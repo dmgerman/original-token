@@ -30,6 +30,18 @@ r_int
 id|size
 )paren
 (brace
+r_extern
+r_void
+id|arm_invalidptr
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -128,9 +140,6 @@ r_int
 id|cr_alignment
 suffix:semicolon
 multiline_comment|/* defined in entry-armv.S */
-multiline_comment|/*&n; * We can wait for an interrupt...&n; */
-DECL|macro|proc_idle
-mdefine_line|#define proc_idle()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;mcr&t;p15, 0, %0, c15, c8, 2&t;@ proc_idle&quot;&t;&t;&bslash;&n;&t;  : : &quot;r&quot; (0));&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * A couple of speedups for the ARM&n; */
 multiline_comment|/*&n; * Save the current interrupt enable state &amp; disable IRQs&n; */
 DECL|macro|__save_flags_cli

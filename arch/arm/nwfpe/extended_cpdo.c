@@ -1,5 +1,4 @@
 multiline_comment|/*&n;    NetWinder Floating Point Emulator&n;    (c) Rebel.com, 1998-1999&n;&n;    Direct questions, comments to Scott Bambrough &lt;scottb@netwinder.org&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
-macro_line|#include &quot;config.h&quot;
 macro_line|#include &quot;softfloat.h&quot;
 macro_line|#include &quot;fpopcode.h&quot;
 macro_line|#include &quot;fpa11.h&quot;
@@ -167,12 +166,10 @@ r_else
 r_switch
 c_cond
 (paren
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|Fm
 )braket
-dot
-id|fType
 )paren
 (brace
 r_case
@@ -188,7 +185,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fSingle
+id|fSingle
 )paren
 suffix:semicolon
 r_break
@@ -206,7 +203,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fDouble
+id|fDouble
 )paren
 suffix:semicolon
 r_break
@@ -221,7 +218,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -254,12 +251,10 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|Fn
 )braket
-dot
-id|fType
 )paren
 (brace
 r_case
@@ -275,7 +270,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fSingle
+id|fSingle
 )paren
 suffix:semicolon
 r_break
@@ -293,7 +288,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fDouble
+id|fDouble
 )paren
 suffix:semicolon
 r_break
@@ -308,7 +303,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -344,7 +339,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_add
 c_func
@@ -367,7 +362,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_mul
 c_func
@@ -387,7 +382,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_sub
 c_func
@@ -407,7 +402,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_sub
 c_func
@@ -430,7 +425,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_div
 c_func
@@ -453,7 +448,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_div
 c_func
@@ -474,7 +469,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_pow
 c_func
@@ -494,7 +489,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_pow
 c_func
@@ -515,7 +510,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_rem
 c_func
@@ -536,7 +531,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_pol
 c_func
@@ -558,7 +553,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|rFm
 suffix:semicolon
@@ -576,7 +571,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|rFm
 suffix:semicolon
@@ -594,7 +589,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|rFm
 suffix:semicolon
@@ -611,7 +606,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|int32_to_floatx80
 c_func
@@ -633,7 +628,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_sqrt
 c_func
@@ -652,7 +647,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_log
 c_func
@@ -670,7 +665,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_ln
 c_func
@@ -688,7 +683,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_exp
 c_func
@@ -706,7 +701,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_sin
 c_func
@@ -724,7 +719,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_cos
 c_func
@@ -742,7 +737,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_tan
 c_func
@@ -760,7 +755,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_arcsin
 c_func
@@ -778,7 +773,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_arccos
 c_func
@@ -796,7 +791,7 @@ id|fpa11-&gt;fpreg
 id|Fd
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|floatx80_arctan
 c_func
@@ -830,12 +825,10 @@ l_int|0
 op_ne
 id|nRc
 )paren
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|Fd
 )braket
-dot
-id|fType
 op_assign
 id|typeExtended
 suffix:semicolon

@@ -1367,6 +1367,9 @@ comma
 id|IOMD_DMATCR
 )paren
 suffix:semicolon
+r_return
+id|speed
+suffix:semicolon
 )brace
 DECL|function|arch_dma_init
 r_void

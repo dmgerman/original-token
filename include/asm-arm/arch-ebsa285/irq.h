@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * include/asm-arm/arch-ebsa285/irq.h&n; *&n; * Copyright (C) 1996-1998 Russell King&n; *&n; * Changelog:&n; *  22-Aug-1998&t;RMK&t;Restructured IRQ routines&n; *  03-Sep-1998&t;PJB&t;Merged CATS support&n; *  20-Jan-1998&t;RMK&t;Started merge of EBSA286, CATS and NetWinder&n; *  26-Jan-1999&t;PJB&t;Don&squot;t use IACK on CATS&n; *  16-Mar-1999&t;RMK&t;Added autodetect of ISA PICs&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* no need for config.h - arch/arm/kernel/irq.c does this for us */
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -566,50 +566,48 @@ id|dc21285_unmask_irq
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Determine the ISA settings for&n;&t; * the machine we&squot;re running on.&n;&t; */
-r_switch
-c_cond
-(paren
-id|machine_arch_type
-)paren
-(brace
-r_default
-suffix:colon
 id|isa_irq
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MACH_TYPE_EBSA285
-suffix:colon
+r_if
+c_cond
+(paren
+id|machine_is_ebsa285
+c_func
+(paren
+)paren
+)paren
 multiline_comment|/* The following is dependent on which slot&n;&t;&t; * you plug the Southbridge card into.  We&n;&t;&t; * currently assume that you plug it into&n;&t;&t; * the right-hand most slot.&n;&t;&t; */
 id|isa_irq
 op_assign
 id|IRQ_PCI
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MACH_TYPE_CATS
-suffix:colon
+r_if
+c_cond
+(paren
+id|machine_is_cats
+c_func
+(paren
+)paren
+)paren
 id|isa_irq
 op_assign
 id|IRQ_IN2
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MACH_TYPE_NETWINDER
-suffix:colon
+r_if
+c_cond
+(paren
+id|machine_is_netwinder
+c_func
+(paren
+)paren
+)paren
 id|isa_irq
 op_assign
 id|IRQ_IN3
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -716,8 +714,6 @@ id|PIC_MASK_HI
 )paren
 suffix:semicolon
 multiline_comment|/* pattern: 11111010&t;*/
-singleline_comment|//&t;&t;outb(0x68, PIC_LO);&t;&t;/* enable special mode&t;*/
-singleline_comment|//&t;&t;outb(0x68, PIC_HI);&t;&t;/* enable special mode&t;*/
 id|outb
 c_func
 (paren

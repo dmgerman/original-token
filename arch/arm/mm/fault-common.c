@@ -107,6 +107,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is useful to dump out the page tables associated with&n; * &squot;addr&squot; in mm &squot;mm&squot;.&n; */
 DECL|function|show_pte
+r_static
 r_void
 id|show_pte
 c_func
@@ -269,6 +270,7 @@ id|pte
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_CPU_32
 id|printk
 c_func
 (paren
@@ -285,6 +287,7 @@ id|PTRS_PER_PTE
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_while
 c_loop
@@ -313,7 +316,7 @@ r_int
 id|addr
 comma
 r_int
-id|mode
+id|write_access
 comma
 r_struct
 id|pt_regs
@@ -397,7 +400,7 @@ l_string|&quot;Oops&quot;
 comma
 id|regs
 comma
-id|mode
+id|write_access
 )paren
 suffix:semicolon
 id|do_exit
@@ -622,9 +625,11 @@ multiline_comment|/* User mode accesses just cause a SIGSEGV */
 r_if
 c_cond
 (paren
-id|mode
-op_amp
-id|FAULT_CODE_USER
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
 )paren
 (brace
 id|tsk-&gt;thread.error_code
@@ -759,10 +764,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|user_mode
+c_func
 (paren
-id|mode
-op_amp
-id|FAULT_CODE_USER
+id|regs
 )paren
 )paren
 r_goto

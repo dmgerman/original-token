@@ -2,7 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/hardware.h&n; *&n; 
 macro_line|#ifndef __ASM_ARCH_HARDWARE_H
 DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * IO definitions&n; */
 DECL|macro|PIT_CTRL
 mdefine_line|#define PIT_CTRL&t;&t;((volatile unsigned char *)0xf200000d)
@@ -18,10 +18,10 @@ mdefine_line|#define IO_BASE&t;&t;&t;0xe0000000
 multiline_comment|/*&n; * RAM definitions&n; */
 DECL|macro|FLUSH_BASE_PHYS
 mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0x40000000
-macro_line|#else
+macro_line|#else&t;/* __ASSEMBLY__ */
 DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE&t;&t;&t;0
-macro_line|#endif
+macro_line|#endif&t;/* __ASSEMBLY__ */
 DECL|macro|IO_SIZE
 mdefine_line|#define IO_SIZE&t;&t;&t;0x20000000
 DECL|macro|IO_START

@@ -1109,9 +1109,10 @@ r_void
 r_if
 c_cond
 (paren
-id|machine_arch_type
-op_eq
-id|MACH_TYPE_CO285
+id|machine_is_co285
+c_func
+(paren
+)paren
 )paren
 multiline_comment|/*&n;&t;&t; * Add-in 21285s shouldn&squot;t access the RTC&n;&t;&t; */
 id|rtc_base

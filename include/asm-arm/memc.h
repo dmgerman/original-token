@@ -8,7 +8,7 @@ DECL|macro|VDMA_START
 mdefine_line|#define VDMA_START&t;1
 DECL|macro|VDMA_END
 mdefine_line|#define VDMA_END&t;2
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_void
 id|memc_write

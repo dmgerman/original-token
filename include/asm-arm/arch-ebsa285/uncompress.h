@@ -1,7 +1,9 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/uncompress.h&n; *&n; * Copyright (C) 1996,1997,1998 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/uncompress.h&n; *&n; * Copyright (C) 1996-1999 Russell King&n; */
 multiline_comment|/*&n; * Note! This could cause problems on the NetWinder&n; */
-DECL|macro|BASE
-mdefine_line|#define BASE 0x42000160
+DECL|macro|DC21285_BASE
+mdefine_line|#define DC21285_BASE ((volatile unsigned int *)0x42000160)
+DECL|macro|SER0_BASE
+mdefine_line|#define SER0_BASE    ((volatile unsigned char *)0x7c0003f8)
 DECL|function|putc
 r_static
 id|__inline__
@@ -13,42 +15,59 @@ r_char
 id|c
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|machine_is_netwinder
+c_func
+(paren
+)paren
+)paren
+(brace
 r_while
 c_loop
 (paren
-op_star
 (paren
+id|SER0_BASE
+(braket
+l_int|5
+)braket
+op_amp
+l_int|0x60
+)paren
+op_ne
+l_int|0x60
+)paren
+suffix:semicolon
+id|SER0_BASE
+(braket
+l_int|0
+)braket
+op_assign
+id|c
+suffix:semicolon
+)brace
+r_else
+(brace
+r_while
+c_loop
 (paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-(paren
-id|BASE
-op_plus
-l_int|0x18
-)paren
-)paren
+id|DC21285_BASE
+(braket
+l_int|6
+)braket
 op_amp
 l_int|8
 )paren
 suffix:semicolon
-op_star
-(paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-(paren
-id|BASE
-)paren
-)paren
+id|DC21285_BASE
+(braket
+l_int|0
+)braket
 op_assign
 id|c
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * This does not append a newline&n; */
 DECL|function|puts

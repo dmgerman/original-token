@@ -1116,6 +1116,7 @@ r_int
 id|__init
 DECL|function|ether1_ramtest
 id|ether1_ramtest
+c_func
 (paren
 r_struct
 id|net_device
@@ -1401,6 +1402,7 @@ r_int
 id|__init
 DECL|function|ether1_init_2
 id|ether1_init_2
+c_func
 (paren
 r_struct
 id|net_device
@@ -2871,6 +2873,7 @@ r_int
 id|__init
 DECL|function|ether1_probe1
 id|ether1_probe1
+c_func
 (paren
 r_struct
 id|net_device
@@ -3111,6 +3114,7 @@ r_void
 id|__init
 DECL|function|ether1_addr
 id|ether1_addr
+c_func
 (paren
 r_struct
 id|net_device
@@ -3152,6 +3156,7 @@ r_int
 id|__init
 DECL|function|ether1_probe
 id|ether1_probe
+c_func
 (paren
 r_struct
 id|net_device

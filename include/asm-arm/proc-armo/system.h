@@ -31,6 +31,18 @@ r_int
 id|size
 )paren
 (brace
+r_extern
+r_void
+id|arm_invalidptr
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -91,9 +103,6 @@ suffix:semicolon
 multiline_comment|/*&n; * We need to turn the caches off before calling the reset vector - RiscOS&n; * messes up if we don&squot;t&n; */
 DECL|macro|proc_hard_reset
 mdefine_line|#define proc_hard_reset()&t;cpu_proc_fin()
-multiline_comment|/*&n; * This processor does not idle&n; */
-DECL|macro|proc_idle
-mdefine_line|#define proc_idle()
 multiline_comment|/*&n; * A couple of speedups for the ARM&n; */
 multiline_comment|/*&n; * Save the current interrupt enable state &amp; disable IRQs&n; */
 DECL|macro|__save_flags_cli

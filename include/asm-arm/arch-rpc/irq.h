@@ -799,5 +799,10 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|init_FIQ
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 eof

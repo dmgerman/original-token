@@ -2,9 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/checksum.h&n; *&n; * IP checksum
 macro_line|#ifndef __ASM_ARM_CHECKSUM_H
 DECL|macro|__ASM_ARM_CHECKSUM_H
 mdefine_line|#define __ASM_ARM_CHECKSUM_H
-macro_line|#ifndef __ASM_ARM_SEGMENT_H
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#endif
 multiline_comment|/*&n; * computes the checksum of a memory block at buff, length len,&n; * and adds in &quot;sum&quot; (32-bit)&n; *&n; * returns a 32-bit number suitable for feeding into itself&n; * or csum_tcpudp_magic&n; *&n; * this function must be called with even lengths, except&n; * for the last fragment, which may be odd&n; *&n; * it&squot;s best to have buff aligned on a 32-bit boundary&n; */
 r_int
 r_int
@@ -124,7 +121,7 @@ r_int
 id|sum
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;This is a version of ip_compute_csum() optimized for IP headers,&n; *&t;which always checksum on 4 octet boundaries.&n; *&n; *&t;Converted and optimised for ARM by R. M. King.&n; *&n; *&t;Note: the order that the LDM registers are loaded with respect to&n; *&t;the adc&squot;s doesn&squot;t matter.&n; */
+multiline_comment|/*&n; *&t;This is a version of ip_compute_csum() optimized for IP headers,&n; *&t;which always checksum on 4 octet boundaries.&n; *&n; *&t;Converted and optimised for ARM by R. M. King.&n; */
 r_static
 r_inline
 r_int
@@ -161,7 +158,7 @@ comma
 op_mod
 l_int|2
 comma
-macro_line|#5
+macro_line|#5&t;&t;@ ip_fast_csum 
 id|ldr
 op_mod
 l_int|0
@@ -340,6 +337,8 @@ l_string|&quot;2&quot;
 (paren
 id|ihl
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -369,13 +368,13 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|0
+l_int|1
 comma
 op_mod
-l_int|0
+l_int|1
 comma
 id|lsl
-macro_line|#16
+macro_line|#16&t;@ csum_fold
 id|addcs
 op_mod
 l_int|0
@@ -390,10 +389,12 @@ l_string|&quot;=r&quot;
 id|sum
 )paren
 suffix:colon
-l_string|&quot;0&quot;
+l_string|&quot;r&quot;
 (paren
 id|sum
 )paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return
@@ -443,19 +444,12 @@ op_mod
 l_int|0
 comma
 op_mod
-l_int|0
-comma
-op_mod
 l_int|1
-id|adcs
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
 comma
 op_mod
 l_int|2
+"@"
+id|csum_tcpudp_nofold
 id|adcs
 op_mod
 l_int|0
@@ -465,6 +459,24 @@ l_int|0
 comma
 op_mod
 l_int|3
+id|adcs
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+op_mod
+l_int|4
+id|adcs
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+op_mod
+l_int|5
 id|adc
 op_mod
 l_int|0
@@ -474,11 +486,16 @@ l_int|0
 comma
 macro_line|#0&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|sum
 )paren
 suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|sum
+)paren
+comma
 l_string|&quot;r&quot;
 (paren
 id|daddr
@@ -491,7 +508,6 @@ id|saddr
 comma
 l_string|&quot;r&quot;
 (paren
-(paren
 id|ntohs
 c_func
 (paren
@@ -500,16 +516,15 @@ id|len
 op_lshift
 l_int|16
 )paren
-op_plus
+comma
+l_string|&quot;Ir&quot;
+(paren
 id|proto
 op_star
 l_int|256
 )paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|sum
-)paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return

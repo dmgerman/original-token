@@ -1930,13 +1930,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCH_ACORN
-id|init_FIQ
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|init_dma
 c_func
 (paren

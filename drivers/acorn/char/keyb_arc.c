@@ -20,7 +20,7 @@ macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/ioc.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
-macro_line|#include &quot;../../char/mouse.h&quot;
+macro_line|#include &quot;../../char/busmouse.h&quot;
 r_extern
 r_void
 id|kbd_reset_kdown
@@ -64,12 +64,12 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-DECL|variable|kbd_waitq
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|kbd_waitq
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_KBDMOUSE
 DECL|variable|mousedev

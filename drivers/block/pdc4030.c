@@ -1434,10 +1434,6 @@ id|hwgroup-&gt;poll_timeout
 )paren
 )paren
 (brace
-id|drive-&gt;timeout
-op_assign
-l_int|1
-suffix:semicolon
 id|ide_set_handler
 c_func
 (paren
@@ -1567,10 +1563,6 @@ id|hwgroup-&gt;poll_timeout
 )paren
 )paren
 (brace
-id|drive-&gt;timeout
-op_assign
-l_int|1
-suffix:semicolon
 id|ide_set_handler
 (paren
 id|drive
@@ -1625,10 +1617,6 @@ op_assign
 id|jiffies
 op_plus
 id|WAIT_WORSTCASE
-suffix:semicolon
-id|drive-&gt;timeout
-op_assign
-l_int|1
 suffix:semicolon
 id|ide_set_handler
 c_func
@@ -1738,10 +1726,6 @@ id|jiffies
 op_plus
 id|WAIT_WORSTCASE
 suffix:semicolon
-id|drive-&gt;timeout
-op_assign
-l_int|1
-suffix:semicolon
 id|ide_set_handler
 (paren
 id|drive
@@ -1767,10 +1751,6 @@ op_assign
 id|jiffies
 op_plus
 id|WAIT_WORSTCASE
-suffix:semicolon
-id|drive-&gt;timeout
-op_assign
-l_int|1
 suffix:semicolon
 id|ide_set_handler
 c_func

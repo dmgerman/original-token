@@ -3,6 +3,7 @@ DECL|macro|_LINUX_BOOTMEM_H
 mdefine_line|#define _LINUX_BOOTMEM_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/*&n; *  simple boot-time physical memory area allocator.&n; */
 r_extern
 r_int
@@ -65,12 +66,18 @@ comma
 r_int
 r_int
 id|align
+comma
+r_int
+r_int
+id|goal
 )paren
 suffix:semicolon
 DECL|macro|alloc_bootmem
-mdefine_line|#define alloc_bootmem(x) __alloc_bootmem((x), SMP_CACHE_BYTES)
+mdefine_line|#define alloc_bootmem(x) &bslash;&n;&t;__alloc_bootmem((x), SMP_CACHE_BYTES, __pa(MAX_DMA_ADDRESS))
 DECL|macro|alloc_bootmem_pages
-mdefine_line|#define alloc_bootmem_pages(x) __alloc_bootmem((x), PAGE_SIZE)
+mdefine_line|#define alloc_bootmem_pages(x) &bslash;&n;&t;__alloc_bootmem((x), PAGE_SIZE, __pa(MAX_DMA_ADDRESS))
+DECL|macro|alloc_bootmem_low_pages
+mdefine_line|#define alloc_bootmem_low_pages(x) &bslash;&n;&t;__alloc_bootmem((x), PAGE_SIZE, 0)
 r_extern
 r_int
 r_int

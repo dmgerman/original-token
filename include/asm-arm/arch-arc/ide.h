@@ -94,13 +94,13 @@ suffix:semicolon
 id|memset
 c_func
 (paren
+op_amp
 id|hw
 comma
 l_int|0
 comma
 r_sizeof
 (paren
-op_star
 id|hw
 )paren
 )paren

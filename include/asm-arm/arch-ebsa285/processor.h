@@ -2,7 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/processor.h&n; *&n;
 macro_line|#ifndef __ASM_ARCH_PROCESSOR_H
 DECL|macro|__ASM_ARCH_PROCESSOR_H
 mdefine_line|#define __ASM_ARCH_PROCESSOR_H
-macro_line|#include &lt;asm/arch/memory.h&gt;
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0

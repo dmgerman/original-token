@@ -19,12 +19,29 @@ mdefine_line|#define __ebsa285_text
 DECL|macro|__netwinder_text
 mdefine_line|#define __netwinder_text
 macro_line|#endif
+multiline_comment|/* information about the system we&squot;re running on */
+r_extern
+r_int
+r_int
+id|system_rev
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|system_serial_low
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|system_serial_high
+suffix:semicolon
 multiline_comment|/* The type of machine we&squot;re running on */
 r_extern
 r_int
 r_int
 id|__machine_arch_type
 suffix:semicolon
+multiline_comment|/* see arch/arm/kernel/setup.c for a description of these */
 DECL|macro|MACH_TYPE_EBSA110
 mdefine_line|#define MACH_TYPE_EBSA110&t;0
 DECL|macro|MACH_TYPE_RISCPC
@@ -47,8 +64,14 @@ DECL|macro|MACH_TYPE_ARCHIMEDES
 mdefine_line|#define MACH_TYPE_ARCHIMEDES&t;10
 DECL|macro|MACH_TYPE_A5K
 mdefine_line|#define MACH_TYPE_A5K&t;&t;11
-DECL|macro|MACH_TYPE_SA1100
-mdefine_line|#define MACH_TYPE_SA1100&t;12&t;/* not allocated!!! */
+DECL|macro|MACH_TYPE_ETOILE
+mdefine_line|#define MACH_TYPE_ETOILE&t;12
+DECL|macro|MACH_TYPE_LACIE_NAS
+mdefine_line|#define MACH_TYPE_LACIE_NAS&t;13
+DECL|macro|MACH_TYPE_CLPS7500
+mdefine_line|#define MACH_TYPE_CLPS7500&t;14
+DECL|macro|MACH_TYPE_SHARK
+mdefine_line|#define MACH_TYPE_SHARK&t;&t;15
 multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; */
 macro_line|#ifdef CONFIG_ARCH_EBSA110
 macro_line|# ifdef machine_arch_type
@@ -173,18 +196,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|arm_invalidptr
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
 id|asmlinkage
 r_void
 id|__backtrace
@@ -195,7 +206,6 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * Include processor dependent parts&n; */
 macro_line|#include &lt;asm/proc/system.h&gt;
-macro_line|#include &lt;asm/arch/system.h&gt;
 DECL|macro|mb
 mdefine_line|#define mb() __asm__ __volatile__ (&quot;&quot; : : : &quot;memory&quot;)
 DECL|macro|rmb

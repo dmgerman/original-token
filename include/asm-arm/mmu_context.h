@@ -49,15 +49,7 @@ id|next
 id|cpu_switch_mm
 c_func
 (paren
-id|__virt_to_phys
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
 id|next-&gt;pgd
-)paren
 comma
 id|tsk
 )paren

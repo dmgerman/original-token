@@ -719,6 +719,15 @@ r_int
 id|fd
 )paren
 (brace
+r_extern
+r_int
+id|sys_close
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 r_return
 id|sys_close
 c_func

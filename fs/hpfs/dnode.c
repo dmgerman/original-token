@@ -3813,8 +3813,7 @@ comma
 (paren
 id|loff_t
 )paren
-op_minus
-l_int|2
+l_int|12
 )paren
 suffix:semicolon
 r_return
@@ -6240,8 +6239,7 @@ suffix:colon
 op_star
 id|posp
 op_assign
-op_minus
-l_int|2
+l_int|12
 suffix:semicolon
 r_return
 id|de

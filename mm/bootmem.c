@@ -7,7 +7,13 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/*&n; * Pointer to a bitmap - the bits represent all physical memory pages&n; * from physical address 0 to physical address end_mem.&n; *&n; * Access to this subsystem has to be serialized externally. (this is&n; * true for the boot process anyway)&n; */
+DECL|variable|max_low_pfn
+r_int
+r_int
+id|max_low_pfn
+suffix:semicolon
 DECL|variable|bootmem_map
 r_static
 r_void
@@ -15,11 +21,6 @@ op_star
 id|bootmem_map
 op_assign
 l_int|NULL
-suffix:semicolon
-DECL|variable|max_low_pfn
-r_int
-r_int
-id|max_low_pfn
 suffix:semicolon
 multiline_comment|/*&n; * Called once to set up the allocator itself.&n; */
 DECL|function|init_bootmem
@@ -323,6 +324,10 @@ comma
 r_int
 r_int
 id|align
+comma
+r_int
+r_int
+id|goal
 )paren
 (brace
 r_int
@@ -353,6 +358,8 @@ suffix:semicolon
 r_int
 r_int
 id|areasize
+comma
+id|preferred
 suffix:semicolon
 r_if
 c_cond
@@ -376,6 +383,36 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * We try to allocate bootmem pages above &squot;goal&squot;&n;&t; * first, then we try to allocate lower pages.&n;&t; */
+r_if
+c_cond
+(paren
+id|goal
+)paren
+(brace
+id|preferred
+op_assign
+id|goal
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|preferred
+op_ge
+id|max_low_pfn
+)paren
+id|preferred
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+id|preferred
+op_assign
+l_int|0
+suffix:semicolon
 id|areasize
 op_assign
 (paren
@@ -388,12 +425,14 @@ l_int|1
 op_div
 id|PAGE_SIZE
 suffix:semicolon
+id|restart_scan
+suffix:colon
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|0
+id|preferred
 suffix:semicolon
 id|i
 OL
@@ -463,6 +502,20 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+)brace
+r_if
+c_cond
+(paren
+id|preferred
+)paren
+(brace
+id|preferred
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|restart_scan
+suffix:semicolon
 )brace
 id|BUG
 c_func
@@ -726,12 +779,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;freeing all bootmem().&bslash;n&quot;
-)paren
-suffix:semicolon
 id|page
 op_assign
 id|mem_map
@@ -786,6 +833,30 @@ c_func
 id|page
 comma
 l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_ge
+(paren
+id|__pa
+c_func
+(paren
+id|MAX_DMA_ADDRESS
+)paren
+op_rshift
+id|PAGE_SHIFT
+)paren
+)paren
+id|clear_bit
+c_func
+(paren
+id|PG_DMA
+comma
+op_amp
+id|page-&gt;flags
 )paren
 suffix:semicolon
 id|__free_page

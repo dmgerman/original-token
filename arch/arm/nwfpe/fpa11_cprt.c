@@ -1,5 +1,4 @@
 multiline_comment|/*&n;    NetWinder Floating Point Emulator&n;    (c) Rebel.com, 1998-1999&n;    (c) Philip Blundell, 1999&n;&n;    Direct questions, comments to Scott Bambrough &lt;scottb@netwinder.org&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
-macro_line|#include &quot;config.h&quot;
 macro_line|#include &quot;milieu.h&quot;
 macro_line|#include &quot;softfloat.h&quot;
 macro_line|#include &quot;fpopcode.h&quot;
@@ -197,50 +196,12 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* ?? Not at all sure about the mode checks here.  Linux never&n;       calls the emulator from a non-USR fault but we always run in SVC&n;       mode.  Is there even any point trying to emulate the way FPA11&n;       behaves in this respect?&n;&n;       No - and I quote: &squot;The FPCR may only be present in some&n;       implementations: it is there to control the hardware in an&n;       implementation-specific manner, ...  The user mode of the&n;       ARM is not permitted to use this register, and the WFC and&n;       RFC instructions will trap if tried from user mode.&squot;&n;       Therefore, we do not provide the RFC and WFC instructions.&n;        (rmk, 3/05/1999)&n;     */
+macro_line|#if 0    /* We currently have no use for the FPCR, so there&squot;s no point&n;&t;    in emulating it. */
 r_case
 id|WFC_CODE
 op_rshift
 l_int|20
 suffix:colon
-(brace
-r_int
-id|mode
-op_assign
-l_int|0
-suffix:semicolon
-id|__asm__
-r_volatile
-(paren
-l_string|&quot;mrs %0, cpsr; and %0, %0, #0x1f;&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;g&quot;
-(paren
-id|mode
-)paren
-)paren
-suffix:semicolon
-id|nRc
-op_assign
-(paren
-l_int|0x13
-op_eq
-id|mode
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
-suffix:semicolon
-multiline_comment|/* in SVC processor mode? */
-r_if
-c_cond
-(paren
-id|nRc
-)paren
 id|writeFPCR
 c_func
 (paren
@@ -255,51 +216,11 @@ id|opcode
 )paren
 )paren
 suffix:semicolon
-)brace
-r_break
-suffix:semicolon
 r_case
 id|RFC_CODE
 op_rshift
 l_int|20
 suffix:colon
-(brace
-r_int
-id|mode
-op_assign
-l_int|0
-suffix:semicolon
-id|__asm__
-r_volatile
-(paren
-l_string|&quot;mrs %0, cpsr; and %0, %0, #0x1f;&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;g&quot;
-(paren
-id|mode
-)paren
-)paren
-suffix:semicolon
-id|nRc
-op_assign
-(paren
-l_int|0x13
-op_eq
-id|mode
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
-suffix:semicolon
-multiline_comment|/* in SVC processor mode? */
-r_if
-c_cond
-(paren
-id|nRc
-)paren
 id|writeRegister
 c_func
 (paren
@@ -315,9 +236,6 @@ c_func
 )paren
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 macro_line|#endif
@@ -374,7 +292,7 @@ r_case
 id|ROUND_SINGLE
 suffix:colon
 (brace
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|getFn
 c_func
@@ -382,8 +300,6 @@ c_func
 id|opcode
 )paren
 )braket
-dot
-id|fType
 op_assign
 id|typeSingle
 suffix:semicolon
@@ -396,7 +312,7 @@ id|opcode
 )paren
 )braket
 dot
-id|fValue.fSingle
+id|fSingle
 op_assign
 id|int32_to_float32
 c_func
@@ -419,7 +335,7 @@ r_case
 id|ROUND_DOUBLE
 suffix:colon
 (brace
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|getFn
 c_func
@@ -427,8 +343,6 @@ c_func
 id|opcode
 )paren
 )braket
-dot
-id|fType
 op_assign
 id|typeDouble
 suffix:semicolon
@@ -441,7 +355,7 @@ id|opcode
 )paren
 )braket
 dot
-id|fValue.fDouble
+id|fDouble
 op_assign
 id|int32_to_float64
 c_func
@@ -464,7 +378,7 @@ r_case
 id|ROUND_EXTENDED
 suffix:colon
 (brace
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|getFn
 c_func
@@ -472,8 +386,6 @@ c_func
 id|opcode
 )paren
 )braket
-dot
-id|fType
 op_assign
 id|typeExtended
 suffix:semicolon
@@ -486,7 +398,7 @@ id|opcode
 )paren
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 op_assign
 id|int32_to_floatx80
 c_func
@@ -553,12 +465,10 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|Fn
 )braket
-dot
-id|fType
 )paren
 (brace
 r_case
@@ -582,7 +492,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fSingle
+id|fSingle
 )paren
 )paren
 suffix:semicolon
@@ -610,7 +520,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fDouble
+id|fDouble
 )paren
 )paren
 suffix:semicolon
@@ -638,7 +548,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 )paren
 )paren
 suffix:semicolon
@@ -809,12 +719,10 @@ multiline_comment|/* Check for unordered condition and convert all operands to 8
 r_switch
 c_cond
 (paren
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|Fn
 )braket
-dot
-id|fType
 )paren
 (brace
 r_case
@@ -832,7 +740,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fSingle
+id|fSingle
 )paren
 )paren
 r_goto
@@ -848,7 +756,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fSingle
+id|fSingle
 )paren
 suffix:semicolon
 r_break
@@ -868,7 +776,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fDouble
+id|fDouble
 )paren
 )paren
 r_goto
@@ -884,7 +792,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fDouble
+id|fDouble
 )paren
 suffix:semicolon
 r_break
@@ -904,7 +812,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 )paren
 )paren
 r_goto
@@ -917,7 +825,7 @@ id|fpa11-&gt;fpreg
 id|Fn
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -965,12 +873,10 @@ singleline_comment|//fp_printk(&quot;Fm = r%d which contains a &quot;,Fm);
 r_switch
 c_cond
 (paren
-id|fpa11-&gt;fpreg
+id|fpa11-&gt;fType
 (braket
 id|Fm
 )braket
-dot
-id|fType
 )paren
 (brace
 r_case
@@ -988,7 +894,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fSingle
+id|fSingle
 )paren
 )paren
 r_goto
@@ -1004,7 +910,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fSingle
+id|fSingle
 )paren
 suffix:semicolon
 r_break
@@ -1024,7 +930,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fDouble
+id|fDouble
 )paren
 )paren
 r_goto
@@ -1040,7 +946,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fDouble
+id|fDouble
 )paren
 suffix:semicolon
 r_break
@@ -1060,7 +966,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 )paren
 )paren
 r_goto
@@ -1073,7 +979,7 @@ id|fpa11-&gt;fpreg
 id|Fm
 )braket
 dot
-id|fValue.fExtended
+id|fExtended
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1110,6 +1016,15 @@ multiline_comment|/* ?? The FPA data sheet is pretty vague about this, in partic
 id|flags
 op_or_assign
 id|CC_OVERFLOW
+suffix:semicolon
+id|flags
+op_and_assign
+op_complement
+(paren
+id|CC_ZERO
+op_or
+id|CC_NEGATIVE
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -37,7 +37,7 @@ DECL|macro|SCREEN1_BASE
 mdefine_line|#define SCREEN1_BASE&t;&t;0xd0000000
 DECL|macro|FLUSH_BASE
 mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * for use with inb/outb&n; */
 DECL|macro|IO_VIDC_AUDIO_BASE
 mdefine_line|#define IO_VIDC_AUDIO_BASE&t;0x80140000
@@ -91,6 +91,19 @@ DECL|macro|PCIO_FLOPPYDMABASE
 mdefine_line|#define PCIO_FLOPPYDMABASE&t;0xe002a000
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xe0010000
+macro_line|#endif
+macro_line|#ifdef HAS_EXPMASK
+macro_line|#ifndef __ASSEMBLY__
+DECL|macro|__EXPMASK
+mdefine_line|#define __EXPMASK(offset)&t;(((volatile unsigned char *)EXPMASK_BASE)[offset])
+macro_line|#else
+DECL|macro|__EXPMASK
+mdefine_line|#define __EXPMASK(offset)&t;offset
+macro_line|#endif
+DECL|macro|EXPMASK_STATUS
+mdefine_line|#define&t;EXPMASK_STATUS&t;__EXPMASK(0x00)
+DECL|macro|EXPMASK_ENABLE
+mdefine_line|#define EXPMASK_ENABLE&t;__EXPMASK(0x04)
 macro_line|#endif
 macro_line|#endif
 eof

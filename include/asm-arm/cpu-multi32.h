@@ -270,6 +270,33 @@ r_int
 id|end
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * flush a specific TLB&n;&t; */
+DECL|member|_flush_tlb_page
+r_void
+(paren
+op_star
+id|_flush_tlb_page
+)paren
+(paren
+r_int
+r_int
+id|address
+comma
+r_int
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Idle the processor&n;&t; */
+DECL|member|_do_idle
+r_int
+(paren
+op_star
+id|_do_idle
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 )brace
 id|processor
 suffix:semicolon
@@ -299,6 +326,8 @@ DECL|macro|cpu_proc_init
 mdefine_line|#define cpu_proc_init()&t;&t;&t;&t;processor._proc_init()
 DECL|macro|cpu_proc_fin
 mdefine_line|#define cpu_proc_fin()&t;&t;&t;&t;processor._proc_fin()
+DECL|macro|cpu_do_idle
+mdefine_line|#define cpu_do_idle()&t;&t;&t;&t;processor._do_idle()
 DECL|macro|cpu_flush_cache_all
 mdefine_line|#define cpu_flush_cache_all()&t;&t;&t;processor._flush_cache_all()
 DECL|macro|cpu_flush_cache_area
@@ -313,8 +342,10 @@ DECL|macro|cpu_flush_tlb_all
 mdefine_line|#define cpu_flush_tlb_all()&t;&t;&t;processor._flush_tlb_all()
 DECL|macro|cpu_flush_tlb_area
 mdefine_line|#define cpu_flush_tlb_area(start,end,flags)&t;processor._flush_tlb_area(start,end,flags)
-DECL|macro|cpu_switch_mm
-mdefine_line|#define cpu_switch_mm(pgd,tsk)&t;&t;&t;processor._set_pgd(pgd)
+DECL|macro|cpu_flush_tlb_page
+mdefine_line|#define cpu_flush_tlb_page(addr,flags)&t;&t;processor._flush_tlb_page(addr,flags)
+DECL|macro|cpu_set_pgd
+mdefine_line|#define cpu_set_pgd(pgd)&t;&t;&t;processor._set_pgd(pgd)
 DECL|macro|cpu_set_pmd
 mdefine_line|#define cpu_set_pmd(pmdp, pmd)&t;&t;&t;processor._set_pmd(pmdp, pmd)
 DECL|macro|cpu_set_pte
@@ -327,5 +358,7 @@ DECL|macro|cpu_cache_wback_area
 mdefine_line|#define cpu_cache_wback_area(start,end)&t;&t;processor._cache_wback_area(start,end)
 DECL|macro|cpu_cache_purge_area
 mdefine_line|#define cpu_cache_purge_area(start,end)&t;&t;processor._cache_purge_area(start,end)
+DECL|macro|cpu_switch_mm
+mdefine_line|#define cpu_switch_mm(pgd,tsk)&t;&t;&t;cpu_set_pgd(__virt_to_phys((unsigned long)(pgd)))
 macro_line|#endif
 eof

@@ -5,6 +5,8 @@ mdefine_line|#define __ASM_ARCH_MEMORY_H
 multiline_comment|/*&n; * User space: 26MB&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x01a00000UL)
+DECL|macro|TASK_SIZE_26
+mdefine_line|#define TASK_SIZE_26&t;(0x01a00000UL)
 multiline_comment|/*&n; * Page offset: 32MB&n; */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;(0x02000000UL)

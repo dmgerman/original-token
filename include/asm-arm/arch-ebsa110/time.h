@@ -9,9 +9,9 @@ macro_line|#if defined(MCLK_42_3)
 DECL|macro|PIT1_COUNT
 mdefine_line|#define PIT1_COUNT 0xecbe
 macro_line|#elif defined(MCLK_47_8)
-multiline_comment|/*&n; * This should be 0x10AE1, but that doesn&squot;t exactly fit.&n; * We run the timer interrupt at 5ms, and then divide it by&n; * two in software...  This is so that the user processes&n; * see exactly the same model whichever ARM processor they&squot;re&n; * running on.&n; */
+multiline_comment|/*&n; * This should be 0x10B43, but that doesn&squot;t exactly fit.&n; * We run the timer interrupt at 5ms, and then divide it by&n; * two in software...  This is so that the user processes&n; * see exactly the same model whichever ARM processor they&squot;re&n; * running on.&n; */
 DECL|macro|PIT1_COUNT
-mdefine_line|#define PIT1_COUNT 0x8570
+mdefine_line|#define PIT1_COUNT 0x85A1
 DECL|macro|DIVISOR
 mdefine_line|#define DIVISOR 2
 macro_line|#endif

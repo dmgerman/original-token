@@ -18,18 +18,17 @@ macro_line|#ifndef NO_DOOR_LOCKING
 DECL|macro|NO_DOOR_LOCKING
 mdefine_line|#define NO_DOOR_LOCKING 0
 macro_line|#endif
-multiline_comment|/* Size of buffer to allocate, in blocks, for audio reads. */
-macro_line|#ifndef CDROM_NBLOCKS_BUFFER
-DECL|macro|CDROM_NBLOCKS_BUFFER
-mdefine_line|#define CDROM_NBLOCKS_BUFFER 8
-macro_line|#endif
 multiline_comment|/************************************************************************/
 DECL|macro|SECTOR_SIZE
-mdefine_line|#define SECTOR_SIZE 512
+mdefine_line|#define SECTOR_SIZE&t;&t;512
 DECL|macro|SECTOR_BITS
-mdefine_line|#define SECTOR_BITS 9
+mdefine_line|#define SECTOR_BITS &t;&t;9
 DECL|macro|SECTORS_PER_FRAME
-mdefine_line|#define SECTORS_PER_FRAME (CD_FRAMESIZE / SECTOR_SIZE)
+mdefine_line|#define SECTORS_PER_FRAME&t;(CD_FRAMESIZE / SECTOR_SIZE)
+DECL|macro|SECTOR_BUFFER_SIZE
+mdefine_line|#define SECTOR_BUFFER_SIZE&t;(CD_FRAMESIZE * 32)
+DECL|macro|SECTORS_BUFFER
+mdefine_line|#define SECTORS_BUFFER&t;&t;(SECTOR_BUFFER_SIZE / SECTOR_SIZE)
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
 multiline_comment|/* special command codes for strategy routine. */
@@ -184,11 +183,18 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* can close the tray */
+DECL|member|writing
+id|__u8
+id|writing
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* pseudo write in progress */
 DECL|member|reserved
 id|__u8
 id|reserved
 suffix:colon
-l_int|4
+l_int|3
 suffix:semicolon
 DECL|member|max_speed
 id|byte
@@ -1511,7 +1517,6 @@ id|atapi_toc
 op_star
 id|toc
 suffix:semicolon
-multiline_comment|/* Sector buffer.  If a read request wants only the first part&n;&t;   of a cdrom block, we cache the rest of the block here,&n;&t;   in the expectation that the data is going to be wanted soon.&n;&t;   SECTOR_BUFFERED is the number of the first buffered sector,&n;&t;   and NSECTORS_BUFFERED is the number of sectors in the buffer.&n;&t;   Before the buffer is allocated, we should have&n;&t;   SECTOR_BUFFER == NULL and NSECTORS_BUFFERED == 0. */
 DECL|member|sector_buffered
 r_int
 r_int
@@ -1522,10 +1527,11 @@ r_int
 r_int
 id|nsectors_buffered
 suffix:semicolon
-DECL|member|sector_buffer
+DECL|member|buffer
+r_int
 r_char
 op_star
-id|sector_buffer
+id|buffer
 suffix:semicolon
 multiline_comment|/* The result of the last successful request sense command&n;&t;   on this device. */
 DECL|member|sense_data
@@ -1582,8 +1588,6 @@ id|devinfo
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|SECTOR_BUFFER_SIZE
-mdefine_line|#define SECTOR_BUFFER_SIZE CD_FRAMESIZE
 multiline_comment|/****************************************************************************&n; * Descriptions of ATAPI error codes.&n; */
 DECL|macro|ARY_LEN
 mdefine_line|#define ARY_LEN(a) ((sizeof(a) / sizeof(a[0])))
@@ -2036,6 +2040,12 @@ l_string|&quot;No current audio status to return&quot;
 )brace
 comma
 (brace
+l_int|0x010c0a
+comma
+l_string|&quot;Write error - padding blocks added&quot;
+)brace
+comma
+(brace
 l_int|0x011700
 comma
 l_string|&quot;Recovered data with no error correction applied&quot;
@@ -2120,6 +2130,12 @@ l_string|&quot;Failure prediction threshold exceeded - False&quot;
 )brace
 comma
 (brace
+l_int|0x017301
+comma
+l_string|&quot;Power calibration area almost full&quot;
+)brace
+comma
+(brace
 l_int|0x020400
 comma
 l_string|&quot;Logical unit not ready - cause not reportable&quot;
@@ -2181,6 +2197,84 @@ l_string|&quot;Unable to recover table of contents&quot;
 )brace
 comma
 (brace
+l_int|0x030300
+comma
+l_string|&quot;Peripheral device write fault&quot;
+)brace
+comma
+(brace
+l_int|0x030301
+comma
+l_string|&quot;No write current&quot;
+)brace
+comma
+(brace
+l_int|0x030302
+comma
+l_string|&quot;Excessive write errors&quot;
+)brace
+comma
+(brace
+l_int|0x030c00
+comma
+l_string|&quot;Write error&quot;
+)brace
+comma
+(brace
+l_int|0x030c01
+comma
+l_string|&quot;Write error - Recovered with auto reallocation&quot;
+)brace
+comma
+(brace
+l_int|0x030c02
+comma
+l_string|&quot;Write error - auto reallocation failed&quot;
+)brace
+comma
+(brace
+l_int|0x030c03
+comma
+l_string|&quot;Write error - recommend reassignment&quot;
+)brace
+comma
+(brace
+l_int|0x030c04
+comma
+l_string|&quot;Compression check miscompare error&quot;
+)brace
+comma
+(brace
+l_int|0x030c05
+comma
+l_string|&quot;Data expansion occurred during compress&quot;
+)brace
+comma
+(brace
+l_int|0x030c06
+comma
+l_string|&quot;Block not compressible&quot;
+)brace
+comma
+(brace
+l_int|0x030c07
+comma
+l_string|&quot;Write error - recovery needed&quot;
+)brace
+comma
+(brace
+l_int|0x030c08
+comma
+l_string|&quot;Write error - recovery failed&quot;
+)brace
+comma
+(brace
+l_int|0x030c09
+comma
+l_string|&quot;Write error - loss of streaming&quot;
+)brace
+comma
+(brace
 l_int|0x031100
 comma
 l_string|&quot;Unrecovered read error&quot;
@@ -2196,6 +2290,78 @@ comma
 l_int|0x033101
 comma
 l_string|&quot;Format command failed&quot;
+)brace
+comma
+(brace
+l_int|0x033200
+comma
+l_string|&quot;No defect spare location available&quot;
+)brace
+comma
+(brace
+l_int|0x033201
+comma
+l_string|&quot;Defect list update failure&quot;
+)brace
+comma
+(brace
+l_int|0x035100
+comma
+l_string|&quot;Erase failure&quot;
+)brace
+comma
+(brace
+l_int|0x037200
+comma
+l_string|&quot;Session fixation error&quot;
+)brace
+comma
+(brace
+l_int|0x037201
+comma
+l_string|&quot;Session fixation error writin lead-in&quot;
+)brace
+comma
+(brace
+l_int|0x037202
+comma
+l_string|&quot;Session fixation error writin lead-out&quot;
+)brace
+comma
+(brace
+l_int|0x037300
+comma
+l_string|&quot;CD control error&quot;
+)brace
+comma
+(brace
+l_int|0x037302
+comma
+l_string|&quot;Power calibration area is full&quot;
+)brace
+comma
+(brace
+l_int|0x037303
+comma
+l_string|&quot;Power calibration area error&quot;
+)brace
+comma
+(brace
+l_int|0x037304
+comma
+l_string|&quot;Program memory area / RMA update failure&quot;
+)brace
+comma
+(brace
+l_int|0x037305
+comma
+l_string|&quot;Program memory area / RMA is full&quot;
+)brace
+comma
+(brace
+l_int|0x037306
+comma
+l_string|&quot;Program memory area / RMA is (almost) full&quot;
 )brace
 comma
 (brace
@@ -2301,6 +2467,12 @@ l_string|&quot;Logical block address out of range&quot;
 )brace
 comma
 (brace
+l_int|0x052102
+comma
+l_string|&quot;Invalid address for write&quot;
+)brace
+comma
+(brace
 l_int|0x052400
 comma
 l_string|&quot;Invalid field in command packet&quot;
@@ -2328,6 +2500,24 @@ comma
 l_int|0x052700
 comma
 l_string|&quot;Write protected media&quot;
+)brace
+comma
+(brace
+l_int|0x052c00
+comma
+l_string|&quot;Command sequence error&quot;
+)brace
+comma
+(brace
+l_int|0x052c03
+comma
+l_string|&quot;Current program area is not empty&quot;
+)brace
+comma
+(brace
+l_int|0x052c04
+comma
+l_string|&quot;Current program area is empty&quot;
 )brace
 comma
 (brace
@@ -2394,6 +2584,42 @@ comma
 l_int|0x056f02
 comma
 l_string|&quot;Copy protection key exchange failure - Key not established&quot;
+)brace
+comma
+(brace
+l_int|0x056f03
+comma
+l_string|&quot;Read of scrambled sector without authentication&quot;
+)brace
+comma
+(brace
+l_int|0x056f04
+comma
+l_string|&quot;Media region code is mismatched to logical unit&quot;
+)brace
+comma
+(brace
+l_int|0x056f05
+comma
+l_string|&quot;Drive region must be permanent / region reset count error&quot;
+)brace
+comma
+(brace
+l_int|0x057203
+comma
+l_string|&quot;Session fixation error - incomplete track in session&quot;
+)brace
+comma
+(brace
+l_int|0x057204
+comma
+l_string|&quot;Empty or partially written reserved track&quot;
+)brace
+comma
+(brace
+l_int|0x057205
+comma
+l_string|&quot;No more RZONE reservations are allowed&quot;
 )brace
 comma
 (brace

@@ -1631,13 +1631,6 @@ id|pgd_t
 op_star
 id|pgd
 suffix:semicolon
-id|printk
-(paren
-l_string|&quot;current-&gt;thread.memmap = %08lX&bslash;n&quot;
-comma
-id|current-&gt;thread.memmap
-)paren
-suffix:semicolon
 id|pgd
 op_assign
 id|pgd_offset

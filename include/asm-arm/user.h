@@ -82,6 +82,19 @@ id|fpcr
 suffix:colon
 l_int|32
 suffix:semicolon
+DECL|member|ftype
+r_int
+r_char
+id|ftype
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|init_flag
+r_int
+r_int
+id|init_flag
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* When the kernel dumps core, it starts by dumping the user struct -&n;   this will be used by gdb to figure out where the data and stack segments&n;   are within the file, and what virtual addresses to use. */

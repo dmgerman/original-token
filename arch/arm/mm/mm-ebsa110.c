@@ -1,12 +1,88 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-ebsa110.c&n; *&n; * Extra MM routines for the EBSA-110 architecture&n; *&n; * Copyright (C) 1998 Russell King&n; */
-macro_line|#include &lt;linux/sched.h&gt;
+multiline_comment|/*&n; * arch/arm/mm/mm-ebsa110.c&n; *&n; * Extra MM routines for the EBSA-110 architecture&n; *&n; * Copyright (C) 1998-1999 Russell King&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/proc/mm-init.h&gt;
-DECL|macro|MAPPING
-mdefine_line|#define MAPPING &bslash;&n;&t;{ IO_BASE - PGDIR_SIZE&t;, 0xc0000000&t;, PGDIR_SIZE&t;, DOMAIN_IO, 0, 1 }, &bslash;&n;&t;{ IO_BASE&t;&t;, IO_START&t;, IO_SIZE&t;, DOMAIN_IO, 0, 1 }
-macro_line|#include &quot;mm-armv.c&quot;
+macro_line|#include &quot;map.h&quot;
+DECL|variable|__initdata
+r_struct
+id|mem_desc
+id|mem_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
+DECL|variable|mem_desc_size
+r_int
+r_int
+id|__initdata
+id|mem_desc_size
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|__initdata
+r_const
+r_struct
+id|map_desc
+id|io_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+id|IO_BASE
+op_minus
+id|PGDIR_SIZE
+comma
+l_int|0xc0000000
+comma
+id|PGDIR_SIZE
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+id|IO_BASE
+comma
+id|IO_START
+comma
+id|IO_SIZE
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|macro|SIZEOFMAP
+mdefine_line|#define SIZEOFMAP (sizeof(mapping) / sizeof(mapping[0]))
+DECL|variable|io_desc_size
+r_int
+r_int
+id|__initdata
+id|io_desc_size
+op_assign
+id|SIZEOFMAP
+suffix:semicolon
 eof

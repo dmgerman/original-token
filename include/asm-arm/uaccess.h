@@ -3,6 +3,7 @@ DECL|macro|_ASMARM_UACCESS_H
 mdefine_line|#define _ASMARM_UACCESS_H
 multiline_comment|/*&n; * User space memory access functions&n; */
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;asm/errno.h&gt;
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
@@ -33,10 +34,18 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|macro|get_ds
+mdefine_line|#define get_ds()&t;(KERNEL_DS)
+DECL|macro|get_fs
+mdefine_line|#define get_fs()&t;(current-&gt;addr_limit)
+DECL|macro|segment_eq
+mdefine_line|#define segment_eq(a,b)&t;((a) == (b))
 macro_line|#include &lt;asm/proc/uaccess.h&gt;
+DECL|macro|access_ok
+mdefine_line|#define access_ok(type,addr,size)&t;(__range_ok(addr,size) == 0)
 DECL|function|verify_area
 r_extern
-r_inline
+id|__inline__
 r_int
 id|verify_area
 c_func
@@ -455,16 +464,22 @@ r_return
 id|res
 suffix:semicolon
 )brace
-DECL|function|strlen_user
+DECL|macro|strlen_user
+mdefine_line|#define strlen_user(s)&t;strnlen_user(s, ~0UL &gt;&gt; 1)
+DECL|function|strnlen_user
 r_extern
 id|__inline__
 r_int
-id|strlen_user
+id|strnlen_user
+c_func
 (paren
 r_const
 r_char
 op_star
 id|s
+comma
+r_int
+id|n
 )paren
 (brace
 r_int
@@ -482,9 +497,12 @@ c_func
 id|s
 )paren
 )paren
-id|__do_strlen_user
+id|__do_strnlen_user
+c_func
 (paren
 id|s
+comma
+id|n
 comma
 id|res
 )paren

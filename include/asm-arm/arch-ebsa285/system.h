@@ -1,8 +1,10 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; * Copyright (c) 1996-1999 Russell King.&n; */
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
+DECL|macro|arch_do_idle
+mdefine_line|#define arch_do_idle()&t;&t;cpu_do_idle()
 DECL|function|arch_reset
 r_extern
 id|__inline__
@@ -14,11 +16,6 @@ r_char
 id|mode
 )paren
 (brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -35,41 +32,29 @@ id|mov
 id|lr
 comma
 macro_line|#0x41000000&t;&t;@ prepare to jump to ROM
-id|mov
-id|r0
-comma
-macro_line|#0x130
 id|mcr
 id|p15
 comma
 l_int|0
 comma
-id|r0
+op_mod
+l_int|0
 comma
 id|c1
 comma
 id|c0
+comma
+l_int|0
 "@"
 id|MMU
 id|off
-id|mcr
-id|p15
-comma
-l_int|0
-comma
-id|ip
-comma
-id|c7
-comma
-id|c7
-"@"
-id|flush
-id|caches
 id|mov
 id|pc
 comma
 id|lr
-l_string|&quot; : : : &quot;
+l_string|&quot; : : &quot;
+id|r
+l_string|&quot; (cpu_reset()) : &quot;
 id|cc
 "&quot;"
 )paren
@@ -174,8 +159,4 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|macro|arch_start_idle
-mdefine_line|#define arch_start_idle()&t;leds_event(led_idle_start)
-DECL|macro|arch_end_idle
-mdefine_line|#define arch_end_idle()&t;&t;leds_event(led_idle_end)
 eof

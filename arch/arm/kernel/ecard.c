@@ -129,10 +129,9 @@ macro_line|#endif
 multiline_comment|/* List of descriptions of cards which don&squot;t have an extended&n; * identification, or chunk directories containing a description.&n; */
 DECL|variable|blacklist
 r_static
-r_const
 r_struct
 id|expcard_blacklist
-id|__init
+id|__initdata
 id|blacklist
 (braket
 )braket
@@ -2989,6 +2988,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+r_default
+suffix:colon
+r_break
+suffix:semicolon
 )brace
 macro_line|#ifdef IOMD_ECTCR
 id|outb

@@ -2,11 +2,13 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -454,6 +456,27 @@ c_func
 id|kernel_thread
 )paren
 suffix:semicolon
+DECL|variable|system_rev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|system_rev
+)paren
+suffix:semicolon
+DECL|variable|system_serial_low
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|system_serial_low
+)paren
+suffix:semicolon
+DECL|variable|system_serial_high
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|system_serial_high
+)paren
+suffix:semicolon
 DECL|variable|enable_irq
 id|EXPORT_SYMBOL
 c_func
@@ -527,11 +550,11 @@ c_func
 id|cpu_flush_tlb_area
 )paren
 suffix:semicolon
-DECL|variable|cpu_switch_mm
+DECL|variable|cpu_set_pgd
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|cpu_switch_mm
+id|cpu_set_pgd
 )paren
 suffix:semicolon
 DECL|variable|cpu_set_pmd
@@ -801,6 +824,13 @@ c_func
 id|strstr
 )paren
 suffix:semicolon
+DECL|variable|__memset
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__memset
+)paren
+suffix:semicolon
 DECL|variable|memset
 id|EXPORT_SYMBOL_NOVERS
 c_func
@@ -808,6 +838,7 @@ c_func
 id|memset
 )paren
 suffix:semicolon
+multiline_comment|/* needed for some versions of gcc */
 DECL|variable|memcpy
 id|EXPORT_SYMBOL_NOVERS
 c_func
@@ -836,11 +867,11 @@ c_func
 id|memscan
 )paren
 suffix:semicolon
-DECL|variable|memzero
+DECL|variable|__memzero
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
-id|memzero
+id|__memzero
 )paren
 suffix:semicolon
 multiline_comment|/* user mem (segment) */
@@ -866,11 +897,11 @@ c_func
 id|__arch_clear_user
 )paren
 suffix:semicolon
-DECL|variable|__arch_strlen_user
+DECL|variable|__arch_strnlen_user
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__arch_strlen_user
+id|__arch_strnlen_user
 )paren
 suffix:semicolon
 macro_line|#elif defined(CONFIG_CPU_26)

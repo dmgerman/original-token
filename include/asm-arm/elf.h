@@ -11,8 +11,19 @@ r_int
 r_int
 id|elf_greg_t
 suffix:semicolon
+DECL|typedef|elf_freg_t
+r_typedef
+r_int
+r_int
+id|elf_freg_t
+(braket
+l_int|3
+)braket
+suffix:semicolon
 DECL|macro|EM_ARM
 mdefine_line|#define EM_ARM&t;40
+DECL|macro|EF_ARM_APCS26
+mdefine_line|#define EF_ARM_APCS26 0x08
 DECL|macro|ELF_NGREG
 mdefine_line|#define ELF_NGREG (sizeof (struct pt_regs) / sizeof(elf_greg_t))
 DECL|typedef|elf_gregset_t
@@ -41,8 +52,13 @@ mdefine_line|#define elf_check_arch(x) ( ((x)-&gt;e_machine == EM_ARM) &amp;&amp
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32
+macro_line|#ifdef __ARMEB__
 DECL|macro|ELF_DATA
 mdefine_line|#define ELF_DATA&t;ELFDATA2LSB;
+macro_line|#else
+DECL|macro|ELF_DATA
+mdefine_line|#define ELF_DATA&t;ELFDATA2LSB;
+macro_line|#endif
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;EM_ARM
 DECL|macro|USE_ELF_CORE_DUMP

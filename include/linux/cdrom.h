@@ -460,6 +460,14 @@ DECL|member|stat
 r_int
 id|stat
 suffix:semicolon
+DECL|member|reserved
+r_void
+op_star
+id|reserved
+(braket
+l_int|4
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * A CD-ROM physical sector size is 2048, 2052, 2056, 2324, 2332, 2336, &n; * 2340, or 2352 bytes long.  &n;&n;*         Sector types of the standard CD-ROM data formats:&n; *&n; * format   sector type               user data size (bytes)&n; * -----------------------------------------------------------------------------&n; *   1     (Red Book)    CD-DA          2352    (CD_FRAMESIZE_RAW)&n; *   2     (Yellow Book) Mode1 Form1    2048    (CD_FRAMESIZE)&n; *   3     (Yellow Book) Mode1 Form2    2336    (CD_FRAMESIZE_RAW0)&n; *   4     (Green Book)  Mode2 Form1    2048    (CD_FRAMESIZE)&n; *   5     (Green Book)  Mode2 Form2    2328    (2324+4 spare bytes)&n; *&n; *&n; *       The layout of the standard CD-ROM data formats:&n; * -----------------------------------------------------------------------------&n; * - audio (red):                  | audio_sample_bytes |&n; *                                 |        2352        |&n; *&n; * - data (yellow, mode1):         | sync - head - data - EDC - zero - ECC |&n; *                                 |  12  -   4  - 2048 -  4  -   8  - 276 |&n; *&n; * - data (yellow, mode2):         | sync - head - data |&n; *                                 |  12  -   4  - 2336 |&n; *&n; * - XA data (green, mode2 form1): | sync - head - sub - data - EDC - ECC |&n; *                                 |  12  -   4  -  8  - 2048 -  4  - 276 |&n; *&n; * - XA data (green, mode2 form2): | sync - head - sub - data - Spare |&n; *                                 |  12  -   4  -  8  - 2324 -  4    |&n; *&n; */
@@ -1224,6 +1232,36 @@ DECL|typedef|dvd_authinfo
 id|dvd_authinfo
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+DECL|struct|cdrom_write_settings
+r_struct
+id|cdrom_write_settings
+(brace
+DECL|member|fpacket
+r_int
+r_char
+id|fpacket
+suffix:semicolon
+multiline_comment|/* fixed/variable packets */
+DECL|member|packet_size
+r_int
+r_int
+id|packet_size
+suffix:semicolon
+multiline_comment|/* write out this number of packets */
+DECL|member|nwa
+r_int
+r_int
+id|nwa
+suffix:semicolon
+multiline_comment|/* next writeable address */
+DECL|member|writeable
+r_int
+r_char
+id|writeable
+suffix:semicolon
+multiline_comment|/* cdrom is writeable */
+)brace
+suffix:semicolon
 multiline_comment|/* Uniform cdrom data structures for cdrom.c */
 DECL|struct|cdrom_device_info
 r_struct
@@ -1313,16 +1351,11 @@ suffix:colon
 l_int|6
 suffix:semicolon
 multiline_comment|/* not used yet */
-DECL|member|packet_size
-id|__u32
-id|packet_size
+DECL|member|write
+r_struct
+id|cdrom_write_settings
+id|write
 suffix:semicolon
-multiline_comment|/* write out this number of packets */
-DECL|member|nwa
-id|__u32
-id|nwa
-suffix:semicolon
-multiline_comment|/* next writeable address */
 )brace
 suffix:semicolon
 DECL|struct|cdrom_device_ops

@@ -11,6 +11,8 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/binfmts.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/ucontext.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -2619,6 +2621,12 @@ op_amp
 id|current-&gt;signal
 comma
 id|signr
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
 )paren
 suffix:semicolon
 id|current-&gt;flags

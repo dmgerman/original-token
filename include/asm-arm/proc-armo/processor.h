@@ -2,7 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/proc-armo/processor.h&n; *&n; * 
 macro_line|#ifndef __ASM_PROC_PROCESSOR_H
 DECL|macro|__ASM_PROC_PROCESSOR_H
 mdefine_line|#define __ASM_PROC_PROCESSOR_H
-macro_line|#include &lt;asm/assembler.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|KERNEL_STACK_SIZE
 mdefine_line|#define KERNEL_STACK_SIZE 4096
@@ -211,18 +210,21 @@ r_int
 id|sz
 )paren
 suffix:semicolon
-DECL|member|strlen_user
+DECL|member|strnlen_user
 r_int
 r_int
 (paren
 op_star
-id|strlen_user
+id|strnlen_user
 )paren
 (paren
 r_const
 r_char
 op_star
 id|s
+comma
+r_int
+id|n
 )paren
 suffix:semicolon
 DECL|typedef|uaccess_t
@@ -236,11 +238,9 @@ comma
 id|uaccess_kernel
 suffix:semicolon
 DECL|macro|EXTRA_THREAD_STRUCT
-mdefine_line|#define EXTRA_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;uaccess_t&t;*uaccess;&t;&t;/* User access functions*/&t;&bslash;&n;&t;unsigned long&t;memcmap[256];
+mdefine_line|#define EXTRA_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;uaccess_t&t;*uaccess;&t;&t;/* User access functions*/
 DECL|macro|EXTRA_THREAD_STRUCT_INIT
-mdefine_line|#define EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;&t;,&amp;uaccess_kernel,&t;&t;&t;&bslash;&n;&t;{ 0, }
-DECL|macro|SWAPPER_PG_DIR
-mdefine_line|#define SWAPPER_PG_DIR ((unsigned long)swapper_pg_dir)
+mdefine_line|#define EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;&t;,&amp;uaccess_kernel
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs,pc,sp)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long *stack = (unsigned long *)sp;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;memzero(regs-&gt;uregs, sizeof (regs-&gt;uregs));&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_pc = pc;&t;&t;/* pc */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_sp = sp;&t;&t;/* sp */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r2 = stack[2];&t;/* r2 (envp) */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r1 = stack[1];&t;/* r1 (argv) */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r0 = stack[0];&t;/* r0 (argc) */&t;&t;&t;&bslash;&n;})
 multiline_comment|/* Allocation and freeing of basic task resources. */

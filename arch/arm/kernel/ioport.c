@@ -4,8 +4,10 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef CONFIG_CPU_32
 DECL|function|sys_iopl
 id|asmlinkage
 r_int
@@ -51,4 +53,22 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|sys_iopl
+id|asmlinkage
+r_int
+id|sys_iopl
+c_func
+(paren
+r_int
+r_int
+id|turn_on
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

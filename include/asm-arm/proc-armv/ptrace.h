@@ -1,7 +1,46 @@
-multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/ptrace.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/ptrace.h&n; *&n; * Copyright (C) 1996-1999 Russell King&n; */
 macro_line|#ifndef __ASM_PROC_PTRACE_H
 DECL|macro|__ASM_PROC_PTRACE_H
 mdefine_line|#define __ASM_PROC_PTRACE_H
+DECL|macro|USR26_MODE
+mdefine_line|#define USR26_MODE&t;0x00
+DECL|macro|FIQ26_MODE
+mdefine_line|#define FIQ26_MODE&t;0x01
+DECL|macro|IRQ26_MODE
+mdefine_line|#define IRQ26_MODE&t;0x02
+DECL|macro|SVC26_MODE
+mdefine_line|#define SVC26_MODE&t;0x03
+DECL|macro|USR_MODE
+mdefine_line|#define USR_MODE&t;0x10
+DECL|macro|FIQ_MODE
+mdefine_line|#define FIQ_MODE&t;0x11
+DECL|macro|IRQ_MODE
+mdefine_line|#define IRQ_MODE&t;0x12
+DECL|macro|SVC_MODE
+mdefine_line|#define SVC_MODE&t;0x13
+DECL|macro|ABT_MODE
+mdefine_line|#define ABT_MODE&t;0x17
+DECL|macro|UND_MODE
+mdefine_line|#define UND_MODE&t;0x1b
+DECL|macro|SYSTEM_MODE
+mdefine_line|#define SYSTEM_MODE&t;0x1f
+DECL|macro|MODE_MASK
+mdefine_line|#define MODE_MASK&t;0x1f
+DECL|macro|F_BIT
+mdefine_line|#define F_BIT&t;&t;0x40
+DECL|macro|I_BIT
+mdefine_line|#define I_BIT&t;&t;0x80
+DECL|macro|CC_V_BIT
+mdefine_line|#define CC_V_BIT&t;(1 &lt;&lt; 28)
+DECL|macro|CC_C_BIT
+mdefine_line|#define CC_C_BIT&t;(1 &lt;&lt; 29)
+DECL|macro|CC_Z_BIT
+mdefine_line|#define CC_Z_BIT&t;(1 &lt;&lt; 30)
+DECL|macro|CC_N_BIT
+mdefine_line|#define CC_N_BIT&t;(1 &lt;&lt; 31)
+DECL|macro|PCMASK
+mdefine_line|#define PCMASK&t;&t;0
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* this struct defines the way the registers are stored on the&n;   stack during a system call. */
 DECL|struct|pt_regs
 r_struct
@@ -51,50 +90,10 @@ mdefine_line|#define ARM_r1&t;&t;uregs[1]
 DECL|macro|ARM_r0
 mdefine_line|#define ARM_r0&t;&t;uregs[0]
 DECL|macro|ARM_ORIG_r0
-mdefine_line|#define ARM_ORIG_r0&t;uregs[17] /* -1 */
-DECL|macro|USR26_MODE
-mdefine_line|#define USR26_MODE&t;0x00
-DECL|macro|FIQ26_MODE
-mdefine_line|#define FIQ26_MODE&t;0x01
-DECL|macro|IRQ26_MODE
-mdefine_line|#define IRQ26_MODE&t;0x02
-DECL|macro|SVC26_MODE
-mdefine_line|#define SVC26_MODE&t;0x03
-DECL|macro|USR_MODE
-mdefine_line|#define USR_MODE&t;0x10
-DECL|macro|FIQ_MODE
-mdefine_line|#define FIQ_MODE&t;0x11
-DECL|macro|IRQ_MODE
-mdefine_line|#define IRQ_MODE&t;0x12
-DECL|macro|SVC_MODE
-mdefine_line|#define SVC_MODE&t;0x13
-DECL|macro|ABT_MODE
-mdefine_line|#define ABT_MODE&t;0x17
-DECL|macro|UND_MODE
-mdefine_line|#define UND_MODE&t;0x1b
-DECL|macro|SYSTEM_MODE
-mdefine_line|#define SYSTEM_MODE&t;0x1f
-DECL|macro|MODE_MASK
-mdefine_line|#define MODE_MASK&t;0x1f
-DECL|macro|F_BIT
-mdefine_line|#define F_BIT&t;&t;0x40
-DECL|macro|I_BIT
-mdefine_line|#define I_BIT&t;&t;0x80
-DECL|macro|CC_V_BIT
-mdefine_line|#define CC_V_BIT&t;(1 &lt;&lt; 28)
-DECL|macro|CC_C_BIT
-mdefine_line|#define CC_C_BIT&t;(1 &lt;&lt; 29)
-DECL|macro|CC_Z_BIT
-mdefine_line|#define CC_Z_BIT&t;(1 &lt;&lt; 30)
-DECL|macro|CC_N_BIT
-mdefine_line|#define CC_N_BIT&t;(1 &lt;&lt; 31)
+mdefine_line|#define ARM_ORIG_r0&t;uregs[17]
 macro_line|#ifdef __KERNEL__
-macro_line|#if 0 /* GCC/egcs should be able to optimise this, IMHO */
-mdefine_line|#define user_mode(regs)&t;&bslash;&n;&t;((((regs)-&gt;ARM_cpsr &amp; MODE_MASK) == USR_MODE) || &bslash;&n;&t; (((regs)-&gt;ARM_cpsr &amp; MODE_MASK) == USR26_MODE))
-macro_line|#else
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs)&t;&bslash;&n;&t;(((regs)-&gt;ARM_cpsr &amp; 0xf) == 0)
-macro_line|#endif
 DECL|macro|processor_mode
 mdefine_line|#define processor_mode(regs) &bslash;&n;&t;((regs)-&gt;ARM_cpsr &amp; MODE_MASK)
 DECL|macro|interrupts_enabled
@@ -103,10 +102,6 @@ DECL|macro|fast_interrupts_enabled
 mdefine_line|#define fast_interrupts_enabled(regs) &bslash;&n;&t;(!((regs)-&gt;ARM_cpsr &amp; F_BIT))
 DECL|macro|condition_codes
 mdefine_line|#define condition_codes(regs) &bslash;&n;&t;((regs)-&gt;ARM_cpsr &amp; (CC_V_BIT|CC_C_BIT|CC_Z_BIT|CC_N_BIT))
-DECL|macro|instruction_pointer
-mdefine_line|#define instruction_pointer(regs)&t;((regs)-&gt;ARM_pc)
-DECL|macro|pc_pointer
-mdefine_line|#define pc_pointer(v)&t;&t;&t;(v)
 multiline_comment|/* Are the current registers suitable for user mode?&n; * (used to maintain security in signal handlers)&n; */
 DECL|function|valid_user_regs
 r_static
@@ -167,5 +162,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* __KERNEL__ */
+macro_line|#endif&t;/* __ASSEMBLY__ */
 macro_line|#endif
 eof

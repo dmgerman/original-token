@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-ebsa285.c&n; *&n; * Extra MM routines for the EBSA285 architecture&n; *&n; * Copyright (C) 1998 Russell King, Dave Gilbert.&n; */
+multiline_comment|/*&n; * arch/arm/mm/mm-footbridge.c&n; *&n; * Extra MM routines for the EBSA285 architecture&n; *&n; * Copyright (C) 1998-1999 Russell King, Dave Gilbert.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -6,13 +6,13 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/proc/mm-init.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
+macro_line|#include &quot;map.h&quot;
 multiline_comment|/*&n; * The first entry allows us to fiddle with the EEPROM from user-space.&n; *  This entry will go away in time, once the fmu32 can mmap() the&n; *  flash.  It can&squot;t at the moment.&n; *&n; * If you want to fiddle with PCI VGA cards from user space, then&n; * change the &squot;0, 1 }&squot; for the PCI MEM and PCI IO to &squot;1, 1 }&squot;&n; * You can then access the PCI bus at 0xe0000000 and 0xffe00000.&n; */
 macro_line|#ifdef CONFIG_HOST_FOOTBRIDGE
 multiline_comment|/*&n; * The mapping when the footbridge is in host mode.&n; */
 DECL|macro|MAPPING
-mdefine_line|#define MAPPING &bslash;&n; { FLASH_BASE,   DC21285_FLASH,&t;&t;&t;FLASH_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { PCIMEM_BASE,  DC21285_PCI_MEM,&t;&t;PCIMEM_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { PCICFG0_BASE, DC21285_PCI_TYPE_0_CONFIG,&t;PCICFG0_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { PCICFG1_BASE, DC21285_PCI_TYPE_1_CONFIG,&t;PCICFG1_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { PCIIACK_BASE, DC21285_PCI_IACK,&t;&t;PCIIACK_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { WFLUSH_BASE,  DC21285_OUTBOUND_WRITE_FLUSH,&t;WFLUSH_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { ARMCSR_BASE,  DC21285_ARMCSR_BASE,&t;&t;ARMCSR_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { PCIO_BASE,    DC21285_PCI_IO,&t;&t;PCIO_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { XBUS_BASE,    0x40000000,&t;&t;&t;XBUS_SIZE,&t;DOMAIN_IO, 0, 1 }
+mdefine_line|#define MAPPING &bslash;&n; { FLASH_BASE,   DC21285_FLASH,&t;&t;&t;FLASH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIMEM_BASE,  DC21285_PCI_MEM,&t;&t;PCIMEM_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCICFG0_BASE, DC21285_PCI_TYPE_0_CONFIG,&t;PCICFG0_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCICFG1_BASE, DC21285_PCI_TYPE_1_CONFIG,&t;PCICFG1_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIIACK_BASE, DC21285_PCI_IACK,&t;&t;PCIIACK_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { WFLUSH_BASE,  DC21285_OUTBOUND_WRITE_FLUSH,&t;WFLUSH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { ARMCSR_BASE,  DC21285_ARMCSR_BASE,&t;&t;ARMCSR_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIO_BASE,    DC21285_PCI_IO,&t;&t;PCIO_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { XBUS_BASE,    0x40000000,&t;&t;&t;XBUS_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }
 macro_line|#else
 multiline_comment|/*&n; * These two functions convert virtual addresses to PCI addresses&n; * and PCI addresses to virtual addresses.  Note that it is only&n; * legal to use these on memory obtained via get_free_page or&n; * kmalloc.&n; */
 DECL|function|__virt_to_bus
@@ -135,7 +135,54 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * The mapping when the footbridge is in add-in mode.&n; */
 DECL|macro|MAPPING
-mdefine_line|#define MAPPING &bslash;&n; { PCIO_BASE,&t; DC21285_PCI_IO,&t;&t;PCIO_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { XBUS_BASE,&t; 0x40000000,&t;&t;&t;XBUS_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { ARMCSR_BASE,  DC21285_ARMCSR_BASE,&t;&t;ARMCSR_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { WFLUSH_BASE,&t; DC21285_OUTBOUND_WRITE_FLUSH,&t;WFLUSH_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { FLASH_BASE,&t; DC21285_FLASH,&t;&t;&t;FLASH_SIZE,&t;DOMAIN_IO, 0, 1 }, &bslash;&n; { PCIMEM_BASE,&t; DC21285_PCI_MEM,&t;&t;PCIMEM_SIZE,&t;DOMAIN_IO, 0, 1 }
+mdefine_line|#define MAPPING &bslash;&n; { PCIO_BASE,&t; DC21285_PCI_IO,&t;&t;PCIO_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { XBUS_BASE,&t; 0x40000000,&t;&t;&t;XBUS_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { ARMCSR_BASE,  DC21285_ARMCSR_BASE,&t;&t;ARMCSR_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { WFLUSH_BASE,&t; DC21285_OUTBOUND_WRITE_FLUSH,&t;WFLUSH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { FLASH_BASE,&t; DC21285_FLASH,&t;&t;&t;FLASH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIMEM_BASE,&t; DC21285_PCI_MEM,&t;&t;PCIMEM_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }
 macro_line|#endif
-macro_line|#include &quot;mm-armv.c&quot;
+DECL|variable|__initdata
+r_struct
+id|mem_desc
+id|mem_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
+DECL|variable|mem_desc_size
+r_int
+r_int
+id|__initdata
+id|mem_desc_size
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|map_desc
+id|io_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+id|MAPPING
+)brace
+suffix:semicolon
+DECL|macro|SIZE
+mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
+DECL|variable|io_desc_size
+r_int
+r_int
+id|__initdata
+id|io_desc_size
+op_assign
+id|SIZE
+c_func
+(paren
+id|io_desc
+)paren
+suffix:semicolon
 eof

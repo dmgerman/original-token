@@ -2,7 +2,6 @@ multiline_comment|/*&n; * linux/arch/arm/lib/getconsdata.c&n; *&n; * Copyright (
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|PAGE_READONLY
@@ -11,24 +10,6 @@ DECL|macro|OFF_TSK
 mdefine_line|#define OFF_TSK(n) (unsigned long)&amp;(((struct task_struct *)0)-&gt;n)
 DECL|macro|OFF_MM
 mdefine_line|#define OFF_MM(n) (unsigned long)&amp;(((struct mm_struct *)0)-&gt;n)
-macro_line|#ifdef KERNEL_DOMAIN
-DECL|variable|DOM_KERNELDOMAIN
-r_int
-r_int
-id|DOM_KERNELDOMAIN
-op_assign
-id|KERNEL_DOMAIN
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef USER_DOMAIN
-DECL|variable|DOM_USERDOMAIN
-r_int
-r_int
-id|DOM_USERDOMAIN
-op_assign
-id|USER_DOMAIN
-suffix:semicolon
-macro_line|#endif
 DECL|variable|TSK_STATE
 r_int
 r_int
@@ -139,30 +120,7 @@ c_func
 id|thread.fpstate.soft.save
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_CPU_26
-DECL|variable|TSS_MEMMAP
-r_int
-r_int
-id|TSS_MEMMAP
-op_assign
-id|OFF_TSK
-c_func
-(paren
-id|thread.memmap
-)paren
-suffix:semicolon
-DECL|variable|TSS_MEMCMAP
-r_int
-r_int
-id|TSS_MEMCMAP
-op_assign
-id|OFF_TSK
-c_func
-(paren
-id|thread.memcmap
-)paren
-suffix:semicolon
-macro_line|#elif defined(CONFIG_CPU_32)
+macro_line|#ifdef CONFIG_CPU_32
 DECL|variable|TSS_DOMAIN
 r_int
 r_int
@@ -337,6 +295,13 @@ op_assign
 id|L_PTE_DIRTY
 suffix:semicolon
 macro_line|#endif
+DECL|variable|PAGE_SZ
+r_int
+r_int
+id|PAGE_SZ
+op_assign
+id|PAGE_SIZE
+suffix:semicolon
 DECL|variable|KSWI_BASE
 r_int
 r_int

@@ -13,17 +13,10 @@ DECL|macro|typeDouble
 mdefine_line|#define&t;&t;typeDouble&t;&t;0x02
 DECL|macro|typeExtended
 mdefine_line|#define&t;&t;typeExtended&t;&t;0x03
-DECL|struct|tagFPREG
+DECL|union|tagFPREG
 r_typedef
-r_struct
-id|tagFPREG
-(brace
-DECL|member|fType
-r_int
-r_int
-id|fType
-suffix:semicolon
 r_union
+id|tagFPREG
 (brace
 DECL|member|fSingle
 id|float32
@@ -37,10 +30,6 @@ DECL|member|fExtended
 id|floatx80
 id|fExtended
 suffix:semicolon
-DECL|member|fValue
-)brace
-id|fValue
-suffix:semicolon
 DECL|typedef|FPREG
 )brace
 id|FPREG
@@ -51,11 +40,6 @@ r_typedef
 r_struct
 id|tagFPA11
 (brace
-DECL|member|initflag
-r_int
-id|initflag
-suffix:semicolon
-multiline_comment|/* this is special.  The kernel guarantees&n;&t;&t;&t;&t;   to set it to 0 when a thread is launched,&n;&t;&t;&t;&t;   so we can use it to detect whether this&n;&t;&t;&t;&t;   instance of the emulator needs to be&n;&t;&t;&t;&t;   initialised. */
 DECL|member|fpreg
 id|FPREG
 id|fpreg
@@ -74,6 +58,20 @@ id|FPCR
 id|fpcr
 suffix:semicolon
 multiline_comment|/* floating point control register */
+DECL|member|fType
+r_int
+r_char
+id|fType
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* type of floating point value held in&n;&t;&t;&t;&t;   floating point registers.  One of none&n;&t;&t;&t;&t;   single, double or extended. */
+DECL|member|initflag
+r_int
+id|initflag
+suffix:semicolon
+multiline_comment|/* this is special.  The kernel guarantees&n;&t;&t;&t;&t;   to set it to 0 when a thread is launched,&n;&t;&t;&t;&t;   so we can use it to detect whether this&n;&t;&t;&t;&t;   instance of the emulator needs to be&n;&t;&t;&t;&t;   initialised. */
 DECL|typedef|FPA11
 )brace
 id|FPA11

@@ -209,9 +209,9 @@ id|matches
 r_return
 id|matches
 suffix:semicolon
-id|ent
-op_increment
+r_break
 suffix:semicolon
+multiline_comment|/* stop list search on first match */
 )brace
 id|dev
 op_assign

@@ -1,5 +1,5 @@
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|__IOMD
 mdefine_line|#define __IOMD(offset)&t;(IO_IOMD_BASE + (offset &gt;&gt; 2))
 macro_line|#else
@@ -324,7 +324,7 @@ DECL|macro|VDMA_START
 mdefine_line|#define VDMA_START&t;IOMD_VIDSTART
 DECL|macro|VDMA_END
 mdefine_line|#define VDMA_END&t;IOMD_VIDEND
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_int
 r_int

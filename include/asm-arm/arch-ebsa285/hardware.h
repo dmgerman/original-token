@@ -139,10 +139,14 @@ mdefine_line|#define GPIO_GREEN_LED&t;&t;0x002
 DECL|macro|GPIO_RESET
 mdefine_line|#define GPIO_RESET&t;&t;0x001
 multiline_comment|/* CPLD pins */
-DECL|macro|CPLD_DSRESET
-mdefine_line|#define CPLD_DSRESET&t;&t;8
+DECL|macro|CPLD_DS_ENABLE
+mdefine_line|#define CPLD_DS_ENABLE&t;&t;8
+DECL|macro|CPLD_7111_DISABLE
+mdefine_line|#define CPLD_7111_DISABLE&t;4
 DECL|macro|CPLD_UNMUTE
 mdefine_line|#define CPLD_UNMUTE&t;&t;2
+DECL|macro|CPLD_FLASH_WR_ENABLE
+mdefine_line|#define CPLD_FLASH_WR_ENABLE&t;1
 macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_void

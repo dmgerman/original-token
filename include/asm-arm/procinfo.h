@@ -2,7 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/procinfo.h&n; *&n; * Copyright (
 macro_line|#ifndef __ASM_PROCINFO_H
 DECL|macro|__ASM_PROCINFO_H
 mdefine_line|#define __ASM_PROCINFO_H
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/proc-fns.h&gt;
 DECL|struct|proc_info_item
 r_struct
@@ -22,7 +22,7 @@ id|cpu_name
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Note!  struct processor is always defined if we&squot;re&n; * using MULTI_CPU, otherwise this entry is unused,&n; * but still exists.&n; */
+multiline_comment|/*&n; * Note!  struct processor is always defined if we&squot;re&n; * using MULTI_CPU, otherwise this entry is unused,&n; * but still exists.  NOTE! This structure is used&n; * by assembler code!  Check:&n; *  arch/arm/mm/proc-*.S and arch/arm/kernel/head-armv.S&n; */
 DECL|struct|proc_info_list
 r_struct
 id|proc_info_list
@@ -37,6 +37,18 @@ r_int
 r_int
 id|cpu_mask
 suffix:semicolon
+DECL|member|__cpu_mmu_flags
+r_int
+r_int
+id|__cpu_mmu_flags
+suffix:semicolon
+multiline_comment|/* used by head-armv.S */
+DECL|member|__cpu_flush
+r_int
+r_int
+id|__cpu_flush
+suffix:semicolon
+multiline_comment|/* used by head-armv.S */
 DECL|member|arch_name
 r_const
 r_char
@@ -76,7 +88,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif&t;/* __ASSEMBLY__ */
 DECL|macro|HWCAP_SWP
 mdefine_line|#define HWCAP_SWP&t;1
 DECL|macro|HWCAP_HALF

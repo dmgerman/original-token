@@ -105,28 +105,14 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-(paren
-r_int
-(paren
-op_star
-)paren
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-)paren
-)paren
-macro_line|#warning Someone needs to code up hpfs_get_block properly... -DaveM
 op_amp
-id|hpfs_bmap
+id|hpfs_get_block
 comma
 multiline_comment|/* get_block */
 id|block_read_full_page
 comma
 multiline_comment|/* readpage */
-id|hpfs_writepage
+id|block_write_full_page
 comma
 multiline_comment|/* writepage */
 id|block_flushpage
@@ -154,9 +140,9 @@ id|file_operations
 id|hpfs_dir_ops
 op_assign
 (brace
-l_int|NULL
+id|hpfs_dir_lseek
 comma
-multiline_comment|/* lseek - default */
+multiline_comment|/* lseek */
 id|hpfs_dir_read
 comma
 multiline_comment|/* read */

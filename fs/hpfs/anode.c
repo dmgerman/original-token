@@ -2173,6 +2173,12 @@ l_string|&quot;hpfs_remove_btree #2&quot;
 )paren
 r_return
 suffix:semicolon
+id|brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
 id|hpfs_free_sectors
 c_func
 (paren
@@ -2190,12 +2196,6 @@ suffix:semicolon
 id|ano
 op_assign
 id|anode-&gt;up
-suffix:semicolon
-id|brelse
-c_func
-(paren
-id|bh
-)paren
 suffix:semicolon
 r_if
 c_cond

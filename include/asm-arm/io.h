@@ -37,7 +37,7 @@ id|addr
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/arch/hardware.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#include &lt;asm/arch/io.h&gt;
 macro_line|#include &lt;asm/proc/io.h&gt;

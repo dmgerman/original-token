@@ -240,12 +240,10 @@ DECL|macro|signal_pending
 mdefine_line|#define signal_pending(x) (((x)-&gt;signal) &amp; ~((x)-&gt;blocked))
 macro_line|#endif
 multiline_comment|/*&n; * Parport stuff&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
 DECL|macro|USE_PARPORT
 mdefine_line|#define USE_PARPORT
-macro_line|#endif
-macro_line|#ifdef USE_PARPORT
 macro_line|#include &lt;linux/parport.h&gt;
+macro_line|#include &lt;linux/parport_pc.h&gt;
 DECL|macro|JS_PAR_DATA_IN
 mdefine_line|#define JS_PAR_DATA_IN(y)&t;parport_read_data(y-&gt;port)
 DECL|macro|JS_PAR_DATA_OUT
@@ -257,21 +255,7 @@ mdefine_line|#define JS_PAR_CTRL_IN(y)&t;parport_read_control(y-&gt;port)
 DECL|macro|JS_PAR_CTRL_OUT
 mdefine_line|#define JS_PAR_CTRL_OUT(x,y)&t;parport_write_control(y-&gt;port, x)
 DECL|macro|JS_PAR_ECTRL_OUT
-mdefine_line|#define JS_PAR_ECTRL_OUT(x,y)&t;parport_write_econtrol(y-&gt;port, x)
-macro_line|#else
-DECL|macro|JS_PAR_DATA_IN
-mdefine_line|#define JS_PAR_DATA_IN(y)&t;inb(y)
-DECL|macro|JS_PAR_DATA_OUT
-mdefine_line|#define JS_PAR_DATA_OUT(x,y)&t;outb(x,y)
-DECL|macro|JS_PAR_STATUS
-mdefine_line|#define JS_PAR_STATUS(y)&t;inb(y+1)
-DECL|macro|JS_PAR_CTRL_IN
-mdefine_line|#define JS_PAR_CTRL_IN(y)&t;inb(y+2)
-DECL|macro|JS_PAR_CTRL_OUT
-mdefine_line|#define JS_PAR_CTRL_OUT(x,y)&t;outb(x,y+2)
-DECL|macro|JS_PAR_ECTRL_OUT
-mdefine_line|#define JS_PAR_ECTRL_OUT(x,y)&t;outb(x,y+0x402)
-macro_line|#endif
+mdefine_line|#define JS_PAR_ECTRL_OUT(x,y)&t;outb(x, ECONTROL(y-&gt;port))
 DECL|macro|JS_PAR_STATUS_INVERT
 mdefine_line|#define JS_PAR_STATUS_INVERT&t;(0x80)
 DECL|macro|JS_PAR_CTRL_INVERT

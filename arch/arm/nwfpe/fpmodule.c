@@ -1,27 +1,13 @@
 multiline_comment|/*&n;    NetWinder Floating Point Emulator&n;    (c) Rebel.com, 1998-1999&n;    (c) Philip Blundell, 1998-1999&n;&n;    Direct questions, comments to Scott Bambrough &lt;scottb@netwinder.org&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
-macro_line|#include &quot;config.h&quot;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* XXX */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* XXX */
 macro_line|#include &quot;softfloat.h&quot;
 macro_line|#include &quot;fpopcode.h&quot;
@@ -75,7 +61,7 @@ macro_line|#if LINUX_VERSION_CODE &gt; 0x20115
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Scott Bambrough &lt;scottb@netwinder.org&gt;&quot;
+l_string|&quot;Scott Bambrough &lt;scottb@rebel.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -95,23 +81,33 @@ mdefine_line|#define kern_fp_enter&t;fp_enter
 macro_line|#endif
 multiline_comment|/* kernel function prototypes required */
 r_void
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|fp_setup
-)paren
+c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 multiline_comment|/* external declarations for saved kernel symbols */
 r_extern
-r_int
-r_int
-id|C_SYMBOL_NAME
-c_func
+r_void
 (paren
+op_star
 id|kern_fp_enter
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Original value of fp_enter from kernel before patched by fpe_init. */
+DECL|variable|orig_fp_enter
+r_static
+r_void
+(paren
+op_star
+id|orig_fp_enter
+)paren
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* forward declarations */
@@ -123,13 +119,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* Original value of fp_enter from kernel before patched by fpe_init. */
-DECL|variable|orig_fp_enter
-r_static
-r_int
-r_int
-id|orig_fp_enter
-suffix:semicolon
 multiline_comment|/* Address of user registers on the kernel stack. */
 DECL|variable|userRegisters
 r_int
@@ -140,11 +129,8 @@ suffix:semicolon
 DECL|function|fpe_version
 r_void
 id|__init
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|fpe_version
-)paren
+c_func
 (paren
 r_void
 )paren
@@ -165,7 +151,7 @@ id|szVersion
 (braket
 )braket
 op_assign
-l_string|&quot;V0.94.1 &quot;
+l_string|&quot;V0.95 &quot;
 suffix:semicolon
 r_static
 r_const
@@ -176,29 +162,20 @@ id|szCopyright
 op_assign
 l_string|&quot;(c) 1998-1999 Rebel.com&bslash;n&quot;
 suffix:semicolon
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|fp_printk
-)paren
+c_func
 (paren
 id|szTitle
 )paren
 suffix:semicolon
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|fp_printk
-)paren
+c_func
 (paren
 id|szVersion
 )paren
 suffix:semicolon
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|fp_printk
-)paren
+c_func
 (paren
 id|szCopyright
 )paren
@@ -213,84 +190,65 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Display title, version and copyright information. */
-id|C_SYMBOL_NAME
+r_if
+c_cond
+(paren
+r_sizeof
+(paren
+id|FPA11
+)paren
+OG
+r_sizeof
+(paren
+r_union
+id|fp_state
+)paren
+)paren
+id|printk
 c_func
 (paren
-id|fpe_version
+id|KERN_ERR
+l_string|&quot;nwfpe: bad structure size&bslash;n&quot;
 )paren
+suffix:semicolon
+r_else
+(brace
+multiline_comment|/* Display title, version and copyright information. */
+id|fpe_version
+c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Save pointer to the old FP handler and then patch ourselves in */
 id|orig_fp_enter
 op_assign
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|kern_fp_enter
-)paren
 suffix:semicolon
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|kern_fp_enter
-)paren
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|nwfpe_enter
-)paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|fpe_exit
 r_void
-)paren
-(brace
-r_return
-id|fpe_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|fpe_exit
 c_func
 (paren
 r_void
 )paren
 (brace
 multiline_comment|/* Restore the values we saved earlier. */
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|kern_fp_enter
-)paren
 op_assign
 id|orig_fp_enter
 suffix:semicolon
 )brace
-macro_line|#endif
-DECL|macro|_ARM_pc
-mdefine_line|#define _ARM_pc 60
-DECL|macro|_ARM_cpsr
-mdefine_line|#define _ARM_cpsr 64
-multiline_comment|/*&n;ScottB:  November 4, 1998&n;&n;Moved this function out of softfloat-specialize into fpmodule.c.&n;This effectively isolates all the changes required for integrating with the&n;Linux kernel into fpmodule.c.  Porting to NetBSD should only require modifying&n;fpmodule.c to integrate with the NetBSD kernel (I hope!).&n;&n;[1/1/99: Not quite true any more unfortunately.  There is Linux-specific&n;code to access data in user space in some other source files at the &n;moment.  --philb]&n;&n;float_exception_flags is a global variable in SoftFloat.&n;&n;This function is called by the SoftFloat routines to raise a floating&n;point exception.  We check the trap enable byte in the FPSR, and raise&n;a SIGFPE exception if necessary.  If not the relevant bits in the &n;cumulative exceptions flag byte are set and we return.&n;*/
+multiline_comment|/*&n;ScottB:  November 4, 1998&n;&n;Moved this function out of softfloat-specialize into fpmodule.c.&n;This effectively isolates all the changes required for integrating with the&n;Linux kernel into fpmodule.c.  Porting to NetBSD should only require modifying&n;fpmodule.c to integrate with the NetBSD kernel (I hope!).&n;&n;[1/1/99: Not quite true any more unfortunately.  There is Linux-specific&n;code to access data in user space in some other source files at the &n;moment (grep for get_user / put_user calls).  --philb]&n;&n;float_exception_flags is a global variable in SoftFloat.&n;&n;This function is called by the SoftFloat routines to raise a floating&n;point exception.  We check the trap enable byte in the FPSR, and raise&n;a SIGFPE exception if necessary.  If not the relevant bits in the &n;cumulative exceptions flag byte are set and we return.&n;*/
 DECL|function|float_raise
 r_void
 id|float_raise
@@ -301,12 +259,16 @@ r_char
 id|flags
 )paren
 (brace
-macro_line|#if 0
+macro_line|#ifdef CONFIG_DEBUG_USER
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;NWFPE: exception %08x at %08x from %08x&bslash;n&quot;
+l_string|&quot;NWFPE: %s[%d] takes exception %08x at %p from %08x&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
 comma
 id|flags
 comma
@@ -343,19 +305,12 @@ l_int|16
 )paren
 (brace
 multiline_comment|/* raise exception */
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|fp_send_sig
-)paren
+c_func
 (paren
 id|SIGFPE
 comma
-id|C_SYMBOL_NAME
-c_func
-(paren
 id|current
-)paren
 comma
 l_int|1
 )paren
@@ -372,4 +327,18 @@ id|flags
 suffix:semicolon
 )brace
 )brace
+DECL|variable|fpe_init
+id|module_init
+c_func
+(paren
+id|fpe_init
+)paren
+suffix:semicolon
+DECL|variable|fpe_exit
+id|module_exit
+c_func
+(paren
+id|fpe_exit
+)paren
+suffix:semicolon
 eof

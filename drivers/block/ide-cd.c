@@ -148,7 +148,7 @@ l_int|0x01
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Suppress the following errors:&n;&t;&t; * &quot;Medium not present&quot;, and &quot;in progress of becoming ready&quot;,&n;&t;&t; * to keep the noise level down to a dull roar.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Suppress the following errors:&n;&t;&t; * &quot;Medium not present&quot;, &quot;in progress of becoming ready&quot;,&n;&t;&t; * and &quot;writing&quot; to keep the noise level down to a dull roar.&n;&t;&t; */
 r_return
 suffix:semicolon
 )brace
@@ -576,6 +576,54 @@ l_string|&quot;&bslash;&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* The SKSV bit specifies validity of the sense_key_specific&n;&t;&t; * in the next two commands. It is bit 7 of the first byte.&n;&t;&t; * In the case of NOT_READY, if SKSV is set the drive can&n;&t;&t; * give us nice ETA readings.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|reqbuf-&gt;sense_key
+op_eq
+id|NOT_READY
+op_logical_and
+(paren
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x80
+)paren
+)paren
+(brace
+r_int
+id|progress
+op_assign
+(paren
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|1
+)braket
+op_lshift
+l_int|8
+op_or
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|2
+)braket
+)paren
+op_star
+l_int|100
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  Command is %02d%% complete&bslash;n&quot;
+comma
+id|progress
+op_div
+l_int|0xffff
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -708,57 +756,6 @@ id|reqbuf-&gt;ascq
 )paren
 suffix:semicolon
 macro_line|#endif /* not VERBOSE_IDE_CD_ERRORS */
-)brace
-multiline_comment|/* Fix up a possibly partially-processed request so that we can&n;   start it over entirely, or even put it back on the request queue. */
-DECL|function|restore_request
-r_static
-r_void
-id|restore_request
-(paren
-r_struct
-id|request
-op_star
-id|rq
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|rq-&gt;buffer
-op_ne
-id|rq-&gt;bh-&gt;b_data
-)paren
-(brace
-r_int
-id|n
-op_assign
-(paren
-id|rq-&gt;buffer
-op_minus
-id|rq-&gt;bh-&gt;b_data
-)paren
-op_div
-id|SECTOR_SIZE
-suffix:semicolon
-id|rq-&gt;buffer
-op_assign
-id|rq-&gt;bh-&gt;b_data
-suffix:semicolon
-id|rq-&gt;nr_sectors
-op_add_assign
-id|n
-suffix:semicolon
-id|rq-&gt;sector
-op_sub_assign
-id|n
-suffix:semicolon
-)brace
-id|rq-&gt;current_nr_sectors
-op_assign
-id|rq-&gt;bh-&gt;b_size
-op_rshift
-id|SECTOR_BITS
-suffix:semicolon
 )brace
 DECL|function|cdrom_queue_request_sense
 r_static
@@ -1505,6 +1502,7 @@ r_if
 c_cond
 (paren
 id|ide_wait_stat
+c_func
 (paren
 id|drive
 comma
@@ -1689,7 +1687,7 @@ op_star
 id|handler
 )paren
 (brace
-multiline_comment|/* set timeout to an hour */
+multiline_comment|/* don&squot;t timeout for blank and format commands. they may take&n;&t; * a _very_ long time. */
 r_if
 c_cond
 (paren
@@ -1709,9 +1707,7 @@ id|GPCMD_FORMAT_UNIT
 )paren
 id|drive-&gt;timeout
 op_assign
-l_int|3600
-op_star
-id|HZ
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1840,18 +1836,19 @@ multiline_comment|/* If we don&squot;t yet have a sector buffer, try to allocate
 r_if
 c_cond
 (paren
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 op_eq
 l_int|NULL
 )paren
 (brace
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 op_assign
 (paren
 r_char
 op_star
 )paren
 id|kmalloc
+c_func
 (paren
 id|SECTOR_BUFFER_SIZE
 comma
@@ -1862,7 +1859,7 @@ multiline_comment|/* If we couldn&squot;t get a buffer,&n;&t;&t;   don&squot;t t
 r_if
 c_cond
 (paren
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 op_eq
 l_int|NULL
 )paren
@@ -1886,7 +1883,7 @@ suffix:semicolon
 multiline_comment|/* Read the data into the buffer. */
 id|dest
 op_assign
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 op_plus
 id|info-&gt;nsectors_buffered
 op_star
@@ -2514,6 +2511,7 @@ l_int|0
 )paren
 (brace
 id|cdrom_buffer_sectors
+c_func
 (paren
 id|drive
 comma
@@ -2549,6 +2547,7 @@ l_int|0
 )paren
 (brace
 id|atapi_input_bytes
+c_func
 (paren
 id|drive
 comma
@@ -2581,6 +2580,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Done moving data!&n;&t;   Wait for another interrupt. */
 id|ide_set_handler
+c_func
 (paren
 id|drive
 comma
@@ -2624,7 +2624,7 @@ multiline_comment|/* Can&squot;t do anything if there&squot;s no buffer. */
 r_if
 c_cond
 (paren
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 op_eq
 l_int|NULL
 )paren
@@ -2668,7 +2668,7 @@ id|memcpy
 (paren
 id|rq-&gt;buffer
 comma
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 op_plus
 (paren
 id|rq-&gt;sector
@@ -2854,11 +2854,19 @@ id|rq-&gt;bh-&gt;b_size
 op_rshift
 id|SECTOR_BITS
 )paren
+op_logical_and
+(paren
+id|rq-&gt;sector
+op_mod
+id|CD_FRAMESIZE
+op_ne
+l_int|0
+)paren
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;%s: cdrom_start_read_continuation: buffer botch (%ld)&bslash;n&quot;
+l_string|&quot;%s: cdrom_start_read_continuation: buffer botch (%lu)&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma
@@ -2979,8 +2987,7 @@ suffix:semicolon
 id|put_unaligned
 c_func
 (paren
-id|cpu_to_be32
-c_func
+id|htonl
 (paren
 id|frame
 )paren
@@ -3020,9 +3027,9 @@ suffix:semicolon
 DECL|macro|IDECD_SEEK_THRESHOLD
 mdefine_line|#define IDECD_SEEK_THRESHOLD&t;(1000)&t;&t;&t;/* 1000 blocks */
 DECL|macro|IDECD_SEEK_TIMER
-mdefine_line|#define IDECD_SEEK_TIMER&t;(2 * WAIT_MIN_SLEEP)&t;/* 40 ms */
+mdefine_line|#define IDECD_SEEK_TIMER&t;(5 * WAIT_MIN_SLEEP)&t;/* 100 ms */
 DECL|macro|IDECD_SEEK_TIMEOUT
-mdefine_line|#define IDECD_SEEK_TIMEOUT     WAIT_CMD                /* 10 sec */
+mdefine_line|#define IDECD_SEEK_TIMEOUT     WAIT_CMD&t;&t;&t;/* 10 sec */
 DECL|function|cdrom_seek_intr
 r_static
 r_void
@@ -3096,6 +3103,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;%s: disabled DSC seek overlap&bslash;n&quot;
 comma
@@ -3271,6 +3279,57 @@ id|cdrom_start_seek_continuation
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Fix up a possibly partially-processed request so that we can&n;   start it over entirely, or even put it back on the request queue. */
+DECL|function|restore_request
+r_static
+r_void
+id|restore_request
+(paren
+r_struct
+id|request
+op_star
+id|rq
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rq-&gt;buffer
+op_ne
+id|rq-&gt;bh-&gt;b_data
+)paren
+(brace
+r_int
+id|n
+op_assign
+(paren
+id|rq-&gt;buffer
+op_minus
+id|rq-&gt;bh-&gt;b_data
+)paren
+op_div
+id|SECTOR_SIZE
+suffix:semicolon
+id|rq-&gt;buffer
+op_assign
+id|rq-&gt;bh-&gt;b_data
+suffix:semicolon
+id|rq-&gt;nr_sectors
+op_add_assign
+id|n
+suffix:semicolon
+id|rq-&gt;sector
+op_sub_assign
+id|n
+suffix:semicolon
+)brace
+id|rq-&gt;current_nr_sectors
+op_assign
+id|rq-&gt;bh-&gt;b_size
+op_rshift
+id|SECTOR_BITS
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Start a read request from the CD-ROM.&n; */
 DECL|function|cdrom_start_read
 r_static
@@ -3361,17 +3420,18 @@ r_if
 c_cond
 (paren
 id|cdrom_read_from_buffer
+c_func
 (paren
 id|drive
 )paren
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Clear the local sector buffer. */
 id|info-&gt;nsectors_buffered
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* use dma, if possible. */
 r_if
 c_cond
 (paren
@@ -3404,6 +3464,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Start sending the read request to the drive. */
 id|cdrom_start_packet_command
+c_func
 (paren
 id|drive
 comma
@@ -4065,6 +4126,10 @@ op_logical_and
 id|reqbuf-&gt;asc
 op_eq
 l_int|4
+op_logical_and
+id|reqbuf-&gt;ascq
+op_ne
+l_int|4
 )paren
 (brace
 multiline_comment|/* The drive is in the process of loading&n;&t;&t;&t;&t;   a disk.  Retry, but wait a little to give&n;&t;&t;&t;&t;   the drive time to complete the load. */
@@ -4210,6 +4275,13 @@ r_int
 id|block
 )paren
 (brace
+r_struct
+id|cdrom_info
+op_star
+id|info
+op_assign
+id|drive-&gt;driver_data
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -4220,13 +4292,6 @@ r_case
 id|READ
 suffix:colon
 (brace
-r_struct
-id|cdrom_info
-op_star
-id|info
-op_assign
-id|drive-&gt;driver_data
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7369,7 +7434,7 @@ id|CDSL_CURRENT
 (brace
 r_struct
 id|atapi_request_sense
-id|my_reqbuf
+id|sense
 suffix:semicolon
 r_int
 id|stat
@@ -7379,7 +7444,7 @@ id|cdrom_check_status
 id|drive
 comma
 op_amp
-id|my_reqbuf
+id|sense
 )paren
 suffix:semicolon
 r_if
@@ -7389,7 +7454,7 @@ id|stat
 op_eq
 l_int|0
 op_logical_or
-id|my_reqbuf.sense_key
+id|sense.sense_key
 op_eq
 id|UNIT_ATTENTION
 )paren
@@ -7399,7 +7464,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|my_reqbuf.sense_key
+id|sense.sense_key
+op_eq
+id|NOT_READY
+op_logical_and
+id|sense.asc
+op_eq
+l_int|0x04
+op_logical_and
+id|sense.ascq
+op_eq
+l_int|0x04
+)paren
+r_return
+id|CDS_DISC_OK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sense.sense_key
 op_eq
 id|NOT_READY
 )paren
@@ -9520,7 +9603,7 @@ id|info-&gt;toc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -9780,14 +9863,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 op_ne
 l_int|NULL
 )paren
 id|kfree
 c_func
 (paren
-id|info-&gt;sector_buffer
+id|info-&gt;buffer
 )paren
 suffix:semicolon
 r_if

@@ -1,12 +1,142 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-nexuspci.c&n; *  from arch/arm/mm/mm-ebsa110.c&n; *&n; * Extra MM routines for the NexusPCI architecture&n; *&n; * Copyright (C) 1998 Phil Blundell&n; * Copyright (C) 1998 Russell King&n; */
+multiline_comment|/*&n; * arch/arm/mm/mm-nexuspci.c&n; *  from arch/arm/mm/mm-ebsa110.c&n; *&n; * Extra MM routines for the NexusPCI architecture&n; *&n; * Copyright (C) 1998 Phil Blundell&n; * Copyright (C) 1998-1999 Russell King&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/proc/mm-init.h&gt;
-DECL|macro|MAPPING
-mdefine_line|#define MAPPING&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; &t;{ 0xfff00000, 0x10000000, 0x00001000, DOMAIN_IO, 0, 1 },&t;&bslash;&n; &t;{ 0xffe00000, 0x20000000, 0x00001000, DOMAIN_IO, 0, 1 },&t;&bslash;&n; &t;{ 0xffc00000, 0x60000000, 0x00001000, DOMAIN_IO, 0, 1 },&t;&bslash;&n; &t;{ 0xfe000000, 0x80000000, 0x00100000, DOMAIN_IO, 0, 1 },&t;&bslash;&n; &t;{ 0xfd000000, 0x88000000, 0x00100000, DOMAIN_IO, 0, 1 }
-macro_line|#include &quot;mm-armv.c&quot;
+macro_line|#include &quot;map.h&quot;
+DECL|variable|__initdata
+r_struct
+id|mem_desc
+id|mem_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
+DECL|variable|mem_desc_size
+r_int
+r_int
+id|__initdata
+id|mem_desc_size
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|__initdata
+r_const
+r_struct
+id|map_desc
+id|io_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+l_int|0xfff00000
+comma
+l_int|0x10000000
+comma
+l_int|0x00001000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0xffe00000
+comma
+l_int|0x20000000
+comma
+l_int|0x00001000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0xffc00000
+comma
+l_int|0x60000000
+comma
+l_int|0x00001000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0xfe000000
+comma
+l_int|0x80000000
+comma
+l_int|0x00100000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0xfd000000
+comma
+l_int|0x88000000
+comma
+l_int|0x00100000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|macro|SIZEOFMAP
+mdefine_line|#define SIZEOFMAP (sizeof(mapping) / sizeof(mapping[0]))
+DECL|variable|io_desc_size
+r_int
+r_int
+id|__initdata
+id|io_desc_size
+op_assign
+id|SIZEOFMAP
+suffix:semicolon
 eof

@@ -10,20 +10,7 @@ r_extern
 r_struct
 id|processor
 (brace
-multiline_comment|/* MISC&n;&t; * get data abort address/flags&n;&t; */
-DECL|member|_data_abort
-r_void
-(paren
-op_star
-id|_data_abort
-)paren
-(paren
-r_int
-r_int
-id|pc
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * check for any bugs&n;&t; */
+multiline_comment|/* check for any bugs */
 DECL|member|_check_bugs
 r_void
 (paren
@@ -34,7 +21,7 @@ id|_check_bugs
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set up any processor specifics&n;&t; */
+multiline_comment|/* Set up any processor specifics */
 DECL|member|_proc_init
 r_void
 (paren
@@ -45,7 +32,7 @@ id|_proc_init
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Disable any processor specifics&n;&t; */
+multiline_comment|/* Disable any processor specifics */
 DECL|member|_proc_fin
 r_void
 (paren
@@ -56,54 +43,20 @@ id|_proc_fin
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Processor architecture specific&n;&t; */
-multiline_comment|/* MEMC&n;&t; *&n;&t; * remap memc tables&n;&t; */
-DECL|member|_remap_memc
+multiline_comment|/* set the MEMC hardware mappings */
+DECL|member|_set_pgd
 r_void
 (paren
 op_star
-id|_remap_memc
+id|_set_pgd
 )paren
 (paren
-r_void
+id|pgd_t
 op_star
-id|tsk
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * update task&squot;s idea of mmap&n;&t; */
-DECL|member|_update_map
-r_void
-(paren
-op_star
-id|_update_map
-)paren
-(paren
-r_void
-op_star
-id|tsk
+id|pgd
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * update task&squot;s idea after abort&n;&t; */
-DECL|member|_update_mmu_cache
-r_void
-(paren
-op_star
-id|_update_mmu_cache
-)paren
-(paren
-r_void
-op_star
-id|vma
-comma
-r_int
-r_int
-id|addr
-comma
-id|pte_t
-id|pte
-)paren
-suffix:semicolon
-multiline_comment|/* XCHG&n;&t; */
+multiline_comment|/* XCHG */
 DECL|member|_xchg_1
 r_int
 r_int
@@ -179,25 +132,49 @@ r_struct
 id|processor
 id|arm3_processor_functions
 suffix:semicolon
-DECL|macro|cpu_data_abort
-mdefine_line|#define cpu_data_abort(pc)&t;&t;&t;processor._data_abort(pc)
 DECL|macro|cpu_check_bugs
 mdefine_line|#define cpu_check_bugs()&t;&t;&t;processor._check_bugs()
 DECL|macro|cpu_proc_init
 mdefine_line|#define cpu_proc_init()&t;&t;&t;&t;processor._proc_init()
 DECL|macro|cpu_proc_fin
 mdefine_line|#define cpu_proc_fin()&t;&t;&t;&t;processor._proc_fin()
-DECL|macro|cpu_remap_memc
-mdefine_line|#define cpu_remap_memc(tsk)&t;&t;&t;processor._remap_memc(tsk)
-DECL|macro|cpu_update_map
-mdefine_line|#define cpu_update_map(tsk)&t;&t;&t;processor._update_map(tsk)
-DECL|macro|cpu_update_mmu_cache
-mdefine_line|#define cpu_update_mmu_cache(vma,addr,pte)&t;processor._update_mmu_cache(vma,addr,pte)
+DECL|macro|cpu_do_idle
+mdefine_line|#define cpu_do_idle()&t;&t;&t;&t;do { } while (0)
+DECL|macro|cpu_switch_mm
+mdefine_line|#define cpu_switch_mm(pgd,tsk)&t;&t;&t;processor._set_pgd(pgd)
 DECL|macro|cpu_xchg_1
 mdefine_line|#define cpu_xchg_1(x,ptr)&t;&t;&t;processor._xchg_1(x,ptr)
 DECL|macro|cpu_xchg_2
 mdefine_line|#define cpu_xchg_2(x,ptr)&t;&t;&t;processor._xchg_2(x,ptr)
 DECL|macro|cpu_xchg_4
 mdefine_line|#define cpu_xchg_4(x,ptr)&t;&t;&t;processor._xchg_4(x,ptr)
+r_extern
+r_void
+id|cpu_memc_update_all
+c_func
+(paren
+id|pgd_t
+op_star
+id|pgd
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cpu_memc_update_entry
+c_func
+(paren
+id|pgd_t
+op_star
+id|pgd
+comma
+r_int
+r_int
+id|phys_pte
+comma
+r_int
+r_int
+id|log_addr
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

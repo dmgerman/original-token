@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * parport.h: ia32-specific parport initialisation&n; *&n; * Copyright (C) 1999  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
-macro_line|#ifndef _ASM_I386_PARPORT_H
-DECL|macro|_ASM_I386_PARPORT_H
-mdefine_line|#define _ASM_I386_PARPORT_H 1
+multiline_comment|/*&n; * parport.h: ARM-specific parport initialisation&n; *&n; * Copyright (C) 1999  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
+macro_line|#ifndef __ASM_ARM_PARPORT_H
+DECL|macro|__ASM_ARM_PARPORT_H
+mdefine_line|#define __ASM_ARM_PARPORT_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Maximum number of ports to support.  It is useless to set this greater&n;   than PARPORT_MAX (in &lt;linux/parport.h&gt;).  */
 DECL|macro|PARPORT_PC_MAX_PORTS

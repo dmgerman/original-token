@@ -2297,6 +2297,16 @@ id|last_pfn
 op_assign
 id|max_low_pfn
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * .. finally, did all the rounding and playing&n;&t;&t; * around just make the area go away?&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|last_pfn
+op_le
+id|curr_pfn
+)paren
+r_continue
+suffix:semicolon
 id|size
 op_assign
 id|last_pfn

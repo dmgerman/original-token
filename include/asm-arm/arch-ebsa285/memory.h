@@ -7,6 +7,8 @@ macro_line|#if defined(CONFIG_HOST_FOOTBRIDGE)
 multiline_comment|/*&n; * Task size: 3GB&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;&t;(0xc0000000UL)
+DECL|macro|TASK_SIZE_26
+mdefine_line|#define TASK_SIZE_26&t;&t;(0x04000000UL)
 multiline_comment|/*&n; * Page offset: 3GB&n; */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;(0xc0000000UL)
@@ -23,6 +25,8 @@ macro_line|#if defined(CONFIG_ARCH_CO285)
 multiline_comment|/*&n; * Task size: 1.5GB&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;&t;(0x60000000UL)
+DECL|macro|TASK_SIZE_26
+mdefine_line|#define TASK_SIZE_26&t;&t;(0x04000000UL)
 multiline_comment|/*&n; * Page offset: 1.5GB&n; */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;(0x60000000UL)

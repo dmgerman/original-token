@@ -1,4 +1,4 @@
 multiline_comment|/*&n; * linux/asm/assembler.h&n; *&n; * This file contains arm architecture specific defines&n; * for the different processors.&n; *&n; * Do not include any C declarations in this file - it is included by&n; * assembler source.&n; */
-multiline_comment|/*&n; * LOADREGS: multiple register load (ldm) with pc in register list&n; *&t;&t;(takes account of ARM6 not using ^)&n; *&n; * RETINSTR: return instruction: adds the &squot;s&squot; in at the end of the&n; *&t;&t;instruction if this is not an ARM6&n; *&n; * SAVEIRQS: save IRQ state (not required on ARM2/ARM3 - done&n; *&t;&t;implicitly&n; *&n; * RESTOREIRQS: restore IRQ state (not required on ARM2/ARM3 - done&n; *&t;&t;implicitly with ldm ... ^ or movs.&n; *&n; * These next two need thinking about - can&squot;t easily use stack... (see system.S)&n; * DISABLEIRQS: disable IRQS in SVC mode&n; *&n; * ENABLEIRQS: enable IRQS in SVC mode&n; *&n; * USERMODE: switch to USER mode&n; *&n; * SVCMODE: switch to SVC mode&n; */
+macro_line|#include &lt;asm/proc/ptrace.h&gt;
 macro_line|#include &lt;asm/proc/assembler.h&gt;
 eof

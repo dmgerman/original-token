@@ -1,4 +1,9 @@
-multiline_comment|/*&n; * misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994&n; *&n; * Modified for ARM Linux by Russell King&n; */
+multiline_comment|/*&n; * misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994&n; *&n; * Modified for ARM Linux by Russell King&n; *&n; * Nicolas Pitre &lt;nico@visuaide.com&gt;  1999/04/14 :&n; *  For this code to run directly from Flash, all constant variables must&n; *  be marked with &squot;const&squot; and all other variables initialized at run-time &n; *  only.  This way all non constant variables will end up in the bss segment,&n; *  which should point to addresses in RAM and cleared to 0 on start.&n; *  This allows for a much quicker boot time.&n; */
+DECL|variable|__machine_arch_type
+r_int
+r_int
+id|__machine_arch_type
+suffix:semicolon
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/arch/uncompress.h&gt;
 macro_line|#include &lt;asm/proc/uncompress.h&gt;
@@ -10,9 +15,7 @@ DECL|macro|__ptr_t
 mdefine_line|#define __ptr_t void *
 multiline_comment|/*&n; * Optimised C version of memzero for the ARM.&n; */
 DECL|function|__memzero
-r_extern
-id|__inline__
-id|__ptr_t
+r_void
 id|__memzero
 (paren
 id|__ptr_t
@@ -223,12 +226,7 @@ op_increment
 op_assign
 l_int|0
 suffix:semicolon
-r_return
-id|s
-suffix:semicolon
 )brace
-DECL|macro|memzero
-mdefine_line|#define memzero(s,n) __memzero(s,n)
 DECL|function|memcpy
 r_extern
 id|__inline__
@@ -603,8 +601,10 @@ id|input_data
 )braket
 suffix:semicolon
 r_extern
-r_int
-id|input_len
+r_char
+id|input_data_end
+(braket
+)braket
 suffix:semicolon
 DECL|variable|output_data
 r_static
@@ -621,8 +621,6 @@ DECL|variable|bytes_out
 r_static
 id|ulg
 id|bytes_out
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_void
@@ -884,6 +882,7 @@ r_int
 id|fill_inbuf
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -905,7 +904,17 @@ id|input_data
 suffix:semicolon
 id|insize
 op_assign
-id|input_len
+op_amp
+id|input_data_end
+(braket
+l_int|0
+)braket
+op_minus
+op_amp
+id|input_data
+(braket
+l_int|0
+)braket
 suffix:semicolon
 id|inptr
 op_assign
@@ -924,6 +933,7 @@ r_void
 id|flush_window
 c_func
 (paren
+r_void
 )paren
 (brace
 id|ulg
@@ -1025,6 +1035,12 @@ id|outcnt
 op_assign
 l_int|0
 suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot;.&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|function|error
 r_static
@@ -1068,18 +1084,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* Halt */
 )brace
-DECL|macro|STACK_SIZE
-mdefine_line|#define STACK_SIZE (4096)
-DECL|variable|user_stack
-id|ulg
-id|user_stack
-(braket
-id|STACK_SIZE
-)braket
-suffix:semicolon
 macro_line|#ifndef STANDALONE_DEBUG
-DECL|function|decompress_kernel
 id|ulg
+DECL|function|decompress_kernel
 id|decompress_kernel
 c_func
 (paren
@@ -1091,24 +1098,11 @@ id|free_mem_ptr_p
 comma
 id|ulg
 id|free_mem_ptr_end_p
+comma
+r_int
+id|arch_id
 )paren
 (brace
-id|free_mem_ptr
-op_assign
-id|free_mem_ptr_p
-suffix:semicolon
-id|free_mem_ptr_end
-op_assign
-id|free_mem_ptr_end_p
-suffix:semicolon
-id|proc_decomp_setup
-(paren
-)paren
-suffix:semicolon
-id|arch_decomp_setup
-(paren
-)paren
-suffix:semicolon
 id|output_data
 op_assign
 (paren
@@ -1118,6 +1112,28 @@ op_star
 id|output_start
 suffix:semicolon
 multiline_comment|/* Points to kernel start */
+id|free_mem_ptr
+op_assign
+id|free_mem_ptr_p
+suffix:semicolon
+id|free_mem_ptr_end
+op_assign
+id|free_mem_ptr_end_p
+suffix:semicolon
+id|__machine_arch_type
+op_assign
+id|arch_id
+suffix:semicolon
+id|proc_decomp_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|arch_decomp_setup
+c_func
+(paren
+)paren
+suffix:semicolon
 id|makecrc
 c_func
 (paren

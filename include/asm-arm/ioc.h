@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Use these macros to read/write the IOC.  All it does is perform the actual&n; * read/write.&n; */
 macro_line|#ifndef IOC_CONTROL
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|__IOC
 mdefine_line|#define __IOC(offset)&t;(IOC_BASE + (offset &gt;&gt; 2))
 macro_line|#else

@@ -30,7 +30,31 @@ r_return
 id|sp
 suffix:semicolon
 )brace
-singleline_comment|//static inline struct task_struct *get_current(void) __attribute__ (( __const__ ));
+multiline_comment|/* Old compilers seem to generate bad code if we allow `current&squot; to be&n;   non volatile.  */
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt; 90)
+r_static
+r_inline
+r_struct
+id|task_struct
+op_star
+id|get_current
+c_func
+(paren
+r_void
+)paren
+id|__attribute__
+(paren
+(paren
+id|__const__
+)paren
+)paren
+suffix:semicolon
+DECL|macro|__VOLATILE_CURRENT
+mdefine_line|#define __VOLATILE_CURRENT
+macro_line|#else
+DECL|macro|__VOLATILE_CURRENT
+mdefine_line|#define __VOLATILE_CURRENT volatile
+macro_line|#endif
 DECL|function|get_current
 r_static
 r_inline
@@ -49,7 +73,7 @@ op_star
 id|ts
 suffix:semicolon
 id|__asm__
-id|__volatile__
+id|__VOLATILE_CURRENT
 (paren
 "&quot;"
 id|bic

@@ -1,48 +1,8 @@
-multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/pgtable.h&n; *&n; * Copyright (C) 1995, 1996, 1997 Russell King&n; *&n; * 12-Jan-1997&t;RMK&t;Altered flushing routines to use function pointers&n; *&t;&t;&t;now possible to combine ARM6, ARM7 and StrongARM versions.&n; * 17-Apr-1999&t;RMK&t;Now pass an area size to clean_cache_area and&n; *&t;&t;&t;flush_icache_area.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/pgtable.h&n; *&n; * Copyright (C) 1995-1999 Russell King&n; *&n; * 12-Jan-1997&t;RMK&t;Altered flushing routines to use function pointers&n; *&t;&t;&t;now possible to combine ARM6, ARM7 and StrongARM versions.&n; * 17-Apr-1999&t;RMK&t;Now pass an area size to clean_cache_area and&n; *&t;&t;&t;flush_icache_area.&n; */
 macro_line|#ifndef __ASM_PROC_PGTABLE_H
 DECL|macro|__ASM_PROC_PGTABLE_H
 mdefine_line|#define __ASM_PROC_PGTABLE_H
-macro_line|#include &lt;asm/arch/memory.h&gt;&t;&t;/* For TASK_SIZE */
-DECL|macro|LIBRARY_TEXT_START
-mdefine_line|#define LIBRARY_TEXT_START 0x0c000000
-multiline_comment|/*&n; * Cache flushing...&n; */
-DECL|macro|flush_cache_all
-mdefine_line|#define flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_cache_all()
-DECL|macro|flush_cache_mm
-mdefine_line|#define flush_cache_mm(_mm)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_cache_all();&t;&t;&t;&t;&bslash;&n;&t;} while (0)
-DECL|macro|flush_cache_range
-mdefine_line|#define flush_cache_range(_mm,_start,_end)&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_cache_area((_start), (_end), 1);&t;&bslash;&n;&t;} while (0)
-DECL|macro|flush_cache_page
-mdefine_line|#define flush_cache_page(_vma,_vmaddr)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_vma)-&gt;vm_mm == current-&gt;mm)&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_cache_area((_vmaddr),&t;&t;&t;&bslash;&n;&t;&t;&t;&t;(_vmaddr) + PAGE_SIZE,&t;&t;&t;&bslash;&n;&t;&t;&t;&t;((_vma)-&gt;vm_flags &amp; VM_EXEC) ? 1 : 0);&t;&bslash;&n;&t;} while (0)
-DECL|macro|clean_cache_range
-mdefine_line|#define clean_cache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _s, _sz;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_s = (unsigned long)_start;&t;&t;&t;&t;&bslash;&n;&t;&t;_sz = (unsigned long)_end - _s;&t;&t;&t;&t;&bslash;&n;&t;&t;cpu_clean_cache_area(_s, _sz);&t;&t;&t;&t;&bslash;&n;&t;} while (0)
-DECL|macro|clean_cache_area
-mdefine_line|#define clean_cache_area(_start,_size)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _s;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_s = (unsigned long)_start;&t;&t;&t;&t;&bslash;&n;&t;&t;cpu_clean_cache_area(_s, _size);&t;&t;&t;&bslash;&n;&t;} while (0)
-DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_icache_area((_start), (_end) - (_start))
-multiline_comment|/*&n; * We don&squot;t have a MEMC chip...&n; */
-DECL|macro|update_memc_all
-mdefine_line|#define update_memc_all()&t;&t;do { } while (0)
-DECL|macro|update_memc_task
-mdefine_line|#define update_memc_task(tsk)&t;&t;do { } while (0)
-DECL|macro|update_memc_mm
-mdefine_line|#define update_memc_mm(mm)&t;&t;do { } while (0)
-DECL|macro|update_memc_addr
-mdefine_line|#define update_memc_addr(mm,addr,pte)&t;do { } while (0)
-multiline_comment|/*&n; * This flushes back any buffered write data.  We have to clean and flush the entries&n; * in the cache for this page.  Is it necessary to invalidate the I-cache?&n; */
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(_page)&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_ram_page((_page) &amp; PAGE_MASK);
-multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * GCC uses conditional instructions, and expects the assembler code to do so as well.&n; *&n; * We drain the write buffer in here to ensure that the page tables in ram&n; * are really up to date.  It is more efficient to do this here...&n; */
-DECL|macro|flush_tlb
-mdefine_line|#define flush_tlb() flush_tlb_all()
-DECL|macro|flush_tlb_all
-mdefine_line|#define flush_tlb_all()&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_tlb_all()
-DECL|macro|flush_tlb_mm
-mdefine_line|#define flush_tlb_mm(_mm)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_tlb_all();&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
-DECL|macro|flush_tlb_range
-mdefine_line|#define flush_tlb_range(_mm,_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_tlb_area((_start), (_end), 1);&t;&t;&bslash;&n;&t;} while (0)
-DECL|macro|flush_tlb_page
-mdefine_line|#define flush_tlb_page(_vma,_vmaddr)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_vma)-&gt;vm_mm == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_tlb_area((_vmaddr), (_vmaddr) + PAGE_SIZE,&t;&bslash;&n;&t;&t;&t;&t; ((_vma)-&gt;vm_flags &amp; VM_EXEC) ? 1 : 0);&t;&t;&bslash;&n;&t;} while (0)
+macro_line|#include &lt;asm/proc/domain.h&gt;
 multiline_comment|/*&n; * PMD_SHIFT determines the size of the area a second-level page table can map&n; */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT       20
@@ -66,7 +26,7 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD    4096
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
-multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
+multiline_comment|/*&n; * Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
 DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET&t;  (8*1024*1024)
 DECL|macro|VMALLOC_START
@@ -75,86 +35,6 @@ DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 DECL|macro|VMALLOC_END
 mdefine_line|#define VMALLOC_END       (PAGE_OFFSET + 0x10000000)
-multiline_comment|/*&n; * Domains&n; */
-DECL|macro|DOMAIN_USER
-mdefine_line|#define DOMAIN_USER&t;0
-DECL|macro|DOMAIN_KERNEL
-mdefine_line|#define DOMAIN_KERNEL&t;1
-DECL|macro|DOMAIN_TABLE
-mdefine_line|#define DOMAIN_TABLE&t;1
-DECL|macro|DOMAIN_IO
-mdefine_line|#define DOMAIN_IO&t;2
-DECL|macro|TEST_VERIFY_AREA
-macro_line|#undef TEST_VERIFY_AREA
-multiline_comment|/*&n; * The sa110 doesn&squot;t have any external MMU info: the kernel page&n; * tables contain all the necessary information.&n; */
-DECL|function|update_mmu_cache
-r_extern
-id|__inline__
-r_void
-id|update_mmu_cache
-c_func
-(paren
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-comma
-r_int
-r_int
-id|address
-comma
-id|pte_t
-id|pte
-)paren
-(brace
-)brace
-multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
-r_extern
-id|pte_t
-id|__bad_page
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-id|pte_t
-op_star
-id|__bad_pagetable
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-op_star
-id|empty_zero_page
-suffix:semicolon
-DECL|macro|BAD_PAGETABLE
-mdefine_line|#define BAD_PAGETABLE&t;__bad_pagetable()
-DECL|macro|BAD_PAGE
-mdefine_line|#define BAD_PAGE&t;__bad_page()
-DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr)&t;((unsigned long) empty_zero_page)
-multiline_comment|/* number of bits that fit into a memory pointer */
-DECL|macro|BYTES_PER_PTR
-mdefine_line|#define BYTES_PER_PTR&t;(sizeof(unsigned long))
-DECL|macro|BITS_PER_PTR
-mdefine_line|#define BITS_PER_PTR&t;(8*BYTES_PER_PTR)
-multiline_comment|/* to align the pointer to a pointer address */
-DECL|macro|PTR_MASK
-mdefine_line|#define PTR_MASK&t;(~(sizeof(void*)-1))
-multiline_comment|/* sizeof(void*)==1&lt;&lt;SIZEOF_PTR_LOG2 */
-DECL|macro|SIZEOF_PTR_LOG2
-mdefine_line|#define SIZEOF_PTR_LOG2&t;2
-multiline_comment|/* to find an entry in a page-table */
-DECL|macro|PAGE_PTR
-mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
-multiline_comment|/* to set the page-dir&n; * Note that we need to flush the cache and TLBs&n; * if we are affecting the current task.&n; */
-DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;tsk-&gt;tss.memmap = __virt_to_phys((unsigned long)pgdir);&t;&bslash;&n;&t;if ((tsk) == current) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;flush_cache_all();&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;mcr%?&t;p15, 0, %0, c2, c0, 0&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;: : &quot;r&quot; (tsk-&gt;tss.memmap));&t;&t;&t;&bslash;&n;&t;&t;flush_tlb_all();&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 r_extern
 r_int
 r_int
@@ -176,43 +56,6 @@ id|page
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any.&n; */
-macro_line|#ifndef __SMP__
-DECL|struct|pgtable_cache_struct
-r_extern
-r_struct
-id|pgtable_cache_struct
-(brace
-DECL|member|pgd_cache
-r_int
-r_int
-op_star
-id|pgd_cache
-suffix:semicolon
-DECL|member|pte_cache
-r_int
-r_int
-op_star
-id|pte_cache
-suffix:semicolon
-DECL|member|pgtable_cache_sz
-r_int
-r_int
-id|pgtable_cache_sz
-suffix:semicolon
-)brace
-id|quicklists
-suffix:semicolon
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist (quicklists.pgd_cache)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist ((unsigned long *)0)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist (quicklists.pte_cache)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size (quicklists.pgtable_cache_sz)
-macro_line|#else
-macro_line|#error Pgtable caches have to be per-CPU, so that no locking is needed.
-macro_line|#endif
 multiline_comment|/****************&n;* PMD functions *&n;****************/
 multiline_comment|/* PMD types (actually level 1 descriptor) */
 DECL|macro|PMD_TYPE_MASK
@@ -281,39 +124,6 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We don&squot;t use pmd cache, so this is a dummy routine */
-DECL|function|get_pmd_fast
-r_extern
-id|__inline__
-id|pmd_t
-op_star
-id|get_pmd_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|free_pmd_fast
-r_extern
-id|__inline__
-r_void
-id|free_pmd_fast
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
 DECL|function|free_pmd_slow
 r_extern
 id|__inline__
@@ -327,26 +137,6 @@ id|pmd
 )paren
 (brace
 )brace
-r_extern
-r_void
-id|__bad_pmd
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|__bad_pmd_kernel
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * allocating and freeing a pmd is trivial: the 1-entry pmd is&n; * inside the pgd, so has no extra memory associated with it.&n; */
 DECL|function|pmd_free
 r_extern
@@ -622,21 +412,6 @@ suffix:semicolon
 r_extern
 id|pte_t
 op_star
-id|get_pte_slow
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-comma
-r_int
-r_int
-id|address_preadjusted
-)paren
-suffix:semicolon
-r_extern
-id|pte_t
-op_star
 id|get_pte_kernel_slow
 c_func
 (paren
@@ -649,120 +424,6 @@ r_int
 id|address_preadjusted
 )paren
 suffix:semicolon
-DECL|function|get_pte_fast
-r_extern
-id|__inline__
-id|pte_t
-op_star
-id|get_pte_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-op_star
-id|ret
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ret
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pte_quicklist
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|pte_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-op_star
-id|ret
-)paren
-suffix:semicolon
-id|ret
-(braket
-l_int|0
-)braket
-op_assign
-id|ret
-(braket
-l_int|1
-)braket
-suffix:semicolon
-id|clean_cache_area
-c_func
-(paren
-id|ret
-comma
-l_int|4
-)paren
-suffix:semicolon
-id|pgtable_cache_size
-op_decrement
-suffix:semicolon
-)brace
-r_return
-(paren
-id|pte_t
-op_star
-)paren
-id|ret
-suffix:semicolon
-)brace
-DECL|function|free_pte_fast
-r_extern
-id|__inline__
-r_void
-id|free_pte_fast
-c_func
-(paren
-id|pte_t
-op_star
-id|pte
-)paren
-(brace
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pte
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|pte_quicklist
-suffix:semicolon
-id|pte_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pte
-suffix:semicolon
-id|pgtable_cache_size
-op_increment
-suffix:semicolon
-)brace
 DECL|function|free_pte_slow
 r_extern
 id|__inline__
@@ -1193,6 +854,21 @@ r_int
 id|address
 )paren
 (brace
+r_extern
+id|pte_t
+op_star
+id|get_pte_slow
+c_func
+(paren
+id|pmd_t
+op_star
+id|pmd
+comma
+r_int
+r_int
+id|address_preadjusted
+)paren
+suffix:semicolon
 id|address
 op_assign
 (paren
@@ -1312,9 +988,6 @@ mdefine_line|#define pgd_clear(pgdp)
 multiline_comment|/* to find an entry in a kernel page-table-directory */
 DECL|macro|pgd_offset_k
 mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
-multiline_comment|/* used for quicklists */
-DECL|macro|__pgd_next
-mdefine_line|#define __pgd_next(pgd) (((unsigned long *)pgd)[1])
 multiline_comment|/* to find an entry in a page-table-directory */
 DECL|function|pgd_offset
 r_extern
@@ -1342,138 +1015,6 @@ id|address
 op_rshift
 id|PGDIR_SHIFT
 )paren
-suffix:semicolon
-)brace
-r_extern
-id|pgd_t
-op_star
-id|get_pgd_slow
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|function|get_pgd_fast
-r_extern
-id|__inline__
-id|pgd_t
-op_star
-id|get_pgd_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-op_star
-id|ret
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ret
-op_assign
-id|pgd_quicklist
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|pgd_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|__pgd_next
-c_func
-(paren
-id|ret
-)paren
-suffix:semicolon
-id|ret
-(braket
-l_int|1
-)braket
-op_assign
-id|ret
-(braket
-l_int|2
-)braket
-suffix:semicolon
-id|clean_cache_area
-c_func
-(paren
-id|ret
-op_plus
-l_int|1
-comma
-l_int|4
-)paren
-suffix:semicolon
-id|pgtable_cache_size
-op_decrement
-suffix:semicolon
-)brace
-r_else
-id|ret
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|get_pgd_slow
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-(paren
-id|pgd_t
-op_star
-)paren
-id|ret
-suffix:semicolon
-)brace
-DECL|function|free_pgd_fast
-r_extern
-id|__inline__
-r_void
-id|free_pgd_fast
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgd
-)paren
-(brace
-id|__pgd_next
-c_func
-(paren
-id|pgd
-)paren
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|pgd_quicklist
-suffix:semicolon
-id|pgd_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgd
-suffix:semicolon
-id|pgtable_cache_size
-op_increment
 suffix:semicolon
 )brace
 DECL|function|free_pgd_slow
@@ -1612,119 +1153,53 @@ suffix:semicolon
 )brace
 DECL|macro|pgd_free
 mdefine_line|#define pgd_free(pgd)&t;&t;free_pgd_fast(pgd)
-DECL|macro|pgd_alloc
-mdefine_line|#define pgd_alloc()&t;&t;get_pgd_fast()
-DECL|function|set_pgdir
+DECL|function|pgd_alloc
 r_extern
 id|__inline__
-r_void
-id|set_pgdir
+id|pgd_t
+op_star
+id|pgd_alloc
 c_func
 (paren
-r_int
-r_int
-id|address
-comma
-id|pgd_t
-id|entry
+r_void
 )paren
 (brace
-r_struct
-id|task_struct
+r_extern
+id|pgd_t
 op_star
-id|p
+id|get_pgd_slow
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 id|pgd_t
 op_star
 id|pgd
 suffix:semicolon
-id|read_lock
+id|pgd
+op_assign
+id|get_pgd_fast
 c_func
 (paren
-op_amp
-id|tasklist_lock
 )paren
 suffix:semicolon
-id|for_each_task
-c_func
-(paren
-id|p
-)paren
-(brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|p-&gt;mm
+id|pgd
 )paren
-r_continue
-suffix:semicolon
-op_star
-id|pgd_offset
+id|pgd
+op_assign
+id|get_pgd_slow
 c_func
 (paren
-id|p-&gt;mm
-comma
-id|address
 )paren
-op_assign
-id|entry
+suffix:semicolon
+r_return
+id|pgd
 suffix:semicolon
 )brace
-id|read_unlock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|pgd_quicklist
-suffix:semicolon
-id|pgd
-suffix:semicolon
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|__pgd_next
-c_func
-(paren
-id|pgd
-)paren
-)paren
-id|pgd
-(braket
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)braket
-op_assign
-id|entry
-suffix:semicolon
-)brace
-r_extern
-id|pgd_t
-id|swapper_pg_dir
-(braket
-id|PTRS_PER_PGD
-)braket
-suffix:semicolon
-DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 2) &amp; 0x7f)
-DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 9)
-DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; 9))
-macro_line|#endif /* __ASM_PROC_PAGE_H */
+macro_line|#endif /* __ASM_PROC_PGTABLE_H */
 eof

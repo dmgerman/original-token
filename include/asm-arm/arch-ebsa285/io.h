@@ -115,7 +115,7 @@ DECL|macro|__pci_mem_addr
 mdefine_line|#define __pci_mem_addr(x)&t;((void *)(IO_FUDGE_FACTOR + (unsigned long)(x)))
 multiline_comment|/*&n; * ioremap takes a PCI memory address, as specified in&n; * linux/Documentation/IO-mapping.txt&n; */
 DECL|macro|ioremap
-mdefine_line|#define ioremap(iomem_addr,size)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long _addr = (iomem_addr), _size = (size);&t;&t;&bslash;&n;&t;void *_ret = NULL;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (valid_ioaddr(_addr, _size)) {&t;&t;&t;&t;&bslash;&n;&t;&t;_addr = io_to_phys(_addr);&t;&t;&t;&t;&bslash;&n;&t;&t;_ret = __ioremap(_addr, _size, 0) - IO_FUDGE_FACTOR;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_ret; })
+mdefine_line|#define ioremap(iomem_addr,size)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long _addr = (iomem_addr), _size = (size);&t;&t;&bslash;&n;&t;void *_ret = NULL;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (valid_ioaddr(_addr, _size)) {&t;&t;&t;&t;&bslash;&n;&t;&t;_addr = io_to_phys(_addr);&t;&t;&t;&t;&bslash;&n;&t;&t;_ret = __ioremap(_addr, _size, 0);&t;&t;&t;&bslash;&n;&t;&t;if (_ret)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;_ret = (void *)((int) _ret - IO_FUDGE_FACTOR);&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_ret; })
 DECL|macro|ioremap_nocache
 mdefine_line|#define ioremap_nocache(iomem_addr,size) ioremap((iomem_addr),(size))
 DECL|macro|iounmap

@@ -60,7 +60,8 @@ mdefine_line|#define N_SYMSIZE(a)&t;((a).a_syms)
 DECL|macro|M_ARM
 mdefine_line|#define M_ARM 103
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;asm/arch/a.out.h&gt;
+DECL|macro|STACK_TOP
+mdefine_line|#define STACK_TOP&t;((current-&gt;personality == PER_LINUX_32BIT) ? &bslash;&n;&t;&t;&t; TASK_SIZE : TASK_SIZE_26)
 macro_line|#endif
 macro_line|#ifndef LIBRARY_START_TEXT
 DECL|macro|LIBRARY_START_TEXT

@@ -1,7 +1,10 @@
-multiline_comment|/*&n; * include/asm/setup.h&n; *&n; * Structure passed to kernel to tell it about the hardware it&squot;s running on&n; *&n; * Copyright (C) 1997,1998 Russell King&n; */
+multiline_comment|/*&n; * include/asm/setup.h&n; *&n; * Structure passed to kernel to tell it about the&n; * hardware it&squot;s running on.  See linux/Documentation/arm/Setup&n; * for more info.&n; *&n; * Copyright (C) 1997-1999 Russell King&n; */
 macro_line|#ifndef __ASMARM_SETUP_H
 DECL|macro|__ASMARM_SETUP_H
 mdefine_line|#define __ASMARM_SETUP_H
+multiline_comment|/*&n; * Usage:&n; *  - do not go blindly adding fields, add them at the end&n; *  - when adding fields, don&squot;t rely on the address until&n; *    a patch from me has been released&n; *  - unused fields should be zero (for future expansion)&n; */
+DECL|macro|COMMAND_LINE_SIZE
+mdefine_line|#define COMMAND_LINE_SIZE 1024
 DECL|struct|param_struct
 r_struct
 id|param_struct
@@ -133,6 +136,24 @@ r_int
 id|rd_start
 suffix:semicolon
 multiline_comment|/* 72 */
+DECL|member|system_rev
+r_int
+r_int
+id|system_rev
+suffix:semicolon
+multiline_comment|/* 76 */
+DECL|member|system_serial_low
+r_int
+r_int
+id|system_serial_low
+suffix:semicolon
+multiline_comment|/* 80 */
+DECL|member|system_serial_high
+r_int
+r_int
+id|system_serial_high
+suffix:semicolon
+multiline_comment|/* 84 */
 DECL|member|s
 )brace
 id|s
@@ -192,7 +213,7 @@ DECL|member|commandline
 r_char
 id|commandline
 (braket
-l_int|256
+id|COMMAND_LINE_SIZE
 )braket
 suffix:semicolon
 )brace

@@ -2257,8 +2257,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|ret
 )paren
+id|ret
+op_assign
 id|put_user
 c_func
 (paren
