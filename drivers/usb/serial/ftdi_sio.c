@@ -3,7 +3,6 @@ multiline_comment|/* Bill Ryder - bryder@sgi.com - wrote the FTDI_SIO implementa
 multiline_comment|/* Thanx to FTDI for so kindly providing details of the protocol required */
 multiline_comment|/*   to talk to the device */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_USB_SERIAL_FTDI_SIO
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -2984,5 +2983,4 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ftdi_sio_ioctl */
-macro_line|#endif &t;/* CONFIG_USB_SERIAL_FTDI_SIO */
 eof

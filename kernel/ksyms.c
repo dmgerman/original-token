@@ -370,6 +370,13 @@ c_func
 id|vfree
 )paren
 suffix:semicolon
+DECL|variable|__vmalloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__vmalloc
+)paren
+suffix:semicolon
 DECL|variable|mem_map
 id|EXPORT_SYMBOL
 c_func

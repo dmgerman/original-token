@@ -1,6 +1,5 @@
 multiline_comment|/*&n;*  Digi AccelePort USB-4 Serial Converter&n;*&n;*  Copyright 2000 by Digi International&n;*&n;*  This program is free software; you can redistribute it and/or modify&n;*  it under the terms of the GNU General Public License as published by&n;*  the Free Software Foundation; either version 2 of the License, or&n;*  (at your option) any later version.&n;*&n;*  Shamelessly based on Brian Warner&squot;s keyspan_pda.c and Greg Kroah-Hartman&squot;s&n;*  usb-serial driver.&n;*&n;*  Peter Berger (pberger@brimson.com)&n;*  Al Borchers (borchers@steinerpoint.com)&n;*&n;*  (5/16/2000) pberger and borchers&n;*    -- added timeouts to sleeps&n;*    -- handle transition to/from B0 in digi_set_termios&n;*&n;*  (5/13/2000) pberger and borchers&n;*    -- all commands now sent on out of band port, using digi_write_oob&n;*    -- get modem control signals whenever they change, support TIOCMGET/&n;*       SET/BIS/BIC ioctls&n;*    -- digi_set_termios now supports parity, word size, stop bits, and&n;*       receive enable&n;*    -- cleaned up open and close, use digi_set_termios and digi_write_oob&n;*       to set port parameters&n;*    -- added digi_startup_device to start read chains on all ports&n;*    -- write buffer is only used when count==1, to be sure put_char can&n;*       write a char (unless the buffer is full)&n;*&n;*  (5/10/2000) pberger and borchers&n;*    -- Added MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT calls&n;*    -- Fixed problem where the first incoming character is lost on&n;*       port opens after the first close on that port.  Now we keep&n;*       the read_urb chain open until shutdown.&n;*    -- Added more port conditioning calls in digi_open and digi_close.&n;*    -- Convert port-&gt;active to a use count so that we can deal with multiple&n;*       opens and closes properly.&n;*    -- Fixed some problems with the locking code.&n;*&n;*  (5/3/2000) pberger and borchers&n;*    -- First alpha version of the driver--many known limitations and bugs.&n;*&n;*  $Id: digi_acceleport.c,v 1.43 2000/05/17 03:21:38 root Exp root $&n;*/
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_USB_SERIAL_DIGI_ACCELEPORT
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -4857,5 +4856,4 @@ id|ret
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif&t;/* CONFIG_USB_SERIAL_DIGI_ACCELEPORT */
 eof

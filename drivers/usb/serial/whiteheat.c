@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_USB_SERIAL_WHITEHEAT
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1406,5 +1405,4 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_USB_SERIAL_WHITEHEAT */
 eof

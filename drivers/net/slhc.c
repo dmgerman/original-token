@@ -25,7 +25,6 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;net/slhc_vj.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
@@ -2934,20 +2933,6 @@ r_void
 )paren
 (brace
 r_return
-suffix:semicolon
-)brace
-macro_line|#else /* MODULE */
-DECL|function|slhc_install
-r_int
-id|__init
-id|slhc_install
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */

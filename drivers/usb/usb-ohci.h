@@ -1045,9 +1045,6 @@ op_star
 id|urb
 comma
 r_int
-id|type
-comma
-r_int
 id|index
 )paren
 suffix:semicolon

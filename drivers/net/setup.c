@@ -38,14 +38,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|slhc_install
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|dmascc_init
 c_func
 (paren
@@ -278,7 +270,7 @@ comma
 l_int|0
 )brace
 comma
-macro_line|#endif&t;/*&n;&t; *&t;SLHC if present needs attaching so other people see it&n;&t; *&t;even if not opened.&n;&t; */
+macro_line|#endif
 macro_line|#if defined(CONFIG_LANMEDIA)
 (brace
 id|lmc_setup
@@ -286,16 +278,6 @@ comma
 l_int|0
 )brace
 comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_INET&t; 
-macro_line|#if (defined(CONFIG_SLIP) &amp;&amp; defined(CONFIG_SLIP_COMPRESSED)) &bslash;&n;&t; || defined(CONFIG_PPP) &bslash;&n;    || (defined(CONFIG_ISDN) &amp;&amp; defined(CONFIG_ISDN_PPP))
-(brace
-id|slhc_install
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif&t;
 macro_line|#endif
 multiline_comment|/*&n;*&n;*&t;Wireless non-HAM&n;*&n;*/
 macro_line|#ifdef CONFIG_AIRONET4500_NONCS
