@@ -2418,6 +2418,14 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|daemonize
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|do_execve
 c_func

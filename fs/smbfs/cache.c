@@ -64,6 +64,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+l_string|&quot;%s&quot;
+comma
 id|buf
 )paren
 suffix:semicolon

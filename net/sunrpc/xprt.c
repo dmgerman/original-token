@@ -35,6 +35,13 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Spinlock for critical sections in the code. */
+DECL|variable|xprt_lock
+id|spinlock_t
+id|xprt_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 macro_line|#ifdef RPC_DEBUG
 DECL|macro|RPC_DEBUG_DATA
 macro_line|# undef  RPC_DEBUG_DATA
@@ -1738,6 +1745,10 @@ id|task
 )paren
 suffix:semicolon
 )brace
+r_extern
+id|spinlock_t
+id|rpc_queue_lock
+suffix:semicolon
 multiline_comment|/*&n; * Look up the RPC request corresponding to a reply.&n; */
 r_static
 r_inline
@@ -1771,9 +1782,22 @@ op_star
 id|req
 suffix:semicolon
 r_int
+r_int
+id|oldflags
+suffix:semicolon
+r_int
 id|safe
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|rpc_queue_lock
+comma
+id|oldflags
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1806,8 +1830,8 @@ id|req-&gt;rq_xid
 op_eq
 id|xid
 )paren
-r_return
-id|req
+r_goto
+id|out
 suffix:semicolon
 id|task
 op_assign
@@ -1828,8 +1852,8 @@ c_func
 l_string|&quot;xprt_lookup_rqst: loop in Q!&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|NULL
+r_goto
+id|out_bad
 suffix:semicolon
 )brace
 )brace
@@ -1850,8 +1874,25 @@ comma
 id|xid
 )paren
 suffix:semicolon
-r_return
+id|out_bad
+suffix:colon
+id|req
+op_assign
 l_int|NULL
+suffix:semicolon
+id|out
+suffix:colon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|rpc_queue_lock
+comma
+id|oldflags
+)paren
+suffix:semicolon
+r_return
+id|req
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Complete reply received.&n; * The TCP code relies on us to remove the request from xprt-&gt;pending.&n; */
@@ -3853,6 +3894,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|xprt_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3914,6 +3962,13 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|xprt_lock
+)paren
+suffix:semicolon
 id|end_bh_atomic
 c_func
 (paren
@@ -4274,6 +4329,7 @@ c_cond
 (paren
 id|xprt-&gt;stream
 )paren
+(brace
 id|req-&gt;rq_bytes_sent
 op_add_assign
 id|status
@@ -4288,6 +4344,7 @@ id|req-&gt;rq_slen
 r_goto
 id|out_release
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4883,6 +4940,13 @@ id|xprt-&gt;free
 )paren
 (brace
 multiline_comment|/* OK: There&squot;s room for us. Grab a free slot and bump&n;&t;&t; * congestion value */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|xprt_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4894,6 +4958,13 @@ id|xprt-&gt;free
 )paren
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|xprt_lock
+)paren
+suffix:semicolon
 r_goto
 id|out_nofree
 suffix:semicolon
@@ -4905,6 +4976,13 @@ suffix:semicolon
 id|req-&gt;rq_next
 op_assign
 l_int|NULL
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|xprt_lock
+)paren
 suffix:semicolon
 id|xprt-&gt;cong
 op_add_assign
@@ -5103,6 +5181,13 @@ comma
 id|req
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|xprt_lock
+)paren
+suffix:semicolon
 id|req-&gt;rq_next
 op_assign
 id|xprt-&gt;free
@@ -5110,6 +5195,49 @@ suffix:semicolon
 id|xprt-&gt;free
 op_assign
 id|req
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|xprt_lock
+)paren
+suffix:semicolon
+multiline_comment|/* remove slot from queue of pending */
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|task-&gt;tk_rpcwait
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: task of released request still queued!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|rpc_del_timer
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
+id|rpc_remove_wait_queue
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
+)brace
+id|end_bh_atomic
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* Decrease congestion value. */
 id|xprt-&gt;cong

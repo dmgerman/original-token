@@ -134,6 +134,8 @@ DECL|macro|IEEE1284_MODE_EPPSWE
 mdefine_line|#define IEEE1284_MODE_EPPSWE            (1&lt;&lt;12) /* Software-emulated */
 DECL|macro|IEEE1284_DEVICEID
 mdefine_line|#define IEEE1284_DEVICEID               (1&lt;&lt;2)  /* This is a flag */
+DECL|macro|IEEE1284_EXT_LINK
+mdefine_line|#define IEEE1284_EXT_LINK               (1&lt;&lt;14) /* This flag causes the&n;&t;&t;&t;&t;&t;&t; * extensibility link to&n;&t;&t;&t;&t;&t;&t; * be requested, using&n;&t;&t;&t;&t;&t;&t; * bits 0-6. */
 multiline_comment|/* For the benefit of parport_read/write, you can use these with&n; * parport_negotiate to use address operations.  They have no effect&n; * other than to make parport_read/write use address transfers. */
 DECL|macro|IEEE1284_ADDR
 mdefine_line|#define IEEE1284_ADDR&t;&t;&t;(1&lt;&lt;13)&t;/* This is a flag */

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifdef RPC_DEBUG
 DECL|macro|RPCDBG_FACILITY
 macro_line|# define RPCDBG_FACILITY&t;RPCDBG_AUTH
@@ -224,6 +225,12 @@ id|auth
 )paren
 suffix:semicolon
 )brace
+DECL|variable|rpc_credcache_lock
+id|spinlock_t
+id|rpc_credcache_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n; * Initialize RPC credential cache&n; */
 r_void
 DECL|function|rpcauth_init_credcache
@@ -320,6 +327,13 @@ op_star
 )paren
 id|rpc_free
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -369,6 +383,13 @@ id|cred
 suffix:semicolon
 )brace
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove stale credentials. Avoid sleeping inside the loop.&n; */
 r_static
@@ -410,6 +431,13 @@ c_func
 l_string|&quot;RPC: gc&squot;ing RPC credentials for auth %p&bslash;n&quot;
 comma
 id|auth
+)paren
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
 )paren
 suffix:semicolon
 r_for
@@ -504,6 +532,13 @@ id|cred-&gt;cr_next
 suffix:semicolon
 )brace
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -563,6 +598,13 @@ op_mod
 id|RPC_CREDCACHE_NR
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
+suffix:semicolon
 id|cred-&gt;cr_next
 op_assign
 id|auth-&gt;au_credcache
@@ -585,6 +627,13 @@ id|auth-&gt;au_expire
 suffix:semicolon
 id|cred-&gt;cr_count
 op_increment
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Look up a process&squot; credentials in the authentication cache&n; */
@@ -657,6 +706,13 @@ c_func
 id|auth
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
+suffix:semicolon
 id|q
 op_assign
 op_amp
@@ -706,6 +762,13 @@ op_amp
 id|cred-&gt;cr_next
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -783,6 +846,13 @@ op_mod
 id|RPC_CREDCACHE_NR
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
+suffix:semicolon
 id|q
 op_assign
 op_amp
@@ -826,6 +896,13 @@ op_amp
 id|cred-&gt;cr_next
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|rpc_credcache_lock
+)paren
+suffix:semicolon
 )brace
 r_struct
 id|rpc_cred
