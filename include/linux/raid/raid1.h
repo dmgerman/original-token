@@ -18,10 +18,6 @@ DECL|member|dev
 id|kdev_t
 id|dev
 suffix:semicolon
-DECL|member|next
-r_int
-id|next
-suffix:semicolon
 DECL|member|sect_limit
 r_int
 id|sect_limit

@@ -1,7 +1,4 @@
-multiline_comment|/* Linux driver for Disk-On-Chip Millennium */
-multiline_comment|/* (c) 1999 Machine Vision Holdings, Inc.   */
-multiline_comment|/* Author: David Woodhouse &lt;dwmw2@mvhi.com&gt; */
-multiline_comment|/* $Id: doc2001.c,v 1.7 2000/07/13 10:41:39 dwmw2 Exp $ */
+multiline_comment|/*&n; * Linux driver for Disk-On-Chip Millennium&n; * (c) 1999 Machine Vision Holdings, Inc.&n; * (c) 1999, 2000 David Woodhouse &lt;dwmw2@infradead.org&gt;&n; *&n; * $Id: doc2001.c,v 1.24 2000/12/01 13:11:02 dwmw2 Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
@@ -16,173 +13,14 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
 macro_line|#include &lt;linux/mtd/nand.h&gt;
+macro_line|#include &lt;linux/mtd/nand_ids.h&gt;
 macro_line|#include &lt;linux/mtd/doc2000.h&gt;
-r_static
-r_struct
-(brace
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-DECL|member|manufacture_id
-r_int
-id|manufacture_id
-suffix:semicolon
-DECL|member|model_id
-r_int
-id|model_id
-suffix:semicolon
-DECL|member|chipshift
-r_int
-id|chipshift
-suffix:semicolon
-DECL|variable|nand_flash_ids
-)brace
-id|nand_flash_ids
-(braket
-)braket
-op_assign
-(brace
-(brace
-l_string|&quot;Toshiba TC5816BDC&quot;
-comma
-id|NAND_MFR_TOSHIBA
-comma
-l_int|0x64
-comma
-l_int|21
-)brace
-comma
-(brace
-l_string|&quot;Toshiba TC5832DC&quot;
-comma
-id|NAND_MFR_TOSHIBA
-comma
-l_int|0x6b
-comma
-l_int|22
-)brace
-comma
-(brace
-l_string|&quot;Toshiba TH58V128DC&quot;
-comma
-id|NAND_MFR_TOSHIBA
-comma
-l_int|0x73
-comma
-l_int|24
-)brace
-comma
-(brace
-l_string|&quot;Toshiba TC58256FT/DC&quot;
-comma
-id|NAND_MFR_TOSHIBA
-comma
-l_int|0x75
-comma
-l_int|25
-)brace
-comma
-(brace
-l_string|&quot;Toshiba TC58V32DC&quot;
-comma
-id|NAND_MFR_TOSHIBA
-comma
-l_int|0xe5
-comma
-l_int|22
-)brace
-comma
-(brace
-l_string|&quot;Toshiba TC58V64DC&quot;
-comma
-id|NAND_MFR_TOSHIBA
-comma
-l_int|0xe6
-comma
-l_int|23
-)brace
-comma
-(brace
-l_string|&quot;Toshiba TC58V16BDC&quot;
-comma
-id|NAND_MFR_TOSHIBA
-comma
-l_int|0xea
-comma
-l_int|21
-)brace
-comma
-(brace
-l_string|&quot;Samsung KM29N16000&quot;
-comma
-id|NAND_MFR_SAMSUNG
-comma
-l_int|0x64
-comma
-l_int|21
-)brace
-comma
-(brace
-l_string|&quot;Samsung KM29U128T&quot;
-comma
-id|NAND_MFR_SAMSUNG
-comma
-l_int|0x73
-comma
-l_int|24
-)brace
-comma
-(brace
-l_string|&quot;Samsung KM29U256T&quot;
-comma
-id|NAND_MFR_SAMSUNG
-comma
-l_int|0x75
-comma
-l_int|25
-)brace
-comma
-(brace
-l_string|&quot;Samsung KM29W32000&quot;
-comma
-id|NAND_MFR_SAMSUNG
-comma
-l_int|0xe3
-comma
-l_int|22
-)brace
-comma
-(brace
-l_string|&quot;Samsung KM29U64000&quot;
-comma
-id|NAND_MFR_SAMSUNG
-comma
-l_int|0xe6
-comma
-l_int|23
-)brace
-comma
-(brace
-l_string|&quot;Samsung KM29W16000&quot;
-comma
-id|NAND_MFR_SAMSUNG
-comma
-l_int|0xea
-comma
-l_int|21
-)brace
-comma
-(brace
-l_int|NULL
-comma
-)brace
-)brace
-suffix:semicolon
+multiline_comment|/* #define ECC_DEBUG */
+multiline_comment|/* I have no idea why some DoC chips can not use memcop_form|to_io().&n; * This may be due to the different revisions of the ASIC controller built-in or&n; * simplily a QA/Bug issue. Who knows ?? If you have trouble, please uncomment&n; * this:&n; #undef USE_MEMCPY&n;*/
 r_static
 r_int
 id|doc_read
+c_func
 (paren
 r_struct
 id|mtd_info
@@ -207,6 +45,7 @@ suffix:semicolon
 r_static
 r_int
 id|doc_write
+c_func
 (paren
 r_struct
 id|mtd_info
@@ -232,6 +71,7 @@ suffix:semicolon
 r_static
 r_int
 id|doc_read_ecc
+c_func
 (paren
 r_struct
 id|mtd_info
@@ -254,12 +94,13 @@ id|buf
 comma
 id|u_char
 op_star
-id|eecbuf
+id|eccbuf
 )paren
 suffix:semicolon
 r_static
 r_int
 id|doc_write_ecc
+c_func
 (paren
 r_struct
 id|mtd_info
@@ -361,6 +202,7 @@ id|docmillist
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Perform the required delay cycles by reading from the NOP register */
 DECL|function|DoC_Delay
 r_static
 r_void
@@ -426,6 +268,14 @@ id|c
 op_assign
 l_int|0xffff
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+id|MTD_DEBUG_LEVEL3
+comma
+l_string|&quot;_DoC_WaitReady called for out-of-line wait&bslash;n&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Out-of-line routine to wait for chip response */
 r_while
 c_loop
@@ -447,6 +297,21 @@ op_decrement
 id|c
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_int|0
+)paren
+id|DEBUG
+c_func
+(paren
+id|MTD_DEBUG_LEVEL2
+comma
+l_string|&quot;_DoC_WaitReady timed out.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 (paren
 id|c
@@ -457,7 +322,7 @@ suffix:semicolon
 )brace
 DECL|function|DoC_WaitReady
 r_static
-id|__inline__
+r_inline
 r_int
 id|DoC_WaitReady
 c_func
@@ -520,10 +385,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* DoC_Command: Send a flash command to the flash chip through the CDSN Slow IO register to bypass&n;   the internal pipeline. Each of 4 delay cycles (read from the NOP register) is required after&n;   writing to CDSN Control register, see Software Requirement 11.4 item 3. */
+multiline_comment|/* DoC_Command: Send a flash command to the flash chip through the CDSN Slow IO register to&n;   bypass the internal pipeline. Each of 4 delay cycles (read from the NOP register) is&n;   required after writing to CDSN Control register, see Software Requirement 11.4 item 3. */
 DECL|function|DoC_Command
 r_static
-id|__inline__
+r_inline
 r_void
 id|DoC_Command
 c_func
@@ -607,12 +472,13 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* DoC_Address: Set the current address for the flash chip through the CDSN Slow IO register to bypass&n;   the internal pipeline. Each of 4 delay cycles (read from the NOP register) is required after&n;   writing to CDSN Control register, see Software Requirement 11.4 item 3. */
+multiline_comment|/* DoC_Address: Set the current address for the flash chip through the CDSN Slow IO register to&n;   bypass the internal pipeline. Each of 4 delay cycles (read from the NOP register) is&n;   required after writing to CDSN Control register, see Software Requirement 11.4 item 3. */
 DECL|function|DoC_Address
 r_static
-id|__inline__
+r_inline
 r_void
 id|DoC_Address
+c_func
 (paren
 r_int
 r_int
@@ -634,7 +500,7 @@ r_char
 id|xtraflags2
 )paren
 (brace
-multiline_comment|/* Assert the ALE (Address Latch Enable line to the flash chip */
+multiline_comment|/* Assert the ALE (Address Latch Enable) line to the flash chip */
 id|WriteDOC
 c_func
 (paren
@@ -1127,7 +993,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* FIXME: to deal with mulit-flash on multi-Millennium case more carefully */
+multiline_comment|/* FIXME: to deal with multi-flash on multi-Millennium case more carefully */
 r_for
 c_loop
 (paren
@@ -1174,7 +1040,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Flash chip found: Manufacture ID: %2.2X, &quot;
+l_string|&quot;Flash chip found: Manufacturer ID: %2.2X, &quot;
 l_string|&quot;Chip ID: %2.2X (%s)&bslash;n&quot;
 comma
 id|mfr
@@ -1488,7 +1354,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_NOTICE
 l_string|&quot;%d flash chips found. Total DiskOnChip size: %ld Mbytes&bslash;n&quot;
 comma
 id|this-&gt;numchips
@@ -1639,6 +1505,7 @@ l_string|&quot;DoCMil_init&quot;
 suffix:semicolon
 multiline_comment|/* This routine is made available to other mtd code via&n; * inter_module_register.  It must only be accessed through&n; * inter_module_get which will bump the use count of this module.  The&n; * addresses passed back in mtd are valid as long as the use count of&n; * this module is non-zero, i.e. between inter_module_get and&n; * inter_module_put.  Keith Owens &lt;kaos@ocs.com.au&gt; 29 Oct 2000.&n; */
 DECL|function|DoCMil_init
+r_static
 r_void
 id|DoCMil_init
 c_func
@@ -1775,6 +1642,7 @@ id|mtd-&gt;size
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* FIXME: erase size is not always 8kB */
 id|mtd-&gt;erasesize
 op_assign
 l_int|0x2000
@@ -1979,10 +1847,19 @@ id|eccbuf
 (brace
 r_int
 id|i
+comma
+id|ret
 suffix:semicolon
 r_volatile
 r_char
 id|dummy
+suffix:semicolon
+r_int
+r_char
+id|syndrome
+(braket
+l_int|6
+)braket
 suffix:semicolon
 r_struct
 id|DiskOnChip
@@ -2113,54 +1990,6 @@ id|this-&gt;curchip
 op_assign
 id|mychip-&gt;chip
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|eccbuf
-)paren
-(brace
-multiline_comment|/* init the ECC engine, see Reed-Solomon EDC/ECC 11.1 .*/
-id|WriteDOC
-(paren
-id|DOC_ECC_RESET
-comma
-id|docptr
-comma
-id|ECCConf
-)paren
-suffix:semicolon
-id|WriteDOC
-(paren
-id|DOC_ECC_EN
-comma
-id|docptr
-comma
-id|ECCConf
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* disable the ECC engine, FIXME: is this correct ?? */
-id|WriteDOC
-(paren
-id|DOC_ECC_RESET
-comma
-id|docptr
-comma
-id|ECCConf
-)paren
-suffix:semicolon
-id|WriteDOC
-(paren
-id|DOC_ECC_DIS
-comma
-id|docptr
-comma
-id|ECCConf
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* issue the Read0 or Read1 command depend on which half of the page&n;&t;   we are accessing. Polling the Flash Ready bit after issue 3 bytes&n;&t;   address in Sequence Read Mode, see Software Requirement 11.4 item 1.*/
 id|DoC_Command
 c_func
@@ -2198,6 +2027,54 @@ c_func
 id|docptr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|eccbuf
+)paren
+(brace
+multiline_comment|/* init the ECC engine, see Reed-Solomon EDC/ECC 11.1 .*/
+id|WriteDOC
+(paren
+id|DOC_ECC_RESET
+comma
+id|docptr
+comma
+id|ECCConf
+)paren
+suffix:semicolon
+id|WriteDOC
+(paren
+id|DOC_ECC_EN
+comma
+id|docptr
+comma
+id|ECCConf
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* disable the ECC engine */
+id|WriteDOC
+(paren
+id|DOC_ECC_RESET
+comma
+id|docptr
+comma
+id|ECCConf
+)paren
+suffix:semicolon
+id|WriteDOC
+(paren
+id|DOC_ECC_DIS
+comma
+id|docptr
+comma
+id|ECCConf
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Read the data via the internal pipeline through CDSN IO register,&n;&t;   see Pipelined Read Operations 11.3 */
 id|dummy
 op_assign
@@ -2209,6 +2086,7 @@ comma
 id|ReadPipeInit
 )paren
 suffix:semicolon
+macro_line|#ifndef USE_MEMCPY
 r_for
 c_loop
 (paren
@@ -2226,6 +2104,7 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* N.B. you have to increase the source address in this way or the&n;&t;&t;   ECC logic will not work properly */
 id|buf
 (braket
 id|i
@@ -2237,12 +2116,36 @@ c_func
 id|docptr
 comma
 id|Mil_CDSN_IO
+op_plus
+(paren
+id|i
+op_amp
+l_int|0xff
+)paren
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+id|memcpy_fromio
+c_func
+(paren
+id|buf
+comma
+id|docptr
+op_plus
+id|DoC_Mil_CDSN_IO
+comma
+id|len
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
 id|buf
 (braket
-id|i
+id|len
+op_minus
+l_int|1
 )braket
 op_assign
 id|ReadDOC
@@ -2259,14 +2162,17 @@ id|retlen
 op_assign
 id|len
 suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|eccbuf
 )paren
 (brace
-multiline_comment|/* FIXME: are we reading the ECC from the ECC logic of DOC or&n;&t;&t;   the spare data space on the flash chip i.e. How do we&n;&t;&t;   control the Spare Area Enable bit of the flash ?? */
-multiline_comment|/* Read the ECC data through the DiskOnChip ECC logic&n;&t;&t;   see Reed-Solomon EDC/ECC 11.1 */
+multiline_comment|/* Read the ECC data from Spare Data Area,&n;&t;&t;   see Reed-Solomon EDC/ECC 11.1 */
 id|dummy
 op_assign
 id|ReadDOC
@@ -2277,6 +2183,7 @@ comma
 id|ReadPipeInit
 )paren
 suffix:semicolon
+macro_line|#ifndef USE_MEMCPY
 r_for
 c_loop
 (paren
@@ -2292,6 +2199,7 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* N.B. you have to increase the source address in this way or the&n;&t;&t;&t;   ECC logic will not work properly */
 id|eccbuf
 (braket
 id|i
@@ -2303,12 +2211,28 @@ c_func
 id|docptr
 comma
 id|Mil_CDSN_IO
+op_plus
+id|i
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+id|memcpy_fromio
+c_func
+(paren
+id|eccbuf
+comma
+id|docptr
+op_plus
+id|DoC_Mil_CDSN_IO
+comma
+l_int|5
+)paren
+suffix:semicolon
+macro_line|#endif
 id|eccbuf
 (braket
-id|i
+l_int|5
 )braket
 op_assign
 id|ReadDOC
@@ -2355,7 +2279,11 @@ op_amp
 l_int|0x80
 )paren
 (brace
+r_int
+id|nb_errors
+suffix:semicolon
 multiline_comment|/* There was an ECC error */
+macro_line|#ifdef ECC_DEBUG
 id|printk
 c_func
 (paren
@@ -2367,19 +2295,80 @@ r_int
 id|from
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: Implement ECC error correction, don&squot;t just whinge */
-multiline_comment|/* We return error, but have actually done the read. Not that&n;&t;&t;&t;   this can be told to user-space, via sys_read(), but at least&n;&t;&t;&t;   MTD-aware stuff can know about it by checking *retlen */
-r_return
+macro_line|#endif
+multiline_comment|/* Read the ECC syndrom through the DiskOnChip ECC logic.&n;&t;&t;&t;   These syndrome will be all ZERO when there is no error */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|syndrome
+(braket
+id|i
+)braket
+op_assign
+id|ReadDOC
+c_func
+(paren
+id|docptr
+comma
+id|ECCSyndrome0
+op_plus
+id|i
+)paren
+suffix:semicolon
+)brace
+id|nb_errors
+op_assign
+id|doc_decode_ecc
+c_func
+(paren
+id|buf
+comma
+id|syndrome
+)paren
+suffix:semicolon
+macro_line|#ifdef ECC_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;Errors corrected: %x&bslash;n&quot;
+comma
+id|nb_errors
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|nb_errors
+OL
+l_int|0
+)paren
+(brace
+multiline_comment|/* We return error, but have actually done the read. Not that&n;&t;&t;&t;&t;   this can be told to user-space, via sys_read(), but at least&n;&t;&t;&t;&t;   MTD-aware stuff can know about it by checking *retlen */
+id|ret
+op_assign
 op_minus
 id|EIO
 suffix:semicolon
 )brace
+)brace
 macro_line|#ifdef PSYCHO_DEBUG
-r_else
 id|printk
 c_func
 (paren
-l_string|&quot;ECC OK at %lx: %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X&bslash;n&quot;
+l_string|&quot;ECC DATA at %lx: %2.2X %2.2X %2.2X %2.2X %2.2X %2.2X&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2418,11 +2407,11 @@ l_int|5
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Reset the ECC engine */
+multiline_comment|/* disable the ECC engine */
 id|WriteDOC
 c_func
 (paren
-id|DOC_ECC_RESV
+id|DOC_ECC_DIS
 comma
 id|docptr
 comma
@@ -2431,7 +2420,7 @@ id|ECCConf
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 DECL|function|doc_write
@@ -2460,9 +2449,8 @@ op_star
 id|buf
 )paren
 (brace
-r_static
 r_char
-id|as
+id|eccbuf
 (braket
 l_int|6
 )braket
@@ -2481,7 +2469,7 @@ id|retlen
 comma
 id|buf
 comma
-id|as
+id|eccbuf
 )paren
 suffix:semicolon
 )brace
@@ -2678,7 +2666,7 @@ id|docptr
 comma
 id|NAND_CMD_RESET
 comma
-id|CDSN_CTRL_WP
+l_int|0x00
 )paren
 suffix:semicolon
 id|DoC_WaitReady
@@ -2695,7 +2683,38 @@ id|docptr
 comma
 id|NAND_CMD_READ0
 comma
-id|CDSN_CTRL_WP
+l_int|0x00
+)paren
+suffix:semicolon
+multiline_comment|/* issue the Serial Data In command to initial the Page Program process */
+id|DoC_Command
+c_func
+(paren
+id|docptr
+comma
+id|NAND_CMD_SEQIN
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+id|DoC_Address
+c_func
+(paren
+id|docptr
+comma
+l_int|3
+comma
+id|to
+comma
+l_int|0x00
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+id|DoC_WaitReady
+c_func
+(paren
+id|docptr
 )paren
 suffix:semicolon
 r_if
@@ -2728,7 +2747,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* disable the ECC engine, FIXME: is this correct ?? */
+multiline_comment|/* disable the ECC engine */
 id|WriteDOC
 (paren
 id|DOC_ECC_RESET
@@ -2748,32 +2767,8 @@ id|ECCConf
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* issue the Serial Data In command to initial the Page Program process */
-id|DoC_Command
-c_func
-(paren
-id|docptr
-comma
-id|NAND_CMD_SEQIN
-comma
-l_int|0x00
-)paren
-suffix:semicolon
-id|DoC_Address
-c_func
-(paren
-id|docptr
-comma
-l_int|3
-comma
-id|to
-comma
-l_int|0x00
-comma
-l_int|0x00
-)paren
-suffix:semicolon
 multiline_comment|/* Write the data via the internal pipeline through CDSN IO register,&n;&t;   see Pipelined Write Operations 11.2 */
+macro_line|#ifndef USE_MEMCPY
 r_for
 c_loop
 (paren
@@ -2789,6 +2784,7 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* N.B. you have to increase the source address in this way or the&n;&t;&t;   ECC logic will not work properly */
 id|WriteDOC
 c_func
 (paren
@@ -2800,9 +2796,25 @@ comma
 id|docptr
 comma
 id|Mil_CDSN_IO
+op_plus
+id|i
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+id|memcpy_toio
+c_func
+(paren
+id|docptr
+op_plus
+id|DoC_Mil_CDSN_IO
+comma
+id|buf
+comma
+id|len
+)paren
+suffix:semicolon
+macro_line|#endif
 id|WriteDOC
 c_func
 (paren
@@ -2819,7 +2831,7 @@ c_cond
 id|eccbuf
 )paren
 (brace
-multiline_comment|/* Write ECC data to flash, the ECC info is generated by the DiskOnChip DECC logic&n;&t;&t;   see Reed-Solomon EDC/ECC 11.1 */
+multiline_comment|/* Write ECC data to flash, the ECC info is generated by the DiskOnChip ECC logic&n;&t;&t;   see Reed-Solomon EDC/ECC 11.1 */
 id|WriteDOC
 c_func
 (paren
@@ -2882,6 +2894,18 @@ id|i
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* ignore the ECC engine */
+id|WriteDOC
+c_func
+(paren
+id|DOC_ECC_DIS
+comma
+id|docptr
+comma
+id|ECCConf
+)paren
+suffix:semicolon
+macro_line|#ifndef USE_MEMCPY
 multiline_comment|/* Write the ECC data to flash */
 r_for
 c_loop
@@ -2898,6 +2922,7 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* N.B. you have to increase the source address in this way or the&n;&t;&t;&t;   ECC logic will not work properly */
 id|WriteDOC
 c_func
 (paren
@@ -2909,9 +2934,48 @@ comma
 id|docptr
 comma
 id|Mil_CDSN_IO
+op_plus
+id|i
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+id|memcpy_toio
+c_func
+(paren
+id|docptr
+op_plus
+id|DoC_Mil_CDSN_IO
+comma
+id|eccbuf
+comma
+l_int|6
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* write the block status BLOCK_USED (0x5555) at the end of ECC data&n;&t;&t;   FIXME: this is only a hack for programming the IPL area for LinuxBIOS&n;&t;&t;   and should be replace with proper codes in user space utilities */
+id|WriteDOC
+c_func
+(paren
+l_int|0x55
+comma
+id|docptr
+comma
+id|Mil_CDSN_IO
+)paren
+suffix:semicolon
+id|WriteDOC
+c_func
+(paren
+l_int|0x55
+comma
+id|docptr
+comma
+id|Mil_CDSN_IO
+op_plus
+l_int|1
+)paren
+suffix:semicolon
 id|WriteDOC
 c_func
 (paren
@@ -2965,17 +3029,6 @@ l_int|5
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Reset the ECC engine */
-id|WriteDOC
-c_func
-(paren
-id|DOC_ECC_RESV
-comma
-id|docptr
-comma
-id|ECCConf
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* Commit the Page Program command and wait for ready&n;&t;   see Software Requirement 11.4 item 1.*/
 id|DoC_Command
@@ -3002,7 +3055,7 @@ id|docptr
 comma
 id|NAND_CMD_STATUS
 comma
-l_int|0x00
+id|CDSN_CTRL_WP
 )paren
 suffix:semicolon
 id|dummy
@@ -3043,7 +3096,7 @@ c_func
 l_string|&quot;Error programming flash&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Error in programming */
+multiline_comment|/* Error in programming&n;&t;&t;   FIXME: implement Bad Block Replacement (in nftl.c ??) */
 op_star
 id|retlen
 op_assign
@@ -3090,12 +3143,14 @@ op_star
 id|buf
 )paren
 (brace
+macro_line|#ifndef USE_MEMCPY
+r_int
+id|i
+suffix:semicolon
+macro_line|#endif
 r_volatile
 r_char
 id|dummy
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 r_struct
 id|DiskOnChip
@@ -3128,7 +3183,6 @@ op_rshift
 id|this-&gt;chipshift
 )braket
 suffix:semicolon
-multiline_comment|/* FIXME: should we restrict the access between 512 to 527 ?? */
 multiline_comment|/* Find the chip which is to be used and select it */
 r_if
 c_cond
@@ -3181,8 +3235,7 @@ id|this-&gt;curchip
 op_assign
 id|mychip-&gt;chip
 suffix:semicolon
-multiline_comment|/* FIXME: should we disable ECC engine in this way ?? */
-multiline_comment|/* disable the ECC engine, FIXME: is this correct ?? */
+multiline_comment|/* disable the ECC engine */
 id|WriteDOC
 (paren
 id|DOC_ECC_RESET
@@ -3201,7 +3254,7 @@ comma
 id|ECCConf
 )paren
 suffix:semicolon
-multiline_comment|/* issue the Read2 command to read the Spare Data Area.&n;&t;   Polling the Flash Ready bit after issue 3 bytes address in&n;&t;   Sequence Read Mode, see Software Requirement 11.4 item 1.*/
+multiline_comment|/* issue the Read2 command to set the pointer to the Spare Data Area.&n;&t;   Polling the Flash Ready bit after issue 3 bytes address in&n;&t;   Sequence Read Mode, see Software Requirement 11.4 item 1.*/
 id|DoC_Command
 c_func
 (paren
@@ -3243,6 +3296,7 @@ comma
 id|ReadPipeInit
 )paren
 suffix:semicolon
+macro_line|#ifndef USE_MEMCPY
 r_for
 c_loop
 (paren
@@ -3260,6 +3314,7 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* N.B. you have to increase the source address in this way or the&n;&t;&t;   ECC logic will not work properly */
 id|buf
 (braket
 id|i
@@ -3271,12 +3326,45 @@ c_func
 id|docptr
 comma
 id|Mil_CDSN_IO
+op_plus
+id|i
 )paren
 suffix:semicolon
 )brace
 id|buf
 (braket
 id|i
+)braket
+op_assign
+id|ReadDOC
+c_func
+(paren
+id|docptr
+comma
+id|LastDataRead
+)paren
+suffix:semicolon
+macro_line|#else
+id|memcpy_fromio
+c_func
+(paren
+id|buf
+comma
+id|docptr
+op_plus
+id|DoC_Mil_CDSN_IO
+comma
+id|len
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
+id|buf
+(braket
+id|len
+op_minus
+l_int|1
 )braket
 op_assign
 id|ReadDOC
@@ -3323,9 +3411,11 @@ op_star
 id|buf
 )paren
 (brace
+macro_line|#ifndef USE_MEMCPY
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 r_volatile
 r_char
 id|dummy
@@ -3413,8 +3503,7 @@ id|this-&gt;curchip
 op_assign
 id|mychip-&gt;chip
 suffix:semicolon
-multiline_comment|/* FIXME: should we disable ECC engine in this way ?? */
-multiline_comment|/* disable the ECC engine, FIXME: is this correct ?? */
+multiline_comment|/* disable the ECC engine */
 id|WriteDOC
 (paren
 id|DOC_ECC_RESET
@@ -3450,7 +3539,7 @@ c_func
 id|docptr
 )paren
 suffix:semicolon
-multiline_comment|/* issue the Read2 command to read the Spare Data Area. */
+multiline_comment|/* issue the Read2 command to set the pointer to the Spare Data Area. */
 id|DoC_Command
 c_func
 (paren
@@ -3487,6 +3576,7 @@ l_int|0x00
 )paren
 suffix:semicolon
 multiline_comment|/* Write the data via the internal pipeline through CDSN IO register,&n;&t;   see Pipelined Write Operations 11.2 */
+macro_line|#ifndef USE_MEMCPY
 r_for
 c_loop
 (paren
@@ -3501,6 +3591,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+multiline_comment|/* N.B. you have to increase the source address in this way or the&n;&t;&t;   ECC logic will not work properly */
 id|WriteDOC
 c_func
 (paren
@@ -3512,8 +3604,25 @@ comma
 id|docptr
 comma
 id|Mil_CDSN_IO
+op_plus
+id|i
 )paren
 suffix:semicolon
+)brace
+macro_line|#else
+id|memcpy_toio
+c_func
+(paren
+id|docptr
+op_plus
+id|DoC_Mil_CDSN_IO
+comma
+id|buf
+comma
+id|len
+)paren
+suffix:semicolon
+macro_line|#endif
 id|WriteDOC
 c_func
 (paren
@@ -3590,6 +3699,7 @@ c_func
 l_string|&quot;Error programming oob data&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: implement Bad Block Replacement (in nftl.c ??) */
 op_star
 id|retlen
 op_assign
@@ -3791,7 +3901,7 @@ id|instr-&gt;state
 op_assign
 id|MTD_ERASING
 suffix:semicolon
-multiline_comment|/* Read the status of the flash device through CDSN Slow IO register&n;&t;   see Software Requirement 11.4 item 5.*/
+multiline_comment|/* Read the status of the flash device through CDSN Slow IO register&n;&t;   see Software Requirement 11.4 item 5.&n;&t;   FIXME: it seems that we are not wait long enough, some blocks are not&n;&t;   erased fully */
 id|DoC_Command
 c_func
 (paren
@@ -3837,10 +3947,12 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Error Erasing&bslash;n&quot;
+l_string|&quot;Error Erasing at 0x%lx&bslash;n&quot;
+comma
+id|ofs
 )paren
 suffix:semicolon
-multiline_comment|/* There was an error */
+multiline_comment|/* There was an error&n;&t;&t;   FIXME: implement Bad Block Replacement (in nftl.c ??) */
 id|instr-&gt;state
 op_assign
 id|MTD_ERASE_FAILED
@@ -3869,8 +3981,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *&n; * Module stuff&n; *&n; ****************************************************************************/
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20212 &amp;&amp; defined(MODULE)
+DECL|macro|cleanup_doc2001
+mdefine_line|#define cleanup_doc2001 cleanup_module
+DECL|macro|init_doc2001
+mdefine_line|#define init_doc2001 init_module
+macro_line|#endif
 DECL|function|init_doc2001
-r_static
 r_int
 id|__init
 id|init_doc2001
@@ -3894,14 +4011,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-macro_line|#ifdef MODULE
-DECL|macro|cleanup_doc2001
-mdefine_line|#define cleanup_doc2001 cleanup_module
-macro_line|#endif
-DECL|macro|__exit
-mdefine_line|#define __exit
-macro_line|#endif
 DECL|function|cleanup_doc2001
 r_static
 r_void
@@ -3981,14 +4090,6 @@ id|im_name
 )paren
 suffix:semicolon
 )brace
-DECL|variable|init_doc2001
-id|module_init
-c_func
-(paren
-id|init_doc2001
-)paren
-suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 DECL|variable|cleanup_doc2001
 id|module_exit
 c_func
@@ -3996,5 +4097,11 @@ c_func
 id|cleanup_doc2001
 )paren
 suffix:semicolon
-macro_line|#endif
+DECL|variable|init_doc2001
+id|module_init
+c_func
+(paren
+id|init_doc2001
+)paren
+suffix:semicolon
 eof

@@ -91,7 +91,7 @@ DECL|typedef|ppa_struct
 id|ppa_struct
 suffix:semicolon
 DECL|macro|PPA_EMPTY
-mdefine_line|#define PPA_EMPTY&t;&bslash;&n;{&t;dev:&t;&t;NULL,&t;&t;&bslash;&n;&t;base:&t;&t;-1,&t;&t;&bslash;&n;&t;mode:&t;&t;PPA_AUTODETECT,&t;&bslash;&n;&t;host:&t;&t;-1,&t;&t;&bslash;&n;&t;cur_cmd:&t;NULL,&t;&t;&bslash;&n;&t;ppa_tq:&t;&t;{0, 0, ppa_interrupt, NULL},&t;&bslash;&n;&t;jstart:&t;&t;0,&t;&t;&bslash;&n;&t;failed:&t;&t;0,&t;&t;&bslash;&n;&t;p_busy:&t;&t;0&t;&t;&bslash;&n;}
+mdefine_line|#define PPA_EMPTY&t;&bslash;&n;{&t;dev:&t;&t;NULL,&t;&t;&bslash;&n;&t;base:&t;&t;-1,&t;&t;&bslash;&n;&t;mode:&t;&t;PPA_AUTODETECT,&t;&bslash;&n;&t;host:&t;&t;-1,&t;&t;&bslash;&n;&t;cur_cmd:&t;NULL,&t;&t;&bslash;&n;&t;ppa_tq:&t;&t;{ routine: ppa_interrupt },&t;&bslash;&n;&t;jstart:&t;&t;0,&t;&t;&bslash;&n;&t;failed:&t;&t;0,&t;&t;&bslash;&n;&t;p_busy:&t;&t;0&t;&t;&bslash;&n;}
 macro_line|#include  &quot;ppa.h&quot;
 DECL|macro|NO_HOSTS
 mdefine_line|#define NO_HOSTS 4
@@ -321,6 +321,16 @@ r_struct
 id|parport
 op_star
 id|pb
+suffix:semicolon
+multiline_comment|/*&n;     * unlock to allow the lowlevel parport driver to probe&n;     * the irqs&n;     */
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
+id|pb
 op_assign
 id|parport_enumerate
 c_func
@@ -354,6 +364,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;ppa: parport reports no devices.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_return
@@ -490,6 +507,13 @@ l_string|&quot;ppa%d: failed to claim parport because a &quot;
 l_string|&quot;pardevice is owning the port for too longtime!&bslash;n&quot;
 comma
 id|i
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_return
@@ -810,6 +834,13 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 )brace
 id|try_again
 op_assign
@@ -820,10 +851,19 @@ id|retry_entry
 suffix:semicolon
 )brace
 r_else
+(brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* return number of hosts detected */
+)brace
 )brace
 multiline_comment|/* This is to give the ppa driver a way to modify the timings (and other&n; * parameters) by writing to the /proc/scsi/ppa/0 file.&n; * Very simple method really... (To simple, no error checking :( )&n; * Reason: Kernel hackers HATE having to unload and reload modules for&n; * testing...&n; * Also gives a method to use a script to obtain optimum timings (TODO)&n; */
 DECL|function|ppa_proc_write

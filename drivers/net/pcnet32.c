@@ -1689,7 +1689,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  ioaddr=%#08lx  resource_flags=%#08lx&bslash;n&quot;
+l_string|&quot;    ioaddr=%#08lx  resource_flags=%#08lx&bslash;n&quot;
 comma
 id|ioaddr
 comma
@@ -2360,7 +2360,6 @@ op_increment
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot; %2.2x&quot;
 comma
 id|dev-&gt;dev_addr
@@ -2412,8 +2411,9 @@ multiline_comment|/* Check tx_start_pt */
 id|printk
 c_func
 (paren
+l_string|&quot;&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;&bslash;n    tx_start_pt(0x%04x):&quot;
+l_string|&quot;    tx_start_pt(0x%04x):&quot;
 comma
 id|i
 )paren
@@ -2432,7 +2432,6 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;  20 bytes,&quot;
 )paren
 suffix:semicolon
@@ -2444,7 +2443,6 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;  64 bytes,&quot;
 )paren
 suffix:semicolon
@@ -2456,7 +2454,6 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot; 128 bytes,&quot;
 )paren
 suffix:semicolon
@@ -2468,7 +2465,6 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;~220 bytes,&quot;
 )paren
 suffix:semicolon
@@ -2491,7 +2487,6 @@ multiline_comment|/* Check Burst/Bus control */
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot; BCR18(%x):&quot;
 comma
 id|i
@@ -2513,7 +2508,6 @@ l_int|5
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;BurstWrEn &quot;
 )paren
 suffix:semicolon
@@ -2531,7 +2525,6 @@ l_int|6
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;BurstRdEn &quot;
 )paren
 suffix:semicolon
@@ -2549,7 +2542,6 @@ l_int|7
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;DWordIO &quot;
 )paren
 suffix:semicolon
@@ -2567,7 +2559,6 @@ l_int|11
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;NoUFlow &quot;
 )paren
 suffix:semicolon
@@ -2586,8 +2577,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+l_string|&quot;&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;&bslash;n    SRAMSIZE=0x%04x,&quot;
+l_string|&quot;    SRAMSIZE=0x%04x,&quot;
 comma
 id|i
 op_lshift
@@ -2609,7 +2601,6 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot; SRAM_BND=0x%04x,&quot;
 comma
 id|i
@@ -2643,8 +2634,7 @@ l_int|14
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;LowLatRx,&quot;
+l_string|&quot;LowLatRx&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2721,8 +2711,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+l_string|&quot;&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;pcnet32: pcnet32_private lp=%p lp_dma_addr=%#08x&bslash;n&quot;
+l_string|&quot;pcnet32: pcnet32_private lp=%p lp_dma_addr=%#08x&quot;
 comma
 id|lp
 comma
@@ -3039,7 +3030,6 @@ l_int|2
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot; assigned IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
@@ -3087,7 +3077,6 @@ id|dev-&gt;irq
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;, probed IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
@@ -3098,7 +3087,6 @@ r_else
 id|printk
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;, failed to detect IRQ line.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4388,7 +4376,6 @@ op_increment
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;%s %08x %04x %08x %04x&quot;
 comma
 id|i
@@ -4450,7 +4437,6 @@ op_increment
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;%s %08x %04x %08x %04x&quot;
 comma
 id|i
@@ -4498,7 +4484,6 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon

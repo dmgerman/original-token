@@ -477,9 +477,11 @@ c_func
 r_void
 )paren
 (brace
-id|task_scan_kbd.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+id|task_scan_kbd.list
+)paren
 suffix:semicolon
 id|task_scan_kbd.sync
 op_assign

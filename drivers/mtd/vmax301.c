@@ -1,4 +1,4 @@
-singleline_comment|// $Id: vmax301.c,v 1.13 2000/07/03 10:01:38 dwmw2 Exp $
+singleline_comment|// $Id: vmax301.c,v 1.15 2000/11/27 08:50:22 dwmw2 Exp $
 multiline_comment|/* ######################################################################&n;&n;   Tempustech VMAX SBC301 MTD Driver.&n;  &n;   The VMAx 301 is a SBC based on . It&n;   comes with three builtin AMD 29F016B flash chips and a socket for SRAM or&n;   more flash. Each unit has it&squot;s own 8k mapping into a settable region &n;   (0xD8000). There are two 8k mappings for each MTD, the first is always set&n;   to the lower 8k of the device the second is paged. Writing a 16 bit page&n;   value to anywhere in the first 8k will cause the second 8k to page around.&n;&n;   To boot the device a bios extension must be installed into the first 8k &n;   of flash that is smart enough to copy itself down, page in the rest of &n;   itself and begin executing.&n;   &n;   ##################################################################### */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -670,8 +670,12 @@ l_int|2
 op_assign
 (brace
 (brace
+id|name
+suffix:colon
 l_string|&quot;VMAX301 Internal Flash&quot;
 comma
+id|size
+suffix:colon
 l_int|3
 op_star
 l_int|2
@@ -680,54 +684,100 @@ l_int|1024
 op_star
 l_int|1024
 comma
+id|buswidth
+suffix:colon
 l_int|1
 comma
+id|read8
+suffix:colon
 id|vmax301_read8
 comma
+id|read16
+suffix:colon
 id|vmax301_read16
 comma
+id|read32
+suffix:colon
 id|vmax301_read32
 comma
+id|copy_from
+suffix:colon
 id|vmax301_copy_from
 comma
+id|write8
+suffix:colon
 id|vmax301_write8
 comma
+id|write16
+suffix:colon
 id|vmax301_write16
 comma
+id|write32
+suffix:colon
 id|vmax301_write32
 comma
+id|copy_to
+suffix:colon
 id|vmax301_copy_to
 comma
+id|map_priv_1
+suffix:colon
 id|WINDOW_START
 op_plus
 id|WINDOW_LENGTH
 comma
+id|map_priv_2
+suffix:colon
 l_int|0xFFFFFFFF
 )brace
 comma
 (brace
+id|name
+suffix:colon
 l_string|&quot;VMAX301 Socket&quot;
 comma
+id|size
+suffix:colon
 l_int|0
 comma
+id|buswidth
+suffix:colon
 l_int|1
 comma
+id|read8
+suffix:colon
 id|vmax301_read8
 comma
+id|read16
+suffix:colon
 id|vmax301_read16
 comma
+id|read32
+suffix:colon
 id|vmax301_read32
 comma
+id|copy_from
+suffix:colon
 id|vmax301_copy_from
 comma
+id|write8
+suffix:colon
 id|vmax301_write8
 comma
+id|write16
+suffix:colon
 id|vmax301_write16
 comma
+id|write32
+suffix:colon
 id|vmax301_write32
 comma
+id|copy_to
+suffix:colon
 id|vmax301_copy_to
 comma
+id|map_priv_1
+suffix:colon
 id|WINDOW_START
 op_plus
 (paren
@@ -736,6 +786,8 @@ op_star
 id|WINDOW_LENGTH
 )paren
 comma
+id|map_priv_2
+suffix:colon
 l_int|0xFFFFFFFF
 )brace
 )brace
@@ -756,15 +808,11 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-macro_line|#ifdef MODULE
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20212 &amp;&amp; defined(MODULE)
 DECL|macro|init_vmax301
 mdefine_line|#define init_vmax301 init_module
 DECL|macro|cleanup_vmax301
 mdefine_line|#define cleanup_vmax301 cleanup_module
-macro_line|#endif
-DECL|macro|__exit
-mdefine_line|#define __exit
 macro_line|#endif
 DECL|function|cleanup_vmax301
 r_static
@@ -1087,7 +1135,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 DECL|variable|init_vmax301
 id|module_init
 c_func
@@ -1102,5 +1149,4 @@ c_func
 id|cleanup_vmax301
 )paren
 suffix:semicolon
-macro_line|#endif
 eof

@@ -158,23 +158,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|abyss_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|madgemc_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|tms_pci_probe
 c_func
 (paren
 r_void
@@ -324,25 +308,9 @@ l_int|0
 comma
 macro_line|#endif&t;/* CONFIG_YAM */
 multiline_comment|/*&n; *&t;Token Ring Drivers&n; */
-macro_line|#ifdef CONFIG_ABYSS
-(brace
-id|abyss_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_MADGEMC
 (brace
 id|madgemc_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_TMSPCI
-(brace
-id|tms_pci_probe
 comma
 l_int|0
 )brace

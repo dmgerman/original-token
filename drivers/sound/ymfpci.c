@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Copyright 1999 Jaroslav Kysela &lt;perex@suse.cz&gt;&n; *  Copyright 2000 Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Yamaha YMF7xx driver.&n; *&n; *  This code is a result of high-speed collision&n; *  between ymfpci.c of ALSA and cs46xx.c of Linux.&n; *  -- Pete Zaitcev &lt;zaitcev@metabyte.com&gt;; 2000/09/18&n; *&n; *   This program is free software; you can redistribute it and/or modify&n; *   it under the terms of the GNU General Public License as published by&n; *   the Free Software Foundation; either version 2 of the License, or&n; *   (at your option) any later version.&n; *&n; *   This program is distributed in the hope that it will be useful,&n; *   but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *   GNU General Public License for more details.&n; *&n; *   You should have received a copy of the GNU General Public License&n; *   along with this program; if not, write to the Free Software&n; *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * TODO:&n; *  - Use P44Slot for 44.1 playback.&n; *  - Capture and duplex&n; *  - 96KHz playback for DVD - use pitch of 2.0.&n; *  - uLaw for Sun apps.&n; *  - Retain DMA buffer on close, do not wait the end of frame.&n; *  - Cleanup&n; *      ? merge ymf_pcm and state&n; *      ? pcm interrupt no pointer&n; *      ? underused structure members&n; */
+multiline_comment|/*&n; *  Copyright 1999 Jaroslav Kysela &lt;perex@suse.cz&gt;&n; *  Copyright 2000 Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Yamaha YMF7xx driver.&n; *&n; *  This code is a result of high-speed collision&n; *  between ymfpci.c of ALSA and cs46xx.c of Linux.&n; *  -- Pete Zaitcev &lt;zaitcev@metabyte.com&gt;; 2000/09/18&n; *&n; *   This program is free software; you can redistribute it and/or modify&n; *   it under the terms of the GNU General Public License as published by&n; *   the Free Software Foundation; either version 2 of the License, or&n; *   (at your option) any later version.&n; *&n; *   This program is distributed in the hope that it will be useful,&n; *   but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *   GNU General Public License for more details.&n; *&n; *   You should have received a copy of the GNU General Public License&n; *   along with this program; if not, write to the Free Software&n; *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * TODO:&n; *  - Use P44Slot for 44.1 playback.&n; *  - Capture and duplex&n; *  - 96KHz playback for DVD - use pitch of 2.0.&n; *  - uLaw for Sun apps.&n; *  - Retain DMA buffer on close, do not wait the end of frame.&n; *  - Cleanup&n; *      ? merge ymf_pcm and state&n; *      ? pcm interrupt no pointer&n; *      ? underused structure members&n; *      - Remove remaining P3 tags (debug messages).&n; *  - Resolve XXX tagged questions.&n; *  - Cannot play 5133Hz.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -94,9 +94,6 @@ id|unit
 comma
 r_int
 id|nvirt
-comma
-r_int
-id|instance
 )paren
 suffix:semicolon
 r_static
@@ -2530,15 +2527,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* P3 */
-id|printk
-c_func
-(paren
-l_string|&quot;ymf_pcm_interrupt: voice %d: no ypcm&bslash;n&quot;
-comma
-id|voice-&gt;number
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2554,15 +2542,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* P3 */
-id|printk
-c_func
-(paren
-l_string|&quot;ymf_pcm_interrupt: voice %d: no state&bslash;n&quot;
-comma
-id|voice-&gt;number
-)paren
-suffix:semicolon
 id|ypcm-&gt;running
 op_assign
 l_int|0
@@ -2661,7 +2640,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;ymfpci%d: %d: runaway: hwptr %d dmasize %d&bslash;n&quot;
 comma
-id|codec-&gt;inst
+id|codec-&gt;dev_audio
 comma
 id|voice-&gt;number
 comma
@@ -2754,7 +2733,7 @@ c_func
 (paren
 l_string|&quot;ymfpci%d: %d: strain: hwptr %d&bslash;n&quot;
 comma
-id|codec-&gt;inst
+id|codec-&gt;dev_audio
 comma
 id|voice-&gt;number
 comma
@@ -2824,7 +2803,7 @@ c_func
 l_string|&quot;ymfpci%d: %d: lost: delta %d&quot;
 l_string|&quot; hwptr %d swptr %d distance %d count %d&bslash;n&quot;
 comma
-id|codec-&gt;inst
+id|codec-&gt;dev_audio
 comma
 id|voice-&gt;number
 comma
@@ -2845,7 +2824,7 @@ r_else
 multiline_comment|/*&n;&t;&t;&t;&t; * Normal end of DMA.&n;&t;&t;&t;&t; */
 singleline_comment|//&t;&t;&t;&t;printk(&quot;ymfpci%d: %d: done: delta %d&quot;
 singleline_comment|//&t;&t;&t;&t;    &quot; hwptr %d swptr %d distance %d count %d&bslash;n&quot;,
-singleline_comment|//&t;&t;&t;&t;    codec-&gt;inst, voice-&gt;number, delta,
+singleline_comment|//&t;&t;&t;&t;    codec-&gt;dev_audio, voice-&gt;number, delta,
 singleline_comment|//&t;&t;&t;&t;    dmabuf-&gt;hwptr, swptr, distance, dmabuf-&gt;count);
 )brace
 id|played
@@ -3134,15 +3113,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* P3 */
-id|printk
-c_func
-(paren
-l_string|&quot;ymfpci: trigger %d no voice&bslash;n&quot;
-comma
-id|cmd
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -4068,7 +4038,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;ymfpci%d: cannot allocate voice!&bslash;n&quot;
 comma
-id|codec-&gt;inst
+id|codec-&gt;dev_audio
 )paren
 suffix:semicolon
 r_return
@@ -4891,9 +4861,6 @@ id|unit
 comma
 r_int
 id|nvirt
-comma
-r_int
-id|instance
 )paren
 (brace
 id|ymfpci_pcm_t
@@ -4943,13 +4910,6 @@ r_sizeof
 r_struct
 id|ymf_state
 )paren
-)paren
-suffix:semicolon
-id|init_waitqueue_head
-c_func
-(paren
-op_amp
-id|state-&gt;open_wait
 )paren
 suffix:semicolon
 id|init_waitqueue_head
@@ -6887,7 +6847,6 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_RESET
 suffix:colon
-multiline_comment|/* FIXME: spin_lock ? */
 r_if
 c_cond
 (paren
@@ -6900,6 +6859,15 @@ id|ymf_wait_dac
 c_func
 (paren
 id|state
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|state-&gt;unit-&gt;reg_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|dmabuf-&gt;ready
@@ -6917,6 +6885,15 @@ op_assign
 id|dmabuf-&gt;total_bytes
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|state-&gt;unit-&gt;reg_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 )brace
 macro_line|#if HAVE_RECORD
@@ -7052,8 +7029,6 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_SPEED %d&bslash;n&quot;, val); */
 r_if
 c_cond
 (paren
@@ -7066,15 +7041,6 @@ op_le
 l_int|48000
 )paren
 (brace
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|state-&gt;unit-&gt;reg_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7107,6 +7073,15 @@ id|state
 suffix:semicolon
 )brace
 macro_line|#endif
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|state-&gt;unit-&gt;reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|dmabuf-&gt;ready
 op_assign
 l_int|0
@@ -7169,8 +7144,6 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_STEREO %d&bslash;n&quot;, val); */
 r_if
 c_cond
 (paren
@@ -7263,8 +7236,6 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETBLKSIZE
 suffix:colon
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_GETBLKSIZE&bslash;n&quot;); */
 r_if
 c_cond
 (paren
@@ -7353,8 +7324,6 @@ r_case
 id|SNDCTL_DSP_GETFMTS
 suffix:colon
 multiline_comment|/* Returns a mask of supported sample format*/
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_GETFMTS&bslash;n&quot;); */
 r_return
 id|put_user
 c_func
@@ -7393,8 +7362,6 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_SETFMT 0x%x&bslash;n&quot;, val); */
 r_if
 c_cond
 (paren
@@ -7407,15 +7374,6 @@ op_eq
 id|AFMT_U8
 )paren
 (brace
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|state-&gt;unit-&gt;reg_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7448,6 +7406,15 @@ id|state
 suffix:semicolon
 )brace
 macro_line|#endif
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|state-&gt;unit-&gt;reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|dmabuf-&gt;ready
 op_assign
 l_int|0
@@ -7518,15 +7485,6 @@ op_ne
 l_int|0
 )paren
 (brace
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|state-&gt;unit-&gt;reg_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7553,6 +7511,15 @@ op_eq
 l_int|2
 )paren
 (brace
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|state-&gt;unit-&gt;reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|dmabuf-&gt;ready
 op_assign
 l_int|0
@@ -7568,6 +7535,15 @@ op_amp
 id|state-&gt;format
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|state-&gt;unit-&gt;reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 )brace
 macro_line|#if HAVE_RECORD
@@ -7579,6 +7555,15 @@ op_amp
 id|FMODE_READ
 )paren
 (brace
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|state-&gt;unit-&gt;reg_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|stop_adc
 c_func
 (paren
@@ -7589,8 +7574,6 @@ id|dmabuf-&gt;ready
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-macro_line|#endif
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -7600,6 +7583,8 @@ comma
 id|flags
 )paren
 suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 r_return
 id|put_user
@@ -7787,8 +7772,6 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETOSPACE
 suffix:colon
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_GETOSPACE&bslash;n&quot;); */
 r_if
 c_cond
 (paren
@@ -8003,8 +7986,6 @@ macro_line|#endif
 r_case
 id|SNDCTL_DSP_NONBLOCK
 suffix:colon
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_NONBLOCK&bslash;n&quot;); */
 id|file-&gt;f_flags
 op_or_assign
 id|O_NONBLOCK
@@ -8015,8 +7996,6 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETCAPS
 suffix:colon
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_GETCAPS&bslash;n&quot;); */
 multiline_comment|/* return put_user(DSP_CAP_REALTIME|DSP_CAP_TRIGGER|DSP_CAP_MMAP,&n;&t;&t;&t;    (int *)arg); */
 r_return
 id|put_user
@@ -8299,8 +8278,6 @@ macro_line|#endif
 r_case
 id|SNDCTL_DSP_GETOPTR
 suffix:colon
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_GETOPTR&bslash;n&quot;); */
 r_if
 c_cond
 (paren
@@ -8383,8 +8360,6 @@ r_case
 id|SNDCTL_DSP_SETDUPLEX
 suffix:colon
 multiline_comment|/* XXX TODO */
-multiline_comment|/* P3 */
-multiline_comment|/* printk(&quot;ymfpci: ioctl SNDCTL_DSP_SETDUPLEX&bslash;n&quot;); */
 r_return
 op_minus
 id|EINVAL
@@ -8518,16 +8493,8 @@ id|ENOTTY
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* P3 */
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;ymfpci: unknown ioctl cmd 0x%x&bslash;n&quot;
-comma
-id|cmd
-)paren
-suffix:semicolon
+(brace
+)brace
 multiline_comment|/*&n;&t;&t; * Some programs mix up audio devices and ioctls&n;&t;&t; * or perhaps they expect &quot;universal&quot; ioctls,&n;&t;&t; * for instance we get SNDCTL_TMR_CONTINUE here.&n;&t;&t; * XXX Is there sound_generic_ioctl() around?&n;&t;&t; */
 )brace
 r_return
@@ -8563,8 +8530,6 @@ id|unit
 suffix:semicolon
 r_int
 id|minor
-comma
-id|instance
 suffix:semicolon
 r_struct
 id|ymf_state
@@ -8608,22 +8573,11 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|instance
-op_assign
-(paren
-id|minor
-op_rshift
-l_int|4
-)paren
-op_amp
-l_int|0x0F
-suffix:semicolon
 id|nvirt
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Such is the partitioning of minor */
-multiline_comment|/* XXX Semaphore here! */
 r_for
 c_loop
 (paren
@@ -8656,9 +8610,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|unit-&gt;inst
+(paren
+(paren
+id|unit-&gt;dev_audio
+op_xor
+id|minor
+)paren
+op_amp
+op_complement
+l_int|0x0F
+)paren
 op_eq
-id|instance
+l_int|0
 )paren
 r_break
 suffix:semicolon
@@ -8675,6 +8638,13 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|unit-&gt;open_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8686,13 +8656,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* P3 */
-id|printk
+id|up
 c_func
 (paren
-l_string|&quot;ymfpci%d: busy&bslash;n&quot;
-comma
-id|unit-&gt;inst
+op_amp
+id|unit-&gt;open_sem
 )paren
 suffix:semicolon
 r_return
@@ -8712,14 +8680,19 @@ c_func
 id|unit
 comma
 id|nvirt
-comma
-id|instance
 )paren
 )paren
 op_ne
 l_int|0
 )paren
 (brace
+id|up
+c_func
+(paren
+op_amp
+id|unit-&gt;open_sem
+)paren
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -8775,6 +8748,13 @@ c_func
 id|state
 )paren
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|unit-&gt;open_sem
+)paren
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -8806,6 +8786,14 @@ id|YDSXGR_TIMERCTRL_TIEN
 )paren
 suffix:semicolon
 macro_line|#endif
+id|up
+c_func
+(paren
+op_amp
+id|unit-&gt;open_sem
+)paren
+suffix:semicolon
+multiline_comment|/* XXX Is it correct to have MOD_INC_USE_COUNT outside of sem.? */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -8859,7 +8847,6 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* XXX Use the semaphore to unrace us with opens */
 r_if
 c_cond
 (paren
@@ -8877,7 +8864,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;ymfpci%d.%d: state mismatch&bslash;n&quot;
 comma
-id|state-&gt;unit-&gt;inst
+id|state-&gt;unit-&gt;dev_audio
 comma
 id|state-&gt;virt
 )paren
@@ -8887,6 +8874,13 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|codec-&gt;open_sem
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * XXX Solve the case of O_NONBLOCK close - don&squot;t deallocate here.&n;&t; * Deallocate when unloading the driver and we can wait.&n;&t; */
 id|ymf_wait_dac
 c_func
@@ -8918,6 +8912,13 @@ id|kfree
 c_func
 (paren
 id|state
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|codec-&gt;open_sem
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -10377,7 +10378,6 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* Alan does not have this printout. P3 */
 id|printk
 c_func
 (paren
@@ -10497,11 +10497,6 @@ id|ent
 id|u16
 id|ctrl
 suffix:semicolon
-r_static
-r_int
-id|ymf_instance
-suffix:semicolon
-multiline_comment|/* = 0 */
 id|ymfpci_t
 op_star
 id|codec
@@ -10594,13 +10589,16 @@ op_amp
 id|codec-&gt;voice_lock
 )paren
 suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|codec-&gt;open_sem
+)paren
+suffix:semicolon
 id|codec-&gt;pci
 op_assign
 id|pcidev
-suffix:semicolon
-id|codec-&gt;inst
-op_assign
-id|ymf_instance
 suffix:semicolon
 id|pci_read_config_byte
 c_func
@@ -10609,10 +10607,6 @@ id|pcidev
 comma
 id|PCI_REVISION_ID
 comma
-(paren
-id|u8
-op_star
-)paren
 op_amp
 id|codec-&gt;rev
 )paren
@@ -10637,9 +10631,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ymfpci%d: %s at 0x%lx IRQ %d&bslash;n&quot;
-comma
-id|ymf_instance
+l_string|&quot;ymfpci: %s at 0x%lx IRQ %d&bslash;n&quot;
 comma
 (paren
 r_char
@@ -10736,7 +10728,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;ymfpci%d: unable to request IRQ %d&bslash;n&quot;
 comma
-id|codec-&gt;inst
+id|codec-&gt;dev_audio
 comma
 id|pcidev-&gt;irq
 )paren
@@ -10772,7 +10764,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;ymfpci%d: unable to register dsp&bslash;n&quot;
 comma
-id|codec-&gt;inst
+id|codec-&gt;dev_audio
 )paren
 suffix:semicolon
 r_goto
@@ -10818,9 +10810,6 @@ id|pcidev
 comma
 id|codec
 )paren
-suffix:semicolon
-id|ymf_instance
-op_increment
 suffix:semicolon
 r_return
 l_int|0

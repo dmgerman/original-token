@@ -230,18 +230,9 @@ id|tq_struct
 id|sdla_tq
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* .next */
-l_int|0
-comma
-multiline_comment|/* .sync */
-op_amp
+id|routine
+suffix:colon
 id|sdla_poll
-comma
-multiline_comment|/* .routine */
-l_int|NULL
-multiline_comment|/* .data */
 )brace
 suffix:semicolon
 multiline_comment|/******* Kernel Loadable Module Entry Points ********************************/

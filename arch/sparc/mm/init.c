@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.95 2000/11/10 04:49:56 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/*  $Id: init.c,v 1.96 2000/11/30 08:51:50 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2593,22 +2593,21 @@ op_assign
 r_int
 r_int
 )paren
-id|kmap
+id|page_address
 c_func
 (paren
 id|page
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vaddr
+)paren
 id|__flush_page_to_ram
 c_func
 (paren
 id|vaddr
-)paren
-suffix:semicolon
-id|kunmap
-c_func
-(paren
-id|page
 )paren
 suffix:semicolon
 )brace

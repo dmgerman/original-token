@@ -67,10 +67,10 @@ r_char
 op_star
 id|devname
 op_assign
-id|skb-&gt;rx_dev
+id|skb-&gt;dev
 ques
 c_cond
-id|skb-&gt;rx_dev-&gt;name
+id|skb-&gt;dev-&gt;name
 suffix:colon
 l_string|&quot;???&quot;
 suffix:semicolon
@@ -90,7 +90,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;DECnet: Martian packet (%s) rx_dev=%s src=0x%04hx dst=0x%04hx srcport=0x%04hx dstport=0x%04hx&bslash;n&quot;
+l_string|&quot;DECnet: Martian packet (%s) dev=%s src=0x%04hx dst=0x%04hx srcport=0x%04hx dstport=0x%04hx&bslash;n&quot;
 comma
 id|msg
 comma
@@ -3122,7 +3122,7 @@ id|NF_DN_LOCAL_IN
 comma
 id|skb
 comma
-id|skb-&gt;rx_dev
+id|skb-&gt;dev
 comma
 l_int|NULL
 comma

@@ -4231,9 +4231,12 @@ id|cs-&gt;event
 op_assign
 l_int|0
 suffix:semicolon
-id|cs-&gt;tqueue.next
-op_assign
-l_int|0
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|cs-&gt;tqueue.list
+)paren
 suffix:semicolon
 id|cs-&gt;tqueue.sync
 op_assign

@@ -137,12 +137,6 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Device we arrived on/are leaving by&t;&t;*/
-DECL|member|rx_dev
-r_struct
-id|net_device
-op_star
-id|rx_dev
-suffix:semicolon
 multiline_comment|/* Transport layer header */
 r_union
 (brace
@@ -280,13 +274,9 @@ r_char
 id|used
 suffix:semicolon
 multiline_comment|/* Data moved to user and not MSG_PEEK&t;&t;*/
-DECL|member|is_clone
+DECL|member|cloned
 r_int
 r_char
-id|is_clone
-comma
-multiline_comment|/* We are a clone&t;&t;&t;&t;*/
-DECL|member|cloned
 id|cloned
 comma
 multiline_comment|/* head may be cloned (check refcnt to be sure). */

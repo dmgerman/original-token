@@ -395,11 +395,6 @@ op_amp
 id|eof
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|nfs_refresh_inode
 c_func
 (paren
@@ -407,6 +402,11 @@ id|inode
 comma
 op_amp
 id|fattr
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Even if we had a partial success we can&squot;t mark the page&n;&t;&t; * cache valid.&n;&t;&t; */

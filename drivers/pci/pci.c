@@ -2488,11 +2488,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_complement
 id|sz
 )paren
 id|res-&gt;end
 op_assign
 id|res-&gt;start
+op_plus
+l_int|0xffffffff
 op_plus
 (paren
 (paren

@@ -6015,9 +6015,12 @@ op_amp
 id|priv-&gt;dp_close_wait
 )paren
 suffix:semicolon
-id|priv-&gt;dp_wakeup_task.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|priv-&gt;dp_wakeup_task.list
+)paren
 suffix:semicolon
 id|priv-&gt;dp_wakeup_task.sync
 op_assign

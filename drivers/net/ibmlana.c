@@ -13,9 +13,7 @@ macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -3155,8 +3153,6 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
@@ -3198,7 +3194,7 @@ id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032a)
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
@@ -3687,6 +3683,14 @@ suffix:semicolon
 id|ibmlana_medium
 id|medium
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* can&squot;t work without an MCA bus ;-) */
 r_if
 c_cond
@@ -4247,50 +4251,32 @@ id|moddevs
 (braket
 id|DEVMAX
 )braket
-op_assign
-(brace
-(brace
-id|init
-suffix:colon
-id|ibmlana_probe
-)brace
-comma
-(brace
-id|init
-suffix:colon
-id|ibmlana_probe
-)brace
-comma
-(brace
-id|init
-suffix:colon
-id|ibmlana_probe
-)brace
-comma
-(brace
-id|init
-suffix:colon
-id|ibmlana_probe
-)brace
-comma
-(brace
-id|init
-suffix:colon
-id|ibmlana_probe
-)brace
-)brace
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
-op_assign
-l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 DECL|function|init_module
 r_int
@@ -4324,18 +4310,32 @@ id|z
 op_increment
 )paren
 (brace
-id|strcpy
-c_func
-(paren
 id|moddevs
 (braket
 id|z
 )braket
 dot
-id|name
-comma
-l_string|&quot;     &quot;
-)paren
+id|init
+op_assign
+id|ibmlana_probe
+suffix:semicolon
+id|moddevs
+(braket
+id|z
+)braket
+dot
+id|irq
+op_assign
+id|irq
+suffix:semicolon
+id|moddevs
+(braket
+id|z
+)braket
+dot
+id|base_addr
+op_assign
+id|io
 suffix:semicolon
 id|res
 op_assign

@@ -993,9 +993,12 @@ op_assign
 id|PLIP_NIBBLE_WAIT
 suffix:semicolon
 multiline_comment|/* Initialize task queue structures */
-id|nl-&gt;immediate.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|nl-&gt;immediate.list
+)paren
 suffix:semicolon
 id|nl-&gt;immediate.sync
 op_assign
@@ -1019,9 +1022,12 @@ id|nl-&gt;immediate.data
 op_assign
 id|dev
 suffix:semicolon
-id|nl-&gt;deferred.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|nl-&gt;deferred.list
+)paren
 suffix:semicolon
 id|nl-&gt;deferred.sync
 op_assign
@@ -1054,9 +1060,12 @@ op_minus
 l_int|1
 )paren
 (brace
-id|nl-&gt;timer.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|nl-&gt;timer.list
+)paren
 suffix:semicolon
 id|nl-&gt;timer.sync
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Common code to handle map devices which are simple RAM&n; * (C) 2000 Red Hat. GPL&squot;d.&n; * $Id: map_ram.c,v 1.2 2000/07/03 10:01:38 dwmw2 Exp $&n; */
+multiline_comment|/*&n; * Common code to handle map devices which are simple RAM&n; * (C) 2000 Red Hat. GPL&squot;d.&n; * $Id: map_ram.c,v 1.7 2000/12/10 01:39:13 dwmw2 Exp $&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -266,6 +266,10 @@ id|mtd
 )paren
 )paren
 suffix:semicolon
+id|map-&gt;im_name
+op_assign
+id|im_name
+suffix:semicolon
 id|map-&gt;fldrv_destroy
 op_assign
 id|mapram_nop
@@ -306,15 +310,15 @@ id|mtd-&gt;sync
 op_assign
 id|mapram_nop
 suffix:semicolon
-id|mtd-&gt;im_name
-op_assign
-id|im_name
-suffix:semicolon
 id|mtd-&gt;flags
 op_assign
 id|MTD_CAP_RAM
 op_or
 id|MTD_VOLATILE
+suffix:semicolon
+id|mtd-&gt;erasesize
+op_assign
+id|PAGE_SIZE
 suffix:semicolon
 r_return
 id|mtd
@@ -533,6 +537,12 @@ id|mtd
 (brace
 multiline_comment|/* Nothing to see here */
 )brace
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20212 &amp;&amp; defined(MODULE)
+DECL|macro|map_ram_init
+mdefine_line|#define map_ram_init init_module
+DECL|macro|map_ram_exit
+mdefine_line|#define map_ram_exit cleanup_module
+macro_line|#endif
 DECL|function|map_ram_init
 r_static
 r_int

@@ -349,6 +349,7 @@ mdefine_line|#define __MODULE_STRING_1(x)&t;#x
 DECL|macro|__MODULE_STRING
 mdefine_line|#define __MODULE_STRING(x)&t;__MODULE_STRING_1(x)
 multiline_comment|/* Generic inter module communication.&n; *&n; * NOTE: This interface is intended for small amounts of data that are&n; *       passed between two objects and either or both of the objects&n; *       might be compiled as modules.  Do not over use this interface.&n; *&n; *       If more than two objects need to communicate then you probably&n; *       need a specific interface instead of abusing this generic&n; *       interface.  If both objects are *always* built into the kernel&n; *       then a global extern variable is good enough, you do not need&n; *       this interface.&n; *&n; * Keith Owens &lt;kaos@ocs.com.au&gt; 28 Oct 2000.&n; */
+macro_line|#ifdef __KERNEL__
 DECL|macro|HAVE_INTER_MODULE
 mdefine_line|#define HAVE_INTER_MODULE
 r_extern
@@ -457,6 +458,7 @@ op_star
 id|mod
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#if defined(MODULE) &amp;&amp; !defined(__GENKSYMS__)
 multiline_comment|/* Embedded module documentation macros.  */
 multiline_comment|/* For documentation purposes only.  */

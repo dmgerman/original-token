@@ -1614,6 +1614,12 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|priv
 op_assign
 id|dev-&gt;priv
@@ -2836,8 +2842,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|priv-&gt;tlanRev
 op_assign
 id|TLan_DioRead8
@@ -2880,8 +2884,6 @@ id|dev-&gt;name
 comma
 id|dev-&gt;irq
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|err
@@ -3832,8 +3834,6 @@ l_string|&quot;Device %s closed.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

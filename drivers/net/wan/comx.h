@@ -163,6 +163,7 @@ suffix:semicolon
 singleline_comment|// against line jitter
 DECL|member|lineup_pending
 r_int
+r_int
 id|lineup_pending
 suffix:semicolon
 DECL|member|lineup_delay

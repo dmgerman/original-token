@@ -1977,6 +1977,10 @@ id|sk-&gt;zapped
 op_assign
 id|osk-&gt;zapped
 suffix:semicolon
+id|sk-&gt;backlog_rcv
+op_assign
+id|osk-&gt;backlog_rcv
+suffix:semicolon
 id|x25-&gt;t21
 op_assign
 id|osk-&gt;protinfo.x25-&gt;t21
@@ -3318,7 +3322,11 @@ op_logical_neg
 (paren
 id|msg-&gt;msg_flags
 op_amp
+(paren
 id|MSG_EOR
+op_or
+id|MSG_OOB
+)paren
 )paren
 )paren
 r_return

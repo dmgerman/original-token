@@ -561,19 +561,13 @@ r_int
 id|last_events
 suffix:semicolon
 multiline_comment|/* IO event timestamp */
-DECL|member|inode
+DECL|member|bdev
 r_struct
-id|inode
+id|block_device
 op_star
-id|inode
+id|bdev
 suffix:semicolon
-multiline_comment|/* Lock inode */
-DECL|member|filp
-r_struct
-id|file
-id|filp
-suffix:semicolon
-multiline_comment|/* Lock file */
+multiline_comment|/* block device handle */
 DECL|member|sb
 id|mdp_super_t
 op_star
@@ -698,6 +692,10 @@ DECL|member|resync_sem
 r_struct
 id|semaphore
 id|resync_sem
+suffix:semicolon
+DECL|member|active
+id|atomic_t
+id|active
 suffix:semicolon
 DECL|member|recovery_active
 id|atomic_t

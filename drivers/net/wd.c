@@ -212,12 +212,13 @@ suffix:semicolon
 r_int
 id|base_addr
 op_assign
-id|dev
-ques
-c_cond
 id|dev-&gt;base_addr
-suffix:colon
-l_int|0
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -277,7 +278,7 @@ suffix:semicolon
 r_else
 id|r-&gt;name
 op_assign
-id|ei_status.name
+id|dev-&gt;name
 suffix:semicolon
 r_return
 id|i
@@ -357,7 +358,7 @@ l_int|0
 (brace
 id|r-&gt;name
 op_assign
-id|ei_status.name
+id|dev-&gt;name
 suffix:semicolon
 r_return
 l_int|0
@@ -1324,9 +1325,8 @@ id|ENOMEM
 suffix:semicolon
 )brace
 multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;&t;   share and the board will usually be enabled. */
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|request_irq
 c_func
 (paren
@@ -1336,10 +1336,15 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-id|model_name
+id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
 (brace
 id|printk
@@ -1360,8 +1365,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|i
 suffix:semicolon
 )brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
@@ -1611,8 +1615,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2118,8 +2120,6 @@ id|WD_MEMENB
 comma
 id|wd_cmdreg
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

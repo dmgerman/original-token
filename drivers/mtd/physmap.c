@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: physmap.c,v 1.2 2000/07/11 09:42:32 dwmw2 Exp $&n; *&n; * Normal mappings of chips in physical memory&n; */
+multiline_comment|/*&n; * $Id: physmap.c,v 1.8 2000/11/27 08:50:22 dwmw2 Exp $&n; *&n; * Normal mappings of chips in physical memory&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,6 +10,8 @@ DECL|macro|WINDOW_ADDR
 mdefine_line|#define WINDOW_ADDR CONFIG_MTD_PHYSMAP_START
 DECL|macro|WINDOW_SIZE
 mdefine_line|#define WINDOW_SIZE CONFIG_MTD_PHYSMAP_LEN
+DECL|macro|BUSWIDTH
+mdefine_line|#define BUSWIDTH CONFIG_MTD_PHYSMAP_BUSWIDTH
 DECL|variable|mymtd
 r_static
 r_struct
@@ -256,40 +258,56 @@ id|map_info
 id|physmap_map
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;Physically mapped flash&quot;
 comma
+id|size
+suffix:colon
 id|WINDOW_SIZE
 comma
-l_int|2
+id|buswidth
+suffix:colon
+id|BUSWIDTH
 comma
+id|read8
+suffix:colon
 id|physmap_read8
 comma
+id|read16
+suffix:colon
 id|physmap_read16
 comma
+id|read32
+suffix:colon
 id|physmap_read32
 comma
+id|copy_from
+suffix:colon
 id|physmap_copy_from
 comma
+id|write8
+suffix:colon
 id|physmap_write8
 comma
+id|write16
+suffix:colon
 id|physmap_write16
 comma
+id|write32
+suffix:colon
 id|physmap_write32
 comma
+id|copy_to
+suffix:colon
 id|physmap_copy_to
-comma
-l_int|0
-comma
-l_int|0
 )brace
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-macro_line|#ifdef MODULE
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20212 &amp;&amp; defined(MODULE)
 DECL|macro|init_physmap
 mdefine_line|#define init_physmap init_module
 DECL|macro|cleanup_physmap
 mdefine_line|#define cleanup_physmap cleanup_module
-macro_line|#endif
 macro_line|#endif
 DECL|function|init_physmap
 r_int
@@ -320,9 +338,9 @@ r_int
 id|ioremap
 c_func
 (paren
-id|WINDOW_SIZE
-comma
 id|WINDOW_ADDR
+comma
+id|WINDOW_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -375,6 +393,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|iounmap
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|physmap_map.map_priv_1
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -431,4 +459,18 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+DECL|variable|init_physmap
+id|module_init
+c_func
+(paren
+id|init_physmap
+)paren
+suffix:semicolon
+DECL|variable|cleanup_physmap
+id|module_exit
+c_func
+(paren
+id|cleanup_physmap
+)paren
+suffix:semicolon
 eof

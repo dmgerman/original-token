@@ -227,10 +227,17 @@ op_logical_or
 id|called
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|called
 op_increment
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|dev-&gt;priv
 op_assign
@@ -695,8 +702,6 @@ op_or
 l_int|0x04
 suffix:semicolon
 multiline_comment|/* Enable irq 4 */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -724,8 +729,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

@@ -2925,6 +2925,8 @@ id|vip
 id|CIA_IOC_PCI_T1_BASE
 op_assign
 l_int|0
+op_rshift
+l_int|2
 suffix:semicolon
 op_star
 (paren
@@ -2957,6 +2959,8 @@ id|vip
 id|CIA_IOC_PCI_T2_BASE
 op_assign
 l_int|0x40000000
+op_rshift
+l_int|2
 suffix:semicolon
 op_star
 (paren

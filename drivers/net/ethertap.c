@@ -157,6 +157,12 @@ op_star
 id|dev
 )paren
 (brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -309,8 +315,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|lp-&gt;nl
 op_assign
 id|netlink_kernel_create
@@ -328,14 +332,10 @@ id|lp-&gt;nl
 op_eq
 l_int|NULL
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENOBUFS
 suffix:semicolon
-)brace
 id|netif_start_queue
 c_func
 (paren
@@ -1335,8 +1335,6 @@ id|sk-&gt;socket
 )paren
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

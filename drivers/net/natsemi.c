@@ -1323,6 +1323,12 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 (brace
 r_void
 op_star
@@ -2196,11 +2202,8 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* Do we need to reset the chip??? */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|request_irq
 c_func
 (paren
@@ -2215,15 +2218,15 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|i
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5610,8 +5613,6 @@ id|ChipConfig
 suffix:semicolon
 multiline_comment|/* Power down Xcvr. */
 macro_line|#endif
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -1179,6 +1179,12 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|net_dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2683,7 +2689,8 @@ suffix:semicolon
 id|u8
 id|revision
 suffix:semicolon
-id|MOD_INC_USE_COUNT
+r_int
+id|ret
 suffix:semicolon
 multiline_comment|/* Soft reset the chip. */
 id|sis900_reset
@@ -2721,9 +2728,8 @@ c_func
 id|net_dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|request_irq
 c_func
 (paren
@@ -2738,15 +2744,15 @@ id|net_dev-&gt;name
 comma
 id|net_dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|ret
 suffix:semicolon
-)brace
 id|sis900_init_rxfilter
 c_func
 (paren
@@ -6321,8 +6327,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Green! Put the chip in low-power mode. */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

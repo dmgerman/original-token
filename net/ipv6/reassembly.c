@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 fragment reassembly&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: reassembly.c,v 1.20 2000/11/28 13:48:03 davem Exp $&n; *&n; *&t;Based on: net/ipv4/ip_fragment.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 fragment reassembly&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: reassembly.c,v 1.22 2000/12/08 17:41:54 davem Exp $&n; *&n; *&t;Based on: net/ipv4/ip_fragment.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/* &n; *&t;Fixes:&t;&n; *&t;Andi Kleen&t;Make it work with multiple hosts.&n; *&t;&t;&t;More RFC compliance.&n; *&n; *      Horst von Brand Add missing #include &lt;linux/string.h&gt;&n; *&t;Alexey Kuznetsov&t;SMP races, threading, cleanup.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -112,12 +112,6 @@ suffix:semicolon
 DECL|member|meat
 r_int
 id|meat
-suffix:semicolon
-DECL|member|dev
-r_struct
-id|net_device
-op_star
-id|dev
 suffix:semicolon
 DECL|member|iif
 r_int
@@ -1882,13 +1876,13 @@ id|fq-&gt;fragments
 op_assign
 id|skb
 suffix:semicolon
-id|fq-&gt;dev
-op_assign
-id|skb-&gt;dev
-suffix:semicolon
 id|fq-&gt;iif
 op_assign
 id|skb-&gt;dev-&gt;ifindex
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+l_int|NULL
 suffix:semicolon
 id|fq-&gt;meat
 op_add_assign
@@ -1956,6 +1950,11 @@ id|sk_buff
 op_star
 op_star
 id|skb_in
+comma
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 (brace
 r_struct
@@ -2095,7 +2094,7 @@ id|skb-&gt;data
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
-id|fq-&gt;dev
+id|dev
 suffix:semicolon
 id|skb-&gt;protocol
 op_assign
@@ -2306,6 +2305,13 @@ id|skb-&gt;h.raw
 )paren
 suffix:semicolon
 r_struct
+id|net_device
+op_star
+id|dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
+r_struct
 id|frag_queue
 op_star
 id|fq
@@ -2500,6 +2506,8 @@ c_func
 id|fq
 comma
 id|skbp
+comma
+id|dev
 )paren
 suffix:semicolon
 id|spin_unlock

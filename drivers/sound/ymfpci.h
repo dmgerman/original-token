@@ -589,8 +589,7 @@ r_struct
 id|ymf_unit
 (brace
 DECL|member|rev
-r_int
-r_int
+id|u8
 id|rev
 suffix:semicolon
 multiline_comment|/* PCI revision */
@@ -721,11 +720,6 @@ id|pci_dev
 op_star
 id|pci
 suffix:semicolon
-DECL|member|inst
-r_int
-id|inst
-suffix:semicolon
-multiline_comment|/* Unit number (instance) */
 DECL|member|reg_lock
 id|spinlock_t
 id|reg_lock
@@ -738,6 +732,11 @@ multiline_comment|/* soundcore stuff */
 DECL|member|dev_audio
 r_int
 id|dev_audio
+suffix:semicolon
+DECL|member|open_sem
+r_struct
+id|semaphore
+id|open_sem
 suffix:semicolon
 DECL|member|ymf_devs
 r_struct
@@ -889,16 +888,6 @@ op_star
 id|unit
 suffix:semicolon
 multiline_comment|/* backpointer */
-multiline_comment|/* single open lock mechanism, only used for recording */
-DECL|member|open_sem
-r_struct
-id|semaphore
-id|open_sem
-suffix:semicolon
-DECL|member|open_wait
-id|wait_queue_head_t
-id|open_wait
-suffix:semicolon
 multiline_comment|/* virtual channel number */
 DECL|member|virt
 r_int

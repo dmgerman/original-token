@@ -8,6 +8,8 @@ multiline_comment|/*&n; * Locking Notes&n; *&n; *&t;INC_USE_COUNT and DEC_USE_CO
 multiline_comment|/*&n; * Sample Format Notes&n; *&n; *&t;Lithium&squot;s DMA engine has two formats: 16-bit 2&squot;s complement&n; *&t;and 8-bit unsigned .  16-bit transfers the data unmodified, 2&n; *&t;bytes per sample.  8-bit unsigned transfers 1 byte per sample&n; *&t;and XORs each byte with 0x80.  Lithium can input or output&n; *&t;either mono or stereo in either format.&n; *&n; *&t;The AD1843 has four formats: 16-bit 2&squot;s complement, 8-bit&n; *&t;unsigned, 8-bit mu-Law and 8-bit A-Law.&n; *&n; *&t;This driver supports five formats: AFMT_S8, AFMT_U8,&n; *&t;AFMT_MU_LAW, AFMT_A_LAW, and AFMT_S16_LE.&n; *&n; *&t;For AFMT_U8 output, we keep the AD1843 in 16-bit mode, and&n; *&t;rely on Lithium&squot;s XOR to translate between U8 and S8.&n; *&n; *&t;For AFMT_S8, AFMT_MU_LAW and AFMT_A_LAW output, we have to XOR&n; *&t;the 0x80 bit in software to compensate for Lithium&squot;s XOR.&n; *&t;This happens in pcm_copy_{in,out}().&n; *&n; * Changes:&n; * 11-10-2000&t;Bartlomiej Zolnierkiewicz &lt;bkz@linux-ide.org&gt;&n; *&t;&t;Added some __init/__exit&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/semaphore.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;

@@ -701,6 +701,12 @@ comma
 id|new_vma
 )paren
 suffix:semicolon
+id|unlock_vma_mappings
+c_func
+(paren
+id|vma
+)paren
+suffix:semicolon
 id|merge_segments
 c_func
 (paren
@@ -716,12 +722,6 @@ c_func
 (paren
 op_amp
 id|current-&gt;mm-&gt;page_table_lock
-)paren
-suffix:semicolon
-id|unlock_vma_mappings
-c_func
-(paren
-id|vma
 )paren
 suffix:semicolon
 id|do_munmap

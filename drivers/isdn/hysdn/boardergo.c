@@ -1822,9 +1822,12 @@ id|card-&gt;set_errlog_state
 op_assign
 id|ergo_set_errlog_state
 suffix:semicolon
-id|card-&gt;irq_queue.next
-op_assign
-l_int|0
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|card-&gt;irq_queue.list
+)paren
 suffix:semicolon
 id|card-&gt;irq_queue.sync
 op_assign

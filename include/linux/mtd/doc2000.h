@@ -1,7 +1,7 @@
 multiline_comment|/* Linux driver for Disk-On-Chip 2000       */
 multiline_comment|/* (c) 1999 Machine Vision Holdings, Inc.   */
 multiline_comment|/* Author: David Woodhouse &lt;dwmw2@mvhi.com&gt; */
-multiline_comment|/* $Id: doc2000.h,v 1.8 2000/07/10 15:46:29 dwmw2 Exp $ */
+multiline_comment|/* $Id: doc2000.h,v 1.12 2000/11/03 12:43:43 dwmw2 Exp $ */
 macro_line|#ifndef __MTD_DOC2000_H__
 DECL|macro|__MTD_DOC2000_H__
 mdefine_line|#define __MTD_DOC2000_H__
@@ -58,21 +58,30 @@ DECL|macro|DoC_2k_CDSN_IO
 mdefine_line|#define DoC_2k_CDSN_IO &t;&t;0x1800
 multiline_comment|/* How to access the device? &n; * On ARM, it&squot;ll be mmap&squot;d directly with 32-bit wide accesses. &n; * On PPC, it&squot;s mmap&squot;d and 16-bit wide.&n; * Others use readb/writeb &n; */
 macro_line|#if defined(__arm__) 
-DECL|macro|ReadDOC
-mdefine_line|#define ReadDOC(adr, reg)      ((unsigned char)(*(__u32 *)(((unsigned long)adr)+(DoC_##reg&lt;&lt;2))))
-DECL|macro|WriteDOC
-mdefine_line|#define WriteDOC(d, adr, reg)  do{ *(__u32 *)(((unsigned long)adr)+(DoC_##reg&lt;&lt;2)) = (__u32)d} while(0)
+DECL|macro|ReadDOC_
+mdefine_line|#define ReadDOC_(adr, reg)      ((unsigned char)(*(__u32 *)(((unsigned long)adr)+(reg&lt;&lt;2))))
+DECL|macro|WriteDOC_
+mdefine_line|#define WriteDOC_(d, adr, reg)  do{ *(__u32 *)(((unsigned long)adr)+(reg&lt;&lt;2)) = (__u32)d} while(0)
 macro_line|#elif defined(__ppc__)
-DECL|macro|ReadDOC
-mdefine_line|#define ReadDOC(adr, reg)      ((unsigned char)(*(__u16 *)(((unsigned long)adr)+(DoC_##reg&lt;&lt;1))))
-DECL|macro|WriteDOC
-mdefine_line|#define WriteDOC(d, adr, reg)  do{ *(__u16 *)(((unsigned long)adr)+(DoC_##reg&lt;&lt;1)) = (__u16)d} while(0)
+DECL|macro|ReadDOC_
+mdefine_line|#define ReadDOC_(adr, reg)      ((unsigned char)(*(__u16 *)(((unsigned long)adr)+(reg&lt;&lt;1))))
+DECL|macro|WriteDOC_
+mdefine_line|#define WriteDOC_(d, adr, reg)  do{ *(__u16 *)(((unsigned long)adr)+(reg&lt;&lt;1)) = (__u16)d} while(0)
 macro_line|#else
-DECL|macro|ReadDOC
-mdefine_line|#define ReadDOC(adr, reg)      readb(((unsigned long)adr) + DoC_##reg)
-DECL|macro|WriteDOC
-mdefine_line|#define WriteDOC(d, adr, reg)  writeb(d, ((unsigned long)adr) + DoC_##reg)
+DECL|macro|ReadDOC_
+mdefine_line|#define ReadDOC_(adr, reg)      readb(((unsigned long)adr) + reg)
+DECL|macro|WriteDOC_
+mdefine_line|#define WriteDOC_(d, adr, reg)  writeb(d, ((unsigned long)adr) + reg)
 macro_line|#endif
+macro_line|#if defined(__i386__)
+DECL|macro|USE_MEMCPY
+mdefine_line|#define USE_MEMCPY
+macro_line|#endif
+multiline_comment|/* These are provided to directly use the DoC_xxx defines */
+DECL|macro|ReadDOC
+mdefine_line|#define ReadDOC(adr, reg)      ReadDOC_(adr,DoC_##reg)
+DECL|macro|WriteDOC
+mdefine_line|#define WriteDOC(d, adr, reg)  WriteDOC_(d,adr,DoC_##reg)
 DECL|macro|DOC_MODE_RESET
 mdefine_line|#define DOC_MODE_RESET &t;&t;0
 DECL|macro|DOC_MODE_NORMAL
@@ -121,7 +130,7 @@ multiline_comment|/* We have to also set the reserved bit 1 for enable */
 DECL|macro|DOC_ECC_EN
 mdefine_line|#define DOC_ECC_EN (DOC_ECC__EN | DOC_ECC_RESV)
 DECL|macro|DOC_ECC_DIS
-mdefine_line|#define DOC_ECC_DIS (DOC_ECC_IGNORE | DOC_ECC_RESV)
+mdefine_line|#define DOC_ECC_DIS (DOC_ECC_RESV)
 DECL|struct|Nand
 r_struct
 id|Nand
@@ -154,6 +163,12 @@ DECL|macro|MAX_FLOORS_MIL
 mdefine_line|#define MAX_FLOORS_MIL 4
 DECL|macro|MAX_CHIPS_MIL
 mdefine_line|#define MAX_CHIPS_MIL 1
+DECL|macro|ADDR_COLUMN
+mdefine_line|#define ADDR_COLUMN 1
+DECL|macro|ADDR_PAGE
+mdefine_line|#define ADDR_PAGE 2
+DECL|macro|ADDR_COLUMN_PAGE
+mdefine_line|#define ADDR_COLUMN_PAGE 3
 DECL|struct|DiskOnChip
 r_struct
 id|DiskOnChip
@@ -178,6 +193,10 @@ r_char
 id|ChipID
 suffix:semicolon
 multiline_comment|/* Type of DiskOnChip */
+DECL|member|ioreg
+r_int
+id|ioreg
+suffix:semicolon
 DECL|member|mfr
 r_int
 r_int
@@ -192,6 +211,19 @@ suffix:semicolon
 DECL|member|chipshift
 r_int
 id|chipshift
+suffix:semicolon
+DECL|member|page256
+r_char
+id|page256
+suffix:semicolon
+DECL|member|pageadrlen
+r_char
+id|pageadrlen
+suffix:semicolon
+DECL|member|erasesize
+r_int
+r_int
+id|erasesize
 suffix:semicolon
 DECL|member|curfloor
 r_int
@@ -218,6 +250,25 @@ op_star
 id|nextdoc
 suffix:semicolon
 )brace
+suffix:semicolon
+r_int
+id|doc_decode_ecc
+c_func
+(paren
+r_int
+r_char
+id|sector
+(braket
+l_int|512
+)braket
+comma
+r_int
+r_char
+id|ecc1
+(braket
+l_int|6
+)braket
+)paren
 suffix:semicolon
 macro_line|#endif /* __MTD_DOC2000_H__ */
 eof

@@ -946,6 +946,8 @@ l_int|0
 )braket
 op_member_access_from_pointer
 id|start
+op_plus
+id|PCIBIOS_MIN_IO
 suffix:semicolon
 id|ranges.mem_start
 op_assign
@@ -955,6 +957,8 @@ l_int|1
 )braket
 op_member_access_from_pointer
 id|start
+op_plus
+id|PCIBIOS_MIN_MEM
 suffix:semicolon
 id|ranges.io_end
 op_assign

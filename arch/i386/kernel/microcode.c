@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel CPU Microcode Update driver for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, &n; *&t;Pentium III, Xeon etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or free download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;For more information, go to http://www.urbanmyth.org/microcode&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; *&t;1.03&t;29 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Made to use devfs (/dev/cpu/microcode) + cleanups.&n; *&t;1.04&t;06 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Added misc device support (now uses both devfs and misc).&n; *&t;&t;Added MICROCODE_IOCFREE ioctl to clear memory.&n; *&t;1.05&t;09 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Messages for error cases (non intel &amp; no suitable microcode).&n; *&t;1.06&t;03 Aug 2000, Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Removed -&gt;release(). Removed exclusive open and status bitmap.&n; *&t;&t;Added microcode_rwsem to serialize read()/write()/ioctl().&n; *&t;&t;Removed global kernel lock usage.&n; *&t;1.07&t;07 Sep 2000, Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Write 0 to 0x8B msr and then cpuid before reading revision,&n; *&t;&t;so that it works even if there were no update done by the&n; *&t;&t;BIOS. Otherwise, reading from 0x8B gives junk (which happened&n; *&t;&t;to be 0 on my machine which is why it worked even when I&n; *&t;&t;disabled update by the BIOS)&n; *&t;&t;Thanks to Eric W. Biederman &lt;ebiederman@lnxi.com&gt; for the fix.&n; */
+multiline_comment|/*&n; *&t;Intel CPU Microcode Update driver for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to IA-32 family - PentiumPro, Pentium II, &n; *&t;Pentium III, Xeon, Pentium 4, etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium 4 Manual, &n; *&t;Order Number 245472 or free download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentium4/manuals/245472.htm&n; *&n; *&t;For more information, go to http://www.urbanmyth.org/microcode&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; *&t;1.03&t;29 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Made to use devfs (/dev/cpu/microcode) + cleanups.&n; *&t;1.04&t;06 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Added misc device support (now uses both devfs and misc).&n; *&t;&t;Added MICROCODE_IOCFREE ioctl to clear memory.&n; *&t;1.05&t;09 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Messages for error cases (non intel &amp; no suitable microcode).&n; *&t;1.06&t;03 Aug 2000, Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Removed -&gt;release(). Removed exclusive open and status bitmap.&n; *&t;&t;Added microcode_rwsem to serialize read()/write()/ioctl().&n; *&t;&t;Removed global kernel lock usage.&n; *&t;1.07&t;07 Sep 2000, Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Write 0 to 0x8B msr and then cpuid before reading revision,&n; *&t;&t;so that it works even if there were no update done by the&n; *&t;&t;BIOS. Otherwise, reading from 0x8B gives junk (which happened&n; *&t;&t;to be 0 on my machine which is why it worked even when I&n; *&t;&t;disabled update by the BIOS)&n; *&t;&t;Thanks to Eric W. Biederman &lt;ebiederman@lnxi.com&gt; for the fix.&n; *&t;1.08&t;11 Dec 2000, Richard Schaal &lt;richard.schaal@intel.com&gt; and&n; *&t;&t;&t;     Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Intel Pentium 4 processor support and bugfixes.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -10,11 +10,11 @@ macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|MICROCODE_VERSION
-mdefine_line|#define MICROCODE_VERSION &t;&quot;1.07&quot;
+mdefine_line|#define MICROCODE_VERSION &t;&quot;1.08&quot;
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;Intel CPU (P6) microcode update driver&quot;
+l_string|&quot;Intel CPU (IA-32) microcode update driver&quot;
 )paren
 suffix:semicolon
 id|MODULE_AUTHOR
@@ -25,6 +25,15 @@ l_string|&quot;Tigran Aivazian &lt;tigran@veritas.com&gt;&quot;
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
+DECL|macro|MICRO_DEBUG
+mdefine_line|#define MICRO_DEBUG 0
+macro_line|#if MICRO_DEBUG
+DECL|macro|printf
+mdefine_line|#define printf(x...) printk(##x)
+macro_line|#else
+DECL|macro|printf
+mdefine_line|#define printf(x...)
+macro_line|#endif
 multiline_comment|/* VFS interface */
 r_static
 r_int
@@ -151,6 +160,7 @@ r_int
 id|mc_fsize
 suffix:semicolon
 multiline_comment|/* file size of /dev/cpu/microcode */
+multiline_comment|/* we share file_operations between misc and devfs mechanisms */
 DECL|variable|microcode_fops
 r_static
 r_struct
@@ -219,22 +229,21 @@ r_void
 (brace
 r_int
 id|error
-op_assign
-l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|error
+op_assign
 id|misc_register
 c_func
 (paren
 op_amp
 id|microcode_dev
 )paren
-OL
-l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -244,11 +253,6 @@ comma
 id|MICROCODE_MINOR
 )paren
 suffix:semicolon
-id|error
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 id|devfs_handle
 op_assign
 id|devfs_register
@@ -293,22 +297,23 @@ id|KERN_ERR
 l_string|&quot;microcode: failed to devfs_register()&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;P6 Microcode Update Driver v%s&bslash;n&quot;
+l_string|&quot;IA-32 Microcode Update Driver: v%s &lt;tigran@veritas.com&gt;&bslash;n&quot;
 comma
 id|MICROCODE_VERSION
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_return
-l_int|0
+id|error
 suffix:semicolon
 )brace
 DECL|function|microcode_exit
@@ -349,26 +354,22 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;P6 Microcode Update Driver v%s unregistered&bslash;n&quot;
+l_string|&quot;IA-32 Microcode Update Driver v%s unregistered&bslash;n&quot;
 comma
 id|MICROCODE_VERSION
 )paren
 suffix:semicolon
 )brace
-DECL|variable|microcode_init
 id|module_init
 c_func
 (paren
 id|microcode_init
 )paren
-suffix:semicolon
-DECL|variable|microcode_exit
 id|module_exit
 c_func
 (paren
 id|microcode_exit
 )paren
-suffix:semicolon
 DECL|function|microcode_open
 r_static
 r_int
@@ -617,7 +618,7 @@ id|req-&gt;err
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* assume the worst */
+multiline_comment|/* assume update will fail on this cpu */
 r_if
 c_cond
 (paren
@@ -626,15 +627,24 @@ op_ne
 id|X86_VENDOR_INTEL
 op_logical_or
 id|c-&gt;x86
-op_ne
+OL
 l_int|6
+op_logical_or
+id|test_bit
+c_func
+(paren
+id|X86_FEATURE_IA64
+comma
+op_amp
+id|c-&gt;x86_capability
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;microcode: CPU%d not an Intel P6&bslash;n&quot;
+l_string|&quot;microcode: CPU%d not a capable Intel processor&bslash;n&quot;
 comma
 id|cpu_num
 )paren
@@ -661,16 +671,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|c-&gt;x86_model
 op_ge
 l_int|5
 )paren
+op_logical_or
+(paren
+id|c-&gt;x86
+OG
+l_int|6
+)paren
+)paren
 (brace
-multiline_comment|/* get processor flags from BBL_CR_OVRD MSR (0x17) */
+multiline_comment|/* get processor flags from MSR 0x17 */
 id|rdmsr
 c_func
 (paren
-l_int|0x17
+id|MSR_IA32_PLATFORM_ID
 comma
 id|val
 (braket
@@ -759,10 +777,180 @@ id|found
 op_assign
 l_int|1
 suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;Microcode&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;   Header Revision %d&bslash;n&quot;
+comma
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|hdrver
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;   Date %x/%x/%x&bslash;n&quot;
+comma
+(paren
+(paren
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|date
+op_rshift
+l_int|24
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+(paren
+(paren
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|date
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+(paren
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|date
+op_amp
+l_int|0xFFFF
+)paren
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;   Type %x Family %x Model %x Stepping %x&bslash;n&quot;
+comma
+(paren
+(paren
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|sig
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|0x3
+)paren
+comma
+(paren
+(paren
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|sig
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xf
+)paren
+comma
+(paren
+(paren
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|sig
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0xf
+)paren
+comma
+(paren
+(paren
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|sig
+op_amp
+l_int|0xf
+)paren
+)paren
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;   Checksum %x&bslash;n&quot;
+comma
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|cksum
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;   Loader Revision %x&bslash;n&quot;
+comma
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|ldrver
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;   Processor Flags %x&bslash;n&bslash;n&quot;
+comma
+id|microcode
+(braket
+id|i
+)braket
+dot
+id|pf
+)paren
+suffix:semicolon
+multiline_comment|/* trick, to work even if there was no prior update by the BIOS */
 id|wrmsr
 c_func
 (paren
-l_int|0x8B
+id|MSR_IA32_UCODE_REV
 comma
 l_int|0
 comma
@@ -785,10 +973,11 @@ comma
 l_string|&quot;dx&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* get current (on-cpu) revision into rev (ignore val[0]) */
 id|rdmsr
 c_func
 (paren
-l_int|0x8B
+id|MSR_IA32_UCODE_REV
 comma
 id|val
 (braket
@@ -930,10 +1119,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* write microcode via MSR 0x79 */
 id|wrmsr
 c_func
 (paren
-l_int|0x79
+id|MSR_IA32_UCODE_WRITE
 comma
 (paren
 r_int
@@ -946,6 +1136,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* serialize */
 id|__asm__
 id|__volatile__
 (paren
@@ -962,10 +1153,11 @@ comma
 l_string|&quot;dx&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* get the current revision from MSR 0x8B */
 id|rdmsr
 c_func
 (paren
-l_int|0x8B
+id|MSR_IA32_UCODE_REV
 comma
 id|val
 (braket
@@ -978,6 +1170,7 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* notify the caller of success on this cpu */
 id|req-&gt;err
 op_assign
 l_int|0
@@ -989,7 +1182,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_ERR
+id|KERN_INFO
 l_string|&quot;microcode: CPU%d updated from revision &quot;
 l_string|&quot;%d to %d, date=%08x&bslash;n&quot;
 comma
@@ -1054,15 +1247,9 @@ op_star
 id|ppos
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_star
-id|ppos
-op_ge
-id|mc_fsize
-)paren
-r_return
+id|ssize_t
+id|ret
+op_assign
 l_int|0
 suffix:semicolon
 id|down_read
@@ -1071,6 +1258,17 @@ c_func
 op_amp
 id|microcode_rwsem
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|ppos
+op_ge
+id|mc_fsize
+)paren
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -1089,6 +1287,11 @@ op_minus
 op_star
 id|ppos
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1105,24 +1308,20 @@ comma
 id|len
 )paren
 )paren
-(brace
-id|up_read
-c_func
-(paren
-op_amp
-id|microcode_rwsem
-)paren
+r_goto
+id|out
 suffix:semicolon
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-)brace
 op_star
 id|ppos
 op_add_assign
 id|len
 suffix:semicolon
+id|ret
+op_assign
+id|len
+suffix:semicolon
+id|out
+suffix:colon
 id|up_read
 c_func
 (paren
@@ -1131,7 +1330,7 @@ id|microcode_rwsem
 )paren
 suffix:semicolon
 r_return
-id|len
+id|ret
 suffix:semicolon
 )brace
 DECL|function|microcode_write
@@ -1230,18 +1429,18 @@ op_logical_neg
 id|mc_applied
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;microcode: out of memory for saved microcode&bslash;n&quot;
-)paren
-suffix:semicolon
 id|up_write
 c_func
 (paren
 op_amp
 id|microcode_rwsem
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;microcode: out of memory for saved microcode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1421,6 +1620,17 @@ c_cond
 id|mc_applied
 )paren
 (brace
+r_int
+id|bytes
+op_assign
+id|smp_num_cpus
+op_star
+r_sizeof
+(paren
+r_struct
+id|microcode
+)paren
+suffix:semicolon
 id|devfs_set_file_size
 c_func
 (paren
@@ -1445,7 +1655,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;microcode: freed %d bytes&bslash;n&quot;
 comma
-id|mc_fsize
+id|bytes
 )paren
 suffix:semicolon
 id|mc_fsize

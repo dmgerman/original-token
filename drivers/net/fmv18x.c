@@ -319,6 +319,12 @@ id|base_addr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1227,8 +1233,6 @@ id|ioaddr
 op_plus
 id|TX_INTR
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2552,8 +2556,6 @@ id|ioaddr
 op_plus
 id|CONFIG_1
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* Set the ethernet adaptor disable IRQ */
 id|outb

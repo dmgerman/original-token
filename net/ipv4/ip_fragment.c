@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.52 2000/11/28 13:32:54 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; *&t;&t;Alexey Kuznetsov:&t;SMP races, threading, cleanup.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.53 2000/12/08 17:15:53 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; *&t;&t;Alexey Kuznetsov:&t;SMP races, threading, cleanup.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -132,13 +132,11 @@ op_star
 op_star
 id|pprev
 suffix:semicolon
-DECL|member|dev
-r_struct
-id|net_device
-op_star
-id|dev
+DECL|member|iif
+r_int
+id|iif
 suffix:semicolon
-multiline_comment|/* Device - for icmp replies */
+multiline_comment|/* Device index - for icmp replies&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/* Hash table. */
@@ -850,11 +848,34 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|head
+op_assign
+id|qp-&gt;fragments
+suffix:semicolon
 multiline_comment|/* Send an ICMP &quot;Fragment Reassembly Timeout&quot; message. */
+r_if
+c_cond
+(paren
+(paren
+id|head-&gt;dev
+op_assign
+id|dev_get_by_index
+c_func
+(paren
+id|qp-&gt;iif
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
 id|icmp_send
 c_func
 (paren
-id|qp-&gt;fragments
+id|head
 comma
 id|ICMP_TIME_EXCEEDED
 comma
@@ -863,6 +884,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|head-&gt;dev
+)paren
+suffix:semicolon
+)brace
 )brace
 id|out
 suffix:colon
@@ -1816,9 +1844,13 @@ id|qp-&gt;fragments
 op_assign
 id|skb
 suffix:semicolon
-id|qp-&gt;dev
+id|qp-&gt;iif
 op_assign
+id|skb-&gt;dev-&gt;ifindex
+suffix:semicolon
 id|skb-&gt;dev
+op_assign
+l_int|NULL
 suffix:semicolon
 id|qp-&gt;meat
 op_add_assign
@@ -1868,6 +1900,11 @@ r_struct
 id|ipq
 op_star
 id|qp
+comma
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 (brace
 r_struct
@@ -2095,7 +2132,7 @@ id|head-&gt;protocol
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
-id|qp-&gt;dev
+id|dev
 suffix:semicolon
 multiline_comment|/*&n;&t;*  Clearly bogus, because security markings of the individual&n;&t;*  fragments should have been checked for consistency before&n;&t;*  gluing, and intermediate coalescing of fragments may have&n;&t;*  taken place in ip_defrag() before ip_glue() ever got called.&n;&t;*  If we&squot;re not going to do the consistency checking, we might&n;&t;*  as well take the value associated with the first fragment.&n;&t;*&t;--rct&n;&t;*/
 id|skb-&gt;security
@@ -2226,6 +2263,11 @@ id|ipq
 op_star
 id|qp
 suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
 id|IP_INC_STATS_BH
 c_func
 (paren
@@ -2249,6 +2291,10 @@ id|ip_evictor
 c_func
 (paren
 )paren
+suffix:semicolon
+id|dev
+op_assign
+id|skb-&gt;dev
 suffix:semicolon
 multiline_comment|/* Lookup (or create) queue header */
 r_if
@@ -2310,6 +2356,8 @@ id|ip_frag_reasm
 c_func
 (paren
 id|qp
+comma
+id|dev
 )paren
 suffix:semicolon
 id|spin_unlock

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.46 2000/08/29 07:01:54 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.47 2000/11/29 05:56:12 anton Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -37,6 +37,8 @@ r_return
 id|PAGE_SIZE
 suffix:semicolon
 )brace
+DECL|macro|COLOUR_ALIGN
+mdefine_line|#define COLOUR_ALIGN(addr)&t;(((addr)+SHMLBA-1)&amp;~(SHMLBA-1))
 DECL|function|get_unmapped_area
 r_int
 r_int
@@ -99,6 +101,22 @@ id|addr
 op_assign
 id|TASK_UNMAPPED_BASE
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;thread.flags
+op_amp
+id|SPARC_FLAG_MMAPSHARED
+)paren
+id|addr
+op_assign
+id|COLOUR_ALIGN
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+r_else
 id|addr
 op_assign
 id|PAGE_ALIGN
@@ -189,6 +207,21 @@ suffix:semicolon
 id|addr
 op_assign
 id|vmm-&gt;vm_end
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;thread.flags
+op_amp
+id|SPARC_FLAG_MMAPSHARED
+)paren
+id|addr
+op_assign
+id|COLOUR_ALIGN
+c_func
+(paren
+id|addr
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -1014,6 +1047,17 @@ r_goto
 id|out_putf
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|MAP_SHARED
+)paren
+id|current-&gt;thread.flags
+op_or_assign
+id|SPARC_FLAG_MMAPSHARED
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -1044,6 +1088,13 @@ c_func
 (paren
 op_amp
 id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|current-&gt;thread.flags
+op_and_assign
+op_complement
+(paren
+id|SPARC_FLAG_MMAPSHARED
 )paren
 suffix:semicolon
 id|out_putf
@@ -1186,6 +1237,11 @@ r_int
 id|new_addr
 )paren
 (brace
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+suffix:semicolon
 r_int
 r_int
 id|ret
@@ -1236,6 +1292,31 @@ c_func
 op_amp
 id|current-&gt;mm-&gt;mmap_sem
 )paren
+suffix:semicolon
+id|vma
+op_assign
+id|find_vma
+c_func
+(paren
+id|current-&gt;mm
+comma
+id|addr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vma
+op_logical_and
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_SHARED
+)paren
+)paren
+id|current-&gt;thread.flags
+op_or_assign
+id|SPARC_FLAG_MMAPSHARED
 suffix:semicolon
 r_if
 c_cond
@@ -1288,6 +1369,7 @@ suffix:semicolon
 id|new_addr
 op_assign
 id|get_unmapped_area
+c_func
 (paren
 id|addr
 comma
@@ -1326,6 +1408,13 @@ id|new_addr
 suffix:semicolon
 id|out_sem
 suffix:colon
+id|current-&gt;thread.flags
+op_and_assign
+op_complement
+(paren
+id|SPARC_FLAG_MMAPSHARED
+)paren
+suffix:semicolon
 id|up
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: nora.c,v 1.12 2000/07/13 10:32:33 dwmw2 Exp $&n; *&n; * This is so simple I love it.&n; */
+multiline_comment|/*&n; * $Id: nora.c,v 1.17 2000/12/03 19:32:21 dwmw2 Exp $&n; *&n; * This is so simple I love it.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -284,31 +284,49 @@ id|map_info
 id|nora_map
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;NORA&quot;
 comma
+id|size
+suffix:colon
 id|WINDOW_SIZE
 comma
+id|buswidth
+suffix:colon
 l_int|2
 comma
+id|read8
+suffix:colon
 id|nora_read8
 comma
+id|read16
+suffix:colon
 id|nora_read16
 comma
+id|read32
+suffix:colon
 id|nora_read32
 comma
+id|copy_from
+suffix:colon
 id|nora_copy_from
 comma
+id|write8
+suffix:colon
 id|nora_write8
 comma
+id|write16
+suffix:colon
 id|nora_write16
 comma
+id|write32
+suffix:colon
 id|nora_write32
 comma
+id|copy_to
+suffix:colon
 id|nora_copy_to
-comma
-l_int|0
-comma
-l_int|0
 )brace
 suffix:semicolon
 DECL|function|nora_mtd_read
@@ -646,7 +664,7 @@ id|MTD_CAP_NORFLASH
 comma
 id|size
 suffix:colon
-l_int|0xf00000
+l_int|0x900000
 comma
 id|erasesize
 suffix:colon
@@ -704,7 +722,7 @@ id|MTD_CAP_NORFLASH
 comma
 id|size
 suffix:colon
-l_int|0x1000000
+l_int|0x1600000
 comma
 id|erasesize
 suffix:colon
@@ -712,7 +730,7 @@ l_int|0x20000
 comma
 id|name
 suffix:colon
-l_string|&quot;NORA main filesystem&quot;
+l_string|&quot;NORA second filesystem&quot;
 comma
 id|module
 suffix:colon
@@ -748,17 +766,15 @@ suffix:colon
 r_void
 op_star
 )paren
-l_int|0x1000000
+l_int|0xa00000
 )brace
 )brace
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-macro_line|#ifdef MODULE
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20212 &amp;&amp; defined(MODULE)
 DECL|macro|init_nora
 mdefine_line|#define init_nora init_module
 DECL|macro|cleanup_nora
 mdefine_line|#define cleanup_nora cleanup_module
-macro_line|#endif
 macro_line|#endif
 DECL|function|init_nora
 r_int
@@ -808,7 +824,7 @@ c_func
 op_amp
 id|nora_mtds
 (braket
-l_int|3
+l_int|2
 )braket
 )paren
 suffix:semicolon
@@ -838,7 +854,7 @@ c_func
 op_amp
 id|nora_mtds
 (braket
-l_int|2
+l_int|3
 )braket
 )paren
 suffix:semicolon
@@ -873,7 +889,7 @@ c_func
 op_amp
 id|nora_mtds
 (braket
-l_int|2
+l_int|3
 )braket
 )paren
 suffix:semicolon
@@ -903,7 +919,7 @@ c_func
 op_amp
 id|nora_mtds
 (braket
-l_int|3
+l_int|2
 )braket
 )paren
 suffix:semicolon
@@ -915,4 +931,18 @@ id|mymtd
 suffix:semicolon
 )brace
 )brace
+DECL|variable|init_nora
+id|module_init
+c_func
+(paren
+id|init_nora
+)paren
+suffix:semicolon
+DECL|variable|cleanup_nora
+id|module_exit
+c_func
+(paren
+id|cleanup_nora
+)paren
+suffix:semicolon
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.159 2000/11/06 06:59:04 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.161 2000/12/09 20:16:58 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -441,6 +441,60 @@ comma
 id|address
 comma
 id|pte
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* In arch/sparc64/mm/ultra.S */
+r_extern
+r_void
+id|__flush_icache_page
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|function|flush_icache_range
+r_void
+id|flush_icache_range
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+r_int
+r_int
+id|kaddr
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|kaddr
+op_assign
+id|start
+suffix:semicolon
+id|kaddr
+OL
+id|end
+suffix:semicolon
+id|kaddr
+op_add_assign
+id|PAGE_SIZE
+)paren
+id|__flush_icache_page
+c_func
+(paren
+id|__get_phys
+c_func
+(paren
+id|kaddr
+)paren
 )paren
 suffix:semicolon
 )brace

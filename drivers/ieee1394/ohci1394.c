@@ -7167,9 +7167,12 @@ id|d-&gt;task.sync
 op_assign
 l_int|0
 suffix:semicolon
-id|d-&gt;task.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|d-&gt;task.list
+)paren
 suffix:semicolon
 id|d-&gt;task.routine
 op_assign

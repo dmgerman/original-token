@@ -494,6 +494,10 @@ comma
 op_star
 id|tmp
 suffix:semicolon
+r_int
+r_int
+id|r_size
+suffix:semicolon
 multiline_comment|/* PCI-PCI bridges may have I/O ports or&n;&t;&t;   memory on the primary bus */
 r_if
 c_cond
@@ -520,6 +524,12 @@ id|dev-&gt;resource
 id|i
 )braket
 suffix:semicolon
+id|r_size
+op_assign
+id|r-&gt;end
+op_minus
+id|r-&gt;start
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -534,6 +544,32 @@ id|r-&gt;parent
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|r_size
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;PCI: Ignore bogus resource %d &quot;
+l_string|&quot;[%lx:%lx] of %s&bslash;n&quot;
+comma
+id|i
+comma
+id|r-&gt;start
+comma
+id|r-&gt;end
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -574,9 +610,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|r-&gt;end
-op_minus
-id|r-&gt;start
+id|r_size
 OG
 id|size
 )paren

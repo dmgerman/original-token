@@ -2120,6 +2120,13 @@ op_assign
 id|skb-&gt;dst
 suffix:semicolon
 r_struct
+id|net_device
+op_star
+id|dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
+r_struct
 id|neighbour
 op_star
 id|neigh
@@ -2192,7 +2199,7 @@ id|NF_DN_FORWARD
 comma
 id|skb
 comma
-id|skb-&gt;rx_dev
+id|dev
 comma
 id|skb-&gt;dev
 comma
@@ -4223,10 +4230,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|skb-&gt;rx_dev
-op_assign
-id|dev
-suffix:semicolon
 id|cb-&gt;src
 op_assign
 id|src
@@ -4325,10 +4328,6 @@ id|skb-&gt;dev
 )paren
 suffix:semicolon
 id|skb-&gt;dev
-op_assign
-l_int|NULL
-suffix:semicolon
-id|skb-&gt;rx_dev
 op_assign
 l_int|NULL
 suffix:semicolon

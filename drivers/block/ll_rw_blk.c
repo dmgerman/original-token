@@ -364,7 +364,7 @@ r_return
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_cleanup_queue: - release a &amp;request_queue_t when it is no longer needed&n; * @q:    the request queue to be released&n; *&n; * Description:  blk_cleanup_queue is the pair to blk_init_queue().  It should&n; *     be called when a request queue is being released; typically when a block&n; *     device is being de-registered.&n; *     Currently, its primary task it to free all the &amp;struct request structures&n; *     that were allocated to the queue.&n; * Caveat:&n; *     Hopefully the low level driver will have finished any outstanding&n; *     requests first...&n; **/
+multiline_comment|/**&n; * blk_cleanup_queue: - release a &amp;request_queue_t when it is no longer needed&n; * @q:    the request queue to be released&n; *&n; * Description:&n; *     blk_cleanup_queue is the pair to blk_init_queue().  It should&n; *     be called when a request queue is being released; typically&n; *     when a block device is being de-registered.  Currently, its&n; *     primary task it to free all the &amp;struct request structures that&n; *     were allocated to the queue.&n; * Caveat: &n; *     Hopefully the low level driver will have finished any&n; *     outstanding requests first...&n; **/
 DECL|function|blk_cleanup_queue
 r_void
 id|blk_cleanup_queue
@@ -451,7 +451,7 @@ op_assign
 id|active
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_queue_pluggable - define a plugging function for a request queue&n; * @q:   the request queue to which the function will apply&n; * @plug: the function to be called to plug a queue&n; *&n; * Description:&n; *   A request queue will be &quot;plugged&quot; if a request is added to it while it&n; *   is empty.  This allows a number of requests to be added before any are&n; *   processed, thus providing an opportunity for these requests to be merged&n; *   or re-ordered.&n; *   The default plugging function (generic_plug_device()) sets the &quot;plugged&quot;&n; *   flag for the queue and adds a task to the $tq_disk task queue to unplug&n; *   the queue and call the request function at a later time.&n; *&n; *   A device driver may provide an alternate plugging function by passing it to&n; *   blk_queue_pluggable().   This function should set the &quot;plugged&quot; flag if it&n; *   want calls to the request_function to be blocked, and should place a&n; *   task on $tq_disk which will unplug the queue.  Alternately it can simply&n; *   do nothing and there-by disable plugging of the device.&n; **/
+multiline_comment|/**&n; * blk_queue_pluggable - define a plugging function for a request queue&n; * @q:   the request queue to which the function will apply&n; * @plug: the function to be called to plug a queue&n; *&n; * Description:&n; *   A request queue will be &quot;plugged&quot; if a request is added to it&n; *   while it is empty.  This allows a number of requests to be added&n; *   before any are processed, thus providing an opportunity for these&n; *   requests to be merged or re-ordered.&n; *   The default plugging function (generic_plug_device()) sets the&n; *   &quot;plugged&quot; flag for the queue and adds a task to the $tq_disk task&n; *   queue to unplug the queue and call the request function at a&n; *   later time.&n; *&n; *   A device driver may provide an alternate plugging function by&n; *   passing it to blk_queue_pluggable().  This function should set&n; *   the &quot;plugged&quot; flag if it want calls to the request_function to be&n; *   blocked, and should place a task on $tq_disk which will unplug&n; *   the queue.  Alternately it can simply do nothing and there-by&n; *   disable plugging of the device.&n; **/
 DECL|function|blk_queue_pluggable
 r_void
 id|blk_queue_pluggable
@@ -470,7 +470,7 @@ op_assign
 id|plug
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_queue_make_request - define an alternate make_request function for a device&n; * @q:  the request queue for the device to be affected&n; * @mfn: the alternate make_request function&n; *&n; * Description:&n; *    The normal way for &amp;struct buffer_heads to be passed to a device driver&n; *    it to collect into requests on a request queue, and allow the device&n; *    driver to select requests off that queue when it is ready.  This works&n; *    well for many block devices. However some block devices (typically&n; *    virtual devices such as md or lvm) do not benefit from the processes on&n; *    the request queue, and are served best by having the requests passed&n; *    directly to them.  This can be achieved by providing a function to&n; *    blk_queue_make_request().&n; **/
+multiline_comment|/**&n; * blk_queue_make_request - define an alternate make_request function for a device&n; * @q:  the request queue for the device to be affected&n; * @mfn: the alternate make_request function&n; *&n; * Description:&n; *    The normal way for &amp;struct buffer_heads to be passed to a device&n; *    driver is for them to be collected into requests on a request&n; *    queue, and then to allow the device driver to select requests&n; *    off that queue when it is ready.  This works well for many block&n; *    devices. However some block devices (typically virtual devices&n; *    such as md or lvm) do not benefit from the processing on the&n; *    request queue, and are served best by having the requests passed&n; *    directly to them.  This can be achieved by providing a function&n; *    to blk_queue_make_request().&n; *&n; * Caveat:&n; *    The driver that does this *must* be able to deal appropriately&n; *    with buffers in &quot;highmemory&quot;, either by calling bh_kmap() to get&n; *    a kernel mapping, to by calling create_bounce() to create a&n; *    buffer in normal memory.&n; **/
 DECL|function|blk_queue_make_request
 r_void
 id|blk_queue_make_request
@@ -2688,6 +2688,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * generic_make_request: hand a buffer head to it&squot;s device driver for I/O&n; * @rw:  READ, WRITE, or READA - what sort of I/O is desired.&n; * @bh:  The buffer head describing the location in memory and on the device.&n; *&n; * generic_make_request() is used to make I/O requests of block&n; * devices. It is passed a &amp;struct buffer_head and a &amp;rw value.  The&n; * %READ and %WRITE options are (hopefully) obvious in meaning.  The&n; * %READA value means that a read is required, but that the driver is&n; * free to fail the request if, for example, it cannot get needed&n; * resources immediately.&n; *&n; * generic_make_request() does not return any status.  The&n; * success/failure status of the request, along with notification of&n; * completion, is delivered asynchronously through the bh-&gt;b_end_io&n; * function described (one day) else where.&n; *&n; * The caller of generic_make_request must make sure that b_page,&n; * b_addr, b_size are set to describe the memory buffer, that b_rdev&n; * and b_rsector are set to describe the device address, and the&n; * b_end_io and optionally b_private are set to describe how&n; * completion notification should be signaled.  BH_Mapped should also&n; * be set (to confirm that b_dev and b_blocknr are valid).&n; *&n; * generic_make_request and the drivers it calls may use b_reqnext,&n; * and may change b_rdev and b_rsector.  So the values of these fields&n; * should NOT be depended on after the call to generic_make_request.&n; * Because of this, the caller should record the device address&n; * information in b_dev and b_blocknr.&n; *&n; * Apart from those fields mentioned above, no other fields, and in&n; * particular, no other flags, are changed by generic_make_request or&n; * any lower level drivers.&n; * */
 DECL|function|generic_make_request
 r_void
 id|generic_make_request
@@ -2924,7 +2925,7 @@ id|bh
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Submit a buffer head for IO.&n; */
+multiline_comment|/**&n; * submit_bh: submit a buffer_head to the block device later for I/O&n; * @rw: whether to %READ or %WRITE, or mayve to %READA (read ahead)&n; * @bh: The &amp;struct buffer_head which describes the I/O&n; *&n; * submit_bh() is very similar in purpose to generic_make_request(), and&n; * uses that function to do most of the work.&n; *&n; * The extra functionality provided by submit_bh is to determine&n; * b_rsector from b_blocknr and b_size, and to set b_rdev from b_dev.&n; * This is is appropriate for IO requests that come from the buffer&n; * cache and page cache which (currently) always use aligned blocks.&n; */
 DECL|function|submit_bh
 r_void
 id|submit_bh
@@ -3021,7 +3022,7 @@ id|bh
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This function can be used to request a number of buffers from a block&n;   device. Currently the only restriction is that all buffers must belong to&n;   the same device */
+multiline_comment|/**&n; * ll_rw_block: low-level access to block devices&n; * @rw: whether to %READ or %WRITE or maybe %READA (readahead)&n; * @nr: number of &amp;struct buffer_heads in the array&n; * @bhs: array of pointers to &amp;struct buffer_head&n; *&n; * ll_rw_block() takes an array of pointers to &amp;struct buffer_heads,&n; * and requests an I/O operation on them, either a %READ or a %WRITE.&n; * The third %READA option is described in the documentation for&n; * generic_make_request() which ll_rw_block() calls.&n; *&n; * This function provides extra functionality that is not in&n; * generic_make_request() that is relevant to buffers in the buffer&n; * cache or page cache.  In particular it drops any buffer that it&n; * cannot get a lock on (with the BH_Lock state bit), any buffer that&n; * appears to be clean when doing a write request, and any buffer that&n; * appears to be up-to-date when doing read request.  Further it marks&n; * as clean buffers that are processed for writing (the buffer cache&n; * wont assume that they are actually clean until the buffer gets&n; * unlocked).&n; *&n; * ll_rw_block sets b_end_io to simple completion handler that marks&n; * the buffer up-to-date (if approriate), unlocks the buffer and wakes&n; * any waiters.  As client that needs a more interesting completion&n; * routine should call submit_bh() (or generic_make_request())&n; * directly.&n; *&n; * Caveat:&n; *  All of the buffers must be for the same device, and must also be&n; *  of the current approved size for the device.  */
 DECL|function|ll_rw_block
 r_void
 id|ll_rw_block

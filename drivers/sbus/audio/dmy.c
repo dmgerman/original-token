@@ -2567,9 +2567,12 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* fake an &quot;interrupt&quot; to deal with this block */
-id|dummy_chip-&gt;tqueue.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|dummy_chip-&gt;tqueue.list
+)paren
 suffix:semicolon
 id|dummy_chip-&gt;tqueue.sync
 op_assign

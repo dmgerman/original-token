@@ -247,7 +247,7 @@ suffix:semicolon
 multiline_comment|/* Example routines you must write ;-&gt;. */
 DECL|macro|tx_done
 mdefine_line|#define tx_done(dev) 1
-r_extern
+r_static
 r_void
 id|hardware_send_packet
 c_func
@@ -263,7 +263,7 @@ r_int
 id|length
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
 id|chipset_init
 c_func
@@ -296,12 +296,13 @@ suffix:semicolon
 r_int
 id|base_addr
 op_assign
-id|dev
-ques
-c_cond
 id|dev-&gt;base_addr
-suffix:colon
-l_int|0
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1151,8 +1152,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1839,8 +1838,6 @@ id|dev-&gt;dma
 )paren
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1877,11 +1874,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Update the statistics from the device registers. */
 id|lp-&gt;stats.rx_missed_errors
 op_assign
@@ -1891,11 +1883,6 @@ c_func
 id|ioaddr
 op_plus
 l_int|1
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -2011,12 +1998,6 @@ r_static
 r_struct
 id|net_device
 id|this_device
-op_assign
-(brace
-id|init
-suffix:colon
-id|netcard_probe
-)brace
 suffix:semicolon
 DECL|variable|io
 r_static
@@ -2083,6 +2064,10 @@ suffix:semicolon
 id|this_device.mem_start
 op_assign
 id|mem
+suffix:semicolon
+id|this_device.init
+op_assign
+id|netcard_probe
 suffix:semicolon
 r_if
 c_cond

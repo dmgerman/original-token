@@ -74,7 +74,7 @@ multiline_comment|/* check if the interface we are leaving by is the same as the
 r_if
 c_cond
 (paren
-id|skb-&gt;rx_dev
+id|skb-&gt;dev
 op_eq
 id|rt-&gt;u.dst.dev
 )paren

@@ -171,7 +171,6 @@ id|mda_display_fg
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef MODULE_PARM
 id|MODULE_PARM
 c_func
 (paren
@@ -188,7 +187,6 @@ comma
 l_string|&quot;1-255i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* MDA register values&n; */
 DECL|macro|MDA_CURSOR_BLINKING
 mdefine_line|#define MDA_CURSOR_BLINKING&t;0x00
@@ -636,16 +634,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef MODULE
 DECL|function|mda_detect
-r_static
-r_int
-id|mda_detect
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
 r_static
 r_int
 id|__init
@@ -654,7 +643,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_int
 id|count
@@ -983,16 +971,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|mda_initialize
-r_static
-r_void
-id|mda_initialize
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
 r_static
 r_void
 id|__init
@@ -1001,7 +980,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 id|write_mda_b
 c_func
@@ -1156,18 +1134,7 @@ id|mda_gfx_port
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|mdacon_startup
-r_static
-r_const
-r_char
-op_star
-id|mdacon_startup
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
 r_static
 r_const
 r_char
@@ -1178,7 +1145,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 id|mda_num_columns
 op_assign
@@ -2585,15 +2551,7 @@ id|mdacon_invert_region
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|function|mda_console_init
-r_void
-id|mda_console_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
 r_void
 id|__init
 id|mda_console_init
@@ -2601,7 +2559,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_if
 c_cond

@@ -9516,9 +9516,12 @@ id|ATM_OC3_PCR
 suffix:semicolon
 macro_line|#ifdef FILL_RX_POOLS_IN_BH
 singleline_comment|// initialise bottom half
-id|dev-&gt;bh.next
-op_assign
-l_int|0
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|dev-&gt;bh.list
+)paren
 suffix:semicolon
 id|dev-&gt;bh.sync
 op_assign

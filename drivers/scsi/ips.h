@@ -2814,7 +2814,7 @@ id|cmd_in_progress
 suffix:semicolon
 multiline_comment|/* Current command in progress*/
 DECL|member|flags
-id|u32
+r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* HA flags                   */

@@ -2504,6 +2504,8 @@ op_logical_and
 id|arena-&gt;dma_base
 op_plus
 id|arena-&gt;size
+op_minus
+l_int|1
 op_le
 id|mask
 )paren
@@ -2522,6 +2524,8 @@ op_logical_and
 id|arena-&gt;dma_base
 op_plus
 id|arena-&gt;size
+op_minus
+l_int|1
 op_le
 id|mask
 )paren

@@ -4370,10 +4370,8 @@ id|tq_struct
 id|run_bh
 op_assign
 (brace
-l_int|0
-comma
-l_int|0
-comma
+id|routine
+suffix:colon
 (paren
 r_void
 op_star
@@ -4384,6 +4382,8 @@ op_star
 )paren
 id|epp_bh
 comma
+id|data
+suffix:colon
 id|dev
 )brace
 suffix:semicolon

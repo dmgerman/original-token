@@ -9,7 +9,7 @@ mdefine_line|#define APIC_DEBUG 1
 macro_line|#ifdef CONFIG_X86_LOCAL_APIC
 macro_line|#if APIC_DEBUG
 DECL|macro|Dprintk
-mdefine_line|#define Dprintk(x...) printk(##x)
+mdefine_line|#define Dprintk(x...) printk(x)
 macro_line|#else
 DECL|macro|Dprintk
 mdefine_line|#define Dprintk(x...)

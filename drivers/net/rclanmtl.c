@@ -4872,9 +4872,7 @@ r_int
 r_int
 id|off
 suffix:semicolon
-r_int
-r_int
-op_star
+id|PU32
 id|pMsg
 suffix:semicolon
 id|PPAB

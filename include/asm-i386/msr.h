@@ -13,4 +13,11 @@ DECL|macro|write_tsc
 mdefine_line|#define write_tsc(val1,val2) wrmsr(0x10, val1, val2)
 DECL|macro|rdpmc
 mdefine_line|#define rdpmc(counter,low,high) &bslash;&n;     __asm__ __volatile__(&quot;rdpmc&quot; &bslash;&n;&t;&t;&t;  : &quot;=a&quot; (low), &quot;=d&quot; (high) &bslash;&n;&t;&t;&t;  : &quot;c&quot; (counter))
+multiline_comment|/* symbolic names for some interesting MSRs */
+DECL|macro|MSR_IA32_PLATFORM_ID
+mdefine_line|#define MSR_IA32_PLATFORM_ID&t;0x17
+DECL|macro|MSR_IA32_UCODE_WRITE
+mdefine_line|#define MSR_IA32_UCODE_WRITE&t;0x79
+DECL|macro|MSR_IA32_UCODE_REV
+mdefine_line|#define MSR_IA32_UCODE_REV&t;0x8B
 eof

@@ -1449,8 +1449,9 @@ l_int|500
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* &squot;6&squot; because it used to be for P6 only (but now covers Pentium 4 as well) */
 DECL|macro|MICROCODE_IOCFREE
-mdefine_line|#define MICROCODE_IOCFREE&t;_IO(&squot;6&squot;,0) /* because it is for P6 */
+mdefine_line|#define MICROCODE_IOCFREE&t;_IO(&squot;6&squot;,0)
 multiline_comment|/* REP NOP (PAUSE) is a good thing to insert into busy-wait loops. */
 DECL|function|rep_nop
 r_extern

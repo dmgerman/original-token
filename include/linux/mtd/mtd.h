@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mtd.h,v 1.17 2000/07/04 07:24:49 jgg Exp $ */
+multiline_comment|/* $Id: mtd.h,v 1.26 2000/10/30 17:18:04 sjhill Exp $ */
 macro_line|#ifndef __MTD_MTD_H__
 DECL|macro|__MTD_MTD_H__
 mdefine_line|#define __MTD_MTD_H__
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mtd/compatmac.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/uio.h&gt;
 macro_line|#endif /* __KERNEL__ */
 DECL|struct|erase_info_user
 r_struct
@@ -106,8 +107,11 @@ DECL|macro|MTD_ECC_NONE
 mdefine_line|#define MTD_ECC_NONE&t;&t;0 &t;
 singleline_comment|// No automatic ECC available
 DECL|macro|MTD_ECC_RS_DiskOnChip
-mdefine_line|#define MTD_ECC_RS_DiskOnChip   1       
+mdefine_line|#define MTD_ECC_RS_DiskOnChip&t;1&t;
 singleline_comment|// Automatic ECC on DiskOnChip
+DECL|macro|MTD_ECC_SW
+mdefine_line|#define MTD_ECC_SW&t;&t;2&t;
+singleline_comment|// SW ECC for Toshiba &amp; Samsung devices
 DECL|struct|mtd_info_user
 r_struct
 id|mtd_info_user
@@ -157,6 +161,10 @@ DECL|macro|MEMWRITEOOB
 mdefine_line|#define MEMWRITEOOB             _IOWR(&squot;M&squot;, 3, struct mtd_oob_buf)
 DECL|macro|MEMREADOOB
 mdefine_line|#define MEMREADOOB              _IOWR(&squot;M&squot;, 4, struct mtd_oob_buf)
+DECL|macro|MEMLOCK
+mdefine_line|#define MEMLOCK                 _IOW(&squot;M&squot;, 5, struct erase_info_user)
+DECL|macro|MEMUNLOCK
+mdefine_line|#define MEMUNLOCK               _IOW(&squot;M&squot;, 6, struct erase_info_user)
 macro_line|#ifndef __KERNEL__
 DECL|typedef|mtd_info_t
 r_typedef
@@ -289,6 +297,10 @@ DECL|member|name
 r_char
 op_star
 id|name
+suffix:semicolon
+DECL|member|index
+r_int
+id|index
 suffix:semicolon
 DECL|member|bank_size
 id|u_long
@@ -538,6 +550,67 @@ op_star
 id|buf
 )paren
 suffix:semicolon
+multiline_comment|/* iovec-based read/write methods. We need these especially for NAND flash,&n;&t;   with its limited number of write cycles per erase.&n;&t;   NB: The &squot;count&squot; parameter is the number of _vectors_, each of &n;&t;   which contains an (ofs, len) tuple.&n;&t;*/
+DECL|member|readv
+r_int
+(paren
+op_star
+id|readv
+)paren
+(paren
+r_struct
+id|mtd_info
+op_star
+id|mtd
+comma
+r_struct
+id|iovec
+op_star
+id|vecs
+comma
+r_int
+r_int
+id|count
+comma
+id|loff_t
+id|from
+comma
+r_int
+op_star
+id|retlen
+)paren
+suffix:semicolon
+DECL|member|writev
+r_int
+(paren
+op_star
+id|writev
+)paren
+(paren
+r_struct
+id|mtd_info
+op_star
+id|mtd
+comma
+r_const
+r_struct
+id|iovec
+op_star
+id|vecs
+comma
+r_int
+r_int
+id|count
+comma
+id|loff_t
+id|to
+comma
+r_int
+op_star
+id|retlen
+)paren
+suffix:semicolon
+multiline_comment|/* Sync */
 DECL|member|sync
 r_void
 (paren
@@ -549,6 +622,45 @@ r_struct
 id|mtd_info
 op_star
 id|mtd
+)paren
+suffix:semicolon
+multiline_comment|/* Chip-supported device locking */
+DECL|member|lock
+r_int
+(paren
+op_star
+id|lock
+)paren
+(paren
+r_struct
+id|mtd_info
+op_star
+id|mtd
+comma
+id|loff_t
+id|ofs
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+DECL|member|unlock
+r_int
+(paren
+op_star
+id|unlock
+)paren
+(paren
+r_struct
+id|mtd_info
+op_star
+id|mtd
+comma
+id|loff_t
+id|ofs
+comma
+r_int
+id|len
 )paren
 suffix:semicolon
 multiline_comment|/* Power Management functions */
@@ -771,6 +883,14 @@ DECL|macro|MTD_READ
 mdefine_line|#define MTD_READ(mtd, args...) (*(mtd-&gt;read))(mtd, args)
 DECL|macro|MTD_WRITE
 mdefine_line|#define MTD_WRITE(mtd, args...) (*(mtd-&gt;write))(mtd, args)
+DECL|macro|MTD_READV
+mdefine_line|#define MTD_READV(mtd, args...) (*(mtd-&gt;readv))(mtd, args)
+DECL|macro|MTD_WRITEV
+mdefine_line|#define MTD_WRITEV(mtd, args...) (*(mtd-&gt;writev))(mtd, args)
+DECL|macro|MTD_READECC
+mdefine_line|#define MTD_READECC(mtd, args...) (*(mtd-&gt;read_ecc))(mtd, args)
+DECL|macro|MTD_WRITEECC
+mdefine_line|#define MTD_WRITEECC(mtd, args...) (*(mtd-&gt;write_ecc))(mtd, args)
 DECL|macro|MTD_READOOB
 mdefine_line|#define MTD_READOOB(mtd, args...) (*(mtd-&gt;read_oob))(mtd, args)
 DECL|macro|MTD_WRITEOOB
@@ -778,14 +898,22 @@ mdefine_line|#define MTD_WRITEOOB(mtd, args...) (*(mtd-&gt;write_oob))(mtd, args
 DECL|macro|MTD_SYNC
 mdefine_line|#define MTD_SYNC(mtd) do { if (mtd-&gt;sync) (*(mtd-&gt;sync))(mtd);  } while (0) 
 macro_line|#endif /* MTDC */
-multiline_comment|/* Debugging macros */
-macro_line|#ifdef DEBUGLVL
+multiline_comment|/*&n; * Debugging macro and defines&n; */
+DECL|macro|MTD_DEBUG_LEVEL0
+mdefine_line|#define MTD_DEBUG_LEVEL0&t;(0)&t;/* Quiet   */
+DECL|macro|MTD_DEBUG_LEVEL1
+mdefine_line|#define MTD_DEBUG_LEVEL1&t;(1)&t;/* Audible */
+DECL|macro|MTD_DEBUG_LEVEL2
+mdefine_line|#define MTD_DEBUG_LEVEL2&t;(2)&t;/* Loud    */
+DECL|macro|MTD_DEBUG_LEVEL3
+mdefine_line|#define MTD_DEBUG_LEVEL3&t;(3)&t;/* Noisy   */
+macro_line|#ifdef CONFIG_MTD_DEBUG
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args...) if (DEBUGLVL&gt;(n)) printk(KERN_DEBUG args)
-macro_line|#else
+mdefine_line|#define DEBUG(n, args...)&t;&t;&t;&bslash;&n;&t;if (n &lt;=  CONFIG_MTD_DEBUG_VERBOSE) {&t;&bslash;&n;&t;&t;printk(KERN_INFO args);&t;&bslash;&n;&t;}
+macro_line|#else /* CONFIG_MTD_DEBUG */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(n, args...)
-macro_line|#endif
+macro_line|#endif /* CONFIG_MTD_DEBUG */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __MTD_MTD_H__ */
 eof

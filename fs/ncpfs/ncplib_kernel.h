@@ -478,7 +478,6 @@ id|length
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_NCPFS_IOCTL_LOCKING */
-macro_line|#ifdef CONFIG_NCPFS_MOUNT_SUBDIR
 r_int
 id|ncp_mount_subdir
 c_func
@@ -498,9 +497,7 @@ comma
 id|__u32
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* CONFIG_NCPFS_MOUNT_SUBDIR */
 macro_line|#ifdef CONFIG_NCPFS_NLS
-r_inline
 r_int
 r_char
 id|ncp__tolower
@@ -514,7 +511,6 @@ r_int
 r_char
 )paren
 suffix:semicolon
-r_inline
 r_int
 r_char
 id|ncp__toupper

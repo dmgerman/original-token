@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.104 2000/11/17 01:40:00 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; *&n; * Changes :&n; * 2000/11/11 Willy Tarreau &lt;willy AT meta-x.org&gt;&n; *   - port to non-sparc architectures. Tested only on x86 and&n; *     only currently works with QFE PCI cards.&n; *   - ability to specify the MAC address at module load time by passing this&n; *     argument : macaddr=0x00,0x10,0x20,0x30,0x40,0x50&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.105 2000/12/05 02:00:36 anton Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; *&n; * Changes :&n; * 2000/11/11 Willy Tarreau &lt;willy AT meta-x.org&gt;&n; *   - port to non-sparc architectures. Tested only on x86 and&n; *     only currently works with QFE PCI cards.&n; *   - ability to specify the MAC address at module load time by passing this&n; *     argument : macaddr=0x00,0x10,0x20,0x30,0x40,0x50&n; */
 DECL|variable|version
 r_static
 r_char
@@ -6406,8 +6406,9 @@ c_func
 (paren
 id|hp
 comma
-op_amp
-id|tregs-&gt;int_mask
+id|tregs
+op_plus
+id|TCVR_IMASK
 )paren
 )paren
 )paren
@@ -6444,8 +6445,9 @@ c_func
 (paren
 id|hp
 comma
-op_amp
-id|tregs-&gt;cfg
+id|tregs
+op_plus
+id|TCVR_CFG
 )paren
 )paren
 )paren
@@ -6489,8 +6491,9 @@ c_func
 (paren
 id|hp
 comma
-op_amp
-id|tregs-&gt;cfg
+id|tregs
+op_plus
+id|TCVR_CFG
 )paren
 )paren
 )paren

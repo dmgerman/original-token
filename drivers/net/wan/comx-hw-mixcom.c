@@ -69,7 +69,7 @@ r_char
 id|channel
 suffix:semicolon
 DECL|member|txbusy
-r_char
+r_int
 id|txbusy
 suffix:semicolon
 DECL|member|sending

@@ -3189,11 +3189,15 @@ id|parport_frob_control
 id|port
 comma
 id|PARPORT_CONTROL_INIT
+op_or
+id|PARPORT_CONTROL_AUTOFD
 comma
-l_int|0
+id|PARPORT_CONTROL_INIT
+op_or
+id|PARPORT_CONTROL_AUTOFD
 )paren
 suffix:semicolon
-multiline_comment|/* Event 40: PError goes high. */
+multiline_comment|/* Event 49: PError goes high. */
 id|r
 op_assign
 id|parport_wait_peripheral

@@ -1424,8 +1424,8 @@ suffix:semicolon
 multiline_comment|/* ---------------------------------------------------------------------- */
 DECL|function|do_kiss_params
 r_static
-r_void
 r_inline
+r_void
 id|do_kiss_params
 c_func
 (paren
@@ -3867,24 +3867,11 @@ id|hdlcdrv_unregister_hdlcdrv
 )paren
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;Packet Radio network interface HDLC encoder/decoder&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|init_module
+DECL|function|hdlcdrv_init_driver
+r_static
 r_int
 id|__init
-id|init_module
+id|hdlcdrv_init_driver
 c_func
 (paren
 r_void
@@ -3913,9 +3900,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|cleanup_module
+DECL|function|hdlcdrv_cleanup_driver
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|hdlcdrv_cleanup_driver
 c_func
 (paren
 r_void
@@ -3929,6 +3918,32 @@ l_string|&quot;hdlcdrv: cleanup&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+multiline_comment|/* --------------------------------------------------------------------- */
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Packet Radio network interface HDLC encoder/decoder&quot;
+)paren
+suffix:semicolon
+DECL|variable|hdlcdrv_init_driver
+id|module_init
+c_func
+(paren
+id|hdlcdrv_init_driver
+)paren
+suffix:semicolon
+DECL|variable|hdlcdrv_cleanup_driver
+id|module_exit
+c_func
+(paren
+id|hdlcdrv_cleanup_driver
+)paren
+suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 eof

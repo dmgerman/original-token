@@ -714,7 +714,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_NCPFS_MOUNT_SUBDIR
 r_case
 id|NCP_IOC_GETROOT
 suffix:colon
@@ -1093,7 +1092,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_NCPFS_MOUNT_SUBDIR */
 macro_line|#ifdef CONFIG_NCPFS_PACKET_SIGNING&t;
 r_case
 id|NCP_IOC_SIGN_INIT
@@ -1673,7 +1671,6 @@ id|result
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* CONFIG_NCPFS_IOCTL_LOCKING */
-macro_line|#ifdef CONFIG_NCPFS_NDS_DOMAINS
 r_case
 id|NCP_IOC_GETOBJECTNAME
 suffix:colon
@@ -2299,7 +2296,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_NCPFS_NDS_DOMAINS */
 macro_line|#ifdef CONFIG_NCPFS_NLS
 multiline_comment|/* Here we are select the iocharset and the codepage for NLS.&n; * Thanks Petr Vandrovec for idea and many hints.&n; */
 r_case

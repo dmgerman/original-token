@@ -1451,7 +1451,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|__dev_get_by_name
+id|dev_get
 c_func
 (paren
 id|name
@@ -2127,16 +2127,6 @@ suffix:semicolon
 id|skb2-&gt;pkt_type
 op_assign
 id|PACKET_OUTGOING
-suffix:semicolon
-id|skb2-&gt;rx_dev
-op_assign
-id|skb-&gt;dev
-suffix:semicolon
-id|dev_hold
-c_func
-(paren
-id|skb2-&gt;rx_dev
-)paren
 suffix:semicolon
 id|ptype
 op_member_access_from_pointer
@@ -3112,25 +3102,10 @@ id|drop
 suffix:semicolon
 id|enqueue
 suffix:colon
-r_if
-c_cond
-(paren
-id|skb-&gt;rx_dev
-)paren
-id|dev_put
-c_func
-(paren
-id|skb-&gt;rx_dev
-)paren
-suffix:semicolon
-id|skb-&gt;rx_dev
-op_assign
-id|skb-&gt;dev
-suffix:semicolon
 id|dev_hold
 c_func
 (paren
-id|skb-&gt;rx_dev
+id|skb-&gt;dev
 )paren
 suffix:semicolon
 id|__skb_queue_tail
@@ -3391,7 +3366,7 @@ id|net_device
 op_star
 id|dev
 op_assign
-id|skb-&gt;rx_dev
+id|skb-&gt;dev
 suffix:semicolon
 r_if
 c_cond
@@ -3406,8 +3381,6 @@ id|dev-&gt;master
 )paren
 suffix:semicolon
 id|skb-&gt;dev
-op_assign
-id|skb-&gt;rx_dev
 op_assign
 id|dev-&gt;master
 suffix:semicolon
@@ -3860,6 +3833,11 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|rx_dev
+suffix:semicolon
 id|local_irq_disable
 c_func
 (paren
@@ -3894,6 +3872,10 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+id|rx_dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
 r_if
 c_cond
@@ -3915,6 +3897,12 @@ id|dev_queue_xmit
 c_func
 (paren
 id|skb
+)paren
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|rx_dev
 )paren
 suffix:semicolon
 r_continue
@@ -4060,6 +4048,12 @@ comma
 id|pt_prev
 )paren
 suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|rx_dev
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -4199,6 +4193,12 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+id|dev_put
+c_func
+(paren
+id|rx_dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7485,6 +7485,24 @@ c_cond
 id|dev_boot_phase
 )paren
 (brace
+macro_line|#ifdef CONFIG_NET_DIVERT
+id|ret
+op_assign
+id|alloc_divert_blk
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_return
+id|ret
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 multiline_comment|/* This is NOT bug, but I am not sure, that all the&n;&t;&t;   devices, initialized before netdev module is started&n;&t;&t;   are sane. &n;&n;&t;&t;   Now they are chained to device boot list&n;&t;&t;   and probed later. If a module is initialized&n;&t;&t;   before netdev, but assumes that dev-&gt;init&n;&t;&t;   is really called by register_netdev(), it will fail.&n;&n;&t;&t;   So that this message should be printed for a while.&n;&t;&t; */
 id|printk
 c_func
@@ -7572,6 +7590,20 @@ op_amp
 id|dev_base_lock
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Default initial state at registry is that the&n;&t;&t; *&t;device is present.&n;&t;&t; */
+id|set_bit
+c_func
+(paren
+id|__LINK_STATE_PRESENT
+comma
+op_amp
+id|dev-&gt;state
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_NET_DIVERT
 id|ret
 op_assign
@@ -7590,20 +7622,6 @@ r_return
 id|ret
 suffix:semicolon
 macro_line|#endif /* CONFIG_NET_DIVERT */
-multiline_comment|/*&n;&t;&t; *&t;Default initial state at registry is that the&n;&t;&t; *&t;device is present.&n;&t;&t; */
-id|set_bit
-c_func
-(paren
-id|__LINK_STATE_PRESENT
-comma
-op_amp
-id|dev-&gt;state
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|dev-&gt;iflink
 op_assign
 op_minus
@@ -7757,24 +7775,6 @@ op_amp
 id|dev_base_lock
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_DIVERT
-id|ret
-op_assign
-id|alloc_divert_blk
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-r_return
-id|ret
-suffix:semicolon
-macro_line|#endif /* CONFIG_NET_DIVERT */
 multiline_comment|/* Notify protocols, that a new device appeared. */
 id|notifier_call_chain
 c_func

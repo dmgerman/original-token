@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Version:&t;$Id: skbuff.c,v 1.73 2000/05/22 07:29:44 davem Exp $&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&t;&t;Linus Torvalds&t;:&t;Better skb_clone.&n; *&t;&t;Alan Cox&t;:&t;Added skb_copy.&n; *&t;&t;Alan Cox&t;:&t;Added all the changed routines Linus&n; *&t;&t;&t;&t;&t;only put in the headers&n; *&t;&t;Ray VanTassle&t;:&t;Fixed --skb-&gt;lock in free&n; *&t;&t;Alan Cox&t;:&t;skb_copy copy arp field&n; *&t;&t;Andi Kleen&t;:&t;slabified it.&n; *&n; *&t;NOTE:&n; *&t;&t;The __skb_ routines should be called with interrupts &n; *&t;disabled, or you better be *real* sure that the operation is atomic &n; *&t;with respect to whatever list is being frobbed (e.g. via lock_sock()&n; *&t;or via disabling bottom half handlers, etc).&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Version:&t;$Id: skbuff.c,v 1.75 2000/12/08 17:15:53 davem Exp $&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&t;&t;Linus Torvalds&t;:&t;Better skb_clone.&n; *&t;&t;Alan Cox&t;:&t;Added skb_copy.&n; *&t;&t;Alan Cox&t;:&t;Added all the changed routines Linus&n; *&t;&t;&t;&t;&t;only put in the headers&n; *&t;&t;Ray VanTassle&t;:&t;Fixed --skb-&gt;lock in free&n; *&t;&t;Alan Cox&t;:&t;skb_copy copy arp field&n; *&t;&t;Andi Kleen&t;:&t;slabified it.&n; *&n; *&t;NOTE:&n; *&t;&t;The __skb_ routines should be called with interrupts &n; *&t;disabled, or you better be *real* sure that the operation is atomic &n; *&t;with respect to whatever list is being frobbed (e.g. via lock_sock()&n; *&t;or via disabling bottom half handlers, etc).&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;The functions in this file will not compile correctly with gcc 2.4.x&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -491,10 +491,6 @@ id|skb-&gt;len
 op_assign
 l_int|0
 suffix:semicolon
-id|skb-&gt;is_clone
-op_assign
-l_int|0
-suffix:semicolon
 id|skb-&gt;cloned
 op_assign
 l_int|0
@@ -603,10 +599,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* By default packets are insecure */
 id|skb-&gt;dst
-op_assign
-l_int|NULL
-suffix:semicolon
-id|skb-&gt;rx_dev
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -783,21 +775,6 @@ id|skb-&gt;nfct
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_NET&t;&t;
-r_if
-c_cond
-(paren
-id|skb-&gt;rx_dev
-)paren
-(brace
-id|dev_put
-c_func
-(paren
-id|skb-&gt;rx_dev
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;
 id|skb_headerinit
 c_func
 (paren
@@ -906,10 +883,6 @@ c_func
 id|n-&gt;dst
 )paren
 suffix:semicolon
-id|n-&gt;rx_dev
-op_assign
-l_int|NULL
-suffix:semicolon
 id|n-&gt;cloned
 op_assign
 l_int|1
@@ -927,10 +900,6 @@ suffix:semicolon
 id|n-&gt;sk
 op_assign
 l_int|NULL
-suffix:semicolon
-id|n-&gt;is_clone
-op_assign
-l_int|1
 suffix:semicolon
 id|atomic_set
 c_func
@@ -1006,12 +975,6 @@ id|old-&gt;dev
 suffix:semicolon
 r_new
 op_member_access_from_pointer
-id|rx_dev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_new
-op_member_access_from_pointer
 id|priority
 op_assign
 id|old-&gt;priority
@@ -1076,12 +1039,6 @@ op_member_access_from_pointer
 id|used
 op_assign
 id|old-&gt;used
-suffix:semicolon
-r_new
-op_member_access_from_pointer
-id|is_clone
-op_assign
-l_int|0
 suffix:semicolon
 id|atomic_set
 c_func

@@ -8307,13 +8307,6 @@ r_int
 id|offset
 suffix:semicolon
 r_int
-id|sectors
-op_assign
-id|size
-op_rshift
-l_int|9
-suffix:semicolon
-r_int
 r_int
 id|blocknr
 suffix:semicolon
@@ -8567,8 +8560,6 @@ comma
 id|iobuf
 )paren
 suffix:semicolon
-id|tmp-&gt;b_rdev
-op_assign
 id|tmp-&gt;b_dev
 op_assign
 id|dev
@@ -8576,12 +8567,6 @@ suffix:semicolon
 id|tmp-&gt;b_blocknr
 op_assign
 id|blocknr
-suffix:semicolon
-id|tmp-&gt;b_rsector
-op_assign
-id|blocknr
-op_star
-id|sectors
 suffix:semicolon
 id|tmp-&gt;b_state
 op_assign
@@ -8653,7 +8638,7 @@ op_amp
 id|iobuf-&gt;io_count
 )paren
 suffix:semicolon
-id|generic_make_request
+id|submit_bh
 c_func
 (paren
 id|rw

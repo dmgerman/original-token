@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.13 2000/11/06 06:59:04 davem Exp $ */
+multiline_comment|/* $Id: pgalloc.h,v 1.14 2000/12/09 04:15:24 anton Exp $ */
 macro_line|#ifndef _SPARC64_PGALLOC_H
 DECL|macro|_SPARC64_PGALLOC_H
 mdefine_line|#define _SPARC64_PGALLOC_H
@@ -14,11 +14,24 @@ DECL|macro|flush_cache_range
 mdefine_line|#define flush_cache_range(mm, start, end) &bslash;&n;&t;flush_cache_mm(mm)
 DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, page) &bslash;&n;&t;flush_cache_mm((vma)-&gt;vm_mm)
-multiline_comment|/* These operations are unnecessary on the SpitFire since D-CACHE is write-through. */
-DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
+multiline_comment|/* This is unnecessary on the SpitFire since D-CACHE is write-through. */
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+multiline_comment|/* &n; * icache doesnt snoop local stores and we don&squot;t use block commit stores&n; * (which invalidate icache lines) during module load, so we need this.&n; */
+r_extern
+r_void
+id|flush_icache_range
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|__flush_dcache_page

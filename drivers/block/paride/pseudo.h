@@ -111,13 +111,9 @@ id|tq_struct
 id|ps_tq
 op_assign
 (brace
-l_int|0
-comma
-l_int|0
-comma
+id|routine
+suffix:colon
 id|ps_tq_int
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|ps_set_intr

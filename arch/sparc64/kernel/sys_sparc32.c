@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.166 2000/11/10 04:49:56 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.168 2000/12/11 18:59:35 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16713,6 +16713,12 @@ comma
 id|bytes_to_copy
 )paren
 suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|flush_page_to_ram
 c_func
 (paren
@@ -22947,6 +22953,11 @@ id|u32
 id|__new_addr
 )paren
 (brace
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+suffix:semicolon
 r_int
 r_int
 id|ret
@@ -22996,6 +23007,31 @@ c_func
 op_amp
 id|current-&gt;mm-&gt;mmap_sem
 )paren
+suffix:semicolon
+id|vma
+op_assign
+id|find_vma
+c_func
+(paren
+id|current-&gt;mm
+comma
+id|addr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vma
+op_logical_and
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_SHARED
+)paren
+)paren
+id|current-&gt;thread.flags
+op_or_assign
+id|SPARC_FLAG_MMAPSHARED
 suffix:semicolon
 r_if
 c_cond
@@ -23050,6 +23086,7 @@ suffix:semicolon
 id|new_addr
 op_assign
 id|get_unmapped_area
+c_func
 (paren
 id|addr
 comma
@@ -23088,6 +23125,13 @@ id|new_addr
 suffix:semicolon
 id|out_sem
 suffix:colon
+id|current-&gt;thread.flags
+op_and_assign
+op_complement
+(paren
+id|SPARC_FLAG_MMAPSHARED
+)paren
+suffix:semicolon
 id|up
 c_func
 (paren

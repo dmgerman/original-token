@@ -1442,9 +1442,12 @@ id|bcs-&gt;channel
 op_assign
 id|bc
 suffix:semicolon
-id|bcs-&gt;tqueue.next
-op_assign
-l_int|0
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|bcs-&gt;tqueue.list
+)paren
 suffix:semicolon
 id|bcs-&gt;tqueue.sync
 op_assign

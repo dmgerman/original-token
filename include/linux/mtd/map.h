@@ -1,5 +1,5 @@
 multiline_comment|/* Overhauled routines for dealing with different mmap regions of flash */
-multiline_comment|/* $Id: map.h,v 1.5 2000/06/26 16:18:58 dwmw2 Exp $ */
+multiline_comment|/* $Id: map.h,v 1.10 2000/12/04 13:18:33 dwmw2 Exp $ */
 macro_line|#ifndef __LINUX_MTD_MAP_H__
 DECL|macro|__LINUX_MTD_MAP_H__
 mdefine_line|#define __LINUX_MTD_MAP_H__
@@ -164,6 +164,16 @@ comma
 id|ssize_t
 )paren
 suffix:semicolon
+DECL|member|set_vpp
+r_void
+(paren
+op_star
+id|set_vpp
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* We put these two here rather than a single void *map_priv, &n;&t;   because we want mappers to be able to have quickly-accessible&n;&t;   cache for the &squot;currently-mapped page&squot; without the _extra_&n;&t;   redirection that would be necessary. If you need more than&n;&t;   two longs, turn the second into a pointer. dwmw2 */
 DECL|member|map_priv_1
 r_int
@@ -200,6 +210,7 @@ id|im_name
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
 multiline_comment|/* &n; * Probe for the contents of a map device and make an MTD structure&n; * if anything is recognised. Doesn&squot;t register it because the calling&n; * map driver needs to set the &squot;module&squot; field first.&n; */
 DECL|function|do_map_probe
 r_static
@@ -285,6 +296,65 @@ DECL|macro|do_ram_probe
 mdefine_line|#define do_ram_probe(x) do_map_probe(x, &quot;map_ram_probe&quot;, &quot;map_ram&quot;)
 DECL|macro|do_rom_probe
 mdefine_line|#define do_rom_probe(x) do_map_probe(x, &quot;map_rom_probe&quot;, &quot;map_rom&quot;)
+macro_line|#else
+multiline_comment|/* without module support, call probe function directly */
+r_extern
+r_struct
+id|mtd_info
+op_star
+id|cfi_probe
+c_func
+(paren
+r_struct
+id|map_info
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|mtd_info
+op_star
+id|jedec_probe
+c_func
+(paren
+r_struct
+id|map_info
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|mtd_info
+op_star
+id|map_ram_probe
+c_func
+(paren
+r_struct
+id|map_info
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|mtd_info
+op_star
+id|map_rom_probe
+c_func
+(paren
+r_struct
+id|map_info
+op_star
+)paren
+suffix:semicolon
+DECL|macro|do_cfi_probe
+mdefine_line|#define do_cfi_probe(x) cfi_probe(x)
+DECL|macro|do_jedec_probe
+mdefine_line|#define do_jedec_probe(x) jedec_probe(x)
+DECL|macro|do_ram_probe
+mdefine_line|#define do_ram_probe(x) map_ram_probe(x)
+DECL|macro|do_rom_probe
+mdefine_line|#define do_rom_probe(x) map_rom_probe(x)
+macro_line|#endif
 multiline_comment|/*&n; * Destroy an MTD device which was created for a map device.&n; * Make sure the MTD device is already unregistered before calling this&n; */
 DECL|function|map_destroy
 r_static
@@ -327,5 +397,9 @@ id|mtd
 )paren
 suffix:semicolon
 )brace
+DECL|macro|ENABLE_VPP
+mdefine_line|#define ENABLE_VPP(map) do { if(map-&gt;set_vpp) map-&gt;set_vpp(1); } while(0)
+DECL|macro|DISABLE_VPP
+mdefine_line|#define DISABLE_VPP(map) do { if(map-&gt;set_vpp) map-&gt;set_vpp(0); } while(0)
 macro_line|#endif /* __LINUX_MTD_MAP_H__ */
 eof

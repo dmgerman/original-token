@@ -143,7 +143,7 @@ id|dev-&gt;name
 suffix:semicolon
 r_return
 op_minus
-id|EFAULT
+id|ENOMEM
 suffix:semicolon
 )brace
 r_else

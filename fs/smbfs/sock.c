@@ -623,9 +623,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|job-&gt;cb.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|job-&gt;cb.list
+)paren
 suffix:semicolon
 id|job-&gt;cb.sync
 op_assign

@@ -3065,8 +3065,6 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
@@ -3114,7 +3112,7 @@ id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032a)
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
@@ -3758,6 +3756,12 @@ l_int|0
 r_return
 op_minus
 id|ENODEV
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* start address of 1 --&gt; forced detection */
 r_if

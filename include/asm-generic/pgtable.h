@@ -123,11 +123,11 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|function|ptep_clear_wrprotect
+DECL|function|ptep_set_wrprotect
 r_static
 r_inline
 r_void
-id|ptep_clear_wrprotect
+id|ptep_set_wrprotect
 c_func
 (paren
 id|pte_t

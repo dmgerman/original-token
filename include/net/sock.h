@@ -3778,6 +3778,10 @@ suffix:semicolon
 multiline_comment|/* Toss packet */
 )brace
 macro_line|#endif /* CONFIG_FILTER */
+id|skb-&gt;dev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|skb_set_owner_r
 c_func
 (paren

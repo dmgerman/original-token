@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hdreg.h,v 1.1 2000/01/21 04:56:27 zaitcev Exp $&n; * hdreg.h: SPARC PCI specific IDE glue.&n; *&n; * Copyright (C) 1997  David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: hdreg.h,v 1.2 2000/12/05 00:56:36 anton Exp $&n; * hdreg.h: SPARC PCI specific IDE glue.&n; *&n; * Copyright (C) 1997  David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef __SPARC_HDREG_H
 DECL|macro|__SPARC_HDREG_H
 mdefine_line|#define __SPARC_HDREG_H

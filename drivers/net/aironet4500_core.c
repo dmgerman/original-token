@@ -13130,9 +13130,12 @@ id|priv-&gt;unlock_command_postponed
 op_assign
 l_int|0
 suffix:semicolon
-id|priv-&gt;immediate_bh.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|priv-&gt;immediate_bh.list
+)paren
 suffix:semicolon
 id|priv-&gt;immediate_bh.sync
 op_assign

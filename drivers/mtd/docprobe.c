@@ -2,8 +2,11 @@ multiline_comment|/* Linux driver for Disk-On-Chip devices    */
 multiline_comment|/* Probe routines common to all DoC devices */
 multiline_comment|/* (c) 1999 Machine Vision Holdings, Inc.   */
 multiline_comment|/* Author: David Woodhouse &lt;dwmw2@mvhi.com&gt; */
-multiline_comment|/* $Id: docprobe.c,v 1.10 2000/07/13 14:23:20 dwmw2 Exp $ */
+multiline_comment|/* $Id: docprobe.c,v 1.21 2000/12/03 19:32:34 dwmw2 Exp $ */
 multiline_comment|/* DOC_PASSIVE_PROBE:&n;   In order to ensure that the BIOS checksum is correct at boot time, and &n;   hence that the onboard BIOS extension gets executed, the DiskOnChip &n;   goes into reset mode when it is read sequentially: all registers &n;   return 0xff until the chip is woken up again by writing to the &n;   DOCControl register. &n;&n;   Unfortunately, this means that the probe for the DiskOnChip is unsafe, &n;   because one of the first things it does is write to where it thinks &n;   the DOCControl register should be - which may well be shared memory &n;   for another device. I&squot;ve had machines which lock up when this is &n;   attempted. Hence the possibility to do a passive probe, which will fail &n;   to detect a chip in reset mode, but is at least guaranteed not to lock&n;   the machine.&n;&n;   If you have this problem, uncomment the following line:&n;#define DOC_PASSIVE_PROBE&n;*/
+multiline_comment|/* DOC_SINGLE_DRIVER:&n;   Millennium driver has been merged into DOC2000 driver.&n;&n;   The newly-merged driver doesn&squot;t appear to work for writing. It&squot;s the&n;   same with the DiskOnChip 2000 and the Millennium. If you have a &n;   Millennium and you want write support to work, remove the definition&n;   of DOC_SINGLE_DRIVER below to use the old doc2001-specific driver.&n;&n;   Otherwise, it&squot;s left on in the hope that it&squot;ll annoy someone with&n;   a Millennium enough that they go through and work out what the &n;   difference is :)&n;*/
+DECL|macro|DOC_SINGLE_DRIVER
+mdefine_line|#define DOC_SINGLE_DRIVER
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
@@ -20,7 +23,26 @@ macro_line|#include &lt;linux/mtd/mtd.h&gt;
 macro_line|#include &lt;linux/mtd/nand.h&gt;
 macro_line|#include &lt;linux/mtd/doc2000.h&gt;
 multiline_comment|/* Where to look for the devices? */
-macro_line|#if defined (__alpha__) || defined(__i386__)
+macro_line|#ifndef CONFIG_MTD_DOCPROBE_ADDRESS
+DECL|macro|CONFIG_MTD_DOCPROBE_ADDRESS
+mdefine_line|#define CONFIG_MTD_DOCPROBE_ADDRESS 0
+macro_line|#endif
+DECL|variable|doc_config_location
+r_static
+r_int
+r_int
+id|doc_config_location
+op_assign
+id|CONFIG_MTD_DOCPROBE_ADDRESS
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|doc_config_location
+comma
+l_string|&quot;l&quot;
+)paren
+suffix:semicolon
 DECL|variable|doc_locations
 r_static
 r_int
@@ -31,6 +53,49 @@ id|doc_locations
 )braket
 op_assign
 (brace
+macro_line|#if defined (__alpha__) || defined(__i386__)
+macro_line|#ifdef CONFIG_MTD_DOCPROBE_HIGH
+l_int|0xfffc8000
+comma
+l_int|0xfffca000
+comma
+l_int|0xfffcc000
+comma
+l_int|0xfffce000
+comma
+l_int|0xfffd0000
+comma
+l_int|0xfffd2000
+comma
+l_int|0xfffd4000
+comma
+l_int|0xfffd6000
+comma
+l_int|0xfffd8000
+comma
+l_int|0xfffda000
+comma
+l_int|0xfffdc000
+comma
+l_int|0xfffde000
+comma
+l_int|0xfffe0000
+comma
+l_int|0xfffe2000
+comma
+l_int|0xfffe4000
+comma
+l_int|0xfffe6000
+comma
+l_int|0xfffe8000
+comma
+l_int|0xfffea000
+comma
+l_int|0xfffec000
+comma
+l_int|0xfffee000
+comma
+macro_line|#else /*  CONFIG_MTD_DOCPROBE_HIGH */
 l_int|0xc8000
 comma
 l_int|0xca000
@@ -71,28 +136,16 @@ l_int|0xec000
 comma
 l_int|0xee000
 comma
-l_int|0
-)brace
-suffix:semicolon
+macro_line|#endif /*  CONFIG_MTD_DOCPROBE_HIGH */
 macro_line|#elif defined(__ppc__)
-DECL|variable|doc_locations
-r_static
-r_int
-r_int
-id|__initdata
-id|doc_locations
-(braket
-)braket
-op_assign
-(brace
 l_int|0xe4000000
 comma
-l_int|0
-)brace
-suffix:semicolon
 macro_line|#else 
 macro_line|#warning Unknown architecture for DiskOnChip. No default probe locations defined
 macro_line|#endif
+l_int|0
+)brace
+suffix:semicolon
 multiline_comment|/* doccheck: Probe a given memory window to see if there&squot;s a DiskOnChip present */
 DECL|function|doccheck
 r_static
@@ -130,7 +183,8 @@ id|tmp2
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Routine copied from the Linux DOC driver */
-multiline_comment|/* Check for 0x55 0xAA signature at beginning of window */
+macro_line|#ifdef CONFIG_MTD_DOCPROBE_55AA
+multiline_comment|/* Check for 0x55 0xAA signature at beginning of window,&n;&t;   this is no longer true once we remove the IPL (for Millennium */
 r_if
 c_cond
 (paren
@@ -157,6 +211,7 @@ l_int|0xaa
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif /* CONFIG_MTD_DOCPROBE_55AA */
 macro_line|#ifndef DOC_PASSIVE_PROBE&t;
 multiline_comment|/* It&squot;s not possible to cleanly detect the DiskOnChip - the&n;&t; * bootup procedure will put the device into reset mode, and&n;&t; * it&squot;s not possible to talk to it without actually writing&n;&t; * to the DOCControl register. So we store the current contents&n;&t; * of the DOCControl register&squot;s location, in case we later decide&n;&t; * that it&squot;s not a DiskOnChip, and want to put it back how we&n;&t; * found it. &n;&t; */
 id|tmp2
@@ -324,6 +379,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+macro_line|#ifndef CONFIG_MTD_DOCPROBE_55AA
 id|printk
 c_func
 (paren
@@ -335,6 +391,7 @@ comma
 id|physadr
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef DOC_PASSIVE_PROBE
 multiline_comment|/* Put back the contents of the DOCControl register, in case it&squot;s not&n;&t;&t; * actually a DiskOnChip.&n;&t;&t; */
 id|WriteDOC
@@ -632,6 +689,16 @@ id|name
 op_assign
 l_string|&quot;Millennium&quot;
 suffix:semicolon
+macro_line|#ifdef DOC_SINGLE_DRIVER
+id|im_funcname
+op_assign
+l_string|&quot;DoC2k_init&quot;
+suffix:semicolon
+id|im_modname
+op_assign
+l_string|&quot;doc2000&quot;
+suffix:semicolon
+macro_line|#else
 id|im_funcname
 op_assign
 l_string|&quot;DoCMil_init&quot;
@@ -640,6 +707,7 @@ id|im_modname
 op_assign
 l_string|&quot;doc2001&quot;
 suffix:semicolon
+macro_line|#endif /* DOC_SINGLE_DRIVER */
 r_break
 suffix:semicolon
 )brace
@@ -684,7 +752,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Cannot find driver for DiskOnChip %s at 0x%X&bslash;n&quot;
+l_string|&quot;Cannot find driver for DiskOnChip %s at 0x%lX&bslash;n&quot;
 comma
 id|name
 comma
@@ -704,13 +772,9 @@ id|docptr
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *&n; * Module stuff&n; *&n; ****************************************************************************/
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-macro_line|#ifdef MODULE
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20212 &amp;&amp; defined(MODULE)
 DECL|macro|init_doc
 mdefine_line|#define init_doc init_module
-macro_line|#endif
-DECL|macro|__exit
-mdefine_line|#define __exit
 macro_line|#endif
 DECL|function|init_doc
 r_int
@@ -736,10 +800,33 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;$Id: docprobe.c,v 1.10 2000/07/13 14:23:20 dwmw2 Exp $&bslash;n&quot;
+l_string|&quot;$Id: docprobe.c,v 1.21 2000/12/03 19:32:34 dwmw2 Exp $&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|doc_config_location
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Using configured probe address 0x%lx&bslash;n&quot;
+comma
+id|doc_config_location
+)paren
+suffix:semicolon
+id|DoC_Probe
+c_func
+(paren
+id|doc_config_location
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 r_for
 c_loop
 (paren
@@ -766,11 +853,16 @@ id|i
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* So it looks like we&squot;ve been used and we get unloaded */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 DECL|variable|init_doc
 id|module_init
 c_func
@@ -778,5 +870,4 @@ c_func
 id|init_doc
 )paren
 suffix:semicolon
-macro_line|#endif
 eof

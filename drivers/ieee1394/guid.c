@@ -701,9 +701,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|greq-&gt;tq.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|greq-&gt;tq.list
+)paren
 suffix:semicolon
 id|greq-&gt;tq.sync
 op_assign

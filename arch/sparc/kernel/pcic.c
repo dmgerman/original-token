@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.c,v 1.19 2000/11/08 04:49:17 davem Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
+multiline_comment|/* $Id: pcic.c,v 1.20 2000/12/05 00:56:36 anton Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2277,15 +2277,15 @@ c_func
 (paren
 l_string|&quot;PCIC: Skipping I/O space at 0x%lx,&quot;
 l_string|&quot;this will Oops if a driver attaches;&quot;
-l_string|&quot;device &squot;%s&squot; (%x,%x)&bslash;n&quot;
+l_string|&quot;device &squot;%s&squot; at %02x:%02x)&bslash;n&quot;
 comma
 id|address
 comma
 id|namebuf
 comma
-id|dev-&gt;device
+id|dev-&gt;bus-&gt;number
 comma
-id|dev-&gt;vendor
+id|dev-&gt;devfn
 )paren
 suffix:semicolon
 )brace
@@ -2328,7 +2328,6 @@ id|namebuf
 l_int|64
 )braket
 suffix:semicolon
-multiline_comment|/* P3 remove */
 r_if
 c_cond
 (paren
@@ -2368,7 +2367,6 @@ id|namebuf
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* P3 remove */
 )brace
 r_if
 c_cond
@@ -2595,13 +2593,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PCIC: setting irq %x for device (%x,%x)&bslash;n&quot;
+l_string|&quot;PCIC: setting irq %d at pin %d for device %02x:%02x&bslash;n&quot;
 comma
 id|p-&gt;irq
 comma
-id|dev-&gt;device
+id|p-&gt;pin
 comma
-id|dev-&gt;vendor
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
 )paren
 suffix:semicolon
 id|dev-&gt;irq

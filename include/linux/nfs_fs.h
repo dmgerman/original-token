@@ -895,6 +895,16 @@ id|inode
 )paren
 )paren
 r_return
+id|NFS_STALE
+c_func
+(paren
+id|inode
+)paren
+ques
+c_cond
+op_minus
+id|ESTALE
+suffix:colon
 l_int|0
 suffix:semicolon
 r_return

@@ -1379,6 +1379,12 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 macro_line|#ifdef USE_IO_OPS
 id|ioaddr
 op_assign
@@ -2689,11 +2695,8 @@ id|PCIBusCfg
 )paren
 suffix:semicolon
 multiline_comment|/* Reset */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|request_irq
 c_func
 (paren
@@ -2708,15 +2711,15 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|i
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6628,8 +6631,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -2691,9 +2691,12 @@ id|dev-&gt;dma-&gt;this_buffer
 op_assign
 l_int|NULL
 suffix:semicolon
-id|dev-&gt;tq.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|dev-&gt;tq.list
+)paren
 suffix:semicolon
 id|dev-&gt;tq.sync
 op_assign

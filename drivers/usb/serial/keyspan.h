@@ -2,6 +2,7 @@ multiline_comment|/*&n;  Keyspan USB to Serial Converter driver&n; &n;  (C) Copy
 macro_line|#ifndef __LINUX_USB_SERIAL_KEYSPAN_H
 DECL|macro|__LINUX_USB_SERIAL_KEYSPAN_H
 mdefine_line|#define __LINUX_USB_SERIAL_KEYSPAN_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Function prototypes for Keyspan serial converter */
 r_static
 r_int

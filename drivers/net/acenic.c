@@ -7927,9 +7927,12 @@ op_assign
 id|ace_timer
 suffix:semicolon
 multiline_comment|/*&n;&t; * Setup the bottom half rx ring refill handler&n;&t; */
-id|ap-&gt;immediate.next
-op_assign
-l_int|NULL
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|ap-&gt;immediate.list
+)paren
 suffix:semicolon
 id|ap-&gt;immediate.sync
 op_assign

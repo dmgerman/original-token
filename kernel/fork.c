@@ -2207,7 +2207,7 @@ id|regs
 comma
 r_int
 r_int
-id|stack_top
+id|stack_size
 )paren
 (brace
 r_int
@@ -2633,7 +2633,7 @@ id|clone_flags
 comma
 id|stack_start
 comma
-id|stack_top
+id|stack_size
 comma
 id|p
 comma

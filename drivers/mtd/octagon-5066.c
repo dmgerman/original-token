@@ -1,4 +1,4 @@
-singleline_comment|// $Id: octagon-5066.c,v 1.10 2000/07/13 14:04:23 dwmw2 Exp $
+singleline_comment|// $Id: octagon-5066.c,v 1.12 2000/11/27 08:50:22 dwmw2 Exp $
 multiline_comment|/* ######################################################################&n;&n;   Octagon 5066 MTD Driver. &n;  &n;   The Octagon 5066 is a SBC based on AMD&squot;s 586-WB running at 133 MHZ. It&n;   comes with a builtin AMD 29F016 flash chip and a socketed EEPROM that&n;   is replacable by flash. Both units are mapped through a multiplexer&n;   into a 32k memory window at 0xe8000. The control register for the &n;   multiplexing unit is located at IO 0x208 with a bit map of&n;     0-5 Page Selection in 32k increments&n;     6-7 Device selection:&n;        00 SSD off&n;        01 SSD 0 (Socket)&n;        10 SSD 1 (Flash chip)&n;        11 undefined&n;  &n;   On each SSD, the first 128k is reserved for use by the bios&n;   (actually it IS the bios..) This only matters if you are booting off the &n;   flash, you must not put a file system starting there.&n;   &n;   The driver tries to do a detection algorithm to guess what sort of devices&n;   are plugged into the sockets.&n;   &n;   ##################################################################### */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -683,62 +683,110 @@ l_int|2
 op_assign
 (brace
 (brace
+id|name
+suffix:colon
 l_string|&quot;Octagon 5066 Socket&quot;
 comma
+id|size
+suffix:colon
 l_int|512
 op_star
 l_int|1024
 comma
+id|buswidth
+suffix:colon
 l_int|1
 comma
+id|read8
+suffix:colon
 id|oct5066_read8
 comma
+id|read16
+suffix:colon
 id|oct5066_read16
 comma
+id|read32
+suffix:colon
 id|oct5066_read32
 comma
+id|copy_from
+suffix:colon
 id|oct5066_copy_from
 comma
+id|write8
+suffix:colon
 id|oct5066_write8
 comma
+id|write16
+suffix:colon
 id|oct5066_write16
 comma
+id|write32
+suffix:colon
 id|oct5066_write32
 comma
+id|copy_to
+suffix:colon
 id|oct5066_copy_to
 comma
+id|map_priv_1
+suffix:colon
 l_int|1
 op_lshift
 l_int|6
 )brace
 comma
 (brace
+id|name
+suffix:colon
 l_string|&quot;Octagon 5066 Internal Flash&quot;
 comma
+id|size
+suffix:colon
 l_int|2
 op_star
 l_int|1024
 op_star
 l_int|1024
 comma
+id|buswidth
+suffix:colon
 l_int|1
 comma
+id|read8
+suffix:colon
 id|oct5066_read8
 comma
+id|read16
+suffix:colon
 id|oct5066_read16
 comma
+id|read32
+suffix:colon
 id|oct5066_read32
 comma
+id|copy_from
+suffix:colon
 id|oct5066_copy_from
 comma
+id|write8
+suffix:colon
 id|oct5066_write8
 comma
+id|write16
+suffix:colon
 id|oct5066_write16
 comma
+id|write32
+suffix:colon
 id|oct5066_write32
 comma
+id|copy_to
+suffix:colon
 id|oct5066_copy_to
 comma
+id|map_priv_1
+suffix:colon
 l_int|2
 op_lshift
 l_int|6
@@ -898,15 +946,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-macro_line|#ifdef MODULE
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20212 &amp;&amp; defined(MODULE)
 DECL|macro|init_oct5066
 mdefine_line|#define init_oct5066 init_module
 DECL|macro|cleanup_oct5066
 mdefine_line|#define cleanup_oct5066 cleanup_module
-macro_line|#endif
-DECL|macro|__exit
-mdefine_line|#define __exit
 macro_line|#endif
 DECL|function|cleanup_oct5066
 r_void
@@ -1270,7 +1314,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 DECL|variable|init_oct5066
 id|module_init
 c_func
@@ -1285,5 +1328,4 @@ c_func
 id|cleanup_oct5066
 )paren
 suffix:semicolon
-macro_line|#endif
 eof

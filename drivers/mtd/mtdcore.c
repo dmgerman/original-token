@@ -1,8 +1,4 @@
-multiline_comment|/*&n; * $Id: mtdcore.c,v 1.13 2000/07/13 14:27:37 dwmw2 Exp $&n; *&n; * Core registration and callback routines for MTD &n; * drivers and users.&n; *&n; */
-macro_line|#ifdef MTD_DEBUG
-DECL|macro|DEBUGLVL
-mdefine_line|#define DEBUGLVL debug
-macro_line|#endif
+multiline_comment|/*&n; * $Id: mtdcore.c,v 1.27 2000/12/10 01:10:09 dwmw2 Exp $&n; *&n; * Core registration and callback routines for MTD&n; * drivers and users.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,166 +16,6 @@ macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
-macro_line|#ifdef MTD_DEBUG
-DECL|variable|debug
-r_static
-r_int
-id|debug
-op_assign
-id|MTD_DEBUG
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|debug
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Init code required for 2.2 kernels */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-macro_line|#ifdef CONFIG_MTD_DOC1000
-r_extern
-r_int
-id|init_doc1000
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_DOCPROBE
-r_extern
-r_int
-id|init_doc
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_PHYSMAP
-r_extern
-r_int
-id|init_physmap
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_RPXLITE
-r_extern
-r_int
-id|init_rpxlite
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_OCTAGON
-r_extern
-r_int
-id|init_octagon5066
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_PNC2000
-r_extern
-r_int
-id|init_pnc2000
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_VMAX
-r_extern
-r_int
-id|init_vmax301
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_MIXMEM
-r_extern
-r_int
-id|init_mixmem
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_PMC551
-r_extern
-r_int
-id|init_pmc551
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_NORA
-r_extern
-r_int
-id|init_nora
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_FTL
-r_extern
-r_int
-id|init_ftl
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NFTL
-r_extern
-r_int
-id|init_nftl
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_BLOCK
-r_extern
-r_int
-id|init_mtdblock
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_CHAR
-r_extern
-r_int
-id|init_mtdchar
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif /* LINUX_VERSION_CODE &lt; 0x20300 */
 r_static
 id|DECLARE_MUTEX
 c_func
@@ -206,7 +42,7 @@ id|mtd_notifiers
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/**&n; *&t;add_mtd_device - register an MTD device &n; *&t;@mtd: pointer to new MTD device info structure&n; *&n; *&t;Add a device to the list of MTD devices present in the system, and&n; *&t;notify each currently active MTD &squot;user&squot; of its arrival. Returns&n; *&t;zero on success or 1 on failure, which currently will only happen&n; *&t;if the number of present devices exceeds MAX_MTD_DEVICES (i.e. 16)&n; */
+multiline_comment|/**&n; *&t;add_mtd_device - register an MTD device&n; *&t;@mtd: pointer to new MTD device info structure&n; *&n; *&t;Add a device to the list of MTD devices present in the system, and&n; *&t;notify each currently active MTD &squot;user&squot; of its arrival. Returns&n; *&t;zero on success or 1 on failure, which currently will only happen&n; *&t;if the number of present devices exceeds MAX_MTD_DEVICES (i.e. 16)&n; */
 DECL|function|add_mtd_device
 r_int
 id|add_mtd_device
@@ -265,6 +101,10 @@ id|i
 )braket
 op_assign
 id|mtd
+suffix:semicolon
+id|mtd-&gt;index
+op_assign
+id|i
 suffix:semicolon
 id|DEBUG
 c_func
@@ -327,7 +167,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;del_mtd_device - unregister an MTD device &n; *&t;@mtd: pointer to MTD device info structure&n; *&n; *&t;Remove a device from the list of MTD devices present in the system,&n; *&t;and notify each currently active MTD &squot;user&squot; of its departure.&n; *&t;Returns zero on success or 1 on failure, which currently will happen&n; *&t;if the requested device does not appear to be present in the list.&n; */
+multiline_comment|/**&n; *&t;del_mtd_device - unregister an MTD device&n; *&t;@mtd: pointer to MTD device info structure&n; *&n; *&t;Remove a device from the list of MTD devices present in the system,&n; *&t;and notify each currently active MTD &squot;user&squot; of its departure.&n; *&t;Returns zero on success or 1 on failure, which currently will happen&n; *&t;if the requested device does not appear to be present in the list.&n; */
 DECL|function|del_mtd_device
 r_int
 id|del_mtd_device
@@ -511,7 +351,7 @@ id|mtd_table_mutex
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;register_mtd_user - unregister a &squot;user&squot; of MTD devices.&n; *&t;@new: pointer to notifier info structure&n; *&n; *&t;Removes a callback function pair from the list of &squot;users&squot; to be&n; *&t;notified upon addition or removal of MTD devices. Causes the &n; *&t;&squot;remove&squot; callback to be immediately invoked for each MTD device&n; *&t;currently present in the system.&n; */
+multiline_comment|/**&n; *&t;register_mtd_user - unregister a &squot;user&squot; of MTD devices.&n; *&t;@new: pointer to notifier info structure&n; *&n; *&t;Removes a callback function pair from the list of &squot;users&squot; to be&n; *&t;notified upon addition or removal of MTD devices. Causes the&n; *&t;&squot;remove&squot; callback to be immediately invoked for each MTD device&n; *&t;currently present in the system.&n; */
 DECL|function|unregister_mtd_user
 r_int
 id|unregister_mtd_user
@@ -633,7 +473,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;__get_mtd_device - obtain a validated handle for an MTD device&n; *&t;@mtd: last known address of the required MTD device&n; *&t;@num: internal device number of the required MTD device&n; *&n; *&t;Given a number and NULL address, return the num&squot;th entry in the device &n; *&t;table, if any.&t;Given an address and num == -1, search the device table&n; *&t;for a device with that address and return if it&squot;s still present. Given&n; *&t;both, return the num&squot;th driver only if its address matches. Return NULL&n; *&t;if not. get_mtd_device() increases the use count, but&n; *&t;__get_mtd_device() doesn&squot;t - you should generally use get_mtd_device().&n; */
+multiline_comment|/**&n; *&t;__get_mtd_device - obtain a validated handle for an MTD device&n; *&t;@mtd: last known address of the required MTD device&n; *&t;@num: internal device number of the required MTD device&n; *&n; *&t;Given a number and NULL address, return the num&squot;th entry in the device&n; *&t;table, if any.&t;Given an address and num == -1, search the device table&n; *&t;for a device with that address and return if it&squot;s still present. Given&n; *&t;both, return the num&squot;th driver only if its address matches. Return NULL&n; *&t;if not. get_mtd_device() increases the use count, but&n; *&t;__get_mtd_device() doesn&squot;t - you should generally use get_mtd_device().&n; */
 DECL|function|__get_mtd_device
 r_struct
 id|mtd_info
@@ -1256,132 +1096,12 @@ macro_line|#endif
 macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/*====================================================================*/
 multiline_comment|/* Init code */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-DECL|function|init_others
-r_static
-r_inline
-r_void
-id|init_others
-c_func
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* Shedloads of calls to init functions of all the&n;&t; * other drivers and users of MTD, which we can&n;&t; * ditch in 2.3 because of the sexy new way of &n;&t; * finding init routines.&n;&t; */
-macro_line|#ifdef CONFIG_MTD_DOC1000
-id|init_doc1000
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_DOCPROBE
-id|init_doc
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* This covers both the DiskOnChip 2000 &n;&t;&t;     * and the DiskOnChip Millennium. &n;&t;&t;     * Theoretically all other DiskOnChip&n;&t;&t;     * devices too. */
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_PHYSMAP
-id|init_physmap
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_RPXLITE
-id|init_rpxlite
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_OCTAGON
-id|init_octagon5066
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_PNC2000
-id|init_pnc2000
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_VMAX
-id|init_vmax301
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIGF_MTD_MIXMEM
-id|init_mixmem
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_PMC551
-id|init_pmc551
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_NORA
-id|init_nora
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_MTDRAM
-id|init_mtdram
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_FTL
-id|init_ftl
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NFTL
-id|init_nftl
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_BLOCK
-id|init_mtdblock
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_CHAR
-id|init_mtdchar
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-macro_line|#ifdef MODULE
+macro_line|#if  LINUX_VERSION_CODE &lt; 0x20212 &amp;&amp; defined(MODULE)
 DECL|macro|init_mtd
 mdefine_line|#define init_mtd init_module
 DECL|macro|cleanup_mtd
 mdefine_line|#define cleanup_mtd cleanup_module
 macro_line|#endif
-macro_line|#endif /* LINUX_VERSION_CODE &lt; 0x20300 */
 DECL|function|init_mtd
 id|mod_init_t
 id|init_mtd
@@ -1390,38 +1110,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;INIT_MTD:&bslash;n&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|MAX_MTD_DEVICES
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|mtd_table
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,2,0)
 r_if
@@ -1458,8 +1146,8 @@ id|mtd_proc_entry
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-id|init_others
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20212
+id|init_mtd_devices
 c_func
 (paren
 )paren
@@ -1491,14 +1179,6 @@ c_func
 r_void
 )paren
 (brace
-id|unregister_chrdev
-c_func
-(paren
-id|MTD_CHAR_MAJOR
-comma
-l_string|&quot;mtd&quot;
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_PM
 r_if
 c_cond
@@ -1546,7 +1226,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 DECL|variable|init_mtd
 id|module_init
 c_func
@@ -1561,5 +1240,4 @@ c_func
 id|cleanup_mtd
 )paren
 suffix:semicolon
-macro_line|#endif
 eof

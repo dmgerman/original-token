@@ -1677,6 +1677,12 @@ r_goto
 id|err_out_free_dma
 suffix:semicolon
 )brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* request all PIO and MMIO regions just to make sure&n;&t; * noone else attempts to use any portion of our I/O space */
 r_if
 c_cond
@@ -2633,8 +2639,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* Reset the chip. */
 id|writew
 c_func
@@ -2646,9 +2650,8 @@ op_plus
 id|ChipCmd
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|request_irq
 c_func
 (paren
@@ -2663,15 +2666,15 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
-op_minus
-id|EBUSY
+id|i
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2720,8 +2723,6 @@ id|dev-&gt;irq
 comma
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -6452,8 +6453,6 @@ id|np-&gt;tx_bufs
 comma
 id|np-&gt;tx_bufs_dma
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
