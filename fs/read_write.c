@@ -429,8 +429,6 @@ op_assign
 r_int
 )paren
 id|offset
-op_amp
-id|INT_MAX
 suffix:semicolon
 r_if
 c_cond

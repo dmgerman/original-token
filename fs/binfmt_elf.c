@@ -4581,7 +4581,12 @@ id|limit
 OL
 id|ELF_EXEC_PAGESIZE
 op_logical_or
+id|atomic_read
+c_func
+(paren
+op_amp
 id|current-&gt;mm-&gt;count
+)paren
 op_ne
 l_int|1
 )paren

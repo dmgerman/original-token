@@ -712,6 +712,7 @@ id|HZ
 )paren
 suffix:semicolon
 macro_line|#ifndef DONT_FILLIN_HOSTNAME
+multiline_comment|/*&n;&t; *&t;Problem: The UTS name could change under us. We can&squot;t lock&n;&t; *&t;here to handle this. On the other hand we can&squot;t really&n;&t; *&t;go building a bad RPC!&n;&t; */
 r_if
 c_cond
 (paren

@@ -168,7 +168,7 @@ r_struct
 id|files_struct
 (brace
 DECL|member|count
-r_int
+id|atomic_t
 id|count
 suffix:semicolon
 DECL|member|max_fds
@@ -194,13 +194,13 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_FILES
-mdefine_line|#define INIT_FILES { &bslash;&n;&t;1, &bslash;&n;&t;NR_OPEN, &bslash;&n;&t;&amp;init_fd_array[0], &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } } &bslash;&n;}
+mdefine_line|#define INIT_FILES { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;NR_OPEN, &bslash;&n;&t;&amp;init_fd_array[0], &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } } &bslash;&n;}
 DECL|struct|fs_struct
 r_struct
 id|fs_struct
 (brace
 DECL|member|count
-r_int
+id|atomic_t
 id|count
 suffix:semicolon
 DECL|member|umask
@@ -220,7 +220,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_FS
-mdefine_line|#define INIT_FS { &bslash;&n;&t;1, &bslash;&n;&t;0022, &bslash;&n;&t;NULL, NULL &bslash;&n;}
+mdefine_line|#define INIT_FS { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;0022, &bslash;&n;&t;NULL, NULL &bslash;&n;}
 multiline_comment|/* Maximum number of active map areas.. This is a random (large) number */
 DECL|macro|MAX_MAP_COUNT
 mdefine_line|#define MAX_MAP_COUNT&t;(65536)
@@ -244,10 +244,11 @@ op_star
 id|pgd
 suffix:semicolon
 DECL|member|count
+id|atomic_t
+id|count
+suffix:semicolon
 DECL|member|map_count
 r_int
-id|count
-comma
 id|map_count
 suffix:semicolon
 DECL|member|mmap_sem
@@ -329,7 +330,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, swapper_pg_dir, 1, 1,&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, NULL }
+mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, swapper_pg_dir, &t;&bslash;&n;&t;&t;ATOMIC_INIT(1), 1,&t;&t;&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, NULL }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
@@ -354,6 +355,10 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|INIT_SIGNALS
 mdefine_line|#define INIT_SIGNALS { &bslash;&n;&t;&t;ATOMIC_INIT(1), &bslash;&n;&t;&t;{ {{0,}}, }, &bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED }
+multiline_comment|/*&n; * Some day this will be a full-fledged user tracking system..&n; * Right now it is only used to track how many processes a&n; * user has, but it has the potential to track memory usage etc.&n; */
+r_struct
+id|user_struct
+suffix:semicolon
 DECL|struct|task_struct
 r_struct
 id|task_struct
@@ -706,6 +711,12 @@ id|cap_inheritable
 comma
 id|cap_permitted
 suffix:semicolon
+DECL|member|user
+r_struct
+id|user_struct
+op_star
+id|user
+suffix:semicolon
 multiline_comment|/* limits */
 DECL|member|rlim
 r_struct
@@ -851,7 +862,7 @@ DECL|macro|DEF_PRIORITY
 mdefine_line|#define DEF_PRIORITY&t;(20*HZ/100)&t;/* 200 ms time slices */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;NULL, &bslash;&n;/* timeout */&t;0,SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;NULL, &bslash;&n;/* timeout */&t;0,SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
 DECL|union|task_union
 r_union
 id|task_union
@@ -1172,16 +1183,23 @@ suffix:semicolon
 multiline_comment|/* per-UID process charging. */
 r_extern
 r_int
-id|charge_uid
+id|alloc_uid
 c_func
 (paren
 r_struct
 id|task_struct
 op_star
 id|p
-comma
-r_int
-id|count
+)paren
+suffix:semicolon
+r_void
+id|free_uid
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
 )paren
 suffix:semicolon
 macro_line|#include &lt;asm/current.h&gt;
@@ -2028,8 +2046,12 @@ op_star
 id|mm
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|mm-&gt;count
-op_increment
+)paren
 suffix:semicolon
 )brace
 r_extern

@@ -216,5 +216,7 @@ DECL|macro|softirq_trylock
 mdefine_line|#define softirq_trylock(cpu)  (local_bh_count[cpu] ? 0 : (local_bh_count[cpu]=1))
 DECL|macro|softirq_endlock
 mdefine_line|#define softirq_endlock(cpu)  (local_bh_count[cpu] = 0)
+DECL|macro|synchronize_bh
+mdefine_line|#define synchronize_bh()&t;do { } while (0)
 macro_line|#endif
 eof

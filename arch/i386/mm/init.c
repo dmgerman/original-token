@@ -922,7 +922,9 @@ DECL|function|fixmap_init
 r_static
 r_int
 r_int
+id|__init
 id|fixmap_init
+c_func
 (paren
 r_int
 r_int
@@ -942,8 +944,12 @@ r_int
 id|address
 suffix:semicolon
 id|start_mem
-op_and_assign
-id|PAGE_MASK
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|start_mem
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -953,7 +959,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|idx
-OL
+op_le
 id|__end_of_fixed_addresses
 suffix:semicolon
 id|idx

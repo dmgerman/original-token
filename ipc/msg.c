@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/ipc/msg.c&n; * Copyright (C) 1992 Krishna Balasubramanian &n; */
+multiline_comment|/*&n; * linux/ipc/msg.c&n; * Copyright (C) 1992 Krishna Balasubramanian &n; *&n; * Removed all the remaining kerneld mess&n; * Catch the -EFAULT stuff properly&n; * Use GFP_KERNEL for messages as in 1.2&n; * Fixed up the unchecked user space derefs&n; * Copyright (C) 1998 Alan Cox &amp; Andi Kleen&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
@@ -182,8 +182,6 @@ id|msgflg
 (brace
 r_int
 id|id
-comma
-id|err
 suffix:semicolon
 r_struct
 id|msqid_ds
@@ -397,7 +395,7 @@ id|msgh
 op_plus
 id|msgsz
 comma
-id|GFP_ATOMIC
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -422,7 +420,11 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
+c_func
 (paren
 id|msgh-&gt;msg_spot
 comma
@@ -430,7 +432,19 @@ id|msgp-&gt;mtext
 comma
 id|msgsz
 )paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|msgh
+)paren
 suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -593,8 +607,6 @@ l_int|NULL
 suffix:semicolon
 r_int
 id|id
-comma
-id|err
 suffix:semicolon
 r_if
 c_cond

@@ -1174,6 +1174,19 @@ c_func
 id|xprt-&gt;sock
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;TCP doesnt require the rpciod now - other things may&n;&t; *&t;but rpciod handles that not us.&n;&t; */
+r_if
+c_cond
+(paren
+id|xprt-&gt;stream
+)paren
+(brace
+id|rpciod_down
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Mark a transport as disconnected&n; */
 r_static
@@ -2830,27 +2843,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Chain by rx_pending of rpc_xprt&squot;s */
-DECL|variable|rpc_tcp_tqueue
-r_static
-r_struct
-id|tq_struct
-id|rpc_tcp_tqueue
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
-suffix:semicolon
-multiline_comment|/*&n; *&t;This is protected from tcp_data_ready by the bh atomicity guarantees&n; */
-DECL|function|tcp_rpc_bh_run
-r_static
+multiline_comment|/*&n; *&t;This is protected from tcp_data_ready and the stack as its run&n; *&t;inside of the RPC I/O daemon&n; */
+DECL|function|rpciod_tcp_dispatcher
 r_void
-id|tcp_rpc_bh_run
+id|rpciod_tcp_dispatcher
 c_func
 (paren
 r_void
@@ -2867,7 +2863,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;tcp_rpc_bh_run: Queue Running&bslash;n&quot;
+l_string|&quot;rpciod_tcp_dispatcher: Queue Running&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Empty each pending socket&n;&t; */
@@ -2899,7 +2895,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;tcp_rpc_run_bh: Processing %p&bslash;n&quot;
+l_string|&quot;rpciod_tcp_dispatcher: Processing %p&bslash;n&quot;
 comma
 id|xprt
 )paren
@@ -2975,47 +2971,19 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|tcp_rpc_bh_queue
-r_static
+DECL|function|tcp_rpciod_queue
+r_extern
+r_inline
 r_void
-id|tcp_rpc_bh_queue
+id|tcp_rpciod_queue
 c_func
 (paren
 r_void
 )paren
 (brace
-id|rpc_tcp_tqueue.routine
-op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-r_void
-op_star
-)paren
-id|tcp_rpc_bh_run
-suffix:semicolon
-id|queue_task
+id|rpciod_wake_up
 c_func
 (paren
-op_amp
-id|rpc_tcp_tqueue
-comma
-op_amp
-id|tq_immediate
-)paren
-suffix:semicolon
-id|dprintk
-c_func
-(paren
-l_string|&quot;RPC:     tcp_rpc_bh_queue: immediate op queued&bslash;n&quot;
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|IMMEDIATE_BH
 )paren
 suffix:semicolon
 )brace
@@ -3116,7 +3084,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|tcp_rpc_bh_queue
+id|tcp_rpciod_queue
 c_func
 (paren
 )paren
@@ -5020,6 +4988,21 @@ comma
 id|xprt
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;TCP requires the rpc I/O daemon is present&n;&t; */
+r_if
+c_cond
+(paren
+id|proto
+op_eq
+id|IPPROTO_TCP
+)paren
+(brace
+id|rpciod_up
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_return
 id|xprt
 suffix:semicolon

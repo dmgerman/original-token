@@ -72,7 +72,7 @@ mdefine_line|#define&t;ASF_PCB_MASK&t;(ASF2|ASF1)
 multiline_comment|/*&n; * host aux DMA register bits&n; */
 DECL|macro|DMA_BRST
 mdefine_line|#define&t;DMA_BRST&t;0x01&t;/* DMA burst */
-multiline_comment|/*&n; * maximum amount of data data allowed in a PCB&n; */
+multiline_comment|/*&n; * maximum amount of data allowed in a PCB&n; */
 DECL|macro|MAX_PCB_DATA
 mdefine_line|#define&t;MAX_PCB_DATA&t;62
 multiline_comment|/*****************************************************************&n; *&n; *  timeout value&n; *&t;this is a rough value used for loops to stop them from &n; *&t;locking up the whole machine in the case of failure or&n; *&t;error conditions&n; *&n; *****************************************************************/

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|DCACHE_PARANOIA
@@ -25,6 +26,11 @@ id|inodes_stat
 suffix:semicolon
 DECL|macro|nr_inodes
 mdefine_line|#define nr_inodes (inodes_stat[0])
+DECL|variable|dentry_cache
+id|kmem_cache_t
+op_star
+id|dentry_cache
+suffix:semicolon
 multiline_comment|/*&n; * This is the single most critical data structure when it comes&n; * to the dcache: the hashtable for lookups. Somebody should try&n; * to make this good - I&squot;ve just made it work.&n; *&n; * This hash-function tries to avoid losing too many bits of hash&n; * information, yet avoid using a prime hash-size or similar.&n; */
 DECL|macro|D_HASHBITS
 mdefine_line|#define D_HASHBITS     10
@@ -118,15 +124,26 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dname_external
+c_func
+(paren
+id|dentry
+)paren
+)paren
 id|kfree
 c_func
 (paren
 id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|dentry_cache
+comma
 id|dentry
 )paren
 suffix:semicolon
@@ -1555,14 +1572,10 @@ suffix:semicolon
 )brace
 id|dentry
 op_assign
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|dentry
-)paren
+id|dentry_cache
 comma
 id|GFP_KERNEL
 )paren
@@ -1576,6 +1589,16 @@ id|dentry
 r_return
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|name-&gt;len
+OG
+id|DNAME_INLINE_LEN
+op_minus
+l_int|1
+)paren
+(brace
 id|str
 op_assign
 id|kmalloc
@@ -1597,9 +1620,11 @@ op_logical_neg
 id|str
 )paren
 (brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|dentry_cache
+comma
 id|dentry
 )paren
 suffix:semicolon
@@ -1607,6 +1632,12 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+)brace
+r_else
+id|str
+op_assign
+id|dentry-&gt;d_iname
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -2320,6 +2351,83 @@ suffix:semicolon
 )brace
 DECL|macro|do_switch
 mdefine_line|#define do_switch(x,y) do { &bslash;&n;&t;__typeof__ (x) __tmp = x; &bslash;&n;&t;x = y; y = __tmp; } while (0)
+multiline_comment|/*&n; * When switching names, the actual string doesn&squot;t strictly have to&n; * be preserved in the target - because we&squot;re dropping the target&n; * anyway. As such, we can just do a simple memcpy() to copy over&n; * the new name before we switch.&n; *&n; * Note that we have to be a lot more careful about getting the hash&n; * switched - we have to switch the hash value properly even if it&n; * then no longer matches the actual (corrupted) string of the target.&n; * The has value has to match the hash queue that the dentry is on..&n; */
+DECL|function|switch_names
+r_static
+r_inline
+r_void
+id|switch_names
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_struct
+id|dentry
+op_star
+id|target
+)paren
+(brace
+r_const
+r_int
+r_char
+op_star
+id|old_name
+comma
+op_star
+id|new_name
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|dentry-&gt;d_iname
+comma
+id|target-&gt;d_iname
+comma
+id|DNAME_INLINE_LEN
+)paren
+suffix:semicolon
+id|old_name
+op_assign
+id|target-&gt;d_name.name
+suffix:semicolon
+id|new_name
+op_assign
+id|dentry-&gt;d_name.name
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|old_name
+op_eq
+id|target-&gt;d_iname
+)paren
+id|old_name
+op_assign
+id|dentry-&gt;d_iname
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_name
+op_eq
+id|dentry-&gt;d_iname
+)paren
+id|new_name
+op_assign
+id|target-&gt;d_iname
+suffix:semicolon
+id|target-&gt;d_name.name
+op_assign
+id|new_name
+suffix:semicolon
+id|dentry-&gt;d_name.name
+op_assign
+id|old_name
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * We cannibalize &quot;target&quot; when moving dentry on top of it,&n; * because it&squot;s going to be thrown away anyway. We could be more&n; * polite about it, though.&n; *&n; * This forceful removal will result in ugly /proc output if&n; * somebody holds a file open that got deleted due to a rename.&n; * We could be nicer about the deleted file, and let it show&n; * up under the name it got deleted rather than the name that&n; * deleted it.&n; *&n; * Careful with the hash switch. The hash switch depends on&n; * the fact that any list-entry can be a head of the list.&n; * Think about it.&n; */
 DECL|function|d_move
 r_void
@@ -2398,20 +2506,20 @@ id|target-&gt;d_child
 )paren
 suffix:semicolon
 multiline_comment|/* Switch the parents and the names.. */
+id|switch_names
+c_func
+(paren
+id|dentry
+comma
+id|target
+)paren
+suffix:semicolon
 id|do_switch
 c_func
 (paren
 id|dentry-&gt;d_parent
 comma
 id|target-&gt;d_parent
-)paren
-suffix:semicolon
-id|do_switch
-c_func
-(paren
-id|dentry-&gt;d_name.name
-comma
-id|target-&gt;d_name.name
 )paren
 suffix:semicolon
 id|do_switch
@@ -2430,6 +2538,7 @@ comma
 id|target-&gt;d_name.hash
 )paren
 suffix:semicolon
+multiline_comment|/* And add them back to the (new) parent lists */
 id|list_add
 c_func
 (paren
@@ -2986,6 +3095,41 @@ op_star
 id|d
 op_assign
 id|dentry_hashtable
+suffix:semicolon
+multiline_comment|/* &n;&t; * A constructor could be added for stable state like the lists,&n;&t; * but it is probably not worth it because of the cache nature&n;&t; * of the dcache. &n;&t; * If fragmentation is too bad then the SLAB_HWCACHE_ALIGN&n;&t; * flag could be removed here, to hint to the allocator that&n;&t; * it should not try to get multiple page regions.  &n;&t; */
+id|dentry_cache
+op_assign
+id|kmem_cache_create
+c_func
+(paren
+l_string|&quot;dentry_cache&quot;
+comma
+r_sizeof
+(paren
+r_struct
+id|dentry
+)paren
+comma
+l_int|0
+comma
+id|SLAB_HWCACHE_ALIGN
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dentry_cache
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Cannot create dentry cache&quot;
+)paren
 suffix:semicolon
 id|i
 op_assign

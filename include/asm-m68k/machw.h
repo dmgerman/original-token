@@ -307,7 +307,7 @@ macro_line|# define via_1         ((*(volatile struct VIA *)VIA1_BAS))
 DECL|macro|via_2
 macro_line|# define via_2         ((*(volatile struct VIA *)VIA2_BAS))
 DECL|macro|via1_regp
-macro_line|# define via1_regp    ((volatile unsigned char *)VIA1_BAS)
+macro_line|# define via1_regp     ((volatile unsigned char *)VIA1_BAS)
 multiline_comment|/*&n; * OSS/RBV base address &n; */
 DECL|macro|OSS_BAS
 mdefine_line|#define OSS_BAS&t;&t;0x50f1a000
@@ -318,5 +318,104 @@ DECL|macro|nIFR
 mdefine_line|#define nIFR&t;0x203
 DECL|macro|oIFR
 mdefine_line|#define oIFR&t;0x202
+multiline_comment|/* hardware stuff */
+DECL|macro|MACHW_DECLARE
+mdefine_line|#define MACHW_DECLARE(name)    unsigned name : 1
+DECL|macro|MACHW_SET
+mdefine_line|#define MACHW_SET(name)                (mac_hw_present.name = 1)
+DECL|macro|MACHW_PRESENT
+mdefine_line|#define MACHW_PRESENT(name)    (mac_hw_present.name)
+r_struct
+(brace
+multiline_comment|/* video hardware */
+multiline_comment|/* sound hardware */
+multiline_comment|/* disk storage interfaces */
+id|MACHW_DECLARE
+c_func
+(paren
+id|MAC_SCSI_80
+)paren
+suffix:semicolon
+multiline_comment|/* Directly mapped NCR5380 */
+id|MACHW_DECLARE
+c_func
+(paren
+id|MAC_SCSI_96
+)paren
+suffix:semicolon
+multiline_comment|/* 53c9[46] */
+id|MACHW_DECLARE
+c_func
+(paren
+id|MAC_SCSI_96_2
+)paren
+suffix:semicolon
+multiline_comment|/* 2nd 53c9[46] Q900 and Q950 */
+id|MACHW_DECLARE
+c_func
+(paren
+id|IDE
+)paren
+suffix:semicolon
+multiline_comment|/* IDE Interface */
+multiline_comment|/* other I/O hardware */
+id|MACHW_DECLARE
+c_func
+(paren
+id|SCC
+)paren
+suffix:semicolon
+multiline_comment|/* Serial Communications Contr. */
+multiline_comment|/* DMA */
+id|MACHW_DECLARE
+c_func
+(paren
+id|SCSI_DMA
+)paren
+suffix:semicolon
+multiline_comment|/* DMA for the NCR5380 */
+multiline_comment|/* real time clocks */
+id|MACHW_DECLARE
+c_func
+(paren
+id|RTC_CLK
+)paren
+suffix:semicolon
+multiline_comment|/* clock chip */
+multiline_comment|/* supporting hardware */
+id|MACHW_DECLARE
+c_func
+(paren
+id|VIA1
+)paren
+suffix:semicolon
+multiline_comment|/* Versatile Interface Ad. 1 */
+id|MACHW_DECLARE
+c_func
+(paren
+id|VIA2
+)paren
+suffix:semicolon
+multiline_comment|/* Versatile Interface Ad. 2 */
+id|MACHW_DECLARE
+c_func
+(paren
+id|RBV
+)paren
+suffix:semicolon
+multiline_comment|/* Versatile Interface Ad. 2+ */
+multiline_comment|/* NUBUS */
+id|MACHW_DECLARE
+c_func
+(paren
+id|NUBUS
+)paren
+suffix:semicolon
+multiline_comment|/* NUBUS */
+DECL|variable|mac_hw_present
+)brace
+id|mac_hw_present
+suffix:semicolon
+multiline_comment|/* extern struct mac_hw_present mac_hw_present; */
 macro_line|#endif /* linux/machw.h */
 eof

@@ -4663,7 +4663,12 @@ id|p
 op_ne
 id|current
 op_logical_or
+id|atomic_read
+c_func
+(paren
+op_amp
 id|p-&gt;mm-&gt;count
+)paren
 OG
 l_int|1
 )paren

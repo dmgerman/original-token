@@ -54,9 +54,10 @@ id|SECTOR_WORDS
 op_star
 l_int|4
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
+multiline_comment|/* called with interrupts disabled! */
 id|ide_input_data
 c_func
 (paren

@@ -2170,6 +2170,14 @@ id|apic_phys
 comma
 id|ioapic_phys
 suffix:semicolon
+id|memory_start
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|memory_start
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2467,7 +2475,14 @@ op_assign
 op_amp
 id|current-&gt;tss
 suffix:semicolon
-multiline_comment|/*&n;&t; * We don&squot;t actually need to load the full TSS,&n;&t; * basically just the stack pointer and the eip.&n;&t; */
+multiline_comment|/*&n;&t; * We don&squot;t actually need to load the full TSS,&n;&t; * basically just the stack pointer and the eip.&n;&t; *&n;&t; * Get the scheduler lock, because we&squot;re going&n;&t; * to release it as part of the &quot;reschedule&quot; return.&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|scheduler_lock
+)paren
+suffix:semicolon
 id|asm
 r_volatile
 (paren

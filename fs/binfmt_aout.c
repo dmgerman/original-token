@@ -258,7 +258,12 @@ c_cond
 op_logical_neg
 id|current-&gt;dumpable
 op_logical_or
+id|atomic_read
+c_func
+(paren
+op_amp
 id|current-&gt;mm-&gt;count
+)paren
 op_ne
 l_int|1
 )paren

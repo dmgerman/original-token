@@ -407,12 +407,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifndef __ASSEMBLY__
-DECL|macro|MACHW_DECLARE
-mdefine_line|#define MACHW_DECLARE(name)    unsigned name : 1
-DECL|macro|MACHW_SET
-mdefine_line|#define MACHW_SET(name)                (boot_info.bi_mac.hw_present.name = 1)
-DECL|macro|MACHW_PRESENT
-mdefine_line|#define MACHW_PRESENT(name)    (boot_info.bi_mac.hw_present.name)
 DECL|struct|compat_bi_Macintosh
 r_struct
 id|compat_bi_Macintosh
@@ -526,83 +520,6 @@ DECL|member|timedbra
 r_int
 r_int
 id|timedbra
-suffix:semicolon
-r_struct
-(brace
-multiline_comment|/* video hardware */
-multiline_comment|/* sound hardware */
-multiline_comment|/* disk storage interfaces */
-id|MACHW_DECLARE
-c_func
-(paren
-id|MAC_SCSI
-)paren
-suffix:semicolon
-multiline_comment|/* Directly mapped NCR5380 */
-id|MACHW_DECLARE
-c_func
-(paren
-id|IDE
-)paren
-suffix:semicolon
-multiline_comment|/* IDE Interface */
-multiline_comment|/* other I/O hardware */
-id|MACHW_DECLARE
-c_func
-(paren
-id|SCC
-)paren
-suffix:semicolon
-multiline_comment|/* Serial Communications Contr. */
-multiline_comment|/* DMA */
-id|MACHW_DECLARE
-c_func
-(paren
-id|SCSI_DMA
-)paren
-suffix:semicolon
-multiline_comment|/* DMA for the NCR5380 */
-multiline_comment|/* real time clocks */
-id|MACHW_DECLARE
-c_func
-(paren
-id|RTC_CLK
-)paren
-suffix:semicolon
-multiline_comment|/* clock chip */
-multiline_comment|/* supporting hardware */
-id|MACHW_DECLARE
-c_func
-(paren
-id|VIA1
-)paren
-suffix:semicolon
-multiline_comment|/* Versatile Interface Ad. 1 */
-id|MACHW_DECLARE
-c_func
-(paren
-id|VIA2
-)paren
-suffix:semicolon
-multiline_comment|/* Versatile Interface Ad. 2 */
-id|MACHW_DECLARE
-c_func
-(paren
-id|RBV
-)paren
-suffix:semicolon
-multiline_comment|/* Versatile Interface Ad. 2+ */
-multiline_comment|/* NUBUS */
-id|MACHW_DECLARE
-c_func
-(paren
-id|NUBUS
-)paren
-suffix:semicolon
-multiline_comment|/* NUBUS */
-DECL|member|hw_present
-)brace
-id|hw_present
 suffix:semicolon
 )brace
 suffix:semicolon

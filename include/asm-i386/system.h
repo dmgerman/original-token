@@ -18,6 +18,7 @@ DECL|macro|load_ldt
 mdefine_line|#define load_ldt(n) __asm__ __volatile__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
 DECL|macro|store_TR
 mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
+macro_line|#ifdef __KERNEL__
 r_struct
 id|task_struct
 suffix:semicolon
@@ -126,6 +127,15 @@ suffix:semicolon
 )brace
 DECL|macro|get_base
 mdefine_line|#define get_base(ldt) _get_base( ((char *)&amp;(ldt)) )
+multiline_comment|/*&n; * Load a segment. Fall back on loading the zero&n; * segment if something goes wrong..&n; */
+DECL|macro|loadsegment
+mdefine_line|#define loadsegment(seg,value)&t;&t;&t;&bslash;&n;&t;asm volatile(&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;1:&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;movl %0,%%&quot; #seg &quot;&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&bslash;&n;&t;&t;&quot;3:&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;pushl $0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;popl %%&quot; #seg &quot;&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&quot;jmp 2b&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;.previous&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot;.align 4&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;.long 1b,3b&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;.previous&quot;&t;&t;&t;&bslash;&n;&t;&t;: :&quot;m&quot; (*(unsigned int *)&amp;(value)))
+multiline_comment|/*&n; * Clear and set &squot;TS&squot; bit respectively&n; */
+DECL|macro|clts
+mdefine_line|#define clts() __asm__ __volatile__ (&quot;clts&quot;)
+DECL|macro|stts
+mdefine_line|#define stts() &bslash;&n;__asm__ __volatile__ ( &bslash;&n;&t;&quot;movl %%cr0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orl $8,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%%cr0&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: /* no inputs */ &bslash;&n;&t;:&quot;ax&quot;)
+macro_line|#endif&t;/* __KERNEL__ */
 DECL|function|get_limit
 r_static
 r_inline
@@ -167,11 +177,6 @@ suffix:semicolon
 )brace
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;)
-multiline_comment|/*&n; * Clear and set &squot;TS&squot; bit respectively&n; */
-DECL|macro|clts
-mdefine_line|#define clts() __asm__ __volatile__ (&quot;clts&quot;)
-DECL|macro|stts
-mdefine_line|#define stts() &bslash;&n;__asm__ __volatile__ ( &bslash;&n;&t;&quot;movl %%cr0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orl $8,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%%cr0&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: /* no inputs */ &bslash;&n;&t;:&quot;ax&quot;)
 DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 DECL|macro|tas

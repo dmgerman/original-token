@@ -18,7 +18,7 @@ DECL|macro|NAMEI_RA_SIZE
 mdefine_line|#define NAMEI_RA_SIZE        (NAMEI_RA_CHUNKS * NAMEI_RA_BLOCKS)
 DECL|macro|NAMEI_RA_INDEX
 mdefine_line|#define NAMEI_RA_INDEX(c,b)  (((c) * NAMEI_RA_BLOCKS) + (b))
-multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; */
+multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; *&n; * `len &lt;= EXT2_NAME_LEN&squot; is guaranteed by caller.&n; * `de != NULL&squot; is guaranteed by caller.&n; */
 DECL|function|ext2_match
 r_static
 r_inline
@@ -43,19 +43,9 @@ id|de
 r_if
 c_cond
 (paren
-op_logical_neg
-id|de
-op_logical_or
-op_logical_neg
-id|le32_to_cpu
-c_func
-(paren
-id|de-&gt;inode
-)paren
-op_logical_or
 id|len
-OG
-id|EXT2_NAME_LEN
+op_ne
+id|de-&gt;name_len
 )paren
 r_return
 l_int|0
@@ -63,9 +53,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|len
-op_ne
-id|de-&gt;name_len
+op_logical_neg
+id|de-&gt;inode
 )paren
 r_return
 l_int|0
@@ -414,11 +403,41 @@ OL
 id|dlimit
 )paren
 (brace
+multiline_comment|/* this code is executed quadratically often */
+multiline_comment|/* do minimal checking `by hand&squot; */
+r_int
+id|de_len
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_char
+op_star
+)paren
+id|de
+op_plus
+id|namelen
+op_le
+id|dlimit
+op_logical_and
+id|ext2_match
+(paren
+id|namelen
+comma
+id|name
+comma
+id|de
+)paren
+)paren
+(brace
+multiline_comment|/* found a match -&n;&t;&t;&t;&t;   just to be sure, do a full check */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|ext2_check_dir_entry
+c_func
 (paren
 l_string|&quot;ext2_find_entry&quot;
 comma
@@ -434,19 +453,6 @@ id|offset
 r_goto
 id|failure
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ext2_match
-(paren
-id|namelen
-comma
-id|name
-comma
-id|de
-)paren
-)paren
-(brace
 r_for
 c_loop
 (paren
@@ -490,13 +496,28 @@ r_return
 id|bh
 suffix:semicolon
 )brace
-id|offset
-op_add_assign
+multiline_comment|/* prevent looping on a bad block */
+id|de_len
+op_assign
 id|le16_to_cpu
 c_func
 (paren
 id|de-&gt;rec_len
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|de_len
+op_le
+l_int|0
+)paren
+r_goto
+id|failure
+suffix:semicolon
+id|offset
+op_add_assign
+id|de_len
 suffix:semicolon
 id|de
 op_assign
@@ -512,11 +533,7 @@ op_star
 )paren
 id|de
 op_plus
-id|le16_to_cpu
-c_func
-(paren
-id|de-&gt;rec_len
-)paren
+id|de_len
 )paren
 suffix:semicolon
 )brace

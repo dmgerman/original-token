@@ -8727,11 +8727,6 @@ id|iobase
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|loading_module
-)paren
 id|lastPCI
 op_assign
 id|NO_MORE_PCI
@@ -17206,6 +17201,7 @@ id|s32
 id|eisa_id
 )paren
 (brace
+r_static
 id|c_char
 op_star
 id|signatures
@@ -17463,6 +17459,7 @@ op_star
 id|lp
 )paren
 (brace
+r_static
 id|c_char
 op_star
 id|de4x5_signatures

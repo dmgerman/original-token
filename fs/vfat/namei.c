@@ -10371,6 +10371,10 @@ id|old_inode
 op_member_access_from_pointer
 id|i_attrs
 suffix:semicolon
+id|old_inode-&gt;i_nlink
+op_assign
+l_int|0
+suffix:semicolon
 id|fat_cache_inval_inode
 c_func
 (paren
@@ -10704,12 +10708,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|clear_inode
-c_func
-(paren
-id|old_inode
-)paren
-suffix:semicolon
 id|rename_done
 suffix:colon
 r_if

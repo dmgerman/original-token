@@ -147,14 +147,19 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* just one copy of this mm? */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|current-&gt;mm-&gt;count
+)paren
 op_eq
 l_int|1
 )paren
-multiline_comment|/* just one copy of this mm */
 id|local_flush_tlb
 c_func
 (paren
@@ -192,7 +197,12 @@ id|mm
 op_eq
 id|current-&gt;mm
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mm-&gt;count
+)paren
 op_eq
 l_int|1
 )paren
@@ -232,7 +242,12 @@ id|vma-&gt;vm_mm
 op_eq
 id|current-&gt;mm
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|current-&gt;mm-&gt;count
+)paren
 op_eq
 l_int|1
 )paren

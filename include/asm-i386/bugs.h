@@ -948,6 +948,8 @@ r_int
 r_char
 id|ccr3
 comma
+id|ccr4
+comma
 id|ccr5
 suffix:semicolon
 id|cli
@@ -978,16 +980,20 @@ l_int|0x10
 )paren
 suffix:semicolon
 multiline_comment|/* enable MAPEN  */
-id|setCx86
-c_func
-(paren
-id|CX86_CCR4
-comma
+id|ccr4
+op_assign
 id|getCx86
 c_func
 (paren
 id|CX86_CCR4
 )paren
+suffix:semicolon
+id|setCx86
+c_func
+(paren
+id|CX86_CCR4
+comma
+id|ccr4
 op_or
 l_int|0x80
 )paren

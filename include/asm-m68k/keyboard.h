@@ -40,8 +40,15 @@ id|scancode
 )paren
 (brace
 r_return
+id|scancode
+OG
+l_int|127
+ques
+c_cond
 op_minus
-id|EOPNOTSUPP
+id|EINVAL
+suffix:colon
+id|scancode
 suffix:semicolon
 )brace
 DECL|function|kbd_pretranslate

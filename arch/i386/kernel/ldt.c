@@ -124,10 +124,6 @@ id|mm
 op_assign
 id|current-&gt;mm
 suffix:semicolon
-r_void
-op_star
-id|ldt
-suffix:semicolon
 id|__u32
 id|entry_1
 comma
@@ -135,13 +131,6 @@ id|entry_2
 comma
 op_star
 id|lp
-suffix:semicolon
-id|__u16
-id|selector
-comma
-id|reg_fs
-comma
-id|reg_gs
 suffix:semicolon
 r_int
 id|error
@@ -236,17 +225,17 @@ id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Horrible dependencies! Try to get rid of this. This is wrong,&n;&t; * as it only reloads the ldt for the first process with this&n;&t; * mm. The implications are that you should really make sure that&n;&t; * you have a ldt before you do the first clone(), otherwise&n;&t; * you get strange behaviour (the kernel is safe, it&squot;s just user&n;&t; * space strangeness).&n;&t; *&n;&t; * For no good reason except historical, the GDT index of the LDT&n;&t; * is chosen to follow the index number in the task[] array.&n;&t; */
-id|ldt
-op_assign
-id|mm-&gt;segments
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|ldt
+id|mm-&gt;segments
 )paren
 (brace
+r_void
+op_star
+id|ldt
+suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -333,7 +322,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|mm-&gt;count
+)paren
 OG
 l_int|1
 )paren
@@ -355,39 +349,6 @@ id|ldt
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Check whether the entry to be changed is currently in use.&n;&t; * If it is, we may need extra validation checks in case the&n;&t; * kernel is forced to save and restore the selector.&n;&t; *&n;&t; * Note: we check the fs and gs values as well, as these are&n;&t; * loaded by the signal code and during a task switch.&n;&t; */
-id|selector
-op_assign
-(paren
-id|ldt_info.entry_number
-op_lshift
-l_int|3
-)paren
-op_or
-l_int|4
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movw %%fs,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|reg_fs
-)paren
-)paren
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movw %%gs,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|reg_gs
-)paren
-)paren
-suffix:semicolon
 id|lp
 op_assign
 (paren
@@ -396,17 +357,16 @@ op_star
 )paren
 (paren
 (paren
-id|selector
-op_amp
-op_complement
-l_int|7
+id|ldt_info.entry_number
+op_lshift
+l_int|3
 )paren
 op_plus
 (paren
 r_char
 op_star
 )paren
-id|ldt
+id|mm-&gt;segments
 )paren
 suffix:semicolon
 multiline_comment|/* Allow LDTs to be cleared by the user. */
@@ -463,7 +423,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_goto
-id|out_check
+id|install
 suffix:semicolon
 )brace
 )brace
@@ -563,9 +523,9 @@ op_lshift
 l_int|20
 )paren
 suffix:semicolon
-id|out_check
+multiline_comment|/* Install the new entry ...  */
+id|install
 suffix:colon
-multiline_comment|/* OK to change the entry ...  */
 op_star
 id|lp
 op_assign

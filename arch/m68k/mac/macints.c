@@ -507,6 +507,15 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * PSC hooks&n; */
+r_extern
+r_void
+id|psc_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * console_loglevel determines NMI handler function&n; */
 r_extern
 r_int
@@ -681,13 +690,6 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* IIfx has OSS, at a different base address than RBV */
-r_if
-c_cond
-(paren
-id|macintosh_config-&gt;ident
-op_eq
-id|MAC_MODEL_IIFX
-)paren
 id|rbv_regp
 op_assign
 (paren
@@ -1094,6 +1096,8 @@ r_if
 c_cond
 (paren
 id|via2_is_rbv
+op_logical_or
+id|via2_is_oss
 )paren
 (brace
 id|via_table
@@ -2858,6 +2862,17 @@ id|irq
 )paren
 (brace
 r_int
+id|pending
+op_assign
+l_int|0
+suffix:semicolon
+r_volatile
+r_int
+r_char
+op_star
+id|via
+suffix:semicolon
+r_int
 id|srcidx
 op_assign
 (paren
@@ -2881,8 +2896,8 @@ op_amp
 id|IRQ_IDX_MASK
 )paren
 suffix:semicolon
-r_return
-(paren
+id|pending
+op_assign
 id|irq_flags
 (braket
 id|srcidx
@@ -2895,6 +2910,137 @@ l_int|1
 op_lshift
 id|irqidx
 )paren
+suffix:semicolon
+id|via
+op_assign
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|via_table
+(braket
+id|srcidx
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|via
+)paren
+r_return
+(paren
+id|pending
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|srcidx
+op_eq
+id|SRC_VIA2
+op_logical_and
+id|via2_is_rbv
+)paren
+id|pending
+op_or_assign
+id|via_read
+c_func
+(paren
+id|via
+comma
+id|rIFR
+)paren
+op_amp
+(paren
+l_int|1
+op_lshift
+id|irqidx
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|srcidx
+op_eq
+id|SRC_VIA2
+op_logical_and
+id|via2_is_oss
+)paren
+id|pending
+op_or_assign
+id|via_read
+c_func
+(paren
+id|via
+comma
+id|oIFR
+)paren
+op_amp
+l_int|0x03
+op_amp
+(paren
+l_int|1
+op_lshift
+id|oss_map
+(braket
+id|irqidx
+)braket
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|srcidx
+op_ge
+id|SRC_VIA2
+)paren
+id|pending
+op_or_assign
+id|via_read
+c_func
+(paren
+id|via
+comma
+(paren
+l_int|0x100
+op_plus
+l_int|0x10
+op_star
+id|srcidx
+)paren
+)paren
+op_amp
+(paren
+l_int|1
+op_lshift
+id|irqidx
+)paren
+suffix:semicolon
+r_else
+id|pending
+op_or_assign
+id|via_read
+c_func
+(paren
+id|via
+comma
+id|vIFR
+)paren
+op_amp
+(paren
+l_int|1
+op_lshift
+id|irqidx
+)paren
+suffix:semicolon
+r_return
+(paren
+id|pending
 )paren
 suffix:semicolon
 )brace
@@ -2997,7 +3143,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Level %01d: %10u (spurious) &bslash;n&quot;
+l_string|&quot;Level %01d: %10lu (spurious) &bslash;n&quot;
 comma
 id|srcidx
 comma
@@ -3072,7 +3218,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;via1  %01d: %10u &quot;
+l_string|&quot;via1  %01d: %10lu &quot;
 comma
 id|irqidx
 comma
@@ -3102,7 +3248,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;via2  %01d: %10u &quot;
+l_string|&quot;via2  %01d: %10lu &quot;
 comma
 id|irqidx
 comma
@@ -3132,7 +3278,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;rbv   %01d: %10u &quot;
+l_string|&quot;rbv   %01d: %10lu &quot;
 comma
 id|irqidx
 comma
@@ -3162,7 +3308,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;scc   %01d: %10u &quot;
+l_string|&quot;scc   %01d: %10lu &quot;
 comma
 id|irqidx
 comma
@@ -3186,7 +3332,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;nubus %01d: %10u &quot;
+l_string|&quot;nubus %01d: %10lu &quot;
 comma
 id|irqidx
 comma
@@ -3444,6 +3590,21 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|variable|in_nmi
+r_static
+r_int
+id|in_nmi
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|nmi_hold
+r_static
+r_volatile
+r_int
+id|nmi_hold
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|mac_nmi_handler
 r_void
 id|mac_nmi_handler
@@ -3466,6 +3627,9 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* &n;&t; * generate debug output on NMI switch if &squot;debug&squot; kernel option given&n;&t; * (only works with Penguin!)&n;&t; */
+id|in_nmi
+op_increment
+suffix:semicolon
 macro_line|#if 0
 id|scsi_mac_debug
 c_func
@@ -3505,11 +3669,63 @@ c_func
 l_int|1000
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|in_nmi
+op_eq
+l_int|1
+)paren
+(brace
+id|nmi_hold
+op_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;... pausing, press NMI to resume ...&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; ok!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|nmi_hold
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|nmi_hold
+op_eq
+l_int|1
+)paren
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+macro_line|#if 0
 id|scsi_mac_polled
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3617,6 +3833,9 @@ macro_line|#else
 multiline_comment|/* printk(&quot;NMI &quot;); */
 macro_line|#endif
 )brace
+id|in_nmi
+op_decrement
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * The generic VIA interrupt routines (shamelessly stolen from Alan Cox&squot;s&n; * via6522.c :-), disable/pending masks added.&n; * The int *viaidx etc. is just to keep the prototype happy ...&n; */
 DECL|function|via_irq
@@ -6648,6 +6867,7 @@ l_int|0x82
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* IDE hack for Quadra: uses Nubus interrupt without any slot bit set */
+macro_line|#ifdef CONFIG_BLK_DEV_MAC_IDE
 r_if
 c_cond
 (paren
@@ -6663,6 +6883,7 @@ comma
 id|regs
 )paren
 suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -6712,6 +6933,7 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_MAC_IDE
 r_if
 c_cond
 (paren
@@ -6728,6 +6950,7 @@ comma
 id|nubus_active
 )paren
 suffix:semicolon
+macro_line|#endif
 id|nubus_irqs
 (braket
 l_int|7

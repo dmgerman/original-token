@@ -1,6 +1,9 @@
 macro_line|#ifndef _I386_CURRENT_H
 DECL|macro|_I386_CURRENT_H
 mdefine_line|#define _I386_CURRENT_H
+r_struct
+id|task_struct
+suffix:semicolon
 DECL|function|get_current
 r_static
 r_inline

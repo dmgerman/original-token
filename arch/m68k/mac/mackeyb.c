@@ -3871,11 +3871,6 @@ OL
 l_int|1000
 )paren
 (brace
-id|adb_poll
-c_func
-(paren
-)paren
-suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -3897,13 +3892,17 @@ c_func
 l_string|&quot;Keyboard timed out.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|autopoll_req.got_reply
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;XXX: all ADB requests now in CUDA format; adb_request takes &n;&t; *&t;care of that for other Macs.&n;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot;Configuring keyboard&bslash;n&quot;
+l_string|&quot;Configuring keyboard:&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * turn on all leds - the keyboard driver will turn them back off &n;&t; * via mac_kbd_leds if everything works ok!&n;&t; */
@@ -3944,11 +3943,6 @@ id|ct
 op_assign
 l_int|0
 suffix:semicolon
-id|adb_poll
-c_func
-(paren
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -3961,11 +3955,6 @@ OL
 l_int|1000
 )paren
 (brace
-id|adb_poll
-c_func
-(paren
-)paren
-suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -3984,15 +3973,19 @@ l_int|1000
 id|printk
 c_func
 (paren
-l_string|&quot;Keyboard timed out.&bslash;n&quot;
+l_string|&quot;keyboard timed out.&bslash;n&quot;
 )paren
+suffix:semicolon
+id|led_request.got_reply
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 macro_line|#if 1
 id|printk
 c_func
 (paren
-l_string|&quot;Configuring coding mode ...&bslash;n&quot;
+l_string|&quot;configuring coding mode ...&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * get the keyboard to send separate codes for&n;&t; * left and right shift, control, option keys. &n;&t; */
@@ -4025,11 +4018,6 @@ id|ct
 op_assign
 l_int|0
 suffix:semicolon
-id|adb_poll
-c_func
-(paren
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -4042,11 +4030,6 @@ OL
 l_int|1000
 )paren
 (brace
-id|adb_poll
-c_func
-(paren
-)paren
-suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -4065,8 +4048,12 @@ l_int|1000
 id|printk
 c_func
 (paren
-l_string|&quot;Keyboard timed out.&bslash;n&quot;
+l_string|&quot;keyboard timed out.&bslash;n&quot;
 )paren
+suffix:semicolon
+id|confcod_req.got_reply
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -4107,11 +4094,6 @@ id|ct
 op_assign
 l_int|0
 suffix:semicolon
-id|adb_poll
-c_func
-(paren
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -4124,11 +4106,6 @@ OL
 l_int|1000
 )paren
 (brace
-id|adb_poll
-c_func
-(paren
-)paren
-suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -4182,22 +4159,6 @@ id|KEYB_KEYREG
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t; * fake &squot;request done&squot; for the driver if requests timed out&n;&t; */
-id|autopoll_req.got_reply
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* XXX: results in race and hang with mac_kbd_leds and serial (why ?) */
-id|led_request.got_reply
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
-id|confcod_req.got_reply
-op_assign
-l_int|1
-suffix:semicolon
 id|in_keybinit
 op_assign
 l_int|0
@@ -4205,12 +4166,32 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Keyboard init done&bslash;n&quot;
+l_string|&quot;keyboard init done&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
+multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|mac_kbd_reset_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+)paren
+(brace
 )brace
 multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
 DECL|function|__initfunc

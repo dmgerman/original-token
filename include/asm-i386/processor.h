@@ -292,6 +292,24 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *      Cyrix CPU configuration register indexes&n; */
+DECL|macro|CX86_CCR2
+mdefine_line|#define CX86_CCR2 0xc2
+DECL|macro|CX86_CCR3
+mdefine_line|#define CX86_CCR3 0xc3
+DECL|macro|CX86_CCR4
+mdefine_line|#define CX86_CCR4 0xe8
+DECL|macro|CX86_CCR5
+mdefine_line|#define CX86_CCR5 0xe9
+DECL|macro|CX86_DIR0
+mdefine_line|#define CX86_DIR0 0xfe
+DECL|macro|CX86_DIR1
+mdefine_line|#define CX86_DIR1 0xff
+multiline_comment|/*&n; *      Cyrix CPU indexed register access macros&n; */
+DECL|macro|getCx86
+mdefine_line|#define getCx86(reg) ({ outb((reg), 0x22); inb(0x23); })
+DECL|macro|setCx86
+mdefine_line|#define setCx86(reg, data) do { &bslash;&n;&t;outb((reg), 0x22); &bslash;&n;&t;outb((data), 0x23); &bslash;&n;} while (0)
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; */
 r_extern
 r_int

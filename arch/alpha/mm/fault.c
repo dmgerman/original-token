@@ -8,7 +8,6 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|__EXTERN_INLINE
 macro_line|#undef  __EXTERN_INLINE
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -2256,8 +2256,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-op_assign
-id|backlog.next
 suffix:semicolon
 multiline_comment|/* Give chance to other bottom halves to run */
 r_if
@@ -2273,23 +2271,13 @@ r_goto
 id|net_bh_break
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;We have a packet. Therefore the queue has shrunk&n;&t;&t; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|__skb_unlink
-c_func
-(paren
 id|skb
-comma
+op_assign
+id|skb_dequeue
+c_func
+(paren
 op_amp
 id|backlog
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_CPU_IS_SLOW

@@ -4,6 +4,20 @@ mdefine_line|#define __i386_UACCESS_H
 multiline_comment|/*&n; * User space memory access functions&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#ifdef __SMP__
+r_extern
+r_void
+id|__check_locks
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|__check_locks
+mdefine_line|#define __check_locks(x)&t;do { } while (0)
+macro_line|#endif
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
@@ -141,7 +155,7 @@ DECL|macro|__get_user_x
 mdefine_line|#define __get_user_x(size,ret,x,ptr) &bslash;&n;&t;__asm__ __volatile__(&quot;call __get_user_&quot; #size &bslash;&n;&t;&t;:&quot;=a&quot; (ret),&quot;=d&quot; (x) &bslash;&n;&t;&t;:&quot;0&quot; (ptr))
 multiline_comment|/* Careful: we have to cast the result to the type of the pointer for sign reasons */
 DECL|macro|get_user
-mdefine_line|#define get_user(x,ptr)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;int __ret_gu,__val_gu;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch(sizeof (*(ptr))) {&t;&t;&t;&t;&t;&bslash;&n;&t;case 1:  __get_user_x(1,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;case 2:  __get_user_x(2,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;case 4:  __get_user_x(4,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;default: __get_user_x(X,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(x) = (__typeof__(*(ptr)))__val_gu;&t;&t;&t;&t;&bslash;&n;&t;__ret_gu;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define get_user(x,ptr)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;int __ret_gu,__val_gu;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__check_locks(1);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch(sizeof (*(ptr))) {&t;&t;&t;&t;&t;&bslash;&n;&t;case 1:  __get_user_x(1,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;case 2:  __get_user_x(2,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;case 4:  __get_user_x(4,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;default: __get_user_x(X,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(x) = (__typeof__(*(ptr)))__val_gu;&t;&t;&t;&t;&bslash;&n;&t;__ret_gu;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 r_extern
 r_void
 id|__put_user_1
@@ -177,13 +191,13 @@ suffix:semicolon
 DECL|macro|__put_user_x
 mdefine_line|#define __put_user_x(size,ret,x,ptr)&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;call __put_user_&quot; #size&t;&t;&t;&bslash;&n;&t;&t;:&quot;=a&quot; (ret)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;0&quot; (ptr),&quot;d&quot; (x)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;cx&quot;)
 DECL|macro|put_user
-mdefine_line|#define put_user(x,ptr)&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;int __ret_pu;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch(sizeof (*(ptr))) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;case 1:  __put_user_x(1,__ret_pu,(__typeof__(*(ptr)))(x),ptr); break;&t;&t;&bslash;&n;&t;case 2:  __put_user_x(2,__ret_pu,(__typeof__(*(ptr)))(x),ptr); break;&t;&t;&bslash;&n;&t;case 4:  __put_user_x(4,__ret_pu,(__typeof__(*(ptr)))(x),ptr); break;&t;&t;&bslash;&n;&t;default: __put_user_x(X,__ret_pu,x,ptr); break;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__ret_pu;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define put_user(x,ptr)&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;int __ret_pu;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__check_locks(1);&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch(sizeof (*(ptr))) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;case 1:  __put_user_x(1,__ret_pu,(__typeof__(*(ptr)))(x),ptr); break;&t;&t;&bslash;&n;&t;case 2:  __put_user_x(2,__ret_pu,(__typeof__(*(ptr)))(x),ptr); break;&t;&t;&bslash;&n;&t;case 4:  __put_user_x(4,__ret_pu,(__typeof__(*(ptr)))(x),ptr); break;&t;&t;&bslash;&n;&t;default: __put_user_x(X,__ret_pu,x,ptr); break;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__ret_pu;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__get_user
 mdefine_line|#define __get_user(x,ptr) &bslash;&n;  __get_user_nocheck((x),(ptr),sizeof(*(ptr)))
 DECL|macro|__put_user
 mdefine_line|#define __put_user(x,ptr) &bslash;&n;  __put_user_nocheck((__typeof__(*(ptr)))(x),(ptr),sizeof(*(ptr)))
 DECL|macro|__put_user_nocheck
-mdefine_line|#define __put_user_nocheck(x,ptr,size)&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;long __pu_err;&t;&t;&t;&t;&t;&bslash;&n;&t;__put_user_size((x),(ptr),(size),__pu_err);&t;&bslash;&n;&t;__pu_err;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __put_user_nocheck(x,ptr,size)&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;long __pu_err;&t;&t;&t;&t;&t;&bslash;&n;&t;__check_locks(1);&t;&t;&t;&t;&bslash;&n;&t;__put_user_size((x),(ptr),(size),__pu_err);&t;&bslash;&n;&t;__pu_err;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__put_user_size
 mdefine_line|#define __put_user_size(x,ptr,size,retval)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;retval = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (size) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  case 1: __put_user_asm(x,ptr,retval,&quot;b&quot;,&quot;b&quot;,&quot;iq&quot;); break;&t;&bslash;&n;&t;  case 2: __put_user_asm(x,ptr,retval,&quot;w&quot;,&quot;w&quot;,&quot;ir&quot;); break;&t;&bslash;&n;&t;  case 4: __put_user_asm(x,ptr,retval,&quot;l&quot;,&quot;&quot;,&quot;ir&quot;); break;&t;&bslash;&n;&t;  default: __put_user_bad();&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|struct|__large_struct
@@ -206,7 +220,7 @@ multiline_comment|/*&n; * Tell gcc we read from memory instead of writing: this 
 DECL|macro|__put_user_asm
 mdefine_line|#define __put_user_asm(x, addr, err, itype, rtype, ltype)&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;1:&t;mov&quot;itype&quot; %&quot;rtype&quot;1,%2&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;3:&t;movl %3,%0&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;&t;jmp 2b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;&t;.align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;&t;.long 1b,3b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(err)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: ltype (x), &quot;m&quot;(__m(addr)), &quot;i&quot;(-EFAULT), &quot;0&quot;(err))
 DECL|macro|__get_user_nocheck
-mdefine_line|#define __get_user_nocheck(x,ptr,size)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;long __gu_err, __gu_val;&t;&t;&t;&t;&bslash;&n;&t;__get_user_size(__gu_val,(ptr),(size),__gu_err);&t;&bslash;&n;&t;(x) = (__typeof__(*(ptr)))__gu_val;&t;&t;&t;&bslash;&n;&t;__gu_err;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __get_user_nocheck(x,ptr,size)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;long __gu_err, __gu_val;&t;&t;&t;&t;&bslash;&n;&t;__check_locks(1);&t;&t;&t;&t;&t;&bslash;&n;&t;__get_user_size(__gu_val,(ptr),(size),__gu_err);&t;&bslash;&n;&t;(x) = (__typeof__(*(ptr)))__gu_val;&t;&t;&t;&bslash;&n;&t;__gu_err;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 r_extern
 r_int
 id|__get_user_bad
@@ -255,6 +269,12 @@ r_int
 id|n
 )paren
 (brace
+id|__check_locks
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|__copy_user
 c_func
 (paren
@@ -291,6 +311,12 @@ r_int
 id|n
 )paren
 (brace
+id|__check_locks
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|__copy_user
 c_func
 (paren
@@ -362,6 +388,12 @@ r_int
 id|n
 )paren
 (brace
+id|__check_locks
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -411,6 +443,12 @@ r_int
 id|n
 )paren
 (brace
+id|__check_locks
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -460,6 +498,12 @@ r_int
 id|n
 )paren
 (brace
+id|__check_locks
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|__constant_copy_user
 c_func
 (paren
@@ -496,6 +540,12 @@ r_int
 id|n
 )paren
 (brace
+id|__check_locks
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|__constant_copy_user
 c_func
 (paren

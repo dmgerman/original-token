@@ -655,6 +655,12 @@ op_amp
 id|__GFP_WAIT
 )paren
 (brace
+id|__check_locks
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

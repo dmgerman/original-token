@@ -774,8 +774,6 @@ id|peax
 (brace
 r_int
 r_int
-id|tmp
-comma
 id|err
 op_assign
 l_int|0
@@ -783,11 +781,11 @@ suffix:semicolon
 DECL|macro|COPY
 mdefine_line|#define COPY(x)&t;&t;err |= __get_user(regs-&gt;x, &amp;sc-&gt;x)
 DECL|macro|COPY_SEG
-mdefine_line|#define COPY_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc)&t;&t;/* not a NULL selectors */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 0x4) != 0x4&t;/* not a LDT selector */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 3) != 3)&t;/* not a RPL3 GDT selector */&t;&bslash;&n;&t;&t;  goto badframe;&t;&t;&t;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp; }
+mdefine_line|#define COPY_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;   err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc)&t;&t;/* not a NULL selectors */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 0x4) != 0x4&t;/* not a LDT selector */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 3) != 3)&t;/* not a RPL3 GDT selector */&t;&bslash;&n;&t;&t;  goto badframe;&t;&t;&t;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp; }
 DECL|macro|COPY_SEG_STRICT
-mdefine_line|#define COPY_SEG_STRICT(seg)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc) &amp;&amp; (tmp &amp; 3) != 3) goto badframe;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp; }
+mdefine_line|#define COPY_SEG_STRICT(seg)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc) &amp;&amp; (tmp &amp; 3) != 3) goto badframe;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp; }
 DECL|macro|GET_SEG
-mdefine_line|#define GET_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc)&t;&t;/* not a NULL selectors */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 0x4) != 0x4&t;/* not a LDT selector */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 3) != 3)&t;/* not a RPL3 GDT selector */&t;&bslash;&n;&t;&t;  goto badframe;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&quot;movl %w0,%%&quot; #seg : : &quot;r&quot;(tmp)); }
+mdefine_line|#define GET_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc)&t;&t;/* not a NULL selectors */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 0x4) != 0x4&t;/* not a LDT selector */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 3) != 3)&t;/* not a RPL3 GDT selector */&t;&bslash;&n;&t;&t;  goto badframe;&t;&t;&t;&t;&t;&bslash;&n;&t;  loadsegment(seg,tmp); }
 id|GET_SEG
 c_func
 (paren
@@ -872,12 +870,17 @@ c_func
 id|ss
 )paren
 suffix:semicolon
+(brace
+r_int
+r_int
+id|tmpflags
+suffix:semicolon
 id|err
 op_or_assign
 id|__get_user
 c_func
 (paren
-id|tmp
+id|tmpflags
 comma
 op_amp
 id|sc-&gt;eflags
@@ -893,7 +896,7 @@ l_int|0x40DD5
 )paren
 op_or
 (paren
-id|tmp
+id|tmpflags
 op_amp
 l_int|0x40DD5
 )paren
@@ -904,18 +907,20 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* disable syscall checks */
+)brace
+(brace
+r_struct
+id|_fpstate
+op_star
+id|buf
+suffix:semicolon
 id|err
 op_or_assign
 id|__get_user
 c_func
 (paren
-id|tmp
+id|buf
 comma
-(paren
-r_int
-r_int
-op_star
-)paren
 op_amp
 id|sc-&gt;fpstate
 )paren
@@ -923,21 +928,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tmp
+id|buf
 )paren
 (brace
-r_struct
-id|_fpstate
-op_star
-id|buf
-op_assign
-(paren
-r_struct
-id|_fpstate
-op_star
-)paren
-id|tmp
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -966,6 +959,7 @@ c_func
 id|buf
 )paren
 suffix:semicolon
+)brace
 )brace
 id|err
 op_or_assign

@@ -4483,6 +4483,12 @@ op_or
 (paren
 l_int|1
 op_lshift
+l_int|9
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
 l_int|13
 )paren
 )paren

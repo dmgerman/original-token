@@ -209,9 +209,9 @@ mdefine_line|#define spin_lock_string &bslash;&n;&t;&quot;&bslash;n1:&bslash;t&q
 DECL|macro|spin_unlock_string
 mdefine_line|#define spin_unlock_string &bslash;&n;&t;&quot;lock ; btrl $0,%0&quot;
 DECL|macro|spin_lock
-mdefine_line|#define spin_lock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;spin_lock_string &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
+mdefine_line|#define spin_lock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;spin_lock_string &bslash;&n;&quot;&bslash;n&bslash;tcall __getlock&quot; &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
 DECL|macro|spin_unlock
-mdefine_line|#define spin_unlock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;spin_unlock_string &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
+mdefine_line|#define spin_unlock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&quot;call __putlock&bslash;n&bslash;t&quot; &bslash;&n;&t;spin_unlock_string &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock) (!test_and_set_bit(0,(lock)))
 DECL|macro|spin_lock_irq
@@ -245,13 +245,13 @@ DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED { 0, 0 }
 multiline_comment|/*&n; * On x86, we implement read-write locks as a 32-bit counter&n; * with the high bit (sign) being the &quot;write&quot; bit.&n; *&n; * The inline assembly is non-obvious. Think about it.&n; */
 DECL|macro|read_lock
-mdefine_line|#define read_lock(rw)&t;&bslash;&n;&t;asm volatile(&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&t;     &quot;lock ; incl %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;js 2f&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&t;     &quot;2:&bslash;tlock ; decl %0&bslash;n&quot; &bslash;&n;&t;&t;     &quot;3:&bslash;tcmpl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;js 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.previous&quot; &bslash;&n;&t;&t;     :&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
+mdefine_line|#define read_lock(rw)&t;&bslash;&n;&t;asm volatile(&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&t;     &quot;lock ; incl %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;js 2f&bslash;n&quot; &bslash;&n;&quot;call __getlock&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&t;     &quot;2:&bslash;tlock ; decl %0&bslash;n&quot; &bslash;&n;&t;&t;     &quot;3:&bslash;tcmpl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;js 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.previous&quot; &bslash;&n;&t;&t;     :&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
 DECL|macro|read_unlock
-mdefine_line|#define read_unlock(rw) &bslash;&n;&t;asm volatile(&quot;lock ; decl %0&quot; &bslash;&n;&t;&t;:&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
+mdefine_line|#define read_unlock(rw) &bslash;&n;&t;asm volatile( &bslash;&n;&quot;call __putlock&bslash;n&quot; &bslash;&n;&t;&t;&quot;lock ; decl %0&quot; &bslash;&n;&t;&t;:&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
 DECL|macro|write_lock
-mdefine_line|#define write_lock(rw) &bslash;&n;&t;asm volatile(&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&t;     &quot;lock ; btsl $31,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jc 4f&bslash;n&quot; &bslash;&n;&t;&t;     &quot;2:&bslash;ttestl $0x7fffffff,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jne 3f&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&t;     &quot;3:&bslash;tlock ; btrl $31,%0&bslash;n&quot; &bslash;&n;&t;&t;     &quot;4:&bslash;tcmp $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jne 4b&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.previous&quot; &bslash;&n;&t;&t;     :&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
+mdefine_line|#define write_lock(rw) &bslash;&n;&t;asm volatile(&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&t;     &quot;lock ; btsl $31,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jc 4f&bslash;n&quot; &bslash;&n;&t;&t;     &quot;2:&bslash;ttestl $0x7fffffff,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jne 3f&bslash;n&quot; &bslash;&n;&quot;call __getlock&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&t;     &quot;3:&bslash;tlock ; btrl $31,%0&bslash;n&quot; &bslash;&n;&t;&t;     &quot;4:&bslash;tcmp $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jne 4b&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.previous&quot; &bslash;&n;&t;&t;     :&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
 DECL|macro|write_unlock
-mdefine_line|#define write_unlock(rw) &bslash;&n;&t;asm volatile(&quot;lock ; btrl $31,%0&quot;:&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
+mdefine_line|#define write_unlock(rw) &bslash;&n;&t;asm volatile( &bslash;&n;&quot;call __putlock&bslash;n&quot; &bslash;&n;&t;&t;&quot;lock ; btrl $31,%0&quot;: &bslash;&n;&t;&t;&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
 DECL|macro|read_lock_irq
 mdefine_line|#define read_lock_irq(lock)&t;do { __cli(); read_lock(lock); } while (0)
 DECL|macro|read_unlock_irq

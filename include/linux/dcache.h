@@ -183,6 +183,8 @@ id|hash
 )paren
 suffix:semicolon
 )brace
+DECL|macro|DNAME_INLINE_LEN
+mdefine_line|#define DNAME_INLINE_LEN 16
 DECL|struct|dentry
 r_struct
 id|dentry
@@ -289,6 +291,15 @@ op_star
 id|d_fsdata
 suffix:semicolon
 multiline_comment|/* fs-specific data */
+DECL|member|d_iname
+r_int
+r_char
+id|d_iname
+(braket
+id|DNAME_INLINE_LEN
+)braket
+suffix:semicolon
+multiline_comment|/* small names */
 )brace
 suffix:semicolon
 DECL|struct|dentry_operations
@@ -418,6 +429,25 @@ c_func
 op_amp
 id|dentry-&gt;d_hash
 )paren
+suffix:semicolon
+)brace
+DECL|function|dname_external
+r_static
+id|__inline__
+r_int
+id|dname_external
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|d
+)paren
+(brace
+r_return
+id|d-&gt;d_name.name
+op_ne
+id|d-&gt;d_iname
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * These are the low-level FS interfaces to the dcache..&n; */

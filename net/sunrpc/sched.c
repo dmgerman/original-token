@@ -534,6 +534,39 @@ op_or_assign
 id|RPC_TASK_RUNNING
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;For other people who may need to wake the I/O daemon&n; *&t;but should (for now) know nothing about its innards&n; */
+DECL|function|rpciod_wake_up
+r_void
+id|rpciod_wake_up
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rpciod_pid
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;rpciod: wot no daemon?&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|wake_up
+c_func
+(paren
+op_amp
+id|rpciod_idle
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Prepare for sleeping on a wait queue.&n; * By always appending tasks to the list we ensure FIFO behavior.&n; * NB: An RPC task will only receive interrupt-driven events as long&n; * as it&squot;s on a wait queue.&n; */
 r_static
 r_void
@@ -2768,6 +2801,11 @@ id|dprintk
 c_func
 (paren
 l_string|&quot;RPC: switch to rpciod&bslash;n&quot;
+)paren
+suffix:semicolon
+id|rpciod_tcp_dispatcher
+c_func
+(paren
 )paren
 suffix:semicolon
 id|rounds
