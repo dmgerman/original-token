@@ -116,6 +116,27 @@ id|CPM_CR_FLG
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Remove any microcode patches.  We will install our own&n;&t; * later.&n;&t; */
+id|cp-&gt;cp_cpmcr1
+op_assign
+l_int|0
+suffix:semicolon
+id|cp-&gt;cp_cpmcr2
+op_assign
+l_int|0
+suffix:semicolon
+id|cp-&gt;cp_cpmcr3
+op_assign
+l_int|0
+suffix:semicolon
+id|cp-&gt;cp_cpmcr4
+op_assign
+l_int|0
+suffix:semicolon
+id|cp-&gt;cp_rccr
+op_assign
+l_int|0
+suffix:semicolon
 id|iip
 op_assign
 (paren

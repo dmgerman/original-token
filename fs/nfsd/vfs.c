@@ -396,7 +396,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|err
+id|IS_ERR
+c_func
+(paren
+id|dentry
+)paren
 )paren
 r_goto
 id|out_nfserr
@@ -3657,11 +3661,9 @@ c_func
 id|dchild
 )paren
 )paren
-(brace
 r_goto
 id|out_nfserr
 suffix:semicolon
-)brace
 id|err
 op_assign
 id|fh_compose

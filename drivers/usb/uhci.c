@@ -8358,6 +8358,14 @@ op_star
 )paren
 id|urb-&gt;dev-&gt;bus-&gt;hcpriv
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|uhci-&gt;rh.urb
+op_eq
+id|urb
+)paren
+(brace
 id|uhci-&gt;rh.send
 op_assign
 l_int|0
@@ -8369,6 +8377,7 @@ op_amp
 id|uhci-&gt;rh.rh_int_timer
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -9435,7 +9444,7 @@ op_star
 id|irq
 op_assign
 op_amp
-id|uhci-&gt;skel_int2_td
+id|uhci-&gt;skel_int1_td
 suffix:semicolon
 r_if
 c_cond

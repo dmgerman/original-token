@@ -1923,6 +1923,16 @@ id|usb
 )paren
 )paren
 (brace
+id|usb_disconnect
+c_func
+(paren
+op_amp
+id|hub-&gt;children
+(braket
+id|port
+)braket
+)paren
+suffix:semicolon
 multiline_comment|/* Woops, disable the port */
 id|dbg
 c_func

@@ -259,6 +259,10 @@ id|saved_command_line
 (braket
 )braket
 suffix:semicolon
+r_extern
+r_int
+id|pmac_newworld
+suffix:semicolon
 DECL|macro|DEFAULT_ROOT_DEVICE
 mdefine_line|#define DEFAULT_ROOT_DEVICE 0x0801&t;/* sda1 - slightly silly choice */
 r_extern
@@ -911,6 +915,26 @@ id|l2cr
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Indicate newworld/oldworld */
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;pmac-generation&bslash;t: %s&bslash;n&quot;
+comma
+id|pmac_newworld
+ques
+c_cond
+l_string|&quot;NewWorld&quot;
+suffix:colon
+l_string|&quot;OldWorld&quot;
+)paren
+suffix:semicolon
 r_return
 id|len
 suffix:semicolon
@@ -2139,6 +2163,11 @@ id|adb_request
 id|req
 suffix:semicolon
 macro_line|#endif /* CONFIG_ADB_CUDA */
+id|pmac_nvram_update
+c_func
+(paren
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2210,6 +2239,11 @@ id|adb_request
 id|req
 suffix:semicolon
 macro_line|#endif /* CONFIG_ADB_CUDA */
+id|pmac_nvram_update
+c_func
+(paren
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren

@@ -7466,23 +7466,6 @@ multiline_comment|/*&n; * MODULE stuff&n; */
 macro_line|#ifdef MODULE
 DECL|macro|EEXP_MAX_CARDS
 mdefine_line|#define EEXP_MAX_CARDS     4    /* max number of cards to support */
-DECL|macro|NAMELEN
-mdefine_line|#define NAMELEN            8    /* max length of dev-&gt;name (inc null) */
-DECL|variable|namelist
-r_static
-r_char
-id|namelist
-(braket
-id|NAMELEN
-op_star
-id|EEXP_MAX_CARDS
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_eexp
 r_static
 r_struct
@@ -7494,9 +7477,8 @@ id|EEXP_MAX_CARDS
 op_assign
 (brace
 (brace
-l_int|NULL
+l_string|&quot;&quot;
 comma
-multiline_comment|/* will allocate dynamically */
 l_int|0
 comma
 l_int|0
@@ -7617,16 +7599,6 @@ id|dev_eexp
 (braket
 id|this_dev
 )braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|namelist
-op_plus
-(paren
-id|NAMELEN
-op_star
-id|this_dev
-)paren
 suffix:semicolon
 id|dev-&gt;irq
 op_assign

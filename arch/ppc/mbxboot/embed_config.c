@@ -1,6 +1,12 @@
 multiline_comment|/* Board specific functions for those embedded 8xx boards that do&n; * not have boot monitor support for board information.&n; */
 macro_line|#include &lt;sys/types.h&gt;
-macro_line|#include &quot;asm/mpc8xx.h&quot;
+macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#ifdef CONFIG_8xx
+macro_line|#include &lt;asm/mpc8xx.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_8260
+macro_line|#include &lt;asm/mpc8260.h&gt;
+macro_line|#endif
 multiline_comment|/* IIC functions.&n; * These are just the basic master read/write operations so we can&n; * examine serial EEPROM.&n; */
 r_extern
 r_void
@@ -31,6 +37,23 @@ op_star
 id|cp
 )paren
 suffix:semicolon
+multiline_comment|/* Supply a default Ethernet address for those eval boards that don&squot;t&n; * ship with one.  This is an address from the MBX board I have, so&n; * it is unlikely you will find it on your network.&n; */
+DECL|variable|def_enet_addr
+r_static
+id|ushort
+id|def_enet_addr
+(braket
+)braket
+op_assign
+(brace
+l_int|0x0800
+comma
+l_int|0x3e26
+comma
+l_int|0x1559
+)brace
+suffix:semicolon
+macro_line|#if defined(CONFIG_RPXLITE) || defined(CONFIG_RPXCLASSIC)
 r_static
 r_void
 id|rpx_eth
@@ -375,6 +398,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#else
+multiline_comment|/* For boards without initialized EEPROM.&n;&t;*/
 id|bd-&gt;bi_memstart
 op_assign
 l_int|0
@@ -382,7 +406,7 @@ suffix:semicolon
 id|bd-&gt;bi_memsize
 op_assign
 (paren
-l_int|4
+l_int|8
 op_star
 l_int|1024
 op_star
@@ -676,6 +700,8 @@ op_div_assign
 l_int|2
 suffix:semicolon
 )brace
+macro_line|#endif /* RPXLITE || RPXCLASSIC */
+macro_line|#ifdef CONFIG_BSEIP
 multiline_comment|/* Build a board information structure for the BSE ip-Engine.&n; * There is more to come since we will add some environment&n; * variables and a function to read them.&n; */
 r_void
 DECL|function|bseip_cfg
@@ -757,4 +783,89 @@ op_assign
 l_int|48
 suffix:semicolon
 )brace
+macro_line|#endif /* BSEIP */
+macro_line|#ifdef CONFIG_EST8260
+r_void
+DECL|function|embed_config
+id|embed_config
+c_func
+(paren
+id|bd_t
+op_star
+id|bd
+)paren
+(brace
+id|u_char
+op_star
+id|cp
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+macro_line|#if 1
+multiline_comment|/* This is actually provided by my boot rom.  I have it&n;&t; * here for those people that may load the kernel with&n;&t; * a JTAG/COP tool and not the rom monitor.&n;&t; */
+id|bd-&gt;bi_baudrate
+op_assign
+l_int|115200
+suffix:semicolon
+id|bd-&gt;bi_intfreq
+op_assign
+l_int|200
+suffix:semicolon
+id|bd-&gt;bi_busfreq
+op_assign
+l_int|66
+suffix:semicolon
+id|bd-&gt;bi_cpmfreq
+op_assign
+l_int|66
+suffix:semicolon
+id|bd-&gt;bi_brgfreq
+op_assign
+l_int|33
+suffix:semicolon
+id|bd-&gt;bi_memsize
+op_assign
+l_int|16
+op_star
+l_int|1024
+op_star
+l_int|1024
+suffix:semicolon
+macro_line|#endif
+id|cp
+op_assign
+(paren
+id|u_char
+op_star
+)paren
+id|def_enet_addr
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|bd-&gt;bi_enetaddr
+(braket
+id|i
+)braket
+op_assign
+op_star
+id|cp
+op_increment
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* EST8260 */
 eof

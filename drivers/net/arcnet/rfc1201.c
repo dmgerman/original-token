@@ -1053,6 +1053,10 @@ comma
 id|soft-&gt;split_flag
 )paren
 suffix:semicolon
+id|lp-&gt;rfc1201.aborted_seq
+op_assign
+id|soft-&gt;sequence
+suffix:semicolon
 id|lp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
@@ -1093,6 +1097,10 @@ id|D_NORMAL
 comma
 l_string|&quot;(split) memory squeeze, dropping packet.&bslash;n&quot;
 )paren
+suffix:semicolon
+id|lp-&gt;rfc1201.aborted_seq
+op_assign
+id|soft-&gt;sequence
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped
 op_increment
@@ -1360,6 +1368,30 @@ op_assign
 id|in-&gt;numpackets
 op_assign
 l_int|0
+suffix:semicolon
+id|BUGMSG
+c_func
+(paren
+id|D_SKB_SIZE
+comma
+l_string|&quot;skb: received %d bytes from %02X (unsplit)&bslash;n&quot;
+comma
+id|skb-&gt;len
+comma
+id|pkt-&gt;hard.source
+)paren
+suffix:semicolon
+id|BUGMSG
+c_func
+(paren
+id|D_SKB_SIZE
+comma
+l_string|&quot;skb: received %d bytes from %02X (split)&bslash;n&quot;
+comma
+id|skb-&gt;len
+comma
+id|pkt-&gt;hard.source
+)paren
 suffix:semicolon
 id|BUGLVL
 c_func
@@ -1684,14 +1716,18 @@ multiline_comment|/* exception packet - add an extra header */
 r_struct
 id|arc_rfc1201
 id|excsoft
+suffix:semicolon
+id|excsoft.proto
 op_assign
-(brace
 id|soft-&gt;proto
-comma
-l_int|0xFF
-comma
-l_int|0xFFFF
-)brace
+suffix:semicolon
+id|excsoft.split_flag
+op_assign
+l_int|0xff
+suffix:semicolon
+id|excsoft.sequence
+op_assign
+l_int|0xffff
 suffix:semicolon
 id|hard-&gt;offset
 (braket

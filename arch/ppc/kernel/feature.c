@@ -180,7 +180,7 @@ comma
 id|OH_BAY_IDE_ENABLE
 )brace
 comma
-multiline_comment|/* FEATURE_Mediabay_IDE_enable */
+multiline_comment|/* FEATURE_IDE1_enable */
 (brace
 l_int|0x38
 comma
@@ -189,7 +189,7 @@ comma
 id|OH_IDE1_RESET_N
 )brace
 comma
-multiline_comment|/* FEATURE_Mediabay_IDE_reset */
+multiline_comment|/* FEATURE_IDE1_reset */
 (brace
 l_int|0x38
 comma
@@ -271,6 +271,24 @@ l_int|0
 )brace
 comma
 multiline_comment|/* FEATURE_IDE2_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_switch */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_content */
 )brace
 suffix:semicolon
 multiline_comment|/* Those bits are from a PowerBook. It&squot;s possible that desktop machines&n; * based on heathrow need a different definition or some bits removed&n; */
@@ -407,7 +425,7 @@ comma
 id|HRW_BAY_IDE_ENABLE
 )brace
 comma
-multiline_comment|/* FEATURE_Mediabay_IDE_enable */
+multiline_comment|/* FEATURE_IDE1_enable */
 (brace
 l_int|0x38
 comma
@@ -416,7 +434,7 @@ comma
 id|HRW_IDE1_RESET_N
 )brace
 comma
-multiline_comment|/* FEATURE_Mediabay_IDE_reset */
+multiline_comment|/* FEATURE_IDE1_reset */
 (brace
 l_int|0x38
 comma
@@ -498,9 +516,272 @@ l_int|0
 )brace
 comma
 multiline_comment|/* FEATURE_IDE2_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_switch */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_content */
 )brace
 suffix:semicolon
-multiline_comment|/* Those bits are from an iBook.&n; */
+multiline_comment|/*&n; * Those bits are from a 1999 G3 PowerBook, with a paddington chip.&n; * Mostly the same as the heathrow.&n; */
+DECL|variable|feature_bits_paddington
+r_static
+id|fbit
+id|feature_bits_paddington
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_null */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SCC_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SCCA_IO
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_IO_A */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SCCB_IO
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_IO_B */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SWIM_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_SWIM3_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_MESH_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_MESH_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_IDE0_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_IDE0_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_IDE0_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_IDE0_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_IOBUS_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_IOBUS_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_BAY_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_reset */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_BAY_POWER_N
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BAY_PCI_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_PCI_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BAY_IDE_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_IDE1_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_IDE1_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_IDE1_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BAY_FLOPPY_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_floppy_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BMAC_RESET
+)brace
+comma
+multiline_comment|/* FEATURE_BMac_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BMAC_IO_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_BMac_IO_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|PADD_MODEM_POWER_N
+)brace
+comma
+multiline_comment|/* FEATURE_Modem_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SLOW_SCC_PCLK
+)brace
+comma
+multiline_comment|/* FEATURE_Slow_SCC_PCLK */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_SOUND_POWER_N
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_Power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SOUND_CLK_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_CLK_Enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_switch */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_content */
+)brace
+suffix:semicolon
+multiline_comment|/* Those bits are for Core99 machines (iBook,G4,iMacSL/DV,Pismo,...).&n; */
 DECL|variable|feature_bits_keylargo
 r_static
 id|fbit
@@ -573,7 +854,7 @@ l_int|0
 comma
 multiline_comment|/* FEATURE_MESH_enable */
 (brace
-l_int|0x38
+l_int|0x3c
 comma
 l_int|0
 comma
@@ -600,20 +881,20 @@ l_int|0
 comma
 multiline_comment|/* FEATURE_IOBUS_enable */
 (brace
-l_int|0x38
+l_int|0x34
 comma
-l_int|0
+l_int|1
 comma
-l_int|0
+l_int|0x00000200
 )brace
 comma
 multiline_comment|/* FEATURE_Mediabay_reset */
 (brace
-l_int|0x38
+l_int|0x34
 comma
-l_int|0
+l_int|1
 comma
-l_int|0
+l_int|0x00000400
 )brace
 comma
 multiline_comment|/* FEATURE_Mediabay_power */
@@ -627,14 +908,14 @@ l_int|0
 comma
 multiline_comment|/* FEATURE_Mediabay_PCI_enable */
 (brace
-l_int|0x38
+l_int|0x3c
 comma
 l_int|0
 comma
-l_int|0
+l_int|0x0
 )brace
 comma
-multiline_comment|/* FEATURE_Mediabay_IDE_enable */
+multiline_comment|/* FEATURE_IDE1_enable */
 (brace
 l_int|0x3c
 comma
@@ -643,7 +924,7 @@ comma
 l_int|0x08000000
 )brace
 comma
-multiline_comment|/* FEATURE_Mediabay_IDE_reset */
+multiline_comment|/* FEATURE_IDE1_reset */
 (brace
 l_int|0x38
 comma
@@ -725,6 +1006,24 @@ l_int|0x40000000
 )brace
 comma
 multiline_comment|/* FEATURE_IDE2_reset */
+(brace
+l_int|0x34
+comma
+l_int|0
+comma
+l_int|0x00001000
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_switch */
+(brace
+l_int|0x34
+comma
+l_int|0
+comma
+l_int|0x00000100
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_content */
 )brace
 suffix:semicolon
 multiline_comment|/* definition of a feature controller object */
@@ -858,6 +1157,28 @@ c_func
 id|np
 comma
 id|feature_bits_keylargo
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|device_is_compatible
+c_func
+(paren
+id|np
+comma
+l_string|&quot;paddington&quot;
+)paren
+)paren
+(brace
+id|feature_add_controller
+c_func
+(paren
+id|np
+comma
+id|feature_bits_paddington
 )paren
 suffix:semicolon
 )brace
@@ -1285,6 +1606,16 @@ id|controller-&gt;bits
 id|f
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bit-&gt;mask
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 macro_line|#ifdef DEBUG_FEATURE
 id|printk
 c_func
@@ -1458,6 +1789,16 @@ id|controller-&gt;bits
 id|f
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bit-&gt;mask
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 macro_line|#ifdef DEBUG_FEATURE
 id|printk
 c_func
@@ -1626,6 +1967,16 @@ id|controller-&gt;bits
 (braket
 id|f
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bit-&gt;mask
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 macro_line|#ifdef DEBUG_FEATURE
 id|printk

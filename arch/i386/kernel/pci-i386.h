@@ -30,6 +30,11 @@ r_int
 id|pci_probe
 suffix:semicolon
 multiline_comment|/* pci-i386.c */
+r_extern
+r_int
+r_int
+id|pcibios_max_latency
+suffix:semicolon
 r_void
 id|pcibios_resource_survey
 c_func
@@ -223,6 +228,13 @@ r_extern
 r_int
 r_int
 id|pcibios_irq_mask
+suffix:semicolon
+r_void
+id|pcibios_irq_init
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_void
 id|pcibios_fixup_irqs

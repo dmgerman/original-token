@@ -6575,11 +6575,6 @@ op_assign
 id|pte
 suffix:semicolon
 )brace
-r_else
-op_decrement
-id|current-&gt;maj_flt
-suffix:semicolon
-multiline_comment|/* was incremented in do_no_page */
 multiline_comment|/* pte_val(pte) == SHM_ENTRY (shp, idx) */
 id|get_page
 c_func
@@ -6590,9 +6585,6 @@ c_func
 id|pte
 )paren
 )paren
-suffix:semicolon
-id|current-&gt;min_flt
-op_increment
 suffix:semicolon
 r_return
 id|pte_page

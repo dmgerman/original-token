@@ -1975,7 +1975,7 @@ l_int|4
 )braket
 op_assign
 (brace
-l_string|&quot;unknown size&quot;
+l_string|&quot;2MB&quot;
 comma
 l_string|&quot;256KB&quot;
 comma

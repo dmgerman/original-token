@@ -2560,9 +2560,13 @@ id|d
 op_assign
 id|chan-&gt;pppdev.dev
 suffix:semicolon
+id|strcpy
+c_func
+(paren
 id|d-&gt;name
-op_assign
+comma
 id|chan-&gt;name
+)paren
 suffix:semicolon
 id|d-&gt;base_addr
 op_assign

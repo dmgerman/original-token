@@ -3180,6 +3180,22 @@ op_ge
 l_int|0
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Inode-cache hash table entries: %d (order: %ld, %ld bytes)&bslash;n&quot;
+comma
+id|nr_hash
+comma
+id|order
+comma
+(paren
+id|PAGE_SIZE
+op_lshift
+id|order
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3190,14 +3206,6 @@ id|panic
 c_func
 (paren
 l_string|&quot;Failed to allocate inode hash table&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;VFS: INODE hash table configured to %d entries&bslash;n&quot;
-comma
-id|nr_hash
 )paren
 suffix:semicolon
 id|head

@@ -49,14 +49,14 @@ comma
 DECL|enumerator|FEATURE_Mediabay_PCI_enable
 id|FEATURE_Mediabay_PCI_enable
 comma
-DECL|enumerator|FEATURE_Mediabay_IDE_enable
-id|FEATURE_Mediabay_IDE_enable
+DECL|enumerator|FEATURE_IDE1_enable
+id|FEATURE_IDE1_enable
 comma
-multiline_comment|/* Also IDE 1 */
-DECL|enumerator|FEATURE_Mediabay_IDE_reset
-id|FEATURE_Mediabay_IDE_reset
+multiline_comment|/* MediaBay IDE */
+DECL|enumerator|FEATURE_IDE1_reset
+id|FEATURE_IDE1_reset
 comma
-multiline_comment|/* Also IDE 1 */
+multiline_comment|/* MediaBay IDE */
 DECL|enumerator|FEATURE_Mediabay_floppy_enable
 id|FEATURE_Mediabay_floppy_enable
 comma
@@ -84,6 +84,14 @@ comma
 DECL|enumerator|FEATURE_IDE2_reset
 id|FEATURE_IDE2_reset
 comma
+DECL|enumerator|FEATURE_Mediabay_IDE_switch
+id|FEATURE_Mediabay_IDE_switch
+comma
+multiline_comment|/* MB IDE bus switch */
+DECL|enumerator|FEATURE_Mediabay_content
+id|FEATURE_Mediabay_content
+comma
+multiline_comment|/* MB content indicator enable */
 DECL|enumerator|FEATURE_last
 id|FEATURE_last
 comma

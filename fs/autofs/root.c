@@ -1992,6 +1992,11 @@ op_star
 id|sbi
 comma
 r_struct
+id|vfsmount
+op_star
+id|mnt
+comma
+r_struct
 id|autofs_packet_expire
 op_star
 id|pkt_p
@@ -2042,6 +2047,8 @@ c_func
 id|sb
 comma
 id|sbi
+comma
+id|mnt
 )paren
 )paren
 )paren
@@ -2301,6 +2308,8 @@ c_func
 id|inode-&gt;i_sb
 comma
 id|sbi
+comma
+id|filp-&gt;f_vfsmnt
 comma
 (paren
 r_struct

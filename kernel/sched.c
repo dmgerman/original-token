@@ -3841,6 +3841,13 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|init_timervecs
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|sched_init
 r_void
 id|__init
@@ -3889,6 +3896,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|init_timervecs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|init_bh
 c_func
 (paren

@@ -1867,6 +1867,10 @@ id|lo-&gt;lo_backing_file-&gt;f_dentry
 op_assign
 id|file-&gt;f_dentry
 suffix:semicolon
+id|lo-&gt;lo_backing_file-&gt;f_vfsmnt
+op_assign
+id|file-&gt;f_vfsmnt
+suffix:semicolon
 id|lo-&gt;lo_backing_file-&gt;f_op
 op_assign
 id|file-&gt;f_op

@@ -3382,16 +3382,6 @@ id|io
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|nullname
-r_static
-r_char
-id|nullname
-(braket
-l_int|8
-)braket
-op_assign
-l_string|&quot;&quot;
-suffix:semicolon
 DECL|variable|atp_dev
 r_static
 r_struct
@@ -3399,7 +3389,7 @@ id|net_device
 id|atp_dev
 op_assign
 (brace
-id|nullname
+l_string|&quot;&quot;
 comma
 l_int|0
 comma

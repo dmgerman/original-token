@@ -16764,13 +16764,6 @@ id|net_device
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|name
-(braket
-id|i
-)braket
-suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|io

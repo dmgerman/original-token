@@ -3498,9 +3498,6 @@ id|max_mapnr
 r_goto
 id|bad_wp_page
 suffix:semicolon
-id|mm-&gt;min_flt
-op_increment
-suffix:semicolon
 id|old_page
 op_assign
 id|mem_map
@@ -3617,6 +3614,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/* Minor fault */
 )brace
 multiline_comment|/*&n;&t; * Ok, we need to copy. Oh, well..&n;&t; */
 id|spin_unlock
@@ -3717,6 +3715,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/* Minor fault */
 id|bad_wp_page
 suffix:colon
 id|spin_unlock
@@ -4534,9 +4533,6 @@ suffix:semicolon
 id|mm-&gt;rss
 op_increment
 suffix:semicolon
-id|mm-&gt;min_flt
-op_increment
-suffix:semicolon
 id|pte
 op_assign
 id|mk_pte
@@ -4545,12 +4541,6 @@ c_func
 id|page
 comma
 id|vma-&gt;vm_page_prot
-)paren
-suffix:semicolon
-id|SetPageSwapEntry
-c_func
-(paren
-id|page
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Freeze the &quot;shared&quot;ness of the page, ie page_count + swap_count.&n;&t; * Must lock page before transferring our swap count to already&n;&t; * obtained page count.&n;&t; */
@@ -4651,6 +4641,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/* Minor fault */
 )brace
 multiline_comment|/*&n; * This only needs the MM semaphore&n; */
 DECL|function|do_anonymous_page
@@ -4778,9 +4769,6 @@ suffix:semicolon
 id|mm-&gt;rss
 op_increment
 suffix:semicolon
-id|mm-&gt;min_flt
-op_increment
-suffix:semicolon
 id|flush_page_to_ram
 c_func
 (paren
@@ -4810,6 +4798,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/* Minor fault */
 )brace
 multiline_comment|/*&n; * do_no_page() tries to create a new page mapping. It aggressively&n; * tries to share with existing pages, but makes a separate copy if&n; * the &quot;write_access&quot; parameter is true in order to avoid the next&n; * page fault.&n; *&n; * As this is called only for pages that do not currently exist, we&n; * do not need to flush old virtual caches or the TLB.&n; *&n; * This is called with the MM semaphore held.&n; */
 DECL|function|do_no_page
@@ -4921,9 +4910,6 @@ op_minus
 l_int|1
 suffix:semicolon
 op_increment
-id|mm-&gt;maj_flt
-suffix:semicolon
-op_increment
 id|mm-&gt;rss
 suffix:semicolon
 multiline_comment|/*&n;&t; * This silly early PAGE_DIRTY setting removes a race&n;&t; * due to the bad i386 page protection. But it&squot;s valid&n;&t; * for other architectures too.&n;&t; *&n;&t; * Note that if write_access is true, we either now have&n;&t; * an exclusive copy of the page, or this is a shared mapping,&n;&t; * so we can make it writable and dirty to avoid having to&n;&t; * handle that later.&n;&t; */
@@ -5017,8 +5003,9 @@ id|entry
 )paren
 suffix:semicolon
 r_return
-l_int|1
+l_int|2
 suffix:semicolon
+multiline_comment|/* Major fault */
 )brace
 multiline_comment|/*&n; * These routines also need to handle stuff like marking pages dirty&n; * and/or accessed for architectures that don&squot;t do it in hardware (most&n; * RISC architectures).  The early dirtying is also good on the i386.&n; *&n; * There is also a hook called &quot;update_mmu_cache()&quot; that architectures&n; * with external mmu caches can use to update those (ie the Sparc or&n; * PowerPC hashed page tables that act as extended TLBs).&n; *&n; * Note the &quot;page_table_lock&quot;. It is to protect against kswapd removing&n; * pages from under us. Note that kswapd only ever _removes_ pages, never&n; * adds them. As such, once we have noticed that the page is not present,&n; * we can drop the lock early.&n; *&n; * The adding of pages is protected by the MM semaphore (which we hold),&n; * so we don&squot;t need to worry about a page being suddenly been added into&n; * our VM.&n; */
 DECL|function|handle_pte_fault

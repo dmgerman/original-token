@@ -3671,14 +3671,6 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|lt_name
-r_static
-r_char
-id|lt_name
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|variable|cops0_dev
 r_static
 r_struct
@@ -3686,7 +3678,7 @@ id|net_device
 id|cops0_dev
 op_assign
 (brace
-id|lt_name
+l_string|&quot;&quot;
 comma
 multiline_comment|/* device name */
 l_int|0

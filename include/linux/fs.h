@@ -3074,7 +3074,7 @@ id|may_umount
 c_func
 (paren
 r_struct
-id|super_block
+id|vfsmount
 op_star
 )paren
 suffix:semicolon

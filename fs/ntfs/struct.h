@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * struct.h&n; * Structure definitions&n; *&n; *  Copyright (C) 1997 R&#xfffd;gis Duchesne&n; */
+multiline_comment|/*&n; * struct.h&n; * Structure definitions&n; *&n; *  Copyright (C) 1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 2000 Anton Altaparmakov&n; */
 multiline_comment|/* Necessary forward definition */
 r_struct
 id|ntfs_inode
@@ -89,9 +89,21 @@ DECL|member|at_file_name
 id|ntfs_u32
 id|at_file_name
 suffix:semicolon
+DECL|member|at_volume_version
+id|ntfs_u32
+id|at_volume_version
+suffix:semicolon
 DECL|member|at_security_descriptor
 id|ntfs_u32
 id|at_security_descriptor
+suffix:semicolon
+DECL|member|at_volume_name
+id|ntfs_u32
+id|at_volume_name
+suffix:semicolon
+DECL|member|at_volume_information
+id|ntfs_u32
+id|at_volume_information
 suffix:semicolon
 DECL|member|at_data
 id|ntfs_u32

@@ -2347,9 +2347,12 @@ suffix:semicolon
 id|timer_active
 op_assign
 (paren
-id|sp-&gt;timer.prev
-op_ne
-l_int|NULL
+id|timer_pending
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
 )paren
 ques
 c_cond

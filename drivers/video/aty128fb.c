@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aty128fb.c,v 1.1.1.1.36.1 1999/12/11 09:03:05 Exp $&n; *  linux/drivers/video/aty128fb.c -- Frame buffer device for ATI Rage128&n; *&n; *  Copyright (C) 1999-2000, Brad Douglas &lt;brad@neruo.com&gt;&n; *  Copyright (C) 1999, Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *                Ani Joshi / Jeff Garzik&n; *                      - Code cleanup&n; *&n; *  Based off of Geert&squot;s atyfb.c and vfb.c.&n; *&n; *  TODO:&n; *&t;&t;- panning&n; *&t;&t;- monitor sensing (DDC)&n; *              - virtual display&n; *&t;&t;- other platform support (only ppc/x86 supported)&n; *&t;&t;- PPLL_REF_DIV &amp; XTALIN calculation    -done for x86&n; *&t;&t;- determine MCLK from previous setting -done for x86            &n; *              - calculate XCLK, rather than probe BIOS&n; *&t;&t;- hardware cursor support&n; *&t;&t;- ioctl()&squot;s&n; */
+multiline_comment|/* $Id: aty128fb.c,v 1.1.1.1.36.1 1999/12/11 09:03:05 Exp $&n; *  linux/drivers/video/aty128fb.c -- Frame buffer device for ATI Rage128&n; *&n; *  Copyright (C) 1999-2000, Brad Douglas &lt;brad@neruo.com&gt;&n; *  Copyright (C) 1999, Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *                Ani Joshi / Jeff Garzik&n; *                      - Code cleanup&n; *&n; *  Based off of Geert&squot;s atyfb.c and vfb.c.&n; *&n; *  TODO:&n; *&t;&t;- panning&n; *&t;&t;- monitor sensing (DDC)&n; *              - virtual display&n; *&t;&t;- other platform support (only ppc/x86 supported)&n; *&t;&t;- hardware cursor support&n; *&t;&t;- ioctl()&squot;s&n; *&n; *    Please cc: your patches to brad@neruo.com.&n; */
 multiline_comment|/*&n; * A special note of gratitude to ATI&squot;s devrel for providing documentation,&n; * example code and hardware. Thanks Nitya.&t;-atong and brad&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -50,11 +50,12 @@ DECL|macro|DBG
 mdefine_line|#define DBG(x)
 macro_line|#endif
 multiline_comment|/* default mode */
-DECL|variable|default_var
+DECL|variable|__initdata
 r_static
 r_struct
 id|fb_var_screeninfo
 id|default_var
+id|__initdata
 op_assign
 (brace
 multiline_comment|/* 640x480, 60 Hz, Non-Interlaced (25.175 MHz dotclock) */
@@ -250,6 +251,7 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* packed BIOS settings */
+macro_line|#ifndef CONFIG_PPC
 macro_line|#pragma pack(1)
 r_typedef
 r_struct
@@ -347,6 +349,7 @@ DECL|typedef|PLL_BLOCK
 id|PLL_BLOCK
 suffix:semicolon
 macro_line|#pragma pack()
+macro_line|#endif /* !CONFIG_PPC */
 multiline_comment|/* onboard memory information */
 DECL|struct|aty128_meminfo
 r_struct
@@ -7961,6 +7964,7 @@ id|k
 )braket
 suffix:semicolon
 )brace
+multiline_comment|/* setup the DAC the way we like it */
 id|dac
 op_assign
 id|aty_ld_le32
@@ -7975,8 +7979,6 @@ op_or_assign
 id|DAC_8BIT_EN
 op_or
 id|DAC_RANGE_CNTL
-op_or
-id|DAC_BLANKING
 )paren
 suffix:semicolon
 id|dac

@@ -433,7 +433,7 @@ mdefine_line|#define D_TIMING  1024
 DECL|macro|D_DOWNCALL
 mdefine_line|#define D_DOWNCALL 2048
 DECL|macro|CDEBUG
-mdefine_line|#define CDEBUG(mask, format, a...)                                &bslash;&n;  do {                                                            &bslash;&n;  if (coda_debug &amp; mask) {                                        &bslash;&n;    printk(&quot;(%s,l. %d): &quot;,  __FUNCTION__, __LINE__);              &bslash;&n;    printk(format, ## a); }                                       &bslash;&n;} while (0) ;                            
+mdefine_line|#define CDEBUG(mask, format, a...)                                &bslash;&n;  do {                                                            &bslash;&n;  if (coda_debug &amp; mask) {                                        &bslash;&n;    printk(&quot;(%s,l. %d): &quot;,  __FUNCTION__, __LINE__);              &bslash;&n;    printk(format, ## a); }                                       &bslash;&n;} while (0)
 DECL|macro|ENTRY
 mdefine_line|#define ENTRY    &bslash;&n;    if(coda_print_entry) printk(&quot;Process %d entered %s&bslash;n&quot;,current-&gt;pid,__FUNCTION__)
 DECL|macro|EXIT

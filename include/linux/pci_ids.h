@@ -573,6 +573,8 @@ DECL|macro|PCI_DEVICE_ID_SI_5591
 mdefine_line|#define PCI_DEVICE_ID_SI_5591&t;&t;0x5591
 DECL|macro|PCI_DEVICE_ID_SI_5597
 mdefine_line|#define PCI_DEVICE_ID_SI_5597&t;&t;0x5597
+DECL|macro|PCI_DEVICE_ID_SI_5598
+mdefine_line|#define PCI_DEVICE_ID_SI_5598&t;&t;0x5598
 DECL|macro|PCI_DEVICE_ID_SI_5600
 mdefine_line|#define PCI_DEVICE_ID_SI_5600&t;&t;0x5600
 DECL|macro|PCI_DEVICE_ID_SI_6306

@@ -3340,19 +3340,6 @@ id|rx_tail
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_3c507
 r_static
 r_struct
@@ -3360,7 +3347,7 @@ id|net_device
 id|dev_3c507
 op_assign
 (brace
-id|devicename
+l_string|&quot;&quot;
 comma
 multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0

@@ -185,21 +185,21 @@ DECL|member|vendor
 r_char
 id|vendor
 (braket
-l_int|32
+id|USB_STOR_STRING_LEN
 )braket
 suffix:semicolon
 DECL|member|product
 r_char
 id|product
 (braket
-l_int|32
+id|USB_STOR_STRING_LEN
 )braket
 suffix:semicolon
 DECL|member|serial
 r_char
 id|serial
 (braket
-l_int|32
+id|USB_STOR_STRING_LEN
 )braket
 suffix:semicolon
 DECL|member|transport_name
@@ -213,45 +213,42 @@ op_star
 id|protocol_name
 suffix:semicolon
 DECL|member|subclass
-id|__u8
+id|u8
 id|subclass
 suffix:semicolon
 DECL|member|protocol
-id|__u8
+id|u8
 id|protocol
 suffix:semicolon
 multiline_comment|/* information about the device -- only good if device is attached */
 DECL|member|ifnum
-id|__u8
+id|u8
 id|ifnum
 suffix:semicolon
 multiline_comment|/* interface number   */
 DECL|member|ep_in
-id|__u8
+id|u8
 id|ep_in
 suffix:semicolon
 multiline_comment|/* bulk in endpoint   */
 DECL|member|ep_out
-id|__u8
+id|u8
 id|ep_out
 suffix:semicolon
 multiline_comment|/* bulk out endpoint  */
 DECL|member|ep_int
-id|__u8
+r_struct
+id|usb_endpoint_descriptor
+op_star
 id|ep_int
 suffix:semicolon
 multiline_comment|/* interrupt endpoint */
-DECL|member|ep_interval
-id|__u8
-id|ep_interval
-suffix:semicolon
-multiline_comment|/* interrupt interval */
 multiline_comment|/* function pointers for this device */
 DECL|member|transport
 id|trans_cmnd
 id|transport
 suffix:semicolon
-multiline_comment|/* transport function     */
+multiline_comment|/* transport function&t;   */
 DECL|member|transport_reset
 id|trans_reset
 id|transport_reset
@@ -261,7 +258,7 @@ DECL|member|proto_handler
 id|proto_cmnd
 id|proto_handler
 suffix:semicolon
-multiline_comment|/* protocol handler       */
+multiline_comment|/* protocol handler&t;   */
 multiline_comment|/* SCSI interfaces */
 id|GUID
 c_func
@@ -269,7 +266,7 @@ c_func
 id|guid
 )paren
 suffix:semicolon
-multiline_comment|/* unique dev id       */
+multiline_comment|/* unique dev id&t;*/
 DECL|member|host
 r_struct
 id|Scsi_Host
@@ -281,23 +278,23 @@ DECL|member|htmplt
 id|Scsi_Host_Template
 id|htmplt
 suffix:semicolon
-multiline_comment|/* own host template   */
+multiline_comment|/* own host template&t;*/
 DECL|member|host_number
 r_int
 id|host_number
 suffix:semicolon
-multiline_comment|/* to find us          */
+multiline_comment|/* to find us&t;&t;*/
 DECL|member|host_no
 r_int
 id|host_no
 suffix:semicolon
-multiline_comment|/* allocated by scsi   */
+multiline_comment|/* allocated by scsi&t;*/
 DECL|member|srb
 id|Scsi_Cmnd
 op_star
 id|srb
 suffix:semicolon
-multiline_comment|/* current srb         */
+multiline_comment|/* current srb&t;&t;*/
 multiline_comment|/* thread information */
 DECL|member|queue_srb
 id|Scsi_Cmnd
@@ -309,48 +306,53 @@ DECL|member|action
 r_int
 id|action
 suffix:semicolon
-multiline_comment|/* what to do            */
+multiline_comment|/* what to do&t;&t;  */
 DECL|member|pid
 r_int
 id|pid
 suffix:semicolon
-multiline_comment|/* control thread        */
+multiline_comment|/* control thread&t;  */
 multiline_comment|/* interrupt info for CBI devices -- only good if attached */
 DECL|member|ip_waitq
 r_struct
 id|semaphore
 id|ip_waitq
 suffix:semicolon
-multiline_comment|/* for CBI interrupts   */
-DECL|member|ip_data
-id|__u16
-id|ip_data
-suffix:semicolon
-multiline_comment|/* interrupt data       */
+multiline_comment|/* for CBI interrupts&t; */
 DECL|member|ip_wanted
 r_int
 id|ip_wanted
 suffix:semicolon
-multiline_comment|/* is an IRQ expected?  */
-DECL|member|irq_handle
-r_void
+multiline_comment|/* is an IRQ expected?&t; */
+DECL|member|irq_urb_sem
+r_struct
+id|semaphore
+id|irq_urb_sem
+suffix:semicolon
+multiline_comment|/* to protect irq_urb&t; */
+DECL|member|irq_urb
+r_struct
+id|urb
 op_star
-id|irq_handle
+id|irq_urb
 suffix:semicolon
 multiline_comment|/* for USB int requests */
-DECL|member|irqpipe
+DECL|member|irqbuf
 r_int
-r_int
-id|irqpipe
+r_char
+id|irqbuf
+(braket
+l_int|2
+)braket
 suffix:semicolon
-multiline_comment|/* pipe for release_irq */
+multiline_comment|/* buffer for USB IRQ&t; */
 multiline_comment|/* mutual exclusion structures */
 DECL|member|notify
 r_struct
 id|semaphore
 id|notify
 suffix:semicolon
-multiline_comment|/* thread begin/end        */
+multiline_comment|/* thread begin/end&t;    */
 DECL|member|sleeper
 r_struct
 id|semaphore
@@ -442,7 +444,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/***********************************************************************&n; * Data transfer routines&n; ***********************************************************************/
-multiline_comment|/*&n; * Transfer one SCSI scatter-gather buffer via bulk transfer&n; *&n; * Note that this function is necessary because we want the ability to&n; * use scatter-gather memory.  Good performance is achived by a combination&n; * of scatter-gather and clustering (which makes each chunk bigger).&n; *&n; * Note that the lower layer will always retry when a NAK occurs, up to the&n; * timeout limit.  Thus we don&squot;t have to worry about it for individual&n; * packets.&n; */
+multiline_comment|/*&n; * Transfer one SCSI scatter-gather buffer via bulk transfer&n; *&n; * Note that this function is necessary because we want the ability to&n; * use scatter-gather memory.  Good performance is achieved by a combination&n; * of scatter-gather and clustering (which makes each chunk bigger).&n; *&n; * Note that the lower layer will always retry when a NAK occurs, up to the&n; * timeout limit.  Thus we don&squot;t have to worry about it for individual&n; * packets.&n; */
 DECL|function|us_transfer_partial
 r_static
 r_int
@@ -502,6 +504,8 @@ comma
 op_amp
 id|partial
 comma
+l_int|5
+op_star
 id|HZ
 )paren
 suffix:semicolon
@@ -783,7 +787,7 @@ id|scatterlist
 op_star
 id|sg
 suffix:semicolon
-multiline_comment|/* support those devices which need the length calculated&n;&t; * differently&n;&t; */
+multiline_comment|/* support those devices which need the length calculated&n;&t; * differently &n;&t; */
 r_if
 c_cond
 (paren
@@ -1250,8 +1254,8 @@ r_if
 c_cond
 (paren
 id|temp_result
-op_eq
-id|USB_STOR_TRANSPORT_ERROR
+op_ne
+id|USB_STOR_TRANSPORT_GOOD
 )paren
 (brace
 multiline_comment|/* FIXME: we need to invoke a transport reset here */
@@ -1412,23 +1416,14 @@ suffix:semicolon
 multiline_comment|/*&n; * Control/Bulk/Interrupt transport&n; */
 DECL|function|CBI_irq
 r_static
-r_int
+r_void
 id|CBI_irq
 c_func
 (paren
-r_int
-id|state
-comma
-r_void
+r_struct
+id|urb
 op_star
-id|buffer
-comma
-r_int
-id|len
-comma
-r_void
-op_star
-id|dev_id
+id|urb
 )paren
 (brace
 r_struct
@@ -1441,7 +1436,7 @@ r_struct
 id|us_data
 op_star
 )paren
-id|dev_id
+id|urb-&gt;context
 suffix:semicolon
 id|US_DEBUGP
 c_func
@@ -1456,7 +1451,7 @@ c_func
 (paren
 l_string|&quot;-- IRQ data length is %d&bslash;n&quot;
 comma
-id|len
+id|urb-&gt;actual_length
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -1464,38 +1459,48 @@ c_func
 (paren
 l_string|&quot;-- IRQ state is %d&bslash;n&quot;
 comma
-id|state
+id|urb-&gt;status
 )paren
 suffix:semicolon
 multiline_comment|/* is the device removed? */
 r_if
 c_cond
 (paren
-id|state
+id|urb-&gt;status
 op_ne
 op_minus
 id|ENOENT
 )paren
 (brace
 multiline_comment|/* save the data for interpretation later */
-id|us-&gt;ip_data
-op_assign
-id|le16_to_cpup
-c_func
-(paren
-(paren
-id|__u16
-op_star
-)paren
-id|buffer
-)paren
-suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;-- Interrupt Status 0x%x&bslash;n&quot;
+l_string|&quot;-- Interrupt Status (0x%x, 0x%x)&bslash;n&quot;
 comma
-id|us-&gt;ip_data
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|urb-&gt;transfer_buffer
+)paren
+(braket
+l_int|0
+)braket
+comma
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|urb-&gt;transfer_buffer
+)paren
+(braket
+l_int|1
+)braket
 )paren
 suffix:semicolon
 multiline_comment|/* was this a wanted interrupt? */
@@ -1533,10 +1538,6 @@ c_func
 (paren
 l_string|&quot;-- device has been removed&bslash;n&quot;
 )paren
-suffix:semicolon
-multiline_comment|/* This return code is truly meaningless -- and I mean truly.  It gets&n;&t; * ignored by other layers.  It used to indicate if we wanted to get&n;&t; * another interrupt or disable the interrupt callback&n;&t; */
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|CBI_transport
@@ -1738,9 +1739,31 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Got interrupt data 0x%x&bslash;n&quot;
+l_string|&quot;Got interrupt data (0x%x, 0x%x)&bslash;n&quot;
 comma
-id|us-&gt;ip_data
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|us-&gt;irq_urb-&gt;transfer_buffer
+)paren
+(braket
+l_int|0
+)braket
+comma
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|us-&gt;irq_urb-&gt;transfer_buffer
+)paren
+(braket
+l_int|1
+)braket
 )paren
 suffix:semicolon
 multiline_comment|/* UFI gives us ASC and ASCQ, like a request sense&n;&t; *&n;&t; * REQUEST_SENSE and INQUIRY don&squot;t affect the sense data on UFI&n;&t; * devices, so we ignore the information for those commands.  Note&n;&t; * that this means we could be ignoring a real error on these&n;&t; * commands, but that can&squot;t be helped.&n;&t; */
@@ -1776,7 +1799,17 @@ r_else
 r_if
 c_cond
 (paren
-id|us-&gt;ip_data
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|us-&gt;irq_urb-&gt;transfer_buffer
+)paren
+(braket
+l_int|0
+)braket
 )paren
 r_return
 id|USB_STOR_TRANSPORT_FAILED
@@ -1787,24 +1820,58 @@ id|USB_STOR_TRANSPORT_GOOD
 suffix:semicolon
 )brace
 multiline_comment|/* If not UFI, we interpret the data as a result code &n;&t; * The first byte should always be a 0x0&n;&t; * The second byte &amp; 0x0F should be 0x0 for good, otherwise error &n;&t; */
+r_if
+c_cond
+(paren
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|us-&gt;irq_urb-&gt;transfer_buffer
+)paren
+(braket
+l_int|0
+)braket
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;CBI IRQ data showed reserved bType&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|USB_STOR_TRANSPORT_ERROR
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
 (paren
-id|us-&gt;ip_data
-op_amp
-l_int|0xFF0F
+(paren
+r_int
+r_char
+op_star
 )paren
+id|us-&gt;irq_urb-&gt;transfer_buffer
+)paren
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0x0F
 )paren
 (brace
 r_case
-l_int|0x0000
+l_int|0x00
 suffix:colon
 r_return
 id|USB_STOR_TRANSPORT_GOOD
 suffix:semicolon
 r_case
-l_int|0x0001
+l_int|0x01
 suffix:colon
 r_return
 id|USB_STOR_TRANSPORT_FAILED
@@ -2028,16 +2095,24 @@ suffix:semicolon
 multiline_comment|/* set up the command wrapper */
 id|bcb.Signature
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|US_BULK_CB_SIGN
+)paren
 suffix:semicolon
 id|bcb.DataTransferLength
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|us_transfer_length
 c_func
 (paren
 id|srb
 comma
 id|us
+)paren
 )paren
 suffix:semicolon
 id|bcb.Flags
@@ -2111,7 +2186,11 @@ c_func
 (paren
 l_string|&quot;Bulk command S 0x%x T 0x%x LUN %d L %d F %d CL %d&bslash;n&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|bcb.Signature
+)paren
 comma
 id|bcb.Tag
 comma
@@ -2252,6 +2331,8 @@ op_amp
 id|partial
 comma
 id|HZ
+op_star
+l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* did the attempt to read the CSW fail? */
@@ -2305,6 +2386,8 @@ op_amp
 id|partial
 comma
 id|HZ
+op_star
+l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* if it fails again, we need a reset and return an error*/
@@ -2363,7 +2446,11 @@ c_func
 (paren
 l_string|&quot;Bulk status S 0x%x T 0x%x R %d V 0x%x&bslash;n&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|bcs.Signature
+)paren
 comma
 id|bcs.Tag
 comma
@@ -2377,7 +2464,11 @@ c_cond
 (paren
 id|bcs.Signature
 op_ne
+id|cpu_to_le32
+c_func
+(paren
 id|US_BULK_CS_SIGN
+)paren
 op_logical_or
 id|bcs.Tag
 op_ne
@@ -2925,7 +3016,7 @@ l_int|9
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* if we&squot;re sending data, we send all.  If getting data, &n;&t;&t; * get the minimum */
+multiline_comment|/* if we&squot;re sending data, we send all.&t;If getting data, &n;&t;&t; * get the minimum */
 r_if
 c_cond
 (paren
@@ -4457,7 +4548,7 @@ multiline_comment|/* print product, vendor, and serial number strings */
 id|SPRINTF
 c_func
 (paren
-l_string|&quot;       Vendor: %s&bslash;n&quot;
+l_string|&quot;&t;Vendor: %s&bslash;n&quot;
 comma
 id|us-&gt;vendor
 )paren
@@ -4499,7 +4590,7 @@ multiline_comment|/* show the GUID of the device */
 id|SPRINTF
 c_func
 (paren
-l_string|&quot;         GUID: &quot;
+l_string|&quot;&t;  GUID: &quot;
 id|GUID_FORMAT
 l_string|&quot;&bslash;n&quot;
 comma
@@ -5137,13 +5228,29 @@ id|US_FL_SINGLE_LUN
 )brace
 comma
 (brace
+l_int|0x059b
+comma
+l_int|0x0030
+comma
+l_int|0x0100
+comma
+l_string|&quot;Iomega Zip 250&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_BULK
+comma
+id|US_FL_SINGLE_LUN
+)brace
+comma
+(brace
 l_int|0x0781
 comma
 l_int|0x0001
 comma
 l_int|0x0200
 comma
-l_string|&quot;Sandisk ImageMate&quot;
+l_string|&quot;Sandisk ImageMate (w/eject button)&quot;
 comma
 id|US_SC_SCSI
 comma
@@ -5168,12 +5275,14 @@ comma
 id|US_PR_BULK
 comma
 id|US_FL_SINGLE_LUN
+op_or
+id|US_FL_IGNORE_SER
 )brace
 comma
 (brace
-l_int|0x04e6
+l_int|0x07af
 comma
-l_int|0x0002
+l_int|0x0005
 comma
 l_int|0x0100
 comma
@@ -5187,9 +5296,9 @@ id|US_FL_ALT_LENGTH
 )brace
 comma
 (brace
-l_int|0x07af
+l_int|0x04e6
 comma
-l_int|0x0005
+l_int|0x0002
 comma
 l_int|0x0100
 comma
@@ -5200,6 +5309,38 @@ comma
 id|US_PR_BULK
 comma
 id|US_FL_ALT_LENGTH
+)brace
+comma
+(brace
+l_int|0x04e6
+comma
+l_int|0x0006
+comma
+l_int|0x0100
+comma
+l_string|&quot;Shuttle eUSB MMC Adapter&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_CB
+comma
+id|US_FL_SINGLE_LUN
+)brace
+comma
+(brace
+l_int|0x03f0
+comma
+l_int|0x0107
+comma
+l_int|0x0200
+comma
+l_string|&quot;HP USB CD-Writer Plus&quot;
+comma
+id|US_SC_8070
+comma
+id|US_PR_CB
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -5228,13 +5369,13 @@ op_star
 id|us_find_dev
 c_func
 (paren
-id|__u16
+id|u16
 id|idVendor
 comma
-id|__u16
+id|u16
 id|idProduct
 comma
-id|__u16
+id|u16
 id|bcdDevice
 )paren
 (brace
@@ -5324,6 +5465,203 @@ r_return
 id|ptr
 suffix:semicolon
 )brace
+multiline_comment|/* Set up the IRQ pipe and handler&n; * Note that this function assumes that all the data in the us_data&n; * strucuture is current.  This includes the ep_int field, which gives us&n; * the endpoint for the interrupt.&n; * Returns non-zero on failure, zero on success&n; */
+DECL|function|usb_stor_allocate_irq
+r_static
+r_int
+id|usb_stor_allocate_irq
+c_func
+(paren
+r_struct
+id|us_data
+op_star
+id|ss
+)paren
+(brace
+r_int
+r_int
+id|pipe
+suffix:semicolon
+r_int
+id|maxp
+suffix:semicolon
+r_int
+id|result
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Allocating IRQ for CBI transport&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* lock access to the data structure */
+id|down
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;irq_urb_sem
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* allocate the URB */
+id|ss-&gt;irq_urb
+op_assign
+id|usb_alloc_urb
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ss-&gt;irq_urb
+)paren
+(brace
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;irq_urb_sem
+)paren
+)paren
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;couldn&squot;t allocate interrupt URB&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* calculate the pipe and max packet size */
+id|pipe
+op_assign
+id|usb_rcvintpipe
+c_func
+(paren
+id|ss-&gt;pusb_dev
+comma
+id|ss-&gt;ep_int-&gt;bEndpointAddress
+op_amp
+id|USB_ENDPOINT_NUMBER_MASK
+)paren
+suffix:semicolon
+id|maxp
+op_assign
+id|usb_maxpacket
+c_func
+(paren
+id|ss-&gt;pusb_dev
+comma
+id|pipe
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|maxp
+OG
+r_sizeof
+(paren
+id|ss-&gt;irqbuf
+)paren
+)paren
+id|maxp
+op_assign
+r_sizeof
+(paren
+id|ss-&gt;irqbuf
+)paren
+suffix:semicolon
+multiline_comment|/* fill in the URB with our data */
+id|FILL_INT_URB
+c_func
+(paren
+id|ss-&gt;irq_urb
+comma
+id|ss-&gt;pusb_dev
+comma
+id|pipe
+comma
+id|ss-&gt;irqbuf
+comma
+id|maxp
+comma
+id|CBI_irq
+comma
+id|ss
+comma
+id|ss-&gt;ep_int-&gt;bInterval
+)paren
+suffix:semicolon
+multiline_comment|/* submit the URB for processing */
+id|result
+op_assign
+id|usb_submit_urb
+c_func
+(paren
+id|ss-&gt;irq_urb
+)paren
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;usb_submit_urb() returns %d&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+(brace
+id|usb_free_urb
+c_func
+(paren
+id|ss-&gt;irq_urb
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;irq_urb_sem
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|2
+suffix:semicolon
+)brace
+multiline_comment|/* unlock the data structure and return success */
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;irq_urb_sem
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Probe to see if a new device is actually a SCSI device */
 DECL|function|storage_probe
 r_static
@@ -5393,32 +5731,33 @@ r_int
 id|result
 suffix:semicolon
 multiline_comment|/* these are temporary copies -- we test on these, then put them&n;&t; * in the us-data structure &n;&t; */
-id|__u8
+r_struct
+id|usb_endpoint_descriptor
+op_star
 id|ep_in
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
-id|__u8
+r_struct
+id|usb_endpoint_descriptor
+op_star
 id|ep_out
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
-id|__u8
+r_struct
+id|usb_endpoint_descriptor
+op_star
 id|ep_int
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
-id|__u8
-id|ep_interval
-op_assign
-l_int|0
-suffix:semicolon
-id|__u8
+id|u8
 id|subclass
 op_assign
 l_int|0
 suffix:semicolon
-id|__u8
+id|u8
 id|protocol
 op_assign
 l_int|0
@@ -5618,26 +5957,20 @@ id|USB_DIR_IN
 )paren
 id|ep_in
 op_assign
+op_amp
 id|altsetting-&gt;endpoint
 (braket
 id|i
 )braket
-dot
-id|bEndpointAddress
-op_amp
-id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
 r_else
 id|ep_out
 op_assign
+op_amp
 id|altsetting-&gt;endpoint
 (braket
 id|i
 )braket
-dot
-id|bEndpointAddress
-op_amp
-id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
 )brace
 multiline_comment|/* is it an interrupt endpoint? */
@@ -5660,30 +5993,18 @@ id|USB_ENDPOINT_XFER_INT
 (brace
 id|ep_int
 op_assign
-id|altsetting-&gt;endpoint
-(braket
-id|i
-)braket
-dot
-id|bEndpointAddress
 op_amp
-id|USB_ENDPOINT_NUMBER_MASK
-suffix:semicolon
-id|ep_interval
-op_assign
 id|altsetting-&gt;endpoint
 (braket
 id|i
 )braket
-dot
-id|bInterval
 suffix:semicolon
 )brace
 )brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Endpoints: In %d Out %d Int %d (Period %d)&bslash;n&quot;
+l_string|&quot;Endpoints: In: 0x%p Out: 0x%p Int: 0x%p (Period %d)&bslash;n&quot;
 comma
 id|ep_in
 comma
@@ -5691,7 +6012,12 @@ id|ep_out
 comma
 id|ep_int
 comma
-id|ep_interval
+id|ep_int
+ques
+c_cond
+id|ep_int-&gt;bInterval
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* set the interface -- STALL is an acceptable response here */
@@ -5788,7 +6114,7 @@ id|ep_int
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Sanity check failed.  Rejecting device.&bslash;n&quot;
+l_string|&quot;Sanity check failed.&t; Rejecting device.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5847,6 +6173,13 @@ r_if
 c_cond
 (paren
 id|dev-&gt;descriptor.iSerialNumber
+op_logical_and
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|US_FL_IGNORE_SER
+)paren
 )paren
 id|usb_string
 c_func
@@ -5978,80 +6311,56 @@ id|ss-&gt;pusb_dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* hook up the IRQ handler again */
+multiline_comment|/* copy over the endpoint data */
 r_if
 c_cond
+(paren
+id|ep_in
+)paren
+id|ss-&gt;ep_in
+op_assign
+id|ep_in-&gt;bEndpointAddress
+op_amp
+id|USB_ENDPOINT_NUMBER_MASK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ep_out
+)paren
+id|ss-&gt;ep_out
+op_assign
+id|ep_out-&gt;bEndpointAddress
+op_amp
+id|USB_ENDPOINT_NUMBER_MASK
+suffix:semicolon
+id|ss-&gt;ep_int
+op_assign
+id|ep_int
+suffix:semicolon
+multiline_comment|/* allocate an IRQ callback if one is needed */
+r_if
+c_cond
+(paren
 (paren
 id|ss-&gt;protocol
 op_eq
 id|US_PR_CBI
 )paren
-(brace
-multiline_comment|/* set up so we&squot;ll wait for notification */
-id|init_MUTEX_LOCKED
+op_logical_and
+id|usb_stor_allocate_irq
 c_func
 (paren
-op_amp
-(paren
-id|ss-&gt;ip_waitq
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* set up the IRQ pipe and handler */
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;Allocating IRQ for CBI transport&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ss-&gt;irqpipe
-op_assign
-id|usb_rcvintpipe
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;ep_int
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|usb_request_irq
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;irqpipe
-comma
-id|CBI_irq
-comma
-id|ss-&gt;ep_interval
-comma
-(paren
-r_void
-op_star
-)paren
 id|ss
-comma
-op_amp
-(paren
-id|ss-&gt;irq_handle
 )paren
 )paren
+r_return
+l_int|NULL
 suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;-- usb_request_irq returned %d&bslash;n&quot;
-comma
-id|result
-)paren
-suffix:semicolon
-)brace
 )brace
 r_else
 (brace
-multiline_comment|/* New device -- Allocate memory and initialize */
+multiline_comment|/* New device -- allocate memory and initialize */
 id|US_DEBUGP
 c_func
 (paren
@@ -6145,12 +6454,30 @@ id|ss-&gt;notify
 )paren
 )paren
 suffix:semicolon
+id|init_MUTEX_LOCKED
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;ip_waitq
+)paren
+)paren
+suffix:semicolon
 id|init_MUTEX
 c_func
 (paren
 op_amp
 (paren
 id|ss-&gt;queue_exclusion
+)paren
+)paren
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;irq_urb_sem
 )paren
 )paren
 suffix:semicolon
@@ -6177,21 +6504,31 @@ op_assign
 id|flags
 suffix:semicolon
 multiline_comment|/* copy over the endpoint data */
+r_if
+c_cond
+(paren
+id|ep_in
+)paren
 id|ss-&gt;ep_in
 op_assign
-id|ep_in
+id|ep_in-&gt;bEndpointAddress
+op_amp
+id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ep_out
+)paren
 id|ss-&gt;ep_out
 op_assign
-id|ep_out
+id|ep_out-&gt;bEndpointAddress
+op_amp
+id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
 id|ss-&gt;ep_int
 op_assign
 id|ep_int
-suffix:semicolon
-id|ss-&gt;ep_interval
-op_assign
-id|ep_interval
 suffix:semicolon
 multiline_comment|/* establish the connection to the new device */
 id|ss-&gt;ifnum
@@ -6443,7 +6780,7 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Sorry, device not supported.  Please&bslash;n&quot;
+l_string|&quot;Sorry, device not supported.&t; Please&bslash;n&quot;
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -6548,75 +6885,25 @@ comma
 id|ss-&gt;protocol_name
 )paren
 suffix:semicolon
+multiline_comment|/* allocate an IRQ callback if one is needed */
 r_if
 c_cond
+(paren
 (paren
 id|ss-&gt;protocol
 op_eq
 id|US_PR_CBI
 )paren
-(brace
-multiline_comment|/* set up so we&squot;ll wait for notification */
-id|init_MUTEX_LOCKED
+op_logical_and
+id|usb_stor_allocate_irq
 c_func
 (paren
-op_amp
-(paren
-id|ss-&gt;ip_waitq
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* set up the IRQ pipe and handler */
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;Allocating IRQ for CBI transport&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ss-&gt;irqpipe
-op_assign
-id|usb_rcvintpipe
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;ep_int
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|usb_request_irq
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;irqpipe
-comma
-id|CBI_irq
-comma
-id|ss-&gt;ep_interval
-comma
-(paren
-r_void
-op_star
-)paren
 id|ss
-comma
-op_amp
-(paren
-id|ss-&gt;irq_handle
 )paren
 )paren
+r_return
+l_int|NULL
 suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;-- usb_request_irq returned %d&bslash;n&quot;
-comma
-id|result
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t; * Since this is a new device, we need to generate a scsi &n;&t;&t; * host definition, and register with the higher SCSI layers&n;&t;&t; */
 multiline_comment|/* Initialize the host template based on the default one */
 id|memcpy
@@ -6652,7 +6939,7 @@ id|ss-&gt;htmplt.proc_dir
 op_assign
 id|ss
 suffix:semicolon
-multiline_comment|/* start up our thread */
+multiline_comment|/* start up our control thread */
 id|ss-&gt;pid
 op_assign
 id|kernel_thread
@@ -6695,7 +6982,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* wait for it to start */
+multiline_comment|/* wait for the thread to start */
 id|down
 c_func
 (paren
@@ -6705,7 +6992,7 @@ id|ss-&gt;notify
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* now register - our detect function will be called */
+multiline_comment|/* now register&t; - our detect function will be called */
 id|ss-&gt;htmplt.module
 op_assign
 id|THIS_MODULE
@@ -6821,10 +7108,19 @@ id|ss-&gt;dev_semaphore
 )paren
 suffix:semicolon
 multiline_comment|/* release the IRQ, if we have one */
+id|down
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;irq_urb_sem
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|ss-&gt;irq_handle
+id|ss-&gt;irq_urb
 )paren
 (brace
 id|US_DEBUGP
@@ -6835,29 +7131,40 @@ l_string|&quot;-- releasing irq handle&bslash;n&quot;
 suffix:semicolon
 id|result
 op_assign
-id|usb_release_irq
+id|usb_unlink_urb
 c_func
 (paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;irq_handle
-comma
-id|ss-&gt;irqpipe
+id|ss-&gt;irq_urb
 )paren
+suffix:semicolon
+id|ss-&gt;irq_urb
+op_assign
+l_int|NULL
 suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;-- usb_release_irq() returned %d&bslash;n&quot;
+l_string|&quot;-- usb_unlink_urb() returned %d&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-id|ss-&gt;irq_handle
-op_assign
-l_int|NULL
+id|usb_free_urb
+c_func
+(paren
+id|ss-&gt;irq_urb
+)paren
 suffix:semicolon
 )brace
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;irq_urb_sem
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* mark the device as gone */
 id|ss-&gt;pusb_dev
 op_assign

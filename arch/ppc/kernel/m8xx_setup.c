@@ -341,15 +341,6 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_XMON
-r_extern
-r_void
-id|xmon
-c_func
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
 id|xmon
 c_func
 (paren

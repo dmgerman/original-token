@@ -6796,16 +6796,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|namespace
-r_static
-r_char
-r_namespace
-(braket
-l_int|16
-)braket
-op_assign
-l_string|&quot;&quot;
-suffix:semicolon
 DECL|variable|dev_cs89x0
 r_static
 r_struct
@@ -6813,7 +6803,7 @@ id|net_device
 id|dev_cs89x0
 op_assign
 (brace
-l_int|NULL
+l_string|&quot;&quot;
 comma
 l_int|0
 comma
@@ -6991,10 +6981,6 @@ op_assign
 id|debug
 suffix:semicolon
 macro_line|#endif
-id|dev_cs89x0.name
-op_assign
-r_namespace
-suffix:semicolon
 id|dev_cs89x0.irq
 op_assign
 id|irq

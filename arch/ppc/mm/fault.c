@@ -765,16 +765,20 @@ id|pte
 )paren
 r_return
 (paren
+(paren
 r_int
 r_int
 )paren
 (paren
-id|pte_page
+id|pte_val
 c_func
 (paren
 op_star
 id|pte
 )paren
+)paren
+op_amp
+id|PAGE_MASK
 )paren
 op_or
 (paren
@@ -921,7 +925,7 @@ mdefine_line|#define pp ((long)pte_val(*pte))&t;&t;&t;&t;
 id|printk
 c_func
 (paren
-l_string|&quot; RPN: %05x PP: %x SPS: %x SH: %lx &quot;
+l_string|&quot; RPN: %05lx PP: %lx SPS: %lx SH: %lx &quot;
 l_string|&quot;CI: %lx v: %lx&bslash;n&quot;
 comma
 id|pp

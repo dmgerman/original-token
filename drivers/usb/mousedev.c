@@ -2082,7 +2082,6 @@ c_cond
 (paren
 id|mousedev_mix.open
 )paren
-(brace
 id|input_open_device
 c_func
 (paren
@@ -2090,10 +2089,6 @@ op_amp
 id|mousedev-&gt;handle
 )paren
 suffix:semicolon
-id|mousedev_mix.open
-op_increment
-suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -2137,17 +2132,12 @@ id|mousedev-&gt;open
 op_logical_or
 id|mousedev_mix.open
 )paren
-(brace
 id|input_close_device
 c_func
 (paren
 id|handle
 )paren
 suffix:semicolon
-id|mousedev_mix.open
-op_decrement
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -10,6 +10,9 @@ macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#ifdef CONFIG_8xx
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_8260
+macro_line|#include &lt;asm/mpc8260.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Please send me load/board info and such data for hardware not&n; * listed here so I can keep track since things are getting tricky&n; * with the different load addrs with different firmware.  This will&n; * help to avoid breaking the load/boot process.&n; * -- Cort&n; */
 DECL|variable|avail_ram
 r_char
@@ -1038,6 +1041,21 @@ r_char
 op_star
 id|dp
 suffix:semicolon
+macro_line|#ifdef CONFIG_8260
+multiline_comment|/* I don&squot;t know why I didn&squot;t do it this way on the 8xx.......&n;&t;*/
+id|embed_config
+c_func
+(paren
+id|bp
+)paren
+suffix:semicolon
+id|serial_init
+c_func
+(paren
+id|bp
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* These values must be variables.  If not, the compiler optimizer&n;&t; * will remove some code, causing the size of the code to vary&n;&t; * when these values are zero.  This is bad because we first&n;&t; * compile with these zero to determine the size and offsets&n;&t; * in an image, than compile again with these set to the proper&n;&t; * discovered value.....Ya know, we used to read these from the&n;&t; * header a long time ago.....&n;&t; */
 id|initrd_offset
 op_assign

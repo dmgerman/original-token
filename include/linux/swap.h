@@ -509,17 +509,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-id|swp_entry_t
-id|acquire_swap_entry
-c_func
-(paren
-r_struct
-id|page
-op_star
-id|page
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|valid_swaphandles
 c_func

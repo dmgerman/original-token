@@ -3878,16 +3878,6 @@ multiline_comment|/* -----------------------------------------------------------
 macro_line|#ifdef MODULE
 DECL|macro|DEVMAX
 mdefine_line|#define DEVMAX 5
-DECL|variable|NameSpace
-r_static
-r_char
-id|NameSpace
-(braket
-l_int|8
-op_star
-id|DEVMAX
-)braket
-suffix:semicolon
 DECL|variable|moddevs
 r_static
 r_struct
@@ -3899,9 +3889,7 @@ id|DEVMAX
 op_assign
 (brace
 (brace
-id|NameSpace
-op_plus
-l_int|0
+l_string|&quot;&quot;
 comma
 l_int|0
 comma
@@ -3927,9 +3915,7 @@ id|skmca_probe
 )brace
 comma
 (brace
-id|NameSpace
-op_plus
-l_int|8
+l_string|&quot;&quot;
 comma
 l_int|0
 comma
@@ -3955,9 +3941,7 @@ id|skmca_probe
 )brace
 comma
 (brace
-id|NameSpace
-op_plus
-l_int|16
+l_string|&quot;&quot;
 comma
 l_int|0
 comma
@@ -3983,9 +3967,7 @@ id|skmca_probe
 )brace
 comma
 (brace
-id|NameSpace
-op_plus
-l_int|24
+l_string|&quot;&quot;
 comma
 l_int|0
 comma
@@ -4011,9 +3993,7 @@ id|skmca_probe
 )brace
 comma
 (brace
-id|NameSpace
-op_plus
-l_int|32
+l_string|&quot;&quot;
 comma
 l_int|0
 comma

@@ -6109,26 +6109,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|macro|NAMELEN
-mdefine_line|#define NAMELEN 9
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-id|ELP_MAX_CARDS
-)braket
-(braket
-id|NAMELEN
-)braket
-op_assign
-(brace
-(brace
-l_int|0
-comma
-)brace
-)brace
-suffix:semicolon
 DECL|variable|dev_3c505
 r_static
 r_struct
@@ -6140,7 +6120,7 @@ id|ELP_MAX_CARDS
 op_assign
 (brace
 (brace
-l_int|NULL
+l_string|&quot;&quot;
 comma
 multiline_comment|/* device name is inserted by net_init.c */
 l_int|0
@@ -6286,13 +6266,6 @@ id|dev
 op_assign
 op_amp
 id|dev_3c505
-(braket
-id|this_dev
-)braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|devicename
 (braket
 id|this_dev
 )braket

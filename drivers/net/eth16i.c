@@ -5566,23 +5566,6 @@ suffix:semicolon
 )brace
 DECL|macro|MAX_ETH16I_CARDS
 mdefine_line|#define MAX_ETH16I_CARDS 4  /* Max number of Eth16i cards per module */
-DECL|macro|NAMELEN
-mdefine_line|#define NAMELEN          8  /* number of chars for storing dev-&gt;name */
-DECL|variable|namelist
-r_static
-r_char
-id|namelist
-(braket
-id|NAMELEN
-op_star
-id|MAX_ETH16I_CARDS
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_eth16i
 r_static
 r_struct
@@ -5594,7 +5577,7 @@ id|MAX_ETH16I_CARDS
 op_assign
 (brace
 (brace
-l_int|NULL
+l_string|&quot;&quot;
 comma
 l_int|0
 comma
@@ -5808,16 +5791,6 @@ id|dev_eth16i
 (braket
 id|this_dev
 )braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|namelist
-op_plus
-(paren
-id|NAMELEN
-op_star
-id|this_dev
-)paren
 suffix:semicolon
 id|dev-&gt;irq
 op_assign

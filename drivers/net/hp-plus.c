@@ -1909,23 +1909,6 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|macro|MAX_HPP_CARDS
 mdefine_line|#define MAX_HPP_CARDS&t;4&t;/* Max number of HPP cards per module */
-DECL|macro|NAMELEN
-mdefine_line|#define NAMELEN&t;&t;8&t;/* # of chars for storing dev-&gt;name */
-DECL|variable|namelist
-r_static
-r_char
-id|namelist
-(braket
-id|NAMELEN
-op_star
-id|MAX_HPP_CARDS
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_hpp
 r_static
 r_struct
@@ -1937,9 +1920,8 @@ id|MAX_HPP_CARDS
 op_assign
 (brace
 (brace
-l_int|NULL
+l_string|&quot;&quot;
 comma
-multiline_comment|/* assign a chunk of namelist[] below */
 l_int|0
 comma
 l_int|0
@@ -2060,16 +2042,6 @@ id|dev_hpp
 (braket
 id|this_dev
 )braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|namelist
-op_plus
-(paren
-id|NAMELEN
-op_star
-id|this_dev
-)paren
 suffix:semicolon
 id|dev-&gt;irq
 op_assign

@@ -88,40 +88,18 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-multiline_comment|/* Returns the number of 0&squot;s to the left of the most significant 1 bit */
-DECL|function|cntlzw
-r_extern
-id|__inline__
-r_int
-id|cntlzw
-c_func
-(paren
-r_int
-id|bits
-)paren
-(brace
-r_int
-id|lz
-suffix:semicolon
-id|asm
-(paren
-l_string|&quot;cntlzw %0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|lz
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|bits
-)paren
-)paren
-suffix:semicolon
-r_return
-id|lz
-suffix:semicolon
-)brace
+multiline_comment|/*&n; * Arguably these bit operations don&squot;t imply any memory barrier or&n; * SMP ordering, but in fact a lot of drivers expect them to imply&n; * both, since they do on x86 cpus.&n; */
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|SMP_WMB
+mdefine_line|#define SMP_WMB&t;&t;&quot;eieio&bslash;n&quot;
+DECL|macro|SMP_MB
+mdefine_line|#define SMP_MB&t;&t;&quot;&bslash;nsync&quot;
+macro_line|#else
+DECL|macro|SMP_WMB
+mdefine_line|#define SMP_WMB
+DECL|macro|SMP_MB
+mdefine_line|#define SMP_MB
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/*&n; * These are if&squot;d out here because using : &quot;cc&quot; as a constraint&n; * results in errors from gcc. -- Cort&n; * Besides, they need to be changed so we have both set_bit&n; * and test_and_set_bit, etc.&n; */
 macro_line|#if 0
 r_extern
@@ -527,6 +505,43 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Return the bit position of the most significant 1 bit in a word */
+DECL|function|__ilog2
+r_extern
+id|__inline__
+r_int
+id|__ilog2
+c_func
+(paren
+r_int
+r_int
+id|x
+)paren
+(brace
+r_int
+id|lz
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;cntlzw %0,%1&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|lz
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|x
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|31
+op_minus
+id|lz
+suffix:semicolon
+)brace
 DECL|function|ffz
 r_extern
 id|__inline__
@@ -539,60 +554,35 @@ r_int
 id|x
 )paren
 (brace
-r_int
-id|n
-suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|x
-op_eq
+op_assign
 op_complement
+id|x
+)paren
+op_eq
 l_int|0
 )paren
 r_return
 l_int|32
 suffix:semicolon
-id|x
-op_assign
-op_complement
+r_return
+id|__ilog2
+c_func
+(paren
 id|x
 op_amp
-(paren
-id|x
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* set LS zero to 1, other bits to 0 */
-id|__asm__
-(paren
-l_string|&quot;cntlzw %0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|n
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|x
-)paren
-)paren
-suffix:semicolon
-r_return
-l_int|31
 op_minus
-id|n
+id|x
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
-DECL|macro|ffs
-mdefine_line|#define ffs(x) generic_ffs(x)
-macro_line|#if 0
-multiline_comment|/* untested, someone with PPC knowledge? */
-multiline_comment|/* From Alexander Kjeldaas &lt;astor@guardian.no&gt; */
+DECL|function|ffs
 r_extern
 id|__inline__
 r_int
@@ -603,32 +593,19 @@ r_int
 id|x
 )paren
 (brace
-r_int
-id|result
-suffix:semicolon
-id|asm
-(paren
-l_string|&quot;cntlzw %0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|result
-)paren
-suffix:colon
-l_string|&quot;r&quot;
+r_return
+id|__ilog2
+c_func
 (paren
 id|x
-)paren
-)paren
-suffix:semicolon
-r_return
-l_int|32
+op_amp
 op_minus
-id|result
+id|x
+)paren
+op_plus
+l_int|1
 suffix:semicolon
-multiline_comment|/* IBM backwards ordering of bits */
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
 DECL|macro|hweight32
 mdefine_line|#define hweight32(x) generic_hweight32(x)

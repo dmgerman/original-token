@@ -566,6 +566,10 @@ r_goto
 id|err_free_irq
 suffix:semicolon
 )brace
+id|lp-&gt;card_name
+op_assign
+l_string|&quot;RIM I&quot;
+suffix:semicolon
 id|lp-&gt;hw.command
 op_assign
 id|arcrimi_command

@@ -174,6 +174,14 @@ l_int|0x80
 suffix:semicolon
 multiline_comment|/* reset DLAB */
 )brace
+r_extern
+r_int
+id|adb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_void
 DECL|function|xmon_map_scc
 id|xmon_map_scc
@@ -216,6 +224,7 @@ op_star
 id|disp_bi
 suffix:semicolon
 multiline_comment|/* needs to be hacked if xmon_printk is to be used&n; &t;&t;   from within find_via_pmu() */
+macro_line|#ifdef CONFIG_ADB_PMU
 r_if
 c_cond
 (paren
@@ -240,9 +249,8 @@ id|use_screen
 op_assign
 l_int|1
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CHRP_ESCC
 id|addr
@@ -292,20 +300,8 @@ l_int|0
 dot
 id|address
 op_plus
-l_int|0x13000
+l_int|0x13020
 suffix:semicolon
-multiline_comment|/* use the B channel on the iMac */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|xmon_use_sccb
-)paren
-id|addr
-op_add_assign
-l_int|0x20
-suffix:semicolon
-multiline_comment|/* use A channel */
 )brace
 id|base
 op_assign
@@ -336,29 +332,12 @@ op_complement
 id|PAGE_MASK
 )paren
 suffix:semicolon
-macro_line|#ifdef CHRP_ESCC
 id|sccd
 op_assign
 id|sccc
 op_plus
-(paren
-l_int|0xc1013030
-op_minus
-l_int|0xc1013020
-)paren
+l_int|0x10
 suffix:semicolon
-macro_line|#else
-id|sccd
-op_assign
-id|sccc
-op_plus
-(paren
-l_int|0xf3013030
-op_minus
-l_int|0xf3013020
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 r_if
@@ -574,7 +553,7 @@ op_eq
 l_int|0
 )paren
 (brace
-macro_line|#ifdef CONFIG_ADB&t;    
+macro_line|#ifdef CONFIG_ADB_PMU
 r_if
 c_cond
 (paren
@@ -587,7 +566,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ADB */
+macro_line|#endif /* CONFIG_ADB_PMU */
 )brace
 id|c
 op_assign
@@ -621,12 +600,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|prom_drawchar
-c_func
-(paren
-id|c
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -664,15 +637,15 @@ DECL|variable|xmon_wants_key
 r_int
 id|xmon_wants_key
 suffix:semicolon
-DECL|variable|xmon_pmu_keycode
+DECL|variable|xmon_adb_keycode
 r_int
-id|xmon_pmu_keycode
+id|xmon_adb_keycode
 suffix:semicolon
 macro_line|#ifdef CONFIG_BOOTX_TEXT
-DECL|variable|xmon_pmu_shiftstate
+DECL|variable|xmon_adb_shiftstate
 r_static
 r_int
-id|xmon_pmu_shiftstate
+id|xmon_adb_shiftstate
 suffix:semicolon
 DECL|variable|xmon_keytab
 r_static
@@ -720,8 +693,8 @@ suffix:semicolon
 multiline_comment|/* 0x50 - 0x5f */
 r_static
 r_int
-DECL|function|xmon_get_pmu_key
-id|xmon_get_pmu_key
+DECL|function|xmon_get_adb_key
+id|xmon_get_adb_key
 c_func
 (paren
 r_void
@@ -745,7 +718,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|xmon_pmu_keycode
+id|xmon_adb_keycode
 op_assign
 op_minus
 l_int|1
@@ -797,16 +770,18 @@ op_assign
 l_int|200000
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_ADB_PMU
 id|pmu_poll
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_PMU */
 )brace
 r_while
 c_loop
 (paren
-id|xmon_pmu_keycode
+id|xmon_adb_keycode
 op_eq
 op_minus
 l_int|1
@@ -814,7 +789,7 @@ l_int|1
 suffix:semicolon
 id|k
 op_assign
-id|xmon_pmu_keycode
+id|xmon_adb_keycode
 suffix:semicolon
 r_if
 c_cond
@@ -848,7 +823,7 @@ op_eq
 l_int|0x7b
 )paren
 (brace
-id|xmon_pmu_shiftstate
+id|xmon_adb_shiftstate
 op_assign
 (paren
 id|k
@@ -874,7 +849,7 @@ multiline_comment|/* ignore up transitions */
 id|k
 op_assign
 (paren
-id|xmon_pmu_shiftstate
+id|xmon_adb_shiftstate
 ques
 c_cond
 id|xmon_shift_keytab
@@ -955,7 +930,7 @@ op_star
 id|p
 op_increment
 op_assign
-id|xmon_get_pmu_key
+id|xmon_get_adb_key
 c_func
 (paren
 )paren
@@ -1003,7 +978,7 @@ id|RXRDY
 op_eq
 l_int|0
 )paren
-macro_line|#ifdef CONFIG_ADB&t;    
+macro_line|#ifdef CONFIG_ADB_PMU
 r_if
 c_cond
 (paren
@@ -1018,7 +993,7 @@ c_func
 suffix:semicolon
 macro_line|#else
 suffix:semicolon
-macro_line|#endif /* CONFIG_ADB */
+macro_line|#endif /* CONFIG_ADB_PMU */
 id|buf_access
 c_func
 (paren
@@ -1057,7 +1032,7 @@ op_eq
 l_int|0
 )paren
 (brace
-macro_line|#ifdef CONFIG_ADB&t;    
+macro_line|#ifdef CONFIG_ADB_PMU
 r_if
 c_cond
 (paren
@@ -1070,9 +1045,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#else
-suffix:semicolon
-macro_line|#endif&t;&t;&t;
+macro_line|#endif /* CONFIG_ADB_PMU */
 r_return
 op_minus
 l_int|1
@@ -1302,6 +1275,39 @@ id|eieio
 c_func
 (paren
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* use the B channel if requested */
+r_if
+c_cond
+(paren
+id|xmon_use_sccb
+)paren
+(brace
+id|sccc
+op_assign
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|sccc
+op_amp
+op_complement
+l_int|0x20
+)paren
+suffix:semicolon
+id|sccd
+op_assign
+id|sccc
+op_plus
+l_int|0x10
 suffix:semicolon
 )brace
 r_for

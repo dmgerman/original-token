@@ -91,10 +91,10 @@ l_int|NULL
 suffix:semicolon
 DECL|variable|file_systems_lock
 r_static
-id|spinlock_t
+id|rwlock_t
 id|file_systems_lock
 op_assign
-id|SPIN_LOCK_UNLOCKED
+id|RW_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* WARNING: This can be used only if we _already_ own a reference */
 DECL|function|get_filesystem
@@ -253,7 +253,7 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|spin_lock
+id|write_lock
 c_func
 (paren
 op_amp
@@ -285,7 +285,7 @@ id|p
 op_assign
 id|fs
 suffix:semicolon
-id|spin_unlock
+id|write_unlock
 c_func
 (paren
 op_amp
@@ -314,7 +314,7 @@ op_star
 op_star
 id|tmp
 suffix:semicolon
-id|spin_lock
+id|write_lock
 c_func
 (paren
 op_amp
@@ -351,7 +351,7 @@ id|fs-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|spin_unlock
+id|write_unlock
 c_func
 (paren
 op_amp
@@ -373,7 +373,7 @@ op_member_access_from_pointer
 id|next
 suffix:semicolon
 )brace
-id|spin_unlock
+id|write_unlock
 c_func
 (paren
 op_amp
@@ -444,7 +444,7 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -494,7 +494,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -536,7 +536,7 @@ id|len
 comma
 id|res
 suffix:semicolon
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -574,7 +574,7 @@ id|tmp-&gt;owner
 )paren
 r_break
 suffix:semicolon
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -647,7 +647,7 @@ suffix:semicolon
 r_int
 id|index
 suffix:semicolon
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -675,7 +675,7 @@ id|index
 op_increment
 )paren
 suffix:semicolon
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -791,7 +791,7 @@ id|file_system_type
 op_star
 id|tmp
 suffix:semicolon
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -844,7 +844,7 @@ op_assign
 id|tmp-&gt;next
 suffix:semicolon
 )brace
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -874,7 +874,7 @@ id|file_system_type
 op_star
 id|fs
 suffix:semicolon
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -908,7 +908,7 @@ id|fs
 op_assign
 l_int|NULL
 suffix:semicolon
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -932,7 +932,7 @@ l_int|0
 )paren
 )paren
 (brace
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -966,7 +966,7 @@ id|fs
 op_assign
 l_int|NULL
 suffix:semicolon
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -3955,18 +3955,24 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Doesn&squot;t take quota and stuff into account. IOW, in some cases it will&n; * give false negatives. The main reason why it&squot;s here is that we need&n; * a non-destructive way to look for easily umountable filesystems.&n; */
-multiline_comment|/* MOUNT_REWRITE: it should take vfsmount, not superblock */
 DECL|function|may_umount
 r_int
 id|may_umount
 c_func
 (paren
 r_struct
+id|vfsmount
+op_star
+id|mnt
+)paren
+(brace
+r_struct
 id|super_block
 op_star
 id|sb
-)paren
-(brace
+op_assign
+id|mnt-&gt;mnt_sb
+suffix:semicolon
 r_struct
 id|dentry
 op_star
@@ -3975,6 +3981,33 @@ suffix:semicolon
 r_int
 id|count
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|mnt-&gt;mnt_count
+)paren
+OG
+l_int|2
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mnt-&gt;mnt_instances.next
+op_ne
+id|mnt-&gt;mnt_instances.prev
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * OK, at that point we have only one instance. We should have&n;&t; * one active reference from -&gt;s_root, one active reference&n;&t; * from -&gt;mnt_root (which may be different) and possibly one&n;&t; * active reference from -&gt;mnt_mountpoint (if mnt-&gt;mnt_parent == mnt).&n;&t; * Anything above that means that tree is busy.&n;&t; */
 id|root
 op_assign
 id|sb-&gt;s_root
@@ -3990,9 +4023,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|root-&gt;d_covers
+id|mnt-&gt;mnt_parent
 op_eq
-id|root
+id|mnt
 )paren
 id|count
 op_decrement
@@ -6016,7 +6049,7 @@ r_goto
 id|mount_it
 suffix:semicolon
 )brace
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -6061,7 +6094,7 @@ id|fs_type-&gt;owner
 )paren
 r_continue
 suffix:semicolon
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -6094,7 +6127,7 @@ id|sb
 r_goto
 id|mount_it
 suffix:semicolon
-id|spin_lock
+id|read_lock
 c_func
 (paren
 op_amp
@@ -6108,7 +6141,7 @@ id|fs_type
 )paren
 suffix:semicolon
 )brace
-id|spin_unlock
+id|read_unlock
 c_func
 (paren
 op_amp
@@ -7050,7 +7083,7 @@ c_func
 (paren
 l_string|&quot;change_root: old root has d_count=%d&bslash;n&quot;
 comma
-id|old_root-&gt;d_count
+id|old_rootmnt-&gt;mnt_root-&gt;d_count
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -1995,11 +1995,12 @@ id|poll_timer.data
 op_assign
 l_int|0
 suffix:semicolon
-id|poll_timer.prev
-op_assign
-id|poll_timer.next
-op_assign
-l_int|NULL
+id|init_timer
+c_func
+(paren
+op_amp
+id|poll_timer
+)paren
 suffix:semicolon
 multiline_comment|/* Build interrupt mask */
 id|printk

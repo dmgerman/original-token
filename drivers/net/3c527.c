@@ -4587,19 +4587,6 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|this_device
 r_static
 r_struct
@@ -4607,7 +4594,7 @@ id|net_device
 id|this_device
 op_assign
 (brace
-id|devicename
+l_string|&quot;&quot;
 comma
 multiline_comment|/* will be inserted by linux/drivers/net/mc32_init.c */
 l_int|0

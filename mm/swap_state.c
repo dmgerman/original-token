@@ -401,12 +401,6 @@ id|page
 )paren
 suffix:semicolon
 )brace
-id|ClearPageSwapEntry
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 id|__free_page
 c_func
 (paren

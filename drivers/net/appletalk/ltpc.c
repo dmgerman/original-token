@@ -4991,14 +4991,6 @@ id|ltpc_setup
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
-DECL|variable|dev_name
-r_static
-r_char
-id|dev_name
-(braket
-l_int|8
-)braket
-suffix:semicolon
 DECL|variable|dev_ltpc
 r_static
 r_struct
@@ -5006,7 +4998,7 @@ id|net_device
 id|dev_ltpc
 op_assign
 (brace
-id|dev_name
+l_string|&quot;&quot;
 comma
 l_int|0
 comma

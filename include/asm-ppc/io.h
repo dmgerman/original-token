@@ -30,6 +30,8 @@ macro_line|#if defined(CONFIG_4xx)
 macro_line|#include &lt;asm/board.h&gt;
 macro_line|#elif defined(CONFIG_8xx)
 macro_line|#include &lt;asm/mpc8xx.h&gt;
+macro_line|#elif defined(CONFIG_8260)
+macro_line|#include &lt;asm/mpc8260.h&gt;
 macro_line|#else
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|_IO_BASE
@@ -85,18 +87,19 @@ mdefine_line|#define writew(b,addr) out_le16((volatile u16 *)(addr),(b))
 DECL|macro|writel
 mdefine_line|#define writel(b,addr) out_le32((volatile u32 *)(addr),(b))
 macro_line|#endif
+multiline_comment|/*&n; * The insw/outsw/insl/outsl macros don&squot;t do byte-swapping.&n; * They are only used in practice for transferring buffers which&n; * are arrays of bytes, and byte-swapping is not appropriate in&n; * that case.  - paulus&n; */
 DECL|macro|insb
 mdefine_line|#define insb(port, buf, ns)&t;_insb((u8 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|outsb
 mdefine_line|#define outsb(port, buf, ns)&t;_outsb((u8 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|insw
-mdefine_line|#define insw(port, buf, ns)&t;_insw((u16 *)((port)+_IO_BASE), (buf), (ns))
+mdefine_line|#define insw(port, buf, ns)&t;_insw_ns((u16 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|outsw
-mdefine_line|#define outsw(port, buf, ns)&t;_outsw((u16 *)((port)+_IO_BASE), (buf), (ns))
+mdefine_line|#define outsw(port, buf, ns)&t;_outsw_ns((u16 *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|insl
-mdefine_line|#define insl(port, buf, nl)&t;_insl((u32 *)((port)+_IO_BASE), (buf), (nl))
+mdefine_line|#define insl(port, buf, nl)&t;_insl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
 DECL|macro|outsl
-mdefine_line|#define outsl(port, buf, nl)&t;_outsl((u32 *)((port)+_IO_BASE), (buf), (nl))
+mdefine_line|#define outsl(port, buf, nl)&t;_outsl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
 DECL|macro|inb
 mdefine_line|#define inb(port)&t;&t;in_8((u8 *)((port)+_IO_BASE))
 DECL|macro|outb
@@ -243,15 +246,6 @@ r_int
 id|nl
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The *_ns versions below don&squot;t do byte-swapping.&n; */
-DECL|macro|insw_ns
-mdefine_line|#define insw_ns(port, buf, ns)&t;_insw_ns((u16 *)((port)+_IO_BASE), (buf), (ns))
-DECL|macro|outsw_ns
-mdefine_line|#define outsw_ns(port, buf, ns)&t;_outsw_ns((u16 *)((port)+_IO_BASE), (buf), (ns))
-DECL|macro|insl_ns
-mdefine_line|#define insl_ns(port, buf, nl)&t;_insl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
-DECL|macro|outsl_ns
-mdefine_line|#define outsl_ns(port, buf, nl)&t;_outsl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
 r_extern
 r_void
 id|_insw_ns
@@ -326,6 +320,15 @@ r_int
 id|nl
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * The *_ns versions below don&squot;t do byte-swapping.&n; * Neither do the standard versions now, these are just here&n; * for older code.&n; */
+DECL|macro|insw_ns
+mdefine_line|#define insw_ns(port, buf, ns)&t;_insw_ns((u16 *)((port)+_IO_BASE), (buf), (ns))
+DECL|macro|outsw_ns
+mdefine_line|#define outsw_ns(port, buf, ns)&t;_outsw_ns((u16 *)((port)+_IO_BASE), (buf), (ns))
+DECL|macro|insl_ns
+mdefine_line|#define insl_ns(port, buf, nl)&t;_insl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
+DECL|macro|outsl_ns
+mdefine_line|#define outsl_ns(port, buf, nl)&t;_outsl_ns((u32 *)((port)+_IO_BASE), (buf), (nl))
 DECL|macro|IO_SPACE_LIMIT
 mdefine_line|#define IO_SPACE_LIMIT ~0
 DECL|macro|memset_io

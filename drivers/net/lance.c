@@ -629,8 +629,6 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|macro|MAX_CARDS
 mdefine_line|#define MAX_CARDS&t;&t;8&t;/* Max number of interfaces (cards) per module */
-DECL|macro|IF_NAMELEN
-mdefine_line|#define IF_NAMELEN&t;&t;8&t;/* # of chars for storing dev-&gt;name */
 DECL|variable|io
 r_static
 r_int
@@ -712,25 +710,6 @@ id|MAX_CARDS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|variable|ifnames
-r_static
-r_char
-id|ifnames
-(braket
-id|MAX_CARDS
-)braket
-(braket
-id|IF_NAMELEN
-)braket
-op_assign
-(brace
-(brace
-l_int|0
-comma
-)brace
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_lance
 r_static
 r_struct
@@ -742,7 +721,7 @@ id|MAX_CARDS
 op_assign
 (brace
 (brace
-l_int|0
+l_string|&quot;&quot;
 comma
 multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
@@ -806,13 +785,6 @@ id|dev
 op_assign
 op_amp
 id|dev_lance
-(braket
-id|this_dev
-)braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|ifnames
 (braket
 id|this_dev
 )braket

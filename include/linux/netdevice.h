@@ -422,8 +422,10 @@ id|net_device
 multiline_comment|/*&n;&t; * This is the first field of the &quot;visible&quot; part of this structure&n;&t; * (i.e. as seen by users in the &quot;Space.c&quot; file).  It is the name&n;&t; * the interface.&n;&t; */
 DECL|member|name
 r_char
-op_star
 id|name
+(braket
+id|IFNAMSIZ
+)braket
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;I/O specific fields&n;&t; *&t;FIXME: Merge these and struct ifmap into one&n;&t; */
 DECL|member|rmem_end

@@ -6531,17 +6531,6 @@ suffix:semicolon
 )brace
 DECL|macro|MAX_EEPRO
 mdefine_line|#define MAX_EEPRO 8
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-id|MAX_EEPRO
-)braket
-(braket
-l_int|9
-)braket
-suffix:semicolon
 DECL|variable|dev_eepro
 r_static
 r_struct
@@ -6743,14 +6732,6 @@ id|dev_eepro
 id|n_eepro
 )braket
 suffix:semicolon
-id|d-&gt;name
-op_assign
-id|devicename
-(braket
-id|n_eepro
-)braket
-suffix:semicolon
-multiline_comment|/* inserted by drivers/net/net_init.c */
 id|d-&gt;mem_end
 op_assign
 id|mem

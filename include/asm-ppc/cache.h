@@ -5,14 +5,19 @@ mdefine_line|#define __ARCH_PPC_CACHE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/* bytes per L1 cache line */
+macro_line|#if !defined(CONFIG_8xx) || defined(CONFIG_8260)
 DECL|macro|L1_CACHE_BYTES
-mdefine_line|#define        L1_CACHE_BYTES  32      
+mdefine_line|#define&t;L1_CACHE_BYTES  32
+macro_line|#else
+DECL|macro|L1_CACHE_BYTES
+mdefine_line|#define&t;L1_CACHE_BYTES&t;16
+macro_line|#endif /* !8xx || 8260 */
 DECL|macro|L1_CACHE_ALIGN
-mdefine_line|#define        L1_CACHE_ALIGN(x)       (((x)+(L1_CACHE_BYTES-1))&amp;~(L1_CACHE_BYTES-1))
+mdefine_line|#define&t;L1_CACHE_ALIGN(x)       (((x)+(L1_CACHE_BYTES-1))&amp;~(L1_CACHE_BYTES-1))
 DECL|macro|L1_CACHE_PAGES
-mdefine_line|#define L1_CACHE_PAGES&t;&t;8
+mdefine_line|#define&t;L1_CACHE_PAGES&t;&t;8
 DECL|macro|SMP_CACHE_BYTES
-mdefine_line|#define        SMP_CACHE_BYTES L1_CACHE_BYTES
+mdefine_line|#define&t;SMP_CACHE_BYTES L1_CACHE_BYTES
 macro_line|#ifdef MODULE
 DECL|macro|__cacheline_aligned
 mdefine_line|#define __cacheline_aligned __attribute__((__aligned__(L1_CACHE_BYTES)))

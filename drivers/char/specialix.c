@@ -10553,13 +10553,8 @@ c_func
 id|pdev
 )paren
 )paren
-(brace
-id|i
-op_increment
-suffix:semicolon
 r_continue
 suffix:semicolon
-)brace
 id|sx_board
 (braket
 id|i

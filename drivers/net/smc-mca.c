@@ -1640,23 +1640,6 @@ DECL|macro|MODULE
 macro_line|#undef MODULE        /* don&squot;t want to bother now! */
 DECL|macro|MAX_ULTRAMCA_CARDS
 mdefine_line|#define MAX_ULTRAMCA_CARDS 4&t;/* Max number of Ultra cards per module */
-DECL|macro|NAMELEN
-mdefine_line|#define NAMELEN 8&t;&t;/* # of chars for storing dev-&gt;name */
-DECL|variable|namelist
-r_static
-r_char
-id|namelist
-(braket
-id|NAMELEN
-op_star
-id|MAX_ULTRAMCA_CARDS
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_ultra
 r_static
 r_struct
@@ -1668,9 +1651,8 @@ id|MAX_ULTRAMCA_CARDS
 op_assign
 (brace
 (brace
-l_int|NULL
+l_string|&quot;&quot;
 comma
-multiline_comment|/* assign a chunk of namelist[] below */
 l_int|0
 comma
 l_int|0
@@ -1790,16 +1772,6 @@ id|dev_ultra
 (braket
 id|this_dev
 )braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|namelist
-op_plus
-(paren
-id|NAMELEN
-op_star
-id|this_dev
-)paren
 suffix:semicolon
 id|dev-&gt;irq
 op_assign

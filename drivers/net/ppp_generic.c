@@ -116,14 +116,6 @@ id|ppp_file
 id|file
 suffix:semicolon
 multiline_comment|/* stuff for read/write/poll */
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* unit name */
 DECL|member|channels
 r_struct
 id|list_head
@@ -9372,16 +9364,6 @@ id|ppp-&gt;file.index
 op_assign
 id|unit
 suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|ppp-&gt;name
-comma
-l_string|&quot;ppp%d&quot;
-comma
-id|unit
-)paren
-suffix:semicolon
 id|ppp-&gt;mru
 op_assign
 id|PPP_MRU
@@ -9459,9 +9441,15 @@ id|dev-&gt;init
 op_assign
 id|ppp_net_init
 suffix:semicolon
+id|sprintf
+c_func
+(paren
 id|dev-&gt;name
-op_assign
-id|ppp-&gt;name
+comma
+l_string|&quot;ppp%d&quot;
+comma
+id|unit
+)paren
 suffix:semicolon
 id|dev-&gt;priv
 op_assign

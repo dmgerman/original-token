@@ -41,13 +41,6 @@ r_struct
 id|ppp_device
 id|netdev
 suffix:semicolon
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|16
-)braket
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Network driver support routines&n; */
@@ -837,10 +830,6 @@ id|dev-&gt;chanB.dev
 op_assign
 id|dev
 suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|sv-&gt;name
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -994,40 +983,17 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now we can take the IRQ&n;&t; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|999
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|sprintf
-c_func
-(paren
-id|sv-&gt;name
-comma
-l_string|&quot;hdlc%d&quot;
-comma
-id|i
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev_get
+id|dev_alloc_name
 c_func
 (paren
-id|sv-&gt;name
+id|dev-&gt;chanA.netdevice
+comma
+l_string|&quot;hdlc%d&quot;
 )paren
-op_eq
+op_ge
 l_int|0
 )paren
 (brace
@@ -1038,7 +1004,7 @@ id|d
 op_assign
 id|dev-&gt;chanA.netdevice
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;&t; *&t;Initialise the PPP components&n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t; *&t;Initialise the PPP components&n;&t;&t; */
 id|sppp_attach
 c_func
 (paren
@@ -1046,21 +1012,7 @@ op_amp
 id|sv-&gt;netdev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Local fields&n;&t;&t;&t; */
-id|sprintf
-c_func
-(paren
-id|sv-&gt;name
-comma
-l_string|&quot;hdlc%d&quot;
-comma
-id|i
-)paren
-suffix:semicolon
-id|d-&gt;name
-op_assign
-id|sv-&gt;name
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Local fields&n;&t;&t; */
 id|d-&gt;base_addr
 op_assign
 id|iobase
@@ -1141,7 +1093,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;%s: unable to register device.&bslash;n&quot;
 comma
-id|sv-&gt;name
+id|d-&gt;name
 )paren
 suffix:semicolon
 r_goto
@@ -1165,7 +1117,6 @@ suffix:semicolon
 r_return
 id|sv
 suffix:semicolon
-)brace
 )brace
 id|dmafail2
 suffix:colon

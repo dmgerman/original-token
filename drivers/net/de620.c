@@ -3559,16 +3559,6 @@ multiline_comment|/* no errors */
 "&f;"
 multiline_comment|/******************************************************************************&n; *&n; * Loadable module skeleton&n; *&n; */
 macro_line|#ifdef MODULE
-DECL|variable|nullname
-r_static
-r_char
-id|nullname
-(braket
-l_int|8
-)braket
-op_assign
-l_string|&quot;&quot;
-suffix:semicolon
 DECL|variable|de620_dev
 r_static
 r_struct
@@ -3576,7 +3566,7 @@ id|net_device
 id|de620_dev
 op_assign
 (brace
-id|nullname
+l_string|&quot;&quot;
 comma
 l_int|0
 comma

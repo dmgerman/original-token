@@ -80,17 +80,12 @@ id|irq
 suffix:semicolon
 )brace
 macro_line|#elif defined(CONFIG_8xx)
-multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; *&n; * The 82xx can have up to 64 interrupts on the internal controller.&n; *&n; * On some implementations, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.&n; */
-macro_line|#ifdef CONFIG_82xx
-DECL|macro|NR_SIU_INTS
-mdefine_line|#define NR_SIU_INTS&t;64
-macro_line|#else
+multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; *&n; * On some implementations, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.&n; */
 DECL|macro|NR_SIU_INTS
 mdefine_line|#define NR_SIU_INTS&t;16
-macro_line|#endif
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS&t;(NR_SIU_INTS + NR_8259_INTS)
-multiline_comment|/* These values must be zero-based and map 1:1 with the SIU configuration.&n; * They are used throughout the 8xx/82xx I/O subsystem to generate&n; * interrupt masks, flags, and other control patterns.  This is why the&n; * current kernel assumption of the 8259 as the base controller is such&n; * a pain in the butt.&n; */
+multiline_comment|/* These values must be zero-based and map 1:1 with the SIU configuration.&n; * They are used throughout the 8xx I/O subsystem to generate&n; * interrupt masks, flags, and other control patterns.  This is why the&n; * current kernel assumption of the 8259 as the base controller is such&n; * a pain in the butt.&n; */
 DECL|macro|SIU_IRQ0
 mdefine_line|#define&t;SIU_IRQ0&t;(0)&t;/* Highest priority */
 DECL|macro|SIU_LEVEL0
@@ -317,6 +312,7 @@ macro_line|#endif /* CONFIG_APUS */
 multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all&n; */
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS&t;&t;&t;256
+macro_line|#ifndef CONFIG_8260
 DECL|macro|NUM_8259_INTERRUPTS
 mdefine_line|#define NUM_8259_INTERRUPTS&t;16
 DECL|macro|IRQ_8259_CASCADE
@@ -325,6 +321,24 @@ DECL|macro|openpic_to_irq
 mdefine_line|#define openpic_to_irq(n)&t;((n)+NUM_8259_INTERRUPTS)
 DECL|macro|irq_to_openpic
 mdefine_line|#define irq_to_openpic(n)&t;((n)-NUM_8259_INTERRUPTS)
+macro_line|#else /* CONFIG_8260 */
+multiline_comment|/* The 8260 has an internal interrupt controller with a maximum of&n; * 64 IRQs.  We will use NR_IRQs from above since it is large enough.&n; * Don&squot;t be confused by the 8260 documentation where they list an&n; * &quot;interrupt number&quot; and &quot;interrupt vector&quot;.  We are only interested&n; * in the interrupt vector.  There are &quot;reserved&quot; holes where the&n; * vector number increases, but the interrupt number in the table does not.&n; * (Document errata updates have fixed this...make sure you have up to&n; * date processor documentation -- Dan).&n; */
+DECL|macro|NR_SIU_INTS
+mdefine_line|#define NR_SIU_INTS&t;64
+multiline_comment|/* There are many more than these, we will add them as we need them.&n;*/
+DECL|macro|SIU_INT_SMC1
+mdefine_line|#define&t;SIU_INT_SMC1&t;&t;((uint)0x04)
+DECL|macro|SIU_INT_SMC2
+mdefine_line|#define&t;SIU_INT_SMC2&t;&t;((uint)0x05)
+DECL|macro|SIU_INT_SCC1
+mdefine_line|#define&t;SIU_INT_SCC1&t;&t;((uint)0x28)
+DECL|macro|SIU_INT_SCC2
+mdefine_line|#define&t;SIU_INT_SCC2&t;&t;((uint)0x29)
+DECL|macro|SIU_INT_SCC3
+mdefine_line|#define&t;SIU_INT_SCC3&t;&t;((uint)0x2a)
+DECL|macro|SIU_INT_SCC4
+mdefine_line|#define&t;SIU_INT_SCC4&t;&t;((uint)0x2b)
+macro_line|#endif /* CONFIG_8260 */
 multiline_comment|/*&n; * This gets called from serial.c, which is now used on&n; * powermacs as well as prep/chrp boxes.&n; * Prep and chrp both have cascaded 8259 PICs.&n; */
 DECL|function|irq_cannonicalize
 r_static

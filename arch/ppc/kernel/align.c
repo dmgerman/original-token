@@ -6,6 +6,7 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/cache.h&gt;
 DECL|struct|aligninfo
 r_struct
 id|aligninfo
@@ -50,6 +51,8 @@ DECL|macro|S
 mdefine_line|#define S&t;0x40&t;/* single-precision fp, or byte-swap value */
 DECL|macro|HARD
 mdefine_line|#define HARD&t;0x80&t;/* string, stwcx. */
+DECL|macro|DCBZ
+mdefine_line|#define DCBZ&t;0x5f&t;/* 8xx/82xx dcbz faults when cache not enabled */
 multiline_comment|/*&n; * The PowerPC stores certain bits of the instruction that caused the&n; * alignment exception in the DSISR register.  This array maps those&n; * bits to information about the operand length and what the&n; * instruction would do.&n; */
 DECL|variable|aligninfo
 r_static
@@ -992,10 +995,69 @@ id|nb
 op_eq
 l_int|0
 )paren
+(brace
+r_int
+op_star
+id|p
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|instr
+op_ne
+id|DCBZ
+)paren
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* too hard or invalid instruction bits */
+multiline_comment|/* too hard or invalid instruction */
+multiline_comment|/*&n;&t;&t; * The dcbz (data cache block zero) instruction&n;&t;&t; * gives an alignment fault if used on non-cacheable&n;&t;&t; * memory.  We handle the fault mainly for the&n;&t;&t; * case when we are running with the cache disabled&n;&t;&t; * for debugging.&n;&t;&t; */
+id|p
+op_assign
+(paren
+r_int
+op_star
+)paren
+(paren
+id|regs-&gt;dar
+op_amp
+op_minus
+id|L1_CACHE_BYTES
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|L1_CACHE_BYTES
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+op_increment
+id|i
+)paren
+id|p
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|flags
 op_assign
 id|aligninfo

@@ -875,6 +875,7 @@ DECL|macro|PVR_8240
 mdefine_line|#define&t;PVR_8240&t;0x00810100
 DECL|macro|PVR_8260
 mdefine_line|#define&t;PVR_8260&t;PVR_8240
+multiline_comment|/* I am just adding a single entry for 8260 boards.  I think we may be&n; * able to combine mbx, fads, rpxlite, bseip, and classic into a single&n; * generic 8xx as well.  The boards containing these processors are either&n; * identical at the processor level (due to the high integration) or so&n; * wildly different that testing _machine at run time is best replaced by&n; * conditional compilation by board type (found in their respective .h file).&n; *&t;-- Dan&n; */
 DECL|macro|_MACH_prep
 mdefine_line|#define _MACH_prep&t;0x00000001
 DECL|macro|_MACH_Pmac
@@ -901,6 +902,8 @@ DECL|macro|_MACH_oak
 mdefine_line|#define _MACH_oak&t;0x00000800&t;/* IBM &quot;Oak&quot; 403 eval. board */
 DECL|macro|_MACH_walnut
 mdefine_line|#define _MACH_walnut&t;0x00001000&t;/* IBM &quot;Walnut&quot; 405GP eval. board */
+DECL|macro|_MACH_8260
+mdefine_line|#define _MACH_8260&t;0x00002000&t;/* Generic 8260 */
 multiline_comment|/* see residual.h for these */
 DECL|macro|_PREP_Motorola
 mdefine_line|#define _PREP_Motorola 0x01  /* motorola prep */
@@ -1323,6 +1326,11 @@ mdefine_line|#define have_of 0
 macro_line|#elif defined(CONFIG_GEMINI)
 DECL|macro|_machine
 mdefine_line|#define _machine _MACH_gemini
+DECL|macro|have_of
+mdefine_line|#define have_of 0
+macro_line|#elif defined(CONFIG_8260)
+DECL|macro|_machine
+mdefine_line|#define _machine _MACH_8260
 DECL|macro|have_of
 mdefine_line|#define have_of 0
 macro_line|#else

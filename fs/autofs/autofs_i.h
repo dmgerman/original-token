@@ -396,6 +396,11 @@ comma
 r_struct
 id|autofs_sb_info
 op_star
+comma
+r_struct
+id|vfsmount
+op_star
+id|mnt
 )paren
 suffix:semicolon
 multiline_comment|/* Operations structures */

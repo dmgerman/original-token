@@ -290,8 +290,8 @@ id|ptr
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_8xx
-multiline_comment|/* Name change so we can catch standard drivers that potentially mess up&n; * the internal interrupt controller on 8xx and 82xx.  Just bear with me,&n; * I don&squot;t like this either and I am searching a better solution.  For&n; * now, this is what I need. -- Dan&n; */
+macro_line|#if (defined(CONFIG_8xx) || defined(CONFIG_8260))
+multiline_comment|/* Name change so we can catch standard drivers that potentially mess up&n; * the internal interrupt controller on 8xx and 8260.  Just bear with me,&n; * I don&squot;t like this either and I am searching a better solution.  For&n; * now, this is what I need. -- Dan&n; */
 DECL|function|request_8xxirq
 r_int
 id|request_8xxirq
@@ -672,8 +672,8 @@ op_star
 id|dev_id
 )paren
 (brace
-macro_line|#ifndef CONFIG_8xx
-id|request_irq
+macro_line|#if (defined(CONFIG_8xx) || defined(CONFIG_8260))
+id|request_8xxirq
 c_func
 (paren
 id|irq
@@ -688,7 +688,7 @@ id|dev_id
 )paren
 suffix:semicolon
 macro_line|#else
-id|request_8xxirq
+id|request_irq
 c_func
 (paren
 id|irq

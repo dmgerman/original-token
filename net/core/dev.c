@@ -817,8 +817,6 @@ r_sizeof
 r_struct
 id|net_device
 )paren
-op_plus
-l_int|16
 comma
 id|GFP_KERNEL
 )paren
@@ -855,19 +853,6 @@ id|net_device
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;name
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|dev
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* Name string space */
 op_star
 id|err
 op_assign

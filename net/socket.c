@@ -728,6 +728,11 @@ c_func
 id|sock-&gt;inode
 )paren
 suffix:semicolon
+multiline_comment|/* MOUNT_REWRITE: set to sockfs internal vfsmnt */
+id|file-&gt;f_vfsmnt
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren

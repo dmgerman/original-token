@@ -468,6 +468,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|page-&gt;mapping
+)paren
+id|PAGE_BUG
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+multiline_comment|/* needs sync_page to wait I/O completation */
+id|page-&gt;mapping
+op_assign
+op_amp
+id|swapper_space
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|rw_swap_page_base
 c_func
@@ -486,6 +503,10 @@ c_func
 (paren
 id|page
 )paren
+suffix:semicolon
+id|page-&gt;mapping
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 eof

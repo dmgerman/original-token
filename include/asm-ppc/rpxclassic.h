@@ -105,6 +105,6 @@ DECL|macro|NR_8259_INTS
 mdefine_line|#define NR_8259_INTS&t;0
 multiline_comment|/* Machine type&n;*/
 DECL|macro|_MACH_8xx
-mdefine_line|#define _MACH_8xx (_MACH_rpxclassic)
+mdefine_line|#define _MACH_8xx (_MACH_classic)
 macro_line|#endif
 eof

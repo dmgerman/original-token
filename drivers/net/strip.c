@@ -579,11 +579,6 @@ op_star
 id|tty
 suffix:semicolon
 multiline_comment|/* ptr to TTY structure&t;&t;*/
-DECL|member|if_name
-id|char8
-id|if_name
-suffix:semicolon
-multiline_comment|/* Dynamically generated name&t;*/
 DECL|member|dev
 r_struct
 id|net_device
@@ -3593,10 +3588,11 @@ id|battery_voltage
 op_assign
 id|strip_info-&gt;battery_voltage
 suffix:semicolon
-id|char8
+r_char
+op_star
 id|if_name
 op_assign
-id|strip_info-&gt;if_name
+id|strip_info-&gt;dev.name
 suffix:semicolon
 id|MetricomAddress
 id|true_dev_addr
@@ -3683,7 +3679,7 @@ id|p
 comma
 l_string|&quot;&bslash;nInterface name&bslash;t&bslash;t%s&bslash;n&quot;
 comma
-id|if_name.c
+id|if_name
 )paren
 suffix:semicolon
 id|p
@@ -10335,16 +10331,12 @@ multiline_comment|/* Note: strip_info-&gt;if_name is currently 8 characters long
 id|sprintf
 c_func
 (paren
-id|strip_info-&gt;if_name.c
+id|strip_info-&gt;dev.name
 comma
 l_string|&quot;st%d&quot;
 comma
 id|channel_id
 )paren
-suffix:semicolon
-id|strip_info-&gt;dev.name
-op_assign
-id|strip_info-&gt;if_name.c
 suffix:semicolon
 id|strip_info-&gt;dev.base_addr
 op_assign
@@ -10529,7 +10521,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;STRIP: device &bslash;&quot;%s&bslash;&quot; activated&bslash;n&quot;
 comma
-id|strip_info-&gt;if_name.c
+id|strip_info-&gt;dev.name
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Done.  We have linked the TTY line to a channel.&n;     */
@@ -10603,7 +10595,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;STRIP: device &bslash;&quot;%s&bslash;&quot; closed down&bslash;n&quot;
 comma
-id|strip_info-&gt;if_name.c
+id|strip_info-&gt;dev.name
 )paren
 suffix:semicolon
 id|strip_free

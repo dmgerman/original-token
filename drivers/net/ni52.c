@@ -5794,19 +5794,6 @@ id|dev
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_ni52
 r_static
 r_struct
@@ -5814,9 +5801,9 @@ id|net_device
 id|dev_ni52
 op_assign
 (brace
-id|devicename
+l_string|&quot;&quot;
 comma
-multiline_comment|/* &quot;ni5210&quot;: device name inserted by net_init.c */
+multiline_comment|/* device name inserted by net_init.c */
 l_int|0
 comma
 l_int|0

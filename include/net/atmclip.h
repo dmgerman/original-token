@@ -139,14 +139,6 @@ DECL|struct|clip_priv
 r_struct
 id|clip_priv
 (brace
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* interface name */
 DECL|member|number
 r_int
 id|number

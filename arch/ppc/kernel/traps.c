@@ -489,6 +489,14 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
+id|debugger
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 id|print_backtrace
 c_func
 (paren
@@ -503,14 +511,6 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
-id|debugger
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 id|panic
 c_func
 (paren

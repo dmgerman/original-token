@@ -1978,7 +1978,7 @@ id|buf
 op_plus
 id|len
 comma
-id|count
+id|PAGE_SIZE
 op_minus
 id|len
 )paren

@@ -7,7 +7,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &quot;ppc8xx_pic.h&quot;
-multiline_comment|/* The 8xx or 82xx internal interrupt controller.  It is usually&n; * the only interrupt controller.  Some boards, like the MBX and&n; * Sandpoint have the 8259 as a secondary controller.  Depending&n; * upon the processor type, the internal controller can have as&n; * few as 16 interrups or as many as 64.  We could use  the&n; * &quot;clear_bit()&quot; and &quot;set_bit()&quot; functions like other platforms,&n; * but they are overkill for us.&n; */
+multiline_comment|/* The 8xx internal interrupt controller.  It is usually&n; * the only interrupt controller.  Some boards, like the MBX and&n; * Sandpoint have the 8259 as a secondary controller.  Depending&n; * upon the processor type, the internal controller can have as&n; * few as 16 interrups or as many as 64.  We could use  the&n; * &quot;clear_bit()&quot; and &quot;set_bit()&quot; functions like other platforms,&n; * but they are overkill for us.&n; */
 DECL|function|m8xx_mask_irq
 r_static
 r_void
@@ -52,26 +52,6 @@ id|bit
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_82xx
-(paren
-(paren
-id|immap_t
-op_star
-)paren
-id|IMAP_ADDR
-)paren
-op_member_access_from_pointer
-id|im_siu_conf.sc_simask
-(braket
-id|word
-)braket
-op_assign
-id|ppc_cached_irq_mask
-(braket
-id|word
-)braket
-suffix:semicolon
-macro_line|#else
 (paren
 (paren
 id|immap_t
@@ -87,7 +67,6 @@ id|ppc_cached_irq_mask
 id|word
 )braket
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|m8xx_unmask_irq
 r_static
@@ -132,26 +111,6 @@ id|bit
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_82xx
-(paren
-(paren
-id|immap_t
-op_star
-)paren
-id|IMAP_ADDR
-)paren
-op_member_access_from_pointer
-id|im_siu_conf.sc_simask
-(braket
-id|word
-)braket
-op_assign
-id|ppc_cached_irq_mask
-(braket
-id|word
-)braket
-suffix:semicolon
-macro_line|#else
 (paren
 (paren
 id|immap_t
@@ -167,7 +126,6 @@ id|ppc_cached_irq_mask
 id|word
 )braket
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|m8xx_mask_and_ack
 r_static
@@ -213,47 +171,6 @@ id|bit
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_82xx
-(paren
-(paren
-id|immap_t
-op_star
-)paren
-id|IMAP_ADDR
-)paren
-op_member_access_from_pointer
-id|im_siu_conf.sc_simask
-(braket
-id|word
-)braket
-op_assign
-id|ppc_cached_irq_mask
-(braket
-id|word
-)braket
-suffix:semicolon
-(paren
-(paren
-id|immap_t
-op_star
-)paren
-id|IMAP_ADDR
-)paren
-op_member_access_from_pointer
-id|im_siu_conf.sc_sipend
-(braket
-id|word
-)braket
-op_assign
-l_int|1
-op_lshift
-(paren
-l_int|31
-op_minus
-id|bit
-)paren
-suffix:semicolon
-macro_line|#else
 (paren
 (paren
 id|immap_t
@@ -287,7 +204,6 @@ op_minus
 id|bit
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|variable|ppc8xx_pic
 r_struct
@@ -453,7 +369,7 @@ id|irq
 suffix:semicolon
 )brace
 multiline_comment|/* The MBX is the only 8xx board that uses the 8259.&n;*/
-macro_line|#ifdef CONFIG_MBX
+macro_line|#if defined(CONFIG_MBX) &amp;&amp; defined(CONFIG_PCI)
 DECL|function|mbx_i8259_action
 r_void
 id|mbx_i8259_action
@@ -620,7 +536,7 @@ op_star
 id|dev_id
 )paren
 (brace
-macro_line|#ifdef CONFIG_MBX
+macro_line|#if defined(CONFIG_MBX) &amp;&amp; defined(CONFIG_PCI)
 id|irq
 op_add_assign
 id|i8259_pic.irq_offset

@@ -3,8 +3,8 @@ multiline_comment|/* offset from ohare base for feature control register */
 DECL|macro|HEATHROW_FEATURE_REG
 mdefine_line|#define HEATHROW_FEATURE_REG&t;0x38
 multiline_comment|/*&n; * Bits in feature control register.&n; * Bits postfixed with a _N are in inverse logic&n; */
-DECL|macro|HRW_RESET_SCC
-mdefine_line|#define HRW_RESET_SCC&t;&t;1&t;&t;/* Named in_use_led in OF ??? */
+DECL|macro|HRW_MODEM_POWER_N
+mdefine_line|#define HRW_MODEM_POWER_N&t;1&t;&t;/* turns off modem power */
 DECL|macro|HRW_BAY_POWER_N
 mdefine_line|#define HRW_BAY_POWER_N&t;&t;2
 DECL|macro|HRW_BAY_PCI_ENABLE
@@ -53,8 +53,8 @@ DECL|macro|HRW_IDE1_RESET_N
 mdefine_line|#define HRW_IDE1_RESET_N&t;0x800000&t;/* Media bay */
 DECL|macro|HRW_SLOW_SCC_PCLK
 mdefine_line|#define HRW_SLOW_SCC_PCLK&t;0x1000000&t;/* ??? (0) */
-DECL|macro|HRW_MODEM_POWER_N
-mdefine_line|#define HRW_MODEM_POWER_N&t;0x2000000&t;/* Used by internal modem on wallstreet */
+DECL|macro|HRW_RESET_SCC
+mdefine_line|#define HRW_RESET_SCC&t;&t;0x2000000&t;/* perhaps? */
 DECL|macro|HRW_MFDC_CELL_ENABLE
 mdefine_line|#define HRW_MFDC_CELL_ENABLE&t;0x4000000&t;/* ??? (0) */
 DECL|macro|HRW_USE_MFDC
@@ -63,4 +63,6 @@ DECL|macro|HRW_BMAC_IO_ENABLE
 mdefine_line|#define HRW_BMAC_IO_ENABLE&t;0x60000000&t;/* two bits, not documented in OF */
 DECL|macro|HRW_BMAC_RESET
 mdefine_line|#define HRW_BMAC_RESET&t;&t;0x80000000&t;/* not documented in OF */
+DECL|macro|PADD_MODEM_POWER_N
+mdefine_line|#define PADD_MODEM_POWER_N&t;0x00000001&t;/* modem power on paddington */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  fs.c&n; *  NTFS driver for Linux 2.3.x&n; *&n; *  Copyright (C) 2000, Anton Altaparmakov&n; *  Copyright (C) 1995-1997, 1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Richard Russon&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; */
+multiline_comment|/*&n; *  fs.c&n; *  NTFS driver for Linux 2.3.x&n; *&n; *  Copyright (C) 1995-1997, 1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Richard Russon&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 2000, Anton Altaparmakov&n; */
 macro_line|#ifdef HAVE_CONFIG_H
 macro_line|#include &quot;config.h&quot;
 macro_line|#endif
@@ -4606,8 +4606,8 @@ suffix:semicolon
 )brace
 DECL|function|exit_ntfs_fs
 r_static
-id|__exit
 r_void
+id|__exit
 id|exit_ntfs_fs
 c_func
 (paren

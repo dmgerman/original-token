@@ -207,14 +207,6 @@ r_typedef
 r_struct
 (brace
 multiline_comment|/*&n;&t; *&t;Stuff for generic ethercard I/F&n;&t; */
-DECL|member|devname
-r_char
-id|devname
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* &quot;ethN&quot; string */
 DECL|member|next_dev
 r_struct
 id|net_device
@@ -3863,11 +3855,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|priv-&gt;devname
-suffix:semicolon
-multiline_comment|/* An empty string. */
 id|dev-&gt;base_addr
 op_assign
 id|io
@@ -4037,18 +4024,6 @@ id|DGRS_PRIV
 op_star
 )paren
 id|devN-&gt;priv
-suffix:semicolon
-multiline_comment|/* ... but seset devname to a NULL string */
-id|privN-&gt;devname
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|devN-&gt;name
-op_assign
-id|privN-&gt;devname
 suffix:semicolon
 multiline_comment|/* ... and zero out VM areas */
 id|privN-&gt;vmem

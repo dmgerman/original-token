@@ -370,10 +370,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * This is a dirty, swappable page.  First of all,&n;&t; * get a suitable swap entry for it, and make sure&n;&t; * we have the swap cache set up to associate the&n;&t; * page with that swap entry.&n;&t; */
 id|entry
 op_assign
-id|acquire_swap_entry
+id|get_swap_page
 c_func
 (paren
-id|page
 )paren
 suffix:semicolon
 r_if
@@ -1381,6 +1380,8 @@ op_increment
 OL
 l_int|10
 )paren
+multiline_comment|/* nothing */
+suffix:semicolon
 id|mm-&gt;swap_cnt
 op_rshift_assign
 id|i

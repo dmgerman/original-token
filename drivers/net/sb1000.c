@@ -7361,19 +7361,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|variable|devname
-r_static
-r_char
-id|devname
-(braket
-l_int|8
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_sb1000
 r_static
 r_struct
@@ -7381,7 +7368,7 @@ id|net_device
 id|dev_sb1000
 op_assign
 (brace
-id|devname
+l_string|&quot;&quot;
 comma
 l_int|0
 comma
@@ -7456,7 +7443,7 @@ op_increment
 id|sprintf
 c_func
 (paren
-id|devname
+id|dev_sb1000.name
 comma
 l_string|&quot;cm%d&quot;
 comma
@@ -7469,7 +7456,7 @@ c_cond
 id|dev_get
 c_func
 (paren
-id|devname
+id|dev_sb1000.name
 )paren
 op_eq
 l_int|0

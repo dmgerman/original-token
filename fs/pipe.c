@@ -2405,6 +2405,13 @@ id|inode
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* MOUNT_REWRITE: set to pipefs internal vfsmnt */
+id|f1-&gt;f_vfsmnt
+op_assign
+id|f2-&gt;f_vfsmnt
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren

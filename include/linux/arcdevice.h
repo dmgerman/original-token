@@ -40,8 +40,10 @@ DECL|macro|D_RX
 mdefine_line|#define D_RX&t;&t;512&t;/* show rx packets                        */
 DECL|macro|D_SKB
 mdefine_line|#define D_SKB&t;&t;1024&t;/* show skb&squot;s                             */
+DECL|macro|D_SKB_SIZE
+mdefine_line|#define D_SKB_SIZE&t;2048&t;/* show skb sizes&t;&t;&t;  */
 DECL|macro|D_TIMING
-mdefine_line|#define D_TIMING&t;2048&t;/* show time needed to copy buffers to card */
+mdefine_line|#define D_TIMING&t;4096&t;/* show time needed to copy buffers to card */
 macro_line|#ifndef ARCNET_DEBUG_MAX
 DECL|macro|ARCNET_DEBUG_MAX
 mdefine_line|#define ARCNET_DEBUG_MAX (~0)&t;/* enable ALL debug messages       */
@@ -132,6 +134,11 @@ DECL|macro|NORMALconf
 mdefine_line|#define NORMALconf      0x00&t;/* 1-249 byte packets */
 DECL|macro|EXTconf
 mdefine_line|#define EXTconf         0x08&t;/* 250-504 byte packets */
+multiline_comment|/* card feature flags, set during auto-detection.&n; * (currently only used by com20020pci)&n; */
+DECL|macro|ARC_IS_5MBIT
+mdefine_line|#define ARC_IS_5MBIT    1   /* card default speed is 5MBit */
+DECL|macro|ARC_CAN_10MBIT
+mdefine_line|#define ARC_CAN_10MBIT  2   /* card uses COM20022, supporting 10MBit,&n;&t;&t;&t;&t; but default is 2.5MBit. */
 multiline_comment|/* information needed to define an encapsulation driver */
 DECL|struct|ArcProto
 r_struct
@@ -349,14 +356,22 @@ DECL|member|backplane
 id|backplane
 comma
 multiline_comment|/* Backplane flag for COM20020 */
-DECL|member|clock
-id|clock
+DECL|member|clockp
+id|clockp
 comma
-multiline_comment|/* COM20020 clock speed flag */
+multiline_comment|/* COM20020 clock divider */
+DECL|member|clockm
+id|clockm
+comma
+multiline_comment|/* COM20020 clock multiplier flag */
 DECL|member|setup
 id|setup
 comma
-multiline_comment|/* Contents of setup register */
+multiline_comment|/* Contents of setup1 register */
+DECL|member|setup2
+id|setup2
+comma
+multiline_comment|/* Contents of setup2 register */
 DECL|member|intmask
 id|intmask
 suffix:semicolon
@@ -391,11 +406,17 @@ DECL|member|lasttrans_dest
 id|lasttrans_dest
 suffix:semicolon
 multiline_comment|/* can last TX&squot;d packet be acked? */
-DECL|member|basename_len
-r_int
-id|basename_len
+DECL|member|card_name
+r_char
+op_star
+id|card_name
 suffix:semicolon
-multiline_comment|/* name length without suffix (&squot;arc0e&squot; -&gt; 4) */
+multiline_comment|/* card ident string */
+DECL|member|card_flags
+r_int
+id|card_flags
+suffix:semicolon
+multiline_comment|/* special card features */
 multiline_comment|/*&n;&t; * Buffer management: an ARCnet card has 4 x 512-byte buffers, each of&n;&t; * which can be used for either sending or receiving.  The new dynamic&n;&t; * buffer management routines use a simple circular queue of available&n;&t; * buffers, and take them as they&squot;re needed.  This way, we simplify&n;&t; * situations in which we (for example) want to pre-load a transmit&n;&t; * buffer, or start receiving while we copy a received packet to&n;&t; * memory.&n;&t; * &n;&t; * The rules: only the interrupt handler is allowed to _add_ buffers to&n;&t; * the queue; thus, this doesn&squot;t require a lock.  Both the interrupt&n;&t; * handler and the transmit function will want to _remove_ buffers, so&n;&t; * we need to handle the situation where they try to do it at the same&n;&t; * time.&n;&t; * &n;&t; * If next_buf == first_free_buf, the queue is empty.  Since there are&n;&t; * only four possible buffers, the queue should never be full.&n;&t; */
 DECL|member|buf_lock
 id|atomic_t

@@ -283,6 +283,8 @@ DECL|macro|flush_cache_range
 mdefine_line|#define flush_cache_range(mm, a, b)&t;do { } while (0)
 DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, p)&t;do { } while (0)
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(vma, page)&t;do { } while (0)
 r_extern
 r_void
 id|flush_icache_range
@@ -307,18 +309,6 @@ id|page_va
 suffix:semicolon
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;__flush_page_to_ram(page_address(page))
-r_extern
-r_void
-id|__flush_icache_page
-c_func
-(paren
-r_int
-r_int
-id|page_va
-)paren
-suffix:semicolon
-DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(vma, page) __flush_icache_page(page_address(page))
 r_extern
 r_int
 r_int
@@ -434,7 +424,9 @@ DECL|macro|_PAGE_NO_CACHE
 mdefine_line|#define _PAGE_NO_CACHE&t;0x0002&t;/* I: cache inhibit */
 DECL|macro|_PAGE_SHARED
 mdefine_line|#define _PAGE_SHARED&t;0x0004&t;/* No ASID (context) compare */
-multiline_comment|/* These four software bits must be masked out when the entry is loaded&n; * into the TLB.&n; */
+multiline_comment|/* These five software bits must be masked out when the entry is loaded&n; * into the TLB.&n; */
+DECL|macro|_PAGE_DIRTY
+mdefine_line|#define _PAGE_DIRTY&t;0x0008&t;/* software: page changed */
 DECL|macro|_PAGE_GUARDED
 mdefine_line|#define _PAGE_GUARDED&t;0x0010&t;/* software: guarded access */
 DECL|macro|_PAGE_WRITETHRU
@@ -443,13 +435,10 @@ DECL|macro|_PAGE_RW
 mdefine_line|#define _PAGE_RW&t;0x0040&t;/* software: user write access allowed */
 DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED&t;0x0080&t;/* software: page referenced */
-DECL|macro|_PAGE_DIRTY
-mdefine_line|#define _PAGE_DIRTY&t;0x0100&t;/* C: page changed (write protect) */
+DECL|macro|_PAGE_HWWRITE
+mdefine_line|#define _PAGE_HWWRITE&t;0x0100&t;/* C: page changed (write protect) */
 DECL|macro|_PAGE_USER
 mdefine_line|#define _PAGE_USER&t;0x0800&t;/* One of the PP bits, the other must be 0 */
-multiline_comment|/* This is used to enable or disable the actual hardware write&n; * protection.&n; */
-DECL|macro|_PAGE_HWWRITE
-mdefine_line|#define _PAGE_HWWRITE&t;_PAGE_DIRTY
 macro_line|#else /* CONFIG_6xx */
 multiline_comment|/* Definitions for 60x, 740/750, etc. */
 DECL|macro|_PAGE_PRESENT
@@ -1247,6 +1236,14 @@ id|swapper_pg_dir
 (braket
 l_int|1024
 )braket
+suffix:semicolon
+r_extern
+r_void
+id|paging_init
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Page tables may have changed.  We don&squot;t need to do anything here&n; * as entries are faulted into the hash table by the low-level&n; * data/instruction access exception handlers.&n; */
 DECL|macro|update_mmu_cache

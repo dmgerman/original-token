@@ -2892,10 +2892,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|clip_priv-&gt;name
-suffix:semicolon
 id|sprintf
 c_func
 (paren

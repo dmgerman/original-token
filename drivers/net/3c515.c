@@ -944,14 +944,6 @@ DECL|struct|corkscrew_private
 r_struct
 id|corkscrew_private
 (brace
-DECL|member|devname
-r_char
-id|devname
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* &quot;ethN&quot; string, also for kernel debug. */
 DECL|member|product_name
 r_const
 r_char
@@ -2544,11 +2536,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|vp-&gt;devname
-suffix:semicolon
-multiline_comment|/* An empty string. */
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr

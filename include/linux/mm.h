@@ -472,8 +472,8 @@ DECL|macro|PG_swap_cache
 mdefine_line|#define PG_swap_cache&t;&t; 9
 DECL|macro|PG_skip
 mdefine_line|#define PG_skip&t;&t;&t;10
-DECL|macro|PG_swap_entry
-mdefine_line|#define PG_swap_entry&t;&t;11
+DECL|macro|PG_unused_03
+mdefine_line|#define PG_unused_03&t;&t;11
 DECL|macro|PG_highmem
 mdefine_line|#define PG_highmem&t;&t;12
 multiline_comment|/* bits 21-30 unused */
@@ -526,12 +526,6 @@ DECL|macro|PageClearSwapCache
 mdefine_line|#define PageClearSwapCache(page)&t;clear_bit(PG_swap_cache, &amp;(page)-&gt;flags)
 DECL|macro|PageTestandClearSwapCache
 mdefine_line|#define PageTestandClearSwapCache(page)&t;test_and_clear_bit(PG_swap_cache, &amp;(page)-&gt;flags)
-DECL|macro|PageSwapEntry
-mdefine_line|#define PageSwapEntry(page)&t;&t;test_bit(PG_swap_entry, &amp;(page)-&gt;flags)
-DECL|macro|SetPageSwapEntry
-mdefine_line|#define SetPageSwapEntry(page)&t;&t;set_bit(PG_swap_entry, &amp;(page)-&gt;flags)
-DECL|macro|ClearPageSwapEntry
-mdefine_line|#define ClearPageSwapEntry(page)&t;clear_bit(PG_swap_entry, &amp;(page)-&gt;flags)
 macro_line|#ifdef CONFIG_HIGHMEM
 DECL|macro|PageHighMem
 mdefine_line|#define PageHighMem(page)&t;&t;test_bit(PG_highmem, &amp;(page)-&gt;flags)

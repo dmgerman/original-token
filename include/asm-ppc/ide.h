@@ -268,14 +268,12 @@ op_star
 id|id
 )paren
 suffix:semicolon
-DECL|macro|insw
+macro_line|#if 0
 macro_line|#undef insw
-DECL|macro|insw
 mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&t;&bslash;&n;&t;ppc_ide_md.insw((port), (buf), (ns));&t;&t;&t;&bslash;&n;} while (0)
-DECL|macro|outsw
 macro_line|#undef outsw
-DECL|macro|outsw
 mdefine_line|#define outsw(port, buf, ns) &t;do {&t;&t;&t;&t;&bslash;&n;&t;ppc_ide_md.outsw((port), (buf), (ns));&t;&t;&t;&bslash;&n;} while (0)
+macro_line|#endif
 DECL|macro|SUPPORT_SLOW_DATA_PORTS
 macro_line|#undef&t;SUPPORT_SLOW_DATA_PORTS
 DECL|macro|SUPPORT_SLOW_DATA_PORTS

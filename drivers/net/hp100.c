@@ -12590,43 +12590,7 @@ l_string|&quot;1-5i&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef LINUX_2_1
-DECL|variable|hp100_name
-r_char
-id|hp100_name
-(braket
-l_int|5
-)braket
-(braket
-id|IFNAMSIZ
-)braket
-op_assign
-(brace
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-)brace
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|hp100_name
-comma
-l_string|&quot;1-5c&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|IFNAMSIZ
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
+macro_line|#ifndef LINUX_2_1
 DECL|variable|devname
 r_static
 r_char
@@ -12813,6 +12777,7 @@ id|net_device
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifndef LINUX_2_1
 id|hp100_devlist
 (braket
 id|i
@@ -12825,6 +12790,7 @@ id|hp100_name
 id|i
 )braket
 suffix:semicolon
+macro_line|#endif
 id|hp100_devlist
 (braket
 id|i

@@ -37,14 +37,6 @@ r_typedef
 r_struct
 id|slip_ctrl
 (brace
-DECL|member|if_name
-r_char
-id|if_name
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* &quot;sl0&bslash;0&quot; .. &quot;sl99999&bslash;0&quot;&t;*/
 DECL|member|ctrl
 r_struct
 id|slip
@@ -2962,16 +2954,12 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|slp-&gt;if_name
+id|slp-&gt;dev.name
 comma
 l_string|&quot;sl%d&quot;
 comma
 id|i
 )paren
-suffix:semicolon
-id|slp-&gt;dev.name
-op_assign
-id|slp-&gt;if_name
 suffix:semicolon
 id|slp-&gt;dev.base_addr
 op_assign

@@ -3468,19 +3468,6 @@ id|IE_ISTAT
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_ni5010
 r_static
 r_struct
@@ -3488,7 +3475,7 @@ id|net_device
 id|dev_ni5010
 op_assign
 (brace
-id|devicename
+l_string|&quot;&quot;
 comma
 l_int|0
 comma

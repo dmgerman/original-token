@@ -3240,6 +3240,22 @@ op_ge
 l_int|0
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Dentry-cache hash table entries: %d (order: %ld, %ld bytes)&bslash;n&quot;
+comma
+id|nr_hash
+comma
+id|order
+comma
+(paren
+id|PAGE_SIZE
+op_lshift
+id|order
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3250,14 +3266,6 @@ id|panic
 c_func
 (paren
 l_string|&quot;Failed to allocate dcache hash table&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;VFS: DCACHE hash table configured to %d entries&bslash;n&quot;
-comma
-id|nr_hash
 )paren
 suffix:semicolon
 id|d

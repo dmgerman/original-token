@@ -43,29 +43,29 @@ DECL|macro|US_DIRECTION
 mdefine_line|#define US_DIRECTION(x) ((us_direction[x&gt;&gt;3] &gt;&gt; (x &amp; 7)) &amp; 1)
 multiline_comment|/* Sub Classes */
 DECL|macro|US_SC_RBC
-mdefine_line|#define US_SC_RBC&t;1&t;&t;/* Typically, flash devices */
+mdefine_line|#define US_SC_RBC&t;0x01&t;&t;/* Typically, flash devices */
 DECL|macro|US_SC_8020
-mdefine_line|#define US_SC_8020&t;2&t;&t;/* CD-ROM */
+mdefine_line|#define US_SC_8020&t;0x02&t;&t;/* CD-ROM */
 DECL|macro|US_SC_QIC
-mdefine_line|#define US_SC_QIC&t;3&t;&t;/* QIC-157 Tapes */
+mdefine_line|#define US_SC_QIC&t;0x03&t;&t;/* QIC-157 Tapes */
 DECL|macro|US_SC_UFI
-mdefine_line|#define US_SC_UFI&t;4&t;&t;/* Floppy */
+mdefine_line|#define US_SC_UFI&t;0x04&t;&t;/* Floppy */
 DECL|macro|US_SC_8070
-mdefine_line|#define US_SC_8070&t;5&t;&t;/* Removable media */
+mdefine_line|#define US_SC_8070&t;0x05&t;&t;/* Removable media */
 DECL|macro|US_SC_SCSI
-mdefine_line|#define US_SC_SCSI&t;6&t;&t;/* Transparent */
+mdefine_line|#define US_SC_SCSI&t;0x06&t;&t;/* Transparent */
 DECL|macro|US_SC_MIN
 mdefine_line|#define US_SC_MIN&t;US_SC_RBC
 DECL|macro|US_SC_MAX
 mdefine_line|#define US_SC_MAX&t;US_SC_SCSI
 multiline_comment|/* Protocols */
-DECL|macro|US_PR_CB
-mdefine_line|#define US_PR_CB&t;1&t;&t;/* Control/Bulk w/o interrupt */
 DECL|macro|US_PR_CBI
-mdefine_line|#define US_PR_CBI&t;0&t;&t;/* Control/Bulk/Interrupt */
+mdefine_line|#define US_PR_CBI&t;0x00&t;&t;/* Control/Bulk/Interrupt */
+DECL|macro|US_PR_CB
+mdefine_line|#define US_PR_CB&t;0x01&t;&t;/* Control/Bulk w/o interrupt */
 DECL|macro|US_PR_BULK
 mdefine_line|#define US_PR_BULK&t;0x50&t;&t;/* bulk only */
-multiline_comment|/*&n; * Bulk only data structures (Zip 100, for example)&n; */
+multiline_comment|/*&n; * Bulk only data structures&n; */
 multiline_comment|/* command block wrapper */
 DECL|struct|bulk_cb_wrap
 r_struct
@@ -112,9 +112,9 @@ multiline_comment|/* max command */
 )brace
 suffix:semicolon
 DECL|macro|US_BULK_CB_WRAP_LEN
-mdefine_line|#define US_BULK_CB_WRAP_LEN &t;31
+mdefine_line|#define US_BULK_CB_WRAP_LEN&t;31
 DECL|macro|US_BULK_CB_SIGN
-mdefine_line|#define US_BULK_CB_SIGN&t;&t;0x43425355
+mdefine_line|#define US_BULK_CB_SIGN&t;&t;0x43425355&t;/*spells out USBC */
 DECL|macro|US_BULK_FLAG_IN
 mdefine_line|#define US_BULK_FLAG_IN&t;&t;1
 DECL|macro|US_BULK_FLAG_OUT
@@ -156,7 +156,7 @@ suffix:semicolon
 DECL|macro|US_BULK_CS_WRAP_LEN
 mdefine_line|#define US_BULK_CS_WRAP_LEN&t;13
 DECL|macro|US_BULK_CS_SIGN
-mdefine_line|#define US_BULK_CS_SIGN&t;&t;0x53425355
+mdefine_line|#define US_BULK_CS_SIGN&t;&t;0x53425355&t;/* spells out &squot;USBS&squot; */
 DECL|macro|US_BULK_STAT_OK
 mdefine_line|#define US_BULK_STAT_OK&t;&t;0
 DECL|macro|US_BULK_STAT_FAIL
@@ -171,14 +171,14 @@ DECL|macro|US_BULK_RESET_HARD
 mdefine_line|#define US_BULK_RESET_HARD&t;0
 multiline_comment|/*&n; * us_bulk_transfer() return codes&n; */
 DECL|macro|US_BULK_TRANSFER_GOOD
-mdefine_line|#define US_BULK_TRANSFER_GOOD   0
+mdefine_line|#define US_BULK_TRANSFER_GOOD&t;0
 DECL|macro|US_BULK_TRANSFER_SHORT
-mdefine_line|#define US_BULK_TRANSFER_SHORT  1
+mdefine_line|#define US_BULK_TRANSFER_SHORT&t;1
 DECL|macro|US_BULK_TRANSFER_FAILED
 mdefine_line|#define US_BULK_TRANSFER_FAILED 2
 multiline_comment|/*&n; * Transport return codes&n; */
 DECL|macro|USB_STOR_TRANSPORT_GOOD
-mdefine_line|#define USB_STOR_TRANSPORT_GOOD    0   /* Transport good, command good     */
+mdefine_line|#define USB_STOR_TRANSPORT_GOOD&t;   0   /* Transport good, command good&t;   */
 DECL|macro|USB_STOR_TRANSPORT_FAILED
 mdefine_line|#define USB_STOR_TRANSPORT_FAILED  1   /* Transport good, command failed   */
 DECL|macro|USB_STOR_TRANSPORT_ERROR
@@ -371,11 +371,13 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* Flag definitions */
 DECL|macro|US_FL_SINGLE_LUN
-mdefine_line|#define US_FL_SINGLE_LUN      0x00000001 /* allow access to only LUN 0 */
+mdefine_line|#define US_FL_SINGLE_LUN      0x00000001 /* allow access to only LUN 0&t;    */
 DECL|macro|US_FL_MODE_XLATE
-mdefine_line|#define US_FL_MODE_XLATE      0x00000002 /* translate _6 to _10 comands for&n;&t;&t;&t;&t;&t;            Win/MacOS compatibility */
+mdefine_line|#define US_FL_MODE_XLATE      0x00000002 /* translate _6 to _10 comands for&n;&t;&t;&t;&t;&t;&t;    Win/MacOS compatibility */
 DECL|macro|US_FL_START_STOP
-mdefine_line|#define US_FL_START_STOP      0x00000004 /* ignore START_STOP commands */
+mdefine_line|#define US_FL_START_STOP      0x00000004 /* ignore START_STOP commands&t;    */
 DECL|macro|US_FL_ALT_LENGTH
-mdefine_line|#define US_FL_ALT_LENGTH      0x00000008 /* use the alternate algorithm for&n;                                                    us_transfer_length() */
+mdefine_line|#define US_FL_ALT_LENGTH      0x00000008 /* use the alternate algorithm for&n;&t;&t;&t;&t;&t;&t;    us_transfer_length()    */
+DECL|macro|US_FL_IGNORE_SER
+mdefine_line|#define US_FL_IGNORE_SER      0x00000010 /* Ignore the serial number given  */
 eof

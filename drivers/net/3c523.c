@@ -5292,24 +5292,6 @@ macro_line|#ifdef MODULE
 multiline_comment|/* Increase if needed ;) */
 DECL|macro|MAX_3C523_CARDS
 mdefine_line|#define MAX_3C523_CARDS 4
-multiline_comment|/* I&squot;m not sure where this magic 9 comes from */
-DECL|macro|NAMELEN
-mdefine_line|#define NAMELEN 9
-DECL|variable|devicenames
-r_static
-r_char
-id|devicenames
-(braket
-id|NAMELEN
-op_star
-id|MAX_3C523_CARDS
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|dev_elmc
 r_static
 r_struct
@@ -5321,8 +5303,7 @@ id|MAX_3C523_CARDS
 op_assign
 (brace
 (brace
-l_int|NULL
-multiline_comment|/*&quot;3c523&quot; */
+l_string|&quot;&quot;
 comma
 l_int|0
 comma
@@ -5444,16 +5425,6 @@ id|dev_elmc
 (braket
 id|this_dev
 )braket
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|devicenames
-op_plus
-(paren
-id|NAMELEN
-op_star
-id|this_dev
-)paren
 suffix:semicolon
 id|dev-&gt;irq
 op_assign

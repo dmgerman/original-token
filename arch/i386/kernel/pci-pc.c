@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
@@ -916,6 +917,16 @@ c_func
 l_string|&quot;PCI: Using configuration type 1&bslash;n&quot;
 )paren
 suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0xCF8
+comma
+l_int|8
+comma
+l_string|&quot;PCI conf1&quot;
+)paren
+suffix:semicolon
 r_return
 op_amp
 id|pci_direct_conf1
@@ -994,6 +1005,16 @@ id|printk
 c_func
 (paren
 l_string|&quot;PCI: Using configuration type 2&bslash;n&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0xCF8
+comma
+l_int|4
+comma
+l_string|&quot;PCI conf2&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4031,6 +4052,31 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+DECL|function|pci_fixup_latency
+r_static
+r_void
+id|__init
+id|pci_fixup_latency
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|d
+)paren
+(brace
+multiline_comment|/*&n;&t; *  SiS 5597 and 5598 chipsets require latency timer set to&n;&t; *  at most 32 to avoid lockups.&n;&t; */
+id|DBG
+c_func
+(paren
+l_string|&quot;PCI: Setting max latency to 32&bslash;n&quot;
+)paren
+suffix:semicolon
+id|pcibios_max_latency
+op_assign
+l_int|32
+suffix:semicolon
+)brace
 DECL|variable|pcibios_fixups
 r_struct
 id|pci_fixup
@@ -4117,6 +4163,26 @@ comma
 id|PCI_ANY_ID
 comma
 id|pci_fixup_ide_bases
+)brace
+comma
+(brace
+id|PCI_FIXUP_HEADER
+comma
+id|PCI_VENDOR_ID_SI
+comma
+id|PCI_DEVICE_ID_SI_5597
+comma
+id|pci_fixup_latency
+)brace
+comma
+(brace
+id|PCI_FIXUP_HEADER
+comma
+id|PCI_VENDOR_ID_SI
+comma
+id|PCI_DEVICE_ID_SI_5598
+comma
+id|pci_fixup_latency
 )brace
 comma
 (brace
@@ -4274,12 +4340,17 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|pcibios_fixup_irqs
+id|pcibios_irq_init
 c_func
 (paren
 )paren
 suffix:semicolon
 id|pcibios_fixup_peer_bridges
+c_func
+(paren
+)paren
+suffix:semicolon
+id|pcibios_fixup_irqs
 c_func
 (paren
 )paren

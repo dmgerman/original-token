@@ -27,8 +27,14 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef CONFIG_8xx
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#include &lt;asm/mpc8xx.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_8260
+macro_line|#include &lt;asm/immap_8260.h&gt;
+macro_line|#include &lt;asm/mpc8260.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
@@ -258,6 +264,17 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_8260
+r_int
+r_int
+op_star
+id|m8260_find_end_of_memory
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_8260 */
 r_static
 r_void
 id|mapin_ram
@@ -3035,7 +3052,7 @@ id|_PAGE_ACCESSED
 op_or
 id|_PAGE_SHARED
 suffix:semicolon
-macro_line|#ifdef CONFIG_KGDB
+macro_line|#if defined(CONFIG_KGDB) || defined(CONFIG_XMON)
 multiline_comment|/* Allows stub to set breakpoints everywhere */
 id|f
 op_or_assign
@@ -3693,6 +3710,7 @@ suffix:semicolon
 multiline_comment|/* 128 MB of instr. space at 0x0. */
 )brace
 macro_line|#else
+multiline_comment|/* How about ppc_md.md_find_end_of_memory instead of these&n;&t; * ifdefs?  -- Dan.&n;&t; */
 DECL|function|MMU_init
 r_void
 id|__init
@@ -3764,6 +3782,16 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_GEMINI&t;*/
+macro_line|#if defined(CONFIG_8260)
+r_else
+id|end_of_DRAM
+op_assign
+id|m8260_find_end_of_memory
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
 r_else
 multiline_comment|/* prep */
 id|end_of_DRAM
@@ -3773,6 +3801,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4035,11 +4064,6 @@ id|IO_PAGE
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if 0
-singleline_comment|// This is bogus, BAT must be aligned.
-singleline_comment|//&t;&t;setbat(0, disp_bi-&gt;dispDeviceBase, disp_bi-&gt;dispDeviceBase, 0x100000, IO_PAGE);
-singleline_comment|//&t;&t;disp_bi-&gt;logicalDisplayBase = disp_bi-&gt;dispDeviceBase;
-macro_line|#endif&t;&t;
 id|ioremap_base
 op_assign
 l_int|0xf0000000
@@ -4111,6 +4135,44 @@ l_int|0x10000000
 comma
 id|IO_PAGE
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|_MACH_8260
+suffix:colon
+multiline_comment|/* Map the IMMR, plus anything else we can cover&n;&t;&t; * in that upper space according to the memory controller&n;&t;&t; * chip select mapping.  Grab another bunch of space&n;&t;&t; * below that for stuff we can&squot;t cover in the upper.&n;&t;&t; */
+id|setbat
+c_func
+(paren
+l_int|0
+comma
+l_int|0xf0000000
+comma
+l_int|0xf0000000
+comma
+l_int|0x10000000
+comma
+id|IO_PAGE
+)paren
+suffix:semicolon
+id|setbat
+c_func
+(paren
+l_int|1
+comma
+l_int|0xe0000000
+comma
+l_int|0xe0000000
+comma
+l_int|0x10000000
+comma
+id|IO_PAGE
+)paren
+suffix:semicolon
+id|ioremap_base
+op_assign
+l_int|0xe0000000
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5483,6 +5545,90 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#endif /* defined(CONFIG_GEMINI) */
+macro_line|#ifdef CONFIG_8260
+multiline_comment|/*&n; * Same hack as 8xx.&n; */
+DECL|function|m8260_find_end_of_memory
+r_int
+r_int
+id|__init
+op_star
+id|m8260_find_end_of_memory
+c_func
+(paren
+r_void
+)paren
+(brace
+id|bd_t
+op_star
+id|binfo
+suffix:semicolon
+r_int
+r_int
+op_star
+id|ret
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|__res
+(braket
+)braket
+suffix:semicolon
+id|binfo
+op_assign
+(paren
+id|bd_t
+op_star
+)paren
+id|__res
+suffix:semicolon
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|address
+op_assign
+l_int|0
+suffix:semicolon
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|size
+op_assign
+id|binfo-&gt;bi_memsize
+suffix:semicolon
+id|phys_mem.n_regions
+op_assign
+l_int|1
+suffix:semicolon
+id|ret
+op_assign
+id|__va
+c_func
+(paren
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|size
+)paren
+suffix:semicolon
+id|set_phys_avail
+c_func
+(paren
+op_amp
+id|phys_mem
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_8260 */
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|HARDWARE_MAPPED_SIZE
 mdefine_line|#define HARDWARE_MAPPED_SIZE (512*1024)
@@ -5844,6 +5990,10 @@ r_case
 l_int|7
 suffix:colon
 multiline_comment|/* 603ev */
+r_case
+l_int|0x0081
+suffix:colon
+multiline_comment|/* 82xx */
 id|Hash_size
 op_assign
 l_int|0

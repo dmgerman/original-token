@@ -328,14 +328,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|dummy_name
-r_static
-r_char
-id|dummy_name
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|variable|dev_dummy
 r_static
 r_struct
@@ -343,9 +335,8 @@ id|net_device
 id|dev_dummy
 op_assign
 (brace
-id|dummy_name
+l_string|&quot;&quot;
 comma
-multiline_comment|/* Needs to be writeable */
 l_int|0
 comma
 l_int|0

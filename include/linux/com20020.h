@@ -25,6 +25,16 @@ r_int
 id|shared
 )paren
 suffix:semicolon
+r_void
+id|com20020_remove
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* The number of low I/O ports used by the card. */
 DECL|macro|ARCNET_TOTAL_SIZE
 mdefine_line|#define ARCNET_TOTAL_SIZE 9
@@ -43,10 +53,12 @@ DECL|macro|_ADDR_LO
 mdefine_line|#define _ADDR_LO  (ioaddr+3)
 DECL|macro|_MEMDATA
 mdefine_line|#define _MEMDATA  (ioaddr+4)&t;/* data port for IO-mapped memory */
+DECL|macro|_SUBADR
+mdefine_line|#define _SUBADR   (ioaddr+5)&t;/* the extended port _XREG refers to */
 DECL|macro|_CONFIG
 mdefine_line|#define _CONFIG   (ioaddr+6)&t;/* configuration register */
-DECL|macro|_SETUP
-mdefine_line|#define _SETUP    (ioaddr+7)&t;/* setup register */
+DECL|macro|_XREG
+mdefine_line|#define _XREG     (ioaddr+7)&t;/* extra registers (indexed by _CONFIG &n;&t;&t;&t;&t;&t;or _SUBADR) */
 multiline_comment|/* in the ADDR_HI register */
 DECL|macro|RDDATAflag
 mdefine_line|#define RDDATAflag&t;0x80&t;/* next access is a read (not a write) */
@@ -61,14 +73,24 @@ mdefine_line|#define TXENcfg&t;&t;0x20&t;/* enable TX */
 multiline_comment|/* in SETUP register */
 DECL|macro|PROMISCset
 mdefine_line|#define PROMISCset&t;0x10&t;/* enable RCV_ALL */
-DECL|macro|REGTENTID
-mdefine_line|#define REGTENTID (lp-&gt;config &amp;= ~3);
-DECL|macro|REGNID
-mdefine_line|#define REGNID (lp-&gt;config = (lp-&gt;config&amp;~2)|1);
-DECL|macro|REGSETUP
-mdefine_line|#define REGSETUP (lp-&gt;config = (lp-&gt;config&amp;~1)|2);
-DECL|macro|REGNXTID
-mdefine_line|#define REGNXTID (lp-&gt;config |= 3);
+multiline_comment|/* COM2002x */
+DECL|macro|SUB_TENTATIVE
+mdefine_line|#define SUB_TENTATIVE&t;0&t;/* tentative node ID */
+DECL|macro|SUB_NODE
+mdefine_line|#define SUB_NODE&t;1&t;/* node ID */
+DECL|macro|SUB_SETUP1
+mdefine_line|#define SUB_SETUP1&t;2&t;/* various options */
+DECL|macro|SUB_TEST
+mdefine_line|#define SUB_TEST&t;3&t;/* test/diag register */
+multiline_comment|/* COM20022 only */
+DECL|macro|SUB_SETUP2
+mdefine_line|#define SUB_SETUP2&t;4&t;/* sundry options */
+DECL|macro|SUB_BUSCTL
+mdefine_line|#define SUB_BUSCTL&t;5&t;/* bus control options */
+DECL|macro|SUB_DMACOUNT
+mdefine_line|#define SUB_DMACOUNT&t;6&t;/* DMA count options */
+DECL|macro|SET_SUBADR
+mdefine_line|#define SET_SUBADR(x) do { &bslash;&n;&t;if ((x) &lt; 4) &bslash;&n;&t;{ &bslash;&n;&t;&t;lp-&gt;config = (lp-&gt;config &amp; ~0x03) | (x); &bslash;&n;&t;&t;SETCONF; &bslash;&n;&t;} &bslash;&n;&t;else &bslash;&n;&t;{ &bslash;&n;&t;&t;outb(x, _SUBADR); &bslash;&n;&t;} &bslash;&n;} while (0)
 DECL|macro|ARCRESET
 macro_line|#undef ARCRESET
 DECL|macro|ASTATUS
@@ -88,6 +110,6 @@ mdefine_line|#define ACOMMAND(cmd)&t;outb((cmd),_COMMAND)
 DECL|macro|AINTMASK
 mdefine_line|#define AINTMASK(msk)&t;outb((msk),_INTMASK)
 DECL|macro|SETCONF
-mdefine_line|#define SETCONF(cfg)&t;outb(cfg, _CONFIG)
+mdefine_line|#define SETCONF&t;&t;outb(lp-&gt;config, _CONFIG)
 macro_line|#endif /* __COM20020_H */
 eof

@@ -22,6 +22,10 @@ macro_line|#ifdef CONFIG_8xx
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_8260
+macro_line|#include &lt;asm/mpc8260.h&gt;
+macro_line|#include &lt;asm/immap_8260.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
@@ -287,8 +291,8 @@ r_struct
 id|machdep_calls
 id|ppc_md
 suffix:semicolon
-multiline_comment|/*&n; * Perhaps we can put the pmac screen_info[] here&n; * on pmac as well so we don&squot;t need the ifdef&squot;s.&n; * Until we get multiple-console support in here&n; * that is.  -- Cort&n; */
-macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
+multiline_comment|/*&n; * Perhaps we can put the pmac screen_info[] here&n; * on pmac as well so we don&squot;t need the ifdef&squot;s.&n; * Until we get multiple-console support in here&n; * that is.  -- Cort&n; * Maybe tie it to serial consoles, since this is really what&n; * these processors use on existing boards.  -- Dan&n; */
+macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx) &amp;&amp; !defined(CONFIG_8260)
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -1051,7 +1055,7 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;821&bslash;n&quot;
+l_string|&quot;8xx&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1068,7 +1072,7 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;8240&bslash;n&quot;
+l_string|&quot;82xx&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1110,7 +1114,7 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Assume here that all clock rates are the same in a&n;&t;&t; * smp system.  -- Cort&n;&t;&t; */
-macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
+macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx) &amp;&amp; !defined(CONFIG_8260)
 r_if
 c_cond
 (paren
@@ -1728,7 +1732,7 @@ comma
 l_int|0x100
 )paren
 suffix:semicolon
-macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
+macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx) &amp;&amp; !defined(CONFIG_8260)
 macro_line|#ifndef CONFIG_MACH_SPECIFIC
 multiline_comment|/* if we didn&squot;t get any bootinfo telling us what we are... */
 r_if
@@ -2210,6 +2214,21 @@ id|r7
 suffix:semicolon
 macro_line|#elif defined(CONFIG_8xx)
 id|m8xx_init
+c_func
+(paren
+id|r3
+comma
+id|r4
+comma
+id|r5
+comma
+id|r6
+comma
+id|r7
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_8260)
+id|m8260_init
 c_func
 (paren
 id|r3
@@ -2826,6 +2845,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ALL_PPC
+id|feature_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_XMON
 id|xmon_map_scc
 c_func
@@ -2866,6 +2892,11 @@ l_int|0x3eab
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_KGDB)
+id|kgdb_map_scc
+c_func
+(paren
+)paren
+suffix:semicolon
 id|set_debug_traps
 c_func
 (paren
@@ -3632,7 +3663,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|31
+l_int|30
 suffix:semicolon
 id|i
 op_increment
@@ -3660,7 +3691,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|97
+l_int|96
 suffix:semicolon
 id|i
 op_increment

@@ -3941,10 +3941,11 @@ id|sp-&gt;sport
 suffix:semicolon
 id|timer_active
 op_assign
+id|timer_pending
+c_func
 (paren
-id|sp-&gt;timer.prev
-op_ne
-l_int|NULL
+op_amp
+id|sp-&gt;timer
 )paren
 ques
 c_cond

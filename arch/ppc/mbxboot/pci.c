@@ -1,5 +1,6 @@
 multiline_comment|/* Stand alone funtions for QSpan Tundra support.&n; */
-macro_line|#include &lt;sys/types.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 multiline_comment|/* To map PCI devices, you first write 0xffffffff into the device&n; * base address registers.  When the register is read back, the&n; * number of most significant &squot;1&squot; bits describes the amount of address&n; * space needed for mapping.  If the most significant bit is not set,&n; * either the device does not use that address register, or it has&n; * a fixed address that we can&squot;t change.  After the address is assigned,&n; * the command register has to be written to enable the card.&n; */

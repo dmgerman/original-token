@@ -4,6 +4,7 @@ DECL|macro|__PPC_SYSTEM_H
 mdefine_line|#define __PPC_SYSTEM_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hw_irq.h&gt;

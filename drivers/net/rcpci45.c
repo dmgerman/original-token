@@ -85,14 +85,6 @@ id|net_device
 op_star
 id|dev
 suffix:semicolon
-DECL|member|devname
-r_char
-id|devname
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* &quot;ethN&quot; string */
 DECL|member|id
 id|U8
 id|id
@@ -894,16 +886,6 @@ macro_line|#endif
 id|pDpa
 op_assign
 id|dev-&gt;priv
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;name
-)paren
-id|dev-&gt;name
-op_assign
-id|pDpa-&gt;devname
 suffix:semicolon
 id|pDpa-&gt;dev
 op_assign

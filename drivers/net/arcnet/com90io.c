@@ -981,6 +981,10 @@ op_star
 id|dev-&gt;priv
 )paren
 suffix:semicolon
+id|lp-&gt;card_name
+op_assign
+l_string|&quot;COM90xx I/O&quot;
+suffix:semicolon
 id|lp-&gt;hw.command
 op_assign
 id|com90io_command

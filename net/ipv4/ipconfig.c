@@ -855,13 +855,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Unable to set interface address (%u.%u.%u.%u).&bslash;n&quot;
+l_string|&quot;IP-Config: Unable to set interface address (%d).&bslash;n&quot;
 comma
-id|NIPQUAD
-c_func
-(paren
 id|err
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -902,13 +898,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Unable to set interface netmask (%u.%u.%u.%u).&bslash;n&quot;
+l_string|&quot;IP-Config: Unable to set interface netmask (%d).&bslash;n&quot;
 comma
-id|NIPQUAD
-c_func
-(paren
 id|err
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -952,13 +944,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Unable to set interface broadcast address (%u.%u.%u.%u).&bslash;n&quot;
+l_string|&quot;IP-Config: Unable to set interface broadcast address (%d).&bslash;n&quot;
 comma
-id|NIPQUAD
-c_func
-(paren
 id|err
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1111,13 +1099,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Cannot add default route (%u.%u.%u.%u).&bslash;n&quot;
+l_string|&quot;IP-Config: Cannot add default route (%d).&bslash;n&quot;
 comma
-id|NIPQUAD
-c_func
-(paren
 id|err
-)paren
 )paren
 suffix:semicolon
 r_return

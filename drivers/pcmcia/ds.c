@@ -4098,11 +4098,12 @@ id|s-&gt;handle
 op_assign
 l_int|NULL
 suffix:semicolon
-id|s-&gt;removal.prev
-op_assign
-id|s-&gt;removal.next
-op_assign
-l_int|NULL
+id|init_timer
+c_func
+(paren
+op_amp
+id|s-&gt;removal
+)paren
 suffix:semicolon
 id|s-&gt;removal.data
 op_assign

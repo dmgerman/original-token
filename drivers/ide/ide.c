@@ -5162,9 +5162,12 @@ macro_line|#if 1
 r_if
 c_cond
 (paren
-id|hwgroup-&gt;timer.next
-op_logical_or
-id|hwgroup-&gt;timer.prev
+id|timer_pending
+c_func
+(paren
+op_amp
+id|hwgroup-&gt;timer
+)paren
 )paren
 id|printk
 c_func

@@ -1814,9 +1814,13 @@ suffix:semicolon
 id|BUG_TRAP
 c_func
 (paren
-id|dev-&gt;watchdog_timer.prev
-op_eq
-l_int|NULL
+op_logical_neg
+id|timer_pending
+c_func
+(paren
+op_amp
+id|dev-&gt;watchdog_timer
+)paren
 )paren
 suffix:semicolon
 id|dev-&gt;qdisc_list

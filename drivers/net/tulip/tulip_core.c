@@ -7985,19 +7985,13 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|pci_set_power_state
-c_func
-(paren
-id|pdev
-comma
-l_int|3
-)paren
-suffix:semicolon
+singleline_comment|//&t;pci_set_power_state(pdev, 3);
 )brace
 DECL|function|tulip_resume
 r_static
 r_void
 id|tulip_resume
+c_func
 (paren
 r_struct
 id|pci_dev

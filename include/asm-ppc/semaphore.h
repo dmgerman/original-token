@@ -4,6 +4,7 @@ mdefine_line|#define _PPC_SEMAPHORE_H
 multiline_comment|/*&n; * Swiped from asm-sparc/semaphore.h and modified&n; * -- Cort (cort@cs.nmt.edu)&n; *&n; * Stole some rw spinlock-based semaphore stuff from asm-alpha/semaphore.h&n; * -- Ani Joshi (ajoshi@unixbox.com)&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|semaphore
 r_struct

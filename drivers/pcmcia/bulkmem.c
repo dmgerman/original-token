@@ -844,11 +844,12 @@ id|busy-&gt;client
 op_assign
 id|handle
 suffix:semicolon
-id|busy-&gt;timeout.prev
-op_assign
-id|busy-&gt;timeout.next
-op_assign
-l_int|NULL
+id|init_timer
+c_func
+(paren
+op_amp
+id|busy-&gt;timeout
+)paren
 suffix:semicolon
 id|busy-&gt;timeout.data
 op_assign

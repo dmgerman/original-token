@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_TIMER_H
 DECL|macro|_LINUX_TIMER_H
 mdefine_line|#define _LINUX_TIMER_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/list.h&gt;
 multiline_comment|/*&n; * Old-style timers. Please don&squot;t use for any new code.&n; *&n; * Numbering of these timers should be consecutive to minimize&n; * processing delays. [MJ]&n; */
 DECL|macro|BLANK_TIMER
 mdefine_line|#define BLANK_TIMER&t;0&t;/* Console screen-saver */
@@ -68,18 +69,10 @@ DECL|struct|timer_list
 r_struct
 id|timer_list
 (brace
-DECL|member|next
+DECL|member|list
 r_struct
-id|timer_list
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* MUST be first element */
-DECL|member|prev
-r_struct
-id|timer_list
-op_star
-id|prev
+id|list_head
+id|list
 suffix:semicolon
 DECL|member|expires
 r_int
@@ -168,11 +161,9 @@ op_star
 id|timer
 )paren
 (brace
-id|timer-&gt;next
+id|timer-&gt;list.next
 op_assign
-l_int|NULL
-suffix:semicolon
-id|timer-&gt;prev
+id|timer-&gt;list.prev
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -188,7 +179,6 @@ r_extern
 r_inline
 r_int
 id|timer_pending
-c_func
 (paren
 r_const
 r_struct
@@ -198,7 +188,7 @@ id|timer
 )paren
 (brace
 r_return
-id|timer-&gt;prev
+id|timer-&gt;list.next
 op_ne
 l_int|NULL
 suffix:semicolon
