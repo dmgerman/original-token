@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;pc110pad.h&quot;
 DECL|variable|default_params
@@ -67,6 +69,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* number of concurrent open()s */
+DECL|variable|read_lock
+r_static
+r_struct
+id|semaphore
+id|read_lock
+suffix:semicolon
 multiline_comment|/*&n; * Utility to reset a timer to go off some time in the future.&n; */
 DECL|function|set_timer_callback
 r_static
@@ -131,6 +139,8 @@ c_func
 id|asyncptr
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 )brace
@@ -1494,6 +1504,10 @@ op_star
 id|file
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1504,6 +1518,12 @@ r_return
 l_int|0
 suffix:semicolon
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -1609,9 +1629,10 @@ op_amp
 id|tap_timer
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1739,6 +1760,13 @@ id|ppos
 r_int
 id|r
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|read_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1785,9 +1813,12 @@ id|r
 )paren
 )paren
 (brace
-r_return
+id|r
+op_assign
 op_minus
 id|EFAULT
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 id|read_byte_count
@@ -1801,6 +1832,13 @@ op_mod
 l_int|3
 suffix:semicolon
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|read_lock
+)paren
+suffix:semicolon
 r_return
 id|r
 suffix:semicolon
@@ -2278,6 +2316,13 @@ c_func
 r_void
 )paren
 (brace
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|read_lock
+)paren
+suffix:semicolon
 r_return
 id|pc110pad_init
 c_func

@@ -18,11 +18,11 @@ macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 macro_line|#include &lt;video/fbcon-cfb16.h&gt;
@@ -3639,7 +3639,51 @@ l_int|0x1000
 )paren
 suffix:semicolon
 multiline_comment|/* Work out which banks of VRAM we have installed. */
-multiline_comment|/* danj: I guess the card just ignores writes to nonexistant VRAM... */
+multiline_comment|/* According to Andrew Fyfe &lt;bandr@best.com&gt;, the VRAM behaves like so: */
+multiline_comment|/* afyfe: observations from an 8500:&n;&t; * - with 2M vram in bank 1, it appears at offsets 0, 2M and 4M&n;&t; * - with 2M vram in bank 2, it appears only at offset 6M&n;&t; * - with 4M vram, it appears only as a 4M block at offset 0.&n;&t; */
+multiline_comment|/* We know there is something at 2M if there is something at 0M. */
+id|out_8
+c_func
+(paren
+op_amp
+id|p-&gt;frame_buffer
+(braket
+l_int|0x200000
+)braket
+comma
+l_int|0xa5
+)paren
+suffix:semicolon
+id|out_8
+c_func
+(paren
+op_amp
+id|p-&gt;frame_buffer
+(braket
+l_int|0x200001
+)braket
+comma
+l_int|0x38
+)paren
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;eieio; dcbi 0,%0&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|p-&gt;frame_buffer
+(braket
+l_int|0x200000
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
 id|out_8
 c_func
 (paren
@@ -3691,7 +3735,7 @@ c_func
 op_amp
 id|p-&gt;frame_buffer
 (braket
-l_int|0
+l_int|0x000000
 )braket
 )paren
 op_eq
@@ -3705,13 +3749,67 @@ c_func
 op_amp
 id|p-&gt;frame_buffer
 (braket
-l_int|1
+l_int|0x000001
 )braket
 )paren
 op_eq
 l_int|0xc7
 )paren
 suffix:semicolon
+id|bank2
+op_assign
+(paren
+id|in_8
+c_func
+(paren
+op_amp
+id|p-&gt;frame_buffer
+(braket
+l_int|0x200000
+)braket
+)paren
+op_eq
+l_int|0xa5
+)paren
+op_logical_and
+(paren
+id|in_8
+c_func
+(paren
+op_amp
+id|p-&gt;frame_buffer
+(braket
+l_int|0x200001
+)braket
+)paren
+op_eq
+l_int|0x38
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bank2
+op_logical_and
+op_logical_neg
+id|bank1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;controlfb: Found memory at 2MB but not at 0!  Please contact dan@debian.org&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bank1
+)paren
+(brace
 id|out_8
 c_func
 (paren
@@ -3784,6 +3882,20 @@ op_eq
 l_int|0x38
 )paren
 suffix:semicolon
+multiline_comment|/* If we don&squot;t have bank 1 installed, we hope we have bank 2 :-) */
+id|p-&gt;control_use_bank2
+op_assign
+l_int|1
+suffix:semicolon
+id|p-&gt;frame_buffer
+op_add_assign
+l_int|0x600000
+suffix:semicolon
+id|p-&gt;frame_buffer_phys
+op_add_assign
+l_int|0x600000
+suffix:semicolon
+)brace
 id|p-&gt;total_vram
 op_assign
 (paren
@@ -3794,27 +3906,35 @@ id|bank2
 op_star
 l_int|0x200000
 suffix:semicolon
-multiline_comment|/* If we don&squot;t have bank 1 installed, we hope we have bank 2 :-) */
-id|p-&gt;control_use_bank2
-op_assign
-op_logical_neg
-id|bank1
-suffix:semicolon
-r_if
-c_cond
+id|printk
+c_func
 (paren
-id|p-&gt;control_use_bank2
+id|KERN_INFO
+l_string|&quot;controlfb: Memory bank 1 %s, bank 2 %s, total VRAM %dMB&bslash;n&quot;
+comma
+id|bank1
+ques
+c_cond
+l_string|&quot;present&quot;
+suffix:colon
+l_string|&quot;absent&quot;
+comma
+id|bank2
+ques
+c_cond
+l_string|&quot;present&quot;
+suffix:colon
+l_string|&quot;absent&quot;
+comma
+l_int|2
+op_star
+(paren
+id|bank1
+op_plus
+id|bank2
 )paren
-(brace
-id|p-&gt;frame_buffer
-op_add_assign
-l_int|0x600000
+)paren
 suffix:semicolon
-id|p-&gt;frame_buffer_phys
-op_add_assign
-l_int|0x600000
-suffix:semicolon
-)brace
 id|init_control
 c_func
 (paren

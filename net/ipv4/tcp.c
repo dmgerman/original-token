@@ -652,6 +652,8 @@ c_func
 id|sk-&gt;socket
 comma
 l_int|2
+comma
+id|POLL_OUT
 )paren
 suffix:semicolon
 )brace

@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -16,12 +15,12 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* Some configuration switches are present in the include file... */
-macro_line|#include &quot;pc_keyb.h&quot;
+macro_line|#include &lt;linux/pc_keyb.h&gt;
 multiline_comment|/* Simple translation table for the SysRq keys */
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
 DECL|variable|pckbd_sysrq_xlate
@@ -50,15 +49,27 @@ multiline_comment|/* 0x60 - 0x6f */
 macro_line|#endif
 r_static
 r_void
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
 r_int
-id|address
-comma
+id|data
+)paren
+suffix:semicolon
+r_static
+r_void
+id|kbd_write_output_w
+c_func
+(paren
 r_int
 id|data
 )paren
+suffix:semicolon
+DECL|variable|kbd_controller_lock
+id|spinlock_t
+id|kbd_controller_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 r_static
 r_int
@@ -68,12 +79,6 @@ c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-DECL|variable|kbd_controller_lock
-id|spinlock_t
-id|kbd_controller_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* used only by send_data - set by keyboard_interrupt */
 DECL|variable|reply_expected
@@ -144,10 +149,6 @@ DECL|macro|AUX_INTS_ON
 mdefine_line|#define AUX_INTS_ON  (KBD_MODE_KCC | KBD_MODE_SYS | KBD_MODE_MOUSE_INT | KBD_MODE_KBD_INT)
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES&t;60&t;&t;/* some aux operations take long time*/
-macro_line|#ifndef AUX_IRQ
-DECL|macro|AUX_IRQ
-macro_line|# define AUX_IRQ&t;12
-macro_line|#endif
 macro_line|#endif /* CONFIG_PSMOUSE */
 multiline_comment|/*&n; * Wait for keyboard controller input buffer to drain.&n; *&n; * Don&squot;t use &squot;jiffies&squot; so that we don&squot;t depend on&n; * interrupts..&n; *&n; * Quote from PS/2 System Reference Manual:&n; *&n; * &quot;Address hex 0060 and address hex 0064 should be written only when&n; * the input-buffer-full bit and output-buffer-full bit in the&n; * Controller Status register are set 0.&quot;&n; */
 DECL|function|kb_wait
@@ -1283,6 +1284,8 @@ c_func
 id|queue-&gt;fasync
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 id|wake_up_interruptible
@@ -1311,11 +1314,16 @@ r_int
 r_char
 id|status
 op_assign
-id|inb
+id|kbd_read_status
 c_func
 (paren
-id|KBD_STATUS_REG
 )paren
+suffix:semicolon
+r_int
+r_int
+id|work
+op_assign
+l_int|10000
 suffix:semicolon
 r_while
 c_loop
@@ -1331,10 +1339,9 @@ id|scancode
 suffix:semicolon
 id|scancode
 op_assign
-id|inb
+id|kbd_read_input
 c_func
 (paren
-id|KBD_DATA_REG
 )paren
 suffix:semicolon
 r_if
@@ -1354,6 +1361,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef CONFIG_VT
 r_if
 c_cond
 (paren
@@ -1376,6 +1384,7 @@ l_int|0x80
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;
 id|mark_bh
 c_func
 (paren
@@ -1385,12 +1394,31 @@ suffix:semicolon
 )brace
 id|status
 op_assign
-id|inb
+id|kbd_read_status
 c_func
 (paren
-id|KBD_STATUS_REG
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|work
+op_decrement
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;pc_keyb: controller jammed (0x%02X).&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 r_return
 id|status
@@ -1419,10 +1447,12 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
 id|kbd_pt_regs
 op_assign
 id|regs
 suffix:semicolon
+macro_line|#endif
 id|spin_lock_irqsave
 c_func
 (paren
@@ -1485,11 +1515,9 @@ id|reply_expected
 op_assign
 l_int|1
 suffix:semicolon
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 id|data
 )paren
 suffix:semicolon
@@ -1652,11 +1680,11 @@ DECL|macro|KBD_NO_DATA
 mdefine_line|#define KBD_NO_DATA&t;(-1)&t;/* No data */
 DECL|macro|KBD_BAD_DATA
 mdefine_line|#define KBD_BAD_DATA&t;(-2)&t;/* Parity or other error */
-DECL|function|kbd_read_input
+DECL|function|kbd_read_data
 r_static
 r_int
 id|__init
-id|kbd_read_input
+id|kbd_read_data
 c_func
 (paren
 r_void
@@ -1673,10 +1701,9 @@ id|status
 suffix:semicolon
 id|status
 op_assign
-id|inb
+id|kbd_read_status
 c_func
 (paren
-id|KBD_STATUS_REG
 )paren
 suffix:semicolon
 r_if
@@ -1691,10 +1718,9 @@ r_int
 r_char
 id|data
 op_assign
-id|inb
+id|kbd_read_input
 c_func
 (paren
-id|KBD_DATA_REG
 )paren
 suffix:semicolon
 id|retval
@@ -1742,7 +1768,7 @@ r_do
 r_if
 c_cond
 (paren
-id|kbd_read_input
+id|kbd_read_data
 c_func
 (paren
 )paren
@@ -1780,7 +1806,7 @@ r_do
 r_int
 id|retval
 op_assign
-id|kbd_read_input
+id|kbd_read_data
 c_func
 (paren
 )paren
@@ -1814,15 +1840,12 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|kbd_write
+DECL|function|kbd_write_command_w
 r_static
 r_void
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-r_int
-id|address
-comma
 r_int
 id|data
 )paren
@@ -1845,12 +1868,54 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_command
 c_func
 (paren
 id|data
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|kbd_controller_lock
 comma
-id|address
+id|flags
+)paren
+suffix:semicolon
+)brace
+DECL|function|kbd_write_output_w
+r_static
+r_void
+id|kbd_write_output_w
+c_func
+(paren
+r_int
+id|data
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|kbd_controller_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|kb_wait
+c_func
+(paren
+)paren
+suffix:semicolon
+id|kbd_write_output
+c_func
+(paren
+id|data
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -1892,12 +1957,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_command
 c_func
 (paren
 id|KBD_CCMD_WRITE_MODE
-comma
-id|KBD_CNTL_REG
 )paren
 suffix:semicolon
 id|kb_wait
@@ -1905,12 +1968,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_output
 c_func
 (paren
 id|cmd
-comma
-id|KBD_DATA_REG
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -1939,11 +2000,9 @@ r_int
 id|status
 suffix:semicolon
 multiline_comment|/*&n;&t; * Test the keyboard interface.&n;&t; * This seems to be the only way to get it going.&n;&t; * If the test is successful a x55 is placed in the input buffer.&n;&t; */
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_SELF_TEST
 )paren
 suffix:semicolon
@@ -1961,11 +2020,9 @@ r_return
 l_string|&quot;Keyboard failed self test&quot;
 suffix:semicolon
 multiline_comment|/*&n;&t; * Perform a keyboard interface test.  This causes the controller&n;&t; * to test the keyboard clock and data lines.  The results of the&n;&t; * test are placed in the input buffer.&n;&t; */
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_KBD_TEST
 )paren
 suffix:semicolon
@@ -1983,22 +2040,18 @@ r_return
 l_string|&quot;Keyboard interface failed self test&quot;
 suffix:semicolon
 multiline_comment|/*&n;&t; * Enable the keyboard by allowing the keyboard clock to run.&n;&t; */
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_KBD_ENABLE
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Reset keyboard. If the read times out&n;&t; * then the assumption is that no keyboard is&n;&t; * plugged into the machine.&n;&t; * This defaults the keyboard to scan-code set 2.&n;&t; *&n;&t; * Set up to try again if the keyboard asks for RESEND.&n;&t; */
 r_do
 (brace
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 id|KBD_CMD_RESET
 )paren
 suffix:semicolon
@@ -2051,11 +2104,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Set keyboard controller mode. During this, the keyboard should be&n;&t; * in the disabled state.&n;&t; *&n;&t; * Set up to try again if the keyboard asks for RESEND.&n;&t; */
 r_do
 (brace
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 id|KBD_CMD_DISABLE
 )paren
 suffix:semicolon
@@ -2092,19 +2143,15 @@ c_loop
 l_int|1
 )paren
 suffix:semicolon
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_WRITE_MODE
 )paren
 suffix:semicolon
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 id|KBD_MODE_KBD_INT
 op_or
 id|KBD_MODE_SYS
@@ -2115,11 +2162,9 @@ id|KBD_MODE_KCC
 )paren
 suffix:semicolon
 multiline_comment|/* ibm powerpc portables need this to use scan-code set 1 -- Cort */
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_READ_MODE
 )paren
 suffix:semicolon
@@ -2138,11 +2183,9 @@ id|KBD_MODE_KCC
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * If the controller does not support conversion,&n;&t;&t; * Set the keyboard to scan-code set 1.&n;&t;&t; */
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 l_int|0xF0
 )paren
 suffix:semicolon
@@ -2151,11 +2194,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 l_int|0x01
 )paren
 suffix:semicolon
@@ -2165,11 +2206,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 id|KBD_CMD_ENABLE
 )paren
 suffix:semicolon
@@ -2187,11 +2226,9 @@ r_return
 l_string|&quot;Enable keyboard: no ACK&quot;
 suffix:semicolon
 multiline_comment|/*&n;&t; * Finally, set the typematic rate to maximum.&n;&t; */
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 id|KBD_CMD_SET_RATE
 )paren
 suffix:semicolon
@@ -2208,11 +2245,9 @@ id|KBD_REPLY_ACK
 r_return
 l_string|&quot;Set rate: no ACK&quot;
 suffix:semicolon
-id|kbd_write
+id|kbd_write_output_w
 c_func
 (paren
-id|KBD_DATA_REG
-comma
 l_int|0x00
 )paren
 suffix:semicolon
@@ -2242,6 +2277,11 @@ c_func
 r_void
 )paren
 (brace
+id|kbd_request_region
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Flush any pending input. */
 id|kbd_clear_input
 c_func
@@ -2286,18 +2326,10 @@ c_func
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Ok, finally allocate the IRQ, and off we go.. */
-id|request_irq
+id|kbd_request_irq
 c_func
 (paren
-id|KEYBOARD_IRQ
-comma
 id|keyboard_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;keyboard&quot;
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -2342,12 +2374,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_command
 c_func
 (paren
 id|KBD_CCMD_WRITE_AUX_OBUF
-comma
-id|KBD_CNTL_REG
 )paren
 suffix:semicolon
 id|kb_wait
@@ -2355,12 +2385,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_output
 c_func
 (paren
 l_int|0x5a
-comma
-id|KBD_DATA_REG
 )paren
 suffix:semicolon
 multiline_comment|/* 0x5a is a random dummy value. */
@@ -2370,10 +2398,9 @@ r_int
 r_char
 id|status
 op_assign
-id|inb
+id|kbd_read_status
 c_func
 (paren
-id|KBD_STATUS_REG
 )paren
 suffix:semicolon
 r_if
@@ -2387,10 +2414,9 @@ id|KBD_STAT_OBF
 (paren
 r_void
 )paren
-id|inb
+id|kbd_read_input
 c_func
 (paren
-id|KBD_DATA_REG
 )paren
 suffix:semicolon
 r_if
@@ -2472,12 +2498,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_command
 c_func
 (paren
 id|KBD_CCMD_WRITE_MOUSE
-comma
-id|KBD_CNTL_REG
 )paren
 suffix:semicolon
 id|kb_wait
@@ -2485,12 +2509,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_output
 c_func
 (paren
 id|val
-comma
-id|KBD_DATA_REG
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -2532,12 +2554,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_command
 c_func
 (paren
 id|KBD_CCMD_WRITE_MOUSE
-comma
-id|KBD_CNTL_REG
 )paren
 suffix:semicolon
 id|kb_wait
@@ -2545,12 +2565,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|kbd_write_output
 c_func
 (paren
 id|val
-comma
-id|KBD_DATA_REG
 )paren
 suffix:semicolon
 multiline_comment|/* we expect an ACK in response. */
@@ -2746,19 +2764,15 @@ id|AUX_INTS_OFF
 )paren
 suffix:semicolon
 multiline_comment|/* Disable controller ints */
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_MOUSE_DISABLE
 )paren
 suffix:semicolon
-id|free_irq
+id|aux_free_irq
 c_func
 (paren
-id|AUX_IRQ
-comma
 id|AUX_DEV
 )paren
 suffix:semicolon
@@ -2805,16 +2819,10 @@ multiline_comment|/* Flush input queue */
 r_if
 c_cond
 (paren
-id|request_irq
+id|aux_request_irq
 c_func
 (paren
-id|AUX_IRQ
-comma
 id|keyboard_interrupt
-comma
-id|SA_SHIRQ
-comma
-l_string|&quot;PS/2 Mouse&quot;
 comma
 id|AUX_DEV
 )paren
@@ -2828,11 +2836,9 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_MOUSE_ENABLE
 )paren
 suffix:semicolon
@@ -3328,11 +3334,9 @@ id|queue-&gt;proc_list
 )paren
 suffix:semicolon
 macro_line|#ifdef INITIALIZE_MOUSE
-id|kbd_write
+id|kbd_write_command_w
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_MOUSE_ENABLE
 )paren
 suffix:semicolon
@@ -3371,11 +3375,9 @@ id|AUX_SET_SCALE21
 suffix:semicolon
 multiline_comment|/* 2:1 scaling */
 macro_line|#endif /* INITIALIZE_MOUSE */
-id|kbd_write
+id|kbd_write_command
 c_func
 (paren
-id|KBD_CNTL_REG
-comma
 id|KBD_CCMD_MOUSE_DISABLE
 )paren
 suffix:semicolon

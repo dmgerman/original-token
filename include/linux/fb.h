@@ -132,6 +132,10 @@ DECL|macro|FB_ACCEL_NV4
 mdefine_line|#define FB_ACCEL_NV4&t;&t;28&t;/* nVidia RIVA TNT&t;&t;*/
 DECL|macro|FB_ACCEL_NV5
 mdefine_line|#define FB_ACCEL_NV5&t;&t;29&t;/* nVidia RIVA TNT2&t;&t;*/
+DECL|macro|FB_ACCEL_CT_6555x
+mdefine_line|#define FB_ACCEL_CT_6555x&t;30&t;/* C&amp;T 6555x&t;&t;&t;*/
+DECL|macro|FB_ACCEL_3DFX_BANSHEE
+mdefine_line|#define FB_ACCEL_3DFX_BANSHEE&t;31&t;/* 3Dfx Banshee&t;&t;&t;*/
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo

@@ -502,6 +502,23 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|tdfxfb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|tdfxfb_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 r_static
 r_struct
 (brace
@@ -540,6 +557,16 @@ id|fb_drivers
 id|__initdata
 op_assign
 (brace
+macro_line|#ifdef CONFIG_FB_3DFX
+(brace
+l_string|&quot;tdfx&quot;
+comma
+id|tdfxfb_init
+comma
+id|tdfxfb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_SGIVW
 (brace
 l_string|&quot;sgivw&quot;

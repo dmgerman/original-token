@@ -465,7 +465,7 @@ id|p-&gt;next_line
 )paren
 (brace
 multiline_comment|/*  Special (but often used) case: Moving whole lines can be&n;&t; *  done with memmove()&n;&t; */
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|p-&gt;screen_base
@@ -725,7 +725,7 @@ op_decrement
 id|rows
 )paren
 (brace
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dst
@@ -983,7 +983,7 @@ id|dst
 op_sub_assign
 id|bytes
 suffix:semicolon
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dst
@@ -1484,7 +1484,7 @@ id|conp
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*  Clears are split if the region starts at an odd column or&n;&t; *  end at an even column. These extra columns are spread&n;&t; *  across the interleaved planes. All in between can be&n;&t; *  cleared by normal mymemclear_small(), because both bytes of&n;&t; *  the single plane words are affected.&n;&t; */
+multiline_comment|/*  Clears are split if the region starts at an odd column or&n;&t; *  end at an even column. These extra columns are spread&n;&t; *  across the interleaved planes. All in between can be&n;&t; *  cleared by normal fb_memclear_small(), because both bytes of&n;&t; *  the single plane words are affected.&n;&t; */
 r_if
 c_cond
 (paren

@@ -18,11 +18,11 @@ macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 macro_line|#include &lt;video/fbcon-cfb16.h&gt;
@@ -691,7 +691,6 @@ op_star
 id|info
 )paren
 suffix:semicolon
-id|__openfirmware
 DECL|function|valkyrie_open
 r_static
 r_int

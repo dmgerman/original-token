@@ -584,6 +584,9 @@ id|sk
 comma
 r_int
 id|how
+comma
+r_int
+id|band
 )paren
 suffix:semicolon
 r_extern

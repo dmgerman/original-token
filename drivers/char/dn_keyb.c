@@ -3187,6 +3187,8 @@ c_func
 id|mouse_fasyncptr
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 )brace

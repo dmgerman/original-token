@@ -1876,6 +1876,8 @@ op_assign
 id|iunique
 c_func
 (paren
+id|dentry-&gt;d_inode-&gt;i_sb
+comma
 l_int|2
 )paren
 suffix:semicolon
@@ -2070,6 +2072,8 @@ op_assign
 id|iunique
 c_func
 (paren
+id|inode-&gt;i_sb
+comma
 l_int|2
 )paren
 suffix:semicolon
@@ -2173,6 +2177,8 @@ op_assign
 id|iunique
 c_func
 (paren
+id|inode-&gt;i_sb
+comma
 l_int|2
 )paren
 suffix:semicolon
@@ -3591,6 +3597,8 @@ op_assign
 id|iunique
 c_func
 (paren
+id|dir-&gt;i_sb
+comma
 l_int|2
 )paren
 suffix:semicolon
@@ -3702,6 +3710,8 @@ op_assign
 id|iunique
 c_func
 (paren
+id|dir-&gt;i_sb
+comma
 l_int|2
 )paren
 suffix:semicolon

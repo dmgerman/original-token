@@ -12,10 +12,20 @@ macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_X86_USE_3DNOW
+macro_line|#include &lt;asm/mmx.h&gt;
+DECL|macro|clear_page
+mdefine_line|#define clear_page(page)&t;mmx_clear_page(page)
+DECL|macro|copy_page
+mdefine_line|#define copy_page(to,from)&t;mmx_copy_page(to,from)
+macro_line|#else
+multiline_comment|/*&n; *&t;On older X86 processors its not a win to use MMX here it seems.&n; *&t;Maybe the K6-III ?&n; */
 DECL|macro|clear_page
 mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page
 mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
+macro_line|#endif
 macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte

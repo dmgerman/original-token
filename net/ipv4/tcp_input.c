@@ -4792,6 +4792,8 @@ c_func
 id|sk-&gt;socket
 comma
 l_int|1
+comma
+id|POLL_HUP
 )paren
 suffix:semicolon
 )brace
@@ -6618,6 +6620,8 @@ c_func
 id|sk-&gt;socket
 comma
 l_int|1
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 )brace
@@ -7122,6 +7126,16 @@ comma
 id|SIGURG
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|sk-&gt;socket
+comma
+l_int|3
+comma
+id|POLL_PRI
 )paren
 suffix:semicolon
 )brace
@@ -7764,6 +7778,8 @@ c_func
 id|sk-&gt;socket
 comma
 l_int|1
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 id|tcp_delack_estimator
@@ -9679,6 +9695,8 @@ c_func
 id|sk-&gt;socket
 comma
 l_int|0
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 )brace
@@ -10213,7 +10231,9 @@ c_func
 (paren
 id|sk-&gt;socket
 comma
-l_int|1
+l_int|0
+comma
+id|POLL_OUT
 )paren
 suffix:semicolon
 )brace

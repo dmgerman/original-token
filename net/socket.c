@@ -2226,6 +2226,9 @@ id|sock
 comma
 r_int
 id|how
+comma
+r_int
+id|band
 )paren
 (brace
 r_if
@@ -2303,11 +2306,26 @@ c_func
 id|sock-&gt;fasync_list
 comma
 id|SIGIO
+comma
+id|band
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* read_unlock(&amp;sock-&gt;sk-&gt;callback_lock); */
 r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|kill_fasync
+c_func
+(paren
+id|sock-&gt;fasync_list
+comma
+id|SIGURG
+comma
+id|band
+)paren
 suffix:semicolon
 )brace
 r_return

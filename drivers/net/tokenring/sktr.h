@@ -11,6 +11,10 @@ DECL|macro|TR_RCF_LONGEST_FRAME_MASK
 mdefine_line|#define TR_RCF_LONGEST_FRAME_MASK 0x0070
 DECL|macro|TR_RCF_FRAME4K
 mdefine_line|#define TR_RCF_FRAME4K 0x0030
+DECL|macro|SK_ISA
+mdefine_line|#define SK_ISA 0
+DECL|macro|SK_PCI
+mdefine_line|#define SK_PCI 1
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*  Bit order for adapter communication with DMA&t;&t;    */
 multiline_comment|/*  --------------------------------------------------------------  */
@@ -763,7 +767,7 @@ DECL|macro|TX_STRIP_FS
 mdefine_line|#define TX_STRIP_FS&t;&t;0xFF00  /* R: reserved.&n;&t;&t;&t;&t;&t; * C: if no Transmission Error,&n;&t;&t;&t;&t;&t; * field contains copy of FS byte after&n;&t;&t;&t;&t;&t; * stripping of frame.&n;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n; * Structure of Transmit Parameter Lists (TPLs) (only one frame every TPL,&n; * but possibly multiple TPLs for one frame) the length of the TPLs has to be&n; * initialized in the OPL. (OPEN parameter list)&n; */
 DECL|macro|TPL_NUM
-mdefine_line|#define TPL_NUM&t;&t;3&t;/* Number of Transmit Parameter Lists.&n;&t;&t;&t;&t; * !! MUST BE &gt;= 3 !!&n;&t;&t;&t;&t; */
+mdefine_line|#define TPL_NUM&t;&t;9&t;/* Number of Transmit Parameter Lists.&n;&t;&t;&t;&t; * !! MUST BE &gt;= 3 !!&n;&t;&t;&t;&t; */
 macro_line|#pragma pack(1)
 DECL|typedef|TPL
 r_typedef
@@ -1243,6 +1247,11 @@ DECL|member|CMDqueue
 r_int
 r_int
 id|CMDqueue
+suffix:semicolon
+DECL|member|DeviceType
+r_int
+r_int
+id|DeviceType
 suffix:semicolon
 DECL|member|AdapterOpenFlag
 r_int

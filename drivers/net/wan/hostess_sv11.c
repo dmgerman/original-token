@@ -984,7 +984,7 @@ c_func
 id|sv-&gt;name
 )paren
 op_eq
-l_int|NULL
+l_int|0
 )paren
 (brace
 r_struct

@@ -103,6 +103,32 @@ r_int
 id|sense
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|__init
+id|mac_find_mode
+c_func
+(paren
+r_struct
+id|fb_var_screeninfo
+op_star
+id|var
+comma
+r_struct
+id|fb_info
+op_star
+id|info
+comma
+r_const
+r_char
+op_star
+id|mode_option
+comma
+r_int
+r_int
+id|default_bpp
+)paren
+suffix:semicolon
 multiline_comment|/*&n;     *  Addresses in NVRAM where video mode and pixel size are stored.&n;     */
 DECL|macro|NV_VMODE
 mdefine_line|#define NV_VMODE&t;&t;0x140f

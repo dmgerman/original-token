@@ -2,6 +2,8 @@ multiline_comment|/*&n; *  linux/fs/fcntl.c&n; *&n; *  Copyright (C) 1991, 1992 
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;asm/poll.h&gt;
+macro_line|#include &lt;asm/siginfo.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_int
@@ -1062,6 +1064,54 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/* Table to convert sigio signal codes into poll band bitmaps */
+DECL|variable|band_table
+r_static
+r_int
+id|band_table
+(braket
+id|NSIGPOLL
+op_plus
+l_int|1
+)braket
+op_assign
+(brace
+op_complement
+l_int|0
+comma
+id|POLLIN
+op_or
+id|POLLRDNORM
+comma
+multiline_comment|/* POLL_IN */
+id|POLLOUT
+op_or
+id|POLLWRNORM
+op_or
+id|POLLWRBAND
+comma
+multiline_comment|/* POLL_OUT */
+id|POLLIN
+op_or
+id|POLLRDNORM
+op_or
+id|POLLMSG
+comma
+multiline_comment|/* POLL_MSG */
+id|POLLERR
+comma
+multiline_comment|/* POLL_ERR */
+id|POLLPRI
+op_or
+id|POLLRDBAND
+comma
+multiline_comment|/* POLL_PRI */
+id|POLLHUP
+op_or
+id|POLLERR
+multiline_comment|/* POLL_HUP */
+)brace
+suffix:semicolon
 DECL|function|send_sigio_to_task
 r_static
 r_void
@@ -1082,6 +1132,9 @@ r_struct
 id|fasync_struct
 op_star
 id|fa
+comma
+r_int
+id|reason
 )paren
 (brace
 r_if
@@ -1141,15 +1194,27 @@ l_int|0
 suffix:semicolon
 id|si.si_code
 op_assign
-id|SI_SIGIO
+id|reason
 suffix:semicolon
-id|si.si_pid
+r_if
+c_cond
+(paren
+id|reason
+template_param
+id|NSIGPOLL
+)paren
+id|si.si_band
 op_assign
-id|fown-&gt;pid
+op_complement
+l_int|0
 suffix:semicolon
-id|si.si_uid
+r_else
+id|si.si_band
 op_assign
-id|fown-&gt;uid
+id|band_table
+(braket
+id|reason
+)braket
 suffix:semicolon
 id|si.si_fd
 op_assign
@@ -1203,6 +1268,9 @@ r_struct
 id|fasync_struct
 op_star
 id|fa
+comma
+r_int
+id|band
 )paren
 (brace
 r_struct
@@ -1250,6 +1318,8 @@ comma
 id|fown
 comma
 id|fa
+comma
+id|band
 )paren
 suffix:semicolon
 r_goto
@@ -1296,6 +1366,8 @@ comma
 id|fown
 comma
 id|fa
+comma
+id|band
 )paren
 suffix:semicolon
 )brace
@@ -1321,6 +1393,9 @@ id|fa
 comma
 r_int
 id|sig
+comma
+r_int
+id|band
 )paren
 (brace
 r_while
@@ -1357,10 +1432,22 @@ op_assign
 op_amp
 id|fa-&gt;fa_file-&gt;f_owner
 suffix:semicolon
+multiline_comment|/* Don&squot;t send SIGURG to processes which have not set a&n;&t;&t;   queued signum: SIGURG has its own default signalling&n;&t;&t;   mechanism. */
 r_if
 c_cond
 (paren
 id|fown-&gt;pid
+op_logical_and
+op_logical_neg
+(paren
+id|sig
+op_eq
+id|SIGURG
+op_logical_and
+id|fown-&gt;signum
+op_eq
+l_int|0
+)paren
 )paren
 id|send_sigio
 c_func
@@ -1368,6 +1455,8 @@ c_func
 id|fown
 comma
 id|fa
+comma
+id|band
 )paren
 suffix:semicolon
 id|fa

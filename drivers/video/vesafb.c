@@ -2319,6 +2319,17 @@ id|video_bpp
 op_assign
 id|screen_info.lfb_depth
 suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|15
+op_eq
+id|video_bpp
+)paren
+id|video_bpp
+op_assign
+l_int|16
+suffix:semicolon
 id|video_width
 op_assign
 id|screen_info.lfb_width

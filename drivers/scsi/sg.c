@@ -4488,6 +4488,8 @@ c_func
 id|sfp-&gt;async_qp
 comma
 id|SIGPOLL
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 )brace

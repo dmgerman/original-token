@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * SyncLink Multiprotocol Serial Adapter Driver&n; *&n; * ==FILEDATE 19990523==&n; *&n; * Copyright (C) 1998 by Microgate Corporation&n; * &n; * Redistribution of this file is permitted under &n; * the terms of the GNU Public License (GPL)&n; */
+multiline_comment|/*&n; * SyncLink Multiprotocol Serial Adapter Driver&n; *&n; * ==FILEDATE 19990810==&n; *&n; * Copyright (C) 1998 by Microgate Corporation&n; * &n; * Redistribution of this file is permitted under &n; * the terms of the GNU Public License (GPL)&n; */
 macro_line|#ifndef _SYNCLINK_H_
 DECL|macro|_SYNCLINK_H_
 mdefine_line|#define _SYNCLINK_H_
@@ -73,9 +73,11 @@ mdefine_line|#define BIT30&t;0x40000000
 DECL|macro|BIT31
 mdefine_line|#define BIT31&t;0x80000000
 DECL|macro|HDLC_MAX_FRAME_SIZE
-mdefine_line|#define HDLC_MAX_FRAME_SIZE&t;4096
+mdefine_line|#define HDLC_MAX_FRAME_SIZE&t;65535
 DECL|macro|MAX_ASYNC_TRANSMIT
 mdefine_line|#define MAX_ASYNC_TRANSMIT&t;4096
+DECL|macro|MAX_ASYNC_BUFFER_SIZE
+mdefine_line|#define MAX_ASYNC_BUFFER_SIZE&t;4096
 DECL|macro|ASYNC_PARITY_NONE
 mdefine_line|#define ASYNC_PARITY_NONE&t;&t;0
 DECL|macro|ASYNC_PARITY_EVEN
@@ -105,17 +107,17 @@ mdefine_line|#define HDLC_FLAG_RXC_DPLL&t;&t;0x0100
 DECL|macro|HDLC_FLAG_RXC_BRG
 mdefine_line|#define HDLC_FLAG_RXC_BRG&t;&t;0x0200
 DECL|macro|HDLC_FLAG_RXC_TXCPIN
-mdefine_line|#define HDLC_FLAG_RXC_TXCPIN&t;0x8000
+mdefine_line|#define HDLC_FLAG_RXC_TXCPIN&t;&t;0x8000
 DECL|macro|HDLC_FLAG_RXC_RXCPIN
-mdefine_line|#define HDLC_FLAG_RXC_RXCPIN&t;0x0000
+mdefine_line|#define HDLC_FLAG_RXC_RXCPIN&t;&t;0x0000
 DECL|macro|HDLC_FLAG_TXC_DPLL
 mdefine_line|#define HDLC_FLAG_TXC_DPLL&t;&t;0x0400
 DECL|macro|HDLC_FLAG_TXC_BRG
 mdefine_line|#define HDLC_FLAG_TXC_BRG&t;&t;0x0800
 DECL|macro|HDLC_FLAG_TXC_TXCPIN
-mdefine_line|#define HDLC_FLAG_TXC_TXCPIN&t;0x0000
+mdefine_line|#define HDLC_FLAG_TXC_TXCPIN&t;&t;0x0000
 DECL|macro|HDLC_FLAG_TXC_RXCPIN
-mdefine_line|#define HDLC_FLAG_TXC_RXCPIN&t;0x0008
+mdefine_line|#define HDLC_FLAG_TXC_RXCPIN&t;&t;0x0008
 DECL|macro|HDLC_FLAG_DPLL_DIV8
 mdefine_line|#define HDLC_FLAG_DPLL_DIV8&t;&t;0x1000
 DECL|macro|HDLC_FLAG_DPLL_DIV16
@@ -128,6 +130,8 @@ DECL|macro|HDLC_CRC_NONE
 mdefine_line|#define HDLC_CRC_NONE&t;&t;&t;0
 DECL|macro|HDLC_CRC_16_CCITT
 mdefine_line|#define HDLC_CRC_16_CCITT&t;&t;1
+DECL|macro|HDLC_CRC_32_CCITT
+mdefine_line|#define HDLC_CRC_32_CCITT&t;&t;2
 DECL|macro|HDLC_TXIDLE_FLAGS
 mdefine_line|#define HDLC_TXIDLE_FLAGS&t;&t;0
 DECL|macro|HDLC_TXIDLE_ALT_ZEROS_ONES
@@ -237,7 +241,7 @@ r_int
 r_int
 id|crc_type
 suffix:semicolon
-multiline_comment|/* None, CRC16 or CRC16-CCITT */
+multiline_comment|/* None, CRC16-CCITT, or CRC32-CCITT */
 DECL|member|preamble_length
 r_int
 r_char

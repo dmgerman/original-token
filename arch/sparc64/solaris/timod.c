@@ -630,6 +630,8 @@ c_func
 id|sock-&gt;fasync_list
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 id|SOLD

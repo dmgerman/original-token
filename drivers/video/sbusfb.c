@@ -1631,7 +1631,7 @@ id|scr_size
 op_div_assign
 l_int|8
 suffix:semicolon
-id|mymemset
+id|fb_memset255
 (paren
 id|fb_base
 comma
@@ -1642,7 +1642,7 @@ op_div
 l_int|8
 )paren
 suffix:semicolon
-id|mymemset
+id|fb_memset255
 (paren
 id|fb_base
 op_plus
@@ -1703,7 +1703,7 @@ comma
 id|h
 op_increment
 )paren
-id|mymemset
+id|fb_memset255
 (paren
 id|q
 comma

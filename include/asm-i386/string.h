@@ -1437,8 +1437,138 @@ macro_line|#undef COMMON
 )brace
 DECL|macro|__HAVE_ARCH_MEMCPY
 mdefine_line|#define __HAVE_ARCH_MEMCPY
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_X86_USE_3DNOW
+multiline_comment|/* All this just for in_interrupt() ... */
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/mmx.h&gt;
+multiline_comment|/*&n; *&t;This CPU favours 3DNow strongly (eg AMD Athlon)&n; */
+DECL|function|__constant_memcpy3d
+r_extern
+r_inline
+r_void
+op_star
+id|__constant_memcpy3d
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|512
+op_logical_or
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+id|__constant_memcpy
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+r_return
+id|_mmx_memcpy
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+DECL|function|__memcpy3d
+r_extern
+id|__inline__
+r_void
+op_star
+id|__memcpy3d
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|512
+op_logical_or
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+id|__memcpy
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+r_return
+id|_mmx_memcpy
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+DECL|macro|memcpy
+mdefine_line|#define memcpy(t, f, n) &bslash;&n;(__builtin_constant_p(n) ? &bslash;&n; __constant_memcpy3d((t),(f),(n)) : &bslash;&n; __memcpy3d((t),(f),(n)))
+macro_line|#else
+multiline_comment|/*&n; *&t;No 3D Now!&n; */
 DECL|macro|memcpy
 mdefine_line|#define memcpy(t, f, n) &bslash;&n;(__builtin_constant_p(n) ? &bslash;&n; __constant_memcpy((t),(f),(n)) : &bslash;&n; __memcpy((t),(f),(n)))
+macro_line|#endif
 DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|function|memmove

@@ -17,6 +17,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/mmx.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -330,13 +331,36 @@ c_func
 id|__generic_copy_to_user
 )paren
 suffix:semicolon
-DECL|variable|strlen_user
+DECL|variable|strnlen_user
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|strlen_user
+id|strnlen_user
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_X86_USE_3DNOW
+DECL|variable|_mmx_memcpy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_mmx_memcpy
+)paren
+suffix:semicolon
+DECL|variable|mmx_clear_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mmx_clear_page
+)paren
+suffix:semicolon
+DECL|variable|mmx_copy_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mmx_copy_page
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __SMP__
 DECL|variable|cpu_data
 id|EXPORT_SYMBOL

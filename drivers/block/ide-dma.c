@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#ifdef IDEDMA_NEW_DRIVE_LISTINGS
+macro_line|#ifdef CONFIG_IDEDMA_NEW_DRIVE_LISTINGS
 DECL|struct|drive_list_entry
 r_struct
 id|drive_list_entry
@@ -195,7 +195,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else /* !IDEDMA_NEW_DRIVE_LISTINGS */
+macro_line|#else /* !CONFIG_IDEDMA_NEW_DRIVE_LISTINGS */
 multiline_comment|/*&n; * good_dma_drives() lists the model names (from &quot;hdparm -i&quot;)&n; * of drives which do not support mode2 DMA but which are&n; * known to work fine with this interface under Linux.&n; */
 DECL|variable|good_dma_drives
 r_const
@@ -243,7 +243,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#endif /* IDEDMA_NEW_DRIVE_LISTINGS */
+macro_line|#endif /* CONFIG_IDEDMA_NEW_DRIVE_LISTINGS */
 multiline_comment|/*&n; * Our Physical Region Descriptor (PRD) table should be large enough&n; * to handle the biggest I/O request we are likely to see.  Since requests&n; * can have no more than 256 sectors, and since the typical blocksize is&n; * two or more sectors, we could get by with a limit of 128 entries here for&n; * the usual worst case.  Most requests seem to include some contiguous blocks,&n; * further reducing the number of table entries required.&n; *&n; * The driver reverts to PIO mode for individual requests that exceed&n; * this limit (possible with 512 byte blocksizes, eg. MSDOS f/s), so handling&n; * 100% of all crazy scenarios here is not necessary.&n; *&n; * As it turns out though, we must allocate a full 4KB page for this,&n; * so the two PRD tables (ide0 &amp; ide1) will each get half of that,&n; * allowing each to have about 256 entries (8 bytes each) from this.&n; */
 DECL|macro|PRD_BYTES
 mdefine_line|#define PRD_BYTES&t;8
@@ -842,7 +842,7 @@ id|id
 op_assign
 id|drive-&gt;id
 suffix:semicolon
-macro_line|#ifdef IDEDMA_NEW_DRIVE_LISTINGS
+macro_line|#ifdef CONFIG_IDEDMA_NEW_DRIVE_LISTINGS
 r_if
 c_cond
 (paren
@@ -891,7 +891,7 @@ r_return
 id|blacklist
 suffix:semicolon
 )brace
-macro_line|#else /* !IDEDMA_NEW_DRIVE_LISTINGS */
+macro_line|#else /* !CONFIG_IDEDMA_NEW_DRIVE_LISTINGS */
 r_const
 r_char
 op_star
@@ -980,7 +980,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* IDEDMA_NEW_DRIVE_LISTINGS */
+macro_line|#endif /* CONFIG_IDEDMA_NEW_DRIVE_LISTINGS */
 r_return
 l_int|0
 suffix:semicolon

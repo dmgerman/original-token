@@ -3354,7 +3354,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|0
+id|first
 suffix:semicolon
 id|i
 OL

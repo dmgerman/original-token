@@ -1612,6 +1612,17 @@ c_func
 id|sock-&gt;fasync_list
 comma
 id|sig
+comma
+(paren
+id|sig
+op_eq
+id|SIGURG
+)paren
+ques
+c_cond
+id|POLL_PRI
+suffix:colon
+id|POLL_IN
 )paren
 suffix:semicolon
 )brace

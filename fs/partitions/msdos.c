@@ -1447,22 +1447,6 @@ op_increment
 (brace
 multiline_comment|/* Do this only once per disk */
 multiline_comment|/*&n;&t;&t; * Look for various forms of IDE disk geometry translation&n;&t;&t; */
-r_extern
-r_int
-id|ide_xlate_1024
-c_func
-(paren
-id|kdev_t
-comma
-r_int
-comma
-r_int
-comma
-r_const
-r_char
-op_star
-)paren
-suffix:semicolon
 r_int
 r_int
 id|sig

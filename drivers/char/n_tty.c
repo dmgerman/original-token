@@ -2891,6 +2891,8 @@ c_func
 id|tty-&gt;fasync
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 r_if
@@ -3399,6 +3401,8 @@ c_func
 id|tty-&gt;fasync
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 r_if
@@ -4247,6 +4251,11 @@ c_cond
 id|n
 )paren
 (brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|copy_to_user

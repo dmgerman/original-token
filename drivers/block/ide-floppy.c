@@ -6441,7 +6441,7 @@ comma
 op_minus
 l_int|1
 comma
-id|TYPE_SHORT
+id|TYPE_INT
 comma
 l_int|0
 comma

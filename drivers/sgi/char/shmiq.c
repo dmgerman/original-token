@@ -250,6 +250,8 @@ dot
 id|fasync
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 id|wake_up_interruptible

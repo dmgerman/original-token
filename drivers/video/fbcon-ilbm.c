@@ -93,7 +93,7 @@ id|width
 op_eq
 id|p-&gt;next_plane
 )paren
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|p-&gt;screen_base
@@ -203,7 +203,7 @@ op_decrement
 suffix:semicolon
 )paren
 (brace
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dest
@@ -293,7 +293,7 @@ id|dest
 op_sub_assign
 id|p-&gt;next_plane
 suffix:semicolon
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dest
@@ -419,7 +419,7 @@ id|bg
 op_amp
 l_int|1
 )paren
-id|mymemset
+id|fb_memset255
 c_func
 (paren
 id|dest
@@ -428,7 +428,7 @@ id|width
 )paren
 suffix:semicolon
 r_else
-id|mymemclear
+id|fb_memclear
 c_func
 (paren
 id|dest

@@ -318,6 +318,8 @@ id|kill_fasync
 id|sunmouse.fasync
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 id|wake_up_interruptible
@@ -1080,6 +1082,8 @@ id|kill_fasync
 id|sunmouse.fasync
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 id|wake_up_interruptible

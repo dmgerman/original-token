@@ -4,6 +4,9 @@ macro_line|#ifndef _I386_KEYBOARD_H
 DECL|macro|_I386_KEYBOARD_H
 mdefine_line|#define _I386_KEYBOARD_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;1
 DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
@@ -102,6 +105,30 @@ DECL|macro|kbd_sysrq_xlate
 mdefine_line|#define kbd_sysrq_xlate&t;&t;pckbd_sysrq_xlate
 DECL|macro|SYSRQ_KEY
 mdefine_line|#define SYSRQ_KEY 0x54
+multiline_comment|/* resource allocation */
+DECL|macro|kbd_request_region
+mdefine_line|#define kbd_request_region()
+DECL|macro|kbd_request_irq
+mdefine_line|#define kbd_request_irq(handler) request_irq(KEYBOARD_IRQ, handler, 0, &bslash;&n;                                             &quot;keyboard&quot;, NULL)
+multiline_comment|/* How to access the keyboard macros on this platform.  */
+DECL|macro|kbd_read_input
+mdefine_line|#define kbd_read_input() inb(KBD_DATA_REG)
+DECL|macro|kbd_read_status
+mdefine_line|#define kbd_read_status() inb(KBD_STATUS_REG)
+DECL|macro|kbd_write_output
+mdefine_line|#define kbd_write_output(val) outb(val, KBD_DATA_REG)
+DECL|macro|kbd_write_command
+mdefine_line|#define kbd_write_command(val) outb(val, KBD_CNTL_REG)
+multiline_comment|/* Some stoneage hardware needs delays after some operations.  */
+DECL|macro|kbd_pause
+mdefine_line|#define kbd_pause() do { } while(0)
+multiline_comment|/*&n; * Machine specific bits for the PS/2 driver&n; */
+DECL|macro|AUX_IRQ
+mdefine_line|#define AUX_IRQ 12
+DECL|macro|aux_request_irq
+mdefine_line|#define aux_request_irq(hand, dev_id)&t;&t;&t;&t;&t;&bslash;&n;&t;request_irq(AUX_IRQ, hand, SA_SHIRQ, &quot;PS/2 Mouse&quot;, dev_id)
+DECL|macro|aux_free_irq
+mdefine_line|#define aux_free_irq(dev_id) free_irq(AUX_IRQ, dev_id)
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* __ASMi386_KEYBOARD_H */
+macro_line|#endif /* _I386_KEYBOARD_H */
 eof

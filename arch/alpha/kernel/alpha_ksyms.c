@@ -681,11 +681,11 @@ c_func
 id|__strncpy_from_user
 )paren
 suffix:semicolon
-DECL|variable|__strlen_user
+DECL|variable|__strnlen_user
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__strlen_user
+id|__strnlen_user
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The following are specially called from the semaphore assembly stubs.&n; */

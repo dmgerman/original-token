@@ -5208,7 +5208,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Initialization&n; */
 DECL|function|virgefb_init
-r_void
+r_int
 id|__init
 id|virgefb_init
 c_func

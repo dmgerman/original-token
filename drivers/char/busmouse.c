@@ -429,6 +429,8 @@ c_func
 id|mse-&gt;fasyncptr
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 )brace
@@ -1655,13 +1657,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MAC_MOUSE
-id|mac_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_MOUSE
 id|sun_mouse_init
 c_func
@@ -1669,7 +1664,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ADBMOUSE
+macro_line|#ifdef CONFIG_ADB_MOUSE
 id|adb_mouse_init
 c_func
 (paren

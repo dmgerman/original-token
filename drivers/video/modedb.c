@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG
+macro_line|#undef DEBUG
 DECL|macro|name_matches
 mdefine_line|#define name_matches(v, s, l) &bslash;&n;    ((v).name &amp;&amp; !strncmp((s), (v).name, (l)) &amp;&amp; strlen((v).name) == (l))
 DECL|macro|res_matches

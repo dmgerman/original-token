@@ -78,7 +78,7 @@ DECL|macro|PPSETPHASE
 mdefine_line|#define PPSETPHASE&t;_IOW(PP_IOCTL, 0x94, int)
 multiline_comment|/* Set and get port timeout (struct timeval&squot;s) */
 DECL|macro|PPGETTIME
-mdefine_line|#define PPGETTIME&t;_IOW(PP_IOCTL, 0x95, struct timeval)
+mdefine_line|#define PPGETTIME&t;_IOR(PP_IOCTL, 0x95, struct timeval)
 DECL|macro|PPSETTIME
-mdefine_line|#define PPSETTIME&t;_IOR(PP_IOCTL, 0x96, struct timeval)
+mdefine_line|#define PPSETTIME&t;_IOW(PP_IOCTL, 0x96, struct timeval)
 eof

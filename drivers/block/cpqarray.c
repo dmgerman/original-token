@@ -994,6 +994,7 @@ r_int
 id|i
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 r_struct
 id|proc_dir_entry
 op_star
@@ -1071,6 +1072,7 @@ id|hba
 id|i
 )braket
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 multiline_comment|/*&n; * Report information about this controller.&n; */
 DECL|function|ida_proc_get_info
@@ -1869,6 +1871,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 id|remove_proc_entry
 c_func
 (paren
@@ -1878,6 +1881,7 @@ op_amp
 id|proc_root
 )paren
 suffix:semicolon
+macro_line|#endif
 id|kfree
 c_func
 (paren

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/vt_buffer.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*                                  &n;     *  `switch&squot; for the Low Level Operations&n;     */
 DECL|struct|display_switch
 r_struct
@@ -344,12 +345,12 @@ multiline_comment|/* ===========================================================
 multiline_comment|/* Those of a delicate disposition might like to skip the next couple of&n; * pages.&n; *&n; * These functions are drop in replacements for memmove and&n; * memset(_, 0, _). However their five instances add at least a kilobyte&n; * to the object file. You have been warned.&n; *&n; * Not a great fan of assembler for the sake of it, but I think&n; * that these routines are at least 10 times faster than their C&n; * equivalents for large blits, and that&squot;s important to the lowest level of&n; * a graphics driver. Question is whether some scheme with the blitter&n; * would be faster. I suspect not for simple text system - not much&n; * asynchrony.&n; *&n; * Code is very simple, just gruesome expansion. Basic strategy is to&n; * increase data moved/cleared at each step to 16 bytes to reduce&n; * instruction per data move overhead. movem might be faster still&n; * For more than 15 bytes, we try to align the write direction on a&n; * longword boundary to get maximum speed. This is even more gruesome.&n; * Unaligned read/write used requires 68020+ - think this is a problem?&n; *&n; * Sorry!&n; */
 multiline_comment|/* ++roman: I&squot;ve optimized Robert&squot;s original versions in some minor&n; * aspects, e.g. moveq instead of movel, let gcc choose the registers,&n; * use movem in some places...&n; * For other modes than 1 plane, lots of more such assembler functions&n; * were needed (e.g. the ones using movep or expanding color values).&n; */
 multiline_comment|/* ++andreas: more optimizations:&n;   subl #65536,d0 replaced by clrw d0; subql #1,d0 for dbcc&n;   addal is faster than addaw&n;   movep is rather expensive compared to ordinary move&squot;s&n;   some functions rewritten in C for clarity, no speed loss */
-DECL|function|mymemclear_small
+DECL|function|fb_memclear_small
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemclear_small
+id|fb_memclear_small
 c_func
 (paren
 r_void
@@ -433,12 +434,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|mymemclear
+DECL|function|fb_memclear
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemclear
+id|fb_memclear
 c_func
 (paren
 r_void
@@ -555,12 +556,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|mymemset
+DECL|function|fb_memset255
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemset
+id|fb_memset255
 c_func
 (paren
 r_void
@@ -648,12 +649,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|mymemmove
+DECL|function|fb_memmove
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 r_void
@@ -1148,12 +1149,12 @@ r_return
 id|s
 suffix:semicolon
 )brace
-DECL|function|mymemset
+DECL|function|fb_memset255
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemset
+id|fb_memset255
 c_func
 (paren
 r_void
@@ -1176,12 +1177,12 @@ id|count
 )paren
 suffix:semicolon
 )brace
-DECL|function|mymemclear
+DECL|function|fb_memclear
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemclear
+id|fb_memclear
 c_func
 (paren
 r_void
@@ -1204,12 +1205,12 @@ id|count
 )paren
 suffix:semicolon
 )brace
-DECL|function|mymemclear_small
+DECL|function|fb_memclear_small
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemclear_small
+id|fb_memclear_small
 c_func
 (paren
 r_void
@@ -1347,12 +1348,12 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
-DECL|function|mymemmove
+DECL|function|fb_memmove
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 r_char
@@ -1383,12 +1384,12 @@ id|dst
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|function|mymemclear_small
+DECL|function|fb_memclear_small
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemclear_small
+id|fb_memclear_small
 c_func
 (paren
 r_void
@@ -1411,12 +1412,12 @@ id|count
 )paren
 suffix:semicolon
 )brace
-DECL|function|mymemclear
+DECL|function|fb_memclear
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemclear
+id|fb_memclear
 c_func
 (paren
 r_void
@@ -1439,12 +1440,12 @@ id|count
 )paren
 suffix:semicolon
 )brace
-DECL|function|mymemset
+DECL|function|fb_memset255
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemset
+id|fb_memset255
 c_func
 (paren
 r_void
@@ -1636,12 +1637,12 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 )brace
-DECL|function|mymemmove
+DECL|function|fb_memmove
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 r_char
@@ -1673,12 +1674,12 @@ suffix:semicolon
 )brace
 macro_line|#else /* !i386 */
 multiline_comment|/*&n;     *  Anyone who&squot;d like to write asm functions for other CPUs?&n;     *   (Why are these functions better than those from include/asm/string.h?)&n;     */
-DECL|function|mymemmove
+DECL|function|fb_memmove
 r_static
 id|__inline__
 r_void
 op_star
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 r_void
@@ -1739,7 +1740,23 @@ suffix:semicolon
 )brace
 macro_line|#endif /* !i386 */
 macro_line|#endif
-macro_line|#if defined(__i386__) || defined(__alpha__)
+macro_line|#if defined(__sparc__)
+multiline_comment|/* We map all of our framebuffers such that big-endian accesses&n; * are what we want, so the following is sufficient.&n; */
+DECL|macro|fb_readb
+mdefine_line|#define fb_readb sbus_readb
+DECL|macro|fb_readw
+mdefine_line|#define fb_readw sbus_readw
+DECL|macro|fb_readl
+mdefine_line|#define fb_readl sbus_readl
+DECL|macro|fb_writeb
+mdefine_line|#define fb_writeb sbus_writeb
+DECL|macro|fb_writew
+mdefine_line|#define fb_writew sbus_writew
+DECL|macro|fb_writel
+mdefine_line|#define fb_writel sbus_writel
+DECL|macro|fb_memset
+mdefine_line|#define fb_memset sbus_memset_io
+macro_line|#elif defined(__i386__) || defined(__alpha__)
 DECL|macro|fb_readb
 mdefine_line|#define fb_readb __raw_readb
 DECL|macro|fb_readw
@@ -1752,6 +1769,8 @@ DECL|macro|fb_writew
 mdefine_line|#define fb_writew __raw_writew
 DECL|macro|fb_writel
 mdefine_line|#define fb_writel __raw_writel
+DECL|macro|fb_memset
+mdefine_line|#define fb_memset memset_io
 macro_line|#else
 DECL|macro|fb_readb
 mdefine_line|#define fb_readb(addr) (*(volatile u8 *) (addr))
@@ -1765,6 +1784,8 @@ DECL|macro|fb_writew
 mdefine_line|#define fb_writew(b,addr) (*(volatile u16 *) (addr) = (b))
 DECL|macro|fb_writel
 mdefine_line|#define fb_writel(b,addr) (*(volatile u32 *) (addr) = (b))
+DECL|macro|fb_memset
+mdefine_line|#define fb_memset memset
 macro_line|#endif
 macro_line|#endif /* _VIDEO_FBCON_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: atyfb.c,v 1.122 1999/09/06 20:44:08 geert Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*  $Id: atyfb.c,v 1.126 1999/09/16 18:46:23 geert Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/******************************************************************************&n;&n;  TODO:&n;&n;    - cursor support on all cards and all ramdacs.&n;    - cursor parameters controlable via ioctl()s.&n;    - guess PLL and MCLK based on the original PLL register values initialized&n;      by the BIOS or Open Firmware (if they are initialized).&n;&n;&t;&t;&t;&t;&t;&t;(Anyone to help with this?)&n;&n;******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -16,19 +16,21 @@ macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef __powerpc__
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;video/macmodes.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_NVRAM
+macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#endif
 macro_line|#ifdef __sparc__
 macro_line|#include &lt;asm/pbm.h&gt;
@@ -622,8 +624,61 @@ r_int
 id|consolecnt
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+DECL|member|save_framebuffer
+r_int
+r_char
+op_star
+id|save_framebuffer
+suffix:semicolon
+DECL|member|save_pll
+r_int
+r_int
+id|save_pll
+(braket
+l_int|64
+)braket
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+r_int
+id|aty_sleep_notify
+c_func
+(paren
+r_struct
+id|pmu_sleep_notifier
+op_star
+id|self
+comma
+r_int
+id|when
+)paren
+suffix:semicolon
+DECL|variable|aty_sleep_notifier
+r_static
+r_struct
+id|pmu_sleep_notifier
+id|aty_sleep_notifier
+op_assign
+(brace
+id|aty_sleep_notify
+comma
+id|SLEEP_LEVEL_VIDEO
+comma
+)brace
+suffix:semicolon
+DECL|variable|first_display
+r_static
+r_struct
+id|fb_info_aty
+op_star
+id|first_display
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;     *  Frame buffer device API&n;     */
 r_static
 r_int
@@ -2026,7 +2081,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PMAC
 r_static
 r_int
 id|read_aty_sense
@@ -2187,7 +2242,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_NVRAM
 DECL|variable|__initdata
 r_static
 r_int
@@ -2204,6 +2260,24 @@ id|__initdata
 op_assign
 id|CMODE_NVRAM
 suffix:semicolon
+macro_line|#else
+DECL|variable|__initdata
+r_static
+r_int
+id|default_vmode
+id|__initdata
+op_assign
+id|VMODE_CHOOSE
+suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_int
+id|default_cmode
+id|__initdata
+op_assign
+id|CMODE_CHOOSE
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI
 DECL|variable|__initdata
@@ -2554,6 +2628,7 @@ op_star
 id|info
 )paren
 (brace
+macro_line|#if defined(__powerpc__)
 r_int
 r_int
 id|temp
@@ -2561,7 +2636,6 @@ suffix:semicolon
 id|u32
 id|val
 suffix:semicolon
-macro_line|#if defined(__powerpc__)
 id|temp
 op_assign
 id|info-&gt;ati_regbase
@@ -2587,30 +2661,11 @@ id|temp
 )paren
 )paren
 suffix:semicolon
-macro_line|#elif defined(__sparc_v9__)
-id|temp
-op_assign
-id|info-&gt;ati_regbase
-op_plus
-id|regindex
-suffix:semicolon
+r_return
 id|val
-op_assign
-id|readl
-c_func
-(paren
-id|temp
-)paren
 suffix:semicolon
-macro_line|#else
-id|temp
-op_assign
-id|info-&gt;ati_regbase
-op_plus
-id|regindex
-suffix:semicolon
-id|val
-op_assign
+macro_line|#elif defined(__mc68000__)
+r_return
 id|le32_to_cpu
 c_func
 (paren
@@ -2622,15 +2677,23 @@ id|u32
 op_star
 )paren
 (paren
-id|temp
+id|info-&gt;ati_regbase
+op_plus
+id|regindex
 )paren
 )paren
+)paren
+suffix:semicolon
+macro_line|#else
+r_return
+id|readl
+(paren
+id|info-&gt;ati_regbase
+op_plus
+id|regindex
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-id|val
-suffix:semicolon
 )brace
 DECL|function|aty_st_le32
 r_static
@@ -2653,11 +2716,11 @@ op_star
 id|info
 )paren
 (brace
+macro_line|#if defined(__powerpc__)
 r_int
 r_int
 id|temp
 suffix:semicolon
-macro_line|#if defined(__powerpc__)
 id|temp
 op_assign
 id|info-&gt;ati_regbase
@@ -2686,28 +2749,7 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-macro_line|#elif defined(__sparc_v9__)
-id|temp
-op_assign
-id|info-&gt;ati_regbase
-op_plus
-id|regindex
-suffix:semicolon
-id|writel
-c_func
-(paren
-id|val
-comma
-id|temp
-)paren
-suffix:semicolon
-macro_line|#else
-id|temp
-op_assign
-id|info-&gt;ati_regbase
-op_plus
-id|regindex
-suffix:semicolon
+macro_line|#elif defined(__mc68000__)
 op_star
 (paren
 (paren
@@ -2716,7 +2758,9 @@ id|u32
 op_star
 )paren
 (paren
-id|temp
+id|info-&gt;ati_regbase
+op_plus
+id|regindex
 )paren
 )paren
 op_assign
@@ -2724,6 +2768,16 @@ id|cpu_to_le32
 c_func
 (paren
 id|val
+)paren
+suffix:semicolon
+macro_line|#else
+id|writel
+(paren
+id|val
+comma
+id|info-&gt;ati_regbase
+op_plus
+id|regindex
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2746,31 +2800,14 @@ op_star
 id|info
 )paren
 (brace
-macro_line|#ifdef __sparc_v9__
 r_return
 id|readb
-c_func
 (paren
 id|info-&gt;ati_regbase
 op_plus
 id|regindex
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-op_star
-(paren
-r_volatile
-id|u8
-op_star
-)paren
-(paren
-id|info-&gt;ati_regbase
-op_plus
-id|regindex
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|aty_st_8
 r_static
@@ -2793,9 +2830,7 @@ op_star
 id|info
 )paren
 (brace
-macro_line|#ifdef __sparc_v9__
 id|writeb
-c_func
 (paren
 id|val
 comma
@@ -2804,22 +2839,6 @@ op_plus
 id|regindex
 )paren
 suffix:semicolon
-macro_line|#else
-op_star
-(paren
-r_volatile
-id|u8
-op_star
-)paren
-(paren
-id|info-&gt;ati_regbase
-op_plus
-id|regindex
-)paren
-op_assign
-id|val
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n;     *  Generic Mach64 routines&n;     */
 multiline_comment|/*&n;     *  All writes to draw engine registers are automatically routed through a&n;     *  32-bit-wide, 16-entry-deep command FIFO ...&n;     *  Register writes to registers with DWORD offsets less than 40h are not&n;     *  FIFOed.&n;     *  (from Chapter 5 of the Mach64 Programmer&squot;s Guide)&n;     */
@@ -3756,7 +3775,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PMAC
 multiline_comment|/*&n;     *  Apple monitor sense&n;     */
 DECL|function|read_aty_sense
 r_static
@@ -4020,7 +4039,7 @@ r_return
 id|sense
 suffix:semicolon
 )brace
-macro_line|#endif /* defined(CONFIG_PPC) */
+macro_line|#endif /* CONFIG_PMAC */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*&n;     *  Hardware Cursor support.&n;     */
 DECL|variable|cursor_pixel_map
@@ -4422,10 +4441,8 @@ id|x
 id|y
 )braket
 suffix:semicolon
-op_star
-id|ram
-op_increment
-op_assign
+id|fb_writeb
+(paren
 id|cursor_mask_lookup
 (braket
 id|m
@@ -4443,11 +4460,13 @@ id|m
 op_rshift
 l_int|4
 )braket
+comma
+id|ram
+op_increment
+)paren
 suffix:semicolon
-op_star
-id|ram
-op_increment
-op_assign
+id|fb_writeb
+(paren
 id|cursor_mask_lookup
 (braket
 id|m
@@ -4465,6 +4484,10 @@ id|m
 op_amp
 l_int|0x0f
 )braket
+comma
+id|ram
+op_increment
+)paren
 suffix:semicolon
 )brace
 r_for
@@ -4479,22 +4502,25 @@ id|x
 op_increment
 )paren
 (brace
-op_star
+id|fb_writeb
+(paren
+l_int|0xaa
+comma
 id|ram
 op_increment
-op_assign
-l_int|0xaa
+)paren
 suffix:semicolon
-op_star
+id|fb_writeb
+(paren
+l_int|0xaa
+comma
 id|ram
 op_increment
-op_assign
-l_int|0xaa
+)paren
 suffix:semicolon
 )brace
 )brace
-id|memset
-c_func
+id|fb_memset
 (paren
 id|ram
 comma
@@ -16297,7 +16323,7 @@ id|mclk
 comma
 id|gtb_memsize
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PMAC
 r_int
 id|sense
 suffix:semicolon
@@ -17794,7 +17820,8 @@ id|var
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PMAC
+multiline_comment|/*&n;     *  FIXME: The NVRAM stuff should be put in a Mac-specific file, as it&n;     *         applies to all Mac video cards&n;     */
 r_if
 c_cond
 (paren
@@ -17826,6 +17853,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef CONFIG_NVRAM
 r_if
 c_cond
 (paren
@@ -17858,6 +17886,7 @@ op_assign
 id|VMODE_CHOOSE
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -17913,6 +17942,7 @@ id|default_vmode
 op_assign
 id|VMODE_640_480_60
 suffix:semicolon
+macro_line|#ifdef CONFIG_NVRAM
 r_if
 c_cond
 (paren
@@ -17928,6 +17958,7 @@ c_func
 id|NV_CMODE
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -17958,7 +17989,7 @@ op_assign
 id|default_var
 suffix:semicolon
 )brace
-macro_line|#else /* !CONFIG_PPC */
+macro_line|#else /* !CONFIG_PMAC */
 macro_line|#ifdef __sparc__
 r_if
 c_cond
@@ -18030,7 +18061,7 @@ op_assign
 id|default_var
 suffix:semicolon
 macro_line|#endif /* !__sparc__ */
-macro_line|#endif /* !CONFIG_PPC */
+macro_line|#endif /* !CONFIG_PMAC */
 macro_line|#endif /* !MODULE */
 r_if
 c_cond
@@ -20018,6 +20049,47 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|device_is_compatible
+c_func
+(paren
+id|dp
+comma
+l_string|&quot;ATY,264LTPro&quot;
+)paren
+)paren
+(brace
+multiline_comment|/* XXX kludge for now */
+r_if
+c_cond
+(paren
+id|dp-&gt;name
+op_eq
+l_int|0
+op_logical_or
+id|strcmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;ATY,264LTProA&quot;
+)paren
+op_ne
+l_int|0
+op_logical_or
+id|dp-&gt;parent
+op_eq
+l_int|0
+)paren
+r_return
+suffix:semicolon
+id|dp
+op_assign
+id|dp-&gt;parent
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -20347,6 +20419,30 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+r_if
+c_cond
+(paren
+id|first_display
+op_eq
+l_int|NULL
+)paren
+id|pmu_register_sleep_notifier
+c_func
+(paren
+op_amp
+id|aty_sleep_notifier
+)paren
+suffix:semicolon
+id|info-&gt;next
+op_assign
+id|first_display
+suffix:semicolon
+id|first_display
+op_assign
+id|info
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 r_if
 c_cond
@@ -20632,7 +20728,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PMAC
 r_else
 r_if
 c_cond
@@ -21334,7 +21430,7 @@ suffix:semicolon
 id|u8
 id|gen_cntl
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PMAC
 r_if
 c_cond
 (paren
@@ -21433,7 +21529,7 @@ comma
 id|info
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PMAC
 r_if
 c_cond
 (paren
@@ -24242,6 +24338,495 @@ l_int|16
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+multiline_comment|/*&n; * Save the contents of the frame buffer when we go to sleep,&n; * and restore it when we wake up again.&n; */
+r_int
+DECL|function|aty_sleep_notify
+id|aty_sleep_notify
+c_func
+(paren
+r_struct
+id|pmu_sleep_notifier
+op_star
+id|self
+comma
+r_int
+id|when
+)paren
+(brace
+r_struct
+id|fb_info_aty
+op_star
+id|info
+suffix:semicolon
+r_int
+r_int
+id|pm
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|info
+op_assign
+id|first_display
+suffix:semicolon
+id|info
+op_ne
+l_int|NULL
+suffix:semicolon
+id|info
+op_assign
+id|info-&gt;next
+)paren
+(brace
+r_struct
+id|fb_fix_screeninfo
+id|fix
+suffix:semicolon
+r_int
+id|nb
+suffix:semicolon
+id|atyfb_get_fix
+c_func
+(paren
+op_amp
+id|fix
+comma
+id|fg_console
+comma
+(paren
+r_struct
+id|fb_info
+op_star
+)paren
+id|info
+)paren
+suffix:semicolon
+id|nb
+op_assign
+id|fb_display
+(braket
+id|fg_console
+)braket
+dot
+id|var.yres
+op_star
+id|fix.line_length
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|when
+)paren
+(brace
+r_case
+id|PBOOK_SLEEP_NOW
+suffix:colon
+multiline_comment|/* Stop accel engine (stop bus mastering) */
+r_if
+c_cond
+(paren
+id|info-&gt;current_par.accel_flags
+op_amp
+id|FB_ACCELF_TEXT
+)paren
+id|reset_engine
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+macro_line|#if 1
+multiline_comment|/* Backup fb content */
+id|info-&gt;save_framebuffer
+op_assign
+id|vmalloc
+c_func
+(paren
+id|nb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;save_framebuffer
+)paren
+id|memcpy
+c_func
+(paren
+id|info-&gt;save_framebuffer
+comma
+(paren
+r_void
+op_star
+)paren
+id|info-&gt;frame_buffer
+comma
+id|nb
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Blank display and LCD */
+id|atyfbcon_blank
+c_func
+(paren
+id|VESA_POWERDOWN
+op_plus
+l_int|1
+comma
+(paren
+r_struct
+id|fb_info
+op_star
+)paren
+id|info
+)paren
+suffix:semicolon
+multiline_comment|/* Set chip to &quot;suspend&quot; mode. Note: There&squot;s an HW bug in the&n;&t;&t;&t;   chip which prevents proper resync on wakeup with automatic&n;&t;&t;&t;   power management, we handle suspend manually using the&n;&t;&t;&t;   following (weird) sequence described by ATI. Note2:&n;&t;&t;&t;   We could enable this for all Rage LT Pro chip ids */
+r_if
+c_cond
+(paren
+(paren
+id|Gx
+op_eq
+id|LG_CHIP_ID
+)paren
+op_logical_or
+(paren
+id|Gx
+op_eq
+id|LT_CHIP_ID
+)paren
+op_logical_or
+(paren
+id|Gx
+op_eq
+id|LP_CHIP_ID
+)paren
+)paren
+(brace
+id|pm
+op_assign
+id|aty_ld_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_and_assign
+op_complement
+id|PWR_MGT_ON
+suffix:semicolon
+id|aty_st_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|pm
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_assign
+id|aty_ld_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_and_assign
+op_complement
+(paren
+id|PWR_BLON
+op_or
+id|AUTO_PWR_UP
+)paren
+suffix:semicolon
+id|pm
+op_or_assign
+id|SUSPEND_NOW
+suffix:semicolon
+id|aty_st_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|pm
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_assign
+id|aty_ld_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_or_assign
+id|PWR_MGT_ON
+suffix:semicolon
+id|aty_st_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|pm
+comma
+id|info
+)paren
+suffix:semicolon
+r_do
+(brace
+id|pm
+op_assign
+id|aty_ld_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|info
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|pm
+op_amp
+id|PWR_MGT_STATUS_MASK
+)paren
+op_ne
+id|PWR_MGT_STATUS_SUSPEND
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|PBOOK_WAKE
+suffix:colon
+multiline_comment|/* Wakeup chip */
+r_if
+c_cond
+(paren
+(paren
+id|Gx
+op_eq
+id|LG_CHIP_ID
+)paren
+op_logical_or
+(paren
+id|Gx
+op_eq
+id|LT_CHIP_ID
+)paren
+op_logical_or
+(paren
+id|Gx
+op_eq
+id|LP_CHIP_ID
+)paren
+)paren
+(brace
+id|pm
+op_assign
+id|aty_ld_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_and_assign
+op_complement
+id|PWR_MGT_ON
+suffix:semicolon
+id|aty_st_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|pm
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_assign
+id|aty_ld_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_or_assign
+(paren
+id|PWR_BLON
+op_or
+id|AUTO_PWR_UP
+)paren
+suffix:semicolon
+id|pm
+op_and_assign
+op_complement
+id|SUSPEND_NOW
+suffix:semicolon
+id|aty_st_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|pm
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_assign
+id|aty_ld_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|info
+)paren
+suffix:semicolon
+id|pm
+op_or_assign
+id|PWR_MGT_ON
+suffix:semicolon
+id|aty_st_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|pm
+comma
+id|info
+)paren
+suffix:semicolon
+r_do
+(brace
+id|pm
+op_assign
+id|aty_ld_le32
+c_func
+(paren
+id|POWER_MANAGEMENT
+comma
+id|info
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|pm
+op_amp
+id|PWR_MGT_STATUS_MASK
+)paren
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
+)brace
+macro_line|#if 1
+multiline_comment|/* Restore fb content */
+r_if
+c_cond
+(paren
+id|info-&gt;save_framebuffer
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|info-&gt;frame_buffer
+comma
+id|info-&gt;save_framebuffer
+comma
+id|nb
+)paren
+suffix:semicolon
+id|vfree
+c_func
+(paren
+id|info-&gt;save_framebuffer
+)paren
+suffix:semicolon
+id|info-&gt;save_framebuffer
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Restore display */
+id|atyfb_set_par
+c_func
+(paren
+op_amp
+id|info-&gt;current_par
+comma
+id|info
+)paren
+suffix:semicolon
+id|atyfbcon_blank
+c_func
+(paren
+l_int|0
+comma
+(paren
+r_struct
+id|fb_info
+op_star
+)paren
+id|info
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_return
+id|PBOOK_SLEEP_OK
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_PMAC_PBOOK */
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int

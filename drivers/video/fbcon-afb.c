@@ -2200,7 +2200,7 @@ id|p-&gt;var.bits_per_pixel
 suffix:semicolon
 r_do
 (brace
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dest
@@ -2302,7 +2302,7 @@ id|p
 suffix:semicolon
 r_do
 (brace
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dest
@@ -2421,7 +2421,7 @@ id|dest
 op_sub_assign
 id|p-&gt;next_line
 suffix:semicolon
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dest
@@ -2555,7 +2555,7 @@ id|bg
 op_amp
 l_int|1
 )paren
-id|mymemset
+id|fb_memset255
 c_func
 (paren
 id|dest
@@ -2564,7 +2564,7 @@ id|width
 )paren
 suffix:semicolon
 r_else
-id|mymemclear
+id|fb_memclear
 c_func
 (paren
 id|dest

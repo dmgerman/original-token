@@ -1743,7 +1743,7 @@ op_amp
 id|pcval2
 )paren
 suffix:semicolon
-multiline_comment|/* Clears are split if the region starts at an odd column or&n;&t;* end at an even column. These extra columns are spread&n;&t;* across the interleaved planes. All in between can be&n;&t;* cleared by normal mymemclear_small(), because both bytes of&n;&t;* the single plane words are affected.&n;&t;*/
+multiline_comment|/* Clears are split if the region starts at an odd column or&n;&t;* end at an even column. These extra columns are spread&n;&t;* across the interleaved planes. All in between can be&n;&t;* cleared by normal fb_memclear_small(), because both bytes of&n;&t;* the single plane words are affected.&n;&t;*/
 r_if
 c_cond
 (paren

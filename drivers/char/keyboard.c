@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
@@ -544,12 +545,6 @@ DECL|variable|sysrq_pressed
 r_static
 r_int
 id|sysrq_pressed
-suffix:semicolon
-DECL|variable|sysrq_enabled
-r_int
-id|sysrq_enabled
-op_assign
-l_int|1
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Many other routines do put_queue, but I think either&n; * they produce ASCII, or they produce some user-assigned&n; * string, and in both cases we might assume that it is&n; * in utf-8 already.&n; */

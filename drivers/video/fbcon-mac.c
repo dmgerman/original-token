@@ -220,7 +220,7 @@ id|p
 op_star
 id|p-&gt;next_line
 suffix:semicolon
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dest
@@ -870,7 +870,7 @@ OL
 id|r
 )paren
 (brace
-id|mymemmove
+id|fb_memmove
 c_func
 (paren
 id|dest
@@ -1122,7 +1122,7 @@ c_cond
 (paren
 id|inverse
 )paren
-id|mymemclear
+id|fb_memclear
 c_func
 (paren
 id|dest
@@ -1131,7 +1131,7 @@ id|s
 )paren
 suffix:semicolon
 r_else
-id|mymemset
+id|fb_memset255
 c_func
 (paren
 id|dest
@@ -1391,7 +1391,7 @@ id|PIXEL_WHITE_MAC
 op_eq
 id|pixel
 )paren
-id|mymemclear
+id|fb_memclear
 c_func
 (paren
 id|dest
@@ -1400,7 +1400,7 @@ id|s
 )paren
 suffix:semicolon
 r_else
-id|mymemset
+id|fb_memset255
 c_func
 (paren
 id|dest

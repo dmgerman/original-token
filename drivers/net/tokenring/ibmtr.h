@@ -1281,8 +1281,12 @@ l_int|3
 )braket
 suffix:semicolon
 DECL|member|funct_address
-id|__u32
+r_int
+r_char
 id|funct_address
+(braket
+l_int|4
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon

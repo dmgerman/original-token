@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/drivers/char/pc_keyb.h&n; *&n; *&t;PC Keyboard And Keyboard Controller&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/*&n; *&t;include/linux/pc_keyb.h&n; *&n; *&t;PC Keyboard And Keyboard Controller&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
 multiline_comment|/*&n; *&t;Configuration Switches&n; */
 DECL|macro|KBD_REPORT_ERR
 macro_line|#undef KBD_REPORT_ERR&t;&t;&t;/* Report keyboard errors */
@@ -27,7 +27,7 @@ r_int
 r_char
 id|aux_device_present
 suffix:semicolon
-multiline_comment|/*&n; *&t;Keyboard Controller Registers&n; */
+multiline_comment|/*&n; *&t;Keyboard Controller Registers on normal PCs.&n; */
 DECL|macro|KBD_STATUS_REG
 mdefine_line|#define KBD_STATUS_REG&t;&t;0x64&t;/* Status register (R) */
 DECL|macro|KBD_CNTL_REG

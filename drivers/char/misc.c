@@ -920,6 +920,18 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SGI_NEWPORT_GFX
+id|gfx_register
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SGI
+id|streamable_init
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

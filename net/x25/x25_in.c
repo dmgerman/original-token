@@ -1112,6 +1112,16 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|sk
+comma
+l_int|3
+comma
+id|POLL_PRI
+)paren
+suffix:semicolon
 )brace
 id|x25_write_internal
 c_func

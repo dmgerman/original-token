@@ -3142,6 +3142,8 @@ c_func
 id|sk-&gt;socket
 comma
 l_int|0
+comma
+id|POLL_ERR
 )paren
 suffix:semicolon
 )brace
@@ -3193,6 +3195,8 @@ c_func
 id|sk-&gt;socket
 comma
 l_int|1
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 )brace
@@ -3267,6 +3271,8 @@ c_func
 id|sk-&gt;socket
 comma
 l_int|2
+comma
+id|POLL_OUT
 )paren
 suffix:semicolon
 )brace

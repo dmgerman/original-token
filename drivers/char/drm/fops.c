@@ -831,6 +831,8 @@ c_func
 id|dev-&gt;buf_async
 comma
 id|SIGIO
+comma
+id|POLL_OUT
 )paren
 suffix:semicolon
 id|DRM_DEBUG

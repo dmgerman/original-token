@@ -124,6 +124,8 @@ DECL|macro|GEN_TEST_CNTL
 mdefine_line|#define GEN_TEST_CNTL&t;&t;0x00D0&t;/* Dword offset 0_34 */
 DECL|macro|CUSTOM_MACRO_CNTL
 mdefine_line|#define CUSTOM_MACRO_CNTL&t;0x00D4&t;/* Dword offset 0_35 */
+DECL|macro|POWER_MANAGEMENT
+mdefine_line|#define POWER_MANAGEMENT&t;0x00D8&t;/* Dword offset 0_36 (LG) */
 DECL|macro|CONFIG_CNTL
 mdefine_line|#define CONFIG_CNTL&t;&t;0x00DC&t;/* Dword offset 0_37 (CT, ET, VT) */
 DECL|macro|CONFIG_CHIP_ID
@@ -1530,5 +1532,24 @@ DECL|macro|MACH64_NUM_CLOCKS
 mdefine_line|#define MACH64_NUM_CLOCKS&t;16
 DECL|macro|MACH64_NUM_FREQS
 mdefine_line|#define MACH64_NUM_FREQS&t;50
+multiline_comment|/* Power Management register constants (LTG and LT Pro) */
+DECL|macro|PWR_MGT_ON
+mdefine_line|#define PWR_MGT_ON&t;&t;0x00000001
+DECL|macro|PWR_MGT_MODE_MASK
+mdefine_line|#define PWR_MGT_MODE_MASK&t;0x00000006
+DECL|macro|AUTO_PWR_UP
+mdefine_line|#define AUTO_PWR_UP&t;&t;0x00000008
+DECL|macro|SELF_REFRESH
+mdefine_line|#define SELF_REFRESH&t;&t;0x00000080
+DECL|macro|PWR_BLON
+mdefine_line|#define PWR_BLON&t;&t;0x02000000
+DECL|macro|STANDBY_NOW
+mdefine_line|#define STANDBY_NOW&t;&t;0x10000000
+DECL|macro|SUSPEND_NOW
+mdefine_line|#define SUSPEND_NOW&t;&t;0x20000000
+DECL|macro|PWR_MGT_STATUS_MASK
+mdefine_line|#define PWR_MGT_STATUS_MASK&t;0xC0000000
+DECL|macro|PWR_MGT_STATUS_SUSPEND
+mdefine_line|#define PWR_MGT_STATUS_SUSPEND&t;0x80000000
 macro_line|#endif /* REGMACH64_H */
 eof

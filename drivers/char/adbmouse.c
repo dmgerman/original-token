@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/adb_mouse.h&gt;
+macro_line|#include &lt;linux/adb_mouse.h&gt;
 macro_line|#ifdef __powerpc__
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#endif

@@ -1283,15 +1283,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* If this was sent by a rt mechanism, try again.  */
-r_if
-c_cond
-(paren
-id|info-&gt;si_code
-OL
-l_int|0
-)paren
-(brace
+multiline_comment|/* Queue overflow, we have to abort. */
 id|ret
 op_assign
 op_minus
@@ -1300,8 +1292,6 @@ suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
-multiline_comment|/* Otherwise, mention that the signal is pending,&n;&t;&t;&t;   but don&squot;t queue the info.  */
 )brace
 )brace
 id|sigaddset
@@ -3153,6 +3143,20 @@ id|sig
 r_struct
 id|siginfo
 id|info
+suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|info
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|info
+)paren
+)paren
 suffix:semicolon
 id|info.si_signo
 op_assign
