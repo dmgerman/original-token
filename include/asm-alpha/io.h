@@ -294,6 +294,17 @@ id|addr
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|_readq
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|_writeb
 c_func
@@ -324,6 +335,20 @@ suffix:semicolon
 r_extern
 r_void
 id|_writel
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_writeq
 c_func
 (paren
 r_int
@@ -435,6 +460,10 @@ macro_line|#ifndef readl
 DECL|macro|readl
 macro_line|# define readl(a)&t;_readl((unsigned long)(a))
 macro_line|#endif
+macro_line|#ifndef readq
+DECL|macro|readq
+macro_line|# define readq(a)&t;_readq((unsigned long)(a))
+macro_line|#endif
 macro_line|#ifndef writeb
 DECL|macro|writeb
 macro_line|# define writeb(v,a)&t;_writeb((v),(unsigned long)(a))
@@ -446,6 +475,10 @@ macro_line|#endif
 macro_line|#ifndef writel
 DECL|macro|writel
 macro_line|# define writel(v,a)&t;_writel((v),(unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef writeq
+DECL|macro|writeq
+macro_line|# define writeq(v,a)&t;_writeq((v),(unsigned long)(a))
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */
@@ -461,7 +494,6 @@ r_int
 r_int
 comma
 r_int
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -476,29 +508,32 @@ r_void
 op_star
 comma
 r_int
-r_int
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|_memset_io
+id|_memset_c_io
 c_func
 (paren
 r_int
 r_int
 comma
 r_int
-comma
 r_int
+comma
 r_int
 )paren
 suffix:semicolon
 DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(to,from,len)&t;_memcpy_fromio((to),(unsigned long)(from),(len))
+mdefine_line|#define memcpy_fromio(to,from,len) &bslash;&n;  _memcpy_fromio((to),(unsigned long)(from),(len))
 DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to),(from),(len))
+mdefine_line|#define memcpy_toio(to,from,len) &bslash;&n;  _memcpy_toio((unsigned long)(to),(from),(len))
 DECL|macro|memset_io
-mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
+mdefine_line|#define memset_io(addr,c,len) &bslash;&n;  _memset_c_io((unsigned long)(addr),0x0101010101010101UL*(u8)(c),(len))
+DECL|macro|__HAVE_ARCH_MEMSETW_IO
+mdefine_line|#define __HAVE_ARCH_MEMSETW_IO
+DECL|macro|memsetw_io
+mdefine_line|#define memsetw_io(addr,c,len) &bslash;&n;  _memset_c_io((unsigned long)(addr),0x0001000100010001UL*(u16)(c),(len))
 multiline_comment|/*&n; * String versions of in/out ops:&n; */
 r_extern
 r_void
@@ -607,7 +642,7 @@ id|count
 suffix:semicolon
 multiline_comment|/*&n; * XXX - We don&squot;t have csum_partial_copy_fromio() yet, so we cheat here and &n; * just copy it. The net code will then do the checksum later. Presently &n; * only used by some shared memory 8390 Ethernet cards anyway.&n; */
 DECL|macro|eth_io_copy_and_sum
-mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused)&t;memcpy_fromio((skb)-&gt;data,(src),(len))
+mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused) &bslash;&n;  memcpy_fromio((skb)-&gt;data,(src),(len))
 DECL|function|check_signature
 r_static
 r_inline

@@ -1170,6 +1170,14 @@ r_int
 )paren
 id|buf
 suffix:semicolon
+multiline_comment|/* Oops, this was forgotten before. -ben */
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 multiline_comment|/* For private mappings, just map in zero pages. */
 r_for
 c_loop
@@ -1210,8 +1218,8 @@ id|VM_WRITE
 op_eq
 l_int|0
 )paren
-r_return
-id|size
+r_goto
+id|out_up
 suffix:semicolon
 r_if
 c_cond
@@ -1254,7 +1262,7 @@ suffix:semicolon
 id|zap_page_range
 c_func
 (paren
-id|current-&gt;mm
+id|vma
 comma
 id|addr
 comma
@@ -1264,6 +1272,8 @@ suffix:semicolon
 id|zeromap_page_range
 c_func
 (paren
+id|vma
+comma
 id|addr
 comma
 id|count
@@ -1302,10 +1312,17 @@ id|size
 op_eq
 l_int|0
 )paren
-r_return
-l_int|0
+r_goto
+id|out_up
 suffix:semicolon
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 multiline_comment|/* The shared case is hard. Let&squot;s do the conventional zeroing. */
 r_do
 (brace
@@ -1356,6 +1373,18 @@ r_while
 c_loop
 (paren
 id|size
+)paren
+suffix:semicolon
+r_return
+id|size
+suffix:semicolon
+id|out_up
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return

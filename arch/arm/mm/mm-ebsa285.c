@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * arch/arm/mm/mm-ebsa285.c&n; *&n; * Extra MM routines for the EBSA285 architecture&n; *&n; * Copyright (C) 1998 Russell King, Dave Gilbert.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

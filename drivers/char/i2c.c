@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;Generic i2c interface for linux&n; *&n; *&t;(c) 1998 Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt;&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

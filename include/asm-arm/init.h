@@ -1,6 +1,7 @@
 macro_line|#ifndef _ASMARM_INIT_H
 DECL|macro|_ASMARM_INIT_H
 mdefine_line|#define _ASMARM_INIT_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* C routines */
 macro_line|#ifdef CONFIG_BINUTILS_NEW
 DECL|macro|__init

@@ -21,6 +21,28 @@ macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_proc.h&gt; 
+r_extern
+r_void
+id|coda_purge_dentries
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|coda_purge_children
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
 r_static
 r_int
 id|coda_upcall

@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#if 0
 macro_line|# define DBG_DEVS(args)&t;&t;printk args
@@ -13,18 +15,6 @@ DECL|macro|DBG_DEVS
 macro_line|# define DBG_DEVS(args)
 macro_line|#endif
 macro_line|#ifndef CONFIG_PCI
-DECL|function|pcibios_present
-r_int
-id|pcibios_present
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|sys_pciconfig_read
 id|asmlinkage
 r_int
@@ -52,7 +42,6 @@ id|ENOSYS
 suffix:semicolon
 )brace
 macro_line|#else /* CONFIG_PCI */
-macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
@@ -74,9 +63,8 @@ mdefine_line|#define MINOR_REV&t;4
 multiline_comment|/*&n; * Align VAL to ALIGN, which must be a power of two.&n; */
 DECL|macro|ALIGN
 mdefine_line|#define ALIGN(val,align)&t;(((val) + ((align) - 1)) &amp; ~((align) - 1))
-macro_line|#if defined(CONFIG_ALPHA_MCPCIA) || defined(CONFIG_ALPHA_TSUNAMI)
-multiline_comment|/* multiple PCI bus machines */
-multiline_comment|/* make handle from bus number */
+multiline_comment|/*&n; * On multiple PCI bus machines, create a handle from the bus number.&n; */
+macro_line|#if defined(CONFIG_ALPHA_MCPCIA) /* || defined(CONFIG_ALPHA_TSUNAMI) */
 r_extern
 r_struct
 id|linux_hose_info
@@ -90,12 +78,12 @@ DECL|macro|HANDLE
 mdefine_line|#define HANDLE(b) (((unsigned long)(bus2hose[(b)]-&gt;pci_hose_index)&amp;3)&lt;&lt;32)
 DECL|macro|DEV_IS_ON_PRIMARY
 mdefine_line|#define DEV_IS_ON_PRIMARY(dev) &bslash;&n;&t;(bus2hose[(dev)-&gt;bus-&gt;number]-&gt;pci_first_busno == (dev)-&gt;bus-&gt;number)
-macro_line|#else /* MCPCIA || TSUNAMI */
+macro_line|#else
 DECL|macro|HANDLE
 mdefine_line|#define HANDLE(b) (0)
 DECL|macro|DEV_IS_ON_PRIMARY
 mdefine_line|#define DEV_IS_ON_PRIMARY(dev) ((dev)-&gt;bus-&gt;number == 0)
-macro_line|#endif /* MCPCIA || TSUNAMI */
+macro_line|#endif
 multiline_comment|/*&n; * PCI_MODIFY&n; *&n; * Temporary internal macro.  If this 0, then do not write to any of&n; * the PCI registers, merely read them (i.e., use configuration as&n; * determined by SRM).  The SRM seem do be doing a less than perfect&n; * job in configuring PCI devices, so for now we do it ourselves.&n; * Reconfiguring PCI devices breaks console (RPB) callbacks, but&n; * those don&squot;t work properly with 64 bit addresses anyways.&n; *&n; * The accepted convention seems to be that the console (POST&n; * software) should fully configure boot devices and configure the&n; * interrupt routing of *all* devices.  In particular, the base&n; * addresses of non-boot devices need not be initialized.  For&n; * example, on the AXPpci33 board, the base address a #9 GXE PCI&n; * graphics card reads as zero (this may, however, be due to a bug in&n; * the graphics card---there have been some rumor that the #9 BIOS&n; * incorrectly resets that address to 0...).&n; */
 macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
 DECL|macro|PCI_MODIFY
@@ -7783,14 +7771,6 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_void
-id|scrreset
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_struct
 id|pci_dev
 op_star
@@ -7926,12 +7906,7 @@ id|i
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* reset the visible screen to the top of display memory */
-id|scrreset
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* FIXME: reset the video origin.  */
 )brace
 macro_line|#endif /* CONFIG_ALPHA_SRM_SETUP */
 macro_line|#endif /* CONFIG_PCI */

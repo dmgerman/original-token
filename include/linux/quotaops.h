@@ -246,6 +246,7 @@ id|super_block
 op_star
 id|sb
 comma
+r_const
 r_struct
 id|inode
 op_star
@@ -306,6 +307,7 @@ id|super_block
 op_star
 id|sb
 comma
+r_const
 r_struct
 id|inode
 op_star
@@ -422,6 +424,7 @@ id|super_block
 op_star
 id|sb
 comma
+r_const
 r_struct
 id|inode
 op_star

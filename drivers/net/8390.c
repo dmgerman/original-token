@@ -606,7 +606,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: No Tx buffers free! irq=%d tx1=%d tx2=%d last=%d&bslash;n&quot;
+l_string|&quot;%s: No Tx buffers free! irq=%ld tx1=%d tx2=%d last=%d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

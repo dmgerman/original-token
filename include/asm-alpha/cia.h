@@ -155,6 +155,8 @@ DECL|macro|CIA_SPARSE_MEM_R3
 mdefine_line|#define CIA_SPARSE_MEM_R3&t;&t;(IDENT_ADDR + 0x8500000000UL)
 DECL|macro|CIA_DENSE_MEM
 mdefine_line|#define CIA_DENSE_MEM&t;&t;        (IDENT_ADDR + 0x8600000000UL)
+DECL|macro|DENSE_MEM
+mdefine_line|#define DENSE_MEM(addr)&t;&t;&t;CIA_DENSE_MEM
 multiline_comment|/*&n; * ALCOR&squot;s GRU ASIC registers&n; */
 DECL|macro|GRU_INT_REQ
 mdefine_line|#define GRU_INT_REQ&t;&t;&t;(IDENT_ADDR + 0x8780000000UL)
@@ -256,6 +258,8 @@ suffix:semicolon
 multiline_comment|/*&n; * I/O functions:&n; *&n; * CIA (the 2117x PCI/memory support chipset for the EV5 (21164)&n; * series of processors uses a sparse address mapping scheme to&n; * get at PCI memory and I/O.&n; */
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
+DECL|macro|vulp
+mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|function|__inb
 r_extern
 r_inline
@@ -1547,6 +1551,31 @@ id|CIA_DENSE_MEM
 )paren
 suffix:semicolon
 )brace
+DECL|function|__readq
+r_extern
+r_inline
+r_int
+r_int
+id|__readq
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+op_star
+(paren
+id|vulp
+)paren
+(paren
+id|addr
+op_plus
+id|CIA_DENSE_MEM
+)paren
+suffix:semicolon
+)brace
 DECL|function|__writel
 r_extern
 r_inline
@@ -1576,16 +1605,51 @@ op_assign
 id|b
 suffix:semicolon
 )brace
+DECL|function|__writeq
+r_extern
+r_inline
+r_void
+id|__writeq
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+op_star
+(paren
+id|vulp
+)paren
+(paren
+id|addr
+op_plus
+id|CIA_DENSE_MEM
+)paren
+op_assign
+id|b
+suffix:semicolon
+)brace
 DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
 mdefine_line|#define outb(x, port) &bslash;&n;(__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
 DECL|macro|readl
 mdefine_line|#define readl(a)&t;__readl((unsigned long)(a))
+DECL|macro|readq
+mdefine_line|#define readq(a)&t;__readq((unsigned long)(a))
 DECL|macro|writel
 mdefine_line|#define writel(v,a)&t;__writel((v),(unsigned long)(a))
+DECL|macro|writeq
+mdefine_line|#define writeq(v,a)&t;__writeq((v),(unsigned long)(a))
 DECL|macro|vuip
 macro_line|#undef vuip
+DECL|macro|vulp
+macro_line|#undef vulp
 r_extern
 r_int
 r_int

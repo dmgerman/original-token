@@ -986,9 +986,10 @@ op_assign
 id|PAGE_MASK
 suffix:semicolon
 r_int
+r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; * Select nr of pages we try to keep free for important stuff&n;&t; * with a minimum of 48 pages and a maximum of 256 pages, so&n;&t; * that we don&squot;t waste too much memory on large systems.&n;&t; * This is totally arbitrary.&n;&t; */
+multiline_comment|/*&n;&t; * Select nr of pages we try to keep free for important stuff&n;&t; * with a minimum of 10 pages and a maximum of 256 pages, so&n;&t; * that we don&squot;t waste too much memory on large systems.&n;&t; * This is fairly arbitrary, but based on some behaviour&n;&t; * analysis.&n;&t; */
 id|i
 op_assign
 (paren
@@ -1008,11 +1009,11 @@ c_cond
 (paren
 id|i
 OL
-l_int|48
+l_int|10
 )paren
 id|i
 op_assign
-l_int|48
+l_int|10
 suffix:semicolon
 r_if
 c_cond
@@ -1032,14 +1033,14 @@ suffix:semicolon
 id|freepages.low
 op_assign
 id|i
-op_lshift
-l_int|1
+op_star
+l_int|2
 suffix:semicolon
 id|freepages.high
 op_assign
-id|freepages.low
-op_plus
 id|i
+op_star
+l_int|3
 suffix:semicolon
 id|mem_map
 op_assign

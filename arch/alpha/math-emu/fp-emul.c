@@ -170,6 +170,8 @@ id|save_emul
 suffix:semicolon
 )brace
 DECL|macro|alpha_fp_emul_imprecise
+macro_line|#undef alpha_fp_emul_imprecise
+DECL|macro|alpha_fp_emul_imprecise
 mdefine_line|#define alpha_fp_emul_imprecise  do_alpha_fp_emul_imprecise
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Emulate the floating point instruction at address PC.  Returns 0 if&n; * emulation fails.  Notice that the kernel does not and cannot use FP&n; * regs.  This is good because it means that instead of&n; * saving/restoring all fp regs, we simply stick the result of the&n; * operation into the appropriate register.&n; */

@@ -1,7 +1,7 @@
 macro_line|#ifndef TLAN_H
 DECL|macro|TLAN_H
 mdefine_line|#define TLAN_H
-multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.h&n; *  by James Banks, james.banks@caldera.com&n; *&n; *  (C) 1997 Caldera, Inc.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with tabstop=4, colums&gt;=132&n; *&n; ********************************************************************/
+multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.h&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with tabstop=4, colums&gt;=132&n; *&n; ********************************************************************/
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -11,53 +11,68 @@ mdefine_line|#define net_device_stats&t;enet_statistics
 macro_line|#endif
 multiline_comment|/*****************************************************************&n;&t; * TLan Definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|FALSE
-mdefine_line|#define FALSE&t;&t;&t;&t;0
+mdefine_line|#define FALSE&t;&t;&t;0
 DECL|macro|TRUE
-mdefine_line|#define TRUE&t;&t;&t;&t;1
+mdefine_line|#define TRUE&t;&t;&t;1
 DECL|macro|TLAN_MIN_FRAME_SIZE
 mdefine_line|#define TLAN_MIN_FRAME_SIZE&t;64
 DECL|macro|TLAN_MAX_FRAME_SIZE
 mdefine_line|#define TLAN_MAX_FRAME_SIZE&t;1600
 DECL|macro|TLAN_NUM_RX_LISTS
-mdefine_line|#define TLAN_NUM_RX_LISTS 4
+mdefine_line|#define TLAN_NUM_RX_LISTS&t;4
 DECL|macro|TLAN_NUM_TX_LISTS
-mdefine_line|#define TLAN_NUM_TX_LISTS 8
+mdefine_line|#define TLAN_NUM_TX_LISTS&t;8
 DECL|macro|TLAN_IGNORE
-mdefine_line|#define TLAN_IGNORE&t;0
+mdefine_line|#define TLAN_IGNORE&t;&t;0
 DECL|macro|TLAN_RECORD
-mdefine_line|#define TLAN_RECORD&t;1
+mdefine_line|#define TLAN_RECORD&t;&t;1
 DECL|macro|TLAN_DBG
 mdefine_line|#define TLAN_DBG(lvl, format, args...)&t;if (debug&amp;lvl) printk( format, ##args );
 DECL|macro|TLAN_DEBUG_GNRL
-mdefine_line|#define TLAN_DEBUG_GNRL&t;0x0001
+mdefine_line|#define TLAN_DEBUG_GNRL&t;&t;0x0001
 DECL|macro|TLAN_DEBUG_TX
-mdefine_line|#define TLAN_DEBUG_TX&t;0x0002
+mdefine_line|#define TLAN_DEBUG_TX&t;&t;0x0002
 DECL|macro|TLAN_DEBUG_RX
-mdefine_line|#define TLAN_DEBUG_RX&t;0x0004 
+mdefine_line|#define TLAN_DEBUG_RX&t;&t;0x0004 
 DECL|macro|TLAN_DEBUG_LIST
-mdefine_line|#define TLAN_DEBUG_LIST&t;0x0008
+mdefine_line|#define TLAN_DEBUG_LIST&t;&t;0x0008
 multiline_comment|/*****************************************************************&n;&t; * Device Identification Definitions&n;&t; *&n;&t; ****************************************************************/
-multiline_comment|/* NOTE: These have been moved to pci.h, will use them&n;&t;   eventually */
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10
-mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10 0xAE34
+mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10&t;&t;&t;0xAE34
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_100
-mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100 0xAE32
+mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100&t;&t;0xAE32
 DECL|macro|PCI_DEVICE_ID_NETFLEX_3P_INTEGRATED
-mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P_INTEGRATED 0xAE35
+mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P_INTEGRATED&t;&t;0xAE35
 DECL|macro|PCI_DEVICE_ID_NETFLEX_3P
-mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P 0xF130
+mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P&t;&t;&t;0xF130
 DECL|macro|PCI_DEVICE_ID_NETFLEX_3P_BNC
-mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P_BNC 0xF150
+mdefine_line|#define PCI_DEVICE_ID_NETFLEX_3P_BNC&t;&t;&t;0xF150
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_100_PROLIANT
-mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100_PROLIANT 0xAE43
+mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100_PROLIANT&t;0xAE43
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_100_DUAL
-mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100_DUAL 0xAE40
+mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100_DUAL&t;&t;0xAE40
 DECL|macro|PCI_DEVICE_ID_DESKPRO_4000_5233MMX
-mdefine_line|#define PCI_DEVICE_ID_DESKPRO_4000_5233MMX 0xB011
-DECL|struct|tlan_pci_id
+mdefine_line|#define PCI_DEVICE_ID_DESKPRO_4000_5233MMX&t;&t;0xB011
+DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_T2
+mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_T2&t;&t;&t;0xB012
+DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_100_WS_5100
+mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10_100_WS_5100&t;0xB030
+macro_line|#ifndef PCI_DEVICE_ID_OLICOM_OC2183
+DECL|macro|PCI_DEVICE_ID_OLICOM_OC2183
+mdefine_line|#define PCI_DEVICE_ID_OLICOM_OC2183&t;&t;&t;0x0013
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_OLICOM_OC2325
+DECL|macro|PCI_DEVICE_ID_OLICOM_OC2325
+mdefine_line|#define PCI_DEVICE_ID_OLICOM_OC2325&t;&t;&t;0x0012
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_OLICOM_OC2326
+DECL|macro|PCI_DEVICE_ID_OLICOM_OC2326
+mdefine_line|#define PCI_DEVICE_ID_OLICOM_OC2326&t;&t;&t;0x0014
+macro_line|#endif
+DECL|struct|tlan_adapter_entry
 r_typedef
 r_struct
-id|tlan_pci_id
+id|tlan_adapter_entry
 (brace
 DECL|member|vendorId
 id|u16
@@ -67,15 +82,45 @@ DECL|member|deviceId
 id|u16
 id|deviceId
 suffix:semicolon
-DECL|member|deviceName
+DECL|member|deviceLabel
 r_char
 op_star
-id|deviceName
+id|deviceLabel
 suffix:semicolon
-DECL|typedef|TLanPciId
+DECL|member|flags
+id|u32
+id|flags
+suffix:semicolon
+DECL|member|addrOfs
+id|u16
+id|addrOfs
+suffix:semicolon
+DECL|typedef|TLanAdapterEntry
 )brace
-id|TLanPciId
+id|TLanAdapterEntry
 suffix:semicolon
+DECL|macro|TLAN_ADAPTER_NONE
+mdefine_line|#define TLAN_ADAPTER_NONE&t;&t;0x00000000
+DECL|macro|TLAN_ADAPTER_UNMANAGED_PHY
+mdefine_line|#define TLAN_ADAPTER_UNMANAGED_PHY&t;0x00000001
+DECL|macro|TLAN_ADAPTER_BIT_RATE_PHY
+mdefine_line|#define TLAN_ADAPTER_BIT_RATE_PHY&t;0x00000002
+DECL|macro|TLAN_ADAPTER_USE_INTERN_10
+mdefine_line|#define TLAN_ADAPTER_USE_INTERN_10&t;0x00000004
+DECL|macro|TLAN_ADAPTER_ACTIVITY_LED
+mdefine_line|#define TLAN_ADAPTER_ACTIVITY_LED&t;0x00000008
+DECL|macro|TLAN_SPEED_DEFAULT
+mdefine_line|#define TLAN_SPEED_DEFAULT&t;0
+DECL|macro|TLAN_SPEED_10
+mdefine_line|#define TLAN_SPEED_10&t;&t;10
+DECL|macro|TLAN_SPEED_100
+mdefine_line|#define TLAN_SPEED_100&t;&t;100
+DECL|macro|TLAN_DUPLEX_DEFAULT
+mdefine_line|#define TLAN_DUPLEX_DEFAULT&t;0
+DECL|macro|TLAN_DUPLEX_HALF
+mdefine_line|#define TLAN_DUPLEX_HALF&t;1
+DECL|macro|TLAN_DUPLEX_FULL
+mdefine_line|#define TLAN_DUPLEX_FULL&t;2
 multiline_comment|/*****************************************************************&n;&t; * Rx/Tx List Definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|TLAN_BUFFERS_PER_LIST
 mdefine_line|#define TLAN_BUFFERS_PER_LIST&t;10
@@ -151,61 +196,8 @@ suffix:semicolon
 multiline_comment|/*****************************************************************&n;&t; * PHY definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|TLAN_PHY_MAX_ADDR
 mdefine_line|#define TLAN_PHY_MAX_ADDR&t;0x1F
-DECL|macro|TLAN_PHY_ACTIVITY
-mdefine_line|#define TLAN_PHY_ACTIVITY&t;0x00000001
-DECL|macro|TLAN_PHY_AUTONEG
-mdefine_line|#define TLAN_PHY_AUTONEG&t;0x00000002
-DECL|macro|TLAN_PHY_INTS
-mdefine_line|#define TLAN_PHY_INTS&t;&t;0x00000004
-DECL|macro|TLAN_PHY_BIT_RATE
-mdefine_line|#define TLAN_PHY_BIT_RATE&t;0x00000008
-DECL|macro|TLAN_PHY_UNMANAGED
-mdefine_line|#define TLAN_PHY_UNMANAGED&t;0x00000010
-DECL|macro|TLAN_PHY_INTERNAL
-mdefine_line|#define TLAN_PHY_INTERNAL&t;0x00000020
-DECL|typedef|TLanPhyFunc
-r_typedef
-r_int
-(paren
-id|TLanPhyFunc
-)paren
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|struct|tlan_phy_id_entry_tag
-r_typedef
-r_struct
-id|tlan_phy_id_entry_tag
-(brace
-DECL|member|idHi
-id|u16
-id|idHi
-suffix:semicolon
-DECL|member|idLo
-id|u16
-id|idLo
-suffix:semicolon
-DECL|member|check
-id|TLanPhyFunc
-op_star
-id|check
-suffix:semicolon
-DECL|member|service
-id|TLanPhyFunc
-op_star
-id|service
-suffix:semicolon
-DECL|member|flags
-id|u32
-id|flags
-suffix:semicolon
-DECL|typedef|TLanPhyIdEntry
-)brace
-id|TLanPhyIdEntry
-suffix:semicolon
+DECL|macro|TLAN_PHY_NONE
+mdefine_line|#define TLAN_PHY_NONE&t;&t;0x20
 multiline_comment|/*****************************************************************&n;&t; * TLAN Private Information Structure&n;&t; *&n;&t; ****************************************************************/
 DECL|struct|tlan_private_tag
 r_typedef
@@ -276,31 +268,9 @@ DECL|member|txBusyCount
 id|u32
 id|txBusyCount
 suffix:semicolon
-DECL|member|phyAddr
-id|u32
-id|phyAddr
-suffix:semicolon
-DECL|member|phyEntry
-id|u32
-id|phyEntry
-suffix:semicolon
 DECL|member|phyOnline
 id|u32
 id|phyOnline
-suffix:semicolon
-DECL|member|phyFlags
-id|u32
-id|phyFlags
-suffix:semicolon
-DECL|member|phyCheck
-id|TLanPhyFunc
-op_star
-id|phyCheck
-suffix:semicolon
-DECL|member|phyService
-id|TLanPhyFunc
-op_star
-id|phyService
 suffix:semicolon
 DECL|member|timerSetAt
 id|u32
@@ -320,25 +290,53 @@ r_struct
 id|net_device_stats
 id|stats
 suffix:semicolon
-DECL|member|pciEntry
+DECL|member|adapter
+id|TLanAdapterEntry
+op_star
+id|adapter
+suffix:semicolon
+DECL|member|adapterRev
 id|u32
-id|pciEntry
+id|adapterRev
 suffix:semicolon
-DECL|member|pciRevision
-id|u8
-id|pciRevision
+DECL|member|aui
+id|u32
+id|aui
 suffix:semicolon
-DECL|member|pciBus
-id|u8
-id|pciBus
+DECL|member|debug
+id|u32
+id|debug
 suffix:semicolon
-DECL|member|pciDeviceFn
-id|u8
-id|pciDeviceFn
+DECL|member|duplex
+id|u32
+id|duplex
+suffix:semicolon
+DECL|member|phy
+id|u32
+id|phy
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|phyNum
+id|u32
+id|phyNum
+suffix:semicolon
+DECL|member|sa_int
+id|u32
+id|sa_int
+suffix:semicolon
+DECL|member|speed
+id|u32
+id|speed
 suffix:semicolon
 DECL|member|tlanRev
 id|u8
 id|tlanRev
+suffix:semicolon
+DECL|member|tlanFullDuplex
+id|u8
+id|tlanFullDuplex
 suffix:semicolon
 DECL|member|devName
 r_char
@@ -354,12 +352,22 @@ suffix:semicolon
 multiline_comment|/*****************************************************************&n;&t; * TLan Driver Timer Definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|TLAN_TIMER_LINK
 mdefine_line|#define TLAN_TIMER_LINK&t;&t;&t;1
-DECL|macro|TLAN_TIMER_ACT
-mdefine_line|#define TLAN_TIMER_ACT&t;&t;&t;2
-DECL|macro|TLAN_TIMER_LINK_DELAY
-mdefine_line|#define TLAN_TIMER_LINK_DELAY&t;230
+DECL|macro|TLAN_TIMER_ACTIVITY
+mdefine_line|#define TLAN_TIMER_ACTIVITY&t;&t;2
+DECL|macro|TLAN_TIMER_PHY_PDOWN
+mdefine_line|#define TLAN_TIMER_PHY_PDOWN&t;&t;3
+DECL|macro|TLAN_TIMER_PHY_PUP
+mdefine_line|#define TLAN_TIMER_PHY_PUP&t;&t;4
+DECL|macro|TLAN_TIMER_PHY_RESET
+mdefine_line|#define TLAN_TIMER_PHY_RESET&t;&t;5
+DECL|macro|TLAN_TIMER_PHY_START_LINK
+mdefine_line|#define TLAN_TIMER_PHY_START_LINK&t;6
+DECL|macro|TLAN_TIMER_PHY_FINISH_AN
+mdefine_line|#define TLAN_TIMER_PHY_FINISH_AN&t;7
+DECL|macro|TLAN_TIMER_FINISH_RESET
+mdefine_line|#define TLAN_TIMER_FINISH_RESET&t;&t;8
 DECL|macro|TLAN_TIMER_ACT_DELAY
-mdefine_line|#define TLAN_TIMER_ACT_DELAY&t;10
+mdefine_line|#define TLAN_TIMER_ACT_DELAY&t;&t;10
 multiline_comment|/*****************************************************************&n;&t; * TLan Driver Eeprom Definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|TLAN_EEPROM_ACK
 mdefine_line|#define TLAN_EEPROM_ACK&t;&t;0
@@ -367,15 +375,15 @@ DECL|macro|TLAN_EEPROM_STOP
 mdefine_line|#define TLAN_EEPROM_STOP&t;1
 multiline_comment|/*****************************************************************&n;&t; * Host Register Offsets and Contents&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|TLAN_HOST_CMD
-mdefine_line|#define TLAN_HOST_CMD&t;&t;0x00
+mdefine_line|#define TLAN_HOST_CMD&t;&t;&t;0x00
 DECL|macro|TLAN_HC_GO
 mdefine_line|#define &t;TLAN_HC_GO&t;&t;0x80000000
 DECL|macro|TLAN_HC_STOP
-mdefine_line|#define&t;&t;TLAN_HC_STOP&t;0x40000000
+mdefine_line|#define&t;&t;TLAN_HC_STOP&t;&t;0x40000000
 DECL|macro|TLAN_HC_ACK
 mdefine_line|#define&t;&t;TLAN_HC_ACK&t;&t;0x20000000
 DECL|macro|TLAN_HC_CS_MASK
-mdefine_line|#define&t;&t;TLAN_HC_CS_MASK 0x1FE00000
+mdefine_line|#define&t;&t;TLAN_HC_CS_MASK&t;&t;0x1FE00000
 DECL|macro|TLAN_HC_EOC
 mdefine_line|#define&t;&t;TLAN_HC_EOC&t;&t;0x00100000
 DECL|macro|TLAN_HC_RT
@@ -383,35 +391,35 @@ mdefine_line|#define&t;&t;TLAN_HC_RT&t;&t;0x00080000
 DECL|macro|TLAN_HC_NES
 mdefine_line|#define&t;&t;TLAN_HC_NES&t;&t;0x00040000
 DECL|macro|TLAN_HC_AD_RST
-mdefine_line|#define&t;&t;TLAN_HC_AD_RST&t;0x00008000
+mdefine_line|#define&t;&t;TLAN_HC_AD_RST&t;&t;0x00008000
 DECL|macro|TLAN_HC_LD_TMR
-mdefine_line|#define&t;&t;TLAN_HC_LD_TMR&t;0x00004000
+mdefine_line|#define&t;&t;TLAN_HC_LD_TMR&t;&t;0x00004000
 DECL|macro|TLAN_HC_LD_THR
-mdefine_line|#define&t;&t;TLAN_HC_LD_THR&t;0x00002000
+mdefine_line|#define&t;&t;TLAN_HC_LD_THR&t;&t;0x00002000
 DECL|macro|TLAN_HC_REQ_INT
-mdefine_line|#define&t;&t;TLAN_HC_REQ_INT&t;0x00001000
+mdefine_line|#define&t;&t;TLAN_HC_REQ_INT&t;&t;0x00001000
 DECL|macro|TLAN_HC_INT_OFF
-mdefine_line|#define&t;&t;TLAN_HC_INT_OFF&t;0x00000800
+mdefine_line|#define&t;&t;TLAN_HC_INT_OFF&t;&t;0x00000800
 DECL|macro|TLAN_HC_INT_ON
-mdefine_line|#define&t;&t;TLAN_HC_INT_ON&t;0x00000400
+mdefine_line|#define&t;&t;TLAN_HC_INT_ON&t;&t;0x00000400
 DECL|macro|TLAN_HC_AC_MASK
-mdefine_line|#define&t;&t;TLAN_HC_AC_MASK&t;0x000000FF
+mdefine_line|#define&t;&t;TLAN_HC_AC_MASK&t;&t;0x000000FF
 DECL|macro|TLAN_CH_PARM
-mdefine_line|#define TLAN_CH_PARM&t;&t;0x04
+mdefine_line|#define TLAN_CH_PARM&t;&t;&t;0x04
 DECL|macro|TLAN_DIO_ADR
-mdefine_line|#define TLAN_DIO_ADR&t;&t;0x08
+mdefine_line|#define TLAN_DIO_ADR&t;&t;&t;0x08
 DECL|macro|TLAN_DA_ADR_INC
-mdefine_line|#define&t;&t;TLAN_DA_ADR_INC&t;0x8000
+mdefine_line|#define&t;&t;TLAN_DA_ADR_INC&t;&t;0x8000
 DECL|macro|TLAN_DA_RAM_ADR
-mdefine_line|#define&t;&t;TLAN_DA_RAM_ADR&t;0x4000
+mdefine_line|#define&t;&t;TLAN_DA_RAM_ADR&t;&t;0x4000
 DECL|macro|TLAN_HOST_INT
-mdefine_line|#define TLAN_HOST_INT&t;&t;0x0A
+mdefine_line|#define TLAN_HOST_INT&t;&t;&t;0x0A
 DECL|macro|TLAN_HI_IV_MASK
-mdefine_line|#define&t;&t;TLAN_HI_IV_MASK&t;0x1FE0
+mdefine_line|#define&t;&t;TLAN_HI_IV_MASK&t;&t;0x1FE0
 DECL|macro|TLAN_HI_IT_MASK
-mdefine_line|#define&t;&t;TLAN_HI_IT_MASK&t;0x001C
+mdefine_line|#define&t;&t;TLAN_HI_IT_MASK&t;&t;0x001C
 DECL|macro|TLAN_DIO_DATA
-mdefine_line|#define TLAN_DIO_DATA&t;&t;0x0C
+mdefine_line|#define TLAN_DIO_DATA&t;&t;&t;0x0C
 multiline_comment|/* ThunderLAN Internal Register DIO Offsets */
 DECL|macro|TLAN_NET_CMD
 mdefine_line|#define TLAN_NET_CMD&t;&t;&t;0x00
@@ -458,7 +466,7 @@ mdefine_line|#define&t;&t;TLAN_NET_STS_HBEAT&t;0x40
 DECL|macro|TLAN_NET_STS_TXSTOP
 mdefine_line|#define&t;&t;TLAN_NET_STS_TXSTOP&t;0x20
 DECL|macro|TLAN_NET_STS_RXSTOP
-mdefine_line|#define&t;&t;TLAN_NET_STS_RXSTOP 0x10
+mdefine_line|#define&t;&t;TLAN_NET_STS_RXSTOP&t;0x10
 DECL|macro|TLAN_NET_STS_RSRVD
 mdefine_line|#define&t;&t;TLAN_NET_STS_RSRVD&t;0x0F
 DECL|macro|TLAN_NET_MASK
@@ -496,19 +504,19 @@ mdefine_line|#define&t;&t;TLAN_NET_CFG_PHY_EN&t;0x0080
 DECL|macro|TLAN_NET_CFG_MSMASK
 mdefine_line|#define&t;&t;TLAN_NET_CFG_MSMASK&t;0x007F
 DECL|macro|TLAN_MAN_TEST
-mdefine_line|#define TLAN_MAN_TEST&t;&t;0x06
+mdefine_line|#define TLAN_MAN_TEST&t;&t;&t;0x06
 DECL|macro|TLAN_DEF_VENDOR_ID
-mdefine_line|#define TLAN_DEF_VENDOR_ID&t;0x08
+mdefine_line|#define TLAN_DEF_VENDOR_ID&t;&t;0x08
 DECL|macro|TLAN_DEF_DEVICE_ID
-mdefine_line|#define TLAN_DEF_DEVICE_ID&t;0x0A
+mdefine_line|#define TLAN_DEF_DEVICE_ID&t;&t;0x0A
 DECL|macro|TLAN_DEF_REVISION
-mdefine_line|#define TLAN_DEF_REVISION&t;0x0C
+mdefine_line|#define TLAN_DEF_REVISION&t;&t;0x0C
 DECL|macro|TLAN_DEF_SUBCLASS
-mdefine_line|#define TLAN_DEF_SUBCLASS&t;0x0D
+mdefine_line|#define TLAN_DEF_SUBCLASS&t;&t;0x0D
 DECL|macro|TLAN_DEF_MIN_LAT
-mdefine_line|#define TLAN_DEF_MIN_LAT&t;0x0E
+mdefine_line|#define TLAN_DEF_MIN_LAT&t;&t;0x0E
 DECL|macro|TLAN_DEF_MAX_LAT
-mdefine_line|#define TLAN_DEF_MAX_LAT&t;0x0F
+mdefine_line|#define TLAN_DEF_MAX_LAT&t;&t;0x0F
 DECL|macro|TLAN_AREG_0
 mdefine_line|#define TLAN_AREG_0&t;&t;&t;0x10
 DECL|macro|TLAN_AREG_1
@@ -522,39 +530,39 @@ mdefine_line|#define TLAN_HASH_1&t;&t;&t;0x28
 DECL|macro|TLAN_HASH_2
 mdefine_line|#define TLAN_HASH_2&t;&t;&t;0x2C
 DECL|macro|TLAN_GOOD_TX_FRMS
-mdefine_line|#define TLAN_GOOD_TX_FRMS&t;0x30
+mdefine_line|#define TLAN_GOOD_TX_FRMS&t;&t;0x30
 DECL|macro|TLAN_TX_UNDERUNS
-mdefine_line|#define TLAN_TX_UNDERUNS&t;0x33
+mdefine_line|#define TLAN_TX_UNDERUNS&t;&t;0x33
 DECL|macro|TLAN_GOOD_RX_FRMS
-mdefine_line|#define TLAN_GOOD_RX_FRMS&t;0x34
+mdefine_line|#define TLAN_GOOD_RX_FRMS&t;&t;0x34
 DECL|macro|TLAN_RX_OVERRUNS
-mdefine_line|#define TLAN_RX_OVERRUNS&t;0x37
+mdefine_line|#define TLAN_RX_OVERRUNS&t;&t;0x37
 DECL|macro|TLAN_DEFERRED_TX
-mdefine_line|#define TLAN_DEFERRED_TX&t;0x38
+mdefine_line|#define TLAN_DEFERRED_TX&t;&t;0x38
 DECL|macro|TLAN_CRC_ERRORS
-mdefine_line|#define TLAN_CRC_ERRORS&t;&t;0x3A
+mdefine_line|#define TLAN_CRC_ERRORS&t;&t;&t;0x3A
 DECL|macro|TLAN_CODE_ERRORS
-mdefine_line|#define TLAN_CODE_ERRORS&t;0x3B
+mdefine_line|#define TLAN_CODE_ERRORS&t;&t;0x3B
 DECL|macro|TLAN_MULTICOL_FRMS
-mdefine_line|#define TLAN_MULTICOL_FRMS&t;0x3C
+mdefine_line|#define TLAN_MULTICOL_FRMS&t;&t;0x3C
 DECL|macro|TLAN_SINGLECOL_FRMS
-mdefine_line|#define TLAN_SINGLECOL_FRMS&t;0x3E
+mdefine_line|#define TLAN_SINGLECOL_FRMS&t;&t;0x3E
 DECL|macro|TLAN_EXCESSCOL_FRMS
-mdefine_line|#define TLAN_EXCESSCOL_FRMS&t;0x40
+mdefine_line|#define TLAN_EXCESSCOL_FRMS&t;&t;0x40
 DECL|macro|TLAN_LATE_COLS
-mdefine_line|#define TLAN_LATE_COLS&t;&t;0x41
+mdefine_line|#define TLAN_LATE_COLS&t;&t;&t;0x41
 DECL|macro|TLAN_CARRIER_LOSS
-mdefine_line|#define TLAN_CARRIER_LOSS&t;0x42
+mdefine_line|#define TLAN_CARRIER_LOSS&t;&t;0x42
 DECL|macro|TLAN_ACOMMIT
-mdefine_line|#define TLAN_ACOMMIT&t;&t;0x43
+mdefine_line|#define TLAN_ACOMMIT&t;&t;&t;0x43
 DECL|macro|TLAN_LED_REG
-mdefine_line|#define TLAN_LED_REG&t;&t;0x44
+mdefine_line|#define TLAN_LED_REG&t;&t;&t;0x44
 DECL|macro|TLAN_LED_ACT
-mdefine_line|#define&t;&t;TLAN_LED_ACT&t;0x10
+mdefine_line|#define&t;&t;TLAN_LED_ACT&t;&t;0x10
 DECL|macro|TLAN_LED_LINK
-mdefine_line|#define&t;&t;TLAN_LED_LINK&t;0x01
+mdefine_line|#define&t;&t;TLAN_LED_LINK&t;&t;0x01
 DECL|macro|TLAN_BSIZE_REG
-mdefine_line|#define TLAN_BSIZE_REG&t;&t;0x45
+mdefine_line|#define TLAN_BSIZE_REG&t;&t;&t;0x45
 DECL|macro|TLAN_MAX_RX
 mdefine_line|#define TLAN_MAX_RX&t;&t;&t;0x46
 DECL|macro|TLAN_INT_DIS
@@ -573,7 +581,7 @@ mdefine_line|#define TLAN_INT_NONE&t;&t;&t;0x0000
 DECL|macro|TLAN_INT_TX_EOF
 mdefine_line|#define TLAN_INT_TX_EOF&t;&t;&t;0x0001
 DECL|macro|TLAN_INT_STAT_OVERFLOW
-mdefine_line|#define TLAN_INT_STAT_OVERFLOW&t;0x0002
+mdefine_line|#define TLAN_INT_STAT_OVERFLOW&t;&t;0x0002
 DECL|macro|TLAN_INT_RX_EOF
 mdefine_line|#define TLAN_INT_RX_EOF&t;&t;&t;0x0003
 DECL|macro|TLAN_INT_DUMMY
@@ -581,13 +589,13 @@ mdefine_line|#define TLAN_INT_DUMMY&t;&t;&t;0x0004
 DECL|macro|TLAN_INT_TX_EOC
 mdefine_line|#define TLAN_INT_TX_EOC&t;&t;&t;0x0005
 DECL|macro|TLAN_INT_STATUS_CHECK
-mdefine_line|#define TLAN_INT_STATUS_CHECK&t;0x0006
+mdefine_line|#define TLAN_INT_STATUS_CHECK&t;&t;0x0006
 DECL|macro|TLAN_INT_RX_EOC
 mdefine_line|#define TLAN_INT_RX_EOC&t;&t;&t;0x0007
 multiline_comment|/* ThunderLAN MII Registers */
 multiline_comment|/* Generic MII/PHY Registers */
 DECL|macro|MII_GEN_CTL
-mdefine_line|#define MII_GEN_CTL&t;&t;&t;&t;0x00
+mdefine_line|#define MII_GEN_CTL&t;&t;&t;0x00
 DECL|macro|MII_GC_RESET
 mdefine_line|#define &t;MII_GC_RESET&t;&t;0x8000
 DECL|macro|MII_GC_LOOPBK
@@ -609,7 +617,7 @@ mdefine_line|#define&t;&t;MII_GC_COLTEST&t;&t;0x0080
 DECL|macro|MII_GC_RESERVED
 mdefine_line|#define&t;&t;MII_GC_RESERVED&t;&t;0x007F
 DECL|macro|MII_GEN_STS
-mdefine_line|#define MII_GEN_STS&t;&t;&t;&t;0x01
+mdefine_line|#define MII_GEN_STS&t;&t;&t;0x01
 DECL|macro|MII_GS_100BT4
 mdefine_line|#define&t;&t;MII_GS_100BT4&t;&t;0x8000
 DECL|macro|MII_GS_100BTXFD
@@ -625,11 +633,11 @@ mdefine_line|#define&t;&t;MII_GS_RESERVED&t;&t;0x07C0
 DECL|macro|MII_GS_AUTOCMPLT
 mdefine_line|#define&t;&t;MII_GS_AUTOCMPLT&t;0x0020
 DECL|macro|MII_GS_RFLT
-mdefine_line|#define&t;&t;MII_GS_RFLT&t;&t;&t;0x0010
+mdefine_line|#define&t;&t;MII_GS_RFLT&t;&t;0x0010
 DECL|macro|MII_GS_AUTONEG
 mdefine_line|#define&t;&t;MII_GS_AUTONEG&t;&t;0x0008
 DECL|macro|MII_GS_LINK
-mdefine_line|#define&t;&t;MII_GS_LINK&t;&t;&t;0x0004
+mdefine_line|#define&t;&t;MII_GS_LINK&t;&t;0x0004
 DECL|macro|MII_GS_JABBER
 mdefine_line|#define&t;&t;MII_GS_JABBER&t;&t;0x0002
 DECL|macro|MII_GS_EXTCAP
@@ -639,17 +647,17 @@ mdefine_line|#define MII_GEN_ID_HI&t;&t;&t;0x02
 DECL|macro|MII_GEN_ID_LO
 mdefine_line|#define MII_GEN_ID_LO&t;&t;&t;0x03
 DECL|macro|MII_GIL_OUI
-mdefine_line|#define &t;MII_GIL_OUI&t;&t;&t;0xFC00
+mdefine_line|#define &t;MII_GIL_OUI&t;&t;0xFC00
 DECL|macro|MII_GIL_MODEL
 mdefine_line|#define &t;MII_GIL_MODEL&t;&t;0x03F0
 DECL|macro|MII_GIL_REVISION
 mdefine_line|#define &t;MII_GIL_REVISION&t;0x000F
 DECL|macro|MII_AN_ADV
-mdefine_line|#define MII_AN_ADV&t;&t;&t;&t;0x04
+mdefine_line|#define MII_AN_ADV&t;&t;&t;0x04
 DECL|macro|MII_AN_LPA
-mdefine_line|#define MII_AN_LPA&t;&t;&t;&t;0x05
+mdefine_line|#define MII_AN_LPA&t;&t;&t;0x05
 DECL|macro|MII_AN_EXP
-mdefine_line|#define MII_AN_EXP&t;&t;&t;&t;0x06
+mdefine_line|#define MII_AN_EXP&t;&t;&t;0x06
 multiline_comment|/* ThunderLAN Specific MII/PHY Registers */
 DECL|macro|TLAN_TLPHY_ID
 mdefine_line|#define TLAN_TLPHY_ID&t;&t;&t;0x10
@@ -685,6 +693,8 @@ DECL|macro|TLAN_TS_TPENERGY
 mdefine_line|#define&t;&t;TLAN_TS_TPENERGY&t;0x1000
 DECL|macro|TLAN_TS_RESERVED
 mdefine_line|#define&t;&t;TLAN_TS_RESERVED&t;0x0FFF
+DECL|macro|CIRC_INC
+mdefine_line|#define CIRC_INC( a, b ) if ( ++a &gt;= b ) a = 0
 multiline_comment|/* Routines to access internal registers. */
 DECL|function|TLan_DioRead8
 r_inline
@@ -939,7 +949,7 @@ l_int|0x2
 )paren
 suffix:semicolon
 )brace
-DECL|function|TLan_ClearBit
+macro_line|#if 0
 r_inline
 r_void
 id|TLan_ClearBit
@@ -968,7 +978,6 @@ id|port
 )paren
 suffix:semicolon
 )brace
-DECL|function|TLan_GetBit
 r_inline
 r_int
 id|TLan_GetBit
@@ -998,7 +1007,6 @@ id|bit
 )paren
 suffix:semicolon
 )brace
-DECL|function|TLan_SetBit
 r_inline
 r_void
 id|TLan_SetBit
@@ -1026,6 +1034,13 @@ id|port
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+DECL|macro|TLan_ClearBit
+mdefine_line|#define TLan_ClearBit( bit, port )&t;outb_p(inb_p(port) &amp; ~bit, port)
+DECL|macro|TLan_GetBit
+mdefine_line|#define TLan_GetBit( bit, port )&t;((int) (inb_p(port) &amp; bit))
+DECL|macro|TLan_SetBit
+mdefine_line|#define TLan_SetBit( bit, port )&t;outb_p(inb_p(port) | bit, port)
 DECL|function|xor
 r_inline
 id|u32

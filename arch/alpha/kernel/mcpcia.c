@@ -4,12 +4,12 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic. &n; * One plausible explanation is that the i/o controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
 r_extern
 r_struct
@@ -4349,11 +4349,6 @@ r_struct
 id|linux_hose_info
 op_star
 id|hose
-comma
-r_int
-r_int
-op_star
-id|mem_start
 )paren
 (brace
 r_static
@@ -4404,8 +4399,6 @@ id|pci_scan_bus
 c_func
 (paren
 id|pbus
-comma
-id|mem_start
 )paren
 suffix:semicolon
 multiline_comment|/* the original! */
@@ -4508,17 +4501,12 @@ id|hose
 op_assign
 id|hose-&gt;next
 )paren
-(brace
 id|mcpcia_probe
 c_func
 (paren
 id|hose
-comma
-op_amp
-id|memory_start
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* CONFIG_ALPHA_MCPCIA */
 eof

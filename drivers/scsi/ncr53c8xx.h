@@ -2,24 +2,22 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef NCR53C8XX_H
 DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if 0
-mdefine_line|#define CONFIG_SCSI_NCR53C8XX_PROFILE
-macro_line|#endif
-macro_line|#ifndef CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
-DECL|macro|CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
-mdefine_line|#define CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
-macro_line|#endif
 multiline_comment|/*&n;**&t;Name and revision of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 3.0e&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 3.0g&quot;
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|LinuxVersionCode
 mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
-multiline_comment|/*&n;**&t;These options are&squot;nt tunable from &squot;make config&squot;&n;*/
+multiline_comment|/*&n; *&t;No more an option, enabled by default.&n; */
+macro_line|#ifndef CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
+DECL|macro|CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
+mdefine_line|#define CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
+macro_line|#endif
+multiline_comment|/*&n;**&t;These options are not tunable from &squot;make config&squot;&n;*/
 DECL|macro|SCSI_NCR_PROC_INFO_SUPPORT
 mdefine_line|#define&t;SCSI_NCR_PROC_INFO_SUPPORT
 DECL|macro|SCSI_NCR_SHARE_IRQ

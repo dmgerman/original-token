@@ -131,6 +131,8 @@ DECL|macro|PYXIS_SPARSE_MEM_R3
 mdefine_line|#define PYXIS_SPARSE_MEM_R3&t;&t;(IDENT_ADDR + 0x8500000000UL)
 DECL|macro|PYXIS_DENSE_MEM
 mdefine_line|#define PYXIS_DENSE_MEM&t;&t;        (IDENT_ADDR + 0x8600000000UL)
+DECL|macro|DENSE_MEM
+mdefine_line|#define DENSE_MEM(addr)&t;&t;&t;PYXIS_DENSE_MEM
 multiline_comment|/*&n; * Byte/Word PCI Memory Spaces:&n; */
 DECL|macro|PYXIS_BW_MEM
 mdefine_line|#define PYXIS_BW_MEM&t;&t;&t;(IDENT_ADDR + 0x8800000000UL)
@@ -277,6 +279,8 @@ macro_line|#endif /* RUFFIAN */
 multiline_comment|/*&n; * I/O functions:&n; *&n; * PYXIS, the 21174 PCI/memory support chipset for the EV56 (21164A)&n; * and PCA56 (21164PC) processors, can use either a sparse address&n; * mapping scheme, or the so-called byte-word PCI address space, to&n; * get at PCI memory and I/O.&n; */
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
+DECL|macro|vulp
+mdefine_line|#define vulp&t;volatile unsigned long *
 macro_line|#ifdef BWIO_ENABLED
 DECL|function|__inb
 r_extern
@@ -310,6 +314,7 @@ l_string|&quot;m&quot;
 (paren
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -348,11 +353,11 @@ id|__volatile__
 l_string|&quot;stb %1,%0&bslash;n&bslash;t&quot;
 l_string|&quot;mb&quot;
 suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
+l_string|&quot;=m&quot;
 (paren
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -363,7 +368,7 @@ op_plus
 id|PYXIS_BW_IO
 )paren
 )paren
-comma
+suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|b
@@ -403,6 +408,7 @@ l_string|&quot;m&quot;
 (paren
 op_star
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -441,11 +447,11 @@ id|__volatile__
 l_string|&quot;stw %1,%0&bslash;n&bslash;t&quot;
 l_string|&quot;mb&quot;
 suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
+l_string|&quot;=m&quot;
 (paren
 op_star
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -456,7 +462,7 @@ op_plus
 id|PYXIS_BW_IO
 )paren
 )paren
-comma
+suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|b
@@ -477,39 +483,16 @@ r_int
 id|addr
 )paren
 (brace
-r_register
-r_int
-r_int
-id|result
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;ldl %0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|result
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
+r_return
 op_star
 (paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 id|addr
 op_plus
 id|PYXIS_BW_IO
 )paren
-)paren
-)paren
-suffix:semicolon
-r_return
-id|result
 suffix:semicolon
 )brace
 DECL|function|__outl
@@ -528,32 +511,21 @@ r_int
 id|addr
 )paren
 (brace
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;stl %1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mb&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
 op_star
 (paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 id|addr
 op_plus
 id|PYXIS_BW_IO
 )paren
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
+op_assign
 id|b
-)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -888,6 +860,7 @@ l_string|&quot;m&quot;
 (paren
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -936,6 +909,7 @@ l_string|&quot;m&quot;
 (paren
 op_star
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -965,39 +939,41 @@ r_int
 id|addr
 )paren
 (brace
-r_register
-r_int
-r_int
-id|result
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;ldl %0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|result
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
+r_return
 op_star
 (paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 id|addr
 op_plus
 id|PYXIS_BW_MEM
 )paren
-)paren
-)paren
 suffix:semicolon
+)brace
+DECL|function|__readq
+r_extern
+r_inline
+r_int
+r_int
+id|__readq
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
 r_return
-id|result
+op_star
+(paren
+id|vulp
+)paren
+(paren
+id|addr
+op_plus
+id|PYXIS_BW_MEM
+)paren
 suffix:semicolon
 )brace
 DECL|function|__writeb
@@ -1022,11 +998,11 @@ id|__volatile__
 l_string|&quot;stb %1,%0&bslash;n&bslash;t&quot;
 l_string|&quot;mb&quot;
 suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
+l_string|&quot;=m&quot;
 (paren
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -1037,7 +1013,7 @@ op_plus
 id|PYXIS_BW_MEM
 )paren
 )paren
-comma
+suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|b
@@ -1067,11 +1043,11 @@ id|__volatile__
 l_string|&quot;stw %1,%0&bslash;n&bslash;t&quot;
 l_string|&quot;mb&quot;
 suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
+l_string|&quot;=m&quot;
 (paren
 op_star
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -1082,7 +1058,7 @@ op_plus
 id|PYXIS_BW_MEM
 )paren
 )paren
-comma
+suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|b
@@ -1106,33 +1082,46 @@ r_int
 id|addr
 )paren
 (brace
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;stl %1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mb&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
 op_star
 (paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 (paren
 id|addr
 op_plus
 id|PYXIS_BW_MEM
 )paren
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
+op_assign
 id|b
+suffix:semicolon
+)brace
+DECL|function|__writeq
+r_extern
+r_inline
+r_void
+id|__writeq
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
 )paren
+(brace
+op_star
+(paren
+id|vulp
 )paren
+(paren
+id|addr
+op_plus
+id|PYXIS_BW_MEM
+)paren
+op_assign
+id|b
 suffix:semicolon
 )brace
 DECL|macro|readb
@@ -2175,6 +2164,31 @@ id|PYXIS_DENSE_MEM
 )paren
 suffix:semicolon
 )brace
+DECL|function|__readq
+r_extern
+r_inline
+r_int
+r_int
+id|__readq
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+op_star
+(paren
+id|vulp
+)paren
+(paren
+id|addr
+op_plus
+id|PYXIS_DENSE_MEM
+)paren
+suffix:semicolon
+)brace
 DECL|function|__writel
 r_extern
 r_inline
@@ -2204,13 +2218,48 @@ op_assign
 id|b
 suffix:semicolon
 )brace
+DECL|function|__writeq
+r_extern
+r_inline
+r_void
+id|__writeq
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+op_star
+(paren
+id|vulp
+)paren
+(paren
+id|addr
+op_plus
+id|PYXIS_DENSE_MEM
+)paren
+op_assign
+id|b
+suffix:semicolon
+)brace
 macro_line|#endif /* BWIO_ENABLED */
 DECL|macro|readl
 mdefine_line|#define readl(a)&t;__readl((unsigned long)(a))
+DECL|macro|readq
+mdefine_line|#define readq(a)&t;__readq((unsigned long)(a))
 DECL|macro|writel
 mdefine_line|#define writel(v,a)&t;__writel((v),(unsigned long)(a))
+DECL|macro|writeq
+mdefine_line|#define writeq(v,a)&t;__writeq((v),(unsigned long)(a))
 DECL|macro|vuip
 macro_line|#undef vuip
+DECL|macro|vulp
+macro_line|#undef vulp
 r_extern
 r_int
 r_int

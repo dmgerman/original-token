@@ -4586,7 +4586,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;##   FLAGS: start: %d tbusy: %ld int: %d&bslash;n&quot;
+l_string|&quot;##   FLAGS: start: %d tbusy: %ld int: %ld&bslash;n&quot;
 comma
 id|dev-&gt;start
 comma

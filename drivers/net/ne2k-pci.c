@@ -28,6 +28,7 @@ macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* Set statically or when loading the driver module. */
 DECL|variable|debug
 r_static
+r_int
 id|debug
 op_assign
 l_int|1
@@ -1790,7 +1791,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne2k_pci_get_8390_hdr &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1978,7 +1979,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne2k_pci_block_input &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2257,7 +2258,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne2k_pci_block_output.&quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d]&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld]&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

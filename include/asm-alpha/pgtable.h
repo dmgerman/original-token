@@ -37,10 +37,11 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
 macro_line|#ifdef CONFIG_ALPHA_DP264
-l_string|&quot;zap $16,0xe0,$16&bslash;n&bslash;t&quot;
-macro_line|#endif /* DP264 */
+l_string|&quot;zap %0,0xe0,$16&bslash;n&bslash;t&quot;
+macro_line|#else
+l_string|&quot;bis %0,%0,$16&bslash;n&bslash;t&quot;
+macro_line|#endif
 l_string|&quot;call_pal %1&quot;
 suffix:colon
 multiline_comment|/* no outputs */

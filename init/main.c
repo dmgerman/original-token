@@ -223,6 +223,7 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_VGA_CONSOLE
 r_extern
 r_void
 id|no_scroll
@@ -237,6 +238,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|kbd_reset_setup
@@ -2673,12 +2675,14 @@ id|console_setup
 )brace
 comma
 macro_line|#ifdef CONFIG_VT
+macro_line|#ifdef CONFIG_VGA_CONSOLE
 (brace
 l_string|&quot;no-scroll&quot;
 comma
 id|no_scroll
 )brace
 comma
+macro_line|#endif
 (brace
 l_string|&quot;kbd-reset&quot;
 comma

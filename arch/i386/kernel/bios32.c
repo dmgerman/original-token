@@ -4002,6 +4002,21 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * Don&squot;t enable VGA-compatible cards since they have&n;&t;&t; * fixed I/O and memory space.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+)paren
+op_ne
+id|PCI_CLASS_DISPLAY_VGA
+)paren
+(brace
 id|pci_read_config_word
 c_func
 (paren
@@ -4088,6 +4103,7 @@ comma
 id|cmd
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; */

@@ -52,7 +52,7 @@ c_func
 r_void
 op_star
 comma
-r_char
+r_int
 comma
 r_int
 )paren
@@ -78,6 +78,28 @@ DECL|macro|__HAVE_ARCH_STRRCHR
 mdefine_line|#define __HAVE_ARCH_STRRCHR
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
+multiline_comment|/* The following routine is like memset except that it writes 16-bit&n;   aligned values.  The DEST and COUNT parameters must be even for &n;   correct operation.  */
+DECL|macro|__HAVE_ARCH_MEMSETW
+mdefine_line|#define __HAVE_ARCH_MEMSETW
+r_extern
+r_void
+op_star
+id|__memsetw
+c_func
+(paren
+r_void
+op_star
+id|dest
+comma
+r_int
+r_int
+comma
+r_int
+id|count
+)paren
+suffix:semicolon
+DECL|macro|memsetw
+mdefine_line|#define memsetw(s, c, n)&t;&t;&t;&t;&t;&t; &bslash;&n;(__builtin_constant_p(c)&t;&t;&t;&t;&t;&t; &bslash;&n; ? __constant_c_memset((s),0x0001000100010001UL*(unsigned short)(c),(n)) &bslash;&n; : __memsetw((s),(c),(n)))
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ALPHA_STRING_H__ */
 eof

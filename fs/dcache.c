@@ -1336,6 +1336,7 @@ r_int
 id|gfp_mask
 )paren
 (brace
+macro_line|#if 0
 r_int
 id|count
 op_assign
@@ -1364,6 +1365,14 @@ op_rshift
 id|priority
 )paren
 suffix:semicolon
+macro_line|#else
+id|prune_dcache
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|macro|NAME_ALLOC_LEN
 mdefine_line|#define NAME_ALLOC_LEN(len)&t;((len+16) &amp; ~15)

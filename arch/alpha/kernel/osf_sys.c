@@ -3350,8 +3350,8 @@ c_cond
 id|uss
 )paren
 (brace
-r_int
-r_int
+r_void
+op_star
 id|ss_sp
 suffix:semicolon
 id|error
@@ -3397,6 +3397,10 @@ suffix:semicolon
 multiline_comment|/* Since we don&squot;t know the extent of the stack, and we don&squot;t&n;&t;&t;   track onstack-ness, but rather calculate it, we must &n;&t;&t;   presume a size.  Ho hum this interface is lossy.  */
 id|current-&gt;sas_ss_sp
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|ss_sp
 op_minus
 id|SIGSTKSZ

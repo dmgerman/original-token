@@ -222,6 +222,8 @@ DECL|macro|APECS_SPARSE_MEM
 mdefine_line|#define APECS_SPARSE_MEM&t;&t;(IDENT_ADDR + 0x200000000UL)
 DECL|macro|APECS_DENSE_MEM
 mdefine_line|#define APECS_DENSE_MEM&t;&t;        (IDENT_ADDR + 0x300000000UL)
+DECL|macro|DENSE_MEM
+mdefine_line|#define DENSE_MEM(addr)&t;&t;&t;APECS_DENSE_MEM
 multiline_comment|/*&n; * Bit definitions for I/O Controller status register 0:&n; */
 DECL|macro|APECS_IOC_STAT0_CMD
 mdefine_line|#define APECS_IOC_STAT0_CMD&t;&t;0xf
@@ -379,6 +381,8 @@ macro_line|#endif /* CONFIG_ALPHA_XL */
 multiline_comment|/*&n; * I/O functions:&n; *&n; * Unlike Jensen, the APECS machines have no concept of local&n; * I/O---everything goes over the PCI bus.&n; *&n; * There is plenty room for optimization here.  In particular,&n; * the Alpha&squot;s insb/insw/extb/extw should be useful in moving&n; * data to/from the right byte-lanes.&n; */
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
+DECL|macro|vulp
+mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|function|__inb
 r_extern
 r_inline
@@ -878,6 +882,31 @@ id|APECS_DENSE_MEM
 )paren
 suffix:semicolon
 )brace
+DECL|function|__readq
+r_extern
+r_inline
+r_int
+r_int
+id|__readq
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+op_star
+(paren
+id|vulp
+)paren
+(paren
+id|addr
+op_plus
+id|APECS_DENSE_MEM
+)paren
+suffix:semicolon
+)brace
 DECL|function|__writeb
 r_extern
 r_inline
@@ -1065,16 +1094,51 @@ op_assign
 id|b
 suffix:semicolon
 )brace
+DECL|function|__writeq
+r_extern
+r_inline
+r_void
+id|__writeq
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+op_star
+(paren
+id|vulp
+)paren
+(paren
+id|addr
+op_plus
+id|APECS_DENSE_MEM
+)paren
+op_assign
+id|b
+suffix:semicolon
+)brace
 DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
 mdefine_line|#define outb(x, port) &bslash;&n;(__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
 DECL|macro|readl
 mdefine_line|#define readl(a)&t;__readl((unsigned long)(a))
+DECL|macro|readq
+mdefine_line|#define readq(a)&t;__readq((unsigned long)(a))
 DECL|macro|writel
 mdefine_line|#define writel(v,a)&t;__writel((v),(unsigned long)(a))
+DECL|macro|writeq
+mdefine_line|#define writeq(v,a)&t;__writeq((v),(unsigned long)(a))
 DECL|macro|vuip
 macro_line|#undef vuip
+DECL|macro|vulp
+macro_line|#undef vulp
 r_extern
 r_int
 r_int

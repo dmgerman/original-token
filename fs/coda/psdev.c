@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1588,51 +1589,10 @@ multiline_comment|/* lock */
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|proc_sys_root
+r_extern
 r_struct
 id|proc_dir_entry
 id|proc_sys_root
-op_assign
-(brace
-id|PROC_SYS
-comma
-l_int|3
-comma
-l_string|&quot;sys&quot;
-comma
-multiline_comment|/* inode, name */
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* mode, nlink, uid, gid */
-l_int|0
-comma
-op_amp
-id|proc_dir_inode_operations
-comma
-multiline_comment|/* size, ops */
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* get_info, fill_inode */
-l_int|NULL
-comma
-multiline_comment|/* next */
-l_int|NULL
-comma
-l_int|NULL
-multiline_comment|/* parent, subdir */
-)brace
 suffix:semicolon
 DECL|variable|proc_sys_coda
 r_struct
