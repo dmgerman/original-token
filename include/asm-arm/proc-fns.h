@@ -20,28 +20,7 @@ r_char
 op_star
 id|name
 suffix:semicolon
-multiline_comment|/* MISC&n;&t; *&n;&t; * flush caches for task switch&n;&t; */
-DECL|member|_switch_to
-r_struct
-id|task_struct
-op_star
-(paren
-op_star
-id|_switch_to
-)paren
-(paren
-r_struct
-id|task_struct
-op_star
-id|prev
-comma
-r_struct
-id|task_struct
-op_star
-id|next
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * get data abort address/flags&n;&t; */
+multiline_comment|/* MISC&n;&t; * get data abort address/flags&n;&t; */
 DECL|member|_data_abort
 r_void
 (paren
@@ -195,6 +174,19 @@ id|end
 comma
 r_int
 id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Set the page table&n;&t;&t;&t; */
+DECL|member|_set_pgd
+r_void
+(paren
+op_star
+id|_set_pgd
+)paren
+(paren
+r_int
+r_int
+id|pgd_phys
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Set a PMD (handling IMP bit 4)&n;&t;&t;&t; */

@@ -1621,7 +1621,8 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
 DECL|function|kbd_reset_setup
-r_void
+r_static
+r_int
 id|__init
 id|kbd_reset_setup
 c_func
@@ -1629,17 +1630,24 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 id|kbd_startup_reset
 op_assign
 l_int|1
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;kbd-reset&quot;
+comma
+id|kbd_reset_setup
+)paren
+suffix:semicolon
 DECL|macro|KBD_NO_DATA
 mdefine_line|#define KBD_NO_DATA&t;(-1)&t;/* No data */
 DECL|macro|KBD_BAD_DATA

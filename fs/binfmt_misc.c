@@ -2368,6 +2368,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|init_misc_binfmt
+r_static
 r_int
 id|__init
 id|init_misc_binfmt
@@ -2517,6 +2518,13 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+DECL|variable|init_misc_binfmt
+id|__initcall
+c_func
+(paren
+id|init_misc_binfmt
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon

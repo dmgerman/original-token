@@ -260,6 +260,8 @@ r_int
 id|page
 )paren
 suffix:semicolon
+DECL|macro|THREAD_SIZE
+mdefine_line|#define THREAD_SIZE&t;(8192)
 DECL|macro|ll_alloc_task_struct
 mdefine_line|#define ll_alloc_task_struct()&t;((struct task_struct *)get_page_8k(GFP_KERNEL))
 DECL|macro|ll_free_task_struct

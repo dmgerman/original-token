@@ -362,13 +362,22 @@ comma
 id|addr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mm
+)paren
+id|mm
+op_assign
+op_amp
+id|init_mm
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;memmap = %08lX, pgd = %p&bslash;n&quot;
-comma
-id|tsk-&gt;tss.memmap
+l_string|&quot;pgd = %p&bslash;n&quot;
 comma
 id|mm-&gt;pgd
 )paren
@@ -618,11 +627,11 @@ op_amp
 id|FAULT_CODE_USER
 )paren
 (brace
-id|tsk-&gt;tss.error_code
+id|tsk-&gt;thread.error_code
 op_assign
 id|mode
 suffix:semicolon
-id|tsk-&gt;tss.trap_no
+id|tsk-&gt;thread.trap_no
 op_assign
 l_int|14
 suffix:semicolon
@@ -729,11 +738,11 @@ id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; */
-id|tsk-&gt;tss.error_code
+id|tsk-&gt;thread.error_code
 op_assign
 id|mode
 suffix:semicolon
-id|tsk-&gt;tss.trap_no
+id|tsk-&gt;thread.trap_no
 op_assign
 l_int|14
 suffix:semicolon

@@ -10446,7 +10446,7 @@ id|p-&gt;dc_regs_phys
 suffix:semicolon
 id|p-&gt;fix.mmio_len
 op_assign
-l_int|0x40000
+l_int|0x1000
 suffix:semicolon
 id|p-&gt;fix.accel
 op_assign

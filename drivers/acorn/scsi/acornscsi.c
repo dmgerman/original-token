@@ -11212,7 +11212,7 @@ c_func
 (paren
 id|string
 comma
-l_string|&quot;%s at port %X irq %d v%d.%d.%d&quot;
+l_string|&quot;%s at port %08lX irq %d v%d.%d.%d&quot;
 macro_line|#ifdef CONFIG_SCSI_ACORNSCSI_SYNC
 l_string|&quot; SYNC&quot;
 macro_line|#endif

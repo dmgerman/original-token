@@ -112,7 +112,8 @@ l_int|1
 suffix:semicolon
 multiline_comment|/*&n; *&t;Setup a list of consoles. Called from init/main.c&n; */
 DECL|function|console_setup
-r_void
+r_static
+r_int
 id|__init
 id|console_setup
 c_func
@@ -120,10 +121,6 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_struct
@@ -152,7 +149,23 @@ id|i
 comma
 id|idx
 suffix:semicolon
+r_int
+id|ints
+(braket
+l_int|11
+)braket
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Decode str into name, index, options.&n;&t; */
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -395,6 +408,7 @@ op_assign
 id|i
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -405,6 +419,7 @@ op_eq
 id|MAX_CMDLINECONSOLES
 )paren
 r_return
+l_int|1
 suffix:semicolon
 id|preferred_console
 op_assign
@@ -439,7 +454,18 @@ id|c-&gt;index
 op_assign
 id|idx
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;console=&quot;
+comma
+id|console_setup
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Commands to do_syslog:&n; *&n; * &t;0 -- Close the log.  Currently a NOP.&n; * &t;1 -- Open the log. Currently a NOP.&n; * &t;2 -- Read from the log.&n; * &t;3 -- Read up to the last 4k of messages in the ring buffer.&n; * &t;4 -- Read and clear last 4k of messages in the ring buffer&n; * &t;5 -- Clear ring buffer.&n; * &t;6 -- Disable printk&squot;s to console&n; * &t;7 -- Enable printk&squot;s to console&n; *&t;8 -- Set level of messages printed to console&n; */
 DECL|function|do_syslog
 r_int

@@ -7,7 +7,7 @@ macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/iomd.h&gt;
-macro_line|#include &quot;../../char/mouse.h&quot;
+macro_line|#include &quot;../../char/busmouse.h&quot;
 DECL|variable|old_x
 DECL|variable|old_y
 DECL|variable|old_b

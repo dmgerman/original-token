@@ -1063,7 +1063,7 @@ c_func
 (paren
 id|buffer
 comma
-id|p-&gt;obuf
+id|buf
 comma
 id|this_read
 )paren

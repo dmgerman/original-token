@@ -380,17 +380,15 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|no_scroll
-r_void
+r_static
+r_int
+id|__init
 id|no_scroll
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 multiline_comment|/*&n;&t; * Disabling scrollback is required for the Braillex ib80-piezo&n;&t; * Braille reader made by F.H. Papenmeier (Germany).&n;&t; * Use the &quot;no-scroll&quot; bootflag.&n;&t; */
@@ -400,7 +398,18 @@ id|vga_hardscroll_enabled
 op_assign
 l_int|0
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;no-scroll&quot;
+comma
+id|no_scroll
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * By replacing the four outb_p with two back to back outw, we can reduce&n; * the window of opportunity to see text mislocated to the RHS of the&n; * console during heavy scrolling activity. However there is the remote&n; * possibility that some pre-dinosaur hardware won&squot;t like the back to back&n; * I/O. Since the Xservers get away with it, we should be able to as well.&n; */
 DECL|function|write_vga
 r_static

@@ -31,64 +31,6 @@ op_star
 )paren
 l_int|NULL
 suffix:semicolon
-DECL|function|binfmt_setup
-r_void
-id|__init
-id|binfmt_setup
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_BINFMT_MISC
-id|init_misc_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_ELF
-id|init_elf_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_ELF32
-id|init_elf32_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_AOUT
-id|init_aout_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_AOUT32
-id|init_aout32_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_EM86
-id|init_em86_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* This cannot be configured out of the kernel */
-id|init_script_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 DECL|function|register_binfmt
 r_int
 id|register_binfmt

@@ -6617,7 +6617,8 @@ id|drive
 suffix:semicolon
 )brace
 DECL|function|device_setup
-r_void
+r_static
+r_int
 id|__init
 id|device_setup
 c_func
@@ -6792,7 +6793,17 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|device_setup
+id|__initcall
+c_func
+(paren
+id|device_setup
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|get_partition_list
 r_int

@@ -1,27 +1,6 @@
 multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/uaccess.h&n; */
-multiline_comment|/*&n; * The fs functions are implemented on the ARMV3 and V4 architectures&n; * using the domain register.&n; *&n; *  DOMAIN_IO     - domain 2 includes all IO only&n; *  DOMAIN_KERNEL - domain 1 includes all kernel memory only&n; *  DOMAIN_USER   - domain 0 includes all user memory only&n; */
 macro_line|#include &lt;asm/hardware.h&gt;
-DECL|macro|DOMAIN_CLIENT
-mdefine_line|#define DOMAIN_CLIENT&t;1
-DECL|macro|DOMAIN_MANAGER
-mdefine_line|#define DOMAIN_MANAGER&t;3
-DECL|macro|DOMAIN_USER_CLIENT
-mdefine_line|#define DOMAIN_USER_CLIENT&t;((DOMAIN_CLIENT) &lt;&lt; 0)
-DECL|macro|DOMAIN_USER_MANAGER
-mdefine_line|#define DOMAIN_USER_MANAGER&t;((DOMAIN_MANAGER) &lt;&lt; 0)
-DECL|macro|DOMAIN_KERNEL_CLIENT
-mdefine_line|#define DOMAIN_KERNEL_CLIENT&t;((DOMAIN_CLIENT) &lt;&lt; 2)
-DECL|macro|DOMAIN_KERNEL_MANAGER
-mdefine_line|#define DOMAIN_KERNEL_MANAGER&t;((DOMAIN_MANAGER) &lt;&lt; 2)
-DECL|macro|DOMAIN_IO_CLIENT
-mdefine_line|#define DOMAIN_IO_CLIENT&t;((DOMAIN_CLIENT) &lt;&lt; 4)
-DECL|macro|DOMAIN_IO_MANAGER
-mdefine_line|#define DOMAIN_IO_MANAGER&t;((DOMAIN_MANAGER) &lt;&lt; 4)
-multiline_comment|/*&n; * When we want to access kernel memory in the *_user functions,&n; * we change the domain register to KERNEL_DS, thus allowing&n; * unrestricted access&n; */
-DECL|macro|KERNEL_DOMAIN
-mdefine_line|#define KERNEL_DOMAIN&t;(DOMAIN_USER_CLIENT | DOMAIN_KERNEL_MANAGER | DOMAIN_IO_CLIENT)
-DECL|macro|USER_DOMAIN
-mdefine_line|#define USER_DOMAIN&t;(DOMAIN_USER_CLIENT | DOMAIN_KERNEL_CLIENT  | DOMAIN_IO_CLIENT)
+macro_line|#include &lt;asm/proc/domain.h&gt;
 multiline_comment|/*&n; * Note that this is actually 0x1,0000,0000&n; */
 DECL|macro|KERNEL_DS
 mdefine_line|#define KERNEL_DS&t;0x00000000
@@ -47,22 +26,17 @@ id|current-&gt;addr_limit
 op_assign
 id|fs
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|modify_domain
 c_func
 (paren
-l_string|&quot;mcr&t;p15, 0, %0, c3, c0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
+id|DOMAIN_KERNEL
+comma
 id|fs
 ques
 c_cond
-id|USER_DOMAIN
+id|DOMAIN_CLIENT
 suffix:colon
-id|KERNEL_DOMAIN
-)paren
+id|DOMAIN_MANAGER
 )paren
 suffix:semicolon
 )brace

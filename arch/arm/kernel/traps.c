@@ -962,11 +962,11 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 op_assign
 l_int|11
 suffix:semicolon
@@ -1017,11 +1017,11 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 op_assign
 l_int|6
 suffix:semicolon
@@ -1081,11 +1081,11 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 op_assign
 l_int|11
 suffix:semicolon
@@ -1635,9 +1635,9 @@ id|pgd
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;current-&gt;tss.memmap = %08lX&bslash;n&quot;
+l_string|&quot;current-&gt;thread.memmap = %08lX&bslash;n&quot;
 comma
-id|current-&gt;tss.memmap
+id|current-&gt;thread.memmap
 )paren
 suffix:semicolon
 id|pgd

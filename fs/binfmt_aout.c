@@ -2699,6 +2699,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|init_aout_binfmt
+r_static
 r_int
 id|__init
 id|init_aout_binfmt
@@ -2716,6 +2717,13 @@ id|aout_format
 )paren
 suffix:semicolon
 )brace
+DECL|variable|init_aout_binfmt
+id|__initcall
+c_func
+(paren
+id|init_aout_binfmt
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int

@@ -20,7 +20,6 @@ r_int
 id|ctrl_port
 comma
 r_int
-op_star
 id|irq
 )paren
 (brace
@@ -74,7 +73,6 @@ id|ctrl_port
 suffix:semicolon
 id|hw-&gt;irq
 op_assign
-op_star
 id|irq
 suffix:semicolon
 )brace
@@ -117,12 +115,8 @@ l_int|0x1f0
 comma
 l_int|0x3f6
 comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|hw.irq
-op_assign
 id|IRQ_HARDDISK
+)paren
 suffix:semicolon
 id|ide_register_hw
 c_func

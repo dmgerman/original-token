@@ -39,6 +39,8 @@ DECL|macro|PER_IRIXN32
 mdefine_line|#define PER_IRIXN32             (0x000a | STICKY_TIMEOUTS) /* IRIX6 new 32-bit */
 DECL|macro|PER_IRIX64
 mdefine_line|#define PER_IRIX64              (0x000b | STICKY_TIMEOUTS) /* IRIX6 64-bit     */
+DECL|macro|PER_RISCOS
+mdefine_line|#define PER_RISCOS&t;&t;(0x000c)
 multiline_comment|/* Prototype for an lcall7 syscall handler. */
 DECL|typedef|lcall7_func
 r_typedef

@@ -36,21 +36,6 @@ macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 r_extern
-r_char
-op_star
-id|get_options
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|set_device_ro
 c_func

@@ -247,18 +247,6 @@ id|virt_addr
 op_assign
 l_int|0xd8000000
 suffix:semicolon
-id|current-&gt;tss.memmap
-op_assign
-id|__virt_to_phys
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|swapper_pg_dir
-)paren
-suffix:semicolon
 )brace
 DECL|macro|MAPPING
 mdefine_line|#define MAPPING &bslash;&n;&t;{ SCREEN2_BASE,&t;SCREEN_START,&t;2*1048576, DOMAIN_IO, 0, 1 },&t;/* VRAM&t;&t;*/ &bslash;&n;&t;{ IO_BASE,&t;IO_START,&t;IO_SIZE&t; , DOMAIN_IO, 0, 1 },&t;/* IO space&t;*/ &bslash;&n;&t;{ EASI_BASE,&t;EASI_START,&t;EASI_SIZE, DOMAIN_IO, 0, 1 }&t;/* EASI space&t;*/

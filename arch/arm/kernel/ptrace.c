@@ -17,7 +17,7 @@ multiline_comment|/*&n; * does not yet catch signals sent when the child dies.&n
 multiline_comment|/*&n; * Breakpoint SWI instruction: SWI &amp;9F0001&n; */
 DECL|macro|BREAKINST
 mdefine_line|#define BREAKINST&t;0xef9f0001
-multiline_comment|/*&n; * this routine will get a word off of the processes privileged stack.&n; * the offset is how far from the base addr as stored in the TSS.&n; * this routine assumes that all the privileged stacks are in our&n; * data space.&n; */
+multiline_comment|/*&n; * this routine will get a word off of the processes privileged stack.&n; * the offset is how far from the base addr as stored in the THREAD.&n; * this routine assumes that all the privileged stacks are in our&n; * data space.&n; */
 DECL|function|get_stack_long
 r_static
 r_inline
@@ -69,7 +69,7 @@ id|offset
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * this routine will put a word on the processes privileged stack.&n; * the offset is how far from the base addr as stored in the TSS.&n; * this routine assumes that all the privileged stacks are in our&n; * data space.&n; */
+multiline_comment|/*&n; * this routine will put a word on the processes privileged stack.&n; * the offset is how far from the base addr as stored in the THREAD.&n; * this routine assumes that all the privileged stacks are in our&n; * data space.&n; */
 DECL|function|put_stack_long
 r_static
 r_inline
@@ -1698,7 +1698,7 @@ op_star
 id|dbg
 op_assign
 op_amp
-id|child-&gt;tss.debug
+id|child-&gt;thread.debug
 suffix:semicolon
 r_int
 r_int
@@ -1827,7 +1827,7 @@ op_star
 id|dbg
 op_assign
 op_amp
-id|child-&gt;tss.debug
+id|child-&gt;thread.debug
 suffix:semicolon
 r_int
 r_int
@@ -2584,7 +2584,7 @@ id|_NSIG
 r_goto
 id|out
 suffix:semicolon
-id|child-&gt;tss.debug.nsaved
+id|child-&gt;thread.debug.nsaved
 op_assign
 op_minus
 l_int|1

@@ -649,20 +649,17 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|memset
 c_func
 (paren
 op_amp
-id|current-&gt;tss.debug
+id|current-&gt;thread.debug
 comma
 l_int|0
 comma
 r_sizeof
 (paren
-id|current-&gt;tss.debug
+id|current-&gt;thread.debug
 )paren
 )paren
 suffix:semicolon
@@ -781,7 +778,7 @@ c_func
 id|save
 )paren
 suffix:semicolon
-id|p-&gt;tss.save
+id|p-&gt;thread.save
 op_assign
 id|save
 suffix:semicolon
@@ -820,7 +817,7 @@ id|memcpy
 id|fp
 comma
 op_amp
-id|current-&gt;tss.fpstate.soft
+id|current-&gt;thread.fpstate.soft
 comma
 r_sizeof
 (paren
@@ -901,7 +898,7 @@ id|dump-&gt;u_debugreg
 l_int|0
 )braket
 op_assign
-id|current-&gt;tss.debug.bp
+id|current-&gt;thread.debug.bp
 (braket
 l_int|0
 )braket
@@ -913,7 +910,7 @@ id|dump-&gt;u_debugreg
 l_int|1
 )braket
 op_assign
-id|current-&gt;tss.debug.bp
+id|current-&gt;thread.debug.bp
 (braket
 l_int|1
 )braket
@@ -925,7 +922,7 @@ id|dump-&gt;u_debugreg
 l_int|2
 )braket
 op_assign
-id|current-&gt;tss.debug.bp
+id|current-&gt;thread.debug.bp
 (braket
 l_int|0
 )braket
@@ -937,7 +934,7 @@ id|dump-&gt;u_debugreg
 l_int|3
 )braket
 op_assign
-id|current-&gt;tss.debug.bp
+id|current-&gt;thread.debug.bp
 (braket
 l_int|1
 )braket
@@ -949,7 +946,7 @@ id|dump-&gt;u_debugreg
 l_int|4
 )braket
 op_assign
-id|current-&gt;tss.debug.nsaved
+id|current-&gt;thread.debug.nsaved
 suffix:semicolon
 r_if
 c_cond

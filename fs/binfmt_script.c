@@ -509,6 +509,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|init_script_binfmt
+r_static
 r_int
 id|__init
 id|init_script_binfmt
@@ -526,6 +527,13 @@ id|script_format
 )paren
 suffix:semicolon
 )brace
+DECL|variable|init_script_binfmt
+id|__initcall
+c_func
+(paren
+id|init_script_binfmt
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int

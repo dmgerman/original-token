@@ -569,5 +569,27 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* PCMCIA code will want to get us to look at a port.  Provide a mechanism. */
+r_extern
+r_struct
+id|parport
+op_star
+id|parport_pc_probe_port
+(paren
+r_int
+r_int
+id|base
+comma
+r_int
+r_int
+id|base_hi
+comma
+r_int
+id|irq
+comma
+r_int
+id|dma
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

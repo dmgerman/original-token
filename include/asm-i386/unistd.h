@@ -409,15 +409,6 @@ c_func
 (paren
 r_int
 comma
-id|idle
-)paren
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
 id|pause
 )paren
 r_static

@@ -5752,6 +5752,7 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;&t;/* USE_ELF_CORE_DUMP */
 DECL|function|init_elf_binfmt
+r_static
 r_int
 id|__init
 id|init_elf_binfmt
@@ -5769,6 +5770,13 @@ id|elf_format
 )paren
 suffix:semicolon
 )brace
+DECL|variable|init_elf_binfmt
+id|__initcall
+c_func
+(paren
+id|init_elf_binfmt
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int

@@ -1360,7 +1360,7 @@ id|err
 op_or_assign
 id|__put_user
 (paren
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 comma
 op_amp
 id|sc-&gt;trap_no
@@ -1370,7 +1370,7 @@ id|err
 op_or_assign
 id|__put_user
 (paren
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 comma
 op_amp
 id|sc-&gt;error_code

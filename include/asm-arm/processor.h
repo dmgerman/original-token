@@ -100,56 +100,48 @@ DECL|struct|thread_struct
 r_struct
 id|thread_struct
 (brace
+multiline_comment|/* fault info&t;  */
 DECL|member|address
 r_int
 r_int
 id|address
 suffix:semicolon
-multiline_comment|/* Address of fault&t;*/
 DECL|member|trap_no
 r_int
 r_int
 id|trap_no
 suffix:semicolon
-multiline_comment|/* Trap number&t;*/
 DECL|member|error_code
 r_int
 r_int
 id|error_code
 suffix:semicolon
-multiline_comment|/* Error code of trap&t;*/
+multiline_comment|/* floating point */
 DECL|member|fpstate
 r_union
 id|fp_state
 id|fpstate
 suffix:semicolon
-multiline_comment|/* FPE save state&t;*/
+multiline_comment|/* debugging&t;  */
 DECL|member|debug
 r_struct
 id|debug_info
 id|debug
 suffix:semicolon
-multiline_comment|/* Debug/ptrace&t;*/
+multiline_comment|/* context info&t;  */
 DECL|member|save
 r_struct
 id|context_save_struct
 op_star
 id|save
 suffix:semicolon
-multiline_comment|/* context save&t;*/
-DECL|member|memmap
-r_int
-r_int
-id|memmap
-suffix:semicolon
-multiline_comment|/* page tables&t;*/
 id|EXTRA_THREAD_STRUCT
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
-DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;{ { { 0, }, }, },&t;&t;&t;&bslash;&n;&t;{ 0, },&t;&t;&t;&t;&t;&bslash;&n;&t;(struct context_save_struct *)0,&t;&bslash;&n;&t;SWAPPER_PG_DIR&t;&t;&t;&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;}
+DECL|macro|INIT_THREAD
+mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;{ { { 0, }, }, },&t;&t;&t;&bslash;&n;&t;{ 0, },&t;&t;&t;&t;&t;&bslash;&n;&t;(struct context_save_struct *)0&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;}
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern
@@ -260,7 +252,7 @@ op_star
 suffix:semicolon
 multiline_comment|/* Copy and release all segment info associated with a VM */
 DECL|macro|copy_segments
-mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+mdefine_line|#define copy_segments(tsk, mm)&t;&t;do { } while (0)
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 DECL|macro|forget_segments

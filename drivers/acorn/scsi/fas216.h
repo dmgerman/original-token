@@ -488,6 +488,21 @@ r_char
 id|msgin_fifo
 suffix:semicolon
 multiline_comment|/* bytes in fifo at time of message in&t;*/
+DECL|member|message
+r_int
+r_char
+id|message
+(braket
+l_int|256
+)braket
+suffix:semicolon
+multiline_comment|/* last message received from device&t;*/
+DECL|member|msglen
+r_int
+r_int
+id|msglen
+suffix:semicolon
+multiline_comment|/* length of last message received&t;*/
 DECL|member|disconnectable
 r_int
 r_char

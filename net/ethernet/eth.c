@@ -22,28 +22,38 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
+DECL|function|eth_setup
+r_static
+r_int
+id|__init
 id|eth_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
-)paren
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|11
+)braket
+suffix:semicolon
 r_struct
 id|device
 op_star
 id|d
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ints
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -56,6 +66,7 @@ op_star
 id|str
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|d
 op_assign
@@ -156,7 +167,18 @@ op_assign
 id|d-&gt;next
 suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;ether=&quot;
+comma
+id|eth_setup
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t; Create the Ethernet MAC header for an arbitrary protocol layer &n; *&n; *&t;saddr=NULL&t;means use device source address&n; *&t;daddr=NULL&t;means leave destination address (eg unresolved arp)&n; */
 DECL|function|eth_header
 r_int

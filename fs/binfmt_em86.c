@@ -387,6 +387,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|init_em86_binfmt
+r_static
 r_int
 id|__init
 id|init_em86_binfmt
@@ -404,6 +405,13 @@ id|em86_format
 )paren
 suffix:semicolon
 )brace
+DECL|variable|init_em86_binfmt
+id|__initcall
+c_func
+(paren
+id|init_em86_binfmt
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int

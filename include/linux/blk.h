@@ -682,32 +682,6 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == MFM_ACORN_MAJOR)
-DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;mfm disk&quot;
-DECL|macro|DEVICE_INTR
-mdefine_line|#define DEVICE_INTR do_mfm
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_mfm_request
-DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 6)
-DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON(device)
-DECL|macro|DEVICE_OFF
-mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == MFM_ACORN_MAJOR)
-DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;mfm disk&quot;
-DECL|macro|DEVICE_INTR
-mdefine_line|#define DEVICE_INTR do_mfm
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_mfm_request
-DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 6)
-DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON(device)
-DECL|macro|DEVICE_OFF
-mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (MAJOR_NR == NBD_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;nbd&quot;

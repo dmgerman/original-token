@@ -3318,14 +3318,6 @@ multiline_comment|/* was incremented in do_no_page */
 id|done
 suffix:colon
 multiline_comment|/* pte_val(pte) == shp-&gt;shm_pages[idx] */
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|current-&gt;min_flt
-op_increment
-suffix:semicolon
 id|get_page
 c_func
 (paren
@@ -3341,6 +3333,14 @@ id|pte
 )paren
 )paren
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;min_flt
+op_increment
 suffix:semicolon
 r_return
 id|pte_page

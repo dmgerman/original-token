@@ -819,6 +819,17 @@ comma
 id|regs-&gt;eip
 )paren
 suffix:semicolon
+id|asm
+c_func
+(paren
+l_string|&quot;movl %%cr3,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|page
+)paren
+)paren
+suffix:semicolon
 id|page
 op_assign
 (paren

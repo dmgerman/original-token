@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/block/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * This is the low-level hd interrupt support. It traverses the&n; * request-list, using interrupts to jump between functions. As&n; * all the functions are called within interrupts, we may not&n; * sleep. Special care is recommended.&n; * &n; *  modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  and general streamlining by Mark Lord.&n; *&n; *  Removed 99% of above. Use Mark&squot;s ide driver for those options.&n; *  This is now a lightweight ST-506 driver. (Paul Gortmaker)&n; *&n; */
+multiline_comment|/*&n; * This is the low-level hd interrupt support. It traverses the&n; * request-list, using interrupts to jump between functions. As&n; * all the functions are called within interrupts, we may not&n; * sleep. Special care is recommended.&n; * &n; *  modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  and general streamlining by Mark Lord.&n; *&n; *  Removed 99% of above. Use Mark&squot;s ide driver for those options.&n; *  This is now a lightweight ST-506 driver. (Paul Gortmaker)&n; *&n; *  Modified 1995 Russell King for ARM processor.&n; */
 multiline_comment|/* Uncomment the following if you want verbose error reports. */
 multiline_comment|/* #define VERBOSE_ERRORS */
 macro_line|#include &lt;asm/irq.h&gt;
@@ -24,6 +24,13 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR HD_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#ifdef __arm__
+DECL|macro|HD_IRQ
+macro_line|#undef  HD_IRQ
+macro_line|#include &lt;asm/irq.h&gt;
+DECL|macro|HD_IRQ
+mdefine_line|#define HD_IRQ IRQ_HARDDISK
+macro_line|#endif
 r_static
 r_int
 id|revalidate_hddisk
@@ -71,11 +78,6 @@ id|recalibrate
 (braket
 id|MAX_HD
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|special_op
 r_static
@@ -84,11 +86,6 @@ id|special_op
 (braket
 id|MAX_HD
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|access_count
 r_static
@@ -97,11 +94,6 @@ id|access_count
 (braket
 id|MAX_HD
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|busy
 r_static
@@ -110,11 +102,6 @@ id|busy
 (braket
 id|MAX_HD
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -127,15 +114,11 @@ DECL|variable|reset
 r_static
 r_int
 id|reset
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|hd_error
 r_static
 r_int
 id|hd_error
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|SUBSECTOR
 mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
@@ -208,44 +191,13 @@ r_struct
 id|hd_i_struct
 id|hd_info
 (braket
+id|MAX_HD
 )braket
-op_assign
-(brace
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
-)brace
 suffix:semicolon
 DECL|variable|NR_HD
 r_static
 r_int
 id|NR_HD
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|variable|hd
@@ -258,8 +210,6 @@ id|MAX_HD
 op_lshift
 l_int|6
 )braket
-op_assign
-initialization_block
 suffix:semicolon
 DECL|variable|hd_sizes
 r_static
@@ -270,11 +220,6 @@ id|MAX_HD
 op_lshift
 l_int|6
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|hd_blocksizes
 r_static
@@ -285,11 +230,16 @@ id|MAX_HD
 op_lshift
 l_int|6
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
+suffix:semicolon
+DECL|variable|hd_hardsectsizes
+r_static
+r_int
+id|hd_hardsectsizes
+(braket
+id|MAX_HD
+op_lshift
+l_int|6
+)braket
 suffix:semicolon
 macro_line|#if (HD_DELAY &gt; 0)
 DECL|variable|last_req
@@ -3670,6 +3620,24 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* __i386__ */
+macro_line|#ifdef __arm__
+r_if
+c_cond
+(paren
+op_logical_neg
+id|NR_HD
+)paren
+(brace
+multiline_comment|/* We don&squot;t know anything about the drive.  This means&n;&t;&t; * that you *MUST* specify the drive parameters to the&n;&t;&t; * kernel yourself.&n;&t;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;hd: no drives specified - use hd=cyl,head,sectors&quot;
+l_string|&quot; on kernel command line&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -3848,6 +3816,13 @@ id|drive
 op_assign
 l_int|1024
 suffix:semicolon
+id|hd_hardsectsizes
+(braket
+id|drive
+)braket
+op_assign
+l_int|512
+suffix:semicolon
 )brace
 id|blksize_size
 (braket
@@ -3855,6 +3830,13 @@ id|MAJOR_NR
 )braket
 op_assign
 id|hd_blocksizes
+suffix:semicolon
+id|hardsect_size
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+id|hd_hardsectsizes
 suffix:semicolon
 )brace
 DECL|variable|hd_fops
