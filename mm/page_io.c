@@ -683,20 +683,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|rw
-op_eq
-id|WRITE
-)paren
-singleline_comment|// HACK, FIXME
-id|UnlockPage
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 multiline_comment|/* Note! For consistency we do all of the logic,&n; &t; * decrementing the page count, and unlocking the page in the&n; &t; * swap lock map - in the IO completion handler.&n; &t; */
 r_if
 c_cond

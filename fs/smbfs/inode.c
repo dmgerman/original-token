@@ -1233,12 +1233,6 @@ op_rshift
 l_int|9
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMB_WIN95
-id|mnt-&gt;version
-op_or_assign
-id|SMB_FIX_WIN95
-suffix:semicolon
-macro_line|#endif
 id|mnt-&gt;file_mode
 op_and_assign
 (paren
@@ -1272,19 +1266,6 @@ op_assign
 id|mnt
 suffix:semicolon
 multiline_comment|/*&n;&t; * Display the enabled options&n;&t; */
-r_if
-c_cond
-(paren
-id|mnt-&gt;version
-op_amp
-id|SMB_FIX_WIN95
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;SMBFS: Win 95 bug fixes enabled&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

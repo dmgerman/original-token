@@ -126,7 +126,7 @@ id|__u32
 id|capabilities
 suffix:semicolon
 DECL|member|serverzone
-id|__u16
+id|__s16
 id|serverzone
 suffix:semicolon
 )brace

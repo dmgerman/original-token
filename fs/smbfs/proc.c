@@ -31,6 +31,9 @@ DECL|macro|SMB_DIRINFO_SIZE
 mdefine_line|#define SMB_DIRINFO_SIZE 43
 DECL|macro|SMB_STATUS_SIZE
 mdefine_line|#define SMB_STATUS_SIZE  21
+multiline_comment|/* yes, this deliberately has two parts */
+DECL|macro|DENTRY_PATH
+mdefine_line|#define DENTRY_PATH(dentry) (dentry)-&gt;d_parent-&gt;d_name.name,(dentry)-&gt;d_name.name
 r_static
 r_int
 id|smb_proc_setattr_ext
@@ -612,17 +615,17 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* JanFebMarApr May Jun Jul Aug Sep Oct Nov Dec */
-r_extern
-r_struct
-id|timezone
-id|sys_tz
-suffix:semicolon
 r_static
 id|time_t
 DECL|function|utc2local
 id|utc2local
 c_func
 (paren
+r_struct
+id|smb_sb_info
+op_star
+id|server
+comma
 id|time_t
 id|time
 )paren
@@ -630,18 +633,9 @@ id|time
 r_return
 id|time
 op_minus
-id|sys_tz.tz_minuteswest
+id|server-&gt;opt.serverzone
 op_star
 l_int|60
-op_minus
-(paren
-id|sys_tz.tz_dsttime
-ques
-c_cond
-l_int|3600
-suffix:colon
-l_int|0
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -650,6 +644,11 @@ DECL|function|local2utc
 id|local2utc
 c_func
 (paren
+r_struct
+id|smb_sb_info
+op_star
+id|server
+comma
 id|time_t
 id|time
 )paren
@@ -657,18 +656,9 @@ id|time
 r_return
 id|time
 op_plus
-id|sys_tz.tz_minuteswest
+id|server-&gt;opt.serverzone
 op_star
 l_int|60
-op_plus
-(paren
-id|sys_tz.tz_dsttime
-ques
-c_cond
-l_int|3600
-suffix:colon
-l_int|0
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Convert a MS-DOS time/date pair to a UNIX date (seconds since 1 1 70). */
@@ -678,6 +668,11 @@ DECL|function|date_dos2unix
 id|date_dos2unix
 c_func
 (paren
+r_struct
+id|smb_sb_info
+op_star
+id|server
+comma
 id|__u16
 id|date
 comma
@@ -796,6 +791,8 @@ r_return
 id|local2utc
 c_func
 (paren
+id|server
+comma
 id|secs
 )paren
 suffix:semicolon
@@ -807,6 +804,11 @@ DECL|function|date_unix2dos
 id|date_unix2dos
 c_func
 (paren
+r_struct
+id|smb_sb_info
+op_star
+id|server
+comma
 r_int
 id|unix_date
 comma
@@ -833,6 +835,8 @@ op_assign
 id|utc2local
 c_func
 (paren
+id|server
+comma
 id|unix_date
 )paren
 suffix:semicolon
@@ -1499,6 +1503,24 @@ r_class
 op_assign
 l_string|&quot;Unknown&quot;
 suffix:semicolon
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
+c_func
+(paren
+l_string|&quot;smb_errno: errcls %d  code %d  from command 0x%x&bslash;n&quot;
+comma
+id|errcls
+comma
+id|error
+comma
+id|SMB_CMD
+c_func
+(paren
+id|server-&gt;packet
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1808,7 +1830,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;smb_errno: class %s, code %d from command %x&bslash;n&quot;
+l_string|&quot;smb_errno: class %s, code %d from command 0x%x&bslash;n&quot;
 comma
 r_class
 comma
@@ -2355,17 +2377,75 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* check if we have an old smbmount that uses seconds for the &n;&t;   serverzone */
+r_if
+c_cond
+(paren
+id|server-&gt;opt.serverzone
+OG
+l_int|12
+op_star
+l_int|60
+op_logical_or
+id|server-&gt;opt.serverzone
+OL
+op_minus
+l_int|12
+op_star
+l_int|60
+)paren
+id|server-&gt;opt.serverzone
+op_div_assign
+l_int|60
+suffix:semicolon
+multiline_comment|/* now that we have an established connection we can detect the server&n;&t;   type and enable bug workarounds */
+r_if
+c_cond
+(paren
+id|server-&gt;opt.protocol
+op_eq
+id|SMB_PROTOCOL_NT1
+op_logical_and
+(paren
+id|server-&gt;opt.max_xmit
+OL
+l_int|0x1000
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|server-&gt;opt.capabilities
+op_amp
+id|SMB_CAP_NT_SMBS
+)paren
+)paren
+(brace
+id|server-&gt;mnt-&gt;version
+op_or_assign
+id|SMB_FIX_WIN95
+suffix:semicolon
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;smb_newconn: protocol=%d, max_xmit=%d, pid=%d&bslash;n&quot;
+l_string|&quot;smb_newconn: detected WIN95 server&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
+id|printk
+c_func
+(paren
+l_string|&quot;smb_newconn: protocol=%d, max_xmit=%d, pid=%d capabilities=0x%x&bslash;n&quot;
 comma
 id|server-&gt;opt.protocol
 comma
 id|server-&gt;opt.max_xmit
 comma
 id|server-&gt;conn_pid
+comma
+id|server-&gt;opt.capabilities
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2921,9 +3001,11 @@ c_func
 (paren
 l_string|&quot;smb_proc_open: %s/%s R/W failed, error=%d, retrying R/O&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|error
 )paren
@@ -3030,9 +3112,11 @@ c_func
 (paren
 l_string|&quot;smb_open: no inode for dentry %s/%s&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 )paren
 suffix:semicolon
 r_goto
@@ -3112,9 +3196,11 @@ c_func
 (paren
 l_string|&quot;smb_open: %s/%s open failed, result=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|result
 )paren
@@ -3155,9 +3241,11 @@ c_func
 (paren
 l_string|&quot;smb_open: %s/%s access denied, access=%x, wish=%x&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|inode-&gt;u.smbfs_i.access
 comma
@@ -3228,6 +3316,8 @@ comma
 id|utc2local
 c_func
 (paren
+id|server
+comma
 id|mtime
 )paren
 )paren
@@ -3517,9 +3607,11 @@ c_func
 (paren
 l_string|&quot;smb_close_dentry: closing %s/%s, count=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|dentry-&gt;d_count
 )paren
@@ -3547,9 +3639,11 @@ c_func
 (paren
 l_string|&quot;smb_close_dentry: closed %s/%s, count=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|dentry-&gt;d_count
 )paren
@@ -3825,9 +3919,11 @@ c_func
 (paren
 l_string|&quot;smb_proc_read: file %s/%s, count=%d, result=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|count
 comma
@@ -3891,9 +3987,11 @@ c_func
 (paren
 l_string|&quot;smb_proc_write: file %s/%s, count=%d@%ld, packet_size=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|count
 comma
@@ -4115,6 +4213,8 @@ comma
 id|utc2local
 c_func
 (paren
+id|server
+comma
 id|ctime
 )paren
 )paren
@@ -5277,9 +5377,11 @@ c_func
 (paren
 l_string|&quot;smb_proc_readdir_short: %s/%s, pos=%d&bslash;n&quot;
 comma
-id|dir-&gt;d_parent-&gt;d_name.name
-comma
-id|dir-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dir
+)paren
 comma
 id|fpos
 )paren
@@ -7296,6 +7398,8 @@ op_assign
 id|date_dos2unix
 c_func
 (paren
+id|server
+comma
 id|date
 comma
 id|time
@@ -7326,6 +7430,8 @@ op_assign
 id|date_dos2unix
 c_func
 (paren
+id|server
+comma
 id|date
 comma
 id|time
@@ -7356,6 +7462,8 @@ op_assign
 id|date_dos2unix
 c_func
 (paren
+id|server
+comma
 id|date
 comma
 id|time
@@ -7535,6 +7643,8 @@ op_assign
 id|local2utc
 c_func
 (paren
+id|server
+comma
 id|DVAL
 c_func
 (paren
@@ -7568,9 +7678,11 @@ c_func
 (paren
 l_string|&quot;getattr_core: %s/%s, mtime=%ld&bslash;n&quot;
 comma
-id|dir-&gt;d_name.name
-comma
-id|name-&gt;name
+id|DENTRY_PATH
+c_func
+(paren
+id|dir
+)paren
 comma
 id|fattr-&gt;f_mtime
 )paren
@@ -7871,6 +7983,8 @@ op_assign
 id|date_dos2unix
 c_func
 (paren
+id|server
+comma
 id|date
 comma
 id|time
@@ -7905,6 +8019,8 @@ op_assign
 id|date_dos2unix
 c_func
 (paren
+id|server
+comma
 id|date
 comma
 id|time
@@ -7939,6 +8055,8 @@ op_assign
 id|date_dos2unix
 c_func
 (paren
+id|server
+comma
 id|date
 comma
 id|time
@@ -7950,9 +8068,11 @@ c_func
 (paren
 l_string|&quot;getattr_trans2: %s/%s, date=%x, time=%x, mtime=%ld&bslash;n&quot;
 comma
-id|dir-&gt;d_name.name
-comma
-id|name-&gt;name
+id|DENTRY_PATH
+c_func
+(paren
+id|dir
+)paren
 comma
 id|date
 comma
@@ -8250,19 +8370,6 @@ op_increment
 op_assign
 l_int|4
 suffix:semicolon
-multiline_comment|/*&n;&t; * Samba uses three leading &squot;&bslash;&squot;, so we&squot;ll do it too.&n;&t; */
-op_star
-id|p
-op_increment
-op_assign
-l_char|&squot;&bslash;&bslash;&squot;
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-l_char|&squot;&bslash;&bslash;&squot;
-suffix:semicolon
 id|p
 op_assign
 id|smb_encode_path
@@ -8382,9 +8489,11 @@ c_func
 (paren
 l_string|&quot;smb_proc_setattr: setting %s/%s, open=%d&bslash;n&quot;
 comma
-id|dir-&gt;d_parent-&gt;d_name.name
-comma
-id|dir-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dir
+)paren
 comma
 id|smb_is_open
 c_func
@@ -8501,6 +8610,8 @@ suffix:semicolon
 id|date_unix2dos
 c_func
 (paren
+id|server
+comma
 id|fattr-&gt;f_atime
 comma
 op_amp
@@ -8533,6 +8644,8 @@ suffix:semicolon
 id|date_unix2dos
 c_func
 (paren
+id|server
+comma
 id|fattr-&gt;f_mtime
 comma
 op_amp
@@ -8757,6 +8870,8 @@ suffix:semicolon
 id|date_unix2dos
 c_func
 (paren
+id|server
+comma
 id|fattr-&gt;f_atime
 comma
 op_amp
@@ -8789,6 +8904,8 @@ suffix:semicolon
 id|date_unix2dos
 c_func
 (paren
+id|server
+comma
 id|fattr-&gt;f_mtime
 comma
 op_amp
@@ -8824,9 +8941,11 @@ c_func
 (paren
 l_string|&quot;setattr_trans2: %s/%s, date=%x, time=%x, mtime=%ld&bslash;n&quot;
 comma
-id|dir-&gt;d_parent-&gt;d_name.name
-comma
-id|dir-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dir
+)paren
 comma
 id|date
 comma
@@ -9006,9 +9125,11 @@ c_func
 (paren
 l_string|&quot;smb_proc_settime: setting %s/%s, open=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|smb_is_open
 c_func
@@ -9024,12 +9145,20 @@ c_func
 id|server
 )paren
 suffix:semicolon
+multiline_comment|/* setting the time on a Win95 server fails (tridge) */
 r_if
 c_cond
 (paren
 id|server-&gt;opt.protocol
 op_ge
 id|SMB_PROTOCOL_LANMAN2
+op_logical_and
+op_logical_neg
+(paren
+id|server-&gt;mnt-&gt;version
+op_amp
+id|SMB_FIX_WIN95
+)paren
 )paren
 (brace
 r_if
@@ -9088,7 +9217,7 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Set the mtime by opening and closing the file.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Set the mtime by opening and closing the file.&n;&t;&t;&t; * Note that the file is opened read-only, but this&n;&t;&t;&t; * still allows us to set the date (tridge)&n;&t;&t;&t; */
 id|result
 op_assign
 op_minus
@@ -9111,7 +9240,7 @@ id|server
 comma
 id|dentry
 comma
-id|SMB_O_WRONLY
+id|SMB_O_RDONLY
 )paren
 suffix:semicolon
 r_if
@@ -9122,10 +9251,6 @@ c_func
 (paren
 id|inode
 )paren
-op_logical_and
-id|inode-&gt;u.smbfs_i.access
-op_ne
-id|SMB_O_RDONLY
 )paren
 (brace
 id|inode-&gt;i_mtime

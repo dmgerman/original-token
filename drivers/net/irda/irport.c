@@ -1118,7 +1118,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|self-&gt;lock
+id|idev-&gt;lock
 comma
 id|flags
 )paren

@@ -4483,6 +4483,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_struct
+id|fs_struct
+op_star
+id|fs
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -4503,7 +4508,29 @@ id|current-&gt;pgrp
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;         * FIXME(eric) this is still a child process of the one that did the insmod.&n;         * This needs to be attached to task[0] instead.&n;         */
+multiline_comment|/* Become as one with the init task */
+id|exit_fs
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+multiline_comment|/* current-&gt;fs-&gt;count--; */
+id|fs
+op_assign
+id|init_task.fs
+suffix:semicolon
+id|current-&gt;fs
+op_assign
+id|fs
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|fs-&gt;count
+)paren
+suffix:semicolon
 id|siginitsetinv
 c_func
 (paren
@@ -4512,10 +4539,6 @@ id|current-&gt;blocked
 comma
 id|SHUTDOWN_SIGS
 )paren
-suffix:semicolon
-id|current-&gt;fs-&gt;umask
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set the name of this process.&n;&t; */
 id|sprintf

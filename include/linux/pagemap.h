@@ -162,6 +162,17 @@ op_star
 id|page
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|lock_page
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
 DECL|macro|find_lock_page
 mdefine_line|#define find_lock_page(inode, offset) &bslash;&n;&t;&t;__find_lock_page(inode, offset, *page_hash(inode, offset))
 r_extern
