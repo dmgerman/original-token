@@ -128,7 +128,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -182,6 +181,7 @@ mdefine_line|#define NEW_MULTICAST
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20100)
+macro_line|#ifdef MODULE
 DECL|variable|kernel_version
 r_char
 id|kernel_version
@@ -190,6 +190,7 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef SA_SHIRQ
 DECL|macro|IRQ
@@ -201,6 +202,7 @@ macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
 DECL|macro|test_and_set_bit
 mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
+macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#endif
 multiline_comment|/* This my implementation of shared IRQs, now only used for 1.2.13. */
 macro_line|#ifdef HAVE_SHARED_IRQ
@@ -1444,7 +1446,7 @@ multiline_comment|/* Ideally we would detect all network cards in slot order.  T
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -1470,10 +1472,24 @@ op_increment
 (brace
 r_int
 r_char
-id|pci_irq_line
-comma
 id|pci_latency
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20155
+r_int
+r_int
+id|pci_irq_line
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+macro_line|#else
+r_int
+r_char
+id|pci_irq_line
+suffix:semicolon
+macro_line|#endif
 r_int
 r_int
 id|pci_command
@@ -1553,6 +1569,29 @@ op_amp
 id|device
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20155
+id|pdev
+op_assign
+id|pci_find_slot
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+)paren
+suffix:semicolon
+id|pci_irq_line
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+id|pci_ioaddr
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+macro_line|#else
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -1579,6 +1618,7 @@ op_amp
 id|pci_ioaddr
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Remove I/O space marker in bit 0. */
 id|pci_ioaddr
 op_and_assign

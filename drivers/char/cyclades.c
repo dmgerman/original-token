@@ -79,7 +79,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -19085,10 +19084,6 @@ r_void
 macro_line|#ifdef CONFIG_PCI
 r_int
 r_char
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
 id|cyy_rev_id
 suffix:semicolon
 r_int
@@ -19144,10 +19139,17 @@ id|ZeIndex
 op_assign
 l_int|0
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -19194,34 +19196,26 @@ l_int|0
 r_if
 c_cond
 (paren
-id|pcibios_find_device
+(paren
+id|pdev
+op_assign
+id|pci_find_device
 c_func
 (paren
 id|PCI_VENDOR_ID_CYCLADES
 comma
 id|device_id
 comma
-id|board_index
-comma
-op_amp
-id|cyy_bus
-comma
-op_amp
-id|cyy_dev_fn
+id|pdev
 )paren
-op_ne
-l_int|0
 )paren
-(brace
+op_eq
+l_int|NULL
+)paren
 id|dev_index
 op_increment
 suffix:semicolon
 multiline_comment|/* try next device id */
-id|board_index
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 r_else
 (brace
 id|board_index
@@ -19242,79 +19236,35 @@ l_int|0
 r_break
 suffix:semicolon
 multiline_comment|/* read PCI configuration area */
-id|pcibios_read_config_byte
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
 id|cy_pci_irq
-)paren
+op_assign
+id|pdev-&gt;irq
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
 id|cy_pci_addr0
-)paren
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
 id|cy_pci_addr1
-)paren
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
-comma
-id|PCI_BASE_ADDRESS_2
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
 id|cy_pci_addr2
-)paren
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|2
+)braket
 suffix:semicolon
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|cyy_bus
-comma
-id|cyy_dev_fn
+id|pdev
 comma
 id|PCI_REVISION_ID
 comma
@@ -19344,9 +19294,9 @@ c_func
 (paren
 l_string|&quot;Cyclom-Y/PCI (bus=0x0%x, pci_id=0x%x, &quot;
 comma
-id|cyy_bus
+id|pdev-&gt;bus-&gt;number
 comma
-id|cyy_dev_fn
+id|pdev-&gt;devfn
 )paren
 suffix:semicolon
 id|printk
@@ -19381,11 +19331,11 @@ suffix:semicolon
 macro_line|#endif
 id|cy_pci_addr1
 op_and_assign
-l_int|0xfffffffc
+id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 id|cy_pci_addr2
 op_and_assign
-l_int|0xfffffff0
+id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
 macro_line|#if defined(__alpha__)
 r_if
@@ -19402,9 +19352,9 @@ c_func
 (paren
 l_string|&quot;Cyclom-Y/PCI (bus=0x0%x, pci_id=0x%x, &quot;
 comma
-id|cyy_bus
+id|pdev-&gt;bus-&gt;number
 comma
-id|cyy_dev_fn
+id|pdev-&gt;devfn
 )paren
 suffix:semicolon
 id|printk
@@ -19865,9 +19815,9 @@ c_func
 (paren
 l_string|&quot;Cyclades-Z/PCI (bus=0x0%x, pci_id=0x%x, &quot;
 comma
-id|cyy_bus
+id|pdev-&gt;bus-&gt;number
 comma
-id|cyy_dev_fn
+id|pdev-&gt;devfn
 )paren
 suffix:semicolon
 id|printk
@@ -19923,9 +19873,9 @@ c_func
 (paren
 l_string|&quot;Cyclades-Z/PCI (bus=0x0%x, pci_id=0x%x, &quot;
 comma
-id|cyy_bus
+id|pdev-&gt;bus-&gt;number
 comma
-id|cyy_dev_fn
+id|pdev-&gt;devfn
 )paren
 suffix:semicolon
 id|printk
@@ -19960,7 +19910,7 @@ suffix:semicolon
 macro_line|#endif
 id|cy_pci_addr0
 op_and_assign
-l_int|0xfffffff0
+id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
 macro_line|#if !defined(__alpha__)
 id|cy_pci_addr0
@@ -20017,7 +19967,7 @@ id|mail_box_0
 suffix:semicolon
 id|cy_pci_addr2
 op_and_assign
-l_int|0xfffffff0
+id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
 r_if
 c_cond

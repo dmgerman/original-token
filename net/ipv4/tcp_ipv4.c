@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.127 1998/03/30 08:41:25 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
-multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics (ifdefed by&n; *&t;&t;&t;&t;&t;NEW_LISTEN for now)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.131 1998/04/03 10:52:04 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics (ifdefed by&n; *&t;&t;&t;&t;&t;TCP_NEW_LISTEN for now)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Andi Kleen&t;&t;:&t;Fix TCP_NEW_LISTEN and make it the default.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -3313,6 +3313,15 @@ multiline_comment|/* report error in accept */
 )brace
 r_else
 (brace
+macro_line|#ifdef TCP_NEW_LISTEN
+id|tp-&gt;syn_backlog
+op_decrement
+suffix:semicolon
+macro_line|#else
+id|sk-&gt;ack_backlog
+op_decrement
+suffix:semicolon
+macro_line|#endif
 id|tcp_synq_unlink
 c_func
 (paren
@@ -4206,12 +4215,6 @@ id|sysctl_max_syn_backlog
 op_assign
 l_int|1024
 suffix:semicolon
-DECL|variable|sysctl_tcp_syn_taildrop
-r_int
-id|sysctl_tcp_syn_taildrop
-op_assign
-l_int|1
-suffix:semicolon
 DECL|variable|or_ipv4
 r_struct
 id|or_calltable
@@ -4225,7 +4228,7 @@ comma
 id|tcp_v4_send_reset
 )brace
 suffix:semicolon
-macro_line|#ifdef NEW_LISTEN
+macro_line|#ifdef TCP_NEW_LISTEN
 DECL|macro|BACKLOG
 mdefine_line|#define BACKLOG(sk) ((sk)-&gt;tp_pinfo.af_tcp.syn_backlog) /* lvalue! */
 DECL|macro|BACKLOGMAX
@@ -4340,42 +4343,9 @@ suffix:semicolon
 )brace
 r_else
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|sysctl_tcp_syn_taildrop
-)paren
-(brace
-r_struct
-id|open_request
-op_star
-id|req
-suffix:semicolon
-id|req
-op_assign
-id|tcp_synq_unlink_tail
-c_func
-(paren
-op_amp
-id|sk-&gt;tp_pinfo.af_tcp
-)paren
-suffix:semicolon
-id|tcp_openreq_free
-c_func
-(paren
-id|req
-)paren
-suffix:semicolon
-id|tcp_statistics.TcpAttemptFails
-op_increment
-suffix:semicolon
-)brace
-r_else
-(brace
 r_goto
-id|error
+id|drop
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -4396,6 +4366,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
+)brace
 id|BACKLOG
 c_func
 (paren
@@ -4403,7 +4374,6 @@ id|sk
 )paren
 op_increment
 suffix:semicolon
-)brace
 id|req
 op_assign
 id|tcp_openreq_alloc
@@ -4419,21 +4389,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|want_cookie
-)paren
-id|BACKLOG
-c_func
-(paren
-id|sk
-)paren
-op_decrement
-suffix:semicolon
 r_goto
-id|error
+id|dropbacklog
 suffix:semicolon
 )brace
 id|req-&gt;rcv_wnd
@@ -4677,7 +4634,22 @@ op_minus
 id|ENOTCONN
 suffix:semicolon
 multiline_comment|/* send reset */
-id|error
+id|dropbacklog
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|want_cookie
+)paren
+id|BACKLOG
+c_func
+(paren
+id|sk
+)paren
+op_decrement
+suffix:semicolon
+id|drop
 suffix:colon
 id|tcp_statistics.TcpAttemptFails
 op_increment
@@ -4876,6 +4848,7 @@ id|newtp-&gt;snd_wl2
 op_assign
 id|req-&gt;snt_isn
 suffix:semicolon
+multiline_comment|/* RFC1323: The window in SYN &amp; SYN/ACK segments&n;&t;&t; * is never scaled.&n;&t;&t; */
 id|newtp-&gt;snd_wnd
 op_assign
 id|ntohs
@@ -5258,6 +5231,7 @@ r_return
 id|newsk
 suffix:semicolon
 )brace
+multiline_comment|/* &n; * The three way handshake has completed - we got a valid synack - &n; * now create the new socket. &n; */
 DECL|function|tcp_v4_syn_recv_sock
 r_struct
 id|sock
@@ -5309,7 +5283,7 @@ suffix:semicolon
 r_int
 id|mtu
 suffix:semicolon
-macro_line|#ifdef NEW_LISTEN
+macro_line|#ifdef TCP_NEW_LISTEN
 r_if
 c_cond
 (paren
@@ -5371,7 +5345,10 @@ op_amp
 id|rt-&gt;u.dst
 suffix:semicolon
 )brace
-macro_line|#ifdef NEW_LISTEN
+macro_line|#ifdef TCP_NEW_LISTEN
+id|sk-&gt;tp_pinfo.af_tcp.syn_backlog
+op_decrement
+suffix:semicolon
 id|sk-&gt;ack_backlog
 op_increment
 suffix:semicolon
@@ -5598,6 +5575,22 @@ comma
 id|prev
 )paren
 suffix:semicolon
+macro_line|#ifdef TCP_NEW_LISTEN
+(paren
+id|req-&gt;sk
+ques
+c_cond
+id|sk-&gt;ack_backlog
+suffix:colon
+id|tp-&gt;syn_backlog
+)paren
+op_decrement
+suffix:semicolon
+macro_line|#else
+id|sk-&gt;ack_backlog
+op_decrement
+suffix:semicolon
+macro_line|#endif
 id|req
 op_member_access_from_pointer
 r_class
@@ -6093,12 +6086,17 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;TCPv4 bad checksum from %d.%d.%d.%d:%04x to %d.%d.%d.%d:%04x, len=%d/%d/%d&bslash;n&quot;
+l_string|&quot;TCPv4 bad checksum from %d.%d.%d.%d:%04x to %d.%d.%d.%d:%04x, &quot;
+l_string|&quot;len=%d/%d/%d&bslash;n&quot;
 comma
 id|NIPQUAD
 c_func
 (paren
+id|ntohl
+c_func
+(paren
 id|skb-&gt;nh.iph-&gt;saddr
+)paren
 )paren
 comma
 id|ntohs
@@ -6110,7 +6108,11 @@ comma
 id|NIPQUAD
 c_func
 (paren
+id|ntohl
+c_func
+(paren
 id|skb-&gt;nh.iph-&gt;daddr
+)paren
 )paren
 comma
 id|ntohs

@@ -2455,38 +2455,7 @@ id|new_permitted
 op_amp
 id|bprm-&gt;cap_effective.cap
 suffix:semicolon
-multiline_comment|/* XXX - Audit candidate */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cap_isclear
-c_func
-(paren
-id|current-&gt;cap_effective
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;raising capabilities on `%s&squot;(pid=%d) [%04x]:%lu&bslash;n&quot;
-comma
-id|current-&gt;comm
-comma
-id|current-&gt;pid
-comma
-id|kdev_t_to_nr
-c_func
-(paren
-id|bprm-&gt;dentry-&gt;d_inode-&gt;i_dev
-)paren
-comma
-id|bprm-&gt;dentry-&gt;d_inode-&gt;i_ino
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* AUD: Audit candidate if current-&gt;cap_effective is set */
 id|current-&gt;suid
 op_assign
 id|current-&gt;euid

@@ -1444,23 +1444,5 @@ DECL|macro|DC390_write16
 mdefine_line|#define DC390_write16(address,value)&t;&t;       &bslash;&n;&t;outw((value), DC390_ioport + (address)))
 DECL|macro|DC390_write32
 mdefine_line|#define DC390_write32(address,value)&t;&t;       &bslash;&n;&t;outl((value), DC390_ioport + (address)))
-multiline_comment|/* Configuration method #1 */
-DECL|macro|PCI_CFG1_ADDRESS_REG
-mdefine_line|#define PCI_CFG1_ADDRESS_REG&t;&t;0xcf8
-DECL|macro|PCI_CFG1_DATA_REG
-mdefine_line|#define PCI_CFG1_DATA_REG&t;&t;0xcfc
-DECL|macro|PCI_CFG1_ENABLE
-mdefine_line|#define PCI_CFG1_ENABLE &t;&t;0x80000000
-DECL|macro|PCI_CFG1_TUPPLE
-mdefine_line|#define PCI_CFG1_TUPPLE(bus, device, function, register)&t;&t;&bslash;&n;&t;(PCI_CFG1_ENABLE | (((bus) &lt;&lt; 16) &amp; 0xff0000) | &t;&t;&bslash;&n;&t;(((device) &lt;&lt; 11) &amp; 0xf800) | (((function) &lt;&lt; 8) &amp; 0x700)|&t;&bslash;&n;&t;(((register) &lt;&lt; 2) &amp; 0xfc))
-multiline_comment|/* Configuration method #2 */
-DECL|macro|PCI_CFG2_ENABLE_REG
-mdefine_line|#define PCI_CFG2_ENABLE_REG&t;&t;0xcf8
-DECL|macro|PCI_CFG2_FORWARD_REG
-mdefine_line|#define PCI_CFG2_FORWARD_REG&t;&t;0xcfa
-DECL|macro|PCI_CFG2_ENABLE
-mdefine_line|#define PCI_CFG2_ENABLE &t;&t;0x0f0
-DECL|macro|PCI_CFG2_TUPPLE
-mdefine_line|#define PCI_CFG2_TUPPLE(function)&t;&t;&t;&t;&t;&bslash;&n;&t;(PCI_CFG2_ENABLE | (((function) &lt;&lt; 1) &amp; 0xe))
 macro_line|#endif /* _TMSCSIM_H */
 eof

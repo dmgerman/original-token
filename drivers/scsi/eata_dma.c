@@ -7483,7 +7483,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren

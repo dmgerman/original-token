@@ -15,8 +15,6 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
-macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 DECL|macro|OPTI621_MAX_PIO
 mdefine_line|#define OPTI621_MAX_PIO 3
 multiline_comment|/* In fact, I do not have any PIO 4 drive&n; * (address: 25 ns, data: 70 ns, recovery: 35 ns),&n; * but OPTi 82C621 is programmable and it can do (minimal values):&n; * on 40MHz PCI bus (pulse 25 ns):&n; *  address: 25 ns, data: 25 ns, recovery: 50 ns;&n; * on 20MHz PCI bus (pulse 50 ns):&n; *  address: 50 ns, data: 50 ns, recovery: 100 ns.&n; */

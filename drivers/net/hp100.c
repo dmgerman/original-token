@@ -27,7 +27,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -942,6 +941,13 @@ id|pci_start_index
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef LINUX_2_1
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef HP100_DEBUG_B
 id|hp100_outw
@@ -1117,7 +1123,7 @@ macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -1216,6 +1222,25 @@ r_break
 suffix:semicolon
 id|__pci_found
 suffix:colon
+macro_line|#ifdef LINUX_2_1
+id|pdev
+op_assign
+id|pci_find_slot
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+)paren
+suffix:semicolon
+id|ioaddr
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+macro_line|#else
 id|pcibios_read_config_dword
 c_func
 (paren
@@ -1229,6 +1254,7 @@ op_amp
 id|ioaddr
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ioaddr
 op_and_assign
 op_complement

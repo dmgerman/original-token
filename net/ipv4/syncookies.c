@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.4 1998/03/08 05:56:34 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; *           Some counter so that the Administrator can see when the machine&n; *           is under a syn flood attack.&n; */
+multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.5 1998/04/03 09:49:46 freitag Exp $&n; *&n; *  Missing: IPv6 support. &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SYN_COOKIES) 
 macro_line|#include &lt;linux/tcp.h&gt;
@@ -231,6 +231,9 @@ op_minus
 l_int|1
 )braket
 suffix:semicolon
+id|net_statistics.SyncookiesSent
+op_increment
+suffix:semicolon
 id|isn
 op_or_assign
 id|i
@@ -284,9 +287,11 @@ id|TCP_TIMEOUT_INIT
 op_logical_and
 id|tcp_lastsynq_overflow
 )paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|mssind
 op_assign
 id|cookie
@@ -520,8 +525,16 @@ id|mss
 op_eq
 l_int|0
 )paren
+(brace
+id|net_statistics.SyncookiesFailed
+op_increment
+suffix:semicolon
 r_return
 id|sk
+suffix:semicolon
+)brace
+id|net_statistics.SyncookiesRecv
+op_increment
 suffix:semicolon
 id|req
 op_assign

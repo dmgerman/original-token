@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
+macro_line|#include &lt;linux/devpts_fs.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -4790,6 +4791,8 @@ id|tty_drivers
 suffix:semicolon
 r_int
 id|minor
+comma
+id|line
 suffix:semicolon
 multiline_comment|/* find the pty driver */
 r_for
@@ -4899,6 +4902,28 @@ id|tty-&gt;flags
 )paren
 suffix:semicolon
 multiline_comment|/* LOCK THE SLAVE */
+id|line
+op_assign
+id|minor
+op_minus
+id|driver-&gt;minor_start
+suffix:semicolon
+id|devpts_pty_new
+c_func
+(paren
+id|line
+comma
+id|MKDEV
+c_func
+(paren
+id|driver-&gt;other-&gt;major
+comma
+id|line
+op_plus
+id|driver-&gt;other-&gt;minor_start
+)paren
+)paren
+suffix:semicolon
 id|noctty
 op_assign
 l_int|1

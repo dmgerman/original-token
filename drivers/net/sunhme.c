@@ -40,7 +40,6 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#endif
 macro_line|#include &quot;sunhme.h&quot;
@@ -55,7 +54,14 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* #define HMEDEBUG */
+DECL|macro|HMEDEBUG
+macro_line|#undef HMEDEBUG
+DECL|macro|SXDEBUG
+macro_line|#undef SXDEBUG
+DECL|macro|RXDEBUG
+macro_line|#undef RXDEBUG
+DECL|macro|TXDEBUG
+macro_line|#undef TXDEBUG
 macro_line|#ifdef HMEDEBUG
 DECL|macro|HMD
 mdefine_line|#define HMD(x)  printk x
@@ -7349,9 +7355,13 @@ id|tregs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* #define TXD(x) printk x */
+macro_line|#ifdef TXDEBUG
+DECL|macro|TXD
+mdefine_line|#define TXD(x) printk x
+macro_line|#else
 DECL|macro|TXD
 mdefine_line|#define TXD(x)
+macro_line|#endif
 DECL|function|happy_meal_tx
 r_static
 r_inline
@@ -7783,9 +7793,13 @@ l_string|&quot;&gt;&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* #define RXD(x) printk x */
+macro_line|#ifdef RXDEBUG
+DECL|macro|RXD
+mdefine_line|#define RXD(x) printk x
+macro_line|#else
 DECL|macro|RXD
 mdefine_line|#define RXD(x)
+macro_line|#endif
 multiline_comment|/* Originally I use to handle the allocation failure by just giving back just&n; * that one ring buffer to the happy meal.  Problem is that usually when that&n; * condition is triggered, the happy meal expects you to do something reasonable&n; * with all of the packets it has DMA&squot;d in.  So now I just drop the entire&n; * ring when we cannot get a new skb and give them all back to the happy meal,&n; * maybe things will be &quot;happier&quot; now.&n; */
 DECL|function|happy_meal_rx
 r_static
@@ -7918,7 +7932,7 @@ id|RXD
 c_func
 (paren
 (paren
-l_string|&quot;ERR(%08lx)]&quot;
+l_string|&quot;ERR(%08x)]&quot;
 comma
 id|flags
 )paren
@@ -8007,19 +8021,6 @@ id|elem
 )braket
 suffix:semicolon
 macro_line|#ifdef NEED_DMA_SYNCHRONIZATION
-macro_line|#ifdef CONFIG_PCI
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|hp-&gt;happy_flags
-op_amp
-id|HFLAG_PCI
-)paren
-)paren
-(brace
-macro_line|#endif
 id|mmu_sync_dma
 c_func
 (paren
@@ -8036,7 +8037,6 @@ comma
 id|hp-&gt;happy_sbus_dev-&gt;my_bus
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -8514,7 +8514,7 @@ id|RXD
 c_func
 (paren
 (paren
-l_string|&quot;ERR(%08lx)]&quot;
+l_string|&quot;ERR(%08x)]&quot;
 comma
 id|flags
 )paren
@@ -9120,7 +9120,7 @@ id|RXD
 c_func
 (paren
 (paren
-l_string|&quot;ERR(%08lx)]&quot;
+l_string|&quot;ERR(%08x)]&quot;
 comma
 id|flags
 )paren
@@ -9404,7 +9404,7 @@ id|HMD
 c_func
 (paren
 (paren
-l_string|&quot;happy_meal_interrupt: status=%08lx &quot;
+l_string|&quot;happy_meal_interrupt: status=%08x &quot;
 comma
 id|happy_status
 )paren
@@ -9647,7 +9647,7 @@ id|HMD
 c_func
 (paren
 (paren
-l_string|&quot;happy_meal_interrupt: status=%08lx &quot;
+l_string|&quot;happy_meal_interrupt: status=%08x &quot;
 comma
 id|happy_status
 )paren
@@ -9888,7 +9888,7 @@ id|HMD
 c_func
 (paren
 (paren
-l_string|&quot;happy_meal_interrupt: status=%08lx &quot;
+l_string|&quot;happy_meal_interrupt: status=%08x &quot;
 comma
 id|happy_status
 )paren
@@ -10440,9 +10440,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* #define SXD(x) printk x */
+macro_line|#ifdef SXDEBUG
+DECL|macro|SXD
+mdefine_line|#define SXD(x) printk x
+macro_line|#else
 DECL|macro|SXD
 mdefine_line|#define SXD(x)
+macro_line|#endif
 DECL|function|happy_meal_start_xmit
 r_static
 r_int
@@ -13060,7 +13064,7 @@ macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -13071,18 +13075,22 @@ id|pci_dev
 op_star
 id|pdev
 suffix:semicolon
-r_for
+id|pdev
+op_assign
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_SUN
+comma
+id|PCI_DEVICE_ID_SUN_HAPPYMEAL
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_while
 c_loop
 (paren
 id|pdev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|pdev
-suffix:semicolon
-id|pdev
-op_assign
-id|pdev-&gt;next
 )paren
 (brace
 r_if
@@ -13096,22 +13104,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
-id|pdev-&gt;vendor
-op_eq
-id|PCI_VENDOR_ID_SUN
-)paren
-op_logical_and
-(paren
-id|pdev-&gt;device
-op_eq
-id|PCI_DEVICE_ID_SUN_HAPPYMEAL
-)paren
-)paren
-(brace
 id|cards
 op_increment
 suffix:semicolon
@@ -13135,7 +13127,18 @@ r_return
 id|v
 suffix:semicolon
 )brace
-)brace
+id|pdev
+op_assign
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_SUN
+comma
+id|PCI_DEVICE_ID_SUN_HAPPYMEAL
+comma
+id|pdev
+)paren
+suffix:semicolon
 )brace
 )brace
 macro_line|#endif

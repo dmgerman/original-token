@@ -83,15 +83,12 @@ op_star
 id|SCpnt
 )paren
 suffix:semicolon
-DECL|variable|host_active
-r_static
+r_extern
 r_volatile
 r_struct
 id|Scsi_Host
 op_star
 id|host_active
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|macro|SCSI_BLOCK
 mdefine_line|#define SCSI_BLOCK(HOST) ((HOST-&gt;block &amp;&amp; host_active &amp;&amp; HOST != host_active) &bslash;&n;&t;&t;&t;  || (HOST-&gt;can_queue &amp;&amp; HOST-&gt;host_busy &gt;= HOST-&gt;can_queue))

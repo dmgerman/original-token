@@ -1259,11 +1259,6 @@ l_string|&quot;ufs_put_super&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* XXX */
 )brace
-id|lock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 multiline_comment|/* XXX - sync fs data, set state to ok, and flush buffers */
 id|set_blocksize
 (paren
@@ -1272,17 +1267,8 @@ comma
 id|BLOCK_SIZE
 )paren
 suffix:semicolon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* XXX - free allocated kernel memory */
 multiline_comment|/* includes freeing usb page */
-id|unlock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return

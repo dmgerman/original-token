@@ -67,12 +67,6 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 macro_line|#ifdef LEAK_CHECK
 id|printk
 c_func
@@ -85,16 +79,6 @@ id|check_bread
 )paren
 suffix:semicolon
 macro_line|#endif
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return

@@ -70,8 +70,15 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|U14_34F_VERSION
-mdefine_line|#define U14_34F_VERSION &quot;3.11.00&quot;
+mdefine_line|#define U14_34F_VERSION &quot;4.02.00&quot;
+DECL|macro|LinuxVersionCode
+mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,88)
 DECL|macro|ULTRASTOR_14_34F
-mdefine_line|#define ULTRASTOR_14_34F {&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;&t;name:              &quot;UltraStor 14F/34F rev. &quot; U14_34F_VERSION &quot; &quot;,  &bslash;&n;&t;&t;detect:            u14_34f_detect,                                 &bslash;&n;&t;&t;release:           u14_34f_release,                                &bslash;&n;&t;&t;queuecommand:      u14_34f_queuecommand,                           &bslash;&n;&t;&t;abort:             u14_34f_abort,                                  &bslash;&n;&t;&t;reset:             u14_34f_reset,                                  &bslash;&n;&t;&t;bios_param:        u14_34f_biosparam,                              &bslash;&n;&t;&t;this_id:           7,   /* this_id, reset by detect */             &bslash;&n;&t;&t;unchecked_isa_dma: 1,   /* unchecked isa dma, reset by detect */   &bslash;&n;&t;&t;use_clustering:    ENABLE_CLUSTERING                               &bslash;&n;&t;&t;}
+mdefine_line|#define ULTRASTOR_14_34F {                                                   &bslash;&n;                name:         &quot;UltraStor 14F/34F rev. &quot; U14_34F_VERSION &quot; &quot;, &bslash;&n;                detect:       u14_34f_detect,                                &bslash;&n;                release:      u14_34f_release,                               &bslash;&n;                queuecommand: u14_34f_queuecommand,                          &bslash;&n;                abort:        u14_34f_abort,                                 &bslash;&n;                reset:        u14_34f_reset,                                 &bslash;&n;                bios_param:   u14_34f_biosparam,                             &bslash;&n;                this_id:      7,                                             &bslash;&n;                unchecked_isa_dma: 1,                                        &bslash;&n;                use_clustering: ENABLE_CLUSTERING,                           &bslash;&n;                use_new_eh_code: 1    /* Enable new error code */            &bslash;&n;                }
+macro_line|#else /* Use old scsi code */
+DECL|macro|ULTRASTOR_14_34F
+mdefine_line|#define ULTRASTOR_14_34F {                                                   &bslash;&n;                name:         &quot;UltraStor 14F/34F rev. &quot; U14_34F_VERSION &quot; &quot;, &bslash;&n;                detect:       u14_34f_detect,                                &bslash;&n;                release:      u14_34f_release,                               &bslash;&n;                queuecommand: u14_34f_queuecommand,                          &bslash;&n;                abort:        u14_34f_abort,                                 &bslash;&n;                reset:        u14_34f_reset,                                 &bslash;&n;                bios_param:   u14_34f_biosparam,                             &bslash;&n;                this_id:      7,                                             &bslash;&n;                unchecked_isa_dma: 1,                                        &bslash;&n;                use_clustering: ENABLE_CLUSTERING,                           &bslash;&n;                }
+macro_line|#endif
 macro_line|#endif
 eof

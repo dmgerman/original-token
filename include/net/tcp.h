@@ -3298,6 +3298,9 @@ id|window_clamp
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Do new listen semantics */
+DECL|macro|TCP_NEW_LISTEN
+mdefine_line|#define TCP_NEW_LISTEN
 DECL|function|tcp_synq_unlink
 r_extern
 id|__inline__
@@ -3398,62 +3401,6 @@ id|tp-&gt;syn_wait_last
 op_assign
 op_amp
 id|tp-&gt;syn_wait_queue
-suffix:semicolon
-)brace
-DECL|function|tcp_synq_unlink_tail
-r_extern
-id|__inline__
-r_struct
-id|open_request
-op_star
-id|tcp_synq_unlink_tail
-c_func
-(paren
-r_struct
-id|tcp_opt
-op_star
-id|tp
-)paren
-(brace
-r_struct
-id|open_request
-op_star
-id|head
-op_assign
-id|tp-&gt;syn_wait_queue
-suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* Should be a net-ratelimit&squot;d thing, not all the time. */
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;synq tail drop with expire=%ld&bslash;n&quot;
-comma
-id|head-&gt;expires
-op_minus
-id|jiffies
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|head-&gt;dl_next
-op_eq
-l_int|NULL
-)paren
-id|tp-&gt;syn_wait_last
-op_assign
-op_amp
-id|tp-&gt;syn_wait_queue
-suffix:semicolon
-id|tp-&gt;syn_wait_queue
-op_assign
-id|head-&gt;dl_next
-suffix:semicolon
-r_return
-id|head
 suffix:semicolon
 )brace
 r_extern

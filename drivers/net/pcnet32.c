@@ -19,7 +19,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -66,7 +65,7 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * &t;&t;&t;&t;Theory of Operation&n; * &n; * This driver uses the same software structure as the normal lance&n; * driver. So look for a verbose description in lance.c. The differences&n; * to the normal lance driver is the use of the 32bit mode of PCnet32&n; * and PCnetPCI chips. Because these chips are 32bit chips, there is no&n; * 16MB limitation and we don&squot;t need bounce buffers.&n; */
-multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C794 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; */
+multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C794 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_device_stats&n; */
 multiline_comment|/*&n; * Set the number of Tx and Rx buffers, using Log_2(# buffers).&n; * Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n; * That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4).&n; */
 macro_line|#ifndef PCNET32_LOG_TX_BUFFERS
 DECL|macro|PCNET32_LOG_TX_BUFFERS
@@ -440,7 +439,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 r_int
-r_char
+r_int
 id|irq_line
 op_assign
 id|dev
@@ -491,14 +490,18 @@ macro_line|#if defined(CONFIG_PCI)
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
 )paren
 (brace
-r_int
-id|pci_index
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func
@@ -506,92 +509,46 @@ c_func
 l_string|&quot;pcnet32.c: PCI bios is present, checking for devices...&bslash;n&quot;
 )paren
 suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-id|pci_index
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_index
-OL
-l_int|8
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-r_int
-r_int
-id|pci_command
-suffix:semicolon
-r_if
-c_cond
 (paren
-id|pcibios_find_device
+id|pdev
+op_assign
+id|pci_find_device
+c_func
 (paren
 id|PCI_VENDOR_ID_AMD
 comma
 id|PCI_DEVICE_ID_AMD_LANCE
 comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
+id|pdev
 )paren
-op_ne
-l_int|0
 )paren
-r_break
+)paren
+(brace
+r_int
+r_int
+id|pci_command
 suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
 id|irq_line
-)paren
+op_assign
+id|pdev-&gt;irq
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
+id|ioaddr
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
 op_amp
-id|ioaddr
-)paren
-suffix:semicolon
-multiline_comment|/* Remove I/O space marker in bit 0. */
-id|ioaddr
-op_and_assign
-op_complement
-l_int|3
+id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 multiline_comment|/* PCI Spec 2.1 states that it is either the driver or PCI card&squot;s&n;&t;     * responsibility to set the PCI Master Enable Bit if needed.&n;&t;     *&t;(From Mark Stockton &lt;marks@schooner.sys.hou.compaq.com&gt;)&n;&t;     */
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -636,12 +593,10 @@ id|PCI_COMMAND_MASTER
 op_or
 id|PCI_COMMAND_IO
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma

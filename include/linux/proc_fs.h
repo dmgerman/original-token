@@ -365,6 +365,9 @@ comma
 DECL|enumerator|PROC_NET_DN_SKT
 id|PROC_NET_DN_SKT
 comma
+DECL|enumerator|PROC_NET_NETSTAT
+id|PROC_NET_NETSTAT
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace

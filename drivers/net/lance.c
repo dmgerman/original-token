@@ -19,7 +19,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -482,7 +481,7 @@ multiline_comment|/* Non-zero only if the current card is a PCI with BIOS-set IR
 DECL|variable|pci_irq_line
 r_static
 r_int
-r_char
+r_int
 id|pci_irq_line
 op_assign
 l_int|0
@@ -650,14 +649,18 @@ macro_line|#if defined(CONFIG_PCI) &amp;&amp; !defined(CONFIG_PCNET32)
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
 )paren
 (brace
-r_int
-id|pci_index
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -669,22 +672,23 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;lance.c: PCI bios is present, checking for devices...&bslash;n&quot;
+l_string|&quot;lance.c: PCI is present, checking for devices...&bslash;n&quot;
 )paren
 suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-id|pci_index
+id|pdev
 op_assign
-l_int|0
-suffix:semicolon
-id|pci_index
-OL
-l_int|8
-suffix:semicolon
-id|pci_index
-op_increment
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_AMD
+comma
+id|PCI_DEVICE_ID_AMD_LANCE
+comma
+id|pdev
+)paren
 )paren
 (brace
 r_int
@@ -701,67 +705,24 @@ r_int
 r_int
 id|pci_command
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-(paren
-id|PCI_VENDOR_ID_AMD
-comma
-id|PCI_DEVICE_ID_AMD_LANCE
-comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-op_ne
-l_int|0
-)paren
-r_break
-suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
 id|pci_irq_line
-)paren
+op_assign
+id|pdev-&gt;irq
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
+id|pci_ioaddr
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
 op_amp
-id|pci_ioaddr
-)paren
-suffix:semicolon
-multiline_comment|/* Remove I/O space marker in bit 0. */
-id|pci_ioaddr
-op_and_assign
-op_complement
-l_int|3
+id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 multiline_comment|/* PCI Spec 2.1 states that it is either the driver or PCI card&squot;s&n;&t; &t;&t; * responsibility to set the PCI Master Enable Bit if needed.&n;&t;&t;&t; *&t;(From Mark Stockton &lt;marks@schooner.sys.hou.compaq.com&gt;)&n;&t;&t;&t; */
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -790,12 +751,10 @@ id|pci_command
 op_or_assign
 id|PCI_COMMAND_MASTER
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma

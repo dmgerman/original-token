@@ -87,7 +87,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -175,6 +174,7 @@ macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
 DECL|macro|test_and_set_bit
 mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
+macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#endif
 multiline_comment|/* The total I/O port extent of the board.  Nominally 0x18, but rounded up&n;   for PCI allocation. */
 DECL|macro|SPEEDO3_TOTAL_SIZE
@@ -1284,7 +1284,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -1314,10 +1314,24 @@ id|pci_bus
 comma
 id|pci_device_fn
 comma
-id|pci_irq_line
-comma
 id|pci_latency
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &gt;= VERSION(2,1,85))
+r_int
+r_int
+id|pci_irq_line
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+macro_line|#else
+r_int
+r_char
+id|pci_irq_line
+suffix:semicolon
+macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &gt;= VERSION(1,3,44))
 r_int
 id|pci_ioaddr
@@ -1352,6 +1366,29 @@ id|pci_device_fn
 )paren
 r_break
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &gt;= VERSION(2,1,85))
+id|pdev
+op_assign
+id|pci_find_slot
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+)paren
+suffix:semicolon
+id|pci_irq_line
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+id|pci_ioaddr
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
+suffix:semicolon
+macro_line|#else
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -1379,6 +1416,7 @@ op_amp
 id|pci_ioaddr
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Remove I/O space marker in bit 0. */
 id|pci_ioaddr
 op_and_assign

@@ -10,6 +10,8 @@ macro_line|#undef EXT2FS_DEBUG
 multiline_comment|/*&n; * Define EXT2_PREALLOCATE to preallocate data blocks for expanding files&n; */
 DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
+DECL|macro|EXT2_DEFAULT_PREALLOC_BLOCKS
+mdefine_line|#define EXT2_DEFAULT_PREALLOC_BLOCKS&t;8
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
 mdefine_line|#define EXT2FS_DATE&t;&t;&quot;95/08/09&quot;
@@ -255,8 +257,24 @@ DECL|macro|EXT2_NODUMP_FL
 mdefine_line|#define EXT2_NODUMP_FL&t;&t;&t;0x00000040 /* do not dump file */
 DECL|macro|EXT2_NOATIME_FL
 mdefine_line|#define EXT2_NOATIME_FL&t;&t;&t;0x00000080 /* do not update atime */
+multiline_comment|/* Reserved for compression usage... */
+DECL|macro|EXT2_DIRTY_FL
+mdefine_line|#define EXT2_DIRTY_FL&t;&t;&t;0x00000100
+DECL|macro|EXT2_COMPRBLK_FL
+mdefine_line|#define EXT2_COMPRBLK_FL&t;&t;0x00000200 /* One or more compressed clusters */
+DECL|macro|EXT2_NOCOMP_FL
+mdefine_line|#define EXT2_NOCOMP_FL&t;&t;&t;0x00000400 /* Don&squot;t compress */
+DECL|macro|EXT2_ECOMPR_FL
+mdefine_line|#define EXT2_ECOMPR_FL&t;&t;&t;0x00000800 /* Compression error */
+multiline_comment|/* End compression flags --- maybe not all used */
+DECL|macro|EXT2_BTREE_FL
+mdefine_line|#define EXT2_BTREE_FL&t;&t;&t;0x00001000 /* btree format dir */
 DECL|macro|EXT2_RESERVED_FL
 mdefine_line|#define EXT2_RESERVED_FL&t;&t;0x80000000 /* reserved for ext2 lib */
+DECL|macro|EXT2_FL_USER_VISIBLE
+mdefine_line|#define EXT2_FL_USER_VISIBLE&t;&t;0x00001FFF /* User visible flags */
+DECL|macro|EXT2_FL_USER_MODIFIABLE
+mdefine_line|#define EXT2_FL_USER_MODIFIABLE&t;&t;0x000000FF /* User modifiable flags */
 multiline_comment|/*&n; * ioctl commands&n; */
 DECL|macro|EXT2_IOC_GETFLAGS
 mdefine_line|#define&t;EXT2_IOC_GETFLAGS&t;&t;_IOR(&squot;f&squot;, 1, long)
@@ -486,6 +504,8 @@ suffix:semicolon
 multiline_comment|/* OS dependent 2 */
 )brace
 suffix:semicolon
+DECL|macro|i_size_high
+mdefine_line|#define i_size_high&t;i_dir_acl
 macro_line|#if defined(__KERNEL__) || defined(__linux__)
 DECL|macro|i_reserved1
 mdefine_line|#define i_reserved1&t;osd1.linux1.l_i_reserved1
@@ -749,16 +769,44 @@ l_int|64
 )braket
 suffix:semicolon
 multiline_comment|/* directory where last mounted */
+DECL|member|s_algorithm_usage_bitmap
+id|__u32
+id|s_algorithm_usage_bitmap
+suffix:semicolon
+multiline_comment|/* For compression */
+multiline_comment|/*&n;&t; * Performance hints.  Directory preallocation should only&n;&t; * happen if the EXT2_COMPAT_PREALLOC flag is on.&n;&t; */
+DECL|member|s_prealloc_blocks
+id|__u8
+id|s_prealloc_blocks
+suffix:semicolon
+multiline_comment|/* Nr of blocks to try to preallocate*/
+DECL|member|s_prealloc_dir_blocks
+id|__u8
+id|s_prealloc_dir_blocks
+suffix:semicolon
+multiline_comment|/* Nr to preallocate for dirs */
+DECL|member|s_padding1
+id|__u16
+id|s_padding1
+suffix:semicolon
 DECL|member|s_reserved
 id|__u32
 id|s_reserved
 (braket
-l_int|206
+l_int|204
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|EXT2_SB
+mdefine_line|#define EXT2_SB(sb)&t;(&amp;((sb)-&gt;u.ext2_sb))
+macro_line|#else
+multiline_comment|/* Assume that user mode programs are passing in an ext2fs superblock, not&n; * a kernel struct super_block.  This will allow us to call the feature-test&n; * macros from user land. */
+DECL|macro|EXT2_SB
+mdefine_line|#define EXT2_SB(sb)&t;(sb)
+macro_line|#endif
 multiline_comment|/*&n; * Codes for operating systems&n; */
 DECL|macro|EXT2_OS_LINUX
 mdefine_line|#define EXT2_OS_LINUX&t;&t;0
@@ -782,14 +830,30 @@ mdefine_line|#define EXT2_MAX_SUPP_REV&t;EXT2_DYNAMIC_REV
 DECL|macro|EXT2_GOOD_OLD_INODE_SIZE
 mdefine_line|#define EXT2_GOOD_OLD_INODE_SIZE 128
 multiline_comment|/*&n; * Feature set definitions&n; */
+DECL|macro|EXT2_HAS_COMPAT_FEATURE
+mdefine_line|#define EXT2_HAS_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_feature_compat &amp; (mask) )
+DECL|macro|EXT2_HAS_RO_COMPAT_FEATURE
+mdefine_line|#define EXT2_HAS_RO_COMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_feature_ro_compat &amp; (mask) )
+DECL|macro|EXT2_HAS_INCOMPAT_FEATURE
+mdefine_line|#define EXT2_HAS_INCOMPAT_FEATURE(sb,mask)&t;&t;&t;&bslash;&n;&t;( EXT2_SB(sb)-&gt;s_feature_incompat &amp; (mask) )
+DECL|macro|EXT2_FEATURE_COMPAT_DIR_PREALLOC
+mdefine_line|#define EXT2_FEATURE_COMPAT_DIR_PREALLOC&t;0x0001
 DECL|macro|EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER
 mdefine_line|#define EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER&t;0x0001
+DECL|macro|EXT2_FEATURE_RO_COMPAT_LARGE_FILE
+mdefine_line|#define EXT2_FEATURE_RO_COMPAT_LARGE_FILE&t;0x0002
+DECL|macro|EXT2_FEATURE_RO_COMPAT_BTREE_DIR
+mdefine_line|#define EXT2_FEATURE_RO_COMPAT_BTREE_DIR&t;0x0004
+DECL|macro|EXT2_FEATURE_INCOMPAT_COMPRESSION
+mdefine_line|#define EXT2_FEATURE_INCOMPAT_COMPRESSION&t;0x0001
+DECL|macro|EXT2_FEATURE_INCOMPAT_FILETYPE
+mdefine_line|#define EXT2_FEATURE_INCOMPAT_FILETYPE&t;&t;0x0002
 DECL|macro|EXT2_FEATURE_COMPAT_SUPP
 mdefine_line|#define EXT2_FEATURE_COMPAT_SUPP&t;0
 DECL|macro|EXT2_FEATURE_INCOMPAT_SUPP
-mdefine_line|#define EXT2_FEATURE_INCOMPAT_SUPP&t;0
+mdefine_line|#define EXT2_FEATURE_INCOMPAT_SUPP&t;EXT2_FEATURE_INCOMPAT_FILETYPE
 DECL|macro|EXT2_FEATURE_RO_COMPAT_SUPP
-mdefine_line|#define EXT2_FEATURE_RO_COMPAT_SUPP&t;EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER
+mdefine_line|#define EXT2_FEATURE_RO_COMPAT_SUPP&t;(EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER| &bslash;&n;&t;&t;&t;&t;&t; EXT2_FEATURE_RO_COMPAT_LARGE_FILE| &bslash;&n;&t;&t;&t;&t;&t; EXT2_FEATURE_RO_COMPAT_BTREE_DIR)
 multiline_comment|/*&n; * Default values for user and/or group using reserved blocks&n; */
 DECL|macro|EXT2_DEF_RESUID
 mdefine_line|#define&t;EXT2_DEF_RESUID&t;&t;0
@@ -827,6 +891,59 @@ suffix:semicolon
 multiline_comment|/* File name */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The new version of the directory entry.  Since EXT2 structures are&n; * stored in intel byte order, and the name_len field could never be&n; * bigger than 255 chars, it&squot;s safe to reclaim the extra byte for the&n; * file_type field.&n; */
+DECL|struct|ext2_dir_entry_2
+r_struct
+id|ext2_dir_entry_2
+(brace
+DECL|member|inode
+id|__u32
+id|inode
+suffix:semicolon
+multiline_comment|/* Inode number */
+DECL|member|rec_len
+id|__u16
+id|rec_len
+suffix:semicolon
+multiline_comment|/* Directory entry length */
+DECL|member|name_len
+id|__u8
+id|name_len
+suffix:semicolon
+multiline_comment|/* Name length */
+DECL|member|file_type
+id|__u8
+id|file_type
+suffix:semicolon
+DECL|member|name
+r_char
+id|name
+(braket
+id|EXT2_NAME_LEN
+)braket
+suffix:semicolon
+multiline_comment|/* File name */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Ext2 directory file types.  Only the low 3 bits are used.  The&n; * other bits are reserved for now.&n; */
+DECL|macro|EXT2_FT_UNKNOWN
+mdefine_line|#define EXT2_FT_UNKNOWN&t;&t;0
+DECL|macro|EXT2_FT_REG_FILE
+mdefine_line|#define EXT2_FT_REG_FILE&t;1
+DECL|macro|EXT2_FT_DIR
+mdefine_line|#define EXT2_FT_DIR&t;&t;2
+DECL|macro|EXT2_FT_CHRDEV
+mdefine_line|#define EXT2_FT_CHRDEV&t;&t;3
+DECL|macro|EXT2_FT_BLKDEV
+mdefine_line|#define EXT2_FT_BLKDEV &t;&t;4
+DECL|macro|EXT2_FT_FIFO
+mdefine_line|#define EXT2_FT_FIFO&t;&t;5
+DECL|macro|EXT2_FT_SOCK
+mdefine_line|#define EXT2_FT_SOCK&t;&t;6
+DECL|macro|EXT2_FT_SYMLINK
+mdefine_line|#define EXT2_FT_SYMLINK&t;&t;7
+DECL|macro|EXT2_FT_MAX
+mdefine_line|#define EXT2_FT_MAX&t;&t;8
 multiline_comment|/*&n; * EXT2_DIR_PAD defines the directory entries boundaries&n; *&n; * NOTE: It must be a multiple of 4&n; */
 DECL|macro|EXT2_DIR_PAD
 mdefine_line|#define EXT2_DIR_PAD&t;&t; &t;4
@@ -913,6 +1030,29 @@ id|super_block
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|ext2_group_desc
+op_star
+id|ext2_get_group_desc
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+r_int
+r_int
+id|block_group
+comma
+r_struct
+id|buffer_head
+op_star
+op_star
+id|bh
+)paren
+suffix:semicolon
 multiline_comment|/* bitmap.c */
 r_extern
 r_int
@@ -940,7 +1080,7 @@ id|inode
 op_star
 comma
 r_struct
-id|ext2_dir_entry
+id|ext2_dir_entry_2
 op_star
 comma
 r_struct

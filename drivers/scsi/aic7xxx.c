@@ -9,7 +9,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -719,25 +718,6 @@ mdefine_line|#define aic7xxx_status(cmd)&t;((cmd)-&gt;SCp.sent_command)
 multiline_comment|/*&n; * The position of the SCSI commands scb within the scb array.&n; */
 DECL|macro|aic7xxx_position
 mdefine_line|#define aic7xxx_position(cmd)&t;((cmd)-&gt;SCp.have_data_in)
-multiline_comment|/*&n; * &quot;Static&quot; structures. Note that these are NOT initialized&n; * to zero inside the kernel - we have to initialize them all&n; * explicitly.&n; *&n; * We support multiple adapter cards per interrupt, but keep a&n; * linked list of Scsi_Host structures for each IRQ.  On an interrupt,&n; * use the IRQ as an index into aic7xxx_boards[] to locate the card&n; * information.&n; */
-DECL|variable|aic7xxx_boards
-r_static
-r_struct
-id|Scsi_Host
-op_star
-id|aic7xxx_boards
-(braket
-id|NR_IRQS
-op_plus
-l_int|1
-)braket
-suffix:semicolon
-multiline_comment|/*&n; * When we detect and register the card, it is possible to&n; * have the card raise a spurious interrupt.  Because we need&n; * to support multiple cards, we cannot tell which card caused&n; * the spurious interrupt.  And, we might not even have added&n; * the card info to the linked list at the time the spurious&n; * interrupt gets raised.  This variable is suppose to keep track&n; * of when we are registering a card and how many spurious&n; * interrupts we have encountered.&n; *&n; *   0 - do not allow spurious interrupts.&n; *   1 - allow 1 spurious interrupt&n; *   2 - have 1 spurious interrupt, do not allow any more.&n; *&n; * I&squot;ve made it an integer instead of a boolean in case we&n; * want to allow more than one spurious interrupt for debugging&n; * purposes.  Otherwise, it could just go from true to false to&n; * true (or something like that).&n; *&n; * When the driver detects the cards, we&squot;ll set the count to 1&n; * for each card detection and registration.  After the registration&n; * of a card completes, we&squot;ll set the count back to 0.  So far, it&n; * seems to be enough to allow a spurious interrupt only during&n; * card registration; if a spurious interrupt is going to occur,&n; * this is where it happens.&n; *&n; * We should be able to find a way to avoid getting the spurious&n; * interrupt.  But until we do, we have to keep this ugly code.&n; */
-DECL|variable|aic7xxx_spurious_count
-r_static
-r_int
-id|aic7xxx_spurious_count
-suffix:semicolon
 multiline_comment|/*&n; * As of Linux 2.1, the mid-level SCSI code uses virtual addresses&n; * in the scatter-gather lists.  We need to convert the virtual&n; * addresses to physical addresses.&n; */
 DECL|struct|hw_scatterlist
 r_struct
@@ -983,11 +963,6 @@ op_star
 id|sg_list
 suffix:semicolon
 multiline_comment|/* SG list in adapter format */
-DECL|member|sg_count
-r_int
-r_char
-id|sg_count
-suffix:semicolon
 DECL|member|sense_cmd
 r_int
 r_char
@@ -997,6 +972,11 @@ l_int|6
 )braket
 suffix:semicolon
 multiline_comment|/*&n;                                               * Allocate 6 characters for&n;                                               * sense command.&n;                                               */
+DECL|member|sg_count
+r_int
+r_char
+id|sg_count
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Define a linked list of SCBs.&n; */
@@ -1152,6 +1132,13 @@ op_star
 id|host
 suffix:semicolon
 multiline_comment|/* pointer to scsi host */
+DECL|member|next
+r_struct
+id|aic7xxx_host
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* pointer to next aic7xxx device */
 DECL|member|host_no
 r_int
 id|host_no
@@ -1178,6 +1165,7 @@ id|irq
 suffix:semicolon
 multiline_comment|/* IRQ for this adapter */
 DECL|member|base
+r_int
 r_int
 id|base
 suffix:semicolon
@@ -1328,13 +1316,6 @@ r_int
 r_char
 id|curqincnt
 suffix:semicolon
-DECL|member|next
-r_struct
-id|Scsi_Host
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* allow for multiple IRQs */
 DECL|member|activescbs
 r_int
 r_char
@@ -1645,7 +1626,11 @@ id|hscb-&gt;target_channel_lun
 comma
 id|hscb-&gt;SCSI_cmd_length
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|hscb-&gt;SCSI_cmd_pointer
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -1653,13 +1638,25 @@ c_func
 (paren
 l_string|&quot;        datlen:%d data:0x%lx segs:0x%x segp:0x%lx&bslash;n&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|hscb-&gt;data_count
+)paren
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|hscb-&gt;data_pointer
+)paren
 comma
 id|hscb-&gt;SG_segment_count
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|hscb-&gt;SG_list_pointer
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -1667,19 +1664,27 @@ c_func
 (paren
 l_string|&quot;        sg_addr:%lx sg_len:%ld&bslash;n&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|hscb-&gt;sg_list
 (braket
 l_int|0
 )braket
 dot
 id|address
+)paren
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|hscb-&gt;sg_list
 (braket
 l_int|0
 )braket
 dot
 id|length
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1740,6 +1745,16 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* verbose messages */
+DECL|variable|first_aic7xxx
+r_static
+r_struct
+id|aic7xxx_host
+op_star
+id|first_aic7xxx
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* list of all our devices */
 multiline_comment|/****************************************************************************&n; *&n; * These functions are not used yet, but when we do memory mapped&n; * IO, we&squot;ll use them then.&n; *&n; ***************************************************************************/
 r_static
 r_inline
@@ -1864,7 +1879,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-macro_line|#ifdef __alpha__
+macro_line|#if defined(__alpha__) || defined(__sparc_v9__) || defined(__powerpc__)
 r_int
 id|i
 suffix:semicolon
@@ -6313,7 +6328,11 @@ id|busy_scbid
 suffix:semicolon
 id|next_scbid
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|busy_scb-&gt;hscb-&gt;data_count
+)paren
 op_rshift
 l_int|24
 suffix:semicolon
@@ -7079,8 +7098,23 @@ id|p
 )paren
 (brace
 r_int
+r_int
+id|processor_flags
+suffix:semicolon
+r_int
 r_char
 id|scsiseq
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|processor_flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* Disable reset interrupts. */
 id|outb
@@ -7174,6 +7208,12 @@ id|udelay
 c_func
 (paren
 l_int|1000
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|processor_flags
 )paren
 suffix:semicolon
 )brace
@@ -9708,7 +9748,7 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;scsi%d: Referenced SCB not valid during &quot;
-l_string|&quot;SEQINT 0x%x, scb %d, flags 0x%x, cmd 0x%x.&bslash;n&quot;
+l_string|&quot;SEQINT 0x%x, scb %d, flags 0x%x, cmd 0x%lx.&bslash;n&quot;
 comma
 id|p-&gt;host_no
 comma
@@ -9873,11 +9913,15 @@ l_int|0
 dot
 id|address
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|VIRT_TO_BUS
 c_func
 (paren
 op_amp
 id|cmd-&gt;sense_buffer
+)paren
 )paren
 suffix:semicolon
 id|scb-&gt;sg_list
@@ -9887,9 +9931,13 @@ l_int|0
 dot
 id|length
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 r_sizeof
 (paren
 id|cmd-&gt;sense_buffer
+)paren
 )paren
 suffix:semicolon
 id|cmd-&gt;cmd_len
@@ -9929,47 +9977,31 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-id|memcpy
+id|hscb-&gt;SG_list_pointer
+op_assign
+id|cpu_to_le32
 c_func
 (paren
-op_amp
-id|hscb-&gt;SG_list_pointer
-comma
-op_amp
 id|addr
-comma
-r_sizeof
-(paren
-id|hscb-&gt;SG_list_pointer
-)paren
 )paren
 suffix:semicolon
-id|memcpy
-c_func
-(paren
-op_amp
 id|hscb-&gt;data_pointer
-comma
-op_amp
-(paren
+op_assign
 id|scb-&gt;sg_list
 (braket
 l_int|0
 )braket
 dot
 id|address
-)paren
-comma
-r_sizeof
-(paren
-id|hscb-&gt;data_pointer
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Maintain SCB_LINKED_NEXT */
 id|hscb-&gt;data_count
 op_and_assign
+id|cpu_to_le32
+c_func
+(paren
 l_int|0xFF000000
+)paren
 suffix:semicolon
 id|hscb-&gt;data_count
 op_or_assign
@@ -9988,19 +10020,12 @@ c_func
 id|scb-&gt;sense_cmd
 )paren
 suffix:semicolon
-id|memcpy
+id|hscb-&gt;SCSI_cmd_pointer
+op_assign
+id|cpu_to_le32
 c_func
 (paren
-op_amp
-id|hscb-&gt;SCSI_cmd_pointer
-comma
-op_amp
 id|addr
-comma
-r_sizeof
-(paren
-id|hscb-&gt;SCSI_cmd_pointer
-)paren
 )paren
 suffix:semicolon
 id|hscb-&gt;SCSI_cmd_length
@@ -10768,19 +10793,27 @@ l_string|&quot;     sg[%d] - Addr 0x%x : Length %d&bslash;n&quot;
 comma
 id|i
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|scb-&gt;sg_list
 (braket
 id|i
 )braket
 dot
 id|address
+)paren
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|scb-&gt;sg_list
 (braket
 id|i
 )braket
 dot
 id|length
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -12138,7 +12171,7 @@ id|p
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_isr&n; *&n; * Description:&n; *   SCSI controller interrupt handler.&n; *&n; *   NOTE: Since we declared this using SA_INTERRUPT, interrupts should&n; *         be disabled all through this function unless we say otherwise.&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_isr&n; *&n; * Description:&n; *   SCSI controller interrupt handler.&n; *-F*************************************************************************/
 r_static
 r_void
 DECL|function|aic7xxx_isr
@@ -12162,6 +12195,13 @@ r_struct
 id|aic7xxx_host
 op_star
 id|p
+op_assign
+(paren
+r_struct
+id|aic7xxx_host
+op_star
+)paren
+id|dev_id
 suffix:semicolon
 r_int
 r_char
@@ -12170,79 +12210,6 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-id|p
-op_assign
-(paren
-r_struct
-id|aic7xxx_host
-op_star
-)paren
-id|aic7xxx_boards
-(braket
-id|irq
-)braket
-op_member_access_from_pointer
-id|hostdata
-suffix:semicolon
-multiline_comment|/*&n;   * Search for the host with a pending interrupt.  If we can&squot;t find&n;   * one, then we&squot;ve encountered a spurious interrupt.&n;   */
-r_while
-c_loop
-(paren
-(paren
-id|p
-op_ne
-l_int|NULL
-)paren
-op_logical_and
-op_logical_neg
-(paren
-id|inb
-c_func
-(paren
-id|p-&gt;base
-op_plus
-id|INTSTAT
-)paren
-op_amp
-id|INT_PEND
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|p-&gt;next
-op_eq
-l_int|NULL
-)paren
-(brace
-id|p
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-r_else
-(brace
-id|p
-op_assign
-(paren
-r_struct
-id|aic7xxx_host
-op_star
-)paren
-id|p-&gt;next-&gt;hostdata
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|p
-op_eq
-l_int|NULL
-)paren
-r_return
 suffix:semicolon
 multiline_comment|/*&n;   * Handle all the interrupt sources - especially for SCSI&n;   * interrupts, we won&squot;t get a second chance at them.&n;   */
 id|intstat
@@ -12254,6 +12221,19 @@ id|p-&gt;base
 op_plus
 id|INTSTAT
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|intstat
+op_amp
+id|INT_PEND
+)paren
+)paren
+multiline_comment|/* Interrupt for another device */
+r_return
 suffix:semicolon
 multiline_comment|/*&n;   * Keep track of interrupts for /proc/scsi&n;   */
 id|p-&gt;isr_count
@@ -13327,6 +13307,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__)
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_probe&n; *&n; * Description:&n; *   Probing for EISA boards: it looks like the first two bytes&n; *   are a manufacturer code - three characters, five bits each:&n; *&n; *               BYTE 0   BYTE 1   BYTE 2   BYTE 3&n; *              ?1111122 22233333 PPPPPPPP RRRRRRRR&n; *&n; *   The characters are baselined off ASCII &squot;@&squot;, so add that value&n; *   to each to get the real ASCII code for it. The next two bytes&n; *   appear to be a product and revision number, probably vendor-&n; *   specific. This is what is being searched for at each port,&n; *   and what should probably correspond to the ID= field in the&n; *   ECU&squot;s .cfg file for the card - if your card is not detected,&n; *   make sure your signature is listed in the array.&n; *&n; *   The fourth byte&squot;s lowest bit seems to be an enabled/disabled&n; *   flag (rest of the bits are reserved?).&n; *-F*************************************************************************/
 r_static
 id|aha_chip_type
@@ -13615,6 +13596,7 @@ id|AIC_NONE
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* __sparc_v9__ or __powerpc__ */
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_2840_seeprom&n; *&n; * Description:&n; *   Reads the 2840 serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   See read_seeprom (for the 2940) for the instruction set of the 93C46&n; *   chip.&n; *&n; *   The 2840 interface to the 93C46 serial EEPROM is through the&n; *   STATUS_2840 and SEECTL_2840 registers.  The CS_2840, CK_2840, and&n; *   DO_2840 bits of the SEECTL_2840 register are connected to the chip&n; *   select, clock, and data out lines respectively of the serial EEPROM.&n; *   The DI_2840 bit of the STATUS_2840 is connected to the data in line&n; *   of the serial EEPROM.  The EEPROM_TF bit of STATUS_2840 register is&n; *   useful in that it gives us an 800 nsec timer.  After a read from the&n; *   SEECTL_2840 register the timing flag is cleared and goes high 800 nsec&n; *   later.&n; *-F*************************************************************************/
 r_static
 r_int
@@ -15986,6 +15968,10 @@ l_int|0
 suffix:semicolon
 r_int
 id|max_targets
+comma
+id|irq_flags
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|found
@@ -16414,10 +16400,6 @@ id|p-&gt;isr_count
 op_assign
 l_int|0
 suffix:semicolon
-id|p-&gt;next
-op_assign
-l_int|NULL
-suffix:semicolon
 id|p-&gt;completeq.head
 op_assign
 l_int|NULL
@@ -16496,94 +16478,40 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|aic7xxx_boards
-(braket
-id|p-&gt;irq
-)braket
-op_eq
-l_int|NULL
-)paren
-(brace
-r_int
-id|result
-suffix:semicolon
-r_int
-id|irq_flags
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&n;   * Request an IRQ for the board. Only allow sharing IRQs with PCI devices.&n;   */
 macro_line|#ifdef AIC7XXX_OLD_ISR_TYPE
-id|irg_flags
+id|irq_flags
 op_assign
 id|SA_INTERRUPT
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;     * Warning! This must be done before requesting the irq.  It is&n;     * possible for some boards to raise an interrupt as soon as&n;     * they are enabled.  So when we request the irq from the Linux&n;     * kernel, an interrupt is triggered immediately.  Therefore, we&n;     * must ensure the board data is correctly set before the request.&n;     */
-id|aic7xxx_boards
-(braket
-id|p-&gt;irq
-)braket
-op_assign
-id|host
-suffix:semicolon
-multiline_comment|/*&n;     * Register IRQ with the kernel.  Only allow sharing IRQs with&n;     * PCI devices.&n;     */
 r_if
 c_cond
 (paren
 id|p-&gt;chip_class
-op_eq
+op_ne
 id|AIC_777x
 )paren
-(brace
-id|result
-op_assign
-(paren
-id|request_irq
-c_func
-(paren
-id|p-&gt;irq
-comma
-id|aic7xxx_isr
-comma
 id|irq_flags
-comma
-l_string|&quot;aic7xxx&quot;
-comma
-l_int|NULL
-)paren
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|result
-op_assign
-(paren
-id|request_irq
-c_func
-(paren
-id|p-&gt;irq
-comma
-id|aic7xxx_isr
-comma
-id|irq_flags
-op_or
+op_or_assign
 id|SA_SHIRQ
-comma
-l_string|&quot;aic7xxx&quot;
-comma
-l_int|NULL
-)paren
-)paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|result
+id|request_irq
+c_func
+(paren
+id|p-&gt;irq
+comma
+id|aic7xxx_isr
+comma
+id|irq_flags
+comma
+l_string|&quot;aic7xxx&quot;
+comma
+id|p
+)paren
 OL
 l_int|0
 )paren
@@ -16597,36 +16525,10 @@ comma
 id|p-&gt;irq
 )paren
 suffix:semicolon
-id|aic7xxx_boards
-(braket
-id|p-&gt;irq
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
 (paren
 l_int|0
 )paren
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-multiline_comment|/*&n;     * We have found a host adapter sharing an IRQ of a previously&n;     * registered host adapter. Add this host adapter&squot;s Scsi_Host&n;     * to the beginning of the linked list of hosts at the same IRQ.&n;     */
-id|p-&gt;next
-op_assign
-id|aic7xxx_boards
-(braket
-id|p-&gt;irq
-)braket
-suffix:semicolon
-id|aic7xxx_boards
-(braket
-id|p-&gt;irq
-)braket
-op_assign
-id|host
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Set the SCSI Id, SXFRCTL0, SXFRCTL1, and SIMODE1, for both channels&n;   */
@@ -17381,30 +17283,13 @@ op_minus
 id|MINREG
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Ensure that we only free the IRQ when there is _not_ another&n;       * aic7xxx adapter sharing this IRQ.  The adapters are always&n;       * added to the beginning of the list, so we can grab the next&n;       * pointer and place it back in the board array.&n;       */
-r_if
-c_cond
-(paren
-id|p-&gt;next
-op_eq
-l_int|NULL
-)paren
-(brace
 id|free_irq
 c_func
 (paren
 id|p-&gt;irq
 comma
-id|aic7xxx_isr
+id|p
 )paren
-suffix:semicolon
-)brace
-id|aic7xxx_boards
-(braket
-id|p-&gt;irq
-)braket
-op_assign
-id|p-&gt;next
 suffix:semicolon
 r_return
 l_int|0
@@ -17606,6 +17491,15 @@ comma
 multiline_comment|/* unpause_always */
 id|TRUE
 )paren
+suffix:semicolon
+multiline_comment|/*&n;   * Add it to our list of adapters.&n;   */
+id|p-&gt;next
+op_assign
+id|first_aic7xxx
+suffix:semicolon
+id|first_aic7xxx
+op_assign
+id|p
 suffix:semicolon
 r_return
 (paren
@@ -18772,19 +18666,31 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__)
 id|aha_status_type
 id|adapter_bios
 suffix:semicolon
-id|aha_chip_class_type
-id|chip_class
-suffix:semicolon
-id|aha_chip_type
-id|chip_type
+r_int
+r_char
+id|hcntrl
+comma
+id|hostconf
+comma
+id|irq
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|slot
 comma
 id|base
+suffix:semicolon
+macro_line|#endif
+id|aha_chip_class_type
+id|chip_class
+suffix:semicolon
+id|aha_chip_type
+id|chip_type
 suffix:semicolon
 r_int
 id|chan_num
@@ -18793,17 +18699,9 @@ l_int|0
 suffix:semicolon
 r_int
 r_char
-id|hcntrl
-comma
 id|sxfrctl1
 comma
 id|sblkctl
-comma
-id|hostconf
-comma
-id|irq
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|i
@@ -18813,34 +18711,6 @@ id|aic7xxx_host
 op_star
 id|p
 suffix:semicolon
-multiline_comment|/*&n;   * Since we may allow sharing of IRQs, it is imperative&n;   * that we &quot;null-out&quot; the aic7xxx_boards array. It is&n;   * not guaranteed to be initialized to 0 (NULL). We use&n;   * a NULL entry to indicate that no prior hosts have&n;   * been found/registered for that IRQ.&n;   */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NUMBER
-c_func
-(paren
-id|aic7xxx_boards
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|aic7xxx_boards
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 r_template
 op_member_access_from_pointer
 id|proc_dir
@@ -18864,11 +18734,7 @@ id|sg_tablesize
 op_assign
 id|AIC7XXX_MAX_SG
 suffix:semicolon
-multiline_comment|/*&n;   * Initialize the spurious count to 0.&n;   */
-id|aic7xxx_spurious_count
-op_assign
-l_int|0
-suffix:semicolon
+macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__)
 multiline_comment|/*&n;   * EISA/VL-bus card signature probe.&n;   */
 r_for
 c_loop
@@ -18988,11 +18854,6 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;       * We found a card, allow 1 spurious interrupt.&n;       */
-id|aic7xxx_spurious_count
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/*&n;       * Pause the card preserving the IRQ type.  Allow the operator&n;       * to override the IRQ trigger.&n;       */
 r_if
 c_cond
@@ -19290,7 +19151,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;aic7xxx: BIOS %sabled, IO Port 0x%x, IRQ %d (%s), &quot;
+l_string|&quot;aic7xxx: BIOS %sabled, IO Port 0x%lx, IRQ %d (%s), &quot;
 comma
 (paren
 id|p-&gt;flags
@@ -19486,19 +19347,15 @@ id|p
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;       * Disallow spurious interrupts.&n;       */
-id|aic7xxx_spurious_count
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* __sparc_v9__ or __powerpc__ */
 macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n;   * PCI-bus probe.&n;   */
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -19674,27 +19531,10 @@ comma
 id|flags
 suffix:semicolon
 r_int
-id|done
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-r_int
-id|iobase
-comma
-id|mbase
-suffix:semicolon
-r_int
 r_int
 id|index
 op_assign
 l_int|0
-suffix:semicolon
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
 suffix:semicolon
 r_int
 r_char
@@ -19727,6 +19567,23 @@ comma
 l_char|&squot;D&squot;
 )brace
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
+suffix:semicolon
+r_int
+r_int
+id|iobase
+comma
+id|mbase
+suffix:semicolon
+r_int
+r_int
+id|irq
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -19745,22 +19602,13 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
-id|done
-op_assign
-id|FALSE
-suffix:semicolon
 r_while
 c_loop
 (paren
-op_logical_neg
-id|done
-)paren
-(brace
-r_if
-c_cond
 (paren
-id|pcibios_find_device
+id|pdev
+op_assign
+id|pci_find_device
 c_func
 (paren
 id|aic7xxx_pci_devices
@@ -19777,27 +19625,10 @@ id|i
 dot
 id|device_id
 comma
-id|index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
+id|pdev
 )paren
 )paren
-(brace
-id|index
-op_assign
-l_int|0
-suffix:semicolon
-id|done
-op_assign
-id|TRUE
-suffix:semicolon
-)brace
-r_else
-multiline_comment|/* Found an Adaptec PCI device. */
+)paren
 (brace
 id|chip_class
 op_assign
@@ -19913,60 +19744,31 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;           * Read sundry information from PCI BIOS.&n;           */
+multiline_comment|/*&n;         * Read sundry information from PCI BIOS.&n;         */
+id|iobase
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|mbase
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
 id|error
 op_assign
-id|pcibios_read_config_dword
+id|pci_read_config_dword
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|iobase
-)paren
-suffix:semicolon
-id|error
-op_add_assign
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|irq
-)paren
-suffix:semicolon
-id|error
-op_add_assign
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-op_amp
-id|mbase
-)paren
-suffix:semicolon
-id|error
-op_add_assign
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|DEVCONFIG
 comma
@@ -19976,12 +19778,10 @@ id|devconfig
 suffix:semicolon
 id|error
 op_add_assign
-id|pcibios_read_config_dword
+id|pci_read_config_dword
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|CLASS_PROGIF_REVID
 comma
@@ -20002,11 +19802,11 @@ comma
 id|PCI_SLOT
 c_func
 (paren
-id|pci_device_fn
+id|pdev-&gt;devfn
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;           * The first bit (LSB) of PCI_BASE_ADDRESS_0 is always set, so&n;           * we mask it off.&n;           */
+multiline_comment|/*&n;         * The first bit (LSB) of PCI_BASE_ADDRESS_0 is always set, so&n;         * we mask it off.&n;         */
 id|iobase
 op_and_assign
 id|PCI_BASE_ADDRESS_IO_MASK
@@ -20033,9 +19833,49 @@ r_if
 c_cond
 (paren
 id|p
-op_eq
-l_int|NULL
 )paren
+(brace
+r_int
+r_int
+id|pci_command
+suffix:semicolon
+multiline_comment|/* Enable bus mastering since this thing must do DMA. */
+id|pci_read_config_word
+c_func
+(paren
+id|pdev
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|pci_command
+)paren
+suffix:semicolon
+id|pci_command
+op_or_assign
+id|PCI_COMMAND_MASTER
+suffix:semicolon
+macro_line|#ifdef __powerpc__
+multiline_comment|/* Enable I/O and memory-space access */
+id|pci_command
+op_or_assign
+id|PCI_COMMAND_MEMORY
+op_or
+id|PCI_COMMAND_IO
+suffix:semicolon
+macro_line|#endif
+id|pci_write_config_word
+c_func
+(paren
+id|pdev
+comma
+id|PCI_COMMAND
+comma
+id|pci_command
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 id|printk
 c_func
@@ -20469,8 +20309,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;aic7xxx: BIOS %sabled, IO Port 0x%x, &quot;
-l_string|&quot;IO Mem 0x%x, IRQ %d&quot;
+l_string|&quot;aic7xxx: BIOS %sabled, IO Port 0x%lx, &quot;
+l_string|&quot;IO Mem 0x%lx, IRQ %x&quot;
 comma
 (paren
 id|p-&gt;flags
@@ -20521,11 +20361,6 @@ c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
-suffix:semicolon
-multiline_comment|/*&n;           * I don&squot;t think we need to bother with allowing&n;           * spurious interrupts for the 787x/785x, but what&n;           * the hey.&n;           */
-id|aic7xxx_spurious_count
-op_assign
-l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -20646,15 +20481,8 @@ macro_line|#endif
 id|index
 op_increment
 suffix:semicolon
-multiline_comment|/*&n;           * Disable spurious interrupts.&n;           */
-id|aic7xxx_spurious_count
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/* Found an Adaptec PCI device. */
-)brace
-)brace
 )brace
 macro_line|#endif CONFIG_PCI
 r_return
@@ -20929,17 +20757,21 @@ l_int|0x07
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * The interpretation of request_buffer and request_bufflen&n;   * changes depending on whether or not use_sg is zero; a&n;   * non-zero use_sg indicates the number of elements in the&n;   * scatter-gather array.&n;   */
-multiline_comment|/*&n;   * XXX - this relies on the host data being stored in a&n;   *       little-endian format.&n;   */
+multiline_comment|/*&n;   * XXX - this relies on the host data being stored in a&n;   *       little-endian format.&n;   *&n;   * No longer is that an issue, I&squot;ve &quot;big-endian&squot;ified&quot; this driver. -DaveM&n;   */
 id|hscb-&gt;SCSI_cmd_length
 op_assign
 id|cmd-&gt;cmd_len
 suffix:semicolon
 id|hscb-&gt;SCSI_cmd_pointer
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|VIRT_TO_BUS
 c_func
 (paren
 id|cmd-&gt;cmnd
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -20989,6 +20821,9 @@ id|i
 dot
 id|address
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|VIRT_TO_BUS
 c_func
 (paren
@@ -20999,6 +20834,7 @@ id|i
 dot
 id|address
 )paren
+)paren
 suffix:semicolon
 id|scb-&gt;sg_list
 (braket
@@ -21007,6 +20843,9 @@ id|i
 dot
 id|length
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 (paren
 r_int
 r_int
@@ -21017,14 +20856,19 @@ id|i
 )braket
 dot
 id|length
+)paren
 suffix:semicolon
 )brace
 id|hscb-&gt;SG_list_pointer
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|VIRT_TO_BUS
 c_func
 (paren
 id|scb-&gt;sg_list
+)paren
 )paren
 suffix:semicolon
 id|hscb-&gt;SG_segment_count
@@ -21054,6 +20898,8 @@ l_int|0
 dot
 id|length
 op_or
+id|cpu_to_le32
+c_func
 (paren
 id|SCB_LIST_NULL
 op_lshift
@@ -21076,7 +20922,11 @@ comma
 l_int|0
 )paren
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|hscb-&gt;data_count
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -21120,10 +20970,14 @@ l_int|0
 dot
 id|address
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|VIRT_TO_BUS
 c_func
 (paren
 id|cmd-&gt;request_buffer
+)paren
 )paren
 suffix:semicolon
 id|scb-&gt;sg_list
@@ -21133,10 +20987,17 @@ l_int|0
 dot
 id|length
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|cmd-&gt;request_bufflen
+)paren
 suffix:semicolon
 id|hscb-&gt;SG_list_pointer
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|VIRT_TO_BUS
 c_func
 (paren
@@ -21145,6 +21006,7 @@ id|scb-&gt;sg_list
 (braket
 l_int|0
 )braket
+)paren
 )paren
 suffix:semicolon
 id|hscb-&gt;data_count
@@ -21156,6 +21018,8 @@ l_int|0
 dot
 id|length
 op_or
+id|cpu_to_le32
+c_func
 (paren
 id|SCB_LIST_NULL
 op_lshift
@@ -21164,10 +21028,14 @@ l_int|24
 suffix:semicolon
 id|hscb-&gt;data_pointer
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|VIRT_TO_BUS
 c_func
 (paren
 id|cmd-&gt;request_buffer
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -21191,9 +21059,13 @@ l_int|0
 suffix:semicolon
 id|hscb-&gt;data_count
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|SCB_LIST_NULL
 op_lshift
 l_int|24
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -21694,7 +21566,7 @@ comma
 r_void
 op_star
 )paren
-l_int|NULL
+id|p
 comma
 (paren
 r_void
@@ -22235,7 +22107,11 @@ suffix:semicolon
 id|linked_next
 op_assign
 (paren
+id|le32_to_cpu
+c_func
+(paren
 id|scb-&gt;hscb-&gt;data_count
+)paren
 op_rshift
 l_int|24
 )paren
@@ -22300,14 +22176,22 @@ id|MK_MESSAGE
 suffix:semicolon
 id|scb-&gt;hscb-&gt;data_count
 op_and_assign
+id|cpu_to_le32
+c_func
+(paren
 op_complement
 l_int|0xFF000000
+)paren
 suffix:semicolon
 id|scb-&gt;hscb-&gt;data_count
 op_or_assign
+id|cpu_to_le32
+c_func
+(paren
 id|linked_next
 op_lshift
 l_int|24
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -22843,8 +22727,10 @@ op_star
 id|p
 suffix:semicolon
 r_int
+r_int
 id|base
-comma
+suffix:semicolon
+r_int
 id|found
 comma
 id|tindex

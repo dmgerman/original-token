@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ext2/file.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 fs regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/file.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 fs regular file handling primitives&n; *&n; *  64-bit file support on 64-bit platforms by Jakub Jelinek&n; * &t;(jj@sunsite.ms.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -63,6 +63,78 @@ id|file
 op_star
 )paren
 suffix:semicolon
+macro_line|#if BITS_PER_LONG &lt; 64
+r_static
+r_int
+id|ext2_open_file
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|EXT2_MAX_SIZE
+mdefine_line|#define EXT2_MAX_SIZE(bits)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(((EXT2_NDIR_BLOCKS + (1LL &lt;&lt; (bits - 2)) + &t;&t;&t;&t;&bslash;&n;&t;   (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2)) + &t;&t;&t;&t;&bslash;&n;&t;   (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2))) * &t;&bslash;&n;&t;  (1LL &lt;&lt; bits)) - 1)
+DECL|variable|ext2_max_sizes
+r_static
+r_int
+r_int
+id|ext2_max_sizes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|EXT2_MAX_SIZE
+c_func
+(paren
+l_int|10
+)paren
+comma
+id|EXT2_MAX_SIZE
+c_func
+(paren
+l_int|11
+)paren
+comma
+id|EXT2_MAX_SIZE
+c_func
+(paren
+l_int|12
+)paren
+comma
+id|EXT2_MAX_SIZE
+c_func
+(paren
+l_int|13
+)paren
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the ext2 filesystem.&n; */
 DECL|variable|ext2_file_operations
 r_static
@@ -92,9 +164,14 @@ multiline_comment|/* ioctl */
 id|generic_file_mmap
 comma
 multiline_comment|/* mmap */
+macro_line|#if BITS_PER_LONG == 64&t;
 l_int|NULL
 comma
 multiline_comment|/* no special open is needed */
+macro_line|#else
+id|ext2_open_file
+comma
+macro_line|#endif
 id|ext2_release_file
 comma
 multiline_comment|/* release */
@@ -194,10 +271,6 @@ r_int
 id|origin
 )paren
 (brace
-r_int
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|inode
 op_star
@@ -228,12 +301,6 @@ op_add_assign
 id|file-&gt;f_pos
 suffix:semicolon
 )brace
-id|retval
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
-multiline_comment|/* make sure the offset fits in 32 bits */
 r_if
 c_cond
 (paren
@@ -247,10 +314,36 @@ id|offset
 op_rshift
 l_int|32
 )paren
-op_eq
+op_ne
 l_int|0
 )paren
 (brace
+macro_line|#if BITS_PER_LONG &lt; 64
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|offset
+OG
+id|ext2_max_sizes
+(braket
+id|EXT2_BLOCK_SIZE_BITS
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+)braket
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -273,13 +366,8 @@ op_increment
 id|event
 suffix:semicolon
 )brace
-id|retval
-op_assign
-id|offset
-suffix:semicolon
-)brace
 r_return
-id|retval
+id|offset
 suffix:semicolon
 )brace
 DECL|function|remove_suid
@@ -376,7 +464,7 @@ id|inode
 op_assign
 id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-id|__u32
+id|off_t
 id|pos
 suffix:semicolon
 r_int
@@ -529,8 +617,29 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#if BITS_PER_LONG &gt;= 64
+r_if
+c_cond
+(paren
+id|pos
+OG
+id|ext2_max_sizes
+(braket
+id|EXT2_BLOCK_SIZE_BITS
+c_func
+(paren
+id|sb
+)paren
+)braket
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Check for overflow.. */
+macro_line|#if BITS_PER_LONG &lt; 64
 r_if
 c_cond
 (paren
@@ -563,6 +672,90 @@ op_minus
 id|EFBIG
 suffix:semicolon
 )brace
+macro_line|#else
+id|off_t
+id|max
+op_assign
+id|ext2_max_sizes
+(braket
+id|EXT2_BLOCK_SIZE_BITS
+c_func
+(paren
+id|sb
+)paren
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pos
+op_plus
+id|count
+OG
+id|max
+)paren
+(brace
+id|count
+op_assign
+id|max
+op_minus
+id|pos
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|count
+)paren
+r_return
+op_minus
+id|EFBIG
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|pos
+op_plus
+id|count
+)paren
+op_rshift
+l_int|32
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|sb-&gt;u.ext2_sb.s_es-&gt;s_feature_ro_compat
+op_amp
+id|cpu_to_le32
+c_func
+(paren
+id|EXT2_FEATURE_RO_COMPAT_LARGE_FILE
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/* If this is the first large file created, add a flag&n;&t;&t;   to the superblock */
+id|sb-&gt;u.ext2_sb.s_es-&gt;s_feature_ro_compat
+op_or_assign
+id|cpu_to_le32
+c_func
+(paren
+id|EXT2_FEATURE_RO_COMPAT_LARGE_FILE
+)paren
+suffix:semicolon
+id|mark_buffer_dirty
+c_func
+(paren
+id|sb-&gt;u.ext2_sb.s_sbh
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * If a file has been opened in synchronous mode, we have to ensure&n;&t; * that meta-data will also be written synchronously.  Thus, we&n;&t; * set the i_osync field.  This field is tested by the allocation&n;&t; * routines.&n;&t; */
 r_if
 c_cond
@@ -1055,7 +1248,7 @@ r_return
 id|written
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Called when an inode is released. Note that this is different&n; * from ext2_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
+multiline_comment|/*&n; * Called when an inode is released. Note that this is different&n; * from ext2_file_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
 DECL|function|ext2_release_file
 r_static
 r_int
@@ -1077,7 +1270,7 @@ c_cond
 (paren
 id|filp-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 id|ext2_discard_prealloc
 (paren
@@ -1088,4 +1281,42 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if BITS_PER_LONG &lt; 64
+multiline_comment|/*&n; * Called when an inode is about to be open.&n; * We use this to disallow opening RW large files on 32bit systems.&n; */
+DECL|function|ext2_open_file
+r_static
+r_int
+id|ext2_open_file
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inode-&gt;u.ext2_i.i_high_size
+op_logical_and
+(paren
+id|filp-&gt;f_mode
+op_amp
+id|FMODE_WRITE
+)paren
+)paren
+r_return
+op_minus
+id|EFBIG
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

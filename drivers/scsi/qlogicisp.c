@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -32,8 +31,6 @@ DECL|macro|TRACE_ISP
 mdefine_line|#define TRACE_ISP&t;&t;0
 DECL|macro|DEFAULT_LOOP_COUNT
 mdefine_line|#define DEFAULT_LOOP_COUNT&t;1000000
-DECL|macro|LinuxVersionCode
-mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
 multiline_comment|/* End Configuration section *************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#if TRACE_ISP
@@ -1405,17 +1402,9 @@ DECL|struct|isp1020_hostdata
 r_struct
 id|isp1020_hostdata
 (brace
-DECL|member|bus
-id|u_char
-id|bus
-suffix:semicolon
 DECL|member|revision
 id|u_char
 id|revision
-suffix:semicolon
-DECL|member|device_fn
-id|u_char
-id|device_fn
 suffix:semicolon
 DECL|member|host_param
 r_struct
@@ -1429,6 +1418,12 @@ id|dev_param
 (braket
 id|MAX_TARGETS
 )braket
+suffix:semicolon
+DECL|member|pci_dev
+r_struct
+id|pci_dev
+op_star
+id|pci_dev
 suffix:semicolon
 multiline_comment|/* result and request queues (shared with isp1020): */
 DECL|member|req_in_ptr
@@ -1480,16 +1475,6 @@ DECL|macro|REQ_QUEUE_DEPTH
 mdefine_line|#define REQ_QUEUE_DEPTH(in, out)&t;QUEUE_DEPTH(in, out, &t;&t;     &bslash;&n;&t;&t;&t;&t;&t;&t;    QLOGICISP_REQ_QUEUE_LEN)
 DECL|macro|RES_QUEUE_DEPTH
 mdefine_line|#define RES_QUEUE_DEPTH(in, out)&t;QUEUE_DEPTH(in, out, RES_QUEUE_LEN)
-DECL|variable|irq2host
-r_static
-r_struct
-id|Scsi_Host
-op_star
-id|irq2host
-(braket
-id|NR_IRQS
-)braket
-suffix:semicolon
 r_static
 r_void
 id|isp1020_enable_irqs
@@ -1733,14 +1718,6 @@ id|hosts
 op_assign
 l_int|0
 suffix:semicolon
-id|u_short
-id|index
-suffix:semicolon
-id|u_char
-id|bus
-comma
-id|device_fn
-suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -1750,6 +1727,13 @@ r_struct
 id|isp1020_hostdata
 op_star
 id|hostdata
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
 suffix:semicolon
 id|ENTER
 c_func
@@ -1765,7 +1749,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -1776,53 +1760,29 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : PCI bios not present&bslash;n&quot;
+l_string|&quot;qlogicisp : PCI not present&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-id|memset
-c_func
-(paren
-id|irq2host
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|irq2host
-)paren
-)paren
-suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-id|index
+(paren
+id|pdev
 op_assign
-l_int|0
-suffix:semicolon
-id|pcibios_find_device
+id|pci_find_device
 c_func
 (paren
 id|PCI_VENDOR_ID_QLOGIC
 comma
 id|PCI_DEVICE_ID_QLOGIC_ISP1020
 comma
-id|index
-comma
-op_amp
-id|bus
-comma
-op_amp
-id|device_fn
+id|pdev
 )paren
-op_eq
-l_int|0
-suffix:semicolon
-id|index
-op_increment
+)paren
 )paren
 (brace
 id|host
@@ -1862,13 +1822,9 @@ id|isp1020_hostdata
 )paren
 )paren
 suffix:semicolon
-id|hostdata-&gt;bus
+id|hostdata-&gt;pci_dev
 op_assign
-id|bus
-suffix:semicolon
-id|hostdata-&gt;device_fn
-op_assign
-id|device_fn
+id|pdev
 suffix:semicolon
 r_if
 c_cond
@@ -1931,10 +1887,12 @@ comma
 id|isp1020_intr_handler
 comma
 id|SA_INTERRUPT
+op_or
+id|SA_SHIRQ
 comma
 l_string|&quot;qlogicisp&quot;
 comma
-l_int|NULL
+id|host
 )paren
 )paren
 (brace
@@ -1985,7 +1943,7 @@ c_func
 (paren
 id|host-&gt;irq
 comma
-l_int|NULL
+id|host
 )paren
 suffix:semicolon
 id|scsi_unregister
@@ -2006,13 +1964,6 @@ l_int|0xff
 comma
 l_string|&quot;qlogicisp&quot;
 )paren
-suffix:semicolon
-id|irq2host
-(braket
-id|host-&gt;irq
-)braket
-op_assign
-id|host
 suffix:semicolon
 id|outw
 c_func
@@ -2100,7 +2051,7 @@ c_func
 (paren
 id|host-&gt;irq
 comma
-l_int|NULL
+id|host
 )paren
 suffix:semicolon
 id|release_region
@@ -2166,17 +2117,11 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;QLogic ISP1020 SCSI on PCI bus %d device %d irq %d base 0x%lx&quot;
+l_string|&quot;QLogic ISP1020 SCSI on PCI bus %02x device %02x irq %d base 0x%lx&quot;
 comma
-id|hostdata-&gt;bus
+id|hostdata-&gt;pci_dev-&gt;bus-&gt;number
 comma
-(paren
-id|hostdata-&gt;device_fn
-op_amp
-l_int|0xf8
-)paren
-op_rshift
-l_int|3
+id|hostdata-&gt;pci_dev-&gt;devfn
 comma
 id|host-&gt;irq
 comma
@@ -2941,6 +2886,8 @@ r_struct
 id|Scsi_Host
 op_star
 id|host
+op_assign
+id|dev_id
 suffix:semicolon
 r_struct
 id|isp1020_hostdata
@@ -2961,31 +2908,6 @@ c_func
 l_string|&quot;isp1020_intr_handler&quot;
 )paren
 suffix:semicolon
-id|host
-op_assign
-id|irq2host
-(braket
-id|irq
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|host
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;qlogicisp : unexpected interrupt on line %d&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|hostdata
 op_assign
 (paren
@@ -4529,10 +4451,8 @@ op_star
 id|sh
 )paren
 (brace
-id|u_long
+id|u_int
 id|io_base
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|isp1020_hostdata
@@ -4540,28 +4460,19 @@ op_star
 id|hostdata
 suffix:semicolon
 id|u_char
-id|bus
-comma
-id|device_fn
-comma
 id|revision
-comma
+suffix:semicolon
+id|u_int
 id|irq
 suffix:semicolon
 id|u_short
-id|vendor_id
-comma
-id|device_id
-comma
 id|command
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,90)
 r_struct
 id|pci_dev
 op_star
 id|pdev
 suffix:semicolon
-macro_line|#endif
 id|ENTER
 c_func
 (paren
@@ -4577,90 +4488,28 @@ op_star
 )paren
 id|sh-&gt;hostdata
 suffix:semicolon
-id|bus
+id|pdev
 op_assign
-id|hostdata-&gt;bus
-suffix:semicolon
-id|device_fn
-op_assign
-id|hostdata-&gt;device_fn
+id|hostdata-&gt;pci_dev
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|bus
-comma
-id|device_fn
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
-id|vendor_id
-)paren
-op_logical_or
-id|pcibios_read_config_word
-c_func
-(paren
-id|bus
-comma
-id|device_fn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|device_id
-)paren
-op_logical_or
-id|pcibios_read_config_word
-c_func
-(paren
-id|bus
-comma
-id|device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
 op_amp
 id|command
 )paren
-macro_line|#if LINUX_VERSION_CODE &lt; LinuxVersionCode(2,1,90)
 op_logical_or
-id|pcibios_read_config_dword
+id|pci_read_config_byte
 c_func
 (paren
-id|bus
-comma
-id|device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|io_base
-)paren
-op_logical_or
-id|pcibios_read_config_byte
-c_func
-(paren
-id|bus
-comma
-id|device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|irq
-)paren
-macro_line|#endif
-op_logical_or
-id|pcibios_read_config_byte
-c_func
-(paren
-id|bus
-comma
-id|device_fn
+id|pdev
 comma
 id|PCI_CLASS_REVISION
 comma
@@ -4679,17 +4528,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,90)
-id|pdev
-op_assign
-id|pci_find_dev
-c_func
-(paren
-id|bus
-comma
-id|device_fn
-)paren
-suffix:semicolon
 id|io_base
 op_assign
 id|pdev-&gt;base_address
@@ -4701,11 +4539,10 @@ id|irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
-id|vendor_id
+id|pdev-&gt;vendor
 op_ne
 id|PCI_VENDOR_ID_QLOGIC
 )paren
@@ -4715,7 +4552,7 @@ c_func
 (paren
 l_string|&quot;qlogicisp : 0x%04x is not QLogic vendor ID&bslash;n&quot;
 comma
-id|vendor_id
+id|pdev-&gt;vendor
 )paren
 suffix:semicolon
 r_return
@@ -4725,7 +4562,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|device_id
+id|pdev-&gt;device
 op_ne
 id|PCI_DEVICE_ID_QLOGIC_ISP1020
 )paren
@@ -4735,7 +4572,7 @@ c_func
 (paren
 l_string|&quot;qlogicisp : 0x%04x does not match ISP1020 device id&bslash;n&quot;
 comma
-id|device_id
+id|pdev-&gt;device
 )paren
 suffix:semicolon
 r_return

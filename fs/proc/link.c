@@ -38,9 +38,6 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * PLAN9_SEMANTICS won&squot;t work any more: it used an ugly hack that broke &n; * when the files[] array was updated only after the open code&n; */
-DECL|macro|PLAN9_SEMANTICS
-macro_line|#undef PLAN9_SEMANTICS
 multiline_comment|/*&n; * links can&squot;t do much...&n; */
 DECL|variable|proc_fd_link_operations
 r_static

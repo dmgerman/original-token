@@ -27,6 +27,9 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bugs.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
+macro_line|#ifdef CONFIG_PCI
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Versions of gcc older than that listed below may actually compile&n; * and link okay, but the end product can have subtle run time bugs.&n; * To avoid associated bogus bug reports, we flatly refuse to compile&n; * with a gcc that is known to be too old from the very beginning.&n; */
 macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 6)
 macro_line|#error sorry, your GCC is too old. It builds incorrect kernels.
@@ -83,6 +86,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|dquot_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|init_IRQ
 c_func
 (paren
@@ -121,19 +132,6 @@ id|uidcache_init
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|pci_init
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -194,14 +192,6 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|dquot_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|smp_setup
 c_func
 (paren
@@ -214,6 +204,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef __i386__
 r_extern
 r_void
 id|ioapic_pirq_setup
@@ -228,9 +219,24 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|no_scroll
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|kbd_reset_setup
 c_func
 (paren
 r_char
@@ -2432,12 +2438,14 @@ comma
 id|smp_setup
 )brace
 comma
+macro_line|#ifdef __i386__
 (brace
 l_string|&quot;pirq=&quot;
 comma
 id|ioapic_pirq_setup
 )brace
 comma
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 (brace
@@ -2504,6 +2512,12 @@ macro_line|#ifdef CONFIG_VT
 l_string|&quot;no-scroll&quot;
 comma
 id|no_scroll
+)brace
+comma
+(brace
+l_string|&quot;kbd-reset&quot;
+comma
+id|kbd_reset_setup
 )brace
 comma
 macro_line|#endif
@@ -3195,6 +3209,14 @@ macro_line|#ifdef CONFIG_IP_PNP
 l_string|&quot;ip=&quot;
 comma
 id|ip_auto_config_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
+(brace
+l_string|&quot;pci=&quot;
+comma
+id|pci_setup
 )brace
 comma
 macro_line|#endif
@@ -4385,70 +4407,11 @@ r_int
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_SBUS
-id|memory_start
-op_assign
-id|sbus_init
-c_func
-(paren
-id|memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP)
-id|memory_start
-op_assign
-id|powermac_init
-c_func
-(paren
-id|memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_PCI) &amp;&amp; defined(CONFIG_PCI_CONSOLE)
-id|memory_start
-op_assign
-id|pci_init
-c_func
-(paren
-id|memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n; * HACK ALERT! This is early. We&squot;re enabling the console before&n; * we&squot;ve done PCI setups etc, and console_init() must be aware of&n; * this. But we do want output early, in case something goes wrong.&n; */
 macro_line|#if HACK
 id|memory_start
 op_assign
 id|console_init
-c_func
-(paren
-id|memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_PCI) &amp;&amp; !defined(CONFIG_PCI_CONSOLE)
-id|memory_start
-op_assign
-id|pci_init
-c_func
-(paren
-id|memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MCA
-id|memory_start
-op_assign
-id|mca_init
 c_func
 (paren
 id|memory_start
@@ -4606,6 +4569,35 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SYSCTL
 id|sysctl_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * Ok, at this point all CPU&squot;s should be initialized, so&n;&t; * we can start looking into devices..&n;&t; */
+macro_line|#ifdef CONFIG_PCI
+id|pci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SBUS
+id|sbus_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_CHRP)
+id|powermac_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MCA
+id|mca_init
 c_func
 (paren
 )paren

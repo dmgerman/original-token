@@ -1759,6 +1759,14 @@ id|pb
 )paren
 (brace
 multiline_comment|/* Do a simple read-write test to make sure the port exists. */
+id|parport_pc_write_econtrol
+c_func
+(paren
+id|pb
+comma
+l_int|0xc
+)paren
+suffix:semicolon
 id|parport_pc_write_control
 c_func
 (paren
@@ -3708,6 +3716,14 @@ op_or_assign
 id|PARPORT_FLAG_COMA
 suffix:semicolon
 multiline_comment|/* Done probing.  Now put the port into a sensible start-up state. */
+id|parport_pc_write_econtrol
+c_func
+(paren
+id|p
+comma
+l_int|0xc
+)paren
+suffix:semicolon
 id|parport_pc_write_control
 c_func
 (paren

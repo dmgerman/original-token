@@ -91,6 +91,9 @@ mdefine_line|#define&t;SCSI_NCR_IOMAPPED
 macro_line|#elif defined(__alpha__) || defined(__powerpc__)
 DECL|macro|SCSI_NCR_IOMAPPED
 mdefine_line|#define&t;SCSI_NCR_IOMAPPED
+macro_line|#elif defined(__sparc__)
+DECL|macro|SCSI_NCR_IOMAPPED
+macro_line|#undef SCSI_NCR_IOMAPPED
 macro_line|#endif
 multiline_comment|/*&n; * Sync transfer frequency at startup.&n; * Allow from 5Mhz to 40Mhz default 10 Mhz.&n; */
 macro_line|#ifndef&t;CONFIG_SCSI_NCR53C8XX_SYNC
@@ -284,7 +287,7 @@ macro_line|#ifdef&t;__BIG_ENDIAN
 macro_line|#if&t;LINUX_VERSION_CODE &lt; LinuxVersionCode(2,1,0)
 macro_line|#error&t;&quot;BIG ENDIAN byte ordering needs kernel version &gt;= 2.1.0&quot;
 macro_line|#endif
-macro_line|#ifdef&t;__powerpc__
+macro_line|#if defined(__powerpc__)
 DECL|macro|inw_l2b
 mdefine_line|#define&t;inw_l2b&t;&t;inw
 DECL|macro|inl_l2b
@@ -293,8 +296,17 @@ DECL|macro|outw_b2l
 mdefine_line|#define&t;outw_b2l&t;outw
 DECL|macro|outl_b2l
 mdefine_line|#define&t;outl_b2l&t;outl
+macro_line|#elif defined(__sparc__)
+DECL|macro|readw_l2b
+mdefine_line|#define&t;readw_l2b&t;readw
+DECL|macro|readl_l2b
+mdefine_line|#define&t;readl_l2b&t;readl
+DECL|macro|writew_b2l
+mdefine_line|#define&t;writew_b2l&t;writew
+DECL|macro|writel_b2l
+mdefine_line|#define&t;writel_b2l&t;writel
 macro_line|#else
-macro_line|#error&t;&quot;Support for BIG ENDIAN is only available for the PowerPC&quot;
+macro_line|#error&t;&quot;Support for BIG ENDIAN is only available for PowerPC and SPARC&quot;
 macro_line|#endif
 macro_line|#else&t;/* Assumed x86 or alpha */
 DECL|macro|inw_raw

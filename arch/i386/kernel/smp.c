@@ -245,43 +245,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Tripped when we start scheduling &t;&t;    &t;*/
-DECL|variable|apic_addr
-r_int
-r_int
-id|apic_addr
-op_assign
-l_int|0xFEE00000
-suffix:semicolon
-multiline_comment|/* Address of APIC (defaults to 0xFEE00000)&t;&t;*/
-DECL|variable|nlong
-r_int
-r_int
-id|nlong
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* dummy used for apic_reg address + 0x20&t;&t;*/
-DECL|variable|apic_reg
-r_int
-r_char
-op_star
-id|apic_reg
-op_assign
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-op_amp
-id|nlong
-)paren
-)paren
-op_minus
-l_int|0x20
-suffix:semicolon
-multiline_comment|/* Later set to the ioremap() of the APIC &t;&t;*/
 DECL|variable|apic_retval
 r_int
 r_int
@@ -397,6 +360,10 @@ id|mp_irqs
 (braket
 id|MAX_IRQ_SOURCES
 )braket
+suffix:semicolon
+r_extern
+r_int
+id|mpc_default_type
 suffix:semicolon
 DECL|variable|mp_bus_id_to_pci_bus
 r_int
@@ -885,12 +852,13 @@ comma
 id|mpc-&gt;mpc_lapic
 )paren
 suffix:semicolon
-multiline_comment|/* set the local APIC address */
-id|apic_addr
-op_assign
+multiline_comment|/* check the local APIC address */
+r_if
+c_cond
 (paren
-r_int
-r_int
+(paren
+r_char
+op_star
 )paren
 id|phys_to_virt
 c_func
@@ -900,6 +868,14 @@ r_int
 r_int
 )paren
 id|mpc-&gt;mpc_lapic
+)paren
+op_ne
+id|APIC_BASE
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;unexpected APIC address&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now process the configuration blocks.&n;&t; */
@@ -1656,7 +1632,11 @@ l_int|0
 )braket
 op_assign
 (paren
-id|apic_addr
+(paren
+r_int
+r_int
+)paren
+id|APIC_BASE
 op_or
 l_int|7
 )paren
@@ -1711,6 +1691,11 @@ c_func
 (paren
 l_string|&quot;I/O APIC at 0xFEC00000.&bslash;n&quot;
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Save the default type number, we&n;&t;&t;&t;&t;&t; * need it later to set the IO-APIC&n;&t;&t;&t;&t;&t; * up properly:&n;&t;&t;&t;&t;&t; */
+id|mpc_default_type
+op_assign
+id|mpf-&gt;mpf_feature1
 suffix:semicolon
 id|printk
 c_func
@@ -1845,14 +1830,6 @@ id|mpf-&gt;mpf_physptr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Now that the boot CPU id is known,&n;&t;&t;&t;&t; *&t;set some other information about it.&n;&t;&t;&t;&t; */
-id|nlong
-op_assign
-id|boot_cpu_id
-op_lshift
-l_int|24
-suffix:semicolon
-multiline_comment|/* Dummy &squot;self&squot; for bootup */
 id|__cpu_logical_map
 (braket
 l_int|0
@@ -3429,32 +3406,6 @@ l_string|&quot;SMP mode deactivated, forcing use of dummy APIC emulation.&bslash
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Map the local APIC into kernel space&n;&t; */
-id|apic_reg
-op_assign
-id|ioremap
-c_func
-(paren
-id|apic_addr
-comma
-l_int|4096
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|apic_reg
-op_eq
-l_int|NULL
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;Unable to map local apic.&quot;
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifdef SMP_DEBUG
 (brace
 r_int
@@ -4892,7 +4843,7 @@ suffix:semicolon
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This part sets up the APIC 32 bit clock in LVTT1, with HZ interrupts&n; * per second. We assume that the caller has already set up the local&n; * APIC at apic_addr.&n; *&n; * The APIC timer is not exactly sync with the external timer chip, it&n; * closely follows bus clocks.&n; */
+multiline_comment|/*&n; * This part sets up the APIC 32 bit clock in LVTT1, with HZ interrupts&n; * per second. We assume that the caller has already set up the local&n; * APIC.&n; *&n; * The APIC timer is not exactly sync with the external timer chip, it&n; * closely follows bus clocks.&n; */
 DECL|macro|RDTSC
 mdefine_line|#define RDTSC(x)&t;__asm__ __volatile__ (  &quot;rdtsc&quot; &bslash;&n;&t;&t;&t;&t;:&quot;=a&quot; (((unsigned long*)&amp;x)[0]),  &bslash;&n;&t;&t;&t;&t; &quot;=d&quot; (((unsigned long*)&amp;x)[1]))
 multiline_comment|/*&n; * The timer chip is already set up at HZ interrupts per second here,&n; * but we do not accept timer interrupts yet. We only allow the BP&n; * to calibrate.&n; */

@@ -847,6 +847,10 @@ id|controller
 op_assign
 id|j
 suffix:semicolon
+id|xd_type
+op_assign
+id|j
+suffix:semicolon
 op_star
 id|address
 op_assign
@@ -3941,6 +3945,16 @@ multiline_comment|/*initial: 0x320 */
 r_case
 l_int|0xCA000
 suffix:colon
+r_if
+c_cond
+(paren
+id|xd
+(braket
+l_int|3
+)braket
+op_le
+l_int|0
+)paren
 id|xd_iobase
 op_assign
 l_int|0x324
@@ -3956,7 +3970,7 @@ l_int|0xD8000
 suffix:colon
 r_break
 suffix:semicolon
-multiline_comment|/*5150CX*/
+multiline_comment|/*5150CX &amp; 5150XL*/
 r_default
 suffix:colon
 id|printk

@@ -502,17 +502,11 @@ id|dentry-&gt;d_inode
 id|printk
 c_func
 (paren
-l_string|&quot;autofs: lookup failure on existing dentry, status = %d, name = %s&bslash;n&quot;
+l_string|&quot;autofs warning: lookup failure on existing dentry, status = %d, name = %s&bslash;n&quot;
 comma
 id|status
 comma
 id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;autofs: trying to recover, but prepare for Armageddon&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -657,6 +651,17 @@ id|dentry-&gt;d_name
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* We don&squot;t update the usages for the autofs daemon itself, this&n;&t;   is necessary for recursive autofs mounts */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|autofs_oz_mode
+c_func
+(paren
+id|sbi
+)paren
+)paren
 id|autofs_update_usage
 c_func
 (paren
@@ -805,6 +810,17 @@ id|sbi
 suffix:semicolon
 )brace
 multiline_comment|/* Update the usage list */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|autofs_oz_mode
+c_func
+(paren
+id|sbi
+)paren
+)paren
+(brace
 id|ent
 op_assign
 (paren
@@ -823,6 +839,7 @@ comma
 id|ent
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|1
 suffix:semicolon

@@ -926,14 +926,11 @@ id|byte
 id|channel
 suffix:semicolon
 multiline_comment|/* for dual-port chips: 0=primary, 1=secondary */
-DECL|member|pci_bus
-id|byte
-id|pci_bus
-suffix:semicolon
-multiline_comment|/* for pci chipsets */
-DECL|member|pci_fn
-id|byte
-id|pci_fn
+DECL|member|pci_dev
+r_struct
+id|pci_dev
+op_star
+id|pci_dev
 suffix:semicolon
 multiline_comment|/* for pci chipsets */
 DECL|member|pci_devid
@@ -2247,6 +2244,11 @@ r_int
 r_int
 id|ide_get_or_set_dma_base
 (paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
 id|ide_hwif_t
 op_star
 id|hwif

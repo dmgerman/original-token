@@ -472,15 +472,6 @@ id|sb
 r_int
 id|i
 suffix:semicolon
-id|lock_super
-(paren
-id|sb
-)paren
-suffix:semicolon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -511,11 +502,6 @@ suffix:semicolon
 id|brelse
 (paren
 id|sb-&gt;u.adfs_sb.s_sbh
-)paren
-suffix:semicolon
-id|unlock_super
-(paren
-id|sb
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT

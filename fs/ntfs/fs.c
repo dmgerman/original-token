@@ -3339,27 +3339,9 @@ comma
 l_string|&quot;ntfs_put_super&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Ensure that nobody uses the super block anymore */
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|vol
 op_assign
 id|NTFS_SB2VOL
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-multiline_comment|/* Tell the kernel that the super block is no more used */
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
 c_func
 (paren
 id|sb

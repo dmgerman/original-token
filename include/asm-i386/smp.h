@@ -427,12 +427,6 @@ suffix:semicolon
 r_extern
 r_int
 r_char
-op_star
-id|apic_reg
-suffix:semicolon
-r_extern
-r_int
-r_char
 id|boot_cpu_id
 suffix:semicolon
 r_extern
@@ -617,7 +611,9 @@ r_volatile
 r_int
 id|smp_process_available
 suffix:semicolon
-multiline_comment|/*&n; *&t;APIC handlers: Note according to the Intel specification update&n; *&t;you should put reads between APIC writes.&n; *&t;Intel Pentium processor specification update [11AP, pg 64]&n; *&t;&t;&quot;Back to Back Assertions of HOLD May Cause Lost APIC Write Cycle&quot;&n; */
+multiline_comment|/*&n; *&t;APIC handlers: Note according to the Intel specification update&n; *&t;you should put reads between APIC writes.&n; *&t;Intel Pentium processor specification update [11AP, pg 64]&n; *&t;&quot;Back to Back Assertions of HOLD May Cause Lost APIC Write Cycle&quot;&n; */
+DECL|macro|APIC_BASE
+mdefine_line|#define APIC_BASE ((char *)0xFEE00000)
 DECL|function|apic_write
 r_extern
 id|__inline
@@ -643,7 +639,7 @@ r_int
 op_star
 )paren
 (paren
-id|apic_reg
+id|APIC_BASE
 op_plus
 id|reg
 )paren
@@ -675,14 +671,14 @@ r_int
 op_star
 )paren
 (paren
-id|apic_reg
+id|APIC_BASE
 op_plus
 id|reg
 )paren
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This function is needed by all SMP systems. It must _always_ be valid from the initial&n; *&t;startup. This may require magic on some systems (in the i86 case we dig out the boot &n; *&t;cpu id from the config and set up a fake apic_reg pointer so that before we activate&n; *&t;the apic we get the right answer). Hopefully other processors are more sensible 8)&n; */
+multiline_comment|/*&n; * This function is needed by all SMP systems. It must _always_ be valid&n; * from the initial startup. We map APIC_BASE very early in page_setup(),&n; * so this is correct in the x86 case.&n; */
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() (current-&gt;processor)
 DECL|function|hard_smp_processor_id
@@ -707,7 +703,7 @@ r_int
 op_star
 )paren
 (paren
-id|apic_reg
+id|APIC_BASE
 op_plus
 id|APIC_ID
 )paren

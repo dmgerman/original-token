@@ -224,12 +224,6 @@ id|sb
 op_member_access_from_pointer
 id|s_mdb
 suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -274,18 +268,7 @@ comma
 id|BLOCK_SIZE
 )paren
 suffix:semicolon
-multiline_comment|/* invalidate the superblock */
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 id|MOD_DEC_USE_COUNT
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
 suffix:semicolon
 r_return
 suffix:semicolon

@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -1936,56 +1935,38 @@ suffix:semicolon
 r_int
 id|setirq
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 (paren
 )paren
 )paren
-(brace
-r_for
+r_while
 c_loop
 (paren
-id|pci_index
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_index
-op_le
-id|MAXADAPTER
-suffix:semicolon
-op_increment
-id|pci_index
-)paren
-(brace
-id|UCHAR
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-r_if
-c_cond
 (paren
-id|pcibios_find_device
+id|pdev
+op_assign
+id|pci_find_device
+c_func
 (paren
 id|VENDOR_PSI
 comma
 id|DEVICE_ROY_1
 comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
+id|pdev
 )paren
-op_ne
-l_int|0
 )paren
-r_break
-suffix:semicolon
+)paren
+(brace
 id|pshost
 op_assign
 id|scsi_register
@@ -2006,21 +1987,14 @@ c_func
 id|pshost
 )paren
 suffix:semicolon
-id|pcibios_read_config_word
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
+id|padapter-&gt;basePort
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
 op_amp
-id|padapter-&gt;basePort
-)paren
-suffix:semicolon
-id|padapter-&gt;basePort
-op_and_assign
-l_int|0xFFFE
+id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 id|DEB
 (paren
@@ -2122,17 +2096,9 @@ id|padapter
 r_goto
 id|unregister
 suffix:semicolon
-id|pcibios_read_config_byte
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
 id|pshost-&gt;irq
-)paren
+op_assign
+id|pdev-&gt;irq
 suffix:semicolon
 id|setirq
 op_assign
@@ -2242,6 +2208,9 @@ c_func
 l_string|&quot;(C) 1997 Perceptive Solutions, Inc. All rights reserved&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
+id|NumAdapters
+op_increment
+suffix:semicolon
 r_continue
 suffix:semicolon
 id|unregister
@@ -2253,13 +2222,8 @@ id|pshost
 )paren
 suffix:semicolon
 )brace
-)brace
-id|NumAdapters
-op_assign
-id|pci_index
-suffix:semicolon
 r_return
-id|pci_index
+id|NumAdapters
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Abort&n; *&n; *&t;Description:&t;Process the Abort command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&n; *&t;Returns:&t;&t;Allways snooze.&n; *&n; ****************************************************************/

@@ -12,7 +12,6 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
@@ -409,48 +408,34 @@ id|flags
 suffix:semicolon
 id|byte
 id|reg
-comma
-id|progif
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+id|hwif-&gt;pci_dev
 suffix:semicolon
 id|hwif-&gt;chipset
 op_assign
 id|ide_trm290
 suffix:semicolon
+id|cfgbase
+op_assign
+id|dev-&gt;base_address
+(braket
+l_int|4
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|pcibios_read_config_byte
-c_func
 (paren
-id|hwif-&gt;pci_bus
-comma
-id|hwif-&gt;pci_fn
-comma
-l_int|0x09
-comma
-op_amp
-id|progif
-)paren
-op_logical_and
-(paren
-id|progif
+id|dev
+op_member_access_from_pointer
+r_class
 op_amp
 l_int|5
-)paren
-op_logical_and
-op_logical_neg
-id|pcibios_read_config_dword
-c_func
-(paren
-id|hwif-&gt;pci_bus
-comma
-id|hwif-&gt;pci_fn
-comma
-l_int|0x20
-comma
-op_amp
-id|cfgbase
 )paren
 op_logical_and
 id|cfgbase
@@ -460,8 +445,7 @@ id|hwif-&gt;config_data
 op_assign
 id|cfgbase
 op_amp
-op_complement
-l_int|1
+id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 id|printk
 c_func

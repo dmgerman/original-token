@@ -451,6 +451,11 @@ id|ip_mib
 id|ip_statistics
 suffix:semicolon
 r_extern
+r_struct
+id|linux_mib
+id|net_statistics
+suffix:semicolon
+r_extern
 r_int
 id|sysctl_local_port_range
 (braket

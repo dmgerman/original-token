@@ -20,8 +20,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1127,6 +1125,7 @@ r_return
 id|h
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * Function : request_synchronous (int host, int target)&n; * &n; * Purpose : KGDB interface which will allow us to negotiate for &n; * &t;synchronous transfers.  This ill be replaced with a more &n; * &t;integrated function; perhaps a new entry in the scsi_host &n; *&t;structure, accessible via an ioctl() or perhaps /proc/scsi.&n; *&n; * Inputs : host - number of SCSI host; target - number of target.&n; *&n; * Returns : 0 when negotiation has been setup for next SCSI command,&n; *&t;-1 on failure.&n; */
 r_static
 r_int
@@ -1307,6 +1306,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Function : request_disconnect (int host, int on_or_off)&n; * &n; * Purpose : KGDB support function, tells us to allow or disallow &n; *&t;disconnections.&n; *&n; * Inputs : host - number of SCSI host; on_or_off - non-zero to allow,&n; *&t;zero to disallow.&n; *&n; * Returns : 0 on success, *&t;-1 on failure.&n; */
 r_static
 r_int
@@ -2753,7 +2753,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : static int ncr53c7xx_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, u32 base, int io_port, int irq, int dma,&n; *&t;long long options, int clock);&n; *&n; * Purpose : initializes a NCR53c7,8x0 based on base addresses,&n; *&t;IRQ, and DMA channel.&t;&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 710&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
+multiline_comment|/* &n; * Function : static int ncr53c7xx_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, u32 base, int io_port, int irq, int dma, long long options,&n; *&t;int clock);&n; *&n; * Purpose : initializes a NCR53c7,8x0 based on base addresses,&n; *&t;IRQ, and DMA channel.&t;&n; *&t;&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 710&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
 r_int
 DECL|function|ncr53c7xx_init
 id|ncr53c7xx_init

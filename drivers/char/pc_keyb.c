@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/* Some configuration switches are present in the include file... */
 macro_line|#include &quot;pc_keyb.h&quot;
 multiline_comment|/* Simple translation table for the SysRq keys */
@@ -43,11 +44,24 @@ suffix:semicolon
 multiline_comment|/* 0x60 - 0x6f */
 macro_line|#endif
 multiline_comment|/*&n; * In case we run on a non-x86 hardware we need to initialize both the keyboard&n; * controller and the keyboard. On a x86, the BIOS will already have initialized&n; * them.&n; */
-macro_line|#ifndef __i386__
-DECL|macro|INIT_KBD
-mdefine_line|#define INIT_KBD
+multiline_comment|/*&n; * Some x86 BIOSes do not correctly initializes the keyboard, so the&n; * &quot;kbd-reset&quot; command line options can be given to force a reset.&n; * [Ranger]&n; */
+macro_line|#ifdef __i386__
+DECL|variable|__initdata
+r_int
+id|kbd_startup_reset
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
+DECL|variable|__initdata
+r_int
+id|kbd_startup_reset
+id|__initdata
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef INIT_KBD
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -518,7 +532,6 @@ id|msg
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* INIT_KBD */
 DECL|variable|kbd_read_mask
 r_int
 r_char
@@ -1986,12 +1999,39 @@ comma
 l_string|&quot;keyboard&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef INIT_KBD
+r_if
+c_cond
+(paren
+id|kbd_startup_reset
+)paren
 id|initialize_kbd
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
+multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|kbd_reset_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+)paren
+(brace
+id|kbd_startup_reset
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 eof

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * Code common to all PYXIS chips.&n; *&n; * Based on cod
 macro_line|#include &lt;linux/config.h&gt; /* CONFIG_ALPHA_RUFFIAN. */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;$Id: proc.c,v 1.27 1998/03/18 07:51:59 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Erik Schoenfelder, &lt;schoenfr@ibr.cs.tu-bs.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;identd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&t;Erik Schoenfelder&t;:&t;/proc/net/snmp&n; *&t;&t;Alan Cox&t;:&t;Handle dead sockets properly.&n; *&t;Gerhard Koerting&t;:&t;Show both timers&n; *&t;&t;Alan Cox&t;:&t;Allow inode to be NULL (kernel socket)&n; *&t;Andi Kleen&t;&t;:&t;Add support for open_requests and &n; *&t;&t;&t;&t;&t;split functions for more readibility.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;$Id: proc.c,v 1.28 1998/04/03 09:49:45 freitag Exp $&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Erik Schoenfelder, &lt;schoenfr@ibr.cs.tu-bs.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;identd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&t;Erik Schoenfelder&t;:&t;/proc/net/snmp&n; *&t;&t;Alan Cox&t;:&t;Handle dead sockets properly.&n; *&t;Gerhard Koerting&t;:&t;Show both timers&n; *&t;&t;Alan Cox&t;:&t;Allow inode to be NULL (kernel socket)&n; *&t;Andi Kleen&t;&t;:&t;Add support for open_requests and &n; *&t;&t;&t;&t;&t;split functions for more readibility.&n; *&t;Andi Kleen&t;&t;:&t;Add support for /proc/net/netstat&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1299,6 +1299,99 @@ id|udp_statistics.UdpOutDatagrams
 )paren
 suffix:semicolon
 multiline_comment|/*&t;&n;&t;  len += sprintf( buffer + len,&n;&t;  &t;&quot;TCP fast path RX:  H2: %ul H1: %ul L: %ul&bslash;n&quot;,&n;&t;  &t;&t;tcp_rx_hit2,tcp_rx_hit1,tcp_rx_miss);&n;*/
+r_if
+c_cond
+(paren
+id|offset
+op_ge
+id|len
+)paren
+(brace
+op_star
+id|start
+op_assign
+id|buffer
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+id|offset
+suffix:semicolon
+id|len
+op_sub_assign
+id|offset
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+id|len
+op_assign
+id|length
+suffix:semicolon
+r_return
+id|len
+suffix:semicolon
+)brace
+multiline_comment|/* &n; *&t;Output /proc/net/netstat&n; */
+DECL|function|netstat_get_info
+r_int
+id|netstat_get_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|dummy
+)paren
+(brace
+r_extern
+r_struct
+id|linux_mib
+id|net_statistics
+suffix:semicolon
+r_int
+id|len
+suffix:semicolon
+id|len
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;TcpExt: SyncookiesSent SyncookiesRecv SyncookiesFailed&bslash;n&quot;
+l_string|&quot;TcpExt: %lu %lu %lu&bslash;n&quot;
+comma
+id|net_statistics.SyncookiesSent
+comma
+id|net_statistics.SyncookiesRecv
+comma
+id|net_statistics.SyncookiesFailed
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -29,7 +29,7 @@ DECL|macro|All_ports
 mdefine_line|#define All_ports (No_of_ports + 1)
 multiline_comment|/*&n; * We time out our entries in the FDB after this many seconds.&n; */
 DECL|macro|FDB_TIMEOUT
-mdefine_line|#define FDB_TIMEOUT&t;300
+mdefine_line|#define FDB_TIMEOUT&t;20 /* JRP: 20s as NSC bridge code, was 300 for Linux */
 multiline_comment|/*&n; * the following defines are the initial values used when the &n; * bridge is booted.  These may be overridden when this bridge is&n; * not the root bridge.  These are the recommended default values &n; * from the 802.1d specification.&n; */
 DECL|macro|BRIDGE_MAX_AGE
 mdefine_line|#define BRIDGE_MAX_AGE&t;&t;20
@@ -39,6 +39,11 @@ DECL|macro|BRIDGE_FORWARD_DELAY
 mdefine_line|#define BRIDGE_FORWARD_DELAY&t;15
 DECL|macro|HOLD_TIME
 mdefine_line|#define HOLD_TIME&t;&t;1
+multiline_comment|/* broacast/multicast storm limitation. This per source. */
+DECL|macro|MAX_MCAST_PER_PERIOD
+mdefine_line|#define MAX_MCAST_PER_PERIOD    4
+DECL|macro|MCAST_HOLD_TIME
+mdefine_line|#define MCAST_HOLD_TIME&t;&t;10&t;/* in jiffies unit (10ms increment) */
 DECL|macro|Default_path_cost
 mdefine_line|#define Default_path_cost 10
 multiline_comment|/*&n; * minimum increment possible to avoid underestimating age, allows for BPDU&n; * transmission time&n; */
@@ -94,6 +99,27 @@ DECL|macro|BRIDGE_ID_ULA
 mdefine_line|#define BRIDGE_ID_ULA&t;bi.p_u.ula
 DECL|macro|BRIDGE_ID
 mdefine_line|#define BRIDGE_ID&t;bi.id
+multiline_comment|/* JRP: on the network the flags field is between &quot;type&quot; and &quot;root_id&quot;&n; * this is unfortunated! To make the code portable to a RISC machine&n; * the pdus are now massaged a little bit for processing&n; */
+DECL|macro|TOPOLOGY_CHANGE
+mdefine_line|#define TOPOLOGY_CHANGE&t;&t;0x01
+DECL|macro|TOPOLOGY_CHANGE_ACK
+mdefine_line|#define TOPOLOGY_CHANGE_ACK&t;0x80
+DECL|macro|BRIDGE_BPDU_8021_CONFIG_SIZE
+mdefine_line|#define BRIDGE_BPDU_8021_CONFIG_SIZE            35&t;/* real size */
+DECL|macro|BRIDGE_BPDU_8021_CONFIG_FLAG_OFFSET
+mdefine_line|#define BRIDGE_BPDU_8021_CONFIG_FLAG_OFFSET&t; 4
+DECL|macro|BRIDGE_BPDU_8021_PROTOCOL_ID
+mdefine_line|#define BRIDGE_BPDU_8021_PROTOCOL_ID 0
+DECL|macro|BRIDGE_BPDU_8021_PROTOCOL_VERSION_ID
+mdefine_line|#define BRIDGE_BPDU_8021_PROTOCOL_VERSION_ID 0
+DECL|macro|BRIDGE_LLC1_HS
+mdefine_line|#define BRIDGE_LLC1_HS 3
+DECL|macro|BRIDGE_LLC1_DSAP
+mdefine_line|#define BRIDGE_LLC1_DSAP 0x42
+DECL|macro|BRIDGE_LLC1_SSAP
+mdefine_line|#define BRIDGE_LLC1_SSAP 0x42
+DECL|macro|BRIDGE_LLC1_CTRL
+mdefine_line|#define BRIDGE_LLC1_CTRL 0x03
 r_typedef
 r_struct
 (brace
@@ -112,15 +138,6 @@ r_int
 r_char
 id|type
 suffix:semicolon
-DECL|member|flags
-r_int
-r_char
-id|flags
-suffix:semicolon
-DECL|macro|TOPOLOGY_CHANGE
-mdefine_line|#define TOPOLOGY_CHANGE&t;&t;0x01
-DECL|macro|TOPOLOGY_CHANGE_ACK
-mdefine_line|#define TOPOLOGY_CHANGE_ACK&t;0x80
 DECL|member|root_id
 id|bridge_id_t
 id|root_id
@@ -167,10 +184,29 @@ r_int
 id|forward_delay
 suffix:semicolon
 multiline_comment|/* (4.5.1.8)&t; */
+DECL|member|top_change_ack
+r_int
+r_char
+id|top_change_ack
+suffix:semicolon
+DECL|member|top_change
+r_int
+r_char
+id|top_change
+suffix:semicolon
 DECL|typedef|Config_bpdu
 )brace
 id|Config_bpdu
 suffix:semicolon
+macro_line|#ifdef __LITTLE_ENDIAN
+DECL|macro|config_bpdu_hton
+mdefine_line|#define config_bpdu_hton(config_bpdu) &bslash;&n;        (config_bpdu)-&gt;root_path_cost = htonl((config_bpdu)-&gt;root_path_cost); &bslash;&n;        (config_bpdu)-&gt;port_id = htons((config_bpdu)-&gt;port_id); &bslash;&n;        (config_bpdu)-&gt;message_age = htons((config_bpdu)-&gt;message_age); &bslash;&n;        (config_bpdu)-&gt;max_age = htons((config_bpdu)-&gt;max_age); &bslash;&n;        (config_bpdu)-&gt;hello_time = htons((config_bpdu)-&gt;hello_time); &bslash;&n;        (config_bpdu)-&gt;forward_delay = htons((config_bpdu)-&gt;forward_delay);
+macro_line|#else
+DECL|macro|config_bpdu_hton
+mdefine_line|#define config_bpdu_hton(config_bpdu)
+macro_line|#endif
+DECL|macro|config_bpdu_ntoh
+mdefine_line|#define config_bpdu_ntoh config_bpdu_hton
 multiline_comment|/** Topology Change Notification BPDU Parameters (4.5.2) **/
 r_typedef
 r_struct
@@ -260,16 +296,16 @@ r_int
 id|bridge_forward_delay
 suffix:semicolon
 multiline_comment|/* (4.5.3.10)&t; */
-DECL|member|topology_change_detected
+DECL|member|top_change_detected
 r_int
 r_int
-id|topology_change_detected
+id|top_change_detected
 suffix:semicolon
 multiline_comment|/* (4.5.3.11) */
-DECL|member|topology_change
+DECL|member|top_change
 r_int
 r_int
-id|topology_change
+id|top_change
 suffix:semicolon
 multiline_comment|/* (4.5.3.12)&t; */
 DECL|member|topology_change_time
@@ -284,16 +320,6 @@ r_int
 id|hold_time
 suffix:semicolon
 multiline_comment|/* (4.5.3.14)&t; */
-DECL|member|top_change
-r_int
-r_int
-id|top_change
-suffix:semicolon
-DECL|member|top_change_detected
-r_int
-r_int
-id|top_change_detected
-suffix:semicolon
 DECL|typedef|Bridge_data
 )brace
 id|Bridge_data
@@ -428,6 +454,17 @@ id|flags
 suffix:semicolon
 DECL|macro|FDB_ENT_VALID
 mdefine_line|#define FDB_ENT_VALID&t;0x01
+DECL|member|mcast_count
+r_int
+r_int
+id|mcast_count
+suffix:semicolon
+DECL|member|mcast_timer
+r_int
+r_int
+id|mcast_timer
+suffix:semicolon
+multiline_comment|/* oldest xxxxxcast */
 multiline_comment|/* AVL tree of all addresses, sorted by address */
 DECL|member|fdb_avl_height
 r_int
@@ -454,6 +491,56 @@ id|fdb_next
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* data returned on BRCMD_DISPLAY_FDB */
+DECL|struct|fdb_info
+r_struct
+id|fdb_info
+(brace
+DECL|member|ula
+r_int
+r_char
+id|ula
+(braket
+l_int|6
+)braket
+suffix:semicolon
+DECL|member|port
+r_int
+r_char
+id|port
+suffix:semicolon
+DECL|member|flags
+r_int
+r_char
+id|flags
+suffix:semicolon
+DECL|member|timer
+r_int
+r_int
+id|timer
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|fdb_info_hdr
+r_struct
+id|fdb_info_hdr
+(brace
+DECL|member|copied
+r_int
+id|copied
+suffix:semicolon
+multiline_comment|/* nb of entries copied to user */
+DECL|member|not_copied
+r_int
+id|not_copied
+suffix:semicolon
+multiline_comment|/* when user buffer is too small */
+DECL|member|cmd_time
+r_int
+id|cmd_time
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|IS_BRIDGED
 mdefine_line|#define IS_BRIDGED&t;0x2e
 DECL|macro|BR_MAX_PROTOCOLS
@@ -465,6 +552,95 @@ DECL|macro|BR_ACCEPT
 mdefine_line|#define BR_ACCEPT 1
 DECL|macro|BR_REJECT
 mdefine_line|#define BR_REJECT 0
+multiline_comment|/* JRP: extra statistics for debug */
+r_typedef
+r_struct
+(brace
+multiline_comment|/* br_receive_frame counters */
+DECL|member|port_disable_up_stack
+r_int
+id|port_disable_up_stack
+suffix:semicolon
+DECL|member|rcv_bpdu
+r_int
+id|rcv_bpdu
+suffix:semicolon
+DECL|member|notForwarding
+r_int
+id|notForwarding
+suffix:semicolon
+DECL|member|forwarding_up_stack
+r_int
+id|forwarding_up_stack
+suffix:semicolon
+DECL|member|unknown_state
+r_int
+id|unknown_state
+suffix:semicolon
+multiline_comment|/* br_tx_frame counters */
+DECL|member|port_disable
+r_int
+id|port_disable
+suffix:semicolon
+DECL|member|port_not_disable
+r_int
+id|port_not_disable
+suffix:semicolon
+multiline_comment|/* br_forward counters */
+DECL|member|local_multicast
+r_int
+id|local_multicast
+suffix:semicolon
+DECL|member|forwarded_multicast
+r_int
+id|forwarded_multicast
+suffix:semicolon
+multiline_comment|/* up stack as well */
+DECL|member|flood_unicast
+r_int
+id|flood_unicast
+suffix:semicolon
+DECL|member|aged_flood_unicast
+r_int
+id|aged_flood_unicast
+suffix:semicolon
+DECL|member|forwarded_unicast
+r_int
+id|forwarded_unicast
+suffix:semicolon
+DECL|member|forwarded_unicast_up_stack
+r_int
+id|forwarded_unicast_up_stack
+suffix:semicolon
+DECL|member|forwarded_ip_up_stack
+r_int
+id|forwarded_ip_up_stack
+suffix:semicolon
+DECL|member|forwarded_ip_up_stack_lie
+r_int
+id|forwarded_ip_up_stack_lie
+suffix:semicolon
+multiline_comment|/* received on alternate device */
+DECL|member|arp_for_local_mac
+r_int
+id|arp_for_local_mac
+suffix:semicolon
+DECL|member|drop_same_port
+r_int
+id|drop_same_port
+suffix:semicolon
+DECL|member|drop_same_port_aged
+r_int
+id|drop_same_port_aged
+suffix:semicolon
+DECL|member|drop_multicast
+r_int
+id|drop_multicast
+suffix:semicolon
+DECL|typedef|br_stats_counter
+)brace
+id|br_stats_counter
+suffix:semicolon
 DECL|struct|br_stat
 r_struct
 id|br_stat
@@ -521,6 +697,10 @@ id|BR_MAX_PROT_STATS
 )braket
 suffix:semicolon
 multiline_comment|/* How many packets ? */
+DECL|member|packet_cnts
+id|br_stats_counter
+id|packet_cnts
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* defined flags for br_stat.flags */
@@ -633,6 +813,19 @@ r_int
 id|protocol
 )paren
 suffix:semicolon
+r_void
+id|requeue_fdb
+c_func
+(paren
+r_struct
+id|fdb
+op_star
+id|node
+comma
+r_int
+id|new_port
+)paren
+suffix:semicolon
 r_struct
 id|fdb
 op_star
@@ -647,7 +840,9 @@ l_int|6
 )braket
 )paren
 suffix:semicolon
-r_int
+r_struct
+id|fdb
+op_star
 id|br_avl_insert
 (paren
 r_struct

@@ -4015,30 +4015,20 @@ id|IFF_UP
 )paren
 multiline_comment|/* Bit is different  ? */
 (brace
-r_if
-c_cond
+id|ret
+op_assign
+(paren
 (paren
 id|old_flags
 op_amp
 id|IFF_UP
 )paren
-(brace
-multiline_comment|/* Gone down */
-id|ret
-op_assign
+ques
+c_cond
 id|dev_close
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-)brace
-r_else
-multiline_comment|/* Come up */
-id|ret
-op_assign
+suffix:colon
 id|dev_open
-c_func
+)paren
 (paren
 id|dev
 )paren

@@ -172,7 +172,7 @@ op_star
 id|dir
 comma
 r_struct
-id|ext2_dir_entry
+id|ext2_dir_entry_2
 op_star
 id|de
 comma
@@ -243,11 +243,7 @@ OL
 id|EXT2_DIR_REC_LEN
 c_func
 (paren
-id|le16_to_cpu
-c_func
-(paren
 id|de-&gt;name_len
-)paren
 )paren
 )paren
 id|error_msg
@@ -342,11 +338,7 @@ c_func
 id|de-&gt;rec_len
 )paren
 comma
-id|le16_to_cpu
-c_func
-(paren
 id|de-&gt;name_len
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -412,7 +404,7 @@ l_int|16
 )braket
 suffix:semicolon
 r_struct
-id|ext2_dir_entry
+id|ext2_dir_entry_2
 op_star
 id|de
 suffix:semicolon
@@ -700,7 +692,7 @@ id|de
 op_assign
 (paren
 r_struct
-id|ext2_dir_entry
+id|ext2_dir_entry_2
 op_star
 )paren
 (paren
@@ -779,7 +771,7 @@ id|de
 op_assign
 (paren
 r_struct
-id|ext2_dir_entry
+id|ext2_dir_entry_2
 op_star
 )paren
 (paren
@@ -864,11 +856,7 @@ id|dirent
 comma
 id|de-&gt;name
 comma
-id|le16_to_cpu
-c_func
-(paren
 id|de-&gt;name_len
-)paren
 comma
 id|filp-&gt;f_pos
 comma

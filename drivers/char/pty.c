@@ -1,4 +1,6 @@
 multiline_comment|/*&n; *  linux/drivers/char/pty.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Added support for a Unix98-style ptmx device.&n; *    -- C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, 14-Jan-1998&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;&t;/* For EXPORT_SYMBOL */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -12,6 +14,9 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+DECL|macro|BUILDING_PTY_C
+mdefine_line|#define BUILDING_PTY_C 1
+macro_line|#include &lt;linux/devpts_fs.h&gt;
 DECL|struct|pty_struct
 r_struct
 id|pty_struct
@@ -259,6 +264,18 @@ id|TTY_OTHER_CLOSED
 comma
 op_amp
 id|tty-&gt;flags
+)paren
+suffix:semicolon
+id|devpts_pty_kill
+c_func
+(paren
+id|MINOR
+c_func
+(paren
+id|tty-&gt;device
+)paren
+op_minus
+id|tty-&gt;driver.minor_start
 )paren
 suffix:semicolon
 )brace

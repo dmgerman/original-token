@@ -1,8 +1,7 @@
-multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.4 1998/01/05 14:16:18 mj Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.10 1998/03/15 13:50:11 ecd Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1911,7 +1910,7 @@ id|SUN
 comma
 id|SUN_EBUS
 comma
-l_string|&quot;EBUS&quot;
+l_string|&quot;PCI-EBus Bridge&quot;
 )paren
 comma
 id|DEVICE
@@ -1921,7 +1920,17 @@ id|SUN
 comma
 id|SUN_HAPPYMEAL
 comma
-l_string|&quot;Happy Meal&quot;
+l_string|&quot;Happy Meal Ethernet&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SUN
+comma
+id|SUN_SIMBA
+comma
+l_string|&quot;Advanced PCI Bridge&quot;
 )paren
 comma
 id|DEVICE
@@ -1932,6 +1941,16 @@ comma
 id|SUN_PBM
 comma
 l_string|&quot;PCI Bus Module&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SUN
+comma
+id|SUN_SABRE
+comma
+l_string|&quot;Ultra IIi PCI&quot;
 )paren
 comma
 id|DEVICE
@@ -2446,6 +2465,26 @@ comma
 id|CERN_SPSB_PCI
 comma
 l_string|&quot;STAR/RD24 SCI-PCI (PMC)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CERN
+comma
+id|CERN_HIPPI_DST
+comma
+l_string|&quot;HIPPI destination&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CERN
+comma
+id|CERN_HIPPI_SRC
+comma
+l_string|&quot;HIPPI source&quot;
 )paren
 comma
 id|DEVICE
@@ -3496,6 +3535,16 @@ comma
 id|RP32INTF
 comma
 l_string|&quot;RocketPort 32 Intf&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ESSENTIAL
+comma
+id|ROADRUNNER
+comma
+l_string|&quot;RoadRunner serial HIPPI&quot;
 )paren
 comma
 id|DEVICE

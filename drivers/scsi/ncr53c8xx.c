@@ -17,7 +17,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -35,6 +34,7 @@ macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,35)
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#else
+macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#ifndef&t;__initdata
 DECL|macro|__initdata
 mdefine_line|#define&t;__initdata
@@ -129,10 +129,14 @@ r_typedef
 r_int
 id|vm_size_t
 suffix:semicolon
+macro_line|#ifndef bcopy
 DECL|macro|bcopy
 mdefine_line|#define bcopy(s, d, n)&t;memcpy((d), (s), (n))
+macro_line|#endif
+macro_line|#ifndef bzero
 DECL|macro|bzero
 mdefine_line|#define bzero(d, n)&t;memset((d), 0, (n))
+macro_line|#endif
 macro_line|#ifndef offsetof
 DECL|macro|offsetof
 mdefine_line|#define offsetof(t, m)&t;((size_t) (&amp;((t *)0)-&gt;m))
@@ -142,6 +146,16 @@ macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
 DECL|macro|vtophys
 mdefine_line|#define vtophys(p)&t;virt_to_bus(p)
 multiline_comment|/*&n;**&t;Memory mapped IO&n;**&n;**&t;Since linux-2.1, we must use ioremap() to map the io memory space.&n;**&t;iounmap() to unmap it. That allows portability.&n;**&t;Linux 1.3.X and 2.0.X allow to remap physical pages addresses greater &n;**&t;than the highest physical memory address to kernel virtual pages with &n;**&t;vremap() / vfree(). That was not portable but worked with i386 &n;**&t;architecture.&n;*/
+macro_line|#ifdef __sparc__
+DECL|macro|remap_pci_mem
+mdefine_line|#define remap_pci_mem(base, size)&t;((vm_offset_t) __va(base))
+DECL|macro|unmap_pci_mem
+mdefine_line|#define unmap_pci_mem(vaddr, size)
+DECL|macro|pcivtophys
+mdefine_line|#define pcivtophys(p)&t;&t;&t;((p) &amp; pci_dvma_mask)
+macro_line|#else&t;/* __sparc__ */
+DECL|macro|pcivtophys
+mdefine_line|#define pcivtophys(p)&t;&t;&t;(p)
 macro_line|#ifndef NCR_IOMAPPED
 DECL|function|__initfunc
 id|__initfunc
@@ -292,6 +306,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#endif&t;/* !NCR_IOMAPPED */
+macro_line|#endif&t;/* __sparc__ */
 macro_line|#else /* linux-1.2.13 */
 multiline_comment|/*&n;**&t;Linux 1.2.X assumes that addresses (virtual, physical, bus)&n;**&t;are the same.&n;**&n;**&t;I have not found how to do MMIO. It seems that only processes can&n;**&t;map high physical pages to virtual (Xservers can do MMIO).&n;*/
 DECL|macro|vtophys
@@ -2575,11 +2590,11 @@ id|profile
 id|profile
 suffix:semicolon
 DECL|member|disc_phys
-id|u_long
+id|u_int
 id|disc_phys
 suffix:semicolon
 DECL|member|disc_ref
-id|u_long
+id|u_int
 id|disc_ref
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;The global control block.&n;&t;**&t;It&squot;s used only during the configuration phase.&n;&t;**&t;A target control block will be created&n;&t;**&t;after the first successful transfer.&n;&t;*/
@@ -2630,7 +2645,7 @@ id|port
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;irq level&n;&t;*/
 DECL|member|irq
-id|u_short
+id|u_int
 id|irq
 suffix:semicolon
 )brace
@@ -8299,7 +8314,11 @@ op_complement
 id|RELOC_MASK
 )paren
 op_plus
+id|pcivtophys
+c_func
+(paren
 id|np-&gt;paddr
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -10683,6 +10702,27 @@ id|nvram
 op_assign
 id|device-&gt;nvram
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|printf
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;ncr53c%s-%d: rev=0x%02x, base=0x%lx, io_port=0x%lx, irq=0x%x&bslash;n&quot;
+comma
+id|device-&gt;chip.name
+comma
+id|unit
+comma
+id|device-&gt;chip.revision_id
+comma
+id|device-&gt;slot.base
+comma
+id|device-&gt;slot.io_port
+comma
+id|device-&gt;slot.irq
+)paren
+suffix:semicolon
+macro_line|#else
 id|printf
 c_func
 (paren
@@ -10702,6 +10742,7 @@ comma
 id|device-&gt;slot.irq
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;**&t;Allocate host_data structure&n;&t;*/
 r_if
 c_cond
@@ -11268,7 +11309,11 @@ id|np-&gt;vaddr2
 )paren
 ques
 c_cond
+id|pcivtophys
+c_func
+(paren
 id|np-&gt;paddr2
+)paren
 suffix:colon
 id|vtophys
 c_func
@@ -11589,7 +11634,7 @@ c_func
 (paren
 id|np
 comma
-l_int|0
+l_int|1
 comma
 id|driver_setup.settle_delay
 )paren
@@ -14476,6 +14521,22 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;**&t;Free irq&n;*/
 macro_line|#ifdef DEBUG_NCR53C8XX
+macro_line|#ifdef __sparc__
+id|printf
+c_func
+(paren
+l_string|&quot;%s: freeing irq 0x%x&bslash;n&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+comma
+id|np-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#else
 id|printf
 c_func
 (paren
@@ -14490,6 +14551,7 @@ comma
 id|np-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,70)
 id|free_irq
@@ -15526,6 +15588,13 @@ c_cond
 id|tp-&gt;numtags
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * Decrease tp-&gt;maxtags (ecd, 980110)&n;&t;&t;&t; */
+id|tp-&gt;maxtags
+op_assign
+id|tp-&gt;numtags
+op_minus
+l_int|1
+suffix:semicolon
 id|PRINT_ADDR
 c_func
 (paren
@@ -15535,7 +15604,9 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;QUEUE FULL! suspending tagged command queueing&bslash;n&quot;
+l_string|&quot;QUEUE FULL! suspending tagged command queueing (setting maxtags to %d)&bslash;n&quot;
+comma
+id|tp-&gt;maxtags
 )paren
 suffix:semicolon
 id|tp-&gt;numtags
@@ -20513,10 +20584,14 @@ l_int|0
 suffix:semicolon
 id|nxtdsp
 op_assign
+id|scr_to_cpu
+c_func
+(paren
 id|vdsp
 (braket
 l_int|3
 )braket
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -20545,10 +20620,14 @@ l_int|4
 suffix:semicolon
 id|nxtdsp
 op_assign
+id|scr_to_cpu
+c_func
+(paren
 id|vdsp
 (braket
 l_int|3
 )braket
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -23454,7 +23533,11 @@ op_assign
 id|cpu_to_scr
 c_func
 (paren
+id|pcivtophys
+c_func
+(paren
 id|np-&gt;paddr
+)paren
 op_plus
 m_offsetof
 (paren
@@ -23520,7 +23603,11 @@ op_assign
 id|cpu_to_scr
 c_func
 (paren
+id|pcivtophys
+c_func
+(paren
 id|np-&gt;paddr
+)paren
 op_plus
 m_offsetof
 (paren
@@ -24857,7 +24944,7 @@ id|work
 comma
 id|disc
 suffix:semicolon
-id|u_long
+id|u_int
 id|diff
 suffix:semicolon
 id|PROFILE.end
@@ -24967,7 +25054,11 @@ suffix:semicolon
 id|diff
 op_assign
 (paren
+id|scr_to_cpu
+c_func
+(paren
 id|np-&gt;disc_phys
+)paren
 op_minus
 id|np-&gt;disc_ref
 )paren
@@ -26827,7 +26918,10 @@ suffix:semicolon
 id|ncr_device
 op_star
 id|devp
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/* to shut up gcc */
 r_if
 c_cond
 (paren
@@ -27289,7 +27383,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -27703,11 +27797,14 @@ comma
 id|latency_timer
 suffix:semicolon
 id|uchar
-id|irq
-comma
 id|revision
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,90)
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,85)
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
 id|ulong
 id|base
 comma
@@ -27715,12 +27812,13 @@ id|base_2
 comma
 id|io_port
 suffix:semicolon
-r_struct
-id|pci_dev
-op_star
-id|pdev
+id|uint
+id|irq
 suffix:semicolon
-macro_line|#elif LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
+macro_line|#elif LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0) 
+id|uchar
+id|irq
+suffix:semicolon
 id|uint
 id|base
 comma
@@ -27729,10 +27827,15 @@ comma
 id|io_port
 suffix:semicolon
 macro_line|#else
+id|uchar
+id|irq
+suffix:semicolon
 id|ulong
 id|base
 comma
 id|base_2
+comma
+id|io_port
 suffix:semicolon
 macro_line|#endif
 r_int
@@ -27758,17 +27861,23 @@ l_string|&quot;ncr53c8xx: at PCI bus %d, device %d, function %d&bslash;n&quot;
 comma
 id|bus
 comma
-id|PCI_SLOT
-c_func
+(paren
+r_int
+)paren
 (paren
 id|device_fn
+op_amp
+l_int|0xf8
 )paren
+op_rshift
+l_int|3
 comma
-id|PCI_FUNC
-c_func
 (paren
-id|device_fn
+r_int
 )paren
+id|device_fn
+op_amp
+l_int|7
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Read info from the PCI config space.&n;&t; * pcibios_read_config_xxx() functions are assumed to be used for &n;&t; * successfully detected PCI devices.&n;&t; * Expecting error conditions from them is just paranoia,&n;&t; * thus void cast.&n;&t; */
@@ -27820,10 +27929,10 @@ op_amp
 id|command
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,90)
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,85)
 id|pdev
 op_assign
-id|pci_find_dev
+id|pci_find_slot
 c_func
 (paren
 id|bus
@@ -28078,27 +28187,161 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#ifdef __powerpc__
-multiline_comment|/*&n;&t; *&t;Severall fix-up for power/pc.&n;&t; *&t;Should not be performed by the driver.&n;&t; */
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
 id|command
 op_amp
-(paren
 id|PCI_COMMAND_MASTER
-op_or
-id|PCI_COMMAND_IO
-op_or
-id|PCI_COMMAND_MEMORY
 )paren
 )paren
-op_ne
+(brace
+id|printk
+c_func
 (paren
+l_string|&quot;ncr53c8xx: attempting to force PCI_COMMAND_MASTER...&quot;
+)paren
+suffix:semicolon
+id|command
+op_or_assign
 id|PCI_COMMAND_MASTER
-op_or
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+id|command
+)paren
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|command
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|command
+op_amp
+id|PCI_COMMAND_MASTER
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;succeeded.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|command
+op_amp
 id|PCI_COMMAND_IO
-op_or
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: attempting to force PCI_COMMAND_IO...&quot;
+)paren
+suffix:semicolon
+id|command
+op_or_assign
+id|PCI_COMMAND_IO
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+id|command
+)paren
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|command
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|command
+op_amp
+id|PCI_COMMAND_IO
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;succeeded.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|command
+op_amp
 id|PCI_COMMAND_MEMORY
 )paren
 )paren
@@ -28106,15 +28349,11 @@ id|PCI_COMMAND_MEMORY
 id|printk
 c_func
 (paren
-l_string|&quot;ncr53c8xx : setting PCI master/io/command bit&bslash;n&quot;
+l_string|&quot;ncr53c8xx: attempting to force PCI_COMMAND_MEMORY...&quot;
 )paren
 suffix:semicolon
 id|command
 op_or_assign
-id|PCI_COMMAND_MASTER
-op_or
-id|PCI_COMMAND_IO
-op_or
 id|PCI_COMMAND_MEMORY
 suffix:semicolon
 id|pcibios_write_config_word
@@ -28129,7 +28368,53 @@ comma
 id|command
 )paren
 suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|command
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|command
+op_amp
+id|PCI_COMMAND_MEMORY
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;failed!&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;succeeded.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|is_prep
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -28138,6 +28423,12 @@ op_ge
 l_int|0x10000000
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: reallocating io_port (Wacky IBM)&quot;
+)paren
+suffix:semicolon
 id|io_port
 op_assign
 (paren
@@ -28169,6 +28460,12 @@ op_ge
 l_int|0x10000000
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: reallocating base (Wacky IBM)&quot;
+)paren
+suffix:semicolon
 id|base
 op_assign
 (paren
@@ -28189,6 +28486,287 @@ comma
 id|PCI_BASE_ADDRESS_1
 comma
 id|base
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|base_2
+op_ge
+l_int|0x10000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: reallocating base2 (Wacky IBM)&quot;
+)paren
+suffix:semicolon
+id|base_2
+op_assign
+(paren
+id|base_2
+op_amp
+l_int|0x00FFFFFF
+)paren
+op_or
+l_int|0x01000000
+suffix:semicolon
+id|pcibios_write_config_dword
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_BASE_ADDRESS_2
+comma
+id|base_2
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
+macro_line|#ifdef __sparc__
+multiline_comment|/*&n;&t; *&t;Severall fix-ups for sparc.&n;&t; *&n;&t; *&t;Should not be performed by the driver, but how can OBP know&n;&t; *&t;each and every PCI card, if they don&squot;t use Fcode?&n;&t; */
+id|base
+op_assign
+id|__pa
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|base_2
+op_assign
+id|__pa
+c_func
+(paren
+id|base_2
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|command
+op_amp
+id|PCI_COMMAND_MASTER
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|initverbose
+op_ge
+l_int|2
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: setting PCI_COMMAND_MASTER bit (fixup)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|command
+op_or_assign
+id|PCI_COMMAND_MASTER
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+id|command
+)paren
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|command
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|chip-&gt;features
+op_amp
+id|FE_WRIE
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|command
+op_amp
+id|PCI_COMMAND_INVALIDATE
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|initverbose
+op_ge
+l_int|2
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: setting PCI_COMMAND_INVALIDATE bit (fixup)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|command
+op_or_assign
+id|PCI_COMMAND_INVALIDATE
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+id|command
+)paren
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|command
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|chip-&gt;features
+op_amp
+id|FE_CLSE
+)paren
+op_logical_and
+op_logical_neg
+id|cache_line_size
+)paren
+(brace
+id|cache_line_size
+op_assign
+l_int|16
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initverbose
+op_ge
+l_int|2
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: setting PCI_CACHE_LINE_SIZE to %d (fixup)&bslash;n&quot;
+comma
+id|cache_line_size
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_CACHE_LINE_SIZE
+comma
+id|cache_line_size
+)paren
+suffix:semicolon
+id|pcibios_read_config_byte
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_CACHE_LINE_SIZE
+comma
+op_amp
+id|cache_line_size
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|latency_timer
+)paren
+(brace
+id|latency_timer
+op_assign
+l_int|248
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initverbose
+op_ge
+l_int|2
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: setting PCI_LATENCY_TIMER to %d bus clocks (fixup)&bslash;n&quot;
+comma
+id|latency_timer
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_LATENCY_TIMER
+comma
+id|latency_timer
+)paren
+suffix:semicolon
+id|pcibios_read_config_byte
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_LATENCY_TIMER
+comma
+op_amp
+id|latency_timer
 )paren
 suffix:semicolon
 )brace
@@ -28323,6 +28901,22 @@ l_int|128
 )paren
 )paren
 (brace
+macro_line|#ifdef __sparc__
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx: IO region 0x%lx to 0x%lx is in use&bslash;n&quot;
+comma
+id|io_port
+comma
+(paren
+id|io_port
+op_plus
+l_int|127
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|printk
 c_func
 (paren
@@ -28343,6 +28937,7 @@ l_int|127
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 l_int|1
@@ -28450,7 +29045,7 @@ id|FE_WIDE
 suffix:semicolon
 macro_line|#ifdef&t;SCSI_NCR_PCI_FIX_UP_SUPPORT
 multiline_comment|/*&n;&t; * Try to fix up PCI config according to wished features.&n;&t; */
-macro_line|#if defined(__i386) &amp;&amp; !defined(MODULE)
+macro_line|#if defined(__i386__) &amp;&amp; !defined(MODULE)
 r_if
 c_cond
 (paren

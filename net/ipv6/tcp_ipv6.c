@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.72 1998/03/30 08:41:52 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.74 1998/04/03 09:50:01 freitag Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -19,14 +19,6 @@ macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-r_extern
-r_int
-id|sysctl_tcp_timestamps
-suffix:semicolon
-r_extern
-r_int
-id|sysctl_tcp_window_scaling
-suffix:semicolon
 r_static
 r_void
 id|tcp_v6_send_reset
@@ -3239,11 +3231,8 @@ comma
 id|sk-&gt;max_ack_backlog
 )paren
 suffix:semicolon
-id|tcp_statistics.TcpAttemptFails
-op_increment
-suffix:semicolon
 r_goto
-m_exit
+id|drop
 suffix:semicolon
 )brace
 id|req
@@ -3261,6 +3250,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
+r_goto
+id|drop
+suffix:semicolon
 )brace
 id|sk-&gt;ack_backlog
 op_increment
@@ -3453,11 +3445,18 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-m_exit
-suffix:colon
 r_return
 l_int|0
 suffix:semicolon
+id|drop
+suffix:colon
+id|tcp_statistics.TcpAttemptFails
+op_increment
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* don&squot;t send reset */
 )brace
 DECL|function|tcp_v6_send_check
 r_static

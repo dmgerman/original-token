@@ -63,7 +63,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -3580,10 +3579,6 @@ id|options
 (brace
 r_int
 r_int
-id|vendor_id
-comma
-id|device_id
-comma
 id|command
 suffix:semicolon
 macro_line|#ifdef LINUX_1_2
@@ -3599,8 +3594,6 @@ id|io_port
 suffix:semicolon
 r_int
 r_char
-id|irq
-comma
 id|revision
 suffix:semicolon
 r_int
@@ -3626,6 +3619,21 @@ l_int|1
 suffix:semicolon
 r_int
 id|i
+comma
+id|irq
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+id|pci_find_slot
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+)paren
 suffix:semicolon
 id|printk
 c_func
@@ -3657,16 +3665,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|pcibios_present
-c_func
-(paren
-)paren
+id|pdev
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;scsi-ncr53c7,8xx : not initializing due to lack of PCI BIOS,&bslash;n&quot;
+l_string|&quot;scsi-ncr53c7,8xx : not initializing -- PCI device not found,&bslash;n&quot;
 l_string|&quot;        try using memory, port, irq override instead.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3687,74 +3692,10 @@ id|bus
 comma
 id|device_fn
 comma
-id|PCI_VENDOR_ID
-comma
-op_amp
-id|vendor_id
-)paren
-)paren
-op_logical_or
-(paren
-id|error
-op_assign
-id|pcibios_read_config_word
-(paren
-id|bus
-comma
-id|device_fn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|device_id
-)paren
-)paren
-op_logical_or
-(paren
-id|error
-op_assign
-id|pcibios_read_config_word
-(paren
-id|bus
-comma
-id|device_fn
-comma
 id|PCI_COMMAND
 comma
 op_amp
 id|command
-)paren
-)paren
-op_logical_or
-(paren
-id|error
-op_assign
-id|pcibios_read_config_dword
-(paren
-id|bus
-comma
-id|device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|io_port
-)paren
-)paren
-op_logical_or
-(paren
-id|error
-op_assign
-id|pcibios_read_config_dword
-(paren
-id|bus
-comma
-id|device_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-op_amp
-id|base
 )paren
 )paren
 op_logical_or
@@ -3771,22 +3712,6 @@ id|PCI_CLASS_REVISION
 comma
 op_amp
 id|revision
-)paren
-)paren
-op_logical_or
-(paren
-id|error
-op_assign
-id|pcibios_read_config_byte
-(paren
-id|bus
-comma
-id|device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|irq
 )paren
 )paren
 )paren
@@ -3808,11 +3733,29 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|io_port
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|base
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
 multiline_comment|/* If any one ever clones the NCR chips, this will have to change */
 r_if
 c_cond
 (paren
-id|vendor_id
+id|pdev-&gt;vendor
 op_ne
 id|PCI_VENDOR_ID_NCR
 )paren
@@ -3824,7 +3767,7 @@ comma
 (paren
 r_int
 )paren
-id|vendor_id
+id|pdev-&gt;vendor
 )paren
 suffix:semicolon
 r_return
@@ -3856,12 +3799,10 @@ id|PCI_COMMAND_MASTER
 op_or
 id|PCI_COMMAND_IO
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|bus
-comma
-id|device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -3874,6 +3815,8 @@ c_cond
 id|io_port
 op_ge
 l_int|0x10000000
+op_logical_and
+id|is_prep
 )paren
 (brace
 multiline_comment|/* Mapping on PowerPC can&squot;t handle this! */
@@ -3905,17 +3848,22 @@ id|io_port
 op_assign
 id|new_io_port
 suffix:semicolon
-id|pcibios_write_config_dword
+id|pci_write_config_dword
 c_func
 (paren
-id|bus
-comma
-id|device_fn
+id|pdev
 comma
 id|PCI_BASE_ADDRESS_0
 comma
 id|io_port
 )paren
+suffix:semicolon
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+op_assign
+id|io_port
 suffix:semicolon
 )brace
 )brace
@@ -4074,7 +4022,7 @@ id|i
 r_if
 c_cond
 (paren
-id|device_id
+id|pdev-&gt;device
 op_eq
 id|pci_chip_ids
 (braket
@@ -4139,7 +4087,7 @@ c_cond
 (paren
 id|chip
 op_logical_and
-id|device_id
+id|pdev-&gt;device
 op_ne
 id|expected_id
 )paren
@@ -4152,7 +4100,7 @@ comma
 r_int
 r_int
 )paren
-id|device_id
+id|pdev-&gt;device
 comma
 (paren
 r_int
@@ -4490,7 +4438,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren

@@ -51,6 +51,12 @@ id|cmd
 r_case
 id|EXT2_IOC_GETFLAGS
 suffix:colon
+id|flags
+op_assign
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+id|EXT2_FL_USER_VISIBLE
+suffix:semicolon
 r_return
 id|put_user
 c_func
@@ -85,6 +91,12 @@ id|arg
 r_return
 op_minus
 id|EFAULT
+suffix:semicolon
+id|flags
+op_assign
+id|flags
+op_amp
+id|EXT2_FL_USER_MODIFIABLE
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * The IMMUTABLE and APPEND_ONLY flags can only be changed by&n;&t;&t; * the super user when the security level is zero.&n;&t;&t; */
 r_if
@@ -161,6 +173,13 @@ id|EROFS
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_flags
 op_assign
+(paren
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+op_complement
+id|EXT2_FL_USER_MODIFIABLE
+)paren
+op_or
 id|flags
 suffix:semicolon
 r_if

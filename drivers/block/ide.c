@@ -16,7 +16,6 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -531,7 +530,7 @@ r_else
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -5215,6 +5214,13 @@ id|hwgroup-&gt;hwif
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __sparc_v9__
+DECL|macro|IDE_IRQ_EQUAL
+mdefine_line|#define IDE_IRQ_EQUAL(irq1, irq2)&t;(1)
+macro_line|#else
+DECL|macro|IDE_IRQ_EQUAL
+mdefine_line|#define IDE_IRQ_EQUAL(irq1, irq2)&t;((irq1) == (irq2))
+macro_line|#endif
 multiline_comment|/*&n; * entry point for all interrupts, caller does __cli() for us&n; */
 DECL|function|ide_intr
 r_void
@@ -5258,7 +5264,6 @@ c_cond
 (paren
 op_logical_neg
 id|ide_ack_intr
-c_func
 (paren
 id|hwif-&gt;io_ports
 (braket
@@ -5278,9 +5283,14 @@ r_do
 r_if
 c_cond
 (paren
-id|hwif-&gt;irq
-op_ne
+op_logical_neg
+id|IDE_IRQ_EQUAL
+c_func
+(paren
 id|irq
+comma
+id|hwgroup-&gt;hwif-&gt;irq
+)paren
 )paren
 id|disable_irq
 c_func
@@ -5304,9 +5314,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|IDE_IRQ_EQUAL
+c_func
+(paren
 id|irq
-op_eq
+comma
 id|hwif-&gt;irq
+)paren
 op_logical_and
 (paren
 id|handler
@@ -5323,7 +5337,7 @@ id|drive
 op_assign
 id|hwgroup-&gt;drive
 suffix:semicolon
-macro_line|#if 1&t;/* temporary, remove later -- FIXME */
+macro_line|#if 1  /* temporary, remove later -- FIXME */
 (brace
 r_struct
 id|request
@@ -5378,7 +5392,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif&t;/* temporary */
+macro_line|#endif /* temporary */
 id|hwgroup-&gt;handler
 op_assign
 l_int|NULL
@@ -5475,9 +5489,14 @@ r_do
 r_if
 c_cond
 (paren
+op_logical_neg
+id|IDE_IRQ_EQUAL
+c_func
+(paren
 id|hwif-&gt;irq
-op_ne
+comma
 id|irq
+)paren
 )paren
 id|enable_irq
 c_func
@@ -11801,7 +11820,7 @@ macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -11830,10 +11849,27 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_BLK_DEV_RZ1000 */
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDEPCI */
+macro_line|#endif /* CONFIG_BLK_DEV_RZ1000 */
+macro_line|#ifdef CONFIG_BLK_DEV_SL82C105
+(brace
+r_extern
+r_void
+id|ide_probe_for_sl82c105
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|ide_probe_for_sl82c105
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_PCI */
+macro_line|#endif /* CONFIG_BLK_DEV_SL82C105 */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
+)brace
+macro_line|#endif /* CONFIG_PCI */
 macro_line|#ifdef CONFIG_BLK_DEV_CMD640
 (brace
 r_extern
@@ -11850,7 +11886,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_BLK_DEV_CMD640 */
+macro_line|#endif /* CONFIG_BLK_DEV_CMD640 */
 macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 (brace
 r_extern
@@ -11870,7 +11906,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_BLK_DEV_PDC4030 */
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 )brace
 DECL|function|__initfunc
 id|__initfunc

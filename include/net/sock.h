@@ -659,6 +659,7 @@ DECL|member|syn_backlog
 r_int
 id|syn_backlog
 suffix:semicolon
+multiline_comment|/* Backlog of received SYNs */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */

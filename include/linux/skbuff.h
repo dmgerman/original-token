@@ -198,7 +198,6 @@ id|dst_entry
 op_star
 id|dst
 suffix:semicolon
-macro_line|#if (defined(__alpha__) || defined(__sparc_v9__)) &amp;&amp; (defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE))
 DECL|member|cb
 r_char
 id|cb
@@ -206,24 +205,6 @@ id|cb
 l_int|48
 )braket
 suffix:semicolon
-multiline_comment|/* sorry. 64bit pointers have a price */
-macro_line|#elif (defined(__alpha__) || defined(__sparc_v9__))
-DECL|member|cb
-r_char
-id|cb
-(braket
-l_int|40
-)braket
-suffix:semicolon
-macro_line|#else
-DECL|member|cb
-r_char
-id|cb
-(braket
-l_int|36
-)braket
-suffix:semicolon
-macro_line|#endif
 DECL|member|len
 r_int
 r_int

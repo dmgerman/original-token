@@ -1746,8 +1746,7 @@ suffix:semicolon
 r_return
 id|to
 suffix:semicolon
-r_case
-l_int|3
+r_default
 suffix:colon
 id|COMMON
 c_func
@@ -2312,8 +2311,7 @@ suffix:semicolon
 r_return
 id|s
 suffix:semicolon
-r_case
-l_int|3
+r_default
 suffix:colon
 id|COMMON
 c_func

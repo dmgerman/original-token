@@ -1574,21 +1574,6 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* Valid SCSI ID&squot;s for adapter */
-multiline_comment|/*&n;     * PCI bus, device, function, only for NCR53c8x0 chips.&n;     * pci_valid indicates that the PCI configuration information&n;     * is valid, and we can twiddle MAX_LAT, etc. as recommended&n;     * for maximum performance in the NCR documentation.&n;     */
-DECL|member|pci_bus
-DECL|member|pci_device_fn
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-DECL|member|pci_valid
-r_int
-id|pci_valid
-suffix:colon
-l_int|1
-suffix:semicolon
 DECL|member|dsp
 id|u32
 op_star

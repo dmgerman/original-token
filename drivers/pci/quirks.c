@@ -1,7 +1,6 @@
-multiline_comment|/*&n; * $Id: quirks.c,v 1.2 1997/09/20 21:43:34 davem Exp $&n; *&n; * PCI Chipset-Specific Quirks&n; *&n; * Extracted from pci.c and rewritten by Martin Mares&n; *&n; * This is the right place for all special fixups for on-board&n; * devices not depending on system architecture -- for example&n; * bus bridges. The only thing implemented in this release is&n; * the bridge optimization, but others might appear later.&n; */
+multiline_comment|/*&n; * $Id: quirks.c,v 1.3 1998/02/06 19:51:42 mj Exp $&n; *&n; * PCI Chipset-Specific Quirks&n; *&n; * Extracted from pci.c and rewritten by Martin Mares&n; *&n; * This is the right place for all special fixups for on-board&n; * devices not depending on system architecture -- for example&n; * bus bridges. The only thing implemented in this release is&n; * the bridge optimization, but others might appear later.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

@@ -210,7 +210,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|host_active
-r_static
 r_volatile
 r_struct
 id|Scsi_Host

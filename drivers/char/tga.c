@@ -14,7 +14,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
@@ -1474,41 +1473,33 @@ r_void
 )paren
 )paren
 (brace
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|dev
 suffix:semicolon
 r_int
 id|status
 suffix:semicolon
 multiline_comment|/*&n;&t; * first, find the TGA among the PCI devices...&n;&t; */
-id|status
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|dev
 op_assign
-id|pcibios_find_device
+id|pci_find_device
+c_func
 (paren
 id|PCI_VENDOR_ID_DEC
 comma
 id|PCI_DEVICE_ID_DEC_TGA
 comma
-l_int|0
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_devfn
+l_int|NULL
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-op_eq
-id|PCIBIOS_DEVICE_NOT_FOUND
 )paren
-(brace
+)paren
 multiline_comment|/* PANIC!!! */
 id|printk
 c_func
@@ -1520,29 +1511,20 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * read BASE_REG_0 for memory address&n;&t; */
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
+id|tga_mem_base
+op_assign
+id|dev-&gt;base_address
+(braket
+l_int|0
+)braket
 op_amp
-id|tga_mem_base
-)paren
-suffix:semicolon
-id|tga_mem_base
-op_and_assign
-op_complement
-l_int|15
+id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;tga_console_init: mem_base 0x%x&bslash;n&quot;
+l_string|&quot;tga_console_init: mem_base 0x%lx&bslash;n&quot;
 comma
 id|tga_mem_base
 )paren
@@ -1554,10 +1536,6 @@ op_assign
 id|readl
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|tga_mem_base
 )paren
 op_rshift
@@ -1605,6 +1583,7 @@ c_func
 suffix:semicolon
 multiline_comment|/*&n;&t; * FINALLY, we can register TGA as console (whew!)&n;&t; */
 macro_line|#ifdef CONFIG_VT_CONSOLE
+DECL|variable|vt_console_driver
 id|register_console
 c_func
 (paren
@@ -1614,7 +1593,6 @@ id|vt_console_driver
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|variable|__initdata
 r_int
 r_char
 id|PLLbits
@@ -1639,7 +1617,6 @@ comma
 l_int|0xb8
 )brace
 suffix:semicolon
-DECL|variable|__initdata
 r_const
 r_int
 r_int
@@ -1779,7 +1756,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|__initdata
 r_const
 r_int
 r_int
@@ -2303,7 +2279,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -2330,10 +2305,6 @@ suffix:semicolon
 id|tga_regs_base
 op_assign
 (paren
-(paren
-r_int
-r_int
-)paren
 id|tga_mem_base
 op_plus
 id|TGA_REGS_OFFSET
@@ -2342,10 +2313,6 @@ suffix:semicolon
 id|tga_fb_base
 op_assign
 (paren
-(paren
-r_int
-r_int
-)paren
 id|tga_mem_base
 op_plus
 id|fb_offset_presets
@@ -3674,7 +3641,6 @@ r_int
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -3785,7 +3751,6 @@ multiline_comment|/*&n; * tga_blitc&n; *&n; * Displays an ASCII character at a s
 r_static
 r_int
 r_int
-DECL|variable|fontmask_bits
 id|fontmask_bits
 (braket
 l_int|16
@@ -3826,7 +3791,6 @@ l_int|0xffffffff
 )brace
 suffix:semicolon
 r_int
-DECL|function|tga_blitc
 id|tga_blitc
 c_func
 (paren
@@ -4372,7 +4336,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * font table of displayable characters.&n; */
-DECL|variable|tga_builtin_font
 r_char
 id|tga_builtin_font
 (braket

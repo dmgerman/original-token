@@ -408,13 +408,6 @@ id|rpc_clnt
 op_star
 id|rpc
 suffix:semicolon
-multiline_comment|/*&n;&t; * Lock the super block while we bring down the daemons.&n;&t; */
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -465,16 +458,6 @@ id|kfree
 c_func
 (paren
 id|server-&gt;hostname
-)paren
-suffix:semicolon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|sb
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT

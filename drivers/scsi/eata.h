@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;eata.h - used by the low-level driver for EATA/DMA SCSI host adapters.&n; */
+multiline_comment|/*&n; *        eata.h - used by the low-level driver for EATA/DMA SCSI host adapters.&n; */
 macro_line|#ifndef _EATA_H
 DECL|macro|_EATA_H
 mdefine_line|#define _EATA_H
@@ -58,8 +58,15 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|EATA_VERSION
-mdefine_line|#define EATA_VERSION &quot;3.11.00&quot;
+mdefine_line|#define EATA_VERSION &quot;4.02.00&quot;
+DECL|macro|LinuxVersionCode
+mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,88)
 DECL|macro|EATA
-mdefine_line|#define EATA {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;name:              &quot;EATA/DMA 2.0x rev. &quot; EATA_VERSION &quot; &quot;,      &bslash;&n;&t;&t;detect:            eata2x_detect,&t;&t;&t;&t;&bslash;&n;&t;&t;release:           eata2x_release,          &t;&t;        &bslash;&n;&t;&t;queuecommand:      eata2x_queuecommand,&t;&t;&t;        &bslash;&n;&t;&t;abort:             eata2x_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;reset:             eata2x_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;bios_param:        scsicam_bios_param,   &t;&t;&t;&bslash;&n;&t;&t;this_id:           7,   /* this_id, reset by detect */          &bslash;&n;&t;&t;unchecked_isa_dma: 1,   /* unchecked isa dma, reset by detect */&bslash;&n;&t;&t;use_clustering:    ENABLE_CLUSTERING                            &bslash;&n;&t;&t;}
+mdefine_line|#define EATA {                                                               &bslash;&n;                name:              &quot;EATA/DMA 2.0x rev. &quot; EATA_VERSION &quot; &quot;,   &bslash;&n;                detect:            eata2x_detect,                            &bslash;&n;                release:           eata2x_release,                           &bslash;&n;                queuecommand:      eata2x_queuecommand,                      &bslash;&n;                abort:             eata2x_abort,                             &bslash;&n;                reset:             eata2x_reset,                             &bslash;&n;                bios_param:        scsicam_bios_param,                       &bslash;&n;                this_id:           7,                                        &bslash;&n;                unchecked_isa_dma: 1,                                        &bslash;&n;                use_clustering:    ENABLE_CLUSTERING,                        &bslash;&n;                use_new_eh_code: 1    /* Enable new error code */            &bslash;&n;             }
+macro_line|#else /* Use old scsi code */
+DECL|macro|EATA
+mdefine_line|#define EATA {                                                               &bslash;&n;                name:              &quot;EATA/DMA 2.0x rev. &quot; EATA_VERSION &quot; &quot;,   &bslash;&n;                detect:            eata2x_detect,                            &bslash;&n;                release:           eata2x_release,                           &bslash;&n;                queuecommand:      eata2x_queuecommand,                      &bslash;&n;                abort:             eata2x_abort,                             &bslash;&n;                reset:             eata2x_reset,                             &bslash;&n;                bios_param:        scsicam_bios_param,                       &bslash;&n;                this_id:           7,                                        &bslash;&n;                unchecked_isa_dma: 1,                                        &bslash;&n;                use_clustering:    ENABLE_CLUSTERING                         &bslash;&n;             }
+macro_line|#endif
 macro_line|#endif
 eof

@@ -4,9 +4,16 @@ DECL|macro|_aic7xxx_h
 mdefine_line|#define _aic7xxx_h
 DECL|macro|AIC7XXX_H_VERSION
 mdefine_line|#define AIC7XXX_H_VERSION  &quot;$Revision: 3.2 $&quot;
+macro_line|#ifdef __i386__
+DECL|macro|AIC7XXX_BIOSPARAM
+mdefine_line|#define AIC7XXX_BIOSPARAM&t;aic7xxx_biosparam
+macro_line|#else
+DECL|macro|AIC7XXX_BIOSPARAM
+mdefine_line|#define AIC7XXX_BIOSPARAM&t;NULL
+macro_line|#endif
 multiline_comment|/*&n; * Scsi_Host_Template (see hosts.h) for AIC-7xxx - some fields&n; * to do with card config are filled in after the card is detected.&n; */
 DECL|macro|AIC7XXX
-mdefine_line|#define AIC7XXX&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;proc_info:       aic7xxx_proc_info,&t;&t;&t;&t;&t;&bslash;&n;&t;detect:          aic7xxx_detect,&t;&t;&t;&t;&t;&bslash;&n;&t;info:            aic7xxx_info,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;queuecommand:    aic7xxx_queue,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;abort:           aic7xxx_abort,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;reset:           aic7xxx_reset,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;bios_param:      aic7xxx_biosparam,&t;&t;&t;&t;&t;&bslash;&n;&t;can_queue:       -1,&t;&t;&t;/* max simultaneous cmds      */&bslash;&n;&t;this_id:         -1,&t;&t;&t;/* scsi id of host adapter    */&bslash;&n;&t;sg_tablesize:    SG_ALL,&t;&t;/* max scatter-gather cmds    */&bslash;&n;&t;cmd_per_lun:     2,&t;&t;&t;/* cmds per lun (linked cmds) */&bslash;&n;&t;use_clustering:  ENABLE_CLUSTERING,&t;&t;&t;&t;&t;&bslash;&n;&t;use_new_eh_code: 0&t;&t;&t;/* Enable new error code */&t;&bslash;&n;}
+mdefine_line|#define AIC7XXX&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;proc_info:       aic7xxx_proc_info,&t;&t;&t;&t;&t;&bslash;&n;&t;detect:          aic7xxx_detect,&t;&t;&t;&t;&t;&bslash;&n;&t;info:            aic7xxx_info,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;queuecommand:    aic7xxx_queue,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;abort:           aic7xxx_abort,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;reset:           aic7xxx_reset,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;bios_param:      AIC7XXX_BIOSPARAM,&t;&t;&t;&t;&t;&bslash;&n;&t;can_queue:       -1,&t;&t;&t;/* max simultaneous cmds      */&bslash;&n;&t;this_id:         -1,&t;&t;&t;/* scsi id of host adapter    */&bslash;&n;&t;sg_tablesize:    SG_ALL,&t;&t;/* max scatter-gather cmds    */&bslash;&n;&t;cmd_per_lun:     2,&t;&t;&t;/* cmds per lun (linked cmds) */&bslash;&n;&t;use_clustering:  ENABLE_CLUSTERING,&t;&t;&t;&t;&t;&bslash;&n;&t;use_new_eh_code: 0&t;&t;&t;/* Enable new error code */&t;&bslash;&n;}
 r_extern
 r_int
 id|aic7xxx_queue

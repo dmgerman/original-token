@@ -70,6 +70,10 @@ DECL|member|i_prealloc_count
 id|__u32
 id|i_prealloc_count
 suffix:semicolon
+DECL|member|i_high_size
+id|__u32
+id|i_high_size
+suffix:semicolon
 DECL|member|i_new_inode
 r_int
 id|i_new_inode

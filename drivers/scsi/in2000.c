@@ -14,9 +14,9 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 DECL|macro|IN2000_VERSION
-mdefine_line|#define IN2000_VERSION    &quot;1.31&quot;
+mdefine_line|#define IN2000_VERSION    &quot;1.32&quot;
 DECL|macro|IN2000_DATE
-mdefine_line|#define IN2000_DATE       &quot;06/July/1997&quot;
+mdefine_line|#define IN2000_DATE       &quot;28/March/1998&quot;
 multiline_comment|/*&n; * Note - the following defines have been moved to &squot;in2000.h&squot;:&n; *&n; *    PROC_INTERFACE&n; *    PROC_STATISTICS&n; *    SYNC_DEBUG&n; *    DEBUGGING_ON&n; *    DEBUG_DEFAULTS&n; *    FAST_READ_IO&n; *    FAST_WRITE_IO&n; *&n; */
 macro_line|#include &quot;in2000.h&quot;
 multiline_comment|/*&n; * &squot;setup_strings&squot; is a single string used to pass operating parameters and&n; * settings from the kernel/module command-line to the driver. &squot;setup_args[]&squot;&n; * is an array of strings that define the compile-time default values for&n; * these settings. If Linux boots with a LILO or insmod command-line, those&n; * settings are combined with &squot;setup_args[]&squot;. Note that LILO command-lines&n; * are prefixed with &quot;in2000=&quot; while insmod uses a &quot;setup_strings=&quot; prefix.&n; * The driver recognizes the following keywords (lower case required) and&n; * arguments:&n; *&n; * -  ioport:addr    -Where addr is IO address of a (usually ROM-less) card.&n; * -  noreset        -No optional args. Prevents SCSI bus reset at boot time.&n; * -  nosync:x       -x is a bitmask where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices (bit 0 for device #0, etc).&n; *                    Set a bit to PREVENT sync negotiation on that device.&n; *                    The driver default is sync DISABLED on all devices.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bitmask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in in2000.h&n; * -  proc:x         -If &squot;PROC_INTERFACE&squot; is defined, x is a bitmask that&n; *                    determines how the /proc interface works and what it&n; *                    does - see the PR_xxx defines in in2000.h&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_args[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_args[] element.&n; *&n; * A few LILO examples (for insmod, use &squot;setup_strings&squot; instead of &squot;in2000&squot;):&n; * -  in2000=ioport:0x220,noreset&n; * -  in2000=period:250,disconnect:2,nosync:0x03&n; * -  in2000=debug:0x1e&n; * -  in2000=proc:3&n; */
@@ -6887,7 +6887,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* Let&squot;s expect only known legal hardware version here. There&n; * can&squot;t be THAT many of them, and it&squot;s easy to add new ones&n; * as we hear about them.&n; */
+multiline_comment|/* Let&squot;s assume any hardware version will work, although the driver&n; * has only been tested on 0x21, 0x22, 0x25, 0x26, and 0x27. We&squot;ll&n; * print out the rev number for reference later, but accept them all.&n; */
 id|hrev
 op_assign
 id|inb
@@ -6898,53 +6898,6 @@ op_plus
 id|IO_HARDWARE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|hrev
-op_ne
-l_int|0x27
-)paren
-op_logical_and
-(paren
-id|hrev
-op_ne
-l_int|0x26
-)paren
-op_logical_and
-(paren
-id|hrev
-op_ne
-l_int|0x25
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;The IN-2000 SCSI card at IOport 0x%03x &quot;
-comma
-id|base
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;has unknown version %02x hardware - &quot;
-comma
-id|hrev
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Sorry, cancelling detection.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
 multiline_comment|/* Bit 2 tells us if interrupts are disabled */
 r_if
 c_cond

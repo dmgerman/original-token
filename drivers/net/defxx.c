@@ -20,7 +20,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -557,18 +556,18 @@ r_int
 id|port_len
 suffix:semicolon
 multiline_comment|/* length of port address range (in bytes) */
-id|u8
-id|pci_bus
-suffix:semicolon
-multiline_comment|/* PCI bus number (0-255) */
-id|u8
-id|pci_dev_fun
-suffix:semicolon
-multiline_comment|/* PCI device and function numbers (0-255) */
 id|u16
 id|port
 suffix:semicolon
 multiline_comment|/* temporary I/O (port) address */
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* PCI device record */
 id|u16
 id|command
 suffix:semicolon
@@ -839,47 +838,28 @@ multiline_comment|/* Scan for FDDI PCI controllers */
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
 )paren
-multiline_comment|/* is PCI BIOS even present? */
-r_for
+multiline_comment|/* is PCI even present? */
+r_while
 c_loop
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DFX_MAX_NUM_BOARDS
-suffix:semicolon
-id|i
-op_increment
-)paren
-multiline_comment|/* scan for up to 8 PCI cards */
-r_if
-c_cond
 (paren
-id|pcibios_find_device
+id|pdev
+op_assign
+id|pci_find_device
 c_func
 (paren
 id|PCI_VENDOR_ID_DEC
 comma
 id|PCI_DEVICE_ID_DEC_FDDI
 comma
-id|i
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_dev_fun
+id|pdev
 )paren
-op_eq
-l_int|0
+)paren
 )paren
 (brace
 r_if
@@ -904,12 +884,10 @@ suffix:semicolon
 multiline_comment|/* we only display this string ONCE */
 )brace
 multiline_comment|/* Verify that I/O enable bit is set (PCI slot is enabled) */
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_dev_fun
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -946,37 +924,26 @@ op_and_assign
 op_complement
 id|PCI_COMMAND_MEMORY
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_dev_fun
+id|pdev
 comma
 id|PCI_COMMAND
 comma
 id|command
 )paren
 suffix:semicolon
-multiline_comment|/* Read I/O base address from PCI Configuration Space */
-id|pcibios_read_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_dev_fun
-comma
-id|PCI_BASE_ADDRESS_1
-comma
+multiline_comment|/* Get I/O base address from PCI Configuration Space */
+id|port
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
 op_amp
-id|port
-)paren
-suffix:semicolon
-id|port
-op_and_assign
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
-multiline_comment|/* clear I/O bit (bit 0) */
 multiline_comment|/* Verify port address range is not already being used */
 id|port_len
 op_assign
@@ -1032,13 +999,9 @@ id|bp-&gt;bus_type
 op_assign
 id|DFX_BUS_TYPE_PCI
 suffix:semicolon
-id|bp-&gt;pci_bus
+id|bp-&gt;pci_dev
 op_assign
-id|pci_bus
-suffix:semicolon
-id|bp-&gt;pci_dev_fun
-op_assign
-id|pci_dev_fun
+id|pdev
 suffix:semicolon
 r_if
 c_cond
@@ -1590,32 +1553,23 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Get the interrupt level from the PCI Configuration Table */
-id|pcibios_read_config_byte
-c_func
-(paren
-id|bp-&gt;pci_bus
-comma
-id|bp-&gt;pci_dev_fun
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|val
-)paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+id|bp-&gt;pci_dev
 suffix:semicolon
+multiline_comment|/* Get the interrupt level from the PCI Configuration Table */
 id|dev-&gt;irq
 op_assign
-id|val
+id|pdev-&gt;irq
 suffix:semicolon
-multiline_comment|/* save IRQ value in device table */
 multiline_comment|/* Check Latency Timer and set if less than minimal */
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|bp-&gt;pci_bus
-comma
-id|bp-&gt;pci_dev_fun
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -1636,12 +1590,10 @@ id|val
 op_assign
 id|PFI_K_LAT_TIMER_DEF
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|bp-&gt;pci_bus
-comma
-id|bp-&gt;pci_dev_fun
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma

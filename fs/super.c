@@ -2956,25 +2956,6 @@ id|retval
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/* Forget any inodes */
-r_if
-c_cond
-(paren
-id|invalidate_inodes
-c_func
-(paren
-id|sb
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;VFS: Busy inodes after unmount. &quot;
-l_string|&quot;Self-destruct in 5 seconds. Bye-bye..&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2996,6 +2977,19 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+)brace
+id|lock_super
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb-&gt;s_op
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -3010,6 +3004,36 @@ id|sb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Forget any remaining inodes */
+r_if
+c_cond
+(paren
+id|invalidate_inodes
+c_func
+(paren
+id|sb
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;VFS: Busy inodes after unmount. &quot;
+l_string|&quot;Self-destruct in 5 seconds.  Have a nice day...&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|sb-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Free the superblock */
+id|unlock_super
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
 id|remove_vfsmnt
 c_func
 (paren

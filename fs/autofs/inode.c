@@ -80,12 +80,6 @@ id|sbi
 )paren
 suffix:semicolon
 multiline_comment|/* Free wait queues, close pipe */
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|autofs_hash_nuke
 c_func
 (paren
@@ -131,20 +125,10 @@ id|data
 )paren
 suffix:semicolon
 )brace
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
 id|kfree
 c_func
 (paren
 id|sb-&gt;u.generic_sbp
-)paren
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|sb
 )paren
 suffix:semicolon
 id|DPRINTK

@@ -16,7 +16,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -370,7 +369,7 @@ multiline_comment|/* Non-zero only if the current card is a PCI with BIOS-set IR
 DECL|variable|pci_irq_line
 r_static
 r_int
-r_char
+r_int
 id|pci_irq_line
 op_assign
 l_int|0
@@ -591,7 +590,7 @@ multiline_comment|/* Then look for any installed PCI clones */
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -714,38 +713,25 @@ id|i
 op_increment
 )paren
 (brace
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 r_int
 id|pci_ioaddr
 suffix:semicolon
-r_int
-id|pci_index
-suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-id|pci_index
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_index
-OL
-l_int|8
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-r_if
-c_cond
 (paren
-id|pcibios_find_device
+id|pdev
+op_assign
+id|pci_find_device
+c_func
 (paren
 id|pci_clone_list
 (braket
@@ -761,36 +747,18 @@ id|i
 dot
 id|dev_id
 comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
+id|pdev
 )paren
-op_ne
+)paren
+)paren
+(brace
+id|pci_ioaddr
+op_assign
+id|pdev-&gt;base_address
+(braket
 l_int|0
-)paren
-r_break
-suffix:semicolon
-multiline_comment|/* No more of these type of cards */
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
+)braket
 op_amp
-id|pci_ioaddr
-)paren
-suffix:semicolon
-multiline_comment|/* Strip the I/O address out of the returned value */
-id|pci_ioaddr
-op_and_assign
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 multiline_comment|/* Avoid already found cards from previous calls */
@@ -807,23 +775,10 @@ id|NE_IO_EXTENT
 )paren
 r_continue
 suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
 id|pci_irq_line
-)paren
+op_assign
+id|pdev-&gt;irq
 suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* Beauty -- got a valid card. */
-)brace
 r_if
 c_cond
 (paren
@@ -834,6 +789,15 @@ l_int|0
 r_continue
 suffix:semicolon
 multiline_comment|/* Try next PCI ID */
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pdev
+)paren
+r_continue
+suffix:semicolon
 id|printk
 c_func
 (paren

@@ -18,7 +18,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -39,6 +38,7 @@ mdefine_line|#define COPY_FROM_USER(DST,SRC,LEN)&t;copy_from_user(DST,SRC,LEN)
 DECL|macro|COPY_TO_USER
 mdefine_line|#define COPY_TO_USER(DST,SRC,LEN)&t;copy_to_user(DST,SRC,LEN)
 macro_line|#else
+macro_line|#include &lt;linux/bios32.h&gt;
 DECL|macro|IOREMAP
 mdefine_line|#define IOREMAP(ADDR, LEN)&t;&t;vremap(ADDR, LEN)
 DECL|macro|IOUNMAP
@@ -4295,7 +4295,7 @@ multiline_comment|/*&n;&t; *&t;First, check for PCI boards&n;&t; */
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -4323,9 +4323,20 @@ id|pci_bus
 comma
 id|pci_device_fn
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 id|uchar
 id|pci_irq
 suffix:semicolon
+macro_line|#else
+id|uint
+id|pci_irq
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+macro_line|#endif
 id|uchar
 id|pci_latency
 suffix:semicolon
@@ -4353,6 +4364,7 @@ id|pci_device_fn
 )paren
 r_break
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -4405,6 +4417,43 @@ op_amp
 id|mem
 )paren
 suffix:semicolon
+macro_line|#else
+id|pdev
+op_assign
+id|pci_find_slot
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+)paren
+suffix:semicolon
+id|pci_irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+id|plxreg
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|io
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|mem
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|2
+)braket
+suffix:semicolon
+macro_line|#endif
 id|pcibios_read_config_dword
 c_func
 (paren

@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
@@ -807,6 +806,13 @@ id|rc
 op_assign
 l_int|0
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+id|hwif-&gt;pci_dev
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -822,12 +828,10 @@ l_string|&quot;byte&quot;
 suffix:semicolon
 id|rc
 op_assign
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_bus
-comma
-id|hwif-&gt;pci_fn
+id|dev
 comma
 id|reg
 comma
@@ -845,12 +849,10 @@ l_string|&quot;word&quot;
 suffix:semicolon
 id|rc
 op_assign
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|hwif-&gt;pci_bus
-comma
-id|hwif-&gt;pci_fn
+id|dev
 comma
 id|reg
 comma
@@ -868,12 +870,10 @@ l_string|&quot;dword&quot;
 suffix:semicolon
 id|rc
 op_assign
-id|pcibios_write_config_dword
+id|pci_write_config_dword
 c_func
 (paren
-id|hwif-&gt;pci_bus
-comma
-id|hwif-&gt;pci_fn
+id|dev
 comma
 id|reg
 comma
@@ -898,13 +898,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;proc_ide_write_config: error writing %s at bus %d fn %d reg 0x%x value 0x%x&bslash;n&quot;
+l_string|&quot;proc_ide_write_config: error writing %s at bus %02x dev %02x reg 0x%x value 0x%x&bslash;n&quot;
 comma
 id|msg
 comma
-id|hwif-&gt;pci_bus
+id|dev-&gt;bus-&gt;number
 comma
-id|hwif-&gt;pci_fn
+id|dev-&gt;devfn
 comma
 id|reg
 comma
@@ -1079,6 +1079,13 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+id|hwif-&gt;pci_dev
+suffix:semicolon
 id|out
 op_add_assign
 id|sprintf
@@ -1086,11 +1093,11 @@ c_func
 (paren
 id|out
 comma
-l_string|&quot;pci bus %d device %d vid %04x did %04x channel %d&bslash;n&quot;
+l_string|&quot;pci bus %02x device %02x vid %04x did %04x channel %d&bslash;n&quot;
 comma
-id|hwif-&gt;pci_bus
+id|dev-&gt;bus-&gt;number
 comma
-id|hwif-&gt;pci_fn
+id|dev-&gt;devfn
 comma
 id|hwif-&gt;pci_devid.vid
 comma
@@ -1107,12 +1114,10 @@ suffix:semicolon
 r_int
 id|rc
 op_assign
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_bus
-comma
-id|hwif-&gt;pci_fn
+id|dev
 comma
 id|reg
 comma
@@ -1129,11 +1134,11 @@ id|rc
 id|printk
 c_func
 (paren
-l_string|&quot;proc_ide_read_config: error reading bus %d fn %d reg 0x%02x&bslash;n&quot;
+l_string|&quot;proc_ide_read_config: error reading bus %02x dev %02x reg 0x%02x&bslash;n&quot;
 comma
-id|hwif-&gt;pci_bus
+id|dev-&gt;bus-&gt;number
 comma
-id|hwif-&gt;pci_fn
+id|dev-&gt;devfn
 comma
 id|reg
 )paren

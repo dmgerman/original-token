@@ -3893,16 +3893,12 @@ id|u16
 id|base_addr
 suffix:semicolon
 multiline_comment|/* base I/O address (same as dev-&gt;base_addr) */
-DECL|member|pci_bus
-id|u8
-id|pci_bus
+DECL|member|pci_dev
+r_struct
+id|pci_dev
+op_star
+id|pci_dev
 suffix:semicolon
-multiline_comment|/* PCI bus number */
-DECL|member|pci_dev_fun
-id|u8
-id|pci_dev_fun
-suffix:semicolon
-multiline_comment|/* PCI device and function numbers */
 DECL|member|full_duplex_enb
 id|u32
 id|full_duplex_enb

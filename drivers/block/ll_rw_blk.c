@@ -31,7 +31,7 @@ c_func
 id|tq_disk
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Protect the request list against multiple users..&n; */
+multiline_comment|/*&n; * Protect the request list against multiple users..&n; *&n; * With this spinlock the Linux block IO subsystem is 100% SMP threaded&n; * from the IRQ event side, and almost 100% SMP threaded from the syscall&n; * side (we still have protect against block device array operations, and&n; * the do_request() side is casually still unsafe. The kernel lock protects&n; * this part currently.).&n; *&n; * there is a fair chance that things will work just OK if these functions&n; * are called with no global kernel lock held ...&n; */
 DECL|variable|io_request_lock
 id|spinlock_t
 id|io_request_lock
@@ -195,6 +195,7 @@ id|dev
 )braket
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Is called with the request spinlock aquired.&n; * NOTE: the device-specific queue() functions&n; * have to be atomic!&n; */
 DECL|function|get_queue
 r_static
 r_inline
@@ -275,18 +276,21 @@ op_star
 id|data
 suffix:semicolon
 r_int
+id|queue_new_request
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -321,6 +325,27 @@ id|dev-&gt;plug.next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|queue_new_request
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|queue_new_request
+)paren
+multiline_comment|/*&n;&t;&t; * request functions are smart enough to notice a change&n;&t;&t; * in the request queue, calling them without the spinlock&n;&t;&t; * is OK, i think. &lt;-- FIXME: [is this true? --mingo]&n;&t;&t; */
 (paren
 id|dev-&gt;request_fn
 )paren
@@ -328,15 +353,7 @@ id|dev-&gt;request_fn
 )paren
 suffix:semicolon
 )brace
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * &quot;plug&quot; the device if there are no outstanding requests: this will&n; * force the transfer to start only after we have put all the requests&n; * on the list.&n; *&n; * This is called with interrupts off and no requests on the queue.&n; */
+multiline_comment|/*&n; * &quot;plug&quot; the device if there are no outstanding requests: this will&n; * force the transfer to start only after we have put all the requests&n; * on the list.&n; *&n; * This is called with interrupts off and no requests on the queue.&n; * (and with the request spinlock aquired)&n; */
 DECL|function|plug_device
 r_static
 r_inline
@@ -373,7 +390,7 @@ id|tq_disk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * look for a free request in the first N entries.&n; * NOTE: interrupts must be disabled on the way in, and will still&n; *       be disabled on the way out.&n; */
+multiline_comment|/*&n; * look for a free request in the first N entries.&n; * NOTE: interrupts must be disabled on the way in (on SMP the request queue&n; * spinlock has to be aquired), and will still be disabled on the way out.&n; */
 DECL|function|get_request
 r_static
 r_inline
@@ -546,6 +563,10 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -567,9 +588,13 @@ id|current-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
 suffix:semicolon
-id|cli
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|req
@@ -582,9 +607,13 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -647,9 +676,17 @@ id|request
 op_star
 id|req
 suffix:semicolon
-id|cli
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|req
@@ -662,9 +699,13 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|sti
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -933,7 +974,7 @@ l_string|&quot;drive_stat_acct: cmd not R/W?&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts so that it can muck with the&n; * request-lists in peace.&n; *&n; * By this point, req-&gt;cmd is always either READ/WRITE, never READA/WRITEA,&n; * which is important for drive_stat_acct() above.&n; */
+multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts (aquires the request spinlock) so that it can muck&n; * with the request-lists in peace. Thus it should be called with no spinlocks&n; * held.&n; *&n; * By this point, req-&gt;cmd is always either READ/WRITE, never READA/WRITEA,&n; * which is important for drive_stat_acct() above.&n; */
 DECL|function|add_request
 r_void
 id|add_request
@@ -961,6 +1002,15 @@ id|current_request
 suffix:semicolon
 r_int
 id|disk_index
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|queue_new_request
+op_assign
+l_int|0
 suffix:semicolon
 r_switch
 c_cond
@@ -1081,17 +1131,22 @@ id|req-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t; * We use the goto to reduce locking complexity&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|current_request
 op_assign
 id|get_queue
 c_func
 (paren
 id|req-&gt;rq_dev
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -1130,18 +1185,12 @@ op_ne
 op_amp
 id|dev-&gt;plug
 )paren
-(paren
-id|dev-&gt;request_fn
-)paren
-(paren
-)paren
+id|queue_new_request
+op_assign
+l_int|1
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_for
@@ -1210,18 +1259,35 @@ id|req-&gt;rq_dev
 )paren
 )paren
 )paren
+id|queue_new_request
+op_assign
+l_int|1
+suffix:semicolon
+id|out
+suffix:colon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * request_fn() is usually a quite complex and slow function,&n;&t; * we want to call it with no spinlocks held&n;&t; */
+r_if
+c_cond
+(paren
+id|queue_new_request
+)paren
 (paren
 id|dev-&gt;request_fn
 )paren
 (paren
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
+multiline_comment|/*&n; * Has to be called with the request spinlock aquired&n; */
 DECL|function|attempt_merge
 r_static
 r_inline

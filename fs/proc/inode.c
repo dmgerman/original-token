@@ -220,35 +220,6 @@ id|de
 suffix:semicolon
 )brace
 )brace
-DECL|function|proc_put_super
-r_static
-r_void
-id|proc_put_super
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-)paren
-(brace
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-id|sb-&gt;s_dev
-op_assign
-l_int|0
-suffix:semicolon
-id|unlock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-)brace
 DECL|variable|proc_sops
 r_static
 r_struct
@@ -267,7 +238,7 @@ comma
 multiline_comment|/* delete_inode(struct inode *) */
 l_int|NULL
 comma
-id|proc_put_super
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -733,8 +704,8 @@ r_if
 c_cond
 (paren
 id|p
-op_ne
-l_int|NULL
+op_logical_and
+id|p-&gt;fs
 )paren
 id|de
 op_assign
@@ -747,6 +718,7 @@ op_amp
 id|tasklist_lock
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME! */
 r_if
 c_cond
 (paren

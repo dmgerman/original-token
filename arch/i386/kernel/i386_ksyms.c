@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -275,14 +274,6 @@ id|strlen_user
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
-DECL|variable|apic_reg
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|apic_reg
-)paren
-suffix:semicolon
-multiline_comment|/* Needed internally for the I386 inlines */
 DECL|variable|cpu_data
 id|EXPORT_SYMBOL
 c_func
@@ -323,6 +314,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|lk_lockmsg
+)paren
+suffix:semicolon
+DECL|variable|__cpu_logical_map
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__cpu_logical_map
+)paren
+suffix:semicolon
+DECL|variable|smp_num_cpus
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|smp_num_cpus
 )paren
 suffix:semicolon
 multiline_comment|/* Global SMP irq stuff */
@@ -460,15 +465,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|mca_isadapter
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if CONFIG_PCI
-DECL|variable|pci_devices
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_devices
 )paren
 suffix:semicolon
 macro_line|#endif

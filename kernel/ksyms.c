@@ -48,10 +48,6 @@ id|aux_device_present
 comma
 id|kbd_read_mask
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#endif
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
@@ -213,78 +209,6 @@ c_func
 id|get_options
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-DECL|variable|pcibios_present
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_present
-)paren
-suffix:semicolon
-DECL|variable|pcibios_find_class
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_find_class
-)paren
-suffix:semicolon
-DECL|variable|pcibios_find_device
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_find_device
-)paren
-suffix:semicolon
-DECL|variable|pcibios_read_config_byte
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_read_config_byte
-)paren
-suffix:semicolon
-DECL|variable|pcibios_read_config_word
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_read_config_word
-)paren
-suffix:semicolon
-DECL|variable|pcibios_read_config_dword
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_read_config_dword
-)paren
-suffix:semicolon
-DECL|variable|pcibios_write_config_byte
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_write_config_byte
-)paren
-suffix:semicolon
-DECL|variable|pcibios_write_config_word
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_write_config_word
-)paren
-suffix:semicolon
-DECL|variable|pcibios_write_config_dword
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_write_config_dword
-)paren
-suffix:semicolon
-DECL|variable|pcibios_strerror
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_strerror
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* process memory management */
 DECL|variable|do_mmap
 id|EXPORT_SYMBOL
@@ -1233,6 +1157,13 @@ c_func
 id|prepare_binprm
 )paren
 suffix:semicolon
+DECL|variable|compute_creds
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|compute_creds
+)paren
+suffix:semicolon
 DECL|variable|remove_arg_zero
 id|EXPORT_SYMBOL
 c_func
@@ -1713,6 +1644,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_random_bytes
+)paren
+suffix:semicolon
+DECL|variable|securebits
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|securebits
 )paren
 suffix:semicolon
 multiline_comment|/* Program loader interfaces */
