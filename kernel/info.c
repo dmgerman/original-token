@@ -1,12 +1,12 @@
 multiline_comment|/*&n; * linux/kernel/info.c&n; *&n; * Copyright (C) 1992 Darren Senn&n; */
 multiline_comment|/* This implements the sysinfo() system call */
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|sys_sysinfo
 id|asmlinkage
 r_int

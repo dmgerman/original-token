@@ -1,8 +1,8 @@
 multiline_comment|/*&n; * sound/gus_card.c&n; *&n; * Detection routine for the Gravis Ultrasound.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_GUS)
+macro_line|#if defined(CONFIG_GUSHW)
 macro_line|#include &quot;gus_hw.h&quot;
 r_void
 id|gusintr
@@ -48,11 +48,6 @@ id|gus_pnp_flag
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|gus_osp
-r_int
-op_star
-id|gus_osp
-suffix:semicolon
 r_void
 DECL|function|attach_gus_card
 id|attach_gus_card
@@ -63,13 +58,6 @@ op_star
 id|hw_config
 )paren
 (brace
-r_int
-id|io_addr
-suffix:semicolon
-id|gus_osp
-op_assign
-id|hw_config-&gt;osp
-suffix:semicolon
 id|snd_set_irq_handler
 (paren
 id|hw_config-&gt;irq
@@ -81,16 +69,6 @@ comma
 id|hw_config-&gt;osp
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|gus_wave_detect
-(paren
-id|hw_config-&gt;io_base
-)paren
-)paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Try first the default&n;&t;&t;&t;&t;&t;&t; */
-(brace
 id|gus_wave_init
 (paren
 id|hw_config
@@ -165,134 +143,6 @@ id|gus_midi_init
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-suffix:semicolon
-)brace
-macro_line|#ifndef EXCLUDE_GUS_IODETECT
-multiline_comment|/*&n;   * Look at the possible base addresses (0x2X0, X=1, 2, 3, 4, 5, 6)&n;   */
-r_for
-c_loop
-(paren
-id|io_addr
-op_assign
-l_int|0x210
-suffix:semicolon
-id|io_addr
-op_le
-l_int|0x260
-suffix:semicolon
-id|io_addr
-op_add_assign
-l_int|0x10
-)paren
-r_if
-c_cond
-(paren
-id|io_addr
-op_ne
-id|hw_config-&gt;io_base
-)paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Already tested&n;&t;&t;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|gus_wave_detect
-(paren
-id|io_addr
-)paren
-)paren
-(brace
-id|hw_config-&gt;io_base
-op_assign
-id|io_addr
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot; WARNING! GUS found at %x, config was %x &quot;
-comma
-id|io_addr
-comma
-id|hw_config-&gt;io_base
-)paren
-suffix:semicolon
-id|gus_wave_init
-(paren
-id|hw_config
-)paren
-suffix:semicolon
-id|request_region
-(paren
-id|io_addr
-comma
-l_int|16
-comma
-l_string|&quot;GUS&quot;
-)paren
-suffix:semicolon
-id|request_region
-(paren
-id|io_addr
-op_plus
-l_int|0x100
-comma
-l_int|12
-comma
-l_string|&quot;GUS&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* 0x10c-&gt; is MAX */
-r_if
-c_cond
-(paren
-id|sound_alloc_dma
-(paren
-id|hw_config-&gt;dma
-comma
-l_string|&quot;GUS&quot;
-)paren
-)paren
-id|printk
-(paren
-l_string|&quot;gus_card.c: Can&squot;t allocate DMA channel&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hw_config-&gt;dma2
-op_ne
-op_minus
-l_int|1
-op_logical_and
-id|hw_config-&gt;dma2
-op_ne
-id|hw_config-&gt;dma
-)paren
-r_if
-c_cond
-(paren
-id|sound_alloc_dma
-(paren
-id|hw_config-&gt;dma2
-comma
-l_string|&quot;GUS&quot;
-)paren
-)paren
-id|printk
-(paren
-l_string|&quot;gus_card.c: Can&squot;t allocate DMA channel2&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_MIDI
-id|gus_midi_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_int
 DECL|function|probe_gus
@@ -305,13 +155,10 @@ id|hw_config
 )paren
 (brace
 r_int
-id|io_addr
-comma
 id|irq
 suffix:semicolon
-id|gus_osp
-op_assign
-id|hw_config-&gt;osp
+r_int
+id|io_addr
 suffix:semicolon
 r_if
 c_cond
@@ -767,7 +614,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef CONFIG_GUS
+macro_line|#ifdef CONFIG_GUSHW
 id|gus_pcm_volume
 op_assign
 l_int|100

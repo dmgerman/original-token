@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/umsdos/ioctl.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *&n; *  Extended MS-DOS ioctl directory handling functions&n; */
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -1,7 +1,7 @@
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;ieee-math.h&quot;
 DECL|macro|OPC_PAL
 mdefine_line|#define&t;OPC_PAL&t;&t;0x00

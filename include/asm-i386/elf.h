@@ -3,6 +3,7 @@ DECL|macro|__ASMi386_ELF_H
 mdefine_line|#define __ASMi386_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/user.h&gt;
 DECL|typedef|elf_greg_t
 r_typedef
 r_int

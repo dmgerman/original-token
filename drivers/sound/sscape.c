@@ -1,8 +1,8 @@
 multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq SoundScape&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SSCAPE)
+macro_line|#if defined(CONFIG_SSCAPEHW)
 macro_line|#include &quot;coproc.h&quot;
 multiline_comment|/*&n; *    I/O ports&n; */
 DECL|macro|MIDI_DATA
@@ -145,7 +145,8 @@ id|dev_info
 suffix:semicolon
 DECL|variable|sscape_sleeper
 r_static
-id|wait_handle
+r_struct
+id|wait_queue
 op_star
 id|sscape_sleeper
 op_assign
@@ -256,7 +257,9 @@ id|cli
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|reg
+)paren
 comma
 id|PORT
 (paren
@@ -315,7 +318,9 @@ id|cli
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|reg
+)paren
 comma
 id|PORT
 (paren
@@ -325,7 +330,9 @@ id|ODIE_ADDR
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|data
+)paren
 comma
 id|PORT
 (paren
@@ -352,7 +359,9 @@ id|devc
 (brace
 id|outb
 (paren
+(paren
 l_int|0x00
+)paren
 comma
 id|PORT
 (paren
@@ -375,7 +384,9 @@ id|devc
 (brace
 id|outb
 (paren
+(paren
 l_int|0x03
+)paren
 comma
 id|PORT
 (paren
@@ -486,10 +497,12 @@ suffix:semicolon
 )brace
 id|outb
 (paren
+(paren
 id|data
 (braket
 id|i
 )braket
+)paren
 comma
 id|PORT
 (paren
@@ -998,18 +1011,18 @@ r_if
 c_cond
 (paren
 (paren
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
 (brace
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|module_wake_up
+id|wake_up
 (paren
 op_amp
 id|sscape_sleeper
@@ -1339,12 +1352,10 @@ id|devc
 )paren
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -1406,7 +1417,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -1498,21 +1509,6 @@ comma
 id|GA_CDCFG_REG
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|sscape_write
-(paren
-id|devc
-comma
-id|GA_CDCFG_REG
-comma
-id|codec_dma_bits
-op_amp
-op_complement
-l_int|0x08
-)paren
-suffix:semicolon
-multiline_comment|/* Disable codec DMA */
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1640,7 +1636,7 @@ id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * Wait until transfer completes.&n;   */
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -1677,15 +1673,14 @@ c_cond
 (paren
 l_int|1
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|1
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -1698,11 +1693,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|sscape_sleeper
@@ -1713,7 +1708,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -1726,12 +1721,12 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -1789,7 +1784,9 @@ id|CPF_LAST
 multiline_comment|/*&n;         * Take the board out of reset&n;       */
 id|outb
 (paren
+(paren
 l_int|0x00
+)paren
 comma
 id|PORT
 (paren
@@ -1799,7 +1796,9 @@ id|HOST_CTRL
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0x00
+)paren
 comma
 id|PORT
 (paren
@@ -1862,6 +1861,10 @@ OG
 l_int|0
 )paren
 (brace
+r_int
+r_char
+id|x
+suffix:semicolon
 (brace
 r_int
 r_int
@@ -1872,15 +1875,14 @@ c_cond
 (paren
 l_int|1
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|1
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -1893,11 +1895,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|sscape_sleeper
@@ -1908,7 +1910,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -1921,21 +1923,20 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
 )brace
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|x
+op_assign
 id|inb
 (paren
 id|PORT
@@ -1943,14 +1944,32 @@ id|PORT
 id|HOST_DATA
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|x
 op_eq
 l_int|0xff
+op_logical_or
+id|x
+op_eq
+l_int|0xfe
 )paren
 multiline_comment|/* OBP startup acknowledge */
+(brace
+id|printk
+(paren
+l_string|&quot;Soundscape: Acknowledge = %x&bslash;n&quot;
+comma
+id|x
+)paren
+suffix:semicolon
 id|done
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 id|sscape_write
 (paren
@@ -2023,15 +2042,14 @@ c_cond
 (paren
 l_int|1
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|1
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -2044,11 +2062,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|sscape_sleeper
@@ -2059,7 +2077,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -2072,12 +2090,12 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|sscape_sleep_flag.flags
+id|sscape_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -2223,9 +2241,7 @@ id|buf-&gt;data
 )paren
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2250,9 +2266,7 @@ l_string|&quot;SSCAPE: Unable to load microcode block to the OBP.&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 r_return
@@ -2332,9 +2346,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-(paren
 id|ENOSPC
-)paren
 suffix:semicolon
 id|copy_from_user
 (paren
@@ -2387,9 +2399,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -2679,7 +2689,19 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
-multiline_comment|/* CD-ROM config. Don&squot;t touch. */
+multiline_comment|/* CD-ROM config (WSS codec actually) */
+id|sscape_write
+(paren
+id|devc
+comma
+id|i
+comma
+id|regs
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2863,10 +2885,6 @@ r_int
 r_char
 id|save
 suffix:semicolon
-id|devc-&gt;failed
-op_assign
-l_int|1
-suffix:semicolon
 id|devc-&gt;base
 op_assign
 id|hw_config-&gt;io_base
@@ -2879,9 +2897,9 @@ id|devc-&gt;dma
 op_assign
 id|hw_config-&gt;dma
 suffix:semicolon
-id|devc-&gt;osp
+id|devc-&gt;failed
 op_assign
-id|hw_config-&gt;osp
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -2915,12 +2933,24 @@ id|ODIE_ADDR
 op_amp
 l_int|0xf0
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;soundscape: Detect error A&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|outb
 (paren
+(paren
 l_int|0x00
+)paren
 comma
 id|PORT
 (paren
@@ -2941,12 +2971,24 @@ id|ODIE_ADDR
 op_ne
 l_int|0x00
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;soundscape: Detect error B&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|outb
 (paren
+(paren
 l_int|0xff
+)paren
 comma
 id|PORT
 (paren
@@ -2967,12 +3009,24 @@ id|ODIE_ADDR
 op_ne
 l_int|0x0f
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;soundscape: Detect error C&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|outb
 (paren
+(paren
 id|save
+)paren
 comma
 id|PORT
 (paren
@@ -2993,9 +3047,26 @@ l_int|0
 op_amp
 l_int|0x0c
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;soundscape: Detect error D (%x)&bslash;n&quot;
+comma
+id|sscape_read
+(paren
+id|devc
+comma
+l_int|0
+)paren
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3008,9 +3079,19 @@ l_int|1
 op_amp
 l_int|0x0f
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;soundscape: Detect error E&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3023,9 +3104,19 @@ l_int|5
 op_amp
 l_int|0x0f
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;soundscape: Detect error F&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 macro_line|#ifdef SSCAPE_DEBUG1
 multiline_comment|/*&n;     * Temporary debugging aid. Print contents of the registers before&n;     * changing them.&n;   */
 (brace
@@ -3165,9 +3256,16 @@ c_cond
 (paren
 id|devc-&gt;failed
 )paren
+(brace
+id|printk
+(paren
+l_string|&quot;Soundscape: Card not detected&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -18,7 +18,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/* We really shouldn&squot;t be using this define.. */
 DECL|macro|IOCCMD_MASK
 mdefine_line|#define IOCCMD_MASK 0x0000ffff

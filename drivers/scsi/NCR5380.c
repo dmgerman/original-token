@@ -1650,10 +1650,11 @@ op_star
 id|instance
 )paren
 (brace
+r_static
 r_char
 id|pr_bfr
 (braket
-l_int|256
+l_int|512
 )braket
 suffix:semicolon
 r_char
@@ -1731,7 +1732,7 @@ multiline_comment|/*&n; * /proc/scsi/[dtc pas16 t128 generic]/[0-ASC_NUM_BOARD_S
 DECL|macro|SPRINTF
 macro_line|#undef SPRINTF
 DECL|macro|SPRINTF
-mdefine_line|#define SPRINTF(args...) do { if(pos &lt; buffer + length) pos += sprintf(pos, ## args); } while(0)
+mdefine_line|#define SPRINTF(args...) do { if(pos &lt; buffer + length-80) pos += sprintf(pos, ## args); } while(0)
 r_static
 r_char
 op_star

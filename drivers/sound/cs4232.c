@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_CS4232)
@@ -25,7 +25,9 @@ id|a
 (brace
 id|outb
 (paren
+(paren
 id|a
+)paren
 comma
 id|KEY_PORT
 )paren
@@ -197,7 +199,8 @@ op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
 r_static
-id|wait_handle
+r_struct
+id|wait_queue
 op_star
 id|cs_sleeper
 op_assign
@@ -212,10 +215,6 @@ op_assign
 (brace
 l_int|0
 )brace
-suffix:semicolon
-id|osp
-op_assign
-id|hw_config-&gt;osp
 suffix:semicolon
 multiline_comment|/*&n; * Verify that the I/O port range is free.&n; */
 r_if
@@ -273,7 +272,7 @@ id|n
 op_increment
 )paren
 (brace
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -312,8 +311,8 @@ id|HZ
 op_div
 l_int|10
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
@@ -322,7 +321,6 @@ op_plus
 id|HZ
 op_div
 l_int|10
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -335,11 +333,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|cs_sleeper
@@ -350,7 +348,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -363,12 +361,12 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -512,8 +510,8 @@ id|HZ
 op_div
 l_int|10
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
@@ -522,7 +520,6 @@ op_plus
 id|HZ
 op_div
 l_int|10
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -535,11 +532,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|cs_sleeper
@@ -550,7 +547,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -563,12 +560,12 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -652,8 +649,8 @@ id|HZ
 op_div
 l_int|5
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
@@ -662,7 +659,6 @@ op_plus
 id|HZ
 op_div
 l_int|5
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -675,11 +671,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|cs_sleeper
@@ -690,7 +686,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -703,12 +699,12 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -742,15 +738,14 @@ c_cond
 (paren
 id|HZ
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
 (paren
 id|HZ
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -763,11 +758,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|cs_sleeper
@@ -778,7 +773,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -791,12 +786,12 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|cs_sleep_flag.flags
+id|cs_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -837,6 +832,11 @@ id|dma2
 op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
+r_int
+id|old_num_mixers
+op_assign
+id|num_mixers
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -868,6 +868,38 @@ comma
 id|hw_config-&gt;osp
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|num_mixers
+OG
+id|old_num_mixers
+)paren
+(brace
+multiline_comment|/* Assume the mixer map is as suggested in the CS4232 databook */
+id|AD1848_REROUTE
+(paren
+id|SOUND_MIXER_LINE1
+comma
+id|SOUND_MIXER_LINE
+)paren
+suffix:semicolon
+id|AD1848_REROUTE
+(paren
+id|SOUND_MIXER_LINE2
+comma
+id|SOUND_MIXER_CD
+)paren
+suffix:semicolon
+id|AD1848_REROUTE
+(paren
+id|SOUND_MIXER_LINE3
+comma
+id|SOUND_MIXER_SYNTH
+)paren
+suffix:semicolon
+multiline_comment|/* FM synth */
+)brace
 macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
@@ -928,10 +960,6 @@ suffix:semicolon
 id|hw_config2.card_subtype
 op_assign
 l_int|0
-suffix:semicolon
-id|hw_config2.osp
-op_assign
-id|hw_config-&gt;osp
 suffix:semicolon
 r_if
 c_cond
@@ -1083,10 +1111,6 @@ suffix:semicolon
 id|hw_config2.card_subtype
 op_assign
 l_int|0
-suffix:semicolon
-id|hw_config2.osp
-op_assign
-id|hw_config-&gt;osp
 suffix:semicolon
 id|unload_mpu401
 (paren

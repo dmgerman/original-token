@@ -4,8 +4,6 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -17,6 +15,8 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/isdnif.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|PH_ACTIVATE
 mdefine_line|#define PH_ACTIVATE   1
 DECL|macro|PH_DATA
@@ -1048,8 +1048,8 @@ r_struct
 id|HscxState
 (brace
 DECL|member|membase
-id|byte
-op_star
+r_int
+r_int
 id|membase
 suffix:semicolon
 DECL|member|iobase
@@ -1161,8 +1161,8 @@ id|magic
 suffix:semicolon
 macro_line|#endif
 DECL|member|membase
-id|byte
-op_star
+r_int
+r_int
 id|membase
 suffix:semicolon
 DECL|member|iobase
@@ -1269,8 +1269,8 @@ r_struct
 id|IsdnCard
 (brace
 DECL|member|membase
-id|byte
-op_star
+r_int
+r_int
 id|membase
 suffix:semicolon
 DECL|member|interrupt

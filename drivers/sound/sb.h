@@ -58,6 +58,8 @@ DECL|macro|MDL_SBPRO
 mdefine_line|#define MDL_SBPRO&t;4&t;/* SB Pro */
 DECL|macro|MDL_SB16
 mdefine_line|#define MDL_SB16&t;5&t;/* SB16/32/AWE */
+DECL|macro|MDL_SBPNP
+mdefine_line|#define MDL_SBPNP &t;6&t;/* SB16/32/AWE PnP */
 DECL|macro|MDL_JAZZ
 mdefine_line|#define MDL_JAZZ&t;10&t;/* Media Vision Jazz16 */
 DECL|macro|MDL_SMW
@@ -210,11 +212,8 @@ suffix:semicolon
 multiline_comment|/* Mixer fields */
 DECL|member|levels
 r_int
-r_int
+op_star
 id|levels
-(braket
-id|SOUND_MIXER_NRDEVICES
-)braket
 suffix:semicolon
 DECL|member|iomap
 id|mixer_tab
@@ -238,6 +237,10 @@ suffix:semicolon
 DECL|member|my_mixerdev
 r_int
 id|my_mixerdev
+suffix:semicolon
+DECL|member|sbmixnum
+r_int
+id|sbmixnum
 suffix:semicolon
 multiline_comment|/* Audio fields */
 DECL|member|trg_buf

@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/blkdev.h&gt; /* for blk_size */
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
-macro_line|#include &lt;asm/segment.h&gt; /* for copy_to/from_user */
+macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|variable|nr_swapfiles

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/adlib_card.c&n; *&n; * Detection routine for the AdLib card.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_YM3812)
@@ -51,11 +51,14 @@ l_int|4
 )paren
 )paren
 (brace
+id|DDB
+(paren
 id|printk
 (paren
-l_string|&quot;&bslash;n&bslash;nopl3.c: I/O port %x already in use&bslash;n&bslash;n&quot;
+l_string|&quot;opl3.c: I/O port %x already in use&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
+)paren
 )paren
 suffix:semicolon
 r_return

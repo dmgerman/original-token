@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;opl3.h&t;- Definitions of the OPL-3 registers&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; *&t;The OPL-3 mode is switched on by writing 0x01, to the offset 5&n; *&t;of the right side.&n; *&n; *&t;Another special register at the right side is at offset 4. It contains&n; *&t;a bit mask defining which voices are used as 4 OP voices.&n; *&n; *&t;The percussive mode is implemented in the left side only.&n; *&n; *&t;With the above exceptions the both sides can be operated independently.&n; *&t;&n; *&t;A 4 OP voice can be created by setting the corresponding&n; *&t;bit at offset 4 of the right side.&n; *&n; *&t;For example setting the rightmost bit (0x01) changes the&n; *&t;first voice on the right side to the 4 OP mode. The fourth&n; *&t;voice is made inaccessible.&n; *&n; *&t;If a voice is set to the 2 OP mode, it works like 2 OP modes&n; *&t;of the original YM3812 (AdLib). In addition the voice can &n; *&t;be connected the left, right or both stereo channels. It can&n; *&t;even be left unconnected. This works with 4 OP voices also.&n; *&n; *&t;The stereo connection bits are located in the FEEDBACK_CONNECTION&n; *&t;register of the voice (0xC0-0xC8). In 4 OP voices these bits are&n; *&t;in the second half of the voice.&n; */
 multiline_comment|/*&n; *&t;Register numbers for the global registers&n; */
 DECL|macro|TEST_REGISTER
@@ -48,14 +48,14 @@ DECL|macro|COMPOSITE_SINE_WAVE_MODE
 mdefine_line|#define   COMPOSITE_SINE_WAVE_MODE&t;0x80&t;&t;/* Don&squot;t use with OPL-3? */
 DECL|macro|KEYBOARD_SPLIT
 mdefine_line|#define   KEYBOARD_SPLIT&t;&t;0x40
-DECL|macro|PERCUSSION_REGISTER
-mdefine_line|#define PERCUSSION_REGISTER&t;&t;&t;0xbd&t;/* Left side only */
+DECL|macro|PERCOSSION_REGISTER
+mdefine_line|#define PERCOSSION_REGISTER&t;&t;&t;0xbd&t;/* Left side only */
 DECL|macro|TREMOLO_DEPTH
 mdefine_line|#define   TREMOLO_DEPTH&t;&t;&t;0x80
 DECL|macro|VIBRATO_DEPTH
 mdefine_line|#define   VIBRATO_DEPTH&t;&t;&t;0x40
-DECL|macro|PERCUSSION_ENABLE
-mdefine_line|#define&t;  PERCUSSION_ENABLE&t;&t;0x20
+DECL|macro|PERCOSSION_ENABLE
+mdefine_line|#define&t;  PERCOSSION_ENABLE&t;&t;0x20
 DECL|macro|BASSDRUM_ON
 mdefine_line|#define   BASSDRUM_ON&t;&t;&t;0x10
 DECL|macro|SNAREDRUM_ON

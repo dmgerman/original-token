@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the Appletalk aarp protocol for&n; *&t;&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;alan@cymru.net&gt;&n; *&n; *&t;This doesn&squot;t fit cleanly with the IP arp. This isn&squot;t a problem as&n; *&t;the IP arp wants extracting from the device layer in 1.3.x anyway.&n; *&t;[see the pre-1.3 test code for details 8)]&n; *&n; *&t;FIXME:&n; *&t;&t;We ought to handle the retransmits with a single list and a &n; *&t;separate fast timer for when it is needed.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;References:&n; *&t;&t;Inside Appletalk (2nd Ed).&n; */
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

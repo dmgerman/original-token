@@ -38,7 +38,7 @@ macro_line|#ifdef CONFIG_ARPD
 macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 multiline_comment|/*&n; *&t;Configurable Parameters&n; */
 multiline_comment|/*&n; *&t;After that time, an unused entry is deleted from the arp table.&n; *&t;RFC1122 recommends set it to 60*HZ, if your site uses proxy arp&n; *&t;and dynamic routing.&n; */

@@ -6,6 +6,7 @@ DECL|macro|INCLUDE_INLINE_FUNCS
 mdefine_line|#define INCLUDE_INLINE_FUNCS
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|DCHAN_VERBOSE
 macro_line|#undef DCHAN_VERBOSE
 r_extern
@@ -49,8 +50,8 @@ DECL|function|readisac_0
 id|readisac_0
 c_func
 (paren
-id|byte
-op_star
+r_int
+r_int
 id|cardm
 comma
 id|byte
@@ -58,11 +59,8 @@ id|offset
 )paren
 (brace
 r_return
-op_star
-(paren
-id|byte
-op_star
-)paren
+id|readb
+c_func
 (paren
 id|cardm
 op_plus
@@ -122,8 +120,8 @@ DECL|function|writeisac_0
 id|writeisac_0
 c_func
 (paren
-id|byte
-op_star
+r_int
+r_int
 id|cardm
 comma
 id|byte
@@ -133,12 +131,11 @@ id|byte
 id|value
 )paren
 (brace
-op_star
+id|writeb
+c_func
 (paren
-id|byte
-op_star
-)paren
-(paren
+id|value
+comma
 id|cardm
 op_plus
 l_int|0x100
@@ -158,8 +155,6 @@ l_int|0
 op_plus
 id|offset
 )paren
-op_assign
-id|value
 suffix:semicolon
 )brace
 r_static
@@ -273,8 +268,8 @@ DECL|function|readhscx_0
 id|readhscx_0
 c_func
 (paren
-id|byte
-op_star
+r_int
+r_int
 id|base
 comma
 id|byte
@@ -285,11 +280,8 @@ id|offset
 )paren
 (brace
 r_return
-op_star
-(paren
-id|byte
-op_star
-)paren
+id|readb
+c_func
 (paren
 id|base
 op_plus
@@ -372,8 +364,8 @@ DECL|function|writehscx_0
 id|writehscx_0
 c_func
 (paren
-id|byte
-op_star
+r_int
+r_int
 id|base
 comma
 id|byte
@@ -386,12 +378,11 @@ id|byte
 id|data
 )paren
 (brace
-op_star
+id|writeb
+c_func
 (paren
-id|byte
-op_star
-)paren
-(paren
+id|data
+comma
 id|base
 op_plus
 l_int|0x180
@@ -424,8 +415,6 @@ l_int|0
 op_plus
 id|offset
 )paren
-op_assign
-id|data
 suffix:semicolon
 )brace
 r_static
@@ -641,8 +630,8 @@ DECL|function|waitforCEC_0
 id|waitforCEC_0
 c_func
 (paren
-id|byte
-op_star
+r_int
+r_int
 id|base
 comma
 id|byte
@@ -768,8 +757,8 @@ DECL|function|waitforXFW_0
 id|waitforXFW_0
 c_func
 (paren
-id|byte
-op_star
+r_int
+r_int
 id|base
 comma
 id|byte
@@ -905,8 +894,8 @@ DECL|function|writehscxCMDR_0
 id|writehscxCMDR_0
 c_func
 (paren
-id|byte
-op_star
+r_int
+r_int
 id|base
 comma
 id|byte
@@ -4988,8 +4977,8 @@ DECL|function|initisac
 id|initisac
 c_func
 (paren
-id|byte
-op_star
+r_int
+r_int
 id|cardmem
 comma
 r_int
@@ -5244,19 +5233,11 @@ id|card-&gt;membase
 r_if
 c_cond
 (paren
-(paren
-r_int
-r_int
-)paren
 id|card-&gt;membase
 OL
 l_int|0x10000
 )paren
 (brace
-(paren
-r_int
-r_int
-)paren
 id|card-&gt;membase
 op_lshift_assign
 l_int|4
@@ -5265,12 +5246,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Teles membase configured DOSish, assuming 0x%lx&bslash;n&quot;
+l_string|&quot;Teles membase configured DOSish, assuming 0x%x&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
 id|card-&gt;membase
 )paren
 suffix:semicolon
@@ -5292,11 +5269,8 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;Teles 8 assumed, mem: %lx irq: %d proto: %s&bslash;n&quot;
+l_string|&quot;Teles 8 assumed, mem: %x irq: %d proto: %s&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|card-&gt;membase
 comma
 id|card-&gt;interrupt
@@ -5652,18 +5626,12 @@ id|card-&gt;membase
 id|cfval
 op_or_assign
 (paren
-(paren
-(paren
-r_int
-r_int
-)paren
 id|card-&gt;membase
 op_rshift
 l_int|9
 )paren
 op_amp
 l_int|0xF0
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -5951,13 +5919,10 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;Teles 16.0 found, io: %x mem: %lx irq: %d proto: %s&bslash;n&quot;
+l_string|&quot;Teles 16.0 found, io: %x mem: %x irq: %d proto: %s&bslash;n&quot;
 comma
 id|card-&gt;iobase
 comma
-(paren
-r_int
-)paren
 id|card-&gt;membase
 comma
 id|card-&gt;interrupt
@@ -6056,18 +6021,15 @@ l_int|5
 op_plus
 l_int|1
 suffix:semicolon
-op_star
+id|writeb
+c_func
 (paren
-id|byte
-op_star
-)paren
-(paren
+l_int|0
+comma
 id|card-&gt;membase
 op_plus
 l_int|0x80
 )paren
-op_assign
-l_int|0
 suffix:semicolon
 id|sti
 c_func
@@ -6087,18 +6049,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
-op_star
+id|writeb
+c_func
 (paren
-id|byte
-op_star
-)paren
-(paren
+l_int|1
+comma
 id|card-&gt;membase
 op_plus
 l_int|0x80
 )paren
-op_assign
-l_int|1
 suffix:semicolon
 id|timout
 op_assign

@@ -1,12 +1,12 @@
 multiline_comment|/*&n; * linux/ipc/sem.c&n; * Copyright (C) 1992 Krishna Balasubramanian&n; * Copyright (C) 1995 Eric Schenk, Bruno Haible&n; *&n; * IMPLEMENTATION NOTES ON CODE REWRITE (Eric Schenk, January 1995):&n; * This code underwent a massive rewrite in order to solve some problems&n; * with the original code. In particular the original code failed to&n; * wake up processes that were waiting for semval to go to 0 if the&n; * value went to 0 and was then incremented rapidly enough. In solving&n; * this problem I have also modified the implementation so that it&n; * processes pending operations in a FIFO manner, thus give a guarantee&n; * that processes waiting for a lock on the semaphore won&squot;t starve&n; * unless another locking process fails to unlock.&n; * In addition the following two changes in behavior have been introduced:&n; * - The original implementation of semop returned the value&n; *   last semaphore element examined on success. This does not&n; *   match the manual page specifications, and effectively&n; *   allows the user to read the semaphore even if they do not&n; *   have read permissions. The implementation now returns 0&n; *   on success as stated in the manual page.&n; * - There is some confusion over whether the set of undo adjustments&n; *   to be performed at exit should be done in an atomic manner.&n; *   That is, if we are attempting to decrement the semval should we queue&n; *   up and wait until we can do so legally?&n; *   The original implementation attempted to do this.&n; *   The current implementation does not do so. This is because I don&squot;t&n; *   think it is the right thing (TM) to do, and because I couldn&squot;t&n; *   see a clean way to get the old behavior with the new design.&n; *   The POSIX standard and SVID should be consulted to determine&n; *   what behavior is mandated.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/ipc.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_int
 id|ipcperms

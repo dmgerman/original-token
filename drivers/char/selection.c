@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;vt_kern.h&quot;
 macro_line|#include &quot;consolemap.h&quot;
 macro_line|#include &quot;selection.h&quot;
@@ -1366,10 +1366,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -1380,12 +1376,12 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|c
-)paren
+r_do
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1446,6 +1442,22 @@ op_add_assign
 id|l
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|c
+)paren
+suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|vt-&gt;paste_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_RUNNING

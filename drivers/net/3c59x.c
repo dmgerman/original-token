@@ -1288,13 +1288,12 @@ l_int|0
 suffix:semicolon
 r_return
 id|cards_found
-OL
-l_int|0
 ques
 c_cond
-id|cards_found
-suffix:colon
 l_int|0
+suffix:colon
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#else

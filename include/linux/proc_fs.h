@@ -276,6 +276,9 @@ comma
 DECL|enumerator|PROC_NET_STRIP_TRACE
 id|PROC_NET_STRIP_TRACE
 comma
+DECL|enumerator|PROC_NET_Z8530
+id|PROC_NET_Z8530
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace

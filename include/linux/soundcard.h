@@ -2,10 +2,12 @@ macro_line|#ifndef SOUNDCARD_H
 DECL|macro|SOUNDCARD_H
 mdefine_line|#define SOUNDCARD_H
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * OSS interface version. With versions earlier than 3.6 this value is&n; * an integer with value less than 361. In versions 3.6 and later&n; * it&squot;s a six digit hexadecimal value. For example value&n; * of 0x030600 represents OSS version 3.6.0.&n; * Use ioctl(fd, OSS_GETVERSION, &amp;int) to get the version number of&n; * the currently active driver.&n; */
 DECL|macro|SOUND_VERSION
-mdefine_line|#define SOUND_VERSION&t;350
-DECL|macro|UNIX_SOUND_SYSTEM
-mdefine_line|#define UNIX_SOUND_SYSTEM
+mdefine_line|#define SOUND_VERSION&t;0x030700
+DECL|macro|OPEN_SOUND_SYSTEM
+mdefine_line|#define OPEN_SOUND_SYSTEM
+multiline_comment|/* In Linux we need to be prepared for cross compiling */
 macro_line|#include &lt;linux/ioctl.h&gt;
 multiline_comment|/*&n; *&t;Supported card ID numbers (Should be somewhere else?)&n; */
 DECL|macro|SNDCARD_ADLIB
@@ -62,71 +64,94 @@ DECL|macro|SNDCARD_UART401
 mdefine_line|#define SNDCARD_UART401&t;&t;26
 multiline_comment|/* Soundcard numbers 27 to N are reserved. Don&squot;t add more numbers here */
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
-macro_line|#ifndef _IOWR
-multiline_comment|/*&t;@(#)ioctlp.h */
+macro_line|#ifndef _SIOWR
+macro_line|#if defined(_IOWR) &amp;&amp; !defined(sun)
+multiline_comment|/* Use already defined ioctl defines if they exist (except with Sun) */
+DECL|macro|SIOCPARM_MASK
+mdefine_line|#define&t;SIOCPARM_MASK&t;IOCPARM_MASK
+DECL|macro|SIOC_VOID
+mdefine_line|#define&t;SIOC_VOID&t;IOC_VOID
+DECL|macro|SIOC_OUT
+mdefine_line|#define&t;SIOC_OUT&t;IOC_OUT
+DECL|macro|SIOC_IN
+mdefine_line|#define&t;SIOC_IN&t;&t;IOC_IN
+DECL|macro|SIOC_INOUT
+mdefine_line|#define&t;SIOC_INOUT&t;IOC_INOUT
+DECL|macro|_SIO
+mdefine_line|#define&t;_SIO&t;&t;_IO
+DECL|macro|_SIOR
+mdefine_line|#define&t;_SIOR&t;&t;_IOR
+DECL|macro|_SIOW
+mdefine_line|#define&t;_SIOW&t;&t;_IOW
+DECL|macro|_SIOWR
+mdefine_line|#define&t;_SIOWR&t;&t;_IOWR
+macro_line|#else
 multiline_comment|/* Ioctl&squot;s have the command encoded in the lower word,&n; * and the size of any in or out parameters in the upper&n; * word.  The high 2 bits of the upper word are used&n; * to encode the in/out status of the parameter; for now&n; * we restrict parameters to at most 128 bytes.&n; */
-multiline_comment|/* #define&t;IOCTYPE&t;&t;(0xff&lt;&lt;8) */
-DECL|macro|IOCPARM_MASK
-mdefine_line|#define&t;IOCPARM_MASK&t;0x7f&t;&t;/* parameters must be &lt; 128 bytes */
-DECL|macro|IOC_VOID
-mdefine_line|#define&t;IOC_VOID&t;0x00000000&t;/* no parameters */
-DECL|macro|IOC_OUT
-mdefine_line|#define&t;IOC_OUT&t;&t;0x20000000&t;/* copy out parameters */
-DECL|macro|IOC_IN
-mdefine_line|#define&t;IOC_IN&t;&t;0x40000000&t;/* copy in parameters */
-DECL|macro|IOC_INOUT
-mdefine_line|#define&t;IOC_INOUT&t;(IOC_IN|IOC_OUT)
+multiline_comment|/* #define&t;SIOCTYPE&t;&t;(0xff&lt;&lt;8) */
+DECL|macro|SIOCPARM_MASK
+mdefine_line|#define&t;SIOCPARM_MASK&t;0x1fff&t;&t;/* parameters must be &lt; 8192 bytes */
+DECL|macro|SIOC_VOID
+mdefine_line|#define&t;SIOC_VOID&t;0x00000000&t;/* no parameters */
+DECL|macro|SIOC_OUT
+mdefine_line|#define&t;SIOC_OUT&t;0x20000000&t;/* copy out parameters */
+DECL|macro|SIOC_IN
+mdefine_line|#define&t;SIOC_IN&t;&t;0x40000000&t;/* copy in parameters */
+DECL|macro|SIOC_INOUT
+mdefine_line|#define&t;SIOC_INOUT&t;(SIOC_IN|SIOC_OUT)
 multiline_comment|/* the 0x20000000 is so we can distinguish new ioctl&squot;s from old */
-DECL|macro|_IO
-mdefine_line|#define&t;_IO(x,y)&t;((int)(IOC_VOID|(x&lt;&lt;8)|y))
-DECL|macro|_IOR
-mdefine_line|#define&t;_IOR(x,y,t)&t;((int)(IOC_OUT|((sizeof(t)&amp;IOCPARM_MASK)&lt;&lt;16)|(x&lt;&lt;8)|y))
-DECL|macro|_IOW
-mdefine_line|#define&t;_IOW(x,y,t)&t;((int)(IOC_IN|((sizeof(t)&amp;IOCPARM_MASK)&lt;&lt;16)|(x&lt;&lt;8)|y))
-multiline_comment|/* this should be _IORW, but stdio got there first */
-DECL|macro|_IOWR
-mdefine_line|#define&t;_IOWR(x,y,t)&t;((int)(IOC_INOUT|((sizeof(t)&amp;IOCPARM_MASK)&lt;&lt;16)|(x&lt;&lt;8)|y))
-macro_line|#endif  /* !_IOWR */
+DECL|macro|_SIO
+mdefine_line|#define&t;_SIO(x,y)&t;((int)(SIOC_VOID|(x&lt;&lt;8)|y))
+DECL|macro|_SIOR
+mdefine_line|#define&t;_SIOR(x,y,t)&t;((int)(SIOC_OUT|((sizeof(t)&amp;SIOCPARM_MASK)&lt;&lt;16)|(x&lt;&lt;8)|y))
+DECL|macro|_SIOW
+mdefine_line|#define&t;_SIOW(x,y,t)&t;((int)(SIOC_IN|((sizeof(t)&amp;SIOCPARM_MASK)&lt;&lt;16)|(x&lt;&lt;8)|y))
+multiline_comment|/* this should be _SIORW, but stdio got there first */
+DECL|macro|_SIOWR
+mdefine_line|#define&t;_SIOWR(x,y,t)&t;((int)(SIOC_INOUT|((sizeof(t)&amp;SIOCPARM_MASK)&lt;&lt;16)|(x&lt;&lt;8)|y))
+macro_line|#  endif /* _IOWR */
+macro_line|#endif  /* !_SIOWR */
 DECL|macro|SNDCTL_SEQ_RESET
-mdefine_line|#define SNDCTL_SEQ_RESET&t;&t;_IO  (&squot;Q&squot;, 0)
+mdefine_line|#define SNDCTL_SEQ_RESET&t;&t;_SIO  (&squot;Q&squot;, 0)
 DECL|macro|SNDCTL_SEQ_SYNC
-mdefine_line|#define SNDCTL_SEQ_SYNC&t;&t;&t;_IO  (&squot;Q&squot;, 1)
+mdefine_line|#define SNDCTL_SEQ_SYNC&t;&t;&t;_SIO  (&squot;Q&squot;, 1)
 DECL|macro|SNDCTL_SYNTH_INFO
-mdefine_line|#define SNDCTL_SYNTH_INFO&t;&t;_IOWR(&squot;Q&squot;, 2, struct synth_info)
+mdefine_line|#define SNDCTL_SYNTH_INFO&t;&t;_SIOWR(&squot;Q&squot;, 2, struct synth_info)
 DECL|macro|SNDCTL_SEQ_CTRLRATE
-mdefine_line|#define SNDCTL_SEQ_CTRLRATE&t;&t;_IOWR(&squot;Q&squot;, 3, int)&t;/* Set/get timer resolution (HZ) */
+mdefine_line|#define SNDCTL_SEQ_CTRLRATE&t;&t;_SIOWR(&squot;Q&squot;, 3, int)&t;/* Set/get timer resolution (HZ) */
 DECL|macro|SNDCTL_SEQ_GETOUTCOUNT
-mdefine_line|#define SNDCTL_SEQ_GETOUTCOUNT&t;&t;_IOR (&squot;Q&squot;, 4, int)
+mdefine_line|#define SNDCTL_SEQ_GETOUTCOUNT&t;&t;_SIOR (&squot;Q&squot;, 4, int)
 DECL|macro|SNDCTL_SEQ_GETINCOUNT
-mdefine_line|#define SNDCTL_SEQ_GETINCOUNT&t;&t;_IOR (&squot;Q&squot;, 5, int)
+mdefine_line|#define SNDCTL_SEQ_GETINCOUNT&t;&t;_SIOR (&squot;Q&squot;, 5, int)
 DECL|macro|SNDCTL_SEQ_PERCMODE
-mdefine_line|#define SNDCTL_SEQ_PERCMODE&t;&t;_IOW (&squot;Q&squot;, 6, int)
+mdefine_line|#define SNDCTL_SEQ_PERCMODE&t;&t;_SIOW (&squot;Q&squot;, 6, int)
 DECL|macro|SNDCTL_FM_LOAD_INSTR
-mdefine_line|#define SNDCTL_FM_LOAD_INSTR&t;&t;_IOW (&squot;Q&squot;, 7, struct sbi_instrument)&t;/* Valid for FM only */
+mdefine_line|#define SNDCTL_FM_LOAD_INSTR&t;&t;_SIOW (&squot;Q&squot;, 7, struct sbi_instrument)&t;/* Valid for FM only */
 DECL|macro|SNDCTL_SEQ_TESTMIDI
-mdefine_line|#define SNDCTL_SEQ_TESTMIDI&t;&t;_IOW (&squot;Q&squot;, 8, int)
+mdefine_line|#define SNDCTL_SEQ_TESTMIDI&t;&t;_SIOW (&squot;Q&squot;, 8, int)
 DECL|macro|SNDCTL_SEQ_RESETSAMPLES
-mdefine_line|#define SNDCTL_SEQ_RESETSAMPLES&t;&t;_IOW (&squot;Q&squot;, 9, int)
+mdefine_line|#define SNDCTL_SEQ_RESETSAMPLES&t;&t;_SIOW (&squot;Q&squot;, 9, int)
 DECL|macro|SNDCTL_SEQ_NRSYNTHS
-mdefine_line|#define SNDCTL_SEQ_NRSYNTHS&t;&t;_IOR (&squot;Q&squot;,10, int)
+mdefine_line|#define SNDCTL_SEQ_NRSYNTHS&t;&t;_SIOR (&squot;Q&squot;,10, int)
 DECL|macro|SNDCTL_SEQ_NRMIDIS
-mdefine_line|#define SNDCTL_SEQ_NRMIDIS&t;&t;_IOR (&squot;Q&squot;,11, int)
+mdefine_line|#define SNDCTL_SEQ_NRMIDIS&t;&t;_SIOR (&squot;Q&squot;,11, int)
 DECL|macro|SNDCTL_MIDI_INFO
-mdefine_line|#define SNDCTL_MIDI_INFO&t;&t;_IOWR(&squot;Q&squot;,12, struct midi_info)
+mdefine_line|#define SNDCTL_MIDI_INFO&t;&t;_SIOWR(&squot;Q&squot;,12, struct midi_info)
 DECL|macro|SNDCTL_SEQ_THRESHOLD
-mdefine_line|#define SNDCTL_SEQ_THRESHOLD&t;&t;_IOW (&squot;Q&squot;,13, int)
+mdefine_line|#define SNDCTL_SEQ_THRESHOLD&t;&t;_SIOW (&squot;Q&squot;,13, int)
 DECL|macro|SNDCTL_SEQ_TRESHOLD
 mdefine_line|#define SNDCTL_SEQ_TRESHOLD&t;&t;SNDCTL_SEQ_THRESHOLD&t;/* there was once a typo */
 DECL|macro|SNDCTL_SYNTH_MEMAVL
-mdefine_line|#define SNDCTL_SYNTH_MEMAVL&t;&t;_IOWR(&squot;Q&squot;,14, int)&t;/* in=dev#, out=memsize */
+mdefine_line|#define SNDCTL_SYNTH_MEMAVL&t;&t;_SIOWR(&squot;Q&squot;,14, int)&t;/* in=dev#, out=memsize */
 DECL|macro|SNDCTL_FM_4OP_ENABLE
-mdefine_line|#define SNDCTL_FM_4OP_ENABLE&t;&t;_IOW (&squot;Q&squot;,15, int)&t;/* in=dev# */
+mdefine_line|#define SNDCTL_FM_4OP_ENABLE&t;&t;_SIOW (&squot;Q&squot;,15, int)&t;/* in=dev# */
 DECL|macro|SNDCTL_PMGR_ACCESS
-mdefine_line|#define SNDCTL_PMGR_ACCESS&t;&t;_IOWR(&squot;Q&squot;,16, struct patmgr_info)
+mdefine_line|#define SNDCTL_PMGR_ACCESS&t;&t;_SIOWR(&squot;Q&squot;,16, struct patmgr_info)
 DECL|macro|SNDCTL_SEQ_PANIC
-mdefine_line|#define SNDCTL_SEQ_PANIC&t;&t;_IO  (&squot;Q&squot;,17)
+mdefine_line|#define SNDCTL_SEQ_PANIC&t;&t;_SIO  (&squot;Q&squot;,17)
 DECL|macro|SNDCTL_SEQ_OUTOFBAND
-mdefine_line|#define SNDCTL_SEQ_OUTOFBAND&t;&t;_IOW (&squot;Q&squot;,18, struct seq_event_rec)
+mdefine_line|#define SNDCTL_SEQ_OUTOFBAND&t;&t;_SIOW (&squot;Q&squot;,18, struct seq_event_rec)
+DECL|macro|SNDCTL_SEQ_GETTIME
+mdefine_line|#define SNDCTL_SEQ_GETTIME&t;&t;_SIOR (&squot;Q&squot;,19, int)
 DECL|struct|seq_event_rec
 r_struct
 id|seq_event_rec
@@ -142,17 +167,17 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|SNDCTL_TMR_TIMEBASE
-mdefine_line|#define SNDCTL_TMR_TIMEBASE&t;&t;_IOWR(&squot;T&squot;, 1, int)
+mdefine_line|#define SNDCTL_TMR_TIMEBASE&t;&t;_SIOWR(&squot;T&squot;, 1, int)
 DECL|macro|SNDCTL_TMR_START
-mdefine_line|#define SNDCTL_TMR_START&t;&t;_IO  (&squot;T&squot;, 2)
+mdefine_line|#define SNDCTL_TMR_START&t;&t;_SIO  (&squot;T&squot;, 2)
 DECL|macro|SNDCTL_TMR_STOP
-mdefine_line|#define SNDCTL_TMR_STOP&t;&t;&t;_IO  (&squot;T&squot;, 3)
+mdefine_line|#define SNDCTL_TMR_STOP&t;&t;&t;_SIO  (&squot;T&squot;, 3)
 DECL|macro|SNDCTL_TMR_CONTINUE
-mdefine_line|#define SNDCTL_TMR_CONTINUE&t;&t;_IO  (&squot;T&squot;, 4)
+mdefine_line|#define SNDCTL_TMR_CONTINUE&t;&t;_SIO  (&squot;T&squot;, 4)
 DECL|macro|SNDCTL_TMR_TEMPO
-mdefine_line|#define SNDCTL_TMR_TEMPO&t;&t;_IOWR(&squot;T&squot;, 5, int)
+mdefine_line|#define SNDCTL_TMR_TEMPO&t;&t;_SIOWR(&squot;T&squot;, 5, int)
 DECL|macro|SNDCTL_TMR_SOURCE
-mdefine_line|#define SNDCTL_TMR_SOURCE&t;&t;_IOWR(&squot;T&squot;, 6, int)
+mdefine_line|#define SNDCTL_TMR_SOURCE&t;&t;_SIOWR(&squot;T&squot;, 6, int)
 DECL|macro|TMR_INTERNAL
 macro_line|#&t;define TMR_INTERNAL&t;&t;0x00000001
 DECL|macro|TMR_EXTERNAL
@@ -166,16 +191,21 @@ macro_line|#&t;&t;define TMR_MODE_CLS&t;0x00000040
 DECL|macro|TMR_MODE_SMPTE
 macro_line|#&t;&t;define TMR_MODE_SMPTE&t;0x00000080
 DECL|macro|SNDCTL_TMR_METRONOME
-mdefine_line|#define SNDCTL_TMR_METRONOME&t;&t;_IOW (&squot;T&squot;, 7, int)
+mdefine_line|#define SNDCTL_TMR_METRONOME&t;&t;_SIOW (&squot;T&squot;, 7, int)
 DECL|macro|SNDCTL_TMR_SELECT
-mdefine_line|#define SNDCTL_TMR_SELECT&t;&t;_IOW (&squot;T&squot;, 8, int)
-multiline_comment|/*&n; *&t;Endian aware patch key generation algorithm.&n; */
-macro_line|#if defined(_AIX) || defined(AIX)
+mdefine_line|#define SNDCTL_TMR_SELECT&t;&t;_SIOW (&squot;T&squot;, 8, int)
+multiline_comment|/*&n; * Some big endian/little endian handling macros&n; */
+macro_line|#if defined(_AIX) || defined(AIX) || defined(sparc) || defined(HPPA) || defined(PPC)
+multiline_comment|/* Big endian machines */
 DECL|macro|_PATCHKEY
 macro_line|#  define _PATCHKEY(id) (0xfd00|id)
+DECL|macro|AFMT_S16_NE
+macro_line|#  define AFMT_S16_NE AFMT_S16_BE
 macro_line|#else
 DECL|macro|_PATCHKEY
 macro_line|#  define _PATCHKEY(id) ((id&lt;&lt;8)|0xfd)
+DECL|macro|AFMT_S16_NE
+macro_line|#  define AFMT_S16_NE AFMT_S16_LE
 macro_line|#endif
 multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is propably too limited.&n; */
 DECL|struct|patch_info
@@ -406,7 +436,7 @@ mdefine_line|#define&t;&t;PS_MGR_OK&t;&t;2&t;/* Patch manager supported */
 DECL|macro|PS_MANAGED
 mdefine_line|#define&t;&t;PS_MANAGED&t;&t;3&t;/* Patch manager running */
 DECL|macro|SNDCTL_PMGR_IFACE
-mdefine_line|#define SNDCTL_PMGR_IFACE&t;&t;_IOWR(&squot;P&squot;, 1, struct patmgr_info)
+mdefine_line|#define SNDCTL_PMGR_IFACE&t;&t;_SIOWR(&squot;P&squot;, 1, struct patmgr_info)
 multiline_comment|/*&n; * The patmgr_info is a fixed size structure which is used for two&n; * different purposes. The intended use is for communication between&n; * the application using /dev/sequencer and the patch manager daemon&n; * associated with a synthesizer device (ioctl(SNDCTL_PMGR_ACCESS)).&n; *&n; * This structure is also used with ioctl(SNDCTL_PGMR_IFACE) which allows&n; * a patch manager daemon to read and write device parameters. This&n; * ioctl available through /dev/sequencer also. Avoid using it since it&squot;s&n; * extremely hardware dependent. In addition access trough /dev/sequencer &n; * may confuse the patch manager daemon.&n; */
 DECL|struct|patmgr_info
 r_struct
@@ -871,41 +901,41 @@ DECL|typedef|mpu_command_rec
 id|mpu_command_rec
 suffix:semicolon
 DECL|macro|SNDCTL_MIDI_PRETIME
-mdefine_line|#define SNDCTL_MIDI_PRETIME&t;&t;_IOWR(&squot;m&squot;, 0, int)
+mdefine_line|#define SNDCTL_MIDI_PRETIME&t;&t;_SIOWR(&squot;m&squot;, 0, int)
 DECL|macro|SNDCTL_MIDI_MPUMODE
-mdefine_line|#define SNDCTL_MIDI_MPUMODE&t;&t;_IOWR(&squot;m&squot;, 1, int)
+mdefine_line|#define SNDCTL_MIDI_MPUMODE&t;&t;_SIOWR(&squot;m&squot;, 1, int)
 DECL|macro|SNDCTL_MIDI_MPUCMD
-mdefine_line|#define SNDCTL_MIDI_MPUCMD&t;&t;_IOWR(&squot;m&squot;, 2, mpu_command_rec)
+mdefine_line|#define SNDCTL_MIDI_MPUCMD&t;&t;_SIOWR(&squot;m&squot;, 2, mpu_command_rec)
 multiline_comment|/********************************************&n; * IOCTL commands for /dev/dsp and /dev/audio&n; */
 DECL|macro|SNDCTL_DSP_RESET
-mdefine_line|#define SNDCTL_DSP_RESET&t;&t;_IO  (&squot;P&squot;, 0)
+mdefine_line|#define SNDCTL_DSP_RESET&t;&t;_SIO  (&squot;P&squot;, 0)
 DECL|macro|SNDCTL_DSP_SYNC
-mdefine_line|#define SNDCTL_DSP_SYNC&t;&t;&t;_IO  (&squot;P&squot;, 1)
+mdefine_line|#define SNDCTL_DSP_SYNC&t;&t;&t;_SIO  (&squot;P&squot;, 1)
 DECL|macro|SNDCTL_DSP_SPEED
-mdefine_line|#define SNDCTL_DSP_SPEED&t;&t;_IOWR(&squot;P&squot;, 2, int)
+mdefine_line|#define SNDCTL_DSP_SPEED&t;&t;_SIOWR(&squot;P&squot;, 2, int)
 DECL|macro|SNDCTL_DSP_STEREO
-mdefine_line|#define SNDCTL_DSP_STEREO&t;&t;_IOWR(&squot;P&squot;, 3, int)
+mdefine_line|#define SNDCTL_DSP_STEREO&t;&t;_SIOWR(&squot;P&squot;, 3, int)
 DECL|macro|SNDCTL_DSP_GETBLKSIZE
-mdefine_line|#define SNDCTL_DSP_GETBLKSIZE&t;&t;_IOWR(&squot;P&squot;, 4, int)
+mdefine_line|#define SNDCTL_DSP_GETBLKSIZE&t;&t;_SIOWR(&squot;P&squot;, 4, int)
 DECL|macro|SNDCTL_DSP_SAMPLESIZE
 mdefine_line|#define SNDCTL_DSP_SAMPLESIZE&t;&t;SNDCTL_DSP_SETFMT
 DECL|macro|SNDCTL_DSP_CHANNELS
-mdefine_line|#define SNDCTL_DSP_CHANNELS&t;&t;_IOWR(&squot;P&squot;, 6, int)
+mdefine_line|#define SNDCTL_DSP_CHANNELS&t;&t;_SIOWR(&squot;P&squot;, 6, int)
 DECL|macro|SOUND_PCM_WRITE_CHANNELS
 mdefine_line|#define SOUND_PCM_WRITE_CHANNELS&t;SNDCTL_DSP_CHANNELS
 DECL|macro|SOUND_PCM_WRITE_FILTER
-mdefine_line|#define SOUND_PCM_WRITE_FILTER&t;&t;_IOWR(&squot;P&squot;, 7, int)
+mdefine_line|#define SOUND_PCM_WRITE_FILTER&t;&t;_SIOWR(&squot;P&squot;, 7, int)
 DECL|macro|SNDCTL_DSP_POST
-mdefine_line|#define SNDCTL_DSP_POST&t;&t;&t;_IO  (&squot;P&squot;, 8)
+mdefine_line|#define SNDCTL_DSP_POST&t;&t;&t;_SIO  (&squot;P&squot;, 8)
 DECL|macro|SNDCTL_DSP_SUBDIVIDE
-mdefine_line|#define SNDCTL_DSP_SUBDIVIDE&t;&t;_IOWR(&squot;P&squot;, 9, int)
+mdefine_line|#define SNDCTL_DSP_SUBDIVIDE&t;&t;_SIOWR(&squot;P&squot;, 9, int)
 DECL|macro|SNDCTL_DSP_SETFRAGMENT
-mdefine_line|#define SNDCTL_DSP_SETFRAGMENT&t;&t;_IOWR(&squot;P&squot;,10, int)
+mdefine_line|#define SNDCTL_DSP_SETFRAGMENT&t;&t;_SIOWR(&squot;P&squot;,10, int)
 multiline_comment|/*&t;Audio data formats (Note! U8=8 and S16_LE=16 for compatibility) */
 DECL|macro|SNDCTL_DSP_GETFMTS
-mdefine_line|#define SNDCTL_DSP_GETFMTS&t;&t;_IOR (&squot;P&squot;,11, int) /* Returns a mask */
+mdefine_line|#define SNDCTL_DSP_GETFMTS&t;&t;_SIOR (&squot;P&squot;,11, int) /* Returns a mask */
 DECL|macro|SNDCTL_DSP_SETFMT
-mdefine_line|#define SNDCTL_DSP_SETFMT&t;&t;_IOWR(&squot;P&squot;,5, int) /* Selects ONE fmt*/
+mdefine_line|#define SNDCTL_DSP_SETFMT&t;&t;_SIOWR(&squot;P&squot;,5, int) /* Selects ONE fmt*/
 DECL|macro|AFMT_QUERY
 macro_line|#&t;define AFMT_QUERY&t;&t;0x00000000&t;/* Return current fmt */
 DECL|macro|AFMT_MU_LAW
@@ -960,13 +990,13 @@ DECL|typedef|audio_buf_info
 id|audio_buf_info
 suffix:semicolon
 DECL|macro|SNDCTL_DSP_GETOSPACE
-mdefine_line|#define SNDCTL_DSP_GETOSPACE&t;&t;_IOR (&squot;P&squot;,12, audio_buf_info)
+mdefine_line|#define SNDCTL_DSP_GETOSPACE&t;&t;_SIOR (&squot;P&squot;,12, audio_buf_info)
 DECL|macro|SNDCTL_DSP_GETISPACE
-mdefine_line|#define SNDCTL_DSP_GETISPACE&t;&t;_IOR (&squot;P&squot;,13, audio_buf_info)
+mdefine_line|#define SNDCTL_DSP_GETISPACE&t;&t;_SIOR (&squot;P&squot;,13, audio_buf_info)
 DECL|macro|SNDCTL_DSP_NONBLOCK
-mdefine_line|#define SNDCTL_DSP_NONBLOCK&t;&t;_IO  (&squot;P&squot;,14)
+mdefine_line|#define SNDCTL_DSP_NONBLOCK&t;&t;_SIO  (&squot;P&squot;,14)
 DECL|macro|SNDCTL_DSP_GETCAPS
-mdefine_line|#define SNDCTL_DSP_GETCAPS&t;&t;_IOR (&squot;P&squot;,15, int)
+mdefine_line|#define SNDCTL_DSP_GETCAPS&t;&t;_SIOR (&squot;P&squot;,15, int)
 DECL|macro|DSP_CAP_REVISION
 macro_line|#&t;define DSP_CAP_REVISION&t;&t;0x000000ff&t;/* Bits for revision level (0 to 255) */
 DECL|macro|DSP_CAP_DUPLEX
@@ -987,9 +1017,9 @@ macro_line|#&t;define DSP_CAP_TRIGGER&t;&t;0x00001000&t;/* Supports SETTRIGGER *
 DECL|macro|DSP_CAP_MMAP
 macro_line|#&t;define DSP_CAP_MMAP&t;&t;0x00002000&t;/* Supports mmap() */
 DECL|macro|SNDCTL_DSP_GETTRIGGER
-mdefine_line|#define SNDCTL_DSP_GETTRIGGER&t;&t;_IOR (&squot;P&squot;,16, int)
+mdefine_line|#define SNDCTL_DSP_GETTRIGGER&t;&t;_SIOR (&squot;P&squot;,16, int)
 DECL|macro|SNDCTL_DSP_SETTRIGGER
-mdefine_line|#define SNDCTL_DSP_SETTRIGGER&t;&t;_IOW (&squot;P&squot;,16, int)
+mdefine_line|#define SNDCTL_DSP_SETTRIGGER&t;&t;_SIOW (&squot;P&squot;,16, int)
 DECL|macro|PCM_ENABLE_INPUT
 macro_line|#&t;define PCM_ENABLE_INPUT&t;&t;0x00000001
 DECL|macro|PCM_ENABLE_OUTPUT
@@ -1019,9 +1049,9 @@ DECL|typedef|count_info
 id|count_info
 suffix:semicolon
 DECL|macro|SNDCTL_DSP_GETIPTR
-mdefine_line|#define SNDCTL_DSP_GETIPTR&t;&t;_IOR (&squot;P&squot;,17, count_info)
+mdefine_line|#define SNDCTL_DSP_GETIPTR&t;&t;_SIOR (&squot;P&squot;,17, count_info)
 DECL|macro|SNDCTL_DSP_GETOPTR
-mdefine_line|#define SNDCTL_DSP_GETOPTR&t;&t;_IOR (&squot;P&squot;,18, count_info)
+mdefine_line|#define SNDCTL_DSP_GETOPTR&t;&t;_SIOR (&squot;P&squot;,18, count_info)
 DECL|struct|buffmem_desc
 r_typedef
 r_struct
@@ -1041,21 +1071,21 @@ DECL|typedef|buffmem_desc
 id|buffmem_desc
 suffix:semicolon
 DECL|macro|SNDCTL_DSP_MAPINBUF
-mdefine_line|#define SNDCTL_DSP_MAPINBUF&t;&t;_IOR (&squot;P&squot;, 19, buffmem_desc)
+mdefine_line|#define SNDCTL_DSP_MAPINBUF&t;&t;_SIOR (&squot;P&squot;, 19, buffmem_desc)
 DECL|macro|SNDCTL_DSP_MAPOUTBUF
-mdefine_line|#define SNDCTL_DSP_MAPOUTBUF&t;&t;_IOR (&squot;P&squot;, 20, buffmem_desc)
+mdefine_line|#define SNDCTL_DSP_MAPOUTBUF&t;&t;_SIOR (&squot;P&squot;, 20, buffmem_desc)
 DECL|macro|SNDCTL_DSP_SETSYNCRO
-mdefine_line|#define SNDCTL_DSP_SETSYNCRO&t;&t;_IO  (&squot;P&squot;, 21)
+mdefine_line|#define SNDCTL_DSP_SETSYNCRO&t;&t;_SIO  (&squot;P&squot;, 21)
 DECL|macro|SNDCTL_DSP_SETDUPLEX
-mdefine_line|#define SNDCTL_DSP_SETDUPLEX&t;&t;_IO  (&squot;P&squot;, 22)
+mdefine_line|#define SNDCTL_DSP_SETDUPLEX&t;&t;_SIO  (&squot;P&squot;, 22)
 DECL|macro|SOUND_PCM_READ_RATE
-mdefine_line|#define SOUND_PCM_READ_RATE&t;&t;_IOR (&squot;P&squot;, 2, int)
+mdefine_line|#define SOUND_PCM_READ_RATE&t;&t;_SIOR (&squot;P&squot;, 2, int)
 DECL|macro|SOUND_PCM_READ_CHANNELS
-mdefine_line|#define SOUND_PCM_READ_CHANNELS&t;&t;_IOR (&squot;P&squot;, 6, int)
+mdefine_line|#define SOUND_PCM_READ_CHANNELS&t;&t;_SIOR (&squot;P&squot;, 6, int)
 DECL|macro|SOUND_PCM_READ_BITS
-mdefine_line|#define SOUND_PCM_READ_BITS&t;&t;_IOR (&squot;P&squot;, 5, int)
+mdefine_line|#define SOUND_PCM_READ_BITS&t;&t;_SIOR (&squot;P&squot;, 5, int)
 DECL|macro|SOUND_PCM_READ_FILTER
-mdefine_line|#define SOUND_PCM_READ_FILTER&t;&t;_IOR (&squot;P&squot;, 7, int)
+mdefine_line|#define SOUND_PCM_READ_FILTER&t;&t;_SIOR (&squot;P&squot;, 7, int)
 multiline_comment|/* Some alias names */
 DECL|macro|SOUND_PCM_WRITE_BITS
 mdefine_line|#define SOUND_PCM_WRITE_BITS&t;&t;SNDCTL_DSP_SETFMT
@@ -1193,25 +1223,25 @@ DECL|typedef|copr_msg
 id|copr_msg
 suffix:semicolon
 DECL|macro|SNDCTL_COPR_RESET
-mdefine_line|#define SNDCTL_COPR_RESET             _IO  (&squot;C&squot;,  0)
+mdefine_line|#define SNDCTL_COPR_RESET             _SIO  (&squot;C&squot;,  0)
 DECL|macro|SNDCTL_COPR_LOAD
-mdefine_line|#define SNDCTL_COPR_LOAD&t;      _IOWR(&squot;C&squot;,  1, copr_buffer)
+mdefine_line|#define SNDCTL_COPR_LOAD&t;      _SIOWR(&squot;C&squot;,  1, copr_buffer)
 DECL|macro|SNDCTL_COPR_RDATA
-mdefine_line|#define SNDCTL_COPR_RDATA&t;      _IOWR(&squot;C&squot;,  2, copr_debug_buf)
+mdefine_line|#define SNDCTL_COPR_RDATA&t;      _SIOWR(&squot;C&squot;,  2, copr_debug_buf)
 DECL|macro|SNDCTL_COPR_RCODE
-mdefine_line|#define SNDCTL_COPR_RCODE&t;      _IOWR(&squot;C&squot;,  3, copr_debug_buf)
+mdefine_line|#define SNDCTL_COPR_RCODE&t;      _SIOWR(&squot;C&squot;,  3, copr_debug_buf)
 DECL|macro|SNDCTL_COPR_WDATA
-mdefine_line|#define SNDCTL_COPR_WDATA&t;      _IOW (&squot;C&squot;,  4, copr_debug_buf)
+mdefine_line|#define SNDCTL_COPR_WDATA&t;      _SIOW (&squot;C&squot;,  4, copr_debug_buf)
 DECL|macro|SNDCTL_COPR_WCODE
-mdefine_line|#define SNDCTL_COPR_WCODE&t;      _IOW (&squot;C&squot;,  5, copr_debug_buf)
+mdefine_line|#define SNDCTL_COPR_WCODE&t;      _SIOW (&squot;C&squot;,  5, copr_debug_buf)
 DECL|macro|SNDCTL_COPR_RUN
-mdefine_line|#define SNDCTL_COPR_RUN&t;&t;      _IOWR(&squot;C&squot;,  6, copr_debug_buf)
+mdefine_line|#define SNDCTL_COPR_RUN&t;&t;      _SIOWR(&squot;C&squot;,  6, copr_debug_buf)
 DECL|macro|SNDCTL_COPR_HALT
-mdefine_line|#define SNDCTL_COPR_HALT&t;      _IOWR(&squot;C&squot;,  7, copr_debug_buf)
+mdefine_line|#define SNDCTL_COPR_HALT&t;      _SIOWR(&squot;C&squot;,  7, copr_debug_buf)
 DECL|macro|SNDCTL_COPR_SENDMSG
-mdefine_line|#define SNDCTL_COPR_SENDMSG&t;      _IOWR(&squot;C&squot;,  8, copr_msg)
+mdefine_line|#define SNDCTL_COPR_SENDMSG&t;      _SIOWR(&squot;C&squot;,  8, copr_msg)
 DECL|macro|SNDCTL_COPR_RCVMSG
-mdefine_line|#define SNDCTL_COPR_RCVMSG&t;      _IOR (&squot;C&squot;,  9, copr_msg)
+mdefine_line|#define SNDCTL_COPR_RCVMSG&t;      _SIOR (&squot;C&squot;,  9, copr_msg)
 multiline_comment|/*********************************************&n; * IOCTL commands for /dev/mixer&n; */
 multiline_comment|/* &n; * Mixer devices&n; *&n; * There can be up to 20 different analog mixer channels. The&n; * SOUND_MIXER_NRDEVICES gives the currently supported maximum. &n; * The SOUND_MIXER_READ_DEVMASK returns a bitmask which tells&n; * the devices supported by the particular mixer.&n; */
 DECL|macro|SOUND_MIXER_NRDEVICES
@@ -1258,13 +1288,15 @@ mdefine_line|#define SOUND_ONOFF_MIN&t;&t;28
 DECL|macro|SOUND_ONOFF_MAX
 mdefine_line|#define SOUND_ONOFF_MAX&t;&t;30
 multiline_comment|/* Note!&t;Number 31 cannot be used since the sign bit is reserved */
+DECL|macro|SOUND_MIXER_NONE
+mdefine_line|#define SOUND_MIXER_NONE&t;31
 multiline_comment|/*&n; * The following unsupported macros are no longer functional.&n; * Use SOUND_MIXER_PRIVATE# macros in future.&n; */
 DECL|macro|SOUND_MIXER_ENHANCE
-mdefine_line|#define SOUND_MIXER_ENHANCE&t;31
+mdefine_line|#define SOUND_MIXER_ENHANCE&t;SOUND_MIXER_NONE
 DECL|macro|SOUND_MIXER_MUTE
-mdefine_line|#define SOUND_MIXER_MUTE&t;31
+mdefine_line|#define SOUND_MIXER_MUTE&t;SOUND_MIXER_NONE
 DECL|macro|SOUND_MIXER_LOUD
-mdefine_line|#define SOUND_MIXER_LOUD&t;31
+mdefine_line|#define SOUND_MIXER_LOUD&t;SOUND_MIXER_NONE
 DECL|macro|SOUND_DEVICE_LABELS
 mdefine_line|#define SOUND_DEVICE_LABELS&t;{&quot;Vol  &quot;, &quot;Bass &quot;, &quot;Trebl&quot;, &quot;Synth&quot;, &quot;Pcm  &quot;, &quot;Spkr &quot;, &quot;Line &quot;, &bslash;&n;&t;&t;&t;&t; &quot;Mic  &quot;, &quot;CD   &quot;, &quot;Mix  &quot;, &quot;Pcm2 &quot;, &quot;Rec  &quot;, &quot;IGain&quot;, &quot;OGain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;Line1&quot;, &quot;Line2&quot;, &quot;Line3&quot;}
 DECL|macro|SOUND_DEVICE_NAMES
@@ -1325,7 +1357,7 @@ mdefine_line|#define SOUND_MASK_ENHANCE&t;(1 &lt;&lt; SOUND_MIXER_ENHANCE)
 DECL|macro|SOUND_MASK_LOUD
 mdefine_line|#define SOUND_MASK_LOUD&t;&t;(1 &lt;&lt; SOUND_MIXER_LOUD)
 DECL|macro|MIXER_READ
-mdefine_line|#define MIXER_READ(dev)&t;&t;_IOR(&squot;M&squot;, dev, int)
+mdefine_line|#define MIXER_READ(dev)&t;&t;_SIOR(&squot;M&squot;, dev, int)
 DECL|macro|SOUND_MIXER_READ_VOLUME
 mdefine_line|#define SOUND_MIXER_READ_VOLUME&t;&t;MIXER_READ(SOUND_MIXER_VOLUME)
 DECL|macro|SOUND_MIXER_READ_BASS
@@ -1378,7 +1410,7 @@ mdefine_line|#define SOUND_MIXER_READ_STEREODEVS&t;MIXER_READ(SOUND_MIXER_STEREO
 DECL|macro|SOUND_MIXER_READ_CAPS
 mdefine_line|#define SOUND_MIXER_READ_CAPS&t;&t;MIXER_READ(SOUND_MIXER_CAPS)
 DECL|macro|MIXER_WRITE
-mdefine_line|#define MIXER_WRITE(dev)&t;&t;_IOWR(&squot;M&squot;, dev, int)
+mdefine_line|#define MIXER_WRITE(dev)&t;&t;_SIOWR(&squot;M&squot;, dev, int)
 DECL|macro|SOUND_MIXER_WRITE_VOLUME
 mdefine_line|#define SOUND_MIXER_WRITE_VOLUME&t;MIXER_WRITE(SOUND_MIXER_VOLUME)
 DECL|macro|SOUND_MIXER_WRITE_BASS
@@ -1441,12 +1473,49 @@ id|name
 l_int|32
 )braket
 suffix:semicolon
+DECL|member|modify_counter
+r_int
+id|modify_counter
+suffix:semicolon
+DECL|member|fillers
+r_int
+id|fillers
+(braket
+l_int|10
+)braket
+suffix:semicolon
 DECL|typedef|mixer_info
 )brace
 id|mixer_info
 suffix:semicolon
+DECL|struct|_old_mixer_info
+r_typedef
+r_struct
+id|_old_mixer_info
+multiline_comment|/* Obsolete */
+(brace
+DECL|member|id
+r_char
+id|id
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|32
+)braket
+suffix:semicolon
+DECL|typedef|_old_mixer_info
+)brace
+id|_old_mixer_info
+suffix:semicolon
 DECL|macro|SOUND_MIXER_INFO
-mdefine_line|#define SOUND_MIXER_INFO&t;&t;_IOR (&squot;M&squot;, 101, mixer_info)
+mdefine_line|#define SOUND_MIXER_INFO&t;&t;_SIOR (&squot;M&squot;, 101, mixer_info)
+DECL|macro|SOUND_OLD_MIXER_INFO
+mdefine_line|#define SOUND_OLD_MIXER_INFO&t;&t;_SIOR (&squot;M&squot;, 101, _old_mixer_info)
 multiline_comment|/*&n; * A mechanism for accessing &quot;proprietary&quot; mixer features. This method&n; * permits passing 128 bytes of arbitrary data between a mixer application&n; * and the mixer driver. Interpretation of the record is defined by&n; * the particular mixer driver.&n; */
 DECL|typedef|mixer_record
 r_typedef
@@ -1458,18 +1527,54 @@ l_int|128
 )braket
 suffix:semicolon
 DECL|macro|SOUND_MIXER_ACCESS
-mdefine_line|#define SOUND_MIXER_ACCESS&t;&t;_IOWR(&squot;M&squot;, 102, mixer_record)
+mdefine_line|#define SOUND_MIXER_ACCESS&t;&t;_SIOWR(&squot;M&squot;, 102, mixer_record)
 multiline_comment|/*&n; * The SOUND_MIXER_PRIVATE# commands can be redefined by low level drivers.&n; * These features can be used when accessing device specific features.&n; */
 DECL|macro|SOUND_MIXER_PRIVATE1
-mdefine_line|#define SOUND_MIXER_PRIVATE1&t;&t;_IOWR(&squot;M&squot;, 111, int)
+mdefine_line|#define SOUND_MIXER_PRIVATE1&t;&t;_SIOWR(&squot;M&squot;, 111, int)
 DECL|macro|SOUND_MIXER_PRIVATE2
-mdefine_line|#define SOUND_MIXER_PRIVATE2&t;&t;_IOWR(&squot;M&squot;, 112, int)
+mdefine_line|#define SOUND_MIXER_PRIVATE2&t;&t;_SIOWR(&squot;M&squot;, 112, int)
 DECL|macro|SOUND_MIXER_PRIVATE3
-mdefine_line|#define SOUND_MIXER_PRIVATE3&t;&t;_IOWR(&squot;M&squot;, 113, int)
+mdefine_line|#define SOUND_MIXER_PRIVATE3&t;&t;_SIOWR(&squot;M&squot;, 113, int)
 DECL|macro|SOUND_MIXER_PRIVATE4
-mdefine_line|#define SOUND_MIXER_PRIVATE4&t;&t;_IOWR(&squot;M&squot;, 114, int)
+mdefine_line|#define SOUND_MIXER_PRIVATE4&t;&t;_SIOWR(&squot;M&squot;, 114, int)
 DECL|macro|SOUND_MIXER_PRIVATE5
-mdefine_line|#define SOUND_MIXER_PRIVATE5&t;&t;_IOWR(&squot;M&squot;, 115, int)
+mdefine_line|#define SOUND_MIXER_PRIVATE5&t;&t;_SIOWR(&squot;M&squot;, 115, int)
+multiline_comment|/*&n; * SOUND_MIXER_GETLEVELS and SOUND_MIXER_SETLEVELS calls can be used&n; * for querying current mixer settings from the driver and for loading&n; * default volume settings _prior_ activating the mixer (loading&n; * doesn&squot;t affect current state of the mixer hardware). These calls&n; * are for internal use only.&n; */
+DECL|struct|mixer_vol_table
+r_typedef
+r_struct
+id|mixer_vol_table
+(brace
+DECL|member|num
+r_int
+id|num
+suffix:semicolon
+multiline_comment|/* Index to volume table */
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|32
+)braket
+suffix:semicolon
+DECL|member|levels
+r_int
+id|levels
+(braket
+l_int|32
+)braket
+suffix:semicolon
+DECL|typedef|mixer_vol_table
+)brace
+id|mixer_vol_table
+suffix:semicolon
+DECL|macro|SOUND_MIXER_GETLEVELS
+mdefine_line|#define SOUND_MIXER_GETLEVELS&t;&t;_SIOWR(&squot;M&squot;, 116, mixer_vol_table)
+DECL|macro|SOUND_MIXER_SETLEVELS
+mdefine_line|#define SOUND_MIXER_SETLEVELS&t;&t;_SIOWR(&squot;M&squot;, 117, mixer_vol_table)
+multiline_comment|/* &n; * An ioctl for identifying the driver version. It will return value&n; * of the SOUND_VERSION macro used when compiling the driver.&n; * This call was introduced in OSS version 3.6 and it will not work&n; * with earlier versions (returns EINVAL).&n; */
+DECL|macro|OSS_GETVERSION
+mdefine_line|#define OSS_GETVERSION&t;&t;&t;_SIOR (&squot;M&squot;, 118, int)
 multiline_comment|/*&n; * Level 2 event types for /dev/sequencer&n; */
 multiline_comment|/*&n; * The 4 most significant bits of byte 0 specify the class of&n; * the event: &n; *&n; *&t;0x8X = system level events,&n; *&t;0x9X = device/port specific events, event[1] = device/port,&n; *&t;&t;The last 4 bits give the subtype:&n; *&t;&t;&t;0x02&t;= Channel event (event[3] = chn).&n; *&t;&t;&t;0x01&t;= note event (event[4] = note).&n; *&t;&t;&t;(0x01 is not used alone but always with bit 0x02).&n; *&t;       event[2] = MIDI message code (0x80=note off etc.)&n; *&n; */
 DECL|macro|EV_SEQ_LOCAL

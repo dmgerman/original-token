@@ -334,4 +334,35 @@ mdefine_line|#define&t;CLK1MIS&t;0x80&t;&t;/* One clock missing */
 multiline_comment|/* Read Register 12 (lower byte of baud rate generator constant) */
 multiline_comment|/* Read Register 13 (upper byte of baud rate generator constant) */
 multiline_comment|/* Read Register 15 (value of WR 15) */
+multiline_comment|/* 8580/85180/85280 Enhanced SCC register definitions */
+multiline_comment|/* Write Register 7&squot; (SDLC/HDLC Programmable Enhancements) */
+DECL|macro|AUTOTXF
+mdefine_line|#define AUTOTXF&t;0x01&t;&t;/* Auto Tx Flag */
+DECL|macro|AUTOEOM
+mdefine_line|#define AUTOEOM 0x02&t;&t;/* Auto EOM Latch Reset */
+DECL|macro|AUTORTS
+mdefine_line|#define AUTORTS&t;0x04&t;&t;/* Auto RTS */
+DECL|macro|TXDNRZI
+mdefine_line|#define TXDNRZI 0x08&t;&t;/* TxD Pulled High in SDLC NRZI mode */
+DECL|macro|FASTDTR
+mdefine_line|#define FASTDTR 0x10&t;&t;/* Fast DTR/REQ Mode */
+DECL|macro|CRCCBCR
+mdefine_line|#define CRCCBCR&t;0x20&t;&t;/* CRC Check Bytes Completely Received */
+DECL|macro|EXTRDEN
+mdefine_line|#define EXTRDEN&t;0x40&t;&t;/* Extended Read Enabled */
+multiline_comment|/* Write Register 15 (external/status interrupt control) */
+DECL|macro|SHDLCE
+mdefine_line|#define SHDLCE&t;1&t;&t;/* SDLC/HDLC Enhancements Enable */
+DECL|macro|FIFOE
+mdefine_line|#define FIFOE&t;4&t;&t;/* FIFO Enable */
+multiline_comment|/* Read Register 6 (frame status FIFO) */
+DECL|macro|BCLSB
+mdefine_line|#define BCLSB&t;0xff&t;&t;/* LSB of 14 bits count */
+multiline_comment|/* Read Register 7 (frame status FIFO) */
+DECL|macro|BCMSB
+mdefine_line|#define BCMSB&t;0x3f&t;&t;/* MSB of 14 bits count */
+DECL|macro|FDA
+mdefine_line|#define FDA&t;0x40&t;&t;/* FIFO Data Available Status */
+DECL|macro|FOY
+mdefine_line|#define FOY&t;0x80&t;&t;/* FIFO Overflow Status */
 eof

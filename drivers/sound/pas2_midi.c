@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/pas2_midi.c&n; *&n; * The low level driver for the PAS Midi Interface.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_PAS) &amp;&amp; defined(CONFIG_MIDI)
 DECL|variable|midi_busy
 DECL|variable|input_opened
@@ -18,14 +18,6 @@ DECL|variable|my_dev
 r_static
 r_int
 id|my_dev
-suffix:semicolon
-DECL|variable|ofifo_bytes
-r_static
-r_volatile
-r_int
-id|ofifo_bytes
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tmp_queue
 r_static
@@ -128,9 +120,7 @@ l_string|&quot;PAS2: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Reset input and output FIFO pointers&n;   */
@@ -198,7 +188,7 @@ id|ctrl
 op_or_assign
 l_int|0x04
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Enable input&n;&t;&t;&t;&t; */
+multiline_comment|/* Enable input */
 id|input_opened
 op_assign
 l_int|1
@@ -220,9 +210,9 @@ id|ctrl
 op_or_assign
 l_int|0x08
 op_or
-multiline_comment|/*&n;&t;&t;&t;&t;   * Enable output&n;&t;&t;&t;&t; */
 l_int|0x10
 suffix:semicolon
+multiline_comment|/* Enable output */
 )brace
 id|pas_write
 (paren
@@ -238,10 +228,6 @@ l_int|0xff
 comma
 l_int|0x1B88
 )paren
-suffix:semicolon
-id|ofifo_bytes
-op_assign
-l_int|0
 suffix:semicolon
 id|restore_flags
 (paren
@@ -325,29 +311,25 @@ l_int|4
 op_amp
 l_int|0x0f
 suffix:semicolon
+multiline_comment|/*&n; * The MIDI FIFO space register and it&squot;s documentation is nonunderstandable.&n; * There seem to be no way to differentiate between buffer full and buffer&n; * empty situations. For this reason we don&squot;t never write the buffer&n; * completely full. In this way we can assume that 0 (or is it 15)&n; * means that the buffer is empty.&n; */
 r_if
 c_cond
 (paren
 id|fifo_space
-op_eq
-l_int|15
-op_logical_or
-(paren
+OL
+l_int|2
+op_logical_and
 id|fifo_space
-template_param
-l_int|13
+op_ne
+l_int|0
 )paren
-)paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * Fifo&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * full&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Full (almost) */
 (brace
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Upper layer will call again&n;&t;&t;&t;&t; */
+multiline_comment|/* Ask upper layers to retry after some time */
 )brace
-id|ofifo_bytes
-op_increment
-suffix:semicolon
 id|pas_write
 (paren
 id|midi_byte
@@ -430,7 +412,6 @@ id|midi_byte
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Put to the local queue&n;   */
 r_if
 c_cond
@@ -442,7 +423,7 @@ l_int|256
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Local queue full&n;&t;&t;&t;&t; */
+multiline_comment|/* Local queue full */
 id|save_flags
 (paren
 id|flags
@@ -517,9 +498,7 @@ id|arg
 (brace
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -531,10 +510,6 @@ r_int
 id|dev
 )paren
 (brace
-id|ofifo_bytes
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_static
 r_int
@@ -594,7 +569,6 @@ id|pas_midi_kick
 comma
 l_int|NULL
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * command&n;&t;&t;&t;&t; */
 id|pas_buffer_status
 comma
 l_int|NULL
@@ -673,7 +647,7 @@ id|stat
 op_amp
 l_int|0x04
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;   * Input byte available&n;&t;&t;&t;&t; */
+multiline_comment|/* Input data available */
 (brace
 id|incount
 op_assign
@@ -684,7 +658,7 @@ l_int|0x1B89
 op_amp
 l_int|0x0f
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Input FIFO count&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Input FIFO size */
 r_if
 c_cond
 (paren
@@ -732,7 +706,7 @@ id|pas_read
 l_int|0x178A
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Flush&n;&t;&t;&t;&t; */
+multiline_comment|/* Flush */
 )brace
 r_if
 c_cond
@@ -746,29 +720,6 @@ l_int|0x10
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|stat
-op_amp
-l_int|0x08
-)paren
-)paren
-(brace
-id|ofifo_bytes
-op_assign
-l_int|8
-suffix:semicolon
-)brace
-r_else
-(brace
-id|ofifo_bytes
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 id|save_flags
 (paren
 id|flags
@@ -815,7 +766,7 @@ l_int|0x40
 (brace
 id|printk
 (paren
-l_string|&quot;MIDI output overrun %x,%x,%d &bslash;n&quot;
+l_string|&quot;MIDI output overrun %x,%x&bslash;n&quot;
 comma
 id|pas_read
 (paren
@@ -823,13 +774,7 @@ l_int|0x1B89
 )paren
 comma
 id|stat
-comma
-id|ofifo_bytes
 )paren
-suffix:semicolon
-id|ofifo_bytes
-op_assign
-l_int|100
 suffix:semicolon
 )brace
 id|pas_write
@@ -839,7 +784,7 @@ comma
 l_int|0x1B88
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Acknowledge interrupts&n;&t;&t;&t;&t; */
+multiline_comment|/* Acknowledge interrupts */
 )brace
 macro_line|#endif
 eof

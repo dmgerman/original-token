@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/mpu401.c&n; *&n; * The low level driver for Roland MPU-401 compatible Midi cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -209,7 +209,9 @@ id|cmd
 (brace
 id|outb
 (paren
+(paren
 id|cmd
+)paren
 comma
 id|COMDPORT
 (paren
@@ -256,7 +258,9 @@ id|byte
 (brace
 id|outb
 (paren
+(paren
 id|byte
+)paren
 comma
 id|DATAPORT
 (paren
@@ -1582,9 +1586,7 @@ id|num_midis
 )paren
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 id|devc
 op_assign
@@ -1607,9 +1609,7 @@ l_string|&quot;MPU-401: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloading its microcode.&n;   */
@@ -1639,9 +1639,7 @@ l_string|&quot;MPU-401: Device not initialized properly&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 id|reset_mpu401
@@ -1972,9 +1970,7 @@ l_string|&quot;MPU-401 commands not possible in the UART mode&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Test for input since pending input seems to block the output.&n;   */
@@ -2019,9 +2015,7 @@ id|cmd-&gt;cmd
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 id|save_flags
@@ -2153,9 +2147,7 @@ suffix:semicolon
 multiline_comment|/*       printk (&quot;MPU: No ACK to command (0x%x)&bslash;n&quot;, (int) cmd-&gt;cmd); */
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -2231,9 +2223,7 @@ id|cmd-&gt;cmd
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -2328,9 +2318,7 @@ suffix:semicolon
 multiline_comment|/* printk (&quot;MPU: No response(%d) to command (0x%x)&bslash;n&quot;, i, (int) cmd-&gt;cmd);  */
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -2656,9 +2644,7 @@ l_string|&quot;MPU-401: Intelligent mode not supported by the HW&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 id|set_uart_mode
@@ -2668,12 +2654,8 @@ comma
 id|devc
 comma
 op_logical_neg
-id|get_user
+id|ioctl_in
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 )paren
 )paren
@@ -2740,6 +2722,18 @@ l_int|0
 r_return
 id|ret
 suffix:semicolon
+(brace
+r_char
+op_star
+id|fixit
+op_assign
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|rec
+suffix:semicolon
 id|copy_to_user
 (paren
 op_amp
@@ -2754,18 +2748,15 @@ id|arg
 l_int|0
 )braket
 comma
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|rec
+id|fixit
 comma
 r_sizeof
 (paren
 id|rec
 )paren
 )paren
+suffix:semicolon
+)brace
 suffix:semicolon
 r_return
 l_int|0
@@ -2777,9 +2768,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -2849,9 +2838,7 @@ id|num_midis
 )paren
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 id|devc
 op_assign
@@ -2870,6 +2857,21 @@ id|cmd
 r_case
 id|SNDCTL_SYNTH_INFO
 suffix:colon
+(brace
+r_char
+op_star
+id|fixit
+op_assign
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|mpu_synth_info
+(braket
+id|midi_dev
+)braket
+suffix:semicolon
 id|copy_to_user
 (paren
 op_amp
@@ -2884,11 +2886,7 @@ id|arg
 l_int|0
 )braket
 comma
-op_amp
-id|mpu_synth_info
-(braket
-id|midi_dev
-)braket
+id|fixit
 comma
 r_sizeof
 (paren
@@ -2896,6 +2894,8 @@ r_struct
 id|synth_info
 )paren
 )paren
+suffix:semicolon
+)brace
 suffix:semicolon
 r_return
 l_int|0
@@ -2914,9 +2914,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -2961,9 +2959,7 @@ id|num_midis
 (brace
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 )brace
 id|devc
@@ -3001,9 +2997,7 @@ l_string|&quot;MPU-401: Device not initialized properly&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 id|reset_mpu401
@@ -3025,9 +3019,7 @@ l_string|&quot;MPU-401: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 id|devc-&gt;mode
@@ -5274,9 +5266,7 @@ id|timer_open
 )paren
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 id|tmr_reset
 (paren
@@ -5747,19 +5737,20 @@ suffix:colon
 (brace
 r_int
 id|parm
-op_assign
-(paren
-r_int
-)paren
+suffix:semicolon
 id|get_user
 (paren
+id|parm
+comma
 (paren
 r_int
 op_star
 )paren
 id|arg
 )paren
-op_amp
+suffix:semicolon
+id|parm
+op_and_assign
 id|timer_caps
 suffix:semicolon
 r_if
@@ -5811,12 +5802,8 @@ suffix:semicolon
 multiline_comment|/* Use SMPTE sync */
 )brace
 r_return
-id|snd_ioctl_return
+id|ioctl_out
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 comma
 id|timer_mode
@@ -5905,12 +5892,8 @@ op_assign
 (paren
 r_int
 )paren
-id|get_user
+id|ioctl_in
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 )paren
 suffix:semicolon
@@ -5927,12 +5910,8 @@ id|val
 )paren
 suffix:semicolon
 r_return
-id|snd_ioctl_return
+id|ioctl_out
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 comma
 id|curr_timebase
@@ -5951,12 +5930,8 @@ op_assign
 (paren
 r_int
 )paren
-id|get_user
+id|ioctl_in
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 )paren
 suffix:semicolon
@@ -6030,12 +6005,8 @@ id|val
 suffix:semicolon
 )brace
 r_return
-id|snd_ioctl_return
+id|ioctl_out
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 comma
 id|curr_tempo
@@ -6050,12 +6021,8 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|get_user
+id|ioctl_in
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 )paren
 op_ne
@@ -6064,17 +6031,11 @@ l_int|0
 multiline_comment|/* Can&squot;t change */
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 r_return
-id|snd_ioctl_return
+id|ioctl_out
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 comma
 (paren
@@ -6093,6 +6054,19 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|SNDCTL_SEQ_GETTIME
+suffix:colon
+r_return
+id|ioctl_out
+(paren
+id|arg
+comma
+id|curr_ticks
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|SNDCTL_TMR_METRONOME
 suffix:colon
 id|metronome_mode
@@ -6100,12 +6074,8 @@ op_assign
 (paren
 r_int
 )paren
-id|get_user
+id|ioctl_in
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 )paren
 suffix:semicolon
@@ -6125,9 +6095,7 @@ suffix:semicolon
 )brace
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static

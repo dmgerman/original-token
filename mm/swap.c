@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
-macro_line|#include &lt;asm/segment.h&gt; /* for copy_to/from_user */
+macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * We identify three levels of free memory.  We never let free mem&n; * fall below the min_free_pages except for atomic allocations.  We&n; * start background swapping if we fall below free_pages_high free&n; * pages, and we begin intensive swapping below free_pages_low.&n; *&n; * Keep these three variables contiguous for sysctl(2).  &n; */

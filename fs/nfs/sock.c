@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/rpcsock.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 multiline_comment|/*&n; * Place a synchronous call to the NFS server, meaning that the process&n; * sleeps in rpc_call until it either receives a reply or a major timeout&n; * occurs.&n; * This is now merely a front-end to nfs_rpc_doio.&n; */

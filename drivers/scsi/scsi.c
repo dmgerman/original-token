@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel and wide scsi support added &n; *  by Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; */
+multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging &n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; */
 multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
 DECL|macro|_SCSI_SYMS_VER_
 mdefine_line|#define _SCSI_SYMS_VER_
@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -894,6 +895,16 @@ comma
 l_string|&quot;1.06&quot;
 comma
 id|BLIST_BORKEN
+)brace
+comma
+(brace
+l_string|&quot;IOMEGA&quot;
+comma
+l_string|&quot;Io20S         *F&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_KEY
 )brace
 comma
 (brace
@@ -4835,7 +4846,14 @@ OL
 id|timeout
 )paren
 (brace
-multiline_comment|/*&n;         * NOTE: This may be executed from within an interrupt&n;         * handler!  This is bad, but for now, it&squot;ll do.  The irq&n;         * level of the interrupt handler has been masked out by the&n;         * platform dependent interrupt handling code already, so the&n;         * sti() here will not cause another call to the SCSI host&squot;s&n;         * interrupt handler (assuming there is one irq-level per&n;         * host).&n;         */
+r_int
+id|ticks_remaining
+op_assign
+id|timeout
+op_minus
+id|jiffies
+suffix:semicolon
+multiline_comment|/*&n;&t; * NOTE: This may be executed from within an interrupt&n;&t; * handler!  This is bad, but for now, it&squot;ll do.  The irq&n;&t; * level of the interrupt handler has been masked out by the&n;&t; * platform dependent interrupt handling code already, so the&n;&t; * sti() here will not cause another call to the SCSI host&squot;s&n;&t; * interrupt handler (assuming there is one irq-level per&n;&t; * host).&n;&t; */
 id|sti
 c_func
 (paren
@@ -4844,14 +4862,24 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|jiffies
-OL
-id|timeout
+op_decrement
+id|ticks_remaining
+op_ge
+l_int|0
 )paren
-id|barrier
+id|udelay
 c_func
 (paren
+l_int|1000000
+op_div
+id|HZ
 )paren
+suffix:semicolon
+id|host-&gt;last_reset
+op_assign
+id|jiffies
+op_minus
+id|MIN_RESET_DELAY
 suffix:semicolon
 )brace
 id|restore_flags
@@ -11899,6 +11927,22 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|shpnt-&gt;select_queue_depths
+op_ne
+l_int|NULL
+)paren
+(paren
+id|shpnt-&gt;select_queue_depths
+)paren
+(paren
+id|shpnt
+comma
+id|scsi_devices
 )paren
 suffix:semicolon
 )brace

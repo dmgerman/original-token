@@ -30,7 +30,7 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &t;&quot;1.5.7&quot;

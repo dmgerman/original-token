@@ -1,12 +1,8 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &quot;local.h&quot;
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
-macro_line|#if defined(ISC) || defined(SCO) || defined(SVR42)
-DECL|macro|GENERIC_SYSV
-mdefine_line|#define GENERIC_SYSV
-macro_line|#endif
 macro_line|#ifndef SND_DEFAULT_ENABLE
 DECL|macro|SND_DEFAULT_ENABLE
 mdefine_line|#define SND_DEFAULT_ENABLE&t;1
@@ -15,12 +11,11 @@ macro_line|#ifndef MAX_REALTIME_FACTOR
 DECL|macro|MAX_REALTIME_FACTOR
 mdefine_line|#define MAX_REALTIME_FACTOR&t;4
 macro_line|#endif
-multiline_comment|/************* PCM DMA buffer sizes *******************/
-multiline_comment|/* If you are using high playback or recording speeds, the default buffer size&n;   is too small. DSP_BUFFSIZE must be 64k or less.&n;&n;   A rule of thumb is 64k for PAS16, 32k for PAS+, 16k for SB Pro and&n;   4k for SB.&n;&n;   If you change the DSP_BUFFSIZE, don&squot;t modify this file.&n;   Use the make config command instead. */
-macro_line|#ifndef DSP_BUFFSIZE
+multiline_comment|/*&n; * Use always 64k buffer size. There is no reason to use shorter.&n; */
 DECL|macro|DSP_BUFFSIZE
-mdefine_line|#define DSP_BUFFSIZE&t;&t;(4096)
-macro_line|#endif
+macro_line|#undef DSP_BUFFSIZE
+DECL|macro|DSP_BUFFSIZE
+mdefine_line|#define DSP_BUFFSIZE&t;&t;(16*1024)
 macro_line|#ifndef DSP_BUFFCOUNT
 DECL|macro|DSP_BUFFCOUNT
 mdefine_line|#define DSP_BUFFCOUNT&t;&t;1&t;/* 1 is recommended. */
@@ -162,7 +157,7 @@ DECL|member|card_subtype
 r_int
 id|card_subtype
 suffix:semicolon
-multiline_comment|/* Driver specific. Usually 0 */
+multiline_comment|/* Driver spesific. Usually 0 */
 )brace
 suffix:semicolon
 DECL|macro|SYNTH_MAX_VOICES
@@ -255,7 +250,7 @@ mdefine_line|#define DEB(x)
 macro_line|#endif
 macro_line|#ifndef DDB
 DECL|macro|DDB
-mdefine_line|#define DDB(x)
+mdefine_line|#define DDB(x) {}
 macro_line|#endif
 DECL|macro|TIMER_ARMED
 mdefine_line|#define TIMER_ARMED&t;121234

@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#include &quot;tables.h&quot;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|function|fat_put_inode
 r_void

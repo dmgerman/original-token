@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/pipe.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -7,6 +6,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Define this if you want SunOS compatibility wrt braindead&n; * select behaviour on FIFO&squot;s.&n; */
 DECL|macro|FIFO_SUNOS_BRAINDAMAGE
 macro_line|#undef FIFO_SUNOS_BRAINDAMAGE

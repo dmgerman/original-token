@@ -266,7 +266,7 @@ l_int|0x00
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Buffers to store audio card information&n; */
+multiline_comment|/*&n; * Buffers to store audio card informations&n; */
 DECL|variable|AudioExcelName
 r_static
 r_char
@@ -446,7 +446,9 @@ id|port
 multiline_comment|/*&n;     * Reset DSP&n;   */
 id|outb
 (paren
+(paren
 l_int|1
+)paren
 comma
 (paren
 id|port
@@ -461,7 +463,9 @@ id|tenmicrosec
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0
+)paren
 comma
 (paren
 id|port
@@ -531,7 +535,9 @@ l_int|0x80
 (brace
 id|outb
 (paren
+(paren
 id|cmd
+)paren
 comma
 id|port
 op_plus
@@ -1464,7 +1470,7 @@ id|hw_config-&gt;io_base
 comma
 l_int|0x0f
 comma
-l_string|&quot;AEDSP16 (SBPro)&quot;
+l_string|&quot;aedsp16 (sbpro)&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1595,7 +1601,7 @@ id|hw_config-&gt;io_base
 comma
 l_int|0x08
 comma
-l_string|&quot;AEDSP16 (MSS)&quot;
+l_string|&quot;aedsp16 (mss)&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1615,7 +1621,7 @@ id|AEDSP16_BASE
 comma
 l_int|0x0f
 comma
-l_string|&quot;AEDSP16 (SBPro)&quot;
+l_string|&quot;aedsp16 (sbpro)&quot;
 )paren
 suffix:semicolon
 id|ae_init
@@ -1733,7 +1739,7 @@ id|hw_config-&gt;io_base
 comma
 l_int|0x02
 comma
-l_string|&quot;AEDSP16 (mpu401)&quot;
+l_string|&quot;aedsp16 (mpu401)&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1757,7 +1763,7 @@ id|AEDSP16_BASE
 comma
 l_int|0x0f
 comma
-l_string|&quot;AEDSP16 (SBPro)&quot;
+l_string|&quot;aedsp16 (sbpro)&quot;
 )paren
 suffix:semicolon
 id|ae_init

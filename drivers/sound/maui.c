@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle Beach Maui and Tropez.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -99,7 +99,8 @@ suffix:semicolon
 macro_line|#endif
 DECL|variable|maui_sleeper
 r_static
-id|wait_handle
+r_struct
+id|wait_queue
 op_star
 id|maui_sleeper
 op_assign
@@ -203,8 +204,8 @@ id|HZ
 op_div
 l_int|10
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
@@ -213,7 +214,6 @@ op_plus
 id|HZ
 op_div
 l_int|10
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -226,11 +226,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|maui_sleep_flag.flags
+id|maui_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|maui_sleeper
@@ -241,7 +241,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|maui_sleep_flag.flags
+id|maui_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -254,12 +254,12 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|maui_sleep_flag.flags
+id|maui_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|maui_sleep_flag.flags
+id|maui_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -269,13 +269,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
@@ -329,7 +334,9 @@ id|STAT_TX_AVAIL
 (brace
 id|outb
 (paren
+(paren
 id|data
+)paren
 comma
 id|HOST_DATA_PORT
 )paren
@@ -739,7 +746,9 @@ suffix:semicolon
 )brace
 id|outb
 (paren
+(paren
 l_int|0x00
+)paren
 comma
 id|HOST_CTRL_PORT
 )paren
@@ -747,7 +756,9 @@ suffix:semicolon
 multiline_comment|/* Reset */
 id|outb
 (paren
+(paren
 id|bits
+)paren
 comma
 id|HOST_DATA_PORT
 )paren
@@ -755,9 +766,11 @@ suffix:semicolon
 multiline_comment|/* Set the IRQ bits */
 id|outb
 (paren
+(paren
 id|bits
 op_or
 l_int|0x80
+)paren
 comma
 id|HOST_DATA_PORT
 )paren
@@ -765,7 +778,9 @@ suffix:semicolon
 multiline_comment|/* Set the IRQ bits again? */
 id|outb
 (paren
+(paren
 l_int|0x80
+)paren
 comma
 id|HOST_CTRL_PORT
 )paren
@@ -773,15 +788,19 @@ suffix:semicolon
 multiline_comment|/* Leave reset */
 id|outb
 (paren
+(paren
 l_int|0x80
+)paren
 comma
 id|HOST_CTRL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* Leave reset */
 id|outb
+(paren
 (paren
 l_int|0xD0
+)paren
 comma
 id|HOST_CTRL_PORT
 )paren
@@ -816,7 +835,9 @@ l_int|0
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0x80
+)paren
 comma
 id|HOST_CTRL_PORT
 )paren
@@ -840,7 +861,9 @@ l_int|0
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0xE0
+)paren
 comma
 id|HOST_CTRL_PORT
 )paren
@@ -1059,9 +1082,7 @@ l_string|&quot;Maui error: Patch header too short&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 id|count
@@ -1149,10 +1170,15 @@ r_int
 r_char
 id|data
 suffix:semicolon
-id|data
-op_assign
-id|get_fs_byte
+id|get_user
 (paren
+id|data
+comma
+(paren
+r_int
+r_char
+op_star
+)paren
 op_amp
 (paren
 (paren
@@ -1182,9 +1208,7 @@ l_int|0x80
 )paren
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1199,9 +1223,7 @@ l_int|1
 )paren
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -1235,9 +1257,7 @@ id|i
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 r_return
@@ -1304,7 +1324,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-id|maui_sleep_flag.flags
+id|maui_sleep_flag.opts
 op_assign
 id|WK_NONE
 suffix:semicolon

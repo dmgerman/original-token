@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SBDSP) &amp;&amp; defined(CONFIG_MIDI)
@@ -82,9 +82,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 id|save_flags
 (paren
@@ -108,9 +106,7 @@ id|flags
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 id|devc-&gt;opened
@@ -150,9 +146,7 @@ l_int|0
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 id|devc-&gt;intr_active
@@ -278,9 +272,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 id|sb_dsp_command
 (paren
@@ -335,9 +327,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 id|sb_dsp_reset
 (paren
@@ -369,9 +359,7 @@ id|arg
 (brace
 r_return
 op_minus
-(paren
 id|EPERM
-)paren
 suffix:semicolon
 )brace
 r_void

@@ -70,7 +70,7 @@ mdefine_line|#define SG_SIZE&t;&t; 64
 DECL|macro|SG_SIZE_BIG
 mdefine_line|#define SG_SIZE_BIG&t; 252&t;       /* max. 8096 elements, 64k */
 DECL|macro|UPPER_DEVICE_QUEUE_LIMIT
-mdefine_line|#define UPPER_DEVICE_QUEUE_LIMIT 24    /* The limit we have to set for the &n;&t;&t;&t;&t;&t;* device queue to keep the broken &n;&t;&t;&t;&t;&t;* midlevel SCSI code from producing&n;&t;&t;&t;&t;&t;* bogus timeouts&n;&t;&t;&t;&t;&t;*/
+mdefine_line|#define UPPER_DEVICE_QUEUE_LIMIT 64    /* The limit we have to set for the &n;&t;&t;&t;&t;&t;* device queue to keep the broken &n;&t;&t;&t;&t;&t;* midlevel SCSI code from producing&n;&t;&t;&t;&t;&t;* bogus timeouts&n;&t;&t;&t;&t;&t;*/
 DECL|macro|TYPE_DISK_QUEUE
 mdefine_line|#define TYPE_DISK_QUEUE  16
 DECL|macro|TYPE_TAPE_QUEUE

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_mixer.h&n; * &n; * Definitions for the SB Pro and SB16 mixers&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added defines for the Sound Galaxy NX Pro mixer.&n; * &n; */
 DECL|macro|SBPRO_RECORDING_DEVICES
 mdefine_line|#define SBPRO_RECORDING_DEVICES&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | SOUND_MASK_CD)
@@ -18,7 +18,7 @@ mdefine_line|#define ES688_RECORDING_DEVICES SBPRO_RECORDING_DEVICES
 DECL|macro|ES688_MIXER_DEVICES
 mdefine_line|#define ES688_MIXER_DEVICES (SBPRO_MIXER_DEVICES|SOUND_MASK_LINE2|SOUND_MASK_SPEAKER)
 DECL|macro|SB16_MIXER_DEVICES
-mdefine_line|#define SB16_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | SOUND_MASK_OGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_VOLUME | SOUND_MASK_BASS | SOUND_MASK_TREBLE)
+mdefine_line|#define SB16_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | SOUND_MASK_OGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_VOLUME | SOUND_MASK_BASS | SOUND_MASK_TREBLE | &bslash;&n;&t;&t;&t;&t;&t;SOUND_MASK_IMIX)
 multiline_comment|/*&n; * Mixer registers&n; * &n; * NOTE!&t;RECORD_SRC == IN_FILTER&n; */
 multiline_comment|/* &n; * Mixer registers of SB Pro&n; */
 DECL|macro|VOC_VOL
@@ -1046,11 +1046,11 @@ c_func
 (paren
 id|SOUND_MIXER_IMIX
 comma
-l_int|0x00
+l_int|0x3c
 comma
 l_int|0
 comma
-l_int|0
+l_int|1
 comma
 l_int|0x00
 comma
@@ -1137,10 +1137,9 @@ macro_line|#ifdef SM_GAMES       /* Master volume is lower and PCM &amp; FM volu
 DECL|variable|default_levels
 r_static
 r_int
-r_int
 id|default_levels
 (braket
-id|SOUND_MIXER_NRDEVICES
+l_int|32
 )braket
 op_assign
 (brace
@@ -1200,10 +1199,9 @@ macro_line|#else  /* If the user selected just plain SB Pro */
 DECL|variable|default_levels
 r_static
 r_int
-r_int
 id|default_levels
 (braket
-id|SOUND_MIXER_NRDEVICES
+l_int|32
 )braket
 op_assign
 (brace
@@ -1234,7 +1232,7 @@ multiline_comment|/* Mic */
 l_int|0x4b4b
 comma
 multiline_comment|/* CD */
-l_int|0x4b4b
+l_int|0x0000
 comma
 multiline_comment|/* Recording monitor */
 l_int|0x4b4b

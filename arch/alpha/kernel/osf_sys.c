@@ -18,7 +18,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 r_extern
 r_int

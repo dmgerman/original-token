@@ -221,7 +221,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * GCC 2.5.8 doesn&squot;t always optimize correctly; see include/asm/segment.h&n; */
+multiline_comment|/*&n; * GCC 2.5.8 doesn&squot;t always optimize correctly; see include/asm/uaccess.h&n; */
 DECL|function|bad_user_access_length
 r_int
 id|bad_user_access_length

@@ -20,7 +20,7 @@ macro_line|#include &lt;linux/lp_m68k.h&gt;
 macro_line|#include &lt;linux/lp_intern.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; *  why bother around with the pio driver when the interrupt works;&n; *  so, for &quot;security&quot; reasons only, it&squot;s configurable here.&n; *  saves some bytes, at least ...&n; */
 DECL|macro|FORCE_POLLING

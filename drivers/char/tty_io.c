@@ -16,10 +16,9 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/scc.h&gt;
 macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;vt_kern.h&quot;
 macro_line|#include &quot;selection.h&quot;
@@ -7493,6 +7492,16 @@ l_int|1
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+(paren
+op_star
+id|p
+)paren
+op_member_access_from_pointer
+id|files
+)paren
 (brace
 r_for
 c_loop
@@ -8288,13 +8297,6 @@ c_func
 suffix:semicolon
 macro_line|#ifdef CONFIG_SERIAL
 id|rs_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SCC
-id|scc_init
 c_func
 (paren
 )paren

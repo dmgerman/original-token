@@ -20,8 +20,8 @@ r_typedef
 r_struct
 (brace
 DECL|member|membase
-id|byte
-op_star
+r_int
+r_int
 id|membase
 suffix:semicolon
 DECL|member|interrupt
@@ -355,10 +355,6 @@ id|i
 dot
 id|membase
 op_assign
-(paren
-id|byte
-op_star
-)paren
 id|ints
 (braket
 id|j

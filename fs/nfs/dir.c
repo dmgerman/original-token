@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;&t;/* for fs functions */
+macro_line|#include &lt;asm/uaccess.h&gt;&t;/* for fs functions */
 r_static
 r_int
 id|nfs_dir_open

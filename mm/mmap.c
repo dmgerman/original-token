@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * description of effects of mapping type and prot in current implementation.&n; * this is due to the limited x86 page protection hardware.  The expected&n; * behavior is in parens:&n; *&n; * map_type&t;prot&n; *&t;&t;PROT_NONE&t;PROT_READ&t;PROT_WRITE&t;PROT_EXEC&n; * MAP_SHARED&t;r: (no) no&t;r: (yes) yes&t;r: (no) yes&t;r: (no) yes&n; *&t;&t;w: (no) no&t;w: (no) no&t;w: (yes) yes&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) yes&t;x: (no) yes&t;x: (yes) yes&n; *&t;&t;&n; * MAP_PRIVATE&t;r: (no) no&t;r: (yes) yes&t;r: (no) yes&t;r: (no) yes&n; *&t;&t;w: (no) no&t;w: (no) no&t;w: (copy) copy&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) yes&t;x: (no) yes&t;x: (yes) yes&n; *&n; */

@@ -11,7 +11,6 @@ macro_line|#include &lt;linux/vfs.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
-macro_line|#include &lt;asm/semaphore.h&gt;
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
 multiline_comment|/* Fixed constants first: */
 DECL|macro|NR_OPEN
@@ -141,6 +140,7 @@ mdefine_line|#define FIBMAP&t;   _IO(0x00,1)&t;/* bmap access */
 DECL|macro|FIGETBSZ
 mdefine_line|#define FIGETBSZ   _IO(0x00,2)&t;/* get the block size used for bmap */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 r_extern
 r_void

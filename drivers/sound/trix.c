@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTrix AudioTrix Pro&n; * (MT-0002-PC Control Chip)&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sb.h&quot;
@@ -67,10 +67,12 @@ id|addr
 id|outb
 (paren
 (paren
+(paren
 r_int
 r_char
 )paren
 id|addr
+)paren
 comma
 l_int|0x390
 )paren
@@ -99,10 +101,12 @@ id|data
 id|outb
 (paren
 (paren
+(paren
 r_int
 r_char
 )paren
 id|addr
+)paren
 comma
 l_int|0x390
 )paren
@@ -111,10 +115,12 @@ multiline_comment|/* MT-0002-PC ASIC address */
 id|outb
 (paren
 (paren
+(paren
 r_int
 r_char
 )paren
 id|data
+)paren
 comma
 l_int|0x391
 )paren
@@ -158,7 +164,9 @@ suffix:semicolon
 multiline_comment|/* ??????? */
 id|outb
 (paren
+(paren
 l_int|0x01
+)paren
 comma
 id|base
 op_plus
@@ -168,7 +176,9 @@ suffix:semicolon
 multiline_comment|/* Clear the internal data pointer */
 id|outb
 (paren
+(paren
 l_int|0x00
+)paren
 comma
 id|base
 op_plus
@@ -179,7 +189,9 @@ multiline_comment|/* Restart */
 multiline_comment|/*&n;     *  Write the boot code to the RAM upload/download register.&n;     *  Each write increments the internal data pointer.&n;   */
 id|outb
 (paren
+(paren
 l_int|0x01
+)paren
 comma
 id|base
 op_plus
@@ -189,7 +201,9 @@ suffix:semicolon
 multiline_comment|/* Clear the internal data pointer */
 id|outb
 (paren
+(paren
 l_int|0x1A
+)paren
 comma
 l_int|0x390
 )paren
@@ -211,10 +225,12 @@ op_increment
 )paren
 id|outb
 (paren
+(paren
 id|trix_boot
 (braket
 id|i
 )braket
+)paren
 comma
 l_int|0x391
 )paren
@@ -236,14 +252,18 @@ op_increment
 multiline_comment|/* Clear up to first 16 bytes of data RAM */
 id|outb
 (paren
+(paren
 l_int|0x00
+)paren
 comma
 l_int|0x391
 )paren
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0x00
+)paren
 comma
 id|base
 op_plus
@@ -253,7 +273,9 @@ suffix:semicolon
 multiline_comment|/* Reset */
 id|outb
 (paren
+(paren
 l_int|0x50
+)paren
 comma
 l_int|0x390
 )paren
@@ -553,6 +575,10 @@ id|hw_config-&gt;dma2
 op_ne
 op_minus
 l_int|1
+op_logical_and
+id|hw_config-&gt;dma2
+op_ne
+id|hw_config-&gt;dma
 )paren
 r_if
 c_cond
@@ -752,6 +778,11 @@ id|dma2
 op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
+r_int
+id|old_num_mixers
+op_assign
+id|num_mixers
+suffix:semicolon
 id|trix_osp
 op_assign
 id|hw_config-&gt;osp
@@ -802,9 +833,11 @@ suffix:semicolon
 )brace
 id|outb
 (paren
+(paren
 id|bits
 op_or
 l_int|0x40
+)paren
 comma
 id|config_port
 )paren
@@ -893,7 +926,9 @@ suffix:semicolon
 )brace
 id|outb
 (paren
+(paren
 id|bits
+)paren
 comma
 id|config_port
 )paren
@@ -927,6 +962,47 @@ comma
 l_string|&quot;MSS config&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|num_mixers
+OG
+id|old_num_mixers
+)paren
+multiline_comment|/* Mixer got installed */
+(brace
+id|AD1848_REROUTE
+(paren
+id|SOUND_MIXER_LINE1
+comma
+id|SOUND_MIXER_LINE
+)paren
+suffix:semicolon
+multiline_comment|/* Line in */
+id|AD1848_REROUTE
+(paren
+id|SOUND_MIXER_LINE2
+comma
+id|SOUND_MIXER_CD
+)paren
+suffix:semicolon
+id|AD1848_REROUTE
+(paren
+id|SOUND_MIXER_LINE3
+comma
+id|SOUND_MIXER_SYNTH
+)paren
+suffix:semicolon
+multiline_comment|/* OPL4 */
+id|AD1848_REROUTE
+(paren
+id|SOUND_MIXER_SPEAKER
+comma
+id|SOUND_MIXER_ALTPCM
+)paren
+suffix:semicolon
+multiline_comment|/* SB */
+)brace
 )brace
 r_int
 DECL|function|probe_trix_sb
@@ -1136,7 +1212,7 @@ l_string|&quot;AudioTrix SB&quot;
 suffix:semicolon
 macro_line|#ifdef CONFIG_SBDSP
 r_return
-id|probe_sb
+id|sb_dsp_detect
 (paren
 id|hw_config
 )paren
@@ -1166,7 +1242,7 @@ id|SB_NO_MIXER
 op_or
 id|SB_NO_RECORDING
 suffix:semicolon
-id|attach_sb_card
+id|sb_dsp_init
 (paren
 id|hw_config
 )paren
@@ -1540,7 +1616,7 @@ id|hw_config
 )paren
 (brace
 macro_line|#ifdef CONFIG_SBDSP
-id|unload_sb
+id|sb_dsp_unload
 (paren
 id|hw_config
 )paren

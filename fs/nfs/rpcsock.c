@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/rpcsock.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|msleep
 mdefine_line|#define msleep(sec)&t;{ current-&gt;timeout = sec * HZ / 1000; &bslash;&n;&t;&t;&t;  current-&gt;state = TASK_INTERRUPTIBLE; &bslash;&n;&t;&t;&t;  schedule(); &bslash;&n;&t;&t;&t;}
 DECL|macro|DEBUG_RPC

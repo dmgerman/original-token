@@ -1,4 +1,4 @@
-multiline_comment|/************************************************************&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *&t;&t;    Linux EATA SCSI driver&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,&t;    *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  The driver currently:&t;&t;&t;&t;    *&n; *&t;-supports all ISA based EATA-DMA boards&t;&t;    *&n; *       like PM2011, PM2021, PM2041, PM3021                *&n; *&t;-supports all EISA based EATA-DMA boards&t;    *&n; *       like PM2012B, PM2022, PM2122, PM2322, PM2042,      *&n; *            PM3122, PM3222, PM3332                        *&n; *&t;-supports all PCI based EATA-DMA boards&t;&t;    *&n; *       like PM2024, PM2124, PM2044, PM2144, PM3224,       *&n; *            PM3334                                        *&n; *      -supports the Wide, Ultra Wide and Differential     *&n; *       versions of the boards                             *&n; *&t;-supports multiple HBAs with &amp; without IRQ sharing  *&n; *&t;-supports all SCSI channels on multi channel boards *&n; *      -supports ix86 and MIPS, untested on ALPHA          *&n; *&t;-needs identical IDs on all channels of a HBA&t;    * &n; *&t;-can be loaded as module&t;&t;&t;    *&n; *&t;-displays statistical and hardware information&t;    *&n; *&t; in /proc/scsi/eata_dma&t;&t;&t;&t;    *&n; *      -provides rudimentary latency measurement           * &n; *       possibilities via /proc/scsi/eata_dma/&lt;hostnum&gt;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  (c)1993-96 Michael Neuffer&t;&t;&t;            *&n; *             mike@i-Connect.Net                           *&n; *&t;       neuffer@mail.uni-mainz.de&t;            *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General&t;    *&n; *  Public License as published by the Free Software&t;    *&n; *  Foundation; either version 2 of the License, or&t;    *&n; *  (at your option) any later version.&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the&t;    *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.&t; See the GNU General Public License *&n; *  for more details.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  You should have received a copy of the GNU General&t;    *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,&t;    *&n; *  Cambridge, MA 02139, USA.&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and&t;    *&n; * support I need.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * Thanks also to Simon Shapiro, Greg Hosler and Mike       *&n; * Jagdis who did a lot of testing and found quite a number *&n; * of bugs during the development.                          *&n; ************************************************************&n; *  last change: 96/08/13                 OS: Linux 2.0.12  *&n; ************************************************************/
+multiline_comment|/************************************************************&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *&t;&t;    Linux EATA SCSI driver&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,&t;    *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  The driver currently:&t;&t;&t;&t;    *&n; *&t;-supports all ISA based EATA-DMA boards&t;&t;    *&n; *       like PM2011, PM2021, PM2041, PM3021                *&n; *&t;-supports all EISA based EATA-DMA boards&t;    *&n; *       like PM2012B, PM2022, PM2122, PM2322, PM2042,      *&n; *            PM3122, PM3222, PM3332                        *&n; *&t;-supports all PCI based EATA-DMA boards&t;&t;    *&n; *       like PM2024, PM2124, PM2044, PM2144, PM3224,       *&n; *            PM3334                                        *&n; *      -supports the Wide, Ultra Wide and Differential     *&n; *       versions of the boards                             *&n; *&t;-supports multiple HBAs with &amp; without IRQ sharing  *&n; *&t;-supports all SCSI channels on multi channel boards *&n; *      -supports ix86 and MIPS, untested on ALPHA          *&n; *&t;-needs identical IDs on all channels of a HBA&t;    * &n; *&t;-can be loaded as module&t;&t;&t;    *&n; *&t;-displays statistical and hardware information&t;    *&n; *&t; in /proc/scsi/eata_dma&t;&t;&t;&t;    *&n; *      -provides rudimentary latency measurement           * &n; *       possibilities via /proc/scsi/eata_dma/&lt;hostnum&gt;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  (c)1993-96 Michael Neuffer&t;&t;&t;            *&n; *             mike@i-Connect.Net                           *&n; *&t;       neuffer@mail.uni-mainz.de&t;            *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General&t;    *&n; *  Public License as published by the Free Software&t;    *&n; *  Foundation; either version 2 of the License, or&t;    *&n; *  (at your option) any later version.&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the&t;    *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.&t; See the GNU General Public License *&n; *  for more details.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  You should have received a copy of the GNU General&t;    *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,&t;    *&n; *  Cambridge, MA 02139, USA.&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and&t;    *&n; * support I need.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * Thanks also to Simon Shapiro, Greg Hosler and Mike       *&n; * Jagdis who did a lot of testing and found quite a number *&n; * of bugs during the development.                          *&n; ************************************************************&n; *  last change: 96/10/21                 OS: Linux 2.0.23  *&n; ************************************************************/
 multiline_comment|/* Look in eata_dma.h for configuration and revision information */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1373,25 +1373,13 @@ op_eq
 id|RESET
 )paren
 (brace
-id|ccb-&gt;status
-op_assign
-id|FREE
-suffix:semicolon
-id|eata_stat
-op_assign
-id|inb
-c_func
-(paren
-id|base
-op_plus
-id|HA_RSTATUS
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: int_handler, reseted command returned,&quot;
-l_string|&quot; freeing reseted queueslot&bslash;n&quot;
+l_string|&quot;eata_dma: int_handler, reseted command pid %ld returned&quot;
+l_string|&quot;&bslash;n&quot;
+comma
+id|cmd-&gt;pid
 )paren
 suffix:semicolon
 id|DBG
@@ -1407,8 +1395,6 @@ c_func
 l_int|1
 )paren
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 )brace
 id|eata_stat
@@ -2396,6 +2382,75 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|1
+comma
+id|sh
+op_assign
+id|first_HBA
+suffix:semicolon
+id|x
+op_le
+id|registered_HBAs
+suffix:semicolon
+id|x
+op_increment
+comma
+id|sh
+op_assign
+id|SD
+c_func
+(paren
+id|sh
+)paren
+op_member_access_from_pointer
+id|next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+(paren
+id|uint
+)paren
+id|sh-&gt;base
+op_plus
+id|HA_RAUXSTAT
+)paren
+op_amp
+id|HA_AIRQ
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;eata_dma: scsi%d interrupt pending in eata_queue.&bslash;n&quot;
+l_string|&quot;          Calling interrupt handler.&bslash;n&quot;
+comma
+id|sh-&gt;host_no
+)paren
+suffix:semicolon
+id|eata_int_handler
+c_func
+(paren
+id|sh-&gt;irq
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 id|queue_counter
 op_increment
 suffix:semicolon
@@ -2411,7 +2466,6 @@ id|sh
 op_assign
 id|cmd-&gt;host
 suffix:semicolon
-macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -2459,7 +2513,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* check for free slot */
 r_for
 c_loop
@@ -3619,7 +3672,6 @@ id|cmd-&gt;abort_reason
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Some interrupt controllers seem to loose interrupts */
 r_for
 c_loop
 (paren
@@ -4187,7 +4239,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_reset: exit, success.&bslash;n&quot;
+l_string|&quot;eata_reset: exit, pending.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -4207,7 +4259,7 @@ l_int|1
 suffix:semicolon
 r_return
 (paren
-id|SCSI_RESET_SUCCESS
+id|SCSI_RESET_PENDING
 )paren
 suffix:semicolon
 )brace
@@ -4576,12 +4628,11 @@ suffix:semicolon
 )brace
 )brace
 r_else
-multiline_comment|/* ISA forces us to limit the QS because of bounce buffers*/
+multiline_comment|/* ISA forces us to limit the queue depth because of the &n;&t;&t;    * bounce buffer memory overhead. I know this is cruel */
 id|device-&gt;queue_depth
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/* I know this is cruel */
 multiline_comment|/* &n;&t;     * It showed that we need to set an upper limit of commands &n;             * we can allow to  queue for a single device on the bus. &n;&t;     * If we get above that limit, the broken midlevel SCSI code &n;&t;     * will produce bogus timeouts and aborts en masse. :-(&n;&t;     */
 r_if
 c_cond
@@ -4594,6 +4645,19 @@ id|UPPER_DEVICE_QUEUE_LIMIT
 id|device-&gt;queue_depth
 op_assign
 id|UPPER_DEVICE_QUEUE_LIMIT
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|device-&gt;queue_depth
+op_eq
+l_int|0
+)paren
+(brace
+id|device-&gt;queue_depth
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|printk

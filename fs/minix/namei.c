@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * comment out this line if you want names &gt; info-&gt;s_namelen chars to be&n; * truncated. Else they will be disallowed (ENAMETOOLONG).&n; */
 multiline_comment|/* #define NO_TRUNCATE */
 DECL|function|namecompare

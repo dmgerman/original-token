@@ -4619,7 +4619,7 @@ r_return
 id|SCSI_RESET_WAKEUP
 suffix:semicolon
 )brace
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 DECL|function|seagate_st0x_biosparam

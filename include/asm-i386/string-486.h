@@ -1624,6 +1624,7 @@ id|__volatile__
 l_string|&quot;std&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&bslash;n&bslash;t&quot;
+l_string|&quot;cld&quot;
 suffix:colon
 multiline_comment|/* no output */
 suffix:colon

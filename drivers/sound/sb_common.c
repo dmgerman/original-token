@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SBDSP)
@@ -125,7 +125,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* I/O relocation bits */
-multiline_comment|/*&n; * Logitech SoundMan Wave specific initialization code&n; */
+multiline_comment|/*&n; * Logitech Soundman Wave specific initialization code&n; */
 macro_line|#ifdef SMW_MIDI0001_INCLUDED
 macro_line|#include &quot;smw-midi0001.h&quot;
 macro_line|#else
@@ -173,7 +173,7 @@ op_div
 l_int|10
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;   * The timeout is 0.1 seconds&n;&t;&t;&t;&t; */
-multiline_comment|/*&n;   * Note! the i&lt;500000 is an emergency exit. The sb_dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is an abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
+multiline_comment|/*&n;   * Note! the i&lt;500000 is an emergency exit. The sb_dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is a abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
 r_for
 c_loop
 (paren
@@ -210,7 +210,9 @@ l_int|0
 (brace
 id|outb
 (paren
+(paren
 id|val
+)paren
 comma
 id|DSP_COMMAND
 )paren
@@ -598,7 +600,9 @@ id|MDL_ESS
 )paren
 id|outb
 (paren
+(paren
 l_int|3
+)paren
 comma
 id|DSP_RESET
 )paren
@@ -607,7 +611,9 @@ multiline_comment|/* Reset FIFO too */
 r_else
 id|outb
 (paren
+(paren
 l_int|1
+)paren
 comma
 id|DSP_RESET
 )paren
@@ -619,7 +625,9 @@ id|devc-&gt;osp
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0
+)paren
 comma
 id|DSP_RESET
 )paren
@@ -875,11 +883,11 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
 r_static
 r_void
 DECL|function|sb16_set_mpu_port
 id|sb16_set_mpu_port
-c_func
 (paren
 id|sb_devc
 op_star
@@ -891,13 +899,12 @@ op_star
 id|hw_config
 )paren
 (brace
-multiline_comment|/*&n; * This routine initializes new MIDI port setup register of SB Vibra.&n; */
+multiline_comment|/*&n; * This routine initializes new MIDI port setup register of SB Vibra (CT2502).&n; */
 r_int
 r_char
 id|bits
 op_assign
 id|sb_getmixer
-c_func
 (paren
 id|devc
 comma
@@ -960,7 +967,6 @@ l_int|0x02
 suffix:semicolon
 multiline_comment|/* Disable MPU */
 id|printk
-c_func
 (paren
 l_string|&quot;SB16: Invalid MIDI I/O port %x&bslash;n&quot;
 comma
@@ -969,6 +975,7 @@ id|hw_config-&gt;io_base
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_static
 r_int
 DECL|function|sb16_set_irq_hw
@@ -1029,6 +1036,18 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+id|devc-&gt;type
+op_eq
+id|MDL_SBPNP
+)paren
+r_return
+l_int|1
+suffix:semicolon
 id|printk
 (paren
 l_string|&quot;SB16 IRQ%d is not possible&bslash;n&quot;
@@ -1153,21 +1172,27 @@ id|cli
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0xAF
+)paren
 comma
 l_int|0x201
 )paren
 suffix:semicolon
 id|outb
+(paren
 (paren
 l_int|0x50
+)paren
 comma
 l_int|0x201
 )paren
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|bits
+)paren
 comma
 l_int|0x201
 )paren
@@ -1624,11 +1649,34 @@ op_eq
 l_int|0x80
 )paren
 (brace
+r_char
+op_star
+id|chip
+op_assign
+l_string|&quot;ES688&quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ess_minor
+op_amp
+l_int|0x0f
+)paren
+op_ge
+l_int|8
+)paren
+id|chip
+op_assign
+l_string|&quot;ES1688&quot;
+suffix:semicolon
 id|sprintf
 (paren
 id|name
 comma
-l_string|&quot;ESS ES1688 AudioDrive (rev %d)&quot;
+l_string|&quot;ESS %s AudioDrive (rev %d)&quot;
+comma
+id|chip
 comma
 id|ess_minor
 op_amp
@@ -1994,10 +2042,6 @@ id|sb_info
 )paren
 suffix:semicolon
 multiline_comment|/* Zero everything */
-id|devc-&gt;osp
-op_assign
-id|hw_config-&gt;osp
-suffix:semicolon
 id|devc-&gt;type
 op_assign
 id|hw_config-&gt;card_subtype
@@ -2287,17 +2331,15 @@ id|sb_devc
 op_star
 id|devc
 suffix:semicolon
+r_int
+id|n
+suffix:semicolon
 r_char
 id|name
 (braket
 l_int|100
 )braket
 suffix:semicolon
-macro_line|#ifndef NO_SB_IRQ_TEST
-r_int
-id|n
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Check if we had detected a SB device earlier&n; */
 id|DDB
 (paren
@@ -2308,6 +2350,13 @@ comma
 id|hw_config-&gt;io_base
 )paren
 )paren
+suffix:semicolon
+id|name
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2367,13 +2416,33 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|devc-&gt;caps
+op_amp
+id|SB_NO_AUDIO
+op_logical_and
+id|devc-&gt;caps
+op_amp
+id|SB_NO_MIDI
+)paren
+op_logical_and
+id|hw_config-&gt;irq
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/* IRQ setup */
+r_if
+c_cond
+(paren
 id|snd_set_irq_handler
 (paren
 id|hw_config-&gt;irq
 comma
 id|sbintr
 comma
-l_string|&quot;sound blaster&quot;
+l_string|&quot;soundblaster&quot;
 comma
 id|devc-&gt;osp
 )paren
@@ -2387,13 +2456,6 @@ l_string|&quot;SB: Can&squot;t allocate IRQ%d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
-suffix:semicolon
-id|irq2devc
-(braket
-id|hw_config-&gt;irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2433,6 +2495,13 @@ id|snd_release_irq
 (paren
 id|devc-&gt;irq
 )paren
+suffix:semicolon
+id|irq2devc
+(braket
+id|hw_config-&gt;irq
+)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2517,19 +2586,23 @@ l_string|&quot;This is a genuine SB Pro&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifndef NO_SB_IRQ_TEST
 r_if
 c_cond
 (paren
 id|devc-&gt;major
-op_ne
+op_eq
 l_int|4
-op_logical_or
+op_logical_and
 id|devc-&gt;minor
-OG
+op_le
 l_int|11
 )paren
-multiline_comment|/* Not Sb16 v4.5 or v4.11 */
+multiline_comment|/* Won&squot;t work */
+id|devc-&gt;irq_ok
+op_assign
+l_int|1
+suffix:semicolon
+r_else
 (brace
 r_for
 c_loop
@@ -2592,17 +2665,10 @@ id|devc-&gt;irq_ok
 (brace
 id|printk
 (paren
-l_string|&quot;sb: Interrupt test on IRQ%d failed - device disabled&bslash;n&quot;
+l_string|&quot;sb: Interrupt test on IRQ%d failed - Propable IRQ conflict&bslash;n&quot;
 comma
 id|devc-&gt;irq
 )paren
-suffix:semicolon
-id|snd_release_irq
-(paren
-id|devc-&gt;irq
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_else
@@ -2619,14 +2685,15 @@ id|devc-&gt;irq
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+multiline_comment|/* IRQ setup */
+)brace
 id|request_region
 (paren
 id|hw_config-&gt;io_base
 comma
 l_int|16
 comma
-l_string|&quot;sound blaster&quot;
+l_string|&quot;soundblaster&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -2863,6 +2930,10 @@ id|devc-&gt;caps
 op_amp
 id|SB_NO_AUDIO
 )paren
+op_logical_and
+id|devc-&gt;dma8
+op_ge
+l_int|0
 )paren
 (brace
 r_if
@@ -2872,7 +2943,7 @@ id|sound_alloc_dma
 (paren
 id|devc-&gt;dma8
 comma
-l_string|&quot;Sound Blaster8&quot;
+l_string|&quot;SoundBlaster8&quot;
 )paren
 )paren
 (brace
@@ -2902,7 +2973,7 @@ id|sound_alloc_dma
 (paren
 id|devc-&gt;dma16
 comma
-l_string|&quot;Sound Blaster16&quot;
+l_string|&quot;SoundBlaster16&quot;
 )paren
 )paren
 (brace
@@ -2972,12 +3043,28 @@ op_mul_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+OG
+l_int|2
+op_logical_and
+id|irq
+OL
+l_int|16
+)paren
 id|devc
 op_assign
 id|irq2devc
 (braket
 id|irq
 )braket
+suffix:semicolon
+r_else
+id|devc
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -3025,6 +3112,25 @@ id|devc-&gt;dma16
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|devc-&gt;caps
+op_amp
+id|SB_NO_AUDIO
+op_logical_and
+id|devc-&gt;caps
+op_amp
+id|SB_NO_MIDI
+)paren
+op_logical_and
+id|devc-&gt;irq
+OG
+l_int|0
+)paren
+(brace
 id|snd_release_irq
 (paren
 id|devc-&gt;irq
@@ -3038,6 +3144,15 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+)brace
+r_else
+id|release_region
+(paren
+id|hw_config-&gt;io_base
+comma
+l_int|16
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Mixer access routines&n; */
 r_void
@@ -3073,6 +3188,7 @@ suffix:semicolon
 id|outb
 (paren
 (paren
+(paren
 r_int
 r_char
 )paren
@@ -3080,6 +3196,7 @@ r_char
 id|port
 op_amp
 l_int|0xff
+)paren
 )paren
 comma
 id|MIXER_ADDR
@@ -3090,7 +3207,13 @@ id|tenmicrosec
 id|devc-&gt;osp
 )paren
 suffix:semicolon
+id|tenmicrosec
+(paren
+id|devc-&gt;osp
+)paren
+suffix:semicolon
 id|outb
+(paren
 (paren
 (paren
 r_int
@@ -3101,8 +3224,14 @@ id|value
 op_amp
 l_int|0xff
 )paren
+)paren
 comma
 id|MIXER_DATA
+)paren
+suffix:semicolon
+id|tenmicrosec
+(paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
@@ -3150,6 +3279,7 @@ suffix:semicolon
 id|outb
 (paren
 (paren
+(paren
 r_int
 r_char
 )paren
@@ -3158,8 +3288,14 @@ id|port
 op_amp
 l_int|0xff
 )paren
+)paren
 comma
 id|MIXER_ADDR
+)paren
+suffix:semicolon
+id|tenmicrosec
+(paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
@@ -3225,9 +3361,11 @@ id|cli
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|addr
 op_amp
 l_int|0xff
+)paren
 comma
 id|base
 op_plus
@@ -3237,9 +3375,11 @@ suffix:semicolon
 multiline_comment|/* Low address bits */
 id|outb
 (paren
+(paren
 id|addr
 op_rshift
 l_int|8
+)paren
 comma
 id|base
 op_plus
@@ -3249,7 +3389,9 @@ suffix:semicolon
 multiline_comment|/* High address bits */
 id|outb
 (paren
+(paren
 id|val
+)paren
 comma
 id|base
 )paren
@@ -3297,9 +3439,11 @@ id|cli
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|addr
 op_amp
 l_int|0xff
+)paren
 comma
 id|base
 op_plus
@@ -3309,9 +3453,11 @@ suffix:semicolon
 multiline_comment|/* Low address bits */
 id|outb
 (paren
+(paren
 id|addr
 op_rshift
 l_int|8
+)paren
 comma
 id|base
 op_plus
@@ -3383,9 +3529,11 @@ l_int|7
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|control
 op_or
 l_int|3
+)paren
 comma
 id|mpu_base
 op_plus
@@ -3396,12 +3544,14 @@ multiline_comment|/* Set last two bits to 1 (?) */
 id|outb
 (paren
 (paren
+(paren
 id|control
 op_amp
 l_int|0xfe
 )paren
 op_or
 l_int|2
+)paren
 comma
 id|mpu_base
 op_plus
@@ -3431,9 +3581,11 @@ id|devc-&gt;osp
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|control
 op_amp
 l_int|0xfc
+)paren
 comma
 id|mpu_base
 op_plus
@@ -3703,9 +3855,11 @@ multiline_comment|/* control |= 0x20;      Uncomment this if you want to use IRQ
 macro_line|#endif
 id|outb
 (paren
+(paren
 id|control
 op_or
 l_int|0x03
+)paren
 comma
 id|mpu_base
 op_plus
@@ -4072,21 +4226,27 @@ id|cli
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0xAF
+)paren
 comma
 l_int|0x201
 )paren
 suffix:semicolon
 id|outb
+(paren
 (paren
 l_int|0x50
+)paren
 comma
 l_int|0x201
 )paren
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|bits
+)paren
 comma
 l_int|0x201
 )paren
@@ -4299,8 +4459,15 @@ op_assign
 op_minus
 id|devc-&gt;irq
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|devc-&gt;minor
+OG
+l_int|12
+)paren
+multiline_comment|/* What is Vibra&squot;s version??? */
 id|sb16_set_mpu_port
-c_func
 (paren
 id|devc
 comma

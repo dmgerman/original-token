@@ -1,9 +1,9 @@
 multiline_comment|/*&n; * sound/gus2_midi.c&n; *&n; * The low level driver for the GUS Midi Interface.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;gus_hw.h&quot;
-macro_line|#if defined(CONFIG_GUS) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_GUSHW) &amp;&amp; defined(CONFIG_MIDI)
 DECL|variable|midi_busy
 DECL|variable|input_opened
 r_static
@@ -153,14 +153,14 @@ l_string|&quot;GUS: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 id|outb
 (paren
+(paren
 id|MIDI_RESET
+)paren
 comma
 id|u_MidiControl
 )paren
@@ -200,7 +200,9 @@ suffix:semicolon
 )brace
 id|outb
 (paren
+(paren
 id|gus_midi_control
+)paren
 comma
 id|u_MidiControl
 )paren
@@ -276,7 +278,9 @@ l_int|1
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|midi_byte
+)paren
 comma
 id|u_MidiData
 )paren
@@ -291,7 +295,9 @@ id|MIDI_ENABLE_XMIT
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|gus_midi_control
+)paren
 comma
 id|u_MidiControl
 )paren
@@ -318,7 +324,9 @@ id|dev
 multiline_comment|/*&n;   * Reset FIFO pointers, disable intrs&n;   */
 id|outb
 (paren
+(paren
 id|MIDI_RESET
+)paren
 comma
 id|u_MidiControl
 )paren
@@ -486,9 +494,7 @@ id|arg
 (brace
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -651,7 +657,9 @@ suffix:semicolon
 )brace
 id|outb
 (paren
+(paren
 id|MIDI_RESET
+)paren
 comma
 id|u_MidiControl
 )paren
@@ -802,14 +810,18 @@ id|MIDI_ENABLE_XMIT
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|gus_midi_control
+)paren
 comma
 id|u_MidiControl
 )paren
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|gus_midi_control
+)paren
 comma
 id|u_MidiControl
 )paren

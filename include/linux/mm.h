@@ -18,49 +18,6 @@ id|high_memory
 suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-DECL|macro|VERIFY_READ
-mdefine_line|#define VERIFY_READ 0
-DECL|macro|VERIFY_WRITE
-mdefine_line|#define VERIFY_WRITE 1
-DECL|function|verify_area
-r_extern
-r_inline
-r_int
-id|verify_area
-c_func
-(paren
-r_int
-id|type
-comma
-r_const
-r_void
-op_star
-id|addr
-comma
-r_int
-r_int
-id|size
-)paren
-(brace
-r_return
-id|access_ok
-c_func
-(paren
-id|type
-comma
-id|addr
-comma
-id|size
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-op_minus
-id|EFAULT
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Linux kernel virtual memory manager primitives.&n; * The idea being to have a &quot;virtual&quot; mm in the same way&n; * we have a virtual fs - giving a cleaner interface to the&n; * mm details, and allowing different kinds of memory mappings&n; * (from shared memory to executable loading to arbitrary&n; * mmap() functions).&n; */
 multiline_comment|/*&n; * This struct defines a memory VMM memory area. There is one of these&n; * per VM-area/task.  A VM area is any part of the process virtual memory&n; * space that has a special rule for the page-fault handlers (ie a shared&n; * library, the executable area etc).&n; */
 DECL|struct|vm_area_struct

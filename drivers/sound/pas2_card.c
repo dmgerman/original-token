@@ -164,11 +164,6 @@ id|pas_sb_base
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|pas_osp
-r_int
-op_star
-id|pas_osp
-suffix:semicolon
 DECL|variable|pas_model
 r_char
 id|pas_model
@@ -238,7 +233,9 @@ id|ioaddr
 (brace
 id|outb
 (paren
+(paren
 id|data
+)paren
 comma
 id|ioaddr
 op_xor
@@ -696,14 +693,18 @@ multiline_comment|/*&n;     * This fixes the timing problems of the PAS due to t
 macro_line|#ifdef SYMPHONY_PAS
 id|outb
 (paren
+(paren
 l_int|0x05
+)paren
 comma
 l_int|0xa8
 )paren
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0x60
+)paren
 comma
 l_int|0xa9
 )paren
@@ -932,7 +933,9 @@ suffix:semicolon
 multiline_comment|/*&n;   * WARNING: Setting an option like W:1 or so that disables warm boot reset&n;   * of the card will screw up this detect code something fierce. Adding code&n;   * to handle this means possibly interfering with other cards on the bus if&n;   * you have something on base port 0x388. SO be forewarned.&n;   */
 id|outb
 (paren
+(paren
 l_int|0xBC
+)paren
 comma
 l_int|0x9A01
 )paren
@@ -940,9 +943,11 @@ suffix:semicolon
 multiline_comment|/* Activate first board */
 id|outb
 (paren
+(paren
 id|hw_config-&gt;io_base
 op_rshift
 l_int|2
+)paren
 comma
 l_int|0x9A01
 )paren
@@ -1042,10 +1047,6 @@ id|hw_config
 id|pas_irq
 op_assign
 id|hw_config-&gt;irq
-suffix:semicolon
-id|pas_osp
-op_assign
-id|hw_config-&gt;osp
 suffix:semicolon
 r_if
 c_cond
@@ -1150,10 +1151,6 @@ op_star
 id|hw_config
 )paren
 (brace
-id|pas_osp
-op_assign
-id|hw_config-&gt;osp
-suffix:semicolon
 r_return
 id|detect_pas_hw
 (paren

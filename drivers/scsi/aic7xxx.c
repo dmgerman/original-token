@@ -1,3 +1,5 @@
+DECL|macro|EXPERIMENTAL_FLAGS
+mdefine_line|#define EXPERIMENTAL_FLAGS 0
 multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Sources include the Adaptec 1740 driver (aha1740.c), the Ultrastor 24F&n; * driver (ultrastor.c), various Linux kernel source, the Adaptec EISA&n; * config file (!adp7771.cfg), the Adaptec AHA-2740A Series User&squot;s Guide,&n; * the Linux Kernel Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; * the Adaptec 1542 driver (aha1542.c), the Adaptec EISA overlay file&n; * (adp7770.ovl), the Adaptec AHA-2740 Series Technical Reference Manual,&n; * the Adaptec AIC-7770 Data Book, the ANSI SCSI specification, the&n; * ANSI SCSI-2 specification (draft 10c), ...&n; *&n; * ----------------------------------------------------------------&n; *  Modified to include support for wide and twin bus adapters,&n; *  DMAing of SCBs, tagged queueing, IRQ sharing, bug fixes,&n; *  SCB paging, and other rework of the code.&n; *&n; *  Parts of this driver are based on the FreeBSD driver by Justin&n; *  T. Gibbs.&n; *&n; *  A Boot time option was also added for not resetting the scsi bus.&n; *&n; *    Form:  aic7xxx=extended,no_reset&n; *&n; *    -- Daniel M. Eischen, deischen@iworks.InterWorks.org, 07/07/96&n; *&n; *  $Id: aic7xxx.c,v 4.0 1996/10/13 08:23:42 deang Exp $&n; *-M*************************************************************************/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
@@ -14120,7 +14122,7 @@ op_amp
 id|p-&gt;scb_usage
 )paren
 suffix:semicolon
-macro_line|#ifdef AIC7XXX_SHARE_SCBS
+macro_line|#if defined(CONFIG_PCI) &amp;&amp; defined(AIC7XXX_SHARE_SCBS)
 r_if
 c_cond
 (paren
@@ -14466,7 +14468,7 @@ op_plus
 id|base
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if EXPERIMENTAL_FLAGS
 id|outb
 c_func
 (paren
@@ -14592,7 +14594,7 @@ op_plus
 id|base
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if EXPERIMENTAL_FLAGS
 id|outb
 c_func
 (paren

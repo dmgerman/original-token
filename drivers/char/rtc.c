@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; *&t;We sponge a minor off of the misc major. No need slurping&n; *&t;up another valuable major dev number for this.&n; */
 DECL|macro|RTC_MINOR
@@ -34,7 +34,8 @@ id|rtc_irq_timer
 suffix:semicolon
 r_static
 r_int
-id|rtc_lseek
+r_int
+id|rtc_llseek
 c_func
 (paren
 r_struct
@@ -47,7 +48,7 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+id|loff_t
 id|offset
 comma
 r_int
@@ -73,6 +74,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -331,10 +333,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;Now all the various file operations that we export.&n; */
-DECL|function|rtc_lseek
+DECL|function|rtc_llseek
 r_static
 r_int
-id|rtc_lseek
+r_int
+id|rtc_llseek
 c_func
 (paren
 r_struct
@@ -347,7 +350,7 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+id|loff_t
 id|offset
 comma
 r_int
@@ -379,6 +382,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -2000,7 +2004,7 @@ id|file_operations
 id|rtc_fops
 op_assign
 (brace
-id|rtc_lseek
+id|rtc_llseek
 comma
 id|rtc_read
 comma

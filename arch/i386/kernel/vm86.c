@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Known problems:&n; *&n; * Interrupt handling is not guaranteed:&n; * - a real x86 will disable all interrupts for one instruction&n; *   after a &quot;mov ss,xx&quot; to make stack handling atomic even without&n; *   the &squot;lss&squot; instruction. We can&squot;t guarantee this in v86 mode,&n; *   as the next instruction might result in a page fault or similar.&n; * - a real x86 will have interrupts disabled for one instruction&n; *   past the &squot;sti&squot; that enables them. We don&squot;t bother with all the&n; *   details yet..&n; *&n; * Hopefully these problems do not actually matter for anything.&n; */

@@ -1,9 +1,3 @@
-DECL|macro|ALLOW_SELECT
-mdefine_line|#define ALLOW_SELECT
-DECL|macro|NO_INLINE_ASM
-macro_line|#undef NO_INLINE_ASM
-DECL|macro|SHORT_BANNERS
-mdefine_line|#define SHORT_BANNERS
 macro_line|#ifdef MODULE
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -21,7 +15,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
@@ -40,9 +34,9 @@ DECL|struct|snd_wait
 r_struct
 id|snd_wait
 (brace
-DECL|member|flags
+DECL|member|opts
 r_int
-id|flags
+id|opts
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -90,8 +84,6 @@ r_int
 id|chn
 )paren
 suffix:semicolon
-DECL|macro|RUNTIME_DMA_ALLOC
-mdefine_line|#define RUNTIME_DMA_ALLOC
 r_extern
 id|caddr_t
 id|sound_mem_blocks
@@ -103,8 +95,4 @@ r_extern
 r_int
 id|sound_nblocks
 suffix:semicolon
-DECL|macro|PSEUDO_DMA_AUTOINIT
-macro_line|#undef PSEUDO_DMA_AUTOINIT
-DECL|macro|ALLOW_BUFFER_MAPPING
-mdefine_line|#define ALLOW_BUFFER_MAPPING
 eof

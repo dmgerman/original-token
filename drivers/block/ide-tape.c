@@ -20,7 +20,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; *&t;Main Linux ide driver include file&n; *&n; *&t;Automatically includes our include file - ide-tape.h.&n; */
 macro_line|#include &quot;ide.h&quot;&t;&t;

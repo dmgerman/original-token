@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 DECL|macro|_BLOCKABLE
@@ -730,12 +730,21 @@ DECL|macro|__CODE
 mdefine_line|#define __CODE ((unsigned long)(frame+24))
 DECL|macro|CODE
 mdefine_line|#define CODE(x) ((unsigned long *) ((x)+__CODE))
+r_if
+c_cond
+(paren
 id|put_user
 c_func
 (paren
 id|__CODE
 comma
 id|frame
+)paren
+)paren
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 r_if
@@ -777,7 +786,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|macro|PUT_SEG
-mdefine_line|#define PUT_SEG(seg, mem) &bslash;&n;__asm__(&quot;mov %%&quot; #seg&quot;,%w0&quot;:&quot;=r&quot; (tmp):&quot;0&quot; (tmp)); *(mem) = tmp;
+mdefine_line|#define PUT_SEG(seg, mem) &bslash;&n;__asm__(&quot;mov %%&quot; #seg&quot;,%w0&quot;:&quot;=r&quot; (tmp):&quot;0&quot; (tmp)); put_user(tmp,mem);
 id|PUT_SEG
 c_func
 (paren

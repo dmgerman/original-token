@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/midi_synth.c&n; *&n; * High level midi sequencer manager for dumb MIDI interfaces.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -11,7 +11,8 @@ DECL|macro|_MIDI_SYNTH_C_
 mdefine_line|#define _MIDI_SYNTH_C_
 DECL|variable|sysex_sleeper
 r_static
-id|wait_handle
+r_struct
+id|wait_queue
 op_star
 id|sysex_sleeper
 op_assign
@@ -359,7 +360,7 @@ l_int|0
 suffix:semicolon
 id|timeout
 OL
-l_int|32000
+l_int|3200
 suffix:semicolon
 id|timeout
 op_increment
@@ -372,7 +373,7 @@ id|midi_devs
 id|midi_dev
 )braket
 op_member_access_from_pointer
-id|putc
+id|outputc
 (paren
 id|midi_dev
 comma
@@ -922,7 +923,7 @@ id|midi_devs
 id|orig_dev
 )braket
 op_member_access_from_pointer
-id|putc
+id|outputc
 (paren
 id|orig_dev
 comma
@@ -980,6 +981,22 @@ id|cmd
 r_case
 id|SNDCTL_SYNTH_INFO
 suffix:colon
+(brace
+r_char
+op_star
+id|fixit
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|synth_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|info
+suffix:semicolon
 id|copy_to_user
 (paren
 op_amp
@@ -994,12 +1011,7 @@ id|arg
 l_int|0
 )braket
 comma
-id|synth_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|info
+id|fixit
 comma
 r_sizeof
 (paren
@@ -1007,6 +1019,8 @@ r_struct
 id|synth_info
 )paren
 )paren
+suffix:semicolon
+)brace
 suffix:semicolon
 r_return
 l_int|0
@@ -1025,9 +1039,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -1346,7 +1358,8 @@ id|instr_no
 template_param
 l_int|127
 )paren
-r_return
+id|instr_no
+op_assign
 l_int|0
 suffix:semicolon
 r_if
@@ -1659,9 +1672,7 @@ id|num_midis
 )paren
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 id|midi2synth
 (braket
@@ -1756,7 +1767,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-id|sysex_sleep_flag.flags
+id|sysex_sleep_flag.opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -1793,7 +1804,7 @@ id|midi_devs
 id|orig_dev
 )braket
 op_member_access_from_pointer
-id|putc
+id|outputc
 (paren
 id|orig_dev
 comma
@@ -1938,9 +1949,7 @@ id|format
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -1958,9 +1967,7 @@ l_string|&quot;MIDI Error: Patch header too short&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 id|count
@@ -2029,7 +2036,7 @@ id|src_offs
 op_assign
 l_int|0
 suffix:semicolon
-id|sysex_sleep_flag.flags
+id|sysex_sleep_flag.opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -2045,8 +2052,11 @@ OL
 id|left
 op_logical_and
 op_logical_neg
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 suffix:semicolon
 id|i
@@ -2057,10 +2067,15 @@ r_int
 r_char
 id|data
 suffix:semicolon
-id|data
-op_assign
-id|get_fs_byte
+id|get_user
 (paren
+id|data
+comma
+(paren
+r_int
+r_char
+op_star
+)paren
 op_amp
 (paren
 (paren
@@ -2123,9 +2138,7 @@ l_string|&quot;Error: Sysex start missing&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -2138,7 +2151,7 @@ id|midi_devs
 id|orig_dev
 )braket
 op_member_access_from_pointer
-id|putc
+id|outputc
 (paren
 id|orig_dev
 comma
@@ -2154,8 +2167,11 @@ l_int|0xff
 )paren
 op_logical_and
 op_logical_neg
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 (brace
@@ -2168,15 +2184,14 @@ c_cond
 (paren
 l_int|1
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|1
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -2189,11 +2204,11 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
-id|sysex_sleep_flag.flags
+id|sysex_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|sysex_sleeper
@@ -2204,7 +2219,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|sysex_sleep_flag.flags
+id|sysex_sleep_flag.opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -2217,12 +2232,12 @@ id|jiffies
 op_ge
 id|tlimit
 )paren
-id|sysex_sleep_flag.flags
+id|sysex_sleep_flag.opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
 )brace
-id|sysex_sleep_flag.flags
+id|sysex_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -2583,9 +2598,7 @@ id|rec
 (brace
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_void
@@ -2918,7 +2931,7 @@ id|midi_devs
 id|orig_dev
 )braket
 op_member_access_from_pointer
-id|putc
+id|outputc
 (paren
 id|orig_dev
 comma
@@ -2958,7 +2971,7 @@ id|midi_devs
 id|orig_dev
 )braket
 op_member_access_from_pointer
-id|putc
+id|outputc
 (paren
 id|orig_dev
 comma

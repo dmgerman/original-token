@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  linux/fs/ufs/ufs_symlink.c&n; *&n; * Copyright (C) 19
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 r_static
 r_int
 DECL|function|ufs_readlink

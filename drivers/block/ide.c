@@ -21,7 +21,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/bios32.h&gt;
@@ -9526,7 +9526,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * EATA SCSI controllers do a hardware ATA emulation:  ignore them&n;&t; */
+macro_line|#if defined (CONFIG_SCSI_EATA_DMA) || defined (CONFIG_SCSI_EATA_PIO)
+multiline_comment|/*&n;&t; * EATA SCSI controllers do a hardware ATA emulation:  &n;&t; * Ignore them if there is a driver for them available.&n;&t; */
 r_if
 c_cond
 (paren
@@ -9580,6 +9581,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; *  WIN_IDENTIFY returns little-endian info,&n;&t; *  WIN_PIDENTIFY *usually* returns little-endian info.&n;&t; */
 id|bswap
 op_assign

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/patmgr.c&n; *&n; * The patch manager interface for the /dev/sequencer&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|PATMGR_C
 mdefine_line|#define PATMGR_C
@@ -7,7 +7,8 @@ macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SEQUENCER)
 DECL|variable|server_procs
 r_static
-id|wait_handle
+r_struct
+id|wait_queue
 op_star
 id|server_procs
 (braket
@@ -79,7 +80,8 @@ DECL|macro|S_TO_A
 mdefine_line|#define S_TO_A &t;2
 DECL|variable|appl_proc
 r_static
-id|wait_handle
+r_struct
+id|wait_queue
 op_star
 id|appl_proc
 op_assign
@@ -117,9 +119,7 @@ id|num_synths
 )paren
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -131,9 +131,7 @@ id|dev
 )paren
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 id|pmgr_opened
 (braket
@@ -147,7 +145,7 @@ id|server_wait_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -190,25 +188,23 @@ op_member_access_from_pointer
 id|parm1
 op_assign
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|appl_wait_flag.flags
+id|appl_wait_flag.opts
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
-id|appl_wait_flag.flags
+id|appl_wait_flag.opts
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|module_wake_up
+id|wake_up
 (paren
 op_amp
 id|appl_proc
@@ -275,9 +271,7 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 r_while
@@ -287,8 +281,11 @@ op_logical_neg
 id|ok
 op_logical_and
 op_logical_neg
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 (brace
@@ -320,8 +317,11 @@ id|A_TO_S
 )paren
 op_logical_and
 op_logical_neg
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 (brace
@@ -330,11 +330,11 @@ id|server_wait_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|server_procs
@@ -348,7 +348,7 @@ id|server_wait_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -371,6 +371,20 @@ op_eq
 id|A_TO_S
 )paren
 (brace
+(brace
+r_char
+op_star
+id|fixit
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|mbox
+(braket
+id|dev
+)braket
+suffix:semicolon
 id|copy_to_user
 (paren
 op_amp
@@ -381,17 +395,12 @@ id|buf
 l_int|0
 )braket
 comma
-(paren
-r_char
-op_star
-)paren
-id|mbox
-(braket
-id|dev
-)braket
+id|fixit
 comma
 id|count
 )paren
+suffix:semicolon
+)brace
 suffix:semicolon
 id|msg_direction
 (braket
@@ -419,9 +428,7 @@ id|ok
 )paren
 r_return
 op_minus
-(paren
 id|EINTR
-)paren
 suffix:semicolon
 r_return
 id|count
@@ -469,9 +476,7 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 id|copy_from_user
@@ -542,9 +547,7 @@ id|dev
 )paren
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 r_return
 id|synth_devs
@@ -598,9 +601,7 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * If everything went OK, there should be a preallocated buffer in the&n;   * mailbox and a client waiting.&n;   */
@@ -669,18 +670,18 @@ r_if
 c_cond
 (paren
 (paren
-id|appl_wait_flag.flags
+id|appl_wait_flag.opts
 op_amp
 id|WK_SLEEP
 )paren
 )paren
 (brace
 (brace
-id|appl_wait_flag.flags
+id|appl_wait_flag.opts
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|module_wake_up
+id|wake_up
 (paren
 op_amp
 id|appl_proc
@@ -774,7 +775,7 @@ id|server_wait_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_amp
 id|WK_SLEEP
 )paren
@@ -786,11 +787,11 @@ id|server_wait_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|module_wake_up
+id|wake_up
 (paren
 op_amp
 id|server_procs
@@ -802,17 +803,17 @@ suffix:semicolon
 )brace
 suffix:semicolon
 )brace
-id|appl_wait_flag.flags
+id|appl_wait_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|appl_proc
 )paren
 suffix:semicolon
-id|appl_wait_flag.flags
+id|appl_wait_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -836,9 +837,7 @@ suffix:semicolon
 id|rec-&gt;parm1
 op_assign
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -1071,7 +1070,7 @@ id|server_wait_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_amp
 id|WK_SLEEP
 )paren
@@ -1083,11 +1082,11 @@ id|server_wait_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|module_wake_up
+id|wake_up
 (paren
 op_amp
 id|server_procs
@@ -1099,17 +1098,17 @@ suffix:semicolon
 )brace
 suffix:semicolon
 )brace
-id|appl_wait_flag.flags
+id|appl_wait_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|appl_proc
 )paren
 suffix:semicolon
-id|appl_wait_flag.flags
+id|appl_wait_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP

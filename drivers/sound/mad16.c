@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;Sound Blaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0a=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; */
+multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *      OPTi 82C924     (in non PnP mode)&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;Sound Blaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0c=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_MAD16)
 macro_line|#include &quot;sb.h&quot;
@@ -19,6 +19,8 @@ DECL|macro|C929
 mdefine_line|#define C929&t;3
 DECL|macro|C930
 mdefine_line|#define C930&t;4
+DECL|macro|C924
+mdefine_line|#define C924    5
 multiline_comment|/*&n; *    Registers&n; *&n; *      The MAD16 occupies I/O ports 0xf8d to 0xf93 (fixed locations).&n; *      All ports are inactive by default. They can be activated by&n; *      writing 0xE2 or 0xE3 to the password register. The password is valid&n; *      only until the next I/O read or write.&n; *&n; *      82C930 uses 0xE4 as the password and indirect addressing to access&n; *      the config registers.&n; */
 DECL|macro|MC0_PORT
 mdefine_line|#define MC0_PORT&t;0xf8c&t;/* Dummy port */
@@ -107,7 +109,9 @@ id|MOZART
 suffix:colon
 id|outb
 (paren
+(paren
 l_int|0xE2
+)paren
 comma
 id|PASSWD_REG
 )paren
@@ -119,7 +123,9 @@ id|C929
 suffix:colon
 id|outb
 (paren
+(paren
 l_int|0xE3
+)paren
 comma
 id|PASSWD_REG
 )paren
@@ -129,7 +135,21 @@ suffix:semicolon
 r_case
 id|C930
 suffix:colon
-multiline_comment|/* outb( 0xE4,  PASSWD_REG); */
+multiline_comment|/* outb(( 0xE4),  PASSWD_REG); */
+r_break
+suffix:semicolon
+r_case
+id|C924
+suffix:colon
+id|outb
+(paren
+(paren
+l_int|0xE5
+)paren
+comma
+id|PASSWD_REG
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -143,9 +163,11 @@ id|C930
 (brace
 id|outb
 (paren
+(paren
 id|port
 op_minus
 id|MC0_PORT
+)paren
 comma
 l_int|0xe0e
 )paren
@@ -217,7 +239,9 @@ id|MOZART
 suffix:colon
 id|outb
 (paren
+(paren
 l_int|0xE2
+)paren
 comma
 id|PASSWD_REG
 )paren
@@ -229,7 +253,9 @@ id|C929
 suffix:colon
 id|outb
 (paren
+(paren
 l_int|0xE3
+)paren
 comma
 id|PASSWD_REG
 )paren
@@ -239,7 +265,21 @@ suffix:semicolon
 r_case
 id|C930
 suffix:colon
-multiline_comment|/* outb( 0xE4,  PASSWD_REG); */
+multiline_comment|/* outb(( 0xE4),  PASSWD_REG); */
+r_break
+suffix:semicolon
+r_case
+id|C924
+suffix:colon
+id|outb
+(paren
+(paren
+l_int|0xE5
+)paren
+comma
+id|PASSWD_REG
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -253,15 +293,18 @@ id|C930
 (brace
 id|outb
 (paren
+(paren
 id|port
 op_minus
 id|MC0_PORT
+)paren
 comma
 l_int|0xe0e
 )paren
 suffix:semicolon
 multiline_comment|/* Write to index reg */
 id|outb
+(paren
 (paren
 (paren
 r_int
@@ -271,6 +314,7 @@ r_char
 id|value
 op_amp
 l_int|0xff
+)paren
 )paren
 comma
 l_int|0xe0f
@@ -281,6 +325,7 @@ r_else
 id|outb
 (paren
 (paren
+(paren
 r_int
 r_char
 )paren
@@ -288,6 +333,7 @@ r_char
 id|value
 op_amp
 l_int|0xff
+)paren
 )paren
 comma
 id|port
@@ -963,7 +1009,7 @@ id|mad_write
 (paren
 id|MC5_PORT
 comma
-l_int|0x3D
+l_int|0x3C
 )paren
 suffix:semicolon
 multiline_comment|/* Init it into mode2 */
@@ -989,27 +1035,6 @@ comma
 l_int|0x11
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|wss_init
-(paren
-id|hw_config
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n; * A temporary kludge which drops the device back to mode1.&n; * This removes problems with interrupts but disables full duplex.&n; * A better solution should be introduced later.&n; */
-id|mad_write
-(paren
-id|MC5_PORT
-comma
-l_int|0x1D
-)paren
-suffix:semicolon
-multiline_comment|/* Disable mode2 */
 r_return
 id|wss_init
 (paren
@@ -1017,72 +1042,40 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
+r_static
 r_int
-DECL|function|probe_mad16
-id|probe_mad16
+DECL|function|chip_detect
+id|chip_detect
 (paren
-r_struct
-id|address_info
-op_star
-id|hw_config
+r_void
 )paren
 (brace
 r_int
 id|i
 suffix:semicolon
-r_static
-r_int
-id|valid_ports
-(braket
-)braket
+multiline_comment|/*&n; *    Then try to detect with the old password&n; */
+id|board_type
 op_assign
-(brace
-l_int|0x530
-comma
-l_int|0xe80
-comma
-l_int|0xf40
-comma
-l_int|0x604
-)brace
+id|C924
 suffix:semicolon
-r_int
-r_char
-id|tmp
-suffix:semicolon
-r_int
-r_char
-id|cs4231_mode
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|ad_flags
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|already_initialized
-)paren
-r_return
-l_int|0
-suffix:semicolon
-id|mad16_osp
-op_assign
-id|hw_config-&gt;osp
-suffix:semicolon
-multiline_comment|/*&n; *    Check that all ports return 0xff (bus float) when no password&n; *      is written to the password register.&n; */
 id|DDB
 (paren
 id|printk
 (paren
-l_string|&quot;--- Detecting MAD16 / Mozart ---&bslash;n&quot;
+l_string|&quot;Detect using password = 0xE5&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *    Then try to detect with the old password&n; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|detect_mad16
+(paren
+)paren
+)paren
+multiline_comment|/* No luck. Try different model */
+(brace
 id|board_type
 op_assign
 id|C928
@@ -1103,7 +1096,6 @@ id|detect_mad16
 (paren
 )paren
 )paren
-multiline_comment|/* No luck. Try different model */
 (brace
 id|board_type
 op_assign
@@ -1142,14 +1134,18 @@ suffix:semicolon
 multiline_comment|/*&n; * First relocate MC# registers to 0xe0e/0xe0f, disable password &n; */
 id|outb
 (paren
+(paren
 l_int|0xE4
+)paren
 comma
 id|PASSWD_REG
 )paren
 suffix:semicolon
 id|outb
 (paren
+(paren
 l_int|0x80
+)paren
 comma
 id|PASSWD_REG
 )paren
@@ -1212,12 +1208,6 @@ id|printk
 (paren
 l_string|&quot;mad16.c: 82C930 detected&bslash;n&quot;
 )paren
-)paren
-suffix:semicolon
-r_return
-id|init_c930
-(paren
-id|hw_config
 )paren
 suffix:semicolon
 )brace
@@ -1287,6 +1277,100 @@ id|C928
 suffix:semicolon
 )brace
 )brace
+)brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_int
+DECL|function|probe_mad16
+id|probe_mad16
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_static
+r_int
+id|valid_ports
+(braket
+)braket
+op_assign
+(brace
+l_int|0x530
+comma
+l_int|0xe80
+comma
+l_int|0xf40
+comma
+l_int|0x604
+)brace
+suffix:semicolon
+r_int
+r_char
+id|tmp
+suffix:semicolon
+r_int
+r_char
+id|cs4231_mode
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|ad_flags
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|already_initialized
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|mad16_osp
+op_assign
+id|hw_config-&gt;osp
+suffix:semicolon
+multiline_comment|/*&n; *    Check that all ports return 0xff (bus float) when no password&n; *      is written to the password register.&n; */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;--- Detecting MAD16 / Mozart ---&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|chip_detect
+(paren
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|board_type
+op_eq
+id|C930
+)paren
+r_return
+id|init_c930
+(paren
+id|hw_config
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1319,6 +1403,15 @@ suffix:semicolon
 multiline_comment|/*&n; * Set the WSS address&n; */
 id|tmp
 op_assign
+(paren
+id|mad_read
+(paren
+id|MC1_PORT
+)paren
+op_amp
+l_int|0x0f
+)paren
+op_or
 l_int|0x80
 suffix:semicolon
 multiline_comment|/* Enable WSS, Disable SB */
@@ -1382,6 +1475,11 @@ suffix:semicolon
 multiline_comment|/*&n; * Set optional CD-ROM and joystick settings.&n; */
 macro_line|#ifdef MAD16_CONF
 id|tmp
+op_and_assign
+op_complement
+l_int|0x0f
+suffix:semicolon
+id|tmp
 op_or_assign
 (paren
 (paren
@@ -1408,7 +1506,10 @@ suffix:semicolon
 macro_line|#else
 id|tmp
 op_assign
-l_int|0x03
+id|mad_read
+(paren
+id|MC2_PORT
+)paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MAD16_OPL4
@@ -1433,6 +1534,37 @@ l_int|0xf0
 )paren
 suffix:semicolon
 multiline_comment|/* Disable SB */
+r_if
+c_cond
+(paren
+id|board_type
+op_eq
+id|C924
+)paren
+multiline_comment|/* Specific C924 init values */
+(brace
+id|mad_write
+(paren
+id|MC4_PORT
+comma
+l_int|0xA0
+)paren
+suffix:semicolon
+id|mad_write
+(paren
+id|MC5_PORT
+comma
+l_int|0x05
+)paren
+suffix:semicolon
+id|mad_write
+(paren
+id|MC6_PORT
+comma
+l_int|0x03
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1684,6 +1816,21 @@ id|mad16_osp
 r_return
 suffix:semicolon
 multiline_comment|/*&n;     * Set the IRQ and DMA addresses.&n;   */
+r_if
+c_cond
+(paren
+id|board_type
+op_eq
+id|C930
+)paren
+id|interrupt_bits
+(braket
+l_int|5
+)braket
+op_assign
+l_int|0x28
+suffix:semicolon
+multiline_comment|/* Also IRQ5 is possible on C930 */
 id|bits
 op_assign
 id|interrupt_bits
@@ -1703,9 +1850,11 @@ r_return
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|bits
 op_or
 l_int|0x40
+)paren
 comma
 id|config_port
 )paren
@@ -1859,6 +2008,7 @@ id|dma
 suffix:semicolon
 id|outb
 (paren
+(paren
 id|bits
 op_or
 id|dma_bits
@@ -1867,6 +2017,7 @@ id|dma
 )braket
 op_or
 id|dma2_bit
+)paren
 comma
 id|config_port
 )paren
@@ -2393,7 +2544,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if (defined(CONFIG_UART401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_uart401
 (paren
 id|hw_config

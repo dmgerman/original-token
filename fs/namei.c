@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|ACC_MODE
 mdefine_line|#define ACC_MODE(x) (&quot;&bslash;000&bslash;004&bslash;002&bslash;006&quot;[(x)&amp;O_ACCMODE])
 multiline_comment|/*&n; * In order to reduce some races, while at the same time doing additional&n; * checking and hopefully speeding things up, we copy filenames to the&n; * kernel data space before using them..&n; *&n; * POSIX.1 2.4: an empty pathname is invalid (ENOENT).&n; */

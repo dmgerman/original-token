@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/uart401.c&n; *&n; * MPU-401 UART driver (formerly uart401_midi.c)&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
@@ -37,8 +37,11 @@ id|data
 )paren
 suffix:semicolon
 DECL|member|opened
+DECL|member|disabled
 r_int
 id|opened
+comma
+id|disabled
 suffix:semicolon
 DECL|member|input_byte
 r_volatile
@@ -122,7 +125,9 @@ id|cmd
 (brace
 id|outb
 (paren
+(paren
 id|cmd
+)paren
 comma
 id|COMDPORT
 )paren
@@ -161,7 +166,9 @@ id|byte
 (brace
 id|outb
 (paren
+(paren
 id|byte
+)paren
 comma
 id|DATAPORT
 )paren
@@ -180,6 +187,15 @@ mdefine_line|#define&t;UART_MODE_ON&t;0x3F
 r_static
 r_int
 id|reset_uart401
+(paren
+id|uart401_devc
+op_star
+id|devc
+)paren
+suffix:semicolon
+r_static
+r_void
+id|enter_uart_mode
 (paren
 id|uart401_devc
 op_star
@@ -363,9 +379,7 @@ id|devc-&gt;opened
 (brace
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 r_while
@@ -388,6 +402,15 @@ suffix:semicolon
 id|devc-&gt;opened
 op_assign
 id|mode
+suffix:semicolon
+id|enter_uart_mode
+(paren
+id|devc
+)paren
+suffix:semicolon
+id|devc-&gt;disabled
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -416,6 +439,11 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|devc
+suffix:semicolon
+id|reset_uart401
+(paren
+id|devc
+)paren
 suffix:semicolon
 id|devc-&gt;opened
 op_assign
@@ -456,6 +484,14 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|devc
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|devc-&gt;disabled
+)paren
+r_return
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;   * Test for input since pending input seems to block the output.&n;   */
 id|save_flags
@@ -519,11 +555,25 @@ id|devc
 (brace
 id|printk
 (paren
-l_string|&quot;MPU-401: Timeout&bslash;n&quot;
+l_string|&quot;MPU-401: Timeout - Device not responding&bslash;n&quot;
+)paren
+suffix:semicolon
+id|devc-&gt;disabled
+op_assign
+l_int|1
+suffix:semicolon
+id|reset_uart401
+(paren
+id|devc
+)paren
+suffix:semicolon
+id|enter_uart_mode
+(paren
+id|devc
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 id|uart401_write
@@ -580,9 +630,7 @@ id|arg
 (brace
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -1231,7 +1279,6 @@ id|ok
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* save_flags(flags);cli(); */
 r_for
 c_loop
 (paren
@@ -1341,13 +1388,36 @@ c_cond
 (paren
 id|ok
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Reset UART401 OK&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Reset UART401 failed - No hardware detected.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ok
+)paren
 id|uart401_input_loop
 (paren
 id|devc
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Flush input before enabling interrupts&n;&t;&t;&t;&t; */
-multiline_comment|/* restore_flags(flags); */
 r_return
 id|ok
 suffix:semicolon
@@ -1377,6 +1447,14 @@ id|devc
 op_assign
 op_amp
 id|hw_info
+suffix:semicolon
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Entered probe_uart401()&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
 id|detected_devc
 op_assign

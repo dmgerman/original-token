@@ -1,13 +1,13 @@
 multiline_comment|/*&n; * linux/ipc/util.c&n; * Copyright (C) 1992 Krishna Balasubramanian&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
 r_extern
 r_void

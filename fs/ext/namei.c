@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * comment out this line if you want names &gt; EXT_NAME_LEN chars to be&n; * truncated. Else they will be disallowed.&n; */
 multiline_comment|/* #define NO_TRUNCATE */
 multiline_comment|/*&n; * EXT_DIR_PAD defines the directory entries boundaries&n; *&n; * NOTE: It must be a power of 2 and must be greater or equal than 8&n; * because a directory entry needs 8 bytes for its fixed part&n; * (4 bytes for the inode, 2 bytes for the entry length and 2 bytes&n; * for the name length)&n; */

@@ -1,8 +1,8 @@
-multiline_comment|/*&n; *     PnP soundcard support is not included in this version.&n; *&n; *       AEDSP16 will not work without significant changes.&n; */
+multiline_comment|/*&n; *     PnP soundcard support is not included in this version.&n; *&n; *     There is a separately distributed patch available for AEDSP16.&n; */
 DECL|macro|DISABLED_OPTIONS
-mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_SPNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2))
+mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_SPNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2)|B(OPT_UNUSED3)|B(OPT_UNUSED4)|B(OPT_UNUSED5))
 multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
@@ -53,12 +53,12 @@ DECL|macro|OPT_UNUSED2
 mdefine_line|#define OPT_UNUSED2&t;17
 DECL|macro|OPT_AEDSP16
 mdefine_line|#define OPT_AEDSP16     18
-DECL|macro|OPT_AUDIO
-mdefine_line|#define OPT_AUDIO&t;19
-DECL|macro|OPT_MIDI_AUTO
-mdefine_line|#define OPT_MIDI_AUTO&t;20
-DECL|macro|OPT_MIDI
-mdefine_line|#define OPT_MIDI&t;21
+DECL|macro|OPT_UNUSED3
+mdefine_line|#define OPT_UNUSED3&t;19
+DECL|macro|OPT_UNUSED4
+mdefine_line|#define OPT_UNUSED4&t;20
+DECL|macro|OPT_UNUSED5
+mdefine_line|#define OPT_UNUSED5&t;21
 DECL|macro|OPT_YM3812_AUTO
 mdefine_line|#define OPT_YM3812_AUTO&t;22
 DECL|macro|OPT_YM3812
@@ -66,23 +66,25 @@ mdefine_line|#define OPT_YM3812&t;23
 DECL|macro|OPT_LAST
 mdefine_line|#define OPT_LAST&t;23&t;/* Last defined OPT number */
 DECL|macro|DUMMY_OPTS
-mdefine_line|#define DUMMY_OPTS (B(OPT_MIDI_AUTO)|B(OPT_YM3812_AUTO))
+mdefine_line|#define DUMMY_OPTS (B(OPT_YM3812_AUTO))
 DECL|macro|ANY_DEVS
-mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI)|B(OPT_ADLIB))
-DECL|macro|AUDIO_CARDS
-mdefine_line|#define AUDIO_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_GUS) | &bslash;&n;&t;&t;B (OPT_MSS) | B (OPT_GUS16) | B (OPT_GUSMAX) | B (OPT_TRIX) | &bslash;&n;&t;&t;B (OPT_SSCAPE)| B(OPT_MAD16) | B(OPT_CS4232))
+mdefine_line|#define ANY_DEVS (B(OPT_SB)|B(OPT_PAS)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI)|B(OPT_ADLIB)| &bslash;&n;&t;&t;  B(OPT_SPNP))
 DECL|macro|MPU_DEVS
 mdefine_line|#define MPU_DEVS (B(OPT_PSS)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_SPNP)|B(OPT_MAUI)|B(OPT_SSCAPE))
 DECL|macro|UART401_DEVS
-mdefine_line|#define UART401_DEVS (SBDSP_DEVS|B(OPT_TRIX)|B(OPT_MAD16))
+mdefine_line|#define UART401_DEVS (SBDSP_DEVS|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_SPNP))
+DECL|macro|NON_AUDIO_CARDS
+mdefine_line|#define NON_AUDIO_CARDS (B(OPT_ADLIB)|B(OPT_MPU401)|B(OPT_UART6850)|B(OPT_MAUI))
+DECL|macro|AUDIO_CARDS
+mdefine_line|#define AUDIO_CARDS (ANY_DEVS &amp; ~NON_AUDIO_CARDS)
 DECL|macro|MIDI_CARDS
-mdefine_line|#define MIDI_CARDS (MPU_DEVS | UART401_DEVS | &bslash;&n;&t;&t;    B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_MPU401) | &bslash;&n;&t;&t;    B (OPT_GUS) | B (OPT_TRIX) | B (OPT_SSCAPE)|B(OPT_MAD16) | &bslash;&n;&t;&t;    B (OPT_CS4232)|B(OPT_MAUI))
+mdefine_line|#define MIDI_CARDS (ANY_DEVS &amp; ~(B(OPT_ADLIB)|B(OPT_MSS)))
 DECL|macro|AD1848_DEVS
 mdefine_line|#define AD1848_DEVS (B(OPT_GUS16)|B(OPT_MSS)|B(OPT_PSS)|B(OPT_GUSMAX)|&bslash;&n;&t;&t;     B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_CS4232)|&bslash;&n;&t;&t;     B(OPT_SPNP))
 DECL|macro|SBDSP_DEVS
 mdefine_line|#define SBDSP_DEVS (B(OPT_SB)|B(OPT_SPNP)|B(OPT_MAD16)|B(OPT_TRIX))
 DECL|macro|SEQUENCER_DEVS
-mdefine_line|#define SEQUENCER_DEVS (OPT_MIDI|OPT_YM3812|OPT_ADLIB|OPT_GUS|OPT_MAUI|MIDI_CARDS)
+mdefine_line|#define SEQUENCER_DEVS (MIDI_CARDS|B(OPT_YM3812)|B(OPT_ADLIB)|B(OPT_GUS)|B(OPT_MAUI))
 multiline_comment|/*&n; * Options that have been disabled for some reason (incompletely implemented&n; * and/or tested). Don&squot;t remove from this list before looking at file&n; * experimental.txt for further info.&n; */
 r_typedef
 r_struct
@@ -447,7 +449,7 @@ id|AUDIO_CARDS
 comma
 l_int|0
 comma
-l_string|&quot;AUDIO&quot;
+l_string|&quot;UNUSED3&quot;
 comma
 l_int|1
 comma
@@ -469,11 +471,11 @@ id|OPT_MAUI
 comma
 l_int|0
 comma
-l_string|&quot;MIDI_AUTO&quot;
+l_string|&quot;UNUSED4&quot;
 comma
 l_int|0
 comma
-id|OPT_MIDI
+l_int|0
 comma
 l_int|0
 )brace
@@ -483,7 +485,7 @@ id|MIDI_CARDS
 comma
 l_int|0
 comma
-l_string|&quot;MIDI&quot;
+l_string|&quot;UNUSED5&quot;
 comma
 l_int|1
 comma
@@ -601,11 +603,11 @@ l_string|&quot;*** Unused option 2 ***&quot;
 comma
 l_string|&quot;Audio Excel DSP 16 initialization support&quot;
 comma
-l_string|&quot;/dev/dsp and /dev/audio support&quot;
+l_string|&quot;*** Unused option 3 ***&quot;
 comma
-l_string|&quot;This should not be asked&quot;
+l_string|&quot;*** Unused option 4 ***&quot;
 comma
-l_string|&quot;MIDI interface support&quot;
+l_string|&quot;*** Unused option 5 ***&quot;
 comma
 l_string|&quot;This should not be asked&quot;
 comma
@@ -755,9 +757,49 @@ id|UART401_DEVS
 )brace
 comma
 (brace
+l_string|&quot;GUSHW&quot;
+comma
+id|B
+(paren
+id|OPT_GUS
+)paren
+op_or
+id|B
+(paren
+id|OPT_SPNP
+)paren
+)brace
+comma
+(brace
+l_string|&quot;SSCAPEHW&quot;
+comma
+id|B
+(paren
+id|OPT_SSCAPE
+)paren
+op_or
+id|B
+(paren
+id|OPT_SPNP
+)paren
+)brace
+comma
+(brace
 l_string|&quot;SEQUENCER&quot;
 comma
 id|SEQUENCER_DEVS
+)brace
+comma
+(brace
+l_string|&quot;AUDIO&quot;
+comma
+id|AUDIO_CARDS
+)brace
+comma
+(brace
+l_string|&quot;MIDI&quot;
+comma
+id|MIDI_CARDS
 )brace
 comma
 (brace
@@ -1218,6 +1260,103 @@ DECL|macro|FMT_HEX
 mdefine_line|#define FMT_HEX 1
 DECL|macro|FMT_INT
 mdefine_line|#define FMT_INT 2
+r_void
+DECL|function|show_comment
+id|show_comment
+(paren
+r_int
+id|mask
+comma
+r_char
+op_star
+id|txt
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dump_only
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|OPT_LAST
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|mask
+op_eq
+id|B
+(paren
+id|i
+)paren
+)paren
+(brace
+id|printf
+(paren
+l_string|&quot;&bslash;n&bslash;nif [ &bslash;&quot;$CONFIG_%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; ]; then&bslash;n&quot;
+comma
+id|hw_table
+(braket
+id|i
+)braket
+dot
+id|macro
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;comment &squot;%s&squot;&bslash;n&quot;
+comma
+id|txt
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;fi&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|mask
+op_amp
+id|selected_options
+)paren
+)paren
+r_return
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|txt
+)paren
+suffix:semicolon
+)brace
+)brace
 r_void
 DECL|function|ask_int_choice
 id|ask_int_choice
@@ -2607,12 +2746,10 @@ comma
 l_string|&quot;Old configuration copied.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if defined(linux) || defined(Solaris)
 id|build_defines
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|old_config_used
 op_assign
 l_int|1
@@ -2621,7 +2758,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if defined(linux) || defined(Solaris)
 r_void
 DECL|function|build_defines
 id|build_defines
@@ -2781,7 +2917,6 @@ id|optf
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_void
 DECL|function|ask_parameters
 id|ask_parameters
@@ -2797,7 +2932,6 @@ id|build_defines
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * IRQ and DMA settings&n;   */
-macro_line|#if 0&t;/* Disable this broken question. */
 id|ask_int_choice
 (paren
 id|B
@@ -2816,7 +2950,6 @@ comma
 l_string|&quot;220 or 240&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|ask_int_choice
 (paren
 id|B
@@ -2880,7 +3013,7 @@ id|OPT_SB
 comma
 l_string|&quot;SB_DMA2&quot;
 comma
-l_string|&quot;Sound Blaster 16 bit DMA (_REQUIRED_for SB16, Jazz16, SMW)&quot;
+l_string|&quot;Sound Blaster 16 bit DMA (SB16, Jazz16, SMW)&quot;
 comma
 id|FMT_INT
 comma
@@ -2902,9 +3035,29 @@ l_string|&quot;MPU401 I/O base of SB16, Jazz16 and ES1688&quot;
 comma
 id|FMT_HEX
 comma
-l_int|0
+l_int|0x330
 comma
 l_string|&quot;Check from manual of the card&quot;
+)paren
+suffix:semicolon
+id|show_comment
+(paren
+id|B
+(paren
+id|OPT_SB
+)paren
+comma
+l_string|&quot;MPU401 IRQ is only required with Jazz16, SM Wave and ESS1688.&quot;
+)paren
+suffix:semicolon
+id|show_comment
+(paren
+id|B
+(paren
+id|OPT_SB
+)paren
+comma
+l_string|&quot;Enter -1 to the following question if you have something else such as SB16/32.&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2923,7 +3076,7 @@ comma
 op_minus
 l_int|1
 comma
-l_string|&quot;Use -1 with SB16&quot;
+l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3193,6 +3346,21 @@ comma
 l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dump_only
+)paren
+id|show_comment
+(paren
+id|B
+(paren
+id|OPT_MAUI
+)paren
+comma
+l_string|&quot;ERROR! You have to use old sound configuration method with Maui.&quot;
+)paren
+suffix:semicolon
 id|ask_int_choice
 (paren
 id|B
@@ -3264,6 +3432,21 @@ op_minus
 l_int|1
 comma
 l_string|&quot;(Unknown)&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dump_only
+)paren
+id|show_comment
+(paren
+id|B
+(paren
+id|OPT_PSS
+)paren
+comma
+l_string|&quot;ERROR! You have to use old sound configuration method with PSS cards.&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3555,6 +3738,21 @@ l_string|&quot;#define REVEAL_SPEA&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|dump_only
+)paren
+id|show_comment
+(paren
+id|B
+(paren
+id|OPT_MAUI
+)paren
+comma
+l_string|&quot;ERROR! You have to use old sound configuration method with AudioTrix.&quot;
+)paren
+suffix:semicolon
 id|ask_int_choice
 (paren
 id|B
@@ -3931,24 +4129,6 @@ comma
 l_int|9
 comma
 l_string|&quot;5, 7, 9 or 10&quot;
-)paren
-suffix:semicolon
-id|ask_int_choice
-(paren
-id|B
-(paren
-id|OPT_AUDIO
-)paren
-comma
-l_string|&quot;DSP_BUFFSIZE&quot;
-comma
-l_string|&quot;Audio DMA buffer size&quot;
-comma
-id|FMT_INT
-comma
-l_int|65536
-comma
-l_string|&quot;4096, 16384, 32768 or 65536&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5638,15 +5818,6 @@ comma
 l_string|&quot;&bslash;nThe sound driver is now configured.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if defined(SCO) || defined(ISC) || defined(SYSV)
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Remember to update the System file&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

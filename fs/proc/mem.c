@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * mem_write isn&squot;t really a good idea right now. It needs&n; * to check a lot more: if the process we try to write to &n; * dies in the middle right now, mem_write will overwrite&n; * kernel memory.. This disables it altogether.&n; */

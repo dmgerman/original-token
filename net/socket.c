@@ -19,7 +19,7 @@ macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#if defined(CONFIG_MODULES) &amp;&amp; defined(CONFIG_NET)
 r_extern
 r_void

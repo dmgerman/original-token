@@ -1,8 +1,8 @@
 multiline_comment|/*&n; * gus_vol.c - Compute volume for GUS.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_GUS
+macro_line|#ifdef CONFIG_GUSHW
 macro_line|#include &quot;gus_linearvol.h&quot;
 DECL|macro|GUS_VOLUME
 mdefine_line|#define GUS_VOLUME&t;gus_wave_volume

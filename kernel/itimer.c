@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * change timeval to jiffies, trying to avoid the &n; * most obvious overflows..&n; *&n; * The tv_*sec values are signed, but nothing seems to &n; * indicate whether we really should use them as signed values&n; * when doing itimers. POSIX doesn&squot;t mention this (but if&n; * alarm() uses itimers without checking, we have to use unsigned&n; * arithmetic).&n; */
 DECL|function|tvtojiffies
 r_static

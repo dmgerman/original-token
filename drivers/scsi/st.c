@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1996 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Tue Oct  1 22:53:51 1996 by makisara@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1996 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Tue Oct 22 20:59:52 1996 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mtio.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* The driver prints some debugging information on the console if DEBUG&n;   is defined and non-zero. */
@@ -4476,12 +4476,14 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
 r_int
 id|total
-comma
+suffix:semicolon
+r_int
 id|do_count
 comma
 id|blks
@@ -5966,6 +5968,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -6823,7 +6826,7 @@ id|printk
 c_func
 (paren
 id|ST_DEB_MSG
-l_string|&quot;st%d: ILI but enough data received %d %d.&bslash;n&quot;
+l_string|&quot;st%d: ILI but enough data received %ld %d.&bslash;n&quot;
 comma
 id|dev
 comma
@@ -6953,7 +6956,7 @@ id|printk
 c_func
 (paren
 id|ST_DEB_MSG
-l_string|&quot;st%d: EOF detected (%d bytes read, transferred %d bytes).&bslash;n&quot;
+l_string|&quot;st%d: EOF detected (%d bytes read, transferred %ld bytes).&bslash;n&quot;
 comma
 id|dev
 comma
@@ -12468,6 +12471,10 @@ op_assign
 op_minus
 l_int|1
 )paren
+suffix:semicolon
+id|STp-&gt;eof
+op_assign
+id|ST_NOEOF
 suffix:semicolon
 r_if
 c_cond

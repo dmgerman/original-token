@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/cdu31a.h&gt;
@@ -5784,11 +5784,21 @@ id|num_tracks
 suffix:semicolon
 id|num_tracks
 op_assign
+(paren
+id|bcd_to_int
+c_func
+(paren
 id|sony_toc.last_track_num
+)paren
 op_minus
+id|bcd_to_int
+c_func
+(paren
 id|sony_toc.first_track_num
+)paren
 op_plus
 l_int|1
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -8205,11 +8215,19 @@ suffix:semicolon
 )brace
 id|loc_hdr.cdth_trk0
 op_assign
+id|bcd_to_int
+c_func
+(paren
 id|sony_toc.first_track_num
+)paren
 suffix:semicolon
 id|loc_hdr.cdth_trk1
 op_assign
+id|bcd_to_int
+c_func
+(paren
 id|sony_toc.last_track_num
+)paren
 suffix:semicolon
 id|copy_to_user
 c_func
@@ -8595,13 +8613,21 @@ c_cond
 (paren
 id|ti.cdti_trk0
 OL
+id|bcd_to_int
+c_func
+(paren
 id|sony_toc.first_track_num
+)paren
 )paren
 op_logical_or
 (paren
 id|ti.cdti_trk0
 OG
+id|bcd_to_int
+c_func
+(paren
 id|sony_toc.last_track_num
+)paren
 )paren
 op_logical_or
 (paren
@@ -8692,7 +8718,11 @@ c_cond
 (paren
 id|ti.cdti_trk1
 op_ge
+id|bcd_to_int
+c_func
+(paren
 id|sony_toc.last_track_num
+)paren
 )paren
 (brace
 id|log_to_msf

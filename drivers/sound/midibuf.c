@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/midibuf.c&n; *&n; * Device file manager for /dev/midi#&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_MIDI)
@@ -8,7 +8,8 @@ DECL|macro|MAX_QUEUE_SIZE
 mdefine_line|#define MAX_QUEUE_SIZE&t;4000
 DECL|variable|midi_sleeper
 r_static
-id|wait_handle
+r_struct
+id|wait_queue
 op_star
 id|midi_sleeper
 (braket
@@ -37,7 +38,8 @@ l_int|0
 suffix:semicolon
 DECL|variable|input_sleeper
 r_static
-id|wait_handle
+r_struct
+id|wait_queue
 op_star
 id|input_sleeper
 (braket
@@ -176,9 +178,9 @@ mdefine_line|#define DATA_AVAIL(q) (q-&gt;len)
 DECL|macro|SPACE_AVAIL
 mdefine_line|#define SPACE_AVAIL(q) (MAX_QUEUE_SIZE - q-&gt;len)
 DECL|macro|QUEUE_BYTE
-mdefine_line|#define QUEUE_BYTE(q, data) &bslash;&n;&t;if (SPACE_AVAIL(q)) &bslash;&n;&t;{ &bslash;&n;&t;  unsigned long flags; &bslash;&n;&t;  save_flags(flags);cli(); &bslash;&n;&t;  q-&gt;queue[q-&gt;tail] = (data); &bslash;&n;&t;  q-&gt;len++; q-&gt;tail = (q-&gt;tail+1) % MAX_QUEUE_SIZE; &bslash;&n;&t;  restore_flags(flags); &bslash;&n;&t;}
+mdefine_line|#define QUEUE_BYTE(q, data) &bslash;&n;&t;if (SPACE_AVAIL(q)) &bslash;&n;&t;{ &bslash;&n;&t;  unsigned long flags; &bslash;&n;&t;  save_flags( flags);cli(); &bslash;&n;&t;  q-&gt;queue[q-&gt;tail] = (data); &bslash;&n;&t;  q-&gt;len++; q-&gt;tail = (q-&gt;tail+1) % MAX_QUEUE_SIZE; &bslash;&n;&t;  restore_flags(flags); &bslash;&n;&t;}
 DECL|macro|REMOVE_BYTE
-mdefine_line|#define REMOVE_BYTE(q, data) &bslash;&n;&t;if (DATA_AVAIL(q)) &bslash;&n;&t;{ &bslash;&n;&t;  unsigned long flags; &bslash;&n;&t;  save_flags(flags);cli(); &bslash;&n;&t;  data = q-&gt;queue[q-&gt;head]; &bslash;&n;&t;  q-&gt;len--; q-&gt;head = (q-&gt;head+1) % MAX_QUEUE_SIZE; &bslash;&n;&t;  restore_flags(flags); &bslash;&n;&t;}
+mdefine_line|#define REMOVE_BYTE(q, data) &bslash;&n;&t;if (DATA_AVAIL(q)) &bslash;&n;&t;{ &bslash;&n;&t;  unsigned long flags; &bslash;&n;&t;  save_flags( flags);cli(); &bslash;&n;&t;  data = q-&gt;queue[q-&gt;head]; &bslash;&n;&t;  q-&gt;len--; q-&gt;head = (q-&gt;head+1) % MAX_QUEUE_SIZE; &bslash;&n;&t;  restore_flags(flags); &bslash;&n;&t;}
 r_void
 DECL|function|drain_midi_queue
 id|drain_midi_queue
@@ -204,8 +206,11 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 op_logical_and
 id|midi_devs
@@ -230,8 +235,8 @@ id|HZ
 op_div
 l_int|10
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
@@ -240,7 +245,6 @@ op_plus
 id|HZ
 op_div
 l_int|10
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -258,11 +262,11 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|midi_sleeper
@@ -281,7 +285,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -299,7 +303,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
@@ -309,7 +313,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -384,7 +388,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_amp
 id|WK_SLEEP
 )paren
@@ -395,11 +399,11 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|module_wake_up
+id|wake_up
 (paren
 op_amp
 id|input_sleeper
@@ -480,6 +484,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_int
+id|ok
+op_assign
+l_int|1
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -491,15 +500,12 @@ id|dev
 )braket
 )paren
 op_logical_and
-id|midi_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|putc
-(paren
-id|dev
-comma
+id|ok
+)paren
+(brace
+r_int
+id|c
+op_assign
 id|midi_out_buf
 (braket
 id|dev
@@ -514,9 +520,36 @@ id|dev
 op_member_access_from_pointer
 id|head
 )braket
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
 )paren
+suffix:semicolon
+multiline_comment|/* Give some time to others */
+id|ok
+op_assign
+id|midi_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|outputc
+(paren
+id|dev
+comma
+id|c
 )paren
-(brace
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
 id|midi_out_buf
 (braket
 id|dev
@@ -565,7 +598,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_amp
 id|WK_SLEEP
 )paren
@@ -576,11 +609,11 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|module_wake_up
+id|wake_up
 (paren
 op_amp
 id|midi_sleeper
@@ -686,9 +719,7 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *    Interrupts disabled. Be careful&n;   */
@@ -778,9 +809,7 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 id|midi_in_buf
@@ -868,9 +897,7 @@ l_int|NULL
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EIO
-)paren
 suffix:semicolon
 )brace
 id|midi_out_buf
@@ -904,7 +931,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -913,7 +940,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_NONE
 suffix:semicolon
@@ -1018,7 +1045,7 @@ id|midi_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|putc
+id|outputc
 (paren
 id|dev
 comma
@@ -1030,8 +1057,11 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 op_logical_and
 id|DATA_AVAIL
@@ -1052,15 +1082,14 @@ c_cond
 (paren
 l_int|0
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|0
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -1078,11 +1107,11 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|midi_sleeper
@@ -1101,7 +1130,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -1119,7 +1148,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
@@ -1129,7 +1158,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -1308,15 +1337,14 @@ c_cond
 (paren
 l_int|0
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|0
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -1334,11 +1362,11 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|midi_sleeper
@@ -1357,7 +1385,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -1375,7 +1403,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
@@ -1385,7 +1413,7 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -1395,8 +1423,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 (brace
@@ -1407,9 +1438,7 @@ id|flags
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EINTR
-)paren
 suffix:semicolon
 )brace
 id|n
@@ -1578,8 +1607,8 @@ id|dev
 dot
 id|prech_timeout
 )paren
-id|current_set_timeout
-(paren
+id|current-&gt;timeout
+op_assign
 id|tlimit
 op_assign
 id|jiffies
@@ -1591,7 +1620,6 @@ id|dev
 )braket
 dot
 id|prech_timeout
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -1609,11 +1637,11 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_interruptible_sleep_on
+id|interruptible_sleep_on
 (paren
 op_amp
 id|input_sleeper
@@ -1632,7 +1660,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_amp
 id|WK_WAKEUP
 )paren
@@ -1650,7 +1678,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_or_assign
 id|WK_TIMEOUT
 suffix:semicolon
@@ -1660,7 +1688,7 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_and_assign
 op_complement
 id|WK_SLEEP
@@ -1670,16 +1698,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current_got_fatal_signal
 (paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 )paren
 id|c
 op_assign
 op_minus
-(paren
 id|EINTR
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;   * The user is getting restless&n;&t;&t;&t;&t; */
 )brace
@@ -1743,6 +1772,18 @@ comma
 id|tmp_data
 )paren
 suffix:semicolon
+(brace
+r_char
+op_star
+id|fixit
+op_assign
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|tmp_data
+suffix:semicolon
 id|copy_to_user
 (paren
 op_amp
@@ -1753,15 +1794,12 @@ id|buf
 id|c
 )braket
 comma
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|tmp_data
+id|fixit
 comma
 l_int|1
 )paren
+suffix:semicolon
+)brace
 suffix:semicolon
 id|c
 op_increment
@@ -1865,9 +1903,7 @@ id|dev
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|ENXIO
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -1880,13 +1916,10 @@ id|cmd
 r_case
 id|SNDCTL_MIDI_PRETIME
 suffix:colon
-id|val
-op_assign
-(paren
-r_int
-)paren
 id|get_user
 (paren
+id|val
+comma
 (paren
 r_int
 op_star
@@ -1925,12 +1958,8 @@ op_assign
 id|val
 suffix:semicolon
 r_return
-id|snd_ioctl_return
+id|ioctl_out
 (paren
-(paren
-r_int
-op_star
-)paren
 id|arg
 comma
 id|val
@@ -1972,7 +2001,7 @@ comma
 r_int
 id|sel_type
 comma
-id|select_table_handle
+id|select_table
 op_star
 id|wait
 )paren
@@ -2010,11 +2039,11 @@ id|input_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_select_wait
+id|select_wait
 (paren
 op_amp
 id|input_sleeper
@@ -2054,11 +2083,11 @@ id|midi_sleep_flag
 id|dev
 )braket
 dot
-id|flags
+id|opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|module_select_wait
+id|select_wait
 (paren
 op_amp
 id|midi_sleeper

@@ -2,7 +2,7 @@ multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster SCSI Host Adap
 DECL|macro|BusLogic_DriverVersion
 mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.6&quot;
 DECL|macro|BusLogic_DriverDate
-mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;17 July 1996&quot;
+mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;19 October 1996&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

@@ -18,7 +18,7 @@ macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;net/route.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_IP_MULTICAST
 multiline_comment|/*&n; *&t;Write an multicast group list table for the IGMP daemon to&n; *&t;read.&n; */
 DECL|function|ip_mc_procinfo

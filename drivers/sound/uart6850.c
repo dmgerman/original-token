@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/uart6850.c&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
 macro_line|#include &quot;sound_config.h&quot;
@@ -54,7 +54,9 @@ id|cmd
 (brace
 id|outb
 (paren
+(paren
 id|cmd
+)paren
 comma
 id|COMDPORT
 )paren
@@ -87,7 +89,9 @@ id|byte
 (brace
 id|outb
 (paren
+(paren
 id|byte
+)paren
 comma
 id|DATAPORT
 )paren
@@ -396,9 +400,7 @@ l_string|&quot;Midi6850: Midi busy&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -611,9 +613,7 @@ id|arg
 (brace
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static

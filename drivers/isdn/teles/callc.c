@@ -6693,7 +6693,11 @@ c_cond
 (paren
 id|user
 )paren
-id|memcpy_fromfs
+(brace
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 id|ptr
@@ -6702,7 +6706,12 @@ id|buf
 comma
 id|count
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_else
 id|memcpy
 c_func
