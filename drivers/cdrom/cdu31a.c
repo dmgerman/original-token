@@ -10289,10 +10289,6 @@ r_int
 id|cdu31a_block_size
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the driver.&n; */
-macro_line|#ifdef MODULE
-DECL|macro|cdu31a_init
-mdefine_line|#define cdu31a_init init_module
-macro_line|#endif
 r_int
 DECL|function|cdu31a_init
 id|cdu31a_init
@@ -10861,6 +10857,21 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|cdu31a_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_void
 DECL|function|cleanup_module
 id|cleanup_module

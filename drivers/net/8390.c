@@ -10,10 +10,7 @@ op_assign
 l_string|&quot;8390.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -3066,14 +3063,6 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

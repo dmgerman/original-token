@@ -8,10 +8,7 @@ id|version
 op_assign
 l_string|&quot;ewrk3.c:v0.32 1/16/95 davies@wanton.lkg.dec.com&bslash;n&quot;
 suffix:semicolon
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif /* MODULE */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,16 +18,16 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;ewrk3.h&quot;
 macro_line|#ifdef EWRK3_DEBUG
 DECL|variable|ewrk3_debug
@@ -2549,10 +2546,8 @@ l_string|&quot;      Run the &squot;ewrk3setup&squot; utility or remove the hard
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif       
 r_return
 id|status
 suffix:semicolon
@@ -4873,10 +4868,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif    
 r_return
 l_int|0
 suffix:semicolon
@@ -8501,14 +8494,6 @@ suffix:semicolon
 multiline_comment|/* return hex char or error */
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char
@@ -8557,6 +8542,7 @@ id|ewrk3_probe
 )brace
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
@@ -8564,6 +8550,7 @@ l_int|0x300
 suffix:semicolon
 multiline_comment|/* &lt;--- EDIT THESE LINES FOR YOUR CONFIGURATION */
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
@@ -8614,23 +8601,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: device busy, remove delayed&bslash;n&quot;
-comma
-id|thisEthwrk.name
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|release_region
 c_func
 (paren
@@ -8656,7 +8626,6 @@ id|thisEthwrk.priv
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

@@ -81,7 +81,7 @@ id|gprmask
 comma
 id|fprmask
 suffix:semicolon
-multiline_comment|/* but what are these? */
+multiline_comment|/* bitmask of general &amp; floating point regs used in binary */
 DECL|member|gpvalue
 id|__u64
 id|gpvalue

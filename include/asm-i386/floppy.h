@@ -43,23 +43,13 @@ r_void
 (brace
 multiline_comment|/* Nothing to do on an i386 */
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|FDC1
+r_static
 r_int
 id|FDC1
 op_assign
 l_int|0x3f0
 suffix:semicolon
-DECL|variable|FDC2
-r_int
-id|FDC2
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#else
-DECL|macro|FDC1
-mdefine_line|#define FDC1 0x3f0
 DECL|variable|FDC2
 r_static
 r_int
@@ -68,7 +58,6 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#endif
 DECL|macro|FLOPPY0_TYPE
 mdefine_line|#define FLOPPY0_TYPE&t;((CMOS_READ(0x10) &gt;&gt; 4) &amp; 15)
 DECL|macro|FLOPPY1_TYPE

@@ -1,13 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/ext/inode.c&n; *&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2375,14 +2367,6 @@ id|err
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|ext_fs_type
 r_static
 r_struct
@@ -2407,15 +2391,13 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|register_filesystem
 c_func
 (paren
 op_amp
 id|ext_fs_type
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

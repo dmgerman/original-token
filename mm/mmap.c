@@ -3198,9 +3198,11 @@ id|mpnt
 )paren
 suffix:semicolon
 )brace
-id|unmap_page_range
+id|zap_page_range
 c_func
 (paren
+id|current-&gt;mm
+comma
 id|addr
 comma
 id|len

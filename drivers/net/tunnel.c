@@ -1,10 +1,5 @@
 multiline_comment|/* tunnel.c: an IP tunnel driver&n;&n;&t;The purpose of this driver is to provide an IP tunnel through&n;&t;which you can tunnel network traffic transparently across subnets.&n;&n;&t;This was written by looking at Nick Holloway&squot;s dummy driver&n;&t;Thanks for the great code!&n;&n;&t;&t;-Sam Lantinga&t;(slouken@cs.ucdavis.edu)  02/01/95&n;&t;&t;&n;&t;Minor tweaks:&n;&t;&t;Cleaned up the code a little and added some pre-1.3.0 tweaks.&n;&t;&t;dev-&gt;hard_header/hard_header_len changed to use no headers.&n;&t;&t;Comments/bracketing tweaked.&n;&t;&t;Made the tunnels use dev-&gt;name not tunnel: when error reporting.&n;&t;&t;Added tx_dropped stat&n;&t;&t;&n;&t;&t;-Alan Cox&t;(Alan.Cox@linux.org) 21 March 95&n;*/
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_IP_FORWARD
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1064,5 +1059,4 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-macro_line|#endif
 eof

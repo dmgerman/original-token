@@ -24,5 +24,9 @@ mdefine_line|#define RLIMIT_MEMLOCK&t;8&t;&t;/* max locked-in-memory address spa
 macro_line|#endif
 DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS&t;8
+macro_line|#ifdef __KERNEL__
+DECL|macro|INIT_RLIMITS
+mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},&t;&t;&t;&t;&bslash;&n;    {       0, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}&t;&bslash;&n;}
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

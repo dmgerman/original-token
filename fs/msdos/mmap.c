@@ -1,7 +1,4 @@
 multiline_comment|/*&n; *&t;fs/msdos/mmap.c&n; *&n; *&t;Written by Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&t;Inspired by fs/nfs/mmap.c (Jon Tombs 15 Aug 1993)&n; *&n; *&t;msdos mmap handling&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -11,9 +8,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;linux/msdos_fs.h&gt;
 multiline_comment|/*&n; * Fill in the supplied page for mmap&n; */
 DECL|function|msdos_file_mmap_nopage
 r_static

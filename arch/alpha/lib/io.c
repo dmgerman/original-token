@@ -726,6 +726,7 @@ r_int
 r_int
 id|port
 comma
+r_const
 r_void
 op_star
 id|src
@@ -777,6 +778,7 @@ r_int
 r_int
 id|port
 comma
+r_const
 r_void
 op_star
 id|src
@@ -937,6 +939,7 @@ r_int
 r_int
 id|port
 comma
+r_const
 r_void
 op_star
 id|src
@@ -1003,9 +1006,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Copy data from IO memory space to &quot;real&quot; memory space.&n; * This needs to be optimized.&n; */
-DECL|function|memcpy_fromio
+DECL|function|_memcpy_fromio
 r_void
-id|memcpy_fromio
+id|_memcpy_fromio
 c_func
 (paren
 r_void
@@ -1058,9 +1061,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Copy data from &quot;real&quot; memory space to IO memory space.&n; * This needs to be optimized.&n; */
-DECL|function|memcpy_toio
+DECL|function|_memcpy_toio
 r_void
-id|memcpy_toio
+id|_memcpy_toio
 c_func
 (paren
 r_int
@@ -1113,9 +1116,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * &quot;memset&quot; on IO memory space.&n; * This needs to be optimized.&n; */
-DECL|function|memset_io
+DECL|function|_memset_io
 r_void
-id|memset_io
+id|_memset_io
 c_func
 (paren
 r_int

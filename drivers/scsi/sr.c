@@ -1,9 +1,5 @@
 multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.frmug.fr.net to&n; *&t; provide auto-eject.&n; *&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -5828,16 +5824,6 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

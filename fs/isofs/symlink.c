@@ -1,14 +1,11 @@
 multiline_comment|/*&n; *  linux/fs/isofs/symlink.c&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  isofs symlink handling code.  This is only used with the Rock Ridge&n; *  extensions to iso9660&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 r_static
 r_int
 id|isofs_readlink

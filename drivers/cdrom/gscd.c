@@ -11,22 +11,8 @@ mdefine_line|#define  NO_MODULE_DEBUG
 DECL|macro|NO_FUTURE_WORK
 mdefine_line|#define  NO_FUTURE_WORK
 multiline_comment|/*------------------------*/
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#ifndef CONFIG_MODVERSIONS
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif MODULE
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1221,10 +1207,8 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/*&t;if (updateToc() &lt; 0)&n;&t;&t;return -EIO;&n;*/
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1272,10 +1256,8 @@ op_member_access_from_pointer
 id|i_rdev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|get_status
 r_int
@@ -2950,6 +2932,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef MODULE
 multiline_comment|/* Init for the Module-Version */
 DECL|function|init_module
 r_int
@@ -2992,7 +2975,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -3000,21 +2982,6 @@ id|cleanup_module
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;GoldStar-module in use - can&squot;t remove it.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -1,8 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/xiafs/bitmap.c&n; *&n; *  Copyright (C) Q. Frank Xia, 1993.&n; *  &n; *  Based on Linus&squot; minix/bitmap.c&n; *  Copyright (C) Linus Torvalds, 1991, 1992.&n; *  &n; *  This software may be redistributed per Linux Copyright.&n; */
 multiline_comment|/* bitmap.c contains the code that handles the inode and block bitmaps */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/xia_fs.h&gt;

@@ -5452,10 +5452,8 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-macro_line|#if&t;defined(MODULE)
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif&t;/* defined(MODULE) */
 r_if
 c_cond
 (paren
@@ -8454,10 +8452,8 @@ id|ha_t
 )paren
 )paren
 suffix:semicolon
-macro_line|#if&t;defined(MODULE)
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif&t;/* defined(MODULE) */
 r_if
 c_cond
 (paren
@@ -9260,6 +9256,7 @@ id|wavelan_probe
 )brace
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
@@ -9267,6 +9264,7 @@ l_int|0x390
 suffix:semicolon
 multiline_comment|/* Default from above.. */
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
@@ -9316,19 +9314,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;wavelan: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|proc_net_unregister
 c_func
 (paren
@@ -9358,7 +9343,6 @@ id|dev_wavelan.priv
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif&t;/* defined(MODULE) */
 r_static

@@ -1,8 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/nfs/symlink.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  Optimization changes Copyright (C) 1994 Florian La Roche&n; *&n; *  nfs symlink handling code&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
@@ -10,6 +6,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 r_static
 r_int
 id|nfs_readlink

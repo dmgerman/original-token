@@ -9,11 +9,8 @@ id|version
 op_assign
 l_string|&quot;3c509.c:1.03 10/8/94 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -23,11 +20,12 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_MCA */
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef EL3_DEBUG
 DECL|variable|el3_debug
 r_int
@@ -1752,10 +1750,8 @@ id|EL3_STATUS
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3412,23 +3408,13 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char
@@ -3476,12 +3462,14 @@ id|el3_probe
 )brace
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
@@ -3545,19 +3533,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;3c509: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -3590,7 +3565,6 @@ comma
 id|EL3_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

@@ -42,10 +42,7 @@ op_assign
 id|DE600_DEBUG
 suffix:semicolon
 "&f;"
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -581,10 +578,8 @@ id|DE600_IRQ
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;start
 op_assign
 l_int|1
@@ -675,10 +670,8 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 l_int|0
@@ -2403,14 +2396,6 @@ suffix:semicolon
 macro_line|#endif
 "&f;"
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|nullname
 r_static
 r_char

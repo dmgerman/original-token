@@ -1,13 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/umsdos/inode.c&n; *&n; *&t;Written 1993 by Jacques Gelinas &n; *&t;Inspired from linux/fs/msdos/... by Werner Almesberger&n; *&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1554,14 +1546,6 @@ id|sb
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|umsdos_fs_type
 r_static
 r_struct
@@ -1586,15 +1570,13 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|register_filesystem
 c_func
 (paren
 op_amp
 id|umsdos_fs_type
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

@@ -1,13 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/sysv/inode.c&n; *&n; *  minix/inode.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  xenix/inode.c&n; *  Copyright (C) 1992  Doug Evans&n; *&n; *  coh/inode.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Paul B. Monday&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Bruno Haible&n; *&n; *  This file contains code for allocating/freeing inodes and for read/writing&n; *  the superblock.&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -5478,14 +5470,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* Every kernel module contains stuff like this. */
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|sysv_fs_type
 r_static
 r_struct
@@ -5538,6 +5522,9 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_int
+id|ouch
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -5552,6 +5539,13 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|ouch
+op_assign
 id|register_filesystem
 c_func
 (paren
@@ -5561,7 +5555,14 @@ id|sysv_fs_type
 id|i
 )braket
 )paren
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+id|ouch
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -5591,6 +5592,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+multiline_comment|/* No error message if this breaks... that&squot;s OK... */
 id|unregister_filesystem
 c_func
 (paren

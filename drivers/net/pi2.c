@@ -43,7 +43,7 @@ mdefine_line|#define REALLY_SLOW_IO 1
 DECL|macro|PI2_MODULE
 mdefine_line|#define PI2_MODULE 0
 macro_line|#if PI2_MODULE &gt; 0
-macro_line|#include &lt;linux/modules.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -1,6 +1,4 @@
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
+multiline_comment|/*&n; * linux/fs/msdos/buffer.c&n; *&n; *&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

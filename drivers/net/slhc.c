@@ -2,10 +2,7 @@ multiline_comment|/*&n; * Routines to compress and uncompress tcp packets (for t
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Entire module is for IP only */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -431,10 +428,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 id|comp
 suffix:semicolon
@@ -486,10 +481,8 @@ c_func
 id|comp-&gt;tstate
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 id|kfree
 c_func
 (paren
@@ -2886,14 +2879,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -2920,19 +2905,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;CSLIP: module in use, remove delayed&quot;
-)paren
-suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace

@@ -3539,18 +3539,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;ppp_bsd_comp: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
 id|ppp_unregister_compressor
 (paren
 op_amp

@@ -2444,15 +2444,12 @@ id|snd_ioctl_return
 r_int
 op_star
 )paren
-(paren
-r_int
-)paren
 id|arg
 comma
 l_int|8
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Only 8 bits/sample supported&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Only 8 bits/sample supported */
 r_break
 suffix:semicolon
 macro_line|#endif /* ifdef JAZZ16  */

@@ -1841,13 +1841,13 @@ op_assign
 (brace
 id|shm_open
 comma
-multiline_comment|/* open */
+multiline_comment|/* open - callback for a new vm-area open */
 id|shm_close
 comma
-multiline_comment|/* close */
+multiline_comment|/* close - callback for when the vm-area is released */
 l_int|NULL
 comma
-multiline_comment|/* unmap */
+multiline_comment|/* no need to sync pages at unmap */
 l_int|NULL
 comma
 multiline_comment|/* protect */
@@ -2831,15 +2831,6 @@ id|shp
 suffix:semicolon
 r_int
 id|id
-suffix:semicolon
-id|unmap_page_range
-(paren
-id|shmd-&gt;vm_start
-comma
-id|shmd-&gt;vm_end
-op_minus
-id|shmd-&gt;vm_start
-)paren
 suffix:semicolon
 multiline_comment|/* remove from the list of attaches of the shm segment */
 id|id

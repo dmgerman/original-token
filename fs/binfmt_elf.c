@@ -1,13 +1,5 @@
 multiline_comment|/*&n; * linux/fs/binfmt_elf.c&n; *&n; * These are the functions used to load ELF format executables as used&n; * on SVr4 machines.  Information on the format may be found in the book&n; * &quot;UNIX SYSTEM V RELEASE 4 Programmers Guide: Ansi C and Programming Support&n; * Tools&quot;.&n; *&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -5620,14 +5612,6 @@ id|has_dumped
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -5637,15 +5621,13 @@ r_void
 )paren
 (brace
 multiline_comment|/* Install the COFF, ELF and XOUT loaders.&n;&t; * N.B. We *rely* on the table being the right size with the&n;&t; * right number of free slots...&n;&t; */
+r_return
 id|register_binfmt
 c_func
 (paren
 op_amp
 id|elf_format
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module
@@ -5656,18 +5638,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;iBCS: module is in use, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Remove the COFF and ELF loaders. */
 id|unregister_binfmt
 c_func

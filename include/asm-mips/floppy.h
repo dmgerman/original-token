@@ -46,17 +46,6 @@ DECL|macro|FLOPPY0_TYPE
 mdefine_line|#define FLOPPY0_TYPE 4&t;&t;/* this is wrong for the Olli M700, but who cares... */
 DECL|macro|FLOPPY1_TYPE
 mdefine_line|#define FLOPPY1_TYPE 0
-macro_line|#ifdef MODULE
-DECL|macro|FDC1
-mdefine_line|#define FDC1&t;&t;&t;((boot_info.machtype == MACH_ACER_PICA_61 || &bslash;&n;&t;&t;&t;&t;boot_info.machtype == MACH_MIPS_MAGNUM_4000 || &bslash;&n;&t;&t;&t;&t;boot_info.machtype == MACH_OLIVETTI_M700) ? &bslash;&n;&t;&t;&t;&t;0xe0003000 : 0x3f0)
-DECL|variable|FDC2
-r_int
-id|FDC2
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#else
 DECL|macro|FDC1
 mdefine_line|#define FDC1&t;&t;&t;((boot_info.machtype == MACH_ACER_PICA_61 || &bslash;&n;&t;&t;&t;&t;boot_info.machtype == MACH_MIPS_MAGNUM_4000 || &bslash;&n;&t;&t;&t;&t;boot_info.machtype == MACH_OLIVETTI_M700) ? &bslash;&n;&t;&t;&t;&t;0xe0003000 : 0x3f0)
 DECL|variable|FDC2
@@ -67,7 +56,6 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#endif /* MODULE */
 DECL|macro|N_FDC
 mdefine_line|#define N_FDC 1&t;&t;&t;/* do you *really* want a second controller? */
 DECL|macro|N_DRIVE

@@ -1,6 +1,5 @@
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
-macro_line|#ifdef CONFIG_MODVERSIONS
+macro_line|#ifdef MODVERSIONS
 DECL|macro|_set_ver
 macro_line|# undef _set_ver
 DECL|macro|X
@@ -16,10 +15,10 @@ macro_line|#  endif /* !MODULE */
 DECL|macro|X
 macro_line|#  define X(a) a
 macro_line|# endif /* !__GENKSYMS__ */
-macro_line|#else /* !CONFIG_MODVERSIONS */
+macro_line|#else /* !MODVERSIONS */
 DECL|macro|X
 macro_line|# define X(sym) { (void *) &amp; sym, SYMBOL_NAME_STR(sym)}
-macro_line|#endif /* !CONFIG_MODVERSIONS */
+macro_line|#endif /* MODVERSIONS */
 DECL|macro|EMPTY
 mdefine_line|#define EMPTY {0,0}
 l_int|0

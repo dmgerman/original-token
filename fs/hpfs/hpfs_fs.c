@@ -1,13 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/hpfs/hpfs_fs.c&n; *  read-only HPFS&n; *  version 1.0&n; *&n; *  Chris Smith 1993&n; *&n; *  Sources &amp; references:&n; *   Duncan, _Design ... of HPFS_, MSJ 4(5)   (C) 1989 Microsoft Corp&n; *   linux/fs/minix  Copyright (C) 1991, 1992, 1993  Linus Torvalds&n; *   linux/fs/msdos  Written 1992, 1993 by Werner Almesberger&n; *   linux/fs/isofs  Copyright (C) 1991  Eric Youngdale&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/hpfs_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -6086,14 +6078,6 @@ l_int|2048
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|hpfs_fs_type
 r_static
 r_struct
@@ -6118,15 +6102,13 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|register_filesystem
 c_func
 (paren
 op_amp
 id|hpfs_fs_type
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

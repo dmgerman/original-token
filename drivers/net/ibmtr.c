@@ -1,10 +1,7 @@
 multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux */
 multiline_comment|/*&n;&t;Written 1993 by Mark Swanson and Peter De Schrijver.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This device driver should work with Any IBM Token Ring Card that does&n;   not use DMA.&n;&n;&t;I used Donald Becker&squot;s (becker@super.org) device driver work&n;&t;as a base for most of my initial work.&n;*/
 multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&t;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n;   and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n;        - multi ring support clean up&n;        - RFC1042 compliance enhanced&n;&n;   Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n;        - bug correction in tr_tx&n;        - removed redundant information display&n;        - some code reworking&n;&n;   Warnings !!!!!!!!!!!!!!&n;      This driver is only partially sanitized for support of multiple&n;      adapters.  It will almost definately fail if more than one&n;      active adapter is identified.&n;*/
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 DECL|macro|NO_AUTODETECT
 mdefine_line|#define NO_AUTODETECT 1
 DECL|macro|NO_AUTODETECT
@@ -2346,10 +2343,8 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/*  NEED to see smem size *AND* reset high 512 bytes if&n;          needed */
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2444,10 +2439,8 @@ id|close_adapter-&gt;ret_code
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -6378,14 +6371,6 @@ id|toki-&gt;tr_stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char
@@ -6433,6 +6418,7 @@ id|tok_probe
 )brace
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
@@ -6503,19 +6489,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;ibmtr: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -6545,7 +6518,6 @@ comma
 id|TR_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 eof

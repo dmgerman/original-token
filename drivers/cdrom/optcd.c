@@ -1,27 +1,5 @@
 multiline_comment|/*&t;$Id: optcd.c,v 1.3 1995/08/24 19:54:27 root Exp root $&n;&t;linux/drivers/block/optcd.c - Optics Storage 8000 AT CDROM driver&n;&n;&t;Copyright (C) 1995 Leo Spiekman (spiekman@dutette.et.tudelft.nl)&n;&n;&t;Based on Aztech CD268 CDROM driver by Werner Zimmermann and preworks&n;&t;by Eberhard Moenkeberg (emoenke@gwdg.de). ISP16 detection and&n;&t;configuration by Eric van der Maarel (maarel@marin.nl), with some data&n;&t;communicated by Vadim V. Model (vadim@rbrf.msk.su).&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;History&n;&t;14-5-95&t;&t;v0.0&t;Plays sound tracks. No reading of data CDs yet.&n;&t;&t;&t;&t;Detection of disk change doesn&squot;t work.&n;&t;21-5-95&t;&t;v0.1&t;First ALPHA version. CD can be mounted. The&n;&t;&t;&t;&t;device major nr is borrowed from the Aztech&n;&t;&t;&t;&t;driver. Speed is around 240 kb/s, as measured&n;&t;&t;&t;&t;with &quot;time dd if=/dev/cdrom of=/dev/null &bslash;&n;&t;&t;&t;&t;bs=2048 count=4096&quot;.&n;&t;24-6-95&t;&t;v0.2&t;Reworked the #defines for the command codes&n;&t;&t;&t;&t;and the like, as well as the structure of&n;&t;&t;&t;&t;the hardware communication protocol, to&n;&t;&t;&t;&t;reflect the &quot;official&quot; documentation, kindly&n;&t;&t;&t;&t;supplied by C.K. Tan, Optics Storage Pte. Ltd.&n;&t;&t;&t;&t;Also tidied up the state machine somewhat.&n;&t;28-6-95&t;&t;v0.3&t;Removed the ISP-16 interface code, as this&n;&t;&t;&t;&t;should go into its own driver. The driver now&n;&t;&t;&t;&t;has its own major nr.&n;&t;&t;&t;&t;Disk change detection now seems to work, too.&n;&t;&t;&t;&t;This version became part of the standard&n;&t;&t;&t;&t;kernel as of version 1.3.7&n;&t;24-9-95&t;&t;v0.4&t;Re-inserted ISP-16 interface code which I&n;&t;&t;&t;&t;copied from sjcd.c, with a few changes.&n;&t;&t;&t;&t;Updated README.optcd. Submitted for&n;&t;&t;&t;&t;inclusion in 1.3.21&n;&t;29-9-95&t;&t;v0.4a&t;Fixed bug that prevented compilation as module&n;*/
-macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
-macro_line|# include &lt;linux/module.h&gt;
-macro_line|# include &lt;linux/version.h&gt;
-macro_line|# ifndef CONFIG_MODVERSIONS
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|# endif
-DECL|macro|optcd_init
-mdefine_line|#define optcd_init init_module
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-macro_line|# define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-macro_line|# define MOD_DEC_USE_COUNT
-macro_line|#endif
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -29,6 +7,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR OPTICS_CDROM_MAJOR
@@ -6726,6 +6705,21 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|optcd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -6734,21 +6728,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;optcd: module in use - can&squot;t remove it.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

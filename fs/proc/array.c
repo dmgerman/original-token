@@ -2016,6 +2016,30 @@ c_cond
 id|tsk-&gt;mm
 )paren
 (brace
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+op_assign
+id|tsk-&gt;mm-&gt;mmap
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|vma
+)paren
+(brace
+id|vsize
+op_add_assign
+id|vma-&gt;vm_end
+op_minus
+id|vma-&gt;vm_start
+suffix:semicolon
+id|vma
+op_assign
+id|vma-&gt;vm_next
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2038,45 +2062,6 @@ c_func
 id|tsk
 )paren
 suffix:semicolon
-id|vsize
-op_assign
-(paren
-(paren
-id|tsk-&gt;mm-&gt;end_code
-op_minus
-id|tsk-&gt;mm-&gt;start_code
-)paren
-multiline_comment|/* text */
-op_plus
-(paren
-id|tsk-&gt;mm-&gt;end_data
-op_minus
-id|tsk-&gt;mm-&gt;start_data
-)paren
-multiline_comment|/* data */
-op_plus
-(paren
-id|tsk-&gt;mm-&gt;brk
-op_minus
-id|tsk-&gt;mm-&gt;start_brk
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* bss + heap */
-r_if
-c_cond
-(paren
-id|esp
-)paren
-(brace
-id|vsize
-op_add_assign
-id|tsk-&gt;mm-&gt;start_stack
-op_minus
-id|esp
-suffix:semicolon
-multiline_comment|/* stack */
-)brace
 )brace
 )brace
 id|wchan
@@ -2171,7 +2156,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* scale priority and nice values from timeslices to 0..40 */
+multiline_comment|/* scale priority and nice values from timeslices to -20..20 */
 id|priority
 op_assign
 id|tsk-&gt;counter
@@ -2183,10 +2168,14 @@ id|priority
 op_star
 l_int|10
 op_plus
-l_int|5
+id|DEF_PRIORITY
+op_div
+l_int|2
 )paren
 op_div
 id|DEF_PRIORITY
+op_minus
+l_int|20
 suffix:semicolon
 id|nice
 op_assign
@@ -2199,10 +2188,14 @@ id|nice
 op_star
 l_int|20
 op_plus
-l_int|10
+id|DEF_PRIORITY
+op_div
+l_int|2
 )paren
 op_div
 id|DEF_PRIORITY
+op_minus
+l_int|20
 suffix:semicolon
 r_return
 id|sprintf

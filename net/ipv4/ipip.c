@@ -1,22 +1,22 @@
 multiline_comment|/*&n; *&t;Linux NET3:&t;IP/IP protocol decoder. &n; *&n; *&t;Authors:&n; *&t;&t;Sam Lantinga (slouken@cs.ucdavis.edu)  02/01/95&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Merged and made usable non modular (its so tiny its silly as&n; *&t;&t;&t;&t;&t;a module taking up 2 pages).&n; *&t;&t;Alan Cox&t;: &t;Fixed bug with 1.3.18 and IPIP not working (now needs to set skb-&gt;h.iph)&n; *&t;&t;&t;&t;&t;to keep ip_forward happy.&n; *&t;&t;Alan Cox&t;:&t;More fixes for 1.3.21, and firewall fix. Maybe this will work soon 8).&n; *&t;&t;Kai Schulte&t;:&t;Fixed #defines for IP_FIREWALL-&gt;FIREWALL&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; */
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/tcp.h&gt;
+macro_line|#include &lt;linux/udp.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* For CONFIG_FIREWALL */
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
-macro_line|#include &lt;linux/tcp.h&gt;
-macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/ipip.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#if ( defined(CONFIG_NET_IPIP) &amp;&amp; defined(CONFIG_IP_FORWARD)) || defined(MODULE)
 multiline_comment|/*&n; *&t;The IPIP protocol driver.&n; *&n; *&t;On entry here&n; *&t;&t;skb-&gt;data is the original IP header&n; *&t;&t;skb-&gt;ip_hdr points to the initial IP header.&n; *&t;&t;skb-&gt;h.raw points at the new header.&n; */
 DECL|function|ipip_rcv
 r_int
@@ -321,6 +321,5 @@ l_string|&quot;ipip close: can&squot;t remove protocol&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

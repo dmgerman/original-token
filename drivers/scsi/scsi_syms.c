@@ -2,9 +2,6 @@ multiline_comment|/*&n; * We should not even be trying to compile this if we are
 macro_line|#ifndef MODULE
 macro_line|#error Go away.
 macro_line|#endif
-multiline_comment|/*&n; * Even though we are building a module, we need to undef this, since&n; * we are building a symbol table to be used by other modules.  For&n; * the symbol table to build properly, we need to undefine this.&n; */
-DECL|macro|MODULE
-macro_line|#undef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -71,23 +68,6 @@ id|scsi_symbol_table
 op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
-macro_line|#ifdef CONFIG_MODVERSIONS
-(brace
-(paren
-r_void
-op_star
-)paren
-l_int|1
-multiline_comment|/* Version version :-) */
-comma
-id|SYMBOL_NAME_STR
-c_func
-(paren
-id|Using_Versions
-)paren
-)brace
-comma
-macro_line|#endif
 id|X
 c_func
 (paren

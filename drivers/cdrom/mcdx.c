@@ -10,28 +10,7 @@ op_assign
 l_string|&quot;mcdx.c,v 1.7 1995/08/27 01:46:41 heiko Exp&quot;
 suffix:semicolon
 macro_line|#endif
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifndef CONFIG_MODVERSIONS
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-DECL|macro|MOD_IN_USE
-mdefine_line|#define MOD_IN_USE 1
-macro_line|#endif MODULE
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

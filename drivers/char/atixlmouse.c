@@ -1,23 +1,5 @@
 multiline_comment|/*&n; * ATI XL Bus Mouse Driver for Linux&n; * by Bob Harris (rth@sparta.com)&n; *&n; * Uses VFS interface for linux 0.98 (01OCT92)&n; *&n; * Modified by Chris Colohan (colohan@eecg.toronto.edu)&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * version 0.3a&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-DECL|macro|atixl_busmouse_init
-mdefine_line|#define atixl_busmouse_init init_module
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -939,6 +921,21 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|atixl_busmouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -947,21 +944,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;atixlmouse: in use, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|mouse_deregister
 c_func
 (paren

@@ -1,17 +1,14 @@
 multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; *&n; * FIXES&n; *&n; * 2/7/94 James Bottomley and Jon Peatfield DAMTP, Cambridge University&n; *&n; * An xid mismatch no longer causes the request to be trashed.&n; *&n; * Peter Eriksson - incorrect XID used to confuse Linux&n; * Florian La Roche - use the correct max size, if reading a packet and&n; *                    also verify, if the whole packet has been read...&n; *                    more checks should be done in proc.c...&n; *&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/rpcsock.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/* JEJB/JSP 2/7/94&n; * this must match the value of NFS_SLACK_SPACE in linux/fs/nfs/proc.c &n; * ***FIXME*** should probably put this in nfs_fs.h */
 DECL|macro|NFS_SLACK_SPACE
 mdefine_line|#define NFS_SLACK_SPACE 1024

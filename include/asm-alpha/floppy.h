@@ -43,23 +43,13 @@ r_void
 (brace
 multiline_comment|/* Nothing to do on an Alpha */
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|FDC1
+r_static
 r_int
 id|FDC1
 op_assign
 l_int|0x3f0
 suffix:semicolon
-DECL|variable|FDC2
-r_int
-id|FDC2
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#else
-DECL|macro|FDC1
-mdefine_line|#define FDC1 0x3f0
 DECL|variable|FDC2
 r_static
 r_int
@@ -68,7 +58,6 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Again, the CMOS information doesn&squot;t work on the alpha..&n; */
 DECL|macro|FLOPPY0_TYPE
 mdefine_line|#define FLOPPY0_TYPE 6

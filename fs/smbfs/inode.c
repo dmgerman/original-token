@@ -1695,14 +1695,6 @@ id|smb_current_malloced
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 multiline_comment|/* looks ugly, taken from gcc-info */
 DECL|variable|shut_up_gcc
 r_static
@@ -1762,15 +1754,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_return
 id|register_filesystem
 c_func
 (paren
 op_amp
 id|smb_fs_type
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_void

@@ -1,6 +1,6 @@
 multiline_comment|/* &n; * Herein lies all the functions/variables that are &quot;exported&quot; for linkage&n; * with dynamically loaded kernel modules.&n; *&t;&t;&t;Jon.&n; *&n; * - Stacked module support and unified symbol table added (June 1994)&n; * - External symbol table support added (December 1994)&n; * - Versions on symbols added (December 1994)&n; * by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; */
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -22,7 +22,6 @@ macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
@@ -579,18 +578,6 @@ id|X
 c_func
 (paren
 id|do_munmap
-)paren
-comma
-id|X
-c_func
-(paren
-id|zeromap_page_range
-)paren
-comma
-id|X
-c_func
-(paren
-id|unmap_page_range
 )paren
 comma
 id|X

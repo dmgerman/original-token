@@ -11873,13 +11873,6 @@ id|expires
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * Supposedly you just do this, and the last symtab registered will&n;     * be removed.  If someone else registered a symtab, this could&n;     * blow up in our faces.  FIXME.&n;     */
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */

@@ -1,23 +1,5 @@
 multiline_comment|/*&n; * Microsoft busmouse driver based on Logitech driver (see busmouse.c)&n; *&n; * Microsoft BusMouse support by Teemu Rantanen (tvr@cs.hut.fi) (02AUG92)&n; *&n; * Microsoft Bus Mouse support modified by Derrick Cole (cole@concert.net)&n; *    8/28/92&n; *&n; * Microsoft Bus Mouse support folded into 0.97pl4 code&n; *    by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; * Changes:  Logitech and Microsoft support in the same kernel.&n; *           Defined new constants in busmouse.h for MS mice.&n; *           Added int mse_busmouse_type to distinguish busmouse types&n; *           Added a couple of new functions to handle differences in using&n; *             MS vs. Logitech (where the int variable wasn&squot;t appropriate).&n; *&n; * Modified by Peter Cervasio (address above) (26SEP92)&n; * Changes:  Included code to (properly?) detect when a Microsoft mouse is&n; *           really attached to the machine.  Don&squot;t know what this does to&n; *           Logitech bus mice, but all it does is read ports.&n; *&n; * Modified by Christoph Niemann (niemann@rubdv15.etdv.ruhr-uni-bochum.de)&n; * Changes:  Better interrupt-handler (like in busmouse.c).&n; *&t;     Some changes to reduce code-size.&n; *&t;     Changed detection code to use inb_p() instead of doing empty&n; *&t;     loops to delay i/o.&n; *&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * version 0.3b&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-DECL|macro|ms_bus_mouse_init
-mdefine_line|#define ms_bus_mouse_init init_module
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -894,6 +876,21 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|ms_bus_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -902,21 +899,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;msbusmouse: in use, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|mouse_deregister
 c_func
 (paren

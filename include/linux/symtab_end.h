@@ -1,4 +1,4 @@
-macro_line|#ifdef MODVERSIONS /* MODVERSIONS */
+macro_line|#ifdef MODVERSIONS
 DECL|macro|_set_ver
 macro_line|#undef _set_ver
 macro_line|#if defined(MODULE) &amp;&amp; !defined(__GENKSYMS__)

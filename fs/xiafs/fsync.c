@@ -1,9 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/xiafs/fsync.c&n; *&n; *  Changes Copyright (C) 1993 Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  xiafs fsync primitive&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -11,6 +6,8 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/xia_fs.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;xiafs_mac.h&quot;
 DECL|macro|blocksize
 mdefine_line|#define blocksize (XIAFS_ZSIZE(inode-&gt;i_sb))

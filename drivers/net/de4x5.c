@@ -13209,23 +13209,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: device busy, remove delayed&bslash;n&quot;
-comma
-id|thisDE4X5.name
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
 id|lp
 )paren
 (brace
@@ -13293,7 +13276,6 @@ op_amp
 id|thisDE4X5
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

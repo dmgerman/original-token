@@ -9,19 +9,16 @@ id|version
 op_assign
 l_string|&quot;e2100.c:v1.01 7/21/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;8390.h&quot;
 DECL|variable|e21_probe_list
 r_static
@@ -1057,10 +1054,8 @@ l_int|0
 r_return
 id|rc
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1451,10 +1446,8 @@ c_func
 id|ioaddr
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1477,14 +1470,6 @@ id|e21_probe_list
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char
@@ -1532,12 +1517,14 @@ id|e2100_probe
 )brace
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
 l_int|0x300
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
@@ -1608,19 +1595,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;e2100: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -1637,7 +1611,6 @@ comma
 id|E21_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

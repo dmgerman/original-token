@@ -334,7 +334,7 @@ macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */
 r_extern
 r_void
-id|memcpy_fromio
+id|_memcpy_fromio
 c_func
 (paren
 r_void
@@ -349,7 +349,7 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|memcpy_toio
+id|_memcpy_toio
 c_func
 (paren
 r_int
@@ -364,7 +364,7 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|memset_io
+id|_memset_io
 c_func
 (paren
 r_int
@@ -376,6 +376,12 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|macro|memcpy_fromio
+mdefine_line|#define memcpy_fromio(to,from,len)&t;_memcpy_fromio((to),(unsigned long)(from),(len))
+DECL|macro|memcpy_toio
+mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to),(from),(len))
+DECL|macro|memset_io
+mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
 multiline_comment|/*&n; * String versions of in/out ops:&n; */
 r_extern
 r_void
@@ -387,7 +393,7 @@ id|port
 comma
 r_void
 op_star
-id|src
+id|dst
 comma
 r_int
 r_int
@@ -404,7 +410,7 @@ id|port
 comma
 r_void
 op_star
-id|src
+id|dst
 comma
 r_int
 r_int
@@ -421,7 +427,7 @@ id|port
 comma
 r_void
 op_star
-id|src
+id|dst
 comma
 r_int
 r_int
@@ -436,9 +442,10 @@ r_int
 r_int
 id|port
 comma
+r_const
 r_void
 op_star
-id|dst
+id|src
 comma
 r_int
 r_int
@@ -453,9 +460,10 @@ r_int
 r_int
 id|port
 comma
+r_const
 r_void
 op_star
-id|dst
+id|src
 comma
 r_int
 r_int
@@ -470,9 +478,10 @@ r_int
 r_int
 id|port
 comma
+r_const
 r_void
 op_star
-id|dst
+id|src
 comma
 r_int
 r_int

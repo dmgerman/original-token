@@ -1,22 +1,5 @@
 multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.5&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.ru&n; *   vadim@ipsun.ras.ru&n; *&n; *   ISP16 detection and configuration.&n; *   Copyright (C) 1995  Eric van der Maarel (maarel@marin.nl)&n; *                   and Vadim Model (vadim@cecmow.enet.dec.com)&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (maarel@marin.nl).&n; *&n; *  ISP16 detection and configuration by Eric van der Maarel (maarel@marin.nl).&n; *  Sound configuration by Vadim V. Model (model@cecmow.enet.dec.com)&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *  1.4 MSS Sound support!! Listen to a CD through the speakers.&n; *  1.5 Module support and bugfixes.&n; *      Tray locking.&n; *&n; */
-macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-DECL|macro|sjcd_init
-mdefine_line|#define sjcd_init init_module
-macro_line|#ifndef CONFIG_MODVERSIONS
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -26,6 +9,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -5791,10 +5775,8 @@ l_string|&quot;sjcd: open: done&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 op_increment
 id|sjcd_open_count
 suffix:semicolon
@@ -5833,10 +5815,8 @@ l_string|&quot;sjcd: release&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6569,6 +6549,21 @@ suffix:semicolon
 )brace
 )def_block
 macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|sjcd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|cleanup_module
 r_void
 (def_block
@@ -6578,20 +6573,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;sjcd: module: in use - can not remove.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
 r_if
 c_cond
 (paren

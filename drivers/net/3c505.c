@@ -1,8 +1,5 @@
 multiline_comment|/*&n; * Linux ethernet device driver for the 3Com Etherlink Plus (3C505)&n; * &t;By Craig Southeren and Juha Laiho&n; *&n; * 3c505.c&t;This module implements an interface to the 3Com&n; *&t;&t;Etherlink Plus (3c505) ethernet card. Linux device &n; *&t;&t;driver interface reverse engineered from the Linux 3C509&n; *&t;&t;device drivers. Some 3C505 information gleaned from&n; *&t;&t;the Crynwr packet driver. Still this driver would not&n; *&t;&t;be here without 3C505 technical reference provided by&n; *&t;&t;3Com.&n; *&n; * Version:&t;@(#)3c505.c&t;0.8.1&t;26-Jun-95&n; *&n; * Authors:&t;Linux 3c505 device driver by&n; *&t;&t;&t;Craig Southeren, &lt;craigs@ineluki.apana.org.au&gt;&n; *              Final debugging by&n; *&t;&t;&t;Andrew Tridgell, &lt;tridge@nimbus.anu.edu.au&gt;&n; *&t;&t;Auto irq/address, tuning, cleanup and v1.1.4+ kernel mods by&n; *&t;&t;&t;Juha Laiho, &lt;jlaiho@ichaos.nullnet.fi&gt;&n; *              Linux 3C509 driver by&n; *             &t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Crynwr packet driver by&n; *&t;&t;&t;Krishnan Gopalan and Gregg Stefancik,&n; * &t;&t;&t;   Clemson University Engineering Computer Operations.&n; *&t;&t;&t;Portions of the code have been adapted from the 3c505&n; *&t;&t;&t;   driver for NCSA Telnet by Bruce Orchard and later&n; *&t;&t;&t;   modified by Warren Van Houten and krus@diku.dk.&n; *              3C505 technical information provided by&n; *                      Terry Murphy, of 3Com Network Adapter Division&n; *&t;&t;Linux 1.3.0 changes by&n; *&t;&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *                     &n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -3185,10 +3182,8 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3898,10 +3893,8 @@ id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -5087,14 +5080,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char
@@ -5142,12 +5127,14 @@ id|elplus_probe
 )brace
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
 l_int|0x300
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
@@ -5218,19 +5205,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;3c505: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -5257,7 +5231,6 @@ comma
 id|ELP_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 eof

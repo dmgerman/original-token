@@ -1,9 +1,5 @@
 multiline_comment|/* linux/net/inet/rarp.c&n; *&n; * Copyright (C) 1994 by Ross Martin&n; * Based on linux/net/inet/arp.c, Copyright (C) 1994 by Florian La Roche&n; *&n; * This module implements the Reverse Address Resolution Protocol &n; * (RARP, RFC 903), which is used to convert low level addresses such&n; * as ethernet addresses into high level addresses such as IP addresses.&n; * The most common use of RARP is as a means for a diskless workstation &n; * to discover its IP address during a network boot.&n; *&n; **&n; ***&t;WARNING:::::::::::::::::::::::::::::::::WARNING&n; ****&n; *****&t;SUN machines seem determined to boot solely from the person who&n; ****&t;answered their RARP query. NEVER add a SUN to your RARP table&n; ***&t;unless you have all the rest to boot the box from it. &n; **&n; * &n; * Currently, only ethernet address -&gt; IP address is likely to work.&n; * (Is RARP ever used for anything else?)&n; *&n; * This code is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Fixes&n; *&t;Alan Cox&t;:&t;Rarp delete on device down needed as&n; *&t;&t;&t;&t;reported by Walter Wolfgang.&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -14,6 +10,7 @@ macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
@@ -33,7 +30,6 @@ macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#if&t;defined(CONFIG_INET_RARP) || defined(MODULE)
 r_extern
 r_int
 (paren
@@ -1826,16 +1822,7 @@ op_assign
 id|rarp_ioctl
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -1860,14 +1847,6 @@ c_func
 (paren
 r_void
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-suffix:semicolon
-r_else
 (brace
 r_struct
 id|rarp_table
@@ -1930,7 +1909,6 @@ c_func
 id|rt
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  ==FILEVERSION 6==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, increment the number above.&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  ==FILEVERSION 7==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, increment the number above.&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   OPTIMIZE_FLAG_TIME - Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If zero then the leading&n;&t;&t;&t;flag is always sent.&n;&n;   CHECK_CHARACTERS   - Enable the checking on all received characters for&n;&t;&t;&t;8 data bits, no parity. This adds a small amount of&n;&t;&t;&t;processing for each received character.&n;&t;&t;&t;&n;   NEW_SKBUFF&t;      - Use NET3.020 sk_buff&squot;s&n;*/
 multiline_comment|/* #define NEW_SKBUFF&t;&t;1 */
 DECL|macro|OPTIMIZE_FLAG_TIME
@@ -21,13 +21,6 @@ mdefine_line|#define PPP_MAX_DEV&t;256
 macro_line|#endif
 multiline_comment|/* $Id: ppp.c,v 1.5 1995/06/12 11:36:53 paulus Exp $&n; * Added dynamic allocation of channels to eliminate&n; *   compiled-in limits on the number of channels.&n; *&n; * Dynamic channel allocation code Copyright 1995 Caldera, Inc.,&n; *   released under the GNU General Public License Version 2.&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#ifdef MODULE
-DECL|macro|STATIC
-mdefine_line|#define  STATIC
-macro_line|#else
-DECL|macro|STATIC
-mdefine_line|#define  STATIC static
-macro_line|#endif /* def MODULE */
 macro_line|#include &lt;endian.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -91,7 +84,7 @@ macro_line|#ifndef PPP_LQR
 DECL|macro|PPP_LQR
 mdefine_line|#define PPP_LQR 0xc025  /* Link Quality Reporting Protocol */
 macro_line|#endif
-id|STATIC
+r_static
 r_int
 id|ppp_register_compressor
 (paren
@@ -101,7 +94,7 @@ op_star
 id|cp
 )paren
 suffix:semicolon
-id|STATIC
+r_static
 r_void
 id|ppp_unregister_compressor
 (paren
@@ -387,14 +380,14 @@ mdefine_line|#define PPP_MAX_DEV 256
 macro_line|#endif
 multiline_comment|/*&n; * Parameters which may be changed via insmod.&n; */
 DECL|variable|flag_time
-id|STATIC
+r_static
 r_int
 id|flag_time
 op_assign
 id|OPTIMIZE_FLAG_TIME
 suffix:semicolon
 DECL|variable|max_dev
-id|STATIC
+r_static
 r_int
 id|max_dev
 op_assign
@@ -2110,6 +2103,35 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|variable|ppp_syms
+r_static
+r_struct
+id|symbol_table
+id|ppp_syms
+op_assign
+(brace
+macro_line|#include &lt;linux/symtab_begin.h&gt;
+id|X
+c_func
+(paren
+id|ppp_register_compressor
+)paren
+comma
+id|X
+c_func
+(paren
+id|ppp_unregister_compressor
+)paren
+comma
+id|X
+c_func
+(paren
+id|ppp_crc16_table
+)paren
+comma
+macro_line|#include &lt;linux/symtab_end.h&gt;
+)brace
+suffix:semicolon
 multiline_comment|/* called at boot/load time for each ppp device defined in the kernel */
 macro_line|#ifndef MODULE
 r_int
@@ -2139,38 +2161,6 @@ c_cond
 id|first_time
 )paren
 (brace
-r_static
-r_struct
-id|symbol_table
-id|ppp_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-DECL|macro|Y
-mdefine_line|#define Y(sym) { (void *) &amp;sym, SYMBOL_NAME_STR (sym) }
-id|Y
-c_func
-(paren
-id|ppp_register_compressor
-)paren
-comma
-id|Y
-c_func
-(paren
-id|ppp_unregister_compressor
-)paren
-comma
-id|Y
-c_func
-(paren
-id|ppp_crc16_table
-)paren
-comma
-DECL|macro|Y
-macro_line|#undef Y
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
-suffix:semicolon
 id|first_time
 op_assign
 l_int|0
@@ -2199,14 +2189,17 @@ id|ppp_syms
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Un-register the devices defined at the start of the system. They will&n; * be added when they are needed again. The first device just gets us into&n; * this code to register the handlers.&n; */
-id|unregister_netdev
+r_if
+c_cond
 (paren
-id|dev
+id|answer
 )paren
-suffix:semicolon
 r_return
 id|answer
+suffix:semicolon
+multiline_comment|/*&n;&t; * Return &quot;not found&quot;, so that dev_init() will unlink&n;&t; * the placeholder device entry for us.&n;&t; */
+r_return
+id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -12242,7 +12235,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ppp_register_compressor
-id|STATIC
+r_static
 r_int
 id|ppp_register_compressor
 (paren
@@ -12356,7 +12349,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ppp_unregister_compressor
-id|STATIC
+r_static
 r_void
 id|ppp_unregister_compressor
 (paren
@@ -12463,14 +12456,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*************************************************************&n; * Module support routines&n; *************************************************************/
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module
@@ -12503,6 +12488,16 @@ id|KERN_INFO
 l_string|&quot;PPP: ppp_init() failure %d&bslash;n&quot;
 comma
 id|status
+)paren
+suffix:semicolon
+r_else
+(paren
+r_void
+)paren
+id|register_symtab
+(paren
+op_amp
+id|ppp_syms
 )paren
 suffix:semicolon
 r_return
@@ -12542,16 +12537,9 @@ suffix:semicolon
 r_int
 id|busy_flag
 op_assign
-id|MOD_IN_USE
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Ensure that the devices are not in operation.&n; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|busy_flag
-)paren
-(brace
 id|ctl
 op_assign
 id|ppp_list
@@ -12615,7 +12603,6 @@ op_assign
 id|ctl-&gt;next
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/*&n; * Ensure that there are no compressor modules registered&n; */
 r_if
 c_cond
@@ -12678,20 +12665,6 @@ id|printk
 (paren
 id|KERN_INFO
 l_string|&quot;PPP: ppp line discipline successfully unregistered&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * Remove the symbol definitions&n; */
-(paren
-r_void
-)paren
-id|register_symtab
-(paren
-(paren
-r_struct
-id|symbol_table
-op_star
-)paren
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * De-register the devices so that there is no problem with them&n; */

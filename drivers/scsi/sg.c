@@ -1,9 +1,5 @@
 multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com), &n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *   &n; *  Borrows code from st driver.&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2432,14 +2428,6 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -2472,23 +2460,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|__FILE__
-l_string|&quot;: module is in use, remove rejected&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|scsi_unregister_module
 c_func
 (paren

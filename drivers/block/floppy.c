@@ -33,30 +33,21 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#ifdef MODULE
-DECL|macro|FD_MODULE
-mdefine_line|#define FD_MODULE
+multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
 DECL|variable|FLOPPY_IRQ
+r_static
 r_int
 id|FLOPPY_IRQ
 op_assign
 l_int|6
 suffix:semicolon
 DECL|variable|FLOPPY_DMA
+r_static
 r_int
 id|FLOPPY_DMA
 op_assign
 l_int|2
 suffix:semicolon
-DECL|variable|ALLOWED_DRIVE_MASK
-r_int
-id|ALLOWED_DRIVE_MASK
-op_assign
-l_int|0x33
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef FD_MODULE
-multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
 DECL|variable|ALLOWED_DRIVE_MASK
 r_static
 r_int
@@ -64,13 +55,6 @@ id|ALLOWED_DRIVE_MASK
 op_assign
 l_int|0x33
 suffix:semicolon
-DECL|macro|FLOPPY_IRQ
-mdefine_line|#define FLOPPY_IRQ 6
-DECL|macro|FLOPPY_DMA
-mdefine_line|#define FLOPPY_DMA 2
-macro_line|#endif
-DECL|macro|MODULE_AWARE_DRIVER
-mdefine_line|#define MODULE_AWARE_DRIVER
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17657,10 +17641,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef FD_MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -17857,10 +17839,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef FD_MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 id|fd_disable_dma
 c_func
 (paren

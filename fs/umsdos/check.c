@@ -1,7 +1,4 @@
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
-macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/*&n; * linux/fs/umsdos/check.c&n; *&n; *&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -11,6 +8,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 r_extern
 r_int
 r_int

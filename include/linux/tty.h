@@ -18,7 +18,7 @@ DECL|macro|MAX_NR_USER_CONSOLES
 mdefine_line|#define MAX_NR_USER_CONSOLES 63&t;/* must be root to allocate above this */
 multiline_comment|/* Note: the ioctl VT_GETSTATE does not work for&n;&t;&t;   consoles 16 and higher (since it returns a short) */
 DECL|macro|NR_PTYS
-mdefine_line|#define NR_PTYS&t;&t;64
+mdefine_line|#define NR_PTYS&t;&t;256
 DECL|macro|NR_LDISCS
 mdefine_line|#define NR_LDISCS&t;16
 multiline_comment|/*&n; * These are set up by the setup-routine at boot-time:&n; */

@@ -8,11 +8,8 @@ id|version
 op_assign
 l_string|&quot;arcnet.c:v2.12 ALPHA 95/10/27 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif /* MODULE */
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* are we Linux 1.2.x? */
 macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
 DECL|macro|LINUX12
@@ -32,13 +29,14 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_INET */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifdef LINUX12
 macro_line|#include &quot;arp.h&quot;
 macro_line|#else
@@ -3385,10 +3383,8 @@ comma
 id|INTMASK
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3536,10 +3532,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -10275,14 +10269,6 @@ suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Kernel Loadable Module Support                                           *&n; *                                                                          *&n; ****************************************************************************/
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char
@@ -10331,6 +10317,7 @@ id|arcnet_probe
 )brace
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
@@ -10338,6 +10325,7 @@ l_int|0x0
 suffix:semicolon
 multiline_comment|/* &lt;--- EDIT THESE LINES FOR YOUR CONFIGURATION */
 DECL|variable|irqnum
+r_static
 r_int
 id|irqnum
 op_assign
@@ -10345,12 +10333,14 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* or use the insmod io= irqnum= shmem= options */
 DECL|variable|shmem
+r_static
 r_int
 id|shmem
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|num
+r_static
 r_int
 id|num
 op_assign
@@ -10464,23 +10454,6 @@ r_void
 r_if
 c_cond
 (paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: device busy, remove delayed&bslash;n&quot;
-comma
-id|thiscard.name
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
 id|thiscard.start
 )paren
 id|arcnet_close
@@ -10531,7 +10504,6 @@ id|thiscard.priv
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

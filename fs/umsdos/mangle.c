@@ -1,7 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/umsdos/mangle.c&n; *&n; *&t;Written 1993 by Jacques Gelinas &n; *&n; * Control the mangling of file name to fit msdos name space.&n; * Many optimisation by GLU == dglaude@is1.vub.ac.be (GLAUDE DAVID)&n;*/
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
+multiline_comment|/*&n; *  linux/fs/umsdos/mangle.c&n; *&n; *&t;Written 1993 by Jacques Gelinas &n; *&n; * Control the mangling of file name to fit msdos name space.&n; * Many optimisation by GLU == dglaude@is1.vub.ac.be (GLAUDE DAVID)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

@@ -2,10 +2,7 @@ multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for 
 DECL|macro|SL_CHECK_TRANSMIT
 mdefine_line|#define SL_CHECK_TRANSMIT
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 multiline_comment|/* Undef this, if you don&squot;t need 6bit encapsulation code in the driver */
 DECL|macro|CONFIG_SLIP_MODE_SLIP6
 mdefine_line|#define CONFIG_SLIP_MODE_SLIP6
@@ -2673,10 +2670,8 @@ r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Done.  We have linked the TTY line to a channel. */
 r_return
 id|sl-&gt;dev-&gt;base_addr
@@ -2751,10 +2746,8 @@ c_func
 id|sl-&gt;dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 r_struct
@@ -4575,14 +4568,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module
@@ -4609,21 +4594,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;SLIP: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

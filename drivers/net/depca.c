@@ -8721,23 +8721,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: device busy, remove delayed&bslash;n&quot;
-comma
-id|thisDepca.name
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|release_region
 c_func
 (paren
@@ -8776,7 +8759,6 @@ op_amp
 id|thisDepca
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

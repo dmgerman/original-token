@@ -1,13 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/xiafs/inode.c&n; *&n; *  Copyright (C) Q. Frank Xia, 1993.&n; *  &n; *  Based on Linus&squot; minix/inode.c&n; *  Copyright (C) Linus Torvalds, 1991, 1992.&n; *&n; *  This software may be redistributed per Linux Copyright.&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/xia_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2828,14 +2820,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* Every kernel module contains stuff like this. */
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|xiafs_fs_type
 r_static
 r_struct
@@ -2860,15 +2844,13 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|register_filesystem
 c_func
 (paren
 op_amp
 id|xiafs_fs_type
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

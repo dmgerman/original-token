@@ -1322,10 +1322,8 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2385,10 +2383,8 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4192,12 +4188,14 @@ id|express_probe
 )brace
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
 l_int|0x300
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
@@ -4260,19 +4258,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;eexpress: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -4305,7 +4290,6 @@ comma
 id|EEXPRESS_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -I/usr/src/linux/drivers/net -Wall -Wstrict-prototypes -O6 -m486 -c eexpress.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */

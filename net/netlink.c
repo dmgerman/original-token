@@ -1,15 +1,5 @@
 multiline_comment|/*&n; * SKIPLINK&t;An implementation of a loadable kernel mode driver providing&n; *&t;&t;multiple kernel/user space bidirectional communications links.&n; *&n; * &t;&t;Author: &t;Alan Cox &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; * &n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_NETLINK) || defined(MODULE)
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -478,6 +468,8 @@ op_lshift
 id|minor
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -833,18 +825,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-DECL|function|init_module
+DECL|function|init_netlink
 r_int
-id|init_module
+id|init_netlink
 c_func
 (paren
 r_void
@@ -852,12 +835,6 @@ r_void
 (brace
 r_int
 id|ct
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Network Kernel/User communications module 0.03&bslash;n&quot;
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -924,6 +901,28 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Network Kernel/User communications module 0.03&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|init_netlink
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -941,77 +940,5 @@ l_string|&quot;netlink&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|function|init_netlink
-r_void
-id|init_netlink
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|ct
-suffix:semicolon
-multiline_comment|/* Keep quiet on booting, we don&squot;t want too many messages */
-r_if
-c_cond
-(paren
-id|register_chrdev
-c_func
-(paren
-id|NET_MAJOR
-comma
-l_string|&quot;netlink&quot;
-comma
-op_amp
-id|netlink_fops
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;netlink: unable to get major %d&bslash;n&quot;
-comma
-id|NET_MAJOR
-)paren
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|ct
-op_assign
-l_int|0
-suffix:semicolon
-id|ct
-OL
-id|MAX_LINKS
-suffix:semicolon
-id|ct
-op_increment
-)paren
-(brace
-id|skb_queue_head_init
-c_func
-(paren
-op_amp
-id|skb_queue_rd
-(braket
-id|ct
-)braket
-)paren
-suffix:semicolon
-id|netlink_handler
-(braket
-id|ct
-)braket
-op_assign
-id|netlink_err
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 macro_line|#endif
 eof

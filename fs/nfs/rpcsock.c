@@ -1,7 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/nfs/rpcsock.c&n; *&n; *  This is a generic RPC call interface for datagram sockets that is able&n; *  to place several concurrent RPC requests at the same time. It works like&n; *  this:&n; *&n; *  -&t;When a process places a call, it allocates a request slot if&n; *&t;one is available. Otherwise, it sleeps on the backlog queue.&n; *  -&t;The first process on the receive queue waits for the next RPC reply,&n; *&t;and peeks at the XID. If it finds a matching request, it receives&n; *&t;the datagram on behalf of that process and wakes it up. Otherwise,&n; *&t;the datagram is discarded.&n; *  -&t;If the process having received the datagram was the first one on&n; *&t;the receive queue, it wakes up the next one to listen for replies.&n; *  -&t;It then removes itself from the request queue. If there are more&n; *&t;callers waiting on the backlog queue, they are woken up, too.&n; *&n; *  Copyright (C) 1995, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,11 +6,11 @@ macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/rpcsock.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|msleep
 mdefine_line|#define msleep(sec)&t;{ current-&gt;timeout = sec * HZ / 1000; &bslash;&n;&t;&t;&t;  current-&gt;state = TASK_INTERRUPTIBLE; &bslash;&n;&t;&t;&t;  schedule(); &bslash;&n;&t;&t;&t;}
 DECL|macro|dprintk

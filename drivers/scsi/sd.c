@@ -1,8 +1,6 @@
 multiline_comment|/*&n; *      sd.c Copyright (C) 1992 Drew Eckhardt &n; *           Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *      Linux scsi disk driver&n; *              Initial versions: Drew Eckhardt &n; *              Subsequent revisions: Eric Youngdale&n; *&n; *      &lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; *&n; *       Modified by Eric Youngdale eric@aib.com to support loadable&n; *       low-level scsi drivers.&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
+macro_line|#ifdef MODULE
 multiline_comment|/*&n; * This is a variable in scsi.c that is set when we are processing something&n; * after boot time.  By definition, this is true when we are a loadable module&n; * ourselves.&n; */
 DECL|macro|MODULE_FLAG
 mdefine_line|#define MODULE_FLAG 1
@@ -6452,16 +6450,6 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -6504,23 +6492,6 @@ id|gendisk
 op_star
 id|sdgd
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|__FILE__
-l_string|&quot;: module is in use, remove rejected&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|scsi_unregister_module
 c_func
 (paren

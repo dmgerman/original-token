@@ -7,15 +7,19 @@ DECL|macro|MAX_CHRDEV
 mdefine_line|#define MAX_CHRDEV 64
 DECL|macro|MAX_BLKDEV
 mdefine_line|#define MAX_BLKDEV 64
-multiline_comment|/*&n; * assignments&n; *&n; * devices are as follows (same as minix, so we can use the minix fs):&n; *&n; *      character              block                  comments&n; *      --------------------   --------------------   --------------------&n; *  0 - unnamed                unnamed                minor 0 = true nodev&n; *  1 - /dev/mem               ramdisk&n; *  2 -                        floppy&n; *  3 -                        ide0 or hd&n; *  4 - /dev/tty*&n; *  5 - /dev/tty; /dev/cua*&n; *  6 - lp&n; *  7 - /dev/vcs*&n; *  8 -                        scsi disk&n; *  9 - scsi tape&n; * 10 - mice&n; * 11 -                        scsi cdrom&n; * 12 - qic02 tape&n; * 13 -                        xt disk&n; * 14 - sound card&n; * 15 -                        cdu31a cdrom&n; * 16 - sockets                goldstar cdrom&n; * 17 - af_unix                optics cdrom&n; * 18 - af_inet                sanyo cdrom&n; * 19 - cyclades /dev/ttyC*&n; * 20 - cyclades /dev/cub*     mitsumi (mcdx) cdrom&n; * 21 - scsi generic&n; * 22 -                        ide1&n; * 23 -                        mitsumi cdrom&n; * 24 -&t;                       sony535 cdrom&n; * 25 -                        matsushita cdrom       minors 0..3&n; * 26 -                        matsushita cdrom 2     minors 0..3&n; * 27 - qic117 tape            matsushita cdrom 3     minors 0..3&n; * 28 -                        matsushita cdrom 4     minors 0..3&n; * 29 -                        aztech/orchid/okano/wearnes cdrom&n; * 32 -                        philips/lms cm206 cdrom&n; * 33 -                        ide2&n; * 34 - z8530 driver           ide3&n; */
+multiline_comment|/*&n; * assignments&n; *&n; * devices are as follows (same as minix, so we can use the minix fs):&n; *&n; *      character              block                  comments&n; *      --------------------   --------------------   --------------------&n; *  0 - unnamed                unnamed                minor 0 = true nodev&n; *  1 - /dev/mem               ramdisk&n; *  2 - /dev/ptyp*             floppy&n; *  3 - /dev/ttyp*             ide0 or hd&n; *  4 - /dev/tty*&n; *  5 - /dev/tty; /dev/cua*&n; *  6 - lp&n; *  7 - /dev/vcs*&n; *  8 -                        scsi disk&n; *  9 - scsi tape&n; * 10 - mice&n; * 11 -                        scsi cdrom&n; * 12 - qic02 tape&n; * 13 -                        xt disk&n; * 14 - sound card&n; * 15 -                        cdu31a cdrom&n; * 16 - sockets                goldstar cdrom&n; * 17 - af_unix                optics cdrom&n; * 18 - af_inet                sanyo cdrom&n; * 19 - cyclades /dev/ttyC*&n; * 20 - cyclades /dev/cub*     mitsumi (mcdx) cdrom&n; * 21 - scsi generic&n; * 22 -                        ide1&n; * 23 -                        mitsumi cdrom&n; * 24 -&t;                       sony535 cdrom&n; * 25 -                        matsushita cdrom       minors 0..3&n; * 26 -                        matsushita cdrom 2     minors 0..3&n; * 27 - qic117 tape            matsushita cdrom 3     minors 0..3&n; * 28 -                        matsushita cdrom 4     minors 0..3&n; * 29 -                        aztech/orchid/okano/wearnes cdrom&n; * 32 -                        philips/lms cm206 cdrom&n; * 33 -                        ide2&n; * 34 - z8530 driver           ide3&n; */
 DECL|macro|UNNAMED_MAJOR
 mdefine_line|#define UNNAMED_MAJOR&t;0
 DECL|macro|MEM_MAJOR
 mdefine_line|#define MEM_MAJOR&t;1
 DECL|macro|FLOPPY_MAJOR
 mdefine_line|#define FLOPPY_MAJOR&t;2
+DECL|macro|PTY_MASTER_MAJOR
+mdefine_line|#define PTY_MASTER_MAJOR 2
 DECL|macro|IDE0_MAJOR
 mdefine_line|#define IDE0_MAJOR&t;3
+DECL|macro|PTY_SLAVE_MAJOR
+mdefine_line|#define PTY_SLAVE_MAJOR 3
 DECL|macro|HD_MAJOR
 mdefine_line|#define HD_MAJOR&t;IDE0_MAJOR
 DECL|macro|TTY_MAJOR

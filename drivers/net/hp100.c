@@ -1980,10 +1980,8 @@ id|irq
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 id|dev
 op_member_access_from_pointer
 id|tbusy
@@ -2392,10 +2390,8 @@ id|irq
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

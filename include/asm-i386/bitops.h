@@ -27,6 +27,8 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|ADDR
 mdefine_line|#define ADDR (*(struct __dummy *) addr)
+DECL|macro|CONST_ADDR
+mdefine_line|#define CONST_ADDR (*(const struct __dummy *) addr)
 DECL|function|set_bit
 r_extern
 id|__inline__
@@ -195,7 +197,7 @@ id|oldbit
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|ADDR
+id|CONST_ADDR
 )paren
 comma
 l_string|&quot;ir&quot;

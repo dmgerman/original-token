@@ -2,24 +2,32 @@ multiline_comment|/*&n; * Dynamic loading of modules into the kernel.&n; *&n; * 
 macro_line|#ifndef _LINUX_MODULE_H
 DECL|macro|_LINUX_MODULE_H
 mdefine_line|#define _LINUX_MODULE_H
-macro_line|#ifdef MODVERSIONS
-macro_line|# ifndef __GENKSYMS__
+macro_line|#ifdef __GENKSYMS__
+DECL|macro|_set_ver
+macro_line|#  define _set_ver(sym,vers) sym
+DECL|macro|MODVERSIONS
+macro_line|#  define MODVERSIONS
+macro_line|#else /* ! __GENKSYMS__ */
+macro_line|# ifdef MODVERSIONS
+DECL|macro|CONFIG_MODVERSIONS
+macro_line|#  undef CONFIG_MODVERSIONS /* the *.ver files need this... */
+DECL|macro|CONFIG_MODVERSIONS
+macro_line|#  define CONFIG_MODVERSIONS /* the *.ver files need this... */
 macro_line|#  ifdef MODULE
 DECL|macro|_set_ver
 macro_line|#   define _set_ver(sym,vers) sym ## _R ## vers
 macro_line|#   include &lt;linux/modversions.h&gt;
-macro_line|#  else /* MODULE */
+macro_line|#  else /* !MODULE */
 macro_line|#   ifdef EXPORT_SYMTAB
 DECL|macro|_set_ver
 macro_line|#    define _set_ver(sym,vers) sym
 macro_line|#    include &lt;linux/modversions.h&gt;
 macro_line|#   endif /* EXPORT_SYMTAB */
 macro_line|#  endif /* MODULE */
-macro_line|# else /* __GENKSYMS__ */
-DECL|macro|_set_ver
-macro_line|#  define _set_ver(sym,vers) sym
-macro_line|# endif /* __GENKSYMS__ */
-macro_line|#endif /* MODVERSIONS */
+DECL|macro|CONFIG_MODVERSIONS
+macro_line|#  undef CONFIG_MODVERSIONS /* the *.ver files needed this... */
+macro_line|# endif /* MODVERSIONS */
+macro_line|#endif /* __GENKSYMS__ */
 multiline_comment|/* values of module.state */
 DECL|macro|MOD_UNINITIALIZED
 mdefine_line|#define MOD_UNINITIALIZED 0

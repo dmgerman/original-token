@@ -1,23 +1,5 @@
 multiline_comment|/*&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_select&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching select code.&n; *&n; * Modified the select() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; *&n; * Minor addition by Cliff Matthews&n; *   added fasync support&n; *&n; * Modularised 6-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt; &n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-DECL|macro|bus_mouse_init
-mdefine_line|#define bus_mouse_init init_module
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/busmouse.h&gt;
@@ -1007,6 +989,21 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|bus_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -1015,17 +1012,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;busmouse: in use - remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
 id|mouse_deregister
 c_func
 (paren

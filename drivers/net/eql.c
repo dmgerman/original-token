@@ -916,10 +916,8 @@ op_amp
 id|eql-&gt;timer
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -989,10 +987,8 @@ id|eql_delete_slave_queue
 id|eql-&gt;queue
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4005,19 +4001,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;eql: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -4025,7 +4008,6 @@ op_amp
 id|dev_eql
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Local Variables: &n; * compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c eql.c&quot;&n; * version-control: t&n; * kept-new-versions: 20&n; * End:&n; */

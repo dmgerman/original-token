@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;de620.c $Revision: 1.31 $ BETA&n; *&n; *&n; *&t;Linux driver for the D-Link DE-620 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993, 1994 by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; *&n; *&t;Based on adapter information gathered from DOS packetdriver&n; *&t;sources from D-Link Inc:  (Special thanks to Henry Ngai of D-Link.)&n; *&t;&t;Portions (C) Copyright D-Link SYSTEM Inc. 1991, 1992&n; *&t;&t;Copyright, 1988, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;&t;(Now at &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&n; *&t;Valuable assistance from:&n; *&t;&t;J. Joshua Kopper &lt;kopper@rtsg.mot.com&gt;&n; *&t;&t;Olav Kvittem &lt;Olav.Kvittem@uninett.no&gt;&n; *&t;&t;Germano Caronni &lt;caronni@nessie.cs.id.ethz.ch&gt;&n; *&t;&t;Jeremy Fitzhardinge &lt;jeremy@suite.sw.oz.au&gt;&n; *&n; *****************************************************************************/
+multiline_comment|/*&n; *&t;de620.c $Revision: 1.40 $ BETA&n; *&n; *&n; *&t;Linux driver for the D-Link DE-620 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993, 1994 by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; *&n; *&t;Based on adapter information gathered from DOS packetdriver&n; *&t;sources from D-Link Inc:  (Special thanks to Henry Ngai of D-Link.)&n; *&t;&t;Portions (C) Copyright D-Link SYSTEM Inc. 1991, 1992&n; *&t;&t;Copyright, 1988, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;&t;(Now at &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&n; *&t;Valuable assistance from:&n; *&t;&t;J. Joshua Kopper &lt;kopper@rtsg.mot.com&gt;&n; *&t;&t;Olav Kvittem &lt;Olav.Kvittem@uninett.no&gt;&n; *&t;&t;Germano Caronni &lt;caronni@nessie.cs.id.ethz.ch&gt;&n; *&t;&t;Jeremy Fitzhardinge &lt;jeremy@suite.sw.oz.au&gt;&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; *****************************************************************************/
 DECL|variable|version
 r_static
@@ -7,10 +7,13 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;de620.c: $Revision: 1.31 $,  Bjorn Ekwall &lt;bj0rn@blox.se&gt;&bslash;n&quot;
+l_string|&quot;de620.c: $Revision: 1.40 $,  Bjorn Ekwall &lt;bj0rn@blox.se&gt;&bslash;n&quot;
 suffix:semicolon
 "&f;"
 multiline_comment|/***********************************************************************&n; *&n; * &quot;Tuning&quot; section.&n; *&n; * Compile-time options: (see below for descriptions)&n; * -DDE620_IO=0x378&t;(lpt1)&n; * -DDE620_IRQ=7&t;(lpt1)&n; * -DDE602_DEBUG=...&n; * -DSHUTDOWN_WHEN_LOST&n; * -DCOUNT_LOOPS&n; * -DLOWSPEED&n; * -DREAD_DELAY&n; * -DWRITE_DELAY&n; */
+multiline_comment|/*&n; * This driver assumes that the printer port is a &quot;normal&quot;,&n; * dumb, uni-directional port!&n; * If your port is &quot;fancy&quot; in any way, please try to set it to &quot;normal&quot;&n; * with your BIOS setup.  I have no access to machines with bi-directional&n; * ports, so I can&squot;t test such a driver :-(&n; * (Yes, I _know_ it is possible to use DE620 with bidirectional ports...)&n; *&n; * There are some clones of DE620 out there, with different names.&n; * If the current driver does not recognize a clone, try to change&n; * the following #define to:&n; *&n; * #define DE620_CLONE 1&n; */
+DECL|macro|DE620_CLONE
+mdefine_line|#define DE620_CLONE 0
 multiline_comment|/*&n; * If the adapter has problems with high speeds, enable this #define&n; * otherwise full printerport speed will be attempted.&n; *&n; * You can tune the READ_DELAY/WRITE_DELAY below if you enable LOWSPEED&n; *&n;#define LOWSPEED&n; */
 macro_line|#ifndef READ_DELAY
 DECL|macro|READ_DELAY
@@ -25,24 +28,8 @@ multiline_comment|/*&n; * Enable debugging by &quot;-DDE620_DEBUG=3&quot; when c
 macro_line|#ifdef LOWSPEED
 multiline_comment|/*&n; * Enable this #define if you want to see debugging output that show how long&n; * we have to wait before the DE-620 is ready for the next read/write/command.&n; *&n;#define COUNT_LOOPS&n; */
 macro_line|#endif
-DECL|variable|bnc
-DECL|variable|utp
-r_static
-r_int
-id|bnc
-op_assign
-l_int|0
-comma
-id|utp
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n; * Force media with insmod:&n; *&t;insmod de620.o bnc=1&n; * or&n; *&t;insmod de620.o utp=1&n; */
 "&f;"
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -97,6 +84,50 @@ mdefine_line|#define DE620_DEBUG 0
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
+multiline_comment|/*&n; * Force media with insmod:&n; *&t;insmod de620.o bnc=1&n; * or&n; *&t;insmod de620.o utp=1&n; *&n; * Force io and/or irq with insmod:&n; *&t;insmod de620.o io=0x378 irq=7&n; *&n; * Make a clone skip the Ethernet-address range check:&n; *&t;insmod de620.o clone=1&n; */
+DECL|variable|bnc
+r_static
+r_int
+id|bnc
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|utp
+r_static
+r_int
+id|utp
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|io
+r_static
+r_int
+id|io
+op_assign
+id|DE620_IO
+suffix:semicolon
+DECL|variable|irq
+r_static
+r_int
+id|irq
+op_assign
+id|DE620_IRQ
+suffix:semicolon
+DECL|variable|clone
+r_static
+r_int
+id|clone
+op_assign
+id|DE620_CLONE
+suffix:semicolon
+DECL|variable|de620_debug
+r_static
+r_int
+r_int
+id|de620_debug
+op_assign
+id|DE620_DEBUG
+suffix:semicolon
 multiline_comment|/***********************************************&n; *                                             *&n; * Index to functions, as function prototypes. *&n; *                                             *&n; ***********************************************/
 multiline_comment|/*&n; * Routines used internally. (See also &quot;convenience macros.. below&quot;)&n; */
 multiline_comment|/* Put in the device structure. */
@@ -223,13 +254,6 @@ DECL|macro|DE620_RX_START_PAGE
 mdefine_line|#define DE620_RX_START_PAGE 12&t;&t;/* 12 pages (=3k) reserved for tx */
 DECL|macro|DEF_NIC_CMD
 mdefine_line|#define DEF_NIC_CMD IRQEN | ICEN | DS1
-DECL|variable|de620_debug
-r_int
-r_int
-id|de620_debug
-op_assign
-id|DE620_DEBUG
-suffix:semicolon
 DECL|variable|NIC_Cmd
 r_static
 r_volatile
@@ -1073,7 +1097,7 @@ c_cond
 id|request_irq
 c_func
 (paren
-id|DE620_IRQ
+id|dev-&gt;irq
 comma
 id|de620_interrupt
 comma
@@ -1089,7 +1113,7 @@ l_string|&quot;%s: unable to get IRQ %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|DE620_IRQ
+id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
@@ -1098,15 +1122,13 @@ suffix:semicolon
 )brace
 id|irq2dev_map
 (braket
-id|DE620_IRQ
+id|dev-&gt;irq
 )braket
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1156,12 +1178,12 @@ suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|DE620_IRQ
+id|dev-&gt;irq
 )paren
 suffix:semicolon
 id|irq2dev_map
 (braket
-id|DE620_IRQ
+id|dev-&gt;irq
 )braket
 op_assign
 l_int|NULL
@@ -1170,10 +1192,8 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1595,7 +1615,7 @@ id|de620_interrupt
 c_func
 (paren
 r_int
-id|irq
+id|irq_in
 comma
 r_struct
 id|pt_regs
@@ -1610,7 +1630,7 @@ id|dev
 op_assign
 id|irq2dev_map
 (braket
-id|irq
+id|irq_in
 )braket
 suffix:semicolon
 id|byte
@@ -1637,9 +1657,9 @@ l_int|NULL
 )paren
 op_logical_or
 (paren
-id|DE620_IRQ
-op_ne
 id|irq
+op_ne
+id|irq_in
 )paren
 )paren
 (brace
@@ -1653,9 +1673,9 @@ ques
 c_cond
 id|dev-&gt;name
 suffix:colon
-l_string|&quot;DE620&quot;
+l_string|&quot;de620&quot;
 comma
-id|irq
+id|irq_in
 )paren
 suffix:semicolon
 r_return
@@ -2638,6 +2658,15 @@ id|checkbyte
 op_assign
 l_int|0xa5
 suffix:semicolon
+multiline_comment|/*&n;&t; * This is where the base_addr and irq gets set.&n;&t; * Tunable at compile-time and insmod-time&n;&t; */
+id|dev-&gt;base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev-&gt;irq
+op_assign
+id|irq
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2728,7 +2757,7 @@ c_cond
 id|check_region
 c_func
 (paren
-id|DE620_IO
+id|dev-&gt;base_addr
 comma
 l_int|3
 )paren
@@ -2739,7 +2768,7 @@ c_func
 (paren
 l_string|&quot;, port 0x%x busy&bslash;n&quot;
 comma
-id|DE620_IO
+id|dev-&gt;base_addr
 )paren
 suffix:semicolon
 r_return
@@ -2750,7 +2779,7 @@ macro_line|#endif
 id|request_region
 c_func
 (paren
-id|DE620_IO
+id|dev-&gt;base_addr
 comma
 l_int|3
 comma
@@ -2895,14 +2924,7 @@ op_assign
 op_amp
 id|de620_set_multicast_list
 suffix:semicolon
-id|dev-&gt;base_addr
-op_assign
-id|DE620_IO
-suffix:semicolon
-id|dev-&gt;irq
-op_assign
-id|DE620_IRQ
-suffix:semicolon
+multiline_comment|/* base_addr and irq are already set, see above! */
 id|ether_setup
 c_func
 (paren
@@ -3311,12 +3333,17 @@ multiline_comment|/* bytes 0 + 1 of NodeID */
 r_if
 c_cond
 (paren
+op_logical_neg
+id|clone
+op_logical_and
+(paren
 id|wrd
 op_ne
 id|htons
 c_func
 (paren
 l_int|0x0080
+)paren
 )paren
 )paren
 multiline_comment|/* Valid D-Link ether sequence? */
@@ -3357,6 +3384,10 @@ multiline_comment|/* bytes 2 + 3 of NodeID */
 r_if
 c_cond
 (paren
+op_logical_neg
+id|clone
+op_logical_and
+(paren
 (paren
 id|wrd
 op_amp
@@ -3364,6 +3395,7 @@ l_int|0xff
 )paren
 op_ne
 l_int|0xc8
+)paren
 )paren
 multiline_comment|/* Valid D-Link ether sequence? */
 r_return
@@ -3502,14 +3534,6 @@ multiline_comment|/* no errors */
 "&f;"
 multiline_comment|/******************************************************************************&n; *&n; * Loadable module skeleton&n; *&n; */
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|nullname
 r_static
 r_char
@@ -3552,18 +3576,6 @@ comma
 id|de620_probe
 )brace
 suffix:semicolon
-DECL|variable|de620_io
-r_int
-id|de620_io
-op_assign
-id|DE620_IO
-suffix:semicolon
-DECL|variable|de620_irq
-r_int
-id|de620_irq
-op_assign
-id|DE620_IRQ
-suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module
@@ -3572,14 +3584,6 @@ c_func
 r_void
 )paren
 (brace
-id|de620_dev.base_addr
-op_assign
-id|de620_io
-suffix:semicolon
-id|de620_dev.irq
-op_assign
-id|de620_irq
-suffix:semicolon
 r_if
 c_cond
 (paren
