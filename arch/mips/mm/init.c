@@ -26,14 +26,6 @@ macro_line|#ifdef CONFIG_SGI
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/mmu_context.h&gt;
-r_extern
-r_void
-id|show_net_buffers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|__bad_pte_kernel
 r_void
 id|__bad_pte_kernel
@@ -1062,13 +1054,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_extern
 r_int

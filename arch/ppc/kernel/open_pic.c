@@ -8,6 +8,7 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &quot;local_irq.h&quot;
 DECL|variable|OpenPIC
 r_volatile
@@ -33,6 +34,14 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|open_pic_irq_offset
+r_int
+id|open_pic_irq_offset
+suffix:semicolon
+r_extern
+r_int
+id|use_of_interrupt_tree
+suffix:semicolon
 r_void
 id|chrp_mask_irq
 c_func
@@ -49,6 +58,13 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_void
+id|find_ISUs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|NumProcessors
 r_static
 id|u_int
@@ -59,6 +75,12 @@ r_static
 id|u_int
 id|NumSources
 suffix:semicolon
+DECL|variable|ISU
+id|OpenPIC_Source
+op_star
+id|ISU
+suffix:semicolon
+multiline_comment|/*&n; * We should use this if we have &gt; 1 ISU.&n; * We can just point each entry to the&n; * appropriate source regs but it wastes a lot of space&n; * so until we have &gt;1 ISU I&squot;ll leave it unimplemented.&n; * -- Cort&n;OpenPIC_Source ISU[128];&n;*/
 DECL|variable|open_pic
 r_struct
 id|hw_interrupt_type
@@ -79,10 +101,6 @@ l_int|0
 comma
 l_int|0
 )brace
-suffix:semicolon
-DECL|variable|open_pic_irq_offset
-r_int
-id|open_pic_irq_offset
 suffix:semicolon
 multiline_comment|/*&n; *  Accesses to the current processor&squot;s registers&n; */
 macro_line|#ifndef __powerpc__
@@ -174,11 +192,11 @@ suffix:semicolon
 )brace
 macro_line|#endif /* __SMP__ */
 macro_line|#ifdef __i386__
-DECL|function|ld_le32
+DECL|function|in_le32
 r_static
 r_inline
 id|u_int
-id|ld_le32
+id|in_le32
 c_func
 (paren
 r_volatile
@@ -231,7 +249,7 @@ id|val
 suffix:semicolon
 id|val
 op_assign
-id|ld_le32
+id|in_le32
 c_func
 (paren
 id|addr
@@ -425,6 +443,7 @@ id|OPENPIC_MASK
 )paren
 suffix:semicolon
 multiline_comment|/* wait until it&squot;s not in use */
+multiline_comment|/* BenH: Is this code really enough ? I would rather check the result&n;&t; *       and eventually retry ...&n;&t; */
 r_while
 c_loop
 (paren
@@ -583,6 +602,14 @@ id|OPENPIC_FEATURE_LAST_SOURCE_SHIFT
 op_plus
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|_machine
+op_ne
+id|_MACH_Pmac
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -620,9 +647,11 @@ id|timerfreq
 id|printk
 c_func
 (paren
-l_string|&quot;%d Hz&bslash;n&quot;
+l_string|&quot;%d MHz&bslash;n&quot;
 comma
 id|timerfreq
+op_rshift
+l_int|20
 )paren
 suffix:semicolon
 r_else
@@ -632,6 +661,7 @@ c_func
 l_string|&quot;not set&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -737,6 +767,19 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|find_ISUs
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|_machine
+op_ne
+id|_MACH_Pmac
+)paren
+(brace
 multiline_comment|/* Initialize external interrupts */
 r_if
 c_cond
@@ -832,6 +875,149 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+multiline_comment|/* Prevent any interrupt from occuring during initialisation.&n;&t;&t;&t; * Hum... I believe this is not necessary, Apple does that in&n;&t;&t;&t; * Darwin&squot;s PowerExpress code.&n;&t;&t;&t; */
+id|openpic_set_priority
+c_func
+(paren
+l_int|0
+comma
+l_int|0xf
+)paren
+suffix:semicolon
+multiline_comment|/* First disable all interrupts and map them to CPU 0 */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NumSources
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|openpic_disable_irq
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
+id|openpic_mapirq
+c_func
+(paren
+id|i
+comma
+l_int|1
+op_lshift
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* If we use the device tree, then lookup all interrupts and&n;&t;&t;&t; * initialize them according to sense infos found in the tree&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|use_of_interrupt_tree
+)paren
+(brace
+r_struct
+id|device_node
+op_star
+id|np
+op_assign
+id|find_all_nodes
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|np
+)paren
+(brace
+r_int
+id|j
+comma
+id|pri
+suffix:semicolon
+id|pri
+op_assign
+id|strcmp
+c_func
+(paren
+id|np-&gt;name
+comma
+l_string|&quot;programmer-switch&quot;
+)paren
+ques
+c_cond
+l_int|2
+suffix:colon
+l_int|7
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|np-&gt;n_intrs
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|openpic_initirq
+c_func
+(paren
+id|np-&gt;intrs
+(braket
+id|j
+)braket
+dot
+id|line
+comma
+id|pri
+comma
+id|np-&gt;intrs
+(braket
+id|j
+)braket
+dot
+id|line
+comma
+id|np-&gt;intrs
+(braket
+id|j
+)braket
+dot
+id|sense
+comma
+id|np-&gt;intrs
+(braket
+id|j
+)braket
+dot
+id|sense
+)paren
+suffix:semicolon
+id|np
+op_assign
+id|np-&gt;next
+suffix:semicolon
+)brace
+)brace
+)brace
 multiline_comment|/* Initialize the spurious interrupt */
 r_if
 c_cond
@@ -857,9 +1043,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|_machine
-op_ne
+op_logical_and
+(paren
 id|_MACH_gemini
+op_or
+id|_MACH_Pmac
+)paren
+)paren
 )paren
 (brace
 r_if
@@ -915,6 +1108,36 @@ comma
 l_int|0x222
 )paren
 suffix:semicolon
+)brace
+DECL|function|find_ISUs
+r_void
+id|find_ISUs
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_PPC64
+multiline_comment|/* hardcode this for now since the IBM 260 is the only thing with&n;&t; * a distributed openpic right now.  -- Cort&n;&t; */
+id|ISU
+op_assign
+(paren
+id|OpenPIC_Source
+op_star
+)paren
+l_int|0xfeff7c00
+suffix:semicolon
+id|NumSources
+op_assign
+l_int|0x10
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* for non-distributed OpenPIC implementations it&squot;s in the IDU -- Cort */
+id|ISU
+op_assign
+id|OpenPIC-&gt;Source
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|openpic_reset
 r_void
@@ -1037,6 +1260,17 @@ op_amp
 id|OpenPIC-&gt;THIS_CPU.EOI
 comma
 l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Handle PCI write posting */
+(paren
+r_void
+)paren
+id|openpic_read
+c_func
+(paren
+op_amp
+id|OpenPIC-&gt;THIS_CPU.EOI
 )paren
 suffix:semicolon
 )brace
@@ -1379,8 +1613,7 @@ comma
 id|openpic_read
 c_func
 (paren
-op_amp
-id|OpenPIC-&gt;Source
+id|ISU
 (braket
 id|i
 )braket
@@ -1524,7 +1757,7 @@ id|openpic_clearfield
 c_func
 (paren
 op_amp
-id|OpenPIC-&gt;Source
+id|ISU
 (braket
 id|irq
 op_minus
@@ -1536,6 +1769,36 @@ comma
 id|OPENPIC_MASK
 )paren
 suffix:semicolon
+multiline_comment|/* make sure mask gets to controller before we return to user */
+r_do
+(brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* sync is probably useless here */
+)brace
+r_while
+c_loop
+(paren
+id|openpic_readfield
+c_func
+(paren
+op_amp
+id|OpenPIC-&gt;Source
+(braket
+id|irq
+)braket
+dot
+id|Vector_Priority
+comma
+id|OPENPIC_MASK
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
 )brace
 DECL|function|openpic_disable_irq
 r_void
@@ -1556,7 +1819,7 @@ id|openpic_setfield
 c_func
 (paren
 op_amp
-id|OpenPIC-&gt;Source
+id|ISU
 (braket
 id|irq
 op_minus
@@ -1568,6 +1831,37 @@ comma
 id|OPENPIC_MASK
 )paren
 suffix:semicolon
+multiline_comment|/* make sure mask gets to controller before we return to user */
+r_do
+(brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* sync is probably useless here */
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|openpic_readfield
+c_func
+(paren
+op_amp
+id|OpenPIC-&gt;Source
+(braket
+id|irq
+)braket
+dot
+id|Vector_Priority
+comma
+id|OPENPIC_MASK
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *  Initialize an interrupt source (and disable it!)&n; *&n; *  irq: OpenPIC interrupt number&n; *  pri: interrupt source priority&n; *  vec: the vector it will produce&n; *  pol: polarity (1 for positive, 0 for negative)&n; *  sense: 1 for level, 0 for edge&n; */
 DECL|function|openpic_initirq
@@ -1613,7 +1907,7 @@ id|openpic_safe_writefield
 c_func
 (paren
 op_amp
-id|OpenPIC-&gt;Source
+id|ISU
 (braket
 id|irq
 )braket
@@ -1624,9 +1918,9 @@ id|OPENPIC_PRIORITY_MASK
 op_or
 id|OPENPIC_VECTOR_MASK
 op_or
-id|OPENPIC_SENSE_POLARITY
+id|OPENPIC_SENSE_MASK
 op_or
-id|OPENPIC_SENSE_LEVEL
+id|OPENPIC_POLARITY_MASK
 comma
 (paren
 id|pri
@@ -1640,9 +1934,9 @@ op_or
 id|pol
 ques
 c_cond
-id|OPENPIC_SENSE_POLARITY
+id|OPENPIC_POLARITY_POSITIVE
 suffix:colon
-l_int|0
+id|OPENPIC_POLARITY_NEGATIVE
 )paren
 op_or
 (paren
@@ -1651,7 +1945,7 @@ ques
 c_cond
 id|OPENPIC_SENSE_LEVEL
 suffix:colon
-l_int|0
+id|OPENPIC_SENSE_EDGE
 )paren
 )paren
 suffix:semicolon
@@ -1679,7 +1973,7 @@ id|openpic_write
 c_func
 (paren
 op_amp
-id|OpenPIC-&gt;Source
+id|ISU
 (braket
 id|irq
 )braket
@@ -1713,7 +2007,7 @@ id|openpic_safe_writefield
 c_func
 (paren
 op_amp
-id|OpenPIC-&gt;Source
+id|ISU
 (braket
 id|irq
 )braket

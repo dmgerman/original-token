@@ -42,6 +42,10 @@ op_star
 id|sk_sk
 suffix:semicolon
 multiline_comment|/* INET layer */
+DECL|member|sk_lock
+id|spinlock_t
+id|sk_lock
+suffix:semicolon
 DECL|member|sk_server
 r_struct
 id|svc_serv

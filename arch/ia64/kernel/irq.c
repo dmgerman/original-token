@@ -2402,6 +2402,21 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|ia64_set_pmv
+c_func
+(paren
+l_int|1
+op_lshift
+l_int|16
+)paren
+suffix:semicolon
+id|ia64_set_cmcv
+c_func
+(paren
+id|CMC_IRQ
+)paren
+suffix:semicolon
+multiline_comment|/* XXX fix me */
 id|platform_irq_init
 c_func
 (paren

@@ -39,7 +39,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|log
+id|order
 OG
 id|PAGE_SHIFT
 )paren
@@ -47,6 +47,10 @@ id|order
 op_sub_assign
 id|PAGE_SHIFT
 suffix:semicolon
+r_else
+id|order
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 id|order

@@ -654,13 +654,10 @@ c_cond
 id|rbh
 )paren
 (brace
-id|set_bit
+id|mark_buffer_protected
 c_func
 (paren
-id|BH_Protected
-comma
-op_amp
-id|rbh-&gt;b_state
+id|rbh
 )paren
 suffix:semicolon
 id|brelse
@@ -753,7 +750,8 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
-id|invalidate_buffers
+multiline_comment|/* special: we want to release the ramdisk memory,&n;&t;&t;&t;   it&squot;s not like with the other blockdevices where&n;&t;&t;&t;   this ioctl only flushes away the buffer cache. */
+id|destroy_buffers
 c_func
 (paren
 id|inode-&gt;i_rdev
@@ -1125,7 +1123,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|invalidate_buffers
+id|destroy_buffers
 c_func
 (paren
 id|MKDEV

@@ -1525,12 +1525,12 @@ op_ge
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|kswapd_process
-r_static
-r_struct
-id|task_struct
-op_star
-id|kswapd_process
+DECL|variable|kswapd_wait
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
+id|kswapd_wait
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * The background pageout daemon, started as a kernel thread&n; * from the init process. &n; *&n; * This basically executes once a second, trickling out pages&n; * so that we have _some_ free memory available even if there&n; * is no other activity that frees anything up. This is needed&n; * for things like routing etc, where we otherwise might have&n; * all activity going on in asynchronous contexts that cannot&n; * page things out.&n; *&n; * If there are applications that are active memory-allocators&n; * (most normal use), this basically shouldn&squot;t matter.&n; */
 DECL|function|kswapd
@@ -1549,10 +1549,6 @@ op_star
 id|tsk
 op_assign
 id|current
-suffix:semicolon
-id|kswapd_process
-op_assign
-id|tsk
 suffix:semicolon
 id|tsk-&gt;session
 op_assign
@@ -1642,10 +1638,11 @@ id|tsk-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|schedule_timeout
+id|interruptible_sleep_on
 c_func
 (paren
-id|HZ
+op_amp
+id|kswapd_wait
 )paren
 suffix:semicolon
 )brace
@@ -1669,12 +1666,6 @@ r_int
 id|retval
 op_assign
 l_int|1
-suffix:semicolon
-id|wake_up_process
-c_func
-(paren
-id|kswapd_process
-)paren
 suffix:semicolon
 r_if
 c_cond

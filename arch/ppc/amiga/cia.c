@@ -115,7 +115,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|macro|CIA_SET_BASE_ADJUST_IRQ
-mdefine_line|#define CIA_SET_BASE_ADJUST_IRQ(base, irq)&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (irq &gt;= IRQ_AMIGA_CIAB) {&t;&t;&bslash;&n;&t;&t;base = &amp;ciab_base;&t;&t;&bslash;&n;&t;&t;irq =- IRQ_AMIGA_CIAB;&t;&t;&bslash;&n;&t;} else {&t;&t;&t;&t;&bslash;&n;&t;&t;base = &amp;ciaa_base;&t;&t;&bslash;&n;&t;&t;irq =- IRQ_AMIGA_CIAA;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define CIA_SET_BASE_ADJUST_IRQ(base, irq)&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (irq &gt;= IRQ_AMIGA_CIAB) {&t;&t;&bslash;&n;&t;&t;base = &amp;ciab_base;&t;&t;&bslash;&n;&t;&t;irq -= IRQ_AMIGA_CIAB;&t;&t;&bslash;&n;&t;} else {&t;&t;&t;&t;&bslash;&n;&t;&t;base = &amp;ciaa_base;&t;&t;&bslash;&n;&t;&t;irq -= IRQ_AMIGA_CIAA;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; *  Cause or clear CIA interrupts, return old interrupt status.&n; */
 DECL|function|cia_set_irq_private
 r_static

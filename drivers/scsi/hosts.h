@@ -288,6 +288,22 @@ r_int
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     * Used to set the queue depth for a specific device.&n;     */
+DECL|member|select_queue_depths
+r_void
+(paren
+op_star
+id|select_queue_depths
+)paren
+(paren
+r_struct
+id|Scsi_Host
+op_star
+comma
+id|Scsi_Device
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n;     * This determines if we will use a non-interrupt driven&n;     * or an interrupt driven scheme,  It is set to the maximum number&n;     * of simultaneous commands a given host adapter will accept.&n;     */
 DECL|member|can_queue
 r_int
@@ -661,35 +677,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *  scsi_init initializes the scsi hosts.&n; */
-multiline_comment|/*&n; * We use these goofy things because the MM is not set up when we init&n; * the scsi subsystem.&t;By using these functions we can write code that&n; * looks normal.  Also, it makes it possible to use the same code for a&n; * loadable module.&n; */
-r_extern
-r_void
-op_star
-id|scsi_init_malloc
-c_func
-(paren
-r_int
-r_int
-id|size
-comma
-r_int
-id|priority
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|scsi_init_free
-c_func
-(paren
-r_char
-op_star
-id|ptr
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
 r_extern
 r_int
 id|next_scsi_host
@@ -732,15 +719,21 @@ id|i
 )paren
 suffix:semicolon
 r_extern
-id|request_fn_proc
-op_star
-id|scsi_get_request_handler
+r_void
+id|scsi_register_blocked_host
 c_func
 (paren
-id|Scsi_Device
+r_struct
+id|Scsi_Host
 op_star
-id|SDpnt
-comma
+id|SHpnt
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_deregister_blocked_host
+c_func
+(paren
 r_struct
 id|Scsi_Host
 op_star
@@ -931,6 +924,20 @@ suffix:semicolon
 multiline_comment|/* Used by new queueing code. &n;                                           Selects command for blkdevs */
 )brace
 suffix:semicolon
+r_void
+id|scsi_initialize_queue
+c_func
+(paren
+id|Scsi_Device
+op_star
+id|SDpnt
+comma
+r_struct
+id|Scsi_Host
+op_star
+id|SHpnt
+)paren
+suffix:semicolon
 r_extern
 r_struct
 id|Scsi_Device_Template
@@ -993,13 +1000,13 @@ DECL|macro|MODULE_SCSI_IOCTL
 mdefine_line|#define MODULE_SCSI_IOCTL 3
 DECL|macro|MODULE_SCSI_DEV
 mdefine_line|#define MODULE_SCSI_DEV 4
-multiline_comment|/*&n; * This is an ugly hack.  If we expect to be able to load devices at run time,&n; * we need to leave extra room in some of the data structures.&t;Doing a&n; * realloc to enlarge the structures would be riddled with race conditions,&n; * so until a better solution is discovered, we use this crude approach&n; *&n; * Even bigger hack for SparcSTORAGE arrays. Those are at least 6 disks, but&n; * usually up to 30 disks, so everyone would need to change this. -jj&n; */
+multiline_comment|/*&n; * This is an ugly hack.  If we expect to be able to load devices at run time,&n; * we need to leave extra room in some of the data structures.&t;Doing a&n; * realloc to enlarge the structures would be riddled with race conditions,&n; * so until a better solution is discovered, we use this crude approach&n; *&n; * Even bigger hack for SparcSTORAGE arrays. Those are at least 6 disks, but&n; * usually up to 30 disks, so everyone would need to change this. -jj&n; *&n; * Note: These things are all evil and all need to go away.  My plan is to&n; * tackle the character devices first, as there aren&squot;t any locking implications&n; * in the block device layer.   The block devices will require more work.&n; */
 DECL|macro|SD_EXTRA_DEVS
-mdefine_line|#define SD_EXTRA_DEVS 40
+mdefine_line|#define SD_EXTRA_DEVS CONFIG_SD_EXTRA_DEVS
 DECL|macro|ST_EXTRA_DEVS
-mdefine_line|#define ST_EXTRA_DEVS 2
+mdefine_line|#define ST_EXTRA_DEVS CONFIG_ST_EXTRA_DEVS
 DECL|macro|SR_EXTRA_DEVS
-mdefine_line|#define SR_EXTRA_DEVS 2
+mdefine_line|#define SR_EXTRA_DEVS CONFIG_SR_EXTRA_DEVS
 DECL|macro|SG_EXTRA_DEVS
 mdefine_line|#define SG_EXTRA_DEVS (SD_EXTRA_DEVS + SR_EXTRA_DEVS + ST_EXTRA_DEVS)
 macro_line|#endif

@@ -81,6 +81,10 @@ DECL|enumerator|PMU_PADDINGTON_BASED
 id|PMU_PADDINGTON_BASED
 comma
 multiline_comment|/* 1999 PowerBook G3 */
+DECL|enumerator|PMU_KEYLARGO_BASED
+id|PMU_KEYLARGO_BASED
+comma
+multiline_comment|/* Core99 motherboard (PMU99) */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Ioctl commands for the /dev/pmu device&n; */
@@ -97,6 +101,9 @@ mdefine_line|#define PMU_IOC_SET_BACKLIGHT&t;_IOW(&squot;B&squot;, 2, sizeof(__u
 multiline_comment|/* out param: u32*&t;backlight value: 0 to 31 */
 DECL|macro|PMU_IOC_GET_MODEL
 mdefine_line|#define PMU_IOC_GET_MODEL&t;_IOR(&squot;B&squot;, 3, sizeof(__u32*))
+multiline_comment|/* out param: u32*&t;has_adb: 0 or 1 */
+DECL|macro|PMU_IOC_HAS_ADB
+mdefine_line|#define PMU_IOC_HAS_ADB&t;&t;_IOR(&squot;B&squot;, 4, sizeof(__u32*)) 
 macro_line|#ifdef __KERNEL__
 r_int
 id|find_via_pmu

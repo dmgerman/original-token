@@ -56,10 +56,13 @@ DECL|member|low_on_memory
 r_int
 id|low_on_memory
 suffix:semicolon
+DECL|member|pages_min
 DECL|member|pages_low
 DECL|member|pages_high
 r_int
 r_int
+id|pages_min
+comma
 id|pages_low
 comma
 id|pages_high

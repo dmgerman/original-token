@@ -10,6 +10,12 @@ r_int
 r_int
 id|__kernel_size_t
 suffix:semicolon
+DECL|typedef|__kernel_ssize_t
+r_typedef
+r_int
+r_int
+id|__kernel_ssize_t
+suffix:semicolon
 macro_line|#else
 DECL|typedef|__kernel_size_t
 r_typedef
@@ -18,13 +24,13 @@ r_int
 r_int
 id|__kernel_size_t
 suffix:semicolon
-macro_line|#endif
 DECL|typedef|__kernel_ssize_t
 r_typedef
 r_int
 r_int
 id|__kernel_ssize_t
 suffix:semicolon
+macro_line|#endif
 DECL|typedef|__kernel_ptrdiff_t
 r_typedef
 r_int

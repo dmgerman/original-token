@@ -2081,7 +2081,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_static
 r_int
 id|read_aty_sense
@@ -2230,8 +2230,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PMAC
-macro_line|#ifdef CONFIG_NVRAM
+macro_line|#ifdef CONFIG_PPC
+macro_line|#ifdef CONFIG_NVRAM_NOT_DEFINED
 DECL|variable|__initdata
 r_static
 r_int
@@ -2631,7 +2631,7 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;lwbrx %0,%1,%2&quot;
+l_string|&quot;lwbrx %0,%1,%2;eieio&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -2716,7 +2716,7 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;stwbrx %0,%1,%2&quot;
+l_string|&quot;stwbrx %0,%1,%2;eieio&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -3588,11 +3588,6 @@ comma
 id|info
 )paren
 suffix:semicolon
-id|eieio
-c_func
-(paren
-)paren
-suffix:semicolon
 id|aty_st_8
 c_func
 (paren
@@ -3601,11 +3596,6 @@ comma
 id|val
 comma
 id|info
-)paren
-suffix:semicolon
-id|eieio
-c_func
-(paren
 )paren
 suffix:semicolon
 id|aty_st_8
@@ -3657,11 +3647,6 @@ comma
 id|info
 )paren
 suffix:semicolon
-id|eieio
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* write the register value */
 id|aty_st_8
 c_func
@@ -3673,11 +3658,6 @@ comma
 id|val
 comma
 id|info
-)paren
-suffix:semicolon
-id|eieio
-c_func
-(paren
 )paren
 suffix:semicolon
 id|aty_st_8
@@ -3736,11 +3716,6 @@ comma
 id|info
 )paren
 suffix:semicolon
-id|eieio
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* read the register value */
 id|res
 op_assign
@@ -3754,16 +3729,11 @@ comma
 id|info
 )paren
 suffix:semicolon
-id|eieio
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|res
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#if defined(CONFIG_PPC)
 multiline_comment|/*&n;     *  Apple monitor sense&n;     */
 DECL|function|read_aty_sense
 r_static
@@ -4027,7 +3997,7 @@ r_return
 id|sense
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* defined(CONFIG_PPC) */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*&n;     *  Hardware Cursor support.&n;     */
 DECL|variable|cursor_pixel_map
@@ -12486,6 +12456,9 @@ macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 r_if
 c_cond
 (paren
+op_logical_neg
+id|console_fb_info
+op_logical_or
 id|console_fb_info
 op_eq
 op_amp
@@ -16439,7 +16412,7 @@ id|mclk
 comma
 id|gtb_memsize
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#if defined(CONFIG_PPC)
 r_int
 id|sense
 suffix:semicolon
@@ -17036,10 +17009,6 @@ id|LD_CHIP_ID
 op_logical_or
 id|Gx
 op_eq
-id|LG_CHIP_ID
-op_logical_or
-id|Gx
-op_eq
 id|LI_CHIP_ID
 op_logical_or
 id|Gx
@@ -17055,6 +17024,25 @@ suffix:semicolon
 id|mclk
 op_assign
 l_int|100
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|Gx
+op_eq
+id|LG_CHIP_ID
+)paren
+(brace
+multiline_comment|/* Rage LT */
+id|pll
+op_assign
+l_int|230
+suffix:semicolon
+id|mclk
+op_assign
+l_int|63
 suffix:semicolon
 )brace
 r_else
@@ -17936,8 +17924,16 @@ id|var
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
-multiline_comment|/*&n;     *  FIXME: The NVRAM stuff should be put in a Mac-specific file, as it&n;     *         applies to all Mac video cards&n;     */
+macro_line|#ifdef CONFIG_PPC
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+(brace
+multiline_comment|/*&n;&t;     *  FIXME: The NVRAM stuff should be put in a Mac-specific file, as it&n;&t;     *         applies to all Mac video cards&n;&t;     */
 r_if
 c_cond
 (paren
@@ -18105,7 +18101,37 @@ op_assign
 id|default_var
 suffix:semicolon
 )brace
-macro_line|#else /* !CONFIG_PMAC */
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fb_find_mode
+c_func
+(paren
+op_amp
+id|var
+comma
+op_amp
+id|info-&gt;fb_info
+comma
+id|mode_option
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+l_int|8
+)paren
+)paren
+id|var
+op_assign
+id|default_var
+suffix:semicolon
+macro_line|#else /* !CONFIG_PPC */
 macro_line|#ifdef __sparc__
 r_if
 c_cond
@@ -18177,7 +18203,7 @@ op_assign
 id|default_var
 suffix:semicolon
 macro_line|#endif /* !__sparc__ */
-macro_line|#endif /* !CONFIG_PMAC */
+macro_line|#endif /* !CONFIG_PPC */
 macro_line|#endif /* !MODULE */
 r_if
 c_cond
@@ -21622,11 +21648,6 @@ comma
 l_int|0xff
 comma
 id|info
-)paren
-suffix:semicolon
-id|eieio
-c_func
-(paren
 )paren
 suffix:semicolon
 id|scale

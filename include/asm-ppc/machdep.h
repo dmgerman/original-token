@@ -94,6 +94,10 @@ op_star
 id|post_irq
 )paren
 (paren
+r_struct
+id|pt_regs
+op_star
+comma
 r_int
 )paren
 suffix:semicolon

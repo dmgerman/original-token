@@ -2,6 +2,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 r_extern
 r_struct
 id|proc_dir_entry
@@ -106,6 +107,7 @@ l_int|NULL
 suffix:semicolon
 DECL|function|init_proc_fs
 r_int
+id|__init
 id|init_proc_fs
 c_func
 (paren

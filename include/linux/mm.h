@@ -1580,7 +1580,7 @@ macro_line|#endif
 DECL|macro|__GFP_DMA
 mdefine_line|#define __GFP_DMA&t;0x20
 DECL|macro|GFP_BUFFER
-mdefine_line|#define GFP_BUFFER&t;(__GFP_WAIT)
+mdefine_line|#define GFP_BUFFER&t;(__GFP_HIGH | __GFP_WAIT)
 DECL|macro|GFP_ATOMIC
 mdefine_line|#define GFP_ATOMIC&t;(__GFP_HIGH)
 DECL|macro|GFP_USER

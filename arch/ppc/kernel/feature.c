@@ -1,155 +1,729 @@
-multiline_comment|/*&n; *  arch/ppc/kernel/feature.c&n; *&n; *  Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  arch/ppc/kernel/feature.c&n; *&n; *  Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; *  BenH: Changed implementation to work on multiple registers&n; * &t;  polarity is also taken into account. Removed delay (now&n; * &t;  responsibility of the caller). Added spinlocks.&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
 macro_line|#include &lt;asm/ohare.h&gt;
+macro_line|#include &lt;asm/heathrow.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
-DECL|macro|MAX_FEATURE_REGS
-mdefine_line|#define MAX_FEATURE_REGS&t;&t;2
 DECL|macro|DEBUG_FEATURE
 macro_line|#undef DEBUG_FEATURE
-DECL|variable|feature_bits_pbook
+DECL|macro|MAX_FEATURE_CONTROLLERS
+mdefine_line|#define MAX_FEATURE_CONTROLLERS&t;&t;2
+DECL|macro|MAX_FEATURE_OFFSET
+mdefine_line|#define MAX_FEATURE_OFFSET&t;&t;0x50
+DECL|macro|FREG
+mdefine_line|#define FREG(c,r)&t;&t;&t;(&amp;(((c)-&gt;reg)[(r)&gt;&gt;2]))
+DECL|struct|feature_bit
+r_typedef
+r_struct
+id|feature_bit
+(brace
+DECL|member|reg
+r_int
+id|reg
+suffix:semicolon
+multiline_comment|/* reg. offset from mac-io base */
+DECL|member|polarity
+r_int
+r_int
+id|polarity
+suffix:semicolon
+multiline_comment|/* 0 = normal, 1 = inverse */
+DECL|member|mask
+r_int
+r_int
+id|mask
+suffix:semicolon
+multiline_comment|/* bit mask */
+DECL|typedef|fbit
+)brace
+id|fbit
+suffix:semicolon
+multiline_comment|/* I don&squot;t have an OHare machine to test with, so I left those as they&n; * were. Someone with such a machine chould check out what OF says and&n; * try too see if they match the heathrow ones and should be changed too&n; */
+DECL|variable|feature_bits_ohare_pbook
 r_static
-id|u32
-id|feature_bits_pbook
+id|fbit
+id|feature_bits_ohare_pbook
 (braket
 )braket
 op_assign
 (brace
+(brace
+l_int|0x38
+comma
 l_int|0
+comma
+l_int|0
+)brace
 comma
 multiline_comment|/* FEATURE_null */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_SCC_RESET
+)brace
 comma
 multiline_comment|/* FEATURE_Serial_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_SCC_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_Serial_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_SCCA_IO
+)brace
 comma
 multiline_comment|/* FEATURE_Serial_IO_A */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_SCCB_IO
+)brace
 comma
 multiline_comment|/* FEATURE_Serial_IO_B */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_FLOPPY_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_SWIM3_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_MESH_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_MESH_enable */
-id|OH_IDE_ENABLE
+(brace
+l_int|0x38
 comma
-multiline_comment|/* FEATURE_IDE_enable */
-id|OH_VIA_ENABLE
+l_int|0
 comma
-multiline_comment|/* FEATURE_VIA_enable */
-id|OH_IDECD_POWER
+id|OH_IDE0_ENABLE
+)brace
 comma
-multiline_comment|/* FEATURE_CD_power */
-id|OH_BAY_RESET
+multiline_comment|/* FEATURE_IDE0_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|OH_IDE0_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_IDE0_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|OH_IOBUS_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_IOBUS_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|OH_BAY_RESET_N
+)brace
 comma
 multiline_comment|/* FEATURE_Mediabay_reset */
-id|OH_BAY_ENABLE
+(brace
+l_int|0x38
 comma
-multiline_comment|/* FEATURE_Mediabay_enable */
+l_int|1
+comma
+id|OH_BAY_POWER_N
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_BAY_PCI_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_Mediabay_PCI_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_BAY_IDE_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_Mediabay_IDE_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|OH_IDE1_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
 id|OH_BAY_FLOPPY_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_Mediabay_floppy_enable */
+(brace
+l_int|0x38
+comma
 l_int|0
+comma
+l_int|0
+)brace
 comma
 multiline_comment|/* FEATURE_BMac_reset */
+(brace
+l_int|0x38
+comma
 l_int|0
+comma
+l_int|0
+)brace
 comma
 multiline_comment|/* FEATURE_BMac_IO_enable */
+(brace
+l_int|0x38
+comma
 l_int|0
 comma
-multiline_comment|/* FEATURE_Modem_Reset -&gt; guess... */
-id|OH_IDE_POWER
+l_int|0
+)brace
 comma
-multiline_comment|/* FEATURE_IDE_DiskPower -&gt; guess... */
-id|OH_IDE_RESET
-multiline_comment|/* FEATURE_IDE_Reset (0 based) -&gt; guess... */
+multiline_comment|/* FEATURE_Modem_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Slow_SCC_PCLK */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_Power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_CLK_Enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_reset */
 )brace
 suffix:semicolon
-multiline_comment|/* assume these are the same as the ohare until proven otherwise */
+multiline_comment|/* Those bits are from a PowerBook. It&squot;s possible that desktop machines&n; * based on heathrow need a different definition or some bits removed&n; */
 DECL|variable|feature_bits_heathrow
 r_static
-id|u32
+id|fbit
 id|feature_bits_heathrow
 (braket
 )braket
 op_assign
 (brace
+(brace
+l_int|0x38
+comma
 l_int|0
 comma
+l_int|0
+)brace
+comma
 multiline_comment|/* FEATURE_null */
-id|OH_SCC_RESET
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_RESET_SCC
+)brace
 comma
 multiline_comment|/* FEATURE_Serial_reset */
-id|OH_SCC_ENABLE
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SCC_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_Serial_enable */
-id|OH_SCCA_IO
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SCCA_IO
+)brace
 comma
 multiline_comment|/* FEATURE_Serial_IO_A */
-id|OH_SCCB_IO
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SCCB_IO
+)brace
 comma
 multiline_comment|/* FEATURE_Serial_IO_B */
-id|OH_FLOPPY_ENABLE
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SWIM_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_SWIM3_enable */
-id|OH_MESH_ENABLE
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_MESH_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_MESH_enable */
-id|OH_IDE_ENABLE
+(brace
+l_int|0x38
 comma
-multiline_comment|/* FEATURE_IDE_enable */
-id|OH_VIA_ENABLE
+l_int|0
 comma
-multiline_comment|/* FEATURE_VIA_enable */
-id|OH_IDECD_POWER
+id|HRW_IDE0_ENABLE
+)brace
 comma
-multiline_comment|/* FEATURE_CD_power */
-id|OH_BAY_RESET
+multiline_comment|/* FEATURE_IDE0_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_IDE0_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_IDE0_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_IOBUS_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_IOBUS_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_BAY_RESET_N
+)brace
 comma
 multiline_comment|/* FEATURE_Mediabay_reset */
-id|OH_BAY_ENABLE
+(brace
+l_int|0x38
 comma
-multiline_comment|/* FEATURE_Mediabay_enable */
-id|OH_BAY_PCI_ENABLE
+l_int|1
+comma
+id|HRW_BAY_POWER_N
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BAY_PCI_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_Mediabay_PCI_enable */
-id|OH_BAY_IDE_ENABLE
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BAY_IDE_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_Mediabay_IDE_enable */
-id|OH_BAY_FLOPPY_ENABLE
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_IDE1_RESET_N
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BAY_FLOPPY_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_Mediabay_floppy_enable */
-l_int|0x80000000
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BMAC_RESET
+)brace
 comma
 multiline_comment|/* FEATURE_BMac_reset */
-l_int|0x60000000
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_BMAC_IO_ENABLE
+)brace
 comma
 multiline_comment|/* FEATURE_BMac_IO_enable */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_MODEM_POWER_N
+)brace
+comma
+multiline_comment|/* FEATURE_Modem_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SLOW_SCC_PCLK
+)brace
+comma
+multiline_comment|/* FEATURE_Slow_SCC_PCLK */
+(brace
+l_int|0x38
+comma
+l_int|1
+comma
+id|HRW_SOUND_POWER_N
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_Power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+id|HRW_SOUND_CLK_ENABLE
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_CLK_Enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_reset */
+)brace
+suffix:semicolon
+multiline_comment|/* Those bits are from an iBook.&n; */
+DECL|variable|feature_bits_keylargo
+r_static
+id|fbit
+id|feature_bits_keylargo
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_null */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0x00000054
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_IO_A */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Serial_IO_B */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_SWIM3_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_MESH_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE0_enable */
+(brace
+l_int|0x3c
+comma
+l_int|1
+comma
+l_int|0x01000000
+)brace
+comma
+multiline_comment|/* FEATURE_IDE0_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IOBUS_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_PCI_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_enable */
+(brace
+l_int|0x3c
+comma
+l_int|1
+comma
+l_int|0x08000000
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_IDE_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Mediabay_floppy_enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_BMac_reset */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_BMac_IO_enable */
+(brace
+l_int|0x40
+comma
+l_int|1
+comma
 l_int|0x02000000
+)brace
 comma
-multiline_comment|/* FEATURE_Modem_Reset -&gt; guess...*/
-id|OH_IDE_POWER
+multiline_comment|/* FEATURE_Modem_power */
+(brace
+l_int|0x38
 comma
-multiline_comment|/* FEATURE_IDE_DiskPower -&gt; guess... */
-id|OH_IDE_RESET
-multiline_comment|/* FEATURE_IDE_Reset (0 based) -&gt; guess... */
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Slow_SCC_PCLK */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_Power */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_Sound_CLK_Enable */
+(brace
+l_int|0x38
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_enable */
+(brace
+l_int|0x3c
+comma
+l_int|1
+comma
+l_int|0x40000000
+)brace
+comma
+multiline_comment|/* FEATURE_IDE2_reset */
 )brace
 suffix:semicolon
 multiline_comment|/* definition of a feature controller object */
@@ -158,7 +732,7 @@ r_struct
 id|feature_controller
 (brace
 DECL|member|bits
-id|u32
+id|fbit
 op_star
 id|bits
 suffix:semicolon
@@ -174,6 +748,10 @@ id|device_node
 op_star
 id|device
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* static functions */
@@ -187,13 +765,15 @@ id|device_node
 op_star
 id|controller_device
 comma
-id|u32
+id|fbit
 op_star
 id|bits
 )paren
 suffix:semicolon
 r_static
-r_int
+r_struct
+id|feature_controller
+op_star
 id|feature_lookup_controller
 c_func
 (paren
@@ -210,7 +790,7 @@ r_struct
 id|feature_controller
 id|controllers
 (braket
-id|MAX_FEATURE_REGS
+id|MAX_FEATURE_CONTROLLERS
 )braket
 suffix:semicolon
 DECL|variable|controller_count
@@ -249,6 +829,30 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* KeyLargo contains several (5 ?) FCR registers in mac-io,&n;&t;&t; * plus some gpio&squot;s which could eventually be handled here.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|device_is_compatible
+c_func
+(paren
+id|np
+comma
+l_string|&quot;Keylargo&quot;
+)paren
+)paren
+(brace
+id|feature_add_controller
+c_func
+(paren
+id|np
+comma
+id|feature_bits_keylargo
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|feature_add_controller
 c_func
 (paren
@@ -257,6 +861,7 @@ comma
 id|feature_bits_heathrow
 )paren
 suffix:semicolon
+)brace
 id|np
 op_assign
 id|np-&gt;next
@@ -300,7 +905,7 @@ c_func
 (paren
 id|np
 comma
-id|feature_bits_pbook
+id|feature_bits_ohare_pbook
 )paren
 suffix:semicolon
 r_else
@@ -329,6 +934,52 @@ comma
 id|controller_count
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+macro_line|#ifdef CONFIG_DMASOUND_MODULE
+multiline_comment|/* On PowerBooks, we disable the sound chip when dmasound is a module */
+r_if
+c_cond
+(paren
+id|controller_count
+op_logical_and
+id|find_devices
+c_func
+(paren
+l_string|&quot;via-pmu&quot;
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+id|feature_clear
+c_func
+(paren
+id|controllers
+(braket
+l_int|0
+)braket
+dot
+id|device
+comma
+id|FEATURE_Sound_power
+)paren
+suffix:semicolon
+id|feature_clear
+c_func
+(paren
+id|controllers
+(braket
+l_int|0
+)braket
+dot
+id|device
+comma
+id|FEATURE_Sound_CLK_enable
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif&t;
+macro_line|#endif
 )brace
 r_static
 r_void
@@ -341,7 +992,7 @@ id|device_node
 op_star
 id|controller_device
 comma
-id|u32
+id|fbit
 op_star
 id|bits
 )paren
@@ -356,7 +1007,7 @@ c_cond
 (paren
 id|controller_count
 op_ge
-id|MAX_FEATURE_REGS
+id|MAX_FEATURE_CONTROLLERS
 )paren
 (brace
 id|printk
@@ -367,7 +1018,7 @@ l_string|&quot;Feature controller %s skipped(MAX:%d)&bslash;n&quot;
 comma
 id|controller_device-&gt;full_name
 comma
-id|MAX_FEATURE_REGS
+id|MAX_FEATURE_CONTROLLERS
 )paren
 suffix:semicolon
 r_return
@@ -425,10 +1076,8 @@ l_int|0
 )braket
 dot
 id|address
-op_plus
-id|OHARE_FEATURE_REG
 comma
-l_int|4
+id|MAX_FEATURE_OFFSET
 )paren
 suffix:semicolon
 r_if
@@ -449,7 +1098,13 @@ suffix:semicolon
 id|out_le32
 c_func
 (paren
-id|controller-&gt;reg
+id|FREG
+c_func
+(paren
+id|controller
+comma
+id|OHARE_FEATURE_REG
+)paren
 comma
 id|STARMAX_FEATURES
 )paren
@@ -457,12 +1112,21 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|controller-&gt;lock
+)paren
+suffix:semicolon
 id|controller_count
 op_increment
 suffix:semicolon
 )brace
 r_static
-r_int
+r_struct
+id|feature_controller
+op_star
 DECL|function|feature_lookup_controller
 id|feature_lookup_controller
 c_func
@@ -484,8 +1148,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
-op_minus
-id|EINVAL
+l_int|NULL
 suffix:semicolon
 r_while
 c_loop
@@ -520,7 +1183,11 @@ dot
 id|device
 )paren
 r_return
+op_amp
+id|controllers
+(braket
 id|i
+)braket
 suffix:semicolon
 id|device
 op_assign
@@ -538,8 +1205,7 @@ id|device-&gt;name
 suffix:semicolon
 macro_line|#endif
 r_return
-op_minus
-id|ENODEV
+l_int|NULL
 suffix:semicolon
 )brace
 r_int
@@ -557,12 +1223,22 @@ id|system_feature
 id|f
 )paren
 (brace
-r_int
+r_struct
+id|feature_controller
+op_star
 id|controller
 suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_int
+r_int
+id|value
+suffix:semicolon
+id|fbit
+op_star
+id|bit
 suffix:semicolon
 r_if
 c_cond
@@ -586,12 +1262,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|controller
-OL
-l_int|0
 )paren
 r_return
-id|controller
+op_minus
+id|ENODEV
+suffix:semicolon
+id|bit
+op_assign
+op_amp
+id|controller-&gt;bits
+(braket
+id|f
+)braket
 suffix:semicolon
 macro_line|#ifdef DEBUG_FEATURE
 id|printk
@@ -610,56 +1294,63 @@ comma
 r_int
 r_int
 )paren
-id|controllers
-(braket
-id|controller
-)braket
-dot
-id|reg
+id|controller-&gt;reg
 )paren
 suffix:semicolon
 macro_line|#endif
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|controller-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|value
+op_assign
+id|in_le32
 c_func
 (paren
+id|FREG
+c_func
+(paren
+id|controller
+comma
+id|bit-&gt;reg
+)paren
+)paren
+suffix:semicolon
+id|value
+op_assign
+id|bit-&gt;polarity
+ques
+c_cond
+(paren
+id|value
+op_amp
+op_complement
+id|bit-&gt;mask
+)paren
+suffix:colon
+(paren
+id|value
+op_or
+id|bit-&gt;mask
 )paren
 suffix:semicolon
 id|out_le32
 c_func
 (paren
-id|controllers
-(braket
-id|controller
-)braket
-dot
-id|reg
-comma
-id|in_le32
+id|FREG
 c_func
 (paren
-id|controllers
-(braket
 id|controller
-)braket
-dot
-id|reg
+comma
+id|bit-&gt;reg
 )paren
-op_or
-id|controllers
-(braket
-id|controller
-)braket
-dot
-id|bits
-(braket
-id|f
-)braket
+comma
+id|value
 )paren
 suffix:semicolon
 (paren
@@ -668,24 +1359,22 @@ r_void
 id|in_le32
 c_func
 (paren
-id|controllers
-(braket
+id|FREG
+c_func
+(paren
 id|controller
-)braket
-dot
-id|reg
+comma
+id|bit-&gt;reg
+)paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|controller-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|10
 )paren
 suffix:semicolon
 r_return
@@ -707,12 +1396,22 @@ id|system_feature
 id|f
 )paren
 (brace
-r_int
+r_struct
+id|feature_controller
+op_star
 id|controller
 suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_int
+r_int
+id|value
+suffix:semicolon
+id|fbit
+op_star
+id|bit
 suffix:semicolon
 r_if
 c_cond
@@ -736,12 +1435,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|controller
-OL
-l_int|0
 )paren
 r_return
-id|controller
+op_minus
+id|ENODEV
+suffix:semicolon
+id|bit
+op_assign
+op_amp
+id|controller-&gt;bits
+(braket
+id|f
+)braket
 suffix:semicolon
 macro_line|#ifdef DEBUG_FEATURE
 id|printk
@@ -760,59 +1467,63 @@ comma
 r_int
 r_int
 )paren
-id|controllers
-(braket
-id|controller
-)braket
-dot
-id|reg
+id|controller-&gt;reg
 )paren
 suffix:semicolon
 macro_line|#endif
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|controller-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|value
+op_assign
+id|in_le32
 c_func
 (paren
+id|FREG
+c_func
+(paren
+id|controller
+comma
+id|bit-&gt;reg
+)paren
+)paren
+suffix:semicolon
+id|value
+op_assign
+id|bit-&gt;polarity
+ques
+c_cond
+(paren
+id|value
+op_or
+id|bit-&gt;mask
+)paren
+suffix:colon
+(paren
+id|value
+op_amp
+op_complement
+id|bit-&gt;mask
 )paren
 suffix:semicolon
 id|out_le32
 c_func
 (paren
-id|controllers
-(braket
-id|controller
-)braket
-dot
-id|reg
-comma
-id|in_le32
+id|FREG
 c_func
 (paren
-id|controllers
-(braket
 id|controller
-)braket
-dot
-id|reg
+comma
+id|bit-&gt;reg
 )paren
-op_amp
-op_complement
-(paren
-id|controllers
-(braket
-id|controller
-)braket
-dot
-id|bits
-(braket
-id|f
-)braket
-)paren
+comma
+id|value
 )paren
 suffix:semicolon
 (paren
@@ -821,24 +1532,22 @@ r_void
 id|in_le32
 c_func
 (paren
-id|controllers
-(braket
+id|FREG
+c_func
+(paren
 id|controller
-)braket
-dot
-id|reg
+comma
+id|bit-&gt;reg
+)paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|controller-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|10
 )paren
 suffix:semicolon
 r_return
@@ -860,8 +1569,18 @@ id|system_feature
 id|f
 )paren
 (brace
-r_int
+r_struct
+id|feature_controller
+op_star
 id|controller
+suffix:semicolon
+r_int
+r_int
+id|value
+suffix:semicolon
+id|fbit
+op_star
+id|bit
 suffix:semicolon
 r_if
 c_cond
@@ -885,38 +1604,76 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|controller
-OL
-l_int|0
 )paren
 r_return
-id|controller
+op_minus
+id|ENODEV
 suffix:semicolon
-r_return
+id|bit
+op_assign
+op_amp
+id|controller-&gt;bits
+(braket
+id|f
+)braket
+suffix:semicolon
+macro_line|#ifdef DEBUG_FEATURE
+id|printk
+c_func
+(paren
+l_string|&quot;feature: &lt;%s&gt; clearing feature %d in controller @0x%x&bslash;n&quot;
+comma
+id|device-&gt;name
+comma
+(paren
+r_int
+)paren
+id|f
+comma
+(paren
+r_int
+r_int
+)paren
+id|controller-&gt;reg
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* If one feature contains several bits, all of them must be set&n;&t; * for value to be true, or all of them must be 0 if polarity is&n;&t; * inverse&n;&t; */
+id|value
+op_assign
 (paren
 id|in_le32
 c_func
 (paren
-id|controllers
-(braket
+id|FREG
+c_func
+(paren
 id|controller
-)braket
-dot
-id|reg
+comma
+id|bit-&gt;reg
+)paren
 )paren
 op_amp
-id|controllers
-(braket
-id|controller
-)braket
-dot
-id|bits
-(braket
-id|f
-)braket
+id|bit-&gt;mask
 )paren
-op_ne
+suffix:semicolon
+r_return
+id|bit-&gt;polarity
+ques
+c_cond
+(paren
+id|value
+op_eq
 l_int|0
+)paren
+suffix:colon
+(paren
+id|value
+op_eq
+id|bit-&gt;mask
+)paren
 suffix:semicolon
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunkbd.h,v 1.3 1997/09/08 03:05:10 tdyas Exp $&n; * sunkbd.h: Defines needed by SUN Keyboard drivers&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunkbd.h,v 1.4 2000/02/09 11:15:54 davem Exp $&n; * sunkbd.h: Defines needed by SUN Keyboard drivers&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_SUNKBD_H
 DECL|macro|_SPARC_SUNKBD_H
 mdefine_line|#define _SPARC_SUNKBD_H 1
@@ -66,6 +66,15 @@ id|batten_down_hatches
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sun_kbd_bh
+c_func
+(paren
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern

@@ -179,11 +179,11 @@ macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#ifdef HAS_PCI_NETIF
 macro_line|#include &quot;pci-netif.h&quot;
 macro_line|#else
@@ -1296,12 +1296,6 @@ DECL|member|mc_setup_dma
 id|dma_addr_t
 id|mc_setup_dma
 suffix:semicolon
-DECL|member|in_interrupt
-r_int
-r_int
-id|in_interrupt
-suffix:semicolon
-multiline_comment|/* Word-aligned dev-&gt;interrupt */
 DECL|member|rx_mode
 r_char
 id|rx_mode
@@ -1384,10 +1378,6 @@ r_int
 id|partner
 suffix:semicolon
 multiline_comment|/* Link partner caps. */
-DECL|member|last_reset
-r_int
-id|last_reset
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* The parameters for a CmdConfigure operation.&n;   There are so many options that it would be difficult to document each bit.&n;   We mostly use the default or recommended settings. */
@@ -3546,6 +3536,15 @@ op_assign
 op_amp
 id|speedo_start_xmit
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|speedo_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
 id|dev-&gt;stop
 op_assign
 op_amp
@@ -4025,10 +4024,6 @@ op_amp
 id|sp-&gt;lock
 )paren
 suffix:semicolon
-id|sp-&gt;in_interrupt
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* .. we can safely take handler calls during init. */
 r_if
 c_cond
@@ -4135,17 +4130,20 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|clear_bit
+c_func
+(paren
+id|LINK_STATE_RXSEM
+comma
+op_amp
+id|dev-&gt;state
+)paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Setup the chip and configure the multicast list. */
 id|sp-&gt;mc_setup_frm
@@ -4814,43 +4812,6 @@ op_plus
 id|SCBStatus
 )paren
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/* This has a small false-trigger window. */
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_logical_and
-(paren
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-)paren
-OG
-id|TX_TIMEOUT
-)paren
-(brace
-id|speedo_tx_timeout
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|sp-&gt;last_reset
-op_assign
-id|jiffies
 suffix:semicolon
 )brace
 r_if
@@ -5669,78 +5630,6 @@ suffix:semicolon
 r_int
 id|entry
 suffix:semicolon
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t;   If this ever occurs the queue layer is doing something evil! */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-id|TX_TIMEOUT
-op_minus
-l_int|2
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-id|TX_TIMEOUT
-)paren
-(brace
-multiline_comment|/* Reap sent packets from the full Tx queue. */
-id|outw
-c_func
-(paren
-id|SCBTriggerIntr
-comma
-id|ioaddr
-op_plus
-id|SCBCmd
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|speedo_tx_timeout
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* Caution: the write order is important here, set the base address&n;&t;   with the &quot;ownership&quot; bits last. */
 (brace
 multiline_comment|/* Prevent interrupts from changing the Tx ring from underneath us. */
@@ -5940,24 +5829,18 @@ id|sp-&gt;dirty_tx
 op_ge
 id|TX_QUEUE_LIMIT
 )paren
+(brace
 id|sp-&gt;tx_full
 op_assign
 l_int|1
 suffix:semicolon
-r_else
-id|clear_bit
+id|netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
+)brace
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -6077,47 +5960,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#ifndef final_version
-multiline_comment|/* A lock to prevent simultaneous entry on SMP machines. */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|sp-&gt;in_interrupt
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: SMP simultaneous entry of an interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|sp-&gt;in_interrupt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Avoid halting machine. */
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_do
 (brace
 id|status
@@ -6417,7 +6259,7 @@ op_member_access_from_pointer
 id|len
 )paren
 suffix:semicolon
-id|dev_free_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|sp-&gt;tx_skbuff
@@ -6525,19 +6367,6 @@ id|sp-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
-id|clear_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -6624,23 +6453,6 @@ id|ioaddr
 op_plus
 id|SCBStatus
 )paren
-)paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|clear_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|sp-&gt;in_interrupt
 )paren
 suffix:semicolon
 r_return
@@ -7309,13 +7121,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7702,7 +7512,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 id|wait_for_cmd_done

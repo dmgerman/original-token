@@ -141,6 +141,20 @@ id|init_task
 comma
 )brace
 suffix:semicolon
+DECL|variable|sysmap
+r_char
+op_star
+id|sysmap
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|sysmap_size
+r_int
+r_int
+id|sysmap_size
+op_assign
+l_int|0
+suffix:semicolon
 DECL|macro|SHOW_TASK_SWITCHES
 macro_line|#undef SHOW_TASK_SWITCHES 1
 DECL|macro|CHECK_STACK

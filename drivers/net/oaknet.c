@@ -1,6 +1,7 @@
-multiline_comment|/*&n; *&n; *    Copyright (c) 1999 Grant Erickson &lt;grant@lcse.umn.edu&gt;&n; *&n; *    Module name: oaknet.c&n; *&n; *    Description:&n; *      Driver for the National Semiconductor DP83902AV Ethernet controller&n; *      on-board the IBM PowerPC &quot;Oak&quot; evaluation board. Adapted from the&n; *      various other 8390 drivers written by Donald Becker and Paul Gortmaker.&n; *&n; */
+multiline_comment|/*&n; *&n; *    Copyright (c) 1999-2000 Grant Erickson &lt;grant@lcse.umn.edu&gt;&n; *&n; *    Module name: oaknet.c&n; *&n; *    Description:&n; *      Driver for the National Semiconductor DP83902AV Ethernet controller&n; *      on-board the IBM PowerPC &quot;Oak&quot; evaluation board. Adapted from the&n; *      various other 8390 drivers written by Donald Becker and Paul Gortmaker.&n; *&n; *      Additional inspiration from the &quot;tcd8390.c&quot; driver from TiVo, Inc. &n; *      and &quot;enetLib.c&quot; from IBM.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;asm/board.h&gt;
@@ -15,21 +16,29 @@ macro_line|#if !defined(FALSE) || FALSE != 0
 DECL|macro|FALSE
 mdefine_line|#define&t;FALSE&t;0
 macro_line|#endif
-DECL|macro|OAKNET_CMD
-mdefine_line|#define&t;OAKNET_CMD     &t;&t;0x00
-DECL|macro|OAKNET_DATA
-mdefine_line|#define OAKNET_DATA&t;&t;0x10&t;/* NS-defined port window offset. */
-DECL|macro|OAKNET_RESET
-mdefine_line|#define OAKNET_RESET&t;&t;0x1f&t;/* A read resets, a write clears. */
 DECL|macro|OAKNET_START_PG
 mdefine_line|#define&t;OAKNET_START_PG&t;&t;0x20&t;/* First page of TX buffer */
 DECL|macro|OAKNET_STOP_PG
 mdefine_line|#define&t;OAKNET_STOP_PG&t;&t;0x40&t;/* Last pagge +1 of RX ring */
-DECL|macro|OAKNET_BASE
-mdefine_line|#define&t;OAKNET_BASE&t;&t;(dev-&gt;base_addr)
 DECL|macro|OAKNET_WAIT
 mdefine_line|#define&t;OAKNET_WAIT&t;&t;(2 * HZ / 100)&t;/* 20 ms */
+multiline_comment|/* Experimenting with some fixes for a broken driver... */
+DECL|macro|OAKNET_DISINT
+mdefine_line|#define&t;OAKNET_DISINT
+DECL|macro|OAKNET_HEADCHECK
+mdefine_line|#define&t;OAKNET_HEADCHECK
+DECL|macro|OAKNET_RWFIX
+mdefine_line|#define&t;OAKNET_RWFIX
 multiline_comment|/* Global Variables */
+DECL|variable|name
+r_static
+r_const
+r_char
+op_star
+id|name
+op_assign
+l_string|&quot;National DP83902AV&quot;
+suffix:semicolon
 macro_line|#if defined(MODULE)
 DECL|variable|oaknet_devs
 r_static
@@ -173,24 +182,34 @@ id|regd
 suffix:semicolon
 r_struct
 id|net_device
+id|tmp
+comma
 op_star
 id|dev
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#if 0
 r_int
 r_int
 id|ioaddr
 op_assign
 id|OAKNET_IO_BASE
 suffix:semicolon
-r_const
-r_char
-op_star
-id|name
+macro_line|#else
+r_int
+r_int
+id|ioaddr
 op_assign
-l_string|&quot;National DP83902AV&quot;
+id|ioremap
+c_func
+(paren
+id|OAKNET_IO_BASE
+comma
+id|OAKNET_IO_SIZE
+)paren
 suffix:semicolon
+macro_line|#endif
 id|bd_t
 op_star
 id|bip
@@ -201,6 +220,16 @@ op_star
 )paren
 id|__res
 suffix:semicolon
+multiline_comment|/*&n;&t; * This MUST happen here because of the nic_* macros&n;&t; * which have an implicit dependency on dev-&gt;base_addr.&n;&t; */
+id|tmp.base_addr
+op_assign
+id|ioaddr
+suffix:semicolon
+id|dev
+op_assign
+op_amp
+id|tmp
+suffix:semicolon
 multiline_comment|/* Quick register check to see if the device is really there. */
 r_if
 c_cond
@@ -208,7 +237,7 @@ c_cond
 (paren
 id|reg0
 op_assign
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|ioaddr
@@ -223,7 +252,7 @@ id|ENODEV
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * That worked. Now a more thorough check, using the multicast&n;&t; * address registers, that the device is definitely out there&n;&t; * and semi-functional.&n;&t; */
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|E8390_NODMA
@@ -239,7 +268,7 @@ id|E8390_CMD
 suffix:semicolon
 id|regd
 op_assign
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|ioaddr
@@ -247,7 +276,7 @@ op_plus
 l_int|0x0D
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 l_int|0xFF
@@ -257,7 +286,7 @@ op_plus
 l_int|0x0D
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|E8390_NODMA
@@ -269,7 +298,7 @@ op_plus
 id|E8390_CMD
 )paren
 suffix:semicolon
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|ioaddr
@@ -281,7 +310,7 @@ multiline_comment|/* It&squot;s no good. Fix things back up and leave. */
 r_if
 c_cond
 (paren
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|ioaddr
@@ -292,7 +321,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|reg0
@@ -300,7 +329,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|regd
@@ -356,7 +385,7 @@ macro_line|#endif
 multiline_comment|/*&n;&t; * This controller is on an embedded board, so the base address&n;&t; * and interrupt assignments are pre-assigned and unchageable.&n;&t; */
 id|dev-&gt;base_addr
 op_assign
-id|OAKNET_IO_BASE
+id|ioaddr
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
@@ -386,15 +415,8 @@ id|ENOMEM
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Just to be safe, reset the card as we cannot really* be sure&n;&t; * what state it was last left in.&n;&t; */
-id|oaknet_reset_8390
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Disable all chip interrupts for now and ACK all pending&n;&t; * interrupts.&n;&t; */
-id|outb_p
+id|ei_obp
 c_func
 (paren
 l_int|0x0
@@ -404,7 +426,7 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 l_int|0xFF
@@ -661,7 +683,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * static void oaknet_reset_8390()&n; *&n; * Description:&n; *   This routine resets the DP83902 chip.&n; *&n; * Input(s):&n; *  *dev - &n; *&n; * Output(s):&n; *   N/A&n; *&n; * Returns:&n; *   N/A&n; *&n; */
+multiline_comment|/*&n; * static void oaknet_reset_8390()&n; *&n; * Description:&n; *   This routine resets the DP83902 chip.&n; *&n; * Input(s):&n; *  *dev - Pointer to the device structure for this driver.&n; *&n; * Output(s):&n; *   N/A&n; *&n; * Returns:&n; *   N/A&n; *&n; */
 r_static
 r_void
 DECL|function|oaknet_reset_8390
@@ -677,28 +699,29 @@ id|dev
 r_int
 id|base
 op_assign
-id|OAKNET_BASE
+id|E8390_BASE
 suffix:semicolon
-r_int
-r_int
-id|start
-op_assign
-id|jiffies
-suffix:semicolon
-id|outb
+multiline_comment|/*&n;&t; * We have no provision of reseting the controller as is done&n;&t; * in other drivers, such as &quot;ne.c&quot;. However, the following&n;&t; * seems to work well enough in the TiVo driver.&n;&t; */
+id|printk
 c_func
 (paren
-id|inb
-c_func
-(paren
-id|base
-op_plus
-id|OAKNET_RESET
+l_string|&quot;Resetting %s...&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
+suffix:semicolon
+id|ei_obp
+c_func
+(paren
+id|E8390_STOP
+op_or
+id|E8390_NODMA
+op_or
+id|E8390_PAGE0
 comma
 id|base
 op_plus
-id|OAKNET_RESET
+id|E8390_CMD
 )paren
 suffix:semicolon
 id|ei_status.txing
@@ -709,62 +732,10 @@ id|ei_status.dmaing
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* This check shouldn&squot;t be necessary eventually */
-r_while
-c_loop
-(paren
-(paren
-id|inb_p
-c_func
-(paren
-id|base
-op_plus
-id|EN0_ISR
-)paren
-op_amp
-id|ENISR_RESET
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|start
-OG
-id|OAKNET_WAIT
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: reset didn&squot;t complete&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-id|outb_p
-c_func
-(paren
-id|ENISR_RESET
-comma
-id|base
-op_plus
-id|EN0_ISR
-)paren
-suffix:semicolon
-multiline_comment|/* ACK reset interrupt */
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * XXX - Document me.&n; */
+multiline_comment|/*&n; * static void oaknet_get_8390_hdr()&n; *&n; * Description:&n; *   This routine grabs the 8390-specific header. It&squot;s similar to the&n; *   block input routine, but we don&squot;t need to be concerned with ring wrap&n; *   as the header will be at the start of a page, so we optimize accordingly.&n; *&n; * Input(s):&n; *  *dev       - Pointer to the device structure for this driver.&n; *  *hdr       - Pointer to storage for the 8390-specific packet header.&n; *   ring_page - ?&n; *&n; * Output(s):&n; *  *hdr       - Pointer to the 8390-specific packet header for the just-&n; *               received frame.&n; *&n; * Returns:&n; *   N/A&n; *&n; */
 r_static
 r_void
 DECL|function|oaknet_get_8390_hdr
@@ -788,7 +759,7 @@ id|ring_page
 r_int
 id|base
 op_assign
-id|OAKNET_BASE
+id|dev-&gt;base_addr
 suffix:semicolon
 multiline_comment|/*&n;&t; * This should NOT happen. If it does, it is the LAST thing you&squot;ll&n;&t; * see.&n;&t; */
 r_if
@@ -923,6 +894,15 @@ id|e8390_pkt_hdr
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Byte-swap the packet byte count */
+id|hdr-&gt;count
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|hdr-&gt;count
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -995,11 +975,24 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef OAKNET_DISINT
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ei_status.dmaing
 op_or_assign
 l_int|0x01
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|E8390_NODMA
@@ -1010,10 +1003,10 @@ id|E8390_START
 comma
 id|base
 op_plus
-id|OAKNET_CMD
+id|E8390_CMD
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|count
@@ -1025,7 +1018,7 @@ op_plus
 id|EN0_RCNTLO
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|count
@@ -1037,7 +1030,7 @@ op_plus
 id|EN0_RCNTHI
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|ring_offset
@@ -1049,7 +1042,7 @@ op_plus
 id|EN0_RSARLO
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|ring_offset
@@ -1061,7 +1054,7 @@ op_plus
 id|EN0_RSARHI
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|E8390_RREAD
@@ -1070,7 +1063,7 @@ id|E8390_START
 comma
 id|base
 op_plus
-id|OAKNET_CMD
+id|E8390_CMD
 )paren
 suffix:semicolon
 r_if
@@ -1079,12 +1072,12 @@ c_cond
 id|ei_status.word16
 )paren
 (brace
-id|insw
+id|ei_isw
 c_func
 (paren
 id|base
 op_plus
-id|OAKNET_DATA
+id|E8390_DATA
 comma
 id|buf
 comma
@@ -1108,24 +1101,29 @@ op_minus
 l_int|1
 )braket
 op_assign
-id|inb
+id|ei_ib
 c_func
 (paren
 id|base
 op_plus
-id|OAKNET_DATA
+id|E8390_DATA
 )paren
 suffix:semicolon
+macro_line|#ifdef OAKNET_HEADCHECK
+id|bytes
+op_increment
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 r_else
 (brace
-id|insb
+id|ei_isb
 c_func
 (paren
 id|base
 op_plus
-id|OAKNET_DATA
+id|E8390_DATA
 comma
 id|buf
 comma
@@ -1133,7 +1131,104 @@ id|count
 )paren
 suffix:semicolon
 )brace
-id|outb_p
+macro_line|#ifdef OAKNET_HEADCHECK
+multiline_comment|/*&n;&t; * This was for the ALPHA version only, but enough people have&n;&t; * been encountering problems so it is still here.  If you see&n;&t; * this message you either 1) have a slightly incompatible clone&n;&t; * or 2) have noise/speed problems with your bus.&n;&t; */
+multiline_comment|/* DMA termination address check... */
+(brace
+r_int
+id|addr
+comma
+id|tries
+op_assign
+l_int|20
+suffix:semicolon
+r_do
+(brace
+multiline_comment|/* DON&squot;T check for &squot;ei_ibp(EN0_ISR) &amp; ENISR_RDC&squot; here&n;&t;&t;&t;   -- it&squot;s broken for Rx on some cards! */
+r_int
+id|high
+op_assign
+id|ei_ibp
+c_func
+(paren
+id|base
+op_plus
+id|EN0_RSARHI
+)paren
+suffix:semicolon
+r_int
+id|low
+op_assign
+id|ei_ibp
+c_func
+(paren
+id|base
+op_plus
+id|EN0_RSARLO
+)paren
+suffix:semicolon
+id|addr
+op_assign
+(paren
+id|high
+op_lshift
+l_int|8
+)paren
+op_plus
+id|low
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|ring_offset
+op_plus
+id|bytes
+)paren
+op_amp
+l_int|0xff
+)paren
+op_eq
+id|low
+)paren
+r_break
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_decrement
+id|tries
+OG
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tries
+op_le
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: RX transfer address mismatch,&quot;
+l_string|&quot;%#4.4x (expected) vs. %#4.4x (actual).&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|ring_offset
+op_plus
+id|bytes
+comma
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+id|ei_obp
 c_func
 (paren
 id|ENISR_RDC
@@ -1149,10 +1244,18 @@ op_and_assign
 op_complement
 l_int|0x01
 suffix:semicolon
+macro_line|#ifdef OAKNET_DISINT
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * XXX - Document me.&n; */
+multiline_comment|/*&n; * static void oaknet_block_output()&n; *&n; * Description:&n; *   This routine...&n; *&n; * Input(s):&n; *  *dev        - Pointer to the device structure for this driver.&n; *   count      - Number of bytes to be transferred.&n; *  *buf        - &n; *   start_page - &n; *&n; * Output(s):&n; *   N/A&n; *&n; * Returns:&n; *   N/A&n; *&n; */
 r_static
 r_void
 DECL|function|oaknet_block_output
@@ -1180,19 +1283,30 @@ id|start_page
 r_int
 id|base
 op_assign
-id|OAKNET_BASE
+id|E8390_BASE
 suffix:semicolon
+macro_line|#if 0
 r_int
 id|bug
 suffix:semicolon
+macro_line|#endif
 r_int
 r_int
 id|start
 suffix:semicolon
+macro_line|#ifdef OAKNET_DISINT
 r_int
-r_char
-id|lobyte
+r_int
+id|flags
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef OAKNET_HEADCHECK
+r_int
+id|retries
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Round the count up for word writes. */
 r_if
 c_cond
@@ -1226,12 +1340,25 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef OAKNET_DISINT
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ei_status.dmaing
 op_or_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* Make sure we are in page 0. */
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|E8390_PAGE0
@@ -1242,9 +1369,14 @@ id|E8390_NODMA
 comma
 id|base
 op_plus
-id|OAKNET_CMD
+id|E8390_CMD
 )paren
 suffix:semicolon
+macro_line|#ifdef OAKNET_HEADCHECK
+id|retry
+suffix:colon
+macro_line|#endif
+macro_line|#if 0
 multiline_comment|/*&n;&t; * The 83902 documentation states that the processor needs to&n;&t; * do a &quot;dummy read&quot; before doing the remote write to work&n;&t; * around a chip bug they don&squot;t feel like fixing.&n;&t; */
 id|bug
 op_assign
@@ -1265,7 +1397,7 @@ r_int
 id|rdlo
 suffix:semicolon
 multiline_comment|/* Now the normal output. */
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|ENISR_RDC
@@ -1275,7 +1407,7 @@ op_plus
 id|EN0_ISR
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|count
@@ -1287,7 +1419,7 @@ op_plus
 id|EN0_RCNTLO
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|count
@@ -1299,7 +1431,7 @@ op_plus
 id|EN0_RCNTHI
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 l_int|0x00
@@ -1309,7 +1441,7 @@ op_plus
 id|EN0_RSARLO
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|start_page
@@ -1330,7 +1462,7 @@ suffix:semicolon
 multiline_comment|/* Perform the dummy read */
 id|rdhi
 op_assign
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|base
@@ -1340,7 +1472,7 @@ id|EN0_CRDAHI
 suffix:semicolon
 id|rdlo
 op_assign
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|base
@@ -1348,7 +1480,7 @@ op_plus
 id|EN0_CRDALO
 )paren
 suffix:semicolon
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|E8390_RREAD
@@ -1357,7 +1489,7 @@ id|E8390_START
 comma
 id|base
 op_plus
-id|OAKNET_CMD
+id|E8390_CMD
 )paren
 suffix:semicolon
 r_while
@@ -1376,7 +1508,7 @@ id|nrdlo
 suffix:semicolon
 id|nrdhi
 op_assign
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|base
@@ -1386,7 +1518,7 @@ id|EN0_CRDAHI
 suffix:semicolon
 id|nrdlo
 op_assign
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|base
@@ -1413,7 +1545,126 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|outb_p
+macro_line|#else
+macro_line|#ifdef OAKNET_RWFIX
+multiline_comment|/*&n;&t; * Handle the read-before-write bug the same way as the&n;&t; * Crynwr packet driver -- the Nat&squot;l Semi. method doesn&squot;t work.&n;&t; * Actually this doesn&squot;t always work either, but if you have&n;&t; * problems with your 83902 this is better than nothing!&n;&t; */
+id|ei_obp
+c_func
+(paren
+l_int|0x42
+comma
+id|base
+op_plus
+id|EN0_RCNTLO
+)paren
+suffix:semicolon
+id|ei_obp
+c_func
+(paren
+l_int|0x00
+comma
+id|base
+op_plus
+id|EN0_RCNTHI
+)paren
+suffix:semicolon
+id|ei_obp
+c_func
+(paren
+l_int|0x42
+comma
+id|base
+op_plus
+id|EN0_RSARLO
+)paren
+suffix:semicolon
+id|ei_obp
+c_func
+(paren
+l_int|0x00
+comma
+id|base
+op_plus
+id|EN0_RSARHI
+)paren
+suffix:semicolon
+id|ei_obp
+c_func
+(paren
+id|E8390_RREAD
+op_plus
+id|E8390_START
+comma
+id|base
+op_plus
+id|E8390_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Make certain that the dummy read has occurred. */
+id|udelay
+c_func
+(paren
+l_int|6
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ei_obp
+c_func
+(paren
+id|ENISR_RDC
+comma
+id|base
+op_plus
+id|EN0_ISR
+)paren
+suffix:semicolon
+multiline_comment|/* Now the normal output. */
+id|ei_obp
+c_func
+(paren
+id|count
+op_amp
+l_int|0xff
+comma
+id|base
+op_plus
+id|EN0_RCNTLO
+)paren
+suffix:semicolon
+id|ei_obp
+c_func
+(paren
+id|count
+op_rshift
+l_int|8
+comma
+id|base
+op_plus
+id|EN0_RCNTHI
+)paren
+suffix:semicolon
+id|ei_obp
+c_func
+(paren
+l_int|0x00
+comma
+id|base
+op_plus
+id|EN0_RSARLO
+)paren
+suffix:semicolon
+id|ei_obp
+c_func
+(paren
+id|start_page
+comma
+id|base
+op_plus
+id|EN0_RSARHI
+)paren
+suffix:semicolon
+macro_line|#endif /* 0/1 */
+id|ei_obp
 c_func
 (paren
 id|E8390_RWRITE
@@ -1422,7 +1673,7 @@ id|E8390_START
 comma
 id|base
 op_plus
-id|OAKNET_CMD
+id|E8390_CMD
 )paren
 suffix:semicolon
 r_if
@@ -1431,12 +1682,12 @@ c_cond
 id|ei_status.word16
 )paren
 (brace
-id|outsw
+id|ei_osw
 c_func
 (paren
-id|OAKNET_BASE
+id|E8390_BASE
 op_plus
-id|OAKNET_DATA
+id|E8390_DATA
 comma
 id|buf
 comma
@@ -1448,12 +1699,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|outsb
+id|ei_osb
 c_func
 (paren
-id|OAKNET_BASE
+id|E8390_BASE
 op_plus
-id|OAKNET_DATA
+id|E8390_DATA
 comma
 id|buf
 comma
@@ -1461,24 +1712,139 @@ id|count
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef OAKNET_DISINT
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 id|start
 op_assign
 id|jiffies
 suffix:semicolon
+macro_line|#ifdef OAKNET_HEADCHECK
+multiline_comment|/*&n;&t; * This was for the ALPHA version only, but enough people have&n;&t; * been encountering problems so it is still here.&n;&t; */
+(brace
+multiline_comment|/* DMA termination address check... */
+r_int
+id|addr
+comma
+id|tries
+op_assign
+l_int|20
+suffix:semicolon
+r_do
+(brace
+r_int
+id|high
+op_assign
+id|ei_ibp
+c_func
+(paren
+id|base
+op_plus
+id|EN0_RSARHI
+)paren
+suffix:semicolon
+r_int
+id|low
+op_assign
+id|ei_ibp
+c_func
+(paren
+id|base
+op_plus
+id|EN0_RSARLO
+)paren
+suffix:semicolon
+id|addr
+op_assign
+(paren
+id|high
+op_lshift
+l_int|8
+)paren
+op_plus
+id|low
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|start_page
+op_lshift
+l_int|8
+)paren
+op_plus
+id|count
+op_eq
+id|addr
+)paren
+r_break
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_decrement
+id|tries
+OG
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tries
+op_le
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Tx packet transfer address mismatch,&quot;
+l_string|&quot;%#4.4x (expected) vs. %#4.4x (actual).&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+(paren
+id|start_page
+op_lshift
+l_int|8
+)paren
+op_plus
+id|count
+comma
+id|addr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retries
+op_increment
+op_eq
+l_int|0
+)paren
+r_goto
+id|retry
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 r_while
 c_loop
 (paren
 (paren
-(paren
-id|lobyte
-op_assign
-id|inb_p
+id|ei_ibp
 c_func
 (paren
 id|base
 op_plus
 id|EN0_ISR
-)paren
 )paren
 op_amp
 id|ENISR_RDC
@@ -1497,62 +1863,12 @@ OG
 id|OAKNET_WAIT
 )paren
 (brace
-r_int
-r_char
-id|hicnt
-comma
-id|locnt
-suffix:semicolon
-id|hicnt
-op_assign
-id|inb_p
-c_func
-(paren
-id|base
-op_plus
-id|EN0_CRDAHI
-)paren
-suffix:semicolon
-id|locnt
-op_assign
-id|inb_p
-c_func
-(paren
-id|base
-op_plus
-id|EN0_CRDALO
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: timeout waiting for Tx RDC, stat = 0x%x&bslash;n&quot;
+l_string|&quot;%s: timeout waiting for Tx RDC.&bslash;n&quot;
 comma
 id|dev-&gt;name
-comma
-id|lobyte
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;tstart address 0x%x, current address 0x%x, count %d&bslash;n&quot;
-comma
-(paren
-id|start_page
-op_lshift
-l_int|8
-)paren
-comma
-(paren
-id|hicnt
-op_lshift
-l_int|8
-)paren
-op_or
-id|locnt
-comma
-id|count
 )paren
 suffix:semicolon
 id|oaknet_reset_8390
@@ -1573,7 +1889,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|outb_p
+id|ei_obp
 c_func
 (paren
 id|ENISR_RDC
@@ -1592,6 +1908,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * static void oaknet_dma_error()&n; *&n; * Description:&n; *   This routine prints out a last-ditch informative message to the console&n; *   indicating that a DMA error occured. If you see this, it&squot;s the last&n; *   thing you&squot;ll see.&n; *&n; * Input(s):&n; *  *dev  - Pointer to the device structure for this driver.&n; *  *name - Informative text (e.g. function name) indicating where the&n; *          DMA error occurred.&n; *&n; * Output(s):&n; *   N/A&n; *&n; * Returns:&n; *   N/A&n; *&n; */
 r_static
 r_void
 DECL|function|oaknet_dma_error

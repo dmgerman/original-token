@@ -67,11 +67,6 @@ id|read_ahead
 (braket
 id|MAX_BLKDEV
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* blk_dev_struct is:&n; *&t;*request_fn&n; *&t;*current_request&n; */
 DECL|variable|blk_dev
@@ -91,13 +86,6 @@ id|blk_size
 (braket
 id|MAX_BLKDEV
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * blksize_size contains the size of all block-devices:&n; *&n; * blksize_size[MAJOR][MINOR]&n; *&n; * if (!blksize_size[MAJOR]) then 1024 bytes is assumed.&n; */
 DECL|variable|blksize_size
@@ -107,13 +95,6 @@ id|blksize_size
 (braket
 id|MAX_BLKDEV
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * hardsect_size contains the size of the hardware sector of a device.&n; *&n; * hardsect_size[MAJOR][MINOR]&n; *&n; * if (!hardsect_size[MAJOR])&n; *&t;&t;then 512 bytes is assumed.&n; * else&n; *&t;&t;sector_size is hardsect_size[MAJOR][MINOR]&n; * This is currently set by some scsi devices and read by the msdos fs driver.&n; * Other uses may appear later.&n; */
 DECL|variable|hardsect_size
@@ -123,13 +104,6 @@ id|hardsect_size
 (braket
 id|MAX_BLKDEV
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * The following tunes the read-ahead algorithm in mm/filemap.c&n; */
 DECL|variable|max_readahead
@@ -139,13 +113,6 @@ id|max_readahead
 (braket
 id|MAX_BLKDEV
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * Max number of sectors per request&n; */
 DECL|variable|max_sectors
@@ -155,13 +122,6 @@ id|max_sectors
 (braket
 id|MAX_BLKDEV
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|function|get_max_sectors
 r_static
@@ -1743,21 +1703,6 @@ suffix:semicolon
 id|sector
 op_assign
 id|bh-&gt;b_rsector
-suffix:semicolon
-multiline_comment|/* It had better not be a new buffer by the time we see it */
-r_if
-c_cond
-(paren
-id|buffer_new
-c_func
-(paren
-id|bh
-)paren
-)paren
-id|BUG
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3742,6 +3687,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|blk_queue_headactive
+)paren
+suffix:semicolon
+DECL|variable|blk_queue_pluggable
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|blk_queue_pluggable
 )paren
 suffix:semicolon
 DECL|variable|generic_make_request

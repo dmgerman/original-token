@@ -446,25 +446,35 @@ id|zero_quicklist
 )paren
 (brace
 multiline_comment|/* atomically remove this page from the list */
+r_register
+r_int
+r_int
+id|tmp
+suffix:semicolon
 id|asm
 (paren
-l_string|&quot;101:lwarx  %1,0,%2&bslash;n&quot;
+l_string|&quot;101:lwarx  %1,0,%3&bslash;n&quot;
 multiline_comment|/* reserve zero_cache */
 l_string|&quot;    lwz    %0,0(%1)&bslash;n&quot;
 multiline_comment|/* get next -- new zero_cache */
-l_string|&quot;    stwcx. %0,0,%2&bslash;n&quot;
+l_string|&quot;    stwcx. %0,0,%3&bslash;n&quot;
 multiline_comment|/* update zero_cache */
 l_string|&quot;    bne-   101b&bslash;n&quot;
 multiline_comment|/* if lost reservation try again */
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
-id|zero_quicklist
+id|tmp
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
 (paren
 id|page
+)paren
+comma
+l_string|&quot;+m&quot;
+(paren
+id|zero_cache
 )paren
 suffix:colon
 l_string|&quot;r&quot;
@@ -564,6 +574,11 @@ r_int
 id|bytecount
 op_assign
 l_int|0
+suffix:semicolon
+r_register
+r_int
+r_int
+id|tmp
 suffix:semicolon
 id|pte_t
 op_star
@@ -757,22 +772,25 @@ suffix:semicolon
 multiline_comment|/* atomically add this page to the list */
 id|asm
 (paren
-l_string|&quot;101:lwarx  %0,0,%1&bslash;n&quot;
+l_string|&quot;101:lwarx  %0,0,%2&bslash;n&quot;
 multiline_comment|/* reserve zero_cache */
-l_string|&quot;    stw    %0,0(%2)&bslash;n&quot;
+l_string|&quot;    stw    %0,0(%3)&bslash;n&quot;
 multiline_comment|/* update *pageptr */
 macro_line|#ifdef __SMP__
 l_string|&quot;    sync&bslash;n&quot;
 multiline_comment|/* let store settle */
 macro_line|#endif&t;&t;&t;
-l_string|&quot;    mr     %0,%2&bslash;n&quot;
-multiline_comment|/* update zero_cache in reg */
-l_string|&quot;    stwcx. %2,0,%1&bslash;n&quot;
+l_string|&quot;    stwcx. %3,0,%2&bslash;n&quot;
 multiline_comment|/* update zero_cache in mem */
 l_string|&quot;    bne-   101b&bslash;n&quot;
 multiline_comment|/* if lost reservation try again */
 suffix:colon
 l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp
+)paren
+comma
+l_string|&quot;+m&quot;
 (paren
 id|zero_quicklist
 )paren

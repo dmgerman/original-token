@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.145 2000/02/08 07:46:11 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.146 2000/02/09 21:11:09 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -22,14 +22,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-r_extern
-r_void
-id|show_net_buffers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|device_scan
@@ -477,13 +469,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|mmu_info
 r_int

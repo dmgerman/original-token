@@ -4259,7 +4259,7 @@ comma
 id|d2-&gt;name
 )paren
 suffix:semicolon
-macro_line|#ifndef HPT366_MODE3
+macro_line|#ifndef CONFIG_HPT366_MODE3
 id|printk
 c_func
 (paren
@@ -4270,7 +4270,7 @@ id|d-&gt;name
 suffix:semicolon
 r_return
 suffix:semicolon
-macro_line|#else /* HPT366_MODE3 */
+macro_line|#else /* CONFIG_HPT366_MODE3 */
 id|printk
 c_func
 (paren
@@ -4279,7 +4279,7 @@ comma
 id|d2-&gt;name
 )paren
 suffix:semicolon
-macro_line|#endif /* HPT366_MODE3 */
+macro_line|#endif /* CONFIG_HPT366_MODE3 */
 )brace
 id|ide_setup_pci_device
 c_func

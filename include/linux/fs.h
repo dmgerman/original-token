@@ -3455,12 +3455,11 @@ id|flag
 )paren
 )paren
 suffix:semicolon
-DECL|macro|atomic_set_buffer_dirty
-mdefine_line|#define atomic_set_buffer_dirty(bh) test_and_set_bit(BH_Dirty, &amp;(bh)-&gt;b_state)
-DECL|function|mark_buffer_dirty
 r_extern
-r_inline
 r_void
+id|FASTCALL
+c_func
+(paren
 id|mark_buffer_dirty
 c_func
 (paren
@@ -3472,26 +3471,10 @@ comma
 r_int
 id|flag
 )paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|atomic_set_buffer_dirty
-c_func
-(paren
-id|bh
-)paren
-)paren
-id|__mark_buffer_dirty
-c_func
-(paren
-id|bh
-comma
-id|flag
 )paren
 suffix:semicolon
-)brace
+DECL|macro|atomic_set_buffer_dirty
+mdefine_line|#define atomic_set_buffer_dirty(bh) test_and_set_bit(BH_Dirty, &amp;(bh)-&gt;b_state)
 r_extern
 r_void
 id|balance_dirty
@@ -3528,12 +3511,19 @@ id|inode
 op_star
 )paren
 suffix:semicolon
+DECL|macro|invalidate_buffers
+mdefine_line|#define invalidate_buffers(dev)&t;__invalidate_buffers((dev), 0)
+DECL|macro|destroy_buffers
+mdefine_line|#define destroy_buffers(dev)&t;__invalidate_buffers((dev), 1)
 r_extern
 r_void
-id|invalidate_buffers
+id|__invalidate_buffers
 c_func
 (paren
 id|kdev_t
+id|dev
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern

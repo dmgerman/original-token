@@ -1371,9 +1371,11 @@ id|slow_nodes
 suffix:semicolon
 r_int
 r_int
-id|flags
-comma
 id|intena
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 id|kstat.irqs
 (braket

@@ -543,7 +543,7 @@ op_assign
 op_amp
 id|Dummy
 suffix:semicolon
-id|write_lock_irq
+id|write_lock_bh
 c_func
 (paren
 op_amp
@@ -558,7 +558,7 @@ id|nsk-&gt;sleep
 op_assign
 l_int|NULL
 suffix:semicolon
-id|write_unlock_irq
+id|write_unlock_bh
 c_func
 (paren
 op_amp

@@ -4,6 +4,8 @@ DECL|macro|_PPC_MEDIABAY_H
 mdefine_line|#define _PPC_MEDIABAY_H
 DECL|macro|MB_FD
 mdefine_line|#define MB_FD&t;0&t;&t;/* media bay contains floppy drive */
+DECL|macro|MB_FD1
+mdefine_line|#define MB_FD1&t;1&t;&t;/* media bay contains floppy drive */
 DECL|macro|MB_CD
 mdefine_line|#define MB_CD&t;3&t;&t;/* media bay contains ATA drive such as CD */
 DECL|macro|MB_NO

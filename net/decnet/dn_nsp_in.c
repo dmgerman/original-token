@@ -1524,10 +1524,6 @@ op_star
 id|filter
 suffix:semicolon
 macro_line|#endif
-r_int
-r_int
-id|flags
-suffix:semicolon
 multiline_comment|/* Cast skb-&gt;rcvbuf to unsigned... It&squot;s pointless, but reduces&n;           number of warnings when compiling with -W --ANK&n;         */
 r_if
 c_cond
@@ -1613,13 +1609,12 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|read_lock_irqsave
+multiline_comment|/* This code only runs from BH or BH protected context.&n;&t; * Therefore the plain read_lock is ok here. -DaveM&n;&t; */
+id|read_lock
 c_func
 (paren
 op_amp
 id|sk-&gt;callback_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1674,13 +1669,11 @@ id|POLL_IN
 )paren
 suffix:semicolon
 )brace
-id|read_unlock_irqrestore
+id|read_unlock
 c_func
 (paren
 op_amp
 id|sk-&gt;callback_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return

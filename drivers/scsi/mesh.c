@@ -1041,7 +1041,7 @@ id|mesh_host-&gt;unique_id
 op_assign
 id|nmeshes
 suffix:semicolon
-macro_line|#ifndef MODULE
+macro_line|#if !defined(MODULE) &amp;&amp; (defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC))
 id|note_scsi_host
 c_func
 (paren
@@ -1350,6 +1350,7 @@ id|mesh_sync_period
 op_assign
 id|minper
 suffix:semicolon
+macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC)
 id|feature_set
 c_func
 (paren
@@ -1358,6 +1359,7 @@ comma
 id|FEATURE_MESH_enable
 )paren
 suffix:semicolon
+macro_line|#endif
 id|mdelay
 c_func
 (paren

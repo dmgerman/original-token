@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.51 2000/01/29 01:08:59 anton Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
+multiline_comment|/* $Id: time.c,v 1.53 2000/02/09 21:11:04 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1862,6 +1862,11 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|tasklet_struct
+op_star
+id|t
+suffix:semicolon
 r_int
 r_int
 id|offset
@@ -1883,24 +1888,30 @@ l_int|10
 op_amp
 l_int|0x1fffff
 suffix:semicolon
+id|t
+op_assign
+op_amp
+id|bh_task_vec
+(braket
+id|TIMER_BH
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|test_bit
 c_func
 (paren
-id|TIMER_BH
+id|TASKLET_STATE_SCHED
 comma
 op_amp
-id|bh_active
+id|t-&gt;state
 )paren
 )paren
-(brace
 id|offset
 op_assign
 l_int|1000000
 suffix:semicolon
-)brace
 r_return
 id|offset
 op_plus

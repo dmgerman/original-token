@@ -599,6 +599,11 @@ DECL|enumerator|NET_CORE_OPTMEM_MAX
 id|NET_CORE_OPTMEM_MAX
 op_assign
 l_int|10
+comma
+DECL|enumerator|NET_CORE_HOT_LIST_LENGTH
+id|NET_CORE_HOT_LIST_LENGTH
+op_assign
+l_int|11
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ethernet */

@@ -129,7 +129,7 @@ id|MimeType
 suffix:semicolon
 multiline_comment|/* Pointer to a string with the mime-type &n;&t;&t;&t;&t;&t;   based on the filename */
 DECL|member|MimeLength
-r_int
+id|__kernel_size_t
 id|MimeLength
 suffix:semicolon
 multiline_comment|/* The length of this string */

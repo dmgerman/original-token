@@ -1,44 +1,20 @@
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* i2c-algo-pcf.c i2c driver algorithms for PCF8584 adapters&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/*   Copyright (C) 1995-97 Simon G. Vogl&n;                   1998-99 Hans Berglund&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
+multiline_comment|/*   Copyright (C) 1995-1997 Simon G. Vogl&n;                   1998-2000 Hans Berglund&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and even&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c-algo-pcf.c,v 1.15 1999/12/21 23:45:58 frodo Exp $ */
+multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and &n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
+multiline_comment|/* $Id: i2c-algo-pcf.c,v 1.20 2000/01/24 02:06:33 mds Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020135
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__init
-mdefine_line|#define __init 
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
-macro_line|#  include &lt;asm/uaccess.h&gt;
-macro_line|#else
-macro_line|#  include &lt;asm/segment.h&gt;
-macro_line|#endif
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-multiline_comment|/* 2.0.0 kernel compatibility */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
-DECL|macro|MODULE_AUTHOR
-mdefine_line|#define MODULE_AUTHOR(noone)
-DECL|macro|MODULE_DESCRIPTION
-mdefine_line|#define MODULE_DESCRIPTION(none)
-DECL|macro|MODULE_PARM
-mdefine_line|#define MODULE_PARM(no,param)
-DECL|macro|MODULE_PARM_DESC
-mdefine_line|#define MODULE_PARM_DESC(no,description)
-DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(noexport)
-DECL|macro|EXPORT_NO_SYMBOLS
-mdefine_line|#define EXPORT_NO_SYMBOLS
-macro_line|#endif
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-algo-pcf.h&gt;
 macro_line|#include &quot;i2c-pcf8584.h&quot;
@@ -58,7 +34,7 @@ multiline_comment|/* debugging - slow down transfer to have a look at the data .
 multiline_comment|/* I use this with two leds&amp;resistors, each one connected to sda,scl &t;*/
 multiline_comment|/* respectively. This makes sure that the algorithm works. Some chips   */
 multiline_comment|/* might not like this, as they have an internal timeout of some mils&t;*/
-multiline_comment|/*&n;#if LINUX_VERSION_CODE &gt;= 0x02016e&n;#define SLO_IO      jif=jiffies;while(jiffies&lt;=jif+i2c_table[minor].veryslow)&bslash;&n;                        if (need_resched) schedule();&n;#else&n;#define SLO_IO      jif=jiffies;while(jiffies&lt;=jif+i2c_table[minor].veryslow)&bslash;&n;&t;&t;&t;if (need_resched) schedule();&n;#endif&n;*/
+multiline_comment|/*&n;#define SLO_IO      jif=jiffies;while(jiffies&lt;=jif+i2c_table[minor].veryslow)&bslash;&n;                        if (need_resched) schedule();&n;*/
 multiline_comment|/* ----- global variables ---------------------------------------------&t;*/
 macro_line|#ifdef SLO_IO
 DECL|variable|jif
@@ -104,34 +80,6 @@ mdefine_line|#define i2c_outb(adap, val) adap-&gt;setpcf(adap-&gt;data, 0, val)
 DECL|macro|i2c_inb
 mdefine_line|#define i2c_inb(adap) adap-&gt;getpcf(adap-&gt;data, 0)
 multiline_comment|/* --- other auxiliary functions --------------------------------------&t;*/
-macro_line|#if LINUX_VERSION_CODE &lt; 0x02017f
-DECL|function|schedule_timeout
-r_static
-r_void
-id|schedule_timeout
-c_func
-(paren
-r_int
-id|j
-)paren
-(brace
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|j
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|i2c_start
 r_static
 r_void
@@ -306,7 +254,7 @@ c_func
 l_string|&quot;Timeout waiting for Bus Busy&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;      set_pcf(adap, 1, I2C_PCF_STOP);&n;   */
+multiline_comment|/*&n;&t;set_pcf(adap, 1, I2C_PCF_STOP);&n;&t;*/
 r_return
 id|timeout
 op_le
@@ -1659,6 +1607,17 @@ id|addr
 op_or_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|I2C_M_REV_DIR_ADDR
+)paren
+id|addr
+op_xor_assign
+l_int|1
+suffix:semicolon
 id|i2c_outb
 c_func
 (paren
@@ -1743,26 +1702,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|pmsg
-op_assign
-op_amp
-id|msgs
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|ret
-op_assign
-id|pcf_doAddress
-c_func
-(paren
-id|adap
-comma
-id|pmsg
-comma
-id|i2c_adap-&gt;retries
-)paren
-suffix:semicolon
 id|i2c_start
 c_func
 (paren
@@ -1784,6 +1723,114 @@ id|i
 op_increment
 )paren
 (brace
+id|pmsg
+op_assign
+op_amp
+id|msgs
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|pmsg-&gt;flags
+op_amp
+id|I2C_M_NOSTART
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|i
+)paren
+id|i2c_repstart
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|pcf_doAddress
+c_func
+(paren
+id|adap
+comma
+id|pmsg
+comma
+id|i2c_adap-&gt;retries
+)paren
+suffix:semicolon
+id|timeout
+op_assign
+id|wait_for_pin
+c_func
+(paren
+id|adap
+comma
+op_amp
+id|status
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+)paren
+(brace
+id|DEB2
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;i2c-algo-pcf.o: Timeout waiting for PIN(1) in pcf_xfer&bslash;n&quot;
+)paren
+suffix:semicolon
+)paren
+r_return
+(paren
+op_minus
+id|EREMOTEIO
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|I2C_PCF_LRB
+)paren
+(brace
+id|i2c_stop
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
+id|DEB2
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;i2c-algo-pcf.o: No LRB(1) in pcf_xfer&bslash;n&quot;
+)paren
+suffix:semicolon
+)paren
+r_return
+(paren
+op_minus
+id|EREMOTEIO
+)paren
+suffix:semicolon
+)brace
+)brace
 id|DEB3
 c_func
 (paren
@@ -1817,84 +1864,6 @@ id|len
 )paren
 suffix:semicolon
 )paren
-id|timeout
-op_assign
-id|wait_for_pin
-c_func
-(paren
-id|adap
-comma
-op_amp
-id|status
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|timeout
-)paren
-(brace
-id|DEB2
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-algo-pcf.o: Timeout waiting for PIN(1) in pcf_xfer&bslash;n&quot;
-)paren
-suffix:semicolon
-)paren
-id|i2c_stop
-c_func
-(paren
-id|adap
-)paren
-suffix:semicolon
-r_return
-(paren
-op_minus
-id|EREMOTEIO
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|status
-op_amp
-id|I2C_PCF_LRB
-)paren
-(brace
-id|i2c_stop
-c_func
-(paren
-id|adap
-)paren
-suffix:semicolon
-id|DEB2
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-algo-pcf.o: NAK from device adr %#2x msg #%d&bslash;n&quot;
-comma
-id|msgs
-(braket
-id|i
-)braket
-dot
-id|addr
-comma
-id|i
-)paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EREMOTEIO
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1957,155 +1926,13 @@ id|ret
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|i
-op_eq
-(paren
-id|num
-op_minus
-l_int|1
-)paren
-)paren
-(brace
+)brace
 id|i2c_stop
 c_func
 (paren
 id|adap
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|i2c_repstart
-c_func
-(paren
-id|adap
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|pmsg-&gt;flags
-op_amp
-id|I2C_M_RD
-)paren
-(brace
-id|pmsg-&gt;buf
-(braket
-id|pmsg-&gt;len
-op_minus
-l_int|1
-)braket
-op_assign
-id|i2c_inb
-c_func
-(paren
-id|adap
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-op_ne
-(paren
-id|num
-op_minus
-l_int|1
-)paren
-)paren
-(brace
-id|pmsg
-op_assign
-op_amp
-id|msgs
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|ret
-op_assign
-id|pcf_doAddress
-c_func
-(paren
-id|adap
-comma
-id|pmsg
-comma
-id|i2c_adap-&gt;retries
-)paren
-suffix:semicolon
-id|timeout
-op_assign
-id|wait_for_pin
-c_func
-(paren
-id|adap
-comma
-op_amp
-id|status
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|timeout
-)paren
-(brace
-id|DEB2
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-algo-pcf.o: Timeout waiting for PIN(2) in pcf_xfer&bslash;n&quot;
-)paren
-suffix:semicolon
-)paren
-r_return
-(paren
-op_minus
-id|EREMOTEIO
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|status
-op_amp
-id|I2C_PCF_LRB
-)paren
-(brace
-id|i2c_stop
-c_func
-(paren
-id|adap
-)paren
-suffix:semicolon
-id|DEB2
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-algo-pcf.o: No LRB(2) in pcf_xfer&bslash;n&quot;
-)paren
-suffix:semicolon
-)paren
-r_return
-(paren
-op_minus
-id|EREMOTEIO
-)paren
-suffix:semicolon
-)brace
-)brace
-)brace
 r_return
 (paren
 id|num
@@ -2152,6 +1979,8 @@ r_return
 id|I2C_FUNC_SMBUS_EMUL
 op_or
 id|I2C_FUNC_10BIT_ADDR
+op_or
+id|I2C_FUNC_PROTOCOL_MANGLING
 suffix:semicolon
 )brace
 multiline_comment|/* -----exported algorithm data: -------------------------------------&t;*/
@@ -2181,7 +2010,7 @@ comma
 multiline_comment|/* ioctl&t;&t;*/
 id|pcf_func
 comma
-multiline_comment|/* functionality        */
+multiline_comment|/* functionality&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/* &n; * registering functions to load algorithms at runtime &n; */

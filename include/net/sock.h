@@ -2924,7 +2924,7 @@ op_star
 id|sk
 )paren
 (brace
-id|write_lock_irq
+id|write_lock_bh
 c_func
 (paren
 op_amp
@@ -2943,7 +2943,7 @@ id|sk-&gt;sleep
 op_assign
 l_int|NULL
 suffix:semicolon
-id|write_unlock_irq
+id|write_unlock_bh
 c_func
 (paren
 op_amp
@@ -2969,7 +2969,7 @@ op_star
 id|parent
 )paren
 (brace
-id|write_lock_irq
+id|write_lock_bh
 c_func
 (paren
 op_amp
@@ -2989,7 +2989,7 @@ id|sk-&gt;socket
 op_assign
 id|parent
 suffix:semicolon
-id|write_unlock_irq
+id|write_unlock_bh
 c_func
 (paren
 op_amp
@@ -3796,7 +3796,7 @@ r_void
 )paren
 (brace
 r_return
-id|in_interrupt
+id|in_softirq
 c_func
 (paren
 )paren

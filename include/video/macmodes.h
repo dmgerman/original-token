@@ -51,6 +51,8 @@ DECL|macro|VMODE_CHOOSE
 mdefine_line|#define VMODE_CHOOSE&t;&t;99
 DECL|macro|CMODE_NVRAM
 mdefine_line|#define CMODE_NVRAM&t;&t;-1
+DECL|macro|CMODE_CHOOSE
+mdefine_line|#define CMODE_CHOOSE&t;&t;-2
 DECL|macro|CMODE_8
 mdefine_line|#define CMODE_8&t;&t;&t;0&t;/* 8 bits/pixel */
 DECL|macro|CMODE_16

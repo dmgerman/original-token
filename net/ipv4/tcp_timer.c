@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_timer.c,v 1.72 2000/02/08 21:27:20 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_timer.c,v 1.73 2000/02/09 11:16:42 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 DECL|variable|sysctl_tcp_syn_retries
 r_int
@@ -831,6 +831,13 @@ id|sk
 suffix:semicolon
 id|out_unlock
 suffix:colon
+id|timer_exit
+c_func
+(paren
+op_amp
+id|tp-&gt;delack_timer
+)paren
+suffix:semicolon
 id|bh_unlock_sock
 c_func
 (paren
@@ -977,6 +984,13 @@ suffix:semicolon
 )brace
 id|out_unlock
 suffix:colon
+id|timer_exit
+c_func
+(paren
+op_amp
+id|tp-&gt;probe_timer
+)paren
+suffix:semicolon
 id|bh_unlock_sock
 c_func
 (paren
@@ -1036,12 +1050,15 @@ suffix:semicolon
 DECL|function|tcp_twkill
 r_static
 r_void
-id|tcp_twkill
+id|SMP_TIMER_NAME
 c_func
+(paren
+id|tcp_twkill
+)paren
 (paren
 r_int
 r_int
-id|data
+id|dummy
 )paren
 (brace
 r_struct
@@ -1190,6 +1207,14 @@ id|tw_death_lock
 )paren
 suffix:semicolon
 )brace
+id|SMP_TIMER_DEFINE
+c_func
+(paren
+id|tcp_twkill
+comma
+id|tcp_twkill_task
+)paren
+suffix:semicolon
 multiline_comment|/* These are always called from BH context.  See callers in&n; * tcp_input.c to verify this.&n; */
 multiline_comment|/* This is for handling early-kills of TIME_WAIT sockets. */
 DECL|function|tcp_tw_deschedule
@@ -1652,8 +1677,11 @@ suffix:semicolon
 )brace
 DECL|function|tcp_twcal_tick
 r_void
-id|tcp_twcal_tick
+id|SMP_TIMER_NAME
 c_func
+(paren
+id|tcp_twcal_tick
+)paren
 (paren
 r_int
 r_int
@@ -1905,6 +1933,14 @@ id|tw_death_lock
 )paren
 suffix:semicolon
 )brace
+id|SMP_TIMER_DEFINE
+c_func
+(paren
+id|tcp_twcal_tick
+comma
+id|tcp_twcal_tasklet
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;The TCP retransmit timer.&n; */
 DECL|function|tcp_retransmit_timer
 r_static
@@ -2216,6 +2252,13 @@ id|sk
 suffix:semicolon
 id|out_unlock
 suffix:colon
+id|timer_exit
+c_func
+(paren
+op_amp
+id|tp-&gt;retransmit_timer
+)paren
+suffix:semicolon
 id|bh_unlock_sock
 c_func
 (paren
@@ -3059,6 +3102,13 @@ id|sk
 suffix:semicolon
 id|out
 suffix:colon
+id|timer_exit
+c_func
+(paren
+op_amp
+id|sk-&gt;timer
+)paren
+suffix:semicolon
 id|bh_unlock_sock
 c_func
 (paren

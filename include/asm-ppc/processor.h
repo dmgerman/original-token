@@ -311,8 +311,16 @@ DECL|macro|HID0_ICFI
 mdefine_line|#define&t;  HID0_ICFI&t;(1&lt;&lt;11)&t;&t;/* Instr. Cache Flash Invalidate */
 DECL|macro|HID0_DCI
 mdefine_line|#define&t;  HID0_DCI&t;(1&lt;&lt;10)&t;&t;/* Data Cache Invalidate */
+DECL|macro|HID0_SPD
+mdefine_line|#define   HID0_SPD&t;(1&lt;&lt;9)&t;&t;/* Speculative disable */
+DECL|macro|HID0_SGE
+mdefine_line|#define   HID0_SGE&t;(1&lt;&lt;7)&t;&t;/* Store Gathering Enable */
 DECL|macro|HID0_SIED
 mdefine_line|#define&t;  HID0_SIED&t;(1&lt;&lt;7)&t;&t;/* Serial Instr. Execution [Disable] */
+DECL|macro|HID0_BTIC
+mdefine_line|#define   HID0_BTIC&t;(1&lt;&lt;5)&t;&t;/* Branch Target Instruction Cache Enable */
+DECL|macro|HID0_ABE
+mdefine_line|#define   HID0_ABE&t;(1&lt;&lt;3)&t;&t;/* Address Broadcast Enable */
 DECL|macro|HID0_BHTE
 mdefine_line|#define&t;  HID0_BHTE&t;(1&lt;&lt;2)&t;&t;/* Branch History Table Enable */
 DECL|macro|HID0_BTCD
@@ -636,6 +644,8 @@ DECL|macro|TBWL
 mdefine_line|#define&t;TBWL&t;SPRN_TBWL&t;/* Time Base Write Lower Register */
 DECL|macro|TBWU
 mdefine_line|#define&t;TBWU&t;SPRN_TBWU&t;/* Time Base Write Upper Register */
+DECL|macro|ICTC
+mdefine_line|#define ICTC&t;1019
 DECL|macro|THRM1
 mdefine_line|#define&t;THRM1&t;SPRN_THRM1&t;/* Thermal Management Register 1 */
 DECL|macro|THRM2

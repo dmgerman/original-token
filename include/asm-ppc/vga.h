@@ -3,11 +3,11 @@ macro_line|#ifndef _LINUX_ASM_VGA_H_
 DECL|macro|_LINUX_ASM_VGA_H_
 mdefine_line|#define _LINUX_ASM_VGA_H_
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/console.h&gt;
+macro_line|#if defined(CONFIG_VGA_CONSOLE) || defined(CONFIG_MDA_CONSOLE)
 DECL|macro|VT_BUF_HAVE_RW
 mdefine_line|#define VT_BUF_HAVE_RW
+multiline_comment|/*&n; *  These are only needed for supporting VGA or MDA text mode, which use little&n; *  endian byte ordering.&n; *  In other cases, we can optimize by using native byte ordering and&n; *  &lt;linux/vt_buffer.h&gt; has already done the right job for us.&n; */
 DECL|function|scr_writew
 r_extern
 r_inline
@@ -23,35 +23,16 @@ op_star
 id|addr
 )paren
 (brace
-multiline_comment|/* If using vgacon (not fbcon) byteswap the writes.&n;&t; * If non-vgacon assume fbcon and don&squot;t byteswap&n;&t; * just like include/linux/vt_buffer.h.&n;&t; * XXX: this is a performance loss so get rid of it&n;&t; *      as soon as fbcon works on prep.&n;&t; * -- Cort&n;&t; */
-macro_line|#ifdef CONFIG_FB
-r_if
-c_cond
-(paren
-id|conswitchp
-op_ne
-op_amp
-id|vga_con
-)paren
-(paren
-op_star
-(paren
-id|addr
-)paren
-op_assign
-(paren
-id|val
-)paren
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif /* CONFIG_FB */
-id|st_le16
+id|writew
 c_func
 (paren
-id|addr
-comma
 id|val
+comma
+(paren
+r_int
+r_int
+)paren
+id|addr
 )paren
 suffix:semicolon
 )brace
@@ -68,44 +49,23 @@ op_star
 id|addr
 )paren
 (brace
-macro_line|#ifdef CONFIG_FB
-r_if
-c_cond
-(paren
-id|conswitchp
-op_ne
-op_amp
-id|vga_con
-)paren
 r_return
-(paren
-op_star
-(paren
-id|addr
-)paren
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif /* CONFIG_FB */
-r_return
-id|ld_le16
+id|readw
 c_func
 (paren
 (paren
 r_int
 r_int
-op_star
 )paren
 id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|VT_BUF_HAVE_MEMCPYF
-mdefine_line|#define VT_BUF_HAVE_MEMCPYF
-DECL|macro|scr_memcpyw_from
-mdefine_line|#define scr_memcpyw_from memcpy
-DECL|macro|scr_memcpyw_to
-mdefine_line|#define scr_memcpyw_to memcpy
+DECL|macro|VT_BUF_HAVE_MEMCPYW
+mdefine_line|#define VT_BUF_HAVE_MEMCPYW
+DECL|macro|scr_memcpyw
+mdefine_line|#define scr_memcpyw&t;memcpy
+macro_line|#endif /* !CONFIG_VGA_CONSOLE &amp;&amp; !CONFIG_MDA_CONSOLE */
 r_extern
 r_int
 r_int

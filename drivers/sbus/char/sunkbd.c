@@ -753,7 +753,7 @@ DECL|macro|KEY_ALT
 mdefine_line|#define KEY_ALT         0x86
 DECL|macro|KEY_L1
 mdefine_line|#define KEY_L1          0x87
-multiline_comment|/* Do to sun_kbd_init() being called before rs_init(), and sun_kbd_init() doing:&n; *&n; *&t;init_bh(KEYBOARD_BH, kbd_bh);&n; *&t;mark_bh(KEYBOARD_BH);&n; *&n; * this might well be called before some driver has claimed interest in&n; * handling the keyboard input/output. So we need to assign an initial nop.&n; *&n; * Otherwise this would lead to the following (DaveM might want to look at):&n; *&n; *&t;sparc64_dtlb_refbit_catch(),&n; *&t;do_sparc64_fault(),&n; *&t;kernel NULL pointer dereference at do_sparc64_fault + 0x2c0 ;-(&n; */
+multiline_comment|/* Due to sun_kbd_init() being called before rs_init(), and sun_kbd_init() doing:&n; *&n; *&t;tasklet_enable(&amp;keyboard_tasklet);&n; *&t;tasklet_schedule(&amp;keyboard_tasklet);&n; *&n; * this might well be called before some driver has claimed interest in&n; * handling the keyboard input/output. So we need to assign an initial nop.&n; */
 DECL|function|nop_kbd_put_char
 r_static
 r_void
@@ -1856,6 +1856,18 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_PCI
+id|DECLARE_TASKLET_DISABLED
+c_func
+(paren
+id|keyboard_tasklet
+comma
+id|sun_kbd_bh
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* #define SKBD_DEBUG */
 multiline_comment|/* This is our keyboard &squot;interrupt&squot; routine. */
 DECL|function|sunkbd_inchar
@@ -2497,10 +2509,11 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 )brace
@@ -4544,15 +4557,6 @@ op_assign
 l_int|0xff
 suffix:semicolon
 multiline_comment|/* undefined */
-DECL|variable|sunkbd_ledstate
-r_static
-r_int
-r_char
-id|sunkbd_ledstate
-op_assign
-l_int|0xff
-suffix:semicolon
-multiline_comment|/* undefined */
 DECL|variable|ledioctl
 r_static
 r_int
@@ -4900,13 +4904,23 @@ suffix:semicolon
 )brace
 )def_block
 multiline_comment|/*&n; * This routine is the bottom half of the keyboard interrupt&n; * routine, and runs with all interrupts enabled. It does&n; * console changing, led setting and copy_to_cooked, which can&n; * take a reasonably long time.&n; *&n; * Aside from timing (which isn&squot;t really that important for&n; * keyboard interrupts as they happen often), using the software&n; * interrupt routines for this thing allows us to easily mask&n; * this when we don&squot;t want any of the above to happen. Not yet&n; * used, but this allows for easy and efficient race-condition&n; * prevention later on.&n; */
-DECL|function|kbd_bh
+DECL|variable|sunkbd_ledstate
 r_static
+r_int
+r_char
+id|sunkbd_ledstate
+op_assign
+l_int|0xff
+suffix:semicolon
+multiline_comment|/* undefined */
+DECL|function|sun_kbd_bh
 r_void
-id|kbd_bh
+id|sun_kbd_bh
 c_func
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 (brace
 r_int
@@ -5241,18 +5255,22 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|init_bh
+id|keyboard_tasklet.func
+op_assign
+id|sun_kbd_bh
+suffix:semicolon
+id|tasklet_enable
 c_func
 (paren
-id|KEYBOARD_BH
-comma
-id|kbd_bh
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 r_return

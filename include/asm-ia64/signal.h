@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_SIGNAL_H
 DECL|macro|_ASM_IA64_SIGNAL_H
 mdefine_line|#define _ASM_IA64_SIGNAL_H
-multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; * Unfortunately, this file is being included by bits/signal.h in&n; * glibc-2.x.  Hence the #ifdef __KERNEL__ ugliness.&n; */
 DECL|macro|SIGHUP
 mdefine_line|#define SIGHUP&t;&t; 1
 DECL|macro|SIGINT
@@ -109,6 +109,7 @@ DECL|macro|MINSIGSTKSZ
 mdefine_line|#define MINSIGSTKSZ&t;2048
 DECL|macro|SIGSTKSZ
 mdefine_line|#define SIGSTKSZ&t;8192
+macro_line|#ifdef __KERNEL__
 DECL|macro|_NSIG
 mdefine_line|#define _NSIG&t;&t;64
 DECL|macro|_NSIG_BPW
@@ -124,6 +125,7 @@ DECL|macro|SA_SHIRQ
 mdefine_line|#define SA_SHIRQ&t;&t;0x04000000
 DECL|macro|SA_LEGACY
 mdefine_line|#define SA_LEGACY&t;&t;0x02000000&t;/* installed via a legacy irq? */
+macro_line|#endif /* __KERNEL__ */
 DECL|macro|SIG_BLOCK
 mdefine_line|#define SIG_BLOCK          0&t;/* for blocking signals */
 DECL|macro|SIG_UNBLOCK
@@ -142,6 +144,41 @@ multiline_comment|/* Avoid too many header ordering problems.  */
 r_struct
 id|siginfo
 suffix:semicolon
+multiline_comment|/* Type of a signal handler.  */
+DECL|typedef|__sighandler_t
+r_typedef
+r_void
+(paren
+op_star
+id|__sighandler_t
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
+DECL|struct|sigaltstack
+r_typedef
+r_struct
+id|sigaltstack
+(brace
+DECL|member|ss_sp
+r_void
+op_star
+id|ss_sp
+suffix:semicolon
+DECL|member|ss_flags
+r_int
+id|ss_flags
+suffix:semicolon
+DECL|member|ss_size
+r_int
+id|ss_size
+suffix:semicolon
+DECL|typedef|stack_t
+)brace
+id|stack_t
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* Most things should be clean enough to redefine this at will, if care&n;   is taken to make libc match.  */
 DECL|typedef|old_sigset_t
 r_typedef
@@ -163,18 +200,6 @@ suffix:semicolon
 DECL|typedef|sigset_t
 )brace
 id|sigset_t
-suffix:semicolon
-multiline_comment|/* Type of a signal handler.  */
-DECL|typedef|__sighandler_t
-r_typedef
-r_void
-(paren
-op_star
-id|__sighandler_t
-)paren
-(paren
-r_int
-)paren
 suffix:semicolon
 DECL|struct|sigaction
 r_struct
@@ -207,30 +232,8 @@ id|sa
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|sigaltstack
-r_typedef
-r_struct
-id|sigaltstack
-(brace
-DECL|member|ss_sp
-r_void
-op_star
-id|ss_sp
-suffix:semicolon
-DECL|member|ss_flags
-r_int
-id|ss_flags
-suffix:semicolon
-DECL|member|ss_size
-r_int
-id|ss_size
-suffix:semicolon
-DECL|typedef|stack_t
-)brace
-id|stack_t
-suffix:semicolon
-multiline_comment|/* sigcontext.h needs stack_t... */
 macro_line|#  include &lt;asm/sigcontext.h&gt;
+macro_line|#endif /* __KERNEL__ */
 macro_line|# endif /* !__ASSEMBLY__ */
 macro_line|#endif /* _ASM_IA64_SIGNAL_H */
 eof

@@ -3952,7 +3952,7 @@ op_star
 l_int|2
 op_plus
 op_logical_neg
-id|in_interrupt
+id|in_softirq
 c_func
 (paren
 )paren

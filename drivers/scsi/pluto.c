@@ -386,7 +386,7 @@ r_struct
 id|ctrl_inquiry
 op_star
 )paren
-id|scsi_init_malloc
+id|kmalloc
 (paren
 r_sizeof
 (paren
@@ -1264,7 +1264,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -1272,14 +1272,6 @@ r_char
 op_star
 )paren
 id|fcs
-comma
-r_sizeof
-(paren
-r_struct
-id|ctrl_inquiry
-)paren
-op_star
-id|fcscount
 )paren
 suffix:semicolon
 r_if

@@ -2084,7 +2084,7 @@ op_and_assign
 op_complement
 id|TCQ_F_THROTTLED
 suffix:semicolon
-id|qdisc_wakeup
+id|netif_schedule
 c_func
 (paren
 id|sch-&gt;dev
@@ -2424,7 +2424,7 @@ op_and_assign
 op_complement
 id|TCQ_F_THROTTLED
 suffix:semicolon
-id|qdisc_wakeup
+id|netif_schedule
 c_func
 (paren
 id|sch-&gt;dev
@@ -3673,7 +3673,14 @@ c_cond
 id|q-&gt;wd_expires
 op_logical_and
 op_logical_neg
-id|sch-&gt;dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|sch-&gt;dev-&gt;state
+)paren
 )paren
 (brace
 r_int

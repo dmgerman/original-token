@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.73 2000/02/08 05:11:32 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.74 2000/02/09 11:15:07 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -588,28 +588,6 @@ c_func
 id|kernel_flag
 )paren
 suffix:semicolon
-multiline_comment|/* Software-IRQ BH locking */
-DECL|variable|global_bh_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|global_bh_lock
-)paren
-suffix:semicolon
-DECL|variable|global_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|global_bh_count
-)paren
-suffix:semicolon
-DECL|variable|synchronize_bh
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|synchronize_bh
-)paren
-suffix:semicolon
 multiline_comment|/* Hard IRQ locking */
 DECL|variable|global_irq_holder
 id|EXPORT_SYMBOL
@@ -736,18 +714,18 @@ id|_do_write_unlock
 suffix:semicolon
 macro_line|#endif
 macro_line|#else
-DECL|variable|local_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_irq_count
-)paren
-suffix:semicolon
 DECL|variable|local_bh_count
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|local_bh_count
+)paren
+suffix:semicolon
+DECL|variable|local_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_irq_count
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -3,6 +3,8 @@ DECL|macro|_PPC_KERNEL_LOCAL_IRQ_H
 mdefine_line|#define _PPC_KERNEL_LOCAL_IRQ_H
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/cache.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 r_void
 id|ppc_irq_dispatch_handler

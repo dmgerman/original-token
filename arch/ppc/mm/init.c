@@ -297,14 +297,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|show_net_buffers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|phys_mem
 r_struct
 id|mem_pieces
@@ -1157,13 +1149,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -2562,6 +2547,7 @@ id|phys
 op_or
 id|wimgxpp
 suffix:semicolon
+macro_line|#ifndef CONFIG_KGDB /* want user access for breakpoints */
 r_if
 c_cond
 (paren
@@ -2569,6 +2555,7 @@ id|flags
 op_amp
 id|_PAGE_USER
 )paren
+macro_line|#endif
 id|bat
 (braket
 l_int|1
@@ -3057,6 +3044,17 @@ id|_PAGE_ACCESSED
 op_or
 id|_PAGE_SHARED
 suffix:semicolon
+macro_line|#ifdef CONFIG_KGDB
+multiline_comment|/* Allows stub to set breakpoints everywhere */
+id|f
+op_or_assign
+id|_PAGE_RW
+op_or
+id|_PAGE_DIRTY
+op_or
+id|_PAGE_HWWRITE
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -3092,6 +3090,7 @@ op_or_assign
 id|_PAGE_USER
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
+macro_line|#endif /* CONFIG_KGDB */
 id|map_page
 c_func
 (paren
@@ -3617,6 +3616,11 @@ l_int|10
 suffix:semicolon
 )brace
 macro_line|#endif
+r_extern
+id|boot_infos_t
+op_star
+id|disp_bi
+suffix:semicolon
 multiline_comment|/*&n; * Do very early mm setup such as finding the size of memory&n; * and setting up the hash table.&n; * A lot of this is prep/pmac specific but a lot of it could&n; * still be merged.&n; * -- Cort&n; */
 macro_line|#if defined(CONFIG_4xx)
 r_void
@@ -3628,6 +3632,16 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/*&n;&t; * The Zone Protection Register (ZPR) defines how protection will&n;&t; * be applied to every page which is a member of a given zone. At&n;&t; * present, we utilize only two of the 4xx&squot;s zones. The first, zone&n;&t; * 0, is set at &squot;00b and only allows access in supervisor-mode based&n;&t; * on the EX and WR bits. No user-mode access is allowed. The second,&n;&t; * zone 1, is set at &squot;10b and in supervisor-mode allows access&n;&t; * without regard to the EX and WR bits. In user-mode, access is&n;&t; * allowed based on the EX and WR bits.&n;&t; */
+id|mtspr
+c_func
+(paren
+id|SPRN_ZPR
+comma
+l_int|0x2aaaaaaa
+)paren
+suffix:semicolon
+multiline_comment|/* Hardwire any TLB entries necessary here. */
 id|PPC4xx_tlb_pin
 c_func
 (paren
@@ -3644,22 +3658,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|PPC4xx_tlb_pin
-c_func
-(paren
-id|OAKNET_IO_BASE
-comma
-id|OAKNET_IO_BASE
-comma
-id|TLB_PAGESZ
-c_func
-(paren
-id|PAGESZ_4K
-)paren
-comma
-l_int|0
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * Find the top of physical memory and map all of it in starting&n;&t; * at KERNELBASE.&n;&t; */
 id|end_of_DRAM
 op_assign
 id|oak_find_end_of_memory
@@ -3667,21 +3666,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Map in all of RAM starting at KERNELBASE */
 id|mapin_ram
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Zone 0 - kernel (above 0x80000000), zone 1 - user */
-id|mtspr
-c_func
-(paren
-id|SPRN_ZPR
-comma
-l_int|0x2aaaaaaa
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * Set up the real-mode cache parameters for the exception vector&n;&t; * handlers (which are run in real-mode).&n;&t; */
 id|mtspr
 c_func
 (paren
@@ -3690,25 +3680,26 @@ comma
 l_int|0x00000000
 )paren
 suffix:semicolon
-multiline_comment|/* all caching is write-back */
-multiline_comment|/* Cache 128MB of space starting at KERNELBASE. */
+multiline_comment|/* All caching is write-back */
+multiline_comment|/*&n;&t; * Cache instruction and data space where the exception&n;&t; * vectors and the kernel live in real-mode.&n;&t; */
 id|mtspr
 c_func
 (paren
 id|SPRN_DCCR
 comma
-l_int|0x00000000
+l_int|0x80000000
 )paren
 suffix:semicolon
-multiline_comment|/* flush_instruction_cache(); XXX */
+multiline_comment|/* 128 MB of data space at 0x0. */
 id|mtspr
 c_func
 (paren
 id|SPRN_ICCR
 comma
-l_int|0x00000000
+l_int|0x80000000
 )paren
 suffix:semicolon
+multiline_comment|/* 128 MB of instr. space at 0x0. */
 )brace
 macro_line|#else
 DECL|function|MMU_init
@@ -3811,6 +3802,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC64
+id|_SDR1
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* temporary hack to just use bats -- Cort */
+macro_line|#else&t;
 id|_SDR1
 op_assign
 id|__pa
@@ -3825,6 +3823,7 @@ op_rshift
 l_int|10
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|ioremap_base
 op_assign
 l_int|0xf8000000
@@ -3926,6 +3925,37 @@ comma
 id|IO_PAGE
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC64
+multiline_comment|/* temporary hack to get working until page tables are stable -- Cort*/
+id|setbat
+c_func
+(paren
+l_int|1
+comma
+l_int|0x80000000
+comma
+l_int|0xc0000000
+comma
+l_int|0x10000000
+comma
+id|IO_PAGE
+)paren
+suffix:semicolon
+id|setbat
+c_func
+(paren
+l_int|3
+comma
+l_int|0xd0000000
+comma
+l_int|0xd0000000
+comma
+l_int|0x10000000
+comma
+id|IO_PAGE
+)paren
+suffix:semicolon
+macro_line|#else
 id|setbat
 c_func
 (paren
@@ -3954,6 +3984,7 @@ comma
 id|IO_PAGE
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 r_break
 suffix:semicolon
 r_case
@@ -4010,6 +4041,26 @@ id|IO_PAGE
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if 0
+id|setbat
+c_func
+(paren
+l_int|0
+comma
+id|disp_bi-&gt;dispDeviceBase
+comma
+id|disp_bi-&gt;dispDeviceBase
+comma
+l_int|0x100000
+comma
+id|IO_PAGE
+)paren
+suffix:semicolon
+id|disp_bi-&gt;logicalDisplayBase
+op_assign
+id|disp_bi-&gt;dispDeviceBase
+suffix:semicolon
+macro_line|#endif&t;&t;
 id|ioremap_base
 op_assign
 l_int|0xf0000000
@@ -4674,6 +4725,16 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+r_char
+op_star
+id|sysmap
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sysmap_size
+suffix:semicolon
 r_int
 r_int
 id|addr
@@ -4816,6 +4877,52 @@ id|addr
 )paren
 suffix:semicolon
 macro_line|#endif /* defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC) */
+r_if
+c_cond
+(paren
+id|sysmap_size
+)paren
+r_for
+c_loop
+(paren
+id|addr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|sysmap
+suffix:semicolon
+id|addr
+OL
+id|PAGE_ALIGN
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|sysmap
+op_plus
+id|sysmap_size
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PAGE_SIZE
+)paren
+id|SetPageReserved
+c_func
+(paren
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4917,6 +5024,9 @@ r_int
 r_int
 )paren
 id|nr_free_pages
+c_func
+(paren
+)paren
 op_lshift
 (paren
 id|PAGE_SHIFT
@@ -4925,28 +5035,10 @@ l_int|10
 )paren
 comma
 id|codepages
-op_lshift
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|10
-)paren
 comma
 id|datapages
-op_lshift
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|10
-)paren
 comma
 id|initpages
-op_lshift
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|10
-)paren
 comma
 id|PAGE_OFFSET
 comma
@@ -4984,7 +5076,7 @@ id|total
 suffix:semicolon
 multiline_comment|/* max amount of RAM we allow -- Cort */
 DECL|macro|RAM_LIMIT
-mdefine_line|#define RAM_LIMIT (768&lt;&lt;20)
+mdefine_line|#define RAM_LIMIT (64&lt;&lt;20)
 id|memory_node
 op_assign
 id|find_devices
@@ -5860,14 +5952,7 @@ op_plus
 id|Hash_size
 )paren
 suffix:semicolon
-id|__clear_user
-c_func
-(paren
-id|Hash
-comma
-id|Hash_size
-)paren
-suffix:semicolon
+multiline_comment|/*__clear_user(Hash, Hash_size);*/
 multiline_comment|/*&n;&t;&t; * Patch up the instructions in head.S:hash_page&n;&t;&t; */
 id|Hash_bits
 op_assign

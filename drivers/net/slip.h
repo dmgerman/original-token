@@ -51,6 +51,10 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* easy for intr handling&t;*/
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 macro_line|#ifdef SL_INCLUDE_CSLIP
 DECL|member|slcomp
 r_struct

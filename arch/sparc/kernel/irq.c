@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.100 2000/01/29 01:38:04 anton Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.101 2000/02/09 11:15:03 davem Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -716,22 +716,6 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|variable|global_bh_lock
-id|atomic_t
-id|global_bh_lock
-op_assign
-id|ATOMIC_INIT
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-DECL|variable|global_bh_count
-id|spinlock_t
-id|global_bh_count
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
 multiline_comment|/* Who has global_irq_lock. */
 DECL|variable|global_irq_holder
 r_int
@@ -757,13 +741,6 @@ c_func
 (paren
 l_int|0
 )paren
-suffix:semicolon
-multiline_comment|/* This protects BH software state (masks, things like that). */
-DECL|variable|sparc_bh_lock
-id|spinlock_t
-id|sparc_bh_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 r_void
 id|smp_show_backtrace_all_cpus
@@ -871,7 +848,7 @@ id|spin_is_locked
 c_func
 (paren
 op_amp
-id|global_bh_count
+id|global_bh_lock
 )paren
 ques
 c_cond
@@ -928,62 +905,6 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|wait_on_bh
-r_static
-r_inline
-r_void
-id|wait_on_bh
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|count
-op_assign
-id|MAXCOUNT
-suffix:semicolon
-r_do
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-op_decrement
-id|count
-)paren
-(brace
-id|show
-c_func
-(paren
-l_string|&quot;wait_on_bh&quot;
-)paren
-suffix:semicolon
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|spin_is_locked
-c_func
-(paren
-op_amp
-id|global_bh_count
-)paren
-)paren
-(brace
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n; * We have to allow irqs to arrive between __sti and __cli&n; */
 DECL|macro|SYNC_OTHER_CORES
 mdefine_line|#define SYNC_OTHER_CORES(x) udelay(x+1)
@@ -1036,7 +957,7 @@ id|spin_is_locked
 c_func
 (paren
 op_amp
-id|global_bh_count
+id|global_bh_lock
 )paren
 )paren
 r_break
@@ -1129,7 +1050,7 @@ id|spin_is_locked
 c_func
 (paren
 op_amp
-id|global_bh_count
+id|global_bh_lock
 )paren
 )paren
 r_continue
@@ -1148,36 +1069,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-)brace
-multiline_comment|/*&n; * This is called when we want to synchronize with&n; * bottom half handlers. We need to wait until&n; * no other CPU is executing any bottom half handler.&n; *&n; * Don&squot;t wait if we&squot;re already running in an interrupt&n; * context or are inside a bh handler. &n; */
-DECL|function|synchronize_bh
-r_void
-id|synchronize_bh
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|spin_is_locked
-(paren
-op_amp
-id|global_bh_count
-)paren
-op_logical_and
-op_logical_neg
-id|in_interrupt
-c_func
-(paren
-)paren
-)paren
-id|wait_on_bh
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is called when we want to synchronize with&n; * interrupts. We may for example tell a device to&n; * stop sending interrupts: but to make sure there&n; * are no interrupts that are executing on another&n; * CPU we need to call this function.&n; */
 DECL|function|synchronize_irq

@@ -2597,7 +2597,7 @@ op_star
 )paren
 id|lock
 )paren
-id|schedule
+id|barrier
 c_func
 (paren
 )paren

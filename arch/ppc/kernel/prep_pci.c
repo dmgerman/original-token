@@ -61,6 +61,11 @@ r_void
 id|chrp_post_irq
 c_func
 (paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
 r_int
 )paren
 suffix:semicolon

@@ -387,10 +387,18 @@ mdefine_line|#define OPENPIC_PRIORITY_SHIFT&t;&t;&t;16
 DECL|macro|OPENPIC_VECTOR_MASK
 mdefine_line|#define OPENPIC_VECTOR_MASK&t;&t;&t;0x000000ff
 multiline_comment|/*&n;     *  Interrupt Source Registers&n;     */
-DECL|macro|OPENPIC_SENSE_POLARITY
-mdefine_line|#define OPENPIC_SENSE_POLARITY&t;&t;&t;0x00800000&t;/* Undoc&squot;d */
+DECL|macro|OPENPIC_POLARITY_POSITIVE
+mdefine_line|#define OPENPIC_POLARITY_POSITIVE&t;&t;0x00800000
+DECL|macro|OPENPIC_POLARITY_NEGATIVE
+mdefine_line|#define OPENPIC_POLARITY_NEGATIVE&t;&t;0x00000000
+DECL|macro|OPENPIC_POLARITY_MASK
+mdefine_line|#define OPENPIC_POLARITY_MASK&t;&t;&t;0x00800000
 DECL|macro|OPENPIC_SENSE_LEVEL
 mdefine_line|#define OPENPIC_SENSE_LEVEL&t;&t;&t;0x00400000
+DECL|macro|OPENPIC_SENSE_EDGE
+mdefine_line|#define OPENPIC_SENSE_EDGE&t;&t;&t;0x00000000
+DECL|macro|OPENPIC_SENSE_MASK
+mdefine_line|#define OPENPIC_SENSE_MASK&t;&t;&t;0x00400000
 multiline_comment|/*&n;     *  Timer Registers&n;     */
 DECL|macro|OPENPIC_COUNT_MASK
 mdefine_line|#define OPENPIC_COUNT_MASK&t;&t;&t;0x7fffffff

@@ -1052,7 +1052,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|12
+id|cmdlen
 suffix:semicolon
 op_increment
 id|i

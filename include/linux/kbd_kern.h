@@ -4,6 +4,11 @@ mdefine_line|#define _KBD_KERN_H
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/keyboard.h&gt;
 r_extern
+r_struct
+id|tasklet_struct
+id|keyboard_tasklet
+suffix:semicolon
+r_extern
 r_int
 id|shift_state
 suffix:semicolon
@@ -243,10 +248,11 @@ c_func
 r_void
 )paren
 (brace
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 )brace

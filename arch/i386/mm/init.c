@@ -51,14 +51,6 @@ id|totalhigh_pages
 op_assign
 l_int|0
 suffix:semicolon
-r_extern
-r_void
-id|show_net_buffers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving an inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
 multiline_comment|/*&n; * These are allocated in head.S so that we get proper page alignment.&n; * If you change the size of these then change head.S as well.&n; */
 r_extern
@@ -949,13 +941,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* References to section boundaries */
 r_extern

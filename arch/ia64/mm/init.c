@@ -56,13 +56,6 @@ id|ia64_tlb_init
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|show_net_buffers
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|totalram_pages
 r_static
 r_int
@@ -881,13 +874,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * This is like put_dirty_page() but installs a clean page with PAGE_GATE protection&n; * (execute-only, typically).&n; */
 r_struct

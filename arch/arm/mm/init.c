@@ -37,14 +37,6 @@ id|swapper_pg_dir
 id|PTRS_PER_PGD
 )braket
 suffix:semicolon
-r_extern
-r_void
-id|show_net_buffers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * empty_bad_page is the page that is used for page faults when&n; * linux is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving a inode&n; * unused etc..&n; *&n; * empty_bad_pte_table is the accompanying page-table: it is&n; * initialized to point to BAD_PAGE entries.&n; *&n; * empty_zero_page is a special page that is used for&n; * zero-initialized data and COW.&n; */
 DECL|variable|empty_zero_page
 r_struct
@@ -544,13 +536,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * paging_init() sets up the page tables...&n; */
 DECL|function|paging_init

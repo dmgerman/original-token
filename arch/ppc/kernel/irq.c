@@ -318,7 +318,7 @@ op_star
 comma
 macro_line|#elif defined(CONFIG_APUS)
 r_int
-id|sys_request_irq
+id|request_sysirq
 (paren
 r_int
 r_int
@@ -1326,6 +1326,8 @@ dot
 id|post_irq
 c_func
 (paren
+id|regs
+comma
 id|irq
 )paren
 suffix:semicolon

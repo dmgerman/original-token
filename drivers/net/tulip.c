@@ -1203,18 +1203,10 @@ id|timer_list
 id|timer
 suffix:semicolon
 multiline_comment|/* Media selection timer. */
-DECL|member|interrupt
-r_int
-id|interrupt
+DECL|member|tx_lock
+id|spinlock_t
+id|tx_lock
 suffix:semicolon
-multiline_comment|/* In-interrupt flag. */
-macro_line|#ifdef SMP_CHECK
-DECL|member|smp_proc_id
-r_int
-id|smp_proc_id
-suffix:semicolon
-multiline_comment|/* Which processor in IRQ handler. */
-macro_line|#endif
 DECL|member|cur_rx
 DECL|member|cur_tx
 r_int
@@ -3418,6 +3410,15 @@ id|dev-&gt;hard_start_xmit
 op_assign
 op_amp
 id|tulip_start_xmit
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|tulip_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
 suffix:semicolon
 id|dev-&gt;stop
 op_assign
@@ -6276,6 +6277,13 @@ id|dev-&gt;irq
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|tp-&gt;tx_lock
+)paren
+suffix:semicolon
 id|tulip_init_ring
 c_func
 (paren
@@ -6784,18 +6792,6 @@ op_plus
 id|CSR6
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Enable interrupts by setting the interrupt mask. */
 id|outl
 c_func
@@ -6932,6 +6928,12 @@ c_func
 (paren
 op_amp
 id|tp-&gt;timer
+)paren
+suffix:semicolon
+id|netif_start_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -11022,6 +11024,14 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: transmit timed out&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11034,6 +11044,7 @@ id|MediaIsMII
 )paren
 (brace
 multiline_comment|/* Do nothing -- the media monitor should handle this. */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -11041,6 +11052,7 @@ id|tulip_debug
 OG
 l_int|1
 )paren
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -11846,49 +11858,20 @@ suffix:semicolon
 id|u32
 id|flag
 suffix:semicolon
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-OL
-id|TX_TIMEOUT
-)paren
-r_return
-l_int|1
+r_int
+r_int
+id|cpuflags
 suffix:semicolon
-id|tulip_tx_timeout
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* Caution: the write order is important here, set the base address&n;&t;   with the &quot;ownership&quot; bits last. */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|tp-&gt;tx_lock
+comma
+id|cpuflags
+)paren
+suffix:semicolon
 multiline_comment|/* Calculate the next Tx descriptor entry. */
 id|entry
 op_assign
@@ -11934,10 +11917,6 @@ op_assign
 l_int|0x60000000
 suffix:semicolon
 multiline_comment|/* No interrupt */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -11957,10 +11936,6 @@ op_assign
 l_int|0xe0000000
 suffix:semicolon
 multiline_comment|/* Tx-done intr. */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -11980,10 +11955,6 @@ op_assign
 l_int|0x60000000
 suffix:semicolon
 multiline_comment|/* No Tx-done intr. */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -11996,6 +11967,12 @@ multiline_comment|/* Tx-done intr. */
 id|tp-&gt;tx_full
 op_assign
 l_int|1
+suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -12034,6 +12011,15 @@ suffix:semicolon
 multiline_comment|/* Pass ownership to the chip. */
 id|tp-&gt;cur_tx
 op_increment
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|tp-&gt;tx_lock
+comma
+id|cpuflags
+)paren
 suffix:semicolon
 multiline_comment|/* Trigger an immediate transmit demand. */
 id|outl
@@ -12154,68 +12140,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|tp-&gt;interrupt
-)paren
-)paren
-(brace
-macro_line|#ifdef SMP_CHECK
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Re-entering the interrupt handler with proc %d,&quot;
-l_string|&quot; proc %d already handling.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|tp-&gt;smp_proc_id
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#ifdef SMP_CHECK
-id|tp-&gt;smp_proc_id
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_do
 (brace
 id|csr5
@@ -12301,6 +12225,13 @@ id|tulip_rx
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|tp-&gt;tx_lock
 )paren
 suffix:semicolon
 r_if
@@ -12522,7 +12453,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
 macro_line|#if (LINUX_VERSION_CODE &gt; 0x20155)
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|tp-&gt;tx_skbuff
@@ -12589,8 +12520,6 @@ c_cond
 (paren
 id|tp-&gt;tx_full
 op_logical_and
-id|dev-&gt;tbusy
-op_logical_and
 id|tp-&gt;cur_tx
 op_minus
 id|dirty_tx
@@ -12605,14 +12534,10 @@ id|tp-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -12681,6 +12606,13 @@ id|CSR6
 suffix:semicolon
 )brace
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|tp-&gt;tx_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Log errors. */
 r_if
 c_cond
@@ -12947,23 +12879,6 @@ id|ioaddr
 op_plus
 id|CSR5
 )paren
-)paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|clear_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|tp-&gt;interrupt
 )paren
 suffix:semicolon
 r_return
@@ -13561,13 +13476,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -13872,7 +13785,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 id|tp-&gt;stats.rx_missed_errors
 op_add_assign
@@ -14504,6 +14424,10 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+r_int
+id|cpuflags
+suffix:semicolon
 id|tp-&gt;csr6
 op_and_assign
 op_complement
@@ -14842,6 +14766,15 @@ l_int|15
 )paren
 suffix:semicolon
 multiline_comment|/* Now add this frame to the Tx list. */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|tp-&gt;tx_lock
+comma
+id|cpuflags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -14860,26 +14793,11 @@ r_else
 (brace
 r_int
 r_int
-id|flags
-suffix:semicolon
-r_int
-r_int
 id|entry
 comma
 id|dummy
 op_assign
 l_int|0
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 id|entry
 op_assign
@@ -15011,9 +14929,11 @@ op_minus
 l_int|2
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|tp-&gt;tx_full
 op_assign
@@ -15036,10 +14956,13 @@ id|status
 op_assign
 id|DescOwned
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
-id|flags
+op_amp
+id|tp-&gt;tx_lock
+comma
+id|cpuflags
 )paren
 suffix:semicolon
 multiline_comment|/* Trigger an immediate transmit demand. */

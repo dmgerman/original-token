@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1335,10 +1336,11 @@ l_int|0x80
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 )brace

@@ -1,40 +1,17 @@
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* i2c-elv.c i2c-hw access for philips style parallel port adapters&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/*   Copyright (C) 1995-99 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
-multiline_comment|/* ------------------------------------------------------------------------- &n;&n;/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and even&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c-elv.c,v 1.12 1999/12/21 23:45:58 frodo Exp $ */
+multiline_comment|/*   Copyright (C) 1995-2000 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
+multiline_comment|/* ------------------------------------------------------------------------- */
+multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and even&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
+multiline_comment|/* $Id: i2c-elv.c,v 1.16 2000/01/18 23:54:07 frodo Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020135
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__init
-mdefine_line|#define __init 
-macro_line|#endif
-multiline_comment|/* 2.0.0 kernel compatibility */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
-DECL|macro|MODULE_AUTHOR
-mdefine_line|#define MODULE_AUTHOR(noone)
-DECL|macro|MODULE_DESCRIPTION
-mdefine_line|#define MODULE_DESCRIPTION(none)
-DECL|macro|MODULE_PARM
-mdefine_line|#define MODULE_PARM(no,param)
-DECL|macro|MODULE_PARM_DESC
-mdefine_line|#define MODULE_PARM_DESC(no,description)
-DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(noexport)
-DECL|macro|EXPORT_NO_SYMBOLS
-mdefine_line|#define EXPORT_NO_SYMBOLS
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
-macro_line|#  include &lt;asm/uaccess.h&gt;
-macro_line|#else
-macro_line|#  include &lt;asm/segment.h&gt;
-macro_line|#endif
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -66,15 +43,15 @@ DECL|macro|DEBE
 mdefine_line|#define DEBE(x)&t;x&t;/* error messages &t;&t;&t;&t;*/
 DECL|macro|DEBINIT
 mdefine_line|#define DEBINIT(x) x&t;/* detection status messages&t;&t;&t;*/
-multiline_comment|/* --- Convenience defines for the parallel port:                       */
+multiline_comment|/* --- Convenience defines for the parallel port:&t;&t;&t;*/
 DECL|macro|BASE
-mdefine_line|#define BASE    (unsigned int)(data)
+mdefine_line|#define BASE&t;(unsigned int)(data)
 DECL|macro|DATA
-mdefine_line|#define DATA    BASE                    /* Centronics data port         */
+mdefine_line|#define DATA&t;BASE&t;&t;&t;/* Centronics data port&t;&t;*/
 DECL|macro|STAT
-mdefine_line|#define STAT    (BASE+1)                /* Centronics status port       */
+mdefine_line|#define STAT&t;(BASE+1)&t;&t;/* Centronics status port&t;*/
 DECL|macro|CTRL
-mdefine_line|#define CTRL    (BASE+2)                /* Centronics control port      */
+mdefine_line|#define CTRL&t;(BASE+2)&t;&t;/* Centronics control port&t;*/
 multiline_comment|/* ----- local functions ----------------------------------------------&t;*/
 DECL|function|bit_elv_setscl
 r_static
@@ -517,7 +494,7 @@ l_int|80
 comma
 l_int|100
 comma
-multiline_comment|/*      waits, timeout */
+multiline_comment|/*&t;waits, timeout */
 )brace
 suffix:semicolon
 DECL|variable|bit_elv_ops

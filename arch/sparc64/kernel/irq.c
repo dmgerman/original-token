@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: irq.c,v 1.81 2000/01/21 06:33:59 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.82 2000/02/09 11:15:07 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt; /* XXX ADD add_foo_randomness() calls... -DaveM */
@@ -2295,22 +2296,6 @@ mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count++)
 DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count--)
 macro_line|#else
-DECL|variable|global_bh_lock
-id|atomic_t
-id|global_bh_lock
-op_assign
-id|ATOMIC_INIT
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-DECL|variable|global_bh_count
-id|spinlock_t
-id|global_bh_count
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
 multiline_comment|/* Who has global_irq_lock. */
 DECL|variable|global_irq_holder
 r_int
@@ -2407,7 +2392,7 @@ id|spin_is_locked
 c_func
 (paren
 op_amp
-id|global_bh_count
+id|global_bh_lock
 )paren
 ques
 c_cond
@@ -2434,63 +2419,6 @@ suffix:semicolon
 )brace
 DECL|macro|MAXCOUNT
 mdefine_line|#define MAXCOUNT 100000000
-DECL|function|wait_on_bh
-r_static
-r_inline
-r_void
-id|wait_on_bh
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|count
-op_assign
-id|MAXCOUNT
-suffix:semicolon
-r_do
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-op_decrement
-id|count
-)paren
-(brace
-id|show
-c_func
-(paren
-l_string|&quot;wait_on_bh&quot;
-)paren
-suffix:semicolon
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|membar
-c_func
-(paren
-l_string|&quot;#LoadLoad&quot;
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|spin_is_locked
-c_func
-(paren
-op_amp
-id|global_bh_count
-)paren
-)paren
-(brace
-suffix:semicolon
-)brace
-)brace
 DECL|macro|SYNC_OTHER_ULTRAS
 mdefine_line|#define SYNC_OTHER_ULTRAS(x)&t;udelay(x+1)
 DECL|function|wait_on_irq
@@ -2543,7 +2471,7 @@ id|spin_is_locked
 c_func
 (paren
 op_amp
-id|global_bh_count
+id|global_bh_lock
 )paren
 )paren
 r_break
@@ -2636,7 +2564,7 @@ op_logical_and
 id|spin_is_locked
 (paren
 op_amp
-id|global_bh_count
+id|global_bh_lock
 )paren
 )paren
 r_continue
@@ -2655,35 +2583,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-)brace
-DECL|function|synchronize_bh
-r_void
-id|synchronize_bh
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|spin_is_locked
-(paren
-op_amp
-id|global_bh_count
-)paren
-op_logical_and
-op_logical_neg
-id|in_interrupt
-c_func
-(paren
-)paren
-)paren
-id|wait_on_bh
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|synchronize_irq
 r_void

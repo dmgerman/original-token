@@ -1134,7 +1134,7 @@ op_amp
 id|reg51h
 )paren
 suffix:semicolon
-macro_line|#ifdef HPT366_FAST_IRQ_PREDICTION
+macro_line|#ifdef CONFIG_HPT366_FAST_IRQ_PREDICTION
 multiline_comment|/*&n;&t; * Some drives prefer/allow for the method of handling interrupts.&n;&t; */
 r_if
 c_cond
@@ -1164,7 +1164,7 @@ op_or
 l_int|0x80
 )paren
 suffix:semicolon
-macro_line|#else /* ! HPT366_FAST_IRQ_PREDICTION */
+macro_line|#else /* ! CONFIG_HPT366_FAST_IRQ_PREDICTION */
 multiline_comment|/*&n;&t; * Disable the &quot;fast interrupt&quot; prediction.&n;&t; * Instead, always wait for the real interrupt from the drive!&n;&t; */
 r_if
 c_cond
@@ -1192,7 +1192,7 @@ op_complement
 l_int|0x80
 )paren
 suffix:semicolon
-macro_line|#endif /* HPT366_FAST_IRQ_PREDICTION */
+macro_line|#endif /* CONFIG_HPT366_FAST_IRQ_PREDICTION */
 multiline_comment|/*&n;&t; * Preserve existing PIO settings:&n;&t; */
 id|pci_read_config_dword
 c_func

@@ -158,6 +158,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|gmac_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|cpm_enet_init
 c_func
 (paren
@@ -601,6 +609,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BMAC
 (brace
 id|bmac_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_GMAC
+(brace
+id|gmac_probe
 comma
 l_int|0
 )brace

@@ -38,6 +38,10 @@ op_star
 id|sv_stats
 suffix:semicolon
 multiline_comment|/* RPC statistics */
+DECL|member|sv_lock
+id|spinlock_t
+id|sv_lock
+suffix:semicolon
 DECL|member|sv_nrthreads
 r_int
 r_int

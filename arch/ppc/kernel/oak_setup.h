@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; *    Copyright (c) 1999 Grant Erickson &lt;grant@lcse.umn.edu&gt;&n; *&n; *    Module name: oak_setup.c&n; *&n; *    Description:&n; *      Architecture- / platform-specific boot-time initialization code for&n; *      the IBM PowerPC 403GCX &quot;Oak&quot; evaluation board. Adapted from original&n; *      code by Gary Thomas, Cort Dougan &lt;cort@cs.nmt.edu&gt;, and Dan Malek&n; *      &lt;dmalek@jlc.net&gt;.&n; *&n; */
+multiline_comment|/*&n; *&n; *    Copyright (c) 1999-2000 Grant Erickson &lt;grant@lcse.umn.edu&gt;&n; *&n; *    Module name: oak_setup.h&n; *&n; *    Description:&n; *      Architecture- / platform-specific boot-time initialization code for&n; *      the IBM PowerPC 403GCX &quot;Oak&quot; evaluation board. Adapted from original&n; *      code by Gary Thomas, Cort Dougan &lt;cort@cs.nmt.edu&gt;, and Dan Malek&n; *      &lt;dan@netx4.com&gt;.&n; *&n; */
 macro_line|#ifndef&t;__OAK_SETUP_H__
 DECL|macro|__OAK_SETUP_H__
 mdefine_line|#define&t;__OAK_SETUP_H__

@@ -45,14 +45,6 @@ op_assign
 l_int|0
 suffix:semicolon
 r_extern
-r_void
-id|show_net_buffers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 r_int
 id|init_smp_mappings
@@ -789,13 +781,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* References to section boundaries */
 r_extern

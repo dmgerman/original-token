@@ -908,7 +908,7 @@ op_assign
 id|IF_NAME
 comma
 multiline_comment|/* name */
-id|I2C_DRIVERID_VIDEOTEXT
+id|I2C_DRIVERID_SAA5249
 comma
 multiline_comment|/* in i2c.h */
 id|I2C_DF_NOTIFY

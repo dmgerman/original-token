@@ -2,6 +2,7 @@ multiline_comment|/*&n; * fsync.c&n; *&n; * PURPOSE&n; *  Fsync handling routine
 macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#include &quot;udf_i.h&quot;
 DECL|function|sync_extent_block

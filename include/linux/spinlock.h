@@ -74,6 +74,8 @@ DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
 mdefine_line|#define spin_lock(lock)&t;&t;(void)(lock) /* Not &quot;unused variable&quot;. */
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(lock)&t;(0)
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock)&t;({1; })
 DECL|macro|spin_unlock_wait
@@ -98,6 +100,8 @@ DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;do { (x)-&gt;lock = 0; } while (0)
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(lock)&t;(test_bit(0,(lock)))
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock)&t;(!test_and_set_bit(0,(lock)))
 DECL|macro|spin_lock
@@ -137,6 +141,8 @@ mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0, 25, __BASE_FILE__ }
 macro_line|#include &lt;linux/kernel.h&gt;
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;do { (x)-&gt;lock = 0; } while (0)
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(lock)&t;(test_bit(0,(lock)))
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock)&t;(!test_and_set_bit(0,(lock)))
 DECL|macro|spin_lock

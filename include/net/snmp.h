@@ -799,7 +799,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|SNMP_INC_STATS
-mdefine_line|#define SNMP_INC_STATS(mib, field) ((mib)[2*smp_processor_id()+!in_interrupt()].field++)
+mdefine_line|#define SNMP_INC_STATS(mib, field) ((mib)[2*smp_processor_id()+!in_softirq()].field++)
 DECL|macro|SNMP_INC_STATS_BH
 mdefine_line|#define SNMP_INC_STATS_BH(mib, field) ((mib)[2*smp_processor_id()].field++)
 DECL|macro|SNMP_INC_STATS_USER

@@ -32298,9 +32298,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; wish_block %d, base %lu, io_port %lu, n_io_port %u, irq %d,&bslash;n&quot;
-comma
-id|s-&gt;wish_block
+l_string|&quot; base %lu, io_port %lu, n_io_port %u, irq %d,&bslash;n&quot;
 comma
 (paren
 id|ulong

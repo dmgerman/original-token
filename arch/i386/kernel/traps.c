@@ -471,9 +471,7 @@ id|VMALLOC_START
 suffix:semicolon
 id|module_end
 op_assign
-id|module_start
-op_plus
-id|MODULE_RANGE
+id|VMALLOC_END
 suffix:semicolon
 r_while
 c_loop

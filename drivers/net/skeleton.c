@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -84,6 +85,8 @@ suffix:semicolon
 multiline_comment|/* The number of low I/O ports used by the ethercard. */
 DECL|macro|NETCARD_IO_EXTENT
 mdefine_line|#define NETCARD_IO_EXTENT&t;32
+DECL|macro|MY_TX_TIMEOUT
+mdefine_line|#define MY_TX_TIMEOUT  ((400*HZ)/1000)
 multiline_comment|/* Information that need to be kept for each board. */
 DECL|struct|net_local
 r_struct
@@ -99,6 +102,11 @@ r_int
 id|open_time
 suffix:semicolon
 multiline_comment|/* Useless example local info. */
+multiline_comment|/* Tx control lock.  This protects the transmit buffer ring&n;&t; * state along with the &quot;tx full&quot; state of the driver.  This&n;&t; * means all netif_queue flow control actions are protected&n;&t; * by this lock as well.&n;&t; */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* The station (ethernet) address prefix, used for IDing the board. */
@@ -217,6 +225,17 @@ suffix:semicolon
 r_static
 r_void
 id|set_multicast_list
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|net_tx_timeout
 c_func
 (paren
 r_struct
@@ -409,6 +428,11 @@ r_int
 id|ioaddr
 )paren
 (brace
+r_struct
+id|net_local
+op_star
+id|np
+suffix:semicolon
 r_static
 r_int
 id|version_printed
@@ -927,6 +951,22 @@ id|net_local
 )paren
 )paren
 suffix:semicolon
+id|np
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|np-&gt;lock
+)paren
+suffix:semicolon
 multiline_comment|/* Grab the region so that no one else tries to probe our ioports. */
 id|request_region
 c_func
@@ -959,6 +999,15 @@ op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|net_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|MY_TX_TIMEOUT
+suffix:semicolon
 multiline_comment|/* Fill in the fields of the device structure with ethernet values. */
 id|ether_setup
 c_func
@@ -968,6 +1017,80 @@ id|dev
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|net_tx_timeout
+r_static
+r_void
+id|net_tx_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|net_local
+op_star
+id|np
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|tx_done
+c_func
+(paren
+id|dev
+)paren
+ques
+c_cond
+l_string|&quot;IRQ conflict&quot;
+suffix:colon
+l_string|&quot;network cable problem&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Try to restart the adaptor. */
+id|chipset_init
+c_func
+(paren
+id|dev
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|np-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
+multiline_comment|/* If we have space available to accept new transmit&n;&t; * requests, wake up the queueing layer.  This would&n;&t; * be the case if the chipset_init() call above just&n;&t; * flushes out the tx queue and empties it.&n;&t; *&n;&t; * If instead, the tx queue is retained then the&n;&t; * netif_wake_queue() call should be placed in the&n;&t; * TX completion interrupt handler of the driver instead&n;&t; * of here.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tx_full
+c_func
+(paren
+id|dev
+)paren
+)paren
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Open/initialize the board. This is called (in the current kernel)&n; * sometime after booting when the &squot;ifconfig&squot; program is run.&n; *&n; * This routine should set everything up anew at each open, even&n; * registers that &quot;should&quot; only need to be set once at boot, so that&n; * there is non-reboot way to recover if something goes wrong.&n; */
@@ -986,7 +1109,7 @@ id|dev
 r_struct
 id|net_local
 op_star
-id|lp
+id|np
 op_assign
 (paren
 r_struct
@@ -1052,7 +1175,14 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* Reset the hardware here. Don&squot;t forget to set the station address. */
-multiline_comment|/*chipset_init(dev, 1);*/
+id|chipset_init
+c_func
+(paren
+id|dev
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -1061,21 +1191,16 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-id|lp-&gt;open_time
+id|np-&gt;open_time
 op_assign
 id|jiffies
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+multiline_comment|/* We are now ready to accept transmit requeusts from&n;&t; * the queueing layer of the networking.&n;&t; */
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -1083,6 +1208,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* This will only be invoked if your driver is _not_ in XOFF state.&n; * What this means is that you need not check it, and that this&n; * invariant will hold if you make sure that the netif_*_queue()&n; * calls are done at the proper times.&n; */
 DECL|function|net_send_packet
 r_static
 r_int
@@ -1103,7 +1229,7 @@ id|dev
 r_struct
 id|net_local
 op_star
-id|lp
+id|np
 op_assign
 (paren
 r_struct
@@ -1117,98 +1243,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * If we get here, some higher level has decided we are broken.&n;&t;&t; * There should really be a &quot;kick me&quot; function call instead.&n;&t;&t; */
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|5
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|tx_done
-c_func
-(paren
-id|dev
-)paren
-ques
-c_cond
-l_string|&quot;IRQ conflict&quot;
-suffix:colon
-l_string|&quot;network cable problem&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Try to restart the adaptor. */
-id|chipset_init
-c_func
-(paren
-id|dev
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Block a timer-based transmit from overlapping. This could better be&n;&t; * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t; */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_else
-(brace
 r_int
 id|length
 op_assign
@@ -1228,10 +1262,56 @@ id|buf
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-id|lp-&gt;stats.tx_bytes
-op_add_assign
-id|skb-&gt;len
+multiline_comment|/* If some error occurs while trying to transmit this&n;&t; * packet, you should return &squot;1&squot; from this function.&n;&t; * In such a case you _may not_ do anything to the&n;&t; * SKB, it is still owned by the network queueing&n;&t; * layer when an error is returned.  This means you&n;&t; * may not modify any SKB fields, you may not free&n;&t; * the SKB, etc.&n;&t; */
+macro_line|#if TX_RING
+multiline_comment|/* This is the most common case for modern hardware.&n;&t; * The spinlock protects this code from the TX complete&n;&t; * hardware interrupt handler.  Queue flow control is&n;&t; * thus managed under this lock as well.&n;&t; */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|np-&gt;lock
+)paren
 suffix:semicolon
+id|add_to_tx_ring
+c_func
+(paren
+id|np
+comma
+id|skb
+comma
+id|length
+)paren
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffied
+suffix:semicolon
+multiline_comment|/* If we just used up the very last entry in the&n;&t; * TX ring on this device, tell the queueing&n;&t; * layer to send no more.&n;&t; */
+r_if
+c_cond
+(paren
+id|tx_full
+c_func
+(paren
+id|dev
+)paren
+)paren
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* When the TX completion hw interrupt arrives, this&n;&t; * is when the transmit statistics are updated.&n;&t; */
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|np-&gt;lock
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* This is the case for older hardware which takes&n;&t; * a single transmit buffer at a time, and it is&n;&t; * just written to the device via PIO.&n;&t; *&n;&t; * No spin locking is needed since there is no TX complete&n;&t; * event.  If by chance your card does have a TX complete&n;&t; * hardware IRQ then you may need to utilize np-&gt;lock here.&n;&t; */
 id|hardware_send_packet
 c_func
 (paren
@@ -1242,15 +1322,13 @@ comma
 id|length
 )paren
 suffix:semicolon
+id|np-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
-suffix:semicolon
-)brace
-id|dev_kfree_skb
-(paren
-id|skb
-)paren
 suffix:semicolon
 multiline_comment|/* You might need to clean up and record Tx statistics here. */
 r_if
@@ -1265,14 +1343,141 @@ op_eq
 multiline_comment|/*RU*/
 l_int|81
 )paren
-id|lp-&gt;stats.tx_aborted_errors
+id|np-&gt;stats.tx_aborted_errors
 op_increment
 suffix:semicolon
+id|dev_kfree_skb
+(paren
+id|skb
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The typical workload of the driver:&n; *   Handle the network interface interrupts.&n; */
+macro_line|#if TX_RING
+multiline_comment|/* This handles TX complete events posted by the device&n; * via interrupts.&n; */
+DECL|function|net_tx
+r_void
+id|net_tx
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|net_local
+op_star
+id|np
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|entry
+suffix:semicolon
+multiline_comment|/* This protects us from concurrent execution of&n;&t; * our dev-&gt;hard_start_xmit function above.&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|np-&gt;lock
+)paren
+suffix:semicolon
+id|entry
+op_assign
+id|np-&gt;tx_old
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|tx_entry_is_sent
+c_func
+(paren
+id|np
+comma
+id|entry
+)paren
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+op_assign
+id|np-&gt;skbs
+(braket
+id|entry
+)braket
+suffix:semicolon
+id|np-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
+id|dev_kfree_skb_irq
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|entry
+op_assign
+id|next_tx_entry
+c_func
+(paren
+id|np
+comma
+id|entry
+)paren
+suffix:semicolon
+)brace
+id|np-&gt;tx_old
+op_assign
+id|entry
+suffix:semicolon
+multiline_comment|/* If we had stopped the queue due to a &quot;tx full&quot;&n;&t; * condition, and space has now been made available,&n;&t; * wake up the queue.&n;&t; */
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;state
+)paren
+op_logical_and
+op_logical_neg
+id|tx_full
+c_func
+(paren
+id|dev
+)paren
+)paren
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|np-&gt;lock
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n; * The typical workload of the driver:&n; * Handle the network interface interrupts.&n; */
 DECL|function|net_interrupt
 r_static
 r_void
@@ -1302,48 +1507,18 @@ suffix:semicolon
 r_struct
 id|net_local
 op_star
-id|lp
+id|np
 suffix:semicolon
 r_int
 id|ioaddr
 comma
 id|status
-comma
-id|boguscount
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: irq %d for unknown device.&bslash;n&quot;
-comma
-id|cardname
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-id|lp
+id|np
 op_assign
 (paren
 r_struct
@@ -1362,13 +1537,12 @@ op_plus
 l_int|0
 )paren
 suffix:semicolon
-r_do
-(brace
 r_if
 c_cond
 (paren
 id|status
-multiline_comment|/*&amp; RX_INTR*/
+op_amp
+id|RX_INTR
 )paren
 (brace
 multiline_comment|/* Got a packet(s). */
@@ -1379,56 +1553,46 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+macro_line|#if TX_RING
 r_if
 c_cond
 (paren
 id|status
-multiline_comment|/*&amp; TX_INTR*/
+op_amp
+id|TX_INTR
 )paren
 (brace
-id|lp-&gt;stats.tx_packets
-op_increment
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+multiline_comment|/* Transmit complete. */
+id|net_tx
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Inform upper layers. */
+id|np-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|status
-multiline_comment|/*&amp; COUNTERS_INTR*/
+op_amp
+id|COUNTERS_INTR
 )paren
 (brace
 multiline_comment|/* Increment the appropriate &squot;localstats&squot; field. */
-id|lp-&gt;stats.tx_window_errors
+id|np-&gt;stats.tx_window_errors
 op_increment
 suffix:semicolon
 )brace
-)brace
-r_while
-c_loop
-(paren
-op_increment
-id|boguscount
-OL
-l_int|20
-)paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/* We have a good packet(s), get it/them out of the buffers. */
 r_static
@@ -1652,7 +1816,6 @@ op_decrement
 id|boguscount
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If any worth-while packets have been received, dev_rint()&n;&t; * has done a mark_bh(NET_BH) for us and will work on them&n;&t; * when we get to the bottom-half routine.&n;&t; */
 r_return
 suffix:semicolon
 )brace
@@ -1690,13 +1853,11 @@ id|lp-&gt;open_time
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Flush the Tx and disable Rx here. */
 id|disable_dma

@@ -1940,7 +1940,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Update the socket async list&n; *&n; *&t;Fasync_list locking strategy.&n; *&n; *&t;1. fasync_list is modified only under process context socket lock&n; *&t;   i.e. under semaphore.&n; *&t;2. fasync_list is used under read_lock(&amp;sk-&gt;callback_lock)&n; *&t;   or under socket lock.&n; *&t;3. fasync_list is used from any context including IRQ, so that&n; *&t;   modification under socket lock have to be enhanced with&n; *&t;   write_lock_irq(&amp;sk-&gt;callback_lock).&n; *&t;&t;&t;&t;&t;&t;&t;--ANK (990710)&n; */
+multiline_comment|/*&n; *&t;Update the socket async list&n; *&n; *&t;Fasync_list locking strategy.&n; *&n; *&t;1. fasync_list is modified only under process context socket lock&n; *&t;   i.e. under semaphore.&n; *&t;2. fasync_list is used under read_lock(&amp;sk-&gt;callback_lock)&n; *&t;   or under socket lock.&n; *&t;3. fasync_list can be used from softirq context, so that&n; *&t;   modification under socket lock have to be enhanced with&n; *&t;   write_lock_bh(&amp;sk-&gt;callback_lock).&n; *&t;&t;&t;&t;&t;&t;&t;--ANK (990710)&n; */
 DECL|function|sock_fasync
 r_static
 r_int
@@ -2103,7 +2103,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|write_lock_irq
+id|write_lock_bh
 c_func
 (paren
 op_amp
@@ -2114,7 +2114,7 @@ id|fa-&gt;fa_fd
 op_assign
 id|fd
 suffix:semicolon
-id|write_unlock_irq
+id|write_unlock_bh
 c_func
 (paren
 op_amp
@@ -2153,7 +2153,7 @@ id|fna-&gt;fa_next
 op_assign
 id|sock-&gt;fasync_list
 suffix:semicolon
-id|write_lock_irq
+id|write_lock_bh
 c_func
 (paren
 op_amp
@@ -2164,7 +2164,7 @@ id|sock-&gt;fasync_list
 op_assign
 id|fna
 suffix:semicolon
-id|write_unlock_irq
+id|write_unlock_bh
 c_func
 (paren
 op_amp
@@ -2182,7 +2182,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|write_lock_irq
+id|write_lock_bh
 c_func
 (paren
 op_amp
@@ -2194,7 +2194,7 @@ id|prev
 op_assign
 id|fa-&gt;fa_next
 suffix:semicolon
-id|write_unlock_irq
+id|write_unlock_bh
 c_func
 (paren
 op_amp

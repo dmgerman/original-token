@@ -2,6 +2,10 @@ multiline_comment|/*&n; * Non-machine dependent bootinfo structure.  Basic idea&
 macro_line|#ifndef _PPC_BOOTINFO_H
 DECL|macro|_PPC_BOOTINFO_H
 mdefine_line|#define _PPC_BOOTINFO_H
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#if defined(CONFIG_APUS) &amp;&amp; !defined(__BOOTER__)
+macro_line|#include &lt;asm-m68k/bootinfo.h&gt;
+macro_line|#else
 DECL|struct|bi_record
 r_struct
 id|bi_record
@@ -43,5 +47,6 @@ DECL|macro|BI_SYSMAP
 mdefine_line|#define BI_SYSMAP&t;&t;0x1015
 DECL|macro|BI_MACHTYPE
 mdefine_line|#define BI_MACHTYPE&t;&t;0x1016
+macro_line|#endif /* CONFIG_APUS */
 macro_line|#endif /* _PPC_BOOTINFO_H */
 eof

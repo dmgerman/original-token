@@ -25,16 +25,6 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 multiline_comment|/*&n; * This entire source file deals with the new queueing code.&n; */
-multiline_comment|/*&n; * For hosts that request single-file access to the ISA bus, this is a pointer to&n; * the currently active host.&n; */
-DECL|variable|host_active
-r_volatile
-r_struct
-id|Scsi_Host
-op_star
-id|host_active
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/*&n; * Function:    scsi_insert_special_cmd()&n; *&n; * Purpose:     Insert pre-formed command into request queue.&n; *&n; * Arguments:   SCpnt   - command that is ready to be queued.&n; *              at_head - boolean.  True if we should insert at head&n; *                        of queue, false if we should insert at tail.&n; *&n; * Lock status: Assumed that lock is not held upon entry.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       This function is called from character device and from&n; *              ioctl types of functions where the caller knows exactly&n; *              what SCSI command needs to be issued.   The idea is that&n; *              we merely inject the command into the queue (at the head&n; *              for now), and then call the queue request function to actually&n; *              process it.&n; */
 DECL|function|scsi_insert_special_cmd
 r_int
@@ -2280,5 +2270,30 @@ id|io_request_lock
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * FIXME(eric) - these are empty stubs for the moment.  I need to re-implement&n; * host blocking from scratch. The theory is that hosts that wish to block&n; * will register/deregister using these functions instead of the old way&n; * of setting the wish_block flag.&n; *&n; * The details of the implementation remain to be settled, however the&n; * stubs are here now so that the actual drivers will properly compile.&n; */
+DECL|function|scsi_register_blocked_host
+r_void
+id|scsi_register_blocked_host
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|SHpnt
+)paren
+(brace
+)brace
+DECL|function|scsi_deregister_blocked_host
+r_void
+id|scsi_deregister_blocked_host
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|SHpnt
+)paren
+(brace
 )brace
 eof

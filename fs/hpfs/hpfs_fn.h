@@ -1254,7 +1254,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* dir.c */
-r_int
+id|ssize_t
 id|hpfs_dir_read
 c_func
 (paren

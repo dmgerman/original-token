@@ -44,14 +44,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|show_net_buffers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|original_pcb
 r_struct
 id|thread_struct
@@ -763,13 +755,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 r_inline

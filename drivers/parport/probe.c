@@ -981,7 +981,7 @@ id|len
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: only read %d of %d ID bytes&bslash;n&quot;
+l_string|&quot;%s: only read %Zd of %Zd ID bytes&bslash;n&quot;
 comma
 id|dev-&gt;port-&gt;name
 comma
@@ -1034,7 +1034,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;%s: device reported incorrect &quot;
-l_string|&quot;length field (%d, should be %d)&bslash;n&quot;
+l_string|&quot;length field (%d, should be %Zd)&bslash;n&quot;
 comma
 id|dev-&gt;port-&gt;name
 comma

@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * Definitions for accessing the Feature Control Register (FCR)&n; * on Power Macintoshes and similar machines.  The FCR lets us&n; * enable/disable, reset, and power up/down various peripherals.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 Paul Mackerras.&n; */
+multiline_comment|/*&n; * Definitions for accessing the Feature Control Register (FCR)&n; * on Power Macintoshes and similar machines.  The FCR lets us&n; * enable/disable, reset, and power up/down various peripherals.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 Paul Mackerras.&n; * &n; */
 macro_line|#ifndef __ASM_PPC_FEATURE_H
 DECL|macro|__ASM_PPC_FEATURE_H
 mdefine_line|#define __ASM_PPC_FEATURE_H
-multiline_comment|/*&n; * The FCR bits for particular features vary somewhat between&n; * different machines.  So we abstract a list of features here&n; * and let the feature_* routines map them to the actual bits.&n; */
+multiline_comment|/*&n; * The FCR selector for particular features vary somewhat between&n; * different machines.  So we abstract a list of features here&n; * and let the feature_* routines map them to the actual bits.&n; */
 DECL|enum|system_feature
 r_enum
 id|system_feature
@@ -28,20 +28,23 @@ comma
 DECL|enumerator|FEATURE_MESH_enable
 id|FEATURE_MESH_enable
 comma
-DECL|enumerator|FEATURE_IDE_enable
-id|FEATURE_IDE_enable
+DECL|enumerator|FEATURE_IDE0_enable
+id|FEATURE_IDE0_enable
 comma
-DECL|enumerator|FEATURE_VIA_enable
-id|FEATURE_VIA_enable
+multiline_comment|/* Internal IDE */
+DECL|enumerator|FEATURE_IDE0_reset
+id|FEATURE_IDE0_reset
 comma
-DECL|enumerator|FEATURE_CD_power
-id|FEATURE_CD_power
+multiline_comment|/* Internal IDE */
+DECL|enumerator|FEATURE_IOBUS_enable
+id|FEATURE_IOBUS_enable
 comma
+multiline_comment|/* Internal IDE */
 DECL|enumerator|FEATURE_Mediabay_reset
 id|FEATURE_Mediabay_reset
 comma
-DECL|enumerator|FEATURE_Mediabay_enable
-id|FEATURE_Mediabay_enable
+DECL|enumerator|FEATURE_Mediabay_power
+id|FEATURE_Mediabay_power
 comma
 DECL|enumerator|FEATURE_Mediabay_PCI_enable
 id|FEATURE_Mediabay_PCI_enable
@@ -49,6 +52,11 @@ comma
 DECL|enumerator|FEATURE_Mediabay_IDE_enable
 id|FEATURE_Mediabay_IDE_enable
 comma
+multiline_comment|/* Also IDE 1 */
+DECL|enumerator|FEATURE_Mediabay_IDE_reset
+id|FEATURE_Mediabay_IDE_reset
+comma
+multiline_comment|/* Also IDE 1 */
 DECL|enumerator|FEATURE_Mediabay_floppy_enable
 id|FEATURE_Mediabay_floppy_enable
 comma
@@ -58,14 +66,23 @@ comma
 DECL|enumerator|FEATURE_BMac_IO_enable
 id|FEATURE_BMac_IO_enable
 comma
-DECL|enumerator|FEATURE_Modem_Reset
-id|FEATURE_Modem_Reset
+DECL|enumerator|FEATURE_Modem_power
+id|FEATURE_Modem_power
 comma
-DECL|enumerator|FEATURE_IDE_DiskPower
-id|FEATURE_IDE_DiskPower
+DECL|enumerator|FEATURE_Slow_SCC_PCLK
+id|FEATURE_Slow_SCC_PCLK
 comma
-DECL|enumerator|FEATURE_IDE_Reset
-id|FEATURE_IDE_Reset
+DECL|enumerator|FEATURE_Sound_power
+id|FEATURE_Sound_power
+comma
+DECL|enumerator|FEATURE_Sound_CLK_enable
+id|FEATURE_Sound_CLK_enable
+comma
+DECL|enumerator|FEATURE_IDE2_enable
+id|FEATURE_IDE2_enable
+comma
+DECL|enumerator|FEATURE_IDE2_reset
+id|FEATURE_IDE2_reset
 comma
 DECL|enumerator|FEATURE_last
 id|FEATURE_last

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/sysv/fsync.c&n; *&n; *  minix/fsync.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *&n; *  coh/fsync.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/fsync.c&n; *  Copyright (C) 1993  Bruno Haible&n; *&n; *  SystemV/Coherent fsync primitive&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
 multiline_comment|/* return values: 0 means OK/done, 1 means redo, -1 means I/O error. */

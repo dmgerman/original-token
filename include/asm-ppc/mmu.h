@@ -809,5 +809,65 @@ mdefine_line|#define MD_RPN&t;&t;798
 multiline_comment|/* This is a temporary storage register that could be used to save&n; * a processor working register during a tablewalk.&n; */
 DECL|macro|M_TW
 mdefine_line|#define M_TW&t;&t;799
+multiline_comment|/*&n; * At present, all PowerPC 400-class processors share a similar TLB&n; * architecture. The instruction and data sides share a unified,&n; * 64-entry, fully-associative TLB which is maintained totally under&n; * software control. In addition, the instruction side has a&n; * hardware-managed, 4-entry, fully- associative TLB which serves as a&n; * first level to the shared TLB. These two TLBs are known as the UTLB&n; * and ITLB, respectively.&n; */
+DECL|macro|PPC4XX_TLB_SIZE
+mdefine_line|#define        PPC4XX_TLB_SIZE 64
+multiline_comment|/*&n; * TLB entries are defined by a &quot;high&quot; tag portion and a &quot;low&quot; data&n; * portion.  On all architectures, the data portion is 32-bits.&n; *&n; * TLB entries are managed entirely under software control by reading,&n; * writing, and searchoing using the 4xx-specific tlbre, tlbwr, and tlbsx&n; * instructions.&n; */
+DECL|macro|TLB_LO
+mdefine_line|#define&t;TLB_LO          1
+DECL|macro|TLB_HI
+mdefine_line|#define&t;TLB_HI          0
+DECL|macro|TLB_DATA
+mdefine_line|#define&t;TLB_DATA        TLB_LO
+DECL|macro|TLB_TAG
+mdefine_line|#define&t;TLB_TAG         TLB_HI
+multiline_comment|/* Tag portion */
+DECL|macro|TLB_EPN_MASK
+mdefine_line|#define TLB_EPN_MASK    0xFFFFFC00      /* Effective Page Number */
+DECL|macro|TLB_PAGESZ_MASK
+mdefine_line|#define TLB_PAGESZ_MASK 0x00000380
+DECL|macro|TLB_PAGESZ
+mdefine_line|#define TLB_PAGESZ(x)   (((x) &amp; 0x7) &lt;&lt; 7)
+DECL|macro|PAGESZ_1K
+mdefine_line|#define   PAGESZ_1K&t;&t;0
+DECL|macro|PAGESZ_4K
+mdefine_line|#define   PAGESZ_4K             1
+DECL|macro|PAGESZ_16K
+mdefine_line|#define   PAGESZ_16K            2
+DECL|macro|PAGESZ_64K
+mdefine_line|#define   PAGESZ_64K            3
+DECL|macro|PAGESZ_256K
+mdefine_line|#define   PAGESZ_256K           4
+DECL|macro|PAGESZ_1M
+mdefine_line|#define   PAGESZ_1M             5
+DECL|macro|PAGESZ_4M
+mdefine_line|#define   PAGESZ_4M             6
+DECL|macro|PAGESZ_16M
+mdefine_line|#define   PAGESZ_16M            7
+DECL|macro|TLB_VALID
+mdefine_line|#define TLB_VALID       0x00000040      /* Entry is valid */
+multiline_comment|/* Data portion */
+DECL|macro|TLB_RPN_MASK
+mdefine_line|#define TLB_RPN_MASK    0xFFFFFC00      /* Real Page Number */
+DECL|macro|TLB_PERM_MASK
+mdefine_line|#define TLB_PERM_MASK   0x00000300
+DECL|macro|TLB_EX
+mdefine_line|#define TLB_EX          0x00000200      /* Instruction execution allowed */
+DECL|macro|TLB_WR
+mdefine_line|#define TLB_WR          0x00000100      /* Writes permitted */
+DECL|macro|TLB_ZSEL_MASK
+mdefine_line|#define TLB_ZSEL_MASK   0x000000F0
+DECL|macro|TLB_ZSEL
+mdefine_line|#define TLB_ZSEL(x)     (((x) &amp; 0xF) &lt;&lt; 4)
+DECL|macro|TLB_ATTR_MASK
+mdefine_line|#define TLB_ATTR_MASK   0x0000000F
+DECL|macro|TLB_W
+mdefine_line|#define TLB_W           0x00000008      /* Caching is write-through */
+DECL|macro|TLB_I
+mdefine_line|#define TLB_I           0x00000004      /* Caching is inhibited */
+DECL|macro|TLB_M
+mdefine_line|#define TLB_M           0x00000002      /* Memory is coherent */
+DECL|macro|TLB_G
+mdefine_line|#define TLB_G           0x00000001      /* Memory is guarded from prefetch */
 macro_line|#endif /* _PPC_MMU_H_ */
 eof

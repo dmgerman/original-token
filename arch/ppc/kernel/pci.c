@@ -306,13 +306,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|pcibios_claim_resources
-c_func
-(paren
-op_amp
-id|pci_root_buses
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -323,6 +316,13 @@ dot
 id|pcibios_fixup
 c_func
 (paren
+)paren
+suffix:semicolon
+id|pcibios_claim_resources
+c_func
+(paren
+op_amp
+id|pci_root_buses
 )paren
 suffix:semicolon
 )brace

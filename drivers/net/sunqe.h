@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunqe.h,v 1.12 1999/09/21 14:36:44 davem Exp $&n; * sunqe.h: Definitions for the Sun QuadEthernet driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunqe.h,v 1.13 2000/02/09 11:15:42 davem Exp $&n; * sunqe.h: Definitions for the Sun QuadEthernet driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SUNQE_H
 DECL|macro|_SUNQE_H
 mdefine_line|#define _SUNQE_H
@@ -627,6 +627,11 @@ id|__u32
 id|qblock_dvma
 suffix:semicolon
 multiline_comment|/* RX and TX descriptors       */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* Protects txfull state       */
 DECL|member|rx_new
 DECL|member|rx_old
 r_int

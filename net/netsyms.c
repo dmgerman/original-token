@@ -2196,6 +2196,13 @@ c_func
 id|netdev_finish_unregister
 )paren
 suffix:semicolon
+DECL|variable|netdev_set_master
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|netdev_set_master
+)paren
+suffix:semicolon
 DECL|variable|eth_type_trans
 id|EXPORT_SYMBOL
 c_func
@@ -2318,13 +2325,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|dev_queue_xmit
-)paren
-suffix:semicolon
-DECL|variable|netdev_dropping
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|netdev_dropping
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
@@ -2500,13 +2500,6 @@ c_func
 id|qdisc_restart
 )paren
 suffix:semicolon
-DECL|variable|qdisc_head
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|qdisc_head
-)paren
-suffix:semicolon
 DECL|variable|qdisc_create_dflt
 id|EXPORT_SYMBOL
 c_func
@@ -2526,13 +2519,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|qdisc_tree_lock
-)paren
-suffix:semicolon
-DECL|variable|qdisc_runqueue_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|qdisc_runqueue_lock
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_SCHED
@@ -2723,6 +2709,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|register_gifconf
+)paren
+suffix:semicolon
+DECL|variable|softirq_state
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|softirq_state
+)paren
+suffix:semicolon
+DECL|variable|softnet_data
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|softnet_data
 )paren
 suffix:semicolon
 macro_line|#endif  /* CONFIG_NET */

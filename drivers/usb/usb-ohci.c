@@ -7967,6 +7967,9 @@ op_star
 id|dev
 )paren
 (brace
+id|u32
+id|cmd
+suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
 r_int
 r_int
@@ -8005,6 +8008,36 @@ op_and_assign
 id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Some Mac firmware will switch memory response off */
+id|pci_read_config_dword
+c_func
+(paren
+id|dev
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|cmd
+)paren
+suffix:semicolon
+id|cmd
+op_assign
+(paren
+id|cmd
+op_or
+id|PCI_COMMAND_MEMORY
+)paren
+suffix:semicolon
+id|pci_write_config_dword
+c_func
+(paren
+id|dev
+comma
+id|PCI_COMMAND
+comma
+id|cmd
+)paren
+suffix:semicolon
 id|pci_set_master
 (paren
 id|dev

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunbmac.h,v 1.5 1999/09/21 14:36:26 davem Exp $&n; * sunbmac.h: Defines for the Sun &quot;Big MAC&quot; 100baseT ethernet cards.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunbmac.h,v 1.6 2000/02/09 11:15:36 davem Exp $&n; * sunbmac.h: Defines for the Sun &quot;Big MAC&quot; 100baseT ethernet cards.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SUNBMAC_H
 DECL|macro|_SUNBMAC_H
 mdefine_line|#define _SUNBMAC_H
@@ -564,6 +564,10 @@ id|__u32
 id|bblock_dvma
 suffix:semicolon
 multiline_comment|/* RX and TX descriptors */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|member|rx_skbs
 r_struct
 id|sk_buff

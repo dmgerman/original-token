@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.26 1999/01/07 14:14:15 jj Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.27 2000/02/09 03:28:33 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -9,7 +9,6 @@ multiline_comment|/* Set bit &squot;nr&squot; in 64-bit quantity at address &squ
 DECL|function|test_and_set_bit
 r_extern
 id|__inline__
-r_int
 r_int
 id|test_and_set_bit
 c_func
@@ -314,7 +313,6 @@ DECL|function|test_and_clear_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_and_clear_bit
 c_func
 (paren
@@ -618,7 +616,6 @@ DECL|function|test_and_change_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_and_change_bit
 c_func
 (paren
@@ -891,7 +888,6 @@ DECL|function|test_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_bit
 c_func
 (paren
@@ -905,6 +901,7 @@ id|addr
 )paren
 (brace
 r_return
+(paren
 l_int|1UL
 op_amp
 (paren
@@ -928,6 +925,9 @@ op_amp
 l_int|63
 )paren
 )paren
+)paren
+op_ne
+l_int|0UL
 suffix:semicolon
 )brace
 multiline_comment|/* The easy/cheese version for now. */

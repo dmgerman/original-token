@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/hpfs/dir.c&n; *&n; *  Mikulas Patocka (mikulas@artax.karlin.mff.cuni.cz), 1998-1999&n; *&n; *  directory VFS functions&n; */
 macro_line|#include &quot;hpfs_fn.h&quot;
 DECL|function|hpfs_dir_read
-r_int
+id|ssize_t
 id|hpfs_dir_read
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.h,v 1.28 1999/09/21 14:36:34 davem Exp $&n; * sunhme.h: Definitions for Sparc HME/BigMac 10/100baseT ethernet driver.&n; *           Also known as the &quot;Happy Meal&quot;.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.h,v 1.29 2000/02/09 11:15:40 davem Exp $&n; * sunhme.h: Definitions for Sparc HME/BigMac 10/100baseT ethernet driver.&n; *           Also known as the &quot;Happy Meal&quot;.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _SUNHME_H
 DECL|macro|_SUNHME_H
 mdefine_line|#define _SUNHME_H
@@ -951,6 +951,10 @@ DECL|member|happy_dev
 r_void
 op_star
 id|happy_dev
+suffix:semicolon
+DECL|member|happy_lock
+id|spinlock_t
+id|happy_lock
 suffix:semicolon
 DECL|member|rx_skbs
 r_struct

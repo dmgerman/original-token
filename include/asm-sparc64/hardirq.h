@@ -13,9 +13,12 @@ macro_line|#else
 DECL|macro|local_irq_count
 mdefine_line|#define local_irq_count&t;&t;(cpu_data[smp_processor_id()].irq_count)
 macro_line|#endif
-multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?  On any cpu?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ((local_irq_count + local_bh_count) != 0)
+multiline_comment|/* This tests only the local processors hw IRQ context disposition.  */
+DECL|macro|in_irq
+mdefine_line|#define in_irq() (local_irq_count != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count == 0)

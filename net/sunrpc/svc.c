@@ -122,6 +122,13 @@ id|serv-&gt;sv_xdrsize
 op_assign
 id|xdrsize
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+suffix:semicolon
 id|serv-&gt;sv_name
 op_assign
 id|prog-&gt;pg_name

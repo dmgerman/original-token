@@ -1065,14 +1065,6 @@ l_int|0x0802
 )paren
 suffix:semicolon
 multiline_comment|/* sda2 (sda1 is for the kernel) */
-id|sprintf
-c_func
-(paren
-id|cmd_line
-comma
-l_string|&quot;console=ttyS0,9600 console=tty0&quot;
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1593,6 +1585,11 @@ r_void
 id|chrp_post_irq
 c_func
 (paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
 r_int
 id|irq
 )paren
@@ -1603,7 +1600,7 @@ c_cond
 (paren
 id|irq
 op_ge
-id|open_pic.irq_offset
+id|open_pic_irq_offset
 )paren
 id|openpic_eoi
 c_func
@@ -1681,7 +1678,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-id|open_pic.irq_offset
+id|open_pic_irq_offset
 op_assign
 l_int|16
 suffix:semicolon
@@ -1713,6 +1710,12 @@ id|openpic_init
 c_func
 (paren
 l_int|1
+)paren
+suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|IRQ_8259_CASCADE
 )paren
 suffix:semicolon
 r_for

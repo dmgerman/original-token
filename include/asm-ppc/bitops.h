@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: bitops.h,v 1.11 1999/01/03 20:16:48 cort Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
+multiline_comment|/*&n; * $Id: bitops.h,v 1.12 2000/02/09 03:28:31 davem Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
 macro_line|#ifndef _PPC_BITOPS_H
 DECL|macro|_PPC_BITOPS_H
 mdefine_line|#define _PPC_BITOPS_H
@@ -477,7 +477,6 @@ DECL|function|test_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_bit
 c_func
 (paren
@@ -507,6 +506,7 @@ id|addr
 suffix:semicolon
 r_return
 (paren
+(paren
 id|p
 (braket
 id|nr
@@ -521,7 +521,10 @@ l_int|0x1f
 )paren
 )paren
 op_amp
-l_int|1UL
+l_int|1
+)paren
+op_ne
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|ffz

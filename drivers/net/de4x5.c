@@ -4542,14 +4542,6 @@ l_string|&quot;WARNING: there may be IRQ related problems in heavily loaded syst
 suffix:semicolon
 )brace
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
 id|lp-&gt;interrupt
 op_assign
 id|UNMASK_INTERRUPTS
@@ -4691,17 +4683,10 @@ id|dev
 )paren
 (brace
 multiline_comment|/* Lock out other processes whilst setting up the hardware */
-id|test_and_set_bit
+id|netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
 id|de4x5_sw_reset
@@ -5188,20 +5173,12 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
-id|test_and_set_bit
+id|netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Stop send re-tries */
 r_if
 c_cond
 (paren
@@ -5269,7 +5246,14 @@ multiline_comment|/* Transmit descriptor ring full or stale skb */
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;state
+)paren
 op_logical_or
 (paren
 id|u_long
@@ -5320,7 +5304,7 @@ id|DEBUG_TX
 id|printk
 c_func
 (paren
-l_string|&quot;%s: transmit busy, lost media or stale skb found:&bslash;n  STS:%08x&bslash;n  tbusy:%ld&bslash;n  IMR:%08x&bslash;n  OMR:%08x&bslash;n Stale skb: %s&bslash;n&quot;
+l_string|&quot;%s: transmit busy, lost media or stale skb found:&bslash;n  STS:%08x&bslash;n  tbusy:%d&bslash;n  IMR:%08x&bslash;n  OMR:%08x&bslash;n Stale skb: %s&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -5330,7 +5314,14 @@ c_func
 id|DE4X5_STS
 )paren
 comma
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;state
+)paren
 comma
 id|inl
 c_func
@@ -5406,7 +5397,14 @@ c_loop
 id|skb
 op_logical_and
 op_logical_neg
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;state
+)paren
 op_logical_and
 (paren
 id|u_long
@@ -5428,17 +5426,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|test_and_set_bit
+id|netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
 id|load_packet
@@ -5491,9 +5482,11 @@ c_cond
 id|TX_BUFFS_AVAIL
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Another pkt may be queued */
 )brace
@@ -5819,7 +5812,14 @@ c_loop
 id|lp-&gt;cache.skb
 op_logical_and
 op_logical_neg
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;state
+)paren
 op_logical_and
 id|lp-&gt;tx_enable
 )paren
@@ -6591,29 +6591,38 @@ op_mod
 id|lp-&gt;txRingSize
 suffix:semicolon
 )brace
+multiline_comment|/* Any resources available? */
 r_if
 c_cond
 (paren
 id|TX_BUFFS_AVAIL
 op_logical_and
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
-multiline_comment|/* Any resources available? */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Clear TX busy flag */
 r_if
 c_cond
 (paren
 id|lp-&gt;interrupt
 )paren
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
+)paren
+suffix:semicolon
+r_else
+id|netif_start_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -7034,13 +7043,11 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -14154,10 +14161,6 @@ id|lp-&gt;tx_enable
 op_assign
 id|YES
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -14175,10 +14178,10 @@ comma
 id|DE4X5_TPD
 )paren
 suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -26965,14 +26968,10 @@ c_loop
 id|test_and_set_bit
 c_func
 (paren
-l_int|0
+id|LINK_STATE_XOFF
 comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|dev-&gt;tbusy
+id|dev-&gt;state
 )paren
 op_ne
 l_int|0
@@ -27023,9 +27022,11 @@ id|DE4X5_TPD
 )paren
 suffix:semicolon
 multiline_comment|/* Start the TX */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Unlock the TX ring */
 r_break
@@ -27510,7 +27511,7 @@ r_break
 suffix:semicolon
 DECL|macro|DE4X5_DUMP
 mdefine_line|#define DE4X5_DUMP              0x0f /* Dump the DE4X5 Status */
-multiline_comment|/*&t;&n;      case DE4X5_DUMP:&n;&t;j = 0;&n;&t;tmp.addr[j++] = dev-&gt;irq;&n;&t;for (i=0; i&lt;ETH_ALEN; i++) {&n;&t;    tmp.addr[j++] = dev-&gt;dev_addr[i];&n;&t;}&n;&t;tmp.addr[j++] = lp-&gt;rxRingSize;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;rx_ring; j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;tx_ring; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;rx_ring[i].status); j+=4;&n;&t;}&n;&t;for (i=0;i&lt;lp-&gt;txRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;tx_ring[i].status); j+=4;&n;&t;}&n;&t;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_BMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_STS);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_OMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_IMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;chipset; j+=4; &n;&t;if (lp-&gt;chipset == DC21140) {&n;&t;    tmp.lval[j&gt;&gt;2] = gep_rd(dev);  j+=4;&n;&t;} else {&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SISR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SICR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_STRR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SIGR); j+=4; &n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;phy[lp-&gt;active].id; j+=4; &n;&t;if (lp-&gt;phy[lp-&gt;active].id &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&n;&t;    tmp.lval[j&gt;&gt;2] = lp-&gt;active; j+=4; &n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_CR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_SR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID0,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID1,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANLPA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(0x10,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x11,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x12,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    } else {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x14,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;}&n;&t;&n;&t;tmp.addr[j++] = lp-&gt;txRingSize;&n;&t;tmp.addr[j++] = dev-&gt;tbusy;&n;&t;&n;&t;ioc-&gt;len = j;&n;&t;if (copy_to_user(ioc-&gt;data, tmp.addr, ioc-&gt;len)) return -EFAULT;&n;&t;break;&n;&n;*/
+multiline_comment|/*&t;&n;      case DE4X5_DUMP:&n;&t;j = 0;&n;&t;tmp.addr[j++] = dev-&gt;irq;&n;&t;for (i=0; i&lt;ETH_ALEN; i++) {&n;&t;    tmp.addr[j++] = dev-&gt;dev_addr[i];&n;&t;}&n;&t;tmp.addr[j++] = lp-&gt;rxRingSize;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;rx_ring; j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;tx_ring; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;rx_ring[i].status); j+=4;&n;&t;}&n;&t;for (i=0;i&lt;lp-&gt;txRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;tx_ring[i].status); j+=4;&n;&t;}&n;&t;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_BMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_STS);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_OMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_IMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;chipset; j+=4; &n;&t;if (lp-&gt;chipset == DC21140) {&n;&t;    tmp.lval[j&gt;&gt;2] = gep_rd(dev);  j+=4;&n;&t;} else {&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SISR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SICR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_STRR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SIGR); j+=4; &n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;phy[lp-&gt;active].id; j+=4; &n;&t;if (lp-&gt;phy[lp-&gt;active].id &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&n;&t;    tmp.lval[j&gt;&gt;2] = lp-&gt;active; j+=4; &n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_CR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_SR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID0,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID1,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANLPA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(0x10,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x11,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x12,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    } else {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x14,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;}&n;&t;&n;&t;tmp.addr[j++] = lp-&gt;txRingSize;&n;&t;tmp.addr[j++] = test_bit(LINK_STATE_XOFF, &amp;dev-&gt;state);&n;&t;&n;&t;ioc-&gt;len = j;&n;&t;if (copy_to_user(ioc-&gt;data, tmp.addr, ioc-&gt;len)) return -EFAULT;&n;&t;break;&n;&n;*/
 r_default
 suffix:colon
 r_return

@@ -16,12 +16,14 @@ DECL|macro|IA64_MAX_VECTORED_IRQ
 mdefine_line|#define IA64_MAX_VECTORED_IRQ&t;255
 DECL|macro|IA64_SPURIOUS_INT
 mdefine_line|#define IA64_SPURIOUS_INT&t;0x0f
+DECL|macro|PERFMON_IRQ
+mdefine_line|#define PERFMON_IRQ&t;&t;0x28&t;/* performanc monitor interrupt vector */
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ&t;&t;0xef&t;/* use highest-prio group 15 interrupt for timer */
 DECL|macro|IPI_IRQ
 mdefine_line|#define IPI_IRQ&t;&t;&t;0xfe&t;/* inter-processor interrupt vector */
-DECL|macro|PERFMON_IRQ
-mdefine_line|#define PERFMON_IRQ&t;&t;0x28&t;/* performanc monitor interrupt vector */
+DECL|macro|CMC_IRQ
+mdefine_line|#define CMC_IRQ&t;&t;&t;0xff&t;/* correctable machine-check interrupt vector */
 DECL|macro|IA64_MIN_VECTORED_IRQ
 mdefine_line|#define IA64_MIN_VECTORED_IRQ&t; 16
 DECL|macro|IA64_MAX_VECTORED_IRQ
@@ -285,6 +287,14 @@ suffix:semicolon
 r_extern
 r_void
 id|disable_irq
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|disable_irq_nosync
 (paren
 r_int
 r_int

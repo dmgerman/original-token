@@ -733,21 +733,28 @@ suffix:semicolon
 )brace
 id|freq
 op_mul_assign
-l_int|60
+l_int|30
 suffix:semicolon
-multiline_comment|/* try to make freq/1e6 an integer */
 id|divisor
 op_assign
-l_int|60
+l_int|30
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;time_init: decrementer frequency = %lu/%d&bslash;n&quot;
+l_string|&quot;time_init: decrementer frequency = %lu/%d (%d MHz)&bslash;n&quot;
 comma
 id|freq
 comma
 id|divisor
+comma
+(paren
+id|freq
+op_div
+id|divisor
+)paren
+op_rshift
+l_int|20
 )paren
 suffix:semicolon
 id|decrementer_count

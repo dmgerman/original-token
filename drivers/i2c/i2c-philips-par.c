@@ -1,35 +1,16 @@
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* i2c-philips-par.c i2c-hw access for philips style parallel port adapters  */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/*   Copyright (C) 1995-99 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
-multiline_comment|/* ------------------------------------------------------------------------- &n;&n;/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and even&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c-philips-par.c,v 1.12 1999/12/21 23:45:58 frodo Exp $ */
+multiline_comment|/*   Copyright (C) 1995-2000 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
+multiline_comment|/* ------------------------------------------------------------------------- */
+multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and even&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
+multiline_comment|/* $Id: i2c-philips-par.c,v 1.16 2000/01/18 23:54:07 frodo Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020135
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__init
-mdefine_line|#define __init 
-macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
-multiline_comment|/* 2.0.0 kernel compatibility */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
-DECL|macro|MODULE_AUTHOR
-mdefine_line|#define MODULE_AUTHOR(noone)
-DECL|macro|MODULE_DESCRIPTION
-mdefine_line|#define MODULE_DESCRIPTION(none)
-DECL|macro|MODULE_PARM
-mdefine_line|#define MODULE_PARM(no,param)
-DECL|macro|MODULE_PARM_DESC
-mdefine_line|#define MODULE_PARM_DESC(no,description)
-DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(noexport)
-DECL|macro|EXPORT_NO_SYMBOLS
-mdefine_line|#define EXPORT_NO_SYMBOLS
-macro_line|#endif
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 DECL|macro|DEFAULT_BASE

@@ -8,7 +8,7 @@ id|version
 op_assign
 l_string|&quot;3c527.c:v0.07 2000/01/18 Alan Cox (alan@redhat.com)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n; *&t;Things you need&n; *&t;o&t;The databook.&n; *&n; *&t;Traps for the unwary&n; *&n; *&t;The diagram (Figure 1-1) and the POS summary disagree with the&n; *&t;&quot;Interrupt Level&quot; section in the manual.&n; *&n; *&t;The documentation in places seems to miss things. In actual fact&n; *&t;I&squot;ve always eventually found everything is documented, it just&n; *&t;requires careful study.&n; */
+multiline_comment|/**&n; * DOC: Traps for the unwary&n; *&n; *&t;The diagram (Figure 1-1) and the POS summary disagree with the&n; *&t;&quot;Interrupt Level&quot; section in the manual.&n; *&n; *&t;The documentation in places seems to miss things. In actual fact&n; *&t;I&squot;ve always eventually found everything is documented, it just&n; *&t;requires careful study.&n; *&n; * DOC: Theory Of Operation&n; *&n; *&t;The 3com 3c527 is a 32bit MCA bus mastering adapter with a large&n; *&t;amount of on board intelligence that housekeeps a somewhat dumber&n; *&t;Intel NIC. For performance we want to keep the transmit queue deep&n; *&t;as the card can transmit packets while fetching others from main&n; *&t;memory by bus master DMA. Transmission and reception are driven by&n; *&t;ring buffers. When updating the ring we are required to do some&n; *&t;housekeeping work using the mailboxes and the command register.&n; *&n; *&t;The mailboxes provide a method for sending control requests to the&n; *&t;card. The transmit mail box is used to update the transmit ring &n; *&t;pointers and the receive mail box to update the receive ring&n; *&t;pointers. The exec mailbox allows a variety of commands to be&n; *&t;executed. Each command must complete before the next is executed.&n; *&t;Primarily we use the exec mailbox for controlling the multicast lists.&n; *&t;We have to do a certain amount of interesting hoop jumping as the &n; *&t;multicast list changes can occur in interrupt state when the card&n; *&t;has an exec command pending. We defer such events until the command&n; *&t;completion interrupt.&n; *&n; *&t;The control register is used to pass status information. It tells us&n; *&t;the transmit and receive status for packets and allows us to control&n; *&t;the card operation mode. You must stop the card when emptying the&n; *&t;receive ring, or you will race with the ring buffer and lose packets.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -389,7 +389,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; * (detachable devices only).&n; */
+multiline_comment|/**&n; * mc32_probe:&n; * @dev: device to probe&n; *&n; * Because MCA bus is a real bus and we can scan for cards we could do a&n; * single scan for all boards here. Right now we use the passed in device&n; * structure and scan for only one board. This needs fixing for modules&n; * in paticular.&n; */
 DECL|function|mc32_probe
 r_int
 id|__init
@@ -515,7 +515,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is the real probe routine. Linux has a history of friendly device&n; * probes on the ISA bus. A good device probes avoids doing writes, and&n; * verifies that the correct device exists and functions.&n; */
+multiline_comment|/**&n; * mc32_probe1:&n; * @dev:  Device structure to fill in&n; * @slot: The MCA bus slot being used by this card&n; *&n; * Decode the slot data and configure the card structures. Having done this we&n; * can reset the card and configure it. The card does a full self test cycle&n; * in firmware so we have to wait for it to return and post us either a &n; * failure case or some addresses we use to find the board internals.&n; */
 DECL|function|mc32_probe1
 r_static
 r_int
@@ -642,7 +642,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
+multiline_comment|/*&n;&t; * Don&squot;t allocate the private data here, it is done later&n;&t; * This makes it easier to free the memory when this driver&n;&t; * is used as a module.&n;&t; */
 r_if
 c_cond
 (paren
@@ -651,7 +651,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Don&squot;t allocate the private data here, it is done later&n;&t;&t; * This makes it easier to free the memory when this driver&n;&t;&t; * is used as a module.&n;&t;&t; */
 id|dev
 op_assign
 id|init_etherdev
@@ -1520,7 +1519,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Polled command stuff &n; */
+multiline_comment|/**&n; *&t;mc32_ring_poll:&n; *&t;@dev:&t;The device to wait for&n; *&t;&n; *&t;Wait until a command we issues to the control register is completed.&n; *&t;This actually takes very little time at all, which is fortunate as&n; *&t;we often have to busy wait it.&n; */
 DECL|function|mc32_ring_poll
 r_static
 r_void
@@ -1558,8 +1557,7 @@ id|HOST_STATUS_CRR
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Send exec commands. This requires a bit of explaining.&n; *&n; *&t;You feed the card a command, you wait, it interrupts you get a &n; *&t;reply. All well and good. The complication arises because you use&n; *&t;commands for filter list changes which come in at bh level from things&n; *&t;like IPV6 group stuff.&n; *&n; *&t;We have a simple state machine&n; *&n; *&t;0&t;- nothing issued&n; *&t;1&t;- command issued, wait reply&n; *&t;2&t;- reply waiting - reader then goes to state 0&n; *&t;3&t;- command issued, trash reply. In which case the irq&n; *&t;&t;  takes it back to state 0&n; */
-multiline_comment|/*&n; *&t;Send command from interrupt state&n; */
+multiline_comment|/**&n; *&t;mc32_command_nowait:&n; *&t;@dev: The 3c527 to issue the command to&n; *&t;@cmd: The command word to write to the mailbox&n; *&t;@data: A data block if the command expects one&n; *&t;@len: Length of the data block&n; *&n; *&t;Send a command from interrupt state. If there is a command currently&n; *&t;being executed then we return an error of -1. It simply isnt viable&n; *&t;to wait around as commands may be slow. Providing we get in then&n; *&t;we send the command and busy wait for the board to acknowledge that&n; *&t;a command request is pending. We do not wait for the command to &n; *&t;complete, just for the card to admit to noticing it.  &n; */
 DECL|function|mc32_command_nowait
 r_static
 r_int
@@ -1678,7 +1676,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send command and block for results. On completion spot and reissue&n; *&t;multicasts&n; */
+multiline_comment|/**&n; *&t;mc32_command: &n; *&t;@dev: The 3c527 card to issue the command to&n; *&t;@cmd: The command word to write to the mailbox&n; *&t;@data: A data block if the command expects one&n; *&t;@len: Length of the data block&n; *&n; *&t;Sends exec commands in a user context. This permits us to wait around&n; *&t;for the replies and also to wait for the command buffer to complete&n; *&t;from a previous command before we execute our command. After our &n; *&t;command completes we will complete any pending multicast reload&n; *&t;we blocked off by hogging the exec buffer.&n; *&n; *&t;You feed the card a command, you wait, it interrupts you get a &n; *&t;reply. All well and good. The complication arises because you use&n; *&t;commands for filter list changes which come in at bh level from things&n; *&t;like IPV6 group stuff.&n; *&n; *&t;We have a simple state machine&n; *&n; *&t;0&t;- nothing issued&n; *&n; *&t;1&t;- command issued, wait reply&n; *&n; *&t;2&t;- reply waiting - reader then goes to state 0&n; *&n; *&t;3&t;- command issued, trash reply. In which case the irq&n; *&t;&t;  takes it back to state 0&n; *&n; *&t;Send command and block for results. On completion spot and reissue&n; *&t;multicasts&n; */
 DECL|function|mc32_command
 r_static
 r_int
@@ -1900,7 +1898,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;RX abort&n; */
+multiline_comment|/**&n; *&t;mc32_rx_abort:&n; *&t;@dev: 3c527 to abort&n; *&n; *&t;Peforms a receive abort sequence on the card. In fact after some&n; *&t;experimenting we now simply tell the card to suspend reception. When&n; *&t;issuing aborts occasionally odd things happened.&n; */
 DECL|function|mc32_rx_abort
 r_static
 r_void
@@ -1967,7 +1965,7 @@ id|HOST_CMD
 suffix:semicolon
 multiline_comment|/* Suspend reception */
 )brace
-multiline_comment|/*&n; *&t;RX enable&n; */
+multiline_comment|/**&n; *&t;mc32_rx_begin:&n; *&t;@dev: 3c527 to enable&n; *&n; *&t;We wait for any pending command to complete and then issue &n; *&t;a start reception command to the board itself. At this point &n; *&t;receive handling continues as it was before.&n; */
 DECL|function|mc32_rx_begin
 r_static
 r_void
@@ -2044,6 +2042,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mc32_tx_abort:&n; *&t;@dev: 3c527 to abort&n; *&n; *&t;Peforms a receive abort sequence on the card. In fact after some&n; *&t;experimenting we now simply tell the card to suspend transmits . When&n; *&t;issuing aborts occasionally odd things happened. In theory we want&n; *&t;an abort to be sure we can recycle our buffers. As it happens we&n; *&t;just have to be careful to shut the card down on close, and&n; *&t;boot it carefully from scratch on setup.&n; */
 DECL|function|mc32_tx_abort
 r_static
 r_void
@@ -2245,7 +2244,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;TX enable&n; */
+multiline_comment|/**&n; *&t;mc32_tx_begin:&n; *&t;@dev: 3c527 to enable&n; *&n; *&t;We wait for any pending command to complete and then issue &n; *&t;a start transmit command to the board itself. At this point &n; *&t;transmit handling continues as it was before. The ring must&n; *&t;be setup before you do this and must have an end marker in it.&n; *&t;It turns out we can avoid issuing this specific command when&n; *&t;doing our setup so we avoid it.&n; */
 DECL|function|mc32_tx_begin
 r_static
 r_void
@@ -2347,7 +2346,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Load the rx ring&n; */
+multiline_comment|/**&n; *&t;mc32_load_rx_ring:&n; *&t;@dev: 3c527 to build the ring for&n; *&n; *&t;The card setups up the receive ring for us. We are required to&n; *&t;use the ring it provides although we can change the size of the&n; *&t;ring.&n; *&n; *&t;We allocate an sk_buff for each ring entry in turn and set the entry&n; *&t;up for a single non s/g buffer. The first buffer we mark with the&n; *&t;end marker bits. Finally we clear the rx mailbox.&n; */
 DECL|function|mc32_load_rx_ring
 r_static
 r_int
@@ -2526,6 +2525,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mc32_flush_rx_ring:&n; *&t;@lp: Local data of 3c527 to flush the rx ring of&n; *&n; *&t;Free the buffer for each ring slot. Because of the receive &n; *&t;algorithm we use the ring will always be loaded will a full set&n; *&t;of buffers.&n; */
 DECL|function|mc32_flush_rx_ring
 r_static
 r_void
@@ -2567,6 +2567,7 @@ id|i
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;mc32_flush_tx_ring:&n; *&t;@lp: Local data of 3c527 to flush the tx ring of&n; *&n; *&t;We have to consider two cases here. We want to free the pending&n; *&t;buffers only. If the ring buffer head is past the start then the&n; *&t;ring segment we wish to free wraps through zero.&n; */
 DECL|function|mc32_flush_tx_ring
 r_static
 r_void
@@ -2670,7 +2671,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Open/initialize the board. This is called (in the current kernel)&n; * sometime after booting when the &squot;ifconfig&squot; program is run.&n; */
+multiline_comment|/**&n; *&t;mc32_open&n; *&t;@dev: device to open&n; *&n; *&t;The user is trying to bring the card into ready state. This requires&n; *&t;a brief dialogue with the card. Firstly we enable interrupts and then&n; *&t;&squot;indications&squot;. Without these enabled the card doesn&squot;t bother telling&n; *&t;us what it has done. This had me puzzled for a week.&n; *&n; *&t;We then load the network address and multicast filters. Turn on the&n; *&t;workaround mode. This works around a bug in the 82586 - it asks the&n; *&t;firmware to do so. It has a performance hit but is needed on busy&n; *&t;[read most] lans. We load the ring with buffers then we kick it&n; *&t;all off.&n; */
 DECL|function|mc32_open
 r_static
 r_int
@@ -2841,6 +2842,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mc32_send_packet:&n; *&t;@skb: buffer to transmit&n; *&t;@dev: 3c527 to send it out of&n; *&n; *&t;Transmit a buffer. This normally means throwing the buffer onto&n; *&t;the transmit queue as the queue is quite large. If the queue is&n; *&t;full then we set tx_busy and return. Once the interrupt handler&n; *&t;gets messages telling it to reclaim transmit queue entries we will&n; *&t;clear tx_busy and the kernel will start calling this again.&n; *&n; *&t;We use cli rather than spinlocks. Since I have no access to an SMP&n; *&t;MCA machine I don&squot;t plan to change it. It is probably the top &n; *&t;performance hit for this driver on SMP however.&n; */
 DECL|function|mc32_send_packet
 r_static
 r_int
@@ -2889,7 +2891,9 @@ c_cond
 (paren
 id|tickssofar
 OL
-l_int|5
+id|HZ
+op_div
+l_int|20
 )paren
 r_return
 l_int|1
@@ -3166,6 +3170,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mc32_update_stats:&n; *&t;@dev: 3c527 to service&n; *&n; *&t;When the board signals us that its statistics need attention we&n; *&t;should query the table and clear it. In actual fact we currently&n; *&t;track all our statistics in software and I haven&squot;t implemented it yet.&n; */
 DECL|function|mc32_update_stats
 r_static
 r_void
@@ -3179,6 +3184,7 @@ id|dev
 )paren
 (brace
 )brace
+multiline_comment|/**&n; *&t;mc32_rx_ring:&n; *&t;@dev: 3c527 that needs its receive ring processing&n; *&n; *&t;We have received one or more indications from the card that&n; *&t;a receive has completed. The ring buffer thus contains dirty&n; *&t;entries. Firstly we tell the card to stop receiving, then We walk &n; *&t;the ring from the first filled entry, which is pointed to by the &n; *&t;card rx mailbox and for each completed packet we will either copy &n; *&t;it and pass it up the stack or if the packet is near MTU sized we &n; *&t;allocate another buffer and flip the old one up the stack.&n; *&n; *&t;We must succeed in keeping a buffer on the ring. If neccessary we&n; *&t;will toss a received packet rather than lose a ring entry. Once the&n; *&t;first packet that is unused is found we reload the mailbox with the&n; *&t;buffer so that the card knows it can use the buffers again. Finally&n; *&t;we set it receiving again. &n; *&n; *&t;We must stop reception during the ring walk. I thought it would be&n; *&t;neat to avoid it by clever tricks, but it turns out the event order&n; *&t;on the card means you have to play by the manual.&n; */
 DECL|function|mc32_rx_ring
 r_static
 r_void
@@ -3220,6 +3226,54 @@ suffix:semicolon
 id|u16
 id|top
 suffix:semicolon
+multiline_comment|/* Halt RX before walking the ring */
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|HOST_STATUS
+)paren
+op_amp
+id|HOST_STATUS_CRR
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
+id|outb
+c_func
+(paren
+l_int|3
+op_lshift
+l_int|3
+comma
+id|ioaddr
+op_plus
+id|HOST_CMD
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|HOST_STATUS
+)paren
+op_amp
+id|HOST_STATUS_CRR
+)paren
+(brace
+suffix:semicolon
+)brace
 id|top
 op_assign
 id|base
@@ -3452,7 +3506,6 @@ l_int|48
 (brace
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; *&t;This is curious. It seems the receive stop and receive continue&n;&t; *&t;commands race against each other, even though we poll for &n;&t; *&t;command ready to be issued. The delay is hackish but is a workaround&n;&t; *&t;while I investigate in depth&n;&t; */
 r_while
 c_loop
 (paren
@@ -3496,7 +3549,7 @@ id|HOST_CMD
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The typical workload of the driver:&n; *   Handle the network interface interrupts.&n; */
+multiline_comment|/**&n; *&t;mc32_interrupt:&n; *&t;@irq: Interrupt number&n; *&t;@dev_id: 3c527 that requires servicing&n; *&t;@regs: Registers (unused)&n; *&n; *&t;The 3c527 interrupts us for four reasons. The command register &n; *&t;contains the message it wishes to send us packed into a single&n; *&t;byte field. We keep reading status entries until we have processed&n; *&t;all the transmit and control items, but simply count receive&n; *&t;reports. When the receive reports are in we can call the mc32_rx_ring&n; *&t;and empty the ring. This saves the overhead of multiple command requests&n; */
 DECL|function|mc32_interrupt
 r_static
 r_void
@@ -3984,7 +4037,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* The inverse routine to mc32_open(). */
+multiline_comment|/**&n; *&t;mc32_close:&n; *&t;@dev: 3c527 card to shut down&n; *&n; *&t;The 3c527 is a bus mastering device. We must be careful how we&n; *&t;shut it down. It may also be running shared interrupt so we have&n; *&t;to be sure to silence it properly&n; *&n; *&t;We abort any receive and transmits going on and then wait until&n; *&t;any pending exec commands have completed in other code threads.&n; *&t;In theory we can&squot;t get here while that is true, in practice I am&n; *&t;paranoid&n; *&n; *&t;We turn off the interrupt enable for the board to be sure it can&squot;t&n; *&t;intefere with other devices.&n; */
 DECL|function|mc32_close
 r_static
 r_int
@@ -4119,7 +4172,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get the current statistics.&n; * This may be called with the card open or closed.&n; */
+multiline_comment|/**&n; *&t;mc32_get_stats:&n; *&t;@dev: The 3c527 card to handle&n; *&n; *&t;As we currently handle our statistics in software this one is&n; *&t;easy to handle. With hardware statistics it will get messy&n; *&t;as the get_stats call will need to send exec mailbox messages and&n; *&t;need to lock out the multicast reloads.&n; */
 DECL|function|mc32_get_stats
 r_static
 r_struct
@@ -4151,7 +4204,7 @@ op_amp
 id|lp-&gt;net_stats
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Set or clear the multicast filter for this adaptor.&n; * num_addrs == -1&t;Promiscuous mode, receive all packets&n; * num_addrs == 0&t;Normal mode, clear multicast list&n; * num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets,&n; *&t;&t;&t;and do best-effort filtering.&n; */
+multiline_comment|/**&n; *&t;do_mc32_set_multicast_list:&n; *&t;@dev: 3c527 device to load the list on&n; *&t;@retry: indicates this is not the first call. &n; *&n; * Actually set or clear the multicast filter for this adaptor. The locking&n; * issues are handled by this routine. We have to track state as it may take&n; * multiple calls to get the command sequence completed. We just keep trying&n; * to schedule the loads until we manage to process them all.&n; *&n; * num_addrs == -1&t;Promiscuous mode, receive all packets&n; *&n; * num_addrs == 0&t;Normal mode, clear multicast list&n; *&n; * num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets,&n; *&t;&t;&t;and do best-effort filtering.&n; */
 DECL|function|do_mc32_set_multicast_list
 r_static
 r_void
@@ -4394,6 +4447,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;mc32_set_multicast_list:&n; *&t;@dev: The 3c527 to use&n; *&n; *&t;Commence loading the multicast list. This is called when the kernel&n; *&t;changes the lists. It will override any pending list we are trying to&n; *&t;load.&n; */
 DECL|function|mc32_set_multicast_list
 r_static
 r_void
@@ -4415,6 +4469,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mc32_reset_multicast_list:&n; *&t;@dev: The 3c527 to use&n; *&n; *&t;Attempt the next step in loading the multicast lists. If this attempt&n; *&t;fails to complete then it will be scheduled and this function called&n; *&t;again later from elsewhere.&n; */
 DECL|function|mc32_reset_multicast_list
 r_static
 r_void
@@ -4484,6 +4539,7 @@ comma
 id|mc32_probe
 )brace
 suffix:semicolon
+multiline_comment|/**&n; *&t;init_module:&n; *&n; *&t;Probe and locate a 3c527 card. This really should probe and locate&n; *&t;all the 3c527 cards in the machine not just one of them. Yes you can&n; *&t;insmod multiple modules for now but its a hack.&n; */
 DECL|function|init_module
 r_int
 id|init_module
@@ -4518,6 +4574,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;cleanup_module:&n; *&n; *&t;Unloading time. We release the MCA bus resources and the interrupt&n; *&t;at which point everything is ready to unload. The card must be stopped&n; *&t;at this point or we would not have been called. When we unload we&n; *&t;leave the card stopped but not totally shut down. When the card is&n; *&t;initialized it must be rebooted or the rings reloaded before any&n; *&t;transmit operations are allowed to start scribbling into memory.&n; */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -4537,7 +4594,7 @@ op_amp
 id|this_device
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we don&squot;t do this, we can&squot;t re-insmod it later.&n;&t; * Release irq/dma here, when you have jumpered versions and&n;&t; * allocate them in mc32_probe1().&n;&t; */
+multiline_comment|/*&n;&t; * If we don&squot;t do this, we can&squot;t re-insmod it later.&n;&t; */
 r_if
 c_cond
 (paren

@@ -3398,10 +3398,11 @@ id|i
 r_return
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * When we actually do the console switch,&n;&t;&t;&t;&t; * make sure we are atomic with respect to&n;&t;&t;&t;&t; * other console switches..&n;&t;&t;&t;&t; */
-id|start_bh_atomic
+multiline_comment|/*&n;&t;&t;&t;&t; * When we actually do the console switch,&n;&t;&t;&t;&t; * make sure we are atomic with respect to&n;&t;&t;&t;&t; * other console switches..&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; * Damn! Was it difficult to make this clean?&n;&t;&t;&t;&t; */
+id|disable_bh
 c_func
 (paren
+id|CONSOLE_BH
 )paren
 suffix:semicolon
 id|complete_change_console
@@ -3410,9 +3411,10 @@ c_func
 id|newvt
 )paren
 suffix:semicolon
-id|end_bh_atomic
+id|enable_bh
 c_func
 (paren
+id|CONSOLE_BH
 )paren
 suffix:semicolon
 )brace

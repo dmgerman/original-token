@@ -344,6 +344,7 @@ suffix:semicolon
 macro_line|#endif /* __ASSEMBLY__ */
 multiline_comment|/*&n; * The PowerPC MMU uses a hash table containing PTEs, together with&n; * a set of 16 segment registers (on 32-bit implementations), to define&n; * the virtual to physical address mapping.&n; *&n; * We use the hash table as an extended TLB, i.e. a cache of currently&n; * active mappings.  We maintain a two-level page table tree, much like&n; * that used by the i386, for the sake of the Linux memory management code.&n; * Low-level assembler code in head.S (procedure hash_page) is responsible&n; * for extracting ptes from the tree and putting them into the hash table&n; * when necessary, and updating the accessed and modified bits in the&n; * page table tree.&n; */
 multiline_comment|/*&n; * The PowerPC MPC8xx uses a TLB with hardware assisted, software tablewalk.&n; * We also use the two level tables, but we can put the real bits in them&n; * needed for the TLB and tablewalk.  These definitions require Mx_CTR.PPM = 0,&n; * Mx_CTR.PPCS = 0, and MD_CTR.TWAM = 1.  The level 2 descriptor has&n; * additional page protection (when Mx_CTR.PPCS = 1) that allows TLB hit&n; * based upon user/super access.  The TLB does not have accessed nor write&n; * protect.  We assume that if the TLB get loaded with an entry it is&n; * accessed, and overload the changed bit for write protect.  We use&n; * two bits in the software pte that are supposed to be set to zero in&n; * the TLB entry (24 and 25) for these indicators.  Although the level 1&n; * descriptor contains the guarded and writethrough/copyback bits, we can&n; * set these at the page level since they get copied from the Mx_TWC&n; * register when the TLB entry is loaded.  We will use bit 27 for guard, since&n; * that is where it exists in the MD_TWC, and bit 26 for writethrough.&n; * These will get masked from the level 2 descriptor at TLB load time, and&n; * copied to the MD_TWC before it gets loaded.&n; */
+multiline_comment|/*&n; * At present, all PowerPC 400-class processors share a similar TLB&n; * architecture. The instruction and data sides share a unified,&n; * 64-entry, fully-associative TLB which is maintained totally under&n; * software control. In addition, the instruction side has a&n; * hardware-managed, 4-entry, fully-associative TLB which serves as a&n; * first level to the shared TLB. These two TLBs are known as the UTLB&n; * and ITLB, respectively (see &quot;mmu.h&quot; for definitions).&n; */
 multiline_comment|/* PMD_SHIFT determines the size of the area mapped by the second-level page tables */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;22
@@ -388,86 +389,27 @@ DECL|macro|VMALLOC_END
 mdefine_line|#define VMALLOC_END&t;ioremap_bot
 multiline_comment|/*&n; * Bits in a linux-style PTE.  These match the bits in the&n; * (hardware-defined) PowerPC PTE as closely as possible.&n; */
 macro_line|#if defined(CONFIG_4xx)
-multiline_comment|/*&n; * At present, all PowerPC 400-class processors share a similar TLB&n; * architecture. The instruction and data sides share a unified, 64-entry,&n; * fully-associative TLB which is maintained under software control. In&n; * addition, the instruction side has a hardware-managed, 4-entry, fully-&n; * associative TLB which serves as a first level to the shared TLB. These&n; * two TLBs are known as the UTLB and ITLB, respectively.&n; */
-DECL|macro|PPC4XX_TLB_SIZE
-mdefine_line|#define        PPC4XX_TLB_SIZE 64
-multiline_comment|/*&n; * TLB entries are defined by a &quot;high&quot; tag portion and a &quot;low&quot; data portion.&n; * On all architectures, the data portion is 32-bits.&n; */
-DECL|macro|TLB_LO
-mdefine_line|#define&t;TLB_LO          1
-DECL|macro|TLB_HI
-mdefine_line|#define&t;TLB_HI          0
-DECL|macro|TLB_DATA
-mdefine_line|#define&t;TLB_DATA        TLB_LO
-DECL|macro|TLB_TAG
-mdefine_line|#define&t;TLB_TAG         TLB_HI
-multiline_comment|/* Tag portion */
-DECL|macro|TLB_EPN_MASK
-mdefine_line|#define TLB_EPN_MASK    0xFFFFFC00      /* Effective Page Number */
-DECL|macro|TLB_PAGESZ_MASK
-mdefine_line|#define TLB_PAGESZ_MASK 0x00000380
-DECL|macro|TLB_PAGESZ
-mdefine_line|#define TLB_PAGESZ(x)   (((x) &amp; 0x7) &lt;&lt; 7)
-DECL|macro|PAGESZ_1K
-mdefine_line|#define   PAGESZ_1K&t;&t;0
-DECL|macro|PAGESZ_4K
-mdefine_line|#define   PAGESZ_4K             1
-DECL|macro|PAGESZ_16K
-mdefine_line|#define   PAGESZ_16K            2
-DECL|macro|PAGESZ_64K
-mdefine_line|#define   PAGESZ_64K            3
-DECL|macro|PAGESZ_256K
-mdefine_line|#define   PAGESZ_256K           4
-DECL|macro|PAGESZ_1M
-mdefine_line|#define   PAGESZ_1M             5
-DECL|macro|PAGESZ_4M
-mdefine_line|#define   PAGESZ_4M             6
-DECL|macro|PAGESZ_16M
-mdefine_line|#define   PAGESZ_16M            7
-DECL|macro|TLB_VALID
-mdefine_line|#define TLB_VALID       0x00000040      /* Entry is valid */
-multiline_comment|/* Data portion */
-DECL|macro|TLB_RPN_MASK
-mdefine_line|#define TLB_RPN_MASK    0xFFFFFC00      /* Real Page Number */
-DECL|macro|TLB_PERM_MASK
-mdefine_line|#define TLB_PERM_MASK   0x00000300
-DECL|macro|TLB_EX
-mdefine_line|#define TLB_EX          0x00000200      /* Instruction execution allowed */
-DECL|macro|TLB_WR
-mdefine_line|#define TLB_WR          0x00000100      /* Writes permitted */
-DECL|macro|TLB_ZSEL_MASK
-mdefine_line|#define TLB_ZSEL_MASK   0x000000F0
-DECL|macro|TLB_ZSEL
-mdefine_line|#define TLB_ZSEL(x)     (((x) &amp; 0xF) &lt;&lt; 4)
-DECL|macro|TLB_ATTR_MASK
-mdefine_line|#define TLB_ATTR_MASK   0x0000000F
-DECL|macro|TLB_W
-mdefine_line|#define TLB_W           0x00000008      /* Caching is write-through */
-DECL|macro|TLB_I
-mdefine_line|#define TLB_I           0x00000004      /* Caching is inhibited */
-DECL|macro|TLB_M
-mdefine_line|#define TLB_M           0x00000002      /* Memory is coherent */
-DECL|macro|TLB_G
-mdefine_line|#define TLB_G           0x00000001      /* Memory is guarded from prefetch */
-DECL|macro|_PAGE_PRESENT
-mdefine_line|#define _PAGE_PRESENT&t;0x001&t;/* software: pte contains a translation */
-DECL|macro|_PAGE_USER
-mdefine_line|#define _PAGE_USER&t;0x002&t;/* matches one of the PP bits */
-DECL|macro|_PAGE_RW
-mdefine_line|#define _PAGE_RW&t;0x004&t;/* software: user write access allowed */
+multiline_comment|/* Definitions for 4xx embedded chips. */
 DECL|macro|_PAGE_GUARDED
-mdefine_line|#define _PAGE_GUARDED&t;0x008
+mdefine_line|#define&t;_PAGE_GUARDED&t;0x001&t;/* G: page is guarded from prefetch */
 DECL|macro|_PAGE_COHERENT
-mdefine_line|#define _PAGE_COHERENT&t;0x010&t;/* M: enforce memory coherence (SMP systems) */
+mdefine_line|#define&t;_PAGE_COHERENT&t;0x002&t;/* M: enforece memory coherence */
 DECL|macro|_PAGE_NO_CACHE
-mdefine_line|#define _PAGE_NO_CACHE&t;0x020&t;/* I: cache inhibit */
+mdefine_line|#define&t;_PAGE_NO_CACHE&t;0x004&t;/* I: caching is inhibited */
 DECL|macro|_PAGE_WRITETHRU
-mdefine_line|#define _PAGE_WRITETHRU&t;0x040&t;/* W: cache write-through */
+mdefine_line|#define&t;_PAGE_WRITETHRU&t;0x008&t;/* W: caching is write-through */
+DECL|macro|_PAGE_USER
+mdefine_line|#define&t;_PAGE_USER&t;0x010&t;/* matches one of the zone permission bits */
+DECL|macro|_PAGE_PRESENT
+mdefine_line|#define&t;_PAGE_PRESENT&t;0x040&t;/* software: PTE contains a translation */
 DECL|macro|_PAGE_DIRTY
-mdefine_line|#define _PAGE_DIRTY&t;0x080&t;/* C: page changed */
+mdefine_line|#define _PAGE_DIRTY&t;0x100&t;/* C: page changed */
+DECL|macro|_PAGE_RW
+mdefine_line|#define&t;_PAGE_RW&t;0x200&t;/* Writes permitted */
 DECL|macro|_PAGE_ACCESSED
-mdefine_line|#define _PAGE_ACCESSED&t;0x100&t;/* R: page referenced */
+mdefine_line|#define _PAGE_ACCESSED&t;0x400&t;/* R: page referenced */
 DECL|macro|_PAGE_HWWRITE
-mdefine_line|#define _PAGE_HWWRITE&t;0x200&t;/* software: _PAGE_RW &amp; _PAGE_DIRTY */
+mdefine_line|#define _PAGE_HWWRITE&t;0x800&t;/* software: _PAGE_RW &amp; _PAGE_DIRTY */
 DECL|macro|_PAGE_SHARED
 mdefine_line|#define&t;_PAGE_SHARED&t;0
 macro_line|#elif defined(CONFIG_8xx)
@@ -494,7 +436,7 @@ mdefine_line|#define _PAGE_USER&t;0x0800&t;/* One of the PP bits, the other must
 multiline_comment|/* This is used to enable or disable the actual hardware write&n; * protection.&n; */
 DECL|macro|_PAGE_HWWRITE
 mdefine_line|#define _PAGE_HWWRITE&t;_PAGE_DIRTY
-macro_line|#else
+macro_line|#else /* CONFIG_6xx */
 multiline_comment|/* Definitions for 60x, 740/750, etc. */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001&t;/* software: pte contains a translation */

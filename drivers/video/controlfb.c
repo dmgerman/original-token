@@ -2709,6 +2709,14 @@ id|p-&gt;sense
 )paren
 suffix:semicolon
 multiline_comment|/* Try to pick a video mode out of NVRAM if we have one. */
+r_if
+c_cond
+(paren
+id|default_vmode
+op_eq
+id|VMODE_NVRAM
+)paren
+(brace
 id|par-&gt;vmode
 op_assign
 id|nvram_read_byte
@@ -2776,6 +2784,20 @@ op_assign
 id|VMODE_640_480_60
 suffix:semicolon
 )brace
+)brace
+r_else
+id|par-&gt;vmode
+op_assign
+id|default_vmode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|default_cmode
+op_eq
+id|CMODE_NVRAM
+)paren
+(brace
 id|par-&gt;cmode
 op_assign
 id|nvram_read_byte
@@ -2797,6 +2819,12 @@ op_assign
 id|CMODE_8
 suffix:semicolon
 )brace
+)brace
+r_else
+id|par-&gt;cmode
+op_assign
+id|default_cmode
+suffix:semicolon
 multiline_comment|/*&n;&t; * Reduce the pixel size if we don&squot;t have enough VRAM.&n;&t; */
 r_while
 c_loop

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * macserial.c: Serial port driver for Power Macintoshes.&n; *&n; * Derived from drivers/sbus/char/sunserial.c by Paul Mackerras.&n; *&n; * Copyright (C) 1996 Paul Mackerras (Paul.Mackerras@cs.anu.edu.au)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Receive DMA code by Takashi Oe &lt;toe@unlserve.unl.edu&gt;.&n; *&n; * $Id: macserial.c,v 1.24.2.3 1999/09/10 02:05:58 paulus Exp $&n; */
+multiline_comment|/*&n; * macserial.c: Serial port driver for Power Macintoshes.&n; *&n; * Derived from drivers/sbus/char/sunserial.c by Paul Mackerras.&n; *&n; * Copyright (C) 1996 Paul Mackerras (Paul.Mackerras@cs.anu.edu.au)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Receive DMA code by Takashi Oe &lt;toe@unlserve.unl.edu&gt;.&n; *&n; * $Id: macserial.c,v 1.24.2.4 1999/10/19 04:36:42 paulus Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -232,6 +232,27 @@ DECL|macro|RS_ISR_PASS_LIMIT
 mdefine_line|#define RS_ISR_PASS_LIMIT 256
 DECL|macro|_INLINE_
 mdefine_line|#define _INLINE_ inline
+macro_line|#ifdef SERIAL_DEBUG_OPEN
+DECL|macro|OPNDBG
+mdefine_line|#define OPNDBG(fmt, arg...)&t;printk(KERN_INFO fmt , ## arg)
+macro_line|#else
+DECL|macro|OPNDBG
+mdefine_line|#define OPNDBG(fmt, arg...)&t;do { } while (0)
+macro_line|#endif
+macro_line|#ifdef SERIAL_DEBUG_POWER
+DECL|macro|PWRDBG
+mdefine_line|#define PWRDBG(fmt, arg...)&t;printk(KERN_INFO fmt , ## arg)
+macro_line|#else
+DECL|macro|PWRDBG
+mdefine_line|#define PWRDBG(fmt, arg...)&t;do { } while (0)
+macro_line|#endif
+macro_line|#ifdef SERIAL_DEBUG_BAUDS
+DECL|macro|BAUDBG
+mdefine_line|#define BAUDBG(fmt, arg...)&t;printk(KERN_INFO fmt , ## arg)
+macro_line|#else
+DECL|macro|BAUDBG
+mdefine_line|#define BAUDBG(fmt, arg...)&t;do { } while (0)
+macro_line|#endif
 r_static
 r_void
 id|probe_sccs
@@ -1214,7 +1235,7 @@ id|ld_le32
 c_func
 (paren
 op_amp
-id|dma-&gt;control
+id|dma-&gt;status
 )paren
 op_amp
 id|RUN
@@ -2875,8 +2896,7 @@ id|can_sleep
 r_int
 id|delay
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;startup() (ttyS%d, irq %d)&bslash;n&quot;
@@ -2886,7 +2906,6 @@ comma
 id|info-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2895,14 +2914,12 @@ op_amp
 id|ZILOG_INITIALIZED
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot; -&gt; already inited&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2938,8 +2955,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;starting up ttyS%d (irq %d)...&bslash;n&quot;
@@ -2949,7 +2965,6 @@ comma
 id|info-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#endif
 id|delay
 op_assign
 id|set_scc_power
@@ -2966,8 +2981,7 @@ c_func
 id|info
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;enabling IRQ on ttyS%d (irq %d)...&bslash;n&quot;
@@ -2977,7 +2991,6 @@ comma
 id|info-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#endif
 id|info-&gt;flags
 op_or_assign
 id|ZILOG_INITIALIZED
@@ -4166,8 +4179,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;setting up ttys%d SCC...&bslash;n&quot;
@@ -4175,7 +4187,6 @@ comma
 id|info-&gt;line
 )paren
 suffix:semicolon
-macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -4606,8 +4617,7 @@ op_star
 id|info
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;Shutting down serial port %d (irq %d)....&bslash;n&quot;
@@ -4617,7 +4627,6 @@ comma
 id|info-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4629,14 +4638,12 @@ id|ZILOG_INITIALIZED
 )paren
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;(already shutdown)&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -4937,17 +4944,14 @@ c_cond
 id|state
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_POWER
-id|printk
+id|PWRDBG
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;ttyS%02d: powering up hardware&bslash;n&quot;
 comma
 id|info-&gt;line
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4962,6 +4966,34 @@ op_eq
 l_int|0
 )paren
 (brace
+id|feature_set
+c_func
+(paren
+id|info-&gt;dev_node
+comma
+id|FEATURE_Serial_enable
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+id|feature_set
+c_func
+(paren
+id|info-&gt;dev_node
+comma
+id|FEATURE_Serial_reset
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|15
+)paren
+suffix:semicolon
 id|feature_clear
 c_func
 (paren
@@ -4973,15 +5005,7 @@ suffix:semicolon
 id|mdelay
 c_func
 (paren
-l_int|5
-)paren
-suffix:semicolon
-id|feature_set
-c_func
-(paren
-id|info-&gt;dev_node
-comma
-id|FEATURE_Serial_enable
+l_int|10
 )paren
 suffix:semicolon
 )brace
@@ -5011,7 +5035,7 @@ id|FEATURE_Serial_IO_B
 suffix:semicolon
 id|delay
 op_assign
-l_int|1
+l_int|10
 suffix:semicolon
 r_if
 c_cond
@@ -5019,12 +5043,18 @@ c_cond
 id|info-&gt;is_cobalt_modem
 )paren
 (brace
+id|mdelay
+c_func
+(paren
+l_int|300
+)paren
+suffix:semicolon
 id|feature_set
 c_func
 (paren
 id|info-&gt;dev_node
 comma
-id|FEATURE_Modem_Reset
+id|FEATURE_Modem_power
 )paren
 suffix:semicolon
 id|mdelay
@@ -5038,7 +5068,21 @@ c_func
 (paren
 id|info-&gt;dev_node
 comma
-id|FEATURE_Modem_Reset
+id|FEATURE_Modem_power
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+id|feature_set
+c_func
+(paren
+id|info-&gt;dev_node
+comma
+id|FEATURE_Modem_power
 )paren
 suffix:semicolon
 id|delay
@@ -5063,89 +5107,26 @@ macro_line|#endif /* CONFIG_PMAC_PBOOK */
 )brace
 r_else
 (brace
-macro_line|#ifdef SERIAL_DEBUG_POWER
-id|printk
+id|PWRDBG
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;ttyS%02d: shutting down hardware&bslash;n&quot;
 comma
 id|info-&gt;line
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_KGDB
-r_if
-c_cond
-(paren
-id|info-&gt;kgdb_channel
-)paren
-(brace
-macro_line|#ifdef SERIAL_DEBUG_POWER
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;        (canceled by KGDB)&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#ifdef CONFIG_XMON
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info-&gt;is_cobalt_modem
-)paren
-(brace
-macro_line|#ifdef SERIAL_DEBUG_POWER
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;        (canceled by XMON)&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
 id|info-&gt;is_cobalt_modem
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_POWER
-id|printk
+id|PWRDBG
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;ttyS%02d: shutting down modem&bslash;n&quot;
 comma
 id|info-&gt;line
-)paren
-suffix:semicolon
-macro_line|#endif
-id|feature_set
-c_func
-(paren
-id|info-&gt;dev_node
-comma
-id|FEATURE_Modem_Reset
-)paren
-suffix:semicolon
-id|mdelay
-c_func
-(paren
-l_int|15
 )paren
 suffix:semicolon
 id|feature_clear
@@ -5153,13 +5134,13 @@ c_func
 (paren
 id|info-&gt;dev_node
 comma
-id|FEATURE_Modem_Reset
+id|FEATURE_Modem_power
 )paren
 suffix:semicolon
 id|mdelay
 c_func
 (paren
-l_int|25
+l_int|10
 )paren
 suffix:semicolon
 )brace
@@ -5184,17 +5165,14 @@ op_eq
 id|info-&gt;zs_channel
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_POWER
-id|printk
+id|PWRDBG
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;ttyS%02d: shutting down SCC channel A&bslash;n&quot;
 comma
 id|info-&gt;line
 )paren
 suffix:semicolon
-macro_line|#endif
 id|feature_clear
 c_func
 (paren
@@ -5206,17 +5184,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef SERIAL_DEBUG_POWER
-id|printk
+id|PWRDBG
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;ttyS%02d: shutting down SCC channel B&bslash;n&quot;
 comma
 id|info-&gt;line
 )paren
 suffix:semicolon
-macro_line|#endif
 id|feature_clear
 c_func
 (paren
@@ -5252,17 +5227,14 @@ id|FEATURE_Serial_IO_B
 )paren
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_POWER
-id|printk
+id|PWRDBG
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;ttyS%02d: shutting down SCC core&bslash;n&quot;
 comma
 id|info-&gt;line
 )paren
 suffix:semicolon
-macro_line|#endif
 id|feature_set
 c_func
 (paren
@@ -5274,7 +5246,21 @@ suffix:semicolon
 id|mdelay
 c_func
 (paren
-l_int|10
+l_int|15
+)paren
+suffix:semicolon
+id|feature_clear
+c_func
+(paren
+id|info-&gt;dev_node
+comma
+id|FEATURE_Serial_reset
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|25
 )paren
 suffix:semicolon
 id|feature_clear
@@ -5457,8 +5443,7 @@ id|info-&gt;clk_divisor
 op_assign
 l_int|16
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;set speed to %d bds, &quot;
@@ -5466,7 +5451,6 @@ comma
 id|baud
 )paren
 suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -5623,14 +5607,12 @@ l_int|5
 op_or_assign
 id|Tx5
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;5 bits, &quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|bits
 op_assign
 l_int|7
@@ -5654,14 +5636,12 @@ l_int|5
 op_or_assign
 id|Tx6
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;6 bits, &quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|bits
 op_assign
 l_int|8
@@ -5685,14 +5665,12 @@ l_int|5
 op_or_assign
 id|Tx7
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;7 bits, &quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|bits
 op_assign
 l_int|9
@@ -5719,14 +5697,12 @@ l_int|5
 op_or_assign
 id|Tx8
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;8 bits, &quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|bits
 op_assign
 l_int|10
@@ -5786,14 +5762,12 @@ suffix:semicolon
 id|bits
 op_increment
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;2 stop, &quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -5804,14 +5778,12 @@ l_int|4
 op_or_assign
 id|SB1
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;1 stop, &quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -5831,14 +5803,12 @@ l_int|4
 op_or_assign
 id|PAR_ENA
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;parity, &quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -6006,8 +5976,7 @@ op_plus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Add .02 seconds of slop */
-macro_line|#ifdef SERIAL_DEBUG_BAUDS
-id|printk
+id|BAUDBG
 c_func
 (paren
 l_string|&quot;timeout=%d/%ds, base:%d&bslash;n&quot;
@@ -6028,7 +5997,6 @@ r_int
 id|info-&gt;baud_base
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Load up the new values */
 id|load_zsregs
 c_func
@@ -8280,8 +8248,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;rs_close ttys%d, count = %d&bslash;n&quot;
@@ -8291,7 +8258,6 @@ comma
 id|info-&gt;count
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -8394,8 +8360,7 @@ op_star
 id|tty-&gt;termios
 suffix:semicolon
 multiline_comment|/*&n;&t; * Now we wait for the transmit buffer to clear; and we notify &n;&t; * the line discipline to only process XON/XOFF characters.&n;&t; */
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;waiting end of Tx... (timeout:%d)&bslash;n&quot;
@@ -8403,7 +8368,6 @@ comma
 id|info-&gt;closing_wait
 )paren
 suffix:semicolon
-macro_line|#endif
 id|tty-&gt;closing
 op_assign
 l_int|1
@@ -8523,14 +8487,12 @@ id|ZILOG_INITIALIZED
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Before we drop DTR, make sure the SCC transmitter&n;&t;&t; * has completely drained.&n;&t;&t; */
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;waiting end of Rx...&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -9197,8 +9159,7 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;block_til_ready before block: ttys%d, count = %d&bslash;n&quot;
@@ -9208,7 +9169,6 @@ comma
 id|info-&gt;count
 )paren
 suffix:semicolon
-macro_line|#endif
 id|cli
 c_func
 (paren
@@ -9380,8 +9340,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;block_til_ready blocking: ttys%d, count = %d&bslash;n&quot;
@@ -9391,7 +9350,6 @@ comma
 id|info-&gt;count
 )paren
 suffix:semicolon
-macro_line|#endif
 id|schedule
 c_func
 (paren
@@ -9428,8 +9386,7 @@ suffix:semicolon
 id|info-&gt;blocked_open
 op_decrement
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;block_til_ready after blocking: ttys%d, count = %d&bslash;n&quot;
@@ -9439,7 +9396,6 @@ comma
 id|info-&gt;count
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9561,8 +9517,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;rs_open %s%d, count = %d&bslash;n&quot;
@@ -9574,7 +9529,6 @@ comma
 id|info-&gt;count
 )paren
 suffix:semicolon
-macro_line|#endif
 id|info-&gt;count
 op_increment
 suffix:semicolon
@@ -9725,8 +9679,7 @@ c_cond
 id|retval
 )paren
 (brace
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;rs_open returning after block_til_ready with %d&bslash;n&quot;
@@ -9734,7 +9687,6 @@ comma
 id|retval
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|retval
 suffix:semicolon
@@ -9819,8 +9771,7 @@ id|info-&gt;pgrp
 op_assign
 id|current-&gt;pgrp
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_OPEN
-id|printk
+id|OPNDBG
 c_func
 (paren
 l_string|&quot;rs_open ttys%d successful...&bslash;n&quot;
@@ -9828,7 +9779,6 @@ comma
 id|info-&gt;line
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -9886,6 +9836,22 @@ id|conn
 suffix:semicolon
 r_int
 id|len
+suffix:semicolon
+r_struct
+id|slot_names_prop
+(brace
+r_int
+id|count
+suffix:semicolon
+r_char
+id|name
+(braket
+l_int|1
+)braket
+suffix:semicolon
+)brace
+op_star
+id|slots
 suffix:semicolon
 id|zss-&gt;irq
 op_assign
@@ -10011,6 +9977,48 @@ l_string|&quot;infrared&quot;
 op_eq
 l_int|0
 )paren
+suffix:semicolon
+multiline_comment|/* 1999 Powerbook G3 has slot-names property instead */
+id|slots
+op_assign
+(paren
+r_struct
+id|slot_names_prop
+op_star
+)paren
+id|get_property
+c_func
+(paren
+id|ch
+comma
+l_string|&quot;slot-names&quot;
+comma
+op_amp
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|slots
+op_logical_and
+id|slots-&gt;count
+OG
+l_int|0
+op_logical_and
+id|strcmp
+c_func
+(paren
+id|slots-&gt;name
+comma
+l_string|&quot;IrDA&quot;
+)paren
+op_eq
+l_int|0
+)paren
+id|zss-&gt;is_pwbk_ir
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -11199,25 +11207,15 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_XMON
 macro_line|#ifdef CONFIG_KGDB
 r_if
 c_cond
 (paren
+op_logical_neg
 id|info-&gt;kgdb_channel
 )paren
-r_continue
-suffix:semicolon
-macro_line|#endif&t;&t;&t;
-macro_line|#ifdef CONFIG_XMON
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info-&gt;is_cobalt_modem
-)paren
-r_continue
-suffix:semicolon
-macro_line|#endif&t;&t;&t;
+macro_line|#endif /* CONFIG_KGDB */
 multiline_comment|/* By default, disable the port */
 id|set_scc_power
 c_func
@@ -11227,6 +11225,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_XMON */
 )brace
 id|tmp_buf
 op_assign

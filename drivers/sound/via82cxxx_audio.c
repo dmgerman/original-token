@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Support for VIA 82Cxxx Audio Codecs&n; * Copyright 1999,2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Distributed under the GNU GENERAL PUBLIC LICENSE (GPL) Version 2.&n; * See the &quot;COPYING&quot; file distributed with this software for more info.&n; *&n; * Documentation for this driver available as&n; * linux/Documentation/sound/via82cxxx.txt.&n; *&n; * Since the mixer is called from the OSS glue the kernel lock is always held&n; * on our AC97 mixing&n; */
 DECL|macro|VIA_VERSION
-mdefine_line|#define VIA_VERSION&t;&quot;1.1.2&quot;
+mdefine_line|#define VIA_VERSION&t;&quot;1.1.2.1&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -49,7 +49,7 @@ mdefine_line|#define&t;LINE_SIZE&t;10
 DECL|macro|VIA_CARD_NAME
 mdefine_line|#define VIA_CARD_NAME&t;&quot;VIA 82Cxxx Audio driver &quot; VIA_VERSION
 DECL|macro|VIA_MODULE_NAME
-mdefine_line|#define VIA_MODULE_NAME &quot;via82cxxx&quot;
+mdefine_line|#define VIA_MODULE_NAME &quot;via_audio&quot;
 DECL|macro|PFX
 mdefine_line|#define PFX&t;&t;VIA_MODULE_NAME &quot;: &quot;
 DECL|macro|VIA_COUNTER_LIMIT

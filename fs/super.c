@@ -6121,7 +6121,8 @@ c_func
 l_string|&quot;okay&bslash;n&quot;
 )paren
 suffix:semicolon
-id|invalidate_buffers
+multiline_comment|/* special: the old device driver is going to be&n;&t;&t;&t;   a ramdisk and the point of this call is to free its&n;&t;&t;&t;   protected memory (even if dirty). */
+id|destroy_buffers
 c_func
 (paren
 id|old_root_dev

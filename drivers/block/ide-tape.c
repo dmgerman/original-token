@@ -16615,7 +16615,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ide-tape: %s: use %d bytes as block size (%d used)&bslash;n&quot;
+l_string|&quot;ide-tape: %s: use %d bytes as block size (%Zd used)&bslash;n&quot;
 comma
 id|tape-&gt;name
 comma
@@ -16640,7 +16640,7 @@ l_int|3
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;ide-tape: Reached idetape_chrdev_read, count %d&bslash;n&quot;
+l_string|&quot;ide-tape: Reached idetape_chrdev_read, count %Zd&bslash;n&quot;
 comma
 id|count
 )paren
@@ -17710,7 +17710,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ide-tape: %s: use %d bytes as block size (%d used)&bslash;n&quot;
+l_string|&quot;ide-tape: %s: use %d bytes as block size (%Zd used)&bslash;n&quot;
 comma
 id|tape-&gt;name
 comma
@@ -17735,7 +17735,7 @@ l_int|3
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;ide-tape: Reached idetape_chrdev_write, count %d&bslash;n&quot;
+l_string|&quot;ide-tape: Reached idetape_chrdev_write, count %Zd&bslash;n&quot;
 comma
 id|count
 )paren

@@ -1016,6 +1016,8 @@ mdefine_line|#define INTEGRITY_TYPE_OPEN&t;0
 DECL|macro|INTEGRITY_TYPE_CLOSE
 mdefine_line|#define INTEGRITY_TYPE_CLOSE&t;1
 multiline_comment|/* Recorded Address (ECMA 167 4/7.1) */
+macro_line|#ifndef _LINUX_UDF_FS_I_H
+multiline_comment|/* Declared in udf_fs_i.h */
 r_typedef
 r_struct
 (brace
@@ -1031,6 +1033,7 @@ DECL|typedef|lb_addr
 )brace
 id|lb_addr
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Extent interpretation (ECMA 167 4/14.14.1.1) */
 DECL|macro|EXTENT_RECORDED_ALLOCATED
 mdefine_line|#define EXTENT_RECORDED_ALLOCATED               0x00

@@ -2493,12 +2493,12 @@ multiline_comment|/*&n;&t;&t; * Note - this means that we just report the status
 r_return
 id|SUCCESS
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * When the low level driver returns DID_SOFT_ERROR,&n;&t;&t; * it is responsible for keeping an internal retry counter &n;&t;&t; * in order to avoid endless loops (DB)&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * When the low level driver returns DID_SOFT_ERROR,&n;&t;&t; * it is responsible for keeping an internal retry counter &n;&t;&t; * in order to avoid endless loops (DB)&n;&t;&t; *&n;&t;&t; * Actually this is a bug in this function here.  We should&n;&t;&t; * be mindful of the maximum number of retries specified&n;&t;&t; * and not get stuck in a loop.&n;&t;&t; */
 r_case
 id|DID_SOFT_ERROR
 suffix:colon
-r_return
-id|NEEDS_RETRY
+r_goto
+id|maybe_retry
 suffix:semicolon
 r_case
 id|DID_BUS_BUSY
@@ -4732,6 +4732,18 @@ id|SHUTDOWN_SIGS
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+id|siginitsetinv
+c_func
+(paren
+op_amp
+id|current-&gt;blocked
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 id|lock_kernel
 c_func
 (paren
@@ -4808,12 +4820,7 @@ l_string|&quot;Error handler sleeping&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|host-&gt;loaded_as_module
-)paren
-(brace
+multiline_comment|/*&n;&t;&t; * Note - we always use down_interruptible with the semaphore&n;&t;&t; * even if the module was loaded as part of the kernel.  The&n;&t;&t; * reason is that down() will cause this thread to be counted&n;&t;&t; * in the load average as a running process, and down&n;&t;&t; * interruptible doesn&squot;t.  Given that we need to allow this&n;&t;&t; * thread to die if the driver was loaded as a module, using&n;&t;&t; * semaphores isn&squot;t unreasonable.&n;&t;&t; */
 id|down_interruptible
 c_func
 (paren
@@ -4824,6 +4831,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|host-&gt;loaded_as_module
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|signal_pending
 c_func
 (paren
@@ -4831,16 +4844,6 @@ id|current
 )paren
 )paren
 r_break
-suffix:semicolon
-)brace
-r_else
-(brace
-id|down
-c_func
-(paren
-op_amp
-id|sem
-)paren
 suffix:semicolon
 )brace
 id|SCSI_LOG_ERROR_RECOVERY

@@ -280,7 +280,6 @@ DECL|function|test_and_set_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_and_set_bit
 c_func
 (paren
@@ -381,7 +380,6 @@ suffix:semicolon
 DECL|function|test_and_clear_bit
 r_extern
 id|__inline__
-r_int
 r_int
 id|test_and_clear_bit
 c_func
@@ -484,7 +482,6 @@ DECL|function|test_and_change_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_and_change_bit
 c_func
 (paren
@@ -584,7 +581,6 @@ DECL|function|test_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_bit
 c_func
 (paren
@@ -598,6 +594,7 @@ id|addr
 )paren
 (brace
 r_return
+(paren
 l_int|1UL
 op_amp
 (paren
@@ -621,6 +618,9 @@ op_amp
 l_int|31
 )paren
 )paren
+)paren
+op_ne
+l_int|0UL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * ffz = Find First Zero in word. Undefined if no zero exists,&n; * so code should check against ~0UL first..&n; *&n; * Do a binary search on the bits.  Due to the nature of large&n; * constants on the alpha, it is worthwhile to split the search.&n; */

@@ -231,6 +231,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|softirq_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|rows
 DECL|variable|cols
 r_int
@@ -1783,6 +1791,11 @@ c_func
 )paren
 suffix:semicolon
 id|time_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|softirq_init
 c_func
 (paren
 )paren

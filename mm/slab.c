@@ -6551,13 +6551,6 @@ id|clock_searchp
 op_assign
 id|searchp
 suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|cache_chain_sem
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6566,7 +6559,8 @@ id|best_cachep
 )paren
 (brace
 multiline_comment|/* couldn&squot;t find anything to reap */
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|spin_lock_irq
@@ -6699,6 +6693,15 @@ c_func
 (paren
 op_amp
 id|best_cachep-&gt;c_spinlock
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|cache_chain_sem
 )paren
 suffix:semicolon
 r_return
@@ -7059,13 +7062,15 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;%-16s %6lu %6lu %4lu %4lu %4lu %6lu %7lu %5lu %4lu %4lu&bslash;n&quot;
+l_string|&quot;%-16s %6lu %6lu %6lu %4lu %4lu %4lu %6lu %7lu %5lu %4lu %4lu&bslash;n&quot;
 comma
 id|cachep-&gt;c_name
 comma
 id|active_objs
 comma
 id|num_objs
+comma
+id|cachep-&gt;c_offset
 comma
 id|active_slabs
 comma
@@ -7110,13 +7115,15 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;%-17s %6lu %6lu&bslash;n&quot;
+l_string|&quot;%-17s %6lu %6lu %6lu&bslash;n&quot;
 comma
 id|cachep-&gt;c_name
 comma
 id|active_objs
 comma
 id|num_objs
+comma
+id|cachep-&gt;c_offset
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* SLAB_STATS */

@@ -5634,6 +5634,39 @@ id|gcw
 op_assign
 id|id-&gt;config
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
+multiline_comment|/* kludge for Apple PowerBook internal zip */
+r_if
+c_cond
+(paren
+(paren
+id|gcw.device_type
+op_eq
+l_int|5
+)paren
+op_logical_and
+op_logical_neg
+id|strstr
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;CD-ROM&quot;
+)paren
+op_logical_and
+id|strstr
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;ZIP&quot;
+)paren
+)paren
+id|gcw.device_type
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 macro_line|#if IDEFLOPPY_DEBUG_INFO
 id|printk
 (paren

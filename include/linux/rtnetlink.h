@@ -759,18 +759,27 @@ comma
 DECL|enumerator|IFLA_COST
 id|IFLA_COST
 comma
+DECL|macro|IFLA_COST
+mdefine_line|#define IFLA_COST IFLA_COST
 DECL|enumerator|IFLA_PRIORITY
 id|IFLA_PRIORITY
+comma
+DECL|macro|IFLA_PRIORITY
+mdefine_line|#define IFLA_PRIORITY IFLA_PRIORITY
+DECL|enumerator|IFLA_MASTER
+id|IFLA_MASTER
+DECL|macro|IFLA_MASTER
+mdefine_line|#define IFLA_MASTER IFLA_MASTER
 )brace
 suffix:semicolon
 DECL|macro|IFLA_MAX
-mdefine_line|#define IFLA_MAX IFLA_STATS
+mdefine_line|#define IFLA_MAX IFLA_MASTER
 DECL|macro|IFLA_RTA
 mdefine_line|#define IFLA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct ifinfomsg))))
 DECL|macro|IFLA_PAYLOAD
 mdefine_line|#define IFLA_PAYLOAD(n) NLMSG_PAYLOAD(n,sizeof(struct ifinfomsg))
 multiline_comment|/* ifi_flags.&n;&n;   IFF_* flags.&n;&n;   The only change is:&n;   IFF_LOOPBACK, IFF_BROADCAST and IFF_POINTOPOINT are&n;   more not changeable by user. They describe link media&n;   characteristics and set by device driver.&n;&n;   Comments:&n;   - Combination IFF_BROADCAST|IFF_POINTOPOINT is invalid&n;   - If neiher of these three flags are set;&n;     the interface is NBMA.&n;&n;   - IFF_MULTICAST does not mean anything special:&n;   multicasts can be used on all not-NBMA links.&n;   IFF_MULTICAST means that this media uses special encapsulation&n;   for multicast frames. Apparently, all IFF_POINTOPOINT and&n;   IFF_BROADCAST devices are able to use multicasts too.&n; */
-multiline_comment|/* ifi_link.&n;   For usual devices it is equal ifi_index.&n;   If it is a &quot;virtual interface&quot; (f.e. tunnel), ifi_link&n;   can point to real physical interface (f.e. for bandwidth calculations),&n;   or maybe 0, what means, that real media is unknown (usual&n;   for IPIP tunnels, when route to endpoint is allowed to change)&n; */
+multiline_comment|/* IFLA_LINK.&n;   For usual devices it is equal ifi_index.&n;   If it is a &quot;virtual interface&quot; (f.e. tunnel), ifi_link&n;   can point to real physical interface (f.e. for bandwidth calculations),&n;   or maybe 0, what means, that real media is unknown (usual&n;   for IPIP tunnels, when route to endpoint is allowed to change)&n; */
 multiline_comment|/*****************************************************************&n; *&t;&t;Traffic control messages.&n; ****/
 DECL|struct|tcmsg
 r_struct
@@ -1074,6 +1083,26 @@ id|data
 suffix:semicolon
 DECL|macro|RTA_PUT
 mdefine_line|#define RTA_PUT(skb, attrtype, attrlen, data) &bslash;&n;({ if (skb_tailroom(skb) &lt; (int)RTA_SPACE(attrlen)) goto rtattr_failure; &bslash;&n;   __rta_fill(skb, attrtype, attrlen, data); })
+r_extern
+r_void
+id|rtmsg_ifinfo
+c_func
+(paren
+r_int
+id|type
+comma
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_int
+id|change
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|rtmsg_ifinfo
+mdefine_line|#define rtmsg_ifinfo(a,b,c) do { } while (0)
 macro_line|#endif
 r_extern
 r_struct

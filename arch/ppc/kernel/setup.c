@@ -183,6 +183,26 @@ r_int
 id|r7
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BOOTX_TEXT
+r_extern
+r_void
+id|map_bootx_text
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_XMON
+r_extern
+r_void
+id|xmon_map_scc
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 id|boot_infos_t
 op_star
@@ -949,7 +969,7 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;7400&bslash;n&quot;
+l_string|&quot;7400 (G4)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1089,7 +1109,7 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Assume here that all clock rates are the same in a&n;&t;&t; * smp system.  -- Cort&n;&t;&t; */
-macro_line|#ifndef CONFIG_8xx
+macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
 r_if
 c_cond
 (paren
@@ -1208,7 +1228,7 @@ l_int|1000000
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* !CONFIG_4xx &amp;&amp; !CONFIG_8xx */
 r_if
 c_cond
 (paren
@@ -1931,14 +1951,8 @@ r_if
 c_cond
 (paren
 id|r3
-op_minus
-id|KERNELBASE
-OL
-l_int|0x800000
 op_logical_and
 id|r4
-op_ne
-l_int|0
 op_logical_and
 id|r4
 op_ne
@@ -1964,6 +1978,10 @@ id|RAMDISK_MAJOR
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|initrd_below_start_ok
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -2388,9 +2406,19 @@ id|rec
 suffix:semicolon
 r_extern
 r_char
-id|_end
+id|__bss_start
 (braket
 )braket
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|sysmap
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sysmap_size
 suffix:semicolon
 id|rec
 op_assign
@@ -2399,13 +2427,27 @@ r_struct
 id|bi_record
 op_star
 )paren
-id|PAGE_ALIGN
+id|_ALIGN
 c_func
 (paren
 (paren
 id|ulong
 )paren
-id|_end
+id|__bss_start
+op_plus
+(paren
+l_int|1
+op_lshift
+l_int|20
+)paren
+op_minus
+l_int|1
+comma
+(paren
+l_int|1
+op_lshift
+l_int|20
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2424,15 +2466,29 @@ r_struct
 id|bi_record
 op_star
 )paren
-id|PAGE_ALIGN
+id|_ALIGN
 c_func
 (paren
 (paren
 id|ulong
 )paren
-id|_end
+id|__bss_start
 op_plus
 l_int|0x10000
+op_plus
+(paren
+l_int|1
+op_lshift
+l_int|20
+)paren
+op_minus
+l_int|1
+comma
+(paren
+l_int|1
+op_lshift
+l_int|20
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2500,6 +2556,52 @@ id|data
 comma
 id|rec-&gt;size
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|BI_SYSMAP
+suffix:colon
+id|sysmap
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+(paren
+id|data
+(braket
+l_int|0
+)braket
+op_ge
+(paren
+id|KERNELBASE
+)paren
+)paren
+ques
+c_cond
+id|data
+(braket
+l_int|0
+)braket
+suffix:colon
+(paren
+id|data
+(braket
+l_int|0
+)braket
+op_plus
+id|KERNELBASE
+)paren
+)paren
+suffix:semicolon
+id|sysmap_size
+op_assign
+id|data
+(braket
+l_int|1
+)braket
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2572,6 +2674,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|_get_PVR
 c_func
 (paren
@@ -2581,6 +2684,20 @@ l_int|16
 )paren
 op_eq
 l_int|8
+)paren
+op_logical_or
+(paren
+(paren
+id|_get_PVR
+c_func
+(paren
+)paren
+op_rshift
+l_int|16
+)paren
+op_eq
+l_int|12
+)paren
 )paren
 (brace
 r_int
@@ -2701,15 +2818,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_XMON
-r_extern
-r_void
-id|xmon_map_scc
+macro_line|#ifdef CONFIG_BOOTX_TEXT
+id|map_bootx_text
 c_func
 (paren
-r_void
 )paren
 suffix:semicolon
+id|prom_print
+c_func
+(paren
+l_string|&quot;identify machine&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_XMON
 id|xmon_map_scc
 c_func
 (paren
@@ -2733,6 +2855,33 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_XMON */
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;setup_arch: enter&quot;
+comma
+l_int|0x3eab
+)paren
+suffix:semicolon
+macro_line|#if defined(CONFIG_KGDB)
+id|set_debug_traps
+c_func
+(paren
+)paren
+suffix:semicolon
+id|breakpoint
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* reboot on panic */
 id|panic_timeout
 op_assign
@@ -2786,6 +2935,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;setup_arch: bootmem&quot;
+comma
+l_int|0x3eab
+)paren
+suffix:semicolon
 id|ppc_md
 dot
 id|setup_arch
@@ -2793,7 +2957,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* clear the progress line */
 r_if
 c_cond
 (paren

@@ -103,6 +103,11 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|member|running
+r_volatile
+r_int
+id|running
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -128,7 +133,7 @@ id|timer
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * mod_timer is a more efficient way to update the expire field of an&n; * active timer (if the timer is inactive it will be activated)&n; * mod_timer(a,b) is equivalent to del_timer(a); a-&gt;expires = b; add_timer(a)&n; */
-r_void
+r_int
 id|mod_timer
 c_func
 (paren
@@ -172,6 +177,12 @@ id|timer-&gt;prev
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|timer-&gt;running
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|timer_pending
 r_extern
@@ -193,6 +204,38 @@ op_ne
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+DECL|macro|timer_exit
+mdefine_line|#define timer_exit(t) do { (t)-&gt;running = 0; mb(); } while (0)
+DECL|macro|timer_set_running
+mdefine_line|#define timer_set_running(t) do { (t)-&gt;running = 1; mb(); } while (0)
+DECL|macro|timer_is_running
+mdefine_line|#define timer_is_running(t) ((t)-&gt;running != 0)
+DECL|macro|timer_synchronize
+mdefine_line|#define timer_synchronize(t) while (timer_is_running(t)) barrier()
+r_extern
+r_int
+id|del_timer_sync
+c_func
+(paren
+r_struct
+id|timer_list
+op_star
+id|timer
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|timer_exit
+mdefine_line|#define timer_exit(t) do { } while (0)
+DECL|macro|timer_set_running
+mdefine_line|#define timer_set_running(t) do { } while (0)
+DECL|macro|timer_is_running
+mdefine_line|#define timer_is_running(t) (0)
+DECL|macro|timer_synchronize
+mdefine_line|#define timer_synchronize(t) barrier()
+DECL|macro|del_timer_sync
+mdefine_line|#define del_timer_sync(t) del_timer(t)
+macro_line|#endif
 multiline_comment|/*&n; *&t;These inlines deal with timer wrapping correctly. You are &n; *&t;strongly encouraged to use them&n; *&t;1. Because people otherwise forget&n; *&t;2. Because if the timer wrap changes in future you wont have to&n; *&t;   alter your driver code.&n; *&n; * Do this with &quot;&lt;0&quot; and &quot;&gt;=0&quot; to only test the sign of the result. A&n; * good compiler would generate better code (and a really good compiler&n; * wouldn&squot;t care). Gcc is currently neither.&n; */
 DECL|macro|time_after
 mdefine_line|#define time_after(a,b)&t;&t;((long)(b) - (long)(a) &lt; 0)

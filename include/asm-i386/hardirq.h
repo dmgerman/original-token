@@ -13,6 +13,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
+DECL|macro|in_irq
+mdefine_line|#define in_irq() (local_irq_count[smp_processor_id()] != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)

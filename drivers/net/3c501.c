@@ -1,5 +1,6 @@
 multiline_comment|/* 3c501.c: A 3Com 3c501 Ethernet driver for Linux. */
-multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;&n;    Removed calls to init_etherdev since they are no longer needed, and&n;    cleaned up modularization just a bit. The driver still allows only&n;    the default address for cards when loaded as a module, but that&squot;s&n;    really less braindead than anyone using a 3c501 board. :)&n;&t;&t;    19950208 (invid@msen.com)&n;&n;    Added traps for interrupts hitting the window as we clear and TX load&n;    the board. Now getting 150K/second FTP with a 3c501 card. Still playing&n;    with a TX-TX optimisation to see if we can touch 180-200K/second as seems&n;    theoretically maximum.&n;    &t;&t;19950402 Alan Cox &lt;Alan.Cox@linux.org&gt;&n;&n;    Some notes on this thing if you have to hack it.  [Alan]&n;&n;    1]&t;Some documentation is available from 3Com. Due to the boards age&n;    &t;standard responses when you ask for this will range from &squot;be serious&squot;&n;    &t;to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n;    &t;of historical interest anyway.&n;&n;    2]  The basic system is a single buffer which can be used to receive or&n;    &t;transmit a packet. A third command mode exists when you are setting&n;    &t;things up.&n;&n;    3]&t;If it&squot;s transmitting it&squot;s not receiving and vice versa. In fact the&n;    &t;time to get the board back into useful state after an operation is&n;    &t;quite large.&n;&n;    4]&t;The driver works by keeping the board in receive mode waiting for a&n;    &t;packet to arrive. When one arrives it is copied out of the buffer&n;    &t;and delivered to the kernel. The card is reloaded and off we go.&n;&n;    5]&t;When transmitting dev-&gt;tbusy is set and the card is reset (from&n;    &t;receive mode) [possibly losing a packet just received] to command&n;    &t;mode. A packet is loaded and transmit mode triggered. The interrupt&n;    &t;handler runs different code for transmit interrupts and can handle&n;    &t;returning to receive mode or retransmissions (yes you have to help&n;    &t;out with those too).&n;&n;    Problems:&n;    &t;There are a wide variety of undocumented error returns from the card&n;    and you basically have to kick the board and pray if they turn up. Most&n;    only occur under extreme load or if you do something the board doesn&squot;t&n;    like (eg touching a register at the wrong time).&n;&n;    &t;The driver is less efficient than it could be. It switches through&n;    receive mode even if more transmits are queued. If this worries you buy&n;    a real Ethernet card.&n;&n;    &t;The combination of slow receive restart and no real multicast&n;    filter makes the board unusable with a kernel compiled for IP&n;    multicasting in a real multicast environment. That&squot;s down to the board,&n;    but even with no multicast programs running a multicast IP kernel is&n;    in group 224.0.0.1 and you will therefore be listening to all multicasts.&n;    One nv conference running over that Ethernet and you can give up.&n;&n;*/
+multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;&n;    Removed calls to init_etherdev since they are no longer needed, and&n;    cleaned up modularization just a bit. The driver still allows only&n;    the default address for cards when loaded as a module, but that&squot;s&n;    really less braindead than anyone using a 3c501 board. :)&n;&t;&t;    19950208 (invid@msen.com)&n;&n;    Added traps for interrupts hitting the window as we clear and TX load&n;    the board. Now getting 150K/second FTP with a 3c501 card. Still playing&n;    with a TX-TX optimisation to see if we can touch 180-200K/second as seems&n;    theoretically maximum.&n;    &t;&t;19950402 Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Cleaned up for 2.3.x because we broke SMP now. &n;    &t;&t;20000208 Alan Cox &lt;alan@redhat.com&gt;&n;    &t;&t;&n;*/
+multiline_comment|/**&n; * DOC: 3c501 Card Notes&n; *&n; *  Some notes on this thing if you have to hack it.  [Alan]&n; *&n; *  Some documentation is available from 3Com. Due to the boards age&n; *  standard responses when you ask for this will range from &squot;be serious&squot;&n; *  to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n; *  of historical interest anyway. &n; *&n; *  The basic system is a single buffer which can be used to receive or&n; *  transmit a packet. A third command mode exists when you are setting&n; *  things up.&n; *&n; *  If it&squot;s transmitting it&squot;s not receiving and vice versa. In fact the&n; *  time to get the board back into useful state after an operation is&n; *  quite large.&n; *&n; *  The driver works by keeping the board in receive mode waiting for a&n; *  packet to arrive. When one arrives it is copied out of the buffer&n; *  and delivered to the kernel. The card is reloaded and off we go.&n; *&n; *  When transmitting dev-&gt;tbusy is set and the card is reset (from&n; *  receive mode) [possibly losing a packet just received] to command&n; *  mode. A packet is loaded and transmit mode triggered. The interrupt&n; *  handler runs different code for transmit interrupts and can handle&n; *  returning to receive mode or retransmissions (yes you have to help&n; *  out with those too).&n; *&n; * DOC: Problems&n; *  &n; *  There are a wide variety of undocumented error returns from the card&n; *  and you basically have to kick the board and pray if they turn up. Most&n; *  only occur under extreme load or if you do something the board doesn&squot;t&n; *  like (eg touching a register at the wrong time).&n; *&n; *  The driver is less efficient than it could be. It switches through&n; *  receive mode even if more transmits are queued. If this worries you buy&n; *  a real Ethernet card.&n; *&n; *  The combination of slow receive restart and no real multicast&n; *  filter makes the board unusable with a kernel compiled for IP&n; *  multicasting in a real multicast environment. That&squot;s down to the board,&n; *  but even with no multicast programs running a multicast IP kernel is&n; *  in group 224.0.0.1 and you will therefore be listening to all multicasts.&n; *  One nv conference running over that Ethernet and you can give up.&n; *&n; */
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +8,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c501.c: 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov).&bslash;n&quot;
+l_string|&quot;3c501.c: 2000/02/08 Alan Cox (alan@redhat.com).&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n; *&t;Braindamage remaining:&n; *&t;The 3c501 board.&n; */
 macro_line|#include &lt;linux/module.h&gt;
@@ -310,6 +311,7 @@ id|netcard_portlist
 )brace
 suffix:semicolon
 macro_line|#else
+multiline_comment|/**&n; * el1_probe:&n; * @dev: The device structure passed in to probe. &n; *&n; * This can be called from two places. The network layer will probe using&n; * a device structure passed in with the probe information completed. For a&n; * modular driver we use #init_module to fill in our own structure and probe&n; * for it.&n; *&n; * Returns 0 on success. ENXIO if asked not to probe and ENODEV if asked to&n; * probe and failing to find anything.&n; */
 DECL|function|el1_probe
 r_int
 id|__init
@@ -423,7 +425,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; *&t;The actual probe.&n; */
+multiline_comment|/**&n; *&t;el1_probe: &n; *&t;@dev: The device structure to use&n; *&t;@ioaddr: An I/O address to probe at.&n; *&n; *&t;The actual probe. This is iterated over by #el1_probe in order to&n; *&t;check all the applicable device locations.&n; *&n; *&t;Returns 0 for a success, in which case the device is activated,&n; *&t;EAGAIN if the IRQ is in use by another driver, and ENODEV if the&n; *&t;board cannot be found.&n; */
 DECL|function|el1_probe1
 r_static
 r_int
@@ -710,6 +712,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: %s EtherLink at %#lx, using %sIRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -732,6 +735,7 @@ macro_line|#ifdef CONFIG_IP_MULTICAST
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;WARNING: Use of the 3c501 in a multicast kernel is NOT recommended.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -837,7 +841,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Open/initialize the board.&n; */
+multiline_comment|/**&n; *&t;el1_open:&n; *&t;@dev: device that is being opened&n; *&n; *&t;When an ifconfig is issued which changes the device flags to include&n; *&t;IFF_UP this function is called. It is only called when the change &n; *&t;occurs, not when the interface remains up. #el1_close will be called&n; *&t;when it goes down.&n; *&n; *&t;Returns 0 for a successful open, or -EAGAIN if someone has run off&n; *&t;with our interrupt line.&n; */
 DECL|function|el_open
 r_static
 r_int
@@ -854,6 +858,22 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
+suffix:semicolon
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -892,10 +912,28 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|el_reset
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|dev-&gt;start
@@ -917,6 +955,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * e1_start_xmit:&n; * @skb: The packet that is queued to be sent&n; * @dev: The 3c501 card we want to throw it down&n; *&n; * Attempt to send a packet to a 3c501 card. There are some interesting&n; * catches here because the 3c501 is an extremely old and therefore&n; * stupid piece of technology.&n; *&n; * If we are handling an interrupt on the other CPU we cannot load a packet&n; * as we may still be attempting to retrieve the last RX packet buffer.&n; *&n; * When a transmit times out we dump the card into control mode and just&n; * start again. It happens enough that it isnt worth logging.&n; *&n; * We avoid holding the spin locks when doing the packet load to the board.&n; * The device is very slow, and its DMA mode is even slower. If we held the&n; * lock while loading 1500 bytes onto the controller we would drop a lot of&n; * serial port characters. This requires we do extra locking, but we have&n; * no real choice.&n; */
 DECL|function|el_start_xmit
 r_static
 r_int
@@ -980,7 +1019,7 @@ id|jiffies
 op_minus
 id|dev-&gt;trans_start
 OL
-l_int|20
+id|HZ
 )paren
 (brace
 r_if
@@ -1318,7 +1357,7 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; *&t;The typical workload of the driver:&n; *&t;Handle the ether interface interrupts.&n; */
+multiline_comment|/**&n; * el_interrupt:&n; * @irq: Interrupt number&n; * @dev_id: The 3c501 that burped&n; * @regs: Register data (surplus to our requirements)&n; *&n; * Handle the ether interface interrupts. The 3c501 needs a lot more &n; * hand holding than most cards. In paticular we get a transmit interrupt&n; * with a collision error because the board firmware isnt capable of rewinding&n; * its own transmit buffer pointers. It can however count to 16 for us.&n; *&n; * On the receive side the card is also very dumb. It has no buffering to&n; * speak of. We simply pull the packet out of its PIO buffer (which is slow)&n; * and queue it for the kernel. Then we reset the card for the next packet.&n; *&n; * We sometimes get suprise interrupts late both because the SMP IRQ delivery&n; * is message passing and because the card sometimes seems to deliver late. I&n; * think if it is part way through a receive and the mode is changed it carries&n; * on receiving and sends us an interrupt. We have to band aid all these cases&n; * to get a sensible 150kbytes/second performance. Even then you want a small&n; * TCP window.&n; */
 DECL|function|el_interrupt
 r_static
 r_void
@@ -1967,7 +2006,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;We have a good packet. Well, not really &quot;good&quot;, just mostly not broken.&n; *&t;We must check everything to see if it is good.&n; */
+multiline_comment|/**&n; * el_receive:&n; * @dev: Device to pull the packets from&n; *&n; * We have a good packet. Well, not really &quot;good&quot;, just mostly not broken.&n; * We must check everything to see if it is good. In paticular we occasionally&n; * get wild packet sizes from the card. If the packet seems sane we PIO it&n; * off the card and queue it for the protocol layers.&n; */
 DECL|function|el_receive
 r_static
 r_void
@@ -2174,6 +2213,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * el_reset: Reset a 3c501 card&n; * @dev: The 3c501 card about to get zapped&n; *&n; * Even resetting a 3c501 isnt simple. When you activate reset it loses all&n; * its configuration. You must hold the lock when doing this. The function&n; * cannot take the lock itself as it is callable from the irq handler.&n; */
 DECL|function|el_reset
 r_static
 r_void
@@ -2264,12 +2304,6 @@ id|RX_BUF_CLR
 )paren
 suffix:semicolon
 multiline_comment|/* Set rx packet area to 0. */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Avoid glitch on writes to CMD regs */
 id|outb
 c_func
 (paren
@@ -2309,12 +2343,8 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
+multiline_comment|/**&n; * el1_close:&n; * @dev: 3c501 card to shut down&n; *&n; * Close a 3c501 card. The IFF_UP flag has been cleared by the user via&n; * the SIOCSIFFLAGS ioctl. We stop any further transmissions being queued,&n; * and then disable the interrupts. Finally we reset the chip. The effects&n; * of the rest will be cleaned up by #el1_open. Always returns 0 indicating&n; * a success.&n; */
 DECL|function|el1_close
 r_static
 r_int
@@ -2381,6 +2411,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * el1_get_stats:&n; * @dev: The card to get the statistics for&n; *&n; * In smarter devices this function is needed to pull statistics off the&n; * board itself. The 3c501 has no hardware statistics. We maintain them all&n; * so they are by definition always up to date.&n; *&n; * Returns the statistics for the card from the card private data&n; */
 DECL|function|el1_get_stats
 r_static
 r_struct
@@ -2412,7 +2443,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Set or clear the multicast filter for this adaptor.&n; *&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/**&n; * set_multicast_list:&n; * @dev: The device to adjust&n; *&n; * Set or clear the multicast filter for this adaptor to use the best-effort &n; * filtering supported. The 3c501 supports only three modes of filtering.&n; * It always receives broadcasts and packets for itself. You can choose to&n; * optionally receive all packets, or all multicast packets on top of this.&n; */
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -2576,6 +2607,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+multiline_comment|/**&n; * init_module:&n; *&n; * When the driver is loaded as a module this function is called. We fake up&n; * a device structure with the base I/O and interrupt set as if it was being&n; * called from Space.c. This minimises the extra code that would otherwise&n; * be required.&n; *&n; * Returns 0 for success or -EIO if a card is not found. Returning an error&n; * here also causes the module to be unloaded&n; */
 DECL|function|init_module
 r_int
 id|init_module
@@ -2612,6 +2644,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * cleanup_module:&n; * &n; * The module is being unloaded. We unhook our network device from the system&n; * and then free up the resources we took when the card was found.&n; */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

@@ -2220,10 +2220,10 @@ op_assign
 id|npi.mode
 suffix:semicolon
 multiline_comment|/* we may be able to transmit more packets now (??) */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|ppp-&gt;dev
 )paren
 suffix:semicolon
 )brace
@@ -2604,10 +2604,11 @@ l_int|1
 op_assign
 id|proto
 suffix:semicolon
-multiline_comment|/*&n;&t; * ppp-&gt;xq should only ever have more than 1 data packet on it&n;&t; * if the core net code calls us when dev-&gt;tbusy == 1.&n;&t; */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|skb_queue_tail
 c_func
@@ -3056,26 +3057,13 @@ id|ppp-&gt;xq
 )paren
 op_eq
 l_int|0
-op_logical_and
-id|ppp-&gt;dev-&gt;tbusy
 )paren
-(brace
-id|ppp-&gt;dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|do_mark_bh
-)paren
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|ppp-&gt;dev
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Now unlock the transmit path, let others in. */
 id|unlock_xmit_path
 c_func

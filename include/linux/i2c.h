@@ -3,10 +3,10 @@ multiline_comment|/* &t;&t;&t;&t;&t;&t;&t;&t;&t;     */
 multiline_comment|/* i2c.h - definitions for the i2c-bus interface&t;&t;&t;     */
 multiline_comment|/* &t;&t;&t;&t;&t;&t;&t;&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/*   Copyright (C) 1995-1999 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
+multiline_comment|/*   Copyright (C) 1995-2000 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c.h,v 1.32 1999/12/21 23:45:58 frodo Exp $ */
+multiline_comment|/* $Id: i2c.h,v 1.36 2000/01/18 23:54:07 frodo Exp $ */
 macro_line|#ifndef I2C_H
 DECL|macro|I2C_H
 mdefine_line|#define I2C_H
@@ -161,6 +161,10 @@ DECL|macro|I2C_M_TEN
 mdefine_line|#define I2C_M_TEN&t;0x10&t;/* we have a ten bit chip address&t;*/
 DECL|macro|I2C_M_RD
 mdefine_line|#define I2C_M_RD&t;0x01
+DECL|macro|I2C_M_NOSTART
+mdefine_line|#define I2C_M_NOSTART&t;0x4000
+DECL|macro|I2C_M_REV_DIR_ADDR
+mdefine_line|#define I2C_M_REV_DIR_ADDR&t;0x2000
 macro_line|#if 0
 mdefine_line|#define I2C_M_PROBE&t;0x20
 macro_line|#endif
@@ -438,7 +442,7 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-multiline_comment|/* These two are mainly used for bookkeeping &amp; dynamic unloading of &n;&t; * kernel modules. inc_use tells the driver that a client is being  &n;&t; * used by another module &amp; that it should increase its ref. counter.&n;&t; * dec_use is the inverse operation.&n;&t; * NB: Make sure you have no circular dependencies, or else you get a &n;&t; * deadlock when trying to unload the modules.&n;         * You should use the i2c_{inc,dec}_use_client functions instead of&n;         * calling this function directly.&n;&t; */
+multiline_comment|/* These two are mainly used for bookkeeping &amp; dynamic unloading of &n;&t; * kernel modules. inc_use tells the driver that a client is being  &n;&t; * used by another module &amp; that it should increase its ref. counter.&n;&t; * dec_use is the inverse operation.&n;&t; * NB: Make sure you have no circular dependencies, or else you get a &n;&t; * deadlock when trying to unload the modules.&n;&t;* You should use the i2c_{inc,dec}_use_client functions instead of&n;&t;* calling this function directly.&n;&t; */
 DECL|member|inc_use
 r_void
 (paren
@@ -497,7 +501,7 @@ suffix:semicolon
 multiline_comment|/* chip address - NOTE: 7bit &t;*/
 multiline_comment|/* addresses are stored in the&t;*/
 multiline_comment|/* _LOWER_ 7 bits of this char&t;*/
-multiline_comment|/* addr: unsigned int to make lm_sensors i2c-isa adapter work&n;           more cleanly. It does not take any more memory space, due to&n;           alignment considerations */
+multiline_comment|/* addr: unsigned int to make lm_sensors i2c-isa adapter work&n;&t;  more cleanly. It does not take any more memory space, due to&n;&t;  alignment considerations */
 DECL|member|adapter
 r_struct
 id|i2c_adapter
@@ -538,7 +542,7 @@ r_int
 r_int
 id|id
 suffix:semicolon
-multiline_comment|/* If a adapter algorithm can&squot;t to I2C-level access, set master_xfer&n;           to NULL. If an adapter algorithm can do SMBus access, set &n;           smbus_xfer. If set to NULL, the SMBus protocol is simulated&n;           using common I2C messages */
+multiline_comment|/* If a adapter algorithm can&squot;t to I2C-level access, set master_xfer&n;&t;   to NULL. If an adapter algorithm can do SMBus access, set &n;&t;   smbus_xfer. If set to NULL, the SMBus protocol is simulated&n;&t;   using common I2C messages */
 DECL|member|master_xfer
 r_int
 (paren
@@ -814,7 +818,7 @@ multiline_comment|/*flags for the driver struct: */
 DECL|macro|I2C_DF_NOTIFY
 mdefine_line|#define I2C_DF_NOTIFY&t;0x01&t;&t;/* notify on bus (de/a)ttaches &t;*/
 DECL|macro|I2C_DF_DUMMY
-mdefine_line|#define I2C_DF_DUMMY    0x02    &t;/* do not connect any clients */
+mdefine_line|#define I2C_DF_DUMMY&t;0x02&t;&t;/* do not connect any clients */
 multiline_comment|/* i2c_client_address_data is the struct for holding default client&n; * addresses for a driver and for the parameters supplied on the&n; * command line&n; */
 DECL|struct|i2c_client_address_data
 r_struct
@@ -1069,33 +1073,35 @@ suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* To determine what functionality is present */
 DECL|macro|I2C_FUNC_I2C
-mdefine_line|#define I2C_FUNC_I2C                    0x00000001
+mdefine_line|#define I2C_FUNC_I2C&t;&t;&t;0x00000001
 DECL|macro|I2C_FUNC_10BIT_ADDR
-mdefine_line|#define I2C_FUNC_10BIT_ADDR             0x00000002
+mdefine_line|#define I2C_FUNC_10BIT_ADDR&t;&t;0x00000002
+DECL|macro|I2C_FUNC_PROTOCOL_MANGLING
+mdefine_line|#define I2C_FUNC_PROTOCOL_MANGLING&t;0x00000004 /* I2C_M_{REV_DIR_ADDR,NOSTART} */
 DECL|macro|I2C_FUNC_SMBUS_QUICK
-mdefine_line|#define I2C_FUNC_SMBUS_QUICK            0x00010000 
+mdefine_line|#define I2C_FUNC_SMBUS_QUICK&t;&t;0x00010000 
 DECL|macro|I2C_FUNC_SMBUS_READ_BYTE
-mdefine_line|#define I2C_FUNC_SMBUS_READ_BYTE        0x00020000 
+mdefine_line|#define I2C_FUNC_SMBUS_READ_BYTE&t;0x00020000 
 DECL|macro|I2C_FUNC_SMBUS_WRITE_BYTE
-mdefine_line|#define I2C_FUNC_SMBUS_WRITE_BYTE       0x00040000 
+mdefine_line|#define I2C_FUNC_SMBUS_WRITE_BYTE&t;0x00040000 
 DECL|macro|I2C_FUNC_SMBUS_READ_BYTE_DATA
-mdefine_line|#define I2C_FUNC_SMBUS_READ_BYTE_DATA   0x00080000 
+mdefine_line|#define I2C_FUNC_SMBUS_READ_BYTE_DATA&t;0x00080000 
 DECL|macro|I2C_FUNC_SMBUS_WRITE_BYTE_DATA
-mdefine_line|#define I2C_FUNC_SMBUS_WRITE_BYTE_DATA  0x00100000 
+mdefine_line|#define I2C_FUNC_SMBUS_WRITE_BYTE_DATA&t;0x00100000 
 DECL|macro|I2C_FUNC_SMBUS_READ_WORD_DATA
-mdefine_line|#define I2C_FUNC_SMBUS_READ_WORD_DATA   0x00200000 
+mdefine_line|#define I2C_FUNC_SMBUS_READ_WORD_DATA&t;0x00200000 
 DECL|macro|I2C_FUNC_SMBUS_WRITE_WORD_DATA
-mdefine_line|#define I2C_FUNC_SMBUS_WRITE_WORD_DATA  0x00400000 
+mdefine_line|#define I2C_FUNC_SMBUS_WRITE_WORD_DATA&t;0x00400000 
 DECL|macro|I2C_FUNC_SMBUS_PROC_CALL
-mdefine_line|#define I2C_FUNC_SMBUS_PROC_CALL        0x00800000 
+mdefine_line|#define I2C_FUNC_SMBUS_PROC_CALL&t;0x00800000 
 DECL|macro|I2C_FUNC_SMBUS_READ_BLOCK_DATA
-mdefine_line|#define I2C_FUNC_SMBUS_READ_BLOCK_DATA  0x01000000 
+mdefine_line|#define I2C_FUNC_SMBUS_READ_BLOCK_DATA&t;0x01000000 
 DECL|macro|I2C_FUNC_SMBUS_WRITE_BLOCK_DATA
 mdefine_line|#define I2C_FUNC_SMBUS_WRITE_BLOCK_DATA 0x02000000 
 DECL|macro|I2C_FUNC_SMBUS_READ_I2C_BLOCK
-mdefine_line|#define I2C_FUNC_SMBUS_READ_I2C_BLOCK   0x04000000 /* New I2C-like block */
+mdefine_line|#define I2C_FUNC_SMBUS_READ_I2C_BLOCK&t;0x04000000 /* New I2C-like block */
 DECL|macro|I2C_FUNC_SMBUS_WRITE_I2C_BLOCK
-mdefine_line|#define I2C_FUNC_SMBUS_WRITE_I2C_BLOCK  0x08000000 /* transfers          */
+mdefine_line|#define I2C_FUNC_SMBUS_WRITE_I2C_BLOCK&t;0x08000000 /* transfer */
 DECL|macro|I2C_FUNC_SMBUS_BYTE
 mdefine_line|#define I2C_FUNC_SMBUS_BYTE I2C_FUNC_SMBUS_READ_BYTE | &bslash;&n;                            I2C_FUNC_SMBUS_WRITE_BYTE
 DECL|macro|I2C_FUNC_SMBUS_BYTE_DATA
@@ -1133,26 +1139,26 @@ multiline_comment|/* block[0] is used for length */
 suffix:semicolon
 multiline_comment|/* smbus_access read or write markers */
 DECL|macro|I2C_SMBUS_READ
-mdefine_line|#define I2C_SMBUS_READ      1
+mdefine_line|#define I2C_SMBUS_READ&t;1
 DECL|macro|I2C_SMBUS_WRITE
-mdefine_line|#define I2C_SMBUS_WRITE     0
+mdefine_line|#define I2C_SMBUS_WRITE&t;0
 multiline_comment|/* SMBus transaction types (size parameter in the above functions) &n;   Note: these no longer correspond to the (arbitrary) PIIX4 internal codes! */
 DECL|macro|I2C_SMBUS_QUICK
-mdefine_line|#define I2C_SMBUS_QUICK      0
+mdefine_line|#define I2C_SMBUS_QUICK&t;&t;0
 DECL|macro|I2C_SMBUS_BYTE
-mdefine_line|#define I2C_SMBUS_BYTE       1
+mdefine_line|#define I2C_SMBUS_BYTE&t;&t;1
 DECL|macro|I2C_SMBUS_BYTE_DATA
-mdefine_line|#define I2C_SMBUS_BYTE_DATA  2 
+mdefine_line|#define I2C_SMBUS_BYTE_DATA&t;2 
 DECL|macro|I2C_SMBUS_WORD_DATA
-mdefine_line|#define I2C_SMBUS_WORD_DATA  3
+mdefine_line|#define I2C_SMBUS_WORD_DATA&t;3
 DECL|macro|I2C_SMBUS_PROC_CALL
-mdefine_line|#define I2C_SMBUS_PROC_CALL  4
+mdefine_line|#define I2C_SMBUS_PROC_CALL&t;4
 DECL|macro|I2C_SMBUS_BLOCK_DATA
-mdefine_line|#define I2C_SMBUS_BLOCK_DATA 5
+mdefine_line|#define I2C_SMBUS_BLOCK_DATA&t;5
 multiline_comment|/* ----- commands for the ioctl like i2c_command call:&n; * note that additional calls are defined in the algorithm and hw &n; *&t;dependent layers - these can be listed here, or see the &n; *&t;corresponding header files.&n; */
 multiline_comment|/* -&gt; bit-adapter specific ioctls&t;*/
 DECL|macro|I2C_RETRIES
-mdefine_line|#define I2C_RETRIES&t;0x0701  /* number times a device adress should  */
+mdefine_line|#define I2C_RETRIES&t;0x0701&t;/* number times a device adress should&t;*/
 multiline_comment|/* be polled when not acknowledging &t;*/
 DECL|macro|I2C_TIMEOUT
 mdefine_line|#define I2C_TIMEOUT&t;0x0702&t;/* set timeout - call with int &t;&t;*/
@@ -1164,11 +1170,11 @@ DECL|macro|I2C_SLAVE_FORCE
 mdefine_line|#define I2C_SLAVE_FORCE&t;0x0706&t;/* Change slave address&t;&t;&t;*/
 multiline_comment|/* Attn.: Slave address is 7 or 10 bits */
 multiline_comment|/* This changes the address, even if it */
-multiline_comment|/* is already taken!                    */
+multiline_comment|/* is already taken!&t;&t;&t;*/
 DECL|macro|I2C_TENBIT
-mdefine_line|#define I2C_TENBIT&t;0x0704&t;/* 0 for 7 bit addrs, != 0 for 10 bit   */
+mdefine_line|#define I2C_TENBIT&t;0x0704&t;/* 0 for 7 bit addrs, != 0 for 10 bit&t;*/
 DECL|macro|I2C_FUNCS
-mdefine_line|#define I2C_FUNCS       0x0705  /* Get the adapter functionality */
+mdefine_line|#define I2C_FUNCS&t;0x0705&t;/* Get the adapter functionality */
 macro_line|#if 0
 mdefine_line|#define I2C_ACK_TEST&t;0x0710&t;/* See if a slave is at a specific adress */
 macro_line|#endif
@@ -1176,7 +1182,7 @@ DECL|macro|I2C_SMBUS
 mdefine_line|#define I2C_SMBUS&t;0x0720&t;/* SMBus-level access */
 multiline_comment|/* ... algo-bit.c recognizes */
 DECL|macro|I2C_UDELAY
-mdefine_line|#define I2C_UDELAY&t;0x0705  /* set delay in microsecs between each  */
+mdefine_line|#define I2C_UDELAY&t;0x0705&t;/* set delay in microsecs between each&t;*/
 multiline_comment|/* written byte (except address)&t;*/
 DECL|macro|I2C_MDELAY
 mdefine_line|#define I2C_MDELAY&t;0x0706&t;/* millisec delay between written bytes */

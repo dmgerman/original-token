@@ -165,9 +165,9 @@ macro_line|#undef enable_irq
 DECL|macro|disable_irq
 macro_line|#undef disable_irq
 macro_line|#else /* CONFIG_APUS */
-multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all - which happens to be powermac&n; * at present (G3 powermacs have 64).&n; */
+multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;&t;&t;128
+mdefine_line|#define NR_IRQS&t;&t;&t;256
 macro_line|#endif /* CONFIG_APUS */
 DECL|macro|NUM_8259_INTERRUPTS
 mdefine_line|#define NUM_8259_INTERRUPTS&t;16

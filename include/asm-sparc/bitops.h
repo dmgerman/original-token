@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.54 1998/09/21 05:07:34 jj Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.55 2000/02/09 03:28:32 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
@@ -380,7 +380,6 @@ DECL|function|test_and_set_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_and_set_bit
 c_func
 (paren
@@ -536,7 +535,6 @@ DECL|function|test_and_clear_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_and_clear_bit
 c_func
 (paren
@@ -691,7 +689,6 @@ suffix:semicolon
 DECL|function|test_and_change_bit
 r_extern
 id|__inline__
-r_int
 r_int
 id|test_and_change_bit
 c_func
@@ -850,7 +847,6 @@ DECL|function|test_bit
 r_extern
 id|__inline__
 r_int
-r_int
 id|test_bit
 c_func
 (paren
@@ -865,7 +861,8 @@ id|addr
 )paren
 (brace
 r_return
-l_int|1UL
+(paren
+l_int|1
 op_amp
 (paren
 (paren
@@ -889,6 +886,9 @@ op_amp
 l_int|31
 )paren
 )paren
+)paren
+op_ne
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* The easy/cheese version for now. */

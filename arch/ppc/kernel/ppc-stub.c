@@ -1015,7 +1015,7 @@ id|msr
 id|asm
 r_volatile
 (paren
-l_string|&quot;mfmsr %0&quot;
+l_string|&quot;mtmsr %0&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;

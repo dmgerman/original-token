@@ -341,7 +341,7 @@ id|sh-&gt;irq
 )braket
 op_decrement
 suffix:semicolon
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -349,11 +349,9 @@ r_void
 op_star
 )paren
 id|status
-comma
-l_int|512
 )paren
 suffix:semicolon
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -363,8 +361,6 @@ op_star
 id|dma_scratch
 op_minus
 l_int|4
-comma
-l_int|1024
 )paren
 suffix:semicolon
 r_for
@@ -402,7 +398,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -421,14 +417,6 @@ id|i
 )braket
 dot
 id|sg_list
-comma
-id|sh-&gt;sg_tablesize
-op_star
-r_sizeof
-(paren
-r_struct
-id|eata_sg_list
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -4855,7 +4843,7 @@ r_struct
 id|eata_ccb
 op_star
 )paren
-id|scsi_init_malloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -4876,7 +4864,7 @@ r_struct
 id|eata_sp
 op_star
 )paren
-id|scsi_init_malloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -5131,7 +5119,7 @@ id|sp
 )paren
 )paren
 suffix:semicolon
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -5139,15 +5127,9 @@ r_void
 op_star
 )paren
 id|cp
-comma
-r_sizeof
-(paren
-r_struct
-id|eata_ccb
-)paren
 )paren
 suffix:semicolon
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -5155,12 +5137,6 @@ r_void
 op_star
 )paren
 id|sp
-comma
-r_sizeof
-(paren
-r_struct
-id|eata_sp
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -6912,7 +6888,6 @@ id|hd-&gt;primary
 op_assign
 id|TRUE
 suffix:semicolon
-singleline_comment|//FIXME//    sh-&gt;wish_block = FALSE;&t;   
 r_if
 c_cond
 (paren
@@ -7848,7 +7823,7 @@ l_string|&quot;eata_dma&quot;
 suffix:semicolon
 id|status
 op_assign
-id|scsi_init_malloc
+id|kmalloc
 c_func
 (paren
 l_int|512
@@ -7860,7 +7835,7 @@ id|GFP_DMA
 suffix:semicolon
 id|dma_scratch
 op_assign
-id|scsi_init_malloc
+id|kmalloc
 c_func
 (paren
 l_int|1024
@@ -8205,7 +8180,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -8213,12 +8188,10 @@ r_void
 op_star
 )paren
 id|status
-comma
-l_int|512
 )paren
 suffix:semicolon
 )brace
-id|scsi_init_free
+id|kfree
 c_func
 (paren
 (paren
@@ -8228,8 +8201,6 @@ op_star
 id|dma_scratch
 op_minus
 l_int|4
-comma
-l_int|1024
 )paren
 suffix:semicolon
 id|DBG

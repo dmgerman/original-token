@@ -27,6 +27,8 @@ DECL|macro|TEMP_MINOR
 mdefine_line|#define TEMP_MINOR&t;&t;131&t;/* Temperature Sensor */
 DECL|macro|RTC_MINOR
 mdefine_line|#define RTC_MINOR 135
+DECL|macro|EFI_RTC_MINOR
+mdefine_line|#define EFI_RTC_MINOR&t;&t;136&t;/* EFI Time services */
 DECL|macro|SUN_OPENPROM_MINOR
 mdefine_line|#define SUN_OPENPROM_MINOR 139
 DECL|macro|NVRAM_MINOR

@@ -41,14 +41,6 @@ id|max_page
 )paren
 suffix:semicolon
 macro_line|#endif
-r_extern
-r_void
-id|show_net_buffers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|do_check_pgt_cache
 r_int
 id|do_check_pgt_cache
@@ -427,13 +419,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-id|show_net_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_extern
 r_void

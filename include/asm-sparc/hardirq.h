@@ -22,6 +22,8 @@ DECL|macro|hardirq_exit
 mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
+DECL|macro|in_irq
+mdefine_line|#define in_irq() (local_irq_count != 0)
 macro_line|#else
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
@@ -51,6 +53,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
+DECL|macro|in_irq
+mdefine_line|#define in_irq() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] != 0); })
 DECL|function|release_irqlock
 r_static
 r_inline
