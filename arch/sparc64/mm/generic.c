@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: generic.c,v 1.3 1998/10/27 23:28:07 davem Exp $&n; * generic.c: Generic Sparc mm routines that are not dependent upon&n; *            MMU type but are Sparc specific.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: generic.c,v 1.8 1999/03/12 06:51:50 davem Exp $&n; * generic.c: Generic Sparc mm routines that are not dependent upon&n; *            MMU type but are Sparc specific.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
@@ -193,7 +193,7 @@ id|page
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Remap IO memory, the same way as remap_page_range(), but use&n; * the obio memory space.&n; *&n; * They use a pgprot that sets PAGE_IO and does not check the&n; * mem_map table as this is independent of normal memory.&n; */
+multiline_comment|/* Remap IO memory, the same way as remap_page_range(), but use&n; * the obio memory space.&n; *&n; * They use a pgprot that sets PAGE_IO and does not check the&n; * mem_map table as this is independent of normal memory.&n; *&n; * As a special hack if the lowest bit of offset is set the&n; * side-effect bit will be turned off.  This is used as a&n; * performance improvement on FFB/AFB. -DaveM&n; */
 DECL|function|io_remap_pte_range
 r_static
 r_inline
@@ -271,16 +271,19 @@ op_assign
 id|mk_pte_io
 c_func
 (paren
+(paren
 id|offset
+op_amp
+op_complement
+(paren
+l_int|0x1UL
+)paren
+)paren
 comma
 id|prot
 comma
 id|space
 )paren
-suffix:semicolon
-id|offset
-op_add_assign
-id|PAGE_SIZE
 suffix:semicolon
 r_if
 c_cond
@@ -307,7 +310,7 @@ op_logical_neg
 (paren
 id|offset
 op_amp
-l_int|0x3fffff
+l_int|0x3ffffe
 )paren
 op_logical_and
 id|end
@@ -322,7 +325,14 @@ op_assign
 id|mk_pte_io
 c_func
 (paren
+(paren
 id|offset
+op_amp
+op_complement
+(paren
+l_int|0x1UL
+)paren
+)paren
 comma
 id|__pgprot
 c_func
@@ -347,8 +357,6 @@ suffix:semicolon
 id|offset
 op_add_assign
 l_int|0x400000
-op_minus
-id|PAGE_SIZE
 suffix:semicolon
 )brace
 r_else
@@ -366,7 +374,7 @@ op_logical_neg
 (paren
 id|offset
 op_amp
-l_int|0x7ffff
+l_int|0x7fffe
 )paren
 op_logical_and
 id|end
@@ -381,7 +389,14 @@ op_assign
 id|mk_pte_io
 c_func
 (paren
+(paren
 id|offset
+op_amp
+op_complement
+(paren
+l_int|0x1UL
+)paren
+)paren
 comma
 id|__pgprot
 c_func
@@ -406,8 +421,6 @@ suffix:semicolon
 id|offset
 op_add_assign
 l_int|0x80000
-op_minus
-id|PAGE_SIZE
 suffix:semicolon
 )brace
 r_else
@@ -418,7 +431,7 @@ op_logical_neg
 (paren
 id|offset
 op_amp
-l_int|0xffff
+l_int|0xfffe
 )paren
 op_logical_and
 id|end
@@ -433,7 +446,14 @@ op_assign
 id|mk_pte_io
 c_func
 (paren
+(paren
 id|offset
+op_amp
+op_complement
+(paren
+l_int|0x1UL
+)paren
+)paren
 comma
 id|__pgprot
 c_func
@@ -458,11 +478,32 @@ suffix:semicolon
 id|offset
 op_add_assign
 l_int|0x10000
-op_minus
-id|PAGE_SIZE
 suffix:semicolon
 )brace
 )brace
+r_else
+id|offset
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|offset
+op_amp
+l_int|0x1UL
+)paren
+id|pte_val
+c_func
+(paren
+id|entry
+)paren
+op_and_assign
+op_complement
+(paren
+id|_PAGE_E
+)paren
+suffix:semicolon
 r_do
 (brace
 id|oldpage

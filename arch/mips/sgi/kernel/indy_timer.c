@@ -317,9 +317,13 @@ multiline_comment|/* We update the Dallas time of day approx. every 11 minutes,&
 r_if
 c_cond
 (paren
-id|time_state
-op_ne
-id|TIME_BAD
+(paren
+id|time_status
+op_amp
+id|STA_UNSYNC
+)paren
+op_eq
+l_int|0
 op_logical_and
 id|xtime.tv_sec
 OG
@@ -328,7 +332,7 @@ op_plus
 l_int|660
 op_logical_and
 id|xtime.tv_usec
-OG
+op_ge
 l_int|500000
 op_minus
 (paren
@@ -338,7 +342,7 @@ l_int|1
 )paren
 op_logical_and
 id|xtime.tv_usec
-OL
+op_le
 l_int|500000
 op_plus
 (paren

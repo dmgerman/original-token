@@ -2138,7 +2138,7 @@ id|ATTR_GID
 )paren
 op_logical_and
 (paren
-id|attr-&gt;ia_uid
+id|attr-&gt;ia_gid
 op_ne
 id|NCP_SERVER
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.6 1998/06/10 07:29:22 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; */
+multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.7 1999/03/17 02:34:57 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SYN_COOKIES) 
 macro_line|#include &lt;linux/tcp.h&gt;
@@ -487,6 +487,10 @@ op_amp
 id|or_ipv4
 suffix:semicolon
 multiline_comment|/* for savety */
+id|req-&gt;af.v4_req.opt
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* We throwed the options of the initial SYN away, so we hope&n;&t; * the ACK carries the same options again (see RFC1122 4.2.3.8)&n;&t; */
 r_if
 c_cond
@@ -550,10 +554,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|req-&gt;af.v4_req.opt
-op_assign
-l_int|NULL
-suffix:semicolon
 id|req-&gt;snd_wscale
 op_assign
 id|req-&gt;rcv_wscale

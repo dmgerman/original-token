@@ -358,7 +358,11 @@ op_star
 id|drv-&gt;num_output_buffers
 )paren
 comma
+(paren
+id|GFP_DMA
+op_or
 id|GFP_KERNEL
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -524,7 +528,11 @@ op_star
 id|drv-&gt;num_input_buffers
 )paren
 comma
+(paren
+id|GFP_DMA
+op_or
 id|GFP_KERNEL
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2525,11 +2533,6 @@ l_int|0
 suffix:semicolon
 id|k
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
 id|arg
 suffix:semicolon
 r_switch
@@ -4774,6 +4777,12 @@ op_eq
 l_int|16
 )paren
 (brace
+r_switch
+c_cond
+(paren
+id|j
+)paren
+(brace
 r_case
 id|AUDIO_ENCODING_LINEAR
 suffix:colon
@@ -4792,6 +4801,7 @@ id|AFMT_S16_LE
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 id|COPY_OUT
 c_func
@@ -8533,6 +8543,13 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+macro_line|#ifdef S_ZERO_WR
+multiline_comment|/* This is how 2.0 ended up dealing with 0 len writes */
+id|inode-&gt;i_flags
+op_or_assign
+id|S_ZERO_WR
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren

@@ -31,24 +31,34 @@ DECL|macro|_FP_CHOOSENAN
 mdefine_line|#define _FP_CHOOSENAN(fs, wc, R, X, Y)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    R##_s = Y##_s;&t;&t;&t;&t;&t;&t;&bslash;&n;    _FP_FRAC_COPY_##wc(R,Y);&t;&t;&t;&t;&t;&bslash;&n;    R##_c = FP_CLS_NAN;&t;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_RAW_1
 mdefine_line|#define __FP_UNPACK_RAW_1(fs, X, val)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    X##_f = _flo-&gt;bits.frac;&t;&t;&t;&t;&t;&bslash;&n;    X##_e = _flo-&gt;bits.exp;&t;&t;&t;&t;&t;&bslash;&n;    X##_s = _flo-&gt;bits.sign;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_RAW_1
-mdefine_line|#define __FP_PACK_RAW_1(fs, val, X)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac = X##_f;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp  = X##_e;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign = X##_s;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_RAW_2
 mdefine_line|#define __FP_UNPACK_RAW_2(fs, X, val)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    X##_f0 = _flo-&gt;bits.frac0;&t;&t;&t;&t;&bslash;&n;    X##_f1 = _flo-&gt;bits.frac1;&t;&t;&t;&t;&bslash;&n;    X##_e  = _flo-&gt;bits.exp;&t;&t;&t;&t;&bslash;&n;    X##_s  = _flo-&gt;bits.sign;&t;&t;&t;&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_RAW_2
-mdefine_line|#define __FP_PACK_RAW_2(fs, val, X)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac0 = X##_f0;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac1 = X##_f1;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp   = X##_e;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign  = X##_s;&t;&t;&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_S
 mdefine_line|#define __FP_UNPACK_S(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    __FP_UNPACK_RAW_1(S,X,val);&t;&t;&bslash;&n;    _FP_UNPACK_CANONICAL(S,1,X);&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_S
-mdefine_line|#define __FP_PACK_S(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(S,1,X);&t;&t;&bslash;&n;    __FP_PACK_RAW_1(S,val,X);&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_D
 mdefine_line|#define __FP_UNPACK_D(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    __FP_UNPACK_RAW_1(D,X,val);&t;&t;&bslash;&n;    _FP_UNPACK_CANONICAL(D,1,X);&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_D
-mdefine_line|#define __FP_PACK_D(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(D,1,X);&t;&t;&bslash;&n;    __FP_PACK_RAW_1(D,val,X);&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_Q
 mdefine_line|#define __FP_UNPACK_Q(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    __FP_UNPACK_RAW_2(Q,X,val);&t;&t;&bslash;&n;    _FP_UNPACK_CANONICAL(Q,2,X);&t;&bslash;&n;  } while (0)
+DECL|macro|__FP_PACK_RAW_1
+mdefine_line|#define __FP_PACK_RAW_1(fs, val, X)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac = X##_f;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp  = X##_e;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign = X##_s;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
+DECL|macro|__FP_PACK_RAW_2
+mdefine_line|#define __FP_PACK_RAW_2(fs, val, X)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac0 = X##_f0;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac1 = X##_f1;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp   = X##_e;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign  = X##_s;&t;&t;&t;&t;&bslash;&n;  } while (0)
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+multiline_comment|/* We only actually write to the destination register&n; * if exceptions signalled (if any) will not trap.&n; */
+DECL|macro|__FPU_TEM
+mdefine_line|#define __FPU_TEM &bslash;&n;&t;(((current-&gt;tss.xfsr[0])&gt;&gt;23)&amp;0x1f)
+DECL|macro|__FPU_TRAP_P
+mdefine_line|#define __FPU_TRAP_P(bits) &bslash;&n;&t;((__FPU_TEM &amp; (bits)) != 0)
+DECL|macro|__FP_PACK_S
+mdefine_line|#define __FP_PACK_S(val,X)&t;&t;&t;&bslash;&n;({  int __exc = _FP_PACK_CANONICAL(S,1,X);&t;&bslash;&n;    if(!__exc || !__FPU_TRAP_P(__exc))&t;&t;&bslash;&n;        __FP_PACK_RAW_1(S,val,X);&t;&t;&bslash;&n;    __exc;&t;&t;&t;&t;&t;&bslash;&n;})
+DECL|macro|__FP_PACK_D
+mdefine_line|#define __FP_PACK_D(val,X)&t;&t;&t;&bslash;&n;({  int __exc = _FP_PACK_CANONICAL(D,1,X);&t;&bslash;&n;    if(!__exc || !__FPU_TRAP_P(__exc))&t;&t;&bslash;&n;        __FP_PACK_RAW_1(D,val,X);&t;&t;&bslash;&n;    __exc;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__FP_PACK_Q
-mdefine_line|#define __FP_PACK_Q(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(Q,2,X);&t;&t;&bslash;&n;    __FP_PACK_RAW_2(Q,val,X);&t;&t;&bslash;&n;  } while (0)
+mdefine_line|#define __FP_PACK_Q(val,X)&t;&t;&t;&bslash;&n;({  int __exc = _FP_PACK_CANONICAL(Q,2,X);&t;&bslash;&n;    if(!__exc || !__FPU_TRAP_P(__exc))&t;&t;&bslash;&n;        __FP_PACK_RAW_2(Q,val,X);&t;&t;&bslash;&n;    __exc;&t;&t;&t;&t;&t;&bslash;&n;})
+multiline_comment|/* Obtain the current rounding mode. */
+DECL|macro|FP_ROUNDMODE
+mdefine_line|#define FP_ROUNDMODE&t;((current-&gt;tss.xfsr[0] &gt;&gt; 30) &amp; 0x3)
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|macro|add_ssaaaa
@@ -152,7 +162,7 @@ id|cc
 "&quot;"
 )paren
 DECL|macro|umul_ppmm
-mdefine_line|#define umul_ppmm(wh, wl, u, v) &t;&t;&t;&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  &t;long tmp1 = 0, tmp2 = 0, tmp3 = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ (&quot;mulx %2,%3,%1
+mdefine_line|#define umul_ppmm(wh, wl, u, v) &t;&t;&t;&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ (&quot;mulx %2,%3,%1
 id|srlx
 op_mod
 l_int|2
@@ -160,7 +170,8 @@ comma
 l_int|32
 comma
 op_mod
-l_int|4
+op_mod
+id|g1
 id|srl
 op_mod
 l_int|3
@@ -168,16 +179,20 @@ comma
 l_int|0
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 id|mulx
 op_mod
-l_int|4
+op_mod
+id|g1
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 comma
 op_mod
-l_int|6
+op_mod
+id|g3
 id|srlx
 op_mod
 l_int|3
@@ -185,7 +200,8 @@ comma
 l_int|32
 comma
 op_mod
-l_int|4
+op_mod
+id|g1
 id|srl
 op_mod
 l_int|2
@@ -193,16 +209,20 @@ comma
 l_int|0
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 id|mulx
 op_mod
-l_int|4
+op_mod
+id|g1
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 id|srlx
 op_mod
 l_int|2
@@ -210,16 +230,20 @@ comma
 l_int|32
 comma
 op_mod
-l_int|4
+op_mod
+id|g1
 id|add
 op_mod
-l_int|5
+op_mod
+id|g2
 comma
 op_mod
-l_int|6
+op_mod
+id|g3
 comma
 op_mod
-l_int|6
+op_mod
+id|g3
 id|srlx
 op_mod
 l_int|3
@@ -227,30 +251,38 @@ comma
 l_int|32
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 id|mulx
 op_mod
-l_int|4
+op_mod
+id|g1
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 comma
 op_mod
-l_int|4
+op_mod
+id|g1
 id|srlx
 op_mod
-l_int|6
+op_mod
+id|g3
 comma
 l_int|32
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 id|add
 op_mod
-l_int|4
+op_mod
+id|g1
 comma
 op_mod
-l_int|5
+op_mod
+id|g2
 comma
 op_mod
 l_int|0
@@ -265,13 +297,13 @@ l_string|&quot; ((UDItype)(wl))&t;&t;&t;&t;      &t;&t;&t;&bslash;&n;&t;   : &qu
 id|r
 l_string|&quot; ((UDItype)(u)),&t;&t;&t;&t;     &t;&t;&t;&bslash;&n;&t;     &quot;
 id|r
-l_string|&quot; ((UDItype)(v)),&t;&t;&t;&t;      &t;&t;&t;&bslash;&n;&t;     &quot;
-id|r
-l_string|&quot; ((UDItype)(tmp1)),&t;&t;&t;&t;      &t;&t;&t;&bslash;&n;&t;     &quot;
-id|r
-l_string|&quot; ((UDItype)(tmp2)),&t;&t;&t;&t;      &t;&t;&t;&bslash;&n;&t;     &quot;
-id|r
-l_string|&quot; ((UDItype)(tmp3))&t;&t;&t;&t;      &t;&t;&t;&bslash;&n;&t;   : &quot;
+l_string|&quot; ((UDItype)(v))&t;&t;&t;&t;      &t;&t;&t;&t;&bslash;&n;&t;   : &quot;
+id|g1
+l_string|&quot;, &quot;
+id|g2
+l_string|&quot;, &quot;
+id|g3
+l_string|&quot;, &quot;
 id|cc
 "&quot;"
 )paren
@@ -296,4 +328,15 @@ macro_line|#else
 DECL|macro|__BYTE_ORDER
 mdefine_line|#define __BYTE_ORDER __LITTLE_ENDIAN
 macro_line|#endif
+multiline_comment|/* Exception flags. */
+DECL|macro|EFLAG_INVALID
+mdefine_line|#define EFLAG_INVALID&t;&t;(1 &lt;&lt; 4)
+DECL|macro|EFLAG_OVERFLOW
+mdefine_line|#define EFLAG_OVERFLOW&t;&t;(1 &lt;&lt; 3)
+DECL|macro|EFLAG_UNDERFLOW
+mdefine_line|#define EFLAG_UNDERFLOW&t;&t;(1 &lt;&lt; 2)
+DECL|macro|EFLAG_DIVZERO
+mdefine_line|#define EFLAG_DIVZERO&t;&t;(1 &lt;&lt; 1)
+DECL|macro|EFLAG_INEXACT
+mdefine_line|#define EFLAG_INEXACT&t;&t;(1 &lt;&lt; 0)
 eof

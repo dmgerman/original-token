@@ -1571,6 +1571,30 @@ op_star
 id|qregs
 suffix:semicolon
 multiline_comment|/* Adapter registers          */
+DECL|member|res_cpu
+r_struct
+id|pti_queue_entry
+op_star
+id|res_cpu
+suffix:semicolon
+multiline_comment|/* Ptr to RESPONSE bufs (CPU) */
+DECL|member|req_cpu
+r_struct
+id|pti_queue_entry
+op_star
+id|req_cpu
+suffix:semicolon
+multiline_comment|/* Ptr to REQUEST bufs (CPU)  */
+DECL|member|res_dvma
+id|__u32
+id|res_dvma
+suffix:semicolon
+multiline_comment|/* Ptr to RESPONSE bufs (DVMA)*/
+DECL|member|req_dvma
+id|__u32
+id|req_dvma
+suffix:semicolon
+multiline_comment|/* Ptr to REQUEST bufs (DVMA) */
 DECL|member|req_in_ptr
 id|u_int
 id|req_in_ptr
@@ -1581,30 +1605,6 @@ id|u_int
 id|res_out_ptr
 suffix:semicolon
 multiline_comment|/* index of next result slot  */
-DECL|member|res_cpu
-r_struct
-id|pti_queue_entry
-op_star
-id|res_cpu
-suffix:semicolon
-multiline_comment|/* Ptr to RESPONSE bufs (CPU) */
-DECL|member|res_dvma
-id|__u32
-id|res_dvma
-suffix:semicolon
-multiline_comment|/* Ptr to RESPONSE bufs (DVMA)*/
-DECL|member|req_cpu
-r_struct
-id|pti_queue_entry
-op_star
-id|req_cpu
-suffix:semicolon
-multiline_comment|/* Ptr to REQUEST bufs (CPU)  */
-DECL|member|req_dvma
-id|__u32
-id|req_dvma
-suffix:semicolon
-multiline_comment|/* Ptr to REQUEST bufs (DVMA) */
 DECL|member|cmd_count
 r_int
 id|cmd_count
@@ -1625,6 +1625,17 @@ r_int
 id|send_marker
 suffix:semicolon
 multiline_comment|/* must we send a marker?     */
+multiline_comment|/* The cmd-&gt;handler is only 32-bits, so that things work even on monster&n;&t; * Ex000 sparc64 machines with &gt;4GB of ram we just keep track of the&n;&t; * scsi command pointers here.  This is essentially what Matt Jacob does. -DaveM&n;&t; */
+DECL|member|cmd_slots
+id|Scsi_Cmnd
+op_star
+id|cmd_slots
+(braket
+id|QLOGICISP_REQ_QUEUE_LEN
+op_plus
+l_int|1
+)braket
+suffix:semicolon
 multiline_comment|/* The rest of the elements are unimportant for performance. */
 DECL|member|fware_majrev
 DECL|member|fware_minrev
@@ -1717,30 +1728,12 @@ r_int
 r_char
 id|swsreg
 suffix:semicolon
-macro_line|#if 0
+DECL|member|is_pti
+r_int
 r_char
-id|res
-(braket
-id|RES_QUEUE_LEN
-op_plus
-l_int|1
-)braket
-(braket
-id|QUEUE_ENTRY_LEN
-)braket
+id|is_pti
 suffix:semicolon
-r_char
-id|req
-(braket
-id|QLOGICISP_REQ_QUEUE_LEN
-op_plus
-l_int|1
-)braket
-(braket
-id|QUEUE_ENTRY_LEN
-)braket
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/* Non-zero if this is a PTI board. */
 )brace
 suffix:semicolon
 multiline_comment|/* How to twiddle them bits... */

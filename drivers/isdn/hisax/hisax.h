@@ -1151,10 +1151,14 @@ id|s_state
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|amd7930_hw
+DECL|struct|foreign_hw
 r_struct
-id|amd7930_hw
+id|foreign_hw
 (brace
+DECL|member|doHDLCprocessing
+r_int
+id|doHDLCprocessing
+suffix:semicolon
 DECL|member|tx_buff
 id|u_char
 op_star
@@ -1321,10 +1325,10 @@ r_struct
 id|tiger_hw
 id|tiger
 suffix:semicolon
-DECL|member|amd7930
+DECL|member|foreign
 r_struct
-id|amd7930_hw
-id|amd7930
+id|foreign_hw
+id|foreign
 suffix:semicolon
 DECL|member|hw
 )brace
@@ -2181,6 +2185,12 @@ r_struct
 id|ix1_hw
 id|niccy
 suffix:semicolon
+DECL|member|foreign
+r_struct
+id|foreign_interface
+op_star
+id|foreign
+suffix:semicolon
 DECL|member|hw
 )brace
 id|hw
@@ -2542,8 +2552,10 @@ DECL|macro|ISDN_CTYPE_AMD7930
 mdefine_line|#define  ISDN_CTYPE_AMD7930&t;23
 DECL|macro|ISDN_CTYPE_NICCY
 mdefine_line|#define  ISDN_CTYPE_NICCY&t;24
+DECL|macro|ISDN_CTYPE_DBRI
+mdefine_line|#define  ISDN_CTYPE_DBRI&t;25
 DECL|macro|ISDN_CTYPE_COUNT
-mdefine_line|#define  ISDN_CTYPE_COUNT&t;24
+mdefine_line|#define  ISDN_CTYPE_COUNT&t;25
 macro_line|#ifdef ISDN_CHIP_ISAC
 DECL|macro|ISDN_CHIP_ISAC
 macro_line|#undef ISDN_CHIP_ISAC
@@ -2717,8 +2729,15 @@ macro_line|#else
 DECL|macro|CARD_NICCY
 mdefine_line|#define CARD_NICCY 0
 macro_line|#endif
+macro_line|#ifdef  CONFIG_HISAX_DBRI
+DECL|macro|CARD_DBRI
+mdefine_line|#define CARD_DBRI (1 &lt;&lt; ISDN_CTYPE_DBRI)
+macro_line|#else
+DECL|macro|CARD_DBRI
+mdefine_line|#define CARD_DBRI 0
+macro_line|#endif
 DECL|macro|SUPORTED_CARDS
-mdefine_line|#define  SUPORTED_CARDS  (CARD_TELES0 | CARD_TELES3 | CARD_AVM_A1 | CARD_ELSA &bslash;&n;&t;&t;&t; | CARD_IX1MICROR2 | CARD_DIEHLDIVA | CARD_ASUSCOM &bslash;&n;&t;&t;&t; | CARD_TELEINT | CARD_SEDLBAUER | CARD_SPORTSTER &bslash;&n;&t;&t;&t; | CARD_MIC | CARD_NETJET | CARD_TELES3C | CARD_AMD7930 &bslash;&n;&t;&t;&t; | CARD_NICCY)
+mdefine_line|#define  SUPORTED_CARDS  (CARD_TELES0 | CARD_TELES3 | CARD_AVM_A1 | CARD_ELSA &bslash;&n;&t;&t;&t; | CARD_IX1MICROR2 | CARD_DIEHLDIVA | CARD_ASUSCOM &bslash;&n;&t;&t;&t; | CARD_TELEINT | CARD_SEDLBAUER | CARD_SPORTSTER &bslash;&n;&t;&t;&t; | CARD_MIC | CARD_NETJET | CARD_TELES3C | CARD_AMD7930 &bslash;&n;&t;&t;&t; | CARD_NICCY | CARD_DBRI)
 DECL|macro|TEI_PER_CARD
 mdefine_line|#define TEI_PER_CARD 0
 macro_line|#ifdef CONFIG_HISAX_1TR6

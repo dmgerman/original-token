@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.7 1998/05/22 14:33:40 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.10 1998/12/16 04:33:58 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* XXX This needs to be mostly redone for sun5 SYSIO. */
 macro_line|#ifndef _SPARC64_SBUS_H
 DECL|macro|_SPARC64_SBUS_H
@@ -265,6 +265,15 @@ DECL|member|num_sbus_ranges
 r_int
 id|num_sbus_ranges
 suffix:semicolon
+DECL|member|upaid
+r_int
+id|upaid
+suffix:semicolon
+DECL|member|starfire_cookie
+r_void
+op_star
+id|starfire_cookie
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -280,6 +289,26 @@ DECL|macro|for_each_sbusdev
 mdefine_line|#define for_each_sbusdev(device, bus) &bslash;&n;        for((device) = (bus)-&gt;devices; (device); (device)=(device)-&gt;next)
 DECL|macro|for_all_sbusdev
 mdefine_line|#define for_all_sbusdev(device, bus) &bslash;&n;&t;for((bus) = SBus_chain, ((device) = (bus) ? (bus)-&gt;devices : 0); (bus); (device)=((device)-&gt;next ? (device)-&gt;next : ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
+r_extern
+r_void
+id|mmu_set_sbus64
+c_func
+(paren
+r_struct
+id|linux_sbus_device
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* If you did not get the buffer from mmu_get_*() or sparc_alloc_dvma()&n; * then you must use this to get the 32-bit SBUS dvma address.&n; * And in this case it is your responsibility to make sure the buffer&n; * is GFP_DMA, ie. that it is not greater than MAX_DMA_ADDRESS.&n; */
+r_extern
+r_int
+r_int
+id|phys_base
+suffix:semicolon
+DECL|macro|sbus_dvma_addr
+mdefine_line|#define sbus_dvma_addr(__addr)&t;((__u32)(__pa(__addr) - phys_base))
 multiline_comment|/* Apply promlib probed SBUS ranges to registers. */
 r_extern
 r_void

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.16 1998/11/14 23:02:54 ecd Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Coypright (C) 1998  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.18 1999/01/02 16:47:37 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Coypright (C) 1998  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -345,6 +345,11 @@ r_struct
 id|su_struct
 op_star
 id|info
+comma
+r_struct
+id|termios
+op_star
+id|old
 )paren
 suffix:semicolon
 r_static
@@ -3096,6 +3101,8 @@ id|change_speed
 c_func
 (paren
 id|info
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|info-&gt;flags
@@ -3538,6 +3545,11 @@ r_struct
 id|su_struct
 op_star
 id|info
+comma
+r_struct
+id|termios
+op_star
+id|old_termios
 )paren
 (brace
 r_int
@@ -3793,7 +3805,103 @@ op_div
 id|baud
 suffix:semicolon
 )brace
-multiline_comment|/* If the quotient is ever zero, default to 9600 bps */
+multiline_comment|/* If the quotient is zero refuse the change */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|quot
+op_logical_and
+id|old_termios
+)paren
+(brace
+id|info-&gt;tty-&gt;termios-&gt;c_cflag
+op_and_assign
+op_complement
+id|CBAUD
+suffix:semicolon
+id|info-&gt;tty-&gt;termios-&gt;c_cflag
+op_or_assign
+(paren
+id|old_termios-&gt;c_cflag
+op_amp
+id|CBAUD
+)paren
+suffix:semicolon
+id|baud
+op_assign
+id|tty_get_baud_rate
+c_func
+(paren
+id|info-&gt;tty
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|baud
+)paren
+id|baud
+op_assign
+l_int|9600
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|baud
+op_eq
+l_int|38400
+op_logical_and
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SPD_MASK
+)paren
+op_eq
+id|ASYNC_SPD_CUST
+)paren
+)paren
+id|quot
+op_assign
+id|info-&gt;custom_divisor
+suffix:semicolon
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|baud
+op_eq
+l_int|134
+)paren
+multiline_comment|/* Special case since 134 is really 134.5 */
+id|quot
+op_assign
+(paren
+l_int|2
+op_star
+id|info-&gt;baud_base
+op_div
+l_int|269
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|baud
+)paren
+id|quot
+op_assign
+id|info-&gt;baud_base
+op_div
+id|baud
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* As a last resort, if the quotient is zero, default to 9600 bps */
 r_if
 c_cond
 (paren
@@ -4513,6 +4621,8 @@ id|change_speed
 c_func
 (paren
 id|info
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -5249,6 +5359,18 @@ comma
 id|tty-&gt;device
 comma
 l_string|&quot;su_send_char&quot;
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_INITIALIZED
 )paren
 )paren
 r_return
@@ -6781,6 +6903,8 @@ id|change_speed
 c_func
 (paren
 id|info
+comma
+id|old_termios
 )paren
 suffix:semicolon
 multiline_comment|/* Handle transition to B0 status */
@@ -8530,6 +8654,8 @@ id|change_speed
 c_func
 (paren
 id|info
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -8556,6 +8682,8 @@ id|change_speed
 c_func
 (paren
 id|info
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -9153,7 +9281,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.16 $&quot;
+l_string|&quot;$Revision: 1.18 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9208,7 +9336,7 @@ id|serial_version
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine is called by su_init() to initialize a specific serial&n; * port.  It determines what type of UART chip this serial port is&n; * using: 8250, 16450, 16550, 16550A.  The important question is&n; * whether or not this UART is a 16550A or not, since this will&n; * determine whether or not we can use its FIFO features or not.&n; */
+multiline_comment|/*&n; * This routine is called by su_init() to initialize a specific serial&n; * port.  It determines what type of UART chip this serial port is&n; * using: 8250, 16450, 16550, 16550A.  The important question is&n; * whether or not this UART is a 16550A, since this will determine&n; * whether or not we can use its FIFO features.&n; */
 r_static
 r_void
 DECL|function|autoconfig

@@ -4,13 +4,19 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+macro_line|#include &lt;asm/adb.h&gt;
+macro_line|#include &lt;asm/pmu.h&gt;
+macro_line|#endif
 macro_line|#include &quot;ide.h&quot;
+macro_line|#include &quot;ide_modes.h&quot;
 DECL|variable|pmac_ide_regbase
 id|ide_ioreg_t
 id|pmac_ide_regbase
@@ -83,6 +89,33 @@ id|wr
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PMAC */
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+r_static
+r_int
+id|idepmac_notify
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+comma
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|variable|idepmac_sleep_notifier
+r_struct
+id|notifier_block
+id|idepmac_sleep_notifier
+op_assign
+(brace
+id|idepmac_notify
+)brace
+suffix:semicolon
+macro_line|#endif /* CONFIG_PMAC_PBOOK */
 multiline_comment|/*&n; * N.B. this can&squot;t be an initfunc, because the media-bay task can&n; * call ide_[un]register at any time.&n; */
 r_void
 DECL|function|pmac_ide_init_hwif_ports
@@ -223,6 +256,95 @@ r_break
 suffix:semicolon
 )brace
 )brace
+)brace
+)brace
+DECL|function|pmac_ide_tuneproc
+r_void
+id|pmac_ide_tuneproc
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|byte
+id|pio
+)paren
+(brace
+id|ide_pio_data_t
+id|d
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|_machine
+op_ne
+id|_MACH_Pmac
+)paren
+r_return
+suffix:semicolon
+id|pio
+op_assign
+id|ide_get_best_pio_mode
+c_func
+(paren
+id|drive
+comma
+id|pio
+comma
+l_int|4
+comma
+op_amp
+id|d
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|pio
+)paren
+(brace
+r_case
+l_int|4
+suffix:colon
+id|out_le32
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+id|IDE_DATA_REG
+op_plus
+l_int|0x200
+)paren
+comma
+l_int|0x211025
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|out_le32
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+id|IDE_DATA_REG
+op_plus
+l_int|0x200
+)paren
+comma
+l_int|0x2f8526
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 )brace
 DECL|function|__initfunc
@@ -605,15 +727,15 @@ id|hwif-&gt;io_ports
 id|IDE_DATA_OFFSET
 )braket
 suffix:semicolon
+id|hwif-&gt;tuneproc
+op_assign
+id|pmac_ide_tuneproc
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
 r_if
 c_cond
 (paren
 id|np-&gt;n_addrs
-op_ge
-l_int|2
-op_logical_and
-id|np-&gt;n_intrs
 op_ge
 l_int|2
 )paren
@@ -637,6 +759,18 @@ id|pmac_ide_count
 op_assign
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+id|notifier_chain_register
+c_func
+(paren
+op_amp
+id|sleep_notifier_list
+comma
+op_amp
+id|idepmac_sleep_notifier
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PMAC_PBOOK */
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
 DECL|function|__initfunc
@@ -1378,4 +1512,127 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PMAC */
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+DECL|function|idepmac_notify
+r_static
+r_int
+id|idepmac_notify
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+id|this
+comma
+r_int
+r_int
+id|code
+comma
+r_void
+op_star
+id|p
+)paren
+(brace
+r_int
+id|i
+comma
+id|timeout
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|code
+)paren
+(brace
+r_case
+id|PBOOK_SLEEP
+suffix:colon
+multiline_comment|/* do anything here?? */
+r_break
+suffix:semicolon
+r_case
+id|PBOOK_WAKE
+suffix:colon
+multiline_comment|/* wait for the controller(s) to become ready */
+id|timeout
+op_assign
+l_int|5000
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|pmac_ide_count
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+r_int
+r_int
+id|base
+op_assign
+id|pmac_ide_regbase
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_media_bay_by_base
+c_func
+(paren
+id|base
+comma
+id|MB_CD
+)paren
+op_eq
+op_minus
+id|EINVAL
+)paren
+r_continue
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|base
+op_plus
+l_int|0x70
+)paren
+op_amp
+id|BUSY_STAT
+)paren
+op_logical_and
+id|timeout
+)paren
+(brace
+id|mdelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+op_decrement
+id|timeout
+suffix:semicolon
+)brace
+)brace
+r_break
+suffix:semicolon
+)brace
+r_return
+id|NOTIFY_DONE
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_PMAC_PBOOK */
 eof

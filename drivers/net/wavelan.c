@@ -762,16 +762,17 @@ id|hacr
 suffix:semicolon
 )brace
 multiline_comment|/* psa_write */
-macro_line|#ifdef PSA_CRC
+macro_line|#ifdef SET_PSA_CRC
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Calculate the PSA CRC (not tested yet)&n; * As the WaveLAN drivers don&squot;t use the CRC, I won&squot;t use it either.&n; * Thanks to Nico Valster &lt;NVALSTER@wcnd.nl.lucent.com&gt; for the code&n; * NOTE: By specifying a length including the CRC position the&n; * returned value should be zero. (i.e. a correct checksum in the PSA).&n; */
+multiline_comment|/*&n; * Calculate the PSA CRC&n; * Thanks to Valster, Nico &lt;NVALSTER@wcnd.nl.lucent.com&gt; for the code&n; * NOTE: By specifying a length including the CRC position the&n; * returned value should be zero. (i.e. a correct checksum in the PSA)&n; *&n; * The Windows drivers don&squot;t use the CRC, but the AP and the PtP tool&n; * depend on it.&n; */
 r_static
+r_inline
 id|u_short
 DECL|function|psa_crc
 id|psa_crc
 c_func
 (paren
-id|u_short
+id|u_char
 op_star
 id|psa
 comma
@@ -803,7 +804,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|byte_cnt
-op_le
+OL
 id|size
 suffix:semicolon
 id|byte_cnt
@@ -864,7 +865,216 @@ id|crc_bytes
 suffix:semicolon
 )brace
 multiline_comment|/* psa_crc */
-macro_line|#endif&t;/* PSA_CRC */
+multiline_comment|/*------------------------------------------------------------------*/
+multiline_comment|/*&n; * update the checksum field in the Wavelan&squot;s PSA&n; */
+r_static
+r_void
+DECL|function|update_psa_checksum
+id|update_psa_checksum
+c_func
+(paren
+id|device
+op_star
+id|dev
+comma
+id|u_long
+id|ioaddr
+comma
+id|u_short
+id|hacr
+)paren
+(brace
+id|psa_t
+id|psa
+suffix:semicolon
+id|u_short
+id|crc
+suffix:semicolon
+multiline_comment|/* read the parameter storage area */
+id|psa_read
+c_func
+(paren
+id|ioaddr
+comma
+id|hacr
+comma
+l_int|0
+comma
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+id|psa
+comma
+r_sizeof
+(paren
+id|psa
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* update the checksum */
+id|crc
+op_assign
+id|psa_crc
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+id|psa
+comma
+r_sizeof
+(paren
+id|psa
+)paren
+op_minus
+r_sizeof
+(paren
+id|psa.psa_crc
+(braket
+l_int|0
+)braket
+)paren
+op_minus
+r_sizeof
+(paren
+id|psa.psa_crc
+(braket
+l_int|1
+)braket
+)paren
+op_minus
+r_sizeof
+(paren
+id|psa.psa_crc_status
+)paren
+)paren
+suffix:semicolon
+id|psa.psa_crc
+(braket
+l_int|0
+)braket
+op_assign
+id|crc
+op_amp
+l_int|0xFF
+suffix:semicolon
+id|psa.psa_crc
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+id|crc
+op_amp
+l_int|0xFF00
+)paren
+op_rshift
+l_int|8
+suffix:semicolon
+multiline_comment|/* Write it ! */
+id|psa_write
+c_func
+(paren
+id|ioaddr
+comma
+id|hacr
+comma
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|psa.psa_crc
+op_minus
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|psa
+comma
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+id|psa.psa_crc
+comma
+l_int|2
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG_IOCTL_INFO
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: update_psa_checksum(): crc = 0x%02x%02x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|psa.psa_crc
+(braket
+l_int|0
+)braket
+comma
+id|psa.psa_crc
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* Check again (luxury !) */
+id|crc
+op_assign
+id|psa_crc
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+id|psa
+comma
+r_sizeof
+(paren
+id|psa
+)paren
+op_minus
+r_sizeof
+(paren
+id|psa.psa_crc_status
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|crc
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: update_psa_checksum(): CRC does not agree with PSA data (even after recalculating)&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* DEBUG_IOCTL_INFO */
+)brace
+multiline_comment|/* update_psa_checksum */
+macro_line|#endif&t;/* SET_PSA_CRC */
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Write 1 byte to the MMC.&n; */
 r_static
@@ -2489,9 +2699,11 @@ multiline_comment|/* Check mc_config command */
 r_if
 c_cond
 (paren
+(paren
 id|status
 op_amp
 id|AC_SFLD_OK
+)paren
 op_ne
 l_int|0
 )paren
@@ -2550,9 +2762,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|status
 op_amp
 id|AC_SFLD_OK
+)paren
 op_ne
 l_int|0
 )paren
@@ -2611,9 +2825,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|status
 op_amp
 id|AC_SFLD_OK
+)paren
 op_ne
 l_int|0
 )paren
@@ -7481,6 +7697,19 @@ id|MMW_LOOPT_SEL_DIS_NWID
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef SET_PSA_CRC
+multiline_comment|/* update the Wavelan checksum */
+id|update_psa_checksum
+c_func
+(paren
+id|dev
+comma
+id|ioaddr
+comma
+id|lp-&gt;hacr
+)paren
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -7803,6 +8032,19 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef SET_PSA_CRC
+multiline_comment|/* update the Wavelan checksum */
+id|update_psa_checksum
+c_func
+(paren
+id|dev
+comma
+id|ioaddr
+comma
+id|lp-&gt;hacr
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mmc_out
 c_func
 (paren
@@ -8070,6 +8312,19 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef SET_PSA_CRC
+multiline_comment|/* update the Wavelan checksum */
+id|update_psa_checksum
+c_func
+(paren
+id|dev
+comma
+id|ioaddr
+comma
+id|lp-&gt;hacr
+)paren
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -8977,6 +9232,19 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef SET_PSA_CRC
+multiline_comment|/* update the Wavelan checksum */
+id|update_psa_checksum
+c_func
+(paren
+id|dev
+comma
+id|ioaddr
+comma
+id|lp-&gt;hacr
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mmc_out
 c_func
 (paren
@@ -9438,6 +9706,8 @@ multiline_comment|/* Copy data to wireless stuff. */
 id|wstats-&gt;status
 op_assign
 id|m.mmr_dce_status
+op_amp
+id|MMR_DCE_STATUS
 suffix:semicolon
 id|wstats-&gt;qual.qual
 op_assign
@@ -11423,6 +11693,19 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef SET_PSA_CRC
+multiline_comment|/* update the Wavelan checksum */
+id|update_psa_checksum
+c_func
+(paren
+id|dev
+comma
+id|ioaddr
+comma
+id|lp-&gt;hacr
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 )brace
 multiline_comment|/* Zero the mmc structure. */
@@ -11518,11 +11801,14 @@ id|psa.psa_quality_thr
 op_amp
 l_int|0x0F
 suffix:semicolon
-multiline_comment|/* Encryption stuff is missing. */
 multiline_comment|/*&n;   * Set default modem control parameters.&n;   * See NCR document 407-0024326 Rev. A.&n;   */
 id|m.mmw_jabber_enable
 op_assign
 l_int|0x01
+suffix:semicolon
+id|m.mmw_freeze
+op_assign
+l_int|0
 suffix:semicolon
 id|m.mmw_anten_sel
 op_assign
@@ -11540,15 +11826,7 @@ id|m.mmw_jam_time
 op_assign
 l_int|0x38
 suffix:semicolon
-id|m.mmw_encr_enable
-op_assign
-l_int|0
-suffix:semicolon
 id|m.mmw_des_io_invert
-op_assign
-l_int|0
-suffix:semicolon
-id|m.mmw_freeze
 op_assign
 l_int|0
 suffix:semicolon
@@ -13554,37 +13832,7 @@ id|cfg
 )paren
 )paren
 suffix:semicolon
-macro_line|#if&t;0
-multiline_comment|/*&n;   * The default board configuration&n;   */
-id|cfg.fifolim_bytecnt
-op_assign
-l_int|0x080c
-suffix:semicolon
-id|cfg.addrlen_mode
-op_assign
-l_int|0x2600
-suffix:semicolon
-id|cfg.linprio_interframe
-op_assign
-l_int|0x7820
-suffix:semicolon
-multiline_comment|/* IFS=120, ACS=2 */
-id|cfg.slot_time
-op_assign
-l_int|0xf00c
-suffix:semicolon
-multiline_comment|/* slottime=12    */
-id|cfg.hardware
-op_assign
-l_int|0x0008
-suffix:semicolon
-multiline_comment|/* tx even without CD */
-id|cfg.min_frame_len
-op_assign
-l_int|0x0040
-suffix:semicolon
-macro_line|#endif&t;/* 0 */
-multiline_comment|/*&n;   * For Linux we invert AC_CFG_ALOC() so as to conform&n;   * to the way that net packets reach us from above.&n;   * (See also ac_tx_t.)&n;   */
+multiline_comment|/*&n;   * For Linux we invert AC_CFG_ALOC() so as to conform&n;   * to the way that net packets reach us from above.&n;   * (See also ac_tx_t.)&n;   *&n;   * Updated from Wavelan Manual WCIN085B&n;   */
 id|cfg.cfg_byte_cnt
 op_assign
 id|AC_CFG_BYTE_CNT
@@ -13606,7 +13854,7 @@ op_assign
 id|AC_CFG_FIFOLIM
 c_func
 (paren
-l_int|8
+l_int|4
 )paren
 suffix:semicolon
 id|cfg.cfg_byte8
@@ -13614,7 +13862,7 @@ op_assign
 id|AC_CFG_SAV_BF
 c_func
 (paren
-l_int|0
+l_int|1
 )paren
 op_or
 id|AC_CFG_SRDY
@@ -13660,13 +13908,13 @@ op_assign
 id|AC_CFG_BOFMET
 c_func
 (paren
-l_int|0
+l_int|1
 )paren
 op_or
 id|AC_CFG_ACR
 c_func
 (paren
-l_int|0
+l_int|6
 )paren
 op_or
 id|AC_CFG_LINPRIO
@@ -13677,11 +13925,11 @@ l_int|0
 suffix:semicolon
 id|cfg.cfg_ifs
 op_assign
-l_int|32
+l_int|0x20
 suffix:semicolon
 id|cfg.cfg_slotl
 op_assign
-l_int|0
+l_int|0x0C
 suffix:semicolon
 id|cfg.cfg_byte13
 op_assign
@@ -13694,7 +13942,7 @@ op_or
 id|AC_CFG_SLTTMHI
 c_func
 (paren
-l_int|2
+l_int|0
 )paren
 suffix:semicolon
 id|cfg.cfg_byte14
@@ -15830,6 +16078,19 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef SET_PSA_CRC
+multiline_comment|/* update the Wavelan checksum */
+id|update_psa_checksum
+c_func
+(paren
+id|dev
+comma
+id|ioaddr
+comma
+id|HACR_DEFAULT
+)paren
+suffix:semicolon
+macro_line|#endif
 id|wv_hacr_reset
 c_func
 (paren
@@ -16404,8 +16665,10 @@ multiline_comment|/* MAC address (check WaveLAN existence) */
 r_int
 id|ret
 op_assign
-l_int|0
+op_minus
+id|EIO
 suffix:semicolon
+multiline_comment|/* Return error if no cards found */
 r_int
 id|i
 suffix:semicolon
@@ -16623,10 +16886,13 @@ id|device
 )paren
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* If at least one device OK, we do not fail */
 id|ret
 op_assign
-op_minus
-id|EIO
+l_int|0
 suffix:semicolon
 )brace
 )brace

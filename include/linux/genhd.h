@@ -3,6 +3,7 @@ DECL|macro|_LINUX_GENHD_H
 mdefine_line|#define _LINUX_GENHD_H
 multiline_comment|/*&n; * &t;genhd.h Copyright (C) 1992 Drew Eckhardt&n; *&t;Generic hard disk header file by  &n; * &t;&t;Drew Eckhardt&n; *&n; *&t;&t;&lt;drew@colorado.edu&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 DECL|macro|CONFIG_MSDOS_PARTITION
 mdefine_line|#define CONFIG_MSDOS_PARTITION 1
 macro_line|#ifdef __alpha__

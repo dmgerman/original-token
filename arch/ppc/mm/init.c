@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.139 1998/12/29 19:53:49 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.150 1999/03/10 08:16:33 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;&t;&t;/* for initrd_* */
 macro_line|#endif
@@ -128,11 +129,6 @@ r_int
 r_int
 id|avail_start
 suffix:semicolon
-DECL|variable|quicklists
-r_struct
-id|pgtable_cache_struct
-id|quicklists
-suffix:semicolon
 r_extern
 r_int
 id|num_memory
@@ -150,6 +146,13 @@ id|boot_infos_t
 op_star
 id|boot_infos
 suffix:semicolon
+macro_line|#ifndef __SMP__
+DECL|variable|quicklists
+r_struct
+id|pgtable_cache_struct
+id|quicklists
+suffix:semicolon
+macro_line|#endif
 r_void
 id|MMU_init
 c_func
@@ -4032,10 +4035,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/* This can get called from ioremap, so don&squot;t make it an initfunc, OK? */
+DECL|function|MMU_get_page
 r_static
 r_void
 op_star
@@ -4043,7 +4044,6 @@ id|MMU_get_page
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_void
@@ -4213,16 +4213,6 @@ comma
 id|num_pmac_pages
 )paren
 suffix:semicolon
-id|FREESEC
-c_func
-(paren
-id|__openfirmware_begin
-comma
-id|__openfirmware_end
-comma
-id|num_openfirmware_pages
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -4241,16 +4231,6 @@ suffix:semicolon
 id|FREESEC
 c_func
 (paren
-id|__openfirmware_begin
-comma
-id|__openfirmware_end
-comma
-id|num_openfirmware_pages
-)paren
-suffix:semicolon
-id|FREESEC
-c_func
-(paren
 id|__prep_begin
 comma
 id|__prep_end
@@ -4261,6 +4241,22 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|have_of
+)paren
+id|FREESEC
+c_func
+(paren
+id|__openfirmware_begin
+comma
+id|__openfirmware_end
+comma
+id|num_openfirmware_pages
+)paren
+suffix:semicolon
 id|printk
 (paren
 l_string|&quot;Freeing unused kernel memory: %ldk init&quot;
@@ -4485,6 +4481,20 @@ comma
 id|IO_PAGE
 )paren
 suffix:semicolon
+id|setbat
+c_func
+(paren
+l_int|1
+comma
+l_int|0x80000000
+comma
+l_int|0x80000000
+comma
+l_int|0x10000000
+comma
+id|IO_PAGE
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -4640,6 +4650,14 @@ id|ioremap
 c_func
 (paren
 l_int|0x80000000
+comma
+l_int|0x4000
+)paren
+suffix:semicolon
+id|ioremap
+c_func
+(paren
+l_int|0x81000000
 comma
 l_int|0x4000
 )paren
@@ -5680,6 +5698,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* max amount of RAM we allow -- Cort */
+DECL|macro|RAM_LIMIT
+mdefine_line|#define RAM_LIMIT (768&lt;&lt;20)&t;
 id|memory_node
 op_assign
 id|find_devices
@@ -5752,6 +5773,28 @@ c_func
 (paren
 l_string|&quot;RAM doesn&squot;t start at physical address 0&quot;
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * XXX:&n;&t; * Make sure ram mappings don&squot;t stomp on IO space&n;&t; * This is a temporary hack to keep this from happening&n;&t; * until we move the KERNELBASE and can allocate RAM up&n;&t; * to our nearest IO area.&n;&t; * -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|size
+op_ge
+id|RAM_LIMIT
+)paren
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|size
+op_assign
+id|RAM_LIMIT
 suffix:semicolon
 id|total
 op_assign
@@ -5843,6 +5886,58 @@ suffix:semicolon
 op_increment
 id|i
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|phys_avail.regions
+(braket
+id|i
+)braket
+dot
+id|address
+op_ge
+id|RAM_LIMIT
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|phys_avail.regions
+(braket
+id|i
+)braket
+dot
+id|address
+op_plus
+id|phys_avail.regions
+(braket
+id|i
+)braket
+dot
+id|size
+)paren
+op_ge
+id|RAM_LIMIT
+)paren
+id|phys_avail.regions
+(braket
+id|i
+)braket
+dot
+id|size
+op_assign
+id|RAM_LIMIT
+op_minus
+id|phys_avail.regions
+(braket
+id|i
+)braket
+dot
+id|address
+suffix:semicolon
 id|remove_mem_piece
 c_func
 (paren
@@ -5866,6 +5961,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * phys_avail records memory we can use now.&n;&t; * prom_mem records memory allocated by the prom that we&n;&t; * don&squot;t want to use now, but we&squot;ll reclaim later.&n;&t; * Make sure the kernel text/data/bss is in neither.&n;&t; */
 id|kstart
 op_assign
@@ -5938,6 +6034,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+DECL|macro|RAM_LIMIT
+macro_line|#undef RAM_LIMIT
 r_return
 id|__va
 c_func

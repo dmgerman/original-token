@@ -2487,10 +2487,6 @@ id|xtime.tv_usec
 op_assign
 l_int|0
 suffix:semicolon
-id|time_state
-op_assign
-id|TIME_ERROR
-suffix:semicolon
 id|time_maxerror
 op_assign
 id|MAXPHASE

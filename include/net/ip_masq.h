@@ -289,6 +289,16 @@ id|maddr
 suffix:semicolon
 r_extern
 r_int
+id|ip_fw_unmasq_icmp
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|ip_fw_demasquerade
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.77 1998/08/04 20:51:19 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.78 1999/01/07 14:14:05 jj Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -2329,8 +2329,16 @@ DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap
 mdefine_line|#define module_unmap    vfree
+r_extern
+r_int
+r_int
+op_star
+id|sparc_valid_addr_bitmap
+suffix:semicolon
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(test_bit(PG_skip, &amp;(page)-&gt;flags))
+DECL|macro|kern_addr_valid
+mdefine_line|#define kern_addr_valid(addr)&t;(test_bit(__pa((unsigned long)(addr))&gt;&gt;20, sparc_valid_addr_bitmap))
 macro_line|#endif /* !(_SPARC_PGTABLE_H) */
 eof

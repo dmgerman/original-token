@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.49 1998/10/28 08:11:28 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.57 1999/03/14 20:51:28 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -61,7 +61,7 @@ r_extern
 r_int
 id|prom_cpu_nodes
 (braket
-id|NR_CPUS
+l_int|64
 )braket
 suffix:semicolon
 r_extern
@@ -77,6 +77,30 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+)paren
+suffix:semicolon
+r_extern
+id|pid_t
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
 )paren
 suffix:semicolon
 r_extern
@@ -528,6 +552,11 @@ id|rw
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
+r_extern
+r_int
+r_int
+id|phys_base
+suffix:semicolon
 multiline_comment|/* One thing to note is that the way the symbols of the mul/div&n; * support routines are named is a mess, they all start with&n; * a &squot;.&squot; which makes it a bitch to export, here is the trick:&n; */
 DECL|macro|EXPORT_SYMBOL_PRIVATE
 mdefine_line|#define EXPORT_SYMBOL_PRIVATE(sym)&t;&t;&t;&t;&bslash;&n;extern int __sparc_priv_ ## sym (int) __asm__(&quot;__&quot; ## #sym);&t;&bslash;&n;const struct module_symbol __export_priv_##sym&t;&t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&t;&bslash;&n;{ (unsigned long) &amp;__sparc_priv_ ## sym, &quot;__&quot; ## #sym }
@@ -711,6 +740,13 @@ id|local_bh_count
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|ivector_table
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ivector_table
+)paren
+suffix:semicolon
 DECL|variable|enable_irq
 id|EXPORT_SYMBOL
 c_func
@@ -803,6 +839,13 @@ id|mmu_release_scsi_sgl
 )paren
 suffix:semicolon
 macro_line|#if CONFIG_SBUS
+DECL|variable|mmu_set_sbus64
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mmu_set_sbus64
+)paren
+suffix:semicolon
 DECL|variable|SBus_chain
 id|EXPORT_SYMBOL
 c_func
@@ -935,6 +978,14 @@ c_func
 id|die_if_kernel
 )paren
 suffix:semicolon
+multiline_comment|/* Kernel thread creation. */
+DECL|variable|kernel_thread
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_thread
+)paren
+suffix:semicolon
 multiline_comment|/* prom symbols */
 DECL|variable|idprom
 id|EXPORT_SYMBOL
@@ -1032,6 +1083,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|prom_feval
+)paren
+suffix:semicolon
+DECL|variable|prom_getbool
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|prom_getbool
 )paren
 suffix:semicolon
 DECL|variable|prom_getstring
@@ -1297,13 +1355,6 @@ c_func
 id|sys32_ioctl
 )paren
 suffix:semicolon
-DECL|variable|get_unmapped_area
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|get_unmapped_area
-)paren
-suffix:semicolon
 DECL|variable|move_addr_to_kernel
 id|EXPORT_SYMBOL
 c_func
@@ -1417,6 +1468,21 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__bzero_noasi
+)paren
+suffix:semicolon
+multiline_comment|/* Various address conversion macros use this. */
+DECL|variable|phys_base
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|phys_base
+)paren
+suffix:semicolon
+DECL|variable|sparc64_valid_addr_bitmap
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sparc64_valid_addr_bitmap
 )paren
 suffix:semicolon
 multiline_comment|/* No version information on this, heavily used in inline asm,&n; * and will always be &squot;void __ret_efault(void)&squot;.&n; */

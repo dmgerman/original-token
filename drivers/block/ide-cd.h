@@ -85,6 +85,9 @@ DECL|macro|MECHANISM_STATUS
 mdefine_line|#define MECHANISM_STATUS        0xbd
 DECL|macro|READ_CD
 mdefine_line|#define READ_CD                 0xbe
+multiline_comment|/* DVD Opcodes */
+DECL|macro|DVD_GET_PERFORMANCE
+mdefine_line|#define DVD_GET_PERFORMANCE&t;0xac
 multiline_comment|/* Page codes for mode sense/set */
 DECL|macro|PAGE_READERR
 mdefine_line|#define PAGE_READERR            0x01
@@ -1594,7 +1597,7 @@ id|atapi_toc
 op_star
 id|toc
 suffix:semicolon
-multiline_comment|/* Sector buffer.  If a read request wants only the first part&n;&t;   of a cdrom block, we cache the rest of the block here,&n;&t;   in the expectation that that data is going to be wanted soon.&n;&t;   SECTOR_BUFFERED is the number of the first buffered sector,&n;&t;   and NSECTORS_BUFFERED is the number of sectors in the buffer.&n;&t;   Before the buffer is allocated, we should have&n;&t;   SECTOR_BUFFER == NULL and NSECTORS_BUFFERED == 0. */
+multiline_comment|/* Sector buffer.  If a read request wants only the first part&n;&t;   of a cdrom block, we cache the rest of the block here,&n;&t;   in the expectation that the data is going to be wanted soon.&n;&t;   SECTOR_BUFFERED is the number of the first buffered sector,&n;&t;   and NSECTORS_BUFFERED is the number of sectors in the buffer.&n;&t;   Before the buffer is allocated, we should have&n;&t;   SECTOR_BUFFER == NULL and NSECTORS_BUFFERED == 0. */
 DECL|member|sector_buffered
 r_int
 r_int
@@ -1888,6 +1891,12 @@ comma
 id|READ_CD
 comma
 l_string|&quot;Read CD&quot;
+)brace
+comma
+(brace
+id|DVD_GET_PERFORMANCE
+comma
+l_string|&quot;Get Performance&quot;
 )brace
 comma
 )brace
@@ -2340,10 +2349,11 @@ comma
 l_string|&quot;Illegal mode for this track or incompatible medium&quot;
 )brace
 comma
+multiline_comment|/* Following error is misspelled in ATAPI 2.6 */
 (brace
 l_int|0xb900
 comma
-l_string|&quot;Play operation oborted (sic)&quot;
+l_string|&quot;Play operation oborted [sic]&quot;
 )brace
 comma
 (brace

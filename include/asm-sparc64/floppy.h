@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.16 1998/10/06 20:32:15 ecd Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: floppy.h,v 1.17 1998/12/02 12:42:23 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef __ASM_SPARC64_FLOPPY_H
 DECL|macro|__ASM_SPARC64_FLOPPY_H
 mdefine_line|#define __ASM_SPARC64_FLOPPY_H
@@ -2777,6 +2777,8 @@ id|sun_fdops.fd_outb
 op_assign
 id|sun_82077_fd_outb
 suffix:semicolon
+id|can_use_virtual_dma
+op_assign
 id|use_virtual_dma
 op_assign
 l_int|1

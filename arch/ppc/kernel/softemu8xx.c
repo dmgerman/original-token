@@ -24,6 +24,8 @@ DECL|macro|STFD
 mdefine_line|#define STFD&t;54
 DECL|macro|STFDU
 mdefine_line|#define STFDU&t;55
+DECL|macro|FMR
+mdefine_line|#define FMR&t;63
 multiline_comment|/*&n; * We return 0 on success, 1 on unimplemented instruction, and EFAULT&n; * if a load/store faulted.&n; */
 r_int
 DECL|function|Soft_emulate_8xx
@@ -50,6 +52,10 @@ id|disp
 suffix:semicolon
 id|uint
 id|retval
+suffix:semicolon
+r_int
+r_int
+id|sdisp
 suffix:semicolon
 id|uint
 op_star
@@ -141,6 +147,30 @@ id|inst
 r_case
 id|LFD
 suffix:colon
+multiline_comment|/* this is a 16 bit quantity that is sign extended&n;&t;&t; * so use a signed short here -- Cort&n;&t;&t; */
+id|sdisp
+op_assign
+(paren
+id|instword
+op_amp
+l_int|0xffff
+)paren
+suffix:semicolon
+id|ea
+op_assign
+(paren
+id|uint
+op_star
+)paren
+(paren
+id|regs-&gt;gpr
+(braket
+id|idxreg
+)braket
+op_plus
+id|sdisp
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -202,6 +232,30 @@ suffix:semicolon
 r_case
 id|STFD
 suffix:colon
+multiline_comment|/* this is a 16 bit quantity that is sign extended&n;&t;&t; * so use a signed short here -- Cort&n;&t;&t; */
+id|sdisp
+op_assign
+(paren
+id|instword
+op_amp
+l_int|0xffff
+)paren
+suffix:semicolon
+id|ea
+op_assign
+(paren
+id|uint
+op_star
+)paren
+(paren
+id|regs-&gt;gpr
+(braket
+id|idxreg
+)braket
+op_plus
+id|sdisp
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -260,6 +314,35 @@ id|ea
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|FMR
+suffix:colon
+multiline_comment|/* assume this is a fp move -- Cort */
+id|memcpy
+c_func
+(paren
+id|ip
+comma
+op_amp
+id|current-&gt;tss.fpr
+(braket
+(paren
+id|instword
+op_rshift
+l_int|11
+)paren
+op_amp
+l_int|0x1f
+)braket
+comma
+r_sizeof
+(paren
+r_float
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|retval
@@ -313,7 +396,7 @@ op_rshift
 l_int|1
 )paren
 op_amp
-l_int|0x1f
+l_int|0x3ff
 comma
 id|instword
 op_amp

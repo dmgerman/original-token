@@ -1168,7 +1168,7 @@ id|sbi
 )paren
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 r_if
 c_cond
@@ -1477,6 +1477,7 @@ r_int
 r_int
 id|n
 suffix:semicolon
+multiline_comment|/* This allows root to remove symlinks */
 r_if
 c_cond
 (paren
@@ -1486,10 +1487,17 @@ c_func
 (paren
 id|sbi
 )paren
+op_logical_and
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SYS_ADMIN
+)paren
 )paren
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 id|ent
 op_assign
@@ -1524,7 +1532,15 @@ c_cond
 id|n
 op_ge
 id|AUTOFS_MAX_SYMLINKS
-op_logical_or
+)paren
+r_return
+op_minus
+id|EISDIR
+suffix:semicolon
+multiline_comment|/* It&squot;s a directory, dummy */
+r_if
+c_cond
+(paren
 op_logical_neg
 id|test_bit
 c_func
@@ -1538,7 +1554,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* Not a symlink inode, can&squot;t unlink */
+multiline_comment|/* Nonexistent symlink?  Shouldn&squot;t happen */
 id|dentry-&gt;d_time
 op_assign
 (paren
@@ -1640,7 +1656,7 @@ id|sbi
 )paren
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 id|ent
 op_assign
@@ -1787,7 +1803,7 @@ id|sbi
 )paren
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 r_if
 c_cond

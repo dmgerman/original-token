@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.23 1998/10/07 01:28:02 davem Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.26 1999/02/10 22:24:35 jj Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -62,16 +62,13 @@ DECL|macro|__NR_pause
 mdefine_line|#define __NR_pause               29 /* Is sigblock(0)-&gt;sigpause() in SunOS         */
 DECL|macro|__NR_utime
 mdefine_line|#define __NR_utime               30 /* Implemented via utimes() under SunOS        */
-DECL|macro|__NR_stty
-mdefine_line|#define __NR_stty                31 /* Implemented via ioctl() under SunOS         */
-DECL|macro|__NR_gtty
-mdefine_line|#define __NR_gtty                32 /* Implemented via ioctl() under SunOS         */
+multiline_comment|/* #define __NR_stty             31    Implemented via ioctl() under SunOS         */
+multiline_comment|/* #define __NR_gtty             32    Implemented via ioctl() under SunOS         */
 DECL|macro|__NR_access
 mdefine_line|#define __NR_access              33 /* Common                                      */
 DECL|macro|__NR_nice
 mdefine_line|#define __NR_nice                34 /* Implemented via get/setpriority() in SunOS  */
-DECL|macro|__NR_ftime
-mdefine_line|#define __NR_ftime               35 /* Implemented via gettimeofday() in SunOS     */
+multiline_comment|/* #define __NR_ftime            35    Implemented via gettimeofday() in SunOS     */
 DECL|macro|__NR_sync
 mdefine_line|#define __NR_sync                36 /* Common                                      */
 DECL|macro|__NR_kill
@@ -88,8 +85,7 @@ DECL|macro|__NR_pipe
 mdefine_line|#define __NR_pipe                42 /* Common                                      */
 DECL|macro|__NR_times
 mdefine_line|#define __NR_times               43 /* Implemented via getrusage() in SunOS        */
-DECL|macro|__NR_profil
-mdefine_line|#define __NR_profil              44 /* Common                                      */
+multiline_comment|/* #define __NR_profil           44    Common                                      */
 multiline_comment|/* #define __NR_ni_syscall       45    ENOSYS under SunOS                          */
 DECL|macro|__NR_setgid
 mdefine_line|#define __NR_setgid              46 /* Implemented via setregid() in SunOS         */
@@ -105,8 +101,7 @@ DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct                51 /* Common                                      */
 DECL|macro|__NR_memory_ordering
 mdefine_line|#define __NR_memory_ordering&t; 52 /* Linux Specific&t;&t;&t;&t;   */
-DECL|macro|__NR_mctl
-mdefine_line|#define __NR_mctl                53 /* SunOS specific                              */
+multiline_comment|/* #define __NR_mctl             53    SunOS specific                              */
 DECL|macro|__NR_ioctl
 mdefine_line|#define __NR_ioctl               54 /* Common                                      */
 DECL|macro|__NR_reboot
@@ -129,38 +124,33 @@ DECL|macro|__NR_getpagesize
 mdefine_line|#define __NR_getpagesize         64 /* Common                                      */
 DECL|macro|__NR_msync
 mdefine_line|#define __NR_msync               65 /* Common in newer 1.3.x revs...               */
-multiline_comment|/* #define __NR_ni_syscall       66    ENOSYS under SunOS                          */
+DECL|macro|__NR_vfork
+mdefine_line|#define __NR_vfork               66 /* Common                                      */
 DECL|macro|__NR_pread
 mdefine_line|#define __NR_pread               67 /* Linux Specific                              */
 DECL|macro|__NR_pwrite
 mdefine_line|#define __NR_pwrite              68 /* Linux Specific                              */
-DECL|macro|__NR_sbrk
-mdefine_line|#define __NR_sbrk                69 /* SunOS Specific                              */
-DECL|macro|__NR_sstk
-mdefine_line|#define __NR_sstk                70 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_sbrk             69    SunOS Specific                              */
+multiline_comment|/* #define __NR_sstk             70    SunOS Specific                              */
 DECL|macro|__NR_mmap
 mdefine_line|#define __NR_mmap                71 /* Common                                      */
-DECL|macro|__NR_vadvise
-mdefine_line|#define __NR_vadvise             72 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_vadvise          72    SunOS Specific                              */
 DECL|macro|__NR_munmap
 mdefine_line|#define __NR_munmap              73 /* Common                                      */
 DECL|macro|__NR_mprotect
 mdefine_line|#define __NR_mprotect            74 /* Common                                      */
-DECL|macro|__NR_madvise
-mdefine_line|#define __NR_madvise             75 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_madvise          75    SunOS Specific                              */
 DECL|macro|__NR_vhangup
 mdefine_line|#define __NR_vhangup             76 /* Common                                      */
 multiline_comment|/* #define __NR_ni_syscall       77    ENOSYS under SunOS                          */
-DECL|macro|__NR_mincore
-mdefine_line|#define __NR_mincore             78 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_mincore          78    SunOS Specific                              */
 DECL|macro|__NR_getgroups
 mdefine_line|#define __NR_getgroups           79 /* Common                                      */
 DECL|macro|__NR_setgroups
 mdefine_line|#define __NR_setgroups           80 /* Common                                      */
 DECL|macro|__NR_getpgrp
 mdefine_line|#define __NR_getpgrp             81 /* Common                                      */
-DECL|macro|__NR_setpgrp
-mdefine_line|#define __NR_setpgrp             82 /* setpgid, same difference...                 */
+multiline_comment|/* #define __NR_setpgrp          82    setpgid, same difference...                 */
 DECL|macro|__NR_setitimer
 mdefine_line|#define __NR_setitimer           83 /* Common                                      */
 multiline_comment|/* #define __NR_ni_syscall       84    ENOSYS under SunOS                          */
@@ -168,22 +158,18 @@ DECL|macro|__NR_swapon
 mdefine_line|#define __NR_swapon              85 /* Common                                      */
 DECL|macro|__NR_getitimer
 mdefine_line|#define __NR_getitimer           86 /* Common                                      */
-DECL|macro|__NR_gethostname
-mdefine_line|#define __NR_gethostname         87 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_gethostname      87    SunOS Specific                              */
 DECL|macro|__NR_sethostname
 mdefine_line|#define __NR_sethostname         88 /* Common                                      */
-DECL|macro|__NR_getdtablesize
-mdefine_line|#define __NR_getdtablesize       89 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_getdtablesize    89    SunOS Specific                              */
 DECL|macro|__NR_dup2
 mdefine_line|#define __NR_dup2                90 /* Common                                      */
-DECL|macro|__NR_getdopt
-mdefine_line|#define __NR_getdopt             91 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_getdopt          91    SunOS Specific                              */
 DECL|macro|__NR_fcntl
 mdefine_line|#define __NR_fcntl               92 /* Common                                      */
 DECL|macro|__NR_select
 mdefine_line|#define __NR_select              93 /* Common                                      */
-DECL|macro|__NR_setdopt
-mdefine_line|#define __NR_setdopt             94 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_setdopt          94    SunOS Specific                              */
 DECL|macro|__NR_fsync
 mdefine_line|#define __NR_fsync               95 /* Common                                      */
 DECL|macro|__NR_setpriority
@@ -210,22 +196,16 @@ DECL|macro|__NR_rt_sigqueueinfo
 mdefine_line|#define __NR_rt_sigqueueinfo    106 /* Linux Specific                              */
 DECL|macro|__NR_rt_sigsuspend
 mdefine_line|#define __NR_rt_sigsuspend      107 /* Linux Specific                              */
-DECL|macro|__NR_sigvec
-mdefine_line|#define __NR_sigvec             108 /* SunOS Specific                              */
-DECL|macro|__NR_sigblock
-mdefine_line|#define __NR_sigblock           109 /* SunOS Specific                              */
-DECL|macro|__NR_sigsetmask
-mdefine_line|#define __NR_sigsetmask         110 /* SunOS Specific                              */
-DECL|macro|__NR_sigpause
-mdefine_line|#define __NR_sigpause           111 /* SunOS Specific                              */
-DECL|macro|__NR_sigstack
-mdefine_line|#define __NR_sigstack           112 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_sigvec          108    SunOS Specific                              */
+multiline_comment|/* #define __NR_sigblock        109    SunOS Specific                              */
+multiline_comment|/* #define __NR_sigsetmask      110    SunOS Specific                              */
+multiline_comment|/* #define __NR_sigpause        111    SunOS Specific                              */
+multiline_comment|/* #define __NR_sigstack        112    SunOS Specific                              */
 DECL|macro|__NR_recvmsg
 mdefine_line|#define __NR_recvmsg            113 /* Common                                      */
 DECL|macro|__NR_sendmsg
 mdefine_line|#define __NR_sendmsg            114 /* Common                                      */
-DECL|macro|__NR_vtrace
-mdefine_line|#define __NR_vtrace             115 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_vtrace          115    SunOS Specific                              */
 DECL|macro|__NR_gettimeofday
 mdefine_line|#define __NR_gettimeofday       116 /* Common                                      */
 DECL|macro|__NR_getrusage
@@ -272,19 +252,16 @@ mdefine_line|#define __NR_rmdir              137 /* Common                      
 DECL|macro|__NR_utimes
 mdefine_line|#define __NR_utimes             138 /* SunOS Specific                              */
 multiline_comment|/* #define __NR_ni_syscall      139    ENOSYS under SunOS                          */
-DECL|macro|__NR_adjtime
-mdefine_line|#define __NR_adjtime            140 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_adjtime         140    SunOS Specific                              */
 DECL|macro|__NR_getpeername
 mdefine_line|#define __NR_getpeername        141 /* Common                                      */
-DECL|macro|__NR_gethostid
-mdefine_line|#define __NR_gethostid          142 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_gethostid       142    SunOS Specific                              */
 multiline_comment|/* #define __NR_ni_syscall      143    ENOSYS under SunOS                          */
 DECL|macro|__NR_getrlimit
 mdefine_line|#define __NR_getrlimit          144 /* Common                                      */
 DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit          145 /* Common                                      */
-DECL|macro|__NR_killpg
-mdefine_line|#define __NR_killpg             146 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_killpg          146    SunOS Specific                              */
 DECL|macro|__NR_prctl
 mdefine_line|#define __NR_prctl&t;&t;147 /* ENOSYS under SunOS                          */
 DECL|macro|__NR_pciconfig_read
@@ -293,27 +270,21 @@ DECL|macro|__NR_pciconfig_write
 mdefine_line|#define __NR_pciconfig_write&t;149 /* ENOSYS under SunOS                          */
 DECL|macro|__NR_getsockname
 mdefine_line|#define __NR_getsockname        150 /* Common                                      */
-DECL|macro|__NR_getmsg
-mdefine_line|#define __NR_getmsg             151 /* SunOS Specific                              */
-DECL|macro|__NR_putmsg
-mdefine_line|#define __NR_putmsg             152 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_getmsg          151    SunOS Specific                              */
+multiline_comment|/* #define __NR_putmsg          152    SunOS Specific                              */
 DECL|macro|__NR_poll
-mdefine_line|#define __NR_poll               153 /* SunOS Specific                              */
+mdefine_line|#define __NR_poll               153 /* Common                                      */
 multiline_comment|/* #define __NR_ni_syscall      154    ENOSYS under SunOS                          */
-DECL|macro|__NR_nfssvc
-mdefine_line|#define __NR_nfssvc             155 /* SunOS Specific                              */
-DECL|macro|__NR_getdirentries
-mdefine_line|#define __NR_getdirentries      156 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_nfssvc          155    SunOS Specific                              */
+multiline_comment|/* #define __NR_getdirentries   156    SunOS Specific                              */
 DECL|macro|__NR_statfs
 mdefine_line|#define __NR_statfs             157 /* Common                                      */
 DECL|macro|__NR_fstatfs
 mdefine_line|#define __NR_fstatfs            158 /* Common                                      */
 DECL|macro|__NR_umount
 mdefine_line|#define __NR_umount             159 /* Common                                      */
-DECL|macro|__NR_async_daemon
-mdefine_line|#define __NR_async_daemon       160 /* SunOS Specific                              */
-DECL|macro|__NR_getfh
-mdefine_line|#define __NR_getfh              161 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_async_daemon    160    SunOS Specific                              */
+multiline_comment|/* #define __NR_getfh           161    SunOS Specific                              */
 DECL|macro|__NR_getdomainname
 mdefine_line|#define __NR_getdomainname      162 /* SunOS Specific                              */
 DECL|macro|__NR_setdomainname
@@ -322,68 +293,48 @@ DECL|macro|__NR_utrap_install
 mdefine_line|#define __NR_utrap_install&t;164 /* SYSV ABI/v9 required&t;&t;&t;   */
 DECL|macro|__NR_quotactl
 mdefine_line|#define __NR_quotactl           165 /* Common                                      */
-DECL|macro|__NR_exportfs
-mdefine_line|#define __NR_exportfs           166 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_exportfs        166    SunOS Specific                              */
 DECL|macro|__NR_mount
 mdefine_line|#define __NR_mount              167 /* Common                                      */
 DECL|macro|__NR_ustat
 mdefine_line|#define __NR_ustat              168 /* Common                                      */
-DECL|macro|__NR_semsys
-mdefine_line|#define __NR_semsys             169 /* SunOS Specific                              */
-DECL|macro|__NR_msgsys
-mdefine_line|#define __NR_msgsys             170 /* SunOS Specific                              */
-DECL|macro|__NR_shmsys
-mdefine_line|#define __NR_shmsys             171 /* SunOS Specific                              */
-DECL|macro|__NR_auditsys
-mdefine_line|#define __NR_auditsys           172 /* SunOS Specific                              */
-DECL|macro|__NR_rfssys
-mdefine_line|#define __NR_rfssys             173 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_semsys          169    SunOS Specific                              */
+multiline_comment|/* #define __NR_msgsys          170    SunOS Specific                              */
+multiline_comment|/* #define __NR_shmsys          171    SunOS Specific                              */
+multiline_comment|/* #define __NR_auditsys        172    SunOS Specific                              */
+multiline_comment|/* #define __NR_rfssys          173    SunOS Specific                              */
 DECL|macro|__NR_getdents
 mdefine_line|#define __NR_getdents           174 /* Common                                      */
 DECL|macro|__NR_setsid
 mdefine_line|#define __NR_setsid             175 /* Common                                      */
 DECL|macro|__NR_fchdir
 mdefine_line|#define __NR_fchdir             176 /* Common                                      */
-DECL|macro|__NR_fchroot
-mdefine_line|#define __NR_fchroot            177 /* SunOS Specific                              */
-DECL|macro|__NR_vpixsys
-mdefine_line|#define __NR_vpixsys            178 /* SunOS Specific                              */
-DECL|macro|__NR_aioread
-mdefine_line|#define __NR_aioread            179 /* SunOS Specific                              */
-DECL|macro|__NR_aiowrite
-mdefine_line|#define __NR_aiowrite           180 /* SunOS Specific                              */
-DECL|macro|__NR_aiowait
-mdefine_line|#define __NR_aiowait            181 /* SunOS Specific                              */
-DECL|macro|__NR_aiocancel
-mdefine_line|#define __NR_aiocancel          182 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_fchroot         177    SunOS Specific                              */
+multiline_comment|/* #define __NR_vpixsys         178    SunOS Specific                              */
+multiline_comment|/* #define __NR_aioread         179    SunOS Specific                              */
+multiline_comment|/* #define __NR_aiowrite        180    SunOS Specific                              */
+multiline_comment|/* #define __NR_aiowait         181    SunOS Specific                              */
+multiline_comment|/* #define __NR_aiocancel       182    SunOS Specific                              */
 DECL|macro|__NR_sigpending
 mdefine_line|#define __NR_sigpending         183 /* Common                                      */
 DECL|macro|__NR_query_module
 mdefine_line|#define __NR_query_module&t;184 /* Linux Specific&t;&t;&t;&t;   */
 DECL|macro|__NR_setpgid
 mdefine_line|#define __NR_setpgid            185 /* Common                                      */
-DECL|macro|__NR_pathconf
-mdefine_line|#define __NR_pathconf           186 /* SunOS Specific                              */
-DECL|macro|__NR_fpathconf
-mdefine_line|#define __NR_fpathconf          187 /* SunOS Specific                              */
-DECL|macro|__NR_sysconf
-mdefine_line|#define __NR_sysconf            188 /* SunOS Specific                              */
+multiline_comment|/* #define __NR_pathconf        186    SunOS Specific                              */
+multiline_comment|/* #define __NR_fpathconf       187    SunOS Specific                              */
+multiline_comment|/* #define __NR_sysconf         188    SunOS Specific                              */
 DECL|macro|__NR_uname
 mdefine_line|#define __NR_uname              189 /* Linux Specific                              */
 DECL|macro|__NR_init_module
 mdefine_line|#define __NR_init_module        190 /* Linux Specific                              */
 DECL|macro|__NR_personality
 mdefine_line|#define __NR_personality        191 /* Linux Specific                              */
-DECL|macro|__NR_prof
-mdefine_line|#define __NR_prof               192 /* Linux Specific                              */
-DECL|macro|__NR_break
-mdefine_line|#define __NR_break              193 /* Linux Specific                              */
-DECL|macro|__NR_lock
-mdefine_line|#define __NR_lock               194 /* Linux Specific                              */
-DECL|macro|__NR_mpx
-mdefine_line|#define __NR_mpx                195 /* Linux Specific                              */
-DECL|macro|__NR_ulimit
-mdefine_line|#define __NR_ulimit             196 /* Linux Specific                              */
+multiline_comment|/* #define __NR_prof            192    Linux Specific                              */
+multiline_comment|/* #define __NR_break           193    Linux Specific                              */
+multiline_comment|/* #define __NR_lock            194    Linux Specific                              */
+multiline_comment|/* #define __NR_mpx             195    Linux Specific                              */
+multiline_comment|/* #define __NR_ulimit          196    Linux Specific                              */
 DECL|macro|__NR_getppid
 mdefine_line|#define __NR_getppid            197 /* Linux Specific                              */
 DECL|macro|__NR_sigaction
@@ -400,20 +351,16 @@ DECL|macro|__NR_uselib
 mdefine_line|#define __NR_uselib             203 /* Linux Specific                              */
 DECL|macro|__NR_readdir
 mdefine_line|#define __NR_readdir            204 /* Linux Specific                              */
-DECL|macro|__NR_ioperm
-mdefine_line|#define __NR_ioperm             205 /* Linux Specific - i386 specific, unused      */
+multiline_comment|/* #define __NR_ioperm          205    Linux Specific - i386 specific, unused      */
 DECL|macro|__NR_socketcall
 mdefine_line|#define __NR_socketcall         206 /* Linux Specific                              */
 DECL|macro|__NR_syslog
 mdefine_line|#define __NR_syslog             207 /* Linux Specific                              */
-DECL|macro|__NR_olduname
-mdefine_line|#define __NR_olduname           208 /* Linux Specific                              */
-DECL|macro|__NR_iopl
-mdefine_line|#define __NR_iopl               209 /* Linux Specific - i386 specific, unused      */
+multiline_comment|/* #define __NR_olduname        208    Linux Specific                              */
+multiline_comment|/* #define __NR_iopl            209    Linux Specific - i386 specific, unused      */
 DECL|macro|__NR_idle
 mdefine_line|#define __NR_idle               210 /* Linux Specific                              */
-DECL|macro|__NR_vm86
-mdefine_line|#define __NR_vm86               211 /* Linux Specific - i386 specific, unused      */
+multiline_comment|/* #define __NR_vm86            211    Linux Specific - i386 specific, unused      */
 DECL|macro|__NR_waitpid
 mdefine_line|#define __NR_waitpid            212 /* Linux Specific                              */
 DECL|macro|__NR_swapoff
@@ -426,8 +373,7 @@ DECL|macro|__NR_sigreturn
 mdefine_line|#define __NR_sigreturn          216 /* Linux Specific                              */
 DECL|macro|__NR_clone
 mdefine_line|#define __NR_clone              217 /* Linux Specific                              */
-DECL|macro|__NR_modify_ldt
-mdefine_line|#define __NR_modify_ldt         218 /* Linux Specific - i386 specific, unused      */
+multiline_comment|/* #define __NR_modify_ldt      218    Linux Specific - i386 specific, unused      */
 DECL|macro|__NR_adjtimex
 mdefine_line|#define __NR_adjtimex           219 /* Linux Specific                              */
 DECL|macro|__NR_sigprocmask
@@ -454,14 +400,11 @@ DECL|macro|__NR__newselect
 mdefine_line|#define __NR__newselect         230 /* Linux Specific                              */
 DECL|macro|__NR_time
 mdefine_line|#define __NR_time               231 /* Linux Specific                              */
-DECL|macro|__NR_oldstat
-mdefine_line|#define __NR_oldstat            232 /* Linux Specific                              */
+multiline_comment|/* #define __NR_oldstat         232    Linux Specific                              */
 DECL|macro|__NR_stime
 mdefine_line|#define __NR_stime              233 /* Linux Specific                              */
-DECL|macro|__NR_oldfstat
-mdefine_line|#define __NR_oldfstat           234 /* Linux Specific                              */
-DECL|macro|__NR_phys
-mdefine_line|#define __NR_phys               235 /* Linux Specific                              */
+multiline_comment|/* #define __NR_oldfstat        234    Linux Specific                              */
+multiline_comment|/* #define __NR_phys            235    Linux Specific                              */
 DECL|macro|__NR__llseek
 mdefine_line|#define __NR__llseek            236 /* Linux Specific                              */
 DECL|macro|__NR_mlock
@@ -750,10 +693,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is the mechanism for creating a new kernel thread.&n; *&n; * NOTE! Only a kernel-only process(ie the swapper or direct descendants&n; * who haven&squot;t done an &quot;execve()&quot;) should use this: it will work within&n; * a system call from a &quot;real&quot; process, but the process memory space will&n; * not be free&squot;d until both the parent and the child have exited.&n; */
-DECL|function|kernel_thread
-r_static
-id|__inline__
+r_extern
 id|pid_t
 id|kernel_thread
 c_func
@@ -776,197 +716,7 @@ r_int
 r_int
 id|flags
 )paren
-(brace
-r_int
-id|retval
 suffix:semicolon
-id|__asm__
-id|__volatile
-c_func
-(paren
-l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;mov %2, %%o0&bslash;n&bslash;t&quot;
-multiline_comment|/* Clone flags. */
-l_string|&quot;mov 0, %%o1&bslash;n&bslash;t&quot;
-multiline_comment|/* usp arg == 0 */
-l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
-multiline_comment|/* Linux/Sparc clone(). */
-l_string|&quot;brz,a,pn %%o1, 1f&bslash;n&bslash;t&quot;
-multiline_comment|/* Parent, just return. */
-l_string|&quot; mov %%o0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;jmpl %4, %%o7&bslash;n&bslash;t&quot;
-multiline_comment|/* Call the function. */
-l_string|&quot; mov %5, %%o0&bslash;n&bslash;t&quot;
-multiline_comment|/* Set arg in delay. */
-l_string|&quot;mov %3, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
-multiline_comment|/* Linux/Sparc exit(). */
-multiline_comment|/* Notreached by child. */
-l_string|&quot;1:&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-suffix:colon
-l_string|&quot;i&quot;
-(paren
-id|__NR_clone
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|flags
-op_or
-id|CLONE_VM
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|__NR_exit
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|fn
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|arg
-)paren
-suffix:colon
-l_string|&quot;g1&quot;
-comma
-l_string|&quot;o0&quot;
-comma
-l_string|&quot;o1&quot;
-comma
-l_string|&quot;memory&quot;
-comma
-l_string|&quot;cc&quot;
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
-DECL|function|fork
-r_static
-id|__inline__
-id|pid_t
-id|fork
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|retval
-suffix:semicolon
-id|__asm__
-id|__volatile
-c_func
-(paren
-l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
-l_string|&quot;brz,a,pn %%o1, 1f&bslash;n&bslash;t&quot;
-l_string|&quot; mov %%o0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;mov %%g0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;1:&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-suffix:colon
-l_string|&quot;i&quot;
-(paren
-id|__NR_fork
-)paren
-suffix:colon
-l_string|&quot;g1&quot;
-comma
-l_string|&quot;o0&quot;
-comma
-l_string|&quot;o1&quot;
-comma
-l_string|&quot;memory&quot;
-comma
-l_string|&quot;cc&quot;
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
-DECL|function|clone
-r_static
-id|__inline__
-id|pid_t
-id|clone
-c_func
-(paren
-r_int
-r_int
-id|flags
-comma
-r_char
-op_star
-id|ksp
-)paren
-(brace
-r_int
-id|retval
-suffix:semicolon
-id|__asm__
-id|__volatile
-c_func
-(paren
-l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;mov %2, %%o0&bslash;n&bslash;t&quot;
-l_string|&quot;mov %3, %%o1&bslash;n&bslash;t&quot;
-l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
-l_string|&quot;brz,a,pn %%o1, 1f&bslash;n&bslash;t&quot;
-l_string|&quot; mov %%o0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;mov %%g0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;1:&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-suffix:colon
-l_string|&quot;i&quot;
-(paren
-id|__NR_fork
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|flags
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|ksp
-)paren
-suffix:colon
-l_string|&quot;g1&quot;
-comma
-l_string|&quot;o0&quot;
-comma
-l_string|&quot;o1&quot;
-comma
-l_string|&quot;memory&quot;
-comma
-l_string|&quot;cc&quot;
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
 macro_line|#endif /* __KERNEL_SYSCALLS__ */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* sysconf options, for SunOS compatibility */

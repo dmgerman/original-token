@@ -454,38 +454,6 @@ DECL|typedef|P601_BAT
 )brace
 id|P601_BAT
 suffix:semicolon
-multiline_comment|/* Block size masks */
-DECL|macro|BL_128K
-mdefine_line|#define BL_128K&t;0x000
-DECL|macro|BL_256K
-mdefine_line|#define BL_256K 0x001
-DECL|macro|BL_512K
-mdefine_line|#define BL_512K 0x003
-DECL|macro|BL_1M
-mdefine_line|#define BL_1M   0x007
-DECL|macro|BL_2M
-mdefine_line|#define BL_2M   0x00F
-DECL|macro|BL_4M
-mdefine_line|#define BL_4M   0x01F
-DECL|macro|BL_8M
-mdefine_line|#define BL_8M   0x03F
-DECL|macro|BL_16M
-mdefine_line|#define BL_16M  0x07F
-DECL|macro|BL_32M
-mdefine_line|#define BL_32M  0x0FF
-DECL|macro|BL_64M
-mdefine_line|#define BL_64M  0x1FF
-DECL|macro|BL_128M
-mdefine_line|#define BL_128M 0x3FF
-DECL|macro|BL_256M
-mdefine_line|#define BL_256M 0x7FF
-multiline_comment|/* BAT Access Protection */
-DECL|macro|BPP_XX
-mdefine_line|#define BPP_XX&t;0x00&t;&t;/* No access */
-DECL|macro|BPP_RX
-mdefine_line|#define BPP_RX&t;0x01&t;&t;/* Read only */
-DECL|macro|BPP_RW
-mdefine_line|#define BPP_RW&t;0x02&t;&t;/* Read/write */
 multiline_comment|/*&n; * Simulated two-level MMU.  This structure is used by the kernel&n; * to keep track of MMU mappings and is used to update/maintain&n; * the hardware HASH table which is really a cache of mappings.&n; *&n; * The simulated structures mimic the hardware available on other&n; * platforms, notably the 80x86 and 680x0.&n; */
 DECL|struct|_pte
 r_typedef
@@ -546,35 +514,6 @@ DECL|typedef|MMU_context
 )brace
 id|MMU_context
 suffix:semicolon
-multiline_comment|/* Used to set up SDR1 register */
-DECL|macro|HASH_TABLE_SIZE_64K
-mdefine_line|#define HASH_TABLE_SIZE_64K&t;0x00010000
-DECL|macro|HASH_TABLE_SIZE_128K
-mdefine_line|#define HASH_TABLE_SIZE_128K&t;0x00020000
-DECL|macro|HASH_TABLE_SIZE_256K
-mdefine_line|#define HASH_TABLE_SIZE_256K&t;0x00040000
-DECL|macro|HASH_TABLE_SIZE_512K
-mdefine_line|#define HASH_TABLE_SIZE_512K&t;0x00080000
-DECL|macro|HASH_TABLE_SIZE_1M
-mdefine_line|#define HASH_TABLE_SIZE_1M&t;0x00100000
-DECL|macro|HASH_TABLE_SIZE_2M
-mdefine_line|#define HASH_TABLE_SIZE_2M&t;0x00200000
-DECL|macro|HASH_TABLE_SIZE_4M
-mdefine_line|#define HASH_TABLE_SIZE_4M&t;0x00400000
-DECL|macro|HASH_TABLE_MASK_64K
-mdefine_line|#define HASH_TABLE_MASK_64K&t;0x000   
-DECL|macro|HASH_TABLE_MASK_128K
-mdefine_line|#define HASH_TABLE_MASK_128K&t;0x001   
-DECL|macro|HASH_TABLE_MASK_256K
-mdefine_line|#define HASH_TABLE_MASK_256K&t;0x003   
-DECL|macro|HASH_TABLE_MASK_512K
-mdefine_line|#define HASH_TABLE_MASK_512K&t;0x007
-DECL|macro|HASH_TABLE_MASK_1M
-mdefine_line|#define HASH_TABLE_MASK_1M&t;0x00F   
-DECL|macro|HASH_TABLE_MASK_2M
-mdefine_line|#define HASH_TABLE_MASK_2M&t;0x01F   
-DECL|macro|HASH_TABLE_MASK_4M
-mdefine_line|#define HASH_TABLE_MASK_4M&t;0x03F   
 multiline_comment|/* invalidate a TLB entry */
 DECL|function|_tlbie
 r_extern
@@ -611,6 +550,67 @@ r_void
 suffix:semicolon
 multiline_comment|/* invalidate all TLB entries */
 macro_line|#endif /* __ASSEMBLY__ */
+multiline_comment|/* Block size masks */
+DECL|macro|BL_128K
+mdefine_line|#define BL_128K&t;0x000
+DECL|macro|BL_256K
+mdefine_line|#define BL_256K 0x001
+DECL|macro|BL_512K
+mdefine_line|#define BL_512K 0x003
+DECL|macro|BL_1M
+mdefine_line|#define BL_1M   0x007
+DECL|macro|BL_2M
+mdefine_line|#define BL_2M   0x00F
+DECL|macro|BL_4M
+mdefine_line|#define BL_4M   0x01F
+DECL|macro|BL_8M
+mdefine_line|#define BL_8M   0x03F
+DECL|macro|BL_16M
+mdefine_line|#define BL_16M  0x07F
+DECL|macro|BL_32M
+mdefine_line|#define BL_32M  0x0FF
+DECL|macro|BL_64M
+mdefine_line|#define BL_64M  0x1FF
+DECL|macro|BL_128M
+mdefine_line|#define BL_128M 0x3FF
+DECL|macro|BL_256M
+mdefine_line|#define BL_256M 0x7FF
+multiline_comment|/* BAT Access Protection */
+DECL|macro|BPP_XX
+mdefine_line|#define BPP_XX&t;0x00&t;&t;/* No access */
+DECL|macro|BPP_RX
+mdefine_line|#define BPP_RX&t;0x01&t;&t;/* Read only */
+DECL|macro|BPP_RW
+mdefine_line|#define BPP_RW&t;0x02&t;&t;/* Read/write */
+multiline_comment|/* Used to set up SDR1 register */
+DECL|macro|HASH_TABLE_SIZE_64K
+mdefine_line|#define HASH_TABLE_SIZE_64K&t;0x00010000
+DECL|macro|HASH_TABLE_SIZE_128K
+mdefine_line|#define HASH_TABLE_SIZE_128K&t;0x00020000
+DECL|macro|HASH_TABLE_SIZE_256K
+mdefine_line|#define HASH_TABLE_SIZE_256K&t;0x00040000
+DECL|macro|HASH_TABLE_SIZE_512K
+mdefine_line|#define HASH_TABLE_SIZE_512K&t;0x00080000
+DECL|macro|HASH_TABLE_SIZE_1M
+mdefine_line|#define HASH_TABLE_SIZE_1M&t;0x00100000
+DECL|macro|HASH_TABLE_SIZE_2M
+mdefine_line|#define HASH_TABLE_SIZE_2M&t;0x00200000
+DECL|macro|HASH_TABLE_SIZE_4M
+mdefine_line|#define HASH_TABLE_SIZE_4M&t;0x00400000
+DECL|macro|HASH_TABLE_MASK_64K
+mdefine_line|#define HASH_TABLE_MASK_64K&t;0x000   
+DECL|macro|HASH_TABLE_MASK_128K
+mdefine_line|#define HASH_TABLE_MASK_128K&t;0x001   
+DECL|macro|HASH_TABLE_MASK_256K
+mdefine_line|#define HASH_TABLE_MASK_256K&t;0x003   
+DECL|macro|HASH_TABLE_MASK_512K
+mdefine_line|#define HASH_TABLE_MASK_512K&t;0x007
+DECL|macro|HASH_TABLE_MASK_1M
+mdefine_line|#define HASH_TABLE_MASK_1M&t;0x00F   
+DECL|macro|HASH_TABLE_MASK_2M
+mdefine_line|#define HASH_TABLE_MASK_2M&t;0x01F   
+DECL|macro|HASH_TABLE_MASK_4M
+mdefine_line|#define HASH_TABLE_MASK_4M&t;0x03F   
 multiline_comment|/* Control/status registers for the MPC8xx.&n; * A write operation to these registers causes serialized access.&n; * During software tablewalk, the registers used perform mask/shift-add&n; * operations when written/read.  A TLB entry is created when the Mx_RPN&n; * is written, and the contents of several registers are used to&n; * create the entry.&n; */
 DECL|macro|MI_CTR
 mdefine_line|#define MI_CTR&t;&t;784&t;/* Instruction TLB control register */

@@ -51,6 +51,7 @@ comma
 id|A
 )paren
 suffix:semicolon
+r_return
 id|__FP_PACK_Q
 c_func
 (paren
@@ -58,9 +59,6 @@ id|rd
 comma
 id|R
 )paren
-suffix:semicolon
-r_return
-l_int|1
 suffix:semicolon
 )brace
 eof

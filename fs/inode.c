@@ -1362,9 +1362,13 @@ id|inode_lock
 )paren
 suffix:semicolon
 )brace
-DECL|macro|INODES_PER_PAGE
-mdefine_line|#define INODES_PER_PAGE PAGE_SIZE/sizeof(struct inode)
-multiline_comment|/*&n; * This is called with the spinlock held, but releases&n; * the lock when freeing or allocating inodes.&n; * Look out! This returns with the inode lock held if&n; * it got an inode..&n; */
+multiline_comment|/*&n; * This is called with the spinlock held, but releases&n; * the lock when freeing or allocating inodes.&n; * Look out! This returns with the inode lock held if&n; * it got an inode..&n; *&n; * We do inode allocations two pages at a time to reduce&n; * fragmentation.&n; */
+DECL|macro|INODE_PAGE_ORDER
+mdefine_line|#define INODE_PAGE_ORDER&t;1
+DECL|macro|INODE_ALLOCATION_SIZE
+mdefine_line|#define INODE_ALLOCATION_SIZE&t;(PAGE_SIZE &lt;&lt; INODE_PAGE_ORDER)
+DECL|macro|INODES_PER_ALLOCATION
+mdefine_line|#define INODES_PER_ALLOCATION&t;(INODE_ALLOCATION_SIZE/sizeof(struct inode))
 DECL|function|grow_inodes
 r_static
 r_struct
@@ -1457,10 +1461,12 @@ r_struct
 id|inode
 op_star
 )paren
-id|__get_free_page
+id|__get_free_pages
 c_func
 (paren
 id|GFP_KERNEL
+comma
+id|INODE_PAGE_ORDER
 )paren
 suffix:semicolon
 r_if
@@ -1477,16 +1483,9 @@ id|inode
 op_star
 id|tmp
 suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|inode_lock
-)paren
-suffix:semicolon
 id|size
 op_assign
-id|PAGE_SIZE
+id|INODE_ALLOCATION_SIZE
 op_minus
 l_int|2
 op_star
@@ -1499,6 +1498,13 @@ suffix:semicolon
 id|tmp
 op_assign
 id|inode
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|inode_lock
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -1547,11 +1553,11 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Update the inode statistics&n;&t;&t; */
 id|inodes_stat.nr_inodes
 op_add_assign
-id|INODES_PER_PAGE
+id|INODES_PER_ALLOCATION
 suffix:semicolon
 id|inodes_stat.nr_free_inodes
 op_add_assign
-id|INODES_PER_PAGE
+id|INODES_PER_ALLOCATION
 op_minus
 l_int|1
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: locks.c,v 1.21 1998/12/28 10:28:53 paulus Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
+multiline_comment|/*&n; * $Id: locks.c,v 1.23 1999/02/12 07:06:32 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -38,33 +38,15 @@ op_assign
 id|INIT_STUCK
 suffix:semicolon
 macro_line|#endif /* DEBUG_LOCKS */
-multiline_comment|/* try expensive atomic load/store to get lock */
 r_while
 c_loop
 (paren
-(paren
-r_int
-r_int
-)paren
-id|xchg_u32
+id|__spin_trylock
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 op_amp
 id|lock-&gt;lock
-comma
-l_int|0xffffffff
 )paren
-)paren
-(brace
-multiline_comment|/* try cheap load until it&squot;s free */
-r_while
-c_loop
-(paren
-id|lock-&gt;lock
 )paren
 (brace
 macro_line|#ifdef DEBUG_LOCKS
@@ -105,12 +87,6 @@ multiline_comment|/* steal the lock */
 multiline_comment|/*xchg_u32((void *)&amp;lock-&gt;lock,0);*/
 )brace
 macro_line|#endif /* DEBUG_LOCKS */
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 )brace
 id|lock-&gt;owner_pc
 op_assign
@@ -139,36 +115,19 @@ op_star
 id|lock
 )paren
 (brace
-r_int
-r_int
-id|result
-suffix:semicolon
-id|result
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|xchg_u32
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|lock-&gt;lock
-comma
-l_int|0xffffffff
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|result
+id|__spin_trylock
+c_func
+(paren
+op_amp
+id|lock-&gt;lock
 )paren
-(brace
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|lock-&gt;owner_cpu
 op_assign
 id|smp_processor_id
@@ -188,13 +147,8 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-)brace
 r_return
-(paren
-id|result
-op_eq
-l_int|0
-)paren
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|_spin_unlock
@@ -270,23 +224,20 @@ id|lp-&gt;owner_cpu
 op_assign
 l_int|0
 suffix:semicolon
-id|eieio
+id|wmb
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* actually I believe eieio only orders */
 id|lp-&gt;lock
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* non-cacheable accesses (on 604 at least) */
-id|eieio
+id|wmb
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*  - paulus. */
 )brace
 multiline_comment|/*&n; * Just like x86, implement read-write locks as a 32-bit counter&n; * with the high bit (sign) being the &quot;write&quot; bit.&n; * -- Cort&n; */
 DECL|function|_read_lock
@@ -318,6 +269,11 @@ macro_line|#endif /* DEBUG_LOCKS */&t;&t;
 id|again
 suffix:colon
 multiline_comment|/* get our read lock in there */
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -418,6 +374,11 @@ r_goto
 id|again
 suffix:semicolon
 )brace
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|_read_unlock
 r_void
@@ -452,6 +413,11 @@ id|rw-&gt;lock
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG_LOCKS */
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|atomic_dec
 c_func
 (paren
@@ -465,6 +431,11 @@ id|rw
 )paren
 op_member_access_from_pointer
 id|lock
+)paren
+suffix:semicolon
+id|wmb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -496,6 +467,11 @@ suffix:semicolon
 macro_line|#endif /* DEBUG_LOCKS */&t;&t;  
 id|again
 suffix:colon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -654,6 +630,11 @@ r_goto
 id|again
 suffix:semicolon
 )brace
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|_write_unlock
 r_void
@@ -695,6 +676,11 @@ id|rw-&gt;lock
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG_LOCKS */
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|clear_bit
 c_func
 (paren
@@ -706,6 +692,11 @@ id|rw
 )paren
 op_member_access_from_pointer
 id|lock
+)paren
+suffix:semicolon
+id|wmb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -779,25 +770,12 @@ multiline_comment|/* mine! */
 r_while
 c_loop
 (paren
-id|xchg_u32
+id|__spin_trylock
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 op_amp
 id|klock_info.kernel_flag
-comma
-id|KLOCK_HELD
 )paren
-)paren
-(brace
-multiline_comment|/* try cheap load until it&squot;s free */
-r_while
-c_loop
-(paren
-id|klock_info.kernel_flag
 )paren
 (brace
 macro_line|#ifdef DEBUG_LOCKS
@@ -832,12 +810,6 @@ id|INIT_STUCK
 suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG_LOCKS */
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 )brace
 id|klock_info.akp
 op_assign
@@ -920,13 +892,28 @@ id|task-&gt;lock_depth
 )paren
 )paren
 (brace
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|klock_info.akp
 op_assign
 id|NO_PROC_ID
 suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|klock_info.kernel_flag
 op_assign
 id|KLOCK_CLEAR
+suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 )brace

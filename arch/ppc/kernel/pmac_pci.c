@@ -316,11 +316,18 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* Bus number once again taken into consideration.&n;&t;&t; * Change applied from 2.1.24. This makes devices located&n;&t;&t; * behind PCI-PCI bridges visible.&n;&t;&t; * -Ranjit Deshpande, 01/20/99&n;&t;&t; */
 id|out_le32
 c_func
 (paren
 id|bp-&gt;cfg_addr
 comma
+(paren
+id|bus
+op_lshift
+l_int|16
+)paren
+op_plus
 (paren
 id|dev_fn
 op_lshift
@@ -490,11 +497,18 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* See pci_read_config_byte */
 id|out_le32
 c_func
 (paren
 id|bp-&gt;cfg_addr
 comma
+(paren
+id|bus
+op_lshift
+l_int|16
+)paren
+op_plus
 (paren
 id|dev_fn
 op_lshift
@@ -667,11 +681,18 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* See pci_read_config_byte */
 id|out_le32
 c_func
 (paren
 id|bp-&gt;cfg_addr
 comma
+(paren
+id|bus
+op_lshift
+l_int|16
+)paren
+op_plus
 (paren
 id|dev_fn
 op_lshift
@@ -816,11 +837,18 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* See pci_read_config_byte */
 id|out_le32
 c_func
 (paren
 id|bp-&gt;cfg_addr
 comma
+(paren
+id|bus
+op_lshift
+l_int|16
+)paren
+op_plus
 (paren
 id|dev_fn
 op_lshift
@@ -983,11 +1011,18 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* See pci_read_config_byte */
 id|out_le32
 c_func
 (paren
 id|bp-&gt;cfg_addr
 comma
+(paren
+id|bus
+op_lshift
+l_int|16
+)paren
+op_plus
 (paren
 id|dev_fn
 op_lshift
@@ -1153,18 +1188,30 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* See pci_read_config_byte */
 id|out_le32
 c_func
 (paren
 id|bp-&gt;cfg_addr
 comma
 (paren
+id|bus
+op_lshift
+l_int|16
+)paren
+op_plus
+(paren
 id|dev_fn
 op_lshift
 l_int|8
 )paren
 op_plus
+(paren
 id|offset
+op_amp
+op_complement
+l_int|3
+)paren
 op_plus
 l_int|1
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.73 1998/10/07 11:35:50 jj Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.76 1998/12/17 11:11:26 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1366,6 +1366,24 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+macro_line|#ifdef __sparc_v9__
+r_extern
+r_void
+id|firetruck_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|firetruck_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 r_return
 suffix:semicolon
 macro_line|#else
@@ -1564,6 +1582,10 @@ id|sbus-&gt;next
 op_assign
 l_int|0
 suffix:semicolon
+id|sbus-&gt;prom_node
+op_assign
+id|nd
+suffix:semicolon
 id|this_sbus
 op_assign
 id|nd
@@ -1753,10 +1775,6 @@ l_int|1
 )braket
 op_assign
 l_int|0
-suffix:semicolon
-id|sbus-&gt;prom_node
-op_assign
-id|this_sbus
 suffix:semicolon
 id|strcpy
 c_func
@@ -2200,6 +2218,10 @@ id|sbus-&gt;next
 op_assign
 l_int|0
 suffix:semicolon
+id|sbus-&gt;prom_node
+op_assign
+id|this_sbus
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -2230,6 +2252,30 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __sparc_v9__
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4u
+)paren
+(brace
+r_extern
+r_void
+id|firetruck_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|firetruck_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_OPENPROMIO
 id|openprom_init
 c_func

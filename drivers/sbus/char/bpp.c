@@ -1194,6 +1194,7 @@ id|jiffies
 comma
 id|extime
 )paren
+)paren
 id|extime
 op_assign
 id|jiffies
@@ -1738,7 +1739,7 @@ suffix:semicolon
 multiline_comment|/*&n; * When the process closes the device, this method is called to clean&n; * up and reset the hardware. Always leave the device in compatibility&n; * mode as this is a reasonable place to clean up from messes made by&n; * ioctls, or other mayhem.&n; */
 DECL|function|bpp_release
 r_static
-r_void
+r_int
 id|bpp_release
 c_func
 (paren
@@ -1788,6 +1789,9 @@ c_func
 (paren
 id|minor
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|read_nibble
@@ -2557,15 +2561,10 @@ suffix:semicolon
 )brace
 DECL|function|bpp_read
 r_static
-r_int
+id|ssize_t
 id|bpp_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -2576,8 +2575,11 @@ op_star
 id|c
 comma
 r_int
-r_int
 id|cnt
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -2590,7 +2592,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|f-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_if
@@ -2896,10 +2898,6 @@ r_int
 r_char
 id|byte
 suffix:semicolon
-id|c
-op_add_assign
-l_int|1
-suffix:semicolon
 id|get_user_ret
 c_func
 (paren
@@ -2910,6 +2908,10 @@ comma
 op_minus
 id|EFAULT
 )paren
+suffix:semicolon
+id|c
+op_add_assign
+l_int|1
 suffix:semicolon
 id|rc
 op_assign
@@ -3227,15 +3229,10 @@ suffix:semicolon
 multiline_comment|/*&n; * Write to the peripheral. Be sensitive of the current mode. If I&squot;m&n; * in a mode that can be turned around (ECP) then just do&n; * that. Otherwise, terminate and do my writing in compat mode. This&n; * is the safest course as any device can handle it.&n; */
 DECL|function|bpp_write
 r_static
-r_int
+id|ssize_t
 id|bpp_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -3247,8 +3244,11 @@ op_star
 id|c
 comma
 r_int
-r_int
 id|cnt
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -3256,13 +3256,14 @@ id|errno
 op_assign
 l_int|0
 suffix:semicolon
+r_const
 r_int
 id|minor
 op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|f-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_if
@@ -3624,6 +3625,21 @@ comma
 multiline_comment|/* flush */
 id|bpp_release
 comma
+l_int|NULL
+comma
+multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check media change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+comma
+multiline_comment|/* lock */
 )brace
 suffix:semicolon
 macro_line|#if defined(__i386__)

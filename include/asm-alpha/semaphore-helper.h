@@ -117,18 +117,20 @@ id|tmp2
 comma
 id|tmp3
 suffix:semicolon
-multiline_comment|/* &quot;Equivalent&quot; C.  Note that we have to do this all without&n;&t;   (taken) branches in order to be a valid ll/sc sequence.&n;&n;&t;   do {&n;&t;       tmp = ldq_l;&n;&t;       ret = 0;&n;&t;       if (tmp &gt;= 0) {&n;&t;           tmp += 0xffffffff00000000;&n;&t;           ret = 1;&n;&t;       }&n;&t;       else if (pending) {&n;&t;           tmp += 1;&n;&t;           ret = -EINTR;&n;&t;       }&n;&t;       else {&n;&t;&t;   break;&t;// ideally.  we don&squot;t actually break &n;&t;&t;   &t;&t;// since this is a predicate we don&squot;t&n;&t;&t;&t;&t;// have, and is more trouble to build&n;&t;&t;&t;&t;// than to elide the noop stq_c.&n;&t;       }&n;&t;       tmp = stq_c = tmp;&n;&t;   } while (tmp == 0);&n;&t;*/
+multiline_comment|/* &quot;Equivalent&quot; C.  Note that we have to do this all without&n;&t;   (taken) branches in order to be a valid ll/sc sequence.&n;&n;&t;   do {&n;&t;       tmp = ldq_l;&n;&t;       ret = 0;&n;&t;       if (tmp &gt;= 0) {&n;&t;           tmp += 0xffffffff00000000;&n;&t;           ret = 1;&n;&t;       }&n;&t;       else if (pending) {&n;&t;&t;   // Since -1 + 1 carries into the high word, we have&n;&t;&t;   // to be more careful adding 1 here.&n;&t;&t;   tmp = (tmp &amp; 0xffffffff00000000)&n;&t;&t;&t; | ((tmp + 1) &amp; 0x00000000ffffffff;&n;&t;           ret = -EINTR;&n;&t;       }&n;&t;       else {&n;&t;&t;   break;&t;// ideally.  we don&squot;t actually break &n;&t;&t;   &t;&t;// since this is a predicate we don&squot;t&n;&t;&t;&t;&t;// have, and is more trouble to build&n;&t;&t;&t;&t;// than to elide the noop stq_c.&n;&t;       }&n;&t;       tmp = stq_c = tmp;&n;&t;   } while (tmp == 0);&n;&t;*/
 id|__asm__
 id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldq_l&t;%1,%4&bslash;n&quot;
 l_string|&quot;&t;lda&t;%0,0&bslash;n&quot;
-l_string|&quot;&t;addq&t;%1,1,%2&bslash;n&quot;
-l_string|&quot;&t;ldah&t;%3,0x8000(%1)&bslash;n&quot;
 l_string|&quot;&t;cmovne&t;%5,%6,%0&bslash;n&quot;
-l_string|&quot;&t;ldah&t;%3,0x8000(%3)&bslash;n&quot;
+l_string|&quot;&t;addq&t;%1,1,%2&bslash;n&quot;
+l_string|&quot;&t;and&t;%1,%7,%3&bslash;n&quot;
+l_string|&quot;&t;andnot&t;%2,%7,%2&bslash;n&quot;
 l_string|&quot;&t;cmovge&t;%1,1,%0&bslash;n&quot;
+l_string|&quot;&t;or&t;%3,%2,%2&bslash;n&quot;
+l_string|&quot;&t;addq&t;%1,%7,%3&bslash;n&quot;
 l_string|&quot;&t;cmovne&t;%5,%2,%1&bslash;n&quot;
 l_string|&quot;&t;cmovge&t;%2,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stq_c&t;%1,%4&bslash;n&quot;
@@ -177,6 +179,11 @@ l_string|&quot;r&quot;
 (paren
 op_minus
 id|EINTR
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+l_int|0xffffffff00000000
 )paren
 )paren
 suffix:semicolon

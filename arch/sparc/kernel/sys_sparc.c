@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.49 1998/10/11 06:57:53 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.50 1999/01/07 19:06:57 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
+multiline_comment|/* #define DEBUG_UNIMP_SYSCALL */
 multiline_comment|/* XXX Make this per-binary type, this way we can detect the type of&n; * XXX a binary.  Every Sparc executable calls this very early on.&n; */
 DECL|function|sys_getpagesize
 id|asmlinkage
@@ -1005,6 +1006,24 @@ op_star
 id|regs
 )paren
 (brace
+r_static
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+op_increment
+OG
+l_int|5
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -1023,11 +1042,13 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG_UNIMP_SYSCALL&t;
 id|show_regs
 (paren
 id|regs
 )paren
 suffix:semicolon
+macro_line|#endif
 id|unlock_kernel
 c_func
 (paren

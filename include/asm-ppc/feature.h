@@ -58,9 +58,6 @@ comma
 DECL|enumerator|FEATURE_BMac_IO_enable
 id|FEATURE_BMac_IO_enable
 comma
-DECL|enumerator|FEATURE_Modem_PowerOn
-id|FEATURE_Modem_PowerOn
-comma
 DECL|enumerator|FEATURE_Modem_Reset
 id|FEATURE_Modem_Reset
 comma

@@ -7,5 +7,7 @@ DECL|macro|L1_CACHE_BYTES
 mdefine_line|#define        L1_CACHE_BYTES  32      /* a guess */
 DECL|macro|L1_CACHE_ALIGN
 mdefine_line|#define        L1_CACHE_ALIGN(x)       (((x)+(L1_CACHE_BYTES-1))&amp;~(L1_CACHE_BYTES-1))
+DECL|macro|SMP_CACHE_BYTES
+mdefine_line|#define        SMP_CACHE_BYTES L1_CACHE_BYTES
 macro_line|#endif /* __ASM_MIPS_CACHE_H */
 eof

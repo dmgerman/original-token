@@ -79,6 +79,12 @@ DECL|macro|CDROM_DISC_STATUS
 mdefine_line|#define CDROM_DISC_STATUS&t;0x5327  /* Get disc type, etc. */
 DECL|macro|CDROM_CHANGER_NSLOTS
 mdefine_line|#define CDROM_CHANGER_NSLOTS    0x5328  /* Get number of slots */
+DECL|macro|CDROM_LOCKDOOR
+mdefine_line|#define CDROM_LOCKDOOR&t;&t;0x5329  /* lock or unlock door */
+DECL|macro|CDROM_DEBUG
+mdefine_line|#define CDROM_DEBUG&t;&t;0x5330&t;/* Turn debug messages on/off */
+DECL|macro|CDROM_GET_CAPABILITY
+mdefine_line|#define CDROM_GET_CAPABILITY&t;0x5331&t;/* get capabilities */
 multiline_comment|/* This ioctl is only used by sbpcd at the moment */
 DECL|macro|CDROMAUDIOBUFSIZ
 mdefine_line|#define CDROMAUDIOBUFSIZ        0x5382&t;/* set the audio buffer size */

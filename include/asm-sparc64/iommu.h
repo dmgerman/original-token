@@ -43,7 +43,7 @@ mdefine_line|#define IOPTE_64K           0x2000000000000000 /* IOPTE is for 64k 
 DECL|macro|IOPTE_STBUF
 mdefine_line|#define IOPTE_STBUF         0x1000000000000000 /* DVMA can use streaming buffer    */
 DECL|macro|IOPTE_INTRA
-mdefine_line|#define IOPTE_INTRA         0x0800000000000000 /* XXX what does this thing do?     */
+mdefine_line|#define IOPTE_INTRA         0x0800000000000000 /* SBUS slot--&gt;slot direct transfer */
 DECL|macro|IOPTE_PAGE
 mdefine_line|#define IOPTE_PAGE          0x000001ffffffe000 /* Physical page number (PA[40:13]) */
 DECL|macro|IOPTE_CACHE
@@ -60,39 +60,26 @@ id|sysio_regs
 op_star
 id|sysio_regs
 suffix:semicolon
-DECL|member|sbuf_flushflag_va
-r_int
-r_int
-op_star
-id|sbuf_flushflag_va
-suffix:semicolon
-DECL|member|sbuf_flushflag_pa
-r_int
-r_int
-id|sbuf_flushflag_pa
-suffix:semicolon
-DECL|member|iommu_lock
-id|spinlock_t
-id|iommu_lock
-suffix:semicolon
 DECL|member|page_table
 id|iopte_t
 op_star
 id|page_table
 suffix:semicolon
-multiline_comment|/* For convenience */
-DECL|member|start
+DECL|member|flushflag
+r_volatile
 r_int
 r_int
-id|start
+id|flushflag
 suffix:semicolon
-multiline_comment|/* First managed virtual address */
-DECL|member|end
+DECL|member|strbuf_enabled
 r_int
 r_int
-id|end
+id|strbuf_enabled
 suffix:semicolon
-multiline_comment|/* Last managed virtual address */
+DECL|member|iommu_lock
+id|spinlock_t
+id|iommu_lock
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* !(_SPARC_IOMMU_H) */

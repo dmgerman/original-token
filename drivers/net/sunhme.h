@@ -1301,6 +1301,9 @@ comma
 multiline_comment|/* Time inactive.                                     */
 )brace
 suffix:semicolon
+r_struct
+id|quattro
+suffix:semicolon
 multiline_comment|/* Happy happy, joy joy! */
 DECL|struct|happy_meal
 r_struct
@@ -1571,6 +1574,18 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Backpointer                       */
+DECL|member|qfe_parent
+r_struct
+id|quattro
+op_star
+id|qfe_parent
+suffix:semicolon
+multiline_comment|/* For Quattro cards                 */
+DECL|member|qfe_ent
+r_int
+id|qfe_ent
+suffix:semicolon
+multiline_comment|/* Which instance on quattro         */
 DECL|member|next_module
 r_struct
 id|happy_meal
@@ -1604,10 +1619,87 @@ DECL|macro|HFLAG_LINKUP
 mdefine_line|#define HFLAG_LINKUP              0x00000400      /* 1 = Link is up                    */
 DECL|macro|HFLAG_PCI
 mdefine_line|#define HFLAG_PCI                 0x00000800      /* PCI based Happy Meal              */
+DECL|macro|HFLAG_QUATTRO
+mdefine_line|#define HFLAG_QUATTRO&t;&t;  0x00001000      /* On QFE/Quattro card&t;       */
 DECL|macro|HFLAG_20_21
 mdefine_line|#define HFLAG_20_21  (HFLAG_POLLENABLE | HFLAG_FENABLE)
 DECL|macro|HFLAG_NOT_A0
 mdefine_line|#define HFLAG_NOT_A0 (HFLAG_POLLENABLE | HFLAG_FENABLE | HFLAG_LANCE | HFLAG_RXCV)
+multiline_comment|/* Support for QFE/Quattro cards. */
+DECL|struct|quattro
+r_struct
+id|quattro
+(brace
+DECL|member|irq_status
+r_volatile
+id|u32
+op_star
+id|irq_status
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|happy_meals
+r_struct
+id|device
+op_star
+id|happy_meals
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|handler
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+DECL|member|quattro_sbus_dev
+r_struct
+id|linux_sbus_device
+op_star
+id|quattro_sbus_dev
+suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+DECL|member|quattro_pci_dev
+r_struct
+id|pci_dev
+op_star
+id|quattro_pci_dev
+suffix:semicolon
+macro_line|#endif
+DECL|member|next
+r_struct
+id|quattro
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* PROM ranges, if any. */
+DECL|member|ranges
+r_struct
+id|linux_prom_ranges
+id|ranges
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|nranges
+r_int
+id|nranges
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* We use this to acquire receive skb&squot;s that we can DMA directly into. */
 DECL|macro|ALIGNED_RX_SKB_ADDR
 mdefine_line|#define ALIGNED_RX_SKB_ADDR(addr) &bslash;&n;        ((((unsigned long)(addr) + (64 - 1)) &amp; ~(64 - 1)) - (unsigned long)(addr))
@@ -1725,10 +1817,11 @@ suffix:semicolon
 )brace
 r_else
 macro_line|#endif
-r_return
+(brace
+macro_line|#ifdef __sparc_v9__
+r_if
+c_cond
 (paren
-id|u32
-)paren
 (paren
 (paren
 r_int
@@ -1736,7 +1829,41 @@ r_int
 )paren
 id|addr
 )paren
+op_ge
+id|MAX_DMA_ADDRESS
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;sunhme: Bogus DMA buffer address &quot;
+l_string|&quot;[%016lx]&bslash;n&quot;
+comma
+(paren
+(paren
+r_int
+r_int
+)paren
+id|addr
+)paren
+)paren
 suffix:semicolon
+id|panic
+c_func
+(paren
+l_string|&quot;DMA address too large, tell DaveM&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_return
+id|sbus_dvma_addr
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|hme_read32
 r_extern

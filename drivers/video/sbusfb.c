@@ -1197,6 +1197,12 @@ dot
 id|size
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
+DECL|macro|POFF_MASK
+mdefine_line|#define POFF_MASK&t;(PAGE_MASK|0x1UL)
+macro_line|#else
+mdefine_line|#define POFF_MASK&t;(PAGE_MASK)
+macro_line|#endif&t;&t;&t;&t;
 id|map_offset
 op_assign
 (paren
@@ -1210,7 +1216,7 @@ dot
 id|poff
 )paren
 op_amp
-id|PAGE_MASK
+id|POFF_MASK
 suffix:semicolon
 r_break
 suffix:semicolon

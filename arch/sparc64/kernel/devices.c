@@ -11,7 +11,7 @@ r_struct
 id|prom_cpuinfo
 id|linux_cpus
 (braket
-id|NR_CPUS
+l_int|64
 )braket
 id|__initdata
 op_assign
@@ -25,7 +25,7 @@ DECL|variable|prom_cpu_nodes
 r_int
 id|prom_cpu_nodes
 (braket
-id|NR_CPUS
+l_int|64
 )braket
 suffix:semicolon
 DECL|variable|linux_num_cpus
@@ -83,7 +83,7 @@ suffix:semicolon
 r_int
 id|cpu_nds
 (braket
-id|NR_CPUS
+l_int|64
 )braket
 suffix:semicolon
 multiline_comment|/* One node for each cpu */
@@ -105,6 +105,12 @@ r_sizeof
 (paren
 id|node_str
 )paren
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Booting Linux...&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -163,17 +169,7 @@ c_func
 id|prom_root_node
 )paren
 suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;root child is %08x&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|scan
-)paren
-suffix:semicolon
+multiline_comment|/* prom_printf(&quot;root child is %08x&bslash;n&quot;, (unsigned) scan); */
 id|nd
 op_assign
 l_int|0
@@ -269,21 +265,8 @@ op_assign
 id|thismid
 suffix:semicolon
 macro_line|#ifdef __SMP__&t;&t;&t;&t;
-id|prom_printf
-c_func
-(paren
-l_string|&quot;Found CPU %d (node=%08x,mid=%d)&bslash;n&quot;
-comma
-id|cpu_ctr
-comma
-(paren
-r_int
-)paren
-id|scan
-comma
-id|thismid
-)paren
-suffix:semicolon
+multiline_comment|/* Don&squot;t pollute PROM screen with these messages. If the kernel is screwed enough&n;&t;&t;&t;&t;   that console does not start up, then we don&squot;t care how many CPUs have been found,&n;&t;&t;&t;&t;   if it starts up, the user can use console=prom to see it. */
+multiline_comment|/* prom_printf(&quot;Found CPU %d (node=%08x,mid=%d)&bslash;n&quot;, cpu_ctr, (unsigned) scan, thismid); */
 id|printk
 c_func
 (paren

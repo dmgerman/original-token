@@ -486,9 +486,6 @@ id|smp_proc_in_lock
 id|NR_CPUS
 )braket
 suffix:semicolon
-multiline_comment|/* As idle task checks need_resched in a tight loop, it is not necessary to&n;   wake it up. -jj */
-DECL|macro|smp_send_reschedule
-mdefine_line|#define smp_send_reschedule(cpu) do {} while (0)
 DECL|function|cpu_logical_map
 r_extern
 id|__inline__
@@ -646,6 +643,29 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() hard_smp_processor_id()
+DECL|function|smp_send_reschedule
+r_extern
+id|__inline__
+r_void
+id|smp_send_reschedule
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+)brace
+DECL|function|smp_send_stop
+r_extern
+id|__inline__
+r_void
+id|smp_send_stop
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* Sparc specific messages. */
 DECL|macro|MSG_CROSS_CALL
@@ -660,11 +680,7 @@ mdefine_line|#define MBOX_IDLECPU2         0xFD
 DECL|macro|MBOX_STOPCPU2
 mdefine_line|#define MBOX_STOPCPU2         0xFE
 DECL|macro|PROC_CHANGE_PENALTY
-mdefine_line|#define PROC_CHANGE_PENALTY     20
-DECL|macro|SMP_FROM_INT
-mdefine_line|#define SMP_FROM_INT&t;&t;1
-DECL|macro|SMP_FROM_SYSCALL
-mdefine_line|#define SMP_FROM_SYSCALL&t;2
+mdefine_line|#define PROC_CHANGE_PENALTY     15
 macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID            0xFF

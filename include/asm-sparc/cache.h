@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cache.h,v 1.7 1997/05/06 09:31:46 davem Exp $&n; * cache.h:  Cache specific code for the Sparc.  These include flushing&n; *           and direct tag/data line access.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: cache.h,v 1.8 1999/03/11 00:14:45 davem Exp $&n; * cache.h:  Cache specific code for the Sparc.  These include flushing&n; *           and direct tag/data line access.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_CACHE_H
 DECL|macro|_SPARC_CACHE_H
 mdefine_line|#define _SPARC_CACHE_H
@@ -7,6 +7,8 @@ DECL|macro|L1_CACHE_BYTES
 mdefine_line|#define L1_CACHE_BYTES 32
 DECL|macro|L1_CACHE_ALIGN
 mdefine_line|#define L1_CACHE_ALIGN(x) ((((x)+(L1_CACHE_BYTES-1))&amp;~(L1_CACHE_BYTES-1)))
+DECL|macro|SMP_CACHE_BYTES
+mdefine_line|#define SMP_CACHE_BYTES 32
 multiline_comment|/* Direct access to the instruction cache is provided through and&n; * alternate address space.  The IDC bit must be off in the ICCR on&n; * HyperSparcs for these accesses to work.  The code below does not do&n; * any checking, the caller must do so.  These routines are for&n; * diagnostics only, but could end up being useful.  Use with care.&n; * Also, you are asking for trouble if you execute these in one of the&n; * three instructions following a %asr/%psr access or modification.&n; */
 multiline_comment|/* First, cache-tag access. */
 DECL|function|get_icache_tag

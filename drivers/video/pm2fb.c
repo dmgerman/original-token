@@ -48,7 +48,7 @@ DECL|macro|KHZ2PICOS
 mdefine_line|#define KHZ2PICOS(a) (1000000000UL/(a))
 multiline_comment|/*&n; * The _DEFINITIVE_ memory mapping/unmapping functions.&n; * This is due to the fact that they&squot;re changing soooo often...&n; */
 DECL|macro|MMAP
-mdefine_line|#define MMAP(a,b)&t;ioremap((u32 )(a), b)
+mdefine_line|#define MMAP(a,b)&t;ioremap((unsigned long )(a), b)
 DECL|macro|UNMAP
 mdefine_line|#define UNMAP(a,b)&t;iounmap(a)
 multiline_comment|/*&n; * The _DEFINITIVE_ memory i/o barrier functions.&n; * This is due to the fact that they&squot;re changing soooo often...&n; */

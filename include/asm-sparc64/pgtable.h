@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: pgtable.h,v 1.96 1998/10/27 23:28:42 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.102 1999/01/22 16:19:29 jj Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
 multiline_comment|/* This file contains the functions and defines necessary to modify and use&n; * the SpitFire page tables.&n; */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/spitfire.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
@@ -120,8 +121,9 @@ DECL|macro|__PRIV_BITS
 mdefine_line|#define __PRIV_BITS&t;_PAGE_P
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE&t;__pgprot (_PAGE_PRESENT | _PAGE_ACCESSED)
+multiline_comment|/* Don&squot;t set the TTE _PAGE_W bit here, else the dirty bit never gets set. */
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __ACCESS_BITS | _PAGE_W | _PAGE_WRITE)
+mdefine_line|#define PAGE_SHARED&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __ACCESS_BITS | _PAGE_WRITE)
 DECL|macro|PAGE_COPY
 mdefine_line|#define PAGE_COPY&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __ACCESS_BITS)
 DECL|macro|PAGE_READONLY
@@ -506,15 +508,15 @@ mdefine_line|#define mk_pte_phys(physpage, pgprot)&t;(__pte((physpage) | pgprot_
 DECL|macro|pte_modify
 mdefine_line|#define pte_modify(_pte, newprot) &bslash;&n;&t;(pte_val(_pte) = ((pte_val(_pte) &amp; _PAGE_CHG_MASK) | pgprot_val(newprot)))
 DECL|macro|pmd_set
-mdefine_line|#define pmd_set(pmdp, ptep)&t;&t;(pmd_val(*(pmdp)) = __pa((unsigned long) (ptep)))
+mdefine_line|#define pmd_set(pmdp, ptep)&t;&bslash;&n;&t;(pmd_val(*(pmdp)) = (__pa((unsigned long) (ptep)) &gt;&gt; 11UL))
 DECL|macro|pgd_set
-mdefine_line|#define pgd_set(pgdp, pmdp)&t;&t;(pgd_val(*(pgdp)) = __pa((unsigned long) (pmdp)))
+mdefine_line|#define pgd_set(pgdp, pmdp)&t;&bslash;&n;&t;(pgd_val(*(pgdp)) = (__pa((unsigned long) (pmdp)) &gt;&gt; 11UL))
 DECL|macro|pte_page
 mdefine_line|#define pte_page(pte)   ((unsigned long) __va(((pte_val(pte)&amp;~PAGE_OFFSET)&amp;~(0xfffUL))))
 DECL|macro|pmd_page
-mdefine_line|#define pmd_page(pmd)&t;&t;&t;((unsigned long) __va(pmd_val(pmd)))
+mdefine_line|#define pmd_page(pmd)&t;&t;&t;((unsigned long) __va((pmd_val(pmd)&lt;&lt;11UL)))
 DECL|macro|pgd_page
-mdefine_line|#define pgd_page(pgd)&t;&t;&t;((unsigned long) __va(pgd_val(pgd)))
+mdefine_line|#define pgd_page(pgd)&t;&t;&t;((unsigned long) __va((pgd_val(pgd)&lt;&lt;11UL)))
 DECL|macro|pte_none
 mdefine_line|#define pte_none(pte) &t;&t;&t;(!pte_val(pte))
 DECL|macro|pte_present
@@ -1761,9 +1763,9 @@ id|pgdir
 op_ne
 id|swapper_pg_dir
 op_logical_and
-id|tsk-&gt;mm
+id|tsk
 op_eq
-id|current-&gt;mm
+id|current
 )paren
 (brace
 r_register
@@ -2256,9 +2258,17 @@ op_star
 id|addr
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+op_star
+id|sparc64_valid_addr_bitmap
+suffix:semicolon
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(test_bit(PG_skip, &amp;(page)-&gt;flags))
+DECL|macro|kern_addr_valid
+mdefine_line|#define kern_addr_valid(addr)&t;(test_bit(__pa((unsigned long)(addr))&gt;&gt;22, sparc64_valid_addr_bitmap))
 r_extern
 r_int
 id|io_remap_page_range

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.37 1998/10/14 15:49:09 ecd Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.41 1999/01/04 20:12:25 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1129,6 +1129,39 @@ id|memory_size
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef PROM_DEBUG_CONSOLE
+DECL|variable|prom_debug_console
+r_static
+r_struct
+id|console
+id|prom_debug_console
+op_assign
+(brace
+l_string|&quot;debug&quot;
+comma
+id|prom_console_write
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+id|CON_PRINTBUFFER
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* XXX Implement this at some point... */
 DECL|function|kernel_enter_debugger
 r_void
@@ -1827,6 +1860,15 @@ op_star
 id|cmdline_p
 )paren
 suffix:semicolon
+macro_line|#ifdef PROM_DEBUG_CONSOLE
+id|register_console
+c_func
+(paren
+op_amp
+id|prom_debug_console
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -2333,9 +2375,7 @@ id|ic_gateway
 op_assign
 id|gw
 suffix:semicolon
-id|ic_bootp_flag
-op_assign
-id|ic_rarp_flag
+id|ic_proto_enabled
 op_assign
 l_int|0
 suffix:semicolon

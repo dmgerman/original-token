@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.15 1998/05/22 14:33:36 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.16 1998/12/16 04:33:52 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SBUS_H
 DECL|macro|_SPARC_SBUS_H
 mdefine_line|#define _SPARC_SBUS_H
@@ -305,6 +305,9 @@ DECL|macro|for_each_sbusdev
 mdefine_line|#define for_each_sbusdev(device, bus) &bslash;&n;        for((device) = (bus)-&gt;devices; (device); (device)=(device)-&gt;next)
 DECL|macro|for_all_sbusdev
 mdefine_line|#define for_all_sbusdev(device, bus) &bslash;&n;&t;for((bus) = SBus_chain, (device) = (bus)-&gt;devices; (bus); (device)=((device)-&gt;next ? (device)-&gt;next : ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
+multiline_comment|/* If you did not get the buffer from mmu_get_*() or sparc_alloc_dvma()&n; * then you must use this to get the 32-bit SBUS dvma address.&n; * And in this case it is your responsibility to make sure the buffer&n; * is GFP_DMA, ie. that it is not greater than MAX_DMA_ADDRESS.&n; */
+DECL|macro|sbus_dvma_addr
+mdefine_line|#define sbus_dvma_addr(__addr)&t;((__u32)(__addr))
 multiline_comment|/* Apply promlib probed SBUS ranges to registers. */
 r_extern
 r_void

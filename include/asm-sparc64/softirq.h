@@ -4,6 +4,7 @@ DECL|macro|__SPARC64_SOFTIRQ_H
 mdefine_line|#define __SPARC64_SOFTIRQ_H
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+macro_line|#include &lt;asm/system.h&gt;&t;&t;/* for membar() */
 macro_line|#ifndef __SMP__
 r_extern
 r_int
@@ -46,12 +47,17 @@ id|nr
 op_assign
 id|routine
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|bh_mask_count
 (braket
 id|nr
 )braket
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 id|bh_mask
 op_or_assign
@@ -71,13 +77,6 @@ r_int
 id|nr
 )paren
 (brace
-id|bh_base
-(braket
-id|nr
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|bh_mask
 op_and_assign
 op_complement
@@ -86,6 +85,19 @@ l_int|1
 op_lshift
 id|nr
 )paren
+suffix:semicolon
+id|membar
+c_func
+(paren
+l_string|&quot;#StoreStore&quot;
+)paren
+suffix:semicolon
+id|bh_base
+(braket
+id|nr
+)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|mark_bh
@@ -326,11 +338,15 @@ op_lshift
 id|nr
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|bh_mask_count
 (braket
 id|nr
 )braket
-op_increment
+)paren
 suffix:semicolon
 id|synchronize_bh
 c_func
@@ -352,12 +368,15 @@ id|nr
 r_if
 c_cond
 (paren
-op_logical_neg
-op_decrement
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
 id|bh_mask_count
 (braket
 id|nr
 )braket
+)paren
 )paren
 id|bh_mask
 op_or_assign

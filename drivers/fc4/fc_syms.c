@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &quot;fcp_scsi.h&quot;
+macro_line|#include &quot;fcp_impl.h&quot;
 DECL|variable|fcp_init
 id|EXPORT_SYMBOL
 c_func
@@ -49,6 +49,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|fcp_state_change
+)paren
+suffix:semicolon
+DECL|variable|fc_do_plogi
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fc_do_plogi
+)paren
+suffix:semicolon
+DECL|variable|fc_do_prli
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fc_do_prli
 )paren
 suffix:semicolon
 multiline_comment|/* SCSI stuff */

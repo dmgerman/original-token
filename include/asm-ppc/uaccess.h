@@ -25,7 +25,7 @@ mdefine_line|#define segment_eq(a,b)&t;((a).seg == (b).seg)
 DECL|macro|__kernel_ok
 mdefine_line|#define __kernel_ok (segment_eq(get_fs(), KERNEL_DS))
 DECL|macro|__user_ok
-mdefine_line|#define __user_ok(addr,size) (((size) &lt;= 0x80000000)&amp;&amp;((addr) &lt;= 0x80000000-(size)))
+mdefine_line|#define __user_ok(addr,size) (((size) &lt;= TASK_SIZE)&amp;&amp;((addr) &lt;= TASK_SIZE-(size)))
 DECL|macro|__access_ok
 mdefine_line|#define __access_ok(addr,size) (__kernel_ok || __user_ok((addr),(size)))
 DECL|macro|access_ok
@@ -281,6 +281,10 @@ r_return
 id|n
 suffix:semicolon
 )brace
+DECL|macro|copy_to_user_ret
+mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ if (copy_to_user(to,from,n)) return retval; })
+DECL|macro|copy_from_user_ret
+mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ if (copy_from_user(to,from,n)) return retval; })
 DECL|macro|__copy_from_user
 mdefine_line|#define __copy_from_user(to, from, size) &bslash;&n;&t;__copy_tofrom_user((to), (from), (size))
 DECL|macro|__copy_to_user

@@ -12,7 +12,23 @@ DECL|macro|L1_CACHE_ALIGN
 mdefine_line|#define        L1_CACHE_ALIGN(x)       (((x)+(L1_CACHE_BYTES-1))&amp;~(L1_CACHE_BYTES-1))
 DECL|macro|L1_CACHE_PAGES
 mdefine_line|#define L1_CACHE_PAGES&t;&t;8
+DECL|macro|SMP_CACHE_BYTES
+mdefine_line|#define        SMP_CACHE_BYTES L1_CACHE_BYTES
 macro_line|#if defined(__KERNEL__) &amp;&amp; !defined(__ASSEMBLY__)
+r_extern
+r_void
+id|flush_dcache_range
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|stop
+)paren
+suffix:semicolon
 DECL|function|unlock_dcache
 r_static
 r_inline

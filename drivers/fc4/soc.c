@@ -1,11 +1,11 @@
-multiline_comment|/* soc.c: Sparc SUNW,soc (Serial Optical Channel) Fibre Channel Sbus adapter support.&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Jirka Hanika (geo@ff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; *&n; * Supported hardware:&n; *      Tested on SOC sbus card bought with SS1000 in Linux running on SS5 and Ultra1. &n; *      Should run on on-board SOC/SOC+ cards of Ex000 servers as well, but it is not&n; *      tested (let us know if you succeed).&n; *      For SOC sbus cards, you have to make sure your FCode is 1.52 or later.&n; *      If you have older FCode, you should try to upgrade or get SOC microcode from Sun&n; *      (the microcode is present in Solaris soc driver as well). In that case you need&n; *      to #define HAVE_SOC_UCODE and format the microcode into soc_asm.c. For the exact&n; *      format mail me and I will tell you. I cannot offer you the actual microcode though,&n; *      unless Sun confirms they don&squot;t mind.&n; */
+multiline_comment|/* soc.c: Sparc SUNW,soc (Serial Optical Channel) Fibre Channel Sbus adapter support.&n; *&n; * Copyright (C) 1996,1997,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1997,1998 Jirka Hanika (geo@ff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; *&n; * Supported hardware:&n; *      Tested on SOC sbus card bought with SS1000 in Linux running on SS5 and Ultra1. &n; *      For SOC sbus cards, you have to make sure your FCode is 1.52 or later.&n; *      If you have older FCode, you should try to upgrade or get SOC microcode from Sun&n; *      (the microcode is present in Solaris soc driver as well). In that case you need&n; *      to #define HAVE_SOC_UCODE and format the microcode into soc_asm.c. For the exact&n; *      format mail me and I will tell you. I cannot offer you the actual microcode though,&n; *      unless Sun confirms they don&squot;t mind.&n; */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;soc.c:v1.2 27/Feb/98 Jakub Jelinek (jj@sunsite.mff.cuni.cz), Jirka Hanika (geo@ff.cuni.cz)&bslash;n&quot;
+l_string|&quot;soc.c:v1.3 9/Feb/99 Jakub Jelinek (jj@ultra.linux.cz), Jirka Hanika (geo@ff.cuni.cz)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -19,7 +19,6 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -33,10 +32,10 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/* #define SOCDEBUG */
 multiline_comment|/* #define HAVE_SOC_UCODE */
-macro_line|#include &quot;fcp_scsi.h&quot;
+macro_line|#include &quot;fcp_impl.h&quot;
 macro_line|#include &quot;soc.h&quot;
 macro_line|#ifdef HAVE_SOC_UCODE
-macro_line|#include &quot;soc_asm.c&quot;
+macro_line|#include &quot;soc_asm.h&quot;
 macro_line|#endif
 DECL|macro|soc_printk
 mdefine_line|#define soc_printk printk (&quot;soc%d: &quot;, s-&gt;soc_no); printk 
@@ -2186,6 +2185,14 @@ op_assign
 id|port-&gt;flags
 suffix:semicolon
 r_break
+suffix:semicolon
+r_case
+id|PROTO_REPORT_AL_MAP
+suffix:colon
+multiline_comment|/* SOC only supports Point-to-Point topology, no FC-AL, sorry... */
+r_return
+op_minus
+id|ENOSYS
 suffix:semicolon
 r_default
 suffix:colon

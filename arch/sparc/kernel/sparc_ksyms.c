@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.73 1998/11/06 13:49:54 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.76 1999/01/29 02:06:54 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -296,6 +296,13 @@ c_func
 id|_spinlock_waitfor
 )paren
 suffix:semicolon
+DECL|variable|kernel_thread
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_thread
+)paren
+suffix:semicolon
 macro_line|#ifdef SPIN_LOCK_DEBUG
 DECL|variable|_do_spin_lock
 id|EXPORT_SYMBOL
@@ -428,6 +435,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|page_offset
+)paren
+suffix:semicolon
+DECL|variable|sparc_valid_addr_bitmap
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sparc_valid_addr_bitmap
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_SUN4
@@ -937,6 +951,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|prom_feval
+)paren
+suffix:semicolon
+DECL|variable|prom_getbool
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|prom_getbool
 )paren
 suffix:semicolon
 DECL|variable|prom_getstring

@@ -336,6 +336,36 @@ mdefine_line|#define  B460800  0x00001004
 multiline_comment|/* This is what we can do with the Zilogs. */
 DECL|macro|B76800
 mdefine_line|#define  B76800   0x00001005
+multiline_comment|/* This is what we can do with the SAB82532. */
+DECL|macro|B153600
+mdefine_line|#define  B153600  0x00001006
+DECL|macro|B307200
+mdefine_line|#define  B307200  0x00001007
+DECL|macro|B614400
+mdefine_line|#define  B614400  0x00001008
+DECL|macro|B921600
+mdefine_line|#define  B921600  0x00001009
+multiline_comment|/* And these are the rest... */
+DECL|macro|B500000
+mdefine_line|#define  B500000  0x0000100a
+DECL|macro|B576000
+mdefine_line|#define  B576000  0x0000100b
+DECL|macro|B1000000
+mdefine_line|#define B1000000  0x0000100c
+DECL|macro|B1152000
+mdefine_line|#define B1152000  0x0000100d
+DECL|macro|B1500000
+mdefine_line|#define B1500000  0x0000100e
+DECL|macro|B2000000
+mdefine_line|#define B2000000  0x0000100f
+DECL|macro|B2500000
+mdefine_line|#define B2500000  0x00001010
+DECL|macro|B3000000
+mdefine_line|#define B3000000  0x00001011
+DECL|macro|B3500000
+mdefine_line|#define B3500000  0x00001012
+DECL|macro|B4000000
+mdefine_line|#define B4000000  0x00001013
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;  0x100f0000  /* input baud rate (not used) */
 DECL|macro|CMSPAR

@@ -59,6 +59,8 @@ DECL|macro|DBRI_NO_INTS
 mdefine_line|#define DBRI_NO_INTS&t;2
 DECL|macro|DBRI_INT_BLK
 mdefine_line|#define DBRI_INT_BLK&t;64
+DECL|macro|DBRI_NO_DESCS
+mdefine_line|#define DBRI_NO_DESCS&t;64
 DECL|macro|DBRI_MM_ONB
 mdefine_line|#define DBRI_MM_ONB&t;1
 DECL|macro|DBRI_MM_SB
@@ -67,9 +69,9 @@ DECL|struct|dbri_mem
 r_struct
 id|dbri_mem
 (brace
-DECL|member|flags
+DECL|member|word1
 id|__u32
-id|flags
+id|word1
 suffix:semicolon
 DECL|member|ba
 id|__u32
@@ -81,35 +83,107 @@ id|__u32
 id|nda
 suffix:semicolon
 multiline_comment|/* Next Descriptor Address */
-DECL|member|status
+DECL|member|word4
 id|__u32
-id|status
+id|word4
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|dbri_channel
+macro_line|#include &quot;cs4215.h&quot;
+multiline_comment|/* This structure is in a DMA region where it can accessed by both&n; * the CPU and the DBRI&n; */
+DECL|struct|dbri_dma
 r_struct
-id|dbri_channel
+id|dbri_dma
 (brace
-DECL|member|td
+DECL|member|cmd
+r_int
+id|cmd
+(braket
+id|DBRI_NO_CMDS
+)braket
+suffix:semicolon
+multiline_comment|/* Place for commands */
+DECL|member|intr
+r_int
+id|intr
+(braket
+id|DBRI_NO_INTS
+op_star
+id|DBRI_INT_BLK
+)braket
+suffix:semicolon
+multiline_comment|/* Interrupt field */
+DECL|member|desc
 r_struct
 id|dbri_mem
-id|td
+id|desc
+(braket
+id|DBRI_NO_DESCS
+)braket
 suffix:semicolon
-DECL|member|rd
+multiline_comment|/* Xmit/receive descriptors */
+)brace
+suffix:semicolon
+DECL|struct|dbri_pipe
 r_struct
-id|dbri_mem
-id|rd
+id|dbri_pipe
+(brace
+DECL|member|sdp
+id|u32
+id|sdp
 suffix:semicolon
-DECL|member|recvSDP
+multiline_comment|/* SDP command word */
+DECL|member|nextpipe
 r_int
-r_int
-id|recvSDP
+id|nextpipe
 suffix:semicolon
-DECL|member|xmitSDP
+multiline_comment|/* Next pipe in linked list */
+DECL|member|cycle
+r_int
+id|cycle
+suffix:semicolon
+multiline_comment|/* Offset of timeslot (bits) */
+DECL|member|length
+r_int
+id|length
+suffix:semicolon
+multiline_comment|/* Length of timeslot (bits) */
+DECL|member|desc
+r_int
+id|desc
+suffix:semicolon
+multiline_comment|/* Index of active descriptor*/
+DECL|member|recv_fixed_ptr
+id|__u32
+op_star
+id|recv_fixed_ptr
+suffix:semicolon
+multiline_comment|/* Ptr to receive fixed data */
+)brace
+suffix:semicolon
+DECL|struct|dbri_desc
+r_struct
+id|dbri_desc
+(brace
+DECL|member|inuse
+r_int
+id|inuse
+suffix:semicolon
+multiline_comment|/* Boolean flag */
+DECL|member|next
+r_int
+id|next
+suffix:semicolon
+multiline_comment|/* Index of next desc, or -1 */
+DECL|member|buffer
+r_void
+op_star
+id|buffer
+suffix:semicolon
+DECL|member|len
 r_int
 r_int
-id|xmitSDP
+id|len
 suffix:semicolon
 DECL|member|output_callback
 r_void
@@ -152,7 +226,6 @@ id|input_callback_arg
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#include &quot;cs4215.h&quot;
 multiline_comment|/* This structure holds the information for both chips (DBRI &amp; CS4215) */
 DECL|struct|dbri
 r_struct
@@ -166,6 +239,27 @@ comma
 id|irq
 suffix:semicolon
 multiline_comment|/* Needed for unload */
+DECL|member|sdev
+r_struct
+id|linux_sbus_device
+op_star
+id|sdev
+suffix:semicolon
+DECL|member|dma
+r_volatile
+r_struct
+id|dbri_dma
+op_star
+id|dma
+suffix:semicolon
+multiline_comment|/* Pointer to our DMA block */
+DECL|member|dma_dvma
+r_struct
+id|dbri_dma
+op_star
+id|dma_dvma
+suffix:semicolon
+multiline_comment|/* DBRI visible DMA address */
 DECL|member|regs
 r_struct
 id|dbri_regs
@@ -183,34 +277,30 @@ r_int
 id|dbri_irqp
 suffix:semicolon
 multiline_comment|/* intr queue pointer */
-DECL|member|cmd
-id|__volatile__
-r_int
-id|cmd
+DECL|member|pipes
+r_struct
+id|dbri_pipe
+id|pipes
 (braket
-id|DBRI_NO_CMDS
+l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* Place for commands */
-DECL|member|intr
-id|__volatile__
-r_int
-id|intr
+multiline_comment|/* DBRI&squot;s 32 data pipes */
+DECL|member|descs
+r_struct
+id|dbri_desc
+id|descs
 (braket
-id|DBRI_NO_INTS
-op_star
-id|DBRI_INT_BLK
+id|DBRI_NO_DESCS
 )braket
 suffix:semicolon
-multiline_comment|/* Interrupt field */
 DECL|member|mm
 r_struct
 id|cs4215
 id|mm
 suffix:semicolon
 multiline_comment|/* mmcodec special info */
-DECL|member|wait
-DECL|member|int_wait
+macro_line|#if 0
 r_struct
 id|wait_queue
 op_star
@@ -220,6 +310,7 @@ op_star
 id|int_wait
 suffix:semicolon
 multiline_comment|/* Where to sleep if busy */
+macro_line|#endif
 DECL|member|perchip_info
 r_struct
 id|audio_info
@@ -245,20 +336,6 @@ DECL|member|liu_callback_arg
 r_void
 op_star
 id|liu_callback_arg
-suffix:semicolon
-multiline_comment|/* Callback routines and descriptors for ISDN channels */
-DECL|member|D
-r_struct
-id|dbri_channel
-id|D
-suffix:semicolon
-DECL|member|B
-r_struct
-id|dbri_channel
-id|B
-(braket
-l_int|2
-)braket
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -378,6 +455,8 @@ DECL|macro|D_SDP_SER
 mdefine_line|#define D_SDP_SER&t;(4&lt;&lt;13)&t;/* Serial to serial */
 DECL|macro|D_SDP_FIXED
 mdefine_line|#define D_SDP_FIXED&t;(6&lt;&lt;13)&t;/* Short only */
+DECL|macro|D_SDP_MODE
+mdefine_line|#define D_SDP_MODE(v)&t;((v)&amp;(7&lt;&lt;13))
 DECL|macro|D_SDP_TO_SER
 mdefine_line|#define D_SDP_TO_SER&t;(1&lt;&lt;12)&t;/* Direction */
 DECL|macro|D_SDP_FROM_SER
@@ -407,9 +486,9 @@ DECL|macro|D_DTS_PRVOUT
 mdefine_line|#define D_DTS_PRVOUT(v)        ((v)&lt;&lt;5)  /* Previous Out Pipe */
 multiline_comment|/* Time Slot defines */
 DECL|macro|D_TS_LEN
-mdefine_line|#define D_TS_LEN(v)&t;(v&lt;&lt;24)&t;/* Number of bits in this time slot */
+mdefine_line|#define D_TS_LEN(v)&t;((v)&lt;&lt;24)&t;/* Number of bits in this time slot */
 DECL|macro|D_TS_CYCLE
-mdefine_line|#define D_TS_CYCLE(v)&t;(v&lt;&lt;14)&t;/* Bit Count at start of TS */
+mdefine_line|#define D_TS_CYCLE(v)&t;((v)&lt;&lt;14)&t;/* Bit Count at start of TS */
 DECL|macro|D_TS_DI
 mdefine_line|#define D_TS_DI(v)&t;(1&lt;&lt;13)&t;/* Data Invert */
 DECL|macro|D_TS_1CHANNEL
@@ -426,7 +505,7 @@ DECL|macro|D_TS_NEXT
 mdefine_line|#define D_TS_NEXT(v)   ((v)&lt;&lt;0)        /* Pipe Nr: 0-15 long, 16-21 short */
 multiline_comment|/* Concentration Highway Interface Modes */
 DECL|macro|D_CHI_CHICM
-mdefine_line|#define D_CHI_CHICM(v)&t;(v&lt;&lt;16)&t;/* Clock mode */
+mdefine_line|#define D_CHI_CHICM(v)&t;((v)&lt;&lt;16)&t;/* Clock mode */
 DECL|macro|D_CHI_IR
 mdefine_line|#define D_CHI_IR&t;(1&lt;&lt;15) /* Immediate Interrupt Report */
 DECL|macro|D_CHI_EN
@@ -438,7 +517,7 @@ mdefine_line|#define D_CHI_FE&t;(1&lt;&lt;12) /* Sample CHIFS on Rising Frame Ed
 DECL|macro|D_CHI_FD
 mdefine_line|#define D_CHI_FD&t;(1&lt;&lt;11) /* Frame Drive */
 DECL|macro|D_CHI_BPF
-mdefine_line|#define D_CHI_BPF(v)&t;(v&lt;&lt;0)&t;/* Bits per Frame */
+mdefine_line|#define D_CHI_BPF(v)&t;((v)&lt;&lt;0)&t;/* Bits per Frame */
 multiline_comment|/* NT: These are here for completeness */
 DECL|macro|D_NT_FBIT
 mdefine_line|#define D_NT_FBIT&t;(1&lt;&lt;17)&t;/* Frame Bit */
@@ -470,16 +549,16 @@ DECL|macro|D_NT_ABV
 mdefine_line|#define D_NT_ABV&t;(1&lt;&lt;0)&t;/* Activate Bipolar Violation */
 multiline_comment|/* Codec Setup */
 DECL|macro|D_CDEC_CK
-mdefine_line|#define D_CDEC_CK(v)&t;(v&lt;&lt;24)&t;/* Clock Select */
+mdefine_line|#define D_CDEC_CK(v)&t;((v)&lt;&lt;24)&t;/* Clock Select */
 DECL|macro|D_CDEC_FED
-mdefine_line|#define D_CDEC_FED(v)&t;(v&lt;&lt;12)&t;/* FSCOD Falling Edge Delay */
+mdefine_line|#define D_CDEC_FED(v)&t;((v)&lt;&lt;12)&t;/* FSCOD Falling Edge Delay */
 DECL|macro|D_CDEC_RED
-mdefine_line|#define D_CDEC_RED(v)&t;(v&lt;&lt;0)&t;/* FSCOD Rising Edge Delay */
+mdefine_line|#define D_CDEC_RED(v)&t;((v)&lt;&lt;0)&t;/* FSCOD Rising Edge Delay */
 multiline_comment|/* Test */
 DECL|macro|D_TEST_RAM
-mdefine_line|#define D_TEST_RAM(v)&t;(v&lt;&lt;16)&t;/* RAM Pointer */
+mdefine_line|#define D_TEST_RAM(v)&t;((v)&lt;&lt;16)&t;/* RAM Pointer */
 DECL|macro|D_TEST_SIZE
-mdefine_line|#define D_TEST_SIZE(v)&t;(v&lt;&lt;11)&t;/* */
+mdefine_line|#define D_TEST_SIZE(v)&t;((v)&lt;&lt;11)&t;/* */
 DECL|macro|D_TEST_ROMONOFF
 mdefine_line|#define D_TEST_ROMONOFF&t;0x5&t;/* Toggle ROM opcode monitor on/off */
 DECL|macro|D_TEST_PROC
@@ -549,15 +628,15 @@ mdefine_line|#define D_INTR_CHI&t;36
 DECL|macro|D_INTR_CMD
 mdefine_line|#define D_INTR_CMD&t;38
 DECL|macro|D_INTR_GETCHAN
-mdefine_line|#define D_INTR_GETCHAN(v)&t;((v&gt;&gt;24) &amp; 0x3f)
+mdefine_line|#define D_INTR_GETCHAN(v)&t;(((v)&gt;&gt;24) &amp; 0x3f)
 DECL|macro|D_INTR_GETCODE
-mdefine_line|#define D_INTR_GETCODE(v)&t;((v&gt;&gt;20) &amp; 0xf)
+mdefine_line|#define D_INTR_GETCODE(v)&t;(((v)&gt;&gt;20) &amp; 0xf)
 DECL|macro|D_INTR_GETCMD
-mdefine_line|#define D_INTR_GETCMD(v)&t;((v&gt;&gt;16) &amp; 0xf)
+mdefine_line|#define D_INTR_GETCMD(v)&t;(((v)&gt;&gt;16) &amp; 0xf)
 DECL|macro|D_INTR_GETVAL
-mdefine_line|#define D_INTR_GETVAL(v)&t;(v &amp; 0xffff)
+mdefine_line|#define D_INTR_GETVAL(v)&t;((v) &amp; 0xffff)
 DECL|macro|D_INTR_GETRVAL
-mdefine_line|#define D_INTR_GETRVAL(v)&t;(v &amp; 0xfffff)
+mdefine_line|#define D_INTR_GETRVAL(v)&t;((v) &amp; 0xfffff)
 DECL|macro|D_P_0
 mdefine_line|#define D_P_0&t;&t;0&t;/* TE receive anchor */
 DECL|macro|D_P_1
@@ -628,7 +707,7 @@ mdefine_line|#define DBRI_TD_F&t;(1&lt;&lt;31)&t;/* End of Frame */
 DECL|macro|DBRI_TD_D
 mdefine_line|#define DBRI_TD_D&t;(1&lt;&lt;30)&t;/* Do not append CRC */
 DECL|macro|DBRI_TD_CNT
-mdefine_line|#define DBRI_TD_CNT(v)&t;(v&lt;&lt;16)&t;/* Number of valid bytes in the buffer */
+mdefine_line|#define DBRI_TD_CNT(v)&t;((v)&lt;&lt;16)&t;/* Number of valid bytes in the buffer */
 DECL|macro|DBRI_TD_B
 mdefine_line|#define DBRI_TD_B&t;(1&lt;&lt;15)&t;/* Final interrupt */
 DECL|macro|DBRI_TD_M
@@ -636,7 +715,7 @@ mdefine_line|#define DBRI_TD_M&t;(1&lt;&lt;14)&t;/* Marker interrupt */
 DECL|macro|DBRI_TD_I
 mdefine_line|#define DBRI_TD_I&t;(1&lt;&lt;13)&t;/* Transmit Idle Characters */
 DECL|macro|DBRI_TD_FCNT
-mdefine_line|#define DBRI_TD_FCNT(v)&t;v&t;/* Flag Count */
+mdefine_line|#define DBRI_TD_FCNT(v)&t;(v)&t;/* Flag Count */
 DECL|macro|DBRI_TD_UNR
 mdefine_line|#define DBRI_TD_UNR&t;(1&lt;&lt;3)&t;/* Underrun: transmitter is out of data */
 DECL|macro|DBRI_TD_ABT
@@ -655,7 +734,7 @@ mdefine_line|#define DBRI_RD_B&t;(1&lt;&lt;15)&t;/* Final interrupt */
 DECL|macro|DBRI_RD_M
 mdefine_line|#define DBRI_RD_M&t;(1&lt;&lt;14)&t;/* Marker interrupt */
 DECL|macro|DBRI_RD_BCNT
-mdefine_line|#define DBRI_RD_BCNT(v)&t;v&t;/* Buffer size */
+mdefine_line|#define DBRI_RD_BCNT(v)&t;(v)&t;/* Buffer size */
 DECL|macro|DBRI_RD_CRC
 mdefine_line|#define DBRI_RD_CRC&t;(1&lt;&lt;7)&t;/* 0: CRC is correct */
 DECL|macro|DBRI_RD_BBC
@@ -667,6 +746,6 @@ mdefine_line|#define DBRI_RD_OVRN&t;(1&lt;&lt;3)&t;/* Overrun: data lost */
 DECL|macro|DBRI_RD_STATUS
 mdefine_line|#define DBRI_RD_STATUS(v)      ((v)&amp;0xff)      /* Receive status */
 DECL|macro|DBRI_RD_CNT
-mdefine_line|#define DBRI_RD_CNT(v) ((v&gt;&gt;16)&amp;0x1fff)        /* Number of valid bytes in the buffer */
+mdefine_line|#define DBRI_RD_CNT(v) (((v)&gt;&gt;16)&amp;0x1fff)        /* Number of valid bytes in the buffer */
 macro_line|#endif /* _DBRI_H_ */
 eof

@@ -274,6 +274,15 @@ comma
 l_string|&quot;Medium Changer   &quot;
 comma
 l_string|&quot;Communications   &quot;
+comma
+l_string|&quot;Unknown          &quot;
+comma
+l_string|&quot;Unknown          &quot;
+comma
+l_string|&quot;Unknown          &quot;
+comma
+l_string|&quot;Enclosure        &quot;
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* &n; * Function prototypes.&n; */
@@ -743,6 +752,16 @@ id|BLIST_NOLUN
 )brace
 comma
 (brace
+l_string|&quot;SONY&quot;
+comma
+l_string|&quot;CD-ROM CDU-8012&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+(brace
 l_string|&quot;TANDBERG&quot;
 comma
 l_string|&quot;TDC 3600&quot;
@@ -1040,6 +1059,18 @@ id|BLIST_FORCELUN
 )brace
 comma
 (brace
+l_string|&quot;NEC&quot;
+comma
+l_string|&quot;PD-1 ODX654P&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+op_or
+id|BLIST_SINGLELUN
+)brace
+comma
+(brace
 l_string|&quot;MATSHITA&quot;
 comma
 l_string|&quot;PD&quot;
@@ -1079,30 +1110,6 @@ comma
 l_string|&quot;jaz 1GB&quot;
 comma
 l_string|&quot;J.86&quot;
-comma
-id|BLIST_NOTQ
-op_or
-id|BLIST_NOLUN
-)brace
-comma
-(brace
-l_string|&quot;IBM&quot;
-comma
-l_string|&quot;DPES-&quot;
-comma
-l_string|&quot;*&quot;
-comma
-id|BLIST_NOTQ
-op_or
-id|BLIST_NOLUN
-)brace
-comma
-(brace
-l_string|&quot;WDIGTL&quot;
-comma
-l_string|&quot;WDE&quot;
-comma
-l_string|&quot;*&quot;
 comma
 id|BLIST_NOTQ
 op_or
@@ -3193,6 +3200,9 @@ id|TYPE_SCANNER
 suffix:colon
 r_case
 id|TYPE_MEDIUM_CHANGER
+suffix:colon
+r_case
+id|TYPE_ENCLOSURE
 suffix:colon
 id|SDpnt-&gt;writeable
 op_assign
@@ -9538,6 +9548,10 @@ op_logical_or
 id|SDpnt-&gt;type
 op_eq
 id|TYPE_MEDIUM_CHANGER
+op_logical_or
+id|SDpnt-&gt;type
+op_eq
+id|TYPE_ENCLOSURE
 )paren
 (brace
 id|new_dma_sectors
@@ -12257,8 +12271,7 @@ suffix:semicolon
 id|dma_malloc_freelist
 op_assign
 (paren
-r_int
-r_char
+id|FreeSectorBitmap
 op_star
 )paren
 id|scsi_init_malloc

@@ -449,11 +449,6 @@ DECL|macro|Vector_Priority
 mdefine_line|#define Vector_Priority&t;&t;&t;_Vector_Priority.Reg
 DECL|macro|Destination
 mdefine_line|#define Destination&t;&t;&t;_Destination.Reg
-multiline_comment|/*&n;     *  Vendor and Device IDs&n;     */
-DECL|macro|OPENPIC_VENDOR_ID_APPLE
-mdefine_line|#define OPENPIC_VENDOR_ID_APPLE&t;&t;0x14
-DECL|macro|OPENPIC_DEVICE_ID_APPLE_HYDRA
-mdefine_line|#define OPENPIC_DEVICE_ID_APPLE_HYDRA&t;0x46
 multiline_comment|/*&n;     *  OpenPIC Operations&n;     */
 multiline_comment|/* Global Operations */
 r_extern

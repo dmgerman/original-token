@@ -152,7 +152,7 @@ id|panic
 (paren
 l_string|&quot;EXT2-fs panic (device %s): %s: %s&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -168,7 +168,7 @@ id|printk
 id|KERN_CRIT
 l_string|&quot;EXT2-fs error (device %s): %s: %s&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -336,7 +336,7 @@ id|panic
 (paren
 l_string|&quot;EXT2-fs panic (device %s): %s: %s&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -401,7 +401,7 @@ id|printk
 id|KERN_WARNING
 l_string|&quot;EXT2-fs warning (device %s): %s: %s&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -2227,7 +2227,7 @@ id|printk
 l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev &quot;
 l_string|&quot;%s.&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|dev
@@ -2293,7 +2293,7 @@ c_func
 l_string|&quot;EXT2-fs: %s: couldn&squot;t mount because of &quot;
 l_string|&quot;unsupported optional features.&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|dev
@@ -2332,7 +2332,7 @@ c_func
 l_string|&quot;EXT2-fs: %s: couldn&squot;t mount RDWR because of &quot;
 l_string|&quot;unsupported optional features.&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|dev
@@ -2783,7 +2783,7 @@ id|printk
 l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev &quot;
 l_string|&quot;%s.&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|dev
@@ -2813,7 +2813,7 @@ id|printk
 l_string|&quot;VFS: Unsupported blocksize on dev &quot;
 l_string|&quot;%s.&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|dev

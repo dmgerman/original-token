@@ -2133,6 +2133,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|EAGAIN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2173,11 +2178,6 @@ id|find_empty_process
 c_func
 (paren
 )paren
-suffix:semicolon
-id|retval
-op_assign
-op_minus
-id|EAGAIN
 suffix:semicolon
 r_if
 c_cond

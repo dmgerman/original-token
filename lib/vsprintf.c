@@ -1350,6 +1350,17 @@ suffix:semicolon
 )brace
 r_continue
 suffix:semicolon
+r_case
+l_char|&squot;%&squot;
+suffix:colon
+op_star
+id|str
+op_increment
+op_assign
+l_char|&squot;%&squot;
+suffix:semicolon
+r_continue
+suffix:semicolon
 multiline_comment|/* integer number formats - set up the flags and &quot;break&quot; */
 r_case
 l_char|&squot;o&squot;
@@ -1393,16 +1404,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
-r_if
-c_cond
-(paren
-op_star
-id|fmt
-op_ne
-l_char|&squot;%&squot;
-)paren
 op_star
 id|str
 op_increment

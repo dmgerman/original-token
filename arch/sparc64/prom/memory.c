@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: memory.c,v 1.3 1997/03/04 16:27:10 jj Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: memory.c,v 1.4 1998/11/25 10:04:06 jj Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
@@ -99,12 +99,12 @@ r_int
 id|i
 comma
 id|mitr
-comma
-id|tmpsize
 suffix:semicolon
 r_int
 r_int
 id|tmpaddr
+comma
+id|tmpsize
 suffix:semicolon
 r_int
 r_int
@@ -392,10 +392,6 @@ id|iter
 dot
 id|num_bytes
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|prom_reg_memlist
 (braket
 id|iter
@@ -499,10 +495,6 @@ id|iter
 dot
 id|num_bytes
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|prom_reg_memlist
 (braket
 id|iter
@@ -615,10 +607,6 @@ id|iter
 dot
 id|num_bytes
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|prom_reg_memlist
 (braket
 id|iter
@@ -729,19 +717,9 @@ l_int|1
 dot
 id|num_bytes
 op_assign
-(paren
-(paren
-r_int
-r_int
-)paren
 op_minus
-l_int|1
-)paren
+l_int|1UL
 op_minus
-(paren
-r_int
-r_int
-)paren
 id|prom_prom_taken
 (braket
 id|iter

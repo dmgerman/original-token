@@ -3674,7 +3674,7 @@ id|printk
 l_string|&quot;IO error syncing ext2 inode [&quot;
 l_string|&quot;%s:%08lx]&bslash;n&quot;
 comma
-id|kdevname
+id|bdevname
 c_func
 (paren
 id|inode-&gt;i_dev

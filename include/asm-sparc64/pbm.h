@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.14 1998/05/29 06:00:40 ecd Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.16 1999/03/14 18:13:03 davem Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
@@ -50,6 +50,11 @@ suffix:semicolon
 r_struct
 id|linux_psycho
 suffix:semicolon
+multiline_comment|/* There can be quite a few ranges and interrupt maps on a PCI&n; * segment.  Thus...&n; */
+DECL|macro|PROM_PCIRNG_MAX
+mdefine_line|#define PROM_PCIRNG_MAX&t;&t;64
+DECL|macro|PROM_PCIIMAP_MAX
+mdefine_line|#define PROM_PCIIMAP_MAX&t;64
 DECL|struct|linux_pbm_info
 r_struct
 id|linux_pbm_info
@@ -88,7 +93,7 @@ r_struct
 id|linux_prom_pci_ranges
 id|pbm_ranges
 (braket
-id|PROMREG_MAX
+id|PROM_PCIRNG_MAX
 )braket
 suffix:semicolon
 DECL|member|num_pbm_ranges
@@ -100,7 +105,7 @@ r_struct
 id|linux_prom_pci_intmap
 id|pbm_intmap
 (braket
-id|PROMREG_MAX
+id|PROM_PCIIMAP_MAX
 )braket
 suffix:semicolon
 DECL|member|num_pbm_intmap
@@ -198,6 +203,11 @@ r_struct
 id|pci_bus
 op_star
 id|pci_bus
+suffix:semicolon
+DECL|member|starfire_cookie
+r_void
+op_star
+id|starfire_cookie
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -181,11 +181,6 @@ id|time_status
 op_or_assign
 id|STA_UNSYNC
 suffix:semicolon
-id|time_state
-op_assign
-id|TIME_ERROR
-suffix:semicolon
-multiline_comment|/* p. 24, (a) */
 id|time_maxerror
 op_assign
 id|NTP_PHASE_LIMIT
@@ -631,10 +626,11 @@ comma
 id|save_adjust
 suffix:semicolon
 r_int
-id|error
+id|result
 op_assign
-l_int|0
+id|time_state
 suffix:semicolon
+multiline_comment|/* mostly `TIME_OK&squot; */
 multiline_comment|/* In order to modify anything, you gotta be super-user! */
 r_if
 c_cond
@@ -733,18 +729,6 @@ id|txc-&gt;modes
 r_if
 c_cond
 (paren
-id|time_state
-op_eq
-id|TIME_ERROR
-)paren
-id|time_state
-op_assign
-id|TIME_OK
-suffix:semicolon
-multiline_comment|/* reset error -- why? */
-r_if
-c_cond
-(paren
 id|txc-&gt;modes
 op_amp
 id|ADJ_STATUS
@@ -787,7 +771,7 @@ op_minus
 id|MAXFREQ
 )paren
 (brace
-id|error
+id|result
 op_assign
 op_minus
 id|EINVAL
@@ -823,7 +807,7 @@ op_ge
 id|NTP_PHASE_LIMIT
 )paren
 (brace
-id|error
+id|result
 op_assign
 op_minus
 id|EINVAL
@@ -857,7 +841,7 @@ op_ge
 id|NTP_PHASE_LIMIT
 )paren
 (brace
-id|error
+id|result
 op_assign
 op_minus
 id|EINVAL
@@ -889,7 +873,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* NTP v4 uses values &gt; 6 */
-id|error
+id|result
 op_assign
 op_minus
 id|EINVAL
@@ -1081,7 +1065,7 @@ suffix:semicolon
 )brace
 r_else
 multiline_comment|/* calibration interval too short (p. 12) */
-id|time_state
+id|result
 op_assign
 id|TIME_ERROR
 suffix:semicolon
@@ -1141,7 +1125,7 @@ suffix:semicolon
 )brace
 r_else
 multiline_comment|/* calibration interval too long (p. 12) */
-id|time_state
+id|result
 op_assign
 id|TIME_ERROR
 suffix:semicolon
@@ -1194,7 +1178,7 @@ op_div
 id|HZ
 )paren
 (brace
-id|error
+id|result
 op_assign
 op_minus
 id|EINVAL
@@ -1292,7 +1276,7 @@ l_int|0
 )paren
 )paren
 multiline_comment|/* p. 24, (d) */
-id|time_state
+id|result
 op_assign
 id|TIME_ERROR
 suffix:semicolon
@@ -1419,14 +1403,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
-id|error
-OL
-l_int|0
-ques
-c_cond
-id|error
-suffix:colon
-id|time_state
+id|result
 suffix:semicolon
 )brace
 DECL|function|sys_adjtimex

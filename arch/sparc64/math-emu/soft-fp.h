@@ -21,19 +21,21 @@ DECL|macro|FP_RND_PINF
 macro_line|# define FP_RND_PINF&t;&t;2
 DECL|macro|FP_RND_MINF
 macro_line|# define FP_RND_MINF&t;&t;3
+macro_line|#ifndef FP_ROUNDMODE
 DECL|macro|FP_ROUNDMODE
 macro_line|# define FP_ROUNDMODE&t;&t;FP_RND_NEAREST
 macro_line|#endif
+macro_line|#endif
 DECL|macro|_FP_ROUND_NEAREST
-mdefine_line|#define _FP_ROUND_NEAREST(wc, X)&t;&t;&t;&bslash;&n;  do { &t;&t;&t;&t;&t;&t;&t;&bslash;&n;    if ((_FP_FRAC_LOW_##wc(X) &amp; 15) != _FP_WORK_ROUND)&t;&bslash;&n;      _FP_FRAC_ADDI_##wc(X, _FP_WORK_ROUND);&t;&t;&bslash;&n;  } while(0)
+mdefine_line|#define _FP_ROUND_NEAREST(wc, X)&t;&t;&t;&bslash;&n;({  int __ret = EFLAG_INEXACT;&t;&t;&t;&t;&bslash;&n;    if ((_FP_FRAC_LOW_##wc(X) &amp; 15) != _FP_WORK_ROUND)&t;&bslash;&n;      _FP_FRAC_ADDI_##wc(X, _FP_WORK_ROUND);&t;&t;&bslash;&n;    else __ret = 0;&t;&t;&t;&t;&t;&bslash;&n;    __ret;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|_FP_ROUND_ZERO
-mdefine_line|#define _FP_ROUND_ZERO(wc, X)
+mdefine_line|#define _FP_ROUND_ZERO(wc, X)&t;&t;0 /* XXX */
 DECL|macro|_FP_ROUND_PINF
-mdefine_line|#define _FP_ROUND_PINF(wc, X)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    if (!X##_s &amp;&amp; (_FP_FRAC_LOW_##wc(X) &amp; 7))&t;&t;&bslash;&n;      _FP_FRAC_ADDI_##wc(X, _FP_WORK_LSB);&t;&t;&bslash;&n;  } while (0)
+mdefine_line|#define _FP_ROUND_PINF(wc, X)&t;&t;&t;&t;&bslash;&n;({  int __ret = EFLAG_INEXACT;&t;&t;&t;&t;&bslash;&n;    if (!X##_s &amp;&amp; (_FP_FRAC_LOW_##wc(X) &amp; 7))&t;&t;&bslash;&n;      _FP_FRAC_ADDI_##wc(X, _FP_WORK_LSB);&t;&t;&bslash;&n;    else __ret = 0;&t;&t;&t;&t;&t;&bslash;&n;    __ret;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|_FP_ROUND_MINF
-mdefine_line|#define _FP_ROUND_MINF(wc, X)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    if (X##_s &amp;&amp; (_FP_FRAC_LOW_##wc(X) &amp; 7))&t;&t;&bslash;&n;      _FP_FRAC_ADDI_##wc(X, _FP_WORK_LSB);&t;&t;&bslash;&n;  } while (0)
+mdefine_line|#define _FP_ROUND_MINF(wc, X)&t;&t;&t;&t;&bslash;&n;({  int __ret = EFLAG_INEXACT;&t;&t;&t;&t;&bslash;&n;    if (X##_s &amp;&amp; (_FP_FRAC_LOW_##wc(X) &amp; 7))&t;&t;&bslash;&n;      _FP_FRAC_ADDI_##wc(X, _FP_WORK_LSB);&t;&t;&bslash;&n;    else __ret = 0;&t;&t;&t;&t;&t;&bslash;&n;    __ret;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|_FP_ROUND
-mdefine_line|#define _FP_ROUND(wc, X)&t;&t;&t;&bslash;&n;&t;switch (FP_ROUNDMODE)&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&bslash;&n;&t;  case FP_RND_NEAREST:&t;&t;&t;&bslash;&n;&t;    _FP_ROUND_NEAREST(wc,X);&t;&t;&bslash;&n;&t;    break;&t;&t;&t;&t;&bslash;&n;&t;  case FP_RND_ZERO:&t;&t;&t;&bslash;&n;&t;    _FP_ROUND_ZERO(wc,X);&t;&t;&bslash;&n;&t;    break;&t;&t;&t;&t;&bslash;&n;&t;  case FP_RND_PINF:&t;&t;&t;&bslash;&n;&t;    _FP_ROUND_PINF(wc,X);&t;&t;&bslash;&n;&t;    break;&t;&t;&t;&t;&bslash;&n;&t;  case FP_RND_MINF:&t;&t;&t;&bslash;&n;&t;    _FP_ROUND_MINF(wc,X);&t;&t;&bslash;&n;&t;    break;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define _FP_ROUND(wc, X)&t;&t;&t;&bslash;&n;({&t;int __ret = 0;&t;&t;&t;&t;&bslash;&n;&t;switch (FP_ROUNDMODE)&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&bslash;&n;&t;  case FP_RND_NEAREST:&t;&t;&t;&bslash;&n;&t;    __ret |= _FP_ROUND_NEAREST(wc,X);&t;&bslash;&n;&t;    break;&t;&t;&t;&t;&bslash;&n;&t;  case FP_RND_ZERO:&t;&t;&t;&bslash;&n;&t;    __ret |= _FP_ROUND_ZERO(wc,X);&t;&bslash;&n;&t;    break;&t;&t;&t;&t;&bslash;&n;&t;  case FP_RND_PINF:&t;&t;&t;&bslash;&n;&t;    __ret |= _FP_ROUND_PINF(wc,X);&t;&bslash;&n;&t;    break;&t;&t;&t;&t;&bslash;&n;&t;  case FP_RND_MINF:&t;&t;&t;&bslash;&n;&t;    __ret |= _FP_ROUND_MINF(wc,X);&t;&bslash;&n;&t;    break;&t;&t;&t;&t;&bslash;&n;&t;};&t;&t;&t;&t;&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|FP_CLS_NORMAL
 mdefine_line|#define FP_CLS_NORMAL&t;&t;0
 DECL|macro|FP_CLS_ZERO

@@ -2,7 +2,7 @@ macro_line|#ifndef __LINUX_DCACHE_H
 DECL|macro|__LINUX_DCACHE_H
 mdefine_line|#define __LINUX_DCACHE_H
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * linux/include/linux/dcache.h&n; *&n; * Directory cache data structures&n; */
+multiline_comment|/*&n; * linux/include/linux/dcache.h&n; *&n; * Dirent cache data structures&n; *&n; * (C) Copyright 1997 Thomas Schoebel-Theuer,&n; * with heavy changes by Linus Torvalds&n; */
 DECL|macro|D_MAXLEN
 mdefine_line|#define D_MAXLEN 1024
 DECL|macro|IS_ROOT

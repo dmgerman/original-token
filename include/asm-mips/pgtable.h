@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.15 1998/08/20 14:40:57 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle at alii&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.19 1998/10/26 19:59:39 davem Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle at alii&n; */
 macro_line|#ifndef __ASM_MIPS_PGTABLE_H
 DECL|macro|__ASM_MIPS_PGTABLE_H
 mdefine_line|#define __ASM_MIPS_PGTABLE_H
@@ -2277,6 +2277,8 @@ mdefine_line|#define module_unmap    vfree
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(0)
+DECL|macro|kern_addr_valid
+mdefine_line|#define kern_addr_valid(addr)&t;(1)
 multiline_comment|/* TLB operations. */
 DECL|function|tlb_probe
 r_extern

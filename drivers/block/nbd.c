@@ -1760,7 +1760,7 @@ id|nbd_bytesizes
 (braket
 id|dev
 )braket
-op_lshift
+op_rshift
 l_int|9
 comma
 (paren

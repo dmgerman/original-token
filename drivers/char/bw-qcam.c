@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    QuickCam Driver For Video4Linux.&n; *&n; *&t;This version only works as a module.&n; *&n; *&t;Video4Linux conversion work by Alan Cox.&n; *&t;Parport compatibility by Phil Blundell.&n; */
+multiline_comment|/*&n; *    QuickCam Driver For Video4Linux.&n; *&n; *&t;This version only works as a module.&n; *&n; *&t;Video4Linux conversion work by Alan Cox.&n; *&t;Parport compatibility by Phil Blundell.&n; *&t;Busy loop avoidance by Mark Cooke.&n; *&n; *    Module parameters:&n; *&n; *&t;maxpoll=&lt;1 - 5000&gt;&n; *&n; *&t;  When polling the QuickCam for a response, busy-wait for a&n; *&t;  maximum of this many loops. The default of 250 gives little&n; *&t;  impact on interactive response.&n; *&n; *&t;  NOTE: If this parameter is set too high, the processor&n; *&t;&t;will busy wait until this loop times out, and then&n; *&t;&t;slowly poll for a further 5 seconds before failing&n; *&t;&t;the transaction. You have been warned.&n; *&n; *&t;yieldlines=&lt;1 - 250&gt;&n; *&n; *&t;  When acquiring a frame from the camera, the data gathering&n; *&t;  loop will yield back to the scheduler after completing&n; *&t;  this many lines. The default of 4 provides a trade-off&n; *&t;  between increased frame acquisition time and impact on&n; *&t;  interactive response.&n; */
 multiline_comment|/* qcam-lib.c -- Library for programming with the Connectix QuickCam.&n; * See the included documentation for usage instructions and details&n; * of the protocol involved. */
 multiline_comment|/* Version 0.5, August 4, 1996 */
 multiline_comment|/* Version 0.7, August 27, 1996 */
@@ -18,6 +18,42 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;bw-qcam.h&quot;
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020117
+id|MODULE_PARM
+c_func
+(paren
+id|maxpoll
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|yieldlines
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|maxpoll
+r_static
+r_int
+r_int
+id|maxpoll
+op_assign
+l_int|250
+suffix:semicolon
+multiline_comment|/* Maximum busy-loop count for qcam I/O */
+DECL|variable|yieldlines
+r_static
+r_int
+r_int
+id|yieldlines
+op_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/* Yield after this many during capture */
 DECL|function|read_lpstatus
 r_extern
 id|__inline__
@@ -447,6 +483,10 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|q-&gt;status
+op_assign
+id|QC_PARAM_CHANGE
+suffix:semicolon
 r_return
 id|q
 suffix:semicolon
@@ -668,14 +708,14 @@ l_int|8
 )paren
 )paren
 (brace
-multiline_comment|/* 1000 is enough spins on the I/O for all normal&n;&t;&t;&t;   cases, at that point we start to poll slowly &n;&t;&t;&t;   until the camera wakes up */
+multiline_comment|/* 1000 is enough spins on the I/O for all normal&n;&t;&t;&t;   cases, at that point we start to poll slowly &n;&t;&t;&t;   until the camera wakes up. However, we are&n;&t;&t;&t;   busy blocked until the camera responds, so&n;&t;&t;&t;   setting it lower is much better for interactive&n;&t;&t;&t;   response. */
 r_if
 c_cond
 (paren
 id|runs
 op_increment
 OG
-l_int|1000
+id|maxpoll
 )paren
 (brace
 id|current-&gt;state
@@ -687,7 +727,7 @@ c_func
 (paren
 id|HZ
 op_div
-l_int|10
+l_int|200
 )paren
 suffix:semicolon
 )brace
@@ -696,9 +736,14 @@ c_cond
 (paren
 id|runs
 OG
-l_int|1050
+(paren
+id|maxpoll
+op_plus
+l_int|1000
+)paren
 )paren
 (brace
+multiline_comment|/* 5 seconds */
 r_return
 op_minus
 l_int|1
@@ -726,14 +771,14 @@ l_int|8
 )paren
 )paren
 (brace
-multiline_comment|/* 1000 is enough spins on the I/O for all normal&n;&t;&t;&t;   cases, at that point we start to poll slowly &n;&t;&t;&t;   until the camera wakes up */
+multiline_comment|/* 1000 is enough spins on the I/O for all normal&n;&t;&t;&t;   cases, at that point we start to poll slowly &n;&t;&t;&t;   until the camera wakes up. However, we are&n;&t;&t;&t;   busy blocked until the camera responds, so&n;&t;&t;&t;   setting it lower is much better for interactive&n;&t;&t;&t;   response. */
 r_if
 c_cond
 (paren
 id|runs
 op_increment
 OG
-l_int|1000
+id|maxpoll
 )paren
 (brace
 id|current-&gt;state
@@ -745,7 +790,7 @@ c_func
 (paren
 id|HZ
 op_div
-l_int|10
+l_int|200
 )paren
 suffix:semicolon
 )brace
@@ -755,7 +800,11 @@ c_cond
 id|runs
 op_increment
 OG
-l_int|1050
+(paren
+id|maxpoll
+op_plus
+l_int|1000
+)paren
 )paren
 (brace
 multiline_comment|/* 5 seconds */
@@ -806,14 +855,14 @@ c_func
 id|q
 )paren
 suffix:semicolon
-multiline_comment|/* 1000 is enough spins on the I/O for all normal&n;&t;&t;   cases, at that point we start to poll slowly &n;&t;&t;   until the camera wakes up */
+multiline_comment|/* 1000 is enough spins on the I/O for all normal&n;&t;&t;   cases, at that point we start to poll slowly &n;&t;&t;   until the camera wakes up. However, we are&n;&t;&t;   busy blocked until the camera responds, so&n;&t;&t;   setting it lower is much better for interactive&n;&t;&t;   response. */
 r_if
 c_cond
 (paren
 id|runs
 op_increment
 OG
-l_int|1000
+id|maxpoll
 )paren
 (brace
 id|current-&gt;state
@@ -825,7 +874,7 @@ c_func
 (paren
 id|HZ
 op_div
-l_int|10
+l_int|200
 )paren
 suffix:semicolon
 )brace
@@ -835,7 +884,11 @@ c_cond
 id|runs
 op_increment
 OG
-l_int|1050
+(paren
+id|maxpoll
+op_plus
+l_int|1000
+)paren
 )paren
 (brace
 multiline_comment|/* 5 seconds */
@@ -907,7 +960,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|300
+l_int|500
 suffix:semicolon
 id|i
 op_increment
@@ -944,17 +997,32 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Be liberal in what you accept...  */
+macro_line|#if 0
+multiline_comment|/* Force camera detection during testing. Sometimes the camera&n;&t;   won&squot;t be flashing these bits. Possibly unloading the module&n;&t;   in the middle of a grab? Or some timeout condition?&n;&t;   I&squot;ve seen this parameter as low as 19 on my 450Mhz box - mpc */
+id|printk
+c_func
+(paren
+l_string|&quot;Debugging: QCam detection counter &lt;30-200 counts as detected&gt;: %d&bslash;n&quot;
+comma
+id|count
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Be (even more) liberal in what you accept...  */
+multiline_comment|/*&t;if (count &gt; 30 &amp;&amp; count &lt; 200) */
 r_if
 c_cond
 (paren
 id|count
 OG
-l_int|30
+l_int|20
 op_logical_and
 id|count
 OL
-l_int|200
+l_int|300
 )paren
 r_return
 l_int|1
@@ -1122,6 +1190,11 @@ op_star
 id|q
 )paren
 (brace
+r_int
+id|old_mode
+op_assign
+id|q-&gt;mode
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1203,6 +1276,17 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|q-&gt;mode
+op_ne
+id|old_mode
+)paren
+id|q-&gt;status
+op_or_assign
+id|QC_PARAM_CHANGE
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1422,6 +1506,14 @@ c_func
 id|q
 comma
 id|q-&gt;whitebal
+)paren
+suffix:semicolon
+multiline_comment|/* Clear flag that we must update the grabbing parameters on the camera&n;&t;   before we grab the next frame */
+id|q-&gt;status
+op_and_assign
+(paren
+op_complement
+id|QC_PARAM_CHANGE
 )paren
 suffix:semicolon
 )brace
@@ -1994,6 +2086,8 @@ comma
 id|j
 comma
 id|k
+comma
+id|yield
 suffix:semicolon
 r_int
 id|bytes
@@ -2194,6 +2288,10 @@ c_loop
 id|i
 op_assign
 l_int|0
+comma
+id|yield
+op_assign
+id|yieldlines
 suffix:semicolon
 id|i
 OL
@@ -2339,6 +2437,34 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* reset state machine */
+multiline_comment|/* Grabbing an entire frame from the quickcam is a lengthy&n;&t;&t;   process. We don&squot;t (usually) want to busy-block the&n;&t;&t;   processor for the entire frame. yieldlines is a module&n;&t;&t;   parameter. If we yield every line, the minimum frame&n;&t;&t;   time will be 240 / 200 = 1.2 seconds. The compile-time&n;&t;&t;   default is to yield every 4 lines. */
+r_if
+c_cond
+(paren
+id|i
+op_ge
+id|yield
+)paren
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+id|HZ
+op_div
+l_int|200
+)paren
+suffix:semicolon
+id|yield
+op_assign
+id|i
+op_plus
+id|yieldlines
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -3050,24 +3176,11 @@ c_func
 id|qcam
 )paren
 suffix:semicolon
-id|parport_claim_or_block
-c_func
-(paren
-id|qcam-&gt;pdev
-)paren
+id|qcam-&gt;status
+op_or_assign
+id|QC_PARAM_CHANGE
 suffix:semicolon
-id|qc_set
-c_func
-(paren
-id|qcam
-)paren
-suffix:semicolon
-id|parport_release
-c_func
-(paren
-id|qcam-&gt;pdev
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t;parport_claim_or_block(qcam-&gt;pdev);&n;&t;&t;&t;qc_set(qcam);&n;&t;&t;&t;parport_release(qcam-&gt;pdev);&n;*/
 r_return
 l_int|0
 suffix:semicolon
@@ -3208,6 +3321,11 @@ c_func
 (paren
 id|qcam
 )paren
+suffix:semicolon
+multiline_comment|/* We must update the camera before we grab. We could&n;&t;&t;&t;   just have changed the grab size */
+id|qcam-&gt;status
+op_or_assign
+id|QC_PARAM_CHANGE
 suffix:semicolon
 multiline_comment|/* Ok we figured out what to use from our wide choice */
 r_return
@@ -3389,6 +3507,20 @@ id|qcam-&gt;pdev
 suffix:semicolon
 multiline_comment|/* Probably should have a semaphore against multiple users */
 id|qc_reset
+c_func
+(paren
+id|qcam
+)paren
+suffix:semicolon
+multiline_comment|/* Update the camera parameters if we need to */
+r_if
+c_cond
+(paren
+id|qcam-&gt;status
+op_amp
+id|QC_PARAM_CHANGE
+)paren
+id|qc_set
 c_func
 (paren
 id|qcam
@@ -3711,6 +3843,45 @@ c_func
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/* Do some sanity checks on the module parameters. */
+r_if
+c_cond
+(paren
+id|maxpoll
+OG
+l_int|5000
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Connectix Quickcam max-poll was above 5000. Using 5000.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|maxpoll
+op_assign
+l_int|5000
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|yieldlines
+OL
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Connectix Quickcam yieldlines was less than 1. Using 1.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|yieldlines
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_return
 (paren
 id|num_cams

@@ -246,7 +246,7 @@ mdefine_line|#define EXTA B19200
 DECL|macro|EXTB
 mdefine_line|#define EXTB B38400
 DECL|macro|CBAUDEX
-mdefine_line|#define CBAUDEX 0000020
+mdefine_line|#define CBAUDEX 0000000
 DECL|macro|B57600
 mdefine_line|#define  B57600   00020
 DECL|macro|B115200

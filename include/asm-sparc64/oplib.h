@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.9 1998/10/06 20:56:05 ecd Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.10 1998/12/18 10:02:03 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
@@ -417,6 +417,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Multiprocessor operations... */
+macro_line|#ifdef __SMP__
 multiline_comment|/* Start the CPU with the given device tree node, context table, and context&n; * at the passed program counter.&n; */
 r_extern
 r_void
@@ -435,34 +436,147 @@ r_int
 id|o0
 )paren
 suffix:semicolon
-multiline_comment|/* Stop the CPU with the passed device tree node. */
+multiline_comment|/* Stop the current CPU. */
 r_extern
-r_int
-id|prom_stopcpu
+r_void
+id|prom_stopself
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Idle the current CPU. */
+r_extern
+r_void
+id|prom_idleself
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Resume the CPU with the passed device tree node. */
+r_extern
+r_void
+id|prom_resumecpu
 c_func
 (paren
 r_int
 id|cpunode
 )paren
 suffix:semicolon
-multiline_comment|/* Idle the CPU with the passed device tree node. */
+macro_line|#endif
+multiline_comment|/* Power management interfaces. */
+multiline_comment|/* Put the current CPU to sleep. */
 r_extern
-r_int
-id|prom_idlecpu
+r_void
+id|prom_sleepself
 c_func
 (paren
-r_int
-id|cpunode
+r_void
 )paren
 suffix:semicolon
-multiline_comment|/* Re-Start the CPU with the passed device tree node. */
+multiline_comment|/* Put the entire system to sleep. */
 r_extern
 r_int
-id|prom_restartcpu
+id|prom_sleepsystem
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Initiate a wakeup event. */
+r_extern
+r_int
+id|prom_wakeupsystem
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* MMU and memory related OBP interfaces. */
+multiline_comment|/* Get unique string identifying SIMM at given physical address. */
+r_extern
+r_int
+id|prom_getunumber
 c_func
 (paren
 r_int
-id|cpunode
+r_int
+id|phys_lo
+comma
+r_int
+r_int
+id|phys_hi
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
+multiline_comment|/* Retain physical memory to the caller across soft resets. */
+r_extern
+r_int
+r_int
+id|prom_retain
+c_func
+(paren
+r_char
+op_star
+id|name
+comma
+r_int
+r_int
+id|pa_low
+comma
+r_int
+r_int
+id|pa_high
+comma
+r_int
+id|size
+comma
+r_int
+id|align
+)paren
+suffix:semicolon
+multiline_comment|/* Load explicit I/D TLB entries into the calling processor. */
+r_extern
+r_int
+id|prom_itlb_load
+c_func
+(paren
+r_int
+r_int
+id|index
+comma
+r_int
+r_int
+id|tte_data
+comma
+r_int
+r_int
+id|vaddr
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|prom_dtlb_load
+c_func
+(paren
+r_int
+r_int
+id|index
+comma
+r_int
+r_int
+id|tte_data
+comma
+r_int
+r_int
+id|vaddr
 )paren
 suffix:semicolon
 multiline_comment|/* PROM device tree traversal functions... */

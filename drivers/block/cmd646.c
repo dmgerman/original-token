@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cmd646.c,v 1.10 1998/08/03 15:28:42 davem Exp $&n; * cmd646.c: Enable interrupts at initialization time on Ultra/PCI machines.&n; *           Note, this driver is not used at all on other systems because&n; *           there the &quot;BIOS&quot; has done all of the following already.&n; *           Due to massive hardware bugs, UltraDMA is only supported&n; *           on the 646U2 and not on the 646U.&n; *&n; * Copyright (C) 1998       Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998       David S. Miller (davem@dm.cobaltmicro.com)&n; */
+multiline_comment|/* $Id: cmd646.c,v 1.11 1998/12/13 08:36:54 davem Exp $&n; * cmd646.c: Enable interrupts at initialization time on Ultra/PCI machines.&n; *           Note, this driver is not used at all on other systems because&n; *           there the &quot;BIOS&quot; has done all of the following already.&n; *           Due to massive hardware bugs, UltraDMA is only supported&n; *           on the 646U2 and not on the 646U.&n; *&n; * Copyright (C) 1998       Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998       David S. Miller (davem@dm.cobaltmicro.com)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -1026,7 +1026,7 @@ id|hwif-&gt;chipset
 op_assign
 id|ide_cmd646
 suffix:semicolon
-multiline_comment|/* Set a good latency timer value. */
+multiline_comment|/* Set a good latency timer and cache line size value. */
 (paren
 r_void
 )paren
@@ -1037,9 +1037,24 @@ id|dev
 comma
 id|PCI_LATENCY_TIMER
 comma
-l_int|240
+l_int|64
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
+(paren
+r_void
+)paren
+id|pci_write_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_CACHE_LINE_SIZE
+comma
+l_int|0x10
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Setup interrupts. */
 (paren
 r_void

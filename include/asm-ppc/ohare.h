@@ -24,9 +24,9 @@ mdefine_line|#define OH_MESH_ENABLE&t;&t;0x400
 DECL|macro|OH_FLOPPY_ENABLE
 mdefine_line|#define OH_FLOPPY_ENABLE&t;0x800
 DECL|macro|OH_SCCA_IO
-mdefine_line|#define OH_SCCA_IO&t;&t;0x2000
+mdefine_line|#define OH_SCCA_IO&t;&t;0x4000
 DECL|macro|OH_SCCB_IO
-mdefine_line|#define OH_SCCB_IO&t;&t;0x4000
+mdefine_line|#define OH_SCCB_IO&t;&t;0x8000
 DECL|macro|OH_VIA_ENABLE
 mdefine_line|#define OH_VIA_ENABLE&t;&t;0x10000
 DECL|macro|OH_IDECD_POWER

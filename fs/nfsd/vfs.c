@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/nfsd/vfs.c&n; *&n; * File operations used by nfsd. Some of these have been ripped from&n; * other parts of the kernel because they weren&squot;t in ksyms.c, others&n; * are partial duplicates with added or changed functionality.&n; *&n; * Note that several functions dget() the dentry upon which they want&n; * to act, most notably those that create directory entries. Response&n; * dentry&squot;s are dput()&squot;d if necessary in the release callback.&n; * So if you notice code paths that apparently fail to dput() the&n; * dentry, don&squot;t worry--they have been taken care of.&n; *&n; * Copyright (C) 1995, 1996, 1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/fs/nfsd/vfs.c&n; *&n; * File operations used by nfsd. Some of these have been ripped from&n; * other parts of the kernel because they weren&squot;t in ksyms.c, others&n; * are partial duplicates with added or changed functionality.&n; *&n; * Note that several functions dget() the dentry upon which they want&n; * to act, most notably those that create directory entries. Response&n; * dentry&squot;s are dput()&squot;d if necessary in the release callback.&n; * So if you notice code paths that apparently fail to dput() the&n; * dentry, don&squot;t worry--they have been taken care of.&n; *&n; * Copyright (C) 1995-1999 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4500,6 +4500,12 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+id|expire_by_dentry
+c_func
+(paren
+id|rdentry
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

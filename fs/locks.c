@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|OFFSET_MAX
-mdefine_line|#define OFFSET_MAX&t;((off_t)0x7fffffff)&t;/* FIXME: move elsewhere? */
+mdefine_line|#define OFFSET_MAX&t;((off_t)LONG_MAX)&t;/* FIXME: move elsewhere? */
 r_static
 r_int
 id|flock_make_lock
@@ -4270,7 +4270,7 @@ r_static
 r_char
 id|temp
 (braket
-l_int|129
+l_int|155
 )braket
 suffix:semicolon
 r_char

@@ -28,7 +28,7 @@ op_amp
 l_int|0x7fffffffUL
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 eof

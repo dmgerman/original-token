@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.c,v 1.3 1998/10/07 11:34:56 jj Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; */
+multiline_comment|/* $Id: pcic.c,v 1.5 1999/03/16 00:15:20 davem Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2043,17 +2043,22 @@ op_assign
 op_star
 id|tv
 suffix:semicolon
-id|time_state
+id|time_adjust
 op_assign
-id|TIME_BAD
+l_int|0
+suffix:semicolon
+multiline_comment|/* stop active adjtime() */
+id|time_status
+op_or_assign
+id|STA_UNSYNC
 suffix:semicolon
 id|time_maxerror
 op_assign
-l_int|0x70000000
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|time_esterror
 op_assign
-l_int|0x70000000
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|sti
 c_func

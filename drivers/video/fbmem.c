@@ -536,6 +536,28 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|sgivwfb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sgivwfb_setup
+c_func
+(paren
+r_char
+op_star
+id|options
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
 r_static
 r_struct
 (brace
@@ -579,6 +601,16 @@ id|fb_drivers
 id|__initdata
 op_assign
 (brace
+macro_line|#ifdef CONFIG_FB_SGIVW
+(brace
+l_string|&quot;sgivw&quot;
+comma
+id|sgivwfb_init
+comma
+id|sgivwfb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_RETINAZ3
 (brace
 l_string|&quot;retz3&quot;

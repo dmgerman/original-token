@@ -430,6 +430,11 @@ r_int
 r_int
 id|retry_count
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* SMP protection */
 )brace
 suffix:semicolon
 multiline_comment|/* token ring adapter commands */

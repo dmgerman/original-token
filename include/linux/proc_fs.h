@@ -578,6 +578,9 @@ comma
 DECL|enumerator|PROC_SCSI_INIA100
 id|PROC_SCSI_INIA100
 comma
+DECL|enumerator|PROC_SCSI_FCAL
+id|PROC_SCSI_FCAL
+comma
 DECL|enumerator|PROC_SCSI_SCSI_DEBUG
 id|PROC_SCSI_SCSI_DEBUG
 comma

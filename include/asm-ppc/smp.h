@@ -2,10 +2,51 @@ multiline_comment|/* smp.h: PPC specific SMP stuff.&n; *&n; * Taken from asm-spa
 macro_line|#ifndef _PPC_SMP_H
 DECL|macro|_PPC_SMP_H
 mdefine_line|#define _PPC_SMP_H
-macro_line|#include &lt;linux/kernel.h&gt; /* for panic */
-macro_line|#include &lt;linux/tasks.h&gt; /* for NR_CPUS */
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#ifdef __SMP__
 macro_line|#ifndef __ASSEMBLY__
+DECL|struct|cpuinfo_PPC
+r_struct
+id|cpuinfo_PPC
+(brace
+DECL|member|loops_per_sec
+r_int
+r_int
+id|loops_per_sec
+suffix:semicolon
+DECL|member|pvr
+r_int
+r_int
+id|pvr
+suffix:semicolon
+DECL|member|pgd_cache
+r_int
+r_int
+op_star
+id|pgd_cache
+suffix:semicolon
+DECL|member|pte_cache
+r_int
+r_int
+op_star
+id|pte_cache
+suffix:semicolon
+DECL|member|pgtable_cache_sz
+r_int
+r_int
+id|pgtable_cache_sz
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|cpuinfo_PPC
+id|cpu_data
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 r_extern
 r_int
 id|first_cpu_booted
@@ -49,7 +90,7 @@ suffix:semicolon
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;&t;0xFF            /* No processor magic marker */
 DECL|macro|PROC_CHANGE_PENALTY
-mdefine_line|#define PROC_CHANGE_PENALTY&t;2000
+mdefine_line|#define PROC_CHANGE_PENALTY&t;20
 multiline_comment|/* 1 to 1 mapping on PPC -- Cort */
 DECL|macro|cpu_logical_map
 mdefine_line|#define cpu_logical_map(cpu) (cpu)
@@ -73,48 +114,6 @@ DECL|macro|hard_smp_processor_id
 mdefine_line|#define hard_smp_processor_id() (0)
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() (current-&gt;processor)
-multiline_comment|/* per processor PPC parameters we need. */
-DECL|struct|cpuinfo_PPC
-r_struct
-id|cpuinfo_PPC
-(brace
-DECL|member|loops_per_sec
-r_int
-r_int
-id|loops_per_sec
-suffix:semicolon
-DECL|member|pvr
-r_int
-r_int
-id|pvr
-suffix:semicolon
-DECL|member|pgd_quick
-r_int
-r_int
-op_star
-id|pgd_quick
-suffix:semicolon
-DECL|member|pte_quick
-r_int
-r_int
-op_star
-id|pte_quick
-suffix:semicolon
-DECL|member|pgtable_cache_sz
-r_int
-r_int
-id|pgtable_cache_sz
-suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|cpuinfo_PPC
-id|cpu_data
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|struct|klock_info_struct
 r_struct
 id|klock_info_struct

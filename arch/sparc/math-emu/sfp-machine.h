@@ -39,28 +39,54 @@ DECL|macro|_FP_CHOOSENAN
 mdefine_line|#define _FP_CHOOSENAN(fs, wc, R, X, Y)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    R##_s = Y##_s;&t;&t;&t;&t;&t;&t;&bslash;&n;    _FP_FRAC_COPY_##wc(R,Y);&t;&t;&t;&t;&t;&bslash;&n;    R##_c = FP_CLS_NAN;&t;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_RAW_1
 mdefine_line|#define __FP_UNPACK_RAW_1(fs, X, val)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    X##_f = _flo-&gt;bits.frac;&t;&t;&t;&t;&t;&bslash;&n;    X##_e = _flo-&gt;bits.exp;&t;&t;&t;&t;&t;&bslash;&n;    X##_s = _flo-&gt;bits.sign;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_RAW_1
-mdefine_line|#define __FP_PACK_RAW_1(fs, val, X)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac = X##_f;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp  = X##_e;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign = X##_s;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_RAW_2
 mdefine_line|#define __FP_UNPACK_RAW_2(fs, X, val)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    X##_f0 = _flo-&gt;bits.frac0;&t;&t;&t;&t;&bslash;&n;    X##_f1 = _flo-&gt;bits.frac1;&t;&t;&t;&t;&bslash;&n;    X##_e  = _flo-&gt;bits.exp;&t;&t;&t;&t;&bslash;&n;    X##_s  = _flo-&gt;bits.sign;&t;&t;&t;&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_RAW_2
-mdefine_line|#define __FP_PACK_RAW_2(fs, val, X)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac0 = X##_f0;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac1 = X##_f1;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp   = X##_e;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign  = X##_s;&t;&t;&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_RAW_4
 mdefine_line|#define __FP_UNPACK_RAW_4(fs, X, val)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    X##_f[0] = _flo-&gt;bits.frac0;&t;&t;&t;&bslash;&n;    X##_f[1] = _flo-&gt;bits.frac1;&t;&t;&t;&bslash;&n;    X##_f[2] = _flo-&gt;bits.frac2;&t;&t;&t;&bslash;&n;    X##_f[3] = _flo-&gt;bits.frac3;&t;&t;&t;&bslash;&n;    X##_e  = _flo-&gt;bits.exp;&t;&t;&t;&t;&bslash;&n;    X##_s  = _flo-&gt;bits.sign;&t;&t;&t;&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_RAW_4
-mdefine_line|#define __FP_PACK_RAW_4(fs, val, X)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac0 = X##_f[0];&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac1 = X##_f[1];&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac2 = X##_f[2];&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac3 = X##_f[3];&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp   = X##_e;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign  = X##_s;&t;&t;&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_S
 mdefine_line|#define __FP_UNPACK_S(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    __FP_UNPACK_RAW_1(S,X,val);&t;&t;&bslash;&n;    _FP_UNPACK_CANONICAL(S,1,X);&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_S
-mdefine_line|#define __FP_PACK_S(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(S,1,X);&t;&t;&bslash;&n;    __FP_PACK_RAW_1(S,val,X);&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_D
 mdefine_line|#define __FP_UNPACK_D(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    __FP_UNPACK_RAW_2(D,X,val);&t;&t;&bslash;&n;    _FP_UNPACK_CANONICAL(D,2,X);&t;&bslash;&n;  } while (0)
-DECL|macro|__FP_PACK_D
-mdefine_line|#define __FP_PACK_D(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(D,2,X);&t;&t;&bslash;&n;    __FP_PACK_RAW_2(D,val,X);&t;&t;&bslash;&n;  } while (0)
 DECL|macro|__FP_UNPACK_Q
 mdefine_line|#define __FP_UNPACK_Q(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    __FP_UNPACK_RAW_4(Q,X,val);&t;&t;&bslash;&n;    _FP_UNPACK_CANONICAL(Q,4,X);&t;&bslash;&n;  } while (0)
+DECL|macro|__FP_PACK_RAW_1
+mdefine_line|#define __FP_PACK_RAW_1(fs, val, X)&t;&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac = X##_f;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp  = X##_e;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign = X##_s;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
+DECL|macro|__FP_PACK_RAW_2
+mdefine_line|#define __FP_PACK_RAW_2(fs, val, X)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac0 = X##_f0;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac1 = X##_f1;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp   = X##_e;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign  = X##_s;&t;&t;&t;&t;&bslash;&n;  } while (0)
+DECL|macro|__FP_PACK_RAW_4
+mdefine_line|#define __FP_PACK_RAW_4(fs, val, X)&t;&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    union _FP_UNION_##fs *_flo =&t;&t;&t;&bslash;&n;    &t;(union _FP_UNION_##fs *)val;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac0 = X##_f[0];&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac1 = X##_f[1];&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac2 = X##_f[2];&t;&t;&t;&bslash;&n;    _flo-&gt;bits.frac3 = X##_f[3];&t;&t;&t;&bslash;&n;    _flo-&gt;bits.exp   = X##_e;&t;&t;&t;&t;&bslash;&n;    _flo-&gt;bits.sign  = X##_s;&t;&t;&t;&t;&bslash;&n;  } while (0)
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+multiline_comment|/* We only actually write to the destination register&n; * if exceptions signalled (if any) will not trap.&n; */
+macro_line|#ifdef __SMP__
+DECL|macro|__FPU_TEM
+mdefine_line|#define __FPU_TEM &bslash;&n;&t;(((current-&gt;tss.fsr)&gt;&gt;23)&amp;0x1f)
+macro_line|#else
+r_extern
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+suffix:semicolon
+DECL|macro|__FPU_TEM
+mdefine_line|#define __FPU_TEM &bslash;&n;&t;(((last_task_used_math-&gt;tss.fsr)&gt;&gt;23)&amp;0x1f)
+macro_line|#endif
+DECL|macro|__FPU_TRAP_P
+mdefine_line|#define __FPU_TRAP_P(bits) &bslash;&n;&t;((__FPU_TEM &amp; (bits)) != 0)
+DECL|macro|__FP_PACK_S
+mdefine_line|#define __FP_PACK_S(val,X)&t;&t;&t;&bslash;&n;({  int __exc = _FP_PACK_CANONICAL(S,1,X);&t;&bslash;&n;    if(!__exc || !__FPU_TRAP_P(__exc))&t;&t;&bslash;&n;        __FP_PACK_RAW_1(S,val,X);&t;&t;&bslash;&n;    __exc;&t;&t;&t;&t;&t;&bslash;&n;})
+DECL|macro|__FP_PACK_D
+mdefine_line|#define __FP_PACK_D(val,X)&t;&t;&t;&bslash;&n;({  int __exc = _FP_PACK_CANONICAL(D,2,X);&t;&bslash;&n;    if(!__exc || !__FPU_TRAP_P(__exc))&t;&t;&bslash;&n;        __FP_PACK_RAW_2(D,val,X);&t;&t;&bslash;&n;    __exc;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__FP_PACK_Q
-mdefine_line|#define __FP_PACK_Q(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(Q,4,X);&t;&t;&bslash;&n;    __FP_PACK_RAW_4(Q,val,X);&t;&t;&bslash;&n;  } while (0)
+mdefine_line|#define __FP_PACK_Q(val,X)&t;&t;&t;&bslash;&n;({  int __exc = _FP_PACK_CANONICAL(Q,4,X);&t;&bslash;&n;    if(!__exc || !__FPU_TRAP_P(__exc))&t;&t;&bslash;&n;        __FP_PACK_RAW_4(Q,val,X);&t;&t;&bslash;&n;    __exc;&t;&t;&t;&t;&t;&bslash;&n;})
+multiline_comment|/* Obtain the current rounding mode. */
+macro_line|#ifdef __SMP__
+DECL|macro|FP_ROUNDMODE
+mdefine_line|#define FP_ROUNDMODE&t;((current-&gt;tss.fsr &gt;&gt; 30) &amp; 0x3)
+macro_line|#else
+DECL|macro|FP_ROUNDMODE
+mdefine_line|#define FP_ROUNDMODE&t;((last_task_used_math-&gt;tss.fsr &gt;&gt; 30) &amp; 0x3)
+macro_line|#endif
 multiline_comment|/* the asm fragments go here: all these are taken from glibc-2.0.5&squot;s stdlib/longlong.h */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -870,4 +896,15 @@ macro_line|#else
 DECL|macro|__BYTE_ORDER
 mdefine_line|#define __BYTE_ORDER __LITTLE_ENDIAN
 macro_line|#endif
+multiline_comment|/* Exception flags. */
+DECL|macro|EFLAG_INVALID
+mdefine_line|#define EFLAG_INVALID&t;&t;(1 &lt;&lt; 4)
+DECL|macro|EFLAG_OVERFLOW
+mdefine_line|#define EFLAG_OVERFLOW&t;&t;(1 &lt;&lt; 3)
+DECL|macro|EFLAG_UNDERFLOW
+mdefine_line|#define EFLAG_UNDERFLOW&t;&t;(1 &lt;&lt; 2)
+DECL|macro|EFLAG_DIVZERO
+mdefine_line|#define EFLAG_DIVZERO&t;&t;(1 &lt;&lt; 1)
+DECL|macro|EFLAG_INEXACT
+mdefine_line|#define EFLAG_INEXACT&t;&t;(1 &lt;&lt; 0)
 eof

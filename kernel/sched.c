@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-04-21&t;Modified by Ulrich Windl to make NTP work&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; *  1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; *  1998-11-19&t;Implemented schedule_timeout() and related stuff&n; *&t;&t;by Andrea Arcangeli&n; *  1998-12-24&t;Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *&t;&t;serialize accesses to xtime/lost_ticks).&n; *&t;&t;&t;&t;Copyright (C) 1998  Andrea Arcangeli&n; *  1998-12-28  Implemented better SMP scheduling by Ingo Molnar&n; */
+multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; *  1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; *  1998-11-19&t;Implemented schedule_timeout() and related stuff&n; *&t;&t;by Andrea Arcangeli&n; *  1998-12-24&t;Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *&t;&t;serialize accesses to xtime/lost_ticks).&n; *&t;&t;&t;&t;Copyright (C) 1998  Andrea Arcangeli&n; *  1998-12-28  Implemented better SMP scheduling by Ingo Molnar&n; *  1999-03-10&t;Improved NTP compatibility by Ulrich Windl&n; */
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid()), which just extract a field from&n; * current-task&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -93,7 +93,7 @@ DECL|variable|time_state
 r_int
 id|time_state
 op_assign
-id|TIME_ERROR
+id|TIME_OK
 suffix:semicolon
 multiline_comment|/* clock synchronization status */
 DECL|variable|time_status
@@ -1792,7 +1792,7 @@ DECL|member|__pad
 r_char
 id|__pad
 (braket
-id|L1_CACHE_BYTES
+id|SMP_CACHE_BYTES
 )braket
 suffix:semicolon
 DECL|variable|__cacheline_aligned
@@ -3295,11 +3295,6 @@ id|time_maxerror
 op_assign
 id|NTP_PHASE_LIMIT
 suffix:semicolon
-id|time_state
-op_assign
-id|TIME_ERROR
-suffix:semicolon
-multiline_comment|/* p. 17, sect. 4.3, (b) */
 id|time_status
 op_or_assign
 id|STA_UNSYNC

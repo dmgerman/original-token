@@ -14,5 +14,7 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT&t;.previous
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA&t;.section&t;&quot;.data.init&quot;,#alloc,#write
+DECL|macro|__cacheline_aligned
+mdefine_line|#define __cacheline_aligned __attribute__ ((aligned (64)))
 macro_line|#endif
 eof

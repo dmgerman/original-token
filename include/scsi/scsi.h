@@ -199,6 +199,8 @@ DECL|macro|TYPE_MOD
 mdefine_line|#define TYPE_MOD            0x07    /* Magneto-optical disk - &n;&t;&t;&t;&t;     * - treated as TYPE_DISK */
 DECL|macro|TYPE_MEDIUM_CHANGER
 mdefine_line|#define TYPE_MEDIUM_CHANGER 0x08
+DECL|macro|TYPE_ENCLOSURE
+mdefine_line|#define TYPE_ENCLOSURE      0x0d    /* Enclosure Services Device */
 DECL|macro|TYPE_NO_LUN
 mdefine_line|#define TYPE_NO_LUN         0x7f
 multiline_comment|/*&n; * standard mode-select header prepended to all mode-select commands&n; *&n; * moved here from cdrom.h -- kraxel&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/* fcp_scsi.h: Generic SCSI on top of FC4 - interface defines.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998 Jirka Hanika (geo@ff.cuni.cz)&n; */
+multiline_comment|/* fcp_impl.h: Generic SCSI on top of FC4 - our interface defines.&n; *&n; * Copyright (C) 1997-1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1998 Jirka Hanika (geo@ff.cuni.cz)&n; */
 macro_line|#ifndef _FCP_SCSI_H
 DECL|macro|_FCP_SCSI_H
 mdefine_line|#define _FCP_SCSI_H
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;../scsi/scsi.h&quot;
 macro_line|#include &quot;fc.h&quot;
 macro_line|#include &quot;fcp.h&quot;
+macro_line|#include &quot;fc-al.h&quot;
 macro_line|#ifdef __sparc__
 macro_line|#include &lt;asm/sbus.h&gt;
 DECL|typedef|dma_handle
@@ -36,6 +37,10 @@ DECL|macro|FC_CLASS_OFFLINE
 mdefine_line|#define FC_CLASS_OFFLINE&t;0x08
 DECL|macro|PROTO_OFFLINE
 mdefine_line|#define PROTO_OFFLINE&t;&t;0x02
+DECL|macro|PROTO_REPORT_AL_MAP
+mdefine_line|#define PROTO_REPORT_AL_MAP&t;0x03
+DECL|macro|PROTO_FORCE_LIP
+mdefine_line|#define PROTO_FORCE_LIP&t;&t;0x06
 r_struct
 id|_fc_channel
 suffix:semicolon
@@ -69,11 +74,18 @@ op_star
 suffix:semicolon
 DECL|member|proto
 r_int
+r_int
 id|proto
 suffix:semicolon
 DECL|member|token
 r_int
+r_int
 id|token
+suffix:semicolon
+DECL|member|did
+r_int
+r_int
+id|did
 suffix:semicolon
 multiline_comment|/* FCP SCSI stuff */
 DECL|member|data
@@ -116,9 +128,34 @@ id|_fc_channel
 op_star
 id|fc
 suffix:semicolon
+DECL|member|ls
+r_void
+op_star
+id|ls
+suffix:semicolon
 DECL|typedef|fcp_cmnd
 )brace
 id|fcp_cmnd
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+DECL|member|list
+r_int
+r_char
+id|list
+(braket
+l_int|0
+)braket
+suffix:semicolon
+DECL|typedef|fcp_posmap
+)brace
+id|fcp_posmap
 suffix:semicolon
 DECL|struct|_fc_channel
 r_typedef
@@ -285,11 +322,16 @@ id|encode_addr
 (paren
 id|Scsi_Cmnd
 op_star
-id|cmnd
 comma
 id|u16
 op_star
-id|addr
+comma
+r_struct
+id|_fc_channel
+op_star
+comma
+id|fcp_cmnd
+op_star
 )paren
 suffix:semicolon
 DECL|member|scsi_que
@@ -304,11 +346,11 @@ id|scsi_name
 l_int|4
 )braket
 suffix:semicolon
-DECL|member|token_tab
+DECL|member|cmd_slots
 id|fcp_cmnd
 op_star
 op_star
-id|token_tab
+id|cmd_slots
 suffix:semicolon
 DECL|member|channels
 r_int
@@ -327,6 +369,11 @@ DECL|member|rst_pkt
 id|Scsi_Cmnd
 op_star
 id|rst_pkt
+suffix:semicolon
+DECL|member|posmap
+id|fcp_posmap
+op_star
+id|posmap
 suffix:semicolon
 multiline_comment|/* LOGIN stuff */
 DECL|member|login
@@ -376,6 +423,10 @@ DECL|macro|FC_STATUS_TIMEOUT
 mdefine_line|#define FC_STATUS_TIMEOUT&t;&t;0x12
 DECL|macro|FC_STATUS_ERR_OVERRUN
 mdefine_line|#define FC_STATUS_ERR_OVERRUN&t;&t;0x13
+DECL|macro|FC_STATUS_POINTTOPOINT
+mdefine_line|#define FC_STATUS_POINTTOPOINT&t;&t;0x15
+DECL|macro|FC_STATUS_AL
+mdefine_line|#define FC_STATUS_AL&t;&t;&t;0x16
 DECL|macro|FC_STATUS_UNKNOWN_CQ_TYPE
 mdefine_line|#define FC_STATUS_UNKNOWN_CQ_TYPE&t;0x20
 DECL|macro|FC_STATUS_BAD_SEG_CNT
@@ -396,6 +447,10 @@ DECL|macro|FC_STATUS_BAD_SID
 mdefine_line|#define FC_STATUS_BAD_SID&t;&t;0x28
 DECL|macro|FC_STATUS_NO_SEQ_INIT
 mdefine_line|#define FC_STATUS_NO_SEQ_INIT&t;&t;0x29
+DECL|macro|FC_STATUS_TIMED_OUT
+mdefine_line|#define FC_STATUS_TIMED_OUT&t;&t;-1
+DECL|macro|FC_STATUS_BAD_RSP
+mdefine_line|#define FC_STATUS_BAD_RSP&t;&t;-2
 r_void
 id|fcp_queue_empty
 c_func
@@ -449,6 +504,34 @@ id|fc_channel
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+r_int
+id|fc_do_plogi
+c_func
+(paren
+id|fc_channel
+op_star
+comma
+r_int
+r_char
+comma
+id|fc_wwn
+op_star
+comma
+id|fc_wwn
+op_star
+)paren
+suffix:semicolon
+r_int
+id|fc_do_prli
+c_func
+(paren
+id|fc_channel
+op_star
+comma
+r_int
+r_char
 )paren
 suffix:semicolon
 DECL|macro|for_each_fc_channel

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.171 1998/09/21 05:05:41 jj Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.173 1999/01/17 02:20:37 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -12681,6 +12681,18 @@ r_int
 r_int
 id|start
 suffix:semicolon
+multiline_comment|/* Do not mistake ourselves as another mapping. */
+r_if
+c_cond
+(paren
+id|vmaring
+op_eq
+id|vma
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -12775,13 +12787,11 @@ comma
 id|start
 )paren
 suffix:semicolon
-id|pte_val
-c_func
-(paren
 op_star
 id|ptep
-)paren
 op_assign
+id|__pte
+c_func
 (paren
 id|pte_val
 c_func
@@ -12864,13 +12874,11 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|pte_val
-c_func
-(paren
 op_star
 id|ptep
-)paren
 op_assign
+id|__pte
+c_func
 (paren
 id|pte_val
 c_func

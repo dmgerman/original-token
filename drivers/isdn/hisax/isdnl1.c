@@ -186,10 +186,10 @@ id|card
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if CARD_AMD7930
+macro_line|#if CARD_AMD7930 || CARD_DBRI
 r_extern
 r_int
-id|setup_amd7930
+id|setup_foreign
 c_func
 (paren
 r_struct
@@ -278,6 +278,8 @@ comma
 l_string|&quot;AMD 7930&quot;
 comma
 l_string|&quot;NICCY&quot;
+comma
+l_string|&quot;DBRI&quot;
 )brace
 suffix:semicolon
 r_extern
@@ -1045,7 +1047,7 @@ id|msg
 r_char
 id|tmp
 (braket
-l_int|256
+l_int|1024
 )braket
 comma
 id|tm
@@ -3291,13 +3293,16 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#if CARD_AMD7930
+macro_line|#if CARD_AMD7930 || CARD_DBRI
 r_case
 id|ISDN_CTYPE_AMD7930
 suffix:colon
+r_case
+id|ISDN_CTYPE_DBRI
+suffix:colon
 id|ret
 op_assign
-id|setup_amd7930
+id|setup_foreign
 c_func
 (paren
 id|card

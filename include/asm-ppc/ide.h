@@ -4,6 +4,7 @@ macro_line|#ifndef __ASMPPC_IDE_H
 DECL|macro|__ASMPPC_IDE_H
 mdefine_line|#define __ASMPPC_IDE_H
 macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * On APUS, nearly everything comes from the m68k file&n; * -- Cort&n; */
 macro_line|#ifdef CONFIG_APUS
 macro_line|#include &lt;linux/hdreg.h&gt;
 DECL|macro|ide_init_hwif_ports
@@ -11,84 +12,71 @@ mdefine_line|#define ide_init_hwif_ports m68k_ide_init_hwif_ports
 macro_line|#include &lt;asm-m68k/ide.h&gt;
 DECL|macro|ide_init_hwif_ports
 macro_line|#undef ide_init_hwif_ports
-DECL|macro|insw
-macro_line|#undef insw
-r_void
-id|ide_init_hwif_ports
-c_func
-(paren
-id|ide_ioreg_t
-op_star
-id|p
-comma
-id|ide_ioreg_t
-id|base
-comma
-r_int
-op_star
-id|irq
-)paren
-suffix:semicolon
-r_void
-id|ide_insw
-c_func
-(paren
-id|ide_ioreg_t
-id|port
-comma
-r_void
-op_star
-id|buf
-comma
-r_int
-id|ns
-)paren
-suffix:semicolon
-r_void
-id|ide_outsw
-c_func
-(paren
-id|ide_ioreg_t
-id|port
-comma
-r_void
-op_star
-id|buf
-comma
-r_int
-id|ns
-)paren
-suffix:semicolon
-DECL|macro|insw
-mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine != _MACH_Pmac &amp;&amp; _machine != _MACH_apus )&t;&bslash;&n;&t;&t;/* this must be the same as insw in io.h!! */&t;&bslash;&n;&t;&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ide_insw((port), (buf), (ns));&t;&t;&bslash;&n;} while (0)
-DECL|macro|outsw
-macro_line|#undef outsw
-DECL|macro|outsw
-mdefine_line|#define outsw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine != _MACH_Pmac &amp;&amp; _machine != _MACH_apus )&t;&bslash;&n;&t;&t;/* this must be the same as outsw in io.h!! */&t;&bslash;&n;&t;&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ide_outsw((port), (buf), (ns));&t;&t;&bslash;&n;} while (0)
-macro_line|#else /* CONFIG_APUS */
-macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/hdreg.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;asm/io.h&gt;&t;&t;/* so we can redefine insw/outsw */
+macro_line|#endif /* CONFIG_APUS */
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
 mdefine_line|#define MAX_HWIFS&t;4
 macro_line|#endif
-DECL|macro|SUPPORT_SLOW_DATA_PORTS
-macro_line|#undef&t;SUPPORT_SLOW_DATA_PORTS
-DECL|macro|SUPPORT_SLOW_DATA_PORTS
-mdefine_line|#define&t;SUPPORT_SLOW_DATA_PORTS&t;0
-DECL|macro|SUPPORT_VLB_SYNC
-macro_line|#undef&t;SUPPORT_VLB_SYNC
-DECL|macro|SUPPORT_VLB_SYNC
-mdefine_line|#define SUPPORT_VLB_SYNC&t;0
-DECL|macro|ide__sti
-mdefine_line|#define ide__sti()&t;__sti()
 DECL|typedef|ide_ioreg_t
 r_typedef
 r_int
 r_int
 id|ide_ioreg_t
+suffix:semicolon
+r_extern
+r_int
+id|pmac_ide_ports_known
+suffix:semicolon
+r_extern
+id|ide_ioreg_t
+id|pmac_ide_regbase
+(braket
+id|MAX_HWIFS
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|pmac_ide_irq
+(braket
+id|MAX_HWIFS
+)braket
+suffix:semicolon
+r_extern
+r_void
+id|pmac_ide_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|chrp_ide_ports_known
+suffix:semicolon
+r_extern
+id|ide_ioreg_t
+id|chrp_ide_regbase
+(braket
+id|MAX_HWIFS
+)braket
+suffix:semicolon
+r_extern
+id|ide_ioreg_t
+id|chrp_idedma_regbase
+suffix:semicolon
+multiline_comment|/* one for both channels */
+r_extern
+r_int
+r_int
+id|chrp_ide_irq
+suffix:semicolon
+r_extern
+r_void
+id|chrp_ide_probe
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_void
 id|ide_init_hwif_ports
@@ -200,61 +188,29 @@ r_int
 id|ns
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|pmac_ide_ports_known
-suffix:semicolon
-r_extern
-id|ide_ioreg_t
-id|pmac_ide_regbase
-(braket
-id|MAX_HWIFS
-)braket
-suffix:semicolon
-r_extern
-r_int
-id|pmac_ide_irq
-(braket
-id|MAX_HWIFS
-)braket
-suffix:semicolon
-r_extern
-r_void
-id|pmac_ide_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|chrp_ide_ports_known
-suffix:semicolon
-r_extern
-id|ide_ioreg_t
-id|chrp_ide_regbase
-(braket
-id|MAX_HWIFS
-)braket
-suffix:semicolon
-r_extern
-id|ide_ioreg_t
-id|chrp_idedma_regbase
-suffix:semicolon
-multiline_comment|/* one for both channels */
-r_extern
-r_int
-r_int
-id|chrp_ide_irq
-suffix:semicolon
-r_extern
-r_void
-id|chrp_ide_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+DECL|macro|insw
+macro_line|#undef insw
+DECL|macro|insw
+mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&t;&bslash;&n;&t;if ( _machine &amp; (_MACH_chrp|_MACH_mbx) )&t;&t;&bslash;&n;&t;&t; ide_insw((port)+_IO_BASE, (buf), (ns));  &t;&bslash;&n;&t;else if ( _machine &amp; (_MACH_Pmac|_MACH_apus) )&t;&t;&bslash;&n;&t;&t; ide_insw((port), (buf), (ns));  &t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as insw in io.h!! */&t;&bslash;&n;&t;&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;} while (0)
+DECL|macro|outsw
+macro_line|#undef outsw
+DECL|macro|outsw
+mdefine_line|#define outsw(port, buf, ns) &t;do {&t;&t;&t;&t;&bslash;&n;&t;if ( _machine &amp; (_MACH_chrp|_MACH_mbx) ) &t;&t;&bslash;&n;&t;&t;ide_outsw((port)+_IO_BASE, (buf), (ns)); &t;&bslash;&n;&t;else if ( _machine &amp; (_MACH_Pmac|_MACH_apus) )&t;&t;&bslash;&n;&t;&t;ide_outsw((port), (buf), (ns)); &t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as outsw in io.h!! */&t;&bslash;&n;&t;&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;} while (0)
+macro_line|#ifndef CONFIG_APUS
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+DECL|macro|SUPPORT_SLOW_DATA_PORTS
+macro_line|#undef&t;SUPPORT_SLOW_DATA_PORTS
+DECL|macro|SUPPORT_SLOW_DATA_PORTS
+mdefine_line|#define&t;SUPPORT_SLOW_DATA_PORTS&t;0
+DECL|macro|SUPPORT_VLB_SYNC
+macro_line|#undef&t;SUPPORT_VLB_SYNC
+DECL|macro|SUPPORT_VLB_SYNC
+mdefine_line|#define SUPPORT_VLB_SYNC&t;0
+DECL|macro|ide__sti
+mdefine_line|#define ide__sti()&t;__sti()
 DECL|function|ide_default_irq
 r_static
 id|__inline__
@@ -284,11 +240,9 @@ id|_machine
 op_eq
 id|_MACH_mbx
 )paren
-multiline_comment|/* hardcode IRQ 14 on the MBX */
+multiline_comment|/* IRQ 14 when in legacy mode on MBX */
 r_return
 l_int|14
-op_plus
-l_int|16
 suffix:semicolon
 r_else
 r_if
@@ -599,25 +553,18 @@ id|id
 r_if
 c_cond
 (paren
-(paren
 id|_machine
-op_eq
-id|_MACH_Pmac
-)paren
-op_logical_or
+op_amp
 (paren
-id|_machine
-op_eq
 id|_MACH_chrp
-)paren
-op_logical_or
-(paren
-id|_machine
-op_eq
+op_or
 id|_MACH_mbx
+op_or
+id|_MACH_Pmac
 )paren
 )paren
 (brace
+"&bslash;"
 r_int
 id|i
 suffix:semicolon
@@ -1503,19 +1450,10 @@ id|i
 suffix:semicolon
 )brace
 )brace
-DECL|macro|insw
-macro_line|#undef insw
-DECL|macro|insw
-mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine == _MACH_chrp)  {&bslash;&n;&t;&t; ide_insw((port)+_IO_BASE, (buf), (ns));  &bslash;&n;&t;}&bslash;&n;&t;else if ( (_machine == _MACH_Pmac) || (_machine == _MACH_mbx) )&t;&t;&t;&bslash;&n;&t;&t;ide_insw((port)+((_machine==_MACH_mbx)? 0x80000000: 0), &bslash;&n;&t;&t;&t; (buf), (ns));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as insw in io.h!! */&t;&bslash;&n;&t;&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;} while (0)
-DECL|macro|outsw
-macro_line|#undef outsw
-multiline_comment|/*&t;printk(&quot;port: %x buf: %p ns: %d&bslash;n&quot;,port,buf,ns); &bslash; */
-DECL|macro|outsw
-mdefine_line|#define outsw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine == _MACH_chrp) {&bslash;&n;&t;&t;ide_outsw((port)+_IO_BASE, (buf), (ns)); &bslash;&n;&t;}&bslash;&n;&t;else if ( (_machine == _MACH_Pmac) || (_machine == _MACH_mbx) )&t; &bslash;&n;&t;&t;ide_outsw((port)+((_machine==_MACH_mbx)? 0x80000000: 0), &bslash;&n;&t;&t;&t;   (buf), (ns));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as outsw in io.h!! */&t;&bslash;&n;&t;&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;} while (0)
 DECL|macro|inb
 macro_line|#undef inb
 DECL|macro|inb
-mdefine_line|#define inb(port)&t;&bslash;&n;&t;in_8((unsigned char *)((port) + &bslash;&n;&t;&t;&t;       ((_machine==_MACH_Pmac)? 0: _IO_BASE) + &bslash;&n;&t;&t;&t;       ((_machine==_MACH_mbx)? 0x80000000: 0)) )
+mdefine_line|#define inb(port)&t;&bslash;&n;&t;in_8((unsigned char *)((port) + &bslash;&n;&t;&t;&t;       ((_machine==_MACH_Pmac)? 0: _IO_BASE) ) )
 DECL|macro|inb_p
 macro_line|#undef inb_p
 DECL|macro|inb_p
@@ -1523,7 +1461,7 @@ mdefine_line|#define inb_p(port)&t;inb(port)
 DECL|macro|outb
 macro_line|#undef outb
 DECL|macro|outb
-mdefine_line|#define outb(val, port)&t;&bslash;&n;&t;out_8((unsigned char *)((port) + &bslash;&n;&t;&t;&t;&t;((_machine==_MACH_Pmac)? 0: _IO_BASE) + &bslash;&n;&t;&t;&t;&t;((_machine==_MACH_mbx)? 0x80000000: 0)), (val) )
+mdefine_line|#define outb(val, port)&t;&bslash;&n;&t;out_8((unsigned char *)((port) + &bslash;&n;&t;&t;&t;&t;((_machine==_MACH_Pmac)? 0: _IO_BASE) ), (val) )
 DECL|macro|outb_p
 macro_line|#undef outb_p
 DECL|macro|outb_p

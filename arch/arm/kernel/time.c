@@ -294,11 +294,6 @@ id|time_status
 op_or_assign
 id|STA_UNSYNC
 suffix:semicolon
-id|time_state
-op_assign
-id|TIME_ERROR
-suffix:semicolon
-multiline_comment|/* p. 24, (a) */
 id|time_maxerror
 op_assign
 id|NTP_PHASE_LIMIT

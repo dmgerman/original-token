@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysio.h,v 1.7 1997/08/18 03:47:26 davem Exp $&n; * sysio.h: UltraSparc sun5 specific SBUS definitions.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sysio.h,v 1.8 1998/11/29 15:49:54 davem Exp $&n; * sysio.h: UltraSparc sun5 specific SBUS definitions.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_SYSIO_H
 DECL|macro|__SPARC64_SYSIO_H
 mdefine_line|#define __SPARC64_SYSIO_H
@@ -970,7 +970,9 @@ mdefine_line|#define SYSIO_SBCNTRL_RESV2&t;0x0000800000000000 /* Reserved       
 DECL|macro|SYSIO_SBCNTRL_PPERR
 mdefine_line|#define SYSIO_SBCNTRL_PPERR&t;0x00007f0000000000 /* PIO Load Parity Error        */
 DECL|macro|SYSIO_SBCNTRL_RESV
-mdefine_line|#define SYSIO_SBCNTRL_RESV&t;0x000000fffffffc00 /* Reserved                     */
+mdefine_line|#define SYSIO_SBCNTRL_RESV&t;0x000000fffffff800 /* Reserved                     */
+DECL|macro|SYSIO_SBCNTRL_FAST
+mdefine_line|#define SYSIO_SBCNTRL_FAST&t;0x0000000000000400 /* Enable Fast-SBUS mode.&t;   */
 DECL|macro|SYSIO_SBCNTRL_WEN
 mdefine_line|#define SYSIO_SBCNTRL_WEN&t;0x0000000000000200 /* Power Mgmt Wake Enable       */
 DECL|macro|SYSIO_SBCNTRL_EEN

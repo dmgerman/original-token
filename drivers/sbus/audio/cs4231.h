@@ -139,6 +139,18 @@ id|cs4231_regs
 op_star
 id|regs
 suffix:semicolon
+DECL|member|eb2c
+r_struct
+id|linux_ebus_dma
+op_star
+id|eb2c
+suffix:semicolon
+DECL|member|eb2p
+r_struct
+id|linux_ebus_dma
+op_star
+id|eb2p
+suffix:semicolon
 DECL|member|perchip_info
 r_struct
 id|audio_info
@@ -153,8 +165,14 @@ comma
 id|reclen
 suffix:semicolon
 DECL|member|irq
+DECL|member|irq2
+DECL|member|nirqs
 r_int
 id|irq
+comma
+id|irq2
+comma
+id|nirqs
 suffix:semicolon
 DECL|member|regs_size
 r_int
@@ -185,10 +203,8 @@ DECL|member|output_dma_handle
 DECL|member|output_next_dma_handle
 r_volatile
 id|__u32
-op_star
 id|output_dma_handle
 comma
-op_star
 id|output_next_dma_handle
 suffix:semicolon
 DECL|member|output_dma_size
@@ -217,10 +233,8 @@ DECL|member|input_dma_handle
 DECL|member|input_next_dma_handle
 r_volatile
 id|__u32
-op_star
 id|input_dma_handle
 comma
-op_star
 id|input_next_dma_handle
 suffix:semicolon
 DECL|member|input_dma_size
@@ -258,6 +272,8 @@ DECL|macro|CS_STATUS_INTS_ON
 mdefine_line|#define CS_STATUS_INTS_ON 0x08
 DECL|macro|CS_STATUS_IS_ULTRA
 mdefine_line|#define CS_STATUS_IS_ULTRA 0x10
+DECL|macro|CS_STATUS_IS_EBUS
+mdefine_line|#define CS_STATUS_IS_EBUS 0x20
 DECL|macro|CS_TIMEOUT
 mdefine_line|#define CS_TIMEOUT      9000000
 DECL|macro|GAIN_SET
@@ -461,57 +477,63 @@ multiline_comment|/* see register 8 */
 multiline_comment|/* 29 - Unused */
 multiline_comment|/* 30 - Capture Upper */
 multiline_comment|/* 31 - Capture Lower */
-multiline_comment|/* Following are CSR register definitions for the Sparc */
-DECL|macro|CS_INT_PENDING
-mdefine_line|#define CS_INT_PENDING 0x800000 /* Interrupt Pending */
-DECL|macro|CS_PLAY_INT
-mdefine_line|#define CS_PLAY_INT    0x400000 /* Playback interrupt */
-DECL|macro|CS_CAPT_INT
-mdefine_line|#define CS_CAPT_INT    0x200000 /* Capture interrupt */
-DECL|macro|CS_GENL_INT
-mdefine_line|#define CS_GENL_INT    0x100000 /* General interrupt */
-DECL|macro|CS_XINT_ENA
-mdefine_line|#define CS_XINT_ENA    0x80000  /* General ext int. enable */
-DECL|macro|CS_XINT_PLAY
-mdefine_line|#define CS_XINT_PLAY   0x40000  /* Playback ext intr */
-DECL|macro|CS_XINT_CAPT
-mdefine_line|#define CS_XINT_CAPT   0x20000  /* Capture ext intr */
-DECL|macro|CS_XINT_GENL
-mdefine_line|#define CS_XINT_GENL   0x10000  /* Error ext intr */
-DECL|macro|CS_XINT_EMPT
-mdefine_line|#define CS_XINT_EMPT   0x8000   /* Pipe empty interrupt */
-DECL|macro|CS_XINT_PEMP
-mdefine_line|#define CS_XINT_PEMP   0x4000   /* Play pipe empty */
-DECL|macro|CS_XINT_PNVA
-mdefine_line|#define CS_XINT_PNVA   0x2000   /* Playback NVA dirty */
-DECL|macro|CS_XINT_PENA
-mdefine_line|#define CS_XINT_PENA   0x1000   /* play pipe empty Int enable */
-DECL|macro|CS_XINT_COVF
-mdefine_line|#define CS_XINT_COVF   0x800    /* Cap data dropped on floor */
-DECL|macro|CS_XINT_CNVA
-mdefine_line|#define CS_XINT_CNVA   0x400    /* Capture NVA dirty */
-DECL|macro|CS_XINT_CEMP
-mdefine_line|#define CS_XINT_CEMP   0x200    /* Capture pipe empty interrupt */
-DECL|macro|CS_XINT_CENA
-mdefine_line|#define CS_XINT_CENA   0x100    /* Cap. pipe empty int enable */
-DECL|macro|CS_PPAUSE
-mdefine_line|#define CS_PPAUSE      0x80     /* Pause the play DMA */
-DECL|macro|CS_CPAUSE
-mdefine_line|#define CS_CPAUSE      0x40     /* Pause the capture DMA */
-DECL|macro|CS_CDC_RESET
-mdefine_line|#define CS_CDC_RESET   0x20     /* CODEC RESET */
-DECL|macro|PDMA_READY
-mdefine_line|#define PDMA_READY     0x08     /* Play DMA Go */
-DECL|macro|CDMA_READY
-mdefine_line|#define CDMA_READY     0x04     /* Capture DMA Go */
-DECL|macro|CS_CHIP_RESET
-mdefine_line|#define CS_CHIP_RESET  0x01     /* Reset the chip */
-DECL|macro|CS_INIT_SETUP
-mdefine_line|#define CS_INIT_SETUP  (CDMA_READY | PDMA_READY | CS_XINT_ENA | CS_XINT_PLAY | CS_XINT_GENL | CS_INT_PENDING | CS_PLAY_INT | CS_CAPT_INT | CS_GENL_INT) 
-DECL|macro|CS_PLAY_SETUP
-mdefine_line|#define CS_PLAY_SETUP  (CS_GENL_INT | CS_PLAY_INT | CS_XINT_ENA | CS_XINT_PLAY | CS_XINT_EMPT | CS_XINT_GENL | CS_XINT_PENA | PDMA_READY)
-DECL|macro|CS_CAPT_SETUP
-mdefine_line|#define CS_CAPT_SETUP  (CS_GENL_INT | CS_CAPT_INT | CS_XINT_ENA | CS_XINT_CAPT | CS_XINT_CEMP | CS_XINT_GENL | CDMA_READY)
+multiline_comment|/* Following are APC CSR register definitions for the Sparc */
+DECL|macro|APC_INT_PENDING
+mdefine_line|#define APC_INT_PENDING 0x800000 /* Interrupt Pending */
+DECL|macro|APC_PLAY_INT
+mdefine_line|#define APC_PLAY_INT    0x400000 /* Playback interrupt */
+DECL|macro|APC_CAPT_INT
+mdefine_line|#define APC_CAPT_INT    0x200000 /* Capture interrupt */
+DECL|macro|APC_GENL_INT
+mdefine_line|#define APC_GENL_INT    0x100000 /* General interrupt */
+DECL|macro|APC_XINT_ENA
+mdefine_line|#define APC_XINT_ENA    0x80000  /* General ext int. enable */
+DECL|macro|APC_XINT_PLAY
+mdefine_line|#define APC_XINT_PLAY   0x40000  /* Playback ext intr */
+DECL|macro|APC_XINT_CAPT
+mdefine_line|#define APC_XINT_CAPT   0x20000  /* Capture ext intr */
+DECL|macro|APC_XINT_GENL
+mdefine_line|#define APC_XINT_GENL   0x10000  /* Error ext intr */
+DECL|macro|APC_XINT_EMPT
+mdefine_line|#define APC_XINT_EMPT   0x8000   /* Pipe empty interrupt */
+DECL|macro|APC_XINT_PEMP
+mdefine_line|#define APC_XINT_PEMP   0x4000   /* Play pipe empty */
+DECL|macro|APC_XINT_PNVA
+mdefine_line|#define APC_XINT_PNVA   0x2000   /* Playback NVA dirty */
+DECL|macro|APC_XINT_PENA
+mdefine_line|#define APC_XINT_PENA   0x1000   /* play pipe empty Int enable */
+DECL|macro|APC_XINT_COVF
+mdefine_line|#define APC_XINT_COVF   0x800    /* Cap data dropped on floor */
+DECL|macro|APC_XINT_CNVA
+mdefine_line|#define APC_XINT_CNVA   0x400    /* Capture NVA dirty */
+DECL|macro|APC_XINT_CEMP
+mdefine_line|#define APC_XINT_CEMP   0x200    /* Capture pipe empty interrupt */
+DECL|macro|APC_XINT_CENA
+mdefine_line|#define APC_XINT_CENA   0x100    /* Cap. pipe empty int enable */
+DECL|macro|APC_PPAUSE
+mdefine_line|#define APC_PPAUSE      0x80     /* Pause the play DMA */
+DECL|macro|APC_CPAUSE
+mdefine_line|#define APC_CPAUSE      0x40     /* Pause the capture DMA */
+DECL|macro|APC_CDC_RESET
+mdefine_line|#define APC_CDC_RESET   0x20     /* CODEC RESET */
+DECL|macro|APC_PDMA_READY
+mdefine_line|#define APC_PDMA_READY     0x08     /* Play DMA Go */
+DECL|macro|APC_CDMA_READY
+mdefine_line|#define APC_CDMA_READY     0x04     /* Capture DMA Go */
+DECL|macro|APC_CHIP_RESET
+mdefine_line|#define APC_CHIP_RESET  0x01     /* Reset the chip */
+DECL|macro|APC_INIT_SETUP
+mdefine_line|#define APC_INIT_SETUP  (APC_CDMA_READY | APC_PDMA_READY | APC_XINT_ENA | APC_XINT_PLAY | APC_XINT_GENL | APC_INT_PENDING | APC_PLAY_INT | APC_CAPT_INT | APC_GENL_INT) 
+DECL|macro|APC_PLAY_SETUP
+mdefine_line|#define APC_PLAY_SETUP  (APC_GENL_INT | APC_PLAY_INT | APC_XINT_ENA | APC_XINT_PLAY | APC_XINT_EMPT | APC_XINT_GENL | APC_XINT_PENA | APC_PDMA_READY)
+DECL|macro|APC_CAPT_SETUP
+mdefine_line|#define APC_CAPT_SETUP  (APC_GENL_INT | APC_CAPT_INT | APC_XINT_ENA | APC_XINT_CAPT | APC_XINT_CEMP | APC_XINT_GENL | APC_CDMA_READY)
+multiline_comment|/* Following are EB2 CSR register definitions for the Sparc */
+multiline_comment|/* asm/ebus.h has the base settings */
+DECL|macro|EB2_PLAY_SETUP
+mdefine_line|#define EB2_PLAY_SETUP (EBUS_DCSR_BURST_SZ_8|EBUS_DCSR_INT_EN|EBUS_DCSR_EN_DMA|EBUS_DCSR_EN_CNT|EBUS_DCSR_TC)
+DECL|macro|EB2_CAPT_SETUP
+mdefine_line|#define EB2_CAPT_SETUP (EBUS_DCSR_BURST_SZ_8|EBUS_DCSR_INT_EN|EBUS_DCSR_EN_DMA|EBUS_DCSR_EN_CNT|EBUS_DCSR_TC|EBUS_DCSR_WRITE)
 DECL|macro|CS4231_MIN_ATEN
 mdefine_line|#define CS4231_MIN_ATEN     (0)
 DECL|macro|CS4231_MAX_ATEN

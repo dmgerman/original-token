@@ -350,6 +350,13 @@ id|nr_unused_buffer_heads
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|nr_hashed_buffers
+r_static
+r_int
+id|nr_hashed_buffers
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* This is used by some architectures to estimate available memory. */
 DECL|variable|buffermem
 r_int
@@ -1696,6 +1703,9 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|nr_hashed_buffers
+op_decrement
+suffix:semicolon
 )brace
 DECL|function|remove_from_lru_list
 r_static
@@ -2357,6 +2367,9 @@ op_assign
 id|bhp
 suffix:semicolon
 )brace
+id|nr_hashed_buffers
+op_increment
+suffix:semicolon
 )brace
 )brace
 DECL|function|find_buffer
@@ -3452,7 +3465,7 @@ l_string|&quot;VFS: brelse: Trying to free free buffer&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * bforget() is like brelse(), except it removes the buffer&n; * from the hash-queues (so that it won&squot;t be re-used if it&squot;s&n; * shared).&n; */
+multiline_comment|/*&n; * bforget() is like brelse(), except it puts the buffer on the&n; * free list if it can.. We can NOT free the buffer if:&n; *  - there are other users of it&n; *  - it is locked and thus can have active IO&n; */
 DECL|function|__bforget
 r_void
 id|__bforget
@@ -3464,52 +3477,39 @@ op_star
 id|buf
 )paren
 (brace
-id|mark_buffer_clean
-c_func
-(paren
-id|buf
-)paren
-suffix:semicolon
-id|clear_bit
-c_func
-(paren
-id|BH_Protected
-comma
-op_amp
-id|buf-&gt;b_state
-)paren
-suffix:semicolon
-id|remove_from_hash_queue
-c_func
-(paren
-id|buf
-)paren
-suffix:semicolon
-id|buf-&gt;b_dev
-op_assign
-id|NODEV
-suffix:semicolon
-id|refile_buffer
-c_func
-(paren
-id|buf
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-op_decrement
 id|buf-&gt;b_count
-)paren
-r_return
-suffix:semicolon
-id|printk
+op_ne
+l_int|1
+op_logical_or
+id|buffer_locked
 c_func
 (paren
-l_string|&quot;VFS: forgot an in-use buffer! (count=%d)&bslash;n&quot;
-comma
-id|buf-&gt;b_count
+id|buf
+)paren
+)paren
+(brace
+id|__brelse
+c_func
+(paren
+id|buf
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|remove_from_queues
+c_func
+(paren
+id|buf
+)paren
+suffix:semicolon
+id|put_last_free
+c_func
+(paren
+id|buf
 )paren
 suffix:semicolon
 )brace
@@ -3535,6 +3535,8 @@ r_struct
 id|buffer_head
 op_star
 id|bh
+suffix:semicolon
+id|bh
 op_assign
 id|getblk
 c_func
@@ -3546,12 +3548,6 @@ comma
 id|size
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|bh
-)paren
-(brace
 id|touch_buffer
 c_func
 (paren
@@ -3603,16 +3599,6 @@ id|brelse
 c_func
 (paren
 id|bh
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;VFS: bread: impossible error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3688,9 +3674,10 @@ c_cond
 id|block
 OL
 l_int|0
-op_logical_or
-op_logical_neg
-(paren
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
 id|bh
 op_assign
 id|getblk
@@ -3702,10 +3689,6 @@ id|block
 comma
 id|bufsize
 )paren
-)paren
-)paren
-r_return
-l_int|NULL
 suffix:semicolon
 id|index
 op_assign
@@ -4134,7 +4117,7 @@ r_return
 id|bh
 suffix:semicolon
 )brace
-multiline_comment|/* This is critical.  We can&squot;t swap out pages to get&n;&t; * more buffer heads, because the swap-out may need&n;&t; * more buffer-heads itself.  Thus SLAB_ATOMIC.&n;&t; */
+multiline_comment|/* This is critical.  We can&squot;t swap out pages to get&n;&t; * more buffer heads, because the swap-out may need&n;&t; * more buffer-heads itself.  Thus SLAB_BUFFER.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4146,7 +4129,7 @@ c_func
 (paren
 id|bh_cachep
 comma
-id|SLAB_ATOMIC
+id|SLAB_BUFFER
 )paren
 )paren
 op_ne
@@ -5992,6 +5975,14 @@ c_func
 l_string|&quot;Buffer blocks:   %6d&bslash;n&quot;
 comma
 id|nr_buffers
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Buffer hashed:   %6d&bslash;n&quot;
+comma
+id|nr_hashed_buffers
 )paren
 suffix:semicolon
 r_for

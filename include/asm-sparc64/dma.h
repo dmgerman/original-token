@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.10 1998/10/27 23:28:50 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.13 1998/12/16 04:33:55 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC64_DMA_H
 DECL|macro|_ASM_SPARC64_DMA_H
 mdefine_line|#define _ASM_SPARC64_DMA_H
@@ -19,12 +19,18 @@ mdefine_line|#define release_dma_lock(__flags) &bslash;&n;&t;spin_unlock_irqrest
 multiline_comment|/* These are irrelevant for Sparc DMA, but we leave it in so that&n; * things can compile.&n; */
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS 8
-DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS  ((0xf0000000) + PAGE_OFFSET)
 DECL|macro|DMA_MODE_READ
 mdefine_line|#define DMA_MODE_READ    1
 DECL|macro|DMA_MODE_WRITE
 mdefine_line|#define DMA_MODE_WRITE   2
+multiline_comment|/* This is actually used. */
+r_extern
+r_int
+r_int
+id|phys_base
+suffix:semicolon
+DECL|macro|MAX_DMA_ADDRESS
+mdefine_line|#define MAX_DMA_ADDRESS  (phys_base + (0xfe000000UL) + PAGE_OFFSET)
 multiline_comment|/* Useful constants */
 DECL|macro|SIZE_16MB
 mdefine_line|#define SIZE_16MB      (16*1024*1024)
@@ -226,6 +232,8 @@ DECL|macro|DMA_BCNT_ENAB
 mdefine_line|#define DMA_BCNT_ENAB    0x00002000        /* If on, use the byte counter */
 DECL|macro|DMA_TERM_CNTR
 mdefine_line|#define DMA_TERM_CNTR    0x00004000        /* Terminal counter */
+DECL|macro|DMA_SCSI_SBUS64
+mdefine_line|#define DMA_SCSI_SBUS64  0x00008000        /* HME: Enable 64-bit SBUS mode. */
 DECL|macro|DMA_CSR_DISAB
 mdefine_line|#define DMA_CSR_DISAB    0x00010000        /* No FIFO drains during csr */
 DECL|macro|DMA_SCSI_DISAB
@@ -239,7 +247,7 @@ mdefine_line|#define DMA_E_BURST8&t; 0x00040000&t;   /* ENET: SBUS r/w burst siz
 DECL|macro|DMA_BRST_SZ
 mdefine_line|#define DMA_BRST_SZ      0x000c0000        /* SCSI: SBUS r/w burst size */
 DECL|macro|DMA_BRST64
-mdefine_line|#define DMA_BRST64       0x00080000        /* SCSI: 64byte bursts (HME on UltraSparc only) */
+mdefine_line|#define DMA_BRST64       0x000c0000        /* SCSI: 64byte bursts (HME on UltraSparc only) */
 DECL|macro|DMA_BRST32
 mdefine_line|#define DMA_BRST32       0x00040000        /* SCSI: 32byte bursts */
 DECL|macro|DMA_BRST16
@@ -266,6 +274,8 @@ DECL|macro|DMA_LOADED_ADDR
 mdefine_line|#define DMA_LOADED_ADDR  0x04000000        /* Address has been loaded */
 DECL|macro|DMA_LOADED_NADDR
 mdefine_line|#define DMA_LOADED_NADDR 0x08000000        /* Next address has been loaded */
+DECL|macro|DMA_RESET_FAS366
+mdefine_line|#define DMA_RESET_FAS366 0x08000000        /* HME: Assert RESET to FAS366 */
 multiline_comment|/* Values describing the burst-size property from the PROM */
 DECL|macro|DMA_BURST1
 mdefine_line|#define DMA_BURST1       0x01

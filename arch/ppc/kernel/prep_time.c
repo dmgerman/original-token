@@ -56,6 +56,96 @@ id|MOTO_RTC_CONTROLB
 multiline_comment|/* 10,11 */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The following struture is used to access the MK48T18&n; */
+DECL|struct|_MK48T18
+r_typedef
+r_volatile
+r_struct
+id|_MK48T18
+(brace
+DECL|member|ucNvRAM
+r_int
+r_char
+id|ucNvRAM
+(braket
+l_int|0x3ff8
+)braket
+suffix:semicolon
+multiline_comment|/* NvRAM locations */
+DECL|member|ucControl
+r_int
+r_char
+id|ucControl
+suffix:semicolon
+DECL|member|ucSecond
+r_int
+r_char
+id|ucSecond
+suffix:semicolon
+multiline_comment|/* 0-59 */
+DECL|member|ucMinute
+r_int
+r_char
+id|ucMinute
+suffix:semicolon
+multiline_comment|/* 0-59 */
+DECL|member|ucHour
+r_int
+r_char
+id|ucHour
+suffix:semicolon
+multiline_comment|/* 0-23 */
+DECL|member|ucDay
+r_int
+r_char
+id|ucDay
+suffix:semicolon
+multiline_comment|/* 1-7 */
+DECL|member|ucDate
+r_int
+r_char
+id|ucDate
+suffix:semicolon
+multiline_comment|/* 1-31 */
+DECL|member|ucMonth
+r_int
+r_char
+id|ucMonth
+suffix:semicolon
+multiline_comment|/* 1-12 */
+DECL|member|ucYear
+r_int
+r_char
+id|ucYear
+suffix:semicolon
+multiline_comment|/* 0-99 */
+DECL|typedef|MK48T18
+DECL|typedef|PMK48T18
+)brace
+id|MK48T18
+comma
+op_star
+id|PMK48T18
+suffix:semicolon
+multiline_comment|/*&n; * The control register contains a 5 bit calibration value plus sign&n; * and read/write enable bits&n; */
+DECL|macro|MK48T18_CTRL_CAL_MASK
+mdefine_line|#define MK48T18_CTRL_CAL_MASK&t;0x1f
+DECL|macro|MK48T18_CTRL_CAL_SIGN
+mdefine_line|#define MK48T18_CTRL_CAL_SIGN&t;0x20
+DECL|macro|MK48T18_CTRL_READ
+mdefine_line|#define MK48T18_CTRL_READ&t;0x40
+DECL|macro|MK48T18_CTRL_WRITE
+mdefine_line|#define MK48T18_CTRL_WRITE&t;0x80
+multiline_comment|/*&n; * The STOP bit is the most significant bit of the seconds location&n; */
+DECL|macro|MK48T18_SEC_MASK
+mdefine_line|#define MK48T18_SEC_MASK&t;0x7f
+DECL|macro|MK48T18_SEC_STOP
+mdefine_line|#define MK48T18_SEC_STOP&t;0x80
+multiline_comment|/*&n; * The day location also contains the frequency test bit which should&n; * be zero for normal operation&n; */
+DECL|macro|MK48T18_DAY_MASK
+mdefine_line|#define MK48T18_DAY_MASK&t;0x07
+DECL|macro|MK48T18_DAY_FT
+mdefine_line|#define MK48T18_DAY_FT&t;&t;0x40
 id|__prep
 DECL|function|prep_cmos_clock_read
 r_int
@@ -123,6 +213,21 @@ id|NVRAM_DATA
 )paren
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|_prep_type
+op_eq
+id|_PREP_Radstone
+)paren
+r_return
+id|CMOS_READ
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -206,6 +311,26 @@ c_func
 id|val
 comma
 id|NVRAM_DATA
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|_prep_type
+op_eq
+id|_PREP_Radstone
+)paren
+(brace
+id|CMOS_WRITE
+c_func
+(paren
+id|val
+comma
+id|addr
 )paren
 suffix:semicolon
 r_return
@@ -335,6 +460,12 @@ suffix:semicolon
 id|BIN_TO_BCD
 c_func
 (paren
+id|tm.tm_wday
+)paren
+suffix:semicolon
+id|BIN_TO_BCD
+c_func
+(paren
 id|tm.tm_mday
 )paren
 suffix:semicolon
@@ -380,6 +511,16 @@ suffix:semicolon
 id|prep_cmos_clock_write
 c_func
 (paren
+id|tm.tm_wday
+op_plus
+l_int|1
+comma
+id|RTC_DAY_OF_WEEK
+)paren
+suffix:semicolon
+id|prep_cmos_clock_write
+c_func
+(paren
 id|tm.tm_mday
 comma
 id|RTC_DAY_OF_MONTH
@@ -410,6 +551,88 @@ comma
 id|RTC_FREQ_SELECT
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Radstone Technology PPC1a boards use an MK48T18 device&n;&t; * as the &quot;master&quot; RTC but also have a DS1287 equivalent incorporated&n;&t; * into the PCI-ISA bridge device. The DS1287 is initialised by the boot&n;&t; * firmware to reflect the value held in the MK48T18 and thus the&n;&t; * time may be read from this device both here and in the rtc driver.&n;&t; * Whenever we set the time, however, if it is to be preserved across&n;&t; * boots we must also update the &quot;master&quot; RTC.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|_prep_type
+op_eq
+id|_PREP_Radstone
+)paren
+op_logical_and
+(paren
+id|ucSystemType
+op_eq
+id|RS_SYS_TYPE_PPC1a
+)paren
+)paren
+(brace
+id|PMK48T18
+id|pMk48t18
+op_assign
+(paren
+id|PMK48T18
+)paren
+(paren
+id|_ISA_MEM_BASE
+op_plus
+l_int|0x00800000
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Set the write enable bit&n;&t;&t; */
+id|pMk48t18-&gt;ucControl
+op_or_assign
+id|MK48T18_CTRL_WRITE
+suffix:semicolon
+id|eieio
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Update the clock&n;&t;&t; */
+id|pMk48t18-&gt;ucSecond
+op_assign
+id|tm.tm_sec
+suffix:semicolon
+id|pMk48t18-&gt;ucMinute
+op_assign
+id|tm.tm_min
+suffix:semicolon
+id|pMk48t18-&gt;ucHour
+op_assign
+id|tm.tm_hour
+suffix:semicolon
+id|pMk48t18-&gt;ucMonth
+op_assign
+id|tm.tm_mon
+suffix:semicolon
+id|pMk48t18-&gt;ucDay
+op_assign
+id|tm.tm_wday
+op_plus
+l_int|1
+suffix:semicolon
+id|pMk48t18-&gt;ucDate
+op_assign
+id|tm.tm_mday
+suffix:semicolon
+id|pMk48t18-&gt;ucYear
+op_assign
+id|tm.tm_year
+suffix:semicolon
+id|eieio
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Clear the write enable bit&n;&t;&t; */
+id|pMk48t18-&gt;ucControl
+op_and_assign
+op_complement
+id|MK48T18_CTRL_WRITE
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.39 1998/09/29 09:46:15 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
+multiline_comment|/* $Id: time.c,v 1.43 1999/03/15 22:13:31 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,6 +21,10 @@ macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/sun4paddr.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+r_extern
+id|rwlock_t
+id|xtime_lock
+suffix:semicolon
 DECL|variable|sp_clock_typ
 r_enum
 id|sparc_clock_type
@@ -170,6 +174,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|write_lock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 id|do_timer
 c_func
 (paren
@@ -245,6 +256,13 @@ l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 )brace
+id|write_unlock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
@@ -1853,6 +1871,7 @@ op_plus
 id|count
 suffix:semicolon
 )brace
+multiline_comment|/* This need not obtain the xtime_lock as it is coded in&n; * an implicitly SMP safe way already.&n; */
 DECL|function|do_gettimeofday
 r_void
 id|do_gettimeofday
@@ -2195,10 +2214,24 @@ op_star
 id|tv
 )paren
 (brace
+id|write_lock_irq
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 id|bus_do_settimeofday
 c_func
 (paren
 id|tv
+)paren
+suffix:semicolon
+id|write_unlock_irq
+c_func
+(paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace
@@ -2214,11 +2247,6 @@ op_star
 id|tv
 )paren
 (brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#if !CONFIG_AP1000
 id|tv-&gt;tv_usec
 op_sub_assign
@@ -2258,11 +2286,6 @@ id|time_status
 op_or_assign
 id|STA_UNSYNC
 suffix:semicolon
-id|time_state
-op_assign
-id|TIME_ERROR
-suffix:semicolon
-multiline_comment|/* p. 24, (a) */
 id|time_maxerror
 op_assign
 id|NTP_PHASE_LIMIT
@@ -2270,11 +2293,6 @@ suffix:semicolon
 id|time_esterror
 op_assign
 id|NTP_PHASE_LIMIT
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * BUG: This routine does not handle hour overflow properly; it just&n; *      sets the minutes. Usually you won&squot;t notice until after reboot!&n; */
@@ -2431,7 +2449,7 @@ c_func
 id|KERN_WARNING
 l_string|&quot;set_rtc_mmss: can&squot;t update from %d to %d&bslash;n&quot;
 comma
-id|cmos_minutes
+id|mostek_minutes
 comma
 id|real_minutes
 )paren

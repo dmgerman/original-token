@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.h,v 1.3 1998/03/15 13:24:28 ecd Exp $&n; * psycho.h: UltraSparc AX specific PCI definitions.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: psycho.h,v 1.4 1998/12/23 10:08:16 davem Exp $&n; * psycho.h: UltraSparc AX specific PCI definitions.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#ifndef __SPARC64_PSYCHO_H
 DECL|macro|__SPARC64_PSYCHO_H
 mdefine_line|#define __SPARC64_PSYCHO_H
@@ -965,21 +965,75 @@ DECL|macro|PSYCHO_CEAFSR_BLK
 mdefine_line|#define PSYCHO_CEAFSR_BLK&t;0x0000000000800000 /* Trans was block operation    */
 DECL|macro|PSYCHO_CEAFSR_RESV2
 mdefine_line|#define PSYCHO_CEAFSR_RESV2&t;0x00000000007fffff /* Reserved                     */
-multiline_comment|/* DMA Scoreboard Diagnostic Register(s) */
-DECL|macro|PSYCHO_DSCORE_VALID
-mdefine_line|#define PSYCHO_DSCORE_VALID&t;0x8000000000000000 /* Entry is valid               */
-DECL|macro|PSYCHO_DSCORE_C
-mdefine_line|#define PSYCHO_DSCORE_C&t;&t;0x4000000000000000 /* Transaction cacheable        */
-DECL|macro|PSYCHO_DSCORE_READ
-mdefine_line|#define PSYCHO_DSCORE_READ&t;0x2000000000000000 /* Transaction was a read       */
-DECL|macro|PSYCHO_DSCORE_TAG
-mdefine_line|#define PSYCHO_DSCORE_TAG&t;0x1f00000000000000 /* Transaction ID               */
-DECL|macro|PSYCHO_DSCORE_ADDR
-mdefine_line|#define PSYCHO_DSCORE_ADDR&t;0x00fffffffff80000 /* Transaction PADDR            */
-DECL|macro|PSYCHO_DSCORE_BMSK
-mdefine_line|#define PSYCHO_DSCORE_BMSK&t;0x000000000007fff8 /* Bytemask of pending transfer */
-DECL|macro|PSYCHO_DSCORE_SRC
-mdefine_line|#define PSYCHO_DSCORE_SRC&t;0x0000000000000007 /* Transaction source           */
+multiline_comment|/* PSYCHO Performance Monitor Register, the counter holds 2 32-bit event counters. */
+DECL|macro|PSYCHO_PMCTRL_RESV3
+mdefine_line|#define PSYCHO_PMCTRL_RESV3&t;0xffffffffffff0000 /* Reserved                     */
+DECL|macro|PSYCHO_PMCTRL_CLR1
+mdefine_line|#define PSYCHO_PMCTRL_CLR1&t;0x0000000000008000 /* Clear SEL1 counter           */
+DECL|macro|PSYCHO_PMCTRL_RESV2
+mdefine_line|#define PSYCHO_PMCTRL_RESV2&t;0x0000000000006000 /* Reserved                     */
+DECL|macro|PSYCHO_PMCTRL_SEL1
+mdefine_line|#define PSYCHO_PMCTRL_SEL1&t;0x0000000000001f00 /* Event source 1               */
+DECL|macro|PSYCHO_PMCTRL_CLR0
+mdefine_line|#define PSYCHO_PMCTRL_CLR0&t;0x0000000000000080 /* Clear SEL0 counter           */
+DECL|macro|PSYCHO_PMCTRL_RESV1
+mdefine_line|#define PSYCHO_PMCTRL_RESV1&t;0x0000000000000060 /* Reserved                     */
+DECL|macro|PSYCHO_PMCTRL_SEL0
+mdefine_line|#define PSYCHO_PMCTRL_SEL0&t;0x000000000000001f /* Event source 0               */
+multiline_comment|/* SEL0/SEL1 each can take any one of the following values. */
+DECL|macro|PMCTRL_SEL_NSDRA
+mdefine_line|#define PMCTRL_SEL_NSDRA&t;0x00  /* # of streaming dvma reads for PCI A       */
+DECL|macro|PMCTRL_SEL_NSDWA
+mdefine_line|#define PMCTRL_SEL_NSDWA&t;0x01  /* # of streaming dvma writes for PCI A      */
+DECL|macro|PMCTRL_SEL_NCDRA
+mdefine_line|#define PMCTRL_SEL_NCDRA&t;0x02  /* # of consistent dvma reads for PCI A      */
+DECL|macro|PMCTRL_SEL_NCDWA
+mdefine_line|#define PMCTRL_SEL_NCDWA&t;0x03  /* # of consistent dvma writes for PCI A     */
+DECL|macro|PMCTRL_SEL_SBMA
+mdefine_line|#define PMCTRL_SEL_SBMA&t;&t;0x04  /* # of streaming buffer misses on PCI A     */
+DECL|macro|PMCTRL_SEL_DCGA
+mdefine_line|#define PMCTRL_SEL_DCGA&t;&t;0x05  /* # of DVMA granted cycles on PCI A         */
+DECL|macro|PMCTRL_SEL_DWTA
+mdefine_line|#define PMCTRL_SEL_DWTA&t;&t;0x06  /* # of DVMA words transferred on PCI A      */
+DECL|macro|PMCTRL_SEL_CPIOA
+mdefine_line|#define PMCTRL_SEL_CPIOA&t;0x07  /* # of PIO cycles used by PSYCHO on PCI A   */
+DECL|macro|PMCTRL_SEL_NSDRB
+mdefine_line|#define PMCTRL_SEL_NSDRB&t;0x08  /* # of streaming dvma reads for PCI B       */
+DECL|macro|PMCTRL_SEL_NSDWB
+mdefine_line|#define PMCTRL_SEL_NSDWB&t;0x09  /* # of streaming dvma writes for PCI B      */
+DECL|macro|PMCTRL_SEL_NCDRB
+mdefine_line|#define PMCTRL_SEL_NCDRB&t;0x0a  /* # of consistent dvma reads for PCI B      */
+DECL|macro|PMCTRL_SEL_NCDWB
+mdefine_line|#define PMCTRL_SEL_NCDWB&t;0x0b  /* # of consistent dvma writes for PCI B     */
+DECL|macro|PMCTRL_SEL_SBMB
+mdefine_line|#define PMCTRL_SEL_SBMB&t;&t;0x0c  /* # of streaming buffer misses on PCI B     */
+DECL|macro|PMCTRL_SEL_DCGB
+mdefine_line|#define PMCTRL_SEL_DCGB&t;&t;0x0d  /* # of DVMA granted cycles on PCI B         */
+DECL|macro|PMCTRL_SEL_DWTB
+mdefine_line|#define PMCTRL_SEL_DWTB&t;&t;0x0e  /* # of DVMA words transferred on PCI B      */
+DECL|macro|PMCTRL_SEL_CPIOB
+mdefine_line|#define PMCTRL_SEL_CPIOB&t;0x0f  /* # of PIO cycles used by PSYCHO on PCI B   */
+DECL|macro|PMCTRL_SEL_TMISS
+mdefine_line|#define PMCTRL_SEL_TMISS&t;0x10  /* # of IOMMU TLB misses                     */
+DECL|macro|PMCTRL_SEL_IRQ
+mdefine_line|#define PMCTRL_SEL_IRQ&t;&t;0x11  /* # of interrupts                           */
+DECL|macro|PMCTRL_SEL_INACK
+mdefine_line|#define PMCTRL_SEL_INACK&t;0x12  /* # of interrupt NACKs on UPA               */
+DECL|macro|PMCTRL_SEL_PRD
+mdefine_line|#define PMCTRL_SEL_PRD&t;&t;0x13  /* # of PIO reads                            */
+DECL|macro|PMCTRL_SEL_PWR
+mdefine_line|#define PMCTRL_SEL_PWR&t;&t;0x14  /* # of PIO writes                           */
+DECL|macro|PMCTRL_SEL_MBT
+mdefine_line|#define PMCTRL_SEL_MBT&t;&t;0x15  /* # of Merge Buffer transactions            */
+DECL|macro|PMCTRL_SEL_PDRTA
+mdefine_line|#define PMCTRL_SEL_PDRTA&t;0x16  /* # of PCI A DVMA tablewalk induced retries */
+DECL|macro|PMCTRL_SEL_PDRSA
+mdefine_line|#define PMCTRL_SEL_PDRSA&t;0x17  /* # of PCI A DVMA str buf induced retries   */
+DECL|macro|PMCTRL_SEL_PDRTB
+mdefine_line|#define PMCTRL_SEL_PDRTB&t;0x18  /* # of PCI B DVMA tablewalk induced retries */
+DECL|macro|PMCTRL_SEL_PDRSB
+mdefine_line|#define PMCTRL_SEL_PDRSB&t;0x19  /* # of PCI B DVMA str buf induced retries   */
+multiline_comment|/* Values 0x1a --&gt; 0x1f are reserved. */
 multiline_comment|/* PSYCHO PCI Control Register */
 DECL|macro|PSYCHO_PCICTRL_RESV1
 mdefine_line|#define PSYCHO_PCICTRL_RESV1&t;0xfffffff000000000 /* Reserved                     */
@@ -1034,6 +1088,23 @@ DECL|macro|PSYCHO_PCIAFSR_MID
 mdefine_line|#define PSYCHO_PCIAFSR_MID&t;0x000000003e000000 /* MID causing the error        */
 DECL|macro|PSYCHO_PCIAFSR_RESV3
 mdefine_line|#define PSYCHO_PCIAFSR_RESV3&t;0x0000000001ffffff /* Reserved                     */
+multiline_comment|/* PSYCHO Diagnostic Register. */
+DECL|macro|PSYCHO_PSYDIAG_RESV
+mdefine_line|#define PSYCHO_PSYDIAG_RESV&t;0xffffffffffffff80 /* Reserved                     */
+DECL|macro|PSYCHO_PCIDIAG_DRETRY
+mdefine_line|#define PSYCHO_PCIDIAG_DRETRY&t;0x0000000000000040 /* Disable retry limit          */
+DECL|macro|PSYCHO_PCIDIAG_DISYNC
+mdefine_line|#define PSYCHO_PCIDIAG_DISYNC&t;0x0000000000000020 /* Disable DMA wr / irq sync    */
+DECL|macro|PSYCHO_PCIDIAG_DDWSYNC
+mdefine_line|#define PSYCHO_PCIDIAG_DDWSYNC&t;0x0000000000000010 /* Disable DMA wr / PIO rd sync */
+DECL|macro|PSYCHO_PCIDIAG_IDDPAR
+mdefine_line|#define PSYCHO_PCIDIAG_IDDPAR&t;0x0000000000000008 /* Invert DMA data parity       */
+DECL|macro|PSYCHO_PCIDIAG_IPDPAR
+mdefine_line|#define PSYCHO_PCIDIAG_IPDPAR&t;0x0000000000000004 /* Invert PIO data parity       */
+DECL|macro|PSYCHO_PCIDIAG_IPAPAR
+mdefine_line|#define PSYCHO_PCIDIAG_IPAPAR&t;0x0000000000000002 /* Invert PIO address parity    */
+DECL|macro|PSYCHO_PCIDIAG_LPBACK
+mdefine_line|#define PSYCHO_PCIDIAG_LPBACK&t;0x0000000000000001 /* Enable loopback mode         */
 multiline_comment|/* IOMMU things defined fully in asm-sparc64/iommu.h */
 multiline_comment|/* Streaming Buffer Control Register */
 DECL|macro|PSYCHO_SBUFCTRL_RESV
@@ -1058,6 +1129,21 @@ DECL|macro|PSYCHO_SBUFSYNC_ADDR
 mdefine_line|#define PSYCHO_SBUFSYNC_ADDR&t;0x000001ffffffffc0 /* Physical address to update   */
 DECL|macro|PSYCHO_SBUFSYNC_RESV
 mdefine_line|#define PSYCHO_SBUFSYNC_RESV&t;0x000000000000003f /* Ignored bits                 */
+multiline_comment|/* DMA Scoreboard Diagnostic Register(s) */
+DECL|macro|PSYCHO_DSCORE_VALID
+mdefine_line|#define PSYCHO_DSCORE_VALID&t;0x8000000000000000 /* Entry is valid               */
+DECL|macro|PSYCHO_DSCORE_C
+mdefine_line|#define PSYCHO_DSCORE_C&t;&t;0x4000000000000000 /* Transaction cacheable        */
+DECL|macro|PSYCHO_DSCORE_READ
+mdefine_line|#define PSYCHO_DSCORE_READ&t;0x2000000000000000 /* Transaction was a read       */
+DECL|macro|PSYCHO_DSCORE_TAG
+mdefine_line|#define PSYCHO_DSCORE_TAG&t;0x1f00000000000000 /* Transaction ID               */
+DECL|macro|PSYCHO_DSCORE_ADDR
+mdefine_line|#define PSYCHO_DSCORE_ADDR&t;0x00fffffffff80000 /* Transaction PADDR            */
+DECL|macro|PSYCHO_DSCORE_BMSK
+mdefine_line|#define PSYCHO_DSCORE_BMSK&t;0x000000000007fff8 /* Bytemask of pending transfer */
+DECL|macro|PSYCHO_DSCORE_SRC
+mdefine_line|#define PSYCHO_DSCORE_SRC&t;0x0000000000000007 /* Transaction source           */
 multiline_comment|/* PSYCHO Interrupt mapping register(s). */
 DECL|macro|PSYCHO_IMAP_RESV1
 mdefine_line|#define PSYCHO_IMAP_RESV1&t;0xffffffff00000000 /* Reserved                     */

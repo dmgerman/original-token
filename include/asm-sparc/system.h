@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.71 1998/10/13 03:51:06 jj Exp $ */
+multiline_comment|/* $Id: system.h,v 1.72 1999/01/02 16:50:21 davem Exp $ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
@@ -683,7 +683,11 @@ mdefine_line|#define save_and_cli(x) __save_and_cli(x)
 macro_line|#endif
 multiline_comment|/* XXX Change this if we ever use a PSO mode kernel. */
 DECL|macro|mb
-mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot; : : : &quot;memory&quot;)
+mdefine_line|#define mb()&t;__asm__ __volatile__ (&quot;&quot; : : : &quot;memory&quot;)
+DECL|macro|rmb
+mdefine_line|#define rmb()&t;mb()
+DECL|macro|wmb
+mdefine_line|#define wmb()&t;mb()
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;);
 multiline_comment|/* This has special calling conventions */

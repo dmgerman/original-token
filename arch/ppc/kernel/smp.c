@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.39 1998/12/28 10:28:51 paulus Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.48 1999/03/16 10:40:32 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -11,6 +11,7 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -21,7 +22,14 @@ macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &quot;time.h&quot;
+DECL|variable|first_cpu_booted
+r_int
+id|first_cpu_booted
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|smp_threads_ready
 r_int
 id|smp_threads_ready
@@ -96,12 +104,6 @@ id|prof_counter
 (braket
 id|NR_CPUS
 )braket
-suffix:semicolon
-DECL|variable|first_cpu_booted
-r_int
-id|first_cpu_booted
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|cacheflush_time
 id|cycles_t
@@ -182,6 +184,19 @@ op_star
 id|unused
 )paren
 suffix:semicolon
+id|u_int
+id|openpic_read
+c_func
+(paren
+r_volatile
+id|u_int
+op_star
+id|addr
+)paren
+suffix:semicolon
+multiline_comment|/* register for interrupting the secondary processor on the powersurge */
+DECL|macro|PSURGE_INTR
+mdefine_line|#define PSURGE_INTR&t;((volatile unsigned *)0xf80000c0)
 DECL|function|smp_local_timer_interrupt
 r_void
 id|smp_local_timer_interrupt
@@ -367,7 +382,7 @@ id|cpu
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Dirty hack to get smp message passing working.&n; * Right now it only works for stop cpu&squot;s but will be setup&n; * later for more general message passing.&n; *&n; * As it is now, if we&squot;re sending two message at the same time&n; * we have race conditions.  I avoided doing locks here since&n; * all that works right now is the stop cpu message.&n; *&n; *  -- Cort&n; */
+multiline_comment|/*&n; * Dirty hack to get smp message passing working.&n; *&n; * As it is now, if we&squot;re sending two message at the same time&n; * we have race conditions.  The PowerSurge doesn&squot;t easily&n; * allow us to send IPI messages so we put the messages in&n; * smp_message[].&n; *&n; * This is because don&squot;t have several IPI&squot;s on the PowerSurge even though&n; * we do on the chrp.  It would be nice to use the actual IPI&squot;s on the chrp&n; * rather than this but having two methods of doing IPI isn&squot;t a good idea&n; * right now.&n; *  -- Cort&n; */
 DECL|variable|smp_message
 r_int
 id|smp_message
@@ -394,26 +409,25 @@ c_func
 )paren
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+(brace
 multiline_comment|/* clear interrupt */
-op_star
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|0xf80000c0
-)paren
-op_assign
-op_complement
-l_int|0L
-suffix:semicolon
-id|eieio
+id|out_be32
 c_func
 (paren
+id|PSURGE_INTR
+comma
+op_complement
+l_int|0
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* make sure msg is for us */
 r_if
 c_cond
@@ -428,7 +442,6 @@ suffix:semicolon
 id|ipi_count
 op_increment
 suffix:semicolon
-multiline_comment|/*printk(&quot;SMP %d: smp_message_recv() msg %x&bslash;n&quot;, smp_processor_id(),msg);*/
 r_switch
 c_cond
 (paren
@@ -555,38 +568,24 @@ r_int
 id|wait
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
+(paren
+op_logical_neg
 (paren
 id|_machine
-op_ne
+op_amp
+(paren
 id|_MACH_Pmac
+op_or
+id|_MACH_chrp
+)paren
+)paren
 )paren
 r_return
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d: sending smp message %x&bslash;n&quot;
-comma
-id|current-&gt;processor
-comma
-id|msg
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;pass from cpu 1&bslash;n&quot;
-)paren
 suffix:semicolon
 id|spin_lock
 c_func
@@ -595,8 +594,7 @@ op_amp
 id|mesg_pass_lock
 )paren
 suffix:semicolon
-DECL|macro|OTHER
-mdefine_line|#define OTHER (~smp_processor_id() &amp; 1)
+multiline_comment|/*&n;&t; * We assume here that the msg is not -1.  If it is,&n;&t; * the recipient won&squot;t know the message was destined&n;&t; * for it. -- Cort&n;&t; */
 r_switch
 c_cond
 (paren
@@ -620,9 +618,32 @@ multiline_comment|/* fall through */
 r_case
 id|MSG_ALL_BUT_SELF
 suffix:colon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|i
+op_ne
+id|smp_processor_id
+(paren
+)paren
+)paren
 id|smp_message
 (braket
-id|OTHER
+id|i
 )braket
 op_assign
 id|msg
@@ -641,46 +662,146 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+(brace
 multiline_comment|/* interrupt secondary processor */
-op_star
+id|out_be32
+c_func
 (paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|0xf80000c0
-)paren
-op_assign
+id|PSURGE_INTR
+comma
 op_complement
-l_int|0L
+l_int|0
+)paren
 suffix:semicolon
-id|eieio
+id|out_be32
 c_func
 (paren
+id|PSURGE_INTR
+comma
+l_int|0
 )paren
 suffix:semicolon
-op_star
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|0xf80000c0
-)paren
-op_assign
-l_int|0L
-suffix:semicolon
-id|eieio
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Assume for now that the secondary doesn&squot;t send&n;&t;&t; * IPI&squot;s -- Cort&n;&t;&t; */
 multiline_comment|/* interrupt primary */
 multiline_comment|/**(volatile unsigned long *)(0xf3019000);*/
+)brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_chrp
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * There has to be some way of doing this better -&n;&t;&t; * perhaps a sent-to-all or send-to-all-but-self&n;&t;&t; * in the openpic.  This gets us going for now, though.&n;&t;&t; * -- Cort&n;&t;&t; */
+r_switch
+c_cond
+(paren
+id|target
+)paren
+(brace
+r_case
+id|MSG_ALL
+suffix:colon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|openpic_cause_IPI
+c_func
+(paren
+id|i
+comma
+l_int|0
+comma
+l_int|0xffffffff
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MSG_ALL_BUT_SELF
+suffix:colon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|i
+op_ne
+id|smp_processor_id
+(paren
+)paren
+)paren
+id|openpic_cause_IPI
+c_func
+(paren
+id|i
+comma
+l_int|0
+comma
+l_int|0xffffffff
+op_amp
+op_complement
+(paren
+l_int|1
+op_lshift
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|openpic_cause_IPI
+c_func
+(paren
+id|target
+comma
+l_int|0
+comma
+l_int|1U
+op_lshift
+id|target
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
 id|spin_unlock
 c_func
 (paren
@@ -709,7 +830,7 @@ id|NR_CPUS
 suffix:semicolon
 r_extern
 r_void
-id|__secondary_start
+id|__secondary_start_psurge
 c_func
 (paren
 r_void
@@ -733,11 +854,33 @@ c_func
 l_string|&quot;Entering SMP Mode...&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* let other processors know to not do certain initialization */
 id|first_cpu_booted
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*dcbf(&amp;first_cpu_booted);*/
+multiline_comment|/*&n;&t; * assume for now that the first cpu booted is&n;&t; * cpu 0, the master -- Cort&n;&t; */
+id|cpu_callin_map
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+id|smp_store_cpu_info
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|active_kernel_processor
+op_assign
+l_int|0
+suffix:semicolon
+id|current-&gt;processor
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -768,27 +911,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|cpu_callin_map
-(braket
-l_int|0
-)braket
-op_assign
-l_int|1
-suffix:semicolon
-id|smp_store_cpu_info
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-id|active_kernel_processor
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;processor
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t; * XXX very rough, assumes 20 bus cycles to read a cache line,&n;&t; * timebase increments every 4 bus cycles, 32kB L1 data cache.&n;&t; */
 id|cacheflush_time
 op_assign
@@ -799,9 +921,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|_machine
-op_ne
+op_amp
+(paren
 id|_MACH_Pmac
+op_or
+id|_MACH_chrp
+)paren
+)paren
 )paren
 (brace
 id|printk
@@ -813,7 +942,79 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* create a process for second processor */
+r_switch
+c_cond
+(paren
+id|_machine
+)paren
+(brace
+r_case
+id|_MACH_Pmac
+suffix:colon
+multiline_comment|/* assume powersurge board - 2 processors -- Cort */
+id|smp_num_cpus
+op_assign
+l_int|2
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|_MACH_chrp
+suffix:colon
+id|smp_num_cpus
+op_assign
+(paren
+(paren
+id|openpic_read
+c_func
+(paren
+op_amp
+id|OpenPIC-&gt;Global.Feature_Reporting0
+)paren
+op_amp
+id|OPENPIC_FEATURE_LAST_PROCESSOR_MASK
+)paren
+op_rshift
+id|OPENPIC_FEATURE_LAST_PROCESSOR_SHIFT
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+multiline_comment|/* get our processor # - we may not be cpu 0 */
+id|printk
+c_func
+(paren
+l_string|&quot;SMP %d processors, boot CPU is %d (should be 0)&bslash;n&quot;
+comma
+id|smp_num_cpus
+comma
+l_int|10
+multiline_comment|/*openpic_read(&amp;OpenPIC-&gt;Processor[0]._Who_Am_I)*/
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * only check for cpus we know exist.  We keep the callin map&n;&t; * with cpus at the bottom -- Cort&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_int
+id|c
+suffix:semicolon
+multiline_comment|/* create a process for the processor */
 id|kernel_thread
 c_func
 (paren
@@ -828,7 +1029,7 @@ id|p
 op_assign
 id|task
 (braket
-l_int|1
+id|i
 )braket
 suffix:semicolon
 r_if
@@ -845,7 +1046,7 @@ l_string|&quot;No idle task for secondary processor&bslash;n&quot;
 suffix:semicolon
 id|p-&gt;processor
 op_assign
-l_int|1
+id|i
 suffix:semicolon
 id|p-&gt;has_cpu
 op_assign
@@ -853,13 +1054,12 @@ l_int|1
 suffix:semicolon
 id|current_set
 (braket
-l_int|1
+id|i
 )braket
 op_assign
 id|p
 suffix:semicolon
-multiline_comment|/* need to flush here since secondary bat&squot;s aren&squot;t setup */
-multiline_comment|/* XXX ??? */
+multiline_comment|/* need to flush here since secondary bats aren&squot;t setup */
 r_for
 c_loop
 (paren
@@ -897,7 +1097,16 @@ r_volatile
 l_string|&quot;sync&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*dcbf((void *)&amp;current_set[1]);*/
+multiline_comment|/* wake up cpus */
+r_switch
+c_cond
+(paren
+id|_machine
+)paren
+(brace
+r_case
+id|_MACH_Pmac
+suffix:colon
 multiline_comment|/* setup entry point of secondary processor */
 op_star
 (paren
@@ -914,7 +1123,7 @@ op_assign
 r_int
 r_int
 )paren
-id|__secondary_start
+id|__secondary_start_psurge
 op_minus
 id|KERNELBASE
 suffix:semicolon
@@ -924,60 +1133,71 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* interrupt secondary to begin executing code */
-op_star
+id|out_be32
+c_func
 (paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-(paren
-l_int|0xf80000c0
-)paren
-op_assign
+id|PSURGE_INTR
+comma
 op_complement
-l_int|0L
+l_int|0
+)paren
 suffix:semicolon
-id|eieio
+id|out_be32
 c_func
 (paren
+id|PSURGE_INTR
+comma
+l_int|0
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|_MACH_chrp
+suffix:colon
 op_star
 (paren
-r_volatile
 r_int
 r_int
 op_star
 )paren
-(paren
-l_int|0xf80000c0
-)paren
+id|KERNELBASE
 op_assign
-l_int|0L
+id|i
 suffix:semicolon
-id|eieio
-c_func
+id|asm
+r_volatile
 (paren
+l_string|&quot;dcbf 0,%0&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|KERNELBASE
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * wait to see if the secondary made a callin (is actually up).&n;&t; * udelay() isn&squot;t accurate here since we haven&squot;t yet called&n;&t; * calibrate_delay() so use this value that I found through&n;&t; * experimentation.  -- Cort&n;&t; */
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * wait to see if the cpu made a callin (is actually up).&n;&t;&t; * use this value that I found through experimentation.&n;&t;&t; * -- Cort&n;&t;&t; */
 r_for
 c_loop
 (paren
-id|i
+id|c
 op_assign
 l_int|1000
 suffix:semicolon
-id|i
+id|c
 op_logical_and
 op_logical_neg
 id|cpu_callin_map
 (braket
-l_int|1
+id|i
 )braket
 suffix:semicolon
-id|i
+id|c
 op_decrement
 )paren
 id|udelay
@@ -991,7 +1211,7 @@ c_cond
 (paren
 id|cpu_callin_map
 (braket
-l_int|1
+id|i
 )braket
 )paren
 (brace
@@ -1000,33 +1220,45 @@ c_func
 (paren
 l_string|&quot;Processor %d found.&bslash;n&quot;
 comma
-id|smp_num_cpus
+id|i
 )paren
 suffix:semicolon
-id|smp_num_cpus
-op_increment
-suffix:semicolon
-macro_line|#if 1 /* this sync&squot;s the decr&squot;s, but we don&squot;t want this now -- Cort */
+multiline_comment|/* this sync&squot;s the decr&squot;s -- Cort */
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
 id|set_dec
 c_func
 (paren
 id|decrementer_count
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;Processor %d is stuck. &bslash;n&quot;
+l_string|&quot;Processor %d is stuck.&bslash;n&quot;
 comma
-id|smp_num_cpus
+id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* reset the entry point so if we get another intr we won&squot;t&n;&t; * try to startup again */
+)brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+(brace
+multiline_comment|/* reset the entry point so if we get another intr we won&squot;t&n;&t;&t; * try to startup again */
 op_star
 (paren
 r_volatile
@@ -1053,6 +1285,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|smp_commence
 r_void
@@ -1188,14 +1421,6 @@ suffix:semicolon
 id|__sti
 c_func
 (paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d: smp_callin done&bslash;n&quot;
-comma
-id|current-&gt;processor
 )paren
 suffix:semicolon
 )brace

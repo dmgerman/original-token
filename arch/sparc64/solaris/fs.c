@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: fs.c,v 1.11 1998/10/28 08:12:04 jj Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fs.c,v 1.12 1999/01/02 16:46:06 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -22,8 +23,6 @@ id|u32
 id|filename
 )paren
 suffix:semicolon
-DECL|macro|putname32
-mdefine_line|#define putname32 putname
 DECL|macro|R4_DEV
 mdefine_line|#define R4_DEV(DEV) ((DEV &amp; 0xff) | ((DEV &amp; 0xff00) &lt;&lt; 10))
 DECL|macro|R4_MAJOR
@@ -697,7 +696,7 @@ id|set_fs
 id|old_fs
 )paren
 suffix:semicolon
-id|putname32
+id|putname
 (paren
 id|filenam
 )paren
@@ -871,7 +870,7 @@ id|set_fs
 id|old_fs
 )paren
 suffix:semicolon
-id|putname32
+id|putname
 (paren
 id|filenam
 )paren
@@ -1018,7 +1017,7 @@ id|set_fs
 id|old_fs
 )paren
 suffix:semicolon
-id|putname32
+id|putname
 (paren
 id|filenam
 )paren
@@ -1191,7 +1190,7 @@ id|set_fs
 id|old_fs
 )paren
 suffix:semicolon
-id|putname32
+id|putname
 (paren
 id|filenam
 )paren

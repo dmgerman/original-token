@@ -1,4 +1,4 @@
-multiline_comment|/* pluto.c: SparcSTORAGE Array SCSI host adapter driver.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; */
+multiline_comment|/* pluto.c: SparcSTORAGE Array SCSI host adapter driver.&n; *&n; * Copyright (C) 1997,1998,1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -15,7 +15,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &quot;../fc4/fcp_scsi.h&quot;
+macro_line|#include &quot;../fc4/fcp_impl.h&quot;
 macro_line|#include &quot;pluto.h&quot;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/* #define PLUTO_DEBUG */
@@ -145,6 +145,14 @@ comma
 id|u16
 op_star
 id|addr
+comma
+id|fc_channel
+op_star
+id|fc
+comma
+id|fcp_cmnd
+op_star
+id|fcmd
 )paren
 suffix:semicolon
 DECL|function|__initfunc
@@ -345,9 +353,17 @@ c_func
 (paren
 id|fc
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fc-&gt;posmap
+)paren
 id|fcscount
 op_increment
 suffix:semicolon
+)brace
 id|PLND
 c_func
 (paren
@@ -376,9 +392,17 @@ c_func
 (paren
 id|fc
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fc-&gt;posmap
+)paren
 id|fcscount
 op_increment
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -498,6 +522,13 @@ op_eq
 id|fcscount
 )paren
 r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fc-&gt;posmap
+)paren
+r_continue
 suffix:semicolon
 id|PLD
 c_func
@@ -1067,6 +1098,12 @@ id|host-&gt;irq
 op_assign
 id|fc-&gt;irq
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
+id|host-&gt;unchecked_isa_dma
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|host-&gt;select_queue_depths
 op_assign
 id|pluto_select_queue_depths
@@ -1443,6 +1480,14 @@ comma
 id|u16
 op_star
 id|addr
+comma
+id|fc_channel
+op_star
+id|fc
+comma
+id|fcp_cmnd
+op_star
+id|fcmd
 )paren
 (brace
 id|PLND
@@ -1542,6 +1587,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* We&squot;re Point-to-Point, so target it to the default DID */
+id|fcmd-&gt;did
+op_assign
+id|fc-&gt;did
+suffix:semicolon
 id|PLND
 c_func
 (paren

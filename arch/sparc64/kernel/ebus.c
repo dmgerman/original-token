@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.33 1998/09/21 05:06:03 jj Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.c,v 1.35 1999/01/26 14:34:11 jj Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1453,6 +1453,79 @@ c_loop
 id|ebusnd
 )paren
 (brace
+multiline_comment|/* SUNW,pci-qfe uses four empty ebuses on it.&n;&t;&t;   I think we should not consider them here,&n;&t;&t;   as they have half of the properties this&n;&t;&t;   code expects and once we do PCI hot-plug,&n;&t;&t;   we&squot;d have to tweak with the ebus_chain&n;&t;&t;   in the runtime after initialization. -jj */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|prom_getchild
+(paren
+id|ebusnd
+)paren
+)paren
+(brace
+id|pdev
+op_assign
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_SUN
+comma
+id|PCI_DEVICE_ID_SUN_EBUS
+comma
+id|pdev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pdev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ebus
+op_eq
+id|ebus_chain
+)paren
+(brace
+id|ebus_chain
+op_assign
+l_int|NULL
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ebus: No EBus&squot;s found.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef PROM_DEBUG
+id|dprintf
+c_func
+(paren
+l_string|&quot;ebus: No EBus&squot;s found.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+)brace
+id|cookie
+op_assign
+id|pdev-&gt;sysdata
+suffix:semicolon
+id|ebusnd
+op_assign
+id|cookie-&gt;prom_node
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1532,6 +1605,28 @@ comma
 id|PCI_COMMAND
 comma
 id|pci_command
+)paren
+suffix:semicolon
+multiline_comment|/* Set reasonable cache line size and latency timer values. */
+id|pci_write_config_byte
+c_func
+(paren
+id|pdev
+comma
+id|PCI_LATENCY_TIMER
+comma
+l_int|64
+)paren
+suffix:semicolon
+multiline_comment|/* NOTE: Cache line size is in 32-bit word units. */
+id|pci_write_config_byte
+c_func
+(paren
+id|pdev
+comma
+id|PCI_CACHE_LINE_SIZE
+comma
+l_int|0x10
 )paren
 suffix:semicolon
 id|len

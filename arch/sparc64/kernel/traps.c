@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.55 1998/10/11 06:58:22 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.57 1999/03/02 15:42:18 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -2785,6 +2785,25 @@ op_star
 id|regs
 )paren
 (brace
+r_extern
+r_void
+id|__show_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|smp_report_regs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Amuse the user. */
 id|printk
 c_func
@@ -2814,7 +2833,7 @@ c_func
 l_string|&quot;flushw&quot;
 )paren
 suffix:semicolon
-id|show_regs
+id|__show_regs
 c_func
 (paren
 id|regs
@@ -2926,6 +2945,13 @@ id|regs-&gt;tpc
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+id|smp_report_regs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|lock_kernel
 c_func
 (paren
@@ -2970,7 +2996,7 @@ id|regs
 suffix:semicolon
 r_extern
 r_int
-id|handle_ldq_stq
+id|handle_ldf_stq
 c_func
 (paren
 id|u32
@@ -3104,7 +3130,7 @@ multiline_comment|/* LDQ/STQ */
 r_if
 c_cond
 (paren
-id|handle_ldq_stq
+id|handle_ldf_stq
 c_func
 (paren
 id|insn

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;oops.c.&n;&n;&t;Oops processing for ksymoop.&n;&n;&t;Copyright Keith Owens &lt;kaos@ocs.com.au&gt;.&n;&t;Released under the GNU Public Licence, Version 2.&n;&n;&t;Mon Jan  4 08:47:55 EST 1999&n;&t;Version 0.6d&n;&t;Add ARM support.&n;&n;&t;Thu Nov 26 16:37:46 EST 1998&n;&t;Version 0.6c&n;&t;Typo in oops_code.&n;&t;Add -c option.&n;&n;&t;Tue Nov  3 23:33:04 EST 1998&n;&t;Version 0.6a&n;&t;Performance inprovements.&n;&n;&t;Tue Nov  3 02:31:01 EST 1998&n;&t;Version 0.6&n;&t;Oops file must be regular.&n;&t;Add &quot;invalid operand&quot; to Oops_print.&n;&t;Minor adjustment to re for ppc.&n;&t;Minor adjustment to re for objdump lines with &lt;_EIP+xxx&gt;.&n;&t;Convert from a.out to bfd, using same format as ksymoops.&n;&t;Added MIPS.&n;&t;PPC handling based on patches by &quot;Ryan Nielsen&quot; &lt;ran@krazynet.com&gt;&n;&n;&t;Wed Oct 28 13:47:23 EST 1998&n;&t;Version 0.4&n;&t;Split into seperate sources.&n; */
+multiline_comment|/*&n;&t;oops.c.&n;&n;&t;Oops processing for ksymoop.&n;&n;&t;Copyright Keith Owens &lt;kaos@ocs.com.au&gt;.&n;&t;Released under the GNU Public Licence, Version 2.&n;&t;&n;&t;Sun Jan  7 12:56:12 CET 1999&n;&t;Added SPARC64 support and some SPARC hacks by &quot;Jakub Jelinek&quot;&n;&t;&lt;jj@ultra.linux.cz&gt;&n;&n;&t;Mon Jan  4 08:47:55 EST 1999&n;&t;Version 0.6d&n;&t;Add ARM support.&n;&n;&t;Thu Nov 26 16:37:46 EST 1998&n;&t;Version 0.6c&n;&t;Typo in oops_code.&n;&t;Add -c option.&n;&n;&t;Tue Nov  3 23:33:04 EST 1998&n;&t;Version 0.6a&n;&t;Performance inprovements.&n;&n;&t;Tue Nov  3 02:31:01 EST 1998&n;&t;Version 0.6&n;&t;Oops file must be regular.&n;&t;Add &quot;invalid operand&quot; to Oops_print.&n;&t;Minor adjustment to re for ppc.&n;&t;Minor adjustment to re for objdump lines with &lt;_EIP+xxx&gt;.&n;&t;Convert from a.out to bfd, using same format as ksymoops.&n;&t;Added MIPS.&n;&t;PPC handling based on patches by &quot;Ryan Nielsen&quot; &lt;ran@krazynet.com&gt;&n;&n;&t;Wed Oct 28 13:47:23 EST 1998&n;&t;Version 0.4&n;&t;Split into seperate sources.&n; */
 macro_line|#include &quot;ksymoops.h&quot;
 macro_line|#include &lt;bfd.h&gt;
 macro_line|#include &lt;ctype.h&gt;
@@ -8,6 +8,67 @@ macro_line|#include &lt;memory.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;unistd.h&gt;
+DECL|enum|oops_arch
+r_enum
+id|oops_arch
+(brace
+DECL|enumerator|OOPS_NOARCH
+id|OOPS_NOARCH
+comma
+DECL|enumerator|OOPS_I386
+id|OOPS_I386
+comma
+DECL|enumerator|OOPS_SPARC
+id|OOPS_SPARC
+comma
+DECL|enumerator|OOPS_SPARC64
+id|OOPS_SPARC64
+comma
+DECL|enumerator|OOPS_ARM
+id|OOPS_ARM
+comma
+DECL|enumerator|OOPS_ALPHA
+id|OOPS_ALPHA
+comma
+DECL|enumerator|OOPS_MIPS
+id|OOPS_MIPS
+comma
+DECL|enumerator|OOPS_PPC
+id|OOPS_PPC
+comma
+DECL|enumerator|OOPS_M68K
+id|OOPS_M68K
+DECL|variable|oops_arch
+)brace
+id|oops_arch
+suffix:semicolon
+DECL|variable|eip_names
+r_char
+op_star
+id|eip_names
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;IP&quot;
+comma
+l_string|&quot;EIP&quot;
+comma
+l_string|&quot;PC&quot;
+comma
+l_string|&quot;PC&quot;
+comma
+l_string|&quot;PC&quot;
+comma
+l_string|&quot;PC&quot;
+comma
+l_string|&quot;PC&quot;
+comma
+l_string|&quot;NIP&quot;
+comma
+l_string|&quot;PC&quot;
+)brace
+suffix:semicolon
 multiline_comment|/* Error detected by bfd */
 DECL|function|Oops_bfd_perror
 r_static
@@ -826,6 +887,8 @@ id|path_objdump
 op_plus
 l_int|1
 op_plus
+l_int|13
+op_plus
 id|strlen
 c_func
 (paren
@@ -867,6 +930,21 @@ c_func
 id|cmd
 comma
 l_string|&quot; &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|oops_arch
+op_eq
+id|OOPS_SPARC64
+)paren
+id|strcat
+c_func
+(paren
+id|cmd
+comma
+l_string|&quot;-m sparc:v9a &quot;
 )paren
 suffix:semicolon
 id|strcat
@@ -949,6 +1027,8 @@ id|adjust
 (brace
 r_int
 id|i
+comma
+id|j
 suffix:semicolon
 id|elf_addr_t
 id|address
@@ -967,6 +1047,9 @@ op_star
 id|string
 op_assign
 l_int|NULL
+comma
+op_star
+id|p
 suffix:semicolon
 r_static
 id|regex_t
@@ -1001,8 +1084,11 @@ multiline_comment|/* 2 */
 l_string|&quot;:&quot;
 l_string|&quot;(&quot;
 multiline_comment|/* 3 */
-l_string|&quot;.* +&lt;_EIP&bslash;&bslash;+0?x?([0-9a-fA-F]+)&gt;[ &bslash;t]*$&quot;
+l_string|&quot;.* +&quot;
+l_string|&quot;(0?x?[0-9a-fA-F]+ +)&quot;
 multiline_comment|/* 4 */
+l_string|&quot;&lt;_EIP&bslash;&bslash;+0?x?([0-9a-fA-F]+)&gt;[ &bslash;t]*$&quot;
+multiline_comment|/* 5 */
 l_string|&quot;)?&quot;
 l_string|&quot;.*&quot;
 comma
@@ -1146,7 +1232,7 @@ c_cond
 (paren
 id|string
 (braket
-l_int|4
+l_int|5
 )braket
 )paren
 (brace
@@ -1162,7 +1248,33 @@ c_func
 (paren
 id|string
 (braket
-l_int|4
+l_int|5
+)braket
+comma
+l_int|NULL
+comma
+l_int|16
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|errno
+)paren
+(brace
+multiline_comment|/* Try strtoull also, e.g. sparc binutils print &lt;_PC+0xfffffffffffffd58&gt; */
+id|errno
+op_assign
+l_int|0
+suffix:semicolon
+id|eip_relative
+op_assign
+id|strtoull
+c_func
+(paren
+id|string
+(braket
+l_int|5
 )braket
 comma
 l_int|NULL
@@ -1189,7 +1301,7 @@ id|procname
 comma
 id|string
 (braket
-l_int|4
+l_int|5
 )braket
 comma
 id|line
@@ -1209,6 +1321,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
 id|eip_relative
 op_add_assign
 id|eip
@@ -1227,13 +1340,34 @@ id|eip_relative
 )paren
 suffix:semicolon
 multiline_comment|/* new text is original line, eip_relative in hex, map text */
-id|i
+id|j
 op_assign
 id|strlen
 c_func
 (paren
 id|line
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|string
+(braket
+l_int|4
+)braket
+)paren
+id|j
+op_assign
+id|re_Oops_objdump_pmatch
+(braket
+l_int|4
+)braket
+dot
+id|rm_so
+suffix:semicolon
+id|i
+op_assign
+id|j
 op_plus
 l_int|1
 op_plus
@@ -1260,6 +1394,8 @@ id|malloc
 c_func
 (paren
 id|i
+op_plus
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -1281,7 +1417,9 @@ id|line2
 comma
 id|i
 comma
-l_string|&quot;%s %s %s&quot;
+l_string|&quot;%.*s %s %s&quot;
+comma
+id|j
 comma
 id|line
 comma
@@ -1294,6 +1432,144 @@ comma
 id|map
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|line2
+op_assign
+id|malloc
+c_func
+(paren
+id|strlen
+c_func
+(paren
+id|line
+)paren
+op_plus
+l_int|6
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|line2
+)paren
+id|malloc_error
+c_func
+(paren
+id|procname
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|line2
+comma
+id|line
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|oops_arch
+op_ne
+id|OOPS_I386
+)paren
+(brace
+id|p
+op_assign
+id|line2
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|p
+op_assign
+id|strstr
+c_func
+(paren
+id|p
+comma
+l_string|&quot;_EIP&quot;
+)paren
+)paren
+)paren
+(brace
+r_int
+id|l
+op_assign
+id|strlen
+c_func
+(paren
+id|eip_names
+(braket
+id|oops_arch
+)braket
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|p
+op_plus
+l_int|1
+comma
+id|eip_names
+(braket
+id|oops_arch
+)braket
+comma
+id|l
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|l
+OL
+l_int|3
+)paren
+id|strcpy
+c_func
+(paren
+id|p
+op_plus
+l_int|1
+op_plus
+id|l
+comma
+id|p
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+l_int|1
+op_plus
+id|l
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|address
+op_eq
+id|eip
+)paren
+id|strcat
+c_func
+(paren
+id|line2
+comma
+l_string|&quot; &lt;===&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* This makes it easier to locate visually the&n;&t;&t;&t;&t;&t;&t;&t;   offending instruction */
 id|add_symbol_n
 c_func
 (paren
@@ -1308,29 +1584,13 @@ comma
 id|line2
 )paren
 suffix:semicolon
+multiline_comment|/* as is */
 id|free
 c_func
 (paren
 id|line2
 )paren
 suffix:semicolon
-)brace
-r_else
-id|add_symbol_n
-c_func
-(paren
-id|ss
-comma
-id|address
-comma
-l_char|&squot;C&squot;
-comma
-l_int|1
-comma
-id|line
-)paren
-suffix:semicolon
-multiline_comment|/* as is */
 id|re_strings_free
 c_func
 (paren
@@ -1923,6 +2183,15 @@ id|re_Oops_eip_sparc_pmatch
 suffix:semicolon
 r_static
 id|regex_t
+id|re_Oops_eip_sparc64
+suffix:semicolon
+r_static
+id|regmatch_t
+op_star
+id|re_Oops_eip_sparc64_pmatch
+suffix:semicolon
+r_static
+id|regex_t
 id|re_Oops_eip_ppc
 suffix:semicolon
 r_static
@@ -2048,6 +2317,10 @@ comma
 id|string
 )paren
 suffix:semicolon
+id|oops_arch
+op_assign
+id|OOPS_SPARC
+suffix:semicolon
 r_return
 (paren
 op_star
@@ -2055,6 +2328,111 @@ id|string
 )paren
 (braket
 id|re_Oops_eip_sparc.re_nsub
+)braket
+suffix:semicolon
+)brace
+multiline_comment|/* Oops &squot;EIP:&squot; line for sparc64, actually TSTATE followed by TPC */
+id|re_compile
+c_func
+(paren
+op_amp
+id|re_Oops_eip_sparc64
+comma
+l_string|&quot;^TSTATE: [0-9a-fA-F]{16} TPC: &quot;
+id|UNBRACKETED_ADDRESS
+comma
+id|REG_NEWLINE
+op_or
+id|REG_EXTENDED
+op_or
+id|REG_ICASE
+comma
+op_amp
+id|re_Oops_eip_sparc64_pmatch
+)paren
+suffix:semicolon
+id|re_string_check
+c_func
+(paren
+id|re_Oops_eip_sparc64.re_nsub
+op_plus
+l_int|1
+comma
+id|string_max
+comma
+id|procname
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|regexec
+c_func
+(paren
+op_amp
+id|re_Oops_eip_sparc64
+comma
+id|line
+comma
+id|re_Oops_eip_sparc64.re_nsub
+op_plus
+l_int|1
+comma
+id|re_Oops_eip_sparc64_pmatch
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|debug
+OG
+l_int|3
+)paren
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;DEBUG: %s regexec sparc64 %d&bslash;n&quot;
+comma
+id|procname
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|0
+)paren
+(brace
+id|re_strings
+c_func
+(paren
+op_amp
+id|re_Oops_eip_sparc64
+comma
+id|line
+comma
+id|re_Oops_eip_sparc64_pmatch
+comma
+id|string
+)paren
+suffix:semicolon
+id|oops_arch
+op_assign
+id|OOPS_SPARC64
+suffix:semicolon
+r_return
+(paren
+op_star
+id|string
+)paren
+(braket
+id|re_Oops_eip_sparc64.re_nsub
 )braket
 suffix:semicolon
 )brace
@@ -2153,6 +2531,10 @@ id|re_Oops_eip_ppc_pmatch
 comma
 id|string
 )paren
+suffix:semicolon
+id|oops_arch
+op_assign
+id|OOPS_PPC
 suffix:semicolon
 r_return
 (paren
@@ -2254,6 +2636,10 @@ id|re_Oops_eip_mips_pmatch
 comma
 id|string
 )paren
+suffix:semicolon
+id|oops_arch
+op_assign
+id|OOPS_MIPS
 suffix:semicolon
 r_return
 (paren
@@ -2363,6 +2749,10 @@ comma
 id|string
 )paren
 suffix:semicolon
+id|oops_arch
+op_assign
+id|OOPS_I386
+suffix:semicolon
 r_return
 (paren
 op_star
@@ -2406,6 +2796,12 @@ id|procname
 )braket
 op_assign
 l_string|&quot;Oops_set_eip&quot;
+suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|10
+)braket
 suffix:semicolon
 id|errno
 op_assign
@@ -2457,6 +2853,19 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|sprintf
+c_func
+(paren
+id|buf
+comma
+l_string|&quot;&gt;&gt;%s:&quot;
+comma
+id|eip_names
+(braket
+id|oops_arch
+)braket
+)paren
+suffix:semicolon
 id|add_symbol_n
 c_func
 (paren
@@ -2469,7 +2878,7 @@ l_char|&squot;E&squot;
 comma
 l_int|1
 comma
-l_string|&quot;&gt;&gt;EIP:&quot;
+id|buf
 )paren
 suffix:semicolon
 )brace
@@ -2714,6 +3123,399 @@ l_string|&quot;&gt;&gt;RA :&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Look for the SPARC o7/i7 registers line, returns start of the relevant hex value */
+DECL|function|Oops_oi7
+r_static
+r_char
+op_star
+id|Oops_oi7
+c_func
+(paren
+r_const
+r_char
+op_star
+id|line
+comma
+r_char
+op_star
+op_star
+op_star
+id|string
+comma
+r_int
+id|string_max
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_static
+id|regex_t
+id|re_Oops_oi7
+suffix:semicolon
+r_static
+id|regmatch_t
+op_star
+id|re_Oops_oi7_pmatch
+suffix:semicolon
+r_static
+r_const
+r_char
+id|procname
+(braket
+)braket
+op_assign
+l_string|&quot;Oops_oi7&quot;
+suffix:semicolon
+id|re_compile
+c_func
+(paren
+op_amp
+id|re_Oops_oi7
+comma
+l_string|&quot;^[io][04]: [0-9a-fA-F iosp:]+ ([io]7|ret_pc): &quot;
+id|UNBRACKETED_ADDRESS
+comma
+id|REG_NEWLINE
+op_or
+id|REG_EXTENDED
+op_or
+id|REG_ICASE
+comma
+op_amp
+id|re_Oops_oi7_pmatch
+)paren
+suffix:semicolon
+id|re_string_check
+c_func
+(paren
+id|re_Oops_oi7.re_nsub
+op_plus
+l_int|1
+comma
+id|string_max
+comma
+id|procname
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|regexec
+c_func
+(paren
+op_amp
+id|re_Oops_oi7
+comma
+id|line
+comma
+id|re_Oops_oi7.re_nsub
+op_plus
+l_int|1
+comma
+id|re_Oops_oi7_pmatch
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|debug
+OG
+l_int|3
+)paren
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;DEBUG: %s regexec %d&bslash;n&quot;
+comma
+id|procname
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|0
+)paren
+(brace
+id|re_strings
+c_func
+(paren
+op_amp
+id|re_Oops_oi7
+comma
+id|line
+comma
+id|re_Oops_oi7_pmatch
+comma
+id|string
+)paren
+suffix:semicolon
+r_return
+(paren
+op_star
+id|string
+)paren
+(braket
+id|re_Oops_oi7.re_nsub
+)braket
+suffix:semicolon
+)brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* Set the SPARC o7/i7 from the oi7 line */
+DECL|function|Oops_set_oi7
+r_static
+r_void
+id|Oops_set_oi7
+c_func
+(paren
+r_const
+r_char
+op_star
+id|value
+comma
+r_char
+op_star
+op_star
+op_star
+id|string
+comma
+id|SYMBOL_SET
+op_star
+id|ss
+)paren
+(brace
+r_static
+r_const
+r_char
+id|procname
+(braket
+)braket
+op_assign
+l_string|&quot;Oops_set_oi7&quot;
+suffix:semicolon
+id|elf_addr_t
+id|oi7
+suffix:semicolon
+r_int
+id|o7
+op_assign
+l_int|1
+suffix:semicolon
+id|errno
+op_assign
+l_int|0
+suffix:semicolon
+id|oi7
+op_assign
+id|strtoul
+c_func
+(paren
+id|value
+comma
+l_int|NULL
+comma
+l_int|16
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+op_star
+id|string
+)paren
+(braket
+l_int|1
+)braket
+op_logical_and
+op_logical_neg
+id|strcmp
+c_func
+(paren
+(paren
+op_star
+id|string
+)paren
+(braket
+l_int|1
+)braket
+comma
+l_string|&quot;i7&quot;
+)paren
+)paren
+id|o7
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|errno
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;%s Invalid hex value in oi7 line, ignored - &squot;%s&squot;&bslash;n&quot;
+comma
+id|procname
+comma
+id|value
+)paren
+suffix:semicolon
+id|perror
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+op_increment
+id|errors
+suffix:semicolon
+id|oi7
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|add_symbol_n
+c_func
+(paren
+id|ss
+comma
+id|oi7
+comma
+l_char|&squot;O&squot;
+comma
+l_int|1
+comma
+id|o7
+ques
+c_cond
+l_string|&quot;&gt;&gt;O7:&quot;
+suffix:colon
+l_string|&quot;&gt;&gt;I7:&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Look for the SPARC register dump lines end */
+DECL|function|Oops_sparc_regdump
+r_static
+r_int
+id|Oops_sparc_regdump
+c_func
+(paren
+r_const
+r_char
+op_star
+id|line
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_static
+id|regex_t
+id|re_Oops_sparc_regdump
+suffix:semicolon
+r_static
+id|regmatch_t
+op_star
+id|re_Oops_sparc_regdump_pmatch
+suffix:semicolon
+r_static
+r_const
+r_char
+id|procname
+(braket
+)braket
+op_assign
+l_string|&quot;Oops_sparc_regdump&quot;
+suffix:semicolon
+id|re_compile
+c_func
+(paren
+op_amp
+id|re_Oops_sparc_regdump
+comma
+l_string|&quot;^(i[04]: &quot;
+l_string|&quot;|Instruction DUMP: &quot;
+l_string|&quot;|Caller&bslash;&bslash;[&quot;
+l_string|&quot;)&quot;
+comma
+id|REG_NEWLINE
+op_or
+id|REG_EXTENDED
+op_or
+id|REG_ICASE
+comma
+op_amp
+id|re_Oops_sparc_regdump_pmatch
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|regexec
+c_func
+(paren
+op_amp
+id|re_Oops_sparc_regdump
+comma
+id|line
+comma
+id|re_Oops_sparc_regdump.re_nsub
+op_plus
+l_int|1
+comma
+id|re_Oops_sparc_regdump_pmatch
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|debug
+OG
+l_int|3
+)paren
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;DEBUG: %s regexec %d&bslash;n&quot;
+comma
+id|procname
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|0
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Look for the Trace multilines :(.  Returns start of addresses. */
 DECL|function|Oops_trace
 r_static
@@ -2806,6 +3608,12 @@ l_string|&quot;|(Function entered at (&quot;
 id|BRACKETED_ADDRESS
 l_string|&quot;))&quot;
 multiline_comment|/* 9,10,11 */
+multiline_comment|/* sparc */
+multiline_comment|/* sparc64 */
+l_string|&quot;|(Caller&bslash;&bslash;[&quot;
+id|UNBRACKETED_ADDRESS
+l_string|&quot;&bslash;&bslash;])&quot;
+multiline_comment|/*12,13*/
 l_string|&quot;)&quot;
 comma
 id|REG_NEWLINE
@@ -3005,6 +3813,37 @@ l_int|10
 )braket
 dot
 id|rm_so
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|MATCHED
+c_func
+(paren
+l_int|12
+)paren
+)paren
+(brace
+id|trace_line
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* sparc, sparc64 */
+id|start
+op_assign
+id|line
+op_plus
+id|re_Oops_trace_pmatch
+(braket
+l_int|13
+)braket
+dot
+id|rm_so
+suffix:semicolon
+r_return
+id|start
 suffix:semicolon
 )brace
 r_else
@@ -3551,30 +4390,35 @@ l_string|&quot;|(push data: )&quot;
 multiline_comment|/* m68k */
 l_string|&quot;|(baddr=)&quot;
 multiline_comment|/* any other m68K lines to print? */
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(Bad unaligned kernel)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(Forwarding unaligned exception)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(: unhandled unaligned exception)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(&lt;sc)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(pc *=)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(r[0-9]+ *=)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(gp *=)&quot;
-multiline_comment|/* any other sparc lines to print? */
-multiline_comment|/* alpha */
-l_string|&quot;|(tsk-&gt;)&quot;
-multiline_comment|/* alpha */
-l_string|&quot;|(PSR: )&quot;
-multiline_comment|/* alpha */
-l_string|&quot;|([goli]0: )&quot;
-multiline_comment|/* alpha */
-l_string|&quot;|(Instruction DUMP: )&quot;
 multiline_comment|/* any other alpha lines to print? */
+multiline_comment|/* sparc */
+l_string|&quot;|(tsk-&gt;)&quot;
+multiline_comment|/* sparc */
+l_string|&quot;|(PSR: )&quot;
+multiline_comment|/* sparc */
+l_string|&quot;|([goli][04]: )&quot;
+multiline_comment|/* sparc */
+l_string|&quot;|(Instruction DUMP: )&quot;
+multiline_comment|/* sparc */
+l_string|&quot;|(Caller&bslash;&bslash;[)&quot;
+multiline_comment|/* any other sparc lines to print? */
+multiline_comment|/* sparc64 */
+l_string|&quot;|(TSTATE: )&quot;
+multiline_comment|/* any other sparc64 lines to print? */
 multiline_comment|/* ppc */
 l_string|&quot;|(MSR: )&quot;
 multiline_comment|/* ppc */
@@ -3910,19 +4754,19 @@ multiline_comment|/* anywhere in text is a bad sign (TM) */
 multiline_comment|/* various */
 l_string|&quot;|(die_if_kernel)&quot;
 multiline_comment|/* ditto */
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(&bslash;&bslash;([0-9]&bslash;&bslash;): Oops )&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(: memory violation)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(: Exception at)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(: Arithmetic fault)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(: Instruction fault)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(: arithmetic trap)&quot;
-multiline_comment|/* sparc */
+multiline_comment|/* alpha */
 l_string|&quot;|(: unaligned trap)&quot;
 multiline_comment|/* sparc      die_if_kernel has no fixed text, identify by (pid): text.&n;&t; *            Somebody has been playful with the texts.&n;&t; *&n;&t; *            Alas adding this next pattern increases run time by 15% on&n;&t; *            its own!  It would be considerably faster if sparc had&n;&t; *            consistent error texts.&n;&t; */
 multiline_comment|/* sparc */
@@ -4820,9 +5664,18 @@ comma
 id|lastprint
 op_assign
 l_int|0
+comma
+id|print
+op_assign
+l_int|0
 suffix:semicolon
 id|elf_addr_t
 id|eip
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|sparc_regdump
 op_assign
 l_int|0
 suffix:semicolon
@@ -4973,9 +5826,8 @@ suffix:semicolon
 op_increment
 id|lineno
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|print
+op_assign
 id|Oops_print
 c_func
 (paren
@@ -4989,6 +5841,65 @@ id|string
 comma
 id|MAX_STRINGS
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|Oops_sparc_regdump
+(paren
+id|text
+)paren
+)paren
+(brace
+id|sparc_regdump
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|oops_arch
+op_eq
+id|OOPS_SPARC
+op_logical_or
+id|oops_arch
+op_eq
+id|OOPS_SPARC64
+)paren
+op_logical_and
+id|sparc_regdump
+op_logical_and
+id|ss_format.used
+)paren
+(brace
+id|Oops_format
+c_func
+(paren
+op_amp
+id|ss_format
+)paren
+suffix:semicolon
+id|ss_free
+c_func
+(paren
+op_amp
+id|ss_format
+)paren
+suffix:semicolon
+)brace
+id|sparc_regdump
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|print
 )paren
 (brace
 id|puts
@@ -5053,6 +5964,36 @@ id|Oops_set_ra
 c_func
 (paren
 id|start
+comma
+op_amp
+id|ss_format
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|start
+op_assign
+id|Oops_oi7
+c_func
+(paren
+id|text
+comma
+op_amp
+id|string
+comma
+id|MAX_STRINGS
+)paren
+)paren
+)paren
+id|Oops_set_oi7
+c_func
+(paren
+id|start
+comma
+op_amp
+id|string
 comma
 op_amp
 id|ss_format
@@ -5203,6 +6144,23 @@ c_cond
 id|ss_format.used
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|oops_arch
+op_ne
+id|OOPS_SPARC
+op_logical_and
+id|oops_arch
+op_ne
+id|OOPS_SPARC64
+)paren
+op_logical_or
+op_logical_neg
+id|sparc_regdump
+)paren
+(brace
 id|fprintf
 c_func
 (paren
@@ -5215,6 +6173,7 @@ suffix:semicolon
 op_increment
 id|warnings
 suffix:semicolon
+)brace
 id|Oops_format
 c_func
 (paren

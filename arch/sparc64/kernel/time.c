@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.16 1998/09/05 17:25:28 jj Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: time.c,v 1.20 1999/03/15 22:13:40 davem Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,6 +19,10 @@ macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/fhc.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
+r_extern
+id|rwlock_t
+id|xtime_lock
+suffix:semicolon
 DECL|variable|mstk48t02_regs
 r_struct
 id|mostek48t02
@@ -182,6 +186,13 @@ r_int
 r_int
 id|ticks
 suffix:semicolon
+id|write_lock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 r_do
 (brace
 id|do_timer
@@ -259,6 +270,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__
 DECL|function|timer_tick_interrupt
@@ -272,6 +290,13 @@ op_star
 id|regs
 )paren
 (brace
+id|write_lock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 id|do_timer
 c_func
 (paren
@@ -316,6 +341,13 @@ suffix:semicolon
 id|timer_check_rtc
 c_func
 (paren
+)paren
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace
@@ -1000,6 +1032,20 @@ c_loop
 l_int|1
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|node
+)paren
+id|model
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_else
 id|prom_getstring
 c_func
 (paren
@@ -1043,6 +1089,11 @@ l_string|&quot;mk48t59&quot;
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|node
+)paren
 id|node
 op_assign
 id|prom_getsibling
@@ -1052,8 +1103,8 @@ id|node
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PCI
-r_if
-c_cond
+r_while
+c_loop
 (paren
 (paren
 id|node
@@ -1691,6 +1742,7 @@ op_div
 id|timer_ticks_per_usec
 suffix:semicolon
 )brace
+multiline_comment|/* This need not obtain the xtime_lock as it is coded in&n; * an implicitly SMP safe way already.&n; */
 DECL|function|do_gettimeofday
 r_void
 id|do_gettimeofday
@@ -2091,9 +2143,11 @@ op_star
 id|tv
 )paren
 (brace
-id|cli
+id|write_lock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 id|tv-&gt;tv_usec
@@ -2133,11 +2187,6 @@ id|time_status
 op_or_assign
 id|STA_UNSYNC
 suffix:semicolon
-id|time_state
-op_assign
-id|TIME_ERROR
-suffix:semicolon
-multiline_comment|/* p. 24, (a) */
 id|time_maxerror
 op_assign
 id|NTP_PHASE_LIMIT
@@ -2146,9 +2195,11 @@ id|time_esterror
 op_assign
 id|NTP_PHASE_LIMIT
 suffix:semicolon
-id|sti
+id|write_unlock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace

@@ -207,7 +207,7 @@ op_assign
 id|fsr
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 eof

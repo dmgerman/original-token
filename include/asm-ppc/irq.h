@@ -3,6 +3,24 @@ macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* for is_prep() */
+r_extern
+r_void
+id|disable_irq
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|enable_irq
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_8xx
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|enable_irq
@@ -31,24 +49,6 @@ DECL|macro|irq_to_openpic
 mdefine_line|#define irq_to_openpic(n)&t;((n)-NUM_8259_INTERRUPTS)
 DECL|macro|IRQ_8259_CASCADE
 mdefine_line|#define IRQ_8259_CASCADE&t;NUM_8259_INTERRUPTS
-r_extern
-r_void
-id|disable_irq
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|enable_irq
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
 macro_line|#ifndef CONFIG_APUS
 multiline_comment|/*&n; * This gets called from serial.c, which is now used on&n; * powermacs as well as prep/chrp boxes.&n; * Prep and chrp both have cascaded 8259 PICs.&n; */
 DECL|function|irq_cannonicalize
@@ -85,41 +85,41 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#else /* CONFIG_8xx */
-multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; * On the MBX implementation, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.  All 8259 interrupts appear&n; * on the 8xx as IRQ3, but I may eventually add some of the 8259 code&n; * back into this port to handle that controller.&n; */
+multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; * On the MBX implementation, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;16
+mdefine_line|#define NR_IRQS&t;(16+16) /* 8259 has 16, too -- Cort */
 DECL|macro|SIU_IRQ0
-mdefine_line|#define&t;SIU_IRQ0&t;0&t;/* Highest priority */
+mdefine_line|#define&t;SIU_IRQ0&t;(0+16)&t;/* Highest priority */
 DECL|macro|SIU_LEVEL0
-mdefine_line|#define&t;SIU_LEVEL0&t;1
+mdefine_line|#define&t;SIU_LEVEL0&t;(1+16)
 DECL|macro|SIU_IRQ1
-mdefine_line|#define&t;SIU_IRQ1&t;2
+mdefine_line|#define&t;SIU_IRQ1&t;(2+16)
 DECL|macro|SIU_LEVEL1
-mdefine_line|#define&t;SIU_LEVEL1&t;3
+mdefine_line|#define&t;SIU_LEVEL1&t;(3+16)
 DECL|macro|SIU_IRQ2
-mdefine_line|#define&t;SIU_IRQ2&t;4
+mdefine_line|#define&t;SIU_IRQ2&t;(4+16)
 DECL|macro|SIU_LEVEL2
-mdefine_line|#define&t;SIU_LEVEL2&t;5
+mdefine_line|#define&t;SIU_LEVEL2&t;(5+16)
 DECL|macro|SIU_IRQ3
-mdefine_line|#define&t;SIU_IRQ3&t;6
+mdefine_line|#define&t;SIU_IRQ3&t;(6+16)
 DECL|macro|SIU_LEVEL3
-mdefine_line|#define&t;SIU_LEVEL3&t;7
+mdefine_line|#define&t;SIU_LEVEL3&t;(7+16)
 DECL|macro|SIU_IRQ4
-mdefine_line|#define&t;SIU_IRQ4&t;8
+mdefine_line|#define&t;SIU_IRQ4&t;(8+16)
 DECL|macro|SIU_LEVEL4
-mdefine_line|#define&t;SIU_LEVEL4&t;9
+mdefine_line|#define&t;SIU_LEVEL4&t;(9+16)
 DECL|macro|SIU_IRQ5
-mdefine_line|#define&t;SIU_IRQ5&t;10
+mdefine_line|#define&t;SIU_IRQ5&t;(10+16)
 DECL|macro|SIU_LEVEL5
-mdefine_line|#define&t;SIU_LEVEL5&t;11
+mdefine_line|#define&t;SIU_LEVEL5&t;(11+16)
 DECL|macro|SIU_IRQ6
-mdefine_line|#define&t;SIU_IRQ6&t;12
+mdefine_line|#define&t;SIU_IRQ6&t;(12+16)
 DECL|macro|SIU_LEVEL6
-mdefine_line|#define&t;SIU_LEVEL6&t;13
+mdefine_line|#define&t;SIU_LEVEL6&t;(13+16)
 DECL|macro|SIU_IRQ7
-mdefine_line|#define&t;SIU_IRQ7&t;14
+mdefine_line|#define&t;SIU_IRQ7&t;(14+16)
 DECL|macro|SIU_LEVEL7
-mdefine_line|#define&t;SIU_LEVEL7&t;15
+mdefine_line|#define&t;SIU_LEVEL7&t;(15+16)
 multiline_comment|/* The internal interrupts we can configure as we see fit.&n; * My personal preference is CPM at level 2, which puts it above the&n; * MBX PCI/ISA/IDE interrupts.&n; */
 DECL|macro|PIT_INTERRUPT
 mdefine_line|#define PIT_INTERRUPT&t;&t;SIU_LEVEL0

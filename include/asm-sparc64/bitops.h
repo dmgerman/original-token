@@ -1,11 +1,11 @@
-multiline_comment|/* $Id: bitops.h,v 1.25 1998/07/26 03:05:51 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.26 1999/01/07 14:14:15 jj Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;         /* For the little endian spaces. */
 multiline_comment|/* These can all be exported to userland, because the atomic&n; * primitives used are not privileged.&n; */
-multiline_comment|/* Set bit &squot;nr&squot; in 32-bit quantity at address &squot;addr&squot; where bit &squot;0&squot;&n; * is in the highest of the four bytes and bit &squot;31&squot; is the high bit&n; * within the first byte. Sparc is BIG-Endian. Unless noted otherwise&n; * all bit-ops return 0 if bit was previously clear and != 0 otherwise.&n; */
+multiline_comment|/* Set bit &squot;nr&squot; in 64-bit quantity at address &squot;addr&squot; where bit &squot;0&squot;&n; * is in the highest of the eight bytes and bit &squot;63&squot; is the high bit&n; * within the first byte. Sparc is BIG-Endian. Unless noted otherwise&n; * all bit-ops return 0 if bit was previously clear and != 0 otherwise.&n; */
 DECL|function|test_and_set_bit
 r_extern
 id|__inline__

@@ -4,17 +4,18 @@ mdefine_line|#define __PPC_SYSTEM_H
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-multiline_comment|/*&n; * Memory barrier.&n; * The sync instruction guarantees that all memory accesses initiated&n; * by this processor have been performed (with respect to all other&n; * mechanisms that access memory).&n; */
+multiline_comment|/*&n; * Memory barrier.&n; * The sync instruction guarantees that all memory accesses initiated&n; * by this processor have been performed (with respect to all other&n; * mechanisms that access memory).  The eieio instruction is a barrier&n; * providing an ordering (separately) for (a) cacheable stores and (b)&n; * loads and stores to non-cacheable memory (e.g. I/O devices).&n; *&n; * mb() prevents loads and stores being reordered across this point.&n; * rmb() prevents loads being reordered across this point.&n; * wmb() prevents stores being reordered across this point.&n; *&n; * We can use the eieio instruction for wmb, but since it doesn&squot;t&n; * give any ordering guarantees about loads, we have to use the&n; * stronger but slower sync instruction for mb and rmb.&n; */
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|rmb
 mdefine_line|#define rmb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|wmb
-mdefine_line|#define wmb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
+mdefine_line|#define wmb()  __asm__ __volatile__ (&quot;eieio&quot; : : : &quot;memory&quot;)
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;({&bslash;&n;&t;__asm__ __volatile__ (&quot;mfmsr %0&quot; : &quot;=r&quot; ((flags)) : : &quot;memory&quot;); })
 DECL|macro|__save_and_cli
 mdefine_line|#define __save_and_cli(flags)&t;({__save_flags(flags);__cli();})
+multiline_comment|/* Data cache block flush - write out the cache line containing the&n;   specified address and then invalidate it in the cache. */
 DECL|function|dcbf
 r_extern
 id|__inline__
@@ -30,41 +31,9 @@ id|line
 id|asm
 c_func
 (paren
-l_string|&quot;dcbf %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;sync &bslash;n&bslash;t&quot;
-l_string|&quot;isync &bslash;n&bslash;t&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|line
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|dcbi
-r_extern
-id|__inline__
-r_void
-id|dcbi
-c_func
-(paren
-r_void
-op_star
-id|line
-)paren
-(brace
-id|asm
-c_func
-(paren
-l_string|&quot;dcbi %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;sync &bslash;n&bslash;t&quot;
-l_string|&quot;isync &bslash;n&bslash;t&quot;
-op_scope_resolution
+l_string|&quot;dcbf %0,%1; sync&quot;
+suffix:colon
+suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|line
@@ -176,6 +145,16 @@ id|_enable_interrupts
 c_func
 (paren
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|instruction_dump
+c_func
+(paren
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -465,8 +444,8 @@ macro_line|#endif /* !__SMP__ */
 DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 r_extern
-r_void
-op_star
+r_int
+r_int
 id|xchg_u64
 c_func
 (paren
@@ -480,14 +459,14 @@ id|val
 )paren
 suffix:semicolon
 r_extern
-r_void
-op_star
+r_int
+r_int
 id|xchg_u32
 c_func
 (paren
 r_void
 op_star
-id|m
+id|ptr
 comma
 r_int
 r_int

@@ -6,23 +6,10 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|macro|KERNELBASE
 mdefine_line|#define KERNELBASE&t;0xc0000000
-multiline_comment|/* from the Carolina Technical Spec -- Cort */
-DECL|macro|IBM_ACORN
-mdefine_line|#define IBM_ACORN 0x82A
 DECL|macro|SIO_CONFIG_RA
 mdefine_line|#define SIO_CONFIG_RA&t;0x398
 DECL|macro|SIO_CONFIG_RD
 mdefine_line|#define SIO_CONFIG_RD&t;0x399
-DECL|macro|IBM_HDD_LED
-mdefine_line|#define IBM_HDD_LED       0x808
-DECL|macro|IBM_EQUIP_PRESENT
-mdefine_line|#define IBM_EQUIP_PRESENT 0x80c&t;
-DECL|macro|IBM_L2_STATUS
-mdefine_line|#define IBM_L2_STATUS     0x80d
-DECL|macro|IBM_L2_INVALIDATE
-mdefine_line|#define IBM_L2_INVALIDATE 0x814
-DECL|macro|IBM_SYS_CTL
-mdefine_line|#define IBM_SYS_CTL       0x81c
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO
 DECL|macro|PMAC_ISA_MEM_BASE
@@ -39,12 +26,11 @@ DECL|macro|PREP_ISA_IO_BASE
 mdefine_line|#define PREP_ISA_IO_BASE &t;0x80000000
 DECL|macro|PREP_ISA_MEM_BASE
 mdefine_line|#define PREP_ISA_MEM_BASE &t;0xd0000000
-multiline_comment|/*#define PREP_ISA_MEM_BASE &t;0xc0000000*/
 DECL|macro|PREP_PCI_DRAM_OFFSET
 mdefine_line|#define PREP_PCI_DRAM_OFFSET &t;0x80000000
 macro_line|#ifdef CONFIG_MBX
 DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE        0
+mdefine_line|#define _IO_BASE        0x80000000
 DECL|macro|_ISA_MEM_BASE
 mdefine_line|#define _ISA_MEM_BASE   0
 DECL|macro|PCI_DRAM_OFFSET

@@ -51,7 +51,7 @@ op_assign
 id|r
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 eof

@@ -7,11 +7,12 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
@@ -165,6 +166,13 @@ id|abs
 c_func
 (paren
 r_int
+)paren
+suffix:semicolon
+DECL|variable|clear_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|clear_page
 )paren
 suffix:semicolon
 DECL|variable|do_signal

@@ -1206,6 +1206,10 @@ l_int|6
 )braket
 suffix:semicolon
 r_int
+r_int
+id|risc_code_addr
+suffix:semicolon
+r_int
 id|loop_count
 comma
 id|i
@@ -1213,6 +1217,24 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qpti-&gt;is_pti
+op_ne
+l_int|0
+)paren
+(brace
+id|risc_code_addr
+op_assign
+id|pti_risc_code_addr01
+suffix:semicolon
+)brace
+r_else
+id|risc_code_addr
+op_assign
+id|sbus_risc_code_addr01
 suffix:semicolon
 id|save_flags
 c_func
@@ -1388,7 +1410,7 @@ id|param
 l_int|1
 )braket
 op_assign
-id|risc_code_addr01
+id|risc_code_addr
 suffix:semicolon
 r_if
 c_cond
@@ -1938,6 +1960,15 @@ l_int|6
 suffix:semicolon
 r_int
 r_int
+op_star
+id|risc_code
+comma
+id|risc_code_addr
+comma
+id|risc_code_length
+suffix:semicolon
+r_int
+r_int
 id|flags
 suffix:semicolon
 macro_line|#if !defined(MODULE) &amp;&amp; !defined(__sparc_v9__)
@@ -1951,6 +1982,50 @@ id|i
 comma
 id|timeout
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|qpti-&gt;is_pti
+op_ne
+l_int|0
+)paren
+(brace
+id|risc_code
+op_assign
+op_amp
+id|pti_risc_code01
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|risc_code_addr
+op_assign
+id|pti_risc_code_addr01
+suffix:semicolon
+id|risc_code_length
+op_assign
+id|pti_risc_code_length01
+suffix:semicolon
+)brace
+r_else
+(brace
+id|risc_code
+op_assign
+op_amp
+id|sbus_risc_code01
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|risc_code_addr
+op_assign
+id|sbus_risc_code_addr01
+suffix:semicolon
+id|risc_code_length
+op_assign
+id|sbus_risc_code_length01
+suffix:semicolon
+)brace
 id|save_flags
 c_func
 (paren
@@ -1972,7 +2047,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|risc_code_length01
+id|risc_code_length
 suffix:semicolon
 id|i
 op_increment
@@ -1980,7 +2055,7 @@ op_increment
 (brace
 id|csum
 op_add_assign
-id|risc_code01
+id|risc_code
 (braket
 id|i
 )braket
@@ -1996,7 +2071,7 @@ id|printk
 c_func
 (paren
 id|KERN_EMERG
-l_string|&quot;qlogicpti%d: AIeee, firmware checksum failed!&quot;
+l_string|&quot;qlogicpti%d: Aieee, firmware checksum failed!&quot;
 comma
 id|qpti-&gt;qpti_id
 )paren
@@ -2166,7 +2241,6 @@ id|qregs-&gt;hcctrl
 op_assign
 id|HCCTRL_REL
 suffix:semicolon
-multiline_comment|/* XXX Talk to PTI engineer about the following, ISP always&n;&t; * XXX returns 0x4001 return status for stop firmware command,&n;&t; * XXX documentation claims this means the cmd is unsupported&n;&t; * XXX on this ISP.  I think something fishy is going on.&n;&t; */
 id|param
 (braket
 l_int|0
@@ -2258,7 +2332,7 @@ r_char
 op_star
 )paren
 op_amp
-id|risc_code01
+id|risc_code
 (braket
 l_int|0
 )braket
@@ -2269,7 +2343,7 @@ r_sizeof
 id|u_short
 )paren
 op_star
-id|risc_code_length01
+id|risc_code_length
 )paren
 )paren
 suffix:semicolon
@@ -2285,7 +2359,7 @@ id|param
 l_int|1
 )braket
 op_assign
-id|risc_code_addr01
+id|risc_code_addr
 suffix:semicolon
 id|param
 (braket
@@ -2320,7 +2394,7 @@ r_sizeof
 id|u_short
 )paren
 op_star
-id|risc_code_length01
+id|risc_code_length
 )paren
 suffix:semicolon
 r_if
@@ -2380,7 +2454,7 @@ r_sizeof
 id|u_short
 )paren
 op_star
-id|risc_code_length01
+id|risc_code_length
 )paren
 )paren
 suffix:semicolon
@@ -2397,7 +2471,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|risc_code_length01
+id|risc_code_length
 suffix:semicolon
 id|i
 op_increment
@@ -2415,7 +2489,7 @@ id|param
 l_int|1
 )braket
 op_assign
-id|risc_code_addr01
+id|risc_code_addr
 op_plus
 id|i
 suffix:semicolon
@@ -2424,7 +2498,7 @@ id|param
 l_int|2
 )braket
 op_assign
-id|risc_code01
+id|risc_code
 (braket
 id|i
 )braket
@@ -2507,7 +2581,7 @@ id|param
 l_int|1
 )braket
 op_assign
-id|risc_code_addr01
+id|risc_code_addr
 suffix:semicolon
 r_if
 c_cond
@@ -2564,7 +2638,7 @@ id|param
 l_int|1
 )braket
 op_assign
-id|risc_code_addr01
+id|risc_code_addr
 suffix:semicolon
 id|qlogicpti_mbox_command
 c_func
@@ -2640,6 +2714,14 @@ id|param
 l_int|2
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|qpti-&gt;is_pti
+op_ne
+l_int|0
+)paren
+(brace
 multiline_comment|/* Load scsi initiator ID and interrupt level into sbus static ram. */
 id|param
 (braket
@@ -2711,6 +2793,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+)brace
 id|restore_flags
 c_func
 (paren
@@ -3275,6 +3358,12 @@ id|qpti_host-&gt;max_id
 op_assign
 id|MAX_TARGETS
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
+id|qpti_host-&gt;unchecked_isa_dma
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Setup back pointers and misc. state. */
 id|qpti-&gt;qhost
 op_assign
@@ -3351,13 +3440,19 @@ id|qpti-&gt;prom_node
 op_assign
 id|qpti_node
 suffix:semicolon
+id|qpti-&gt;is_pti
+op_assign
 id|is_pti
 op_assign
+(paren
 id|strcmp
 (paren
 id|qpti-&gt;prom_name
 comma
 l_string|&quot;QLGC,isp&quot;
+)paren
+op_ne
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Setup the reg property for this device. */
@@ -3785,6 +3880,20 @@ id|qpti-&gt;bursts
 op_assign
 id|bsizes
 suffix:semicolon
+multiline_comment|/* Clear out Scsi_Cmnd array. */
+id|memset
+c_func
+(paren
+id|qpti-&gt;cmd_slots
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|qpti-&gt;cmd_slots
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* The request and response queues must each be aligned&n;&t;&t;&t; * on a page boundry.&n;&t;&t;&t; */
 DECL|macro|QSIZE
 mdefine_line|#define QSIZE(entries)&t;(((entries) + 1) * QUEUE_ENTRY_LEN)
@@ -3831,16 +3940,13 @@ c_func
 id|qpti
 )paren
 suffix:semicolon
+multiline_comment|/* Load the firmware. */
+multiline_comment|/* XXX Find out where is it possible to download&n;&t;&t;&t;   our sbus_risc_code on non-PTI ISP1000. */
 r_if
 c_cond
 (paren
 id|is_pti
-)paren
-(brace
-multiline_comment|/* Load the firmware. */
-r_if
-c_cond
-(paren
+op_logical_and
 id|qlogicpti_load_firmware
 c_func
 (paren
@@ -3851,10 +3957,16 @@ id|qpti
 id|panic
 c_func
 (paren
-l_string|&quot;PTI Qlogic/ISP firmware load failed&quot;
+l_string|&quot;SBUS Qlogic/ISP firmware load failed&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|is_pti
+)paren
+(brace
 multiline_comment|/* Check the PTI status reg. */
 r_if
 c_cond
@@ -3928,6 +4040,14 @@ comma
 l_int|60
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|buffer
+(braket
+l_int|0
+)braket
+)paren
 id|printk
 c_func
 (paren
@@ -3935,6 +4055,21 @@ l_string|&quot;(Firmware %s)&quot;
 comma
 id|buffer
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|prom_getbool
+c_func
+(paren
+id|qpti_node
+comma
+l_string|&quot;differential&quot;
+)paren
+)paren
+id|qpti-&gt;differential
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|printk
@@ -4224,41 +4359,6 @@ id|cmd-&gt;hdr.entry_type
 op_assign
 id|ENTRY_COMMAND
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-id|cmd-&gt;handle
-op_assign
-(paren
-id|u_int
-)paren
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|Cmnd
-)paren
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
-multiline_comment|/* magic mushroom */
-macro_line|#else
-id|cmd-&gt;handle
-op_assign
-(paren
-id|u_int
-)paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|Cmnd
-)paren
-suffix:semicolon
-multiline_comment|/* magic mushroom */
-macro_line|#endif
 id|cmd-&gt;target_id
 op_assign
 id|Cmnd-&gt;target
@@ -4762,6 +4862,18 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Committed, record Scsi_Cmd so we can find it later. */
+id|cmd-&gt;handle
+op_assign
+id|in_ptr
+suffix:semicolon
+id|qpti-&gt;cmd_slots
+(braket
+id|in_ptr
+)braket
+op_assign
+id|Cmnd
+suffix:semicolon
 id|qpti-&gt;cmd_count
 (braket
 id|Cmnd-&gt;target
@@ -5467,6 +5579,9 @@ op_ne
 id|in_ptr
 )paren
 (brace
+id|u_int
+id|cmd_slot
+suffix:semicolon
 id|sts
 op_assign
 (paren
@@ -5488,23 +5603,24 @@ c_func
 id|out_ptr
 )paren
 suffix:semicolon
+multiline_comment|/* We store an index in the handle, not the pointer in&n;&t;&t; * some form.  This avoids problems due to the fact&n;&t;&t; * that the handle provided is only 32-bits. -DaveM&n;&t;&t; */
+id|cmd_slot
+op_assign
+id|sts-&gt;handle
+suffix:semicolon
 id|Cmnd
 op_assign
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|sts-&gt;handle
-)paren
-op_plus
-id|PAGE_OFFSET
-)paren
+id|qpti-&gt;cmd_slots
+(braket
+id|cmd_slot
+)braket
+suffix:semicolon
+id|qpti-&gt;cmd_slots
+(braket
+id|cmd_slot
+)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -5687,12 +5803,12 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_do
+(brace
 id|again
 op_assign
 l_int|0
 suffix:semicolon
-r_do
-(brace
 id|for_each_qlogicpti
 c_func
 (paren

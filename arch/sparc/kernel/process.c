@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.126 1998/09/21 05:05:18 jj Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.131 1999/01/19 07:54:33 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -114,7 +114,8 @@ l_int|0
 suffix:semicolon
 id|current-&gt;counter
 op_assign
-l_int|0
+op_minus
+l_int|100
 suffix:semicolon
 r_for
 c_loop
@@ -307,9 +308,15 @@ op_star
 id|unused
 )paren
 (brace
+multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;priority
 op_assign
 l_int|0
+suffix:semicolon
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
 suffix:semicolon
 r_while
 c_loop
@@ -317,28 +324,29 @@ c_loop
 l_int|1
 )paren
 (brace
-id|check_pgt_cache
-c_func
+r_if
+c_cond
 (paren
+id|current-&gt;need_resched
 )paren
-suffix:semicolon
-id|run_task_queue
-c_func
-(paren
-op_amp
-id|tq_scheduler
-)paren
-suffix:semicolon
-multiline_comment|/* endless idle loop with no priority at all */
-id|current-&gt;counter
-op_assign
-l_int|0
-suffix:semicolon
+(brace
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* or else gcc optimizes... */
 )brace
 )brace
 DECL|function|sys_idle
@@ -2953,6 +2961,115 @@ c_func
 suffix:semicolon
 r_return
 id|error
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This is the mechanism for creating a new kernel thread.&n; *&n; * NOTE! Only a kernel-only process(ie the swapper or direct descendants&n; * who haven&squot;t done an &quot;execve()&quot;) should use this: it will work within&n; * a system call from a &quot;real&quot; process, but the process memory space will&n; * not be free&squot;d until both the parent and the child have exited.&n; */
+DECL|function|kernel_thread
+id|pid_t
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile
+c_func
+(paren
+l_string|&quot;mov %4, %%g2&bslash;n&bslash;t&quot;
+multiline_comment|/* Set aside fn ptr... */
+l_string|&quot;mov %5, %%g3&bslash;n&bslash;t&quot;
+multiline_comment|/* and arg. */
+l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;mov %2, %%o0&bslash;n&bslash;t&quot;
+multiline_comment|/* Clone flags. */
+l_string|&quot;mov 0, %%o1&bslash;n&bslash;t&quot;
+multiline_comment|/* usp arg == 0 */
+l_string|&quot;t 0x10&bslash;n&bslash;t&quot;
+multiline_comment|/* Linux/Sparc clone(). */
+l_string|&quot;cmp %%o1, 0&bslash;n&bslash;t&quot;
+l_string|&quot;be 1f&bslash;n&bslash;t&quot;
+multiline_comment|/* The parent, just return. */
+l_string|&quot; nop&bslash;n&bslash;t&quot;
+multiline_comment|/* Delay slot. */
+l_string|&quot;jmpl %%g2, %%o7&bslash;n&bslash;t&quot;
+multiline_comment|/* Call the function. */
+l_string|&quot; mov %%g3, %%o0&bslash;n&bslash;t&quot;
+multiline_comment|/* Get back the arg in delay. */
+l_string|&quot;mov %3, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;t 0x10&bslash;n&bslash;t&quot;
+multiline_comment|/* Linux/Sparc exit(). */
+multiline_comment|/* Notreached by child. */
+l_string|&quot;1: mov %%o0, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|__NR_clone
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|flags
+op_or
+id|CLONE_VM
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|__NR_exit
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fn
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|arg
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
+comma
+l_string|&quot;o0&quot;
+comma
+l_string|&quot;o1&quot;
+comma
+l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 eof

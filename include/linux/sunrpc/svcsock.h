@@ -155,7 +155,6 @@ suffix:semicolon
 multiline_comment|/* private TCP part */
 DECL|member|sk_reclen
 r_int
-r_int
 id|sk_reclen
 suffix:semicolon
 multiline_comment|/* length of record */

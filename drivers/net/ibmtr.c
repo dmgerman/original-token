@@ -1,4 +1,4 @@
-multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux&n; *&n; *&t;Written 1993 by Mark Swanson and Peter De Schrijver.&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;This device driver should work with Any IBM Token Ring Card that does&n; *&t;not use DMA.&n; *&n; *&t;I used Donald Becker&squot;s (becker@cesdis.gsfc.nasa.gov) device driver work&n; *&t;as a base for most of my initial work.&n; *&n; *&t;Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n; *&n; *&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n; *&t;+ changed reset code and adapter open code.&n; *&t;+ added SAP open code.&n; *&t;+ a first attempt to write interrupt, transmit and receive routines.&n; *&n; *&t;Changes by David W. Morris (dwm@shell.portal.com) :&n; *&t;941003 dwm: - Restructure tok_probe for multiple adapters, devices.&n; *&t;+ Add comments, misc reorg for clarity.&n; *&t;+ Flatten interrupt handler levels.&n; *&n; *&t;Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n; *&t;and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n; *&t;+ multi ring support clean up.&n; *&t;+ RFC1042 compliance enhanced.&n; *&n; *&t;Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n; *&t;+ bug correction in tr_tx&n; *&t;+ removed redundant information display&n; *&t;+ some code reworking&n; *&n; *&t;Changes by Michel Lespinasse (walken@via.ecp.fr),&n; *&t;Yann Doussot (doussot@via.ecp.fr) and Pascal Andre (andre@via.ecp.fr)&n; *&t;(February 18, 1996) :&n; *&t;+ modified shared memory and mmio access port the driver to&n; *&t;  alpha platform (structure access -&gt; readb/writeb)&n; *&n; *&t;Changes by Steve Kipisz (bungy@ibm.net or kipisz@vnet.ibm.com)&n; *&t;(January 18 1996):&n; *&t;+ swapped WWOR and WWCR in ibmtr.h&n; *&t;+ moved some init code from tok_probe into trdev_init.  The&n; *&t;  PCMCIA code can call trdev_init to complete initializing&n; *&t;  the driver.&n; *&t;+ added -DPCMCIA to support PCMCIA&n; *&t;+ detecting PCMCIA Card Removal in interrupt handler.  If&n; *&t;  ISRP is FF, then a PCMCIA card has been removed&n; *&n; *&t;Changes by Paul Norton (pnorton@cts.com) :&n; *&t;+ restructured the READ.LOG logic to prevent the transmit SRB&n; *&t;  from being rudely overwritten before the transmit cycle is&n; *&t;  complete. (August 15 1996)&n; *&t;+ completed multiple adapter support. (November 20 1996)&n; *&t;+ implemented csum_partial_copy in tr_rx and increased receive &n; *        buffer size and count. Minor fixes. (March 15, 1997)&n; *&n; *&t;Changes by Christopher Turcksin &lt;wabbit@rtfc.demon.co.uk&gt;&n; *&t;+ Now compiles ok as a module again.&n; *&n; *&t;Changes by Paul Norton (pnorton@ieee.org) :&n; *      + moved the header manipulation code in tr_tx and tr_rx to&n; *        net/802/tr.c. (July 12 1997)&n; *      + add retry and timeout on open if cable disconnected. (May 5 1998)&n; *      + lifted 2000 byte mtu limit. now depends on shared-RAM size.&n; *        May 25 1998)&n; *      + can&squot;t allocate 2k recv buff at 8k shared-RAM. (20 October 1998)&n; *&n; *      Changes by Joel Sloan (jjs@c-me.com) :&n; *      + disable verbose debug messages by default - to enable verbose&n; *&t;  debugging, edit the IBMTR_DEBUG_MESSAGES define below &n; */
+multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux&n; *&n; *&t;Written 1993 by Mark Swanson and Peter De Schrijver.&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;This device driver should work with Any IBM Token Ring Card that does&n; *&t;not use DMA.&n; *&n; *&t;I used Donald Becker&squot;s (becker@cesdis.gsfc.nasa.gov) device driver work&n; *&t;as a base for most of my initial work.&n; *&n; *&t;Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n; *&n; *&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n; *&t;+ changed reset code and adapter open code.&n; *&t;+ added SAP open code.&n; *&t;+ a first attempt to write interrupt, transmit and receive routines.&n; *&n; *&t;Changes by David W. Morris (dwm@shell.portal.com) :&n; *&t;941003 dwm: - Restructure tok_probe for multiple adapters, devices.&n; *&t;+ Add comments, misc reorg for clarity.&n; *&t;+ Flatten interrupt handler levels.&n; *&n; *&t;Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n; *&t;and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n; *&t;+ multi ring support clean up.&n; *&t;+ RFC1042 compliance enhanced.&n; *&n; *&t;Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n; *&t;+ bug correction in tr_tx&n; *&t;+ removed redundant information display&n; *&t;+ some code reworking&n; *&n; *&t;Changes by Michel Lespinasse (walken@via.ecp.fr),&n; *&t;Yann Doussot (doussot@via.ecp.fr) and Pascal Andre (andre@via.ecp.fr)&n; *&t;(February 18, 1996) :&n; *&t;+ modified shared memory and mmio access port the driver to&n; *&t;  alpha platform (structure access -&gt; readb/writeb)&n; *&n; *&t;Changes by Steve Kipisz (bungy@ibm.net or kipisz@vnet.ibm.com)&n; *&t;(January 18 1996):&n; *&t;+ swapped WWOR and WWCR in ibmtr.h&n; *&t;+ moved some init code from tok_probe into trdev_init.  The&n; *&t;  PCMCIA code can call trdev_init to complete initializing&n; *&t;  the driver.&n; *&t;+ added -DPCMCIA to support PCMCIA&n; *&t;+ detecting PCMCIA Card Removal in interrupt handler.  If&n; *&t;  ISRP is FF, then a PCMCIA card has been removed&n; *&n; *&t;Changes by Paul Norton (pnorton@cts.com) :&n; *&t;+ restructured the READ.LOG logic to prevent the transmit SRB&n; *&t;  from being rudely overwritten before the transmit cycle is&n; *&t;  complete. (August 15 1996)&n; *&t;+ completed multiple adapter support. (November 20 1996)&n; *&t;+ implemented csum_partial_copy in tr_rx and increased receive &n; *        buffer size and count. Minor fixes. (March 15, 1997)&n; *&n; *&t;Changes by Christopher Turcksin &lt;wabbit@rtfc.demon.co.uk&gt;&n; *&t;+ Now compiles ok as a module again.&n; *&n; *&t;Changes by Paul Norton (pnorton@ieee.org) :&n; *      + moved the header manipulation code in tr_tx and tr_rx to&n; *        net/802/tr.c. (July 12 1997)&n; *      + add retry and timeout on open if cable disconnected. (May 5 1998)&n; *      + lifted 2000 byte mtu limit. now depends on shared-RAM size.&n; *        May 25 1998)&n; *      + can&squot;t allocate 2k recv buff at 8k shared-RAM. (20 October 1998)&n; *&n; *      Changes by Joel Sloan (jjs@c-me.com) :&n; *      + disable verbose debug messages by default - to enable verbose&n; *&t;  debugging, edit the IBMTR_DEBUG_MESSAGES define below &n; *&n; *&t;Changes by Tim Hockin (thockin@isunix.it.ilstu.edu) :&n; *&t;+ added spinlocks for SMP sanity (10 March 1999)&n; */
 multiline_comment|/* change the define of IBMTR_DEBUG_MESSAGES to a nonzero value &n;in the event that chatty debug messages are desired - jjs 12/30/98 */
 DECL|macro|IBMTR_DEBUG_MESSAGES
 mdefine_line|#define IBMTR_DEBUG_MESSAGES 0
@@ -172,6 +172,7 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;ibmtr.h&quot;
@@ -2977,6 +2978,14 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+multiline_comment|/* init the spinlock */
+id|ti-&gt;lock
+op_assign
+(paren
+id|spinlock_t
+)paren
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3212,6 +3221,15 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+(paren
+id|ti-&gt;lock
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Disable interrupts till processing is finished */
 id|dev-&gt;interrupt
 op_assign
@@ -3297,6 +3315,15 @@ c_func
 l_string|&quot;PCMCIA card removed.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+(paren
+id|ti-&gt;lock
+)paren
+)paren
+suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
 l_int|0
@@ -3326,6 +3353,15 @@ id|DPRINTK
 c_func
 (paren
 l_string|&quot;PCMCIA card removed.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+(paren
+id|ti-&gt;lock
+)paren
 )paren
 suffix:semicolon
 id|dev-&gt;interrupt
@@ -5114,6 +5150,15 @@ l_string|&quot;Unexpected interrupt from tr adapter&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+(paren
+id|ti-&gt;lock
+)paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|initial_tok_int
 r_static
@@ -8077,6 +8122,21 @@ l_string|&quot;Transmitter access conflict&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* lock against other CPUs */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+(paren
+id|ti-&gt;lock
+)paren
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Save skb; we&squot;ll need it when the adapter asks for the data */
 id|ti-&gt;current_skb
 op_assign
@@ -8128,6 +8188,17 @@ id|ACA_SET
 op_plus
 id|ISRA_ODD
 )paren
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+(paren
+id|ti-&gt;lock
+)paren
+comma
+id|flags
 )paren
 suffix:semicolon
 id|dev-&gt;trans_start

@@ -9,8 +9,9 @@ macro_line|#ifdef macintosh
 multiline_comment|/* All this requires PowerPC alignment */
 macro_line|#pragma options align=power
 macro_line|#endif
+multiline_comment|/* On boostrap entry:&n; *&n; * r3 = 0x426f6f58&t;(&squot;BooX&squot;)&n; * r4 = pointer to boot_infos&n; * r5 = NULL&n; */
 DECL|macro|BOOT_INFO_VERSION
-mdefine_line|#define BOOT_INFO_VERSION&t;&t;1
+mdefine_line|#define BOOT_INFO_VERSION&t;&t;2
 DECL|macro|BOOT_INFO_COMPATIBLE_VERSION
 mdefine_line|#define BOOT_INFO_COMPATIBLE_VERSION&t;1
 multiline_comment|/* Here are the boot informations that are passed to the bootstrap&n; * Note that the kernel arguments and the device tree are appended&n; * at the end of this structure. */
@@ -31,13 +32,20 @@ r_int
 r_int
 id|compatible_version
 suffix:semicolon
+multiline_comment|/* NEW (vers. 2) this holds the current _logical_ base addr of&n;&t;   the frame buffer (for use by early boot message) */
+DECL|member|logicalDisplayBase
+r_int
+r_char
+op_star
+id|logicalDisplayBase
+suffix:semicolon
 multiline_comment|/* Set to 0 by current BootX */
 DECL|member|unused
 r_int
 r_int
 id|unused
 (braket
-l_int|3
+l_int|2
 )braket
 suffix:semicolon
 multiline_comment|/* The device tree (internal addresses relative to the beginning of the tree,&n;&t; * device tree offset relative to the beginning of this structure). */
@@ -118,7 +126,7 @@ id|boot_infos_t
 suffix:semicolon
 multiline_comment|/* (*) The format of the colormap is 256 * 3 * 2 bytes. Each color index is represented&n; * by 3 short words containing a 16 bits (unsigned) color component.&n; * Later versions may contain the gamma table for direct-color devices here.&n; */
 DECL|macro|BOOTX_COLORTABLE_SIZE
-mdefine_line|#define BOOTX_COLORTABLE_SIZE&t;(256UL*3UL*2UL);
+mdefine_line|#define BOOTX_COLORTABLE_SIZE&t;(256UL*3UL*2UL)
 macro_line|#ifdef macintosh
 macro_line|#pragma options align=reset
 macro_line|#endif

@@ -667,12 +667,14 @@ op_star
 id|cpu
 suffix:semicolon
 r_int
-id|freq
-comma
 op_star
 id|fp
 comma
 id|divisor
+suffix:semicolon
+r_int
+r_int
+id|freq
 suffix:semicolon
 r_if
 c_cond
@@ -747,7 +749,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;time_init: decrementer frequency = %d/%d&bslash;n&quot;
+l_string|&quot;time_init: decrementer frequency = %lu/%d&bslash;n&quot;
 comma
 id|freq
 comma

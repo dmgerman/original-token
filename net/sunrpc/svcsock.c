@@ -2231,7 +2231,7 @@ id|iov.iov_base
 op_assign
 (paren
 (paren
-id|u32
+r_char
 op_star
 )paren
 op_amp
@@ -2318,7 +2318,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: TCP record, %ld bytes&bslash;n&quot;
+l_string|&quot;svc: TCP record, %d bytes&bslash;n&quot;
 comma
 id|svsk-&gt;sk_reclen
 )paren
@@ -2354,7 +2354,7 @@ id|svsk-&gt;sk_reclen
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: incomplete TCP record (%d of %ld)&bslash;n&quot;
+l_string|&quot;svc: incomplete TCP record (%d of %d)&bslash;n&quot;
 comma
 id|len
 comma

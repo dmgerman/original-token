@@ -266,6 +266,33 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_int
+id|adb_try_handler_change
+c_func
+(paren
+r_int
+id|address
+comma
+r_int
+id|new_id
+)paren
+suffix:semicolon
+r_int
+id|adb_get_infos
+c_func
+(paren
+r_int
+id|address
+comma
+r_int
+op_star
+id|original_address
+comma
+r_int
+op_star
+id|handler_id
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __PPC_ADB_H */
 eof

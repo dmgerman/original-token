@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: creatorfb.c,v 1.19 1999/02/22 16:20:25 jj Exp $&n; * creatorfb.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997,1998,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: creatorfb.c,v 1.26 1999/03/11 00:29:54 davem Exp $&n; * creatorfb.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997,1998,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -213,65 +213,65 @@ id|ffb_fbc
 (brace
 multiline_comment|/* Next vertex registers */
 DECL|member|xxx1
+DECL|member|alpha
+DECL|member|red
 id|u32
 id|xxx1
 (braket
 l_int|3
 )braket
 suffix:semicolon
-DECL|member|alpha
 r_volatile
 id|u32
 id|alpha
 suffix:semicolon
-DECL|member|red
 r_volatile
 id|u32
 id|red
 suffix:semicolon
 DECL|member|green
+DECL|member|blue
+DECL|member|depth
 r_volatile
 id|u32
 id|green
 suffix:semicolon
-DECL|member|blue
 r_volatile
 id|u32
 id|blue
 suffix:semicolon
-DECL|member|depth
 r_volatile
 id|u32
 id|depth
 suffix:semicolon
-DECL|member|y
 r_volatile
+DECL|member|y
+DECL|member|x
+DECL|member|xxx2
+DECL|member|ryf
 id|u32
 id|y
 suffix:semicolon
-DECL|member|x
 r_volatile
 id|u32
 id|x
 suffix:semicolon
-DECL|member|xxx2
 id|u32
 id|xxx2
 (braket
 l_int|2
 )braket
 suffix:semicolon
-DECL|member|ryf
 r_volatile
 id|u32
 id|ryf
 suffix:semicolon
-DECL|member|rxf
 r_volatile
 id|u32
+DECL|member|rxf
+DECL|member|xxx3
 id|rxf
 suffix:semicolon
-DECL|member|xxx3
 id|u32
 id|xxx3
 (braket
@@ -916,7 +916,7 @@ op_amp
 id|FFB_UCSR_FIFO_MASK
 )paren
 op_minus
-l_int|4
+l_int|8
 suffix:semicolon
 )brace
 r_while

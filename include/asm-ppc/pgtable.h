@@ -1336,7 +1336,11 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is handled very differently on the PPC since out page tables&n; * are all 0&squot;s and I want to be able to use these zero&squot;d pages elsewhere&n; * as well - it gives us quite a speedup.&n; *&n; * Note that the SMP/UP versions are the same since we don&squot;t need a&n; * per cpu list of zero pages since we do the zero-ing with the cache&n; * off and the access routines are lock-free but the pgt cache stuff&n; * _IS_ per-cpu since it isn&squot;t done with any lock-free access routines&n; * (although I think we need arch-specific routines so I can do lock-free).&n; *&n; * I need to generalize this so we can use it for other arch&squot;s as well.&n; * -- Cort&n; */
+multiline_comment|/*&n; * This is handled very differently on the PPC since out page tables&n; * are all 0&squot;s and I want to be able to use these zero&squot;d pages elsewhere&n; * as well - it gives us quite a speedup.&n; *&n; * Note that the SMP/UP versions are the same but we don&squot;t need a&n; * per cpu list of zero pages because we do the zero-ing with the cache&n; * off and the access routines are lock-free but the pgt cache stuff&n; * is per-cpu since it isn&squot;t done with any lock-free access routines&n; * (although I think we need arch-specific routines so I can do lock-free).&n; *&n; * I need to generalize this so we can use it for other arch&squot;s as well.&n; * -- Cort&n; */
+macro_line|#ifdef __SMP__
+DECL|macro|quicklists
+mdefine_line|#define quicklists&t;cpu_data[smp_processor_id()]
+macro_line|#else
 DECL|struct|pgtable_cache_struct
 r_extern
 r_struct
@@ -1359,64 +1363,59 @@ r_int
 r_int
 id|pgtable_cache_sz
 suffix:semicolon
-DECL|member|zero_cache
+)brace
+id|quicklists
+suffix:semicolon
+macro_line|#endif
+DECL|macro|pgd_quicklist
+mdefine_line|#define pgd_quicklist &t;&t;(quicklists.pgd_cache)
+DECL|macro|pmd_quicklist
+mdefine_line|#define pmd_quicklist &t;&t;((unsigned long *)0)
+DECL|macro|pte_quicklist
+mdefine_line|#define pte_quicklist &t;&t;(quicklists.pte_cache)
+DECL|macro|pgtable_cache_size
+mdefine_line|#define pgtable_cache_size &t;(quicklists.pgtable_cache_sz)
+r_extern
 r_int
 r_int
 op_star
 id|zero_cache
 suffix:semicolon
 multiline_comment|/* head linked list of pre-zero&squot;d pages */
-DECL|member|zero_sz
+r_extern
 r_int
 r_int
 id|zero_sz
 suffix:semicolon
 multiline_comment|/* # currently pre-zero&squot;d pages */
-DECL|member|zeropage_hits
+r_extern
 r_int
 r_int
 id|zeropage_hits
 suffix:semicolon
 multiline_comment|/* # zero&squot;d pages request that we&squot;ve done */
-DECL|member|zeropage_calls
+r_extern
 r_int
 r_int
 id|zeropage_calls
 suffix:semicolon
 multiline_comment|/* # zero&squot;d pages request that&squot;ve been made */
-DECL|member|zerototal
+r_extern
 r_int
 r_int
 id|zerototal
 suffix:semicolon
 multiline_comment|/* # pages zero&squot;d over time */
-)brace
-id|quicklists
-suffix:semicolon
-macro_line|#ifdef __SMP__
-multiline_comment|/*#warning Tell Cort to do the pgt cache for SMP*/
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist (quicklists.pgd_cache)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist ((unsigned long *)0)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist (quicklists.pte_cache)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size (quicklists.pgtable_cache_sz)
-macro_line|#else /* __SMP__ */
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist (quicklists.pgd_cache)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist ((unsigned long *)0)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist (quicklists.pte_cache)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size (quicklists.pgtable_cache_sz)
-macro_line|#endif /* __SMP__ */
 DECL|macro|zero_quicklist
-mdefine_line|#define zero_quicklist (quicklists.zero_cache)
+mdefine_line|#define zero_quicklist     &t;(zero_cache)
 DECL|macro|zero_cache_sz
-mdefine_line|#define zero_cache_sz  (quicklists.zero_sz)
+mdefine_line|#define zero_cache_sz  &t; &t;(zero_sz)
+DECL|macro|zero_cache_calls
+mdefine_line|#define zero_cache_calls &t;(zeropage_calls)
+DECL|macro|zero_cache_hits
+mdefine_line|#define zero_cache_hits  &t;(zeropage_hits)
+DECL|macro|zero_cache_total
+mdefine_line|#define zero_cache_total &t;(zerototal)
 multiline_comment|/* return a pre-zero&squot;d page from the list, return NULL if none available -- Cort */
 r_extern
 r_int
@@ -1465,6 +1464,10 @@ op_eq
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
 id|ret
 op_assign
 (paren
@@ -1476,7 +1479,10 @@ c_func
 (paren
 id|GFP_KERNEL
 )paren
-suffix:semicolon
+)paren
+op_ne
+l_int|NULL
+)paren
 id|memset
 (paren
 id|ret
@@ -2198,7 +2204,7 @@ id|cpu_data
 id|i
 )braket
 dot
-id|pgd_quick
+id|pgd_cache
 suffix:semicolon
 id|pgd
 suffix:semicolon

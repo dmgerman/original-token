@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.28 1998/10/26 20:03:09 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.29 1998/11/29 15:49:44 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
@@ -281,6 +281,8 @@ DECL|macro|DMA_BCNT_ENAB
 mdefine_line|#define DMA_BCNT_ENAB    0x00002000        /* If on, use the byte counter */
 DECL|macro|DMA_TERM_CNTR
 mdefine_line|#define DMA_TERM_CNTR    0x00004000        /* Terminal counter */
+DECL|macro|DMA_SCSI_SBUS64
+mdefine_line|#define DMA_SCSI_SBUS64  0x00008000        /* HME: Enable 64-bit SBUS mode. */
 DECL|macro|DMA_CSR_DISAB
 mdefine_line|#define DMA_CSR_DISAB    0x00010000        /* No FIFO drains during csr */
 DECL|macro|DMA_SCSI_DISAB
@@ -321,6 +323,8 @@ DECL|macro|DMA_LOADED_ADDR
 mdefine_line|#define DMA_LOADED_ADDR  0x04000000        /* Address has been loaded */
 DECL|macro|DMA_LOADED_NADDR
 mdefine_line|#define DMA_LOADED_NADDR 0x08000000        /* Next address has been loaded */
+DECL|macro|DMA_RESET_FAS366
+mdefine_line|#define DMA_RESET_FAS366 0x08000000        /* HME: Assert RESET to FAS366 */
 multiline_comment|/* Values describing the burst-size property from the PROM */
 DECL|macro|DMA_BURST1
 mdefine_line|#define DMA_BURST1       0x01

@@ -16,19 +16,20 @@ DECL|macro|IOUNIT_DVMA_SIZE
 mdefine_line|#define IOUNIT_DVMA_SIZE    0x00100000 /* 1M */
 multiline_comment|/* The format of an iopte in the external page tables */
 DECL|macro|IOUPTE_PAGE
-mdefine_line|#define IOUPTE_PAGE          0xffffff00 /* Physical page number (PA[35:12]) */
+mdefine_line|#define IOUPTE_PAGE          0xffffff00 /* Physical page number (PA[35:12])&t;*/
 DECL|macro|IOUPTE_CACHE
-mdefine_line|#define IOUPTE_CACHE         0x00000080 /* Cached (in Viking/MXCC) */
+mdefine_line|#define IOUPTE_CACHE         0x00000080 /* Cached (in Viking/MXCC)&t;&t;*/
+multiline_comment|/* XXX Jakub, find out how to program SBUS streaming cache on XDBUS/sun4d.&n; * XXX Actually, all you should need to do is find out where the registers&n; * XXX are and copy over the sparc64 implementation I wrote.  There may be&n; * XXX some horrible hwbugs though, so be careful.  -DaveM&n; */
 DECL|macro|IOUPTE_STREAM
-mdefine_line|#define IOUPTE_STREAM        0x00000040
+mdefine_line|#define IOUPTE_STREAM        0x00000040 /* Translation can use streaming cache&t;*/
 DECL|macro|IOUPTE_INTRA
-mdefine_line|#define IOUPTE_INTRA&t;     0x00000008 /* Not regular memory - probably direct sbus&lt;-&gt;sbus dma &n;&t;&t;&t;&t;&t;   FIXME: Play with this and find out how we can make use of this */
+mdefine_line|#define IOUPTE_INTRA&t;     0x00000008 /* SBUS direct slot-&gt;slot transfer&t;*/
 DECL|macro|IOUPTE_WRITE
-mdefine_line|#define IOUPTE_WRITE         0x00000004 /* Writeable */
+mdefine_line|#define IOUPTE_WRITE         0x00000004 /* Writeable&t;&t;&t;&t;*/
 DECL|macro|IOUPTE_VALID
-mdefine_line|#define IOUPTE_VALID         0x00000002 /* IOPTE is valid */
+mdefine_line|#define IOUPTE_VALID         0x00000002 /* IOPTE is valid&t;&t;&t;*/
 DECL|macro|IOUPTE_PARITY
-mdefine_line|#define IOUPTE_PARITY        0x00000001
+mdefine_line|#define IOUPTE_PARITY        0x00000001 /* Parity is checked during DVMA&t;*/
 DECL|struct|iounit_struct
 r_struct
 id|iounit_struct

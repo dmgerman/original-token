@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.32 1998/10/13 14:03:52 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.34 1999/01/11 13:45:44 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -248,6 +248,7 @@ id|SPARC_FLAG_32BIT
 id|pgd_cache
 op_assign
 (paren
+(paren
 r_int
 r_int
 )paren
@@ -255,6 +256,9 @@ id|mm-&gt;pgd
 (braket
 l_int|0
 )braket
+)paren
+op_lshift
+l_int|11UL
 suffix:semicolon
 )brace
 r_else
@@ -375,9 +379,9 @@ suffix:semicolon
 multiline_comment|/* Now we define this as a do nothing macro, because the only&n; * generic user right now is the scheduler, and we handle all&n; * the atomicity issues by having switch_to() call the above&n; * function itself.&n; */
 DECL|macro|get_mmu_context
 mdefine_line|#define get_mmu_context(x)&t;do { } while(0)
-multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
+multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.  Currently,&n; * this is always called for &squot;current&squot;, if that changes put appropriate&n; * checks here.&n; *&n; * We set the cpu_vm_mask first to zero to enforce a tlb flush for&n; * the new context above, then we set it to the current cpu so the&n; * smp tlb flush routines do not get confused.&n; */
 DECL|macro|activate_context
-mdefine_line|#define activate_context(__tsk)&t;&t;&bslash;&n;do {&t;flushw_user();&t;&t;&t;&bslash;&n;&t;spin_lock(&amp;scheduler_lock);&t;&bslash;&n;&t;__get_mmu_context(__tsk);&t;&bslash;&n;&t;spin_unlock(&amp;scheduler_lock);&t;&bslash;&n;} while(0)
+mdefine_line|#define activate_context(__tsk)&t;&t;&bslash;&n;do {&t;flushw_user();&t;&t;&t;&bslash;&n;&t;(__tsk)-&gt;mm-&gt;cpu_vm_mask = 0;&t;&bslash;&n;&t;spin_lock(&amp;scheduler_lock);&t;&bslash;&n;&t;__get_mmu_context(__tsk);&t;&bslash;&n;&t;spin_unlock(&amp;scheduler_lock);&t;&bslash;&n;&t;(__tsk)-&gt;mm-&gt;cpu_vm_mask = (1UL&lt;&lt;smp_processor_id()); &bslash;&n;} while(0)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_MMU_CONTEXT_H) */
 eof

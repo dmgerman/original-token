@@ -4,7 +4,7 @@ DECL|macro|__SOC_H
 mdefine_line|#define __SOC_H
 macro_line|#include &quot;fc.h&quot;
 macro_line|#include &quot;fcp.h&quot;
-macro_line|#include &quot;fcp_scsi.h&quot;
+macro_line|#include &quot;fcp_impl.h&quot;
 multiline_comment|/* Hardware structures and constants first {{{ */
 DECL|struct|soc_regs
 r_struct

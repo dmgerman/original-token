@@ -501,6 +501,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|bigmac_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|myri_sbus_probe
 c_func
 (paren
@@ -1199,6 +1209,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SUNQE
 (brace
 id|qec_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUNBMAC
+(brace
+id|bigmac_probe
 comma
 l_int|0
 )brace

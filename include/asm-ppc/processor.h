@@ -97,15 +97,21 @@ mdefine_line|#define FPSCR_FEX       (1&lt;&lt;30)
 DECL|macro|_MACH_prep
 mdefine_line|#define _MACH_prep     1
 DECL|macro|_MACH_Pmac
-mdefine_line|#define _MACH_Pmac     2 /* pmac or pmac clone (non-chrp) */
+mdefine_line|#define _MACH_Pmac     2  /* pmac or pmac clone (non-chrp) */
 DECL|macro|_MACH_chrp
-mdefine_line|#define _MACH_chrp     4 /* chrp machine */
+mdefine_line|#define _MACH_chrp     4  /* chrp machine */
 DECL|macro|_MACH_mbx
-mdefine_line|#define _MACH_mbx      8 /* Motorola MBX board */
+mdefine_line|#define _MACH_mbx      8  /* Motorola MBX board */
 DECL|macro|_MACH_apus
-mdefine_line|#define _MACH_apus    16 /* amiga with phase5 powerup */
+mdefine_line|#define _MACH_apus    16  /* amiga with phase5 powerup */
 DECL|macro|_MACH_fads
-mdefine_line|#define _MACH_fads    32 /* Motorola FADS board */
+mdefine_line|#define _MACH_fads    32  /* Motorola FADS board */
+DECL|macro|_MACH_rpxlite
+mdefine_line|#define _MACH_rpxlite 64  /* RPCG RPX-Lite 8xx board */
+DECL|macro|_MACH_bseip
+mdefine_line|#define _MACH_bseip   128 /* Bright Star Engineering ip-Engine */
+DECL|macro|_MACH_yk
+mdefine_line|#define _MACH_yk      256 /* Motorola Yellowknife */
 multiline_comment|/* see residual.h for these */
 DECL|macro|_PREP_Motorola
 mdefine_line|#define _PREP_Motorola 0x01  /* motorola prep */
@@ -115,11 +121,28 @@ DECL|macro|_PREP_IBM
 mdefine_line|#define _PREP_IBM      0x00  /* ibm prep */
 DECL|macro|_PREP_Bull
 mdefine_line|#define _PREP_Bull     0x03  /* bull prep */
+DECL|macro|_PREP_Radstone
+mdefine_line|#define _PREP_Radstone 0x04  /* Radstone Technology PLC prep */
+multiline_comment|/*&n; * Radstone board types&n; */
+DECL|macro|RS_SYS_TYPE_PPC1
+mdefine_line|#define RS_SYS_TYPE_PPC1   0
+DECL|macro|RS_SYS_TYPE_PPC2
+mdefine_line|#define RS_SYS_TYPE_PPC2   1
+DECL|macro|RS_SYS_TYPE_PPC1a
+mdefine_line|#define RS_SYS_TYPE_PPC1a  2
+DECL|macro|RS_SYS_TYPE_PPC2a
+mdefine_line|#define RS_SYS_TYPE_PPC2a  3
+DECL|macro|RS_SYS_TYPE_PPC4
+mdefine_line|#define RS_SYS_TYPE_PPC4   4
+DECL|macro|RS_SYS_TYPE_PPC4a
+mdefine_line|#define RS_SYS_TYPE_PPC4a  5
+DECL|macro|RS_SYS_TYPE_PPC2ep
+mdefine_line|#define RS_SYS_TYPE_PPC2ep 6
 multiline_comment|/* these are arbitrary */
 DECL|macro|_CHRP_Motorola
 mdefine_line|#define _CHRP_Motorola 0x04  /* motorola chrp, the cobra */
 DECL|macro|_CHRP_IBM
-mdefine_line|#define _CHRP_IBM     0x05   /* IBM chrp, the longtrail and longtrail 2 */
+mdefine_line|#define _CHRP_IBM      0x05  /* IBM chrp, the longtrail and longtrail 2 */
 DECL|macro|_GLOBAL
 mdefine_line|#define _GLOBAL(n)&bslash;&n;&t;.globl n;&bslash;&n;n:
 DECL|macro|TBRU
@@ -358,6 +381,24 @@ multiline_comment|/* what kind of prep workstation we are */
 r_extern
 r_int
 id|_prep_type
+suffix:semicolon
+multiline_comment|/*&n; * This is used to identify the board type from a given PReP board&n; * vendor. Board revision is also made available.&n; */
+r_extern
+r_int
+r_char
+id|ucSystemType
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|ucBoardRev
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|ucBoardRevMaj
+comma
+id|ucBoardRevMin
 suffix:semicolon
 r_struct
 id|task_struct

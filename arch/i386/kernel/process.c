@@ -916,7 +916,9 @@ id|pg0
 l_int|0
 )braket
 op_assign
-l_int|7
+id|_PAGE_RW
+op_or
+id|_PAGE_PRESENT
 suffix:semicolon
 multiline_comment|/*&n;&t; * Use `swapper_pg_dir&squot; as our page directory.  We bother with&n;&t; * `SET_PAGE_DIR&squot; because although might be rebooting, but if we change&n;&t; * the way we set root page dir in the future, then we wont break a&n;&t; * seldom used feature ;)&n;&t; */
 id|SET_PAGE_DIR

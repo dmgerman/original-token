@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.24 1998/11/08 11:15:24 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.25 1999/02/08 07:01:48 ecd Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4146,6 +4146,24 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|queue
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;pcimouse_init: kmalloc(aux_queue) failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -4159,16 +4177,6 @@ op_star
 id|queue
 )paren
 )paren
-suffix:semicolon
-id|queue-&gt;head
-op_assign
-id|queue-&gt;tail
-op_assign
-l_int|0
-suffix:semicolon
-id|queue-&gt;proc_list
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond

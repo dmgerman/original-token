@@ -171,7 +171,7 @@ r_char
 op_star
 id|sparc_cpu_type
 (braket
-id|NR_CPUS
+l_int|64
 )braket
 op_assign
 (brace
@@ -189,7 +189,7 @@ r_char
 op_star
 id|sparc_fpu_type
 (braket
-id|NR_CPUS
+l_int|64
 )braket
 op_assign
 (brace
@@ -208,7 +208,7 @@ r_char
 op_star
 id|sparc_cpu_type
 (braket
-id|NR_CPUS
+l_int|64
 )braket
 op_assign
 (brace
@@ -221,7 +221,7 @@ r_char
 op_star
 id|sparc_fpu_type
 (braket
-id|NR_CPUS
+l_int|64
 )braket
 op_assign
 (brace

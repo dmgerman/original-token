@@ -2015,6 +2015,15 @@ id|kdev_t
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * CompactFlash cards and their brethern pretend to be removable hard disks,&n; * but they never have a slave unit, and they don&squot;t have doorlock mechanisms.&n; * This test catches them, and is invoked elsewhere when setting appropriate config bits.&n; */
+r_int
+id|drive_is_flashcard
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
 r_int
 id|ide_spin_wait_hwgroup
 c_func

@@ -3068,5 +3068,7 @@ mdefine_line|#define module_unmap    vfree
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(0)
+DECL|macro|kern_addr_valid
+mdefine_line|#define kern_addr_valid(addr)&t;(1)
 macro_line|#endif /* _M68K_PGTABLE_H */
 eof

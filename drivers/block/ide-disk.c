@@ -3493,20 +3493,21 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* check for removable disks (eg. SYQUEST), ignore &squot;WD&squot; drives */
+multiline_comment|/*&n;&t; * CompactFlash cards and their brethern look just like hard drives&n;&t; * to us, but they are removable and don&squot;t have a doorlock mechanism.&n;&t; */
 r_if
 c_cond
 (paren
-id|id-&gt;config
-op_amp
+id|drive-&gt;removable
+op_logical_and
+op_logical_neg
+id|drive_is_flashcard
+c_func
 (paren
-l_int|1
-op_lshift
-l_int|7
+id|drive
 )paren
 )paren
 (brace
-multiline_comment|/* removable disk ? */
+multiline_comment|/*&n;&t;&t; * Removable disks (eg. SYQUEST); ignore &squot;WD&squot; drives &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3525,10 +3526,6 @@ op_ne
 l_char|&squot;D&squot;
 )paren
 (brace
-id|drive-&gt;removable
-op_assign
-l_int|1
-suffix:semicolon
 id|drive-&gt;doorlocking
 op_assign
 l_int|1
@@ -4117,37 +4114,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* SunDisk drives: ignore &quot;second&quot; drive;   can mess up non-Sun systems!  FIXME */
-r_struct
-id|hd_driveid
-op_star
-id|id
-op_assign
-id|drive-&gt;id
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|id
-op_logical_and
-id|id-&gt;model
-(braket
-l_int|0
-)braket
-op_eq
-l_char|&squot;S&squot;
-op_logical_and
-id|id-&gt;model
-(braket
-l_int|1
-)braket
-op_eq
-l_char|&squot;u&squot;
-op_logical_and
-id|drive-&gt;select.b.unit
-)paren
-r_continue
-suffix:semicolon
 r_if
 c_cond
 (paren

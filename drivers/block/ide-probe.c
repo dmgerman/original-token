@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-probe.c&t;Version 1.03  Dec  5, 1997&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-probe.c&t;Version 1.04  March 10, 1999&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; * Version 1.04&t;&t;fixed buggy treatments of known flash memory cards&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -20,6 +20,84 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
+multiline_comment|/*&n; * CompactFlash cards and their brethern pretend to be removable hard disks, except:&n; *&t;(1) they never have a slave unit, and&n; *&t;(2) they don&squot;t have doorlock mechanisms.&n; * This test catches them, and is invoked elsewhere when setting appropriate config bits.&n; *&n; * FIXME: This treatment is probably applicable for *all* PCMCIA (PC CARD) devices,&n; * so in linux 2.3.x we should change this to just treat all PCMCIA drives this way,&n; * and get rid of the model-name tests below (too big of an interface change for 2.2.x).&n; * At that time, we might also consider parameterizing the timeouts and retries,&n; * since these are MUCH faster than mechanical drives.&t;-M.Lord&n; */
+DECL|function|drive_is_flashcard
+r_int
+id|drive_is_flashcard
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+r_struct
+id|hd_driveid
+op_star
+id|id
+op_assign
+id|drive-&gt;id
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;removable
+op_logical_and
+id|id
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;KODAK ATA_FLASH&quot;
+comma
+l_int|15
+)paren
+multiline_comment|/* Kodak */
+op_logical_or
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;Hitachi CV&quot;
+comma
+l_int|10
+)paren
+multiline_comment|/* Hitachi */
+op_logical_or
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;SunDisk SDCFB&quot;
+comma
+l_int|13
+)paren
+)paren
+multiline_comment|/* SunDisk */
+(brace
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* yes, it is a flash memory card */
+)brace
+)brace
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* no, it is not a flash memory card */
+)brace
 DECL|function|do_identify
 r_static
 r_inline
@@ -269,47 +347,6 @@ id|drive-&gt;present
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * Prevent long system lockup probing later for non-existant&n;&t; * slave drive if the hwif is actually a Kodak CompactFlash card.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
-c_func
-(paren
-id|id-&gt;model
-comma
-l_string|&quot;KODAK ATA_FLASH&quot;
-)paren
-)paren
-(brace
-id|ide_drive_t
-op_star
-id|mate
-op_assign
-op_amp
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|drives
-(braket
-l_int|1
-op_xor
-id|drive-&gt;select.b.unit
-)braket
-suffix:semicolon
-id|mate-&gt;present
-op_assign
-l_int|0
-suffix:semicolon
-id|mate-&gt;noprobe
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Check for an ATAPI device&n;&t; */
 r_if
 c_cond
@@ -516,6 +553,60 @@ op_assign
 id|type
 suffix:semicolon
 r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Not an ATAPI device: looks like a &quot;regular&quot; hard disk&n;&t; */
+r_if
+c_cond
+(paren
+id|id-&gt;config
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|7
+)paren
+)paren
+id|drive-&gt;removable
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t; * Prevent long system lockup probing later for non-existant&n;&t; * slave drive if the hwif is actually a flash memory card of some variety:&n;&t; */
+r_if
+c_cond
+(paren
+id|drive_is_flashcard
+c_func
+(paren
+id|drive
+)paren
+)paren
+(brace
+id|ide_drive_t
+op_star
+id|mate
+op_assign
+op_amp
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|drives
+(braket
+l_int|1
+op_xor
+id|drive-&gt;select.b.unit
+)braket
+suffix:semicolon
+id|mate-&gt;present
+op_assign
+l_int|0
+suffix:semicolon
+id|mate-&gt;noprobe
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|drive-&gt;media

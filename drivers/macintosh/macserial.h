@@ -84,35 +84,35 @@ DECL|macro|ZILOG_CLOSING_WAIT_NONE
 mdefine_line|#define ZILOG_CLOSING_WAIT_NONE&t;65535
 multiline_comment|/*&n; * Definitions for ZILOG_struct (and serial_struct) flags field&n; */
 DECL|macro|ZILOG_HUP_NOTIFY
-mdefine_line|#define ZILOG_HUP_NOTIFY 0x0001 /* Notify getty on hangups and closes &n;&t;&t;&t;&t;   on the callout port */
+mdefine_line|#define ZILOG_HUP_NOTIFY&t;0x0001&t;/* Notify getty on hangups and closes &n;&t;&t;&t;&t;   &t; * on the callout port */
 DECL|macro|ZILOG_FOURPORT
-mdefine_line|#define ZILOG_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
+mdefine_line|#define ZILOG_FOURPORT &t;&t;0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
 DECL|macro|ZILOG_SAK
-mdefine_line|#define ZILOG_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) */
+mdefine_line|#define ZILOG_SAK&t;&t;0x0004&t;/* Secure Attention Key (Orange book) */
 DECL|macro|ZILOG_SPLIT_TERMIOS
-mdefine_line|#define ZILOG_SPLIT_TERMIOS 0x0008 /* Separate termios for dialin/callout */
+mdefine_line|#define ZILOG_SPLIT_TERMIOS&t;0x0008&t;/* Separate termios for dialin/callout */
 DECL|macro|ZILOG_SPD_MASK
-mdefine_line|#define ZILOG_SPD_MASK&t;0x0030
+mdefine_line|#define ZILOG_SPD_MASK&t;&t;0x0030
 DECL|macro|ZILOG_SPD_HI
-mdefine_line|#define ZILOG_SPD_HI&t;0x0010&t;/* Use 56000 instead of 38400 bps */
+mdefine_line|#define ZILOG_SPD_HI&t;&t;0x0010&t;/* Use 56000 instead of 38400 bps */
 DECL|macro|ZILOG_SPD_VHI
-mdefine_line|#define ZILOG_SPD_VHI&t;0x0020  /* Use 115200 instead of 38400 bps */
+mdefine_line|#define ZILOG_SPD_VHI&t;&t;0x0020  /* Use 115200 instead of 38400 bps */
 DECL|macro|ZILOG_SPD_CUST
-mdefine_line|#define ZILOG_SPD_CUST&t;0x0030  /* Use user-specified divisor */
+mdefine_line|#define ZILOG_SPD_CUST&t;&t;0x0030  /* Use user-specified divisor */
 DECL|macro|ZILOG_SKIP_TEST
-mdefine_line|#define ZILOG_SKIP_TEST&t;0x0040 /* Skip UART test during autoconfiguration */
+mdefine_line|#define ZILOG_SKIP_TEST&t;&t;0x0040&t;/* Skip UART test during autoconfiguration */
 DECL|macro|ZILOG_AUTO_IRQ
-mdefine_line|#define ZILOG_AUTO_IRQ  0x0080 /* Do automatic IRQ during autoconfiguration */
+mdefine_line|#define ZILOG_AUTO_IRQ &t;&t;0x0080&t;/* Do automatic IRQ during autoconfiguration */
 DECL|macro|ZILOG_SESSION_LOCKOUT
-mdefine_line|#define ZILOG_SESSION_LOCKOUT 0x0100 /* Lock out cua opens based on session */
+mdefine_line|#define ZILOG_SESSION_LOCKOUT&t;0x0100&t;/* Lock out cua opens based on session */
 DECL|macro|ZILOG_PGRP_LOCKOUT
-mdefine_line|#define ZILOG_PGRP_LOCKOUT    0x0200 /* Lock out cua opens based on pgrp */
+mdefine_line|#define ZILOG_PGRP_LOCKOUT&t;0x0200&t;/* Lock out cua opens based on pgrp */
 DECL|macro|ZILOG_CALLOUT_NOHUP
-mdefine_line|#define ZILOG_CALLOUT_NOHUP   0x0400 /* Don&squot;t do hangups for cua device */
+mdefine_line|#define ZILOG_CALLOUT_NOHUP&t;0x0400&t;/* Don&squot;t do hangups for cua device */
 DECL|macro|ZILOG_FLAGS
-mdefine_line|#define ZILOG_FLAGS&t;0x0FFF&t;/* Possible legal ZILOG flags */
+mdefine_line|#define ZILOG_FLAGS&t;&t;0x0FFF&t;/* Possible legal ZILOG flags */
 DECL|macro|ZILOG_USR_MASK
-mdefine_line|#define ZILOG_USR_MASK 0x0430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
+mdefine_line|#define ZILOG_USR_MASK&t;&t;0x0430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t;&t; * users can set or reset */
 multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
 DECL|macro|ZILOG_INITIALIZED
 mdefine_line|#define ZILOG_INITIALIZED&t;0x80000000 /* Serial port was initialized */
@@ -131,6 +131,9 @@ mdefine_line|#define ZILOG_CHECK_CD&t;&t;0x02000000 /* i.e., CLOCAL */
 multiline_comment|/* Software state per channel */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
+r_struct
+id|mac_serial
+suffix:semicolon
 DECL|struct|mac_zschannel
 r_struct
 id|mac_zschannel
@@ -152,6 +155,13 @@ suffix:semicolon
 DECL|member|lock
 id|spinlock_t
 id|lock
+suffix:semicolon
+multiline_comment|/* Used for debugging */
+DECL|member|parent
+r_struct
+id|mac_serial
+op_star
+id|parent
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -216,6 +226,11 @@ r_char
 id|is_cobalt_modem
 suffix:semicolon
 multiline_comment|/* is a gatwick-based cobalt modem */
+DECL|member|is_pwbk_ir
+r_char
+id|is_pwbk_ir
+suffix:semicolon
+multiline_comment|/* is connected to an IR led on powerbooks */
 DECL|member|tx_active
 r_int
 r_char

@@ -85,6 +85,12 @@ id|node_str
 )paren
 )paren
 suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Booting Linux...&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -116,18 +122,8 @@ c_func
 id|prom_root_node
 )paren
 suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;root child is %08lx&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|scan
-)paren
-suffix:semicolon
+multiline_comment|/* One can look it up in PROM instead */
+multiline_comment|/* prom_printf(&quot;root child is %08lx&bslash;n&quot;, (unsigned long) scan); */
 r_while
 c_loop
 (paren
@@ -211,7 +207,8 @@ id|mid
 op_assign
 id|thismid
 suffix:semicolon
-id|prom_printf
+multiline_comment|/* prom_printf(&quot;Found CPU %d &lt;node=%08lx,mid=%d&gt;&bslash;n&quot;, linux_num_cpus, (unsigned long) scan, thismid); */
+id|printk
 c_func
 (paren
 l_string|&quot;Found CPU %d &lt;node=%08lx,mid=%d&gt;&bslash;n&quot;
@@ -232,7 +229,6 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -363,7 +359,8 @@ id|mid
 op_assign
 id|thismid
 suffix:semicolon
-id|prom_printf
+multiline_comment|/* prom_printf(&quot;Found CPU %d &lt;node=%08lx,mid=%d&gt;&bslash;n&quot;, &n;&t;&t;&t;&t;&t;&t;&t;       linux_num_cpus, (unsigned long) node, thismid); */
+id|printk
 c_func
 (paren
 l_string|&quot;Found CPU %d &lt;node=%08lx,mid=%d&gt;&bslash;n&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.82 1998/10/19 21:52:23 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.89 1999/01/19 07:54:39 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -57,7 +57,8 @@ l_int|0
 suffix:semicolon
 id|current-&gt;counter
 op_assign
-l_int|0
+op_minus
+l_int|100
 suffix:semicolon
 r_for
 c_loop
@@ -66,19 +67,13 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|check_pgt_cache
-c_func
-(paren
-)paren
-suffix:semicolon
-id|run_task_queue
-c_func
-(paren
-op_amp
-id|tq_scheduler
-)paren
-suffix:semicolon
+multiline_comment|/* If current-&gt;need_resched is zero we should really&n;&t;&t; * setup for a system wakup event and execute a shutdown&n;&t;&t; * instruction.&n;&t;&t; *&n;&t;&t; * But this requires writing back the contents of the&n;&t;&t; * L2 cache etc. so implement this later. -DaveM&n;&t;&t; */
 id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+id|check_pgt_cache
 c_func
 (paren
 )paren
@@ -90,6 +85,10 @@ suffix:semicolon
 )brace
 macro_line|#else
 multiline_comment|/*&n; * the idle loop on a UltraMultiPenguin...&n; */
+DECL|macro|idle_me_harder
+mdefine_line|#define idle_me_harder()&t;(cpu_data[current-&gt;processor].idle_volume += 1)
+DECL|macro|unidle_me
+mdefine_line|#define unidle_me()&t;&t;(cpu_data[current-&gt;processor].idle_volume = 0)
 DECL|function|cpu_idle
 id|asmlinkage
 r_int
@@ -103,70 +102,51 @@ id|current-&gt;priority
 op_assign
 l_int|0
 suffix:semicolon
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
 r_while
 c_loop
 (paren
 l_int|1
 )paren
 (brace
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
-id|check_pgt_cache
-c_func
-(paren
-)paren
-suffix:semicolon
-id|run_task_queue
-c_func
-(paren
-op_amp
-id|tq_scheduler
-)paren
-suffix:semicolon
-id|current-&gt;counter
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|current-&gt;need_resched
 op_ne
 l_int|0
-op_logical_or
-(paren
-(paren
-id|p
-op_assign
-id|init_task.next_run
 )paren
-op_ne
-l_int|NULL
-op_logical_and
-(paren
-id|p-&gt;processor
-op_eq
-id|smp_processor_id
+(brace
+id|unidle_me
 c_func
 (paren
 )paren
-op_logical_or
-(paren
-id|p-&gt;tss.flags
-op_amp
-id|SPARC_FLAG_NEWCHILD
-)paren
-op_ne
-l_int|0
-)paren
-)paren
-)paren
+suffix:semicolon
 id|schedule
 c_func
 (paren
+)paren
+suffix:semicolon
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|idle_me_harder
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* The store ordering is so that IRQ handlers on&n;&t;&t; * other cpus see our increasing idleness for the buddy&n;&t;&t; * redistribution algorithm.  -DaveM&n;&t;&t; */
+id|membar
+c_func
+(paren
+l_string|&quot;#StoreStore | #StoreLoad&quot;
 )paren
 suffix:semicolon
 )brace
@@ -490,8 +470,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;l0: %016x l1: %016x l2: %016x l3: %016x&bslash;n&quot;
-l_string|&quot;l4: %016x l5: %016x l6: %016x l7: %016x&bslash;n&quot;
+l_string|&quot;l0: %08x l1: %08x l2: %08x l3: %08x &quot;
+l_string|&quot;l4: %08x l5: %08x l6: %08x l7: %08x&bslash;n&quot;
 comma
 id|rw-&gt;locals
 (braket
@@ -537,8 +517,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;i0: %016x i1: %016x i2: %016x i3: %016x&bslash;n&quot;
-l_string|&quot;i4: %016x i5: %016x i6: %016x i7: %016x&bslash;n&quot;
+l_string|&quot;i0: %08x i1: %08x i2: %08x i3: %08x &quot;
+l_string|&quot;i4: %08x i5: %08x i6: %08x i7: %08x&bslash;n&quot;
 comma
 id|rw-&gt;ins
 (braket
@@ -1752,7 +1732,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;g0: %08x g1: %08x g2: %08x g3: %08x&bslash;n&quot;
+l_string|&quot;g0: %08x g1: %08x g2: %08x g3: %08x &quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -1804,7 +1784,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;o0: %08x o1: %08x o2: %08x o3: %08x&bslash;n&quot;
+l_string|&quot;o0: %08x o1: %08x o2: %08x o3: %08x &quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -2153,25 +2133,10 @@ op_complement
 id|SPARC_FLAG_KTHREAD
 suffix:semicolon
 multiline_comment|/* exec_mmap() set context to NO_CONTEXT, here is&n;&t;&t; * where we grab a new one.&n;&t;&t; */
-id|current-&gt;mm-&gt;cpu_vm_mask
-op_assign
-l_int|0
-suffix:semicolon
 id|activate_context
 c_func
 (paren
 id|current
-)paren
-suffix:semicolon
-id|current-&gt;mm-&gt;cpu_vm_mask
-op_assign
-(paren
-l_int|1UL
-op_lshift
-id|smp_processor_id
-c_func
-(paren
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3202,6 +3167,105 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This is the mechanism for creating a new kernel thread.&n; *&n; * NOTE! Only a kernel-only process(ie the swapper or direct descendants&n; * who haven&squot;t done an &quot;execve()&quot;) should use this: it will work within&n; * a system call from a &quot;real&quot; process, but the process memory space will&n; * not be free&squot;d until both the parent and the child have exited.&n; */
+DECL|function|kernel_thread
+id|pid_t
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile
+c_func
+(paren
+l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;mov %2, %%o0&bslash;n&bslash;t&quot;
+multiline_comment|/* Clone flags. */
+l_string|&quot;mov 0, %%o1&bslash;n&bslash;t&quot;
+multiline_comment|/* usp arg == 0 */
+l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
+multiline_comment|/* Linux/Sparc clone(). */
+l_string|&quot;brz,a,pn %%o1, 1f&bslash;n&bslash;t&quot;
+multiline_comment|/* Parent, just return. */
+l_string|&quot; mov %%o0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;jmpl %4, %%o7&bslash;n&bslash;t&quot;
+multiline_comment|/* Call the function. */
+l_string|&quot; mov %5, %%o0&bslash;n&bslash;t&quot;
+multiline_comment|/* Set arg in delay. */
+l_string|&quot;mov %3, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
+multiline_comment|/* Linux/Sparc exit(). */
+multiline_comment|/* Notreached by child. */
+l_string|&quot;1:&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|__NR_clone
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|flags
+op_or
+id|CLONE_VM
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|__NR_exit
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fn
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|arg
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;o0&quot;
+comma
+l_string|&quot;o1&quot;
+comma
+l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the user structure for a core dump..&n; */

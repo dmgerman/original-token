@@ -410,6 +410,26 @@ id|unchar
 id|sreg2
 suffix:semicolon
 multiline_comment|/* Copy of HME status2 register */
+multiline_comment|/* To save register writes to the ESP, which can be expensive, we&n;   * keep track of the previous value that various registers had for&n;   * the last target we connected to.  If they are the same for the&n;   * current target, we skip the register writes as they are not needed.&n;   */
+DECL|member|prev_soff
+DECL|member|prev_stp
+DECL|member|prev_cfg3
+DECL|member|__cache_pad
+id|unchar
+id|prev_soff
+comma
+id|prev_stp
+comma
+id|prev_cfg3
+comma
+id|__cache_pad
+suffix:semicolon
+multiline_comment|/* We also keep a cache of the previous FAS/HME DMA CSR register value.  */
+DECL|member|prev_hme_dmacsr
+r_int
+r_int
+id|prev_hme_dmacsr
+suffix:semicolon
 multiline_comment|/* The HME is the biggest piece of shit I have ever seen. */
 DECL|member|hme_fifo_workaround_buffer
 id|unchar
@@ -424,6 +444,38 @@ multiline_comment|/* 16-bit/entry fifo for wide scsi */
 DECL|member|hme_fifo_workaround_count
 id|unchar
 id|hme_fifo_workaround_count
+suffix:semicolon
+multiline_comment|/* For each target we keep track of save/restore data&n;   * pointer information.  This needs to be updated majorly&n;   * when we add support for tagged queueing.  -DaveM&n;   */
+DECL|struct|esp_pointers
+r_struct
+id|esp_pointers
+(brace
+DECL|member|saved_ptr
+r_char
+op_star
+id|saved_ptr
+suffix:semicolon
+DECL|member|saved_buffer
+r_struct
+id|scatterlist
+op_star
+id|saved_buffer
+suffix:semicolon
+DECL|member|saved_this_residual
+r_int
+id|saved_this_residual
+suffix:semicolon
+DECL|member|saved_buffers_residual
+r_int
+id|saved_buffers_residual
+suffix:semicolon
+DECL|member|data_pointers
+)brace
+id|data_pointers
+(braket
+l_int|16
+)braket
+multiline_comment|/*XXX [MAX_TAGS_PER_TARGET]*/
 suffix:semicolon
 multiline_comment|/* Clock periods, frequencies, synchronization, etc. */
 DECL|member|cfreq
@@ -679,8 +731,8 @@ DECL|macro|ESP_CONFIG3_FSCSI
 mdefine_line|#define ESP_CONFIG3_FSCSI     0x10             /* Enable FAST SCSI     (esp/fas236)  */
 DECL|macro|ESP_CONFIG3_GTM
 mdefine_line|#define ESP_CONFIG3_GTM       0x20             /* group2 SCSI2 support (esp/fas236)  */
-DECL|macro|ESP_CONFIG3_BIGID
-mdefine_line|#define ESP_CONFIG3_BIGID     0x20             /* SCSI-ID&squot;s are 4bits  (hme)         */
+DECL|macro|ESP_CONFIG3_IDBIT3
+mdefine_line|#define ESP_CONFIG3_IDBIT3    0x20             /* Bit 3 of HME SCSI-ID (hme)         */
 DECL|macro|ESP_CONFIG3_TBMS
 mdefine_line|#define ESP_CONFIG3_TBMS      0x40             /* Three-byte msg&squot;s ok  (esp/fas236)  */
 DECL|macro|ESP_CONFIG3_EWIDE

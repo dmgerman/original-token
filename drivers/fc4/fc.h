@@ -1,20 +1,25 @@
-multiline_comment|/* fc.h: Definitions for Fibre Channel Physical and Signaling Interface.&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; */
+multiline_comment|/* fc.h: Definitions for Fibre Channel Physical and Signaling Interface.&n; *&n; * Copyright (C) 1996-1997,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; */
 macro_line|#ifndef __FC_H
 DECL|macro|__FC_H
 mdefine_line|#define __FC_H
 multiline_comment|/* World Wide Name */
 DECL|macro|NAAID_IEEE
-mdefine_line|#define NAAID_IEEE&t;1
+mdefine_line|#define NAAID_IEEE&t;&t;1
 DECL|macro|NAAID_IEEE_EXT
-mdefine_line|#define NAAID_IEEE_EXT&t;2
+mdefine_line|#define NAAID_IEEE_EXT&t;&t;2
 DECL|macro|NAAID_LOCAL
-mdefine_line|#define NAAID_LOCAL&t;3
+mdefine_line|#define NAAID_LOCAL&t;&t;3
 DECL|macro|NAAID_IP
-mdefine_line|#define NAAID_IP&t;4
+mdefine_line|#define NAAID_IP&t;&t;4
+DECL|macro|NAAID_IEEE_REG
+mdefine_line|#define NAAID_IEEE_REG&t;&t;5
+DECL|macro|NAAID_IEEE_REG_EXT
+mdefine_line|#define NAAID_IEEE_REG_EXT&t;6
 DECL|macro|NAAID_CCITT
-mdefine_line|#define NAAID_CCITT&t;12
+mdefine_line|#define NAAID_CCITT&t;&t;12
 DECL|macro|NAAID_CCITT_GRP
-mdefine_line|#define NAAID_CCITT_GRP&t;14
+mdefine_line|#define NAAID_CCITT_GRP&t;&t;14
+multiline_comment|/* This is NAAID_IEEE_EXT scheme */
 r_typedef
 r_struct
 (brace
@@ -349,6 +354,8 @@ DECL|macro|LS_RJT
 mdefine_line|#define LS_RJT&t;&t;&t;0x01000000
 DECL|macro|LS_ACC
 mdefine_line|#define LS_ACC&t;&t;&t;0x02000000
+DECL|macro|LS_PRLI_ACC
+mdefine_line|#define LS_PRLI_ACC&t;&t;0x02100014
 DECL|macro|LS_PLOGI
 mdefine_line|#define LS_PLOGI&t;&t;0x03000000
 DECL|macro|LS_FLOGI
@@ -383,8 +390,16 @@ DECL|macro|LS_RRQ
 mdefine_line|#define LS_RRQ&t;&t;&t;0x12000000
 DECL|macro|LS_IDENT
 mdefine_line|#define LS_IDENT&t;&t;0x20000000
+DECL|macro|LS_PRLI
+mdefine_line|#define LS_PRLI&t;&t;&t;0x20100014
 DECL|macro|LS_DISPLAY
 mdefine_line|#define LS_DISPLAY&t;&t;0x21000000
+DECL|macro|LS_PRLO
+mdefine_line|#define LS_PRLO&t;&t;&t;0x21100014
+DECL|macro|LS_PDISC
+mdefine_line|#define LS_PDISC&t;&t;0x50000000
+DECL|macro|LS_ADISC
+mdefine_line|#define LS_ADISC&t;&t;0x52000000
 r_typedef
 r_struct
 (brace

@@ -124,6 +124,7 @@ macro_line|#endif
 r_typedef
 r_struct
 (brace
+macro_line|#if defined(__KERNEL__) || defined(__USE_ALL)
 DECL|member|val
 r_int
 id|val
@@ -131,10 +132,19 @@ id|val
 l_int|2
 )braket
 suffix:semicolon
+macro_line|#else /* !defined(__KERNEL__) &amp;&amp; !defined(__USE_ALL) */
+r_int
+id|__val
+(braket
+l_int|2
+)braket
+suffix:semicolon
+macro_line|#endif /* !defined(__KERNEL__) &amp;&amp; !defined(__USE_ALL) */
 DECL|typedef|__kernel_fsid_t
 )brace
 id|__kernel_fsid_t
 suffix:semicolon
+macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2)
 DECL|macro|__FD_SET
 macro_line|#undef __FD_SET
 DECL|function|__FD_SET
@@ -786,5 +796,6 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2) */
 macro_line|#endif /* !(__ARCH_SPARC_POSIX_TYPES_H) */
 eof

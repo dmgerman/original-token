@@ -187,6 +187,16 @@ mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_AMD7930
 DECL|macro|DEFAULT_CFG
 mdefine_line|#define DEFAULT_CFG {12,0x3e0,0,0}
 macro_line|#endif
+macro_line|#ifdef CONFIG_HISAX_DBRI
+DECL|macro|DEFAULT_CARD
+macro_line|#undef DEFAULT_CARD
+DECL|macro|DEFAULT_CFG
+macro_line|#undef DEFAULT_CFG
+DECL|macro|DEFAULT_CARD
+mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_DBRI
+DECL|macro|DEFAULT_CFG
+mdefine_line|#define DEFAULT_CFG {0,0x0,0,0}
+macro_line|#endif
 macro_line|#ifdef CONFIG_HISAX_NICCY
 DECL|macro|DEFAULT_CARD
 macro_line|#undef DEFAULT_CARD
@@ -1671,6 +1681,9 @@ id|ISDN_CTYPE_NETJET
 suffix:colon
 r_case
 id|ISDN_CTYPE_AMD7930
+suffix:colon
+r_case
+id|ISDN_CTYPE_DBRI
 suffix:colon
 r_break
 suffix:semicolon

@@ -337,6 +337,13 @@ c_func
 id|smp_invalidate_needed
 )paren
 suffix:semicolon
+DECL|variable|cpu_number_map
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cpu_number_map
+)paren
+suffix:semicolon
 DECL|variable|__cpu_logical_map
 id|EXPORT_SYMBOL
 c_func
@@ -349,6 +356,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|smp_num_cpus
+)paren
+suffix:semicolon
+DECL|variable|cpu_present_map
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cpu_present_map
+)paren
+suffix:semicolon
+DECL|variable|cpu_online_map
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cpu_online_map
 )paren
 suffix:semicolon
 multiline_comment|/* Global SMP irq stuff */

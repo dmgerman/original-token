@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.55 1998/11/17 07:43:17 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.59 1999/03/12 13:30:21 jj Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -43,6 +43,7 @@ macro_line|#include &lt;asm/rtc.h&gt;
 macro_line|#include &lt;asm/openpromio.h&gt;
 macro_line|#include &lt;asm/envctrl.h&gt;
 macro_line|#include &lt;asm/audioio.h&gt;
+macro_line|#include &lt;asm/ethtool.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 multiline_comment|/* Use this to get at 32-bit user passed pointers. &n;   See sys_sparc32.c for description about these. */
 DECL|macro|A
@@ -1220,6 +1221,9 @@ suffix:colon
 r_case
 id|SIOCGPPPVER
 suffix:colon
+r_case
+id|SIOCETHTOOL
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1268,6 +1272,79 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|SIOCETHTOOL
+)paren
+(brace
+id|u32
+id|data
+suffix:semicolon
+id|__get_user
+c_func
+(paren
+id|data
+comma
+op_amp
+(paren
+(paren
+(paren
+r_struct
+id|ifreq32
+op_star
+)paren
+id|arg
+)paren
+op_member_access_from_pointer
+id|ifr_ifru.ifru_data
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
+(paren
+id|ifr.ifr_data
+comma
+(paren
+r_char
+op_star
+)paren
+id|A
+c_func
+(paren
+id|data
+)paren
+comma
+r_sizeof
+(paren
+r_struct
+id|ethtool_cmd
+)paren
+)paren
+)paren
+(brace
+id|free_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|ifr.ifr_data
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+)brace
 r_break
 suffix:semicolon
 r_default
@@ -1380,6 +1457,9 @@ suffix:colon
 r_case
 id|SIOCGIFNETMASK
 suffix:colon
+r_case
+id|SIOCGIFTXQLEN
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1418,6 +1498,9 @@ suffix:colon
 r_case
 id|SIOCGPPPVER
 suffix:colon
+r_case
+id|SIOCETHTOOL
+suffix:colon
 (brace
 id|u32
 id|data
@@ -1445,6 +1528,23 @@ id|ifr_ifru.ifru_data
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|SIOCETHTOOL
+)paren
+(brace
+id|len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|ethtool_cmd
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1491,9 +1591,8 @@ r_struct
 id|ppp_stats
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|len
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -1511,11 +1610,28 @@ id|ifr.ifr_data
 comma
 id|len
 )paren
+suffix:semicolon
+id|free_page
+c_func
+(paren
+(paren
+r_int
+r_int
 )paren
+id|ifr.ifr_data
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+)paren
+(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -10356,6 +10472,15 @@ suffix:colon
 r_case
 id|SIOCGPPPVER
 suffix:colon
+r_case
+id|SIOCGIFTXQLEN
+suffix:colon
+r_case
+id|SIOCSIFTXQLEN
+suffix:colon
+r_case
+id|SIOCETHTOOL
+suffix:colon
 id|error
 op_assign
 id|dev_ifsioc
@@ -10841,7 +10966,7 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* List here exlicitly which ioctl&squot;s are known to have&n;&t; * compatable types passed or none at all...&n;&t; */
-multiline_comment|/* Bit T */
+multiline_comment|/* Big T */
 r_case
 id|TCGETA
 suffix:colon
@@ -10938,6 +11063,12 @@ id|TIOCGPGRP
 suffix:colon
 r_case
 id|TIOCSCTTY
+suffix:colon
+r_case
+id|TIOCGPTN
+suffix:colon
+r_case
+id|TIOCSPTLCK
 suffix:colon
 multiline_comment|/* Big F */
 r_case

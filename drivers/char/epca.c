@@ -43,7 +43,6 @@ macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#ifndef NEW_MODULES
@@ -76,7 +75,7 @@ macro_line|#include &lt;linux/epca.h&gt;
 macro_line|#include &lt;linux/epcaconfig.h&gt;
 multiline_comment|/* ---------------------- Begin defines ------------------------ */
 DECL|macro|VERSION
-mdefine_line|#define VERSION            &quot;1.1.0&quot;     
+mdefine_line|#define VERSION            &quot;1.3.0-K&quot;     
 multiline_comment|/* This major needs to be submitted to Linux to join the majors list */
 DECL|macro|DIGIINFOMAJOR
 mdefine_line|#define DIGIINFOMAJOR       35  /* For Digi specific ioctl */ 
@@ -5486,7 +5485,7 @@ id|pc_driver
 suffix:semicolon
 id|pc_info.name
 op_assign
-l_string|&quot;digiCtl&quot;
+l_string|&quot;digi_ctl&quot;
 suffix:semicolon
 id|pc_info.major
 op_assign
@@ -5495,6 +5494,10 @@ suffix:semicolon
 id|pc_info.minor_start
 op_assign
 l_int|0
+suffix:semicolon
+id|pc_info.num
+op_assign
+l_int|1
 suffix:semicolon
 id|pc_info.init_termios.c_cflag
 op_assign
@@ -7529,7 +7532,8 @@ id|ch
 suffix:semicolon
 )brace
 multiline_comment|/* End DATA_IND */
-r_else
+multiline_comment|/* else */
+multiline_comment|/* Fix for DCD transition missed bug */
 r_if
 c_cond
 (paren

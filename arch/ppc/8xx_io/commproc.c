@@ -256,7 +256,9 @@ id|CICR_SCA_SCC1
 op_or
 (paren
 (paren
-id|CPM_INTERRUPT
+(paren
+l_int|5
+)paren
 op_div
 l_int|2
 )paren
@@ -266,6 +268,7 @@ l_int|13
 op_or
 id|CICR_HP_MASK
 suffix:semicolon
+multiline_comment|/* I hard coded the CPM interrupt to 5 above&n;&t; * since the CPM_INTERRUPT define is relative to&n;&t; * the linux irq structure not what the hardware&n;&t; * belives. -- Cort&n;&t; */
 (paren
 (paren
 id|immap_t

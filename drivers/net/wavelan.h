@@ -32,6 +32,23 @@ l_int|0x6A
 )brace
 comma
 multiline_comment|/* AT&amp;T WaveLAN (alternate) */
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0xE1
+)brace
+comma
+multiline_comment|/* Hitachi Wavelan */
+(brace
+l_int|0x00
+comma
+l_int|0x60
+comma
+l_int|0x1D
+)brace
+multiline_comment|/* Lucent Wavelan (another one) */
 multiline_comment|/* Add your card here and send me the patch! */
 )brace
 suffix:semicolon
@@ -807,6 +824,8 @@ DECL|macro|MMR_DCE_STATUS_TX_BUSY
 mdefine_line|#define&t;MMR_DCE_STATUS_TX_BUSY&t;&t;0x04&t;/* transmitter on */
 DECL|macro|MMR_DCE_STATUS_JBR_EXPIRED
 mdefine_line|#define&t;MMR_DCE_STATUS_JBR_EXPIRED&t;0x08&t;/* jabber timer expired */
+DECL|macro|MMR_DCE_STATUS
+mdefine_line|#define MMR_DCE_STATUS&t;&t;&t;0x0F&t;/* mask to get the bits */
 DECL|member|mmr_dsp_id
 r_int
 r_char

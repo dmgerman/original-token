@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -32,14 +33,6 @@ macro_line|#include &lt;asm/pci-bridge.h&gt;
 r_extern
 r_void
 id|hydra_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|w83c553f_init
 c_func
 (paren
 r_void
@@ -81,11 +74,6 @@ id|empty_zero_page
 (braket
 l_int|1024
 )braket
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|aux_device_present
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 r_extern
@@ -254,6 +242,22 @@ comma
 id|model
 )paren
 suffix:semicolon
+multiline_comment|/* longtrail (goldengate) stuff */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|model
+comma
+l_string|&quot;IBM,LongTrail&quot;
+comma
+l_int|9
+)paren
+)paren
+(brace
 multiline_comment|/* VLSI VAS96011/12 `Golden Gate 2&squot; */
 multiline_comment|/* Memory banks */
 id|sdramen
@@ -500,6 +504,7 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
+)brace
 r_return
 id|len
 suffix:semicolon
@@ -784,10 +789,6 @@ id|loops_per_sec
 op_assign
 l_int|50000000
 suffix:semicolon
-id|aux_device_present
-op_assign
-l_int|0xaa
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* this is fine for chrp */
 id|initrd_below_start_ok
@@ -904,12 +905,60 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Mac I/O */
-id|w83c553f_init
+multiline_comment|/* Some IBM machines don&squot;t have the hydra -- Cort */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|OpenPIC
+)paren
+(brace
+id|OpenPIC
+op_assign
+(paren
+r_struct
+id|OpenPIC
+op_star
+)paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|get_property
 c_func
 (paren
+id|find_path_device
+c_func
+(paren
+l_string|&quot;/&quot;
+)paren
+comma
+l_string|&quot;platform-open-pic&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* PCI-ISA bridge and IDE */
+id|OpenPIC
+op_assign
+id|ioremap
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|OpenPIC
+comma
+r_sizeof
+(paren
+r_struct
+id|OpenPIC
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *  Fix the Super I/O configuration&n;&t; */
 id|sio_init
 c_func

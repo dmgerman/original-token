@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.122 1998/12/31 20:51:19 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.130 1999/03/11 01:45:15 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -22,6 +22,7 @@ macro_line|#include &lt;asm/amigappc.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#ifdef CONFIG_MBX
 macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/bootx.h&gt;
 multiline_comment|/* APUS defs */
@@ -71,6 +72,11 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* END APUS defs */
 r_extern
+id|boot_infos_t
+op_star
+id|boot_infos
+suffix:semicolon
+r_extern
 r_char
 id|cmd_line
 (braket
@@ -115,6 +121,7 @@ id|have_of
 suffix:semicolon
 macro_line|#endif /* ! CONFIG_MACH_SPECIFIC */
 multiline_comment|/* copy of the residual data */
+macro_line|#ifndef CONFIG_MBX
 DECL|variable|__prepdata
 r_int
 r_char
@@ -132,6 +139,24 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|variable|__res
+r_int
+r_char
+id|__res
+(braket
+r_sizeof
+(paren
+id|bd_t
+)paren
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|variable|res
 id|RESIDUAL
 op_star
@@ -148,10 +173,24 @@ DECL|variable|_prep_type
 r_int
 id|_prep_type
 suffix:semicolon
-r_extern
-id|boot_infos_t
-op_star
-id|boot_infos
+multiline_comment|/*&n; * This is used to identify the board type from a given PReP board&n; * vendor. Board revision is also made available.&n; */
+DECL|variable|ucSystemType
+r_int
+r_char
+id|ucSystemType
+suffix:semicolon
+DECL|variable|ucBoardRev
+r_int
+r_char
+id|ucBoardRev
+suffix:semicolon
+DECL|variable|ucBoardRevMaj
+DECL|variable|ucBoardRevMin
+r_int
+r_char
+id|ucBoardRevMaj
+comma
+id|ucBoardRevMin
 suffix:semicolon
 multiline_comment|/*&n; * Perhaps we can put the pmac screen_info[] here&n; * on pmac as well so we don&squot;t need the ifdef&squot;s.&n; * Until we get multiple-console support in here&n; * that is.  -- Cort&n; */
 macro_line|#ifndef CONFIG_MBX
@@ -282,25 +321,14 @@ id|cmd
 )paren
 (brace
 macro_line|#ifndef CONFIG_MBX
-r_struct
-id|adb_request
-id|req
-suffix:semicolon
 r_int
 r_int
 id|flags
 suffix:semicolon
-r_int
-r_int
-id|i
-op_assign
-l_int|10000
+r_struct
+id|adb_request
+id|req
 suffix:semicolon
-macro_line|#if 0
-r_int
-id|err
-suffix:semicolon
-macro_line|#endif&t;
 r_switch
 c_cond
 (paren
@@ -368,7 +396,7 @@ r_case
 id|_MACH_chrp
 suffix:colon
 macro_line|#if 0&t;&t;/* RTAS doesn&squot;t seem to work on Longtrail.&n;&t;&t;   For now, do it the same way as the PReP. */
-multiline_comment|/*err = call_rtas(&quot;system-reboot&quot;, 0, 1, NULL);&n;&t;&t;printk(&quot;RTAS system-reboot returned %d&bslash;n&quot;, err);&n;&t;&t;for (;;);*/
+multiline_comment|/*err = call_rtas(&quot;system-reboot&quot;, 0, 1, NULL);&n;&t;&t;  printk(&quot;RTAS system-reboot returned %d&bslash;n&quot;, err);&n;&t;&t;  for (;;);*/
 (brace
 r_extern
 r_int
@@ -388,7 +416,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;rtas_entry: %08x rtas_data: %08x rtas_size: %08x&bslash;n&quot;
+l_string|&quot;rtas_ent`ry: %08x rtas_data: %08x rtas_size: %08x&bslash;n&quot;
 comma
 id|rtas_entry
 comma
@@ -456,21 +484,12 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|i
-op_ne
-l_int|0
-)paren
-id|i
-op_increment
-suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;restart failed&bslash;n&quot;
+l_int|1
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Not reached&n;&t;&t; */
 r_case
 id|_MACH_apus
 suffix:colon
@@ -540,17 +559,68 @@ suffix:semicolon
 macro_line|#else /* CONFIG_MBX */
 r_extern
 r_void
-id|MBX_gorom
+id|__clear_msr_me
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-id|MBX_gorom
+id|__volatile__
+r_int
+r_char
+id|dummy
+suffix:semicolon
+id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_clkrst.car_plprcr
+op_or_assign
+l_int|0x00000080
+suffix:semicolon
+id|__clear_msr_me
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dummy
+op_assign
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_clkrst.res
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Restart failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 macro_line|#endif /* CONFIG_MBX */
 )brace
 DECL|function|machine_power_off
@@ -700,10 +770,9 @@ suffix:semicolon
 )paren
 suffix:semicolon
 macro_line|#else /* CONFIG_MBX */
-id|machine_restart
+id|machine_halt
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_MBX */
@@ -1616,44 +1685,44 @@ comma
 l_string|&quot;zero pages&bslash;t: total %lu (%luKb) &quot;
 l_string|&quot;current: %lu (%luKb) hits: %lu/%lu (%lu%%)&bslash;n&quot;
 comma
-id|quicklists.zerototal
+id|zero_cache_total
 comma
 (paren
-id|quicklists.zerototal
+id|zero_cache_total
 op_star
 id|PAGE_SIZE
 )paren
 op_rshift
 l_int|10
 comma
-id|quicklists.zero_sz
+id|zero_cache_sz
 comma
 (paren
-id|quicklists.zero_sz
+id|zero_cache_sz
 op_star
 id|PAGE_SIZE
 )paren
 op_rshift
 l_int|10
 comma
-id|quicklists.zeropage_hits
+id|zero_cache_hits
 comma
-id|quicklists.zeropage_calls
+id|zero_cache_calls
 comma
 multiline_comment|/* : 1 below is so we don&squot;t div by zero */
 (paren
-id|quicklists.zeropage_hits
+id|zero_cache_hits
 op_star
 l_int|100
 )paren
 op_div
 (paren
 (paren
-id|quicklists.zeropage_calls
+id|zero_cache_calls
 )paren
 ques
 c_cond
-id|quicklists.zeropage_calls
+id|zero_cache_calls
 suffix:colon
 l_int|1
 )paren
@@ -2243,11 +2312,6 @@ id|RESIDUAL
 )paren
 )paren
 suffix:semicolon
-id|setup_pci_ptrs
-c_func
-(paren
-)paren
-suffix:semicolon
 id|isa_io_base
 op_assign
 id|PREP_ISA_IO_BASE
@@ -2302,6 +2366,36 @@ op_assign
 id|_PREP_IBM
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|res-&gt;VitalProductData.PrintableModel
+comma
+l_string|&quot;Radstone&quot;
+comma
+l_int|8
+)paren
+)paren
+(brace
+r_extern
+r_char
+op_star
+id|Motherboard_map_name
+suffix:semicolon
+id|_prep_type
+op_assign
+id|_PREP_Radstone
+suffix:semicolon
+id|Motherboard_map_name
+op_assign
+id|res-&gt;VitalProductData.PrintableModel
+suffix:semicolon
+)brace
+r_else
 id|_prep_type
 op_assign
 id|_PREP_Motorola
@@ -2312,6 +2406,11 @@ multiline_comment|/* assume motorola if no residual (netboot?) */
 id|_prep_type
 op_assign
 id|_PREP_Motorola
+suffix:semicolon
+id|setup_pci_ptrs
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* take care of initrd if we have one */
@@ -2406,15 +2505,7 @@ id|KERNELBASE
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
-multiline_comment|/* isa_io_base set by setup_pci_ptrs() */
-id|isa_mem_base
-op_assign
-id|CHRP_ISA_MEM_BASE
-suffix:semicolon
-id|pci_dram_offset
-op_assign
-id|CHRP_PCI_DRAM_OFFSET
-suffix:semicolon
+multiline_comment|/* pci_dram_offset/isa_io_base/isa_mem_base set by setup_pci_ptrs() */
 macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
 id|ISA_DMA_THRESHOLD
 op_assign

@@ -73,9 +73,6 @@ l_int|0
 comma
 multiline_comment|/* FEATURE_BMac_IO_enable */
 l_int|0
-comma
-multiline_comment|/* FEATURE_Modem_PowerOn -&gt; guess...*/
-l_int|0
 multiline_comment|/* FEATURE_Modem_Reset -&gt; guess...*/
 )brace
 suffix:semicolon
@@ -140,9 +137,6 @@ l_int|0x60000000
 comma
 multiline_comment|/* FEATURE_BMac_IO_enable */
 l_int|0x02000000
-comma
-multiline_comment|/* FEATURE_Modem_PowerOn -&gt; guess...*/
-l_int|0x07000000
 multiline_comment|/* FEATURE_Modem_Reset -&gt; guess...*/
 )brace
 suffix:semicolon

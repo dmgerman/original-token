@@ -2605,6 +2605,12 @@ op_and_assign
 op_complement
 id|vol-&gt;umask
 suffix:semicolon
+id|insert_inode_hash
+c_func
+(paren
+id|r
+)paren
+suffix:semicolon
 id|d_instantiate
 c_func
 (paren
@@ -2921,6 +2927,12 @@ id|r-&gt;i_mode
 op_and_assign
 op_complement
 id|vol-&gt;umask
+suffix:semicolon
+id|insert_inode_hash
+c_func
+(paren
+id|r
+)paren
 suffix:semicolon
 id|d_instantiate
 c_func

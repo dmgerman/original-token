@@ -3,6 +3,9 @@ macro_line|#ifndef _LINUX_ASM_VGA_H_
 DECL|macro|_LINUX_ASM_VGA_H_
 mdefine_line|#define _LINUX_ASM_VGA_H_
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 DECL|macro|VT_BUF_HAVE_RW
 mdefine_line|#define VT_BUF_HAVE_RW
 DECL|function|scr_writew
@@ -20,6 +23,29 @@ op_star
 id|addr
 )paren
 (brace
+multiline_comment|/* If using vgacon (not fbcon) byteswap the writes.&n;&t; * If non-vgacon assume fbcon and don&squot;t byteswap&n;&t; * just like include/linux/vt_buffer.h.&n;&t; * XXX: this is a performance loss so get rid of it&n;&t; *      as soon as fbcon works on prep.&n;&t; * -- Cort&n;&t; */
+macro_line|#ifdef CONFIG_FB
+r_if
+c_cond
+(paren
+id|conswitchp
+op_ne
+op_amp
+id|vga_con
+)paren
+(paren
+op_star
+(paren
+id|addr
+)paren
+op_assign
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif /* CONFIG_FB */
 id|st_le16
 c_func
 (paren
@@ -42,10 +68,34 @@ op_star
 id|addr
 )paren
 (brace
+macro_line|#ifdef CONFIG_FB
+r_if
+c_cond
+(paren
+id|conswitchp
+op_ne
+op_amp
+id|vga_con
+)paren
+r_return
+(paren
+op_star
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif /* CONFIG_FB */
 r_return
 id|ld_le16
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|addr
 )paren
 suffix:semicolon

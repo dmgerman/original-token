@@ -2,7 +2,7 @@ multiline_comment|/* pluto.h: SparcSTORAGE Array SCSI host adapter driver defini
 macro_line|#ifndef _PLUTO_H
 DECL|macro|_PLUTO_H
 mdefine_line|#define _PLUTO_H
-macro_line|#include &quot;../fc4/fcp_scsi.h&quot;
+macro_line|#include &quot;../fc4/fcp_impl.h&quot;
 DECL|struct|pluto
 r_struct
 id|pluto

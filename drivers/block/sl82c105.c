@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -99,6 +100,7 @@ comma
 l_int|0x03e4
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_MBX
 id|pci_read_config_dword
 c_func
 (paren
@@ -128,5 +130,6 @@ comma
 l_int|0x10ff08a1
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_MBX */
 )brace
 eof

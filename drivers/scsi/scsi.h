@@ -19,7 +19,7 @@ DECL|macro|FALSE
 macro_line|# define FALSE 0
 macro_line|#endif
 DECL|macro|MAX_SCSI_DEVICE_CODE
-mdefine_line|#define MAX_SCSI_DEVICE_CODE 10
+mdefine_line|#define MAX_SCSI_DEVICE_CODE 14
 r_extern
 r_const
 r_char

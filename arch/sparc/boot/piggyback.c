@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: piggyback.c,v 1.1 1997/07/11 11:05:17 jj Exp $&n;   Simple utility to make a single-image install kernel with initial ramdisk&n;   for Sparc tftpbooting without need to set up nfs.&n;   &n;   Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
+multiline_comment|/* $Id: piggyback.c,v 1.2 1998/12/15 12:24:43 jj Exp $&n;   Simple utility to make a single-image install kernel with initial ramdisk&n;   for Sparc tftpbooting without need to set up nfs.&n;   &n;   Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;ctype.h&gt;
@@ -84,6 +84,12 @@ id|image
 comma
 id|tail
 suffix:semicolon
+id|start
+op_assign
+id|end
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -156,9 +162,19 @@ id|strcmp
 (paren
 id|buffer
 op_plus
-l_int|11
+l_int|8
 comma
-l_string|&quot;start&bslash;n&quot;
+l_string|&quot; T start&bslash;n&quot;
+)paren
+op_logical_or
+op_logical_neg
+id|strcmp
+(paren
+id|buffer
+op_plus
+l_int|16
+comma
+l_string|&quot; T start&bslash;n&quot;
 )paren
 )paren
 id|start
@@ -181,9 +197,19 @@ id|strcmp
 (paren
 id|buffer
 op_plus
-l_int|11
+l_int|8
 comma
-l_string|&quot;end&bslash;n&quot;
+l_string|&quot; A end&bslash;n&quot;
+)paren
+op_logical_or
+op_logical_neg
+id|strcmp
+(paren
+id|buffer
+op_plus
+l_int|16
+comma
+l_string|&quot; A end&bslash;n&quot;
 )paren
 )paren
 id|end
@@ -203,6 +229,29 @@ id|fclose
 id|map
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|start
+op_logical_or
+op_logical_neg
+id|end
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;Could not determine start and end from System.map&bslash;n&quot;
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

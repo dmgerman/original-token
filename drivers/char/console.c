@@ -17,7 +17,6 @@ macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
-macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/consolemap.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

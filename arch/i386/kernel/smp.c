@@ -1584,7 +1584,9 @@ op_assign
 (paren
 id|mp_lapic_addr
 op_or
-l_int|7
+id|_PAGE_RW
+op_or
+id|_PAGE_PRESENT
 )paren
 suffix:semicolon
 id|local_flush_tlb
@@ -4243,7 +4245,9 @@ id|pg0
 l_int|0
 )braket
 op_assign
-l_int|3
+id|_PAGE_RW
+op_or
+id|_PAGE_PRESENT
 suffix:semicolon
 multiline_comment|/* writeable, present, addr 0 */
 id|local_flush_tlb

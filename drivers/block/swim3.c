@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Driver for the SWIM3 (Super Woz Integrated Machine 3)&n; * floppy controller found on Power Macintoshes.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * TODO:&n; * handle 2 drives&n; * handle GCR disks&n; */
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -93,7 +94,7 @@ suffix:semicolon
 id|REG
 c_func
 (paren
-id|usecs
+id|timer
 )paren
 suffix:semicolon
 multiline_comment|/* counts down at 1MHz */
@@ -119,7 +120,7 @@ multiline_comment|/* controls CA0, CA1, CA2 and LSTRB signals */
 id|REG
 c_func
 (paren
-id|reg5
+id|setup
 )paren
 suffix:semicolon
 id|REG
@@ -166,10 +167,10 @@ multiline_comment|/* current sector number */
 id|REG
 c_func
 (paren
-id|ssize
+id|gap3
 )paren
 suffix:semicolon
-multiline_comment|/* sector size code?? */
+multiline_comment|/* size of gap 3 in track format */
 id|REG
 c_func
 (paren
@@ -204,22 +205,38 @@ mdefine_line|#define LSTRB&t;&t;8
 multiline_comment|/* Bits in control register */
 DECL|macro|DO_SEEK
 mdefine_line|#define DO_SEEK&t;&t;0x80
+DECL|macro|FORMAT
+mdefine_line|#define FORMAT&t;&t;0x40
 DECL|macro|SELECT
 mdefine_line|#define SELECT&t;&t;0x20
 DECL|macro|WRITE_SECTORS
 mdefine_line|#define WRITE_SECTORS&t;0x10
-DECL|macro|SCAN_TRACK
-mdefine_line|#define SCAN_TRACK&t;0x08
+DECL|macro|DO_ACTION
+mdefine_line|#define DO_ACTION&t;0x08
+DECL|macro|DRIVE2_ENABLE
+mdefine_line|#define DRIVE2_ENABLE&t;0x04
 DECL|macro|DRIVE_ENABLE
 mdefine_line|#define DRIVE_ENABLE&t;0x02
 DECL|macro|INTR_ENABLE
 mdefine_line|#define INTR_ENABLE&t;0x01
 multiline_comment|/* Bits in status register */
-DECL|macro|DATA
-mdefine_line|#define DATA&t;&t;0x08
-multiline_comment|/* Bits in intr and intr_enable registers */
+DECL|macro|FIFO_1BYTE
+mdefine_line|#define FIFO_1BYTE&t;0x80
+DECL|macro|FIFO_2BYTE
+mdefine_line|#define FIFO_2BYTE&t;0x40
 DECL|macro|ERROR
 mdefine_line|#define ERROR&t;&t;0x20
+DECL|macro|DATA
+mdefine_line|#define DATA&t;&t;0x08
+DECL|macro|RDDATA
+mdefine_line|#define RDDATA&t;&t;0x04
+DECL|macro|INTR_PENDING
+mdefine_line|#define INTR_PENDING&t;0x02
+DECL|macro|MARK_BYTE
+mdefine_line|#define MARK_BYTE&t;0x01
+multiline_comment|/* Bits in intr and intr_enable registers */
+DECL|macro|ERROR_INTR
+mdefine_line|#define ERROR_INTR&t;0x20
 DECL|macro|DATA_CHANGED
 mdefine_line|#define DATA_CHANGED&t;0x10
 DECL|macro|TRANSFER_DONE
@@ -228,6 +245,34 @@ DECL|macro|SEEN_SECTOR
 mdefine_line|#define SEEN_SECTOR&t;0x04
 DECL|macro|SEEK_DONE
 mdefine_line|#define SEEK_DONE&t;0x02
+DECL|macro|TIMER_DONE
+mdefine_line|#define TIMER_DONE&t;0x01
+multiline_comment|/* Bits in error register */
+DECL|macro|ERR_DATA_CRC
+mdefine_line|#define ERR_DATA_CRC&t;0x80
+DECL|macro|ERR_ADDR_CRC
+mdefine_line|#define ERR_ADDR_CRC&t;0x40
+DECL|macro|ERR_OVERRUN
+mdefine_line|#define ERR_OVERRUN&t;0x04
+DECL|macro|ERR_UNDERRUN
+mdefine_line|#define ERR_UNDERRUN&t;0x01
+multiline_comment|/* Bits in setup register */
+DECL|macro|S_SW_RESET
+mdefine_line|#define S_SW_RESET&t;0x80
+DECL|macro|S_GCR_WRITE
+mdefine_line|#define S_GCR_WRITE&t;0x40
+DECL|macro|S_IBM_DRIVE
+mdefine_line|#define S_IBM_DRIVE&t;0x20
+DECL|macro|S_TEST_MODE
+mdefine_line|#define S_TEST_MODE&t;0x10
+DECL|macro|S_FCLK_DIV2
+mdefine_line|#define S_FCLK_DIV2&t;0x08
+DECL|macro|S_GCR
+mdefine_line|#define S_GCR&t;&t;0x04
+DECL|macro|S_COPY_PROT
+mdefine_line|#define S_COPY_PROT&t;0x02
+DECL|macro|S_INV_WDATA
+mdefine_line|#define S_INV_WDATA&t;0x01
 multiline_comment|/* Select values for swim3_action */
 DECL|macro|SEEK_POSITIVE
 mdefine_line|#define SEEK_POSITIVE&t;0
@@ -239,8 +284,14 @@ DECL|macro|MOTOR_ON
 mdefine_line|#define MOTOR_ON&t;2
 DECL|macro|MOTOR_OFF
 mdefine_line|#define MOTOR_OFF&t;6
+DECL|macro|INDEX
+mdefine_line|#define INDEX&t;&t;3
 DECL|macro|EJECT
 mdefine_line|#define EJECT&t;&t;7
+DECL|macro|SETMFM
+mdefine_line|#define SETMFM&t;&t;9
+DECL|macro|SETGCR
+mdefine_line|#define SETGCR&t;&t;13
 multiline_comment|/* Select values for swim3_select and swim3_readbit */
 DECL|macro|STEP_DIR
 mdefine_line|#define STEP_DIR&t;0
@@ -249,9 +300,11 @@ mdefine_line|#define STEPPING&t;1
 DECL|macro|MOTOR_ON
 mdefine_line|#define MOTOR_ON&t;2
 DECL|macro|RELAX
-mdefine_line|#define RELAX&t;&t;3
+mdefine_line|#define RELAX&t;&t;3&t;/* also eject in progress */
 DECL|macro|READ_DATA_0
 mdefine_line|#define READ_DATA_0&t;4
+DECL|macro|TWOMEG_DRIVE
+mdefine_line|#define TWOMEG_DRIVE&t;5
 DECL|macro|SINGLE_SIDED
 mdefine_line|#define SINGLE_SIDED&t;6
 DECL|macro|DRIVE_PRESENT
@@ -266,8 +319,39 @@ DECL|macro|TACHO
 mdefine_line|#define TACHO&t;&t;11
 DECL|macro|READ_DATA_1
 mdefine_line|#define READ_DATA_1&t;12
+DECL|macro|MFM_MODE
+mdefine_line|#define MFM_MODE&t;13
 DECL|macro|SEEK_COMPLETE
 mdefine_line|#define SEEK_COMPLETE&t;14
+DECL|macro|ONEMEG_MEDIA
+mdefine_line|#define ONEMEG_MEDIA&t;15
+multiline_comment|/* Definitions of values used in writing and formatting */
+DECL|macro|DATA_ESCAPE
+mdefine_line|#define DATA_ESCAPE&t;0x99
+DECL|macro|GCR_SYNC_EXC
+mdefine_line|#define GCR_SYNC_EXC&t;0x3f
+DECL|macro|GCR_SYNC_CONV
+mdefine_line|#define GCR_SYNC_CONV&t;0x80
+DECL|macro|GCR_FIRST_MARK
+mdefine_line|#define GCR_FIRST_MARK&t;0xd5
+DECL|macro|GCR_SECOND_MARK
+mdefine_line|#define GCR_SECOND_MARK&t;0xaa
+DECL|macro|GCR_ADDR_MARK
+mdefine_line|#define GCR_ADDR_MARK&t;&quot;&bslash;xd5&bslash;xaa&bslash;x00&quot;
+DECL|macro|GCR_DATA_MARK
+mdefine_line|#define GCR_DATA_MARK&t;&quot;&bslash;xd5&bslash;xaa&bslash;x0b&quot;
+DECL|macro|GCR_SLIP_BYTE
+mdefine_line|#define GCR_SLIP_BYTE&t;&quot;&bslash;x27&bslash;xaa&quot;
+DECL|macro|GCR_SELF_SYNC
+mdefine_line|#define GCR_SELF_SYNC&t;&quot;&bslash;x3f&bslash;xbf&bslash;x1e&bslash;x34&bslash;x3c&bslash;x3f&quot;
+DECL|macro|DATA_99
+mdefine_line|#define DATA_99&t;&t;&quot;&bslash;x99&bslash;x99&quot;
+DECL|macro|MFM_ADDR_MARK
+mdefine_line|#define MFM_ADDR_MARK&t;&quot;&bslash;x99&bslash;xa1&bslash;x99&bslash;xa1&bslash;x99&bslash;xa1&bslash;x99&bslash;xfe&quot;
+DECL|macro|MFM_INDEX_MARK
+mdefine_line|#define MFM_INDEX_MARK&t;&quot;&bslash;x99&bslash;xc2&bslash;x99&bslash;xc2&bslash;x99&bslash;xc2&bslash;x99&bslash;xfc&quot;
+DECL|macro|MFM_GAP_LEN
+mdefine_line|#define MFM_GAP_LEN&t;12
 DECL|struct|floppy_state
 r_struct
 id|floppy_state
@@ -472,7 +556,7 @@ l_int|0x99fb
 comma
 multiline_comment|/* data address mark */
 l_int|0x990f
-multiline_comment|/* init CRC generator */
+multiline_comment|/* no escape for 512 bytes */
 )brace
 suffix:semicolon
 DECL|variable|write_postamble
@@ -994,38 +1078,42 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|1
 )paren
 suffix:semicolon
-id|sw-&gt;select
-op_or_assign
-id|LSTRB
-suffix:semicolon
-id|eieio
+id|out_8
 c_func
 (paren
+op_amp
+id|sw-&gt;select
+comma
+id|sw-&gt;select
+op_or
+id|LSTRB
 )paren
 suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|20
+l_int|2
 )paren
 suffix:semicolon
+id|out_8
+c_func
+(paren
+op_amp
 id|sw-&gt;select
-op_and_assign
+comma
+id|sw-&gt;select
+op_amp
 op_complement
 id|LSTRB
-suffix:semicolon
-id|eieio
-c_func
-(paren
 )paren
 suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|1
 )paren
 suffix:semicolon
 id|out_8
@@ -1563,7 +1651,7 @@ c_func
 op_amp
 id|sw-&gt;control_bis
 comma
-id|SCAN_TRACK
+id|DO_ACTION
 )paren
 suffix:semicolon
 multiline_comment|/* enable intr when track found */
@@ -1573,7 +1661,7 @@ c_func
 op_amp
 id|sw-&gt;intr_enable
 comma
-id|ERROR
+id|ERROR_INTR
 op_or
 id|SEEN_SECTOR
 )paren
@@ -1691,7 +1779,7 @@ c_func
 op_amp
 id|sw-&gt;intr_enable
 comma
-id|ERROR
+id|ERROR_INTR
 op_or
 id|SEEK_DONE
 )paren
@@ -1897,7 +1985,7 @@ id|out_8
 c_func
 (paren
 op_amp
-id|sw-&gt;ssize
+id|sw-&gt;gap3
 comma
 l_int|0
 )paren
@@ -2034,7 +2122,7 @@ suffix:colon
 l_int|0
 )paren
 op_or
-id|SCAN_TRACK
+id|DO_ACTION
 )paren
 suffix:semicolon
 multiline_comment|/* enable intr when transfer complete */
@@ -2044,7 +2132,7 @@ c_func
 op_amp
 id|sw-&gt;intr_enable
 comma
-id|ERROR
+id|ERROR_INTR
 op_or
 id|TRANSFER_DONE
 )paren
@@ -2228,7 +2316,7 @@ c_func
 op_amp
 id|sw-&gt;intr_enable
 comma
-id|ERROR
+id|ERROR_INTR
 op_or
 id|DATA_CHANGED
 )paren
@@ -2410,7 +2498,7 @@ c_func
 op_amp
 id|sw-&gt;control_bic
 comma
-id|SCAN_TRACK
+id|DO_ACTION
 )paren
 suffix:semicolon
 id|out_8
@@ -2698,7 +2786,7 @@ id|sw-&gt;control_bic
 comma
 id|WRITE_SECTORS
 op_or
-id|SCAN_TRACK
+id|DO_ACTION
 )paren
 suffix:semicolon
 id|out_8
@@ -2900,7 +2988,7 @@ c_cond
 (paren
 id|intr
 op_amp
-id|ERROR
+id|ERROR_INTR
 )paren
 op_logical_and
 id|fs-&gt;state
@@ -2945,7 +3033,7 @@ c_func
 op_amp
 id|sw-&gt;control_bic
 comma
-id|SCAN_TRACK
+id|DO_ACTION
 )paren
 suffix:semicolon
 id|out_8
@@ -3198,7 +3286,7 @@ c_cond
 id|intr
 op_amp
 (paren
-id|ERROR
+id|ERROR_INTR
 op_or
 id|TRANSFER_DONE
 )paren
@@ -3244,7 +3332,7 @@ id|sw-&gt;control_bic
 comma
 id|WRITE_SECTORS
 op_or
-id|SCAN_TRACK
+id|DO_ACTION
 )paren
 suffix:semicolon
 id|out_8
@@ -3300,7 +3388,7 @@ c_cond
 (paren
 id|intr
 op_amp
-id|ERROR
+id|ERROR_INTR
 )paren
 (brace
 id|n
@@ -4096,6 +4184,17 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|filp
+op_eq
+l_int|0
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
 id|fs
 op_assign
 op_amp
@@ -4159,9 +4258,11 @@ id|out_8
 c_func
 (paren
 op_amp
-id|sw-&gt;reg5
+id|sw-&gt;setup
 comma
-l_int|0x28
+id|S_IBM_DRIVE
+op_or
+id|S_FCLK_DIV2
 )paren
 suffix:semicolon
 id|udelay
@@ -4332,8 +4433,6 @@ id|err
 op_eq
 l_int|0
 op_logical_and
-id|filp
-op_logical_and
 (paren
 id|filp-&gt;f_flags
 op_amp
@@ -4373,16 +4472,10 @@ id|err
 op_eq
 l_int|0
 op_logical_and
-id|filp
-op_logical_and
 (paren
-id|filp-&gt;f_flags
+id|filp-&gt;f_mode
 op_amp
-(paren
-id|O_WRONLY
-op_or
-id|O_RDWR
-)paren
+l_int|2
 )paren
 )paren
 (brace
@@ -5067,6 +5160,12 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|check_disk_change
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+suffix:semicolon
 id|fs
 op_assign
 op_amp
@@ -5083,6 +5182,32 @@ id|fs-&gt;ejected
 r_return
 op_minus
 id|ENXIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fs-&gt;write_prot
+OL
+l_int|0
+)paren
+id|fs-&gt;write_prot
+op_assign
+id|swim3_readbit
+c_func
+(paren
+id|fs
+comma
+id|WRITE_PROT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fs-&gt;write_prot
+)paren
+r_return
+op_minus
+id|EROFS
 suffix:semicolon
 r_return
 id|block_write

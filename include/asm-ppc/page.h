@@ -130,8 +130,16 @@ mdefine_line|#define _ALIGN(addr,size)&t;(((addr)+size-1)&amp;(~(size-1)))
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
-DECL|macro|clear_page
-mdefine_line|#define clear_page(page)        memset((void *)(page), 0, PAGE_SIZE)
+r_extern
+r_void
+id|clear_page
+c_func
+(paren
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
 DECL|macro|copy_page
 mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
 multiline_comment|/* map phys-&gt;virtual and virtual-&gt;phys for RAM pages */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  $Id: signal.c,v 1.21 1998/10/22 19:37:49 paulus Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/kernel/signal.c&quot;&n; *    Copyright (C) 1991, 1992 Linus Torvalds&n; *    1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  $Id: signal.c,v 1.23 1999/03/01 16:51:53 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/kernel/signal.c&quot;&n; *    Copyright (C) 1991, 1992 Linus Torvalds&n; *    1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -1648,16 +1648,7 @@ id|newsp
 op_assign
 id|frame
 op_assign
-id|regs-&gt;gpr
-(braket
-l_int|1
-)braket
-op_minus
-r_sizeof
-(paren
-r_struct
-id|sigregs
-)paren
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -2060,6 +2051,55 @@ suffix:semicolon
 multiline_comment|/* NOTREACHED */
 )brace
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|ka-&gt;sa.sa_flags
+op_amp
+id|SA_ONSTACK
+)paren
+op_logical_and
+(paren
+op_logical_neg
+id|on_sig_stack
+c_func
+(paren
+id|regs-&gt;gpr
+(braket
+l_int|1
+)braket
+)paren
+)paren
+)paren
+id|newsp
+op_assign
+(paren
+id|current-&gt;sas_ss_sp
+op_plus
+id|current-&gt;sas_ss_size
+)paren
+suffix:semicolon
+r_else
+id|newsp
+op_assign
+id|regs-&gt;gpr
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|newsp
+op_assign
+id|frame
+op_assign
+id|newsp
+op_minus
+r_sizeof
+(paren
+r_struct
+id|sigregs
+)paren
+suffix:semicolon
 multiline_comment|/* Whee!  Actually deliver the signal.  */
 id|handle_signal
 c_func

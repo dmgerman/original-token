@@ -27,6 +27,9 @@ DECL|macro|MAX_HEIGHT
 mdefine_line|#define MAX_HEIGHT 243
 DECL|macro|MAX_WIDTH
 mdefine_line|#define MAX_WIDTH 336
+multiline_comment|/* Bit fields for status flags */
+DECL|macro|QC_PARAM_CHANGE
+mdefine_line|#define QC_PARAM_CHANGE&t;0x01 /* Camera status change has occurred */
 DECL|struct|qcam_device
 r_struct
 id|qcam_device
@@ -87,6 +90,10 @@ r_int
 id|top
 comma
 id|left
+suffix:semicolon
+DECL|member|status
+r_int
+id|status
 suffix:semicolon
 DECL|member|saved_bits
 r_int

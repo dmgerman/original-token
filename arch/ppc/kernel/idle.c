@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.57 1998/12/28 10:28:46 paulus Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: idle.c,v 1.60 1999/02/12 07:06:26 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -60,6 +60,37 @@ id|powersave_nap
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|zero_cache
+r_int
+r_int
+op_star
+id|zero_cache
+suffix:semicolon
+multiline_comment|/* head linked list of pre-zero&squot;d pages */
+DECL|variable|zero_sz
+r_int
+r_int
+id|zero_sz
+suffix:semicolon
+multiline_comment|/* # currently pre-zero&squot;d pages */
+DECL|variable|zeropage_hits
+r_int
+r_int
+id|zeropage_hits
+suffix:semicolon
+multiline_comment|/* # zero&squot;d pages request that we&squot;ve done */
+DECL|variable|zeropage_calls
+r_int
+r_int
+id|zeropage_calls
+suffix:semicolon
+multiline_comment|/* # zero&squot;d pages request that&squot;ve been made */
+DECL|variable|zerototal
+r_int
+r_int
+id|zerototal
+suffix:semicolon
+multiline_comment|/* # pages zero&squot;d over time */
 DECL|function|idled
 r_int
 id|idled
@@ -275,12 +306,6 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-id|lock_dcache
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
 macro_line|#if 0&t;
 multiline_comment|/* find a random place in the htab to start each time */
 id|start
@@ -441,11 +466,6 @@ comma
 id|current-&gt;need_resched
 )paren
 suffix:semicolon
-id|unlock_dcache
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
 )brace
 multiline_comment|/*&n; * Returns a pre-zero&squot;d page from the list otherwise returns&n; * NULL.&n; */
@@ -472,7 +492,7 @@ id|atomic_t
 op_star
 )paren
 op_amp
-id|quicklists.zeropage_calls
+id|zero_cache_calls
 )paren
 suffix:semicolon
 r_if
@@ -525,7 +545,7 @@ r_return
 l_int|0
 suffix:semicolon
 macro_line|#endif /* __SMP__ */&t;&t;
-multiline_comment|/* we can update zerocount after the fact since it is not&n;&t;&t; * used for anything but control of a loop which doesn&squot;t&n;&t;&t; * matter since it won&squot;t affect anything if it zero&squot;s one&n;&t;&t; * less page -- Cort&n;&t;&t; */
+multiline_comment|/* we can update zerocount after the fact since it is not&n;&t;&t; * used for anything but control of a loop which doesn&squot;t&n;&t;&t; * matter since it won&squot;t affect anything if it zeros one&n;&t;&t; * less page -- Cort&n;&t;&t; */
 id|atomic_inc
 c_func
 (paren
@@ -534,7 +554,7 @@ id|atomic_t
 op_star
 )paren
 op_amp
-id|quicklists.zeropage_hits
+id|zero_cache_hits
 )paren
 suffix:semicolon
 id|atomic_dec
@@ -666,7 +686,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Make the page no cache so we don&squot;t blow our cache with 0&squot;s&n;&t;&t; * We should just turn off the cache instead. -- Cort&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Make the page no cache so we don&squot;t blow our cache with 0&squot;s&n;&t;&t; */
 id|pte
 op_assign
 id|find_pte
@@ -836,7 +856,7 @@ id|atomic_t
 op_star
 )paren
 op_amp
-id|quicklists.zerototal
+id|zero_cache_total
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: debuglocks.c,v 1.5 1998/10/14 09:19:04 jj Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* $Id: debuglocks.c,v 1.6 1999/02/23 13:23:55 jj Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
@@ -37,6 +37,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|console_lock
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lock
+op_ne
+op_amp
+id|console_lock
+)paren
 id|printk
 c_func
 (paren

@@ -13908,6 +13908,13 @@ id|ide_spin_wait_hwgroup
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Probe module&n; */
+DECL|variable|drive_is_flashcard
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|drive_is_flashcard
+)paren
+suffix:semicolon
 DECL|variable|ide_timer_expiry
 id|EXPORT_SYMBOL
 c_func

@@ -1211,6 +1211,10 @@ multiline_comment|/* printk(&quot;DOR @0x%p&bslash;n&quot;, &amp;sun_fdc-&gt;dor
 multiline_comment|/* P3 */
 )brace
 multiline_comment|/* Success... */
+id|allowed_drive_mask
+op_assign
+l_int|0x01
+suffix:semicolon
 r_return
 (paren
 r_int
