@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide_cd.h&n; *&n; *  Copyright (C) 1996-98  Erik Andersen&n; *  Copyright (C) 1998-2000 Jens Axboe&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/ide_cd.h&n; *&n; *  Copyright (C) 1996-98  Erik Andersen&n; *  Copyright (C) 1998-2000 Jens Axboe&n; */
 macro_line|#ifndef _IDE_CD_H
 DECL|macro|_IDE_CD_H
 mdefine_line|#define _IDE_CD_H

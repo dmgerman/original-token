@@ -2508,7 +2508,11 @@ r_int
 r_int
 id|idx_count
 op_assign
+(paren
 id|count
+op_minus
+l_int|1
+)paren
 op_rshift
 id|PAGE_CACHE_SHIFT
 suffix:semicolon
@@ -3031,7 +3035,11 @@ op_assign
 id|idx_start
 op_plus
 (paren
+(paren
 id|count
+op_minus
+l_int|1
+)paren
 op_rshift
 id|PAGE_CACHE_SHIFT
 )paren

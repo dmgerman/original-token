@@ -213,7 +213,7 @@ op_assign
 id|PARPORT_DISABLE
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -245,7 +245,7 @@ op_assign
 id|PARPORT_DMA_AUTO
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 id|val
@@ -529,7 +529,7 @@ id|parport_setup_ptr
 op_increment
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 id|__setup

@@ -5275,7 +5275,7 @@ l_int|0
 suffix:semicolon
 DECL|function|plip_setup
 r_static
-r_void
+r_int
 id|__init
 id|plip_setup
 c_func
@@ -5429,6 +5429,9 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 id|__setup
 c_func

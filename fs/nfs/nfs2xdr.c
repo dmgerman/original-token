@@ -2820,10 +2820,12 @@ op_star
 id|res
 )paren
 (brace
+macro_line|#ifdef CONFIG_NFS_V3
 id|res-&gt;verf-&gt;committed
 op_assign
 id|NFS_FILE_SYNC
 suffix:semicolon
+macro_line|#endif
 r_return
 id|nfs_xdr_attrstat
 c_func

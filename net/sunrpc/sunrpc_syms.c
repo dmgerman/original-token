@@ -98,6 +98,20 @@ c_func
 id|rpciod_up
 )paren
 suffix:semicolon
+DECL|variable|rpc_new_task
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rpc_new_task
+)paren
+suffix:semicolon
+DECL|variable|rpc_wake_up_status
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rpc_wake_up_status
+)paren
+suffix:semicolon
 multiline_comment|/* RPC client functions */
 DECL|variable|rpc_create_client
 id|EXPORT_SYMBOL

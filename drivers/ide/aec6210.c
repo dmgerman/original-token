@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/aec6210.c&t;&t;Version 0.05&t;Feb. 10, 2000&n; *&n; * Copyright (C) 1998-2000&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; *  pio 0 ::       40: 00 07 00 00 00 00 00 00 02 07 a6 04 00 02 00 02&n; *  pio 1 ::       40: 0a 07 00 00 00 00 00 00 02 07 a6 05 00 02 00 02&n; *  pio 2 ::       40: 08 07 00 00 00 00 00 00 02 07 a6 05 00 02 00 02&n; *  pio 3 ::       40: 03 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  pio 4 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 0 ::       40: 0a 07 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 1 ::       40: 02 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 2 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 00 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 0 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 01 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 1 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 01 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 2 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 02 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * auto   ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 02 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * auto   ::       40: 01 04 01 04 01 04 01 04 02 05 a6 cf 00 02 00 02&n; *                 50: ff ff ff ff aa 06 04 00 00 00 00 00 00 00 00 00&n; *&n; *                 NO-Devices&n; *                 40: 00 00 00 00 00 00 00 00 02 05 a6 00 00 02 00 02&n; *                 50: ff ff ff ff 00 06 00 00 00 00 00 00 00 00 00 00&n; */
+multiline_comment|/*&n; * linux/drivers/ide/aec6210.c&t;&t;Version 0.06&t;Mar. 18, 2000&n; *&n; * Copyright (C) 1998-2000&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; *  pio 0 ::       40: 00 07 00 00 00 00 00 00 02 07 a6 04 00 02 00 02&n; *  pio 1 ::       40: 0a 07 00 00 00 00 00 00 02 07 a6 05 00 02 00 02&n; *  pio 2 ::       40: 08 07 00 00 00 00 00 00 02 07 a6 05 00 02 00 02&n; *  pio 3 ::       40: 03 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  pio 4 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 0 ::       40: 0a 07 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 1 ::       40: 02 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *  dma 2 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 00 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 0 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 01 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 1 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 01 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * udma 2 ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 02 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * auto   ::       40: 01 04 00 00 00 00 00 00 02 05 a6 05 00 02 00 02&n; *                 50: ff ff ff ff 02 06 04 00 00 00 00 00 00 00 00 00&n; *&n; * auto   ::       40: 01 04 01 04 01 04 01 04 02 05 a6 cf 00 02 00 02&n; *                 50: ff ff ff ff aa 06 04 00 00 00 00 00 00 00 00 00&n; *&n; *                 NO-Devices&n; *                 40: 00 00 00 00 00 00 00 00 02 05 a6 00 00 02 00 02&n; *                 50: ff ff ff ff 00 06 00 00 00 00 00 00 00 00 00 00&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -833,6 +833,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 DECL|function|config_chipset_for_dma
 r_static
 r_int
@@ -1114,6 +1115,7 @@ id|ide_dma_off_quietly
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 DECL|function|aec6210_tune_drive
 r_static
 r_void
@@ -1212,6 +1214,7 @@ id|speed
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 DECL|function|config_drive_xfer_rate
 r_static
 r_int
@@ -1525,6 +1528,7 @@ id|drive
 suffix:semicolon
 multiline_comment|/* use standard DMA stuff */
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 macro_line|#endif /* CONFIG_AEC6210_TUNING */
 DECL|function|pci_init_aec6210
 r_int
@@ -1622,20 +1626,6 @@ op_assign
 op_amp
 id|aec6210_tune_drive
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|hwif-&gt;dma_base
-)paren
-(brace
-id|hwif-&gt;dmaproc
-op_assign
-op_amp
-id|aec6210_dmaproc
-suffix:semicolon
-)brace
-r_else
-(brace
 id|hwif-&gt;drives
 (braket
 l_int|0
@@ -1654,7 +1644,18 @@ id|autotune
 op_assign
 l_int|1
 suffix:semicolon
-)brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
+r_if
+c_cond
+(paren
+id|hwif-&gt;dma_base
+)paren
+id|hwif-&gt;dmaproc
+op_assign
+op_amp
+id|aec6210_dmaproc
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 macro_line|#endif /* CONFIG_AEC6210_TUNING */
 )brace
 DECL|function|ide_dmacapable_aec6210

@@ -348,7 +348,7 @@ l_string|&quot;&bslash;nATI Inport &quot;
 suffix:semicolon
 r_else
 (brace
-id|free_region
+id|release_region
 c_func
 (paren
 id|ATIXL_MSE_DATA_PORT
@@ -411,7 +411,7 @@ c_func
 l_string|&quot;Bus mouse initialisation error.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|free_region
+id|release_region
 c_func
 (paren
 id|ATIXL_MSE_DATA_PORT

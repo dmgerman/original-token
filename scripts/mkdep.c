@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Originally by Linus Torvalds.&n; * Smart CONFIG_* processing by Werner Almesberger, Michael Chastain.&n; *&n; * Usage: mkdep file ...&n; * &n; * Read source files and output makefile dependency lines for them.&n; * I make simple dependency lines for #include &lt;*.h&gt; and #include &quot;*.h&quot;.&n; * I also find instances of CONFIG_FOO and generate dependencies&n; *    like include/config/foo.h.&n; *&n; * 1 August 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Keith Owens reported a bug in smart config processing.  There used&n; *   to be an optimization for &quot;#define CONFIG_FOO ... #ifdef CONFIG_FOO&quot;,&n; *   so that the file would not depend on CONFIG_FOO because the file defines&n; *   this symbol itself.  But this optimization is bogus!  Consider this code:&n; *   &quot;#if 0 &bslash;n #define CONFIG_FOO &bslash;n #endif ... #ifdef CONFIG_FOO&quot;.  Here&n; *   the definition is inactivated, but I still used it.  It turns out this&n; *   actually happens a few times in the kernel source.  The simple way to&n; *   fix this problem is to remove this particular optimization.&n; */
+multiline_comment|/*&n; * Originally by Linus Torvalds.&n; * Smart CONFIG_* processing by Werner Almesberger, Michael Chastain.&n; *&n; * Usage: mkdep file ...&n; * &n; * Read source files and output makefile dependency lines for them.&n; * I make simple dependency lines for #include &lt;*.h&gt; and #include &quot;*.h&quot;.&n; * I also find instances of CONFIG_FOO and generate dependencies&n; *    like include/config/foo.h.&n; *&n; * 1 August 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Keith Owens reported a bug in smart config processing.  There used&n; *   to be an optimization for &quot;#define CONFIG_FOO ... #ifdef CONFIG_FOO&quot;,&n; *   so that the file would not depend on CONFIG_FOO because the file defines&n; *   this symbol itself.  But this optimization is bogus!  Consider this code:&n; *   &quot;#if 0 &bslash;n #define CONFIG_FOO &bslash;n #endif ... #ifdef CONFIG_FOO&quot;.  Here&n; *   the definition is inactivated, but I still used it.  It turns out this&n; *   actually happens a few times in the kernel source.  The simple way to&n; *   fix this problem is to remove this particular optimization.&n; *&n; * 2.3.99-pre1, Andrew Morton &lt;andrewm@uow.edu.au&gt;&n; * - Changed so that &squot;filename.o&squot; depends upon &squot;filename.[cS]&squot;.  This is so that&n; *   missing source files are noticed, rather than silently ignored.&n; */
 macro_line|#include &lt;ctype.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;stdio.h&gt;
@@ -65,6 +65,14 @@ l_string|&quot;&quot;
 )brace
 )brace
 suffix:semicolon
+multiline_comment|/* Current input file */
+DECL|variable|g_filename
+r_static
+r_const
+r_char
+op_star
+id|g_filename
+suffix:semicolon
 multiline_comment|/*&n; * This records all the configuration options seen.&n; * In perl this would be a hash, but here it&squot;s a long string&n; * of values separated by newlines.  This is simple and&n; * extremely fast.&n; */
 DECL|variable|str_config
 r_char
@@ -85,6 +93,49 @@ id|len_config
 op_assign
 l_int|0
 suffix:semicolon
+r_static
+r_void
+DECL|function|do_depname
+id|do_depname
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hasdep
+)paren
+(brace
+id|hasdep
+op_assign
+l_int|1
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;%s:&quot;
+comma
+id|depname
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|g_filename
+)paren
+id|printf
+c_func
+(paren
+l_string|&quot; %s&quot;
+comma
+id|g_filename
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n; * Grow the configuration string to a desired length.&n; * Usually the first growth is plenty.&n; */
 DECL|function|grow_config
 r_void
@@ -645,26 +696,11 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|hasdep
-)paren
-(brace
-id|hasdep
-op_assign
-l_int|1
-suffix:semicolon
-id|printf
+id|do_depname
 c_func
 (paren
-l_string|&quot;%s:&quot;
-comma
-id|depname
 )paren
 suffix:semicolon
-)brace
 id|printf
 c_func
 (paren
@@ -813,26 +849,11 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|hasdep
-)paren
-(brace
-id|hasdep
-op_assign
-l_int|1
-suffix:semicolon
-id|printf
+id|do_depname
 c_func
 (paren
-l_string|&quot;%s: &quot;
-comma
-id|depname
 )paren
 suffix:semicolon
-)brace
 id|printf
 c_func
 (paren
@@ -2133,6 +2154,10 @@ id|command
 op_assign
 id|__depname
 suffix:semicolon
+id|g_filename
+op_assign
+l_int|0
+suffix:semicolon
 id|len
 op_assign
 id|strlen
@@ -2200,6 +2225,10 @@ l_int|1
 )braket
 op_assign
 l_char|&squot;o&squot;
+suffix:semicolon
+id|g_filename
+op_assign
+id|filename
 suffix:semicolon
 id|command
 op_assign

@@ -328,6 +328,38 @@ DECL|macro|HDIO_SET_NICE
 mdefine_line|#define HDIO_SET_NICE&t;&t;0x0329&t;/* set nice flags */
 DECL|macro|HDIO_UNREGISTER_HWIF
 mdefine_line|#define HDIO_UNREGISTER_HWIF&t;0x032a  /* unregister interface */
+multiline_comment|/* BIG GEOMETRY */
+DECL|struct|hd_big_geometry
+r_struct
+id|hd_big_geometry
+(brace
+DECL|member|heads
+r_int
+r_char
+id|heads
+suffix:semicolon
+DECL|member|sectors
+r_int
+r_char
+id|sectors
+suffix:semicolon
+DECL|member|cylinders
+r_int
+r_int
+id|cylinders
+suffix:semicolon
+DECL|member|start
+r_int
+r_int
+id|start
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* hd/ide ctl&squot;s that pass (arg) ptrs to user space are numbered 0x033n/0x033n */
+DECL|macro|HDIO_GETGEO_BIG
+mdefine_line|#define HDIO_GETGEO_BIG&t;&t;0x0330&t;/* */
+DECL|macro|HDIO_GETGEO_BIG_RAW
+mdefine_line|#define HDIO_GETGEO_BIG_RAW&t;0x0331&t;/* */
 DECL|macro|__NEW_HD_DRIVE_ID
 mdefine_line|#define __NEW_HD_DRIVE_ID
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.09&t;April 23, 1999&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/ide-disk.c&t;Version 1.09&t;April 23, 1999&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
 multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and  Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; * Version 1.05&t;&t;add capacity support for ATA3 &gt;= 8GB&n; * Version 1.06&t;&t;get boot-up messages to show full cyl count&n; * Version 1.07&t;&t;disable door-locking if it fails&n; * Version 1.08&t;&t;fixed CHS/LBA translations for ATA4 &gt; 8GB,&n; *&t;&t;&t;process of adding new ATA4 compliance.&n; *&t;&t;&t;fixed problems in allowing fdisk to see&n; *&t;&t;&t;the entire disk.&n; * Version 1.09&t;&t;added increment of rq-&gt;sector in ide_multwrite&n; *&t;&t;&t;added UDMA 3/4 reporting&n; */
 DECL|macro|IDEDISK_VERSION
 mdefine_line|#define IDEDISK_VERSION&t;&quot;1.09&quot;
@@ -4054,116 +4054,30 @@ comma
 id|drive-&gt;bios_sect
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
 id|drive-&gt;using_dma
 )paren
-(brace
-r_if
-c_cond
 (paren
-(paren
-id|id-&gt;field_valid
-op_amp
-l_int|4
+r_void
 )paren
-op_logical_and
-(paren
-id|id-&gt;hw_config
-op_amp
-l_int|0x2000
-)paren
-op_logical_and
-(paren
 id|HWIF
 c_func
 (paren
 id|drive
 )paren
 op_member_access_from_pointer
-id|udma_four
-)paren
-op_logical_and
-(paren
-id|id-&gt;dma_ultra
-op_amp
-(paren
-id|id-&gt;dma_ultra
-op_rshift
-l_int|11
-)paren
-op_amp
-l_int|3
-)paren
-)paren
-(brace
-id|printk
+id|dmaproc
 c_func
 (paren
-l_string|&quot;, UDMA(66)&quot;
+id|ide_dma_verbose
+comma
+id|drive
 )paren
 suffix:semicolon
-multiline_comment|/* UDMA BIOS-enabled! */
-)brace
-r_else
-r_if
-c_cond
-(paren
-(paren
-id|id-&gt;field_valid
-op_amp
-l_int|4
-)paren
-op_logical_and
-(paren
-id|id-&gt;dma_ultra
-op_amp
-(paren
-id|id-&gt;dma_ultra
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|7
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;, UDMA(33)&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* UDMA BIOS-enabled! */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|id-&gt;field_valid
-op_amp
-l_int|4
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;, (U)DMA&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Can be BIOS-enabled! */
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;, DMA&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|printk
 c_func
 (paren

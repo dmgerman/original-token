@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-pci.c&t;&t;Version 1.04&t;July 27, 1999&n; *&n; *  Copyright (c) 1998-1999  Andre Hedrick&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/ide-pci.c&t;&t;Version 1.04&t;July 27, 1999&n; *&n; *  Copyright (c) 1998-2000  Andre Hedrick &lt;andre@linux-ide.org&gt;&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
 multiline_comment|/*&n; *  This module provides support for automatic detection and&n; *  configuration of all PCI IDE interfaces present in a system.  &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

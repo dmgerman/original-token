@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide_modes.h&n; *&n; *  Copyright (C) 1996  Linus Torvalds, Igor Abramov, and Mark Lord&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/ide_modes.h&n; *&n; *  Copyright (C) 1996  Linus Torvalds, Igor Abramov, and Mark Lord&n; */
 macro_line|#ifndef _IDE_MODES_H
 DECL|macro|_IDE_MODES_H
 mdefine_line|#define _IDE_MODES_H

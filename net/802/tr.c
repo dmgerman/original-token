@@ -861,11 +861,17 @@ comma
 l_int|0x00
 )brace
 suffix:semicolon
-id|spin_lock_bh
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
 c_func
 (paren
 op_amp
 id|rif_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Broadcasts are single route as stated in RFC 1042 &n;&t; */
@@ -1261,11 +1267,13 @@ id|olddata
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-id|spin_unlock_bh
+id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
 id|rif_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|skb_pull
@@ -1819,11 +1827,17 @@ id|now
 op_assign
 id|jiffies
 suffix:semicolon
-id|spin_lock
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
 c_func
 (paren
 op_amp
 id|rif_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_for
@@ -1901,11 +1915,13 @@ id|entry-&gt;next
 suffix:semicolon
 )brace
 )brace
-id|spin_unlock
+id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
 id|rif_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Reset the timer&n;&t; */

@@ -826,6 +826,12 @@ id|ide_dma_bad_drive
 comma
 id|ide_dma_good_drive
 comma
+DECL|enumerator|ide_dma_verbose
+DECL|enumerator|ide_dma_retune
+id|ide_dma_verbose
+comma
+id|ide_dma_retune
+comma
 DECL|enumerator|ide_dma_lostirq
 DECL|enumerator|ide_dma_timeout
 id|ide_dma_lostirq
@@ -2773,6 +2779,14 @@ id|drive
 comma
 r_int
 id|good_bad
+)paren
+suffix:semicolon
+r_int
+id|report_drive_dmaing
+(paren
+id|ide_drive_t
+op_star
+id|drive
 )paren
 suffix:semicolon
 r_int

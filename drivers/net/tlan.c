@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *&t;v1.4 Feb 10, 2000    - Updated with more changes required after Dave&squot;s&n; *&t;                       network cleanup in 2.3.43pre7 (Tigran &amp; myself)&n; *&t;                     - Minor stuff.&n; *&n; *******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *&t;v1.4 Feb 10, 2000    - Updated with more changes required after Dave&squot;s&n; *&t;                       network cleanup in 2.3.43pre7 (Tigran &amp; myself)&n; *&t;                     - Minor stuff.&n; *&n; *&t;v1.5 March 22, 2000  - Fixed another timer bug that would hang the driver&n; *&t;&t;&t;       if no cable/link were present.&n; *&t;&t;&t;     - Cosmetic changes.&n; *&t;&t;&t;     - TODO: Port completely to new PCI/DMA API&n; *&t;&t;&t;     &t;     Auto-Neg fallback.&n; *&n; *******************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tlan.h&quot;
 macro_line|#include &lt;linux/init.h&gt;
@@ -135,7 +135,7 @@ r_static
 r_int
 id|TLanVersionMinor
 op_assign
-l_int|4
+l_int|5
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -1374,9 +1374,18 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;TLAN: %d device(s) installed&bslash;n&quot;
+l_string|&quot;TLAN: %d device%s installed&bslash;n&quot;
 comma
 id|TLanDevicesInstalled
+comma
+id|TLanDevicesInstalled
+op_eq
+l_int|1
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;s&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2766,6 +2775,7 @@ id|priv-&gt;timer.function
 op_ne
 l_int|NULL
 )paren
+(brace
 id|del_timer
 c_func
 (paren
@@ -2773,6 +2783,11 @@ op_amp
 id|priv-&gt;timer
 )paren
 suffix:semicolon
+id|priv-&gt;timer.function
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|free_irq
 c_func
 (paren

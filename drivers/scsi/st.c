@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;   Michael Leodolter, Eyal Lebedinsky, Michael Schaefer, J&quot;org Weule, and&n;   Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Mon Mar 13 21:15:29 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n; */
+multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Eric Lee Green, Wolfgang Denk, Steve Hirsch,&n;   Andreas Koppenh&quot;ofer, Michael Leodolter, Eyal Lebedinsky, Michael Schaefer,&n;   J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Sun Mar 19 22:06:54 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -14124,7 +14124,7 @@ l_int|1
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/* Functions for reading and writing the medium partition mode page. These&n;   seem to work with Wangtek 6200HS and HP C1533A. */
+multiline_comment|/* Functions for reading and writing the medium partition mode page. */
 DECL|macro|PART_PAGE
 mdefine_line|#define PART_PAGE   0x11
 DECL|macro|PART_PAGE_FIXED_LENGTH
@@ -14260,7 +14260,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/* Partition the tape into two partitions if size &gt; 0 or one partition if&n;   size == 0.&n;&n;   The block descriptors are read and written because Sony SDT-7000 does not&n;   work without this (suggestion from Michael Schaefer &lt;Michael.Schaefer@dlr.de&gt;).&n;&n;   My HP C1533A drive returns only one partition size field. This is used to&n;   set the size of partition 1. There is no size field for the default partition.&n;   Michael Schaefer&squot;s Sony SDT-7000 returns two descriptors and the second is&n;   used to set the size of partition 1 (this is what the SCSI-3 standard specifies).&n;   The following algorithm is used to accomodate both drives: if the number of&n;   partition size fields is greater than the maximum number of additional partitions&n;   in the mode page, the second field is used. Otherwise the first field is used.&n; */
+multiline_comment|/* Partition the tape into two partitions if size &gt; 0 or one partition if&n;   size == 0.&n;&n;   The block descriptors are read and written because Sony SDT-7000 does not&n;   work without this (suggestion from Michael Schaefer &lt;Michael.Schaefer@dlr.de&gt;).&n;&n;   My HP C1533A drive returns only one partition size field. This is used to&n;   set the size of partition 1. There is no size field for the default partition.&n;   Michael Schaefer&squot;s Sony SDT-7000 returns two descriptors and the second is&n;   used to set the size of partition 1 (this is what the SCSI-3 standard specifies).&n;   The following algorithm is used to accomodate both drives: if the number of&n;   partition size fields is greater than the maximum number of additional partitions&n;   in the mode page, the second field is used. Otherwise the first field is used.&n;&n;   For Seagate DDS drives the page length must be 8 when no partitions is defined&n;   and 10 when 1 partition is defined (information from Eric Lee Green). This is&n;   is acceptable also to some other old drives and enforced if the first partition&n;   size field is used for the first additional partition size.&n; */
 DECL|function|partition_tape
 r_static
 r_int
@@ -14493,6 +14493,27 @@ id|PP_OFF_NBR_ADD_PARTS
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|psd_cnt
+op_le
+id|bp
+(braket
+id|pgo
+op_plus
+id|PP_OFF_MAX_ADD_PARTS
+)braket
+)paren
+id|bp
+(braket
+id|pgo
+op_plus
+id|MP_OFF_PAGE_LENGTH
+)braket
+op_assign
+l_int|6
+suffix:semicolon
 id|DEBC
 c_func
 (paren
@@ -14541,6 +14562,27 @@ l_int|3
 )braket
 op_assign
 l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bp
+(braket
+id|pgo
+op_plus
+id|MP_OFF_PAGE_LENGTH
+)braket
+OL
+l_int|8
+)paren
+id|bp
+(braket
+id|pgo
+op_plus
+id|MP_OFF_PAGE_LENGTH
+)braket
+op_assign
+l_int|8
 suffix:semicolon
 id|DEBC
 c_func

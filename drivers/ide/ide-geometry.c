@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-geometry.c&n; */
+multiline_comment|/*&n; * linux/drivers/ide/ide-geometry.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
+macro_line|#ifdef CONFIG_IDE
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_extern
@@ -705,5 +705,5 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#endif /* (CONFIG_BLK_DEV_IDE) || (CONFIG_BLK_DEV_IDE_MODULE) */
+macro_line|#endif /* CONFIG_IDE */
 eof

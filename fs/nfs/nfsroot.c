@@ -1055,7 +1055,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Parse NFS server and directory information passed on the kernel&n; *  command line.&n; */
 DECL|function|nfs_root_setup
-r_void
+r_int
 id|__init
 id|nfs_root_setup
 c_func
@@ -1196,6 +1196,9 @@ c_func
 (paren
 id|nfs_root_name
 )paren
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 id|__setup

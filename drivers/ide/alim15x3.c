@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/alim15x3.c&t;&t;Version 0.08&t;Jan. 14, 2000&n; *&n; *  Copyright (C) 1998-2000 Michel Aubry, Maintainer&n; *  Copyright (C) 1998-2000 Andrzej Krzysztofowicz, Maintainer&n; *&n; *  Copyright (C) 1998-2000 Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  (U)DMA capable version of ali 1533/1543(C), 1535(D)&n; *&n; *  version: 1.0 beta2 (Sep. 2, 1999)&n; *&t;e-mail your problems to cjtsai@ali.com.tw&n; *&n; **********************************************************************&n; *  9/7/99 --Parts from the above author are included and need to be&n; *  converted into standard interface, once I finish the thought.&n; */
+multiline_comment|/*&n; * linux/drivers/ide/alim15x3.c&t;&t;Version 0.09&t;Mar. 18, 2000&n; *&n; *  Copyright (C) 1998-2000 Michel Aubry, Maintainer&n; *  Copyright (C) 1998-2000 Andrzej Krzysztofowicz, Maintainer&n; *&n; *  Copyright (C) 1998-2000 Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  (U)DMA capable version of ali 1533/1543(C), 1535(D)&n; *&n; *  version: 1.0 beta2 (Sep. 2, 1999)&n; *&t;e-mail your problems to cjtsai@ali.com.tw&n; *&n; **********************************************************************&n; *  9/7/99 --Parts from the above author are included and need to be&n; *  converted into standard interface, once I finish the thought.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -55,6 +55,7 @@ r_int
 suffix:semicolon
 multiline_comment|/* ide-proc.c */
 DECL|variable|bmide_dev
+r_static
 r_struct
 id|pci_dev
 op_star
@@ -134,7 +135,6 @@ DECL|function|ali_get_info
 r_static
 r_int
 id|ali_get_info
-c_func
 (paren
 r_char
 op_star
@@ -2128,6 +2128,26 @@ id|err
 )paren
 suffix:semicolon
 )brace
+DECL|function|config_chipset_for_pio
+r_static
+r_void
+id|config_chipset_for_pio
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|ali15x3_tune_drive
+c_func
+(paren
+id|drive
+comma
+l_int|5
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 DECL|function|config_chipset_for_dma
 r_static
 r_int
@@ -2464,25 +2484,6 @@ r_return
 id|rval
 suffix:semicolon
 )brace
-DECL|function|config_chipset_for_pio
-r_static
-r_void
-id|config_chipset_for_pio
-(paren
-id|ide_drive_t
-op_star
-id|drive
-)paren
-(brace
-id|ali15x3_tune_drive
-c_func
-(paren
-id|drive
-comma
-l_int|5
-)paren
-suffix:semicolon
-)brace
 DECL|function|ali15x3_can_ultra
 r_static
 id|byte
@@ -2493,6 +2494,7 @@ op_star
 id|drive
 )paren
 (brace
+macro_line|#ifdef CONFIG_WDC_ALI15X3
 r_struct
 id|hd_driveid
 op_star
@@ -2500,16 +2502,7 @@ id|id
 op_assign
 id|drive-&gt;id
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|m5229_revision
-OL
-l_int|0x20
-)paren
-(brace
-macro_line|#else
+macro_line|#endif /* CONFIG_WDC_ALI15X3 */
 r_if
 c_cond
 (paren
@@ -2518,7 +2511,6 @@ op_le
 l_int|0x20
 )paren
 (brace
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2533,13 +2525,8 @@ OL
 l_int|0xC2
 )paren
 op_logical_and
+macro_line|#ifdef CONFIG_WDC_ALI15X3
 (paren
-(paren
-id|drive-&gt;media
-op_ne
-id|ide_disk
-)paren
-op_logical_or
 (paren
 id|chip_is_1543c_e
 op_logical_and
@@ -2551,9 +2538,24 @@ comma
 l_string|&quot;WDC &quot;
 )paren
 )paren
+op_logical_or
+(paren
+id|drive-&gt;media
+op_ne
+id|ide_disk
+)paren
 )paren
 )paren
 (brace
+macro_line|#else /* CONFIG_WDC_ALI15X3 */
+(paren
+id|drive-&gt;media
+op_ne
+id|ide_disk
+)paren
+)paren
+(brace
+macro_line|#endif /* CONFIG_WDC_ALI15X3 */
 r_return
 l_int|0
 suffix:semicolon
@@ -2952,6 +2954,7 @@ id|drive
 suffix:semicolon
 multiline_comment|/* use standard DMA stuff */
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 DECL|function|pci_init_ali15x3
 r_int
 r_int
@@ -3060,6 +3063,13 @@ id|name
 suffix:semicolon
 )brace
 macro_line|#if defined(DISPLAY_ALI_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ali_proc
+)paren
+(brace
 id|ali_proc
 op_assign
 l_int|1
@@ -3073,6 +3083,7 @@ op_assign
 op_amp
 id|ali_get_info
 suffix:semicolon
+)brace
 macro_line|#endif  /* defined(DISPLAY_ALI_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS) */
 r_return
 l_int|0
@@ -3581,6 +3592,32 @@ op_assign
 op_amp
 id|ali15x3_tune_drive
 suffix:semicolon
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
+dot
+id|autotune
+op_assign
+l_int|1
+suffix:semicolon
+id|hwif-&gt;drives
+(braket
+l_int|1
+)braket
+dot
+id|autotune
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#ifndef CONFIG_BLK_DEV_IDEDMA
+id|hwif-&gt;autodma
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 r_if
 c_cond
 (paren
@@ -3606,33 +3643,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-r_else
-(brace
-id|hwif-&gt;autodma
-op_assign
-l_int|0
-suffix:semicolon
-id|hwif-&gt;drives
-(braket
-l_int|0
-)braket
-dot
-id|autotune
-op_assign
-l_int|1
-suffix:semicolon
-id|hwif-&gt;drives
-(braket
-l_int|1
-)braket
-dot
-id|autotune
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_return
-suffix:semicolon
 )brace
 DECL|function|ide_dmacapable_ali15x3
 r_void

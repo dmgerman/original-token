@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#endif
 macro_line|#include &quot;sound_config.h&quot;
@@ -524,8 +524,9 @@ op_assign
 id|AWE_DEFAULT_MEM_SIZE
 suffix:semicolon
 multiline_comment|/* memory size in Kbytes */
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 DECL|variable|isapnp
+r_static
 r_int
 id|isapnp
 op_assign
@@ -533,6 +534,7 @@ l_int|1
 suffix:semicolon
 macro_line|#else
 DECL|variable|isapnp
+r_static
 r_int
 id|isapnp
 op_assign
@@ -25616,7 +25618,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 r_static
 r_struct
 (brace
@@ -25932,7 +25934,7 @@ r_void
 r_int
 id|base
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 r_if
 c_cond
 (paren
@@ -32667,7 +32669,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 r_if
 c_cond
 (paren

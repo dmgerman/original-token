@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ns87415.c&t;&t;Version 1.00  December 7, 1997&n; *&n; * Copyright (C) 1997-1998  Mark Lord&n; * Copyright (C) 1998       Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Inspired by an earlier effort from David S. Miller (davem@caipfs.rutgers.edu)&n; */
+multiline_comment|/*&n; * linux/drivers/ide/ns87415.c&t;&t;Version 1.01  Mar. 18, 2000&n; *&n; * Copyright (C) 1997-1998&t;Mark Lord &lt;mlord@pobox.com&gt;&n; * Copyright (C) 1998&t;&t;Eddie C. Dost &lt;ecd@skynet.be&gt;&n; * Copyright (C) 1999-2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n; *&n; * Inspired by an earlier effort from David S. Miller &lt;davem@redhat.com&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -299,6 +299,7 @@ id|drive-&gt;using_dma
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 DECL|function|ns87415_dmaproc
 r_static
 r_int
@@ -475,6 +476,7 @@ suffix:semicolon
 multiline_comment|/* use standard DMA stuff */
 )brace
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 DECL|function|ide_init_ns87415
 r_void
 id|__init
@@ -819,6 +821,7 @@ op_assign
 id|hwif-&gt;mate-&gt;irq
 suffix:semicolon
 multiline_comment|/* share IRQ with mate */
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
 (paren
@@ -829,6 +832,7 @@ op_assign
 op_amp
 id|ns87415_dmaproc
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|hwif-&gt;selectproc
 op_assign
 op_amp

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/buddha.c -- Amiga Buddha and Catweasel IDE Driver&n; *&n; *&t;Copyright (C) 1997 by Geert Uytterhoeven&n; *&n; *  This driver was written by based on the specifications in README.buddha.&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; *&n; *  TODO:&n; *    - test it :-)&n; *    - tune the timings using the speed-register&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/buddha.c -- Amiga Buddha and Catweasel IDE Driver&n; *&n; *&t;Copyright (C) 1997 by Geert Uytterhoeven&n; *&n; *  This driver was written by based on the specifications in README.buddha.&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; *&n; *  TODO:&n; *    - test it :-)&n; *    - tune the timings using the speed-register&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

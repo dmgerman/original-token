@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/piix.c&t;&t;Version 0.30&t;Feb. 26, 2000&n; *&n; *  Copyright (C) 1998-1999 Andrzej Krzysztofowicz, Author and Maintainer&n; *  Copyright (C) 1998-2000 Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  PIO mode setting function for Intel chipsets.  &n; *  For use instead of BIOS settings.&n; *&n; * 40-41&n; * 42-43&n; * &n; *                 41&n; *                 43&n; *&n; * | PIO 0       | c0 | 80 | 0 | &t;piix_tune_drive(drive, 0);&n; * | PIO 2 | SW2 | d0 | 90 | 4 | &t;piix_tune_drive(drive, 2);&n; * | PIO 3 | MW1 | e1 | a1 | 9 | &t;piix_tune_drive(drive, 3);&n; * | PIO 4 | MW2 | e3 | a3 | b | &t;piix_tune_drive(drive, 4);&n; * &n; * sitre = word40 &amp; 0x4000; primary&n; * sitre = word42 &amp; 0x4000; secondary&n; *&n; * 44 8421|8421    hdd|hdb&n; * &n; * 48 8421         hdd|hdc|hdb|hda udma enabled&n; *&n; *    0001         hda&n; *    0010         hdb&n; *    0100         hdc&n; *    1000         hdd&n; *&n; * 4a 84|21        hdb|hda&n; * 4b 84|21        hdd|hdc&n; *&n; *    ata-33/82371AB&n; *    ata-33/82371EB&n; *    ata-33/82801AB            ata-66/82801AA&n; *    00|00 udma 0              00|00 reserved&n; *    01|01 udma 1              01|01 udma 3&n; *    10|10 udma 2              10|10 udma 4&n; *    11|11 reserved            11|11 reserved&n; *&n; * 54 8421|8421    ata66 drive|ata66 enable&n; *&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x40, &amp;reg40);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x42, &amp;reg42);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x44, &amp;reg44);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x48, &amp;reg48);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x4a, &amp;reg4a);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x54, &amp;reg54);&n; *&n; * 00:1f.1 IDE interface: Intel Corporation:&n; *                          Unknown device 2411 (rev 01) (prog-if 80 [Master])&n; *         Control: I/O+ Mem- BusMaster+ SpecCycle- MemWINV- VGASnoop-&n; *                          ParErr- Stepping- SERR- FastB2B-&n; *         Status: Cap- 66Mhz- UDF- FastB2B+ ParErr- DEVSEL=medium &gt;TAbort-&n; *                          &lt;TAbort- &lt;MAbort- &gt;SERR- &lt;PERR-&n; *         Latency: 0 set&n; *         Region 4: I/O ports at ffa0&n; * 00: 86 80 11 24 05 00 80 02 01 80 01 01 00 00 00 00&n; * 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * 20: a1 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * 30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * 40: 07 a3 03 a3 00 00 00 00 05 00 02 02 00 00 00 00&n; * 50: 00 00 00 00 11 04 00 00 00 00 00 00 00 00 00 00&n; * 60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * 80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * 90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00&n; * f0: 00 00 00 00 00 00 00 00 3a 0f 00 00 00 00 00 00&n; *&n; */
+multiline_comment|/*&n; *  linux/drivers/ide/piix.c&t;&t;Version 0.31&t;Mar. 18, 2000&n; *&n; *  Copyright (C) 1998-1999 Andrzej Krzysztofowicz, Author and Maintainer&n; *  Copyright (C) 1998-2000 Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  PIO mode setting function for Intel chipsets.  &n; *  For use instead of BIOS settings.&n; *&n; * 40-41&n; * 42-43&n; * &n; *                 41&n; *                 43&n; *&n; * | PIO 0       | c0 | 80 | 0 | &t;piix_tune_drive(drive, 0);&n; * | PIO 2 | SW2 | d0 | 90 | 4 | &t;piix_tune_drive(drive, 2);&n; * | PIO 3 | MW1 | e1 | a1 | 9 | &t;piix_tune_drive(drive, 3);&n; * | PIO 4 | MW2 | e3 | a3 | b | &t;piix_tune_drive(drive, 4);&n; * &n; * sitre = word40 &amp; 0x4000; primary&n; * sitre = word42 &amp; 0x4000; secondary&n; *&n; * 44 8421|8421    hdd|hdb&n; * &n; * 48 8421         hdd|hdc|hdb|hda udma enabled&n; *&n; *    0001         hda&n; *    0010         hdb&n; *    0100         hdc&n; *    1000         hdd&n; *&n; * 4a 84|21        hdb|hda&n; * 4b 84|21        hdd|hdc&n; *&n; *    ata-33/82371AB&n; *    ata-33/82371EB&n; *    ata-33/82801AB            ata-66/82801AA&n; *    00|00 udma 0              00|00 reserved&n; *    01|01 udma 1              01|01 udma 3&n; *    10|10 udma 2              10|10 udma 4&n; *    11|11 reserved            11|11 reserved&n; *&n; * 54 8421|8421    ata66 drive|ata66 enable&n; *&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x40, &amp;reg40);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x42, &amp;reg42);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x44, &amp;reg44);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x48, &amp;reg48);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x4a, &amp;reg4a);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x54, &amp;reg54);&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1273,6 +1273,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_BLK_DEV_IDEDMA) &amp;&amp; defined(CONFIG_PIIX_TUNING)
 DECL|function|piix_config_drive_for_dma
 r_static
 r_int
@@ -2099,6 +2100,7 @@ id|drive
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* defined(CONFIG_BLK_DEV_IDEDMA) &amp;&amp; (CONFIG_PIIX_TUNING) */
 DECL|function|pci_init_piix
 r_int
 r_int
@@ -2117,6 +2119,13 @@ id|name
 )paren
 (brace
 macro_line|#if defined(DISPLAY_PIIX_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+r_if
+c_cond
+(paren
+op_logical_neg
+id|piix_proc
+)paren
+(brace
 id|piix_proc
 op_assign
 l_int|1
@@ -2130,6 +2139,7 @@ op_assign
 op_amp
 id|piix_get_info
 suffix:semicolon
+)brace
 macro_line|#endif /* DISPLAY_PIIX_TIMINGS &amp;&amp; CONFIG_PROC_FS */
 r_return
 l_int|0
@@ -2265,6 +2275,12 @@ id|hwif-&gt;dma_base
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifndef CONFIG_BLK_DEV_IDEDMA
+id|hwif-&gt;autodma
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else /* CONFIG_BLK_DEV_IDEDMA */
 macro_line|#ifdef CONFIG_PIIX_TUNING
 id|hwif-&gt;autodma
 op_assign
@@ -2275,16 +2291,7 @@ op_assign
 op_amp
 id|piix_dmaproc
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|hwif-&gt;autodma
-)paren
-id|hwif-&gt;autodma
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#endif /* CONFIG_PIIX_TUNING */
+macro_line|#endif /* !CONFIG_BLK_DEV_IDEDMA */
 )brace
 eof

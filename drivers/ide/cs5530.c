@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/cs5530.c&t;&t;&t;Version 0.5&t;Feb 13, 2000&n; *&n; * Copyright (C) 2000&t;&t;&t;Mark Lord &lt;mlord@pobox.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Development of this chipset driver was funded&n; * by the nice folks at National Semiconductor.&n; */
+multiline_comment|/*&n; * linux/drivers/ide/cs5530.c&t;&t;Version 0.6&t;Mar. 18, 2000&n; *&n; * Copyright (C) 2000&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * Ditto of GNU General Public License.&n; *&n; * Copyright (C) 2000&t;&t;&t;Mark Lord &lt;mlord@pobox.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Development of this chipset driver was funded&n; * by the nice folks at National Semiconductor.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -531,6 +531,7 @@ l_int|3
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 multiline_comment|/*&n; * cs5530_config_dma() handles selection/setting of DMA/UDMA modes&n; * for both the chipset and drive.&n; */
 DECL|function|cs5530_config_dma
 r_static
@@ -1127,6 +1128,7 @@ id|drive
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 multiline_comment|/*&n; * Initialize the cs5530 bridge for reliable IDE DMA operation.&n; */
 DECL|function|pci_init_cs5530
 r_int
@@ -1354,6 +1356,13 @@ id|flags
 )paren
 suffix:semicolon
 macro_line|#if defined(DISPLAY_CS5530_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cs5530_proc
+)paren
+(brace
 id|cs5530_proc
 op_assign
 l_int|1
@@ -1367,6 +1376,7 @@ op_assign
 op_amp
 id|cs5530_get_info
 suffix:semicolon
+)brace
 macro_line|#endif /* DISPLAY_CS5530_TIMINGS &amp;&amp; CONFIG_PROC_FS */
 r_return
 l_int|0
@@ -1414,11 +1424,18 @@ id|basereg
 comma
 id|d0_timings
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 id|hwif-&gt;dmaproc
 op_assign
 op_amp
 id|cs5530_dmaproc
 suffix:semicolon
+macro_line|#else
+id|hwif-&gt;autodma
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|hwif-&gt;tuneproc
 op_assign
 op_amp
