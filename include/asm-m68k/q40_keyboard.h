@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/include/asm-m68k/q40_keyboard.h&n; *&n; *  Created &n; */
 multiline_comment|/*&n; *  This file contains the Q40 specific keyboard definitions&n; */
-macro_line|#include &lt;linux/config.h&gt; /* CONFIG_MAGIC_SYSRQ */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/machdep.h&gt;
 r_extern

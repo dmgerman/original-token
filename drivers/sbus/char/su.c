@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.18 1999/01/02 16:47:37 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Coypright (C) 1998  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.19 1999/05/12 11:15:14 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Coypright (C) 1998  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -243,21 +243,15 @@ id|tq_struct
 id|tqueue
 suffix:semicolon
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|open_wait
 suffix:semicolon
 DECL|member|close_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|close_wait
 suffix:semicolon
 DECL|member|delta_msr_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|delta_msr_wait
 suffix:semicolon
 DECL|member|count
@@ -518,13 +512,12 @@ r_char
 op_star
 id|tmp_buf
 suffix:semicolon
-DECL|variable|tmp_buf_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|tmp_buf_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|function|serial_paranoia_check
 r_static
@@ -7802,15 +7795,13 @@ op_star
 id|info
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_int
 id|retval
@@ -9281,7 +9272,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.18 $&quot;
+l_string|&quot;$Revision: 1.19 $&quot;
 suffix:semicolon
 r_char
 op_star

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  arch/m68k/q40/config.c&n; *&n; * originally based on:&n; *&n; *  linux/bvme/config.c&n; *&n; *  Copyright (C) 1993 Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;stdarg.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

@@ -154,9 +154,12 @@ id|NBD_INITIALISED
 )paren
 )paren
 (brace
+id|init_MUTEX
+c_func
+(paren
+op_amp
 id|nbdev-&gt;queue_lock
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 id|nbdev-&gt;flags
 op_or_assign

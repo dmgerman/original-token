@@ -87,9 +87,7 @@ id|vuid_mode
 suffix:semicolon
 multiline_comment|/* VUID_NATIVE or VUID_FIRM_EVENT */
 DECL|member|proc_list
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|proc_list
 suffix:semicolon
 DECL|member|fasync
@@ -1225,15 +1223,13 @@ op_star
 id|ppos
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1884,9 +1880,12 @@ id|sunmouse.button_state
 op_assign
 l_int|0x80
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|sunmouse.proc_list
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|sunmouse.byte
 op_assign

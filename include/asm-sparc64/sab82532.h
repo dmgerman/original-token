@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.h,v 1.4 1998/10/25 23:04:29 ecd Exp $&n; * sab82532.h: Register Definitions for the Siemens SAB82532 DUSCC&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sab82532.h,v 1.5 1999/05/12 11:21:22 davem Exp $&n; * sab82532.h: Register Definitions for the Siemens SAB82532 DUSCC&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC64_SAB82532_H
 DECL|macro|_SPARC64_SAB82532_H
 mdefine_line|#define _SPARC64_SAB82532_H
@@ -708,21 +708,15 @@ id|termios
 id|callout_termios
 suffix:semicolon
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|open_wait
 suffix:semicolon
 DECL|member|close_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|close_wait
 suffix:semicolon
 DECL|member|delta_msr_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|delta_msr_wait
 suffix:semicolon
 DECL|member|next

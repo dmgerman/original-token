@@ -79,9 +79,7 @@ id|u_long
 id|vc_seq
 suffix:semicolon
 DECL|member|vc_waitq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|vc_waitq
 suffix:semicolon
 multiline_comment|/* Venus wait queue */
@@ -646,9 +644,7 @@ r_int
 id|uc_unique
 suffix:semicolon
 DECL|member|uc_sleep
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|uc_sleep
 suffix:semicolon
 multiline_comment|/* process&squot; wait queue */

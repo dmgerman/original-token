@@ -1,6 +1,7 @@
 macro_line|#ifndef _M68K_PAGE_H
 DECL|macro|_M68K_PAGE_H
 mdefine_line|#define _M68K_PAGE_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT&t;12

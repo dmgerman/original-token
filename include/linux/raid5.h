@@ -181,9 +181,7 @@ id|phase
 suffix:semicolon
 multiline_comment|/* PHASE_BEGIN, ..., PHASE_COMPLETE */
 DECL|member|wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 suffix:semicolon
 multiline_comment|/* processes waiting for this stripe */
@@ -347,9 +345,7 @@ op_star
 id|free_sh_list
 suffix:semicolon
 DECL|member|wait_for_stripe
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait_for_stripe
 suffix:semicolon
 )brace

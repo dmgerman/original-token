@@ -55,6 +55,10 @@ id|mm_struct
 id|init_mm
 op_assign
 id|INIT_MM
+c_func
+(paren
+id|init_mm
+)paren
 suffix:semicolon
 multiline_comment|/* .text section in head.S is aligned at 8k boundry and this gets linked&n; * right after that so that the init_task_union is aligned properly as well.&n; * If this is not aligned on a 8k boundry, then you should change code&n; * in etrap.S which assumes it.&n; */
 DECL|variable|init_task_union
@@ -75,6 +79,10 @@ l_string|&quot;.text&quot;
 op_assign
 (brace
 id|INIT_TASK
+c_func
+(paren
+id|init_task_union.task
+)paren
 )brace
 suffix:semicolon
 eof

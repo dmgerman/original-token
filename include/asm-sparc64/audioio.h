@@ -441,9 +441,7 @@ id|dev
 suffix:semicolon
 multiline_comment|/* Processes blocked on open() sit here. */
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|open_wait
 suffix:semicolon
 multiline_comment|/* Task queue for this driver&squot;s bottom half. */
@@ -508,12 +506,9 @@ id|output_eof
 suffix:semicolon
 DECL|member|output_write_wait
 DECL|member|output_drain_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|output_write_wait
 comma
-op_star
 id|output_drain_wait
 suffix:semicolon
 DECL|member|output_notify
@@ -563,9 +558,7 @@ comma
 id|recording_count
 suffix:semicolon
 DECL|member|input_read_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|input_read_wait
 suffix:semicolon
 multiline_comment|/* Hack to make it look like we support variable size buffers. */

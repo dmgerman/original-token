@@ -481,9 +481,9 @@ DECL|typedef|spinlock_t
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0, 0, NO_PROC_ID }
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0, 0, 0xff }
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(__lock)&t;&bslash;&n;do {&t;(__lock)-&gt;lock = 0; &bslash;&n;&t;(__lock)-&gt;owner_pc = 0; &bslash;&n;&t;(__lock)-&gt;owner_cpu = NO_PROC_ID; &bslash;&n;} while(0)
+mdefine_line|#define spin_lock_init(__lock)&t;&bslash;&n;do {&t;(__lock)-&gt;lock = 0; &bslash;&n;&t;(__lock)-&gt;owner_pc = 0; &bslash;&n;&t;(__lock)-&gt;owner_cpu = 0xff; &bslash;&n;} while(0)
 DECL|macro|spin_is_locked
 mdefine_line|#define spin_is_locked(__lock)&t;(*((volatile unsigned char *)(&amp;((__lock)-&gt;lock))) != 0)
 DECL|macro|spin_unlock_wait
@@ -1169,7 +1169,7 @@ DECL|typedef|rwlock_t
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED&t;(rwlock_t) { 0, 0, NO_PROC_ID, { 0, 0, 0, 0 } }
+mdefine_line|#define RW_LOCK_UNLOCKED&t;(rwlock_t) { 0, 0, 0xff, { 0, 0, 0, 0 } }
 r_extern
 r_void
 id|_do_read_lock

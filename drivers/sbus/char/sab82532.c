@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.c,v 1.30 1999/03/24 11:34:52 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/* $Id: sab82532.c,v 1.31 1999/05/12 11:15:10 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -230,13 +230,12 @@ id|tmp_buf
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|tmp_buf_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|tmp_buf_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|function|serial_paranoia_check
 r_static
@@ -6765,15 +6764,13 @@ op_star
 id|info
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_int
 id|retval
@@ -8628,7 +8625,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.30 $&quot;
+l_string|&quot;$Revision: 1.31 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9138,17 +9135,26 @@ id|info-&gt;normal_termios
 op_assign
 id|serial_driver.init_termios
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|info-&gt;open_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|info-&gt;close_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|info-&gt;delta_msr_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 id|info-&gt;icount.cts
 op_assign

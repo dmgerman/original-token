@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.41 1999/04/16 16:22:27 jj Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.42 1999/05/12 11:15:26 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -436,13 +436,12 @@ l_int|4096
 )braket
 suffix:semicolon
 multiline_comment|/* This is cheating */
-DECL|variable|tmp_buf_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|tmp_buf_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|function|serial_paranoia_check
 r_static
@@ -6872,15 +6871,13 @@ op_star
 id|info
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_int
 id|retval
@@ -7697,7 +7694,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.41 $&quot;
+l_string|&quot;$Revision: 1.42 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -11897,13 +11894,19 @@ id|info-&gt;normal_termios
 op_assign
 id|serial_driver.init_termios
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|info-&gt;open_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|info-&gt;close_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 id|printk
 c_func

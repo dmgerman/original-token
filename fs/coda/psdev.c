@@ -1370,6 +1370,13 @@ id|coda_super_info
 )paren
 )paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|coda_upc_comm.vc_waitq
+)paren
+suffix:semicolon
 id|coda_sysctl_init
 c_func
 (paren

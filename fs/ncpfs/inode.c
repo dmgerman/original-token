@@ -147,13 +147,12 @@ id|read_nwinfo
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|read_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|read_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Fill in the ncpfs-specific information in the inode.&n; */
 DECL|function|ncp_update_inode
@@ -1528,9 +1527,12 @@ id|server-&gt;lock
 op_assign
 l_int|0
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|server-&gt;wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|server-&gt;packet
 op_assign
@@ -3152,9 +3154,12 @@ id|KERN_DEBUG
 l_string|&quot;ncpfs: init_module called&bslash;n&quot;
 )paren
 suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
 id|read_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 id|read_nwinfo
 op_assign

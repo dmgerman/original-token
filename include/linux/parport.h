@@ -811,9 +811,7 @@ id|state
 suffix:semicolon
 multiline_comment|/* saved status over preemption */
 DECL|member|wait_q
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait_q
 suffix:semicolon
 DECL|member|time

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/arch/m68k/sun3x/time.c&n; *&n; *  Sun3x-specific time handling&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

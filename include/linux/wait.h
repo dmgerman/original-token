@@ -34,9 +34,9 @@ suffix:semicolon
 DECL|macro|WQ_BUG
 mdefine_line|#define WQ_BUG() do { &bslash;&n;&t;printk(&quot;wq bug, forcing oops.&bslash;n&quot;); &bslash;&n;&t;*(int*)0 = 0; &bslash;&n;} while (0)
 DECL|macro|CHECK_MAGIC
-mdefine_line|#define CHECK_MAGIC(x) if (x != (int)&amp;(x)) &bslash;&n;&t;{ printk(&quot;bad magic %08x (should be %08x), &quot;, x, (int)&amp;(x)); WQ_BUG(); }
+mdefine_line|#define CHECK_MAGIC(x) if (x != (long)&amp;(x)) &bslash;&n;&t;{ printk(&quot;bad magic %lx (should be %lx), &quot;, x, (long)&amp;(x)); WQ_BUG(); }
 DECL|macro|CHECK_MAGIC_WQHEAD
-mdefine_line|#define CHECK_MAGIC_WQHEAD(x) do { &bslash;&n;&t;if (x-&gt;__magic != (int)&amp;(x-&gt;__magic)) { &bslash;&n;&t;&t;printk(&quot;bad magic %08x (should be %08x, creator %08x), &quot;, &bslash;&n;&t;&t;&t;x-&gt;__magic, (int)&amp;(x-&gt;__magic), x-&gt;__creator); &bslash;&n;&t;&t;WQ_BUG(); &bslash;&n;&t;} &bslash;&n;} while (0)
+mdefine_line|#define CHECK_MAGIC_WQHEAD(x) do { &bslash;&n;&t;if (x-&gt;__magic != (long)&amp;(x-&gt;__magic)) { &bslash;&n;&t;&t;printk(&quot;bad magic %lx (should be %lx, creator %lx), &quot;, &bslash;&n;&t;&t;&t;x-&gt;__magic, (long)&amp;(x-&gt;__magic), x-&gt;__creator); &bslash;&n;&t;&t;WQ_BUG(); &bslash;&n;&t;} &bslash;&n;} while (0)
 macro_line|#endif
 DECL|struct|__wait_queue
 r_struct
@@ -155,9 +155,9 @@ id|wait_queue_head_t
 suffix:semicolon
 macro_line|#if WAITQUEUE_DEBUG
 DECL|macro|__WAITQUEUE_DEBUG_INIT
-macro_line|# define __WAITQUEUE_DEBUG_INIT(name) &bslash;&n;&t;&t;, (int)&amp;(name).__magic, 0
+macro_line|# define __WAITQUEUE_DEBUG_INIT(name) &bslash;&n;&t;&t;, (long)&amp;(name).__magic, 0
 DECL|macro|__WAITQUEUE_HEAD_DEBUG_INIT
-macro_line|# define __WAITQUEUE_HEAD_DEBUG_INIT(name) &bslash;&n;&t;&t;, (int)&amp;(name).__magic, (int)&amp;(name).__magic
+macro_line|# define __WAITQUEUE_HEAD_DEBUG_INIT(name) &bslash;&n;&t;&t;, (long)&amp;(name).__magic, (long)&amp;(name).__magic
 macro_line|#else
 DECL|macro|__WAITQUEUE_DEBUG_INIT
 macro_line|# define __WAITQUEUE_DEBUG_INIT(name)

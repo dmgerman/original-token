@@ -195,9 +195,7 @@ id|fsinfo_offset
 suffix:semicolon
 multiline_comment|/* FAT32 fsinfo offset from start of disk */
 DECL|member|fat_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|fat_wait
 suffix:semicolon
 DECL|member|fat_lock

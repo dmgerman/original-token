@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.12 1998/09/13 04:30:30 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.13 1999/05/12 11:11:34 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -49,14 +49,12 @@ DECL|variable|stats
 id|stats
 suffix:semicolon
 multiline_comment|/* &n; * The wait queue for waking up the async daemon:&n; */
-DECL|variable|asyncd_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|asyncd_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 DECL|struct|async_job
 r_struct

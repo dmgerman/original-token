@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.27 1999/05/09 06:40:47 ecd Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.28 1999/05/12 11:15:05 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2580,9 +2580,7 @@ r_int
 id|tail
 suffix:semicolon
 DECL|member|proc_list
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|proc_list
 suffix:semicolon
 DECL|member|fasync
@@ -3109,13 +3107,12 @@ id|KBD_DATA_REG
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * AUX handler critical section start and end.&n; * &n; * Only one process can be in the critical section and all keyboard sends are&n; * deferred as long as we&squot;re inside. This is necessary as we may sleep when&n; * waiting for the keyboard controller and other processes / BH&squot;s can&n; * preempt us. Please note that the input buffer must be flushed when&n; * aux_end_atomic() is called and the interrupt is no longer enabled as not&n; * doing so might cause the keyboard driver to ignore all incoming keystrokes.&n; */
-DECL|variable|aux_sema4
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|aux_sema4
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|function|aux_start_atomic
 r_static
@@ -3666,15 +3663,13 @@ op_star
 id|ppos
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 id|ssize_t
 id|i

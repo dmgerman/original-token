@@ -189,9 +189,7 @@ suffix:semicolon
 multiline_comment|/* FCS so far of rpkt&t;&t;*/
 multiline_comment|/* Queues for select() functionality */
 DECL|member|read_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|read_wait
 suffix:semicolon
 multiline_comment|/* queue for reading processes&t;*/

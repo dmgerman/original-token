@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timod.c,v 1.1 1998/03/26 08:46:18 jj Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
+multiline_comment|/* $Id: timod.c,v 1.2 1999/05/12 11:11:55 davem Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -224,8 +224,8 @@ DECL|macro|BUF_SIZE
 mdefine_line|#define BUF_SIZE&t;PAGE_SIZE
 DECL|macro|PUT_MAGIC
 mdefine_line|#define PUT_MAGIC(a,m)
-DECL|macro|CHECK_MAGIC
-mdefine_line|#define CHECK_MAGIC(a,m)
+DECL|macro|SCHECK_MAGIC
+mdefine_line|#define SCHECK_MAGIC(a,m)
 DECL|macro|BUF_OFFSET
 mdefine_line|#define BUF_OFFSET&t;0
 DECL|macro|MKCTL_TRAILER
@@ -239,8 +239,8 @@ DECL|macro|MKCTL_MAGIC
 mdefine_line|#define MKCTL_MAGIC&t;0xDEADBABEBADC0DEDL
 DECL|macro|PUT_MAGIC
 mdefine_line|#define PUT_MAGIC(a,m)&t;do{(*(u64*)(a))=(m);}while(0)
-DECL|macro|CHECK_MAGIC
-mdefine_line|#define CHECK_MAGIC(a,m)&t;do{if((*(u64*)(a))!=(m))printk(&quot;%s,%u,%s(): magic %08x at %p corrupted!&bslash;n&quot;,&bslash;&n;&t;&t;&t;&t;__FILE__,__LINE__,__FUNCTION__,(m),(a));}while(0)
+DECL|macro|SCHECK_MAGIC
+mdefine_line|#define SCHECK_MAGIC(a,m)&t;do{if((*(u64*)(a))!=(m))printk(&quot;%s,%u,%s(): magic %08x at %p corrupted!&bslash;n&quot;,&bslash;&n;&t;&t;&t;&t;__FILE__,__LINE__,__FUNCTION__,(m),(a));}while(0)
 DECL|macro|BUF_OFFSET
 mdefine_line|#define BUF_OFFSET&t;sizeof(u64)
 DECL|macro|MKCTL_TRAILER
@@ -383,7 +383,7 @@ id|p
 op_minus
 id|BUF_OFFSET
 suffix:semicolon
-id|CHECK_MAGIC
+id|SCHECK_MAGIC
 c_func
 (paren
 id|p
@@ -391,7 +391,7 @@ comma
 id|BUFPAGE_MAGIC
 )paren
 suffix:semicolon
-id|CHECK_MAGIC
+id|SCHECK_MAGIC
 c_func
 (paren
 id|p
@@ -4019,7 +4019,7 @@ comma
 id|it-&gt;length
 )paren
 suffix:semicolon
-id|CHECK_MAGIC
+id|SCHECK_MAGIC
 c_func
 (paren
 (paren

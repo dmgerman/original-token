@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/m68k/mm/kmap.c&n; *&n; *  Copyright (C) 1997 Roman Hodek&n; *&n; *  10/01/99 cleaned up the code and changing to the same interface&n; *&t;     used by other architectures&t;&t;/Roman Zippel&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

@@ -116,13 +116,12 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
-DECL|variable|mfw_sema
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|mfw_sema
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|variable|mfw_lock

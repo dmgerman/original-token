@@ -7021,11 +7021,11 @@ op_star
 id|rq
 )paren
 (brace
-r_struct
-id|semaphore
+id|DECLARE_MUTEX_LOCKED
+c_func
+(paren
 id|sem
-op_assign
-id|MUTEX_LOCKED
+)paren
 suffix:semicolon
 macro_line|#if IDETAPE_DEBUG_BUGS
 r_if

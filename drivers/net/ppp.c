@@ -10730,9 +10730,12 @@ id|ppp-&gt;inuse
 op_assign
 l_int|1
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|ppp-&gt;read_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Make up a suitable name for this device&n;&t; */
 id|dev

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.h,v 1.1 1997/08/28 02:23:45 ecd Exp $&n; * zs.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: zs.h,v 1.2 1999/05/12 11:15:31 davem Exp $&n; * zs.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_SERIAL_H
 DECL|macro|_SPARC_SERIAL_H
 mdefine_line|#define _SPARC_SERIAL_H
@@ -408,15 +408,11 @@ id|termios
 id|callout_termios
 suffix:semicolon
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|open_wait
 suffix:semicolon
 DECL|member|close_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|close_wait
 suffix:semicolon
 )brace

@@ -2,6 +2,7 @@ macro_line|#ifndef _M68K_SEMAPHORE_HELPER_H
 DECL|macro|_M68K_SEMAPHORE_HELPER_H
 mdefine_line|#define _M68K_SEMAPHORE_HELPER_H
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores helper functions.&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * m68k version by Andreas Schwab&n; */
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; */
 DECL|function|wake_one_more
 r_static

@@ -2733,6 +2733,10 @@ op_assign
 id|MSDOS_SUPER_MAGIC
 suffix:semicolon
 multiline_comment|/* set up enough so that it can read an inode */
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|MSDOS_SB
 c_func
 (paren
@@ -2740,8 +2744,7 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|fat_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|MSDOS_SB
 c_func

@@ -233,9 +233,7 @@ id|timer_list
 id|poll_timer
 suffix:semicolon
 DECL|member|poll_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|poll_wait
 suffix:semicolon
 DECL|member|instance

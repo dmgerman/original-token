@@ -301,12 +301,9 @@ id|mm
 suffix:semicolon
 multiline_comment|/* mmcodec special info */
 macro_line|#if 0
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wait
 comma
-op_star
 id|int_wait
 suffix:semicolon
 multiline_comment|/* Where to sleep if busy */

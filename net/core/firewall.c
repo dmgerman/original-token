@@ -6,11 +6,11 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 DECL|variable|firewall_sem
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|firewall_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|variable|firewall_policy
 r_static
