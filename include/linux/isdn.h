@@ -517,8 +517,6 @@ DECL|macro|ISDN_TIMER_NETDIAL
 mdefine_line|#define ISDN_TIMER_NETDIAL    16 
 DECL|macro|ISDN_TIMER_NETHANGUP
 mdefine_line|#define ISDN_TIMER_NETHANGUP  32
-DECL|macro|ISDN_TIMER_IPPP
-mdefine_line|#define ISDN_TIMER_IPPP       64 
 DECL|macro|ISDN_TIMER_KEEPALIVE
 mdefine_line|#define ISDN_TIMER_KEEPALIVE 128 /* Cisco-Keepalive */
 DECL|macro|ISDN_TIMER_CARRIER
@@ -980,17 +978,12 @@ id|dev
 suffix:semicolon
 multiline_comment|/* interface to upper levels        */
 macro_line|#ifdef CONFIG_ISDN_PPP
-DECL|member|mp_last
-r_struct
-id|mpqueue
-op_star
-id|mp_last
-suffix:semicolon
-DECL|member|ib
-r_struct
+DECL|member|pb
 id|ippp_bundle
-id|ib
+op_star
+id|pb
 suffix:semicolon
+multiline_comment|/* pointer to the common bundle structure&n;   &t;&t;&t;         * with the the per-bundle data */
 macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN_X25
 DECL|member|cprot

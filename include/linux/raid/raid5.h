@@ -293,10 +293,6 @@ id|working_disks
 comma
 id|failed_disks
 suffix:semicolon
-DECL|member|sector_count
-r_int
-id|sector_count
-suffix:semicolon
 DECL|member|next_sector
 r_int
 r_int

@@ -1568,6 +1568,32 @@ op_amp
 id|head-&gt;agp_info
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|head-&gt;agp_info.chipset
+op_eq
+id|NOT_SUPPORTED
+)paren
+(brace
+id|drm_free
+c_func
+(paren
+id|head
+comma
+r_sizeof
+(paren
+op_star
+id|head
+)paren
+comma
+id|DRM_MEM_AGPLISTS
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|head-&gt;memory
 op_assign
 l_int|NULL
@@ -1623,6 +1649,17 @@ l_string|&quot;Intel i810&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020400
+r_case
+id|INTEL_I840
+suffix:colon
+id|head-&gt;chipset
+op_assign
+l_string|&quot;Intel i840&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_case
 id|VIA_GENERIC
 suffix:colon
@@ -1650,12 +1687,13 @@ l_string|&quot;VIA MVP3&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020400
 r_case
-id|VIA_APOLLO_PRO
+id|VIA_MVP4
 suffix:colon
 id|head-&gt;chipset
 op_assign
-l_string|&quot;VIA Apollo Pro&quot;
+l_string|&quot;VIA MVP4&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1665,6 +1703,16 @@ suffix:colon
 id|head-&gt;chipset
 op_assign
 l_string|&quot;VIA Apollo Super&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_case
+id|VIA_APOLLO_PRO
+suffix:colon
+id|head-&gt;chipset
+op_assign
+l_string|&quot;VIA Apollo Pro&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1715,8 +1763,12 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+id|head-&gt;chipset
+op_assign
+l_string|&quot;Unknown&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 id|DRM_INFO
 c_func

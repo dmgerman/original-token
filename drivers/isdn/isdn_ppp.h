@@ -2,14 +2,6 @@ multiline_comment|/* $Id: isdn_ppp.h,v 1.16 2000/05/18 23:14:18 keil Exp $&n;&n;
 macro_line|#include &lt;linux/ppp_defs.h&gt;     /* for PPP_PROTOCOL */
 macro_line|#include &lt;linux/isdn_ppp.h&gt;&t;/* for isdn_ppp info */
 r_extern
-r_void
-id|isdn_ppp_timer_timeout
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|isdn_ppp_read
 c_func

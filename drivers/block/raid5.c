@@ -3271,6 +3271,7 @@ op_star
 id|b_page
 suffix:semicolon
 r_int
+r_int
 id|block
 op_assign
 id|sh-&gt;sector
@@ -3645,6 +3646,7 @@ id|raid5_compute_sector
 c_func
 (paren
 r_int
+r_int
 id|r_sector
 comma
 r_int
@@ -3675,8 +3677,11 @@ r_int
 id|stripe
 suffix:semicolon
 r_int
+r_int
 id|chunk_number
-comma
+suffix:semicolon
+r_int
+r_int
 id|chunk_offset
 suffix:semicolon
 r_int

@@ -148,6 +148,7 @@ multiline_comment|/* for use when syncing mirrors: */
 DECL|member|start_active
 DECL|member|start_ready
 r_int
+r_int
 id|start_active
 comma
 id|start_ready

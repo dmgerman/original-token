@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|function|open_kcore
 r_static
 r_int
@@ -148,7 +149,15 @@ id|CMAGIC
 suffix:semicolon
 id|dump.u_dsize
 op_assign
-id|max_mapnr
+(paren
+id|virt_to_phys
+c_func
+(paren
+id|high_memory
+)paren
+op_rshift
+id|PAGE_SHIFT
+)paren
 suffix:semicolon
 macro_line|#if defined (__i386__)
 id|dump.start_code
@@ -164,13 +173,11 @@ suffix:semicolon
 macro_line|#endif
 id|memsize
 op_assign
+id|virt_to_phys
+c_func
 (paren
-id|max_mapnr
-op_plus
-l_int|1
+id|high_memory
 )paren
-op_lshift
-id|PAGE_SHIFT
 suffix:semicolon
 r_if
 c_cond

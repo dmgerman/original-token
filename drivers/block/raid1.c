@@ -1757,11 +1757,10 @@ l_int|9
 suffix:semicolon
 r_const
 r_int
+r_int
 id|this_sector
 op_assign
-id|bh-&gt;b_blocknr
-op_star
-id|sectors
+id|bh-&gt;b_rsector
 suffix:semicolon
 r_int
 id|disk

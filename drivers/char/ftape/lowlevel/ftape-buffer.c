@@ -76,7 +76,7 @@ id|addr
 suffix:semicolon
 id|page
 OL
-id|get_mem_map
+id|virt_to_page
 c_func
 (paren
 id|addr

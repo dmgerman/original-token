@@ -3,6 +3,7 @@ DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;drmP.h&quot;
+macro_line|#include &lt;linux/wrapper.h&gt;
 DECL|struct|drm_mem_stats
 r_typedef
 r_struct
@@ -1157,6 +1158,8 @@ op_sub_assign
 id|PAGE_SIZE
 )paren
 (brace
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020400
+multiline_comment|/* Argument type changed in 2.4.0-test6/pre8 */
 id|mem_map_reserve
 c_func
 (paren
@@ -1167,6 +1170,18 @@ id|addr
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|mem_map_reserve
+c_func
+(paren
+id|MAP_NR
+c_func
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 id|address
@@ -1253,6 +1268,8 @@ op_sub_assign
 id|PAGE_SIZE
 )paren
 (brace
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020400
+multiline_comment|/* Argument type changed in 2.4.0-test6/pre8 */
 id|mem_map_unreserve
 c_func
 (paren
@@ -1263,6 +1280,18 @@ id|addr
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|mem_map_unreserve
+c_func
+(paren
+id|MAP_NR
+c_func
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 id|free_pages
 c_func

@@ -2756,7 +2756,6 @@ l_string|&quot;timed out waiting to issue RX_START&quot;
 (brace
 id|spin_unlock_irqrestore
 (paren
-(paren
 op_amp
 id|lp-&gt;lock
 comma

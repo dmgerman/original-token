@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_tty.c,v 1.92 2000/06/21 09:54:29 keil Exp $&n;&n; * Linux ISDN subsystem, tty functions and AT-command emulator (linklevel).&n; *&n; * Copyright 1994-1999  by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* $Id: isdn_tty.c,v 1.93 2000/08/05 09:58:26 armin Exp $&n;&n; * Linux ISDN subsystem, tty functions and AT-command emulator (linklevel).&n; *&n; * Copyright 1994-1999  by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 DECL|macro|ISDN_TTY_STAT_DEBUG
 macro_line|#undef ISDN_TTY_STAT_DEBUG
 DECL|macro|__NO_VERSION__
@@ -211,7 +211,7 @@ r_char
 op_star
 id|isdn_tty_revision
 op_assign
-l_string|&quot;$Revision: 1.92 $&quot;
+l_string|&quot;$Revision: 1.93 $&quot;
 suffix:semicolon
 multiline_comment|/* isdn_tty_try_read() is called from within isdn_tty_rcv_skb()&n; * to stuff incoming data directly into a tty&squot;s flip-buffer. This&n; * is done to speed up tty-receiving if the receive-queue is empty.&n; * This routine MUST be called with interrupts off.&n; * Return:&n; *  1 = Success&n; *  0 = Failure, data has to be buffered and later processed by&n; *      isdn_tty_readmodem().&n; */
 r_static
@@ -5011,6 +5011,13 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
+id|atemu
+op_star
+id|m
+op_assign
+op_amp
+id|info-&gt;emu
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5123,13 +5130,6 @@ l_int|3
 macro_line|#endif
 )paren
 (brace
-id|atemu
-op_star
-id|m
-op_assign
-op_amp
-id|info-&gt;emu
-suffix:semicolon
 macro_line|#ifdef CONFIG_ISDN_AUDIO
 r_if
 c_cond
@@ -5402,6 +5402,7 @@ id|info-&gt;vonline
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef ISDN_DEBUG_MODEM_VOICE
 id|printk
 c_func
 (paren
@@ -5413,6 +5414,7 @@ comma
 id|c
 )paren
 suffix:semicolon
+macro_line|#endif
 id|info-&gt;xmit_count
 op_add_assign
 id|cc
@@ -5500,6 +5502,13 @@ op_add_assign
 id|c
 suffix:semicolon
 )brace
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|info-&gt;xmit_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5516,6 +5525,31 @@ id|info-&gt;xmit_queue
 )paren
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|m-&gt;mdmreg
+(braket
+id|REG_DXMT
+)braket
+op_amp
+id|BIT_DXMT
+)paren
+(brace
+id|isdn_tty_senddown
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+id|isdn_tty_tint
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+)brace
 id|isdn_timer_ctrl
 c_func
 (paren
@@ -5524,13 +5558,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|info-&gt;xmit_lock
-)paren
-suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -9421,7 +9449,7 @@ c_cond
 (paren
 id|tmp
 op_assign
-id|isdn_wildmat
+id|isdn_msncmp
 c_func
 (paren
 id|cid
@@ -9511,7 +9539,7 @@ id|tmp
 suffix:semicolon
 id|tmp
 op_assign
-id|isdn_wildmat
+id|isdn_msncmp
 c_func
 (paren
 id|cid
@@ -9562,6 +9590,7 @@ r_int
 id|ch
 comma
 id|setup_parm
+op_star
 id|setup
 )paren
 (brace
@@ -9595,7 +9624,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|setup.phone
+id|setup-&gt;phone
 (braket
 l_int|0
 )braket
@@ -9616,27 +9645,27 @@ suffix:semicolon
 r_else
 id|nr
 op_assign
-id|setup.phone
+id|setup-&gt;phone
 suffix:semicolon
 id|si1
 op_assign
 (paren
 r_int
 )paren
-id|setup.si1
+id|setup-&gt;si1
 suffix:semicolon
 id|si2
 op_assign
 (paren
 r_int
 )paren
-id|setup.si2
+id|setup-&gt;si2
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|setup.eazmsn
+id|setup-&gt;eazmsn
 (braket
 l_int|0
 )braket
@@ -9657,7 +9686,7 @@ suffix:semicolon
 r_else
 id|eaz
 op_assign
-id|setup.eazmsn
+id|setup-&gt;eazmsn
 suffix:semicolon
 macro_line|#ifdef ISDN_DEBUG_MODEM_ICALL
 id|printk
@@ -9939,14 +9968,14 @@ id|info-&gt;emu.mdmreg
 id|REG_PLAN
 )braket
 op_assign
-id|setup.plan
+id|setup-&gt;plan
 suffix:semicolon
 id|info-&gt;emu.mdmreg
 (braket
 id|REG_SCREEN
 )braket
 op_assign
-id|setup.screen
+id|setup-&gt;screen
 suffix:semicolon
 id|isdn_info_update
 c_func
@@ -10469,6 +10498,30 @@ id|info-&gt;line
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Wake up any processes waiting&n;&t;&t;&t;&t; * for incoming call of this device when&n;&t;&t;&t;&t; * DCD follow the state of incoming carrier&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|info-&gt;blocked_open
+op_logical_and
+(paren
+id|info-&gt;emu.mdmreg
+(braket
+id|REG_DCD
+)braket
+op_amp
+id|BIT_DCD
+)paren
+)paren
+(brace
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|info-&gt;open_wait
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Schedule CONNECT-Message to any tty&n;&t;&t;&t;&t; * waiting for it and&n;&t;&t;&t;&t; * set DCD-bit of its modem-status.&n;&t;&t;&t;&t; */
 r_if
 c_cond
@@ -10477,6 +10530,19 @@ id|TTY_IS_ACTIVE
 c_func
 (paren
 id|info
+)paren
+op_logical_or
+(paren
+id|info-&gt;blocked_open
+op_logical_and
+(paren
+id|info-&gt;emu.mdmreg
+(braket
+id|REG_DCD
+)braket
+op_amp
+id|BIT_DCD
+)paren
 )paren
 )paren
 (brace
@@ -12507,6 +12573,16 @@ l_int|0
 )braket
 op_eq
 l_char|&squot;,&squot;
+)paren
+op_logical_or
+(paren
+op_star
+id|p
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;:&squot;
 )paren
 )paren
 op_logical_and

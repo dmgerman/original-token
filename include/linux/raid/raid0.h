@@ -8,15 +8,18 @@ id|strip_zone
 (brace
 DECL|member|zone_offset
 r_int
+r_int
 id|zone_offset
 suffix:semicolon
 multiline_comment|/* Zone offset in md_dev */
 DECL|member|dev_offset
 r_int
+r_int
 id|dev_offset
 suffix:semicolon
 multiline_comment|/* Zone offset in real dev */
 DECL|member|size
+r_int
 r_int
 id|size
 suffix:semicolon

@@ -3404,6 +3404,10 @@ r_int
 id|do_close
 c_func
 (paren
+r_struct
+id|files_struct
+op_star
+comma
 r_int
 r_int
 comma

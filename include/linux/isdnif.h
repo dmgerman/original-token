@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnif.h,v 1.33 2000/01/20 19:59:43 keil Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; */
+multiline_comment|/* $Id: isdnif.h,v 1.35 2000/06/16 13:19:38 keil Exp $&n;&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; */
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
@@ -124,6 +124,22 @@ multiline_comment|/* Broadcast invoke frames from the network are reported via t
 multiline_comment|/* STAT_INVOKE_BRD callback. The ll_id is set to 0, the other fields */
 multiline_comment|/* are supplied by the network and not by the HL.                    */
 multiline_comment|/*********************************************************************/
+multiline_comment|/*****************/
+multiline_comment|/* NI1 commands */
+multiline_comment|/*****************/
+DECL|macro|NI1_CMD_INVOKE
+mdefine_line|#define NI1_CMD_INVOKE       ((0x00 &lt;&lt; 8) | ISDN_PTYPE_NI1)   /* invoke a supplementary service */
+DECL|macro|NI1_CMD_INVOKE_ABORT
+mdefine_line|#define NI1_CMD_INVOKE_ABORT ((0x01 &lt;&lt; 8) | ISDN_PTYPE_NI1)   /* abort a invoke cmd */
+multiline_comment|/*******************************/
+multiline_comment|/* NI1 Status callback values */
+multiline_comment|/*******************************/
+DECL|macro|NI1_STAT_INVOKE_RES
+mdefine_line|#define NI1_STAT_INVOKE_RES  ((0x80 &lt;&lt; 8) | ISDN_PTYPE_NI1)   /* Result for invocation */
+DECL|macro|NI1_STAT_INVOKE_ERR
+mdefine_line|#define NI1_STAT_INVOKE_ERR  ((0x81 &lt;&lt; 8) | ISDN_PTYPE_NI1)   /* Error Return for invocation */
+DECL|macro|NI1_STAT_INVOKE_BRD
+mdefine_line|#define NI1_STAT_INVOKE_BRD  ((0x82 &lt;&lt; 8) | ISDN_PTYPE_NI1)   /* Deliver invoke broadcast info */
 r_typedef
 r_struct
 DECL|member|ll_id
@@ -166,9 +182,9 @@ op_star
 id|data
 suffix:semicolon
 multiline_comment|/* pointer to data delivered or send   */
-DECL|typedef|dss1_cmd_stat
+DECL|typedef|isdn_cmd_stat
 )brace
-id|dss1_cmd_stat
+id|isdn_cmd_stat
 suffix:semicolon
 multiline_comment|/*&n; * Commands from linklevel to lowlevel&n; *&n; */
 DECL|macro|ISDN_CMD_IOCTL
@@ -978,11 +994,11 @@ l_int|85
 )braket
 suffix:semicolon
 multiline_comment|/* display message data&t;&t;*/
-DECL|member|dss1_io
-id|dss1_cmd_stat
-id|dss1_io
+DECL|member|isdn_io
+id|isdn_cmd_stat
+id|isdn_io
 suffix:semicolon
-multiline_comment|/* DSS1 IO-parameter/result&t;*/
+multiline_comment|/* ISDN IO-parameter/result&t;*/
 DECL|member|aux
 id|aux_s
 id|aux
@@ -1004,6 +1020,10 @@ DECL|typedef|isdn_ctrl
 )brace
 id|isdn_ctrl
 suffix:semicolon
+DECL|macro|dss1_io
+mdefine_line|#define dss1_io    isdn_io
+DECL|macro|ni1_io
+mdefine_line|#define ni1_io     isdn_io
 multiline_comment|/*&n; * The interface-struct itself (initialized at load-time of lowlevel-driver)&n; *&n; * See Documentation/isdn/INTERFACE for a description, how the communication&n; * between the ISDN subsystem and its drivers is done.&n; *&n; */
 r_typedef
 r_struct

@@ -2784,15 +2784,17 @@ c_cond
 id|redraw
 )paren
 (brace
+r_int
+id|update
+suffix:semicolon
 id|set_origin
 c_func
 (paren
 id|currcons
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|update
+op_assign
 id|sw
 op_member_access_from_pointer
 id|con_switch
@@ -2805,19 +2807,22 @@ id|currcons
 dot
 id|d
 )paren
-op_logical_and
-id|vcmode
-op_ne
-id|KD_GRAPHICS
-)paren
-(brace
-multiline_comment|/* Update the screen contents */
+suffix:semicolon
 id|set_palette
 c_func
 (paren
 id|currcons
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|update
+op_logical_and
+id|vcmode
+op_ne
+id|KD_GRAPHICS
+)paren
 id|do_update_region
 c_func
 (paren
@@ -2830,7 +2835,6 @@ op_div
 l_int|2
 )paren
 suffix:semicolon
-)brace
 )brace
 id|set_cursor
 c_func
@@ -14160,6 +14164,15 @@ c_func
 id|console_blank_hook
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
+DECL|variable|vt_cons
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|vt_cons
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef VT_SINGLE_DRIVER
 DECL|variable|take_over_console
 id|EXPORT_SYMBOL

@@ -239,6 +239,7 @@ comma
 r_int
 comma
 id|setup_parm
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -460,10 +461,16 @@ id|nd-&gt;queue
 op_eq
 id|lp
 )paren
+(brace
 multiline_comment|/* not found -- should never happen */
-r_return
-l_int|0
+id|lp
+op_assign
+l_int|NULL
 suffix:semicolon
+r_goto
+id|errout
+suffix:semicolon
+)brace
 id|spin_lock_bh
 c_func
 (paren
@@ -480,6 +487,8 @@ id|nd-&gt;queue
 op_assign
 id|nd-&gt;queue-&gt;next
 suffix:semicolon
+id|errout
+suffix:colon
 id|spin_unlock_irqrestore
 c_func
 (paren

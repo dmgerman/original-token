@@ -1523,6 +1523,13 @@ id|ISDN_NET_CONNECTED
 )paren
 (brace
 macro_line|#ifdef CONFIG_ISDN_PPP
+r_if
+c_cond
+(paren
+id|lp-&gt;p_encap
+op_eq
+id|ISDN_NET_ENCAP_SYNCPPP
+)paren
 id|isdn_ppp_free
 c_func
 (paren
@@ -3092,6 +3099,51 @@ op_amp
 id|ISDN_NET_CONNECTED
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|lp-&gt;slave
+op_ne
+l_int|NULL
+)paren
+(brace
+id|isdn_net_local
+op_star
+id|slp
+op_assign
+(paren
+id|isdn_net_local
+op_star
+)paren
+id|lp-&gt;slave-&gt;priv
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|slp-&gt;flags
+op_amp
+id|ISDN_NET_CONNECTED
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;isdn_net: hang up slave %s before %s&bslash;n&quot;
+comma
+id|slp-&gt;name
+comma
+id|lp-&gt;name
+)paren
+suffix:semicolon
+id|isdn_net_hangup
+c_func
+(paren
+id|lp-&gt;slave
+)paren
+suffix:semicolon
+)brace
+)brace
 id|printk
 c_func
 (paren
@@ -3102,6 +3154,13 @@ id|lp-&gt;name
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_ISDN_PPP
+r_if
+c_cond
+(paren
+id|lp-&gt;p_encap
+op_eq
+id|ISDN_NET_ENCAP_SYNCPPP
+)paren
 id|isdn_ppp_free
 c_func
 (paren
@@ -4148,7 +4207,7 @@ c_func
 id|KERN_WARNING
 l_string|&quot;%s: all channels busy - requeuing!&bslash;n&quot;
 comma
-id|lp-&gt;name
+id|ndev-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -7318,6 +7377,7 @@ r_int
 id|idx
 comma
 id|setup_parm
+op_star
 id|setup
 )paren
 (brace
@@ -7378,7 +7438,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|setup.phone
+id|setup-&gt;phone
 (braket
 l_int|0
 )braket
@@ -7412,7 +7472,7 @@ c_func
 (paren
 id|nr
 comma
-id|setup.phone
+id|setup-&gt;phone
 )paren
 suffix:semicolon
 id|si1
@@ -7420,20 +7480,20 @@ op_assign
 (paren
 r_int
 )paren
-id|setup.si1
+id|setup-&gt;si1
 suffix:semicolon
 id|si2
 op_assign
 (paren
 r_int
 )paren
-id|setup.si2
+id|setup-&gt;si2
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|setup.eazmsn
+id|setup-&gt;eazmsn
 (braket
 l_int|0
 )braket
@@ -7454,7 +7514,7 @@ suffix:semicolon
 r_else
 id|eaz
 op_assign
-id|setup.eazmsn
+id|setup-&gt;eazmsn
 suffix:semicolon
 r_if
 c_cond
@@ -7608,7 +7668,7 @@ op_logical_neg
 (paren
 id|matchret
 op_assign
-id|isdn_wildmat
+id|isdn_msncmp
 c_func
 (paren
 id|eaz
@@ -8005,7 +8065,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|isdn_wildmat
+id|isdn_msncmp
 c_func
 (paren
 id|nr
@@ -9316,21 +9376,6 @@ id|netdev-&gt;local-&gt;magic
 op_assign
 id|ISDN_NET_MAGIC
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISDN_PPP
-id|netdev-&gt;mp_last
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* mpqueue is empty */
-id|netdev-&gt;ib.next_num
-op_assign
-l_int|0
-suffix:semicolon
-id|netdev-&gt;ib.last
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 id|netdev-&gt;queue
 op_assign
 id|netdev-&gt;local

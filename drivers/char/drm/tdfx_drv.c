@@ -30,8 +30,8 @@ id|file_operations
 id|tdfx_fops
 op_assign
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020322
-multiline_comment|/* This started being used approx. 2.3.34 */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020400
+multiline_comment|/* This started being used during 2.4.0-test */
 id|owner
 suffix:colon
 id|THIS_MODULE

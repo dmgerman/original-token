@@ -53,6 +53,10 @@ DECL|macro|REG_CPPP
 mdefine_line|#define REG_CPPP     12
 DECL|macro|BIT_CPPP
 mdefine_line|#define BIT_CPPP    128
+DECL|macro|REG_DXMT
+mdefine_line|#define REG_DXMT     13
+DECL|macro|BIT_DXMT
+mdefine_line|#define BIT_DXMT      1
 DECL|macro|REG_T70
 mdefine_line|#define REG_T70      13
 DECL|macro|BIT_T70
@@ -192,6 +196,7 @@ comma
 r_int
 comma
 id|setup_parm
+op_star
 )paren
 suffix:semicolon
 r_extern

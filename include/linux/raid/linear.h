@@ -12,6 +12,7 @@ id|dev
 suffix:semicolon
 DECL|member|size
 r_int
+r_int
 id|size
 suffix:semicolon
 DECL|member|offset

@@ -471,7 +471,7 @@ id|write_lock
 c_func
 (paren
 op_amp
-id|current-&gt;files-&gt;file_lock
+id|files-&gt;file_lock
 )paren
 suffix:semicolon
 r_if
@@ -586,6 +586,8 @@ suffix:semicolon
 id|do_close
 c_func
 (paren
+id|files
+comma
 id|newfd
 comma
 l_int|0
@@ -623,7 +625,7 @@ id|write_unlock
 c_func
 (paren
 op_amp
-id|current-&gt;files-&gt;file_lock
+id|files-&gt;file_lock
 )paren
 suffix:semicolon
 r_goto

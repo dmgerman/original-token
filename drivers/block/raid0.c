@@ -29,6 +29,7 @@ comma
 id|j2
 suffix:semicolon
 r_int
+r_int
 id|current_offset
 comma
 id|curr_zone_offset
@@ -886,8 +887,6 @@ id|sect_in_chunk
 comma
 id|chunksize_bits
 comma
-id|chunk
-comma
 id|chunk_size
 suffix:semicolon
 id|raid0_conf_t
@@ -916,6 +915,8 @@ id|tmp_dev
 suffix:semicolon
 r_int
 r_int
+id|chunk
+comma
 id|block
 comma
 id|rsect

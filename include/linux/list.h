@@ -181,7 +181,7 @@ id|entry-&gt;next
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * list_del_init - deletes entry from list and reinitialize it.&n; * @entry: the element to delete from the list.n &n; */
+multiline_comment|/**&n; * list_del_init - deletes entry from list and reinitialize it.&n; * @entry: the element to delete from the list.&n; */
 DECL|function|list_del_init
 r_static
 id|__inline__

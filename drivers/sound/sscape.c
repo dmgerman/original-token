@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &quot;coproc.h&quot;
 macro_line|#include &quot;ad1848.h&quot;
 macro_line|#include &quot;mpu401.h&quot;
@@ -3460,7 +3461,7 @@ id|start_addr
 suffix:semicolon
 id|page
 op_le
-id|get_mem_map
+id|virt_to_page
 c_func
 (paren
 id|end_addr
@@ -3565,7 +3566,7 @@ id|start_addr
 suffix:semicolon
 id|page
 op_le
-id|get_mem_map
+id|virt_to_page
 c_func
 (paren
 id|end_addr

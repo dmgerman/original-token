@@ -1872,10 +1872,6 @@ id|dummy_packet
 (braket
 l_int|64
 )braket
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 multiline_comment|/* Powerup the chip */
 id|outb
@@ -1969,6 +1965,23 @@ l_int|13
 )braket
 op_assign
 l_int|0x04
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|dummy_packet
+op_plus
+l_int|14
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|dummy_packet
+)paren
+op_minus
+l_int|14
+)paren
 suffix:semicolon
 id|eth16i_select_regbank
 c_func

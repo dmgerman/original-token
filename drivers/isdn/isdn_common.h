@@ -210,12 +210,14 @@ id|i
 suffix:semicolon
 r_extern
 r_int
-id|isdn_wildmat
+id|isdn_msncmp
 c_func
 (paren
+r_const
 r_char
 op_star
 comma
+r_const
 r_char
 op_star
 )paren

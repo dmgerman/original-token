@@ -144,6 +144,11 @@ macro_line|#ifndef module_exit
 DECL|macro|module_exit
 mdefine_line|#define module_exit(x)  void cleanup_module(void) { x(); }
 macro_line|#endif
+multiline_comment|/* virt_to_page added in 2.4.0-test6 */
+macro_line|#ifndef virt_to_page
+DECL|macro|virt_to_page
+mdefine_line|#define virt_to_page(kaddr) (mem_map + MAP_NR(kaddr))
+macro_line|#endif
 multiline_comment|/* Generic cmpxchg added in 2.3.x */
 macro_line|#ifndef __HAVE_ARCH_CMPXCHG
 multiline_comment|/* Include this here so that driver can be&n;                                   used with older kernels. */
@@ -1878,6 +1883,25 @@ suffix:semicolon
 r_extern
 r_int
 r_int
+id|drm_vm_shm_nopage_lock
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
 id|drm_vm_dma_nopage
 c_func
 (paren
@@ -1921,6 +1945,26 @@ r_struct
 id|page
 op_star
 id|drm_vm_shm_nopage
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|page
+op_star
+id|drm_vm_shm_nopage_lock
 c_func
 (paren
 r_struct
@@ -2010,21 +2054,6 @@ id|vm_area_struct
 op_star
 id|vma
 )paren
-suffix:semicolon
-r_extern
-r_struct
-id|vm_operations_struct
-id|drm_vm_ops
-suffix:semicolon
-r_extern
-r_struct
-id|vm_operations_struct
-id|drm_vm_shm_ops
-suffix:semicolon
-r_extern
-r_struct
-id|vm_operations_struct
-id|drm_vm_dma_ops
 suffix:semicolon
 multiline_comment|/* Proc support (proc.c) */
 r_extern

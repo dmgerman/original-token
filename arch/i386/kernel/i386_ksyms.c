@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/i387.h&gt;
@@ -23,6 +24,7 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/mmx.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -619,4 +621,61 @@ c_func
 id|rtc_lock
 )paren
 suffix:semicolon
+DECL|macro|memcpy
+macro_line|#undef memcpy
+DECL|macro|memset
+macro_line|#undef memset
+r_extern
+r_void
+op_star
+id|memset
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
+r_extern
+r_void
+op_star
+id|memcpy
+c_func
+(paren
+r_void
+op_star
+comma
+r_const
+r_void
+op_star
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
+DECL|variable|memcpy
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memcpy
+)paren
+suffix:semicolon
+DECL|variable|memset
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memset
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_X86_PAE
+DECL|variable|empty_zero_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|empty_zero_page
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

@@ -9,6 +9,7 @@ r_struct
 id|kmem_cache_s
 id|kmem_cache_t
 suffix:semicolon
+macro_line|#include&t;&lt;linux/config.h&gt;
 macro_line|#include&t;&lt;linux/mm.h&gt;
 macro_line|#include&t;&lt;linux/cache.h&gt;
 multiline_comment|/* flags for kmem_cache_alloc() */

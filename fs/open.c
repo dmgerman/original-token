@@ -3397,6 +3397,11 @@ r_int
 id|do_close
 c_func
 (paren
+r_struct
+id|files_struct
+op_star
+id|files
+comma
 r_int
 r_int
 id|fd
@@ -3412,13 +3417,6 @@ r_struct
 id|file
 op_star
 id|filp
-suffix:semicolon
-r_struct
-id|files_struct
-op_star
-id|files
-op_assign
-id|current-&gt;files
 suffix:semicolon
 id|error
 op_assign
@@ -3522,6 +3520,8 @@ r_return
 id|do_close
 c_func
 (paren
+id|current-&gt;files
+comma
 id|fd
 comma
 l_int|1

@@ -160,23 +160,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#else
-multiline_comment|/* Make sure not to do anything during a clone-vm operation */
-r_if
-c_cond
-(paren
-(paren
-id|current
-op_eq
-id|tsk
-)paren
-op_logical_or
-(paren
-id|current-&gt;mm
-op_ne
-id|mm
-)paren
-)paren
-(brace
 id|mm-&gt;context
 op_assign
 (paren
@@ -197,7 +180,7 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; &t; * Init the &quot;context&quot; values so that a tlbpid allocation &n;&t; &t; * happens on the first switch.&n;&t; &t; */
+multiline_comment|/*&n; &t; * Init the &quot;context&quot; values so that a tlbpid allocation &n;&t; * happens on the first switch.&n; &t; */
 r_if
 c_cond
 (paren
@@ -230,7 +213,6 @@ c_func
 l_string|&quot;Warning: init_new_context failed&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 DECL|function|switch_mm
