@@ -553,6 +553,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;PIRQ redirection, working around broken MP-BIOS.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -595,6 +596,7 @@ op_increment
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... PIRQ%d -&gt; IRQ %d&bslash;n&quot;
 comma
 id|i
@@ -1094,6 +1096,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Broken MPtable reports ISA irq %d&bslash;n&quot;
 comma
 id|irq
@@ -1216,6 +1219,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;broken BIOS!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1250,6 +1254,7 @@ multiline_comment|/* reserved */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;broken BIOS!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1281,6 +1286,7 @@ multiline_comment|/* invalid */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;broken BIOS!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1402,6 +1408,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;broken BIOS!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1436,6 +1443,7 @@ multiline_comment|/* reserved */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;broken BIOS!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1467,6 +1475,7 @@ multiline_comment|/* invalid */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;broken BIOS!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1568,6 +1577,7 @@ id|pin
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;broken BIOS or MPTABLE parser, ayiee!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1642,6 +1652,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unknown bus type %d.&bslash;n&quot;
 comma
 id|bus
@@ -1701,6 +1712,7 @@ l_int|16
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;disabling PIRQ%d&bslash;n&quot;
 comma
 id|pin
@@ -1723,6 +1735,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;using PIRQ%d -&gt; IRQ %d&bslash;n&quot;
 comma
 id|pin
@@ -2007,6 +2020,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;init IO_APIC IRQs&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2106,6 +2120,7 @@ id|first_notcon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot; IO-APIC (apicid-pin) %d-%d&quot;
 comma
 id|mp_ioapics
@@ -2541,12 +2556,14 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot; WARNING: unexpected IO-APIC, please mail&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;          to linux-smp@vger.rutgers.edu&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2580,6 +2597,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;number of MP IRQ sources: %d.&bslash;n&quot;
 comma
 id|mp_irq_entries
@@ -2602,6 +2620,7 @@ op_increment
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;number of IO-APIC #%d registers: %d.&bslash;n&quot;
 comma
 id|mp_ioapics
@@ -2621,6 +2640,7 @@ multiline_comment|/*&n;&t; * We are a bit conservative about what we expect.  We
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;testing the IO APIC.......................&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2697,7 +2717,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nIO APIC #%d......&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;IO APIC #%d......&bslash;n&quot;
 comma
 id|mp_ioapics
 (braket
@@ -2710,6 +2737,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.... register #00: %08X&bslash;n&quot;
 comma
 op_star
@@ -2724,6 +2752,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.......    : physical APIC id: %02X&bslash;n&quot;
 comma
 id|reg_00.ID
@@ -2744,6 +2773,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.... register #01: %08X&bslash;n&quot;
 comma
 op_star
@@ -2758,6 +2788,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.......     : max redirection entries: %04X&bslash;n&quot;
 comma
 id|reg_01.entries
@@ -2821,6 +2852,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.......     : IO APIC version: %04X&bslash;n&quot;
 comma
 id|reg_01.version
@@ -2885,6 +2917,7 @@ l_int|0x10
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.... register #02: %08X&bslash;n&quot;
 comma
 op_star
@@ -2899,6 +2932,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.......     : arbitration: %02X&bslash;n&quot;
 comma
 id|reg_02.arbitration
@@ -2920,18 +2954,21 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.... IRQ redirection table:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot; NR Log Phy &quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Mask Trig IRR Pol Stat Dest Deli Vect:   &bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3009,6 +3046,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot; %02x %03X %02X  &quot;
 comma
 id|i
@@ -3131,6 +3169,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;.................................... done.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3158,7 +3197,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;0123456789abcdef0123456789abcdef&bslash;n&quot;
+id|KERN_DEBUG
 )paren
 suffix:semicolon
 r_for
@@ -3258,7 +3299,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nprinting local APIC contents on CPU#%d/%d:&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;printing local APIC contents on CPU#%d/%d:&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func
@@ -3282,6 +3325,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... APIC ID:      %08x (%01x)&bslash;n&quot;
 comma
 id|v
@@ -3304,6 +3348,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;... APIC VERSION: %08x&bslash;n&quot;
 comma
 id|v
@@ -3335,6 +3380,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC TASKPRI: %08x (%02x)&bslash;n&quot;
 comma
 id|v
@@ -3366,6 +3412,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC ARBPRI: %08x (%02x)&bslash;n&quot;
 comma
 id|v
@@ -3386,6 +3433,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC PROCPRI: %08x&bslash;n&quot;
 comma
 id|v
@@ -3403,6 +3451,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC EOI: %08x&bslash;n&quot;
 comma
 id|v
@@ -3419,6 +3468,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC LDR: %08x&bslash;n&quot;
 comma
 id|v
@@ -3435,6 +3485,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC DFR: %08x&bslash;n&quot;
 comma
 id|v
@@ -3451,6 +3502,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC SPIV: %08x&bslash;n&quot;
 comma
 id|v
@@ -3459,6 +3511,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC ISR field:&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3471,6 +3524,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC TMR field:&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3483,6 +3537,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC IRR field:&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3539,6 +3594,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC ESR: %08x&bslash;n&quot;
 comma
 id|v
@@ -3556,6 +3612,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC ICR: %08x&bslash;n&quot;
 comma
 id|v
@@ -3572,6 +3629,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC ICR2: %08x&bslash;n&quot;
 comma
 id|v
@@ -3588,6 +3646,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC LVTT: %08x&bslash;n&quot;
 comma
 id|v
@@ -3613,6 +3672,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC LVTPC: %08x&bslash;n&quot;
 comma
 id|v
@@ -3630,6 +3690,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC LVT0: %08x&bslash;n&quot;
 comma
 id|v
@@ -3646,6 +3707,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC LVT1: %08x&bslash;n&quot;
 comma
 id|v
@@ -3671,6 +3733,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC LVTERR: %08x&bslash;n&quot;
 comma
 id|v
@@ -3688,6 +3751,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC TMICT: %08x&bslash;n&quot;
 comma
 id|v
@@ -3704,6 +3768,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC TMCCT: %08x&bslash;n&quot;
 comma
 id|v
@@ -3720,6 +3785,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;... APIC TDCR: %08x&bslash;n&quot;
 comma
 id|v
@@ -4017,6 +4083,7 @@ multiline_comment|/*&n;&t;&t; * Read the right value from the MPC table and&n;&t
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;...changing IO-APIC physical APIC ID to %d ...&quot;
 comma
 id|mp_ioapics
@@ -4450,6 +4517,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;CPU#%d NMI appears to be stuck.&bslash;n&quot;
 comma
 id|cpu
@@ -4950,6 +5018,7 @@ multiline_comment|/*&n; &t; * Dirty trick to enable the NMI watchdog ...&n;&t; *
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;activating NMI Watchdog ...&quot;
 )paren
 suffix:semicolon
@@ -5042,6 +5111,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;..TIMER: vector=%d pin1=%d pin2=%d&bslash;n&quot;
 comma
 id|vector
@@ -5117,6 +5187,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;..MP-BIOS bug: 8254 timer not connected to IO-APIC&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5132,6 +5203,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;...trying to set up timer (IRQ0) through the 8259A ... &quot;
 )paren
 suffix:semicolon
@@ -5227,6 +5299,7 @@ id|nmi_watchdog
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;timer doesnt work through the IO-APIC - disabling NMI Watchdog!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5238,6 +5311,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;...trying to set up timer as Virtual Wire IRQ...&quot;
 )paren
 suffix:semicolon

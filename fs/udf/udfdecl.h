@@ -196,8 +196,6 @@ id|Uint8
 id|u_name
 (braket
 id|UDF_NAME_LEN
-op_minus
-l_int|1
 )braket
 suffix:semicolon
 DECL|member|u_len
@@ -1031,6 +1029,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* fsync.c */
 r_extern
 r_int
 id|udf_sync_file

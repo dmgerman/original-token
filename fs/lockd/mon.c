@@ -597,7 +597,7 @@ multiline_comment|/* This is the private part. Needed only for SM_MON call */
 r_if
 c_cond
 (paren
-id|rqstp-&gt;rq_task-&gt;tk_proc
+id|rqstp-&gt;rq_task-&gt;tk_msg.rpc_proc
 op_eq
 id|SM_MON
 )paren

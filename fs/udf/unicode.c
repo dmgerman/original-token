@@ -736,8 +736,12 @@ id|ocu_len
 op_logical_and
 (paren
 id|utf_o-&gt;u_len
-OL
+op_le
+(paren
 id|UDF_NAME_LEN
+op_minus
+l_int|3
+)paren
 )paren
 suffix:semicolon
 )paren

@@ -24,7 +24,7 @@ DECL|macro|RPCXPRT_CONGESTED
 mdefine_line|#define RPCXPRT_CONGESTED(xprt) &bslash;&n;&t;((xprt)-&gt;cong &gt;= (xprt)-&gt;cwnd)
 multiline_comment|/* Default timeout values */
 DECL|macro|RPC_MAX_UDP_TIMEOUT
-mdefine_line|#define RPC_MAX_UDP_TIMEOUT&t;(6*HZ)
+mdefine_line|#define RPC_MAX_UDP_TIMEOUT&t;(60*HZ)
 DECL|macro|RPC_MAX_TCP_TIMEOUT
 mdefine_line|#define RPC_MAX_TCP_TIMEOUT&t;(600*HZ)
 multiline_comment|/* RPC call and reply header size as number of 32bit words (verifier&n; * size computed separately)&n; */
@@ -147,18 +147,12 @@ op_star
 id|rq_next
 suffix:semicolon
 multiline_comment|/* free list */
-DECL|member|rq_gotit
-r_int
-r_char
-id|rq_gotit
-suffix:semicolon
-multiline_comment|/* reply received */
 DECL|member|rq_damaged
 r_int
 r_char
 id|rq_damaged
 suffix:semicolon
-multiline_comment|/* being received */
+multiline_comment|/* reply being received */
 multiline_comment|/*&n;&t; * For authentication (e.g. auth_des)&n;&t; */
 DECL|member|rq_creddata
 id|u32
@@ -199,32 +193,6 @@ DECL|struct|rpc_xprt
 r_struct
 id|rpc_xprt
 (brace
-DECL|member|link
-r_struct
-id|rpc_xprt
-op_star
-id|link
-suffix:semicolon
-multiline_comment|/* list of all clients */
-DECL|member|rx_pending
-r_struct
-id|rpc_xprt
-op_star
-id|rx_pending
-suffix:semicolon
-multiline_comment|/* receive pending list */
-DECL|member|rx_pending_flag
-r_int
-id|rx_pending_flag
-suffix:semicolon
-multiline_comment|/* are we on the rcv pending list ? */
-DECL|member|file
-r_struct
-id|file
-op_star
-id|file
-suffix:semicolon
-multiline_comment|/* VFS layer */
 DECL|member|sock
 r_struct
 id|socket
@@ -315,19 +283,19 @@ id|RPC_MAXREQS
 suffix:semicolon
 DECL|member|connected
 r_int
-r_char
+r_int
 id|connected
-suffix:semicolon
+suffix:colon
+l_int|1
+comma
 multiline_comment|/* TCP: connected */
 DECL|member|write_space
-r_int
-r_char
 id|write_space
-suffix:semicolon
+suffix:colon
+l_int|1
+comma
 multiline_comment|/* TCP: can send */
 DECL|member|shutdown
-r_int
-r_int
 id|shutdown
 suffix:colon
 l_int|1
@@ -358,61 +326,36 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* being reconnected */
 multiline_comment|/*&n;&t; * State of TCP reply receive stuff&n;&t; */
-r_union
-(brace
-multiline_comment|/* record marker &amp; XID */
-DECL|member|header
-id|u32
-id|header
-(braket
-l_int|2
-)braket
-suffix:semicolon
-DECL|member|data
-id|u8
-id|data
-(braket
-l_int|8
-)braket
-suffix:semicolon
 DECL|member|tcp_recm
-)brace
+id|u32
 id|tcp_recm
 suffix:semicolon
-DECL|member|tcp_rqstp
-r_struct
-id|rpc_rqst
-op_star
-id|tcp_rqstp
-suffix:semicolon
-DECL|member|tcp_iovec
-r_struct
-id|iovec
-id|tcp_iovec
-(braket
-id|MAX_IOVEC
-)braket
-suffix:semicolon
-DECL|member|tcp_total
+multiline_comment|/* Fragment header */
+DECL|member|tcp_xid
 id|u32
-id|tcp_total
+id|tcp_xid
 suffix:semicolon
-multiline_comment|/* overall record length */
+multiline_comment|/* Current XID */
 DECL|member|tcp_reclen
-id|u32
+r_int
+r_int
 id|tcp_reclen
-suffix:semicolon
+comma
 multiline_comment|/* fragment length */
 DECL|member|tcp_offset
-id|u32
 id|tcp_offset
-suffix:semicolon
+comma
 multiline_comment|/* fragment offset */
 DECL|member|tcp_copied
-id|u32
 id|tcp_copied
 suffix:semicolon
 multiline_comment|/* copied to request */
+DECL|member|rx_pending
+r_struct
+id|list_head
+id|rx_pending
+suffix:semicolon
+multiline_comment|/* receive pending list */
 multiline_comment|/*&n;&t; * Send stuff&n;&t; */
 DECL|member|snd_task
 r_struct
@@ -465,33 +408,7 @@ id|cong_wait
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|tcp_reclen
-mdefine_line|#define tcp_reclen&t;&t;tcp_recm.header[0]
-DECL|macro|tcp_xid
-mdefine_line|#define tcp_xid&t;&t;&t;tcp_recm.header[1]
 macro_line|#ifdef __KERNEL__
-r_struct
-id|rpc_xprt
-op_star
-id|xprt_create
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|socket
-comma
-r_struct
-id|sockaddr_in
-op_star
-id|addr
-comma
-r_struct
-id|rpc_timeout
-op_star
-id|toparms
-)paren
-suffix:semicolon
 r_struct
 id|rpc_xprt
 op_star
@@ -514,6 +431,15 @@ id|toparms
 suffix:semicolon
 r_int
 id|xprt_destroy
+c_func
+(paren
+r_struct
+id|rpc_xprt
+op_star
+)paren
+suffix:semicolon
+r_void
+id|xprt_shutdown
 c_func
 (paren
 r_struct
@@ -610,13 +536,62 @@ id|rpc_xprt
 op_star
 )paren
 suffix:semicolon
+r_void
+id|__rpciod_tcp_dispatcher
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|list_head
+id|rpc_xprt_pending
+suffix:semicolon
+r_static
+r_inline
+DECL|function|xprt_tcp_pending
 r_int
 id|xprt_tcp_pending
 c_func
 (paren
 r_void
 )paren
+(brace
+r_return
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|rpc_xprt_pending
+)paren
 suffix:semicolon
+)brace
+r_static
+r_inline
+DECL|function|rpciod_tcp_dispatcher
+r_void
+id|rpciod_tcp_dispatcher
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|xprt_tcp_pending
+c_func
+(paren
+)paren
+)paren
+id|__rpciod_tcp_dispatcher
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif /* __KERNEL__*/
 macro_line|#endif /* _LINUX_SUNRPC_XPRT_H */
 eof

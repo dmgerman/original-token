@@ -485,6 +485,15 @@ id|devc
 )paren
 suffix:semicolon
 r_void
+id|sb_mixer_unload
+c_func
+(paren
+id|sb_devc
+op_star
+id|devc
+)paren
+suffix:semicolon
+r_void
 id|sb_mixer_set_stereo
 (paren
 id|sb_devc

@@ -30,6 +30,14 @@ DECL|macro|UDF_FLAG_UNHIDE
 mdefine_line|#define UDF_FLAG_UNHIDE&t;&t;&t;&t;7
 DECL|macro|UDF_FLAG_VARCONV
 mdefine_line|#define UDF_FLAG_VARCONV&t;&t;&t;8
+DECL|macro|UDF_PART_FLAG_UNALLOC_BITMAP
+mdefine_line|#define UDF_PART_FLAG_UNALLOC_BITMAP&t;&t;0x0001
+DECL|macro|UDF_PART_FLAG_UNALLOC_TABLE
+mdefine_line|#define UDF_PART_FLAG_UNALLOC_TABLE&t;&t;&t;0x0002
+DECL|macro|UDF_PART_FLAG_FREED_BITMAP
+mdefine_line|#define UDF_PART_FLAG_FREED_BITMAP&t;&t;&t;0x0004
+DECL|macro|UDF_PART_FLAG_FREED_TABLE
+mdefine_line|#define UDF_PART_FLAG_FREED_TABLE&t;&t;&t;0x0008
 DECL|macro|UDF_SB_FREE
 mdefine_line|#define UDF_SB_FREE(X)&bslash;&n;{&bslash;&n;&t;if (UDF_SB(X))&bslash;&n;&t;{&bslash;&n;&t;&t;if (UDF_SB_PARTMAPS(X))&bslash;&n;&t;&t;&t;kfree(UDF_SB_PARTMAPS(X));&bslash;&n;&t;&t;UDF_SB_PARTMAPS(X) = NULL;&bslash;&n;&t;}&bslash;&n;}
 DECL|macro|UDF_SB
@@ -62,6 +70,8 @@ DECL|macro|UDF_SB_TYPEVIRT
 mdefine_line|#define UDF_SB_TYPEVIRT(X,Y)&t;&t;&t;( UDF_SB_PARTMAPS(X)[(Y)].s_type_specific.s_virtual )
 DECL|macro|UDF_SB_PARTFUNC
 mdefine_line|#define UDF_SB_PARTFUNC(X,Y)&t;&t;&t;( UDF_SB_PARTMAPS(X)[(Y)].s_partition_func )
+DECL|macro|UDF_SB_PARTFLAGS
+mdefine_line|#define UDF_SB_PARTFLAGS(X,Y)&t;&t;&t;( UDF_SB_PARTMAPS(X)[(Y)].s_partition_flags )
 DECL|macro|UDF_SB_VOLIDENT
 mdefine_line|#define UDF_SB_VOLIDENT(X)&t;&t;&t;&t;( UDF_SB(X)-&gt;s_volident )
 DECL|macro|UDF_SB_NUMPARTS

@@ -1,6 +1,5 @@
-multiline_comment|/*&n; * linux/net/sunrpc/rpcauth_unix.c&n; *&n; * UNIX-style authentication; no AUTH_SHORT support&n; *&n; * Copyright (C) 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; *&n; * Modified May 1999 Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; */
+multiline_comment|/*&n; * linux/net/sunrpc/rpcauth_unix.c&n; *&n; * UNIX-style authentication; no AUTH_SHORT support&n; *&n; * Copyright (C) 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
@@ -177,10 +176,8 @@ DECL|function|unx_create_cred
 id|unx_create_cred
 c_func
 (paren
-r_struct
-id|rpc_task
-op_star
-id|task
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -213,10 +210,10 @@ r_struct
 id|unx_cred
 op_star
 )paren
-id|rpc_malloc
+id|rpc_allocate
 c_func
 (paren
-id|task
+id|flags
 comma
 r_sizeof
 (paren
@@ -226,16 +223,9 @@ id|cred
 )paren
 )paren
 )paren
-(brace
-id|task-&gt;tk_status
-op_assign
-op_minus
-id|ENOMEM
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 id|cred-&gt;uc_count
 op_assign
 l_int|0
@@ -247,11 +237,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|RPC_DO_ROOTOVERRIDE
-c_func
-(paren
-id|task
-)paren
+id|flags
+op_amp
+id|RPC_TASK_ROOTCREDS
 )paren
 (brace
 id|cred-&gt;uc_uid
@@ -458,7 +446,7 @@ id|gid_t
 id|NOGROUP
 suffix:semicolon
 r_return
-id|task-&gt;tk_cred
+id|task-&gt;tk_msg.rpc_cred
 op_assign
 (paren
 r_struct
@@ -495,14 +483,12 @@ id|unx_match
 c_func
 (paren
 r_struct
-id|rpc_task
-op_star
-id|task
-comma
-r_struct
 id|rpc_cred
 op_star
 id|rcred
+comma
+r_int
+id|taskflags
 )paren
 (brace
 r_struct
@@ -524,10 +510,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|RPC_DO_ROOTOVERRIDE
-c_func
 (paren
-id|task
+id|taskflags
+op_amp
+id|RPC_TASK_ROOTCREDS
 )paren
 )paren
 (brace
@@ -676,7 +662,7 @@ r_struct
 id|unx_cred
 op_star
 )paren
-id|task-&gt;tk_cred
+id|task-&gt;tk_msg.rpc_cred
 suffix:semicolon
 id|u32
 op_star
@@ -928,7 +914,7 @@ op_star
 id|task
 )paren
 (brace
-id|task-&gt;tk_cred-&gt;cr_flags
+id|task-&gt;tk_msg.rpc_cred-&gt;cr_flags
 op_or_assign
 id|RPCAUTH_CRED_UPTODATE
 suffix:semicolon

@@ -9,6 +9,37 @@ macro_line|#include &lt;linux/wait.h&gt;
 multiline_comment|/*&n; * Define this if you want to test the fast scheduler for async calls.&n; * This is still experimental and may not work.&n; */
 DECL|macro|CONFIG_RPC_FASTSCHED
 macro_line|#undef  CONFIG_RPC_FASTSCHED
+multiline_comment|/*&n; * This is the actual RPC procedure call info.&n; */
+DECL|struct|rpc_message
+r_struct
+id|rpc_message
+(brace
+DECL|member|rpc_proc
+id|__u32
+id|rpc_proc
+suffix:semicolon
+multiline_comment|/* Procedure number */
+DECL|member|rpc_argp
+r_void
+op_star
+id|rpc_argp
+suffix:semicolon
+multiline_comment|/* Arguments */
+DECL|member|rpc_resp
+r_void
+op_star
+id|rpc_resp
+suffix:semicolon
+multiline_comment|/* Result */
+DECL|member|rpc_cred
+r_struct
+id|rpc_cred
+op_star
+id|rpc_cred
+suffix:semicolon
+multiline_comment|/* Credentials */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * This is the RPC task struct&n; */
 DECL|struct|rpc_task
 r_struct
@@ -63,13 +94,6 @@ op_star
 id|tk_rqstp
 suffix:semicolon
 multiline_comment|/* RPC request */
-DECL|member|tk_cred
-r_struct
-id|rpc_cred
-op_star
-id|tk_cred
-suffix:semicolon
-multiline_comment|/* RPC credentials */
 DECL|member|tk_status
 r_int
 id|tk_status
@@ -83,29 +107,18 @@ id|tk_rpcwait
 suffix:semicolon
 multiline_comment|/* RPC wait queue we&squot;re on */
 multiline_comment|/*&n;&t; * RPC call state&n;&t; */
-DECL|member|tk_proc
-id|__u32
-id|tk_proc
+DECL|member|tk_msg
+r_struct
+id|rpc_message
+id|tk_msg
 suffix:semicolon
-multiline_comment|/* procedure number */
+multiline_comment|/* RPC call info */
 DECL|member|tk_buffer
 id|__u32
 op_star
 id|tk_buffer
 suffix:semicolon
 multiline_comment|/* XDR buffer */
-DECL|member|tk_argp
-r_void
-op_star
-id|tk_argp
-suffix:semicolon
-multiline_comment|/* argument storage */
-DECL|member|tk_resp
-r_void
-op_star
-id|tk_resp
-suffix:semicolon
-multiline_comment|/* result storage */
 DECL|member|tk_garb_retry
 id|__u8
 id|tk_garb_retry
@@ -182,6 +195,32 @@ r_int
 id|tk_flags
 suffix:semicolon
 multiline_comment|/* misc flags */
+DECL|member|tk_lock
+r_int
+r_int
+id|tk_lock
+suffix:semicolon
+multiline_comment|/* Task lock counter */
+DECL|member|tk_wakeup
+r_int
+r_int
+id|tk_wakeup
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Task waiting to wake up */
+DECL|member|tk_sleeping
+id|tk_sleeping
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Task is truly asleep */
+DECL|member|tk_active
+id|tk_active
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Task has been activated */
 macro_line|#ifdef RPC_DEBUG
 DECL|member|tk_pid
 r_int
@@ -250,6 +289,10 @@ DECL|macro|RPC_DO_ROOTOVERRIDE
 mdefine_line|#define RPC_DO_ROOTOVERRIDE(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_ROOTCREDS)
 DECL|macro|RPC_ASSASSINATED
 mdefine_line|#define RPC_ASSASSINATED(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_KILLED)
+DECL|macro|RPC_IS_SLEEPING
+mdefine_line|#define RPC_IS_SLEEPING(t)&t;((t)-&gt;tk_sleeping)
+DECL|macro|RPC_IS_ACTIVATED
+mdefine_line|#define RPC_IS_ACTIVATED(t)&t;((t)-&gt;tk_active)
 multiline_comment|/*&n; * RPC synchronization objects&n; */
 DECL|struct|rpc_wait_queue
 r_struct
@@ -347,7 +390,7 @@ id|rpc_clnt
 op_star
 )paren
 suffix:semicolon
-r_void
+r_int
 id|rpc_execute
 c_func
 (paren
@@ -416,7 +459,7 @@ id|timer
 )paren
 suffix:semicolon
 r_void
-id|rpc_cond_wait
+id|rpc_sleep_locked
 c_func
 (paren
 r_struct
@@ -427,15 +470,22 @@ r_struct
 id|rpc_task
 op_star
 comma
-r_int
-r_char
-op_star
-comma
 id|rpc_action
 id|action
 comma
 id|rpc_action
 id|timer
+)paren
+suffix:semicolon
+r_void
+id|rpc_add_timer
+c_func
+(paren
+r_struct
+id|rpc_task
+op_star
+comma
+id|rpc_action
 )paren
 suffix:semicolon
 r_void
@@ -478,19 +528,17 @@ comma
 r_int
 )paren
 suffix:semicolon
-r_void
-id|rpc_add_timer
+r_int
+id|rpc_lock_task
 c_func
 (paren
 r_struct
 id|rpc_task
 op_star
-comma
-id|rpc_action
 )paren
 suffix:semicolon
 r_void
-id|rpc_del_timer
+id|rpc_unlock_task
 c_func
 (paren
 r_struct
@@ -547,13 +595,6 @@ r_void
 suffix:semicolon
 r_void
 id|rpciod_wake_up
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|rpciod_tcp_dispatcher
 c_func
 (paren
 r_void

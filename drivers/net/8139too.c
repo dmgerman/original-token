@@ -7667,6 +7667,8 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+op_assign
+l_int|0
 suffix:semicolon
 id|DPRINTK
 (paren

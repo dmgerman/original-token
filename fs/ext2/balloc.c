@@ -972,14 +972,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_opt
-(paren
-id|sb
-comma
-id|CHECK_STRICT
-)paren
-op_logical_and
-(paren
 id|in_range
 (paren
 id|le32_to_cpu
@@ -1036,8 +1028,7 @@ comma
 id|sb-&gt;u.ext2_sb.s_itb_per_group
 )paren
 )paren
-)paren
-id|ext2_panic
+id|ext2_error
 (paren
 id|sb
 comma
@@ -1079,7 +1070,7 @@ comma
 id|bh-&gt;b_data
 )paren
 )paren
-id|ext2_warning
+id|ext2_error
 (paren
 id|sb
 comma
@@ -2043,14 +2034,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_opt
-(paren
-id|sb
-comma
-id|CHECK_STRICT
-)paren
-op_logical_and
-(paren
 id|tmp
 op_eq
 id|le32_to_cpu
@@ -2080,8 +2063,7 @@ comma
 id|sb-&gt;u.ext2_sb.s_itb_per_group
 )paren
 )paren
-)paren
-id|ext2_panic
+id|ext2_error
 (paren
 id|sb
 comma
@@ -2773,6 +2755,7 @@ l_int|7
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_EXT2_CHECK
 multiline_comment|/* Called at mount-time, super-block is locked */
 DECL|function|ext2_check_blocks_bitmap
 r_void
@@ -3186,4 +3169,5 @@ id|bitmap_count
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

@@ -189,6 +189,17 @@ op_star
 id|inode
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|inode-&gt;i_sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+)paren
+(brace
 id|lock_kernel
 c_func
 (paren
@@ -211,6 +222,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * udf_delete_inode&n; *&n; * PURPOSE&n; *&t;Clean-up before the specified inode is destroyed.&n; *&n; * DESCRIPTION&n; *&t;This routine is called when the kernel destroys an inode structure&n; *&t;ie. when iput() finds i_count == 0.&n; *&n; * HISTORY&n; *&t;July 1, 1997 - Andrew E. Mileski&n; *&t;Written, tested, and released.&n; *&n; *  Called at the last iput() if i_nlink is zero.&n; */
 DECL|function|udf_delete_inode
@@ -8143,11 +8155,15 @@ id|sptr
 suffix:semicolon
 id|sad-&gt;extLength
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|EXTENT_NEXT_EXTENT_ALLOCDECS
 op_lshift
 l_int|30
 op_or
 id|inode-&gt;i_sb-&gt;s_blocksize
+)paren
 suffix:semicolon
 id|sad-&gt;extPosition
 op_assign
@@ -8174,11 +8190,15 @@ id|sptr
 suffix:semicolon
 id|lad-&gt;extLength
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|EXTENT_NEXT_EXTENT_ALLOCDECS
 op_lshift
 l_int|30
 op_or
 id|inode-&gt;i_sb-&gt;s_blocksize
+)paren
 suffix:semicolon
 id|lad-&gt;extLocation
 op_assign

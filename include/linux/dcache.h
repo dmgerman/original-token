@@ -602,6 +602,17 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* test whether we have any submounts in a subdir tree */
+r_extern
+r_int
+id|have_submounts
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This adds the entry to the hash queues.&n; */
 r_extern
 r_void

@@ -936,7 +936,11 @@ id|bh-&gt;b_data
 suffix:semicolon
 id|eaicb
 op_assign
+id|lela_to_cpu
+c_func
+(paren
 id|fe-&gt;extendedAttrICB
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -970,7 +974,11 @@ id|bh-&gt;b_data
 suffix:semicolon
 id|eaicb
 op_assign
+id|lela_to_cpu
+c_func
+(paren
 id|efe-&gt;extendedAttrICB
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -4972,7 +4972,7 @@ c_func
 (paren
 id|inode
 )paren
-op_eq
+op_ne
 id|ICB_FLAG_AD_IN_ICB
 )paren
 (brace
@@ -5160,10 +5160,10 @@ id|eoffset
 op_assign
 id|inode-&gt;i_sb-&gt;s_blocksize
 op_minus
+id|udf_ext0_offset
+c_func
 (paren
-id|ea
-op_minus
-id|bh-&gt;b_data
+id|inode
 )paren
 suffix:semicolon
 id|pc

@@ -561,12 +561,8 @@ mdefine_line|#define&t;EXT2_VALID_FS&t;&t;&t;0x0001&t;/* Unmounted cleanly */
 DECL|macro|EXT2_ERROR_FS
 mdefine_line|#define&t;EXT2_ERROR_FS&t;&t;&t;0x0002&t;/* Errors detected */
 multiline_comment|/*&n; * Mount flags&n; */
-DECL|macro|EXT2_MOUNT_CHECK_NORMAL
-mdefine_line|#define EXT2_MOUNT_CHECK_NORMAL&t;&t;0x0001&t;/* Do some more checks */
-DECL|macro|EXT2_MOUNT_CHECK_STRICT
-mdefine_line|#define EXT2_MOUNT_CHECK_STRICT&t;&t;0x0002&t;/* Do again more checks */
 DECL|macro|EXT2_MOUNT_CHECK
-mdefine_line|#define EXT2_MOUNT_CHECK&t;&t;(EXT2_MOUNT_CHECK_NORMAL | &bslash;&n;&t;&t;&t;&t;&t; EXT2_MOUNT_CHECK_STRICT)
+mdefine_line|#define EXT2_MOUNT_CHECK&t;&t;0x0001&t;/* Do mount-time checks */
 DECL|macro|EXT2_MOUNT_GRPID
 mdefine_line|#define EXT2_MOUNT_GRPID&t;&t;0x0004&t;/* Create files with directory&squot;s group */
 DECL|macro|EXT2_MOUNT_DEBUG

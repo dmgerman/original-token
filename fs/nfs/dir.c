@@ -2300,6 +2300,19 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
+multiline_comment|/* If we have submounts, don&squot;t unhash ! */
+r_if
+c_cond
+(paren
+id|have_submounts
+c_func
+(paren
+id|dentry
+)paren
+)paren
+r_goto
+id|out_valid
+suffix:semicolon
 multiline_comment|/* Purge readdir caches. */
 r_if
 c_cond

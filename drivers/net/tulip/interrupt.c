@@ -1036,6 +1036,17 @@ op_eq
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* test because dummy frames not mapped */
+r_if
+c_cond
+(paren
+id|tp-&gt;tx_buffers
+(braket
+id|entry
+)braket
+dot
+id|mapping
+)paren
 id|pci_unmap_single
 c_func
 (paren

@@ -480,6 +480,7 @@ r_void
 id|scroll
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -788,6 +789,9 @@ id|i
 op_assign
 id|c
 suffix:semicolon
+r_return
+id|s
+suffix:semicolon
 )brace
 DECL|function|memcpy
 r_void
@@ -854,6 +858,9 @@ id|s
 id|i
 )braket
 suffix:semicolon
+r_return
+id|__dest
+suffix:semicolon
 )brace
 multiline_comment|/* ===========================================================================&n; * Fill the input buffer. This is called only when the buffer is empty&n; * and at least one byte is really needed.&n; */
 DECL|function|fill_inbuf
@@ -862,6 +869,7 @@ r_int
 id|fill_inbuf
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -905,6 +913,7 @@ r_void
 id|flush_window_low
 c_func
 (paren
+r_void
 )paren
 (brace
 id|ulg
@@ -1014,6 +1023,7 @@ r_void
 id|flush_window_high
 c_func
 (paren
+r_void
 )paren
 (brace
 id|ulg
@@ -1119,6 +1129,7 @@ r_void
 id|flush_window
 c_func
 (paren
+r_void
 )paren
 (brace
 r_if
@@ -1216,6 +1227,7 @@ r_void
 id|setup_normal_output_buffer
 c_func
 (paren
+r_void
 )paren
 (brace
 macro_line|#ifdef STANDARD_MEMORY_BIOS_CALL

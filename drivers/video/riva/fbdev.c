@@ -1992,7 +1992,7 @@ suffix:semicolon
 multiline_comment|/* from GGI */
 m_assert
 (paren
-id|rinfo-&gt;base0_region_size
+id|rinfo-&gt;base1_region_size
 op_ge
 l_int|0x01000000
 )paren

@@ -154,9 +154,6 @@ comma
 DECL|enumerator|I21145
 id|I21145
 comma
-DECL|enumerator|X3201_3
-id|X3201_3
-comma
 )brace
 suffix:semicolon
 DECL|enum|MediaIs
@@ -1192,6 +1189,9 @@ id|t21041_csr15
 (braket
 )braket
 suffix:semicolon
+DECL|function|tulip_outl_CSR6
+r_extern
+r_inline
 r_void
 id|tulip_outl_CSR6
 (paren
@@ -1203,6 +1203,21 @@ comma
 id|u32
 id|newcsr6
 )paren
+(brace
+r_int
+id|ioaddr
+op_assign
+id|tp-&gt;base_addr
 suffix:semicolon
+id|outl
+(paren
+id|newcsr6
+comma
+id|ioaddr
+op_plus
+id|CSR6
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif /* __NET_TULIP_H__ */
 eof

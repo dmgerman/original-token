@@ -749,7 +749,7 @@ comma
 id|bh-&gt;b_data
 )paren
 )paren
-id|ext2_warning
+id|ext2_error
 (paren
 id|sb
 comma
@@ -1429,7 +1429,7 @@ id|bh-&gt;b_data
 )paren
 )paren
 (brace
-id|ext2_warning
+id|ext2_error
 (paren
 id|sb
 comma
@@ -2062,6 +2062,7 @@ id|sb-&gt;u.ext2_sb.s_es-&gt;s_free_inodes_count
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifdef CONFIG_EXT2_CHECK
 multiline_comment|/* Called at mount-time, super-block is locked */
 DECL|function|ext2_check_inodes_bitmap
 r_void
@@ -2261,4 +2262,5 @@ id|bitmap_count
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof
