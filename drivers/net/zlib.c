@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * This file is derived from various .h and .c files from the zlib-0.95&n; * distribution by Jean-loup Gailly and Mark Adler, with some additions&n; * by Paul Mackerras to aid in implementing Deflate compression and&n; * decompression for PPP packets.  See zlib.h for conditions of&n; * distribution and use.&n; *&n; * Changes that have been made include:&n; * - added Z_PACKET_FLUSH (see zlib.h for details)&n; * - added inflateIncomp and deflateOutputPending&n; * - changed DEBUG_ZLIB to DEBUG_ZLIB&n; * - use ZALLOC_INIT rather than ZALLOC for allocations during initialization&n; * - allow strm-&gt;next_out to be NULL, meaning discard the output&n; *&n; * $Id: zlib.c,v 1.2 1997/10/02 17:59:23 davem Exp $&n; */
-multiline_comment|/* &n; *  ==FILEVERSION 970501==&n; *&n; * This marker is used by the Linux installation script to determine&n; * whether an up-to-date version of this file is already installed.&n; */
+multiline_comment|/*&n; * This file is derived from various .h and .c files from the zlib-1.0.4&n; * distribution by Jean-loup Gailly and Mark Adler, with some additions&n; * by Paul Mackerras to aid in implementing Deflate compression and&n; * decompression for PPP packets.  See zlib.h for conditions of&n; * distribution and use.&n; *&n; * Changes that have been made include:&n; * - added Z_PACKET_FLUSH (see zlib.h for details)&n; * - added inflateIncomp and deflateOutputPending&n; * - allow strm-&gt;next_out to be NULL, meaning discard the output&n; *&n; * $Id: zlib.c,v 1.3 1997/12/23 10:47:42 paulus Exp $&n; */
+multiline_comment|/* &n; *  ==FILEVERSION 971210==&n; *&n; * This marker is used by the Linux installation script to determine&n; * whether an up-to-date version of this file is already installed.&n; */
 DECL|macro|NO_DUMMY_DECL
 mdefine_line|#define NO_DUMMY_DECL
 DECL|macro|NO_ZCFUNCS
@@ -19,30 +19,24 @@ DECL|macro|_Z_UTIL_H
 mdefine_line|#define _Z_UTIL_H
 macro_line|#include &quot;zlib.h&quot;
 macro_line|#if defined(KERNEL) || defined(_KERNEL)
-multiline_comment|/* Assume this is a *BSD kernel */
+multiline_comment|/* Assume this is a *BSD or SVR4 kernel */
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;sys/time.h&gt;
 macro_line|#include &lt;sys/systm.h&gt;
 DECL|macro|HAVE_MEMCPY
 macro_line|#  define HAVE_MEMCPY
-DECL|macro|zmemcpy
-macro_line|#  define zmemcpy(d, s, n)&t;bcopy((s), (d), (n))
-DECL|macro|zmemzero
-macro_line|#  define zmemzero&t;&t;bzero
-DECL|macro|zmemcmp
-macro_line|#  define zmemcmp&t;&t;bcmp
+DECL|macro|memcpy
+macro_line|#  define memcpy(d, s, n)&t;bcopy((s), (d), (n))
+DECL|macro|memset
+macro_line|#  define memset(d, v, n)&t;bzero((d), (n))
+DECL|macro|memcmp
+macro_line|#  define memcmp&t;&t;bcmp
 macro_line|#else
 macro_line|#if defined(__KERNEL__)
 multiline_comment|/* Assume this is a Linux kernel */
 macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|HAVE_MEMCPY
 mdefine_line|#define HAVE_MEMCPY
-DECL|macro|zmemcpy
-mdefine_line|#define zmemcpy &t;&t;memcpy
-DECL|macro|zmemzero
-mdefine_line|#define zmemzero(dest, len)&t;memset(dest, 0, len)
-DECL|macro|zmemcmp
-mdefine_line|#define zmemcmp&t;&t;&t;memcmp
 macro_line|#else /* not kernel */
 macro_line|#if defined(MSDOS)||defined(VMS)||defined(CRAY)||defined(WIN32)||defined(RISCOS)
 macro_line|#   include &lt;stddef.h&gt;
@@ -2654,7 +2648,7 @@ c_cond
 (paren
 id|strm-&gt;next_out
 op_ne
-l_int|NULL
+id|Z_NULL
 )paren
 (brace
 id|zmemcpy
@@ -19809,7 +19803,7 @@ c_cond
 (paren
 id|p
 op_ne
-l_int|NULL
+id|Z_NULL
 )paren
 (brace
 id|zmemcpy
@@ -19931,7 +19925,7 @@ c_cond
 (paren
 id|p
 op_ne
-l_int|NULL
+id|Z_NULL
 )paren
 (brace
 id|zmemcpy

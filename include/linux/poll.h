@@ -1,4 +1,6 @@
 macro_line|#ifndef _LINUX_POLL_H
+DECL|macro|_LINUX_POLL_H
+mdefine_line|#define _LINUX_POLL_H
 macro_line|#include &lt;asm/poll.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/wait.h&gt;

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *    The sound core exports the following symbols to the rest of&n; *      modulespace.&n; *&n; *      (C) Copyright 1997      Alan Cox, Licensed under the GNU GPL&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 DECL|macro|_MIDI_SYNTH_C_

@@ -3531,7 +3531,7 @@ r_extern
 r_struct
 id|buffer_head
 op_star
-id|efind_buffer
+id|find_buffer
 c_func
 (paren
 id|kdev_t

@@ -1,18 +1,4 @@
-macro_line|#ifndef _BLURB_
-DECL|macro|_BLURB_
-mdefine_line|#define _BLURB_
-multiline_comment|/*&n;&n;            Coda: an Experimental Distributed File System&n;                             Release 3.1&n;&n;          Copyright (c) 1987-1996 Carnegie Mellon University&n;                         All Rights Reserved&n;&n;Permission  to  use, copy, modify and distribute this software and its&n;documentation is hereby granted,  provided  that  both  the  copyright&n;notice  and  this  permission  notice  appear  in  all  copies  of the&n;software, derivative works or  modified  versions,  and  any  portions&n;thereof, and that both notices appear in supporting documentation, and&n;that credit is given to Carnegie Mellon University  in  all  documents&n;and publicity pertaining to direct or indirect use of this code or its&n;derivatives.&n;&n;CODA IS AN EXPERIMENTAL SOFTWARE SYSTEM AND IS  KNOWN  TO  HAVE  BUGS,&n;SOME  OF  WHICH MAY HAVE SERIOUS CONSEQUENCES.  CARNEGIE MELLON ALLOWS&n;FREE USE OF THIS SOFTWARE IN ITS &quot;AS IS&quot; CONDITION.   CARNEGIE  MELLON&n;DISCLAIMS  ANY  LIABILITY  OF  ANY  KIND  FOR  ANY  DAMAGES WHATSOEVER&n;RESULTING DIRECTLY OR INDIRECTLY FROM THE USE OF THIS SOFTWARE  OR  OF&n;ANY DERIVATIVE WORK.&n;&n;Carnegie  Mellon  encourages  users  of  this  software  to return any&n;improvements or extensions that  they  make,  and  to  grant  Carnegie&n;Mellon the rights to redistribute these changes without encumbrance.&n;*/
-DECL|variable|rcsid
-r_static
-r_char
-op_star
-id|rcsid
-op_assign
-l_string|&quot;$Header: /afs/cs/project/coda-src/cvs/coda/kernel-src/vfs/linux21/linux/coda_opstats.h,v 1.1 1997/12/02 05:35:02 braam Exp $&quot;
-suffix:semicolon
-macro_line|#endif /*_BLURB_*/
-multiline_comment|/*&n; * operation stats: what the minicache can intercept that&n; * *isn&squot;t* seen by venus.  These stats are kept to augment&n; * the stats maintained by the Volume-Session mechanism.&n; */
-multiline_comment|/* vfsops:&n; *          mount: not currently bounced to Venus&n; *          umount: nope&n; *          root: only first call, rest is cached.&n; *          statfs: none (bogus)&n; *          sync: none (bogus)&n; *          vget: all&n; */
+multiline_comment|/*&n; * Operation statistics for Coda.&n; * Copyright (C) 1997 Carnegie Mellon University&n; * &n; * Carnegie Mellon University encourages users of this software&n; * to contribute improvements to the Coda project. Contact Peter Braam&n; * &lt;coda@coda.cs.cmu.edu&gt;.&n; */
 DECL|macro|CFS_MOUNT_STATS
 mdefine_line|#define CFS_MOUNT_STATS  0
 DECL|macro|CFS_UMOUNT_STATS

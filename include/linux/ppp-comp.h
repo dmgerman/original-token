@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * ppp-comp.h - Definitions for doing PPP packet compression.&n; *&n; * Copyright (c) 1994 The Australian National University.&n; * All rights reserved.&n; *&n; * Permission to use, copy, modify, and distribute this software and its&n; * documentation is hereby granted, provided that the above copyright&n; * notice appears in all copies.  This software is provided without any&n; * warranty, express or implied. The Australian National University&n; * makes no representations about the suitability of this software for&n; * any purpose.&n; *&n; * IN NO EVENT SHALL THE AUSTRALIAN NATIONAL UNIVERSITY BE LIABLE TO ANY&n; * PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&n; * ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&n; * THE AUSTRALIAN NATIONAL UNIVERSITY HAVE BEEN ADVISED OF THE POSSIBILITY&n; * OF SUCH DAMAGE.&n; *&n; * THE AUSTRALIAN NATIONAL UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,&n; * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY&n; * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS&n; * ON AN &quot;AS IS&quot; BASIS, AND THE AUSTRALIAN NATIONAL UNIVERSITY HAS NO&n; * OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,&n; * OR MODIFICATIONS.&n; *&n; * $Id: ppp-comp.h,v 1.7 1995/05/01 01:43:37 paulus Exp $&n; */
-multiline_comment|/*&n; *  ==FILEVERSION 970501==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     ppp-comp.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp-comp.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*&n; *  ==FILEVERSION 971024==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     ppp-comp.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp-comp.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 macro_line|#ifndef _NET_PPP_COMP_H
 DECL|macro|_NET_PPP_COMP_H
 mdefine_line|#define _NET_PPP_COMP_H
@@ -295,12 +295,10 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The return value from decompress routine is the length of the&n; * decompressed packet if successful, otherwise DECOMP_ERROR&n; * or DECOMP_FATALERROR if an error occurred.&n; * &n; * We need to make this distinction so that we can disable certain&n; * useful functionality, namely sending a CCP reset-request as a result&n; * of an error detected after decompression.  This is to avoid infringing&n; * a patent held by Motorola.&n; * Don&squot;t you just lurve software patents.&n; */
-DECL|macro|DECOMP_OK
-mdefine_line|#define DECOMP_OK&t;&t;0&t;/* no error occured */
 DECL|macro|DECOMP_ERROR
-mdefine_line|#define DECOMP_ERROR&t;&t;1&t;/* error detected before decomp. */
+mdefine_line|#define DECOMP_ERROR&t;&t;-1&t;/* error detected before decomp. */
 DECL|macro|DECOMP_FATALERROR
-mdefine_line|#define DECOMP_FATALERROR&t;2&t;/* error detected after decomp. */
+mdefine_line|#define DECOMP_FATALERROR&t;-2&t;/* error detected after decomp. */
 multiline_comment|/*&n; * CCP codes.&n; */
 DECL|macro|CCP_CONFREQ
 mdefine_line|#define CCP_CONFREQ&t;1

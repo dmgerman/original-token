@@ -46,16 +46,9 @@ mdefine_line|#define PSS_WRITE_EMPTY  0x8000
 DECL|macro|PSS_READ_FULL
 mdefine_line|#define PSS_READ_FULL    0x4000
 macro_line|#include &quot;coproc.h&quot;
-macro_line|#ifdef PSS_HAVE_LD
-macro_line|#include &quot;synth-ld.h&quot;
+macro_line|#ifdef PSS_HAVE_BOOT
+macro_line|#include &quot;pss_boot.h&quot;
 macro_line|#else
-DECL|variable|pss_synthLen
-r_static
-r_int
-id|pss_synthLen
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|pss_synth
 r_static
 r_int
@@ -64,6 +57,13 @@ op_star
 id|pss_synth
 op_assign
 l_int|NULL
+suffix:semicolon
+DECL|variable|pss_synthLen
+r_static
+r_int
+id|pss_synthLen
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|struct|pss_confdata

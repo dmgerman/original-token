@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SBDSP
 DECL|macro|DSP_RESET
 mdefine_line|#define DSP_RESET&t;(devc-&gt;base + 0x6)

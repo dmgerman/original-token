@@ -5521,7 +5521,7 @@ id|i
 suffix:semicolon
 id|bh
 op_assign
-id|efind_buffer
+id|find_buffer
 c_func
 (paren
 id|MKDEV

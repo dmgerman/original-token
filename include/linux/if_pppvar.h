@@ -1,6 +1,6 @@
-multiline_comment|/*&t;$Id: if_pppvar.h,v 1.4 1997/09/03 11:55:06 ecd Exp $&t;*/
+multiline_comment|/*&t;From: if_pppvar.h,v 1.2 1995/06/12 11:36:51 paulus Exp */
 multiline_comment|/*&n; * if_pppvar.h - private structures and declarations for PPP.&n; *&n; * Copyright (c) 1994 The Australian National University.&n; * All rights reserved.&n; *&n; * Permission to use, copy, modify, and distribute this software and its&n; * documentation is hereby granted, provided that the above copyright&n; * notice appears in all copies.  This software is provided without any&n; * warranty, express or implied. The Australian National University&n; * makes no representations about the suitability of this software for&n; * any purpose.&n; *&n; * IN NO EVENT SHALL THE AUSTRALIAN NATIONAL UNIVERSITY BE LIABLE TO ANY&n; * PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&n; * ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&n; * THE AUSTRALIAN NATIONAL UNIVERSITY HAVE BEEN ADVISED OF THE POSSIBILITY&n; * OF SUCH DAMAGE.&n; *&n; * THE AUSTRALIAN NATIONAL UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,&n; * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY&n; * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS&n; * ON AN &quot;AS IS&quot; BASIS, AND THE AUSTRALIAN NATIONAL UNIVERSITY HAS NO&n; * OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,&n; * OR MODIFICATIONS.&n; *&n; * Copyright (c) 1989 Carnegie Mellon University.&n; * All rights reserved.&n; *&n; * Redistribution and use in source and binary forms are permitted&n; * provided that the above copyright notice and this paragraph are&n; * duplicated in all such forms and that any documentation,&n; * advertising materials, and other materials related to such&n; * distribution and use acknowledge that the software was developed&n; * by Carnegie Mellon University.  The name of the&n; * University may not be used to endorse or promote products derived&n; * from this software without specific prior written permission.&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND WITHOUT ANY EXPRESS OR&n; * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED&n; * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.&n; */
-multiline_comment|/*&n; *  ==FILEVERSION 960302==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     if_pppvar.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new if_pppvar.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*&n; *  ==FILEVERSION 971001==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     if_pppvar.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new if_pppvar.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 multiline_comment|/*&n; * Supported network protocols.  These values are used for&n; * indexing sc_npmode.&n; */
 DECL|macro|NP_IP
 mdefine_line|#define NP_IP&t;0&t;&t;/* Internet Protocol */
@@ -53,12 +53,9 @@ id|__u16
 id|fcs
 suffix:semicolon
 multiline_comment|/* Frame Check Sequence (CRC)&t;*/
-DECL|member|filler
-id|__u8
-id|filler
-(braket
-l_int|4
-)braket
+DECL|member|magic
+id|__u16
+id|magic
 suffix:semicolon
 multiline_comment|/* Extra space if needed&t;*/
 )brace
@@ -76,6 +73,13 @@ id|__s32
 id|magic
 suffix:semicolon
 multiline_comment|/* magic value for structure&t;*/
+DECL|member|next
+r_struct
+id|ppp
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* unit with next index&t;&t;*/
 multiline_comment|/* Bitmapped flag fields. */
 DECL|member|inuse
 r_int
@@ -134,6 +138,13 @@ op_star
 id|tty
 suffix:semicolon
 multiline_comment|/* ptr to TTY structure&t;*/
+DECL|member|backup_tty
+r_struct
+id|tty_struct
+op_star
+id|backup_tty
+suffix:semicolon
+multiline_comment|/* TTY to use if tty gets closed */
 DECL|member|bytes_sent
 id|__s32
 id|bytes_sent
@@ -144,14 +155,6 @@ id|__s32
 id|bytes_rcvd
 suffix:semicolon
 multiline_comment|/* Bytes recvd on frame&t;*/
-multiline_comment|/* Interface to the network layer */
-DECL|member|dev
-r_struct
-id|device
-op_star
-id|dev
-suffix:semicolon
-multiline_comment|/* easy for intr handling&t;*/
 multiline_comment|/* VJ Header compression data */
 DECL|member|slcomp
 r_struct
@@ -183,10 +186,17 @@ id|s2buf
 suffix:semicolon
 multiline_comment|/* Pointer to device buffer&t;*/
 DECL|member|last_xmit
-id|__u32
+r_int
+r_int
 id|last_xmit
 suffix:semicolon
 multiline_comment|/* time of last transmission&t;*/
+DECL|member|last_recv
+r_int
+r_int
+id|last_recv
+suffix:semicolon
+multiline_comment|/* time last packet received    */
 multiline_comment|/* These are pointers to the malloc()ed frame buffers.&n;     These buffers are used while processing a packet.&t;If a packet&n;     has to hang around for the user process to read it, it lingers in&n;     the user buffers below. */
 DECL|member|wbuf
 r_struct
@@ -245,12 +255,6 @@ id|pppstat
 id|stats
 suffix:semicolon
 multiline_comment|/* statistic information&t;*/
-DECL|member|ddinfo
-r_struct
-id|ppp_idle
-id|ddinfo
-suffix:semicolon
-multiline_comment|/* demand dial information&t;*/
 multiline_comment|/* PPP compression protocol information */
 DECL|member|sc_bytessent
 id|__u32
@@ -302,6 +306,25 @@ id|__s32
 id|sc_xfer
 suffix:semicolon
 multiline_comment|/* PID of reserved PPP table */
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|dev
+r_struct
+id|device
+id|dev
+suffix:semicolon
+multiline_comment|/* net device structure */
+DECL|member|estats
+r_struct
+id|enet_statistics
+id|estats
+suffix:semicolon
+multiline_comment|/* more detailed stats */
 )brace
 suffix:semicolon
 eof

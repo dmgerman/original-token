@@ -28057,14 +28057,10 @@ op_eq
 l_int|0
 )paren
 (brace
-r_extern
-r_char
-id|x86
-suffix:semicolon
 r_switch
 c_cond
 (paren
-id|x86
+id|boot_cpu_data.x86
 )paren
 (brace
 r_case

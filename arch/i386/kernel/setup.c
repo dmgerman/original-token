@@ -1874,9 +1874,9 @@ l_string|&quot;K6 (166 - 266)&quot;
 comma
 l_string|&quot;K6 (166 - 300)&quot;
 comma
-l_string|&quot;K6 (model 8)&quot;
+l_string|&quot;K6-3D (200 - 450)&quot;
 comma
-l_string|&quot;K6 (model 9)&quot;
+l_string|&quot;K6-3D-Plus (200 - 450)&quot;
 comma
 l_int|NULL
 comma

@@ -229,9 +229,9 @@ c_func
 (paren
 id|NCR
 comma
-id|NCR_53C876
+id|NCR_53C875J
 comma
-l_string|&quot;53c876&quot;
+l_string|&quot;53c875J&quot;
 )paren
 comma
 id|DEVICE
@@ -272,6 +272,16 @@ comma
 id|ATI_215GB
 comma
 l_string|&quot;Mach64 GB&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
+id|ATI_215GD
+comma
+l_string|&quot;Mach64 GD (Rage Pro)&quot;
 )paren
 comma
 id|DEVICE
@@ -831,7 +841,7 @@ id|TRIDENT
 comma
 id|TRIDENT_9660
 comma
-l_string|&quot;TG 9660&quot;
+l_string|&quot;TG 9660 / Cyber9385&quot;
 )paren
 comma
 id|DEVICE
@@ -1587,6 +1597,86 @@ comma
 id|DEVICE
 c_func
 (paren
+id|CYRIX
+comma
+id|CYRIX_5510
+comma
+l_string|&quot;5510&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYRIX
+comma
+id|CYRIX_PCI_MASTER
+comma
+l_string|&quot;PCI Master&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYRIX
+comma
+id|CYRIX_5520
+comma
+l_string|&quot;5520&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYRIX
+comma
+id|CYRIX_5530_LEGACY
+comma
+l_string|&quot;5530 Kahlua Legacy&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYRIX
+comma
+id|CYRIX_5530_SMI
+comma
+l_string|&quot;5530 Kahlua SMI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYRIX
+comma
+id|CYRIX_5530_IDE
+comma
+l_string|&quot;5530 Kahlua IDE&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYRIX
+comma
+id|CYRIX_5530_AUDIO
+comma
+l_string|&quot;5530 Kahlua Audio&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYRIX
+comma
+id|CYRIX_5530_VIDEO
+comma
+l_string|&quot;5530 Kahlua Video&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|LEADTEK
 comma
 id|LEADTEK_805
@@ -2195,7 +2285,17 @@ id|AMCC
 comma
 id|AMCC_S5933
 comma
-l_string|&quot;S5933&quot;
+l_string|&quot;S5933 PCI44&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AMCC
+comma
+id|AMCC_S5933_HEPC3
+comma
+l_string|&quot;S5933 Traquair HEPC3&quot;
 )paren
 comma
 id|DEVICE
@@ -2851,6 +2951,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|RENDITION
+comma
+id|RENDITION_VERITE2100
+comma
+l_string|&quot;Verite 2100&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|TOSHIBA
 comma
 id|TOSHIBA_601
@@ -3098,6 +3208,36 @@ l_int|3
 id|DFX_VOODOO
 comma
 l_string|&quot;Voodoo&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|STALLION
+comma
+id|STALLION_ECHPCI832
+comma
+l_string|&quot;EasyConnection 8/32&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|STALLION
+comma
+id|STALLION_ECHPCI864
+comma
+l_string|&quot;EasyConnection 8/64&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|STALLION
+comma
+id|STALLION_EIOPCI
+comma
+l_string|&quot;EasyIO&quot;
 )paren
 comma
 id|DEVICE
@@ -3456,6 +3596,36 @@ comma
 id|S3_ViRGE_GX2
 comma
 l_string|&quot;ViRGE/GX2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|S3
+comma
+id|S3_ViRGE_MX
+comma
+l_string|&quot;ViRGE/MX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|S3
+comma
+id|S3_ViRGE_MXP
+comma
+l_string|&quot;ViRGE/MX+&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|S3
+comma
+id|S3_ViRGE_MXPMV
+comma
+l_string|&quot;ViRGE/MX+MV&quot;
 )paren
 comma
 id|DEVICE
@@ -4751,6 +4921,12 @@ r_return
 l_string|&quot;Q Logic&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_CYRIX
+suffix:colon
+r_return
+l_string|&quot;Cyrix&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_LEADTEK
 suffix:colon
 r_return
@@ -5079,6 +5255,12 @@ id|PCI_VENDOR_ID_3DFX
 suffix:colon
 r_return
 l_string|&quot;3Dfx&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_STALLION
+suffix:colon
+r_return
+l_string|&quot;Stallion Technologies&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_SIGMADES

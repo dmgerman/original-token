@@ -20,13 +20,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
-DECL|macro|PACKETPTR
-macro_line|#undef&t; PACKETPTR
-DECL|macro|PACKETPTR
-mdefine_line|#define&t; PACKETPTR 1
 macro_line|#include &lt;linux/ppp-comp.h&gt;
-DECL|macro|PACKETPTR
-macro_line|#undef&t; PACKETPTR
 macro_line|#include &quot;zlib.c&quot;
 multiline_comment|/*&n; * State for a Deflate (de)compressor.&n; */
 DECL|struct|ppp_deflate_state

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/ipx.h&gt;
@@ -441,7 +442,7 @@ op_minus
 l_int|1
 )braket
 dot
-id|sa_handler
+id|sa.sa_handler
 op_eq
 id|SIG_DFL
 )paren
@@ -463,7 +464,7 @@ op_minus
 l_int|1
 )braket
 dot
-id|sa_handler
+id|sa.sa_handler
 op_eq
 id|SIG_DFL
 )paren
@@ -476,7 +477,7 @@ id|SIGQUIT
 )paren
 suffix:semicolon
 )brace
-id|siginitmaskinv
+id|siginitsetinv
 c_func
 (paren
 op_amp
@@ -1171,7 +1172,7 @@ id|flags
 suffix:semicolon
 id|current-&gt;blocked
 op_assign
-id|old_mask
+id|old_set
 suffix:semicolon
 id|recalc_sigpending
 c_func

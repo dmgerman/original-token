@@ -1,4 +1,4 @@
-multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04&n; * Avery Pennarun - Aesthetic improvements.&n; *&n; * 1996 01 24&n; * Avery Pennarun - Bugfixes and more aesthetics.&n; *&n; * 1996 03 08&n; * Avery Pennarun - The int and hex config.in commands work right.&n; *                - Choice buttons are more user-friendly.&n; *                - Disabling a text entry line greys it out properly.&n; *                - dep_tristate now works like in Configure. (not pretty)&n; *                - No warnings in gcc -Wall. (Fixed some &quot;interesting&quot; bugs.)&n; *                - Faster/prettier &quot;Help&quot; lookups.&n; *&n; * 1996 03 15&n; * Avery Pennarun - Added new sed script from Axel Boldt to make help even&n; *                  faster. (Actually awk is downright slow on some machines.)&n; *                - Fixed a bug I introduced into Choice dependencies.  Thanks&n; *                  to Robert Krawitz for pointing this out.&n; *&n; * 1996 03 16&n; * Avery Pennarun - basic &quot;do_make&quot; support added to let sound config work.&n; *&n; * 1996 03 25&n; *     Axel Boldt - Help now works on &quot;choice&quot; buttons.&n; *&n; * 1996 04 06&n; * Avery Pennarun - Improved sound config stuff. (I think it actually works&n; *                  now!)&n; *                - Window-resize-limits don&squot;t use ugly /usr/lib/tk4.0 hack.&n; *                - int/hex work with tk3 again. (The &quot;cget&quot; error.)&n; *                - Next/Prev buttons switch between menus.  I can&squot;t take&n; *                  much credit for this; the code was already there, but&n; *                  ifdef&squot;d out for some reason.  It flickers a lot, but&n; *                  I suspect there&squot;s no &quot;easy&quot; fix for that.&n; *                - Labels no longer highlight as you move the mouse over&n; *                  them (although you can still press them... oh well.)&n; *                - Got rid of the last of the literal color settings, to&n; *                  help out people with mono X-Windows systems. &n; *                  (Apparently there still are some out there!)&n; *                - Tabstops seem sensible now.&n; *&n; * 1996 04 14&n; * Avery Pennarun - Reduced flicker when creating windows, even with &quot;update&n; *                  idletasks&quot; hack.&n; *&n; * TO DO:&n; *   - clean up - there are useless ifdef&squot;s everywhere.&n; *   - better comments throughout - C code generating tcl is really cryptic.&n; *   - eliminate silly &quot;update idletasks&quot; hack to improve display speed and&n; *     reduce flicker.  But how?&n; *   - make canvas contents resize with the window (good luck).&n; *   - some way to make submenus inside of submenus (ie. Main-&gt;Networking-&gt;IP)&n; *           (perhaps a button where the description would be)&n; *   - make the main menu use the same tcl code as the submenus.&n; *   - make choice and int/hex input types line up vertically with&n; *           bool/tristate.&n; *   - general speedups - how?  The canvas seems to slow it down a lot.&n; *   - choice buttons should default to the first menu option, rather than a&n; *           blank.  Also look up the right variable when the help button&n; *           is pressed.&n; *   - clean up +/- 16 confusion for enabling/disabling variables; causes&n; *           (theoretical, at the moment) problems with dependencies.&n; *   &n; */
+multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04&n; * Avery Pennarun - Aesthetic improvements.&n; *&n; * 1996 01 24&n; * Avery Pennarun - Bugfixes and more aesthetics.&n; *&n; * 1996 03 08&n; * Avery Pennarun - The int and hex config.in commands work right.&n; *                - Choice buttons are more user-friendly.&n; *                - Disabling a text entry line greys it out properly.&n; *                - dep_tristate now works like in Configure. (not pretty)&n; *                - No warnings in gcc -Wall. (Fixed some &quot;interesting&quot; bugs.)&n; *                - Faster/prettier &quot;Help&quot; lookups.&n; *&n; * 1996 03 15&n; * Avery Pennarun - Added new sed script from Axel Boldt to make help even&n; *                  faster. (Actually awk is downright slow on some machines.)&n; *                - Fixed a bug I introduced into Choice dependencies.  Thanks&n; *                  to Robert Krawitz for pointing this out.&n; *&n; * 1996 03 16&n; * Avery Pennarun - basic &quot;do_make&quot; support added to let sound config work.&n; *&n; * 1996 03 25&n; *     Axel Boldt - Help now works on &quot;choice&quot; buttons.&n; *&n; * 1996 04 06&n; * Avery Pennarun - Improved sound config stuff. (I think it actually works&n; *                  now!)&n; *                - Window-resize-limits don&squot;t use ugly /usr/lib/tk4.0 hack.&n; *                - int/hex work with tk3 again. (The &quot;cget&quot; error.)&n; *                - Next/Prev buttons switch between menus.  I can&squot;t take&n; *                  much credit for this; the code was already there, but&n; *                  ifdef&squot;d out for some reason.  It flickers a lot, but&n; *                  I suspect there&squot;s no &quot;easy&quot; fix for that.&n; *                - Labels no longer highlight as you move the mouse over&n; *                  them (although you can still press them... oh well.)&n; *                - Got rid of the last of the literal color settings, to&n; *                  help out people with mono X-Windows systems. &n; *                  (Apparently there still are some out there!)&n; *                - Tabstops seem sensible now.&n; *&n; * 1996 04 14&n; * Avery Pennarun - Reduced flicker when creating windows, even with &quot;update&n; *                  idletasks&quot; hack.&n; *&n; * 1997 12 08&n; * Michael Chastain - Remove sound driver special cases.&n; *&n; * TO DO:&n; *   - clean up - there are useless ifdef&squot;s everywhere.&n; *   - better comments throughout - C code generating tcl is really cryptic.&n; *   - eliminate silly &quot;update idletasks&quot; hack to improve display speed and&n; *     reduce flicker.  But how?&n; *   - make canvas contents resize with the window (good luck).&n; *   - some way to make submenus inside of submenus (ie. Main-&gt;Networking-&gt;IP)&n; *           (perhaps a button where the description would be)&n; *   - make the main menu use the same tcl code as the submenus.&n; *   - make choice and int/hex input types line up vertically with&n; *           bool/tristate.&n; *   - general speedups - how?  The canvas seems to slow it down a lot.&n; *   - choice buttons should default to the first menu option, rather than a&n; *           blank.  Also look up the right variable when the help button&n; *           is pressed.&n; *   - clean up +/- 16 confusion for enabling/disabling variables; causes&n; *           (theoretical, at the moment) problems with dependencies.&n; *   &n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &quot;tkparse.h&quot;
@@ -1566,19 +1566,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|tok_make
-suffix:colon
-id|printf
-c_func
-(paren
-l_string|&quot;} then { do_make {%s} }&bslash;n&quot;
-comma
-id|item-&gt;value
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
 id|tok_choose
 suffix:colon
 r_case
@@ -2729,61 +2716,6 @@ c_func
 id|menu_num
 )paren
 suffix:semicolon
-macro_line|#ifdef ERIC_DONT_DEF
-multiline_comment|/*&n;   * Generate the code for configuring the sound driver.  Right now this&n;   * cannot be done from the X script, but we insert the menu anyways.&n;   */
-id|start_proc
-c_func
-(paren
-l_string|&quot;Configure sound driver&quot;
-comma
-op_increment
-id|menu_num
-comma
-id|TRUE
-)paren
-suffix:semicolon
-macro_line|#if 0
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tdo_make -C drivers/sound config&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;techo check_sound_config %d&bslash;n&quot;
-comma
-id|menu_num
-)paren
-suffix:semicolon
-macro_line|#endif
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tlabel $w.config.f.m0 -bitmap error&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tmessage $w.config.f.m1 -width 400 -aspect 300 -text &bslash;&quot;The sound drivers cannot as of yet be configured via the X-based interface&bslash;&quot; -relief raised&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tpack $w.config.f.m0 $w.config.f.m1 -side top -pady 10 -expand on&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n;   * Close out the last menu.&n;   */
-id|end_proc
-c_func
-(paren
-id|menu_num
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;   * The top level menu also needs an update function.  When we exit a&n;   * submenu, we may need to disable one or more of the submenus on&n;   * the top level menu, and this procedure will ensure that things are&n;   * correct.&n;   */
 id|printf
 c_func
@@ -3147,9 +3079,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* fall through */
 r_case
-id|tok_make
-suffix:colon
-r_case
 id|tok_comment
 suffix:colon
 r_if
@@ -3338,24 +3267,6 @@ comma
 id|cfg-&gt;optionname
 comma
 id|cfg-&gt;optionname
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|cfg-&gt;tok
-op_eq
-id|tok_make
-)paren
-(brace
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tdo_make {%s}&bslash;n&quot;
-comma
-id|cfg-&gt;value
 )paren
 suffix:semicolon
 )brace

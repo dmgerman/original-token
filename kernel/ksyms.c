@@ -1090,11 +1090,11 @@ c_func
 id|tq_disk
 )paren
 suffix:semicolon
-DECL|variable|efind_buffer
+DECL|variable|find_buffer
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|efind_buffer
+id|find_buffer
 )paren
 suffix:semicolon
 DECL|variable|init_buffer

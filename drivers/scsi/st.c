@@ -4886,16 +4886,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|STp
-op_assign
-op_amp
-(paren
-id|scsi_tapes
-(braket
-id|dev
-)braket
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7528,16 +7518,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|STp
-op_assign
-op_amp
-(paren
-id|scsi_tapes
-(braket
-id|dev
-)braket
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11866,6 +11846,14 @@ id|STp-&gt;buffer
 op_member_access_from_pointer
 id|last_result_fatal
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ioctl_result
+)paren
+(brace
+multiline_comment|/* SCSI command successful */
 id|scsi_release_command
 c_func
 (paren
@@ -11876,14 +11864,6 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ioctl_result
-)paren
-(brace
-multiline_comment|/* SCSI command successful */
 id|STps-&gt;drv_block
 op_assign
 id|blkno
@@ -12166,7 +12146,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* SCSI command was not completely successful */
+multiline_comment|/* SCSI command was not completely successful. Don&squot;t return&n;&t;        from this block without releasing the SCSI command block! */
 r_if
 c_cond
 (paren
@@ -12597,6 +12577,16 @@ id|MTLOCK
 id|STp-&gt;door_locked
 op_assign
 id|ST_LOCK_FAILS
+suffix:semicolon
+id|scsi_release_command
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+id|SCpnt
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 r_return
@@ -13480,11 +13470,6 @@ op_minus
 id|EBUSY
 )paren
 suffix:semicolon
-id|SCpnt-&gt;request.rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
-multiline_comment|/* Mark as not busy */
 id|STps-&gt;drv_block
 op_assign
 id|STps-&gt;drv_file

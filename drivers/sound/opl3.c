@@ -5571,12 +5571,6 @@ c_cond
 id|devc
 )paren
 (brace
-id|vfree
-c_func
-(paren
-id|devc
-)paren
-suffix:semicolon
 id|devc
 op_assign
 l_int|NULL

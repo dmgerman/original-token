@@ -3,6 +3,7 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 macro_line|#ifndef _DEV_TABLE_H_
 DECL|macro|_DEV_TABLE_H_
 mdefine_line|#define _DEV_TABLE_H_
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Sound card numbers 27 to 999. (1 to 26 are defined in soundcard.h)&n; * Numbers 1000 to N are reserved for driver&squot;s internal use.&n; */
 DECL|macro|SNDCARD_DESKPROXL
 mdefine_line|#define SNDCARD_DESKPROXL&t;&t;27&t;/* Compaq Deskpro XL */

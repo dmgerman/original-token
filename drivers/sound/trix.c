@@ -13,7 +13,7 @@ DECL|macro|DO_MIDI
 mdefine_line|#define DO_MIDI
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef INCLUDE_TRIX_BOOT
+macro_line|#ifdef TRIX_HAVE_BOOT
 macro_line|#include &quot;trix_boot.h&quot;
 macro_line|#else
 DECL|variable|trix_boot

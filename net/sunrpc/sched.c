@@ -236,7 +236,7 @@ id|queue
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Remove request from queue&n; */
+multiline_comment|/*&n; * Remove request from queue.&n; * Note: must be called with interrupts disabled.&n; */
 r_void
 DECL|function|rpc_remove_wait_queue
 id|rpc_remove_wait_queue
@@ -450,7 +450,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Make an RPC task runnable.&n; */
+multiline_comment|/*&n; * Make an RPC task runnable.&n; *&n; * Note: If the task is ASYNC, this must be called with &n; * interrupts disabled to protect the wait queue operation.&n; */
 r_static
 r_inline
 r_void
@@ -2330,11 +2330,6 @@ id|rpc_task
 op_star
 id|task
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|task
 op_assign
 id|rpc_new_task
@@ -2348,18 +2343,16 @@ id|RPC_TASK_ASYNC
 op_or
 id|RPC_TASK_CHILD
 )paren
-)paren
-)paren
-(brace
-id|parent-&gt;tk_status
-op_assign
-op_minus
-id|ENOMEM
 suffix:semicolon
-r_return
-l_int|NULL
+r_if
+c_cond
+(paren
+op_logical_neg
+id|task
+)paren
+r_goto
+id|fail
 suffix:semicolon
-)brace
 id|task-&gt;tk_exit
 op_assign
 id|rpc_child_exit
@@ -2370,6 +2363,16 @@ id|parent
 suffix:semicolon
 r_return
 id|task
+suffix:semicolon
+id|fail
+suffix:colon
+id|parent-&gt;tk_status
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 r_void
@@ -2391,10 +2394,31 @@ id|rpc_action
 id|func
 )paren
 (brace
+r_int
+r_int
+id|oldflags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|oldflags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rpc_make_runnable
 c_func
 (paren
 id|child
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|oldflags
 )paren
 suffix:semicolon
 id|rpc_sleep_on

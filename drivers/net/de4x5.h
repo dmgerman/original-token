@@ -216,13 +216,8 @@ multiline_comment|/*&n;** PCI Configuration Latency Timer Register (PCI_CFLT)&n;
 DECL|macro|CFLT_BC
 mdefine_line|#define CFLT_BC     0x0000ff00       /* Latency Timer bits */
 multiline_comment|/*&n;** PCI Configuration Base I/O Address Register (PCI_CBIO)&n;*/
-macro_line|#ifdef __sparc_v9__
 DECL|macro|CBIO_MASK
-mdefine_line|#define CBIO_MASK   0xffffffffffffff80       /* Base I/O Address Mask */
-macro_line|#else
-DECL|macro|CBIO_MASK
-mdefine_line|#define CBIO_MASK   0xffffff80       /* Base I/O Address Mask */
-macro_line|#endif
+mdefine_line|#define CBIO_MASK   -128             /* Base I/O Address Mask */
 DECL|macro|CBIO_IOSI
 mdefine_line|#define CBIO_IOSI   0x00000001       /* I/O Space Indicator (RO, value is 1) */
 multiline_comment|/*&n;** PCI Configuration Card Information Structure Register (PCI_CCIS)&n;*/
@@ -511,7 +506,7 @@ mdefine_line|#define OMR_SYM     (OMR_SDP | OMR_SCR | OMR_PCS | OMR_HBD | OMR_PS
 DECL|macro|OMR_MII_10
 mdefine_line|#define OMR_MII_10  (OMR_SDP | OMR_TTM | OMR_PS)
 DECL|macro|OMR_MII_100
-mdefine_line|#define OMR_MII_100 (OMR_SDP | OMR_SCR | OMR_HBD | OMR_PS)
+mdefine_line|#define OMR_MII_100 (OMR_SDP | OMR_HBD | OMR_PS)
 multiline_comment|/*&n;** DC21040 Interrupt Mask Register (DE4X5_IMR)&n;*/
 DECL|macro|IMR_GPM
 mdefine_line|#define IMR_GPM    0x04000000       /* General Purpose Port Mask */
@@ -1196,9 +1191,7 @@ DECL|macro|INVERSE_F
 mdefine_line|#define INVERSE_F  TD_FT1
 DECL|macro|HASH_O_F
 mdefine_line|#define HASH_O_F   (TD_FT1 | TD_F0)
-multiline_comment|/*&n;** Media / mode state machine definitions&n;*/
-DECL|macro|NC
-mdefine_line|#define NC              0x0000     /* No Connection                        */
+multiline_comment|/*&n;** Media / mode state machine definitions&n;** User selectable:&n;*/
 DECL|macro|TP
 mdefine_line|#define TP              0x0001     /* 10Base-T                             */
 DECL|macro|TP_NW
@@ -1209,12 +1202,17 @@ DECL|macro|AUI
 mdefine_line|#define AUI             0x0008     /* Thickwire                            */
 DECL|macro|BNC_AUI
 mdefine_line|#define BNC_AUI         0x0010     /* BNC/AUI on DC21040 indistinguishable */
-DECL|macro|ANS
-mdefine_line|#define ANS             0x0020     /* Intermediate AutoNegotiation State   */
 DECL|macro|_10Mb
 mdefine_line|#define _10Mb           0x0040     /* 10Mb/s Ethernet                      */
 DECL|macro|_100Mb
 mdefine_line|#define _100Mb          0x0080     /* 100Mb/s Ethernet                     */
+DECL|macro|AUTO
+mdefine_line|#define AUTO            0x4000     /* Auto sense the media or speed        */
+multiline_comment|/*&n;** Internal states&n;*/
+DECL|macro|NC
+mdefine_line|#define NC              0x0000     /* No Connection                        */
+DECL|macro|ANS
+mdefine_line|#define ANS             0x0020     /* Intermediate AutoNegotiation State   */
 DECL|macro|SPD_DET
 mdefine_line|#define SPD_DET         0x0100     /* Parallel speed detection             */
 DECL|macro|INIT
@@ -1235,8 +1233,6 @@ DECL|macro|AUI_SUSPECT
 mdefine_line|#define AUI_SUSPECT     0x0807     /* Suspect the AUI port is down         */
 DECL|macro|MII
 mdefine_line|#define MII             0x1000     /* MII on the 21143                     */
-DECL|macro|AUTO
-mdefine_line|#define AUTO            0x4000     /* Auto sense the media or speed        */
 DECL|macro|TIMER_CB
 mdefine_line|#define TIMER_CB        0x80000000 /* Timer callback detection             */
 multiline_comment|/*&n;** DE4X5 DEBUG Options&n;*/
@@ -1322,7 +1318,7 @@ DECL|macro|CLOSED
 mdefine_line|#define CLOSED               1     /* Ready for opening */
 DECL|macro|OPEN
 mdefine_line|#define OPEN                 2     /* Running */
-multiline_comment|/*&n;*/
+multiline_comment|/*&n;** Various wait times&n;*/
 DECL|macro|PDET_LINK_WAIT
 mdefine_line|#define PDET_LINK_WAIT    1200    /* msecs to wait for link detect bits     */
 DECL|macro|ANS_FINISH_WAIT
@@ -1338,12 +1334,12 @@ DECL|macro|CYPRESS_T4
 mdefine_line|#define CYPRESS_T4  0x0014
 multiline_comment|/*&n;** Speed Selection stuff&n;*/
 DECL|macro|SET_10Mb
-mdefine_line|#define SET_10Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_10|(lp-&gt;fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr |= ((lp-&gt;fdx ? OMR_FDX : 0) | OMR_TTM);&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    if (!lp-&gt;useSROM) lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | lp-&gt;infoblock_csr6, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_TTM, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD);&bslash;&n;  }&bslash;&n;}
+mdefine_line|#define SET_10Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_10|(lp-&gt;fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr |= ((lp-&gt;fdx ? OMR_FDX : 0) | OMR_TTM);&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    if (!lp-&gt;useSROM) lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | (lp-&gt;infoblock_csr6 &amp; ~(OMR_SCR | OMR_HBD)), DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_SDP | OMR_TTM, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD);&bslash;&n;    gep_wr(lp-&gt;cache.gep, dev);&bslash;&n;  }&bslash;&n;}
 DECL|macro|SET_100Mb
-mdefine_line|#define SET_100Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    int fdx=0;&bslash;&n;    if (lp-&gt;phy[lp-&gt;active].id == NATIONAL_TX) {&bslash;&n;        mii_wr(mii_rd(0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII) &amp; ~0x2000,&bslash;&n;                      0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    sr = mii_rd(MII_SR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    if (!(sr &amp; MII_ANA_T4AM) &amp;&amp; lp-&gt;fdx) fdx=1;&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_100|(fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    if (fdx) omr |= OMR_FDX;&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    if (!lp-&gt;useSROM) lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | (lp-&gt;infoblock_csr6 &amp; ~(OMR_SCR | OMR_HBD)), DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD) | GEP_MODE;&bslash;&n;  }&bslash;&n;}
+mdefine_line|#define SET_100Mb {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    int fdx=0;&bslash;&n;    if (lp-&gt;phy[lp-&gt;active].id == NATIONAL_TX) {&bslash;&n;        mii_wr(mii_rd(0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII) &amp; ~0x2000,&bslash;&n;                      0x18, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    omr = inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX);&bslash;&n;    sr = mii_rd(MII_SR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    if (!(sr &amp; MII_ANA_T4AM) &amp;&amp; lp-&gt;fdx) fdx=1;&bslash;&n;    if ((lp-&gt;tmp != MII_SR_ASSC) || (lp-&gt;autosense != AUTO)) {&bslash;&n;      mii_wr(MII_CR_100|(fdx?MII_CR_FDM:0), MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    }&bslash;&n;    if (fdx) omr |= OMR_FDX;&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;    if (!lp-&gt;useSROM) lp-&gt;cache.gep = 0;&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | lp-&gt;infoblock_csr6, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    omr |= (lp-&gt;fdx ? OMR_FDX : 0);&bslash;&n;    outl(omr | OMR_SDP | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (lp-&gt;fdx ? 0 : GEP_FDXD) | GEP_MODE;&bslash;&n;    gep_wr(lp-&gt;cache.gep, dev);&bslash;&n;  }&bslash;&n;}
 multiline_comment|/* FIX ME so I don&squot;t jam 10Mb networks */
 DECL|macro|SET_100Mb_PDET
-mdefine_line|#define SET_100Mb_PDET {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    mii_wr(MII_CR_100|MII_CR_ASSE, MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr | lp-&gt;infoblock_csr6, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr | OMR_PS | OMR_HBD | OMR_PCS | OMR_SCR, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (GEP_FDXD | GEP_MODE);&bslash;&n;  }&bslash;&n;}
+mdefine_line|#define SET_100Mb_PDET {&bslash;&n;  if ((lp-&gt;phy[lp-&gt;active].id) &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&bslash;&n;    mii_wr(MII_CR_100|MII_CR_ASSE, MII_CR, lp-&gt;phy[lp-&gt;active].addr, DE4X5_MII);&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;  } else if (lp-&gt;useSROM &amp;&amp; !lp-&gt;useMII) {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr, DE4X5_OMR);&bslash;&n;  } else {&bslash;&n;    omr = (inl(DE4X5_OMR) &amp; ~(OMR_PS | OMR_HBD | OMR_TTM | OMR_PCS | OMR_SCR | OMR_FDX));&bslash;&n;    outl(omr | OMR_SDP | OMR_PS | OMR_HBD | OMR_PCS, DE4X5_OMR);&bslash;&n;    lp-&gt;cache.gep = (GEP_FDXD | GEP_MODE);&bslash;&n;    gep_wr(lp-&gt;cache.gep, dev);&bslash;&n;  }&bslash;&n;}
 multiline_comment|/*&n;** Include the IOCTL stuff&n;*/
 macro_line|#include &lt;linux/sockios.h&gt;
 DECL|macro|DE4X5IOCTL

@@ -801,7 +801,6 @@ r_void
 )paren
 )paren
 (brace
-macro_line|#ifndef __SMP__
 id|identify_cpu
 c_func
 (paren
@@ -809,6 +808,7 @@ op_amp
 id|boot_cpu_data
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__
 id|printk
 c_func
 (paren

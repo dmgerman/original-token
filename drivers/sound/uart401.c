@@ -1787,14 +1787,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|devc
 )paren
-id|vfree
-c_func
-(paren
 id|devc
-)paren
+op_assign
+l_int|NULL
 suffix:semicolon
 id|sound_unload_mididev
 c_func
