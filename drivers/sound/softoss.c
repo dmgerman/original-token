@@ -1,5 +1,6 @@
-multiline_comment|/* &n; * sound/softoss.c&n; *&n; * Software based MIDI synthsesizer driver.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/* &n; * sound/softoss.c&n; *&n; * Software based MIDI synthsesizer driver.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;: ioctl code reworked (vmalloc/vfree removed)&n; * Christoph Hellwig&t;: adapted to module_init/module_exit&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * When POLLED_MODE is defined, the resampling loop is run using a timer&n; * callback routine. Normally the resampling loop is executed inside&n; * audio buffer interrupt handler which doesn&squot;t work with single mode DMA.&n; */
 DECL|macro|SOFTSYN_MAIN
@@ -6417,7 +6418,9 @@ id|soft_tmr_restart
 )brace
 suffix:semicolon
 DECL|function|probe_softsyn
+r_static
 r_int
+id|__init
 id|probe_softsyn
 c_func
 (paren
@@ -6539,7 +6542,9 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|attach_softsyn_card
+r_static
 r_void
+id|__init
 id|attach_softsyn_card
 c_func
 (paren
@@ -6591,7 +6596,9 @@ macro_line|#ifndef POLLED_MODE
 macro_line|#endif
 )brace
 DECL|function|unload_softsyn
+r_static
 r_void
+id|__exit
 id|unload_softsyn
 c_func
 (paren
@@ -6624,16 +6631,17 @@ id|devc
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|variable|config
+DECL|variable|cfg
 r_static
 r_struct
 id|address_info
-id|config
+id|cfg
 suffix:semicolon
-DECL|function|init_module
+DECL|function|init_softoss
+r_static
 r_int
-id|init_module
+id|__init
+id|init_softoss
 c_func
 (paren
 r_void
@@ -6654,7 +6662,7 @@ id|probe_softsyn
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 )paren
 r_return
@@ -6665,7 +6673,7 @@ id|attach_softsyn_card
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 id|SOUND_LOCK
@@ -6674,9 +6682,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cleanup_softoss
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_softoss
 c_func
 (paren
 r_void
@@ -6686,7 +6696,7 @@ id|unload_softsyn
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 id|sound_unload_synthdev
@@ -6704,5 +6714,18 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|init_softoss
+id|module_init
+c_func
+(paren
+id|init_softoss
+)paren
+suffix:semicolon
+DECL|variable|cleanup_softoss
+id|module_exit
+c_func
+(paren
+id|cleanup_softoss
+)paren
+suffix:semicolon
 eof

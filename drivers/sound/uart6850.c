@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * sound/uart6850.c&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; * Extended by Alan Cox for Red Hat Software. Now a loadable MIDI driver.&n; * 28/4/97 - (C) Copyright Alan Cox. Released under the GPL version 2.&n; *&n; * Alan Cox:&t;Updated for new modular code. Removed snd_* irq handling. Now&n; *&t;&t;uses native linux resources&n; *&n; *&t;Status: Testing required&n; *&n; */
+multiline_comment|/*&n; * sound/uart6850.c&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; * Extended by Alan Cox for Red Hat Software. Now a loadable MIDI driver.&n; * 28/4/97 - (C) Copyright Alan Cox. Released under the GPL version 2.&n; *&n; * Alan Cox:&t;&t;Updated for new modular code. Removed snd_* irq handling. Now&n; *&t;&t;&t;uses native linux resources&n; * Christoph Hellwig:&t;Adapted to module_init/module_exit&n; *&n; *&t;Status: Testing required&n; *&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
 macro_line|#include &quot;sound_config.h&quot;
@@ -589,6 +589,7 @@ suffix:semicolon
 )brace
 DECL|function|uart6850_command
 r_static
+r_inline
 r_int
 id|uart6850_command
 c_func
@@ -608,6 +609,7 @@ suffix:semicolon
 )brace
 DECL|function|uart6850_start_read
 r_static
+r_inline
 r_int
 id|uart6850_start_read
 c_func
@@ -622,6 +624,7 @@ suffix:semicolon
 )brace
 DECL|function|uart6850_end_read
 r_static
+r_inline
 r_int
 id|uart6850_end_read
 c_func
@@ -636,6 +639,7 @@ suffix:semicolon
 )brace
 DECL|function|uart6850_kick
 r_static
+r_inline
 r_void
 id|uart6850_kick
 c_func
@@ -647,6 +651,7 @@ id|dev
 )brace
 DECL|function|uart6850_buffer_status
 r_static
+r_inline
 r_int
 id|uart6850_buffer_status
 c_func
@@ -710,7 +715,9 @@ id|uart6850_buffer_status
 )brace
 suffix:semicolon
 DECL|function|attach_uart6850
+r_static
 r_void
+id|__init
 id|attach_uart6850
 c_func
 (paren
@@ -885,7 +892,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t; */
 )brace
 DECL|function|probe_uart6850
+r_static
 r_int
+id|__init
 id|probe_uart6850
 c_func
 (paren
@@ -950,7 +959,9 @@ id|ok
 suffix:semicolon
 )brace
 DECL|function|unload_uart6850
+r_static
 r_void
+id|__exit
 id|unload_uart6850
 c_func
 (paren
@@ -978,16 +989,25 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
+DECL|variable|cfg_mpu
+r_static
+r_struct
+id|address_info
+id|cfg_mpu
+suffix:semicolon
 DECL|variable|io
+r_static
 r_int
+id|__initdata
 id|io
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
+id|__initdata
 id|irq
 op_assign
 op_minus
@@ -1009,30 +1029,33 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
-DECL|variable|cfg
-r_struct
-id|address_info
-id|cfg
-suffix:semicolon
-DECL|function|init_module
+DECL|function|init_uart6850
+r_static
 r_int
-id|init_module
+id|__init
+id|init_uart6850
 c_func
 (paren
 r_void
 )paren
 (brace
+id|cfg_mpu.io_base
+op_assign
+id|io
+suffix:semicolon
+id|cfg_mpu.irq
+op_assign
+id|irq
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|io
+id|cfg_mpu.io_base
 op_eq
 op_minus
 l_int|1
 op_logical_or
-id|irq
+id|cfg_mpu.irq
 op_eq
 op_minus
 l_int|1
@@ -1050,14 +1073,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|cfg.io_base
-op_assign
-id|io
-suffix:semicolon
-id|cfg.irq
-op_assign
-id|irq
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1065,7 +1080,7 @@ id|probe_uart6850
 c_func
 (paren
 op_amp
-id|cfg
+id|cfg_mpu
 )paren
 )paren
 r_return
@@ -1078,9 +1093,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cleanup_uart6850
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_uart6850
 c_func
 (paren
 r_void
@@ -1090,11 +1107,87 @@ id|unload_uart6850
 c_func
 (paren
 op_amp
-id|cfg
+id|cfg_mpu
 )paren
 suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|init_uart6850
+id|module_init
+c_func
+(paren
+id|init_uart6850
+)paren
+suffix:semicolon
+DECL|variable|cleanup_uart6850
+id|module_exit
+c_func
+(paren
+id|cleanup_uart6850
+)paren
+suffix:semicolon
+macro_line|#ifndef MODULE
+DECL|function|setup_uart6850
+r_static
+r_int
+id|__init
+id|setup_uart6850
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+multiline_comment|/* io, irq */
+r_int
+id|ints
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
+id|io
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|irq
+op_assign
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;uart6850=&quot;
+comma
+id|setup_uart6850
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

@@ -2,6 +2,7 @@ multiline_comment|/* &n; * Audio driver for the NeoMagic 256AV and 256ZX chipset
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -6012,7 +6013,6 @@ c_func
 id|init_nm256
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|variable|loaded
 r_static
 r_int
@@ -6048,9 +6048,12 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+DECL|function|do_init_nm256
+r_static
 r_int
-DECL|function|init_module
-id|init_module
+id|__init
+id|do_init_nm256
+c_func
 (paren
 r_void
 )paren
@@ -6091,9 +6094,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+DECL|function|cleanup_nm256
+r_static
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
+id|__exit
+id|cleanup_nm256
 (paren
 r_void
 )paren
@@ -6208,7 +6213,19 @@ id|handle_pm_event
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-"&f;"
+DECL|variable|do_init_nm256
+id|module_init
+c_func
+(paren
+id|do_init_nm256
+)paren
+suffix:semicolon
+DECL|variable|cleanup_nm256
+id|module_exit
+c_func
+(paren
+id|cleanup_nm256
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  c-basic-offset: 4&n; * End:&n; */
 eof

@@ -1,10 +1,10 @@
-multiline_comment|/*&n; * sound/gus_card.c&n; *&n; * Detection routine for the Gravis Ultrasound.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Frank van de Pol : Fixed GUS MAX interrupt handling, enabled simultanious&n; *                    usage of CS4231A codec, GUS wave and MIDI for GUS MAX.&n; *&n; * Status:&n; *              Tested... &n; */
+multiline_comment|/*&n; * sound/gus_card.c&n; *&n; * Detection routine for the Gravis Ultrasound.&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; *&n; * Frank van de Pol : Fixed GUS MAX interrupt handling, enabled simultanious&n; *                    usage of CS4231A codec, GUS wave and MIDI for GUS MAX.&n; * Christoph Hellwig: Adapted to module_init/module_exit, simple cleanups.&n; *&n; * Status:&n; *              Tested... &n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#include &quot;gus.h&quot;
 macro_line|#include &quot;gus_hw.h&quot;
 r_void
 id|gusintr
@@ -63,7 +63,7 @@ id|gus_pnp_flag
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_GUS16
+macro_line|#ifdef CONFIG_SOUND_GUS16
 DECL|variable|db16
 r_static
 r_int
@@ -73,9 +73,11 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Has a Gus16 AD1848 on it */
 macro_line|#endif
-DECL|function|attach_gus_card
+DECL|function|attach_gus
+r_static
 r_void
-id|attach_gus_card
+id|__init
+id|attach_gus
 c_func
 (paren
 r_struct
@@ -201,9 +203,13 @@ id|hw_config-&gt;irq
 )paren
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
 )brace
 DECL|function|probe_gus
+r_static
 r_int
+id|__init
 id|probe_gus
 c_func
 (paren
@@ -409,12 +415,20 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;NO GUS card found !&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|unload_gus
+r_static
 r_void
+id|__exit
 id|unload_gus
 c_func
 (paren
@@ -525,7 +539,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_GUSMAX
+macro_line|#ifdef CONFIG_SOUND_GUSMAX
 r_if
 c_cond
 (paren
@@ -558,7 +572,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_GUS16
+macro_line|#ifdef CONFIG_SOUND_GUS16
 r_if
 c_cond
 (paren
@@ -706,9 +720,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;Some extra code for the 16 bit sampling option&n; */
-macro_line|#ifdef CONFIG_GUS16
+macro_line|#ifdef CONFIG_SOUND_GUS16
 DECL|function|probe_gus_db16
+r_static
 r_int
+id|__init
 id|probe_gus_db16
 c_func
 (paren
@@ -731,7 +747,9 @@ id|hw_config-&gt;osp
 suffix:semicolon
 )brace
 DECL|function|attach_gus_db16
+r_static
 r_void
+id|__init
 id|attach_gus_db16
 c_func
 (paren
@@ -774,7 +792,9 @@ id|hw_config-&gt;osp
 suffix:semicolon
 )brace
 DECL|function|unload_gus_db16
+r_static
 r_void
+id|__exit
 id|unload_gus_db16
 c_func
 (paren
@@ -809,57 +829,14 @@ l_int|3
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef MODULE
-DECL|variable|config
-r_static
-r_struct
-id|address_info
-id|config
-suffix:semicolon
-multiline_comment|/*&n; *    Note DMA2 of -1 has the right meaning in the GUS driver as well&n; *      as here. &n; */
-DECL|variable|io
-r_int
-id|io
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|irq
-r_int
-id|irq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|dma
-r_int
-id|dma
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|dma16
-r_int
-id|dma16
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* Set this for modules that need it */
-DECL|variable|type
-r_int
-id|type
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* 1 for PnP */
 DECL|variable|gus16
+r_static
 r_int
 id|gus16
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_GUSMAX
+macro_line|#ifdef CONFIG_SOUND_GUSMAX
 DECL|variable|no_wave_dma
 r_static
 r_int
@@ -867,8 +844,61 @@ id|no_wave_dma
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Set if no dma is to be used for the &n;&t;&t;&t;&t;   wave table (GF1 chip) */
+multiline_comment|/* Set if no dma is to be used for the&n;                                   wave table (GF1 chip) */
 macro_line|#endif
+multiline_comment|/*&n; *    Note DMA2 of -1 has the right meaning in the GUS driver as well&n; *      as here. &n; */
+DECL|variable|cfg
+r_static
+r_struct
+id|address_info
+id|cfg
+suffix:semicolon
+DECL|variable|io
+r_static
+r_int
+id|__initdata
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_static
+r_int
+id|__initdata
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma
+r_static
+r_int
+id|__initdata
+id|dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma16
+r_static
+r_int
+id|__initdata
+id|dma16
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Set this for modules that need it */
+DECL|variable|type
+r_static
+r_int
+id|__initdata
+id|type
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* 1 for PnP */
 id|MODULE_PARM
 c_func
 (paren
@@ -917,7 +947,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_GUSMAX
+macro_line|#ifdef CONFIG_SOUND_GUSMAX
 id|MODULE_PARM
 c_func
 (paren
@@ -927,7 +957,7 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_GUS16
+macro_line|#ifdef CONFIG_SOUND_GUS16
 id|MODULE_PARM
 c_func
 (paren
@@ -937,9 +967,11 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|init_module
+DECL|function|init_gus
+r_static
 r_int
-id|init_module
+id|__init
+id|init_gus
 c_func
 (paren
 r_void
@@ -952,20 +984,46 @@ id|KERN_INFO
 l_string|&quot;Gravis Ultrasound audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
+id|cfg.io_base
+op_assign
+id|io
+suffix:semicolon
+id|cfg.irq
+op_assign
+id|irq
+suffix:semicolon
+id|cfg.dma
+op_assign
+id|dma
+suffix:semicolon
+id|cfg.dma2
+op_assign
+id|dma16
+suffix:semicolon
+id|cfg.card_subtype
+op_assign
+id|type
+suffix:semicolon
+macro_line|#ifdef CONFIG_SOUND_GUSMAX
+id|gus_no_wave_dma
+op_assign
+id|no_wave_dma
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
-id|io
+id|cfg.io_base
 op_eq
 op_minus
 l_int|1
 op_logical_or
-id|dma
+id|cfg.dma
 op_eq
 op_minus
 l_int|1
 op_logical_or
-id|irq
+id|cfg.irq
 op_eq
 op_minus
 l_int|1
@@ -983,33 +1041,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|config.io_base
-op_assign
-id|io
-suffix:semicolon
-id|config.irq
-op_assign
-id|irq
-suffix:semicolon
-id|config.dma
-op_assign
-id|dma
-suffix:semicolon
-id|config.dma2
-op_assign
-id|dma16
-suffix:semicolon
-id|config.card_subtype
-op_assign
-id|type
-suffix:semicolon
-macro_line|#ifdef CONFIG_GUSMAX
-id|gus_no_wave_dma
-op_assign
-id|no_wave_dma
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_GUS16)
+macro_line|#ifdef CONFIG_SOUND_GUS16
 r_if
 c_cond
 (paren
@@ -1017,17 +1049,18 @@ id|probe_gus_db16
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 op_logical_and
 id|gus16
 )paren
 (brace
+multiline_comment|/* FIXME: This can&squot;t work, can it ? -- Christoph */
 id|attach_gus_db16
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 id|db16
@@ -1039,24 +1072,23 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+op_logical_neg
 id|probe_gus
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
-op_eq
-l_int|0
 )paren
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|attach_gus_card
+id|attach_gus
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 id|SOUND_LOCK
@@ -1065,15 +1097,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cleanup_gus
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_gus
 c_func
 (paren
 r_void
 )paren
 (brace
-macro_line|#if defined(CONFIG_GUS16)
+macro_line|#ifdef CONFIG_SOUND_GUS16
 r_if
 c_cond
 (paren
@@ -1083,7 +1117,7 @@ id|unload_gus_db16
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1091,11 +1125,101 @@ id|unload_gus
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|init_gus
+id|module_init
+c_func
+(paren
+id|init_gus
+)paren
+suffix:semicolon
+DECL|variable|cleanup_gus
+id|module_exit
+c_func
+(paren
+id|cleanup_gus
+)paren
+suffix:semicolon
+macro_line|#ifndef MODULE
+DECL|function|setup_gus
+r_static
+r_int
+id|__init
+id|setup_gus
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+multiline_comment|/* io, irq, dma, dma2 */
+r_int
+id|ints
+(braket
+l_int|5
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
+id|io
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|irq
+op_assign
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|dma
+op_assign
+id|ints
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|dma16
+op_assign
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;gus=&quot;
+comma
+id|setup_gus
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

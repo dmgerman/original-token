@@ -2,6 +2,7 @@ multiline_comment|/*&n; * sound/pas2_mixer.c&n; *&n; * Mixer routines for the Pr
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &quot;sound_config.h&quot;
+macro_line|#include &quot;pas2.h&quot;
 macro_line|#ifndef DEB
 DECL|macro|DEB
 mdefine_line|#define DEB(what)&t;&t;/* (what) */

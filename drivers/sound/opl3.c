@@ -1,10 +1,12 @@
-multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; *&n;*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Changes&n; *&t;Thomas Sailer   ioctl code reworked (vmalloc/vfree removed)&n; *&t;Alan Cox&t;modularisation, fixed sound_mem allocs.&n; *&n; * Status&n; *&t;Believed to work. Badly needs rewriting a bit to support multiple&n; *&t;OPL3 devices.&n; */
+multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Changes&n; *&t;Thomas Sailer   &t;ioctl code reworked (vmalloc/vfree removed)&n; *&t;Alan Cox&t;&t;modularisation, fixed sound_mem allocs.&n; *&t;Christoph Hellwig&t;Adapted to module_init/module_exit&n; *&n; * Status&n; *&t;Believed to work. Badly needs rewriting a bit to support multiple&n; *&t;OPL3 devices.&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; * hooft@chem.ruu.nl&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;opl3.h&quot;
+macro_line|#include &quot;opl3_hw.h&quot;
 DECL|macro|MAX_VOICE
 mdefine_line|#define MAX_VOICE&t;18
 DECL|macro|OFFS_4OP
@@ -5416,22 +5418,46 @@ r_return
 id|me
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-multiline_comment|/*&n; *    We provide OPL3 functions.&n; */
+DECL|variable|opl3_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|opl3_init
+)paren
+suffix:semicolon
+DECL|variable|opl3_detect
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|opl3_detect
+)paren
+suffix:semicolon
+DECL|variable|me
+r_static
+r_int
+id|me
+suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-DECL|variable|me
-r_int
-id|me
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
-DECL|function|init_module
+DECL|function|init_opl3
+r_static
 r_int
-id|init_module
+id|__init
+id|init_opl3
 (paren
 r_void
 )paren
@@ -5523,9 +5549,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cleanup_opl3
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_opl3
 c_func
 (paren
 r_void
@@ -5577,27 +5605,74 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-id|MODULE_PARM
+DECL|variable|init_opl3
+id|module_init
 c_func
 (paren
-id|io
+id|init_opl3
+)paren
+suffix:semicolon
+DECL|variable|cleanup_opl3
+id|module_exit
+c_func
+(paren
+id|cleanup_opl3
+)paren
+suffix:semicolon
+macro_line|#ifndef MODULE
+DECL|function|setup_opl3
+r_static
+r_int
+id|__init
+id|setup_opl3
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+multiline_comment|/* io  */
+r_int
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
 comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* MODULE */
-DECL|variable|opl3_init
-id|EXPORT_SYMBOL
+id|ARRAY_SIZE
 c_func
 (paren
-id|opl3_init
+id|ints
+)paren
+comma
+id|ints
 )paren
 suffix:semicolon
-DECL|variable|opl3_detect
-id|EXPORT_SYMBOL
+id|io
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
 c_func
 (paren
-id|opl3_detect
+l_string|&quot;opl3=&quot;
+comma
+id|setup_opl3
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

@@ -31,18 +31,6 @@ macro_line|#ifndef CONFIG_PAS_BASE
 DECL|macro|CONFIG_PAS_BASE
 mdefine_line|#define CONFIG_PAS_BASE&t;0x388
 macro_line|#endif
-macro_line|#if defined(CONFIG_SB16_DMA) &amp;&amp; !defined(CONFIG_SB_DMA2)
-DECL|macro|CONFIG_SB_DMA2
-macro_line|#  define CONFIG_SB_DMA2 CONFIG_SB16_DMA
-macro_line|#endif
-macro_line|#if defined(SB16MIDI_BASE) &amp;&amp; !defined(CONFIG_SB_MPU_BASE)
-DECL|macro|CONFIG_SB_MPU_BASE
-macro_line|#   define CONFIG_SB_MPU_BASE SB16MIDI_BASE
-macro_line|#endif
-macro_line|#ifndef CONFIG_SB_MPU_IRQ
-DECL|macro|CONFIG_SB_MPU_IRQ
-macro_line|#  define CONFIG_SB_MPU_IRQ CONFIG_SB_IRQ
-macro_line|#endif
 multiline_comment|/* SEQ_MAX_QUEUE is the maximum number of sequencer events buffered by the&n;   driver. (There is no need to alter this) */
 DECL|macro|SEQ_MAX_QUEUE
 mdefine_line|#define SEQ_MAX_QUEUE&t;1024

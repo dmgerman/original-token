@@ -15,6 +15,7 @@ macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;ac97.h&quot;
+macro_line|#include &quot;mpu401.h&quot;
 macro_line|#ifndef SOUND_LOCK
 DECL|macro|SOUND_LOCK
 mdefine_line|#define SOUND_LOCK do {} while (0)

@@ -1,6 +1,7 @@
 multiline_comment|/*  -*- linux-c -*-&n; *&n; * sound/wavfront.c&n; *&n; * A Linux driver for Turtle Beach WaveFront Series (Maui, Tropez, Tropez Plus)&n; *&n; * This driver supports the onboard wavetable synthesizer (an ICS2115),&n; * including patch, sample and program loading and unloading, conversion&n; * of GUS patches during loading, and full user-level access to all&n; * WaveFront commands. It tries to provide semi-intelligent patch and&n; * sample management as well.&n; *&n; * It also provides support for the ICS emulation of an MPU-401.  Full&n; * support for the ICS emulation&squot;s &quot;virtual MIDI mode&quot; is provided in&n; * wf_midi.c.&n; *&n; * Support is also provided for the Tropez Plus&squot; onboard FX processor,&n; * a Yamaha YSS225. Currently, code exists to configure the YSS225,&n; * and there is an interface allowing tweaking of any of its memory&n; * addresses. However, I have been unable to decipher the logical&n; * positioning of the configuration info for various effects, so for&n; * now, you just get the YSS225 in the same state as Turtle Beach&squot;s&n; * &quot;SETUPSND.EXE&quot; utility leaves it.&n; *&n; * The boards&squot; DAC/ADC (a Crystal CS4232) is supported by cs4232.[co],&n; * This chip also controls the configuration of the card: the wavefront&n; * synth is logical unit 4.&n; *&n; *&n; * Supported devices:&n; *&n; *   /dev/dsp                      - using cs4232+ad1848 modules, OSS compatible&n; *   /dev/midiNN and /dev/midiNN+1 - using wf_midi code, OSS compatible&n; *   /dev/synth00                  - raw synth interface&n; * &n; **********************************************************************&n; *&n; * Copyright (C) by Paul Barton-Davis 1998&n; *&n; * Some portions of this file are taken from work that is&n; * copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * Although the relevant code here is all new, the handling of&n; * sample/alias/multi- samples is entirely based on a driver by Matt&n; * Martin and Rutger Nijlunsing which demonstrated how to get things&n; * to work correctly. The GUS patch loading code has been almost&n; * unaltered by me, except to fit formatting and function names in the&n; * rest of the file. Many thanks to them.&n; *&n; * Appreciation and thanks to Hannu Savolainen for his early work on the Maui&n; * driver, and answering a few questions while this one was developed.&n; *&n; * Absolutely NO thanks to Turtle Beach/Voyetra and Yamaha for their&n; * complete lack of help in developing this driver, and in particular&n; * for their utter silence in response to questions about undocumented&n; * aspects of configuring a WaveFront soundcard, particularly the&n; * effects processor.&n; *&n; * $Id: wavfront.c,v 0.7 1998/09/09 15:47:36 pbd Exp $&n; *&n; * This program is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.  */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -73,8 +74,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif OSS_SUPPORT_SEQ
-multiline_comment|/* This is meant to work as a module */
-macro_line|#if defined(CONFIG_SOUND_WAVEFRONT_MODULE) &amp;&amp; defined(MODULE)
 multiline_comment|/* if WF_DEBUG not defined, no run-time debugging messages will&n;   be available via the debug flag setting. Given the current&n;   beta state of the driver, this will remain set until a future &n;   version.&n;*/
 DECL|macro|WF_DEBUG
 mdefine_line|#define WF_DEBUG 1
@@ -7682,7 +7681,9 @@ suffix:semicolon
 macro_line|#endif OSS_SUPPORT_SEQ
 macro_line|#if OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_STATIC_INSTALL
 DECL|function|attach_wavefront
+r_static
 r_void
+id|__init
 id|attach_wavefront
 (paren
 r_struct
@@ -7700,7 +7701,9 @@ id|install_wavefront
 suffix:semicolon
 )brace
 DECL|function|probe_wavefront
+r_static
 r_int
+id|__init
 id|probe_wavefront
 (paren
 r_struct
@@ -7720,7 +7723,9 @@ id|hw_config-&gt;io_base
 suffix:semicolon
 )brace
 DECL|function|unload_wavefront
+r_static
 r_void
+id|__exit
 id|unload_wavefront
 (paren
 r_struct
@@ -7738,7 +7743,6 @@ id|uninstall_wavefront
 suffix:semicolon
 )brace
 macro_line|#endif OSS_SUPPORT_STATIC_INSTALL
-"&f;"
 multiline_comment|/***********************************************************************/
 multiline_comment|/* WaveFront: Linux modular sound kernel installation interface        */
 multiline_comment|/***********************************************************************/
@@ -9524,9 +9528,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|wavefront_init
 r_static
 r_int
-DECL|function|wavefront_init
+id|__init
 id|wavefront_init
 (paren
 r_int
@@ -9769,8 +9774,10 @@ r_return
 id|dev.oss_dev
 suffix:semicolon
 )brace
-r_void
 DECL|function|uninstall_wavefront
+r_static
+r_void
+id|__exit
 id|uninstall_wavefront
 (paren
 r_void
@@ -9911,7 +9918,6 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|detect_wffx
-r_static
 r_int
 id|__init
 id|detect_wffx
@@ -9948,7 +9954,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|attach_wffx
-r_static
 r_int
 id|__init
 id|attach_wffx
@@ -9986,7 +9991,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_static
 r_void
 DECL|function|wffx_mute
 id|wffx_mute
@@ -10481,9 +10485,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* YSS225 initialization.&n;&n;   This code was developed using DOSEMU. The Turtle Beach SETUPSND&n;   utility was run with I/O tracing in DOSEMU enabled, and a reconstruction&n;   of the port I/O done, using the Yamaha faxback document as a guide&n;   to add more logic to the code. Its really pretty wierd.&n;&n;   There was an alternative approach of just dumping the whole I/O&n;   sequence as a series of port/value pairs and a simple loop&n;   that output it. However, I hope that eventually I&squot;ll get more&n;   control over what this code does, and so I tried to stick with&n;   a somewhat &quot;algorithmic&quot; approach.&n;*/
+DECL|function|wffx_init
 r_static
 r_int
-DECL|function|wffx_init
 id|wffx_init
 (paren
 r_void
@@ -13750,9 +13754,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
@@ -13760,6 +13763,7 @@ op_minus
 l_int|1
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
@@ -13790,9 +13794,11 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
+DECL|function|init_wavfront
+r_static
 r_int
-id|init_module
+id|__init
+id|init_wavfront
 (paren
 r_void
 )paren
@@ -13895,9 +13901,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cleanup_wavfront
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_wavfront
 (paren
 r_void
 )paren
@@ -13909,5 +13917,18 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE &amp;&amp; MODULE
+DECL|variable|init_wavfront
+id|module_init
+c_func
+(paren
+id|init_wavfront
+)paren
+suffix:semicolon
+DECL|variable|cleanup_wavfront
+id|module_exit
+c_func
+(paren
+id|cleanup_wavfront
+)paren
+suffix:semicolon
 eof

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * sound/v_midi.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; * ??&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, changed memory allocations&n; *&n; * Status&n; *&t;Untested&n; */
+multiline_comment|/*&n; * sound/v_midi.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; * ??&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, changed memory allocations&n; *&t;Christoph Hellwig&t;Adapted to module_init/module_exit&n; *&n; * Status&n; *&t;Untested&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
@@ -34,75 +35,6 @@ id|midi_mem
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|variable|config
-r_static
-r_struct
-id|address_info
-id|config
-suffix:semicolon
-multiline_comment|/* dummy */
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;MIDI Loopback device driver&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|probe_v_midi
-c_func
-(paren
-op_amp
-id|config
-)paren
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-id|attach_v_midi
-c_func
-(paren
-op_amp
-id|config
-)paren
-suffix:semicolon
-id|SOUND_LOCK
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|unload_v_midi
-c_func
-(paren
-op_amp
-id|config
-)paren
-suffix:semicolon
-id|SOUND_LOCK_END
-suffix:semicolon
-)brace
-macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * The DSP channel can be used either for input or output. Variable&n; * &squot;sb_irq_mode&squot; will be set when the program calls read or write first time&n; * after open. Current version doesn&squot;t support mode changes without closing&n; * and reopening the device. Support for this feature may be implemented in a&n; * future version of this driver.&n; */
 DECL|variable|midi_input_intr
 r_void
@@ -389,6 +321,7 @@ suffix:semicolon
 )brace
 DECL|function|v_midi_start_read
 r_static
+r_inline
 r_int
 id|v_midi_start_read
 (paren
@@ -442,6 +375,7 @@ suffix:semicolon
 multiline_comment|/* why -EPERM and not -EINVAL?? */
 DECL|function|v_midi_ioctl
 r_static
+r_inline
 r_int
 id|v_midi_ioctl
 (paren
@@ -588,7 +522,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|attach_v_midi
+r_static
 r_void
+id|__init
 id|attach_v_midi
 (paren
 r_struct
@@ -1052,7 +988,10 @@ suffix:semicolon
 multiline_comment|/* printk(&quot;Attached v_midi device&bslash;n&quot;); */
 )brace
 DECL|function|probe_v_midi
+r_static
+r_inline
 r_int
+id|__init
 id|probe_v_midi
 c_func
 (paren
@@ -1068,7 +1007,9 @@ suffix:semicolon
 multiline_comment|/* always OK */
 )brace
 DECL|function|unload_v_midi
+r_static
 r_void
+id|__exit
 id|unload_v_midi
 c_func
 (paren
@@ -1097,4 +1038,89 @@ id|midi_mem
 )paren
 suffix:semicolon
 )brace
+DECL|variable|cfg
+r_static
+r_struct
+id|address_info
+id|cfg
+suffix:semicolon
+multiline_comment|/* dummy */
+DECL|function|init_vmidi
+r_static
+r_int
+id|__init
+id|init_vmidi
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;MIDI Loopback device driver&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|probe_v_midi
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|attach_v_midi
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_vmidi
+r_static
+r_void
+id|__exit
+id|cleanup_vmidi
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unload_v_midi
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|SOUND_LOCK_END
+suffix:semicolon
+)brace
+DECL|variable|init_vmidi
+id|module_init
+c_func
+(paren
+id|init_vmidi
+)paren
+suffix:semicolon
+DECL|variable|cleanup_vmidi
+id|module_exit
+c_func
+(paren
+id|cleanup_vmidi
+)paren
+suffix:semicolon
 eof

@@ -1074,9 +1074,9 @@ id|q-&gt;status
 op_eq
 l_int|1
 )paren
-r_return
+r_continue
 suffix:semicolon
-multiline_comment|/* wait for other process */
+multiline_comment|/* this one was woken up before */
 id|error
 op_assign
 id|try_atomic_semop

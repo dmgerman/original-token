@@ -1,11 +1,10 @@
-multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer    : ioctl code reworked (vmalloc/vfree removed)&n; * Frank van de Pol : Fixed GUS MAX interrupt handling. Enabled simultanious&n; *                    usage of CS4231A codec, GUS wave and MIDI for GUS MAX.&n; */
+multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer    : ioctl code reworked (vmalloc/vfree removed)&n; * Frank van de Pol : Fixed GUS MAX interrupt handling. Enabled simultanious&n; *                    usage of CS4231A codec, GUS wave and MIDI for GUS MAX.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|GUSPNP_AUTODETECT
 mdefine_line|#define GUSPNP_AUTODETECT
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
+macro_line|#include &quot;gus.h&quot;
 macro_line|#include &quot;gus_hw.h&quot;
 DECL|macro|GUS_BANK_SIZE
 mdefine_line|#define GUS_BANK_SIZE (((iw_mode) ? 256*1024*1024 : 256*1024))
@@ -13743,7 +13742,7 @@ id|mixer_type
 op_assign
 id|CS4231
 suffix:semicolon
-macro_line|#ifdef CONFIG_GUSMAX
+macro_line|#ifdef CONFIG_SOUND_GUSMAX
 (brace
 r_int
 r_char
@@ -14435,7 +14434,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef CONFIG_GUSMAX
+macro_line|#ifdef CONFIG_SOUND_GUSMAX
 r_if
 c_cond
 (paren

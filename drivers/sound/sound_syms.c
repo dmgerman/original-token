@@ -195,14 +195,6 @@ c_func
 id|load_mixer_volumes
 )paren
 suffix:semicolon
-DECL|variable|trace_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|trace_init
-)paren
-suffix:semicolon
-multiline_comment|/* oops! this is needed for maui.c -- AJK */
 DECL|variable|conf_printf
 id|EXPORT_SYMBOL
 c_func

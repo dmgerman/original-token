@@ -807,6 +807,13 @@ c_func
 id|getblk
 )paren
 suffix:semicolon
+DECL|variable|bdget
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|bdget
+)paren
+suffix:semicolon
 DECL|variable|bread
 id|EXPORT_SYMBOL
 c_func

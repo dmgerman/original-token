@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle Beach Maui and Tropez.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;&t;General clean up, use kernel IRQ &n; *&t;&t;&t;&t;&t;system&n; *&n; *&t;Status:&n; *&t;&t;Andrew J. Kroll&t;&t;Tested 06/01/1999 with:&n; *&t;&t;&t;&t;&t;* OSWF.MOT File Version: 1.15&n; *&t;&t;&t;&t;&t;* OSWF.MOT File Dated: 09/12/94&n; *&t;&t;&t;&t;&t;* Older versions will cause problems.&n; */
+multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle Beach Maui and Tropez.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;&t;General clean up, use kernel IRQ &n; *&t;&t;&t;&t;&t;system&n; *&t;&t;Christoph Hellwig&t;Adapted to module_init/module_exit&n; *&n; *&t;Status:&n; *&t;&t;Andrew J. Kroll&t;&t;Tested 06/01/1999 with:&n; *&t;&t;&t;&t;&t;* OSWF.MOT File Version: 1.15&n; *&t;&t;&t;&t;&t;* OSWF.MOT File Dated: 09/12/94&n; *&t;&t;&t;&t;&t;* Older versions will cause problems.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -10,6 +9,7 @@ mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
+macro_line|#include &quot;mpu401.h&quot;
 DECL|variable|maui_base
 r_static
 r_int
@@ -109,7 +109,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -121,12 +120,9 @@ id|HOST_STAT_PORT
 op_amp
 id|mask
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n;&t; * Wait up to 15 seconds with sleeping&n;&t; */
 r_for
 c_loop
@@ -616,6 +612,7 @@ suffix:semicolon
 DECL|function|maui_init
 r_static
 r_int
+id|__init
 id|maui_init
 c_func
 (paren
@@ -623,11 +620,6 @@ r_int
 id|irq
 )paren
 (brace
-macro_line|#ifdef CONFIG_SMP
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif&t;
 r_int
 r_char
 id|bits
@@ -758,6 +750,10 @@ id|HOST_CTRL_PORT
 suffix:semicolon
 multiline_comment|/* Cause interrupt */
 macro_line|#ifdef CONFIG_SMP
+(brace
+r_int
+id|i
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -785,6 +781,7 @@ id|irq_ok
 r_return
 l_int|0
 suffix:semicolon
+)brace
 macro_line|#endif
 id|outb
 c_func
@@ -1268,7 +1265,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|probe_maui
+r_static
 r_int
+id|__init
 id|probe_maui
 c_func
 (paren
@@ -1512,11 +1511,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|trace_init
-)paren
 id|printk
 c_func
 (paren
@@ -1572,11 +1566,6 @@ l_int|1
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|trace_init
-)paren
 id|printk
 c_func
 (paren
@@ -1635,11 +1624,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|trace_init
-)paren
 id|printk
 c_func
 (paren
@@ -1706,7 +1690,9 @@ id|ret
 suffix:semicolon
 )brace
 DECL|function|attach_maui
+r_static
 r_void
+id|__init
 id|attach_maui
 c_func
 (paren
@@ -1810,7 +1796,9 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|unload_maui
+r_static
 r_void
+id|__exit
 id|unload_maui
 c_func
 (paren
@@ -1869,39 +1857,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MODULE_PARM
-c_func
-(paren
-id|io
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|irq
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
-DECL|variable|io
-r_int
-id|io
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|irq
-r_int
-id|irq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 DECL|variable|fw_load
 r_static
 r_int
@@ -1910,14 +1865,51 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|cfg
+r_static
 r_struct
 id|address_info
 id|cfg
 suffix:semicolon
-multiline_comment|/*&n; *&t;Install a Maui card. Needs mpu401 loaded already.&n; */
-DECL|function|init_module
+DECL|variable|io
+r_static
 r_int
-id|init_module
+id|__initdata
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_static
+r_int
+id|__initdata
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;Install a Maui card. Needs mpu401 loaded already.&n; */
+DECL|function|init_maui
+r_static
+r_int
+id|__init
+id|init_maui
 c_func
 (paren
 r_void
@@ -1930,15 +1922,23 @@ id|KERN_INFO
 l_string|&quot;Turtle beach Maui and Tropez driver, Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
+id|cfg.io_base
+op_assign
+id|io
+suffix:semicolon
+id|cfg.irq
+op_assign
+id|irq
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|io
+id|cfg.io_base
 op_eq
 op_minus
 l_int|1
 op_logical_or
-id|irq
+id|cfg.irq
 op_eq
 op_minus
 l_int|1
@@ -1956,14 +1956,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|cfg.io_base
-op_assign
-id|io
-suffix:semicolon
-id|cfg.irq
-op_assign
-id|irq
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2022,9 +2014,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cleanup_maui
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_maui
 c_func
 (paren
 r_void
@@ -2053,5 +2047,81 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|init_maui
+id|module_init
+c_func
+(paren
+id|init_maui
+)paren
+suffix:semicolon
+DECL|variable|cleanup_maui
+id|module_exit
+c_func
+(paren
+id|cleanup_maui
+)paren
+suffix:semicolon
+macro_line|#ifndef MODULE
+DECL|function|setup_maui
+r_static
+r_int
+id|__init
+id|setup_maui
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+multiline_comment|/* io, irq */
+r_int
+id|ints
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
+id|io
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|irq
+op_assign
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;maui=&quot;
+comma
+id|setup_maui
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

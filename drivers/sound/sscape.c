@@ -1,7 +1,6 @@
-multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq SoundScape&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   &t;: ioctl code reworked (vmalloc/vfree removed)&n; * Sergey Smitienko&t;: ensoniq p&squot;n&squot;p support&n; */
+multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq SoundScape&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   &t;: ioctl code reworked (vmalloc/vfree removed)&n; * Sergey Smitienko&t;: ensoniq p&squot;n&squot;p support&n; * Christoph Hellwig&t;: adapted to module_init/module_exit&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
@@ -13,17 +12,17 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
-macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &quot;coproc.h&quot;
+macro_line|#include &quot;ad1848.h&quot;
+macro_line|#include &quot;mpu401.h&quot;
 multiline_comment|/*&n; *    I/O ports&n; */
 DECL|macro|MIDI_DATA
 mdefine_line|#define MIDI_DATA       0
@@ -4403,6 +4402,7 @@ suffix:semicolon
 DECL|function|sscape_pnp_init_hw
 r_static
 r_void
+id|__init
 id|sscape_pnp_init_hw
 c_func
 (paren
@@ -5278,6 +5278,7 @@ suffix:semicolon
 DECL|function|detect_sscape_pnp
 r_static
 r_int
+id|__init
 id|detect_sscape_pnp
 c_func
 (paren
@@ -6035,7 +6036,9 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|probe_sscape
+r_static
 r_int
+id|__init
 id|probe_sscape
 c_func
 (paren
@@ -6231,7 +6234,9 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|probe_ss_ms_sound
+r_static
 r_int
+id|__init
 id|probe_ss_ms_sound
 c_func
 (paren
@@ -6414,7 +6419,9 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|attach_ss_ms_sound
+r_static
 r_void
+id|__init
 id|attach_ss_ms_sound
 c_func
 (paren
@@ -6680,7 +6687,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|unload_sscape
+r_static
 r_void
+id|__exit
 id|unload_sscape
 c_func
 (paren
@@ -6708,7 +6717,9 @@ id|hw_config
 suffix:semicolon
 )brace
 DECL|function|unload_ss_ms_sound
+r_static
 r_void
+id|__exit
 id|unload_ss_ms_sound
 c_func
 (paren
@@ -6742,44 +6753,22 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|variable|dma
-r_int
-id|dma
-op_assign
-op_minus
-l_int|1
+DECL|variable|cfg
+r_static
+r_struct
+id|address_info
+id|cfg
 suffix:semicolon
-DECL|variable|irq
-r_int
-id|irq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|io
-r_int
-id|io
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|mpu_irq
-r_int
-id|mpu_irq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|mpu_io
-r_int
-id|mpu_io
-op_assign
-op_minus
-l_int|1
+DECL|variable|cfg_mpu
+r_static
+r_struct
+id|address_info
+id|cfg_mpu
 suffix:semicolon
 DECL|variable|spea
+r_static
 r_int
+id|__initdata
 id|spea
 op_assign
 op_minus
@@ -6788,9 +6777,55 @@ suffix:semicolon
 DECL|variable|mss
 r_static
 r_int
+id|__initdata
 id|mss
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|dma
+r_static
+r_int
+id|__initdata
+id|dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_static
+r_int
+id|__initdata
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|io
+r_static
+r_int
+id|__initdata
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|mpu_irq
+r_static
+r_int
+id|__initdata
+id|mpu_irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|mpu_io
+r_static
+r_int
+id|__initdata
+id|mpu_io
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|MODULE_PARM
 c_func
@@ -6849,19 +6884,11 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|variable|config
-r_struct
-id|address_info
-id|config
-suffix:semicolon
-DECL|variable|mpu_config
-r_struct
-id|address_info
-id|mpu_config
-suffix:semicolon
-DECL|function|init_module
+DECL|function|init_sscape
+r_static
 r_int
-id|init_module
+id|__init
+id|init_sscape
 c_func
 (paren
 r_void
@@ -6874,20 +6901,65 @@ id|KERN_INFO
 l_string|&quot;Soundscape driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
+id|cfg.irq
+op_assign
+id|irq
+suffix:semicolon
+id|cfg.dma
+op_assign
+id|dma
+suffix:semicolon
+id|cfg.io_base
+op_assign
+id|io
+suffix:semicolon
+id|cfg_mpu.irq
+op_assign
+id|mpu_irq
+suffix:semicolon
+id|cfg_mpu.io_base
+op_assign
+id|mpu_io
+suffix:semicolon
+multiline_comment|/* WEH - Try to get right dma channel */
+id|cfg_mpu.dma
+op_assign
+id|dma
+suffix:semicolon
+id|devc-&gt;codec
+op_assign
+id|cfg.io_base
+suffix:semicolon
+id|devc-&gt;codec_irq
+op_assign
+id|cfg.irq
+suffix:semicolon
+id|devc-&gt;codec_type
+op_assign
+l_int|0
+suffix:semicolon
+id|devc-&gt;ic_type
+op_assign
+l_int|0
+suffix:semicolon
+id|devc-&gt;raw_buf
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|dma
+id|cfg.dma
 op_eq
 op_minus
 l_int|1
 op_logical_or
-id|irq
+id|cfg.irq
 op_eq
 op_minus
 l_int|1
 op_logical_or
-id|io
+id|cfg.io_base
 op_eq
 op_minus
 l_int|1
@@ -6908,12 +6980,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mpu_irq
+id|cfg_mpu.irq
 op_eq
 op_minus
 l_int|1
 op_logical_and
-id|mpu_io
+id|cfg_mpu.io_base
 op_ne
 op_minus
 l_int|1
@@ -6923,7 +6995,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;CONFIG_MPU_IRQ must be specified if CONFIG_MPU_IO is set.&bslash;n&quot;
+l_string|&quot;MPU_IRQ must be specified if MPU_IO is set.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6931,51 +7003,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|devc-&gt;codec
-op_assign
-id|io
-suffix:semicolon
-id|devc-&gt;codec_irq
-op_assign
-id|irq
-suffix:semicolon
-id|devc-&gt;codec_type
-op_assign
-l_int|0
-suffix:semicolon
-id|devc-&gt;ic_type
-op_assign
-l_int|0
-suffix:semicolon
-id|devc-&gt;raw_buf
-op_assign
-l_int|NULL
-suffix:semicolon
-id|config.irq
-op_assign
-id|irq
-suffix:semicolon
-id|config.dma
-op_assign
-id|dma
-suffix:semicolon
-id|config.io_base
-op_assign
-id|io
-suffix:semicolon
-id|mpu_config.irq
-op_assign
-id|mpu_irq
-suffix:semicolon
-id|mpu_config.io_base
-op_assign
-id|mpu_io
-suffix:semicolon
-multiline_comment|/* WEH - Try to get right dma channel */
-id|mpu_config.dma
-op_assign
-id|dma
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7011,7 +7038,7 @@ id|probe_sscape
 c_func
 (paren
 op_amp
-id|mpu_config
+id|cfg_mpu
 )paren
 op_eq
 l_int|0
@@ -7024,7 +7051,7 @@ id|attach_sscape
 c_func
 (paren
 op_amp
-id|mpu_config
+id|cfg_mpu
 )paren
 suffix:semicolon
 id|mss
@@ -7033,7 +7060,7 @@ id|probe_ss_ms_sound
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 r_if
@@ -7045,7 +7072,7 @@ id|attach_ss_ms_sound
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 id|SOUND_LOCK
@@ -7054,9 +7081,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cleanup_sscape
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_sscape
 c_func
 (paren
 r_void
@@ -7071,7 +7100,7 @@ id|unload_ss_ms_sound
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 id|SOUND_LOCK_END
@@ -7080,9 +7109,106 @@ id|unload_sscape
 c_func
 (paren
 op_amp
-id|mpu_config
+id|cfg_mpu
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|init_sscape
+id|module_init
+c_func
+(paren
+id|init_sscape
+)paren
+suffix:semicolon
+DECL|variable|cleanup_sscape
+id|module_exit
+c_func
+(paren
+id|cleanup_sscape
+)paren
+suffix:semicolon
+macro_line|#ifndef MODULE
+DECL|function|setup_sscape
+r_static
+r_int
+id|__init
+id|setup_sscape
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+multiline_comment|/* io, irq, dma, mpu_io, mpu_irq */
+r_int
+id|ints
+(braket
+l_int|6
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
+id|io
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|irq
+op_assign
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|dma
+op_assign
+id|ints
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|mpu_io
+op_assign
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+id|mpu_irq
+op_assign
+id|ints
+(braket
+l_int|5
+)braket
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;sscape=&quot;
+comma
+id|setup_sscape
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

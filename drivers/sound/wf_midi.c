@@ -1,11 +1,11 @@
 multiline_comment|/*&n; * sound/wf_midi.c&n; *&n; * The low level driver for the WaveFront ICS2115 MIDI interface(s)&n; * Note that there is also an MPU-401 emulation (actually, a UART-401&n; * emulation) on the CS4232 on the Tropez Plus. This code has nothing&n; * to do with that interface at all.&n; *&n; * The interface is essentially just a UART-401, but is has the&n; * interesting property of supporting what Turtle Beach called&n; * &quot;Virtual MIDI&quot; mode. In this mode, there are effectively *two*&n; * MIDI buses accessible via the interface, one that is routed&n; * solely to/from the external WaveFront synthesizer and the other&n; * corresponding to the pin/socket connector used to link external&n; * MIDI devices to the board.&n; *&n; * This driver fully supports this mode, allowing two distinct&n; * midi devices (/dev/midiNN and /dev/midiNN+1) to be used&n; * completely independently, giving 32 channels of MIDI routing,&n; * 16 to the WaveFront synth and 16 to the external MIDI bus.&n; *&n; * Switching between the two is accomplished externally by the driver&n; * using the two otherwise unused MIDI bytes. See the code for more details.&n; *&n; * NOTE: VIRTUAL MIDI MODE IS ON BY DEFAULT (see wavefront.c)&n; *&n; * The main reason to turn off Virtual MIDI mode is when you want to&n; * tightly couple the WaveFront synth with an external MIDI&n; * device. You won&squot;t be able to distinguish the source of any MIDI&n; * data except via SysEx ID, but thats probably OK, since for the most&n; * part, the WaveFront won&squot;t be sending any MIDI data at all.&n; *  &n; * The main reason to turn on Virtual MIDI Mode is to provide two&n; * completely independent 16-channel MIDI buses, one to the&n; * WaveFront and one to any external MIDI devices. Given the 32&n; * voice nature of the WaveFront, its pretty easy to find a use&n; * for all 16 channels driving just that synth.&n; *&n; */
-multiline_comment|/*&n; * Copyright (C) by Paul Barton-Davis 1998&n; * Some portions of this file are derived from work that is:&n; *&n; *    Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Paul Barton-Davis 1998&n; * Some portions of this file are derived from work that is:&n; *&n; *    CopyriGht (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &lt;linux/wavefront.h&gt;
-macro_line|#if defined(CONFIG_SOUND_WAVEFRONT_MODULE) &amp;&amp; defined(MODULE)
+macro_line|#ifdef MODULE
 DECL|struct|wf_mpu_config
 r_struct
 id|wf_mpu_config
@@ -116,10 +116,10 @@ DECL|macro|MPU_ACK
 mdefine_line|#define&t;MPU_ACK&t;&t;0xFE
 DECL|macro|UART_MODE_ON
 mdefine_line|#define&t;UART_MODE_ON&t;0x3F
+DECL|function|wf_mpu_status
 r_static
 r_inline
 r_int
-DECL|function|wf_mpu_status
 id|wf_mpu_status
 (paren
 r_void
@@ -135,10 +135,10 @@ id|phys_dev
 )paren
 suffix:semicolon
 )brace
+DECL|function|input_avail
 r_static
 r_inline
 r_int
-DECL|function|input_avail
 id|input_avail
 (paren
 r_void
@@ -156,10 +156,10 @@ id|INPUT_AVAIL
 )paren
 suffix:semicolon
 )brace
+DECL|function|output_ready
 r_static
 r_inline
 r_int
-DECL|function|output_ready
 id|output_ready
 (paren
 r_void
@@ -177,10 +177,10 @@ id|OUTPUT_READY
 )paren
 suffix:semicolon
 )brace
+DECL|function|read_data
 r_static
 r_inline
 r_int
-DECL|function|read_data
 id|read_data
 (paren
 r_void
@@ -196,10 +196,10 @@ id|phys_dev
 )paren
 suffix:semicolon
 )brace
+DECL|function|write_data
 r_static
 r_inline
 r_void
-DECL|function|write_data
 id|write_data
 (paren
 r_int
@@ -1545,9 +1545,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_static
-r_int
 DECL|function|wf_mpu_start_read
+r_static
+r_inline
+r_int
 id|wf_mpu_start_read
 (paren
 r_int
@@ -1558,9 +1559,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_static
-r_int
 DECL|function|wf_mpu_end_read
+r_static
+r_inline
+r_int
 id|wf_mpu_end_read
 (paren
 r_int
@@ -1571,9 +1573,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|wf_mpu_ioctl
 r_static
 r_int
-DECL|function|wf_mpu_ioctl
 id|wf_mpu_ioctl
 (paren
 r_int
@@ -1599,9 +1601,9 @@ id|EINVAL
 )paren
 suffix:semicolon
 )brace
+DECL|function|wf_mpu_buffer_status
 r_static
 r_int
-DECL|function|wf_mpu_buffer_status
 id|wf_mpu_buffer_status
 (paren
 r_int
@@ -2844,57 +2846,5 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef OSS_SUPPORT
-r_int
-DECL|function|probe_wf_mpu
-id|probe_wf_mpu
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-r_return
-op_logical_neg
-id|detect_wf_mpu
-(paren
-id|hw_config-&gt;irq
-comma
-id|hw_config-&gt;io_base
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|attach_wf_mpu
-id|attach_wf_mpu
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-(paren
-r_void
-)paren
-id|install_wf_mpu
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|unload_wf_mpu
-id|unload_wf_mpu
-(paren
-r_void
-)paren
-(brace
-id|uninstall_wf_mpu
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif OSS_SUPPORT
-macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE_AND_MODULE
+macro_line|#endif
 eof

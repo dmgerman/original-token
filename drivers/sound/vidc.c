@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * drivers/sound/vidc.c&n; *&n; * VIDC20 audio driver.&n; *&n; * Copyright (C) 1997-2000 by Russell King &lt;rmk@arm.linux.org.uk&gt;&n; *&n; * The VIDC20 sound hardware consists of the VIDC20 itself, a DAC and a DMA&n; * engine.  The DMA transfers fixed-format (16-bit little-endian linear)&n; * samples to the VIDC20, which then transfers this data serially to the&n; * DACs.  The samplerate is controlled by the VIDC.&n; *&n; * We currently support a mixer device, but it is currently non-functional.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
@@ -1451,7 +1452,9 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|attach_vidc
+r_static
 r_void
+id|__init
 id|attach_vidc
 c_func
 (paren
@@ -1827,7 +1830,9 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|probe_vidc
+r_static
 r_int
+id|__init
 id|probe_vidc
 c_func
 (paren
@@ -1863,7 +1868,9 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|unload_vidc
+r_static
 r_void
+id|__exit
 id|unload_vidc
 c_func
 (paren
@@ -1959,17 +1966,18 @@ id|i
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
-DECL|variable|config
+DECL|variable|cfg
 r_static
 r_struct
 id|address_info
-id|config
+id|cfg
 suffix:semicolon
 multiline_comment|/*&n; * Note! Module use count is handled by SOUNDLOCK/SOUND_LOCK_END&n; */
-DECL|function|init_module
+DECL|function|init_vidc
+r_static
 r_int
-id|init_module
+id|__init
+id|init_vidc
 c_func
 (paren
 r_void
@@ -1982,7 +1990,7 @@ id|probe_vidc
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 op_eq
 l_int|0
@@ -1997,16 +2005,18 @@ id|attach_vidc
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cleanup_vidc
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_vidc
 c_func
 (paren
 r_void
@@ -2016,11 +2026,24 @@ id|unload_vidc
 c_func
 (paren
 op_amp
-id|config
+id|cfg
 )paren
 suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|init_vidc
+id|module_init
+c_func
+(paren
+id|init_vidc
+)paren
+suffix:semicolon
+DECL|variable|cleanup_vidc
+id|module_exit
+c_func
+(paren
+id|cleanup_vidc
+)paren
+suffix:semicolon
 eof

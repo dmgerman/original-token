@@ -1,13 +1,25 @@
-multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Daniel J. Rodriksson: Modified sbintr to handle 8 and 16 bit interrupts&n; *                       for full duplex support ( only sb16 by now )&n; * Rolf Fokkens:&t; Added (BETA?) support for ES1887 chips.&n; * (fokkensr@vertis.nl)&t; Which means: You can adjust the recording levels.&n; */
+multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Daniel J. Rodriksson: Modified sbintr to handle 8 and 16 bit interrupts&n; *                       for full duplex support ( only sb16 by now )&n; * Rolf Fokkens:&t; Added (BETA?) support for ES1887 chips.&n; * (fokkensr@vertis.nl)&t; Which means: You can adjust the recording levels.&n; *&n; * 2000/01/18 - separated sb_card and sb_common -&n; * Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; */
+multiline_comment|/* FIXME: *grr* why can&squot;t the f**in Makefile do this for me ? */
+DECL|macro|EXPORT_SYMTAB
+mdefine_line|#define EXPORT_SYMTAB
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#include &quot;mpu401.h&quot;
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sb_ess.h&quot;
+multiline_comment|/*&n; * global module flag&n; */
+DECL|variable|sb_be_quiet
+r_int
+id|sb_be_quiet
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|detected_devc
 r_static
 id|sb_devc
@@ -93,6 +105,31 @@ l_int|0
 comma
 l_int|4
 )brace
+suffix:semicolon
+multiline_comment|/* Do acer notebook init? */
+DECL|variable|acer
+r_int
+id|acer
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* soundman games? */
+DECL|variable|sm_games
+r_int
+id|sm_games
+op_assign
+l_int|0
+suffix:semicolon
+r_extern
+r_int
+id|esstype
+suffix:semicolon
+DECL|variable|smw_free
+r_void
+op_star
+id|smw_free
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Jazz16 chipset specific control variables&n; */
 DECL|variable|jazz16_base
@@ -4283,11 +4320,6 @@ op_logical_neg
 id|smw_ucode
 )paren
 (brace
-r_extern
-r_void
-op_star
-id|smw_free
-suffix:semicolon
 id|smw_ucodeLen
 op_assign
 id|mod_firmware_load
@@ -5220,4 +5252,91 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
+id|MODULE_PARM
+c_func
+(paren
+id|acer
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sm_games
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|esstype
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+DECL|variable|sb_dsp_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sb_dsp_init
+)paren
+suffix:semicolon
+DECL|variable|sb_dsp_detect
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sb_dsp_detect
+)paren
+suffix:semicolon
+DECL|variable|sb_dsp_unload
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sb_dsp_unload
+)paren
+suffix:semicolon
+DECL|variable|sb_dsp_disable_midi
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sb_dsp_disable_midi
+)paren
+suffix:semicolon
+DECL|variable|sb_be_quiet
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sb_be_quiet
+)paren
+suffix:semicolon
+DECL|variable|attach_sbmpu
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|attach_sbmpu
+)paren
+suffix:semicolon
+DECL|variable|probe_sbmpu
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|probe_sbmpu
+)paren
+suffix:semicolon
+DECL|variable|unload_sbmpu
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unload_sbmpu
+)paren
+suffix:semicolon
+DECL|variable|smw_free
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|smw_free
+)paren
+suffix:semicolon
 eof

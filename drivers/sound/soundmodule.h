@@ -2,6 +2,7 @@ macro_line|#ifndef _SOUNDMODULE_H
 DECL|macro|_SOUNDMODULE_H
 mdefine_line|#define _SOUNDMODULE_H
 macro_line|#include &lt;linux/notifier.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 r_extern
 r_struct
 id|notifier_block
@@ -18,7 +19,6 @@ id|notifier_block
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|macro|SOUND_LOCK
 mdefine_line|#define SOUND_LOCK&t;&t;sound_notifier_chain_register(&amp;sound_notifier); 
 DECL|macro|SOUND_LOCK_END
@@ -77,6 +77,5 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 eof
