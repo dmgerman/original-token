@@ -95,4 +95,19 @@ l_int|30
 multiline_comment|/* maximum percent buffer */
 )brace
 suffix:semicolon
+DECL|variable|page_cache
+id|buffer_mem_t
+id|page_cache
+op_assign
+(brace
+l_int|10
+comma
+multiline_comment|/* minimum percent page cache */
+l_int|30
+comma
+multiline_comment|/* borrow percent page cache */
+l_int|75
+multiline_comment|/* maximum */
+)brace
+suffix:semicolon
 eof

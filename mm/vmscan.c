@@ -1473,6 +1473,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|buffermem
 op_rshift
 id|PAGE_SHIFT
@@ -1483,6 +1484,17 @@ OG
 id|buffer_mem.borrow_percent
 op_star
 id|num_physpages
+)paren
+op_logical_or
+(paren
+id|page_cache_size
+op_star
+l_int|100
+OG
+id|page_cache.borrow_percent
+op_star
+id|num_physpages
+)paren
 )paren
 id|state
 op_assign
@@ -1819,7 +1831,17 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Do the background pageout: be&n;&t;&t; * more aggressive if we&squot;re really&n;&t;&t; * low on free memory.&n;&t;&t; *&n;&t;&t; * Normally this is called 4 times&n;&t;&t; * a second if we need more memory,&n;&t;&t; * so this has a normal rate of&n;&t;&t; * X*4 pages of memory free&squot;d per&n;&t;&t; * second. That rate goes up when&n;&t;&t; *&n;&t;&t; * - we&squot;re really low on memory (we get woken&n;&t;&t; *   up a lot more)&n;&t;&t; * - other processes fail to allocate memory,&n;&t;&t; *   at which time they try to do their own&n;&t;&t; *   freeing.&n;&t;&t; *&n;&t;&t; * A &quot;tries&quot; value of 50 means up to 200 pages&n;&t;&t; * per second (1.6MB/s). This should be a /proc&n;&t;&t; * thing.&n;&t;&t; */
 id|tries
 op_assign
+(paren
 l_int|50
+op_lshift
+l_int|2
+)paren
+op_rshift
+id|free_memory_available
+c_func
+(paren
+l_int|3
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -1990,6 +2012,14 @@ id|PAGE_SHIFT
 )paren
 op_star
 l_int|100
+op_logical_or
+(paren
+id|num_physpages
+op_star
+id|page_cache.max_percent
+OL
+id|page_cache_size
+)paren
 )paren
 (brace
 multiline_comment|/* Set the next wake-up time */

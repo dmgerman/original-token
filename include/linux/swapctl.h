@@ -139,6 +139,10 @@ r_extern
 id|buffer_mem_t
 id|buffer_mem
 suffix:semicolon
+r_extern
+id|buffer_mem_t
+id|page_cache
+suffix:semicolon
 DECL|struct|freepages_v1
 r_typedef
 r_struct

@@ -825,10 +825,12 @@ op_amp
 id|__GFP_WAIT
 )paren
 op_logical_and
-id|try_to_free_page
+id|try_to_free_pages
 c_func
 (paren
 id|gfp_mask
+comma
+id|SWAP_CLUSTER_MAX
 )paren
 )paren
 r_goto

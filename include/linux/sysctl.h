@@ -222,6 +222,10 @@ comma
 multiline_comment|/* Turn off the virtual memory safety limit */
 DECL|enumerator|VM_BUFFERMEM
 id|VM_BUFFERMEM
+comma
+multiline_comment|/* struct: Set buffer memory thresholds */
+DECL|enumerator|VM_PAGECACHE
+id|VM_PAGECACHE
 multiline_comment|/* struct: Set cache memory thresholds */
 )brace
 suffix:semicolon

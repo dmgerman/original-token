@@ -4,21 +4,6 @@ mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
-r_static
-r_inline
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|delete_module
-comma
-r_const
-r_char
-op_star
-comma
-id|name_user
-)paren
 multiline_comment|/*&n;&t;kmod_unload_delay and modprobe_path are set via /proc/sys.&n;*/
 DECL|variable|kmod_unload_delay
 r_int
@@ -36,6 +21,7 @@ op_assign
 l_string|&quot;/sbin/modprobe&quot;
 suffix:semicolon
 DECL|variable|module_name
+r_static
 r_char
 id|module_name
 (braket
@@ -45,6 +31,7 @@ op_assign
 l_string|&quot;&quot;
 suffix:semicolon
 DECL|variable|argv
+r_static
 r_char
 op_star
 id|argv
@@ -56,13 +43,14 @@ l_string|&quot;modprobe&quot;
 comma
 l_string|&quot;-k&quot;
 comma
-l_int|NULL
+id|module_name
 comma
 l_int|NULL
 comma
 )brace
 suffix:semicolon
 DECL|variable|envp
+r_static
 r_char
 op_star
 id|envp
@@ -80,6 +68,7 @@ comma
 suffix:semicolon
 multiline_comment|/*&n;&t;kmod_queue synchronizes the kmod thread and the rest of the system&n;&t;kmod_unload_timer is what we use to unload modules&n;&t;after kmod_unload_delay seconds&n;*/
 DECL|variable|kmod_queue
+r_static
 r_struct
 id|wait_queue
 op_star
@@ -88,6 +77,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 DECL|variable|kmod_unload_timer
+r_static
 r_struct
 id|timer_list
 id|kmod_unload_timer
@@ -215,13 +205,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t;&t;Call modprobe with module_name.  If execve returns,&n;&t;&t;&t;&t;&t;print out an error.&n;&t;&t;&t;&t;*/
-id|argv
-(braket
-l_int|2
-)braket
-op_assign
-id|module_name
-suffix:semicolon
 id|execve
 c_func
 (paren
@@ -378,13 +361,30 @@ multiline_comment|/* first, copy the name of the module into module_name */
 multiline_comment|/* then wake_up() the kmod daemon */
 multiline_comment|/* wait for the kmod daemon to finish (it will wake us up) */
 multiline_comment|/*&n;&t;&t;kmod_thread is sleeping, so start by copying the name of&n;&t;&t;the module into module_name.  Once that is done, wake up&n;&t;&t;kmod_thread.&n;&t;*/
-id|strcpy
+id|strncpy
 c_func
 (paren
 id|module_name
 comma
 id|name
+comma
+r_sizeof
+(paren
+id|module_name
 )paren
+)paren
+suffix:semicolon
+id|module_name
+(braket
+r_sizeof
+(paren
+id|module_name
+)paren
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|wake_up
 c_func

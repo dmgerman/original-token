@@ -596,6 +596,21 @@ r_int
 comma
 id|options
 )paren
+r_static
+r_inline
+id|_syscall1
+c_func
+(paren
+r_int
+comma
+id|delete_module
+comma
+r_const
+r_char
+op_star
+comma
+id|name
+)paren
 multiline_comment|/*&n; * This is the mechanism for creating a new kernel thread.&n; *&n; * NOTE! Only a kernel-only process(ie the swapper or direct descendants&n; * who haven&squot;t done an &quot;execve()&quot;) should use this: it will work within&n; * a system call from a &quot;real&quot; process, but the process memory space will&n; * not be free&squot;d until both the parent and the child have exited.&n; */
 DECL|function|kernel_thread
 r_static

@@ -319,7 +319,7 @@ l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
 l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 3f&bslash;n&quot;
 l_string|&quot;2:&bslash;tsbbl %%eax,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;orb $1,%%eax&bslash;n&quot;
+l_string|&quot;orb $1,%%al&bslash;n&quot;
 l_string|&quot;3:&quot;
 suffix:colon
 l_string|&quot;=a&quot;

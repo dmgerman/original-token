@@ -22,6 +22,13 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/*&n; * Skb list spinlock&n; */
+DECL|variable|skb_queue_lock
+id|spinlock_t
+id|skb_queue_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n; *&t;Resource tracking variables&n; */
 DECL|variable|net_skbcount
 r_static
@@ -978,12 +985,6 @@ op_plus
 id|newheadroom
 op_minus
 id|headroom
-op_minus
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
 comma
 id|GFP_ATOMIC
 )paren

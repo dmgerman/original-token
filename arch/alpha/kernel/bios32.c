@@ -2396,7 +2396,7 @@ l_int|5
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 (brace
@@ -2546,7 +2546,7 @@ l_int|7
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 multiline_comment|/*INT   INTA  INTB   INTC   INTD */
@@ -2748,7 +2748,7 @@ l_int|5
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 (brace
@@ -2897,7 +2897,7 @@ l_int|5
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 (brace
@@ -3047,7 +3047,7 @@ l_int|8
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -3252,7 +3252,7 @@ l_int|13
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -3550,7 +3550,7 @@ l_int|6
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -3724,7 +3724,7 @@ l_int|7
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -3918,7 +3918,7 @@ l_int|9
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -4148,7 +4148,7 @@ l_int|18
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -4553,7 +4553,7 @@ l_int|5
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -4715,7 +4715,7 @@ id|pirq_tab
 (braket
 l_int|5
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 macro_line|#ifdef CONFIG_ALPHA_P2K

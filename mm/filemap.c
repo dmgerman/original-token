@@ -535,7 +535,7 @@ id|PAGE_SHIFT
 )paren
 op_star
 l_int|100
-OG
+OL
 (paren
 id|buffer_mem.min_percent
 op_star
@@ -600,6 +600,16 @@ r_if
 c_cond
 (paren
 id|page-&gt;age
+op_logical_or
+id|page_cache_size
+op_star
+l_int|100
+OL
+(paren
+id|page_cache.min_percent
+op_star
+id|num_physpages
+)paren
 )paren
 r_break
 suffix:semicolon
