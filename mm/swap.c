@@ -354,22 +354,6 @@ r_int
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef SWAP_CACHE_INFO
-id|printk
-c_func
-(paren
-l_string|&quot;%ld bytes for swap cache allocated&bslash;n&quot;
-comma
-id|swap_cache_size
-op_star
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 r_return
 (paren
 r_int
@@ -575,7 +559,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;With MsDOS, we use msdos_smap which return&n;&t;&t;&t;&t;a sector number (not a cluster or block number).&n;&t;&t;&t;&t;It is a patch to enable the UMSDOS project.&n;&t;&t;&t;&t;Other people are working on better solution.&n;&n;&t;&t;&t;&t;It sounds like ll_rw_swap_file defined&n;&t;&t;&t;&t;it operation size (sector size) based on&n;&t;&t;&t;&t;PAGE_SIZE and the number of block to read.&n;&t;&t;&t;&t;So using bmap ou smap should work even if&n;&t;&t;&t;&t;smap will requiered more blocks.&n;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;With MsDOS, we use msdos_smap which return&n;&t;&t;&t;&t;a sector number (not a cluster or block number).&n;&t;&t;&t;&t;It is a patch to enable the UMSDOS project.&n;&t;&t;&t;&t;Other people are working on better solution.&n;&n;&t;&t;&t;&t;It sounds like ll_rw_swap_file defined&n;&t;&t;&t;&t;it operation size (sector size) based on&n;&t;&t;&t;&t;PAGE_SIZE and the number of block to read.&n;&t;&t;&t;&t;So using bmap or smap should work even if&n;&t;&t;&t;&t;smap will require more blocks.&n;&t;&t;&t;*/
 r_int
 id|j
 suffix:semicolon
@@ -1592,7 +1576,7 @@ id|page
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * A new implementation of swap_out().  We do not swap complete processes,&n; * but only a small number of blocks, before we continue with the next&n; * process.  The number of blocks actually swapped is determined on the&n; * number of page faults, that this process actually had in the last time,&n; * so we won&squot;t swap heavily used processes all the time ...&n; *&n; * Note: the priority argument is a hint on much CPU to waste with the&n; *       swap block search, not a hint, of how much blocks to swap with&n; *       each process.&n; *&n; * (C) 1993 Kai Petzke, wpp@marie.physik.tu-berlin.de&n; */
-multiline_comment|/*&n; * These are the miminum and maximum number of pages to swap from one process,&n; * before proceeding to the next:&n; */
+multiline_comment|/*&n; * These are the minimum and maximum number of pages to swap from one process,&n; * before proceeding to the next:&n; */
 DECL|macro|SWAP_MIN
 mdefine_line|#define SWAP_MIN&t;4
 DECL|macro|SWAP_MAX
@@ -2501,7 +2485,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to free free memory (%08lx): memory probabably corrupted&bslash;n&quot;
+l_string|&quot;Trying to free free memory (%08lx): memory probably corrupted&bslash;n&quot;
 comma
 id|addr
 )paren

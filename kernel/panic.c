@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/panic.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * This function is used through-out the kernel (includeinh mm and fs)&n; * to indicate a major problem.&n; */
+multiline_comment|/*&n; * This function is used through-out the kernel (including mm and fs)&n; * to indicate a major problem.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

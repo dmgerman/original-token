@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 multiline_comment|/* We don&squot;t use the head/tail construction any more. Now we use the start/len*/
-multiline_comment|/* contruction providing full use of PIPE_BUF (multiple of PAGE_SIZE) */
+multiline_comment|/* construction providing full use of PIPE_BUF (multiple of PAGE_SIZE) */
 multiline_comment|/* Florian Coosmann (FGC)                                ^ current = 1       */
 multiline_comment|/* Additionally, we now use locking technique. This prevents race condition  */
 multiline_comment|/* in case of paging and multiple read/write on the same pipe. (FGC)         */

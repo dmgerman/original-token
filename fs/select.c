@@ -777,7 +777,7 @@ DECL|macro|get_fd_set
 mdefine_line|#define get_fd_set(nr,fsp,fdp) &bslash;&n;__get_fd_set(nr, (unsigned long *) (fsp), (unsigned long *) (fdp))
 DECL|macro|set_fd_set
 mdefine_line|#define set_fd_set(nr,fsp,fdp) &bslash;&n;__set_fd_set(nr, (unsigned long *) (fsp), (unsigned long *) (fdp))
-multiline_comment|/*&n; * We can actually return ERESTARTSYS insetad of EINTR, but I&squot;d&n; * like to be certain this leads to no problems. So I return&n; * EINTR just for safety.&n; *&n; * Update: ERESTARTSYS breaks at least the xview clock binary, so&n; * I&squot;m trying ERESTARTNOHAND which restart only when you want to.&n; */
+multiline_comment|/*&n; * We can actually return ERESTARTSYS instead of EINTR, but I&squot;d&n; * like to be certain this leads to no problems. So I return&n; * EINTR just for safety.&n; *&n; * Update: ERESTARTSYS breaks at least the xview clock binary, so&n; * I&squot;m trying ERESTARTNOHAND which restart only when you want to.&n; */
 DECL|function|sys_select
 id|asmlinkage
 r_int

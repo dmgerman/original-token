@@ -1181,7 +1181,7 @@ op_minus
 id|ESPIPE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Read data from a socket. ubuf is a user mode pointer. We make sure the user&n; *&t;area ubuf...ubuf+size-1 is writeable before asking the protocol.&n; */
+multiline_comment|/*&n; *&t;Read data from a socket. ubuf is a user mode pointer. We make sure the user&n; *&t;area ubuf...ubuf+size-1 is writable before asking the protocol.&n; */
 DECL|function|sock_read
 r_static
 r_int
@@ -3531,7 +3531,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send a datagram to a given address. We move the address into kernel&n; *&t;spacee and check the user space data area is readable before invoking&n; *&t;the protocol.&n; */
+multiline_comment|/*&n; *&t;Send a datagram to a given address. We move the address into kernel&n; *&t;space and check the user space data area is readable before invoking&n; *&t;the protocol.&n; */
 DECL|function|sock_sendto
 r_static
 r_int
@@ -4467,7 +4467,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;System call vectors. Since I (RIB) want to rewrite sockets as streams,&n; *&t;we have this level of indirection. Not a lot of overhead, since more of&n; *&t;the work is done via read/write/select directly.&n; *&n; *&t;I&squot;m now expanding this up to a higher level to seperate the assorted&n; *&t;kernel/user space manipulations and global assumptions from the protocol&n; *&t;layers proper - AC.&n; */
+multiline_comment|/*&n; *&t;System call vectors. Since I (RIB) want to rewrite sockets as streams,&n; *&t;we have this level of indirection. Not a lot of overhead, since more of&n; *&t;the work is done via read/write/select directly.&n; *&n; *&t;I&squot;m now expanding this up to a higher level to separate the assorted&n; *&t;kernel/user space manipulations and global assumptions from the protocol&n; *&t;layers proper - AC.&n; */
 DECL|function|sys_socketcall
 id|asmlinkage
 r_int

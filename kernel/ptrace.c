@@ -86,7 +86,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * this routine will get a word off of the processes priviledged stack. &n; * the offset is how far from the base addr as stored in the TSS.  &n; * this routine assumes that all the priviledged stacks are in our&n; * data space.&n; */
+multiline_comment|/*&n; * this routine will get a word off of the processes privileged stack. &n; * the offset is how far from the base addr as stored in the TSS.  &n; * this routine assumes that all the privileged stacks are in our&n; * data space.&n; */
 DECL|function|get_stack_long
 r_static
 r_inline
@@ -134,7 +134,7 @@ id|stack
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * this routine will put a word on the processes priviledged stack. &n; * the offset is how far from the base addr as stored in the TSS.  &n; * this routine assumes that all the priviledged stacks are in our&n; * data space.&n; */
+multiline_comment|/*&n; * this routine will put a word on the processes privileged stack. &n; * the offset is how far from the base addr as stored in the TSS.  &n; * this routine assumes that all the privileged stacks are in our&n; * data space.&n; */
 DECL|function|put_stack_long
 r_static
 r_inline
@@ -1265,7 +1265,7 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-multiline_comment|/* set the ptrace bit in the proccess flags. */
+multiline_comment|/* set the ptrace bit in the process flags. */
 id|current-&gt;flags
 op_or_assign
 id|PF_PTRACED
@@ -1471,7 +1471,7 @@ c_cond
 id|request
 )paren
 (brace
-multiline_comment|/* when I and D space are seperate, these will need to be fixed. */
+multiline_comment|/* when I and D space are separate, these will need to be fixed. */
 r_case
 id|PTRACE_PEEKTEXT
 suffix:colon
@@ -1758,7 +1758,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* when I and D space are seperate, this will have to be fixed. */
+multiline_comment|/* when I and D space are separate, this will have to be fixed. */
 r_case
 id|PTRACE_POKETEXT
 suffix:colon
@@ -1810,7 +1810,7 @@ id|addr
 op_rshift
 l_int|2
 suffix:semicolon
-multiline_comment|/* temproary hack. */
+multiline_comment|/* temporary hack. */
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * These are the functions used to load COFF IBSC style executables.&n; * Information on COFF format may be obtained in either the Intel Binary&n; * Compatibility Specification 2 or O&squot;Rilley&squot;s book on COFF. The shared&n; * libraries are defined only the in the Intel book.&n; *&n; * This file is based upon code written by Eric Youndale for the ELF object&n; * file format.&n; *&n; * Author: Al Longyear (longyear@sii.com)&n; *&n; * Latest Revision:&n; *    3 Feburary 1994&n; *      Al Longyear (longyear@sii.com)&n; *      Cleared first page of bss section using put_fs_byte.&n; */
+multiline_comment|/*&n; * These are the functions used to load COFF IBSC style executables.&n; * Information on COFF format may be obtained in either the Intel Binary&n; * Compatibility Specification 2 or O&squot;Rilley&squot;s book on COFF. The shared&n; * libraries are defined only the in the Intel book.&n; *&n; * This file is based upon code written by Eric Youngdale for the ELF object&n; * file format.&n; *&n; * Author: Al Longyear (longyear@sii.com)&n; *&n; * Latest Revision:&n; *    3 February 1994&n; *      Al Longyear (longyear@sii.com)&n; *      Cleared first page of bss section using put_fs_byte.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -498,7 +498,7 @@ id|coff_hdr-&gt;f_opthdr
 )paren
 suffix:semicolon
 multiline_comment|/* Size of opt. headr */
-multiline_comment|/*&n; *  If the file is not executable then reject the exectution. This means&n; *  that there must not be external references.&n; */
+multiline_comment|/*&n; *  If the file is not executable then reject the execution. This means&n; *  that there must not be external references.&n; */
 r_if
 c_cond
 (paren
@@ -526,7 +526,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  There must be atleast one section.&n; */
+multiline_comment|/*&n; *  There must be at least one section.&n; */
 r_if
 c_cond
 (paren
@@ -1575,7 +1575,7 @@ op_minus
 id|ENOEXEC
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *   Construct the bss data for the process. The bss ranges from the&n; *   end of the data (which may not be on a page boundry) to the end&n; *   of the bss section. Allocate any necessary pages for the data.&n; */
+multiline_comment|/*&n; *   Construct the bss data for the process. The bss ranges from the&n; *   end of the data (which may not be on a page boundary) to the end&n; *   of the bss section. Allocate any necessary pages for the data.&n; */
 r_if
 c_cond
 (paren
@@ -1648,7 +1648,7 @@ id|sect_ptr
 op_assign
 id|sect_bufr
 suffix:semicolon
-multiline_comment|/*&n; *  Find the library sections. (There should be atleast one. It was counted&n; *  earlier.) This will evenutally recurse to our code and load the shared&n; *  library with our own procedures.&n; */
+multiline_comment|/*&n; *  Find the library sections. (There should be at least one. It was counted&n; *  earlier.) This will eventually recurse to our code and load the shared&n; *  library with our own procedures.&n; */
 r_for
 c_loop
 (paren
@@ -1815,7 +1815,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  This procedure will load the library listed in the file name given&n; *  as the paramter. The result will be non-zero should something fail&n; *  to load.&n; */
+multiline_comment|/*&n; *  This procedure will load the library listed in the file name given&n; *  as the parameter. The result will be non-zero should something fail&n; *  to load.&n; */
 r_static
 r_int
 DECL|function|preload_this_library
@@ -1912,7 +1912,7 @@ r_int
 id|nbytes
 suffix:semicolon
 multiline_comment|/* Count of bytes in the header area  */
-multiline_comment|/*&n; *  Fetch the size of the section. There must be enough room for atleast&n; *  one entry.&n; */
+multiline_comment|/*&n; *  Fetch the size of the section. There must be enough room for at least&n; *  one entry.&n; */
 id|nbytes
 op_assign
 id|COFF_LONG
@@ -2028,7 +2028,7 @@ id|old_fs
 )paren
 suffix:semicolon
 multiline_comment|/* Restore the selector */
-multiline_comment|/*&n; *  Check the result. The value returned is the byte count actaully read.&n; */
+multiline_comment|/*&n; *  Check the result. The value returned is the byte count actually read.&n; */
 r_if
 c_cond
 (paren

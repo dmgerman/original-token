@@ -336,7 +336,7 @@ id|free_mem_ptr
 op_add_assign
 id|size
 suffix:semicolon
-multiline_comment|/*&n;  &t; * The part of the compresed kernel which has already been expanded&n;&t; * is no longer needed. Therefore we can reuse it for malloc.&n;&t; * With bigger kernels, this is necessary.&n;&t; */
+multiline_comment|/*&n;  &t; * The part of the compressed kernel which has already been expanded&n;&t; * is no longer needed. Therefore we can reuse it for malloc.&n;&t; * With bigger kernels, this is necessary.&n;&t; */
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* crypt.h (dummy version) -- do not perform encrytion&n; * Hardly worth copyrighting :-)&n; */
+multiline_comment|/* crypt.h (dummy version) -- do not perform encryption&n; * Hardly worth copyrighting :-)&n; */
 macro_line|#ifdef CRYPT
 DECL|macro|CRYPT
 macro_line|#  undef CRYPT      /* dummy version */

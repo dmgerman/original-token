@@ -12,11 +12,6 @@ macro_line|#include &lt;linux/mc146818rtc.h&gt;
 DECL|macro|RTC_ALWAYS_BCD
 mdefine_line|#define RTC_ALWAYS_BCD 1
 macro_line|#include &lt;linux/timex.h&gt;
-r_extern
-r_struct
-id|timeval
-id|xtime
-suffix:semicolon
 multiline_comment|/* converts date to days since 1/1/1970&n; * assumes year,mon,day in normal date format&n; * ie. 1/1/1970 =&gt; year=1970, mon=1, day=1&n; *&n; * For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.&n; *&n; * This algorithm was first published by Gauss (I think).&n; */
 DECL|function|mktime
 r_static

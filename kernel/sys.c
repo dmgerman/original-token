@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/*&n; * this indicates wether you can reboot with ctrl-alt-del: the default is yes&n; */
+multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
 DECL|variable|C_A_D
 r_static
 r_int
@@ -687,7 +687,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function gets called by ctrl-alt-del - ie the keyboard interrupt.&n; * As it&squot;s called within an interrupt, it may NOT sync: the only choice&n; * is wether to reboot at once, or just ignore the ctrl-alt-del.&n; */
+multiline_comment|/*&n; * This function gets called by ctrl-alt-del - ie the keyboard interrupt.&n; * As it&squot;s called within an interrupt, it may NOT sync: the only choice&n; * is whether to reboot at once, or just ignore the ctrl-alt-del.&n; */
 DECL|function|ctrl_alt_del
 r_void
 id|ctrl_alt_del
@@ -869,7 +869,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * setgid() is implemeneted like SysV w/ SAVED_IDS &n; */
+multiline_comment|/*&n; * setgid() is implemented like SysV w/ SAVED_IDS &n; */
 DECL|function|sys_setgid
 id|asmlinkage
 r_int
@@ -1157,7 +1157,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * setuid() is implemeneted like SysV w/ SAVED_IDS &n; * &n; * Note that SAVED_ID&squot;s is deficient in that a setuid root program&n; * like sendmail, for example, cannot set its uid to be a normal &n; * user and then switch back, because if you&squot;re root, setuid() sets&n; * the saved uid too.  If you don&squot;t like this, blame the bright people&n; * in the POSIX commmittee and/or USG.  Note that the BSD-style setreuid()&n; * will allow a root program to temporarily drop privileges and be able to&n; * regain them by swapping the real and effective uid.  &n; */
+multiline_comment|/*&n; * setuid() is implemented like SysV w/ SAVED_IDS &n; * &n; * Note that SAVED_ID&squot;s is deficient in that a setuid root program&n; * like sendmail, for example, cannot set its uid to be a normal &n; * user and then switch back, because if you&squot;re root, setuid() sets&n; * the saved uid too.  If you don&squot;t like this, blame the bright people&n; * in the POSIX committee and/or USG.  Note that the BSD-style setreuid()&n; * will allow a root program to temporarily drop privileges and be able to&n; * regain them by swapping the real and effective uid.  &n; */
 DECL|function|sys_setuid
 id|asmlinkage
 r_int
@@ -2826,7 +2826,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * It would make sense to put struct rusuage in the task_struct,&n; * except that would make the task_struct be *really big*.  After&n; * task_struct gets moved into malloc&squot;ed memory, it would&n; * make sense to do this.  It will make moving the rest of the information&n; * a lot simpler!  (Which we&squot;re not doing right now because we&squot;re not&n; * measuring them yet).&n; */
+multiline_comment|/*&n; * It would make sense to put struct rusage in the task_struct,&n; * except that would make the task_struct be *really big*.  After&n; * task_struct gets moved into malloc&squot;ed memory, it would&n; * make sense to do this.  It will make moving the rest of the information&n; * a lot simpler!  (Which we&squot;re not doing right now because we&squot;re not&n; * measuring them yet).&n; */
 DECL|function|getrusage
 r_int
 id|getrusage

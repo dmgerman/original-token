@@ -231,15 +231,6 @@ r_int
 suffix:semicolon
 macro_line|#endif CONFIG_SBPCD
 r_extern
-r_int
-id|is_read_only
-c_func
-(paren
-r_int
-id|dev
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|set_device_ro
 c_func

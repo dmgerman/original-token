@@ -96,6 +96,8 @@ r_struct
 id|tty_driver
 op_star
 id|tty_drivers
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* linked list of tty drivers */
 DECL|variable|ldiscs
@@ -6738,6 +6740,9 @@ op_star
 id|driver
 )paren
 (brace
+r_int
+id|error
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6748,10 +6753,8 @@ id|TTY_DRIVER_INSTALLED
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * XXX need to check to see if major device already&n;&t; * registered, and then handle error checking.&n;&t; */
-(paren
-r_void
-)paren
+id|error
+op_assign
 id|register_chrdev
 c_func
 (paren
@@ -6762,6 +6765,14 @@ comma
 op_amp
 id|tty_fops
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 r_if
 c_cond
@@ -6863,10 +6874,6 @@ comma
 id|TTYAUX_MAJOR
 )paren
 suffix:semicolon
-id|tty_drivers
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Setup the default TTY line discipline. */
 id|memset
 c_func
@@ -6956,14 +6963,6 @@ op_or
 id|ECHOKE
 op_or
 id|IEXTEN
-suffix:semicolon
-id|kmem_start
-op_assign
-id|con_init
-c_func
-(paren
-id|kmem_start
-)paren
 suffix:semicolon
 id|kmem_start
 op_assign

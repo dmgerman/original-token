@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Protocol intialiser table. Here seperately for convenience&n; *&n; */
+multiline_comment|/*&n; *&t;Protocol initializer table. Here separately for convenience&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

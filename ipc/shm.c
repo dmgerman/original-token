@@ -2008,7 +2008,7 @@ id|shm_swap_in
 multiline_comment|/* swapin */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is really minimal support to make the shared mem stuff&n; * ve known by the general VM manager. It should add the vm_ops&n; * field so that &squot;munmap()&squot; and friends work correctly on shared&n; * memory areas..&n; */
+multiline_comment|/*&n; * This is really minimal support to make the shared mem stuff&n; * be known by the general VM manager. It should add the vm_ops&n; * field so that &squot;munmap()&squot; and friends work correctly on shared&n; * memory areas..&n; */
 DECL|function|add_vm_area
 r_static
 r_int
@@ -3220,7 +3220,7 @@ id|max_shmid
 (brace
 id|printk
 (paren
-l_string|&quot;shm_no_page: id=%d too big. proc mem corruptedn&quot;
+l_string|&quot;shm_no_page: id=%d too big. proc mem corrupted&bslash;n&quot;
 comma
 id|id
 )paren

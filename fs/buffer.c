@@ -1979,7 +1979,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Why like this, I hear you say... The reason is race-conditions.&n; * As we don&squot;t lock buffers (unless we are readint them, that is),&n; * something might happen to it while we sleep (ie a read-error&n; * will force it bad). This shouldn&squot;t really happen currently, but&n; * the code is ready.&n; */
+multiline_comment|/*&n; * Why like this, I hear you say... The reason is race-conditions.&n; * As we don&squot;t lock buffers (unless we are reading them, that is),&n; * something might happen to it while we sleep (ie a read-error&n; * will force it bad). This shouldn&squot;t really happen currently, but&n; * the code is ready.&n; */
 DECL|function|get_hash_table
 r_struct
 id|buffer_head
@@ -3311,7 +3311,7 @@ r_goto
 id|repeat0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Ok, this is getblk, and it isn&squot;t very clear, again to hinder&n; * race-conditions. Most of the code is seldom used, (ie repeating),&n; * so it should be much more efficient than it looks.&n; *&n; * The algoritm is changed: hopefully better, and an elusive bug removed.&n; *&n; * 14.02.92: changed it to sync dirty buffers a bit: better performance&n; * when the filesystem starts to get full of dirty blocks (I hope).&n; */
+multiline_comment|/*&n; * Ok, this is getblk, and it isn&squot;t very clear, again to hinder&n; * race-conditions. Most of the code is seldom used, (ie repeating),&n; * so it should be much more efficient than it looks.&n; *&n; * The algorithm is changed: hopefully better, and an elusive bug removed.&n; *&n; * 14.02.92: changed it to sync dirty buffers a bit: better performance&n; * when the filesystem starts to get full of dirty blocks (I hope).&n; */
 DECL|function|getblk
 r_struct
 id|buffer_head
@@ -7177,7 +7177,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Try to find a free cluster by locating a page where&n; * all of the buffers are unused.  We would like this function&n; * to be atomic, so we do not call anything that might cause&n; * the process to sleep.  The priority is somewhat similar to&n; * the priority used in shrink_buffers.&n; * &n; * My thinking is that the kernel should end up using whole&n; * pages for the buffer cache as much of the time as possible.&n; * This way the other buffers on a particular page are likely&n; * to be very near each other on the free list, and we will not&n; * be expiring data prematurely.  For now we only canibalize buffers&n; * of the same size to keep the code simpler.&n; */
+multiline_comment|/*&n; * Try to find a free cluster by locating a page where&n; * all of the buffers are unused.  We would like this function&n; * to be atomic, so we do not call anything that might cause&n; * the process to sleep.  The priority is somewhat similar to&n; * the priority used in shrink_buffers.&n; * &n; * My thinking is that the kernel should end up using whole&n; * pages for the buffer cache as much of the time as possible.&n; * This way the other buffers on a particular page are likely&n; * to be very near each other on the free list, and we will not&n; * be expiring data prematurely.  For now we only cannibalize buffers&n; * of the same size to keep the code simpler.&n; */
 DECL|function|reassign_cluster
 r_static
 r_int
@@ -7964,7 +7964,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* This is a simple kernel daemon, whose job it is to provide a dynamicly&n; * response to dirty buffers.  Once this process is activated, we write back&n; * a limited number of buffers to the disks and then go back to sleep again.&n; * In effect this is a process which never leaves kernel mode, and does not have&n; * any user memory associated with it except for the stack.  There is also&n; * a kernel stack page, which obviously must be separate from the user stack.&n; */
+multiline_comment|/* This is a simple kernel daemon, whose job it is to provide a dynamically&n; * response to dirty buffers.  Once this process is activated, we write back&n; * a limited number of buffers to the disks and then go back to sleep again.&n; * In effect this is a process which never leaves kernel mode, and does not have&n; * any user memory associated with it except for the stack.  There is also&n; * a kernel stack page, which obviously must be separate from the user stack.&n; */
 DECL|variable|bdflush_wait
 r_struct
 id|wait_queue
@@ -8045,7 +8045,7 @@ id|bdflush_done
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * Here we attempt to write back old buffers.  We also try and flush indoes &n; * and supers as well, since this function is essentially &quot;update&quot;, and &n; * otherwise there would be no way of ensuring that these quantities ever &n; * get written back.  Ideally, we would have a timestamp on the inodes&n; * and superblocks so that we could write back only the old ones as well&n; */
+multiline_comment|/* &n; * Here we attempt to write back old buffers.  We also try and flush inodes &n; * and supers as well, since this function is essentially &quot;update&quot;, and &n; * otherwise there would be no way of ensuring that these quantities ever &n; * get written back.  Ideally, we would have a timestamp on the inodes&n; * and superblocks so that we could write back only the old ones as well&n; */
 DECL|function|sync_old_buffers
 id|asmlinkage
 r_int

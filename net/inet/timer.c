@@ -139,7 +139,7 @@ id|why
 op_assign
 id|sk-&gt;timeout
 suffix:semicolon
-multiline_comment|/* timeout is overwritten by &squot;delete_timer&squot; and &squot;reset_timer&squot; */
+multiline_comment|/* &n;&t; * only process if socket is not in use&n;&t; */
 id|cli
 c_func
 (paren
@@ -181,6 +181,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef NOTDEF
+multiline_comment|/* &n;&t; * what the hell is this doing here?  this belongs in tcp.c.&n;&t; * I believe that this code is the cause of a lot of timer&n;&t; * screwups, especially during close (like FIN_WAIT1 states&n;&t; * with a KEEPOPEN timeout rather then a WRITE timeout).&n;&t; */
 r_if
 c_cond
 (paren
@@ -236,6 +238,7 @@ comma
 id|TCP_TIMEOUT_LEN
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Always see if we need to send an ack. */
 r_if
 c_cond
@@ -644,6 +647,16 @@ suffix:semicolon
 r_case
 id|TIME_KEEPOPEN
 suffix:colon
+multiline_comment|/* &n;&t;&t;&t; * this reset_timer() call is a hack, this is not&n;&t;&t;&t; * how KEEPOPEN is supposed to work.&n;&t;&t;&t; */
+id|reset_timer
+(paren
+id|sk
+comma
+id|TIME_KEEPOPEN
+comma
+id|TCP_TIMEOUT_LEN
+)paren
+suffix:semicolon
 multiline_comment|/* Send something to keep the connection open. */
 r_if
 c_cond

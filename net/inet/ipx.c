@@ -1877,16 +1877,7 @@ r_int
 id|arg
 )paren
 (brace
-id|ipx_socket
-op_star
-id|sk
-op_assign
-(paren
-id|ipx_socket
-op_star
-)paren
-id|sock-&gt;data
-suffix:semicolon
+multiline_comment|/* ipx_socket *sk=(ipx_socket *)sock-&gt;data; */
 r_switch
 c_cond
 (paren

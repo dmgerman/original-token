@@ -5046,10 +5046,6 @@ c_cond
 op_logical_neg
 id|tty
 op_logical_or
-id|tty-&gt;stopped
-op_logical_or
-id|tty-&gt;hw_stopped
-op_logical_or
 op_logical_neg
 id|info-&gt;xmit_buf
 )paren

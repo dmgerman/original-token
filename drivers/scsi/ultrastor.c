@@ -655,7 +655,7 @@ r_return
 id|rv
 suffix:semicolon
 )brace
-multiline_comment|/* This asm is fragile: it doesn&squot;t work without the casts and it may&n;   not work without optimization.  Maybe I should add a swap builtin&n;   to gcc.  --jfc  */
+multiline_comment|/* This has been re-implemented with the help of Richard Earnshaw,&n;   &lt;rwe@pegasus.esprit.ec.org&gt; and works with gcc-2.5.8 and gcc-2.6.0.&n;   The instability noted by jfc below appears to be a bug in&n;   gcc-2.5.x when compiling w/o optimization.  --Caleb&n;&n;   This asm is fragile: it doesn&squot;t work without the casts and it may&n;   not work without optimization.  Maybe I should add a swap builtin&n;   to gcc.  --jfc  */
 DECL|function|xchgb
 r_static
 r_inline
@@ -676,24 +676,12 @@ id|mem
 )paren
 (brace
 id|asm
-c_func
 (paren
-l_string|&quot;xchgb %0,%1&quot;
+l_string|&quot;xchgb %0, (%2)&quot;
 suffix:colon
 l_string|&quot;=q&quot;
 (paren
 id|reg
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
-(paren
-r_int
-r_char
-op_star
-)paren
-id|mem
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -701,16 +689,12 @@ l_string|&quot;0&quot;
 id|reg
 )paren
 comma
-l_string|&quot;1&quot;
+l_string|&quot;q&quot;
 (paren
-op_star
-(paren
-r_int
-r_char
-op_star
-)paren
 id|mem
 )paren
+suffix:colon
+l_string|&quot;m&quot;
 )paren
 suffix:semicolon
 r_return

@@ -3,11 +3,15 @@ macro_line|#ifndef BIOS32_H
 DECL|macro|BIOS32_H
 mdefine_line|#define BIOS32_H
 r_int
+r_int
 id|bios32_init
+c_func
 (paren
+r_int
 r_int
 id|memory_start
 comma
+r_int
 r_int
 id|memory_end
 )paren

@@ -231,9 +231,11 @@ r_int
 id|namelen
 comma
 r_int
+r_int
 op_star
 id|ino
 comma
+r_int
 r_int
 op_star
 id|ino_back
@@ -1095,6 +1097,7 @@ op_star
 id|result
 )paren
 (brace
+r_int
 r_int
 id|ino
 comma

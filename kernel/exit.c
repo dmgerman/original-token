@@ -582,7 +582,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine scans the pid tree and make sure the rep invarient still&n; * holds.  Used for debugging only, since it&squot;s very slow....&n; *&n; * It looks a lot scarier than it really is.... we&squot;re doing nothing more&n; * than verifying the doubly-linked list found in p_ysptr and p_osptr, &n; * and checking it corresponds with the process tree defined by p_cptr and &n; * p_pptr;&n; */
+multiline_comment|/*&n; * This routine scans the pid tree and makes sure the rep invariant still&n; * holds.  Used for debugging only, since it&squot;s very slow....&n; *&n; * It looks a lot scarier than it really is.... we&squot;re doing nothing more&n; * than verifying the doubly-linked list found in p_ysptr and p_osptr, &n; * and checking it corresponds with the process tree defined by p_cptr and &n; * p_pptr;&n; */
 DECL|function|audit_ptree
 r_void
 id|audit_ptree
@@ -1102,7 +1102,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* DEBUG_PROC_TREE */
-multiline_comment|/*&n; * This checks not only the pgrp, but falls back on the pid if no&n; * satisfactory prgp is found. I dunno - gdb doesn&squot;t work correctly&n; * without this...&n; */
+multiline_comment|/*&n; * This checks not only the pgrp, but falls back on the pid if no&n; * satisfactory pgrp is found. I dunno - gdb doesn&squot;t work correctly&n; * without this...&n; */
 DECL|function|session_of_pgrp
 r_int
 id|session_of_pgrp

@@ -139,13 +139,6 @@ r_int
 id|tickadj
 suffix:semicolon
 multiline_comment|/* amount of adjustment per tick */
-r_extern
-r_volatile
-r_struct
-id|timeval
-id|xtime
-suffix:semicolon
-multiline_comment|/* The current time */
 multiline_comment|/*&n; * phase-lock loop variables&n; */
 r_extern
 r_int

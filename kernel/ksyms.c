@@ -132,16 +132,6 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|dev_tint
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|device
 op_star
@@ -701,11 +691,13 @@ multiline_comment|/* mark end of table */
 )brace
 comma
 (brace
+(brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 multiline_comment|/* no module refs */
+)brace
 )brace
 suffix:semicolon
 multiline_comment|/*&n;int symbol_table_size = sizeof (symbol_table) / sizeof (symbol_table[0]);&n;*/

@@ -11,7 +11,7 @@ r_extern
 l_string|&quot;C&quot;
 (brace
 macro_line|#endif
-macro_line|#include &lt;i386/string.h&gt;&t;/* inline functions for i386.. */
+macro_line|#include &lt;asm/string.h&gt;&t;&t;/* inline functions for i386.. */
 r_extern
 r_char
 op_star

@@ -11,11 +11,11 @@ mdefine_line|#define INIT_BITS 9              /* Initial number of bits per code
 DECL|macro|LZW_MAGIC
 mdefine_line|#define&t;LZW_MAGIC  &quot;&bslash;037&bslash;235&quot;   /* Magic header for lzw files, 1F 9D */
 DECL|macro|BIT_MASK
-mdefine_line|#define BIT_MASK    0x1f /* Mask for &squot;number of compresssion bits&squot; */
+mdefine_line|#define BIT_MASK    0x1f /* Mask for &squot;number of compression bits&squot; */
 multiline_comment|/* Mask 0x20 is reserved to mean a fourth header byte, and 0x40 is free.&n; * It&squot;s a pity that old uncompress does not check bit 0x20. That makes&n; * extension of the format actually undesirable because old compress&n; * would just crash on the new format instead of giving a meaningful&n; * error message. It does check the number of bits, but it&squot;s more&n; * helpful to say &quot;unsupported format, get a new version&quot; than&n; * &quot;can only handle 16 bits&quot;.&n; */
 DECL|macro|BLOCK_MODE
 mdefine_line|#define BLOCK_MODE  0x80
-multiline_comment|/* Block compresssion: if table is full and compression rate is dropping,&n; * clear the dictionary.&n; */
+multiline_comment|/* Block compression: if table is full and compression rate is dropping,&n; * clear the dictionary.&n; */
 DECL|macro|LZW_RESERVED
 mdefine_line|#define LZW_RESERVED 0x60 /* reserved bits */
 DECL|macro|CLEAR

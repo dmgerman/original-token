@@ -536,7 +536,7 @@ op_assign
 op_complement
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *  &squot;schedule()&squot; is the scheduler function. It&squot;s a very simple and nice&n; * scheduler: it&squot;s not perfect, but certainly works for most things.&n; * The one thing you might take a look at is the signal-handler code here.&n; *&n; *   NOTE!!  Task 0 is the &squot;idle&squot; task, which gets called when no other&n; * tasks can run. It can not be killed, and it cannot sleep. The &squot;state&squot;&n; * information in task[0] is never used.&n; *&n; * The &quot;confuse_gcc&quot; goto is used only to get better assembly code..&n; * Djikstra probably hates me.&n; */
+multiline_comment|/*&n; *  &squot;schedule()&squot; is the scheduler function. It&squot;s a very simple and nice&n; * scheduler: it&squot;s not perfect, but certainly works for most things.&n; * The one thing you might take a look at is the signal-handler code here.&n; *&n; *   NOTE!!  Task 0 is the &squot;idle&squot; task, which gets called when no other&n; * tasks can run. It can not be killed, and it cannot sleep. The &squot;state&squot;&n; * information in task[0] is never used.&n; *&n; * The &quot;confuse_gcc&quot; goto is used only to get better assembly code..&n; * Dijkstra probably hates me.&n; */
 DECL|function|schedule
 id|asmlinkage
 r_void

@@ -827,6 +827,10 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|0
 suffix:semicolon
+id|bh-&gt;b_req
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

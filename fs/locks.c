@@ -1414,7 +1414,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Replace the old lock with the new one. Wake up&n;&t;&t;&t; * anybody waiting for the old one, as the change in&n;&t;&t;&t; * lock type migth satisfy his needs.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Replace the old lock with the new one. Wake up&n;&t;&t;&t; * anybody waiting for the old one, as the change in&n;&t;&t;&t; * lock type might satisfy his needs.&n;&t;&t;&t; */
 id|wake_up
 c_func
 (paren

@@ -1008,7 +1008,7 @@ id|page-&gt;nfree
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Now we&squot;re going to muck with the &quot;global&quot; freelist for this size:&n;       this should be uniterruptible */
+multiline_comment|/* Now we&squot;re going to muck with the &quot;global&quot; freelist for this size:&n;       this should be uninterruptible */
 id|cli
 (paren
 )paren

@@ -1557,6 +1557,7 @@ macro_line|#endif
 )brace
 multiline_comment|/*&n; * Function : void NCR5380_print_status (struct Scsi_Host *instance)&n; *&n; * Purpose : print commands in the various queues, called from&n; *&t;NCR5380_abort and NCR5380_debug to aid debugging.&n; *&n; * Inputs : instance, pointer to this instance.  &n; */
 DECL|function|NCR5380_print_status
+r_static
 r_void
 id|NCR5380_print_status
 (paren

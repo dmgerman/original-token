@@ -1670,7 +1670,7 @@ id|prev
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Map memory not associated with any file into a process&n; * address space.  Adjecent memory is merged.&n; */
+multiline_comment|/*&n; * Map memory not associated with any file into a process&n; * address space.  Adjacent memory is merged.&n; */
 DECL|function|anon_map
 r_static
 r_int
