@@ -7240,9 +7240,8 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* we set the default configuration here */
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|usb_set_configuration
 c_func
 (paren
@@ -7255,12 +7254,19 @@ l_int|0
 dot
 id|bConfigurationValue
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|err
 c_func
 (paren
-l_string|&quot;failed to set default configuration&quot;
+l_string|&quot;failed to set default configuration (error=%d)&quot;
+comma
+id|err
 )paren
 suffix:semicolon
 r_return

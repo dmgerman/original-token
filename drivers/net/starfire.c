@@ -1,5 +1,5 @@
 multiline_comment|/* starfire.c: Linux device driver for the Adaptec Starfire network adapter. */
-multiline_comment|/*&n;&t;Written 1998-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Support and updates available at&n;&t;http://www.scyld.com/network/starfire.html&n;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.1 (jgarzik):&n;&t;- Use PCI driver interface&n;&t;- Fix MOD_xxx races&n;&t;- softnet fixups&n;&n;&t;LK1.1.2 (jgarzik):&n;&t;- Merge Becker version 0.15&n;*/
+multiline_comment|/*&n;&t;Written 1998-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Support and updates available at&n;&t;http://www.scyld.com/network/starfire.html&n;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.1 (jgarzik):&n;&t;- Use PCI driver interface&n;&t;- Fix MOD_xxx races&n;&t;- softnet fixups&n;&n;&t;LK1.1.2 (jgarzik):&n;&t;- Merge Becker version 0.15&n;&n;&t;LK1.1.3 (Andrew Morton)&n;&t;- Timer cleanups&n;*/
 multiline_comment|/* The user-configurable values.&n;   These may be modified when a driver module is loaded.*/
 multiline_comment|/* Used for tuning interrupt latency vs. overhead. */
 DECL|variable|interrupt_mitigation
@@ -167,7 +167,7 @@ id|version1
 )braket
 id|__devinitdata
 op_assign
-l_string|&quot;starfire.c:v0.15+LK1.1.2 4/28/2000  Written by Donald Becker &lt;becker@scyld.com&gt;&bslash;n&quot;
+l_string|&quot;starfire.c:v0.15+LK1.1.3 6/17/2000  Written by Donald Becker &lt;becker@scyld.com&gt;&bslash;n&quot;
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
@@ -2046,13 +2046,14 @@ id|dev-&gt;base_addr
 suffix:semicolon
 r_int
 id|i
+comma
+id|retval
 suffix:semicolon
 multiline_comment|/* Do we ever need to reset the chip??? */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -2067,13 +2068,17 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/* Disable the Rx and Tx, and reset the chip. */
@@ -6268,6 +6273,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|del_timer_sync
+c_func
+(paren
+op_amp
+id|np-&gt;timer
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6323,13 +6335,6 @@ id|IntrEnable
 )paren
 suffix:semicolon
 multiline_comment|/* Stop the chip&squot;s Tx and Rx processes. */
-id|del_timer
-c_func
-(paren
-op_amp
-id|np-&gt;timer
-)paren
-suffix:semicolon
 macro_line|#ifdef __i386__
 r_if
 c_cond

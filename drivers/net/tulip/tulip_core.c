@@ -8,7 +8,7 @@ id|version
 (braket
 )braket
 op_assign
-l_string|&quot;Linux Tulip driver version 0.9.6 (May 31, 2000)&bslash;n&quot;
+l_string|&quot;Linux Tulip driver version 0.9.7 (June 17, 2000)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tulip.h&quot;
@@ -2393,11 +2393,17 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|retval
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -2413,12 +2419,12 @@ comma
 id|dev
 )paren
 )paren
+)paren
 (brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-op_minus
-id|EBUSY
+id|retval
 suffix:semicolon
 )brace
 id|tulip_init_ring
@@ -3829,7 +3835,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|del_timer
+id|del_timer_sync
 (paren
 op_amp
 id|tp-&gt;timer

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/tty_io.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was an array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; *&n; * New TIOCLINUX variants added.&n; *&t;-- mj@k332.feld.cvut.cz, 19-Nov-95&n; * &n; * Restrict vt switching via ioctl()&n; *      -- grif@cs.ucr.edu, 5-Dec-95&n; *&n; * Move console and virtual terminal code to more appropriate files,&n; * implement CONFIG_VT and generalize console device interface.&n; *&t;-- Marko Kohtala &lt;Marko.Kohtala@hut.fi&gt;, March 97&n; *&n; * Rewrote init_dev and release_dev to eliminate races.&n; *&t;-- Bill Hawes &lt;whawes@star.net&gt;, June 97&n; *&n; * Added devfs support.&n; *      -- C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, 13-Jan-1998&n; *&n; * Added support for a Unix98-style ptmx device.&n; *      -- C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, 14-Jan-1998&n; */
+multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was an array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; *&n; * New TIOCLINUX variants added.&n; *&t;-- mj@k332.feld.cvut.cz, 19-Nov-95&n; * &n; * Restrict vt switching via ioctl()&n; *      -- grif@cs.ucr.edu, 5-Dec-95&n; *&n; * Move console and virtual terminal code to more appropriate files,&n; * implement CONFIG_VT and generalize console device interface.&n; *&t;-- Marko Kohtala &lt;Marko.Kohtala@hut.fi&gt;, March 97&n; *&n; * Rewrote init_dev and release_dev to eliminate races.&n; *&t;-- Bill Hawes &lt;whawes@star.net&gt;, June 97&n; *&n; * Added devfs support.&n; *      -- C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, 13-Jan-1998&n; *&n; * Added support for a Unix98-style ptmx device.&n; *      -- C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, 14-Jan-1998&n; *&n; * Reduced memory usage for older ARM systems&n; *      -- Russell King &lt;rmk@arm.linux.org.uk&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -67,8 +67,6 @@ r_struct
 id|tty_driver
 op_star
 id|tty_drivers
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* linked list of tty drivers */
 DECL|variable|ldiscs
@@ -104,8 +102,6 @@ r_struct
 id|tty_struct
 op_star
 id|redirect
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_void
@@ -237,7 +233,6 @@ r_int
 id|on
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SX
 r_extern
 r_int
 id|sx_init
@@ -245,8 +240,6 @@ id|sx_init
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_MVME162_SCC) || defined(CONFIG_BVME6000_SCC) || defined(CONFIG_MVME147_SCC)
 r_extern
 r_int
 id|vme_scc_init
@@ -262,8 +255,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SERIAL167
 r_extern
 r_int
 id|serial167_init
@@ -280,8 +271,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if (defined(CONFIG_8xx) || defined(CONFIG_8260))
 r_extern
 r_void
 id|console_8xx_init
@@ -298,8 +287,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_8xx */
-macro_line|#ifdef CONFIG_HWC
 r_extern
 r_void
 id|hwc_console_init
@@ -308,8 +295,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_3215
 r_extern
 r_void
 id|con3215_init
@@ -318,11 +303,161 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_3215 */
+r_extern
+r_void
+id|rs285_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rs285_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sa1100_rs_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sa1100_rs_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
 macro_line|#endif
+macro_line|#ifndef MAX
+DECL|macro|MAX
+mdefine_line|#define MAX(a,b)&t;((a) &lt; (b) ? (b) : (a))
+macro_line|#endif
+DECL|function|alloc_tty_struct
+r_static
+r_inline
+r_struct
+id|tty_struct
+op_star
+id|alloc_tty_struct
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|tty_struct
+op_star
+id|tty
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PAGE_SIZE
+OG
+l_int|8192
+)paren
+(brace
+id|tty
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|tty_struct
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty
+)paren
+id|memset
+c_func
+(paren
+id|tty
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|tty_struct
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+id|tty
+op_assign
+(paren
+r_struct
+id|tty_struct
+op_star
+)paren
+id|get_zeroed_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_return
+id|tty
+suffix:semicolon
+)brace
+DECL|function|free_tty_struct
+r_static
+r_inline
+r_void
+id|free_tty_struct
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|PAGE_SIZE
+OG
+l_int|8192
+)paren
+id|kfree
+c_func
+(paren
+id|tty
+)paren
+suffix:semicolon
+r_else
+id|free_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|tty
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This routine returns the name of tty.&n; */
 r_static
 r_char
@@ -2759,9 +2894,15 @@ r_int
 r_int
 id|size
 op_assign
+id|MAX
+c_func
+(paren
 id|PAGE_SIZE
 op_star
 l_int|2
+comma
+l_int|16384
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3316,15 +3457,9 @@ l_int|NULL
 suffix:semicolon
 id|tty
 op_assign
-(paren
-r_struct
-id|tty_struct
-op_star
-)paren
-id|get_zeroed_page
+id|alloc_tty_struct
 c_func
 (paren
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -3472,15 +3607,9 @@ id|TTY_DRIVER_TYPE_PTY
 (brace
 id|o_tty
 op_assign
-(paren
-r_struct
-id|tty_struct
-op_star
-)paren
-id|get_zeroed_page
+id|alloc_tty_struct
 c_func
 (paren
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -3924,13 +4053,9 @@ c_cond
 (paren
 id|o_tty
 )paren
-id|free_page
+id|free_tty_struct
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|o_tty
 )paren
 suffix:semicolon
@@ -3968,13 +4093,9 @@ id|termios
 )paren
 )paren
 suffix:semicolon
-id|free_page
+id|free_tty_struct
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|tty
 )paren
 suffix:semicolon
@@ -4101,13 +4222,9 @@ id|o_tty-&gt;driver.refcount
 )paren
 op_decrement
 suffix:semicolon
-id|free_page
+id|free_tty_struct
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|o_tty
 )paren
 suffix:semicolon
@@ -4164,13 +4281,9 @@ id|tty-&gt;driver.refcount
 )paren
 op_decrement
 suffix:semicolon
-id|free_page
+id|free_tty_struct
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|tty
 )paren
 suffix:semicolon

@@ -28,13 +28,6 @@ op_star
 id|sbi_psdev
 suffix:semicolon
 multiline_comment|/* /dev/cfs? Venus/kernel device */
-DECL|member|sbi_ctlcp
-r_struct
-id|inode
-op_star
-id|sbi_ctlcp
-suffix:semicolon
-multiline_comment|/* control magic file */
 DECL|member|sbi_refct
 r_int
 id|sbi_refct
@@ -97,11 +90,6 @@ DECL|member|vc_inuse
 r_int
 id|vc_inuse
 suffix:semicolon
-DECL|member|vc_pid
-id|pid_t
-id|vc_pid
-suffix:semicolon
-multiline_comment|/* Venus pid */
 )brace
 suffix:semicolon
 DECL|function|coda_sbp

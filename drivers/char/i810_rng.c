@@ -1,9 +1,10 @@
-multiline_comment|/*&n;&n;&t;Hardware driver for Intel i810 Random Number Generator (RNG)&n;&t;Copyright 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&n;&t;Driver Web site:  http://gtf.org/garzik/drivers/i810_rng/&n;&n;&n;&t;&n;&t;Based on:&n;&t;Intel 82802AB/82802AC Firmware Hub (FWH) Datasheet&n;&t;&t;May 1999 Order Number: 290658-002 R&n;&t;&n;&t;Intel 82802 Firmware Hub: Random Number Generator&n;&t;Programmer&squot;s Reference Manual&n;&t;&t;December 1999 Order Number: 298029-001 R&n;&t;&n;&t;Intel 82802 Firmware HUB Random Number Generator Driver&n;&t;Copyright (c) 2000 Matt Sottek &lt;msottek@quiknet.com&gt;&n;&n;&t;Special thanks to Matt Sottek.  I did the &quot;guts&quot;, he&n;&t;did the &quot;brains&quot; and all the testing.  (Anybody wanna send&n;&t;me an i810 or i820?)&n;&t;&n;&t;----------------------------------------------------------&n;&t;&n;&t;This software may be used and distributed according to the terms&n;        of the GNU Public License, incorporated herein by reference.&n;&n;&t;----------------------------------------------------------&n;&t;&n;&t;From the firmware hub datasheet:&n;&t;&n;&t;The Firmware Hub integrates a Random Number Generator (RNG)&n;&t;using thermal noise generated from inherently random quantum&n;&t;mechanical properties of silicon. When not generating new random&n;&t;bits the RNG circuitry will enter a low power state. Intel will&n;&t;provide a binary software driver to give third party software&n;&t;access to our RNG for use as a security feature. At this time,&n;&t;the RNG is only to be used with a system in an OS-present state.&n;&n;&t;----------------------------------------------------------&n;&n;&t;Theory of operation:&n;&n;&t;This driver has TWO modes of operation:&n;&t;&n;&t;Mode 1&n;&t;------&n;&t;Character driver.  Using the standard open()&n;&t;and read() system calls, you can read random data from&n;&t;the i810 RNG device.  This data is NOT CHECKED by any&n;&t;fitness tests, and could potentially be bogus (if the&n;&t;hardware is faulty or has been tampered with).&n;&t;&n;&t;/dev/intel_rng is char device major 10, minor 183.&n;&t;&n;&n;&t;Mode 2&n;&t;------&n;&t;Injection of entropy into the kernel entropy pool via a&n;&t;timer function.&n;&n;&t;A timer is run at RNG_TIMER_LEN intervals, reading 8 bits&n;&t;of data from the RNG.  If the RNG has previously passed a&n;&t;FIPS test, then the data will be added to the /dev/random&n;&t;entropy pool.  Then, those 8 bits are added to an internal&n;&t;test data pool.  When that pool is full, a FIPS test is&n;&t;run to verify that the last N bytes read are decently random.&n;&n;&t;Thus, the RNG will never be enabled until it passes a&n;&t;FIPS test.  And, data will stop flowing into the system&n;&t;entropy pool if the data is determined to be non-random.&n;&t;&n;&t;Finally, note that the timer defaults to OFF.  This ensures&n;&t;that the system entropy pool will not be polluted with&n;&t;RNG-originated data unless a conscious decision is made&n;&t;by the user.&n;&t;&n;&t;HOWEVER NOTE THAT UP TO 2499 BYTES OF DATA CAN BE BOGUS&n;&t;BEFORE THE SYSTEM WILL NOTICE VIA THE FIPS TEST.&n;&n;&t;----------------------------------------------------------&n;&n;&t;Driver notes:&n;&n;&t;* You may enable and disable the RNG hardware (and this&n;&t;driver) via sysctl:&n;&n;&t;&t;# disable RNG&n;&t;&t;echo 0 &gt; /proc/sys/dev/i810_hw_enabled&n;&n;&t;&t;# enable RNG&n;&t;&t;echo 1 &gt; /proc/sys/dev/i810_hw_enabled&n;&n;&t;* The default number of entropy bits added by default is&n;&t;the full 8 bits.  If you wish to reduce this value for&n;&t;paranoia&squot;s sake, you can do so via sysctl as well:&n;&n;&t;&t;# Add only 4 bits of entropy to /dev/random&n;&t;&t;echo 4 &gt; /proc/sys/dev/i810_rng_entropy&n;&n;&t;* The default number of entropy bits can also be set via&n;&t;a module parameter &quot;rng_entropy&quot; at module load time.&n;&n;&t;* In order to unload the i810_rng module, you must first&n;&t;disable the hardware via sysctl i810_hw_enabled, as shown above,&n;&t;and make sure all users of the character device &n;&t;&n; */
+multiline_comment|/*&n;&n;&t;Hardware driver for Intel i810 Random Number Generator (RNG)&n;&t;Copyright 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&n;&t;Driver Web site:  http://gtf.org/garzik/drivers/i810_rng/&n;&n;&n;&n;&t;Based on:&n;&t;Intel 82802AB/82802AC Firmware Hub (FWH) Datasheet&n;&t;&t;May 1999 Order Number: 290658-002 R&n;&n;&t;Intel 82802 Firmware Hub: Random Number Generator&n;&t;Programmer&squot;s Reference Manual&n;&t;&t;December 1999 Order Number: 298029-001 R&n;&n;&t;Intel 82802 Firmware HUB Random Number Generator Driver&n;&t;Copyright (c) 2000 Matt Sottek &lt;msottek@quiknet.com&gt;&n;&n;&t;Special thanks to Matt Sottek.  I did the &quot;guts&quot;, he&n;&t;did the &quot;brains&quot; and all the testing.  (Anybody wanna send&n;&t;me an i810 or i820?)&n;&n;&t;----------------------------------------------------------&n;&n;&t;This software may be used and distributed according to the terms&n;        of the GNU Public License, incorporated herein by reference.&n;&n;&t;----------------------------------------------------------&n;&n;&t;From the firmware hub datasheet:&n;&n;&t;The Firmware Hub integrates a Random Number Generator (RNG)&n;&t;using thermal noise generated from inherently random quantum&n;&t;mechanical properties of silicon. When not generating new random&n;&t;bits the RNG circuitry will enter a low power state. Intel will&n;&t;provide a binary software driver to give third party software&n;&t;access to our RNG for use as a security feature. At this time,&n;&t;the RNG is only to be used with a system in an OS-present state.&n;&n;&t;----------------------------------------------------------&n;&n;&t;Theory of operation:&n;&n;&t;This driver has TWO modes of operation:&n;&n;&t;Mode 1&n;&t;------&n;&t;Character driver.  Using the standard open()&n;&t;and read() system calls, you can read random data from&n;&t;the i810 RNG device.  This data is NOT CHECKED by any&n;&t;fitness tests, and could potentially be bogus (if the&n;&t;hardware is faulty or has been tampered with).&n;&n;&t;/dev/intel_rng is char device major 10, minor 183.&n;&n;&n;&t;Mode 2&n;&t;------&n;&t;Injection of entropy into the kernel entropy pool via a&n;&t;timer function.&n;&n;&t;A timer is run at rng_timer_len intervals, reading 8 bits&n;&t;of data from the RNG.  If the RNG has previously passed a&n;&t;FIPS test, then the data will be added to the /dev/random&n;&t;entropy pool.  Then, those 8 bits are added to an internal&n;&t;test data pool.  When that pool is full, a FIPS test is&n;&t;run to verify that the last N bytes read are decently random.&n;&n;&t;Thus, the RNG will never be enabled until it passes a&n;&t;FIPS test.  And, data will stop flowing into the system&n;&t;entropy pool if the data is determined to be non-random.&n;&n;&t;Finally, note that the timer defaults to OFF.  This ensures&n;&t;that the system entropy pool will not be polluted with&n;&t;RNG-originated data unless a conscious decision is made&n;&t;by the user.&n;&n;&t;HOWEVER NOTE THAT UP TO 2499 BYTES OF DATA CAN BE BOGUS&n;&t;BEFORE THE SYSTEM WILL NOTICE VIA THE FIPS TEST.&n;&n;&t;----------------------------------------------------------&n;&n;&t;Driver notes:&n;&n;&t;* You may enable and disable the RNG timer via sysctl:&n;&n;&t;&t;# disable RNG&n;&t;&t;echo 0 &gt; /proc/sys/dev/i810_rng_timer&n;&n;&t;&t;# enable RNG&n;&t;&t;echo 1 &gt; /proc/sys/dev/i810_rng_timer&n;&n;&t;* The default number of entropy bits added by default is&n;&t;the full 8 bits.  If you wish to reduce this value for&n;&t;paranoia&squot;s sake, you can do so via sysctl as well:&n;&n;&t;&t;# Add only 4 bits of entropy to /dev/random&n;&t;&t;echo 4 &gt; /proc/sys/dev/i810_rng_entropy&n;&n;&t;* The default number of entropy bits can also be set via&n;&t;a module parameter &quot;rng_entropy&quot; at module load time.&n;&n;&t;* When the RNG timer is enabled, the driver reads 1 byte&n;&t;from the hardware RNG every N jiffies.  By default, every&n;&t;half-second.  If you would like to change the timer interval,&n;&t;do so via another sysctl:&n;&n;&t;&t;echo 200 &gt; /proc/sys/dev/i810_rng_interval&n;&n;&t;NOTE THIS VALUE IS IN JIFFIES, NOT SECONDS OR MILLISECONDS.&n;&t;Minimum interval is 1 jiffy, maximum interval is 24 hours.&n;&n;&t;* In order to unload the i810_rng module, you must first&n;&t;disable the hardware via sysctl i810_hw_enabled, as shown above,&n;&t;and make sure all users of the character device have closed&n;&n;&t;* The timer and the character device may be used simultaneously,&n;&t;if desired.&n;&n;&t;* FIXME:  Currently only one open() of the character device is allowed.&n;&t;If another user tries to open() the device, they will get an&n;&t;-EBUSY error.  Instead, this really should either support&n;&t;multiple simultaneous users of the character device (not hard),&n;&t;or simply block open() until the current user of the chrdev&n;&t;calls close().&n;&n;&t;* FIXME: support poll()&n;&n;&t;* FIXME: should we be crazy and support mmap()?&n;&n;&t;* FIXME: It is possible for the timer function to read,&n;&t;and shove into the kernel entropy pool, 2499 bytes of data&n;&t;before the internal FIPS test notices that the data is bad.&n;&t;The kernel should handle this (I think???), but we should use a&n;&t;2500-byte array, and re-run the FIPS test for every byte read.&n;&t;This will slow things down but guarantee that bad data is&n;&t;never passed upstream.&n;&n;&t;----------------------------------------------------------&n;&n;&t;Change history:&n;&n;&t;0.6.2:&n;&t;* Clean up spinlocks.  Since we don&squot;t have any interrupts&n;&t;  to worry about, but we do have a timer to worry about,&n;&t;  we use spin_lock_bh everywhere except the timer function&n;&t;  itself.&n;&t;* Fix module load/unload.&n;&t;* Fix timer function and h/w enable/disable logic&n;&t;* New timer interval sysctl&n;&t;* Clean up sysctl names&n;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -12,13 +13,13 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * core module and version information&n; */
 DECL|macro|RNG_VERSION
-mdefine_line|#define RNG_VERSION &quot;0.6.1&quot;
+mdefine_line|#define RNG_VERSION &quot;0.6.2&quot;
 DECL|macro|RNG_MODULE_NAME
 mdefine_line|#define RNG_MODULE_NAME &quot;i810_rng&quot;
 DECL|macro|RNG_DRIVER_NAME
 mdefine_line|#define RNG_DRIVER_NAME   RNG_MODULE_NAME &quot; hardware driver &quot; RNG_VERSION
 DECL|macro|PFX
-mdefine_line|#define PFX RNG_MODULE_NAME &quot;: &quot;                                                                                 
+mdefine_line|#define PFX RNG_MODULE_NAME &quot;: &quot;
 multiline_comment|/*&n; * debugging macros&n; */
 DECL|macro|RNG_DEBUG
 macro_line|#undef RNG_DEBUG /* define to 1 to enable copious debugging info */
@@ -41,7 +42,7 @@ mdefine_line|#define assert(expr) &bslash;&n;        if(!(expr)) {              
 macro_line|#endif
 multiline_comment|/*&n; * misc helper macros&n; */
 DECL|macro|arraysize
-mdefine_line|#define arraysize(x)            (sizeof(x)/sizeof(*(x)))                                                             
+mdefine_line|#define arraysize(x)            (sizeof(x)/sizeof(*(x)))
 multiline_comment|/*&n; * prototypes&n; */
 r_static
 r_void
@@ -80,8 +81,8 @@ mdefine_line|#define RNG_MAX_ENTROPY&t;&t;&t;8 /* max entropy h/w is capable of 
 DECL|macro|RNG_MISCDEV_MINOR
 mdefine_line|#define RNG_MISCDEV_MINOR&t;&t;183 /* official */
 multiline_comment|/*&n; * Frequency that data is added to kernel entropy pool&n; * HZ&gt;&gt;1 == every half-second&n; */
-DECL|macro|RNG_TIMER_LEN
-mdefine_line|#define RNG_TIMER_LEN&t;&t;(HZ &gt;&gt; 1)
+DECL|macro|RNG_DEF_TIMER_LEN
+mdefine_line|#define RNG_DEF_TIMER_LEN&t;&t;(HZ &gt;&gt; 1)
 multiline_comment|/*&n; * number of bytes required for a FIPS test.&n; * do not alter unless you really, I mean&n; * REALLY know what you are doing.&n; */
 DECL|macro|RNG_FIPS_TEST_THRESHOLD
 mdefine_line|#define RNG_FIPS_TEST_THRESHOLD&t;2500
@@ -90,24 +91,30 @@ DECL|variable|rng_allocated
 r_static
 r_int
 id|rng_allocated
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* is someone using the RNG region? */
 DECL|variable|rng_hw_enabled
 r_static
 r_int
 id|rng_hw_enabled
-op_assign
-l_int|0
 suffix:semicolon
-multiline_comment|/* is the RNG h/w, and timer, enabled? */
+multiline_comment|/* is the RNG h/w enabled? */
+DECL|variable|rng_timer_enabled
+r_static
+r_int
+id|rng_timer_enabled
+suffix:semicolon
+multiline_comment|/* is the RNG timer enabled? */
+DECL|variable|rng_use_count
+r_static
+r_int
+id|rng_use_count
+suffix:semicolon
+multiline_comment|/* number of times RNG has been enabled */
 DECL|variable|rng_trusted
 r_static
 r_int
 id|rng_trusted
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* does FIPS trust out data? */
 DECL|variable|rng_enabled_sysctl
@@ -130,29 +137,37 @@ r_int
 id|rng_entropy_sysctl
 suffix:semicolon
 multiline_comment|/* sysctl for changing entropy bits */
+DECL|variable|rng_interval_sysctl
+r_static
+r_int
+id|rng_interval_sysctl
+suffix:semicolon
+multiline_comment|/* sysctl for changing timer interval */
 DECL|variable|rng_have_mem_region
 r_static
 r_int
 id|rng_have_mem_region
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* did we grab RNG region via request_mem_region? */
 DECL|variable|rng_fips_counter
 r_static
 r_int
 id|rng_fips_counter
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* size of internal FIPS test data pool */
+DECL|variable|rng_timer_len
+r_static
+r_int
+id|rng_timer_len
+op_assign
+id|RNG_DEF_TIMER_LEN
+suffix:semicolon
+multiline_comment|/* timer interval, in jiffies */
 DECL|variable|rng_mem
 r_static
 r_void
 op_star
 id|rng_mem
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* token to our ioremap&squot;d RNG register area */
 DECL|variable|rng_lock
@@ -172,9 +187,10 @@ suffix:semicolon
 multiline_comment|/* kernel timer for RNG hardware reads and tests */
 DECL|variable|rng_open
 r_static
-id|atomic_t
+r_int
 id|rng_open
 suffix:semicolon
+multiline_comment|/* boolean, 0 (false) if chrdev is closed, 1 (true) if open */
 multiline_comment|/*&n; * inlined helper functions for accessing RNG registers&n; */
 DECL|function|rng_hwstatus
 r_static
@@ -301,7 +317,7 @@ id|RNG_DATA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * rng_timer_ticker - executes every RNG_TIMER_LEN jiffies,&n; *&t;&t;      adds a single byte to system entropy&n; *&t;&t;      and internal FIPS test pools&n; */
+multiline_comment|/*&n; * rng_timer_ticker - executes every rng_timer_len jiffies,&n; *&t;&t;      adds a single byte to system entropy&n; *&t;&t;      and internal FIPS test pools&n; */
 DECL|function|rng_timer_tick
 r_static
 r_void
@@ -313,18 +329,12 @@ id|data
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|rng_data
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -375,25 +385,30 @@ id|rng_run_fips_test
 )paren
 suffix:semicolon
 )brace
-id|spin_unlock_irqrestore
+multiline_comment|/* run the timer again, if enabled */
+r_if
+c_cond
 (paren
-op_amp
-id|rng_lock
-comma
-id|flags
+id|rng_timer_enabled
 )paren
-suffix:semicolon
-multiline_comment|/* run the timer again */
+(brace
 id|rng_timer.expires
 op_assign
 id|jiffies
 op_plus
-id|RNG_TIMER_LEN
+id|rng_timer_len
 suffix:semicolon
 id|add_timer
 (paren
 op_amp
 id|rng_timer
+)paren
+suffix:semicolon
+)brace
+id|spin_unlock
+(paren
+op_amp
+id|rng_lock
 )paren
 suffix:semicolon
 )brace
@@ -408,10 +423,6 @@ id|enable
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|rc
 op_assign
 l_int|0
@@ -424,12 +435,10 @@ id|DPRINTK
 l_string|&quot;ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|hw_status
@@ -442,9 +451,51 @@ r_if
 c_cond
 (paren
 id|enable
-op_logical_and
-op_logical_neg
+)paren
+(brace
 id|rng_hw_enabled
+op_assign
+l_int|1
+suffix:semicolon
+id|rng_use_count
+op_increment
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+)brace
+r_else
+(brace
+id|rng_use_count
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rng_use_count
+op_eq
+l_int|0
+)paren
+id|rng_hw_enabled
+op_assign
+l_int|0
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|rng_hw_enabled
+op_logical_and
+(paren
+(paren
+id|hw_status
+op_amp
+id|RNG_ENABLED
+)paren
+op_eq
+l_int|0
+)paren
 )paren
 (brace
 id|rng_hwstatus_set
@@ -461,29 +512,21 @@ id|PFX
 l_string|&quot;RNG h/w enabled&bslash;n&quot;
 )paren
 suffix:semicolon
-id|rng_hw_enabled
-op_assign
-l_int|1
-suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 )brace
 r_else
 r_if
 c_cond
 (paren
 op_logical_neg
-id|enable
-op_logical_and
 id|rng_hw_enabled
+op_logical_and
+(paren
+id|hw_status
+op_amp
+id|RNG_ENABLED
+)paren
 )paren
 (brace
-id|del_timer
-(paren
-op_amp
-id|rng_timer
-)paren
-suffix:semicolon
 id|rng_hwstatus_set
 (paren
 id|hw_status
@@ -499,18 +542,25 @@ id|PFX
 l_string|&quot;RNG h/w disabled&bslash;n&quot;
 )paren
 suffix:semicolon
-id|rng_hw_enabled
-op_assign
-l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
+id|spin_unlock_bh
+(paren
+op_amp
+id|rng_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+op_logical_neg
+op_logical_neg
 id|enable
+)paren
 op_ne
+(paren
+op_logical_neg
+op_logical_neg
 (paren
 id|rng_hwstatus
 (paren
@@ -519,13 +569,8 @@ op_amp
 id|RNG_ENABLED
 )paren
 )paren
-(brace
-id|del_timer
-(paren
-op_amp
-id|rng_timer
 )paren
-suffix:semicolon
+(brace
 id|printk
 (paren
 id|KERN_ERR
@@ -546,14 +591,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|spin_unlock_irqrestore
-(paren
-op_amp
-id|rng_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;EXIT, returning %d&bslash;n&quot;
@@ -593,10 +630,6 @@ id|lenp
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|enabled_save
 comma
 id|rc
@@ -606,27 +639,17 @@ id|DPRINTK
 l_string|&quot;ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|rng_enabled_sysctl
 op_assign
 id|enabled_save
 op_assign
-id|rng_hw_enabled
-suffix:semicolon
-id|spin_unlock_irqrestore
-(paren
-op_amp
-id|rng_lock
-comma
-id|flags
-)paren
+id|rng_timer_enabled
 suffix:semicolon
 id|rc
 op_assign
@@ -648,9 +671,17 @@ c_cond
 (paren
 id|rc
 )paren
+(brace
+id|spin_unlock_bh
+(paren
+op_amp
+id|rng_lock
+)paren
+suffix:semicolon
 r_return
 id|rc
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -658,11 +689,62 @@ id|enabled_save
 op_ne
 id|rng_enabled_sysctl
 )paren
+(brace
+id|rng_timer_enabled
+op_assign
+id|rng_enabled_sysctl
+suffix:semicolon
+id|spin_unlock_bh
+(paren
+op_amp
+id|rng_lock
+)paren
+suffix:semicolon
+multiline_comment|/* enable/disable hardware */
 id|rng_enable
 (paren
 id|rng_enabled_sysctl
 )paren
 suffix:semicolon
+multiline_comment|/* enable/disable timer */
+r_if
+c_cond
+(paren
+id|rng_enabled_sysctl
+)paren
+(brace
+id|rng_timer.expires
+op_assign
+id|jiffies
+op_plus
+id|rng_timer_len
+suffix:semicolon
+id|add_timer
+(paren
+op_amp
+id|rng_timer
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|del_timer_sync
+(paren
+op_amp
+id|rng_timer
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|spin_unlock_bh
+(paren
+op_amp
+id|rng_lock
+)paren
+suffix:semicolon
+)brace
 id|DPRINTK
 (paren
 l_string|&quot;EXIT, returning 0&bslash;n&quot;
@@ -700,10 +782,6 @@ id|lenp
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|entropy_bits_save
 comma
 id|rc
@@ -713,12 +791,10 @@ id|DPRINTK
 l_string|&quot;ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|rng_entropy_sysctl
@@ -727,12 +803,10 @@ id|entropy_bits_save
 op_assign
 id|rng_entropy
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|rc
@@ -784,24 +858,20 @@ l_int|8
 )paren
 )paren
 (brace
-id|spin_lock_irqsave
+id|spin_lock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|rng_entropy
 op_assign
 id|rng_entropy_sysctl
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|printk
@@ -837,6 +907,163 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * rng_handle_sysctl_interval - handle a read or write of our timer interval len sysctl&n; */
+DECL|function|rng_handle_sysctl_interval
+r_static
+r_int
+id|rng_handle_sysctl_interval
+(paren
+id|ctl_table
+op_star
+id|table
+comma
+r_int
+id|write
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_void
+op_star
+id|buffer
+comma
+r_int
+op_star
+id|lenp
+)paren
+(brace
+r_int
+id|timer_len_save
+comma
+id|rc
+suffix:semicolon
+id|DPRINTK
+(paren
+l_string|&quot;ENTER&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_lock_bh
+(paren
+op_amp
+id|rng_lock
+)paren
+suffix:semicolon
+id|rng_interval_sysctl
+op_assign
+id|timer_len_save
+op_assign
+id|rng_timer_len
+suffix:semicolon
+id|spin_unlock_bh
+(paren
+op_amp
+id|rng_lock
+)paren
+suffix:semicolon
+id|rc
+op_assign
+id|proc_dointvec
+(paren
+id|table
+comma
+id|write
+comma
+id|filp
+comma
+id|buffer
+comma
+id|lenp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rc
+)paren
+r_return
+id|rc
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timer_len_save
+op_eq
+id|rng_interval_sysctl
+)paren
+r_goto
+id|out
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|rng_interval_sysctl
+OG
+l_int|0
+)paren
+op_logical_and
+(paren
+id|rng_interval_sysctl
+OL
+(paren
+id|HZ
+op_star
+l_int|86400
+)paren
+)paren
+)paren
+(brace
+id|spin_lock_bh
+(paren
+op_amp
+id|rng_lock
+)paren
+suffix:semicolon
+id|rng_timer_len
+op_assign
+id|rng_interval_sysctl
+suffix:semicolon
+id|spin_unlock_bh
+(paren
+op_amp
+id|rng_lock
+)paren
+suffix:semicolon
+id|printk
+(paren
+id|KERN_INFO
+id|PFX
+l_string|&quot;timer interval now %d&bslash;n&quot;
+comma
+id|rng_interval_sysctl
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+(paren
+id|KERN_INFO
+id|PFX
+l_string|&quot;ignoring invalid timer interval (%d)&bslash;n&quot;
+comma
+id|rng_interval_sysctl
+)paren
+suffix:semicolon
+)brace
+id|out
+suffix:colon
+id|DPRINTK
+(paren
+l_string|&quot;EXIT, returning 0&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * rng_sysctl - add or remove the rng sysctl&n; */
 DECL|function|rng_sysctl
 r_static
@@ -847,11 +1074,14 @@ r_int
 id|add
 )paren
 (brace
-DECL|macro|DEV_I810_RNG
-mdefine_line|#define DEV_I810_RNG&t;&t;1
-DECL|macro|DEV_I810_RNG_ENTROPY
-mdefine_line|#define DEV_I810_RNG_ENTROPY&t;2
+DECL|macro|DEV_I810_TIMER
+mdefine_line|#define DEV_I810_TIMER&t;&t;1
+DECL|macro|DEV_I810_ENTROPY
+mdefine_line|#define DEV_I810_ENTROPY&t;2
+DECL|macro|DEV_I810_INTERVAL
+mdefine_line|#define DEV_I810_INTERVAL&t;3
 multiline_comment|/* Definition of the sysctl */
+multiline_comment|/* FIXME: use new field:value style of struct initialization */
 r_static
 id|ctl_table
 id|rng_sysctls
@@ -860,11 +1090,11 @@ id|rng_sysctls
 op_assign
 (brace
 (brace
-id|DEV_I810_RNG
+id|DEV_I810_TIMER
 comma
 multiline_comment|/* ID */
 id|RNG_MODULE_NAME
-l_string|&quot;_enabled&quot;
+l_string|&quot;_timer&quot;
 comma
 multiline_comment|/* name in /proc */
 op_amp
@@ -897,7 +1127,7 @@ l_int|0
 )brace
 comma
 (brace
-id|DEV_I810_RNG_ENTROPY
+id|DEV_I810_ENTROPY
 comma
 multiline_comment|/* ID */
 id|RNG_MODULE_NAME
@@ -920,6 +1150,43 @@ l_int|0
 comma
 multiline_comment|/* child */
 id|rng_handle_sysctl_entropy
+comma
+multiline_comment|/* proc handler */
+l_int|0
+comma
+multiline_comment|/* strategy */
+l_int|0
+comma
+multiline_comment|/* proc control block */
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEV_I810_INTERVAL
+comma
+multiline_comment|/* ID */
+id|RNG_MODULE_NAME
+l_string|&quot;_interval&quot;
+comma
+multiline_comment|/* name in /proc */
+op_amp
+id|rng_interval_sysctl
+comma
+r_sizeof
+(paren
+id|rng_interval_sysctl
+)paren
+comma
+multiline_comment|/* data ptr, data size */
+l_int|0644
+comma
+multiline_comment|/* mode */
+l_int|0
+comma
+multiline_comment|/* child */
+id|rng_handle_sysctl_interval
 comma
 multiline_comment|/* proc handler */
 l_int|0
@@ -1035,10 +1302,6 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1063,31 +1326,24 @@ id|FMODE_WRITE
 r_goto
 id|err_out
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* only allow one open of this device, exit with -EBUSY if already open */
+multiline_comment|/* FIXME: we should sleep on a semaphore here, unless O_NONBLOCK */
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|rng_open
 )paren
-)paren
 (brace
-id|spin_unlock_irqrestore
+id|spin_unlock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|rc
@@ -1099,20 +1355,14 @@ r_goto
 id|err_out
 suffix:semicolon
 )brace
-id|atomic_set
-(paren
-op_amp
 id|rng_open
-comma
+op_assign
 l_int|1
-)paren
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1127,28 +1377,20 @@ op_ne
 l_int|0
 )paren
 (brace
-id|spin_lock_irqsave
+id|spin_lock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
-id|atomic_set
-(paren
-op_amp
 id|rng_open
-comma
+op_assign
 l_int|0
-)paren
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|rc
@@ -1185,10 +1427,6 @@ op_star
 id|filp
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1204,28 +1442,20 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
-id|atomic_set
-(paren
-op_amp
 id|rng_open
-comma
+op_assign
 l_int|0
-)paren
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1261,10 +1491,6 @@ id|copied
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|u8
 id|data
 op_assign
@@ -1291,7 +1517,7 @@ r_int
 r_char
 op_star
 )paren
-id|get_zeroed_page
+id|get_free_page
 (paren
 id|GFP_KERNEL
 )paren
@@ -1371,12 +1597,10 @@ r_return
 id|tmpsize
 suffix:semicolon
 )brace
-id|spin_lock_irqsave
+id|spin_lock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|have_data
@@ -1402,12 +1626,10 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|spin_unlock_irqrestore
+id|spin_unlock_bh
 (paren
 op_amp
 id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1882,8 +2104,6 @@ id|DPRINTK
 l_string|&quot;ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1900,8 +2120,6 @@ id|DPRINTK
 (paren
 l_string|&quot;EXIT, returning -ENODEV&bslash;n&quot;
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -1935,8 +2153,6 @@ comma
 id|rc
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|rc
 suffix:semicolon
@@ -1948,12 +2164,6 @@ id|RNG_DRIVER_NAME
 l_string|&quot; loaded&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: verify module unload logic, then remove&n;&t; * this additional MOD_INC_USE_COUNT */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* init complete, unload allowed now */
 id|DPRINTK
 (paren
 l_string|&quot;EXIT, returning 0&bslash;n&quot;
@@ -1973,35 +2183,15 @@ id|rng_cleanup
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
-(paren
-op_amp
-id|rng_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|del_timer
+id|del_timer_sync
 (paren
 op_amp
 id|rng_timer
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-(paren
-op_amp
-id|rng_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|rng_sysctl

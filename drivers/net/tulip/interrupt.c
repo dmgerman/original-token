@@ -1473,6 +1473,7 @@ id|CSR6
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; * NB: t21142_lnk_change() does a del_timer_sync(), so be careful if this&n;&t;&t;&t; * call is ever done under the spinlock&n;&t;&t;&t; */
 r_if
 c_cond
 (paren

@@ -1732,6 +1732,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_int
+id|datasync
 )paren
 (brace
 r_return

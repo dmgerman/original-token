@@ -1162,6 +1162,8 @@ comma
 r_struct
 id|dentry
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* ialloc.c */
@@ -1263,6 +1265,8 @@ id|ext2_write_inode
 r_struct
 id|inode
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern

@@ -406,6 +406,17 @@ DECL|member|lasttrans_dest
 id|lasttrans_dest
 suffix:semicolon
 multiline_comment|/* can last TX&squot;d packet be acked? */
+DECL|member|timed_out
+r_int
+id|timed_out
+suffix:semicolon
+multiline_comment|/* need to process TX timeout and drop packet */
+DECL|member|last_timeout
+r_int
+r_int
+id|last_timeout
+suffix:semicolon
+multiline_comment|/* time of last reported timeout */
 DECL|member|card_name
 r_char
 op_star

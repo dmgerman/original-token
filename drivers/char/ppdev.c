@@ -159,6 +159,10 @@ id|add-&gt;next
 op_assign
 id|pp_port_list
 suffix:semicolon
+id|add-&gt;port
+op_assign
+id|port
+suffix:semicolon
 id|down
 (paren
 op_amp

@@ -7449,13 +7449,6 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-id|timer_exit
-c_func
-(paren
-op_amp
-id|vp-&gt;timer
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace

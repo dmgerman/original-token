@@ -33,6 +33,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|wait
 )paren
 suffix:semicolon
 r_static
@@ -5916,6 +5919,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|wait
 )paren
 (brace
 r_struct

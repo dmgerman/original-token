@@ -3138,7 +3138,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|coda_upc_comm.vc_pid
+id|coda_upc_comm.vc_inuse
 )paren
 r_break
 suffix:semicolon
@@ -3374,7 +3374,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|vcommp-&gt;vc_pid
+id|vcommp-&gt;vc_inuse
 )paren
 (brace
 id|printk
@@ -3570,7 +3570,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vcommp-&gt;vc_pid
+id|vcommp-&gt;vc_inuse
 )paren
 (brace
 multiline_comment|/* i.e. Venus is still alive */

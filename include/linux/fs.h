@@ -112,6 +112,8 @@ DECL|macro|FS_SINGLE
 mdefine_line|#define FS_SINGLE&t;8 /*&n;&t;&t;&t;   * Filesystem that can have only one superblock;&n;&t;&t;&t;   * kernel-wide vfsmnt is kept in -&gt;kern_mnt.&n;&t;&t;&t;   */
 DECL|macro|FS_NOMOUNT
 mdefine_line|#define FS_NOMOUNT&t;16 /* Never mount from userland */
+DECL|macro|FS_LITTER
+mdefine_line|#define FS_LITTER&t;32 /* Keeps the tree in dcache */
 multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
 DECL|macro|MS_RDONLY
 mdefine_line|#define MS_RDONLY&t; 1&t;/* Mount read-only */
@@ -1331,33 +1333,18 @@ op_star
 id|fl_next
 suffix:semicolon
 multiline_comment|/* singly linked list for this inode  */
-DECL|member|fl_nextlink
+DECL|member|fl_link
 r_struct
-id|file_lock
-op_star
-id|fl_nextlink
+id|list_head
+id|fl_link
 suffix:semicolon
 multiline_comment|/* doubly linked list of all locks */
-DECL|member|fl_prevlink
+DECL|member|fl_block
 r_struct
-id|file_lock
-op_star
-id|fl_prevlink
-suffix:semicolon
-multiline_comment|/* used to simplify lock removal */
-DECL|member|fl_nextblock
-r_struct
-id|file_lock
-op_star
-id|fl_nextblock
+id|list_head
+id|fl_block
 suffix:semicolon
 multiline_comment|/* circular list of blocked processes */
-DECL|member|fl_prevblock
-r_struct
-id|file_lock
-op_star
-id|fl_prevblock
-suffix:semicolon
 DECL|member|fl_owner
 id|fl_owner_t
 id|fl_owner
@@ -1456,9 +1443,8 @@ mdefine_line|#define OFFSET_MAX&t;INT_LIMIT(loff_t)
 macro_line|#endif
 r_extern
 r_struct
-id|file_lock
-op_star
-id|file_lock_table
+id|list_head
+id|file_lock_list
 suffix:semicolon
 macro_line|#include &lt;linux/fcntl.h&gt;
 r_extern
@@ -2438,6 +2424,9 @@ comma
 r_struct
 id|dentry
 op_star
+comma
+r_int
+id|datasync
 )paren
 suffix:semicolon
 DECL|member|fasync
@@ -2828,6 +2817,8 @@ id|write_inode
 r_struct
 id|inode
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|put_inode
@@ -3383,12 +3374,19 @@ id|size
 suffix:colon
 id|inode-&gt;i_size
 comma
-id|abs
-c_func
 (paren
+id|size
+OL
+id|inode-&gt;i_size
+ques
+c_cond
 id|inode-&gt;i_size
 op_minus
 id|size
+suffix:colon
+id|size
+op_minus
+id|inode-&gt;i_size
 )paren
 )paren
 suffix:semicolon
@@ -4131,6 +4129,8 @@ c_func
 r_struct
 id|inode
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -5530,6 +5530,8 @@ comma
 r_struct
 id|dentry
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern

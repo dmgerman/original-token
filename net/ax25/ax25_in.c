@@ -1673,10 +1673,20 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Reverse the source SABM&squot;s path */
-op_star
+id|memcpy
+c_func
+(paren
+op_amp
 id|ax25-&gt;digipeat
-op_assign
+comma
+op_amp
 id|reverse_dp
+comma
+r_sizeof
+(paren
+id|ax25_digi
+)paren
+)paren
 suffix:semicolon
 )brace
 r_if

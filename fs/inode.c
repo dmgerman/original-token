@@ -420,6 +420,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|sync
 )paren
 (brace
 r_if
@@ -437,6 +440,8 @@ id|write_inode
 c_func
 (paren
 id|inode
+comma
+id|sync
 )paren
 suffix:semicolon
 )brace
@@ -525,6 +530,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|sync
 )paren
 (brace
 r_if
@@ -616,6 +624,8 @@ id|write_inode
 c_func
 (paren
 id|inode
+comma
+id|sync
 )paren
 suffix:semicolon
 id|spin_lock
@@ -681,6 +691,8 @@ id|inode
 comma
 id|i_list
 )paren
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -847,6 +859,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|sync
 )paren
 (brace
 r_struct
@@ -880,6 +895,8 @@ id|sync_one
 c_func
 (paren
 id|inode
+comma
+id|sync
 )paren
 suffix:semicolon
 id|spin_unlock

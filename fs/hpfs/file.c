@@ -84,6 +84,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_int
+id|datasync
 )paren
 (brace
 multiline_comment|/*return file_fsync(file, dentry);*/

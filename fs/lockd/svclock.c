@@ -1283,7 +1283,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|block-&gt;b_call.a_args.lock.fl.fl_prevblock
+id|list_empty
+c_func
+(paren
+op_amp
+id|block-&gt;b_call.a_args.lock.fl.fl_block
+)paren
 )paren
 (brace
 multiline_comment|/* Now add block to block list of the conflicting lock&n;&t;&t;   if we haven&squot;t done so. */

@@ -6536,6 +6536,8 @@ c_func
 id|file
 comma
 id|file-&gt;f_dentry
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace

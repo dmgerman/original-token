@@ -969,11 +969,11 @@ c_func
 id|page_hash_table
 )paren
 suffix:semicolon
-DECL|variable|file_lock_table
+DECL|variable|file_lock_list
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|file_lock_table
+id|file_lock_list
 )paren
 suffix:semicolon
 DECL|variable|posix_lock_file
@@ -1023,13 +1023,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|have_submounts
-)paren
-suffix:semicolon
-DECL|variable|d_genocide
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|d_genocide
 )paren
 suffix:semicolon
 DECL|variable|d_find_alias

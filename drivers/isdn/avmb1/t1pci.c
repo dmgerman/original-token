@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: t1pci.c,v 1.7 2000/04/07 15:26:55 calle Exp $&n; * &n; * Module for AVM T1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: t1pci.c,v $&n; * Revision 1.7  2000/04/07 15:26:55  calle&n; * better error message if cabel not connected or T1 has no power.&n; *&n; * Revision 1.6  2000/04/03 13:29:25  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.5  2000/02/02 18:36:04  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.4  2000/01/25 14:33:38  calle&n; * - Added Support AVM B1 PCI V4.0 (tested with prototype)&n; *   - splitted up t1pci.c into b1dma.c for common function with b1pciv4&n; *   - support for revision register&n; *&n; * Revision 1.3  1999/11/13 21:27:16  keil&n; * remove KERNELVERSION&n; *&n; * Revision 1.2  1999/11/05 16:38:02  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.1  1999/10/26 15:31:42  calle&n; * Added driver for T1-PCI card.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: t1pci.c,v 1.9 2000/05/19 15:43:22 calle Exp $&n; * &n; * Module for AVM T1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: t1pci.c,v $&n; * Revision 1.9  2000/05/19 15:43:22  calle&n; * added calls to pci_device_start().&n; *&n; * Revision 1.8  2000/05/06 00:52:36  kai&n; * merged changes from kernel tree&n; * fixed timer and net_device-&gt;name breakage&n; *&n; * Revision 1.7  2000/04/07 15:26:55  calle&n; * better error message if cabel not connected or T1 has no power.&n; *&n; * Revision 1.6  2000/04/03 13:29:25  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.5  2000/02/02 18:36:04  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.4  2000/01/25 14:33:38  calle&n; * - Added Support AVM B1 PCI V4.0 (tested with prototype)&n; *   - splitted up t1pci.c into b1dma.c for common function with b1pciv4&n; *   - support for revision register&n; *&n; * Revision 1.3  1999/11/13 21:27:16  keil&n; * remove KERNELVERSION&n; *&n; * Revision 1.2  1999/11/05 16:38:02  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.1  1999/10/26 15:31:42  calle&n; * Added driver for T1-PCI card.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/isdn.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capilli.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 DECL|macro|CONFIG_T1PCI_DEBUG
 macro_line|#undef CONFIG_T1PCI_DEBUG
@@ -1174,20 +1175,10 @@ r_struct
 id|capicardparams
 id|param
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_enable_device
-c_func
-(paren
-id|dev
-)paren
-)paren
-r_continue
-suffix:semicolon
 id|param.port
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev
 comma
@@ -1201,12 +1192,59 @@ suffix:semicolon
 id|param.membase
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev
 comma
 l_int|0
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|pci_enable_device
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: failed to enable AVM-T1-PCI at i/o %#x, irq %d, mem %#x err=%d&bslash;n&quot;
+comma
+id|driver-&gt;name
+comma
+id|param.port
+comma
+id|param.irq
+comma
+id|param.membase
+comma
+id|retval
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|cleanup_module
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren

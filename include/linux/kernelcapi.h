@@ -3,9 +3,9 @@ macro_line|#ifndef __KERNELCAPI_H__
 DECL|macro|__KERNELCAPI_H__
 mdefine_line|#define __KERNELCAPI_H__
 DECL|macro|CAPI_MAXAPPL
-mdefine_line|#define CAPI_MAXAPPL&t;20&t;/*&n;&t;&t;&t;&t;   * maximum number of applications &n;&t;&t;&t;&t; */
+mdefine_line|#define CAPI_MAXAPPL&t;128&t;/* maximum number of applications  */
 DECL|macro|CAPI_MAXCONTR
-mdefine_line|#define CAPI_MAXCONTR&t;10&t;/*&n;&t;&t;&t;&t;   * maximum number of controller &n;&t;&t;&t;&t; */
+mdefine_line|#define CAPI_MAXCONTR&t;16&t;/* maximum number of controller    */
 DECL|macro|CAPI_MAXDATAWINDOW
 mdefine_line|#define CAPI_MAXDATAWINDOW&t;8
 DECL|struct|kcapi_flagdef

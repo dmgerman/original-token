@@ -3997,7 +3997,6 @@ id|E8390_CMD
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|ei_open
 id|EXPORT_SYMBOL
 c_func
@@ -4033,6 +4032,7 @@ c_func
 id|NS8390_init
 )paren
 suffix:semicolon
+macro_line|#if defined(MODULE)
 DECL|function|init_module
 r_int
 id|init_module

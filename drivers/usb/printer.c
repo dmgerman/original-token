@@ -32,7 +32,7 @@ mdefine_line|#define USBLP_MINORS&t;&t;16
 DECL|macro|USBLP_MINOR_BASE
 mdefine_line|#define USBLP_MINOR_BASE&t;0
 DECL|macro|USBLP_WRITE_TIMEOUT
-mdefine_line|#define USBLP_WRITE_TIMEOUT&t;(60*HZ)&t;&t;&t;/* 60 seconds */
+mdefine_line|#define USBLP_WRITE_TIMEOUT&t;(60*60*HZ)&t;&t;/* 60 minutes */
 DECL|struct|usblp
 r_struct
 id|usblp
@@ -376,15 +376,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_complement
-id|status
-op_amp
-id|LP_PERRORP
-)paren
-(brace
 id|info
 c_func
 (paren
@@ -397,7 +388,6 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|0

@@ -513,6 +513,9 @@ id|swab
 )paren
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
 id|frag
 op_sub_assign
@@ -3765,13 +3768,16 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|wait
 )paren
 (brace
 id|ufs_update_inode
 (paren
 id|inode
 comma
-l_int|0
+id|wait
 )paren
 suffix:semicolon
 )brace

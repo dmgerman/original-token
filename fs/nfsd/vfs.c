@@ -1165,6 +1165,8 @@ id|write_inode_now
 c_func
 (paren
 id|inode
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|err
@@ -1893,6 +1895,8 @@ c_func
 id|filp
 comma
 id|filp-&gt;f_dentry
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|up
@@ -1934,6 +1938,8 @@ comma
 r_struct
 id|dentry
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_if
@@ -1954,6 +1960,8 @@ c_func
 l_int|NULL
 comma
 id|dp
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -3450,6 +3458,8 @@ id|write_inode_now
 c_func
 (paren
 id|dchild-&gt;d_inode
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -4450,6 +4460,8 @@ id|write_inode_now
 c_func
 (paren
 id|dentry-&gt;d_inode
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -4731,6 +4743,8 @@ id|write_inode_now
 c_func
 (paren
 id|dest
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: c4.c,v 1.8 2000/04/03 16:38:05 calle Exp $&n; * &n; * Module for AVM C4 card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: c4.c,v $&n; * Revision 1.8  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.7  2000/04/03 13:29:24  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.6  2000/03/17 12:21:08  calle&n; * send patchvalues now working.&n; *&n; * Revision 1.5  2000/03/16 15:21:03  calle&n; * Bugfix in c4_remove: loop 5 times instead of 4 :-(&n; *&n; * Revision 1.4  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.3  2000/01/25 14:37:39  calle&n; * new message after successfull detection including card revision and&n; * used resources.&n; *&n; * Revision 1.2  2000/01/21 20:52:58  keil&n; * pci_find_subsys as local function for 2.2.X kernel&n; *&n; * Revision 1.1  2000/01/20 10:51:37  calle&n; * Added driver for C4.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: c4.c,v 1.12 2000/06/19 16:51:53 keil Exp $&n; * &n; * Module for AVM C4 card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: c4.c,v $&n; * Revision 1.12  2000/06/19 16:51:53  keil&n; * don&squot;t free skb in irq context&n; *&n; * Revision 1.11  2000/06/19 15:11:24  keil&n; * avoid use of freed structs&n; * changes from 2.4.0-ac21&n; *&n; * Revision 1.10  2000/05/29 12:29:18  keil&n; * make pci_enable_dev compatible to 2.2 kernel versions&n; *&n; * Revision 1.9  2000/05/19 15:43:22  calle&n; * added calls to pci_device_start().&n; *&n; * Revision 1.8  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.7  2000/04/03 13:29:24  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.6  2000/03/17 12:21:08  calle&n; * send patchvalues now working.&n; *&n; * Revision 1.5  2000/03/16 15:21:03  calle&n; * Bugfix in c4_remove: loop 5 times instead of 4 :-(&n; *&n; * Revision 1.4  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.3  2000/01/25 14:37:39  calle&n; * new message after successfull detection including card revision and&n; * used resources.&n; *&n; * Revision 1.2  2000/01/21 20:52:58  keil&n; * pci_find_subsys as local function for 2.2.X kernel&n; *&n; * Revision 1.1  2000/01/20 10:51:37  calle&n; * Added driver for C4.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
+macro_line|#include &lt;linux/isdn.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
@@ -21,7 +22,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.12 $&quot;
 suffix:semicolon
 DECL|macro|CONFIG_C4_DEBUG
 macro_line|#undef CONFIG_C4_DEBUG
@@ -2247,7 +2248,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -4742,6 +4743,7 @@ c_cond
 (paren
 id|cinfo-&gt;capi_ctrl
 )paren
+(brace
 id|di
 op_member_access_from_pointer
 id|detach_ctr
@@ -4750,6 +4752,11 @@ c_func
 id|cinfo-&gt;capi_ctrl
 )paren
 suffix:semicolon
+id|cinfo-&gt;capi_ctrl
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 id|free_irq
 c_func
@@ -6142,12 +6149,6 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
-id|card-&gt;ctrlinfo
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
 id|card-&gt;dma
 )paren
 suffix:semicolon
@@ -6961,20 +6962,10 @@ r_struct
 id|capicardparams
 id|param
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_enable_device
-c_func
-(paren
-id|dev
-)paren
-)paren
-r_continue
-suffix:semicolon
 id|param.port
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev
 comma
@@ -6988,12 +6979,59 @@ suffix:semicolon
 id|param.membase
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev
 comma
 l_int|0
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|pci_enable_device
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: failed to enable AVM-C4 at i/o %#x, irq %d, mem %#x err=%d&bslash;n&quot;
+comma
+id|driver-&gt;name
+comma
+id|param.port
+comma
+id|param.irq
+comma
+id|param.membase
+comma
+id|retval
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|cleanup_module
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren

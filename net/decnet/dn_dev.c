@@ -4320,13 +4320,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|timer_exit
-c_func
-(paren
-op_amp
-id|dn_db-&gt;timer
-)paren
-suffix:semicolon
 )brace
 DECL|function|dn_dev_set_timer
 r_static

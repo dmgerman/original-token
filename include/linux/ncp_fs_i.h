@@ -45,8 +45,13 @@ DECL|member|nwattr
 id|__u32
 id|nwattr
 suffix:semicolon
+DECL|member|open_sem
+r_struct
+id|semaphore
+id|open_sem
+suffix:semicolon
 DECL|member|opened
-r_int
+id|atomic_t
 id|opened
 suffix:semicolon
 DECL|member|access

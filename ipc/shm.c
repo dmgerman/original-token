@@ -74,6 +74,8 @@ c_func
 r_struct
 id|inode
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_static
@@ -1613,6 +1615,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|sync
 )paren
 (brace
 )brace

@@ -838,13 +838,6 @@ c_func
 id|sh
 )paren
 suffix:semicolon
-id|timer_exit
-c_func
-(paren
-op_amp
-id|sh-&gt;timer
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Kick a shaper queue and try and do something sensible with the &n; *&t;queue. &n; */
 DECL|function|shaper_kick

@@ -3340,6 +3340,8 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* Lookups */
+DECL|macro|MAX_MULBY10
+mdefine_line|#define MAX_MULBY10&t;((~0U-9)/10)
 DECL|function|proc_lookupfd
 r_static
 r_struct
@@ -3451,6 +3453,16 @@ l_int|9
 r_goto
 id|out
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fd
+op_ge
+id|MAX_MULBY10
+)paren
+r_goto
+id|out
+suffix:semicolon
 id|fd
 op_mul_assign
 l_int|10
@@ -3458,16 +3470,6 @@ suffix:semicolon
 id|fd
 op_add_assign
 id|c
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|fd
-op_amp
-l_int|0xffff8000
-)paren
-r_goto
-id|out
 suffix:semicolon
 )brace
 id|inode
@@ -4391,6 +4393,16 @@ l_int|9
 r_goto
 id|out
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pid
+op_ge
+id|MAX_MULBY10
+)paren
+r_goto
+id|out
+suffix:semicolon
 id|pid
 op_mul_assign
 l_int|10
@@ -4404,16 +4416,6 @@ c_cond
 (paren
 op_logical_neg
 id|pid
-)paren
-r_goto
-id|out
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pid
-op_amp
-l_int|0xffff0000
 )paren
 r_goto
 id|out

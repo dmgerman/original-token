@@ -2447,6 +2447,11 @@ op_ne
 id|TESTvalue
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|really_reset
+)paren
 id|BUGMSG
 c_func
 (paren

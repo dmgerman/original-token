@@ -1042,6 +1042,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|wait
 )paren
 (brace
 r_struct
@@ -1051,6 +1054,8 @@ suffix:semicolon
 id|fat_write_inode
 (paren
 id|inode
+comma
+id|wait
 )paren
 suffix:semicolon
 id|newattrs.ia_mtime

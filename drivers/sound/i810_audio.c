@@ -7002,6 +7002,14 @@ id|dmabuf-&gt;channel-&gt;num
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* we&squot;re covered by the open_sem */
+id|up
+c_func
+(paren
+op_amp
+id|state-&gt;open_sem
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -7017,27 +7025,6 @@ id|state-&gt;virt
 )braket
 op_assign
 l_int|NULL
-suffix:semicolon
-id|state-&gt;open_mode
-op_and_assign
-(paren
-op_complement
-id|file-&gt;f_mode
-)paren
-op_amp
-(paren
-id|FMODE_READ
-op_or
-id|FMODE_WRITE
-)paren
-suffix:semicolon
-multiline_comment|/* we&squot;re covered by the open_sem */
-id|up
-c_func
-(paren
-op_amp
-id|state-&gt;open_sem
-)paren
 suffix:semicolon
 r_return
 l_int|0

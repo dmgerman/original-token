@@ -2874,9 +2874,9 @@ id|error
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if 0
 r_static
 r_int
-DECL|function|ntfs_bmap
 id|ntfs_bmap
 c_func
 (paren
@@ -2932,6 +2932,7 @@ suffix:colon
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* It&squot;s fscking broken. */
 DECL|function|ntfs_get_block
 r_static

@@ -169,7 +169,6 @@ DECL|macro|MTS_EP_IMAGE
 mdefine_line|#define MTS_EP_IMAGE&t;0x3
 DECL|macro|MTS_EP_TOTAL
 mdefine_line|#define MTS_EP_TOTAL&t;0x3
-DECL|macro|MTS_MAX_CHUNK_MASK
-mdefine_line|#define MTS_MAX_CHUNK_MASK ~0x3fu 
-multiline_comment|/*maximum amount the scanner will transmit at once */
+DECL|macro|MTS_SCSI_ERR_MASK
+mdefine_line|#define MTS_SCSI_ERR_MASK ~0x3fu 
 eof

@@ -6111,6 +6111,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|sync
 )paren
 (brace
 id|lock_kernel
@@ -6123,7 +6126,7 @@ c_func
 (paren
 id|inode
 comma
-l_int|0
+id|sync
 )paren
 suffix:semicolon
 id|unlock_kernel

@@ -1516,12 +1516,6 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;m_n_i: allocated inode &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1534,12 +1528,6 @@ id|inode
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;fails quota test&bslash;n&quot;
-)paren
-suffix:semicolon
 id|sb-&gt;dq_op
 op_member_access_from_pointer
 id|drop
@@ -1568,12 +1556,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;is within quota&bslash;n&quot;
-)paren
-suffix:semicolon
 op_star
 id|error
 op_assign

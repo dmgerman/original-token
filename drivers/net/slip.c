@@ -5683,13 +5683,6 @@ op_amp
 id|sl-&gt;lock
 )paren
 suffix:semicolon
-id|timer_exit
-c_func
-(paren
-op_amp
-id|sl-&gt;outfill_timer
-)paren
-suffix:semicolon
 )brace
 DECL|function|sl_keepalive
 r_static
@@ -5820,13 +5813,6 @@ c_func
 (paren
 op_amp
 id|sl-&gt;lock
-)paren
-suffix:semicolon
-id|timer_exit
-c_func
-(paren
-op_amp
-id|sl-&gt;keepalive_timer
 )paren
 suffix:semicolon
 )brace

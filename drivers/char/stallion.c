@@ -3030,8 +3030,6 @@ comma
 id|j
 comma
 id|k
-comma
-id|l
 suffix:semicolon
 macro_line|#if DEBUG
 id|printk

@@ -5445,7 +5445,7 @@ id|__init
 id|dz_serial_console_init
 c_func
 (paren
-id|l
+r_void
 )paren
 (brace
 id|register_console

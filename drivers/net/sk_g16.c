@@ -1,4 +1,4 @@
-multiline_comment|/*-&n; * Copyright (C) 1994 by PJD Weichmann &amp; SWS Bern, Switzerland&n; *&n; * This software may be used and distributed according to the terms&n; * of the GNU Public License, incorporated herein by reference.&n; *&n; * Module         : sk_g16.c&n; *&n; * Version        : $Revision: 1.1 $&n; *&n; * Author         : Patrick J.D. Weichmann&n; *&n; * Date Created   : 94/05/26&n; * Last Updated   : $Date: 1994/06/30 16:25:15 $&n; *&n; * Description    : Schneider &amp; Koch G16 Ethernet Device Driver for&n; *                  Linux Kernel &gt;= 1.1.22&n; * Update History :&n; *                  Paul Gortmaker, 03/97: Fix for v2.1.x to use read{b,w}&n; *                  write{b,w} and memcpy -&gt; memcpy_{to,from}io&n; *&n;-*/
+multiline_comment|/*-&n; * Copyright (C) 1994 by PJD Weichmann &amp; SWS Bern, Switzerland&n; *&n; * This software may be used and distributed according to the terms&n; * of the GNU Public License, incorporated herein by reference.&n; *&n; * Module         : sk_g16.c&n; *&n; * Version        : $Revision: 1.1 $&n; *&n; * Author         : Patrick J.D. Weichmann&n; *&n; * Date Created   : 94/05/26&n; * Last Updated   : $Date: 1994/06/30 16:25:15 $&n; *&n; * Description    : Schneider &amp; Koch G16 Ethernet Device Driver for&n; *                  Linux Kernel &gt;= 1.1.22&n; * Update History :&n; *                  Paul Gortmaker, 03/97: Fix for v2.1.x to use read{b,w}&n; *                  write{b,w} and memcpy -&gt; memcpy_{to,from}io&n; *&n; *&t;&t;    Jeff Garzik, 06/2000, Modularize&n; *&n;-*/
 DECL|variable|rcsid
 r_static
 r_const
@@ -8,7 +8,8 @@ id|rcsid
 op_assign
 l_string|&quot;$Id: sk_g16.c,v 1.1 1994/06/30 16:25:15 root Exp $&quot;
 suffix:semicolon
-multiline_comment|/*&n; * The Schneider &amp; Koch (SK) G16 Network device driver is based&n; * on the &squot;ni6510&squot; driver from Michael Hipp which can be found at&n; * ftp://sunsite.unc.edu/pub/Linux/system/Network/drivers/nidrivers.tar.gz&n; * &n; * Sources: 1) ni6510.c by M. Hipp&n; *          2) depca.c  by D.C. Davies&n; *          3) skeleton.c by D. Becker&n; *          4) Am7990 Local Area Network Controller for Ethernet (LANCE),&n; *             AMD, Pub. #05698, June 1989&n; *&n; * Many Thanks for helping me to get things working to: &n; *                 &n; *                 A. Cox (A.Cox@swansea.ac.uk)&n; *                 M. Hipp (mhipp@student.uni-tuebingen.de)&n; *                 R. Bolz (Schneider &amp; Koch, Germany)&n; *&n; * To Do: &n; *        - Support of SK_G8 and other SK Network Cards.&n; *        - Autoset memory mapped RAM. Check for free memory and then&n; *          configure RAM correctly. &n; *        - SK_close should really set card in to initial state.&n; *        - Test if IRQ 3 is not switched off. Use autoirq() functionality.&n; *          (as in /drivers/net/skeleton.c)&n; *        - Implement Multicast addressing. At minimum something like&n; *          in depca.c. &n; *        - Redo the statistics part.&n; *        - Try to find out if the board is in 8 Bit or 16 Bit slot.&n; *          If in 8 Bit mode don&squot;t use IRQ 11.&n; *        - (Try to make it slightly faster.) &n; */
+multiline_comment|/*&n; * The Schneider &amp; Koch (SK) G16 Network device driver is based&n; * on the &squot;ni6510&squot; driver from Michael Hipp which can be found at&n; * ftp://sunsite.unc.edu/pub/Linux/system/Network/drivers/nidrivers.tar.gz&n; * &n; * Sources: 1) ni6510.c by M. Hipp&n; *          2) depca.c  by D.C. Davies&n; *          3) skeleton.c by D. Becker&n; *          4) Am7990 Local Area Network Controller for Ethernet (LANCE),&n; *             AMD, Pub. #05698, June 1989&n; *&n; * Many Thanks for helping me to get things working to: &n; *                 &n; *                 A. Cox (A.Cox@swansea.ac.uk)&n; *                 M. Hipp (mhipp@student.uni-tuebingen.de)&n; *                 R. Bolz (Schneider &amp; Koch, Germany)&n; *&n; * To Do: &n; *        - Support of SK_G8 and other SK Network Cards.&n; *        - Autoset memory mapped RAM. Check for free memory and then&n; *          configure RAM correctly. &n; *        - SK_close should really set card in to initial state.&n; *        - Test if IRQ 3 is not switched off. Use autoirq() functionality.&n; *          (as in /drivers/net/skeleton.c)&n; *        - Implement Multicast addressing. At minimum something like&n; *          in depca.c. &n; *        - Redo the statistics part.&n; *        - Try to find out if the board is in 8 Bit or 16 Bit slot.&n; *          If in 8 Bit mode don&squot;t use IRQ 11.&n; *        - (Try to make it slightly faster.) &n; *&t;  - Power management support&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -361,6 +362,18 @@ op_star
 id|board
 suffix:semicolon
 multiline_comment|/* pointer to our memory mapped board components */
+DECL|variable|SK_dev
+r_static
+r_struct
+id|net_device
+op_star
+id|SK_dev
+suffix:semicolon
+DECL|variable|SK_ioaddr
+r_int
+r_int
+id|SK_ioaddr
+suffix:semicolon
 DECL|variable|SK_lock
 r_static
 id|spinlock_t
@@ -630,8 +643,6 @@ id|dev
 (brace
 r_int
 id|ioaddr
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* I/O port address used for POS regs */
 r_int
@@ -677,7 +688,35 @@ l_int|0x0ff
 )paren
 multiline_comment|/* Check a single specified address */
 (brace
+r_int
+id|rc
+op_assign
+op_minus
+id|ENODEV
+suffix:semicolon
+id|ioaddr
+op_assign
+id|base_addr
+suffix:semicolon
 multiline_comment|/* Check if on specified address is a SK_G16 */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|ETHERCARD_TOTAL_SIZE
+comma
+l_string|&quot;sk_g16&quot;
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -702,21 +741,33 @@ id|SK_IDHIGH
 )paren
 )paren
 (brace
-r_return
+id|rc
+op_assign
 id|SK_probe
 c_func
 (paren
 id|dev
 comma
-id|base_addr
+id|ioaddr
 )paren
 suffix:semicolon
 )brace
-r_return
-op_minus
-id|ENODEV
+r_if
+c_cond
+(paren
+id|rc
+)paren
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|ETHERCARD_TOTAL_SIZE
+)paren
 suffix:semicolon
-multiline_comment|/* Sorry, but on specified address NO SK_G16 */
+r_return
+id|rc
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -762,12 +813,15 @@ multiline_comment|/* Check if I/O Port region is used by another board */
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|ioaddr
 comma
 id|ETHERCARD_TOTAL_SIZE
+comma
+l_string|&quot;sk_g16&quot;
 )paren
 )paren
 (brace
@@ -802,6 +856,14 @@ id|SK_IDHIGH
 )paren
 )paren
 (brace
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|ETHERCARD_TOTAL_SIZE
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 multiline_comment|/* Try next Port address */
@@ -830,6 +892,14 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Card found and initialized */
 )brace
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|ETHERCARD_TOTAL_SIZE
+)paren
+suffix:semicolon
 )brace
 id|dev-&gt;base_addr
 op_assign
@@ -843,6 +913,192 @@ suffix:semicolon
 multiline_comment|/* Failed to find or init driver */
 )brace
 multiline_comment|/* End of SK_init */
+DECL|variable|io
+r_static
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* 0 == probe */
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Patrick J.D. Weichmann&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Schneider &amp; Koch G16 Ethernet Device Driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|io
+comma
+l_string|&quot;0 to probe common ports (unsafe), or the I/O base of the board&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|function|SK_init_module
+r_static
+r_int
+id|__init
+id|SK_init_module
+(paren
+r_void
+)paren
+(brace
+r_int
+id|rc
+suffix:semicolon
+id|SK_dev
+op_assign
+id|init_etherdev
+(paren
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|SK_dev
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|rc
+op_assign
+id|SK_init
+(paren
+id|SK_dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rc
+)paren
+(brace
+id|unregister_netdev
+(paren
+id|SK_dev
+)paren
+suffix:semicolon
+id|kfree
+(paren
+id|SK_dev
+)paren
+suffix:semicolon
+id|SK_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_return
+id|rc
+suffix:semicolon
+)brace
+macro_line|#endif /* MODULE */
+DECL|function|SK_cleanup_module
+r_static
+r_void
+id|__exit
+id|SK_cleanup_module
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SK_dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SK_dev-&gt;priv
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|SK_dev-&gt;priv
+)paren
+suffix:semicolon
+id|SK_dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|unregister_netdev
+c_func
+(paren
+id|SK_dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|SK_dev
+)paren
+suffix:semicolon
+id|SK_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|SK_ioaddr
+)paren
+(brace
+id|release_region
+c_func
+(paren
+id|SK_ioaddr
+comma
+id|ETHERCARD_TOTAL_SIZE
+)paren
+suffix:semicolon
+id|SK_ioaddr
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+macro_line|#ifdef MODULE
+DECL|variable|SK_init_module
+id|module_init
+c_func
+(paren
+id|SK_init_module
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|SK_cleanup_module
+id|module_exit
+c_func
+(paren
+id|SK_cleanup_module
+)paren
+suffix:semicolon
 "&f;"
 multiline_comment|/*-&n; * Function       : SK_probe&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called by SK_init and &n; *                  does the main part of initialization.&n; *                  &n; * Parameters     : I : struct net_device *dev - SK_G16 device structure&n; *                  I : short ioaddr       - I/O Port address where POS is.&n; * Return Value   : 0 = Initialization done             &n; * Errors         : ENODEV - No SK_G16 found&n; *                  -1     - Configuration problem&n; * Globals        : board       - pointer to SK_RAM&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     94/06/30  pwe  SK_ADDR now checked and at the correct place&n;-*/
 DECL|function|SK_probe
@@ -1468,17 +1724,6 @@ id|priv
 )paren
 suffix:semicolon
 multiline_comment|/* clear memory */
-multiline_comment|/* Grab the I/O Port region */
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|ETHERCARD_TOTAL_SIZE
-comma
-l_string|&quot;sk_g16&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Assign our Device Driver functions */
 id|dev-&gt;open
 op_assign
@@ -1638,6 +1883,14 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif 
+id|SK_dev
+op_assign
+id|dev
+suffix:semicolon
+id|SK_ioaddr
+op_assign
+id|ioaddr
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2486,15 +2739,13 @@ id|ib.tdrp
 )paren
 suffix:semicolon
 multiline_comment|/* Prepare LANCE Control and Status Registers */
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|SK_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|SK_write_reg
@@ -2552,9 +2803,12 @@ comma
 id|CSR0_INIT
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|SK_lock
+comma
 id|flags
 )paren
 suffix:semicolon

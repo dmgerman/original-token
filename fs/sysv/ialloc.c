@@ -712,6 +712,8 @@ id|sysv_write_inode
 c_func
 (paren
 id|inode
+comma
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* ensure inode not allocated again */

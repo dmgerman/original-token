@@ -386,13 +386,6 @@ id|p-&gt;real_timer
 )paren
 suffix:semicolon
 )brace
-id|timer_exit
-c_func
-(paren
-op_amp
-id|p-&gt;real_timer
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_setitimer
 r_int

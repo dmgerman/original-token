@@ -1,5 +1,5 @@
 multiline_comment|/* epic100.c: A SMC 83c170 EPIC/100 Fast Ethernet driver for Linux. */
-multiline_comment|/*&n;&t;Written/copyright 1997-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;This driver is for the SMC83c170/175 &quot;EPIC&quot; series, as used on the&n;&t;SMC EtherPower II 9432 PCI adapter, and several CardBus cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Information and updates available at&n;&t;http://www.scyld.com/network/epic100.html&n;&t;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.2 (jgarzik):&n;&t;* Merge becker version 1.09&n;&n;*/
+multiline_comment|/*&n;&t;Written/copyright 1997-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;This driver is for the SMC83c170/175 &quot;EPIC&quot; series, as used on the&n;&t;SMC EtherPower II 9432 PCI adapter, and several CardBus cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Information and updates available at&n;&t;http://www.scyld.com/network/epic100.html&n;&t;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.2 (jgarzik):&n;&t;* Merge becker version 1.09&n;&n;&t;LK1.1.3:&n;&t;* Major bugfix to 1.09 driver (Francis Romieu)&n;&n;*/
 multiline_comment|/* The user-configurable values.&n;   These may be modified when a driver module is loaded.*/
 DECL|variable|debug
 r_static
@@ -147,7 +147,7 @@ id|version
 )braket
 id|__devinitdata
 op_assign
-l_string|&quot;epic100.c:v1.09+LK1.1.2 4/28/2000 Written by Donald Becker &lt;becker@scyld.com&gt;&bslash;n&quot;
+l_string|&quot;epic100.c:v1.09+LK1.1.3 6/17/2000 Written by Donald Becker &lt;becker@scyld.com&gt;&bslash;n&quot;
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
@@ -2696,6 +2696,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
 id|ep-&gt;full_duplex
 op_assign
 id|ep-&gt;force_fd
@@ -2716,6 +2719,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -2731,12 +2737,12 @@ comma
 id|dev
 )paren
 )paren
+)paren
 (brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|retval
 suffix:semicolon
 )brace
 id|epic_init_ring
@@ -5995,17 +6001,17 @@ id|INTSTAT
 )paren
 )paren
 suffix:semicolon
-id|epic_pause
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
 id|ep-&gt;timer
+)paren
+suffix:semicolon
+id|epic_pause
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 id|free_irq

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: b1dma.c,v 1.4 2000/04/03 16:38:05 calle Exp $&n; * &n; * Common module for AVM B1 cards that support dma with AMCC&n; * &n; * (c) Copyright 2000 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1dma.c,v $&n; * Revision 1.4  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.3  2000/02/26 01:00:53  keil&n; * changes from 2.3.47&n; *&n; * Revision 1.2  2000/01/25 14:44:47  calle&n; * typo in b1pciv4_detect().&n; *&n; * Revision 1.1  2000/01/25 14:36:43  calle&n; * common function for  T1 PCI and B1 PCI V4.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: b1dma.c,v 1.5 2000/06/19 16:51:53 keil Exp $&n; * &n; * Common module for AVM B1 cards that support dma with AMCC&n; * &n; * (c) Copyright 2000 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1dma.c,v $&n; * Revision 1.5  2000/06/19 16:51:53  keil&n; * don&squot;t free skb in irq context&n; *&n; * Revision 1.4  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.3  2000/02/26 01:00:53  keil&n; * changes from 2.3.47&n; *&n; * Revision 1.2  2000/01/25 14:44:47  calle&n; * typo in b1pciv4_detect().&n; *&n; * Revision 1.1  2000/01/25 14:36:43  calle&n; * common function for  T1 PCI and B1 PCI V4.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;capilli.h&quot;
 macro_line|#include &quot;avmcard.h&quot;
 macro_line|#include &quot;capicmd.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.4 $&quot;
+l_string|&quot;$Revision: 1.5 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 id|MODULE_AUTHOR
@@ -2108,7 +2109,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
@@ -3141,42 +3142,6 @@ c_func
 id|card
 )paren
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|card-&gt;csr
-op_amp
-id|EN_TX_TC_INT
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|b1dmainmeml
-c_func
-(paren
-id|card-&gt;mbase
-op_plus
-id|AMCC_TXLEN
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-id|card-&gt;csr
-op_and_assign
-op_complement
-id|EN_TX_TC_INT
-suffix:semicolon
-id|b1dma_dispatch_tx
-c_func
-(paren
-id|card
-)paren
-suffix:semicolon
-)brace
 )brace
 id|b1dmaoutmeml
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: b1pci.c,v 1.21 2000/04/03 13:29:24 calle Exp $&n; * &n; * Module for AVM B1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1pci.c,v $&n; * Revision 1.21  2000/04/03 13:29:24  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.20  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.19  2000/01/25 14:33:38  calle&n; * - Added Support AVM B1 PCI V4.0 (tested with prototype)&n; *   - splitted up t1pci.c into b1dma.c for common function with b1pciv4&n; *   - support for revision register&n; *&n; * Revision 1.18  1999/11/05 16:38:01  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.17  1999/10/05 06:50:07  calle&n; * Forgot SA_SHIRQ as argument to request_irq.&n; *&n; * Revision 1.16  1999/08/11 21:01:07  keil&n; * new PCI codefix&n; *&n; * Revision 1.15  1999/08/10 16:02:27  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.14  1999/07/09 15:05:41  keil&n; * compat.h is now isdn_compat.h&n; *&n; * Revision 1.13  1999/07/05 15:09:50  calle&n; * - renamed &quot;appl_release&quot; to &quot;appl_released&quot;.&n; * - version und profile data now cleared on controller reset&n; * - extended /proc interface, to allow driver and controller specific&n; *   informations to include by driver hackers.&n; *&n; * Revision 1.12  1999/07/01 15:26:29  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: b1pci.c,v 1.25 2000/05/29 12:29:18 keil Exp $&n; * &n; * Module for AVM B1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1pci.c,v $&n; * Revision 1.25  2000/05/29 12:29:18  keil&n; * make pci_enable_dev compatible to 2.2 kernel versions&n; *&n; * Revision 1.24  2000/05/19 15:43:22  calle&n; * added calls to pci_device_start().&n; *&n; * Revision 1.23  2000/05/06 00:52:36  kai&n; * merged changes from kernel tree&n; * fixed timer and net_device-&gt;name breakage&n; *&n; * Revision 1.22  2000/04/21 13:01:33  calle&n; * Revision in b1pciv4 driver was missing.&n; *&n; * Revision 1.21  2000/04/03 13:29:24  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.20  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.19  2000/01/25 14:33:38  calle&n; * - Added Support AVM B1 PCI V4.0 (tested with prototype)&n; *   - splitted up t1pci.c into b1dma.c for common function with b1pciv4&n; *   - support for revision register&n; *&n; * Revision 1.18  1999/11/05 16:38:01  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.17  1999/10/05 06:50:07  calle&n; * Forgot SA_SHIRQ as argument to request_irq.&n; *&n; * Revision 1.16  1999/08/11 21:01:07  keil&n; * new PCI codefix&n; *&n; * Revision 1.15  1999/08/10 16:02:27  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.14  1999/07/09 15:05:41  keil&n; * compat.h is now isdn_compat.h&n; *&n; * Revision 1.13  1999/07/05 15:09:50  calle&n; * - renamed &quot;appl_release&quot; to &quot;appl_released&quot;.&n; * - version und profile data now cleared on controller reset&n; * - extended /proc interface, to allow driver and controller specific&n; *   informations to include by driver hackers.&n; *&n; * Revision 1.12  1999/07/01 15:26:29  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/isdn.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capilli.h&quot;
@@ -20,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.21 $&quot;
+l_string|&quot;$Revision: 1.25 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 macro_line|#ifndef PCI_VENDOR_ID_AVM
@@ -1780,28 +1781,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pci_enable_device
-c_func
-(paren
-id|dev
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* return failure */
-r_if
-c_cond
-(paren
-id|pci_resource_flags
+id|pci_resource_start
 c_func
 (paren
 id|dev
 comma
 l_int|2
 )paren
-op_amp
-id|IORESOURCE_IO
 )paren
 (brace
 multiline_comment|/* B1 PCI V4 */
@@ -1815,6 +1801,7 @@ macro_line|#endif
 id|param.membase
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev
 comma
@@ -1824,6 +1811,7 @@ suffix:semicolon
 id|param.port
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev
 comma
@@ -1834,6 +1822,52 @@ id|param.irq
 op_assign
 id|dev-&gt;irq
 suffix:semicolon
+id|retval
+op_assign
+id|pci_enable_device
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: failed to enable AVM-B1 V4 at i/o %#x, irq %d, mem %#x err=%d&bslash;n&quot;
+comma
+id|driver-&gt;name
+comma
+id|param.port
+comma
+id|param.irq
+comma
+id|param.membase
+comma
+id|retval
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|cleanup_module
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1908,6 +1942,7 @@ suffix:semicolon
 id|param.port
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev
 comma
@@ -1918,6 +1953,50 @@ id|param.irq
 op_assign
 id|dev-&gt;irq
 suffix:semicolon
+id|retval
+op_assign
+id|pci_enable_device
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: failed to enable AVM-B1 at i/o %#x, irq %d, err=%d&bslash;n&quot;
+comma
+id|driver-&gt;name
+comma
+id|param.port
+comma
+id|param.irq
+comma
+id|retval
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|cleanup_module
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -2057,6 +2136,48 @@ id|p
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_B1PCIV4
+id|p
+op_assign
+id|strchr
+c_func
+(paren
+id|revision
+comma
+l_char|&squot;:&squot;
+)paren
+suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|driverv4-&gt;revision
+comma
+id|p
+op_plus
+l_int|1
+comma
+r_sizeof
+(paren
+id|driverv4-&gt;revision
+)paren
+)paren
+suffix:semicolon
+id|p
+op_assign
+id|strchr
+c_func
+(paren
+id|driverv4-&gt;revision
+comma
+l_char|&squot;$&squot;
+)paren
+suffix:semicolon
+op_star
+id|p
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 id|printk
 c_func

@@ -5887,13 +5887,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|timer_exit
-c_func
-(paren
-op_amp
-id|lp-&gt;multicast_timer
-)paren
-suffix:semicolon
 )brace
 DECL|function|lance_free_hwresources
 r_static

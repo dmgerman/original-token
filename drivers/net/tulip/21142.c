@@ -1202,7 +1202,7 @@ id|TPLnkFail
 )paren
 (brace
 multiline_comment|/* Link blew? Maybe restart NWay. */
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
@@ -1291,7 +1291,7 @@ op_logical_neg
 id|tp-&gt;medialock
 )paren
 (brace
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp

@@ -4378,6 +4378,9 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
+id|wait
 )paren
 (brace
 id|lock_kernel

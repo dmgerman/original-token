@@ -298,6 +298,12 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|ncp_inode_close
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond

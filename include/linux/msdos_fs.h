@@ -1126,6 +1126,8 @@ r_struct
 id|inode
 op_star
 id|inode
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* dir.c */

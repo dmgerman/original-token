@@ -5091,15 +5091,6 @@ op_amp
 id|sp-&gt;timer
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,43)
-id|timer_exit
-c_func
-(paren
-op_amp
-id|sp-&gt;timer
-)paren
-suffix:semicolon
-macro_line|#endif /* LINUX_VERSION_CODE */
 )brace
 DECL|function|speedo_show_state
 r_static
@@ -5124,21 +5115,6 @@ id|speedo_private
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-r_int
-id|ioaddr
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
-r_int
-id|phy_num
-op_assign
-id|sp-&gt;phy
-(braket
-l_int|0
-)braket
-op_amp
-l_int|0x1f
 suffix:semicolon
 r_int
 id|i
@@ -5319,6 +5295,21 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#if 0
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_int
+id|phy_num
+op_assign
+id|sp-&gt;phy
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x1f
+suffix:semicolon
 r_for
 c_loop
 (paren
