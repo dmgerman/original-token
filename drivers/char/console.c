@@ -1425,7 +1425,7 @@ id|color
 comma
 l_int|1
 comma
-l_int|0
+id|blink
 comma
 l_int|0
 comma

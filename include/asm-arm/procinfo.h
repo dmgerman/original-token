@@ -22,7 +22,7 @@ id|cpu_name
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Note!  struct processor is always defined if we&squot;re&n; * using MULTI_CPU, otherwise this entry is unused,&n; * but still exists.  NOTE! This structure is used&n; * by assembler code!  Check:&n; *  arch/arm/mm/proc-*.S and arch/arm/kernel/head-armv.S&n; */
+multiline_comment|/*&n; * Note!  struct processor is always defined if we&squot;re&n; * using MULTI_CPU, otherwise this entry is unused,&n; * but still exists.&n; *&n; * NOTE! The following structure is defined by assembly&n; * language, NOT C code.  For more information, check:&n; *  arch/arm/mm/proc-*.S and arch/arm/kernel/head-armv.S&n; */
 DECL|struct|proc_info_list
 r_struct
 id|proc_info_list

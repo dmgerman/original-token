@@ -4699,5 +4699,20 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+DECL|function|try_inc_mod_count
+r_int
+id|try_inc_mod_count
+c_func
+(paren
+r_struct
+id|module
+op_star
+id|mod
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 macro_line|#endif&t;/* CONFIG_MODULES */
 eof

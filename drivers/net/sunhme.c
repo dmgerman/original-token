@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.92 2000/02/18 13:49:22 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.93 2000/03/12 04:02:14 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -817,7 +817,7 @@ mdefine_line|#define hme_read_desc32(__hp, __p)&t;(*(__p))
 DECL|macro|hme_dma_map
 mdefine_line|#define hme_dma_map(__hp, __ptr, __size, __dir) &bslash;&n;&t;sbus_map_single((__hp)-&gt;happy_dev, (__ptr), (__size), (__dir))
 DECL|macro|hme_dma_unmap
-mdefine_line|#define hme_dma_unmap(__hp, __addr, __size) &bslash;&n;&t;sbus_unmap_single((__hp)-&gt;happy_dev, (__addr), (__size), (__dir))
+mdefine_line|#define hme_dma_unmap(__hp, __addr, __size, __dir) &bslash;&n;&t;sbus_unmap_single((__hp)-&gt;happy_dev, (__addr), (__size), (__dir))
 DECL|macro|hme_dma_sync
 mdefine_line|#define hme_dma_sync(__hp, __addr, __size, __dir) &bslash;&n;&t;sbus_dma_sync_single((__hp)-&gt;happy_dev, (__addr), (__size), (__dir))
 macro_line|#else

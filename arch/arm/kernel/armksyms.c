@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -368,6 +369,13 @@ id|ret_from_exception
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|kd_mksound
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kd_mksound
+)paren
+suffix:semicolon
 multiline_comment|/* platform dependent support */
 DECL|variable|dump_thread
 id|EXPORT_SYMBOL

@@ -243,6 +243,31 @@ DECL|typedef|phone_codec
 )brace
 id|phone_codec
 suffix:semicolon
+DECL|struct|phone_codec_data
+r_struct
+id|phone_codec_data
+(brace
+DECL|member|type
+id|phone_codec
+id|type
+suffix:semicolon
+DECL|member|buf_min
+DECL|member|buf_opt
+DECL|member|buf_max
+r_int
+r_int
+id|buf_min
+comma
+id|buf_opt
+comma
+id|buf_max
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|PHONE_QUERY_CODEC
+mdefine_line|#define PHONE_QUERY_CODEC&t;&t;_IOWR (&squot;q&squot;, 0xA7, struct phone_codec_data *)
+DECL|macro|PHONE_PSTN_LINETEST
+mdefine_line|#define PHONE_PSTN_LINETEST&t;&t;_IO (&squot;q&squot;, 0xA8)
 multiline_comment|/******************************************************************************&n;*&n;* The exception structure allows us to multiplex multiple events onto the&n;* select() exception set.  If any of these flags are set select() will&n;* return with a positive indication on the exception set.  The dtmf_ready&n;* bit indicates if there is data waiting in the DTMF buffer.  The&n;* hookstate bit is set if there is a change in hookstate status, it does not&n;* indicate the current state of the hookswitch.  The pstn_ring bit&n;* indicates that the DAA on a LineJACK card has detected ring voltage on&n;* the PSTN port.  The caller_id bit indicates that caller_id data has been&n;* recieved and is available.  The pstn_wink bit indicates that the DAA on&n;* the LineJACK has recieved a wink from the telco switch.  The f0, f1, f2&n;* and f3 bits indicate that the filter has been triggered by detecting the&n;* frequency programmed into that filter.&n;*&n;* The remaining bits should be set to zero. They will become defined over time&n;* for other interface cards and their needs.&n;*&n;******************************************************************************/
 DECL|struct|phone_except
 r_struct

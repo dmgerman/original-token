@@ -2643,6 +2643,10 @@ id|lp-&gt;rx_ptr
 op_assign
 id|lp-&gt;rx_buf_start
 suffix:semicolon
+id|lp-&gt;started
+op_or_assign
+id|STARTED_RU
+suffix:semicolon
 )brace
 id|ack_cmd
 op_or_assign

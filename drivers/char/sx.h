@@ -61,10 +61,19 @@ r_int
 r_int
 id|base
 suffix:semicolon
+DECL|member|base2
+r_int
+r_int
+id|base2
+suffix:semicolon
 DECL|member|hw_base
 r_int
 r_int
 id|hw_base
+suffix:semicolon
+DECL|member|eisa_base
+r_int
+id|eisa_base
 suffix:semicolon
 DECL|member|port_base
 r_int
@@ -161,24 +170,34 @@ macro_line|#ifndef MOD_RS232DB25MALE
 DECL|macro|MOD_RS232DB25MALE
 mdefine_line|#define MOD_RS232DB25MALE 0x0a
 macro_line|#endif
-DECL|macro|SX_BOARD_PRESENT
-mdefine_line|#define SX_BOARD_PRESENT     0x00000001
+DECL|macro|SI_ISA_BOARD
+mdefine_line|#define SI_ISA_BOARD         0x00000001
 DECL|macro|SX_ISA_BOARD
 mdefine_line|#define SX_ISA_BOARD         0x00000002
 DECL|macro|SX_PCI_BOARD
 mdefine_line|#define SX_PCI_BOARD         0x00000004
-DECL|macro|SI_ISA_BOARD
-mdefine_line|#define SI_ISA_BOARD         0x00000008
+DECL|macro|SX_CFPCI_BOARD
+mdefine_line|#define SX_CFPCI_BOARD       0x00000008
+DECL|macro|SX_CFISA_BOARD
+mdefine_line|#define SX_CFISA_BOARD       0x00000010
+DECL|macro|SI_EISA_BOARD
+mdefine_line|#define SI_EISA_BOARD        0x00000020
+DECL|macro|SX_BOARD_PRESENT
+mdefine_line|#define SX_BOARD_PRESENT     0x00001000
 DECL|macro|SX_BOARD_INITIALIZED
-mdefine_line|#define SX_BOARD_INITIALIZED 0x00000010
+mdefine_line|#define SX_BOARD_INITIALIZED 0x00002000
 DECL|macro|SX_IRQ_ALLOCATED
-mdefine_line|#define SX_IRQ_ALLOCATED     0x00000020
+mdefine_line|#define SX_IRQ_ALLOCATED     0x00004000
 DECL|macro|SX_BOARD_TYPE
-mdefine_line|#define SX_BOARD_TYPE (SX_ISA_BOARD|SX_PCI_BOARD|SI_ISA_BOARD)
+mdefine_line|#define SX_BOARD_TYPE        0x000000ff
 DECL|macro|IS_SX_BOARD
-mdefine_line|#define IS_SX_BOARD(board) (board-&gt;flags &amp; (SX_PCI_BOARD | SX_ISA_BOARD))
+mdefine_line|#define IS_SX_BOARD(board) (board-&gt;flags &amp; (SX_PCI_BOARD | SX_CFPCI_BOARD | &bslash;&n;                                            SX_ISA_BOARD | SX_CFISA_BOARD))
 DECL|macro|IS_SI_BOARD
 mdefine_line|#define IS_SI_BOARD(board) (board-&gt;flags &amp; SI_ISA_BOARD)
+DECL|macro|IS_EISA_BOARD
+mdefine_line|#define IS_EISA_BOARD(board) (board-&gt;flags &amp; SI_EISA_BOARD)
+DECL|macro|IS_CF_BOARD
+mdefine_line|#define IS_CF_BOARD(board) (board-&gt;flags &amp; (SX_CFISA_BOARD | SX_CFPCI_BOARD))
 DECL|macro|SERIAL_TYPE_NORMAL
 mdefine_line|#define SERIAL_TYPE_NORMAL 1
 multiline_comment|/* The SI processor clock is required to calculate the cc_int_count register&n;   value for the SI cards. */
@@ -262,13 +281,27 @@ DECL|macro|SXIO_SETGSDEBUG
 mdefine_line|#define SXIO_SETGSDEBUG     SPXL(0x08)
 DECL|macro|SXIO_GETGSDEBUG
 mdefine_line|#define SXIO_GETGSDEBUG     SPXL(0x09)
+DECL|macro|SXIO_GETNPORTS
+mdefine_line|#define SXIO_GETNPORTS      SPXL(0x0a)
 macro_line|#ifndef SXCTL_MISC_MINOR 
 multiline_comment|/* Allow others to gather this into &quot;major.h&quot; or something like that */
 DECL|macro|SXCTL_MISC_MINOR
 mdefine_line|#define SXCTL_MISC_MINOR    167
 macro_line|#endif
+macro_line|#ifndef SX_NORMAL_MAJOR
+multiline_comment|/* This allows overriding on the compiler commandline, or in a &quot;major.h&quot; &n;   include or something like that */
+DECL|macro|SX_NORMAL_MAJOR
+mdefine_line|#define SX_NORMAL_MAJOR  32
+DECL|macro|SX_CALLOUT_MAJOR
+mdefine_line|#define SX_CALLOUT_MAJOR 33
+macro_line|#endif
 DECL|macro|SX_TYPE_SX
 mdefine_line|#define SX_TYPE_SX          0x01
 DECL|macro|SX_TYPE_SI
 mdefine_line|#define SX_TYPE_SI          0x02
+DECL|macro|SX_TYPE_CF
+mdefine_line|#define SX_TYPE_CF          0x03
+DECL|macro|WINDOW_LEN
+mdefine_line|#define WINDOW_LEN(board) (IS_CF_BOARD(board)?0x20000:SX_WINDOW_LEN)
+multiline_comment|/*                         Need a #define for ^^^^^^^ !!! */
 eof

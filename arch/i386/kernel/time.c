@@ -1672,6 +1672,10 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+r_int
+id|x86_udelay_tsc
+suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|get_cmos_time
@@ -1718,6 +1722,11 @@ op_assign
 id|tsc_quotient
 suffix:semicolon
 id|use_tsc
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;We could be more selective here I suspect&n;&t;&t;&t; *&t;and just enable this for the next intel chips ?&n;&t;&t;&t; */
+id|x86_udelay_tsc
 op_assign
 l_int|1
 suffix:semicolon

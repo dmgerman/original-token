@@ -77,9 +77,9 @@ mdefine_line|#define NET_BH              0
 DECL|macro|rr_mark_net_bh
 mdefine_line|#define rr_mark_net_bh(foo) {do{} while(0);}
 DECL|macro|rr_if_busy
-mdefine_line|#define rr_if_busy(dev)     test_bit(LINK_STATE_XOFF, &amp;dev-&gt;state)
+mdefine_line|#define rr_if_busy(dev)     netif_queue_stopped(dev)
 DECL|macro|rr_if_running
-mdefine_line|#define rr_if_running(dev)  test_bit(LINK_STATE_START, &amp;dev-&gt;state)
+mdefine_line|#define rr_if_running(dev)  netif_running(dev)
 DECL|macro|rr_if_down
 mdefine_line|#define rr_if_down(dev)     {do{} while(0);}
 macro_line|#endif

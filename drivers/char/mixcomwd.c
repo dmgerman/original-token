@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * MixCom Watchdog: A Simple Hardware Watchdog Device&n; * Based on Softdog driver by Alan Cox and PC Watchdog driver by Ken Hollis&n; *&n; * Author: Gergely Madarasz &lt;gorgo@itc.hu&gt;&n; *&n; * Copyright (c) 1999 ITConsult-Pro Co. &lt;info@itc.hu&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Version 0.1 (99/04/15):&n; *&t;&t;- first version&n; *&n; * Version 0.2 (99/06/16):&n; *&t;&t;- added kernel timer watchdog ping after close&n; *&t;&t;  since the hardware does not support watchdog shutdown&n; *&n; * Version 0.3 (99/06/21):&n; *&t;&t;- added WDIOC_GETSTATUS and WDIOC_GETSUPPORT ioctl calls&n; *&n; * Version 0.3.1 (99/06/22):&n; *&t;&t;- allow module removal while internal timer is active,&n; *&t;&t;  print warning about probable reset&n; *&t;&n; */
+multiline_comment|/*&n; * MixCom Watchdog: A Simple Hardware Watchdog Device&n; * Based on Softdog driver by Alan Cox and PC Watchdog driver by Ken Hollis&n; *&n; * Author: Gergely Madarasz &lt;gorgo@itc.hu&gt;&n; *&n; * Copyright (c) 1999 ITConsult-Pro Co. &lt;info@itc.hu&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Version 0.1 (99/04/15):&n; *&t;&t;- first version&n; *&n; * Version 0.2 (99/06/16):&n; *&t;&t;- added kernel timer watchdog ping after close&n; *&t;&t;  since the hardware does not support watchdog shutdown&n; *&n; * Version 0.3 (99/06/21):&n; *&t;&t;- added WDIOC_GETSTATUS and WDIOC_GETSUPPORT ioctl calls&n; *&n; * Version 0.3.1 (99/06/22):&n; *&t;&t;- allow module removal while internal timer is active,&n; *&t;&t;  print warning about probable reset&n; *&n; * Version 0.4 (99/11/15):&n; *&t;&t;- support for one more type board&n; *&t;&n; */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;0.3.1&quot; 
+mdefine_line|#define VERSION &quot;0.4&quot; 
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -33,19 +33,21 @@ l_int|0x000
 suffix:semicolon
 DECL|macro|MIXCOM_WATCHDOG_OFFSET
 mdefine_line|#define MIXCOM_WATCHDOG_OFFSET 0xc10
-DECL|macro|MIXCOM_ID1
-mdefine_line|#define MIXCOM_ID1 0x11
-DECL|macro|MIXCOM_ID2
-mdefine_line|#define MIXCOM_ID2 0x13
+DECL|macro|MIXCOM_ID
+mdefine_line|#define MIXCOM_ID 0x11
+DECL|macro|FLASHCOM_WATCHDOG_OFFSET
+mdefine_line|#define FLASHCOM_WATCHDOG_OFFSET 0x4
+DECL|macro|FLASHCOM_ID
+mdefine_line|#define FLASHCOM_ID 0x18
 DECL|variable|mixcomwd_opened
 r_static
 r_int
 id|mixcomwd_opened
 suffix:semicolon
-DECL|variable|mixcomwd_port
+DECL|variable|watchdog_port
 r_static
 r_int
-id|mixcomwd_port
+id|watchdog_port
 suffix:semicolon
 macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT
 DECL|variable|mixcomwd_timer_alive
@@ -74,9 +76,7 @@ c_func
 (paren
 l_int|55
 comma
-id|mixcomwd_port
-op_plus
-id|MIXCOM_WATCHDOG_OFFSET
+id|watchdog_port
 )paren
 suffix:semicolon
 r_return
@@ -528,6 +528,8 @@ id|check_region
 c_func
 (paren
 id|port
+op_plus
+id|MIXCOM_WATCHDOG_OFFSET
 comma
 l_int|1
 )paren
@@ -554,11 +556,65 @@ c_cond
 (paren
 id|id
 op_ne
-id|MIXCOM_ID1
-op_logical_and
+id|MIXCOM_ID
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+DECL|function|flashcom_checkcard
+r_static
+r_int
+id|__init
+id|flashcom_checkcard
+c_func
+(paren
+r_int
+id|port
+)paren
+(brace
+r_int
+id|id
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|port
+op_plus
+id|FLASHCOM_WATCHDOG_OFFSET
+comma
+l_int|1
+)paren
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|id
+op_assign
+id|inb_p
+c_func
+(paren
+id|port
+op_plus
+id|FLASHCOM_WATCHDOG_OFFSET
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|id
 op_ne
-id|MIXCOM_ID2
+id|FLASHCOM_ID
 )paren
 (brace
 r_return
@@ -593,6 +649,9 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+op_logical_neg
+id|found
+op_logical_and
 id|mixcomwd_ioports
 (braket
 id|i
@@ -621,14 +680,56 @@ id|found
 op_assign
 l_int|1
 suffix:semicolon
-id|mixcomwd_port
+id|watchdog_port
 op_assign
 id|mixcomwd_ioports
 (braket
 id|i
 )braket
+op_plus
+id|MIXCOM_WATCHDOG_OFFSET
 suffix:semicolon
-r_break
+)brace
+)brace
+multiline_comment|/* The FlashCOM card can be set up at 0x300 -&gt; 0x378, in 0x8 jumps */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0x300
+suffix:semicolon
+op_logical_neg
+id|found
+op_logical_and
+id|i
+OL
+l_int|0x380
+suffix:semicolon
+id|i
+op_add_assign
+l_int|0x8
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|flashcom_checkcard
+c_func
+(paren
+id|i
+)paren
+)paren
+(brace
+id|found
+op_assign
+l_int|1
+suffix:semicolon
+id|watchdog_port
+op_assign
+id|i
+op_plus
+id|FLASHCOM_WATCHDOG_OFFSET
 suffix:semicolon
 )brace
 )brace
@@ -651,9 +752,7 @@ suffix:semicolon
 id|request_region
 c_func
 (paren
-id|mixcomwd_port
-op_plus
-id|MIXCOM_WATCHDOG_OFFSET
+id|watchdog_port
 comma
 l_int|1
 comma
@@ -670,11 +769,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;MixCOM watchdog driver v%s, MixCOM card at 0x%3x&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;MixCOM watchdog driver v%s, watchdog port at 0x%3x&bslash;n&quot;
 comma
 id|VERSION
 comma
-id|mixcomwd_port
+id|watchdog_port
 )paren
 suffix:semicolon
 )brace
@@ -735,9 +835,7 @@ macro_line|#endif
 id|release_region
 c_func
 (paren
-id|mixcomwd_port
-op_plus
-id|MIXCOM_WATCHDOG_OFFSET
+id|watchdog_port
 comma
 l_int|1
 )paren

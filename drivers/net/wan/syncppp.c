@@ -494,7 +494,7 @@ id|PP_TIMO
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Process the received packet.&n; */
+multiline_comment|/**&n; *&t;sppp_input -&t;receive and process a WAN PPP frame&n; *&t;@skb:&t;The buffer to process&n; *&t;@dev:&t;The device it arrived on&n; *&n; *&t;This can be called directly by cards that do not have&n; *&t;timing constraints but is normally called from the network layer&n; *&t;after interrupt servicing to process frames queued via netif_rx.&n; *&n; *&t;We process the options in the card. If the frame is destined for&n; *&t;the protocol stacks then it requeues the frame for the upper level&n; *&t;protocol. If it is a control from it is processed and discarded&n; *&t;here.&n; */
 DECL|function|sppp_input
 r_void
 id|sppp_input
@@ -3477,6 +3477,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;sppp_close - close down a synchronous PPP or Cisco HDLC link&n; *&t;@dev: The network device to drop the link of&n; *&n; *&t;This drops the logical interface to the channel. It is not&n; *&t;done politely as we assume we will also be dropping DTR. Any&n; *&t;timeouts are killed.&n; */
 DECL|function|sppp_close
 r_int
 id|sppp_close
@@ -3532,6 +3533,7 @@ c_func
 id|sppp_close
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;sppp_open - open a synchronous PPP or Cisco HDLC link&n; *&t;@dev:&t;Network device to activate&n; *&t;&n; *&t;Close down any existing synchronous session and commence&n; *&t;from scratch. In the PPP case this means negotiating LCP/IPCP&n; *&t;and friends, while for Cisco HDLC we simply need to staet sending&n; *&t;keepalives&n; */
 DECL|function|sppp_open
 r_int
 id|sppp_open
@@ -3594,6 +3596,7 @@ c_func
 id|sppp_open
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;sppp_reopen - notify of physical link loss&n; *&t;@dev: Device that lost the link&n; *&n; *&t;This function informs the synchronous protocol code that&n; *&t;the underlying link died (for example a carrier drop on X.21)&n; *&n; *&t;We increment the magic numbers to ensure that if the other end&n; *&t;failed to notice we will correctly start a new session. It happens&n; *&t;do to the nature of telco circuits is that you can lose carrier on&n; *&t;one endonly.&n; *&n; *&t;Having done this we go back to negotiating. This function may&n; *&t;be called from an interrupt context.&n; */
 DECL|function|sppp_reopen
 r_int
 id|sppp_reopen
@@ -3676,6 +3679,7 @@ c_func
 id|sppp_reopen
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;sppp_change_mtu - Change the link MTU&n; *&t;@dev:&t;Device to change MTU on&n; *&t;@new_mtu: New MTU&n; *&n; *&t;Change the MTU on the link. This can only be called with&n; *&t;the link down. It returns an error if the link is up or&n; *&t;the mtu is out of range.&n; */
 DECL|function|sppp_change_mtu
 r_int
 id|sppp_change_mtu
@@ -3723,6 +3727,7 @@ c_func
 id|sppp_change_mtu
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;sppp_do_ioctl - Ioctl handler for ppp/hdlc&n; *&t;@dev: Device subject to ioctl&n; *&t;@ifr: Interface request block from the user&n; *&t;@cmd: Command that is being issued&n; *&t;&n; *&t;This function handles the ioctls that may be issued by the user&n; *&t;to control the settings of a PPP/HDLC link. It does both busy&n; *&t;and security checks. This function is intended to be wrapped by&n; *&t;callers who wish to add additional ioctl calls of their own.&n; */
 DECL|function|sppp_do_ioctl
 r_int
 id|sppp_do_ioctl
@@ -3859,6 +3864,7 @@ c_func
 id|sppp_do_ioctl
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;sppp_attach - attach synchronous PPP/HDLC to a device&n; *&t;@pd:&t;PPP device to initialise&n; *&n; *&t;This initialises the PPP/HDLC support on an interface. At the&n; *&t;time of calling the dev element must point to the network device&n; *&t;that this interface is attached to. The interface should not yet&n; *&t;be registered. &n; */
 DECL|function|sppp_attach
 r_void
 id|sppp_attach
@@ -4079,6 +4085,7 @@ c_func
 id|sppp_attach
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;sppp_detach - release PPP resources from a device&n; *&t;@dev:&t;Network device to release&n; *&n; *&t;Stop and free up any PPP/HDLC resources used by this&n; *&t;interface. This must be called before the device is&n; *&t;freed.&n; */
 DECL|function|sppp_detach
 r_void
 id|sppp_detach
@@ -5521,8 +5528,9 @@ op_increment
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Protocol glue. This drives the deferred processing mode the poorer&n; *&t;cards use.&n; */
+multiline_comment|/**&n; *&t;sppp_rcv -&t;receive and process a WAN PPP frame&n; *&t;@skb:&t;The buffer to process&n; *&t;@dev:&t;The device it arrived on&n; *&t;@p: Unused&n; *&n; *&t;Protocol glue. This drives the deferred processing mode the poorer&n; *&t;cards use. This can be called directly by cards that do not have&n; *&t;timing constraints but is normally called from the network layer&n; *&t;after interrupt servicing to process frames queued via netif_rx.&n; */
 DECL|function|sppp_rcv
+r_static
 r_int
 id|sppp_rcv
 c_func
@@ -5555,13 +5563,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|sppp_rcv
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sppp_rcv
-)paren
-suffix:semicolon
 DECL|variable|sppp_packet_type
 r_struct
 id|packet_type
@@ -5624,13 +5625,6 @@ id|sppp_packet_type
 )paren
 suffix:semicolon
 )brace
-DECL|variable|sync_ppp_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sync_ppp_init
-)paren
-suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int

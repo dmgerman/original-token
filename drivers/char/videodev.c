@@ -9,9 +9,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
 DECL|macro|VIDEO_NUM_DEVICES
@@ -504,7 +503,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Question: Should we be able to capture and then seek around the&n; *&t;image ?&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|function|video_lseek
 r_static
 r_int
@@ -530,38 +528,6 @@ op_minus
 id|ESPIPE
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|function|video_lseek
-r_static
-r_int
-r_int
-id|video_lseek
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-id|origin
-)paren
-(brace
-r_return
-op_minus
-id|ESPIPE
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|video_ioctl
 r_static
 r_int
@@ -648,7 +614,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;We need to do MMAP support&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|function|video_mmap
 r_int
 id|video_mmap
@@ -679,43 +644,6 @@ id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 )braket
 suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|video_mmap
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-)paren
-(brace
-r_struct
-id|video_device
-op_star
-id|vfl
-op_assign
-id|video_device
-(braket
-id|MINOR
-c_func
-(paren
-id|ino-&gt;i_rdev
-)paren
-)braket
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -758,7 +686,7 @@ r_struct
 id|file_operations
 id|video_fops
 suffix:semicolon
-multiline_comment|/*&n; *&t;Video For Linux device drivers request registration here.&n; */
+multiline_comment|/**&n; *&t;video_register_device - register video4linux devices&n; *&t;@vfd: Video device structure we want to register&n; *&t;@type: type of device to register&n; *&t;FIXME: needs a semaphore on 2.3.x&n; *&t;&n; *&t;The registration code assigns minor numbers based on the type&n; *&t;requested. -ENFILE is returned in all the device slots for this&n; *&t;catetory are full. If not then the minor field is set and the&n; *&t;driver initialize function is called (if non NULL).&n; *&n; *&t;Zero is returned on success.&n; *&n; *&t;Valid types are&n; *&n; *&t;VFL_TYPE_GRABBER - A frame grabber&n; *&n; *&t;VFL_TYPE_VTX - A teletext device&n; *&n; *&t;VFL_TYPE_VBI - Vertical blank data (undecoded)&n; *&n; *&t;VFL_TYPE_RADIO - A radio card&t;&n; */
 DECL|function|video_register_device
 r_int
 id|video_register_device
@@ -969,6 +897,7 @@ op_minus
 id|base
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Start the device root only. Anything else&n;&t;&t;&t; *&t;has serious privacy issues.&n;&t;&t;&t; */
 id|vfd-&gt;devfs_handle
 op_assign
 id|devfs_register
@@ -987,9 +916,9 @@ id|vfd-&gt;minor
 comma
 id|S_IFCHR
 op_or
-id|S_IRUGO
+id|S_IRUSR
 op_or
-id|S_IWUGO
+id|S_IWUSR
 comma
 l_int|0
 comma
@@ -1011,7 +940,7 @@ op_minus
 id|ENFILE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Unregister an unused video for linux device&n; */
+multiline_comment|/**&n; *&t;video_unregister_device - Unregister a video4linux device&n; *&t;@vfd: the device to unregister&n; *&n; *&t;This unregisters the passed device and deassigns the minor&n; *&t;number. Future open calls will be met with errors.&n; */
 DECL|function|video_unregister_device
 r_void
 id|video_unregister_device
@@ -1091,17 +1020,16 @@ id|release
 suffix:colon
 id|video_release
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
 id|poll
 suffix:colon
 id|video_poll
 comma
-macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Initialise video for linux&n; */
 DECL|function|videodev_init
 r_int
+id|__init
 id|videodev_init
 c_func
 (paren
@@ -1209,7 +1137,6 @@ l_string|&quot;video_capture&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|variable|video_register_device
 id|EXPORT_SYMBOL
 c_func
@@ -1224,5 +1151,16 @@ c_func
 id|video_unregister_device
 )paren
 suffix:semicolon
-macro_line|#endif
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Alan Cox&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Device registrar for Video4Linux drivers&quot;
+)paren
+suffix:semicolon
 eof

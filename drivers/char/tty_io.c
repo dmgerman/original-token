@@ -8386,6 +8386,13 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|tty-&gt;read_lock
+)paren
+suffix:semicolon
 id|INIT_LIST_HEAD
 c_func
 (paren
@@ -9639,6 +9646,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SX
 id|sx_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_RIO
+id|rio_init
 c_func
 (paren
 )paren

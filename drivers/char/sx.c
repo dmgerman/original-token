@@ -1,8 +1,8 @@
-multiline_comment|/* sx.c -- driver for the Specialix SX series cards. &n; *&n; *  This driver will also support the older SI, and XIO cards.&n; *&n; *&n; *   (C) 1998 R.E.Wolff@BitWizard.nl&n; *&n; *  Simon Allen (simonallen@cix.compulink.co.uk) wrote a previous&n; *  version of this driver. Some fragments may have been copied. (none&n; *  yet :-)&n; *&n; * Specialix pays for the development and support of this driver.&n; * Please DO contact support@specialix.co.uk if you require&n; * support. But please read the documentation (sx.txt) first.&n; *&n; *&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License as&n; *      published by the Free Software Foundation; either version 2 of&n; *      the License, or (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be&n; *      useful, but WITHOUT ANY WARRANTY; without even the implied&n; *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR&n; *      PURPOSE.  See the GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public&n; *      License along with this program; if not, write to the Free&n; *      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *      USA.&n; *&n; * Revision history:&n; * $Log: sx.c,v $&n; * Revision 1.26  1999/08/05 15:22:14  wolff&n; * - Port to 2.3.x&n; * - Reformatted to Linus&squot; liking.&n; *&n; * Revision 1.25  1999/07/30 14:24:08  wolff&n; * Had accidentally left &quot;gs_debug&quot; set to &quot;-1&quot; instead of &quot;off&quot; (=0).&n; *&n; * Revision 1.24  1999/07/28 09:41:52  wolff&n; * - I noticed the remark about use-count straying in sx.txt. I checked&n; *   sx_open, and found a few places where that could happen. I hope it&squot;s&n; *   fixed now.&n; *&n; * Revision 1.23  1999/07/28 08:56:06  wolff&n; * - Fixed crash when sx_firmware run twice.&n; * - Added sx_slowpoll as a module parameter (I guess nobody really wanted&n; *   to change it from the default... )&n; * - Fixed a stupid editing problem I introduced in 1.22.&n; * - Fixed dropping characters on a termios change.&n; *&n; * Revision 1.22  1999/07/26 21:01:43  wolff&n; * Russell Brown noticed that I had overlooked 4 out of six modem control&n; * signals in sx_getsignals. Ooops.&n; *&n; * Revision 1.21  1999/07/23 09:11:33  wolff&n; * I forgot to free dynamically allocated memory when the driver is unloaded.&n; *&n; * Revision 1.20  1999/07/20 06:25:26  wolff&n; * The &quot;closing wait&quot; wasn&squot;t honoured. Thanks to James Griffiths for&n; * reporting this.&n; *&n; * Revision 1.19  1999/07/11 08:59:59  wolff&n; * Fixed an oops in close, when an open was pending. Changed the memtest&n; * a bit. Should also test the board in word-mode, however my card fails the&n; * memtest then. I still have to figure out what is wrong...&n; *&n; * Revision 1.18  1999/06/10 09:38:42  wolff&n; * Changed the format of the firmware revision from %04x to %x.%02x .&n; *&n; * Revision 1.17  1999/06/04 09:44:35  wolff&n; * fixed problem: reference to pci stuff when config_pci was off...&n; * Thanks to Jorge Novo for noticing this.&n; *&n; * Revision 1.16  1999/06/02 08:30:15  wolff&n; * added/removed the workaround for the DCD bug in the Firmware.&n; * A bit more debugging code to locate that...&n; *&n; * Revision 1.15  1999/06/01 11:35:30  wolff&n; * when DCD is left low (floating?), on TA&squot;s the firmware first tells us&n; * that DCD is high, but after a short while suddenly comes to the&n; * conclusion that it is low. All this would be fine, if it weren&squot;t that&n; * Unix requires us to send a &quot;hangup&quot; signal in that case. This usually&n; * all happens BEFORE the program has had a chance to ioctl the device&n; * into clocal mode..&n; *&n; * Revision 1.14  1999/05/25 11:18:59  wolff&n; * Added PCI-fix.&n; * Added checks for return code of sx_sendcommand.&n; * Don&squot;t issue &quot;reconfig&quot; if port isn&squot;t open yet. (bit us on TA modules...)&n; *&n; * Revision 1.13  1999/04/29 15:18:01  wolff&n; * Fixed an &quot;oops&quot; that showed on SuSE 6.0 systems.&n; * Activate DTR again after stty 0.&n; *&n; * Revision 1.12  1999/04/29 07:49:52  wolff&n; * Improved &quot;stty 0&quot; handling a bit. (used to change baud to 9600 assuming&n; *     the connection would be dropped anyway. That is not always the case,&n; *     and confuses people).&n; * Told the card to always monitor the modem signals.&n; * Added support for dynamic  gs_debug adjustments.&n; * Now tells the rest of the system the number of ports.&n; *&n; * Revision 1.11  1999/04/24 11:11:30  wolff&n; * Fixed two stupid typos in the memory test.&n; *&n; * Revision 1.10  1999/04/24 10:53:39  wolff&n; * Added some of Christian&squot;s suggestions.&n; * Fixed an HW_COOK_IN bug (ISIG was not in I_OTHER. We used to trust the&n; * card to send the signal to the process.....)&n; *&n; * Revision 1.9  1999/04/23 07:26:38  wolff&n; * Included Christian Lademann&squot;s 2.0 compile-warning fixes and interrupt&n; *    assignment redesign.&n; * Cleanup of some other stuff.&n; *&n; * Revision 1.8  1999/04/16 13:05:30  wolff&n; * fixed a DCD change unnoticed bug.&n; *&n; * Revision 1.7  1999/04/14 22:19:51  wolff&n; * Fixed typo that showed up in 2.0.x builds (get_user instead of Get_user!)&n; *&n; * Revision 1.6  1999/04/13 18:40:20  wolff&n; * changed misc-minor to 161, as assigned by HPA.&n; *&n; * Revision 1.5  1999/04/13 15:12:25  wolff&n; * Fixed use-count leak when &quot;hangup&quot; occurred.&n; * Added workaround for a stupid-PCIBIOS bug.&n; *&n; *&n; * Revision 1.4  1999/04/01 22:47:40  wolff&n; * Fixed &lt; 1M linux-2.0 problem.&n; * (vremap isn&squot;t compatible with ioremap in that case)&n; *&n; * Revision 1.3  1999/03/31 13:45:45  wolff&n; * Firmware loading is now done through a separate IOCTL.&n; *&n; * Revision 1.2  1999/03/28 12:22:29  wolff&n; * rcs cleanup&n; *&n; * Revision 1.1  1999/03/28 12:10:34  wolff&n; * Readying for release on 2.0.x (sorry David, 1.01 becomes 1.1 for RCS). &n; *&n; * Revision 0.12  1999/03/28 09:20:10  wolff&n; * Fixed problem in 0.11, continueing cleanup.&n; *&n; * Revision 0.11  1999/03/28 08:46:44  wolff&n; * cleanup. Not good.&n; *&n; * Revision 0.10  1999/03/28 08:09:43  wolff&n; * Fixed loosing characters on close.&n; *&n; * Revision 0.9  1999/03/21 22:52:01  wolff&n; * Ported back to 2.2.... (minor things)&n; *&n; * Revision 0.8  1999/03/21 22:40:33  wolff&n; * Port to 2.0&n; *&n; * Revision 0.7  1999/03/21 19:06:34  wolff&n; * Fixed hangup processing.&n; *&n; * Revision 0.6  1999/02/05 08:45:14  wolff&n; * fixed real_raw problems. Inclusion into kernel imminent.&n; *&n; * Revision 0.5  1998/12/21 23:51:06  wolff&n; * Snatched a nasty bug: sx_transmit_chars was getting re-entered, and it&n; * shouldn&squot;t have. THATs why I want to have transmit interrupts even when&n; * the buffer is empty.&n; *&n; * Revision 0.4  1998/12/17 09:34:46  wolff&n; * PPP works. ioctl works. Basically works!&n; *&n; * Revision 0.3  1998/12/15 13:05:18  wolff&n; * It works! Wow! Gotta start implementing IOCTL and stuff....&n; *&n; * Revision 0.2  1998/12/01 08:33:53  wolff&n; * moved over to 2.1.130&n; *&n; * Revision 0.1  1998/11/03 21:23:51  wolff&n; * Initial revision. Detects SX card.&n; *&n; * */
+multiline_comment|/* sx.c -- driver for the Specialix SX series cards. &n; *&n; *  This driver will also support the older SI, and XIO cards.&n; *&n; *&n; *   (C) 1998 - 2000  R.E.Wolff@BitWizard.nl&n; *&n; *  Simon Allen (simonallen@cix.compulink.co.uk) wrote a previous&n; *  version of this driver. Some fragments may have been copied. (none&n; *  yet :-)&n; *&n; * Specialix pays for the development and support of this driver.&n; * Please DO contact support@specialix.co.uk if you require&n; * support. But please read the documentation (sx.txt) first.&n; *&n; *&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License as&n; *      published by the Free Software Foundation; either version 2 of&n; *      the License, or (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be&n; *      useful, but WITHOUT ANY WARRANTY; without even the implied&n; *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR&n; *      PURPOSE.  See the GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public&n; *      License along with this program; if not, write to the Free&n; *      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *      USA.&n; *&n; * Revision history:&n; * $Log: sx.c,v $&n; * Revision 1.32  2000/03/07 90:00:00  wolff,pvdl&n; * - Fixed some sx_dprintk typos&n; * - added detection for an invalid board/module configuration&n; *&n; * Revision 1.31  2000/03/06 12:00:00  wolff,pvdl&n; * - Added support for EISA&n; *&n; * Revision 1.30  2000/01/21 17:43:06  wolff&n; * - Added support for SX+&n; *&n; * Revision 1.26  1999/08/05 15:22:14  wolff&n; * - Port to 2.3.x&n; * - Reformatted to Linus&squot; liking.&n; *&n; * Revision 1.25  1999/07/30 14:24:08  wolff&n; * Had accidentally left &quot;gs_debug&quot; set to &quot;-1&quot; instead of &quot;off&quot; (=0).&n; *&n; * Revision 1.24  1999/07/28 09:41:52  wolff&n; * - I noticed the remark about use-count straying in sx.txt. I checked&n; *   sx_open, and found a few places where that could happen. I hope it&squot;s&n; *   fixed now.&n; *&n; * Revision 1.23  1999/07/28 08:56:06  wolff&n; * - Fixed crash when sx_firmware run twice.&n; * - Added sx_slowpoll as a module parameter (I guess nobody really wanted&n; *   to change it from the default... )&n; * - Fixed a stupid editing problem I introduced in 1.22.&n; * - Fixed dropping characters on a termios change.&n; *&n; * Revision 1.22  1999/07/26 21:01:43  wolff&n; * Russell Brown noticed that I had overlooked 4 out of six modem control&n; * signals in sx_getsignals. Ooops.&n; *&n; * Revision 1.21  1999/07/23 09:11:33  wolff&n; * I forgot to free dynamically allocated memory when the driver is unloaded.&n; *&n; * Revision 1.20  1999/07/20 06:25:26  wolff&n; * The &quot;closing wait&quot; wasn&squot;t honoured. Thanks to James Griffiths for&n; * reporting this.&n; *&n; * Revision 1.19  1999/07/11 08:59:59  wolff&n; * Fixed an oops in close, when an open was pending. Changed the memtest&n; * a bit. Should also test the board in word-mode, however my card fails the&n; * memtest then. I still have to figure out what is wrong...&n; *&n; * Revision 1.18  1999/06/10 09:38:42  wolff&n; * Changed the format of the firmware revision from %04x to %x.%02x .&n; *&n; * Revision 1.17  1999/06/04 09:44:35  wolff&n; * fixed problem: reference to pci stuff when config_pci was off...&n; * Thanks to Jorge Novo for noticing this.&n; *&n; * Revision 1.16  1999/06/02 08:30:15  wolff&n; * added/removed the workaround for the DCD bug in the Firmware.&n; * A bit more debugging code to locate that...&n; *&n; * Revision 1.15  1999/06/01 11:35:30  wolff&n; * when DCD is left low (floating?), on TA&squot;s the firmware first tells us&n; * that DCD is high, but after a short while suddenly comes to the&n; * conclusion that it is low. All this would be fine, if it weren&squot;t that&n; * Unix requires us to send a &quot;hangup&quot; signal in that case. This usually&n; * all happens BEFORE the program has had a chance to ioctl the device&n; * into clocal mode..&n; *&n; * Revision 1.14  1999/05/25 11:18:59  wolff&n; * Added PCI-fix.&n; * Added checks for return code of sx_sendcommand.&n; * Don&squot;t issue &quot;reconfig&quot; if port isn&squot;t open yet. (bit us on TA modules...)&n; *&n; * Revision 1.13  1999/04/29 15:18:01  wolff&n; * Fixed an &quot;oops&quot; that showed on SuSE 6.0 systems.&n; * Activate DTR again after stty 0.&n; *&n; * Revision 1.12  1999/04/29 07:49:52  wolff&n; * Improved &quot;stty 0&quot; handling a bit. (used to change baud to 9600 assuming&n; *     the connection would be dropped anyway. That is not always the case,&n; *     and confuses people).&n; * Told the card to always monitor the modem signals.&n; * Added support for dynamic  gs_debug adjustments.&n; * Now tells the rest of the system the number of ports.&n; *&n; * Revision 1.11  1999/04/24 11:11:30  wolff&n; * Fixed two stupid typos in the memory test.&n; *&n; * Revision 1.10  1999/04/24 10:53:39  wolff&n; * Added some of Christian&squot;s suggestions.&n; * Fixed an HW_COOK_IN bug (ISIG was not in I_OTHER. We used to trust the&n; * card to send the signal to the process.....)&n; *&n; * Revision 1.9  1999/04/23 07:26:38  wolff&n; * Included Christian Lademann&squot;s 2.0 compile-warning fixes and interrupt&n; *    assignment redesign.&n; * Cleanup of some other stuff.&n; *&n; * Revision 1.8  1999/04/16 13:05:30  wolff&n; * fixed a DCD change unnoticed bug.&n; *&n; * Revision 1.7  1999/04/14 22:19:51  wolff&n; * Fixed typo that showed up in 2.0.x builds (get_user instead of Get_user!)&n; *&n; * Revision 1.6  1999/04/13 18:40:20  wolff&n; * changed misc-minor to 161, as assigned by HPA.&n; *&n; * Revision 1.5  1999/04/13 15:12:25  wolff&n; * Fixed use-count leak when &quot;hangup&quot; occurred.&n; * Added workaround for a stupid-PCIBIOS bug.&n; *&n; *&n; * Revision 1.4  1999/04/01 22:47:40  wolff&n; * Fixed &lt; 1M linux-2.0 problem.&n; * (vremap isn&squot;t compatible with ioremap in that case)&n; *&n; * Revision 1.3  1999/03/31 13:45:45  wolff&n; * Firmware loading is now done through a separate IOCTL.&n; *&n; * Revision 1.2  1999/03/28 12:22:29  wolff&n; * rcs cleanup&n; *&n; * Revision 1.1  1999/03/28 12:10:34  wolff&n; * Readying for release on 2.0.x (sorry David, 1.01 becomes 1.1 for RCS). &n; *&n; * Revision 0.12  1999/03/28 09:20:10  wolff&n; * Fixed problem in 0.11, continueing cleanup.&n; *&n; * Revision 0.11  1999/03/28 08:46:44  wolff&n; * cleanup. Not good.&n; *&n; * Revision 0.10  1999/03/28 08:09:43  wolff&n; * Fixed loosing characters on close.&n; *&n; * Revision 0.9  1999/03/21 22:52:01  wolff&n; * Ported back to 2.2.... (minor things)&n; *&n; * Revision 0.8  1999/03/21 22:40:33  wolff&n; * Port to 2.0&n; *&n; * Revision 0.7  1999/03/21 19:06:34  wolff&n; * Fixed hangup processing.&n; *&n; * Revision 0.6  1999/02/05 08:45:14  wolff&n; * fixed real_raw problems. Inclusion into kernel imminent.&n; *&n; * Revision 0.5  1998/12/21 23:51:06  wolff&n; * Snatched a nasty bug: sx_transmit_chars was getting re-entered, and it&n; * shouldn&squot;t have. THATs why I want to have transmit interrupts even when&n; * the buffer is empty.&n; *&n; * Revision 0.4  1998/12/17 09:34:46  wolff&n; * PPP works. ioctl works. Basically works!&n; *&n; * Revision 0.3  1998/12/15 13:05:18  wolff&n; * It works! Wow! Gotta start implementing IOCTL and stuff....&n; *&n; * Revision 0.2  1998/12/01 08:33:53  wolff&n; * moved over to 2.1.130&n; *&n; * Revision 0.1  1998/11/03 21:23:51  wolff&n; * Initial revision. Detects SX card.&n; *&n; * */
 DECL|macro|RCS_ID
-mdefine_line|#define RCS_ID &quot;$Id: sx.c,v 1.26 1999/08/05 15:22:14 wolff Exp $&quot;
+mdefine_line|#define RCS_ID &quot;$Id: sx.c,v 1.32 2000/03/07 17:01:02 wolff, pvdl Exp $&quot;
 DECL|macro|RCS_REV
-mdefine_line|#define RCS_REV &quot;$Revision: 1.26 $&quot;
+mdefine_line|#define RCS_REV &quot;$Revision: 1.32 $&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt; 
 macro_line|#include &lt;linux/kdev_t.h&gt;
@@ -36,232 +36,15 @@ DECL|macro|_u16
 mdefine_line|#define _u16 u16
 macro_line|#include &quot;sxboards.h&quot;
 macro_line|#include &quot;sxwindow.h&quot;
-multiline_comment|/* I don&squot;t think that this driver can handle more than 256 ports on&n;   one machine. You&squot;ll have to increase the number of boards in sx.h&n;   if you want more than 4 boards.  */
-multiline_comment|/* ************************************************************** */
-multiline_comment|/* * This section can be removed when 2.0 becomes outdated....  * */
-multiline_comment|/* ************************************************************** */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100    /* Less than 2.1.0 */
-DECL|macro|TWO_ZERO
-mdefine_line|#define TWO_ZERO
-macro_line|#else
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020200   /* less than 2.2.x */
-macro_line|#warning &quot;Please use a 2.2.x kernel. &quot;
-macro_line|#else
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020300   /* less than 2.3.x */
-DECL|macro|TWO_TWO
-mdefine_line|#define TWO_TWO
-macro_line|#else
-DECL|macro|TWO_THREE
-mdefine_line|#define TWO_THREE
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef TWO_ZERO
-multiline_comment|/* Here is the section that makes the 2.2 compatible driver source &n;   work for 2.0 too! We mostly try to adopt the &quot;new thingies&quot; from 2.2, &n;   and provide for compatibility stuff here if possible. */
-macro_line|#include &lt;linux/bios32.h&gt;
-DECL|macro|Get_user
-mdefine_line|#define Get_user(a,b)                a = get_user(b)
-DECL|macro|Put_user
-mdefine_line|#define Put_user(a,b)                0,put_user(a,b)
-DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user(a,b,c)          memcpy_tofs(a,b,c)
-DECL|function|copy_from_user
-r_static
-r_inline
-r_int
-id|copy_from_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-id|c
-)paren
-(brace
-id|memcpy_fromfs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|c
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|macro|pci_present
-mdefine_line|#define pci_present                  pcibios_present
-DECL|macro|pci_read_config_word
-mdefine_line|#define pci_read_config_word         pcibios_read_config_word
-DECL|macro|pci_read_config_dword
-mdefine_line|#define pci_read_config_dword        pcibios_read_config_dword
-DECL|function|get_irq
-r_static
-r_inline
-r_int
-r_char
-id|get_irq
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|fn
-)paren
-(brace
-r_int
-r_char
-id|t
-suffix:semicolon
-id|pcibios_read_config_byte
-(paren
-id|bus
-comma
-id|fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|t
-)paren
-suffix:semicolon
-r_return
-id|t
-suffix:semicolon
-)brace
-DECL|function|ioremap
-r_static
-r_inline
-r_void
-op_star
-id|ioremap
-c_func
-(paren
-r_int
-r_int
-id|base
-comma
-r_int
-id|length
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|base
-OL
-l_int|0x100000
-)paren
-r_return
-(paren
-r_void
-op_star
-)paren
-id|base
-suffix:semicolon
-r_return
-id|vremap
-(paren
-id|base
-comma
-id|length
-)paren
-suffix:semicolon
-)brace
-DECL|macro|my_iounmap
-mdefine_line|#define my_iounmap(x, b)             (((long)x&lt;0x100000)?0:vfree ((void*)x))
-DECL|macro|capable
-mdefine_line|#define capable(x)                   suser()
-DECL|macro|queue_task
-mdefine_line|#define queue_task                   queue_task_irq_off
-DECL|macro|tty_flip_buffer_push
-mdefine_line|#define tty_flip_buffer_push(tty)    queue_task(&amp;tty-&gt;flip.tqueue, &amp;tq_timer)
-DECL|macro|signal_pending
-mdefine_line|#define signal_pending(current)      (current-&gt;signal &amp; ~current-&gt;blocked)
-DECL|macro|schedule_timeout
-mdefine_line|#define schedule_timeout(to)         do {current-&gt;timeout = jiffies + (to);schedule ();} while (0)
-DECL|macro|time_after
-mdefine_line|#define time_after(t1,t2)            (((long)t1-t2) &gt; 0)
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(nr, addr)   set_bit(nr, addr)
-DECL|macro|test_and_clear_bit
-mdefine_line|#define test_and_clear_bit(nr, addr) clear_bit(nr, addr)
-multiline_comment|/* Not yet implemented on 2.0 */
-DECL|macro|ASYNC_SPD_SHI
-mdefine_line|#define ASYNC_SPD_SHI  -1
-DECL|macro|ASYNC_SPD_WARP
-mdefine_line|#define ASYNC_SPD_WARP -1
-multiline_comment|/* Ugly hack: the driver_name doesn&squot;t exist in 2.0.x . So we define it&n;   to the &quot;name&quot; field that does exist. As long as the assignments are&n;   done in the right order, there is nothing to worry about. */
-DECL|macro|driver_name
-mdefine_line|#define driver_name           name 
-multiline_comment|/* Should be in a header somewhere. They are in tty.h on 2.2 */
-DECL|macro|TTY_HW_COOK_OUT
-mdefine_line|#define TTY_HW_COOK_OUT       14 /* Flag to tell ntty what we can handle */
-DECL|macro|TTY_HW_COOK_IN
-mdefine_line|#define TTY_HW_COOK_IN        15 /* in hardware - output and input       */
-multiline_comment|/* The return type of a &quot;close&quot; routine. */
-DECL|macro|INT
-mdefine_line|#define INT                   void
-DECL|macro|NO_ERROR
-mdefine_line|#define NO_ERROR              /* Nothing */
-macro_line|#else
-multiline_comment|/* The 2.2.x compatibility section. */
-macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|Get_user
-mdefine_line|#define Get_user(a,b)         get_user(a,b)
-DECL|macro|Put_user
-mdefine_line|#define Put_user(a,b)         put_user(a,b)
-DECL|macro|get_irq
-mdefine_line|#define get_irq(pdev)         pdev-&gt;irq
-DECL|macro|INT
-mdefine_line|#define INT                   int
-DECL|macro|NO_ERROR
-mdefine_line|#define NO_ERROR              0
-DECL|macro|my_iounmap
-mdefine_line|#define my_iounmap(x,b)       (iounmap((char *)(b)))
-macro_line|#endif
-macro_line|#ifndef TWO_THREE
-multiline_comment|/* These are new in 2.3. The source now uses 2.3 syntax, and here is &n;   the compatibility define... */
-DECL|macro|wait_queue_head_t
-mdefine_line|#define wait_queue_head_t struct wait_queue *
-DECL|macro|DECLARE_MUTEX
-mdefine_line|#define DECLARE_MUTEX(name) struct semaphore name = MUTEX
-DECL|macro|DECLARE_WAITQUEUE
-mdefine_line|#define DECLARE_WAITQUEUE(wait, current) struct wait_queue wait = { current, NULL }
-macro_line|#endif
-DECL|macro|RS_EVENT_WRITE_WAKEUP
-macro_line|#undef RS_EVENT_WRITE_WAKEUP
-DECL|macro|RS_EVENT_WRITE_WAKEUP
-mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
-macro_line|#include &quot;generic_serial.h&quot;
+macro_line|#include &lt;linux/generic_serial.h&gt;
+macro_line|#include &lt;linux/compatmac.h&gt;
 macro_line|#include &quot;sx.h&quot;
-multiline_comment|/* ************************************************************** */
-multiline_comment|/* *                End of compatibility section..              * */
-multiline_comment|/* ************************************************************** */
+multiline_comment|/* I don&squot;t think that this driver can handle more than 256 ports on&n;   one machine. You&squot;ll have to increase the number of boards in sx.h&n;   if you want more than 4 boards.  */
 multiline_comment|/* Why the hell am I defining these here? */
 DECL|macro|SX_TYPE_NORMAL
 mdefine_line|#define SX_TYPE_NORMAL 1
 DECL|macro|SX_TYPE_CALLOUT
 mdefine_line|#define SX_TYPE_CALLOUT 2
-macro_line|#ifndef SX_NORMAL_MAJOR
-multiline_comment|/* This allows overriding on the compiler commandline, or in a &quot;major.h&quot; &n;   include or something like that */
-DECL|macro|SX_NORMAL_MAJOR
-mdefine_line|#define SX_NORMAL_MAJOR  32
-DECL|macro|SX_CALLOUT_MAJOR
-mdefine_line|#define SX_CALLOUT_MAJOR 33
-macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_SPECIALIX_SX_XIO_IO8
 DECL|macro|PCI_DEVICE_ID_SPECIALIX_SX_XIO_IO8
 mdefine_line|#define PCI_DEVICE_ID_SPECIALIX_SX_XIO_IO8 0x2000
@@ -338,7 +121,7 @@ id|ptr
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|sx_set_real_termios
 (paren
 r_void
@@ -457,18 +240,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_void
-id|my_hd
-(paren
-r_int
-r_char
-op_star
-id|addr
-comma
-r_int
-id|len
-)paren
-suffix:semicolon
 DECL|variable|sx_driver
 DECL|variable|sx_callout_driver
 r_static
@@ -565,7 +336,7 @@ id|sx_maxints
 op_assign
 l_int|100
 suffix:semicolon
-multiline_comment|/* These are the only open spaces in my computer. Yours may have more&n;   or less.... */
+multiline_comment|/* These are the only open spaces in my computer. Yours may have more&n;   or less.... -- REW &n;   duh: Card at 0xa0000 is possible on HP Netserver?? -- pvdl&n;*/
 DECL|variable|sx_probe_addrs
 r_int
 id|sx_probe_addrs
@@ -604,6 +375,8 @@ comma
 l_int|0xd8000
 comma
 l_int|0xe8000
+comma
+l_int|0xa0000
 )brace
 suffix:semicolon
 DECL|macro|NR_SX_ADDRS
@@ -620,6 +393,22 @@ l_int|1
 suffix:semicolon
 macro_line|#ifndef TWO_ZERO
 macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|sx_probe_addrs
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|si_probe_addrs
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -850,6 +639,155 @@ DECL|macro|TIMEOUT_1
 mdefine_line|#define TIMEOUT_1 30
 DECL|macro|TIMEOUT_2
 mdefine_line|#define TIMEOUT_2 1000000
+macro_line|#ifdef DEBUG
+DECL|function|my_hd
+r_static
+r_void
+id|my_hd
+(paren
+r_int
+r_char
+op_star
+id|addr
+comma
+r_int
+id|len
+)paren
+(brace
+r_int
+id|i
+comma
+id|j
+comma
+id|ch
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|len
+suffix:semicolon
+id|i
+op_add_assign
+l_int|16
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;%08x &quot;
+comma
+(paren
+r_int
+)paren
+id|addr
+op_plus
+id|i
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+l_int|16
+suffix:semicolon
+id|j
+op_increment
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;%02x %s&quot;
+comma
+id|addr
+(braket
+id|j
+op_plus
+id|i
+)braket
+comma
+(paren
+id|j
+op_eq
+l_int|7
+)paren
+ques
+c_cond
+l_string|&quot; &quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+l_int|16
+suffix:semicolon
+id|j
+op_increment
+)paren
+(brace
+id|ch
+op_assign
+id|addr
+(braket
+id|j
+op_plus
+id|i
+)braket
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;%c&quot;
+comma
+(paren
+id|ch
+OL
+l_int|0x20
+)paren
+ques
+c_cond
+l_char|&squot;.&squot;
+suffix:colon
+(paren
+(paren
+id|ch
+OG
+l_int|0x7f
+)paren
+ques
+c_cond
+l_char|&squot;.&squot;
+suffix:colon
+id|ch
+)paren
+)paren
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 multiline_comment|/* This needs redoing for Alpha -- REW -- Done. */
 DECL|function|write_sx_byte
 r_inline
@@ -1260,6 +1198,30 @@ suffix:semicolon
 )brace
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|IS_EISA_BOARD
+c_func
+(paren
+id|board
+)paren
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|board-&gt;irq
+op_lshift
+l_int|4
+comma
+id|board-&gt;eisa_base
+op_plus
+l_int|0xc02
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 multiline_comment|/* Gory details of the SI/ISA board */
 id|write_sx_byte
@@ -1389,8 +1351,46 @@ id|SX_CONF_BUSEN
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|IS_EISA_BOARD
+c_func
+(paren
+id|board
+)paren
+)paren
 (brace
-multiline_comment|/* Don&squot;t bug me about the clear_set. &n;&t;&t;   I haven&squot;t the foggiest idea what it&squot;s about -- REW*/
+id|write_sx_byte
+c_func
+(paren
+id|board
+comma
+id|SI2_EISA_OFF
+comma
+id|SI2_EISA_VAL
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+(paren
+id|board-&gt;irq
+op_lshift
+l_int|4
+)paren
+op_or
+l_int|4
+comma
+id|board-&gt;eisa_base
+op_plus
+l_int|0xc02
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Don&squot;t bug me about the clear_set. &n;&t;&t;   I haven&squot;t the foggiest idea what it&squot;s about -- REW */
 id|write_sx_byte
 (paren
 id|board
@@ -1452,6 +1452,26 @@ op_or
 id|SX_CONF_BUSEN
 op_or
 id|SX_CONF_HOSTIRQ
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|IS_EISA_BOARD
+c_func
+(paren
+id|board
+)paren
+)paren
+(brace
+id|inb
+c_func
+(paren
+id|board-&gt;eisa_base
+op_plus
+l_int|0xc03
 )paren
 suffix:semicolon
 )brace
@@ -1745,6 +1765,75 @@ id|module_type
 op_rshift
 l_int|4
 suffix:semicolon
+)brace
+DECL|function|sx_reconfigure_port
+r_static
+r_void
+id|sx_reconfigure_port
+c_func
+(paren
+r_struct
+id|sx_port
+op_star
+id|port
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sx_read_channel_byte
+(paren
+id|port
+comma
+id|hi_hstat
+)paren
+op_eq
+id|HS_IDLE_OPEN
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sx_send_command
+(paren
+id|port
+comma
+id|HS_CONFIG
+comma
+op_minus
+l_int|1
+comma
+id|HS_IDLE_OPEN
+)paren
+op_ne
+l_int|1
+)paren
+(brace
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;sx: Sent reconfigure command, but card didn&squot;t react.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|sx_dprintk
+(paren
+id|SX_DEBUG_TERMIOS
+comma
+l_string|&quot;sx: Not sending reconfigure: port isn&squot;t open (%02x).&bslash;n&quot;
+comma
+id|sx_read_channel_byte
+(paren
+id|port
+comma
+id|hi_hstat
+)paren
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|sx_setsignals
 r_static
@@ -2550,7 +2639,7 @@ suffix:semicolon
 multiline_comment|/* Simon Allen&squot;s version of this routine was 225 lines long. 85 is a lot&n;   better. -- REW */
 DECL|function|sx_set_real_termios
 r_static
-r_void
+r_int
 id|sx_set_real_termios
 (paren
 r_void
@@ -2935,62 +3024,12 @@ id|port-&gt;gs.tty
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sx_read_channel_byte
+id|sx_reconfigure_port
+c_func
 (paren
 id|port
-comma
-id|hi_hstat
-)paren
-op_eq
-id|HS_IDLE_OPEN
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sx_send_command
-(paren
-id|port
-comma
-id|HS_CONFIG
-comma
-op_minus
-l_int|1
-comma
-id|HS_IDLE_OPEN
-)paren
-op_ne
-l_int|1
-)paren
-(brace
-id|printk
-(paren
-id|KERN_WARNING
-l_string|&quot;sx: Sent reconfigure command, but card didn&squot;t react.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|sx_dprintk
-(paren
-id|SX_DEBUG_TERMIOS
-comma
-l_string|&quot;sx: Not sending reconfigure: port isn&squot;t open (%02x).&bslash;n&quot;
-comma
-id|sx_read_channel_byte
-(paren
-id|port
-comma
-id|hi_hstat
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Tell line discipline whether we will do input cooking */
 r_if
 c_cond
@@ -3098,6 +3137,9 @@ multiline_comment|/* port-&gt;c_dcd = sx_get_CD (port); */
 id|func_exit
 (paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ********************************************************************** *&n; *                   the interrupt related routines                       *&n; * ********************************************************************** */
@@ -4120,6 +4162,36 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|IS_EISA_BOARD
+c_func
+(paren
+id|board
+)paren
+)paren
+(brace
+id|inb
+c_func
+(paren
+id|board-&gt;eisa_base
+op_plus
+l_int|0xc03
+)paren
+suffix:semicolon
+id|write_sx_word
+c_func
+(paren
+id|board
+comma
+l_int|8
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 id|write_sx_byte
 (paren
@@ -4635,6 +4707,12 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|sx_reconfigure_port
+c_func
+(paren
+id|port
 )paren
 suffix:semicolon
 )brace
@@ -5719,14 +5797,56 @@ id|SXIO_GET_TYPE
 suffix:colon
 id|rc
 op_assign
+op_minus
+id|ENOENT
+suffix:semicolon
+multiline_comment|/* If we manage to miss one, return error. */
+r_if
+c_cond
+(paren
 id|IS_SX_BOARD
 (paren
 id|board
 )paren
-ques
-c_cond
+)paren
+id|rc
+op_assign
 id|SX_TYPE_SX
-suffix:colon
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_CF_BOARD
+(paren
+id|board
+)paren
+)paren
+id|rc
+op_assign
+id|SX_TYPE_CF
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_SI_BOARD
+(paren
+id|board
+)paren
+)paren
+id|rc
+op_assign
+id|SX_TYPE_SI
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_EISA_BOARD
+(paren
+id|board
+)paren
+)paren
+id|rc
+op_assign
 id|SX_TYPE_SI
 suffix:semicolon
 id|sx_dprintk
@@ -5953,7 +6073,7 @@ r_char
 op_star
 )paren
 (paren
-id|board-&gt;base
+id|board-&gt;base2
 op_plus
 id|offset
 op_plus
@@ -6190,6 +6310,15 @@ suffix:colon
 id|rc
 op_assign
 id|gs_debug
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SXIO_GETNPORTS
+suffix:colon
+id|rc
+op_assign
+id|sx_nports
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -6584,6 +6713,12 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+id|sx_reconfigure_port
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -6665,6 +6800,12 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+id|sx_reconfigure_port
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -6742,6 +6883,12 @@ l_int|1
 suffix:colon
 l_int|0
 )paren
+)paren
+suffix:semicolon
+id|sx_reconfigure_port
+c_func
+(paren
+id|port
 )paren
 suffix:semicolon
 )brace
@@ -6894,6 +7041,27 @@ id|board-&gt;flags
 op_or_assign
 id|SX_BOARD_INITIALIZED
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|read_sx_byte
+(paren
+id|board
+comma
+l_int|0
+)paren
+)paren
+multiline_comment|/* CF boards may need this. */
+id|write_sx_byte
+c_func
+(paren
+id|board
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/* This resets the processor again, to make sure it didn&squot;t do any&n;&t;   foolish things while we were downloading the image */
 r_if
 c_cond
@@ -6910,6 +7078,11 @@ suffix:semicolon
 id|sx_start_board
 (paren
 id|board
+)paren
+suffix:semicolon
+id|udelay
+(paren
+l_int|10
 )paren
 suffix:semicolon
 r_if
@@ -7287,10 +7460,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|IS_EISA_BOARD
+c_func
+(paren
+id|board
+)paren
+op_logical_or
 id|IS_SI_BOARD
 c_func
 (paren
 id|board
+)paren
 )paren
 op_logical_and
 (paren
@@ -7706,6 +7887,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|IS_CF_BOARD
+(paren
+id|board
+)paren
+)paren
+(brace
 id|sx_dprintk
 (paren
 id|SX_DEBUG_PROBE
@@ -7835,10 +8026,21 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)brace
 id|printheader
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|IS_CF_BOARD
+(paren
+id|board
+)paren
+)paren
+(brace
 id|printk
 (paren
 id|KERN_DEBUG
@@ -7902,7 +8104,7 @@ id|SX_ISA_UNIQUEID1
 )paren
 )paren
 (brace
-multiline_comment|/* This might be a bit harsh. This was the primary reason the&n;&t;&t;   SX/ISA card didn&squot;t work at first... */
+multiline_comment|/* This might be a bit harsh. This was the primary reason the&n;&t;&t;&t;   SX/ISA card didn&squot;t work at first... */
 id|printk
 (paren
 id|KERN_ERR
@@ -7953,6 +8155,7 @@ id|KERN_WARNING
 l_string|&quot;sx: Read sx.txt for more info.&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 id|board-&gt;nports
@@ -8045,6 +8248,17 @@ comma
 l_int|0x8
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|IS_EISA_BOARD
+c_func
+(paren
+id|board
+)paren
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -8084,6 +8298,7 @@ id|i
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 )brace
 id|printheader
@@ -8939,7 +9154,7 @@ suffix:semicolon
 DECL|macro|CNTRL_REG_OFFSET
 mdefine_line|#define CNTRL_REG_OFFSET        0x50
 DECL|macro|CNTRL_REG_GOODVALUE
-mdefine_line|#define CNTRL_REG_GOODVALUE     0x00260000
+mdefine_line|#define CNTRL_REG_GOODVALUE     0x18260000
 id|pci_read_config_dword
 c_func
 (paren
@@ -9033,6 +9248,9 @@ r_int
 id|found
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+id|eisa_slot
 suffix:semicolon
 r_struct
 id|sx_board
@@ -9220,9 +9438,17 @@ multiline_comment|/* sx_dprintk (SX_DEBUG_PROBE, &quot;pdev = %d/%d&t;(%x)&bslas
 r_if
 c_cond
 (paren
+(paren
 id|tshort
 op_ne
 l_int|0x0200
+)paren
+op_logical_and
+(paren
+id|tshort
+op_ne
+l_int|0x0300
+)paren
 )paren
 (brace
 id|sx_dprintk
@@ -9245,6 +9471,45 @@ id|boards
 id|found
 )braket
 suffix:semicolon
+id|board-&gt;flags
+op_and_assign
+op_complement
+id|SX_BOARD_TYPE
+suffix:semicolon
+id|board-&gt;flags
+op_or_assign
+(paren
+id|tshort
+op_eq
+l_int|0x200
+)paren
+ques
+c_cond
+id|SX_PCI_BOARD
+suffix:colon
+id|SX_CFPCI_BOARD
+suffix:semicolon
+multiline_comment|/* CF boards use base address 3.... */
+r_if
+c_cond
+(paren
+id|IS_CF_BOARD
+(paren
+id|board
+)paren
+)paren
+id|pci_read_config_dword
+c_func
+(paren
+id|pdev
+comma
+id|PCI_BASE_ADDRESS_3
+comma
+op_amp
+id|tint
+)paren
+suffix:semicolon
+r_else
 id|pci_read_config_dword
 c_func
 (paren
@@ -9262,6 +9527,8 @@ id|tint
 op_amp
 id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
+id|board-&gt;base2
+op_assign
 id|board-&gt;base
 op_assign
 (paren
@@ -9272,8 +9539,24 @@ c_func
 (paren
 id|board-&gt;hw_base
 comma
-id|SX_WINDOW_LEN
+id|WINDOW_LEN
+(paren
+id|board
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* Most of the stuff on the CF board is offset by&n;&t;&t;&t;   0x18000 ....  */
+r_if
+c_cond
+(paren
+id|IS_CF_BOARD
+(paren
+id|board
+)paren
+)paren
+id|board-&gt;base
+op_add_assign
+l_int|0x18000
 suffix:semicolon
 id|board-&gt;irq
 op_assign
@@ -9282,20 +9565,11 @@ id|get_irq
 id|pdev
 )paren
 suffix:semicolon
-id|board-&gt;flags
-op_and_assign
-op_complement
-id|SX_BOARD_TYPE
-suffix:semicolon
-id|board-&gt;flags
-op_or_assign
-id|SX_PCI_BOARD
-suffix:semicolon
 id|sx_dprintk
 (paren
 id|SX_DEBUG_PROBE
 comma
-l_string|&quot;Got a specialix card: %x/%x(%d).&bslash;n&quot;
+l_string|&quot;Got a specialix card: %x/%x(%d) %x.&bslash;n&quot;
 comma
 id|tint
 comma
@@ -9307,6 +9581,8 @@ dot
 id|base
 comma
 id|board-&gt;irq
+comma
+id|board-&gt;flags
 )paren
 suffix:semicolon
 r_if
@@ -9370,6 +9646,8 @@ id|sx_probe_addrs
 id|i
 )braket
 suffix:semicolon
+id|board-&gt;base2
+op_assign
 id|board-&gt;base
 op_assign
 (paren
@@ -9455,6 +9733,8 @@ id|si_probe_addrs
 id|i
 )braket
 suffix:semicolon
+id|board-&gt;base2
+op_assign
 id|board-&gt;base
 op_assign
 (paren
@@ -9507,6 +9787,207 @@ id|board-&gt;hw_base
 comma
 id|board-&gt;base
 )paren
+suffix:semicolon
+)brace
+)brace
+id|sx_dprintk
+c_func
+(paren
+id|SX_DEBUG_PROBE
+comma
+l_string|&quot;Probing for EISA cards&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|eisa_slot
+op_assign
+l_int|0x1000
+suffix:semicolon
+id|eisa_slot
+OL
+l_int|0x10000
+suffix:semicolon
+id|eisa_slot
+op_add_assign
+l_int|0x1000
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|eisa_slot
+op_plus
+l_int|0xc80
+)paren
+op_eq
+l_int|0x4d
+)paren
+op_logical_and
+(paren
+id|inb
+c_func
+(paren
+id|eisa_slot
+op_plus
+l_int|0xc81
+)paren
+op_eq
+l_int|0x98
+)paren
+)paren
+(brace
+id|sx_dprintk
+c_func
+(paren
+id|SX_DEBUG_PROBE
+comma
+l_string|&quot;%s : Signature found in EISA slot %d, Product %d Rev %d&bslash;n&quot;
+comma
+l_string|&quot;XIO&quot;
+comma
+(paren
+id|eisa_slot
+op_rshift
+l_int|12
+)paren
+comma
+id|inb
+c_func
+(paren
+id|eisa_slot
+op_plus
+l_int|0xc82
+)paren
+comma
+id|inb
+c_func
+(paren
+id|eisa_slot
+op_plus
+l_int|0xc83
+)paren
+)paren
+suffix:semicolon
+id|board
+op_assign
+op_amp
+id|boards
+(braket
+id|found
+)braket
+suffix:semicolon
+id|board-&gt;eisa_base
+op_assign
+id|eisa_slot
+suffix:semicolon
+id|board-&gt;flags
+op_and_assign
+op_complement
+id|SX_BOARD_TYPE
+suffix:semicolon
+id|board-&gt;flags
+op_or_assign
+id|SI_EISA_BOARD
+suffix:semicolon
+id|board-&gt;hw_base
+op_assign
+(paren
+(paren
+(paren
+id|inb
+c_func
+(paren
+l_int|0xc01
+op_plus
+id|eisa_slot
+)paren
+op_lshift
+l_int|8
+)paren
+op_plus
+id|inb
+c_func
+(paren
+l_int|0xc00
+op_plus
+id|eisa_slot
+)paren
+)paren
+op_lshift
+l_int|16
+)paren
+suffix:semicolon
+id|board-&gt;base2
+op_assign
+id|board-&gt;base
+op_assign
+(paren
+id|ulong
+)paren
+id|ioremap
+c_func
+(paren
+id|board-&gt;hw_base
+comma
+id|SI2_EISA_WINDOW_LEN
+)paren
+suffix:semicolon
+id|sx_dprintk
+c_func
+(paren
+id|SX_DEBUG_PROBE
+comma
+l_string|&quot;IO hw_base address: %x&bslash;n&quot;
+comma
+id|board-&gt;hw_base
+)paren
+suffix:semicolon
+id|sx_dprintk
+c_func
+(paren
+id|SX_DEBUG_PROBE
+comma
+l_string|&quot;base: %x&bslash;n&quot;
+comma
+id|board-&gt;base
+)paren
+suffix:semicolon
+id|board-&gt;irq
+op_assign
+id|inb
+c_func
+(paren
+id|board-&gt;eisa_base
+op_plus
+l_int|0xc02
+)paren
+op_rshift
+l_int|4
+suffix:semicolon
+id|sx_dprintk
+c_func
+(paren
+id|SX_DEBUG_PROBE
+comma
+l_string|&quot;IRQ: %d&bslash;n&quot;
+comma
+id|board-&gt;irq
+)paren
+suffix:semicolon
+id|probe_si
+c_func
+(paren
+id|board
+)paren
+suffix:semicolon
+id|found
+op_increment
 suffix:semicolon
 )brace
 )brace
@@ -9565,6 +10046,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -9727,160 +10209,5 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
-DECL|function|my_hd
-r_void
-id|my_hd
-(paren
-r_int
-r_char
-op_star
-id|addr
-comma
-r_int
-id|len
-)paren
-(brace
-r_int
-id|i
-comma
-id|j
-comma
-id|ch
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|len
-suffix:semicolon
-id|i
-op_add_assign
-l_int|16
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;%08x &quot;
-comma
-(paren
-r_int
-)paren
-id|addr
-op_plus
-id|i
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|j
-op_assign
-l_int|0
-suffix:semicolon
-id|j
-OL
-l_int|16
-suffix:semicolon
-id|j
-op_increment
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;%02x %s&quot;
-comma
-id|addr
-(braket
-id|j
-op_plus
-id|i
-)braket
-comma
-(paren
-id|j
-op_eq
-l_int|7
-)paren
-ques
-c_cond
-l_string|&quot; &quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|j
-op_assign
-l_int|0
-suffix:semicolon
-id|j
-OL
-l_int|16
-suffix:semicolon
-id|j
-op_increment
-)paren
-(brace
-id|ch
-op_assign
-id|addr
-(braket
-id|j
-op_plus
-id|i
-)braket
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;%c&quot;
-comma
-(paren
-id|ch
-OL
-l_int|0x20
-)paren
-ques
-c_cond
-l_char|&squot;.&squot;
-suffix:colon
-(paren
-(paren
-id|ch
-OG
-l_int|0x7f
-)paren
-ques
-c_cond
-l_char|&squot;.&squot;
-suffix:colon
-id|ch
-)paren
-)paren
-suffix:semicolon
-)brace
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
 macro_line|#endif
-macro_line|#ifdef MODULE
-DECL|macro|func_enter
-macro_line|#undef func_enter
-DECL|macro|func_exit
-macro_line|#undef func_exit
-macro_line|#include &quot;generic_serial.c&quot;
-macro_line|#endif
-multiline_comment|/*&n; * Anybody who knows why this doesn&squot;t work for me, please tell me -- REW.&n; * Snatched from scsi.c (fixed one spelling error):&n; * Overrides for Emacs so that we follow Linus&squot; tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

@@ -424,6 +424,7 @@ macro_line|#endif
 macro_line|#endif&t;/* MCA */
 multiline_comment|/*&n; * FDDI card reset&n; */
 DECL|function|card_start
+r_static
 r_void
 id|card_start
 c_func

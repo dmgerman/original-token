@@ -12,10 +12,7 @@ id|io_request_lock
 suffix:semicolon
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
 DECL|macro|NR_REQUEST
-mdefine_line|#define NR_REQUEST&t;128
-multiline_comment|/*&n; * This is used in the elevator algorithm.  We don&squot;t prioritise reads&n; * over writes any more --- although reads are more time-critical than&n; * writes, by treating them equally we increase filesystem throughput.&n; * This turns out to give better overall performance.  -- sct&n; */
-DECL|macro|IN_ORDER
-mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;rq_dev &lt; (s2)-&gt;rq_dev || (((s1)-&gt;rq_dev == (s2)-&gt;rq_dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))
+mdefine_line|#define NR_REQUEST&t;256
 multiline_comment|/*&n; * Initialization functions.&n; */
 r_extern
 r_int
@@ -374,7 +371,7 @@ id|READ
 id|req-&gt;q-&gt;elevator.read_pendings
 op_decrement
 suffix:semicolon
-id|req-&gt;q-&gt;nr_segments
+id|req-&gt;q-&gt;elevator.nr_segments
 op_sub_assign
 id|req-&gt;nr_segments
 suffix:semicolon

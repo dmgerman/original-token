@@ -2,8 +2,6 @@ multiline_comment|/*&n; *  generic_serial.h&n; *&n; *  Copyright (C) 1998 R.E.Wo
 macro_line|#ifndef GENERIC_SERIAL_H
 DECL|macro|GENERIC_SERIAL_H
 mdefine_line|#define GENERIC_SERIAL_H
-DECL|macro|RS_EVENT_WRITE_WAKEUP
-mdefine_line|#define RS_EVENT_WRITE_WAKEUP 0
 DECL|struct|real_driver
 r_struct
 id|real_driver
@@ -75,7 +73,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|member|set_real_termios
-r_void
+r_int
 (paren
 op_star
 id|set_real_termios

@@ -782,6 +782,10 @@ r_struct
 id|semaphore
 id|atomic_read
 suffix:semicolon
+DECL|member|read_lock
+id|spinlock_t
+id|read_lock
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* tty magic number */

@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_int
 id|aci_implied_cmd

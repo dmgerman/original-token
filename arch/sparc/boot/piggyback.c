@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: piggyback.c,v 1.2 1998/12/15 12:24:43 jj Exp $&n;   Simple utility to make a single-image install kernel with initial ramdisk&n;   for Sparc tftpbooting without need to set up nfs.&n;   &n;   Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
+multiline_comment|/* $Id: piggyback.c,v 1.3 2000/03/11 00:22:26 zaitcev Exp $&n;   Simple utility to make a single-image install kernel with initial ramdisk&n;   for Sparc tftpbooting without need to set up nfs.&n;   &n;   Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;ctype.h&gt;
@@ -9,7 +9,38 @@ macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
-multiline_comment|/* Note: run this on an a.out kernel (use elftoaout for it), as PROM looks for a.out image onlly&n;   usage: piggyback vmlinux System.map tail, where tail is gzipped fs of the initial ramdisk */
+multiline_comment|/*&n; * Note: run this on an a.out kernel (use elftoaout for it),&n; * as PROM looks for a.out image only.&n; */
+DECL|function|usage
+r_void
+id|usage
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* fs_img.gz is an image of initial ramdisk. */
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;Usage: piggyback vmlinux.aout System.map fs_img.gz&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;tKernel image will be modified in place.&bslash;n&quot;
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
 DECL|function|die
 r_void
 id|die
@@ -83,6 +114,18 @@ r_int
 id|image
 comma
 id|tail
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|argc
+op_ne
+l_int|4
+)paren
+id|usage
+c_func
+(paren
+)paren
 suffix:semicolon
 id|start
 op_assign

@@ -2257,6 +2257,20 @@ suffix:colon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|ioc.port
 OG
 id|privN-&gt;bcomm-&gt;bc_nports
@@ -3579,6 +3593,13 @@ id|jiffies
 )paren
 suffix:semicolon
 )paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* gcc 2.95 needs this */
 r_if
 c_cond
 (paren
@@ -3588,6 +3609,7 @@ l_int|2
 )paren
 r_break
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

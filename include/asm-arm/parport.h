@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * parport.h: ARM-specific parport initialisation&n; *&n; * Copyright (C) 1999  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
+multiline_comment|/*&n; * parport.h: ARM-specific parport initialisation&n; *&n; * Copyright (C) 1999, 2000  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
 macro_line|#ifndef __ASMARM_PARPORT_H
 DECL|macro|__ASMARM_PARPORT_H
 mdefine_line|#define __ASMARM_PARPORT_H
@@ -18,28 +18,6 @@ mdefine_line|#define __maybe_initdata __initdata
 DECL|macro|__maybe_init
 mdefine_line|#define __maybe_init __init
 macro_line|#endif
-r_static
-r_int
-id|__maybe_init
-id|parport_pc_init_pci
-c_func
-(paren
-r_int
-id|irq
-comma
-r_int
-id|dma
-)paren
-suffix:semicolon
-r_static
-r_int
-id|__devinit
-id|parport_pc_init_superio
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|__maybe_initdata
 r_static
 r_int
@@ -80,6 +58,24 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef MODULE
+id|detect_and_report_winbond
+c_func
+(paren
+)paren
+suffix:semicolon
+id|detect_and_report_smsc
+c_func
+(paren
+)paren
+suffix:semicolon
+id|count
+op_add_assign
+id|parport_pc_init_superio
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -165,14 +161,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef CONFIG_PCI
-id|count
-op_add_assign
-id|parport_pc_init_superio
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Probe all the likely ports. */
 r_if
 c_cond
@@ -252,23 +240,6 @@ l_int|NULL
 id|count
 op_increment
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-id|count
-op_add_assign
-id|parport_pc_init_pci
-(paren
-id|irq
-(braket
-l_int|0
-)braket
-comma
-id|dma
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 id|count

@@ -138,10 +138,14 @@ c_cond
 id|current-&gt;counter
 OG
 id|current-&gt;priority
+op_star
+l_int|2
 )paren
 id|current-&gt;counter
 op_assign
 id|current-&gt;priority
+op_star
+l_int|2
 suffix:semicolon
 id|free_task_struct
 c_func

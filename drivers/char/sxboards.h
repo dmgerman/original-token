@@ -196,6 +196,8 @@ DECL|macro|SI2_EISA_OFF
 mdefine_line|#define&t;&t;SI2_EISA_OFF&t; &t;0x42
 DECL|macro|SI2_EISA_VAL
 mdefine_line|#define&t;&t;SI2_EISA_VAL&t; &t;0x01
+DECL|macro|SI2_EISA_WINDOW_LEN
+mdefine_line|#define&t;&t;SI2_EISA_WINDOW_LEN     0x10000
 multiline_comment|/*****************************************************************************&n;***********************************         **********************************&n;***********************************   PCI   **********************************&n;***********************************         **********************************&n;*****************************************************************************/
 multiline_comment|/* General definitions... */
 DECL|macro|SPX_VENDOR_ID

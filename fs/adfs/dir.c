@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/adfs/dir.c&n; *&n; * Copyright (C) 1999 Russell King&n; *&n; * Common directory handling for ADFS&n; */
+multiline_comment|/*&n; * linux/fs/adfs/dir.c&n; *&n; * Copyright (C) 1999-2000 Russell King&n; *&n; * Common directory handling for ADFS&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -67,6 +67,18 @@ id|dir
 suffix:semicolon
 r_int
 id|ret
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|filp-&gt;f_pos
+op_rshift
+l_int|32
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|ret
 op_assign
@@ -96,6 +108,10 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|filp-&gt;f_pos
 )paren
 (brace
@@ -279,6 +295,13 @@ op_star
 id|obj
 )paren
 (brace
+r_int
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#ifdef CONFIG_ADFS_FS_RW
 r_struct
 id|adfs_dir_ops
 op_star
@@ -289,12 +312,6 @@ suffix:semicolon
 r_struct
 id|adfs_dir
 id|dir
-suffix:semicolon
-r_int
-id|ret
-op_assign
-op_minus
-id|EINVAL
 suffix:semicolon
 id|printk
 c_func
@@ -307,7 +324,6 @@ comma
 id|obj-&gt;parent_id
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren

@@ -709,9 +709,10 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
+multiline_comment|/* Was once sndstat */
 id|name
 op_assign
-l_string|&quot;sndstat&quot;
+l_string|&quot;unknown6&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -821,9 +822,9 @@ l_int|1
 comma
 id|name
 comma
-id|S_IRUGO
+id|S_IRUSR
 op_or
-id|S_IWUGO
+id|S_IWUSR
 )paren
 suffix:semicolon
 )brace
@@ -868,9 +869,9 @@ l_int|128
 comma
 l_string|&quot;mixer&quot;
 comma
-id|S_IRUGO
+id|S_IRUSR
 op_or
-id|S_IWUGO
+id|S_IWUSR
 )paren
 suffix:semicolon
 )brace
@@ -915,9 +916,9 @@ l_int|130
 comma
 l_string|&quot;midi&quot;
 comma
-id|S_IRUGO
+id|S_IRUSR
 op_or
-id|S_IWUGO
+id|S_IWUSR
 )paren
 suffix:semicolon
 )brace
@@ -963,11 +964,9 @@ l_int|131
 comma
 l_string|&quot;dsp&quot;
 comma
-id|S_IWUGO
+id|S_IWUSR
 op_or
 id|S_IRUSR
-op_or
-id|S_IRGRP
 )paren
 suffix:semicolon
 )brace
@@ -1012,9 +1011,9 @@ l_int|137
 comma
 l_string|&quot;synth&quot;
 comma
-id|S_IRUGO
+id|S_IRUSR
 op_or
-id|S_IWUGO
+id|S_IWUSR
 )paren
 suffix:semicolon
 )brace

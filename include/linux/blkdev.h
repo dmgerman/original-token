@@ -118,6 +118,7 @@ id|q
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#include &lt;linux/elevator.h&gt;
 DECL|typedef|merge_request_fn
 r_typedef
 r_int
@@ -237,35 +238,6 @@ op_star
 id|q
 )paren
 suffix:semicolon
-DECL|struct|elevator_s
-r_typedef
-r_struct
-id|elevator_s
-(brace
-DECL|member|sequence
-r_int
-id|sequence
-suffix:semicolon
-DECL|member|read_latency
-r_int
-id|read_latency
-suffix:semicolon
-DECL|member|write_latency
-r_int
-id|write_latency
-suffix:semicolon
-DECL|member|max_bomb_segments
-r_int
-id|max_bomb_segments
-suffix:semicolon
-DECL|member|read_pendings
-r_int
-id|read_pendings
-suffix:semicolon
-DECL|typedef|elevator_t
-)brace
-id|elevator_t
-suffix:semicolon
 DECL|struct|request_queue
 r_struct
 id|request_queue
@@ -279,11 +251,6 @@ multiline_comment|/* together with queue_head for cacheline sharing */
 DECL|member|elevator
 id|elevator_t
 id|elevator
-suffix:semicolon
-DECL|member|nr_segments
-r_int
-r_int
-id|nr_segments
 suffix:semicolon
 DECL|member|request_fn
 id|request_fn_proc
@@ -597,8 +564,6 @@ DECL|macro|MAX_READAHEAD
 mdefine_line|#define MAX_READAHEAD&t;31
 DECL|macro|MIN_READAHEAD
 mdefine_line|#define MIN_READAHEAD&t;3
-DECL|macro|ELEVATOR_DEFAULTS
-mdefine_line|#define ELEVATOR_DEFAULTS ((elevator_t) { 0, NR_REQUEST&gt;&gt;1, NR_REQUEST&lt;&lt;5, 4, 0, })
 DECL|macro|blkdev_entry_to_request
 mdefine_line|#define blkdev_entry_to_request(entry) list_entry((entry), struct request, queue)
 DECL|macro|blkdev_entry_next_request

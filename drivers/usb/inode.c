@@ -3,6 +3,7 @@ multiline_comment|/*&n; *&t;inode.c  --  Inode/Dentry functions for the USB devi
 multiline_comment|/*****************************************************************************/
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

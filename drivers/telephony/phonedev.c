@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *            Telephony registration for Linux&n; *&n; *              (c) Copyright 1999 Red Hat Software Inc.&n; *&n; *              This program is free software; you can redistribute it and/or&n; *              modify it under the terms of the GNU General Public License&n; *              as published by the Free Software Foundation; either version&n; *              2 of the License, or (at your option) any later version.&n; *&n; * Author:      Alan Cox, &lt;alan@redhat.com&gt;&n; *&n; * Fixes:&n; */
+multiline_comment|/*&n; *            Telephony registration for Linux&n; *&n; *              (c) Copyright 1999 Red Hat Software Inc.&n; *&n; *              This program is free software; you can redistribute it and/or&n; *              modify it under the terms of the GNU General Public License&n; *              as published by the Free Software Foundation; either version&n; *              2 of the License, or (at your option) any later version.&n; *&n; * Author:      Alan Cox, &lt;alan@redhat.com&gt;&n; *&n; * Fixes:       Mar 01 2000 Thomas Sparr, &lt;thomas.l.sparr@telia.com&gt;&n; *              phone_register_device now works with unit!=PHONE_UNIT_ANY&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -215,7 +215,10 @@ suffix:semicolon
 id|end
 op_assign
 id|unit
+op_plus
+l_int|1
 suffix:semicolon
+multiline_comment|/* enter the loop at least one time */
 )brace
 r_for
 c_loop

@@ -579,10 +579,10 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|free_page
+id|__free_page
 c_func
 (paren
-id|address
+id|page
 )paren
 suffix:semicolon
 id|rpc_release_task

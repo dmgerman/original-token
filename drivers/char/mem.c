@@ -15,16 +15,6 @@ macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
-macro_line|#ifdef CONFIG_VIDEO_BT848
-r_extern
-r_int
-id|i2c_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_I2C
 r_extern
 r_int
@@ -2715,13 +2705,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_FTAPE
 id|ftape_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_VIDEO_BT848
-id|i2c_init
 c_func
 (paren
 )paren

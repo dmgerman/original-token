@@ -78,6 +78,10 @@ id|SCpnt-&gt;request.q
 op_assign
 l_int|NULL
 suffix:semicolon
+id|SCpnt-&gt;request.nr_segments
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * We have the option of inserting the head or the tail of the queue.&n;&t; * Typically we use the tail for new ioctls and so forth.  We use the&n;&t; * head of the queue for things like a QUEUE_FULL message from a&n;&t; * device, or a host that is unable to accept a particular command.&n;&t; */
 id|spin_lock_irqsave
 c_func
@@ -189,6 +193,14 @@ r_void
 op_star
 )paren
 id|SRpnt
+suffix:semicolon
+id|SRpnt-&gt;sr_request.q
+op_assign
+l_int|NULL
+suffix:semicolon
+id|SRpnt-&gt;sr_request.nr_segments
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * We have the option of inserting the head or the tail of the queue.&n;&t; * Typically we use the tail for new ioctls and so forth.  We use the&n;&t; * head of the queue for things like a QUEUE_FULL message from a&n;&t; * device, or a host that is unable to accept a particular command.&n;&t; */
 id|spin_lock_irqsave

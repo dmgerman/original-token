@@ -772,6 +772,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
+id|__inline__
 r_void
 DECL|function|awc_fid_queue_init
 (def_block

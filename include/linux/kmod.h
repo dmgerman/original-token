@@ -55,7 +55,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|exec_usermodehelper
-r_extern
+r_static
 r_inline
 r_int
 id|exec_usermodehelper

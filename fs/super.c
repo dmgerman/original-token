@@ -4969,7 +4969,7 @@ id|dentry
 )paren
 )paren
 r_goto
-id|out
+id|fs_out
 suffix:semicolon
 id|inode
 op_assign
@@ -5113,6 +5113,14 @@ id|dput
 c_func
 (paren
 id|dentry
+)paren
+suffix:semicolon
+id|fs_out
+suffix:colon
+id|put_filesystem
+c_func
+(paren
+id|fstype
 )paren
 suffix:semicolon
 id|out

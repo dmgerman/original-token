@@ -28,38 +28,40 @@ id|__machine_arch_type
 suffix:semicolon
 multiline_comment|/* see arch/arm/kernel/setup.c for a description of these */
 DECL|macro|MACH_TYPE_EBSA110
-mdefine_line|#define MACH_TYPE_EBSA110&t;0
+mdefine_line|#define MACH_TYPE_EBSA110&t;&t;0
 DECL|macro|MACH_TYPE_RISCPC
-mdefine_line|#define MACH_TYPE_RISCPC&t;1
+mdefine_line|#define MACH_TYPE_RISCPC&t;&t;1
 DECL|macro|MACH_TYPE_NEXUSPCI
-mdefine_line|#define MACH_TYPE_NEXUSPCI&t;3
+mdefine_line|#define MACH_TYPE_NEXUSPCI&t;&t;3
 DECL|macro|MACH_TYPE_EBSA285
-mdefine_line|#define MACH_TYPE_EBSA285&t;4
+mdefine_line|#define MACH_TYPE_EBSA285&t;&t;4
 DECL|macro|MACH_TYPE_NETWINDER
-mdefine_line|#define MACH_TYPE_NETWINDER&t;5
+mdefine_line|#define MACH_TYPE_NETWINDER&t;&t;5
 DECL|macro|MACH_TYPE_CATS
-mdefine_line|#define MACH_TYPE_CATS&t;&t;6
+mdefine_line|#define MACH_TYPE_CATS&t;&t;&t;6
 DECL|macro|MACH_TYPE_TBOX
-mdefine_line|#define MACH_TYPE_TBOX&t;&t;7
+mdefine_line|#define MACH_TYPE_TBOX&t;&t;&t;7
 DECL|macro|MACH_TYPE_CO285
-mdefine_line|#define MACH_TYPE_CO285&t;&t;8
+mdefine_line|#define MACH_TYPE_CO285&t;&t;&t;8
 DECL|macro|MACH_TYPE_CLPS7110
-mdefine_line|#define MACH_TYPE_CLPS7110&t;9
+mdefine_line|#define MACH_TYPE_CLPS7110&t;&t;9
 DECL|macro|MACH_TYPE_ARCHIMEDES
-mdefine_line|#define MACH_TYPE_ARCHIMEDES&t;10
+mdefine_line|#define MACH_TYPE_ARCHIMEDES&t;&t;10
 DECL|macro|MACH_TYPE_A5K
-mdefine_line|#define MACH_TYPE_A5K&t;&t;11
+mdefine_line|#define MACH_TYPE_A5K&t;&t;&t;11
 DECL|macro|MACH_TYPE_ETOILE
-mdefine_line|#define MACH_TYPE_ETOILE&t;12
+mdefine_line|#define MACH_TYPE_ETOILE&t;&t;12
 DECL|macro|MACH_TYPE_LACIE_NAS
-mdefine_line|#define MACH_TYPE_LACIE_NAS&t;13
+mdefine_line|#define MACH_TYPE_LACIE_NAS&t;&t;13
 DECL|macro|MACH_TYPE_CLPS7500
-mdefine_line|#define MACH_TYPE_CLPS7500&t;14
+mdefine_line|#define MACH_TYPE_CLPS7500&t;&t;14
 DECL|macro|MACH_TYPE_SHARK
-mdefine_line|#define MACH_TYPE_SHARK&t;&t;15
+mdefine_line|#define MACH_TYPE_SHARK&t;&t;&t;15
 DECL|macro|MACH_TYPE_SA1100
-mdefine_line|#define MACH_TYPE_SA1100&t;16
-multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; */
+mdefine_line|#define MACH_TYPE_SA1100&t;&t;16
+DECL|macro|MACH_TYPE_PERSONAL_SERVER
+mdefine_line|#define MACH_TYPE_PERSONAL_SERVER&t;17
+multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; *&n; * In general, you should use machine_is_xxxx() in your code, not:&n; *  -  switch (machine_arch_type) { }&n; *  -  if (machine_arch_type = xxxx)&n; *  -  __machine_arch_type&n; */
 macro_line|#ifdef CONFIG_ARCH_EBSA110
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
@@ -156,6 +158,70 @@ macro_line|#else
 DECL|macro|machine_is_co285
 macro_line|# define machine_is_co285()&t;(0)
 macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_ARC
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_ARCHIMEDES
+macro_line|# endif
+DECL|macro|machine_is_arc
+macro_line|# define machine_is_arc()&t;(machine_arch_type == MACH_TYPE_ARCHIMEDES)
+macro_line|#else
+DECL|macro|machine_is_arc
+macro_line|# define machine_is_arc()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_A5K
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_A5K
+macro_line|# endif
+DECL|macro|machine_is_a5k
+macro_line|# define machine_is_a5k()&t;(machine_arch_type == MACH_TYPE_A5K)
+macro_line|#else
+DECL|macro|machine_is_a5k
+macro_line|# define machine_is_a5k()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_CLPS7500
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_CLPS7500
+macro_line|# endif
+DECL|macro|machine_is_clps7500
+macro_line|# define machine_is_clps7500()&t;(machine_arch_type == MACH_TYPE_CLPS7500)
+macro_line|#else
+DECL|macro|machine_is_clps7500
+macro_line|# define machine_is_clps7500()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_SHARK
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_SHARK
+macro_line|# endif
+DECL|macro|machine_is_shark
+macro_line|# define machine_is_shark()&t;(machine_arch_type == MACH_TYPE_SHARK)
+macro_line|#else
+DECL|macro|machine_is_shark
+macro_line|# define machine_is_shark()&t;(0)
+macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_SA1100
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
@@ -167,10 +233,26 @@ DECL|macro|machine_arch_type
 macro_line|#  define machine_arch_type&t;MACH_TYPE_SA1100
 macro_line|# endif
 DECL|macro|machine_is_sa1100
-macro_line|# define machine_is_sa1100()&t;(machine_arch_type == MACH_TYPE_SA1100
+macro_line|# define machine_is_sa1100()&t;(machine_arch_type == MACH_TYPE_SA1100)
 macro_line|#else
 DECL|macro|machine_is_sa1100
 macro_line|# define machine_is_sa1100()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_PERSONAL_SERVER
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_PERSONAL_SERVER
+macro_line|# endif
+DECL|macro|machine_is_personal_server
+macro_line|# define machine_is_personal_server()&t;(machine_arch_type == MACH_TYPE_PERSONAL_SERVER)
+macro_line|#else
+DECL|macro|machine_is_personal_server
+macro_line|# define machine_is_personal_server()&t;(0)
 macro_line|#endif
 macro_line|#ifndef machine_arch_type
 DECL|macro|machine_arch_type

@@ -638,7 +638,7 @@ suffix:semicolon
 id|req-&gt;nr_segments
 op_increment
 suffix:semicolon
-id|q-&gt;nr_segments
+id|q-&gt;elevator.nr_segments
 op_increment
 suffix:semicolon
 r_return
@@ -707,7 +707,7 @@ suffix:semicolon
 id|req-&gt;nr_segments
 op_increment
 suffix:semicolon
-id|q-&gt;nr_segments
+id|q-&gt;elevator.nr_segments
 op_increment
 suffix:semicolon
 r_return
@@ -756,7 +756,7 @@ multiline_comment|/*&n;&t;&t; * This will form the start of a new segment.  Bump
 id|req-&gt;nr_segments
 op_increment
 suffix:semicolon
-id|q-&gt;nr_segments
+id|q-&gt;elevator.nr_segments
 op_increment
 suffix:semicolon
 r_return
@@ -1518,7 +1518,7 @@ id|next-&gt;nr_segments
 op_minus
 l_int|1
 suffix:semicolon
-id|q-&gt;nr_segments
+id|q-&gt;elevator.nr_segments
 op_decrement
 suffix:semicolon
 macro_line|#ifdef DMA_CHUNK_SIZE

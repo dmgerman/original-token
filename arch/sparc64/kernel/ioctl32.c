@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.80 2000/02/17 06:45:09 jj Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.81 2000/03/12 04:02:07 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/mtio.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/loop.h&gt;
 macro_line|#include &lt;linux/auto_fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
@@ -15723,6 +15724,27 @@ id|COMPATIBLE_IOCTL
 c_func
 (paren
 id|AUTOFS_IOC_EXPIRE
+)paren
+multiline_comment|/* DEVFS */
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|DEVFSDIOC_GET_PROTO_REV
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|DEVFSDIOC_SET_EVENT_MASK
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|DEVFSDIOC_RELEASE_EVENT_QUEUE
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|DEVFSDIOC_SET_DEBUG_MASK
 )paren
 multiline_comment|/* Raw devices */
 id|COMPATIBLE_IOCTL

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-11-03&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -3272,7 +3272,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* we currently don&squot;t support segments at the user interface */
+multiline_comment|/* we currently don&squot;t support segmented records at the user interface */
 r_if
 c_cond
 (paren
@@ -4112,6 +4112,11 @@ op_or_assign
 id|MSG_TRUNC
 suffix:semicolon
 )brace
+multiline_comment|/* Currently, each datagram always contains a complete record */
+id|msg-&gt;msg_flags
+op_or_assign
+id|MSG_EOR
+suffix:semicolon
 id|skb_copy_datagram_iovec
 c_func
 (paren

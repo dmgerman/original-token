@@ -807,6 +807,11 @@ id|machine_is_co285
 c_func
 (paren
 )paren
+op_logical_or
+id|machine_is_personal_server
+c_func
+(paren
+)paren
 )paren
 multiline_comment|/*&n;&t;&t; * Add-in 21285s shouldn&squot;t access the RTC&n;&t;&t; */
 id|rtc_base
@@ -940,6 +945,11 @@ c_func
 )paren
 op_logical_or
 id|machine_is_co285
+c_func
+(paren
+)paren
+op_logical_or
+id|machine_is_personal_server
 c_func
 (paren
 )paren

@@ -4,109 +4,10 @@ macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100    /* Less than 2.1.0 */
-DECL|macro|TWO_ZERO
-mdefine_line|#define TWO_ZERO
-macro_line|#else
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020200   /* less than 2.2.x */
-macro_line|#warning &quot;Please use a 2.2.x kernel. &quot;
-macro_line|#else
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020300   /* less than 2.2.x */
-DECL|macro|TWO_TWO
-mdefine_line|#define TWO_TWO
-macro_line|#else
-DECL|macro|TWO_THREE
-mdefine_line|#define TWO_THREE
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef TWO_ZERO
-multiline_comment|/* Here is the section that makes the 2.2 compatible driver source &n;   work for 2.0 too! We mostly try to adopt the &quot;new thingies&quot; from 2.2, &n;   and provide for compatibility stuff here if possible. */
-multiline_comment|/* Some 200 days (on intel) */
-DECL|macro|MAX_SCHEDULE_TIMEOUT
-mdefine_line|#define MAX_SCHEDULE_TIMEOUT     ((long)(~0UL&gt;&gt;1))
-macro_line|#ifndef MODULE
-DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user(a,b,c)          memcpy_tofs(a,b,c)
-DECL|function|copy_from_user
-r_static
-r_inline
-r_int
-id|copy_from_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-id|c
-)paren
-(brace
-id|memcpy_fromfs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|c
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|macro|capable
-mdefine_line|#define capable(x)                   suser()
-DECL|macro|queue_task
-mdefine_line|#define queue_task                   queue_task_irq_off
-DECL|macro|tty_flip_buffer_push
-mdefine_line|#define tty_flip_buffer_push(tty)    queue_task(&amp;tty-&gt;flip.tqueue, &amp;tq_timer)
-DECL|macro|signal_pending
-mdefine_line|#define signal_pending(current)      (current-&gt;signal &amp; ~current-&gt;blocked)
-DECL|macro|schedule_timeout
-mdefine_line|#define schedule_timeout(to)         do {current-&gt;timeout = jiffies + (to);schedule ();} while (0)
-DECL|macro|time_after
-mdefine_line|#define time_after(t1,t2)            (((long)t1-t2) &gt; 0)
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(nr, addr)   set_bit(nr, addr)
-DECL|macro|test_and_clear_bit
-mdefine_line|#define test_and_clear_bit(nr, addr) clear_bit(nr, addr)
-multiline_comment|/* Not yet implemented on 2.0 */
-DECL|macro|ASYNC_SPD_SHI
-mdefine_line|#define ASYNC_SPD_SHI  -1
-DECL|macro|ASYNC_SPD_WARP
-mdefine_line|#define ASYNC_SPD_WARP -1
-multiline_comment|/* Ugly hack: the driver_name doesn&squot;t exist in 2.0.x . So we define it&n;   to the &quot;name&quot; field that does exist. As long as the assignments are&n;   done in the right order, there is nothing to worry about. */
-DECL|macro|driver_name
-mdefine_line|#define driver_name           name 
-multiline_comment|/* Should be in a header somewhere. */
-DECL|macro|TTY_HW_COOK_OUT
-mdefine_line|#define TTY_HW_COOK_OUT       14 /* Flag to tell ntty what we can handle */
-DECL|macro|TTY_HW_COOK_IN
-mdefine_line|#define TTY_HW_COOK_IN        15 /* in hardware - output and input       */
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifndef TWO_ZERO
-multiline_comment|/* This include is new with 2.2  (and required!) */
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#endif
-macro_line|#ifndef TWO_THREE
-multiline_comment|/* These are new in 2.3. The source now uses 2.3 syntax, and here is &n;   the compatibility define... */
-DECL|macro|wait_queue_head_t
-mdefine_line|#define wait_queue_head_t struct wait_queue *
-DECL|macro|DECLARE_MUTEX
-mdefine_line|#define DECLARE_MUTEX(name) struct semaphore name = MUTEX
-DECL|macro|DECLARE_WAITQUEUE
-mdefine_line|#define DECLARE_WAITQUEUE(wait, current) struct wait_queue wait = { current, NULL }
-macro_line|#endif
-macro_line|#include &quot;generic_serial.h&quot;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/generic_serial.h&gt;
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG 
 DECL|variable|tmp_buf
 r_static
 r_char
@@ -151,6 +52,158 @@ DECL|macro|LOCKIT
 mdefine_line|#define LOCKIT    save_flags (flags);cli ()
 DECL|macro|RELEASEIT
 mdefine_line|#define RELEASEIT restore_flags (flags)
+macro_line|#endif
+macro_line|#ifdef DEBUG
+DECL|function|my_hd
+r_static
+r_void
+id|my_hd
+(paren
+r_int
+r_char
+op_star
+id|addr
+comma
+r_int
+id|len
+)paren
+(brace
+r_int
+id|i
+comma
+id|j
+comma
+id|ch
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|len
+suffix:semicolon
+id|i
+op_add_assign
+l_int|16
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;%08x &quot;
+comma
+(paren
+r_int
+)paren
+id|addr
+op_plus
+id|i
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+l_int|16
+suffix:semicolon
+id|j
+op_increment
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;%02x %s&quot;
+comma
+id|addr
+(braket
+id|j
+op_plus
+id|i
+)braket
+comma
+(paren
+id|j
+op_eq
+l_int|7
+)paren
+ques
+c_cond
+l_string|&quot; &quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+l_int|16
+suffix:semicolon
+id|j
+op_increment
+)paren
+(brace
+id|ch
+op_assign
+id|addr
+(braket
+id|j
+op_plus
+id|i
+)braket
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;%c&quot;
+comma
+(paren
+id|ch
+OL
+l_int|0x20
+)paren
+ques
+c_cond
+l_char|&squot;.&squot;
+suffix:colon
+(paren
+(paren
+id|ch
+OG
+l_int|0x7f
+)paren
+ques
+c_cond
+l_char|&squot;.&squot;
+suffix:colon
+id|ch
+)paren
+)paren
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#else
+DECL|macro|my_hd
+mdefine_line|#define my_hd(addr,len) 
 macro_line|#endif
 DECL|function|gs_put_char
 r_void
@@ -1032,6 +1085,24 @@ id|port
 op_assign
 id|tty-&gt;driver_data
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|port-&gt;rd
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|port-&gt;rd-&gt;chars_in_buffer
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|func_exit
 (paren
 )paren
@@ -1047,7 +1118,7 @@ suffix:semicolon
 )brace
 DECL|function|gs_wait_tx_flushed
 r_static
-r_void
+r_int
 id|gs_wait_tx_flushed
 (paren
 r_void
@@ -1072,6 +1143,12 @@ r_int
 id|jiffies_to_transmit
 comma
 id|charsleft
+op_assign
+l_int|0
+comma
+id|rv
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|to
@@ -1139,6 +1216,8 @@ c_func
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 multiline_comment|/* This is an error which we don&squot;t know how to handle. */
 )brace
@@ -1185,6 +1264,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
+id|rv
 suffix:semicolon
 )brace
 id|gs_dprintk
@@ -1339,8 +1419,22 @@ id|signal_pending
 id|current
 )paren
 )paren
+(brace
+id|gs_dprintk
+(paren
+id|GS_DEBUG_FLUSH
+comma
+l_string|&quot;Signal pending. Bombing out: &quot;
+)paren
+suffix:semicolon
+id|rv
+op_assign
+op_minus
+id|EINTR
+suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 id|gs_dprintk
 (paren
@@ -1359,6 +1453,9 @@ id|func_exit
 c_func
 (paren
 )paren
+suffix:semicolon
+r_return
+id|rv
 suffix:semicolon
 )brace
 DECL|function|gs_flush_buffer
@@ -1619,6 +1716,11 @@ id|port
 r_int
 id|flags
 suffix:semicolon
+id|func_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1688,6 +1790,11 @@ suffix:semicolon
 id|restore_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|func_exit
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -2448,9 +2555,11 @@ op_logical_neg
 id|port-&gt;tty
 )paren
 (brace
-id|printk
+multiline_comment|/* This seems to happen when this is called from vhangup. */
+id|gs_dprintk
 (paren
-id|KERN_WARNING
+id|GS_DEBUG_CLOSE
+comma
 l_string|&quot;gs: Odd: port-&gt;tty is NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2558,6 +2667,16 @@ c_cond
 id|port-&gt;count
 )paren
 (brace
+id|gs_dprintk
+c_func
+(paren
+id|GS_DEBUG_CLOSE
+comma
+l_string|&quot;gs_close: count: %d&bslash;n&quot;
+comma
+id|port-&gt;count
+)paren
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -2612,6 +2731,7 @@ id|port-&gt;rd-&gt;disable_rx_interrupts
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/* close has no way of returning &quot;EINTR&quot;, so discard return value */
 r_if
 c_cond
 (paren
@@ -2664,6 +2784,16 @@ suffix:semicolon
 id|port-&gt;event
 op_assign
 l_int|0
+suffix:semicolon
+id|port-&gt;rd-&gt;close
+(paren
+id|port
+)paren
+suffix:semicolon
+id|port-&gt;rd-&gt;shutdown_port
+(paren
+id|port
+)paren
 suffix:semicolon
 id|port-&gt;tty
 op_assign
@@ -2718,16 +2848,6 @@ c_func
 (paren
 op_amp
 id|port-&gt;close_wait
-)paren
-suffix:semicolon
-id|port-&gt;rd-&gt;close
-(paren
-id|port
-)paren
-suffix:semicolon
-id|port-&gt;rd-&gt;shutdown_port
-(paren
-id|port
 )paren
 suffix:semicolon
 id|restore_flags
@@ -2819,6 +2939,8 @@ r_int
 id|baudrate
 comma
 id|tmp
+comma
+id|rv
 suffix:semicolon
 r_struct
 id|termios
@@ -2919,6 +3041,7 @@ l_string|&quot;gs_set_termios: optimized away&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+multiline_comment|/* 0 */
 suffix:semicolon
 )brace
 )brace
@@ -3238,6 +3361,8 @@ op_assign
 id|tmp
 suffix:semicolon
 multiline_comment|/* We should really wait for the characters to be all sent before&n;&t;   changing the settings. -- CAL */
+id|rv
+op_assign
 id|gs_wait_tx_flushed
 (paren
 id|port
@@ -3245,6 +3370,18 @@ comma
 id|MAX_SCHEDULE_TIMEOUT
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rv
+OL
+l_int|0
+)paren
+r_return
+multiline_comment|/* rv */
+suffix:semicolon
+id|rv
+op_assign
 id|port-&gt;rd
 op_member_access_from_pointer
 id|set_real_termios
@@ -3252,6 +3389,16 @@ c_func
 (paren
 id|port
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rv
+OL
+l_int|0
+)paren
+r_return
+multiline_comment|/* rv */
 suffix:semicolon
 r_if
 c_cond
@@ -3318,6 +3465,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
+multiline_comment|/* 0 */
 suffix:semicolon
 )brace
 multiline_comment|/* Must be called with interrupts enabled */
@@ -3768,4 +3916,28 @@ id|serial_struct
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_int
+id|cleanup_module
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

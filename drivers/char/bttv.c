@@ -3039,6 +3039,7 @@ l_string|&quot;PXC200 Initialised.&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/* ----------------------------------------------------------------------- */
+multiline_comment|/* for some vendors it is just the PCI ID */
 DECL|struct|VENDOR
 r_static
 r_struct
@@ -3070,6 +3071,12 @@ comma
 l_int|0x10b4
 comma
 l_string|&quot;STB Systems Inc&quot;
+)brace
+comma
+(brace
+l_int|0x1118
+comma
+l_string|&quot;Terratec&quot;
 )brace
 comma
 (brace
@@ -3169,6 +3176,16 @@ comma
 id|BTTV_HAUPPAUGE878
 comma
 l_string|&quot;???&quot;
+)brace
+comma
+(brace
+l_int|0x1118
+comma
+l_int|0x153b
+comma
+id|BTTV_TERRATVALUE
+comma
+l_string|&quot;TV Value&quot;
 )brace
 comma
 (brace
@@ -11895,6 +11912,12 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+id|set_pll
+c_func
+(paren
+id|btv
+)paren
+suffix:semicolon
 id|btv-&gt;user
 op_increment
 suffix:semicolon
@@ -12983,6 +13006,12 @@ c_func
 (paren
 op_amp
 id|btv-&gt;lock
+)paren
+suffix:semicolon
+id|set_pll
+c_func
+(paren
+id|btv
 )paren
 suffix:semicolon
 id|make_vbitab
@@ -16154,6 +16183,10 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+r_int
+r_int
+id|v
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -16175,6 +16208,23 @@ suffix:semicolon
 id|btv-&gt;radio
 op_assign
 l_int|1
+suffix:semicolon
+id|v
+op_assign
+l_int|400
+op_star
+l_int|16
+suffix:semicolon
+id|call_i2c_clients
+c_func
+(paren
+id|btv
+comma
+id|VIDIOCSFREQ
+comma
+op_amp
+id|v
+)paren
 suffix:semicolon
 id|call_i2c_clients
 c_func

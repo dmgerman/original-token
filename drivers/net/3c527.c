@@ -1,4 +1,4 @@
-multiline_comment|/* 3c527.c: 3Com Etherlink/MC32 driver for Linux&n; *&n; *&t;(c) Copyright 1998 Red Hat Software Inc&n; *&t;Written by Alan Cox.&n; *&n; *&t;Based on skeleton.c written 1993-94 by Donald Becker and ne2.c&n; *&t;(for the MCA stuff) written by Wim Dumon.&n; *&n; *&t;Thanks to 3Com for making this possible by providing me with the&n; *&t;documentation.&n; *&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; */
+multiline_comment|/* 3c527.c: 3Com Etherlink/MC32 driver for Linux&n; *&n; *&t;(c) Copyright 1998 Red Hat Software Inc&n; *&t;Written by Alan Cox.&n; *&t;Further debugging by Carl Drougge.&n; *&n; *&t;Based on skeleton.c written 1993-94 by Donald Becker and ne2.c&n; *&t;(for the MCA stuff) written by Wim Dumon.&n; *&n; *&t;Thanks to 3Com for making this possible by providing me with the&n; *&t;documentation.&n; *&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; */
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c527.c:v0.07 2000/01/18 Alan Cox (alan@redhat.com)&bslash;n&quot;
+l_string|&quot;3c527.c:v0.08 2000/02/22 Alan Cox (alan@redhat.com)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/**&n; * DOC: Traps for the unwary&n; *&n; *&t;The diagram (Figure 1-1) and the POS summary disagree with the&n; *&t;&quot;Interrupt Level&quot; section in the manual.&n; *&n; *&t;The documentation in places seems to miss things. In actual fact&n; *&t;I&squot;ve always eventually found everything is documented, it just&n; *&t;requires careful study.&n; *&n; * DOC: Theory Of Operation&n; *&n; *&t;The 3com 3c527 is a 32bit MCA bus mastering adapter with a large&n; *&t;amount of on board intelligence that housekeeps a somewhat dumber&n; *&t;Intel NIC. For performance we want to keep the transmit queue deep&n; *&t;as the card can transmit packets while fetching others from main&n; *&t;memory by bus master DMA. Transmission and reception are driven by&n; *&t;ring buffers. When updating the ring we are required to do some&n; *&t;housekeeping work using the mailboxes and the command register.&n; *&n; *&t;The mailboxes provide a method for sending control requests to the&n; *&t;card. The transmit mail box is used to update the transmit ring &n; *&t;pointers and the receive mail box to update the receive ring&n; *&t;pointers. The exec mailbox allows a variety of commands to be&n; *&t;executed. Each command must complete before the next is executed.&n; *&t;Primarily we use the exec mailbox for controlling the multicast lists.&n; *&t;We have to do a certain amount of interesting hoop jumping as the &n; *&t;multicast list changes can occur in interrupt state when the card&n; *&t;has an exec command pending. We defer such events until the command&n; *&t;completion interrupt.&n; *&n; *&t;The control register is used to pass status information. It tells us&n; *&t;the transmit and receive status for packets and allows us to control&n; *&t;the card operation mode. You must stop the card when emptying the&n; *&t;receive ring, or you will race with the ring buffer and lose packets.&n; */
 macro_line|#include &lt;linux/module.h&gt;
@@ -158,6 +158,10 @@ suffix:semicolon
 DECL|member|tx_halted
 id|u16
 id|tx_halted
+suffix:semicolon
+DECL|member|rx_pending
+id|u16
+id|rx_pending
 suffix:semicolon
 DECL|member|exec_pending
 id|u16
@@ -1491,6 +1495,19 @@ comma
 id|lp-&gt;base
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;tx_len
+OG
+id|TX_RING_MAX
+)paren
+(brace
+id|lp-&gt;tx_len
+op_assign
+id|TX_RING_MAX
+suffix:semicolon
+)brace
 id|dev-&gt;open
 op_assign
 id|mc32_open
@@ -1529,6 +1546,10 @@ suffix:semicolon
 id|lp-&gt;tx_halted
 op_assign
 l_int|1
+suffix:semicolon
+id|lp-&gt;rx_pending
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Fill in the fields of the device structure with ethernet values. */
 id|ether_setup
@@ -2060,6 +2081,10 @@ id|dev
 )paren
 suffix:semicolon
 id|lp-&gt;rx_halted
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;rx_pending
 op_assign
 l_int|0
 suffix:semicolon
@@ -2919,6 +2944,11 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -3007,6 +3037,41 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* TX suspend - shouldnt be needed but apparently is.&n;&t;   This is a research item ... */
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|HOST_STATUS
+)paren
+op_amp
+id|HOST_STATUS_CRR
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
+id|lp-&gt;tx_box-&gt;mbox
+op_assign
+l_int|0
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|3
+comma
+id|ioaddr
+op_plus
+id|HOST_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Transmit now stopped */
 multiline_comment|/* P is the last sending/sent buffer as a pointer */
 id|p
 op_assign
@@ -3115,10 +3180,40 @@ op_lshift
 l_int|6
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|HOST_STATUS
+)paren
+op_amp
+id|HOST_STATUS_CRR
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
 id|lp-&gt;tx_box-&gt;mbox
 op_assign
 l_int|0
 suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|5
+comma
+id|ioaddr
+op_plus
+id|HOST_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Restart TX */
 id|restore_flags
 c_func
 (paren
@@ -3471,6 +3566,7 @@ l_int|48
 (brace
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Restart ring processing&n;&t; */
 r_while
 c_loop
 (paren
@@ -3513,6 +3609,10 @@ op_plus
 id|HOST_CMD
 )paren
 suffix:semicolon
+id|lp-&gt;rx_halted
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/**&n; *&t;mc32_interrupt:&n; *&t;@irq: Interrupt number&n; *&t;@dev_id: 3c527 that requires servicing&n; *&t;@regs: Registers (unused)&n; *&n; *&t;The 3c527 interrupts us for four reasons. The command register &n; *&t;contains the message it wishes to send us packed into a single&n; *&t;byte field. We keep reading status entries until we have processed&n; *&t;all the transmit and control items, but simply count receive&n; *&t;reports. When the receive reports are in we can call the mc32_rx_ring&n; *&t;and empty the ring. This saves the overhead of multiple command requests&n; */
 DECL|function|mc32_interrupt
@@ -3552,11 +3652,6 @@ comma
 id|status
 comma
 id|boguscount
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|rx_event
 op_assign
 l_int|0
 suffix:semicolon
@@ -3821,10 +3916,50 @@ r_case
 l_int|2
 suffix:colon
 multiline_comment|/* RX */
-id|rx_event
+id|lp-&gt;rx_pending
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;rx_halted
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Halt ring receive&n;&t;&t;&t;&t;&t; */
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|HOST_STATUS
+)paren
+op_amp
+id|HOST_STATUS_CRR
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
+id|outb
+c_func
+(paren
+l_int|3
+op_lshift
+l_int|3
+comma
+id|ioaddr
+op_plus
+id|HOST_CMD
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -3866,15 +4001,18 @@ r_case
 l_int|6
 suffix:colon
 multiline_comment|/* Out of RX buffers stat */
-multiline_comment|/* Must restart */
 id|lp-&gt;net_stats.rx_dropped
 op_increment
 suffix:semicolon
-id|rx_event
+id|lp-&gt;rx_pending
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* To restart */
+multiline_comment|/* Must restart */
+id|lp-&gt;rx_halted
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -3973,11 +4111,13 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Process and restart the receive ring.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Process and restart the receive ring. This has some state&n;&t; *&t;as we must halt the ring to process it and halting the ring&n;&t; *&t;might not occur in the same IRQ handling loop as we issue&n;&t; *&t;the halt.&n;&t; */
 r_if
 c_cond
 (paren
-id|rx_event
+id|lp-&gt;rx_pending
+op_logical_and
+id|lp-&gt;rx_halted
 )paren
 (brace
 id|mc32_rx_ring
@@ -3985,6 +4125,10 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|lp-&gt;rx_pending
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_return

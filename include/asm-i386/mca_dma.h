@@ -43,6 +43,7 @@ DECL|macro|MCA_DMA_MODE_IO
 mdefine_line|#define MCA_DMA_MODE_IO    0x01  /* DMA from IO register */
 DECL|macro|MCA_DMA_MODE_16
 mdefine_line|#define MCA_DMA_MODE_16    0x40  /* 16 bit xfers */
+multiline_comment|/**&n; *&t;mca_enable_dma&t;-&t;channel to enable DMA on&n; *&t;@dmanr: DMA channel&n; *&n; *&t;Enable the MCA bus DMA on a channel. This can be called from&n; *&t;IRQ context.&n; */
 DECL|function|mca_enable_dma
 r_static
 id|__inline__
@@ -66,6 +67,7 @@ id|MCA_DMA_REG_FN
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mca_disble_dma&t;-&t;channel to disable DMA on&n; *&t;@dmanr: DMA channel&n; *&n; *&t;Enable the MCA bus DMA on a channel. This can be called from&n; *&t;IRQ context.&n; */
 DECL|function|mca_disable_dma
 r_static
 id|__inline__
@@ -89,6 +91,7 @@ id|MCA_DMA_REG_FN
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mca_set_dma_addr -&t;load a 24bit DMA address&n; *&t;@dmanr: DMA channel&n; *&t;@a: 24bit bus address&n; *&n; *&t;Load the address register in the DMA controller. This has a 24bit&n; *&t;limitation (16Mb). &n; */
 DECL|function|mca_set_dma_addr
 r_static
 id|__inline__
@@ -154,6 +157,7 @@ id|MCA_DMA_REG_EXE
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mca_get_dma_addr -&t;load a 24bit DMA address&n; *&t;@dmanr: DMA channel&n; *&n; *&t;Read the address register in the DMA controller. This has a 24bit&n; *&t;limitation (16Mb). The return is a bus address.&n; */
 DECL|function|mca_get_dma_addr
 r_static
 id|__inline__
@@ -213,6 +217,7 @@ r_return
 id|addr
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mca_set_dma_count -&t;load a 16bit transfer count&n; *&t;@dmanr: DMA channel&n; *&t;@count: count&n; *&n; *&t;Set the DMA count for this channel. This can be up to 64Kbytes.&n; *&t;Setting a count of zero will not do what you expect.&n; */
 DECL|function|mca_set_dma_count
 r_static
 id|__inline__
@@ -268,6 +273,7 @@ id|MCA_DMA_REG_EXE
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mca_get_dma_residue -&t;get the remaining bytes to transfer&n; *&t;@dmanr: DMA channel&n; *&n; *&t;This function returns the number of bytes left to transfer&n; *&t;on this DMA channel.&n; */
 DECL|function|mca_get_dma_residue
 r_static
 id|__inline__
@@ -319,6 +325,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mca_set_dma_io -&t;set the port for an I/O transfer&n; *&t;@dmanr: DMA channel&n; *&t;@io_addr: an I/O port number&n; *&n; *&t;Unlike the ISA bus DMA controllers the DMA on MCA bus can transfer&n; *&t;with an I/O port target.&n; */
 DECL|function|mca_set_dma_io
 r_static
 id|__inline__
@@ -371,6 +378,7 @@ id|MCA_DMA_REG_EXE
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;mca_set_dma_mode -&t;set the DMA mode&n; *&t;@dmanr: DMA channel&n; *&t;@mode: The mode to set&n; *&n; *&t;The DMA controller supports several modes. The mode values you can&n; *&t;set are &n; *&n; *&t;MCA_DMA_MODE_READ when reading from the DMA device.&n; *&n; *&t;MCA_DMA_MODE_WRITE to writing to the DMA device.&n; *&n; *&t;MCA_DMA_MODE_IO to do DMA to or from an I/O port.&n; *&n; *&t;MCA_DMA_MODE_16 to do 16bit transfers.&n; *&n; */
 DECL|function|mca_set_dma_mode
 r_static
 id|__inline__

@@ -1,30 +1,10 @@
-multiline_comment|/*&n; * parport.h: ia32-specific parport initialisation&n; *&n; * Copyright (C) 1999  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
+multiline_comment|/*&n; * parport.h: ia32-specific parport initialisation&n; *&n; * Copyright (C) 1999, 2000  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
 macro_line|#ifndef _ASM_I386_PARPORT_H
 DECL|macro|_ASM_I386_PARPORT_H
 mdefine_line|#define _ASM_I386_PARPORT_H 1
 multiline_comment|/* Maximum number of ports to support.  It is useless to set this greater&n;   than PARPORT_MAX (in &lt;linux/parport.h&gt;).  */
 DECL|macro|PARPORT_PC_MAX_PORTS
 mdefine_line|#define PARPORT_PC_MAX_PORTS  8
-r_static
-r_int
-id|parport_pc_init_pci
-c_func
-(paren
-r_int
-id|irq
-comma
-r_int
-id|dma
-)paren
-suffix:semicolon
-r_static
-r_int
-id|parport_pc_init_superio
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|__devinitdata
 r_static
 r_int
@@ -34,7 +14,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
-id|__init
+id|__devinit
 DECL|function|parport_pc_init
 id|parport_pc_init
 c_func
@@ -150,12 +130,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|count
-op_add_assign
-id|parport_pc_init_superio
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -233,22 +207,6 @@ l_int|NULL
 )paren
 id|count
 op_increment
-suffix:semicolon
-multiline_comment|/* probe for other PCI parallel devices */
-id|count
-op_add_assign
-id|parport_pc_init_pci
-(paren
-id|irq
-(braket
-l_int|0
-)braket
-comma
-id|dma
-(braket
-l_int|0
-)braket
-)paren
 suffix:semicolon
 )brace
 r_return

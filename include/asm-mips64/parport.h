@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport.h,v 1.2 2000/02/18 00:24:48 ralf Exp $&n; *&n; * parport.h: ia32-specific parport initialisation&n; *&n; * Copyright (C) 1999  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
+multiline_comment|/* $Id: parport.h,v 1.2 2000/02/18 00:24:48 ralf Exp $&n; *&n; * parport.h: ia32-specific parport initialisation&n; *&n; * Copyright (C) 1999, 2000  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
 macro_line|#ifndef _ASM_PARPORT_H
 DECL|macro|_ASM_PARPORT_H
 mdefine_line|#define _ASM_PARPORT_H 1
@@ -18,19 +18,6 @@ mdefine_line|#define __maybe_initdata __initdata
 DECL|macro|__maybe_init
 mdefine_line|#define __maybe_init __init
 macro_line|#endif
-r_static
-r_int
-id|__maybe_init
-id|parport_pc_init_pci
-c_func
-(paren
-r_int
-id|irq
-comma
-r_int
-id|dma
-)paren
-suffix:semicolon
 DECL|variable|__maybe_initdata
 r_static
 r_int
@@ -156,13 +143,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|count
-op_add_assign
-id|parport_pc_init_superio
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Probe all the likely ports. */
 r_if
 c_cond
 (paren
@@ -240,21 +220,6 @@ l_int|NULL
 )paren
 id|count
 op_increment
-suffix:semicolon
-id|count
-op_add_assign
-id|parport_pc_init_pci
-(paren
-id|irq
-(braket
-l_int|0
-)braket
-comma
-id|dma
-(braket
-l_int|0
-)braket
-)paren
 suffix:semicolon
 )brace
 r_return

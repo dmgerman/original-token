@@ -1,8 +1,8 @@
 multiline_comment|/******************************************************************************&n;**  High Performance device driver for the Symbios 53C896 controller.&n;**&n;**  Copyright (C) 1998-2000  Gerard Roudier &lt;groudier@club-internet.fr&gt;&n;**&n;**  This driver also supports all the Symbios 53C8XX controller family, &n;**  except 53C810 revisions &lt; 16, 53C825 revisions &lt; 16 and all &n;**  revisions of 53C815 controllers.&n;**&n;**  This driver is based on the Linux port of the FreeBSD ncr driver.&n;** &n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**  &n;**-----------------------------------------------------------------------------&n;**  &n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  The Linux port of the FreeBSD ncr driver has been achieved in &n;**  november 1995 by:&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  Major contributions:&n;**  --------------------&n;**&n;**  NVRAM detection and reading.&n;**    Copyright (C) 1997 Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;February 20 2000, sym53c8xx 1.5j&n;**&n;**&t;Supported SCSI features:&n;**&t;    Synchronous data transfers&n;**&t;    Wide16 SCSI BUS&n;**&t;    Disconnection/Reselection&n;**&t;    Tagged command queuing&n;**&t;    SCSI Parity checking&n;**&n;**&t;Supported NCR/SYMBIOS chips:&n;**&t;&t;53C810A&t;  (8 bits, Fast 10,&t; no rom BIOS) &n;**&t;&t;53C825A&t;  (Wide,   Fast 10,&t; on-board rom BIOS)&n;**&t;&t;53C860&t;  (8 bits, Fast 20,&t; no rom BIOS)&n;**&t;&t;53C875&t;  (Wide,   Fast 20,&t; on-board rom BIOS)&n;**&t;&t;53C876&t;  (Wide,   Fast 20 Dual, on-board rom BIOS)&n;**&t;&t;53C895&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C895A&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C896&t;  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&t;&t;53C1510D  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO&n;**&t;&t;Module&n;**&t;&t;Shared IRQ&n;*/
+multiline_comment|/*&n;**&t;March 6 2000, sym53c8xx 1.5k&n;**&n;**&t;Supported SCSI features:&n;**&t;    Synchronous data transfers&n;**&t;    Wide16 SCSI BUS&n;**&t;    Disconnection/Reselection&n;**&t;    Tagged command queuing&n;**&t;    SCSI Parity checking&n;**&n;**&t;Supported NCR/SYMBIOS chips:&n;**&t;&t;53C810A&t;  (8 bits, Fast 10,&t; no rom BIOS) &n;**&t;&t;53C825A&t;  (Wide,   Fast 10,&t; on-board rom BIOS)&n;**&t;&t;53C860&t;  (8 bits, Fast 20,&t; no rom BIOS)&n;**&t;&t;53C875&t;  (Wide,   Fast 20,&t; on-board rom BIOS)&n;**&t;&t;53C876&t;  (Wide,   Fast 20 Dual, on-board rom BIOS)&n;**&t;&t;53C895&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C895A&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C896&t;  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&t;&t;53C1510D  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO&n;**&t;&t;Module&n;**&t;&t;Shared IRQ&n;*/
 multiline_comment|/*&n;**&t;Name and version of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;sym53c8xx - version 1.5j&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;sym53c8xx - version 1.5k&quot;
 multiline_comment|/* #define DEBUG_896R1 */
 DECL|macro|SCSI_NCR_OPTIMIZE_896
 mdefine_line|#define SCSI_NCR_OPTIMIZE_896
@@ -82,6 +82,10 @@ id|u64
 id|u_int64
 suffix:semicolon
 macro_line|#include &quot;sym53c8xx.h&quot;
+DECL|macro|MIN
+mdefine_line|#define MIN(a,b)        (((a) &lt; (b)) ? (a) : (b))
+DECL|macro|MAX
+mdefine_line|#define MAX(a,b)        (((a) &gt; (b)) ? (a) : (b))
 multiline_comment|/*&n;**&t;Hmmm... What complex some PCI-HOST bridges actually are, &n;**&t;despite the fact that the PCI specifications are looking &n;**&t;so smart and simple! ;-)&n;*/
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,3,47)
 DECL|macro|SCSI_NCR_DYNAMIC_DMA_MAPPING
@@ -2254,7 +2258,7 @@ r_return
 id|vp
 suffix:semicolon
 )brace
-)brace
+r_else
 id|__m_free
 c_func
 (paren
@@ -2272,6 +2276,7 @@ comma
 l_string|&quot;VTOB&quot;
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -3291,6 +3296,7 @@ mdefine_line|#define&t;SCSI_DATA_NONE&t;&t;3
 DECL|function|scsi_data_direction
 r_static
 id|__inline__
+r_int
 id|scsi_data_direction
 c_func
 (paren
@@ -4457,14 +4463,17 @@ DECL|macro|HF_DP_SAVED
 mdefine_line|#define HF_DP_SAVED&t;(1u&lt;&lt;3)
 DECL|macro|HF_AUTO_SENSE
 mdefine_line|#define HF_AUTO_SENSE&t;(1u&lt;&lt;4)
-DECL|macro|HF_DATA_ST
-mdefine_line|#define HF_DATA_ST&t;(1u&lt;&lt;5)
+DECL|macro|HF_DATA_IN
+mdefine_line|#define HF_DATA_IN&t;(1u&lt;&lt;5)
 DECL|macro|HF_PM_TO_C
 mdefine_line|#define HF_PM_TO_C&t;(1u&lt;&lt;6)
 macro_line|#ifdef SCSI_NCR_IARB_SUPPORT
 DECL|macro|HF_HINT_IARB
 mdefine_line|#define HF_HINT_IARB&t;(1u&lt;&lt;7)
 macro_line|#endif
+multiline_comment|/*&n;**&t;This one is stolen from QU_REG.:)&n;*/
+DECL|macro|HF_DATA_ST
+mdefine_line|#define HF_DATA_ST&t;(1u&lt;&lt;7)
 multiline_comment|/*&n;**&t;First four bytes (script)&n;*/
 DECL|macro|xerr_st
 mdefine_line|#define  xerr_st       header.scr_st[0]
@@ -5680,14 +5689,42 @@ DECL|member|pm0_data
 id|ncrcmd
 id|pm0_data
 (braket
-l_int|16
+l_int|12
+)braket
+suffix:semicolon
+DECL|member|pm0_data_out
+id|ncrcmd
+id|pm0_data_out
+(braket
+l_int|6
+)braket
+suffix:semicolon
+DECL|member|pm0_data_end
+id|ncrcmd
+id|pm0_data_end
+(braket
+l_int|6
 )braket
 suffix:semicolon
 DECL|member|pm1_data
 id|ncrcmd
 id|pm1_data
 (braket
-l_int|16
+l_int|12
+)braket
+suffix:semicolon
+DECL|member|pm1_data_out
+id|ncrcmd
+id|pm1_data_out
+(braket
+l_int|6
+)braket
+suffix:semicolon
+DECL|member|pm1_data_end
+id|ncrcmd
+id|pm1_data_end
+(braket
+l_int|6
 )braket
 suffix:semicolon
 )brace
@@ -5897,7 +5934,7 @@ DECL|member|data_io_out
 id|ncrcmd
 id|data_io_out
 (braket
-l_int|10
+l_int|12
 )braket
 suffix:semicolon
 DECL|member|bad_identify
@@ -7682,7 +7719,7 @@ comma
 macro_line|#ifdef SCSI_NCR_PROFILE_SUPPORT
 id|SCR_REG_REG
 (paren
-id|HF_REG
+id|QU_REG
 comma
 id|SCR_OR
 comma
@@ -8238,7 +8275,7 @@ id|phys.num_disc
 comma
 id|SCR_FROM_REG
 (paren
-id|HF_REG
+id|QU_REG
 )paren
 comma
 l_int|0
@@ -9008,7 +9045,49 @@ comma
 multiline_comment|/*-------------------------&lt; PM0_DATA &gt;--------------------*/
 comma
 (brace
-multiline_comment|/*&n;&t;**&t;Keep track we are executing the PM0 DATA &n;&t;**&t;mini-script.&n;&t;*/
+multiline_comment|/*&n;&t;**&t;Read our host flags to SFBR, so we will be able &n;&t;**&t;to check against the data direction we expect.&n;&t;*/
+id|SCR_FROM_REG
+(paren
+id|HF_REG
+)paren
+comma
+l_int|0
+comma
+multiline_comment|/*&n;&t;**&t;Check against actual DATA PHASE.&n;&t;*/
+id|SCR_JUMP
+op_xor
+id|IFFALSE
+(paren
+id|WHEN
+(paren
+id|SCR_DATA_IN
+)paren
+)paren
+comma
+id|PADDR
+(paren
+id|pm0_data_out
+)paren
+comma
+multiline_comment|/*&n;&t;**&t;Actual phase is DATA IN.&n;&t;**&t;Check against expected direction.&n;&t;*/
+id|SCR_JUMP
+op_xor
+id|IFFALSE
+(paren
+id|MASK
+(paren
+id|HF_DATA_IN
+comma
+id|HF_DATA_IN
+)paren
+)paren
+comma
+id|PADDRH
+(paren
+id|no_data
+)paren
+comma
+multiline_comment|/*&n;&t;**&t;Keep track we are moving data from the &n;&t;**&t;PM0 DATA mini-script.&n;&t;*/
 id|SCR_REG_REG
 (paren
 id|HF_REG
@@ -9020,19 +9099,7 @@ id|HF_IN_PM0
 comma
 l_int|0
 comma
-multiline_comment|/*&n;&t;**&t;MOVE the data according to the actual &n;&t;**&t;DATA direction.&n;&t;*/
-id|SCR_JUMPR
-op_xor
-id|IFFALSE
-(paren
-id|WHEN
-(paren
-id|SCR_DATA_IN
-)paren
-)paren
-comma
-l_int|16
-comma
+multiline_comment|/*&n;&t;**&t;Move the data to memory.&n;&t;*/
 id|SCR_CHMOV_TBL
 op_xor
 id|SCR_DATA_IN
@@ -9045,10 +9112,48 @@ comma
 id|phys.pm0.sg
 )paren
 comma
-id|SCR_JUMPR
+id|SCR_JUMP
 comma
-l_int|8
+id|PADDR
+(paren
+id|pm0_data_end
+)paren
 comma
+)brace
+multiline_comment|/*-------------------------&lt; PM0_DATA_OUT &gt;----------------*/
+comma
+(brace
+multiline_comment|/*&n;&t;**&t;Actual phase is DATA OUT.&n;&t;**&t;Check against expected direction.&n;&t;*/
+id|SCR_JUMP
+op_xor
+id|IFTRUE
+(paren
+id|MASK
+(paren
+id|HF_DATA_IN
+comma
+id|HF_DATA_IN
+)paren
+)paren
+comma
+id|PADDRH
+(paren
+id|no_data
+)paren
+comma
+multiline_comment|/*&n;&t;**&t;Keep track we are moving data from the &n;&t;**&t;PM0 DATA mini-script.&n;&t;*/
+id|SCR_REG_REG
+(paren
+id|HF_REG
+comma
+id|SCR_OR
+comma
+id|HF_IN_PM0
+)paren
+comma
+l_int|0
+comma
+multiline_comment|/*&n;&t;**&t;Move the data from memory.&n;&t;*/
 id|SCR_CHMOV_TBL
 op_xor
 id|SCR_DATA_OUT
@@ -9061,7 +9166,11 @@ comma
 id|phys.pm0.sg
 )paren
 comma
-multiline_comment|/*&n;&t;**&t;Clear the flag that told we were in &n;&t;**&t;the PM0 DATA mini-script.&n;&t;*/
+)brace
+multiline_comment|/*-------------------------&lt; PM0_DATA_END &gt;----------------*/
+comma
+(brace
+multiline_comment|/*&n;&t;**&t;Clear the flag that told we were moving  &n;&t;**&t;data from the PM0 DATA mini-script.&n;&t;*/
 id|SCR_REG_REG
 (paren
 id|HF_REG
@@ -9100,7 +9209,49 @@ comma
 multiline_comment|/*-------------------------&lt; PM1_DATA &gt;--------------------*/
 comma
 (brace
-multiline_comment|/*&n;&t;**&t;Keep track we are executing the PM1 DATA &n;&t;**&t;mini-script.&n;&t;*/
+multiline_comment|/*&n;&t;**&t;Read our host flags to SFBR, so we will be able &n;&t;**&t;to check against the data direction we expect.&n;&t;*/
+id|SCR_FROM_REG
+(paren
+id|HF_REG
+)paren
+comma
+l_int|0
+comma
+multiline_comment|/*&n;&t;**&t;Check against actual DATA PHASE.&n;&t;*/
+id|SCR_JUMP
+op_xor
+id|IFFALSE
+(paren
+id|WHEN
+(paren
+id|SCR_DATA_IN
+)paren
+)paren
+comma
+id|PADDR
+(paren
+id|pm1_data_out
+)paren
+comma
+multiline_comment|/*&n;&t;**&t;Actual phase is DATA IN.&n;&t;**&t;Check against expected direction.&n;&t;*/
+id|SCR_JUMP
+op_xor
+id|IFFALSE
+(paren
+id|MASK
+(paren
+id|HF_DATA_IN
+comma
+id|HF_DATA_IN
+)paren
+)paren
+comma
+id|PADDRH
+(paren
+id|no_data
+)paren
+comma
+multiline_comment|/*&n;&t;**&t;Keep track we are moving data from the &n;&t;**&t;PM1 DATA mini-script.&n;&t;*/
 id|SCR_REG_REG
 (paren
 id|HF_REG
@@ -9112,19 +9263,7 @@ id|HF_IN_PM1
 comma
 l_int|0
 comma
-multiline_comment|/*&n;&t;**&t;MOVE the data according to the actual &n;&t;**&t;DATA direction.&n;&t;*/
-id|SCR_JUMPR
-op_xor
-id|IFFALSE
-(paren
-id|WHEN
-(paren
-id|SCR_DATA_IN
-)paren
-)paren
-comma
-l_int|16
-comma
+multiline_comment|/*&n;&t;**&t;Move the data to memory.&n;&t;*/
 id|SCR_CHMOV_TBL
 op_xor
 id|SCR_DATA_IN
@@ -9137,10 +9276,48 @@ comma
 id|phys.pm1.sg
 )paren
 comma
-id|SCR_JUMPR
+id|SCR_JUMP
 comma
-l_int|8
+id|PADDR
+(paren
+id|pm1_data_end
+)paren
 comma
+)brace
+multiline_comment|/*-------------------------&lt; PM1_DATA_OUT &gt;----------------*/
+comma
+(brace
+multiline_comment|/*&n;&t;**&t;Actual phase is DATA OUT.&n;&t;**&t;Check against expected direction.&n;&t;*/
+id|SCR_JUMP
+op_xor
+id|IFTRUE
+(paren
+id|MASK
+(paren
+id|HF_DATA_IN
+comma
+id|HF_DATA_IN
+)paren
+)paren
+comma
+id|PADDRH
+(paren
+id|no_data
+)paren
+comma
+multiline_comment|/*&n;&t;**&t;Keep track we are moving data from the &n;&t;**&t;PM1 DATA mini-script.&n;&t;*/
+id|SCR_REG_REG
+(paren
+id|HF_REG
+comma
+id|SCR_OR
+comma
+id|HF_IN_PM1
+)paren
+comma
+l_int|0
+comma
+multiline_comment|/*&n;&t;**&t;Move the data from memory.&n;&t;*/
 id|SCR_CHMOV_TBL
 op_xor
 id|SCR_DATA_OUT
@@ -9153,7 +9330,11 @@ comma
 id|phys.pm1.sg
 )paren
 comma
-multiline_comment|/*&n;&t;**&t;Clear the flag that told we were in &n;&t;**&t;the PM1 DATA mini-script.&n;&t;*/
+)brace
+multiline_comment|/*-------------------------&lt; PM1_DATA_END &gt;----------------*/
+comma
+(brace
+multiline_comment|/*&n;&t;**&t;Clear the flag that told we were moving  &n;&t;**&t;data from the PM1 DATA mini-script.&n;&t;*/
 id|SCR_REG_REG
 (paren
 id|HF_REG
@@ -10391,6 +10572,20 @@ multiline_comment|/*-------------------------&lt; DATA_IO_OUT &gt;--------------
 comma
 (brace
 multiline_comment|/*&n;&t;**&t;Direction is DATA OUT.&n;&t;*/
+id|SCR_REG_REG
+(paren
+id|HF_REG
+comma
+id|SCR_AND
+comma
+(paren
+op_complement
+id|HF_DATA_IN
+)paren
+)paren
+comma
+l_int|0
+comma
 id|SCR_LOAD_REL
 (paren
 id|scratcha
@@ -15108,11 +15303,9 @@ id|device-&gt;pdev
 suffix:semicolon
 id|np-&gt;p_ncb
 op_assign
-id|__vtobus
+id|vtobus
 c_func
 (paren
-id|device-&gt;pdev
-comma
 id|np
 )paren
 suffix:semicolon
@@ -17241,6 +17434,14 @@ op_star
 id|cmd
 )paren
 (brace
+id|unmap_scsi_data
+c_func
+(paren
+id|np
+comma
+id|cmd
+)paren
+suffix:semicolon
 id|cmd-&gt;host_scribble
 op_assign
 (paren
@@ -17261,9 +17462,6 @@ r_void
 id|ncr_flush_done_cmds
 c_func
 (paren
-id|pcidev_t
-id|pdev
-comma
 id|Scsi_Cmnd
 op_star
 id|lcmd
@@ -17290,14 +17488,6 @@ id|Scsi_Cmnd
 op_star
 )paren
 id|cmd-&gt;host_scribble
-suffix:semicolon
-id|__unmap_scsi_data
-c_func
-(paren
-id|pdev
-comma
-id|cmd
-)paren
 suffix:semicolon
 id|cmd
 op_member_access_from_pointer
@@ -18160,6 +18350,10 @@ multiline_comment|/* fall through */
 r_case
 id|SCSI_DATA_READ
 suffix:colon
+id|cp-&gt;host_flags
+op_or_assign
+id|HF_DATA_IN
+suffix:semicolon
 id|goalp
 op_assign
 id|NCB_SCRIPT_PHYS
@@ -18368,7 +18562,16 @@ id|cp-&gt;cdb_buf
 comma
 id|cmd-&gt;cmnd
 comma
+id|MIN
+c_func
+(paren
 id|cmd-&gt;cmd_len
+comma
+r_sizeof
+(paren
+id|cp-&gt;cdb_buf
+)paren
+)paren
 )paren
 suffix:semicolon
 id|cp-&gt;phys.cmd.addr
@@ -26735,7 +26938,11 @@ l_int|0
 suffix:semicolon
 id|cp-&gt;host_flags
 op_and_assign
+(paren
 id|HF_PM_TO_C
+op_or
+id|HF_DATA_IN
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -26910,7 +27117,7 @@ l_int|4
 op_assign
 r_sizeof
 (paren
-id|cmd-&gt;sense_buffer
+id|cp-&gt;sense_buf
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;**&t;sense data&n;&t;&t;*/
@@ -27022,7 +27229,11 @@ id|S_ILLEGAL
 suffix:semicolon
 id|cp-&gt;host_flags
 op_assign
+(paren
 id|HF_AUTO_SENSE
+op_or
+id|HF_DATA_IN
+)paren
 suffix:semicolon
 id|cp-&gt;phys.header.go.start
 op_assign
@@ -37917,12 +38128,22 @@ id|sts
 op_ne
 id|DID_OK
 )paren
+(brace
+id|unmap_scsi_data
+c_func
+(paren
+id|np
+comma
+id|cmd
+)paren
+suffix:semicolon
 id|done
 c_func
 (paren
 id|cmd
 )paren
 suffix:semicolon
+)brace
 r_return
 id|sts
 suffix:semicolon
@@ -37963,9 +38184,6 @@ id|Scsi_Cmnd
 op_star
 id|done_list
 suffix:semicolon
-id|pcidev_t
-id|pdev
-suffix:semicolon
 macro_line|#ifdef DEBUG_SYM53C8XX
 id|printk
 c_func
@@ -37999,10 +38217,6 @@ c_func
 (paren
 id|np
 )paren
-suffix:semicolon
-id|pdev
-op_assign
-id|np-&gt;pdev
 suffix:semicolon
 id|done_list
 op_assign
@@ -38049,8 +38263,6 @@ suffix:semicolon
 id|ncr_flush_done_cmds
 c_func
 (paren
-id|pdev
-comma
 id|done_list
 )paren
 suffix:semicolon
@@ -38088,9 +38300,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|pcidev_t
-id|pdev
-suffix:semicolon
 id|Scsi_Cmnd
 op_star
 id|done_list
@@ -38111,10 +38320,6 @@ id|ncb_p
 )paren
 id|np
 )paren
-suffix:semicolon
-id|pdev
-op_assign
-id|np-&gt;pdev
 suffix:semicolon
 id|done_list
 op_assign
@@ -38149,8 +38354,6 @@ suffix:semicolon
 id|ncr_flush_done_cmds
 c_func
 (paren
-id|pdev
-comma
 id|done_list
 )paren
 suffix:semicolon
@@ -38210,9 +38413,6 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-id|pcidev_t
-id|pdev
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
@@ -38324,10 +38524,6 @@ suffix:semicolon
 macro_line|#endif
 id|out
 suffix:colon
-id|pdev
-op_assign
-id|np-&gt;pdev
-suffix:semicolon
 id|done_list
 op_assign
 id|np-&gt;done_list
@@ -38347,8 +38543,6 @@ suffix:semicolon
 id|ncr_flush_done_cmds
 c_func
 (paren
-id|pdev
-comma
 id|done_list
 )paren
 suffix:semicolon
@@ -38387,9 +38581,6 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-id|pcidev_t
-id|pdev
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
@@ -38457,10 +38648,6 @@ id|cmd
 suffix:semicolon
 id|out
 suffix:colon
-id|pdev
-op_assign
-id|np-&gt;pdev
-suffix:semicolon
 id|done_list
 op_assign
 id|np-&gt;done_list
@@ -38480,8 +38667,6 @@ suffix:semicolon
 id|ncr_flush_done_cmds
 c_func
 (paren
-id|pdev
-comma
 id|done_list
 )paren
 suffix:semicolon

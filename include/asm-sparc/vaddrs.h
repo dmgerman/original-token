@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vaddrs.h,v 1.22 1999/04/20 13:22:55 anton Exp $ */
+multiline_comment|/* $Id: vaddrs.h,v 1.23 2000/03/12 04:10:46 davem Exp $ */
 macro_line|#ifndef _SPARC_VADDRS_H
 DECL|macro|_SPARC_VADDRS_H
 mdefine_line|#define _SPARC_VADDRS_H
@@ -14,9 +14,9 @@ mdefine_line|#define  IOBASE_END     0xfe300000
 DECL|macro|DVMA_VADDR
 mdefine_line|#define  DVMA_VADDR     0xfff00000  /* Base area of the DVMA on suns */
 DECL|macro|DVMA_LEN
-mdefine_line|#define  DVMA_LEN       0x00040000  /* Size of the DVMA address space */
+mdefine_line|#define  DVMA_LEN       0x000c0000  /* Size of the DVMA address space */
 DECL|macro|DVMA_END
-mdefine_line|#define  DVMA_END       0xfff40000
+mdefine_line|#define  DVMA_END       0xfffc0000
 multiline_comment|/* IOMMU Mapping area, must be on a 16MB boundary!  Note this&n; * doesn&squot;t count the DVMA areas, the prom lives between the&n; * iommu mapping area (for scsi transfer buffers) and the&n; * dvma upper range (for lance packet ring buffers).&n; */
 DECL|macro|IOMMU_VADDR
 mdefine_line|#define  IOMMU_VADDR    0xff000000

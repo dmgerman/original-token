@@ -27,7 +27,7 @@ r_int
 id|first_sector
 comma
 r_int
-id|first_part_minor
+id|current_minor
 )paren
 (brace
 r_int
@@ -36,10 +36,6 @@ comma
 id|csum
 comma
 id|magic
-comma
-id|current_minor
-op_assign
-id|first_part_minor
 suffix:semicolon
 r_int
 r_int

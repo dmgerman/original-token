@@ -4208,7 +4208,7 @@ id|max_segments
 id|req-&gt;nr_segments
 op_increment
 suffix:semicolon
-id|q-&gt;nr_segments
+id|q-&gt;elevator.nr_segments
 op_increment
 suffix:semicolon
 r_return
@@ -4412,7 +4412,7 @@ id|max_segments
 r_return
 l_int|0
 suffix:semicolon
-id|q-&gt;nr_segments
+id|q-&gt;elevator.nr_segments
 op_sub_assign
 id|same_segment
 suffix:semicolon

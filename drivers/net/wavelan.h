@@ -5,6 +5,7 @@ mdefine_line|#define&t;_WAVELAN_H
 multiline_comment|/************************** MAGIC NUMBERS ***************************/
 multiline_comment|/* Detection of the WaveLAN card is done by reading the MAC&n; * address from the card and checking it.  If you have a non-AT&amp;T&n; * product (OEM, like DEC RoamAbout, Digital Ocean, or Epson),&n; * you might need to modify this part to accommodate your hardware.&n; */
 DECL|variable|MAC_ADDRESSES
+r_static
 r_const
 r_char
 id|MAC_ADDRESSES
@@ -62,6 +63,7 @@ mdefine_line|#define&t;MAXDATAZ&t;&t;(WAVELAN_ADDR_SIZE + WAVELAN_ADDR_SIZE + 2 
 multiline_comment|/*&n; * Constants used to convert channels to frequencies&n; */
 multiline_comment|/* Frequency available in the 2.0 modem, in units of 250 kHz&n; * (as read in the offset register of the dac area).&n; * Used to map channel numbers used by `wfreqsel&squot; to frequencies&n; */
 DECL|variable|channel_bands
+r_static
 r_const
 r_int
 id|channel_bands
@@ -92,6 +94,7 @@ l_int|0x150
 suffix:semicolon
 multiline_comment|/* Frequencies of the 1.0 modem (fixed frequencies).&n; * Use to map the PSA `subband&squot; to a frequency&n; * Note : all frequencies apart from the first one need to be multiplied by 10&n; */
 DECL|variable|fixed_bands
+r_static
 r_const
 r_int
 id|fixed_bands

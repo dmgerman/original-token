@@ -6,10 +6,10 @@ DECL|macro|OV511_DEBUG
 mdefine_line|#define OV511_DEBUG&t;/* Turn on debug messages */
 macro_line|#ifdef OV511_DEBUG
 DECL|macro|PDEBUG
-macro_line|#  define PDEBUG(fmt, args...) printk(&quot;ov511: &quot; fmt &quot;&bslash;n&quot; , ## args)
+macro_line|#  define PDEBUG(level, fmt, args...) &bslash;&n;if (debug &gt;= level) printk(&quot;ov511: &quot; fmt &quot;&bslash;n&quot; , ## args)
 macro_line|#else
 DECL|macro|PDEBUG
-macro_line|#  define PDEBUG(fmt, args...) do {} while(0)
+macro_line|#  define PDEBUG(level, fmt, args...) do {} while(0)
 macro_line|#endif
 multiline_comment|/* Camera interface register numbers */
 DECL|macro|OV511_REG_CAMERA_DELAY_MODE
@@ -482,6 +482,11 @@ id|wait_queue_head_t
 id|wq
 suffix:semicolon
 multiline_comment|/* Processes waiting */
+DECL|member|snapshot
+r_int
+id|snapshot
+suffix:semicolon
+multiline_comment|/* True if frame was a snapshot */
 )brace
 suffix:semicolon
 DECL|macro|OV511_NUMFRAMES
@@ -615,6 +620,11 @@ id|wait_queue_head_t
 id|wq
 suffix:semicolon
 multiline_comment|/* Processes waiting */
+DECL|member|snap_enabled
+r_int
+id|snap_enabled
+suffix:semicolon
+multiline_comment|/* Snapshot mode enabled */
 )brace
 suffix:semicolon
 macro_line|#endif

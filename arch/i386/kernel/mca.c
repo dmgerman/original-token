@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/i386/kernel/mca.c&n; *  Written by Martin Kolinek, February 1996&n; *&n; * Changes:&n; *&n; *&t;Chris Beauregard July 28th, 1996&n; *&t;- Fixed up integrated SCSI detection&n; *&n; *&t;Chris Beauregard August 3rd, 1996&n; *&t;- Made mca_info local&n; *&t;- Made integrated registers accessible through standard function calls&n; *&t;- Added name field&n; *&t;- More sanity checking&n; *&n; *&t;Chris Beauregard August 9th, 1996&n; *&t;- Rewrote /proc/mca&n; *&t;&n; *&t;Chris Beauregard January 7th, 1997&n; *&t;- Added basic NMI-processing&n; *&t;- Added more information to mca_info structure&n; *&n; *&t;David Weinehall October 12th, 1998&n; *&t;- Made a lot of cleaning up in the source&n; *&t;- Added use of save_flags / restore_flags&n; *&t;- Added the &squot;driver_loaded&squot; flag in MCA_adapter&n; *&t;- Added an alternative implemention of ZP Gu&squot;s mca_find_unused_adapter&n; *&n; *&t;David Weinehall March 24th, 1999&n; *&t;- Fixed the output of &squot;Driver Installed&squot; in /proc/mca/pos&n; *&t;- Made the Integrated Video &amp; SCSI show up even if they have id 0000&n; *&n; *&t;AV November 9th, 1999&n; *&t;- switched to regular procfs methods.&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1100,6 +1101,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* mca_handle_nmi */
 multiline_comment|/*--------------------------------------------------------------------*/
+multiline_comment|/**&n; *&t;mca_find_adapter - scan for adapters&n; *&t;@id:&t;MCA identification to search for&n; *&t;@start:&t;Starting slot&n; *&n; *&t;Search the MCA configuration for adapters matching the 16bit&n; *&t;ID given. The first time it should be called with start as zero&n; *&t;and then further calls made passing the return value of the&n; *&t;previous call until MCA_NOTFOUND is returned.&n; *&n; *&t;Disabled adapters are not reported.&n; */
 DECL|function|mca_find_adapter
 r_int
 id|mca_find_adapter
@@ -1184,7 +1186,15 @@ id|MCA_NOTFOUND
 suffix:semicolon
 )brace
 multiline_comment|/* mca_find_adapter() */
+DECL|variable|mca_find_adapter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_find_adapter
+)paren
+suffix:semicolon
 multiline_comment|/*--------------------------------------------------------------------*/
+multiline_comment|/**&n; *&t;mca_find_unused_adapter - scan for unused adapters&n; *&t;@id:&t;MCA identification to search for&n; *&t;@start:&t;Starting slot&n; *&n; *&t;Search the MCA configuration for adapters matching the 16bit&n; *&t;ID given. The first time it should be called with start as zero&n; *&t;and then further calls made passing the return value of the&n; *&t;previous call until MCA_NOTFOUND is returned.&n; *&n; *&t;Adapters that have been claimed by drivers and those that&n; *&t;are disabled are not reported. This function thus allows a driver&n; *&t;to scan for further cards when some may already be driven.&n; */
 DECL|function|mca_find_unused_adapter
 r_int
 id|mca_find_unused_adapter
@@ -1276,7 +1286,15 @@ id|MCA_NOTFOUND
 suffix:semicolon
 )brace
 multiline_comment|/* mca_find_unused_adapter() */
+DECL|variable|mca_find_unused_adapter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_find_unused_adapter
+)paren
+suffix:semicolon
 multiline_comment|/*--------------------------------------------------------------------*/
+multiline_comment|/**&n; *&t;mca_read_stored_pos - read POS register from boot data&n; *&t;@slot: slot number to read from&n; *&t;@reg:  register to read from&n; *&n; *&t;Fetch a POS value that was stored at boot time by the kernel&n; *&t;when it scanned the MCA space. The register value is returned.&n; *&t;Missing or invalid registers report 0.&n; */
 DECL|function|mca_read_stored_pos
 r_int
 r_char
@@ -1339,7 +1357,15 @@ id|reg
 suffix:semicolon
 )brace
 multiline_comment|/* mca_read_stored_pos() */
+DECL|variable|mca_read_stored_pos
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_read_stored_pos
+)paren
+suffix:semicolon
 multiline_comment|/*--------------------------------------------------------------------*/
+multiline_comment|/**&n; *&t;mca_read_pos - read POS register from card&n; *&t;@slot: slot number to read from&n; *&t;@reg:  register to read from&n; *&n; *&t;Fetch a POS value directly from the hardware to obtain the&n; *&t;current value. This is much slower than mca_read_stored_pos and&n; *&t;may not be invoked from interrupt context. It handles the&n; *&t;deep magic required for onboard devices transparently.&n; */
 DECL|function|mca_read_pos
 r_int
 r_char
@@ -1593,8 +1619,15 @@ id|byte
 suffix:semicolon
 )brace
 multiline_comment|/* mca_read_pos() */
+DECL|variable|mca_read_pos
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_read_pos
+)paren
+suffix:semicolon
 multiline_comment|/*--------------------------------------------------------------------*/
-multiline_comment|/* Note that this a technically a Bad Thing, as IBM tech stuff says&n; * you should only set POS values through their utilities.&n; * However, some devices such as the 3c523 recommend that you write&n; * back some data to make sure the configuration is consistent.&n; * I&squot;d say that IBM is right, but I like my drivers to work.&n; * This function can&squot;t do checks to see if multiple devices end up&n; * with the same resources, so you might see magic smoke if someone&n; * screws up.&n; */
+multiline_comment|/**&n; *&t;mca_write_pos - read POS register from card&n; *&t;@slot: slot number to read from&n; *&t;@reg:  register to read from&n; *&t;@byte: byte to write to the POS registers&n; *&n; *&t;Store a POS value directly from the hardware. You should not &n; *&t;normally need to use this function and should have a very good&n; *&t;knowledge of MCA bus before you do so. Doing this wrongly can&n; *&t;damage the hardware.&n; *&n; *&t;This function may not be used from interrupt context.&n; *&n; *&t;Note that this a technically a Bad Thing, as IBM tech stuff says&n; *&t;you should only set POS values through their utilities.&n; *&t;However, some devices such as the 3c523 recommend that you write&n; *&t;back some data to make sure the configuration is consistent.&n; *&t;I&squot;d say that IBM is right, but I like my drivers to work.&n; *&n; *&t;This function can&squot;t do checks to see if multiple devices end up&n; *&t;with the same resources, so you might see magic smoke if someone&n; *&t;screws up.&n; */
 DECL|function|mca_write_pos
 r_void
 id|mca_write_pos
@@ -1732,7 +1765,15 @@ id|byte
 suffix:semicolon
 )brace
 multiline_comment|/* mca_write_pos() */
+DECL|variable|mca_write_pos
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_write_pos
+)paren
+suffix:semicolon
 multiline_comment|/*--------------------------------------------------------------------*/
+multiline_comment|/**&n; *&t;mca_set_adapter_name - Set the description of the card&n; *&t;@slot: slot to name&n; *&t;@name: text string for the namen&n; *&n; *&t;This function sets the name reported via /proc for this&n; *&t;adapter slot. This is for user information only. Setting a &n; *&t;name deletes any previous name.&n; */
 DECL|function|mca_set_adapter_name
 r_void
 id|mca_set_adapter_name
@@ -1842,6 +1883,14 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|variable|mca_set_adapter_name
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_set_adapter_name
+)paren
+suffix:semicolon
+multiline_comment|/**&n; *&t;mca_set_adapter_procfn - Set the /proc callback&n; *&t;@slot: slot to configure&n; *&t;@procfn: callback function to call for /proc &n; *&t;@dev: device information passed to the callback&n; *&n; *&t;This sets up an information callback for /proc/mca/slot?.  The&n; *&t;function is called with the buffer, slot, and device pointer (or&n; *&t;some equally informative context information, or nothing, if you&n; *&t;prefer), and is expected to put useful information into the&n; *&t;buffer.  The adapter name, id, and POS registers get printed&n; * &t;before this is called though, so don&squot;t do it again.&n; *&n; *&t;This should be called with a NULL procfn when a module&n; *&t;unregisters, thus preventing kernel crashes and other such&n; *&t;nastiness.&n; */
 DECL|function|mca_set_adapter_procfn
 r_void
 id|mca_set_adapter_procfn
@@ -1901,6 +1950,14 @@ id|dev
 suffix:semicolon
 )brace
 )brace
+DECL|variable|mca_set_adapter_procfn
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_set_adapter_procfn
+)paren
+suffix:semicolon
+multiline_comment|/**&n; *&t;mca_is_adapter_used - check if claimed by driver&n; *&t;@slot:&t;slot to check&n; *&n; *&t;Returns 1 if the slot has been claimed by a driver&n; */
 DECL|function|mca_is_adapter_used
 r_int
 id|mca_is_adapter_used
@@ -1919,6 +1976,14 @@ dot
 id|driver_loaded
 suffix:semicolon
 )brace
+DECL|variable|mca_is_adapter_used
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_is_adapter_used
+)paren
+suffix:semicolon
+multiline_comment|/**&n; *&t;mca_mark_as_used - claim an MCA device&n; *&t;@slot:&t;slot to claim&n; *&t;FIXME:  should we make this threadsafe&n; *&n; *&t;Claim an MCA slot for a device driver. If the&n; *&t;slot is already taken the function returns 1,&n; *&t;if it is not taken it is claimed and 0 is&n; *&t;returned.&n; */
 DECL|function|mca_mark_as_used
 r_int
 id|mca_mark_as_used
@@ -1956,6 +2021,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|mca_mark_as_used
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_mark_as_used
+)paren
+suffix:semicolon
+multiline_comment|/**&n; *&t;mca_mark_as_unused - release an MCA device&n; *&t;@slot:&t;slot to claim&n; *&n; *&t;Release the slot for other drives to use.&n; */
 DECL|function|mca_mark_as_unused
 r_void
 id|mca_mark_as_unused
@@ -1975,6 +2048,14 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|mca_mark_as_unused
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_mark_as_unused
+)paren
+suffix:semicolon
+multiline_comment|/**&n; *&t;mca_get_adapter_name - get the adapter description&n; *&t;@slot:&t;slot to query&n; *&n; *&t;Return the adapter description if set. If it has not been&n; *&t;set or the slot is out range then return NULL.&n; */
 DECL|function|mca_get_adapter_name
 r_char
 op_star
@@ -2022,6 +2103,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|mca_get_adapter_name
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_get_adapter_name
+)paren
+suffix:semicolon
+multiline_comment|/**&n; *&t;mca_isadapter - check if the slot holds an adapter&n; *&t;@slot:&t;slot to query&n; *&n; *&t;Returns zero if the slot does not hold an adapter, non zero if&n; *&t;it does.&n; */
 DECL|function|mca_isadapter
 r_int
 id|mca_isadapter
@@ -2085,6 +2174,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|mca_isadapter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_isadapter
+)paren
+suffix:semicolon
+multiline_comment|/**&n; *&t;mca_isadapter - check if the slot holds an adapter&n; *&t;@slot:&t;slot to query&n; *&n; *&t;Returns a non zero value if the slot holds an enabled adapter&n; *&t;and zero for any other case.&n; */
 DECL|function|mca_isenabled
 r_int
 id|mca_isenabled
@@ -2135,6 +2232,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|mca_isenabled
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_isenabled
+)paren
+suffix:semicolon
 multiline_comment|/*--------------------------------------------------------------------*/
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|get_mca_info

@@ -212,6 +212,20 @@ op_star
 l_int|1024
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Now check for the Cyrix problem.&n;&t; */
+r_if
+c_cond
+(paren
+id|isa_dma_bridge_buggy
+op_eq
+l_int|2
+)paren
+(brace
+id|dma_pagesize
+op_assign
+l_int|32768
+suffix:semicolon
+)brace
 id|dmap-&gt;raw_buf
 op_assign
 l_int|NULL
