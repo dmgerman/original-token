@@ -124,10 +124,6 @@ r_struct
 id|list_head
 id|rec_buff_list
 suffix:semicolon
-DECL|member|in_use
-r_int
-id|in_use
-suffix:semicolon
 DECL|typedef|dabusb_t
 DECL|typedef|pdabusb_t
 )brace

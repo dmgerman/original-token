@@ -4,23 +4,6 @@ mdefine_line|#define __ALPHA_TSUNAMI__H__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * TSUNAMI/TYPHOON are the internal names for the core logic chipset which&n; * provides memory controller and PCI access for the 21264 based systems.&n; *&n; * This file is based on:&n; *&n; * Tsunami System Programmers Manual&n; * Preliminary, Chapters 2-5&n; *&n; */
-multiline_comment|/*&n; * We must actually use 2 windows to direct-map the 2GB space, because&n; * of an &quot;idiot-syncracy&quot; of the CYPRESS chip used on DS20 and others.&n; * It may respond to a PCI bus address in the last 1MB of the 4GB&n; * address range, and that is where real memory may appear.&n; *&n; * Sigh...&n; */
-DECL|macro|TSUNAMI_DMA_WIN_BASE
-mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;&t;(1UL*1024*1024*1024)
-DECL|macro|TSUNAMI_DMA_WIN_SIZE
-mdefine_line|#define TSUNAMI_DMA_WIN_SIZE&t;&t;(2UL*1024*1024*1024)
-DECL|macro|TSUNAMI_DMA_WIN0_BASE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN0_BASE_DEFAULT&t;(1UL*1024*1024*1024)
-DECL|macro|TSUNAMI_DMA_WIN0_SIZE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN0_SIZE_DEFAULT&t;(1UL*1024*1024*1024)
-DECL|macro|TSUNAMI_DMA_WIN0_TRAN_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN0_TRAN_DEFAULT&t;(0UL)
-DECL|macro|TSUNAMI_DMA_WIN1_BASE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN1_BASE_DEFAULT&t;(2UL*1024*1024*1024)
-DECL|macro|TSUNAMI_DMA_WIN1_SIZE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN1_SIZE_DEFAULT&t;(1UL*1024*1024*1024)
-DECL|macro|TSUNAMI_DMA_WIN1_TRAN_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN1_TRAN_DEFAULT&t;(1UL*1024*1024*1024)
 multiline_comment|/* XXX: Do we need to conditionalize on this?  */
 macro_line|#ifdef USE_48_BIT_KSEG
 DECL|macro|TS_BIAS
@@ -885,51 +868,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|tsunami_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|tsunami_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|TSUNAMI_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|tsunami_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|tsunami_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|TSUNAMI_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * TSUNAMI, the 21??? PCI/memory support chipset for the EV6 (21264)&n; * can only use linear accesses to get at PCI memory and I/O spaces.&n; */
 DECL|macro|vucp
 mdefine_line|#define vucp&t;volatile unsigned char *
@@ -1364,10 +1302,6 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;tsunami_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;tsunami_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;tsunami_inb
 DECL|macro|__inw

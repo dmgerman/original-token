@@ -3,6 +3,28 @@ macro_line|#ifndef __ASM_SH_MMU_CONTEXT_H
 DECL|macro|__ASM_SH_MMU_CONTEXT_H
 mdefine_line|#define __ASM_SH_MMU_CONTEXT_H
 multiline_comment|/* The MMU &quot;context&quot; consists of two things:&n;     (a) TLB cache version (or round, cycle whatever expression you like)&n;     (b) ASID (Address Space IDentifier)&n; */
+DECL|function|enter_lazy_tlb
+r_static
+r_inline
+r_void
+id|enter_lazy_tlb
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
+)paren
+(brace
+)brace
 multiline_comment|/*&n; * Cache of MMU context last used.&n; */
 r_extern
 r_int

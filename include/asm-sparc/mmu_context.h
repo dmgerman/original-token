@@ -3,6 +3,28 @@ DECL|macro|__SPARC_MMU_CONTEXT_H
 mdefine_line|#define __SPARC_MMU_CONTEXT_H
 macro_line|#include &lt;asm/btfixup.h&gt;
 macro_line|#ifndef __ASSEMBLY__
+DECL|function|enter_lazy_tlb
+r_static
+r_inline
+r_void
+id|enter_lazy_tlb
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
+)paren
+(brace
+)brace
 multiline_comment|/*&n; * Initialize a new mmu context.  This is invoked when a new&n; * address space instance (unique or shared) is instantiated.&n; */
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(tsk, mm) ((mm)-&gt;context = NO_CONTEXT)

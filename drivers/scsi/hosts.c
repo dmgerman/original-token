@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  hosts.c Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to lowlevel SCSI driver interface&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Jiffies wrap fixes (host-&gt;resetting), 3 Dec 1998 Andrea Arcangeli&n; */
+multiline_comment|/*&n; *  hosts.c Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to lowlevel SCSI driver interface&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Jiffies wrap fixes (host-&gt;resetting), 3 Dec 1998 Andrea Arcangeli&n; *  Added QLOGIC QLA1280 SCSI controller kernel host support. &n; *     August 4, 1999 Fred Lewis, Intel DuPont&n; */
 multiline_comment|/*&n; *  This file contains the medium level SCSI&n; *  host interface initialization, as well as the scsi_hosts array of SCSI&n; *  hosts currently present in the system.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -129,6 +129,9 @@ macro_line|#include &quot;qlogicisp.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGIC_FC
 macro_line|#include &quot;qlogicfc.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_1280
+macro_line|#include &quot;qla1280.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SEAGATE
 macro_line|#include &quot;seagate.h&quot;
@@ -439,6 +442,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGIC_FC
 id|QLOGICFC
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_1280
+id|QLA1280_LINUX_TEMPLATE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PAS16

@@ -10,6 +10,28 @@ multiline_comment|/* Don&squot;t get into trouble with dueling __EXTERN_INLINEs.
 macro_line|#ifndef __EXTERN_INLINE
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#endif
+DECL|function|enter_lazy_tlb
+r_static
+r_inline
+r_void
+id|enter_lazy_tlb
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
+)paren
+(brace
+)brace
 r_extern
 r_inline
 r_int

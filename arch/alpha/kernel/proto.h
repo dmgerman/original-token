@@ -18,6 +18,9 @@ suffix:semicolon
 r_struct
 id|pci_dev
 suffix:semicolon
+r_struct
+id|pci_controler
+suffix:semicolon
 multiline_comment|/* core_apecs.c */
 r_extern
 r_struct
@@ -54,6 +57,20 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|apecs_pci_tbi
+c_func
+(paren
+r_struct
+id|pci_controler
+op_star
+comma
+id|dma_addr_t
+comma
+id|dma_addr_t
+)paren
+suffix:semicolon
 multiline_comment|/* core_cia.c */
 r_extern
 r_struct
@@ -80,6 +97,20 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cia_pci_tbi
+c_func
+(paren
+r_struct
+id|pci_controler
+op_star
+comma
+id|dma_addr_t
+comma
+id|dma_addr_t
 )paren
 suffix:semicolon
 multiline_comment|/* core_irongate.c */
@@ -118,6 +149,8 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+DECL|macro|irongate_pci_tbi
+mdefine_line|#define irongate_pci_tbi ((void *)0)
 multiline_comment|/* core_lca.c */
 r_extern
 r_struct
@@ -144,6 +177,20 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|lca_pci_tbi
+c_func
+(paren
+r_struct
+id|pci_controler
+op_star
+comma
+id|dma_addr_t
+comma
+id|dma_addr_t
 )paren
 suffix:semicolon
 multiline_comment|/* core_mcpcia.c */
@@ -182,6 +229,20 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|mcpcia_pci_tbi
+c_func
+(paren
+r_struct
+id|pci_controler
+op_star
+comma
+id|dma_addr_t
+comma
+id|dma_addr_t
+)paren
+suffix:semicolon
 multiline_comment|/* core_polaris.c */
 r_extern
 r_struct
@@ -210,6 +271,8 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+DECL|macro|polaris_pci_tbi
+mdefine_line|#define polaris_pci_tbi ((void *)0)
 multiline_comment|/* core_pyxis.c */
 r_extern
 r_struct
@@ -236,6 +299,20 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|pyxis_pci_tbi
+c_func
+(paren
+r_struct
+id|pci_controler
+op_star
+comma
+id|dma_addr_t
+comma
+id|dma_addr_t
 )paren
 suffix:semicolon
 multiline_comment|/* core_t2.c */
@@ -266,6 +343,8 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+DECL|macro|t2_pci_tbi
+mdefine_line|#define t2_pci_tbi ((void *)0)
 multiline_comment|/* core_tsunami.c */
 r_extern
 r_struct
@@ -300,6 +379,20 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|tsunami_pci_tbi
+c_func
+(paren
+r_struct
+id|pci_controler
+op_star
+comma
+id|dma_addr_t
+comma
+id|dma_addr_t
 )paren
 suffix:semicolon
 multiline_comment|/* setup.c */

@@ -3477,6 +3477,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if !defined(__ia64__)
 multiline_comment|/*&n; *&t;Back compatibility for getrlimit. Needed for some apps.&n; */
 DECL|function|sys_old_getrlimit
 id|asmlinkage
@@ -3573,6 +3574,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sys_setrlimit
 id|asmlinkage
 r_int

@@ -17,6 +17,8 @@ DECL|macro|IS_EP_BULK_OUT
 mdefine_line|#define IS_EP_BULK_OUT(ep) (IS_EP_BULK(ep) &amp;&amp; ((ep).bEndpointAddress &amp; USB_ENDPOINT_DIR_MASK) == USB_DIR_OUT)
 DECL|macro|IS_EP_INTR
 mdefine_line|#define IS_EP_INTR(ep) ((ep).bmAttributes == USB_ENDPOINT_XFER_INT ? 1 : 0)
+DECL|macro|USB_SCN_MINOR
+mdefine_line|#define USB_SCN_MINOR(X) MINOR((X)-&gt;i_rdev) - SCN_BASE_MNR
 macro_line|#ifdef DEBUG
 DECL|macro|SCN_DEBUG
 mdefine_line|#define SCN_DEBUG(X) X
@@ -29,30 +31,56 @@ mdefine_line|#define IBUF_SIZE 32768
 DECL|macro|OBUF_SIZE
 mdefine_line|#define OBUF_SIZE 4096
 multiline_comment|/* FIXME: These are NOT registered ioctls()&squot;s */
-DECL|macro|PV8630_RECEIVE
-mdefine_line|#define PV8630_RECEIVE 69
-DECL|macro|PV8630_SEND
-mdefine_line|#define PV8630_SEND    70
-DECL|struct|hpscan_usb_data
+DECL|macro|PV8630_IOCTL_INREQUEST
+mdefine_line|#define PV8630_IOCTL_INREQUEST 69
+DECL|macro|PV8630_IOCTL_OUTREQUEST
+mdefine_line|#define PV8630_IOCTL_OUTREQUEST 70
+DECL|macro|SCN_MAX_MNR
+mdefine_line|#define SCN_MAX_MNR 16&t;&t;/* We&squot;re allocated 16 minors */
+DECL|macro|SCN_BASE_MNR
+mdefine_line|#define SCN_BASE_MNR 48&t;&t;/* USB Scanners start at minor 48 */
+DECL|struct|scn_usb_data
 r_struct
-id|hpscan_usb_data
+id|scn_usb_data
 (brace
-DECL|member|hpscan_dev
+DECL|member|scn_dev
 r_struct
 id|usb_device
 op_star
-id|hpscan_dev
+id|scn_dev
 suffix:semicolon
-DECL|member|isopen
+DECL|member|scn_irq
+r_struct
+id|urb
+id|scn_irq
+suffix:semicolon
+DECL|member|ifnum
 r_int
+r_int
+id|ifnum
+suffix:semicolon
+multiline_comment|/* Interface number of the USB device */
+DECL|member|scn_minor
+id|kdev_t
+id|scn_minor
+suffix:semicolon
+multiline_comment|/* Scanner minor - used in disconnect() */
+DECL|member|button
+r_int
+r_char
+id|button
+suffix:semicolon
+multiline_comment|/* Front panel buffer */
+DECL|member|isopen
+r_char
 id|isopen
 suffix:semicolon
 multiline_comment|/* Not zero if the device is open */
 DECL|member|present
-r_int
+r_char
 id|present
 suffix:semicolon
-multiline_comment|/* Device is present on the bus */
+multiline_comment|/* Not zero if device is present */
 DECL|member|obuf
 DECL|member|ibuf
 r_char
@@ -74,19 +102,23 @@ comma
 id|intr_ep
 suffix:semicolon
 multiline_comment|/* Endpoint assignments */
-DECL|member|button
-r_char
-op_star
-id|button
-suffix:semicolon
-multiline_comment|/* Front panel button buffer */
 )brace
 suffix:semicolon
-DECL|variable|hpscan
+DECL|variable|p_scn_table
 r_static
 r_struct
-id|hpscan_usb_data
-id|hpscan
+id|scn_usb_data
+op_star
+id|p_scn_table
+(braket
+id|SCN_MAX_MNR
+)braket
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* ... */
+)brace
 suffix:semicolon
 id|MODULE_AUTHOR
 c_func
@@ -145,5 +177,12 @@ id|product
 comma
 l_string|&quot;User specified USB idProduct&quot;
 )paren
+suffix:semicolon
+multiline_comment|/* Forward declarations */
+DECL|variable|scanner_driver
+r_static
+r_struct
+id|usb_driver
+id|scanner_driver
 suffix:semicolon
 eof

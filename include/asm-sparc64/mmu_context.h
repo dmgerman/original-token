@@ -7,6 +7,28 @@ macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spitfire.h&gt;
+DECL|function|enter_lazy_tlb
+r_static
+r_inline
+r_void
+id|enter_lazy_tlb
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
+)paren
+(brace
+)brace
 r_extern
 id|spinlock_t
 id|ctx_alloc_lock

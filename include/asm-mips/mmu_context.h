@@ -2,6 +2,28 @@ multiline_comment|/* $Id: mmu_context.h,v 1.3 1998/10/16 19:22:54 ralf Exp $&n; 
 macro_line|#ifndef __ASM_MIPS_MMU_CONTEXT_H
 DECL|macro|__ASM_MIPS_MMU_CONTEXT_H
 mdefine_line|#define __ASM_MIPS_MMU_CONTEXT_H
+DECL|function|enter_lazy_tlb
+r_static
+r_inline
+r_void
+id|enter_lazy_tlb
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
+)paren
+(brace
+)brace
 multiline_comment|/* Fuck.  The f-word is here so you can grep for it :-)  */
 r_extern
 r_int

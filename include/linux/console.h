@@ -2,6 +2,8 @@ multiline_comment|/*&n; *  linux/include/linux/console.h&n; *&n; *  Copyright (C
 macro_line|#ifndef _LINUX_CONSOLE_H_
 DECL|macro|_LINUX_CONSOLE_H_
 mdefine_line|#define _LINUX_CONSOLE_H_ 1
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
 r_struct
 id|vc_data
 suffix:semicolon

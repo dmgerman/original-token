@@ -607,6 +607,21 @@ id|hose-&gt;index
 op_assign
 l_int|0
 suffix:semicolon
+id|hose-&gt;sg_isa
+op_assign
+id|hose-&gt;sg_pci
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* The I/O window is fixed at 2G @ 2G.  */
+id|__direct_map_base
+op_assign
+l_int|0x80000000
+suffix:semicolon
+id|__direct_map_size
+op_assign
+l_int|0x80000000
+suffix:semicolon
 )brace
 r_static
 r_inline

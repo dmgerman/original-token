@@ -6,10 +6,6 @@ macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * Low Cost Alpha (LCA) definitions (these apply to 21066 and 21068,&n; * for example).&n; *&n; * This file is based on:&n; *&n; *&t;DECchip 21066 and DECchip 21068 Alpha AXP Microprocessors&n; *&t;Hardware Reference Manual; Digital Equipment Corp.; May 1994;&n; *&t;Maynard, MA; Order Number: EC-N2681-71.&n; */
 multiline_comment|/*&n; * NOTE: The LCA uses a Host Address Extension (HAE) register to access&n; *&t; PCI addresses that are beyond the first 27 bits of address&n; *&t; space.  Updating the HAE requires an external cycle (and&n; *&t; a memory barrier), which tends to be slow.  Instead of updating&n; *&t; it on each sparse memory access, we keep the current HAE value&n; *&t; cached in variable cache_hae.  Only if the cached HAE differs&n; *&t; from the desired HAE value do we actually updated HAE register.&n; *&t; The HAE register is preserved by the interrupt handler entry/exit&n; *&t; code, so this scheme works even in the presence of interrupts.&n; *&n; * Dense memory space doesn&squot;t require the HAE, but is restricted to&n; * aligned 32 and 64 bit accesses.  Special Cycle and Interrupt&n; * Acknowledge cycles may also require the use of the HAE.  The LCA&n; * limits I/O address space to the bottom 24 bits of address space,&n; * but this easily covers the 16 bit ISA I/O address space.&n; */
 multiline_comment|/*&n; * NOTE 2! The memory operations do not set any memory barriers, as&n; * it&squot;s not needed for cases like a frame buffer that is essentially&n; * memory-like.  You need to do them by hand if the operations depend&n; * on ordering.&n; *&n; * Similarly, the port I/O operations do a &quot;mb&quot; only after a write&n; * operation: if an mb is needed before (as in the case of doing&n; * memory mapped I/O first, and then a port I/O operation to the same&n; * device), it needs to be done by hand.&n; *&n; * After the above has bitten me 100 times, I&squot;ll give up and just do&n; * the mb all the time, but right now I&squot;m hoping this will work out.&n; * Avoiding mb&squot;s may potentially be a noticeable speed improvement,&n; * but I can&squot;t honestly say I&squot;ve tested it.&n; *&n; * Handling interrupts that need to do mb&squot;s to synchronize to&n; * non-interrupts is another fun race area.  Don&squot;t do it (because if&n; * you do, I&squot;ll have to do *everything* with interrupts disabled,&n; * ugh).&n; */
-DECL|macro|LCA_DMA_WIN_BASE
-mdefine_line|#define LCA_DMA_WIN_BASE&t;(1UL*1024*1024*1024)
-DECL|macro|LCA_DMA_WIN_SIZE
-mdefine_line|#define LCA_DMA_WIN_SIZE&t;(1UL*1024*1024*1024)
 multiline_comment|/*&n; * Memory Controller registers:&n; */
 DECL|macro|LCA_MEM_BCR0
 mdefine_line|#define LCA_MEM_BCR0&t;&t;(IDENT_ADDR + 0x120000000UL)
@@ -358,62 +354,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|lca_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|lca_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|LCA_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|lca_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|lca_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-multiline_comment|/*&n;&t; * This check is a sanity check but also ensures that bus&n;&t; * address 0 maps to virtual address 0 which is useful to&n;&t; * detect null &quot;pointers&quot; (the NCR driver is much simpler if&n;&t; * NULL pointers are preserved).&n;&t; */
-r_if
-c_cond
-(paren
-id|address
-OL
-id|LCA_DMA_WIN_BASE
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|LCA_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * Unlike Jensen, the Noname machines have no concept of local&n; * I/O---everything goes over the PCI bus.&n; *&n; * There is plenty room for optimization here.  In particular,&n; * the Alpha&squot;s insb/insw/extb/extw should be useful in moving&n; * data to/from the right byte-lanes.&n; */
 DECL|macro|vip
 mdefine_line|#define vip&t;volatile int *
@@ -1155,10 +1095,6 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;lca_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;lca_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;lca_inb
 DECL|macro|__inw

@@ -3306,6 +3306,15 @@ r_break
 suffix:semicolon
 multiline_comment|/* System specific (these are for Alcor, at least): */
 r_case
+l_int|0x202
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;system detected hard error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|0x203
 suffix:colon
 id|reason

@@ -299,7 +299,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/* Check against rlimit and stack.. */
+multiline_comment|/* Check against rlimit.. */
 id|rlim
 op_assign
 id|current-&gt;rlim

@@ -132,9 +132,9 @@ DECL|variable|cacheflush_time
 id|cycles_t
 id|cacheflush_time
 suffix:semicolon
-DECL|variable|cpu_number_map
+DECL|variable|__cpu_number_map
 r_int
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|NR_CPUS
 )braket
@@ -1445,7 +1445,7 @@ id|cpunum
 op_assign
 id|cpuid
 suffix:semicolon
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|cpuid
 )braket
@@ -1560,7 +1560,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|cpuid
 )braket
@@ -1824,14 +1824,14 @@ multiline_comment|/* Take care of some initial bookkeeping.  */
 id|memset
 c_func
 (paren
-id|cpu_number_map
+id|__cpu_number_map
 comma
 op_minus
 l_int|1
 comma
 r_sizeof
 (paren
-id|cpu_number_map
+id|__cpu_number_map
 )paren
 )paren
 suffix:semicolon
@@ -1862,7 +1862,7 @@ id|ipi_data
 )paren
 )paren
 suffix:semicolon
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|smp_boot_cpuid
 )braket

@@ -4,11 +4,7 @@ mdefine_line|#define __ALPHA_IRONGATE__H__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * IRONGATE is the internal name for the AMD-751 K7 core logic chipset&n; * which provides memory controller and PCI access for NAUTILUS-based&n; * EV6 (21264) systems.&n; *&n; * This file is based on:&n; *&n; * IronGate management library, (c) 1999 Alpha Processor, Inc.&n; * Copyright (C) 1999 Alpha Processor, Inc.,&n; *&t;(David Daniel, Stig Telfer, Soohoon Lee)&n; */
-multiline_comment|/*&n; * The 21264 supports, and internally recognizes, a 44-bit physical&n; * address space that is divided equally between memory address space&n; * and I/O address space. Memory address space resides in the lower&n; * half of the physical address space (PA[43]=0) and I/O address space&n; * resides in the upper half of the physical address space (PA[43]=1).&n; *&n; */
-DECL|macro|IRONGATE_DMA_WIN_BASE
-mdefine_line|#define IRONGATE_DMA_WIN_BASE&t;&t; (0UL)
-DECL|macro|IRONGATE_DMA_WIN_SIZE
-mdefine_line|#define IRONGATE_DMA_WIN_SIZE&t;&t; (0UL)
+multiline_comment|/*&n; * The 21264 supports, and internally recognizes, a 44-bit physical&n; * address space that is divided equally between memory address space&n; * and I/O address space. Memory address space resides in the lower&n; * half of the physical address space (PA[43]=0) and I/O address space&n; * resides in the upper half of the physical address space (PA[43]=1).&n; */
 multiline_comment|/*&n; * Irongate CSR map.  Some of the CSRs are 8 or 16 bits, but all access&n; * through the routines given is 32-bit.&n; *&n; * The first 0x40 bytes are standard as per the PCI spec.&n; */
 DECL|typedef|igcsr32
 r_typedef
@@ -1332,51 +1328,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|irongate_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|irongate_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|IRONGATE_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|irongate_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|irongate_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|IRONGATE_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * IRONGATE (AMD-751) PCI/memory support chip for the EV6 (21264) and&n; * K7 can only use linear accesses to get at PCI memory and I/O spaces.&n; */
 DECL|macro|vucp
 mdefine_line|#define vucp&t;volatile unsigned char *
@@ -1810,10 +1761,6 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;irongate_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;irongate_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;irongate_inb
 DECL|macro|__inw

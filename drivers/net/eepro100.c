@@ -746,15 +746,16 @@ multiline_comment|/* Use &quot;Flexible mode&quot; for CmdTx command. */
 )brace
 suffix:semicolon
 multiline_comment|/* Do atomically if possible. */
-macro_line|#if defined(__i386__) || defined(__alpha__)
+macro_line|#if defined(__i386__) || defined(__alpha__) || defined(__ia64__)
 DECL|macro|clear_suspend
-mdefine_line|#define clear_suspend(cmd)   clear_bit(30, &amp;(cmd)-&gt;cmd_status)
+mdefine_line|#define clear_suspend(cmd)&t;clear_bit(30, &amp;(cmd)-&gt;cmd_status)
 macro_line|#elif defined(__powerpc__)
 DECL|macro|clear_suspend
 mdefine_line|#define clear_suspend(cmd)&t;clear_bit(6, &amp;(cmd)-&gt;cmd_status)
 macro_line|#else
+macro_line|# error You are probably in trouble: clear_suspend() MUST be atomic.
 DECL|macro|clear_suspend
-mdefine_line|#define clear_suspend(cmd)&t;(cmd)-&gt;cmd_status &amp;= cpu_to_le32(~CmdSuspend)
+macro_line|# define clear_suspend(cmd)&t;(cmd)-&gt;cmd_status &amp;= cpu_to_le32(~CmdSuspend)
 macro_line|#endif
 DECL|enum|SCBCmdBits
 r_enum
@@ -1998,6 +1999,11 @@ op_amp
 id|pciaddr
 )paren
 suffix:semicolon
+id|pciaddr
+op_and_assign
+op_complement
+l_int|3UL
+suffix:semicolon
 macro_line|#else
 id|pcibios_read_config_dword
 c_func
@@ -2020,20 +2026,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Remove I/O space marker in bit 0. */
-r_if
-c_cond
-(paren
-id|pciaddr
-op_amp
-l_int|1
-)paren
-(brace
+macro_line|#ifdef USE_IO
 id|ioaddr
 op_assign
 id|pciaddr
-op_amp
-op_complement
-l_int|3UL
 suffix:semicolon
 r_if
 c_cond
@@ -2048,8 +2044,7 @@ l_int|32
 )paren
 r_continue
 suffix:semicolon
-)brace
-r_else
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2086,6 +2081,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -1897,6 +1897,7 @@ c_func
 id|do_gettimeofday
 )paren
 suffix:semicolon
+macro_line|#ifndef __ia64__
 DECL|variable|loops_per_sec
 id|EXPORT_SYMBOL
 c_func
@@ -1904,6 +1905,7 @@ c_func
 id|loops_per_sec
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|kstat
 id|EXPORT_SYMBOL
 c_func

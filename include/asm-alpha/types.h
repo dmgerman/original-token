@@ -45,25 +45,6 @@ r_int
 r_int
 id|__u32
 suffix:semicolon
-multiline_comment|/*&n; * There are 32-bit compilers for the alpha out there..&n; */
-macro_line|#if ((~0UL) == 0xffffffff)
-macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
-DECL|typedef|__s64
-r_typedef
-id|__signed__
-r_int
-r_int
-id|__s64
-suffix:semicolon
-DECL|typedef|__u64
-r_typedef
-r_int
-r_int
-r_int
-id|__u64
-suffix:semicolon
-macro_line|#endif
-macro_line|#else
 DECL|typedef|__s64
 r_typedef
 id|__signed__
@@ -76,7 +57,6 @@ r_int
 r_int
 id|__u64
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
 macro_line|#ifdef __KERNEL__
 DECL|typedef|s8
@@ -115,25 +95,6 @@ r_int
 r_int
 id|u32
 suffix:semicolon
-multiline_comment|/*&n; * There are 32-bit compilers for the alpha out there..&n; */
-macro_line|#if ((~0UL) == 0xffffffff)
-DECL|typedef|s64
-r_typedef
-r_int
-r_int
-r_int
-id|s64
-suffix:semicolon
-DECL|typedef|u64
-r_typedef
-r_int
-r_int
-r_int
-id|u64
-suffix:semicolon
-DECL|macro|BITS_PER_LONG
-mdefine_line|#define BITS_PER_LONG 32
-macro_line|#else
 DECL|typedef|s64
 r_typedef
 r_int
@@ -148,7 +109,12 @@ id|u64
 suffix:semicolon
 DECL|macro|BITS_PER_LONG
 mdefine_line|#define BITS_PER_LONG 64
-macro_line|#endif
+multiline_comment|/* PCI dma addresses are 32-bits wide.  Ignore PCI64 for now, since&n;   we&squot;ll typically be sending it all through iommu tables anyway.  */
+DECL|typedef|dma_addr_t
+r_typedef
+id|u32
+id|dma_addr_t
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _ALPHA_TYPES_H */
 eof

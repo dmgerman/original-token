@@ -467,6 +467,7 @@ op_star
 id|out
 )paren
 suffix:semicolon
+macro_line|#if BITS_PER_LONG &lt; 64
 r_int
 id|ipc_parse_version
 (paren
@@ -475,4 +476,8 @@ op_star
 id|cmd
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|macro|ipc_parse_version
+mdefine_line|#define ipc_parse_version(cmd)&t;IPC_64
+macro_line|#endif
 eof

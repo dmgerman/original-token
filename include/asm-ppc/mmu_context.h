@@ -3,6 +3,28 @@ macro_line|#ifndef __PPC_MMU_CONTEXT_H
 DECL|macro|__PPC_MMU_CONTEXT_H
 mdefine_line|#define __PPC_MMU_CONTEXT_H
 multiline_comment|/* the way contexts are handled on the ppc they are vsid&squot;s and&n;   don&squot;t need any special treatment right now.&n;   perhaps I can defer flushing the tlb by keeping a list of&n;   zombie vsid/context&squot;s and handling that through destroy_context&n;   later -- Cort&n;&n;   The MPC8xx has only 16 contexts.  We rotate through them on each&n;   task switch.  A better way would be to keep track of tasks that&n;   own contexts, and implement an LRU usage.  That way very active&n;   tasks don&squot;t always have to pay the TLB reload overhead.  The&n;   kernel pages are mapped shared, so the kernel can run on behalf&n;   of any task that makes a kernel entry.  Shared does not mean they&n;   are not protected, just that the ASID comparison is not performed.&n;        -- Dan&n; */
+DECL|function|enter_lazy_tlb
+r_static
+r_inline
+r_void
+id|enter_lazy_tlb
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
+)paren
+(brace
+)brace
 macro_line|#ifdef CONFIG_8xx
 DECL|macro|NO_CONTEXT
 mdefine_line|#define NO_CONTEXT      &t;16

@@ -169,6 +169,17 @@ suffix:colon
 l_int|16
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The direct map I/O window, if any.  This should be the same&n; * for all busses, since it&squot;s used by virt_to_bus.&n; */
+DECL|variable|__direct_map_base
+r_int
+r_int
+id|__direct_map_base
+suffix:semicolon
+DECL|variable|__direct_map_size
+r_int
+r_int
+id|__direct_map_size
+suffix:semicolon
 multiline_comment|/*&n; * Declare all of the machine vectors.&n; */
 multiline_comment|/* GCC 2.7.2 (on alpha at least) is lame.  It does not support either &n;   __attribute__((weak)) or #pragma weak.  Bypass it and talk directly&n;   to the assembler.  */
 DECL|macro|WEAK
@@ -729,26 +740,6 @@ op_assign
 id|end
 suffix:semicolon
 )brace
-multiline_comment|/* Enforce maximum of 2GB even if there is more.  Blah.  */
-r_if
-c_cond
-(paren
-id|max_low_pfn
-OG
-id|PFN_MAX
-)paren
-id|max_low_pfn
-op_assign
-id|PFN_MAX
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;max_low_pfn %ld&bslash;n&quot;
-comma
-id|max_low_pfn
-)paren
-suffix:semicolon
 multiline_comment|/* Find the end of the kernel memory.  */
 id|start_pfn
 op_assign
@@ -760,16 +751,6 @@ c_func
 (paren
 id|_end
 )paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;_end %p, start_pfn %ld&bslash;n&quot;
-comma
-id|_end
-comma
-id|start_pfn
 )paren
 suffix:semicolon
 id|bootmap_start
@@ -799,14 +780,6 @@ id|bootmem_bootmap_pages
 c_func
 (paren
 id|max_low_pfn
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;bootmap size: %ld pages&bslash;n&quot;
-comma
-id|bootmap_pages
 )paren
 suffix:semicolon
 multiline_comment|/* Now find a good region where to allocate the bootmap.  */
@@ -889,18 +862,6 @@ op_ge
 id|bootmap_pages
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;allocating bootmap in area %ld:%ld&bslash;n&quot;
-comma
-id|start
-comma
-id|start
-op_plus
-id|bootmap_pages
-)paren
-suffix:semicolon
 id|bootmap_start
 op_assign
 id|start
@@ -921,14 +882,6 @@ l_int|1
 id|max_low_pfn
 op_rshift_assign
 l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;bootmap area not found now trying with %ld pages&bslash;n&quot;
-comma
-id|max_low_pfn
-)paren
 suffix:semicolon
 r_goto
 id|try_again
@@ -1064,22 +1017,6 @@ comma
 id|bootmap_size
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;reserving bootmap %ld:%ld&bslash;n&quot;
-comma
-id|bootmap_start
-comma
-id|bootmap_start
-op_plus
-id|PFN_UP
-c_func
-(paren
-id|bootmap_size
-)paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 id|initrd_start
 op_assign
@@ -1171,9 +1108,9 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
 )brace
-DECL|function|page_is_ram
 r_int
 id|__init
+DECL|function|page_is_ram
 id|page_is_ram
 c_func
 (paren
@@ -1236,18 +1173,16 @@ op_plus
 id|cluster-&gt;numpages
 )paren
 (brace
-r_if
-c_cond
+r_return
 (paren
 id|cluster-&gt;usage
 op_amp
 l_int|3
 )paren
-r_return
+ques
+c_cond
 l_int|0
-suffix:semicolon
-r_else
-r_return
+suffix:colon
 l_int|1
 suffix:semicolon
 )brace
@@ -1312,7 +1247,7 @@ id|INIT_HWRPB-&gt;phys_addr
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * Locate the command line.&n;&t; */
-multiline_comment|/* Hack for Jensen... since we&squot;re restricted to 8 or 16 chars for&n;&t;   boot flags depending on the boot mode, we need some shorthand.&n;&t;   This should do for installation.  Later we&squot;ll add other&n;&t;   abbreviations as well... */
+multiline_comment|/* Hack for Jensen... since we&squot;re restricted to 8 or 16 chars for&n;&t;   boot flags depending on the boot mode, we need some shorthand.&n;&t;   This should do for installation.  */
 r_if
 c_cond
 (paren

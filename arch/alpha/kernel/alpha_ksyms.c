@@ -723,6 +723,27 @@ c_func
 id|__up_wakeup
 )paren
 suffix:semicolon
+DECL|variable|__down_read_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_read_failed
+)paren
+suffix:semicolon
+DECL|variable|__down_write_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_write_failed
+)paren
+suffix:semicolon
+DECL|variable|__rwsem_wake
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__rwsem_wake
+)paren
+suffix:semicolon
 multiline_comment|/* &n; * SMP-specific symbols.&n; */
 macro_line|#ifdef __SMP__
 DECL|variable|synchronize_irq
@@ -767,11 +788,11 @@ c_func
 id|cpu_data
 )paren
 suffix:semicolon
-DECL|variable|cpu_number_map
+DECL|variable|__cpu_number_map
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|cpu_number_map
+id|__cpu_number_map
 )paren
 suffix:semicolon
 DECL|variable|global_bh_lock

@@ -15,24 +15,6 @@ DECL|macro|CIA_MEM_R2_MASK
 mdefine_line|#define CIA_MEM_R2_MASK 0x07ffffff  /* SPARSE Mem region 2 mask is 27 bits */
 DECL|macro|CIA_MEM_R3_MASK
 mdefine_line|#define CIA_MEM_R3_MASK 0x03ffffff  /* SPARSE Mem region 3 mask is 26 bits */
-DECL|macro|CIA_DMA_WIN_BASE
-mdefine_line|#define CIA_DMA_WIN_BASE&t;&t;(1UL*1024*1024*1024)
-DECL|macro|CIA_DMA_WIN_SIZE
-mdefine_line|#define CIA_DMA_WIN_SIZE&t;&t;(2UL*1024*1024*1024)
-multiline_comment|/* Window 0 at 1GB size 1GB mapping to 0.  */
-DECL|macro|CIA_DMA_WIN0_BASE_DEFAULT
-mdefine_line|#define CIA_DMA_WIN0_BASE_DEFAULT      (1UL*1024*1024*1024)
-DECL|macro|CIA_DMA_WIN0_SIZE_DEFAULT
-mdefine_line|#define CIA_DMA_WIN0_SIZE_DEFAULT      (1UL*1024*1024*1024)
-DECL|macro|CIA_DMA_WIN0_TRAN_DEFAULT
-mdefine_line|#define CIA_DMA_WIN0_TRAN_DEFAULT      (0UL)
-multiline_comment|/* Window 1 at 2GB size 1GB mapping to 1GB.  */
-DECL|macro|CIA_DMA_WIN1_BASE_DEFAULT
-mdefine_line|#define CIA_DMA_WIN1_BASE_DEFAULT      (2UL*1024*1024*1024)
-DECL|macro|CIA_DMA_WIN1_SIZE_DEFAULT
-mdefine_line|#define CIA_DMA_WIN1_SIZE_DEFAULT      (1UL*1024*1024*1024)
-DECL|macro|CIA_DMA_WIN1_TRAN_DEFAULT
-mdefine_line|#define CIA_DMA_WIN1_TRAN_DEFAULT      (1UL*1024*1024*1024)
 multiline_comment|/*&n; * 21171-CA Control and Status Registers (p4-1)&n; */
 DECL|macro|CIA_IOC_CIA_REV
 mdefine_line|#define CIA_IOC_CIA_REV               (IDENT_ADDR + 0x8740000080UL)
@@ -436,51 +418,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|cia_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|cia_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|CIA_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|cia_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|cia_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|CIA_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * CIA (the 2117x PCI/memory support chipset for the EV5 (21164)&n; * series of processors uses a sparse address mapping scheme to&n; * get at PCI memory and I/O.&n; */
 DECL|macro|vip
 mdefine_line|#define vip&t;volatile int *
@@ -1170,10 +1107,6 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;cia_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;cia_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;cia_inb
 DECL|macro|__inw

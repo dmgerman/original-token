@@ -282,6 +282,24 @@ multiline_comment|/* enable cascade */
 )brace
 r_static
 r_void
+DECL|function|jensen_init_arch
+id|jensen_init_arch
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__direct_map_base
+op_assign
+l_int|0
+suffix:semicolon
+id|__direct_map_size
+op_assign
+l_int|0xffffffff
+suffix:semicolon
+)brace
+r_static
+r_void
 DECL|function|jensen_machine_check
 id|jensen_machine_check
 (paren
@@ -305,6 +323,8 @@ l_string|&quot;Machine check&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|macro|jensen_pci_tbi
+mdefine_line|#define jensen_pci_tbi&t;((void*)0)
 multiline_comment|/*&n; * The System Vector&n; */
 DECL|variable|__initmv
 r_struct
@@ -371,7 +391,7 @@ id|jensen_device_interrupt
 comma
 id|init_arch
 suffix:colon
-l_int|NULL
+id|jensen_init_arch
 comma
 id|init_irq
 suffix:colon

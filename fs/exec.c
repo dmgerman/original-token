@@ -1013,7 +1013,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine is used to map in a page into an address space: needed by&n; * execve() for the initial stack and environment pages.&n; */
 DECL|function|put_dirty_page
-r_static
 r_void
 id|put_dirty_page
 c_func

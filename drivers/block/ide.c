@@ -3145,8 +3145,7 @@ OG
 l_int|0
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|buffer
 (braket
 l_int|16

@@ -151,11 +151,13 @@ mdefine_line|#define PROC_CHANGE_PENALTY     20
 multiline_comment|/* Map from cpu id to sequential logical cpu number.  This will only&n;   not be idempotent when cpus failed to come on-line.  */
 r_extern
 r_int
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|NR_CPUS
 )braket
 suffix:semicolon
+DECL|macro|cpu_number_map
+mdefine_line|#define cpu_number_map(cpu)  __cpu_number_map[cpu]
 multiline_comment|/* The reverse map from sequential logical cpu number to cpu id.  */
 r_extern
 r_int

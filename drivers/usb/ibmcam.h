@@ -50,6 +50,9 @@ mdefine_line|#define YUV_TO_RGB_BY_THE_BOOK(my,mu,mv,mr,mg,mb) { &bslash;&n;    
 multiline_comment|/* Debugging aid */
 DECL|macro|IBMCAM_SAY_AND_WAIT
 mdefine_line|#define IBMCAM_SAY_AND_WAIT(what) { &bslash;&n;&t;wait_queue_head_t wq; &bslash;&n;&t;init_waitqueue_head(&amp;wq); &bslash;&n;&t;printk(KERN_INFO &quot;Say: %s&bslash;n&quot;, what); &bslash;&n;&t;interruptible_sleep_on_timeout (&amp;wq, HZ*3); &bslash;&n;}
+multiline_comment|/*&n; * This macro checks if ibmcam is still operational. The &squot;ibmcam&squot;&n; * pointer must be valid, ibmcam-&gt;dev must be valid, we are not&n; * removing the device and the device has not erred on us.&n; */
+DECL|macro|IBMCAM_IS_OPERATIONAL
+mdefine_line|#define IBMCAM_IS_OPERATIONAL(ibm_cam) (&bslash;&n;&t;(ibm_cam != NULL) &amp;&amp; &bslash;&n;&t;((ibm_cam)-&gt;dev != NULL) &amp;&amp; &bslash;&n;&t;((ibm_cam)-&gt;last_error == 0) &amp;&amp; &bslash;&n;&t;(!(ibm_cam)-&gt;remove_pending))
 r_enum
 (brace
 DECL|enumerator|STATE_SCANNING
@@ -200,6 +203,16 @@ r_int
 r_char
 id|iface
 suffix:semicolon
+multiline_comment|/* Video interface number */
+DECL|member|ifaceAltActive
+DECL|member|ifaceAltInactive
+r_int
+r_char
+id|ifaceAltActive
+comma
+id|ifaceAltInactive
+suffix:semicolon
+multiline_comment|/* Alt settings */
 DECL|member|lock
 r_struct
 id|semaphore
@@ -210,6 +223,11 @@ r_int
 id|user
 suffix:semicolon
 multiline_comment|/* user count for exclusive use */
+DECL|member|ibmcam_used
+r_int
+id|ibmcam_used
+suffix:semicolon
+multiline_comment|/* Is this structure in use? */
 DECL|member|initialized
 r_int
 id|initialized
@@ -225,6 +243,11 @@ r_int
 id|grabbing
 suffix:semicolon
 multiline_comment|/* Are we grabbing? */
+DECL|member|last_error
+r_int
+id|last_error
+suffix:semicolon
+multiline_comment|/* What calamity struck us? */
 DECL|member|compress
 r_int
 id|compress

@@ -30,11 +30,6 @@ DECL|macro|POLARIS_W_CMD
 mdefine_line|#define POLARIS_W_CMD&t;&t;(POLARIS_DENSE_CONFIG_BASE+4)
 DECL|macro|POLARIS_W_STATUS
 mdefine_line|#define POLARIS_W_STATUS&t;(POLARIS_DENSE_CONFIG_BASE+6)
-multiline_comment|/* No HAE address.  Polaris has no concept of an HAE, since it&n; * supports transfers of all sizes in dense space.&n; */
-DECL|macro|POLARIS_DMA_WIN_BASE
-mdefine_line|#define POLARIS_DMA_WIN_BASE&t;0x80000000UL&t;/* fixed, 2G @ 2G */
-DECL|macro|POLARIS_DMA_WIN_SIZE
-mdefine_line|#define POLARIS_DMA_WIN_SIZE&t;0x80000000UL&t;/* fixed, 2G @ 2G */
 multiline_comment|/*&n; * Data structure for handling POLARIS machine checks:&n; */
 DECL|struct|el_POLARIS_sysdata_mcheck
 r_struct
@@ -65,50 +60,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-DECL|function|polaris_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|polaris_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|POLARIS_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|polaris_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|polaris_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|POLARIS_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * POLARIS, the PCI/memory support chipset for the PCA56 (21164PC)&n; * processors, can use either a sparse address  mapping scheme, or the &n; * so-called byte-word PCI address space, to get at PCI memory and I/O.&n; *&n; * However, we will support only the BWX form.&n; */
 DECL|macro|vucp
 mdefine_line|#define vucp&t;volatile unsigned char *
@@ -543,10 +494,6 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus     polaris_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt     polaris_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb           polaris_inb
 DECL|macro|__inw

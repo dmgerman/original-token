@@ -2075,11 +2075,13 @@ id|USB_PORT_STAT_C_ENABLE
 id|dbg
 c_func
 (paren
-l_string|&quot;port %d enable change&quot;
+l_string|&quot;port %d enable change, status %x&quot;
 comma
 id|i
 op_plus
 l_int|1
+comma
+id|portstatus
 )paren
 suffix:semicolon
 id|usb_clear_port_feature
@@ -2094,6 +2096,45 @@ comma
 id|USB_PORT_FEAT_C_ENABLE
 )paren
 suffix:semicolon
+singleline_comment|// EM interference sometimes causes bad shielded USB devices to 
+singleline_comment|// be shutdown by the hub, this hack enables them again.
+singleline_comment|// Works at least with mouse driver. 
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|portstatus
+op_amp
+id|USB_PORT_STAT_ENABLE
+)paren
+op_logical_and
+(paren
+id|portstatus
+op_amp
+id|USB_PORT_STAT_CONNECTION
+)paren
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;already running port %i disabled by hub (EMI?), re-enabling...&quot;
+comma
+id|i
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+id|usb_hub_port_connect_change
+c_func
+(paren
+id|dev
+comma
+id|i
+)paren
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

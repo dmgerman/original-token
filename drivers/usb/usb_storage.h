@@ -156,7 +156,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|US_BULK_CS_WRAP_LEN
-mdefine_line|#define US_BULK_CS_WRAP_LEN&t;31
+mdefine_line|#define US_BULK_CS_WRAP_LEN&t;13
 DECL|macro|US_BULK_CS_SIGN
 mdefine_line|#define US_BULK_CS_SIGN&t;&t;0x53425355
 DECL|macro|US_BULK_STAT_OK

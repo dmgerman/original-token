@@ -1,11 +1,58 @@
 macro_line|#ifndef __LINUX_UHCI_H
 DECL|macro|__LINUX_UHCI_H
 mdefine_line|#define __LINUX_UHCI_H
-multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.31 2000/01/15 22:02:30 acher Exp $&n; */
+multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.39 2000/02/05 20:25:27 acher Exp $&n; */
 DECL|macro|MODNAME
 mdefine_line|#define MODNAME &quot;usb-uhci&quot;
 DECL|macro|VERSTR
-mdefine_line|#define VERSTR &quot;version v1.169 time &quot; __TIME__ &quot; &quot; __DATE__
+mdefine_line|#define VERSTR &quot;version v1.184 time &quot; __TIME__ &quot; &quot; __DATE__
+DECL|function|uhci_wait_ms
+r_static
+id|__inline__
+r_void
+id|uhci_wait_ms
+c_func
+(paren
+r_int
+r_int
+id|ms
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_UNINTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+l_int|1
+op_plus
+id|ms
+op_star
+id|HZ
+op_div
+l_int|1000
+)paren
+suffix:semicolon
+)brace
+r_else
+id|mdelay
+c_func
+(paren
+id|ms
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Command register */
 DECL|macro|USBCMD
 mdefine_line|#define USBCMD&t;&t;0
@@ -87,6 +134,8 @@ DECL|macro|USBLEGSUP_DEFAULT
 mdefine_line|#define USBLEGSUP_DEFAULT 0x2000&t;/* only PIRQ enable set */
 DECL|macro|UHCI_NULL_DATA_SIZE
 mdefine_line|#define UHCI_NULL_DATA_SIZE&t;0x7ff&t;/* for UHCI controller TD */
+DECL|macro|UHCI_PID
+mdefine_line|#define UHCI_PID &t;&t;0xff&t;/* PID MASK */
 DECL|macro|UHCI_PTR_BITS
 mdefine_line|#define UHCI_PTR_BITS&t;&t;0x000F
 DECL|macro|UHCI_PTR_TERM
@@ -254,6 +303,10 @@ r_struct
 id|list_head
 id|desc_list
 suffix:semicolon
+DECL|member|last_used
+r_int
+id|last_used
+suffix:semicolon
 DECL|typedef|uhci_desc_t
 DECL|typedef|puhci_desc_t
 )brace
@@ -378,6 +431,10 @@ id|spinlock_t
 id|urb_list_lock
 suffix:semicolon
 singleline_comment|// lock to keep consistency 
+DECL|member|unlink_urb_done
+r_int
+id|unlink_urb_done
+suffix:semicolon
 DECL|member|bus
 r_struct
 id|usb_bus
@@ -385,11 +442,6 @@ op_star
 id|bus
 suffix:semicolon
 singleline_comment|// our bus
-DECL|member|unlink_urb_lock
-id|spinlock_t
-id|unlink_urb_lock
-suffix:semicolon
-singleline_comment|// lock for unlink_urb
 DECL|member|framelist
 id|__u32
 op_star
@@ -423,6 +475,11 @@ DECL|member|chain_end
 id|uhci_desc_t
 op_star
 id|chain_end
+suffix:semicolon
+DECL|member|free_desc
+r_struct
+id|list_head
+id|free_desc
 suffix:semicolon
 DECL|member|qh_lock
 id|spinlock_t

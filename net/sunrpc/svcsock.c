@@ -851,7 +851,7 @@ macro_line|#endif
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: socket %p sendto([%p %lu... ], %d, %d) = %d&bslash;n&quot;
+l_string|&quot;svc: socket %p sendto([%p %Zu... ], %d, %d) = %d&bslash;n&quot;
 comma
 id|rqstp-&gt;rq_sock
 comma
@@ -862,10 +862,6 @@ l_int|0
 dot
 id|iov_base
 comma
-(paren
-r_int
-r_int
-)paren
 id|iov
 (braket
 l_int|0
@@ -1130,7 +1126,7 @@ macro_line|#endif
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: socket %p recvfrom(%p, %lu) = %d&bslash;n&quot;
+l_string|&quot;svc: socket %p recvfrom(%p, %Zu) = %d&bslash;n&quot;
 comma
 id|rqstp-&gt;rq_sock
 comma
@@ -1141,10 +1137,6 @@ l_int|0
 dot
 id|iov_base
 comma
-(paren
-r_int
-r_int
-)paren
 id|iov
 (braket
 l_int|0

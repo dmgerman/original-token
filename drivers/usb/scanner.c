@@ -1,6 +1,57 @@
 multiline_comment|/* -*- linux-c -*- */
-multiline_comment|/* &n; * Driver for USB Scanners (linux-2.3.41)&n; *&n; * Copyright (C) 1999, 2000 David E. Nelson&n; *&n; * Portions may be copyright Brad Keryan and Michael Gee.&n; *&n; * David E. Nelson (dnelson@jump.net)&n; * &n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License as&n; * published by the Free Software Foundation; either version 2 of the&n; * License, or (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Originally based upon mouse.c (Brad Keryan) and printer.c (Michael Gee).&n; *&n; * History&n; *&n; *  0.1  8/31/1999&n; *&n; *    Developed/tested using linux-2.3.15 with minor ohci.c changes to&n; *    support short packes during bulk xfer mode.  Some testing was&n; *    done with ohci-hcd but the performace was low.  Very limited&n; *    testing was performed with uhci but I was unable to get it to&n; *    work.  Initial relase to the linux-usb development effort.&n; *&n; *&n; *  0.2  10/16/1999&n; *&n; *    - Device can&squot;t be opened unless a scanner is plugged into the USB.&n; *    - Finally settled on a reasonable value for the I/O buffer&squot;s.&n; *    - Cleaned up write_scanner()&n; *    - Disabled read/write stats&n; *    - A little more code cleanup&n; *&n; *&n; *  0.3  10/18/1999&n; *&n; *    - Device registration changed to reflect new device&n; *      allocation/registration for linux-2.3.22+.&n; *    - Adopted David Brownell&squot;s &lt;david-b@pacbell.net&gt; technique for &n; *      assigning bulk endpoints.&n; *    - Removed unnessesary #include&squot;s&n; *    - Scanner model now reported via syslog INFO after being detected &n; *      *and* configured.&n; *    - Added user specified verdor:product USB ID&squot;s which can be passed &n; *      as module parameters.&n; *&n; *&n; *  0.3.1&n; *&n; *    - Applied patches for linux-2.3.25.&n; *    - Error number reporting changed to reflect negative return codes.&n; *&n; *&n; *  0.3.2&n; *&n; *    - Applied patches for linux-2.3.26 to scanner_init().&n; *    - Debug read/write stats now report values as signed decimal.&n; *&n; *&n; *  0.3.3&n; *&n; *    - Updated the bulk_msg() calls to usb usb_bulk_msg().&n; *    - Added a small delay in the write_scanner() method to aid in&n; *      avoiding NULL data reads on HP scanners.  We&squot;ll see how this works.&n; *    - Return values from usb_bulk_msg() now ignore positive values for&n; *      use with the ohci driver.&n; *    - Added conditional debugging instead of commenting/uncommenting&n; *      all over the place.&n; *    - kfree()&squot;d the pointer after using usb_string() as documented in&n; *      linux-usb-api.txt.&n; *    - Added usb_set_configuration().  It got lost in version 0.3 -- ack!&n; *    - Added the HP 5200C USB Vendor/Product ID&squot;s.&n; *&n; *&n; *  0.3.4&n; *&n; *    - Added Greg K-H&squot;s &lt;greg@kroah.com&gt; patch for better handling of &n; *      Product/Vendor detection.&n; *    - The driver now autoconfigures its endpoints including interrupt&n; *      endpoints if one is detected.  The concept was originally based&n; *      upon David Brownell&squot;s method.&n; *    - Added some Seiko/Epson ID&squot;s. Thanks to Karl Heinz &n; *      Kremer &lt;khk@khk.net&gt;.&n; *    - Added some preliminary ioctl() calls for the PV8630 which is used&n; *      by the HP4200. The ioctl()&squot;s still have to be registered. Thanks &n; *      to Adrian Perez Jorge &lt;adrianpj@easynews.com&gt;.&n; *    - Moved/migrated stuff to scanner.h&n; *    - Removed the usb_set_configuration() since this is handled by&n; *      the usb_new_device() routine in usb.c.&n; *    - Added the HP 3300C.  Thanks to Bruce Tenison.&n; *    - Changed user specified vendor/product id so that root hub doesn&squot;t&n; *      get falsely attached to. Thanks to Greg K-H.&n; *    - Added some Mustek ID&squot;s. Thanks to Gernot Hoyler &n; *      &lt;Dr.Hoyler@t-online.de&gt;.&n; *    - Modified the usb_string() reporting.  See kfree() comment above.&n; *    - Added Umax Astra 2000U. Thanks to Doug Alcorn.&n; *    - Updated the printk()&squot;s to use the info/warn/dbg macros.&n; *    - Updated usb_bulk_msg() argument types to correct gcc warnings.&n; *&n; *&n; *  TODO&n; *&n; *    - Simultaneous multiple device attachment&n; *&n; *&n; *  Thanks to:&n; *&n; *    - All the folks on the linux-usb list who put up with me. :)  This &n; *      has been a great learning experience for me.&n; *    - To Linus Torvalds for this great OS.&n; *    - The GNU folks.&n; *    - The folks that forwarded Vendor:Product ID&squot;s to me.&n; *    - And anybody else who chimed in with reports and suggestions.&n; *&n; *  Performance:&n; *&n; *    System: Pentium 120, 80 MB RAM, OHCI, Linux 2.3.23, HP 4100C USB Scanner&n; *            300 dpi scan of the entire bed&n; *      24 Bit Color ~ 70 secs - 3.6 Mbit/sec&n; *       8 Bit Gray  ~ 17 secs - 4.2 Mbit/sec&n; * */
+multiline_comment|/* &n; * Driver for USB Scanners (linux-2.3.42)&n; *&n; * Copyright (C) 1999, 2000 David E. Nelson&n; *&n; * Portions may be copyright Brad Keryan and Michael Gee.&n; *&n; * David E. Nelson (dnelson@jump.net)&n; * &n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License as&n; * published by the Free Software Foundation; either version 2 of the&n; * License, or (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Originally based upon mouse.c (Brad Keryan) and printer.c (Michael Gee).&n; *&n; * History&n; *&n; *  0.1  8/31/1999&n; *&n; *    Developed/tested using linux-2.3.15 with minor ohci.c changes to&n; *    support short packes during bulk xfer mode.  Some testing was&n; *    done with ohci-hcd but the performace was low.  Very limited&n; *    testing was performed with uhci but I was unable to get it to&n; *    work.  Initial relase to the linux-usb development effort.&n; *&n; *&n; *  0.2  10/16/1999&n; *&n; *    - Device can&squot;t be opened unless a scanner is plugged into the USB.&n; *    - Finally settled on a reasonable value for the I/O buffer&squot;s.&n; *    - Cleaned up write_scanner()&n; *    - Disabled read/write stats&n; *    - A little more code cleanup&n; *&n; *&n; *  0.3  10/18/1999&n; *&n; *    - Device registration changed to reflect new device&n; *      allocation/registration for linux-2.3.22+.&n; *    - Adopted David Brownell&squot;s &lt;david-b@pacbell.net&gt; technique for &n; *      assigning bulk endpoints.&n; *    - Removed unnessesary #include&squot;s&n; *    - Scanner model now reported via syslog INFO after being detected &n; *      *and* configured.&n; *    - Added user specified verdor:product USB ID&squot;s which can be passed &n; *      as module parameters.&n; *&n; *&n; *  0.3.1&n; *&n; *    - Applied patches for linux-2.3.25.&n; *    - Error number reporting changed to reflect negative return codes.&n; *&n; *&n; *  0.3.2&n; *&n; *    - Applied patches for linux-2.3.26 to scanner_init().&n; *    - Debug read/write stats now report values as signed decimal.&n; *&n; *&n; *  0.3.3&n; *&n; *    - Updated the bulk_msg() calls to usb usb_bulk_msg().&n; *    - Added a small delay in the write_scanner() method to aid in&n; *      avoiding NULL data reads on HP scanners.  We&squot;ll see how this works.&n; *    - Return values from usb_bulk_msg() now ignore positive values for&n; *      use with the ohci driver.&n; *    - Added conditional debugging instead of commenting/uncommenting&n; *      all over the place.&n; *    - kfree()&squot;d the pointer after using usb_string() as documented in&n; *      linux-usb-api.txt.&n; *    - Added usb_set_configuration().  It got lost in version 0.3 -- ack!&n; *    - Added the HP 5200C USB Vendor/Product ID&squot;s.&n; *&n; *&n; *  0.3.4  1/23/2000&n; *&n; *    - Added Greg K-H&squot;s &lt;greg@kroah.com&gt; patch for better handling of &n; *      Product/Vendor detection.&n; *    - The driver now autoconfigures its endpoints including interrupt&n; *      endpoints if one is detected.  The concept was originally based&n; *      upon David Brownell&squot;s method.&n; *    - Added some Seiko/Epson ID&squot;s. Thanks to Karl Heinz &n; *      Kremer &lt;khk@khk.net&gt;.&n; *    - Added some preliminary ioctl() calls for the PV8630 which is used&n; *      by the HP4200. The ioctl()&squot;s still have to be registered. Thanks &n; *      to Adrian Perez Jorge &lt;adrianpj@easynews.com&gt;.&n; *    - Moved/migrated stuff to scanner.h&n; *    - Removed the usb_set_configuration() since this is handled by&n; *      the usb_new_device() routine in usb.c.&n; *    - Added the HP 3300C.  Thanks to Bruce Tenison.&n; *    - Changed user specified vendor/product id so that root hub doesn&squot;t&n; *      get falsely attached to. Thanks to Greg K-H.&n; *    - Added some Mustek ID&squot;s. Thanks to Gernot Hoyler &n; *      &lt;Dr.Hoyler@t-online.de&gt;.&n; *    - Modified the usb_string() reporting.  See kfree() comment above.&n; *    - Added Umax Astra 2000U. Thanks to Doug Alcorn &lt;doug@lathi.net&gt;.&n; *    - Updated the printk()&squot;s to use the info/warn/dbg macros.&n; *    - Updated usb_bulk_msg() argument types to fix gcc warnings.&n; *&n; *&n; *  0.4  2/4/2000&n; *&n; *    - Removed usb_string() from probe_scanner since the core now does a&n; *      good job of reporting what was connnected.  &n; *    - Finally, simultaneous multiple device attachment!&n; *    - Fixed some potential memory freeing issues should memory allocation&n; *      fail in probe_scanner();&n; *    - Some fixes to disconnect_scanner().&n; *    - Added interrupt endpoint support.&n; *    - Added Agfa SnapScan Touch. Thanks to Jan Van den Bergh&n; *      &lt;jan.vandenbergh@cs.kuleuven.ac.be&gt;.&n; *    - Added Umax 1220U ID&squot;s. Thanks to Maciek Klimkowski&n; *      &lt;mac@nexus.carleton.ca&gt;.&n; *    - Fixed bug in write_scanner(). The buffer was not being properly&n; *      updated for writes larger than OBUF_SIZE. Thanks to Henrik &n; *      Johansson &lt;henrikjo@post.utfors.se&gt; for identifying it.&n; *    - Added Microtek X6 ID&squot;s. Thanks to Oliver Neukum&n; *      &lt;Oliver.Neukum@lrz.uni-muenchen.de&gt;.&n; *&n; *&n; *  TODO&n; *&n; *    - Select/poll methods&n; *&n; *&n; *  Thanks to:&n; *&n; *    - All the folks on the linux-usb list who put up with me. :)  This &n; *      has been a great learning experience for me.&n; *    - To Linus Torvalds for this great OS.&n; *    - The GNU folks.&n; *    - The folks that forwarded Vendor:Product ID&squot;s to me.&n; *    - And anybody else who chimed in with reports and suggestions.&n; *&n; *  Performance:&n; *&n; *    System: Pentium 120, 80 MB RAM, OHCI, Linux 2.3.23, HP 4100C USB Scanner&n; *            300 dpi scan of the entire bed&n; *      24 Bit Color ~ 70 secs - 3.6 Mbit/sec&n; *       8 Bit Gray  ~ 17 secs - 4.2 Mbit/sec&n; */
 macro_line|#include &quot;scanner.h&quot;
+r_static
+r_void
+DECL|function|irq_scanner
+id|irq_scanner
+c_func
+(paren
+r_struct
+id|urb
+op_star
+id|urb
+)paren
+(brace
+multiline_comment|/*&n; * For the meantime, this is just a placeholder until I figure out what&n; * all I want to do with it.&n; */
+r_struct
+id|scn_usb_data
+op_star
+id|scn
+op_assign
+id|urb-&gt;context
+suffix:semicolon
+r_int
+r_char
+op_star
+id|data
+op_assign
+op_amp
+id|scn-&gt;button
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|urb-&gt;status
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|dbg
+c_func
+(paren
+l_string|&quot;irq_scanner(%d): data:%x&quot;
+comma
+id|scn-&gt;scn_minor
+comma
+op_star
+id|data
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_static
 r_int
 DECL|function|open_scanner
@@ -19,21 +70,67 @@ id|file
 )paren
 (brace
 r_struct
-id|hpscan_usb_data
+id|scn_usb_data
 op_star
-id|hps
-op_assign
-op_amp
-id|hpscan
+id|scn
 suffix:semicolon
 r_struct
 id|usb_device
 op_star
 id|dev
 suffix:semicolon
+id|kdev_t
+id|scn_minor
+suffix:semicolon
+id|scn_minor
+op_assign
+id|USB_SCN_MINOR
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;open_scanner: scn_minor:%d&quot;
+comma
+id|scn_minor
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;open_scanner(%d): invalid scn_minor&quot;
+comma
+id|scn_minor
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOIOCTLCMD
+suffix:semicolon
+)brace
+id|scn
+op_assign
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+suffix:semicolon
 id|dev
 op_assign
-id|hps-&gt;hpscan_dev
+id|scn-&gt;scn_dev
 suffix:semicolon
 r_if
 c_cond
@@ -51,7 +148,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|hps-&gt;present
+id|scn-&gt;present
 )paren
 (brace
 r_return
@@ -62,7 +159,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hps-&gt;isopen
+id|scn-&gt;isopen
 )paren
 (brace
 r_return
@@ -70,10 +167,15 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|hps-&gt;isopen
+id|scn-&gt;isopen
 op_assign
 l_int|1
 suffix:semicolon
+id|file-&gt;private_data
+op_assign
+id|scn
+suffix:semicolon
+multiline_comment|/* Used by the read and write metheds */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -98,16 +200,65 @@ id|file
 )paren
 (brace
 r_struct
-id|hpscan_usb_data
+id|scn_usb_data
 op_star
-id|hps
-op_assign
-op_amp
-id|hpscan
+id|scn
 suffix:semicolon
-id|hps-&gt;isopen
+id|kdev_t
+id|scn_minor
+suffix:semicolon
+id|scn_minor
+op_assign
+id|USB_SCN_MINOR
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;close_scanner: scn_minor:%d&quot;
+comma
+id|scn_minor
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;close_scanner(%d): invalid scn_minor&quot;
+comma
+id|scn_minor
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOIOCTLCMD
+suffix:semicolon
+)brace
+id|scn
+op_assign
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+suffix:semicolon
+id|scn-&gt;isopen
 op_assign
 l_int|0
+suffix:semicolon
+id|file-&gt;private_data
+op_assign
+l_int|NULL
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -140,12 +291,9 @@ id|ppos
 )paren
 (brace
 r_struct
-id|hpscan_usb_data
+id|scn_usb_data
 op_star
-id|hps
-op_assign
-op_amp
-id|hpscan
+id|scn
 suffix:semicolon
 r_struct
 id|usb_device
@@ -176,12 +324,18 @@ suffix:semicolon
 r_char
 op_star
 id|obuf
+suffix:semicolon
+id|scn
 op_assign
-id|hps-&gt;obuf
+id|file-&gt;private_data
+suffix:semicolon
+id|obuf
+op_assign
+id|scn-&gt;obuf
 suffix:semicolon
 id|dev
 op_assign
-id|hps-&gt;hpscan_dev
+id|scn-&gt;scn_dev
 suffix:semicolon
 r_while
 c_loop
@@ -228,7 +382,7 @@ c_cond
 id|copy_from_user
 c_func
 (paren
-id|hps-&gt;obuf
+id|scn-&gt;obuf
 comma
 id|buffer
 comma
@@ -256,7 +410,7 @@ c_func
 (paren
 id|dev
 comma
-id|hps-&gt;bulk_out_ep
+id|scn-&gt;bulk_out_ep
 )paren
 comma
 id|obuf
@@ -274,7 +428,9 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;write stats: result:%d copy_size:%d partial:%d&quot;
+l_string|&quot;write stats(%d): result:%d copy_size:%d partial:%d&quot;
+comma
+id|scn-&gt;scn_minor
 comma
 id|result
 comma
@@ -319,7 +475,9 @@ multiline_comment|/* We should not get any I/O errors */
 id|warn
 c_func
 (paren
-l_string|&quot;write_scanner: funky result: %d. Please notify the maintainer.&quot;
+l_string|&quot;write_scanner(%d): funky result: %d. Please notify the maintainer.&quot;
+comma
+id|scn-&gt;scn_minor
 comma
 id|result
 )paren
@@ -362,7 +520,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;dump: &quot;
+l_string|&quot;dump(%d): &quot;
+comma
+id|scn-&gt;scn_minor
 )paren
 suffix:semicolon
 r_for
@@ -424,7 +584,7 @@ id|partial
 )paren
 (brace
 multiline_comment|/* Data written */
-id|obuf
+id|buffer
 op_add_assign
 id|partial
 suffix:semicolon
@@ -458,6 +618,7 @@ c_func
 l_int|5
 )paren
 suffix:semicolon
+multiline_comment|/* This seems to help with SANE queries */
 r_return
 id|ret
 ques
@@ -491,12 +652,9 @@ id|ppos
 )paren
 (brace
 r_struct
-id|hpscan_usb_data
+id|scn_usb_data
 op_star
-id|hps
-op_assign
-op_amp
-id|hpscan
+id|scn
 suffix:semicolon
 r_struct
 id|usb_device
@@ -522,12 +680,18 @@ suffix:semicolon
 r_char
 op_star
 id|ibuf
+suffix:semicolon
+id|scn
 op_assign
-id|hps-&gt;ibuf
+id|file-&gt;private_data
+suffix:semicolon
+id|ibuf
+op_assign
+id|scn-&gt;ibuf
 suffix:semicolon
 id|dev
 op_assign
-id|hps-&gt;hpscan_dev
+id|scn-&gt;scn_dev
 suffix:semicolon
 id|read_count
 op_assign
@@ -582,7 +746,7 @@ c_func
 (paren
 id|dev
 comma
-id|hps-&gt;bulk_in_ep
+id|scn-&gt;bulk_in_ep
 )paren
 comma
 id|ibuf
@@ -600,7 +764,9 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;read stats: result:%d this_read:%d partial:%d&quot;
+l_string|&quot;read stats(%d): result:%d this_read:%d partial:%d&quot;
+comma
+id|scn-&gt;scn_minor
 comma
 id|result
 comma
@@ -621,7 +787,9 @@ multiline_comment|/* NAK -- shouldn&squot;t happen */
 id|warn
 c_func
 (paren
-l_string|&quot;read_scanner: NAK received&quot;
+l_string|&quot;read_scanner(%d): NAK received&quot;
+comma
+id|scn-&gt;scn_minor
 )paren
 suffix:semicolon
 id|ret
@@ -652,7 +820,9 @@ id|USB_ST_DATAUNDERRUN
 id|warn
 c_func
 (paren
-l_string|&quot;read_scanner: funky result: %d. Please notify the maintainer.&quot;
+l_string|&quot;read_scanner(%d): funky result:%d. Please notify the maintainer.&quot;
+comma
+id|scn-&gt;scn_minor
 comma
 (paren
 r_int
@@ -698,7 +868,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;dump: &quot;
+l_string|&quot;dump(%d): &quot;
+comma
+id|scn-&gt;scn_minor
 )paren
 suffix:semicolon
 r_for
@@ -832,12 +1004,9 @@ id|ifnum
 )paren
 (brace
 r_struct
-id|hpscan_usb_data
+id|scn_usb_data
 op_star
-id|hps
-op_assign
-op_amp
-id|hpscan
+id|scn
 suffix:semicolon
 r_struct
 id|usb_interface_descriptor
@@ -852,6 +1021,9 @@ suffix:semicolon
 r_int
 id|ep_cnt
 suffix:semicolon
+id|kdev_t
+id|scn_minor
+suffix:semicolon
 r_char
 id|valid_device
 op_assign
@@ -863,10 +1035,6 @@ comma
 id|have_bulk_out
 comma
 id|have_intr
-suffix:semicolon
-id|hps-&gt;present
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -893,6 +1061,22 @@ id|product
 )paren
 suffix:semicolon
 )brace
+id|dbg
+c_func
+(paren
+l_string|&quot;probe_scanner: USB dev address:%p&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;probe_scanner: ifnum:%u&quot;
+comma
+id|ifnum
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * 1. Check Vendor/Product&n; * 2. Determine/Assign Bulk Endpoints&n; * 3. Determine/Assign Intr Endpoint&n; */
 multiline_comment|/* &n; * There doesn&squot;t seem to be an imaging class defined in the USB&n; * Spec. (yet).  If there is, HP isn&squot;t following it and it doesn&squot;t&n; * look like anybody else is either.  Therefore, we have to test the&n; * Vendor and Product ID&squot;s to see what we have.  Also, other scanners&n; * may be able to use this driver by specifying both vendor and&n; * product ID&squot;s as options to the scanner module in conf.modules.&n; *&n; * NOTE: Just because a product is supported here does not mean that&n; * applications exist that support the product.  It&squot;s in the hopes&n; * that this will allow developers a means to produce applications&n; * that will support USB products.&n; *&n; * Until we detect a device which is pleasing, we silently punt.  */
 r_do
@@ -959,14 +1143,23 @@ c_cond
 id|dev-&gt;descriptor.idVendor
 op_eq
 l_int|0x06bd
-op_logical_and
-multiline_comment|/* AGFA */
+)paren
+(brace
+multiline_comment|/* Agfa */
+r_if
+c_cond
+(paren
 id|dev-&gt;descriptor.idProduct
 op_eq
 l_int|0x0001
+op_logical_or
+multiline_comment|/* SnapScan 1212U */
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x0100
 )paren
 (brace
-multiline_comment|/* SnapScan 1212U */
+multiline_comment|/* SnapScan Touch */
 id|valid_device
 op_assign
 l_int|1
@@ -974,14 +1167,24 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+)brace
 r_if
 c_cond
 (paren
 id|dev-&gt;descriptor.idVendor
 op_eq
 l_int|0x1606
-op_logical_and
+)paren
+(brace
 multiline_comment|/* Umax */
+r_if
+c_cond
+(paren
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x0010
+op_logical_or
+multiline_comment|/* Astra 1220U */
 id|dev-&gt;descriptor.idProduct
 op_eq
 l_int|0x0030
@@ -994,6 +1197,7 @@ l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -1057,6 +1261,32 @@ c_cond
 (paren
 id|dev-&gt;descriptor.idVendor
 op_eq
+l_int|0x05da
+)paren
+(brace
+multiline_comment|/* Microtek */
+r_if
+c_cond
+(paren
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x0099
+)paren
+(brace
+multiline_comment|/* X6 */
+id|valid_device
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|dev-&gt;descriptor.idVendor
+op_eq
 id|vendor
 op_logical_and
 multiline_comment|/* User specified */
@@ -1089,6 +1319,7 @@ id|valid_device
 r_return
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* We didn&squot;t find anything pleasing */
 multiline_comment|/*&n; * After this point we can be a little noisy about what we are trying to&n; *  configure.&n; */
 r_if
 c_cond
@@ -1101,7 +1332,7 @@ l_int|1
 id|info
 c_func
 (paren
-l_string|&quot;probe_scanner: Only one configuration is supported.&quot;
+l_string|&quot;probe_scanner: Only one device configuration is supported.&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1124,7 +1355,7 @@ l_int|1
 id|info
 c_func
 (paren
-l_string|&quot;probe_scanner: Only one interface is supported.&quot;
+l_string|&quot;probe_scanner: Only one device interface is supported.&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1140,7 +1371,7 @@ l_int|0
 dot
 id|interface
 (braket
-l_int|0
+id|ifnum
 )braket
 dot
 id|altsetting
@@ -1149,7 +1380,7 @@ id|endpoint
 op_assign
 id|interface
 (braket
-l_int|0
+id|ifnum
 )braket
 dot
 id|endpoint
@@ -1158,7 +1389,7 @@ multiline_comment|/* &n; * Start checking for two bulk endpoints OR two bulk end
 id|dbg
 c_func
 (paren
-l_string|&quot;probe_scanner: Number of Endpoints: %d&quot;
+l_string|&quot;probe_scanner: Number of Endpoints:%d&quot;
 comma
 (paren
 r_int
@@ -1226,28 +1457,19 @@ id|ep_cnt
 )paren
 )paren
 (brace
-id|have_bulk_in
-op_assign
-l_int|1
-suffix:semicolon
-id|hps-&gt;bulk_in_ep
-op_assign
-id|ep_cnt
-op_plus
-l_int|1
-suffix:semicolon
 id|ep_cnt
 op_increment
+suffix:semicolon
+id|have_bulk_in
+op_assign
+id|ep_cnt
 suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;probe_scanner: bulk_in_ep: %d&quot;
+l_string|&quot;probe_scanner: bulk_in_ep:%d&quot;
 comma
-(paren
-r_int
-)paren
-id|hps-&gt;bulk_in_ep
+id|have_bulk_in
 )paren
 suffix:semicolon
 r_continue
@@ -1269,28 +1491,19 @@ id|ep_cnt
 )paren
 )paren
 (brace
-id|have_bulk_out
-op_assign
-l_int|1
-suffix:semicolon
-id|hps-&gt;bulk_out_ep
-op_assign
-id|ep_cnt
-op_plus
-l_int|1
-suffix:semicolon
 id|ep_cnt
 op_increment
+suffix:semicolon
+id|have_bulk_out
+op_assign
+id|ep_cnt
 suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;probe_scanner: bulk_out_ep: %d&quot;
+l_string|&quot;probe_scanner: bulk_out_ep:%d&quot;
 comma
-(paren
-r_int
-)paren
-id|hps-&gt;bulk_out_ep
+id|have_bulk_out
 )paren
 suffix:semicolon
 r_continue
@@ -1312,28 +1525,19 @@ id|ep_cnt
 )paren
 )paren
 (brace
-id|have_intr
-op_assign
-l_int|1
-suffix:semicolon
-id|hps-&gt;intr_ep
-op_assign
-id|ep_cnt
-op_plus
-l_int|1
-suffix:semicolon
 id|ep_cnt
 op_increment
+suffix:semicolon
+id|have_intr
+op_assign
+id|ep_cnt
 suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;probe_scanner: intr_ep: %d&quot;
+l_string|&quot;probe_scanner: intr_ep:%d&quot;
 comma
-(paren
-r_int
-)paren
-id|hps-&gt;intr_ep
+id|have_intr
 )paren
 suffix:semicolon
 r_continue
@@ -1350,6 +1554,7 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* Shouldn&squot;t ever get here unless we have something weird */
 )brace
+multiline_comment|/*&n; * Perform a quick check to make sure that everything worked as it&n; * should have.&n; */
 r_switch
 c_cond
 (paren
@@ -1421,20 +1626,197 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|hps-&gt;present
+multiline_comment|/* &n; * Determine a minor number and initialize the structure associated&n; * with it.  The problem with this is that we are counting on the fact&n; * that the user will sequentially add device nodes for the scanner&n; * devices.  */
+r_for
+c_loop
+(paren
+id|scn_minor
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
-id|hps-&gt;hpscan_dev
-op_assign
-id|dev
+id|scn_minor
+OL
+id|SCN_MAX_MNR
+suffix:semicolon
+id|scn_minor
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+)paren
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Check to make sure that the last slot isn&squot;t already taken */
+r_if
+c_cond
+(paren
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;probe_scanner: No more minor devices remaining.&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|dbg
+c_func
+(paren
+l_string|&quot;probe_scanner: Allocated minor:%d&quot;
+comma
+id|scn_minor
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
-id|hps-&gt;obuf
+id|scn
+op_assign
+id|kmalloc
+(paren
+r_sizeof
+(paren
+r_struct
+id|scn_usb_data
+)paren
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;probe_scanner: Out of memory.&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|memset
+(paren
+id|scn
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|scn_usb_data
+)paren
+)paren
+suffix:semicolon
+id|dbg
+(paren
+l_string|&quot;probe_scanner(%d): Address of scn:%p&quot;
+comma
+id|scn_minor
+comma
+id|scn
+)paren
+suffix:semicolon
+multiline_comment|/* Ok, if we detected an interrupt EP, setup a handler for it */
+r_if
+c_cond
+(paren
+id|have_intr
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;probe_scanner(%d): Configuring IRQ handler for intr EP:%d&quot;
+comma
+id|scn_minor
+comma
+id|have_intr
+)paren
+suffix:semicolon
+id|FILL_INT_URB
+c_func
+(paren
+op_amp
+id|scn-&gt;scn_irq
+comma
+id|dev
+comma
+id|usb_rcvintpipe
+c_func
+(paren
+id|dev
+comma
+id|have_intr
+)paren
+comma
+op_amp
+id|scn-&gt;button
+comma
+l_int|1
+comma
+id|irq_scanner
+comma
+id|scn
+comma
+singleline_comment|// endpoint[(int)have_intr].bInterval);
+l_int|250
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|usb_submit_urb
+c_func
+(paren
+op_amp
+id|scn-&gt;scn_irq
+)paren
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;probe_scanner(%d): Unable to allocate INT URB.&quot;
+comma
+id|scn_minor
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|scn
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Ok, now initialize all the relevant values */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|scn-&gt;obuf
 op_assign
 (paren
 r_char
@@ -1450,16 +1832,40 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
+id|err
+c_func
+(paren
+l_string|&quot;probe_scanner(%d): Not enough memory for the output buffer.&quot;
+comma
+id|scn_minor
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|scn
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|dbg
+c_func
+(paren
+l_string|&quot;probe_scanner(%d): obuf address:%p&quot;
+comma
+id|scn_minor
+comma
+id|scn-&gt;obuf
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
-id|hps-&gt;ibuf
+id|scn-&gt;ibuf
 op_assign
 (paren
 r_char
@@ -1475,12 +1881,75 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
+id|err
+c_func
+(paren
+l_string|&quot;probe_scanner(%d): Not enough memory for the input buffer.&quot;
+comma
+id|scn_minor
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|scn-&gt;obuf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|scn
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|dbg
+c_func
+(paren
+l_string|&quot;probe_scanner(%d): ibuf address:%p&quot;
+comma
+id|scn_minor
+comma
+id|scn-&gt;ibuf
+)paren
+suffix:semicolon
+id|scn-&gt;bulk_in_ep
+op_assign
+id|have_bulk_in
+suffix:semicolon
+id|scn-&gt;bulk_out_ep
+op_assign
+id|have_bulk_out
+suffix:semicolon
+id|scn-&gt;intr_ep
+op_assign
+id|have_intr
+suffix:semicolon
+id|scn-&gt;present
+op_assign
+l_int|1
+suffix:semicolon
+id|scn-&gt;scn_dev
+op_assign
+id|dev
+suffix:semicolon
+id|scn-&gt;scn_minor
+op_assign
+id|scn_minor
+suffix:semicolon
+id|scn-&gt;isopen
+op_assign
+l_int|0
+suffix:semicolon
 r_return
-id|hps
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+op_assign
+id|scn
 suffix:semicolon
 )brace
 r_static
@@ -1500,13 +1969,13 @@ id|ptr
 )paren
 (brace
 r_struct
-id|hpscan_usb_data
+id|scn_usb_data
 op_star
-id|hps
+id|scn
 op_assign
 (paren
 r_struct
-id|hpscan_usb_data
+id|scn_usb_data
 op_star
 )paren
 id|ptr
@@ -1514,32 +1983,69 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hps-&gt;isopen
+id|scn-&gt;intr_ep
 )paren
 (brace
-multiline_comment|/* better let it finish - the release will do whats needed */
-id|hps-&gt;hpscan_dev
+id|dbg
+c_func
+(paren
+l_string|&quot;disconnect_scanner(%d): Unlinking IRQ URB&quot;
+comma
+id|scn-&gt;scn_minor
+)paren
+suffix:semicolon
+id|usb_unlink_urb
+c_func
+(paren
+op_amp
+id|scn-&gt;scn_irq
+)paren
+suffix:semicolon
+)brace
+id|usb_driver_release_interface
+c_func
+(paren
+op_amp
+id|scanner_driver
+comma
+op_amp
+id|scn-&gt;scn_dev-&gt;actconfig-&gt;interface
+(braket
+id|scn-&gt;ifnum
+)braket
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|scn-&gt;ibuf
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|scn-&gt;obuf
+)paren
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;disconnect_scanner: De-allocating minor:%d&quot;
+comma
+id|scn-&gt;scn_minor
+)paren
+suffix:semicolon
+id|p_scn_table
+(braket
+id|scn-&gt;scn_minor
+)braket
 op_assign
 l_int|NULL
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|kfree
-c_func
 (paren
-id|hps-&gt;ibuf
+id|scn
 )paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|hps-&gt;obuf
-)paren
-suffix:semicolon
-id|hps-&gt;present
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -1568,14 +2074,6 @@ id|arg
 )paren
 (brace
 r_struct
-id|hpscan_usb_data
-op_star
-id|hps
-op_assign
-op_amp
-id|hpscan
-suffix:semicolon
-r_struct
 id|usb_device
 op_star
 id|dev
@@ -1583,9 +2081,48 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
+id|kdev_t
+id|scn_minor
+suffix:semicolon
+id|scn_minor
+op_assign
+id|USB_SCN_MINOR
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;ioctl_scanner(%d): invalid scn_minor&quot;
+comma
+id|scn_minor
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOIOCTLCMD
+suffix:semicolon
+)brace
 id|dev
 op_assign
-id|hps-&gt;hpscan_dev
+id|p_scn_table
+(braket
+id|scn_minor
+)braket
+op_member_access_from_pointer
+id|scn_dev
 suffix:semicolon
 r_switch
 c_cond
@@ -1594,14 +2131,16 @@ id|cmd
 )paren
 (brace
 r_case
-id|PV8630_RECEIVE
+id|PV8630_IOCTL_INREQUEST
 suffix:colon
 (brace
 r_struct
 (brace
-r_int
-r_char
+id|__u8
 id|data
+suffix:semicolon
+id|__u8
+id|request
 suffix:semicolon
 id|__u16
 id|value
@@ -1652,7 +2191,7 @@ comma
 l_int|0
 )paren
 comma
-l_int|0x0
+id|args.request
 comma
 id|USB_TYPE_VENDOR
 op_or
@@ -1670,18 +2209,24 @@ comma
 l_int|1
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ioctl_scanner recv: args.data:%x args.value:%x args.index:%x&quot;
+l_string|&quot;ioctl_scanner(%d): inreq: args.data:%x args.value:%x args.index:%x args.request:%x&bslash;n&quot;
+comma
+id|scn_minor
 comma
 id|args.data
 comma
 id|args.value
 comma
 id|args.index
+comma
+id|args.request
 )paren
 suffix:semicolon
 r_if
@@ -1712,7 +2257,9 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ioctl_scanner recv: result:%d&quot;
+l_string|&quot;ioctl_scanner(%d): inreq: result:%d&bslash;n&quot;
+comma
+id|scn_minor
 comma
 id|result
 )paren
@@ -1722,11 +2269,14 @@ id|result
 suffix:semicolon
 )brace
 r_case
-id|PV8630_SEND
+id|PV8630_IOCTL_OUTREQUEST
 suffix:colon
 (brace
 r_struct
 (brace
+id|__u8
+id|request
+suffix:semicolon
 id|__u16
 id|value
 suffix:semicolon
@@ -1764,11 +2314,15 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ioctl_scanner send: args.value:%x args.index:%x&quot;
+l_string|&quot;ioctl_scanner(%d): outreq: args.value:%x args.index:%x args.request:%x&bslash;n&quot;
+comma
+id|scn_minor
 comma
 id|args.value
 comma
 id|args.index
+comma
+id|args.request
 )paren
 suffix:semicolon
 id|result
@@ -1786,15 +2340,13 @@ comma
 l_int|0
 )paren
 comma
-l_int|0x1
-multiline_comment|/* Vendor Specific bRequest */
+id|args.request
 comma
 id|USB_TYPE_VENDOR
 op_or
 id|USB_RECIP_DEVICE
 op_or
 id|USB_DIR_OUT
-multiline_comment|/* 0x40 */
 comma
 id|args.value
 comma
@@ -1805,12 +2357,16 @@ comma
 l_int|0
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ioctl_scanner send: result:%d&quot;
+l_string|&quot;ioctl_scanner(%d): outreq: result:%d&bslash;n&quot;
+comma
+id|scn_minor
 comma
 id|result
 )paren
@@ -1852,7 +2408,6 @@ comma
 multiline_comment|/* poll */
 id|ioctl_scanner
 comma
-multiline_comment|/* ioctl */
 l_int|NULL
 comma
 multiline_comment|/* mmap */
@@ -1892,7 +2447,7 @@ comma
 op_amp
 id|usb_scanner_fops
 comma
-l_int|48
+id|SCN_BASE_MNR
 )brace
 suffix:semicolon
 r_int
@@ -1929,34 +2484,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
-DECL|function|usb_scanner_cleanup
-id|usb_scanner_cleanup
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|hpscan_usb_data
-op_star
-id|hps
-op_assign
-op_amp
-id|hpscan
-suffix:semicolon
-id|hps-&gt;present
-op_assign
-l_int|0
-suffix:semicolon
-id|usb_deregister
-c_func
-(paren
-op_amp
-id|scanner_driver
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifdef MODULE
 r_int
 DECL|function|init_module
@@ -1981,9 +2508,11 @@ c_func
 r_void
 )paren
 (brace
-id|usb_scanner_cleanup
+id|usb_deregister
 c_func
 (paren
+op_amp
+id|scanner_driver
 )paren
 suffix:semicolon
 )brace

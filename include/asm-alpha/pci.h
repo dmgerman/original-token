@@ -1,19 +1,56 @@
 macro_line|#ifndef __ALPHA_PCI_H
 DECL|macro|__ALPHA_PCI_H
 mdefine_line|#define __ALPHA_PCI_H
+macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 multiline_comment|/*&n; * The following structure is used to manage multiple PCI busses.&n; */
+r_struct
+id|pci_dev
+suffix:semicolon
 r_struct
 id|pci_bus
 suffix:semicolon
 r_struct
 id|resource
 suffix:semicolon
+multiline_comment|/* A PCI IOMMU allocation arena.  There are typically two of these&n;   regions per bus.  */
+multiline_comment|/* ??? The 8400 has a 32-byte pte entry, and the entire table apparently&n;   lives directly on the host bridge (no tlb?).  We don&squot;t support this&n;   machine, but if we ever did, we&squot;d need to parameterize all this quite&n;   a bit further.  Probably with per-bus operation tables.  */
+DECL|struct|pci_iommu_arena
+r_struct
+id|pci_iommu_arena
+(brace
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|ptes
+r_int
+r_int
+op_star
+id|ptes
+suffix:semicolon
+DECL|member|dma_base
+id|dma_addr_t
+id|dma_base
+suffix:semicolon
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
+DECL|member|alloc_hint
+r_int
+r_int
+id|alloc_hint
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* A controler.  Used to manage multiple PCI busses.  */
 DECL|struct|pci_controler
 r_struct
 id|pci_controler
 (brace
-multiline_comment|/* Mandated.  */
 DECL|member|next
 r_struct
 id|pci_controler
@@ -38,7 +75,6 @@ id|resource
 op_star
 id|mem_space
 suffix:semicolon
-multiline_comment|/* Alpha specific.  */
 DECL|member|config_space
 r_int
 r_int
@@ -59,6 +95,18 @@ r_int
 r_int
 id|last_busno
 suffix:semicolon
+DECL|member|sg_pci
+r_struct
+id|pci_iommu_arena
+op_star
+id|sg_pci
+suffix:semicolon
+DECL|member|sg_isa
+r_struct
+id|pci_iommu_arena
+op_star
+id|sg_isa
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Override the logic in pci_scan_bus for skipping already-configured&n;   bus numbers.  */
@@ -68,5 +116,152 @@ DECL|macro|PCIBIOS_MIN_IO
 mdefine_line|#define PCIBIOS_MIN_IO&t;&t;alpha_mv.min_io_address
 DECL|macro|PCIBIOS_MIN_MEM
 mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;alpha_mv.min_mem_address
+multiline_comment|/* IOMMU controls.  */
+multiline_comment|/* Allocate and map kernel buffer using consistant mode DMA for PCI&n;   device.  Returns non-NULL cpu-view pointer to the buffer if&n;   successful and sets *DMA_ADDRP to the pci side dma address as well,&n;   else DMA_ADDRP is undefined.  */
+r_extern
+r_void
+op_star
+id|pci_alloc_consistent
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+comma
+id|dma_addr_t
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Free and unmap a consistant DMA buffer.  CPU_ADDR and DMA_ADDR must&n;   be values that were returned from pci_alloc_consistant.  SIZE must&n;   be the same as what as passed into pci_alloc_consistant.&n;   References to the memory and mappings assosciated with CPU_ADDR or&n;   DMA_ADDR past this call are illegal.  */
+r_extern
+r_void
+id|pci_free_consistent
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+comma
+r_void
+op_star
+comma
+id|dma_addr_t
+)paren
+suffix:semicolon
+multiline_comment|/* Map a single buffer of the indicate size for PCI DMA in streaming&n;   mode.  The 32-bit PCI bus mastering address to use is returned.&n;   Once the device is given the dma address, the device owns this memory&n;   until either pci_unmap_single or pci_sync_single is performed.  */
+r_extern
+id|dma_addr_t
+id|pci_map_single
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Unmap a single streaming mode DMA translation.  The DMA_ADDR and&n;   SIZE must match what was provided for in a previous pci_map_single&n;   call.  All other usages are undefined.  After this call, reads by&n;   the cpu to the buffer are guarenteed to see whatever the device&n;   wrote there.  */
+r_extern
+r_void
+id|pci_unmap_single
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+id|dma_addr_t
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Map a set of buffers described by scatterlist in streaming mode for&n;   PCI DMA.  This is the scather-gather version of the above&n;   pci_map_single interface.  Here the scatter gather list elements&n;   are each tagged with the appropriate PCI dma address and length.&n;   They are obtained via sg_dma_{address,length}(SG).&n;&n;   NOTE: An implementation may be able to use a smaller number of DMA&n;   address/length pairs than there are SG table elements.  (for&n;   example via virtual mapping capabilities) The routine returns the&n;   number of addr/length pairs actually used, at most nents.&n;&n;   Device ownership issues as mentioned above for pci_map_single are&n;   the same here.  */
+r_extern
+r_int
+id|pci_map_sg
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_struct
+id|scatterlist
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Unmap a set of streaming mode DMA translations.  Again, cpu read&n;   rules concerning calls here are the same as for pci_unmap_single()&n;   above.  */
+r_extern
+r_void
+id|pci_unmap_sg
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_struct
+id|scatterlist
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Make physical memory consistant for a single streaming mode DMA&n;   translation after a transfer.&n;&n;   If you perform a pci_map_single() but wish to interrogate the&n;   buffer using the cpu, yet do not wish to teardown the PCI dma&n;   mapping, you must call this function before doing so.  At the next&n;   point you give the PCI dma address back to the card, the device&n;   again owns the buffer.  */
+r_extern
+r_inline
+r_void
+DECL|function|pci_sync_single
+id|pci_sync_single
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+id|dma_addr_t
+id|dma_addr
+comma
+r_int
+id|size
+)paren
+(brace
+multiline_comment|/* Nothing to do.  */
+)brace
+multiline_comment|/* Make physical memory consistant for a set of streaming mode DMA&n;   translations after a transfer.  The same as pci_dma_sync_single but&n;   for a scatter-gather list, same rules and usage.  */
+r_extern
+r_inline
+r_void
+DECL|function|pci_sync_sg
+id|pci_sync_sg
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_struct
+id|scatterlist
+op_star
+id|sg
+comma
+r_int
+id|size
+)paren
+(brace
+multiline_comment|/* Nothing to do.  */
+)brace
 macro_line|#endif /* __ALPHA_PCI_H */
 eof

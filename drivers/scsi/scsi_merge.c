@@ -130,7 +130,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Simple sanity check that we will use for the first go around&n; * in order to ensure that we are doing the counting correctly.&n; * This can be removed for optimization.&n; */
 DECL|macro|SANITY_CHECK
-mdefine_line|#define SANITY_CHECK(req, _CLUSTER, _DMA)&t;&t;&t;&t;&bslash;&n;    if( req-&gt;nr_segments != __count_segments(req, _CLUSTER, _DMA, NULL) )&t;&bslash;&n;    {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ here;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;here:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;printk(&quot;Incorrect segment count at 0x%p&quot;, &amp;&amp;here);&t;&t;&bslash;&n;&t;dump_stats(req, _CLUSTER, _DMA, __count_segments(req, _CLUSTER, _DMA, NULL)); &bslash;&n;    }
+mdefine_line|#define SANITY_CHECK(req, _CLUSTER, _DMA)&t;&t;&t;&t;&bslash;&n;    if( req-&gt;nr_segments != __count_segments(req, _CLUSTER, _DMA, NULL) )&t;&bslash;&n;    {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;printk(&quot;Incorrect segment count at 0x%p&quot;, current_text_addr());&t;&bslash;&n;&t;dump_stats(req, _CLUSTER, _DMA, __count_segments(req, _CLUSTER, _DMA, NULL)); &bslash;&n;    }
 macro_line|#else
 DECL|macro|SANITY_CHECK
 mdefine_line|#define SANITY_CHECK(req, _CLUSTER, _DMA)

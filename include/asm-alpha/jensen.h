@@ -40,47 +40,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Change virtual addresses to bus addresses and vv.&n; *&n; * NOTE! On the Jensen, the physical address is the same&n; * as the bus address, but this is not necessarily true on&n; * other alpha hardware.&n; */
-DECL|function|jensen_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|jensen_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-)brace
-DECL|function|jensen_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|jensen_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Handle the &quot;host address register&quot;. This needs to be set&n; * to the high 7 bits of the EISA address.  This is also needed&n; * for EISA IO addresses, which are only 16 bits wide (the&n; * hae needs to be set to 0).&n; *&n; * HAE isn&squot;t needed for the local IO operations, though.&n; */
 DECL|macro|JENSEN_HAE_ADDRESS
 mdefine_line|#define JENSEN_HAE_ADDRESS&t;EISA_HAE
@@ -1035,10 +994,6 @@ suffix:semicolon
 DECL|macro|vuip
 macro_line|#undef vuip
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;jensen_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;jensen_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;jensen_inb
 DECL|macro|__inw

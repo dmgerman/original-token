@@ -538,20 +538,29 @@ id|ppos
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef pgprot_noncached
 multiline_comment|/*&n; * This should probably be per-architecture in &lt;asm/pgtable.h&gt;&n; */
 DECL|function|pgprot_noncached
 r_static
 r_inline
-r_int
-r_int
+id|pgprot_t
 id|pgprot_noncached
 c_func
 (paren
+id|pgprot_t
+id|_prot
+)paren
+(brace
 r_int
 r_int
 id|prot
+op_assign
+id|pgprot_val
+c_func
+(paren
+id|_prot
 )paren
-(brace
+suffix:semicolon
 macro_line|#if defined(__i386__)
 multiline_comment|/* On PPro and successors, PCD alone doesn&squot;t always mean &n;&t;    uncached because of interactions with the MTRRs. PCD | PWT&n;&t;    means definitely uncached. */
 r_if
@@ -640,9 +649,14 @@ id|L_PTE_BUFFERABLE
 suffix:semicolon
 macro_line|#endif
 r_return
+id|__pgprot
+c_func
+(paren
 id|prot
+)paren
 suffix:semicolon
 )brace
+macro_line|#endif /* !pgprot_noncached */
 multiline_comment|/*&n; * Architectures vary in how they handle caching for addresses &n; * outside of main memory.&n; */
 DECL|function|noncached_address
 r_static
@@ -727,20 +741,12 @@ op_amp
 id|O_SYNC
 )paren
 )paren
-id|pgprot_val
-c_func
-(paren
 id|vma-&gt;vm_page_prot
-)paren
 op_assign
 id|pgprot_noncached
 c_func
 (paren
-id|pgprot_val
-c_func
-(paren
 id|vma-&gt;vm_page_prot
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t dump addresses that are not real memory to a core file.&n;&t; */

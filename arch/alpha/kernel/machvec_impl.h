@@ -58,7 +58,7 @@ mdefine_line|#define DO_T2_IO&t;IO(T2,t2)
 DECL|macro|DO_TSUNAMI_IO
 mdefine_line|#define DO_TSUNAMI_IO&t;IO(TSUNAMI,tsunami)
 DECL|macro|BUS
-mdefine_line|#define BUS(which)&t;&t;&t;&t;&t;&bslash;&n;&t;mv_virt_to_bus:&t;CAT(which,_virt_to_bus),&t;&bslash;&n;&t;mv_bus_to_virt:&t;CAT(which,_bus_to_virt)
+mdefine_line|#define BUS(which)&t;&t;&t;&t;&t;&bslash;&n;&t;mv_pci_tbi:&t;CAT(which,_pci_tbi)
 DECL|macro|DO_APECS_BUS
 mdefine_line|#define DO_APECS_BUS&t;BUS(apecs)
 DECL|macro|DO_CIA_BUS

@@ -104,7 +104,6 @@ r_int
 id|virt_to_phys
 c_func
 (paren
-r_volatile
 r_void
 op_star
 id|address
@@ -145,6 +144,103 @@ id|IDENT_ADDR
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Change addresses as seen by the kernel (virtual) to addresses as&n; * seen by a device (bus), and vice versa.&n; *&n; * Note that this only works for a limited range of kernel addresses,&n; * and very well may not span all memory.  Consider this interface &n; * deprecated in favour of the mapping functions in &lt;asm/pci.h&gt;.&n; */
+r_extern
+r_int
+r_int
+id|__direct_map_base
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__direct_map_size
+suffix:semicolon
+DECL|function|virt_to_bus
+r_static
+r_inline
+r_int
+r_int
+id|virt_to_bus
+c_func
+(paren
+r_void
+op_star
+id|address
+)paren
+(brace
+r_int
+r_int
+id|phys
+op_assign
+id|virt_to_phys
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+r_int
+r_int
+id|bus
+op_assign
+id|phys
+op_plus
+id|__direct_map_base
+suffix:semicolon
+r_return
+id|phys
+op_le
+id|__direct_map_size
+ques
+c_cond
+id|bus
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|bus_to_virt
+r_static
+r_inline
+r_void
+op_star
+id|bus_to_virt
+c_func
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+r_void
+op_star
+id|virt
+suffix:semicolon
+multiline_comment|/* This check is a sanity check but also ensures that bus address 0&n;&t;   maps to virtual address 0 which is useful to detect null pointers&n;&t;   (the NCR driver is much simpler if NULL pointers are preserved).  */
+id|address
+op_sub_assign
+id|__direct_map_base
+suffix:semicolon
+id|virt
+op_assign
+id|phys_to_virt
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+r_return
+(paren
+r_int
+)paren
+id|address
+op_le
+l_int|0
+ques
+c_cond
+l_int|NULL
+suffix:colon
+id|virt
+suffix:semicolon
+)brace
 macro_line|#else /* !__KERNEL__ */
 multiline_comment|/*&n; * Define actual functions in private name-space so it&squot;s easier to&n; * accommodate things like XFree or svgalib that like to define their&n; * own versions of inb etc.&n; */
 r_extern
@@ -172,10 +268,6 @@ multiline_comment|/*&n; * There are different chipsets to interface the Alpha CP
 macro_line|#ifdef __KERNEL__
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 multiline_comment|/* In a generic kernel, we always go through the machine vector.  */
-DECL|macro|virt_to_bus
-macro_line|# define virt_to_bus(a)&t;alpha_mv.mv_virt_to_bus(a)
-DECL|macro|bus_to_virt
-macro_line|# define bus_to_virt(a)&t;alpha_mv.mv_bus_to_virt(a)
 DECL|macro|__inb
 macro_line|# define __inb&t;&t;alpha_mv.mv_inb
 DECL|macro|__inw

@@ -1951,7 +1951,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;On node %d totalpages: %08x&bslash;n&quot;
+l_string|&quot;On node %d totalpages: %lu&bslash;n&quot;
 comma
 id|nid
 comma
@@ -2157,7 +2157,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;zone(%ld): %ld pages.&bslash;n&quot;
+l_string|&quot;zone(%lu): %lu pages.&bslash;n&quot;
 comma
 id|j
 comma

@@ -1427,6 +1427,20 @@ id|hose-&gt;index
 op_assign
 l_int|0
 suffix:semicolon
+id|hose-&gt;sg_isa
+op_assign
+id|hose-&gt;sg_pci
+op_assign
+l_int|NULL
+suffix:semicolon
+id|__direct_map_base
+op_assign
+l_int|0x40000000
+suffix:semicolon
+id|__direct_map_size
+op_assign
+l_int|0x40000000
+suffix:semicolon
 )brace
 DECL|macro|SIC_SEIC
 mdefine_line|#define SIC_SEIC (1UL &lt;&lt; 33)    /* System Event Clear */

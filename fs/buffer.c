@@ -9280,7 +9280,7 @@ c_cond
 id|check_flushtime
 )paren
 (brace
-multiline_comment|/* The dirty lru list is chronogical ordered so&n;&t;&t;&t;   if the current bh is not yet timed out,&n;&t;&t;&t;   then also all the following bhs&n;&t;&t;&t;   will be too young. */
+multiline_comment|/* The dirty lru list is chronologically ordered so&n;&t;&t;&t;   if the current bh is not yet timed out,&n;&t;&t;&t;   then also all the following bhs&n;&t;&t;&t;   will be too young. */
 r_if
 c_cond
 (paren

@@ -33,6 +33,7 @@ macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/e820.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/mpspec.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 multiline_comment|/*&n; * Machine setup..&n; */
 DECL|variable|ignore_irq13
 r_char
@@ -6519,6 +6520,29 @@ id|current-&gt;active_mm
 op_assign
 op_amp
 id|init_mm
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;mm
+)paren
+(brace
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|enter_lazy_tlb
+c_func
+(paren
+op_amp
+id|init_mm
+comma
+id|current
+comma
+id|nr
+)paren
 suffix:semicolon
 id|t-&gt;esp0
 op_assign

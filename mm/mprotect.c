@@ -1155,14 +1155,11 @@ id|EINVAL
 suffix:semicolon
 id|len
 op_assign
+id|PAGE_ALIGN
+c_func
 (paren
 id|len
-op_plus
-op_complement
-id|PAGE_MASK
 )paren
-op_amp
-id|PAGE_MASK
 suffix:semicolon
 id|end
 op_assign

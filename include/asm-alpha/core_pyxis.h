@@ -12,24 +12,6 @@ DECL|macro|PYXIS_MEM_R2_MASK
 mdefine_line|#define PYXIS_MEM_R2_MASK 0x07ffffff  /* SPARSE Mem region 2 mask is 27 bits */
 DECL|macro|PYXIS_MEM_R3_MASK
 mdefine_line|#define PYXIS_MEM_R3_MASK 0x03ffffff  /* SPARSE Mem region 3 mask is 26 bits */
-DECL|macro|PYXIS_DMA_WIN_BASE
-mdefine_line|#define PYXIS_DMA_WIN_BASE&t;&t;(1UL*1024*1024*1024)
-DECL|macro|PYXIS_DMA_WIN_SIZE
-mdefine_line|#define PYXIS_DMA_WIN_SIZE&t;&t;(2UL*1024*1024*1024)
-multiline_comment|/* Window 0 at 1GB size 1GB mapping 0 */
-DECL|macro|PYXIS_DMA_WIN0_BASE_DEFAULT
-mdefine_line|#define PYXIS_DMA_WIN0_BASE_DEFAULT&t;(1UL*1024*1024*1024)
-DECL|macro|PYXIS_DMA_WIN0_SIZE_DEFAULT
-mdefine_line|#define PYXIS_DMA_WIN0_SIZE_DEFAULT&t;(1UL*1024*1024*1024)
-DECL|macro|PYXIS_DMA_WIN0_TRAN_DEFAULT
-mdefine_line|#define PYXIS_DMA_WIN0_TRAN_DEFAULT&t;(0UL)
-multiline_comment|/* Window 0 at 2GB size 1GB mapping 1GB */
-DECL|macro|PYXIS_DMA_WIN1_BASE_DEFAULT
-mdefine_line|#define PYXIS_DMA_WIN1_BASE_DEFAULT&t;(2UL*1024*1024*1024)
-DECL|macro|PYXIS_DMA_WIN1_SIZE_DEFAULT
-mdefine_line|#define PYXIS_DMA_WIN1_SIZE_DEFAULT&t;(1UL*1024*1024*1024)
-DECL|macro|PYXIS_DMA_WIN1_TRAN_DEFAULT
-mdefine_line|#define PYXIS_DMA_WIN1_TRAN_DEFAULT&t;(1UL*1024*1024*1024)
 multiline_comment|/*&n; *  General Registers&n; */
 DECL|macro|PYXIS_REV
 mdefine_line|#define PYXIS_REV&t;&t;&t;(IDENT_ADDR + 0x8740000080UL)
@@ -370,51 +352,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|pyxis_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|pyxis_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|PYXIS_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|pyxis_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|pyxis_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|PYXIS_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * PYXIS, the 21174 PCI/memory support chipset for the EV56 (21164A)&n; * and PCA56 (21164PC) processors, can use either a sparse address&n; * mapping scheme, or the so-called byte-word PCI address space, to&n; * get at PCI memory and I/O.&n; */
 DECL|macro|vucp
 mdefine_line|#define vucp&t;volatile unsigned char *
@@ -855,10 +792,6 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;pyxis_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;pyxis_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;pyxis_inb
 DECL|macro|__inw

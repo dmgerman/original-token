@@ -1738,6 +1738,8 @@ id|start_code
 comma
 id|end_code
 comma
+id|start_data
+comma
 id|end_data
 suffix:semicolon
 r_struct
@@ -1983,6 +1985,10 @@ op_complement
 l_int|0UL
 suffix:semicolon
 id|end_code
+op_assign
+l_int|0
+suffix:semicolon
+id|start_data
 op_assign
 l_int|0
 suffix:semicolon
@@ -2484,6 +2490,10 @@ r_goto
 id|out_free_dentry
 suffix:semicolon
 multiline_comment|/* OK, This is the point of no return */
+id|current-&gt;mm-&gt;start_data
+op_assign
+l_int|0
+suffix:semicolon
 id|current-&gt;mm-&gt;end_data
 op_assign
 l_int|0
@@ -2769,6 +2779,17 @@ id|start_code
 op_assign
 id|k
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|start_data
+OL
+id|k
+)paren
+id|start_data
+op_assign
+id|k
+suffix:semicolon
 id|k
 op_assign
 id|elf_ppnt-&gt;p_vaddr
@@ -2862,6 +2883,10 @@ op_add_assign
 id|load_bias
 suffix:semicolon
 id|end_code
+op_add_assign
+id|load_bias
+suffix:semicolon
+id|start_data
 op_add_assign
 id|load_bias
 suffix:semicolon
@@ -3143,6 +3168,10 @@ id|current-&gt;mm-&gt;start_code
 op_assign
 id|start_code
 suffix:semicolon
+id|current-&gt;mm-&gt;start_data
+op_assign
+id|start_data
+suffix:semicolon
 id|current-&gt;mm-&gt;end_data
 op_assign
 id|end_data
@@ -3198,6 +3227,17 @@ comma
 r_int
 )paren
 id|current-&gt;mm-&gt;start_code
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;(start_data) %lx&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|current-&gt;mm-&gt;start_data
 )paren
 suffix:semicolon
 id|printk

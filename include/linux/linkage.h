@@ -11,6 +11,9 @@ macro_line|#endif
 macro_line|#if defined __i386__ &amp;&amp; (__GNUC__ &gt; 2 || __GNUC_MINOR__ &gt; 7)
 DECL|macro|asmlinkage
 mdefine_line|#define asmlinkage CPP_ASMLINKAGE __attribute__((regparm(0)))
+macro_line|#elif defined __ia64__
+DECL|macro|asmlinkage
+mdefine_line|#define asmlinkage CPP_ASMLINKAGE __attribute__((syscall_linkage))
 macro_line|#else
 DECL|macro|asmlinkage
 mdefine_line|#define asmlinkage CPP_ASMLINKAGE

@@ -72,6 +72,12 @@ op_assign
 op_amp
 id|hose_head
 suffix:semicolon
+DECL|variable|pci_isa_hose
+r_struct
+id|pci_controler
+op_star
+id|pci_isa_hose
+suffix:semicolon
 multiline_comment|/*&n; * Quirks.&n; */
 r_static
 r_void

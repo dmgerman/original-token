@@ -7,10 +7,6 @@ macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * T2 is the internal name for the core logic chipset which provides&n; * memory controller and PCI access for the SABLE-based systems.&n; *&n; * This file is based on:&n; *&n; * SABLE I/O Specification&n; * Revision/Update Information: 1.3&n; *&n; * jestabro@amt.tay1.dec.com Initial Version.&n; *&n; */
 DECL|macro|T2_MEM_R1_MASK
 mdefine_line|#define T2_MEM_R1_MASK 0x03ffffff  /* Mem sparse region 1 mask is 26 bits */
-DECL|macro|T2_DMA_WIN_BASE
-mdefine_line|#define T2_DMA_WIN_BASE&t;&t;(1UL*1024*1024*1024)
-DECL|macro|T2_DMA_WIN_SIZE
-mdefine_line|#define T2_DMA_WIN_SIZE&t;&t;(1UL*1024*1024*1024)
 multiline_comment|/* GAMMA-SABLE is a SABLE with EV5-based CPUs */
 DECL|macro|_GAMMA_BIAS
 mdefine_line|#define _GAMMA_BIAS&t;&t;0x8000000000UL
@@ -1074,51 +1070,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|t2_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|t2_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|T2_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|t2_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|t2_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|T2_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * T2 (the core logic PCI/memory support chipset for the SABLE&n; * series of processors uses a sparse address mapping scheme to&n; * get at PCI memory and I/O.&n; */
 DECL|macro|vip
 mdefine_line|#define vip&t;volatile int *
@@ -1961,10 +1912,6 @@ macro_line|#undef vip
 DECL|macro|vuip
 macro_line|#undef vuip
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;t2_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;t2_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;t2_inb
 DECL|macro|__inw

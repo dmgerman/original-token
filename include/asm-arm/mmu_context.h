@@ -10,6 +10,28 @@ DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;&t;do { } while(0)
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(tsk,mm)&t;do { } while(0)
+DECL|function|enter_lazy_tlb
+r_static
+r_inline
+r_void
+id|enter_lazy_tlb
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
+)paren
+(brace
+)brace
 multiline_comment|/*&n; * This is the actual mm switch as far as the scheduler&n; * is concerned.  No registers are touched.&n; */
 r_static
 r_inline

@@ -10,14 +10,10 @@ macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * MCPCIA is the internal name for a core logic chipset which provides&n; * PCI access for the RAWHIDE family of systems.&n; *&n; * This file is based on:&n; *&n; * RAWHIDE System Programmer&squot;s Manual&n; * 16-May-96&n; * Rev. 1.4&n; *&n; */
 multiline_comment|/*------------------------------------------------------------------------**&n;**                                                                        **&n;**  I/O procedures                                                        **&n;**                                                                        **&n;**      inport[b|w|t|l], outport[b|w|t|l] 8:16:24:32 IO xfers             **&n;**&t;inportbxt: 8 bits only                                            **&n;**      inport:    alias of inportw                                       **&n;**      outport:   alias of outportw                                      **&n;**                                                                        **&n;**      inmem[b|w|t|l], outmem[b|w|t|l] 8:16:24:32 ISA memory xfers       **&n;**&t;inmembxt: 8 bits only                                             **&n;**      inmem:    alias of inmemw                                         **&n;**      outmem:   alias of outmemw                                        **&n;**                                                                        **&n;**------------------------------------------------------------------------*/
 multiline_comment|/* MCPCIA ADDRESS BIT DEFINITIONS&n; *&n; *  3333 3333 3322 2222 2222 1111 1111 11&n; *  9876 5432 1098 7654 3210 9876 5432 1098 7654 3210&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  1                                             000&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  |                                             |&bslash;|&n; *  |                               Byte Enable --+ |&n; *  |                             Transfer Length --+&n; *  +-- IO space, not cached&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
-DECL|macro|MCPCIA_MEM_MASK
-mdefine_line|#define MCPCIA_MEM_MASK 0x07ffffff /* SPARSE Mem region mask is 27 bits */
-DECL|macro|MCPCIA_DMA_WIN_BASE
-mdefine_line|#define MCPCIA_DMA_WIN_BASE&t;&t;(2UL*1024*1024*1024)
-DECL|macro|MCPCIA_DMA_WIN_SIZE
-mdefine_line|#define MCPCIA_DMA_WIN_SIZE&t;&t;(2UL*1024*1024*1024)
 DECL|macro|MCPCIA_MID
 mdefine_line|#define MCPCIA_MID(m)&t;&t;((unsigned long)(m) &lt;&lt; 33)
+DECL|macro|MCPCIA_MEM_MASK
+mdefine_line|#define MCPCIA_MEM_MASK 0x07ffffff /* SPARSE Mem region mask is 27 bits */
 multiline_comment|/*&n; * Memory spaces:&n; */
 DECL|macro|MCPCIA_SPARSE
 mdefine_line|#define MCPCIA_SPARSE(m)&t;(IDENT_ADDR + 0xf000000000UL + MCPCIA_MID(m))
@@ -167,51 +163,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|mcpcia_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|mcpcia_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|MCPCIA_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|mcpcia_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|mcpcia_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|MCPCIA_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * MCPCIA, the RAWHIDE family PCI/memory support chipset for the EV5 (21164)&n; * and EV56 (21164a) processors, can use either a sparse address mapping&n; * scheme, or the so-called byte-word PCI address space, to get at PCI memory&n; * and I/O.&n; *&n; * Unfortunately, we can&squot;t use BWIO with EV5, so for now, we always use SPARSE.&n; */
 DECL|macro|vucp
 mdefine_line|#define vucp&t;volatile unsigned char *
@@ -1200,10 +1151,6 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;mcpcia_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;mcpcia_bus_to_virt
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;mcpcia_inb
 DECL|macro|__inw

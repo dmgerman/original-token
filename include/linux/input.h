@@ -392,7 +392,7 @@ mdefine_line|#define KEY_RECORD&t;&t;167&t;&t;
 DECL|macro|KEY_REWIND
 mdefine_line|#define KEY_REWIND&t;&t;168&t;&t;
 DECL|macro|KEY_UNKNOWN
-mdefine_line|#define KEY_UNKNOWN&t;&t;192
+mdefine_line|#define KEY_UNKNOWN&t;&t;180
 DECL|macro|BTN_MISC
 mdefine_line|#define BTN_MISC&t;&t;0x100
 DECL|macro|BTN_0

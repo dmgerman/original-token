@@ -5,22 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * APECS is the internal name for the 2107x chipset which provides&n; * memory controller and PCI access for the 21064 chip based systems.&n; *&n; * This file is based on:&n; *&n; * DECchip 21071-AA and DECchip 21072-AA Core Logic Chipsets&n; * Data Sheet&n; *&n; * EC-N0648-72&n; *&n; *&n; * david.rusling@reo.mts.dec.com Initial Version.&n; *&n; */
-multiline_comment|/*&n;   An AVANTI *might* be an XL, and an XL has only 27 bits of ISA address&n;   that get passed through the PCI&lt;-&gt;ISA bridge chip. So we&squot;ve gotta use&n;   both windows to max out the physical memory we can DMA to. Sigh...&n;&n;   If we try a window at 0 for 1GB as a work-around, we run into conflicts&n;   with ISA/PCI bus memory which can&squot;t be relocated, like VGA aperture and&n;   BIOS ROMs. So we must put the windows high enough to avoid these areas.&n;&n;   We put window 1 at BUS 64Mb for 64Mb, mapping physical 0 to 64Mb-1,&n;   and window 2 at BUS 1Gb for 1Gb, mapping physical 0 to 1Gb-1.&n;   Yes, this does map 0 to 64Mb-1 twice, but only window 1 will actually&n;   be used for that range (via virt_to_bus()).&n;&n;   Note that we actually fudge the window 1 maximum as 48Mb instead of 64Mb,&n;   to keep virt_to_bus() from returning an address in the first window, for&n;   a data area that goes beyond the 64Mb first DMA window.  Sigh...&n;   The fudge factor MUST match with &lt;asm/dma.h&gt; MAX_DMA_ADDRESS, but&n;   we can&squot;t just use that here, because of header file looping... :-(&n;&n;   Window 1 will be used for all DMA from the ISA bus; yes, that does&n;   limit what memory an ISA floppy or sound card or Ethernet can touch, but&n;   it&squot;s also a known limitation on other platforms as well. We use the&n;   same technique that is used on INTEL platforms with similar limitation:&n;   set MAX_DMA_ADDRESS and clear some pages&squot; DMAable flags during mem_init().&n;   We trust that any ISA bus device drivers will *always* ask for DMAable&n;   memory explicitly via kmalloc()/get_free_pages() flags arguments.&n;&n;   Note that most PCI bus devices&squot; drivers do *not* explicitly ask for&n;   DMAable memory; they count on being able to DMA to any memory they&n;   get from kmalloc()/get_free_pages(). They will also use window 1 for&n;   any physical memory accesses below 64Mb; the rest will be handled by&n;   window 2, maxing out at 1Gb of memory. I trust this is enough... :-)&n;&n;   We hope that the area before the first window is large enough so that&n;   there will be no overlap at the top end (64Mb). We *must* locate the&n;   PCI cards&squot; memory just below window 1, so that there&squot;s still the&n;   possibility of being able to access it via SPARSE space. This is&n;   important for cards such as the Matrox Millennium, whose Xserver&n;   wants to access memory-mapped registers in byte and short lengths.&n;&n;   Note that the XL is treated differently from the AVANTI, even though&n;   for most other things they are identical. It didn&squot;t seem reasonable to&n;   make the AVANTI support pay for the limitations of the XL. It is true,&n;   however, that an XL kernel will run on an AVANTI without problems.&n;*/
-DECL|macro|APECS_XL_DMA_WIN1_BASE
-mdefine_line|#define APECS_XL_DMA_WIN1_BASE&t;&t;(64UL*1024*1024)
-DECL|macro|APECS_XL_DMA_WIN1_SIZE
-mdefine_line|#define APECS_XL_DMA_WIN1_SIZE&t;&t;(64UL*1024*1024)
-DECL|macro|APECS_XL_DMA_WIN1_SIZE_PARANOID
-mdefine_line|#define APECS_XL_DMA_WIN1_SIZE_PARANOID&t;(48UL*1024*1024)
-DECL|macro|APECS_XL_DMA_WIN2_BASE
-mdefine_line|#define APECS_XL_DMA_WIN2_BASE&t;&t;(1UL*1024*1024*1024)
-DECL|macro|APECS_XL_DMA_WIN2_SIZE
-mdefine_line|#define APECS_XL_DMA_WIN2_SIZE&t;&t;(1UL*1024*1024*1024)
-multiline_comment|/* These are for normal APECS family machines, AVANTI/MUSTANG/EB64/PC64.  */
-DECL|macro|APECS_DMA_WIN_BASE
-mdefine_line|#define APECS_DMA_WIN_BASE&t;&t;(1UL*1024*1024*1024)
-DECL|macro|APECS_DMA_WIN_SIZE
-mdefine_line|#define APECS_DMA_WIN_SIZE&t;&t;(1UL*1024*1024*1024)
+multiline_comment|/*&n;   An AVANTI *might* be an XL, and an XL has only 27 bits of ISA address&n;   that get passed through the PCI&lt;-&gt;ISA bridge chip. So we&squot;ve gotta use&n;   both windows to max out the physical memory we can DMA to. Sigh...&n;&n;   If we try a window at 0 for 1GB as a work-around, we run into conflicts&n;   with ISA/PCI bus memory which can&squot;t be relocated, like VGA aperture and&n;   BIOS ROMs. So we must put the windows high enough to avoid these areas.&n;&n;   We put window 1 at BUS 64Mb for 64Mb, mapping physical 0 to 64Mb-1,&n;   and window 2 at BUS 1Gb for 1Gb, mapping physical 0 to 1Gb-1.&n;   Yes, this does map 0 to 64Mb-1 twice, but only window 1 will actually&n;   be used for that range (via virt_to_bus()).&n;&n;   Note that we actually fudge the window 1 maximum as 48Mb instead of 64Mb,&n;   to keep virt_to_bus() from returning an address in the first window, for&n;   a data area that goes beyond the 64Mb first DMA window.  Sigh...&n;   The fudge factor MUST match with &lt;asm/dma.h&gt; MAX_DMA_ADDRESS, but&n;   we can&squot;t just use that here, because of header file looping... :-(&n;&n;   Window 1 will be used for all DMA from the ISA bus; yes, that does&n;   limit what memory an ISA floppy or sound card or Ethernet can touch, but&n;   it&squot;s also a known limitation on other platforms as well. We use the&n;   same technique that is used on INTEL platforms with similar limitation:&n;   set MAX_DMA_ADDRESS and clear some pages&squot; DMAable flags during mem_init().&n;   We trust that any ISA bus device drivers will *always* ask for DMAable&n;   memory explicitly via kmalloc()/get_free_pages() flags arguments.&n;&n;   Note that most PCI bus devices&squot; drivers do *not* explicitly ask for&n;   DMAable memory; they count on being able to DMA to any memory they&n;   get from kmalloc()/get_free_pages(). They will also use window 1 for&n;   any physical memory accesses below 64Mb; the rest will be handled by&n;   window 2, maxing out at 1Gb of memory. I trust this is enough... :-)&n;&n;   We hope that the area before the first window is large enough so that&n;   there will be no overlap at the top end (64Mb). We *must* locate the&n;   PCI cards&squot; memory just below window 1, so that there&squot;s still the&n;   possibility of being able to access it via SPARSE space. This is&n;   important for cards such as the Matrox Millennium, whose Xserver&n;   wants to access memory-mapped registers in byte and short lengths.&n;&n;   Note that the XL is treated differently from the AVANTI, even though&n;   for most other things they are identical. It didn&squot;t seem reasonable to&n;   make the AVANTI support pay for the limitations of the XL. It is true,&n;   however, that an XL kernel will run on an AVANTI without problems.&n;&n;   %%% All of this should be obviated by the ability to route&n;   everything through the iommu.&n;*/
 multiline_comment|/*&n; * 21071-DA Control and Status registers.&n; * These are used for PCI memory access.&n; */
 DECL|macro|APECS_IOC_DCSR
 mdefine_line|#define APECS_IOC_DCSR                  (IDENT_ADDR + 0x1A0000000UL)
@@ -888,165 +873,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-multiline_comment|/*&n; * NOTE: we fudge the window 1 maximum as 48Mb instead of 64Mb, to prevent &n; * virt_to_bus() from returning an address in the first window, for a&n; * data area that goes beyond the 64Mb first DMA window. Sigh...&n; * This MUST match with &lt;asm/dma.h&gt; MAX_DMA_ADDRESS for consistency, but&n; * we can&squot;t just use that here, because of header file looping... :-(&n; */
-DECL|function|apecs_virt_to_bus
-id|__EXTERN_INLINE
-r_int
-r_int
-id|apecs_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_int
-r_int
-id|paddr
-op_assign
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-r_return
-id|paddr
-op_plus
-id|APECS_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|apecs_xl_virt_to_bus
-r_static
-r_inline
-r_int
-r_int
-id|apecs_xl_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_int
-r_int
-id|paddr
-op_assign
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|paddr
-OL
-id|APECS_XL_DMA_WIN1_SIZE_PARANOID
-)paren
-r_return
-id|paddr
-op_plus
-id|APECS_XL_DMA_WIN1_BASE
-suffix:semicolon
-r_else
-r_return
-id|paddr
-op_plus
-id|APECS_XL_DMA_WIN2_BASE
-suffix:semicolon
-)brace
-DECL|function|apecs_bus_to_virt
-id|__EXTERN_INLINE
-r_void
-op_star
-id|apecs_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-multiline_comment|/*&n;&t; * This check is a sanity check but also ensures that bus&n;&t; * address 0 maps to virtual address 0 which is useful to&n;&t; * detect null &quot;pointers&quot; (the NCR driver is much simpler if&n;&t; * NULL pointers are preserved).&n;&t; */
-r_if
-c_cond
-(paren
-id|address
-OL
-id|APECS_DMA_WIN_BASE
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|APECS_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
-DECL|function|apecs_xl_bus_to_virt
-r_static
-r_inline
-r_void
-op_star
-id|apecs_xl_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-multiline_comment|/*&n;&t; * This check is a sanity check but also ensures that bus&n;&t; * address 0 maps to virtual address 0 which is useful to&n;&t; * detect null &quot;pointers&quot; (the NCR driver is much simpler if&n;&t; * NULL pointers are preserved).&n;&t; */
-r_if
-c_cond
-(paren
-id|address
-OL
-id|APECS_XL_DMA_WIN1_BASE
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|address
-OL
-(paren
-id|APECS_XL_DMA_WIN1_BASE
-op_plus
-id|APECS_XL_DMA_WIN1_SIZE
-)paren
-)paren
-id|address
-op_sub_assign
-id|APECS_XL_DMA_WIN1_BASE
-suffix:semicolon
-r_else
-multiline_comment|/* should be more checking here, maybe? */
-id|address
-op_sub_assign
-id|APECS_XL_DMA_WIN2_BASE
-suffix:semicolon
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * Unlike Jensen, the APECS machines have no concept of local&n; * I/O---everything goes over the PCI bus.&n; *&n; * There is plenty room for optimization here.  In particular,&n; * the Alpha&squot;s insb/insw/extb/extw should be useful in moving&n; * data to/from the right byte-lanes.&n; */
 DECL|macro|vip
 mdefine_line|#define vip&t;volatile int *
@@ -1760,17 +1586,6 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-macro_line|#ifdef CONFIG_ALPHA_XL
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;apecs_xl_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;apecs_xl_bus_to_virt
-macro_line|#else
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;apecs_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;apecs_bus_to_virt
-macro_line|#endif
 DECL|macro|__inb
 mdefine_line|#define __inb&t;&t;apecs_inb
 DECL|macro|__inw

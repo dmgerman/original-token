@@ -1457,6 +1457,12 @@ id|dev
 r_if
 c_cond
 (paren
+id|dev-&gt;driver
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|dev-&gt;driver-&gt;remove
 )paren
 id|dev-&gt;driver
@@ -1471,6 +1477,7 @@ id|dev-&gt;driver
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 id|list_del
 c_func
 (paren
