@@ -1125,7 +1125,7 @@ DECL|macro|FL_ACCESS
 mdefine_line|#define FL_ACCESS&t;8&t;/* for processes suspended by mandatory locking */
 DECL|macro|FL_LOCKD
 mdefine_line|#define FL_LOCKD&t;16&t;/* lock held by rpc.lockd */
-multiline_comment|/*&n; * The POSIX file lock owner is determined by&n; * the &quot;struct files_struct&quot; in the thread group&n; * (or NULL for no owner - BSD locks).&n; */
+multiline_comment|/*&n; * The POSIX file lock owner is determined by&n; * the &quot;struct files_struct&quot; in the thread group&n; * (or NULL for no owner - BSD locks).&n; *&n; * Lockd stuffs a &quot;host&quot; pointer into this.&n; */
 DECL|typedef|fl_owner_t
 r_typedef
 r_struct

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -916,7 +917,7 @@ id|server-&gt;sock_file
 op_assign
 l_int|NULL
 suffix:semicolon
-id|close_fp
+id|fput
 c_func
 (paren
 id|file

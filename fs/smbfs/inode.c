@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
@@ -1002,7 +1003,7 @@ c_func
 id|server
 )paren
 suffix:semicolon
-id|close_fp
+id|fput
 c_func
 (paren
 id|server-&gt;sock_file

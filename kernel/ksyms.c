@@ -547,13 +547,6 @@ c_func
 id|sys_close
 )paren
 suffix:semicolon
-DECL|variable|close_fp
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|close_fp
-)paren
-suffix:semicolon
 DECL|variable|d_alloc_root
 id|EXPORT_SYMBOL
 c_func

@@ -20,17 +20,6 @@ macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
-r_extern
-r_int
-id|close_fp
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-)paren
-suffix:semicolon
 r_static
 r_void
 id|ncp_read_inode
@@ -1590,7 +1579,7 @@ c_func
 id|server
 )paren
 suffix:semicolon
-id|close_fp
+id|fput
 c_func
 (paren
 id|server-&gt;ncp_filp

@@ -2972,6 +2972,11 @@ r_int
 r_int
 id|size
 suffix:semicolon
+id|loff_t
+id|loff
+op_assign
+id|offset
+suffix:semicolon
 id|mm_segment_t
 id|old_fs
 suffix:semicolon
@@ -3060,7 +3065,7 @@ comma
 id|size
 comma
 op_amp
-id|file-&gt;f_pos
+id|loff
 )paren
 )paren
 id|retval

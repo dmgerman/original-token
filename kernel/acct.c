@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/acct.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * These constants control the amount of freespace that suspend and&n; * resume the process accounting system, and the time delay between&n; * each check.&n; */
 DECL|macro|RESUME
@@ -25,16 +26,6 @@ mdefine_line|#define SUSPEND&t;&t;(2)       /* Less than 2% free space will susp
 DECL|macro|ACCT_TIMEOUT
 mdefine_line|#define ACCT_TIMEOUT&t;(30 * HZ) /* 30 second timeout between checks */
 multiline_comment|/*&n; * External references and all of the globals.&n; */
-r_extern
-r_int
-id|close_fp
-c_func
-(paren
-r_struct
-id|file
-op_star
-)paren
-suffix:semicolon
 r_void
 id|acct_timeout
 c_func
@@ -349,7 +340,7 @@ id|acct_needcheck
 op_assign
 l_int|0
 suffix:semicolon
-id|close_fp
+id|fput
 c_func
 (paren
 id|acct_file

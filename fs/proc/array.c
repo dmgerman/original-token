@@ -2488,6 +2488,97 @@ op_plus
 l_int|1
 suffix:semicolon
 )brace
+DECL|variable|task_state_array
+r_static
+r_const
+r_char
+op_star
+id|task_state_array
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;. Huh?&quot;
+comma
+l_string|&quot;R (running)&quot;
+comma
+l_string|&quot;S (sleeping)&quot;
+comma
+l_string|&quot;D (disk sleep)&quot;
+comma
+l_string|&quot;Z (zombie)&quot;
+comma
+l_string|&quot;T (stopped)&quot;
+comma
+l_string|&quot;W (paging)&quot;
+)brace
+suffix:semicolon
+DECL|function|get_task_state
+r_static
+r_inline
+r_const
+r_char
+op_star
+id|get_task_state
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+)paren
+(brace
+r_int
+r_int
+id|state
+op_assign
+id|tsk-&gt;state
+op_amp
+(paren
+id|TASK_RUNNING
+op_or
+id|TASK_INTERRUPTIBLE
+op_or
+id|TASK_UNINTERRUPTIBLE
+op_or
+id|TASK_ZOMBIE
+op_or
+id|TASK_STOPPED
+op_or
+id|TASK_SWAPPING
+)paren
+suffix:semicolon
+r_const
+r_char
+op_star
+op_star
+id|p
+op_assign
+op_amp
+id|task_state_array
+(braket
+l_int|0
+)braket
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|state
+)paren
+(brace
+id|p
+op_increment
+suffix:semicolon
+id|state
+op_rshift_assign
+l_int|1
+suffix:semicolon
+)brace
+r_return
+op_star
+id|p
+suffix:semicolon
+)brace
 DECL|function|task_state
 r_static
 r_inline
@@ -2506,51 +2597,6 @@ op_star
 id|buffer
 )paren
 (brace
-DECL|macro|NR_STATES
-mdefine_line|#define NR_STATES (sizeof(states)/sizeof(const char *))
-r_int
-r_int
-id|n
-op_assign
-id|p-&gt;state
-suffix:semicolon
-r_static
-r_const
-r_char
-op_star
-id|states
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;R (running)&quot;
-comma
-l_string|&quot;S (sleeping)&quot;
-comma
-l_string|&quot;D (disk sleep)&quot;
-comma
-l_string|&quot;Z (zombie)&quot;
-comma
-l_string|&quot;T (stopped)&quot;
-comma
-l_string|&quot;W (paging)&quot;
-comma
-l_string|&quot;. Huh?&quot;
-)brace
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|n
-op_ge
-id|NR_STATES
-)paren
-id|n
-op_assign
-id|NR_STATES
-op_minus
-l_int|1
-suffix:semicolon
 id|buffer
 op_add_assign
 id|sprintf
@@ -2564,10 +2610,11 @@ l_string|&quot;PPid:&bslash;t%d&bslash;n&quot;
 l_string|&quot;Uid:&bslash;t%d&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
 l_string|&quot;Gid:&bslash;t%d&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
 comma
-id|states
-(braket
-id|n
-)braket
+id|get_task_state
+c_func
+(paren
+id|p
+)paren
 comma
 id|p-&gt;pid
 comma
@@ -3385,24 +3432,14 @@ id|tsk
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
+id|state
+op_assign
+op_star
+id|get_task_state
+c_func
 (paren
-id|tsk-&gt;state
-template_param
-l_int|5
+id|tsk
 )paren
-id|state
-op_assign
-l_char|&squot;.&squot;
-suffix:semicolon
-r_else
-id|state
-op_assign
-l_string|&quot;RSDZTW&quot;
-(braket
-id|tsk-&gt;state
-)braket
 suffix:semicolon
 id|vsize
 op_assign

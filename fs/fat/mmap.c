@@ -425,9 +425,9 @@ id|fat_readpage
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
+id|file
 comma
 r_struct
 id|page
@@ -435,6 +435,13 @@ op_star
 id|page
 )paren
 (brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
 r_struct
 id|inode
 op_star

@@ -821,7 +821,7 @@ DECL|member|ui_flags
 id|__u32
 id|ui_flags
 suffix:semicolon
-multiline_comment|/* 0x64 unused -- &quot;status flags (chflags)&quot; ??? */
+multiline_comment|/* 0x64 immutable, append-only... */
 DECL|member|ui_blocks
 id|__u32
 id|ui_blocks
@@ -831,7 +831,7 @@ DECL|member|ui_gen
 id|__u32
 id|ui_gen
 suffix:semicolon
-multiline_comment|/* 0x6c generation number XXX - what is this? */
+multiline_comment|/* 0x6c like ext2 i_version, for NFS support */
 r_union
 (brace
 r_struct
@@ -840,7 +840,7 @@ DECL|member|ui_shadow
 id|__u32
 id|ui_shadow
 suffix:semicolon
-multiline_comment|/* 0x70 shadow inode XXX - what is this?*/
+multiline_comment|/* 0x70 shadow inode with security data */
 DECL|member|ui_uid
 id|__u32
 id|ui_uid
@@ -921,6 +921,31 @@ id|ui_u3
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* FreeBSD has these in sys/stat.h */
+multiline_comment|/* ui_flags that can be set by a file owner */
+DECL|macro|UFS_UF_SETTABLE
+mdefine_line|#define UFS_UF_SETTABLE   0x0000ffff
+DECL|macro|UFS_UF_NODUMP
+mdefine_line|#define UFS_UF_NODUMP     0x00000001  /* do not dump */
+DECL|macro|UFS_UF_IMMUTABLE
+mdefine_line|#define UFS_UF_IMMUTABLE  0x00000002  /* immutable (can&squot;t &quot;change&quot;) */
+DECL|macro|UFS_UF_APPEND
+mdefine_line|#define UFS_UF_APPEND     0x00000004  /* append-only */
+DECL|macro|UFS_UF_OPAQUE
+mdefine_line|#define UFS_UF_OPAQUE     0x00000008  /* directory is opaque (unionfs) */
+DECL|macro|UFS_UF_NOUNLINK
+mdefine_line|#define UFS_UF_NOUNLINK   0x00000010  /* can&squot;t be removed or renamed */
+multiline_comment|/* ui_flags that only root can set */
+DECL|macro|UFS_SF_SETTABLE
+mdefine_line|#define UFS_SF_SETTABLE   0xffff0000
+DECL|macro|UFS_SF_ARCHIVED
+mdefine_line|#define UFS_SF_ARCHIVED   0x00010000  /* archived */
+DECL|macro|UFS_SF_IMMUTABLE
+mdefine_line|#define UFS_SF_IMMUTABLE  0x00020000  /* immutable (can&squot;t &quot;change&quot;) */
+DECL|macro|UFS_SF_APPEND
+mdefine_line|#define UFS_SF_APPEND     0x00040000  /* append-only */
+DECL|macro|UFS_SF_NOUNLINK
+mdefine_line|#define UFS_SF_NOUNLINK   0x00100000  /* can&squot;t be removed or renamed */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Function prototypes&n; */
 multiline_comment|/* ufs_inode.c */

@@ -4619,7 +4619,7 @@ comma
 id|cnt
 )paren
 suffix:semicolon
-id|close_fp
+id|fput
 c_func
 (paren
 id|vfsmnt-&gt;mnt_quotas
