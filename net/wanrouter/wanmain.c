@@ -2135,7 +2135,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|register_wan_device
 id|EXPORT_SYMBOL
 c_func
@@ -2164,6 +2163,5 @@ c_func
 id|wanrouter_type_trans
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;End&n; */
 eof

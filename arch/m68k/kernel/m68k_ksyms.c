@@ -206,6 +206,13 @@ c_func
 id|disable_irq
 )paren
 suffix:semicolon
+DECL|variable|kernel_set_cachemode
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_set_cachemode
+)paren
+suffix:semicolon
 multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_partial_copy
 id|EXPORT_SYMBOL

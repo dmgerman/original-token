@@ -15,12 +15,8 @@ multiline_comment|/*&n; * User space: 26MB&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x01a00000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
-macro_line|#if 0
-mdefine_line|#define TASK_UNMAPPED_BASE(off)&t;(TASK_SIZE / 3)
-macro_line|#else
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE (TASK_SIZE / 3)
-macro_line|#endif
 DECL|macro|TASK_UNMAPPED_ALIGN
 mdefine_line|#define TASK_UNMAPPED_ALIGN(addr, off)&t;PAGE_ALIGN(addr)
 DECL|macro|INIT_MMAP

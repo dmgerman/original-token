@@ -9,12 +9,8 @@ mdefine_line|#define HAS_PCIO
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xfe000000
 multiline_comment|/*&n; * Mapping areas&n; */
-DECL|macro|IO_END
-mdefine_line|#define IO_END&t;&t;&t;0xffffffff
 DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE&t;&t;&t;0xfe000000
-DECL|macro|IO_SIZE
-mdefine_line|#define IO_SIZE&t;&t;&t;(IO_END - IO_BASE)
 multiline_comment|/*&n; * RAM definitions&n; */
 DECL|macro|RAM_BASE
 mdefine_line|#define RAM_BASE&t;&t;0x40000000

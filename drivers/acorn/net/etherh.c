@@ -540,7 +540,7 @@ id|ei_status.dmaing
 id|printk
 (paren
 l_string|&quot;%s: DMAing conflict in etherh_block_input: &quot;
-l_string|&quot; DMAstat %d irqlock %d intr %d&bslash;n&quot;
+l_string|&quot; DMAstat %d irqlock %d intr %ld&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -843,7 +843,7 @@ id|ei_status.dmaing
 id|printk
 (paren
 l_string|&quot;%s: DMAing conflict in etherh_block_input: &quot;
-l_string|&quot; DMAstat %d irqlock %d intr %d&bslash;n&quot;
+l_string|&quot; DMAstat %d irqlock %d intr %ld&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1036,7 +1036,7 @@ id|ei_status.dmaing
 id|printk
 (paren
 l_string|&quot;%s: DMAing conflict in etherh_get_header: &quot;
-l_string|&quot; DMAstat %d irqlock %d intr %d&bslash;n&quot;
+l_string|&quot; DMAstat %d irqlock %d intr %ld&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1810,12 +1810,12 @@ id|ec-&gt;irq
 suffix:semicolon
 id|dev-&gt;mem_end
 op_assign
-id|ec-&gt;cld.product
+id|ec-&gt;cid.product
 suffix:semicolon
 r_switch
 c_cond
 (paren
-id|ec-&gt;cld.product
+id|ec-&gt;cid.product
 )paren
 (brace
 r_case

@@ -218,6 +218,14 @@ id|version
 op_assign
 l_string|&quot;apne.c:v1.1 7/10/98 Alain Malek (Alain.Malek@cryogen.ch)&bslash;n&quot;
 suffix:semicolon
+DECL|variable|apne_owned
+r_static
+r_int
+id|apne_owned
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* signal if card already owned */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -244,6 +252,15 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|apne_owned
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|AMIGAHW_PRESENT
@@ -255,6 +272,7 @@ id|PCMCIA
 )paren
 r_return
 (paren
+op_minus
 id|ENODEV
 )paren
 suffix:semicolon
@@ -282,6 +300,7 @@ l_string|&quot;NO PCMCIA card inserted&bslash;n&quot;
 suffix:semicolon
 r_return
 (paren
+op_minus
 id|ENODEV
 )paren
 suffix:semicolon
@@ -328,6 +347,7 @@ l_string|&quot;not an ethernet card&bslash;n&quot;
 suffix:semicolon
 r_return
 (paren
+op_minus
 id|ENODEV
 )paren
 suffix:semicolon
@@ -361,6 +381,7 @@ suffix:semicolon
 r_else
 r_return
 (paren
+op_minus
 id|ENODEV
 )paren
 suffix:semicolon
@@ -425,7 +446,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_static
-r_int
+id|u32
 id|pcmcia_offsets
 (braket
 l_int|16
@@ -557,6 +578,7 @@ l_string|&quot; not found (no reset ack).&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1230,6 +1252,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|apne_owned
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1463,7 +1489,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_get_8390_hdr &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1738,7 +1764,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_block_input &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2034,7 +2060,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_block_output.&quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d]&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld]&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2514,6 +2540,13 @@ c_func
 r_void
 )paren
 (brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|apne_dev
+)paren
+suffix:semicolon
 id|pcmcia_disable_irq
 c_func
 (paren
@@ -2533,17 +2566,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-op_amp
-id|apne_dev
-)paren
-suffix:semicolon
 id|unlock_8390_module
 c_func
 (paren
 )paren
+suffix:semicolon
+id|apne_owned
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif

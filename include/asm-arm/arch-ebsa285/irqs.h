@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/irqs.h&n; *&n; * Copyright (C) 1998 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/irqs.h&n; *&n; * Copyright (C) 1998 Russell King&n; * Copyright (C) 1998 Phil Blundell&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;&t;&t;32
+mdefine_line|#define NR_IRQS&t;&t;&t;48
 multiline_comment|/*&n; * This is a list of all interrupts that the 21285&n; * can generate&n; */
 DECL|macro|IRQ_RESERVED
 mdefine_line|#define IRQ_RESERVED&t;&t;0
@@ -58,9 +58,24 @@ DECL|macro|IRQ_PCITARGETABORT
 mdefine_line|#define IRQ_PCITARGETABORT&t;30
 DECL|macro|IRQ_PCIPARITY
 mdefine_line|#define IRQ_PCIPARITY&t;&t;31
+multiline_comment|/* IRQs 32-47 are the 16 ISA interrupts on a CATS board.  */
+DECL|macro|IRQ_ISA_PIC
+mdefine_line|#define IRQ_ISA_PIC&t;IRQ_IN2
+DECL|macro|IRQ_IS_ISA
+mdefine_line|#define IRQ_IS_ISA(_x)&t;(((_x) &gt;= 32) &amp;&amp; ((_x) &lt;= 47))
+DECL|macro|IRQ_ISA
+mdefine_line|#define IRQ_ISA(_x)&t;((_x) + 0x20)
+DECL|macro|IRQ_ISA_CASCADE
+mdefine_line|#define IRQ_ISA_CASCADE&t;&t;IRQ_ISA(2)
 multiline_comment|/*&n; * Now map them to the Linux interrupts&n; */
 DECL|macro|IRQ_TIMER
 mdefine_line|#define IRQ_TIMER&t;&t;IRQ_TIMER1
+DECL|macro|IRQ_FLOPPYDISK
+mdefine_line|#define IRQ_FLOPPYDISK&t;&t;IRQ_ISA(6)
+DECL|macro|IRQ_HARDDISK
+mdefine_line|#define IRQ_HARDDISK&t;&t;IRQ_ISA(14)
+DECL|macro|IRQ_HARDDISK_SECONDARY
+mdefine_line|#define IRQ_HARDDISK_SECONDARY&t;IRQ_ISA(15)
 DECL|macro|irq_cannonicalize
-mdefine_line|#define irq_cannonicalize(i)&t;(i)
+mdefine_line|#define irq_cannonicalize(_i)&t;(((_i) == IRQ_ISA_CASCADE) ? IRQ_ISA(9) : _i)
 eof

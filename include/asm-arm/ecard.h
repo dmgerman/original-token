@@ -19,6 +19,10 @@ DECL|macro|MANU_ATOMWIDE
 mdefine_line|#define MANU_ATOMWIDE&t;&t;0x0017
 DECL|macro|PROD_ATOMWIDE_3PSERIAL
 mdefine_line|#define PROD_ATOMWIDE_3PSERIAL&t;&t;0x0090
+DECL|macro|MANU_IRLAM_INSTRUMENTS
+mdefine_line|#define MANU_IRLAM_INSTRUMENTS&t;0x001f
+DECL|macro|MANU_IRLAM_INSTRUMENTS_ETHERN
+mdefine_line|#define MANU_IRLAM_INSTRUMENTS_ETHERN&t;0x5678
 DECL|macro|MANU_OAK
 mdefine_line|#define MANU_OAK&t;&t;0x0021
 DECL|macro|PROD_OAK_SCSI
@@ -78,26 +82,26 @@ mdefine_line|#define CONST const
 macro_line|#endif
 DECL|macro|MAX_ECARDS
 mdefine_line|#define MAX_ECARDS&t;8
-multiline_comment|/* Type of card&squot;s address space */
 r_typedef
 r_enum
 (brace
+multiline_comment|/* Cards address space&t;&t;*/
 DECL|enumerator|ECARD_IOC
 id|ECARD_IOC
 comma
 DECL|enumerator|ECARD_MEMC
 id|ECARD_MEMC
 comma
-DECL|enumerator|ECARD_DEBI
-id|ECARD_DEBI
+DECL|enumerator|ECARD_EASI
+id|ECARD_EASI
 DECL|typedef|card_type_t
 )brace
 id|card_type_t
 suffix:semicolon
-multiline_comment|/* Speed of card for ECARD_IOC address space */
 r_typedef
 r_enum
 (brace
+multiline_comment|/* Speed for ECARD_IOC space&t;*/
 DECL|enumerator|ECARD_SLOW
 id|ECARD_SLOW
 op_assign
@@ -121,10 +125,10 @@ DECL|typedef|card_speed_t
 )brace
 id|card_speed_t
 suffix:semicolon
-multiline_comment|/* Card ID structure */
 r_typedef
 r_struct
 (brace
+multiline_comment|/* Card ID structure&t;&t;*/
 DECL|member|manufacturer
 r_int
 r_int
@@ -139,51 +143,85 @@ DECL|typedef|card_ids
 )brace
 id|card_ids
 suffix:semicolon
-multiline_comment|/* External view of card ID information */
-DECL|struct|in_ecld
+DECL|struct|in_ecid
 r_struct
-id|in_ecld
+id|in_ecid
 (brace
+multiline_comment|/* Packed card ID information&t;*/
 DECL|member|product
 r_int
 r_int
 id|product
 suffix:semicolon
+multiline_comment|/* Product code&t;&t;&t;*/
 DECL|member|manufacturer
 r_int
 r_int
 id|manufacturer
 suffix:semicolon
-DECL|member|ecld
+multiline_comment|/* Manufacturer code&t;&t;*/
+DECL|member|id
 r_int
 r_char
-id|ecld
+id|id
+suffix:colon
+l_int|4
 suffix:semicolon
+multiline_comment|/* Simple ID&t;&t;&t;*/
+DECL|member|cd
+r_int
+r_char
+id|cd
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Chunk dir present&t;&t;*/
+DECL|member|is
+r_int
+r_char
+id|is
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Interrupt status pointers&t;*/
+DECL|member|w
+r_int
+r_char
+id|w
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Width&t;&t;&t;*/
 DECL|member|country
 r_int
 r_char
 id|country
 suffix:semicolon
-DECL|member|fiqmask
-r_int
-r_char
-id|fiqmask
-suffix:semicolon
+multiline_comment|/* Country&t;&t;&t;*/
 DECL|member|irqmask
 r_int
 r_char
 id|irqmask
 suffix:semicolon
-DECL|member|fiqaddr
+multiline_comment|/* IRQ mask&t;&t;&t;*/
+DECL|member|fiqmask
 r_int
-r_int
-id|fiqaddr
+r_char
+id|fiqmask
 suffix:semicolon
-DECL|member|irqaddr
+multiline_comment|/* FIQ mask&t;&t;&t;*/
+DECL|member|irqoff
 r_int
 r_int
-id|irqaddr
+id|irqoff
 suffix:semicolon
+multiline_comment|/* IRQ offset&t;&t;&t;*/
+DECL|member|fiqoff
+r_int
+r_int
+id|fiqoff
+suffix:semicolon
+multiline_comment|/* FIQ offset&t;&t;&t;*/
 )brace
 suffix:semicolon
 DECL|typedef|ecard_t
@@ -192,10 +230,17 @@ r_struct
 id|expansion_card
 id|ecard_t
 suffix:semicolon
-multiline_comment|/* Card handler routines */
+DECL|typedef|loader_t
+r_typedef
+r_int
+r_int
+op_star
+id|loader_t
+suffix:semicolon
 r_typedef
 r_struct
 (brace
+multiline_comment|/* Card handler routines&t;*/
 DECL|member|irqenable
 r_void
 (paren
@@ -260,13 +305,6 @@ DECL|typedef|expansioncard_ops_t
 )brace
 id|expansioncard_ops_t
 suffix:semicolon
-DECL|typedef|loader_t
-r_typedef
-r_int
-r_int
-op_star
-id|loader_t
-suffix:semicolon
 multiline_comment|/*&n; * This contains all the info needed on an expansion card&n; */
 DECL|struct|expansion_card
 r_struct
@@ -307,6 +345,24 @@ r_char
 id|claimed
 suffix:semicolon
 multiline_comment|/* Card claimed?&t;&t;*/
+DECL|member|irq_data
+r_void
+op_star
+id|irq_data
+suffix:semicolon
+multiline_comment|/* Data for use for IRQ by card&t;*/
+DECL|member|fiq_data
+r_void
+op_star
+id|fiq_data
+suffix:semicolon
+multiline_comment|/* Data for use for FIQ by card&t;*/
+DECL|member|ops
+id|expansioncard_ops_t
+op_star
+id|ops
+suffix:semicolon
+multiline_comment|/* Enable/Disable Ops for card&t;*/
 DECL|member|slot_no
 id|CONST
 r_int
@@ -335,32 +391,27 @@ r_char
 id|fiq
 suffix:semicolon
 multiline_comment|/* FIQ number (for request_irq)&t;*/
-DECL|member|cld
+DECL|member|type
+id|CONST
+id|card_type_t
+id|type
+suffix:semicolon
+multiline_comment|/* Type of card&t;&t;&t;*/
+DECL|member|cid
 id|CONST
 r_struct
-id|in_ecld
-id|cld
+id|in_ecid
+id|cid
 suffix:semicolon
 multiline_comment|/* Card Identification&t;&t;*/
-DECL|member|irq_data
-r_void
-op_star
-id|irq_data
-suffix:semicolon
-multiline_comment|/* Data for use for IRQ by card&t;*/
-DECL|member|fiq_data
-r_void
-op_star
-id|fiq_data
-suffix:semicolon
-multiline_comment|/* Data for use for FIQ by card&t;*/
-DECL|member|ops
-id|expansioncard_ops_t
-op_star
-id|ops
-suffix:semicolon
-multiline_comment|/* Enable/Disable Ops for card&t;*/
 multiline_comment|/* Private internal data */
+DECL|member|card_desc
+r_const
+r_char
+op_star
+id|card_desc
+suffix:semicolon
+multiline_comment|/* Card description&t;&t;*/
 DECL|member|podaddr
 id|CONST
 r_int
@@ -423,7 +474,7 @@ id|ecard_startfind
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Find an expansion card with the correct cld, product and manufacturer code&n; */
+multiline_comment|/*&n; * Find an expansion card with the correct cid, product and manufacturer code&n; */
 r_extern
 r_struct
 id|expansion_card
@@ -431,7 +482,7 @@ op_star
 id|ecard_find
 (paren
 r_int
-id|cld
+id|cid
 comma
 r_const
 id|card_ids
@@ -481,35 +532,92 @@ id|speed
 suffix:semicolon
 macro_line|#ifdef ECARD_C
 multiline_comment|/* Definitions internal to ecard.c - for it&squot;s use only!!&n; *&n; * External expansion card header as read from the card&n; */
-DECL|struct|ex_ecld
+DECL|struct|ex_ecid
 r_struct
-id|ex_ecld
+id|ex_ecid
 (brace
-DECL|member|r_ecld
+DECL|member|r_irq
 r_int
 r_char
-id|r_ecld
+id|r_irq
+suffix:colon
+l_int|1
 suffix:semicolon
-DECL|member|r_reserved
+DECL|member|r_zero
 r_int
 r_char
-id|r_reserved
+id|r_zero
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|r_fiq
+r_int
+r_char
+id|r_fiq
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|r_id
+r_int
+r_char
+id|r_id
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|r_a
+r_int
+r_char
+id|r_a
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|r_cd
+r_int
+r_char
+id|r_cd
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|r_is
+r_int
+r_char
+id|r_is
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|r_w
+r_int
+r_char
+id|r_w
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|r_r1
+r_int
+r_char
+id|r_r1
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|r_r2
+r_int
+r_char
+id|r_r2
+suffix:colon
+l_int|8
+suffix:semicolon
+DECL|member|r_prod
+r_int
+r_char
+id|r_prod
 (braket
 l_int|2
 )braket
 suffix:semicolon
-DECL|member|r_product
+DECL|member|r_manu
 r_int
 r_char
-id|r_product
-(braket
-l_int|2
-)braket
-suffix:semicolon
-DECL|member|r_manufacturer
-r_int
-r_char
-id|r_manufacturer
+id|r_manu
 (braket
 l_int|2
 )braket
@@ -519,36 +627,32 @@ r_int
 r_char
 id|r_country
 suffix:semicolon
-DECL|member|r_fiqs
+DECL|member|r_irqmask
 r_int
-id|r_fiqs
+r_char
+id|r_irqmask
 suffix:semicolon
-DECL|member|r_irqs
+DECL|member|r_irqoff
 r_int
-id|r_irqs
+r_char
+id|r_irqoff
+(braket
+l_int|3
+)braket
 suffix:semicolon
-DECL|macro|e_ecld
-mdefine_line|#define e_ecld(x)&t;((x)-&gt;r_ecld)
-DECL|macro|e_cd
-mdefine_line|#define e_cd(x)&t;&t;((x)-&gt;r_reserved[0] &amp; 1)
-DECL|macro|e_is
-mdefine_line|#define e_is(x)&t;&t;((x)-&gt;r_reserved[0] &amp; 2)
-DECL|macro|e_w
-mdefine_line|#define e_w(x)&t;&t;(((x)-&gt;r_reserved[0] &amp; 12)&gt;&gt;2)
-DECL|macro|e_prod
-mdefine_line|#define e_prod(x)&t;((x)-&gt;r_product[0]|((x)-&gt;r_product[1]&lt;&lt;8))
-DECL|macro|e_manu
-mdefine_line|#define e_manu(x)&t;((x)-&gt;r_manufacturer[0]|((x)-&gt;r_manufacturer[1]&lt;&lt;8))
-DECL|macro|e_country
-mdefine_line|#define e_country(x)&t;((x)-&gt;r_country)
-DECL|macro|e_fiqmask
-mdefine_line|#define e_fiqmask(x)&t;((x)-&gt;r_fiqs &amp; 0xff)
-DECL|macro|e_fiqaddr
-mdefine_line|#define e_fiqaddr(x)&t;((x)-&gt;r_fiqs &gt;&gt; 8)
-DECL|macro|e_irqmask
-mdefine_line|#define e_irqmask(x)&t;((x)-&gt;r_irqs &amp; 0xff)
-DECL|macro|e_irqaddr
-mdefine_line|#define e_irqaddr(x)&t;((x)-&gt;r_irqs &gt;&gt; 8)
+DECL|member|r_fiqmask
+r_int
+r_char
+id|r_fiqmask
+suffix:semicolon
+DECL|member|r_fiqoff
+r_int
+r_char
+id|r_fiqoff
+(braket
+l_int|3
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Chunk directory entry as read from the card&n; */

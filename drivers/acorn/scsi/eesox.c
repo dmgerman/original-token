@@ -365,10 +365,6 @@ id|fasdmadir_t
 id|direction
 )paren
 (brace
-r_int
-r_int
-id|page
-suffix:semicolon
 r_if
 c_cond
 (paren

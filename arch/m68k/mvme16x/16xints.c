@@ -482,13 +482,15 @@ id|vec
 template_param
 l_int|255
 )paren
-id|panic
+id|printk
 (paren
 l_string|&quot;mvme16x_process_int: Illegal vector %ld&quot;
 comma
 id|vec
 )paren
 suffix:semicolon
+r_else
+(brace
 id|irq_tab
 (braket
 id|vec
@@ -523,6 +525,7 @@ comma
 id|fp
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|mvme16x_get_irq_list
 r_int

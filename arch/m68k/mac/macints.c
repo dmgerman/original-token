@@ -346,7 +346,7 @@ id|mac_irqs
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * VIA2 / RBV register base pointers&n; */
+multiline_comment|/*&n; * VIA/RBV/OSS/PSC register base pointers&n; */
 DECL|variable|via2_regp
 r_volatile
 r_int
@@ -687,7 +687,7 @@ op_eq
 id|MAC_MODEL_IIFX
 )paren
 (brace
-multiline_comment|/* no real VIA2, the OSS seems _very_different */
+multiline_comment|/* no real VIA2, the OSS seems _very_ different */
 id|via2_is_oss
 op_assign
 l_int|1
@@ -1876,7 +1876,7 @@ id|IRQ_MAC_SCSI
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Set vPCR for SCSI interrupts. (what about RBV here?)&n;&t;&t; * 980429 MS: RBV is ok, OSS seems to be differentt&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Set vPCR for SCSI interrupts. (what about RBV here?)&n;&t;&t; * 980429 MS: RBV is ok, OSS seems to be different&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2411,7 +2411,7 @@ id|irqidx
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * In opposite to {en,dis}able_irq, requests between turn{off,on}_irq are not&n; * &quot;stored&quot;. This is done with the VIA interrupt enable register&n; */
+multiline_comment|/*&n; * In opposite to {en,dis}able_irq, requests between turn{off,on}_irq are not&n; * &quot;stored&quot;. This is done with the VIA interrupt enable register on VIAs.&n; *&n; * Note: Using these functions on non-VIA/OSS/PSC ints will panic, or at least &n; * have undesired side effects.&n; */
 DECL|function|mac_turnon_irq
 r_void
 id|mac_turnon_irq
@@ -2482,6 +2482,7 @@ id|SRC_VIA2
 op_logical_and
 id|via2_is_rbv
 )paren
+multiline_comment|/* RBV as VIA2 */
 id|via_write
 c_func
 (paren
@@ -2518,6 +2519,7 @@ id|SRC_VIA2
 op_logical_and
 id|via2_is_oss
 )paren
+multiline_comment|/* OSS */
 id|via_write
 c_func
 (paren
@@ -2541,6 +2543,7 @@ id|srcidx
 OG
 id|SRC_VIA2
 )paren
+multiline_comment|/* hope AVs have VIA2 */
 id|via_write
 c_func
 (paren
@@ -2580,6 +2583,7 @@ id|irqidx
 )paren
 suffix:semicolon
 r_else
+multiline_comment|/* VIA1+2 */
 id|via_write
 c_func
 (paren
@@ -2677,6 +2681,7 @@ id|SRC_VIA2
 op_logical_and
 id|via2_is_rbv
 )paren
+multiline_comment|/* RBV as VIA2 */
 id|via_write
 c_func
 (paren
@@ -2711,6 +2716,7 @@ id|SRC_VIA2
 op_logical_and
 id|via2_is_oss
 )paren
+multiline_comment|/* OSS */
 id|via_write
 c_func
 (paren
@@ -2772,6 +2778,7 @@ id|irqidx
 )paren
 suffix:semicolon
 r_else
+multiline_comment|/* VIA1+2 */
 id|via_write
 c_func
 (paren
@@ -3494,9 +3501,11 @@ macro_line|#ifdef DEBUG_VIA
 id|printk
 c_func
 (paren
-l_string|&quot;Unexpected IRQ %d&bslash;n&quot;
+l_string|&quot;Unexpected IRQ %d on device %p&bslash;n&quot;
 comma
 id|irq
+comma
+id|dev_id
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5751,7 +5760,7 @@ macro_line|#ifdef DEBUG_VIA
 id|printk
 c_func
 (paren
-l_string|&quot;rbv_irq: nothing pending, flags %x mask %x!&bslash;n&quot;
+l_string|&quot;psc_irq: nothing pending, flags %x mask %x!&bslash;n&quot;
 comma
 id|via_read
 c_func
@@ -5784,7 +5793,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_VIA&t;
-multiline_comment|/*&n;&t; * limited verbosity for RBV interrupts (add more if needed)&n;&t; */
+multiline_comment|/*&n;&t; * limited verbosity for PSC interrupts (add more if needed)&n;&t; */
 r_if
 c_cond
 (paren
@@ -6639,6 +6648,18 @@ comma
 id|vBufA
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG_NUBUS_INT
+id|printk
+c_func
+(paren
+l_string|&quot;nubus_irq: map %x mask %x&bslash;n&quot;
+comma
+id|map
+comma
+id|nubus_active
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6676,18 +6697,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG_NUBUS_INT
-id|printk
-c_func
-(paren
-l_string|&quot;nubus_irq: map %x mask %x&bslash;n&quot;
-comma
-id|map
-comma
-id|nubus_active
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -13,6 +13,8 @@ DECL|macro|MAX_IFS
 mdefine_line|#define MAX_IFS&t;2
 DECL|macro|ICS_IDENT_OFFSET
 mdefine_line|#define ICS_IDENT_OFFSET&t;&t;0x8a0
+DECL|macro|ICS_ARCIN_V5_INTRSTAT
+mdefine_line|#define ICS_ARCIN_V5_INTRSTAT&t;&t;0x000
 DECL|macro|ICS_ARCIN_V5_INTROFFSET
 mdefine_line|#define ICS_ARCIN_V5_INTROFFSET&t;&t;0x001
 DECL|macro|ICS_ARCIN_V5_IDEOFFSET
@@ -25,12 +27,16 @@ DECL|macro|ICS_ARCIN_V6_IDEOFFSET_1
 mdefine_line|#define ICS_ARCIN_V6_IDEOFFSET_1&t;0x800
 DECL|macro|ICS_ARCIN_V6_INTROFFSET_1
 mdefine_line|#define ICS_ARCIN_V6_INTROFFSET_1&t;0x880
+DECL|macro|ICS_ARCIN_V6_INTRSTAT_1
+mdefine_line|#define ICS_ARCIN_V6_INTRSTAT_1&t;&t;0x8a4
 DECL|macro|ICS_ARCIN_V6_IDEALTOFFSET_1
 mdefine_line|#define ICS_ARCIN_V6_IDEALTOFFSET_1&t;0x8e0
 DECL|macro|ICS_ARCIN_V6_IDEOFFSET_2
 mdefine_line|#define ICS_ARCIN_V6_IDEOFFSET_2&t;0xc00
 DECL|macro|ICS_ARCIN_V6_INTROFFSET_2
 mdefine_line|#define ICS_ARCIN_V6_INTROFFSET_2&t;0xc80
+DECL|macro|ICS_ARCIN_V6_INTRSTAT_2
+mdefine_line|#define ICS_ARCIN_V6_INTRSTAT_2&t;&t;0xca4
 DECL|macro|ICS_ARCIN_V6_IDEALTOFFSET_2
 mdefine_line|#define ICS_ARCIN_V6_IDEALTOFFSET_2&t;0xce0
 DECL|macro|ICS_ARCIN_V6_IDESTEPPING
@@ -649,6 +655,20 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|ec-&gt;irqaddr
+op_assign
+id|ioaddr
+c_func
+(paren
+id|port
+op_plus
+id|ICS_ARCIN_V5_INTRSTAT
+)paren
+suffix:semicolon
+id|ec-&gt;irqmask
+op_assign
+l_int|1
+suffix:semicolon
 id|ec-&gt;irq_data
 op_assign
 (paren
@@ -698,6 +718,17 @@ comma
 id|ec-&gt;irq
 )paren
 suffix:semicolon
+id|result
+(braket
+id|index
+)braket
+(braket
+l_int|1
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -713,6 +744,20 @@ id|ECARD_IOC
 comma
 id|ECARD_FAST
 )paren
+suffix:semicolon
+id|ec-&gt;irqaddr
+op_assign
+id|ioaddr
+c_func
+(paren
+id|port
+op_plus
+id|ICS_ARCIN_V6_INTRSTAT_1
+)paren
+suffix:semicolon
+id|ec-&gt;irqmask
+op_assign
+l_int|1
 suffix:semicolon
 id|ec-&gt;irq_data
 op_assign

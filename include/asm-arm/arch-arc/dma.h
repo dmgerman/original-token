@@ -18,17 +18,23 @@ DECL|typedef|dmamode_t
 )brace
 id|dmamode_t
 suffix:semicolon
+macro_line|#ifdef CONFIG_ARCH_ARC
 DECL|macro|MAX_DMA_CHANNELS
-mdefine_line|#define MAX_DMA_CHANNELS&t;4
-DECL|macro|DMA_0
-mdefine_line|#define DMA_0&t;&t;&t;0
-DECL|macro|DMA_1
-mdefine_line|#define DMA_1&t;&t;&t;1
-DECL|macro|DMA_VIRTUAL_FLOPPY
-mdefine_line|#define DMA_VIRTUAL_FLOPPY&t;2
+mdefine_line|#define MAX_DMA_CHANNELS&t;3
+DECL|macro|DMA_VIRTUAL_FLOPPY0
+mdefine_line|#define DMA_VIRTUAL_FLOPPY0&t;0
+DECL|macro|DMA_VIRTUAL_FLOPPY1
+mdefine_line|#define DMA_VIRTUAL_FLOPPY1&t;1
 DECL|macro|DMA_VIRTUAL_SOUND
-mdefine_line|#define DMA_VIRTUAL_SOUND&t;3
+mdefine_line|#define DMA_VIRTUAL_SOUND&t;2
+macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_A5K
+DECL|macro|MAX_DMA_CHANNELS
+mdefine_line|#define MAX_DMA_CHANNELS&t;2
+DECL|macro|DMA_VIRTUAL_FLOPPY
+mdefine_line|#define DMA_VIRTUAL_FLOPPY&t;0
+DECL|macro|DMA_VIRTUAL_SOUND
+mdefine_line|#define DMA_VIRTUAL_SOUND&t;1
 DECL|macro|DMA_FLOPPY
 mdefine_line|#define DMA_FLOPPY&t;&t;DMA_VIRTUAL_FLOPPY
 macro_line|#endif

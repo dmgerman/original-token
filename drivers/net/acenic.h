@@ -497,6 +497,8 @@ DECL|macro|ACE_JUMBO_MTU
 mdefine_line|#define ACE_JUMBO_MTU 9000
 DECL|macro|ACE_STD_MTU
 mdefine_line|#define ACE_STD_MTU 1500
+DECL|macro|ACE_TRACE_SIZE
+mdefine_line|#define ACE_TRACE_SIZE 0x8000
 multiline_comment|/*&n; * Host control register bits.&n; */
 DECL|macro|IN_INT
 mdefine_line|#define IN_INT&t;&t;0x01
@@ -568,17 +570,14 @@ DECL|macro|DMA_WRITE_MAX_256
 mdefine_line|#define DMA_WRITE_MAX_256&t;0xc0
 DECL|macro|DMA_WRITE_MAX_1K
 mdefine_line|#define DMA_WRITE_MAX_1K&t;0xe0
+DECL|macro|MEM_READ_MULTIPLE
+mdefine_line|#define MEM_READ_MULTIPLE&t;0x00020000
 DECL|macro|DMA_WRITE_ALL_ALIGN
 mdefine_line|#define DMA_WRITE_ALL_ALIGN&t;0x00800000
 DECL|macro|READ_CMD_MEM
 mdefine_line|#define READ_CMD_MEM&t;&t;0x06000000
 DECL|macro|WRITE_CMD_MEM
 mdefine_line|#define WRITE_CMD_MEM&t;&t;0x70000000
-multiline_comment|/*&n; * Transmit status.&n; */
-DECL|macro|ENA_XMIT
-mdefine_line|#define ENA_XMIT&t;&t;0x01
-DECL|macro|PERM_CON
-mdefine_line|#define PERM_CON&t;&t;0x02
 multiline_comment|/*&n; * Mode status&n; */
 DECL|macro|ACE_BYTE_SWAP_DATA
 mdefine_line|#define ACE_BYTE_SWAP_DATA&t;0x10
@@ -1453,6 +1452,12 @@ id|L1_CACHE_BYTES
 )paren
 )paren
 suffix:semicolon
+DECL|member|trace_buf
+r_int
+r_char
+op_star
+id|trace_buf
+suffix:semicolon
 DECL|member|fw_running
 DECL|member|fw_up
 DECL|member|jumbo
@@ -1470,8 +1475,12 @@ DECL|member|version
 r_int
 id|version
 suffix:semicolon
-DECL|member|vendor
+DECL|member|flags
 r_int
+id|flags
+suffix:semicolon
+DECL|member|vendor
+id|u16
 id|vendor
 suffix:semicolon
 DECL|member|pci_command
@@ -1510,6 +1519,9 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+id|board_idx
 )paren
 suffix:semicolon
 r_static
@@ -1609,6 +1621,17 @@ c_func
 r_int
 r_int
 id|data
+)paren
+suffix:semicolon
+r_static
+r_void
+id|ace_dump_trace
+c_func
+(paren
+r_struct
+id|ace_private
+op_star
+id|ap
 )paren
 suffix:semicolon
 r_static

@@ -904,7 +904,7 @@ multiline_comment|/*&n; * Conversion functions: convert a page and protection to
 DECL|macro|mk_pte
 mdefine_line|#define mk_pte(page, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = virt_to_phys((void *)page) + pgprot_val(pgprot); __pte; })
 DECL|macro|mk_pte_phys
-mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = virt_to_phys((void *)physpage) + pgprot_val(pgprot); __pte; })
+mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = (unsigned long)physpage + pgprot_val(pgprot); __pte; })
 DECL|function|pte_modify
 r_extern
 r_inline

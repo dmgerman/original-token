@@ -1090,9 +1090,49 @@ c_func
 (paren
 id|MATROX
 comma
+id|MATROX_G200_PCI
+comma
+l_string|&quot;Matrox G200 PCI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
+id|MATROX_G200_AGP
+comma
+l_string|&quot;Matrox G200 AGP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
 id|MATROX_MGA_IMP
 comma
 l_string|&quot;MGA Impression&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
+id|MATROX_G100_MM
+comma
+l_string|&quot;Matrox G100 multi monitor&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
+id|MATROX_G100_AGP
+comma
+l_string|&quot;Matrox G100 AGP&quot;
 )paren
 comma
 id|DEVICE
@@ -2970,6 +3010,16 @@ c_func
 (paren
 id|VIA
 comma
+id|VIA_82C598_0
+comma
+l_string|&quot;VT 82C598 Apollo MVP3&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
 id|VIA_82C926
 comma
 l_string|&quot;VT 82C926 Amazon&quot;
@@ -3033,6 +3083,16 @@ comma
 id|VIA_82C597_1
 comma
 l_string|&quot;VT 82C597 Apollo VP3 AGP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C598_1
+comma
+l_string|&quot;VT 82C598 Apollo MVP3 AGP&quot;
 )paren
 comma
 id|DEVICE

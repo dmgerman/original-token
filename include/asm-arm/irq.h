@@ -2,8 +2,10 @@ macro_line|#ifndef __ASM_ARM_IRQ_H
 DECL|macro|__ASM_ARM_IRQ_H
 mdefine_line|#define __ASM_ARM_IRQ_H
 macro_line|#include &lt;asm/arch/irqs.h&gt;
+macro_line|#ifndef irq_cannonicalize
 DECL|macro|irq_cannonicalize
 mdefine_line|#define irq_cannonicalize(i)&t;(i)
+macro_line|#endif
 macro_line|#ifndef NR_IRQS
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS&t;128

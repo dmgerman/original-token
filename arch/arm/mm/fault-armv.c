@@ -1045,7 +1045,11 @@ op_assign
 id|search_exception_table
 c_func
 (paren
-id|regs-&gt;ARM_pc
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
 )paren
 )paren
 op_ne

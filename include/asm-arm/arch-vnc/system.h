@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; * Copyright (c) 1998 Corel Computer Corp.&n; */
 macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
-multiline_comment|/* To reboot, we set up the 21285 watchdog and enable it.&n; * We then wait for it to timeout.&n; */
+macro_line|#include &lt;asm/io.h&gt;
 DECL|function|arch_hard_reset
 r_extern
 id|__inline__
@@ -16,26 +17,65 @@ c_func
 (paren
 )paren
 suffix:semicolon
-op_star
-id|CSR_TIMER4_LOAD
-op_assign
-l_int|0x8000
+multiline_comment|/* open up the SuperIO chip&n;&t; */
+id|outb
+c_func
+(paren
+l_int|0x87
+comma
+l_int|0x370
+)paren
 suffix:semicolon
-op_star
-id|CSR_TIMER4_CNTL
-op_assign
-id|TIMER_CNTL_ENABLE
-op_or
-id|TIMER_CNTL_AUTORELOAD
-op_or
-id|TIMER_CNTL_DIV16
+id|outb
+c_func
+(paren
+l_int|0x87
+comma
+l_int|0x370
+)paren
 suffix:semicolon
-op_star
-id|CSR_SA110_CNTL
-op_or_assign
-l_int|1
-op_lshift
-l_int|13
+multiline_comment|/* aux function group 1 (Logical Device 7)&n;&t; */
+id|outb
+c_func
+(paren
+l_int|0x07
+comma
+l_int|0x370
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x07
+comma
+l_int|0x371
+)paren
+suffix:semicolon
+multiline_comment|/* set GP16 for WD-TIMER output&n;&t; */
+id|outb
+c_func
+(paren
+l_int|0xE6
+comma
+l_int|0x370
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x371
+)paren
+suffix:semicolon
+multiline_comment|/* set a RED LED and toggle WD_TIMER for rebooting...&n;&t; */
+id|outb
+c_func
+(paren
+l_int|0xC4
+comma
+l_int|0x338
+)paren
 suffix:semicolon
 r_while
 c_loop

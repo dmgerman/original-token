@@ -14,7 +14,11 @@ id|fiq_handler
 id|fh
 op_assign
 (brace
+l_int|NULL
+comma
 l_string|&quot;floppydma&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 )brace

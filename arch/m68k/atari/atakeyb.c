@@ -4385,21 +4385,23 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|time_before
+c_func
+(paren
 id|jiffies
-OL
+comma
 id|self_test_last_rcv
 op_plus
 id|HZ
 op_div
 l_int|4
 )paren
-(brace
+)paren
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* if not incremented: no 0xf1 received */
 r_if
 c_cond

@@ -391,13 +391,21 @@ op_star
 id|model
 )paren
 (brace
-multiline_comment|/* XXX Need to detect if BVME4000 or BVME6000 */
 id|sprintf
 c_func
 (paren
 id|model
 comma
-l_string|&quot;BVME6000&quot;
+l_string|&quot;BVME%d000&quot;
+comma
+id|m68k_cputype
+op_eq
+id|CPU_68060
+ques
+c_cond
+l_int|6
+suffix:colon
+l_int|4
 )paren
 suffix:semicolon
 )brace
@@ -598,6 +606,11 @@ op_assign
 l_int|0x03
 suffix:semicolon
 multiline_comment|/* WDOG disable */
+multiline_comment|/* Disable snooping for Ethernet and VME accesses */
+id|bvme_acr_addrctl
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|bvme6000_abort_int
 r_void
@@ -639,7 +652,6 @@ r_int
 op_star
 )paren
 l_int|0xf8000000
-suffix:semicolon
 suffix:semicolon
 multiline_comment|/* Wait for button release */
 r_while

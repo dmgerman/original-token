@@ -338,7 +338,7 @@ comma
 id|stop_page
 suffix:semicolon
 r_static
-r_int
+id|u32
 id|ariadne2_offsets
 (braket
 l_int|16

@@ -387,7 +387,6 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-multiline_comment|/* XXX FIXME: Atari scancodes still */
 DECL|variable|mac_sysrq_xlate
 r_static
 r_char
@@ -396,21 +395,21 @@ id|mac_sysrq_xlate
 l_int|128
 )braket
 op_assign
-l_string|&quot;&bslash;000&bslash;0331234567890-=&bslash;177&bslash;t&quot;
+l_string|&quot;&bslash;000sdfghzxcv&bslash;000bqwer&quot;
 multiline_comment|/* 0x00 - 0x0f */
-l_string|&quot;qwertyuiop[]&bslash;r&bslash;000as&quot;
+l_string|&quot;yt123465=97-80)o&quot;
 multiline_comment|/* 0x10 - 0x1f */
-l_string|&quot;dfghjkl;&squot;`&bslash;000&bslash;&bslash;zxcv&quot;
+l_string|&quot;u(ip&bslash;rlj&squot;k;&bslash;&bslash;,/nm.&quot;
 multiline_comment|/* 0x20 - 0x2f */
-l_string|&quot;bnm,./&bslash;000&bslash;000&bslash;000 &bslash;000&bslash;201&bslash;202&bslash;203&bslash;204&bslash;205&quot;
+l_string|&quot;&bslash;t `&bslash;000&bslash;033&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
 multiline_comment|/* 0x30 - 0x3f */
-l_string|&quot;&bslash;206&bslash;207&bslash;210&bslash;211&bslash;212&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000-&bslash;000&bslash;000&bslash;000+&bslash;000&quot;
+l_string|&quot;&bslash;000.&bslash;000*&bslash;000+&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000/&bslash;r&bslash;000-&bslash;000&quot;
 multiline_comment|/* 0x40 - 0x4f */
-l_string|&quot;&bslash;000&bslash;000&bslash;000&bslash;177&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
+l_string|&quot;&bslash;000&bslash;00001234567a89&bslash;000&bslash;000&bslash;000&quot;
 multiline_comment|/* 0x50 - 0x5f */
-l_string|&quot;&bslash;000&bslash;000&bslash;000()/*789456123&quot;
+l_string|&quot;&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
 multiline_comment|/* 0x60 - 0x6f */
-l_string|&quot;0.&bslash;r&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
+l_string|&quot;&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
 suffix:semicolon
 multiline_comment|/* 0x70 - 0x7f */
 macro_line|#endif
@@ -1341,7 +1340,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
 id|mach_sysrq_key
 op_assign
-l_int|98
+l_int|114
 suffix:semicolon
 multiline_comment|/* HELP */
 id|mach_sysrq_shift_state
@@ -1459,6 +1458,8 @@ id|MAC_IDE_NONE
 comma
 id|MAC_SCC_II
 comma
+id|MAC_ETHER_NONE
+comma
 id|MAC_NUBUS
 )brace
 comma
@@ -1476,6 +1477,8 @@ comma
 id|MAC_IDE_NONE
 comma
 id|MAC_SCC_II
+comma
+id|MAC_ETHER_NONE
 comma
 id|MAC_NUBUS
 )brace
@@ -1495,6 +1498,8 @@ id|MAC_IDE_NONE
 comma
 id|MAC_SCC_II
 comma
+id|MAC_ETHER_NONE
+comma
 id|MAC_NUBUS
 )brace
 comma
@@ -1512,6 +1517,8 @@ comma
 id|MAC_IDE_NONE
 comma
 id|MAC_SCC_II
+comma
+id|MAC_ETHER_NONE
 comma
 id|MAC_NUBUS
 )brace
@@ -1992,7 +1999,7 @@ id|MAC_ADB_CUDA
 comma
 id|MAC_VIA_IIci
 comma
-id|MAC_SCSI_QUADRA
+id|MAC_SCSI_OLD
 comma
 id|MAC_IDE_NONE
 comma
@@ -2682,10 +2689,10 @@ op_minus
 l_int|1
 )paren
 (brace
-id|mac_boom
+id|panic
 c_func
 (paren
-l_int|5
+l_string|&quot;mac model config data corrupt!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

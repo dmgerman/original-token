@@ -1,6 +1,7 @@
 multiline_comment|/*&n;** asm-m68k/pcmcia.c -- Amiga Linux PCMCIA support&n;**                      most information was found by disassembling card.resource&n;**                      I&squot;m still looking for an official doc !&n;**&n;** Copyright 1997 by Alain Malek&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;** Created: 12/10/97 by Alain Malek&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/amigayle.h&gt;
 macro_line|#include &lt;asm/amipcmcia.h&gt;
 multiline_comment|/* gayle config byte for program voltage and access speed */
@@ -38,15 +39,19 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|time_before
+c_func
+(paren
 id|jiffies
-op_minus
+comma
 id|reset_start_time
-OL
+op_plus
 l_int|1
 op_star
 id|HZ
 op_div
 l_int|100
+)paren
 )paren
 suffix:semicolon
 id|b

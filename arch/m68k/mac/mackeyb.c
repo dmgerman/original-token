@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/m68k/mac/mackeyb.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/arch/m68k/mac/mackeyb.c&n; *&n; * Keyboard driver for Macintosh computers.&n; *&n; * Adapted from drivers/macintosh/key_mac.c and arch/m68k/atari/akakeyb.c &n; * (see that file for its authors and contributors).&n; *&n; * Copyright (C) 1997 Michael Schmitz.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * misc. keyboard stuff (everything not in adb-bus.c or keyb_m68k.c)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -148,7 +148,8 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Hook for mouse driver */
+macro_line|#ifdef CONFIG_ADBMOUSE
+multiline_comment|/* XXX: Hook for mouse driver */
 DECL|variable|adb_mouse_interrupt_hook
 r_void
 (paren
@@ -156,12 +157,34 @@ op_star
 id|adb_mouse_interrupt_hook
 )paren
 (paren
+r_int
 r_char
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
+DECL|variable|adb_emulate_buttons
+r_int
+id|adb_emulate_buttons
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|adb_button2_keycode
+r_int
+id|adb_button2_keycode
+op_assign
+l_int|0x7d
+suffix:semicolon
+multiline_comment|/* right control key */
+DECL|variable|adb_button3_keycode
+r_int
+id|adb_button3_keycode
+op_assign
+l_int|0x7c
+suffix:semicolon
+multiline_comment|/* right option key */
+macro_line|#endif
 multiline_comment|/* The mouse driver - for debugging */
 r_extern
 r_void
@@ -2585,15 +2608,20 @@ op_amp
 id|repeat_timer
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ADBMOUSE
 multiline_comment|/*&n;&t; * XXX: Add mouse button 2+3 fake codes here if mouse open.&n;&t; *&t;As we only report up/down events, keep track of faked buttons.&n;&t; *&t;Really messy; might need to check if keyboard is in&n;&t; *&t;VC_RAW mode for X?.&n;&t; *&t;Might also want to know how many buttons need to be emulated.&n;&t; *&t;-&gt; hide this as function in arch/m68k/mac ?&n;&t; *&t;Current emulation buttons: right alt/option and control&n;&t; *&t;(wanted: command and alt/option, or KP= and KP( ...)&n;&t; *&t;Debug version; might be rewritten to be faster on normal keys.&n;&t; */
 r_if
 c_cond
+(paren
+id|adb_emulate_buttons
+op_logical_and
 (paren
 id|adb_mouse_interrupt_hook
 op_logical_or
 id|console_loglevel
 op_ge
 l_int|8
+)paren
 )paren
 (brace
 r_int
@@ -2645,16 +2673,15 @@ id|fake_event
 op_assign
 l_int|0
 suffix:semicolon
-r_switch
+r_if
 c_cond
 (paren
 id|keycode
+op_eq
+id|adb_button2_keycode
 )paren
 (brace
 multiline_comment|/* which &squot;button&squot; ? */
-r_case
-l_int|0x7c
-suffix:colon
 multiline_comment|/* R-option */
 id|button2
 op_assign
@@ -2685,11 +2712,16 @@ id|fake_event
 op_assign
 l_int|2
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x7d
-suffix:colon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|keycode
+op_eq
+id|adb_button3_keycode
+)paren
+(brace
 multiline_comment|/* R-control */
 id|button3
 op_assign
@@ -2719,8 +2751,6 @@ multiline_comment|/* save state */
 id|fake_event
 op_assign
 l_int|3
-suffix:semicolon
-r_break
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_ADBMOUSE
@@ -2862,6 +2892,7 @@ id|fake_event
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_ADBMOUSE */
 multiline_comment|/*&n;&t; * Convert R-shift/control/option to L version.&n;&t; */
 r_switch
 c_cond
@@ -2967,38 +2998,16 @@ id|repeat_timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * XXX fix caps-lock behaviour by turning the key-up&n;&t;&t; * transition into a key-down transition.&n;&t;&t; * MSch: need to turn each caps-lock event into a down-up&n;&t;&t; * double event (keyboard code assumes caps-lock is a toggle)&n;&t;&t; */
-macro_line|#if 0
-r_if
+multiline_comment|/*&n;&t;&t; * XXX fix caps-lock behaviour by turning the key-up&n;&t;&t; * transition into a key-down transition.&n;&t;&t; * MSch: need to turn each caps-lock event into a down-up&n;&t;&t; * double event (keyboard code assumes caps-lock is a toggle)&n;&t;&t; * 981127: fix LED behavior (kudos atong!)&n;&t;&t; */
+r_switch
 c_cond
 (paren
 id|keycode
-op_eq
-l_int|0x39
-op_logical_and
-id|up_flag
-op_logical_and
-id|vc_kbd_led
-c_func
-(paren
-id|kbd
-comma
-id|VC_CAPSLOCK
-)paren
-)paren
-id|up_flag
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|keycode
-op_eq
-l_int|0x39
 )paren
 (brace
+r_case
+l_int|0x39
+suffix:colon
 id|handle_scancode
 c_func
 (paren
@@ -3011,8 +3020,26 @@ op_assign
 l_int|0x80
 suffix:semicolon
 multiline_comment|/* see below ... */
+id|mark_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x47
+suffix:colon
+id|mark_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 id|handle_scancode
 c_func

@@ -1554,7 +1554,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_static
-r_int
+id|u32
 id|fwrd4_offsets
 (braket
 l_int|16
@@ -1563,7 +1563,7 @@ op_assign
 initialization_block
 suffix:semicolon
 r_static
-r_int
+id|u32
 id|back4_offsets
 (braket
 l_int|16

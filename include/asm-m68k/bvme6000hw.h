@@ -594,7 +594,7 @@ mdefine_line|#define BVME_SCC_B_ADDR&t;0xffb00003
 DECL|macro|BVME_CONFIG_REG
 mdefine_line|#define BVME_CONFIG_REG&t;0xff500003
 DECL|macro|config_reg_ptr
-mdefine_line|#define config_reg_ptr&t;(unsigned char *)BVME_CONFIG_REG
+mdefine_line|#define config_reg_ptr&t;(volatile unsigned char *)BVME_CONFIG_REG
 DECL|macro|BVME_CONFIG_SW1
 mdefine_line|#define BVME_CONFIG_SW1&t;0x08
 DECL|macro|BVME_CONFIG_SW2
@@ -636,5 +636,38 @@ DECL|macro|BVME_IRQ_SCCA_RX
 mdefine_line|#define BVME_IRQ_SCCA_RX&t;&t;0x4c
 DECL|macro|BVME_IRQ_SCCA_SPCOND
 mdefine_line|#define BVME_IRQ_SCCA_SPCOND&t;&t;0x4e
+multiline_comment|/* Address control registers */
+DECL|macro|BVME_ACR_A32VBA
+mdefine_line|#define BVME_ACR_A32VBA&t;&t;0xff400003
+DECL|macro|BVME_ACR_A32MSK
+mdefine_line|#define BVME_ACR_A32MSK&t;&t;0xff410003
+DECL|macro|BVME_ACR_A24VBA
+mdefine_line|#define BVME_ACR_A24VBA&t;&t;0xff420003
+DECL|macro|BVME_ACR_A24MSK
+mdefine_line|#define BVME_ACR_A24MSK&t;&t;0xff430003
+DECL|macro|BVME_ACR_A16VBA
+mdefine_line|#define BVME_ACR_A16VBA&t;&t;0xff440003
+DECL|macro|BVME_ACR_A32LBA
+mdefine_line|#define BVME_ACR_A32LBA&t;&t;0xff450003
+DECL|macro|BVME_ACR_A24LBA
+mdefine_line|#define BVME_ACR_A24LBA&t;&t;0xff460003
+DECL|macro|BVME_ACR_ADDRCTL
+mdefine_line|#define BVME_ACR_ADDRCTL&t;0xff470003
+DECL|macro|bvme_acr_a32vba
+mdefine_line|#define bvme_acr_a32vba&t;&t;*(volatile unsigned char *)BVME_ACR_A32VBA
+DECL|macro|bvme_acr_a32msk
+mdefine_line|#define bvme_acr_a32msk&t;&t;*(volatile unsigned char *)BVME_ACR_A32MSK
+DECL|macro|bvme_acr_a24vba
+mdefine_line|#define bvme_acr_a24vba&t;&t;*(volatile unsigned char *)BVME_ACR_A24VBA
+DECL|macro|bvme_acr_a24msk
+mdefine_line|#define bvme_acr_a24msk&t;&t;*(volatile unsigned char *)BVME_ACR_A24MSK
+DECL|macro|bvme_acr_a16vba
+mdefine_line|#define bvme_acr_a16vba&t;&t;*(volatile unsigned char *)BVME_ACR_A16VBA
+DECL|macro|bvme_acr_a32lba
+mdefine_line|#define bvme_acr_a32lba&t;&t;*(volatile unsigned char *)BVME_ACR_A32LBA
+DECL|macro|bvme_acr_a24lba
+mdefine_line|#define bvme_acr_a24lba&t;&t;*(volatile unsigned char *)BVME_ACR_A24LBA
+DECL|macro|bvme_acr_addrctl
+mdefine_line|#define bvme_acr_addrctl&t;*(volatile unsigned char *)BVME_ACR_ADDRCTL
 macro_line|#endif
 eof

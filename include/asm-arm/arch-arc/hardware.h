@@ -12,31 +12,45 @@ DECL|macro|HAS_MEMC1A
 mdefine_line|#define HAS_MEMC1A
 DECL|macro|HAS_VIDC
 mdefine_line|#define HAS_VIDC
-macro_line|#ifdef CONFIG_ARCH_A5K
-DECL|macro|HAS_PCIO
-mdefine_line|#define HAS_PCIO
-macro_line|#endif
 multiline_comment|/*&n; * Optional hardware&n; */
 DECL|macro|HAS_EXPMASK
 mdefine_line|#define HAS_EXPMASK
+multiline_comment|/* Hardware addresses of major areas.&n; *  *_START is the physical address&n; *  *_SIZE  is the size of the region&n; *  *_BASE  is the virtual address&n; */
+DECL|macro|IO_START
+mdefine_line|#define IO_START&t;&t;0x03000000
+DECL|macro|IO_SIZE
+mdefine_line|#define IO_SIZE&t;&t;&t;0x01000000
+DECL|macro|IO_BASE
+mdefine_line|#define IO_BASE&t;&t;&t;0x03000000
+multiline_comment|/*&n; * Screen mapping information&n; */
+DECL|macro|SCREEN_START
+mdefine_line|#define SCREEN_START&t;&t;0x02000000
+DECL|macro|SCREEN2_END
+mdefine_line|#define SCREEN2_END&t;&t;0x02078000
+DECL|macro|SCREEN2_BASE
+mdefine_line|#define SCREEN2_BASE&t;&t;0x02000000
+DECL|macro|SCREEN1_END
+mdefine_line|#define SCREEN1_END&t;&t;0x02000000
+DECL|macro|SCREEN1_BASE
+mdefine_line|#define SCREEN1_BASE&t;&t;0x01f88000
 macro_line|#ifndef __ASSEMBLER__
 multiline_comment|/*&n; * for use with inb/outb&n; */
-DECL|macro|VIDC_BASE
-mdefine_line|#define VIDC_BASE&t;&t;0x80100000
-DECL|macro|IOCEC4IO_BASE
-mdefine_line|#define IOCEC4IO_BASE&t;&t;0x8009c000
+DECL|macro|IO_VIDC_BASE
+mdefine_line|#define IO_VIDC_BASE&t;&t;0x80100000
 macro_line|#ifdef CONFIG_ARCH_ARC
 DECL|macro|LATCHAADDR
 mdefine_line|#define LATCHAADDR&t;&t;0x80094010
 DECL|macro|LATCHBADDR
 mdefine_line|#define LATCHBADDR&t;&t;0x80094006
 macro_line|#endif
-DECL|macro|IOCECIO_BASE
-mdefine_line|#define IOCECIO_BASE&t;&t;0x80090000
 DECL|macro|IOC_BASE
 mdefine_line|#define IOC_BASE&t;&t;0x80080000
-DECL|macro|MEMCECIO_BASE
-mdefine_line|#define MEMCECIO_BASE&t;&t;0x80000000
+DECL|macro|IO_EC_IOC4_BASE
+mdefine_line|#define IO_EC_IOC4_BASE&t;&t;0x8009c000
+DECL|macro|IO_EC_IOC_BASE
+mdefine_line|#define IO_EC_IOC_BASE&t;&t;0x80090000
+DECL|macro|IO_EC_MEMC_BASE
+mdefine_line|#define IO_EC_MEMC_BASE&t;&t;0x80000000
 multiline_comment|/*&n; * IO definitions&n; */
 DECL|macro|EXPMASK_BASE
 mdefine_line|#define EXPMASK_BASE&t;&t;((volatile unsigned char *)0x03360000)
@@ -46,26 +60,6 @@ DECL|macro|PCIO_FLOPPYDMABASE
 mdefine_line|#define PCIO_FLOPPYDMABASE&t;((volatile unsigned char *)0x0302a000)
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0x03010000
-multiline_comment|/*&n; * Mapping areas&n; */
-DECL|macro|IO_END
-mdefine_line|#define IO_END&t;&t;&t;0x03ffffff
-DECL|macro|IO_BASE
-mdefine_line|#define IO_BASE&t;&t;&t;0x03000000
-DECL|macro|IO_SIZE
-mdefine_line|#define IO_SIZE&t;&t;&t;(IO_END - IO_BASE)
-DECL|macro|IO_START
-mdefine_line|#define IO_START&t;&t;0x03000000
-multiline_comment|/*&n; * Screen mapping information&n; */
-DECL|macro|SCREEN2_END
-mdefine_line|#define SCREEN2_END&t;&t;0x02078000
-DECL|macro|SCREEN2_BASE
-mdefine_line|#define SCREEN2_BASE&t;&t;0x02000000
-DECL|macro|SCREEN1_END
-mdefine_line|#define SCREEN1_END&t;&t;SCREEN2_BASE
-DECL|macro|SCREEN1_BASE
-mdefine_line|#define SCREEN1_BASE&t;&t;0x01f88000
-DECL|macro|SCREEN_START
-mdefine_line|#define SCREEN_START&t;&t;0x02000000
 multiline_comment|/*&n; * RAM definitions&n; */
 DECL|macro|MAPTOPHYS
 mdefine_line|#define MAPTOPHYS(a)&t;&t;(((unsigned long)a &amp; 0x007fffff) + PAGE_OFFSET)
@@ -86,8 +80,6 @@ DECL|macro|PCIO_FLOPPYDMABASE
 mdefine_line|#define PCIO_FLOPPYDMABASE&t;0x0302a000
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0x03010000
-DECL|macro|IO_BASE
-mdefine_line|#define IO_BASE&t;&t;&t;0x03000000
 macro_line|#endif
 macro_line|#endif
 eof

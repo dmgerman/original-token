@@ -414,6 +414,13 @@ id|version
 comma
 id|ret
 suffix:semicolon
+id|version
+op_assign
+id|call
+op_rshift
+l_int|16
+suffix:semicolon
+multiline_comment|/* hack for backward compatibility */
 id|call
 op_and_assign
 l_int|0xffff
@@ -520,13 +527,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|version
-op_assign
-id|call
-op_rshift
-l_int|16
-suffix:semicolon
-multiline_comment|/* hack for backward compatibility      */
 r_if
 c_cond
 (paren

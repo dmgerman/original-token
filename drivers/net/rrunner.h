@@ -1018,6 +1018,8 @@ DECL|macro|SIOCRRPFW
 mdefine_line|#define SIOCRRPFW&t;SIOCDEVPRIVATE&t;&t;/* put firmware */
 DECL|macro|SIOCRRGFW
 mdefine_line|#define SIOCRRGFW&t;SIOCDEVPRIVATE+1&t;/* get firmware */
+DECL|macro|SIOCRRID
+mdefine_line|#define SIOCRRID&t;SIOCDEVPRIVATE+2&t;/* identify */
 DECL|struct|seg_hdr
 r_struct
 id|seg_hdr
@@ -1038,6 +1040,10 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|EEPROM_BASE
 mdefine_line|#define EEPROM_BASE 0x80000000
+DECL|macro|EEPROM_WORDS
+mdefine_line|#define EEPROM_WORDS 8192
+DECL|macro|EEPROM_BYTES
+mdefine_line|#define EEPROM_BYTES (EEPROM_WORDS * sizeof(u32))
 DECL|struct|eeprom_boot
 r_struct
 id|eeprom_boot

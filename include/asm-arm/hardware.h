@@ -104,7 +104,7 @@ macro_line|#endif
 macro_line|#ifdef HAS_IOMD
 macro_line|#ifndef __ASSEMBLER__
 DECL|macro|__IOMD
-mdefine_line|#define __IOMD(offset)&t;(IOMD_BASE + (offset &gt;&gt; 2))
+mdefine_line|#define __IOMD(offset)&t;(IO_IOMD_BASE + (offset &gt;&gt; 2))
 macro_line|#else
 DECL|macro|__IOMD
 mdefine_line|#define __IOMD(offset)&t;offset

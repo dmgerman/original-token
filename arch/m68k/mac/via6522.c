@@ -1128,18 +1128,19 @@ r_int
 op_star
 id|reset_hook
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* need ROMBASE in booter */
+multiline_comment|/* indeed, plus need to MAP THE ROM !! */
+r_if
+c_cond
+(paren
+id|mac_bi_data.rombase
+op_eq
+l_int|0
+)paren
+id|mac_bi_data.rombase
+op_assign
+l_int|0x40800000
+suffix:semicolon
 multiline_comment|/* works on some */
 id|rom_reset
 op_assign
@@ -1183,6 +1184,43 @@ op_star
 id|reset_hook
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;ident
+op_eq
+id|MAC_MODEL_SE30
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * MSch: Machines known to crash on ROM reset ...&n;&t;&t;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;System halted.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rom_reset
 c_func
 (paren
@@ -1194,7 +1232,8 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* We never make it this far... */
+)brace
+multiline_comment|/* We never make it this far... it usually panics above. */
 id|printk
 (paren
 l_string|&quot;Restart failed.  Please restart manually.&bslash;n&quot;

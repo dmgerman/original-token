@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -53,18 +54,11 @@ id|error_code
 )paren
 (brace
 r_struct
-id|task_struct
-op_star
-id|tsk
-op_assign
-id|current
-suffix:semicolon
-r_struct
 id|mm_struct
 op_star
 id|mm
 op_assign
-id|tsk-&gt;mm
+id|current-&gt;mm
 suffix:semicolon
 r_struct
 id|vm_area_struct
@@ -91,10 +85,27 @@ id|address
 comma
 id|error_code
 comma
-id|tsk-&gt;mm-&gt;pgd
+id|current-&gt;mm-&gt;pgd
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * If we&squot;re in an interrupt or have no user&n;&t; * context, we must not take the fault..&n;&t; */
+r_if
+c_cond
+(paren
+id|in_interrupt
+c_func
+(paren
+)paren
+op_logical_or
+id|mm
+op_eq
+op_amp
+id|init_mm
+)paren
+r_goto
+id|no_context
+suffix:semicolon
 id|down
 c_func
 (paren
@@ -267,6 +278,11 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If for any reason at all we couldn&squot;t handle the fault,&n;&t; * make sure we exit gracefully rather than endlessly redo&n;&t; * the fault.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
@@ -278,6 +294,9 @@ id|address
 comma
 id|write
 )paren
+)paren
+r_goto
+id|do_sigbus
 suffix:semicolon
 multiline_comment|/* There seems to be a missing invalidate somewhere in do_no_page.&n;&t; * Until I found it, this one cures the problem and makes&n;&t; * 1.2 run on the 68040 (Martin Apel).&n;&t; */
 r_if
@@ -324,17 +343,42 @@ id|regs
 )paren
 )paren
 (brace
-id|force_sig
+id|siginfo_t
+id|info
+suffix:semicolon
+id|info.si_signo
+op_assign
+id|SIGSEGV
+suffix:semicolon
+id|info.si_code
+op_assign
+id|SEGV_MAPERR
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|address
+suffix:semicolon
+id|force_sig_info
+c_func
 (paren
 id|SIGSEGV
 comma
-id|tsk
+op_amp
+id|info
+comma
+id|current
 )paren
 suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
+id|no_context
+suffix:colon
 multiline_comment|/* Are we prepared to handle this kernel fault?  */
 r_if
 c_cond
@@ -454,6 +498,39 @@ c_func
 (paren
 id|SIGKILL
 )paren
+suffix:semicolon
+multiline_comment|/*&n; * We ran out of memory, or some other thing happened to us that made&n; * us unable to handle the page fault gracefully.&n; */
+id|do_sigbus
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; */
+id|force_sig
+c_func
+(paren
+id|SIGBUS
+comma
+id|current
+)paren
+suffix:semicolon
+multiline_comment|/* Kernel mode? Handle exceptions or die */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+r_goto
+id|no_context
 suffix:semicolon
 r_return
 l_int|1

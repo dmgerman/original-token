@@ -229,17 +229,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* This doesn&squot;w work correctly.  Ok, it&squot;s a misuse&n;&t; * of the DMA flushing code, but it ought to work.&n;&t; * More investigation required.  Maybe it really&n;&t; * needs the cache flushed.&n;&t; */
-id|dma_cache_wback
-c_func
-(paren
-id|FIQ_VECTOR
-comma
-id|length
-)paren
-suffix:semicolon
-macro_line|#else
+macro_line|#ifdef CONFIG_CPU_32
 id|processor.u.armv3v4
 dot
 id|_flush_cache_area

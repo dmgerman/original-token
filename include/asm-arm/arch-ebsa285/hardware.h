@@ -1,13 +1,9 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/hardware.h&n; *&n; * Copyright (C) 1998 Russell King.&n; *&n; * This file contains the hardware definitions of the EBSA-285.&n; */
 multiline_comment|/*    Logical    Physical&n; * 0xfff00000&t;0x40000000&t;X-Bus&n; * 0xffe00000&t;0x7c000000&t;PCI I/O space&n; *&n; * 0xfe000000&t;0x42000000&t;CSR&n; * 0xfd000000&t;0x78000000&t;Outbound write flush&n; * 0xfc000000&t;0x79000000&t;PCI IACK/special space&n; *&n; * 0xf9000000&t;0x7a010000&t;PCI Config type 1&n; * 0xf8000000&t;0x7b010000&t;PCI Config type 0&n; * &n; */
-DECL|macro|IO_END
-mdefine_line|#define IO_END&t;&t;&t;0xffffffff
 DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE&t;&t;&t;0xe0000000
-DECL|macro|IO_SIZE
-mdefine_line|#define IO_SIZE&t;&t;&t;(IO_END - IO_BASE)
-DECL|macro|HAS_PCIO
-mdefine_line|#define HAS_PCIO
+DECL|macro|PCIO_BASE
+mdefine_line|#define PCIO_BASE&t;&t;0xffe00000
 DECL|macro|XBUS_LEDS
 mdefine_line|#define XBUS_LEDS&t;&t;((volatile unsigned char *)0xfff12000)
 DECL|macro|XBUS_LED_AMBER
@@ -28,8 +24,6 @@ DECL|macro|XBUS_SWITCH_J17_11
 mdefine_line|#define XBUS_SWITCH_J17_11&t;((*XBUS_SWITCH) &amp; (1 &lt;&lt; 5))
 DECL|macro|XBUS_SWITCH_J17_9
 mdefine_line|#define XBUS_SWITCH_J17_9&t;((*XBUS_SWITCH) &amp; (1 &lt;&lt; 6))
-DECL|macro|PCIO_BASE
-mdefine_line|#define PCIO_BASE&t;&t;0xffe00000
 DECL|macro|CSR_SA110_CNTL
 mdefine_line|#define CSR_SA110_CNTL&t;&t;((volatile unsigned long *)0xfe00013c)
 DECL|macro|CSR_PCIADDR_EXTN

@@ -18,12 +18,10 @@ mdefine_line|#define PIT_T0&t;&t;&t;((volatile unsigned char *)0xf2000001)
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xf0000000
 multiline_comment|/*&n; * Mapping areas&n; */
-DECL|macro|IO_END
-mdefine_line|#define IO_END&t;&t;&t;0xffffffff
 DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE&t;&t;&t;0xe0000000
 DECL|macro|IO_SIZE
-mdefine_line|#define IO_SIZE&t;&t;&t;(IO_END - IO_BASE)
+mdefine_line|#define IO_SIZE&t;&t;&t;0x20000000
 DECL|macro|IO_START
 mdefine_line|#define IO_START&t;&t;0xe0000000
 multiline_comment|/*&n; * RAM definitions&n; */

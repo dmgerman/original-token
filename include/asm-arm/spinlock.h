@@ -42,6 +42,7 @@ mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { __save_fl
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(lock, flags) &bslash;&n;&t;restore_flags(flags)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC_MINOR__ &gt;= 8)
 DECL|typedef|rwlock_t
 r_typedef
 r_struct
@@ -50,7 +51,17 @@ r_struct
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { }
+macro_line|# define RW_LOCK_UNLOCKED { }
+macro_line|#else
+DECL|typedef|rwlock_t
+r_typedef
+r_int
+r_char
+id|rwlock_t
+suffix:semicolon
+DECL|macro|RW_LOCK_UNLOCKED
+macro_line|# define RW_LOCK_UNLOCKED 0
+macro_line|#endif
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
 DECL|macro|read_unlock

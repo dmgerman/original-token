@@ -95,11 +95,6 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
-id|current-&gt;counter
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* make us low-priority */
 r_if
 c_cond
 (paren

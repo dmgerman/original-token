@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/uaccess.h&n; */
 multiline_comment|/*&n; * The fs functions are implemented on the ARMV3 and V4 architectures&n; * using the domain register.&n; *&n; *  DOMAIN_IO     - domain 2 includes all IO only&n; *  DOMAIN_KERNEL - domain 1 includes all kernel memory only&n; *  DOMAIN_USER   - domain 0 includes all user memory only&n; */
+macro_line|#include &lt;asm/hardware.h&gt;
 DECL|macro|DOMAIN_CLIENT
 mdefine_line|#define DOMAIN_CLIENT&t;1
 DECL|macro|DOMAIN_MANAGER
@@ -25,7 +26,7 @@ multiline_comment|/*&n; * Note that this is actually 0x1,0000,0000&n; */
 DECL|macro|KERNEL_DS
 mdefine_line|#define KERNEL_DS&t;0x00000000
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS&t;&t;0xc0000000
+mdefine_line|#define USER_DS&t;&t;PAGE_OFFSET
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
 DECL|macro|get_fs
@@ -65,9 +66,9 @@ id|KERNEL_DOMAIN
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * a + s   &lt;= 2^32  -&gt; C = 0 || Z = 0 (LS)&n; * (a + s) &lt;= l     -&gt; C = 0 || Z = 0 (LS)&n; */
+multiline_comment|/* We use 33-bit arithmetic here... */
 DECL|macro|__range_ok
-mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag, sum; &bslash;&n;&t;__asm__ __volatile__(&quot;adds %1, %2, %3; cmpls %1, %0; movls %0, #0&quot; &bslash;&n;&t;&t;: &quot;=&amp;r&quot; (flag), &quot;=&amp;r&quot; (sum) &bslash;&n;&t;&t;: &quot;r&quot; (addr), &quot;Ir&quot; (size), &quot;0&quot; (current-&gt;addr_limit) &bslash;&n;&t;&t;: &quot;cc&quot;); &bslash;&n;&t;flag; })
+mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag, sum; &bslash;&n;&t;__asm__ __volatile__(&quot;adds %1, %2, %3; sbccs %1, %1, %0; movcc %0, #0&quot; &bslash;&n;&t;&t;: &quot;=&amp;r&quot; (flag), &quot;=&amp;r&quot; (sum) &bslash;&n;&t;&t;: &quot;r&quot; (addr), &quot;Ir&quot; (size), &quot;0&quot; (current-&gt;addr_limit) &bslash;&n;&t;&t;: &quot;cc&quot;); &bslash;&n;&t;flag; })
 DECL|macro|__addr_ok
 mdefine_line|#define __addr_ok(addr) ({ &bslash;&n;&t;unsigned long flag; &bslash;&n;&t;__asm__ __volatile__(&quot;cmp %2, %0; movlo %0, #0&quot; &bslash;&n;&t;&t;: &quot;=&amp;r&quot; (flag) &bslash;&n;&t;&t;: &quot;0&quot; (current-&gt;addr_limit), &quot;r&quot; (addr) &bslash;&n;&t;&t;: &quot;cc&quot;); &bslash;&n;&t;(flag == 0); })
 DECL|macro|access_ok

@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASM_ARM_SYSTEM_H
 DECL|macro|__ASM_ARM_SYSTEM_H
 mdefine_line|#define __ASM_ARM_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* The type of machine we&squot;re running on */
 r_extern
 r_int
@@ -21,6 +22,31 @@ DECL|macro|MACH_TYPE_CATS
 mdefine_line|#define MACH_TYPE_CATS&t;&t;6
 DECL|macro|MACH_TYPE_TBOX
 mdefine_line|#define MACH_TYPE_TBOX&t;&t;7
+macro_line|#ifdef CONFIG_ARCH_EBSA285
+DECL|macro|machine_is_ebsa285
+mdefine_line|#define machine_is_ebsa285()&t;(1)
+macro_line|#else
+DECL|macro|machine_is_ebsa285
+mdefine_line|#define machine_is_ebsa285()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_VNC
+DECL|macro|machine_is_netwinder
+mdefine_line|#define machine_is_netwinder()&t;(1)
+macro_line|#else
+DECL|macro|machine_is_netwinder
+mdefine_line|#define machine_is_netwinder()&t;(0)
+macro_line|#endif
+macro_line|#if defined(CONFIG_CATS)
+DECL|macro|machine_is_cats
+mdefine_line|#define machine_is_cats()&t;(machine_type == MACH_TYPE_CATS)
+macro_line|#else
+DECL|macro|machine_is_cats
+mdefine_line|#define machine_is_cats()&t;(0)
+macro_line|#endif
+macro_line|#if 0
+mdefine_line|#define machine_is_ebsa285()&t;(machine_type == MACH_TYPE_EBSA285)
+mdefine_line|#define machine_is_netwinder()&t;(machine_type == MACH_TYPE_NETWINDER)
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
 r_extern

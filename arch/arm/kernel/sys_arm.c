@@ -211,7 +211,7 @@ c_cond
 (paren
 id|a.fd
 op_ge
-id|NR_OPEN
+id|current-&gt;files-&gt;max_fds
 op_logical_or
 op_logical_neg
 (paren

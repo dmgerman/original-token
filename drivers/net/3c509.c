@@ -31,6 +31,7 @@ macro_line|#include &lt;linux/delay.h&gt;&t;/* for udelay() */
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef EL3_DEBUG
 DECL|variable|el3_debug
 r_int
@@ -1865,7 +1866,7 @@ id|el3_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;3c509&quot;
+id|dev-&gt;name
 comma
 id|dev
 )paren
@@ -2531,20 +2532,22 @@ id|dev-&gt;name
 suffix:semicolon
 r_else
 (brace
-r_int
-r_int
-id|flags
+multiline_comment|/*&n;&t;&t; *&t;We lock the driver against other processors. Note&n;&t;&t; *&t;we don&squot;t need to lock versus the IRQ as we suspended&n;&t;&t; *&t;that. This means that we lose the ability to take&n;&t;&t; *&t;an RX during a TX upload. That sucks a bit with SMP&n;&t;&t; *&t;on an original 3c509 (2K buffer)&n;&t;&t; *&n;&t;&t; *&t;Using disable_irq stops us crapping on other&n;&t;&t; *&t;time sensitive devices.&n;&t;&t; */
+macro_line|#ifdef __SMP__
+id|disable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
 suffix:semicolon
-multiline_comment|/* Spin on the lock, until we&squot;re clear of an IRQ */
-id|spin_lock_irqsave
+id|spin_lock
 c_func
 (paren
 op_amp
 id|lp-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
+macro_line|#endif&t;    &t;
 multiline_comment|/* Put out the doubleword header... */
 id|outw
 c_func
@@ -2643,15 +2646,21 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
+macro_line|#ifdef __SMP__
+id|spin_unlock
 c_func
 (paren
 op_amp
 id|lp-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
 )brace
 id|dev_kfree_skb
 (paren
@@ -3224,15 +3233,14 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+multiline_comment|/*&n;&t; *&t;This is fast enough not to bother with disable IRQ&n;&t; *&t;stuff.&n;&t; */
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|update_stats
@@ -3241,9 +3249,12 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon

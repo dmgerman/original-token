@@ -1,7 +1,7 @@
 macro_line|#ifndef _M68K_STRING_H_
 DECL|macro|_M68K_STRING_H_
 mdefine_line|#define _M68K_STRING_H_
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
@@ -1339,7 +1339,7 @@ id|data
 op_lshift
 l_int|16
 suffix:semicolon
-macro_line|#if defined(CONFIG_OPTIMIZE_040) || defined(CONFIG_OPTIMIZE_060)
+macro_line|#ifdef CPU_M68040_OR_M68060_ONLY
 r_if
 c_cond
 (paren
@@ -1561,7 +1561,7 @@ id|xto
 op_assign
 id|to
 suffix:semicolon
-macro_line|#if defined(CONFIG_OPTIMIZE_040) || defined(CONFIG_OPTIMIZE_060)
+macro_line|#ifdef CPU_M68040_OR_M68060_ONLY
 r_if
 c_cond
 (paren

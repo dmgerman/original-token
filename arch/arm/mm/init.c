@@ -869,6 +869,26 @@ l_int|10
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_CPU_26
+r_if
+c_cond
+(paren
+id|max_mapnr
+op_le
+l_int|128
+)paren
+(brace
+r_extern
+r_int
+id|sysctl_overcommit_memory
+suffix:semicolon
+multiline_comment|/* On a machine this small we won&squot;t get anywhere without&n;&t;&t;   overcommit, so turn it on by default.  */
+id|sysctl_overcommit_memory
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 DECL|function|free_initmem
 r_void

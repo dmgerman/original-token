@@ -53,7 +53,7 @@ mdefine_line|#define SUPPORT_CPU_SA110
 macro_line|#endif
 macro_line|#ifndef CONFIG_CMDLINE
 DECL|macro|CONFIG_CMDLINE
-mdefine_line|#define CONFIG_CMDLINE&t;&quot;root=nfs rw console=ttyS1,38400n8&quot;
+mdefine_line|#define CONFIG_CMDLINE&t;&quot;root=/dev/nfs rw&quot;
 macro_line|#endif
 DECL|macro|MEM_SIZE
 mdefine_line|#define MEM_SIZE&t;(16*1024*1024)
@@ -80,6 +80,14 @@ id|screen_info
 id|screen_info
 op_assign
 (brace
+id|orig_video_lines
+suffix:colon
+l_int|30
+comma
+id|orig_video_cols
+suffix:colon
+l_int|80
+comma
 id|orig_video_mode
 suffix:colon
 l_int|0
@@ -626,6 +634,16 @@ c_func
 id|params
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ARCH_EBSA285)
+op_star
+id|mem_end_p
+op_assign
+id|PAGE_OFFSET
+op_plus
+id|params-&gt;u1.s.page_size
+op_star
+id|params-&gt;u1.s.nr_pages
+suffix:semicolon
 macro_line|#else
 op_star
 id|mem_end_p
@@ -967,8 +985,6 @@ id|mem_end
 (brace
 r_char
 id|c
-op_assign
-l_char|&squot; &squot;
 comma
 op_star
 id|to
@@ -1000,34 +1016,37 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|c
-op_eq
-l_char|&squot; &squot;
-op_logical_and
 id|cmd_line
 (braket
 l_int|0
 )braket
 op_eq
-l_char|&squot;m&squot;
+l_char|&squot; &squot;
 op_logical_and
 id|cmd_line
 (braket
 l_int|1
 )braket
 op_eq
-l_char|&squot;e&squot;
+l_char|&squot;m&squot;
 op_logical_and
 id|cmd_line
 (braket
 l_int|2
 )braket
 op_eq
-l_char|&squot;m&squot;
+l_char|&squot;e&squot;
 op_logical_and
 id|cmd_line
 (braket
 l_int|3
+)braket
+op_eq
+l_char|&squot;m&squot;
+op_logical_and
+id|cmd_line
+(braket
+l_int|4
 )braket
 op_eq
 l_char|&squot;=&squot;
@@ -1041,7 +1060,7 @@ c_func
 (paren
 id|cmd_line
 op_plus
-l_int|4
+l_int|5
 comma
 op_amp
 id|cmd_line
@@ -1340,13 +1359,71 @@ id|dummy_con
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-id|printascii
-c_func
-(paren
-l_string|&quot;setup_arch done&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
+r_static
+r_const
+r_struct
+(brace
+DECL|member|machine_name
+r_char
+op_star
+id|machine_name
+suffix:semicolon
+DECL|member|bus_name
+r_char
+op_star
+id|bus_name
+suffix:semicolon
+DECL|variable|machine_desc
+)brace
+id|machine_desc
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;DEC-EBSA110&quot;
+comma
+l_string|&quot;DEC&quot;
+)brace
+comma
+(brace
+l_string|&quot;Acorn-RiscPC&quot;
+comma
+l_string|&quot;Acorn&quot;
+)brace
+comma
+(brace
+l_string|&quot;Nexus-NexusPCI&quot;
+comma
+l_string|&quot;PCI&quot;
+)brace
+comma
+(brace
+l_string|&quot;DEC-EBSA285&quot;
+comma
+l_string|&quot;PCI&quot;
+)brace
+comma
+(brace
+l_string|&quot;Corel-Netwinder&quot;
+comma
+l_string|&quot;PCI/ISA&quot;
+)brace
+comma
+(brace
+l_string|&quot;Chalice-CATS&quot;
+comma
+l_string|&quot;PCI&quot;
+)brace
+comma
+(brace
+l_string|&quot;unknown-TBOX&quot;
+comma
+l_string|&quot;PCI&quot;
+)brace
+)brace
+suffix:semicolon
 macro_line|#if defined(CONFIG_ARCH_ARC)
 DECL|macro|HARDWARE
 mdefine_line|#define HARDWARE &quot;Acorn-Archimedes&quot;
@@ -1357,36 +1434,6 @@ DECL|macro|HARDWARE
 mdefine_line|#define HARDWARE &quot;Acorn-A5000&quot;
 DECL|macro|IO_BUS
 mdefine_line|#define IO_BUS&t; &quot;Acorn&quot;
-macro_line|#elif defined(CONFIG_ARCH_RPC)
-DECL|macro|HARDWARE
-mdefine_line|#define HARDWARE &quot;Acorn-RiscPC&quot;
-DECL|macro|IO_BUS
-mdefine_line|#define IO_BUS&t; &quot;Acorn&quot;
-macro_line|#elif defined(CONFIG_ARCH_EBSA110)
-DECL|macro|HARDWARE
-mdefine_line|#define HARDWARE &quot;DEC-EBSA110&quot;
-DECL|macro|IO_BUS
-mdefine_line|#define IO_BUS&t; &quot;DEC&quot;
-macro_line|#elif defined(CONFIG_ARCH_EBSA285)
-DECL|macro|HARDWARE
-mdefine_line|#define HARDWARE &quot;DEC-EBSA285&quot;
-DECL|macro|IO_BUS
-mdefine_line|#define IO_BUS   &quot;PCI&quot;
-macro_line|#elif defined(CONFIG_ARCH_NEXUSPCI)
-DECL|macro|HARDWARE
-mdefine_line|#define HARDWARE &quot;Nexus-NexusPCI&quot;
-DECL|macro|IO_BUS
-mdefine_line|#define IO_BUS   &quot;PCI&quot;
-macro_line|#elif defined(CONFIG_ARCH_VNC)
-DECL|macro|HARDWARE
-mdefine_line|#define HARDWARE &quot;Corel-VNC&quot;
-DECL|macro|IO_BUS
-mdefine_line|#define IO_BUS   &quot;PCI&quot;
-macro_line|#else
-DECL|macro|HARDWARE
-mdefine_line|#define HARDWARE &quot;unknown&quot;
-DECL|macro|IO_BUS
-mdefine_line|#define IO_BUS   &quot;unknown&quot;
 macro_line|#endif
 macro_line|#if defined(CONFIG_CPU_ARM2)
 DECL|macro|OPTIMISATION
@@ -1474,11 +1521,30 @@ l_int|5000
 op_mod
 l_int|100
 comma
+macro_line|#ifdef HARDWARE
 id|HARDWARE
 comma
+macro_line|#else
+id|machine_desc
+(braket
+id|machine_type
+)braket
+dot
+id|machine_name
+comma
+macro_line|#endif
 id|OPTIMISATION
 comma
+macro_line|#ifdef IO_BUS
 id|IO_BUS
+macro_line|#else
+id|machine_desc
+(braket
+id|machine_type
+)braket
+dot
+id|bus_name
+macro_line|#endif
 )paren
 suffix:semicolon
 r_return

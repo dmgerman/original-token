@@ -950,6 +950,8 @@ r_struct
 id|scb_struct
 op_star
 )paren
+id|phys_to_virt
+c_func
 (paren
 id|dev-&gt;mem_start
 )paren
@@ -1761,9 +1763,6 @@ suffix:semicolon
 multiline_comment|/* The 3c523 has a 24K chunk of memory.  The first 16K is the&n;&t;   shared memory, while the last 8K is for the EtherStart BIOS ROM.&n;&t;   Which we don&squot;t care much about here.  We&squot;ll just tell Linux that&n;&t;   we&squot;re using 16K.  MCA won&squot;t permit adress space conflicts caused&n;&t;   by not mapping the other 8K. */
 id|dev-&gt;mem_start
 op_assign
-id|phys_to_virt
-c_func
-(paren
 id|shm_table
 (braket
 (paren
@@ -1774,7 +1773,6 @@ id|ELMC_STATUS_MEMORY_SELECT
 op_rshift
 l_int|3
 )braket
-)paren
 suffix:semicolon
 multiline_comment|/* We&squot;re using MCA, so it&squot;s a given that the information about memory&n;&t;   size is correct.  The Crynwr drivers do something like this. */
 id|elmc_id_reset586
@@ -1801,7 +1799,11 @@ comma
 r_char
 op_star
 )paren
+id|phys_to_virt
+c_func
+(paren
 id|dev-&gt;mem_start
+)paren
 comma
 id|size
 )paren
@@ -1849,11 +1851,15 @@ id|dev-&gt;priv
 op_member_access_from_pointer
 id|base
 op_assign
+id|phys_to_virt
+c_func
+(paren
 id|dev-&gt;mem_start
 op_plus
 id|size
 op_minus
 l_int|0x01000000
+)paren
 suffix:semicolon
 id|alloc586
 c_func
@@ -1898,19 +1904,11 @@ l_string|&quot;ex&quot;
 suffix:colon
 l_string|&quot;in&quot;
 comma
-id|virt_to_phys
-c_func
-(paren
 id|dev-&gt;mem_start
-)paren
 comma
-id|virt_to_phys
-c_func
-(paren
 id|dev-&gt;mem_end
 op_minus
 l_int|1
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* The hardware address for the 3c523 is stored in the first six&n;&t;   bytes of the IO address. */
@@ -2243,6 +2241,10 @@ op_minus
 id|s
 OG
 l_int|30
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 r_break
 suffix:semicolon
@@ -2365,6 +2367,10 @@ op_minus
 id|s
 OG
 l_int|30
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 r_break
 suffix:semicolon
@@ -2472,6 +2478,10 @@ op_minus
 id|s
 OG
 l_int|30
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 (brace
 id|printk
@@ -3034,6 +3044,10 @@ op_minus
 id|s
 OG
 l_int|30
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 r_break
 suffix:semicolon

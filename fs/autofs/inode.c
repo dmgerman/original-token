@@ -1263,13 +1263,23 @@ op_star
 )paren
 id|inode-&gt;i_sb-&gt;u.generic_sbp
 suffix:semicolon
+multiline_comment|/* Initialize to the default case (stub directory) */
 id|inode-&gt;i_op
 op_assign
 l_int|NULL
 suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|autofs_dir_inode_operations
+suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
-l_int|0
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
@@ -1380,7 +1390,7 @@ id|sbi-&gt;symlink_bitmap
 id|printk
 c_func
 (paren
-l_string|&quot;autofs: Looking for bad symlink inode 0x%08x&bslash;n&quot;
+l_string|&quot;autofs: Looking for bad symlink inode %u&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1428,23 +1438,6 @@ suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
 l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* All non-root directory inodes look the same */
-id|inode-&gt;i_op
-op_assign
-op_amp
-id|autofs_dir_inode_operations
-suffix:semicolon
-id|inode-&gt;i_mode
-op_assign
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
 suffix:semicolon
 )brace
 )brace

@@ -83,6 +83,9 @@ macro_line|#ifdef CONFIG_ROSE
 macro_line|#include &lt;net/rosecall.h&gt;
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifdef CONFIG_IRDA
+macro_line|#include &lt;net/irda/irdacall.h&gt;
+macro_line|#endif
 macro_line|#if defined(CONFIG_DECNET)
 macro_line|#include &lt;net/decnet_call.h&gt;
 macro_line|#endif
@@ -289,6 +292,15 @@ id|econet_proto_init
 )brace
 comma
 multiline_comment|/* Acorn Econet */
+macro_line|#endif
+macro_line|#ifdef CONFIG_IRDA
+(brace
+l_string|&quot;IrDA&quot;
+comma
+id|irda_proto_init
+)brace
+comma
+multiline_comment|/* IrDA protocols */
 macro_line|#endif
 (brace
 l_int|NULL

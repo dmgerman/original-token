@@ -385,6 +385,12 @@ comma
 DECL|enumerator|PROC_NET_DN_SKT
 id|PROC_NET_DN_SKT
 comma
+DECL|enumerator|PROC_NET_DN_FW
+id|PROC_NET_DN_FW
+comma
+DECL|enumerator|PROC_NET_DN_RAW
+id|PROC_NET_DN_RAW
+comma
 DECL|enumerator|PROC_NET_NETSTAT
 id|PROC_NET_NETSTAT
 comma
@@ -396,6 +402,9 @@ id|PROC_NET_IPFW_CHAIN_NAMES
 comma
 DECL|enumerator|PROC_NET_AT_AARP
 id|PROC_NET_AT_AARP
+comma
+DECL|enumerator|PROC_NET_BRIDGE
+id|PROC_NET_BRIDGE
 comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST

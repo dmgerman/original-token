@@ -2,7 +2,7 @@ multiline_comment|/*&n; * This program is used to generate definitions needed by
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|macro|DEFINE
-mdefine_line|#define DEFINE(sym, val) &bslash;&n;&t;asm volatile(&quot;&bslash;n#define &quot; #sym &quot; %0&quot; : : &quot;i&quot; (val))
+mdefine_line|#define DEFINE(sym, val) &bslash;&n;&t;asm volatile(&quot;&bslash;n#define &quot; #sym &quot; %c0&quot; : : &quot;i&quot; (val))
 DECL|function|main
 r_int
 id|main

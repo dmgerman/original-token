@@ -2,7 +2,8 @@ macro_line|#ifndef __ASM_ARM_BYTEORDER_H
 DECL|macro|__ASM_ARM_BYTEORDER_H
 mdefine_line|#define __ASM_ARM_BYTEORDER_H
 macro_line|#include &lt;asm/types.h&gt;
-macro_line|#ifdef __GNUC__
+macro_line|#if defined(__GNUC__) &amp;&amp; __GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 80
+multiline_comment|/* Recent versions of GCC can do as well or better than this&n;   on their own - we shouldn&squot;t interfere.  */
 DECL|function|___arch__swab32
 r_static
 id|__inline__

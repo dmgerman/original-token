@@ -69,6 +69,17 @@ id|sem
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|__down_interruptible
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|__up
 c_func

@@ -91,12 +91,13 @@ macro_line|#include &quot;../../scsi/scsi.h&quot;
 macro_line|#include &quot;../../scsi/hosts.h&quot;
 macro_line|#include &quot;../../scsi/constants.h&quot;
 macro_line|#include &quot;acornscsi.h&quot;
+macro_line|#include &quot;msgqueue.h&quot;
 DECL|macro|VER_MAJOR
 mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 0
 DECL|macro|VER_PATCH
-mdefine_line|#define VER_PATCH 5
+mdefine_line|#define VER_PATCH 6
 macro_line|#ifndef ABORT_TAG
 DECL|macro|ABORT_TAG
 mdefine_line|#define ABORT_TAG 0xd
@@ -122,6 +123,8 @@ DECL|macro|DMAC_WRITE
 mdefine_line|#define DMAC_WRITE&t;(MODECON_WRITE)
 DECL|macro|INIT_SBICDMA
 mdefine_line|#define INIT_SBICDMA&t;(CTRL_DMABURST)
+DECL|macro|scsi_xferred
+mdefine_line|#define scsi_xferred&t;have_data_in
 multiline_comment|/*&n; * Size of on-board DMA buffer&n; */
 DECL|macro|DMAC_BUFFER_SIZE
 mdefine_line|#define DMAC_BUFFER_SIZE&t;65536
@@ -396,6 +399,121 @@ id|dmac_read
 id|io_port
 comma
 id|TXADRLO
+)paren
+suffix:semicolon
+)brace
+r_static
+DECL|function|acornscsi_dumpdma
+r_void
+id|acornscsi_dumpdma
+(paren
+id|AS_Host
+op_star
+id|host
+comma
+r_char
+op_star
+id|where
+)paren
+(brace
+r_int
+r_int
+id|mode
+comma
+id|addr
+comma
+id|len
+suffix:semicolon
+id|mode
+op_assign
+id|dmac_read
+(paren
+id|host-&gt;dma.io_port
+comma
+id|MODECON
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|dmac_address
+(paren
+id|host-&gt;dma.io_port
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|dmac_read
+(paren
+id|host-&gt;dma.io_port
+comma
+id|TXCNTHI
+)paren
+op_lshift
+l_int|8
+op_or
+id|dmac_read
+(paren
+id|host-&gt;dma.io_port
+comma
+id|TXCNTLO
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;scsi%d: %s: DMAC %02x @%06x+%04x msk %02x, &quot;
+comma
+id|host-&gt;host-&gt;host_no
+comma
+id|where
+comma
+id|mode
+comma
+id|addr
+comma
+(paren
+id|len
+op_plus
+l_int|1
+)paren
+op_amp
+l_int|0xffff
+comma
+id|dmac_read
+(paren
+id|host-&gt;dma.io_port
+comma
+id|MASKREG
+)paren
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;DMA @%06x, &quot;
+comma
+id|host-&gt;dma.start_addr
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;BH @%p +%04x, &quot;
+comma
+id|host-&gt;scsi.SCp.ptr
+comma
+id|host-&gt;scsi.SCp.this_residual
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;DT @+%04x ST @+%04x&quot;
+comma
+id|host-&gt;dma.transferred
+comma
+id|host-&gt;scsi.SCp.scsi_xferred
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -736,9 +854,9 @@ comma
 id|host-&gt;card.io_page
 )paren
 suffix:semicolon
-macro_line|#ifdef USE_DMAC
 multiline_comment|/* setup dmac - uPC71071 */
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -747,7 +865,9 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef USE_DMAC
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -757,6 +877,7 @@ id|INIT_8BIT
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -766,6 +887,7 @@ id|CHANNEL_0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -775,22 +897,13 @@ id|INIT_DEVCON0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
 id|DEVCON1
 comma
 id|INIT_DEVCON1
-)paren
-suffix:semicolon
-macro_line|#else
-id|dmac_write
-(paren
-id|host-&gt;dma.io_port
-comma
-id|INIT
-comma
-l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2188,123 +2301,6 @@ r_return
 l_char|&squot;H&squot;
 suffix:semicolon
 )brace
-macro_line|#ifdef USE_DMAC
-r_static
-DECL|function|acornscsi_dumpdma
-r_void
-id|acornscsi_dumpdma
-(paren
-id|AS_Host
-op_star
-id|host
-comma
-r_char
-op_star
-id|where
-)paren
-(brace
-r_int
-r_int
-id|mode
-comma
-id|addr
-comma
-id|len
-suffix:semicolon
-id|mode
-op_assign
-id|dmac_read
-(paren
-id|host-&gt;dma.io_port
-comma
-id|MODECON
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|dmac_address
-(paren
-id|host-&gt;dma.io_port
-)paren
-suffix:semicolon
-id|len
-op_assign
-id|dmac_read
-(paren
-id|host-&gt;dma.io_port
-comma
-id|TXCNTHI
-)paren
-op_lshift
-l_int|8
-op_or
-id|dmac_read
-(paren
-id|host-&gt;dma.io_port
-comma
-id|TXCNTLO
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;scsi%d: %s: DMAC %02x @%06x+%04x msk %02x, &quot;
-comma
-id|host-&gt;host-&gt;host_no
-comma
-id|where
-comma
-id|mode
-comma
-id|addr
-comma
-(paren
-id|len
-op_plus
-l_int|1
-)paren
-op_amp
-l_int|0xffff
-comma
-id|dmac_read
-(paren
-id|host-&gt;dma.io_port
-comma
-id|MASKREG
-)paren
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;DMA @%06x, &quot;
-comma
-id|host-&gt;dma.start_addr
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;BH @%p +%04x, &quot;
-comma
-id|host-&gt;scsi.SCp.ptr
-comma
-id|host-&gt;scsi.SCp.this_residual
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;DT @+%04x ST @+%04x&quot;
-comma
-id|host-&gt;dma.transferred
-comma
-id|host-&gt;scsi.SCp.have_data_in
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n; * Prototype: cmdtype_t acornscsi_cmdtype (int command)&n; * Purpose  : differentiate READ from WRITE from other commands&n; * Params   : command - command to interpret&n; * Returns  : CMD_READ&t;- command reads data,&n; *&t;      CMD_WRITE - command writes data,&n; *&t;      CMD_MISC&t;- everything else&n; */
 r_static
 r_inline
@@ -4025,10 +4021,11 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|acornscsi_dumpdma
+c_func
 (paren
 id|host
 comma
-l_string|&quot;clup&quot;
+l_string|&quot;cupi&quot;
 )paren
 )paren
 suffix:semicolon
@@ -4076,6 +4073,22 @@ comma
 id|transferred
 )paren
 suffix:semicolon
+macro_line|#if (DEBUG &amp; DEBUG_DMA)
+id|DBG
+c_func
+(paren
+id|host-&gt;SCpnt
+comma
+id|acornscsi_dumpdma
+c_func
+(paren
+id|host
+comma
+l_string|&quot;cupo&quot;
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n; * Function: void acornscsi_dmacintr (AS_Host *host)&n; * Purpose : handle interrupts from DMAC device&n; * Params  : host - host to process&n; * Notes   : If reading, we schedule the read to main memory &amp;&n; *&t;     allow the transfer to continue.&n; *&t;   : If writing, we fill the onboard DMA memory from main&n; *&t;     memory.&n; *&t;   : Called whenever DMAC finished it&squot;s current transfer.&n; */
@@ -4467,10 +4480,10 @@ l_string|&quot;adji&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t; * Calculate correct DMA address - DMA is ahead of SCSI bus while&n;&t; * writing.&n;&t; *  host-&gt;scsi.SCp.have_data_in is the number of bytes&n;&t; *  actually transferred to/from the SCSI bus.&n;&t; *  host-&gt;dma.transferred is the number of bytes transferred&n;&t; *  over DMA since host-&gt;dma.start_addr was last set.&n;&t; *&n;&t; * real_dma_addr = host-&gt;dma.start_addr + host-&gt;scsi.SCp.have_data_in&n;&t; *&t;&t;   - host-&gt;dma.transferred&n;&t; */
+multiline_comment|/*&n;&t; * Calculate correct DMA address - DMA is ahead of SCSI bus while&n;&t; * writing.&n;&t; *  host-&gt;scsi.SCp.scsi_xferred is the number of bytes&n;&t; *  actually transferred to/from the SCSI bus.&n;&t; *  host-&gt;dma.transferred is the number of bytes transferred&n;&t; *  over DMA since host-&gt;dma.start_addr was last set.&n;&t; *&n;&t; * real_dma_addr = host-&gt;dma.start_addr + host-&gt;scsi.SCp.scsi_xferred&n;&t; *&t;&t;   - host-&gt;dma.transferred&n;&t; */
 id|transferred
 op_assign
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 op_minus
 id|host-&gt;dma.transferred
 suffix:semicolon
@@ -4722,9 +4735,10 @@ id|host-&gt;scsi.msgs
 )paren
 suffix:semicolon
 r_int
-id|msglen
+id|msgnr
 suffix:semicolon
-r_char
+r_struct
+id|message
 op_star
 id|msg
 suffix:semicolon
@@ -4813,13 +4827,13 @@ id|CMND_SBT
 suffix:semicolon
 id|msg
 op_assign
-id|msgqueue_getnextmsg
+id|msgqueue_getmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 comma
-op_amp
-id|msglen
+l_int|0
 )paren
 suffix:semicolon
 r_while
@@ -4845,7 +4859,7 @@ id|host-&gt;scsi.io_port
 comma
 id|DATA
 comma
-id|msg
+id|msg-&gt;msg
 (braket
 l_int|0
 )braket
@@ -4853,15 +4867,16 @@ l_int|0
 suffix:semicolon
 id|host-&gt;scsi.last_message
 op_assign
-id|msg
+id|msg-&gt;msg
 (braket
 l_int|0
 )braket
 suffix:semicolon
 macro_line|#if (DEBUG &amp; DEBUG_MESSAGES)
 id|print_msg
+c_func
 (paren
-id|msg
+id|msg-&gt;msg
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4900,19 +4915,24 @@ comma
 id|CMND_XFERINFO
 )paren
 suffix:semicolon
+id|msgnr
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
 (paren
 id|msg
 op_assign
-id|msgqueue_getnextmsg
+id|msgqueue_getmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 comma
-op_amp
-id|msglen
+id|msgnr
+op_increment
 )paren
 )paren
 op_ne
@@ -4941,7 +4961,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|msglen
+id|msg-&gt;length
 suffix:semicolon
 )paren
 (brace
@@ -4967,7 +4987,7 @@ id|host-&gt;scsi.io_port
 comma
 id|DATA
 comma
-id|msg
+id|msg-&gt;msg
 (braket
 id|i
 op_increment
@@ -4986,7 +5006,7 @@ suffix:semicolon
 )brace
 id|host-&gt;scsi.last_message
 op_assign
-id|msg
+id|msg-&gt;msg
 (braket
 l_int|0
 )braket
@@ -4994,7 +5014,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|msg
+id|msg-&gt;msg
 (braket
 l_int|0
 )braket
@@ -5003,7 +5023,7 @@ id|EXTENDED_MESSAGE
 )paren
 id|host-&gt;scsi.last_message
 op_or_assign
-id|msg
+id|msg-&gt;msg
 (braket
 l_int|2
 )braket
@@ -5318,8 +5338,8 @@ id|msglen
 suffix:semicolon
 macro_line|#if (DEBUG &amp; DEBUG_MESSAGES)
 id|printk
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;scsi%d.%c: message in: &quot;
 comma
 id|host-&gt;host-&gt;host_no
@@ -5331,11 +5351,13 @@ id|host
 )paren
 suffix:semicolon
 id|print_msg
+c_func
 (paren
 id|message
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -5405,7 +5427,9 @@ id|host-&gt;scsi.phase
 op_ne
 id|PHASE_STATUSIN
 )paren
+(brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: command complete following non-status in phase?&bslash;n&quot;
@@ -5418,6 +5442,15 @@ id|host
 )paren
 )paren
 suffix:semicolon
+id|acornscsi_dumplog
+c_func
+(paren
+id|host
+comma
+id|host-&gt;SCpnt-&gt;target
+)paren
+suffix:semicolon
+)brace
 id|host-&gt;scsi.phase
 op_assign
 id|PHASE_DONE
@@ -5908,8 +5941,8 @@ l_int|0
 (brace
 macro_line|#if (DEBUG &amp; DEBUG_LINK)
 id|printk
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;scsi%d.%c: lun %d tag %d linked command complete&bslash;n&quot;
 comma
 id|host-&gt;host-&gt;host_no
@@ -6284,7 +6317,7 @@ id|residual
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 suffix:semicolon
 id|sbic_arm_write
 (paren
@@ -6745,7 +6778,7 @@ suffix:semicolon
 macro_line|#endif
 id|host-&gt;dma.transferred
 op_assign
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 suffix:semicolon
 r_return
 id|host-&gt;SCpnt
@@ -7095,7 +7128,7 @@ id|host-&gt;scsi.msgs
 suffix:semicolon
 id|host-&gt;dma.transferred
 op_assign
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 suffix:semicolon
 multiline_comment|/* 33C93 gives next interrupt indicating bus phase */
 id|asr
@@ -7989,7 +8022,7 @@ l_int|0x1b
 suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
 multiline_comment|/* DATA IN -&gt; STATUS */
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
@@ -8023,7 +8056,7 @@ l_int|0x4e
 suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* DATA IN -&gt; MESSAGE OUT */
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
@@ -8053,7 +8086,7 @@ l_int|0x4f
 suffix:colon
 multiline_comment|/* message in&t;&t;&t;&t;&t;*/
 multiline_comment|/* DATA IN -&gt; MESSAGE IN */
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
@@ -8142,7 +8175,7 @@ l_int|0x1b
 suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
 multiline_comment|/* DATA OUT -&gt; STATUS */
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
@@ -8181,7 +8214,7 @@ l_int|0x4e
 suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* DATA OUT -&gt; MESSAGE OUT */
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
@@ -8216,7 +8249,7 @@ l_int|0x4f
 suffix:colon
 multiline_comment|/* message in&t;&t;&t;&t;&t;*/
 multiline_comment|/* DATA OUT -&gt; MESSAGE IN */
-id|host-&gt;scsi.SCp.have_data_in
+id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
@@ -8890,7 +8923,7 @@ id|SCpnt-&gt;SCp.sent_command
 op_assign
 l_int|0
 suffix:semicolon
-id|SCpnt-&gt;SCp.have_data_in
+id|SCpnt-&gt;SCp.scsi_xferred
 op_assign
 l_int|0
 suffix:semicolon
@@ -9479,12 +9512,6 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-suffix:semicolon
 r_return
 id|SCSI_RESET_BUS_RESET
 op_or
@@ -9788,6 +9815,32 @@ id|instance-&gt;io_port
 )paren
 op_plus
 l_int|0x800
+suffix:semicolon
+id|ecs
+(braket
+id|count
+)braket
+op_member_access_from_pointer
+id|irqaddr
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ioaddr
+c_func
+(paren
+id|host-&gt;card.io_intr
+)paren
+suffix:semicolon
+id|ecs
+(braket
+id|count
+)braket
+op_member_access_from_pointer
+id|irqmask
+op_assign
+l_int|0x0a
 suffix:semicolon
 id|request_region
 (paren

@@ -115,12 +115,18 @@ op_star
 id|action
 suffix:semicolon
 multiline_comment|/* IRQ action list */
+DECL|member|depth
+r_int
+r_int
+id|depth
+suffix:semicolon
+multiline_comment|/* Disable depth for nested irq disables */
 DECL|member|unused
 r_int
 r_int
 id|unused
 (braket
-l_int|3
+l_int|2
 )braket
 suffix:semicolon
 DECL|typedef|irq_desc_t

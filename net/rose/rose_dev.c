@@ -58,6 +58,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
@@ -114,6 +115,14 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#else
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -260,6 +269,7 @@ id|sk_buff
 op_star
 id|skbn
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
@@ -274,15 +284,6 @@ id|skb
 )paren
 )paren
 (brace
-macro_line|#if 0
-multiline_comment|/* BUGGGG! If arp_find returned 1, skb does not exist. --ANK*/
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -366,6 +367,7 @@ id|stats-&gt;tx_bytes
 op_add_assign
 id|skbn-&gt;len
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon

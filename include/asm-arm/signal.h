@@ -186,6 +186,7 @@ DECL|macro|SIG_IGN
 mdefine_line|#define SIG_IGN&t;((__sighandler_t)1)&t;/* ignore signal */
 DECL|macro|SIG_ERR
 mdefine_line|#define SIG_ERR&t;((__sighandler_t)-1)&t;/* error return from signal */
+macro_line|#ifdef __KERNEL__
 DECL|struct|old_sigaction
 r_struct
 id|old_sigaction
@@ -256,6 +257,65 @@ id|sa
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Here we must cater to libcs that poke about in kernel headers.  */
+DECL|struct|sigaction
+r_struct
+id|sigaction
+(brace
+r_union
+(brace
+DECL|member|_sa_handler
+id|__sighandler_t
+id|_sa_handler
+suffix:semicolon
+DECL|member|_sa_sigaction
+r_void
+(paren
+op_star
+id|_sa_sigaction
+)paren
+(paren
+r_int
+comma
+r_struct
+id|siginfo
+op_star
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|member|_u
+)brace
+id|_u
+suffix:semicolon
+DECL|member|sa_mask
+id|sigset_t
+id|sa_mask
+suffix:semicolon
+DECL|member|sa_flags
+r_int
+r_int
+id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|sa_handler
+mdefine_line|#define sa_handler&t;_u._sa_handler
+DECL|macro|sa_sigaction
+mdefine_line|#define sa_sigaction&t;_u._sa_sigaction
+macro_line|#endif /* __KERNEL__ */
 DECL|struct|sigaltstack
 r_typedef
 r_struct

@@ -881,6 +881,8 @@ id|dump_mem
 c_func
 (paren
 id|cstack
+op_minus
+l_int|16
 comma
 id|sstack
 op_plus

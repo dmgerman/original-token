@@ -55,5 +55,10 @@ DECL|macro|SO_SECURITY_ENCRYPTION_NETWORK
 mdefine_line|#define SO_SECURITY_ENCRYPTION_NETWORK&t;&t;24
 DECL|macro|SO_BINDTODEVICE
 mdefine_line|#define SO_BINDTODEVICE 25
+multiline_comment|/* Socket filtering */
+DECL|macro|SO_ATTACH_FILTER
+mdefine_line|#define SO_ATTACH_FILTER        26
+DECL|macro|SO_DETACH_FILTER
+mdefine_line|#define SO_DETACH_FILTER        27
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

@@ -447,6 +447,7 @@ op_assign
 l_char|&squot;&bslash;n&squot;
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_ACORN
 id|p
 op_add_assign
 id|get_fiq_list
@@ -455,6 +456,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|p
 op_minus
@@ -1727,11 +1729,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ARCH_ACORN
 id|init_FIQ
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|init_dma
 c_func
 (paren

@@ -69,4 +69,6 @@ DECL|macro|kbd_disable_irq
 mdefine_line|#define kbd_disable_irq()&t;&t;disable_irq(IRQ_KEYBOARDRX)
 DECL|macro|kbd_enable_irq
 mdefine_line|#define kbd_enable_irq()&t;&t;enable_irq(IRQ_KEYBOARDRX)
+DECL|macro|SYSRQ_KEY
+mdefine_line|#define SYSRQ_KEY&t;13
 eof

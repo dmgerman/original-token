@@ -8,6 +8,7 @@ r_int
 id|dmach_t
 suffix:semicolon
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/arch/dma.h&gt;
 r_typedef
 r_struct
@@ -33,12 +34,66 @@ id|dma_str
 (braket
 )braket
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|dma_spin_lock
+suffix:semicolon
+DECL|function|claim_dma_lock
+r_extern
+id|__inline__
+r_int
+r_int
+id|claim_dma_lock
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|dma_spin_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|flags
+suffix:semicolon
+)brace
+DECL|function|release_dma_lock
+r_extern
+id|__inline__
+r_void
+id|release_dma_lock
+c_func
+(paren
+r_int
+r_int
+id|flags
+)paren
+(brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|dma_spin_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; *&n; * NOTE: This is an architecture specific function, and should&n; *       be hidden from the drivers.&n; */
 DECL|macro|clear_dma_ff
 mdefine_line|#define clear_dma_ff(channel)
 multiline_comment|/* Set only the page register bits of the transfer address.&n; *&n; * NOTE: This is an architecture specific function, and should&n; *       be hidden from the drivers&n; */
 DECL|function|set_dma_page
-r_static
+r_extern
 id|__inline__
 r_void
 id|set_dma_page

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;Linux NET3 Bridge Support&n; *&n; *&t;Originally by John Hayes (Network Plumbing).&n; *&t;Minor hacks to get it to run with 1.3.x by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&t;More hacks to be able to switch protocols on and off by Christoph Lameter&n; *&t;&lt;clameter@debian.org&gt;&n; *&t;Software and more Documentation for the bridge is available from ftp.debian.org&n; *&t;in the bridge package or at ftp.fuller.edu/Linux/bridge&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;Yury Shevchuk&t;:&t;Bridge with non bridging ports&n; *&t;Jean-Rene Peulve: jr.peulve@aix.pacwan.net &t;&t;Jan/Feb 98&n; *&t;&t;&t;support Linux 2.0&n; *&t;&t;&t;Handle Receive config bpdu&n; *&t;&t;&t;kick mark_bh to send Spanning Tree pdus&n; *&t;&t;&t;bridgeId comparison using htonl()&n; *&t;&t;&t;make STP interoperable with other vendors&n; *&t;&t;&t;wrong test in root_selection()&n; *&t;&t;&t;add more STP debug info &n; *&t;&t;&t;some performance improvments&n; *&t;&t;&t;do not clear bridgeId.mac  while setting priority&n; *&t;&t;&t;do not reset port priority when starting bridge&n; *&t;&t;&t;make port priority from user value and port number&n; *&t;&t;&t;maintains user port state out of device state&n; *&t;&t;&t;broacast/multicast storm limitation&n; *&t;&t;&t;forwarding statistics&n; *&t;&t;&t;stop br_tick when bridge is turn off&n; *&t;&t;&t;add local MACs in avl_tree to forward up stack&n; *&t;&t;&t;fake receive on right port for IP/ARP &n; *&t;&t;&t;ages tree even if packet does not cross bridge&n; *&t;&t;&t;add BRCMD_DISPLAY_FDB (ioctl for now)&n; *&n; *&t;Alan Cox:&t;Merged Jean-Rene&squot;s stuff, reformatted stuff a bit&n; *&t;&t;&t;so blame me first if its broken ;)&n; *&n; *&t;Todo:&n; *&t;&t;Don&squot;t bring up devices automatically. Start ports disabled&n; *&t;and use a netlink notifier so a daemon can maintain the bridge&n; *&t;port group (could we also do multiple groups ????).&n; *&t;&t;A nice /proc file interface.&n; *&t;&t;Put the path costs in the port info and devices.&n; *&t;&t;Put the bridge port number in the device structure for speed.&n; *&t;&t;Bridge SNMP stats.&n; *&t;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -19,6 +20,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;net/br.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#ifndef min
 DECL|macro|min
 mdefine_line|#define min(a, b) (((a) &lt;= (b)) ? (a) : (b))
@@ -3502,6 +3504,171 @@ multiline_comment|/* (4.7.8.1)&t; */
 )brace
 multiline_comment|/* (4.6.1.2.3)&t; */
 )brace
+multiline_comment|/* Vova Oksman: Write the buffer (contents of the Bridge table) */
+multiline_comment|/* to a PROCfs file                                             */
+DECL|function|br_tree_get_info
+r_int
+id|br_tree_get_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|dummy
+)paren
+(brace
+r_int
+id|size
+suffix:semicolon
+r_int
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|off_t
+id|pos
+op_assign
+l_int|0
+suffix:semicolon
+r_char
+op_star
+id|pbuffer
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|0
+op_eq
+id|offset
+)paren
+(brace
+multiline_comment|/* first time write the header */
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;%s&quot;
+comma
+l_string|&quot;MAC address           Device     Flags     Age (sec.)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|size
+suffix:semicolon
+)brace
+id|pbuffer
+op_assign
+op_amp
+id|buffer
+(braket
+id|len
+)braket
+suffix:semicolon
+id|sprintf_avl
+c_func
+(paren
+op_amp
+id|pbuffer
+comma
+l_int|NULL
+comma
+op_amp
+id|pos
+comma
+op_amp
+id|len
+comma
+id|offset
+comma
+id|length
+)paren
+suffix:semicolon
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+id|len
+op_minus
+(paren
+id|pos
+op_minus
+id|offset
+)paren
+suffix:semicolon
+multiline_comment|/* Start of wanted data */
+id|len
+op_assign
+id|pos
+op_minus
+id|offset
+suffix:semicolon
+multiline_comment|/* Start slop */
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+id|len
+op_assign
+id|length
+suffix:semicolon
+multiline_comment|/* Ending slop */
+r_return
+id|len
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_PROC_FS
+DECL|variable|proc_net_bridge
+r_struct
+id|proc_dir_entry
+id|proc_net_bridge
+op_assign
+(brace
+id|PROC_NET_BRIDGE
+comma
+l_int|6
+comma
+l_string|&quot;bridge&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
+comma
+id|br_tree_get_info
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -3717,6 +3884,16 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*start_hello_timer();*/
+multiline_comment|/* Vova Oksman: register the function for the PROCfs &quot;bridge&quot; file */
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_bridge
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|make_port_id
 r_static

@@ -1,15 +1,10 @@
-multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/processor.h&n; *&n; * Copyright (c) 1996 Russell King.&n; *&n; * Changelog:&n; *  20-09-1996&t;RMK&t;Created&n; *  26-09-1996&t;RMK&t;Added &squot;EXTRA_THREAD_STRUCT*&squot;&n; *  28-09-1996&t;RMK&t;Moved start_thread into the processor dependencies&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/processor.h&n; *&n; * Copyright (c) 1996 Russell King.&n; *&n; * Changelog:&n; *  20-09-1996&t;RMK&t;Created&n; *  26-09-1996&t;RMK&t;Added &squot;EXTRA_THREAD_STRUCT*&squot;&n; *  28-09-1996&t;RMK&t;Moved start_thread into the processor dependencies&n; *  09-09-1998&t;PJB&t;Delete redundant `wp_works_ok&squot;&n; */
 macro_line|#ifndef __ASM_PROC_PROCESSOR_H
 DECL|macro|__ASM_PROC_PROCESSOR_H
 mdefine_line|#define __ASM_PROC_PROCESSOR_H
 macro_line|#ifdef __KERNEL__
 DECL|macro|KERNEL_STACK_SIZE
 mdefine_line|#define KERNEL_STACK_SIZE&t;PAGE_SIZE
-multiline_comment|/*&n; * on arm2,3 wp does not work&n; */
-DECL|macro|wp_works_ok
-mdefine_line|#define wp_works_ok 0
-DECL|macro|wp_works_ok__is_a_macro
-mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 DECL|struct|context_save_struct
 r_struct
 id|context_save_struct
