@@ -3225,11 +3225,13 @@ op_star
 id|hw_config
 )paren
 (brace
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_mpu401
 (paren
 id|hw_config
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_void
 DECL|function|unload_pss_mss

@@ -955,15 +955,9 @@ macro_line|#endif 0
 r_if
 c_cond
 (paren
-(paren
 id|i
 op_eq
 l_int|0
-)paren
-op_logical_and
-(paren
-id|ms_info.xa_flag
-)paren
 )paren
 id|vol_desc_start
 op_assign

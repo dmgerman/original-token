@@ -2321,6 +2321,10 @@ r_int
 r_int
 id|addr
 suffix:semicolon
+r_int
+r_int
+id|len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2450,6 +2454,34 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Check if addr exceeds TASK_SIZE (from do_mmap)&n;&t; */
+id|len
+op_assign
+id|PAGE_SIZE
+op_star
+id|shp-&gt;shm_npages
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|addr
+op_ge
+id|TASK_SIZE
+op_logical_or
+id|len
+OG
+id|TASK_SIZE
+op_logical_or
+id|addr
+OG
+id|TASK_SIZE
+op_minus
+id|len
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 multiline_comment|/*&n;&t; * If shm segment goes below stack, make sure there is some&n;&t; * space left for the stack to grow (presently 4 pages).&n;&t; */
 r_if
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/dir.c&n; *&n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  isofs directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/dir.c&n; *&n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  Steve Beynon&t;&t;       : Missing last directory entries fixed&n; *  (stephen@askone.demon.co.uk)      : 21st June 1996&n; * &n; *  isofs directory handling functions&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
@@ -508,6 +508,14 @@ comma
 id|filp-&gt;f_pos
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;inode-&gt;i_size = %x&bslash;n&quot;
+comma
+id|inode-&gt;i_size
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Next directory_record on next CDROM sector */
 r_if
@@ -518,6 +526,14 @@ op_ge
 id|bufsize
 )paren
 (brace
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;offset &gt;= bufsize&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|brelse
 c_func
 (paren
@@ -620,6 +636,16 @@ op_star
 )paren
 id|de
 suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;de_len = %ld&bslash;n&quot;
+comma
+id|de_len
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* If the length byte is zero, we should move on to the next&n;&t;&t;   CDROM sector.  If we are at the end of the directory, we&n;&t;&t;   kick out of the while loop. */
 r_if
 c_cond
@@ -722,6 +748,18 @@ OG
 id|bufsize
 )paren
 (brace
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;next_offset (%x) &gt; bufsize (%x)&bslash;n&quot;
+comma
+id|next_offset
+comma
+id|bufsize
+)paren
+suffix:semicolon
+macro_line|#endif
 id|next_offset
 op_and_assign
 (paren
@@ -770,9 +808,11 @@ c_cond
 op_logical_neg
 id|block
 )paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|bh
 op_assign
 id|breada
@@ -785,8 +825,6 @@ comma
 id|bufsize
 comma
 id|filp-&gt;f_pos
-op_plus
-id|de_len
 comma
 id|inode-&gt;i_size
 )paren
@@ -797,9 +835,39 @@ c_cond
 op_logical_neg
 id|bh
 )paren
+(brace
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;!bh block=%ld, bufsize=%ld&bslash;n&quot;
+comma
+id|block
+comma
+id|bufsize
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;filp-&gt;f_pos = %ld&bslash;n&quot;
+comma
+id|filp-&gt;f_pos
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;inode-&gt;i_size = %ld&bslash;n&quot;
+comma
+id|inode-&gt;i_size
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren

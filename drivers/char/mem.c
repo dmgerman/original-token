@@ -828,6 +828,16 @@ suffix:semicolon
 id|buf
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|need_resched
+)paren
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_return
 id|count

@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Keyboard driver for Linux v0.99 using Latin-1.&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * &n; */
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ 1
+DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
+mdefine_line|#define DISABLE_KBD_DURING_INTERRUPTS 0
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -48,11 +50,6 @@ macro_line|#ifndef KBD_DEFLOCK
 DECL|macro|KBD_DEFLOCK
 mdefine_line|#define KBD_DEFLOCK 0
 macro_line|#endif
-multiline_comment|/*&n; * The default IO slowdown is doing &squot;inb()&squot;s from 0x61, which should be&n; * safe. But as that is the keyboard controller chip address, we do our&n; * slowdowns here by doing short jumps: the keyboard controller should&n; * be able to keep up&n; */
-DECL|macro|REALLY_SLOW_IO
-mdefine_line|#define REALLY_SLOW_IO
-DECL|macro|SLOW_IO_BY_JUMPING
-mdefine_line|#define SLOW_IO_BY_JUMPING
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 r_extern
@@ -1354,29 +1351,30 @@ l_int|128
 )braket
 suffix:semicolon
 )brace
-DECL|function|keyboard_interrupt
+macro_line|#if DISABLE_KBD_DURING_INTERRUPTS
+DECL|macro|disable_keyboard
+mdefine_line|#define disable_keyboard()&t;do { send_cmd(0xAD); kb_wait(); } while (0)
+DECL|macro|enable_keyboard
+mdefine_line|#define enable_keyboard()&t;send_cmd(0xAE)
+macro_line|#else
+DECL|macro|disable_keyboard
+mdefine_line|#define disable_keyboard()&t;/* nothing */
+DECL|macro|enable_keyboard
+mdefine_line|#define enable_keyboard()&t;/* nothing */
+macro_line|#endif
+DECL|function|handle_scancode
 r_static
 r_void
-id|keyboard_interrupt
+id|handle_scancode
 c_func
 (paren
 r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
+r_char
+id|scancode
 )paren
 (brace
 r_int
 r_char
-id|scancode
-comma
 id|keycode
 suffix:semicolon
 r_static
@@ -1393,101 +1391,6 @@ suffix:semicolon
 multiline_comment|/* 0 or 0200 */
 r_char
 id|raw_mode
-suffix:semicolon
-r_int
-id|status
-suffix:semicolon
-id|pt_regs
-op_assign
-id|regs
-suffix:semicolon
-id|send_cmd
-c_func
-(paren
-l_int|0xAD
-)paren
-suffix:semicolon
-multiline_comment|/* disable keyboard */
-id|kb_wait
-c_func
-(paren
-)paren
-suffix:semicolon
-id|status
-op_assign
-id|inb_p
-c_func
-(paren
-l_int|0x64
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_amp
-id|kbd_read_mask
-)paren
-op_ne
-l_int|0x01
-)paren
-(brace
-multiline_comment|/*&n;&t;   * On some platforms (Alpha XL for one), the init code may leave&n;&t;   *  an interrupt hanging, yet with status indicating no data.&n;&t;   * After making sure that there&squot;s no data indicated and its not a&n;&t;   *  mouse interrupt, we will read the data register to clear it.&n;&t;   * If we don&squot;t do this, the data reg stays full and will not&n;&t;   *  allow new data or interrupt from the keyboard. Sigh...&n;&t;   */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|status
-op_amp
-l_int|0x21
-)paren
-)paren
-(brace
-multiline_comment|/* neither ODS nor OBF */
-id|scancode
-op_assign
-id|inb
-c_func
-(paren
-l_int|0x60
-)paren
-suffix:semicolon
-multiline_comment|/* read data anyway */
-macro_line|#if 0
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;keyboard: status 0x%x  mask 0x%x  data 0x%x&bslash;n&quot;
-comma
-id|status
-comma
-id|kbd_read_mask
-comma
-id|scancode
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_goto
-id|end_kbd_intr
-suffix:semicolon
-)brace
-id|scancode
-op_assign
-id|inb
-c_func
-(paren
-l_int|0x60
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|KEYBOARD_BH
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1513,8 +1416,7 @@ id|acknowledge
 op_assign
 l_int|1
 suffix:semicolon
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 r_else
@@ -1530,8 +1432,7 @@ id|resend
 op_assign
 l_int|1
 suffix:semicolon
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* strange ... */
@@ -1572,8 +1473,7 @@ id|prev_scancode
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 id|do_poke_blanked_console
@@ -1658,8 +1558,7 @@ id|prev_scancode
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 r_if
@@ -1678,8 +1577,7 @@ id|prev_scancode
 op_assign
 id|scancode
 suffix:semicolon
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  Convert scancode to keycode, using prev_scancode.&n; &t; */
@@ -1726,8 +1624,7 @@ id|prev_scancode
 op_assign
 l_int|0x100
 suffix:semicolon
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 r_else
@@ -1773,8 +1670,7 @@ id|prev_scancode
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 )brace
@@ -1797,8 +1693,7 @@ id|scancode
 op_eq
 l_int|0x36
 )paren
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -1834,8 +1729,7 @@ id|scancode
 )paren
 suffix:semicolon
 macro_line|#endif
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 )brace
@@ -1888,8 +1782,7 @@ id|scancode
 suffix:semicolon
 macro_line|#endif
 )brace
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 )brace
@@ -1956,8 +1849,7 @@ c_cond
 (paren
 id|raw_mode
 )paren
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -1976,8 +1868,7 @@ op_plus
 id|up_flag
 )paren
 suffix:semicolon
-r_goto
-id|end_kbd_intr
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Small change in philosophy: earlier we defined repetition by&n;&t; *&t; rep = keycode == prev_keycode;&n;&t; *&t; prev_keycode = keycode;&n;&t; * but now by the fact that the depressed key was down already.&n;&t; * Does this ever make a difference? Yes.&n;&t; */
@@ -2231,15 +2122,114 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
-id|end_kbd_intr
-suffix:colon
-id|send_cmd
+)brace
+DECL|function|keyboard_interrupt
+r_static
+r_void
+id|keyboard_interrupt
 c_func
 (paren
-l_int|0xAE
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_char
+id|status
+suffix:semicolon
+id|pt_regs
+op_assign
+id|regs
+suffix:semicolon
+id|disable_keyboard
+c_func
+(paren
 )paren
 suffix:semicolon
-multiline_comment|/* enable keyboard */
+id|status
+op_assign
+id|inb_p
+c_func
+(paren
+l_int|0x64
+)paren
+suffix:semicolon
+r_do
+(brace
+r_int
+r_char
+id|scancode
+suffix:semicolon
+multiline_comment|/* mouse data? */
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|kbd_read_mask
+op_amp
+l_int|0x20
+)paren
+r_break
+suffix:semicolon
+id|scancode
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x60
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+l_int|0x01
+)paren
+id|handle_scancode
+c_func
+(paren
+id|scancode
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x64
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|status
+op_amp
+l_int|0x01
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
+id|enable_keyboard
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|put_queue
 r_static

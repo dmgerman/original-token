@@ -105,6 +105,18 @@ DECL|macro|HD_DATA
 macro_line|#undef HD_DATA
 DECL|macro|HD_DATA
 mdefine_line|#define HD_DATA NULL
+multiline_comment|/* MSch: changed sti() to STI() wherever possible in ide.c; moved STI() def. &n; * to asm/ide.h &n; */
+multiline_comment|/* The Atari interrupt structure strictly requires that the IPL isn&squot;t lowered&n; * uncontrolled in an interrupt handler. In the concrete case, the IDE&n; * interrupt is already a slow int, so the irq is already disabled at the time&n; * the handler is called, and the IPL has been lowered to the minimum value&n; * possible. To avoid going below that, STI() checks for being called inside&n; * an interrupt, and in that case it does nothing. Hope that is reasonable and&n; * works. (Roman)&n; */
+macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA)
+DECL|macro|STI
+mdefine_line|#define&t;STI()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;if (!intr_count) sti();&t;&t;&t;&bslash;&n;    } while(0)
+macro_line|#elif defined(CONFIG_ATARI)
+DECL|macro|STI
+mdefine_line|#define&t;STI()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!MACH_IS_ATARI || !intr_count) sti();&t;&bslash;&n;    } while(0)
+macro_line|#else /* !defined(CONFIG_ATARI) */
+DECL|macro|STI
+mdefine_line|#define&t;STI()&t;sti()
+macro_line|#endif
 DECL|macro|SELECT_DRIVE
 mdefine_line|#define SELECT_DRIVE(hwif,drive)  OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_base+IDE_SELECT_OFFSET);
 DECL|macro|insl

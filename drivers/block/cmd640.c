@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.09  Mar 19, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  abramov@cecmow.enet.dec.com (Igor Abramov)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with read ahead mode. Separate function for setting&n; *&t;&t;&t;readahead is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *  &n; *  Version 0.04&t;Now configs/compiles separate from ide.c  -ml &n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Readahead is enabled only for&n; *&t;&t;&t;detected hard drives, not included in readahead&n; *&t;&t;&t;black list.&n; * &n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to &n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.  -ml&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.  -ml&n; *  Version 0.10&t;Be nice and don&squot;t reset 2nd port.  -ml&n; *&t;&t;&t;&n; */
+multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.12  Jul 22, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Original author:&t;abramov@cecmow.enet.dec.com (Igor Abramov)&n; *&n; *  Maintained by:&t;s0033las@sun10.vsz.bme.hu (Laszlo Peter)&n; *&t;&t;&t;mlord@pobox.com (Mark Lord)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  These chips are basically fucked by design, and getting this driver&n; *  to work on every motherboard design that uses this screwed chip seems&n; *  bloody well impossible.  However, we&squot;re still trying.&n; *&n; *  We think version 0.12 should work for most folks.&n; *  User feedback is essential.&n; *&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with read ahead mode. Separate function for setting&n; *&t;&t;&t;readahead is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *&n; *  Version 0.04&t;Now configs/compiles separate from ide.c  -ml&n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Readahead is enabled only for&n; *&t;&t;&t;detected hard drives, not included in readahead&n; *&t;&t;&t;black list.&n; *&n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to&n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.  -ml&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.  -ml&n; *  Version 0.10&t;Be nice and don&squot;t reset 2nd port.  -ml&n; *  Version 0.11&t;Try to handle more wierd situations.  -ml&n; *&n; *  Version 0.12&t;Lots of bug fixes from Laszlo Peter&n; *&t;&t;&t;irq unmasking disabled for reliability.  -lp&n; *&t;&t;&t;try to be even smarter about the second port.  -lp&n; *&t;&t;&t;tidy up source code formatting.  -ml&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -13,6 +13,8 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
+DECL|macro|PARANOID_ABOUT_CMD640
+mdefine_line|#define PARANOID_ABOUT_CMD640&t;1&t;/* used to tag superstitious code */
 DECL|variable|cmd640_vlb
 r_int
 id|cmd640_vlb
@@ -97,7 +99,6 @@ id|cmd640_tune_drive
 suffix:semicolon
 multiline_comment|/* Interface to access cmd640x registers */
 DECL|variable|put_cmd640_reg
-r_static
 r_void
 (paren
 op_star
@@ -160,7 +161,7 @@ r_int
 id|bus_speed
 suffix:semicolon
 multiline_comment|/* MHz */
-multiline_comment|/*&n; * For some unknown reasons pcibios functions which read and write registers&n; * do not always work with cmd640. We use direct IO instead.&n; */
+multiline_comment|/*&n; * The CMD640x chip does not support DWORD config write cycles, but some&n; * of the BIOSes use them to implement the config services.&n; * We use direct IO instead.&n; */
 multiline_comment|/* PCI method 1 access */
 DECL|function|put_cmd640_reg_pci1
 r_static
@@ -920,26 +921,29 @@ suffix:semicolon
 macro_line|#endif /* 0 */
 multiline_comment|/*&n; *  Returns 1 if an IDE interface/drive exists at 0x170,&n; *  Returns 0 otherwise.&n; */
 DECL|function|secondary_port_responding
+r_static
 r_int
 id|secondary_port_responding
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/*&n;&t; * Test for hardware at 0x170 (secondary IDE port).&n;&t; * Leave the enable-bit alone if something responds.&n;&t; */
+multiline_comment|/*&n;&t; * Test for hardware at 0x170 (secondary IDE port).&n;&t; */
 id|outb_p
 c_func
 (paren
-l_int|0x0a
+l_int|0xa0
 comma
-l_int|0x176
+l_int|0x170
+op_plus
+id|IDE_SELECT_OFFSET
 )paren
 suffix:semicolon
 multiline_comment|/* select drive0 */
 id|udelay
 c_func
 (paren
-l_int|1
+l_int|100
 )paren
 suffix:semicolon
 r_if
@@ -948,25 +952,29 @@ c_cond
 id|inb_p
 c_func
 (paren
-l_int|0x176
+l_int|0x170
+op_plus
+id|IDE_SELECT_OFFSET
 )paren
-op_eq
-l_int|0xff
+op_ne
+l_int|0xa0
 )paren
 (brace
 id|outb_p
 c_func
 (paren
-l_int|0x0b
+l_int|0xb0
 comma
-l_int|0x176
+l_int|0x170
+op_plus
+id|IDE_SELECT_OFFSET
 )paren
 suffix:semicolon
 multiline_comment|/* select drive1 */
 id|udelay
 c_func
 (paren
-l_int|1
+l_int|100
 )paren
 suffix:semicolon
 r_if
@@ -975,10 +983,12 @@ c_cond
 id|inb_p
 c_func
 (paren
-l_int|0x176
+l_int|0x170
+op_plus
+id|IDE_SELECT_OFFSET
 )paren
-op_eq
-l_int|0xff
+op_ne
+l_int|0xb0
 )paren
 r_return
 l_int|0
@@ -1001,6 +1011,11 @@ r_void
 (brace
 r_int
 id|second_port_toggled
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|second_port_cmd640
 op_assign
 l_int|0
 suffix:semicolon
@@ -1060,6 +1075,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef PARANOID_ABOUT_CMD640
 id|ide_hwifs
 (braket
 l_int|0
@@ -1080,7 +1096,8 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* ensure this *always* gets set */
-macro_line|#if 0&t;
+macro_line|#endif
+macro_line|#if 0
 multiline_comment|/* Dump initial state of chip registers */
 r_for
 c_loop
@@ -1197,6 +1214,14 @@ multiline_comment|/*&n;&t; * Setup the most conservative timings for all drives,
 id|put_cmd640_reg
 c_func
 (paren
+id|CMDTIM
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|put_cmd640_reg
+c_func
+(paren
 id|ARTTIM0
 comma
 l_int|0xc0
@@ -1218,7 +1243,31 @@ comma
 l_int|0xcc
 )paren
 suffix:semicolon
-multiline_comment|/* 0xc0? */
+multiline_comment|/* disable read-ahead for drives 2&amp;3 */
+id|put_cmd640_reg
+c_func
+(paren
+id|DRWTIM0
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|put_cmd640_reg
+c_func
+(paren
+id|DRWTIM1
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|put_cmd640_reg
+c_func
+(paren
+id|DRWTIM23
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Set the maximum allowed bus speed (it is safest until we&n;&t; * &t;&t;&t;&t;      find how to detect bus speed)&n;&t; * Normally PCI bus runs at 33MHz, but often works overclocked to 40&n;&t; */
 id|bus_speed
 op_assign
@@ -1242,26 +1291,6 @@ c_func
 id|CNTRL
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|secondary_port_responding
-c_func
-(paren
-)paren
-)paren
-(brace
-id|b
-op_xor_assign
-id|CNTRL_ENA_2ND
-suffix:semicolon
-multiline_comment|/* toggle the bit */
-id|second_port_toggled
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Disable readahead for drives at primary interface&n;&t; */
 id|b
 op_or_assign
@@ -1279,6 +1308,110 @@ comma
 id|b
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ide_hwifs
+(braket
+l_int|1
+)braket
+dot
+id|noprobe
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|secondary_port_responding
+c_func
+(paren
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|b
+op_amp
+id|CNTRL_ENA_2ND
+)paren
+op_logical_or
+(paren
+id|bus_type
+op_eq
+id|vlb
+)paren
+)paren
+id|second_port_cmd640
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|b
+op_amp
+id|CNTRL_ENA_2ND
+)paren
+op_logical_and
+(paren
+id|bus_type
+op_ne
+id|vlb
+)paren
+)paren
+(brace
+id|second_port_toggled
+op_assign
+l_int|1
+suffix:semicolon
+id|put_cmd640_reg
+c_func
+(paren
+id|CNTRL
+comma
+id|b
+op_or
+id|CNTRL_ENA_2ND
+)paren
+suffix:semicolon
+multiline_comment|/* Enable second interface */
+r_if
+c_cond
+(paren
+id|secondary_port_responding
+c_func
+(paren
+)paren
+)paren
+id|second_port_cmd640
+op_assign
+l_int|1
+suffix:semicolon
+r_else
+(brace
+id|second_port_toggled
+op_assign
+l_int|0
+suffix:semicolon
+id|put_cmd640_reg
+c_func
+(paren
+id|CNTRL
+comma
+id|b
+)paren
+suffix:semicolon
+multiline_comment|/* Disable second interface */
+)brace
+)brace
+)brace
 multiline_comment|/*&n;&t; * Note that we assume that the first interface is at 0x1f0,&n;&t; * and that the second interface, if enabled, is at 0x170.&n;&t; */
 id|ide_hwifs
 (braket
@@ -1298,6 +1431,15 @@ id|tuneproc
 op_assign
 op_amp
 id|cmd640_tune_drive
+suffix:semicolon
+id|ide_hwifs
+(braket
+l_int|0
+)braket
+dot
+id|no_unmask
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -1365,12 +1507,29 @@ multiline_comment|/*&n;&t; * Initialize 2nd IDE port, if required&n;&t; */
 r_if
 c_cond
 (paren
-id|secondary_port_responding
-c_func
-(paren
-)paren
+id|second_port_cmd640
 )paren
 (brace
+macro_line|#ifndef PARANOID_ABOUT_CMD640
+id|ide_hwifs
+(braket
+l_int|0
+)braket
+dot
+id|serialized
+op_assign
+l_int|1
+suffix:semicolon
+id|ide_hwifs
+(braket
+l_int|1
+)braket
+dot
+id|serialized
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|ide_hwifs
 (braket
 l_int|1
@@ -1390,6 +1549,15 @@ op_assign
 op_amp
 id|cmd640_tune_drive
 suffix:semicolon
+id|ide_hwifs
+(braket
+l_int|1
+)braket
+dot
+id|no_unmask
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1452,35 +1620,6 @@ id|autotune
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* disable read-ahead for drives 2 &amp; 3 */
-id|put_cmd640_reg
-c_func
-(paren
-id|ARTTIM23
-comma
-(paren
-id|DIS_RA2
-op_or
-id|DIS_RA3
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|second_port_toggled
-)paren
-(brace
-multiline_comment|/* reset PIO timings for drives 2 &amp; 3 */
-id|put_cmd640_reg
-c_func
-(paren
-id|DRWTIM23
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
 macro_line|#if 0
 multiline_comment|/* reset the secondary interface */
 id|cmd640_reset_controller
@@ -1549,22 +1688,18 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* reset PIO timings for drives 1 &amp; 2 */
-id|put_cmd640_reg
-c_func
-(paren
-id|CMDTIM
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif /* 0 */
 multiline_comment|/*&n;&t; * Tell everyone what we did to their system&n;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot;; serialized, secondary port %s&bslash;n&quot;
+l_string|&quot;:%s serialized, second port %s&bslash;n&quot;
+comma
+id|second_port_cmd640
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot; not&quot;
 comma
 id|second_port_toggled
 ques
@@ -1646,14 +1781,12 @@ r_void
 id|set_readahead_mode
 c_func
 (paren
+id|ide_drive_t
+op_star
+id|drive
+comma
 r_int
 id|mode
-comma
-r_int
-id|if_num
-comma
-r_int
-id|dr_num
 )paren
 (brace
 r_static
@@ -1680,11 +1813,30 @@ id|DIS_RA3
 )brace
 )brace
 suffix:semicolon
+id|byte
+id|b
+suffix:semicolon
+r_int
+id|interface_number
+op_assign
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|index
+suffix:semicolon
+r_int
+id|drive_number
+op_assign
+id|drive-&gt;select.b.unit
+suffix:semicolon
 r_int
 id|port
 op_assign
 (paren
-id|if_num
+id|interface_number
 op_eq
 l_int|0
 )paren
@@ -1699,14 +1851,11 @@ id|mask
 op_assign
 id|masks
 (braket
-id|if_num
+id|interface_number
 )braket
 (braket
-id|dr_num
+id|drive_number
 )braket
-suffix:semicolon
-id|byte
-id|b
 suffix:semicolon
 id|b
 op_assign
@@ -1715,6 +1864,22 @@ c_func
 (paren
 id|port
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * I don&squot;t know why it is necessary, but without this my machine&n;&t; * locks up, if bus_speed is not correct. And it even allows me&n;&t; * to use 32 bit transfers on the primary port (hdparm -c1).&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|interface_number
+op_eq
+l_int|0
+)paren
+op_logical_and
+id|mode
+)paren
+id|b
+op_or_assign
+l_int|0x27
 suffix:semicolon
 r_if
 c_cond
@@ -1744,6 +1909,7 @@ suffix:semicolon
 )brace
 DECL|struct|readahead_black_list
 r_static
+r_const
 r_struct
 id|readahead_black_list
 (brace
@@ -1979,7 +2145,7 @@ l_int|1
 )brace
 suffix:semicolon
 multiline_comment|/* Recovery count (encoded) */
-multiline_comment|/*&n; * Convert address setup count from number of clocks &n; * to representation used by controller&n; */
+multiline_comment|/*&n; * Convert address setup count from number of clocks&n; * to representation used by controller&n; */
 DECL|function|pack_arttim
 r_inline
 r_static
@@ -2154,6 +2320,9 @@ id|rc
 comma
 id|at
 suffix:semicolon
+id|byte
+id|b
+suffix:semicolon
 multiline_comment|/*&n;&t; * Set address setup count and drive read/write timing registers.&n;&t; * Primary interface has individual count/timing registers for&n;&t; * each drive. Secondary interface has common set of registers, and&n;&t; * we should set timings for the slowest drive.&n;&t; */
 r_if
 c_cond
@@ -2192,6 +2361,14 @@ id|r_count
 (braket
 id|dr_num
 )braket
+suffix:semicolon
+id|b
+op_assign
+id|pack_arttim
+c_func
+(paren
+id|at
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -2248,17 +2425,36 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Protect the readahead bits&n;&t;&t; */
+id|b
+op_assign
+id|pack_arttim
+c_func
+(paren
+id|at
+)paren
+op_or
+(paren
+id|get_cmd640_reg
+c_func
+(paren
+id|ARTTIM23
+)paren
+op_amp
+(paren
+id|DIS_RA2
+op_or
+id|DIS_RA3
+)paren
+)paren
+suffix:semicolon
 )brace
 id|put_cmd640_reg
 c_func
 (paren
 id|b_reg
 comma
-id|pack_arttim
-c_func
-(paren
-id|at
-)paren
+id|b
 )paren
 suffix:semicolon
 id|put_cmd640_reg
@@ -2277,13 +2473,13 @@ id|rc
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Update CMDTIM (IDE Command Block Timing Register) &n;&t; */
+multiline_comment|/*&n;&t; * Update CMDTIM (IDE Command Block Timing Register)&n;&t; */
 id|ac
 op_assign
 id|max4
 c_func
 (paren
-id|r_count
+id|a_count
 )paren
 suffix:semicolon
 id|rc
@@ -2291,7 +2487,7 @@ op_assign
 id|max4
 c_func
 (paren
-id|a_count
+id|r_count
 )paren
 suffix:semicolon
 id|put_cmd640_reg
@@ -2312,6 +2508,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Standard timings for PIO modes&n; */
 DECL|struct|pio_timing
 r_static
+r_const
 r_struct
 id|pio_timing
 (brace
@@ -2319,17 +2516,17 @@ DECL|member|mc_time
 r_int
 id|mc_time
 suffix:semicolon
-multiline_comment|/* Minimal cycle time (ns) */
+multiline_comment|/* Address setup (ns) min */
 DECL|member|av_time
 r_int
 id|av_time
 suffix:semicolon
-multiline_comment|/* Address valid to DIOR-/DIOW- setup (ns) */
+multiline_comment|/* Active pulse (ns) min */
 DECL|member|ds_time
 r_int
 id|ds_time
 suffix:semicolon
-multiline_comment|/* DIOR data setup&t;(ns) */
+multiline_comment|/* Cycle time (ns) min = Active pulse + Recovery pulse */
 DECL|variable|pio_timings
 )brace
 id|pio_timings
@@ -2373,7 +2570,7 @@ comma
 l_int|180
 )brace
 comma
-multiline_comment|/* PIO Mode 3 */
+multiline_comment|/* PIO Mode 3 w/IORDY */
 (brace
 l_int|25
 comma
@@ -2382,7 +2579,7 @@ comma
 l_int|125
 )brace
 comma
-multiline_comment|/* PIO Mode 4  -- should be 120, not 125 */
+multiline_comment|/* PIO Mode 4 w/IORDY -- should be 120, not 125 */
 (brace
 l_int|20
 comma
@@ -2390,7 +2587,7 @@ l_int|50
 comma
 l_int|100
 )brace
-multiline_comment|/* PIO Mode ? (nonstandard) */
+multiline_comment|/* PIO Mode 5 w/IORDY (nonstandard) */
 )brace
 suffix:semicolon
 DECL|function|cmd640_timings_to_clocks
@@ -2588,7 +2785,7 @@ l_int|3
 comma
 id|p_base
 op_plus
-l_int|1
+id|IDE_FEATURE_OFFSET
 )paren
 suffix:semicolon
 id|outb_p
@@ -2596,11 +2793,11 @@ c_func
 (paren
 id|mode_num
 op_or
-l_int|8
+l_int|0x08
 comma
 id|p_base
 op_plus
-l_int|2
+id|IDE_NSECTOR_OFFSET
 )paren
 suffix:semicolon
 id|outb_p
@@ -2609,24 +2806,24 @@ c_func
 (paren
 id|drv_num
 op_or
-l_int|0xa
+l_int|0x0a
 )paren
 op_lshift
 l_int|4
 comma
 id|p_base
 op_plus
-l_int|6
+id|IDE_SELECT_OFFSET
 )paren
 suffix:semicolon
 id|outb_p
 c_func
 (paren
-l_int|0xef
+id|WIN_SETFEATURES
 comma
 id|p_base
 op_plus
-l_int|7
+id|IDE_COMMAND_OFFSET
 )paren
 suffix:semicolon
 r_for
@@ -2644,13 +2841,14 @@ l_int|100
 op_logical_and
 (paren
 id|inb
+c_func
 (paren
 id|p_base
 op_plus
-l_int|7
+id|IDE_STATUS_OFFSET
 )paren
 op_amp
-l_int|0x80
+id|BUSY_STAT
 )paren
 suffix:semicolon
 id|i
@@ -2674,8 +2872,11 @@ id|ide_drive_t
 op_star
 id|drive
 comma
-r_int
+id|byte
 id|pio_mode
+comma
+r_int
+id|ds_time
 )paren
 (brace
 r_int
@@ -2692,8 +2893,15 @@ r_int
 id|mc_time
 comma
 id|av_time
-comma
-id|ds_time
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pio_mode
+OG
+l_int|5
+)paren
+r_return
 suffix:semicolon
 id|interface_number
 op_assign
@@ -2735,6 +2943,15 @@ id|av_time
 suffix:semicolon
 id|ds_time
 op_assign
+(paren
+id|ds_time
+op_ne
+l_int|0
+)paren
+ques
+c_cond
+id|ds_time
+suffix:colon
 id|pio_timings
 (braket
 id|pio_mode
@@ -2779,7 +2996,7 @@ id|drive_number
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Drive PIO mode &quot;autoconfiguration&quot;.&n; * Ideally, this code should *always* call cmd640_set_mode(), but it doesn&squot;t.&n; */
+multiline_comment|/*&n; * Drive PIO mode &quot;autoconfiguration&quot;.&n; */
 DECL|function|cmd640_tune_drive
 r_static
 r_void
@@ -2795,34 +3012,26 @@ id|pio_mode
 )paren
 (brace
 r_int
-id|interface_number
-suffix:semicolon
-r_int
-id|drive_number
-suffix:semicolon
-r_int
-id|clock_time
-suffix:semicolon
-multiline_comment|/* ns */
-r_int
 id|max_pio
 suffix:semicolon
 r_int
-id|mc_time
-comma
-id|av_time
-comma
 id|ds_time
+suffix:semicolon
+r_int
+id|readahead
+suffix:semicolon
+multiline_comment|/* there is a global named read_ahead */
+r_int
+id|overridden
+suffix:semicolon
+r_int
+id|iordy
 suffix:semicolon
 r_struct
 id|hd_driveid
 op_star
 id|id
 suffix:semicolon
-r_int
-id|readahead
-suffix:semicolon
-multiline_comment|/* there is a global named read_ahead */
 r_if
 c_cond
 (paren
@@ -2837,30 +3046,20 @@ c_func
 id|drive
 comma
 id|pio_mode
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|interface_number
+id|overridden
 op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|index
+l_int|0
 suffix:semicolon
-id|drive_number
+id|iordy
 op_assign
-id|drive-&gt;select.b.unit
-suffix:semicolon
-id|clock_time
-op_assign
-l_int|1000
-op_div
-id|bus_speed
+l_int|0
 suffix:semicolon
 id|id
 op_assign
@@ -2891,6 +3090,18 @@ id|max_pio
 )braket
 dot
 id|ds_time
+suffix:semicolon
+id|overridden
+op_assign
+l_int|1
+suffix:semicolon
+id|iordy
+op_assign
+(paren
+id|max_pio
+OG
+l_int|2
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -2964,6 +3175,10 @@ id|ds_time
 op_assign
 id|id-&gt;eide_pio_iordy
 suffix:semicolon
+id|iordy
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -2979,6 +3194,7 @@ id|ds_time
 op_eq
 l_int|0
 )paren
+(brace
 id|ds_time
 op_assign
 id|pio_timings
@@ -2988,6 +3204,15 @@ id|max_pio
 dot
 id|ds_time
 suffix:semicolon
+id|iordy
+op_assign
+(paren
+id|max_pio
+OG
+l_int|2
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t;&t; * Conservative &quot;downgrade&quot;&n;&t;&t; */
 r_if
@@ -3003,72 +3228,39 @@ l_int|0
 )paren
 (brace
 id|max_pio
-op_sub_assign
+op_decrement
+suffix:semicolon
+id|overridden
+op_assign
 l_int|1
 suffix:semicolon
-id|ds_time
+id|iordy
 op_assign
-id|pio_timings
-(braket
-id|max_pio
-)braket
-dot
-id|ds_time
-suffix:semicolon
-)brace
-)brace
-id|mc_time
-op_assign
-id|pio_timings
-(braket
-id|max_pio
-)braket
-dot
-id|mc_time
-suffix:semicolon
-id|av_time
-op_assign
-id|pio_timings
-(braket
-id|max_pio
-)braket
-dot
-id|av_time
-suffix:semicolon
-id|cmd640_timings_to_clocks
-c_func
 (paren
-id|mc_time
-comma
-id|av_time
-comma
-id|ds_time
-comma
-id|clock_time
-comma
-id|interface_number
-op_star
+id|max_pio
+OG
 l_int|2
-op_plus
-id|drive_number
 )paren
 suffix:semicolon
-id|set_pio_mode
+id|ds_time
+op_assign
+id|pio_timings
+(braket
+id|max_pio
+)braket
+dot
+id|ds_time
+suffix:semicolon
+)brace
+)brace
+id|cmd640_set_mode
 c_func
 (paren
-id|interface_number
-comma
-id|drive_number
+id|drive
 comma
 id|max_pio
-)paren
-suffix:semicolon
-id|cmd640_set_timing
-c_func
-(paren
-id|interface_number
 comma
-id|drive_number
+id|ds_time
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Disable (or set) readahead mode&n;&t; */
@@ -3109,19 +3301,33 @@ multiline_comment|/* Mmmm.. probably be 0 ?? */
 id|set_readahead_mode
 c_func
 (paren
+id|drive
+comma
 id|readahead
-comma
-id|interface_number
-comma
-id|drive_number
 )paren
 suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;Mode and Timing set to PIO%d, Readahead is %s&bslash;n&quot;
+l_string|&quot;Drive Timing: PIO Mode %d (%dns) %s/IORDY%s, Read-ahead: %s&bslash;n&quot;
 comma
 id|max_pio
+comma
+id|ds_time
+comma
+id|iordy
+ques
+c_cond
+l_string|&quot;w&quot;
+suffix:colon
+l_string|&quot;wo&quot;
+comma
+id|overridden
+ques
+c_cond
+l_string|&quot; (overriding vendor mode)&quot;
+suffix:colon
+l_string|&quot;&quot;
 comma
 id|readahead
 ques

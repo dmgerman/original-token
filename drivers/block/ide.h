@@ -149,8 +149,13 @@ mdefine_line|#define SECTOR_WORDS&t;(512 / 4)&t;/* number of 32bit words per sec
 multiline_comment|/*&n; * Timeouts for various operations:&n; */
 DECL|macro|WAIT_DRQ
 mdefine_line|#define WAIT_DRQ&t;(5*HZ/100)&t;/* 50msec - spec allows up to 20ms */
+macro_line|#ifdef CONFIG_APM
+DECL|macro|WAIT_READY
+mdefine_line|#define WAIT_READY&t;(5*HZ)&t;&t;/* 5sec - some laptops are very slow */
+macro_line|#else
 DECL|macro|WAIT_READY
 mdefine_line|#define WAIT_READY&t;(3*HZ/100)&t;/* 30msec - should be instantaneous */
+macro_line|#endif /* CONFIG_APM */
 DECL|macro|WAIT_PIDENTIFY
 mdefine_line|#define WAIT_PIDENTIFY&t;(1*HZ)&t;/* 1sec   - should be less than 3ms (?) */
 DECL|macro|WAIT_WORSTCASE
@@ -594,6 +599,62 @@ DECL|typedef|special_t
 )brace
 id|special_t
 suffix:semicolon
+macro_line|#ifdef __BIG_ENDIAN_BITFIELD
+r_typedef
+r_union
+(brace
+r_int
+id|all
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* all of the bits together */
+r_struct
+(brace
+DECL|member|bit7
+r_int
+id|bit7
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* always 1 */
+DECL|member|lba
+r_int
+id|lba
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* using LBA instead of CHS */
+DECL|member|bit5
+r_int
+id|bit5
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* always 1 */
+DECL|member|unit
+r_int
+id|unit
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* drive select number, 0 or 1 */
+DECL|member|head
+r_int
+id|head
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* always zeros here */
+DECL|member|b
+)brace
+id|b
+suffix:semicolon
+DECL|typedef|select_t
+)brace
+id|select_t
+suffix:semicolon
+macro_line|#else /* __BIG_ENDIAN_BITFIELD */
 r_typedef
 r_union
 (brace
@@ -648,6 +709,7 @@ DECL|typedef|select_t
 )brace
 id|select_t
 suffix:semicolon
+macro_line|#endif /* __BIG_ENDIAN_BITFIELD */
 DECL|struct|ide_drive_s
 r_typedef
 r_struct
@@ -728,6 +790,13 @@ suffix:colon
 l_int|2
 suffix:semicolon
 multiline_comment|/* 1=autotune, 2=noautotune, 0=default */
+DECL|member|ignore_unexp
+r_int
+id|ignore_unexp
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: ignore unexpected_intr&squot;s */
 macro_line|#if FAKE_FDISK_FOR_EZDRIVE
 DECL|member|remap_0_to_1
 r_int
@@ -771,7 +840,7 @@ DECL|member|pio_req
 id|byte
 id|pio_req
 suffix:semicolon
-multiline_comment|/* requested multiple sector setting */
+multiline_comment|/* requested drive pio setting */
 DECL|member|io_32bit
 id|byte
 id|io_32bit

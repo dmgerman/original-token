@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@pandora.pp.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@pandora.pp.fi&n; *&n; * Added support for SIGIO. 28Jul95 jem@pandora.pp.fi&n; *&n; * Rearranged SIGIO support to use code from tty_io.  9Sept95 ctm@ardi.com&n; *&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * Fixed keyboard lockups at open time (intervening kbd interrupts), handle&n; * RESEND replies, better error checking&n; * 3-Jul-96 Roman Hodek &lt;Roman.Hodek@informatik.uni-erlangen.de&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/char/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@pandora.pp.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@pandora.pp.fi&n; *&n; * Added support for SIGIO. 28Jul95 jem@pandora.pp.fi&n; *&n; * Rearranged SIGIO support to use code from tty_io.  9Sept95 ctm@ardi.com&n; *&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
 multiline_comment|/* Uncomment the following line if your mouse needs initialization. */
 multiline_comment|/* #define INITIALIZE_DEVICE */
 macro_line|#include &lt;linux/module.h&gt;
@@ -26,14 +26,10 @@ mdefine_line|#define AUX_COMMAND&t;0x64&t;&t;/* Aux device command buffer */
 DECL|macro|AUX_STATUS
 mdefine_line|#define AUX_STATUS&t;0x64&t;&t;/* Aux device status reg */
 multiline_comment|/* aux controller status bits */
-DECL|macro|AUX_KOBUF_FULL
-mdefine_line|#define AUX_KOBUF_FULL&t;0x01&t;&t;/* output buffer (from controller) full */
 DECL|macro|AUX_OBUF_FULL
 mdefine_line|#define AUX_OBUF_FULL&t;0x21&t;&t;/* output buffer (from device) full */
 DECL|macro|AUX_IBUF_FULL
 mdefine_line|#define AUX_IBUF_FULL&t;0x02&t;&t;/* input buffer (to device) full */
-DECL|macro|AUX_TIMEOUT
-mdefine_line|#define AUX_TIMEOUT&t;0x40&t;&t;/* controller reports timeout */
 multiline_comment|/* aux controller commands */
 DECL|macro|AUX_CMD_WRITE
 mdefine_line|#define AUX_CMD_WRITE&t;0x60&t;&t;/* value to write to controller */
@@ -66,16 +62,6 @@ DECL|macro|AUX_DISABLE_DEV
 mdefine_line|#define AUX_DISABLE_DEV&t;0xf5&t;&t;/* disable aux device */
 DECL|macro|AUX_RESET
 mdefine_line|#define AUX_RESET&t;0xff&t;&t;/* reset aux device */
-multiline_comment|/* kbd controller commands */
-DECL|macro|KBD_DISABLE
-mdefine_line|#define KBD_DISABLE&t;0xad
-DECL|macro|KBD_ENABLE
-mdefine_line|#define KBD_ENABLE&t;0xae
-multiline_comment|/* replies */
-DECL|macro|AUX_ACK
-mdefine_line|#define AUX_ACK&t;&t;0xfa
-DECL|macro|AUX_RESEND
-mdefine_line|#define AUX_RESEND&t;0xfe
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES&t;60&t;&t;/* some aux operations take long time*/
 macro_line|#if defined(__alpha__) &amp;&amp; !defined(CONFIG_PCI)
@@ -195,6 +181,14 @@ r_void
 suffix:semicolon
 r_static
 r_int
+id|poll_aux_status_nosleep
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
 id|fasync_aux
 c_func
 (paren
@@ -258,36 +252,48 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * Write a byte to the kbd controller and wait for it being processed&n; */
-DECL|function|aux_write_byte
+multiline_comment|/*&n; * Write to aux device&n; */
+DECL|function|aux_write_dev
 r_static
-r_int
-id|aux_write_byte
+r_void
+id|aux_write_dev
 c_func
 (paren
 r_int
 id|val
-comma
-r_int
-id|port
 )paren
 (brace
-id|outb_p
-c_func
-(paren
-id|val
-comma
-id|port
-)paren
-suffix:semicolon
-r_return
 id|poll_aux_status
 c_func
 (paren
 )paren
 suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|AUX_MAGIC_WRITE
+comma
+id|AUX_COMMAND
+)paren
+suffix:semicolon
+multiline_comment|/* write magic cookie */
+id|poll_aux_status
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|val
+comma
+id|AUX_OUTPUT_PORT
+)paren
+suffix:semicolon
+multiline_comment|/* write data */
 )brace
-multiline_comment|/*&n; * Write to device, handle returned resend requests and wait for ack&n; */
+multiline_comment|/*&n; * Write to device &amp; handle returned ack&n; */
+macro_line|#if defined INITIALIZE_DEVICE
 DECL|function|aux_write_ack
 r_static
 r_int
@@ -299,29 +305,14 @@ id|val
 )paren
 (brace
 r_int
-id|rv
-comma
 id|retries
 op_assign
 l_int|0
-comma
-id|stat
 suffix:semicolon
-id|repeat
-suffix:colon
-r_if
-c_cond
-(paren
-id|poll_aux_status
+id|poll_aux_status_nosleep
 c_func
 (paren
 )paren
-OL
-l_int|0
-)paren
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 id|outb_p
 c_func
@@ -331,19 +322,10 @@ comma
 id|AUX_COMMAND
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|poll_aux_status
+id|poll_aux_status_nosleep
 c_func
 (paren
 )paren
-OL
-l_int|0
-)paren
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 id|outb_p
 c_func
@@ -353,127 +335,46 @@ comma
 id|AUX_OUTPUT_PORT
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|rv
-op_assign
-id|poll_aux_status
+id|poll_aux_status_nosleep
 c_func
 (paren
 )paren
-)paren
-OL
-l_int|0
-)paren
-multiline_comment|/* timeout */
-r_return
-op_minus
-l_int|1
 suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
-id|rv
-op_eq
-id|AUX_RESEND
-)paren
-multiline_comment|/* controller needs last byte again... */
-r_goto
-id|repeat
-suffix:semicolon
-r_else
-r_if
-c_cond
 (paren
-id|rv
-op_eq
-id|AUX_ACK
-)paren
-multiline_comment|/* already got ACK */
-r_return
-l_int|0
-suffix:semicolon
-r_else
-(brace
-multiline_comment|/* wait for ACK from controller */
-r_while
-c_loop
-(paren
-id|retries
-OL
-id|MAX_RETRIES
-)paren
-(brace
-id|stat
-op_assign
-id|inb_p
+id|inb
 c_func
 (paren
 id|AUX_STATUS
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|stat
 op_amp
 id|AUX_OBUF_FULL
 )paren
 op_eq
 id|AUX_OBUF_FULL
-op_logical_and
-id|inb_p
+)paren
+(brace
+r_return
+(paren
+id|inb
 c_func
 (paren
 id|AUX_INPUT_PORT
 )paren
-op_eq
-id|AUX_ACK
 )paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-(paren
-l_int|5
-op_star
-id|HZ
-op_plus
-l_int|99
-)paren
-op_div
-l_int|100
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-id|retries
-op_increment
-suffix:semicolon
 )brace
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-)brace
+macro_line|#endif /* INITIALIZE_DEVICE */
 multiline_comment|/*&n; * Write aux device command&n; */
 DECL|function|aux_write_cmd
 r_static
-r_int
+r_void
 id|aux_write_cmd
 c_func
 (paren
@@ -481,19 +382,10 @@ r_int
 id|val
 )paren
 (brace
-r_if
-c_cond
-(paren
 id|poll_aux_status
 c_func
 (paren
 )paren
-OL
-l_int|0
-)paren
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 id|outb_p
 c_func
@@ -503,19 +395,10 @@ comma
 id|AUX_COMMAND
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|poll_aux_status
 c_func
 (paren
 )paren
-OL
-l_int|0
-)paren
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 id|outb_p
 c_func
@@ -524,23 +407,6 @@ id|val
 comma
 id|AUX_OUTPUT_PORT
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|poll_aux_status
-c_func
-(paren
-)paren
-OL
-l_int|0
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|get_from_queue
@@ -877,91 +743,30 @@ id|aux_count
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* disable keyboard to avoid clashes with multi-byte command sequences */
-id|poll_aux_status
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|aux_write_byte
-c_func
-(paren
-id|KBD_DISABLE
-comma
-id|AUX_COMMAND
-)paren
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;psaux: controller timeout&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* disable controller ints */
-r_if
-c_cond
-(paren
 id|aux_write_cmd
 c_func
 (paren
 id|AUX_INTS_OFF
 )paren
-OL
-l_int|0
-)paren
-id|printk
+suffix:semicolon
+multiline_comment|/* disable controller ints */
+id|poll_aux_status
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;psaux: controller timeout&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Disable Aux device */
-r_if
-c_cond
-(paren
-id|aux_write_byte
+id|outb_p
 c_func
 (paren
 id|AUX_DISABLE
 comma
 id|AUX_COMMAND
 )paren
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;psaux: controller timeout&bslash;n&quot;
-)paren
 suffix:semicolon
-multiline_comment|/* re-enable keyboard */
-r_if
-c_cond
-(paren
-id|aux_write_byte
+multiline_comment|/* Disable Aux device */
+id|poll_aux_status
 c_func
 (paren
-id|KBD_ENABLE
-comma
-id|AUX_COMMAND
-)paren
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;psaux: controller timeout&bslash;n&quot;
 )paren
 suffix:semicolon
 id|free_irq
@@ -1172,12 +977,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|poll_aux_status
 c_func
 (paren
 )paren
-OL
-l_int|0
 )paren
 (brace
 id|aux_count
@@ -1228,86 +1032,33 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* disable keyboard to avoid clashes with multi-byte command sequences */
-r_if
-c_cond
-(paren
-id|aux_write_byte
-c_func
-(paren
-id|KBD_DISABLE
-comma
-id|AUX_COMMAND
-)paren
-OL
-l_int|0
-)paren
-r_goto
-id|open_error
-suffix:semicolon
-multiline_comment|/* Enable Aux in kbd controller */
-r_if
-c_cond
-(paren
-id|aux_write_byte
+id|outb_p
 c_func
 (paren
 id|AUX_ENABLE
 comma
 id|AUX_COMMAND
 )paren
-OL
-l_int|0
-)paren
-r_goto
-id|open_error
 suffix:semicolon
-multiline_comment|/* enable aux device */
-r_if
-c_cond
-(paren
-id|aux_write_ack
+multiline_comment|/* Enable Aux */
+id|aux_write_dev
 c_func
 (paren
 id|AUX_ENABLE_DEV
 )paren
-OL
-l_int|0
-)paren
-r_goto
-id|open_error
 suffix:semicolon
-multiline_comment|/* enable controller ints */
-r_if
-c_cond
-(paren
+multiline_comment|/* enable aux device */
 id|aux_write_cmd
 c_func
 (paren
 id|AUX_INTS_ON
 )paren
-OL
-l_int|0
-)paren
-r_goto
-id|open_error
 suffix:semicolon
-multiline_comment|/* re-enable keyboard */
-r_if
-c_cond
-(paren
-id|aux_write_byte
+multiline_comment|/* enable controller ints */
+id|poll_aux_status
 c_func
 (paren
-id|KBD_ENABLE
-comma
-id|AUX_COMMAND
 )paren
-OL
-l_int|0
-)paren
-r_goto
-id|open_error
 suffix:semicolon
 id|aux_ready
 op_assign
@@ -1315,19 +1066,6 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-id|open_error
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;psaux: controller timeout&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_82C710_MOUSE
@@ -1553,29 +1291,6 @@ id|i
 op_assign
 id|count
 suffix:semicolon
-r_int
-id|rv
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* temporary disable keyboard to avoid clashes with multi-byte command&n;&t; * sequence */
-r_if
-c_cond
-(paren
-id|aux_write_byte
-c_func
-(paren
-id|KBD_DISABLE
-comma
-id|AUX_COMMAND
-)paren
-OL
-l_int|0
-)paren
-r_return
-op_minus
-id|EIO
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1586,22 +1301,16 @@ op_decrement
 r_if
 c_cond
 (paren
+op_logical_neg
 id|poll_aux_status
 c_func
 (paren
 )paren
-OL
-l_int|0
 )paren
-(brace
-id|rv
-op_assign
+r_return
 op_minus
 id|EIO
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|outb_p
 c_func
 (paren
@@ -1613,22 +1322,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|poll_aux_status
 c_func
 (paren
 )paren
-OL
-l_int|0
 )paren
-(brace
-id|rv
-op_assign
+r_return
 op_minus
 id|EIO
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|outb_p
 c_func
 (paren
@@ -1643,42 +1346,11 @@ id|AUX_OUTPUT_PORT
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* reenable keyboard */
-r_if
-c_cond
-(paren
-id|poll_aux_status
-c_func
-(paren
-)paren
-OL
-l_int|0
-op_logical_or
-id|aux_write_byte
-c_func
-(paren
-id|KBD_ENABLE
-comma
-id|AUX_COMMAND
-)paren
-OL
-l_int|0
-)paren
-id|rv
-op_assign
-op_minus
-id|EIO
-suffix:semicolon
 id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
 r_return
-id|rv
-ques
-c_cond
-id|rv
-suffix:colon
 id|count
 suffix:semicolon
 )brace
@@ -2244,36 +1916,49 @@ id|AUX_SET_SCALE21
 )paren
 suffix:semicolon
 multiline_comment|/* 2:1 scaling */
-macro_line|#endif /* INITIALIZE_DEVICE */
-multiline_comment|/* Disable Aux device and its interrupts on the controller */
-r_if
-c_cond
+id|poll_aux_status_nosleep
+c_func
 (paren
-id|aux_write_byte
+)paren
+suffix:semicolon
+macro_line|#endif /* INITIALIZE_DEVICE */
+id|outb_p
 c_func
 (paren
 id|AUX_DISABLE
 comma
 id|AUX_COMMAND
 )paren
-OL
-l_int|0
-op_logical_or
-id|aux_write_cmd
+suffix:semicolon
+multiline_comment|/* Disable Aux device */
+id|poll_aux_status_nosleep
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|AUX_CMD_WRITE
+comma
+id|AUX_COMMAND
+)paren
+suffix:semicolon
+id|poll_aux_status_nosleep
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Disable interrupts */
+id|outb_p
 c_func
 (paren
 id|AUX_INTS_OFF
-)paren
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;psaux: controller timeout&bslash;n&quot;
+comma
+id|AUX_OUTPUT_PORT
 )paren
 suffix:semicolon
+multiline_comment|/*  on the controller */
 )brace
 r_return
 l_int|0
@@ -2294,6 +1979,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*?? Bjorn */
 )brace
 DECL|function|cleanup_module
 r_void
@@ -2326,11 +2012,6 @@ id|retries
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|reply
-op_assign
-l_int|0
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -2341,11 +2022,7 @@ c_func
 id|AUX_STATUS
 )paren
 op_amp
-(paren
-id|AUX_KOBUF_FULL
-op_or
-id|AUX_IBUF_FULL
-)paren
+l_int|0x03
 )paren
 op_logical_and
 id|retries
@@ -2368,8 +2045,6 @@ id|AUX_OBUF_FULL
 op_eq
 id|AUX_OBUF_FULL
 )paren
-id|reply
-op_assign
 id|inb_p
 c_func
 (paren
@@ -2404,17 +2079,78 @@ op_increment
 suffix:semicolon
 )brace
 r_return
+op_logical_neg
 (paren
 id|retries
 op_eq
 id|MAX_RETRIES
 )paren
-ques
+suffix:semicolon
+)brace
+DECL|function|poll_aux_status_nosleep
+r_static
+r_int
+id|poll_aux_status_nosleep
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|retries
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|AUX_STATUS
+)paren
+op_amp
+l_int|0x03
+)paren
+op_logical_and
+id|retries
+OL
+l_int|1000000
+)paren
+(brace
+r_if
 c_cond
-op_minus
-l_int|1
-suffix:colon
-id|reply
+(paren
+(paren
+id|inb_p
+c_func
+(paren
+id|AUX_STATUS
+)paren
+op_amp
+id|AUX_OBUF_FULL
+)paren
+op_eq
+id|AUX_OBUF_FULL
+)paren
+id|inb_p
+c_func
+(paren
+id|AUX_INPUT_PORT
+)paren
+suffix:semicolon
+id|retries
+op_increment
+suffix:semicolon
+)brace
+r_return
+op_logical_neg
+(paren
+id|retries
+op_eq
+l_int|1000000
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_82C710_MOUSE

@@ -228,8 +228,6 @@ DECL|macro|SF_SETGID
 mdefine_line|#define SF_SETGID&t;0x0020&t;&t;/* Ignore Amiga gid */
 DECL|macro|SF_SETMODE
 mdefine_line|#define SF_SETMODE&t;0x0040&t;&t;/* Ignore Amiga protection bits */
-DECL|macro|SF_USE_MP
-mdefine_line|#define SF_USE_MP&t;0x0080&t;&t;/* Use uid and gid from mount point */
 DECL|macro|SF_MUFS
 mdefine_line|#define SF_MUFS&t;&t;0x0100&t;&t;/* Use MUFS uid/gid mapping */
 DECL|macro|SF_OFS

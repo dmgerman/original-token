@@ -1,5 +1,5 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;23 June 1996, version 1.12&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(NCR BIOS in flash-bios required) &n;**&t;&t;53C815&t;&t;(~53C810 with on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide, NCR BIOS in flash bios required)&n;**&t;&t;53C825&t;&t;(Wide, ~53C820 with on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;21 July 1996, version 1.12b&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(NCR BIOS in flash-bios required) &n;**&t;&t;53C815&t;&t;(~53C810 with on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide, NCR BIOS in flash bios required)&n;**&t;&t;53C825&t;&t;(Wide, ~53C820 with on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG
 mdefine_line|#define SCSI_NCR_DEBUG
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
@@ -497,6 +497,24 @@ suffix:semicolon
 multiline_comment|/*&n;**&t;Other Linux definitions&n;*/
 DECL|macro|ScsiResult
 mdefine_line|#define ScsiResult(host_code, scsi_code) (((host_code) &lt;&lt; 16) + ((scsi_code) &amp; 0x7f))
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,0,0)
+r_static
+r_void
+id|ncr53c8xx_select_queue_depths
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|host
+comma
+r_struct
+id|scsi_device
+op_star
+id|devlist
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,70)
 r_static
 r_void
@@ -7793,6 +7811,12 @@ id|instance-&gt;dma_channel
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,0,0)
+id|instance-&gt;select_queue_depths
+op_assign
+id|ncr53c8xx_select_queue_depths
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;**&t;Patch script to physical addresses&n;&t;*/
 id|ncr_script_fill
 (paren
@@ -11706,10 +11730,10 @@ c_func
 (paren
 id|nc_dmode
 comma
-l_int|0x00
+l_int|0x80
 )paren
 suffix:semicolon
-multiline_comment|/* Set 2-transfer burst */
+multiline_comment|/* Set 8-transfer burst */
 )brace
 r_else
 multiline_comment|/**&t;NCR53C825&t;&t;&t;**/
@@ -15575,8 +15599,7 @@ id|u_long
 id|np-&gt;header.cp
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
+multiline_comment|/*&t;    return;*/
 )brace
 multiline_comment|/*&n;&t;**&t;find the interrupted script command,&n;&t;**&t;and the address at which to continue.&n;&t;*/
 r_if
@@ -21345,6 +21368,88 @@ id|device_fn
 )paren
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,0,0)
+multiline_comment|/*&n;**   Linux select queue depths function&n;*/
+DECL|function|ncr53c8xx_select_queue_depths
+r_static
+r_void
+id|ncr53c8xx_select_queue_depths
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|host
+comma
+r_struct
+id|scsi_device
+op_star
+id|devlist
+)paren
+(brace
+r_struct
+id|scsi_device
+op_star
+id|device
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|device
+op_assign
+id|devlist
+suffix:semicolon
+id|device
+suffix:semicolon
+id|device
+op_assign
+id|device-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|device-&gt;host
+op_eq
+id|host
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|device-&gt;tagged_supported
+)paren
+(brace
+id|device-&gt;queue_depth
+op_assign
+id|SCSI_NCR_MAX_TAGS
+suffix:semicolon
+)brace
+r_else
+(brace
+id|device-&gt;queue_depth
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx_select_queue_depth: id=%d, lun=%d, queue_depth=%d&bslash;n&quot;
+comma
+id|device-&gt;id
+comma
+id|device-&gt;lun
+comma
+id|device-&gt;queue_depth
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+)brace
+)brace
+macro_line|#endif
 multiline_comment|/*&n;**   Linux entry point of queuecommand() function&n;*/
 DECL|function|ncr53c8xx_queue_command
 r_int
