@@ -1010,7 +1010,9 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;Channel: %02d Id: %02d Lun: %02d&bslash;n  Vendor: &quot;
+l_string|&quot;Host: scsi%d Channel: %02d Id: %02d Lun: %02d&bslash;n  Vendor: &quot;
+comma
+id|scd-&gt;host-&gt;host_no
 comma
 id|scd-&gt;channel
 comma

@@ -35,6 +35,10 @@ DECL|macro|IS_PCI
 mdefine_line|#define IS_PCI&t;   &squot;P&squot;
 DECL|macro|BROKEN_INQUIRY
 mdefine_line|#define BROKEN_INQUIRY&t;1
+DECL|macro|BUSMASTER
+mdefine_line|#define BUSMASTER       0xff
+DECL|macro|PIO
+mdefine_line|#define PIO             0xfe
 DECL|macro|EATA_SIGNATURE
 mdefine_line|#define EATA_SIGNATURE&t;0x45415441     /* BIG ENDIAN coded &quot;EATA&quot; sig.&t; */
 DECL|macro|EATA_CP_SIZE

@@ -2282,7 +2282,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -2&t;All multicast hosts&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
 r_static
 r_void
 DECL|function|set_multicast_list
@@ -2313,6 +2313,11 @@ c_cond
 id|num_addrs
 OG
 l_int|0
+op_logical_or
+id|num_addrs
+op_eq
+op_minus
+l_int|2
 )paren
 (brace
 id|outb
@@ -2323,6 +2328,7 @@ comma
 id|RX_CMD
 )paren
 suffix:semicolon
+multiline_comment|/* Multicast or all multicast is the same */
 id|inb
 c_func
 (paren

@@ -2,6 +2,9 @@ macro_line|#ifndef _I386_DELAY_H
 DECL|macro|_I386_DELAY_H
 mdefine_line|#define _I386_DELAY_H
 multiline_comment|/*&n; * Copyright (C) 1993 Linus Torvalds&n; *&n; * Delay routines, using a pre-computed &quot;loops_per_second&quot; value.&n; */
+macro_line|#ifdef CONFIG_SMP
+macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#endif 
 DECL|function|__delay
 r_extern
 id|__inline__
@@ -55,6 +58,26 @@ l_string|&quot;=d&quot;
 (paren
 id|usecs
 )paren
+macro_line|#ifdef CONFIG_SMP
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|usecs
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|cpu_data
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+dot
+id|udelay_val
+)paren
+macro_line|#else
 suffix:colon
 l_string|&quot;a&quot;
 (paren
@@ -65,6 +88,7 @@ l_string|&quot;0&quot;
 (paren
 id|loops_per_sec
 )paren
+macro_line|#endif
 suffix:colon
 l_string|&quot;ax&quot;
 )paren

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/arch/i386/traps.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;Traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;asm.s&squot;. Currently mostly a debugging-aid, will be extended&n; * to mainly kill the offending process (probably by giving it a signal,&n; * but possibly by killing it outright if necessary).&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -334,6 +335,17 @@ comma
 id|err
 op_amp
 l_int|0xffff
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CPU:    %d&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -968,6 +980,13 @@ r_int
 id|error_code
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP_NMI_INVAL
+id|smp_invalidate_rcv
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
 macro_line|#ifndef CONFIG_IGNORE_NMI
 id|printk
 c_func
@@ -988,6 +1007,7 @@ l_string|&quot;power saving mode enabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#endif
 )brace
 DECL|function|do_debug
 id|asmlinkage
@@ -1120,6 +1140,48 @@ id|i387_hard_struct
 op_star
 id|env
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|env
+op_assign
+op_amp
+id|current-&gt;tss.i387.hard
+suffix:semicolon
+id|send_sig
+c_func
+(paren
+id|SIGFPE
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Save the info for the exception handler&n;&t; */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;fnsave %0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|env
+)paren
+)paren
+suffix:semicolon
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_USEDFPU
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Cause a trap if they use the FPU again.&n;&t; */
+id|stts
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|clts
 c_func
 (paren
@@ -1212,6 +1274,7 @@ id|env-&gt;twd
 op_assign
 l_int|0xffffffff
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 DECL|function|do_coprocessor_error
 id|asmlinkage
@@ -1248,6 +1311,55 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP
+multiline_comment|/*&n; *&t;SMP is actually simpler than uniprocessor for once. Because&n; *&t;we can&squot;t pull the delayed FPU switching trick Linus does&n; *&t;we simply have to do the restore each context switch and&n; *&t;set the flag. switch_to() will always save the state in&n; *&t;case we swap processors. We also don&squot;t use the coprocessor&n; *&t;timer - IRQ 13 mode isnt used with SMP machines (thank god).&n; *&n; *&t;If this actually works it will be a miracle however&n; */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;clts&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Allow maths ops (or we recurse) */
+r_if
+c_cond
+(paren
+id|current-&gt;used_math
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;frstor %0&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|current-&gt;tss.i387
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t; *&t;Our first FPU usage, clean the chip.&n;&t;&t; */
+id|__asm__
+c_func
+(paren
+l_string|&quot;fninit&quot;
+)paren
+suffix:semicolon
+id|current-&gt;used_math
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|current-&gt;flags
+op_or_assign
+id|PF_USEDFPU
+suffix:semicolon
+multiline_comment|/* So we fnsave on switch_to() */
+macro_line|#else
 id|__asm__
 id|__volatile__
 c_func
@@ -1349,6 +1461,7 @@ op_lshift
 id|COPRO_TIMER
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 macro_line|#ifndef CONFIG_MATH_EMULATION
 DECL|function|math_emulate
@@ -1407,6 +1520,36 @@ r_struct
 id|desc_struct
 op_star
 id|p
+suffix:semicolon
+r_static
+r_int
+id|smptrap
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smptrap
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;pushfl ; andl $0xffffbfff,(%esp) ; popfl&quot;
+)paren
+suffix:semicolon
+id|load_ldt
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|smptrap
+op_increment
 suffix:semicolon
 r_if
 c_cond

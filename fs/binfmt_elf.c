@@ -117,7 +117,7 @@ id|load_elf_binary
 comma
 id|load_elf_library
 comma
-id|aout_core_dump
+id|elf_core_dump
 macro_line|#else
 l_int|NULL
 comma
@@ -128,7 +128,7 @@ id|load_elf_binary
 comma
 id|load_elf_library
 comma
-id|aout_core_dump
+id|elf_core_dump
 macro_line|#endif
 )brace
 suffix:semicolon

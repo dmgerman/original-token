@@ -11,6 +11,17 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+r_extern
+r_void
+id|timer_interrupt
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
 DECL|variable|cache_21
 r_static
 r_int
@@ -1033,6 +1044,17 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/* don&squot;t accept requests for irq #0 */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|irq
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|action
 op_assign
 id|irq
@@ -1346,6 +1368,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_ALPHA_JENSEN)
 id|printk
 c_func
 (paren
@@ -1408,6 +1431,32 @@ comma
 l_int|0x461
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_NONAME)
+id|printk
+c_func
+(paren
+l_string|&quot;61=%02x, 64=%02x, 60=%02x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+l_int|0x61
+)paren
+comma
+id|inb
+c_func
+(paren
+l_int|0x64
+)paren
+comma
+id|inb
+c_func
+(paren
+l_int|0x60
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|handle_irq
 r_static
@@ -2607,12 +2656,9 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-multiline_comment|/* timer interrupt.. */
-id|handle_irq
+id|timer_interrupt
 c_func
 (paren
-l_int|0
-comma
 op_amp
 id|regs
 )paren

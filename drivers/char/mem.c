@@ -118,6 +118,10 @@ suffix:semicolon
 r_int
 id|read
 suffix:semicolon
+id|p
+op_add_assign
+id|PAGE_OFFSET
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -166,6 +170,7 @@ id|read
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if defined(__i386__)&t;&t;/* we don&squot;t have page 0 mapped on x86.. */
 r_while
 c_loop
 (paren
@@ -195,6 +200,7 @@ id|read
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
 id|memcpy_tofs
 c_func
 (paren
@@ -255,6 +261,10 @@ suffix:semicolon
 r_int
 id|written
 suffix:semicolon
+id|p
+op_add_assign
+id|PAGE_OFFSET
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -303,9 +313,12 @@ id|written
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if defined(__i386__)&t;&t;/* we don&squot;t have page 0 mapped on x86.. */
 r_while
 c_loop
 (paren
+id|PAGE_OFFSET
+op_plus
 id|p
 template_param
 l_int|0
@@ -325,6 +338,7 @@ id|written
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
 id|memcpy_fromfs
 c_func
 (paren
@@ -955,7 +969,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The memory devices use the full 32 bits of the offset, and so we cannot&n; * check against negative addresses: they are ok. The return value is weird,&n; * though, in that case (0).&n; *&n; * also note that seeking relative to the &quot;end of file&quot; isn&squot;t supported:&n; * it has no meaning, so it returns -EINVAL.&n; */
+multiline_comment|/*&n; * The memory devices use the full 32/64 bits of the offset, and so we cannot&n; * check against negative addresses: they are ok. The return value is weird,&n; * though, in that case (0).&n; *&n; * also note that seeking relative to the &quot;end of file&quot; isn&squot;t supported:&n; * it has no meaning, so it returns -EINVAL.&n; */
 DECL|function|memory_lseek
 r_static
 r_int

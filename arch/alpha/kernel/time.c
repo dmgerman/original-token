@@ -22,14 +22,10 @@ r_int
 suffix:semicolon
 multiline_comment|/*&n; * timer_interrupt() needs to keep up the real-time clock,&n; * as well as call the &quot;do_timer()&quot; routine every clocktick&n; */
 DECL|function|timer_interrupt
-r_static
 r_void
 id|timer_interrupt
 c_func
 (paren
-r_int
-id|irq
-comma
 r_struct
 id|pt_regs
 op_star
@@ -469,29 +465,6 @@ suffix:semicolon
 id|xtime.tv_usec
 op_assign
 l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|TIMER_IRQ
-comma
-id|timer_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;timer&quot;
-)paren
-op_ne
-l_int|0
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;Could not allocate timer IRQ!&quot;
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We could get better timer accuracy by using the alpha&n; * time counters or something.  Now this is limited to&n; * the HZ clock frequency.&n; */

@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_SCHED_H
 DECL|macro|_LINUX_SCHED_H
 mdefine_line|#define _LINUX_SCHED_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 macro_line|#include &lt;asm/param.h&gt;&t;/* for HZ */
 r_extern
@@ -19,6 +20,7 @@ macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 multiline_comment|/*&n; * cloning flags:&n; */
 DECL|macro|CSIGNAL
 mdefine_line|#define CSIGNAL&t;&t;0x000000ff&t;/* signal mask to be sent at exit */
@@ -652,6 +654,17 @@ id|signal_struct
 op_star
 id|sig
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+DECL|member|processor
+r_int
+id|processor
+suffix:semicolon
+DECL|member|lock_depth
+r_int
+id|lock_depth
+suffix:semicolon
+multiline_comment|/* Lock depth. We can context swithc in and out of holding a syscall kernel lock... */
+macro_line|#endif&t;
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Per process flags&n; */
@@ -666,6 +679,8 @@ DECL|macro|PF_STARTING
 mdefine_line|#define PF_STARTING&t;0x00000100&t;/* being created */
 DECL|macro|PF_EXITING
 mdefine_line|#define PF_EXITING&t;0x00000200&t;/* getting shut down */
+DECL|macro|PF_USEDFPU
+mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* Process used the FPU this quantum (SMP only) */
 multiline_comment|/*&n; * Limit the stack by to some sane default: root can always&n; * increase this limit if needed..  8MB seems reasonable.&n; */
 DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)
@@ -701,8 +716,14 @@ r_extern
 r_struct
 id|task_struct
 op_star
-id|current
+id|current_set
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
+multiline_comment|/*&n; *&t;On a single processor system this comes out as current_set[0] when cpp&n; *&t;has finished with it, which gcc will optimise away.&n; */
+DECL|macro|current
+mdefine_line|#define current (current_set[smp_processor_id()])&t;/* Current on this processor */
 r_extern
 r_int
 r_int

@@ -292,6 +292,10 @@ DECL|macro|__NR_flock
 mdefine_line|#define __NR_flock&t;&t;143
 DECL|macro|__NR_msync
 mdefine_line|#define __NR_msync&t;&t;144
+DECL|macro|__NR_readv
+mdefine_line|#define __NR_readv&t;&t;145
+DECL|macro|__NR_writev
+mdefine_line|#define __NR_writev&t;&t;146
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}

@@ -3154,7 +3154,11 @@ suffix:semicolon
 id|tty-&gt;flags
 op_and_assign
 op_complement
+(paren
+l_int|1
+op_lshift
 id|TTY_DO_WRITE_WAKEUP
+)paren
 suffix:semicolon
 id|ppp_output_done
 c_func

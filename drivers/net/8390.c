@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;&n;  */
 DECL|variable|version
 r_static
 r_const
@@ -32,13 +32,15 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;8390.h&quot;
-multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;int block_input(struct device *dev, int count, char *buf, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into BUF.  Start reading from&n;&t;&t;RING_OFFSET, the address as the 8390 sees it.  The first read will&n;&t;&t;always be the 4 byte, page aligned 8390 header.  *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;*/
+multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;void get_8390_hdr(struct device *dev, struct e8390_hdr *hdr, int ring_page)&n;&t;&t;Read the 4 byte, page aligned 8390 header. *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;&t;void block_input(struct device *dev, int count, struct sk_buff *skb, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into the skb data area. Start &n;&t;&t;reading from RING_OFFSET, the address as the 8390 sees it.  This will always&n;&t;&t;follow the read of the 8390 header. &n;*/
 DECL|macro|ei_reset_8390
 mdefine_line|#define ei_reset_8390 (ei_local-&gt;reset_8390)
 DECL|macro|ei_block_output
 mdefine_line|#define ei_block_output (ei_local-&gt;block_output)
 DECL|macro|ei_block_input
 mdefine_line|#define ei_block_input (ei_local-&gt;block_input)
+DECL|macro|ei_get_8390_hdr
+mdefine_line|#define ei_get_8390_hdr (ei_local-&gt;get_8390_hdr)
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifdef EI_DEBUG
 DECL|variable|ei_debug
@@ -354,57 +356,50 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: transmit timed out, TX status %#2x, ISR %#2x.&bslash;n&quot;
+l_string|&quot;%s: Tx timed out, %s TSR=%#2x, ISR=%#2x, t=%d.&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+(paren
+id|txsr
+op_amp
+id|ENTSR_ABT
+)paren
+ques
+c_cond
+l_string|&quot;excess collisions.&quot;
+suffix:colon
+(paren
+id|isr
+)paren
+ques
+c_cond
+l_string|&quot;lost interrupt?&quot;
+suffix:colon
+l_string|&quot;cable problem?&quot;
 comma
 id|txsr
 comma
 id|isr
+comma
+id|tickssofar
 )paren
 suffix:semicolon
-multiline_comment|/* Does the 8390 thinks it has posted an interrupt? */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|isr
+op_logical_and
+op_logical_neg
+id|ei_local-&gt;stat.tx_packets
 )paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: Possible IRQ conflict on IRQ%d?&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-r_else
 (brace
 multiline_comment|/* The 8390 probably hasn&squot;t gotten on the cable yet. */
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: Possible network cable problem?&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ei_local-&gt;stat.tx_packets
-op_eq
-l_int|0
-)paren
-(brace
 id|ei_local-&gt;interface_num
 op_xor_assign
 l_int|1
 suffix:semicolon
-)brace
 multiline_comment|/* Try a different xcvr.  */
 )brace
 multiline_comment|/* Try to restart the card.  Perhaps the user has fixed something. */
@@ -1754,24 +1749,15 @@ id|this_frame
 op_lshift
 l_int|8
 suffix:semicolon
-id|ei_block_input
+id|ei_get_8390_hdr
 c_func
 (paren
 id|dev
 comma
-r_sizeof
-(paren
-id|rx_frame
-)paren
-comma
-(paren
-r_char
-op_star
-)paren
 op_amp
 id|rx_frame
 comma
-id|current_offset
+id|this_frame
 )paren
 suffix:semicolon
 id|pkt_len
@@ -1780,7 +1766,8 @@ id|rx_frame.count
 op_minus
 r_sizeof
 (paren
-id|rx_frame
+r_struct
+id|e8390_pkt_hdr
 )paren
 suffix:semicolon
 id|next_frame
@@ -1955,13 +1942,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|ei_block_input
-c_func
-(paren
-id|dev
-comma
-id|pkt_len
-comma
 id|skb_put
 c_func
 (paren
@@ -1969,6 +1949,16 @@ id|skb
 comma
 id|pkt_len
 )paren
+suffix:semicolon
+multiline_comment|/* Make room */
+id|ei_block_input
+c_func
+(paren
+id|dev
+comma
+id|pkt_len
+comma
+id|skb
 comma
 id|current_offset
 op_plus
@@ -2206,7 +2196,11 @@ id|jiffies
 op_minus
 id|reset_start_time
 OG
-l_int|1
+l_int|2
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 (brace
 id|printk
@@ -2383,6 +2377,11 @@ c_cond
 id|num_addrs
 OG
 l_int|0
+op_logical_or
+id|num_addrs
+op_eq
+op_minus
+l_int|2
 )paren
 (brace
 multiline_comment|/* The multicast-accept list is initialized to accept-all, and we&n;&t;&t;   rely on higher-level filtering for now. */

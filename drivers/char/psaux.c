@@ -1747,13 +1747,6 @@ id|kbd_read_mask
 op_assign
 id|AUX_OBUF_FULL
 suffix:semicolon
-id|mouse_register
-c_func
-(paren
-op_amp
-id|psaux_mouse
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -1769,6 +1762,13 @@ suffix:semicolon
 multiline_comment|/* No mouse at all */
 macro_line|#endif
 )brace
+id|mouse_register
+c_func
+(paren
+op_amp
+id|psaux_mouse
+)paren
+suffix:semicolon
 id|queue
 op_assign
 (paren

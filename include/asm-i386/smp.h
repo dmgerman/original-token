@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASM_SMP_H
 DECL|macro|__ASM_SMP_H
 mdefine_line|#define __ASM_SMP_H
+macro_line|#ifdef CONFIG_SMP
 macro_line|#ifndef ASSEMBLY
 macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -450,7 +451,7 @@ r_struct
 id|cpuinfo_x86
 id|cpu_data
 (braket
-id|NR_PROCS
+id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Private routines/data&n; */
@@ -489,7 +490,7 @@ r_char
 op_star
 id|kernel_stacks
 (braket
-id|NR_PROCS
+id|NR_CPUS
 )braket
 suffix:semicolon
 r_extern
@@ -694,5 +695,6 @@ suffix:semicolon
 macro_line|#endif /* !ASSEMBLY */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;&t;0xFF&t;&t;/* No processor magic marker */
+macro_line|#endif
 macro_line|#endif
 eof

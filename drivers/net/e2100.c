@@ -1,5 +1,5 @@
 multiline_comment|/* e2100.c: A Cabletron E2100 series ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993-1994 by Donald Becker.&n;&n;&t;Copyright 1994 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.  This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;This is a driver for the Cabletron E2100 series ethercards.&n;&n;&t;The Author may be reached as becker@cesdis.gsfc.nasa.gov, or&n;&t;C/O Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;The E2100 series ethercard is a fairly generic shared memory 8390&n;&t;implementation.  The only unusual aspect is the way the shared memory&n;&t;registers are set: first you do an inb() in what is normally the&n;&t;station address region, and the low three bits of next outb() *address*&n;&t;is used&t;as the write value for that register.  Either someone wasn&squot;t&n;&t;too used to dem bit en bites, or they were trying to obfuscate the&n;&t;programming&t;interface.&n;&n;&t;There is an additional complication when setting the window on the packet&n;&t;buffer.  You must first do a read into the packet buffer region with the&n;&t;low 8 address bits the address setting the page for the start of the packet&n;&t;buffer window, and then do the above operation.  See mem_on() for details.&n;&n;&t;One bug on the chip is that even a hard reset won&squot;t disable the memory&n;&t;window, usually resulting in a hung machine if mem_off() isn&squot;t called.&n;&t;If this happens, you must power down the machine for about 30 seconds.&n;*/
+multiline_comment|/*&n;&t;Written 1993-1994 by Donald Becker.&n;&n;&t;Copyright 1994 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.  This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;This is a driver for the Cabletron E2100 series ethercards.&n;&n;&t;The Author may be reached as becker@cesdis.gsfc.nasa.gov, or&n;&t;C/O Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;The E2100 series ethercard is a fairly generic shared memory 8390&n;&t;implementation.  The only unusual aspect is the way the shared memory&n;&t;registers are set: first you do an inb() in what is normally the&n;&t;station address region, and the low three bits of next outb() *address*&n;&t;is used&t;as the write value for that register.  Either someone wasn&squot;t&n;&t;too used to dem bit en bites, or they were trying to obfuscate the&n;&t;programming interface.&n;&n;&t;There is an additional complication when setting the window on the packet&n;&t;buffer.  You must first do a read into the packet buffer region with the&n;&t;low 8 address bits the address setting the page for the start of the packet&n;&t;buffer window, and then do the above operation.  See mem_on() for details.&n;&n;&t;One bug on the chip is that even a hard reset won&squot;t disable the memory&n;&t;window, usually resulting in a hung machine if mem_off() isn&squot;t called.&n;&t;If this happens, you must power down the machine for about 30 seconds.&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -21,6 +21,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
 DECL|variable|e21_probe_list
 r_static
@@ -200,7 +201,7 @@ id|dev
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|e21_block_input
 c_func
 (paren
@@ -212,9 +213,10 @@ comma
 r_int
 id|count
 comma
-r_char
+r_struct
+id|sk_buff
 op_star
-id|buf
+id|skb
 comma
 r_int
 id|ring_offset
@@ -241,6 +243,25 @@ id|buf
 comma
 r_const
 id|start_page
+)paren
+suffix:semicolon
+r_static
+r_void
+id|e21_get_8390_hdr
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|e8390_pkt_hdr
+op_star
+id|hdr
+comma
+r_int
+id|ring_page
 )paren
 suffix:semicolon
 r_static
@@ -852,6 +873,11 @@ op_assign
 op_amp
 id|e21_block_output
 suffix:semicolon
+id|ei_status.get_8390_hdr
+op_assign
+op_amp
+id|e21_get_8390_hdr
+suffix:semicolon
 id|dev-&gt;open
 op_assign
 op_amp
@@ -1100,9 +1126,77 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Grab the 8390 specific header. We put the 2k window so the header page&n;   appears at the start of the shared memory. */
+r_static
+r_void
+DECL|function|e21_get_8390_hdr
+id|e21_get_8390_hdr
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|e8390_pkt_hdr
+op_star
+id|hdr
+comma
+r_int
+id|ring_page
+)paren
+(brace
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_char
+op_star
+id|shared_mem
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|dev-&gt;mem_start
+suffix:semicolon
+id|mem_on
+c_func
+(paren
+id|ioaddr
+comma
+id|shared_mem
+comma
+id|ring_page
+)paren
+suffix:semicolon
+id|memcpy_fromio
+c_func
+(paren
+id|hdr
+comma
+id|shared_mem
+comma
+r_sizeof
+(paren
+r_struct
+id|e8390_pkt_hdr
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Turn off memory access: we would need to reprogram the window anyway. */
+id|mem_off
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*  Block input and output are easy on shared memory ethercards.&n;&t;The E21xx makes block_input() especially easy by wrapping the top&n;&t;ring buffer to the bottom automatically. */
 r_static
-r_int
+r_void
 DECL|function|e21_block_input
 id|e21_block_input
 c_func
@@ -1115,9 +1209,10 @@ comma
 r_int
 id|count
 comma
-r_char
+r_struct
+id|sk_buff
 op_star
-id|buf
+id|skb
 comma
 r_int
 id|ring_offset
@@ -1138,15 +1233,6 @@ op_star
 )paren
 id|dev-&gt;mem_start
 suffix:semicolon
-r_int
-id|start_page
-op_assign
-(paren
-id|ring_offset
-op_rshift
-l_int|8
-)paren
-suffix:semicolon
 id|mem_on
 c_func
 (paren
@@ -1154,46 +1240,20 @@ id|ioaddr
 comma
 id|shared_mem
 comma
-id|start_page
+(paren
+id|ring_offset
+op_rshift
+l_int|8
+)paren
 )paren
 suffix:semicolon
-multiline_comment|/* We&squot;ll always get a 4 byte header read first. */
-r_if
-c_cond
-(paren
-id|count
-op_eq
-l_int|4
-)paren
-(paren
-(paren
-r_int
-op_star
-)paren
-id|buf
-)paren
-(braket
-l_int|0
-)braket
-op_assign
-(paren
-(paren
-r_int
-op_star
-)paren
-id|shared_mem
-)paren
-(braket
-l_int|0
-)braket
-suffix:semicolon
-r_else
-id|memcpy
+multiline_comment|/* Packet is always in one chunk -- we can copy + cksum. */
+id|eth_io_copy_and_sum
 c_func
 (paren
-id|buf
+id|skb
 comma
-id|shared_mem
+id|dev-&gt;mem_start
 op_plus
 (paren
 id|ring_offset
@@ -1202,17 +1262,15 @@ l_int|0xff
 )paren
 comma
 id|count
+comma
+l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Turn off memory access: we would need to reprogram the window anyway. */
 id|mem_off
 c_func
 (paren
 id|ioaddr
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -1256,7 +1314,8 @@ op_star
 id|dev-&gt;mem_start
 suffix:semicolon
 multiline_comment|/* Set the shared memory window start by doing a read, with the low address&n;&t;   bits specifying the starting page. */
-op_star
+id|readb
+c_func
 (paren
 id|shared_mem
 op_plus
@@ -1273,13 +1332,9 @@ comma
 id|start_page
 )paren
 suffix:semicolon
-id|memcpy
+id|memcpy_toio
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|shared_mem
 comma
 id|buf

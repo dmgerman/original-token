@@ -140,6 +140,10 @@ DECL|macro|__NR_getrusage
 mdefine_line|#define __NR_getrusage&t;&t;117
 DECL|macro|__NR_getsockopt
 mdefine_line|#define __NR_getsockopt&t;&t;118
+DECL|macro|__NR_readv
+mdefine_line|#define __NR_readv&t;&t;120
+DECL|macro|__NR_writev
+mdefine_line|#define __NR_writev&t;&t;121
 DECL|macro|__NR_settimeofday
 mdefine_line|#define __NR_settimeofday&t;122
 DECL|macro|__NR_fchown
@@ -231,6 +235,8 @@ DECL|macro|__NR_reboot
 mdefine_line|#define __NR_reboot&t;&t;311
 DECL|macro|__NR_clone
 mdefine_line|#define __NR_clone&t;&t;312
+DECL|macro|__NR_uselib
+mdefine_line|#define __NR_uselib&t;&t;313
 macro_line|#ifdef __LIBRARY__
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

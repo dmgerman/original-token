@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Commented a couple of minor bits of surplus code&n; *&t;&t;Alan Cox&t;:&t;Undefining IP_FORWARD doesn&squot;t include the code&n; *&t;&t;&t;&t;&t;(just stops a compiler warning).&n; *&t;&t;Alan Cox&t;:&t;Frames with &gt;=MAX_ROUTE record routes, strict routes or loose routes&n; *&t;&t;&t;&t;&t;are junked rather than corrupting things.&n; *&t;&t;Alan Cox&t;:&t;Frames to bad broadcast subnets are dumped&n; *&t;&t;&t;&t;&t;We used to process them non broadcast and&n; *&t;&t;&t;&t;&t;boy could that cause havoc.&n; *&t;&t;Alan Cox&t;:&t;ip_forward sets the free flag on the&n; *&t;&t;&t;&t;&t;new frame it queues. Still crap because&n; *&t;&t;&t;&t;&t;it copies the frame but at least it&n; *&t;&t;&t;&t;&t;doesn&squot;t eat memory too.&n; *&t;&t;Alan Cox&t;:&t;Generic queue code and memory fixes.&n; *&t;&t;Fred Van Kempen :&t;IP fragment support (borrowed from NET2E)&n; *&t;&t;Gerhard Koerting:&t;Forward fragmented frames correctly.&n; *&t;&t;Gerhard Koerting: &t;Fixes to my fix of the above 8-).&n; *&t;&t;Gerhard Koerting:&t;IP interface addressing fix.&n; *&t;&t;Linus Torvalds&t;:&t;More robustness checks&n; *&t;&t;Alan Cox&t;:&t;Even more checks: Still not as robust as it ought to be&n; *&t;&t;Alan Cox&t;:&t;Save IP header pointer for later&n; *&t;&t;Alan Cox&t;:&t;ip option setting&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos/ip_ttl settings&n; *&t;&t;Alan Cox&t;:&t;Fragmentation bogosity removed&n; *&t;&t;&t;&t;&t;(Thanks to Mark.Bush@prg.ox.ac.uk)&n; *&t;&t;Dmitry Gorodchanin :&t;Send of a raw packet crash fix.&n; *&t;&t;Alan Cox&t;:&t;Silly ip bug when an overlength&n; *&t;&t;&t;&t;&t;fragment turns up. Now frees the&n; *&t;&t;&t;&t;&t;queue.&n; *&t;&t;Linus Torvalds/ :&t;Memory leakage on fragmentation&n; *&t;&t;Alan Cox&t;:&t;handling.&n; *&t;&t;Gerhard Koerting:&t;Forwarding uses IP priority hints&n; *&t;&t;Teemu Rantanen&t;:&t;Fragment problems.&n; *&t;&t;Alan Cox&t;:&t;General cleanup, comments and reformat&n; *&t;&t;Alan Cox&t;:&t;SNMP statistics&n; *&t;&t;Alan Cox&t;:&t;BSD address rule semantics. Also see&n; *&t;&t;&t;&t;&t;UDP as there is a nasty checksum issue&n; *&t;&t;&t;&t;&t;if you do things the wrong way.&n; *&t;&t;Alan Cox&t;:&t;Always defrag, moved IP_FORWARD to the config.in file&n; *&t;&t;Alan Cox&t;: &t;IP options adjust sk-&gt;priority.&n; *&t;&t;Pedro Roque&t;:&t;Fix mtu/length error in ip_forward.&n; *&t;&t;Alan Cox&t;:&t;Avoid ip_chk_addr when possible.&n; *&t;Richard Underwood&t;:&t;IP multicasting.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up multicast handlers.&n; *&t;&t;Alan Cox&t;:&t;RAW sockets demultiplex in the BSD style.&n; *&t;&t;Gunther Mayer&t;:&t;Fix the SNMP reporting typo&n; *&t;&t;Alan Cox&t;:&t;Always in group 224.0.0.1&n; *&t;Pauline Middelink&t;:&t;Fast ip_checksum update when forwarding&n; *&t;&t;&t;&t;&t;Masquerading support.&n; *&t;&t;Alan Cox&t;:&t;Multicast loopback error for 224.0.0.1&n; *&t;&t;Alan Cox&t;:&t;IP_MULTICAST_LOOP option.&n; *&t;&t;Alan Cox&t;:&t;Use notifiers.&n; *&t;&t;Bjorn Ekwall&t;:&t;Removed ip_csum (from slhc.c too)&n; *&t;&t;Bjorn Ekwall&t;:&t;Moved ip_fast_csum to ip.h (inline!)&n; *&t;&t;Stefan Becker   :       Send out ICMP HOST REDIRECT&n; *&t;Arnt Gulbrandsen&t;:&t;ip_build_xmit&n; *&t;&t;Alan Cox&t;:&t;Per socket routing cache&n; *&t;&t;Alan Cox&t;:&t;Fixed routing cache, added header cache.&n; *&t;&t;Alan Cox&t;:&t;Loopback didnt work right in original ip_build_xmit - fixed it.&n; *&t;&t;Alan Cox&t;:&t;Only send ICMP_REDIRECT if src/dest are the same net.&n; *&t;&t;Alan Cox&t;:&t;Incoming IP option handling.&n; *&t;&t;Alan Cox&t;:&t;Set saddr on raw output frames as per BSD.&n; *&t;&t;Alan Cox&t;:&t;Stopped broadcast source route explosions.&n; *&t;&t;Alan Cox&t;:&t;Can disable source routing&n; *&t;&t;Takeshi Sone    :&t;Masquerading didn&squot;t work.&n; *&t;Dave Bonn,Alan Cox&t;:&t;Faster IP forwarding whenever possible.&n; *&t;&t;Alan Cox&t;:&t;Memory leaks, tramples, misc debugging.&n; *&t;&t;Alan Cox&t;:&t;Fixed multicast (by popular demand 8))&n; *&t;&t;Alan Cox&t;:&t;Fixed forwarding (by even more popular demand 8))&n; *&t;&t;Alan Cox&t;:&t;Fixed SNMP statistics [I think]&n; *&t;Gerhard Koerting&t;:&t;IP fragmentation forwarding fix&n; *&t;&t;Alan Cox&t;:&t;Device lock against page fault.&n; *&t;&t;Alan Cox&t;:&t;IP_HDRINCL facility.&n; *&t;Werner Almesberger&t;:&t;Zero fragment bug&n; *&t;&t;Alan Cox&t;:&t;RAW IP frame length bug&n; *&t;&t;Alan Cox&t;:&t;Outgoing firewall on build_xmit&n; *&n; *  &n; *&n; * To Fix:&n; *&t;&t;IP option processing is mostly not needed. ip_forward needs to know about routing rules&n; *&t;&t;and time stamp but that&squot;s about all. Use the route mtu field here too&n; *&t;&t;IP fragmentation wants rewriting cleanly. The RFC815 algorithm is much more efficient&n; *&t;&t;and could be made very efficient with the addition of some virtual memory hacks to permit&n; *&t;&t;the allocation of a buffer that can then be &squot;grown&squot; by twiddling page tables.&n; *&t;&t;Output fragmentation wants updating along with the buffer management to use a single &n; *&t;&t;interleaved copy algorithm so that fragmenting has a one copy overhead. Actual packet&n; *&t;&t;output should probably do its own fragmentation at the UDP/RAW layer. TCP shouldn&squot;t cause&n; *&t;&t;fragmentation anyway.&n; *&n; *&t;&t;FIXME: copy frag 0 iph to qp-&gt;iph&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Commented a couple of minor bits of surplus code&n; *&t;&t;Alan Cox&t;:&t;Undefining IP_FORWARD doesn&squot;t include the code&n; *&t;&t;&t;&t;&t;(just stops a compiler warning).&n; *&t;&t;Alan Cox&t;:&t;Frames with &gt;=MAX_ROUTE record routes, strict routes or loose routes&n; *&t;&t;&t;&t;&t;are junked rather than corrupting things.&n; *&t;&t;Alan Cox&t;:&t;Frames to bad broadcast subnets are dumped&n; *&t;&t;&t;&t;&t;We used to process them non broadcast and&n; *&t;&t;&t;&t;&t;boy could that cause havoc.&n; *&t;&t;Alan Cox&t;:&t;ip_forward sets the free flag on the&n; *&t;&t;&t;&t;&t;new frame it queues. Still crap because&n; *&t;&t;&t;&t;&t;it copies the frame but at least it&n; *&t;&t;&t;&t;&t;doesn&squot;t eat memory too.&n; *&t;&t;Alan Cox&t;:&t;Generic queue code and memory fixes.&n; *&t;&t;Fred Van Kempen :&t;IP fragment support (borrowed from NET2E)&n; *&t;&t;Gerhard Koerting:&t;Forward fragmented frames correctly.&n; *&t;&t;Gerhard Koerting: &t;Fixes to my fix of the above 8-).&n; *&t;&t;Gerhard Koerting:&t;IP interface addressing fix.&n; *&t;&t;Linus Torvalds&t;:&t;More robustness checks&n; *&t;&t;Alan Cox&t;:&t;Even more checks: Still not as robust as it ought to be&n; *&t;&t;Alan Cox&t;:&t;Save IP header pointer for later&n; *&t;&t;Alan Cox&t;:&t;ip option setting&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos/ip_ttl settings&n; *&t;&t;Alan Cox&t;:&t;Fragmentation bogosity removed&n; *&t;&t;&t;&t;&t;(Thanks to Mark.Bush@prg.ox.ac.uk)&n; *&t;&t;Dmitry Gorodchanin :&t;Send of a raw packet crash fix.&n; *&t;&t;Alan Cox&t;:&t;Silly ip bug when an overlength&n; *&t;&t;&t;&t;&t;fragment turns up. Now frees the&n; *&t;&t;&t;&t;&t;queue.&n; *&t;&t;Linus Torvalds/ :&t;Memory leakage on fragmentation&n; *&t;&t;Alan Cox&t;:&t;handling.&n; *&t;&t;Gerhard Koerting:&t;Forwarding uses IP priority hints&n; *&t;&t;Teemu Rantanen&t;:&t;Fragment problems.&n; *&t;&t;Alan Cox&t;:&t;General cleanup, comments and reformat&n; *&t;&t;Alan Cox&t;:&t;SNMP statistics&n; *&t;&t;Alan Cox&t;:&t;BSD address rule semantics. Also see&n; *&t;&t;&t;&t;&t;UDP as there is a nasty checksum issue&n; *&t;&t;&t;&t;&t;if you do things the wrong way.&n; *&t;&t;Alan Cox&t;:&t;Always defrag, moved IP_FORWARD to the config.in file&n; *&t;&t;Alan Cox&t;: &t;IP options adjust sk-&gt;priority.&n; *&t;&t;Pedro Roque&t;:&t;Fix mtu/length error in ip_forward.&n; *&t;&t;Alan Cox&t;:&t;Avoid ip_chk_addr when possible.&n; *&t;Richard Underwood&t;:&t;IP multicasting.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up multicast handlers.&n; *&t;&t;Alan Cox&t;:&t;RAW sockets demultiplex in the BSD style.&n; *&t;&t;Gunther Mayer&t;:&t;Fix the SNMP reporting typo&n; *&t;&t;Alan Cox&t;:&t;Always in group 224.0.0.1&n; *&t;Pauline Middelink&t;:&t;Fast ip_checksum update when forwarding&n; *&t;&t;&t;&t;&t;Masquerading support.&n; *&t;&t;Alan Cox&t;:&t;Multicast loopback error for 224.0.0.1&n; *&t;&t;Alan Cox&t;:&t;IP_MULTICAST_LOOP option.&n; *&t;&t;Alan Cox&t;:&t;Use notifiers.&n; *&t;&t;Bjorn Ekwall&t;:&t;Removed ip_csum (from slhc.c too)&n; *&t;&t;Bjorn Ekwall&t;:&t;Moved ip_fast_csum to ip.h (inline!)&n; *&t;&t;Stefan Becker   :       Send out ICMP HOST REDIRECT&n; *&t;Arnt Gulbrandsen&t;:&t;ip_build_xmit&n; *&t;&t;Alan Cox&t;:&t;Per socket routing cache&n; *&t;&t;Alan Cox&t;:&t;Fixed routing cache, added header cache.&n; *&t;&t;Alan Cox&t;:&t;Loopback didnt work right in original ip_build_xmit - fixed it.&n; *&t;&t;Alan Cox&t;:&t;Only send ICMP_REDIRECT if src/dest are the same net.&n; *&t;&t;Alan Cox&t;:&t;Incoming IP option handling.&n; *&t;&t;Alan Cox&t;:&t;Set saddr on raw output frames as per BSD.&n; *&t;&t;Alan Cox&t;:&t;Stopped broadcast source route explosions.&n; *&t;&t;Alan Cox&t;:&t;Can disable source routing&n; *&t;&t;Takeshi Sone    :&t;Masquerading didn&squot;t work.&n; *&t;Dave Bonn,Alan Cox&t;:&t;Faster IP forwarding whenever possible.&n; *&t;&t;Alan Cox&t;:&t;Memory leaks, tramples, misc debugging.&n; *&t;&t;Alan Cox&t;:&t;Fixed multicast (by popular demand 8))&n; *&t;&t;Alan Cox&t;:&t;Fixed forwarding (by even more popular demand 8))&n; *&t;&t;Alan Cox&t;:&t;Fixed SNMP statistics [I think]&n; *&t;Gerhard Koerting&t;:&t;IP fragmentation forwarding fix&n; *&t;&t;Alan Cox&t;:&t;Device lock against page fault.&n; *&t;&t;Alan Cox&t;:&t;IP_HDRINCL facility.&n; *&t;Werner Almesberger&t;:&t;Zero fragment bug&n; *&t;&t;Alan Cox&t;:&t;RAW IP frame length bug&n; *&t;&t;Alan Cox&t;:&t;Outgoing firewall on build_xmit&n; *&t;&t;A.N.Kuznetsov&t;:&t;IP_OPTIONS support throughout the kernel&n; *&t;&t;Alan Cox&t;:&t;Multicast routing hooks&n; *&n; *  &n; *&n; * To Fix:&n; *&t;&t;IP option processing is mostly not needed. ip_forward needs to know about routing rules&n; *&t;&t;and time stamp but that&squot;s about all. Use the route mtu field here too&n; *&t;&t;IP fragmentation wants rewriting cleanly. The RFC815 algorithm is much more efficient&n; *&t;&t;and could be made very efficient with the addition of some virtual memory hacks to permit&n; *&t;&t;the allocation of a buffer that can then be &squot;grown&squot; by twiddling page tables.&n; *&t;&t;Output fragmentation wants updating along with the buffer management to use a single &n; *&t;&t;interleaved copy algorithm so that fragmenting has a one copy overhead. Actual packet&n; *&t;&t;output should probably do its own fragmentation at the UDP/RAW layer. TCP shouldn&squot;t cause&n; *&t;&t;fragmentation anyway.&n; *&n; *&t;&t;FIXME: copy frag 0 iph to qp-&gt;iph&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -5174,6 +5174,167 @@ op_increment
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IP_FORWARD
+macro_line|#ifdef CONFIG_IP_MROUTE
+multiline_comment|/*&n; * &t;Encapsulate a packet by attaching a valid IPIP header to it.&n; *&t;This avoids tunnel drivers and other mess and gives us the speed so&n; *&t;important for multicast video.&n; */
+DECL|function|ip_encap
+r_static
+r_void
+id|ip_encap
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|len
+comma
+r_struct
+id|device
+op_star
+id|out
+comma
+id|__u32
+id|daddr
+)paren
+(brace
+multiline_comment|/*&n;&t; *&t;There is space for the IPIP header and MAC left.&n;&t; *&n;&t; *&t;Firstly push down and install the IPIP header.&n;&t; */
+r_struct
+id|iphdr
+op_star
+id|iph
+op_assign
+(paren
+r_struct
+id|iphdr
+op_star
+)paren
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|65515
+)paren
+(brace
+id|len
+op_assign
+l_int|65515
+suffix:semicolon
+)brace
+id|iph-&gt;version
+op_assign
+l_int|4
+suffix:semicolon
+id|iph-&gt;tos
+op_assign
+id|skb-&gt;ip_hdr-&gt;tos
+suffix:semicolon
+id|iph-&gt;ttl
+op_assign
+id|skb-&gt;ip_hdr-&gt;ttl
+suffix:semicolon
+id|iph-&gt;frag_off
+op_assign
+l_int|0
+suffix:semicolon
+id|iph-&gt;daddr
+op_assign
+id|daddr
+suffix:semicolon
+id|iph-&gt;saddr
+op_assign
+id|out-&gt;pa_addr
+suffix:semicolon
+id|iph-&gt;protocol
+op_assign
+id|IPPROTO_IPIP
+suffix:semicolon
+id|iph-&gt;ihl
+op_assign
+l_int|5
+suffix:semicolon
+id|iph-&gt;tot_len
+op_assign
+id|htons
+c_func
+(paren
+id|skb-&gt;len
+)paren
+suffix:semicolon
+id|iph-&gt;id
+op_assign
+id|htons
+c_func
+(paren
+id|ip_id_count
+op_increment
+)paren
+suffix:semicolon
+id|ip_send_check
+c_func
+(paren
+id|iph
+)paren
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|out
+suffix:semicolon
+id|skb-&gt;arp
+op_assign
+l_int|1
+suffix:semicolon
+id|skb-&gt;raddr
+op_assign
+id|daddr
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Now add the physical header (driver will push it down).&n;&t; */
+r_if
+c_cond
+(paren
+id|out-&gt;hard_header
+op_logical_and
+id|out
+op_member_access_from_pointer
+id|hard_header
+c_func
+(paren
+id|skb
+comma
+id|out
+comma
+id|ETH_P_IP
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+id|len
+)paren
+OL
+l_int|0
+)paren
+id|skb-&gt;arp
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Read to queue for transmission.&n;&t; */
+)brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Forward an IP datagram to its next destination.&n; */
 DECL|function|ip_forward
 r_int
@@ -5260,7 +5421,13 @@ op_assign
 id|skb
 suffix:semicolon
 multiline_comment|/* So we can remember if the masquerader did some swaps */
-macro_line|#endif&t;
+macro_line|#endif
+r_int
+id|encap
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Encap length */
 multiline_comment|/* &n;&t; *&t;See if we are allowed to forward this.&n; &t; *&t;Note: demasqueraded fragments are always &squot;back&squot;warded.&n;&t; */
 r_if
 c_cond
@@ -5402,7 +5569,20 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * OK, the packet is still valid.  Fetch its destination address,&n;&t; * and give it to the IP sender for further processing.&n;&t; */
+macro_line|#ifdef CONFIG_IP_MROUTE
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|is_frag
+op_amp
+l_int|8
+)paren
+)paren
+(brace
+macro_line|#endif&t;
+multiline_comment|/*&n;&t;&t; * OK, the packet is still valid.  Fetch its destination address,&n;&t;&t; * and give it to the IP sender for further processing.&n;&t;&t; */
 id|rt
 op_assign
 id|ip_rt_route
@@ -5423,7 +5603,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Tell the sender its packet cannot be delivered. Again&n;&t;&t; *&t;ICMP is screened later.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Tell the sender its packet cannot be delivered. Again&n;&t;&t;&t; *&t;ICMP is screened later.&n;&t;&t;&t; */
 id|icmp_send
 c_func
 (paren
@@ -5443,7 +5623,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Gosh.  Not only is the packet valid; we even know how to&n;&t; * forward it onto its final destination.  Can we say this&n;&t; * is being plain lucky?&n;&t; * If the router told us that there is no GW, use the dest.&n;&t; * IP address itself- we seem to be connected directly...&n;&t; */
+multiline_comment|/*&n;&t;&t; * Gosh.  Not only is the packet valid; we even know how to&n;&t;&t; * forward it onto its final destination.  Can we say this&n;&t;&t; * is being plain lucky?&n;&t;&t; * If the router told us that there is no GW, use the dest.&n;&t;&t; * IP address itself- we seem to be connected directly...&n;&t;&t; */
 id|raddr
 op_assign
 id|rt-&gt;rt_gateway
@@ -5456,7 +5636,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Strict routing permits no gatewaying&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Strict routing permits no gatewaying&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5482,72 +5662,19 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;There is a gateway so find the correct route for it.&n;&t;&t; *&t;Gateways cannot in turn be gatewayed.&n;&t;&t; */
-macro_line|#if 0
-id|rt
-op_assign
-id|ip_rt_route
-c_func
-(paren
-id|raddr
-comma
-l_int|NULL
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rt
-op_eq
-l_int|NULL
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Tell the sender its packet cannot be delivered...&n;&t;&t;&t; */
-id|icmp_send
-c_func
-(paren
-id|skb
-comma
-id|ICMP_DEST_UNREACH
-comma
-id|ICMP_HOST_UNREACH
-comma
-l_int|0
-comma
-id|dev
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|rt-&gt;rt_gateway
-op_ne
-l_int|0
-)paren
-id|raddr
-op_assign
-id|rt-&gt;rt_gateway
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n;&t;&t;&t; *&t;There is a gateway so find the correct route for it.&n;&t;&t;&t; *&t;Gateways cannot in turn be gatewayed.&n;&t;&t;&t; */
 )brace
 r_else
 id|raddr
 op_assign
 id|target_addr
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Having picked a route we can now send the frame out.&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Having picked a route we can now send the frame out.&n;&t;&t; */
 id|dev2
 op_assign
 id|rt-&gt;rt_dev
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;In IP you never have to forward a frame on the interface that it &n;&t; *&t;arrived upon. We now generate an ICMP HOST REDIRECT giving the route&n;&t; *&t;we calculated.&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;In IP you never have to forward a frame on the interface that it &n;&t;&t; *&t;arrived upon. We now generate an ICMP HOST REDIRECT giving the route&n;&t;&t; *&t;we calculated.&n;&t;&t; */
 macro_line|#ifndef CONFIG_IP_NO_ICMP_REDIRECT
 r_if
 c_cond
@@ -5590,7 +5717,36 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MROUTE
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t; *&t;Multicast route forward. Routing is already done&n;&t;&t; */
+id|dev2
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
+id|raddr
+op_assign
+id|skb-&gt;raddr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|is_frag
+op_amp
+l_int|16
+)paren
+(brace
+multiline_comment|/* VIFF_TUNNEL mode */
+id|encap
+op_assign
+l_int|20
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif&t;
 multiline_comment|/*&n;&t; * We now may allocate a new buffer, and copy the datagram into it.&n;&t; * If the indicated interface is up and running, kick it.&n;&t; */
 r_if
 c_cond
@@ -5636,6 +5792,8 @@ r_if
 c_cond
 (paren
 id|skb-&gt;len
+op_plus
+id|encap
 OG
 id|dev2-&gt;mtu
 op_logical_and
@@ -5672,6 +5830,38 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_IP_MROUTE
+r_if
+c_cond
+(paren
+id|skb_headroom
+c_func
+(paren
+id|skb
+)paren
+op_minus
+id|encap
+OL
+id|dev2-&gt;hard_header_len
+)paren
+(brace
+id|skb2
+op_assign
+id|alloc_skb
+c_func
+(paren
+id|dev2-&gt;hard_header_len
+op_plus
+id|skb-&gt;len
+op_plus
+id|encap
+op_plus
+l_int|15
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -5698,12 +5888,7 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb2
-)paren
-suffix:semicolon
+macro_line|#endif&t;&t;
 multiline_comment|/*&n;&t;&t;&t; *&t;This is rare and since IP is tolerant of network failures&n;&t;&t;&t; *&t;quite harmless.&n;&t;&t;&t; */
 r_if
 c_cond
@@ -5728,7 +5913,55 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|IS_SKB
+c_func
+(paren
+id|skb2
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Add the physical headers.&n;&t;&t;&t; */
+macro_line|#ifdef CONFIG_IP_MROUTE
+r_if
+c_cond
+(paren
+id|is_frag
+op_amp
+l_int|16
+)paren
+(brace
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+(paren
+id|encap
+op_plus
+id|dev-&gt;hard_header_len
+op_plus
+l_int|15
+)paren
+op_amp
+op_complement
+l_int|15
+)paren
+suffix:semicolon
+multiline_comment|/* 16 byte aligned IP headers are good */
+id|ip_encap
+c_func
+(paren
+id|skb2
+comma
+id|skb-&gt;len
+comma
+id|dev2
+comma
+id|raddr
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif&t;&t;&t;
 id|ip_send
 c_func
 (paren
@@ -5804,6 +6037,31 @@ id|skb2-&gt;dev
 op_assign
 id|dev2
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_MROUTE
+r_if
+c_cond
+(paren
+id|is_frag
+op_amp
+l_int|16
+)paren
+(brace
+id|ip_encap
+c_func
+(paren
+id|skb
+comma
+id|skb-&gt;len
+comma
+id|dev2
+comma
+id|raddr
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+macro_line|#endif
 id|skb-&gt;arp
 op_assign
 l_int|1
@@ -5848,6 +6106,9 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_IP_MROUTE
+)brace
+macro_line|#endif&t;&t;&t;
 id|ip_statistics.IpForwDatagrams
 op_increment
 suffix:semicolon
@@ -6326,6 +6587,13 @@ r_int
 id|err
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#ifdef CONFIG_IP_MROUTE
+r_int
+id|mroute_pkt
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif&t;
 macro_line|#ifdef CONFIG_NET_IPV6
 multiline_comment|/* &n;&t; *&t;Intercept IPv6 frames. We dump ST-II and invalid types just below..&n;&t; */
 r_if
@@ -6773,7 +7041,7 @@ op_ne
 id|IS_MYADDR
 )paren
 (brace
-multiline_comment|/* ANK: should we implement weak tunneling of multicasts?&n; *&t;Are they obsolete? DVMRP specs (RFC-1075) is old enough...&n; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;ANK: should we implement weak tunneling of multicasts?&n;&t;&t;&t;&t;&t; *&t;Are they obsolete? DVMRP specs (RFC-1075) is old enough...&n;&t;&t;&t;&t;&t; *&t;[They are obsolete]&n;&t;&t;&t;&t;&t; */
 id|kfree_skb
 c_func
 (paren
@@ -7047,6 +7315,38 @@ id|iph-&gt;ihl
 op_star
 l_int|4
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_MROUTE&t;&t;
+multiline_comment|/*&n;&t;&t; *&t;Check the state on multicast routing (multicast and not 224.0.0.z)&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|brd
+op_eq
+id|IS_MULTICAST
+op_logical_and
+(paren
+id|iph-&gt;daddr
+op_amp
+id|htonl
+c_func
+(paren
+l_int|0xFFFFFF00
+)paren
+)paren
+op_ne
+id|htonl
+c_func
+(paren
+l_int|0xE0000000
+)paren
+)paren
+(brace
+id|mroute_pkt
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; *&t;Deliver to raw sockets. This is fun as to avoid copies we want to make no surplus copies.&n;&t;&t; *&n;&t;&t; *&t;RFC 1122: SHOULD pass TOS value up to the transport layer.&n;&t;&t; */
 id|hash
 op_assign
@@ -7240,6 +7540,17 @@ id|iph-&gt;protocol
 r_continue
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;* &t;See if we need to make a copy of it.  This will&n;&t;&t;&t;* &t;only be set if more than one protocol wants it.&n;&t;&t;&t;* &t;and then not for the last one. If there is a pending&n;&t;&t;&t;*&t;raw delivery wait for that&n;&t;&t;&t;*/
+macro_line|#ifdef CONFIG_IP_MROUTE
+r_if
+c_cond
+(paren
+id|ipprot-&gt;copy
+op_logical_or
+id|raw_sk
+op_logical_or
+id|mroute_pkt
+)paren
+macro_line|#else&t;
 r_if
 c_cond
 (paren
@@ -7247,6 +7558,7 @@ id|ipprot-&gt;copy
 op_logical_or
 id|raw_sk
 )paren
+macro_line|#endif&t;&t;&t;
 (brace
 id|skb2
 op_assign
@@ -7318,6 +7630,72 @@ id|ipprot
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;All protocols checked.&n;&t;&t; *&t;If this packet was a broadcast, we may *not* reply to it, since that&n;&t;&t; *&t;causes (proven, grin) ARP storms and a leakage of memory (i.e. all&n;&t;&t; *&t;ICMP reply messages get queued up for transmission...)&n;&t;&t; */
+macro_line|#ifdef CONFIG_IP_MROUTE&t;&t; 
+multiline_comment|/*&n;&t;&t; *&t;Forward the last copy to the multicast router. If&n;&t;&t; *&t;there is a pending raw deliery however make a copy&n;&t;&t; *&t;and forward that.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|mroute_pkt
+)paren
+(brace
+id|flag
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|raw_sk
+op_eq
+l_int|NULL
+)paren
+(brace
+id|ipmr_forward
+c_func
+(paren
+id|skb
+comma
+id|is_frag
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb2
+op_assign
+id|skb_clone
+c_func
+(paren
+id|skb
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb2
+)paren
+(brace
+id|skb2-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
+id|ipmr_forward
+c_func
+(paren
+id|skb2
+comma
+id|is_frag
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren
@@ -7389,7 +7767,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Do any IP forwarding required.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Do any unicast IP forwarding required.&n;&t; */
 multiline_comment|/*&n;&t; *&t;Don&squot;t forward multicast or broadcast frames.&n;&t; */
 r_if
 c_cond
@@ -7733,34 +8111,10 @@ op_assign
 id|jiffies
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find the IP header and set the length. This is bad&n;&t; *&t;but once we get the skb data handling code in the&n;&t; *&t;hardware will push its header sensibly and we will&n;&t; *&t;set skb-&gt;ip_hdr to avoid this mess and the fixed&n;&t; *&t;header length problem&n;&t; */
-macro_line|#if 0
-id|ptr
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|ptr
-op_add_assign
-id|dev-&gt;hard_header_len
-suffix:semicolon
-id|iph
-op_assign
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-id|ptr
-suffix:semicolon
-id|skb-&gt;ip_hdr
-op_assign
-id|iph
-suffix:semicolon
-macro_line|#else
 id|iph
 op_assign
 id|skb-&gt;ip_hdr
 suffix:semicolon
-macro_line|#endif
 id|iph-&gt;tot_len
 op_assign
 id|ntohs

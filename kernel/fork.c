@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/kernel/fork.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *  &squot;fork.c&squot; contains the help-routines for the &squot;fork&squot; system call&n; * (see also system_call.s).&n; * Fork is rather simple, once you get the hang of it, but the memory&n; * management can be a bitch. See &squot;mm/mm.c&squot;: &squot;copy_page_tables()&squot;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,6 +10,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ldt.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -75,6 +77,12 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|smp_threads_ready
+)paren
+(brace
+r_if
+c_cond
+(paren
 (paren
 op_increment
 id|last_pid
@@ -86,6 +94,7 @@ id|last_pid
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 id|this_user_tasks
 op_assign
 l_int|0
@@ -108,6 +117,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|smp_threads_ready
+op_logical_and
+(paren
 id|p-&gt;pid
 op_eq
 id|last_pid
@@ -119,6 +131,7 @@ op_logical_or
 id|p-&gt;session
 op_eq
 id|last_pid
+)paren
 )paren
 r_goto
 id|repeat
@@ -1022,6 +1035,16 @@ id|p-&gt;cstime
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|p-&gt;processor
+op_assign
+id|NO_PROC_ID
+suffix:semicolon
+id|p-&gt;lock_depth
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|p-&gt;start_time
 op_assign
 id|jiffies

@@ -319,6 +319,20 @@ op_star
 id|sk
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ipmr_forward
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|is_frag
+)paren
+suffix:semicolon
 DECL|struct|vif_device
 r_struct
 id|vif_device
@@ -353,25 +367,25 @@ id|pkt_in
 comma
 id|pkt_out
 suffix:semicolon
-multiline_comment|/* Statistics */
+multiline_comment|/* Statistics &t;&t;&t;*/
 DECL|member|rate_limit
 r_int
 r_int
 id|rate_limit
 suffix:semicolon
-multiline_comment|/* Traffic shaping (NI) */
+multiline_comment|/* Traffic shaping (NI) &t;*/
 DECL|member|threshold
 r_int
 r_char
 id|threshold
 suffix:semicolon
-multiline_comment|/* TTL threshold */
+multiline_comment|/* TTL threshold &t;&t;*/
 DECL|member|flags
 r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* Control flags */
+multiline_comment|/* Control flags &t;&t;*/
 DECL|member|local
 DECL|member|remote
 r_int
@@ -380,9 +394,86 @@ id|local
 comma
 id|remote
 suffix:semicolon
-multiline_comment|/* Addresses (remote for tunnels) */
+multiline_comment|/* Addresses(remote for tunnels)*/
 )brace
 suffix:semicolon
+DECL|struct|mfc_cache
+r_struct
+id|mfc_cache
+(brace
+DECL|member|next
+r_struct
+id|mfc_cache
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* Next entry on cache line &t;*/
+DECL|member|mfc_mcastgrp
+id|__u32
+id|mfc_mcastgrp
+suffix:semicolon
+multiline_comment|/* Group the entry belongs to &t;*/
+DECL|member|mfc_origin
+id|__u32
+id|mfc_origin
+suffix:semicolon
+multiline_comment|/* Source of packet &t;&t;*/
+DECL|member|mfc_parent
+id|vifi_t
+id|mfc_parent
+suffix:semicolon
+multiline_comment|/* Source interface&t;&t;*/
+DECL|member|mfc_timer
+r_struct
+id|timer_list
+id|mfc_timer
+suffix:semicolon
+multiline_comment|/* Expiry timer&t;&t;&t;*/
+DECL|member|mfc_flags
+r_int
+id|mfc_flags
+suffix:semicolon
+multiline_comment|/* Flags on line&t;&t;*/
+DECL|member|mfc_unresolved
+r_struct
+id|sk_buff_head
+id|mfc_unresolved
+suffix:semicolon
+multiline_comment|/* Unresolved buffers&t;&t;*/
+DECL|member|mfc_queuelen
+r_int
+id|mfc_queuelen
+suffix:semicolon
+multiline_comment|/* Unresolved buffer counter&t;*/
+DECL|member|mfc_ttls
+r_int
+r_char
+id|mfc_ttls
+(braket
+id|MAXVIFS
+)braket
+suffix:semicolon
+multiline_comment|/* TTL thresholds&t;&t;*/
+)brace
+suffix:semicolon
+DECL|macro|MFC_QUEUED
+mdefine_line|#define MFC_QUEUED&t;&t;1
+DECL|macro|MFC_RESOLVED
+mdefine_line|#define MFC_RESOLVED&t;&t;2
+DECL|macro|MFC_LINES
+mdefine_line|#define MFC_LINES&t;&t;64
+macro_line|#ifdef __BIG_ENDIAN
+DECL|macro|MFC_HASH
+mdefine_line|#define MFC_HASH(a,b)&t;((((a)&gt;&gt;24)^((b)&gt;&gt;26))&amp;(MFC_LINES-1))
+macro_line|#else
+DECL|macro|MFC_HASH
+mdefine_line|#define MFC_HASH(a,b)&t;(((a)^((b)&gt;&gt;2))&amp;(MFC_LINES-1))
+macro_line|#endif&t;&t;
 macro_line|#endif
+multiline_comment|/*&n; *&t;Pseudo messages used by mrouted&n; */
+DECL|macro|IGMPMSG_NOCACHE
+mdefine_line|#define IGMPMSG_NOCACHE&t;&t;1&t;&t;/* Kernel cache fill request to mrouted */
+DECL|macro|IGMPMSG_WRONGVIF
+mdefine_line|#define IGMPMSG_WRONGVIF&t;2&t;&t;/* For PIM assert processing (unused) */
 macro_line|#endif
 eof

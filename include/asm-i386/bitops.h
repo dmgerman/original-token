@@ -3,6 +3,14 @@ DECL|macro|_I386_BITOPS_H
 mdefine_line|#define _I386_BITOPS_H
 multiline_comment|/*&n; * Copyright 1992, Linus Torvalds.&n; */
 multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bit operations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|LOCK_PREFIX
+mdefine_line|#define LOCK_PREFIX &quot;lock ; &quot;
+macro_line|#else
+DECL|macro|LOCK_PREFIX
+mdefine_line|#define LOCK_PREFIX &quot;&quot;
+macro_line|#endif
 multiline_comment|/*&n; * Some hacks to defeat gcc over-optimizations..&n; */
 DECL|struct|__dummy
 DECL|member|a
@@ -42,6 +50,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
+id|LOCK_PREFIX
 l_string|&quot;btsl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -86,6 +95,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
+id|LOCK_PREFIX
 l_string|&quot;btrl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -130,6 +140,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
+id|LOCK_PREFIX
 l_string|&quot;btcl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;

@@ -448,6 +448,10 @@ id|pos
 op_assign
 l_int|0
 suffix:semicolon
+id|scd
+op_assign
+l_int|NULL
+suffix:semicolon
 id|HBA_ptr
 op_assign
 id|first_HBA
@@ -809,9 +813,9 @@ c_func
 id|HBA_ptr
 )paren
 op_member_access_from_pointer
-id|bustype
+id|broken_INQUIRY
 op_eq
-id|IS_EISA
+id|TRUE
 )paren
 (brace
 r_if
@@ -819,7 +823,7 @@ c_cond
 (paren
 id|HBA_ptr-&gt;dma_channel
 op_eq
-l_int|0xff
+id|BUSMASTER
 )paren
 id|size
 op_assign
@@ -3190,6 +3194,7 @@ r_goto
 id|stop_output
 suffix:semicolon
 )brace
+macro_line|#if 0
 id|scd
 op_assign
 id|scsi_devices
@@ -3297,6 +3302,7 @@ op_assign
 id|scd-&gt;next
 suffix:semicolon
 )brace
+macro_line|#endif
 id|stop_output
 suffix:colon
 id|DBG

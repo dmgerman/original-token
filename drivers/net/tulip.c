@@ -2992,6 +2992,11 @@ c_cond
 id|num_addrs
 OG
 l_int|15
+op_logical_or
+id|num_addrs
+op_eq
+op_minus
+l_int|2
 )paren
 (brace
 multiline_comment|/* Too many to filter perfectly -- accept all multicasts. */

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *&t;linux/arch/i386/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; */
 multiline_comment|/*&n; * IRQ&squot;s are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -13,6 +14,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 DECL|macro|CR0_NE
 mdefine_line|#define CR0_NE 32
 DECL|variable|cache_21
@@ -336,6 +338,17 @@ l_int|12
 comma
 l_int|0x10
 )paren
+macro_line|#ifdef CONFIG_SMP
+id|BUILD_MSGIRQ
+c_func
+(paren
+id|SECOND
+comma
+l_int|13
+comma
+l_int|0x20
+)paren
+macro_line|#else
 id|BUILD_IRQ
 c_func
 (paren
@@ -345,6 +358,7 @@ l_int|13
 comma
 l_int|0x20
 )paren
+macro_line|#endif
 id|BUILD_IRQ
 c_func
 (paren
@@ -363,6 +377,13 @@ l_int|15
 comma
 l_int|0x80
 )paren
+macro_line|#ifdef CONFIG_SMP
+id|BUILD_RESCHEDIRQ
+c_func
+(paren
+l_int|16
+)paren
+macro_line|#endif
 multiline_comment|/*&n; * Pointers to the low-level handlers: first the general ones, then the&n; * fast ones, then the bad ones.&n; */
 DECL|variable|interrupt
 r_static
@@ -371,7 +392,7 @@ r_void
 op_star
 id|interrupt
 (braket
-l_int|16
+l_int|17
 )braket
 )paren
 (paren
@@ -410,6 +431,10 @@ comma
 id|IRQ14_interrupt
 comma
 id|IRQ15_interrupt
+macro_line|#ifdef CONFIG_SMP&t;
+comma
+id|IRQ16_interrupt
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|fast_interrupt
@@ -775,7 +800,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;%2d: %8d %c %s&bslash;n&quot;
+l_string|&quot;%3d: %8d %c %s&bslash;n&quot;
 comma
 id|i
 comma
@@ -799,6 +824,37 @@ id|action-&gt;name
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Linus - should you add NMI counts here ?????&n; */
+macro_line|#ifdef CONFIG_SMP
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;IPI: %8lu received&bslash;n&quot;
+comma
+id|ipi_count
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;LCK: %8lu spins&bslash;n&quot;
+comma
+id|smp_spins
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
 r_return
 id|len
 suffix:semicolon
@@ -828,6 +884,37 @@ id|irq
 op_plus
 id|irq_action
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+r_if
+c_cond
+(paren
+id|smp_threads_ready
+op_logical_and
+id|active_kernel_processor
+op_ne
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;IRQ %d: active processor set wrongly(%d not %d).&bslash;n&quot;
+comma
+id|irq
+comma
+id|active_kernel_processor
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|kstat.interrupts
 (braket
 id|irq
@@ -880,6 +967,42 @@ id|irq
 op_plus
 id|irq_action
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+multiline_comment|/* IRQ 13 is allowed - thats an invalidate */
+r_if
+c_cond
+(paren
+id|smp_threads_ready
+op_logical_and
+id|active_kernel_processor
+op_ne
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_logical_and
+id|irq
+op_ne
+l_int|13
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;fast_IRQ %d: active processor set wrongly(%d not %d).&bslash;n&quot;
+comma
+id|irq
+comma
+id|active_kernel_processor
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|kstat.interrupts
 (braket
 id|irq
@@ -1293,6 +1416,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_SMP
 multiline_comment|/*&n; * Note that on a 486, we don&squot;t want to do a SIGFPE on a irq13&n; * as the irq is unreliable, and exception 16 works correctly&n; * (ie as explained in the intel literature). On a 386, you&n; * can&squot;t use exception 16 due to bad IBM design, so we have to&n; * rely on the less exact irq13.&n; *&n; * Careful.. Not only is IRQ13 unreliable, but it is also&n; * leads to races. IBM designers who came up with it should&n; * be shot.&n; */
 DECL|function|math_error_irq
 r_static
@@ -1333,6 +1457,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|no_action
 r_static
 r_void
@@ -1658,6 +1783,26 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_static
+r_int
+r_char
+id|smptrap
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smptrap
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|smptrap
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/* set the clock to 100 Hz */
 id|outb_p
 c_func
@@ -1717,6 +1862,24 @@ id|i
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* This bit is a hack because we don&squot;t send timer messages to all processors yet */
+multiline_comment|/* It has to here .. it doesnt work if you put it down the bottom - assembler explodes 8) */
+macro_line|#ifdef CONFIG_SMP&t;
+id|set_intr_gate
+c_func
+(paren
+l_int|0x20
+op_plus
+id|i
+comma
+id|interrupt
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* IRQ &squot;16&squot; - IPI for rescheduling */
+macro_line|#endif&t;
 r_if
 c_cond
 (paren
@@ -1735,9 +1898,10 @@ l_string|&quot;cascade&quot;
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get IRQ2 for cascade&bslash;n&quot;
+l_string|&quot;Unable to get IRQ2 for cascade.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_SMP&t;&t;
 r_if
 c_cond
 (paren
@@ -1756,9 +1920,32 @@ l_string|&quot;math error&quot;
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get IRQ13 for math-error handler&bslash;n&quot;
+l_string|&quot;Unable to get IRQ13 for math-error handler.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+l_int|13
+comma
+id|smp_message_irq
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;IPI&quot;
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to get IRQ13 for IPI.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;
 id|request_region
 c_func
 (paren

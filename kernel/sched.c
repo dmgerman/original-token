@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -306,14 +307,14 @@ id|jiffies
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|current
+DECL|variable|current_set
 r_struct
 id|task_struct
 op_star
-id|current
-op_assign
-op_amp
-id|init_task
+id|current_set
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 DECL|variable|last_task_used_math
 r_struct
@@ -633,6 +634,35 @@ id|timeout
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP_DEBUG
+r_int
+id|proc
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|active_kernel_processor
+op_ne
+id|proc
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;active kernel processor set wrongly! %d not %d&bslash;n&quot;
+comma
+id|active_kernel_processor
+comma
+id|proc
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* check alarm, wake up any interruptible tasks that have got a signal */
 r_if
 c_cond
@@ -739,6 +769,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+multiline_comment|/*&n;&t; *&t;This is safe as we do not permit re-entry of schedule()&n;&t; */
+id|current-&gt;processor
+op_assign
+id|NO_PROC_ID
+suffix:semicolon
+macro_line|#endif&t;
 multiline_comment|/*&n; * Note! there may appear new tasks on the run-queue during this, as&n; * interrupts are enabled. However, they will be put on front of the&n; * list, so our list starting at &quot;p&quot; is essentially fixed.&n; */
 multiline_comment|/* this is the scheduler proper: */
 id|c
@@ -760,6 +797,24 @@ op_amp
 id|init_task
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP&t;
+multiline_comment|/* We are not permitted to run a task someone else is running */
+r_if
+c_cond
+(paren
+id|p-&gt;processor
+op_ne
+id|NO_PROC_ID
+)paren
+(brace
+id|p
+op_assign
+id|p-&gt;next_run
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren
@@ -804,6 +859,32 @@ op_plus
 id|p-&gt;priority
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SMP&t;
+multiline_comment|/*&n;&t; *&t;Context switching between two idle threads is pointless.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|current-&gt;pid
+op_logical_and
+op_logical_neg
+id|next-&gt;pid
+)paren
+(brace
+id|next
+op_assign
+id|current
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Allocate process to CPU&n;&t; */
+id|next-&gt;processor
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t; 
 r_if
 c_cond
 (paren
@@ -1771,6 +1852,18 @@ id|nr
 op_add_assign
 id|FIXED_1
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|nr
+op_sub_assign
+(paren
+id|smp_num_cpus
+op_minus
+l_int|1
+)paren
+op_star
+id|FIXED_1
+suffix:semicolon
+macro_line|#endif&t;&t;&t;
 r_return
 id|nr
 suffix:semicolon
@@ -2654,12 +2747,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current
-op_ne
-id|task
-(braket
-l_int|0
-)braket
+id|current-&gt;pid
 )paren
 (brace
 r_if
@@ -2714,12 +2802,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current
-op_ne
-id|task
-(braket
-l_int|0
-)braket
+id|current-&gt;pid
 )paren
 (brace
 id|kstat.cpu_system
@@ -2731,12 +2814,7 @@ c_cond
 (paren
 id|prof_buffer
 op_logical_and
-id|current
-op_ne
-id|task
-(braket
-l_int|0
-)braket
+id|current-&gt;pid
 )paren
 (brace
 r_extern
@@ -2934,12 +3012,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current
-op_ne
-id|task
-(braket
-l_int|0
-)braket
+id|current-&gt;pid
 op_logical_and
 l_int|0
 OG
@@ -3645,6 +3718,29 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/*&n;&t; *&t;We have to do a little magic to get the first&n;&t; *&t;process right in SMP mode.&n;&t; */
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current_set
+(braket
+id|cpu
+)braket
+op_assign
+op_amp
+id|init_task
+suffix:semicolon
+macro_line|#ifdef CONFIG_SMP&t;
+id|init_task.processor
+op_assign
+id|cpu
+suffix:semicolon
+macro_line|#endif
 id|bh_base
 (braket
 id|TIMER_BH

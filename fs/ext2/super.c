@@ -3082,7 +3082,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Allow the &quot;check&quot; option to be passed as a remount option.&n;&t; */
 id|set_opt
 (paren
-id|sb-&gt;u.ext2_sb.s_mount_opt
+id|new_mount_opt
 comma
 id|CHECK_NORMAL
 )paren

@@ -5104,7 +5104,7 @@ suffix:semicolon
 multiline_comment|/* if gc-&gt;DMA_valid it must be an ISA HBA and we have to register it */
 id|dma_channel
 op_assign
-l_int|0xff
+id|BUSMASTER
 suffix:semicolon
 r_if
 c_cond
@@ -5977,6 +5977,10 @@ id|sh-&gt;max_channel
 op_assign
 id|gc-&gt;MAX_CHAN
 suffix:semicolon
+id|sh-&gt;unique_id
+op_assign
+id|base
+suffix:semicolon
 id|sh-&gt;base
 op_assign
 (paren
@@ -5987,9 +5991,6 @@ id|base
 suffix:semicolon
 id|sh-&gt;io_port
 op_assign
-(paren
-id|u16
-)paren
 id|base
 suffix:semicolon
 id|sh-&gt;n_io_port
@@ -7549,7 +7550,7 @@ c_cond
 (paren
 id|HBA_ptr-&gt;dma_channel
 op_ne
-l_int|0xff
+id|BUSMASTER
 )paren
 (brace
 id|printk

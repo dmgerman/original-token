@@ -4511,6 +4511,10 @@ id|moresupport
 op_assign
 id|gc-&gt;MORE_support
 suffix:semicolon
+id|sh-&gt;unique_id
+op_assign
+id|base
+suffix:semicolon
 id|sh-&gt;base
 op_assign
 (paren
@@ -4521,9 +4525,6 @@ id|base
 suffix:semicolon
 id|sh-&gt;io_port
 op_assign
-(paren
-id|ushort
-)paren
 id|base
 suffix:semicolon
 id|sh-&gt;n_io_port
@@ -4536,9 +4537,8 @@ id|gc-&gt;IRQ
 suffix:semicolon
 id|sh-&gt;dma_channel
 op_assign
-l_int|0xfe
+id|PIO
 suffix:semicolon
-multiline_comment|/* PIO */
 id|sh-&gt;this_id
 op_assign
 id|gc-&gt;scsi_id

@@ -1188,6 +1188,20 @@ op_star
 id|LCA_IOC_STAT1
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_NONAME
+id|printk
+c_func
+(paren
+l_string|&quot;NMMI status &amp; control (0x61)=%02x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+l_int|0x61
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif /* CONFIG_ALPHA_LCA */
 eof

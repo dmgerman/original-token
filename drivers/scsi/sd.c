@@ -5937,7 +5937,7 @@ id|blksize_size
 id|MAJOR_NR
 )braket
 (braket
-id|i
+id|minor
 )braket
 op_assign
 l_int|1024

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 r_static
@@ -5617,7 +5618,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society NET3.031 Snap #1 for Linux 1.3.25&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society NET3.031 Snap #3 for Linux 1.3.30&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */
@@ -5642,6 +5643,14 @@ id|i
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The netlink device handler may be needed early.&n;&t; */
+macro_line|#ifdef CONFIG_NETLINK
+id|init_netlink
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t; 
 multiline_comment|/*&n;&t; *&t;Initialize the protocols module. &n;&t; */
 id|proto_init
 c_func

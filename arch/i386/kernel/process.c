@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/arch/i386/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,6 +16,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 id|asmlinkage
 r_void
 id|ret_from_sys_call
@@ -76,10 +78,108 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
+(brace
+multiline_comment|/*&t;printk(&quot;Wrong process idled&bslash;n&quot;);&t;SMP bug check */
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_SMP
+multiline_comment|/*&n;&t; *&t;SMP locking sanity checker&n;&t; */
+r_if
+c_cond
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_ne
+id|active_kernel_processor
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;CPU is %d, kernel CPU is %d in sys_idle!&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|active_kernel_processor
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|syscall_count
+op_ne
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;sys_idle: syscall count is not 1 (%ld)&bslash;n&quot;
+comma
+id|syscall_count
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|kernel_counter
+op_ne
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CPU %d, sys_idle, kernel_counter is %ld&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|kernel_counter
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|kernel_counter
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;kernel locking botch&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; *&t;Until we have C unlocking done&n;&t; */
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif&t;
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
 op_assign
@@ -93,6 +193,27 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP
+r_if
+c_cond
+(paren
+id|cpu_data
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+dot
+id|hlt_works_ok
+op_logical_and
+op_logical_neg
+id|hlt_counter
+op_logical_and
+op_logical_neg
+id|need_resched
+)paren
+macro_line|#else&t;
 r_if
 c_cond
 (paren
@@ -104,6 +225,7 @@ op_logical_and
 op_logical_neg
 id|need_resched
 )paren
+macro_line|#endif&t;&t;
 id|__asm__
 c_func
 (paren

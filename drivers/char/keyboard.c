@@ -4847,6 +4847,26 @@ l_string|&quot;kbd&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef __alpha__
+multiline_comment|/* if there is an input byte left, eat it up: */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+l_int|0x64
+)paren
+op_amp
+l_int|0x01
+)paren
+(brace
+id|inb
+c_func
+(paren
+l_int|0x60
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* enable keyboard interrupts, PC/AT mode */
 id|kb_wait
 c_func

@@ -121,6 +121,7 @@ DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif
 multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current task TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_task(task) invalidates the specified tasks TLB&squot;s&n; *  - invalidate_page(task, vmaddr) invalidates one page&n; *&n; * ..but the i386 has somewhat limited invalidation capabilities.&n; */
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|invalidate
 mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
 DECL|macro|invalidate_all
@@ -129,6 +130,13 @@ DECL|macro|invalidate_task
 mdefine_line|#define invalidate_task(task) &bslash;&n;do { if ((task)-&gt;mm == current-&gt;mm) invalidate(); } while (0)
 DECL|macro|invalidate_page
 mdefine_line|#define invalidate_page(task,addr) &bslash;&n;do { if ((task)-&gt;mm == current-&gt;mm) invalidate(); } while (0)
+macro_line|#else
+macro_line|#include &lt;asm/smp.h&gt;
+DECL|macro|local_invalidate
+mdefine_line|#define local_invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
+DECL|macro|invalidate
+mdefine_line|#define invalidate() &bslash;&n;&t;smp_invalidate();
+macro_line|#endif
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))

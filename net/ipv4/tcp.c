@@ -277,6 +277,20 @@ id|tcp_statistics.TcpCurrEstab
 op_increment
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_CLOSE
+)paren
+(brace
+id|tcp_cache_zap
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;This routine picks a TCP windows for a socket based on&n; *&t;the following constraints&n; *  &n; *&t;1. The window can never be shrunk once it is offered (RFC 793)&n; *&t;2. We limit memory per socket&n; *   &n; *&t;For now we use NET2E3&squot;s heuristic of offering half the memory&n; *&t;we have handy. All is not as bad as this seems however because&n; *&t;of two things. Firstly we will bin packets even within the window&n; *&t;in order to get the data we are waiting for into the memory limit.&n; *&t;Secondly we bin common duplicate forms at receive time&n; *&t;Better heuristics welcome&n; */
 DECL|function|tcp_select_window

@@ -383,6 +383,9 @@ DECL|macro|memcpy_fromio
 mdefine_line|#define memcpy_fromio(to,from,len)&t;(memcpy_fromio)((to),(unsigned long)(from),(len))
 DECL|macro|memcpy_toio
 mdefine_line|#define memcpy_toio(to,from,len)&t;(memcpy_toio)((unsigned long)(to),(from),(len))
+multiline_comment|/*&n; * XXX - We don&squot;t have csum_partial_copy_fromio() yet, so we cheat here and &n; * just copy it. The net code will then do the checksum later. Presently &n; * only used by some shared memory 8390 ethernet cards anyway.&n; */
+DECL|macro|eth_io_copy_and_sum
+mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused)&t;memcpy_fromio((skb)-&gt;data,(src),(len))
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

@@ -50,6 +50,21 @@ DECL|macro|CD_BLOCK_OFFSET
 mdefine_line|#define CD_BLOCK_OFFSET    CD_MSF_OFFSET /* obsolete name */
 multiline_comment|/*&n; * the raw frame layout:&n; *&n; * - audio (red):                  | audio_sample_bytes |&n; *                                 |        2352        |&n; *&n; * - data (yellow, mode1):         | sync - head - data - EDC - zero - ECC |&n; *                                 |  12  -   4  - 2048 -  4  -   8  - 276 |&n; *&n; * - data (yellow, mode2):         | sync - head - data |&n; *                                 |  12  -   4  - 2336 |&n; *&n; * - XA data (green, mode2 form1): | sync - head - sub - data - EDC - ECC |&n; *                                 |  12  -   4  -  8  - 2048 -  4  - 276 |&n; *&n; * - XA data (green, mode2 form2): | sync - head - sub - data - EDC |&n; *                                 |  12  -   4  -  8  - 2324 -  4  |&n; */
 multiline_comment|/*&n; * CDROM IOCTL structures&n; */
+DECL|struct|cdrom_blk
+r_struct
+id|cdrom_blk
+(brace
+DECL|member|from
+r_int
+id|from
+suffix:semicolon
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|cdrom_msf
 r_struct
 id|cdrom_msf
@@ -499,6 +514,9 @@ DECL|macro|CDROMREADCOOKED
 mdefine_line|#define CDROMREADCOOKED&t;&t;0x5315&t;/* read data in cooked mode */
 DECL|macro|CDROMSEEK
 mdefine_line|#define CDROMSEEK&t;&t;0x5316  /*seek msf address*/
+multiline_comment|/*&n; * for playing audio in logical block addressing mode&n; */
+DECL|macro|CDROMPLAYBLK
+mdefine_line|#define CDROMPLAYBLK&t;&t;0x5317&t;/* (struct cdrom_blk) */
 multiline_comment|/*&n; * CD-ROM-specific SCSI command opcodes&n; */
 multiline_comment|/*&n; * Group 2 (10-byte).  All of these are called &squot;optional&squot; by SCSI-II.&n; */
 DECL|macro|SCMD_READ_TOC

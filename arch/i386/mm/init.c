@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -381,7 +382,7 @@ r_int
 r_int
 id|address
 suffix:semicolon
-multiline_comment|/*&n; * Physical page 0 is special; it&squot;s not touched by Linux since BIOS&n; * and SMM (for laptops with [34]86/SL chips) may need it.  It is read&n; * and write protected to detect null pointer references in the&n; * kernel.&n; */
+multiline_comment|/*&n; * Physical page 0 is special; it&squot;s not touched by Linux since BIOS&n; * and SMM (for laptops with [34]86/SL chips) may need it.  It is read&n; * and write protected to detect null pointer references in the&n; * kernel.&n; * It may also hold the MP configuration table when we are booting SMP.&n; */
 macro_line|#if 0
 id|memset
 c_func
@@ -397,6 +398,40 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SMP
+id|smp_scan_config
+c_func
+(paren
+l_int|0x0
+comma
+l_int|0x400
+)paren
+suffix:semicolon
+multiline_comment|/* Scan the bottom 1K for a signature */
+multiline_comment|/*&n;&t; *&t;FIXME: Linux assumes you have 640K of base ram.. this continues&n;&t; *&t;the error...&n;&t; */
+id|smp_scan_config
+c_func
+(paren
+l_int|639
+op_star
+l_int|0x400
+comma
+l_int|0x400
+)paren
+suffix:semicolon
+multiline_comment|/* Scan the top 1K of base RAM */
+id|smp_scan_config
+c_func
+(paren
+l_int|0xF0000
+comma
+l_int|0x10000
+)paren
+suffix:semicolon
+multiline_comment|/* Scan the 64K of bios */
+multiline_comment|/*&n;&t; *&t;If it is an SMP machine we should know now, unless the configuration&n;&t; *&t;is in an EISA/MCA bus machine with an extended bios data area. I don&squot;t&n;&t; *&t;have such a machine so someone else can fill in the check of the EBDA&n;&t; *&t;here.&n;&t; */
+multiline_comment|/*&t;smp_alloc_memory(8192); */
 macro_line|#endif
 macro_line|#ifdef CONFIG_TEST_VERIFY_AREA
 id|wp_works_ok
@@ -429,6 +464,7 @@ id|end_mem
 )paren
 (brace
 macro_line|#ifdef CONFIG_PENTIUM_MM
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -524,6 +560,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* map the memory at virtual addr 0xC0000000 */
 id|pg_table
@@ -741,6 +778,23 @@ c_func
 id|start_low_mem
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+multiline_comment|/*&n;&t; * But first pinch a few for the stack/trampoline stuff&n;&t; */
+id|start_low_mem
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+multiline_comment|/* 32bit startup code */
+id|start_low_mem
+op_assign
+id|smp_alloc_memory
+c_func
+(paren
+id|start_low_mem
+)paren
+suffix:semicolon
+multiline_comment|/* AP processor stacks */
+macro_line|#endif
 id|start_mem
 op_assign
 id|PAGE_ALIGN

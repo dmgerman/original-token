@@ -5,6 +5,7 @@ DECL|macro|_8390_h
 mdefine_line|#define _8390_h
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 DECL|macro|TX_2X_PAGES
 mdefine_line|#define TX_2X_PAGES 12
 DECL|macro|TX_1X_PAGES
@@ -13,6 +14,31 @@ DECL|macro|TX_PAGES
 mdefine_line|#define TX_PAGES (ei_status.pingpong ? TX_2X_PAGES : TX_1X_PAGES)
 DECL|macro|ETHER_ADDR_LEN
 mdefine_line|#define ETHER_ADDR_LEN 6
+multiline_comment|/* The 8390 specific per-packet-header format. */
+DECL|struct|e8390_pkt_hdr
+r_struct
+id|e8390_pkt_hdr
+(brace
+DECL|member|status
+r_int
+r_char
+id|status
+suffix:semicolon
+multiline_comment|/* status */
+DECL|member|next
+r_int
+r_char
+id|next
+suffix:semicolon
+multiline_comment|/* pointer to next packet. */
+DECL|member|count
+r_int
+r_int
+id|count
+suffix:semicolon
+multiline_comment|/* header + packet length in bytes */
+)brace
+suffix:semicolon
 multiline_comment|/* From 8390.c */
 r_extern
 r_int
@@ -138,6 +164,24 @@ id|device
 op_star
 )paren
 suffix:semicolon
+DECL|member|get_8390_hdr
+r_void
+(paren
+op_star
+id|get_8390_hdr
+)paren
+(paren
+r_struct
+id|device
+op_star
+comma
+r_struct
+id|e8390_pkt_hdr
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|member|block_output
 r_void
 (paren
@@ -160,7 +204,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|block_input
-r_int
+r_void
 (paren
 op_star
 id|block_input
@@ -172,7 +216,8 @@ op_star
 comma
 r_int
 comma
-r_char
+r_struct
+id|sk_buff
 op_star
 comma
 r_int
@@ -290,9 +335,9 @@ suffix:semicolon
 multiline_comment|/* The maximum number of 8390 interrupt service routines called per IRQ. */
 DECL|macro|MAX_SERVICE
 mdefine_line|#define MAX_SERVICE 12
-multiline_comment|/* The maximum number of jiffies waited before assuming a Tx failed. */
+multiline_comment|/* The maximum time waited (in jiffies) before assuming a Tx failed. (20ms) */
 DECL|macro|TX_TIMEOUT
-mdefine_line|#define TX_TIMEOUT 20 
+mdefine_line|#define TX_TIMEOUT (20*HZ/100)
 DECL|macro|ei_status
 mdefine_line|#define ei_status (*(struct ei_device *)(dev-&gt;priv))
 multiline_comment|/* Some generic ethernet register configurations. */
@@ -445,30 +490,5 @@ DECL|macro|ENTSR_CDH
 mdefine_line|#define ENTSR_CDH 0x40&t;/* The collision detect &quot;heartbeat&quot; signal was lost. */
 DECL|macro|ENTSR_OWC
 mdefine_line|#define ENTSR_OWC 0x80  /* There was an out-of-window collision. */
-multiline_comment|/* The per-packet-header format. */
-DECL|struct|e8390_pkt_hdr
-r_struct
-id|e8390_pkt_hdr
-(brace
-DECL|member|status
-r_int
-r_char
-id|status
-suffix:semicolon
-multiline_comment|/* status */
-DECL|member|next
-r_int
-r_char
-id|next
-suffix:semicolon
-multiline_comment|/* pointer to next packet. */
-DECL|member|count
-r_int
-r_int
-id|count
-suffix:semicolon
-multiline_comment|/* header + packet length in bytes */
-)brace
-suffix:semicolon
 macro_line|#endif /* _8390_h */
 eof

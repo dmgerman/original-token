@@ -4,6 +4,11 @@ DECL|macro|EL2H
 mdefine_line|#define EL2H (dev-&gt;base_addr + 0x400)
 DECL|macro|EL2L
 mdefine_line|#define EL2L (dev-&gt;base_addr)
+multiline_comment|/* Vendor unique hardware addr. prefix. 3Com has 2 because they ran&n;   out of available addresses on the first one... */
+DECL|macro|OLD_3COM_ID
+mdefine_line|#define OLD_3COM_ID&t;0x02608c
+DECL|macro|NEW_3COM_ID
+mdefine_line|#define NEW_3COM_ID&t;0x0020af
 multiline_comment|/* Shared memory management parameters */
 DECL|macro|EL2SM_START_PG
 mdefine_line|#define EL2SM_START_PG&t;(0x20)&t;/* First page of TX buffer */

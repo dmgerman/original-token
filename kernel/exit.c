@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/kernel/exit.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 DECL|macro|DEBUG_PROC_TREE
 macro_line|#undef DEBUG_PROC_TREE
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -390,9 +391,10 @@ id|tsk-&gt;p_pptr
 op_eq
 id|task
 (braket
-l_int|1
+id|smp_num_cpus
 )braket
 )paren
+multiline_comment|/* Init */
 id|tsk-&gt;exit_signal
 op_assign
 id|SIGCHLD
@@ -1748,14 +1750,15 @@ c_cond
 (paren
 id|task
 (braket
-l_int|1
+id|smp_num_cpus
 )braket
 )paren
+multiline_comment|/* init */
 id|p-&gt;p_opptr
 op_assign
 id|task
 (braket
-l_int|1
+id|smp_num_cpus
 )braket
 suffix:semicolon
 r_else
@@ -2137,21 +2140,22 @@ c_cond
 (paren
 id|task
 (braket
-l_int|1
+id|smp_num_cpus
 )braket
 op_logical_and
 id|task
 (braket
-l_int|1
+id|smp_num_cpus
 )braket
 op_ne
 id|current
 )paren
+multiline_comment|/* init */
 id|p-&gt;p_pptr
 op_assign
 id|task
 (braket
-l_int|1
+id|smp_num_cpus
 )braket
 suffix:semicolon
 r_else

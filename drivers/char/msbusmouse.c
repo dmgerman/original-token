@@ -9,6 +9,7 @@ DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/busmouse.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -748,6 +749,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|check_region
+c_func
+(paren
+id|MS_MSE_CONTROL_PORT
+comma
+l_int|0x04
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|inb_p
 c_func
 (paren
@@ -844,6 +860,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|request_region
+c_func
+(paren
+id|MS_MSE_CONTROL_PORT
+comma
+l_int|0x04
+comma
+l_string|&quot;MS Busmouse&quot;
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -887,6 +913,8 @@ c_func
 l_string|&quot;msbusmouse: in use, remove delayed&bslash;n&quot;
 )paren
 suffix:semicolon
+r_else
+(brace
 id|mouse_deregister
 c_func
 (paren
@@ -894,6 +922,15 @@ op_amp
 id|ms_bus_mouse
 )paren
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|MS_MSE_CONTROL_PORT
+comma
+l_int|0x04
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 eof

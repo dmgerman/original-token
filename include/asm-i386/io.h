@@ -85,6 +85,9 @@ DECL|macro|memcpy_fromio
 mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(void *)(b),(c))
 DECL|macro|memcpy_toio
 mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((void *)(a),(b),(c))
+multiline_comment|/*&n; * Again, i386 does not require mem IO specific function.&n; */
+DECL|macro|eth_io_copy_and_sum
+mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),(void *)(b),(c),(d))
 multiline_comment|/*&n; * Talk about misusing macros..&n; */
 DECL|macro|__OUT1
 mdefine_line|#define __OUT1(s,x) &bslash;&n;extern inline void __out##s(unsigned x value, unsigned short port) {

@@ -167,6 +167,12 @@ comma
 DECL|enumerator|PROC_NET_IGMP
 id|PROC_NET_IGMP
 comma
+DECL|enumerator|PROC_NET_IPMR_VIF
+id|PROC_NET_IPMR_VIF
+comma
+DECL|enumerator|PROC_NET_IPMR_MFC
+id|PROC_NET_IPMR_MFC
+comma
 DECL|enumerator|PROC_NET_IPFWFWD
 id|PROC_NET_IPFWFWD
 comma

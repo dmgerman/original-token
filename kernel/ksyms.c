@@ -1009,9 +1009,18 @@ comma
 id|X
 c_func
 (paren
-id|current
+id|current_set
 )paren
 comma
+macro_line|#if defined(__i386__) &amp;&amp; defined(CONFIG_SMP)
+id|X
+c_func
+(paren
+id|apic_reg
+)paren
+comma
+multiline_comment|/* Needed internally for the I386 inlines */
+macro_line|#endif&t;
 id|X
 c_func
 (paren
