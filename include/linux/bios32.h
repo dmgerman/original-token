@@ -2,7 +2,7 @@ multiline_comment|/*&n; * BIOS32, PCI BIOS functions and defines&n; * Copyright 
 macro_line|#ifndef BIOS32_H
 DECL|macro|BIOS32_H
 mdefine_line|#define BIOS32_H
-multiline_comment|/*&n; * Error values that may be returned by the PCI bios.  Use&n; * pci_strbioserr() to convert to a printable string.&n; */
+multiline_comment|/*&n; * Error values that may be returned by the PCI bios.  Use&n; * pcibios_strerror() to convert to a printable string.&n; */
 DECL|macro|PCIBIOS_SUCCESSFUL
 mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00
 DECL|macro|PCIBIOS_FUNC_NOT_SUPPORTED

@@ -1649,13 +1649,74 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#if defined(CONFIG_ALPHA_APECS)
+DECL|macro|IACK_SC
+macro_line|#&t;define IACK_SC&t;APECS_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_LCA)
+macro_line|#&t;define IACK_SC&t;LCA_IACK_SC
+macro_line|#endif
+r_int
+id|j
+suffix:semicolon
+multiline_comment|/*&n;&t; * Generate a PCI interrupt acknowledge cycle.  The PIC will&n;&t; * respond with the interrupt vector of the highest priority&n;&t; * interrupt that is pending.  The PALcode sets up the&n;&t; * interrupts vectors such that irq level L generates vector&n;&t; * L.&n;&t; */
+id|j
+op_assign
+op_star
+(paren
+r_volatile
+r_int
+op_star
+)paren
+id|IACK_SC
+suffix:semicolon
+id|j
+op_and_assign
+l_int|0xff
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|j
+op_eq
+l_int|7
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+op_amp
+l_int|0x80
+)paren
+)paren
+(brace
+multiline_comment|/* it&squot;s only a passive release... */
+r_return
+suffix:semicolon
+)brace
+)brace
+id|device_interrupt
+c_func
+(paren
+id|j
+comma
+id|j
+comma
+id|regs
+)paren
+suffix:semicolon
+macro_line|#if 0
 r_int
 r_int
 id|pic
 suffix:semicolon
-r_int
-id|j
-suffix:semicolon
+multiline_comment|/*&n;&t; * It seems to me that the probability of two or more *device*&n;&t; * interrupts occuring at almost exactly the same time is&n;&t; * pretty low.  So why pay the price of checking for&n;&t; * additional interrupts here if the common case can be&n;&t; * handled so much easier?&n;&t; */
 multiline_comment|/* &n;&t; *  The first read of gives you *all* interrupting lines.&n;&t; *  Therefore, read the mask register and and out those lines&n;&t; *  not enabled.  Note that some documentation has 21 and a1 &n;&t; *  write only.  This is not true.&n;&t; */
 id|pic
 op_assign
@@ -1727,6 +1788,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|cabriolet_and_eb66p_device_interrupt
 r_static

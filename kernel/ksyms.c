@@ -312,7 +312,7 @@ id|symbol_table
 op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
-macro_line|#ifdef CONFIG_MODVERSIONS
+macro_line|#ifdef MODVERSIONS
 (brace
 (paren
 r_void
@@ -777,7 +777,13 @@ comma
 id|X
 c_func
 (paren
-id|brelse
+id|__brelse
+)paren
+comma
+id|X
+c_func
+(paren
+id|__bforget
 )paren
 comma
 id|X
@@ -1470,6 +1476,12 @@ id|X
 c_func
 (paren
 id|ei_open
+)paren
+comma
+id|X
+c_func
+(paren
+id|ei_close
 )paren
 comma
 id|X

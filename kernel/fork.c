@@ -27,6 +27,7 @@ l_int|1
 suffix:semicolon
 DECL|function|find_empty_process
 r_static
+r_inline
 r_int
 id|find_empty_process
 c_func
@@ -224,6 +225,7 @@ suffix:semicolon
 )brace
 DECL|function|dup_mmap
 r_static
+r_inline
 r_int
 id|dup_mmap
 c_func
@@ -406,6 +408,7 @@ suffix:semicolon
 )brace
 DECL|function|copy_mm
 r_static
+r_inline
 r_int
 id|copy_mm
 c_func
@@ -535,6 +538,7 @@ suffix:semicolon
 )brace
 DECL|function|copy_fs
 r_static
+r_inline
 r_int
 id|copy_fs
 c_func
@@ -626,6 +630,7 @@ suffix:semicolon
 )brace
 DECL|function|copy_files
 r_static
+r_inline
 r_int
 id|copy_files
 c_func
@@ -748,6 +753,7 @@ suffix:semicolon
 )brace
 DECL|function|copy_sighand
 r_static
+r_inline
 r_int
 id|copy_sighand
 c_func

@@ -2378,7 +2378,7 @@ id|printk
 l_string|&quot;scsi-ncr53c7,8xx : error %s not initializing due to error reading configuration space&bslash;n&quot;
 l_string|&quot;        perhaps you specified an incorrect PCI bus, device, or function.&bslash;n&quot;
 comma
-id|pci_strbioserr
+id|pcibios_strerror
 c_func
 (paren
 id|error

@@ -1732,9 +1732,6 @@ id|rtable
 op_star
 id|rt
 suffix:semicolon
-id|__u32
-id|sa
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1800,24 +1797,15 @@ suffix:semicolon
 multiline_comment|/* Must turn broadcast on first */
 id|rt
 op_assign
-(paren
-id|sk-&gt;localroute
-ques
-c_cond
-id|ip_rt_local
-suffix:colon
 id|ip_rt_route
-)paren
+c_func
 (paren
 (paren
 id|__u32
 )paren
 id|usin-&gt;sin_addr.s_addr
 comma
-l_int|NULL
-comma
-op_amp
-id|sa
+id|sk-&gt;localroute
 )paren
 suffix:semicolon
 r_if
@@ -1827,12 +1815,10 @@ id|rt
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENETUNREACH
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1842,7 +1828,7 @@ id|sk-&gt;saddr
 (brace
 id|sk-&gt;saddr
 op_assign
-id|sa
+id|rt-&gt;rt_src
 suffix:semicolon
 )brace
 multiline_comment|/* Update source address */
@@ -1855,7 +1841,7 @@ id|sk-&gt;rcv_saddr
 (brace
 id|sk-&gt;rcv_saddr
 op_assign
-id|sa
+id|rt-&gt;rt_src
 suffix:semicolon
 )brace
 id|sk-&gt;daddr
@@ -1878,10 +1864,6 @@ suffix:semicolon
 id|sk-&gt;ip_route_cache
 op_assign
 id|rt
-suffix:semicolon
-id|sk-&gt;ip_route_stamp
-op_assign
-id|rt_stamp
 suffix:semicolon
 r_return
 l_int|0

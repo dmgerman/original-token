@@ -2230,7 +2230,7 @@ id|callsign
 comma
 id|dev-&gt;pa_addr
 comma
-id|ARPHRD_AX25
+id|dev
 )paren
 )paren
 r_return

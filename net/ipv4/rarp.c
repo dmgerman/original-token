@@ -726,6 +726,8 @@ comma
 id|sha
 comma
 id|dev-&gt;dev_addr
+comma
+id|sha
 )paren
 suffix:semicolon
 )brace
@@ -787,6 +789,11 @@ r_struct
 id|rtable
 op_star
 id|rt
+suffix:semicolon
+r_struct
+id|device
+op_star
+id|dev
 suffix:semicolon
 id|memcpy_fromfs
 c_func
@@ -896,9 +903,7 @@ c_func
 (paren
 id|ip
 comma
-l_int|NULL
-comma
-l_int|NULL
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -911,6 +916,16 @@ l_int|NULL
 r_return
 op_minus
 id|ENETUNREACH
+suffix:semicolon
+id|dev
+op_assign
+id|rt-&gt;rt_dev
+suffix:semicolon
+id|ip_rt_put
+c_func
+(paren
+id|rt
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Is there an existing entry for this address?  Find out...&n; */
 id|cli
@@ -1039,7 +1054,7 @@ id|hlen
 suffix:semicolon
 id|entry-&gt;dev
 op_assign
-id|rt-&gt;rt_dev
+id|dev
 suffix:semicolon
 id|sti
 c_func

@@ -1,13 +1,13 @@
 macro_line|#ifndef __NET_NETLINK_H
 DECL|macro|__NET_NETLINK_H
 mdefine_line|#define __NET_NETLINK_H
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NET_MAJOR
 mdefine_line|#define NET_MAJOR 18&t;&t;/* Major 18 is reserved for networking &t;&t;*/
 DECL|macro|MAX_LINKS
 mdefine_line|#define MAX_LINKS 3&t;&t;/* 18,0 for route updates, 18,1 for SKIP &t;*/
 DECL|macro|MAX_QBYTES
 mdefine_line|#define MAX_QBYTES 32768&t;/* Maximum bytes in the queue &t;&t;&t;*/
+macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_int
 id|netlink_attach

@@ -871,16 +871,6 @@ r_extern
 r_const
 r_char
 op_star
-id|pci_strbioserr
-(paren
-r_int
-id|error
-)paren
-suffix:semicolon
-r_extern
-r_const
-r_char
-op_star
 id|pci_strclass
 (paren
 r_int

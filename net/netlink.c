@@ -842,7 +842,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-id|NET_MAJOR
+id|NETLINK_MAJOR
 comma
 l_string|&quot;netlink&quot;
 comma
@@ -856,7 +856,7 @@ c_func
 (paren
 l_string|&quot;netlink: unable to get major %d&bslash;n&quot;
 comma
-id|NET_MAJOR
+id|NETLINK_MAJOR
 )paren
 suffix:semicolon
 r_return

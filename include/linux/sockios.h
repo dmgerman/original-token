@@ -65,12 +65,18 @@ DECL|macro|SIOCDELMULTI
 mdefine_line|#define SIOCDELMULTI  0x8932
 multiline_comment|/* end multicast support change */
 multiline_comment|/* ARP cache control calls. */
+DECL|macro|OLD_SIOCDARP
+mdefine_line|#define OLD_SIOCDARP&t;0x8950&t;&t;/* old delete ARP table entry&t;*/
+DECL|macro|OLD_SIOCGARP
+mdefine_line|#define OLD_SIOCGARP&t;0x8951&t;&t;/* old get ARP table entry&t;*/
+DECL|macro|OLD_SIOCSARP
+mdefine_line|#define OLD_SIOCSARP&t;0x8952&t;&t;/* old set ARP table entry&t;*/
 DECL|macro|SIOCDARP
-mdefine_line|#define SIOCDARP&t;0x8950&t;&t;/* delete ARP table entry&t;*/
+mdefine_line|#define SIOCDARP&t;0x8953&t;&t;/* delete ARP table entry&t;*/
 DECL|macro|SIOCGARP
-mdefine_line|#define SIOCGARP&t;0x8951&t;&t;/* get ARP table entry&t;&t;*/
+mdefine_line|#define SIOCGARP&t;0x8954&t;&t;/* get ARP table entry&t;&t;*/
 DECL|macro|SIOCSARP
-mdefine_line|#define SIOCSARP&t;0x8952&t;&t;/* set ARP table entry&t;&t;*/
+mdefine_line|#define SIOCSARP&t;0x8955&t;&t;/* set ARP table entry&t;&t;*/
 multiline_comment|/* RARP cache control calls. */
 DECL|macro|SIOCDRARP
 mdefine_line|#define SIOCDRARP&t;0x8960&t;&t;/* delete RARP table entry&t;*/

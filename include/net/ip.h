@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;net/route.h&gt;
 macro_line|#ifndef _SNMP_H
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#endif
@@ -228,6 +229,11 @@ id|ip_send
 c_func
 (paren
 r_struct
+id|rtable
+op_star
+id|rt
+comma
+r_struct
 id|sk_buff
 op_star
 id|skb
@@ -285,6 +291,12 @@ id|tos
 comma
 r_int
 id|ttl
+comma
+r_struct
+id|rtable
+op_star
+op_star
+id|rp
 )paren
 suffix:semicolon
 r_extern

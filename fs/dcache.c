@@ -345,6 +345,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Find a directory cache entry given all the necessary info.&n; */
 DECL|function|find_entry
 r_static
+r_inline
 r_struct
 id|dir_cache_entry
 op_star

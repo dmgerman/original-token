@@ -2,10 +2,10 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_NETDEVICE_H
 DECL|macro|_LINUX_NETDEVICE_H
 mdefine_line|#define _LINUX_NETDEVICE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* for future expansion when we will have different priorities. */
 DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3
@@ -61,6 +61,49 @@ r_int
 r_int
 id|dmi_users
 suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|hh_cache
+r_struct
+id|hh_cache
+(brace
+DECL|member|hh_next
+r_struct
+id|hh_cache
+op_star
+id|hh_next
+suffix:semicolon
+DECL|member|hh_refcnt
+r_int
+r_int
+id|hh_refcnt
+suffix:semicolon
+multiline_comment|/* number of users */
+DECL|member|hh_arp
+r_void
+op_star
+id|hh_arp
+suffix:semicolon
+multiline_comment|/* Opaque pointer, used by&n;&t;&t;&t;&t;&t; * any address resolution module,&n;&t;&t;&t;&t;&t; * not only ARP.&n;&t;&t;&t;&t;&t; */
+DECL|member|hh_type
+r_int
+r_int
+id|hh_type
+suffix:semicolon
+multiline_comment|/* protocol identifier, f.e ETH_P_IP */
+DECL|member|hh_uptodate
+r_char
+id|hh_uptodate
+suffix:semicolon
+multiline_comment|/* hh_data is valid */
+DECL|member|hh_data
+r_char
+id|hh_data
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* cached hardware header */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The DEVICE structure.&n; * Actually, this whole structure is a big mistake.  It mixes I/O&n; * data with strictly &quot;high-level&quot; data, and it has to know about&n; * almost every data structure used in the INET module.  &n; */
@@ -476,8 +519,7 @@ id|device
 op_star
 id|dev
 comma
-r_struct
-id|sockaddr
+r_void
 op_star
 id|addr
 )paren
@@ -525,30 +567,55 @@ op_star
 id|map
 )paren
 suffix:semicolon
-DECL|member|header_cache
+DECL|macro|HAVE_HEADER_CACHE
+mdefine_line|#define HAVE_HEADER_CACHE
+DECL|member|header_cache_bind
 r_void
 (paren
 op_star
-id|header_cache
+id|header_cache_bind
 )paren
 (paren
+r_struct
+id|hh_cache
+op_star
+op_star
+id|hhp
+comma
 r_struct
 id|device
 op_star
 id|dev
 comma
-r_struct
-id|sock
-op_star
-id|sk
+r_int
+r_int
+id|htype
 comma
-r_int
-r_int
-id|saddr
-comma
-r_int
-r_int
+id|__u32
 id|daddr
+)paren
+suffix:semicolon
+DECL|member|header_cache_update
+r_void
+(paren
+op_star
+id|header_cache_update
+)paren
+(paren
+r_struct
+id|hh_cache
+op_star
+id|hh
+comma
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+r_char
+op_star
+id|haddr
 )paren
 suffix:semicolon
 )brace
@@ -699,6 +766,18 @@ c_func
 r_int
 r_int
 id|addr
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|device
+op_star
+id|dev_getbytype
+c_func
+(paren
+r_int
+r_int
+id|type
 )paren
 suffix:semicolon
 r_extern

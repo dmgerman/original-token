@@ -395,14 +395,6 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#if defined(CONFIG_NE2000) || defined(NE2000)
-op_logical_and
-id|ne_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
 macro_line|#if defined(CONFIG_HPLAN) || defined(HPLAN)
 op_logical_and
 id|hp_probe
@@ -414,6 +406,30 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_HPLAN_PLUS)
 op_logical_and
 id|hp_plus_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_AC3200&t;&t;/* Ansel Communications EISA 3200. */
+op_logical_and
+id|ac3200_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_E2100&t;&t;/* Cabletron E21xx series. */
+op_logical_and
+id|e2100_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#if defined(CONFIG_NE2000) || defined(NE2000)
+op_logical_and
+id|ne_probe
 c_func
 (paren
 id|dev
@@ -526,22 +542,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ELPLUS&t;&t;/* 3c505 */
 op_logical_and
 id|elplus_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_AC3200&t;&t;/* Ansel Communications EISA 3200. */
-op_logical_and
-id|ac3200_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_E2100&t;&t;/* Cabletron E21xx series. */
-op_logical_and
-id|e2100_probe
 c_func
 (paren
 id|dev

@@ -317,10 +317,12 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+op_logical_neg
 id|MOUNT_ROOT_RDONLY
 )paren
 id|root_mountflags
-op_or_assign
+op_and_assign
+op_complement
 id|MS_RDONLY
 suffix:semicolon
 id|memory_start

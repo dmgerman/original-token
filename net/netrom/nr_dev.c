@@ -356,7 +356,7 @@ l_int|7
 comma
 id|raddr
 comma
-id|ARPHRD_NETROM
+id|dev
 )paren
 )paren
 (brace

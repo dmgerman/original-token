@@ -54,6 +54,7 @@ id|arg
 suffix:semicolon
 DECL|function|dupfd
 r_static
+r_inline
 r_int
 id|dupfd
 c_func

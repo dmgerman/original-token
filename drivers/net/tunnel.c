@@ -212,7 +212,7 @@ id|dev-&gt;hard_header
 op_assign
 l_int|NULL
 suffix:semicolon
-id|dev-&gt;header_cache
+id|dev-&gt;header_cache_bind
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -890,14 +890,6 @@ id|dev-&gt;priv
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|tunnel_probe
 r_static
 r_int

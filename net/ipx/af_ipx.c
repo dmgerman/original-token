@@ -851,6 +851,11 @@ DECL|function|ipxitf_device_event
 id|ipxitf_device_event
 c_func
 (paren
+r_struct
+id|notifier_block
+op_star
+id|notifier
+comma
 r_int
 r_int
 id|event

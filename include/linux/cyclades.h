@@ -1,4 +1,7 @@
-multiline_comment|/*&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; */
+multiline_comment|/*&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; * Revision 1.5  1995/11/13  21:13:31  bentson&n; * changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; * to support use of this file in non-kernel applications&n; *&n; *&n; */
+macro_line|#ifndef _LINUX_CYCLADES_H
+DECL|macro|_LINUX_CYCLADES_H
+mdefine_line|#define _LINUX_CYCLADES_H
 multiline_comment|/* PCI vendor and device ID&squot;s */
 macro_line|#ifndef PCI_VENDOR_ID_CYCLADES
 DECL|macro|PCI_VENDOR_ID_CYCLADES
@@ -8,6 +11,53 @@ macro_line|#ifndef PCI_DEVICE_ID_CYCLOMY
 DECL|macro|PCI_DEVICE_ID_CYCLOMY
 mdefine_line|#define&t;PCI_DEVICE_ID_CYCLOMY&t;0x0100
 macro_line|#endif
+DECL|struct|cyclades_monitor
+r_struct
+id|cyclades_monitor
+(brace
+DECL|member|int_count
+r_int
+r_int
+id|int_count
+suffix:semicolon
+DECL|member|char_count
+r_int
+r_int
+id|char_count
+suffix:semicolon
+DECL|member|char_max
+r_int
+r_int
+id|char_max
+suffix:semicolon
+DECL|member|char_last
+r_int
+r_int
+id|char_last
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|CYCLADES_MAGIC
+mdefine_line|#define CYCLADES_MAGIC  0x4359
+DECL|macro|CYGETMON
+mdefine_line|#define CYGETMON                0x435901
+DECL|macro|CYGETTHRESH
+mdefine_line|#define CYGETTHRESH             0x435902
+DECL|macro|CYSETTHRESH
+mdefine_line|#define CYSETTHRESH             0x435903
+DECL|macro|CYGETDEFTHRESH
+mdefine_line|#define CYGETDEFTHRESH          0x435904
+DECL|macro|CYSETDEFTHRESH
+mdefine_line|#define CYSETDEFTHRESH          0x435905
+DECL|macro|CYGETTIMEOUT
+mdefine_line|#define CYGETTIMEOUT            0x435906
+DECL|macro|CYSETTIMEOUT
+mdefine_line|#define CYSETTIMEOUT            0x435907
+DECL|macro|CYGETDEFTIMEOUT
+mdefine_line|#define CYGETDEFTIMEOUT         0x435908
+DECL|macro|CYSETDEFTIMEOUT
+mdefine_line|#define CYSETDEFTIMEOUT         0x435909
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* Per card data structure */
 DECL|struct|cyclades_card
 r_struct
@@ -48,35 +98,7 @@ id|filler
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cyclades_monitor
-r_struct
-id|cyclades_monitor
-(brace
-DECL|member|int_count
-r_int
-r_int
-id|int_count
-suffix:semicolon
-DECL|member|char_count
-r_int
-r_int
-id|char_count
-suffix:semicolon
-DECL|member|char_max
-r_int
-r_int
-id|char_max
-suffix:semicolon
-DECL|member|char_last
-r_int
-r_int
-id|char_last
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
-macro_line|#include &lt;linux/termios.h&gt;
-macro_line|#include &lt;linux/tqueue.h&gt;
 DECL|struct|cyclades_port
 r_struct
 id|cyclades_port
@@ -260,26 +282,6 @@ id|mon
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|CYCLADES_MAGIC
-mdefine_line|#define CYCLADES_MAGIC  0x4359
-DECL|macro|CYGETMON
-mdefine_line|#define CYGETMON                0x435901
-DECL|macro|CYGETTHRESH
-mdefine_line|#define CYGETTHRESH             0x435902
-DECL|macro|CYSETTHRESH
-mdefine_line|#define CYSETTHRESH             0x435903
-DECL|macro|CYGETDEFTHRESH
-mdefine_line|#define CYGETDEFTHRESH          0x435904
-DECL|macro|CYSETDEFTHRESH
-mdefine_line|#define CYSETDEFTHRESH          0x435905
-DECL|macro|CYGETTIMEOUT
-mdefine_line|#define CYGETTIMEOUT            0x435906
-DECL|macro|CYSETTIMEOUT
-mdefine_line|#define CYSETTIMEOUT            0x435907
-DECL|macro|CYGETDEFTIMEOUT
-mdefine_line|#define CYGETDEFTIMEOUT         0x435908
-DECL|macro|CYSETDEFTIMEOUT
-mdefine_line|#define CYSETDEFTIMEOUT         0x435909
 multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at cy interrupt time.&n; */
 DECL|macro|Cy_EVENT_READ_PROCESS
 mdefine_line|#define Cy_EVENT_READ_PROCESS&t;0
@@ -594,4 +596,6 @@ multiline_comment|/* max number of chars in the FIFO */
 DECL|macro|CyMAX_CHAR_FIFO
 mdefine_line|#define CyMAX_CHAR_FIFO&t;12
 multiline_comment|/***************************************************************************/
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* _LINUX_CYCLADES_H */
 eof

@@ -226,6 +226,9 @@ comma
 DECL|enumerator|PROC_NET_SOCKSTAT
 id|PROC_NET_SOCKSTAT
 comma
+DECL|enumerator|PROC_NET_RTCACHE
+id|PROC_NET_RTCACHE
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace

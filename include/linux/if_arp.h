@@ -40,6 +40,10 @@ DECL|macro|ARPHRD_TUNNEL
 mdefine_line|#define ARPHRD_TUNNEL&t;768&t;&t;/* IPIP tunnel&t;&t;&t;*/
 DECL|macro|ARPHRD_TUNNEL6
 mdefine_line|#define ARPHRD_TUNNEL6&t;769&t;&t;/* IPIP6 tunnel&t;&t;&t;*/
+DECL|macro|ARPHRD_FRAD
+mdefine_line|#define ARPHRD_FRAD&t;770&t;&t;/* Frame Relay&t;&t;&t;*/
+DECL|macro|ARPHRD_SKIP
+mdefine_line|#define ARPHRD_SKIP&t;771&t;&t;/* SKIP vif&t;&t;&t;*/
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/
@@ -53,6 +57,42 @@ multiline_comment|/* ARP ioctl request. */
 DECL|struct|arpreq
 r_struct
 id|arpreq
+(brace
+DECL|member|arp_pa
+r_struct
+id|sockaddr
+id|arp_pa
+suffix:semicolon
+multiline_comment|/* protocol address&t;&t;*/
+DECL|member|arp_ha
+r_struct
+id|sockaddr
+id|arp_ha
+suffix:semicolon
+multiline_comment|/* hardware address&t;&t;*/
+DECL|member|arp_flags
+r_int
+id|arp_flags
+suffix:semicolon
+multiline_comment|/* flags&t;&t;&t;*/
+DECL|member|arp_netmask
+r_struct
+id|sockaddr
+id|arp_netmask
+suffix:semicolon
+multiline_comment|/* netmask (only for proxy arps) */
+DECL|member|arp_dev
+r_char
+id|arp_dev
+(braket
+l_int|16
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|arpreq_old
+r_struct
+id|arpreq_old
 (brace
 DECL|member|arp_pa
 r_struct

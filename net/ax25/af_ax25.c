@@ -2449,7 +2449,7 @@ id|dev_addr
 comma
 id|dev-&gt;pa_addr
 comma
-id|ARPHRD_AX25
+id|dev
 )paren
 )paren
 r_if
@@ -6953,7 +6953,7 @@ id|port_call
 comma
 id|dev-&gt;pa_addr
 comma
-id|ARPHRD_AX25
+id|dev
 )paren
 )paren
 (brace

@@ -116,6 +116,7 @@ suffix:semicolon
 )brace
 DECL|function|insert_inode_free
 r_static
+r_inline
 r_void
 id|insert_inode_free
 c_func
@@ -149,6 +150,7 @@ suffix:semicolon
 )brace
 DECL|function|remove_inode_free
 r_static
+r_inline
 r_void
 id|remove_inode_free
 c_func
@@ -245,6 +247,7 @@ suffix:semicolon
 )brace
 DECL|function|remove_inode_hash
 r_static
+r_inline
 r_void
 id|remove_inode_hash
 c_func
@@ -308,6 +311,7 @@ suffix:semicolon
 )brace
 DECL|function|put_last_free
 r_static
+r_inline
 r_void
 id|put_last_free
 c_func
@@ -955,6 +959,7 @@ suffix:semicolon
 )brace
 DECL|function|read_inode
 r_static
+r_inline
 r_void
 id|read_inode
 c_func

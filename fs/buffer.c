@@ -1997,6 +1997,7 @@ suffix:semicolon
 )brace
 DECL|function|find_buffer
 r_static
+r_inline
 r_struct
 id|buffer_head
 op_star
@@ -3889,9 +3890,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Release a buffer head&n; */
-DECL|function|brelse
+DECL|function|__brelse
 r_void
-id|brelse
+id|__brelse
 c_func
 (paren
 r_struct
@@ -3900,14 +3901,6 @@ op_star
 id|buf
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|buf
-)paren
-r_return
-suffix:semicolon
 id|wait_on_buffer
 c_func
 (paren
@@ -3960,9 +3953,9 @@ l_string|&quot;VFS: brelse: Trying to free free buffer&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * bforget() is like brelse(), except is throws the buffer away&n; */
-DECL|function|bforget
+DECL|function|__bforget
 r_void
-id|bforget
+id|__bforget
 c_func
 (paren
 r_struct
@@ -3971,14 +3964,6 @@ op_star
 id|buf
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|buf
-)paren
-r_return
-suffix:semicolon
 id|wait_on_buffer
 c_func
 (paren
@@ -4938,6 +4923,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This actually gets enough info to try to align the stuff,&n; * but we don&squot;t bother yet.. We&squot;ll have to check that nobody&n; * else uses the buffers etc.&n; *&n; * &quot;address&quot; points to the new page we can use to move things&n; * around..&n; */
 DECL|function|try_to_align
 r_static
+r_inline
 r_int
 r_int
 id|try_to_align

@@ -574,7 +574,7 @@ id|optlen
 r_if
 c_cond
 (paren
-id|dopt-&gt;ts_needaddr
+id|sopt-&gt;ts_needaddr
 )paren
 (brace
 r_if
@@ -602,7 +602,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dopt-&gt;ts_needtime
+id|sopt-&gt;ts_needtime
 )paren
 (brace
 r_if
@@ -1779,7 +1779,6 @@ c_cond
 (paren
 id|skb
 )paren
-(brace
 id|timeptr
 op_assign
 (paren
@@ -1794,11 +1793,10 @@ op_minus
 l_int|1
 )braket
 suffix:semicolon
-id|opt-&gt;is_changed
+id|opt-&gt;ts_needtime
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|ts-&gt;ptr
 op_add_assign
 l_int|4

@@ -20,6 +20,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Insert a new file structure at the head of the list of available ones.&n; */
 DECL|function|insert_file_free
 r_static
+r_inline
 r_void
 id|insert_file_free
 c_func
@@ -58,6 +59,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Remove a file structure from the list of available ones.&n; */
 DECL|function|remove_file_free
 r_static
+r_inline
 r_void
 id|remove_file_free
 c_func
@@ -97,6 +99,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Insert a file structure at the end of the list of available ones.&n; */
 DECL|function|put_last_free
 r_static
+r_inline
 r_void
 id|put_last_free
 c_func

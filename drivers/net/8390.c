@@ -27,7 +27,6 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;void get_8390_hdr(struct device *dev, struct e8390_hdr *hdr, int ring_page)&n;&t;&t;Read the 4 byte, page aligned 8390 header. *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;&t;void block_input(struct device *dev, int count, struct sk_buff *skb, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into the skb data area. Start &n;&t;&t;reading from RING_OFFSET, the address as the 8390 sees it.  This will always&n;&t;&t;follow the read of the 8390 header. &n;*/
 DECL|macro|ei_reset_8390
@@ -177,22 +176,26 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+multiline_comment|/* This can&squot;t happen unless somebody forgot to call ethdev_init(). */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|ei_local
+op_eq
+l_int|NULL
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Opening a non-existent physical device&bslash;n&quot;
+id|KERN_EMERG
+l_string|&quot;%s: ei_open passed a non-existent device!&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 )brace
@@ -216,6 +219,34 @@ op_assign
 l_int|1
 suffix:semicolon
 id|ei_local-&gt;irqlock
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Opposite of above. Only used when &quot;ifconfig &lt;devname&gt; down&quot; is done. */
+DECL|function|ei_close
+r_int
+id|ei_close
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|NS8390_init
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
@@ -2519,20 +2550,6 @@ op_assign
 id|ei_pingpong
 suffix:semicolon
 )brace
-multiline_comment|/* The open call may be overridden by the card-specific code. */
-r_if
-c_cond
-(paren
-id|dev-&gt;open
-op_eq
-l_int|NULL
-)paren
-id|dev-&gt;open
-op_assign
-op_amp
-id|ei_open
-suffix:semicolon
-multiline_comment|/* We should have a dev-&gt;stop entry also. */
 id|dev-&gt;hard_start_xmit
 op_assign
 op_amp

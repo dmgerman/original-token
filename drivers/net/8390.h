@@ -97,6 +97,17 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|ei_close
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ei_interrupt
 c_func
@@ -122,7 +133,7 @@ l_int|16
 )braket
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|autoirq_setup
 c_func
 (paren

@@ -33,7 +33,7 @@ macro_line|#ifdef CONFIG_SCSI_AIC7XXX
 macro_line|#include &quot;aic7xxx.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
-macro_line|#include &quot;buslogic.h&quot;
+macro_line|#include &quot;BusLogic.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_EATA_DMA
 macro_line|#include &quot;eata_dma.h&quot;
@@ -116,7 +116,7 @@ macro_line|#ifdef CONFIG_SCSI_AHA152X
 id|AHA152X
 comma
 macro_line|#endif
-multiline_comment|/* Buslogic must come before aha1542.c */
+multiline_comment|/* BusLogic must come before aha1542.c */
 macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 id|BUSLOGIC
 comma

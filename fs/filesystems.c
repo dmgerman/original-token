@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
 macro_line|#include &lt;linux/hpfs_fs.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 r_extern
 r_void
 id|device_setup
@@ -21,6 +22,24 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ROOT_NFS
+r_extern
+r_int
+id|nfs_root_init
+c_func
+(paren
+r_char
+op_star
+id|nfsname
+)paren
+suffix:semicolon
+r_extern
+r_char
+id|nfs_root_name
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* This may be used only once, enforced by &squot;static int callable&squot; */
 DECL|function|sys_setup
 id|asmlinkage
@@ -345,6 +364,48 @@ l_int|NULL
 )brace
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ROOT_NFS
+r_if
+c_cond
+(paren
+id|nfs_root_name
+(braket
+l_int|0
+)braket
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|nfs_root_init
+c_func
+(paren
+id|nfs_root_name
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Root-NFS: Unable to mount NFS filesystem as /, using /dev/fd0 instead&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ROOT_DEV
+op_assign
+id|MKDEV
+c_func
+(paren
+id|FLOPPY_MAJOR
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
 macro_line|#endif
 id|mount_root
 c_func

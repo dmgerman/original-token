@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/ip.h&gt;&t;&t;/* struct options */
 macro_line|#include &lt;linux/in.h&gt;&t;&t;/* struct sockaddr_in */
 macro_line|#include &lt;linux/tcp.h&gt;&t;&t;/* struct tcphdr */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;&t;/* struct sk_buff */
 macro_line|#include &lt;net/protocol.h&gt;&t;&t;/* struct inet_protocol */
 macro_line|#ifdef CONFIG_AX25
@@ -586,89 +587,6 @@ op_star
 id|ip_route_cache
 suffix:semicolon
 multiline_comment|/* Cached output route */
-DECL|member|ip_route_stamp
-r_int
-r_int
-id|ip_route_stamp
-suffix:semicolon
-multiline_comment|/* Route cache stamp */
-DECL|member|ip_route_daddr
-r_int
-r_int
-id|ip_route_daddr
-suffix:semicolon
-multiline_comment|/* Target address */
-DECL|member|ip_route_saddr
-r_int
-r_int
-id|ip_route_saddr
-suffix:semicolon
-multiline_comment|/* Source address */
-DECL|member|ip_route_local
-r_int
-id|ip_route_local
-suffix:semicolon
-multiline_comment|/* State of locality flag */
-DECL|member|ip_hcache_stamp
-r_int
-r_int
-id|ip_hcache_stamp
-suffix:semicolon
-multiline_comment|/* Header cache stamp */
-DECL|member|ip_hcache_ver
-r_int
-r_int
-op_star
-id|ip_hcache_ver
-suffix:semicolon
-multiline_comment|/* Pointer to version of cache */
-DECL|member|ip_hcache_data
-r_char
-id|ip_hcache_data
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* Cached header */
-DECL|member|ip_hcache_state
-r_int
-id|ip_hcache_state
-suffix:semicolon
-multiline_comment|/* Have we a cached header */
-DECL|member|ip_option_len
-r_int
-r_char
-id|ip_option_len
-suffix:semicolon
-multiline_comment|/* Length of IP options */
-DECL|member|ip_option_flen
-r_int
-r_char
-id|ip_option_flen
-suffix:semicolon
-multiline_comment|/* Second fragment option length */
-DECL|member|ip_opt_next_strict
-r_int
-r_char
-id|ip_opt_next_strict
-suffix:semicolon
-multiline_comment|/* Next hop is strict route */
-DECL|member|ip_opt_next_hop
-r_int
-r_int
-id|ip_opt_next_hop
-suffix:semicolon
-multiline_comment|/* Next hop if forced */
-DECL|member|ip_opt_ptr
-r_int
-r_char
-op_star
-id|ip_opt_ptr
-(braket
-l_int|2
-)braket
-suffix:semicolon
-multiline_comment|/* IP option pointers */
 DECL|member|ip_hdrincl
 r_int
 r_char
@@ -845,6 +763,12 @@ id|tos
 comma
 r_int
 id|ttl
+comma
+r_struct
+id|rtable
+op_star
+op_star
+id|rp
 )paren
 suffix:semicolon
 DECL|member|connect

@@ -266,6 +266,7 @@ suffix:semicolon
 multiline_comment|/*&n; * &quot;plug&quot; the device if there are no outstanding requests: this will&n; * force the transfer to start only after we have put all the requests&n; * on the list.&n; */
 DECL|function|plug_device
 r_static
+r_inline
 r_void
 id|plug_device
 c_func
@@ -329,6 +330,7 @@ suffix:semicolon
 multiline_comment|/*&n; * remove the plug and let it rip..&n; */
 DECL|function|unplug_device
 r_static
+r_inline
 r_void
 id|unplug_device
 c_func

@@ -328,14 +328,6 @@ id|delete_timer
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* Kill the ARP entry in case the hardware has changed. */
-id|arp_destroy
-(paren
-id|sk-&gt;daddr
-comma
-l_int|0
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

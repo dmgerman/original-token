@@ -10648,6 +10648,10 @@ id|MAX_DMA_ADDRESS
 )paren
 (brace
 r_int
+r_int
+id|dma_limit
+suffix:semicolon
+r_int
 id|direct
 comma
 id|indirect
@@ -10668,16 +10672,16 @@ l_int|2
 op_minus
 id|sector_t
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Do NOT use minimum() here---MAX_DMA_ADDRESS is 64 bits wide&n;&t;&t; * on a 64 bit machine!&n;&t;&t; */
 id|max_size
 op_assign
-id|minimum
-c_func
-(paren
 id|buffer_chain_size
 c_func
 (paren
 )paren
-comma
+suffix:semicolon
+id|dma_limit
+op_assign
 (paren
 id|MAX_DMA_ADDRESS
 op_minus
@@ -10691,8 +10695,24 @@ id|CURRENT-&gt;buffer
 )paren
 op_rshift
 l_int|9
-)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|max_size
+OG
+id|dma_limit
+)paren
+(brace
+id|max_size
+op_assign
+id|dma_limit
+suffix:semicolon
+)brace
 multiline_comment|/* 64 kb boundaries */
 r_if
 c_cond
@@ -13504,12 +13524,18 @@ id|fd_ref
 id|check_disk_change
 c_func
 (paren
+id|MKDEV
+c_func
+(paren
+id|FLOPPY_MAJOR
+comma
 id|drive_state
 (braket
 id|cnt
 )braket
 dot
 id|fd_device
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -14000,7 +14026,7 @@ c_func
 l_string|&quot;please recompile your program&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* these ioctls only existed&n;&t;&t;&t;&t; * in two (development)&n;&t;&t;&t;&t; * kernels anyways. That&squot;s why we&n;&t;&t;&t;&t; * complain about these, and not about&n;&t;&t;&t;&t; * the much older 0x00xx ioctl&squot;s&n;&t;&t;&t;&t; */
+multiline_comment|/* these ioctls only existed&n;&t;&t;&t;&t; * in six (development)&n;&t;&t;&t;&t; * kernels anyways. That&squot;s why we&n;&t;&t;&t;&t; * complain about these, and not about&n;&t;&t;&t;&t; * the much older 0x00xx ioctl&squot;s&n;&t;&t;&t;&t; */
 )brace
 r_else
 (brace
@@ -14349,7 +14375,7 @@ c_func
 id|cmd
 )paren
 op_amp
-id|_IOC_WRITE
+id|_IOC_READ
 )paren
 id|ECALL
 c_func
@@ -14386,7 +14412,7 @@ c_func
 id|cmd
 )paren
 op_amp
-id|_IOC_READ
+id|_IOC_WRITE
 )paren
 id|ECALL
 c_func
@@ -14850,7 +14876,7 @@ c_func
 id|cmd
 )paren
 op_amp
-id|_IOC_WRITE
+id|_IOC_READ
 )paren
 r_return
 id|fd_copyout
@@ -15716,10 +15742,17 @@ r_if
 c_cond
 (paren
 id|old_dev
+op_ne
+op_minus
+l_int|1
 op_logical_and
 id|old_dev
 op_ne
+id|MINOR
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 )paren
 (brace
 r_if
@@ -15737,7 +15770,13 @@ suffix:semicolon
 id|invalidate_buffers
 c_func
 (paren
+id|MKDEV
+c_func
+(paren
+id|FLOPPY_MAJOR
+comma
 id|old_dev
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -17471,6 +17510,11 @@ op_or
 id|FD_DISK_NEWCHANGE
 op_or
 id|FD_DISK_CHANGED
+suffix:semicolon
+id|UDRS-&gt;fd_device
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|floppy_track_buffer
 op_assign

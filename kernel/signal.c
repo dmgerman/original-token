@@ -254,6 +254,7 @@ suffix:semicolon
 multiline_comment|/*&n; * POSIX 3.3.1.3:&n; *  &quot;Setting a signal action to SIG_IGN for a signal that is pending&n; *   shall cause the pending signal to be discarded, whether or not&n; *   it is blocked&quot; (but SIGCHLD is unspecified: linux leaves it alone).&n; *&n; *  &quot;Setting a signal action to SIG_DFL for a signal that is pending&n; *   and whose default action is to ignore the signal (for example,&n; *   SIGCHLD), shall cause the pending signal to be discarded, whether&n; *   or not it is blocked&quot;&n; *&n; * Note the silly behaviour of SIGCHLD: SIG_IGN means that the signal&n; * isn&squot;t actually ignored, but does automatic child reaping, while&n; * SIG_DFL is explicitly said by POSIX to force the signal to be ignored..&n; */
 DECL|function|check_pending
 r_static
+r_inline
 r_void
 id|check_pending
 c_func

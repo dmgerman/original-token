@@ -77,6 +77,87 @@ comma
 id|fw_bcnt
 suffix:semicolon
 multiline_comment|/* Packet and byte counters */
+DECL|member|fw_priority
+r_int
+r_int
+id|fw_priority
+suffix:semicolon
+multiline_comment|/* Revised packet priority */
+)brace
+suffix:semicolon
+DECL|struct|ip_fw_old
+r_struct
+id|ip_fw_old
+(brace
+DECL|member|fw_next
+r_struct
+id|ip_fw
+op_star
+id|fw_next
+suffix:semicolon
+multiline_comment|/* Next firewall on chain */
+DECL|member|fw_src
+DECL|member|fw_dst
+r_struct
+id|in_addr
+id|fw_src
+comma
+id|fw_dst
+suffix:semicolon
+multiline_comment|/* Source and destination IP addr */
+DECL|member|fw_smsk
+DECL|member|fw_dmsk
+r_struct
+id|in_addr
+id|fw_smsk
+comma
+id|fw_dmsk
+suffix:semicolon
+multiline_comment|/* Mask for src and dest IP addr */
+DECL|member|fw_via
+r_struct
+id|in_addr
+id|fw_via
+suffix:semicolon
+multiline_comment|/* IP address of interface &quot;via&quot; */
+DECL|member|fw_flg
+r_int
+r_int
+id|fw_flg
+suffix:semicolon
+multiline_comment|/* Flags word */
+DECL|member|fw_nsp
+DECL|member|fw_ndp
+r_int
+r_int
+id|fw_nsp
+comma
+id|fw_ndp
+suffix:semicolon
+multiline_comment|/* N&squot;of src ports and # of dst ports */
+multiline_comment|/* in ports array (dst ports follow */
+multiline_comment|/* src ports; max of 10 ports in all; */
+multiline_comment|/* count of 0 means match all ports) */
+DECL|macro|IP_FW_MAX_PORTS
+mdefine_line|#define IP_FW_MAX_PORTS&t;10      &t;&t;/* A reasonable maximum */
+DECL|member|fw_pts
+r_int
+r_int
+id|fw_pts
+(braket
+id|IP_FW_MAX_PORTS
+)braket
+suffix:semicolon
+multiline_comment|/* Array of port numbers to match */
+DECL|member|fw_pcnt
+DECL|member|fw_bcnt
+r_int
+r_int
+id|fw_pcnt
+comma
+id|fw_bcnt
+suffix:semicolon
+multiline_comment|/* Packet and byte counters */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Values for &quot;flags&quot; field .&n; */
