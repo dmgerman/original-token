@@ -50,7 +50,7 @@ id|IFF_UP
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;An aliased device should end up with the combined&n;&t; *&t;multicast list of all its aliases. &n;&t; *&t;[Check this is still ok -AC]&n;&t; */
+multiline_comment|/*&n;&t; *&t;An aliased device should end up with the combined&n;&t; *&t;multicast list of all its aliases. &n;&t; *&t;Really, multicasting with logical interfaces is very&n;&t; *&t;subtle question. Now we DO forward multicast packets&n;&t; *&t;to logical interfcases, that doubles multicast&n;&t; *&t;traffic but allows mrouted to work.&n;&t; *&t;Alas, mrouted does not understand aliases even&n;&t; *&t;in 4.4BSD --ANK&n;&t; */
 id|dev
 op_assign
 id|net_alias_main_dev

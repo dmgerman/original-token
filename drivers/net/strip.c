@@ -1,3 +1,4 @@
+macro_line|#error &quot;Doesn&squot;t run with 2.1.x&quot;
 multiline_comment|/*&n; * Copyright 1996 The Board of Trustees of The Leland Stanford&n; * Junior University. All Rights Reserved.&n; *&n; * Permission to use, copy, modify, and distribute this&n; * software and its documentation for any purpose and without&n; * fee is hereby granted, provided that the above copyright&n; * notice appear in all copies.  Stanford University&n; * makes no representations about the suitability of this&n; * software for any purpose.  It is provided &quot;as is&quot; without&n; * express or implied warranty.&n; *&n; * strip.c&t;This module implements Starmode Radio IP (STRIP)&n; *&t;&t;for kernel-based devices like TTY.  It interfaces between a&n; *&t;&t;raw TTY, and the kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)strip.c&t;0.9.8&t;June 1996&n; *&n; * Author:&t;Stuart Cheshire &lt;cheshire@cs.stanford.edu&gt;&n; *&n; * Fixes:&t;v0.9 12th Feb 1996.&n; *&t;&t;New byte stuffing (2+6 run-length encoding)&n; *&t;&t;New watchdog timer task&n; *&t;&t;New Protocol key (SIP0)&n; *&t;&t;&n; *&t;&t;v0.9.1 3rd March 1996&n; *&t;&t;Changed to dynamic device allocation -- no more compile&n; *&t;&t;time (or boot time) limit on the number of STRIP devices.&n; *&t;&t;&n; *&t;&t;v0.9.2 13th March 1996&n; *&t;&t;Uses arp cache lookups (but doesn&squot;t send arp packets yet)&n; *&t;&t;&n; *&t;&t;v0.9.3 17th April 1996&n; *&t;&t;Fixed bug where STR_ERROR flag was getting set unneccessarily&n; *&t;&t;&n; *&t;&t;v0.9.4 27th April 1996&n; *&t;&t;First attempt at using &quot;&amp;COMMAND&quot; Starmode AT commands&n; *&t;&t;&n; *&t;&t;v0.9.5 29th May 1996&n; *&t;&t;First attempt at sending (unicast) ARP packets&n; *&t;&t;&n; *&t;&t;v0.9.6 5th June 1996&n; *&t;&t;Elliot put &quot;message level&quot; tags in every &quot;printk&quot; statement&n; *&t;&t;&n; *&t;&t;v0.9.7 13th June 1996&n; *&t;&t;Added support for the /proc fs (laik)&n; *&n; *              v0.9.8 July 1996&n; *              Added packet logging (Mema)&n; */
 multiline_comment|/*&n; * Undefine this symbol if you don&squot;t have PROC_NET_STRIP_STATUS&n; * defined in include/linux/proc_fs.h&n; */
 DECL|macro|DO_PROC_NET_STRIP_STATUS
@@ -6591,19 +6592,6 @@ r_int
 id|strip_rebuild_header
 c_func
 (paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|dst
-comma
 r_struct
 id|sk_buff
 op_star
@@ -6618,9 +6606,9 @@ op_assign
 id|STRIP_Header
 op_star
 )paren
-id|buff
+id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*printk(KERN_INFO &quot;%s: strip_rebuild_header&bslash;n&quot;, dev-&gt;name);*/
+multiline_comment|/*printk(KERN_INFO &quot;%s: strip_rebuild_header&bslash;n&quot;, skb-&gt;dev-&gt;name);*/
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Arp find returns zero if if knows the address, */
 multiline_comment|/* or if it doesn&squot;t know the address it sends an ARP packet and returns non-zero */
@@ -6629,12 +6617,6 @@ id|arp_find
 c_func
 (paren
 id|header-&gt;dst_addr.c
-comma
-id|dst
-comma
-id|dev
-comma
-id|dev-&gt;pa_addr
 comma
 id|skb
 )paren

@@ -373,7 +373,7 @@ macro_line|#endif /* MODULE */
 multiline_comment|/* Export a symbol either from the kernel or a module.&n;&n;   In the kernel, the symbol is added to the kernel&squot;s global symbol table.&n;&n;   In a module, it controls which variables are exported.  If no&n;   variables are explicitly exported, the action is controled by the&n;   insmod -[xX] flags.  Otherwise, only the variables listed are exported.&n;   This obviates the need for the old register_symtab() function.  */
 macro_line|#if defined(__GENKSYMS__)
 multiline_comment|/* We want the EXPORT_SYMBOL tag left intact for recognition.  */
-macro_line|#elif !defined(EXPORT_SYMTAB)
+macro_line|#elif !defined(EXPORT_SYMTAB) &amp;&amp; defined(CONFIG_MODULES)
 DECL|macro|__EXPORT_SYMBOL
 mdefine_line|#define __EXPORT_SYMBOL(sym,str)   error EXPORT_SYMTAB_not_defined
 DECL|macro|EXPORT_SYMBOL

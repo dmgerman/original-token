@@ -1,11 +1,11 @@
 DECL|macro|RCS_ID
-mdefine_line|#define RCS_ID &quot;$Id: scc.c,v 1.64 1996/10/30 18:58:26 jreuter Exp jreuter $&quot;
+mdefine_line|#define RCS_ID &quot;$Id: scc.c,v 1.66 1997/01/08 22:56:06 jreuter Exp jreuter $&quot;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;3.0&quot;
 DECL|macro|BANNER
 mdefine_line|#define BANNER  &quot;Z8530 SCC driver version &quot;VERSION&quot;.dl1bke (experimental) by DL1BKE&bslash;n&quot;
 multiline_comment|/*&n; * Please use z8530drv-utils-3.0 with this version.&n; *            ------------------&n; */
-multiline_comment|/*&n;   ********************************************************************&n;   *   SCC.C - Linux driver for Z8530 based HDLC cards for AX.25      *&n;   ********************************************************************&n;&n;&n;   ********************************************************************&n;&n;&t;Copyright (c) 1993, 1996 Joerg Reuter DL1BKE&n;&n;&t;portions (c) 1993 Guido ten Dolle PE1NNZ&n;&n;   ********************************************************************&n;   &n;   The driver and the programs in the archive are UNDER CONSTRUCTION.&n;   The code is likely to fail, and so your kernel could --- even &n;   a whole network. &n;&n;   This driver is intended for Amateur Radio use. If you are running it&n;   for commercial purposes, please drop me a note. I am nosy...&n;&n;   ...BUT:&n; &n;   ! You  m u s t  recognize the appropriate legislations of your country !&n;   ! before you connect a radio to the SCC board and start to transmit or !&n;   ! receive. The GPL allows you to use the  d r i v e r,  NOT the RADIO! !&n;&n;   For non-Amateur-Radio use please note that you might need a special&n;   allowance/licence from the designer of the SCC Board and/or the&n;   MODEM. &n;&n;   This program is free software; you can redistribute it and/or modify &n;   it under the terms of the (modified) GNU General Public License &n;   delivered with the Linux kernel source.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should find a copy of the GNU General Public License in &n;   /usr/src/linux/COPYING; &n;   &n;   ******************************************************************** &n;&n;&t;&t;&n;   Incomplete history of z8530drv:&n;   -------------------------------&n;&n;   940913&t;- started to write the driver, rescued most of my own&n;&t;&t;  code (and Hans Alblas&squot; memory buffer pool concept) from &n;&t;&t;  an earlier project &quot;sccdrv&quot; which was initiated by &n;&t;&t;  Guido ten Dolle. Not much of the old driver survived, &n;&t;&t;  though. The first version I put my hands on was sccdrv1.3&n;&t;&t;  from August 1993. The memory buffer pool concept&n;&t;&t;  appeared in an unauthorized sccdrv version (1.5) from&n;&t;&t;  August 1994.&n;&n;   950131&t;- changed copyright notice to GPL without limitations.&n;   &n;     .&n;     .&t;&lt;SNIP&gt;&n;     .&n;   &t;&t;  &n;   961005&t;- New semester, new driver... &n;&n;   &t;&t;  * KISS TNC emulator removed (TTY driver)&n;   &t;&t;  * Source moved to drivers/net/&n;   &t;&t;  * Includes Z8530 defines from drivers/net/z8530.h&n;   &t;&t;  * Uses sk_buffer memory management&n;   &t;&t;  * Reduced overhead of /proc/net/z8530drv output&n;   &t;&t;  * Streamlined quite a lot things&n;   &t;&t;  * Invents brand new bugs... ;-)&n;&n;   &t;&t;  The move to version number 3.0 reflects theses changes.&n;   &t;&t;  You can use version 2.4a if you need a KISS TNC emulator.&n;&n;   961213&t;- Fixed for Linux networking changes.&n;&n;   Thanks to all who contributed to this driver with ideas and bug&n;   reports!&n;   &n;   NB -- if you find errors, change something, please let me know&n;      &t; first before you distribute it... And please don&squot;t touch&n;   &t; the version number. Just replace my callsign in&n;   &t; &quot;v3.0.dl1bke&quot; with your own. Just to avoid confusion...&n;&n;   If you want to add your modification to the linux distribution&n;   please (!) contact me first.&n;   &n;   New versions of the driver will be announced on the linux-hams&n;   mailing list on vger.rutgers.edu. To subscribe send an e-mail&n;   to majordomo@vger.rutgers.edu with the following line in&n;   the body of the mail:&n;   &n;&t;   subscribe linux-hams&n;&t;   &n;   The content of the &quot;Subject&quot; field will be ignored.&n;&n;   vy 73,&n;   Joerg Reuter&t;ampr-net: dl1bke@db0pra.ampr.org&n;&t;&t;AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU&n;&t;&t;Internet: jreuter@lykos.oche.de  &n;*/
+multiline_comment|/*&n;   ********************************************************************&n;   *   SCC.C - Linux driver for Z8530 based HDLC cards for AX.25      *&n;   ********************************************************************&n;&n;&n;   ********************************************************************&n;&n;&t;Copyright (c) 1993, 1996 Joerg Reuter DL1BKE&n;&n;&t;portions (c) 1993 Guido ten Dolle PE1NNZ&n;&n;   ********************************************************************&n;   &n;   The driver and the programs in the archive are UNDER CONSTRUCTION.&n;   The code is likely to fail, and so your kernel could --- even &n;   a whole network. &n;&n;   This driver is intended for Amateur Radio use. If you are running it&n;   for commercial purposes, please drop me a note. I am nosy...&n;&n;   ...BUT:&n; &n;   ! You  m u s t  recognize the appropriate legislations of your country !&n;   ! before you connect a radio to the SCC board and start to transmit or !&n;   ! receive. The GPL allows you to use the  d r i v e r,  NOT the RADIO! !&n;&n;   For non-Amateur-Radio use please note that you might need a special&n;   allowance/licence from the designer of the SCC Board and/or the&n;   MODEM. &n;&n;   This program is free software; you can redistribute it and/or modify &n;   it under the terms of the (modified) GNU General Public License &n;   delivered with the Linux kernel source.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should find a copy of the GNU General Public License in &n;   /usr/src/linux/COPYING; &n;   &n;   ******************************************************************** &n;&n;&t;&t;&n;   Incomplete history of z8530drv:&n;   -------------------------------&n;&n;   940913&t;- started to write the driver, rescued most of my own&n;&t;&t;  code (and Hans Alblas&squot; memory buffer pool concept) from &n;&t;&t;  an earlier project &quot;sccdrv&quot; which was initiated by &n;&t;&t;  Guido ten Dolle. Not much of the old driver survived, &n;&t;&t;  though. The first version I put my hands on was sccdrv1.3&n;&t;&t;  from August 1993. The memory buffer pool concept&n;&t;&t;  appeared in an unauthorized sccdrv version (1.5) from&n;&t;&t;  August 1994.&n;&n;   950131&t;- changed copyright notice to GPL without limitations.&n;   &n;     .&n;     .&t;&lt;SNIP&gt;&n;     .&n;   &t;&t;  &n;   961005&t;- New semester, new driver... &n;&n;   &t;&t;  * KISS TNC emulator removed (TTY driver)&n;   &t;&t;  * Source moved to drivers/net/&n;   &t;&t;  * Includes Z8530 defines from drivers/net/z8530.h&n;   &t;&t;  * Uses sk_buffer memory management&n;   &t;&t;  * Reduced overhead of /proc/net/z8530drv output&n;   &t;&t;  * Streamlined quite a lot things&n;   &t;&t;  * Invents brand new bugs... ;-)&n;&n;   &t;&t;  The move to version number 3.0 reflects theses changes.&n;   &t;&t;  You can use &squot;kissbridge&squot; if you need a KISS TNC emulator.&n;&n;   961213&t;- Fixed for Linux networking changes. (G4KLX)&n;   960108&t;- Fixed the remaining problems.&n;&n;   Thanks to all who contributed to this driver with ideas and bug&n;   reports!&n;   &n;   NB -- if you find errors, change something, please let me know&n;      &t; first before you distribute it... And please don&squot;t touch&n;   &t; the version number. Just replace my callsign in&n;   &t; &quot;v3.0.dl1bke&quot; with your own. Just to avoid confusion...&n;&n;   If you want to add your modification to the linux distribution&n;   please (!) contact me first.&n;   &n;   New versions of the driver will be announced on the linux-hams&n;   mailing list on vger.rutgers.edu. To subscribe send an e-mail&n;   to majordomo@vger.rutgers.edu with the following line in&n;   the body of the mail:&n;   &n;&t;   subscribe linux-hams&n;&t;   &n;   The content of the &quot;Subject&quot; field will be ignored.&n;&n;   vy 73,&n;   Joerg Reuter&t;ampr-net: dl1bke@db0pra.ampr.org&n;&t;&t;AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU&n;&t;&t;Internet: jreuter@lykos.oche.de  &n;*/
 multiline_comment|/* ----------------------------------------------------------------------- */
 DECL|macro|SCC_DELAY
 macro_line|#undef  SCC_DELAY &t;/* perhaps your ISA bus is a *bit* too fast? */
@@ -363,30 +363,6 @@ comma
 r_void
 op_star
 id|addr
-)paren
-suffix:semicolon
-r_static
-r_int
-id|scc_net_rebuild_header
-c_func
-(paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|raddr
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
 )paren
 suffix:semicolon
 r_static
@@ -1067,10 +1043,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|bp
 op_assign
 id|skb_put
@@ -1851,10 +1823,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|scc-&gt;rx_buff
 op_assign
 id|skb
@@ -5822,7 +5790,7 @@ id|scc_net_header
 suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign
-id|scc_net_rebuild_header
+id|ax25_rebuild_header
 suffix:semicolon
 id|dev-&gt;set_mac_address
 op_assign
@@ -7668,27 +7636,6 @@ id|dev-&gt;addr_len
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* ----&gt; rebuild header &lt;---- */
-DECL|function|scc_net_rebuild_header
-r_static
-r_int
-id|scc_net_rebuild_header
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-(brace
-r_return
-id|ax25_rebuild_header
-c_func
-(paren
-id|skb
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; &quot;hard&quot; header &lt;---- */

@@ -162,9 +162,9 @@ op_star
 id|buff
 op_increment
 op_assign
-id|GFI
+id|ROSE_GFI
 op_or
-id|Q_BIT
+id|ROSE_Q_BIT
 suffix:semicolon
 op_star
 id|buff
@@ -313,7 +313,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|skbn-&gt;sk
+id|skb-&gt;sk
 op_ne
 l_int|NULL
 )paren

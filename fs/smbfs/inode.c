@@ -1803,9 +1803,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
 id|DPRINTK
 c_func
 (paren

@@ -3466,7 +3466,7 @@ suffix:semicolon
 r_int
 id|num_addrs
 op_assign
-id|dev-&gt;mc_list
+id|dev-&gt;mc_count
 suffix:semicolon
 r_if
 c_cond

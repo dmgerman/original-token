@@ -1698,9 +1698,6 @@ c_cond
 id|virt_to_bus
 c_func
 (paren
-(paren
-id|u_int
-)paren
 id|CURRENT-&gt;buffer
 op_plus
 id|CURRENT-&gt;nr_sectors

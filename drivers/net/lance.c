@@ -616,7 +616,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|virt_to_bus
+c_func
+(paren
 id|high_memory
+)paren
 op_le
 l_int|16
 op_star

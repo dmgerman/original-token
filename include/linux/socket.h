@@ -129,8 +129,13 @@ DECL|macro|CMSG_NXTHDR
 mdefine_line|#define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr(mhdr, cmsg)
 DECL|macro|CMSG_ALIGN
 mdefine_line|#define CMSG_ALIGN(len) ( ((len)+sizeof(long)-1) &amp; ~(sizeof(long)-1) )
-DECL|macro|CMSG_FIRST
-mdefine_line|#define&t;CMSG_FIRST(msg)&t;((msg)-&gt;msg_controllen &gt;= sizeof(struct cmsghdr) ? &bslash;&n;&t;&t;&t; (struct cmsghdr *)(msg)-&gt;msg_control : &bslash;&n;&t;&t;&t; (struct cmsghdr *)NULL)
+multiline_comment|/* Stevens&squot;s Adv. API specifies CMSG_SPACE &amp; CMSG_LENGTH,&n; * I cannot understand, what the differenece? --ANK&n; */
+DECL|macro|CMSG_SPACE
+mdefine_line|#define CMSG_SPACE(len) CMSG_ALIGN((len)+sizeof(struct cmsghdr))
+DECL|macro|CMSG_LENGTH
+mdefine_line|#define CMSG_LENGTH(len) CMSG_ALIGN((len)+sizeof(struct cmsghdr))
+DECL|macro|CMSG_FIRSTHDR
+mdefine_line|#define&t;CMSG_FIRSTHDR(msg)&t;((msg)-&gt;msg_controllen &gt;= sizeof(struct cmsghdr) ? &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)(msg)-&gt;msg_control : &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)NULL)
 DECL|function|cmsg_nxthdr
 r_extern
 id|__inline__
@@ -215,12 +220,6 @@ op_star
 id|ptr
 suffix:semicolon
 )brace
-macro_line|#ifdef __KERNEL__
-DECL|macro|KCMSG_NXTHDR
-mdefine_line|#define&t;KCMSG_NXTHDR(msg, cmsg)&t;({ &bslash;&n;&t;struct cmsghdr * __cmptr = (struct cmsghdr *)((unsigned char*)(cmsg) + CMSG_ALIGN(kcm.cmsg_len)); &bslash;&n;&t;( (void *)(__cmptr + 1) &lt;= (msg)-&gt;msg_control + (msg)-&gt;msg_controllen &amp;&amp; &bslash;&n;&t;  !copy_from_user(&amp;kcm, __cmptr, sizeof(struct cmsghdr)) ? __cmptr : NULL); })
-DECL|macro|KCMSG_FIRSTHDR
-mdefine_line|#define&t;KCMSG_FIRSTHDR(msg)&t;((msg)-&gt;msg_control &amp;&amp; (msg)-&gt;msg_controllen &gt;= sizeof(struct cmsghdr) &bslash;&n;&t;&t;&t;&t; &amp;&amp; !copy_from_user(&amp;kcm, (msg)-&gt;msg_control, sizeof(struct cmsghdr)) ? &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)(msg)-&gt;msg_control : &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)NULL)
-macro_line|#endif
 multiline_comment|/* &quot;Socket&quot;-level control message types: */
 DECL|macro|SCM_RIGHTS
 mdefine_line|#define&t;SCM_RIGHTS&t;0x01&t;&t;/* rw: access rights (array of int) */
@@ -321,8 +320,8 @@ DECL|macro|PF_X25
 mdefine_line|#define PF_X25&t;&t;AF_X25
 DECL|macro|PF_INET6
 mdefine_line|#define PF_INET6&t;AF_INET6
-DECL|macro|PR_ROSE
-mdefine_line|#define PR_ROSE&t;&t;AF_ROSE
+DECL|macro|PF_ROSE
+mdefine_line|#define PF_ROSE&t;&t;AF_ROSE
 DECL|macro|PF_DECNET
 mdefine_line|#define PF_DECNET&t;AF_DECNET
 DECL|macro|PF_NETBEUI

@@ -429,7 +429,7 @@ id|skb-&gt;data
 l_int|0
 )braket
 op_eq
-id|LAPB_ADDR_C
+id|LAPB_ADDR_D
 )paren
 op_star
 id|type
@@ -444,7 +444,7 @@ id|skb-&gt;data
 l_int|0
 )braket
 op_eq
-id|LAPB_ADDR_D
+id|LAPB_ADDR_C
 )paren
 op_star
 id|type
@@ -462,7 +462,7 @@ id|skb-&gt;data
 l_int|0
 )braket
 op_eq
-id|LAPB_ADDR_D
+id|LAPB_ADDR_C
 )paren
 op_star
 id|type
@@ -477,7 +477,7 @@ id|skb-&gt;data
 l_int|0
 )braket
 op_eq
-id|LAPB_ADDR_C
+id|LAPB_ADDR_D
 )paren
 op_star
 id|type
@@ -504,7 +504,7 @@ id|skb-&gt;data
 l_int|0
 )braket
 op_eq
-id|LAPB_ADDR_A
+id|LAPB_ADDR_B
 )paren
 op_star
 id|type
@@ -519,7 +519,7 @@ id|skb-&gt;data
 l_int|0
 )braket
 op_eq
-id|LAPB_ADDR_B
+id|LAPB_ADDR_A
 )paren
 op_star
 id|type
@@ -537,7 +537,7 @@ id|skb-&gt;data
 l_int|0
 )braket
 op_eq
-id|LAPB_ADDR_B
+id|LAPB_ADDR_A
 )paren
 op_star
 id|type
@@ -552,7 +552,7 @@ id|skb-&gt;data
 l_int|0
 )braket
 op_eq
-id|LAPB_ADDR_A
+id|LAPB_ADDR_B
 )paren
 op_star
 id|type
@@ -887,7 +887,7 @@ l_int|0
 )braket
 op_amp
 op_complement
-id|PF
+id|LAPB_SPF
 suffix:semicolon
 op_star
 id|pf

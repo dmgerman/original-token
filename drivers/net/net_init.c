@@ -13,9 +13,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/fddidevice.h&gt;
-macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
-macro_line|#endif
 multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;   &n;   [Removed all support for /dev network devices. When someone adds&n;    streams then by magic we get them, but otherwise they are un-needed&n;&t;and a space waste]&n;*/
 multiline_comment|/* The list of used and available &quot;eth&quot; slots (for &quot;eth0&quot;, &quot;eth1&quot;, etc.) */
 DECL|macro|MAX_ETH_CARDS
@@ -1153,6 +1151,13 @@ suffix:semicolon
 id|dev-&gt;next
 op_assign
 l_int|NULL
+suffix:semicolon
+id|dev-&gt;ifindex
+op_assign
+id|dev_new_index
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 id|restore_flags

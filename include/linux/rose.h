@@ -23,7 +23,9 @@ mdefine_line|#define&t;ROSE_HOLDBACK&t;7
 DECL|macro|ROSE_KILL
 mdefine_line|#define&t;ROSE_KILL&t;99
 DECL|macro|SIOCRSCTLCON
-mdefine_line|#define&t;SIOCRSCTLCON&t;&t;(SIOCPROTOPRIVATE+0)
+mdefine_line|#define&t;SIOCRSCTLCON&t;&t;(SIOCPROTOPRIVATE+1)
+DECL|macro|SIOCRSL2CALL
+mdefine_line|#define&t;SIOCRSL2CALL&t;&t;(SIOCPROTOPRIVATE+2)
 r_typedef
 r_struct
 (brace

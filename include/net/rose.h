@@ -3,18 +3,20 @@ macro_line|#ifndef _ROSE_H
 DECL|macro|_ROSE_H
 mdefine_line|#define _ROSE_H 
 macro_line|#include &lt;linux/rose.h&gt;
+DECL|macro|ROSE_SLOWHZ
+mdefine_line|#define&t;ROSE_SLOWHZ&t;&t;&t;10&t;/* Run timing at 1/10 second */
 DECL|macro|ROSE_ADDR_LEN
 mdefine_line|#define&t;ROSE_ADDR_LEN&t;&t;&t;5
 DECL|macro|ROSE_MIN_LEN
 mdefine_line|#define&t;ROSE_MIN_LEN&t;&t;&t;3
-DECL|macro|GFI
-mdefine_line|#define&t;GFI&t;&t;&t;&t;0x10
-DECL|macro|Q_BIT
-mdefine_line|#define&t;Q_BIT&t;&t;&t;&t;0x80
-DECL|macro|D_BIT
-mdefine_line|#define&t;D_BIT&t;&t;&t;&t;0x40
-DECL|macro|M_BIT
-mdefine_line|#define&t;M_BIT&t;&t;&t;&t;0x10
+DECL|macro|ROSE_GFI
+mdefine_line|#define&t;ROSE_GFI&t;&t;&t;0x10
+DECL|macro|ROSE_Q_BIT
+mdefine_line|#define&t;ROSE_Q_BIT&t;&t;&t;0x80
+DECL|macro|ROSE_D_BIT
+mdefine_line|#define&t;ROSE_D_BIT&t;&t;&t;0x40
+DECL|macro|ROSE_M_BIT
+mdefine_line|#define&t;ROSE_M_BIT&t;&t;&t;0x10
 DECL|macro|ROSE_CALL_REQUEST
 mdefine_line|#define&t;ROSE_CALL_REQUEST&t;&t;0x0B
 DECL|macro|ROSE_CALL_ACCEPTED
@@ -53,51 +55,57 @@ DECL|macro|ROSE_ILLEGAL
 mdefine_line|#define&t;ROSE_ILLEGAL&t;&t;&t;0xFD
 multiline_comment|/* Define Link State constants. */
 DECL|macro|ROSE_STATE_0
-mdefine_line|#define ROSE_STATE_0&t;&t;0&t;&t;/* Ready */
+mdefine_line|#define ROSE_STATE_0&t;&t;&t;0&t;&t;/* Ready */
 DECL|macro|ROSE_STATE_1
-mdefine_line|#define ROSE_STATE_1&t;&t;1&t;&t;/* Awaiting Call Accepted */
+mdefine_line|#define ROSE_STATE_1&t;&t;&t;1&t;&t;/* Awaiting Call Accepted */
 DECL|macro|ROSE_STATE_2
-mdefine_line|#define ROSE_STATE_2&t;&t;2&t;&t;/* Awaiting Clear Confirmation */
+mdefine_line|#define ROSE_STATE_2&t;&t;&t;2&t;&t;/* Awaiting Clear Confirmation */
 DECL|macro|ROSE_STATE_3
-mdefine_line|#define ROSE_STATE_3&t;&t;3&t;&t;/* Data Transfer */
+mdefine_line|#define ROSE_STATE_3&t;&t;&t;3&t;&t;/* Data Transfer */
 DECL|macro|ROSE_STATE_4
-mdefine_line|#define&t;ROSE_STATE_4&t;&t;4&t;&t;/* Awaiting Reset Confirmation */
+mdefine_line|#define&t;ROSE_STATE_4&t;&t;&t;4&t;&t;/* Awaiting Reset Confirmation */
 DECL|macro|ROSE_DEFAULT_T0
-mdefine_line|#define ROSE_DEFAULT_T0&t;&t;(180 * PR_SLOWHZ)&t;/* Default T10 T20 value */
+mdefine_line|#define ROSE_DEFAULT_T0&t;&t;&t;(180 * ROSE_SLOWHZ)&t;/* Default T10 T20 value */
 DECL|macro|ROSE_DEFAULT_T1
-mdefine_line|#define ROSE_DEFAULT_T1&t;&t;(200 * PR_SLOWHZ)&t;/* Default T11 T21 value */
+mdefine_line|#define ROSE_DEFAULT_T1&t;&t;&t;(200 * ROSE_SLOWHZ)&t;/* Default T11 T21 value */
 DECL|macro|ROSE_DEFAULT_T2
-mdefine_line|#define ROSE_DEFAULT_T2&t;&t;(180 * PR_SLOWHZ)&t;/* Default T12 T22 value */
+mdefine_line|#define ROSE_DEFAULT_T2&t;&t;&t;(180 * ROSE_SLOWHZ)&t;/* Default T12 T22 value */
 DECL|macro|ROSE_DEFAULT_T3
-mdefine_line|#define&t;ROSE_DEFAULT_T3&t;&t;(180 * PR_SLOWHZ)&t;/* Default T13 T23 value */
+mdefine_line|#define&t;ROSE_DEFAULT_T3&t;&t;&t;(180 * ROSE_SLOWHZ)&t;/* Default T13 T23 value */
 DECL|macro|ROSE_DEFAULT_HB
-mdefine_line|#define&t;ROSE_DEFAULT_HB&t;&t;(5 * PR_SLOWHZ)&t;&t;/* Default Holdback value */
+mdefine_line|#define&t;ROSE_DEFAULT_HB&t;&t;&t;(5 * ROSE_SLOWHZ)&t;/* Default Holdback value */
 DECL|macro|ROSE_DEFAULT_IDLE
-mdefine_line|#define&t;ROSE_DEFAULT_IDLE&t;(20 * 60 * PR_SLOWHZ)&t;/* Default No Activity value */
+mdefine_line|#define&t;ROSE_DEFAULT_IDLE&t;&t;(20 * 60 * ROSE_SLOWHZ)&t;/* Default No Activity value */
 DECL|macro|ROSE_DEFAULT_WINDOW
-mdefine_line|#define&t;ROSE_DEFAULT_WINDOW&t;2&t;&t;&t;/* Default Window Size&t;*/
+mdefine_line|#define&t;ROSE_DEFAULT_WINDOW&t;&t;2&t;&t;&t;/* Default Window Size&t;*/
 DECL|macro|ROSE_MODULUS
-mdefine_line|#define ROSE_MODULUS &t;&t;8
+mdefine_line|#define ROSE_MODULUS &t;&t;&t;8
 DECL|macro|ROSE_MAX_WINDOW_SIZE
-mdefine_line|#define ROSE_MAX_WINDOW_SIZE&t;7&t;&t;&t;/* Maximum Window Allowable */
+mdefine_line|#define ROSE_MAX_WINDOW_SIZE&t;&t;7&t;&t;&t;/* Maximum Window Allowable */
 DECL|macro|ROSE_PACLEN
-mdefine_line|#define&t;ROSE_PACLEN&t;&t;128&t;&t;&t;/* Default Packet Length */
+mdefine_line|#define&t;ROSE_PACLEN&t;&t;&t;128&t;&t;&t;/* Default Packet Length */
+DECL|macro|ROSE_COND_ACK_PENDING
+mdefine_line|#define&t;ROSE_COND_ACK_PENDING&t;&t;0x01
+DECL|macro|ROSE_COND_PEER_RX_BUSY
+mdefine_line|#define&t;ROSE_COND_PEER_RX_BUSY&t;&t;0x02
+DECL|macro|ROSE_COND_OWN_RX_BUSY
+mdefine_line|#define&t;ROSE_COND_OWN_RX_BUSY&t;&t;0x04
 DECL|macro|FAC_NATIONAL
-mdefine_line|#define&t;FAC_NATIONAL&t;&t;0x00
+mdefine_line|#define&t;FAC_NATIONAL&t;&t;&t;0x00
 DECL|macro|FAC_CCITT
-mdefine_line|#define&t;FAC_CCITT&t;&t;0x0F
+mdefine_line|#define&t;FAC_CCITT&t;&t;&t;0x0F
 DECL|macro|FAC_NATIONAL_RAND
-mdefine_line|#define&t;FAC_NATIONAL_RAND&t;0x7F
+mdefine_line|#define&t;FAC_NATIONAL_RAND&t;&t;0x7F
 DECL|macro|FAC_NATIONAL_FLAGS
-mdefine_line|#define&t;FAC_NATIONAL_FLAGS&t;0x3F
+mdefine_line|#define&t;FAC_NATIONAL_FLAGS&t;&t;0x3F
 DECL|macro|FAC_NATIONAL_DEST_DIGI
-mdefine_line|#define&t;FAC_NATIONAL_DEST_DIGI&t;0xE9
+mdefine_line|#define&t;FAC_NATIONAL_DEST_DIGI&t;&t;0xE9
 DECL|macro|FAC_NATIONAL_SRC_DIGI
-mdefine_line|#define&t;FAC_NATIONAL_SRC_DIGI&t;0xEB
+mdefine_line|#define&t;FAC_NATIONAL_SRC_DIGI&t;&t;0xEB
 DECL|macro|FAC_CCITT_DEST_NSAP
-mdefine_line|#define&t;FAC_CCITT_DEST_NSAP&t;0xC9
+mdefine_line|#define&t;FAC_CCITT_DEST_NSAP&t;&t;0xC9
 DECL|macro|FAC_CCITT_SRC_NSAP
-mdefine_line|#define&t;FAC_CCITT_SRC_NSAP&t;0xCB
+mdefine_line|#define&t;FAC_CCITT_SRC_NSAP&t;&t;0xCB
 DECL|struct|rose_neigh
 r_struct
 id|rose_neigh
@@ -336,11 +344,6 @@ r_int
 r_int
 id|fraglen
 suffix:semicolon
-DECL|member|ack_queue
-r_struct
-id|sk_buff_head
-id|ack_queue
-suffix:semicolon
 DECL|member|frag_queue
 r_struct
 id|sk_buff_head
@@ -358,6 +361,10 @@ DECL|typedef|rose_cb
 id|rose_cb
 suffix:semicolon
 multiline_comment|/* af_rose.c */
+r_extern
+id|ax25_address
+id|rose_callsign
+suffix:semicolon
 r_extern
 r_int
 id|sysctl_rose_restart_request_timeout
@@ -821,29 +828,6 @@ multiline_comment|/* rose_subr.c */
 r_extern
 r_void
 id|rose_clear_queues
-c_func
-(paren
-r_struct
-id|sock
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|rose_frames_acked
-c_func
-(paren
-r_struct
-id|sock
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|rose_requeue_frames
 c_func
 (paren
 r_struct

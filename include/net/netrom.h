@@ -3,69 +3,83 @@ macro_line|#ifndef _NETROM_H
 DECL|macro|_NETROM_H
 mdefine_line|#define _NETROM_H 
 macro_line|#include &lt;linux/netrom.h&gt;
+DECL|macro|NR_SLOWHZ
+mdefine_line|#define&t;NR_SLOWHZ&t;&t;&t;10&t;/* Run timing at 1/10 second */
 DECL|macro|NR_T1CLAMPLO
-mdefine_line|#define&t;NR_T1CLAMPLO   (1 * PR_SLOWHZ)&t;/* If defined, clamp at 1 second **/
+mdefine_line|#define&t;NR_T1CLAMPLO  &t; &t;&t;(1 * NR_SLOWHZ)&t;&t;/* If defined, clamp at 1 second **/
 DECL|macro|NR_T1CLAMPHI
-mdefine_line|#define&t;NR_T1CLAMPHI (300 * PR_SLOWHZ)&t;/* If defined, clamp at 30 seconds **/
+mdefine_line|#define&t;NR_T1CLAMPHI &t;&t;&t;(300 * NR_SLOWHZ)&t;/* If defined, clamp at 30 seconds **/
 DECL|macro|NR_NETWORK_LEN
-mdefine_line|#define&t;NR_NETWORK_LEN&t;&t;15
+mdefine_line|#define&t;NR_NETWORK_LEN&t;&t;&t;15
 DECL|macro|NR_TRANSPORT_LEN
-mdefine_line|#define&t;NR_TRANSPORT_LEN&t;5
+mdefine_line|#define&t;NR_TRANSPORT_LEN&t;&t;5
 DECL|macro|NR_PROTO_IP
-mdefine_line|#define&t;NR_PROTO_IP&t;&t;0x0C
+mdefine_line|#define&t;NR_PROTO_IP&t;&t;&t;0x0C
 DECL|macro|NR_PROTOEXT
-mdefine_line|#define&t;NR_PROTOEXT&t;&t;0x00
+mdefine_line|#define&t;NR_PROTOEXT&t;&t;&t;0x00
 DECL|macro|NR_CONNREQ
-mdefine_line|#define&t;NR_CONNREQ&t;&t;0x01
+mdefine_line|#define&t;NR_CONNREQ&t;&t;&t;0x01
 DECL|macro|NR_CONNACK
-mdefine_line|#define&t;NR_CONNACK&t;&t;0x02
+mdefine_line|#define&t;NR_CONNACK&t;&t;&t;0x02
 DECL|macro|NR_DISCREQ
-mdefine_line|#define&t;NR_DISCREQ&t;&t;0x03
+mdefine_line|#define&t;NR_DISCREQ&t;&t;&t;0x03
 DECL|macro|NR_DISCACK
-mdefine_line|#define&t;NR_DISCACK&t;&t;0x04
+mdefine_line|#define&t;NR_DISCACK&t;&t;&t;0x04
 DECL|macro|NR_INFO
-mdefine_line|#define&t;NR_INFO&t;&t;&t;0x05
+mdefine_line|#define&t;NR_INFO&t;&t;&t;&t;0x05
 DECL|macro|NR_INFOACK
-mdefine_line|#define&t;NR_INFOACK&t;&t;0x06
+mdefine_line|#define&t;NR_INFOACK&t;&t;&t;0x06
 DECL|macro|NR_CHOKE_FLAG
-mdefine_line|#define&t;NR_CHOKE_FLAG&t;&t;0x80
+mdefine_line|#define&t;NR_CHOKE_FLAG&t;&t;&t;0x80
 DECL|macro|NR_NAK_FLAG
-mdefine_line|#define&t;NR_NAK_FLAG&t;&t;0x40
+mdefine_line|#define&t;NR_NAK_FLAG&t;&t;&t;0x40
 DECL|macro|NR_MORE_FLAG
-mdefine_line|#define&t;NR_MORE_FLAG&t;&t;0x20
+mdefine_line|#define&t;NR_MORE_FLAG&t;&t;&t;0x20
 multiline_comment|/* Define Link State constants. */
 DECL|macro|NR_STATE_0
-mdefine_line|#define NR_STATE_0&t;&t;0
+mdefine_line|#define NR_STATE_0&t;&t;&t;0
 DECL|macro|NR_STATE_1
-mdefine_line|#define NR_STATE_1&t;&t;1
+mdefine_line|#define NR_STATE_1&t;&t;&t;1
 DECL|macro|NR_STATE_2
-mdefine_line|#define NR_STATE_2&t;&t;2
+mdefine_line|#define NR_STATE_2&t;&t;&t;2
 DECL|macro|NR_STATE_3
-mdefine_line|#define NR_STATE_3&t;&t;3
+mdefine_line|#define NR_STATE_3&t;&t;&t;3
+DECL|macro|NR_COND_ACK_PENDING
+mdefine_line|#define&t;NR_COND_ACK_PENDING&t;&t;0x01
+DECL|macro|NR_COND_REJECT
+mdefine_line|#define&t;NR_COND_REJECT&t;&t;&t;0x02
+DECL|macro|NR_COND_PEER_RX_BUSY
+mdefine_line|#define&t;NR_COND_PEER_RX_BUSY&t;&t;0x04
+DECL|macro|NR_COND_OWN_RX_BUSY
+mdefine_line|#define&t;NR_COND_OWN_RX_BUSY&t;&t;0x08
 DECL|macro|NR_DEFAULT_T1
-mdefine_line|#define NR_DEFAULT_T1&t;&t;(120 * PR_SLOWHZ)&t;/* Outstanding frames - 120 seconds */
+mdefine_line|#define NR_DEFAULT_T1&t;&t;&t;(120 * NR_SLOWHZ)&t;/* Outstanding frames - 120 seconds */
 DECL|macro|NR_DEFAULT_T2
-mdefine_line|#define NR_DEFAULT_T2&t;&t;(5   * PR_SLOWHZ)&t;/* Response delay     - 5 seconds */
+mdefine_line|#define NR_DEFAULT_T2&t;&t;&t;(5   * NR_SLOWHZ)&t;/* Response delay     - 5 seconds */
 DECL|macro|NR_DEFAULT_N2
-mdefine_line|#define NR_DEFAULT_N2&t;&t;3&t;&t;&t;/* Number of Retries - 3 */
+mdefine_line|#define NR_DEFAULT_N2&t;&t;&t;3&t;&t;&t;/* Number of Retries - 3 */
 DECL|macro|NR_DEFAULT_T4
-mdefine_line|#define&t;NR_DEFAULT_T4&t;&t;(180 * PR_SLOWHZ)&t;/* Busy Delay - 180 seconds */
+mdefine_line|#define&t;NR_DEFAULT_T4&t;&t;&t;(180 * NR_SLOWHZ)&t;/* Busy Delay - 180 seconds */
 DECL|macro|NR_DEFAULT_IDLE
-mdefine_line|#define&t;NR_DEFAULT_IDLE&t;&t;(20* 60 * PR_SLOWHZ)&t;/* No Activuty Timeout - 900 seconds*/
+mdefine_line|#define&t;NR_DEFAULT_IDLE&t;&t;&t;(20* 60 * NR_SLOWHZ)&t;/* No Activuty Timeout - 900 seconds*/
 DECL|macro|NR_DEFAULT_WINDOW
-mdefine_line|#define&t;NR_DEFAULT_WINDOW&t;4&t;&t;&t;/* Default Window Size - 4 */
+mdefine_line|#define&t;NR_DEFAULT_WINDOW&t;&t;4&t;&t;&t;/* Default Window Size - 4 */
 DECL|macro|NR_DEFAULT_OBS
-mdefine_line|#define&t;NR_DEFAULT_OBS&t;&t;6&t;&t;&t;/* Default Obsolescence Count - 6 */
+mdefine_line|#define&t;NR_DEFAULT_OBS&t;&t;&t;6&t;&t;&t;/* Default Obsolescence Count - 6 */
 DECL|macro|NR_DEFAULT_QUAL
-mdefine_line|#define&t;NR_DEFAULT_QUAL&t;&t;10&t;&t;&t;/* Default Neighbour Quality - 10 */
+mdefine_line|#define&t;NR_DEFAULT_QUAL&t;&t;&t;10&t;&t;&t;/* Default Neighbour Quality - 10 */
 DECL|macro|NR_DEFAULT_TTL
-mdefine_line|#define&t;NR_DEFAULT_TTL&t;&t;16&t;&t;&t;/* Default Time To Live - 16 */
+mdefine_line|#define&t;NR_DEFAULT_TTL&t;&t;&t;16&t;&t;&t;/* Default Time To Live - 16 */
 DECL|macro|NR_MODULUS
-mdefine_line|#define NR_MODULUS &t;&t;256
+mdefine_line|#define NR_MODULUS &t;&t;&t;256
 DECL|macro|NR_MAX_WINDOW_SIZE
-mdefine_line|#define NR_MAX_WINDOW_SIZE&t;127&t;&t;&t;/* Maximum Window Allowable - 127 */
+mdefine_line|#define NR_MAX_WINDOW_SIZE&t;&t;127&t;&t;&t;/* Maximum Window Allowable - 127 */
 DECL|macro|NR_DEFAULT_PACLEN
-mdefine_line|#define&t;NR_DEFAULT_PACLEN&t;236&t;&t;&t;/* Default Packet Length - 236 */
+mdefine_line|#define&t;NR_DEFAULT_PACLEN&t;&t;236&t;&t;&t;/* Default Packet Length - 236 */
+DECL|macro|NR_DEFAULT_ROUTING
+mdefine_line|#define&t;NR_DEFAULT_ROUTING&t;&t;1&t;&t;&t;/* Is routing enabled ? */
+DECL|macro|NR_DEFAULT_FAILS
+mdefine_line|#define&t;NR_DEFAULT_FAILS&t;&t;2&t;&t;&t;/* Link fails until route fails */
 r_typedef
 r_struct
 (brace
@@ -250,6 +264,11 @@ r_int
 r_int
 id|number
 suffix:semicolon
+DECL|member|failed
+r_int
+r_char
+id|failed
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|nr_route
@@ -359,6 +378,10 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_netrom_routing_control
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_netrom_link_fails_count
 suffix:semicolon
 r_extern
 r_int

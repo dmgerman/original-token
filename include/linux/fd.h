@@ -278,7 +278,7 @@ mdefine_line|#define FD_DEBUG 0x02
 DECL|macro|FD_SILENT_DCL_CLEAR
 mdefine_line|#define FD_SILENT_DCL_CLEAR 0x4
 DECL|macro|FD_INVERTED_DCL
-mdefine_line|#define FD_INVERTED_DCL 0x80
+mdefine_line|#define FD_INVERTED_DCL 0x80 /* must be 0x80, because of hardware &n;&t;&t;&t;&t;considerations */
 DECL|member|read_track
 r_char
 id|read_track

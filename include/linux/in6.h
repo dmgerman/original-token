@@ -16,6 +16,13 @@ id|u6_addr8
 l_int|16
 )braket
 suffix:semicolon
+DECL|member|u6_addr16
+id|__u16
+id|u6_addr16
+(braket
+l_int|8
+)braket
+suffix:semicolon
 DECL|member|u6_addr32
 id|__u32
 id|u6_addr32
@@ -38,6 +45,8 @@ id|in6_u
 suffix:semicolon
 DECL|macro|s6_addr
 mdefine_line|#define s6_addr&t;&t;&t;in6_u.u6_addr8
+DECL|macro|s6_addr16
+mdefine_line|#define s6_addr16&t;&t;in6_u.u6_addr16
 DECL|macro|s6_addr32
 mdefine_line|#define s6_addr32&t;&t;in6_u.u6_addr32
 DECL|macro|s6_addr64

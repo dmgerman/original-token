@@ -105,6 +105,7 @@ id|kdev_t
 )paren
 suffix:semicolon
 r_static
+r_int
 id|sd_init_onedisk
 c_func
 (paren

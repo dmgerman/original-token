@@ -4,19 +4,21 @@ DECL|macro|X25_KERNEL_H
 mdefine_line|#define&t;X25_KERNEL_H
 DECL|macro|PF_X25
 mdefine_line|#define PF_X25&t;&t;&t;AF_X25
-DECL|macro|SIOCX25SETSUBSCR
-mdefine_line|#define&t;SIOCX25SETSUBSCR&t;(SIOCPROTOPRIVATE + 0)
+DECL|macro|SIOCX25GSUBSCRIP
+mdefine_line|#define&t;SIOCX25GSUBSCRIP&t;(SIOCPROTOPRIVATE + 0)
+DECL|macro|SIOCX25SSUBSCRIP
+mdefine_line|#define&t;SIOCX25SSUBSCRIP&t;(SIOCPROTOPRIVATE + 1)
+DECL|macro|SIOCX25GFACILITIES
+mdefine_line|#define&t;SIOCX25GFACILITIES&t;(SIOCPROTOPRIVATE + 2)
+DECL|macro|SIOCX25SFACILITIES
+mdefine_line|#define&t;SIOCX25SFACILITIES&t;(SIOCPROTOPRIVATE + 3)
+DECL|macro|SIOCX25GCALLUSERDATA
+mdefine_line|#define&t;SIOCX25GCALLUSERDATA&t;(SIOCPROTOPRIVATE + 4)
+DECL|macro|SIOCX25SCALLUSERDATA
+mdefine_line|#define&t;SIOCX25SCALLUSERDATA&t;(SIOCPROTOPRIVATE + 5)
 multiline_comment|/*&n; *&t;Values for {get,set}sockopt.&n; */
 DECL|macro|X25_QBITINCL
 mdefine_line|#define&t;X25_QBITINCL&t;&t;1
-DECL|macro|X25_PACKET_SIZE
-mdefine_line|#define&t;X25_PACKET_SIZE&t;&t;10
-DECL|macro|X25_WINDOW_SIZE
-mdefine_line|#define&t;X25_WINDOW_SIZE&t;&t;11
-DECL|macro|X25_THROUGHPUT_SPEED
-mdefine_line|#define&t;X25_THROUGHPUT_SPEED&t;12
-DECL|macro|X25_REVERSE_CHARGE
-mdefine_line|#define&t;X25_REVERSE_CHARGE&t;13
 multiline_comment|/*&n; *&t;X.25 Packet Size values.&n; */
 DECL|macro|X25_PS16
 mdefine_line|#define&t;X25_PS16&t;&t;4
@@ -154,6 +156,59 @@ r_char
 id|device
 (braket
 l_int|200
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;Facilities structure.&n; */
+DECL|struct|x25_facilities
+r_struct
+id|x25_facilities
+(brace
+DECL|member|winsize_in
+DECL|member|winsize_out
+r_int
+r_int
+id|winsize_in
+comma
+id|winsize_out
+suffix:semicolon
+DECL|member|pacsize_in
+DECL|member|pacsize_out
+r_int
+r_int
+id|pacsize_in
+comma
+id|pacsize_out
+suffix:semicolon
+DECL|member|throughput
+r_int
+r_int
+id|throughput
+suffix:semicolon
+DECL|member|reverse
+r_int
+r_int
+id|reverse
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;Call User Data structure.&n; */
+DECL|struct|x25_calluserdata
+r_struct
+id|x25_calluserdata
+(brace
+DECL|member|cudlength
+r_int
+r_int
+id|cudlength
+suffix:semicolon
+DECL|member|cuddata
+r_int
+r_char
+id|cuddata
+(braket
+l_int|128
 )braket
 suffix:semicolon
 )brace

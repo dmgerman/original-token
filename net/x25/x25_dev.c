@@ -200,16 +200,7 @@ id|lci
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Its not a Call Request, nor is it a control frame, throw it awa&n;&t; */
-id|x25_transmit_clear_request
-c_func
-(paren
-id|neigh
-comma
-id|lci
-comma
-l_int|0x0D
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t;x25_transmit_clear_request(neigh, lci, 0x0D);&n;*/
 id|kfree_skb
 c_func
 (paren
@@ -269,6 +260,15 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;X.25: unknown neighbour - %s&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -364,20 +364,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_case
-l_int|0x04
-suffix:colon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 r_default
 suffix:colon
 id|kfree_skb
@@ -440,6 +426,15 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;X.25: unknown_neighbour - %s&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|kfree_skb
 c_func
 (paren

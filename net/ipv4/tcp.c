@@ -1610,7 +1610,7 @@ op_minus
 id|EPIPE
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t;&t;&t; *Now we need to check if we have a half built packet. &n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t;&t; *&t;Now we need to check if we have a half built packet. &n;&t;&t;&t; */
 multiline_comment|/* if we have queued packets */
 r_if
 c_cond
@@ -1648,7 +1648,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * This window_seq test is somewhat dangerous&n;&t;&t;&t;&t; * If the remote does SWS avoidance we should&n;&t;&t;&t;&t; * queue the best we can&n;&t;&t;&t;&t; * if not we should in fact send multiple&n;&t;&t;&t;&t; * packets...&n;&t;&t;&t;&t; * a method for detecting this would be most&n;&t;&t;&t;&t; * welcome&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * This window_seq test is somewhat dangerous&n;&t;&t;&t;&t; * If the remote does SWS avoidance we should&n;&t;&t;&t;&t; * queue the best we can if not we should in &n;&t;&t;&t;&t; * fact send multiple packets...&n;&t;&t;&t;&t; * a method for detecting this would be most&n;&t;&t;&t;&t; * welcome&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren

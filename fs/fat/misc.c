@@ -244,6 +244,7 @@ l_int|NULL
 suffix:semicolon
 DECL|variable|creation_lock
 r_static
+r_int
 id|creation_lock
 op_assign
 l_int|0

@@ -5959,9 +5959,6 @@ op_star
 id|lp
 suffix:semicolon
 r_int
-id|i
-suffix:semicolon
-r_int
 r_int
 id|flags
 suffix:semicolon
@@ -6475,7 +6472,7 @@ c_func
 (paren
 id|dev
 )paren
-suffix:colon
+suffix:semicolon
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 id|dev-&gt;hard_header
 op_assign

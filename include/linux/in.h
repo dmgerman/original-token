@@ -102,13 +102,16 @@ mdefine_line|#define IP_HDRINCL&t;3
 DECL|macro|IP_OPTIONS
 mdefine_line|#define IP_OPTIONS&t;4
 DECL|macro|IP_LOCALADDR
-mdefine_line|#define IP_LOCALADDR&t;5
+mdefine_line|#define IP_LOCALADDR&t;5&t;/* Cannot remove; a lot of apps still use it. ANK */
 DECL|macro|IP_RECVOPTS
 mdefine_line|#define IP_RECVOPTS&t;6
 DECL|macro|IP_RETOPTS
 mdefine_line|#define IP_RETOPTS&t;7
-DECL|macro|IP_LOCALDEV
-mdefine_line|#define IP_LOCALDEV&t;8
+DECL|macro|IP_RXINFO
+mdefine_line|#define IP_RXINFO&t;8
+DECL|macro|IP_TXINFO
+mdefine_line|#define IP_TXINFO&t;IP_RXINFO
+multiline_comment|/* Gated uses it. Remove later or preserve for 4.4BSD compatibility??? */
 DECL|macro|IP_RECVDSTADDR
 mdefine_line|#define IP_RECVDSTADDR  9
 DECL|macro|IP_PMTUDISC
@@ -183,21 +186,31 @@ id|in_addr
 id|imr_address
 suffix:semicolon
 multiline_comment|/* local IP address of interface */
-macro_line|#if 1
-DECL|member|imr_interface
-r_char
-id|imr_interface
-(braket
-l_int|16
-)braket
-suffix:semicolon
-macro_line|#else
 DECL|member|imr_ifindex
 r_int
 id|imr_ifindex
 suffix:semicolon
 multiline_comment|/* Interface index */
-macro_line|#endif
+)brace
+suffix:semicolon
+DECL|struct|in_pktinfo
+r_struct
+id|in_pktinfo
+(brace
+DECL|member|ipi_ifindex
+r_int
+id|ipi_ifindex
+suffix:semicolon
+DECL|member|ipi_spec_dst
+r_struct
+id|in_addr
+id|ipi_spec_dst
+suffix:semicolon
+DECL|member|ipi_addr
+r_struct
+id|in_addr
+id|ipi_addr
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Structure describing an Internet (IP) socket address. */

@@ -3318,11 +3318,11 @@ l_string|&quot;no&quot;
 comma
 id|rose_neigh-&gt;t0timer
 op_div
-id|PR_SLOWHZ
+id|ROSE_SLOWHZ
 comma
 id|rose_neigh-&gt;t0
 op_div
-id|PR_SLOWHZ
+id|ROSE_SLOWHZ
 )paren
 suffix:semicolon
 id|pos

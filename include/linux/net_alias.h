@@ -3,6 +3,7 @@ macro_line|#ifndef _NET_ALIAS_H
 DECL|macro|_NET_ALIAS_H
 mdefine_line|#define _NET_ALIAS_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -644,5 +645,13 @@ id|__u32
 id|dst
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|macro|net_alias_is
+mdefine_line|#define net_alias_is(a)&t;&t;0
+DECL|macro|net_alias_main_dev
+mdefine_line|#define net_alias_main_dev(dev)&t;(dev)
+DECL|macro|net_alias_has
+mdefine_line|#define net_alias_has(dev)&t;0
+macro_line|#endif
 macro_line|#endif  /* _NET_ALIAS_H */
 eof

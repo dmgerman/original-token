@@ -559,6 +559,7 @@ suffix:semicolon
 macro_line|#endif
 r_extern
 id|asmlinkage
+r_int
 id|sys_kill
 c_func
 (paren

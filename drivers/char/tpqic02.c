@@ -9039,14 +9039,14 @@ c_func
 r_char
 op_star
 )paren
-op_amp
-id|ioctl_status
+id|ioarg
 comma
 (paren
 r_char
 op_star
 )paren
-id|ioarg
+op_amp
+id|ioctl_status
 comma
 r_sizeof
 (paren

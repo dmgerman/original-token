@@ -622,6 +622,12 @@ id|skb
 )paren
 OL
 id|dev2-&gt;hard_header_len
+op_logical_or
+id|skb_cloned
+c_func
+(paren
+id|skb
+)paren
 )paren
 (brace
 r_struct

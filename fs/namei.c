@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|macro|ACC_MODE
 mdefine_line|#define ACC_MODE(x) (&quot;&bslash;000&bslash;004&bslash;002&bslash;006&quot;[(x)&amp;O_ACCMODE])
 multiline_comment|/*&n; * In order to reduce some races, while at the same time doing additional&n; * checking and hopefully speeding things up, we copy filenames to the&n; * kernel data space before using them..&n; *&n; * POSIX.1 2.4: an empty pathname is invalid (ENOENT).&n; */
@@ -622,19 +623,17 @@ id|len
 op_eq
 l_int|2
 op_logical_and
+id|get_unaligned
+c_func
+(paren
+(paren
+id|u16
+op_star
+)paren
 id|name
-(braket
-l_int|0
-)braket
+)paren
 op_eq
-l_char|&squot;.&squot;
-op_logical_and
-id|name
-(braket
-l_int|1
-)braket
-op_eq
-l_char|&squot;.&squot;
+l_int|0x2e2e
 )paren
 (brace
 r_if
@@ -904,6 +903,7 @@ op_star
 id|res_inode
 )paren
 (brace
+r_int
 r_char
 id|c
 suffix:semicolon

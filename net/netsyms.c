@@ -96,6 +96,9 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ATALK_MODULE
+macro_line|#include &lt;net/sock.h&gt;
+macro_line|#endif
 r_extern
 r_char
 op_star
@@ -200,6 +203,13 @@ c_func
 id|sock_alloc_send_skb
 )paren
 suffix:semicolon
+DECL|variable|sock_no_fcntl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_no_fcntl
+)paren
+suffix:semicolon
 DECL|variable|sock_rfree
 id|EXPORT_SYMBOL
 c_func
@@ -298,6 +308,22 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|destroy_EII_client
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATALK_MODULE
+DECL|variable|sklist_destroy_socket
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sklist_destroy_socket
+)paren
+suffix:semicolon
+DECL|variable|sklist_insert_socket
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sklist_insert_socket
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -408,15 +434,6 @@ c_func
 id|inet_family_ops
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_FORWARD
-DECL|variable|ip_forward
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ip_forward
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_IPV6_MODULE
 multiline_comment|/* inet functions common to v4 and v6 */
 DECL|variable|inet_stream_ops
@@ -1042,13 +1059,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|eth_copy_and_sum
-)paren
-suffix:semicolon
-DECL|variable|arp_query
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|arp_query
 )paren
 suffix:semicolon
 DECL|variable|alloc_skb

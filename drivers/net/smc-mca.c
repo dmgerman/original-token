@@ -170,8 +170,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* Look for two flavors of SMC Elite/A (3013EP/A) -jeh- */
 r_if
 c_cond
+(paren
 (paren
 (paren
 id|slot
@@ -186,6 +188,23 @@ l_int|0
 )paren
 op_ne
 id|MCA_NOTFOUND
+)paren
+op_logical_or
+(paren
+(paren
+id|slot
+op_assign
+id|mca_find_adapter
+c_func
+(paren
+l_int|0xefd5
+comma
+l_int|0
+)paren
+)paren
+op_ne
+id|MCA_NOTFOUND
+)paren
 )paren
 (brace
 macro_line|#ifndef MODULE

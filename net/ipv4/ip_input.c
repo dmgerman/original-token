@@ -36,9 +36,7 @@ macro_line|#endif
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
-macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
-macro_line|#endif
 multiline_comment|/*&n; *&t;SNMP management statistics&n; */
 DECL|variable|ip_statistics
 r_struct

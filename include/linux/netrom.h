@@ -23,9 +23,9 @@ mdefine_line|#define&t;NETROM_IDLE&t;7
 DECL|macro|NETROM_KILL
 mdefine_line|#define&t;NETROM_KILL&t;99
 DECL|macro|SIOCNRDECOBS
-mdefine_line|#define&t;SIOCNRDECOBS&t;&t;(SIOCPROTOPRIVATE+0)
+mdefine_line|#define&t;SIOCNRDECOBS&t;&t;(SIOCPROTOPRIVATE+2)
 DECL|macro|SIOCNRCTLCON
-mdefine_line|#define&t;SIOCNRCTLCON&t;&t;(SIOCPROTOPRIVATE+1)
+mdefine_line|#define&t;SIOCNRCTLCON&t;&t;(SIOCPROTOPRIVATE+4)
 DECL|struct|nr_route_struct
 r_struct
 id|nr_route_struct

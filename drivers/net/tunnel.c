@@ -223,11 +223,6 @@ id|rt
 suffix:semicolon
 multiline_comment|/* Route to the other host */
 r_struct
-id|hh_cache
-op_star
-id|hh
-suffix:semicolon
-r_struct
 id|device
 op_star
 id|tdev
@@ -308,10 +303,6 @@ id|tdev
 op_assign
 id|rt-&gt;u.dst.dev
 suffix:semicolon
-id|hh
-op_assign
-id|rt-&gt;u.dst.hh
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -383,9 +374,11 @@ id|skb
 OL
 id|max_headroom
 op_logical_or
-id|skb-&gt;users
-op_ne
-l_int|1
+id|skb_shared
+c_func
+(paren
+id|skb
+)paren
 )paren
 (brace
 r_struct

@@ -25,12 +25,14 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;You must set these - there is no sane way to probe for this board.&n; *&t;You can use wdt=x,y to set these now.&n; */
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
 l_int|0x240
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign

@@ -422,6 +422,7 @@ id|aux_device_present
 op_assign
 id|AUX_DEVICE_INFO
 suffix:semicolon
+macro_line|#ifdef STANDARD_MEMORY_BIOS_CALL
 id|memory_end
 op_assign
 (paren
@@ -436,6 +437,25 @@ op_lshift
 l_int|10
 )paren
 suffix:semicolon
+macro_line|#else
+id|memory_end
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|20
+)paren
+op_plus
+(paren
+id|EXT_MEM_K
+op_star
+l_int|64L
+op_star
+l_int|1024L
+)paren
+suffix:semicolon
+multiline_comment|/* 64kb chunks */
+macro_line|#endif
 id|memory_end
 op_and_assign
 id|PAGE_MASK
@@ -470,27 +490,6 @@ id|RAMDISK_LOAD_FLAG
 op_ne
 l_int|0
 )paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MAX_16M
-r_if
-c_cond
-(paren
-id|memory_end
-OG
-l_int|16
-op_star
-l_int|1024
-op_star
-l_int|1024
-)paren
-id|memory_end
-op_assign
-l_int|16
-op_star
-l_int|1024
-op_star
-l_int|1024
 suffix:semicolon
 macro_line|#endif
 r_if

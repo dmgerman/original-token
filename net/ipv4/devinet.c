@@ -26,9 +26,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
-macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
@@ -40,6 +38,7 @@ id|netdev_chain
 suffix:semicolon
 multiline_comment|/* &n; *&t;Determine a default network mask, based on the IP address. &n; */
 DECL|function|ip_get_mask
+r_static
 r_int
 r_int
 id|ip_get_mask
@@ -126,81 +125,6 @@ suffix:semicolon
 multiline_comment|/*&n;  &t; *&t;Something else, probably a multicast. &n;  &t; */
 r_return
 l_int|0
-suffix:semicolon
-)brace
-DECL|function|dev_getbyhwaddr
-r_struct
-id|device
-op_star
-id|dev_getbyhwaddr
-c_func
-(paren
-r_int
-r_int
-id|type
-comma
-r_char
-op_star
-id|ha
-)paren
-(brace
-r_struct
-id|device
-op_star
-id|dev
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|dev_base
-suffix:semicolon
-id|dev
-op_ne
-l_int|NULL
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|dev-&gt;type
-op_eq
-id|type
-op_logical_and
-op_logical_neg
-(paren
-id|dev-&gt;flags
-op_amp
-(paren
-id|IFF_LOOPBACK
-op_or
-id|IFF_NOARP
-)paren
-)paren
-op_logical_and
-id|memcmp
-c_func
-(paren
-id|dev-&gt;dev_addr
-comma
-id|ha
-comma
-id|dev-&gt;addr_len
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-id|dev
-suffix:semicolon
-)brace
-r_return
-l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This checks bitmasks for the ioctl calls for devices.&n; */
@@ -485,6 +409,9 @@ op_eq
 id|AF_UNSPEC
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -498,7 +425,8 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-r_return
+id|ret
+op_assign
 id|dev
 op_member_access_from_pointer
 id|set_mac_address
@@ -509,6 +437,26 @@ comma
 op_amp
 id|ifr.ifr_addr
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|netdev_chain
+comma
+id|NETDEV_CHANGEADDR
+comma
+id|dev
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 r_if

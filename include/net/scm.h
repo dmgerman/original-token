@@ -199,8 +199,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|msg-&gt;msg_control
+id|msg-&gt;msg_controllen
+op_le
+l_int|0
 )paren
 r_return
 l_int|0

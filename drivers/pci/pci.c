@@ -351,6 +351,16 @@ c_func
 (paren
 id|CIRRUS
 comma
+id|CIRRUS_7548
+comma
+l_string|&quot;GD 7548&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CIRRUS
+comma
 id|CIRRUS_5430
 comma
 l_string|&quot;GD 5430&quot;
@@ -1223,6 +1233,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|NEOMAGIC
+comma
+id|NEOMAGIC_MAGICGRAPH_NM2070
+comma
+l_string|&quot;Magicgraph NM2070&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|ASP
 comma
 id|ASP_ABP940
@@ -1288,6 +1308,16 @@ comma
 id|INTERG_1680
 comma
 l_string|&quot;IGA-1680&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTERG
+comma
+id|INTERG_1682
+comma
+l_string|&quot;IGA-1682&quot;
 )paren
 comma
 id|DEVICE
@@ -2064,6 +2094,26 @@ comma
 id|INTEL_82371_1
 comma
 l_string|&quot;82371 Triton PIIX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_430MX_0
+comma
+l_string|&quot;Triton I&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_430MX_1
+comma
+l_string|&quot;Triton I&quot;
 )paren
 comma
 id|DEVICE
@@ -3339,6 +3389,12 @@ id|PCI_VENDOR_ID_AL
 suffix:colon
 r_return
 l_string|&quot;Acer Labs&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_NEOMAGIC
+suffix:colon
+r_return
+l_string|&quot;Neomagic&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_ASP

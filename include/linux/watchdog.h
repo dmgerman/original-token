@@ -62,4 +62,6 @@ DECL|macro|WDIOS_DISABLECARD
 mdefine_line|#define&t;WDIOS_DISABLECARD&t;0x0001&t;/* Turn off the watchdog timer */
 DECL|macro|WDIOS_ENABLECARD
 mdefine_line|#define&t;WDIOS_ENABLECARD&t;0x0002&t;/* Turn on the watchdog timer */
+DECL|macro|WDIOS_TEMPPANIC
+mdefine_line|#define&t;WDIOS_TEMPPANIC&t;&t;0x0004&t;/* Kernel panic on temperature trip */
 eof

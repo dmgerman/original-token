@@ -1370,6 +1370,7 @@ c_func
 (paren
 )paren
 (brace
+macro_line|#ifdef STANDARD_MEMORY_BIOS_CALL
 r_if
 c_cond
 (paren
@@ -1380,9 +1381,26 @@ l_int|1024
 id|error
 c_func
 (paren
-l_string|&quot;Less than 2MB of memory.&bslash;n&quot;
+l_string|&quot;&lt;2M of mem&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|EXT_MEM_K
+op_star
+l_int|64
+OL
+l_int|1024
+)paren
+id|error
+c_func
+(paren
+l_string|&quot;&lt;2M of mem&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|output_data
 op_assign
 (paren

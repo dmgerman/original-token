@@ -239,7 +239,7 @@ suffix:semicolon
 multiline_comment|/* And netatalk apps expect to stick the type in themselves */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;Unused (and currently unsupported)&n; */
+multiline_comment|/*&n; *&t;Short form header&n; */
 DECL|struct|ddpshdr
 r_struct
 id|ddpshdr
@@ -420,7 +420,10 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Inter module exports */
+multiline_comment|/*&n; *&t;Give a device find its atif control structure&n; */
+DECL|function|atalk_find_dev
 r_extern
+id|__inline__
 r_struct
 id|atalk_iface
 op_star
@@ -432,7 +435,11 @@ id|device
 op_star
 id|dev
 )paren
+(brace
+r_return
+id|dev-&gt;atalk_ptr
 suffix:semicolon
+)brace
 r_extern
 r_struct
 id|at_addr

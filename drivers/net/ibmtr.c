@@ -1,6 +1,4 @@
-multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux */
-multiline_comment|/*&n;  Written 1993 by Mark Swanson and Peter De Schrijver.&n;  This software may be used and distributed according to the terms&n;  of the GNU Public License, incorporated herein by reference.&n;&n;  This device driver should work with Any IBM Token Ring Card that does&n;  not use DMA.&n;&n;  I used Donald Becker&squot;s (becker@super.org) device driver work&n;  as a base for most of my initial work.&n;*/
-multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n;   and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n;        - multi ring support clean up&n;        - RFC1042 compliance enhanced&n;&n;   Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n;        - bug correction in tr_tx&n;        - removed redundant information display&n;        - some code reworking&n;&n;   Changes by Michel Lespinasse (walken@via.ecp.fr),&n;     Yann Doussot (doussot@via.ecp.fr) and Pascal Andre (andre@via.ecp.fr)&n;     (February 18, 1996) :&n;&t;- modified shared memory and mmio access port the driver to&n;          alpha platform (structure access -&gt; readb/writeb)&n;&n;   Changes by Steve Kipisz (bungy@ibm.net or kipisz@vnet.ibm.com)&n;                           (January 18 1996):&n;        - swapped WWOR and WWCR in ibmtr.h&n;        - moved some init code from tok_probe into trdev_init.  The&n;          PCMCIA code can call trdev_init to complete initializing&n;          the driver.&n;&t;- added -DPCMCIA to support PCMCIA&n;&t;- detecting PCMCIA Card Removal in interrupt handler.  if&n;&t;  ISRP is FF, then a PCMCIA card has been removed&n;&n;   Changes by Paul Norton (pnorton@cts.com) :&n; &t;- restructured the READ.LOG logic to prevent the transmit SRB&n;&t;  from being rudely overwritten before the transmit cycle is&n;&t;  complete. (August 15 1996)&n;        - completed multiple adapter support. (November 20 1996)&n;*/
+multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux&n; *&n; *&t;Written 1993 by Mark Swanson and Peter De Schrijver.&n; *&t;This software may be used and distributed according to the terms&n; *&t;of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;This device driver should work with Any IBM Token Ring Card that does&n; *&t;not use DMA.&n; *&n; *&t;I used Donald Becker&squot;s (becker@cesdis.gsfc.nasa.gov) device driver work&n; *&t;as a base for most of my initial work.&n; *&n; *&t;Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n; *&n; *&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n; *&t;+ changed reset code and adapter open code.&n; *&t;+ added SAP open code.&n; *&t;+ a first attempt to write interrupt, transmit and receive routines.&n; *&n; *&t;Changes by David W. Morris (dwm@shell.portal.com) :&n; *&t;941003 dwm: - Restructure tok_probe for multiple adapters, devices.&n; *&t;+ Add comments, misc reorg for clarity.&n; *&t;+ Flatten interrupt handler levels.&n; *&n; *&t;Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n; *&t;and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n; *&t;+ multi ring support clean up.&n; *&t;+ RFC1042 compliance enhanced.&n; *&n; *&t;Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n; *&t;+ bug correction in tr_tx&n; *&t;+ removed redundant information display&n; *&t;+ some code reworking&n; *&n; *&t;Changes by Michel Lespinasse (walken@via.ecp.fr),&n; *&t;Yann Doussot (doussot@via.ecp.fr) and Pascal Andre (andre@via.ecp.fr)&n; *&t;(February 18, 1996) :&n; *&t;+ modified shared memory and mmio access port the driver to&n; *&t;  alpha platform (structure access -&gt; readb/writeb)&n; *&n; *&t;Changes by Steve Kipisz (bungy@ibm.net or kipisz@vnet.ibm.com)&n; *&t;(January 18 1996):&n; *&t;+ swapped WWOR and WWCR in ibmtr.h&n; *&t;+ moved some init code from tok_probe into trdev_init.  The&n; *&t;  PCMCIA code can call trdev_init to complete initializing&n; *&t;  the driver.&n; *&t;+ added -DPCMCIA to support PCMCIA&n; *&t;+ detecting PCMCIA Card Removal in interrupt handler.  If&n; *&t;  ISRP is FF, then a PCMCIA card has been removed&n; *&n; *&t;Changes by Paul Norton (pnorton@cts.com) :&n; *&t;+ restructured the READ.LOG logic to prevent the transmit SRB&n; *&t;  from being rudely overwritten before the transmit cycle is&n; *&t;  complete. (August 15 1996)&n; *&t;+ completed multiple adapter support. (November 20 1996)&n; */
 macro_line|#ifdef PCMCIA
 DECL|macro|MODULE
 mdefine_line|#define MODULE
@@ -48,7 +46,55 @@ id|pcchannelid
 (braket
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x05
+comma
+l_int|0x00
+comma
+l_int|0x04
+comma
+l_int|0x09
+comma
+l_int|0x04
+comma
+l_int|0x03
+comma
+l_int|0x04
+comma
+l_int|0x0f
+comma
+l_int|0x03
+comma
+l_int|0x06
+comma
+l_int|0x03
+comma
+l_int|0x01
+comma
+l_int|0x03
+comma
+l_int|0x01
+comma
+l_int|0x03
+comma
+l_int|0x00
+comma
+l_int|0x03
+comma
+l_int|0x09
+comma
+l_int|0x03
+comma
+l_int|0x09
+comma
+l_int|0x03
+comma
+l_int|0x00
+comma
+l_int|0x02
+comma
+l_int|0x00
+)brace
 suffix:semicolon
 DECL|variable|mcchannelid
 r_static
@@ -57,7 +103,55 @@ id|mcchannelid
 (braket
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x04
+comma
+l_int|0x0d
+comma
+l_int|0x04
+comma
+l_int|0x01
+comma
+l_int|0x05
+comma
+l_int|0x02
+comma
+l_int|0x05
+comma
+l_int|0x03
+comma
+l_int|0x03
+comma
+l_int|0x06
+comma
+l_int|0x03
+comma
+l_int|0x03
+comma
+l_int|0x05
+comma
+l_int|0x08
+comma
+l_int|0x03
+comma
+l_int|0x04
+comma
+l_int|0x03
+comma
+l_int|0x05
+comma
+l_int|0x03
+comma
+l_int|0x01
+comma
+l_int|0x03
+comma
+l_int|0x08
+comma
+l_int|0x02
+comma
+l_int|0x00
+)brace
 suffix:semicolon
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -363,13 +457,24 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: Should use init_timer and friends not assume the structure&n;   is constant! */
 DECL|variable|tr_timer
 r_static
 r_struct
 id|timer_list
 id|tr_timer
 op_assign
-initialization_block
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0L
+comma
+id|tok_open_adapter
+)brace
 suffix:semicolon
 DECL|variable|ibmtr_portlist
 r_static
@@ -394,37 +499,6 @@ id|ibmtr_mem_base
 op_assign
 l_int|0xd0000
 suffix:semicolon
-macro_line|#if 0
-DECL|variable|DummyCallCount
-r_int
-id|DummyCallCount
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*  This routine combined with the #DEFINE DPRINTD serves&n;    to workaround the gcc apparent bug.   in tr_tx() */
-DECL|function|DummyCall
-r_static
-r_void
-id|DummyCall
-c_func
-(paren
-r_const
-r_char
-op_star
-id|fmt
-comma
-dot
-dot
-dot
-)paren
-(brace
-id|DummyCallCount
-op_increment
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|PrtChanID
 r_static
 r_void
@@ -558,7 +632,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* ibmtr_probe():  Routine specified in the network device structure&n;          to probe for an IBM Token Ring Adapter.  Routine outline:&n;          I.  Interrogate hardware to determine if an adapter exists&n;              and what the speeds and feeds are&n;         II.  Setup data structures to control execution based upon&n;              adapter characteristics.&n;         III. Initialize adapter operation&n;     We expect ibmtr_probe to be called once for each device entry&n;     which references it.&n; */
+multiline_comment|/*&n; *&t;ibmtr_probe():  Routine specified in the network device structure&n; *&t;to probe for an IBM Token Ring Adapter.  Routine outline:&n; *&t;I.    Interrogate hardware to determine if an adapter exists&n; *&t;      and what the speeds and feeds are&n; *&t;II.   Setup data structures to control execution based upon&n; *&t;      adapter characteristics.&n; *&t;III.  Initialize adapter operation&n; *&n; *&t;We expect ibmtr_probe to be called once for each device entry&n; *&t;which references it.&n; */
 DECL|function|ibmtr_probe
 r_int
 id|ibmtr_probe
@@ -591,7 +665,7 @@ OG
 l_int|0x1ff
 )paren
 (brace
-multiline_comment|/* check a single specified location. */
+multiline_comment|/*&n;        &t; *&t;Check a single specified location. &n; &t;&t; */
 r_if
 c_cond
 (paren
@@ -618,11 +692,9 @@ id|ENODEV
 suffix:semicolon
 )brace
 r_else
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 r_else
 r_if
@@ -696,11 +768,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 r_else
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 r_return
 op_minus
@@ -786,7 +856,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Query the adapter PIO base port which will return&n;&t;indication of where MMIO was placed. We also have a&n;&t;coded interrupt number. */
+multiline_comment|/*&t;Query the adapter PIO base port which will return&n;&t; *&t;indication of where MMIO was placed. We also have a&n;&t; *&t;coded interrupt number.&n;&t; */
 id|segment
 op_assign
 id|inb
@@ -795,7 +865,7 @@ c_func
 id|PIOaddr
 )paren
 suffix:semicolon
-multiline_comment|/* out of range values so we&squot;ll assume non-existent IO device */
+multiline_comment|/*&n;&t; *&t;Out of range values so we&squot;ll assume non-existent IO device &n;&t; */
 r_if
 c_cond
 (paren
@@ -807,7 +877,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* Compute the linear base address of the MMIO area&n;&t;   as LINUX doesn&squot;t care about segments          */
+multiline_comment|/*&n;&t; *&t;Compute the linear base address of the MMIO area&n;&t; *&t;as LINUX doesn&squot;t care about segments&n;&t; */
 id|t_mmio
 op_assign
 (paren
@@ -861,7 +931,7 @@ r_int
 id|intr
 )paren
 suffix:semicolon
-multiline_comment|/* Now we will compare expected &squot;channelid&squot; strings with&n;&t;   what we is there to learn of ISA/MCA or not TR card */
+multiline_comment|/*&n;&t; *&t;Now we will compare expected &squot;channelid&squot; strings with&n;&t; *&t;what we is there to learn of ISA/MCA or not TR card&n;&t; */
 id|cd_chanid
 op_assign
 (paren
@@ -880,7 +950,7 @@ op_assign
 id|TR_ISA
 suffix:semicolon
 multiline_comment|/* try ISA */
-multiline_comment|/* suboptimize knowing first byte different */
+multiline_comment|/*&n;&t; *&t;Suboptimize knowing first byte different&n;&t; */
 id|ctemp
 op_assign
 id|readb
@@ -931,7 +1001,7 @@ op_ne
 id|NOTOK
 )paren
 (brace
-multiline_comment|/* know presumed type, try rest of ID */
+multiline_comment|/* &n;&t;&t; *&t;Know presumed type, try rest of ID &n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -988,7 +1058,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* If we have an ISA board check for the ISA P&amp;P version,&n;&t;   as it has different IRQ settings */
+multiline_comment|/* &n;&t; *&t;If we have an ISA board check for the ISA P&amp;P version,&n;&t; *&t;as it has different IRQ settings &n;&t; */
 r_if
 c_cond
 (paren
@@ -1361,6 +1431,7 @@ id|irq
 op_assign
 l_int|11
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;FIXME: this wait should have a timeout&n;&t;&t;&t; */
 r_while
 c_loop
 (paren
@@ -1682,8 +1753,8 @@ id|ti-&gt;dhb_size16mb
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* We must figure out how much shared memory space this adapter&n;&t;   will occupy so that if there are two adapters we can fit both&n;&t;   in.  Given a choice, we will limit this adapter to 32K.  The&n;&t;   maximum space will will use for two adapters is 64K so if the&n;&t;   adapter we are working on demands 64K (it also doesn&squot;t support&n;&t;   paging), then only one adapter can be supported.  */
-multiline_comment|/* determine how much of total RAM is mapped into PC space */
+multiline_comment|/*&t;We must figure out how much shared memory space this adapter&n;&t; *&t;will occupy so that if there are two adapters we can fit both&n;&t; *&t;in.  Given a choice, we will limit this adapter to 32K.  The&n;&t; *&t;maximum space will will use for two adapters is 64K so if the&n;&t; *&t;adapter we are working on demands 64K (it also doesn&squot;t support&n;&t; *&t;paging), then only one adapter can be supported.  &n;&t; */
+multiline_comment|/*&n;&t; *&t;determine how much of total RAM is mapped into PC space &n;&t; */
 id|ti-&gt;mapped_ram_size
 op_assign
 l_int|1
@@ -1845,7 +1916,7 @@ c_func
 l_string|&quot;Dual size shared RAM page (code=0xC), don&squot;t support it!&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* nb/dwm: I did this because RRR (3,2) bits are documented as&n;&t;&t;   R/O and I can&squot;t find how to select which page size&n;&t;&t;   Also, the above conditional statement sequence is invalid&n;&t;&t;   as page_mask will always be set by the second stmt */
+multiline_comment|/* nb/dwm: I did this because RRR (3,2) bits are documented as&n;&t;&t;&t;   R/O and I can&squot;t find how to select which page size&n;&t;&t;&t;   Also, the above conditional statement sequence is invalid&n;&t;&t;&t;   as page_mask will always be set by the second stmt */
 id|kfree_s
 c_func
 (paren
@@ -2794,12 +2865,7 @@ multiline_comment|/* Check ISRP EVEN too. */
 r_if
 c_cond
 (paren
-op_star
-(paren
-r_int
-r_char
-op_star
-)paren
+id|readb
 (paren
 id|ti-&gt;mmio
 op_plus
@@ -3392,8 +3458,8 @@ l_int|0x24
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;open failed: Adapter speed must match ring &quot;
-l_string|&quot;speed if Automatic Ring Speed Save is disabled&bslash;n&quot;
+l_string|&quot;Open failed: Adapter speed must match ring &quot;
+l_string|&quot;speed if Automatic Ring Speed Save is disabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ti-&gt;open_status
@@ -3419,7 +3485,7 @@ l_int|0x24
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;retrying open to adjust to ring speed&bslash;n&quot;
+l_string|&quot;Retrying open to adjust to ring speed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -3437,14 +3503,41 @@ id|ti-&gt;auto_ringspeedsave
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;No signal detected for Auto Speed Detection&bslash;n&quot;
+l_string|&quot;No signal detected for Auto Speed Detection.&bslash;n&quot;
 )paren
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|open_error_code
+op_eq
+l_int|0x11
+)paren
+(brace
+id|ti-&gt;open_status
+op_assign
+id|FAILURE
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;Ring broken/disconnected.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|ti-&gt;wait_for_reset
+)paren
+suffix:semicolon
+)brace
 r_else
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;Unrecoverable error: error code = %04x&bslash;n&quot;
+l_string|&quot;Unrecoverable error: error code = %04x.&bslash;n&quot;
 comma
 id|open_error_code
 )paren

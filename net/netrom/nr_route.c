@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 006&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;First attempt.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Use SIOCADDRT/SIOCDELRT ioctl values&n; *&t;&t;&t;&t;&t;for NET/ROM routes.&n; *&t;&t;&t;&t;&t;Use &squot;*&squot; for a blank mnemonic in /proc/net/nr_nodes.&n; *&t;&t;&t;&t;&t;Change default quality for new neighbour when same&n; *&t;&t;&t;&t;&t;as node callsign.&n; *&t;&t;&t;Alan Cox(GW4PTS) Added the firewall hooks.&n; *&t;NET/ROM 006&t;Jonathan(G4KLX)&t;Added the setting of digipeated neighbours.&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 006&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;First attempt.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Use SIOCADDRT/SIOCDELRT ioctl values&n; *&t;&t;&t;&t;&t;for NET/ROM routes.&n; *&t;&t;&t;&t;&t;Use &squot;*&squot; for a blank mnemonic in /proc/net/nr_nodes.&n; *&t;&t;&t;&t;&t;Change default quality for new neighbour when same&n; *&t;&t;&t;&t;&t;as node callsign.&n; *&t;&t;&t;Alan Cox(GW4PTS) Added the firewall hooks.&n; *&t;NET/ROM 006&t;Jonathan(G4KLX)&t;Added the setting of digipeated neighbours.&n; *&t;&t;&t;Tomi(OH2BNS)&t;Routing quality and link failure changes.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -207,6 +207,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|nr_neigh
+op_ne
+l_int|NULL
+)paren
+id|nr_neigh-&gt;failed
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|quality
 op_eq
 l_int|0
@@ -273,24 +284,6 @@ id|nr_neigh-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ax25cmp
-c_func
-(paren
-id|nr
-comma
-id|ax25
-)paren
-op_eq
-l_int|0
-)paren
-id|nr_neigh-&gt;quality
-op_assign
-id|quality
-suffix:semicolon
-r_else
 id|nr_neigh-&gt;quality
 op_assign
 id|sysctl_netrom_default_path_quality
@@ -392,6 +385,27 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|quality
+op_ne
+l_int|0
+op_logical_and
+id|ax25cmp
+c_func
+(paren
+id|nr
+comma
+id|ax25
+)paren
+op_eq
+l_int|0
+)paren
+id|nr_neigh-&gt;quality
+op_assign
+id|quality
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -510,17 +524,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_else
-(brace
 r_if
 c_cond
 (paren
-id|nr_node-&gt;mnemonic
-(braket
+id|quality
+op_ne
 l_int|0
-)braket
-op_eq
-l_char|&squot;&bslash;0&squot;
 )paren
 id|strcpy
 c_func
@@ -530,7 +539,6 @@ comma
 id|mnemonic
 )paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -1699,6 +1707,10 @@ id|nr_neigh-&gt;number
 op_assign
 id|nr_neigh_no
 op_increment
+suffix:semicolon
+id|nr_neigh-&gt;failed
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2888,6 +2900,16 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|nr_neigh-&gt;failed
+OL
+id|sysctl_netrom_link_fails_count
+)paren
+r_return
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3563,7 +3585,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;addr  callsign  dev  qual lock count digipeaters&bslash;n&quot;
+l_string|&quot;addr  callsign  dev  qual lock count failed digipeaters&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -3591,7 +3613,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%05d %-9s %-4s  %3d    %d   %3d&quot;
+l_string|&quot;%05d %-9s %-4s  %3d    %d   %3d    %3d&quot;
 comma
 id|nr_neigh-&gt;number
 comma
@@ -3614,6 +3636,8 @@ comma
 id|nr_neigh-&gt;locked
 comma
 id|nr_neigh-&gt;count
+comma
+id|nr_neigh-&gt;failed
 )paren
 suffix:semicolon
 r_if

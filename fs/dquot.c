@@ -2840,9 +2840,6 @@ r_struct
 id|dqblk
 id|dq_dqblk
 suffix:semicolon
-r_int
-id|error
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3274,9 +3271,6 @@ id|caddr_t
 id|addr
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|dqstats.allocated_dquots
 op_assign
 id|nr_dquots

@@ -3,128 +3,126 @@ macro_line|#ifndef _AX25_H
 DECL|macro|_AX25_H
 mdefine_line|#define _AX25_H 
 macro_line|#include &lt;linux/ax25.h&gt;
-DECL|macro|PR_SLOWHZ
-mdefine_line|#define PR_SLOWHZ&t;10&t;&t;/*  Run timing at 1/10 second - gives us better resolution for 56kbit links */
+DECL|macro|AX25_SLOWHZ
+mdefine_line|#define AX25_SLOWHZ&t;&t;&t;10&t;/* Run timing at 1/10 second - gives us better resolution for 56kbit links */
 DECL|macro|AX25_T1CLAMPLO
-mdefine_line|#define&t;AX25_T1CLAMPLO  (1 * PR_SLOWHZ)&t;/* If defined, clamp at 1 second **/
+mdefine_line|#define&t;AX25_T1CLAMPLO  &t;&t;(1 * AX25_SLOWHZ)&t;/* If defined, clamp at 1 second **/
 DECL|macro|AX25_T1CLAMPHI
-mdefine_line|#define&t;AX25_T1CLAMPHI (30 * PR_SLOWHZ)&t;/* If defined, clamp at 30 seconds **/
-DECL|macro|AX25_BROKEN_NETMAC
-mdefine_line|#define&t;AX25_BROKEN_NETMAC
+mdefine_line|#define&t;AX25_T1CLAMPHI &t;&t;&t;(30 * AX25_SLOWHZ)&t;/* If defined, clamp at 30 seconds **/
 DECL|macro|AX25_BPQ_HEADER_LEN
-mdefine_line|#define&t;AX25_BPQ_HEADER_LEN&t;16
+mdefine_line|#define&t;AX25_BPQ_HEADER_LEN&t;&t;16
 DECL|macro|AX25_KISS_HEADER_LEN
-mdefine_line|#define&t;AX25_KISS_HEADER_LEN&t;1
+mdefine_line|#define&t;AX25_KISS_HEADER_LEN&t;&t;1
 DECL|macro|AX25_HEADER_LEN
-mdefine_line|#define&t;AX25_HEADER_LEN&t;&t;17
+mdefine_line|#define&t;AX25_HEADER_LEN&t;&t;&t;17
 DECL|macro|AX25_ADDR_LEN
-mdefine_line|#define&t;AX25_ADDR_LEN&t;&t;7
+mdefine_line|#define&t;AX25_ADDR_LEN&t;&t;&t;7
 DECL|macro|AX25_DIGI_HEADER_LEN
-mdefine_line|#define&t;AX25_DIGI_HEADER_LEN&t;(AX25_MAX_DIGIS * AX25_ADDR_LEN)
+mdefine_line|#define&t;AX25_DIGI_HEADER_LEN&t;&t;(AX25_MAX_DIGIS * AX25_ADDR_LEN)
 DECL|macro|AX25_MAX_HEADER_LEN
-mdefine_line|#define&t;AX25_MAX_HEADER_LEN&t;(AX25_HEADER_LEN + AX25_DIGI_HEADER_LEN)
+mdefine_line|#define&t;AX25_MAX_HEADER_LEN&t;&t;(AX25_HEADER_LEN + AX25_DIGI_HEADER_LEN)
+multiline_comment|/* AX.25 Protocol IDs */
 DECL|macro|AX25_P_ROSE
-mdefine_line|#define AX25_P_ROSE&t;0x01
+mdefine_line|#define AX25_P_ROSE&t;&t;&t;0x01
 DECL|macro|AX25_P_IP
-mdefine_line|#define AX25_P_IP&t;0xCC
+mdefine_line|#define AX25_P_IP&t;&t;&t;0xCC
 DECL|macro|AX25_P_ARP
-mdefine_line|#define AX25_P_ARP&t;0xCD
+mdefine_line|#define AX25_P_ARP&t;&t;&t;0xCD
 DECL|macro|AX25_P_TEXT
-mdefine_line|#define AX25_P_TEXT &t;0xF0
+mdefine_line|#define AX25_P_TEXT &t;&t;&t;0xF0
 DECL|macro|AX25_P_NETROM
-mdefine_line|#define AX25_P_NETROM &t;0xCF
+mdefine_line|#define AX25_P_NETROM &t;&t;&t;0xCF
 DECL|macro|AX25_P_SEGMENT
-mdefine_line|#define&t;AX25_P_SEGMENT&t;0x08
-DECL|macro|SEG_REM
-mdefine_line|#define&t;SEG_REM&t;&t;0x7F
-DECL|macro|SEG_FIRST
-mdefine_line|#define&t;SEG_FIRST&t;0x80
-DECL|macro|LAPB_UI
-mdefine_line|#define LAPB_UI&t;&t;0x03
-DECL|macro|LAPB_C
-mdefine_line|#define LAPB_C&t;&t;0x80
-DECL|macro|LAPB_E
-mdefine_line|#define LAPB_E&t;&t;0x01
-DECL|macro|SSSID_SPARE
-mdefine_line|#define SSSID_SPARE&t;0x60&t;/* Unused bits in SSID for standard AX.25 */
-DECL|macro|ESSID_SPARE
-mdefine_line|#define ESSID_SPARE&t;0x20&t;/* Unused bits in SSID for extended AX.25 */
-DECL|macro|DAMA_FLAG
-mdefine_line|#define DAMA_FLAG&t;0x20&t;/* Well, it is *NOT* unused! (dl1bke 951121 */
-DECL|macro|AX25_REPEATED
-mdefine_line|#define AX25_REPEATED&t;0x80
-DECL|macro|ACK_PENDING_CONDITION
-mdefine_line|#define&t;ACK_PENDING_CONDITION&t;&t;0x01
-DECL|macro|REJECT_CONDITION
-mdefine_line|#define&t;REJECT_CONDITION&t;&t;0x02
-DECL|macro|PEER_RX_BUSY_CONDITION
-mdefine_line|#define&t;PEER_RX_BUSY_CONDITION&t;&t;0x04
-DECL|macro|OWN_RX_BUSY_CONDITION
-mdefine_line|#define&t;OWN_RX_BUSY_CONDITION&t;&t;0x08
+mdefine_line|#define&t;AX25_P_SEGMENT&t;&t;&t;0x08
+multiline_comment|/* AX.25 Segment control values */
+DECL|macro|AX25_SEG_REM
+mdefine_line|#define&t;AX25_SEG_REM&t;&t;&t;0x7F
+DECL|macro|AX25_SEG_FIRST
+mdefine_line|#define&t;AX25_SEG_FIRST&t;&t;&t;0x80
+DECL|macro|AX25_CBIT
+mdefine_line|#define AX25_CBIT&t;&t;&t;0x80&t;/* Command/Response bit */
+DECL|macro|AX25_EBIT
+mdefine_line|#define AX25_EBIT&t;&t;&t;0x01&t;/* HDLC Address Extension bit */
+DECL|macro|AX25_HBIT
+mdefine_line|#define AX25_HBIT&t;&t;&t;0x80&t;/* Has been repeated bit */
+DECL|macro|AX25_SSSID_SPARE
+mdefine_line|#define AX25_SSSID_SPARE&t;&t;0x60&t;/* Unused bits in SSID for standard AX.25 */
+DECL|macro|AX25_ESSID_SPARE
+mdefine_line|#define AX25_ESSID_SPARE&t;&t;0x20&t;/* Unused bits in SSID for extended AX.25 */
+DECL|macro|AX25_DAMA_FLAG
+mdefine_line|#define AX25_DAMA_FLAG&t;&t;&t;0x20&t;/* Well, it is *NOT* unused! (dl1bke 951121 */
+DECL|macro|AX25_COND_ACK_PENDING
+mdefine_line|#define&t;AX25_COND_ACK_PENDING&t;&t;0x01
+DECL|macro|AX25_COND_REJECT
+mdefine_line|#define&t;AX25_COND_REJECT&t;&t;0x02
+DECL|macro|AX25_COND_PEER_RX_BUSY
+mdefine_line|#define&t;AX25_COND_PEER_RX_BUSY&t;&t;0x04
+DECL|macro|AX25_COND_OWN_RX_BUSY
+mdefine_line|#define&t;AX25_COND_OWN_RX_BUSY&t;&t;0x08
 macro_line|#ifndef _LINUX_NETDEVICE_H
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * These headers are taken from the KA9Q package by Phil Karn. These specific&n; * files have been placed under the GPL (not the whole package) by Phil.&n; *&n; *&n; * Copyright 1991 Phil Karn, KA9Q&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; version 2 dated June, 1991.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program;  if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.&n; */
 multiline_comment|/* Upper sub-layer (LAPB) definitions */
 multiline_comment|/* Control field templates */
-DECL|macro|I
-mdefine_line|#define&t;I&t;0x00&t;/* Information frames */
-DECL|macro|S
-mdefine_line|#define&t;S&t;0x01&t;/* Supervisory frames */
-DECL|macro|RR
-mdefine_line|#define&t;RR&t;0x01&t;/* Receiver ready */
-DECL|macro|RNR
-mdefine_line|#define&t;RNR&t;0x05&t;/* Receiver not ready */
-DECL|macro|REJ
-mdefine_line|#define&t;REJ&t;0x09&t;/* Reject */
-DECL|macro|U
-mdefine_line|#define&t;U&t;0x03&t;/* Unnumbered frames */
-DECL|macro|SABM
-mdefine_line|#define&t;SABM&t;0x2f&t;/* Set Asynchronous Balanced Mode */
-DECL|macro|SABME
-mdefine_line|#define&t;SABME&t;0x6f&t;/* Set Asynchronous Balanced Mode Extended */
-DECL|macro|DISC
-mdefine_line|#define&t;DISC&t;0x43&t;/* Disconnect */
-DECL|macro|DM
-mdefine_line|#define&t;DM&t;0x0f&t;/* Disconnected mode */
-DECL|macro|UA
-mdefine_line|#define&t;UA&t;0x63&t;/* Unnumbered acknowledge */
-DECL|macro|FRMR
-mdefine_line|#define&t;FRMR&t;0x87&t;/* Frame reject */
-DECL|macro|UI
-mdefine_line|#define&t;UI&t;0x03&t;/* Unnumbered information */
-DECL|macro|PF
-mdefine_line|#define&t;PF&t;0x10&t;/* Poll/final bit for standard AX.25 */
-DECL|macro|EPF
-mdefine_line|#define&t;EPF&t;0x01&t;/* Poll/final bit for extended AX.25 */
-DECL|macro|ILLEGAL
-mdefine_line|#define ILLEGAL&t;0x100&t;/* Impossible to be a real frame type */
-DECL|macro|POLLOFF
-mdefine_line|#define&t;POLLOFF&t;&t;0
-DECL|macro|POLLON
-mdefine_line|#define&t;POLLON&t;&t;1
+DECL|macro|AX25_I
+mdefine_line|#define&t;AX25_I&t;&t;&t;0x00&t;/* Information frames */
+DECL|macro|AX25_S
+mdefine_line|#define&t;AX25_S&t;&t;&t;0x01&t;/* Supervisory frames */
+DECL|macro|AX25_RR
+mdefine_line|#define&t;AX25_RR&t;&t;&t;0x01&t;/* Receiver ready */
+DECL|macro|AX25_RNR
+mdefine_line|#define&t;AX25_RNR&t;&t;0x05&t;/* Receiver not ready */
+DECL|macro|AX25_REJ
+mdefine_line|#define&t;AX25_REJ&t;&t;0x09&t;/* Reject */
+DECL|macro|AX25_U
+mdefine_line|#define&t;AX25_U&t;&t;&t;0x03&t;/* Unnumbered frames */
+DECL|macro|AX25_SABM
+mdefine_line|#define&t;AX25_SABM&t;&t;0x2f&t;/* Set Asynchronous Balanced Mode */
+DECL|macro|AX25_SABME
+mdefine_line|#define&t;AX25_SABME&t;&t;0x6f&t;/* Set Asynchronous Balanced Mode Extended */
+DECL|macro|AX25_DISC
+mdefine_line|#define&t;AX25_DISC&t;&t;0x43&t;/* Disconnect */
+DECL|macro|AX25_DM
+mdefine_line|#define&t;AX25_DM&t;&t;&t;0x0f&t;/* Disconnected mode */
+DECL|macro|AX25_UA
+mdefine_line|#define&t;AX25_UA&t;&t;&t;0x63&t;/* Unnumbered acknowledge */
+DECL|macro|AX25_FRMR
+mdefine_line|#define&t;AX25_FRMR&t;&t;0x87&t;/* Frame reject */
+DECL|macro|AX25_UI
+mdefine_line|#define&t;AX25_UI&t;&t;&t;0x03&t;/* Unnumbered information */
+DECL|macro|AX25_PF
+mdefine_line|#define&t;AX25_PF&t;&t;&t;0x10&t;/* Poll/final bit for standard AX.25 */
+DECL|macro|AX25_EPF
+mdefine_line|#define&t;AX25_EPF&t;&t;0x01&t;/* Poll/final bit for extended AX.25 */
+DECL|macro|AX25_ILLEGAL
+mdefine_line|#define AX25_ILLEGAL&t;&t;0x100&t;/* Impossible to be a real frame type */
+DECL|macro|AX25_POLLOFF
+mdefine_line|#define&t;AX25_POLLOFF&t;&t;0
+DECL|macro|AX25_POLLON
+mdefine_line|#define&t;AX25_POLLON&t;&t;1
 multiline_comment|/* AX25 L2 C-bit */
-DECL|macro|C_COMMAND
-mdefine_line|#define C_COMMAND&t;1&t;/* C_ otherwise it clashes with the de600 defines (sigh)) */
-DECL|macro|C_RESPONSE
-mdefine_line|#define C_RESPONSE&t;2
+DECL|macro|AX25_COMMAND
+mdefine_line|#define AX25_COMMAND&t;&t;1
+DECL|macro|AX25_RESPONSE
+mdefine_line|#define AX25_RESPONSE&t;&t;2
 multiline_comment|/* Define Link State constants. */
 DECL|macro|AX25_STATE_0
-mdefine_line|#define AX25_STATE_0&t;0
+mdefine_line|#define AX25_STATE_0&t;&t;0
 DECL|macro|AX25_STATE_1
-mdefine_line|#define AX25_STATE_1&t;1
+mdefine_line|#define AX25_STATE_1&t;&t;1
 DECL|macro|AX25_STATE_2
-mdefine_line|#define AX25_STATE_2&t;2
+mdefine_line|#define AX25_STATE_2&t;&t;2
 DECL|macro|AX25_STATE_3
-mdefine_line|#define AX25_STATE_3&t;3
+mdefine_line|#define AX25_STATE_3&t;&t;3
 DECL|macro|AX25_STATE_4
-mdefine_line|#define AX25_STATE_4&t;4
+mdefine_line|#define AX25_STATE_4&t;&t;4
 DECL|macro|AX25_MAX_DEVICES
 mdefine_line|#define&t;AX25_MAX_DEVICES&t;20&t;/* Max No of AX.25 devices */
-DECL|macro|MODULUS
-mdefine_line|#define MODULUS &t;&t;8&t;/*  Standard AX.25 modulus */
-DECL|macro|EMODULUS
-mdefine_line|#define&t;EMODULUS&t;&t;128&t;/*  Extended AX.25 modulus */
+DECL|macro|AX25_MODULUS
+mdefine_line|#define AX25_MODULUS &t;&t;8&t;/*  Standard AX.25 modulus */
+DECL|macro|AX25_EMODULUS
+mdefine_line|#define&t;AX25_EMODULUS&t;&t;128&t;/*  Extended AX.25 modulus */
 DECL|macro|AX25_DIGI_INBAND
 mdefine_line|#define&t;AX25_DIGI_INBAND&t;0x01&t;/* Allow digipeating within port **/
 DECL|macro|AX25_DIGI_XBAND
@@ -176,15 +174,15 @@ mdefine_line|#define&t;AX25_DEF_WINDOW&t;&t;2&t;&t;&t;/* Window=2 */
 DECL|macro|AX25_DEF_EWINDOW
 mdefine_line|#define&t;AX25_DEF_EWINDOW&t;32&t;&t;&t;/* Module-128 Window=32 */
 DECL|macro|AX25_DEF_T1
-mdefine_line|#define&t;AX25_DEF_T1&t;&t;(10 * PR_SLOWHZ)&t;/* T1=10s */
+mdefine_line|#define&t;AX25_DEF_T1&t;&t;(10 * AX25_SLOWHZ)&t;/* T1=10s */
 DECL|macro|AX25_DEF_T2
-mdefine_line|#define&t;AX25_DEF_T2&t;&t;(3 * PR_SLOWHZ)&t;&t;/* T2=3s  */
+mdefine_line|#define&t;AX25_DEF_T2&t;&t;(3 * AX25_SLOWHZ)&t;/* T2=3s  */
 DECL|macro|AX25_DEF_T3
-mdefine_line|#define&t;AX25_DEF_T3&t;&t;(300 * PR_SLOWHZ)&t;/* T3=300s */
+mdefine_line|#define&t;AX25_DEF_T3&t;&t;(300 * AX25_SLOWHZ)&t;/* T3=300s */
 DECL|macro|AX25_DEF_N2
 mdefine_line|#define&t;AX25_DEF_N2&t;&t;10&t;&t;&t;/* N2=10 */
 DECL|macro|AX25_DEF_IDLE
-mdefine_line|#define AX25_DEF_IDLE&t;&t;(20 * 60 * PR_SLOWHZ)&t;/* Idle=20 mins */&t;&t;
+mdefine_line|#define AX25_DEF_IDLE&t;&t;(20 * 60 * AX25_SLOWHZ)&t;/* Idle=20 mins */&t;&t;
 DECL|macro|AX25_DEF_PACLEN
 mdefine_line|#define AX25_DEF_PACLEN&t;&t;256&t;&t;&t;/* Paclen=256 */
 DECL|macro|AX25_DEF_MAXQUEUE
@@ -270,11 +268,13 @@ op_star
 id|device
 suffix:semicolon
 DECL|member|dama_slave
+DECL|member|iamdigi
 r_int
 r_char
 id|dama_slave
+comma
+id|iamdigi
 suffix:semicolon
-multiline_comment|/* dl1bke 951121 */
 DECL|member|state
 DECL|member|modulus
 DECL|member|hdrincl
@@ -424,6 +424,12 @@ r_struct
 id|device
 op_star
 id|dev
+suffix:semicolon
+DECL|member|forward
+r_struct
+id|device
+op_star
+id|forward
 suffix:semicolon
 DECL|member|values
 r_int
@@ -924,6 +930,31 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|ax25_fwd_ioctl
+c_func
+(paren
+r_int
+r_int
+comma
+r_struct
+id|ax25_fwd_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|device
+op_star
+id|ax25_fwd_dev
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ax25_rt_free
 c_func
@@ -1340,6 +1371,15 @@ comma
 r_struct
 id|device
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ax25_protocol_is_registered
+c_func
+(paren
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif

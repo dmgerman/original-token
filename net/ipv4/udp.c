@@ -1149,10 +1149,7 @@ c_func
 id|daddr
 )paren
 op_logical_and
-id|sk-&gt;ip_mc_name
-(braket
-l_int|0
-)braket
+id|sk-&gt;ip_mc_index
 op_logical_and
 id|dev
 op_eq
@@ -1172,7 +1169,7 @@ id|ufh.saddr
 comma
 id|tos
 comma
-id|sk-&gt;ip_mc_name
+id|sk-&gt;ip_mc_index
 )paren
 suffix:semicolon
 r_else

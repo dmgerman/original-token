@@ -2,7 +2,7 @@ macro_line|#ifndef _I386_SEMAPHORE_H
 DECL|macro|_I386_SEMAPHORE_H
 mdefine_line|#define _I386_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
-multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; */
+multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * Modified 1996-12-23 by Dave Grothe &lt;dave@gcom.com&gt; to fix bugs in&n; *                     the original code and to make semaphore waits&n; *                     interruptible so that processes waiting on&n; *                     semaphores can be killed.&n; *&n; * If you would like to see an analysis of this implementation, please&n; * ftp to gcom.com and download the file&n; * /pub/linux/src/semaphore/semaphore-2.0.24.tar.gz.&n; *&n; */
 DECL|struct|semaphore
 r_struct
 id|semaphore
@@ -11,9 +11,9 @@ DECL|member|count
 r_int
 id|count
 suffix:semicolon
-DECL|member|waiting
+DECL|member|waking
 r_int
-id|waiting
+id|waking
 suffix:semicolon
 DECL|member|wait
 r_struct
@@ -34,6 +34,15 @@ c_func
 (paren
 r_void
 multiline_comment|/* special register calling convention */
+)paren
+suffix:semicolon
+id|asmlinkage
+r_int
+id|__down_failed_interruptible
+c_func
+(paren
+r_void
+multiline_comment|/* params in registers */
 )paren
 suffix:semicolon
 id|asmlinkage
@@ -70,7 +79,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
 DECL|function|down
 r_extern
-id|__inline__
+r_inline
 r_void
 id|down
 c_func
@@ -86,11 +95,11 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;# atomic down operation&bslash;n&bslash;t&quot;
+l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
-l_string|&quot;decl %0&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;decl 0(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;js &quot;
 id|SYMBOL_NAME_STR
 c_func
@@ -101,11 +110,6 @@ l_string|&quot;&bslash;n1:&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|sem-&gt;count
-)paren
-comma
 l_string|&quot;c&quot;
 (paren
 id|sem
@@ -117,10 +121,64 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This version waits in interruptible state so that the waiting&n; * process can be killed.  The down_failed_interruptible routine&n; * returns negative for signalled and zero for semaphore acquired.&n; */
+DECL|function|down_interruptible
+r_extern
+r_inline
+r_int
+id|down_interruptible
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;# atomic interruptible down operation&bslash;n&bslash;t&quot;
+l_string|&quot;movl $1f,%0&bslash;n&bslash;t&quot;
+macro_line|#ifdef __SMP__
+l_string|&quot;lock ; &quot;
+macro_line|#endif
+l_string|&quot;decl 0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;js &quot;
+id|SYMBOL_NAME_STR
+c_func
+(paren
+id|__down_failed_interruptible
+)paren
+l_string|&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;xorl %0,%0&quot;
+l_string|&quot;&bslash;n1:&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;c&quot;
+(paren
+id|sem
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Note! This is subtle. We jump to wake people up only if&n; * the semaphore was negative (== somebody was waiting on it).&n; * The default case (no contention) will result in NO&n; * jumps for both down() and up().&n; */
 DECL|function|up
 r_extern
-id|__inline__
+r_inline
 r_void
 id|up
 c_func
@@ -136,11 +194,11 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;# atomic up operation&bslash;n&bslash;t&quot;
+l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
-l_string|&quot;incl %0&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;incl 0(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;jle &quot;
 id|SYMBOL_NAME_STR
 c_func
@@ -151,11 +209,6 @@ l_string|&quot;&bslash;n1:&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|sem-&gt;count
-)paren
-comma
 l_string|&quot;c&quot;
 (paren
 id|sem

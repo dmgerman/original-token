@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
+macro_line|#include &lt;net/ax25.h&gt;
 multiline_comment|/* make genksyms happy */
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
@@ -3322,9 +3323,6 @@ l_int|40
 comma
 l_int|0
 )brace
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 r_struct
 id|hdlcdrv_state

@@ -889,6 +889,13 @@ op_amp
 op_complement
 id|IFF_UP
 suffix:semicolon
+id|dev-&gt;ifindex
+op_assign
+id|dev_new_index
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Only makes sense if same family (arguable)&n;&t; */
 r_if
 c_cond

@@ -254,9 +254,7 @@ comma
 id|u8
 id|tos
 comma
-r_char
-op_star
-id|devname
+r_int
 )paren
 suffix:semicolon
 r_extern

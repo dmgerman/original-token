@@ -1625,9 +1625,6 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|indx
-suffix:semicolon
 id|dev-&gt;hard_header_len
 op_assign
 id|PPP_HARD_HDR_LEN
@@ -11957,6 +11954,7 @@ op_star
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MODULES
 DECL|function|ppp_register_compressor
 r_static
 r_int
@@ -12175,6 +12173,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*************************************************************&n; * Module support routines&n; *************************************************************/
 macro_line|#ifdef MODULE
 r_int

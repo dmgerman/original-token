@@ -271,6 +271,9 @@ id|NET_NETROM_TRANSPORT_PACKET_LENGTH
 comma
 DECL|enumerator|NET_NETROM_ROUTING_CONTROL
 id|NET_NETROM_ROUTING_CONTROL
+comma
+DECL|enumerator|NET_NETROM_LINK_FAILS_COUNT
+id|NET_NETROM_LINK_FAILS_COUNT
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ax25 */

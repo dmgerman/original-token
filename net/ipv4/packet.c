@@ -462,6 +462,10 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+id|sk-&gt;dead
+op_assign
+l_int|1
+suffix:semicolon
 id|destroy_sock
 c_func
 (paren

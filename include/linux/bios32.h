@@ -211,6 +211,7 @@ id|val
 )paren
 suffix:semicolon
 r_extern
+r_int
 id|pcibios_write_config_dword
 (paren
 r_int

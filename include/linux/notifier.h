@@ -272,6 +272,14 @@ DECL|macro|NETDEV_REBOOT
 mdefine_line|#define NETDEV_REBOOT&t;0x0003&t;/* Tell a protocol stack a network interface&n;&t;&t;&t;&t;   detected a hardware crash and restarted&n;&t;&t;&t;&t;   - we can use this eg to kick tcp sessions&n;&t;&t;&t;&t;   once done */
 DECL|macro|NETDEV_CHANGE
 mdefine_line|#define NETDEV_CHANGE&t;0x0004&t;/* Notify device state change */
+DECL|macro|NETDEV_REGISTER
+mdefine_line|#define NETDEV_REGISTER 0x0005
+DECL|macro|NETDEV_UNREGISTER
+mdefine_line|#define NETDEV_UNREGISTER&t;0x0006
+DECL|macro|NETDEV_CHANGEMTU
+mdefine_line|#define NETDEV_CHANGEMTU&t;0x0007
+DECL|macro|NETDEV_CHANGEADDR
+mdefine_line|#define NETDEV_CHANGEADDR&t;0x0008
 DECL|macro|SYS_DOWN
 mdefine_line|#define SYS_DOWN&t;0x0001&t;/* Notify of system down */
 DECL|macro|SYS_HALT

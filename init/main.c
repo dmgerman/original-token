@@ -1262,7 +1262,7 @@ r_char
 op_star
 id|execute_command
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 macro_line|#ifdef CONFIG_ROOT_NFS
 DECL|variable|nfs_root_name
@@ -4261,6 +4261,11 @@ l_int|0
 r_int
 id|error
 suffix:semicolon
+r_int
+id|pid
+comma
+id|i
+suffix:semicolon
 id|pid
 op_assign
 id|kernel_thread
@@ -4392,10 +4397,25 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We try each of these until one succeeds.&n;&t; *&n;&t; * The Bourne shell can be used instead of init if we are &n;&t; * trying to recover a really broken machine.&n;&t; */
+r_if
+c_cond
+(paren
+id|execute_command
+)paren
 id|execve
 c_func
 (paren
 id|execute_command
+comma
+id|argv_init
+comma
+id|envp_init
+)paren
+suffix:semicolon
+id|execve
+c_func
+(paren
+l_string|&quot;/sbin/init&quot;
 comma
 id|argv_init
 comma
@@ -4416,16 +4436,6 @@ id|execve
 c_func
 (paren
 l_string|&quot;/bin/init&quot;
-comma
-id|argv_init
-comma
-id|envp_init
-)paren
-suffix:semicolon
-id|execve
-c_func
-(paren
-l_string|&quot;/sbin/init&quot;
 comma
 id|argv_init
 comma

@@ -4427,13 +4427,9 @@ id|i
 )paren
 comma
 op_amp
-id|dst
+id|skb-&gt;daddr
 comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 )paren
 suffix:semicolon
 r_return

@@ -699,7 +699,7 @@ id|NR_CHOKE_FLAG
 (brace
 id|sk-&gt;protinfo.nr-&gt;condition
 op_or_assign
-id|PEER_RX_BUSY_CONDITION
+id|NR_COND_PEER_RX_BUSY
 suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;t4timer
 op_assign
@@ -711,7 +711,7 @@ r_else
 id|sk-&gt;protinfo.nr-&gt;condition
 op_and_assign
 op_complement
-id|PEER_RX_BUSY_CONDITION
+id|NR_COND_PEER_RX_BUSY
 suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;t4timer
 op_assign
@@ -764,7 +764,7 @@ c_cond
 (paren
 id|sk-&gt;protinfo.nr-&gt;condition
 op_amp
-id|PEER_RX_BUSY_CONDITION
+id|NR_COND_PEER_RX_BUSY
 )paren
 (brace
 id|nr_frames_acked
@@ -848,7 +848,7 @@ id|NR_CHOKE_FLAG
 (brace
 id|sk-&gt;protinfo.nr-&gt;condition
 op_or_assign
-id|PEER_RX_BUSY_CONDITION
+id|NR_COND_PEER_RX_BUSY
 suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;t4timer
 op_assign
@@ -860,7 +860,7 @@ r_else
 id|sk-&gt;protinfo.nr-&gt;condition
 op_and_assign
 op_complement
-id|PEER_RX_BUSY_CONDITION
+id|NR_COND_PEER_RX_BUSY
 suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;t4timer
 op_assign
@@ -909,7 +909,7 @@ c_cond
 (paren
 id|sk-&gt;protinfo.nr-&gt;condition
 op_amp
-id|PEER_RX_BUSY_CONDITION
+id|NR_COND_PEER_RX_BUSY
 )paren
 (brace
 id|nr_frames_acked
@@ -952,7 +952,7 @@ c_cond
 (paren
 id|sk-&gt;protinfo.nr-&gt;condition
 op_amp
-id|OWN_RX_BUSY_CONDITION
+id|NR_COND_OWN_RX_BUSY
 )paren
 r_break
 suffix:semicolon
@@ -1034,7 +1034,7 @@ r_else
 (brace
 id|sk-&gt;protinfo.nr-&gt;condition
 op_or_assign
-id|OWN_RX_BUSY_CONDITION
+id|NR_COND_OWN_RX_BUSY
 suffix:semicolon
 id|skb_queue_tail
 c_func
@@ -1151,7 +1151,7 @@ op_logical_neg
 (paren
 id|sk-&gt;protinfo.nr-&gt;condition
 op_amp
-id|ACK_PENDING_CONDITION
+id|NR_COND_ACK_PENDING
 )paren
 )paren
 (brace
@@ -1161,7 +1161,7 @@ id|sk-&gt;protinfo.nr-&gt;t2
 suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;condition
 op_or_assign
-id|ACK_PENDING_CONDITION
+id|NR_COND_ACK_PENDING
 suffix:semicolon
 )brace
 )brace

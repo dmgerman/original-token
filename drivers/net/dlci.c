@@ -2317,9 +2317,6 @@ id|dlci_local
 op_star
 id|dlp
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 id|dev-&gt;priv
 op_assign
 id|kmalloc

@@ -452,6 +452,6 @@ op_star
 suffix:semicolon
 multiline_comment|/*&n; * Debug levels.&n; *&t;0 = Off&n; *&t;1 = State Changes&n; *&t;2 = Packets I/O and State Changes&n; *&t;3 = Hex dumps, Packets I/O and State Changes.&n; */
 DECL|macro|LAPB_DEBUG
-mdefine_line|#define&t;LAPB_DEBUG&t;2
+mdefine_line|#define&t;LAPB_DEBUG&t;0
 macro_line|#endif
 eof

@@ -1174,7 +1174,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;%c %s&bslash;n&quot;
+l_string|&quot;%c %s&quot;
 comma
 (paren
 id|action-&gt;flags
@@ -1230,6 +1230,18 @@ id|action-&gt;name
 )paren
 suffix:semicolon
 )brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 id|len
 op_add_assign

@@ -636,7 +636,6 @@ l_string|&quot;misc&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* Should this be surrounded with &quot;#ifdef CONFIG_MODULES&quot; ? */
 DECL|variable|misc_register
 id|EXPORT_SYMBOL
 c_func
@@ -775,8 +774,9 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SOFT_WATCHDOG
-id|watchdog_init
+multiline_comment|/*&n; *&t;Only one watchdog can succeed. We probe the pcwatchdog first,&n; *&t;then the wdt cards and finally the software watchdog which always&n; *&t;works. This means if your hardware watchdog dies or is &squot;borrowed&squot;&n; *&t;for some reason the software watchdog still gives you some cover.&n; */
+macro_line|#ifdef CONFIG_PCWATCHDOG
+id|pcwatchdog_init
 c_func
 (paren
 )paren
@@ -789,8 +789,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PCWATCHDOG
-id|pcwatchdog_init
+macro_line|#ifdef CONFIG_SOFT_WATCHDOG
+id|watchdog_init
 c_func
 (paren
 )paren

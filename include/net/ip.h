@@ -785,7 +785,7 @@ id|skb
 suffix:semicolon
 r_extern
 r_int
-id|ip_options_getfromuser
+id|ip_options_get
 c_func
 (paren
 r_struct
@@ -801,6 +801,9 @@ id|data
 comma
 r_int
 id|optlen
+comma
+r_int
+id|user
 )paren
 suffix:semicolon
 r_extern

@@ -2220,17 +2220,14 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
 id|DPRINTK
 c_func
 (paren

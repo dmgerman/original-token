@@ -15822,9 +15822,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Check for a network adaptor of this type.&n; * Return &squot;0&squot; iff one exists.&n; * (There seem to be different interpretations of&n; * the initial value of dev-&gt;base_addr.&n; * We follow the example in drivers/net/ne.c.)&n; * (called in &quot;Space.c&quot;)&n; */
-r_extern
-r_int
 DECL|function|wavelan_probe
+r_int
 id|wavelan_probe
 c_func
 (paren
