@@ -2472,20 +2472,6 @@ id|FS_NO_DCACHE
 )paren
 )paren
 (brace
-multiline_comment|/* See dcache.c:_d_del() for the details...  -DaveM */
-r_if
-c_cond
-(paren
-id|inode-&gt;i_dentry
-op_logical_and
-op_logical_neg
-(paren
-id|inode-&gt;i_dentry-&gt;d_flag
-op_amp
-id|D_DDELIP
-)paren
-)paren
-(brace
 r_while
 c_loop
 (paren
@@ -2517,7 +2503,6 @@ id|inode-&gt;i_ddir_count
 r_goto
 id|done
 suffix:semicolon
-)brace
 )brace
 )brace
 r_if

@@ -1513,6 +1513,10 @@ c_cond
 id|dir-&gt;i_dentry
 )paren
 (brace
+id|error
+op_assign
+l_int|0
+suffix:semicolon
 op_star
 id|result
 op_assign
@@ -1526,17 +1530,19 @@ op_star
 id|result
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;dcache parent directory is lost&quot;
 )paren
 suffix:semicolon
-)brace
 id|error
 op_assign
-l_int|0
+op_minus
+id|ESTALE
 suffix:semicolon
+multiline_comment|/* random error */
+)brace
 )brace
 )brace
 r_if
@@ -4387,8 +4393,8 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#if 0 /* We need a &quot;deletefs&quot;, someone please write it.  -DaveM */
 multiline_comment|/* Perhaps this could be moved out into a new file. */
-DECL|function|basket_name
 r_static
 r_void
 id|basket_name
@@ -4603,6 +4609,7 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|do_rmdir
 r_static
 r_inline
@@ -4809,6 +4816,7 @@ op_amp
 id|dir-&gt;i_sem
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -4837,6 +4845,7 @@ r_goto
 id|exit_lock
 suffix:semicolon
 )brace
+macro_line|#endif
 id|atomic_inc
 c_func
 (paren
@@ -4882,6 +4891,7 @@ id|CURRENT_TIME
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -4902,6 +4912,26 @@ suffix:semicolon
 )brace
 id|exit_lock
 suffix:colon
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+op_logical_and
+id|lastent
+)paren
+(brace
+id|d_del
+c_func
+(paren
+id|lastent
+comma
+id|D_REMOVE
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|up
 c_func
 (paren
@@ -5250,6 +5280,7 @@ id|inode-&gt;i_dent_count
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -5278,6 +5309,7 @@ r_goto
 id|exit_lock
 suffix:semicolon
 )brace
+macro_line|#endif
 id|atomic_inc
 c_func
 (paren
@@ -5323,6 +5355,7 @@ id|CURRENT_TIME
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -5343,6 +5376,26 @@ suffix:semicolon
 )brace
 id|exit_lock
 suffix:colon
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+op_logical_and
+id|lastent
+)paren
+(brace
+id|d_del
+c_func
+(paren
+id|lastent
+comma
+id|D_REMOVE
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|up
 c_func
 (paren

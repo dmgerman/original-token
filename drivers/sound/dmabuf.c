@@ -3711,6 +3711,17 @@ id|max
 op_assign
 id|dmap-&gt;max_fragments
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|max
+OG
+id|dmap-&gt;nbufs
+)paren
+id|max
+op_assign
+id|dmap-&gt;nbufs
+suffix:semicolon
 id|len
 op_assign
 id|dmap-&gt;qlen

@@ -1,7 +1,7 @@
 macro_line|#ifndef DALLOC_H
 DECL|macro|DALLOC_H
 mdefine_line|#define DALLOC_H
-multiline_comment|/*&n; * $Id: dalloc.h,v 1.2 1997/06/12 08:02:42 davem Exp $&n; *&n; * include/linux/dalloc.h - alloc routines for dcache&n; * alloc / free space for pathname strings&n; * Copyright (C) 1997, Thomas Schoebel-Theuer,&n; * &lt;schoebel@informatik.uni-stuttgart.de&gt;.&n; */
+multiline_comment|/*&n; * $Id: dalloc.h,v 1.3 1997/06/13 04:39:34 davem Exp $&n; *&n; * include/linux/dalloc.h - alloc routines for dcache&n; * alloc / free space for pathname strings&n; * Copyright (C) 1997, Thomas Schoebel-Theuer,&n; * &lt;schoebel@informatik.uni-stuttgart.de&gt;.&n; */
 DECL|macro|D_MAXLEN
 mdefine_line|#define D_MAXLEN   1024
 multiline_comment|/* public flags for d_add() */
@@ -16,8 +16,6 @@ mdefine_line|#define D_NOCHECKDUP 4 /* no not check for duplicates */
 multiline_comment|/* public flags for d_flag */
 DECL|macro|D_PRELOADED
 mdefine_line|#define D_PRELOADED 8
-DECL|macro|D_DDELIP
-mdefine_line|#define D_DDELIP    16&t;/* d_del() in progress, see __iput() for details... */
 multiline_comment|/* public flags for d_del() */
 DECL|macro|D_REMOVE
 mdefine_line|#define D_REMOVE         0

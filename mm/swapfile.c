@@ -652,6 +652,11 @@ id|pte
 )paren
 )paren
 (brace
+r_struct
+id|page
+op_star
+id|pg
+suffix:semicolon
 r_int
 r_int
 id|page_nr
@@ -676,6 +681,12 @@ id|max_mapnr
 r_return
 l_int|0
 suffix:semicolon
+id|pg
+op_assign
+id|mem_map
+op_plus
+id|page_nr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -683,7 +694,7 @@ op_logical_neg
 id|in_swap_cache
 c_func
 (paren
-id|page_nr
+id|pg
 )paren
 )paren
 r_return
@@ -698,7 +709,7 @@ c_func
 id|in_swap_cache
 c_func
 (paren
-id|page_nr
+id|pg
 )paren
 )paren
 op_ne
@@ -710,7 +721,7 @@ suffix:semicolon
 id|delete_from_swap_cache
 c_func
 (paren
-id|page_nr
+id|pg
 )paren
 suffix:semicolon
 id|set_pte

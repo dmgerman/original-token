@@ -268,7 +268,14 @@ op_amp
 id|page-&gt;flags
 )paren
 suffix:semicolon
-id|page-&gt;swap_unlock_entry
+multiline_comment|/* swap-cache  shouldn&squot;t be set, but play safe */
+id|PageClearSwapCache
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|page-&gt;pg_swap_entry
 op_assign
 id|entry
 suffix:semicolon

@@ -244,7 +244,7 @@ id|page-&gt;flags
 id|swap_after_unlock_page
 c_func
 (paren
-id|page-&gt;swap_unlock_entry
+id|page-&gt;pg_swap_entry
 )paren
 suffix:semicolon
 macro_line|#endif

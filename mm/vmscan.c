@@ -202,11 +202,7 @@ op_logical_and
 id|delete_from_swap_cache
 c_func
 (paren
-id|MAP_NR
-c_func
-(paren
-id|page
-)paren
+id|page_map
 )paren
 )paren
 op_logical_or
@@ -413,11 +409,7 @@ op_assign
 id|find_in_swap_cache
 c_func
 (paren
-id|MAP_NR
-c_func
-(paren
-id|page
-)paren
+id|page_map
 )paren
 )paren
 )paren

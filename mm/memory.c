@@ -695,7 +695,11 @@ c_cond
 id|delete_from_swap_cache
 c_func
 (paren
+op_amp
+id|mem_map
+(braket
 id|page_nr
+)braket
 )paren
 )paren
 id|pte
