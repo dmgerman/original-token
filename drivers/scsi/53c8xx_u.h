@@ -1,3 +1,11 @@
+DECL|macro|A_NCR53c7xx_msg_abort
+macro_line|#undef A_NCR53c7xx_msg_abort
+DECL|macro|A_NCR53c7xx_msg_reject
+macro_line|#undef A_NCR53c7xx_msg_reject
+DECL|macro|A_NCR53c7xx_sink
+macro_line|#undef A_NCR53c7xx_sink
+DECL|macro|A_NCR53c7xx_zero
+macro_line|#undef A_NCR53c7xx_zero
 DECL|macro|A_addr_scratch
 macro_line|#undef A_addr_scratch
 DECL|macro|A_addr_sfbr

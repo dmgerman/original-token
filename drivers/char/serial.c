@@ -3147,7 +3147,7 @@ id|tty-&gt;write_wait
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This routine is called from the scheduler tqueue when the interrupt&n; * routine has signalled that a hangup has occured.  The path of&n; * hangup processing is:&n; *&n; * &t;serial interrupt routine -&gt; (scheduler tqueue) -&gt;&n; * &t;do_serial_hangup() -&gt; tty-&gt;hangup() -&gt; rs_hangup()&n; * &n; */
+multiline_comment|/*&n; * This routine is called from the scheduler tqueue when the interrupt&n; * routine has signalled that a hangup has occurred.  The path of&n; * hangup processing is:&n; *&n; * &t;serial interrupt routine -&gt; (scheduler tqueue) -&gt;&n; * &t;do_serial_hangup() -&gt; tty-&gt;hangup() -&gt; rs_hangup()&n; * &n; */
 DECL|function|do_serial_hangup
 r_static
 r_void

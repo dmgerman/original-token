@@ -2,6 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_IP_H
 DECL|macro|_LINUX_IP_H
 mdefine_line|#define _LINUX_IP_H
+macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|macro|IPOPT_END
 mdefine_line|#define IPOPT_END&t;0
 DECL|macro|IPOPT_NOOP
@@ -34,7 +35,7 @@ id|ptr
 suffix:semicolon
 r_union
 (brace
-macro_line|#if defined(__i386__)
+macro_line|#if defined(LITTLE_ENDIAN_BITFIELD)
 id|__u8
 id|flags
 suffix:colon
@@ -44,47 +45,7 @@ id|overflow
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#elif defined(__mc68000__)
-id|__u8
-id|overflow
-suffix:colon
-l_int|4
-comma
-id|flags
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__MIPSEL__) 
-id|__u8
-id|flags
-suffix:colon
-l_int|4
-comma
-id|overflow
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__MIPSEB__)
-id|__u8
-id|overflow
-suffix:colon
-l_int|4
-comma
-id|flags
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__alpha__)
-id|__u8
-id|flags
-suffix:colon
-l_int|4
-comma
-id|overflow
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__sparc__)
+macro_line|#elif defined(BIG_ENDIAN_BITFIELD)
 id|__u8
 id|overflow
 suffix:colon
@@ -95,7 +56,7 @@ suffix:colon
 l_int|4
 suffix:semicolon
 macro_line|#else
-macro_line|#error&t;&quot;Adjust this structure to match your CPU&quot;
+macro_line|#error&t;&quot;Please fix &lt;asm/byteorder.h&gt;&quot;
 macro_line|#endif&t;&t;&t;&t;&t;&t;
 DECL|member|full_char
 id|__u8
@@ -192,7 +153,7 @@ DECL|struct|iphdr
 r_struct
 id|iphdr
 (brace
-macro_line|#if defined(__i386__)
+macro_line|#if defined(LITTLE_ENDIAN_BITFIELD)
 DECL|member|ihl
 id|__u8
 id|ihl
@@ -204,47 +165,7 @@ id|version
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#elif defined (__mc68000__)
-id|__u8
-id|version
-suffix:colon
-l_int|4
-comma
-id|ihl
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__MIPSEL__)
-id|__u8
-id|ihl
-suffix:colon
-l_int|4
-comma
-id|version
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__MIPSEB__)
-id|__u8
-id|version
-suffix:colon
-l_int|4
-comma
-id|ihl
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__alpha__)
-id|__u8
-id|ihl
-suffix:colon
-l_int|4
-comma
-id|version
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined (__sparc__)
+macro_line|#elif defined (BIG_ENDIAN_BITFIELD)
 id|__u8
 id|version
 suffix:colon
@@ -255,7 +176,7 @@ suffix:colon
 l_int|4
 suffix:semicolon
 macro_line|#else
-macro_line|#error &quot;Adjust this structure to match your CPU&quot;
+macro_line|#error&t;&quot;Please fix &lt;asm/byteorder.h&gt;&quot;
 macro_line|#endif
 DECL|member|tos
 id|__u8

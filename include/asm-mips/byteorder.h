@@ -9,6 +9,19 @@ DECL|macro|htonl
 macro_line|#undef htonl
 DECL|macro|htons
 macro_line|#undef htons
+macro_line|#ifdef MIPSEL
+DECL|macro|LITTLE_ENDIAN
+mdefine_line|#define LITTLE_ENDIAN
+DECL|macro|LITTLE_ENDIAN_BITFIELD
+mdefine_line|#define LITTLE_ENDIAN_BITFIELD
+macro_line|#elif MIPSEB
+DECL|macro|BIG_ENDIAN
+mdefine_line|#define BIG_ENDIAN
+DECL|macro|BIG_ENDIAN_BITFIELD
+mdefine_line|#define BIG_ENDIAN_BITFIELD
+macro_line|#else
+macro_line|#error &quot;MIPS but neither MIPSEL nor MIPSEB?&quot;
+macro_line|#endif
 r_extern
 r_int
 r_int

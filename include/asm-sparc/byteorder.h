@@ -9,6 +9,10 @@ DECL|macro|htonl
 macro_line|#undef htonl
 DECL|macro|htons
 macro_line|#undef htons
+DECL|macro|BIG_ENDIAN
+mdefine_line|#define BIG_ENDIAN
+DECL|macro|BIG_ENDIAN_BITFIELD
+mdefine_line|#define BIG_ENDIAN_BITFIELD
 r_extern
 r_int
 r_int

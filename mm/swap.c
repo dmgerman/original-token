@@ -2286,7 +2286,7 @@ id|p
 suffix:semicolon
 id|counter
 op_assign
-l_int|2
+l_int|6
 op_star
 id|nr_tasks
 op_rshift
@@ -2577,8 +2577,8 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-op_decrement
 id|i
+op_decrement
 )paren
 (brace
 suffix:semicolon

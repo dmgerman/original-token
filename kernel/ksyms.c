@@ -23,15 +23,17 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef CONFIG_NET
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &quot;../net/inet/protocol.h&quot;
 macro_line|#include &quot;../net/inet/arp.h&quot;
 macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
 macro_line|#include &quot;../drivers/net/slhc.h&quot;
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
@@ -234,6 +236,12 @@ id|X
 c_func
 (paren
 id|pcibios_read_config_dword
+)paren
+comma
+id|X
+c_func
+(paren
+id|pcibios_strerror
 )paren
 comma
 id|X
@@ -1030,6 +1038,7 @@ id|inet_del_protocol
 )paren
 comma
 macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
+multiline_comment|/* VJ header compression */
 id|X
 c_func
 (paren
@@ -1228,6 +1237,13 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 multiline_comment|/* Supports loadable scsi drivers */
+multiline_comment|/* &n; &t; * in_scan_scsis is a hack, and should go away once the new &n;&t; * memory allocation code is in the NCR driver &n;&t; */
+id|X
+c_func
+(paren
+id|in_scan_scsis
+)paren
+comma
 id|X
 c_func
 (paren
@@ -1286,6 +1302,18 @@ id|X
 c_func
 (paren
 id|print_command
+)paren
+comma
+id|X
+c_func
+(paren
+id|print_msg
+)paren
+comma
+id|X
+c_func
+(paren
+id|print_status
 )paren
 comma
 macro_line|#endif

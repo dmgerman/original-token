@@ -1862,10 +1862,6 @@ id|nic_base
 op_assign
 id|NE_BASE
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 multiline_comment|/* Round the count up for word writes.  Do we need to do this?&n;       What effect will an odd byte count have on the 8390?&n;       I should check someday. */
 r_if
 c_cond
@@ -1995,18 +1991,7 @@ suffix:semicolon
 id|SLOW_DOWN_IO
 suffix:semicolon
 macro_line|#endif  /* rw_bugfix */
-multiline_comment|/*&n;    &t;Now the normal output. I believe that if we don&squot;t lock this, a&n;&t;race condition will munge the remote byte count values, and then&n;&t;the ne2k will hang the machine by holding I/O CH RDY because it&n;&t;expects more data. Hopefully fixes the lockups. -- Paul Gortmaker.&n;&n;&t;Use save_flags/cli/restore_flags rather than cli/sti to avoid risk&n;&t;of accidentally enabling interrupts which were disabled when we&n;&t;were entered.   Dave Platt &lt;dplatt@3do.com&gt;&n;    */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* Now the normal output. */
 id|outb_p
 c_func
 (paren
@@ -2099,12 +2084,6 @@ id|count
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_NE_SANITY
 multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       encountering problems that it is still here. */
 r_if

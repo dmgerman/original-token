@@ -43,6 +43,7 @@ macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/* Use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
@@ -305,7 +306,7 @@ r_union
 (brace
 r_struct
 (brace
-macro_line|#if defined(__i386__)
+macro_line|#if defined(LITTLE_ENDIAN)
 DECL|member|lsb
 r_int
 r_char
@@ -316,7 +317,7 @@ r_int
 r_char
 id|msb
 suffix:semicolon
-macro_line|#elif defined(__mc68000__)
+macro_line|#elif defined(BIG_ENDIAN)
 r_int
 r_char
 id|msb
@@ -324,45 +325,9 @@ suffix:semicolon
 r_int
 r_char
 id|lsb
-suffix:semicolon
-macro_line|#elif defined(__sparc__)
-r_int
-r_char
-id|msb
-suffix:semicolon
-r_int
-r_char
-id|lsb
-suffix:semicolon
-macro_line|#elif defined(__MIPSEL__)
-r_int
-r_char
-id|lsb
-suffix:semicolon
-r_int
-r_char
-id|msb
-suffix:semicolon
-macro_line|#elif defined(__MIPSEB__)
-r_int
-r_char
-id|msb
-suffix:semicolon
-r_int
-r_char
-id|lsb
-suffix:semicolon
-macro_line|#elif defined(__alpha__)
-r_int
-r_char
-id|lsb
-suffix:semicolon
-r_int
-r_char
-id|msb
 suffix:semicolon
 macro_line|#else
-macro_line|#error&t;&quot;Adjust this structure to match your CPU&quot;
+macro_line|#error&t;&quot;Please fix the endianness defines in &lt;asm/byteorder.h&gt;&quot;
 macro_line|#endif&t;&t;&t;&t;&t;&t;
 DECL|member|b
 )brace

@@ -3959,7 +3959,7 @@ id|TRUE
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: HBA with IO on 0x%p dectected,&bslash;n&quot;
+l_string|&quot;Warning: HBA with IO on 0x%p detected,&bslash;n&quot;
 l_string|&quot;         this IO space is already allocated, probably by the IDE driver.&bslash;n&quot;
 l_string|&quot;         This might lead to problems.&quot;
 comma

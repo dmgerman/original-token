@@ -218,5 +218,14 @@ r_int
 id|value
 )paren
 suffix:semicolon
+r_extern
+r_char
+op_star
+id|pcibios_strerror
+(paren
+r_int
+id|error
+)paren
+suffix:semicolon
 macro_line|#endif /* ndef BIOS32_H */
 eof

@@ -9,6 +9,10 @@ DECL|macro|htonl
 macro_line|#undef htonl
 DECL|macro|htons
 macro_line|#undef htons
+DECL|macro|LITTLE_ENDIAN
+mdefine_line|#define LITTLE_ENDIAN
+DECL|macro|LITTLE_ENDIAN_BITFIELD
+mdefine_line|#define LITTLE_ENDIAN_BITFIELD
 r_extern
 r_int
 r_int

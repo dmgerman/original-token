@@ -1164,16 +1164,12 @@ op_amp
 id|INTV
 )paren
 )paren
-(brace
 id|buslogic_printk
 c_func
 (paren
 l_string|&quot;interrupt received, but INTV not set&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/*&n;      Reset the Host Adapter Interrupt Register.  It appears to be&n;      important that this is only done once per interrupt to avoid&n;      losing interrupts under heavy loads.&n;    */
 id|INTR_RESET
 c_func
@@ -1262,6 +1258,37 @@ id|ccbptr
 op_minus
 id|ccb
 suffix:semicolon
+id|sctmp
+op_assign
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|sc
+(braket
+id|mbo
+)braket
+suffix:semicolon
+multiline_comment|/*&n;&t;  If sctmp has become NULL, higher level code must have aborted&n;&t;  this operation and called the necessary completion routine.&n;&t;*/
+r_if
+c_cond
+(paren
+id|sctmp
+op_ne
+l_int|NULL
+op_logical_and
+id|mb
+(braket
+id|mbi
+)braket
+dot
+id|status
+op_ne
+id|MBX_COMPLETION_NOT_FOUND
+)paren
+(brace
 r_int
 id|result
 op_assign
@@ -1307,18 +1334,7 @@ dot
 id|tarstat
 )paren
 suffix:semicolon
-id|HOSTDATA
-c_func
-(paren
-id|shpnt
-)paren
-op_member_access_from_pointer
-id|sc
-(braket
-id|mbo
-)braket
-op_member_access_from_pointer
-id|result
+id|sctmp-&gt;result
 op_assign
 id|result
 suffix:semicolon
@@ -1331,6 +1347,7 @@ id|status
 op_assign
 id|MBX_NOT_IN_USE
 suffix:semicolon
+)brace
 id|HOSTDATA
 c_func
 (paren
@@ -1398,6 +1415,15 @@ id|sc
 id|mbo
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sctmp
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
 multiline_comment|/*&n;&t;  First, free any storage allocated for a scatter/gather&n;&t;  data segment list.&n;&t;*/
 r_if
 c_cond
@@ -1412,16 +1438,7 @@ comma
 id|BUSLOGIC_SG_MALLOC
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;  Next, call the SCSI command completion handler.&n;&t;*/
-id|sctmp
-op_member_access_from_pointer
-id|scsi_done
-c_func
-(paren
-id|sctmp
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;  Finally, mark the SCSI Command as completed so it may be reused&n;&t;  for another command by buslogic_queuecommand.&n;&t;*/
+multiline_comment|/*&n;&t;  Next, mark the SCSI Command as completed so it may be reused&n;&t;  for another command by buslogic_queuecommand.  This also signals&n;&t;  to buslogic_reset that the command is no longer active.&n;&t;*/
 id|HOSTDATA
 c_func
 (paren
@@ -1434,6 +1451,15 @@ id|mbo
 )braket
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/*&n;&t;  Finally, call the SCSI command completion handler.&n;&t;*/
+id|sctmp
+op_member_access_from_pointer
+id|scsi_done
+c_func
+(paren
+id|sctmp
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -5202,6 +5228,8 @@ r_int
 id|mbi
 comma
 id|mbo
+comma
+id|last_mbi
 suffix:semicolon
 r_int
 r_int
@@ -5258,7 +5286,7 @@ id|scpnt-&gt;host
 op_member_access_from_pointer
 id|mb
 suffix:semicolon
-id|mbi
+id|last_mbi
 op_assign
 id|HOSTDATA
 c_func
@@ -5267,6 +5295,10 @@ id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|last_mbi_used
+suffix:semicolon
+id|mbi
+op_assign
+id|last_mbi
 op_plus
 l_int|1
 suffix:semicolon
@@ -5299,6 +5331,10 @@ id|MBX_NOT_IN_USE
 )paren
 r_break
 suffix:semicolon
+id|last_mbi
+op_assign
+id|mbi
+suffix:semicolon
 id|mbi
 op_increment
 suffix:semicolon
@@ -5330,12 +5366,6 @@ op_member_access_from_pointer
 id|last_mbi_used
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5352,13 +5382,22 @@ id|MBX_NOT_IN_USE
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;lost interrupt discovered on irq %d&quot;
+l_string|&quot;lost interrupt discovered on irq %d, &quot;
 l_string|&quot; - attempting to recover...&bslash;n&quot;
 comma
 id|scpnt-&gt;host-&gt;irq
 )paren
 suffix:semicolon
-(brace
+id|HOSTDATA
+c_func
+(paren
+id|scpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|last_mbi_used
+op_assign
+id|last_mbi
+suffix:semicolon
 id|buslogic_interrupt
 c_func
 (paren
@@ -5367,11 +5406,22 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
-)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* OK, no lost interrupt.  Try looking to see how many pending commands we&n;       think we have. */
 r_for
 c_loop

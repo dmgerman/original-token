@@ -3,7 +3,7 @@ macro_line|#ifndef NCR53c7x0_H
 DECL|macro|NCR53c7x0_H
 mdefine_line|#define NCR53c7x0_H
 multiline_comment|/* &n; * Prevent name space pollution in hosts.c, and only provide the &n; * define we need to get the NCR53c7x0 driver into the host template&n; * array.&n; */
-macro_line|#ifdef HOSTS_C 
+macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;linux/scsicam.h&gt;
 r_extern
 r_int
@@ -52,9 +52,25 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 3)&quot;, NCR53c7xx_detect, &t;&bslash;&n;    &t;NULL, NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL, NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&bslash;&n;        NULL, scsicam_bios_param, &t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ 1, /* id */ 7, 127 /* old SG_ALL */, &t;&t;&bslash;&n;&t;/* cmd per lun */ 1 , 0, 0, DISABLE_CLUSTERING}
+macro_line|#ifdef MODULE
+r_extern
+r_int
+id|NCR53c7xx_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+suffix:semicolon
 macro_line|#else
+DECL|macro|NCR53c7xx_release
+mdefine_line|#define NCR53c7xx_release NULL
+macro_line|#endif
+DECL|macro|NCR53c7xx
+mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 4)&quot;, NCR53c7xx_detect, &t;&bslash;&n;    &t;NULL, /* info */ NULL, /* command, depricated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ 1, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 1 , &t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
+macro_line|#ifndef HOSTS_C
 multiline_comment|/* Register addresses, ordered numerically */
 multiline_comment|/* SCSI control 0 rw, default = 0xc0 */
 DECL|macro|SCNTL0_REG
@@ -1089,6 +1105,18 @@ op_star
 id|real
 suffix:semicolon
 multiline_comment|/* Real, unaligned address */
+DECL|member|free
+r_void
+(paren
+op_star
+id|free
+)paren
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Command to deallocate; NULL&n;&t;&t;&t;&t;&t;   for structures allocated with&n;&t;&t;&t;&t;&t;   scsi_register, etc. */
 DECL|member|cmd
 id|Scsi_Cmnd
 op_star
@@ -1115,6 +1143,7 @@ suffix:semicolon
 multiline_comment|/* Select message, includes&n;&t;&t;&t;&t;&t;   IDENTIFY&n;&t;&t;&t;&t;&t;   (optional) QUEUE TAG&n; &t;&t;&t;&t; &t;   (optional) SDTR or WDTR&n;&t;&t;&t;&t;&t; */
 DECL|member|next
 DECL|member|prev
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -1123,7 +1152,7 @@ comma
 op_star
 id|prev
 suffix:semicolon
-multiline_comment|/* Linux maintained lists */
+multiline_comment|/* Linux maintained lists.  Note that&n;&t;&t;&t;&t;&t;   hostdata-&gt;free is a singly linked&n;&t;&t;&t;&t;&t;   list; the rest are doubly linked */
 DECL|member|data_transfer_start
 r_int
 r_int
@@ -1197,9 +1226,12 @@ mdefine_line|#define STATE_WAITING&t;1&t;&t;
 multiline_comment|/* Indicates that the NCR is executing other code. */
 DECL|macro|STATE_RUNNING
 mdefine_line|#define STATE_RUNNING&t;2&t;&t;
-multiline_comment|/* &n; * Indicates that the NCR was being aborted.  Only used when running &n; * NCR53c700 compatible scripts.  &n; */
+multiline_comment|/* &n; * Indicates that the NCR was being aborted.&n; */
 DECL|macro|STATE_ABORTING
 mdefine_line|#define STATE_ABORTING&t;3
+multiline_comment|/* &n; * Indicates that the NCR was successfully aborted. */
+DECL|macro|STATE_ABORTED
+mdefine_line|#define STATE_ABORTED 4
 multiline_comment|/* &n; * Where knowledge of SCSI SCRIPT(tm) specified values are needed &n; * in an interrupt handler, an interrupt handler exists for each &n; * different SCSI script so we don&squot;t have name space problems.&n; * &n; * Return values of these handlers are as follows : &n; */
 DECL|macro|SPECIFIC_INT_NOTHING
 mdefine_line|#define SPECIFIC_INT_NOTHING &t;0&t;/* don&squot;t even restart */
@@ -1380,6 +1412,11 @@ op_star
 id|cmd
 )paren
 suffix:semicolon
+DECL|member|dsa_size
+r_int
+id|dsa_size
+suffix:semicolon
+multiline_comment|/* Size of DSA structure */
 multiline_comment|/*&n;     * Location of DSA fields for the SCSI SCRIPT corresponding to this &n;     * chip.  &n;     */
 DECL|member|dsa_start
 r_int
@@ -1626,6 +1663,7 @@ op_star
 id|breakpoint_current
 suffix:semicolon
 multiline_comment|/* Current breakpoint being stepped &n;&t;&t;&t;&t;&t;   through, NULL if we are running &n;&t;&t;&t;&t;&t;   normally. */
+macro_line|#ifdef NCR_DEBUG
 DECL|member|debug_size
 r_int
 id|debug_size
@@ -1658,6 +1696,7 @@ op_star
 id|debug_read
 suffix:semicolon
 multiline_comment|/* Current read pointer */
+macro_line|#endif /* def NCR_DEBUG */
 multiline_comment|/* XXX - primitive debugging junk, remove when working ? */
 DECL|member|debug_print_limit
 r_int
@@ -1720,6 +1759,42 @@ op_star
 id|current
 suffix:semicolon
 multiline_comment|/* currently connected &n;&t;&t;&t;&t;&t;&t;   nexus, ONLY valid for&n;&t;&t;&t;&t;&t;&t;   NCR53c700/NCR53c700-66&n;&t;&t;&t;&t;&t;&t; */
+DECL|member|spare
+r_volatile
+r_struct
+id|NCR53c7x0_cmd
+op_star
+id|spare
+suffix:semicolon
+multiline_comment|/* pointer to spare,&n;    &t;    &t;    &t;    &t;    &t;    &t;   allocated at probe time,&n;    &t;    &t;    &t;    &t;    &t;    &t;   which we can use for &n;&t;&t;&t;&t;&t;&t;   initialization */
+DECL|member|free
+r_volatile
+r_struct
+id|NCR53c7x0_cmd
+op_star
+id|free
+suffix:semicolon
+DECL|member|max_cmd_size
+r_int
+id|max_cmd_size
+suffix:semicolon
+multiline_comment|/* Maximum size of NCR53c7x0_cmd&n;&t;&t;&t;&t;&t;    &t;   based on number of &n;&t;&t;&t;&t;&t;&t;   scatter/gather segments, etc.&n;&t;&t;&t;&t;&t;&t;   */
+DECL|member|num_cmds
+r_volatile
+r_int
+id|num_cmds
+suffix:semicolon
+multiline_comment|/* Number of commands &n;&t;&t;&t;&t;&t;&t;   allocated */
+DECL|member|cmd_allocated
+r_volatile
+r_int
+r_char
+id|cmd_allocated
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Have we allocated commands&n;&t;&t;&t;&t;&t;&t;   for this target yet?  If not,&n;&t;&t;&t;&t;&t;&t;   do so ASAP */
 DECL|member|busy
 r_volatile
 r_int
@@ -1769,8 +1844,8 @@ suffix:semicolon
 multiline_comment|/* buffer for messages&n;&t;&t;&t;&t;&t;&t;   other than the command&n;&t;&t;&t;&t;&t;&t;   complete message */
 DECL|member|reconnect_dsa_head
 r_volatile
-r_struct
-id|NCR53c7x0_cmd
+r_int
+r_char
 op_star
 id|reconnect_dsa_head
 suffix:semicolon
@@ -1790,6 +1865,27 @@ r_char
 id|reselected_tag
 suffix:semicolon
 multiline_comment|/* second byte of queue tag &n;&t;&t;&t;&t;&t;&t;   message or 0 */
+multiline_comment|/* These were static variables before we moved them */
+DECL|member|NCR53c7xx_zero
+r_int
+id|NCR53c7xx_zero
+suffix:semicolon
+DECL|member|NCR53c7xx_sink
+r_int
+id|NCR53c7xx_sink
+suffix:semicolon
+DECL|member|NCR53c7xx_msg_reject
+r_char
+id|NCR53c7xx_msg_reject
+suffix:semicolon
+DECL|member|NCR53c7xx_msg_abort
+r_char
+id|NCR53c7xx_msg_abort
+suffix:semicolon
+DECL|member|NCR53c7xx_msg_nop
+r_char
+id|NCR53c7xx_msg_nop
+suffix:semicolon
 DECL|member|script_count
 r_int
 id|script_count

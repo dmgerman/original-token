@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lance.c:v1.07 1/18/95 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
+l_string|&quot;lance.c:v1.08 4/10/95 dplatt@3do.com&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -311,6 +311,7 @@ id|enet_statistics
 id|stats
 suffix:semicolon
 DECL|member|chip_version
+r_int
 r_char
 id|chip_version
 suffix:semicolon
@@ -333,6 +334,16 @@ suffix:semicolon
 multiline_comment|/* Used for 8-byte alignment */
 )brace
 suffix:semicolon
+DECL|macro|LANCE_MUST_PAD
+mdefine_line|#define LANCE_MUST_PAD          0x00000001
+DECL|macro|LANCE_ENABLE_AUTOSELECT
+mdefine_line|#define LANCE_ENABLE_AUTOSELECT 0x00000002
+DECL|macro|LANCE_MUST_REINIT_RING
+mdefine_line|#define LANCE_MUST_REINIT_RING  0x00000004
+DECL|macro|LANCE_MUST_UNRESET
+mdefine_line|#define LANCE_MUST_UNRESET      0x00000008
+DECL|macro|LANCE_HAS_MISSED_FRAME
+mdefine_line|#define LANCE_HAS_MISSED_FRAME  0x00000010
 multiline_comment|/* A mapping from the chip ID number to the part number and features.&n;   These are from the datasheets -- in real life the &squot;970 version&n;   reportedly has the same ID as the &squot;965. */
 DECL|struct|lance_chip_type
 r_static
@@ -364,53 +375,75 @@ l_int|0x0000
 comma
 l_string|&quot;LANCE 7990&quot;
 comma
-l_int|0
+multiline_comment|/* Ancient lance chip.  */
+id|LANCE_MUST_PAD
+op_plus
+id|LANCE_MUST_UNRESET
 )brace
 comma
-multiline_comment|/* Ancient lance chip.  */
 (brace
 l_int|0x0003
 comma
 l_string|&quot;PCnet/ISA 79C960&quot;
 comma
-l_int|0
+multiline_comment|/* 79C960 PCnet/ISA.  */
+id|LANCE_ENABLE_AUTOSELECT
+op_plus
+id|LANCE_MUST_REINIT_RING
+op_plus
+id|LANCE_HAS_MISSED_FRAME
 )brace
 comma
-multiline_comment|/* 79C960 PCnet/ISA.  */
 (brace
 l_int|0x2260
 comma
 l_string|&quot;PCnet/ISA+ 79C961&quot;
 comma
-l_int|0
+multiline_comment|/* 79C961 PCnet/ISA+, Plug-n-Play.  */
+id|LANCE_ENABLE_AUTOSELECT
+op_plus
+id|LANCE_MUST_REINIT_RING
+op_plus
+id|LANCE_HAS_MISSED_FRAME
 )brace
 comma
-multiline_comment|/* 79C961 PCnet/ISA+, Plug-n-Play.  */
 (brace
 l_int|0x2420
 comma
 l_string|&quot;PCnet/PCI 79C970&quot;
 comma
-l_int|0
+multiline_comment|/* 79C970 or 79C974 PCnet-SCSI, PCI. */
+id|LANCE_ENABLE_AUTOSELECT
+op_plus
+id|LANCE_MUST_REINIT_RING
+op_plus
+id|LANCE_HAS_MISSED_FRAME
 )brace
 comma
-multiline_comment|/* 79C970 or 79C974 PCnet-SCSI, PCI. */
 multiline_comment|/* Bug: the PCnet/PCI actually uses the PCnet/VLB ID number, so just call&n;&t;&t;it the PCnet32. */
 (brace
 l_int|0x2430
 comma
 l_string|&quot;PCnet32&quot;
 comma
-l_int|0
+multiline_comment|/* 79C965 PCnet for VL bus. */
+id|LANCE_ENABLE_AUTOSELECT
+op_plus
+id|LANCE_MUST_REINIT_RING
+op_plus
+id|LANCE_HAS_MISSED_FRAME
 )brace
 comma
-multiline_comment|/* 79C965 PCnet for VL bus. */
 (brace
 l_int|0x0
 comma
 l_string|&quot;PCnet (unknown)&quot;
 comma
-l_int|0
+id|LANCE_ENABLE_AUTOSELECT
+op_plus
+id|LANCE_MUST_REINIT_RING
+op_plus
+id|LANCE_HAS_MISSED_FRAME
 )brace
 comma
 )brace
@@ -586,10 +619,6 @@ op_star
 id|port
 suffix:semicolon
 macro_line|#if defined(CONFIG_PCI)
-DECL|macro|AMD_VENDOR_ID
-mdefine_line|#define AMD_VENDOR_ID 0x1022
-DECL|macro|AMD_DEVICE_ID
-mdefine_line|#define AMD_DEVICE_ID 0x2000
 r_if
 c_cond
 (paren
@@ -642,9 +671,9 @@ c_cond
 (paren
 id|pcibios_find_device
 (paren
-id|AMD_VENDOR_ID
+id|PCI_VENDOR_ID_AMD
 comma
-id|AMD_DEVICE_ID
+id|PCI_DEVICE_ID_AMD_LANCE
 comma
 id|pci_index
 comma
@@ -2206,9 +2235,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|chip_table
+(braket
 id|lp-&gt;chip_version
-op_ne
-id|OLD_LANCE
+)braket
+dot
+id|flags
+op_amp
+id|LANCE_ENABLE_AUTOSELECT
 )paren
 (brace
 multiline_comment|/* Turn on auto-select of media (10baseT or BNC) so that the user&n;&t;&t;   can watch the LEDs even if the board isn&squot;t opened. */
@@ -2385,9 +2419,14 @@ multiline_comment|/* Un-Reset the LANCE, needed only for the NE2100. */
 r_if
 c_cond
 (paren
+id|chip_table
+(braket
 id|lp-&gt;chip_version
-op_eq
-id|OLD_LANCE
+)braket
+dot
+id|flags
+op_amp
+id|LANCE_MUST_UNRESET
 )paren
 id|outw
 c_func
@@ -2402,9 +2441,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|chip_table
+(braket
 id|lp-&gt;chip_version
-op_ne
-id|OLD_LANCE
+)braket
+dot
+id|flags
+op_amp
+id|LANCE_ENABLE_AUTOSELECT
 )paren
 (brace
 multiline_comment|/* This is 79C960-specific: Turn on auto-select of media (AUI, BNC). */
@@ -2652,6 +2696,79 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Always succeed */
 )brace
+multiline_comment|/* The LANCE has been halted for one reason or another (busmaster memory&n;   arbitration error, Tx FIFO underflow, driver stopped it to reconfigure,&n;   etc.).  Modern LANCE variants always reload their ring-buffer&n;   configuration when restarted, so we must reinitialize our ring&n;   context before restarting.  As part of this reinitialization,&n;   find all packets still on the Tx ring and pretend that they had been&n;   sent (in effect, drop the packets on the floor) - the higher-level&n;   protocols will time out and retransmit.  It&squot;d be better to shuffle&n;   these skbs to a temp list and then actually re-Tx them after&n;   restarting the chip, but I&squot;m too lazy to do so right now.  dplatt@3do.com&n;*/
+r_static
+r_void
+DECL|function|lance_purge_tx_ring
+id|lance_purge_tx_ring
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|lance_private
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|lance_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|TX_RING_SIZE
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|lp-&gt;tx_skbuff
+(braket
+id|i
+)braket
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|lp-&gt;tx_skbuff
+(braket
+id|i
+)braket
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|lp-&gt;tx_skbuff
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+)brace
 multiline_comment|/* Initialize the LANCE Rx and Tx rings. */
 r_static
 r_void
@@ -2831,6 +2948,88 @@ id|TX_RING_LEN_BITS
 suffix:semicolon
 )brace
 r_static
+r_void
+DECL|function|lance_restart
+id|lance_restart
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|csr0_bits
+comma
+r_int
+id|must_reinit
+)paren
+(brace
+r_struct
+id|lance_private
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|lance_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|must_reinit
+op_logical_or
+(paren
+id|chip_table
+(braket
+id|lp-&gt;chip_version
+)braket
+dot
+id|flags
+op_amp
+id|LANCE_MUST_REINIT_RING
+)paren
+)paren
+(brace
+id|lance_purge_tx_ring
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|lance_init_ring
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+id|outw
+c_func
+(paren
+l_int|0x0000
+comma
+id|dev-&gt;base_addr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|csr0_bits
+comma
+id|dev-&gt;base_addr
+op_plus
+id|LANCE_DATA
+)paren
+suffix:semicolon
+)brace
+r_static
 r_int
 DECL|function|lance_start_xmit
 id|lance_start_xmit
@@ -2866,6 +3065,10 @@ id|dev-&gt;base_addr
 suffix:semicolon
 r_int
 id|entry
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 multiline_comment|/* Transmitter timeout, serious problems. */
 r_if
@@ -3064,20 +3267,14 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-id|lance_init_ring
+id|lance_restart
 c_func
 (paren
 id|dev
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
+comma
 l_int|0x0043
 comma
-id|ioaddr
-op_plus
-id|LANCE_DATA
+l_int|1
 )paren
 suffix:semicolon
 id|dev-&gt;tbusy
@@ -3249,9 +3446,14 @@ multiline_comment|/* The old LANCE chips doesn&squot;t automatically pad buffers
 r_if
 c_cond
 (paren
+id|chip_table
+(braket
 id|lp-&gt;chip_version
-op_eq
-id|OLD_LANCE
+)braket
+dot
+id|flags
+op_amp
+id|LANCE_MUST_PAD
 )paren
 (brace
 id|lp-&gt;tx_ring
@@ -3426,6 +3628,12 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -3462,9 +3670,10 @@ id|lp-&gt;tx_full
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -3517,6 +3726,9 @@ comma
 id|boguscnt
 op_assign
 l_int|10
+suffix:semicolon
+r_int
+id|must_restart
 suffix:semicolon
 r_if
 c_cond
@@ -3612,6 +3824,10 @@ id|dev-&gt;base_addr
 op_plus
 id|LANCE_DATA
 )paren
+suffix:semicolon
+id|must_restart
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3786,15 +4002,9 @@ id|csr0
 )paren
 suffix:semicolon
 multiline_comment|/* Restart the chip. */
-id|outw
-c_func
-(paren
-l_int|0x0002
-comma
-id|dev-&gt;base_addr
-op_plus
-id|LANCE_DATA
-)paren
+id|must_restart
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -3955,14 +4165,46 @@ id|csr0
 )paren
 suffix:semicolon
 multiline_comment|/* Restart the chip. */
+id|must_restart
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|must_restart
+)paren
+(brace
+multiline_comment|/* stop the chip to clear the error condition, then restart */
 id|outw
 c_func
 (paren
-l_int|0x0002
+l_int|0x0000
+comma
+id|dev-&gt;base_addr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x0004
 comma
 id|dev-&gt;base_addr
 op_plus
 id|LANCE_DATA
+)paren
+suffix:semicolon
+id|lance_restart
+c_func
+(paren
+id|dev
+comma
+l_int|0x0002
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -4388,9 +4630,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|chip_table
+(braket
 id|lp-&gt;chip_version
-op_ne
-id|OLD_LANCE
+)braket
+dot
+id|flags
+op_amp
+id|LANCE_HAS_MISSED_FRAME
 )paren
 (brace
 id|outw
@@ -4522,14 +4769,29 @@ suffix:semicolon
 r_int
 id|saved_addr
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|chip_table
+(braket
 id|lp-&gt;chip_version
-op_ne
-id|OLD_LANCE
+)braket
+dot
+id|flags
+op_amp
+id|LANCE_HAS_MISSED_FRAME
 )paren
 (brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4575,9 +4837,10 @@ op_plus
 id|LANCE_ADDR
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -4611,7 +4874,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-multiline_comment|/* We take the simple way out and always enable promiscuous mode. */
 id|outw
 c_func
 (paren
@@ -4633,16 +4895,6 @@ id|LANCE_DATA
 )paren
 suffix:semicolon
 multiline_comment|/* Temporarily stop the lance.&t; */
-id|outw
-c_func
-(paren
-l_int|15
-comma
-id|ioaddr
-op_plus
-id|LANCE_ADDR
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4728,6 +4980,16 @@ suffix:semicolon
 id|outw
 c_func
 (paren
+l_int|15
+comma
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
 l_int|0x0000
 comma
 id|ioaddr
@@ -4751,19 +5013,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x8000
-comma
-id|ioaddr
-op_plus
-id|LANCE_DATA
-)paren
-suffix:semicolon
-multiline_comment|/* Set promiscuous mode */
-)brace
-id|outw
-c_func
-(paren
-l_int|0
+l_int|15
 comma
 id|ioaddr
 op_plus
@@ -4773,14 +5023,26 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x0142
+l_int|0x8000
 comma
 id|ioaddr
 op_plus
 id|LANCE_DATA
 )paren
 suffix:semicolon
-multiline_comment|/* Resume normal operation. */
+multiline_comment|/* Set promiscuous mode */
+)brace
+id|lance_restart
+c_func
+(paren
+id|dev
+comma
+l_int|0x0142
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/*  Resume normal operation */
 )brace
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c lance.c&quot;&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
