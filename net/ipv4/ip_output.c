@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -513,7 +513,6 @@ op_assign
 id|daddr
 suffix:semicolon
 r_return
-op_minus
 id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace

@@ -2105,6 +2105,11 @@ c_loop
 (paren
 id|skbq
 op_ne
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|list
 )paren
 (brace

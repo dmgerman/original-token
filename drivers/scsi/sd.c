@@ -5025,9 +5025,16 @@ suffix:semicolon
 suffix:semicolon
 )brace
 (brace
-multiline_comment|/*&n;&t; * The msdos fs need to know the hardware sector size&n;&t; * So I have created this table. See ll_rw_blk.c&n;&t; * Jacques Gelinas (Jacques@solucorp.qc.ca)&n;&t; */
+multiline_comment|/*&n;&t; * The msdos fs needs to know the hardware sector size&n;&t; * So I have created this table. See ll_rw_blk.c&n;&t; * Jacques Gelinas (Jacques@solucorp.qc.ca)&n;&t; */
 r_int
 id|m
+comma
+id|mb
+suffix:semicolon
+r_int
+id|sz_quot
+comma
+id|sz_rem
 suffix:semicolon
 r_int
 id|hard_sector
@@ -5039,7 +5046,7 @@ id|i
 dot
 id|sector_size
 suffix:semicolon
-multiline_comment|/* There is 16 minor allocated for each devices */
+multiline_comment|/* There are 16 minors allocated for each major device */
 r_for
 c_loop
 (paren
@@ -5073,15 +5080,75 @@ op_assign
 id|hard_sector
 suffix:semicolon
 )brace
+id|mb
+op_assign
+(paren
+id|hard_sector
+op_star
+id|rscsi_disks
+(braket
+id|i
+)braket
+dot
+id|capacity
+)paren
+op_div
+(paren
+l_int|1024
+op_star
+l_int|1024
+)paren
+suffix:semicolon
+multiline_comment|/* sz = div(m/100, 10);  this seems to not be in the libr */
+id|m
+op_assign
+(paren
+id|mb
+op_plus
+l_int|50
+)paren
+op_div
+l_int|100
+suffix:semicolon
+id|sz_quot
+op_assign
+id|m
+op_div
+l_int|10
+suffix:semicolon
+id|sz_rem
+op_assign
+id|m
+op_minus
+(paren
+l_int|10
+op_star
+id|sz_quot
+)paren
+suffix:semicolon
 id|printk
 (paren
-l_string|&quot;SCSI Hardware sector size is %d bytes on device sd%c&bslash;n&quot;
-comma
-id|hard_sector
+l_string|&quot;SCSI device sd%c: hdwr sector= %d bytes.&quot;
+l_string|&quot; Sectors= %d [%d MB] [%d.%1d GB]&bslash;n&quot;
 comma
 id|i
 op_plus
 l_char|&squot;a&squot;
+comma
+id|hard_sector
+comma
+id|rscsi_disks
+(braket
+id|i
+)braket
+dot
+id|capacity
+comma
+id|mb
+comma
+id|sz_quot
+comma
+id|sz_rem
 )paren
 suffix:semicolon
 )brace

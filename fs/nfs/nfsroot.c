@@ -3166,6 +3166,13 @@ id|myaddr.sin_addr.s_addr
 op_assign
 id|recv_bootp-&gt;your_ip
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|server.sin_addr.s_addr
+op_eq
+id|INADDR_NONE
+)paren
 id|server.sin_addr.s_addr
 op_assign
 id|recv_bootp-&gt;server_ip

@@ -502,7 +502,7 @@ suffix:semicolon
 )brace
 id|error
 op_assign
-id|locks_verify
+id|locks_verify_area
 c_func
 (paren
 id|FLOCK_VERIFY_WRITE
@@ -667,7 +667,7 @@ id|EPERM
 suffix:semicolon
 id|error
 op_assign
-id|locks_verify
+id|locks_verify_area
 c_func
 (paren
 id|FLOCK_VERIFY_WRITE

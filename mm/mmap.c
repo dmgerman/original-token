@@ -221,6 +221,20 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * make sure there are no mandatory locks on the file.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|locks_verify_locked
+c_func
+(paren
+id|file-&gt;f_inode
+)paren
+)paren
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
 multiline_comment|/* fall through */
 r_case
 id|MAP_PRIVATE

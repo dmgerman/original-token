@@ -68,6 +68,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_T128
 macro_line|#include &quot;t128.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DTC3280
+macro_line|#include &quot;dtc.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C7xx
 macro_line|#include &quot;53c7,8xx.h&quot;
 macro_line|#endif
@@ -176,6 +179,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_T128
 id|TRANTOR_T128
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DTC3280
+id|DTC3x80
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C7xx

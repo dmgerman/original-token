@@ -59,12 +59,14 @@ DECL|macro|SIOCGIFSLAVE
 mdefine_line|#define SIOCGIFSLAVE&t;0x8929&t;&t;/* Driver slaving support&t;*/
 DECL|macro|SIOCSIFSLAVE
 mdefine_line|#define SIOCSIFSLAVE&t;0x8930
-multiline_comment|/* begin multicast support change */
 DECL|macro|SIOCADDMULTI
-mdefine_line|#define SIOCADDMULTI  0x8931
+mdefine_line|#define SIOCADDMULTI&t;0x8931&t;&t;/* Multicast address lists&t;*/
 DECL|macro|SIOCDELMULTI
-mdefine_line|#define SIOCDELMULTI  0x8932
-multiline_comment|/* end multicast support change */
+mdefine_line|#define SIOCDELMULTI&t;0x8932
+DECL|macro|SIOCGIFBR
+mdefine_line|#define SIOCGIFBR&t;0x8940&t;&t;/* Bridging support&t;&t;*/
+DECL|macro|SIOCSIFBR
+mdefine_line|#define SIOCSIFBR&t;0x8941&t;&t;/* Set bridging options &t;*/
 multiline_comment|/* ARP cache control calls. */
 DECL|macro|OLD_SIOCDARP
 mdefine_line|#define OLD_SIOCDARP&t;0x8950&t;&t;/* old delete ARP table entry&t;*/

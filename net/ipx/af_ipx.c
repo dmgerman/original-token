@@ -9199,9 +9199,6 @@ r_case
 id|SIOCSIFADDR
 suffix:colon
 r_case
-id|SIOCGIFADDR
-suffix:colon
-r_case
 id|SIOCAIPXITFCRT
 suffix:colon
 r_case
@@ -9222,6 +9219,9 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
+r_case
+id|SIOCGIFADDR
+suffix:colon
 r_return
 id|ipxitf_ioctl
 c_func
@@ -9907,6 +9907,16 @@ id|ipx_snap_id
 )paren
 suffix:semicolon
 id|pSNAP_datalink
+op_assign
+l_int|NULL
+suffix:semicolon
+id|unregister_8022tr_client
+c_func
+(paren
+id|ipx_8022_type
+)paren
+suffix:semicolon
+id|p8022tr_datalink
 op_assign
 l_int|NULL
 suffix:semicolon

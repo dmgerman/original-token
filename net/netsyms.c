@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#ifdef CONFIG_AX25
@@ -200,21 +199,6 @@ id|X
 c_func
 (paren
 id|destroy_EII_client
-)paren
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FIREWALL
-multiline_comment|/* Firewall registration */
-id|X
-c_func
-(paren
-id|register_firewall
-)paren
-comma
-id|X
-c_func
-(paren
-id|unregister_firewall
 )paren
 comma
 macro_line|#endif
@@ -427,6 +411,12 @@ comma
 id|X
 c_func
 (paren
+id|arp_query
+)paren
+comma
+id|X
+c_func
+(paren
 id|alloc_skb
 )paren
 comma
@@ -550,26 +540,6 @@ c_func
 id|arp_query
 )paren
 comma
-macro_line|#ifdef CONFIG_FIREWALL
-id|X
-c_func
-(paren
-id|call_in_firewall
-)paren
-comma
-id|X
-c_func
-(paren
-id|call_out_firewall
-)paren
-comma
-id|X
-c_func
-(paren
-id|call_fw_firewall
-)paren
-comma
-macro_line|#endif
 macro_line|#endif  /* CONFIG_INET */
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace

@@ -38,6 +38,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_IP_ALIAS
 macro_line|#include &lt;net/ip_alias.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_BRIDGE
+macro_line|#include &lt;net/br.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
@@ -4498,6 +4501,32 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+r_case
+id|SIOCGIFBR
+suffix:colon
+r_case
+id|SIOCSIFBR
+suffix:colon
+macro_line|#ifdef CONFIG_BRIDGE&t;&t;
+r_return
+id|br_ioctl
+c_func
+(paren
+id|cmd
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|ENOPKG
+suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;&t;&t;
 r_default
 suffix:colon
 (brace

@@ -271,6 +271,10 @@ DECL|member|pkt_type
 id|pkt_type
 comma
 multiline_comment|/* Packet class&t;&t;&t;&t;&t;*/
+DECL|member|pkt_bridged
+id|pkt_bridged
+comma
+multiline_comment|/* Tracker for bridging &t;&t;&t;*/
 DECL|member|ip_summed
 id|ip_summed
 suffix:semicolon

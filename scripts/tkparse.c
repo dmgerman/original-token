@@ -489,7 +489,7 @@ op_increment
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|cpnt-&gt;variable
+id|cpnt-&gt;variable.str
 op_assign
 id|strdup
 c_func
@@ -573,7 +573,7 @@ op_increment
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|cpnt-&gt;variable
+id|cpnt-&gt;variable.str
 op_assign
 id|strdup
 c_func
@@ -632,7 +632,7 @@ op_increment
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|cpnt-&gt;variable
+id|cpnt-&gt;variable.str
 op_assign
 id|strdup
 c_func

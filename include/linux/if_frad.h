@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DLCI/FRAD&t;Definitions for Frame Relay Access Devices.  DLCI devices are&n; *&t;&t;created for each DLCI associated with a FRAD.  The FRAD driver&n; *&t;&t;is not truely a network device, but the lower level device&n; *&t;&t;handler.  This allows other FRAD manufacturers to use the DLCI&n; *&t;&t;code, including it&squot;s RFC1490 encapsulation along side the current&n; *&t;&t;implementation for the Sangoma cards.&n; *&n; * Version:&t;@(#)if_ifrad.h&t;0.10&t;23 Mar 96&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * DLCI/FRAD&t;Definitions for Frame Relay Access Devices.  DLCI devices are&n; *&t;&t;created for each DLCI associated with a FRAD.  The FRAD driver&n; *&t;&t;is not truely a network device, but the lower level device&n; *&t;&t;handler.  This allows other FRAD manufacturers to use the DLCI&n; *&t;&t;code, including it&squot;s RFC1490 encapsulation along side the current&n; *&t;&t;implementation for the Sangoma cards.&n; *&n; * Version:&t;@(#)if_ifrad.h&t;0.15&t;31 Mar 96&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _FRAD_H_
 DECL|macro|_FRAD_H_
 mdefine_line|#define _FRAD_H_
@@ -28,7 +28,7 @@ DECL|macro|DLCI_GET_CONF
 mdefine_line|#define DLCI_GET_CONF&t;(SIOCDEVPRIVATE + 2)
 DECL|macro|DLCI_SET_CONF
 mdefine_line|#define DLCI_SET_CONF&t;(SIOCDEVPRIVATE + 3)
-multiline_comment|/* These are related to the Sangoma FRAD */
+multiline_comment|/* &n; * These are related to the Sangoma SDLA and should remain in order. &n; * Code within the SDLA module is based on the specifics of this &n; * structure.  Change at your own peril.&n; */
 DECL|struct|dlci_conf
 r_struct
 id|dlci_conf
@@ -78,6 +78,7 @@ DECL|member|Tb_max
 r_int
 id|Tb_max
 suffix:semicolon
+multiline_comment|/* add any new fields here above is a mirror of sdla_dlci_conf */
 )brace
 suffix:semicolon
 DECL|macro|DLCI_GET_SLAVE
@@ -91,6 +92,13 @@ DECL|macro|DLCI_BUFFER_IF
 mdefine_line|#define DLCI_BUFFER_IF&t;&t;0x0008
 DECL|macro|DLCI_VALID_FLAGS
 mdefine_line|#define DLCI_VALID_FLAGS&t;0x000B
+multiline_comment|/* FRAD driver uses these to indicate what it did with packet */
+DECL|macro|DLCI_RET_OK
+mdefine_line|#define DLCI_RET_OK&t;&t;0x00
+DECL|macro|DLCI_RET_ERR
+mdefine_line|#define DLCI_RET_ERR&t;&t;0x01
+DECL|macro|DLCI_RET_DROP
+mdefine_line|#define DLCI_RET_DROP&t;&t;0x02
 multiline_comment|/* defines for the actual Frame Relay hardware */
 DECL|macro|FRAD_GET_CONF
 mdefine_line|#define FRAD_GET_CONF&t;(SIOCDEVPRIVATE)
@@ -98,6 +106,7 @@ DECL|macro|FRAD_SET_CONF
 mdefine_line|#define FRAD_SET_CONF&t;(SIOCDEVPRIVATE + 1)
 DECL|macro|FRAD_LAST_IOCTL
 mdefine_line|#define FRAD_LAST_IOCTL&t;FRAD_SET_CONF
+multiline_comment|/*&n; * Based on the setup for the Sangoma SDLA.  If changes are &n; * necessary to this structure, a routine will need to be &n; * added to that module to copy fields.&n; */
 DECL|struct|frad_conf
 r_struct
 id|frad_conf
@@ -166,7 +175,7 @@ DECL|member|Be_bwd
 r_int
 id|Be_bwd
 suffix:semicolon
-multiline_comment|/* Add new fields here, above is a mirror of the sangoma_conf */
+multiline_comment|/* Add new fields here, above is a mirror of the sdla_conf */
 )brace
 suffix:semicolon
 DECL|macro|FRAD_STATION_CPE
@@ -194,26 +203,47 @@ mdefine_line|#define FRAD_CLOCK_INT&t;&t;0x0001
 DECL|macro|FRAD_CLOCK_EXT
 mdefine_line|#define FRAD_CLOCK_EXT&t;&t;0x0000
 macro_line|#ifdef __KERNEL__
-DECL|struct|fradhdr
+multiline_comment|/* these are the fields of an RFC 1490 header */
+DECL|struct|frhdr
 r_struct
-id|fradhdr
+id|frhdr
 (brace
-multiline_comment|/* these are the fields of an RFC 1490 header               */
 DECL|member|control
 r_int
 r_char
 id|control
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
+multiline_comment|/* for IP packets, this can be the NLPID */
 DECL|member|pad
 r_int
 r_char
 id|pad
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
-multiline_comment|/* for IP packets, this can be the NLPID */
 DECL|member|NLPID
 r_int
 r_char
 id|NLPID
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|member|OUI
 r_int
@@ -222,12 +252,28 @@ id|OUI
 (braket
 l_int|3
 )braket
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|member|PID
 r_int
 r_int
 id|PID
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
+DECL|macro|IP_NLPID
+mdefine_line|#define IP_NLPID pad 
 )brace
 suffix:semicolon
 multiline_comment|/* see RFC 1490 for the definition of the following */
@@ -296,11 +342,6 @@ r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
-DECL|member|timer
-r_struct
-id|timer_list
-id|timer
-suffix:semicolon
 multiline_comment|/* devices which this FRAD is slaved to */
 DECL|member|master
 r_struct
@@ -318,6 +359,21 @@ id|dlci
 id|CONFIG_DLCI_MAX
 )braket
 suffix:semicolon
+DECL|member|config
+r_struct
+id|frad_conf
+id|config
+suffix:semicolon
+DECL|member|configured
+r_int
+id|configured
+suffix:semicolon
+multiline_comment|/* has this device been configured */
+DECL|member|initialized
+r_int
+id|initialized
+suffix:semicolon
+multiline_comment|/* mem_start, port, irq set ? */
 multiline_comment|/* callback functions */
 DECL|member|activate
 r_int
@@ -402,16 +458,12 @@ r_int
 id|get
 )paren
 suffix:semicolon
-DECL|member|initialized
-r_int
-id|initialized
+multiline_comment|/* fields that are used by the Sangoma SDLA cards */
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
 suffix:semicolon
-multiline_comment|/* mem_start, port, irq set ? */
-DECL|member|configured
-r_int
-id|configured
-suffix:semicolon
-multiline_comment|/* has this device been configured */
 DECL|member|type
 r_int
 id|type
@@ -427,11 +479,6 @@ r_int
 id|buffer
 suffix:semicolon
 multiline_comment|/* current buffer for S508 firmware */
-DECL|member|config
-r_struct
-id|frad_conf
-id|config
-suffix:semicolon
 )brace
 suffix:semicolon
 r_int

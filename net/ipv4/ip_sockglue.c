@@ -1320,6 +1320,9 @@ suffix:colon
 r_case
 id|IP_FW_POLICY_FWD
 suffix:colon
+r_case
+id|IP_FW_MASQ_TIMEOUTS
+suffix:colon
 r_if
 c_cond
 (paren

@@ -26,6 +26,7 @@ macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/slhc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;net/br.h&gt;
 macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#endif
@@ -854,6 +855,35 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; *&t;If we are bridging and this is directly generated output&n;&t; *&t;pass the frame via the bridge.&n;&t; */
+macro_line|#ifdef CONFIG_BRIDGE
+r_if
+c_cond
+(paren
+id|skb-&gt;pkt_bridged
+op_ne
+id|IS_BRIDGED
+op_logical_and
+id|br_stats.flags
+op_amp
+id|BR_UP
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|br_tx_frame
+c_func
+(paren
+id|skb
+)paren
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 id|list
 op_assign
 id|dev-&gt;buffs
@@ -1221,20 +1251,12 @@ id|backlog_size
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;If any packet arrived, mark it for processing after the&n;&t; *&t;hardware interrupt returns.&n;&t; */
-macro_line|#ifdef CONFIG_NET_RUNONIRQ&t;/* Dont enable yet, needs some driver mods */
-id|net_bh
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
 id|mark_bh
 c_func
 (paren
 id|NET_BH
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -1363,7 +1385,42 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;*&t;Bump the pointer to the next structure.&n;&t;&t;*&n;&t;&t;*&t;On entry to the protocol layer. skb-&gt;data and&n;&t;&t;*&t;skb-&gt;h.raw point to the MAC and encapsulated data&n;&t;&t;*/
+macro_line|#ifdef CONFIG_BRIDGE
+multiline_comment|/*&n;&t;&t; *&t;If we are bridging then pass the frame up to the&n;&t;&t; *&t;bridging code. If it is bridged then move on&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|br_stats.flags
+op_amp
+id|BR_UP
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|br_receive_frame
+c_func
+(paren
+id|skb
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n;&t; &t; *&t;Bump the pointer to the next structure.&n;&t;&t; * &n;&t;&t; *&t;On entry to the protocol layer. skb-&gt;data and&n;&t;&t; *&t;skb-&gt;h.raw point to the MAC and encapsulated data&n;&t;&t; */
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
@@ -3674,7 +3731,15 @@ op_amp
 id|backlog
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * This is VeryUgly(tm).&n;&t; *&n;&t; * Some devices want to be initialized eary..&n;&t; */
+multiline_comment|/*&n;&t; *&t;The bridge has to be up before the devices&n;&t; */
+macro_line|#ifdef CONFIG_BRIDGE&t; 
+id|br_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+multiline_comment|/*&n;&t; * This is Very Ugly(tm).&n;&t; *&n;&t; * Some devices want to be initialized early..&n;&t; */
 macro_line|#if defined(CONFIG_LANCE)
 id|lance_init
 c_func

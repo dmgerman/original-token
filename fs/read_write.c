@@ -543,7 +543,7 @@ l_int|0
 suffix:semicolon
 id|error
 op_assign
-id|locks_verify
+id|locks_verify_area
 c_func
 (paren
 id|FLOCK_VERIFY_READ
@@ -702,7 +702,7 @@ l_int|0
 suffix:semicolon
 id|error
 op_assign
-id|locks_verify
+id|locks_verify_area
 c_func
 (paren
 id|FLOCK_VERIFY_WRITE
@@ -1196,7 +1196,7 @@ suffix:semicolon
 )brace
 id|retval
 op_assign
-id|locks_verify
+id|locks_verify_area
 c_func
 (paren
 id|type

@@ -1,10 +1,10 @@
-multiline_comment|/* &n; * NCR 5380 defines&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix consulting and custom programming)&n; * &t;drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 6&n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
+multiline_comment|/* &n; * NCR 5380 defines&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix consulting and custom programming)&n; * &t;drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 7&n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
 multiline_comment|/*&n; * $Log: NCR5380.h,v $&n; */
 macro_line|#ifndef NCR5380_H
 DECL|macro|NCR5380_H
 mdefine_line|#define NCR5380_H
 DECL|macro|NCR5380_PUBLIC_RELEASE
-mdefine_line|#define NCR5380_PUBLIC_RELEASE 6
+mdefine_line|#define NCR5380_PUBLIC_RELEASE 7
 DECL|macro|NCR53C400_PUBLIC_RELEASE
 mdefine_line|#define NCR53C400_PUBLIC_RELEASE 2
 DECL|macro|NDEBUG_ARBITRATION
@@ -464,6 +464,7 @@ op_star
 id|instance
 )paren
 suffix:semicolon
+macro_line|#ifndef DONT_USE_INTR
 r_static
 r_void
 id|NCR5380_intr
@@ -481,6 +482,7 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|NCR5380_main

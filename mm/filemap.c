@@ -1523,6 +1523,7 @@ id|error
 op_assign
 id|read
 suffix:semicolon
+macro_line|#ifdef WE_SHOULD_DO_SOME_EXTRA_CHECKS
 multiline_comment|/*&n;&t;&t; * Start some extra read-ahead if we haven&squot;t already&n;&t;&t; * read ahead enough..&n;&t;&t; */
 r_while
 c_loop
@@ -1556,6 +1557,7 @@ op_amp
 id|tq_disk
 )paren
 suffix:semicolon
+macro_line|#endif
 id|filp-&gt;f_pos
 op_assign
 id|pos

@@ -1050,7 +1050,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|l
+id|optlen
 id|l
 )paren
 r_return
@@ -1339,11 +1339,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|l
-id|l
-op_logical_or
-op_logical_neg
 id|optlen
+id|l
 )paren
 (brace
 id|pp_ptr

@@ -467,24 +467,13 @@ id|end_mem
 )paren
 (brace
 macro_line|#ifdef USE_PENTIUM_MM
+multiline_comment|/*&n;&t;&t; * This will create page tables that&n;&t;&t; * span up to the next 4MB virtual&n;&t;&t; * memory boundary, but that&squot;s ok,&n;&t;&t; * we won&squot;t use that memory anyway.&n;&t;&t; */
 r_if
 c_cond
-(paren
-id|address
-op_plus
-l_int|4
-op_star
-l_int|1024
-op_star
-l_int|1024
-op_le
-id|end_mem
-op_logical_and
 (paren
 id|x86_capability
 op_amp
 l_int|8
-)paren
 )paren
 (brace
 macro_line|#ifdef GAS_KNOWS_CR4

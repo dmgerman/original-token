@@ -2428,6 +2428,11 @@ op_assign
 id|PACKET_HOST
 suffix:semicolon
 multiline_comment|/* Default type */
+id|skb-&gt;pkt_bridged
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Not bridged */
 id|skb-&gt;prev
 op_assign
 id|skb-&gt;next

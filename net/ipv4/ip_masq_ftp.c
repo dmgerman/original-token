@@ -483,7 +483,7 @@ c_func
 (paren
 id|n_ms
 comma
-id|MASQUERADE_EXPIRE_TCP_FIN
+id|ip_masq_expire-&gt;tcp_fin_timeout
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Replace the old PORT with the new one&n;&t;&t; */

@@ -167,6 +167,8 @@ DECL|macro|IP_FW_POLICY
 mdefine_line|#define IP_FW_POLICY&t;&t;(IP_FW_BASE_CTL+5)
 DECL|macro|IP_FW_CHECK
 mdefine_line|#define IP_FW_CHECK&t;&t;(IP_FW_BASE_CTL+6)
+DECL|macro|IP_FW_MASQ_TIMEOUTS
+mdefine_line|#define IP_FW_MASQ_TIMEOUTS&t;(IP_FW_BASE_CTL+7)
 DECL|macro|IP_FW_INSERT_FWD
 mdefine_line|#define IP_FW_INSERT_FWD&t;(IP_FW_INSERT | (IP_FW_FWD &lt;&lt; IP_FW_SHIFT))
 DECL|macro|IP_FW_APPEND_FWD
@@ -268,6 +270,10 @@ id|IFNAMSIZ
 suffix:semicolon
 multiline_comment|/* interface name */
 )brace
+suffix:semicolon
+multiline_comment|/*&n; * timeouts for ip masquerading&n; */
+r_struct
+id|ip_fw_masq
 suffix:semicolon
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__

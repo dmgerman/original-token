@@ -66,6 +66,31 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+r_int
+id|notyet_generic_proc_info
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|hostno
+comma
+r_int
+id|inout
+)paren
+suffix:semicolon
 r_const
 r_char
 op_star
@@ -132,7 +157,7 @@ mdefine_line|#define CAN_QUEUE 16
 macro_line|#endif
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 DECL|macro|GENERIC_NCR5380
-mdefine_line|#define GENERIC_NCR5380 {NULL, NULL, NULL, &t; &t;&t;&t;&bslash;&n;&t;generic_NCR5380_proc_info,&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;Generic NCR5380/NCR53C400 Scsi Driver&quot;, &t;&t;&t;&bslash;&n;&t;generic_NCR5380_detect, generic_NCR5380_release_resources,&t;&bslash;&n;&t;generic_NCR5380_info, NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;generic_NCR5380_queue_command, generic_NCR5380_abort, &t;&t;&bslash;&n;&t;generic_NCR5380_reset, NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;NCR5380_BIOSPARAM,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define GENERIC_NCR5380 {NULL, NULL, NULL, &t; &t;&t;&t;&bslash;&n;&t;generic_NCR5380_proc_info,&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;Generic NCR5380/NCR53C400 Scsi Driver&quot;, &t;&t;&t;&bslash;&n;&t;generic_NCR5380_detect, generic_NCR5380_release_resources,&t;&bslash;&n;&t;(void *)generic_NCR5380_info, NULL,&t;&t;&t;&t;&bslash;&n;&t;generic_NCR5380_queue_command, generic_NCR5380_abort, &t;&t;&bslash;&n;&t;generic_NCR5380_reset, NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;NCR5380_BIOSPARAM,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
 macro_line|#endif
 macro_line|#ifndef HOSTS_C
 DECL|macro|__STRVAL
@@ -206,6 +231,8 @@ DECL|macro|NCR5380_pread
 mdefine_line|#define NCR5380_pread generic_NCR5380_pread
 DECL|macro|NCR5380_pwrite
 mdefine_line|#define NCR5380_pwrite generic_NCR5380_pwrite
+DECL|macro|NCR5380_proc_info
+mdefine_line|#define NCR5380_proc_info notyet_generic_proc_info
 DECL|macro|BOARD_NCR5380
 mdefine_line|#define BOARD_NCR5380&t;0
 DECL|macro|BOARD_NCR53C400

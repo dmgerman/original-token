@@ -123,6 +123,31 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+r_int
+id|pas16_proc_info
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|hostno
+comma
+r_int
+id|inout
+)paren
+suffix:semicolon
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
@@ -168,6 +193,8 @@ DECL|macro|NCR5380_abort
 mdefine_line|#define NCR5380_abort pas16_abort
 DECL|macro|NCR5380_reset
 mdefine_line|#define NCR5380_reset pas16_reset
+DECL|macro|NCR5380_proc_info
+mdefine_line|#define NCR5380_proc_info pas16_proc_info
 multiline_comment|/* 15 14 12 10 7 5 3 &n;   1101 0100 1010 1000 */
 DECL|macro|PAS16_IRQS
 mdefine_line|#define PAS16_IRQS 0xd4a8 

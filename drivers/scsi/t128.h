@@ -101,6 +101,31 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+r_int
+id|t128_proc_info
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|hostno
+comma
+r_int
+id|inout
+)paren
+suffix:semicolon
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
@@ -118,7 +143,7 @@ macro_line|#if defined(HOSTS_C) || defined(MODULE)
 DECL|macro|TRANTOR_T128
 mdefine_line|#define TRANTOR_T128 {NULL, NULL, NULL, NULL, &bslash;&n;&t;&quot;Trantor T128/T128F/T228&quot;, t128_detect, NULL,  &bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL, t128_queue_command, t128_abort, t128_reset, NULL, &t;&bslash;&n;&t;t128_biosparam, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
 macro_line|#endif
-macro_line|#ifndef(HOSTS_C)
+macro_line|#ifndef HOSTS_C
 DECL|macro|NCR5380_implementation_fields
 mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    volatile unsigned char *base
 DECL|macro|NCR5380_local_declare
@@ -146,6 +171,8 @@ DECL|macro|NCR5380_abort
 mdefine_line|#define NCR5380_abort t128_abort
 DECL|macro|NCR5380_reset
 mdefine_line|#define NCR5380_reset t128_reset
+DECL|macro|NCR5380_proc_info
+mdefine_line|#define NCR5380_proc_info t128_proc_info
 multiline_comment|/* 15 14 12 10 7 5 3 &n;   1101 0100 1010 1000 */
 DECL|macro|T128_IRQS
 mdefine_line|#define T128_IRQS 0xc4a8 

@@ -122,6 +122,31 @@ suffix:semicolon
 multiline_comment|/* status flags */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;timeout values&n; */
+DECL|struct|ip_fw_masq
+r_struct
+id|ip_fw_masq
+(brace
+DECL|member|tcp_timeout
+r_int
+id|tcp_timeout
+suffix:semicolon
+DECL|member|tcp_fin_timeout
+r_int
+id|tcp_fin_timeout
+suffix:semicolon
+DECL|member|udp_timeout
+r_int
+id|udp_timeout
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|ip_fw_masq
+op_star
+id|ip_masq_expire
+suffix:semicolon
 multiline_comment|/*&n; *&t;[0]: UDP free_ports&n; *&t;[1]: TCP free_ports&n; */
 r_extern
 r_int

@@ -47,6 +47,20 @@ comma
 l_int|2
 )brace
 suffix:semicolon
+DECL|variable|pas_maxi
+r_static
+r_int
+id|pas_maxi
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|pas_wmaxi
+r_static
+r_int
+id|pas_wmaxi
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|scsi_irq_translate
 r_int
 id|scsi_irq_translate
@@ -244,6 +258,16 @@ comma
 multiline_comment|/* RESET_PARITY_INTERRUPT_REG ro,&n;&t;&t;    * START_DMA_INITIATOR_RECEIVE_REG wo&n;&t;&t;    */
 )brace
 suffix:semicolon
+multiline_comment|/*----------------------------------------------------------------*/
+multiline_comment|/* the following will set the monitor border color (useful to find&n; where something crashed or gets stuck at */
+multiline_comment|/* 1 = blue&n; 2 = green&n; 3 = cyan&n; 4 = red&n; 5 = magenta&n; 6 = yellow&n; 7 = white&n;*/
+macro_line|#if 1
+DECL|macro|rtrc
+mdefine_line|#define rtrc(i) {inb(0x3da); outb(0x31, 0x3c0); outb((i), 0x3c0);}
+macro_line|#else
+DECL|macro|rtrc
+mdefine_line|#define rtrc(i) {}
+macro_line|#endif
 multiline_comment|/*&n; * Function : enable_board( int  board_num, unsigned short port )&n; *&n; * Purpose :  set address in new model board&n; *&n; * Inputs : board_num - logical board number 0-3, port - base address&n; *&n; */
 DECL|function|enable_board
 r_void
@@ -820,6 +844,11 @@ op_assign
 op_amp
 id|proc_scsi_pas16
 suffix:semicolon
+id|tpnt-&gt;proc_info
+op_assign
+op_amp
+id|pas16_proc_info
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1049,6 +1078,11 @@ comma
 id|PAS16_IRQS
 )paren
 suffix:semicolon
+id|instance-&gt;irq
+op_assign
+id|IRQ_NONE
+suffix:semicolon
+multiline_comment|/*****temp****/
 r_if
 c_cond
 (paren
@@ -1386,6 +1420,11 @@ id|i
 op_assign
 id|len
 suffix:semicolon
+r_int
+id|ii
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1402,6 +1441,8 @@ op_amp
 id|P_ST_RDY
 )paren
 )paren
+op_increment
+id|ii
 suffix:semicolon
 id|insb
 c_func
@@ -1450,7 +1491,17 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_else
+r_if
+c_cond
+(paren
+id|ii
+OG
+id|pas_maxi
+)paren
+id|pas_maxi
+op_assign
+id|ii
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1500,6 +1551,11 @@ id|i
 op_assign
 id|len
 suffix:semicolon
+r_int
+id|ii
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1518,6 +1574,8 @@ op_amp
 id|P_ST_RDY
 )paren
 )paren
+op_increment
+id|ii
 suffix:semicolon
 id|outsb
 c_func
@@ -1566,7 +1624,17 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_else
+r_if
+c_cond
+(paren
+id|ii
+OG
+id|pas_maxi
+)paren
+id|pas_wmaxi
+op_assign
+id|ii
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the Frame relay interface.&n; *&n; * Version:&t;@(#)if_ifrad.h&t;0.10&t;23 Mar 96&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the Frame relay interface.&n; *&n; * Version:&t;@(#)if_ifrad.h&t;0.15&t;31 Mar 96&n; *&n; * Author:&t;Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef SDLA_H
 DECL|macro|SDLA_H
 mdefine_line|#define SDLA_H
@@ -84,6 +84,10 @@ DECL|macro|SDLA_S502A_NMIADDR
 mdefine_line|#define SDLA_S502A_NMIADDR&t;&t;0x0066
 DECL|macro|SDLA_CODE_BASEADDR
 mdefine_line|#define SDLA_CODE_BASEADDR&t;&t;0x0100
+DECL|macro|SDLA_WINDOW_SIZE
+mdefine_line|#define SDLA_WINDOW_SIZE&t;&t;0x2000
+DECL|macro|SDLA_ADDR_MASK
+mdefine_line|#define SDLA_ADDR_MASK&t;&t;&t;0x1FFF
 multiline_comment|/* largest handlable block of data */
 DECL|macro|SDLA_MAX_DATA
 mdefine_line|#define SDLA_MAX_DATA&t;&t;&t;4080
@@ -91,6 +95,7 @@ DECL|macro|SDLA_MAX_MTU
 mdefine_line|#define SDLA_MAX_MTU&t;&t;&t;4072&t;/* MAX_DATA - sizeof(fradhdr) */
 DECL|macro|SDLA_MAX_DLCI
 mdefine_line|#define SDLA_MAX_DLCI&t;&t;&t;24
+multiline_comment|/* this should be the same as frad_conf */
 DECL|struct|sdla_conf
 r_struct
 id|sdla_conf
@@ -161,9 +166,10 @@ id|Be_bwd
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|sdla_dlci
+multiline_comment|/* this should be the same as dlci_conf */
+DECL|struct|sdla_dlci_conf
 r_struct
-id|sdla_dlci
+id|sdla_dlci_conf
 (brace
 DECL|member|config
 r_int
@@ -193,7 +199,6 @@ DECL|member|Be_bwd
 r_int
 id|Be_bwd
 suffix:semicolon
-multiline_comment|/* these are part of the status READ */
 DECL|member|Tc_fwd
 r_int
 id|Tc_fwd
@@ -390,8 +395,8 @@ DECL|macro|SDLA_RET_BUF_OVERSIZE
 mdefine_line|#define SDLA_RET_BUF_OVERSIZE&t;&t;0x06
 DECL|macro|SDLA_RET_CIR_OVERFLOW
 mdefine_line|#define SDLA_RET_CIR_OVERFLOW&t;&t;0x07
-DECL|macro|SDLA_RET_NO_BUFF
-mdefine_line|#define SDLA_RET_NO_BUFF&t;&t;0x08
+DECL|macro|SDLA_RET_NO_BUFS
+mdefine_line|#define SDLA_RET_NO_BUFS&t;&t;0x08
 DECL|macro|SDLA_RET_TIMEOUT
 mdefine_line|#define SDLA_RET_TIMEOUT&t;&t;0x0A
 DECL|macro|SDLA_RET_MODEM

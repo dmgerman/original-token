@@ -1268,12 +1268,25 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;icmp: ICMP redirect from %s on %s ignored.&bslash;n&quot;
+l_string|&quot;icmp: ICMP redirect ignored. dest = %s, &quot;
+l_string|&quot;orig gw = %s, &bslash;&quot;new&bslash;&quot; gw = %s, device = %s.&bslash;n&quot;
+comma
+id|in_ntoa
+c_func
+(paren
+id|ip
+)paren
 comma
 id|in_ntoa
 c_func
 (paren
 id|source
+)paren
+comma
+id|in_ntoa
+c_func
+(paren
+id|icmph-&gt;un.gateway
 )paren
 comma
 id|dev-&gt;name
