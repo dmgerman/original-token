@@ -892,6 +892,9 @@ id|tmp
 op_assign
 id|read
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|clear_user
 c_func
 (paren
@@ -899,6 +902,10 @@ id|buf
 comma
 id|tmp
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|buf
 op_add_assign
@@ -918,6 +925,9 @@ id|tmp
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -931,6 +941,10 @@ id|p
 comma
 id|read
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|p
 op_add_assign
