@@ -5363,9 +5363,6 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-r_int
-id|retransmits
-suffix:semicolon
 id|prot
 op_assign
 id|sk-&gt;prot
@@ -5373,10 +5370,6 @@ suffix:semicolon
 id|skb
 op_assign
 id|sk-&gt;send_head
-suffix:semicolon
-id|retransmits
-op_assign
-id|sk-&gt;retransmits
 suffix:semicolon
 r_while
 c_loop
@@ -5573,7 +5566,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Count retransmissions&n;&t;&t; */
-id|retransmits
+id|sk-&gt;retransmits
 op_increment
 suffix:semicolon
 id|sk-&gt;prot-&gt;retransmits
@@ -5593,7 +5586,7 @@ r_if
 c_cond
 (paren
 id|sk-&gt;retransmits
-OG
+op_ge
 id|sk-&gt;cong_window
 )paren
 r_break

@@ -1369,12 +1369,12 @@ id|scsi_result
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
 id|type
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#endif
 )brace
 id|SDpnt-&gt;soft_reset
 op_assign

@@ -739,9 +739,6 @@ id|ok
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 r_extern
 r_int
 id|sbc_major

@@ -7409,6 +7409,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|current_drive
+comma
+op_amp
+id|changed_floppies
+)paren
+suffix:semicolon
 id|floppy_start
 c_func
 (paren

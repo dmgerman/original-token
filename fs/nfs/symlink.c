@@ -262,7 +262,7 @@ comma
 id|NFS_MAXPATHLEN
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 r_if
 c_cond
 (paren

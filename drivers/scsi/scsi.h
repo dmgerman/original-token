@@ -978,7 +978,8 @@ suffix:semicolon
 macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != SCSI_TAPE_MAJOR)
 DECL|function|end_scsi_request
 r_static
-r_void
+id|Scsi_Cmnd
+op_star
 id|end_scsi_request
 c_func
 (paren
@@ -1142,6 +1143,7 @@ op_assign
 id|bh-&gt;b_data
 suffix:semicolon
 r_return
+id|SCpnt
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1179,6 +1181,7 @@ id|SCpnt-&gt;device-&gt;device_wait
 )paren
 suffix:semicolon
 r_return
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* This is just like INIT_REQUEST, but we need to be aware of the fact&n;   that an interrupt may start another request, so we run this with interrupts&n;   turned off */

@@ -3495,7 +3495,7 @@ r_int
 r_char
 id|res_reg
 (braket
-l_int|2
+l_int|12
 )braket
 suffix:semicolon
 r_int
@@ -3923,6 +3923,19 @@ id|sony_first_block
 op_star
 l_int|512
 suffix:semicolon
+multiline_comment|/*&n;             * Bugfix: get_data calls handle_sony_cd_attention&n;             *         there the buffer may be declared invalid&n;             *         if the CD ist changed by setting sony_first_block = -1&n;             *         This would cause a segfault in memcpy&n;             */
+r_if
+c_cond
+(paren
+id|sony_first_block
+OL
+l_int|0
+)paren
+(brace
+r_goto
+id|cdu31a_request_startover
+suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren

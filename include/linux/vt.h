@@ -76,5 +76,30 @@ DECL|macro|VT_ACTIVATE
 mdefine_line|#define VT_ACTIVATE&t;0x5606&t;/* make vt active */
 DECL|macro|VT_WAITACTIVE
 mdefine_line|#define VT_WAITACTIVE&t;0x5607&t;/* wait for vt active */
+DECL|macro|VT_DISALLOCATE
+mdefine_line|#define VT_DISALLOCATE&t;0x5608  /* free memory associated to vt */
+DECL|struct|vt_sizes
+r_struct
+id|vt_sizes
+(brace
+DECL|member|v_rows
+id|ushort
+id|v_rows
+suffix:semicolon
+multiline_comment|/* number of rows */
+DECL|member|v_cols
+id|ushort
+id|v_cols
+suffix:semicolon
+multiline_comment|/* number of columns */
+DECL|member|v_scrollsize
+id|ushort
+id|v_scrollsize
+suffix:semicolon
+multiline_comment|/* number of lines of scrollback */
+)brace
+suffix:semicolon
+DECL|macro|VT_RESIZE
+mdefine_line|#define VT_RESIZE&t;0x5609&t;/* set kernel&squot;s idea of screensize */
 macro_line|#endif /* _LINUX_VT_H */
 eof

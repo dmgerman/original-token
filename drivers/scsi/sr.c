@@ -751,6 +751,8 @@ id|this_count
 )paren
 suffix:semicolon
 )brace
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -931,6 +933,8 @@ id|device-&gt;changed
 op_assign
 l_int|1
 suffix:semicolon
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1022,6 +1026,8 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1060,6 +1066,8 @@ c_func
 l_string|&quot;CDROM not ready.  Make sure you have a disc in the drive.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1149,6 +1157,8 @@ comma
 id|SCpnt
 )paren
 suffix:semicolon
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1586,6 +1596,9 @@ suffix:colon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|SCpnt
+op_logical_or
 id|SCpnt-&gt;request.dev
 op_le
 l_int|0
@@ -1628,6 +1641,8 @@ id|sr_template.nr_dev
 )paren
 (brace
 multiline_comment|/* printk(&quot;CD-ROM request error: invalid device.&bslash;n&quot;);&t;&t;&t;*/
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1659,6 +1674,8 @@ id|use
 )paren
 (brace
 multiline_comment|/* printk(&quot;CD-ROM request error: device marked not in use.&bslash;n&quot;);&t;&t;*/
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1690,6 +1707,8 @@ id|device-&gt;changed
 (brace
 multiline_comment|/* &n; * quietly refuse to do anything to a changed disc until the changed bit has been reset&n; */
 multiline_comment|/* printk(&quot;CD-ROM has been changed.  Prohibiting further I/O.&bslash;n&quot;);&t;*/
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1717,6 +1736,8 @@ id|SCpnt-&gt;request.cmd
 r_case
 id|WRITE
 suffix:colon
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren

@@ -227,15 +227,15 @@ mdefine_line|#define KIOCSOUND&t;0x4B2F&t;/* start sound generation (0 for off) 
 DECL|macro|KDMKTONE
 mdefine_line|#define KDMKTONE&t;0x4B30&t;/* generate tone */
 DECL|macro|KDGETLED
-mdefine_line|#define KDGETLED&t;0x4B31&t;/* return current led flags */
+mdefine_line|#define KDGETLED&t;0x4B31&t;/* return current led state */
 DECL|macro|KDSETLED
-mdefine_line|#define KDSETLED&t;0x4B32&t;/* set current led flags */
+mdefine_line|#define KDSETLED&t;0x4B32&t;/* set led state [lights, not flags] */
 DECL|macro|LED_SCR
-mdefine_line|#define &t;LED_SCR&t;&t;0x01&t;/* scroll lock */
+mdefine_line|#define &t;LED_SCR&t;&t;0x01&t;/* scroll lock led */
 DECL|macro|LED_CAP
-mdefine_line|#define &t;LED_CAP&t;&t;0x04&t;/* caps lock */
+mdefine_line|#define &t;LED_CAP&t;&t;0x04&t;/* caps lock led */
 DECL|macro|LED_NUM
-mdefine_line|#define &t;LED_NUM&t;&t;0x02&t;/* num lock */
+mdefine_line|#define &t;LED_NUM&t;&t;0x02&t;/* num lock led */
 DECL|macro|KDGKBTYPE
 mdefine_line|#define KDGKBTYPE&t;0x4B33&t;/* get keyboard type */
 DECL|macro|KB_84
@@ -347,11 +347,12 @@ DECL|macro|K_XLATE
 mdefine_line|#define&t;&t;K_XLATE&t;&t;0x01
 DECL|macro|K_MEDIUMRAW
 mdefine_line|#define&t;&t;K_MEDIUMRAW&t;0x02
+DECL|macro|K_UNICODE
+mdefine_line|#define&t;&t;K_UNICODE&t;0x03
 DECL|macro|KDGKBMODE
 mdefine_line|#define KDGKBMODE&t;0x4B44&t;/* gets current keyboard mode */
 DECL|macro|KDSKBMODE
 mdefine_line|#define KDSKBMODE&t;0x4B45&t;/* sets current keyboard mode */
-multiline_comment|/* merge with previous pair of ioctls? */
 DECL|macro|K_METABIT
 mdefine_line|#define&t;&t;K_METABIT&t;0x03
 DECL|macro|K_ESCPREFIX
@@ -360,6 +361,16 @@ DECL|macro|KDGKBMETA
 mdefine_line|#define KDGKBMETA&t;0x4B62&t;/* gets meta key handling mode */
 DECL|macro|KDSKBMETA
 mdefine_line|#define KDSKBMETA&t;0x4B63&t;/* sets meta key handling mode */
+DECL|macro|K_SCROLLLOCK
+mdefine_line|#define&t;&t;K_SCROLLLOCK&t;0x01
+DECL|macro|K_CAPSLOCK
+mdefine_line|#define&t;&t;K_CAPSLOCK&t;0x02
+DECL|macro|K_NUMLOCK
+mdefine_line|#define&t;&t;K_NUMLOCK&t;0x04
+DECL|macro|KDGKBLED
+mdefine_line|#define&t;KDGKBLED&t;0x4B64&t;/* get led flags (not lights) */
+DECL|macro|KDSKBLED
+mdefine_line|#define KDSKBLED&t;0x4B65&t;/* set led flags (not lights) */
 DECL|struct|kbentry
 r_struct
 id|kbentry
@@ -386,8 +397,6 @@ DECL|macro|K_ALTTAB
 mdefine_line|#define&t;&t;K_ALTTAB&t;0x02
 DECL|macro|K_ALTSHIFTTAB
 mdefine_line|#define&t;&t;K_ALTSHIFTTAB&t;0x03
-DECL|macro|K_SRQTAB
-mdefine_line|#define&t;&t;K_SRQTAB&t;0x04
 DECL|macro|KDGKBENT
 mdefine_line|#define KDGKBENT&t;0x4B46&t;/* gets one entry in translation table */
 DECL|macro|KDSKBENT
@@ -407,7 +416,6 @@ id|kb_string
 l_int|512
 )braket
 suffix:semicolon
-multiline_comment|/* FUNC_BUFSIZE from keyboard.h */
 )brace
 suffix:semicolon
 DECL|macro|KDGKBSENT

@@ -85,6 +85,11 @@ id|regs
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Here are the actual binaries that will be accepted:&n; * add more with &quot;register_binfmt()&quot;..&n; */
+r_extern
+r_struct
+id|linux_binfmt
+id|elf_format
+suffix:semicolon
 DECL|variable|aout_format
 r_static
 r_struct
@@ -92,6 +97,7 @@ id|linux_binfmt
 id|aout_format
 op_assign
 (brace
+macro_line|#ifndef CONFIG_BINFMT_ELF
 l_int|NULL
 comma
 l_int|NULL
@@ -101,6 +107,18 @@ comma
 id|load_aout_library
 comma
 id|aout_core_dump
+macro_line|#else
+op_amp
+id|elf_format
+comma
+l_int|NULL
+comma
+id|load_aout_binary
+comma
+id|load_aout_library
+comma
+id|aout_core_dump
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|formats

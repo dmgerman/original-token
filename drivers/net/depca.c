@@ -1,11 +1,11 @@
-multiline_comment|/*  depca.c: A DIGITAL DEPCA  &amp; EtherWORKS ethernet driver for linux.&n;&n;    Written 1994 by David C. Davies.&n;&n;&n;                      Copyright 1994 David C. Davies&n;&t;&t;                   and &n;&t;&t;&t; United States Government&n;&t; (as represented by the Director, National Security Agency).  &n;&n;&n;    This software may be used and distributed according to the terms of&n;    the GNU Public License, incorporated herein by reference.&n;&n;    This driver is written for the Digital Equipment Corporation series&n;    of DEPCA and EtherWORKS ethernet cards:&n;&n;        DEPCA       (the original)&n;    &t;DE100&n;&t;DE200 Turbo&n;&t;DE201 Turbo&n;&t;DE202 Turbo (TP BNC)&n;&t;DE210&n;&t;DE422       (EISA)&n;&n;    The  driver has been tested on DE100, DE200 and DE202 cards  in  a&n;    relatively busy network. The DE422 has been tested a little.&n;&n;    This  driver will NOT work   for the DE203,  DE204  and DE205 series  of&n;    cards,  since they have  a  new custom ASIC in   place of the AMD  LANCE&n;    chip. &n;&n;    The author may be reached as davies@wanton.lkg.dec.com or&n;    Digital Equipment Corporation, 550 King Street, Littleton MA 01460.&n;&n;    =========================================================================&n;    The driver was based on the &squot;lance.c&squot; driver from Donald Becker which is&n;    included with the standard driver distribution for linux. Modifications&n;    were made to most routines and the hardware recognition routines were&n;    written from scratch. Primary references used were:&n;&n;    1) Lance.c code in /linux/drivers/net/&n;    2) &quot;Ethernet/IEEE 802.3 Family. 1992 World Network Data Book/Handbook&quot;,&n;       AMD, 1992 [(800) 222-9323].&n;    3) &quot;Am79C90 CMOS Local Area Network Controller for Ethernet (C-LANCE)&quot;,&n;       AMD, Pub. #17881, May 1993.&n;    4) &quot;Am79C960 PCnet-ISA(tm), Single-Chip Ethernet Controller for ISA&quot;,&n;       AMD, Pub. #16907, May 1992&n;    5) &quot;DEC EtherWORKS LC Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1990, Pub. #EK-DE100-OM.003&n;    6) &quot;DEC EtherWORKS Turbo Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1990, Pub. #EK-DE200-OM.003&n;    7) &quot;DEPCA Hardware Reference Manual&quot;, Pub. #EK-DEPCA-PR&n;       Digital Equipment Corporation, 1989&n;    8) &quot;DEC EtherWORKS Turbo_(TP BNC) Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1991, Pub. #EK-DE202-OM.001&n;    &n;    Peter Bauer&squot;s depca.c (V0.5) was referred to when debugging this driver.&n;    The hash filter code was  derived from Reference  3 and has been  tested&n;    only to the extent that the Table  A-1, page A-7,  was confirmed to fill&n;    the   filter bit   positions  correctly.  Hash   filtering  is  not  yet&n;    implemented in the current driver set.&n;&n;    The original DEPCA  card requires that the  ethernet ROM address counter&n;    be enabled to count and has an 8 bit NICSR.  The ROM counter enabling is&n;    only  done when a  0x08 is read as the  first address octet (to minimise&n;    the chances  of writing over some  other hardware&squot;s  I/O register).  The&n;    NICSR accesses   have been changed  to  byte accesses  for all the cards&n;    supported by this driver, since there is only one  useful bit in the MSB&n;    (remote boot timeout) and it  is not used.  Also, there  is a maximum of&n;    only 48kB network  RAM for this  card.  My thanks  to Torbjorn Lindh for&n;    help debugging all this (and holding my feet to  the fire until I got it&n;    right).&n;&n;    The DE200  series  boards have  on-board 64kB  RAM for  use  as a shared&n;    memory network  buffer. Only the DE100  cards make use  of a  2kB buffer&n;    mode which has not  been implemented in  this driver (only the 32kB  and&n;    64kB modes are supported [16kB/48kB for the original DEPCA]).&n;&n;    At the most only 2 DEPCA cards can  be supported on  the ISA bus because&n;    there is only provision  for two I/O base addresses  on each card (0x300&n;    and 0x200). The I/O address is detected by searching for a byte sequence&n;    in the Ethernet station address PROM at the expected I/O address for the&n;    Ethernet  PROM.   The shared memory  base   address  is &squot;autoprobed&squot;  by&n;    looking  for the self  test PROM  and detecting the  card name.   When a&n;    second  DEPCA is  detected,  information  is   placed in the   base_addr&n;    variable of the  next device structure (which  is created if necessary),&n;    thus  enabling ethif_probe  initialization  for the device.  More than 2&n;    EISA cards can  be  supported, but  care will  be  needed assigning  the&n;    shared memory to ensure that each slot has the  correct IRQ, I/O address&n;    and shared memory address assigned.&n;&n;    ************************************************************************&n;&n;    NOTE: If you are using two  ISA DEPCAs, it is  important that you assign&n;    the base memory addresses correctly.   The  driver autoprobes I/O  0x300&n;    then 0x200.  The  base memory address for  the first device must be less&n;    than that of the second so that the auto probe will correctly assign the&n;    I/O and memory addresses on the same card.  I can&squot;t think of a way to do&n;    this unambiguously at the moment, since there is nothing on the cards to&n;    tie I/O and memory information together.&n;&n;    I am unable  to  test  2 cards   together for now,    so this  code   is&n;    unchecked. All reports, good or bad, are welcome.&n;&n;    ************************************************************************&n;&n;    The board IRQ   setting must be  at an  unused IRQ which  is auto-probed&n;    using Donald Becker&squot;s autoprobe routines. DEPCA and DE100 board IRQs are&n;    {2,3,4,5,7}, whereas the  DE200 is at {5,9,10,11,15}.  Note that IRQ2 is&n;    really IRQ9 in machines with 16 IRQ lines.&n;&n;    No 16MB memory  limitation should exist with this  driver as DMA is  not&n;    used and the common memory area is in low memory on the network card (my&n;    current system has 20MB and I&squot;ve not had problems yet).&n;&n;    The ability to load this driver as a loadable module has been added. To&n;    utilise this ability, you have to do &lt;8 things:&n;&n;    1) copy depca.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) edit the  source code near  line 1530 to reflect  the I/O address and&n;    IRQ you&squot;re using.&n;    3) compile  depca.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the depca configuration turned off and reboot.&n;    5) insmod depca.o&n;    6) run the net startup bits for your eth?? interface manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;&n;    Note that autoprobing is not allowed in loadable modules - the system is&n;    already up and running and you&squot;re messing with interrupts. Also, there&n;    is no way to check on the number of depcas installed at the moment.&n;&n;    To unload a module, turn off the associated interface &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod depca&squot;.&n;&n;    TO DO:&n;    ------&n;&n;    1. Implement the 2k buffer mode - does anyone need it??&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1   25-jan-94     Initial writing.&n;      0.2   27-jan-94     Added LANCE TX hardware buffer chaining.&n;      0.3    1-feb-94     Added multiple DEPCA support.&n;      0.31   4-feb-94     Added DE202 recognition.&n;      0.32  19-feb-94     Tidy up. Improve multi-DEPCA support.&n;      0.33  25-feb-94     Fix DEPCA ethernet ROM counter enable.&n;                          Add jabber packet fix from murf@perftech.com&n;&t;&t;&t;  and becker@super.org&n;      0.34   7-mar-94     Fix DEPCA max network memory RAM &amp; NICSR access.&n;      0.35   8-mar-94     Added DE201 recognition. Tidied up.&n;      0.351 30-apr-94     Added EISA support. Added DE422 recognition.&n;      0.36  16-may-94     DE422 fix released.&n;      0.37  22-jul-94     Added MODULE support&n;&n;    =========================================================================&n;*/
+multiline_comment|/*  depca.c: A DIGITAL DEPCA  &amp; EtherWORKS ethernet driver for linux.&n;&n;    Written 1994 by David C. Davies.&n;&n;&n;                      Copyright 1994 David C. Davies&n;&t;&t;                   and &n;&t;&t;&t; United States Government&n;&t; (as represented by the Director, National Security Agency).  &n;&n;&n;    This software may be used and distributed according to the terms of&n;    the GNU Public License, incorporated herein by reference.&n;&n;    This driver is written for the Digital Equipment Corporation series&n;    of DEPCA and EtherWORKS ethernet cards:&n;&n;        DEPCA       (the original)&n;    &t;DE100&n;&t;DE200 Turbo&n;&t;DE201 Turbo&n;&t;DE202 Turbo (TP BNC)&n;&t;DE210&n;&t;DE422       (EISA)&n;&n;    The  driver has been tested on DE100, DE200 and DE202 cards  in  a&n;    relatively busy network. The DE422 has been tested a little.&n;&n;    This  driver will NOT work   for the DE203,  DE204  and DE205 series  of&n;    cards,  since they have  a  new custom ASIC in   place of the AMD  LANCE&n;    chip. &n;&n;    The author may be reached as davies@wanton.lkg.dec.com or&n;    Digital Equipment Corporation, 550 King Street, Littleton MA 01460.&n;&n;    =========================================================================&n;    The driver was based on the &squot;lance.c&squot; driver from Donald Becker which is&n;    included with the standard driver distribution for linux. Modifications&n;    were made to most routines and the hardware recognition routines were&n;    written from scratch. Primary references used were:&n;&n;    1) Lance.c code in /linux/drivers/net/&n;    2) &quot;Ethernet/IEEE 802.3 Family. 1992 World Network Data Book/Handbook&quot;,&n;       AMD, 1992 [(800) 222-9323].&n;    3) &quot;Am79C90 CMOS Local Area Network Controller for Ethernet (C-LANCE)&quot;,&n;       AMD, Pub. #17881, May 1993.&n;    4) &quot;Am79C960 PCnet-ISA(tm), Single-Chip Ethernet Controller for ISA&quot;,&n;       AMD, Pub. #16907, May 1992&n;    5) &quot;DEC EtherWORKS LC Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1990, Pub. #EK-DE100-OM.003&n;    6) &quot;DEC EtherWORKS Turbo Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1990, Pub. #EK-DE200-OM.003&n;    7) &quot;DEPCA Hardware Reference Manual&quot;, Pub. #EK-DEPCA-PR&n;       Digital Equipment Corporation, 1989&n;    8) &quot;DEC EtherWORKS Turbo_(TP BNC) Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1991, Pub. #EK-DE202-OM.001&n;    &n;    Peter Bauer&squot;s depca.c (V0.5) was referred to when debugging this driver.&n;    The hash filter code was  derived from Reference  3 and has been  tested&n;    only to the extent that the Table  A-1, page A-7,  was confirmed to fill&n;    the   filter bit   positions  correctly.  Hash   filtering  is  not  yet&n;    implemented in the current driver set.&n;&n;    The original DEPCA  card requires that the  ethernet ROM address counter&n;    be enabled to count and has an 8 bit NICSR.  The ROM counter enabling is&n;    only  done when a  0x08 is read as the  first address octet (to minimise&n;    the chances  of writing over some  other hardware&squot;s  I/O register).  The&n;    NICSR accesses   have been changed  to  byte accesses  for all the cards&n;    supported by this driver, since there is only one  useful bit in the MSB&n;    (remote boot timeout) and it  is not used.  Also, there  is a maximum of&n;    only 48kB network  RAM for this  card.  My thanks  to Torbjorn Lindh for&n;    help debugging all this (and holding my feet to  the fire until I got it&n;    right).&n;&n;    The DE200  series  boards have  on-board 64kB  RAM for  use  as a shared&n;    memory network  buffer. Only the DE100  cards make use  of a  2kB buffer&n;    mode which has not  been implemented in  this driver (only the 32kB  and&n;    64kB modes are supported [16kB/48kB for the original DEPCA]).&n;&n;    At the most only 2 DEPCA cards can  be supported on  the ISA bus because&n;    there is only provision  for two I/O base addresses  on each card (0x300&n;    and 0x200). The I/O address is detected by searching for a byte sequence&n;    in the Ethernet station address PROM at the expected I/O address for the&n;    Ethernet  PROM.   The shared memory  base   address  is &squot;autoprobed&squot;  by&n;    looking  for the self  test PROM  and detecting the  card name.   When a&n;    second  DEPCA is  detected,  information  is   placed in the   base_addr&n;    variable of the  next device structure (which  is created if necessary),&n;    thus  enabling ethif_probe  initialization  for the device.  More than 2&n;    EISA cards can  be  supported, but  care will  be  needed assigning  the&n;    shared memory to ensure that each slot has the  correct IRQ, I/O address&n;    and shared memory address assigned.&n;&n;    ************************************************************************&n;&n;    NOTE: If you are using two  ISA DEPCAs, it is  important that you assign&n;    the base memory addresses correctly.   The  driver autoprobes I/O  0x300&n;    then 0x200.  The  base memory address for  the first device must be less&n;    than that of the second so that the auto probe will correctly assign the&n;    I/O and memory addresses on the same card.  I can&squot;t think of a way to do&n;    this unambiguously at the moment, since there is nothing on the cards to&n;    tie I/O and memory information together.&n;&n;    I am unable  to  test  2 cards   together for now,    so this  code   is&n;    unchecked. All reports, good or bad, are welcome.&n;&n;    ************************************************************************&n;&n;    The board IRQ   setting must be  at an  unused IRQ which  is auto-probed&n;    using Donald Becker&squot;s autoprobe routines. DEPCA and DE100 board IRQs are&n;    {2,3,4,5,7}, whereas the  DE200 is at {5,9,10,11,15}.  Note that IRQ2 is&n;    really IRQ9 in machines with 16 IRQ lines.&n;&n;    No 16MB memory  limitation should exist with this  driver as DMA is  not&n;    used and the common memory area is in low memory on the network card (my&n;    current system has 20MB and I&squot;ve not had problems yet).&n;&n;    The ability to load this driver as a loadable module has been added. To&n;    utilise this ability, you have to do &lt;8 things:&n;&n;    1) copy depca.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) edit the  source code near  line 1530 to reflect  the I/O address and&n;    IRQ you&squot;re using.&n;    3) compile  depca.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the depca configuration turned off and reboot.&n;    5) insmod depca.o&n;    6) run the net startup bits for your eth?? interface manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;&n;    Note that autoprobing is not allowed in loadable modules - the system is&n;    already up and running and you&squot;re messing with interrupts. Also, there&n;    is no way to check on the number of depcas installed at the moment.&n;&n;    To unload a module, turn off the associated interface &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod depca&squot;.&n;&n;    TO DO:&n;    ------&n;&n;    1. Implement the 2k buffer mode - does anyone need it??&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1   25-jan-94     Initial writing.&n;      0.2   27-jan-94     Added LANCE TX hardware buffer chaining.&n;      0.3    1-feb-94     Added multiple DEPCA support.&n;      0.31   4-feb-94     Added DE202 recognition.&n;      0.32  19-feb-94     Tidy up. Improve multi-DEPCA support.&n;      0.33  25-feb-94     Fix DEPCA ethernet ROM counter enable.&n;                          Add jabber packet fix from murf@perftech.com&n;&t;&t;&t;  and becker@super.org&n;      0.34   7-mar-94     Fix DEPCA max network memory RAM &amp; NICSR access.&n;      0.35   8-mar-94     Added DE201 recognition. Tidied up.&n;      0.351 30-apr-94     Added EISA support. Added DE422 recognition.&n;      0.36  16-may-94     DE422 fix released.&n;      0.37  22-jul-94     Added MODULE support&n;      0.38  15-aug-94     Added DBR ROM switch in depca_close(). &n;                          Multi DEPCA bug fix.&n;&n;    =========================================================================&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;depca.c:v0.37 7/22/94 davies@wanton.lkg.dec.com&bslash;n&quot;
+l_string|&quot;depca.c:v0.38 8/15/94 davies@wanton.lkg.dec.com&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -211,7 +211,7 @@ id|devname
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* Not used */
+multiline_comment|/* Device Product String */
 DECL|member|rx_ring
 r_struct
 id|depca_rx_head
@@ -524,6 +524,7 @@ id|ioaddr
 suffix:semicolon
 DECL|variable|num_depcas
 DECL|variable|num_eth
+DECL|variable|autoprobed
 r_static
 r_int
 id|num_depcas
@@ -533,7 +534,10 @@ comma
 id|num_eth
 op_assign
 l_int|0
-suffix:semicolon
+comma
+id|autoprobed
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#else
 r_int
@@ -633,11 +637,10 @@ op_assign
 op_minus
 id|ENXIO
 suffix:semicolon
+macro_line|#ifdef MODULE
 )brace
 r_else
 (brace
-multiline_comment|/* First probe for the DEPCA test */
-macro_line|#ifdef MODULE                         /* pattern in ROM */
 id|printk
 c_func
 (paren
@@ -650,6 +653,17 @@ op_minus
 id|EIO
 suffix:semicolon
 macro_line|#else
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|autoprobed
+)paren
+(brace
+multiline_comment|/* First probe for the DEPCA test */
+multiline_comment|/* pattern in ROM */
 id|eth0
 op_assign
 id|isa_probe
@@ -674,6 +688,18 @@ id|dev-&gt;priv
 id|status
 op_assign
 l_int|0
+suffix:semicolon
+id|autoprobed
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|status
+op_assign
+op_minus
+id|ENXIO
 suffix:semicolon
 macro_line|#endif /* MODULE */
 )brace
@@ -817,6 +843,8 @@ op_eq
 l_int|0
 )paren
 suffix:semicolon
+id|i
+op_increment
 )paren
 (brace
 r_if
@@ -872,13 +900,9 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* set exit flag */
-)brace
-r_else
-(brace
+op_decrement
 id|i
-op_increment
 suffix:semicolon
-multiline_comment|/* increment search index */
 )brace
 )brace
 )brace
@@ -1316,6 +1340,14 @@ r_sizeof
 r_struct
 id|depca_private
 )paren
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|lp-&gt;devname
+comma
+id|name
 )paren
 suffix:semicolon
 multiline_comment|/* Tx &amp; Rx descriptors (aligned to a quadword boundary) */
@@ -1819,6 +1851,34 @@ c_func
 id|DEPCA_NICSR
 )paren
 suffix:semicolon
+multiline_comment|/*&n;    ** Make sure the shadow RAM is enabled&n;    */
+r_if
+c_cond
+(paren
+id|strstr
+c_func
+(paren
+id|lp-&gt;devname
+comma
+l_string|&quot;DEPCA&quot;
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|nicsr
+op_or_assign
+id|SHE
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|nicsr
+comma
+id|DEPCA_NICSR
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* &n;    ** Re-initialize the DEPCA... &n;    */
 id|depca_init_ring
 c_func
@@ -2178,7 +2238,7 @@ id|DEPCA_DATA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    ** Enable DEPCA board interrupts&n;    */
+multiline_comment|/*&n;    ** Enable DEPCA board interrupts and turn off LED&n;    */
 id|nicsr
 op_assign
 (paren
@@ -2191,8 +2251,6 @@ op_amp
 op_complement
 id|LED
 )paren
-op_or
-id|SHE
 op_or
 id|IEN
 )paren
@@ -4146,7 +4204,21 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|depca_private
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|depca_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 r_int
+id|nicsr
+comma
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -4190,7 +4262,7 @@ id|DEPCA_DATA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;    ** We stop the DEPCA here -- it occasionally polls&n;    ** memory if we don&squot;t. &n;    */
+multiline_comment|/* &n;  ** We stop the DEPCA here -- it occasionally polls&n;  ** memory if we don&squot;t. &n;  */
 id|outw
 c_func
 (paren
@@ -4199,6 +4271,43 @@ comma
 id|DEPCA_DATA
 )paren
 suffix:semicolon
+multiline_comment|/*&n;  ** Give back the ROM in case the user wants to go to DOS&n;  */
+r_if
+c_cond
+(paren
+id|strstr
+c_func
+(paren
+id|lp-&gt;devname
+comma
+l_string|&quot;DEPCA&quot;
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|nicsr
+op_assign
+id|inb
+c_func
+(paren
+id|DEPCA_NICSR
+)paren
+suffix:semicolon
+id|nicsr
+op_and_assign
+op_complement
+id|SHE
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|nicsr
+comma
+id|DEPCA_NICSR
+)paren
+suffix:semicolon
+)brace
 id|free_irq
 c_func
 (paren
@@ -6125,5 +6234,5 @@ suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  kernel-compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c depca.c&quot;&n; *&n; *  module-compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c depca.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  kernel-compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O2 -m486 -c depca.c&quot;&n; *&n; *  module-compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O2 -m486 -c depca.c&quot;&n; * End:&n; */
 eof

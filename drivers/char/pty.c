@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/chr_drv/pty.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/drivers/char/pty.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *&t;pty.c&n; *&n; * This module exports the following pty function:&n; * &n; * &t;int  pty_open(struct tty_struct * tty, struct file * filp);&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -675,26 +675,25 @@ op_star
 id|mem
 )paren
 (brace
-id|asm
+id|__asm__
 (paren
-l_string|&quot;xchgb %0, (%2)&quot;
+l_string|&quot;xchgb %0,%1&quot;
 suffix:colon
 l_string|&quot;=q&quot;
 (paren
 id|reg
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|mem
 )paren
 suffix:colon
 l_string|&quot;0&quot;
 (paren
 id|reg
 )paren
-comma
-l_string|&quot;q&quot;
-(paren
-id|mem
-)paren
-suffix:colon
-l_string|&quot;m&quot;
 )paren
 suffix:semicolon
 r_return

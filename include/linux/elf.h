@@ -127,6 +127,7 @@ mdefine_line|#define ELF32_ST_BIND(x) ((x) &gt;&gt; 4)
 DECL|macro|ELF32_ST_TYPE
 mdefine_line|#define ELF32_ST_TYPE(x) (((unsigned int) x) &amp; 0xf)
 DECL|struct|dynamic
+r_typedef
 r_struct
 id|dynamic
 (brace
@@ -151,7 +152,9 @@ DECL|member|d_un
 )def_block
 id|d_un
 suffix:semicolon
+DECL|typedef|Elf32_Dyn
 )brace
+id|Elf32_Dyn
 suffix:semicolon
 multiline_comment|/* The following are used with relocations */
 DECL|macro|ELF32_R_SYM
@@ -182,9 +185,10 @@ DECL|macro|R_386_GOTPC
 mdefine_line|#define R_386_GOTPC&t;10
 DECL|macro|R_386_NUM
 mdefine_line|#define R_386_NUM&t;11
-DECL|struct|Elf32_Rel
+DECL|struct|elf32_rel
+r_typedef
 r_struct
-id|Elf32_Rel
+id|elf32_rel
 (brace
 DECL|member|offset
 r_int
@@ -196,11 +200,14 @@ DECL|member|info
 r_int
 id|info
 suffix:semicolon
+DECL|typedef|Elf32_Rel
 )brace
+id|Elf32_Rel
 suffix:semicolon
-DECL|struct|Elf32_Rela
+DECL|struct|elf32_rela
+r_typedef
 r_struct
-id|Elf32_Rela
+id|elf32_rela
 (brace
 DECL|member|offset
 r_int
@@ -216,11 +223,14 @@ DECL|member|addend
 r_int
 id|addend
 suffix:semicolon
+DECL|typedef|Elf32_Rela
 )brace
+id|Elf32_Rela
 suffix:semicolon
-DECL|struct|Elf32_Sym
+DECL|struct|elf32_sym
+r_typedef
 r_struct
-id|Elf32_Sym
+id|elf32_sym
 (brace
 DECL|member|st_name
 r_int
@@ -250,9 +260,12 @@ r_int
 r_int
 id|st_shndx
 suffix:semicolon
+DECL|typedef|Elf32_Sym
 )brace
+id|Elf32_Sym
 suffix:semicolon
 DECL|struct|elfhdr
+r_typedef
 r_struct
 id|elfhdr
 (brace
@@ -325,9 +338,12 @@ r_int
 r_int
 id|e_shstrndx
 suffix:semicolon
+DECL|typedef|Elf32_Ehdr
 )brace
+id|Elf32_Ehdr
 suffix:semicolon
 DECL|struct|elf_phdr
+r_typedef
 r_struct
 id|elf_phdr
 (brace
@@ -363,7 +379,9 @@ DECL|member|p_align
 r_int
 id|p_align
 suffix:semicolon
+DECL|typedef|Elf32_Phdr
 )brace
+id|Elf32_Phdr
 suffix:semicolon
 DECL|macro|ELF_START_MMAP
 mdefine_line|#define ELF_START_MMAP 0x80000000

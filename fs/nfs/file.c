@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/file.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  Changes Copyright (C) 1994 by Florian La Roche&n; *   - Do not copy data too often around in the kernel.&n; *   - In nfs_file_read the return value of kmalloc wasn&squot;t checked.&n; *   - Put in a better version of read look-ahead buffering. Original idea&n; *     and implementation by Wai S Kok elekokw@ee.nus.sg.&n; *&n; *  nfs regular file handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/file.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  Changes Copyright (C) 1994 by Florian La Roche&n; *   - Do not copy data too often around in the kernel.&n; *   - In nfs_file_read the return value of kmalloc wasn&squot;t checked.&n; *   - Put in a better version of read look-ahead buffering. Original idea&n; *     and implementation by Wai S Kok elekokws@ee.nus.sg.&n; *&n; *  Expire cache on write to a file by Wai S Kok (Oct 1994).&n; *&n; *  nfs regular file handling functions&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1094,6 +1094,54 @@ l_int|0
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* If hit, cache is dirty and must be expired. */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|READ_CACHE_SIZE
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|cache
+(braket
+id|i
+)braket
+dot
+id|inode_num
+op_eq
+id|inode-&gt;i_ino
+)paren
+(brace
+id|cache
+(braket
+id|i
+)braket
+dot
+id|time
+op_sub_assign
+id|EXPIRE_CACHE
+suffix:semicolon
+)brace
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 id|pos
 op_assign

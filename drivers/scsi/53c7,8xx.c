@@ -269,7 +269,7 @@ r_struct
 id|pci_chip
 id|pci_chip_ids
 (braket
-l_int|2
+l_int|3
 )braket
 op_assign
 (brace
@@ -782,6 +782,9 @@ l_int|810
 suffix:colon
 r_case
 l_int|815
+suffix:colon
+r_case
+l_int|825
 suffix:colon
 id|hostdata-&gt;dstat_sir_intr
 op_assign

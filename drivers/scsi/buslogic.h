@@ -65,7 +65,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|BUSLOGIC_CMDLUN
-mdefine_line|#define BUSLOGIC_CMDLUN 4&t;/* ??? */
+mdefine_line|#define BUSLOGIC_CMDLUN 1&t;/* Do not set this too high.  It sucks&n;&t;&t;&t;&t;   up lots of memory on machines with &gt; 16Mb&n;&t;&t;&t;&t;   because of the huge number of bounce&n;&t;&t;&t;&t;   buffers that need to be allocated.&n;&t;&t;&t;&t;   For boards that use non-ISA bus, we can&n;&t;&t;&t;&t;   bump this in the board detect routine.  &n;&t;&t;&t;&t;   &t;&t;&t;10/8/94 ERY */
 DECL|macro|BUSLOGIC
 mdefine_line|#define BUSLOGIC { NULL, &t;&t;&t;&bslash;&n;&t;&t;   &quot;BusLogic&quot;,&t;&t;&t;&bslash;&n;&t;&t;   buslogic_detect,&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&bslash;&n;&t;&t;   buslogic_info,&t;&t;&bslash;&n;&t;&t;   0,&t;/* no command func */&t;&bslash;&n;&t;&t;   buslogic_queuecommand,&t;&bslash;&n;&t;&t;   buslogic_abort,&t;&t;&bslash;&n;&t;&t;   buslogic_reset,&t;&t;&bslash;&n;&t;&t;   0,&t;/* slave_attach NYI */&t;&bslash;&n;&t;&t;   buslogic_biosparam,&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   BUSLOGIC_CMDLUN,&t;&t;&bslash;&n;&t;&t;   0,&t;&t;&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING&t;&t;&bslash;&n;&t;&t; }
 macro_line|#ifdef BUSLOGIC_PRIVATE_H

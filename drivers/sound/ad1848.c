@@ -159,11 +159,13 @@ r_static
 r_int
 id|ad_format_mask
 (braket
-l_int|2
+l_int|3
 multiline_comment|/*devc-&gt;mode*/
 )braket
 op_assign
 (brace
+l_int|0
+comma
 id|AFMT_U8
 op_or
 id|AFMT_S16_LE

@@ -343,7 +343,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%08lX:%02X%02X%02X%02X%02X%02X:%02X &quot;
+l_string|&quot;%08lX:%02X%02X%02X%02X%02X%02X:%04X &quot;
 comma
 id|htonl
 c_func
@@ -396,7 +396,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%08lX:%02X%02X%02X%02X%02X%02X:%02X &quot;
+l_string|&quot;%08lX:%02X%02X%02X%02X%02X%02X:%04X &quot;
 comma
 id|htonl
 c_func
@@ -2702,7 +2702,7 @@ c_loop
 id|ipx_find_socket
 c_func
 (paren
-id|htons
+id|ntohs
 c_func
 (paren
 id|socketNum
@@ -2722,12 +2722,15 @@ id|socketNum
 op_assign
 l_int|0x4000
 suffix:semicolon
+r_else
+id|socketNum
+op_increment
+suffix:semicolon
 r_return
-id|htons
+id|ntohs
 c_func
 (paren
 id|socketNum
-op_increment
 )paren
 suffix:semicolon
 )brace
@@ -3076,6 +3079,7 @@ id|addr_len
 op_ne
 r_sizeof
 (paren
+op_star
 id|addr
 )paren
 )paren
@@ -3190,6 +3194,10 @@ op_minus
 id|ENETUNREACH
 suffix:semicolon
 )brace
+id|sk-&gt;ipx_type
+op_assign
+id|addr-&gt;sipx_type
+suffix:semicolon
 id|sock-&gt;state
 op_assign
 id|SS_CONNECTED
@@ -3354,6 +3362,10 @@ suffix:semicolon
 id|sipx.sipx_family
 op_assign
 id|AF_IPX
+suffix:semicolon
+id|sipx.sipx_type
+op_assign
+id|sk-&gt;ipx_type
 suffix:semicolon
 id|sipx.sipx_port
 op_assign
@@ -3624,9 +3636,17 @@ multiline_comment|/* Rule: Don&squot;t forward packets that have exceeded the ho
 r_if
 c_cond
 (paren
+(paren
 id|ipx-&gt;ipx_tctrl
 op_eq
 l_int|16
+)paren
+op_logical_or
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
+)paren
 )paren
 (brace
 id|kfree_skb
@@ -4246,6 +4266,10 @@ suffix:semicolon
 id|usipx-&gt;sipx_family
 op_assign
 id|AF_IPX
+suffix:semicolon
+id|usipx-&gt;sipx_type
+op_assign
+id|sk-&gt;ipx_type
 suffix:semicolon
 id|usipx-&gt;sipx_port
 op_assign

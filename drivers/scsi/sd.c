@@ -852,6 +852,8 @@ id|this_count
 suffix:semicolon
 )brace
 )brace
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1108,6 +1110,8 @@ id|device-&gt;changed
 op_assign
 l_int|1
 suffix:semicolon
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1252,6 +1256,8 @@ comma
 id|SCpnt
 )paren
 suffix:semicolon
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1567,6 +1573,9 @@ suffix:colon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|SCpnt
+op_logical_or
 id|SCpnt-&gt;request.dev
 op_le
 l_int|0
@@ -1643,6 +1652,8 @@ dot
 id|nr_sects
 )paren
 (brace
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1687,6 +1698,8 @@ id|device-&gt;changed
 (brace
 multiline_comment|/*&n; * quietly refuse to do anything to a changed disc until the changed bit has been reset&n; */
 multiline_comment|/* printk(&quot;SCSI disk has been changed.  Prohibiting further I/O.&bslash;n&quot;);&t;*/
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
@@ -1742,6 +1755,8 @@ dot
 id|device-&gt;writeable
 )paren
 (brace
+id|SCpnt
+op_assign
 id|end_scsi_request
 c_func
 (paren
