@@ -1259,16 +1259,27 @@ r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_TSC
-)paren
+id|cpu_has_tsc
 )paren
 id|panic
 c_func
 (paren
-l_string|&quot;Kernel compiled for Pentium+, requires TSC&quot;
+l_string|&quot;Kernel compiled for Pentium+, requires TSC feature!&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n; * If we configured ourselves for PGE, we&squot;d better have it.&n; */
+macro_line|#ifdef CONFIG_X86_PGE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cpu_has_pge
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Kernel compiled for PPro+, requires PGE feature!&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -5857,7 +5857,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;RPC:      xprt_create_socket(%08lx, %s %d)&bslash;n&quot;
+l_string|&quot;RPC:      xprt_create_socket(%08x, %s %d)&bslash;n&quot;
 comma
 id|sap
 ques

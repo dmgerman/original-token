@@ -5390,7 +5390,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the ACPI idle function. Note that we can&squot;t really&n;&t; * do this with multiple CPU&squot;s, we&squot;d need a per-CPU ACPI&n;&t; * device..&n;&t; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren

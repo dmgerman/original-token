@@ -7632,7 +7632,7 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;tcp_v4_rebuild_header(): not valid sock addrs: &quot;
-l_string|&quot;saddr=%08lX rcv_saddr=%08lX&bslash;n&quot;
+l_string|&quot;saddr=%08X rcv_saddr=%08X&bslash;n&quot;
 comma
 id|ntohl
 c_func

@@ -949,6 +949,7 @@ c_func
 id|pci_drivers
 )paren
 suffix:semicolon
+r_const
 r_struct
 id|pci_device_id
 op_star
@@ -956,6 +957,7 @@ DECL|function|pci_match_device
 id|pci_match_device
 c_func
 (paren
+r_const
 r_struct
 id|pci_device_id
 op_star
@@ -1063,6 +1065,7 @@ op_star
 id|dev
 )paren
 (brace
+r_const
 r_struct
 id|pci_device_id
 op_star
@@ -1111,6 +1114,8 @@ id|dev
 comma
 id|id
 )paren
+op_ge
+l_int|0
 )paren
 (brace
 id|dev-&gt;driver
@@ -1125,7 +1130,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
+r_int
 DECL|function|pci_register_driver
 id|pci_register_driver
 c_func
@@ -1140,6 +1145,11 @@ r_struct
 id|pci_dev
 op_star
 id|dev
+suffix:semicolon
+r_int
+id|count
+op_assign
+l_int|0
 suffix:semicolon
 id|list_add_tail
 c_func
@@ -1167,6 +1177,8 @@ c_func
 id|dev
 )paren
 )paren
+id|count
+op_add_assign
 id|pci_announce_device
 c_func
 (paren
@@ -1176,6 +1188,9 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+r_return
+id|count
+suffix:semicolon
 )brace
 r_void
 DECL|function|pci_unregister_driver
@@ -1320,6 +1335,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|drv-&gt;remove
+op_logical_and
 id|pci_announce_device
 c_func
 (paren

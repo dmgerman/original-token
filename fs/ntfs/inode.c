@@ -3325,6 +3325,11 @@ op_assign
 l_int|0
 suffix:semicolon
 id|rnum
+OL
+id|data-&gt;d.r.len
+op_logical_and
+id|vcn
+op_ge
 id|data-&gt;d.r.runlist
 (braket
 id|rnum

@@ -1,11 +1,7 @@
 macro_line|#ifndef _LINUX_POSIX_TYPES_H
 DECL|macro|_LINUX_POSIX_TYPES_H
 mdefine_line|#define _LINUX_POSIX_TYPES_H
-multiline_comment|/*&n; * This file is generally used by user-level software, so you need to&n; * be a little careful about namespace pollution etc.  Also, we cannot&n; * assume GCC is being used.&n; */
-macro_line|#ifndef NULL
-DECL|macro|NULL
-macro_line|# define NULL&t;&t;((void *) 0)
-macro_line|#endif
+macro_line|#include &lt;linux/stddef.h&gt;
 multiline_comment|/*&n; * This allows for 1024 file descriptors: if NR_OPEN is ever grown&n; * beyond that you&squot;ll have to change this too. But 1024 fd&squot;s seem to be&n; * enough even for such &quot;real&quot; unices like OSF/1, so hopefully this is&n; * one limit that doesn&squot;t have to be changed [again].&n; *&n; * Note that POSIX wants the FD_CLEAR(fd,fdsetp) defines to be in&n; * &lt;sys/time.h&gt; (and thus &lt;linux/time.h&gt;) - but this is a more logical&n; * place for them. Solved by having dummy defines in &lt;sys/time.h&gt;.&n; */
 multiline_comment|/*&n; * Those macros may have been defined in &lt;gnu/types.h&gt;. But we always&n; * use the ones here. &n; */
 DECL|macro|__NFDBITS

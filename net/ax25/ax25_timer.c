@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;AX.25 032&t;Joerg(DL1BKE)&t;Fixed DAMA timeout bug&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Modularisation functions.&n; *&t;AX.25 035&t;Frederic(F1OAT)&t;Support for pseudo-digipeating.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split Standard and DAMA code into separate files.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed DAMA Slave. We are *required* to start with&n; *&t;&t;&t;&t;&t;standard AX.25 mode.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;New timer architecture.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;AX.25 032&t;Joerg(DL1BKE)&t;Fixed DAMA timeout bug&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Modularisation functions.&n; *&t;AX.25 035&t;Frederic(F1OAT)&t;Support for pseudo-digipeating.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split Standard and DAMA code into separate files.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed DAMA Slave. We are *required* to start with&n; *&t;&t;&t;&t;&t;standard AX.25 mode.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;New timer architecture.&n; *                      Tomi(OH2BNS)    Fixed heartbeat expiry (check ax25_dev).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -471,13 +471,27 @@ op_star
 )paren
 id|param
 suffix:semicolon
-r_switch
+r_int
+id|proto
+op_assign
+id|AX25_PROTO_STD_SIMPLEX
+suffix:semicolon
+r_if
 c_cond
 (paren
+id|ax25-&gt;ax25_dev
+)paren
+id|proto
+op_assign
 id|ax25-&gt;ax25_dev-&gt;values
 (braket
 id|AX25_VALUES_PROTOCOL
 )braket
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|proto
 )paren
 (brace
 r_case

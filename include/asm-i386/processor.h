@@ -239,7 +239,7 @@ mdefine_line|#define cpu_has_pse &bslash;&n;&t;&t;(boot_cpu_data.x86_capability 
 DECL|macro|cpu_has_pae
 mdefine_line|#define cpu_has_pae &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_PAE)
 DECL|macro|cpu_has_tsc
-mdefine_line|#define cpu_has_tsc &bslash;&n;&t;&t;(cpu_data[smp_processor_id()].x86_capability &amp; X86_FEATURE_TSC)
+mdefine_line|#define cpu_has_tsc &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_TSC)
 r_extern
 r_char
 id|ignore_irq13

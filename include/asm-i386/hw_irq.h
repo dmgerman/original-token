@@ -213,45 +213,8 @@ id|_stext
 comma
 id|_etext
 suffix:semicolon
-DECL|macro|MAX_IRQ_SOURCES
-mdefine_line|#define MAX_IRQ_SOURCES 128
-DECL|macro|MAX_MP_BUSSES
-mdefine_line|#define MAX_MP_BUSSES 32
-DECL|enum|mp_bustype
-r_enum
-id|mp_bustype
-(brace
-DECL|enumerator|MP_BUS_ISA
-id|MP_BUS_ISA
-comma
-DECL|enumerator|MP_BUS_EISA
-id|MP_BUS_EISA
-comma
-DECL|enumerator|MP_BUS_PCI
-id|MP_BUS_PCI
-)brace
-suffix:semicolon
-r_extern
-r_int
-id|mp_bus_id_to_type
-(braket
-id|MAX_MP_BUSSES
-)braket
-suffix:semicolon
-r_extern
-r_int
-id|mp_bus_id_to_pci_bus
-(braket
-id|MAX_MP_BUSSES
-)braket
-suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|macro|IO_APIC_IRQ
 mdefine_line|#define IO_APIC_IRQ(x) (((x) &gt;= 16) || ((1&lt;&lt;(x)) &amp; io_apic_irqs))
-macro_line|#else
-DECL|macro|IO_APIC_IRQ
-mdefine_line|#define IO_APIC_IRQ(x)&t;(0)
-macro_line|#endif
 DECL|macro|__STR
 mdefine_line|#define __STR(x) #x
 DECL|macro|STR
@@ -264,7 +227,6 @@ DECL|macro|IRQ_NAME
 mdefine_line|#define IRQ_NAME(nr) IRQ_NAME2(IRQ##nr)
 DECL|macro|GET_CURRENT
 mdefine_line|#define GET_CURRENT &bslash;&n;&t;&quot;movl %esp, %ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andl $-8192, %ebx&bslash;n&bslash;t&quot;
-macro_line|#ifdef __SMP__
 multiline_comment|/*&n; *&t;SMP has a few special interrupts for IPI messages&n; */
 multiline_comment|/* there is a second layer of macro just to get the symbolic&n;&t;   name for the vector evaluated. This change is for RTLinux */
 DECL|macro|BUILD_SMP_INTERRUPT
@@ -275,7 +237,6 @@ DECL|macro|BUILD_SMP_TIMER_INTERRUPT
 mdefine_line|#define BUILD_SMP_TIMER_INTERRUPT(x,v) XBUILD_SMP_TIMER_INTERRUPT(x,v)
 DECL|macro|XBUILD_SMP_TIMER_INTERRUPT
 mdefine_line|#define XBUILD_SMP_TIMER_INTERRUPT(x,v) &bslash;&n;asmlinkage void x(struct pt_regs * regs); &bslash;&n;asmlinkage void call_##x(void); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(x) &quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot;#v&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;movl %esp,%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %eax&bslash;n&bslash;t&quot; &bslash;&n;&t;SYMBOL_NAME_STR(call_##x)&quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call &quot;SYMBOL_NAME_STR(smp_##x)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $4,%esp&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp ret_from_intr&bslash;n&quot;);
-macro_line|#endif /* __SMP__ */
 DECL|macro|BUILD_COMMON_IRQ
 mdefine_line|#define BUILD_COMMON_IRQ() &bslash;&n;asmlinkage void call_do_IRQ(void); &bslash;&n;__asm__( &bslash;&n;&t;&quot;&bslash;n&quot; __ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;&t;&quot;common_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;pushl $ret_from_intr&bslash;n&bslash;t&quot; &bslash;&n;&t;SYMBOL_NAME_STR(call_do_IRQ)&quot;:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp &quot;SYMBOL_NAME_STR(do_IRQ));
 multiline_comment|/* &n; * subtle. orig_eax is used by the signal code to distinct between&n; * system calls and interrupted &squot;random user-space&squot;. Thus we have&n; * to put a negative value into orig_eax here. (the problem is that&n; * both system calls and IRQs want to have small integer numbers in&n; * orig_eax, and the syscall code has won the optimization conflict ;)&n; *&n; * Subtle as a pigs ear.  VY&n; */

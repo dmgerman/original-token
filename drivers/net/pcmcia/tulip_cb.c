@@ -14985,7 +14985,7 @@ l_string|&quot;processor %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -18694,13 +18694,15 @@ id|tp-&gt;chip_id
 suffix:semicolon
 )brace
 "&f;"
-DECL|variable|tulip_pci_table
+DECL|variable|__devinitdata
 r_static
+r_const
 r_struct
 id|pci_device_id
 id|tulip_pci_table
 (braket
 )braket
+id|__devinitdata
 op_assign
 (brace
 (brace
@@ -18937,6 +18939,7 @@ id|pci_dev
 op_star
 id|pdev
 comma
+r_const
 r_struct
 id|pci_device_id
 op_star
@@ -19006,11 +19009,12 @@ op_assign
 id|dev
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 r_return
-l_int|0
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|tulip_suspend
@@ -19212,6 +19216,7 @@ suffix:semicolon
 DECL|function|tulip_init
 r_static
 r_int
+id|__init
 id|tulip_init
 c_func
 (paren
@@ -19231,6 +19236,7 @@ suffix:semicolon
 )brace
 DECL|function|tulip_exit
 r_static
+id|__exit
 r_void
 id|tulip_exit
 c_func

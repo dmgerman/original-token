@@ -481,6 +481,18 @@ DECL|macro|BTN_START
 mdefine_line|#define BTN_START&t;&t;0x13b
 DECL|macro|BTN_MODE
 mdefine_line|#define BTN_MODE&t;&t;0x13c
+DECL|macro|BTN_DIGI
+mdefine_line|#define BTN_DIGI&t;&t;0x140
+DECL|macro|BTN_PEN
+mdefine_line|#define BTN_PEN&t;&t;&t;0x140
+DECL|macro|BTN_RUBBER
+mdefine_line|#define BTN_RUBBER&t;&t;0x141
+DECL|macro|BTN_PEN_SIDE
+mdefine_line|#define BTN_PEN_SIDE&t;&t;0x142
+DECL|macro|BTN_PEN_SIDE2
+mdefine_line|#define BTN_PEN_SIDE2&t;&t;0x143
+DECL|macro|BTN_NEAR
+mdefine_line|#define BTN_NEAR&t;&t;0x144
 DECL|macro|KEY_MAX
 mdefine_line|#define KEY_MAX&t;&t;&t;0x1ff
 multiline_comment|/*&n; * Relative axes&n; */
@@ -533,17 +545,21 @@ DECL|macro|ABS_HAT3X
 mdefine_line|#define ABS_HAT3X&t;&t;0x16
 DECL|macro|ABS_HAT3Y
 mdefine_line|#define ABS_HAT3Y&t;&t;0x17
+DECL|macro|ABS_PRESSURE
+mdefine_line|#define ABS_PRESSURE&t;&t;0x18
+DECL|macro|ABS_DISTANCE
+mdefine_line|#define ABS_DISTANCE&t;&t;0x19
 DECL|macro|ABS_MISC
-mdefine_line|#define ABS_MISC&t;&t;0x18
+mdefine_line|#define ABS_MISC&t;&t;0x1a
 DECL|macro|ABS_MAX
 mdefine_line|#define ABS_MAX&t;&t;&t;0x1f
 multiline_comment|/*&n; * LEDs&n; */
-DECL|macro|LED_SCROLLL
-mdefine_line|#define LED_SCROLLL&t;&t;0x00
 DECL|macro|LED_NUML
-mdefine_line|#define LED_NUML&t;&t;0x01
+mdefine_line|#define LED_NUML&t;&t;0x00
 DECL|macro|LED_CAPSL
-mdefine_line|#define LED_CAPSL&t;&t;0x02
+mdefine_line|#define LED_CAPSL&t;&t;0x01
+DECL|macro|LED_SCROLLL
+mdefine_line|#define LED_SCROLLL&t;&t;0x02
 DECL|macro|LED_COMPOSE
 mdefine_line|#define LED_COMPOSE&t;&t;0x03
 DECL|macro|LED_KANA

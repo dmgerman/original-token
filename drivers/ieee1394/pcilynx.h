@@ -1055,10 +1055,12 @@ id|pclid
 )paren
 (brace
 r_return
-id|lynx-&gt;dev-&gt;base_address
+id|lynx-&gt;dev-&gt;resource
 (braket
 l_int|1
 )braket
+dot
+id|start
 op_plus
 id|pclid
 op_star

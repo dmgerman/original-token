@@ -448,6 +448,11 @@ id|u8
 id|status
 suffix:semicolon
 multiline_comment|/* Current DCD */
+DECL|member|dcdcheck
+id|u8
+id|dcdcheck
+suffix:semicolon
+multiline_comment|/* which bit to check for line */
 DECL|member|sync
 id|u8
 id|sync
@@ -1029,9 +1034,7 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Standard interrupt vector sets&n; */
-DECL|variable|z8530_sync
-DECL|variable|z8530_async
-DECL|variable|z8530_nop
+r_extern
 r_struct
 id|z8530_irqhandler
 id|z8530_sync

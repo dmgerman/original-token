@@ -137,10 +137,6 @@ id|sched_priority
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifndef NULL
-DECL|macro|NULL
-mdefine_line|#define NULL ((void *) 0)
-macro_line|#endif
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/spinlock.h&gt;
 multiline_comment|/*&n; * This serializes &quot;schedule()&quot; and also protects&n; * the run-queue from deletions/modifications (but&n; * _adding_ to the beginning of the run-queue has&n; * a separate lock).&n; */

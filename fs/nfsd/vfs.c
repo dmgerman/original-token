@@ -6173,7 +6173,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: readdir result %d bytes, eof %d offset %ld&bslash;n&quot;
+l_string|&quot;nfsd: readdir result %d bytes, eof %d offset %d&bslash;n&quot;
 comma
 op_star
 id|countp

@@ -353,6 +353,10 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+id|skb-&gt;nh.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 id|p
 op_assign
 id|skb_put

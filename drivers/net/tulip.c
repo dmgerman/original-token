@@ -190,8 +190,6 @@ DECL|macro|IRQ
 mdefine_line|#define IRQ(irq, dev_id, pt_regs) (irq, pt_regs)
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
-DECL|macro|hard_smp_processor_id
-mdefine_line|#define hard_smp_processor_id() smp_processor_id()
 DECL|macro|test_and_set_bit
 mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
 macro_line|#endif
@@ -12185,7 +12183,7 @@ id|dev-&gt;name
 comma
 id|tp-&gt;smp_proc_id
 comma
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren
@@ -12212,7 +12210,7 @@ suffix:semicolon
 macro_line|#ifdef SMP_CHECK
 id|tp-&gt;smp_proc_id
 op_assign
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren

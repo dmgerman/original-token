@@ -215,6 +215,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 r_case
 id|BOARD_NCR53C400
 suffix:colon
@@ -244,6 +246,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 r_case
 id|BOARD_NCR53C400A
 suffix:colon
@@ -273,6 +277,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 r_case
 id|BOARD_DTC3181E
 suffix:colon
@@ -302,6 +308,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 )brace
 r_if
 c_cond

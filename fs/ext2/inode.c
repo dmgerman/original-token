@@ -4342,7 +4342,7 @@ op_or_assign
 id|MS_SYNCHRONOUS
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_flags
-op_assign
+op_or_assign
 id|EXT2_SYNC_FL
 suffix:semicolon
 )brace
@@ -4372,7 +4372,7 @@ op_or_assign
 id|MS_NOATIME
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_flags
-op_assign
+op_or_assign
 id|EXT2_NOATIME_FL
 suffix:semicolon
 )brace
@@ -4402,7 +4402,7 @@ op_or_assign
 id|S_APPEND
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_flags
-op_assign
+op_or_assign
 id|EXT2_APPEND_FL
 suffix:semicolon
 )brace
@@ -4432,7 +4432,7 @@ op_or_assign
 id|S_IMMUTABLE
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_flags
-op_assign
+op_or_assign
 id|EXT2_IMMUTABLE_FL
 suffix:semicolon
 )brace

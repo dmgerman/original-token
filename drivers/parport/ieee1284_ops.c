@@ -112,6 +112,13 @@ id|port-&gt;physport-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_DATA
 suffix:semicolon
+id|parport_write_control
+(paren
+id|port
+comma
+id|ctl
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren

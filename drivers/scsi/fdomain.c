@@ -2314,6 +2314,16 @@ op_star
 id|shpnt
 suffix:semicolon
 macro_line|#if DO_DETECT
+r_int
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|j
+op_assign
+l_int|0
+suffix:semicolon
 r_const
 r_int
 id|buflen

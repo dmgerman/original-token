@@ -377,7 +377,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|flush_tlb_all_kernel
+id|flush_tlb_all
 c_func
 (paren
 )paren

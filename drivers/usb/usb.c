@@ -865,12 +865,6 @@ c_func
 l_string|&quot;too many buses&quot;
 )paren
 suffix:semicolon
-id|proc_usb_add_bus
-c_func
-(paren
-id|bus
-)paren
-suffix:semicolon
 multiline_comment|/* Add it to the list of buses */
 id|list_add
 c_func
@@ -922,12 +916,6 @@ c_func
 (paren
 op_amp
 id|bus-&gt;bus_list
-)paren
-suffix:semicolon
-id|proc_usb_remove_bus
-c_func
-(paren
-id|bus
 )paren
 suffix:semicolon
 id|usbdevfs_remove_bus
@@ -4940,12 +4928,6 @@ id|child
 suffix:semicolon
 )brace
 multiline_comment|/* remove /proc/bus/usb entry */
-id|proc_usb_remove_device
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|usbdevfs_remove_device
 c_func
 (paren
@@ -7410,12 +7392,6 @@ id|dev-&gt;descriptor.iSerialNumber
 )paren
 suffix:semicolon
 multiline_comment|/* now that the basic setup is over, add a /proc/bus/usb entry */
-id|proc_usb_add_device
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|usbdevfs_add_device
 c_func
 (paren

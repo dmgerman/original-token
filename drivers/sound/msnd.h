@@ -1,9 +1,9 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.33 1998/11/05 20:26:18 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.36 1999/03/21 17:05:42 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#ifndef __MSND_H
 DECL|macro|__MSND_H
 mdefine_line|#define __MSND_H
 DECL|macro|VERSION
-mdefine_line|#define VERSION&t;&t;&t;&quot;0.8.2.2&quot;
+mdefine_line|#define VERSION&t;&t;&t;&quot;0.8.3.1&quot;
 DECL|macro|DEFSAMPLERATE
 mdefine_line|#define DEFSAMPLERATE&t;&t;DSP_DEFAULT_SPEED
 DECL|macro|DEFSAMPLESIZE
@@ -327,6 +327,13 @@ id|dsp_minor
 comma
 id|mixer_minor
 suffix:semicolon
+DECL|member|ext_midi_dev
+DECL|member|hdr_midi_dev
+r_int
+id|ext_midi_dev
+comma
+id|hdr_midi_dev
+suffix:semicolon
 multiline_comment|/* Hardware resources */
 DECL|member|io
 DECL|member|numio
@@ -393,6 +400,13 @@ id|pwMIDQData
 comma
 id|pwMODQData
 suffix:semicolon
+DECL|member|dspq_data_buff
+DECL|member|dspq_buff_size
+r_int
+id|dspq_data_buff
+comma
+id|dspq_buff_size
+suffix:semicolon
 multiline_comment|/* State variables */
 DECL|enumerator|msndClassic
 DECL|enumerator|msndPinnacle
@@ -434,8 +448,8 @@ DECL|macro|F_READBLOCK
 mdefine_line|#define F_READBLOCK&t;&t;&t;8
 DECL|macro|F_EXT_MIDI_INUSE
 mdefine_line|#define F_EXT_MIDI_INUSE&t;&t;9
-DECL|macro|F_INT_MIDI_INUSE
-mdefine_line|#define F_INT_MIDI_INUSE&t;&t;10
+DECL|macro|F_HDR_MIDI_INUSE
+mdefine_line|#define F_HDR_MIDI_INUSE&t;&t;10
 DECL|macro|F_DISABLE_WRITE_NDELAY
 mdefine_line|#define F_DISABLE_WRITE_NDELAY&t;&t;11
 DECL|member|writeblock
@@ -611,6 +625,20 @@ c_func
 (paren
 r_int
 id|i
+)paren
+suffix:semicolon
+r_void
+id|msnd_init_queue
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+id|start
+comma
+r_int
+id|size
 )paren
 suffix:semicolon
 r_void

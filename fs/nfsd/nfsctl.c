@@ -1061,6 +1061,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Installing knfsd (copyright (C) 1996 okir@monad.swb.de).&bslash;n&quot;
 )paren
 suffix:semicolon

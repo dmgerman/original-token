@@ -1049,6 +1049,10 @@ id|digi
 )paren
 )paren
 suffix:semicolon
+id|skb-&gt;nh.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 id|ax25_digi_invert
 c_func
 (paren

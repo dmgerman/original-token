@@ -178,8 +178,12 @@ DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR
 mdefine_line|#define SPECIALIX_CALLOUT_MAJOR 76
+DECL|macro|DASD_MAJOR
+mdefine_line|#define DASD_MAJOR      94&t;/* Official assignations from Peter */
 DECL|macro|LVM_CHAR_MAJOR
 mdefine_line|#define LVM_CHAR_MAJOR&t;109&t;/* Logical Volume Manager */
+DECL|macro|MDISK_MAJOR
+mdefine_line|#define MDISK_MAJOR     95&t;/* Official assignations from Peter */
 DECL|macro|I2O_MAJOR
 mdefine_line|#define I2O_MAJOR&t;&t;80&t;/* 80-&gt;87 */
 DECL|macro|IDE6_MAJOR

@@ -2,10 +2,7 @@ macro_line|#ifndef _LINUX_STRING_H_
 DECL|macro|_LINUX_STRING_H_
 mdefine_line|#define _LINUX_STRING_H_
 macro_line|#include &lt;linux/types.h&gt;&t;/* for size_t */
-macro_line|#ifndef NULL
-DECL|macro|NULL
-mdefine_line|#define NULL ((void *) 0)
-macro_line|#endif
+macro_line|#include &lt;linux/stddef.h&gt;&t;/* for NULL */
 macro_line|#ifdef __cplusplus
 r_extern
 l_string|&quot;C&quot;

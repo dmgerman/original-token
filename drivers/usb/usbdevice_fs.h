@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;usbdevice_fs.h  --  USB device file system.&n; *&n; *&t;Copyright (C) 2000&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *   0.1  04.01.2000  Created&n; *&n; *  $Id: ezusb.c,v 1.22 1999/12/03 15:06:28 tom Exp $&n; */
+multiline_comment|/*&n; *&t;usbdevice_fs.h  --  USB device file system.&n; *&n; *&t;Copyright (C) 2000&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *   0.1  04.01.2000  Created&n; *&n; *  $Id: usbdevice_fs.h,v 1.1 2000/01/06 18:40:41 tom Exp $&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#ifndef _LINUX_USBDEVICE_FS_H
 DECL|macro|_LINUX_USBDEVICE_FS_H
@@ -231,6 +231,7 @@ DECL|macro|USBDEVFS_RELEASEINTERFACE
 mdefine_line|#define USBDEVFS_RELEASEINTERFACE  _IOR(&squot;U&squot;, 16, unsigned int)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 multiline_comment|/*&n; * inode number macros&n; */

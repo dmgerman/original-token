@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c527.c:v0.05 1999/09/06 Alan Cox (alan@redhat.com)&bslash;n&quot;
+l_string|&quot;3c527.c:v0.07 2000/01/18 Alan Cox (alan@redhat.com)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n; *&t;Things you need&n; *&t;o&t;The databook.&n; *&n; *&t;Traps for the unwary&n; *&n; *&t;The diagram (Figure 1-1) and the POS summary disagree with the&n; *&t;&quot;Interrupt Level&quot; section in the manual.&n; *&n; *&t;The documentation in places seems to miss things. In actual fact&n; *&t;I&squot;ve always eventually found everything is documented, it just&n; *&t;requires careful study.&n; */
 macro_line|#include &lt;linux/module.h&gt;
@@ -1558,7 +1558,7 @@ id|HOST_STATUS_CRR
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Send exec commands&n; */
+multiline_comment|/*&n; *&t;Send exec commands. This requires a bit of explaining.&n; *&n; *&t;You feed the card a command, you wait, it interrupts you get a &n; *&t;reply. All well and good. The complication arises because you use&n; *&t;commands for filter list changes which come in at bh level from things&n; *&t;like IPV6 group stuff.&n; *&n; *&t;We have a simple state machine&n; *&n; *&t;0&t;- nothing issued&n; *&t;1&t;- command issued, wait reply&n; *&t;2&t;- reply waiting - reader then goes to state 0&n; *&t;3&t;- command issued, trash reply. In which case the irq&n; *&t;&t;  takes it back to state 0&n; */
 multiline_comment|/*&n; *&t;Send command from interrupt state&n; */
 DECL|function|mc32_command_nowait
 r_static
@@ -1612,7 +1612,7 @@ suffix:semicolon
 )brace
 id|lp-&gt;exec_pending
 op_assign
-l_int|1
+l_int|3
 suffix:semicolon
 id|lp-&gt;exec_box-&gt;mbox
 op_assign
@@ -1728,6 +1728,17 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Wait for a command&n;&t; */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1746,6 +1757,12 @@ multiline_comment|/*&n;&t; *&t;Issue mine&n;&t; */
 id|lp-&gt;exec_pending
 op_assign
 l_int|1
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|lp-&gt;exec_box-&gt;mbox
 op_assign
@@ -3071,6 +3088,19 @@ id|np-&gt;length
 op_assign
 id|skb-&gt;len
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|np-&gt;length
+OL
+l_int|60
+)paren
+(brace
+id|np-&gt;length
+op_assign
+l_int|60
+suffix:semicolon
+)brace
 id|np-&gt;data
 op_assign
 id|virt_to_bus
@@ -3864,10 +3894,24 @@ op_amp
 l_int|1
 )paren
 (brace
-multiline_comment|/* 0=no 1=yes 2=reply clearing */
+multiline_comment|/* 0=no 1=yes 2=replied, get cmd, 3 = wait reply &amp; dump it */
+r_if
+c_cond
+(paren
+id|lp-&gt;exec_pending
+op_ne
+l_int|3
+)paren
+(brace
 id|lp-&gt;exec_pending
 op_assign
 l_int|2
+suffix:semicolon
+)brace
+r_else
+id|lp-&gt;exec_pending
+op_assign
+l_int|0
 suffix:semicolon
 id|wake_up
 c_func

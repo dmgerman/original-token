@@ -565,7 +565,7 @@ comma
 l_string|&quot;Acquire WDT&quot;
 )paren
 suffix:semicolon
-id|unregister_reboot_notifier
+id|register_reboot_notifier
 c_func
 (paren
 op_amp

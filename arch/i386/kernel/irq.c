@@ -1,6 +1,5 @@
-multiline_comment|/* mostly architecture independent&n;   some moved to i8259.c&n;   the beautiful visws architecture code needs to be updated too.&n;   and, finally, the BUILD_IRQ and SMP_BUILD macros in irq.h need fixed.&n;   */
 multiline_comment|/*&n; *&t;linux/arch/i386/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992, 1998 Linus Torvalds, Ingo Molnar&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; */
-multiline_comment|/*&n; * IRQs are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
+multiline_comment|/*&n; * (mostly architecture independent, will move to kernel/irq.c in 2.5.)&n; *&n; * IRQs are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -14,14 +13,15 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;linux/irq.h&gt;
 DECL|variable|local_bh_count
 r_int
 r_int
@@ -164,7 +164,7 @@ comma
 id|irq
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_X86_LOCAL_APIC
 multiline_comment|/*&n;&t; * Currently unexpected vectors happen only on SMP and APIC.&n;&t; * We _must_ ack these because every local APIC has only N&n;&t; * irq slots per priority level, and a &squot;hanging, unacked&squot; IRQ&n;&t; * holds up an irq slot - in excessive cases (when multiple&n;&t; * unexpected vectors occur) that might lock up the APIC&n;&t; * completely.&n;&t; */
 id|ack_APIC_irq
 c_func
@@ -319,7 +319,7 @@ comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|p
 op_add_assign
 id|sprintf
@@ -573,7 +573,7 @@ id|i386_bh_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|global_irq_holder
 r_int
 r_char
@@ -2408,7 +2408,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Wait to make sure it&squot;s not being used on another CPU */
 r_while
 c_loop

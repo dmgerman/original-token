@@ -331,6 +331,7 @@ op_star
 id|PREAD_CAPACITY_DATA
 suffix:semicolon
 singleline_comment|// SCSI inquiry data
+macro_line|#ifndef HOSTS_C
 DECL|struct|_INQUIRYDATA
 r_typedef
 r_struct
@@ -470,6 +471,7 @@ comma
 op_star
 id|PINQUIRYDATA
 suffix:semicolon
+macro_line|#endif
 singleline_comment|// IDE IDENTIFY data
 DECL|struct|_IDENTIFY_DATA
 r_typedef

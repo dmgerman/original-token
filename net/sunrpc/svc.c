@@ -1388,7 +1388,7 @@ suffix:colon
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: authentication failed (%ld)&bslash;n&quot;
+l_string|&quot;svc: authentication failed (%d)&bslash;n&quot;
 comma
 id|ntohl
 c_func

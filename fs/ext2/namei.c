@@ -4063,6 +4063,17 @@ op_assign
 op_increment
 id|event
 suffix:semicolon
+multiline_comment|/*&n;&t; * Like most other Unix systems, set the ctime for inodes on a&n;&t; * rename.&n;&t; */
+id|old_inode-&gt;i_ctime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|old_inode
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * ok, that&squot;s it&n;&t; */
 id|new_de-&gt;inode
 op_assign

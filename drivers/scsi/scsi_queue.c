@@ -52,6 +52,10 @@ id|Scsi_Host
 op_star
 id|host
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|SCSI_LOG_MLQUEUE
 c_func
 (paren
@@ -164,11 +168,29 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; * Decrement the counters, since these commands are no longer&n;&t; * active on the host/device.&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|cmd-&gt;host-&gt;host_busy
 op_decrement
 suffix:semicolon
 id|cmd-&gt;device-&gt;device_busy
 op_decrement
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Insert this command at the head of the queue for it&squot;s device.&n;&t; * It will go before all other commands that are already in the queue.&n;&t; */
 id|scsi_insert_special_cmd

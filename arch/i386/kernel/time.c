@@ -10,12 +10,14 @@ macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;asm/mpspec.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -788,7 +790,7 @@ id|regs
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * In the SMP case we use the local APIC timer interrupt to do the&n; * profiling, except when we simulate SMP mode on a uniprocessor&n; * system, in that case we have to call the local interrupt handler.&n; */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_X86_LOCAL_APIC
 r_if
 c_cond
 (paren

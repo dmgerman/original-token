@@ -1,5 +1,5 @@
 multiline_comment|/* lance.c: An AMD LANCE/PCnet ethernet driver for Linux. */
-multiline_comment|/*&n;&t;Written/copyright 1993-1998 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100/NE2500) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Fixing alignment problem with 1.3.* kernel and some minor changes&n;&t;by Andrey V. Savochkin, 1996.&n;&n;&t;Problems or questions may be send to Donald Becker (see above) or to&n;&t;Andrey Savochkin -- saw@shade.msu.ru or&n;&t;&t;Laboratory of Computation Methods, &n;&t;&t;Department of Mathematics and Mechanics,&n;&t;&t;Moscow State University,&n;&t;&t;Leninskye Gory, Moscow 119899&n;&n;&t;But I should to inform you that I&squot;m not an expert in the LANCE card&n;&t;and it may occurs that you will receive no answer on your mail&n;&t;to Donald Becker. I didn&squot;t receive any answer on all my letters&n;&t;to him. Who knows why... But may be you are more lucky?  ;-&gt;&n;                                                          SAW&n;&n;&t;Thomas Bogendoerfer (tsbogend@bigbug.franken.de):&n;&t;- added support for Linux/Alpha, but removed most of it, because&n;        it worked only for the PCI chip. &n;      - added hook for the 32bit lance driver&n;      - added PCnetPCI II (79C970A) to chip table&n;&t;Paul Gortmaker (gpg109@rsphy1.anu.edu.au):&n;&t;- hopefully fix above so Linux/Alpha can use ISA cards too.&n;    8/20/96 Fixed 7990 autoIRQ failure and reversed unneeded alignment -djb&n;    v1.12 10/27/97 Module support -djb&n;    v1.14  2/3/98 Module support modified, made PCI support optional -djb&n;    &n;    Forward ported v1.14 to 2.1.129, merged the PCI and misc changes from&n;    the 2.1 version of the old driver - Alan Cox&n;*/
+multiline_comment|/*&n;&t;Written/copyright 1993-1998 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100/NE2500) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Fixing alignment problem with 1.3.* kernel and some minor changes&n;&t;by Andrey V. Savochkin, 1996.&n;&n;&t;Problems or questions may be send to Donald Becker (see above) or to&n;&t;Andrey Savochkin -- saw@shade.msu.ru or&n;&t;&t;Laboratory of Computation Methods, &n;&t;&t;Department of Mathematics and Mechanics,&n;&t;&t;Moscow State University,&n;&t;&t;Leninskye Gory, Moscow 119899&n;&n;&t;But I should to inform you that I&squot;m not an expert in the LANCE card&n;&t;and it may occurs that you will receive no answer on your mail&n;&t;to Donald Becker. I didn&squot;t receive any answer on all my letters&n;&t;to him. Who knows why... But may be you are more lucky?  ;-&gt;&n;                                                          SAW&n;&n;&t;Thomas Bogendoerfer (tsbogend@bigbug.franken.de):&n;&t;- added support for Linux/Alpha, but removed most of it, because&n;        it worked only for the PCI chip. &n;      - added hook for the 32bit lance driver&n;      - added PCnetPCI II (79C970A) to chip table&n;&t;Paul Gortmaker (gpg109@rsphy1.anu.edu.au):&n;&t;- hopefully fix above so Linux/Alpha can use ISA cards too.&n;    8/20/96 Fixed 7990 autoIRQ failure and reversed unneeded alignment -djb&n;    v1.12 10/27/97 Module support -djb&n;    v1.14  2/3/98 Module support modified, made PCI support optional -djb&n;    v1.15 5/27/99 Fixed bug in the cleanup_module(). dev-&gt;priv was freed&n;                  before unregister_netdev() which caused NULL pointer&n;                  reference later in the chain (in rtnetlink_fill_ifinfo())&n;                  -- Mika Kuoppala &lt;miku@iki.fi&gt;&n;    &n;    Forward ported v1.14 to 2.1.129, merged the PCI and misc changes from&n;    the 2.1 version of the old driver - Alan Cox&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lance.c:v1.14ac 1998/11/20 dplatt@3do.com, becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
+l_string|&quot;lance.c:v1.15ac 1999/11/13 dplatt@3do.com, becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -957,15 +957,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|kfree
+id|unregister_netdev
 c_func
 (paren
-id|dev-&gt;priv
+id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
 suffix:semicolon
 id|free_dma
 c_func
@@ -981,11 +977,15 @@ comma
 id|LANCE_TOTAL_SIZE
 )paren
 suffix:semicolon
-id|unregister_netdev
+id|kfree
 c_func
 (paren
-id|dev
+id|dev-&gt;priv
 )paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 )brace

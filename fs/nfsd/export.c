@@ -2939,7 +2939,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%ld.%ld.%ld.%ld&quot;
+l_string|&quot;%d.%d.%d.%d&quot;
 comma
 id|htonl
 c_func

@@ -4,7 +4,7 @@ DECL|macro|_ASM_FIXMAP_H
 mdefine_line|#define _ASM_FIXMAP_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/apic.h&gt;
+macro_line|#include &lt;asm/apicdef.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifdef CONFIG_HIGHMEM
 macro_line|#include &lt;linux/threads.h&gt;

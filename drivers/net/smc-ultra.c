@@ -2318,7 +2318,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* NB: ultra_close_card() does free_irq + irq2dev */
+multiline_comment|/* NB: ultra_close_card() does free_irq */
 r_int
 id|ioaddr
 op_assign
@@ -2326,10 +2326,10 @@ id|dev-&gt;base_addr
 op_minus
 id|ULTRA_NIC_OFFSET
 suffix:semicolon
-id|kfree
+id|unregister_netdev
 c_func
 (paren
-id|dev-&gt;priv
+id|dev
 )paren
 suffix:semicolon
 id|release_region
@@ -2340,18 +2340,19 @@ comma
 id|ULTRA_IO_EXTENT
 )paren
 suffix:semicolon
-id|unregister_netdev
+id|kfree
 c_func
 (paren
-id|dev
+id|dev-&gt;priv
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
+)brace
+)brace
+id|unlock_8390_module
+c_func
+(paren
+)paren
 suffix:semicolon
-)brace
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd_classic.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; * &n; * $Id: msnd_classic.h,v 1.9 1998/09/10 04:11:18 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd_classic.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; * &n; * $Id: msnd_classic.h,v 1.10 1999/03/21 17:36:09 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#ifndef __MSND_CLASSIC_H
 DECL|macro|__MSND_CLASSIC_H
 mdefine_line|#define __MSND_CLASSIC_H
@@ -117,8 +117,8 @@ DECL|macro|MIDQ_OFFSET
 mdefine_line|#define MIDQ_OFFSET&t;&t;&t;&t;(SRAM_CNTL_START + 0x18)
 DECL|macro|DSPQ_OFFSET
 mdefine_line|#define DSPQ_OFFSET&t;&t;&t;&t;(SRAM_CNTL_START + 0x20)
-DECL|macro|MOP_PROTEUS
-mdefine_line|#define MOP_PROTEUS&t;&t;&t;&t;0x10
+DECL|macro|MOP_SYNTH
+mdefine_line|#define MOP_SYNTH&t;&t;&t;&t;0x10
 DECL|macro|MOP_EXTOUT
 mdefine_line|#define MOP_EXTOUT&t;&t;&t;&t;0x32
 DECL|macro|MOP_EXTTHRU
@@ -127,8 +127,8 @@ DECL|macro|MOP_OUTMASK
 mdefine_line|#define MOP_OUTMASK&t;&t;&t;&t;0x01
 DECL|macro|MIP_EXTIN
 mdefine_line|#define MIP_EXTIN&t;&t;&t;&t;0x01
-DECL|macro|MIP_PROTEUS
-mdefine_line|#define MIP_PROTEUS&t;&t;&t;&t;0x00
+DECL|macro|MIP_SYNTH
+mdefine_line|#define MIP_SYNTH&t;&t;&t;&t;0x00
 DECL|macro|MIP_INMASK
 mdefine_line|#define MIP_INMASK&t;&t;&t;&t;0x32
 multiline_comment|/* Classic SMA Common Data */

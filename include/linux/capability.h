@@ -89,7 +89,7 @@ mdefine_line|#define CAP_DAC_READ_SEARCH  2
 multiline_comment|/* Overrides all restrictions about allowed operations on files, where&n;   file owner ID must be equal to the user ID, except where CAP_FSETID&n;   is applicable. It doesn&squot;t override MAC and DAC restrictions. */
 DECL|macro|CAP_FOWNER
 mdefine_line|#define CAP_FOWNER           3
-multiline_comment|/* Overrides the following restrictions that the effective user ID&n;   shall match the file owner ID when setting the S_ISUID and S_ISGID&n;   bits on that file; that the effective group ID (or one of the&n;   supplementary group IDs shall match the file owner ID when setting&n;   the S_ISGID bit on that file; that the S_ISUID and S_ISGID bits are&n;   cleared on successful return from chown(2). */
+multiline_comment|/* Overrides the following restrictions that the effective user ID&n;   shall match the file owner ID when setting the S_ISUID and S_ISGID&n;   bits on that file; that the effective group ID (or one of the&n;   supplementary group IDs) shall match the file owner ID when setting&n;   the S_ISGID bit on that file; that the S_ISUID and S_ISGID bits are&n;   cleared on successful return from chown(2) (not implemented). */
 DECL|macro|CAP_FSETID
 mdefine_line|#define CAP_FSETID           4
 multiline_comment|/* Used to decide between falling back on the old suser() or fsuser(). */

@@ -28,10 +28,23 @@ mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 DECL|macro|__flush_tlb
-mdefine_line|#define __flush_tlb() &bslash;&n;do { unsigned long tmpreg; __asm__ __volatile__(&quot;movl %%cr3,%0&bslash;n&bslash;tmovl %0,%%cr3&quot;:&quot;=r&quot; (tmpreg) : :&quot;memory&quot;); } while (0)
+mdefine_line|#define __flush_tlb()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;(&quot;movl %0, %%cr3;&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;:&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;: &quot;r&quot; __pa(current-&gt;active_mm-&gt;pgd)&t;&bslash;&n;&t;&t;&t;&t;: &quot;memory&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * Global pages have to be flushed a bit differently. Not a real&n; * performance problem because this does not happen often.&n; */
 DECL|macro|__flush_tlb_global
-mdefine_line|#define __flush_tlb_global()&t;&t;&t;&t;&t;&t;&bslash;&n;    do { __asm__ __volatile__( &quot;&t;&t;&t;&t;&t;&bslash;&n;&t;movl %%cr4,%%eax;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;movl %%eax,%%ecx;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;andl $0xffffff7f,%%eax; # turn off PGE (CR4[7]) in EAX &bslash;n&t;&bslash;&n;&t;movl %%eax,%%cr4;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;movl %%cr3,%%ebx;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;movl %%ebx,%%cr3;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;movl %%ecx,%%cr4;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; : : : &quot;cc&quot;, &quot;eax&quot;, &quot;ebx&quot;, &quot;ecx&quot;, &quot;memory&quot;&t;&t;&t;&bslash;&n;    );&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define __flush_tlb_global()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&quot;movl %0, %%cr4; # turn off PGE &bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&t;&quot;mov %2, %%cr3;  # flush TLB &bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&t;&quot;mov %1, %%cr4;  # turn PGE back on &bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&t;:&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;r&quot; (mmu_cr4_features),&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot; (mmu_cr4_features &amp; ~X86_CR4_PGE),&t;&bslash;&n;&t;&t;&t;  &quot;r&quot; (__pa(current-&gt;active_mm-&gt;pgd))&t;&t;&bslash;&n;&t;&t;&t;: &quot;memory&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
+r_extern
+r_int
+r_int
+id|pgkern_mask
+suffix:semicolon
+multiline_comment|/*&n; * Do not check the PGE bit unnecesserily if this is a PPro+ kernel.&n; */
+macro_line|#ifdef CONFIG_X86_PGE
+DECL|macro|__flush_tlb_all
+macro_line|# define __flush_tlb_all() __flush_tlb_global()
+macro_line|#else
+DECL|macro|__flush_tlb_all
+macro_line|# define __flush_tlb_all()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (cpu_has_pge)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;__flush_tlb_global();&t;&t;&t;&t;&bslash;&n;&t;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;__flush_tlb();&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
+macro_line|#endif
 macro_line|#ifndef CONFIG_X86_INVLPG
 DECL|macro|__flush_tlb_one
 mdefine_line|#define __flush_tlb_one(addr) __flush_tlb()
@@ -126,13 +139,26 @@ DECL|macro|PAGE_COPY
 mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
 DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
+DECL|macro|__PAGE_KERNEL
+mdefine_line|#define __PAGE_KERNEL &bslash;&n;&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED)
+DECL|macro|__PAGE_KERNEL_NOCACHE
+mdefine_line|#define __PAGE_KERNEL_NOCACHE &bslash;&n;&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_PCD | _PAGE_ACCESSED)
+DECL|macro|__PAGE_KERNEL_RO
+mdefine_line|#define __PAGE_KERNEL_RO &bslash;&n;&t;(_PAGE_PRESENT | _PAGE_DIRTY | _PAGE_ACCESSED)
+macro_line|#ifdef CONFIG_X86_PGE
+DECL|macro|MAKE_GLOBAL
+macro_line|# define MAKE_GLOBAL(x) __pgprot((x) | _PAGE_GLOBAL)
+macro_line|#else
+DECL|macro|MAKE_GLOBAL
+macro_line|# define MAKE_GLOBAL(x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;pgprot_t __ret;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (cpu_has_pge)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = __pgprot((x) | _PAGE_GLOBAL);&t;&bslash;&n;&t;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = __pgprot(x);&t;&t;&t;&bslash;&n;&t;&t;__ret;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;})
+macro_line|#endif
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED)
-DECL|macro|PAGE_KERNEL_NOCACHE
-mdefine_line|#define PAGE_KERNEL_NOCACHE&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_PCD | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_KERNEL MAKE_GLOBAL(__PAGE_KERNEL)
 DECL|macro|PAGE_KERNEL_RO
-mdefine_line|#define PAGE_KERNEL_RO&t;__pgprot(_PAGE_PRESENT | _PAGE_DIRTY | _PAGE_ACCESSED)
-multiline_comment|/*&n; * The i386 can&squot;t do page protection for execute, and considers that the same are read.&n; * Also, write permissions imply read permissions. This is the closest we can get..&n; */
+mdefine_line|#define PAGE_KERNEL_RO MAKE_GLOBAL(__PAGE_KERNEL_RO)
+DECL|macro|PAGE_KERNEL_NOCACHE
+mdefine_line|#define PAGE_KERNEL_NOCACHE MAKE_GLOBAL(__PAGE_KERNEL_NOCACHE)
+multiline_comment|/*&n; * The i386 can&squot;t do page protection for execute, and considers that&n; * the same are read. Also, write permissions imply read permissions.&n; * This is the closest we can get..&n; */
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE
 DECL|macro|__P001

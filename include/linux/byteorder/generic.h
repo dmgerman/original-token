@@ -78,7 +78,7 @@ mdefine_line|#define cpu_to_be16s __cpu_to_be16s
 DECL|macro|be16_to_cpus
 mdefine_line|#define be16_to_cpus __be16_to_cpus
 macro_line|#endif
-multiline_comment|/*&n; * Handle ntohl and suches. These have various compatibility&n; * issues - like we want to give the prototype even though we&n; * also have a macro for them in case some strange program&n; * wants to take the address of the thing or something..&n; *&n; * Note that these traditionally return a &quot;long&quot;, even though&n; * long is often 64-bit these days.. Thus the casts.&n; *&n; * They have to be macros in order to do the constant folding&n; * correctly - if the argument passed into a inline function&n; * it is no longer constant according to gcc..&n; */
+multiline_comment|/*&n; * Handle ntohl and suches. These have various compatibility&n; * issues - like we want to give the prototype even though we&n; * also have a macro for them in case some strange program&n; * wants to take the address of the thing or something..&n; *&n; * Note that these used to return a &quot;long&quot; in libc5, even though&n; * long is often 64-bit these days.. Thus the casts.&n; *&n; * They have to be macros in order to do the constant folding&n; * correctly - if the argument passed into a inline function&n; * it is no longer constant according to gcc..&n; */
 DECL|macro|ntohl
 macro_line|#undef ntohl
 DECL|macro|ntohs
@@ -88,6 +88,24 @@ macro_line|#undef htonl
 DECL|macro|htons
 macro_line|#undef htons
 multiline_comment|/*&n; * Do the prototypes. Somebody might want to take the&n; * address or some such sick thing..&n; */
+macro_line|#if defined(__KERNEL__) || (defined (__GLIBC__) &amp;&amp; __GLIBC__ &gt;= 2)
+r_extern
+id|__u32
+id|ntohl
+c_func
+(paren
+id|__u32
+)paren
+suffix:semicolon
+r_extern
+id|__u32
+id|htonl
+c_func
+(paren
+id|__u32
+)paren
+suffix:semicolon
+macro_line|#else
 r_extern
 r_int
 r_int
@@ -104,7 +122,7 @@ r_extern
 r_int
 r_int
 r_int
-id|ntohs
+id|htonl
 c_func
 (paren
 r_int
@@ -112,11 +130,12 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 r_int
 r_int
-id|htonl
+id|ntohs
 c_func
 (paren
 r_int
@@ -145,12 +164,19 @@ DECL|macro|___ntohl
 mdefine_line|#define ___ntohl(x) __be32_to_cpu(x)
 DECL|macro|___ntohs
 mdefine_line|#define ___ntohs(x) __be16_to_cpu(x)
+macro_line|#if defined(__KERNEL__) || (defined (__GLIBC__) &amp;&amp; __GLIBC__ &gt;= 2)
+DECL|macro|htonl
+mdefine_line|#define htonl(x) ___htonl(x)
+DECL|macro|ntohl
+mdefine_line|#define ntohl(x) ___ntohl(x)
+macro_line|#else
 DECL|macro|htonl
 mdefine_line|#define htonl(x) ((unsigned long)___htonl(x))
-DECL|macro|htons
-mdefine_line|#define htons(x) ___htons(x)
 DECL|macro|ntohl
 mdefine_line|#define ntohl(x) ((unsigned long)___ntohl(x))
+macro_line|#endif
+DECL|macro|htons
+mdefine_line|#define htons(x) ___htons(x)
 DECL|macro|ntohs
 mdefine_line|#define ntohs(x) ___ntohs(x)
 macro_line|#endif /* OPTIMIZE */

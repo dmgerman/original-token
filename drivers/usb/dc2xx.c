@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * Copyright (C) 1999 by David Brownell &lt;david-b@pacbell.net&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * Copyright (C) 1999-2000 by David Brownell &lt;david-b@pacbell.net&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*&n; * USB driver for Kodak DC-2XX series digital still cameras&n; *&n; * The protocol here is the same as the one going over a serial line, but&n; * it uses USB for speed.  Set up /dev/kodak, get gphoto (www.gphoto.org),&n; * and have fun!&n; *&n; * This should also work for a number of other digital (non-Kodak) cameras,&n; * by adding the vendor and product IDs to the table below.&n; */
-multiline_comment|/*&n; * HISTORY&n; *&n; * 26 August, 1999 -- first release (0.1), works with my DC-240.&n; * &t;The DC-280 (2Mpixel) should also work, but isn&squot;t tested.&n; *&t;If you use gphoto, make sure you have the USB updates.&n; *&t;Lives in a 2.3.14 or so Linux kernel, in drivers/usb.&n; * 31 August, 1999 -- minor update to recognize DC-260 and handle&n; *&t;its endpoints being in a different order.  Note that as&n; *&t;of gPhoto 0.36pre, the USB updates are integrated.&n; * 12 Oct, 1999 -- handle DC-280 interface class (0xff not 0x0);&n; *&t;added timeouts to bulk_msg calls.  Minor updates, docs.&n; * 03 Nov, 1999 -- update for 2.3.25 kernel API changes.&n; *&n; * Thanks to:  the folk who&squot;ve provided USB product IDs, sent in&n; * patches, and shared their sucesses!&n; */
+multiline_comment|/*&n; * HISTORY&n; *&n; * 26 August, 1999 -- first release (0.1), works with my DC-240.&n; * &t;The DC-280 (2Mpixel) should also work, but isn&squot;t tested.&n; *&t;If you use gphoto, make sure you have the USB updates.&n; *&t;Lives in a 2.3.14 or so Linux kernel, in drivers/usb.&n; * 31 August, 1999 -- minor update to recognize DC-260 and handle&n; *&t;its endpoints being in a different order.  Note that as&n; *&t;of gPhoto 0.36pre, the USB updates are integrated.&n; * 12 Oct, 1999 -- handle DC-280 interface class (0xff not 0x0);&n; *&t;added timeouts to bulk_msg calls.  Minor updates, docs.&n; * 03 Nov, 1999 -- update for 2.3.25 kernel API changes.&n; * 08 Jan, 2000 .. multiple camera support&n; *&n; * Thanks to:  the folk who&squot;ve provided USB product IDs, sent in&n; * patches, and shared their sucesses!&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -14,10 +14,13 @@ macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 macro_line|#include &quot;usb.h&quot;
-multiline_comment|/* XXX need to get registered minor number, cdev 10/MINOR */
-multiline_comment|/* XXX or: cdev USB_MAJOR(180)/USB_CAMERA_MINOR */
-DECL|macro|USB_CAMERA_MINOR
-mdefine_line|#define&t;USB_CAMERA_MINOR&t;170
+multiline_comment|/* current USB framework handles max of 16 USB devices per driver */
+DECL|macro|MAX_CAMERAS
+mdefine_line|#define&t;MAX_CAMERAS&t;&t;8
+multiline_comment|/* USB char devs use USB_MAJOR and from USB_CAMERA_MINOR_BASE up */
+DECL|macro|USB_CAMERA_MINOR_BASE
+mdefine_line|#define&t;USB_CAMERA_MINOR_BASE&t;80
+singleline_comment|// XXX remove packet size limit, now that bulk transfers seem fixed
 multiline_comment|/* Application protocol limit is 0x8002; USB has disliked that limit! */
 DECL|macro|MAX_PACKET_SIZE
 mdefine_line|#define&t;MAX_PACKET_SIZE&t;&t;0x2000&t;&t;/* e.g. image downloading */
@@ -50,6 +53,7 @@ id|cameras
 )braket
 op_assign
 (brace
+multiline_comment|/* These have the same application level protocol */
 (brace
 l_int|0x040a
 comma
@@ -64,8 +68,14 @@ l_int|0x0130
 )brace
 comma
 singleline_comment|// Kodak DC-280
-multiline_comment|/* Kodak has several other USB-enabled devices, which (along with&n;&t; * models from other vendors) all use the Flashpoint &quot;Digita&n;&t; * OS&quot; and its wire protocol.  These use a different application&n;&t; * level protocol from the DC-240/280 models.  Note that Digita&n;&t; * isn&squot;t just for cameras -- Epson has a non-USB Digita printer.&n;&t; */
-singleline_comment|//  { 0x040a, 0x0100 },&t;&t;// Kodak DC-220
+multiline_comment|/* These have a different application level protocol which&n;&t; * is part of the Flashpoint &quot;DigitaOS&quot;.  That supports some&n;&t; * non-camera devices, and some non-Kodak cameras.&n;&t; */
+(brace
+l_int|0x040a
+comma
+l_int|0x0100
+)brace
+comma
+singleline_comment|// Kodak DC-220
 (brace
 l_int|0x040a
 comma
@@ -88,14 +98,13 @@ l_int|0x0112
 comma
 singleline_comment|// Kodak DC-290
 singleline_comment|//  { 0x03f0, 0xffff },&t;&t;// HP PhotoSmart C500
-multiline_comment|/* Other USB cameras may well work here too, so long as they&n;&t; * just stick to half duplex packet exchanges and bulk messages.&n;&t; * Some non-camera devices have also been shown to work.&n;&t; */
+multiline_comment|/* Other USB devices may well work here too, so long as they&n;&t; * just stick to half duplex bulk packet exchanges.&n;&t; */
 )brace
 suffix:semicolon
 DECL|struct|camera_state
 r_struct
 id|camera_state
 (brace
-multiline_comment|/* these fields valid (dev != 0) iff camera connected */
 DECL|member|dev
 r_struct
 id|usb_device
@@ -121,17 +130,17 @@ op_star
 id|info
 suffix:semicolon
 multiline_comment|/* DC-240, etc */
-multiline_comment|/* valid iff isOpen */
-DECL|member|isOpen
+DECL|member|subminor
 r_int
-id|isOpen
+id|subminor
 suffix:semicolon
-multiline_comment|/* device opened? */
+multiline_comment|/* which minor dev #? */
 DECL|member|isActive
 r_int
 id|isActive
 suffix:semicolon
 multiline_comment|/* I/O taking place? */
+multiline_comment|/* this is non-null iff the device is open */
 DECL|member|buf
 r_char
 op_star
@@ -146,12 +155,16 @@ suffix:semicolon
 multiline_comment|/* for timed waits */
 )brace
 suffix:semicolon
-multiline_comment|/* For now, we only support one camera at a time: there&squot;s one&n; * application-visible device (e.g. /dev/kodak) and the second&n; * (to Nth) camera detected on the bus is ignored.&n; */
-DECL|variable|static_camera_state
+multiline_comment|/* Support multiple cameras, possibly of different types.  */
+DECL|variable|minor_data
 r_static
 r_struct
 id|camera_state
-id|static_camera_state
+op_star
+id|minor_data
+(braket
+id|MAX_CAMERAS
+)braket
 suffix:semicolon
 DECL|function|camera_read
 r_static
@@ -183,6 +196,17 @@ suffix:semicolon
 r_int
 id|retries
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|MAX_PACKET_SIZE
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|camera
 op_assign
 (paren
@@ -195,13 +219,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|len
-OG
-id|MAX_PACKET_SIZE
+op_logical_neg
+id|camera-&gt;dev
 )paren
 r_return
 op_minus
-id|EINVAL
+id|ENODEV
 suffix:semicolon
 r_if
 c_cond
@@ -296,7 +319,6 @@ l_int|10
 )paren
 suffix:semicolon
 id|dbg
-c_func
 (paren
 l_string|&quot;read (%d) - 0x%x %ld&quot;
 comma
@@ -356,7 +378,6 @@ id|RETRY_TIMEOUT
 )paren
 suffix:semicolon
 id|dbg
-c_func
 (paren
 l_string|&quot;read (%d) - retry&quot;
 comma
@@ -406,6 +427,17 @@ id|bytes_written
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|MAX_PACKET_SIZE
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|camera
 op_assign
 (paren
@@ -418,13 +450,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|len
-OG
-id|MAX_PACKET_SIZE
+op_logical_neg
+id|camera-&gt;dev
 )paren
 r_return
 op_minus
-id|EINVAL
+id|ENODEV
 suffix:semicolon
 r_if
 c_cond
@@ -580,7 +611,6 @@ c_cond
 id|result
 )paren
 id|dbg
-c_func
 (paren
 l_string|&quot;write USB err - %x&quot;
 comma
@@ -695,9 +725,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|dbg
-c_func
 (paren
-l_string|&quot;write %d&quot;
+l_string|&quot;wrote %d&quot;
 comma
 id|bytes_written
 )paren
@@ -726,21 +755,46 @@ r_struct
 id|camera_state
 op_star
 id|camera
-op_assign
-op_amp
-id|static_camera_state
 suffix:semicolon
-multiline_comment|/* ignore camera-&gt;dev so it can be turned on &quot;late&quot; */
+r_int
+id|subminor
+suffix:semicolon
+id|subminor
+op_assign
+id|MINOR
+(paren
+id|inode-&gt;i_rdev
+)paren
+op_minus
+id|USB_CAMERA_MINOR_BASE
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|camera-&gt;isOpen
-op_increment
+id|subminor
+OL
+l_int|0
+op_logical_or
+id|subminor
+op_ge
+id|MAX_CAMERAS
+op_logical_or
+op_logical_neg
+(paren
+id|camera
+op_assign
+id|minor_data
+(braket
+id|subminor
+)braket
 )paren
+)paren
+(brace
 r_return
 op_minus
-id|EBUSY
+id|ENODEV
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -761,17 +815,12 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
-id|camera-&gt;isOpen
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
 id|dbg
-c_func
 (paren
 l_string|&quot;open&quot;
 )paren
@@ -826,14 +875,30 @@ id|kfree
 id|camera-&gt;buf
 )paren
 suffix:semicolon
-id|camera-&gt;isOpen
+multiline_comment|/* If camera was unplugged with open file ... */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|camera-&gt;dev
+)paren
+(brace
+id|minor_data
+(braket
+id|camera-&gt;subminor
+)braket
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
+id|kfree
+(paren
+id|camera
+)paren
+suffix:semicolon
+)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|dbg
-c_func
 (paren
 l_string|&quot;close&quot;
 )paren
@@ -851,57 +916,23 @@ id|file_operations
 id|usb_camera_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
+multiline_comment|/* Uses GCC initializer extension; simpler to maintain */
+id|read
+suffix:colon
 id|camera_read
 comma
+id|write
+suffix:colon
 id|camera_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|camera_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|camera_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* async */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
-)brace
-suffix:semicolon
-DECL|variable|usb_camera
-r_static
-r_struct
-id|miscdevice
-id|usb_camera
-op_assign
-(brace
-id|USB_CAMERA_MINOR
-comma
-l_string|&quot;USB camera (Kodak DC-2xx)&quot;
-comma
-op_amp
-id|usb_camera_fops
-singleline_comment|// next, prev
 )brace
 suffix:semicolon
 DECL|function|camera_probe
@@ -951,9 +982,6 @@ r_struct
 id|camera_state
 op_star
 id|camera
-op_assign
-op_amp
-id|static_camera_state
 suffix:semicolon
 multiline_comment|/* Is it a supported camera? */
 r_for
@@ -1048,7 +1076,6 @@ l_int|1
 )paren
 (brace
 id|dbg
-c_func
 (paren
 l_string|&quot;Bogus camera config info&quot;
 )paren
@@ -1098,7 +1125,6 @@ l_int|2
 )paren
 (brace
 id|dbg
-c_func
 (paren
 l_string|&quot;Bogus camera interface info&quot;
 )paren
@@ -1107,29 +1133,43 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* can only show one camera at a time through /dev ... */
+multiline_comment|/* select &quot;subminor&quot; number (part of a minor number) */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_CAMERAS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|camera-&gt;dev
+id|minor_data
+(braket
+id|i
+)braket
 )paren
-(brace
-id|camera-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|info
-c_func
-(paren
-l_string|&quot;USB Camera is connected&quot;
-)paren
+r_break
 suffix:semicolon
 )brace
-r_else
+r_if
+c_cond
+(paren
+id|i
+op_ge
+id|MAX_CAMERAS
+)paren
 (brace
 id|info
-c_func
 (paren
 l_string|&quot;Ignoring additional USB Camera&quot;
 )paren
@@ -1138,6 +1178,68 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/* allocate &amp; init camera state */
+id|camera
+op_assign
+id|minor_data
+(braket
+id|i
+)braket
+op_assign
+id|kmalloc
+(paren
+r_sizeof
+op_star
+id|camera
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|camera
+)paren
+(brace
+id|err
+(paren
+l_string|&quot;no memory!&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|camera-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|camera-&gt;subminor
+op_assign
+id|i
+suffix:semicolon
+id|camera-&gt;isActive
+op_assign
+l_int|0
+suffix:semicolon
+id|camera-&gt;buf
+op_assign
+l_int|NULL
+suffix:semicolon
+id|init_waitqueue_head
+(paren
+op_amp
+id|camera-&gt;wait
+)paren
+suffix:semicolon
+id|info
+(paren
+l_string|&quot;USB Camera #%d connected&quot;
+comma
+id|camera-&gt;subminor
+)paren
+suffix:semicolon
 multiline_comment|/* get input and output endpoints (either order) */
 id|endpoint
 op_assign
@@ -1259,9 +1361,8 @@ id|USB_ENDPOINT_XFER_BULK
 )paren
 (brace
 id|dbg
-c_func
 (paren
-l_string|&quot;Bogus camera endpoints&quot;
+l_string|&quot;Bogus endpoints&quot;
 )paren
 suffix:semicolon
 id|camera-&gt;dev
@@ -1289,7 +1390,6 @@ id|bConfigurationValue
 )paren
 (brace
 id|err
-c_func
 (paren
 l_string|&quot;Failed usb_set_configuration&quot;
 )paren
@@ -1338,28 +1438,42 @@ op_star
 )paren
 id|ptr
 suffix:semicolon
+r_int
+id|subminor
+op_assign
+id|camera-&gt;subminor
+suffix:semicolon
+multiline_comment|/* If camera&squot;s not opened, we can clean up right away.&n;&t; * Else apps see a disconnect on next I/O; the release cleans.&n;&t; */
 r_if
 c_cond
 (paren
-id|camera-&gt;dev
-op_ne
-id|dev
+op_logical_neg
+id|camera-&gt;buf
 )paren
-r_return
-suffix:semicolon
-multiline_comment|/* Currently not reflecting this up to userland; at one point&n;&t; * it got called on bus reconfig, which we clearly don&squot;t want.&n;&t; * A good consequence is the ability to remove camera for&n;&t; * a while without apps needing to do much more than ignore&n;&t; * some particular error returns.  On the bad side, if one&n;&t; * camera is swapped for another one, we won&squot;t be telling.&n;&t; */
-id|camera-&gt;info
+(brace
+id|minor_data
+(braket
+id|subminor
+)braket
 op_assign
 l_int|NULL
 suffix:semicolon
+id|kfree
+(paren
+id|camera
+)paren
+suffix:semicolon
+)brace
+r_else
 id|camera-&gt;dev
 op_assign
 l_int|NULL
 suffix:semicolon
 id|info
-c_func
 (paren
-l_string|&quot;USB Camera disconnected&quot;
+l_string|&quot;USB Camera #%d disconnected&quot;
+comma
+id|subminor
 )paren
 suffix:semicolon
 )brace
@@ -1383,51 +1497,21 @@ comma
 l_int|NULL
 )brace
 comma
-l_int|NULL
+op_amp
+id|usb_camera_fops
 comma
-multiline_comment|/* &amp;usb_camera_fops, */
-l_int|0
-multiline_comment|/* USB_CAMERA_MINOR */
+id|USB_CAMERA_MINOR_BASE
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-r_static
-id|__init
-macro_line|#endif
 DECL|function|usb_dc2xx_init
 r_int
+id|__init
 id|usb_dc2xx_init
 c_func
 (paren
 r_void
 )paren
 (brace
-r_struct
-id|camera_state
-op_star
-id|camera
-op_assign
-op_amp
-id|static_camera_state
-suffix:semicolon
-id|camera-&gt;dev
-op_assign
-l_int|NULL
-suffix:semicolon
-id|camera-&gt;isOpen
-op_assign
-l_int|0
-suffix:semicolon
-id|camera-&gt;isActive
-op_assign
-l_int|0
-suffix:semicolon
-id|init_waitqueue_head
-(paren
-op_amp
-id|camera-&gt;wait
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1443,22 +1527,13 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-id|misc_register
-(paren
-op_amp
-id|usb_camera
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-r_static
-id|__exit
-macro_line|#endif
 DECL|function|usb_dc2xx_cleanup
 r_void
+id|__exit
 id|usb_dc2xx_cleanup
 c_func
 (paren
@@ -1471,14 +1546,7 @@ op_amp
 id|camera_driver
 )paren
 suffix:semicolon
-id|misc_deregister
-(paren
-op_amp
-id|usb_camera
-)paren
-suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1503,5 +1571,4 @@ id|module_exit
 id|usb_dc2xx_cleanup
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* MODULE */
 eof

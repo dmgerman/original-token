@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 007&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 007&t;Tomi(OH2BNS)&t;Created this file.&n; *&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 007&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 007&t;Tomi(OH2BNS)&t;Created this file.&n; *                                      Small change in nr_loopback_queue().&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/types.h&gt;
@@ -87,30 +87,44 @@ id|sk_buff
 op_star
 id|skbn
 suffix:semicolon
-id|skbn
-op_assign
-id|skb_clone
-c_func
-(paren
-id|skb
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|skbn
+op_assign
+id|alloc_skb
+c_func
+(paren
+id|skb-&gt;len
+comma
+id|GFP_ATOMIC
+)paren
+)paren
 op_ne
 l_int|NULL
 )paren
 (brace
+id|memcpy
+c_func
+(paren
+id|skb_put
+c_func
+(paren
+id|skbn
+comma
+id|skb-&gt;len
+)paren
+comma
+id|skb-&gt;data
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+id|skbn-&gt;h.raw
+op_assign
+id|skbn-&gt;data
+suffix:semicolon
 id|skb_queue_tail
 c_func
 (paren
@@ -135,6 +149,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

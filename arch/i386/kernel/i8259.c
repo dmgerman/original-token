@@ -106,8 +106,8 @@ DECL|macro|BUILD_16_IRQS
 macro_line|#undef BUILD_16_IRQS
 DECL|macro|BI
 macro_line|#undef BI
-macro_line|#ifdef __SMP__
 multiline_comment|/*&n; * The following vectors are part of the Linux architecture, there&n; * is no hardware IRQ pin equivalent for them, they are triggered&n; * through the ICC by us (IPIs)&n; */
+macro_line|#ifdef CONFIG_SMP
 id|BUILD_SMP_INTERRUPT
 c_func
 (paren
@@ -129,12 +129,15 @@ id|call_function_interrupt
 comma
 id|CALL_FUNCTION_VECTOR
 )paren
-id|BUILD_SMP_INTERRUPT
+macro_line|#endif
+multiline_comment|/*&n; * every pentium local APIC has two &squot;local interrupts&squot;, with a&n; * soft-definable vector attached to both interrupts, one of&n; * which is a timer interrupt, the other one is error counter&n; * overflow. Linux uses the local APIC timer interrupt to get&n; * a much simpler SMP time architecture:&n; */
+macro_line|#ifdef CONFIG_X86_LOCAL_APIC
+id|BUILD_SMP_TIMER_INTERRUPT
 c_func
 (paren
-id|spurious_interrupt
+id|apic_timer_interrupt
 comma
-id|SPURIOUS_APIC_VECTOR
+id|LOCAL_TIMER_VECTOR
 )paren
 id|BUILD_SMP_INTERRUPT
 c_func
@@ -143,13 +146,12 @@ id|error_interrupt
 comma
 id|ERROR_APIC_VECTOR
 )paren
-multiline_comment|/*&n; * every pentium local APIC has two &squot;local interrupts&squot;, with a&n; * soft-definable vector attached to both interrupts, one of&n; * which is a timer interrupt, the other one is error counter&n; * overflow. Linux uses the local APIC timer interrupt to get&n; * a much simpler SMP time architecture:&n; */
-id|BUILD_SMP_TIMER_INTERRUPT
+id|BUILD_SMP_INTERRUPT
 c_func
 (paren
-id|apic_timer_interrupt
+id|spurious_interrupt
 comma
-id|LOCAL_TIMER_VECTOR
+id|SPURIOUS_APIC_VECTOR
 )paren
 macro_line|#endif
 DECL|macro|IRQ
@@ -1240,7 +1242,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__&t;
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/*&n;&t; * IRQ0 must be given a fixed assignment and initialized,&n;&t; * because it&squot;s used before the IO-APIC is set up.&n;&t; */
 id|set_intr_gate
 c_func
@@ -1271,15 +1273,6 @@ comma
 id|invalidate_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* self generated IPI for local APIC timer */
-id|set_intr_gate
-c_func
-(paren
-id|LOCAL_TIMER_VECTOR
-comma
-id|apic_timer_interrupt
-)paren
-suffix:semicolon
 multiline_comment|/* IPI for generic function call */
 id|set_intr_gate
 c_func
@@ -1287,6 +1280,17 @@ c_func
 id|CALL_FUNCTION_VECTOR
 comma
 id|call_function_interrupt
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+macro_line|#ifdef CONFIG_X86_LOCAL_APIC
+multiline_comment|/* self generated IPI for local APIC timer */
+id|set_intr_gate
+c_func
+(paren
+id|LOCAL_TIMER_VECTOR
+comma
+id|apic_timer_interrupt
 )paren
 suffix:semicolon
 multiline_comment|/* IPI vectors for APIC spurious and error interrupts */
@@ -1306,7 +1310,7 @@ comma
 id|error_interrupt
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/*&n;&t; * Set the clock to HZ Hz, we already have a valid&n;&t; * vector now:&n;&t; */
 id|outb_p
 c_func

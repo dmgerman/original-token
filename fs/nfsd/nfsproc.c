@@ -515,7 +515,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;oversized read request from %08lx:%d (%d bytes)&bslash;n&quot;
+l_string|&quot;oversized read request from %08x:%d (%d bytes)&bslash;n&quot;
 comma
 id|ntohl
 c_func

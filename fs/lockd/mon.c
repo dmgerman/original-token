@@ -464,7 +464,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nsm: xdr_encode_mon(%08lx, %ld, %ld, %ld)&bslash;n&quot;
+l_string|&quot;nsm: xdr_encode_mon(%08x, %d, %d, %d)&bslash;n&quot;
 comma
 id|htonl
 c_func

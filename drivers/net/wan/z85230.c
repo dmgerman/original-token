@@ -1123,7 +1123,7 @@ c_cond
 (paren
 id|altered
 op_amp
-id|DCD
+id|chan-&gt;dcdcheck
 )paren
 (brace
 r_if
@@ -1131,7 +1131,7 @@ c_cond
 (paren
 id|status
 op_amp
-id|DCD
+id|chan-&gt;dcdcheck
 )paren
 (brace
 id|printk
@@ -1162,6 +1162,20 @@ r_if
 c_cond
 (paren
 id|chan-&gt;netdevice
+op_logical_and
+(paren
+(paren
+id|chan-&gt;netdevice-&gt;type
+op_eq
+id|ARPHRD_HDLC
+)paren
+op_logical_or
+(paren
+id|chan-&gt;netdevice-&gt;type
+op_eq
+id|ARPHRD_PPP
+)paren
+)paren
 )paren
 (brace
 id|sppp_reopen
@@ -1445,7 +1459,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Transmit underrun */
 id|disable_dma
 c_func
 (paren
@@ -1481,7 +1494,7 @@ c_cond
 (paren
 id|altered
 op_amp
-id|DCD
+id|chan-&gt;dcdcheck
 )paren
 (brace
 r_if
@@ -1489,7 +1502,7 @@ c_cond
 (paren
 id|status
 op_amp
-id|DCD
+id|chan-&gt;dcdcheck
 )paren
 (brace
 id|printk
@@ -1520,6 +1533,20 @@ r_if
 c_cond
 (paren
 id|chan-&gt;netdevice
+op_logical_and
+(paren
+(paren
+id|chan-&gt;netdevice-&gt;type
+op_eq
+id|ARPHRD_HDLC
+)paren
+op_logical_or
+(paren
+id|chan-&gt;netdevice-&gt;type
+op_eq
+id|ARPHRD_PPP
+)paren
+)paren
 )paren
 (brace
 id|sppp_reopen
@@ -2392,6 +2419,10 @@ id|c-&gt;rx_buf
 l_int|0
 )braket
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|get_free_page
 c_func
 (paren
@@ -2435,6 +2466,10 @@ id|c-&gt;tx_dma_buf
 l_int|0
 )braket
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|get_free_page
 c_func
 (paren
@@ -2457,6 +2492,10 @@ l_int|NULL
 id|free_page
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|c-&gt;rx_buf
 (braket
 l_int|0
@@ -2930,6 +2969,10 @@ l_int|0
 id|free_page
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|c-&gt;rx_buf
 (braket
 l_int|0
@@ -2956,6 +2999,10 @@ l_int|0
 id|free_page
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|c-&gt;tx_dma_buf
 (braket
 l_int|0
@@ -3103,6 +3150,10 @@ id|c-&gt;tx_dma_buf
 l_int|0
 )braket
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|get_free_page
 c_func
 (paren
@@ -3463,6 +3514,10 @@ l_int|0
 id|free_page
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|c-&gt;tx_dma_buf
 (braket
 l_int|0
@@ -3602,6 +3657,14 @@ id|dev-&gt;chanB.irqs
 op_assign
 op_amp
 id|z8530_nop
+suffix:semicolon
+id|dev-&gt;chanA.dcdcheck
+op_assign
+id|DCD
+suffix:semicolon
+id|dev-&gt;chanB.dcdcheck
+op_assign
+id|DCD
 suffix:semicolon
 multiline_comment|/* Reset the chip */
 id|write_zsreg
@@ -3985,9 +4048,14 @@ l_int|0
 suffix:semicolon
 id|c-&gt;status
 op_assign
-l_int|0
+id|read_zsreg
+c_func
+(paren
+id|c
+comma
+id|R0
+)paren
 suffix:semicolon
-multiline_comment|/* Fixme - check DCD now */
 id|c-&gt;sync
 op_assign
 l_int|1

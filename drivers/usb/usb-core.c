@@ -32,20 +32,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_int
-id|proc_usb_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|proc_usb_cleanup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * USB device drivers&n; */
 r_int
 id|usb_acm_init
@@ -145,6 +131,13 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+id|graphire_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * HCI drivers&n; */
 r_int
 id|uhci_init
@@ -175,12 +168,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_USB_PROC
-id|proc_usb_cleanup
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|usbdevfs_cleanup
 c_func
 (paren
@@ -214,13 +201,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_USB_PROC
-id|proc_usb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|usbdevfs_init
 c_func
 (paren
@@ -302,7 +282,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_USB_HID) || defined(CONFIG_USB_MOUSE) || defined(CONFIG_USB_KBD)
+macro_line|#if defined(CONFIG_USB_HID) || defined(CONFIG_USB_MOUSE) || defined(CONFIG_USB_KBD) || defined(CONFIG_USB_GRAPHIRE)
 id|input_init
 c_func
 (paren
@@ -325,6 +305,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_KBD
 id|usb_kbd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_GRAPHIRE
+id|graphire_init
 c_func
 (paren
 )paren

@@ -337,7 +337,7 @@ id|nl
 )paren
 suffix:semicolon
 DECL|macro|IO_SPACE_LIMIT
-mdefine_line|#define IO_SPACE_LIMIT 0xffff
+mdefine_line|#define IO_SPACE_LIMIT ~0
 DECL|macro|memset_io
 mdefine_line|#define memset_io(a,b,c)&t;memset((a),(b),(c))
 DECL|macro|memcpy_fromio

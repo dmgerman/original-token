@@ -1902,6 +1902,14 @@ OL
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
 id|printk
 c_func
 (paren
@@ -1957,6 +1965,14 @@ OL
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
 id|printk
 c_func
 (paren
@@ -1987,6 +2003,14 @@ op_ge
 l_int|1024
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
 id|printk
 c_func
 (paren
@@ -3420,7 +3444,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: svc_create_socket(%s, %d, %08lx:%d)&bslash;n&quot;
+l_string|&quot;svc: svc_create_socket(%s, %d, %08x:%d)&bslash;n&quot;
 comma
 id|serv-&gt;sv_program-&gt;pg_name
 comma

@@ -146,7 +146,7 @@ l_int|0
 suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|macro|idle_task
-mdefine_line|#define idle_task(cpu) (init_tasks[cpu_number_map[(cpu)]])
+mdefine_line|#define idle_task(cpu) (init_tasks[cpu_number_map(cpu)])
 DECL|macro|can_schedule
 mdefine_line|#define can_schedule(p)&t;(!(p)-&gt;has_cpu)
 macro_line|#else
@@ -3835,7 +3835,7 @@ multiline_comment|/*&n;&t; * We have to do a little magic to get the first&n;&t;
 r_int
 id|cpu
 op_assign
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren

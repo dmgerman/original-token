@@ -26,6 +26,7 @@ macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;asm/e820.h&gt;
+macro_line|#include &lt;asm/apic.h&gt;
 DECL|variable|highstart_pfn
 DECL|variable|highend_pfn
 r_int
@@ -742,21 +743,6 @@ id|kmap_prot
 op_assign
 id|PAGE_KERNEL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_PGE
-)paren
-id|pgprot_val
-c_func
-(paren
-id|kmap_prot
-)paren
-op_or_assign
-id|_PAGE_GLOBAL
-suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|show_mem
@@ -1053,24 +1039,23 @@ comma
 id|vaddr
 )paren
 suffix:semicolon
-id|prot
-op_assign
-id|flags
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_PGE
-)paren
 id|pgprot_val
 c_func
 (paren
 id|prot
 )paren
-op_or_assign
-id|_PAGE_GLOBAL
+op_assign
+id|pgprot_val
+c_func
+(paren
+id|PAGE_KERNEL
+)paren
+op_or
+id|pgprot_val
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|set_pte
 c_func
@@ -1086,7 +1071,7 @@ id|prot
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * It&squot;s enough to flush this one mapping.&n;&t; */
+multiline_comment|/*&n;&t; * It&squot;s enough to flush this one mapping.&n;&t; * (PGE mappings get flushed as well)&n;&t; */
 id|__flush_tlb_one
 c_func
 (paren
@@ -1912,7 +1897,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-id|flush_tlb_all_kernel
+id|flush_tlb_all
 c_func
 (paren
 )paren
@@ -1962,13 +1947,13 @@ id|X86_CR4_PAE
 )paren
 suffix:semicolon
 macro_line|#endif
-id|__flush_tlb
+id|__flush_tlb_all
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
-id|init_smp_mappings
+macro_line|#ifdef CONFIG_X86_LOCAL_APIC
+id|init_apic_mappings
 c_func
 (paren
 )paren

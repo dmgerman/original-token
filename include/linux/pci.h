@@ -1734,6 +1734,7 @@ op_star
 id|name
 suffix:semicolon
 DECL|member|id_table
+r_const
 r_struct
 id|pci_device_id
 op_star
@@ -1752,6 +1753,7 @@ id|pci_dev
 op_star
 id|dev
 comma
+r_const
 r_struct
 id|pci_device_id
 op_star
@@ -1772,7 +1774,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Device removed */
+multiline_comment|/* Device removed (NULL if not a hot-plug capable driver) */
 DECL|member|suspend
 r_void
 (paren
@@ -1803,7 +1805,7 @@ suffix:semicolon
 multiline_comment|/* Device woken up */
 )brace
 suffix:semicolon
-r_void
+r_int
 id|pci_register_driver
 c_func
 (paren
@@ -1854,12 +1856,14 @@ id|pci_dev
 op_star
 )paren
 suffix:semicolon
+r_const
 r_struct
 id|pci_device_id
 op_star
 id|pci_match_device
 c_func
 (paren
+r_const
 r_struct
 id|pci_device_id
 op_star

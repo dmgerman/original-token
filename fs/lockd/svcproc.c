@@ -115,7 +115,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;lockd: unauthenticated request from (%08lx:%d)&bslash;n&quot;
+l_string|&quot;lockd: unauthenticated request from (%08x:%d)&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -376,7 +376,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: TEST          status %ld&bslash;n&quot;
+l_string|&quot;lockd: TEST          status %d&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -527,7 +527,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: LOCK          status %ld&bslash;n&quot;
+l_string|&quot;lockd: LOCK          status %d&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -649,7 +649,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: CANCEL        status %ld&bslash;n&quot;
+l_string|&quot;lockd: CANCEL        status %d&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -772,7 +772,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: UNLOCK        status %ld&bslash;n&quot;
+l_string|&quot;lockd: UNLOCK        status %d&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -842,7 +842,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: GRANTED       status %ld&bslash;n&quot;
+l_string|&quot;lockd: GRANTED       status %d&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -1313,7 +1313,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: SHARE         status %ld&bslash;n&quot;
+l_string|&quot;lockd: SHARE         status %d&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -1437,7 +1437,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: UNSHARE       status %ld&bslash;n&quot;
+l_string|&quot;lockd: UNSHARE       status %d&bslash;n&quot;
 comma
 id|ntohl
 c_func
@@ -1634,7 +1634,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;lockd: rejected NSM callback from %08lx:%d&bslash;n&quot;
+l_string|&quot;lockd: rejected NSM callback from %08x:%d&bslash;n&quot;
 comma
 id|ntohl
 c_func

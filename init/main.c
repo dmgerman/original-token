@@ -48,6 +48,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_IRDA
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_X86_IO_APIC
+macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Versions of gcc older than that listed below may actually compile&n; * and link okay, but the end product can have subtle run time bugs.&n; * To avoid associated bogus bug reports, we flatly refuse to compile&n; * with a gcc that is known to be too old from the very beginning.&n; */
 macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 6)
 macro_line|#error sorry, your GCC is too old. It builds incorrect kernels.
@@ -1673,8 +1676,27 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#ifndef __SMP__
+macro_line|#ifdef CONFIG_X86_IO_APIC
+DECL|function|smp_init
+r_static
+r_void
+id|__init
+id|smp_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|IO_APIC_init_uniprocessor
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|macro|smp_init
 mdefine_line|#define smp_init()&t;do { } while (0)
+macro_line|#endif
 macro_line|#else
 multiline_comment|/* Called by boot processor to activate the rest. */
 DECL|function|smp_init

@@ -544,12 +544,31 @@ l_int|32
 )braket
 suffix:semicolon
 multiline_comment|/* Receive buffer */
+DECL|member|bufout
+r_char
+id|bufout
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* Transmit buffer */
+DECL|member|dr
+id|devrequest
+id|dr
+suffix:semicolon
+multiline_comment|/* Startup packet */
 DECL|member|urb
 r_struct
 id|urb
 id|urb
 suffix:semicolon
 multiline_comment|/* USB URB structure */
+DECL|member|urbout
+r_struct
+id|urb
+id|urbout
+suffix:semicolon
+multiline_comment|/* Output URB */
 DECL|member|input
 r_struct
 id|input_dev

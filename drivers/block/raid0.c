@@ -810,6 +810,30 @@ op_div
 id|data-&gt;smallest-&gt;size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hash
+op_minus
+id|data-&gt;hash_table
+OG
+id|data-&gt;nr_zones
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;raid0_map: invalid block %ul&bslash;n&quot;
+comma
+id|block
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* Sanity check */
 r_if
 c_cond

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
@@ -258,8 +259,8 @@ suffix:semicolon
 )brace
 DECL|function|handle_wp_test
 r_static
-r_inline
 r_void
+id|__init
 id|handle_wp_test
 (paren
 r_void
@@ -326,7 +327,7 @@ comma
 id|PAGE_KERNEL
 )paren
 suffix:semicolon
-id|local_flush_tlb
+id|__flush_tlb_all
 c_func
 (paren
 )paren

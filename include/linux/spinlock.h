@@ -75,7 +75,7 @@ mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
 mdefine_line|#define spin_lock(lock)&t;&t;(void)(lock) /* Not &quot;unused variable&quot;. */
 DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock)&t;(1)
+mdefine_line|#define spin_trylock(lock)&t;({1; })
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lock)&t;do { } while(0)
 DECL|macro|spin_unlock

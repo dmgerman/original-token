@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * printer.c  Version 0.1&n; *&n; * Copyright (c) 1999 Michael Gee &t;&lt;michael@linuxspecific.com&gt;&n; * Copyright (c) 1999 Pavel Machek      &lt;pavel@suse.cz&gt;&n; * Copyright (c) 2000 Vojtech Pavlik    &lt;vojtech@suse.cz&gt;&n; *&n; * USB Printer Device Class driver for USB printers and printer cables&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.1 - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.2 - some more cleanups&n; */
+multiline_comment|/*&n; * printer.c  Version 0.3&n; *&n; * Copyright (c) 1999 Michael Gee &t;&lt;michael@linuxspecific.com&gt;&n; * Copyright (c) 1999 Pavel Machek      &lt;pavel@suse.cz&gt;&n; * Copyright (c) 2000 Vojtech Pavlik    &lt;vojtech@suse.cz&gt;&n; *&n; * USB Printer Device Class driver for USB printers and printer cables&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.1 - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.2 - some more cleanups&n; *&t;v0.3 - cleaner again, waitqueue fixes&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -25,7 +25,7 @@ mdefine_line|#define USBLP_MINORS&t;&t;16
 DECL|macro|USBLP_MINOR_BASE
 mdefine_line|#define USBLP_MINOR_BASE&t;0
 DECL|macro|USBLP_WRITE_TIMEOUT
-mdefine_line|#define USBLP_WRITE_TIMEOUT&t;(60*HZ)&t;&t;&t;&t;/* 60 seconds */
+mdefine_line|#define USBLP_WRITE_TIMEOUT&t;(60*HZ)&t;&t;&t;/* 60 seconds */
 DECL|struct|usblp
 r_struct
 id|usblp
@@ -46,15 +46,9 @@ comma
 id|writeurb
 suffix:semicolon
 multiline_comment|/* The urbs */
-DECL|member|readwait
-DECL|member|writewait
-DECL|member|pollwait
+DECL|member|wait
 id|wait_queue_head_t
-id|readwait
-comma
-id|writewait
-comma
-id|pollwait
+id|wait
 suffix:semicolon
 multiline_comment|/* Zzzzz ... */
 DECL|member|readcount
@@ -68,7 +62,6 @@ id|ifnum
 suffix:semicolon
 multiline_comment|/* Interface number */
 DECL|member|minor
-r_int
 r_int
 id|minor
 suffix:semicolon
@@ -262,41 +255,11 @@ comma
 id|urb-&gt;status
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|urb
-op_eq
-op_amp
-id|usblp-&gt;writeurb
-)paren
 id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|usblp-&gt;writewait
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|urb
-op_eq
-op_amp
-id|usblp-&gt;readurb
-)paren
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|usblp-&gt;readwait
-)paren
-suffix:semicolon
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|usblp-&gt;pollwait
+id|usblp-&gt;wait
 )paren
 suffix:semicolon
 )brace
@@ -357,9 +320,10 @@ op_amp
 id|LP_POUTPA
 )paren
 (brace
-id|info
+id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;usblp%d: out of paper&quot;
 comma
 id|usblp-&gt;minor
@@ -379,9 +343,10 @@ op_amp
 id|LP_PSELECD
 )paren
 (brace
-id|info
+id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;usblp%d: off-line&quot;
 comma
 id|usblp-&gt;minor
@@ -401,9 +366,10 @@ op_amp
 id|LP_PERRORP
 )paren
 (brace
-id|info
+id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;usblp%d: on fire&quot;
 comma
 id|usblp-&gt;minor
@@ -651,7 +617,7 @@ c_func
 id|file
 comma
 op_amp
-id|usblp-&gt;pollwait
+id|usblp-&gt;wait
 comma
 id|wait
 )paren
@@ -801,7 +767,7 @@ id|interruptible_sleep_on_timeout
 c_func
 (paren
 op_amp
-id|usblp-&gt;writewait
+id|usblp-&gt;wait
 comma
 id|timeout
 )paren
@@ -824,10 +790,11 @@ op_amp
 id|usblp-&gt;writeurb
 )paren
 suffix:semicolon
-id|err
+id|printk
 c_func
 (paren
-l_string|&quot;usblp%d: timed out&quot;
+id|KERN_ERR
+l_string|&quot;usblp%d: timed out&bslash;n&quot;
 comma
 id|usblp-&gt;minor
 )paren
@@ -874,10 +841,11 @@ id|usblp
 )paren
 )paren
 (brace
-id|err
+id|printk
 c_func
 (paren
-l_string|&quot;usblp%d: error %d writing to printer&quot;
+id|KERN_ERR
+l_string|&quot;usblp%d: error %d writing to printer&bslash;n&quot;
 comma
 id|usblp-&gt;minor
 comma
@@ -1046,7 +1014,7 @@ id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|usblp-&gt;readwait
+id|usblp-&gt;wait
 )paren
 suffix:semicolon
 )brace
@@ -1067,10 +1035,11 @@ c_cond
 id|usblp-&gt;readurb.status
 )paren
 (brace
-id|err
+id|printk
 c_func
 (paren
-l_string|&quot;usblp%d: error %d reading from printer&quot;
+id|KERN_ERR
+l_string|&quot;usblp%d: error %d reading from printer&bslash;n&quot;
 comma
 id|usblp-&gt;minor
 comma
@@ -1520,21 +1489,7 @@ id|init_waitqueue_head
 c_func
 (paren
 op_amp
-id|usblp-&gt;writewait
-)paren
-suffix:semicolon
-id|init_waitqueue_head
-c_func
-(paren
-op_amp
-id|usblp-&gt;readwait
-)paren
-suffix:semicolon
-id|init_waitqueue_head
-c_func
-(paren
-op_amp
-id|usblp-&gt;pollwait
+id|usblp-&gt;wait
 )paren
 suffix:semicolon
 r_if

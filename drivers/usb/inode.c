@@ -1,14 +1,14 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;inode.c  --  Inode/Dentry functions for the USB device file system.&n; *&n; *&t;Copyright (C) 2000&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *   0.1  04.01.2000  Created&n; *&n; *  $Id: ezusb.c,v 1.22 1999/12/03 15:06:28 tom Exp $&n; */
+multiline_comment|/*&n; *&t;inode.c  --  Inode/Dentry functions for the USB device file system.&n; *&n; *&t;Copyright (C) 2000&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  $Id: inode.c,v 1.3 2000/01/11 13:58:25 tom Exp $&n; *&n; *  History:&n; *   0.1  04.01.2000  Created&n; */
 multiline_comment|/*****************************************************************************/
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usbdevice_fs.h&quot;
@@ -3612,6 +3612,15 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
+DECL|variable|usbdir
+r_static
+r_struct
+id|proc_dir_entry
+op_star
+id|usbdir
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|usbdevfs_init
 r_int
 id|__init
@@ -3690,6 +3699,17 @@ op_amp
 id|usbdevfs_driver
 )paren
 suffix:semicolon
+multiline_comment|/* create mount point for usbdevfs */
+id|usbdir
+op_assign
+id|proc_mkdir
+c_func
+(paren
+l_string|&quot;usb&quot;
+comma
+id|proc_bus
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -3715,6 +3735,19 @@ c_func
 (paren
 op_amp
 id|usbdevice_fs_type
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|usbdir
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;usb&quot;
+comma
+id|proc_bus
 )paren
 suffix:semicolon
 )brace

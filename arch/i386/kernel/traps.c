@@ -1532,7 +1532,7 @@ id|nmi_counter
 id|NR_CPUS
 )braket
 suffix:semicolon
-macro_line|#if CONFIG_SMP
+macro_line|#if CONFIG_X86_IO_APIC
 DECL|variable|nmi_watchdog
 r_int
 id|nmi_watchdog
@@ -1676,11 +1676,21 @@ op_amp
 id|nmi_print_lock
 )paren
 suffix:semicolon
-id|console_lock.lock
-op_assign
-l_int|0
+multiline_comment|/*&n;&t;&t;&t; * We are in trouble anyway, lets at least try&n;&t;&t;&t; * to get a message out.&n;&t;&t;&t; */
+id|spin_trylock
+c_func
+(paren
+op_amp
+id|console_lock
+)paren
 suffix:semicolon
-singleline_comment|// we are in trouble anyway
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|console_lock
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1787,7 +1797,7 @@ l_int|0xc0
 )paren
 )paren
 (brace
-macro_line|#if CONFIG_SMP
+macro_line|#if CONFIG_X86_IO_APIC
 multiline_comment|/*&n;&t;&t; * Ok, so this is none of the documented NMI sources,&n;&t;&t; * so it must be the NMI watchdog.&n;&t;&t; */
 r_if
 c_cond
@@ -2384,7 +2394,8 @@ comma
 id|PAGE_KERNEL_RO
 )paren
 suffix:semicolon
-id|local_flush_tlb
+multiline_comment|/*&n;&t; * Not that any PGE-capable kernel should have the f00f bug ...&n;&t; */
+id|__flush_tlb_all
 c_func
 (paren
 )paren
@@ -3210,14 +3221,12 @@ comma
 id|lcall27
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * on SMP we do not yet know which CPU is on which TSS,&n;&t; * so we delay this until smp_init(). (the CPU is already&n;&t; * in a reasonable state, otherwise we wouldnt have gotten so far :)&n;&t; */
-macro_line|#ifndef __SMP__
+multiline_comment|/*&n;&t; * Should be a barrier for any external CPU state.&n;&t; */
 id|cpu_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_X86_VISWS_APIC
 id|superio_init
 c_func

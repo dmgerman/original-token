@@ -330,7 +330,7 @@ l_int|0
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: open failed (nfserr %ld)&bslash;n&quot;
+l_string|&quot;lockd: open failed (nfserr %d)&bslash;n&quot;
 comma
 id|ntohl
 c_func

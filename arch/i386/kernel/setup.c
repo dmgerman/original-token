@@ -32,6 +32,7 @@ macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/e820.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/mpspec.h&gt;
 multiline_comment|/*&n; * Machine setup..&n; */
 DECL|variable|ignore_irq13
 r_char
@@ -67,11 +68,10 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|mmu_cr4_features
 r_int
 r_int
 id|mmu_cr4_features
-id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
@@ -2435,7 +2435,7 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/*&n;&t; * But first pinch a few for the stack/trampoline stuff&n;&t; * FIXME: Don&squot;t need the extra page at 4K, but need to fix&n;&t; * trampoline before removing it. (see the GDT stuff)&n;&t; */
 id|reserve_bootmem
 c_func
@@ -2452,7 +2452,7 @@ c_func
 suffix:semicolon
 multiline_comment|/* AP processor realmode stacks in low memory*/
 macro_line|#endif
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_X86_IO_APIC
 multiline_comment|/*&n;&t; *&t;Save possible boot-time SMP configuration:&n;&t; */
 id|init_smp_config
 c_func
@@ -5926,7 +5926,7 @@ id|c
 op_increment
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -6462,9 +6462,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_PSE
+id|cpu_has_pse
 )paren
 id|clear_in_cr4
 c_func

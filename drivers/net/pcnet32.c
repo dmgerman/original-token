@@ -2233,6 +2233,8 @@ id|mii
 op_assign
 l_int|1
 suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk

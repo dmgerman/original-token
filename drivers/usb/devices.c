@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * devices.c&n; * (C) Copyright 1999 Randy Dunlap.&n; * (C) Copyright 1999,2000 Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;. (proc file per device)&n; * (C) Copyright 1999 Deti Fliegl (new USB architecture)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; *&n; *************************************************************&n; *&n; * &lt;mountpoint&gt;/devices contains USB topology, device, config, class,&n; * interface, &amp; endpoint data.&n; *&n; * I considered using /proc/bus/usb/devices/device# for each device&n; * as it is attached or detached, but I didn&squot;t like this for some&n; * reason -- maybe it&squot;s just too deep of a directory structure.&n; * I also don&squot;t like looking in multiple places to gather and view&n; * the data.  Having only one file for ./devices also prevents race&n; * conditions that could arise if a program was reading device info&n; * for devices that are being removed (unplugged).  (That is, the&n; * program may find a directory for devnum_12 then try to open it,&n; * but it was just unplugged, so the directory is now deleted.&n; * But programs would just have to be prepared for situations like&n; * this in any plug-and-play environment.)&n; *&n; * 1999-12-16: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *   Converted the whole proc stuff to real&n; *   read methods. Now not the whole device list needs to fit&n; *   into one page, only the device list for one bus.&n; *   Added a poll method to /proc/bus/usb/devices, to wake&n; *   up an eventual usbd&n; * 2000-01-04: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *   Turned into its own filesystem&n; *&n; * $Id: proc_usb.c,v 1.16 1999/12/20 11:11:10 fliegl Exp $&n; */
+multiline_comment|/*&n; * devices.c&n; * (C) Copyright 1999 Randy Dunlap.&n; * (C) Copyright 1999,2000 Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;. (proc file per device)&n; * (C) Copyright 1999 Deti Fliegl (new USB architecture)&n; *&n; * $id$&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; *&n; *************************************************************&n; *&n; * &lt;mountpoint&gt;/devices contains USB topology, device, config, class,&n; * interface, &amp; endpoint data.&n; *&n; * I considered using /proc/bus/usb/devices/device# for each device&n; * as it is attached or detached, but I didn&squot;t like this for some&n; * reason -- maybe it&squot;s just too deep of a directory structure.&n; * I also don&squot;t like looking in multiple places to gather and view&n; * the data.  Having only one file for ./devices also prevents race&n; * conditions that could arise if a program was reading device info&n; * for devices that are being removed (unplugged).  (That is, the&n; * program may find a directory for devnum_12 then try to open it,&n; * but it was just unplugged, so the directory is now deleted.&n; * But programs would just have to be prepared for situations like&n; * this in any plug-and-play environment.)&n; *&n; * 1999-12-16: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *   Converted the whole proc stuff to real&n; *   read methods. Now not the whole device list needs to fit&n; *   into one page, only the device list for one bus.&n; *   Added a poll method to /proc/bus/usb/devices, to wake&n; *   up an eventual usbd&n; * 2000-01-04: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *   Turned into its own filesystem&n; *&n; * $Id: devices.c,v 1.5 2000/01/11 13:58:21 tom Exp $&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
@@ -27,7 +27,7 @@ op_star
 id|format_string_manufacturer
 op_assign
 multiline_comment|/* S:  Manufacturer=xxxx */
-l_string|&quot;S:  Manufacturer=%s&bslash;n&quot;
+l_string|&quot;S:  Manufacturer=%.100s&bslash;n&quot;
 suffix:semicolon
 DECL|variable|format_string_product
 r_static
@@ -36,7 +36,7 @@ op_star
 id|format_string_product
 op_assign
 multiline_comment|/* S:  Product=xxxx */
-l_string|&quot;S:  Product=%s&bslash;n&quot;
+l_string|&quot;S:  Product=%.100s&bslash;n&quot;
 suffix:semicolon
 macro_line|#ifdef ALLOW_SERIAL_NUMBER
 DECL|variable|format_string_serialnumber
@@ -46,7 +46,7 @@ op_star
 id|format_string_serialnumber
 op_assign
 multiline_comment|/* S:  SerialNumber=xxxx */
-l_string|&quot;S:  SerialNumber=%s&bslash;n&quot;
+l_string|&quot;S:  SerialNumber=%.100s&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 DECL|variable|format_bandwidth
@@ -628,7 +628,6 @@ id|usb_config_descriptor
 op_star
 id|desc
 comma
-r_const
 r_int
 id|active
 )paren
@@ -696,7 +695,6 @@ id|usb_config_descriptor
 op_star
 id|config
 comma
-r_const
 r_int
 id|active
 )paren
@@ -943,7 +941,6 @@ r_char
 op_star
 id|end
 comma
-r_const
 r_struct
 id|usb_device
 op_star
@@ -969,7 +966,7 @@ op_assign
 id|kmalloc
 c_func
 (paren
-l_int|256
+l_int|128
 comma
 id|GFP_KERNEL
 )paren
@@ -1001,7 +998,7 @@ id|dev-&gt;descriptor.iManufacturer
 comma
 id|buf
 comma
-l_int|256
+l_int|128
 )paren
 OG
 l_int|0
@@ -1047,7 +1044,7 @@ id|dev-&gt;descriptor.iProduct
 comma
 id|buf
 comma
-l_int|256
+l_int|128
 )paren
 OG
 l_int|0
@@ -1094,7 +1091,7 @@ id|dev-&gt;descriptor.iSerialNumber
 comma
 id|buf
 comma
-l_int|256
+l_int|128
 )paren
 OG
 l_int|0
@@ -1311,6 +1308,10 @@ r_while
 c_loop
 (paren
 id|leng
+op_logical_and
+id|start
+op_le
+id|end
 )paren
 (brace
 id|start
@@ -1333,15 +1334,11 @@ id|leng
 op_decrement
 suffix:semicolon
 )brace
+op_star
 id|start
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|start
-comma
-l_string|&quot;&bslash;n&quot;
-)paren
+op_increment
+op_assign
+l_char|&squot;&bslash;n&squot;
 suffix:semicolon
 r_return
 id|start
@@ -1417,7 +1414,7 @@ c_func
 (paren
 id|start
 comma
-l_string|&quot;%s: %s &quot;
+l_string|&quot;%s: %.100s &quot;
 comma
 id|id
 comma
@@ -1742,10 +1739,12 @@ op_assign
 r_char
 op_star
 )paren
-id|__get_free_page
+id|__get_free_pages
 c_func
 (paren
 id|GFP_KERNEL
+comma
+l_int|1
 )paren
 )paren
 )paren
@@ -1832,9 +1831,11 @@ comma
 id|page
 op_plus
 (paren
+l_int|2
+op_star
 id|PAGE_SIZE
 op_minus
-l_int|100
+l_int|256
 )paren
 comma
 id|bus-&gt;root_hub
@@ -1935,7 +1936,7 @@ op_sub_assign
 id|len
 suffix:semicolon
 )brace
-id|free_page
+id|free_pages
 c_func
 (paren
 (paren
@@ -1943,6 +1944,8 @@ r_int
 r_int
 )paren
 id|page
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return

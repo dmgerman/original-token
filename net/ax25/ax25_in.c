@@ -187,6 +187,10 @@ id|skbn-&gt;h.raw
 op_assign
 id|skbn-&gt;data
 suffix:semicolon
+id|skbn-&gt;nh.raw
+op_assign
+id|skbn-&gt;data
+suffix:semicolon
 multiline_comment|/* Copy data from the fragments */
 r_while
 c_loop

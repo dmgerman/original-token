@@ -190,7 +190,7 @@ id|lock
 suffix:semicolon
 )brace
 DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock) (!test_and_set_bit(0,(lock)))
+mdefine_line|#define spin_trylock(lock) ({ !test_and_set_bit(0,(lock)); })
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
 r_typedef
 r_struct

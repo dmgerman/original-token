@@ -2663,7 +2663,7 @@ id|PP_DEBUG
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: cisco input: %d bytes &lt;%lxh %xh %xh %xh %xh-%xh&gt;&bslash;n&quot;
+l_string|&quot;%s: cisco input: %d bytes &lt;%xh %xh %xh %xh %xh-%xh&gt;&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2708,7 +2708,7 @@ id|PP_DEBUG
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: unknown cisco packet type: 0x%lx&bslash;n&quot;
+l_string|&quot;%s: unknown cisco packet type: 0x%x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3431,7 +3431,7 @@ id|PP_DEBUG
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: cisco output: &lt;%lxh %xh %xh %xh %xh-%xh&gt;&bslash;n&quot;
+l_string|&quot;%s: cisco output: &lt;%xh %xh %xh %xh %xh-%xh&gt;&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

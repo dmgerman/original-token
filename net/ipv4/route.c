@@ -3377,8 +3377,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Redirect from %lX/%s to %lX ignored.&quot;
-l_string|&quot;Path = %lX -&gt; %lX, tos %02x&bslash;n&quot;
+l_string|&quot;Redirect from %X/%s to %X ignored.&quot;
+l_string|&quot;Path = %X -&gt; %X, tos %02x&bslash;n&quot;
 comma
 id|ntohl
 c_func

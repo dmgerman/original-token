@@ -41,7 +41,7 @@ id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|FASTCALL
@@ -426,7 +426,7 @@ id|mmx_copy_page
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|cpu_data
 id|EXPORT_SYMBOL
 c_func
@@ -441,32 +441,11 @@ c_func
 id|kernel_flag
 )paren
 suffix:semicolon
-DECL|variable|cpu_number_map
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|cpu_number_map
-)paren
-suffix:semicolon
-DECL|variable|__cpu_logical_map
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__cpu_logical_map
-)paren
-suffix:semicolon
 DECL|variable|smp_num_cpus
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|smp_num_cpus
-)paren
-suffix:semicolon
-DECL|variable|cpu_present_map
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|cpu_present_map
 )paren
 suffix:semicolon
 DECL|variable|cpu_online_map
