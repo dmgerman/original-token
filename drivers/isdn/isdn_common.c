@@ -8216,6 +8216,9 @@ comma
 multiline_comment|/* isdn_mmap */
 id|isdn_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|isdn_close
 comma
 l_int|NULL

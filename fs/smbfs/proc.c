@@ -8053,7 +8053,7 @@ comma
 id|fattr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Win 95 is painfully slow at returning trans2 getattr info,&n;&t; * so we provide the SMB_FIX_OLDATTR option switch.&n; &t; */
+multiline_comment|/*&n;&t; * Select whether to use core or trans2 getattr.&n; &t; */
 r_if
 c_cond
 (paren
@@ -8062,12 +8062,17 @@ op_ge
 id|SMB_PROTOCOL_LANMAN2
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * Win 95 appears to break with the trans2 getattr.&n; &t; &t; */
 r_if
 c_cond
 (paren
 id|server-&gt;mnt-&gt;version
 op_amp
+(paren
 id|SMB_FIX_OLDATTR
+op_or
+id|SMB_FIX_WIN95
+)paren
 )paren
 r_goto
 id|core_attr

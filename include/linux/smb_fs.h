@@ -2,7 +2,6 @@ multiline_comment|/*&n; *  smb_fs.h&n; *&n; *  Copyright (C) 1995 by Paal-Kr. En
 macro_line|#ifndef _LINUX_SMB_FS_H
 DECL|macro|_LINUX_SMB_FS_H
 mdefine_line|#define _LINUX_SMB_FS_H
-macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#include &lt;linux/smb.h&gt;
 multiline_comment|/*&n; * ioctl commands&n; */
 DECL|macro|SMB_IOC_GETMOUNTUID

@@ -12503,6 +12503,23 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
+macro_line|#ifdef CONFIG_BLK_DEV_IDE_PMAC
+(brace
+r_extern
+r_void
+id|pmac_ide_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|pmac_ide_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDE_PMAC */
 )brace
 DECL|function|__initfunc
 id|__initfunc

@@ -360,17 +360,6 @@ op_eq
 id|_MACH_Pmac
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pmac_ide_ports_known
-)paren
-id|pmac_ide_probe
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|pmac_ide_regbase
 (braket

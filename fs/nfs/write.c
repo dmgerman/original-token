@@ -7,9 +7,6 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/*&n; * NOTE! We must NOT default to soft-mounting: that breaks too many&n; * programs that depend on POSIX behaviour of uninterruptible reads&n; * and writes.&n; *&n; * Until we have a per-mount soft/hard mount policy that we can honour&n; * we must default to hard mounting!&n; *&n; * And yes, this should be &quot;interruptible&quot;, not soft.&n; */
-DECL|macro|IS_SOFT
-mdefine_line|#define IS_SOFT 0
 DECL|macro|NFS_PARANOIA
 mdefine_line|#define NFS_PARANOIA 1
 DECL|macro|NFSDBG_FACILITY
@@ -2578,10 +2575,6 @@ r_int
 id|result
 op_assign
 l_int|0
-comma
-id|cancel
-op_assign
-l_int|0
 suffix:semicolon
 id|dprintk
 c_func
@@ -2599,30 +2592,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|IS_SOFT
-op_logical_and
-id|signalled
-c_func
-(paren
-)paren
-)paren
-(brace
-id|nfs_cancel_dirty
-c_func
-(paren
-id|inode
-comma
-id|pid
-)paren
-suffix:semicolon
-id|cancel
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -2630,39 +2599,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|IS_SOFT
-op_logical_and
-id|signalled
-c_func
-(paren
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cancel
-)paren
-id|nfs_cancel_dirty
-c_func
-(paren
-id|inode
-comma
-id|pid
-)paren
-suffix:semicolon
-id|result
-op_assign
-op_minus
-id|ERESTARTSYS
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 multiline_comment|/* Flush all pending writes for the pid and file region */
 id|last
 op_assign
@@ -2689,12 +2625,31 @@ l_int|NULL
 )paren
 r_break
 suffix:semicolon
+id|result
+op_assign
 id|wait_on_write_request
 c_func
 (paren
 id|last
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+(brace
+id|nfs_cancel_dirty
+c_func
+(paren
+id|inode
+comma
+id|pid
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 r_return
 id|result
