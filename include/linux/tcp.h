@@ -28,6 +28,7 @@ r_int
 r_int
 id|ack_seq
 suffix:semicolon
+macro_line|#if defined(__i386__)
 DECL|member|res1
 r_int
 r_int
@@ -75,6 +76,59 @@ id|res2
 suffix:colon
 l_int|2
 suffix:semicolon
+macro_line|#else
+macro_line|#if defined(__mc680x0__)
+DECL|member|res2
+r_int
+r_int
+id|res2
+suffix:colon
+l_int|2
+comma
+DECL|member|urg
+id|urg
+suffix:colon
+l_int|1
+comma
+DECL|member|ack
+id|ack
+suffix:colon
+l_int|1
+comma
+DECL|member|psh
+id|psh
+suffix:colon
+l_int|1
+comma
+DECL|member|rst
+id|rst
+suffix:colon
+l_int|1
+comma
+DECL|member|syn
+id|syn
+suffix:colon
+l_int|1
+comma
+DECL|member|fin
+id|fin
+suffix:colon
+l_int|1
+comma
+DECL|member|doff
+id|doff
+suffix:colon
+l_int|4
+comma
+DECL|member|res1
+id|res1
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#else
+macro_line|#error&t;&quot;Adjust this structure for your cpu alignment rules&quot;
+macro_line|#endif  &t;&t;
+macro_line|#endif&t;
 DECL|member|window
 r_int
 r_int
@@ -105,11 +159,6 @@ comma
 DECL|enumerator|TCP_SYN_RECV
 id|TCP_SYN_RECV
 comma
-macro_line|#if 0
-id|TCP_CLOSING
-comma
-multiline_comment|/* not a valid state, just a seperator so we can use&n;&t;&t;  &lt; tcp_closing or &gt; tcp_closing for checks. */
-macro_line|#endif
 DECL|enumerator|TCP_FIN_WAIT1
 id|TCP_FIN_WAIT1
 comma
@@ -130,6 +179,10 @@ id|TCP_LAST_ACK
 comma
 DECL|enumerator|TCP_LISTEN
 id|TCP_LISTEN
+comma
+DECL|enumerator|TCP_CLOSING
+id|TCP_CLOSING
+multiline_comment|/* now a valid state */
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_TCP_H */

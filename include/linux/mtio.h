@@ -142,6 +142,8 @@ DECL|macro|MT_ISDDS2
 mdefine_line|#define MT_ISDDS2&t;&t;0x52&t;/* DDS device with partitions */
 DECL|macro|MT_ISSCSI1
 mdefine_line|#define MT_ISSCSI1&t;&t;0x71&t;/* Generic ANSI SCSI-1 tape unit */
+DECL|macro|MT_ISSCSI2
+mdefine_line|#define MT_ISSCSI2&t;&t;0x72&t;/* Generic ANSI SCSI-2 tape unit */
 DECL|struct|mt_tape_info
 r_struct
 id|mt_tape_info
@@ -160,7 +162,7 @@ multiline_comment|/* descriptive name */
 )brace
 suffix:semicolon
 DECL|macro|MT_TAPE_INFO
-mdefine_line|#define MT_TAPE_INFO&t;{ &bslash;&n;&t;{MT_ISUNKNOWN,&t;&t;&quot;Unknown type of tape device&quot;}, &bslash;&n;&t;{MT_ISQIC02,&t;&t;&quot;Generic QIC-02 tape streamer&quot;}, &bslash;&n;&t;{MT_ISWT5150,&t;&t;&quot;Wangtek 5150, QIC-150&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_5945L2,&t;&quot;Archive 5945L-2&quot;}, &bslash;&n;&t;{MT_ISCMSJ500,&t;&t;&quot;CMS Jumbo 500&quot;}, &bslash;&n;&t;{MT_ISTDC3610,&t;&t;&quot;Tandberg TDC 3610, QIC-24&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_VP60I,&t;&quot;Archive VP60i, QIC-02&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2150L,&t;&quot;Archive Viper 2150L&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2060L,&t;&quot;Archive Viper 2060L&quot;}, &bslash;&n;&t;{MT_ISWT5099EEN24,&t;&quot;Wangtek 5099-een24, 60MB&quot;}, &bslash;&n;&t;{MT_ISEVEREX_FT40A,&t;&quot;Everex FT40A, QIC-40&quot;}, &bslash;&n;&t;{MT_ISSCSI1,&t;&t;&quot;Generic SCSI-1 tape&quot;}, &bslash;&n;&t;{0, NULL} &bslash;&n;}
+mdefine_line|#define MT_TAPE_INFO&t;{ &bslash;&n;&t;{MT_ISUNKNOWN,&t;&t;&quot;Unknown type of tape device&quot;}, &bslash;&n;&t;{MT_ISQIC02,&t;&t;&quot;Generic QIC-02 tape streamer&quot;}, &bslash;&n;&t;{MT_ISWT5150,&t;&t;&quot;Wangtek 5150, QIC-150&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_5945L2,&t;&quot;Archive 5945L-2&quot;}, &bslash;&n;&t;{MT_ISCMSJ500,&t;&t;&quot;CMS Jumbo 500&quot;}, &bslash;&n;&t;{MT_ISTDC3610,&t;&t;&quot;Tandberg TDC 3610, QIC-24&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_VP60I,&t;&quot;Archive VP60i, QIC-02&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2150L,&t;&quot;Archive Viper 2150L&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2060L,&t;&quot;Archive Viper 2060L&quot;}, &bslash;&n;&t;{MT_ISWT5099EEN24,&t;&quot;Wangtek 5099-een24, 60MB&quot;}, &bslash;&n;&t;{MT_ISEVEREX_FT40A,&t;&quot;Everex FT40A, QIC-40&quot;}, &bslash;&n;&t;{MT_ISSCSI1,&t;&t;&quot;Generic SCSI-1 tape&quot;}, &bslash;&n;&t;{MT_ISSCSI2,&t;&t;&quot;Generic SCSI-2 tape&quot;}, &bslash;&n;&t;{0, NULL} &bslash;&n;}
 multiline_comment|/* structure for MTIOCPOS - mag tape get position command */
 DECL|struct|mtpos
 r_struct
@@ -211,5 +213,32 @@ DECL|macro|GMT_IM_REP_EN
 mdefine_line|#define GMT_IM_REP_EN(x)        ((x) &amp; 0x00010000)  /* immediate report mode */
 multiline_comment|/* 16 generic status bits unused */
 multiline_comment|/* DDS drives have &squot;setmarks&squot;, sort of like filemarks but used to group&n; * files, rather than blocks. Not used. Not supported.&n; * I think DDS drives are DAT drives.&n; */
+multiline_comment|/* SCSI-tape specific definitions */
+DECL|macro|MT_ST_BLKSIZE_SHIFT
+mdefine_line|#define MT_ST_BLKSIZE_SHIFT&t;0
+DECL|macro|MT_ST_BLKSIZE_MASK
+mdefine_line|#define MT_ST_BLKSIZE_MASK&t;0xffffff
+DECL|macro|MT_ST_DENSITY_SHIFT
+mdefine_line|#define MT_ST_DENSITY_SHIFT&t;24
+DECL|macro|MT_ST_DENSITY_MASK
+mdefine_line|#define MT_ST_DENSITY_MASK&t;0xff000000
+DECL|macro|MT_ST_SOFTERR_SHIFT
+mdefine_line|#define MT_ST_SOFTERR_SHIFT&t;0
+DECL|macro|MT_ST_SOFTERR_MASK
+mdefine_line|#define MT_ST_SOFTERR_MASK&t;0xffff
+DECL|macro|MT_ST_OPTIONS
+mdefine_line|#define MT_ST_OPTIONS&t;&t;0xf0000000
+DECL|macro|MT_ST_BOOLEANS
+mdefine_line|#define MT_ST_BOOLEANS&t;&t;0x10000000
+DECL|macro|MT_ST_WRITE_THRESHOLD
+mdefine_line|#define MT_ST_WRITE_THRESHOLD&t;0x20000000
+DECL|macro|MT_ST_BUFFER_WRITES
+mdefine_line|#define MT_ST_BUFFER_WRITES&t;0x1
+DECL|macro|MT_ST_ASYNC_WRITES
+mdefine_line|#define MT_ST_ASYNC_WRITES&t;0x2
+DECL|macro|MT_ST_READ_AHEAD
+mdefine_line|#define MT_ST_READ_AHEAD&t;0x4
+DECL|macro|MT_ST_DEBUGGING
+mdefine_line|#define MT_ST_DEBUGGING&t;&t;0x8
 macro_line|#endif /* _LINUX_MTIO_H */
 eof

@@ -4387,8 +4387,9 @@ suffix:semicolon
 multiline_comment|/*&n; &t;&t; *&t;Set up data on packet&n; &t;&t; */
 id|skb2-&gt;arp
 op_assign
-id|skb-&gt;arp
+l_int|0
 suffix:semicolon
+multiline_comment|/*skb-&gt;arp;*/
 id|skb2-&gt;free
 op_assign
 id|skb-&gt;free

@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: wd7000.c,v 1.2 1994/01/15 06:02:32 drew Exp $&n; *  linux/kernel/wd7000.c&n; *&n; *  Copyright (C) 1992  Thomas Wuensche&n; *&t;closely related to the aha1542 driver from Tommy Thorn&n; *&t;( as close as different hardware allows on a lowlevel-driver :-) )&n; *&n; *  Revised (and renamed) by John Boyd &lt;boyd@cis.ohio-state.edu&gt; to&n; *  accomodate Eric Youngdale&squot;s modifications to scsi.c.  Nov 1992.&n; *&n; *  Additional changes to support scatter/gather.  Dec. 1992.  tw/jb&n; */
+multiline_comment|/* $Id: $&n; *  linux/drivers/scsi/wd7000.c&n; *&n; *  Copyright (C) 1992  Thomas Wuensche&n; *&t;closely related to the aha1542 driver from Tommy Thorn&n; *&t;( as close as different hardware allows on a lowlevel-driver :-) )&n; *&n; *  Revised (and renamed) by John Boyd &lt;boyd@cis.ohio-state.edu&gt; to&n; *  accomodate Eric Youngdale&squot;s modifications to scsi.c.  Nov 1992.&n; *&n; *  Additional changes to support scatter/gather.  Dec. 1992.  tw/jb&n; *&n; *  No longer tries to reset SCSI bus at boot (it wasn&squot;t working anyway).&n; *  Rewritten to support multiple host adapters.&n; *  Miscellaneous cleanup.&n; *  So far, still doesn&squot;t do reset or abort correctly, since I have no idea&n; *  how to do them with this board (8^(.                      Jan 1994 jb&n; *&n; * This driver now supports both of the two standard configurations (per&n; * the 3.36 Owner&squot;s Manual, my latest reference) by the same method as&n; * before; namely, by looking for a BIOS signature.  Thus, the location of&n; * the BIOS signature determines the board configuration.  Until I have&n; * time to do something more flexible, users should stick to one of the&n; * following:&n; *&n; * Standard configuration for single-adapter systems:&n; *    - BIOS at CE00h&n; *    - I/O base address 350h&n; *    - IRQ level 15&n; *    - DMA channel 6&n; * Standard configuration for a second adapter in a system:&n; *    - BIOS at C800h&n; *    - I/O base address 330h&n; *    - IRQ level 11&n; *    - DMA channel 5&n; *&n; * Anyone who can recompile the kernel is welcome to add others as need&n; * arises, but unpredictable results may occur if there are conflicts.&n; * In any event, if there are multiple adapters in a system, they MUST&n; * use different I/O bases, IRQ levels, and DMA channels, since they will be&n; * indistinguishable (and in direct conflict) otherwise.&n; *&n; *   As a point of information, the NO_OP command toggles the CMD_RDY bit&n; * of the status port, and this fact could be used as a test for the I/O&n; * base address (or more generally, board detection).  There is an interrupt&n; * status port, so IRQ probing could also be done.  I suppose the full&n; * DMA diagnostic could be used to detect the DMA channel being used.  I&n; * haven&squot;t done any of this, though, because I think there&squot;s too much of&n; * a chance that such explorations could be destructive, if some other&n; * board&squot;s resources are used inadvertently.  So, call me a wimp, but I&n; * don&squot;t want to try it.  The only kind of exploration I trust is memory&n; * exploration, since it&squot;s more certain that reading memory won&squot;t be&n; * destructive.&n; *&n; * More to my liking would be a LILO boot command line specification, such&n; * as is used by the aha152x driver (and possibly others).  I&squot;ll look into&n; * it, as I have time...&n; *&n; *   I get mail occasionally from people who either are using or are&n; * considering using a WD7000 with Linux.  There is a variety of&n; * nomenclature describing WD7000&squot;s.  To the best of my knowledge, the&n; * following is a brief summary (from an old WD doc - I don&squot;t work for&n; * them or anything like that):&n; *&n; * WD7000-FASST2: This is a WD7000 board with the real-mode SST ROM BIOS&n; *        installed.  Last I heard, the BIOS was actually done by Columbia&n; *        Data Products.  The BIOS is only used by this driver (and thus&n; *        by Linux) to identify the board; none of it can be executed under&n; *        Linux.&n; *&n; * WD7000-ASC: This is the original adapter board, with or without BIOS.&n; *        The board uses a WD33C93 or WD33C93A SBIC, which in turn is&n; *        controlled by an onboard Z80 processor.  The board interface&n; *        visible to the host CPU is defined effectively by the Z80&squot;s&n; *        firmware, and it is this firmware&squot;s revision level that is&n; *        determined and reported by this driver.  (The version of the&n; *        on-board BIOS is of no interest whatsoever.)  The host CPU has&n; *        no access to the SBIC; hence the fact that it is a WD33C93 is&n; *        also of no interest to this driver.&n; *&n; * WD7000-AX:&n; * WD7000-MX:&n; * WD7000-EX: These are newer versions of the WD7000-ASC.  The -ASC is&n; *        largely built from discrete components; these boards use more&n; *        integration.  The -AX is an ISA bus board (like the -ASC),&n; *        the -MX is an MCA (i.e., PS/2) bus board), and the -EX is an&n; *        EISA bus board.&n; *&n; *  At the time of my documentation, the -?X boards were &quot;future&quot; products,&n; *  and were not yet available.  However, I vaguely recall that Thomas&n; *  Wuensche had an -AX, so I believe at least it is supported by this&n; *  driver.  I have no personal knowledge of either -MX or -EX boards.&n; *&n; *  P.S. Just recently, I&squot;ve discovered (directly from WD and Future&n; *  Domain) that all but the WD7000-EX have been out of production for&n; *  two years now.  FD has production rights to the 7000-EX, and are&n; *  producing it under a new name, and with a new BIOS.  If anyone has&n; *  one of the FD boards, it would be nice to come up with a signature&n; *  for it.&n; *                                                           J.B. Jan 1994.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -12,47 +13,987 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-multiline_comment|/* #define DEBUG  */
+DECL|macro|ANY2SCSI_INLINE
+mdefine_line|#define ANY2SCSI_INLINE    /* undef this to use old macros */
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
 macro_line|#include &quot;wd7000.h&quot;
-macro_line|#ifdef DEBUG
-DECL|macro|DEB
-mdefine_line|#define DEB(x) x
-macro_line|#else
-DECL|macro|DEB
-mdefine_line|#define DEB(x)
-macro_line|#endif
-multiline_comment|/*&n;   Driver data structures:&n;   - mb and scbs are required for interfacing with the host adapter.&n;     An SCB has extra fields not visible to the adapter; mb&squot;s&n;     _cannot_ do this, since the adapter assumes they are contiguous in&n;     memory, 4 bytes each, with ICMBs following OGMBs, and uses this fact&n;     to access them.&n;   - An icb is for host-only (non-SCSI) commands.  ICBs are 16 bytes each;&n;     the additional bytes are used only by the driver.&n;   - For now, a pool of SCBs are kept in global storage by this driver,&n;     and are allocated and freed as needed.&n;&n;  The 7000-FASST2 marks OGMBs empty as soon as it has _started_ a command,&n;  not when it has finished.  Since the SCB must be around for completion,&n;  problems arise when SCBs correspond to OGMBs, which may be reallocated&n;  earlier (or delayed unnecessarily until a command completes).&n;  Mailboxes are used as transient data structures, simply for&n;  carrying SCB addresses to/from the 7000-FASST2.&n;&n;  Note also since SCBs are not &quot;permanently&quot; associated with mailboxes,&n;  there is no need to keep a global list of Scsi_Cmnd pointers indexed&n;  by OGMB.   Again, SCBs reference their Scsi_Cmnds directly, so mailbox&n;  indices need not be involved.&n;*/
-r_static
+multiline_comment|/*&n; *  Mailbox structure sizes.&n; *  I prefer to keep the number of ICMBs much larger than the number of&n; *  OGMBs.  OGMBs are used very quickly by the driver to start one or&n; *  more commands, while ICMBs are used by the host adapter per command.&n; */
+DECL|macro|OGMB_CNT
+mdefine_line|#define OGMB_CNT&t;16
+DECL|macro|ICMB_CNT
+mdefine_line|#define ICMB_CNT&t;32
+multiline_comment|/*&n; *  Scb&squot;s are shared by all active adapters.  So, if they all become busy,&n; *  callers may be made to wait in alloc_scbs for them to free.  That can&n; *  be avoided by setting MAX_SCBS to NUM_CONFIG * WD7000_Q.  If you&squot;d&n; *  rather conserve memory, use a smaller number (&gt; 0, of course) - things&n; *  will should still work OK.&n; */
+DECL|macro|MAX_SCBS
+mdefine_line|#define MAX_SCBS        32
+multiline_comment|/*&n; *  WD7000-specific mailbox structure&n; *&n; */
+DECL|struct|mailbox
+r_typedef
+r_volatile
+r_struct
+id|mailbox
+(brace
+DECL|member|status
+id|unchar
+id|status
+suffix:semicolon
+DECL|member|scbptr
+id|unchar
+id|scbptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* SCSI-style - MSB first (big endian) */
+DECL|typedef|Mailbox
+)brace
+id|Mailbox
+suffix:semicolon
+multiline_comment|/*&n; *  This structure should contain all per-adapter global data.  I.e., any&n; *  new global per-adapter data should put in here.&n; *&n; */
+DECL|struct|adapter
+r_typedef
+r_struct
+id|adapter
+(brace
+DECL|member|num
+r_int
+id|num
+suffix:semicolon
+multiline_comment|/* Index into Scsi_hosts array */
+DECL|member|sh
+r_struct
+id|Scsi_Host
+op_star
+id|sh
+suffix:semicolon
+multiline_comment|/* Pointer to Scsi_Host structure */
+DECL|member|iobase
+r_int
+id|iobase
+suffix:semicolon
+multiline_comment|/* This adapter&squot;s I/O base address */
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+multiline_comment|/* This adapter&squot;s IRQ level */
+DECL|member|dma
+r_int
+id|dma
+suffix:semicolon
+multiline_comment|/* This adapter&squot;s DMA channel */
 r_struct
 (brace
+multiline_comment|/* This adapter&squot;s mailboxes */
 DECL|member|ogmb
-r_struct
-id|wd_mailbox
+id|Mailbox
 id|ogmb
 (braket
 id|OGMB_CNT
 )braket
 suffix:semicolon
+multiline_comment|/* Outgoing mailboxes */
 DECL|member|icmb
-r_struct
-id|wd_mailbox
+id|Mailbox
 id|icmb
 (braket
 id|ICMB_CNT
 )braket
 suffix:semicolon
-DECL|variable|mb
+multiline_comment|/* Incoming mailboxes */
+DECL|member|mb
 )brace
 id|mb
 suffix:semicolon
-DECL|variable|next_ogmb
-r_static
+DECL|member|next_ogmb
 r_int
 id|next_ogmb
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* to reduce contention at mailboxes */
+DECL|member|control
+id|unchar
+id|control
+suffix:semicolon
+multiline_comment|/* shadows CONTROL port value */
+DECL|member|rev1
+DECL|member|rev2
+id|unchar
+id|rev1
+comma
+id|rev2
+suffix:semicolon
+multiline_comment|/* filled in by wd7000_revision */
+DECL|typedef|Adapter
+)brace
+id|Adapter
+suffix:semicolon
+multiline_comment|/*&n; * The following is set up by wd7000_detect, and used thereafter by&n; * wd7000_intr_handle to map the irq level to the corresponding Adapter.&n; * Note that if request_irq instead of irqaction to allocate the IRQ,&n; * or if SA_INTERRUPT is not used, wd7000_intr_handle must be changed &n; * to pick up the IRQ level correctly.&n; */
+DECL|variable|irq2host
+id|Adapter
+op_star
+id|irq2host
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|NULL
+)brace
+suffix:semicolon
+multiline_comment|/* Possible IRQs are 0-15 */
+multiline_comment|/*&n; *  Standard Adapter Configurations - used by wd7000_detect&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|bios
+r_const
+r_void
+op_star
+id|bios
+suffix:semicolon
+multiline_comment|/* (linear) base address for ROM BIOS */
+DECL|member|iobase
+r_int
+id|iobase
+suffix:semicolon
+multiline_comment|/* I/O ports base address */
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+multiline_comment|/* IRQ level */
+DECL|member|dma
+r_int
+id|dma
+suffix:semicolon
+multiline_comment|/* DMA channel */
+DECL|typedef|Config
+)brace
+id|Config
+suffix:semicolon
+DECL|variable|configs
+r_static
+r_const
+id|Config
+id|configs
+(braket
+)braket
+op_assign
+(brace
+(brace
+(paren
+r_void
+op_star
+)paren
+l_int|0xce000
+comma
+l_int|0x350
+comma
+l_int|15
+comma
+l_int|6
+)brace
+comma
+multiline_comment|/* defaults for single adapter */
+(brace
+(paren
+r_void
+op_star
+)paren
+l_int|0xc8000
+comma
+l_int|0x330
+comma
+l_int|11
+comma
+l_int|5
+)brace
+comma
+multiline_comment|/* defaults for second adapter */
+(brace
+(paren
+r_void
+op_star
+)paren
+l_int|0xd8000
+comma
+l_int|0x350
+comma
+l_int|15
+comma
+l_int|6
+)brace
+comma
+multiline_comment|/* Arghhh.... who added this ? */
+)brace
+suffix:semicolon
+DECL|macro|NUM_CONFIGS
+mdefine_line|#define NUM_CONFIGS (sizeof(configs)/sizeof(Config))
+multiline_comment|/*&n; *  The following list defines strings to look for in the BIOS that identify&n; *  it as the WD7000-FASST2 SST BIOS.  I suspect that something should be&n; *  added for the Future Domain version.&n; */
+DECL|struct|signature
+r_typedef
+r_struct
+id|signature
+(brace
+DECL|member|sig
+r_void
+op_star
+id|sig
+suffix:semicolon
+multiline_comment|/* String to look for */
+DECL|member|ofs
+r_int
+id|ofs
+suffix:semicolon
+multiline_comment|/* offset from BIOS base address */
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* length of string */
+DECL|typedef|Signature
+)brace
+id|Signature
+suffix:semicolon
+DECL|variable|signatures
+r_static
+r_const
+id|Signature
+id|signatures
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;SSTBIOS&quot;
+comma
+l_int|0x0000d
+comma
+l_int|7
+)brace
+multiline_comment|/* &quot;SSTBIOS&quot; @ offset 0x0000d */
+)brace
+suffix:semicolon
+DECL|macro|NUM_SIGNATURES
+mdefine_line|#define NUM_SIGNATURES (sizeof(signatures)/sizeof(Signature))
+multiline_comment|/*&n; *  I/O Port Offsets and Bit Definitions&n; *  4 addresses are used.  Those not defined here are reserved.&n; */
+DECL|macro|ASC_STAT
+mdefine_line|#define ASC_STAT        0       /* Status,  Read */
+DECL|macro|ASC_COMMAND
+mdefine_line|#define ASC_COMMAND     0       /* Command, Write */
+DECL|macro|ASC_INTR_STAT
+mdefine_line|#define ASC_INTR_STAT   1       /* Interrupt Status, Read */
+DECL|macro|ASC_INTR_ACK
+mdefine_line|#define ASC_INTR_ACK    1       /* Acknowledge, Write */
+DECL|macro|ASC_CONTROL
+mdefine_line|#define ASC_CONTROL     2       /* Control, Write */
+multiline_comment|/* ASC Status Port&n; */
+DECL|macro|INT_IM
+mdefine_line|#define INT_IM&t;        0x80&t;&t;/* Interrupt Image Flag */
+DECL|macro|CMD_RDY
+mdefine_line|#define CMD_RDY&t;        0x40&t;&t;/* Command Port Ready */
+DECL|macro|CMD_REJ
+mdefine_line|#define CMD_REJ&t;        0x20&t;&t;/* Command Port Byte Rejected */
+DECL|macro|ASC_INIT
+mdefine_line|#define ASC_INIT        0x10&t;&t;/* ASC Initialized Flag */
+DECL|macro|ASC_STATMASK
+mdefine_line|#define ASC_STATMASK    0xf0&t;&t;/* The lower 4 Bytes are reserved */
+multiline_comment|/* COMMAND opcodes&n; *&n; *  Unfortunately, I have no idea how to properly use some of these commands,&n; *  as the OEM manual does not make it clear.  I have not been able to use&n; *  enable/disable unsolicited interrupts or the reset commands with any&n; *  discernable effect whatsoever.  I think they may be related to certain&n; *  ICB commands, but again, the OEM manual doesn&squot;t make that clear.&n; */
+DECL|macro|NO_OP
+mdefine_line|#define NO_OP             0     /* NO-OP toggles CMD_RDY bit in ASC_STAT */
+DECL|macro|INITIALIZATION
+mdefine_line|#define INITIALIZATION    1     /* initialization (10 bytes) */
+DECL|macro|DISABLE_UNS_INTR
+mdefine_line|#define DISABLE_UNS_INTR  2     /* disable unsolicited interrupts */
+DECL|macro|ENABLE_UNS_INTR
+mdefine_line|#define ENABLE_UNS_INTR   3     /* enable unsolicited interrupts */
+DECL|macro|INTR_ON_FREE_OGMB
+mdefine_line|#define INTR_ON_FREE_OGMB 4     /* interrupt on free OGMB */
+DECL|macro|SOFT_RESET
+mdefine_line|#define SOFT_RESET        5     /* SCSI bus soft reset */
+DECL|macro|HARD_RESET_ACK
+mdefine_line|#define HARD_RESET_ACK    6     /* SCSI bus hard reset acknowledge */
+DECL|macro|START_OGMB
+mdefine_line|#define START_OGMB        0x80  /* start command in OGMB (n) */
+DECL|macro|SCAN_OGMBS
+mdefine_line|#define SCAN_OGMBS        0xc0  /* start multiple commands, signature (n) */
+multiline_comment|/*    where (n) = lower 6 bits */
+multiline_comment|/* For INITIALIZATION:&n; */
+DECL|struct|initCmd
+r_typedef
+r_struct
+id|initCmd
+(brace
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+multiline_comment|/* command opcode (= 1) */
+DECL|member|ID
+id|unchar
+id|ID
+suffix:semicolon
+multiline_comment|/* Adapter&squot;s SCSI ID */
+DECL|member|bus_on
+id|unchar
+id|bus_on
+suffix:semicolon
+multiline_comment|/* Bus on time, x 125ns (see below) */
+DECL|member|bus_off
+id|unchar
+id|bus_off
+suffix:semicolon
+multiline_comment|/* Bus off time, &quot;&quot;         &quot;&quot;      */
+DECL|member|rsvd
+id|unchar
+id|rsvd
+suffix:semicolon
+multiline_comment|/* Reserved */
+DECL|member|mailboxes
+id|unchar
+id|mailboxes
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* Address of Mailboxes, MSB first  */
+DECL|member|ogmbs
+id|unchar
+id|ogmbs
+suffix:semicolon
+multiline_comment|/* Number of outgoing MBs, max 64, 0,1 = 1 */
+DECL|member|icmbs
+id|unchar
+id|icmbs
+suffix:semicolon
+multiline_comment|/* Number of incoming MBs,   &quot;&quot;       &quot;&quot;   */
+DECL|typedef|InitCmd
+)brace
+id|InitCmd
+suffix:semicolon
+DECL|macro|BUS_ON
+mdefine_line|#define BUS_ON            64    /* x 125ns = 8000ns (BIOS default) */
+DECL|macro|BUS_OFF
+mdefine_line|#define BUS_OFF           15    /* x 125ns = 1875ns (BIOS default) */
+multiline_comment|/* Interrupt Status Port - also returns diagnostic codes at ASC reset&n; *&n; * if msb is zero, the lower bits are diagnostic status&n; * Diagnostics:&n; * 01&t;No diagnostic error occurred&n; * 02&t;RAM failure&n; * 03&t;FIFO R/W failed&n; * 04   SBIC register read/write failed&n; * 05   Initialization D-FF failed&n; * 06   Host IRQ D-FF failed&n; * 07   ROM checksum error&n; * Interrupt status (bitwise):&n; * 10NNNNNN   outgoing mailbox NNNNNN is free&n; * 11NNNNNN   incoming mailbox NNNNNN needs service&n; */
+DECL|macro|MB_INTR
+mdefine_line|#define MB_INTR&t; 0xC0&t;&t;/* Mailbox Service possible/required */
+DECL|macro|IMB_INTR
+mdefine_line|#define IMB_INTR 0x40&t;&t;/* 1 Incoming / 0 Outgoing */
+DECL|macro|MB_MASK
+mdefine_line|#define MB_MASK  0x3f           /* mask for mailbox number */
+multiline_comment|/* CONTROL port bits&n; */
+DECL|macro|INT_EN
+mdefine_line|#define INT_EN&t;        0x08&t;/* Interrupt Enable&t;*/
+DECL|macro|DMA_EN
+mdefine_line|#define DMA_EN&t;        0x04&t;/* DMA Enable&t;&t;*/
+DECL|macro|SCSI_RES
+mdefine_line|#define SCSI_RES&t;0x02&t;/* SCSI Reset&t;&t;*/
+DECL|macro|ASC_RES
+mdefine_line|#define ASC_RES&t;        0x01&t;/* ASC Reset&t;&t;*/
+multiline_comment|/*&n;   Driver data structures:&n;   - mb and scbs are required for interfacing with the host adapter.&n;     An SCB has extra fields not visible to the adapter; mb&squot;s&n;     _cannot_ do this, since the adapter assumes they are contiguous in&n;     memory, 4 bytes each, with ICMBs following OGMBs, and uses this fact&n;     to access them.&n;   - An icb is for host-only (non-SCSI) commands.  ICBs are 16 bytes each;&n;     the additional bytes are used only by the driver.&n;   - For now, a pool of SCBs are kept in global storage by this driver,&n;     and are allocated and freed as needed.&n;&n;  The 7000-FASST2 marks OGMBs empty as soon as it has _started_ a command,&n;  not when it has finished.  Since the SCB must be around for completion,&n;  problems arise when SCBs correspond to OGMBs, which may be reallocated&n;  earlier (or delayed unnecessarily until a command completes).&n;  Mailboxes are used as transient data structures, simply for&n;  carrying SCB addresses to/from the 7000-FASST2.&n;&n;  Note also since SCBs are not &quot;permanently&quot; associated with mailboxes,&n;  there is no need to keep a global list of Scsi_Cmnd pointers indexed&n;  by OGMB.   Again, SCBs reference their Scsi_Cmnds directly, so mailbox&n;  indices need not be involved.&n;*/
+multiline_comment|/*&n; *  WD7000-specific scatter/gather element structure&n; */
+DECL|struct|sgb
+r_typedef
+r_struct
+id|sgb
+(brace
+DECL|member|len
+id|unchar
+id|len
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|member|ptr
+id|unchar
+id|ptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* Also SCSI-style - MSB first */
+DECL|typedef|Sgb
+)brace
+id|Sgb
+suffix:semicolon
+DECL|struct|scb
+r_typedef
+r_struct
+id|scb
+(brace
+multiline_comment|/* Command Control Block 5.4.1 */
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+multiline_comment|/* Command Control Block Operation Code */
+DECL|member|idlun
+id|unchar
+id|idlun
+suffix:semicolon
+multiline_comment|/* op=0,2:Target Id, op=1:Initiator Id */
+multiline_comment|/* Outbound data transfer, length is checked*/
+multiline_comment|/* Inbound data transfer, length is checked */
+multiline_comment|/* Logical Unit Number */
+DECL|member|cdb
+id|unchar
+id|cdb
+(braket
+l_int|12
+)braket
+suffix:semicolon
+multiline_comment|/* SCSI Command Block */
+DECL|member|status
+r_volatile
+id|unchar
+id|status
+suffix:semicolon
+multiline_comment|/* SCSI Return Status */
+DECL|member|vue
+r_volatile
+id|unchar
+id|vue
+suffix:semicolon
+multiline_comment|/* Vendor Unique Error Code */
+DECL|member|maxlen
+id|unchar
+id|maxlen
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* Maximum Data Transfer Length */
+DECL|member|dataptr
+id|unchar
+id|dataptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* SCSI Data Block Pointer */
+DECL|member|linkptr
+id|unchar
+id|linkptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* Next Command Link Pointer */
+DECL|member|direc
+id|unchar
+id|direc
+suffix:semicolon
+multiline_comment|/* Transfer Direction */
+DECL|member|reserved2
+id|unchar
+id|reserved2
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* SCSI Command Descriptor Block */
+multiline_comment|/* end of hardware SCB */
+DECL|member|SCpnt
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+suffix:semicolon
+multiline_comment|/* Scsi_Cmnd using this SCB */
+DECL|member|sgb
+id|Sgb
+id|sgb
+(braket
+id|WD7000_SG
+)braket
+suffix:semicolon
+multiline_comment|/* Scatter/gather list for this SCB */
+DECL|member|host
+id|Adapter
+op_star
+id|host
+suffix:semicolon
+multiline_comment|/* host adapter */
+DECL|member|next
+r_struct
+id|scb
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* for lists of scbs */
+DECL|typedef|Scb
+)brace
+id|Scb
+suffix:semicolon
+multiline_comment|/*&n; *  This driver is written to allow host-only commands to be executed.&n; *  These use a 16-byte block called an ICB.  The format is extended by the&n; *  driver to 18 bytes, to support the status returned in the ICMB and&n; *  an execution phase code.&n; *&n; *  There are other formats besides these; these are the ones I&squot;ve tried&n; *  to use.  Formats for some of the defined ICB opcodes are not defined&n; *  (notably, get/set unsolicited interrupt status) in my copy of the OEM&n; *  manual, and others are ambiguous/hard to follow.&n; */
+DECL|macro|ICB_OP_MASK
+mdefine_line|#define ICB_OP_MASK             0x80  /* distinguishes scbs from icbs */
+DECL|macro|ICB_OP_OPEN_RBUF
+mdefine_line|#define ICB_OP_OPEN_RBUF        0x80  /* open receive buffer */
+DECL|macro|ICB_OP_RECV_CMD
+mdefine_line|#define ICB_OP_RECV_CMD         0x81  /* receive command from initiator */
+DECL|macro|ICB_OP_RECV_DATA
+mdefine_line|#define ICB_OP_RECV_DATA        0x82  /* receive data from initiator */
+DECL|macro|ICB_OP_RECV_SDATA
+mdefine_line|#define ICB_OP_RECV_SDATA       0x83  /* receive data with status from init. */
+DECL|macro|ICB_OP_SEND_DATA
+mdefine_line|#define ICB_OP_SEND_DATA        0x84  /* send data with status to initiator */
+DECL|macro|ICB_OP_SEND_STAT
+mdefine_line|#define ICB_OP_SEND_STAT        0x86  /* send command status to initiator */
+multiline_comment|/* 0x87 is reserved */
+DECL|macro|ICB_OP_READ_INIT
+mdefine_line|#define ICB_OP_READ_INIT        0x88  /* read initialization bytes */
+DECL|macro|ICB_OP_READ_ID
+mdefine_line|#define ICB_OP_READ_ID          0x89  /* read adapter&squot;s SCSI ID */
+DECL|macro|ICB_OP_SET_UMASK
+mdefine_line|#define ICB_OP_SET_UMASK        0x8A  /* set unsolicited interrupt mask */
+DECL|macro|ICB_OP_GET_UMASK
+mdefine_line|#define ICB_OP_GET_UMASK        0x8B  /* read unsolicited interrupt mask */
+DECL|macro|ICB_OP_GET_REVISION
+mdefine_line|#define ICB_OP_GET_REVISION     0x8C  /* read firmware revision level */
+DECL|macro|ICB_OP_DIAGNOSTICS
+mdefine_line|#define ICB_OP_DIAGNOSTICS      0x8D  /* execute diagnostics */
+DECL|macro|ICB_OP_SET_EPARMS
+mdefine_line|#define ICB_OP_SET_EPARMS       0x8E  /* set execution parameters */
+DECL|macro|ICB_OP_GET_EPARMS
+mdefine_line|#define ICB_OP_GET_EPARMS       0x8F  /* read execution parameters */
+DECL|struct|icbRecvCmd
+r_typedef
+r_struct
+id|icbRecvCmd
+(brace
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+DECL|member|IDlun
+id|unchar
+id|IDlun
+suffix:semicolon
+multiline_comment|/* Initiator SCSI ID/lun */
+DECL|member|len
+id|unchar
+id|len
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* command buffer length */
+DECL|member|ptr
+id|unchar
+id|ptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* command buffer address */
+DECL|member|rsvd
+id|unchar
+id|rsvd
+(braket
+l_int|7
+)braket
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|vue
+r_volatile
+id|unchar
+id|vue
+suffix:semicolon
+multiline_comment|/* vendor-unique error code */
+DECL|member|status
+r_volatile
+id|unchar
+id|status
+suffix:semicolon
+multiline_comment|/* returned (icmb) status */
+DECL|member|phase
+r_volatile
+id|unchar
+id|phase
+suffix:semicolon
+multiline_comment|/* used by interrupt handler */
+DECL|typedef|IcbRecvCmd
+)brace
+id|IcbRecvCmd
+suffix:semicolon
+DECL|struct|icbSendStat
+r_typedef
+r_struct
+id|icbSendStat
+(brace
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+DECL|member|IDlun
+id|unchar
+id|IDlun
+suffix:semicolon
+multiline_comment|/* Target SCSI ID/lun */
+DECL|member|stat
+id|unchar
+id|stat
+suffix:semicolon
+multiline_comment|/* (outgoing) completion status byte 1 */
+DECL|member|rsvd
+id|unchar
+id|rsvd
+(braket
+l_int|12
+)braket
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|vue
+r_volatile
+id|unchar
+id|vue
+suffix:semicolon
+multiline_comment|/* vendor-unique error code */
+DECL|member|status
+r_volatile
+id|unchar
+id|status
+suffix:semicolon
+multiline_comment|/* returned (icmb) status */
+DECL|member|phase
+r_volatile
+id|unchar
+id|phase
+suffix:semicolon
+multiline_comment|/* used by interrupt handler */
+DECL|typedef|IcbSendStat
+)brace
+id|IcbSendStat
+suffix:semicolon
+DECL|struct|icbRevLvl
+r_typedef
+r_struct
+id|icbRevLvl
+(brace
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+DECL|member|primary
+r_volatile
+id|unchar
+id|primary
+suffix:semicolon
+multiline_comment|/* primary revision level (returned) */
+DECL|member|secondary
+r_volatile
+id|unchar
+id|secondary
+suffix:semicolon
+multiline_comment|/* secondary revision level (returned) */
+DECL|member|rsvd
+id|unchar
+id|rsvd
+(braket
+l_int|12
+)braket
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|vue
+r_volatile
+id|unchar
+id|vue
+suffix:semicolon
+multiline_comment|/* vendor-unique error code */
+DECL|member|status
+r_volatile
+id|unchar
+id|status
+suffix:semicolon
+multiline_comment|/* returned (icmb) status */
+DECL|member|phase
+r_volatile
+id|unchar
+id|phase
+suffix:semicolon
+multiline_comment|/* used by interrupt handler */
+DECL|typedef|IcbRevLvl
+)brace
+id|IcbRevLvl
+suffix:semicolon
+DECL|struct|icbUnsMask
+r_typedef
+r_struct
+id|icbUnsMask
+(brace
+multiline_comment|/* I&squot;m totally guessing here */
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+DECL|member|mask
+r_volatile
+id|unchar
+id|mask
+(braket
+l_int|14
+)braket
+suffix:semicolon
+multiline_comment|/* mask bits */
+macro_line|#ifdef 0
+id|unchar
+id|rsvd
+(braket
+l_int|12
+)braket
+suffix:semicolon
+multiline_comment|/* reserved */
+macro_line|#endif
+DECL|member|vue
+r_volatile
+id|unchar
+id|vue
+suffix:semicolon
+multiline_comment|/* vendor-unique error code */
+DECL|member|status
+r_volatile
+id|unchar
+id|status
+suffix:semicolon
+multiline_comment|/* returned (icmb) status */
+DECL|member|phase
+r_volatile
+id|unchar
+id|phase
+suffix:semicolon
+multiline_comment|/* used by interrupt handler */
+DECL|typedef|IcbUnsMask
+)brace
+id|IcbUnsMask
+suffix:semicolon
+DECL|struct|icbDiag
+r_typedef
+r_struct
+id|icbDiag
+(brace
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+DECL|member|type
+id|unchar
+id|type
+suffix:semicolon
+multiline_comment|/* diagnostics type code (0-3) */
+DECL|member|len
+id|unchar
+id|len
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* buffer length */
+DECL|member|ptr
+id|unchar
+id|ptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* buffer address */
+DECL|member|rsvd
+id|unchar
+id|rsvd
+(braket
+l_int|7
+)braket
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|vue
+r_volatile
+id|unchar
+id|vue
+suffix:semicolon
+multiline_comment|/* vendor-unique error code */
+DECL|member|status
+r_volatile
+id|unchar
+id|status
+suffix:semicolon
+multiline_comment|/* returned (icmb) status */
+DECL|member|phase
+r_volatile
+id|unchar
+id|phase
+suffix:semicolon
+multiline_comment|/* used by interrupt handler */
+DECL|typedef|IcbDiag
+)brace
+id|IcbDiag
+suffix:semicolon
+DECL|macro|ICB_DIAG_POWERUP
+mdefine_line|#define ICB_DIAG_POWERUP        0     /* Power-up diags only */
+DECL|macro|ICB_DIAG_WALKING
+mdefine_line|#define ICB_DIAG_WALKING        1     /* walking 1&squot;s pattern */
+DECL|macro|ICB_DIAG_DMA
+mdefine_line|#define ICB_DIAG_DMA            2     /* DMA - system memory diags */
+DECL|macro|ICB_DIAG_FULL
+mdefine_line|#define ICB_DIAG_FULL           3     /* do both 1 &amp; 2 */
+DECL|struct|icbParms
+r_typedef
+r_struct
+id|icbParms
+(brace
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+DECL|member|rsvd1
+id|unchar
+id|rsvd1
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|len
+id|unchar
+id|len
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* parms buffer length */
+DECL|member|ptr
+id|unchar
+id|ptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* parms buffer address */
+DECL|member|idx
+id|unchar
+id|idx
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* index (MSB-LSB) */
+DECL|member|rsvd2
+id|unchar
+id|rsvd2
+(braket
+l_int|5
+)braket
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|vue
+r_volatile
+id|unchar
+id|vue
+suffix:semicolon
+multiline_comment|/* vendor-unique error code */
+DECL|member|status
+r_volatile
+id|unchar
+id|status
+suffix:semicolon
+multiline_comment|/* returned (icmb) status */
+DECL|member|phase
+r_volatile
+id|unchar
+id|phase
+suffix:semicolon
+multiline_comment|/* used by interrupt handler */
+DECL|typedef|IcbParms
+)brace
+id|IcbParms
+suffix:semicolon
+DECL|struct|icbAny
+r_typedef
+r_struct
+id|icbAny
+(brace
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+DECL|member|data
+id|unchar
+id|data
+(braket
+l_int|14
+)braket
+suffix:semicolon
+multiline_comment|/* format-specific data */
+DECL|member|vue
+r_volatile
+id|unchar
+id|vue
+suffix:semicolon
+multiline_comment|/* vendor-unique error code */
+DECL|member|status
+r_volatile
+id|unchar
+id|status
+suffix:semicolon
+multiline_comment|/* returned (icmb) status */
+DECL|member|phase
+r_volatile
+id|unchar
+id|phase
+suffix:semicolon
+multiline_comment|/* used by interrupt handler */
+DECL|typedef|IcbAny
+)brace
+id|IcbAny
+suffix:semicolon
+DECL|union|icb
+r_typedef
+r_union
+id|icb
+(brace
+DECL|member|op
+id|unchar
+id|op
+suffix:semicolon
+multiline_comment|/* ICB opcode */
+DECL|member|recv_cmd
+id|IcbRecvCmd
+id|recv_cmd
+suffix:semicolon
+multiline_comment|/* format for receive command */
+DECL|member|send_stat
+id|IcbSendStat
+id|send_stat
+suffix:semicolon
+multiline_comment|/* format for send status */
+DECL|member|rev_lvl
+id|IcbRevLvl
+id|rev_lvl
+suffix:semicolon
+multiline_comment|/* format for get revision level */
+DECL|member|diag
+id|IcbDiag
+id|diag
+suffix:semicolon
+multiline_comment|/* format for execute diagnostics */
+DECL|member|eparms
+id|IcbParms
+id|eparms
+suffix:semicolon
+multiline_comment|/* format for get/set exec parms */
+DECL|member|icb
+id|IcbAny
+id|icb
+suffix:semicolon
+multiline_comment|/* generic format */
+DECL|member|data
+id|unchar
+id|data
+(braket
+l_int|18
+)braket
+suffix:semicolon
+DECL|typedef|Icb
+)brace
+id|Icb
+suffix:semicolon
+multiline_comment|/*&n; *  Driver SCB structure pool.&n; *&n; *  The SCBs declared here are shared by all host adapters; hence, this&n; *  structure is not part of the Adapter structure.&n; */
 DECL|variable|scbs
 r_static
 id|Scb
@@ -69,37 +1010,171 @@ id|scbfree
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|wd7000_host
+multiline_comment|/* free list */
+DECL|variable|freescbs
 r_static
 r_int
-id|wd7000_host
+id|freescbs
 op_assign
-l_int|0
+id|MAX_SCBS
 suffix:semicolon
-DECL|variable|controlstat
-r_static
-id|unchar
-id|controlstat
-op_assign
-l_int|0
+multiline_comment|/* free list counter */
+multiline_comment|/*&n; *  END of data/declarations - code follows.&n; */
+macro_line|#ifdef ANY2SCSI_INLINE
+multiline_comment|/*&n;   Since they&squot;re used a lot, I&squot;ve redone the following from the macros&n;   formerly in wd7000.h, hopefully to speed them up by getting rid of&n;   all the shifting (it may not matter; GCC might have done as well anyway).&n;&n;   xany2scsi and xscsi2int were not being used, and are no longer defined.&n;   (They were simply 4-byte versions of these routines).&n;*/
+r_typedef
+r_union
+(brace
+multiline_comment|/* let&squot;s cheat... */
+DECL|member|i
+r_int
+id|i
 suffix:semicolon
-DECL|variable|rev_1
-DECL|variable|rev_2
-r_static
+DECL|member|u
 id|unchar
-id|rev_1
-op_assign
-l_int|0
+id|u
+(braket
+r_sizeof
+(paren
+r_int
+)paren
+)braket
+suffix:semicolon
+multiline_comment|/* the sizeof(int) makes it more portable */
+DECL|typedef|i_u
+)brace
+id|i_u
+suffix:semicolon
+DECL|function|any2scsi
+r_static
+r_inline
+r_void
+id|any2scsi
+c_func
+(paren
+id|unchar
+op_star
+id|scsi
 comma
-id|rev_2
+r_int
+id|any
+)paren
+(brace
+op_star
+id|scsi
+op_increment
+op_assign
+(paren
+(paren
+id|i_u
+)paren
+id|any
+)paren
+dot
+id|u
+(braket
+l_int|2
+)braket
+suffix:semicolon
+op_star
+id|scsi
+op_increment
+op_assign
+(paren
+(paren
+id|i_u
+)paren
+id|any
+)paren
+dot
+id|u
+(braket
+l_int|1
+)braket
+suffix:semicolon
+op_star
+id|scsi
+op_increment
+op_assign
+(paren
+(paren
+id|i_u
+)paren
+id|any
+)paren
+dot
+id|u
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+DECL|function|scsi2int
+r_static
+r_inline
+r_int
+id|scsi2int
+c_func
+(paren
+id|unchar
+op_star
+id|scsi
+)paren
+(brace
+id|i_u
+id|result
+suffix:semicolon
+id|result.i
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* filled in by wd7000_revision */
-DECL|macro|wd7000_intr_ack
-mdefine_line|#define wd7000_intr_ack()  outb(0,INTR_ACK)
-DECL|macro|WAITnexttimeout
-mdefine_line|#define WAITnexttimeout 3000000
+multiline_comment|/* clears unused bytes */
+op_star
+(paren
+id|result.u
+op_plus
+l_int|2
+)paren
+op_assign
+op_star
+id|scsi
+op_increment
+suffix:semicolon
+op_star
+(paren
+id|result.u
+op_plus
+l_int|1
+)paren
+op_assign
+op_star
+id|scsi
+op_increment
+suffix:semicolon
+op_star
+(paren
+id|result.u
+)paren
+op_assign
+op_star
+id|scsi
+op_increment
+suffix:semicolon
+r_return
+id|result.i
+suffix:semicolon
+)brace
+macro_line|#else
+multiline_comment|/*&n;   These are the old ones - I&squot;ve just moved them here...&n;*/
+DECL|macro|any2scsi
+macro_line|#undef any2scsi
+DECL|macro|any2scsi
+mdefine_line|#define any2scsi(up, p)&t;&t;&t;&bslash;&n;(up)[0] = (((unsigned long)(p)) &gt;&gt; 16);&t;        &bslash;&n;(up)[1] = ((unsigned long)(p)) &gt;&gt; 8;&t;&t;&bslash;&n;(up)[2] = ((unsigned long)(p));
+DECL|macro|scsi2int
+macro_line|#undef scsi2int
+DECL|macro|scsi2int
+mdefine_line|#define scsi2int(up) ( (((unsigned long)*(up)) &lt;&lt; 16) + &bslash;&n; (((unsigned long)(up)[1]) &lt;&lt; 8) + ((unsigned long)(up)[2]) )
+macro_line|#endif
 DECL|function|wd7000_enable_intr
 r_static
 r_inline
@@ -107,19 +1182,23 @@ r_void
 id|wd7000_enable_intr
 c_func
 (paren
-r_void
+id|Adapter
+op_star
+id|host
 )paren
 (brace
-id|controlstat
+id|host-&gt;control
 op_or_assign
 id|INT_EN
 suffix:semicolon
 id|outb
 c_func
 (paren
-id|controlstat
+id|host-&gt;control
 comma
-id|CONTROL
+id|host-&gt;iobase
+op_plus
+id|ASC_CONTROL
 )paren
 suffix:semicolon
 )brace
@@ -130,25 +1209,29 @@ r_void
 id|wd7000_enable_dma
 c_func
 (paren
-r_void
+id|Adapter
+op_star
+id|host
 )paren
 (brace
-id|controlstat
+id|host-&gt;control
 op_or_assign
 id|DMA_EN
 suffix:semicolon
 id|outb
 c_func
 (paren
-id|controlstat
+id|host-&gt;control
 comma
-id|CONTROL
+id|host-&gt;iobase
+op_plus
+id|ASC_CONTROL
 )paren
 suffix:semicolon
 id|set_dma_mode
 c_func
 (paren
-id|DMA_CH
+id|host-&gt;dma
 comma
 id|DMA_MODE_CASCADE
 )paren
@@ -156,12 +1239,14 @@ suffix:semicolon
 id|enable_dma
 c_func
 (paren
-id|DMA_CH
+id|host-&gt;dma
 )paren
 suffix:semicolon
 )brace
+DECL|macro|WAITnexttimeout
+mdefine_line|#define WAITnexttimeout 200  /* 2 seconds */
 DECL|macro|WAIT
-mdefine_line|#define WAIT(port, mask, allof, noneof)&t;&t;&t;&t;&t;&bslash;&n; { register WAITbits;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   register WAITtimeout = WAITnexttimeout;&t;&t;&t;&t;&bslash;&n;   while (1) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     WAITbits = inb(port) &amp; (mask);&t;&t;&t;&t;&t;&bslash;&n;     if ((WAITbits &amp; (allof)) == (allof) &amp;&amp; ((WAITbits &amp; (noneof)) == 0)) &bslash;&n;       break;                                                         &t;&bslash;&n;     if (--WAITtimeout == 0) goto fail;&t;&t;&t;&t;&t;&bslash;&n;   }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; }
+mdefine_line|#define WAIT(port, mask, allof, noneof)&t;&t;&t;&t;&t;&bslash;&n; { register volatile unsigned WAITbits; &t;&t;&t;&t;&bslash;&n;   register unsigned long WAITtimeout = jiffies + WAITnexttimeout;&t;&bslash;&n;   while (1) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     WAITbits = inb(port) &amp; (mask);&t;&t;&t;&t;&t;&bslash;&n;     if ((WAITbits &amp; (allof)) == (allof) &amp;&amp; ((WAITbits &amp; (noneof)) == 0)) &bslash;&n;       break;                                                         &t;&bslash;&n;     if (jiffies &gt; WAITtimeout) goto fail;&t;&t;&t;&t;&bslash;&n;   }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; }
 DECL|function|delay
 r_static
 r_inline
@@ -173,6 +1258,7 @@ r_int
 id|how_long
 )paren
 (brace
+r_register
 r_int
 r_int
 id|time
@@ -197,94 +1283,30 @@ r_int
 id|command_out
 c_func
 (paren
+id|Adapter
+op_star
+id|host
+comma
 id|unchar
 op_star
-id|cmdp
+id|cmd
 comma
 r_int
 id|len
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|len
-op_eq
-l_int|1
-)paren
-(brace
-r_while
-c_loop
-(paren
-l_int|1
-op_eq
-l_int|1
-)paren
-(brace
 id|WAIT
 c_func
 (paren
+id|host-&gt;iobase
+op_plus
 id|ASC_STAT
 comma
-id|STATMASK
+id|ASC_STATMASK
 comma
 id|CMD_RDY
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|inb
-c_func
-(paren
-id|ASC_STAT
-)paren
-op_amp
-id|CMD_RDY
-)paren
-)paren
-(brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-id|outb
-c_func
-(paren
-op_star
-id|cmdp
-comma
-id|COMMAND
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_while
@@ -294,33 +1316,50 @@ id|len
 op_decrement
 )paren
 (brace
+r_do
+(brace
+id|outb
+c_func
+(paren
+op_star
+id|cmd
+comma
+id|host-&gt;iobase
+op_plus
+id|ASC_COMMAND
+)paren
+suffix:semicolon
 id|WAIT
 c_func
 (paren
+id|host-&gt;iobase
+op_plus
 id|ASC_STAT
 comma
-id|STATMASK
+id|ASC_STATMASK
 comma
 id|CMD_RDY
 comma
 l_int|0
 )paren
 suffix:semicolon
-id|outb
+)brace
+r_while
+c_loop
+(paren
+id|inb
 c_func
 (paren
-op_star
-id|cmdp
-op_increment
-comma
-id|COMMAND
+id|host-&gt;iobase
+op_plus
+id|ASC_STAT
+)paren
+op_amp
+id|CMD_REJ
 )paren
 suffix:semicolon
-)brace
-id|sti
-c_func
-(paren
-)paren
+id|cmd
+op_increment
 suffix:semicolon
 )brace
 r_return
@@ -328,15 +1367,10 @@ l_int|1
 suffix:semicolon
 id|fail
 suffix:colon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;wd7000_out WAIT failed(%d): &quot;
+l_string|&quot;wd7000 command_out: WAIT failed(%d)&bslash;n&quot;
 comma
 id|len
 op_plus
@@ -347,25 +1381,66 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|alloc_scb
+multiline_comment|/*&n; *  This version of alloc_scbs is in preparation for supporting multiple&n; *  commands per lun and command chaining, by queueing pending commands.&n; *  We will need to allocate Scbs in blocks since they will wait to be&n; *  executed so there is the possibility of deadlock otherwise.&n; *  Also, to keep larger requests from being starved by smaller requests,&n; *  we limit access to this routine with an internal busy flag, so that&n; *  the satisfiability of a request is not dependent on the size of the&n; *  request.&n; */
+DECL|function|alloc_scbs
 r_static
 r_inline
 id|Scb
 op_star
-id|alloc_scb
+id|alloc_scbs
 c_func
 (paren
-r_void
+r_int
+id|needed
 )paren
 (brace
+r_register
 id|Scb
 op_star
 id|scb
+comma
+op_star
+id|p
 suffix:semicolon
+r_register
 r_int
 r_int
 id|flags
 suffix:semicolon
+r_register
+r_int
+r_int
+id|timeout
+op_assign
+id|jiffies
+op_plus
+id|WAITnexttimeout
+suffix:semicolon
+r_register
+r_int
+r_int
+id|now
+suffix:semicolon
+r_static
+r_int
+id|busy
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|needed
+op_le
+l_int|0
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* sanity check */
 id|save_flags
 c_func
 (paren
@@ -377,18 +1452,111 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|busy
+)paren
+(brace
+multiline_comment|/* someone else is allocating */
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|now
+op_assign
+id|jiffies
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|jiffies
+op_eq
+id|now
+)paren
+multiline_comment|/* wait a jiffy */
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|busy
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* not busy now; it&squot;s our turn */
+r_while
+c_loop
+(paren
+id|freescbs
+OL
+id|needed
+)paren
+(brace
+id|timeout
+op_assign
+id|jiffies
+op_plus
+id|WAITnexttimeout
+suffix:semicolon
+r_do
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|now
+op_assign
+id|jiffies
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|jiffies
+op_eq
+id|now
+)paren
+multiline_comment|/* wait a jiffy */
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|freescbs
+OL
+id|needed
+op_logical_and
+id|jiffies
+op_le
+id|timeout
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *  If we get here with enough free Scbs, we can take them.&n;&t; *  Otherwise, we timed out and didn&squot;t get enough.&n;&t; */
 r_if
 c_cond
 (paren
-id|scbfree
-op_eq
-l_int|NULL
+id|freescbs
+OL
+id|needed
 )paren
 (brace
+id|busy
+op_assign
+l_int|0
+suffix:semicolon
 id|panic
 c_func
 (paren
-l_string|&quot;wd7000: can&squot;t allocate free SCB.&bslash;n&quot;
+l_string|&quot;wd7000: can&squot;t get enough free SCBs.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -401,31 +1569,48 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+)brace
 id|scb
 op_assign
 id|scbfree
 suffix:semicolon
-id|scbfree
-op_assign
-id|scb-&gt;next
+id|freescbs
+op_sub_assign
+id|needed
 suffix:semicolon
-id|memset
-c_func
+r_for
+c_loop
 (paren
-id|scb
-comma
+id|i
+op_assign
 l_int|0
-comma
-r_sizeof
-(paren
-id|Scb
-)paren
-)paren
 suffix:semicolon
-id|scb-&gt;next
+id|i
+OL
+id|needed
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|p
+op_assign
+id|scbfree
+suffix:semicolon
+id|scbfree
+op_assign
+id|p-&gt;next
+suffix:semicolon
+)brace
+id|p-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|busy
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* we&squot;re done */
 id|restore_flags
 c_func
 (paren
@@ -448,6 +1633,7 @@ op_star
 id|scb
 )paren
 (brace
+r_register
 r_int
 r_int
 id|flags
@@ -483,6 +1669,9 @@ suffix:semicolon
 id|scbfree
 op_assign
 id|scb
+suffix:semicolon
+id|freescbs
+op_increment
 suffix:semicolon
 id|restore_flags
 c_func
@@ -529,6 +1718,19 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|scbs
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|scbs
+)paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -545,6 +1747,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 id|scbs
 (braket
 id|i
@@ -564,12 +1767,33 @@ l_int|1
 suffix:semicolon
 id|scbs
 (braket
+id|i
+)braket
+dot
+id|SCpnt
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|scbs
+(braket
 id|MAX_SCBS
 op_minus
 l_int|1
 )braket
 dot
 id|next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|scbs
+(braket
+id|MAX_SCBS
+op_minus
+l_int|1
+)braket
+dot
+id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -586,35 +1810,59 @@ r_int
 id|mail_out
 c_func
 (paren
+id|Adapter
+op_star
+id|host
+comma
 id|Scb
 op_star
 id|scbptr
 )paren
 multiline_comment|/*&n; *  Note: this can also be used for ICBs; just cast to the parm type.&n; */
 (brace
+r_register
 r_int
 id|i
 comma
 id|ogmb
 suffix:semicolon
-r_int
-r_char
-id|start_cmd
-suffix:semicolon
+r_register
 r_int
 r_int
 id|flags
 suffix:semicolon
-id|DEB
-c_func
+id|unchar
+id|start_ogmb
+suffix:semicolon
+id|Mailbox
+op_star
+id|ogmbs
+op_assign
+id|host-&gt;mb.ogmb
+suffix:semicolon
+r_int
+op_star
+id|next_ogmb
+op_assign
+op_amp
 (paren
+id|host-&gt;next_ogmb
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;wd7000_scb_out: %06x&quot;
+l_string|&quot;wd7000 mail_out: %06x&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|scbptr
 )paren
 suffix:semicolon
-)paren
+macro_line|#endif
 multiline_comment|/* We first look for a free outgoing mailbox */
 id|save_flags
 c_func
@@ -629,6 +1877,7 @@ c_func
 suffix:semicolon
 id|ogmb
 op_assign
+op_star
 id|next_ogmb
 suffix:semicolon
 r_for
@@ -649,7 +1898,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|mb.ogmb
+id|ogmbs
 (braket
 id|ogmb
 )braket
@@ -659,9 +1908,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|DEB
-c_func
-(paren
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -669,9 +1916,9 @@ l_string|&quot; using OGMB %x&quot;
 comma
 id|ogmb
 )paren
-)paren
 suffix:semicolon
-id|mb.ogmb
+macro_line|#endif
+id|ogmbs
 (braket
 id|ogmb
 )braket
@@ -683,16 +1930,24 @@ suffix:semicolon
 id|any2scsi
 c_func
 (paren
-id|mb.ogmb
+(paren
+id|unchar
+op_star
+)paren
+id|ogmbs
 (braket
 id|ogmb
 )braket
 dot
 id|scbptr
 comma
+(paren
+r_int
+)paren
 id|scbptr
 )paren
 suffix:semicolon
+op_star
 id|next_ogmb
 op_assign
 (paren
@@ -723,18 +1978,20 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|DEB
-c_func
-(paren
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 l_string|&quot;, scb is %x&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|scbptr
 )paren
 suffix:semicolon
-)paren
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -743,95 +2000,52 @@ op_ge
 id|OGMB_CNT
 )paren
 (brace
-id|DEB
-c_func
-(paren
+multiline_comment|/*&n;&t; *  Alternatively, we might issue the &quot;interrupt on free OGMB&quot;,&n;&t; *  and sleep, but it must be ensured that it isn&squot;t the init&n;&t; *  task running.  Instead, this version assumes that the caller&n;&t; *  will be persistent, and try again.  Since it&squot;s the adapter&n;&t; *  that marks OGMB&squot;s free, waiting even with interrupts off&n;&t; *  should work, since they are freed very quickly in most cases.&n;&t; */
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 l_string|&quot;, no free OGMBs.&bslash;n&quot;
 )paren
 suffix:semicolon
-)paren
-multiline_comment|/* Alternatively, issue &quot;interrupt on free OGMB&quot;, and sleep... */
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-id|start_cmd
+id|wd7000_enable_intr
+c_func
+(paren
+id|host
+)paren
+suffix:semicolon
+id|start_ogmb
 op_assign
 id|START_OGMB
 op_or
 id|ogmb
 suffix:semicolon
-id|wd7000_enable_intr
-c_func
-(paren
-)paren
-suffix:semicolon
-r_do
-(brace
 id|command_out
 c_func
 (paren
+id|host
+comma
 op_amp
-id|start_cmd
+id|start_ogmb
 comma
 l_int|1
 )paren
 suffix:semicolon
-id|WAIT
-c_func
-(paren
-id|ASC_STAT
-comma
-id|STATMASK
-comma
-id|CMD_RDY
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|inb
-c_func
-(paren
-id|ASC_STAT
-)paren
-op_amp
-id|CMD_REJ
-)paren
-suffix:semicolon
-id|DEB
-c_func
-(paren
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 l_string|&quot;, awaiting interrupt.&bslash;n&quot;
 )paren
 suffix:semicolon
-)paren
+macro_line|#endif
 r_return
 l_int|1
-suffix:semicolon
-id|fail
-suffix:colon
-id|DEB
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;, WAIT timed out.&bslash;n&quot;
-)paren
-suffix:semicolon
-)paren
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|make_code
@@ -1015,23 +2229,27 @@ op_star
 id|SCpnt
 )paren
 (brace
-id|DEB
-c_func
-(paren
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 l_string|&quot;wd7000_scsi_done: %06x&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|SCpnt
 )paren
 suffix:semicolon
-)paren
+macro_line|#endif
 id|SCpnt-&gt;SCp.phase
 op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|macro|wd7000_intr_ack
+mdefine_line|#define wd7000_intr_ack(host)  outb(0,host-&gt;iobase+ASC_INTR_ACK)
 DECL|function|wd7000_intr_handle
 r_void
 id|wd7000_intr_handle
@@ -1041,6 +2259,27 @@ r_int
 id|irq
 )paren
 (brace
+macro_line|#ifdef 0
+multiline_comment|/*&n;     * Use irqp as the parm, and the following declaration, if request_irq&n;     * is used or if SA_INTERRUPT is not used.&n;     */
+r_register
+r_int
+id|irq
+op_assign
+op_star
+(paren
+(paren
+(paren
+r_int
+op_star
+)paren
+id|irqp
+)paren
+op_minus
+l_int|2
+)paren
+suffix:semicolon
+macro_line|#endif
+r_register
 r_int
 id|flag
 comma
@@ -1050,45 +2289,77 @@ id|errstatus
 comma
 id|icmb_status
 suffix:semicolon
+r_register
 r_int
 id|host_error
 comma
 id|scsi_error
 suffix:semicolon
+r_register
 id|Scb
 op_star
 id|scb
 suffix:semicolon
 multiline_comment|/* for SCSI commands */
-id|unchar
+r_register
+id|IcbAny
 op_star
 id|icb
 suffix:semicolon
 multiline_comment|/* for host commands */
+r_register
 id|Scsi_Cmnd
 op_star
 id|SCpnt
 suffix:semicolon
+id|Adapter
+op_star
+id|host
+op_assign
+id|irq2host
+(braket
+id|irq
+)braket
+suffix:semicolon
+multiline_comment|/* This MUST be set!!! */
+id|Mailbox
+op_star
+id|icmbs
+op_assign
+id|host-&gt;mb.icmb
+suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;wd7000_intr_handle: irq = %d, host = %06x&bslash;n&quot;
+comma
+id|irq
+comma
+id|host
+)paren
+suffix:semicolon
+macro_line|#endif
 id|flag
 op_assign
 id|inb
 c_func
 (paren
-id|INTR_STAT
+id|host-&gt;iobase
+op_plus
+id|ASC_INTR_STAT
 )paren
 suffix:semicolon
-id|DEB
-c_func
-(paren
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;wd7000_intr_handle: intr stat = %02x&quot;
+l_string|&quot;wd7000_intr_handle: intr stat = %02x&bslash;n&quot;
 comma
 id|flag
 )paren
 suffix:semicolon
-)paren
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1097,70 +2368,117 @@ op_logical_neg
 id|inb
 c_func
 (paren
+id|host-&gt;iobase
+op_plus
 id|ASC_STAT
 )paren
 op_amp
-l_int|0x80
+id|INT_IM
 )paren
 )paren
 (brace
-id|DEB
-c_func
-(paren
+multiline_comment|/* NB: these are _very_ possible if IRQ 15 is being used, since&n;&t;   it&squot;s the &quot;garbage collector&quot; on the 2nd 8259 PIC.  Specifically,&n;&t;   any interrupt signal into the 8259 which can&squot;t be identified&n;&t;   comes out as 7 from the 8259, which is 15 to the host.  Thus, it&n;&t;   is a good thing the WD7000 has an interrupt status port, so we&n;&t;   can sort these out.  Otherwise, electrical noise and other such&n;&t;   problems would be indistinguishable from valid interrupts...&n;&t;*/
+macro_line|#ifdef DEBUG 
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nwd7000_intr_handle: phantom interrupt...&bslash;n&quot;
+l_string|&quot;wd7000_intr_handle: phantom interrupt...&bslash;n&quot;
 )paren
 suffix:semicolon
-)paren
+macro_line|#endif
 id|wd7000_intr_ack
 c_func
 (paren
+id|host
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* check for an incoming mailbox */
 r_if
 c_cond
 (paren
+id|flag
+op_amp
+id|MB_INTR
+)paren
+(brace
+multiline_comment|/* The interrupt is for a mailbox */
+r_if
+c_cond
+(paren
+op_logical_neg
 (paren
 id|flag
 op_amp
-l_int|0x40
+id|IMB_INTR
 )paren
-op_eq
-l_int|0
 )paren
 (brace
-multiline_comment|/*  for a free OGMB - need code for this case... */
-id|DEB
-c_func
-(paren
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;wd7000_intr_handle: free outgoing mailbox&bslash;n&quot;
+l_string|&quot;wd7000_intr_handle: free outgoing mailbox&quot;
 )paren
 suffix:semicolon
-)paren
+macro_line|#endif
+multiline_comment|/*&n;&t;     * If sleep_on() and the &quot;interrupt on free OGMB&quot; command are&n;&t;     * used in mail_out(), wake_up() should correspondingly be called&n;&t;     * here.  For now, we don&squot;t need to do anything special.&n;&t;     */
 id|wd7000_intr_ack
 c_func
 (paren
+id|host
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_else
+(brace
 multiline_comment|/* The interrupt is for an incoming mailbox */
 id|icmb
 op_assign
 id|flag
 op_amp
-l_int|0x3f
+id|MB_MASK
 suffix:semicolon
+id|icmb_status
+op_assign
+id|icmbs
+(braket
+id|icmb
+)braket
+dot
+id|status
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|icmb_status
+op_amp
+l_int|0x80
+)paren
+(brace
+multiline_comment|/* unsolicited - result in ICMB */
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;wd7000_intr_handle: unsolicited interrupt %02xh&bslash;n&quot;
+comma
+id|icmb_status
+)paren
+suffix:semicolon
+macro_line|#endif
+id|wd7000_intr_ack
+c_func
+(paren
+id|host
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|scb
 op_assign
 (paren
@@ -1171,7 +2489,11 @@ op_star
 id|scsi2int
 c_func
 (paren
-id|mb.icmb
+(paren
+id|unchar
+op_star
+)paren
+id|icmbs
 (braket
 id|icmb
 )braket
@@ -1179,16 +2501,7 @@ dot
 id|scbptr
 )paren
 suffix:semicolon
-id|icmb_status
-op_assign
-id|mb.icmb
-(braket
-id|icmb
-)braket
-dot
-id|status
-suffix:semicolon
-id|mb.icmb
+id|icmbs
 (braket
 id|icmb
 )braket
@@ -1197,22 +2510,6 @@ id|status
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot; ICMB %d posted for SCB/ICB %06x, status %02x, vue %02x&quot;
-comma
-id|icmb
-comma
-id|scb
-comma
-id|icmb_status
-comma
-id|scb-&gt;vue
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1220,7 +2517,7 @@ op_logical_neg
 (paren
 id|scb-&gt;op
 op_amp
-l_int|0x80
+id|ICB_OP_MASK
 )paren
 )paren
 (brace
@@ -1240,7 +2537,7 @@ op_le
 l_int|0
 )paren
 (brace
-multiline_comment|/* all scbs for SCpnt are done */
+multiline_comment|/* all scbs are done */
 id|host_error
 op_assign
 id|scb-&gt;vue
@@ -1269,21 +2566,6 @@ id|SCpnt-&gt;result
 op_assign
 id|errstatus
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|SCpnt-&gt;host_scribble
-op_ne
-l_int|NULL
-)paren
-id|scsi_free
-c_func
-(paren
-id|SCpnt-&gt;host_scribble
-comma
-id|WD7000_SCRIBBLE
-)paren
-suffix:semicolon
 id|free_scb
 c_func
 (paren
@@ -1306,41 +2588,29 @@ multiline_comment|/* an ICB is done */
 id|icb
 op_assign
 (paren
-id|unchar
+id|IcbAny
 op_star
 )paren
 id|scb
 suffix:semicolon
-id|icb
-(braket
-id|ICB_STATUS
-)braket
+id|icb-&gt;status
 op_assign
 id|icmb_status
 suffix:semicolon
-id|icb
-(braket
-id|ICB_PHASE
-)braket
+id|icb-&gt;phase
 op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* incoming mailbox */
+)brace
 id|wd7000_intr_ack
 c_func
 (paren
+id|host
 )paren
 suffix:semicolon
-id|DEB
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;.&bslash;n&quot;
-)paren
-suffix:semicolon
-)paren
 r_return
 suffix:semicolon
 )brace
@@ -1364,24 +2634,19 @@ op_star
 )paren
 )paren
 (brace
+r_register
 id|Scb
 op_star
 id|scb
 suffix:semicolon
+r_register
 id|Sgb
 op_star
 id|sgb
 suffix:semicolon
+r_register
 id|unchar
 op_star
-id|cdb
-suffix:semicolon
-id|unchar
-id|idlun
-suffix:semicolon
-r_int
-id|cdblen
-suffix:semicolon
 id|cdb
 op_assign
 (paren
@@ -1390,13 +2655,33 @@ op_star
 )paren
 id|SCpnt-&gt;cmnd
 suffix:semicolon
+r_register
+id|unchar
+id|idlun
+suffix:semicolon
+r_register
+r_int
+id|cdblen
+suffix:semicolon
+id|Adapter
+op_star
+id|host
+op_assign
+(paren
+id|Adapter
+op_star
+)paren
+id|SCpnt-&gt;host-&gt;hostdata
+suffix:semicolon
 id|cdblen
 op_assign
 id|COMMAND_SIZE
 c_func
 (paren
-op_star
 id|cdb
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
 id|idlun
@@ -1427,9 +2712,10 @@ l_int|1
 suffix:semicolon
 id|scb
 op_assign
-id|alloc_scb
+id|alloc_scbs
 c_func
 (paren
+l_int|1
 )paren
 suffix:semicolon
 id|scb-&gt;idlun
@@ -1458,23 +2744,16 @@ suffix:semicolon
 multiline_comment|/* so we can find stuff later */
 id|SCpnt-&gt;host_scribble
 op_assign
-l_int|NULL
-suffix:semicolon
-id|DEB
-c_func
 (paren
-id|printk
-c_func
-(paren
-l_string|&quot;request_bufflen is %x, bufflen is %x&bslash;n&quot;
-comma
-"&bslash;"
-id|SCpnt-&gt;request_bufflen
-comma
-id|SCpnt-&gt;bufflen
+id|unchar
+op_star
 )paren
+id|scb
 suffix:semicolon
-)paren
+id|scb-&gt;host
+op_assign
+id|host
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1499,14 +2778,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|scsi_hosts
-(braket
-id|wd7000_host
-)braket
-dot
-id|sg_tablesize
-op_le
-l_int|0
+id|SCpnt-&gt;host-&gt;sg_tablesize
+op_eq
+id|SG_NONE
 )paren
 (brace
 id|panic
@@ -1526,55 +2800,9 @@ id|SCpnt-&gt;use_sg
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; &t;    Allocate memory for a scatter/gather-list in wd7000 format.&n; &t;    Save the pointer at host_scribble.&n;  &t;*/
-macro_line|#ifdef DEBUG
-r_if
-c_cond
-(paren
-id|SCpnt-&gt;use_sg
-OG
-id|WD7000_SG
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;WD7000: requesting too many scatterblocks&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-id|SCpnt-&gt;host_scribble
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-id|scsi_malloc
-c_func
-(paren
-id|WD7000_SCRIBBLE
-)paren
-suffix:semicolon
 id|sgb
 op_assign
-(paren
-id|Sgb
-op_star
-)paren
-id|SCpnt-&gt;host_scribble
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sgb
-op_eq
-l_int|NULL
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;wd7000_queuecommand: scsi_malloc() failed.&bslash;n&quot;
-)paren
+id|scb-&gt;sgb
 suffix:semicolon
 id|scb-&gt;op
 op_assign
@@ -1585,6 +2813,9 @@ c_func
 (paren
 id|scb-&gt;dataptr
 comma
+(paren
+r_int
+)paren
 id|sgb
 )paren
 suffix:semicolon
@@ -1619,8 +2850,16 @@ op_increment
 id|any2scsi
 c_func
 (paren
-id|sgb-&gt;ptr
+id|sgb
+(braket
+id|i
+)braket
+dot
+id|ptr
 comma
+(paren
+r_int
+)paren
 id|sg
 (braket
 id|i
@@ -1632,7 +2871,12 @@ suffix:semicolon
 id|any2scsi
 c_func
 (paren
-id|sgb-&gt;len
+id|sgb
+(braket
+id|i
+)braket
+dot
+id|len
 comma
 id|sg
 (braket
@@ -1642,29 +2886,7 @@ dot
 id|length
 )paren
 suffix:semicolon
-id|sgb
-op_increment
-suffix:semicolon
 )brace
-id|DEB
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;Using %d bytes for %d scatter/gather blocks&bslash;n&quot;
-comma
-"&bslash;"
-id|scsi2int
-c_func
-(paren
-id|scb-&gt;maxlen
-)paren
-comma
-id|SCpnt-&gt;use_sg
-)paren
-suffix:semicolon
-)paren
 )brace
 r_else
 (brace
@@ -1677,6 +2899,9 @@ c_func
 (paren
 id|scb-&gt;dataptr
 comma
+(paren
+r_int
+)paren
 id|SCpnt-&gt;request_buffer
 )paren
 suffix:semicolon
@@ -1689,12 +2914,22 @@ id|SCpnt-&gt;request_bufflen
 )paren
 suffix:semicolon
 )brace
-r_return
+r_while
+c_loop
+(paren
+op_logical_neg
 id|mail_out
 c_func
 (paren
+id|host
+comma
 id|scb
 )paren
+)paren
+multiline_comment|/* keep trying */
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|wd7000_command
@@ -1728,21 +2963,166 @@ r_return
 id|SCpnt-&gt;result
 suffix:semicolon
 )brace
+DECL|function|wd7000_diagnostics
+r_int
+id|wd7000_diagnostics
+c_func
+(paren
+id|Adapter
+op_star
+id|host
+comma
+r_int
+id|code
+)paren
+(brace
+r_static
+id|IcbDiag
+id|icb
+op_assign
+(brace
+id|ICB_OP_DIAGNOSTICS
+)brace
+suffix:semicolon
+r_static
+id|unchar
+id|buf
+(braket
+l_int|256
+)braket
+suffix:semicolon
+r_int
+r_int
+id|timeout
+suffix:semicolon
+id|icb.type
+op_assign
+id|code
+suffix:semicolon
+id|any2scsi
+c_func
+(paren
+id|icb.len
+comma
+r_sizeof
+(paren
+id|buf
+)paren
+)paren
+suffix:semicolon
+id|any2scsi
+c_func
+(paren
+id|icb.ptr
+comma
+(paren
+r_int
+)paren
+op_amp
+id|buf
+)paren
+suffix:semicolon
+id|icb.phase
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;     * This routine is only called at init, so there should be OGMBs&n;     * available.  I&squot;m assuming so here.  If this is going to&n;     * fail, I can just let the timeout catch the failure.&n;     */
+id|mail_out
+c_func
+(paren
+id|host
+comma
+(paren
+r_struct
+id|scb
+op_star
+)paren
+op_amp
+id|icb
+)paren
+suffix:semicolon
+id|timeout
+op_assign
+id|jiffies
+op_plus
+id|WAITnexttimeout
+suffix:semicolon
+multiline_comment|/* wait up to 2 seconds */
+r_while
+c_loop
+(paren
+id|icb.phase
+op_logical_and
+id|jiffies
+OL
+id|timeout
+)paren
+multiline_comment|/* wait for completion */
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|icb.phase
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;wd7000_diagnostics: timed out.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|make_code
+c_func
+(paren
+id|icb.vue
+op_or
+(paren
+id|icb.status
+op_lshift
+l_int|8
+)paren
+comma
+l_int|0
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;wd7000_diagnostics: failed (%02x,%02x)&bslash;n&quot;
+comma
+id|icb.vue
+comma
+id|icb.status
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 DECL|function|wd7000_init
 r_int
 id|wd7000_init
 c_func
 (paren
-r_void
+id|Adapter
+op_star
+id|host
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-id|unchar
-id|init_block
-(braket
-)braket
+id|InitCmd
+id|init_cmd
 op_assign
 (brace
 id|INITIALIZATION
@@ -1766,15 +3146,32 @@ comma
 id|ICMB_CNT
 )brace
 suffix:semicolon
-multiline_comment|/* Reset the adapter. */
+r_struct
+id|sigaction
+id|sa
+op_assign
+(brace
+id|wd7000_intr_handle
+comma
+l_int|0
+comma
+id|SA_INTERRUPT
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+r_int
+id|diag
+suffix:semicolon
+multiline_comment|/*&n;       Reset the adapter - only.  The SCSI bus was initialized at power-up,&n;       and we need to do this just so we control the mailboxes, etc.&n;    */
 id|outb
 c_func
 (paren
-id|SCSI_RES
-op_or
 id|ASC_RES
 comma
-id|CONTROL
+id|host-&gt;iobase
+op_plus
+id|ASC_CONTROL
 )paren
 suffix:semicolon
 id|delay
@@ -1789,72 +3186,139 @@ c_func
 (paren
 l_int|0
 comma
-id|CONTROL
+id|host-&gt;iobase
+op_plus
+id|ASC_CONTROL
 )paren
 suffix:semicolon
-id|controlstat
+id|host-&gt;control
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;       Wait 2 seconds, then expect Command Port Ready.&n;&n;       I suspect something else needs to be done here, but I don&squot;t know&n;       what.  The OEM doc says power-up diagnostics take 2 seconds, and&n;       indeed, SCSI commands submitted before then will time out, but&n;       none of what follows seems deterred by _not_ waiting 2 secs.&n;    */
-id|delay
-c_func
-(paren
-l_int|200
-)paren
-suffix:semicolon
+multiline_comment|/* this must always shadow ASC_CONTROL */
 id|WAIT
 c_func
 (paren
+id|host-&gt;iobase
+op_plus
 id|ASC_STAT
 comma
-id|STATMASK
+id|ASC_STATMASK
 comma
 id|CMD_RDY
 comma
 l_int|0
 )paren
 suffix:semicolon
-id|DEB
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;wd7000_init: Power-on Diagnostics finished&bslash;n&quot;
-)paren
-suffix:semicolon
-)paren
 r_if
 c_cond
 (paren
 (paren
-(paren
-id|i
+id|diag
 op_assign
 id|inb
 c_func
 (paren
-id|INTR_STAT
+id|host-&gt;iobase
+op_plus
+id|ASC_INTR_STAT
 )paren
 )paren
 op_ne
 l_int|1
 )paren
-op_logical_and
-(paren
-id|i
-op_ne
-l_int|7
-)paren
-)paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;wd7000_init: Power-on Diagnostics error&bslash;n&quot;
+l_string|&quot;wd7000_init: &quot;
 )paren
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|diag
+)paren
+(brace
+r_case
+l_int|2
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RAM failure.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;FIFO R/W failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;SBIC register R/W failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|5
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Initialization D-FF failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|6
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Host IRQ D-FF failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;ROM checksum error.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;diagnostic code %02Xh received.&bslash;n&quot;
+comma
+id|diag
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1864,35 +3328,40 @@ id|memset
 c_func
 (paren
 op_amp
-id|mb
+(paren
+id|host-&gt;mb
+)paren
 comma
 l_int|0
 comma
 r_sizeof
 (paren
-id|mb
+id|host-&gt;mb
 )paren
-)paren
-suffix:semicolon
-multiline_comment|/* Set up SCB free list */
-id|init_scbs
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Set up init block */
-id|any2scsi
-c_func
-(paren
-id|init_block
-op_plus
-l_int|5
-comma
-op_amp
-id|mb
 )paren
 suffix:semicolon
 multiline_comment|/* Execute init command */
+id|any2scsi
+c_func
+(paren
+(paren
+id|unchar
+op_star
+)paren
+op_amp
+(paren
+id|init_cmd.mailboxes
+)paren
+comma
+(paren
+r_int
+)paren
+op_amp
+(paren
+id|host-&gt;mb
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1900,134 +3369,151 @@ op_logical_neg
 id|command_out
 c_func
 (paren
-id|init_block
+id|host
+comma
+(paren
+id|unchar
+op_star
+)paren
+op_amp
+id|init_cmd
 comma
 r_sizeof
 (paren
-id|init_block
+id|init_cmd
 )paren
 )paren
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;WD-7000 Initialization failed.&bslash;n&quot;
+l_string|&quot;wd7000_init: adapter initialization failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Wait until init finished */
 id|WAIT
 c_func
 (paren
+id|host-&gt;iobase
+op_plus
 id|ASC_STAT
 comma
-id|STATMASK
+id|ASC_STATMASK
 comma
-id|CMD_RDY
-op_or
-id|ASC_INI
+id|ASC_INIT
 comma
 l_int|0
 )paren
 suffix:semicolon
-id|outb
-c_func
-(paren
-id|DISABLE_UNS_INTR
-comma
-id|COMMAND
-)paren
-suffix:semicolon
-id|WAIT
-c_func
-(paren
-id|ASC_STAT
-comma
-id|STATMASK
-comma
-id|CMD_RDY
-op_or
-id|ASC_INI
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Enable Interrupt and DMA */
 r_if
 c_cond
 (paren
-id|request_irq
+id|irqaction
 c_func
 (paren
-id|IRQ_LVL
+id|host-&gt;irq
 comma
-id|wd7000_intr_handle
+op_amp
+id|sa
 )paren
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;Unable to allocate IRQ for WD-7000.&bslash;n&quot;
+l_string|&quot;wd7000_init: can&squot;t get IRQ %d.&bslash;n&quot;
+comma
+id|host-&gt;irq
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|request_dma
 c_func
 (paren
-id|DMA_CH
+id|host-&gt;dma
 )paren
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;Unable to allocate DMA channel for WD-7000.&bslash;n&quot;
+l_string|&quot;wd7000_init: can&squot;t get DMA channel %d.&bslash;n&quot;
+comma
+id|host-&gt;dma
 )paren
 suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|IRQ_LVL
+id|host-&gt;irq
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 id|wd7000_enable_dma
 c_func
 (paren
+id|host
 )paren
 suffix:semicolon
 id|wd7000_enable_intr
 c_func
 (paren
+id|host
 )paren
 suffix:semicolon
-id|printk
+r_if
+c_cond
+(paren
+op_logical_neg
+id|wd7000_diagnostics
 c_func
 (paren
-l_string|&quot;WD-7000 initialized.&bslash;n&quot;
+id|host
+comma
+id|ICB_DIAG_FULL
+)paren
+)paren
+(brace
+id|free_dma
+c_func
+(paren
+id|host-&gt;dma
 )paren
 suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|host-&gt;irq
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_return
 l_int|1
 suffix:semicolon
 id|fail
 suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;wd7000_init: WAIT timed out.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2038,144 +3524,54 @@ r_void
 id|wd7000_revision
 c_func
 (paren
-r_void
+id|Adapter
+op_star
+id|host
 )paren
 (brace
-r_volatile
-id|unchar
+r_static
+id|IcbRevLvl
 id|icb
-(braket
-id|ICB_LEN
-)braket
 op_assign
 (brace
-l_int|0x8c
+id|ICB_OP_GET_REVISION
 )brace
 suffix:semicolon
-multiline_comment|/* read firmware revision level */
-id|icb
-(braket
-id|ICB_PHASE
-)braket
+id|icb.phase
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;     * Like diagnostics, this is only done at init time, in fact, from&n;     * wd7000_detect, so there should be OGMBs available.  If it fails,&n;     * the only damage will be that the revision will show up as 0.0,&n;     * which in turn means that scatter/gather will be disabled.&n;     */
 id|mail_out
 c_func
 (paren
+id|host
+comma
 (paren
 r_struct
 id|scb
 op_star
 )paren
+op_amp
 id|icb
 )paren
 suffix:semicolon
 r_while
 c_loop
 (paren
-id|icb
-(braket
-id|ICB_PHASE
-)braket
+id|icb.phase
 )paren
 multiline_comment|/* wait for completion */
 suffix:semicolon
-id|rev_1
+id|host-&gt;rev1
 op_assign
-id|icb
-(braket
-l_int|1
-)braket
+id|icb.primary
 suffix:semicolon
-id|rev_2
+id|host-&gt;rev2
 op_assign
-id|icb
-(braket
-l_int|2
-)braket
-suffix:semicolon
-multiline_comment|/*&n;        For boards at rev 7.0 or later, enable scatter/gather.&n;    */
-r_if
-c_cond
-(paren
-id|rev_1
-op_ge
-l_int|7
-)paren
-id|scsi_hosts
-(braket
-id|wd7000_host
-)braket
-dot
-id|sg_tablesize
-op_assign
-id|WD7000_SG
+id|icb.secondary
 suffix:semicolon
 )brace
-DECL|variable|wd_bases
-r_static
-r_const
-r_char
-op_star
-id|wd_bases
-(braket
-)braket
-op_assign
-(brace
-(paren
-r_char
-op_star
-)paren
-l_int|0xce000
-comma
-(paren
-r_char
-op_star
-)paren
-l_int|0xd8000
-)brace
-suffix:semicolon
-r_typedef
-r_struct
-(brace
-DECL|member|signature
-r_char
-op_star
-id|signature
-suffix:semicolon
-DECL|member|offset
-r_int
-id|offset
-suffix:semicolon
-DECL|member|length
-r_int
-id|length
-suffix:semicolon
-DECL|typedef|Signature
-)brace
-id|Signature
-suffix:semicolon
-DECL|variable|signatures
-r_static
-r_const
-id|Signature
-id|signatures
-(braket
-)braket
-op_assign
-(brace
-(brace
-l_string|&quot;SSTBIOS&quot;
-comma
-l_int|0xd
-comma
-l_int|0x7
-)brace
-)brace
-suffix:semicolon
-DECL|macro|NUM_SIGNATURES
-mdefine_line|#define NUM_SIGNATURES (sizeof(signatures)/sizeof(Signature))
 DECL|function|wd7000_detect
 r_int
 id|wd7000_detect
@@ -2184,37 +3580,48 @@ c_func
 r_int
 id|hostnum
 )paren
-multiline_comment|/* &n; *  return non-zero on detection&n; */
+multiline_comment|/* &n; *  Returns the number of adapters this driver is supporting.&n; *&n; *  The source for hosts.c says to wait to call scsi_register until 100%&n; *  sure about an adapter.  We need to do it a little sooner here; we&n; *  need the storage set up by scsi_register before wd7000_init, and&n; *  changing the location of an Adapter structure is more trouble than&n; *  calling scsi_unregister.&n; *&n; */
 (brace
 r_int
 id|i
 comma
 id|j
+comma
+id|present
+op_assign
+l_int|0
 suffix:semicolon
-r_char
 r_const
+id|Config
 op_star
-id|base_address
+id|cfg
+suffix:semicolon
+r_const
+id|Signature
+op_star
+id|sig
+suffix:semicolon
+id|Adapter
+op_star
+id|host
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|check_region
+r_struct
+id|Scsi_Host
+op_star
+id|sh
+suffix:semicolon
+multiline_comment|/* Set up SCB free list, which is shared by all adapters */
+id|init_scbs
 c_func
 (paren
-id|IO_BASE
-comma
-l_int|4
 )paren
-)paren
-(brace
-r_return
-l_int|0
 suffix:semicolon
-)brace
-multiline_comment|/* IO ports in use */
+id|cfg
+op_assign
+id|configs
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2224,23 +3631,16 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-(paren
-r_sizeof
-(paren
-id|wd_bases
-)paren
-op_div
-r_sizeof
-(paren
-r_char
-op_star
-)paren
-)paren
+id|NUM_CONFIGS
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
+id|sig
+op_assign
+id|signatures
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2263,214 +3663,230 @@ op_logical_neg
 id|memcmp
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
-(paren
-id|wd_bases
-(braket
-id|i
-)braket
+id|cfg-&gt;bios
 op_plus
-id|signatures
-(braket
-id|j
-)braket
-dot
-id|offset
-)paren
+id|sig-&gt;ofs
 comma
-(paren
-r_void
-op_star
-)paren
-id|signatures
-(braket
-id|j
-)braket
-dot
-id|signature
+id|sig-&gt;sig
 comma
-id|signatures
-(braket
-id|j
-)braket
-dot
-id|length
+id|sig-&gt;len
 )paren
 )paren
 (brace
-id|base_address
+multiline_comment|/* matched this one */
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;WD-7000 SST BIOS detected at %04X: checking...&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|cfg-&gt;bios
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t;&t; *  We won&squot;t explicitly test the configuration (in this&n;&t;&t; *  version); instead, we&squot;ll just see if it works to&n;&t;&t; *  setup the adapter; if it does, we&squot;ll use it.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|cfg-&gt;iobase
+comma
+l_int|4
+)paren
+)paren
+(brace
+multiline_comment|/* ports in use */
+id|printk
+c_func
+(paren
+l_string|&quot;IO %xh already in use.&bslash;n&quot;
+comma
+id|host-&gt;iobase
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *  We register here, to get a pointer to the extra space,&n;&t;&t; *  which we&squot;ll use as the Adapter structure (host) for&n;&t;&t; *  this adapter.  It is located just after the registered&n;&t;&t; *  Scsi_Host structure (sh), and is located by the empty&n;&t;&t; *  array hostdata.&n;&t;&t; */
+id|sh
 op_assign
-id|wd_bases
+id|scsi_register
+c_func
+(paren
+id|hostnum
+comma
+r_sizeof
+(paren
+id|Adapter
+)paren
+)paren
+suffix:semicolon
+id|host
+op_assign
+(paren
+id|Adapter
+op_star
+)paren
+id|sh-&gt;hostdata
+suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;wd7000_detect: adapter allocated at %06x&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|host
+)paren
+suffix:semicolon
+macro_line|#endif
+id|memset
+c_func
+(paren
+id|host
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|Adapter
+)paren
+)paren
+suffix:semicolon
+id|host-&gt;num
+op_assign
+id|hostnum
+suffix:semicolon
+id|host-&gt;sh
+op_assign
+id|sh
+suffix:semicolon
+id|host-&gt;irq
+op_assign
+id|cfg-&gt;irq
+suffix:semicolon
+id|host-&gt;iobase
+op_assign
+id|cfg-&gt;iobase
+suffix:semicolon
+id|host-&gt;dma
+op_assign
+id|cfg-&gt;dma
+suffix:semicolon
+id|irq2host
 (braket
-id|i
+id|host-&gt;irq
 )braket
+op_assign
+id|host
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|wd7000_init
+c_func
+(paren
+id|host
+)paren
+)paren
+(brace
+multiline_comment|/* Initialization failed */
+id|scsi_unregister
+c_func
+(paren
+id|sh
+comma
+r_sizeof
+(paren
+id|Adapter
+)paren
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *  OK from here - we&squot;ll use this adapter/configuration.&n;&t;&t; */
+id|wd7000_revision
+c_func
+(paren
+id|host
+)paren
+suffix:semicolon
+multiline_comment|/* important for scatter/gather */
+id|printk
+c_func
+(paren
+l_string|&quot;Western Digital WD-7000 (%d.%d) &quot;
+comma
+id|host-&gt;rev1
+comma
+id|host-&gt;rev2
+)paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;WD-7000 detected.&bslash;n&quot;
+l_string|&quot;using IO %xh IRQ %d DMA %d.&bslash;n&quot;
+comma
+id|host-&gt;iobase
+comma
+id|host-&gt;irq
+comma
+id|host-&gt;dma
 )paren
-suffix:semicolon
-)brace
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|base_address
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|0
 suffix:semicolon
 id|snarf_region
 c_func
 (paren
-id|IO_BASE
+id|host-&gt;iobase
 comma
 l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Register our ports */
-multiline_comment|/* Store our host number */
-id|wd7000_host
+multiline_comment|/*&n;&t;&t; *  For boards before rev 6.0, scatter/gather isn&squot;t supported.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|host-&gt;rev1
+OL
+l_int|6
+)paren
+id|sh-&gt;sg_tablesize
 op_assign
-id|hostnum
+id|SG_NONE
 suffix:semicolon
-id|wd7000_init
-c_func
-(paren
-)paren
+id|present
+op_increment
 suffix:semicolon
-id|wd7000_revision
-c_func
-(paren
-)paren
+multiline_comment|/* count it */
+r_break
 suffix:semicolon
-multiline_comment|/* will set scatter/gather by rev level */
+multiline_comment|/* don&squot;t try any more sigs */
+)brace
+id|sig
+op_increment
+suffix:semicolon
+multiline_comment|/* try next signature with this configuration */
+)brace
+id|cfg
+op_increment
+suffix:semicolon
+multiline_comment|/* try next configuration */
+)brace
 r_return
-l_int|1
+id|present
 suffix:semicolon
 )brace
-DECL|function|wd7000_append_info
-r_static
-r_void
-id|wd7000_append_info
-c_func
-(paren
-r_char
-op_star
-id|info
-comma
-r_const
-r_char
-op_star
-id|fmt
-comma
-dot
-dot
-dot
-)paren
-multiline_comment|/*&n; *  This is just so I can use vsprintf...&n; */
-(brace
-id|va_list
-id|args
-suffix:semicolon
-r_extern
-r_int
-id|vsprintf
-c_func
-(paren
-r_char
-op_star
-id|buf
-comma
-r_const
-r_char
-op_star
-id|fmt
-comma
-id|va_list
-id|args
-)paren
-suffix:semicolon
-id|va_start
-c_func
-(paren
-id|args
-comma
-id|fmt
-)paren
-suffix:semicolon
-id|vsprintf
-c_func
-(paren
-id|info
-comma
-id|fmt
-comma
-id|args
-)paren
-suffix:semicolon
-id|va_end
-c_func
-(paren
-id|args
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-DECL|function|wd7000_info
-r_const
-r_char
-op_star
-id|wd7000_info
-c_func
-(paren
-r_void
-)paren
-(brace
-r_static
-r_char
-id|info
-(braket
-l_int|80
-)braket
-op_assign
-l_string|&quot;Western Digital WD-7000, Firmware Revision &quot;
-suffix:semicolon
-id|wd7000_revision
-c_func
-(paren
-)paren
-suffix:semicolon
-id|wd7000_append_info
-c_func
-(paren
-id|info
-op_plus
-id|strlen
-c_func
-(paren
-id|info
-)paren
-comma
-l_string|&quot;%d.%d.&bslash;n&quot;
-comma
-id|rev_1
-comma
-id|rev_2
-)paren
-suffix:semicolon
-r_return
-id|info
-suffix:semicolon
-)brace
+multiline_comment|/*&n; *  I have absolutely NO idea how to do an abort with the WD7000...&n; */
 DECL|function|wd7000_abort
 r_int
 id|wd7000_abort
@@ -2488,8 +3904,11 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;wd7000_abort: Scsi_Cmnd = 0x%08x, code = %d &quot;
+l_string|&quot;wd7000_abort: Scsi_Cmnd = 0x%06x, code = %d &quot;
 comma
+(paren
+r_int
+)paren
 id|SCpnt
 comma
 id|i
@@ -2564,7 +3983,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* We do not implement a reset function here, but the upper level code assumes&n;   that it will get some kind of response for the command in SCpnt.  We must&n;   oblige, or the command will hang the scsi system */
+multiline_comment|/*&n; *  I also have no idea how to do a reset...&n; */
 DECL|function|wd7000_reset
 r_int
 id|wd7000_reset
@@ -2579,7 +3998,89 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;wd7000_reset&bslash;n&quot;
+l_string|&quot;wd7000_reset: Scsi_Cmnd = 0x%06x &quot;
+comma
+(paren
+r_int
+)paren
+id|SCpnt
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;id %d lun %d cdb&quot;
+comma
+id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;lun
+)paren
+suffix:semicolon
+(brace
+r_int
+id|j
+suffix:semicolon
+id|unchar
+op_star
+id|cdbj
+op_assign
+(paren
+id|unchar
+op_star
+)paren
+id|SCpnt-&gt;cmnd
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|COMMAND_SIZE
+c_func
+(paren
+op_star
+id|cdbj
+)paren
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; %02x&quot;
+comma
+op_star
+(paren
+id|cdbj
+op_increment
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; result %08x&quot;
+comma
+id|SCpnt-&gt;result
+)paren
+suffix:semicolon
+)brace
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2596,6 +4097,30 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *  The info routine in the WD7000 structure isn&squot;t per-adapter, so it can&squot;t&n; *  really return any useful information about an adapter.  Because of this,&n; *  I&squot;m no longer using it to return rev. level.&n; */
+DECL|function|wd7000_info
+r_const
+r_char
+op_star
+id|wd7000_info
+c_func
+(paren
+r_void
+)paren
+(brace
+r_static
+r_char
+id|info
+(braket
+)braket
+op_assign
+l_string|&quot;Western Digital WD-7000&quot;
+suffix:semicolon
+r_return
+id|info
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *  This was borrowed directly from aha1542.c, but my disks are organized&n; *  this way, so I think it will work OK.  Someone who is ambitious can&n; *  borrow a newer or more complete version from another driver.&n; */
 DECL|function|wd7000_biosparam
 r_int
 id|wd7000_biosparam
@@ -2611,7 +4136,6 @@ r_int
 op_star
 id|ip
 )paren
-multiline_comment|/*&n; *  This is borrowed directly from aha1542.c, but my disks are organized&n; *   this way, so I think it will work OK.&n; */
 (brace
 id|ip
 (braket

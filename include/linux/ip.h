@@ -34,6 +34,7 @@ id|ptr
 suffix:semicolon
 r_union
 (brace
+macro_line|#if defined(__i386__)  
 r_int
 r_char
 id|flags
@@ -44,6 +45,22 @@ id|overflow
 suffix:colon
 l_int|4
 suffix:semicolon
+macro_line|#else
+macro_line|#if defined(__mc680x0__)
+r_int
+r_char
+id|overflow
+suffix:colon
+l_int|4
+comma
+id|flags
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#else
+macro_line|#error&t;&quot;Adjust this structure to match your CPU&quot;
+macro_line|#endif
+macro_line|#endif&t;&t;&t;&t;&t;&t;
 DECL|member|full_char
 r_int
 r_char
@@ -141,6 +158,7 @@ DECL|struct|iphdr
 r_struct
 id|iphdr
 (brace
+macro_line|#if defined(__i386__)
 DECL|member|ihl
 r_int
 r_char
@@ -153,6 +171,22 @@ id|version
 suffix:colon
 l_int|4
 suffix:semicolon
+macro_line|#else
+macro_line|#if defined (__mc680x0__)
+r_int
+r_char
+id|version
+suffix:colon
+l_int|4
+comma
+id|ihl
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Adjust this structure to match your CPU&quot;
+macro_line|#endif&t;&t;&t;
+macro_line|#endif
 DECL|member|tos
 r_int
 r_char

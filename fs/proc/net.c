@@ -159,6 +159,23 @@ r_int
 suffix:semicolon
 r_extern
 r_int
+id|rarp_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|dev_get_info
 c_func
 (paren
@@ -401,11 +418,21 @@ l_int|3
 comma
 l_string|&quot;udp&quot;
 )brace
+comma
+macro_line|#ifdef CONFIG_INET_RARP
+(brace
+l_int|135
+comma
+l_int|4
+comma
+l_string|&quot;rarp&quot;
+)brace
+macro_line|#endif
 macro_line|#endif&t;/* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
 comma
 (brace
-l_int|135
+l_int|136
 comma
 l_int|9
 comma
@@ -413,7 +440,7 @@ l_string|&quot;ipx_route&quot;
 )brace
 comma
 (brace
-l_int|136
+l_int|137
 comma
 l_int|3
 comma
@@ -1000,10 +1027,30 @@ id|thistime
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_int|135
+suffix:colon
+id|length
+op_assign
+id|rarp_get_info
+c_func
+(paren
+id|page
+comma
+op_amp
+id|start
+comma
+id|file-&gt;f_pos
+comma
+id|thistime
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 macro_line|#endif /* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
 r_case
-l_int|135
+l_int|136
 suffix:colon
 id|length
 op_assign
@@ -1023,7 +1070,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|136
+l_int|137
 suffix:colon
 id|length
 op_assign

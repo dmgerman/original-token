@@ -458,6 +458,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|st_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|st0x_setup
 c_func
 (paren
@@ -949,6 +963,14 @@ macro_line|#ifdef CONFIG_BLK_DEV_HD
 l_string|&quot;hd=&quot;
 comma
 id|hd_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_CHR_DEV_ST
+(brace
+l_string|&quot;st=&quot;
+comma
+id|st_setup
 )brace
 comma
 macro_line|#endif

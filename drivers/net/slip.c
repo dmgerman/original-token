@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; *&n; *&n; *&t;FIXME:&t;This driver still makes some IP&squot;ish assumptions. It should build cleanly KISS TNC only without&n; *&t;CONFIG_INET defined.&n; */
+multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; *&t;&t;Alan Cox&t;:&t;Now uses hardware type as per FvK.&n; *&n; *&n; *&t;FIXME:&t;This driver still makes some IP&squot;ish assumptions. It should build cleanly KISS TNC only without&n; *&t;CONFIG_INET defined.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -27,6 +27,7 @@ macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#endif
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;slip.h&quot;
 macro_line|#ifdef CONFIG_INET
@@ -541,6 +542,12 @@ r_int
 r_int
 )paren
 l_int|NULL
+suffix:semicolon
+id|dev-&gt;type
+op_assign
+id|ARPHRD_SLIP
+op_plus
+id|sl-&gt;mode
 suffix:semicolon
 )brace
 multiline_comment|/* Find a SLIP channel from its `tty&squot; link. */
@@ -4422,11 +4429,6 @@ op_assign
 l_int|17
 suffix:semicolon
 multiline_comment|/* We don&squot;t do digipeaters */
-id|sl-&gt;dev-&gt;type
-op_assign
-l_int|3
-suffix:semicolon
-multiline_comment|/* AF_AX25 not an AF_INET device */
 )brace
 r_else
 (brace
@@ -4439,12 +4441,14 @@ id|sl-&gt;dev-&gt;hard_header_len
 op_assign
 l_int|0
 suffix:semicolon
-id|sl-&gt;dev-&gt;type
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 macro_line|#endif&t;&t;
+id|sl-&gt;dev-&gt;type
+op_assign
+id|ARPHRD_SLIP
+op_plus
+id|sl-&gt;mode
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

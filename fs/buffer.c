@@ -127,7 +127,7 @@ l_int|4096
 )brace
 suffix:semicolon
 DECL|macro|BUFSIZE_INDEX
-mdefine_line|#define BUFSIZE_INDEX(X) (buffersize_index[(X)&gt;&gt;9])
+mdefine_line|#define BUFSIZE_INDEX(X) ((int) buffersize_index[(X)&gt;&gt;9])
 r_static
 r_int
 id|grow_buffers

@@ -10,9 +10,9 @@ macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Known problems:&n; *&n; * Interrupt handling is not guaranteed:&n; * - a real x86 will disable all interrupts for one instruction&n; *   after a &quot;mov ss,xx&quot; to make stack handling atomic even without&n; *   the &squot;lss&squot; instruction. We can&squot;t guarantee this in v86 mode,&n; *   as the next instruction might result in a page fault or similar.&n; * - a real x86 will have interrupts disabled for one instruction&n; *   past the &squot;sti&squot; that enables them. We don&squot;t bother with all the&n; *   details yet..&n; *&n; * Hopefully these problems do not actually matter for anything.&n; */
 multiline_comment|/*&n; * 8- and 16-bit register defines..&n; */
 DECL|macro|AL
-mdefine_line|#define AL(regs)&t;(((unsigned char *) ((regs)-&gt;eax))[0])
+mdefine_line|#define AL(regs)&t;(((unsigned char *)&amp;((regs)-&gt;eax))[0])
 DECL|macro|AH
-mdefine_line|#define AH(regs)&t;(((unsigned char *) ((regs)-&gt;eax))[1])
+mdefine_line|#define AH(regs)&t;(((unsigned char *)&amp;((regs)-&gt;eax))[1])
 DECL|macro|IP
 mdefine_line|#define IP(regs)&t;(*(unsigned short *)&amp;((regs)-&gt;eip))
 DECL|macro|SP
@@ -874,7 +874,6 @@ op_amp
 id|current-&gt;vm86_info-&gt;int21_revectored
 )paren
 )paren
-(brace
 id|return_to_32bit
 c_func
 (paren
@@ -889,7 +888,6 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-)brace
 id|pushw
 c_func
 (paren
@@ -989,12 +987,13 @@ r_int
 id|error_code
 )paren
 (brace
+macro_line|#if 0
 id|do_int
 c_func
 (paren
 id|regs
 comma
-l_int|3
+l_int|1
 comma
 (paren
 r_int
@@ -1014,6 +1013,46 @@ id|regs
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_PTRACED
+)paren
+id|current-&gt;blocked
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+(paren
+id|SIGTRAP
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
+id|send_sig
+c_func
+(paren
+id|SIGTRAP
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|current-&gt;tss.trap_no
+op_assign
+l_int|1
+suffix:semicolon
+id|current-&gt;tss.error_code
+op_assign
+id|error_code
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|handle_vm86_fault
 r_void

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Moved to /usr/include/linux for NET3&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Moved to /usr/include/linux for NET3&n; */
 macro_line|#ifndef _LINUX_NETDEVICE_H
 DECL|macro|_LINUX_NETDEVICE_H
 mdefine_line|#define _LINUX_NETDEVICE_H
@@ -19,7 +19,7 @@ mdefine_line|#define IS_LOOPBACK&t;2&t;&t;/* address is for LOOPBACK&t;*/
 DECL|macro|IS_BROADCAST
 mdefine_line|#define IS_BROADCAST&t;3&t;&t;/* address is a valid broadcast&t;*/
 DECL|macro|IS_INVBCAST
-mdefine_line|#define IS_INVBCAST&t;4&t;&t;/* Wrong netmask bcast not for us */
+mdefine_line|#define IS_INVBCAST&t;4&t;&t;/* Wrong netmask bcast not for us (unused)*/
 multiline_comment|/*&n; * The DEVICE structure.&n; * Actually, this whole structure is a big mistake.  It mixes I/O&n; * data with strictly &quot;high-level&quot; data, and it has to know about&n; * almost every data structure used in the INET module.  &n; */
 DECL|struct|device
 r_struct
@@ -31,7 +31,7 @@ r_char
 op_star
 id|name
 suffix:semicolon
-multiline_comment|/* I/O specific fields.  These will be moved to DDI soon. */
+multiline_comment|/* I/O specific fields.  */
 DECL|member|rmem_end
 r_int
 r_int
@@ -84,7 +84,6 @@ DECL|member|interrupt
 id|interrupt
 suffix:semicolon
 multiline_comment|/* interrupt arrived&t;*/
-multiline_comment|/*&n;   * Another mistake.&n;   * This points to the next device in the &quot;dev&quot; chain. It will&n;   * be moved to the &quot;invisible&quot; part of the structure as soon as&n;   * it has been cleaned up. -FvK&n;   */
 DECL|member|next
 r_struct
 id|device
@@ -420,6 +419,26 @@ comma
 r_void
 op_star
 id|addr
+)paren
+suffix:semicolon
+DECL|macro|HAVE_PRIVATE_IOCTL
+mdefine_line|#define HAVE_PRIVATE_IOCTL
+DECL|member|do_ioctl
+r_int
+(paren
+op_star
+id|do_ioctl
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|ifreq
+op_star
+id|ifr
 )paren
 suffix:semicolon
 )brace

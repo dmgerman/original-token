@@ -828,6 +828,7 @@ id|gid_t
 op_minus
 l_int|1
 op_logical_or
+(paren
 id|egid
 op_ne
 (paren
@@ -839,6 +840,7 @@ op_logical_and
 id|egid
 op_ne
 id|old_rgid
+)paren
 )paren
 id|current-&gt;sgid
 op_assign
@@ -1108,6 +1110,7 @@ id|uid_t
 op_minus
 l_int|1
 op_logical_or
+(paren
 id|euid
 op_ne
 (paren
@@ -1119,6 +1122,7 @@ op_logical_and
 id|euid
 op_ne
 id|old_ruid
+)paren
 )paren
 id|current-&gt;suid
 op_assign

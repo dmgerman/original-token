@@ -653,7 +653,7 @@ id|TCP_FIN_WAIT2
 op_logical_or
 id|sk-&gt;state
 op_eq
-id|TCP_LAST_ACK
+id|TCP_CLOSING
 )paren
 (brace
 id|sk-&gt;state

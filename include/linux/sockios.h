@@ -82,5 +82,16 @@ DECL|macro|SIOCGARP
 mdefine_line|#define SIOCGARP&t;0x8951&t;&t;/* get ARP table entry&t;&t;*/
 DECL|macro|SIOCSARP
 mdefine_line|#define SIOCSARP&t;0x8952&t;&t;/* set ARP table entry&t;&t;*/
+multiline_comment|/* RARP cache control calls. */
+DECL|macro|SIOCDRARP
+mdefine_line|#define SIOCDRARP&t;0x8960&t;&t;/* delete RARP table entry&t;*/
+DECL|macro|SIOCGRARP
+mdefine_line|#define SIOCGRARP&t;0x8961&t;&t;/* get RARP table entry&t;&t;*/
+DECL|macro|SIOCSRARP
+mdefine_line|#define SIOCSRARP&t;0x8962&t;&t;/* set RARP table entry&t;&t;*/
+multiline_comment|/* Device private ioctl calls */
+multiline_comment|/*&n; *&t;These 16 ioctls are available to devices via the do_ioctl() device&n; *&t;vector. Each device should include this file and redefine these names&n; *&t;as their own. Because these are device dependant it is a good idea&n; *&t;_NOT_ to issue them to random objects and hope.&n; */
+DECL|macro|SIOCDEVPRIVATE
+mdefine_line|#define SIOCDEVPRIVATE&t;0x89F0&t;/* to 89FF */
 macro_line|#endif&t;/* _LINUX_SOCKIOS_H */
 eof

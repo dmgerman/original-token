@@ -21,6 +21,19 @@ DECL|macro|ARPHRD_ARCNET
 mdefine_line|#define&t;ARPHRD_ARCNET&t;7&t;&t;/* ARCnet&t;&t;&t;*/
 DECL|macro|ARPHRD_APPLETLK
 mdefine_line|#define&t;ARPHRD_APPLETLK&t;8&t;&t;/* APPLEtalk&t;&t;&t;*/
+multiline_comment|/* Dummy types for non ARP hardware */
+DECL|macro|ARPHRD_SLIP
+mdefine_line|#define ARPHRD_SLIP&t;256
+DECL|macro|ARPHRD_CSLIP
+mdefine_line|#define ARPHRD_CSLIP&t;257
+DECL|macro|ARPHRD_SLIP6
+mdefine_line|#define ARPHRD_SLIP6&t;258
+DECL|macro|ARPHRD_CSLIP6
+mdefine_line|#define ARPHRD_CSLIP6&t;259
+DECL|macro|ARPHRD_KISS
+mdefine_line|#define ARPHRD_KISS&t;260
+DECL|macro|ARPHRD_ADAPT
+mdefine_line|#define ARPHRD_ADAPT&t;264
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/
