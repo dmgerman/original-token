@@ -228,7 +228,7 @@ id|argp-&gt;attrs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look up a path name component&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
+multiline_comment|/*&n; * Look up a path name component&n; * Note: the dentry in the resp-&gt;fh may be negative if the file&n; * doesn&squot;t exist yet.&n; * N.B. After this call resp-&gt;fh needs an fh_put&n; */
 r_static
 r_int
 DECL|function|nfsd_proc_lookup
@@ -740,7 +740,7 @@ suffix:semicolon
 multiline_comment|/* must fh_put dirfhp even on error */
 id|dirp
 op_assign
-id|dirfhp-&gt;fh_handle.fh_dentry-&gt;d_inode
+id|dirfhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/* Check for MAY_WRITE separately. */
 id|nfserr
@@ -750,7 +750,7 @@ c_func
 (paren
 id|dirfhp-&gt;fh_export
 comma
-id|dirfhp-&gt;fh_handle.fh_dentry
+id|dirfhp-&gt;fh_dentry
 comma
 id|MAY_WRITE
 )paren
@@ -803,7 +803,7 @@ id|newfhp-&gt;fh_dverified
 )paren
 id|inode
 op_assign
-id|newfhp-&gt;fh_handle.fh_dentry-&gt;d_inode
+id|newfhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/* Get rid of this soon... */
 r_if

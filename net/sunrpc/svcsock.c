@@ -2851,16 +2851,6 @@ id|EAGAIN
 suffix:semicolon
 )brace
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;svc_recv: svsk=%p, use count=%d&bslash;n&quot;
-comma
-id|svsk
-comma
-id|svsk-&gt;sk_inuse
-)paren
-suffix:semicolon
 id|dprintk
 c_func
 (paren

@@ -204,6 +204,14 @@ r_void
 suffix:semicolon
 id|asmlinkage
 r_void
+id|page_fault_f00f
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|asmlinkage
+r_void
 id|coprocessor_error
 c_func
 (paren
@@ -1763,6 +1771,16 @@ r_void
 r_int
 r_int
 id|page
+suffix:semicolon
+multiline_comment|/*&n;&t; * We use a special page fault handler, to actually detect&n;&t; * &squot;bounced&squot; traps/exceptions #0-6. This new page fault&n;&t; * handler is a few tens of cycles slower than the &squot;normal&squot;&n;&t; * one.&n;&t; */
+id|set_trap_gate
+c_func
+(paren
+l_int|14
+comma
+op_amp
+id|page_fault_f00f
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allocate a new page in virtual address space, &n;&t; * and move the IDT to have entry #7 starting at&n;&t; * the beginning of the page. We&squot;ll force a page&n;&t; * fault for IDT entries #0-#6..&n;&t; */
 id|page

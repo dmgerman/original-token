@@ -18,6 +18,16 @@ macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#endif
+r_extern
+r_void
+id|fh_update
+c_func
+(paren
+r_struct
+id|svc_fh
+op_star
+)paren
+suffix:semicolon
 DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;&t;NFSDDBG_FILEOP
 multiline_comment|/* Open mode for nfsd_open */
@@ -210,10 +220,6 @@ id|name
 )paren
 suffix:semicolon
 multiline_comment|/* Obtain dentry and export. */
-r_if
-c_cond
-(paren
-(paren
 id|err
 op_assign
 id|fh_verify
@@ -227,16 +233,18 @@ id|S_IFDIR
 comma
 id|MAY_NOP
 )paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|err
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|dparent
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|exp
 op_assign
@@ -286,6 +294,7 @@ id|dentry
 op_star
 id|dchild
 suffix:semicolon
+multiline_comment|/* Lookup the name, but don&squot;t follow links */
 id|dchild
 op_assign
 id|lookup_dentry
@@ -299,7 +308,7 @@ c_func
 id|dparent
 )paren
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|err
@@ -327,6 +336,7 @@ op_minus
 id|err
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Note: we compose the filehandle now, but as the&n;&t;&t; * dentry may be negative, it may need to be updated.&n;&t;&t; */
 id|fh_compose
 c_func
 (paren
@@ -375,6 +385,8 @@ id|exp
 r_return
 id|nfserr_acces
 suffix:semicolon
+id|out
+suffix:colon
 r_return
 id|err
 suffix:semicolon
@@ -456,10 +468,6 @@ op_assign
 id|S_IFREG
 suffix:semicolon
 multiline_comment|/* Get inode */
-r_if
-c_cond
-(paren
-(paren
 id|err
 op_assign
 id|fh_verify
@@ -473,16 +481,18 @@ id|ftype
 comma
 id|accmode
 )paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|err
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|inode
 op_assign
@@ -532,8 +542,8 @@ id|err
 op_ne
 l_int|0
 )paren
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -750,8 +760,14 @@ id|inode
 )paren
 suffix:semicolon
 )brace
-r_return
+id|err
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Open an existing file or directory.&n; * The wflag argument indicates write access.&n; * N.B. After this call fhp needs an fh_put&n; */
@@ -827,18 +843,22 @@ id|access
 op_ne
 l_int|0
 )paren
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/* Disallow access to files with the append-only bit set or&n;&t; * with mandatory locking enabled */
+id|err
+op_assign
+id|nfserr_perm
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -854,8 +874,8 @@ c_func
 id|inode
 )paren
 )paren
-r_return
-id|nfserr_perm
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -866,8 +886,8 @@ op_logical_or
 op_logical_neg
 id|inode-&gt;i_op-&gt;default_file_ops
 )paren
-r_return
-id|nfserr_perm
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -886,7 +906,9 @@ id|inode
 op_ne
 l_int|0
 )paren
-r_return
+(brace
+id|err
+op_assign
 id|nfserrno
 c_func
 (paren
@@ -894,6 +916,10 @@ op_minus
 id|err
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -938,6 +964,10 @@ id|filp-&gt;f_dentry
 op_assign
 id|dentry
 suffix:semicolon
+id|err
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -977,7 +1007,8 @@ multiline_comment|/* I nearly added put_filp() call here, but this filp&n;&t;&t;
 id|filp-&gt;f_count
 op_decrement
 suffix:semicolon
-r_return
+id|err
+op_assign
 id|nfserrno
 c_func
 (paren
@@ -987,8 +1018,10 @@ id|err
 suffix:semicolon
 )brace
 )brace
+id|out
+suffix:colon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Close a file.&n; */
@@ -1040,7 +1073,11 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;nfsd: wheee, dentry count == 0!&bslash;n&quot;
+l_string|&quot;nfsd: wheee, %s/%s d_count == 0!&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 r_if
@@ -1102,7 +1139,7 @@ id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Obtain the readahead parameters for the given file&n; */
+multiline_comment|/*&n; * Obtain the readahead parameters for the given file&n; *&n; * N.B. is raparm cache for a file cleared when the file closes??&n; * (dentry might be reused later.)&n; */
 r_static
 r_inline
 r_struct
@@ -2012,14 +2049,18 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|err
+op_assign
+id|nfserr_perm
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|flen
 )paren
-r_return
-id|nfserr_perm
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -2035,10 +2076,6 @@ id|iap-&gt;ia_mode
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|err
 op_assign
 id|fh_verify
@@ -2052,22 +2089,28 @@ id|S_IFDIR
 comma
 id|MAY_CREATE
 )paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|err
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|dirp
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/* Get all the sanity checks out of the way before we lock the parent. */
+id|err
+op_assign
+id|nfserr_notdir
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2078,16 +2121,14 @@ op_logical_neg
 id|dirp-&gt;i_op-&gt;lookup
 )paren
 (brace
-r_return
-id|nfserrno
-c_func
-(paren
-op_minus
-id|ENOTDIR
-)paren
+r_goto
+id|out
 suffix:semicolon
 )brace
-r_else
+id|err
+op_assign
+id|nfserr_perm
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2103,8 +2144,8 @@ op_logical_neg
 id|dirp-&gt;i_op-&gt;create
 )paren
 (brace
-r_return
-id|nfserr_perm
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -2124,8 +2165,8 @@ op_logical_neg
 id|dirp-&gt;i_op-&gt;mkdir
 )paren
 (brace
-r_return
-id|nfserr_perm
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -2159,17 +2200,18 @@ op_logical_neg
 id|dirp-&gt;i_op-&gt;mknod
 )paren
 (brace
-r_return
-id|nfserr_perm
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
 r_else
 (brace
-r_return
-id|nfserr_perm
+r_goto
+id|out
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * The response filehandle may have been setup already ...&n;&t; */
 r_if
 c_cond
 (paren
@@ -2224,8 +2266,26 @@ suffix:semicolon
 r_else
 id|dchild
 op_assign
-id|resfhp-&gt;fh_handle.fh_dentry
+id|resfhp-&gt;fh_dentry
 suffix:semicolon
+multiline_comment|/*&n;&t; * Make sure the child dentry is still negative ...&n;&t; */
+r_if
+c_cond
+(paren
+id|dchild-&gt;d_inode
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nfsd_create: dentry %s/%s not negative!&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Looks good, lock the directory. */
 id|fh_lock
 c_func
@@ -2341,7 +2401,7 @@ c_func
 id|dirp
 )paren
 suffix:semicolon
-multiline_comment|/* If needed, assemble the file handle for the newly created file.  */
+multiline_comment|/*&n;&t; * Assemble the file handle for the newly created file,&n;&t; * or update the filehandle to get the new inode info.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2357,6 +2417,15 @@ comma
 id|fhp-&gt;fh_export
 comma
 id|dchild
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|fh_update
+c_func
+(paren
+id|resfhp
 )paren
 suffix:semicolon
 )brace
@@ -2394,6 +2463,8 @@ comma
 id|iap
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_return
 id|err
 suffix:semicolon
@@ -2464,7 +2535,7 @@ id|err
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|inode
 op_assign
@@ -2645,7 +2716,7 @@ id|err
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|inode
 op_assign
@@ -2817,7 +2888,7 @@ id|err
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|dirp
 op_assign
@@ -3065,7 +3136,7 @@ id|err
 suffix:semicolon
 id|ddir
 op_assign
-id|ffhp-&gt;fh_handle.fh_dentry
+id|ffhp-&gt;fh_dentry
 suffix:semicolon
 id|dirp
 op_assign
@@ -3127,7 +3198,7 @@ id|dput_and_out
 suffix:semicolon
 id|dest
 op_assign
-id|tfhp-&gt;fh_handle.fh_dentry-&gt;d_inode
+id|tfhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
 id|err
 op_assign
@@ -3472,7 +3543,7 @@ id|err
 suffix:semicolon
 id|fdentry
 op_assign
-id|ffhp-&gt;fh_handle.fh_dentry
+id|ffhp-&gt;fh_dentry
 suffix:semicolon
 id|fdir
 op_assign
@@ -3480,7 +3551,7 @@ id|fdentry-&gt;d_inode
 suffix:semicolon
 id|tdentry
 op_assign
-id|tfhp-&gt;fh_handle.fh_dentry
+id|tfhp-&gt;fh_dentry
 suffix:semicolon
 id|tdir
 op_assign
@@ -3626,6 +3697,7 @@ id|ndentry
 r_goto
 id|out_dput_old
 suffix:semicolon
+multiline_comment|/* N.B. check this ... problems in locking?? */
 id|nfsd_double_down
 c_func
 (paren
@@ -3844,7 +3916,7 @@ id|err
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|dirp
 op_assign
@@ -4363,10 +4435,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|err
 op_assign
 id|fh_verify
@@ -4380,20 +4448,26 @@ l_int|0
 comma
 id|MAY_NOP
 )paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|err
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 id|inode
 op_assign
 id|dentry-&gt;d_inode
+suffix:semicolon
+id|err
+op_assign
+id|nfserr_io
 suffix:semicolon
 r_if
 c_cond
@@ -4408,8 +4482,8 @@ op_logical_or
 op_logical_neg
 id|sb-&gt;s_op-&gt;statfs
 )paren
-r_return
-id|nfserr_io
+r_goto
+id|out
 suffix:semicolon
 id|oldfs
 op_assign
@@ -4444,8 +4518,14 @@ id|set_fs
 id|oldfs
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check for a user&squot;s access permissions to this inode.&n; */

@@ -34,7 +34,7 @@ id|nlm_file_sema
 op_assign
 id|MUTEX
 suffix:semicolon
-multiline_comment|/*&n; * Lookup file info. If it doesn&squot;t exist, create a file info struct&n; * and open a (VFS) file for the given inode.&n; *&n; * FIXME:&n; * Note that we open the file O_RDONLY even when creating write locks.&n; * This is not quite right, but for now, we assume the client performs&n; * the proper R/W checking.&n; */
+multiline_comment|/*&n; * Lookup file info. If it doesn&squot;t exist, create a file info struct&n; * and open a (VFS) file for the given inode.&n; *&n; * The NFS filehandle must have been validated prior to this call,&n; * as we assume that the dentry pointer is valid.&n; *&n; * FIXME:&n; * Note that we open the file O_RDONLY even when creating write locks.&n; * This is not quite right, but for now, we assume the client performs&n; * the proper R/W checking.&n; *&n; * The dentry in the FH may not be validated .. can we call this with&n; * the full svc_fh?&n; */
 id|u32
 DECL|function|nlm_lookup_file
 id|nlm_lookup_file
@@ -74,6 +74,13 @@ op_star
 )paren
 id|f
 suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|fh-&gt;fh_dcookie
+suffix:semicolon
 r_int
 r_int
 id|hash
@@ -81,7 +88,7 @@ op_assign
 id|FILE_HASH
 c_func
 (paren
-id|fh-&gt;fh_dhash
+id|dentry-&gt;d_name.hash
 )paren
 suffix:semicolon
 id|u32
@@ -90,9 +97,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlm_file_lookup(%p)&bslash;n&quot;
+l_string|&quot;lockd: nlm_file_lookup(%s/%s)&bslash;n&quot;
 comma
-id|fh-&gt;fh_dentry
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 multiline_comment|/* Lock file table */
@@ -123,9 +132,9 @@ id|file-&gt;f_next
 r_if
 c_cond
 (paren
-id|file-&gt;f_handle.fh_dentry
+id|file-&gt;f_handle.fh_dcookie
 op_eq
-id|fh-&gt;fh_dentry
+id|dentry
 op_logical_and
 op_logical_neg
 id|memcmp
@@ -150,9 +159,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: creating file for %p&bslash;n&quot;
+l_string|&quot;lockd: creating file for %s/%s&bslash;n&quot;
 comma
-id|fh-&gt;fh_dentry
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 r_if

@@ -9,10 +9,10 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
 macro_line|#include &lt;linux/nfsd/cache.h&gt;
@@ -30,6 +30,14 @@ macro_line|# define access_ok&t;&t;!verify_area
 macro_line|#endif
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+r_extern
+r_void
+id|nfsd_fh_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|sys_call_table
@@ -161,6 +169,12 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Readahead param cache */
+id|nfsd_fh_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* FH table */
 id|initialized
 op_assign
 l_int|1
@@ -458,6 +472,8 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|lock_kernel
 (paren
 )paren
@@ -473,6 +489,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -483,15 +504,15 @@ c_func
 )paren
 )paren
 (brace
-id|err
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
 r_goto
 id|done
 suffix:semicolon
 )brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -530,15 +551,16 @@ id|resp
 )paren
 )paren
 (brace
-id|err
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
 r_goto
 id|done
 suffix:semicolon
 )brace
+id|err
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
+multiline_comment|/* ??? */
 r_if
 c_cond
 (paren
@@ -581,16 +603,15 @@ id|GFP_USER
 )paren
 )paren
 (brace
-id|err
-op_assign
-op_minus
-id|ENOMEM
-suffix:semicolon
-multiline_comment|/* ??? */
 r_goto
 id|done
 suffix:semicolon
 )brace
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -620,17 +641,10 @@ id|KERN_WARNING
 l_string|&quot;nfsd: incompatible version in syscall.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|err
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
 r_goto
 id|done
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -748,8 +762,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -800,6 +812,8 @@ id|unlock_kernel
 (paren
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -847,11 +861,6 @@ c_func
 l_string|&quot;Installing knfsd (copyright (C) 1996 okir@monad.swb.de).&bslash;n&quot;
 )paren
 suffix:semicolon
-id|nfsd_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_nfsservctl
 op_assign
 id|handle_sys_nfsservctl
@@ -894,6 +903,11 @@ c_func
 )paren
 suffix:semicolon
 id|nfsd_cache_shutdown
+c_func
+(paren
+)paren
+suffix:semicolon
+id|nfsd_fh_free
 c_func
 (paren
 )paren

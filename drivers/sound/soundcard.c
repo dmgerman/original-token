@@ -1251,7 +1251,11 @@ id|EAGAIN
 suffix:semicolon
 id|vma-&gt;vm_dentry
 op_assign
+id|dget
+c_func
+(paren
 id|file-&gt;f_dentry
+)paren
 suffix:semicolon
 id|dmap-&gt;mapping_flags
 op_or_assign

@@ -10,7 +10,7 @@ DECL|macro|AWE_OBSOLETE_VOXWARE
 macro_line|#undef AWE_OBSOLETE_VOXWARE
 multiline_comment|/* if you have lowlevel.h in the lowlevel directory (OSS-Lite), define&n; * the following line.&n; */
 DECL|macro|HAS_LOWLEVEL_H
-macro_line|#undef HAS_LOWLEVEL_H
+mdefine_line|#define HAS_LOWLEVEL_H
 multiline_comment|/* if your system doesn&squot;t support patch manager (OSS 3.7 or newer),&n; * define the following line.&n; */
 DECL|macro|AWE_NO_PATCHMGR
 mdefine_line|#define AWE_NO_PATCHMGR

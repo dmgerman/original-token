@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eepro100.c:v0.34 8/30/97 Donald Becker linux-eepro100@cesdis.gsfc.nasa.gov&bslash;n&quot;
+l_string|&quot;eepro100.c:v0.36 10/20/97 Donald Becker linux-eepro100@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values that apply to all boards.&n;   First set are undocumented and spelled per Intel recommendations. */
 DECL|variable|congenb
@@ -34,14 +34,14 @@ op_assign
 l_int|8
 suffix:semicolon
 multiline_comment|/* Rx FIFO threshold, default 32 bytes. */
+multiline_comment|/* Tx/Rx DMA burst length, 0-127, 0 == no preemption, tx==128 -&gt; disabled. */
 DECL|variable|txdmacount
 r_static
 r_int
 id|txdmacount
 op_assign
-l_int|0
+l_int|128
 suffix:semicolon
-multiline_comment|/* Tx DMA burst length, 0-127, default 0. */
 DECL|variable|rxdmacount
 r_static
 r_int
@@ -49,10 +49,22 @@ id|rxdmacount
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Rx DMA length, 0 means no preemption. */
-multiline_comment|/* If defined use the copy-only-tiny-buffer scheme for higher performance.&n;   The value sets the copy breakpoint.  Lower uses more memory, but is&n;   faster. */
-DECL|macro|SKBUFF_RX_COPYBREAK
-mdefine_line|#define SKBUFF_RX_COPYBREAK 256
+multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-buffer Rx method.&n;   Lower values use more memory, but are faster. */
+DECL|variable|rx_copybreak
+r_static
+r_int
+id|rx_copybreak
+op_assign
+l_int|200
+suffix:semicolon
+multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
+DECL|variable|max_interrupt_work
+r_static
+r_int
+id|max_interrupt_work
+op_assign
+l_int|20
+suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#ifdef MODVERSIONS
@@ -199,7 +211,7 @@ op_assign
 l_int|3
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the Intel i82557 &quot;Speedo3&quot; chip, Intel&squot;s&n;single-chip fast ethernet controller for PCI, as used on the Intel&n;EtherExpress Pro 100 adapter.&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS should be set to assign the&n;PCI INTA signal to an otherwise unused system IRQ line.  While it&squot;s&n;possible to share PCI interrupt lines, it negatively impacts performance and&n;only recent kernels support it.&n;&n;III. Driver operation&n;&n;IIIA. General&n;The Speedo3 is very similar to other Intel network chips, that is to say&n;&quot;apparently designed on a different planet&quot;.  This chips retains the complex&n;Rx and Tx descriptors and multiple buffers pointers as previous chips, but&n;also has simplified Tx and Rx buffer modes.  This driver uses the &quot;flexible&quot;&n;Tx mode, but in a simplified lower-overhead manner: it associates only a&n;single buffer descriptor with each frame descriptor.&n;&n;Despite the extra space overhead in each recieve skbuff, the driver must use&n;the simplified Rx buffer mode to assure that only a single data buffer is&n;associated with each RxFD. The driver implements this by reserving space&n;for the Rx descriptor at the head of each Rx skbuff&n;&n;The Speedo-3 has receive and command unit base addresses that are added to&n;almost all descriptor pointers.  The driver sets these to zero, so that all&n;pointer fields are absolute addresses.&n;&n;The System Control Block (SCB) of some previous Intel chips exists on the&n;chip in both PCI I/O and memory space.  This driver uses the I/O space&n;registers, but might switch to memory mapped mode to better support non-x86&n;processors.&n;&n;IIIB. Transmit structure&n;&n;The driver must use the complex Tx command+descriptor mode in order to&n;have a indirect pointer to the skbuff data section.  Each Tx command block&n;(TxCB) is associated with a single, immediately appended Tx buffer descriptor&n;(TxBD).  A fixed ring of these TxCB+TxBD pairs are kept as part of the&n;speedo_private data structure for each adapter instance.&n;&n;This ring structure is used for all normal transmit packets, but the&n;transmit packet descriptors aren&squot;t long enough for most non-Tx commands such&n;as CmdConfigure.  This is complicated by the possibility that the chip has&n;already loaded the link address in the previous descriptor.  So for these&n;commands we convert the next free descriptor on the ring to a NoOp, and point&n;that descriptor&squot;s link to the complex command.&n;&n;An additional complexity of these non-transmit commands are that they may be&n;added asynchronous to the normal transmit queue, so we disable interrupts&n;whenever the Tx descriptor ring is manipulated.&n;&n;A notable aspect of the these special configure commands is that they do&n;work with the normal Tx ring entry scavenge method.  The Tx ring scavenge&n;is done at interrupt time using the &squot;dirty_tx&squot; index, and checking for the&n;command-complete bit.  While the setup frames may have the NoOp command on the&n;Tx ring marked as complete, but not have completed the setup command, this&n;is not a problem.  The tx_ring entry can be still safely reused, as the&n;tx_skbuff[] entry is always empty for config_cmd and mc_setup frames.&n;&n;Commands may have bits set e.g. CmdSuspend in the command word to either&n;suspend or stop the transmit/command unit.  This driver always flags the last&n;command with CmdSuspend, erases the CmdSuspend in the previous command, and&n;then issues a CU_RESUME.&n;Note: Watch out for the potential race condition here: imagine&n;&t;erasing the previous suspend&n;&t;&t;the chip processes the previous command&n;&t;&t;the chip processes the final command, and suspends&n;&t;doing the CU_RESUME&n;&t;&t;the chip processes the next-yet-valid post-final-command.&n;So blindly sending a CU_RESUME is only safe if we do it immediately after&n;after erasing the previous CmdSuspend, without the possibility of an&n;intervening delay.  Thus the resume command is always within the&n;interrupts-disabled region.  This is a timing dependence, but handling this&n;condition in a timing-independent way would considerably complicate the code.&n;&n;Note: In previous generation Intel chips, restarting the command unit was a&n;notoriously slow process.  This is presumably no longer true.&n;&n;IIIC. Receive structure&n;&n;Because of the bus-master support on the Speedo3 this driver uses the new&n;SKBUFF_RX_COPYBREAK scheme, rather than a fixed intermediate receive buffer.&n;This scheme allocates full-sized skbuffs as receive buffers.  The value&n;SKBUFF_RX_COPYBREAK is used as the copying breakpoint: it is chosen to&n;trade-off the memory wasted by passing the full-sized skbuff to the queue&n;layer for all frames vs. the copying cost of copying a frame to a&n;correctly-sized skbuff.&n;&n;For small frames the copying cost is negligible (esp. considering that we&n;are pre-loading the cache with immediately useful header information), so we&n;allocate a new, minimally-sized skbuff.  For large frames the copying cost&n;is non-trivial, and the larger copy might flush the cache of useful data, so&n;we pass up the skbuff the packet was received into.&n;&n;IIID. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;sp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  (The Tx-done interrupt can&squot;t be selectively turned off, so&n;we can&squot;t avoid the interrupt overhead by having the Tx routine reap the Tx&n;stats.)&t; After reaping the stats, it marks the queue entry as empty by setting&n;the &squot;base&squot; to zero.&t; Iff the &squot;sp-&gt;tx_full&squot; flag is set, it clears both the&n;tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;Thanks to Steve Williams of Intel for arranging the non-disclosure agreement&n;that stated that I could disclose the information.  But I still resent&n;having to sign an Intel NDA when I&squot;m helping Intel sell their own product!&n;&n;*/
+multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the Intel i82557 &quot;Speedo3&quot; chip, Intel&squot;s&n;single-chip fast ethernet controller for PCI, as used on the Intel&n;EtherExpress Pro 100 adapter.&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS should be set to assign the&n;PCI INTA signal to an otherwise unused system IRQ line.  While it&squot;s&n;possible to share PCI interrupt lines, it negatively impacts performance and&n;only recent kernels support it.&n;&n;III. Driver operation&n;&n;IIIA. General&n;The Speedo3 is very similar to other Intel network chips, that is to say&n;&quot;apparently designed on a different planet&quot;.  This chips retains the complex&n;Rx and Tx descriptors and multiple buffers pointers as previous chips, but&n;also has simplified Tx and Rx buffer modes.  This driver uses the &quot;flexible&quot;&n;Tx mode, but in a simplified lower-overhead manner: it associates only a&n;single buffer descriptor with each frame descriptor.&n;&n;Despite the extra space overhead in each receive skbuff, the driver must use&n;the simplified Rx buffer mode to assure that only a single data buffer is&n;associated with each RxFD. The driver implements this by reserving space&n;for the Rx descriptor at the head of each Rx skbuff&n;&n;The Speedo-3 has receive and command unit base addresses that are added to&n;almost all descriptor pointers.  The driver sets these to zero, so that all&n;pointer fields are absolute addresses.&n;&n;The System Control Block (SCB) of some previous Intel chips exists on the&n;chip in both PCI I/O and memory space.  This driver uses the I/O space&n;registers, but might switch to memory mapped mode to better support non-x86&n;processors.&n;&n;IIIB. Transmit structure&n;&n;The driver must use the complex Tx command+descriptor mode in order to&n;have a indirect pointer to the skbuff data section.  Each Tx command block&n;(TxCB) is associated with a single, immediately appended Tx buffer descriptor&n;(TxBD).  A fixed ring of these TxCB+TxBD pairs are kept as part of the&n;speedo_private data structure for each adapter instance.&n;&n;This ring structure is used for all normal transmit packets, but the&n;transmit packet descriptors aren&squot;t long enough for most non-Tx commands such&n;as CmdConfigure.  This is complicated by the possibility that the chip has&n;already loaded the link address in the previous descriptor.  So for these&n;commands we convert the next free descriptor on the ring to a NoOp, and point&n;that descriptor&squot;s link to the complex command.&n;&n;An additional complexity of these non-transmit commands are that they may be&n;added asynchronous to the normal transmit queue, so we disable interrupts&n;whenever the Tx descriptor ring is manipulated.&n;&n;A notable aspect of the these special configure commands is that they do&n;work with the normal Tx ring entry scavenge method.  The Tx ring scavenge&n;is done at interrupt time using the &squot;dirty_tx&squot; index, and checking for the&n;command-complete bit.  While the setup frames may have the NoOp command on the&n;Tx ring marked as complete, but not have completed the setup command, this&n;is not a problem.  The tx_ring entry can be still safely reused, as the&n;tx_skbuff[] entry is always empty for config_cmd and mc_setup frames.&n;&n;Commands may have bits set e.g. CmdSuspend in the command word to either&n;suspend or stop the transmit/command unit.  This driver always flags the last&n;command with CmdSuspend, erases the CmdSuspend in the previous command, and&n;then issues a CU_RESUME.&n;Note: Watch out for the potential race condition here: imagine&n;&t;erasing the previous suspend&n;&t;&t;the chip processes the previous command&n;&t;&t;the chip processes the final command, and suspends&n;&t;doing the CU_RESUME&n;&t;&t;the chip processes the next-yet-valid post-final-command.&n;So blindly sending a CU_RESUME is only safe if we do it immediately after&n;after erasing the previous CmdSuspend, without the possibility of an&n;intervening delay.  Thus the resume command is always within the&n;interrupts-disabled region.  This is a timing dependence, but handling this&n;condition in a timing-independent way would considerably complicate the code.&n;&n;Note: In previous generation Intel chips, restarting the command unit was a&n;notoriously slow process.  This is presumably no longer true.&n;&n;IIIC. Receive structure&n;&n;Because of the bus-master support on the Speedo3 this driver uses the new&n;SKBUFF_RX_COPYBREAK scheme, rather than a fixed intermediate receive buffer.&n;This scheme allocates full-sized skbuffs as receive buffers.  The value&n;SKBUFF_RX_COPYBREAK is used as the copying breakpoint: it is chosen to&n;trade-off the memory wasted by passing the full-sized skbuff to the queue&n;layer for all frames vs. the copying cost of copying a frame to a&n;correctly-sized skbuff.&n;&n;For small frames the copying cost is negligible (esp. considering that we&n;are pre-loading the cache with immediately useful header information), so we&n;allocate a new, minimally-sized skbuff.  For large frames the copying cost&n;is non-trivial, and the larger copy might flush the cache of useful data, so&n;we pass up the skbuff the packet was received into.&n;&n;IIID. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;sp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  (The Tx-done interrupt can&squot;t be selectively turned off, so&n;we can&squot;t avoid the interrupt overhead by having the Tx routine reap the Tx&n;stats.)&t; After reaping the stats, it marks the queue entry as empty by setting&n;the &squot;base&squot; to zero.&t; Iff the &squot;sp-&gt;tx_full&squot; flag is set, it clears both the&n;tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;Thanks to Steve Williams of Intel for arranging the non-disclosure agreement&n;that stated that I could disclose the information.  But I still resent&n;having to sign an Intel NDA when I&squot;m helping Intel sell their own product!&n;&n;*/
 multiline_comment|/* A few values that may be tweaked. */
 multiline_comment|/* The ring sizes should be a power of two for efficiency. */
 DECL|macro|TX_RING_SIZE
@@ -212,9 +224,6 @@ mdefine_line|#define PKT_BUF_SZ&t;&t;1536
 multiline_comment|/* Time in jiffies before concluding the transmitter is hung. */
 DECL|macro|TX_TIMEOUT
 mdefine_line|#define TX_TIMEOUT  ((400*HZ)/1000)
-multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
-DECL|macro|INTR_WORK
-mdefine_line|#define INTR_WORK&t;16
 multiline_comment|/* How to wait for the command unit to accept a command.&n;   Typically this takes 0 ticks. */
 DECL|function|wait_for_cmd_done
 r_static
@@ -1134,6 +1143,27 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifdef HAVE_PRIVATE_IOCTL
+r_static
+r_int
+id|speedo_ioctl
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|ifreq
+op_star
+id|rq
+comma
+r_int
+id|cmd
+)paren
+suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|set_rx_mode
@@ -1224,6 +1254,7 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* The debug level */
+macro_line|#endif
 multiline_comment|/* A list of all installed Speedo devices, for removing the driver module. */
 DECL|variable|root_speedo_dev
 r_static
@@ -1234,7 +1265,6 @@ id|root_speedo_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 DECL|function|eepro100_init
 r_int
 id|eepro100_init
@@ -1260,15 +1290,15 @@ c_func
 )paren
 )paren
 (brace
+r_static
 r_int
 id|pci_index
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
 (paren
-id|pci_index
-op_assign
-l_int|0
 suffix:semicolon
 id|pci_index
 OL
@@ -1571,6 +1601,10 @@ id|speedo_private
 op_star
 id|sp
 suffix:semicolon
+r_char
+op_star
+id|product
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -1660,8 +1694,7 @@ id|i
 op_increment
 )paren
 (brace
-r_int
-r_int
+id|u16
 id|value
 op_assign
 id|read_eeprom
@@ -1743,13 +1776,34 @@ op_plus
 id|SCBPort
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|eeprom
+(braket
+l_int|3
+)braket
+op_amp
+l_int|0x0100
+)paren
+id|product
+op_assign
+l_string|&quot;OEM i82557/i82558 10/100 Ethernet&quot;
+suffix:semicolon
+r_else
+id|product
+op_assign
+l_string|&quot;Intel EtherExpress Pro 10/100&quot;
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: Intel EtherExpress Pro 10/100 at %#3x, &quot;
+l_string|&quot;%s: %s at %#3x, &quot;
 comma
 id|dev-&gt;name
+comma
+id|product
 comma
 id|ioaddr
 )paren
@@ -1813,7 +1867,7 @@ l_string|&quot; MII&quot;
 )brace
 suffix:semicolon
 multiline_comment|/* The self-test results must be paragraph aligned. */
-r_int
+id|s32
 id|str
 (braket
 l_int|6
@@ -2257,7 +2311,7 @@ multiline_comment|/* Perform a system self-test. */
 id|self_test_results
 op_assign
 (paren
-r_int
+id|s32
 op_star
 )paren
 (paren
@@ -2434,6 +2488,16 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif  /* kernel_bloat */
+id|outl
+c_func
+(paren
+l_int|0
+comma
+id|ioaddr
+op_plus
+id|SCBPort
+)paren
+suffix:semicolon
 multiline_comment|/* We do a request_region() only to register /proc/ioports info. */
 id|request_region
 c_func
@@ -2492,7 +2556,6 @@ id|sp
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|sp-&gt;next_module
 op_assign
 id|root_speedo_dev
@@ -2501,7 +2564,6 @@ id|root_speedo_dev
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2599,20 +2661,6 @@ l_int|0
 suffix:colon
 l_int|1
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;  Operating in %s duplex mode.&bslash;n&quot;
-comma
-id|sp-&gt;full_duplex
-ques
-c_cond
-l_string|&quot;full&quot;
-suffix:colon
-l_string|&quot;half&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2622,7 +2670,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  Reciever lock-up workaround activated.&bslash;n&quot;
+l_string|&quot;  Receiver lock-up workaround activated.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* The Speedo-specific entries in the device structure. */
@@ -2653,6 +2701,13 @@ op_amp
 id|set_rx_mode
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef HAVE_PRIVATE_IOCTL
+id|dev-&gt;do_ioctl
+op_assign
+op_amp
+id|speedo_ioctl
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -2674,8 +2729,13 @@ mdefine_line|#define EE_DATA_READ&t;0x08&t;/* EEPROM chip data out. */
 DECL|macro|EE_ENB
 mdefine_line|#define EE_ENB&t;&t;&t;(0x4800 | EE_CS)
 multiline_comment|/* Delay between EEPROM clock transitions.&n;   This is a &quot;nasty&quot; timing loop, but PC compatible machines are defined&n;   to delay an ISA compatible period for the SLOW_DOWN_IO macro.  */
+macro_line|#ifdef _LINUX_DELAY_H
+DECL|macro|eeprom_delay
+mdefine_line|#define eeprom_delay(nanosec)&t;&t;udelay(1);
+macro_line|#else
 DECL|macro|eeprom_delay
 mdefine_line|#define eeprom_delay(nanosec)&t;do { int _i = 3; while (--_i &gt; 0) { __SLOW_DOWN_IO; }} while (0)
+macro_line|#endif
 multiline_comment|/* The EEPROM commands include the alway-set leading bit. */
 DECL|macro|EE_WRITE_CMD
 mdefine_line|#define EE_WRITE_CMD&t;(5 &lt;&lt; 6)
@@ -3245,6 +3305,14 @@ suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* Load the statistics block address. */
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
 id|outl
 c_func
 (paren
@@ -3280,6 +3348,14 @@ id|speedo_init_rx_ring
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
 )paren
 suffix:semicolon
 id|outl
@@ -3344,25 +3420,22 @@ id|SCBCmd
 suffix:semicolon
 multiline_comment|/* Fill the first command with our physical address. */
 (brace
-r_int
-r_int
+id|u16
 op_star
 id|eaddrs
 op_assign
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|dev-&gt;dev_addr
 suffix:semicolon
-r_int
-r_int
+id|u16
 op_star
 id|setup_frm
 op_assign
 (paren
-r_int
+id|u16
 op_star
 )paren
 op_amp
@@ -3466,6 +3539,14 @@ suffix:semicolon
 id|sp-&gt;tx_full
 op_assign
 l_int|0
+suffix:semicolon
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
 suffix:semicolon
 id|outl
 c_func
@@ -3632,6 +3713,14 @@ c_func
 (paren
 op_amp
 id|sp-&gt;timer
+)paren
+suffix:semicolon
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
 )paren
 suffix:semicolon
 id|outw
@@ -4587,6 +4676,14 @@ id|entry
 )braket
 suffix:semicolon
 multiline_comment|/* Trigger the command unit resume. */
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -4675,7 +4772,7 @@ id|ioaddr
 comma
 id|boguscnt
 op_assign
-id|INTR_WORK
+id|max_interrupt_work
 suffix:semicolon
 r_int
 r_int
@@ -5029,7 +5126,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot; scavenge canidate %d status %4.4x.&bslash;n&quot;
+l_string|&quot; scavenge candidate %d status %4.4x.&bslash;n&quot;
 comma
 id|entry
 comma
@@ -5440,7 +5537,7 @@ c_cond
 (paren
 id|pkt_len
 OG
-id|SKBUFF_RX_COPYBREAK
+id|rx_copybreak
 )paren
 (brace
 r_struct
@@ -5868,6 +5965,30 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* 16 byte align the data fields */
+macro_line|#if defined(__i386)   &amp;&amp;  notyet
+multiline_comment|/* Packet is in one chunk -- we can copy + cksum. */
+id|eth_io_copy_and_sum
+c_func
+(paren
+id|skb
+comma
+id|bus_to_virt
+c_func
+(paren
+id|sp-&gt;rx_ringp
+(braket
+id|entry
+)braket
+op_member_access_from_pointer
+id|rx_buf_addr
+)paren
+comma
+id|pkt_len
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#else
 id|memcpy
 c_func
 (paren
@@ -5893,6 +6014,7 @@ comma
 id|pkt_len
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|skb-&gt;protocol
 op_assign
@@ -6497,6 +6619,15 @@ c_cond
 (paren
 id|dev-&gt;start
 )paren
+(brace
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -6508,11 +6639,170 @@ id|SCBCmd
 )paren
 suffix:semicolon
 )brace
+)brace
 r_return
 op_amp
 id|sp-&gt;stats
 suffix:semicolon
 )brace
+macro_line|#ifdef HAVE_PRIVATE_IOCTL
+DECL|function|speedo_ioctl
+r_static
+r_int
+id|speedo_ioctl
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|ifreq
+op_star
+id|rq
+comma
+r_int
+id|cmd
+)paren
+(brace
+r_struct
+id|speedo_private
+op_star
+id|sp
+op_assign
+(paren
+r_struct
+id|speedo_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+id|u16
+op_star
+id|data
+op_assign
+(paren
+id|u16
+op_star
+)paren
+op_amp
+id|rq-&gt;ifr_data
+suffix:semicolon
+r_int
+id|phy
+op_assign
+id|sp-&gt;phy
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x1f
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cmd
+)paren
+(brace
+r_case
+id|SIOCDEVPRIVATE
+suffix:colon
+multiline_comment|/* Get the address of the PHY in use. */
+id|data
+(braket
+l_int|0
+)braket
+op_assign
+id|phy
+suffix:semicolon
+r_case
+id|SIOCDEVPRIVATE
+op_plus
+l_int|1
+suffix:colon
+multiline_comment|/* Read the specified MII register. */
+id|data
+(braket
+l_int|3
+)braket
+op_assign
+id|mdio_read
+c_func
+(paren
+id|ioaddr
+comma
+id|data
+(braket
+l_int|0
+)braket
+comma
+id|data
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|SIOCDEVPRIVATE
+op_plus
+l_int|2
+suffix:colon
+multiline_comment|/* Write the specified MII register */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|mdio_write
+c_func
+(paren
+id|ioaddr
+comma
+id|data
+(braket
+l_int|0
+)braket
+comma
+id|data
+(braket
+l_int|1
+)braket
+comma
+id|data
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+op_minus
+id|EOPNOTSUPP
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif  /* HAVE_PRIVATE_IOCTL */
 multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   This is very ugly with Intel chips -- we usually have to execute an&n;   entire configuration command, plus process a multicast command.&n;   This is complicated.  We must put a large configuration command and&n;   an arbitrarily-sized multicast command in the transmit list.&n;   To minimize the disruption -- the previous command might have already&n;   loaded the link -- we convert the current command block, normally a Tx&n;   command, into a no-op and link it to the new command.&n;*/
 r_static
 r_void
@@ -6815,6 +7105,14 @@ op_complement
 id|CmdSuspend
 suffix:semicolon
 multiline_comment|/* Immediately trigger the command unit resume. */
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -6915,9 +7213,7 @@ multiline_comment|/* The simple case of 0-2 multicast list entries occurs often,
 id|u16
 op_star
 id|setup_params
-suffix:semicolon
-r_int
-r_int
+comma
 op_star
 id|eaddrs
 suffix:semicolon
@@ -6998,7 +7294,7 @@ multiline_comment|/* Really MC list count. */
 id|setup_params
 op_assign
 (paren
-r_int
+id|u16
 op_star
 )paren
 op_amp
@@ -7044,8 +7340,7 @@ id|mclist-&gt;next
 id|eaddrs
 op_assign
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|mclist-&gt;dmi_addr
@@ -7081,6 +7376,14 @@ op_complement
 id|CmdSuspend
 suffix:semicolon
 multiline_comment|/* Immediately trigger the command unit resume. */
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -7126,8 +7429,7 @@ id|dev_mc_list
 op_star
 id|mclist
 suffix:semicolon
-r_int
-r_int
+id|u16
 op_star
 id|eaddrs
 suffix:semicolon
@@ -7143,7 +7445,7 @@ op_star
 id|setup_params
 op_assign
 (paren
-r_int
+id|u16
 op_star
 )paren
 id|mc_setup_frm-&gt;params
@@ -7268,7 +7570,7 @@ multiline_comment|/* Link set below. */
 id|setup_params
 op_assign
 (paren
-r_int
+id|u16
 op_star
 )paren
 id|mc_setup_frm-&gt;params
@@ -7308,8 +7610,7 @@ id|mclist-&gt;next
 id|eaddrs
 op_assign
 (paren
-r_int
-r_int
+id|u16
 op_star
 )paren
 id|mclist-&gt;dmi_addr
@@ -7430,6 +7731,14 @@ op_complement
 id|CmdSuspend
 suffix:semicolon
 multiline_comment|/* Immediately trigger the command unit resume. */
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -7486,6 +7795,112 @@ id|kernel_version
 )braket
 op_assign
 id|UTS_RELEASE
+suffix:semicolon
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt; 0x20118
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Donald Becker &lt;becker@cesdis.gsfc.nasa.gov&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Intel i82557/i82558 EtherExpressPro driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|options
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+l_int|8
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|full_duplex
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+l_int|8
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|congenb
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|txfifo
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|rxfifo
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|txdmacount
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|rxdmacount
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|rx_copybreak
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|max_interrupt_work
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 macro_line|#endif
 r_int

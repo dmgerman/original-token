@@ -18,29 +18,29 @@ id|dentry
 op_star
 id|fb_dentry
 suffix:semicolon
-DECL|member|fb_dparent
-r_struct
-id|dentry
-op_star
-id|fb_dparent
+multiline_comment|/* dentry cookie */
+DECL|member|fb_ino
+id|ino_t
+id|fb_ino
 suffix:semicolon
-DECL|member|fb_dhash
-r_int
-r_int
-id|fb_dhash
+multiline_comment|/* our inode number */
+DECL|member|fb_dirino
+id|ino_t
+id|fb_dirino
 suffix:semicolon
-DECL|member|fb_dlen
-r_int
-r_int
-id|fb_dlen
+multiline_comment|/* dir inode number */
+DECL|member|fb_dev
+id|dev_t
+id|fb_dev
+suffix:semicolon
+multiline_comment|/* our device */
+DECL|member|fb_xdev
+id|dev_t
+id|fb_xdev
 suffix:semicolon
 DECL|member|fb_xino
 id|ino_t
 id|fb_xino
-suffix:semicolon
-DECL|member|fb_xdev
-id|dev_t
-id|fb_xdev
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -64,18 +64,18 @@ id|NFS_FH_PADDING
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|fh_dentry
-mdefine_line|#define fh_dentry&t;&t;fh_base.fb_dentry
-DECL|macro|fh_dparent
-mdefine_line|#define fh_dparent&t;&t;fh_base.fb_dparent
-DECL|macro|fh_dhash
-mdefine_line|#define fh_dhash&t;&t;fh_base.fb_dhash
-DECL|macro|fh_dlen
-mdefine_line|#define fh_dlen&t;&t;&t;fh_base.fb_dlen
-DECL|macro|fh_xino
-mdefine_line|#define fh_xino&t;&t;&t;fh_base.fb_xino
+DECL|macro|fh_dcookie
+mdefine_line|#define fh_dcookie&t;&t;fh_base.fb_dentry
+DECL|macro|fh_ino
+mdefine_line|#define fh_ino&t;&t;&t;fh_base.fb_ino
+DECL|macro|fh_dirino
+mdefine_line|#define fh_dirino&t;&t;fh_base.fb_dirino
+DECL|macro|fh_dev
+mdefine_line|#define fh_dev&t;&t;&t;fh_base.fb_dev
 DECL|macro|fh_xdev
 mdefine_line|#define fh_xdev&t;&t;&t;fh_base.fb_xdev
+DECL|macro|fh_xino
+mdefine_line|#define fh_xino&t;&t;&t;fh_base.fb_xino
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is the internal representation of an NFS handle used in knfsd.&n; * pre_mtime/post_version will be used to support wcc_attr&squot;s in NFSv3.&n; */
 DECL|struct|svc_fh
@@ -89,6 +89,13 @@ id|knfs_fh
 id|fh_handle
 suffix:semicolon
 multiline_comment|/* FH data */
+DECL|member|fh_dentry
+r_struct
+id|dentry
+op_star
+id|fh_dentry
+suffix:semicolon
+multiline_comment|/* validated dentry */
 DECL|member|fh_export
 r_struct
 id|svc_export
@@ -135,7 +142,7 @@ id|svc_fh
 suffix:semicolon
 multiline_comment|/*&n; * Shorthand for dprintk()&squot;s&n; */
 DECL|macro|SVCFH_DENTRY
-mdefine_line|#define SVCFH_DENTRY(f)&t;&t;((f)-&gt;fh_handle.fh_dentry)
+mdefine_line|#define SVCFH_DENTRY(f)&t;&t;((f)-&gt;fh_dentry)
 multiline_comment|/*&n; * Function prototypes&n; */
 id|u32
 id|fh_verify
@@ -171,6 +178,29 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+r_void
+id|fh_put
+c_func
+(paren
+r_struct
+id|svc_fh
+op_star
+)paren
+suffix:semicolon
+r_void
+id|nfsd_fh_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|nfsd_fh_free
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_static
 id|__inline__
 r_struct
@@ -191,6 +221,30 @@ op_star
 id|src
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|src-&gt;fh_dverified
+)paren
+(brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|src-&gt;fh_dentry
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;fh_copy: copying %s/%s, already verified!&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+)brace
 op_star
 id|dst
 op_assign
@@ -253,7 +307,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry-&gt;d_inode
+id|fhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/*&n;&t;dfprintk(FILEOP, &quot;nfsd: fh_lock(%x/%ld) locked = %d&bslash;n&quot;,&n;&t;&t;&t;SVCFH_DEV(fhp), SVCFH_INO(fhp), fhp-&gt;fh_locked);&n;&t; */
 r_if
@@ -305,7 +359,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry-&gt;d_inode
+id|fhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -337,51 +391,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Release an inode&n; */
-macro_line|#ifndef NFSD_DEBUG
-r_static
-r_inline
-r_void
-DECL|function|fh_put
-id|fh_put
-c_func
-(paren
-r_struct
-id|svc_fh
-op_star
-id|fhp
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|fhp-&gt;fh_dverified
-)paren
-(brace
-id|fh_unlock
-c_func
-(paren
-id|fhp
-)paren
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|fhp-&gt;fh_handle.fh_dentry
-)paren
-suffix:semicolon
-id|fhp-&gt;fh_dverified
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
-macro_line|#else
-DECL|macro|fh_put
+macro_line|#if 0
 mdefine_line|#define fh_put(fhp)&t;__fh_put(fhp, __FILE__, __LINE__)
 r_static
 r_inline
 r_void
-DECL|function|__fh_put
 id|__fh_put
 c_func
 (paren
@@ -413,7 +427,7 @@ r_return
 suffix:semicolon
 id|dentry
 op_assign
-id|fhp-&gt;fh_handle.fh_dentry
+id|fhp-&gt;fh_dentry
 suffix:semicolon
 r_if
 c_cond
@@ -446,15 +460,15 @@ c_func
 id|fhp
 )paren
 suffix:semicolon
+id|fhp-&gt;fh_dverified
+op_assign
+l_int|0
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|dentry
 )paren
-suffix:semicolon
-id|fhp-&gt;fh_dverified
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 )brace

@@ -76,7 +76,7 @@ suffix:semicolon
 multiline_comment|/* enable/disable scatter-gather. */
 multiline_comment|/* other options */
 DECL|macro|PPA_CAN_QUEUE
-mdefine_line|#define PPA_CAN_QUEUE   0&t;/* use &quot;queueing&quot; interface */
+mdefine_line|#define PPA_CAN_QUEUE   1&t;/* use &quot;queueing&quot; interface */
 DECL|macro|PPA_BURST_SIZE
 mdefine_line|#define PPA_BURST_SIZE&t;512&t;/* data burst size */
 DECL|macro|PPA_SELECT_TMO
