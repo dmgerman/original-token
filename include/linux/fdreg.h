@@ -127,6 +127,10 @@ DECL|macro|FD_UNLOCK
 mdefine_line|#define FD_UNLOCK&t;&t;0x14&t;/* Fifo config unlock */
 DECL|macro|FD_LOCK
 mdefine_line|#define FD_LOCK&t;&t;&t;0x94&t;/* Fifo config lock */
+DECL|macro|FD_RSEEK_OUT
+mdefine_line|#define FD_RSEEK_OUT&t;&t;0x8f&t;/* seek out (i.e. to lower tracks) */
+DECL|macro|FD_RSEEK_IN
+mdefine_line|#define FD_RSEEK_IN&t;&t;0xcf&t;/* seek in (i.e. to higher tracks) */
 multiline_comment|/* DMA commands */
 DECL|macro|DMA_READ
 mdefine_line|#define DMA_READ&t;0x46

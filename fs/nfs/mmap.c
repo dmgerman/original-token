@@ -185,6 +185,8 @@ id|i
 comma
 op_amp
 id|fattr
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if

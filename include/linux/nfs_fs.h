@@ -119,9 +119,24 @@ id|nfs_fh
 op_star
 id|fhandle
 comma
+r_int
+op_star
+op_star
+id|p0
+comma
 r_char
 op_star
-id|res
+op_star
+id|string
+comma
+r_int
+r_int
+op_star
+id|len
+comma
+r_int
+r_int
+id|maxlen
 )paren
 suffix:semicolon
 r_extern
@@ -153,6 +168,9 @@ r_struct
 id|nfs_fattr
 op_star
 id|fattr
+comma
+r_int
+id|fs
 )paren
 suffix:semicolon
 r_extern
@@ -454,6 +472,9 @@ comma
 r_int
 op_star
 id|end
+comma
+r_int
+id|size
 )paren
 suffix:semicolon
 multiline_comment|/* linux/fs/nfs/inode.c */

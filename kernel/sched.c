@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/segment.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -2750,6 +2751,93 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+multiline_comment|/*&n;&t; * check the cpu time limit on the process.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|current-&gt;rlim
+(braket
+id|RLIMIT_CPU
+)braket
+dot
+id|rlim_cur
+op_ne
+id|RLIM_INFINITY
+)paren
+op_logical_and
+(paren
+(paren
+(paren
+id|current-&gt;stime
+op_plus
+id|current-&gt;utime
+)paren
+op_div
+id|HZ
+)paren
+op_ge
+id|current-&gt;rlim
+(braket
+id|RLIMIT_CPU
+)braket
+dot
+id|rlim_cur
+)paren
+)paren
+id|send_sig
+c_func
+(paren
+id|SIGXCPU
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|current-&gt;rlim
+(braket
+id|RLIMIT_CPU
+)braket
+dot
+id|rlim_max
+op_ne
+id|RLIM_INFINITY
+)paren
+op_logical_and
+(paren
+(paren
+(paren
+id|current-&gt;stime
+op_plus
+id|current-&gt;utime
+)paren
+op_div
+id|HZ
+)paren
+op_ge
+id|current-&gt;rlim
+(braket
+id|RLIMIT_CPU
+)braket
+dot
+id|rlim_max
+)paren
+)paren
+id|send_sig
+c_func
+(paren
+id|SIGKILL
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

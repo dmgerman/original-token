@@ -145,12 +145,12 @@ r_int
 id|cyls
 suffix:semicolon
 multiline_comment|/* &quot;physical&quot; cyls */
-DECL|member|reserved0
+DECL|member|reserved2
 r_int
 r_int
-id|reserved0
+id|reserved2
 suffix:semicolon
-multiline_comment|/* reserved */
+multiline_comment|/* reserved (word 2) */
 DECL|member|heads
 r_int
 r_int
@@ -266,13 +266,13 @@ r_int
 r_char
 id|capability
 suffix:semicolon
-multiline_comment|/* bit0:DMA, bit1:LBA */
-DECL|member|reserved1
+multiline_comment|/* bits 0:DMA 1:LBA 2:IORDYsw 3:IORDYsup*/
+DECL|member|reserved50
 r_int
 r_int
-id|reserved1
+id|reserved50
 suffix:semicolon
-multiline_comment|/* reserved */
+multiline_comment|/* reserved (word 50) */
 DECL|member|vendor5
 r_int
 r_char
@@ -297,12 +297,12 @@ r_char
 id|tDMA
 suffix:semicolon
 multiline_comment|/* 0=slow, 1=medium, 2=fast */
-DECL|member|cur_valid
+DECL|member|field_valid
 r_int
 r_int
-id|cur_valid
+id|field_valid
 suffix:semicolon
-multiline_comment|/* when (bit0==1) use logical geom */
+multiline_comment|/* bits 0:cur_ok 1:eide_ok */
 DECL|member|cur_cyls
 r_int
 r_int
@@ -363,12 +363,54 @@ r_int
 id|dma_mword
 suffix:semicolon
 multiline_comment|/* multiple-word dma info */
-multiline_comment|/* unsigned short reserved2[64];*/
-multiline_comment|/* reserved */
+DECL|member|eide_pio_modes
+r_int
+r_int
+id|eide_pio_modes
+suffix:semicolon
+multiline_comment|/* bits 0:mode3 1:mode4 */
+DECL|member|eide_dma_min
+r_int
+r_int
+id|eide_dma_min
+suffix:semicolon
+multiline_comment|/* min mword dma cycle time (ns) */
+DECL|member|eide_dma_time
+r_int
+r_int
+id|eide_dma_time
+suffix:semicolon
+multiline_comment|/* recommended mword dma cycle time (ns) */
+DECL|member|eide_pio
+r_int
+r_int
+id|eide_pio
+suffix:semicolon
+multiline_comment|/* min cycle time (ns), no IORDY  */
+DECL|member|eide_pio_iordy
+r_int
+r_int
+id|eide_pio_iordy
+suffix:semicolon
+multiline_comment|/* min cycle time (ns), with IORDY */
+DECL|member|reserved69
+r_int
+r_int
+id|reserved69
+suffix:semicolon
+multiline_comment|/* reserved (word 69) */
+DECL|member|reserved70
+r_int
+r_int
+id|reserved70
+suffix:semicolon
+multiline_comment|/* reserved (word 70) */
+multiline_comment|/* unsigned short reservedxx[57];*/
+multiline_comment|/* reserved (words 71-127) */
 multiline_comment|/* unsigned short vendor7  [32];*/
-multiline_comment|/* vendor unique */
-multiline_comment|/* unsigned short reserved3[96];*/
-multiline_comment|/* reserved */
+multiline_comment|/* vendor unique (words 128-159) */
+multiline_comment|/* unsigned short reservedyy[96];*/
+multiline_comment|/* reserved (words 160-255) */
 )brace
 suffix:semicolon
 eof

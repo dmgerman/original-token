@@ -541,7 +541,7 @@ c_func
 (paren
 l_int|NULL
 comma
-id|dev
+id|ndev
 comma
 id|skb
 comma

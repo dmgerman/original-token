@@ -309,8 +309,31 @@ multiline_comment|/* fa52 29c5, more magic? */
 DECL|member|dirty
 r_int
 id|dirty
+suffix:colon
+l_int|1
 suffix:semicolon
 multiline_comment|/* 0 clean, 1 &quot;improperly stopped&quot; */
+DECL|member|flag1234
+r_int
+id|flag1234
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* unknown flags */
+DECL|member|fast
+r_int
+id|fast
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* partition was fast formatted */
+DECL|member|flag6to31
+r_int
+id|flag6to31
+suffix:colon
+l_int|26
+suffix:semicolon
+multiline_comment|/* unknown flags */
 DECL|member|hotfix_map
 id|secno
 id|hotfix_map

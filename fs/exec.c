@@ -3623,7 +3623,7 @@ r_if
 c_cond
 (paren
 id|retval
-op_eq
+op_ge
 l_int|0
 )paren
 (brace
@@ -3638,7 +3638,7 @@ op_assign
 l_int|1
 suffix:semicolon
 r_return
-l_int|0
+id|retval
 suffix:semicolon
 )brace
 r_if

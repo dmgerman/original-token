@@ -144,16 +144,6 @@ mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (MAJOR_NR == FLOPPY_MAJOR)
 r_static
 r_void
-id|floppy_on
-c_func
-(paren
-r_int
-r_int
-id|nr
-)paren
-suffix:semicolon
-r_static
-r_void
 id|floppy_off
 c_func
 (paren
@@ -171,7 +161,7 @@ mdefine_line|#define DEVICE_REQUEST do_fd_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) ( ((device) &amp; 3) | (((device) &amp; 0x80 ) &gt;&gt; 5 ))
 DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON(device) floppy_on(DEVICE_NR(device))
+mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device) floppy_off(DEVICE_NR(device))
 macro_line|#elif (MAJOR_NR == HD_MAJOR)

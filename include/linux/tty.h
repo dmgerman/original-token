@@ -555,6 +555,8 @@ DECL|macro|TTY_DEBUG
 mdefine_line|#define TTY_DEBUG 4
 DECL|macro|TTY_DO_WRITE_WAKEUP
 mdefine_line|#define TTY_DO_WRITE_WAKEUP 5
+DECL|macro|TTY_PUSH
+mdefine_line|#define TTY_PUSH 6
 DECL|macro|TTY_WRITE_FLUSH
 mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
 r_extern

@@ -9527,8 +9527,9 @@ macro_line|#endif /* CONFIG_SELECTION */
 multiline_comment|/*&n; * PIO_FONT support.&n; *&n; * The font loading code goes back to the codepage package by&n; * Joel Hoffman (joel@wam.umd.edu). (He reports that the original&n; * reference is: &quot;From: p. 307 of _Programmer&squot;s Guide to PC &amp; PS/2&n; * Video Systems_ by Richard Wilton. 1987.  Microsoft Press&quot;.)&n; *&n; * Change for certain monochrome monitors by Yury Shevchuck&n; * (sizif@botik.yaroslavl.su).&n; */
 DECL|macro|colourmap
 mdefine_line|#define colourmap ((char *)0xa0000)
+multiline_comment|/* Pauline Middelink reports that we should use 0xA0000 for the bwmap as well.. */
 DECL|macro|blackwmap
-mdefine_line|#define blackwmap ((char *)0xb0000)
+mdefine_line|#define blackwmap ((char *)0xa0000)
 DECL|macro|cmapsz
 mdefine_line|#define cmapsz 8192
 DECL|macro|seq_port_reg

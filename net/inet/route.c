@@ -850,9 +850,14 @@ multiline_comment|/*&n;&t; *&t;Update the loopback route&n;&t; */
 r_if
 c_cond
 (paren
+(paren
 id|rt-&gt;rt_dev-&gt;flags
 op_amp
 id|IFF_LOOPBACK
+)paren
+op_logical_and
+op_logical_neg
+id|rt_loopback
 )paren
 id|rt_loopback
 op_assign

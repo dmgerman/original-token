@@ -211,9 +211,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|filp-&gt;f_pos
-op_mod
-l_int|8
+op_amp
+l_int|7
+)paren
 op_ne
 l_int|0
 )paren

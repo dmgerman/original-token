@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; *&n; * FIXES&n; *&n; * 2/7/94 James Bottomley and Jon Peatfield DAMTP, Cambridge University&n; *&n; * An xid mismatch no longer causes the request to be trashed.&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; *&n; * FIXES&n; *&n; * 2/7/94 James Bottomley and Jon Peatfield DAMTP, Cambridge University&n; *&n; * An xid mismatch no longer causes the request to be trashed.&n; *&n; * Peter Eriksson - incorrect XID used to confuse Linux&n; * Florian La Roche - use the correct max size, if reading a packet and&n; *                    also verify, if the whole packet has been read...&n; *                    more checks should be done in proc.c...&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
@@ -46,6 +46,9 @@ comma
 r_int
 op_star
 id|end
+comma
+r_int
+id|size
 )paren
 (brace
 r_struct
@@ -767,8 +770,11 @@ l_string|&quot;nfs_rpc_call: XID mismatch&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_goto
+id|re_select
+suffix:semicolon
 )brace
-multiline_comment|/* JEJB/JSP 2/7/94&n;&t; *&n;&t; * we have the correct xid, so read into the correct place and&n;&t; * return it&n;&t; *&n;&t; * Here we need to know the size given to alloc, server-&gt;wsize for&n;&t; * writes or server-&gt;rsize for reads.  In practice these are the&n;&t; * same. &n;&t; *&n;&t; * If they are not the same then a reply to a write request will be&n;&t; * a small acknowledgment, so even if wsize &lt; rsize we should never&n;&t; * cause data to be written past the end of the buffer (unless some&n;&t; * brain damaged implementation sends out a large write acknowledge).&n;&t; *&n;&t; * FIXME:  I should really know how big a packet was alloc&squot;d --&n;&t; *         should pass it to do_nfs_rpc. */
+multiline_comment|/* JEJB/JSP 2/7/94&n;&t; *&n;&t; * we have the correct xid, so read into the correct place and&n;&t; * return it&n;&t; *&n;&t; */
 id|result
 op_assign
 id|sock-&gt;ops
@@ -784,9 +790,9 @@ op_star
 )paren
 id|start
 comma
-id|server-&gt;rsize
+id|size
 op_plus
-id|NFS_SLACK_SPACE
+l_int|1024
 comma
 l_int|1
 comma
@@ -794,10 +800,41 @@ l_int|0
 comma
 l_int|NULL
 comma
+multiline_comment|/* Here is NFS_SLACK_SPACE..., hack */
 op_amp
 id|addrlen
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+OL
+id|addrlen
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: just caught a too small read memory size..., email to NET channel&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: result=%d,addrlen=%d&bslash;n&quot;
+comma
+id|result
+comma
+id|addrlen
+)paren
+suffix:semicolon
+id|result
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|current-&gt;blocked
 op_assign
 id|old_mask
@@ -830,6 +867,9 @@ comma
 r_int
 op_star
 id|end
+comma
+r_int
+id|size
 )paren
 (brace
 r_int
@@ -861,6 +901,8 @@ comma
 id|start
 comma
 id|end
+comma
+id|size
 )paren
 suffix:semicolon
 id|server-&gt;lock

@@ -845,6 +845,9 @@ op_eq
 l_char|&squot;*&squot;
 )paren
 (brace
+op_increment
+id|fmt
+suffix:semicolon
 multiline_comment|/* it&squot;s the next argument */
 id|field_width
 op_assign
@@ -922,6 +925,9 @@ op_eq
 l_char|&squot;*&squot;
 )paren
 (brace
+op_increment
+id|fmt
+suffix:semicolon
 multiline_comment|/* it&squot;s the next argument */
 id|precision
 op_assign

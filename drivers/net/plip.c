@@ -29,6 +29,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/lp.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -474,7 +475,7 @@ multiline_comment|/* Check that there is something at base_addr. */
 id|outb
 c_func
 (paren
-l_int|0x00
+id|LP_PINITP
 comma
 id|PAR_CONTROL
 c_func
@@ -566,7 +567,9 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0x00
+id|LP_PINITP
+op_or
+id|LP_PSELECP
 comma
 id|PAR_CONTROL
 c_func
@@ -578,7 +581,11 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0x10
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+op_or
+id|LP_PINTEN
 comma
 id|PAR_CONTROL
 c_func
@@ -590,7 +597,9 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0x00
+id|LP_PINITP
+op_or
+id|LP_PSELECP
 comma
 id|PAR_CONTROL
 c_func
@@ -1269,7 +1278,11 @@ multiline_comment|/* enable rx interrupt. */
 id|outb
 c_func
 (paren
-l_int|0x10
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+op_or
+id|LP_PINTEN
 comma
 id|PAR_CONTROL
 c_func
@@ -1376,7 +1389,9 @@ multiline_comment|/* release the interrupt. */
 id|outb
 c_func
 (paren
-l_int|0x00
+id|LP_PINITP
+op_or
+id|LP_PSELECP
 comma
 id|PAR_CONTROL
 c_func

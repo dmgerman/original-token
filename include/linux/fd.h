@@ -557,15 +557,19 @@ DECL|macro|FD_RAW_READ
 mdefine_line|#define FD_RAW_READ 1
 DECL|macro|FD_RAW_WRITE
 mdefine_line|#define FD_RAW_WRITE 2
+DECL|macro|FD_RAW_NO_MOTOR
+mdefine_line|#define FD_RAW_NO_MOTOR 4
+DECL|macro|FD_RAW_DISK_CHANGE
+mdefine_line|#define FD_RAW_DISK_CHANGE 4
 DECL|macro|FD_RAW_INTR
 mdefine_line|#define FD_RAW_INTR 8
 DECL|macro|FD_RAW_SPIN
 mdefine_line|#define FD_RAW_SPIN 16
+DECL|macro|FD_RAW_NO_MOTOR_AFTER
+mdefine_line|#define FD_RAW_NO_MOTOR_AFTER 32
 DECL|macro|FD_RAW_NEED_DISK
 mdefine_line|#define FD_RAW_NEED_DISK 64
 DECL|macro|FD_RAW_NEED_SEEK
 mdefine_line|#define FD_RAW_NEED_SEEK 128
-DECL|macro|FD_RAW_USER_SUPPLIED
-mdefine_line|#define FD_RAW_USER_SUPPLIED 256
 macro_line|#endif
 eof

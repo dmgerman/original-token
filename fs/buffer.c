@@ -568,6 +568,8 @@ id|retry
 op_assign
 l_int|0
 suffix:semicolon
+id|repeat2
+suffix:colon
 id|ncount
 op_assign
 l_int|0
@@ -698,6 +700,9 @@ id|wait_on_buffer
 id|bh
 )paren
 suffix:semicolon
+r_goto
+id|repeat2
+suffix:semicolon
 )brace
 multiline_comment|/* If an unlocked buffer is not uptodate, there has&n;&t;&t;&t;     been an IO error. Skip it. */
 r_if
@@ -746,6 +751,14 @@ op_logical_or
 id|pass
 op_ge
 l_int|2
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* don&squot;t bother about locked buffers */
+r_if
+c_cond
+(paren
+id|bh-&gt;b_lock
 )paren
 r_continue
 suffix:semicolon
@@ -8416,12 +8429,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -8429,14 +8440,12 @@ id|func
 op_eq
 l_int|1
 )paren
-(brace
 r_return
 id|sync_old_buffers
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Basically func 0 means start, 1 means read param 1, 2 means write param 1, etc */
 r_if
 c_cond
@@ -8507,11 +8516,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
 r_return
 id|error
 suffix:semicolon
-)brace
 id|put_fs_long
 c_func
 (paren
@@ -8538,12 +8545,10 @@ id|bdflush_max
 id|i
 )braket
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 id|bdf_prm.data
 (braket
 id|i
@@ -8560,22 +8565,21 @@ r_if
 c_cond
 (paren
 id|bdflush_running
-op_increment
 )paren
-(brace
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
 multiline_comment|/* Only one copy of this running at one time */
+id|bdflush_running
+op_increment
+suffix:semicolon
 multiline_comment|/* OK, from here on is the daemon */
-r_while
+r_for
 c_loop
 (paren
-l_int|1
-op_eq
-l_int|1
+suffix:semicolon
+suffix:semicolon
 )paren
 (brace
 macro_line|#ifdef DEBUG

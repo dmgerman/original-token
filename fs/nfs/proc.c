@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/proc.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Rick Sladkey&n; *&n; *  OS-independent nfs remote procedure call functions&n; *&n; *  Tuned by Alan Cox &lt;A.Cox@swansea.ac.uk&gt; for &gt;3K buffers&n; *  so at last we can have decent(ish) throughput off a &n; *  Sun server.&n; *&n; *  FixMe: We ought to define a sensible small max size for&n; *  things like getattr that are tiny packets and use the&n; *  old get_free_page stuff with it.&n; *&n; *  Feel free to fix it and mail me the diffs if it worries you.&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/proc.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Rick Sladkey&n; *&n; *  OS-independent nfs remote procedure call functions&n; *&n; *  Tuned by Alan Cox &lt;A.Cox@swansea.ac.uk&gt; for &gt;3K buffers&n; *  so at last we can have decent(ish) throughput off a &n; *  Sun server.&n; *&n; *  Coding optimized and cleaned up by Florian La Roche.&n; *  Note: Error returns are optimized for NFS_OK, which isn&squot;t translated via&n; *  nfs_stat_to_errno(), but happens to be already the right return code.&n; *&n; *  FixMe: We ought to define a sensible small max size for&n; *  things like getattr that are tiny packets and use the&n; *  old get_free_page stuff with it.&n; *&n; *  Also, the code currently doesn&squot;t check the size of the packet, when&n; *  it decodes the packet.&n; *&n; *  Feel free to fix it and mail me the diffs if it worries you.&n; */
 multiline_comment|/*&n; * Defining NFS_PROC_DEBUG causes a lookup of a file named&n; * &quot;xyzzy&quot; to toggle debugging.  Just cd to an NFS-mounted&n; * filesystem and type &squot;ls xyzzy&squot; to turn on debugging.&n; */
 macro_line|#if 0
 mdefine_line|#define NFS_PROC_DEBUG
@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#ifdef NFS_PROC_DEBUG
 DECL|variable|proc_debug
 r_static
@@ -27,6 +28,9 @@ macro_line|#else /* !NFS_PROC_DEBUG */
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(format, args...) do ; while (0)
 macro_line|#endif /* !NFS_PROC_DEBUG */
+multiline_comment|/* Mapping from NFS error code to &quot;errno&quot; error code. */
+DECL|macro|errno_NFSERR_IO
+mdefine_line|#define errno_NFSERR_IO EIO
 r_static
 r_int
 op_star
@@ -67,6 +71,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Our memory allocation and release functions.&n; */
 DECL|macro|NFS_SLACK_SPACE
 mdefine_line|#define NFS_SLACK_SPACE&t;&t;1024&t;/* Total overkill */ 
+multiline_comment|/* !!! Be careful, this constant is now also used in sock.c...&n;   We should easily convert to not using it anymore for most cases... */
 DECL|function|nfs_rpc_alloc
 r_static
 r_inline
@@ -79,10 +84,7 @@ r_int
 id|size
 )paren
 (brace
-id|size
-op_add_assign
-id|NFS_SLACK_SPACE
-suffix:semicolon
+macro_line|#if 1
 multiline_comment|/* Allow for the NFS crap as well as buffer */
 r_return
 (paren
@@ -93,10 +95,51 @@ id|kmalloc
 c_func
 (paren
 id|size
+op_plus
+id|NFS_SLACK_SPACE
 comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* If kmalloc fails, then we will give an EIO to user level.&n;&t;   (Please correct me, I am wron here... ??) This is not&n;&t;   desirable, but it is also not desirable to execute the&n;&t;   following code: Just loop until we get memory, call schedule(),&n;&t;   so that other processes are run inbetween (and hopefully give&n;&t;   some memory back).&t;&t;Florian&n;&t;*/
+r_int
+id|i
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|i
+op_assign
+(paren
+r_int
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+id|size
+op_plus
+id|NFS_SLACK_SPACE
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/* printk(&quot;NFS: call schedule&bslash;n&quot;); */
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+id|i
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|nfs_rpc_free
 r_static
@@ -122,6 +165,8 @@ id|p
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Here are a bunch of xdr encode/decode functions that convert&n; * between machine dependent and xdr data formats.&n; */
+DECL|macro|QUADLEN
+mdefine_line|#define QUADLEN(len) (((len) + 3) &gt;&gt; 2)
 DECL|function|xdr_encode_fhandle
 r_static
 r_inline
@@ -153,22 +198,18 @@ op_assign
 op_star
 id|fhandle
 suffix:semicolon
+r_return
 id|p
-op_add_assign
+op_plus
+id|QUADLEN
+c_func
 (paren
 r_sizeof
 (paren
 op_star
 id|fhandle
 )paren
-op_plus
-l_int|3
 )paren
-op_rshift
-l_int|2
-suffix:semicolon
-r_return
-id|p
 suffix:semicolon
 )brace
 DECL|function|xdr_decode_fhandle
@@ -202,22 +243,18 @@ op_star
 id|p
 )paren
 suffix:semicolon
+r_return
 id|p
-op_add_assign
+op_plus
+id|QUADLEN
+c_func
 (paren
 r_sizeof
 (paren
 op_star
 id|fhandle
 )paren
-op_plus
-l_int|3
 )paren
-op_rshift
-l_int|2
-suffix:semicolon
-r_return
-id|p
 suffix:semicolon
 )brace
 DECL|function|xdr_encode_string
@@ -240,10 +277,6 @@ id|string
 (brace
 r_int
 id|len
-comma
-id|quadlen
-suffix:semicolon
-id|len
 op_assign
 id|strlen
 c_func
@@ -251,15 +284,21 @@ c_func
 id|string
 )paren
 suffix:semicolon
+r_int
 id|quadlen
 op_assign
+id|QUADLEN
+c_func
 (paren
 id|len
-op_plus
-l_int|3
 )paren
-op_rshift
-l_int|2
+suffix:semicolon
+id|p
+(braket
+id|quadlen
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 op_star
 id|p
@@ -274,10 +313,6 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|p
 comma
 id|string
@@ -285,36 +320,10 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|memset
-c_func
-(paren
-(paren
-(paren
-r_char
-op_star
-)paren
-id|p
-)paren
-op_plus
-id|len
-comma
-l_char|&squot;&bslash;0&squot;
-comma
-(paren
-id|quadlen
-op_lshift
-l_int|2
-)paren
-op_minus
-id|len
-)paren
-suffix:semicolon
-id|p
-op_add_assign
-id|quadlen
-suffix:semicolon
 r_return
 id|p
+op_plus
+id|quadlen
 suffix:semicolon
 )brace
 DECL|function|xdr_decode_string
@@ -334,13 +343,12 @@ op_star
 id|string
 comma
 r_int
+r_int
 id|maxlen
 )paren
 (brace
 r_int
 r_int
-id|len
-suffix:semicolon
 id|len
 op_assign
 id|ntohl
@@ -366,10 +374,6 @@ c_func
 (paren
 id|string
 comma
-(paren
-r_char
-op_star
-)paren
 id|p
 comma
 id|len
@@ -382,18 +386,83 @@ id|len
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+r_return
 id|p
-op_add_assign
+op_plus
+id|QUADLEN
+c_func
 (paren
 id|len
-op_plus
-l_int|3
 )paren
-op_rshift
-l_int|2
+suffix:semicolon
+)brace
+DECL|function|xdr_decode_string2
+r_static
+r_inline
+r_int
+op_star
+id|xdr_decode_string2
+c_func
+(paren
+r_int
+op_star
+id|p
+comma
+r_char
+op_star
+op_star
+id|string
+comma
+r_int
+r_int
+op_star
+id|len
+comma
+r_int
+r_int
+id|maxlen
+)paren
+(brace
+op_star
+id|len
+op_assign
+id|ntohl
+c_func
+(paren
+op_star
+id|p
+op_increment
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|len
+OG
+id|maxlen
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+op_star
+id|string
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|p
 suffix:semicolon
 r_return
 id|p
+op_plus
+id|QUADLEN
+c_func
+(paren
+op_star
+id|len
+)paren
 suffix:semicolon
 )brace
 DECL|function|xdr_encode_data
@@ -418,16 +487,19 @@ id|len
 (brace
 r_int
 id|quadlen
-suffix:semicolon
-id|quadlen
 op_assign
+id|QUADLEN
+c_func
 (paren
 id|len
-op_plus
-l_int|3
 )paren
-op_rshift
-l_int|2
+suffix:semicolon
+id|p
+(braket
+id|quadlen
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 op_star
 id|p
@@ -439,13 +511,9 @@ c_func
 id|len
 )paren
 suffix:semicolon
-id|memcpy
+id|memcpy_fromfs
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|p
 comma
 id|data
@@ -453,36 +521,10 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|memset
-c_func
-(paren
-(paren
-(paren
-r_char
-op_star
-)paren
-id|p
-)paren
-op_plus
-id|len
-comma
-l_char|&squot;&bslash;0&squot;
-comma
-(paren
-id|quadlen
-op_lshift
-l_int|2
-)paren
-op_minus
-id|len
-)paren
-suffix:semicolon
-id|p
-op_add_assign
-id|quadlen
-suffix:semicolon
 r_return
 id|p
+op_plus
+id|quadlen
 suffix:semicolon
 )brace
 DECL|function|xdr_decode_data
@@ -507,12 +549,12 @@ id|lenp
 comma
 r_int
 id|maxlen
+comma
+r_int
+id|fs
 )paren
 (brace
 r_int
-r_int
-id|len
-suffix:semicolon
 id|len
 op_assign
 op_star
@@ -536,32 +578,40 @@ id|maxlen
 r_return
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fs
+)paren
+id|memcpy_tofs
+c_func
+(paren
+id|data
+comma
+id|p
+comma
+id|len
+)paren
+suffix:semicolon
+r_else
 id|memcpy
 c_func
 (paren
 id|data
 comma
-(paren
-r_char
-op_star
-)paren
 id|p
 comma
 id|len
 )paren
 suffix:semicolon
-id|p
-op_add_assign
-(paren
-id|len
-op_plus
-l_int|3
-)paren
-op_rshift
-l_int|2
-suffix:semicolon
 r_return
 id|p
+op_plus
+id|QUADLEN
+c_func
+(paren
+id|len
+)paren
 suffix:semicolon
 )brace
 DECL|function|xdr_decode_fattr
@@ -1096,6 +1146,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;rsize
 )paren
 )paren
 OL
@@ -1128,7 +1180,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -1165,6 +1218,7 @@ c_func
 l_string|&quot;NFS reply getattr&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -1199,6 +1253,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -1207,12 +1270,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_setattr
@@ -1328,6 +1386,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -1360,7 +1420,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -1397,6 +1458,7 @@ c_func
 l_string|&quot;NFS reply setattr&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -1431,6 +1493,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -1439,12 +1510,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_lookup
@@ -1587,6 +1653,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;rsize
 )paren
 )paren
 OL
@@ -1619,7 +1687,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -1666,6 +1735,7 @@ c_func
 l_string|&quot;NFS reply lookup&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -1700,6 +1770,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -1708,12 +1787,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_readlink
@@ -1731,22 +1805,33 @@ id|nfs_fh
 op_star
 id|fhandle
 comma
+r_int
+op_star
+op_star
+id|p0
+comma
 r_char
 op_star
-id|res
+op_star
+id|string
+comma
+r_int
+r_int
+op_star
+id|len
+comma
+r_int
+r_int
+id|maxlen
 )paren
 (brace
 r_int
 op_star
 id|p
-comma
-op_star
-id|p0
 suffix:semicolon
 r_int
 id|status
-suffix:semicolon
-r_int
+comma
 id|ruid
 op_assign
 l_int|0
@@ -1762,6 +1847,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
+op_star
 id|p0
 op_assign
 id|nfs_rpc_alloc
@@ -1782,6 +1868,7 @@ op_assign
 id|nfs_rpc_header
 c_func
 (paren
+op_star
 id|p0
 comma
 id|NFSPROC_READLINK
@@ -1810,25 +1897,20 @@ c_func
 (paren
 id|server
 comma
+op_star
 id|p0
 comma
 id|p
+comma
+id|server-&gt;rsize
 )paren
 )paren
 OL
 l_int|0
 )paren
-(brace
-id|nfs_rpc_free
-c_func
-(paren
-id|p0
-)paren
-suffix:semicolon
 r_return
 id|status
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1839,13 +1921,15 @@ op_assign
 id|nfs_rpc_verify
 c_func
 (paren
+op_star
 id|p0
 )paren
 )paren
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -1873,14 +1957,16 @@ op_logical_neg
 (paren
 id|p
 op_assign
-id|xdr_decode_string
+id|xdr_decode_string2
 c_func
 (paren
 id|p
 comma
-id|res
+id|string
 comma
-id|NFS_MAXPATHLEN
+id|len
+comma
+id|maxlen
 )paren
 )paren
 )paren
@@ -1893,16 +1979,16 @@ l_string|&quot;nfs_proc_readlink: giant pathname&bslash;n&quot;
 suffix:semicolon
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 )brace
 r_else
+multiline_comment|/* status = 0, */
 id|PRINTK
 c_func
 (paren
-l_string|&quot;NFS reply readlink %s&bslash;n&quot;
-comma
-id|res
+l_string|&quot;NFS reply readlink&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1939,20 +2025,18 @@ comma
 id|status
 )paren
 suffix:semicolon
-)brace
-id|nfs_rpc_free
-c_func
-(paren
-id|p0
-)paren
-suffix:semicolon
-r_return
+id|status
+op_assign
 op_minus
 id|nfs_stat_to_errno
 c_func
 (paren
 id|status
 )paren
+suffix:semicolon
+)brace
+r_return
+id|status
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_read
@@ -1984,6 +2068,9 @@ r_struct
 id|nfs_fattr
 op_star
 id|fattr
+comma
+r_int
+id|fs
 )paren
 (brace
 r_int
@@ -2003,10 +2090,7 @@ l_int|0
 suffix:semicolon
 r_int
 id|len
-op_assign
-l_int|0
 suffix:semicolon
-multiline_comment|/* = 0 is for gcc */
 id|PRINTK
 c_func
 (paren
@@ -2104,6 +2188,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;rsize
 )paren
 )paren
 OL
@@ -2136,7 +2222,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -2185,6 +2272,8 @@ op_amp
 id|len
 comma
 id|count
+comma
+id|fs
 )paren
 )paren
 )paren
@@ -2197,10 +2286,16 @@ l_string|&quot;nfs_proc_read: giant data size&bslash;n&quot;
 suffix:semicolon
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 )brace
 r_else
+(brace
+id|status
+op_assign
+id|len
+suffix:semicolon
 id|PRINTK
 c_func
 (paren
@@ -2209,6 +2304,7 @@ comma
 id|len
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -2243,6 +2339,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -2251,21 +2356,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-(paren
 id|status
-op_eq
-id|NFS_OK
-)paren
-ques
-c_cond
-id|len
-suffix:colon
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
-id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_write
@@ -2424,6 +2515,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -2456,7 +2549,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -2493,6 +2587,7 @@ c_func
 l_string|&quot;NFS reply write&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -2527,6 +2622,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -2535,12 +2639,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_create
@@ -2678,6 +2777,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -2710,7 +2811,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -2757,6 +2859,7 @@ c_func
 l_string|&quot;NFS reply create&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -2791,6 +2894,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -2799,12 +2911,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_remove
@@ -2917,6 +3024,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -2949,7 +3058,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -2976,6 +3086,7 @@ c_func
 l_string|&quot;NFS reply remove&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -3010,6 +3121,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -3018,12 +3138,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_rename
@@ -3168,6 +3283,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -3200,7 +3317,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -3227,6 +3345,7 @@ c_func
 l_string|&quot;NFS reply rename&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -3261,6 +3380,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -3269,12 +3397,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_link
@@ -3402,6 +3525,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -3434,7 +3559,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -3461,6 +3587,7 @@ c_func
 l_string|&quot;NFS reply link&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -3495,6 +3622,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -3503,12 +3639,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_symlink
@@ -3653,6 +3784,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -3685,7 +3818,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -3712,6 +3846,7 @@ c_func
 l_string|&quot;NFS reply symlink&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -3746,6 +3881,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -3754,12 +3898,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_mkdir
@@ -3897,6 +4036,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -3929,7 +4070,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -3976,6 +4118,7 @@ c_func
 l_string|&quot;NFS reply mkdir&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -4010,6 +4153,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -4018,12 +4170,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_rmdir
@@ -4136,6 +4283,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;wsize
 )paren
 )paren
 OL
@@ -4168,7 +4317,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -4195,6 +4345,7 @@ c_func
 l_string|&quot;NFS reply rmdir&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -4229,6 +4380,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -4237,12 +4397,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_readdir
@@ -4289,10 +4444,7 @@ l_int|0
 suffix:semicolon
 r_int
 id|i
-op_assign
-l_int|0
 suffix:semicolon
-multiline_comment|/* = 0 is for gcc */
 r_int
 id|size
 suffix:semicolon
@@ -4389,6 +4541,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;rsize
 )paren
 )paren
 OL
@@ -4421,7 +4575,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -4496,7 +4651,8 @@ l_string|&quot;nfs_proc_readdir: giant filename&bslash;n&quot;
 suffix:semicolon
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 )brace
 r_else
@@ -4560,6 +4716,10 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
+id|status
+op_assign
+id|i
+suffix:semicolon
 )brace
 )brace
 r_else
@@ -4595,6 +4755,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -4603,21 +4772,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-(paren
 id|status
-op_eq
-id|NFS_OK
-)paren
-ques
-c_cond
-id|i
-suffix:colon
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
-id|status
-)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_proc_statfs
@@ -4718,6 +4873,8 @@ comma
 id|p0
 comma
 id|p
+comma
+id|server-&gt;rsize
 )paren
 )paren
 OL
@@ -4750,7 +4907,8 @@ id|p0
 )paren
 id|status
 op_assign
-id|NFSERR_IO
+op_minus
+id|errno_NFSERR_IO
 suffix:semicolon
 r_else
 r_if
@@ -4787,6 +4945,7 @@ c_func
 l_string|&quot;NFS reply statfs&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* status = 0; */
 )brace
 r_else
 (brace
@@ -4821,6 +4980,15 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+id|nfs_stat_to_errno
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
 )brace
 id|nfs_rpc_free
 c_func
@@ -4829,12 +4997,7 @@ id|p0
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|nfs_stat_to_errno
-c_func
-(paren
 id|status
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Here are a few RPC-assist functions.&n; */
@@ -5300,13 +5463,11 @@ suffix:semicolon
 )brace
 id|p
 op_add_assign
+id|QUADLEN
+c_func
 (paren
 id|n
-op_plus
-l_int|3
 )paren
-op_rshift
-l_int|2
 suffix:semicolon
 r_if
 c_cond
@@ -5343,10 +5504,6 @@ id|p
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We need to translate between nfs status return values and&n; * the local errno values which may not be the same.&n; */
-macro_line|#ifndef EDQUOT
-DECL|macro|EDQUOT
-mdefine_line|#define EDQUOT&t;ENOSPC
-macro_line|#endif
 r_static
 r_struct
 (brace
@@ -5386,7 +5543,7 @@ comma
 (brace
 id|NFSERR_IO
 comma
-id|EIO
+id|errno_NFSERR_IO
 )brace
 comma
 (brace

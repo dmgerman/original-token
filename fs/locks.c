@@ -523,7 +523,7 @@ op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 id|l
 comma

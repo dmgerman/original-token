@@ -1743,9 +1743,12 @@ id|printk
 l_string|&quot;bios32_init : multiple entries, mail drew@colorado.edu&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Jeremy Fitzhardinge reports at least one PCI BIOS&n;&t;&t;&t; * with two different service directories, and as both&n;&t;&t;&t; * worked for him, we&squot;ll just mention the fact, and&n;&t;&t;&t; * not actually disallow it..&n;&t;&t;&t; */
+macro_line|#if 0
 r_return
 id|memory_start
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 macro_line|#ifdef CONFIG_PCI
