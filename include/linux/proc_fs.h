@@ -172,22 +172,13 @@ macro_line|#ifdef CONFIG_IP_FIREWALL
 DECL|enumerator|PROC_NET_IPFWFWD
 id|PROC_NET_IPFWFWD
 comma
-DECL|enumerator|PROC_NET_IPFWFWD0
-id|PROC_NET_IPFWFWD0
-comma
 DECL|enumerator|PROC_NET_IPFWBLK
 id|PROC_NET_IPFWBLK
-comma
-DECL|enumerator|PROC_NET_IPFWBLK0
-id|PROC_NET_IPFWBLK0
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_ACCT
 DECL|enumerator|PROC_NET_IPACCT
 id|PROC_NET_IPACCT
-comma
-DECL|enumerator|PROC_NET_IPACCT0
-id|PROC_NET_IPACCT0
 comma
 macro_line|#endif
 macro_line|#if&t;defined(CONFIG_WAVELAN)

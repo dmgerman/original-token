@@ -22,7 +22,7 @@ mdefine_line|#define DEBUGT 2
 DECL|macro|DCL_DEBUG
 mdefine_line|#define DCL_DEBUG /* debug disk change line */
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/* do print messages for unexpected interupts */
+multiline_comment|/* do print messages for unexpected interrupts */
 DECL|variable|print_unex
 r_static
 r_int
@@ -14450,7 +14450,7 @@ multiline_comment|/* Revised 82077AA passes all the tests */
 )brace
 multiline_comment|/* get_fdc_version */
 multiline_comment|/* lilo configuration */
-multiline_comment|/* we make the invert_dcl function global. One day, somebody might&n;want to centralize all thinkpad related options into one lilo option,&n;there are just so many thinpad related quirks! */
+multiline_comment|/* we make the invert_dcl function global. One day, somebody might&n;want to centralize all thinkpad related options into one lilo option,&n;there are just so many thinkpad related quirks! */
 DECL|function|floppy_invert_dcl
 r_void
 id|floppy_invert_dcl

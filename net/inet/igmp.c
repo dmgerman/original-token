@@ -703,14 +703,7 @@ comma
 id|im-&gt;multiaddr
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Left group %lX&bslash;n&quot;
-comma
-id|im-&gt;multiaddr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;Left group %lX&bslash;n&quot;,im-&gt;multiaddr);*/
 )brace
 DECL|function|igmp_group_added
 r_static
@@ -748,14 +741,7 @@ comma
 id|im-&gt;multiaddr
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Joined group %lX&bslash;n&quot;
-comma
-id|im-&gt;multiaddr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;Joined group %lX&bslash;n&quot;,im-&gt;multiaddr);*/
 )brace
 DECL|function|igmp_rcv
 r_int

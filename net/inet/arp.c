@@ -1917,9 +1917,9 @@ multiline_comment|/* we will respond to a proxy arp request&n;&t;&t;&t;     if t
 r_if
 c_cond
 (paren
-id|proxy_entry-&gt;htype
-op_eq
-id|htype
+id|proxy_entry-&gt;dev
+op_ne
+id|dev
 op_logical_and
 op_logical_neg
 (paren

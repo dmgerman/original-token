@@ -725,7 +725,7 @@ comma
 op_star
 id|shpnt
 suffix:semicolon
-multiline_comment|/*&n;   * Create a circular linked list from the scsi hosts which have&n;   * the &quot;block&quot; field in the Scsi_Host structure set to any value&n;   * different from NULL.&n;   * If there is only one host such that host-&gt;block != NULL, the list is&n;   * empty and host-&gt;block is reset to NULL.&n;   * The blocked list should include all the scsi hosts using ISA DMA.&n;   * In some systems, using two dma channels simultaneously causes&n;   * unpredictable results.&n;   * Among the scsi hosts in the blocked list, only one host at a time&n;   * is allowed to have active commands queued. The transition from&n;   * one active host to the next one is allowed only when host_busy == 0&n;   * for the active host (which implies host_busy == 0 for all the hosts&n;   * in the list). Moreover for block devices the transition to a new&n;   * active host is allowed only when a request is completed, since a&n;   * block device request can be divided into multiple scsi commands&n;   * (when there are few sg lists or clustering is disabled).&n;   *&n;   * (DB, 4 Feb 1995)&n;   */
+multiline_comment|/*&n;   * Create a circular linked list from the scsi hosts which have&n;   * the &quot;wish_block&quot; field in the Scsi_Host structure set.&n;   * The blocked list should include all the scsi hosts using ISA DMA.&n;   * In some systems, using two dma channels simultaneously causes&n;   * unpredictable results.&n;   * Among the scsi hosts in the blocked list, only one host at a time&n;   * is allowed to have active commands queued. The transition from&n;   * one active host to the next one is allowed only when host_busy == 0&n;   * for the active host (which implies host_busy == 0 for all the hosts&n;   * in the list). Moreover for block devices the transition to a new&n;   * active host is allowed only when a request is completed, since a&n;   * block device request can be divided into multiple scsi commands&n;   * (when there are few sg lists or clustering is disabled).&n;   *&n;   * (DB, 4 Feb 1995)&n;   */
 id|save_flags
 c_func
 (paren
@@ -762,15 +762,15 @@ c_cond
 (paren
 id|shpnt-&gt;unchecked_isa_dma
 )paren
-id|shpnt-&gt;block
+id|shpnt-&gt;wish_block
 op_assign
-id|shpnt
+l_int|1
 suffix:semicolon
 macro_line|#endif
 r_if
 c_cond
 (paren
-id|shpnt-&gt;block
+id|shpnt-&gt;wish_block
 )paren
 id|sh
 (braket

@@ -1888,6 +1888,8 @@ suffix:semicolon
 id|sg_template.dev_max
 op_assign
 id|sg_template.dev_noticed
+op_plus
+id|SG_EXTRA_DEVS
 suffix:semicolon
 )brace
 DECL|function|sg_attach

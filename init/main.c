@@ -659,6 +659,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU31A
+macro_line|#ifdef CONFIG_CDU535
+r_extern
+r_void
+id|sonycd535_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_CDU535
 r_void
 id|ramdisk_setup
 c_func
@@ -1169,6 +1185,14 @@ id|aztcd_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_CDU535
+(brace
+l_string|&quot;sonycd535=&quot;
+comma
+id|sonycd535_setup
+)brace
+comma
+macro_line|#endif CONFIG_CDU535
 macro_line|#ifdef CONFIG_SOUND
 (brace
 l_string|&quot;sound=&quot;

@@ -241,6 +241,9 @@ op_decrement
 id|offset
 )paren
 suffix:semicolon
+id|dir
+op_increment
+suffix:semicolon
 )brace
 r_return
 suffix:semicolon

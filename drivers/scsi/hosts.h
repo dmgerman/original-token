@@ -274,6 +274,12 @@ id|Scsi_Host
 op_star
 id|block
 suffix:semicolon
+DECL|member|wish_block
+r_int
+id|wish_block
+suffix:colon
+l_int|1
+suffix:semicolon
 multiline_comment|/* These parameters should be set by the detect routine */
 DECL|member|base
 r_int

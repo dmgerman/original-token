@@ -133,13 +133,17 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* keyboard key bitmap */
+DECL|macro|BITS_PER_LONG
+mdefine_line|#define BITS_PER_LONG (8*sizeof(unsigned long))
 DECL|variable|key_down
 r_static
 r_int
 r_int
 id|key_down
 (braket
-l_int|8
+l_int|256
+op_div
+id|BITS_PER_LONG
 )braket
 op_assign
 (brace
@@ -3860,11 +3864,9 @@ id|i
 multiline_comment|/* skip this word if not a single bit on */
 id|k
 op_assign
-(paren
 id|i
-op_lshift
-l_int|5
-)paren
+op_star
+id|BITS_PER_LONG
 suffix:semicolon
 r_for
 c_loop
@@ -3875,7 +3877,7 @@ l_int|0
 suffix:semicolon
 id|j
 OL
-l_int|32
+id|BITS_PER_LONG
 suffix:semicolon
 id|j
 op_increment

@@ -1,22 +1,30 @@
-multiline_comment|/*  de4x5.c: A DIGITAL DE425/DE434/DE435 ethernet driver for linux.&n;&n;    Copyright 1994 Digital Equipment Corporation.&n;&n;    This software may be used and distributed according to the terms of&n;    the GNU Public License, incorporated herein by reference.&n;&n;    This driver is written for the Digital Equipment Corporation series&n;    of EtherWORKS ethernet cards:&n;&n;&t;DE425 TP/COAX EISA&n;&t;DE434 TP PCI&n;&t;DE435 TP/COAX/AUI PCI&n;&n;    The driver has been tested on a  relatively busy network using the DE425&n;    and DE435 cards and benchmarked with &squot;ttcp&squot;: it  transferred 16M of data&n;    at 1.08MB/s (8.6Mb/s) to a DECstation 5000/200.&n;&n;    ************************************************************************&n;    However there is still a known bug which causes ttcp to hang on transmit&n;    (receive  is  OK), although  the  adapter/driver  continues to  function&n;    normally for  other applications e.g.  nfs  mounting disks, pinging etc.&n;    The cause is under investigation.&n;    ************************************************************************&n;&n;    The author may    be  reached as davies@wanton.lkg.dec.com  or   Digital&n;    Equipment Corporation, 550 King Street, Littleton MA 01460.&n;&n;    =========================================================================&n;    This driver has been written  substantially  from scratch, although  its&n;    inheritance of style and stack interface from &squot;ewrk3.c&squot; and in turn from&n;    Donald Becker&squot;s &squot;lance.c&squot; should be obvious.&n;&n;    Upto 15 EISA cards can be supported under this driver, limited primarily&n;    by the available IRQ lines.  I have  checked different configurations of&n;    multiple depca, EtherWORKS 3 cards and de4x5 cards and  have not found a&n;    problem yet (provided you have at least depca.c v0.38) ...&n;&n;    PCI support  has been added  to allow the  driver to work with the DE434&n;    and  DE435 cards. The I/O  accesses  are a  bit of a   kludge due to the&n;    differences  in the  EISA and PCI    CSR address offsets  from the  base&n;    address.&n;&n;    The ability to load this driver  as a loadable  module has been included&n;    and used  extensively during the  driver development (to save those long&n;    reboot sequences).  I  don&squot;t  recommend using loadable drivers  with PCI&n;    however,  since the  PCI BIOS allocates   the  I/O and  memory addresses&n;    dynamically at  boot time.  To  utilise this  ability, you  have to do 8&n;    things:&n;&n;    0) have a copy of the loadable modules code installed on your system.&n;    1) copy de4x5.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) edit the  source code near  line 1945 to reflect  the I/O address and&n;    IRQ you&squot;re using, or assign these when loading by:&n;&n;                   insmod de4x5.o irq=x io=y&n;&n;    3) compile  de4x5.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the de4x5 configuration turned off and reboot.&n;    5) insmod de4x5.o&n;    6) run the net startup bits for your new eth?? interface manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;&n;    Note that autoprobing is not allowed in loadable modules - the system is&n;    already up and running and you&squot;re messing with interrupts.&n;&n;    To unload a module, turn off the associated interface &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod de4x5&squot;.&n;&n;    Automedia detection is included so that in  principal you can disconnect&n;    from, e.g.  TP, reconnect  to BNC  and  things will still work  (after a&n;    pause whilst the   driver figures out   where its media went).  My tests&n;    using ping showed that it appears to work....&n;&n;    TO DO:&n;    ------&n;      1.      Improve the timing loops to be accurate across different CPUs&n;              and speeds.&n;&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1     17-Nov-94   Initial writing. ALPHA code release.&n;      0.2     13-Jan-95   Added PCI support for DE435&squot;s&n;      0.21    19-Jan-95   Added auto media detection&n;&n;    =========================================================================&n;*/
+multiline_comment|/*  de4x5.c: A DIGITAL DE425/DE434/DE435 ethernet driver for linux.&n;&n;    Copyright 1994 Digital Equipment Corporation.&n;&n;    This software may be used and distributed according to the terms of&n;    the GNU Public License, incorporated herein by reference.&n;&n;    This driver is written for the Digital Equipment Corporation series&n;    of EtherWORKS ethernet cards:&n;&n;&t;DE425 TP/COAX EISA&n;&t;DE434 TP PCI&n;&t;DE435 TP/COAX/AUI PCI&n;&n;    The driver has been tested on a  relatively busy network using the DE425&n;    and DE435 cards and benchmarked with &squot;ttcp&squot;: it  transferred 16M of data&n;    at 1.08MB/s (8.6Mb/s) to a DECstation 5000/200.&n;&n;    ************************************************************************&n;    However there is still a known bug which causes ttcp to hang on transmit&n;    (receive  is  OK), although  the  adapter/driver  continues to  function&n;    normally for  other applications e.g.  nfs  mounting disks, pinging etc.&n;    The cause is under investigation.&n;    ************************************************************************&n;&n;    The author may    be  reached as davies@wanton.lkg.dec.com  or   Digital&n;    Equipment Corporation, 550 King Street, Littleton MA 01460.&n;&n;    =========================================================================&n;    This driver has been written  substantially  from scratch, although  its&n;    inheritance of style and stack interface from &squot;ewrk3.c&squot; and in turn from&n;    Donald Becker&squot;s &squot;lance.c&squot; should be obvious.&n;&n;    Upto 15 EISA cards can be supported under this driver, limited primarily&n;    by the available IRQ lines.  I have  checked different configurations of&n;    multiple depca, EtherWORKS 3 cards and de4x5 cards and  have not found a&n;    problem yet (provided you have at least depca.c v0.38) ...&n;&n;    PCI support  has been added  to allow the  driver to work with the DE434&n;    and  DE435 cards. The I/O  accesses  are a  bit of a   kludge due to the&n;    differences  in the  EISA and PCI    CSR address offsets  from the  base&n;    address.&n;&n;    The ability to load  this driver as a loadable  module has been included&n;    and  used extensively during the  driver development (to save those long&n;    reboot sequences).  Loadable module support under  PCI has been achieved&n;    by letting any I/O address less than 0x1000 be assigned as:&n;&n;                       0xghh&n;&n;    where g is the bus number (usually 0 until the BIOS&squot;s get fixed)&n;         hh is the device number (max is 32 per bus).&n;&n;    Essentially, the I/O address and IRQ information  are ignored and filled&n;    in later by  the PCI BIOS   during the PCI  probe.  Note  that the board&n;    should be in the system at boot time so that its I/O address and IRQ are&n;    allocated by the PCI BIOS automatically. The special case of device 0 on&n;    bus 0  is  not allowed  as  the probe  will think   you&squot;re autoprobing a&n;    module.&n;&n;    To utilise this ability, you have to do 8 things:&n;&n;    0) have a copy of the loadable modules code installed on your system.&n;    1) copy de4x5.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) edit the  source code near  line 1945 to reflect  the I/O address and&n;    IRQ you&squot;re using, or assign these when loading by:&n;&n;                   insmod de4x5.o irq=x io=y&n;&n;    3) compile  de4x5.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the de4x5 configuration turned off and reboot.&n;    5) insmod de4x5.o&n;    6) run the net startup bits for your new eth?? interface manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;&n;    Note that autoprobing is not allowed in loadable modules - the system is&n;    already up and running and you&squot;re messing with interrupts.&n;&n;    To unload a module, turn off the associated interface &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod de4x5&squot;.&n;&n;    Automedia detection is included so that in  principal you can disconnect&n;    from, e.g.  TP, reconnect  to BNC  and  things will still work  (after a&n;    pause whilst the   driver figures out   where its media went).  My tests&n;    using ping showed that it appears to work....&n;&n;    A compile time  switch to allow  Zynx  recognition has been  added. This&n;    &quot;feature&quot; is in no way supported nor tested  in this driver and the user&n;    may use it at his/her sole discretion.  I have had 2 conflicting reports&n;    that  my driver  will or   won&squot;t  work with   Zynx. Try Donald  Becker&squot;s&n;    &squot;tulip.c&squot; if this driver doesn&squot;t work for  you. I will not be supporting&n;    Zynx cards since I have no information on them  and can&squot;t test them in a&n;    system.&n;&n;    TO DO:&n;    ------&n;    1. Add DC21041 Nway/Autosense support&n;    2. Add DC21140 Autosense support&n;    3. Add timer support&n;&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1     17-Nov-94   Initial writing. ALPHA code release.&n;      0.2     13-Jan-95   Added PCI support for DE435&squot;s&n;      0.21    19-Jan-95   Added auto media detection&n;      0.22    10-Feb-95   Fix interrupt handler call &lt;chris@cosy.sbg.ac.at&gt;&n;                          Fix recognition bug reported by &lt;bkm@star.rl.ac.uk&gt;&n;&t;&t;&t;  Add request/release_region code&n;&t;&t;&t;  Add loadable modules support for PCI&n;&t;&t;&t;  Clean up loadable modules support&n;&n;    =========================================================================&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;de4x5.c:v0.21 1/19/95 davies@wanton.lkg.dec.com&bslash;n&quot;
+l_string|&quot;de4x5.c:v0.22 2/10/95 davies@wanton.lkg.dec.com&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -28,10 +36,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif /* MODULE */
 macro_line|#include &quot;de4x5.h&quot;
 macro_line|#ifdef DE4X5_DEBUG
 DECL|variable|de4x5_debug
@@ -50,51 +54,76 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef PROBE_LENGTH
+multiline_comment|/*&n;** Ethernet PROM defines&n;*/
 DECL|macro|PROBE_LENGTH
 mdefine_line|#define PROBE_LENGTH    32
-macro_line|#endif
 DECL|macro|ETH_PROM_SIG
-mdefine_line|#define ETH_PROM_SIG &quot;FF0055AAFF0055AA&quot;
-DECL|macro|DE4X5_SIGNATURE
-mdefine_line|#define DE4X5_SIGNATURE {&quot;DE425&quot;,&quot;&quot;}
-DECL|macro|DE4X5_NAME_LENGTH
-mdefine_line|#define DE4X5_NAME_LENGTH 8
-DECL|macro|DE4X5_EISA_IO_PORTS
-mdefine_line|#define DE4X5_EISA_IO_PORTS 0x0c00       /* I/O port base address, slot 0 */
-DECL|macro|MAX_EISA_SLOTS
-mdefine_line|#define MAX_EISA_SLOTS 16
-DECL|macro|EISA_SLOT_INC
-mdefine_line|#define EISA_SLOT_INC 0x1000
-DECL|macro|DE4X5_EISA_SEARCH
-mdefine_line|#define DE4X5_EISA_SEARCH 0x00000001     /* probe search mask */
-DECL|variable|eisa_slots_full
-r_static
-id|u_long
-id|eisa_slots_full
-op_assign
-id|DE4X5_EISA_SEARCH
-suffix:semicolon
-multiline_comment|/* holds which EISA slots hold */
-multiline_comment|/* DE425s, for multi-DE425 case */
-DECL|macro|PCI_MAX_BUS_NUM
-mdefine_line|#define PCI_MAX_BUS_NUM 8
-DECL|variable|pci_slots_full
-r_static
-id|u_long
-id|pci_slots_full
-(braket
-id|PCI_MAX_BUS_NUM
-)braket
-suffix:semicolon
-multiline_comment|/* Which PCI slots used */
-multiline_comment|/* on up to PCI_MAX_BUS_NUM buses */
+mdefine_line|#define ETH_PROM_SIG    0xAA5500FFUL
+multiline_comment|/*&n;** Ethernet Info&n;*/
+DECL|macro|PKT_BUF_SZ
+mdefine_line|#define PKT_BUF_SZ&t;1544            /* Buffer size for each Tx/Rx buffer */
+DECL|macro|MAX_PKT_SZ
+mdefine_line|#define MAX_PKT_SZ   &t;1514            /* Maximum ethernet packet length */
+DECL|macro|MAX_DAT_SZ
+mdefine_line|#define MAX_DAT_SZ   &t;1500            /* Maximum ethernet data length */
+DECL|macro|MIN_DAT_SZ
+mdefine_line|#define MIN_DAT_SZ   &t;1               /* Minimum ethernet data length */
+DECL|macro|PKT_HDR_LEN
+mdefine_line|#define PKT_HDR_LEN     14              /* Addresses and data length info */
 DECL|macro|CRC_POLYNOMIAL_BE
 mdefine_line|#define CRC_POLYNOMIAL_BE 0x04c11db7UL   /* Ethernet CRC, big endian */
 DECL|macro|CRC_POLYNOMIAL_LE
 mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL   /* Ethernet CRC, little endian */
+multiline_comment|/*&n;** EISA bus defines&n;*/
+DECL|macro|DE4X5_EISA_IO_PORTS
+mdefine_line|#define DE4X5_EISA_IO_PORTS   0x0c00     /* I/O port base address, slot 0 */
+DECL|macro|DE4X5_EISA_TOTAL_SIZE
+mdefine_line|#define DE4X5_EISA_TOTAL_SIZE 0xfff      /* I/O address extent */
+DECL|macro|MAX_EISA_SLOTS
+mdefine_line|#define MAX_EISA_SLOTS 16
+DECL|macro|EISA_SLOT_INC
+mdefine_line|#define EISA_SLOT_INC 0x1000
+DECL|macro|DE4X5_SIGNATURE
+mdefine_line|#define DE4X5_SIGNATURE {&quot;DE425&quot;,&quot;&quot;}
+DECL|macro|DE4X5_NAME_LENGTH
+mdefine_line|#define DE4X5_NAME_LENGTH 8
+multiline_comment|/*&n;** PCI Bus defines&n;*/
+DECL|macro|PCI_MAX_BUS_NUM
+mdefine_line|#define PCI_MAX_BUS_NUM 8
+DECL|macro|DE4X5_PCI_TOTAL_SIZE
+mdefine_line|#define DE4X5_PCI_TOTAL_SIZE 0x80        /* I/O address extent */
+multiline_comment|/*&n;** Timer defines&n;*/
+DECL|macro|TIMER_WIDTH
+mdefine_line|#define TIMER_WIDTH   16
+DECL|macro|TIMER_PORT
+mdefine_line|#define TIMER_PORT    0x43
+DECL|macro|TIMER_LATCH
+mdefine_line|#define TIMER_LATCH   0x06
+DECL|macro|TIMER_READ
+mdefine_line|#define TIMER_READ    0x40
+DECL|macro|TIMER_TICK
+mdefine_line|#define TIMER_TICK    419  /*ns*/
+DECL|macro|DELAY_QUANT
+mdefine_line|#define DELAY_QUANT   5    /*us*/
 DECL|macro|LWPAD
 mdefine_line|#define LWPAD ((long)(sizeof(long) - 1)) /* for longword alignment */
+macro_line|#ifndef IS_ZYNX                          /* See README.de4x5 for using this */
+DECL|variable|is_zynx
+r_static
+r_int
+id|is_zynx
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
+DECL|variable|is_zynx
+r_static
+r_int
+id|is_zynx
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;** DE4X5 IRQ ENABLE/DISABLE&n;*/
 DECL|variable|irq_mask
 r_static
@@ -117,32 +146,21 @@ op_or
 id|IMR_AIM
 suffix:semicolon
 DECL|macro|ENABLE_IRQs
-mdefine_line|#define ENABLE_IRQs &bslash;&n;  imr |= irq_en;&bslash;&n;  outl(imr, DE4X5_IMR)                      /* Enable the IRQs */
+mdefine_line|#define ENABLE_IRQs &bslash;&n;    imr |= irq_en;&bslash;&n;    outl(imr, DE4X5_IMR)                    /* Enable the IRQs */
 DECL|macro|DISABLE_IRQs
-mdefine_line|#define DISABLE_IRQs &bslash;&n;  imr = inl(DE4X5_IMR);&bslash;&n;  imr &amp;= ~irq_en;&bslash;&n;  outl(imr, DE4X5_IMR)                      /* Disable the IRQs */
+mdefine_line|#define DISABLE_IRQs &bslash;&n;    imr = inl(DE4X5_IMR);&bslash;&n;    imr &amp;= ~irq_en;&bslash;&n;    outl(imr, DE4X5_IMR)                    /* Disable the IRQs */
 DECL|macro|UNMASK_IRQs
-mdefine_line|#define UNMASK_IRQs &bslash;&n;  imr |= irq_mask;&bslash;&n;  outl(imr, DE4X5_IMR)                      /* Unmask the IRQs */
+mdefine_line|#define UNMASK_IRQs &bslash;&n;    imr |= irq_mask;&bslash;&n;    outl(imr, DE4X5_IMR)                    /* Unmask the IRQs */
 DECL|macro|MASK_IRQs
-mdefine_line|#define MASK_IRQs &bslash;&n;  imr = inl(DE4X5_IMR);&bslash;&n;  imr &amp;= ~irq_mask;&bslash;&n;  outl(imr, DE4X5_IMR)                      /* Mask the IRQs */
+mdefine_line|#define MASK_IRQs &bslash;&n;    imr = inl(DE4X5_IMR);&bslash;&n;    imr &amp;= ~irq_mask;&bslash;&n;    outl(imr, DE4X5_IMR)                    /* Mask the IRQs */
 multiline_comment|/*&n;** DE4X5 START/STOP&n;*/
 DECL|macro|START_DE4X5
-mdefine_line|#define START_DE4X5 &bslash;&n;  omr = inl(DE4X5_OMR);&bslash;&n;  omr |= OMR_ST | OMR_SR;&bslash;&n;  outl(omr, DE4X5_OMR)                      /* Enable the TX and/or RX */
+mdefine_line|#define START_DE4X5 &bslash;&n;    omr = inl(DE4X5_OMR);&bslash;&n;    omr |= OMR_ST | OMR_SR;&bslash;&n;    outl(omr, DE4X5_OMR)                    /* Enable the TX and/or RX */
 DECL|macro|STOP_DE4X5
-mdefine_line|#define STOP_DE4X5 &bslash;&n;  omr = inl(DE4X5_OMR);&bslash;&n;  omr &amp;= ~(OMR_ST|OMR_SR);&bslash;&n;  outl(omr, DE4X5_OMR)                      /* Disable the TX and/or RX */
+mdefine_line|#define STOP_DE4X5 &bslash;&n;    omr = inl(DE4X5_OMR);&bslash;&n;    omr &amp;= ~(OMR_ST|OMR_SR);&bslash;&n;    outl(omr, DE4X5_OMR)                    /* Disable the TX and/or RX */
 multiline_comment|/*&n;** DE4X5 SIA RESET&n;*/
 DECL|macro|RESET_SIA
-mdefine_line|#define RESET_SIA &bslash;&n;  outl(SICR_RESET, DE4X5_SICR);             /* Reset SIA connectivity regs */ &bslash;&n;  outl(STRR_RESET, DE4X5_STRR);             /* Write reset values */ &bslash;&n;  outl(SIGR_RESET, DE4X5_SIGR)              /* Write reset values */
-multiline_comment|/*&n;** Ethernet Packet Info&n;*/
-DECL|macro|PKT_BUF_SZ
-mdefine_line|#define PKT_BUF_SZ&t;1544            /* Buffer size for each Tx/Rx buffer */
-DECL|macro|MAX_PKT_SZ
-mdefine_line|#define MAX_PKT_SZ   &t;1514            /* Maximum ethernet packet length */
-DECL|macro|MAX_DAT_SZ
-mdefine_line|#define MAX_DAT_SZ   &t;1500            /* Maximum ethernet data length */
-DECL|macro|MIN_DAT_SZ
-mdefine_line|#define MIN_DAT_SZ   &t;1               /* Minimum ethernet data length */
-DECL|macro|PKT_HDR_LEN
-mdefine_line|#define PKT_HDR_LEN     14              /* Addresses and data length info */
+mdefine_line|#define RESET_SIA &bslash;&n;    outl(SICR_RESET, DE4X5_SICR);           /* Reset SIA connectivity regs */ &bslash;&n;    outl(STRR_RESET, DE4X5_STRR);           /* Write reset values */ &bslash;&n;    outl(SIGR_RESET, DE4X5_SIGR)            /* Write reset values */
 multiline_comment|/*&n;** DE4X5 Descriptors. Make sure that all the RX buffers are contiguous&n;** and have sizes of both a power of 2 and a multiple of 4.&n;** A size of 256 bytes for each buffer was chosen because over 90% of&n;** all packets in our network are &lt;256 bytes long.&n;*/
 DECL|macro|NUM_RX_DESC
 mdefine_line|#define NUM_RX_DESC 64                       /* Number of RX descriptors */
@@ -187,6 +205,14 @@ DECL|struct|de4x5_private
 r_struct
 id|de4x5_private
 (brace
+DECL|member|adapter_name
+r_char
+id|adapter_name
+(braket
+l_int|80
+)braket
+suffix:semicolon
+multiline_comment|/* Adapter name */
 DECL|member|rx_ring
 r_struct
 id|de4x5_desc
@@ -348,7 +374,12 @@ id|de4x5_interrupt
 c_func
 (paren
 r_int
-id|reg_ptr
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_static
@@ -490,6 +521,32 @@ id|len
 )paren
 suffix:semicolon
 r_static
+id|u_short
+id|dce_get_ticks
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|dce_us_delay
+c_func
+(paren
+id|u_long
+id|usec
+)paren
+suffix:semicolon
+r_static
+r_void
+id|dce_ms_delay
+c_func
+(paren
+id|u_long
+id|msec
+)paren
+suffix:semicolon
+r_static
 r_void
 id|load_packet
 c_func
@@ -625,6 +682,18 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|variable|autoprobed
+DECL|variable|loading_module
+r_static
+r_int
+id|autoprobed
+op_assign
+l_int|1
+comma
+id|loading_module
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|# else
 DECL|variable|de4x5_irq
 r_static
@@ -644,10 +713,31 @@ comma
 l_int|11
 )brace
 suffix:semicolon
+DECL|variable|autoprobed
+DECL|variable|loading_module
+r_static
+r_int
+id|autoprobed
+op_assign
+l_int|0
+comma
+id|loading_module
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif /* MODULE */
+DECL|variable|name
+r_static
+r_char
+id|name
+(braket
+id|DE4X5_NAME_LENGTH
+op_plus
+l_int|1
+)braket
+suffix:semicolon
 DECL|variable|num_de4x5s
 DECL|variable|num_eth
-DECL|variable|autoprobed
 r_static
 r_int
 id|num_de4x5s
@@ -655,10 +745,6 @@ op_assign
 l_int|0
 comma
 id|num_eth
-op_assign
-l_int|0
-comma
-id|autoprobed
 op_assign
 l_int|0
 suffix:semicolon
@@ -715,32 +801,11 @@ c_cond
 (paren
 (paren
 id|iobase
-OG
+op_eq
 l_int|0
 )paren
 op_logical_and
-(paren
-id|iobase
-OL
-l_int|0x100
-)paren
-)paren
-(brace
-multiline_comment|/* Don&squot;t probe at all. */
-id|status
-op_assign
-op_minus
-id|ENXIO
-suffix:semicolon
-macro_line|#ifdef MODULE
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|iobase
-op_eq
-l_int|0
+id|loading_module
 )paren
 (brace
 id|printk
@@ -754,7 +819,6 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -883,18 +947,10 @@ suffix:semicolon
 r_char
 op_star
 id|tmp
-comma
-id|name
-(braket
-id|DE4X5_NAME_LENGTH
-op_plus
-l_int|1
-)braket
 suffix:semicolon
 id|u_long
 id|nicsr
 suffix:semicolon
-multiline_comment|/*&n;  ** First, RESET the board.&n;  */
 id|RESET_DE4X5
 suffix:semicolon
 r_if
@@ -921,14 +977,20 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* Really stopped */
-multiline_comment|/* &n;    ** Now find out what kind of DC21040/DC21140 board we have.&n;    */
+multiline_comment|/* &n;    ** Now find out what kind of DC21040/DC21041/DC21140 board we have.&n;    */
 r_if
 c_cond
 (paren
 id|lp-&gt;bus
 op_eq
 id|PCI
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|is_zynx
 )paren
 (brace
 id|strcpy
@@ -939,6 +1001,18 @@ comma
 l_string|&quot;DE435&quot;
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|strcpy
+c_func
+(paren
+id|name
+comma
+l_string|&quot;ZYNX&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -964,6 +1038,25 @@ multiline_comment|/* found a board signature */
 id|dev-&gt;base_addr
 op_assign
 id|iobase
+suffix:semicolon
+id|request_region
+c_func
+(paren
+id|iobase
+comma
+(paren
+id|lp-&gt;bus
+op_eq
+id|PCI
+ques
+c_cond
+id|DE4X5_PCI_TOTAL_SIZE
+suffix:colon
+id|DE4X5_EISA_TOTAL_SIZE
+)paren
+comma
+id|name
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1163,6 +1256,14 @@ suffix:semicolon
 id|lp-&gt;bus
 op_assign
 id|tmpbus
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|lp-&gt;adapter_name
+comma
+id|name
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** Allocate contiguous receive buffers, long word aligned. &n;&t;** This could be a possible memory leak if the private area&n;&t;** is ever hosed.&n;&t;*/
 r_for
@@ -1514,7 +1615,7 @@ id|DE4X5_IMR
 )paren
 suffix:semicolon
 multiline_comment|/* Re-mask RUM interrupt */
-macro_line|#endif  /* MODULE */
+macro_line|#endif /* MODULE */
 )brace
 r_else
 (brace
@@ -1559,6 +1660,28 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|status
+)paren
+id|release_region
+c_func
+(paren
+id|iobase
+comma
+(paren
+id|lp-&gt;bus
+op_eq
+id|PCI
+ques
+c_cond
+id|DE4X5_PCI_TOTAL_SIZE
+suffix:colon
+id|DE4X5_EISA_TOTAL_SIZE
+)paren
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1669,6 +1792,11 @@ id|kfree_s
 c_func
 (paren
 id|lp-&gt;rx_ring
+(braket
+l_int|0
+)braket
+dot
+id|buf
 comma
 id|RX_BUFF_SZ
 op_star
@@ -1771,7 +1899,7 @@ id|de4x5_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;de4x5&quot;
+id|lp-&gt;adapter_name
 )paren
 )paren
 (brace
@@ -1865,14 +1993,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;tchecked memory: 0x%08lx&bslash;n&quot;
-comma
-id|eisa_slots_full
 )paren
 suffix:semicolon
 id|printk
@@ -2340,10 +2460,8 @@ id|DE4X5_SIGR
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif       
 r_return
 id|status
 suffix:semicolon
@@ -3123,28 +3241,14 @@ id|de4x5_interrupt
 c_func
 (paren
 r_int
-id|reg_ptr
-)paren
-(brace
-r_int
 id|irq
-op_assign
-op_minus
-(paren
-(paren
-(paren
+comma
 r_struct
 id|pt_regs
 op_star
+id|regs
 )paren
-id|reg_ptr
-)paren
-op_member_access_from_pointer
-id|orig_eax
-op_plus
-l_int|2
-)paren
-suffix:semicolon
+(brace
 r_struct
 id|device
 op_star
@@ -4166,10 +4270,8 @@ id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif    
 r_return
 l_int|0
 suffix:semicolon
@@ -4809,6 +4911,24 @@ id|autoprobed
 r_return
 suffix:semicolon
 multiline_comment|/* Been here before ! */
+r_if
+c_cond
+(paren
+(paren
+id|ioaddr
+OL
+l_int|0x1000
+)paren
+op_logical_and
+(paren
+id|ioaddr
+OG
+l_int|0
+)paren
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* PCI MODULE special */
 id|lp-&gt;bus
 op_assign
 id|EISA
@@ -4886,21 +5006,6 @@ r_if
 c_cond
 (paren
 (paren
-(paren
-id|eisa_slots_full
-op_rshift
-id|i
-)paren
-op_amp
-l_int|0x01
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
 id|DevicePresent
 c_func
 (paren
@@ -4909,15 +5014,24 @@ id|EISA_APROM
 op_eq
 l_int|0
 )paren
-(brace
-id|eisa_slots_full
-op_or_assign
-(paren
-l_int|0x01
-op_lshift
-id|i
+op_logical_or
+id|is_zynx
 )paren
-suffix:semicolon
+(brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|iobase
+comma
+id|DE4X5_EISA_TOTAL_SIZE
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -4963,13 +5077,17 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-)brace
 r_else
+r_if
+c_cond
+(paren
+id|autoprobed
+)paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: EISA device already allocated at 0x%04x.&bslash;n&quot;
+l_string|&quot;%s: region already allocated at 0x%04x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4978,12 +5096,15 @@ id|iobase
 suffix:semicolon
 )brace
 )brace
+)brace
 r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** PCI bus I/O device probe&n;*/
 DECL|macro|PCI_DEVICE
-mdefine_line|#define PCI_DEVICE (dev_num &lt;&lt; 3)
+mdefine_line|#define PCI_DEVICE    (dev_num &lt;&lt; 3)
+DECL|macro|PCI_LAST_DEV
+mdefine_line|#define PCI_LAST_DEV  32
 DECL|function|pci_probe
 r_static
 r_void
@@ -5006,10 +5127,10 @@ id|u_short
 id|pb
 comma
 id|dev_num
+comma
+id|dev_last
 suffix:semicolon
 id|u_short
-id|i
-comma
 id|vendor
 comma
 id|device
@@ -5029,12 +5150,6 @@ op_assign
 op_amp
 id|bus
 suffix:semicolon
-r_static
-r_char
-id|pci_init
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5049,41 +5164,6 @@ multiline_comment|/* Been here before ! */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|pci_init
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|PCI_MAX_BUS_NUM
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|pci_slots_full
-(braket
-id|i
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_init
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
 id|pcibios_present
 c_func
 (paren
@@ -5094,20 +5174,86 @@ id|lp-&gt;bus
 op_assign
 id|PCI
 suffix:semicolon
-r_for
-c_loop
+r_if
+c_cond
 (paren
+id|ioaddr
+OL
+l_int|0x1000
+)paren
+(brace
 id|pb
 op_assign
-l_int|0
-comma
+(paren
+id|u_short
+)paren
+(paren
+id|ioaddr
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
 id|dev_num
+op_assign
+(paren
+id|u_short
+)paren
+(paren
+id|ioaddr
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|pb
 op_assign
 l_int|0
 suffix:semicolon
 id|dev_num
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ioaddr
+OG
+l_int|0
+)paren
+(brace
+id|dev_last
+op_assign
+(paren
+id|dev_num
 OL
-l_int|32
+id|PCI_LAST_DEV
+)paren
+ques
+c_cond
+id|dev_num
+op_plus
+l_int|1
+suffix:colon
+id|PCI_LAST_DEV
+suffix:semicolon
+)brace
+r_else
+(brace
+id|dev_last
+op_assign
+id|PCI_LAST_DEV
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|dev_num
+OL
+id|dev_last
 op_logical_and
 id|dev
 op_ne
@@ -5136,25 +5282,6 @@ c_cond
 r_class
 op_ne
 l_int|0xffffffff
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|pci_slots_full
-(braket
-id|pb
-)braket
-op_rshift
-id|dev_num
-)paren
-op_amp
-l_int|0x01
-)paren
-op_eq
-l_int|0
 )paren
 (brace
 id|pcibios_read_config_word
@@ -5268,9 +5395,10 @@ comma
 id|status
 )paren
 suffix:semicolon
-multiline_comment|/* If a device is present, initialise it */
+multiline_comment|/* If there is a device and I/O region is open, initialise dev. */
 r_if
 c_cond
+(paren
 (paren
 id|DevicePresent
 c_func
@@ -5280,18 +5408,24 @@ id|DE4X5_APROM
 op_eq
 l_int|0
 )paren
-(brace
-id|pci_slots_full
-(braket
-id|pb
-)braket
-op_or_assign
-(paren
-l_int|0x01
-op_lshift
-id|dev_num
+op_logical_or
+id|is_zynx
 )paren
-suffix:semicolon
+(brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|iobase
+comma
+id|DE4X5_PCI_TOTAL_SIZE
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -5341,20 +5475,28 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-)brace
-)brace
 r_else
+r_if
+c_cond
+(paren
+id|autoprobed
+)paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: PCI device already allocated at slot %d.&bslash;n&quot;
+l_string|&quot;%s: region already allocated at 0x%04x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|dev_num
+(paren
+id|u_short
+)paren
+id|iobase
 )paren
 suffix:semicolon
+)brace
+)brace
 )brace
 )brace
 )brace
@@ -5409,6 +5551,13 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;  ** Check the device structures for an end of list or unused device&n;  */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|loading_module
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -5444,7 +5593,7 @@ op_increment
 suffix:semicolon
 multiline_comment|/* increment eth device number */
 )brace
-multiline_comment|/*&n;  ** If an autoprobe is requested for another device, we must re-insert&n;  ** the request later in the list. Remember the current position first.&n;  */
+multiline_comment|/*&n;    ** If an autoprobe is requested for another device, we must re-insert&n;    ** the request later in the list. Remember the current position first.&n;    */
 r_if
 c_cond
 (paren
@@ -5475,7 +5624,7 @@ id|dev-&gt;init
 suffix:semicolon
 multiline_comment|/* remember the probe function */
 )brace
-multiline_comment|/*&n;  ** If at end of list and can&squot;t use current entry, malloc one up. &n;  ** If memory could not be allocated, print an error message.&n;  */
+multiline_comment|/*&n;    ** If at end of list and can&squot;t use current entry, malloc one up. &n;    ** If memory could not be allocated, print an error message.&n;    */
 r_if
 c_cond
 (paren
@@ -5546,7 +5695,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;      ** If the memory was allocated, point to the new memory area&n;      ** and initialize it (name, I/O address, next device (NULL) and&n;      ** initialisation probe routine).&n;      */
+multiline_comment|/*&n;&t;** If the memory was allocated, point to the new memory area&n;&t;** and initialize it (name, I/O address, next device (NULL) and&n;&t;** initialisation probe routine).&n;&t;*/
 id|dev-&gt;name
 op_assign
 (paren
@@ -5621,7 +5770,7 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* return current struct, or NULL */
-multiline_comment|/*&n;  ** Now figure out what to do with the autoprobe that has to be inserted.&n;  ** Firstly, search the (possibly altered) list for an empty space.&n;  */
+multiline_comment|/*&n;    ** Now figure out what to do with the autoprobe that has to be inserted.&n;    ** Firstly, search the (possibly altered) list for an empty space.&n;    */
 r_if
 c_cond
 (paren
@@ -5657,7 +5806,7 @@ op_assign
 id|tmp-&gt;next
 )paren
 suffix:semicolon
-multiline_comment|/*&n;      ** If no more device structures and can&squot;t use the current one, malloc&n;      ** one up. If memory could not be allocated, print an error message.&n;      */
+multiline_comment|/*&n;&t;** If no more device structures and can&squot;t use the current one, malloc&n;&t;** one up. If memory could not be allocated, print an error message.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -5720,7 +5869,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;  ** If the memory was allocated, point to the new memory area&n;&t;  ** and initialize it (name, I/O address, next device (NULL) and&n;&t;  ** initialisation probe routine).&n;&t;  */
+multiline_comment|/*&n;&t;    ** If the memory was allocated, point to the new memory area&n;&t;    ** and initialize it (name, I/O address, next device (NULL) and&n;&t;    ** initialisation probe routine).&n;&t;    */
 id|tmp-&gt;name
 op_assign
 (paren
@@ -5797,6 +5946,14 @@ multiline_comment|/* re-insert the io address */
 )brace
 )brace
 )brace
+)brace
+r_else
+(brace
+id|ret
+op_assign
+id|dev
+suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon
@@ -5850,11 +6007,7 @@ id|sisr
 comma
 id|linkBad
 suffix:semicolon
-id|u_long
-id|t_330ms
-op_assign
-l_int|920000
-suffix:semicolon
+multiline_comment|/*  u_long t_330ms = 920000;*/
 id|u_long
 id|t_3s
 op_assign
@@ -5992,30 +6145,13 @@ id|DE4X5_SICR
 )paren
 suffix:semicolon
 multiline_comment|/* Wait 330ms */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|t_330ms
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|sisr
-op_assign
-id|inl
+id|dce_ms_delay
 c_func
 (paren
-id|DE4X5_SISR
+l_int|330
 )paren
 suffix:semicolon
-)brace
+multiline_comment|/*    for (i=0; i&lt;t_330ms; i++) {&n;      sisr = inl(DE4X5_SISR);&n;    }&n;*/
 multiline_comment|/* Make up a dummy packet with CRC error */
 id|create_packet
 c_func
@@ -6217,6 +6353,13 @@ op_or
 id|SICR_SRL
 comma
 id|DE4X5_SICR
+)paren
+suffix:semicolon
+multiline_comment|/* Wait 330ms */
+id|dce_ms_delay
+c_func
+(paren
+l_int|330
 )paren
 suffix:semicolon
 multiline_comment|/* Setup the packet descriptor */
@@ -6610,6 +6753,199 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;** Get the timer ticks from the PIT&n;*/
+DECL|function|dce_get_ticks
+r_static
+id|u_short
+id|dce_get_ticks
+c_func
+(paren
+r_void
+)paren
+(brace
+id|u_short
+id|ticks
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Command 8254 to latch T0&squot;s count */
+id|outb
+c_func
+(paren
+id|TIMER_PORT
+comma
+id|TIMER_LATCH
+)paren
+suffix:semicolon
+multiline_comment|/* Read the counter */
+id|ticks
+op_assign
+id|inb
+c_func
+(paren
+id|TIMER_READ
+)paren
+suffix:semicolon
+id|ticks
+op_or_assign
+(paren
+id|inb
+c_func
+(paren
+id|TIMER_READ
+)paren
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+r_return
+id|ticks
+suffix:semicolon
+)brace
+multiline_comment|/*&n;** Known delay in microseconds&n;*/
+DECL|function|dce_us_delay
+r_static
+r_void
+id|dce_us_delay
+c_func
+(paren
+id|u_long
+id|usec
+)paren
+(brace
+id|u_long
+id|i
+comma
+id|start
+comma
+id|now
+comma
+id|quant
+op_assign
+(paren
+id|DELAY_QUANT
+op_star
+l_int|1000
+)paren
+op_div
+id|TIMER_TICK
+op_plus
+l_int|1
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|usec
+op_div
+id|DELAY_QUANT
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|start
+op_assign
+id|dce_get_ticks
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|now
+op_assign
+id|start
+suffix:semicolon
+(paren
+id|start
+op_minus
+id|now
+)paren
+OL
+id|quant
+suffix:semicolon
+)paren
+(brace
+id|now
+op_assign
+id|dce_get_ticks
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|now
+OG
+id|start
+)paren
+(brace
+multiline_comment|/* Wrapped counter counting down */
+id|quant
+op_sub_assign
+id|start
+suffix:semicolon
+id|start
+op_assign
+(paren
+l_int|1
+op_lshift
+id|TIMER_WIDTH
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;** Known delay in milliseconds&n;*/
+DECL|function|dce_ms_delay
+r_static
+r_void
+id|dce_ms_delay
+c_func
+(paren
+id|u_long
+id|msec
+)paren
+(brace
+id|u_long
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|msec
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|dce_us_delay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/*&n;** Look for a particular board name in the EISA configuration space&n;*/
 DECL|function|EISA_signature
 r_static
@@ -6854,7 +7190,7 @@ r_return
 suffix:semicolon
 multiline_comment|/* return the device name string */
 )brace
-multiline_comment|/*&n;** Look for a special sequence in the Ethernet station address PROM that&n;** is common across all DIGITAL network adapter products.&n;*/
+multiline_comment|/*&n;** Look for a special sequence in the Ethernet station address PROM that&n;** is common across all DIGITAL network adapter products.&n;** &n;** Search the Ethernet address ROM for the signature. Since the ROM address&n;** counter can start at an arbitrary point, the search must include the entire&n;** probe sequence length plus the (length_of_the_signature - 1).&n;** Stop the search IMMEDIATELY after the signature is found so that the&n;** PROM address counter is correctly positioned at the start of the&n;** ethernet address for later read out.&n;*/
 DECL|function|DevicePresent
 r_static
 r_int
@@ -6865,23 +7201,32 @@ r_int
 id|aprom_addr
 )paren
 (brace
-r_static
-r_int
-id|fp
-op_assign
-l_int|1
-comma
-id|sigLength
-op_assign
-l_int|0
+r_union
+(brace
+r_struct
+(brace
+id|u_long
+id|a
 suffix:semicolon
-r_static
+id|u_long
+id|b
+suffix:semicolon
+)brace
+id|llsig
+suffix:semicolon
 r_char
-id|devSig
+id|Sig
 (braket
+r_sizeof
+(paren
+r_int
+)paren
+op_lshift
+l_int|1
 )braket
-op_assign
-id|ETH_PROM_SIG
+suffix:semicolon
+)brace
+id|dev
 suffix:semicolon
 r_char
 id|data
@@ -6890,6 +7235,11 @@ r_int
 id|i
 comma
 id|j
+comma
+id|tmp
+suffix:semicolon
+r_int
+id|sigLength
 suffix:semicolon
 r_int
 id|status
@@ -6904,162 +7254,22 @@ op_assign
 op_amp
 id|bus
 suffix:semicolon
-r_static
-r_char
-id|asc2hex
-c_func
-(paren
-r_char
-id|value
-)paren
-suffix:semicolon
-multiline_comment|/* &n;** Convert the ascii signature to a hex equivalent &amp; pack in place &n;*/
-r_if
-c_cond
-(paren
-id|fp
-)paren
-(brace
-multiline_comment|/* only do this once!... */
-r_for
-c_loop
-(paren
-id|i
+id|dev.llsig.a
 op_assign
-l_int|0
-comma
-id|j
-op_assign
-l_int|0
+id|ETH_PROM_SIG
 suffix:semicolon
-id|devSig
-(braket
-id|i
-)braket
-op_ne
-l_char|&squot;&bslash;0&squot;
-op_logical_and
-op_logical_neg
-id|status
-suffix:semicolon
-id|i
-op_add_assign
-l_int|2
-comma
-id|j
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|devSig
-(braket
-id|i
-)braket
+id|dev.llsig.b
 op_assign
-id|asc2hex
-c_func
-(paren
-id|devSig
-(braket
-id|i
-)braket
-)paren
-)paren
-op_ge
-l_int|0
-)paren
-(brace
-id|devSig
-(braket
-id|i
-)braket
-op_lshift_assign
-l_int|4
+id|ETH_PROM_SIG
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|devSig
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-op_assign
-id|asc2hex
-c_func
-(paren
-id|devSig
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-)paren
-)paren
-op_ge
-l_int|0
-)paren
-(brace
-id|devSig
-(braket
-id|j
-)braket
-op_assign
-id|devSig
-(braket
-id|i
-)braket
-op_plus
-id|devSig
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-suffix:semicolon
-)brace
-r_else
-(brace
-id|status
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|status
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-)brace
 id|sigLength
 op_assign
-id|j
-suffix:semicolon
-id|fp
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* &n;** Search the Ethernet address ROM for the signature. Since the ROM address&n;** counter can start at an arbitrary point, the search must include the entire&n;** probe sequence length plus the (length_of_the_signature - 1).&n;** Stop the search IMMEDIATELY after the signature is found so that the&n;** PROM address counter is correctly positioned at the start of the&n;** ethernet address for later read out.&n;*/
-r_if
-c_cond
+r_sizeof
 (paren
-op_logical_neg
-id|status
-)paren
-(brace
 r_int
-id|tmp
+)paren
+op_lshift
+l_int|1
 suffix:semicolon
 r_for
 c_loop
@@ -7134,7 +7344,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|devSig
+id|dev.Sig
 (braket
 id|j
 )braket
@@ -7150,10 +7360,29 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* lost signature; begin search again */
+r_if
+c_cond
+(paren
+id|data
+op_eq
+id|dev.Sig
+(braket
+l_int|0
+)braket
+)paren
+(brace
+id|j
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
 id|j
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 )brace
 r_if
@@ -7170,7 +7399,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* search failed */
-)brace
 )brace
 r_return
 id|status
@@ -7593,9 +7821,11 @@ r_int
 r_char
 id|addr
 (braket
+(paren
 id|HASH_TABLE_LEN
 op_star
 id|ETH_ALEN
+)paren
 )braket
 suffix:semicolon
 r_int
@@ -8473,19 +8703,6 @@ op_rshift
 l_int|2
 )braket
 op_assign
-id|eisa_slots_full
-suffix:semicolon
-id|j
-op_add_assign
-l_int|4
-suffix:semicolon
-id|tmp.lval
-(braket
-id|j
-op_rshift
-l_int|2
-)braket
-op_assign
 (paren
 r_int
 )paren
@@ -9039,89 +9256,6 @@ r_return
 id|status
 suffix:semicolon
 )brace
-DECL|function|asc2hex
-r_static
-r_char
-id|asc2hex
-c_func
-(paren
-r_char
-id|value
-)paren
-(brace
-id|value
-op_sub_assign
-l_int|0x30
-suffix:semicolon
-multiline_comment|/* normalise to 0..9 range */
-r_if
-c_cond
-(paren
-id|value
-op_ge
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|value
-OG
-l_int|9
-)paren
-(brace
-multiline_comment|/* but may not be 10..15 */
-id|value
-op_and_assign
-l_int|0x1f
-suffix:semicolon
-multiline_comment|/* make A..F &amp; a..f be the same */
-id|value
-op_sub_assign
-l_int|0x07
-suffix:semicolon
-multiline_comment|/* normalise to 10..15 range */
-r_if
-c_cond
-(paren
-(paren
-id|value
-OL
-l_int|0x0a
-)paren
-op_logical_or
-(paren
-id|value
-OG
-l_int|0x0f
-)paren
-)paren
-(brace
-multiline_comment|/* if outside range then... */
-id|value
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* ...signal error */
-)brace
-)brace
-)brace
-r_else
-(brace
-multiline_comment|/* outside 0..9 range... */
-id|value
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* ...signal error */
-)brace
-r_return
-id|value
-suffix:semicolon
-multiline_comment|/* return hex char or error */
-)brace
 macro_line|#ifdef MODULE
 DECL|variable|kernel_version
 r_char
@@ -9169,7 +9303,7 @@ DECL|variable|io
 r_int
 id|io
 op_assign
-l_int|0x2000
+l_int|0x000b
 suffix:semicolon
 multiline_comment|/* &lt;--- EDIT THESE LINES FOR YOUR CONFIGURATION */
 DECL|variable|irq
@@ -9223,6 +9357,18 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|de4x5_private
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|de4x5_private
+op_star
+)paren
+id|thisDE4X5.priv
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9240,6 +9386,65 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|release_region
+c_func
+(paren
+id|thisDE4X5.base_addr
+comma
+(paren
+id|lp-&gt;bus
+op_eq
+id|PCI
+ques
+c_cond
+id|DE4X5_PCI_TOTAL_SIZE
+suffix:colon
+id|DE4X5_EISA_TOTAL_SIZE
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp
+)paren
+(brace
+id|kfree_s
+c_func
+(paren
+id|lp-&gt;rx_ring
+(braket
+l_int|0
+)braket
+dot
+id|buf
+comma
+id|RX_BUFF_SZ
+op_star
+id|NUM_RX_DESC
+op_plus
+id|LWPAD
+)paren
+suffix:semicolon
+)brace
+id|kfree_s
+c_func
+(paren
+id|thisDE4X5.priv
+comma
+r_sizeof
+(paren
+r_struct
+id|de4x5_private
+)paren
+op_plus
+id|LWPAD
+)paren
+suffix:semicolon
+id|thisDE4X5.priv
+op_assign
+l_int|NULL
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren

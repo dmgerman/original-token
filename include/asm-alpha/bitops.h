@@ -99,6 +99,8 @@ l_int|6
 suffix:semicolon
 r_return
 id|oldbit
+op_ne
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|clear_bit
@@ -197,6 +199,8 @@ l_int|6
 suffix:semicolon
 r_return
 id|oldbit
+op_ne
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|change_bit
@@ -293,6 +297,8 @@ l_int|6
 suffix:semicolon
 r_return
 id|oldbit
+op_ne
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|test_bit

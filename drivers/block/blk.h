@@ -67,6 +67,23 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_CDU535
+r_extern
+r_int
+r_int
+id|sony535_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_HD
 r_extern
 r_int
@@ -329,6 +346,19 @@ DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;Aztech CD-ROM&quot;
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_aztcd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == CDU535_CDROM_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;SONY-CDU535&quot;
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_cdu535
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_cdu535_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON

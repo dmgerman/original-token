@@ -786,6 +786,10 @@ c_cond
 id|r-&gt;rt_dst
 op_ne
 id|dst
+op_logical_or
+id|r-&gt;rt_mask
+op_ne
+id|mask
 )paren
 (brace
 id|rp

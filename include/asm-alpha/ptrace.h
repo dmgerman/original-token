@@ -101,10 +101,10 @@ r_int
 r_int
 id|r28
 suffix:semicolon
-DECL|member|padding
+DECL|member|hae
 r_int
 r_int
-id|padding
+id|hae
 suffix:semicolon
 multiline_comment|/* These are saved by PAL-code: */
 DECL|member|ps

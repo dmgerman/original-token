@@ -1873,12 +1873,13 @@ l_int|0L
 )paren
 op_logical_and
 (paren
-id|ipx-&gt;ipx_tctrl
+id|ipx-&gt;ipx_source.net
 op_eq
-l_int|0
+id|ipx-&gt;ipx_dest.net
 )paren
 )paren
 (brace
+multiline_comment|/* NB: NetWare servers lie about their hop count so we&n;&t;&t; * dropped the test based on it.  This is the best way&n;&t;&t; * to determine this is a 0 hop count packet.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1956,6 +1957,23 @@ id|intrfc-&gt;if_netnum
 op_ne
 id|ipx-&gt;ipx_dest.net
 )paren
+(brace
+multiline_comment|/* We only route point-to-point packets. */
+r_if
+c_cond
+(paren
+(paren
+id|skb-&gt;pkt_type
+op_ne
+id|PACKET_BROADCAST
+)paren
+op_logical_and
+(paren
+id|skb-&gt;pkt_type
+op_ne
+id|PACKET_MULTICAST
+)paren
+)paren
 r_return
 id|ipxrtr_route_skb
 c_func
@@ -1963,6 +1981,18 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* see if we should keep it */
 r_if
 c_cond

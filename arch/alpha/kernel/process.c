@@ -90,37 +90,6 @@ id|regs-&gt;pc
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
-DECL|function|start_thread
-r_void
-id|start_thread
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-r_int
-id|pc
-comma
-r_int
-r_int
-id|sp
-)paren
-(brace
-id|regs-&gt;pc
-op_assign
-id|pc
-suffix:semicolon
-id|wrusp
-c_func
-(paren
-id|sp
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Free current thread data structures etc..&n; */
 DECL|function|exit_thread
 r_void

@@ -349,6 +349,10 @@ id|retval-&gt;block
 op_assign
 l_int|NULL
 suffix:semicolon
+id|retval-&gt;wish_block
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
