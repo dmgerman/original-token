@@ -82,7 +82,7 @@ r_return
 id|kmap
 c_func
 (paren
-id|bh-&gt;p_page
+id|bh-&gt;b_page
 )paren
 op_plus
 id|bh_offset

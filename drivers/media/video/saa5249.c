@@ -3663,28 +3663,35 @@ id|video_device
 id|saa_template
 op_assign
 (brace
+id|name
+suffix:colon
 id|IF_NAME
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TELETEXT
 comma
 multiline_comment|/*| VID_TYPE_TUNER ?? */
+id|hardware
+suffix:colon
 id|VID_HARDWARE_SAA5249
 comma
+id|open
+suffix:colon
 id|saa5249_open
 comma
+id|close
+suffix:colon
 id|saa5249_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|saa5249_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|saa5249_ioctl
 comma
-multiline_comment|/* the rest are null */
 )brace
 suffix:semicolon
 eof

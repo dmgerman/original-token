@@ -7036,42 +7036,55 @@ id|video_device
 id|zr36120_template
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;UNSET&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TUNER
 op_or
 id|VID_TYPE_CAPTURE
 op_or
 id|VID_TYPE_OVERLAY
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_ZR36120
 comma
+id|open
+suffix:colon
 id|zoran_open
 comma
+id|close
+suffix:colon
 id|zoran_close
 comma
+id|read
+suffix:colon
 id|zoran_read
 comma
+id|write
+suffix:colon
 id|zoran_write
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
+id|poll
+suffix:colon
 id|zoran_poll
 comma
-multiline_comment|/* poll */
-macro_line|#endif
+id|ioctl
+suffix:colon
 id|zoran_ioctl
 comma
+id|mmap
+suffix:colon
 id|zoran_mmap
 comma
-l_int|NULL
-comma
-multiline_comment|/* initialize */
-l_int|NULL
-comma
-l_int|0
-comma
+id|minor
+suffix:colon
 op_minus
 l_int|1
+comma
 )brace
 suffix:semicolon
 r_static
@@ -8525,44 +8538,49 @@ id|video_device
 id|vbi_template
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;UNSET&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_CAPTURE
 op_or
 id|VID_TYPE_TELETEXT
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_ZR36120
 comma
+id|open
+suffix:colon
 id|vbi_open
 comma
+id|close
+suffix:colon
 id|vbi_close
 comma
+id|read
+suffix:colon
 id|vbi_read
 comma
+id|write
+suffix:colon
 id|zoran_write
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
+id|poll
+suffix:colon
 id|vbi_poll
 comma
-multiline_comment|/* poll */
-macro_line|#endif
+id|ioctl
+suffix:colon
 id|vbi_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* no mmap */
-l_int|NULL
-comma
-multiline_comment|/* no initialize */
-l_int|NULL
-comma
-multiline_comment|/* priv */
-l_int|0
-comma
-multiline_comment|/* busy */
+id|minor
+suffix:colon
 op_minus
 l_int|1
-multiline_comment|/* minor */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *      Scan for a Zoran chip, request the irq and map the io memory&n; */

@@ -506,9 +506,9 @@ c_func
 (paren
 id|de
 comma
-id|dir
-comma
 id|tmpname
+comma
+id|dir
 )paren
 suffix:semicolon
 id|dpnt

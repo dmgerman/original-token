@@ -818,37 +818,34 @@ id|video_device
 id|vino_dev
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;Vino IndyCam/TV&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_CAPTURE
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_VINO
 comma
+id|open
+suffix:colon
 id|vino_open
 comma
+id|close
+suffix:colon
 id|vino_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* vino_read */
-l_int|NULL
-comma
-multiline_comment|/* vino_write */
-l_int|NULL
-comma
-multiline_comment|/* vino_poll */
+id|ioctl
+suffix:colon
 id|vino_ioctl
 comma
+id|mmap
+suffix:colon
 id|vino_mmap
 comma
-l_int|NULL
-comma
-multiline_comment|/* vino_init */
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
 )brace
 suffix:semicolon
 DECL|function|init_vino

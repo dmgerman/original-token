@@ -1118,30 +1118,30 @@ id|video_device
 id|terratec_radio
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;TerraTec ActiveRadio&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TUNER
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_TERRATEC
 comma
+id|open
+suffix:colon
 id|tt_open
 comma
+id|close
+suffix:colon
 id|tt_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t read  (no capture ability) */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t write */
-l_int|NULL
-comma
-multiline_comment|/* No poll */
+id|ioctl
+suffix:colon
 id|tt_ioctl
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|terratec_init

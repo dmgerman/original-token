@@ -1036,30 +1036,30 @@ id|video_device
 id|gemtek_radio
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;GemTek radio&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TUNER
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_GEMTEK
 comma
+id|open
+suffix:colon
 id|gemtek_open
 comma
+id|close
+suffix:colon
 id|gemtek_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t read  (no capture ability) */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t write */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t poll */
+id|ioctl
+suffix:colon
 id|gemtek_ioctl
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|gemtek_init

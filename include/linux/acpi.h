@@ -492,6 +492,9 @@ comma
 DECL|enumerator|ACPI_DSDT
 id|ACPI_DSDT
 comma
+DECL|enumerator|ACPI_FACS
+id|ACPI_FACS
+comma
 DECL|enumerator|ACPI_PM1_ENABLE
 id|ACPI_PM1_ENABLE
 comma

@@ -833,30 +833,30 @@ id|video_device
 id|pcm20_radio
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;Miro PCM 20 radio&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TUNER
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_RTRACK
 comma
+id|open
+suffix:colon
 id|pcm20_open
 comma
+id|close
+suffix:colon
 id|pcm20_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t read  (no capture ability) */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t write */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t poll */
+id|ioctl
+suffix:colon
 id|pcm20_ioctl
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|pcm20_init

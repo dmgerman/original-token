@@ -1104,30 +1104,30 @@ id|video_device
 id|aztech_radio
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;Aztech radio&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TUNER
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_AZTECH
 comma
+id|open
+suffix:colon
 id|az_open
 comma
+id|close
+suffix:colon
 id|az_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t read  (no capture ability) */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t write */
-l_int|NULL
-comma
-multiline_comment|/* No poll */
+id|ioctl
+suffix:colon
 id|az_ioctl
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|aztech_init

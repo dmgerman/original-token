@@ -1117,23 +1117,18 @@ id|typhoon_device
 id|typhoon_unit
 op_assign
 (brace
-l_int|0
-comma
-multiline_comment|/* users */
+id|iobase
+suffix:colon
 id|CONFIG_RADIO_TYPHOON_PORT
 comma
-multiline_comment|/* iobase */
-l_int|0
-comma
-multiline_comment|/* curvol */
-l_int|0
-comma
-multiline_comment|/* muted */
+id|curfreq
+suffix:colon
 id|CONFIG_RADIO_TYPHOON_MUTEFREQ
 comma
-multiline_comment|/* curfreq */
+id|mutefreq
+suffix:colon
 id|CONFIG_RADIO_TYPHOON_MUTEFREQ
-multiline_comment|/* mutefreq */
+comma
 )brace
 suffix:semicolon
 DECL|variable|typhoon_radio
@@ -1143,30 +1138,30 @@ id|video_device
 id|typhoon_radio
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;Typhoon Radio&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TUNER
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_TYPHOON
 comma
+id|open
+suffix:colon
 id|typhoon_open
 comma
+id|close
+suffix:colon
 id|typhoon_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t read  (no capture ability) */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t write */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t poll */
+id|ioctl
+suffix:colon
 id|typhoon_ioctl
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_RADIO_TYPHOON_PROC_FS

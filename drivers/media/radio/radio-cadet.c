@@ -2390,29 +2390,34 @@ id|video_device
 id|cadet_radio
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;Cadet radio&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TUNER
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_CADET
 comma
+id|open
+suffix:colon
 id|cadet_open
 comma
+id|close
+suffix:colon
 id|cadet_close
 comma
+id|read
+suffix:colon
 id|cadet_read
 comma
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t write */
-l_int|NULL
-comma
-multiline_comment|/* No poll */
+id|ioctl
+suffix:colon
 id|cadet_ioctl
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_ISAPNP

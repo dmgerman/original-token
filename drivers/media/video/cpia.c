@@ -13492,46 +13492,48 @@ id|video_device
 id|cpia_template
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;CPiA Camera&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_CAPTURE
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_CPIA
 comma
 multiline_comment|/* FIXME */
+id|open
+suffix:colon
 id|cpia_open
 comma
-multiline_comment|/* open */
+id|close
+suffix:colon
 id|cpia_close
 comma
-multiline_comment|/* close */
+id|read
+suffix:colon
 id|cpia_read
 comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* no write */
-l_int|NULL
-comma
-multiline_comment|/* no poll */
+id|ioctl
+suffix:colon
 id|cpia_ioctl
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|cpia_mmap
 comma
-multiline_comment|/* mmap */
+id|initialize
+suffix:colon
 id|cpia_video_init
 comma
-multiline_comment|/* initialize */
-l_int|NULL
-comma
-multiline_comment|/* priv */
-l_int|0
-comma
-multiline_comment|/* busy */
+id|minor
+suffix:colon
 op_minus
 l_int|1
-multiline_comment|/* minor - unset */
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* initialise cam_data structure  */

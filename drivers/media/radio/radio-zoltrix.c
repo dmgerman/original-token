@@ -1476,29 +1476,30 @@ id|video_device
 id|zoltrix_radio
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;Zoltrix Radio Plus&quot;
 comma
+id|type
+suffix:colon
 id|VID_TYPE_TUNER
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_ZOLTRIX
 comma
+id|open
+suffix:colon
 id|zol_open
 comma
+id|close
+suffix:colon
 id|zol_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t read  (no capture ability) */
-l_int|NULL
-comma
-multiline_comment|/* Can&squot;t write */
-l_int|NULL
-comma
+id|ioctl
+suffix:colon
 id|zol_ioctl
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|zoltrix_init

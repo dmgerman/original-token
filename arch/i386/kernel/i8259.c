@@ -1120,7 +1120,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_VISWS
 multiline_comment|/*&n; * Note that on a 486, we don&squot;t want to do a SIGFPE on an irq13&n; * as the irq is unreliable, and exception 16 works correctly&n; * (ie as explained in the intel literature). On a 386, you&n; * can&squot;t use exception 16 due to bad IBM design, so we have to&n; * rely on the less exact irq13.&n; *&n; * Careful.. Not only is IRQ13 unreliable, but it is also&n; * leads to races. IBM designers who came up with it should&n; * be shot.&n; */
 DECL|function|math_error_irq
 r_static
@@ -1189,7 +1188,7 @@ op_assign
 (brace
 id|math_error_irq
 comma
-id|SA_SHIRQ
+l_int|0
 comma
 l_int|0
 comma
@@ -1201,6 +1200,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * IRQ2 is cascade interrupt to second interrupt controller&n; */
+macro_line|#ifndef CONFIG_VISWS
 DECL|variable|irq2
 r_static
 r_struct
@@ -1495,6 +1495,16 @@ op_amp
 id|irq2
 )paren
 suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * External FPU? Set up irq13 if so, for&n;&t; * original braindamaged IBM FERR coupling.&n;&t; */
+r_if
+c_cond
+(paren
+id|boot_cpu_data.hard_math
+op_logical_and
+op_logical_neg
+id|cpu_has_fpu
+)paren
 id|setup_irq
 c_func
 (paren
@@ -1504,6 +1514,5 @@ op_amp
 id|irq13
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 eof

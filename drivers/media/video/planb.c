@@ -11472,24 +11472,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This gets called upon device registration */
-multiline_comment|/* we could do some init here */
-DECL|function|planb_init_done
-r_static
-r_int
-id|planb_init_done
-c_func
-(paren
-r_struct
-id|video_device
-op_star
-id|dev
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|variable|planb_template
 r_static
 r_struct
@@ -11497,38 +11479,43 @@ id|video_device
 id|planb_template
 op_assign
 (brace
+id|name
+suffix:colon
 id|PLANB_DEVICE_NAME
 comma
+id|type
+suffix:colon
 id|VID_TYPE_OVERLAY
 comma
+id|hardware
+suffix:colon
 id|VID_HARDWARE_PLANB
 comma
+id|open
+suffix:colon
 id|planb_open
 comma
+id|close
+suffix:colon
 id|planb_close
 comma
+id|read
+suffix:colon
 id|planb_read
 comma
+id|write
+suffix:colon
 id|planb_write
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
-l_int|NULL
-comma
-multiline_comment|/* poll */
-macro_line|#endif
+id|ioctl
+suffix:colon
 id|planb_ioctl
 comma
+id|mmap
+suffix:colon
 id|planb_mmap
 comma
 multiline_comment|/* mmap? */
-id|planb_init_done
-comma
-l_int|NULL
-comma
-multiline_comment|/* pointer to private data */
-l_int|0
-comma
-l_int|0
 )brace
 suffix:semicolon
 DECL|function|init_planb

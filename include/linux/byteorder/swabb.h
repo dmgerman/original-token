@@ -6,7 +6,7 @@ multiline_comment|/*&n; * Meaning of the names I chose (vaxlinux people feel fre
 DECL|macro|___swahw32
 mdefine_line|#define ___swahw32(x) &bslash;&n;({ &bslash;&n;&t;__u32 __x = (x); &bslash;&n;&t;((__u32)( &bslash;&n;&t;&t;(((__u32)(__x) &amp; (__u32)0x0000ffffUL) &lt;&lt; 16) | &bslash;&n;&t;&t;(((__u32)(__x) &amp; (__u32)0xffff0000UL) &gt;&gt; 16) )); &bslash;&n;})
 DECL|macro|___swahb32
-mdefine_line|#define ___swahb32(x) &bslash;&n;({ &bslash;&n;&t;__u32 __x = (x); &bslash;&n;&t;((__u32)( &bslash;&n;&t;&t;(((__u32)(__x) &amp; (__u32)0x00ff00ffUL) &lt;&lt; 8) | &bslash;&n;&t;&t;(((__u32)(__x) &amp; (__u32)0xff00ff00UL) &gt;&gt; 8) )) &bslash;&n;})
+mdefine_line|#define ___swahb32(x) &bslash;&n;({ &bslash;&n;&t;__u32 __x = (x); &bslash;&n;&t;((__u32)( &bslash;&n;&t;&t;(((__u32)(__x) &amp; (__u32)0x00ff00ffUL) &lt;&lt; 8) | &bslash;&n;&t;&t;(((__u32)(__x) &amp; (__u32)0xff00ff00UL) &gt;&gt; 8) )); &bslash;&n;})
 DECL|macro|___constant_swahw32
 mdefine_line|#define ___constant_swahw32(x) &bslash;&n;&t;((__u32)( &bslash;&n;&t;&t;(((__u32)(x) &amp; (__u32)0x0000ffffUL) &lt;&lt; 16) | &bslash;&n;&t;&t;(((__u32)(x) &amp; (__u32)0xffff0000UL) &gt;&gt; 16) ))
 DECL|macro|___constant_swahb32

@@ -23,6 +23,7 @@ multiline_comment|/* nanoseconds */
 )brace
 suffix:semicolon
 macro_line|#endif /* _STRUCT_TIMESPEC */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Change timeval to jiffies, trying to avoid the&n; * most obvious overflows..&n; *&n; * And some not so obvious.&n; *&n; * Note that we don&squot;t want to return MAX_LONG, because&n; * for various timeout reasons we often end up having&n; * to wait &quot;jiffies+1&quot; in order to guarantee that we wait&n; * at _least_ &quot;jiffies&quot; - so &quot;jiffies+1&quot; had better still&n; * be positive.&n; */
 DECL|macro|MAX_JIFFY_OFFSET
 mdefine_line|#define MAX_JIFFY_OFFSET ((~0UL &gt;&gt; 1)-1)
@@ -239,6 +240,7 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
+macro_line|#endif /* __KERNEL__ */
 DECL|struct|timeval
 r_struct
 id|timeval
