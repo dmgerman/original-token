@@ -4,10 +4,6 @@ DECL|macro|_LINUX_VT_BUFFER_H_
 mdefine_line|#define _LINUX_VT_BUFFER_H_
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_VGA_CONSOLE
-macro_line|#if !defined(CONFIG_FB) &amp;&amp; !defined(CONFIG_FB_MODULE)
-DECL|macro|VT_BUF_VRAM_ONLY
-mdefine_line|#define VT_BUF_VRAM_ONLY
-macro_line|#endif
 macro_line|#include &lt;asm/vga.h&gt;
 macro_line|#endif
 macro_line|#ifndef VT_BUF_HAVE_RW

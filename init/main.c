@@ -144,9 +144,7 @@ r_int
 id|sbus_init
 c_func
 (paren
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern

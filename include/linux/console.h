@@ -366,18 +366,21 @@ r_int
 id|deflt
 )paren
 suffix:semicolon
-multiline_comment|/* flag bits */
-DECL|macro|CON_INITED
-mdefine_line|#define CON_INITED  (1)
+r_void
+id|give_up_console
+c_func
+(paren
+r_struct
+id|consw
+op_star
+id|sw
+)paren
+suffix:semicolon
 multiline_comment|/* scroll */
 DECL|macro|SM_UP
 mdefine_line|#define SM_UP       (1)
 DECL|macro|SM_DOWN
 mdefine_line|#define SM_DOWN     (2)
-DECL|macro|SM_LEFT
-mdefine_line|#define SM_LEFT     (3)
-DECL|macro|SM_RIGHT
-mdefine_line|#define SM_RIGHT    (4)
 multiline_comment|/* cursor */
 DECL|macro|CM_DRAW
 mdefine_line|#define CM_DRAW     (1)

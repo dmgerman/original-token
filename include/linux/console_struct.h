@@ -46,12 +46,6 @@ r_int
 r_int
 id|vc_screenbuf_size
 suffix:semicolon
-DECL|member|vc_video_erase_char
-r_int
-r_int
-id|vc_video_erase_char
-suffix:semicolon
-multiline_comment|/* Background erase character */
 DECL|member|vc_attr
 r_int
 r_char
@@ -100,6 +94,18 @@ r_int
 id|vc_hi_font_mask
 suffix:semicolon
 multiline_comment|/* [#] Attribute set for upper 256 chars of font or 0 if not supported */
+DECL|member|vc_video_erase_char
+r_int
+r_int
+id|vc_video_erase_char
+suffix:semicolon
+multiline_comment|/* Background erase character */
+DECL|member|vc_s_complement_mask
+r_int
+r_int
+id|vc_s_complement_mask
+suffix:semicolon
+multiline_comment|/* Saved mouse pointer mask */
 DECL|member|vc_x
 DECL|member|vc_y
 r_int
@@ -490,4 +496,6 @@ DECL|macro|CUR_SWMASK
 mdefine_line|#define CUR_SWMASK&t;0xfff0
 DECL|macro|CUR_DEFAULT
 mdefine_line|#define CUR_DEFAULT CUR_UNDERLINE
+DECL|macro|CON_IS_VISIBLE
+mdefine_line|#define CON_IS_VISIBLE(conp) (*conp-&gt;vc_display_fg == conp)
 eof

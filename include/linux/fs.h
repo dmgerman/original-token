@@ -795,6 +795,11 @@ r_struct
 id|semaphore
 id|i_sem
 suffix:semicolon
+DECL|member|i_atomic_write
+r_struct
+id|semaphore
+id|i_atomic_write
+suffix:semicolon
 DECL|member|i_op
 r_struct
 id|inode_operations
@@ -2297,6 +2302,9 @@ comma
 r_struct
 id|dentry
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|member|readpage
@@ -3533,6 +3541,7 @@ id|dentry
 op_star
 comma
 r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -3546,6 +3555,7 @@ r_const
 r_char
 op_star
 comma
+r_int
 r_int
 )paren
 suffix:semicolon

@@ -405,7 +405,7 @@ id|currcons
 op_assign
 id|fg_console
 suffix:semicolon
-id|do_unblank_screen
+id|unblank_screen
 c_func
 (paren
 )paren

@@ -44,7 +44,7 @@ id|partial_name_hash
 c_func
 (paren
 r_int
-r_char
+r_int
 id|c
 comma
 r_int

@@ -73,7 +73,6 @@ suffix:semicolon
 )brace
 DECL|macro|MAX_NBD
 mdefine_line|#define MAX_NBD 128
-macro_line|#endif
 DECL|struct|nbd_device
 r_struct
 id|nbd_device
@@ -135,6 +134,7 @@ id|queue_lock
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* This now IS in some kind of include file...&t;*/
 multiline_comment|/* These are send over network in request/reply magic field */
 DECL|macro|NBD_REQUEST_MAGIC

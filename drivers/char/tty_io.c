@@ -182,7 +182,6 @@ id|file
 op_star
 )paren
 suffix:semicolon
-r_static
 r_int
 id|tty_ioctl
 c_func
@@ -229,7 +228,9 @@ r_int
 id|console_8xx_init
 c_func
 (paren
-r_void
+r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -2446,6 +2447,43 @@ id|written
 op_assign
 l_int|0
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|down_interruptible
+c_func
+(paren
+op_amp
+id|inode-&gt;i_atomic_write
+)paren
+)paren
+(brace
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ERESTARTSYS
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -2557,6 +2595,20 @@ op_assign
 id|written
 suffix:semicolon
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_atomic_write
+)paren
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -6611,7 +6663,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Split this up, as gcc can choke on it otherwise..&n; */
 DECL|function|tty_ioctl
-r_static
 r_int
 id|tty_ioctl
 c_func
@@ -8317,6 +8368,18 @@ id|kmem_start
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
+macro_line|#ifdef CONFIG_8xx
+id|kmem_start
+op_assign
+id|console_8xx_init
+c_func
+(paren
+id|kmem_start
+comma
+id|kmem_end
+)paren
+suffix:semicolon
+macro_line|#else &t;
 id|kmem_start
 op_assign
 id|serial_console_init
@@ -8327,6 +8390,7 @@ comma
 id|kmem_end
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
 macro_line|#endif
 r_return
 id|kmem_start

@@ -4,7 +4,7 @@ mdefine_line|#define _LINUX_TTY_H
 multiline_comment|/*&n; * &squot;tty.h&squot; defines some structures used by tty_io.c and some defines.&n; */
 multiline_comment|/*&n; * These constants are also useful for user-level apps (e.g., VC&n; * resizing).&n; */
 DECL|macro|MIN_NR_CONSOLES
-mdefine_line|#define MIN_NR_CONSOLES&t;1&t;/* must be at least 1 */
+mdefine_line|#define MIN_NR_CONSOLES 1       /* must be at least 1 */
 DECL|macro|MAX_NR_CONSOLES
 mdefine_line|#define MAX_NR_CONSOLES&t;63&t;/* serial lines start at 64 */
 DECL|macro|MAX_NR_USER_CONSOLES
@@ -211,7 +211,25 @@ r_char
 id|rsvd_pos
 suffix:semicolon
 multiline_comment|/* 0x2d */
-multiline_comment|/* 0x2e -- 0x3f reserved for future expansion */
+DECL|member|vesapm_seg
+r_int
+r_int
+id|vesapm_seg
+suffix:semicolon
+multiline_comment|/* 0x2e */
+DECL|member|vesapm_off
+r_int
+r_int
+id|vesapm_off
+suffix:semicolon
+multiline_comment|/* 0x30 */
+DECL|member|pages
+r_int
+r_int
+id|pages
+suffix:semicolon
+multiline_comment|/* 0x32 */
+multiline_comment|/* 0x34 -- 0x3f reserved for future expansion */
 )brace
 suffix:semicolon
 r_extern
@@ -1276,16 +1294,6 @@ r_struct
 id|file
 op_star
 id|filp
-)paren
-suffix:semicolon
-multiline_comment|/* console.c */
-r_extern
-r_void
-id|update_screen
-c_func
-(paren
-r_int
-id|new_console
 )paren
 suffix:semicolon
 multiline_comment|/* printk.c */

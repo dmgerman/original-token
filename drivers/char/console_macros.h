@@ -54,10 +54,6 @@ DECL|macro|utf_count
 mdefine_line|#define utf_count&t;(vc_cons[currcons].d-&gt;vc_utf_count)
 DECL|macro|utf_char
 mdefine_line|#define utf_char&t;(vc_cons[currcons].d-&gt;vc_utf_char)
-DECL|macro|video_mem_start
-mdefine_line|#define video_mem_start (vc_cons[currcons].d-&gt;vc_video_mem_start)
-DECL|macro|video_mem_end
-mdefine_line|#define video_mem_end&t;(vc_cons[currcons].d-&gt;vc_video_mem_end)
 DECL|macro|video_erase_char
 mdefine_line|#define video_erase_char (vc_cons[currcons].d-&gt;vc_video_erase_char)
 DECL|macro|disp_ctrl
@@ -130,6 +126,8 @@ DECL|macro|display_fg
 mdefine_line|#define display_fg&t;(vc_cons[currcons].d-&gt;vc_display_fg)
 DECL|macro|complement_mask
 mdefine_line|#define complement_mask (vc_cons[currcons].d-&gt;vc_complement_mask)
+DECL|macro|s_complement_mask
+mdefine_line|#define s_complement_mask (vc_cons[currcons].d-&gt;vc_s_complement_mask)
 DECL|macro|hi_font_mask
 mdefine_line|#define hi_font_mask&t;(vc_cons[currcons].d-&gt;vc_hi_font_mask)
 DECL|macro|vcmode

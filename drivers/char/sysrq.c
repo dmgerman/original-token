@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; *&n; *&t;$Id: sysrq.c,v 1.7 1997/11/06 15:57:09 mj Exp $&n; *&n; *&t;Linux Magic System Request Key Hacks&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&t;based on ideas by Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/* -*- linux-c -*-&n; *&n; *&t;$Id: sysrq.c,v 1.15 1998/08/23 14:56:41 mj Exp $&n; *&n; *&t;Linux Magic System Request Key Hacks&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&t;based on ideas by Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -183,6 +183,7 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
 r_case
 l_char|&squot;k&squot;
 suffix:colon
@@ -212,6 +213,7 @@ id|fg_console
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 l_char|&squot;b&squot;
 suffix:colon
@@ -464,6 +466,7 @@ c_func
 l_string|&quot;unRaw &quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
 r_if
 c_cond
 (paren
@@ -475,6 +478,7 @@ c_func
 l_string|&quot;saK &quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren

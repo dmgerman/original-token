@@ -34,6 +34,9 @@ comma
 r_struct
 id|dentry
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * symlinks can&squot;t do much...&n; */
@@ -112,6 +115,10 @@ r_struct
 id|dentry
 op_star
 id|base
+comma
+r_int
+r_int
+id|follow
 )paren
 (brace
 r_struct
@@ -175,7 +182,7 @@ id|bh-&gt;b_data
 comma
 id|base
 comma
-l_int|1
+id|follow
 )paren
 suffix:semicolon
 id|brelse

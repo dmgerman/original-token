@@ -36,6 +36,9 @@ comma
 r_struct
 id|dentry
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * links can&squot;t do much...&n; */
@@ -156,6 +159,10 @@ r_struct
 id|dentry
 op_star
 id|base
+comma
+r_int
+r_int
+id|follow
 )paren
 (brace
 r_struct
@@ -658,6 +665,8 @@ c_func
 id|dentry
 comma
 l_int|NULL
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|error
