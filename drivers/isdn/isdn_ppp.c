@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_ppp.c,v 1.12 1996/06/24 17:42:03 fritz Exp $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.12  1996/06/24 17:42:03  fritz&n; * Minor bugfixes.&n; *&n; * Revision 1.11  1996/06/16 17:46:05  tsbogend&n; * changed unsigned long to u32 to make Alpha people happy&n; *&n; * Revision 1.10  1996/06/11 14:50:29  hipp&n; * Lot of changes and bugfixes.&n; * New scheme to resend packets to busy LL devices.&n; *&n; * Revision 1.9  1996/05/18 01:37:01  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.8  1996/05/06 11:34:55  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/04/30 11:07:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:33:09  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:32:32  fritz&n; * Changed ippp_table to an array of pointers, allocating each part&n; * separately.&n; *&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_ppp.c,v 1.13 1996/07/01 19:47:24 hipp Exp $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.13  1996/07/01 19:47:24  hipp&n; * Fixed memory leak in VJ handling and more VJ changes&n; *&n; * Revision 1.12  1996/06/24 17:42:03  fritz&n; * Minor bugfixes.&n; *&n; * Revision 1.11  1996/06/16 17:46:05  tsbogend&n; * changed unsigned long to u32 to make Alpha people happy&n; *&n; * Revision 1.10  1996/06/11 14:50:29  hipp&n; * Lot of changes and bugfixes.&n; * New scheme to resend packets to busy LL devices.&n; *&n; * Revision 1.9  1996/05/18 01:37:01  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.8  1996/05/06 11:34:55  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/04/30 11:07:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:33:09  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:32:32  fritz&n; * Changed ippp_table to an array of pointers, allocating each part&n; * separately.&n; *&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
 multiline_comment|/* TODO: right tbusy handling when using MP */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
@@ -142,7 +142,7 @@ r_char
 op_star
 id|isdn_ppp_revision
 op_assign
-l_string|&quot;$Revision: 1.12 $&quot;
+l_string|&quot;$Revision: 1.13 $&quot;
 suffix:semicolon
 DECL|variable|ippp_table
 r_struct
@@ -921,55 +921,6 @@ id|ippp_table
 id|minor
 )braket
 op_member_access_from_pointer
-id|cbuf
-op_assign
-id|kmalloc
-c_func
-(paren
-id|ippp_table
-(braket
-id|minor
-)braket
-op_member_access_from_pointer
-id|mru
-op_plus
-id|PPP_HARD_HDR_LEN
-op_plus
-l_int|2
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ippp_table
-(braket
-id|minor
-)braket
-op_member_access_from_pointer
-id|cbuf
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;ippp: Can&squot;t allocate memory buffer for VJ compression.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-id|ippp_table
-(braket
-id|minor
-)braket
-op_member_access_from_pointer
 id|slcomp
 op_assign
 id|slhc_init
@@ -1230,17 +1181,6 @@ op_member_access_from_pointer
 id|slcomp
 op_assign
 l_int|NULL
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|ippp_table
-(braket
-id|minor
-)braket
-op_member_access_from_pointer
-id|cbuf
-)paren
 suffix:semicolon
 macro_line|#endif
 id|ippp_table
@@ -3327,12 +3267,17 @@ op_amp
 id|SC_REJ_COMP_AC
 )paren
 (brace
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -3978,12 +3923,17 @@ id|KERN_WARNING
 l_string|&quot;ippp/MPPP: Bad! Can&squot;t alloc sq node!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -4342,6 +4292,27 @@ r_case
 id|PPP_IPX
 suffix:colon
 multiline_comment|/* untested */
+r_if
+c_cond
+(paren
+id|ippp_table
+(braket
+id|lp-&gt;ppp_minor
+)braket
+op_member_access_from_pointer
+id|debug
+op_amp
+l_int|0x20
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;isdn_ppp: _IPX&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -4364,6 +4335,30 @@ macro_line|#ifdef CONFIG_ISDN_PPP_VJ
 r_case
 id|PPP_VJC_UNCOMP
 suffix:colon
+r_if
+c_cond
+(paren
+id|ippp_table
+(braket
+id|lp-&gt;ppp_minor
+)braket
+op_member_access_from_pointer
+id|debug
+op_amp
+l_int|0x20
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;isdn_ppp: VJC_UNCOMP&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|slhc_remember
 c_func
 (paren
@@ -4378,11 +4373,61 @@ id|skb-&gt;data
 comma
 id|skb-&gt;len
 )paren
+op_le
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;isdn_ppp: received illegal VJC_UNCOMP frame!&bslash;n&quot;
+)paren
 suffix:semicolon
+id|net_dev-&gt;local.stats.rx_dropped
+op_increment
+suffix:semicolon
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+l_int|0
+multiline_comment|/* FREE_READ */
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 macro_line|#endif
 r_case
 id|PPP_IP
 suffix:colon
+r_if
+c_cond
+(paren
+id|ippp_table
+(braket
+id|lp-&gt;ppp_minor
+)braket
+op_member_access_from_pointer
+id|debug
+op_amp
+l_int|0x20
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;isdn_ppp: IP&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -4404,6 +4449,27 @@ suffix:semicolon
 r_case
 id|PPP_VJC_COMP
 suffix:colon
+r_if
+c_cond
+(paren
+id|ippp_table
+(braket
+id|lp-&gt;ppp_minor
+)braket
+op_member_access_from_pointer
+id|debug
+op_amp
+l_int|0x20
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;isdn_ppp: VJC_COMP&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_ISDN_PPP_VJ
 (brace
 r_struct
@@ -4425,6 +4491,10 @@ id|skb_old-&gt;len
 op_plus
 l_int|40
 )paren
+suffix:semicolon
+id|skb_old-&gt;free
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -4450,7 +4520,8 @@ c_func
 (paren
 id|skb_old
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -4506,7 +4577,8 @@ c_func
 (paren
 id|skb_old
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_if
@@ -4517,12 +4589,17 @@ OL
 l_int|0
 )paren
 (brace
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped
@@ -4559,12 +4636,17 @@ suffix:semicolon
 id|lp-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -4587,12 +4669,17 @@ id|lp-&gt;ppp_minor
 )paren
 suffix:semicolon
 multiline_comment|/* push data to pppd device */
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -4615,7 +4702,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * send ppp frame .. we expect a PIDCOMPressable proto -- &n; *  (here: currently always PPP_IP,PPP_VJC_COMP,PPP_VJC_UNCOMP)&n; */
+multiline_comment|/*&n; * send ppp frame .. we expect a PIDCOMPressable proto -- &n; *  (here: currently always PPP_IP,PPP_VJC_COMP,PPP_VJC_UNCOMP)&n; *&n; * VJ compression may change skb pointer!!! .. requeue with old&n; * skb isn&squot;t allowed!! &n; */
 DECL|function|isdn_ppp_xmit
 r_int
 id|isdn_ppp_xmit
@@ -4872,14 +4959,10 @@ id|SC_COMP_TCP
 )paren
 (brace
 multiline_comment|/* ipts here? probably yes .. but check again */
-id|u_char
+r_struct
+id|sk_buff
 op_star
-id|buf
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-r_int
-id|pktlen
+id|new_skb
 suffix:semicolon
 r_int
 id|len
@@ -4913,9 +4996,64 @@ op_add_assign
 l_int|5
 suffix:semicolon
 macro_line|#endif
+id|new_skb
+op_assign
+id|dev_alloc_skb
+c_func
+(paren
+id|skb-&gt;len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_skb
+)paren
+(brace
+id|u_char
+op_star
 id|buf
-op_add_assign
+suffix:semicolon
+r_int
+id|pktlen
+suffix:semicolon
+id|new_skb-&gt;dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
+id|new_skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
+id|skb_put
+c_func
+(paren
+id|new_skb
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
 id|len
+)paren
+suffix:semicolon
+multiline_comment|/* pull PPP header */
+id|skb_pull
+c_func
+(paren
+id|new_skb
+comma
+id|len
+)paren
+suffix:semicolon
+multiline_comment|/* pull PPP header */
+id|buf
+op_assign
+id|skb-&gt;data
 suffix:semicolon
 id|pktlen
 op_assign
@@ -4924,13 +5062,11 @@ c_func
 (paren
 id|ipts-&gt;slcomp
 comma
-id|buf
+id|skb-&gt;data
 comma
 id|skb-&gt;len
-op_minus
-id|len
 comma
-id|ipts-&gt;cbuf
+id|new_skb-&gt;data
 comma
 op_amp
 id|buf
@@ -4943,46 +5079,70 @@ id|SC_NO_TCP_CCID
 )paren
 )paren
 suffix:semicolon
-id|skb_trim
-c_func
-(paren
-id|skb
-comma
-id|pktlen
-op_plus
-id|len
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|buf
 op_ne
 id|skb-&gt;data
-op_plus
-id|len
 )paren
 (brace
 multiline_comment|/* copied to new buffer ??? (btw: WHY must slhc copy it?? *sigh*)  */
-id|memcpy
+r_if
+c_cond
+(paren
+id|new_skb-&gt;data
+op_ne
+id|buf
+)paren
+(brace
+id|printk
 c_func
 (paren
-id|skb-&gt;data
-op_plus
-id|len
+id|KERN_ERR
+l_string|&quot;isdn_ppp: FATAL error after slhc_compress!!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 comma
-id|buf
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|skb
+op_assign
+id|new_skb
+suffix:semicolon
+)brace
+r_else
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|new_skb
+comma
+l_int|0
+multiline_comment|/* FREE_WRITE */
+)paren
+suffix:semicolon
+)brace
+id|skb_trim
+c_func
+(paren
+id|skb
 comma
 id|pktlen
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|skb-&gt;data
 (braket
-id|len
+l_int|0
 )braket
 op_amp
 id|SL_TYPE_COMPRESSED_TCP
@@ -4995,7 +5155,7 @@ id|PPP_VJC_COMP
 suffix:semicolon
 id|skb-&gt;data
 (braket
-id|len
+l_int|0
 )braket
 op_xor_assign
 id|SL_TYPE_COMPRESSED_TCP
@@ -5008,7 +5168,7 @@ c_cond
 (paren
 id|skb-&gt;data
 (braket
-id|len
+l_int|0
 )braket
 op_ge
 id|SL_TYPE_UNCOMPRESSED_TCP
@@ -5019,19 +5179,28 @@ id|PPP_VJC_UNCOMP
 suffix:semicolon
 id|skb-&gt;data
 (braket
-id|len
+l_int|0
 )braket
 op_assign
 (paren
 id|skb-&gt;data
 (braket
-id|len
+l_int|0
 )braket
 op_amp
 l_int|0x0f
 )paren
 op_or
 l_int|0x40
+suffix:semicolon
+)brace
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|len
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -5259,7 +5428,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: whoops .. there is another stored skb!&bslash;n!&quot;
+l_string|&quot;%s: whoops .. there is another stored skb!&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -5323,12 +5492,17 @@ c_cond
 id|q-&gt;skb
 )paren
 (brace
+id|q-&gt;skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 )brace
@@ -5374,12 +5548,17 @@ id|ql
 op_assign
 id|q-&gt;next
 suffix:semicolon
+id|q-&gt;skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|kfree
@@ -6171,12 +6350,17 @@ id|ql
 op_assign
 id|q-&gt;next
 suffix:semicolon
+id|q-&gt;skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|kfree
@@ -6242,12 +6426,17 @@ id|cnt
 op_add_assign
 id|q-&gt;skb-&gt;len
 suffix:semicolon
+id|q-&gt;skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|kfree
@@ -6350,12 +6539,17 @@ id|ql
 op_assign
 id|q-&gt;last
 suffix:semicolon
+id|q-&gt;skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
 comma
-id|FREE_WRITE
+l_int|0
+multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|kfree
@@ -6824,7 +7018,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 id|printk
 c_func
 (paren

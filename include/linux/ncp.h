@@ -431,6 +431,17 @@ id|update_time
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Defines for Name Spaces */
+DECL|macro|NW_NS_DOS
+mdefine_line|#define NW_NS_DOS     0
+DECL|macro|NW_NS_MAC
+mdefine_line|#define NW_NS_MAC     1
+DECL|macro|NW_NS_NFS
+mdefine_line|#define NW_NS_NFS     2
+DECL|macro|NW_NS_FTAM
+mdefine_line|#define NW_NS_FTAM    3
+DECL|macro|NW_NS_OS2
+mdefine_line|#define NW_NS_OS2     4
 multiline_comment|/*  Defines for ReturnInformationMask */
 DECL|macro|RIM_NAME
 mdefine_line|#define RIM_NAME&t;      (0x0001L)

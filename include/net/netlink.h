@@ -4,8 +4,9 @@ mdefine_line|#define __NET_NETLINK_H
 DECL|macro|NET_MAJOR
 mdefine_line|#define NET_MAJOR 36&t;&t;/* Major 18 is reserved for networking &t;&t;&t;&t;&t;&t;*/
 DECL|macro|MAX_LINKS
-mdefine_line|#define MAX_LINKS 10&t;&t;/* 18,0 for route updates, 18,1 for SKIP, 18,2 debug tap 18,3 PPP reserved &t;*/
+mdefine_line|#define MAX_LINKS 11&t;&t;/* 18,0 for route updates, 18,1 for SKIP, 18,2 debug tap 18,3 PPP reserved &t;*/
 multiline_comment|/* 4-7 are psi0-psi3  8 is arpd 9 is ppp */
+multiline_comment|/* 10 is for IPSEC &lt;John Ioannidis&gt; */
 DECL|macro|MAX_QBYTES
 mdefine_line|#define MAX_QBYTES 32768&t;/* Maximum bytes in the queue &t;&t;&t;&t;&t;&t;&t;*/
 macro_line|#include &lt;linux/config.h&gt;
@@ -86,6 +87,8 @@ DECL|macro|NETLINK_ARPD
 mdefine_line|#define NETLINK_ARPD&t;&t;8
 DECL|macro|NETLINK_NET_PPP
 mdefine_line|#define NETLINK_NET_PPP&t;&t;9&t;/* Non tty PPP devices */
+DECL|macro|NETLINK_IPSEC
+mdefine_line|#define NETLINK_IPSEC&t;&t;10&t;/* IPSEC */
 macro_line|#ifdef CONFIG_RTNETLINK
 r_extern
 r_void

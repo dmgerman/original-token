@@ -1539,11 +1539,13 @@ op_star
 id|hw_config
 )paren
 (brace
+macro_line|#ifdef CONFIG_SBDSP
 id|unload_sb
 (paren
 id|hw_config
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 eof

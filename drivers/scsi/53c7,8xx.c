@@ -12731,6 +12731,10 @@ suffix:colon
 r_case
 id|WRITE_10
 suffix:colon
+r_case
+id|START_STOP
+suffix:colon
+multiline_comment|/* also SCAN, which may do DATA OUT */
 macro_line|#if 0
 id|printk
 c_func
@@ -12786,9 +12790,6 @@ macro_line|#endif
 r_break
 suffix:semicolon
 multiline_comment|/* &n;     * These commands do no data transfer, we should force an&n;     * interrupt if a data phase is attempted on them.&n;     */
-r_case
-id|START_STOP
-suffix:colon
 r_case
 id|TEST_UNIT_READY
 suffix:colon

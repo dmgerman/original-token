@@ -2282,15 +2282,6 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;leader
-)paren
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
 id|for_each_task
 c_func
 (paren
@@ -2300,10 +2291,6 @@ id|p
 r_if
 c_cond
 (paren
-id|p
-op_ne
-id|current
-op_logical_and
 id|p-&gt;pgrp
 op_eq
 id|current-&gt;pid

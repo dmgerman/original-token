@@ -4547,6 +4547,9 @@ id|iov
 comma
 r_int
 id|len
+comma
+r_int
+id|noblock
 )paren
 (brace
 r_struct
@@ -4659,7 +4662,7 @@ id|size
 comma
 l_int|0
 comma
-l_int|0
+id|noblock
 comma
 op_amp
 id|err
@@ -8726,6 +8729,8 @@ comma
 id|msg-&gt;msg_iov
 comma
 id|len
+comma
+id|noblock
 )paren
 suffix:semicolon
 r_if

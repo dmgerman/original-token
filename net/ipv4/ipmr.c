@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&n; *&t;Status:&n; *&t;&t;Cache manager under test. Forwarding in vague test mode&n; *&t;Todo:&n; *&t;&t;Flow control&n; *&t;&t;Finish Tunnels&n; *&t;&t;Debug cache ttl handling properly&n; *&t;&t;Resolve IFF_ALLMULTI for rest of cards&n; */
+multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6/3.8&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code.&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&t;Malcolm Beattie&t;&t;:&t;Buffer handling fixes.&n; *&t;Alexey Kuznetsov&t;:&t;Double buffer free and other fixes.&n; *&t;SVR Anand&t;&t;:&t;Fixed several multicast bugs and problems.&n; *&n; *&t;Status:&n; *&t;&t;Cache manager under test. Forwarding in vague test mode&n; *&t;Todo:&n; *&t;&t;Flow control&n; *&t;&t;Finish Tunnels&n; *&t;&t;Debug cache ttl handling properly&n; *&t;&t;Resolve IFF_ALLMULTI for rest of cards&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -2671,6 +2671,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Without the following addition, skb-&gt;h.iph points to something&n;&t; *&t;different that is not the ip header.&n;&t; */
+id|skb-&gt;h.iph
+op_assign
+id|skb-&gt;ip_hdr
+suffix:semicolon
+multiline_comment|/* Anand, ernet.  */
 id|vif_table
 (braket
 id|vif
@@ -3407,7 +3413,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Linux IP multicast router 0.05.&bslash;n&quot;
+l_string|&quot;Linux IP multicast router 0.06.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|register_netdevice_notifier

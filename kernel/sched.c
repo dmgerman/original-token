@@ -4136,6 +4136,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+r_int
+)paren
 id|newprio
 OL
 l_int|1

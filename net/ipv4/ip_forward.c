@@ -120,8 +120,11 @@ id|htons
 c_func
 (paren
 id|skb-&gt;len
+op_plus
+id|len
 )paren
 suffix:semicolon
+multiline_comment|/* Anand, ernet */
 id|iph-&gt;id
 op_assign
 id|htons
@@ -149,7 +152,9 @@ id|skb-&gt;raddr
 op_assign
 id|daddr
 suffix:semicolon
+multiline_comment|/* Router address is not destination address. The&n;&t;&t;&t;    * correct value is given eventually. I have not&n;&t;&t;&t;    * removed this statement. But could have. &n;&t;&t;&t;    * Anand, ernet.&n;&t;&t;&t;    */
 multiline_comment|/*&n;&t; *&t;Now add the physical header (driver will push it down).&n;&t; */
+multiline_comment|/* The last parameter of out-&gt;hard_header() needed skb-&gt;len + len.&n; &t; * Anand, ernet.&n;&t; */
 r_if
 c_cond
 (paren
@@ -170,6 +175,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+id|skb-&gt;len
+op_plus
 id|len
 )paren
 OL
@@ -288,43 +295,47 @@ id|iph
 op_assign
 id|skb-&gt;h.iph
 suffix:semicolon
-id|iph-&gt;ttl
-op_decrement
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Re-compute the IP header checksum.&n;&t; *&t;This is inefficient. We know what has happened to the header&n;&t; *&t;and could thus adjust the checksum as Phil Karn does in KA9Q&n;&t; */
-id|iph-&gt;check
-op_assign
-id|ntohs
-c_func
-(paren
-id|iph-&gt;check
-)paren
-op_plus
-l_int|0x0100
-suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
-id|iph-&gt;check
+id|is_frag
 op_amp
-l_int|0xFF00
+id|IPFWD_NOTTLDEC
 )paren
-op_eq
-l_int|0
 )paren
-id|iph-&gt;check
-op_increment
-suffix:semicolon
-multiline_comment|/* carry overflow */
-id|iph-&gt;check
+(brace
+r_int
+r_int
+id|checksum
 op_assign
+id|iph-&gt;check
+suffix:semicolon
+id|iph-&gt;ttl
+op_decrement
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Re-compute the IP header checksum.&n;&t; *&t;This is efficient. We know what has happened to the header&n;&t; *&t;and can thus adjust the checksum as Phil Karn does in KA9Q&n;&t; *&t;except we do this in &quot;network byte order&quot;.&n;&t; */
+id|checksum
+op_add_assign
 id|htons
 c_func
 (paren
-id|iph-&gt;check
+l_int|0x0100
 )paren
 suffix:semicolon
+multiline_comment|/* carry overflow? */
+id|checksum
+op_add_assign
+id|checksum
+op_rshift
+l_int|16
+suffix:semicolon
+id|iph-&gt;check
+op_assign
+id|checksum
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -353,6 +364,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* If IPFWD_MULTITUNNEL flag is set, then we have to perform routing&n;&t; * decision so as to reach the other end of the tunnel. This condition&n;&t; * also means that we are dealing with a unicast IP packet &quot;in a way&quot;. &n;&t; * Anand, ernet.&n;&t; */
 macro_line|#ifdef CONFIG_IP_MROUTE
 r_if
 c_cond
@@ -362,6 +374,12 @@ op_logical_neg
 id|is_frag
 op_amp
 id|IPFWD_MULTICASTING
+)paren
+op_logical_or
+(paren
+id|is_frag
+op_amp
+id|IPFWD_MULTITUNNEL
 )paren
 )paren
 (brace
@@ -502,6 +520,20 @@ id|dev
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_MROUTE
+multiline_comment|/* This is for ip encap. Anand, ernet.*/
+r_if
+c_cond
+(paren
+id|is_frag
+op_amp
+id|IPFWD_MULTITUNNEL
+)paren
+(brace
+id|encap
+op_assign
+l_int|20
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -911,6 +943,11 @@ l_int|15
 )paren
 suffix:semicolon
 multiline_comment|/* 16 byte aligned IP headers are good */
+multiline_comment|/* We need to pass on IP information of the incoming packet to ip_encap() &n; * to fillin ttl, and tos fields.The destination should be target_addr. &n; *  Anand, ernet. &n; */
+id|skb2-&gt;ip_hdr
+op_assign
+id|skb-&gt;ip_hdr
+suffix:semicolon
 id|ip_encap
 c_func
 (paren
@@ -920,8 +957,13 @@ id|skb-&gt;len
 comma
 id|dev2
 comma
-id|raddr
+id|target_addr
 )paren
+suffix:semicolon
+multiline_comment|/*  The router address is got earlier that to take us to the remote tunnel&n; *  Anand, ernet.&n; */
+id|skb2-&gt;raddr
+op_assign
+id|rt-&gt;rt_gateway
 suffix:semicolon
 )brace
 r_else

@@ -5549,6 +5549,10 @@ multiline_comment|/*&n;&t;&t; *&t;Sending&n;&t;&t; */
 r_if
 c_cond
 (paren
+id|f-&gt;port
+op_ne
+id|port
+op_logical_and
 id|port_info
 (braket
 id|f-&gt;port

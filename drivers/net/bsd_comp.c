@@ -4,7 +4,6 @@ macro_line|#ifndef MODULE
 macro_line|#error This file must be compiled as a module.
 macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;endian.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -22,6 +21,7 @@ macro_line|#include &lt;linux/signal.h&gt;&t;/* used in new tty drivers */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -65,7 +65,7 @@ id|fcode
 suffix:semicolon
 r_struct
 (brace
-macro_line|#ifndef BIG_ENDIAN_BITFIELD /* Little endian order */
+macro_line|#if defined(__LITTLE_ENDIAN) /* Little endian order */
 DECL|member|prefix
 r_int
 r_int
@@ -83,7 +83,7 @@ r_int
 r_char
 id|pad
 suffix:semicolon
-macro_line|#else /* Big endian order */
+macro_line|#elif defined(__BIG_ENDIAN) /* Big endian order */
 r_int
 r_char
 id|pad

@@ -6602,7 +6602,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ide: to fix it, run:  /usr/src/linux/drivers/block/MAKEDEV.ide&bslash;n&quot;
+l_string|&quot;ide: to fix it, run:  /usr/src/linux/scripts/MAKEDEV.ide&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

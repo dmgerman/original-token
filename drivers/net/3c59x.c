@@ -3692,6 +3692,8 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 multiline_comment|/* Part of the following code is inspired by code from Giuseppe Ciaccio,&n;&t;   ciaccio@disi.unige.it.&n;&t;   It works around a ?bug? in the 8K Vortex that only occurs on some&n;&t;   systems: the TxAvailable interrupt seems to be lost.&n;&t;   The ugly work-around is to busy-wait for room available in the Tx&n;&t;   buffer before deciding the transmitter is actually hung.&n;&t;   This busy-wait should never really occur, since the problem is that&n;&t;   there actually *is*  room in the Tx FIFO.&n;&n;&t;   This pointed out an optimization -- we can ignore dev-&gt;tbusy if&n;&t;   we actually have room for this packet.&n;&t;   */
+macro_line|#if 0
+multiline_comment|/* unstable optimization */
 r_if
 c_cond
 (paren
@@ -3712,6 +3714,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Fake out the check below. */
 r_else
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -474,6 +474,12 @@ comma
 id|X
 c_func
 (paren
+id|skb_device_unlock
+)paren
+comma
+id|X
+c_func
+(paren
 id|netif_rx
 )paren
 comma

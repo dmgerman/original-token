@@ -28,7 +28,7 @@ id|page-&gt;map_nr
 suffix:semicolon
 )brace
 DECL|macro|PAGE_HASH_BITS
-mdefine_line|#define PAGE_HASH_BITS 10
+mdefine_line|#define PAGE_HASH_BITS 11
 DECL|macro|PAGE_HASH_SIZE
 mdefine_line|#define PAGE_HASH_SIZE (1 &lt;&lt; PAGE_HASH_BITS)
 DECL|macro|PAGE_AGE_VALUE
@@ -121,9 +121,6 @@ id|page
 op_star
 id|page
 suffix:semicolon
-r_for
-c_loop
-(paren
 id|page
 op_assign
 id|page_hash
@@ -134,13 +131,31 @@ comma
 id|offset
 )paren
 suffix:semicolon
-id|page
+r_goto
+id|inside
 suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
 id|page
 op_assign
 id|page-&gt;next_hash
+suffix:semicolon
+id|inside
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|page
 )paren
-(brace
+r_goto
+id|not_found
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -154,11 +169,12 @@ r_if
 c_cond
 (paren
 id|page-&gt;offset
-op_ne
+op_eq
 id|offset
 )paren
-r_continue
+r_break
 suffix:semicolon
+)brace
 multiline_comment|/* Found the page. */
 id|atomic_inc
 c_func
@@ -176,9 +192,8 @@ op_amp
 id|page-&gt;flags
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
+id|not_found
+suffix:colon
 r_return
 id|page
 suffix:semicolon

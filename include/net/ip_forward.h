@@ -10,6 +10,8 @@ mdefine_line|#define IPFWD_MASQUERADED&t;4
 DECL|macro|IPFWD_MULTICASTING
 mdefine_line|#define IPFWD_MULTICASTING&t;8
 DECL|macro|IPFWD_MULTITUNNEL
-mdefine_line|#define IPFWD_MULTITUNNEL&t;16
+mdefine_line|#define IPFWD_MULTITUNNEL&t;0x10
+DECL|macro|IPFWD_NOTTLDEC
+mdefine_line|#define IPFWD_NOTTLDEC&t;&t;0x20
 macro_line|#endif
 eof

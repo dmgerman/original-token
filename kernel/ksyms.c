@@ -35,6 +35,7 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/ctype.h&gt;
 r_extern
 r_int
 r_char
@@ -1168,6 +1169,12 @@ id|X
 c_func
 (paren
 id|hard_reset_now
+)paren
+comma
+id|X
+c_func
+(paren
+id|_ctype
 )paren
 comma
 multiline_comment|/* Signal interfaces */

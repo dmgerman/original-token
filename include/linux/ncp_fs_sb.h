@@ -17,6 +17,13 @@ id|ncp_mount_data
 id|m
 suffix:semicolon
 multiline_comment|/* Nearly all of the mount data is of&n;&t;&t;&t;&t;    interest for us later, so we store&n;&t;&t;&t;&t;    it completely. */
+DECL|member|name_space
+id|__u8
+id|name_space
+(braket
+id|NCP_NUMBER_OF_VOLUMES
+)braket
+suffix:semicolon
 DECL|member|ncp_filp
 r_struct
 id|file

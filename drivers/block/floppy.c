@@ -130,6 +130,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt; /* CMOS defines */
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -4437,6 +4438,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|fd_cacheflush
+c_func
+(paren
+id|raw_cmd-&gt;kernel_data
+comma
+id|raw_cmd-&gt;length
+)paren
+suffix:semicolon
 id|fd_set_dma_mode
 c_func
 (paren
@@ -7122,6 +7131,14 @@ c_cond
 id|handler
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|intr_count
+op_ge
+l_int|2
+)paren
+(brace
 multiline_comment|/* expected interrupt */
 id|floppy_tq.routine
 op_assign
@@ -7142,7 +7159,20 @@ op_amp
 id|floppy_tq
 comma
 op_amp
-id|tq_timer
+id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
+)paren
+suffix:semicolon
+)brace
+r_else
+id|handler
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -8144,7 +8174,13 @@ op_amp
 id|floppy_tq
 comma
 op_amp
-id|tq_timer
+id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
 )paren
 suffix:semicolon
 id|INT_OFF
@@ -10157,15 +10193,6 @@ id|COMMAND
 op_eq
 id|FD_READ
 )paren
-(brace
-id|fd_cacheflush
-c_func
-(paren
-id|dma_buffer
-comma
-id|size
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -10176,9 +10203,7 @@ comma
 id|size
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|memcpy
 c_func
 (paren
@@ -10189,15 +10214,6 @@ comma
 id|size
 )paren
 suffix:semicolon
-id|fd_cacheflush
-c_func
-(paren
-id|dma_buffer
-comma
-id|size
-)paren
-suffix:semicolon
-)brace
 id|remaining
 op_sub_assign
 id|size
@@ -11810,6 +11826,12 @@ id|redo_fd_request
 )paren
 r_return
 suffix:semicolon
+id|disk_change
+c_func
+(paren
+id|current_drive
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11963,7 +11985,13 @@ op_amp
 id|floppy_tq
 comma
 op_amp
-id|tq_timer
+id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUGT
@@ -12033,7 +12061,13 @@ op_amp
 id|request_tq
 comma
 op_amp
-id|tq_timer
+id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
 )paren
 suffix:semicolon
 )brace
@@ -12046,6 +12080,11 @@ c_func
 r_void
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -12293,16 +12332,6 @@ id|size
 )paren
 )paren
 suffix:semicolon
-id|fd_cacheflush
-c_func
-(paren
-id|address
-comma
-id|size
-)paren
-suffix:semicolon
-multiline_comment|/* is this necessary ??? */
-multiline_comment|/* Ralf: Yes; only the l2 cache is completely chipset&n;&t;   controlled */
 id|memcpy_tofs
 c_func
 (paren
@@ -12463,7 +12492,7 @@ id|flag
 )paren
 (brace
 id|raw_cmd-&gt;flags
-op_assign
+op_or_assign
 id|FD_RAW_FAILURE
 suffix:semicolon
 id|raw_cmd-&gt;flags

@@ -152,9 +152,6 @@ mdefine_line|#define BusLogic_UntaggedQueueDepth&t;&t;3
 multiline_comment|/*&n;  Define the default amount of time in seconds to wait between a Host Adapter&n;  Hard Reset which initiates a SCSI Bus Reset and issuing any SCSI commands.&n;  Some SCSI devices get confused if they receive SCSI commands too soon after&n;  a SCSI Bus Reset.&n;*/
 DECL|macro|BusLogic_DefaultBusSettleTime
 mdefine_line|#define BusLogic_DefaultBusSettleTime&t;&t;2
-multiline_comment|/*&n;  Define the possible Local Options.&n;*/
-DECL|macro|BusLogic_InhibitTargetInquiry
-mdefine_line|#define BusLogic_InhibitTargetInquiry&t;&t;1
 multiline_comment|/*&n;  Define the possible Probe Options.&n;*/
 DECL|macro|BusLogic_NoProbe
 mdefine_line|#define BusLogic_NoProbe&t;&t;&t;1
@@ -162,6 +159,9 @@ DECL|macro|BusLogic_NoProbeISA
 mdefine_line|#define BusLogic_NoProbeISA&t;&t;&t;2
 DECL|macro|BusLogic_NoSortPCI
 mdefine_line|#define BusLogic_NoSortPCI&t;&t;&t;4
+multiline_comment|/*&n;  Define the possible Local Options.&n;*/
+DECL|macro|BusLogic_InhibitTargetInquiry
+mdefine_line|#define BusLogic_InhibitTargetInquiry&t;&t;1
 multiline_comment|/*&n;  Define the possible Global Options.&n;*/
 DECL|macro|BusLogic_TraceProbe
 mdefine_line|#define BusLogic_TraceProbe&t;&t;&t;1
@@ -248,7 +248,7 @@ mdefine_line|#define BusLogic_DataInRegister&t;&t;&t;1&t;/* RO register */
 DECL|macro|BusLogic_InterruptRegister
 mdefine_line|#define BusLogic_InterruptRegister&t;&t;2&t;/* RO register */
 DECL|macro|BusLogic_GeometryRegister
-mdefine_line|#define BusLogic_GeometryRegister&t;&t;3&t;/* RO, undocumented */
+mdefine_line|#define BusLogic_GeometryRegister&t;&t;3&t;/* RO register */
 multiline_comment|/*&n;  Define the bits in the write-only Control Register.&n;*/
 DECL|macro|BusLogic_ReservedCR
 mdefine_line|#define BusLogic_ReservedCR&t;&t;&t;0x0F
@@ -290,7 +290,7 @@ DECL|macro|BusLogic_ReservedIR
 mdefine_line|#define BusLogic_ReservedIR&t;&t;&t;0x70
 DECL|macro|BusLogic_InterruptValid
 mdefine_line|#define BusLogic_InterruptValid&t;&t;&t;0x80
-multiline_comment|/*&n;  Define the bits in the undocumented read-only Geometry Register.&n;*/
+multiline_comment|/*&n;  Define the bits in the read-only Geometry Register.&n;*/
 DECL|macro|BusLogic_Drive0Geometry
 mdefine_line|#define BusLogic_Drive0Geometry&t;&t;&t;0x03
 DECL|macro|BusLogic_Drive1Geometry
@@ -308,204 +308,220 @@ id|BusLogic_TestCommandCompleteInterrupt
 op_assign
 l_int|0x00
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_InitializeMailbox
 id|BusLogic_InitializeMailbox
 op_assign
 l_int|0x01
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_ExecuteMailboxCommand
 id|BusLogic_ExecuteMailboxCommand
 op_assign
 l_int|0x02
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_ExecuteBIOSCommand
 id|BusLogic_ExecuteBIOSCommand
 op_assign
 l_int|0x03
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_InquireBoardID
 id|BusLogic_InquireBoardID
 op_assign
 l_int|0x04
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_EnableOutgoingMailboxAvailableInt
 id|BusLogic_EnableOutgoingMailboxAvailableInt
 op_assign
 l_int|0x05
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_SetSCSISelectionTimeout
 id|BusLogic_SetSCSISelectionTimeout
 op_assign
 l_int|0x06
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_SetPreemptTimeOnBus
 id|BusLogic_SetPreemptTimeOnBus
 op_assign
 l_int|0x07
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_SetTimeOffBus
 id|BusLogic_SetTimeOffBus
 op_assign
 l_int|0x08
 comma
-multiline_comment|/* ISA Bus only */
 DECL|enumerator|BusLogic_SetBusTransferRate
 id|BusLogic_SetBusTransferRate
 op_assign
 l_int|0x09
 comma
-multiline_comment|/* ISA Bus only */
 DECL|enumerator|BusLogic_InquireInstalledDevicesID0to7
 id|BusLogic_InquireInstalledDevicesID0to7
 op_assign
 l_int|0x0A
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_InquireConfiguration
 id|BusLogic_InquireConfiguration
 op_assign
 l_int|0x0B
 comma
-multiline_comment|/* documented */
-DECL|enumerator|BusLogic_SetTargetMode
-id|BusLogic_SetTargetMode
+DECL|enumerator|BusLogic_EnableTargetMode
+id|BusLogic_EnableTargetMode
 op_assign
 l_int|0x0C
 comma
-multiline_comment|/* now undocumented */
 DECL|enumerator|BusLogic_InquireSetupInformation
 id|BusLogic_InquireSetupInformation
 op_assign
 l_int|0x0D
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_WriteAdapterLocalRAM
 id|BusLogic_WriteAdapterLocalRAM
 op_assign
 l_int|0x1A
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_ReadAdapterLocalRAM
 id|BusLogic_ReadAdapterLocalRAM
 op_assign
 l_int|0x1B
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_WriteBusMasterChipFIFO
 id|BusLogic_WriteBusMasterChipFIFO
 op_assign
 l_int|0x1C
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_ReadBusMasterChipFIFO
 id|BusLogic_ReadBusMasterChipFIFO
 op_assign
 l_int|0x1D
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_EchoCommandData
 id|BusLogic_EchoCommandData
 op_assign
 l_int|0x1F
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_HostAdapterDiagnostic
 id|BusLogic_HostAdapterDiagnostic
 op_assign
 l_int|0x20
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_SetAdapterOptions
 id|BusLogic_SetAdapterOptions
 op_assign
 l_int|0x21
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_InquireInstalledDevicesID8to15
 id|BusLogic_InquireInstalledDevicesID8to15
 op_assign
 l_int|0x23
 comma
-multiline_comment|/* Wide only */
-DECL|enumerator|BusLogic_InquireDevices
-id|BusLogic_InquireDevices
+DECL|enumerator|BusLogic_InquireTargetDevices
+id|BusLogic_InquireTargetDevices
 op_assign
 l_int|0x24
 comma
-multiline_comment|/* &quot;W&quot; and &quot;C&quot; only */
+DECL|enumerator|BusLogic_DisableHostAdapterInterrupt
+id|BusLogic_DisableHostAdapterInterrupt
+op_assign
+l_int|0x25
+comma
 DECL|enumerator|BusLogic_InitializeExtendedMailbox
 id|BusLogic_InitializeExtendedMailbox
 op_assign
 l_int|0x81
 comma
-multiline_comment|/* documented */
+DECL|enumerator|BusLogic_ExecuteSCSICommand
+id|BusLogic_ExecuteSCSICommand
+op_assign
+l_int|0x83
+comma
 DECL|enumerator|BusLogic_InquireFirmwareVersion3rdDigit
 id|BusLogic_InquireFirmwareVersion3rdDigit
 op_assign
 l_int|0x84
 comma
-multiline_comment|/* undocumented */
 DECL|enumerator|BusLogic_InquireFirmwareVersionLetter
 id|BusLogic_InquireFirmwareVersionLetter
 op_assign
 l_int|0x85
 comma
-multiline_comment|/* undocumented */
 DECL|enumerator|BusLogic_InquireGenericIOPortInformation
 id|BusLogic_InquireGenericIOPortInformation
 op_assign
 l_int|0x86
 comma
-multiline_comment|/* PCI only */
-DECL|enumerator|BusLogic_InquireBoardModelNumber
-id|BusLogic_InquireBoardModelNumber
+DECL|enumerator|BusLogic_InquireControllerModelNumber
+id|BusLogic_InquireControllerModelNumber
 op_assign
 l_int|0x8B
 comma
-multiline_comment|/* undocumented */
 DECL|enumerator|BusLogic_InquireSynchronousPeriod
 id|BusLogic_InquireSynchronousPeriod
 op_assign
 l_int|0x8C
 comma
-multiline_comment|/* undocumented */
 DECL|enumerator|BusLogic_InquireExtendedSetupInformation
 id|BusLogic_InquireExtendedSetupInformation
 op_assign
 l_int|0x8D
 comma
-multiline_comment|/* documented */
 DECL|enumerator|BusLogic_EnableStrictRoundRobinMode
 id|BusLogic_EnableStrictRoundRobinMode
 op_assign
 l_int|0x8F
 comma
-multiline_comment|/* documented */
+DECL|enumerator|BusLogic_StoreHostAdapterLocalRAM
+id|BusLogic_StoreHostAdapterLocalRAM
+op_assign
+l_int|0x90
+comma
 DECL|enumerator|BusLogic_FetchHostAdapterLocalRAM
 id|BusLogic_FetchHostAdapterLocalRAM
 op_assign
 l_int|0x91
 comma
-multiline_comment|/* undocumented */
+DECL|enumerator|BusLogic_StoreLocalDataInEEPROM
+id|BusLogic_StoreLocalDataInEEPROM
+op_assign
+l_int|0x92
+comma
+DECL|enumerator|BusLogic_UploadAutoSCSICode
+id|BusLogic_UploadAutoSCSICode
+op_assign
+l_int|0x94
+comma
 DECL|enumerator|BusLogic_ModifyIOAddress
 id|BusLogic_ModifyIOAddress
 op_assign
 l_int|0x95
 comma
-multiline_comment|/* PCI only */
-DECL|enumerator|BusLogic_EnableWideModeCCB
-id|BusLogic_EnableWideModeCCB
+DECL|enumerator|BusLogic_SetCCBFormat
+id|BusLogic_SetCCBFormat
 op_assign
 l_int|0x96
-multiline_comment|/* Wide only */
+comma
+DECL|enumerator|BusLogic_WriteInquiryBuffer
+id|BusLogic_WriteInquiryBuffer
+op_assign
+l_int|0x9A
+comma
+DECL|enumerator|BusLogic_ReadInquiryBuffer
+id|BusLogic_ReadInquiryBuffer
+op_assign
+l_int|0x9B
+comma
+DECL|enumerator|BusLogic_FlashROMUploadDownload
+id|BusLogic_FlashROMUploadDownload
+op_assign
+l_int|0xA7
+comma
+DECL|enumerator|BusLogic_ReadSCAMData
+id|BusLogic_ReadSCAMData
+op_assign
+l_int|0xA8
+comma
+DECL|enumerator|BusLogic_WriteSCAMData
+id|BusLogic_WriteSCAMData
+op_assign
+l_int|0xA9
 )brace
 DECL|typedef|BusLogic_OperationCode_T
 id|BusLogic_OperationCode_T
@@ -554,7 +570,7 @@ id|BusLogic_InstalledDevices8_T
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/*&n;  Define the Inquire Devices reply type.  Inquire Devices only tests Logical&n;  Unit 0 of each Target Device unlike Inquire Installed Devices which tests&n;  Logical Units 0 - 7.  Two bytes are returned, where bit 0 set indicates&n;  that Target Device 0 exists, and so on.&n;*/
+multiline_comment|/*&n;  Define the Inquire Target Devices reply type.  Inquire Target Devices only&n;  tests Logical Unit 0 of each Target Device unlike the Inquire Installed&n;  Devices commands which test Logical Units 0 - 7.  Two bytes are returned,&n;  where bit 0 set indicates that Target Device 0 exists, and so on.&n;*/
 DECL|typedef|BusLogic_InstalledDevices_T
 r_typedef
 r_int
@@ -796,10 +812,10 @@ r_char
 id|CharacterD
 suffix:semicolon
 multiline_comment|/* Byte 18 */
-DECL|member|BusLetter
+DECL|member|HostBusType
 r_int
 r_char
-id|BusLetter
+id|HostBusType
 suffix:semicolon
 multiline_comment|/* Byte 19 */
 r_int
@@ -946,12 +962,12 @@ multiline_comment|/* Byte 3 */
 DECL|typedef|BusLogic_GenericIOPortInformation_T
 id|BusLogic_GenericIOPortInformation_T
 suffix:semicolon
-multiline_comment|/*&n;  Define the Inquire Board Model Number reply type.&n;*/
-DECL|typedef|BusLogic_BoardModelNumber_T
+multiline_comment|/*&n;  Define the Inquire Controller Model Number reply type.&n;*/
+DECL|typedef|BusLogic_ControllerModelNumber_T
 r_typedef
 r_int
 r_char
-id|BusLogic_BoardModelNumber_T
+id|BusLogic_ControllerModelNumber_T
 (braket
 l_int|5
 )braket
@@ -1069,12 +1085,19 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Byte 13 Bit 3 */
+DECL|member|HostSmartTermination
+id|boolean
+id|HostSmartTermination
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 13 Bit 4 */
 r_int
 r_char
 suffix:colon
-l_int|4
+l_int|3
 suffix:semicolon
-multiline_comment|/* Byte 13 Bits 4-7 */
+multiline_comment|/* Byte 13 Bits 5-7 */
 )brace
 DECL|typedef|BusLogic_ExtendedSetupInformation_T
 id|BusLogic_ExtendedSetupInformation_T
@@ -1201,18 +1224,18 @@ r_int
 r_char
 id|BusLogic_ModifyIOAddressRequest_T
 suffix:semicolon
-multiline_comment|/*&n;  Define the Enable Wide Mode SCSI CCB request type.  Wide Mode CCBs are&n;  necessary to support more than 8 Logical Units per Target Device.&n;*/
-DECL|macro|BusLogic_NormalModeCCB
-mdefine_line|#define BusLogic_NormalModeCCB&t;&t;&t;0x00
-DECL|macro|BusLogic_WideModeCCB
-mdefine_line|#define BusLogic_WideModeCCB&t;&t;&t;0x01
-DECL|typedef|BusLogic_WideModeCCBRequest_T
+multiline_comment|/*&n;  Define the Set CCB Format request type.  64 LUN Format CCBs are necessary to&n;  support 64 Logical Units per Target Device.  8 LUN Format CCBs only support 8&n;  Logical Units per Target Device.&n;*/
+DECL|macro|BusLogic_8LUNFormatCCB
+mdefine_line|#define BusLogic_8LUNFormatCCB&t;&t;&t;0x00
+DECL|macro|BusLogic_64LUNFormatCCB
+mdefine_line|#define BusLogic_64LUNFormatCCB&t;&t;&t;0x01
+DECL|typedef|BusLogic_SetCCBFormatRequest_T
 r_typedef
 r_int
 r_char
-id|BusLogic_WideModeCCBRequest_T
+id|BusLogic_SetCCBFormatRequest_T
 suffix:semicolon
-multiline_comment|/*&n;  Define the Requested Reply Length type used by the Inquire Setup Information,&n;  Inquire Board Model Number, Inquire Synchronous Period, and Inquire Extended&n;  Setup Information commands.&n;*/
+multiline_comment|/*&n;  Define the Requested Reply Length type used by the Inquire Setup Information,&n;  Inquire Controller Model Number, Inquire Synchronous Period, and Inquire&n;  Extended Setup Information commands.&n;*/
 DECL|typedef|BusLogic_RequestedReplyLength_T
 r_typedef
 r_int
@@ -1553,7 +1576,7 @@ multiline_comment|/* Bytes 4-7 */
 DECL|typedef|BusLogic_ScatterGatherSegment_T
 id|BusLogic_ScatterGatherSegment_T
 suffix:semicolon
-multiline_comment|/*&n;  Define the 32 Bit Mode Command Control Block (CCB) structure.  The first 40&n;  bytes are defined by the Host Adapter Firmware Interface.  The remaining&n;  components are defined by the Linux BusLogic Driver.  Wide Mode CCBs differ&n;  from standard 32 Bit Mode CCBs only in having the TagEnable and QueueTag&n;  fields moved from byte 17 to byte 1, and the Logical Unit field in byte 17&n;  expanded to 6 bits; unfortunately, using a union of structs containing&n;  enumeration type bitfields to provide both definitions leads to packing&n;  problems, so the following definition is used which requires setting&n;  TagEnable to Logical Unit bit 5 in Wide Mode CCBs.&n;*/
+multiline_comment|/*&n;  Define the 32 Bit Mode Command Control Block (CCB) structure.  The first 40&n;  bytes are defined by the Host Adapter Firmware Interface.  The remaining&n;  components are defined by the Linux BusLogic Driver.  64 LUN Format CCBs&n;  differ from standard 8 LUN Format 32 Bit Mode CCBs only in having the&n;  TagEnable and QueueTag fields moved from byte 17 to byte 1, and the Logical&n;  Unit field in byte 17 expanded to 6 bits; unfortunately, using a union of&n;  structs containing enumeration type bitfields to provide both definitions&n;  leads to packing problems, so the following definition is used which requires&n;  setting TagEnable to Logical Unit bit 5 in 64 LUN Format CCBs.&n;*/
 DECL|struct|BusLogic_CCB
 r_typedef
 r_struct
@@ -1580,16 +1603,16 @@ suffix:colon
 l_int|2
 suffix:semicolon
 multiline_comment|/* Byte 1 Bits 3-4 */
-DECL|member|WideModeTagEnable
+DECL|member|TagEnable64LUN
 id|boolean
-id|WideModeTagEnable
+id|TagEnable64LUN
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Byte 1 Bit 5 */
-DECL|member|WideModeQueueTag
+DECL|member|QueueTag64LUN
 id|BusLogic_QueueTag_T
-id|WideModeQueueTag
+id|QueueTag64LUN
 suffix:colon
 l_int|2
 suffix:semicolon
@@ -1982,10 +2005,10 @@ id|FirmwareVersion
 l_int|6
 )braket
 suffix:semicolon
-DECL|member|BoardName
+DECL|member|ControllerName
 r_int
 r_char
-id|BoardName
+id|ControllerName
 (braket
 l_int|18
 )braket
@@ -2103,9 +2126,15 @@ id|BounceBuffersRequired
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|StrictRoundRobinModeSupported
+DECL|member|StrictRoundRobinModeSupport
 id|boolean
-id|StrictRoundRobinModeSupported
+id|StrictRoundRobinModeSupport
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|Host64LUNSupport
+id|boolean
+id|Host64LUNSupport
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -2652,6 +2681,10 @@ c_loop
 id|jiffies
 OL
 id|TimeoutJiffies
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 id|restore_flags

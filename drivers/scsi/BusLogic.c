@@ -1,8 +1,8 @@
 multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster SCSI Host Adapters&n;&n;  Copyright 1995 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation, provided that none of the source code or runtime&n;  copyright notices are removed or modified.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen and Alex Win of BusLogic, whose advice has been&n;  invaluable, to David Gentzel, for writing the original Linux BusLogic driver,&n;  and to Paul Gortmaker, for being such a dedicated test site.&n;&n;*/
 DECL|macro|BusLogic_DriverVersion
-mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.5&quot;
+mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.6&quot;
 DECL|macro|BusLogic_DriverDate
-mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;7 July 1996&quot;
+mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;17 July 1996&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -192,7 +192,7 @@ op_assign
 l_bool|true
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  BusLogic_DriverInfo returns the Board Name to identify this SCSI Driver&n;  and Host Adapter.&n;*/
+multiline_comment|/*&n;  BusLogic_DriverInfo returns the Controller Name to identify this SCSI Driver&n;  and Host Adapter.&n;*/
 DECL|function|BusLogic_DriverInfo
 r_const
 r_char
@@ -216,7 +216,7 @@ op_star
 id|Host-&gt;hostdata
 suffix:semicolon
 r_return
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_RegisterHostAdapter adds Host Adapter to the list of registered&n;  BusLogic Host Adapters.&n;*/
@@ -901,7 +901,7 @@ op_assign
 id|CCB
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  BusLogic_Command sends the command OperationCode to HostAdapter, optionally&n;  providing ParameterLength bytes of ParameterData and receiving at most&n;  ReplyLength bytes of ReplyData; any excess reply data is received but&n;  discarded.&n;&n;  On success, this function returns the number of reply bytes read from&n;  the Host Adapter (including any discarded data); on failure, it returns&n;  -1 if the command was invalid, or -2 if a timeout occurred.&n;&n;  This function is only called during board detection and initialization, so&n;  performance and latency are not critical, and exclusive access to the Host&n;  Adapter hardware is assumed.  Once the board and driver are initialized, the&n;  only Host Adapter command that is issued is the single byte Execute Mailbox&n;  Command operation code , which does not require waiting for the Host Adapter&n;  Ready bit to be set in the Status Register.&n;*/
+multiline_comment|/*&n;  BusLogic_Command sends the command OperationCode to HostAdapter, optionally&n;  providing ParameterLength bytes of ParameterData and receiving at most&n;  ReplyLength bytes of ReplyData; any excess reply data is received but&n;  discarded.&n;&n;  On success, this function returns the number of reply bytes read from&n;  the Host Adapter (including any discarded data); on failure, it returns&n;  -1 if the command was invalid, or -2 if a timeout occurred.&n;&n;  This function is only called during controller detection and initialization,&n;  so performance and latency are not critical, and exclusive access to the Host&n;  Adapter hardware is assumed.  Once the controller and driver are initialized,&n;  the only Host Adapter command that is issued is the single byte Execute&n;  Mailbox Command operation code, which does not require waiting for the Host&n;  Adapter Ready bit to be set in the Status Register.&n;*/
 DECL|function|BusLogic_Command
 r_static
 r_int
@@ -1216,7 +1216,7 @@ r_case
 id|BusLogic_InquireInstalledDevicesID8to15
 suffix:colon
 r_case
-id|BusLogic_InquireDevices
+id|BusLogic_InquireTargetDevices
 suffix:colon
 multiline_comment|/* Approximately 60 seconds. */
 id|TimeoutCounter
@@ -2153,7 +2153,7 @@ l_int|0xFF
 r_return
 l_bool|false
 suffix:semicolon
-multiline_comment|/*&n;    Read the undocumented BusLogic Geometry Register to test if there is an I/O&n;    port that responds.  Adaptec Host Adapters do not implement the Geometry&n;    Register, so this test helps serve to avoid incorrectly recognizing an&n;    Adaptec 1542A or 1542B as a BusLogic.  Unfortunately, the Adaptec 1542C&n;    series does respond to the Geometry Register I/O port, but it will be&n;    rejected later when the Inquire Extended Setup Information command is&n;    issued in BusLogic_CheckHostAdapter.  The AMI FastDisk Host Adapter is a&n;    BusLogic clone that implements the same interface as earlier BusLogic&n;    boards, including the undocumented commands, and is therefore supported by&n;    this driver.  However, the AMI FastDisk always returns 0x00 upon reading&n;    the Geometry Register, so the extended translation option should always be&n;    left disabled on the AMI FastDisk.&n;  */
+multiline_comment|/*&n;    Read the undocumented BusLogic Geometry Register to test if there is an I/O&n;    port that responds.  Adaptec Host Adapters do not implement the Geometry&n;    Register, so this test helps serve to avoid incorrectly recognizing an&n;    Adaptec 1542A or 1542B as a BusLogic.  Unfortunately, the Adaptec 1542C&n;    series does respond to the Geometry Register I/O port, but it will be&n;    rejected later when the Inquire Extended Setup Information command is&n;    issued in BusLogic_CheckHostAdapter.  The AMI FastDisk Host Adapter is a&n;    BusLogic clone that implements the same interface as earlier BusLogic&n;    controllers, including the undocumented commands, and is therefore&n;    supported by this driver.  However, the AMI FastDisk always returns 0x00&n;    upon reading the Geometry Register, so the extended translation option&n;    should always be left disabled on the AMI FastDisk.&n;  */
 id|GeometryRegister
 op_assign
 id|BusLogic_ReadGeometryRegister
@@ -2614,8 +2614,8 @@ suffix:semicolon
 id|BusLogic_ExtendedSetupInformation_T
 id|ExtendedSetupInformation
 suffix:semicolon
-id|BusLogic_BoardModelNumber_T
-id|BoardModelNumber
+id|BusLogic_ControllerModelNumber_T
+id|ControllerModelNumber
 suffix:semicolon
 id|BusLogic_FirmwareVersion3rdDigit_T
 id|FirmwareVersion3rdDigit
@@ -2838,7 +2838,7 @@ comma
 l_string|&quot;INQUIRE EXTENDED SETUP INFORMATION&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;    Issue the Inquire Board Model Number command.&n;  */
+multiline_comment|/*&n;    Issue the Inquire Controller Model Number command.&n;  */
 r_if
 c_cond
 (paren
@@ -2854,7 +2854,7 @@ multiline_comment|/* BusLogic BT-542B ISA 2.xx */
 id|strcpy
 c_func
 (paren
-id|BoardModelNumber
+id|ControllerModelNumber
 comma
 l_string|&quot;542B&quot;
 )paren
@@ -2875,7 +2875,7 @@ multiline_comment|/* AMI FastDisk EISA Series 441 0.x */
 id|strcpy
 c_func
 (paren
-id|BoardModelNumber
+id|ControllerModelNumber
 comma
 l_string|&quot;747A&quot;
 )paren
@@ -2886,7 +2886,7 @@ id|RequestedReplyLength
 op_assign
 r_sizeof
 (paren
-id|BoardModelNumber
+id|ControllerModelNumber
 )paren
 suffix:semicolon
 r_if
@@ -2897,7 +2897,7 @@ c_func
 (paren
 id|HostAdapter
 comma
-id|BusLogic_InquireBoardModelNumber
+id|BusLogic_InquireControllerModelNumber
 comma
 op_amp
 id|RequestedReplyLength
@@ -2908,17 +2908,17 @@ id|RequestedReplyLength
 )paren
 comma
 op_amp
-id|BoardModelNumber
+id|ControllerModelNumber
 comma
 r_sizeof
 (paren
-id|BoardModelNumber
+id|ControllerModelNumber
 )paren
 )paren
 op_ne
 r_sizeof
 (paren
-id|BoardModelNumber
+id|ControllerModelNumber
 )paren
 )paren
 r_return
@@ -2927,7 +2927,7 @@ c_func
 (paren
 id|HostAdapter
 comma
-l_string|&quot;INQUIRE BOARD MODEL NUMBER&quot;
+l_string|&quot;INQUIRE CONTROLLER MODEL NUMBER&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2981,7 +2981,7 @@ l_string|&quot;INQUIRE FIRMWARE 3RD DIGIT&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    BusLogic Host Adapters can be identified by their model number and&n;    the major version number of their firmware as follows:&n;&n;    5.xx&t;BusLogic &quot;W&quot; Series Host Adapters:&n;&t;&t;  BT-948/958/958D&n;    4.xx&t;BusLogic &quot;C&quot; Series Host Adapters:&n;&t;&t;  BT-946C/956C/956CD/747C/757C/757CD/445C/545C/540CF&n;    3.xx&t;BusLogic &quot;S&quot; Series Host Adapters:&n;&t;&t;  BT-747S/747D/757S/757D/445S/545S/542D&n;&t;&t;  BT-542B/742A (revision H)&n;    2.xx&t;BusLogic &quot;A&quot; Series Host Adapters:&n;&t;&t;  BT-542B/742A (revision G and below)&n;    0.xx&t;AMI FastDisk VLB/EISA BusLogic Clone Host Adapter&n;  */
-multiline_comment|/*&n;    Save the Model Name and Board Name in the Host Adapter structure.&n;  */
+multiline_comment|/*&n;    Save the Model Name and Controller Name in the Host Adapter structure.&n;  */
 id|TargetPointer
 op_assign
 id|HostAdapter-&gt;ModelName
@@ -3015,7 +3015,7 @@ id|i
 OL
 r_sizeof
 (paren
-id|BoardModelNumber
+id|ControllerModelNumber
 )paren
 suffix:semicolon
 id|i
@@ -3024,7 +3024,7 @@ op_increment
 (brace
 id|Character
 op_assign
-id|BoardModelNumber
+id|ControllerModelNumber
 (braket
 id|i
 )braket
@@ -3058,7 +3058,7 @@ suffix:semicolon
 id|strcpy
 c_func
 (paren
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 comma
 l_string|&quot;BusLogic &quot;
 )paren
@@ -3066,7 +3066,7 @@ suffix:semicolon
 id|strcat
 c_func
 (paren
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 comma
 id|HostAdapter-&gt;ModelName
 )paren
@@ -3076,7 +3076,7 @@ c_func
 (paren
 id|HostAdapter-&gt;InterruptLabel
 comma
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    Save the Firmware Version in the Host Adapter structure.&n;  */
@@ -3559,7 +3559,7 @@ id|HostAdapter-&gt;ExtendedTranslation
 op_assign
 l_bool|true
 suffix:semicolon
-multiline_comment|/*&n;    Save the Disconnect/Reconnect Permitted flag bits in the Host Adapter&n;    structure.  The Disconnect Permitted information is only valid on &quot;W&quot; and&n;    &quot;C&quot; Series boards, but Disconnect/Reconnect is always permitted on &quot;S&quot; and&n;    &quot;A&quot; Series boards.&n;  */
+multiline_comment|/*&n;    Save the Disconnect/Reconnect Permitted flag bits in the Host Adapter&n;    structure.  The Disconnect Permitted information is only valid on &quot;W&quot; and&n;    &quot;C&quot; Series controllers, but Disconnect/Reconnect is always permitted on &quot;S&quot;&n;    and &quot;A&quot; Series controllers.&n;  */
 r_if
 c_cond
 (paren
@@ -3630,6 +3630,32 @@ id|HostAdapter-&gt;HostUltraSCSI
 op_assign
 id|ExtendedSetupInformation.HostUltraSCSI
 suffix:semicolon
+multiline_comment|/*&n;    Determine whether 64 LUN Format CCBs are supported and save the information&n;    in the Host Adapter structure.&n;  */
+r_if
+c_cond
+(paren
+id|HostAdapter-&gt;FirmwareVersion
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;5&squot;
+op_logical_or
+(paren
+id|HostAdapter-&gt;FirmwareVersion
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;4&squot;
+op_logical_and
+id|HostAdapter-&gt;HostWideSCSI
+)paren
+)paren
+id|HostAdapter-&gt;Host64LUNSupport
+op_assign
+l_bool|true
+suffix:semicolon
 multiline_comment|/*&n;    Determine the Host Adapter BIOS Address if the BIOS is enabled and&n;    save it in the Host Adapter structure.  The BIOS is disabled if the&n;    BIOS_Address is 0.&n;  */
 id|HostAdapter-&gt;BIOS_Address
 op_assign
@@ -3653,7 +3679,7 @@ id|HostAdapter-&gt;BounceBuffersRequired
 op_assign
 l_bool|true
 suffix:semicolon
-multiline_comment|/*&n;    BusLogic BT-445S Host Adapters prior to board revision E have a hardware&n;    bug whereby when the BIOS is enabled, transfers to/from the same address&n;    range the BIOS occupies modulo 16MB are handled incorrectly.  Only properly&n;    functioning BT-445S boards have firmware version 3.37, so we require that&n;    ISA Bounce Buffers be used for the buggy BT-445S models if there is more&n;    than 16MB memory.&n;  */
+multiline_comment|/*&n;    BusLogic BT-445S Host Adapters prior to controller revision E have a&n;    hardware bug whereby when the BIOS is enabled, transfers to/from the same&n;    address range the BIOS occupies modulo 16MB are handled incorrectly.  Only&n;    properly functioning BT-445S controllers have firmware version 3.37, so we&n;    require that ISA Bounce Buffers be used for the buggy BT-445S models if&n;    there is more than 16MB memory.&n;  */
 r_if
 c_cond
 (paren
@@ -3686,32 +3712,28 @@ op_assign
 l_bool|true
 suffix:semicolon
 multiline_comment|/*&n;    Determine the maximum number of Target IDs and Logical Units supported by&n;    this driver for Wide and Narrow Host Adapters.&n;  */
-r_if
-c_cond
+id|HostAdapter-&gt;MaxTargetDevices
+op_assign
 (paren
 id|HostAdapter-&gt;HostWideSCSI
-)paren
-(brace
-id|HostAdapter-&gt;MaxTargetDevices
-op_assign
+ques
+c_cond
 l_int|16
+suffix:colon
+l_int|8
+)paren
 suffix:semicolon
 id|HostAdapter-&gt;MaxLogicalUnits
 op_assign
+(paren
+id|HostAdapter-&gt;Host64LUNSupport
+ques
+c_cond
 l_int|64
-suffix:semicolon
-)brace
-r_else
-(brace
-id|HostAdapter-&gt;MaxTargetDevices
-op_assign
+suffix:colon
 l_int|8
+)paren
 suffix:semicolon
-id|HostAdapter-&gt;MaxLogicalUnits
-op_assign
-l_int|8
-suffix:semicolon
-)brace
 multiline_comment|/*&n;    Select appropriate values for the Mailbox Count, Initial CCBs, and&n;    Incremental CCBs variables based on whether or not Strict Round Robin Mode&n;    is supported.  If Strict Round Robin Mode is supported, then there is no&n;    performance degradation in using the maximum possible number of Outgoing&n;    and Incoming Mailboxes and allowing the Tagged and Untagged Queue Depths to&n;    determine the actual utilization.  If Strict Round Robin Mode is not&n;    supported, then the Host Adapter must scan all the Outgoing Mailboxes&n;    whenever an Outgoing Mailbox entry is made, which can cause a substantial&n;    performance penalty.  The Host Adapters actually have room to store the&n;    following number of CCBs internally; that is, they can internally queue and&n;    manage this many active commands on the SCSI bus simultaneously.&n;    Performance measurements demonstrate that the Mailbox Count should be set&n;    to the maximum possible, rather than the internal CCB capacity, as it is&n;    more efficient to have the queued commands waiting in Outgoing Mailboxes if&n;    necessary than to block the process in the higher levels of the SCSI&n;    Subsystem.&n;&n;&t;192&t;  BT-948/958/958D&n;&t;100&t;  BT-946C/956C/956CD/747C/757C/757CD/445C&n;&t; 50&t;  BT-545C/540CF&n;&t; 30&t;  BT-747S/747D/757S/757D/445S/545S/542D/542B/742A&n;  */
 r_if
 c_cond
@@ -3727,7 +3749,7 @@ op_ge
 l_int|0
 )paren
 (brace
-id|HostAdapter-&gt;StrictRoundRobinModeSupported
+id|HostAdapter-&gt;StrictRoundRobinModeSupport
 op_assign
 l_bool|true
 suffix:semicolon
@@ -3746,7 +3768,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|HostAdapter-&gt;StrictRoundRobinModeSupported
+id|HostAdapter-&gt;StrictRoundRobinModeSupport
 op_assign
 l_bool|false
 suffix:semicolon
@@ -3924,7 +3946,7 @@ id|HostAdapter-&gt;ErrorRecoveryStrategy
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;    Tagged Queuing support is available and operates properly on all &quot;W&quot; Series&n;    boards, on &quot;C&quot; Series boards with firmware version 4.22 and above, and on&n;    &quot;S&quot; Series boards with firmware version 3.35 and above.  Tagged Queuing is&n;    disabled by default when the Tagged Queue Depth is 1 since queuing multiple&n;    commands is not possible.&n;  */
+multiline_comment|/*&n;    Tagged Queuing support is available and operates properly on all &quot;W&quot; Series&n;    controllers, on &quot;C&quot; Series controllers with firmware version 4.22 and&n;    above, and on &quot;S&quot; Series controllers with firmware version 3.35 and above.&n;    Tagged Queuing is disabled by default when the Tagged Queue Depth is 1&n;    since queuing multiple commands is not possible.&n;  */
 id|TaggedQueuingPermittedDefault
 op_assign
 l_int|0
@@ -4764,7 +4786,7 @@ c_func
 (paren
 id|HostAdapter-&gt;DMA_Channel
 comma
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 )paren
 OL
 l_int|0
@@ -4980,8 +5002,8 @@ suffix:semicolon
 id|BusLogic_RoundRobinModeRequest_T
 id|RoundRobinModeRequest
 suffix:semicolon
-id|BusLogic_WideModeCCBRequest_T
-id|WideModeCCBRequest
+id|BusLogic_SetCCBFormatRequest_T
+id|SetCCBFormatRequest
 suffix:semicolon
 id|BusLogic_ModifyIOAddressRequest_T
 id|ModifyIOAddressRequest
@@ -5154,7 +5176,7 @@ multiline_comment|/*&n;    Enable Strict Round Robin Mode if supported by the Ho
 r_if
 c_cond
 (paren
-id|HostAdapter-&gt;StrictRoundRobinModeSupported
+id|HostAdapter-&gt;StrictRoundRobinModeSupport
 )paren
 (brace
 id|RoundRobinModeRequest
@@ -5196,16 +5218,16 @@ l_string|&quot;ENABLE STRICT ROUND ROBIN MODE&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    For Wide SCSI Host Adapters, issue the Enable Wide Mode CCB command to&n;    allow more than 8 Logical Units per Target Device to be supported.&n;  */
+multiline_comment|/*&n;    For Host Adapters that support 64 LUN Format CCBs, issue the Set CCB Format&n;    command to allow 64 Logical Units per Target Device.&n;  */
 r_if
 c_cond
 (paren
-id|HostAdapter-&gt;HostWideSCSI
+id|HostAdapter-&gt;Host64LUNSupport
 )paren
 (brace
-id|WideModeCCBRequest
+id|SetCCBFormatRequest
 op_assign
-id|BusLogic_WideModeCCB
+id|BusLogic_64LUNFormatCCB
 suffix:semicolon
 r_if
 c_cond
@@ -5215,14 +5237,14 @@ c_func
 (paren
 id|HostAdapter
 comma
-id|BusLogic_EnableWideModeCCB
+id|BusLogic_SetCCBFormat
 comma
 op_amp
-id|WideModeCCBRequest
+id|SetCCBFormatRequest
 comma
 r_sizeof
 (paren
-id|WideModeCCBRequest
+id|SetCCBFormatRequest
 )paren
 comma
 l_int|NULL
@@ -5238,7 +5260,7 @@ c_func
 (paren
 id|HostAdapter
 comma
-l_string|&quot;ENABLE WIDE MODE CCB&quot;
+l_string|&quot;SET CCB FORMAT&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5342,7 +5364,7 @@ l_string|&quot;scsi%d: *** %s Initialized Successfully ***&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
 comma
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    Indicate the Host Adapter Initialization completed successfully.&n;  */
@@ -5350,11 +5372,11 @@ r_return
 l_bool|true
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  BusLogic_InquireTargetDevices inquires about the Target Devices accessible&n;  through Host Adapter and reports on the results.&n;*/
-DECL|function|BusLogic_InquireTargetDevices
+multiline_comment|/*&n;  BusLogic_TargetDeviceInquiry inquires about the Target Devices accessible&n;  through Host Adapter and reports on the results.&n;*/
+DECL|function|BusLogic_TargetDeviceInquiry
 r_static
 id|boolean
-id|BusLogic_InquireTargetDevices
+id|BusLogic_TargetDeviceInquiry
 c_func
 (paren
 id|BusLogic_HostAdapter_T
@@ -5412,7 +5434,7 @@ r_return
 l_bool|true
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    Issue the Inquire Devices command for boards with firmware version 4.25 or&n;    later, or the Inquire Installed Devices ID 0 to 7 command for older boards.&n;    This is necessary to force Synchronous Transfer Negotiation so that the&n;    Inquire Setup Information and Inquire Synchronous Period commands will&n;    return valid data.  The Inquire Devices command is preferable to Inquire&n;    Installed Devices ID 0 to 7 since it only probes Logical Unit 0 of each&n;    Target Device.&n;  */
+multiline_comment|/*&n;    Issue the Inquire Target Devices command for controllers with firmware&n;    version 4.25 or later, or the Inquire Installed Devices ID 0 to 7 command&n;    for older controllers.  This is necessary to force Synchronous Transfer&n;    Negotiation so that the Inquire Setup Information and Inquire Synchronous&n;    Period commands will return valid data.  The Inquire Target Devices command&n;    is preferable to Inquire Installed Devices ID 0 to 7 since it only probes&n;    Logical Unit 0 of each Target Device.&n;  */
 r_if
 c_cond
 (paren
@@ -5435,7 +5457,7 @@ c_func
 (paren
 id|HostAdapter
 comma
-id|BusLogic_InquireDevices
+id|BusLogic_InquireTargetDevices
 comma
 l_int|NULL
 comma
@@ -5461,7 +5483,7 @@ c_func
 (paren
 id|HostAdapter
 comma
-l_string|&quot;INQUIRE DEVICES&quot;
+l_string|&quot;INQUIRE TARGET DEVICES&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6458,7 +6480,7 @@ c_func
 id|HostAdapter
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;Read the Host Adapter Configuration, Acquire the System Resources&n;&t;necessary to use Host Adapter and initialize the fields in the SCSI&n;&t;Host structure, then Test Interrupts, Create the Mailboxes and CCBs,&n;&t;Initialize the Host Adapter, and finally Inquire about the Target&n;&t;Devices.&n;      */
+multiline_comment|/*&n;&t;Read the Host Adapter Configuration, Acquire the System Resources&n;&t;necessary to use Host Adapter and initialize the fields in the SCSI&n;&t;Host structure, then Test Interrupts, Create the Mailboxes and CCBs,&n;&t;Initialize the Host Adapter, and finally perform Target Device Inquiry.&n;      */
 r_if
 c_cond
 (paren
@@ -6498,7 +6520,7 @@ c_func
 id|HostAdapter
 )paren
 op_logical_and
-id|BusLogic_InquireTargetDevices
+id|BusLogic_TargetDeviceInquiry
 c_func
 (paren
 id|HostAdapter
@@ -6521,7 +6543,7 @@ id|HostAdapter-&gt;IO_Address
 comma
 id|BusLogic_IO_PortCount
 comma
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 )paren
 suffix:semicolon
 id|BusLogic_InitializeHostStructure
@@ -6767,7 +6789,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;BusLogic: unknown Host Adapter Status 0x%02X&bslash;n&quot;
+l_string|&quot;BusLogic: Unknown Host Adapter Status 0x%02X&bslash;n&quot;
 comma
 id|HostAdapterStatus
 )paren
@@ -8020,11 +8042,11 @@ id|CCB-&gt;LogicalUnit
 op_assign
 id|LogicalUnit
 suffix:semicolon
-multiline_comment|/*&n;    For Wide SCSI Host Adapters, Wide Mode CCBs are used to support more than&n;    8 Logical Units per Target, and this requires setting the overloaded&n;    TagEnable field to Logical Unit bit 5.&n;  */
+multiline_comment|/*&n;    For Host Adapters that support it, 64 LUN Format CCBs are used to allow&n;    64 Logical Units per Target, and this requires setting the overloaded&n;    TagEnable field to Logical Unit bit 5.&n;  */
 r_if
 c_cond
 (paren
-id|HostAdapter-&gt;HostWideSCSI
+id|HostAdapter-&gt;Host64LUNSupport
 )paren
 (brace
 id|CCB-&gt;TagEnable
@@ -8033,7 +8055,7 @@ id|LogicalUnit
 op_rshift
 l_int|5
 suffix:semicolon
-id|CCB-&gt;WideModeTagEnable
+id|CCB-&gt;TagEnable64LUN
 op_assign
 l_bool|false
 suffix:semicolon
@@ -8043,7 +8065,7 @@ id|CCB-&gt;TagEnable
 op_assign
 l_bool|false
 suffix:semicolon
-multiline_comment|/*&n;    BusLogic recommends that after a Reset the first couple of commands that&n;    are sent to a Target Device be sent in a non Tagged Queue fashion so that&n;    the Host Adapter and Target Device can establish Synchronous and Wide&n;    Transfer before Queue Tag messages can interfere with the Synchronous and&n;    Wide Negotiation message.  By waiting to enable Tagged Queuing until after&n;    the first 2*BusLogic_PreferredQueueDepth commands have been sent, it is&n;    assured that after a Reset any pending commands are resent before Tagged&n;    Queuing is enabled and that the Tagged Queuing message will not occur while&n;    the partition table is being printed.&n;  */
+multiline_comment|/*&n;    BusLogic recommends that after a Reset the first couple of commands that&n;    are sent to a Target Device be sent in a non Tagged Queue fashion so that&n;    the Host Adapter and Target Device can establish Synchronous and Wide&n;    Transfer before Queue Tag messages can interfere with the Synchronous and&n;    Wide Negotiation messages.  By waiting to enable Tagged Queuing until after&n;    the first BusLogic_MaxTaggedQueueDepth commands have been queued, it is&n;    assured that after a Reset any pending commands are requeued before Tagged&n;    Queuing is enabled and that the Tagged Queuing message will not occur while&n;    the partition table is being printed.  In addition, some devices do not&n;    properly handle the transition from non-tagged to tagged commands, so it is&n;    necessary to wait until there are no pending commands for a target device&n;    before queuing tagged commands.&n;  */
 r_if
 c_cond
 (paren
@@ -8052,10 +8074,21 @@ id|HostAdapter-&gt;TotalCommandCount
 id|TargetID
 )braket
 op_increment
+op_ge
+id|BusLogic_MaxTaggedQueueDepth
+op_logical_and
+op_logical_neg
+id|HostAdapter-&gt;TaggedQueuingActive
+(braket
+id|TargetID
+)braket
+op_logical_and
+id|HostAdapter-&gt;ActiveCommandCount
+(braket
+id|TargetID
+)braket
 op_eq
-l_int|2
-op_star
-id|BusLogic_PreferredTaggedQueueDepth
+l_int|0
 op_logical_and
 (paren
 id|HostAdapter-&gt;TaggedQueuingPermitted
@@ -8102,7 +8135,7 @@ id|QueueTag
 op_assign
 id|BusLogic_SimpleQueueTag
 suffix:semicolon
-multiline_comment|/*&n;&t;When using Tagged Queuing with Simple Queue Tags, it appears that disk&n;&t;drive controllers do not guarantee that a queued command will not&n;&t;remain in a disconnected state indefinitely if commands that read or&n;&t;write nearer the head position continue to arrive without interruption.&n;&t;Therefore, for each Target Device this driver keeps track of the last&n;&t;time either the queue was empty or an Ordered Queue Tag was issued.  If&n;&t;more than 5 seconds (half the 10 second disk timeout) have elapsed&n;&t;since this last sequence point, this command will be issued with an&n;&t;Ordered Queue Tag rather than a Simple Queue Tag, which forces the&n;&t;Target Device to complete all previously queued commands before this&n;&t;command may be executed.&n;      */
+multiline_comment|/*&n;&t;When using Tagged Queuing with Simple Queue Tags, it appears that disk&n;&t;drive controllers do not guarantee that a queued command will not&n;&t;remain in a disconnected state indefinitely if commands that read or&n;&t;write nearer the head position continue to arrive without interruption.&n;&t;Therefore, for each Target Device this driver keeps track of the last&n;&t;time either the queue was empty or an Ordered Queue Tag was issued.  If&n;&t;more than 5 seconds (one third of the 15 second disk timeout) have&n;&t;elapsed since this last sequence point, this command will be issued&n;&t;with an Ordered Queue Tag rather than a Simple Queue Tag, which forces&n;&t;the Target Device to complete all previously queued commands before&n;&t;this command may be executed.&n;      */
 r_if
 c_cond
 (paren
@@ -8151,14 +8184,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|HostAdapter-&gt;HostWideSCSI
+id|HostAdapter-&gt;Host64LUNSupport
 )paren
 (brace
-id|CCB-&gt;WideModeTagEnable
+id|CCB-&gt;TagEnable64LUN
 op_assign
 l_bool|true
 suffix:semicolon
-id|CCB-&gt;WideModeQueueTag
+id|CCB-&gt;QueueTag64LUN
 op_assign
 id|QueueTag
 suffix:semicolon
@@ -8787,7 +8820,7 @@ l_string|&quot;scsi%d: Resetting %s due to SCSI Reset State Interrupt&bslash;n&q
 comma
 id|HostAdapter-&gt;HostNumber
 comma
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 )paren
 suffix:semicolon
 r_else
@@ -8798,7 +8831,7 @@ l_string|&quot;scsi%d: Resetting %s due to Target %d&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
 comma
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 comma
 id|Command-&gt;target
 )paren
@@ -8830,7 +8863,7 @@ l_string|&quot;scsi%d: Resetting %s Failed&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
 comma
-id|HostAdapter-&gt;BoardName
+id|HostAdapter-&gt;ControllerName
 )paren
 suffix:semicolon
 id|Result
@@ -9699,7 +9732,7 @@ r_return
 id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  BusLogic_BIOSDiskParameters returns the Heads/Sectors/Cylinders BIOS Disk&n;  Parameters for Disk.  The default disk geometry is 64 heads, 32 sectors,&n;  and the appropriate number of cylinders so as not to exceed drive capacity.&n;  In order for disks equal to or larger than 1 GB to be addressable by the&n;  BIOS without exceeding the BIOS limitation of 1024 cylinders, Extended&n;  Translation may be enabled in AutoSCSI on &quot;W&quot; and &quot;C&quot; Series boards or by a&n;  dip switch setting on older boards.  With Extended Translation enabled,&n;  drives between 1 GB inclusive and 2 GB exclusive are given a disk geometry&n;  of 128 heads and 32 sectors, and drives above 2 GB inclusive are given a&n;  disk geometry of 255 heads and 63 sectors.  However, if the BIOS detects&n;  that the Extended Translation setting does not match the geometry in the&n;  partition table, then the translation inferred from the partition table&n;  will be used by the BIOS, and a warning may be displayed.&n;*/
+multiline_comment|/*&n;  BusLogic_BIOSDiskParameters returns the Heads/Sectors/Cylinders BIOS Disk&n;  Parameters for Disk.  The default disk geometry is 64 heads, 32 sectors, and&n;  the appropriate number of cylinders so as not to exceed drive capacity.  In&n;  order for disks equal to or larger than 1 GB to be addressable by the BIOS&n;  without exceeding the BIOS limitation of 1024 cylinders, Extended Translation&n;  may be enabled in AutoSCSI on &quot;W&quot; and &quot;C&quot; Series controllers or by a dip&n;  switch setting on older controllers.  With Extended Translation enabled,&n;  drives between 1 GB inclusive and 2 GB exclusive are given a disk geometry of&n;  128 heads and 32 sectors, and drives above 2 GB inclusive are given a disk&n;  geometry of 255 heads and 63 sectors.  However, if the BIOS detects that the&n;  Extended Translation setting does not match the geometry in the partition&n;  table, then the translation inferred from the partition table will be used by&n;  the BIOS, and a warning may be displayed.&n;*/
 DECL|function|BusLogic_BIOSDiskParameters
 r_int
 id|BusLogic_BIOSDiskParameters

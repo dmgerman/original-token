@@ -1888,6 +1888,10 @@ suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
+r_int
+r_int
+id|true_hard_header_len
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Point into the IP datagram header.&n;&t; */
 id|raw
 op_assign
@@ -1917,6 +1921,20 @@ op_assign
 id|skb-&gt;ip_hdr
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * Calculate the length of the link-layer header appended to&n;&t; * the IP-packet.&n;&t; */
+id|true_hard_header_len
+op_assign
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|iph
+)paren
+op_minus
+id|raw
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Setup starting values.&n;&t; */
 id|hlen
 op_assign
@@ -1937,9 +1955,8 @@ suffix:semicolon
 multiline_comment|/* Space per frame */
 id|hlen
 op_add_assign
-id|dev-&gt;hard_header_len
+id|true_hard_header_len
 suffix:semicolon
-multiline_comment|/* Total header size */
 id|mtu
 op_assign
 (paren
@@ -2132,6 +2149,16 @@ id|skb2-&gt;arp
 op_assign
 id|skb-&gt;arp
 suffix:semicolon
+id|skb2-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+suffix:semicolon
+multiline_comment|/* Atleast PPP needs this */
+macro_line|#if 0&t;&t;
 r_if
 c_cond
 (paren
@@ -2148,6 +2175,7 @@ l_string|&quot;IP fragmenter: BUG free!=1 in fragmenter&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;&t;
 id|skb2-&gt;free
 op_assign
 l_int|1
@@ -2226,7 +2254,7 @@ id|len
 suffix:semicolon
 id|skb2-&gt;h.raw
 op_add_assign
-id|dev-&gt;hard_header_len
+id|true_hard_header_len
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Fill in the new header fields.&n;&t;&t; */
 id|iph

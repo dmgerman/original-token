@@ -3911,16 +3911,9 @@ op_assign
 id|count
 suffix:semicolon
 multiline_comment|/* Number of chains */
+multiline_comment|/* scsi_malloc can only allocate in chunks of 512 bytes */
 id|count
 op_assign
-l_int|512
-suffix:semicolon
-multiline_comment|/* scsi_malloc can only allocate in chunks of 512 bytes*/
-r_while
-c_loop
-(paren
-id|count
-OL
 (paren
 id|SCpnt-&gt;use_sg
 op_star
@@ -3929,16 +3922,13 @@ r_sizeof
 r_struct
 id|scatterlist
 )paren
+op_plus
+l_int|511
 )paren
-)paren
-(brace
-id|count
-op_assign
-id|count
-op_lshift
-l_int|1
+op_amp
+op_complement
+l_int|511
 suffix:semicolon
-)brace
 id|SCpnt-&gt;sglist_len
 op_assign
 id|count

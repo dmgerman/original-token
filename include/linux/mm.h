@@ -364,16 +364,38 @@ r_int
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Try to keep the most commonly accessed fields in single cache lines&n; * here (16 bytes or greater).  This ordering should be particularly&n; * beneficial on 32-bit processors.&n; *&n; * The first line is data used in linear searches (eg. clock algorithm&n; * scans).  The second line is data used in page searches through the&n; * page-cache.  -- sct &n; */
+multiline_comment|/*&n; * Try to keep the most commonly accessed fields in single cache lines&n; * here (16 bytes or greater).  This ordering should be particularly&n; * beneficial on 32-bit processors.&n; *&n; * The first line is data used in page cache lookup, the second line&n; * is used for linear searches (eg. clock algorithm scans). &n; */
 DECL|struct|page
 r_typedef
 r_struct
 id|page
 (brace
+DECL|member|inode
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
+DECL|member|offset
+r_int
+r_int
+id|offset
+suffix:semicolon
+DECL|member|next_hash
+r_struct
+id|page
+op_star
+id|next_hash
+suffix:semicolon
 DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* atomic flags, some possibly updated asynchronously */
 DECL|member|dirty
 r_int
 id|dirty
@@ -385,11 +407,6 @@ id|age
 suffix:colon
 l_int|8
 suffix:semicolon
-DECL|member|flags
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* atomic flags, some possibly updated asynchronously */
 DECL|member|wait
 r_struct
 id|wait_queue
@@ -401,23 +418,6 @@ r_struct
 id|page
 op_star
 id|next
-suffix:semicolon
-DECL|member|next_hash
-r_struct
-id|page
-op_star
-id|next_hash
-suffix:semicolon
-DECL|member|offset
-r_int
-r_int
-id|offset
-suffix:semicolon
-DECL|member|inode
-r_struct
-id|inode
-op_star
-id|inode
 suffix:semicolon
 DECL|member|prev
 r_struct

@@ -607,6 +607,8 @@ id|skb
 )paren
 op_ge
 id|max_headroom
+op_logical_and
+id|skb-&gt;free
 )paren
 (brace
 id|skb-&gt;h.iph
@@ -622,6 +624,12 @@ c_func
 id|skb
 comma
 id|tunnel_hlen
+)paren
+suffix:semicolon
+id|skb_device_unlock
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 )brace
@@ -868,7 +876,7 @@ id|skb
 comma
 id|dev
 comma
-l_int|0
+id|IPFWD_NOTTLDEC
 comma
 id|target
 )paren

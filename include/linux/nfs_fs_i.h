@@ -36,6 +36,12 @@ id|inode
 op_star
 id|silly_rename_dir
 suffix:semicolon
+multiline_comment|/*&n;&t; * attrtimeo defines for how long the cached attributes are valid&n;&t; */
+DECL|member|attrtimeo
+r_int
+r_int
+id|attrtimeo
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

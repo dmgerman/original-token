@@ -30,6 +30,10 @@ DECL|macro|NFS_READTIME
 mdefine_line|#define NFS_READTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_jiffies)
 DECL|macro|NFS_OLDMTIME
 mdefine_line|#define NFS_OLDMTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_mtime)
+DECL|macro|NFS_ATTRTIMEO
+mdefine_line|#define NFS_ATTRTIMEO(inode)&t;&t;((inode)-&gt;u.nfs_i.attrtimeo)
+DECL|macro|NFS_MINATTRTIMEO
+mdefine_line|#define NFS_MINATTRTIMEO(inode)&t;&t;(S_ISREG((inode)-&gt;i_mode)?&t;&bslash;&n;&t;&t;&t;&t;&t;&t;NFS_SERVER(inode)-&gt;acregmin : &bslash;&n;&t;&t;&t;&t;&t;&t;NFS_SERVER(inode)-&gt;acdirmin)
 DECL|macro|NFS_CACHEINV
 mdefine_line|#define NFS_CACHEINV(inode) &bslash;&n;do { &bslash;&n;&t;NFS_READTIME(inode) = jiffies - 1000000; &bslash;&n;&t;NFS_OLDMTIME(inode) = 0; &bslash;&n;} while (0)
 macro_line|#ifdef __KERNEL__
