@@ -3544,11 +3544,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_WAVELAN
 comma
-id|wavelan_get_info
-comma
 l_int|7
 comma
 l_string|&quot;wavelan&quot;
+comma
+id|wavelan_get_info
 )brace
 )paren
 suffix:semicolon

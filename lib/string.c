@@ -221,8 +221,15 @@ id|count
 op_eq
 l_int|0
 )paren
+(brace
+op_star
+id|dest
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 )brace
 r_return

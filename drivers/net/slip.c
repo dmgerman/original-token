@@ -4356,13 +4356,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* If not loadable module, a bootstrap Space.c slip_proto dev&n;&t; *  now needs to be unregistered.&n;&t; */
 macro_line|#ifndef MODULE
-id|printk
-c_func
-(paren
-l_string|&quot;SLIP: Unregistering bootstrap device &quot;
-l_string|&quot;&squot;slip_proto&squot; - slip OK&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;printk(&quot;SLIP: Unregistering bootstrap device &quot;&n;&t;       &quot;&squot;slip_proto&squot; - slip OK&bslash;n&quot;);*/
 id|unregister_netdev
 c_func
 (paren

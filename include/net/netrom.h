@@ -335,6 +335,8 @@ comma
 id|off_t
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* nr_dev.c */
@@ -555,6 +557,8 @@ comma
 id|off_t
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -570,6 +574,8 @@ op_star
 op_star
 comma
 id|off_t
+comma
+r_int
 comma
 r_int
 )paren

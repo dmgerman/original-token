@@ -3346,7 +3346,7 @@ DECL|variable|io
 r_int
 id|io
 op_assign
-l_int|0
+l_int|0x300
 suffix:semicolon
 DECL|variable|irq
 r_int
@@ -3362,6 +3362,19 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;3c507: You should not use auto-probing with insmod!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dev_3c507.base_addr
 op_assign
 id|io

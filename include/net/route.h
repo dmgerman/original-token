@@ -36,7 +36,6 @@ id|rt_flags
 suffix:semicolon
 DECL|member|rt_metric
 r_int
-r_int
 id|rt_metric
 suffix:semicolon
 DECL|member|rt_refcnt
@@ -121,7 +120,6 @@ r_int
 id|irtt
 comma
 r_int
-r_char
 id|metric
 )paren
 suffix:semicolon

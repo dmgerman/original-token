@@ -1792,11 +1792,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_RARP
 comma
-id|rarp_get_info
-comma
 l_int|4
 comma
 l_string|&quot;rarp&quot;
+comma
+id|rarp_get_info
 )brace
 )paren
 suffix:semicolon

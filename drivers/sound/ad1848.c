@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/ad1848.c&n; *&n; * The low level driver for the AD1848/CS4248 codec chip which&n; * is used for example in the MS Sound System.&n; *&n; * The CS4231 which is used in the GUS MAX and some other cards is&n; * upwards compatible with AD1848 and this driver is able to drive it.&n; *&n; * Copyright by Hannu Savolainen 1994, 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *  Riccardo Facchetti  24 Mar 1995&n; *  - Added the Audio Excel DSP 16 initialization routine.&n; */
+multiline_comment|/*&n; * sound/ad1848.c&n; *&n; * The low level driver for the AD1848/CS4248 codec chip which&n; * is used for example in the MS Sound System.&n; *&n; * The CS4231 which is used in the GUS MAX and some other cards is&n; * upwards compatible with AD1848 and this driver is able to drive it.&n; *&n; * CS4231A and AD1845 are upward compatible with CS4231. However&n; * the new features of these chips are different.&n; *&n; * CS4232 is a PnP audio chip which contains a CS4231A.&n; *&n; * Copyright by Hannu Savolainen 1994, 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *  Riccardo Facchetti  24 Mar 1995&n; *  - Added the Audio Excel DSP 16 initialization routine.&n; */
 DECL|macro|DEB
 mdefine_line|#define DEB(x)
 DECL|macro|DEB1
@@ -4267,11 +4267,7 @@ id|ad_leave_MCE
 id|devc
 )paren
 suffix:semicolon
-id|DMAbuf_reset_dma
-(paren
-id|dev
-)paren
-suffix:semicolon
+multiline_comment|/* DMAbuf_reset_dma (dev); */
 )brace
 r_int
 DECL|function|ad1848_detect
@@ -4825,7 +4821,7 @@ l_int|0xe7
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;         *      It&squot;s a CS4231&n;&t;       */
+multiline_comment|/*&n;&t;       *      It&squot;s at least CS4231&n;&t;       */
 id|devc-&gt;chip_name
 op_assign
 l_string|&quot;CS4231&quot;
@@ -4845,6 +4841,100 @@ id|devc-&gt;mode
 op_assign
 l_int|2
 suffix:semicolon
+multiline_comment|/*&n;&t;       * It could be an AD1845 or CS4231A as well.&n;&t;       * CS4231 and AD1845 report the same revision info in I25&n;&t;       * while the CS4231A reports different.&n;&t;       */
+r_if
+c_cond
+(paren
+(paren
+id|ad_read
+(paren
+id|devc
+comma
+l_int|25
+)paren
+op_amp
+l_int|0xe7
+)paren
+op_eq
+l_int|0xa0
+)paren
+(brace
+id|devc-&gt;chip_name
+op_assign
+l_string|&quot;CS4231A&quot;
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|ad_read
+(paren
+id|devc
+comma
+l_int|25
+)paren
+op_amp
+l_int|0xe7
+)paren
+op_eq
+l_int|0x80
+)paren
+(brace
+multiline_comment|/* &n;&t;&t;   * It must be a CS4231 or AD1845. The register I23 of&n;&t;&t;   * CS4231 is undefined and it appears to be read only.&n;&t;&t;   * AD1845 uses I23 for setting sample rate. Assume&n;&t;&t;   * the chip is AD1845 if I23 is changeable.&n;&t;&t;   */
+r_int
+r_char
+id|tmp
+op_assign
+id|ad_read
+(paren
+id|devc
+comma
+l_int|23
+)paren
+suffix:semicolon
+id|ad_write
+(paren
+id|devc
+comma
+l_int|23
+comma
+op_complement
+id|tmp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ad_read
+(paren
+id|devc
+comma
+l_int|23
+)paren
+op_ne
+id|tmp
+)paren
+multiline_comment|/* AD1845 ? */
+(brace
+id|devc-&gt;chip_name
+op_assign
+l_string|&quot;AD1845&quot;
+suffix:semicolon
+)brace
+id|ad_write
+(paren
+id|devc
+comma
+l_int|23
+comma
+id|tmp
+)paren
+suffix:semicolon
+multiline_comment|/* Restore */
+)brace
+multiline_comment|/* Otherwise behave just as if the chip is a CS4231 */
 )brace
 id|ad_write
 (paren

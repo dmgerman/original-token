@@ -1298,12 +1298,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;unregister_netdev: device &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1385,21 +1379,13 @@ id|d-&gt;next
 op_assign
 id|dev-&gt;next
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&squot;%s&squot; unlinked&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;&squot;%s&squot; not found&bslash;n&quot;
+l_string|&quot;unregister_netdev: &squot;%s&squot; not found&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren

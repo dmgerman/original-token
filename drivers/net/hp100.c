@@ -5292,6 +5292,22 @@ r_if
 c_cond
 (paren
 id|hp100_port
+op_eq
+l_int|0
+op_logical_and
+op_logical_neg
+id|EISA_bus
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;HP100: You should not use auto-probing with insmod!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hp100_port
 OG
 l_int|0
 )paren

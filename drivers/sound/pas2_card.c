@@ -184,12 +184,10 @@ id|I_S_MIDI_IRQ
 )paren
 (brace
 macro_line|#ifndef EXCLUDE_MIDI
-macro_line|#ifdef EXCLUDE_PRO_MIDI
 id|pas_midi_interrupt
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 id|status
 op_and_assign
@@ -677,7 +675,7 @@ comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-macro_line|#if !defined(EXCLUDE_SB_EMULATION) || !defined(EXCLUDE_SB)
+macro_line|#if !defined(EXCLUDE_SB_EMULATION) &amp;&amp; !defined(EXCLUDE_SB)
 (brace
 r_struct
 id|address_info
@@ -1015,7 +1013,6 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_MIDI
-macro_line|#ifdef EXCLUDE_PRO_MIDI
 id|mem_start
 op_assign
 id|pas_midi_init
@@ -1023,7 +1020,6 @@ id|pas_midi_init
 id|mem_start
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 id|pas_init_mixer
 (paren

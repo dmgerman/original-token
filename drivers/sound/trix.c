@@ -252,10 +252,6 @@ multiline_comment|/* Already initialized */
 r_return
 l_int|0
 suffix:semicolon
-id|kilroy_was_here
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -269,6 +265,10 @@ l_int|0x71
 multiline_comment|/* No asic signature */
 r_return
 l_int|0
+suffix:semicolon
+id|kilroy_was_here
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;     * Disable separate wave playback and recording DMA channels since&n;     * the driver doesn&squot;t support duplex mode yet.&n;   */
 id|trix_write
@@ -938,6 +938,7 @@ op_star
 id|hw_config
 )paren
 (brace
+macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
 r_return
 id|attach_mpu401
 (paren
@@ -946,6 +947,11 @@ comma
 id|hw_config
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+id|mem_start
+suffix:semicolon
+macro_line|#endif
 )brace
 r_int
 DECL|function|probe_trix_mpu
@@ -957,6 +963,7 @@ op_star
 id|hw_config
 )paren
 (brace
+macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
 r_int
 r_char
 id|conf
@@ -1129,6 +1136,11 @@ id|probe_mpu401
 id|hw_config
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 eof

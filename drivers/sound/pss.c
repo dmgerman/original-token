@@ -1461,17 +1461,16 @@ r_break
 suffix:semicolon
 multiline_comment|/* No more input */
 )brace
-macro_line|#ifdef EXCLUDE_MIDI
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#else
+macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
 r_return
 id|probe_mpu401
 (paren
 id|hw_config
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
 macro_line|#endif
 )brace
 r_static
@@ -2537,7 +2536,7 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
 id|prev_devs
 op_assign
 id|num_midis

@@ -51,6 +51,8 @@ DECL|macro|LPGETSTATUS
 mdefine_line|#define LPGETSTATUS 0x060b  /* return LP_S(minor) */
 DECL|macro|LPRESET
 mdefine_line|#define LPRESET     0x060c  /* reset printer */
+DECL|macro|LPGETSTATS
+mdefine_line|#define LPGETSTATS  0x060d  /* get statistics (struct lp_stats) */
 multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
 DECL|macro|LP_TIMEOUT_INTERRUPT
 mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)
@@ -73,8 +75,46 @@ mdefine_line|#define LP_WAIT(minor)&t;lp_table[(minor)].wait&t;&t;/* strobe wait
 DECL|macro|LP_IRQ
 mdefine_line|#define LP_IRQ(minor)&t;lp_table[(minor)].irq&t;&t;/* interrupt # */
 multiline_comment|/* 0 means polled */
+DECL|macro|LP_STAT
+mdefine_line|#define LP_STAT(minor)&t;lp_table[(minor)].stats&t;&t;/* statistics area */
 DECL|macro|LP_BUFFER_SIZE
 mdefine_line|#define LP_BUFFER_SIZE 256
+DECL|struct|lp_stats
+r_struct
+id|lp_stats
+(brace
+DECL|member|chars
+r_int
+r_int
+id|chars
+suffix:semicolon
+DECL|member|sleeps
+r_int
+r_int
+id|sleeps
+suffix:semicolon
+DECL|member|maxrun
+r_int
+r_int
+id|maxrun
+suffix:semicolon
+DECL|member|maxwait
+r_int
+r_int
+id|maxwait
+suffix:semicolon
+DECL|member|meanwait
+r_int
+r_int
+id|meanwait
+suffix:semicolon
+DECL|member|mdev
+r_int
+r_int
+id|mdev
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|lp_struct
 r_struct
 id|lp_struct
@@ -118,6 +158,26 @@ r_char
 op_star
 id|lp_buffer
 suffix:semicolon
+DECL|member|lastcall
+r_int
+r_int
+id|lastcall
+suffix:semicolon
+DECL|member|runchars
+r_int
+r_int
+id|runchars
+suffix:semicolon
+DECL|member|waittime
+r_int
+r_int
+id|waittime
+suffix:semicolon
+DECL|member|stats
+r_struct
+id|lp_stats
+id|stats
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The following constants describe the various signals of the printer port&n; * hardware.  Note that the hardware inverts some signals and that some&n; * signals are active low.  An example is LP_STROBE, which must be programmed&n; * with 1 for being active and 0 for being inactive, because the strobe signal&n; * gets inverted, but it is also active low.&n; */
@@ -134,7 +194,7 @@ DECL|macro|LP_PERRORP
 mdefine_line|#define LP_PERRORP&t;0x08  /* unchanged input, active low */
 multiline_comment|/* &n; * defines for 8255 control port&n; * base + 2 &n; * accessed with LP_C(minor)&n; */
 DECL|macro|LP_PINTEN
-mdefine_line|#define LP_PINTEN&t;0x10
+mdefine_line|#define LP_PINTEN&t;0x10  /* high to read data in or-ed with data out */
 DECL|macro|LP_PSELECP
 mdefine_line|#define LP_PSELECP&t;0x08  /* inverted output, active low */
 DECL|macro|LP_PINITP
@@ -142,13 +202,13 @@ mdefine_line|#define LP_PINITP&t;0x04  /* unchanged output, active low */
 DECL|macro|LP_PAUTOLF
 mdefine_line|#define LP_PAUTOLF&t;0x02  /* inverted output, active low */
 DECL|macro|LP_PSTROBE
-mdefine_line|#define LP_PSTROBE&t;0x01  /* inverted output, active low */
+mdefine_line|#define LP_PSTROBE&t;0x01  /* short high output on raising edge */
 multiline_comment|/* &n; * the value written to ports to test existence. PC-style ports will &n; * return the value written. AT-style ports will return 0. so why not&n; * make them the same ? &n; */
 DECL|macro|LP_DUMMY
 mdefine_line|#define LP_DUMMY&t;0x00
-multiline_comment|/*&n; * This is the port delay time.  Your mileage may vary.&n; * It is used only in the lp_init() routine.&n; */
+multiline_comment|/*&n; * This is the port delay time, in microseconds.&n; * It is used only in the lp_init() and lp_reset() routine.&n; */
 DECL|macro|LP_DELAY
-mdefine_line|#define LP_DELAY &t;150000
+mdefine_line|#define LP_DELAY &t;50
 multiline_comment|/*&n; * function prototypes&n; */
 r_extern
 r_int

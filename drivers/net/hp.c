@@ -224,14 +224,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* NE2000, et.al. bug-fix code */
-DECL|variable|ne8390_rw_bugfix
-r_static
-r_int
-id|ne8390_rw_bugfix
-op_assign
-l_int|0
-suffix:semicolon
 "&f;"
 multiline_comment|/*&t;Probe for an HP LAN adaptor.&n;&t;Also initialize the card and fill in STATION_ADDR with the station&n;&t;address. */
 macro_line|#ifdef HAVE_DEVLIST
@@ -1376,13 +1368,8 @@ comma
 id|nic_base
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ne8390_rw_bugfix
-)paren
-(brace
-multiline_comment|/* Handle the read-before-write bug the same way as the&n;&t;&t;   Crynwr packet driver -- the NatSemi method doesn&squot;t work. */
+macro_line|#ifdef NE8390_RW_BUGFIX
+multiline_comment|/* Handle the read-before-write bug the same way as the&n;&t;   Crynwr packet driver -- the NatSemi method doesn&squot;t work. */
 id|outb_p
 c_func
 (paren
@@ -1450,7 +1437,7 @@ c_func
 l_int|0x61
 )paren
 suffix:semicolon
-)brace
+macro_line|#endif
 id|outb_p
 c_func
 (paren
@@ -1736,7 +1723,7 @@ DECL|variable|io
 r_int
 id|io
 op_assign
-l_int|0
+l_int|300
 suffix:semicolon
 DECL|variable|irq
 r_int
@@ -1752,6 +1739,19 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;hp: You should not use auto-probing with insmod!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dev_hp.base_addr
 op_assign
 id|io

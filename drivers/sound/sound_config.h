@@ -2,7 +2,7 @@ multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc conf
 macro_line|#include &quot;local.h&quot;
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
-macro_line|#if !defined(PSS_MPU_BASE) &amp;&amp; defined(EXCLUDE_SSCAPE) &amp;&amp; &bslash;&n;&t;&t;&t;      defined(EXCLUDE_TRIX) &amp;&amp; !defined(MAD16_MPU_BASE)
+macro_line|#if !defined(PSS_MPU_BASE) &amp;&amp; defined(EXCLUDE_SSCAPE) &amp;&amp; &bslash;&n;      defined(EXCLUDE_TRIX) &amp;&amp; !defined(MAD16_MPU_BASE)
 DECL|macro|EXCLUDE_MPU_EMU
 mdefine_line|#define EXCLUDE_MPU_EMU
 macro_line|#endif

@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/termios.h&gt;&t;/* For TIOCINQ/OUTQ */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 DECL|variable|ax25_digi_on
@@ -8906,11 +8907,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_AX25_ROUTE
 comma
-id|ax25_rt_get_info
-comma
 l_int|10
 comma
 l_string|&quot;ax25_route&quot;
+comma
+id|ax25_rt_get_info
 )brace
 )paren
 suffix:semicolon
@@ -8925,11 +8926,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_AX25
 comma
-id|ax25_get_info
-comma
 l_int|4
 comma
 l_string|&quot;ax25&quot;
+comma
+id|ax25_get_info
 )brace
 )paren
 suffix:semicolon
@@ -8944,11 +8945,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_AX25_CALLS
 comma
-id|ax25_cs_get_info
-comma
 l_int|10
 comma
 l_string|&quot;ax25_calls&quot;
+comma
+id|ax25_cs_get_info
 )brace
 )paren
 suffix:semicolon

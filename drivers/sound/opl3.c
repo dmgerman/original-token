@@ -4377,6 +4377,8 @@ comma
 id|voice
 comma
 id|value
+op_minus
+l_int|8192
 )paren
 suffix:semicolon
 )brace

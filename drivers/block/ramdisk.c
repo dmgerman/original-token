@@ -557,15 +557,9 @@ op_eq
 op_minus
 l_int|1
 op_logical_and
-(paren
-id|ext2sb-&gt;s_magic
-op_eq
-id|EXT2_PRE_02B_MAGIC
-op_logical_or
 id|ext2sb-&gt;s_magic
 op_eq
 id|EXT2_SUPER_MAGIC
-)paren
 )paren
 (brace
 id|printk

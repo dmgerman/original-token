@@ -34,27 +34,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-r_extern
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 multiline_comment|/* First, a few definitions that the brave might change. */
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
 DECL|variable|eepro_portlist
@@ -4894,7 +4873,7 @@ DECL|variable|io
 r_int
 id|io
 op_assign
-l_int|0
+l_int|0x200
 suffix:semicolon
 DECL|variable|irq
 r_int
@@ -4910,6 +4889,19 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;eepro: You should not use auto-probing with insmod!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dev_eepro.base_addr
 op_assign
 id|io

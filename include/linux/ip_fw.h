@@ -374,6 +374,14 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ip_fw_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* KERNEL */
 macro_line|#ifdef CONFIG_IP_MASQUERADE
 DECL|macro|DEBUG_MASQ

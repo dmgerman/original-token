@@ -2,6 +2,7 @@ multiline_comment|/* tulip.c: A DEC 21040 ethernet driver for linux. */
 multiline_comment|/*&n;   NOTICE: this version works with kernels 1.1.82 and later only!&n;&t;Written 1994,1995 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the SMC EtherPower PCI ethernet adapter.&n;&t;It should work with most other DEC 21*40-based ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -29,27 +30,6 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-multiline_comment|/* This will be in linux/etherdevice.h someday. */
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 multiline_comment|/* The total size is unusually large: The 21040 aligns each of its 16&n;   longword-wide registers on a quadword boundary. */
 DECL|macro|TULIP_TOTAL_SIZE
 mdefine_line|#define TULIP_TOTAL_SIZE 0x80
@@ -3340,6 +3320,30 @@ c_func
 r_void
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;tulip: Sorry, modularization is not completed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;tulip: You should not use auto-probing with insmod!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dev_tulip.base_addr
 op_assign
 id|io
@@ -3375,6 +3379,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 )brace
 r_void
 DECL|function|cleanup_module

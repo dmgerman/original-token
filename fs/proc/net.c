@@ -8,186 +8,14 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-multiline_comment|/* forward references */
-r_static
-r_int
-id|proc_readnet
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-suffix:semicolon
-r_static
-r_int
-id|proc_readnetdir
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-comma
-r_void
-op_star
-comma
-id|filldir_t
-id|filldir
-)paren
-suffix:semicolon
-r_static
-r_int
-id|proc_lookupnet
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_const
-r_char
-op_star
-comma
-r_int
-comma
-r_struct
-id|inode
-op_star
-op_star
-)paren
-suffix:semicolon
-DECL|variable|proc_net_operations
-r_static
-r_struct
-id|file_operations
-id|proc_net_operations
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|proc_readnet
-comma
-multiline_comment|/* read - bad */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
-id|proc_readnetdir
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
-DECL|variable|proc_net_inode_operations
-r_struct
-id|inode_operations
-id|proc_net_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_net_operations
-comma
-multiline_comment|/* default net directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
-id|proc_lookupnet
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* bmap */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-multiline_comment|/* permission */
-)brace
-suffix:semicolon
-DECL|macro|NR_MAX_PROC_NET_DIR
-mdefine_line|#define NR_MAX_PROC_NET_DIR 100
 DECL|variable|net_dir
 r_static
 r_struct
 id|proc_dir_entry
 op_star
 id|net_dir
-(braket
-id|NR_MAX_PROC_NET_DIR
-)braket
 op_assign
-(brace
 l_int|NULL
-comma
-)brace
-suffix:semicolon
-DECL|variable|nr_net_direntry
-r_static
-r_int
-id|nr_net_direntry
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|proc_net_register
 r_int
@@ -200,60 +28,16 @@ op_star
 id|dp
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
+id|dp-&gt;next
 op_assign
-l_int|0
+id|net_dir
 suffix:semicolon
 id|net_dir
-(braket
-id|i
-)braket
-op_ne
-l_int|NULL
-suffix:semicolon
-op_increment
-id|i
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-op_ge
-id|NR_MAX_PROC_NET_DIR
-)paren
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-id|net_dir
-(braket
-id|i
-)braket
 op_assign
 id|dp
 suffix:semicolon
-id|net_dir
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Just make sure.. */
-op_increment
-id|nr_net_direntry
-suffix:semicolon
 r_return
-id|i
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|proc_net_unregister
@@ -265,79 +49,61 @@ r_int
 id|ino
 )paren
 (brace
-r_int
-id|i
+r_struct
+id|proc_dir_entry
+op_star
+op_star
+id|p
+op_assign
+op_amp
+id|net_dir
+comma
+op_star
+id|dp
 suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-id|i
+(paren
+id|dp
 op_assign
-l_int|0
-suffix:semicolon
-id|net_dir
-(braket
-id|i
-)braket
+op_star
+id|p
+)paren
 op_ne
 l_int|NULL
-op_logical_and
-id|i
-OL
-id|nr_net_direntry
-suffix:semicolon
-op_increment
-id|i
 )paren
+(brace
 r_if
 c_cond
 (paren
-id|net_dir
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|low_ino
+id|dp-&gt;low_ino
 op_eq
 id|ino
 )paren
 (brace
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|net_dir
-(braket
-id|i
-)braket
-op_ne
-l_int|NULL
-suffix:semicolon
-op_increment
-id|i
-)paren
-id|net_dir
-(braket
-id|i
-)braket
+op_star
+id|p
 op_assign
-id|net_dir
-(braket
-id|i
-op_plus
-l_int|1
-)braket
+id|dp-&gt;next
 suffix:semicolon
-op_decrement
-id|nr_net_direntry
+id|dp-&gt;next
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|p
+op_assign
+op_amp
+id|dp-&gt;next
+suffix:semicolon
+)brace
 r_return
 op_minus
-id|ENOENT
+id|EINVAL
 suffix:semicolon
 )brace
 DECL|function|dir_get_info
@@ -386,11 +152,11 @@ op_assign
 (brace
 id|PROC_NET
 comma
-id|dir_get_info
-comma
 l_int|1
 comma
 l_string|&quot;.&quot;
+comma
+id|dir_get_info
 )brace
 comma
 id|nd_rootdir
@@ -398,11 +164,11 @@ op_assign
 (brace
 id|PROC_ROOT_INO
 comma
-id|dir_get_info
-comma
-l_int|1
+l_int|2
 comma
 l_string|&quot;..&quot;
+comma
+id|dir_get_info
 )brace
 suffix:semicolon
 r_static
@@ -466,7 +232,6 @@ id|result
 r_struct
 id|proc_dir_entry
 op_star
-op_star
 id|de
 suffix:semicolon
 op_star
@@ -513,17 +278,18 @@ id|de
 op_assign
 id|net_dir
 suffix:semicolon
-(paren
-op_star
 id|de
-)paren
-op_member_access_from_pointer
-id|name
 suffix:semicolon
 id|de
-op_increment
+op_assign
+id|de-&gt;next
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -535,26 +301,19 @@ id|len
 comma
 id|name
 comma
-op_star
 id|de
 )paren
 )paren
 r_continue
 suffix:semicolon
-op_star
-id|result
+id|inode
 op_assign
 id|iget
 c_func
 (paren
 id|dir-&gt;i_sb
 comma
-(paren
-op_star
-id|de
-)paren
-op_member_access_from_pointer
-id|low_ino
+id|de-&gt;low_ino
 )paren
 suffix:semicolon
 id|iput
@@ -567,12 +326,33 @@ r_if
 c_cond
 (paren
 op_logical_neg
-op_star
-id|result
+id|inode
 )paren
 r_return
 op_minus
 id|ENOENT
+suffix:semicolon
+id|inode-&gt;u.generic_ip
+op_assign
+id|de
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|de-&gt;fill_inode
+)paren
+id|de
+op_member_access_from_pointer
+id|fill_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+op_star
+id|result
+op_assign
+id|inode
 suffix:semicolon
 r_return
 l_int|0
@@ -622,6 +402,9 @@ r_int
 r_int
 id|ino
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -643,26 +426,48 @@ id|ino
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-(paren
-r_int
-)paren
-id|filp-&gt;f_pos
-)paren
-OL
-id|nr_net_direntry
-)paren
-(brace
 id|de
 op_assign
 id|net_dir
-(braket
-id|filp-&gt;f_pos
-)braket
 suffix:semicolon
+id|i
+op_assign
+id|filp-&gt;f_pos
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|de
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|i
+)paren
+r_break
+suffix:semicolon
+id|de
+op_assign
+id|de-&gt;next
+suffix:semicolon
+id|i
+op_decrement
+suffix:semicolon
+)brace
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -682,12 +487,23 @@ id|de-&gt;low_ino
 OL
 l_int|0
 )paren
-r_break
+r_return
+l_int|0
 suffix:semicolon
 id|filp-&gt;f_pos
 op_increment
 suffix:semicolon
+id|de
+op_assign
+id|de-&gt;next
+suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|de
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -723,16 +539,9 @@ op_star
 id|page
 suffix:semicolon
 r_int
-r_int
-id|ino
-suffix:semicolon
-r_int
 id|bytes
 op_assign
 id|count
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 r_int
 id|copied
@@ -759,54 +568,15 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|ino
-op_assign
-id|inode-&gt;i_ino
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|i
-op_ge
-id|NR_MAX_PROC_NET_DIR
-op_logical_or
-(paren
 id|dp
 op_assign
-id|net_dir
-(braket
-id|i
-)braket
-)paren
-op_eq
-l_int|NULL
-)paren
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
-r_if
-c_cond
 (paren
-id|dp-&gt;low_ino
-op_eq
-id|ino
+r_struct
+id|proc_dir_entry
+op_star
 )paren
-r_break
+id|inode-&gt;u.generic_ip
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -941,4 +711,188 @@ r_return
 id|copied
 suffix:semicolon
 )brace
+DECL|variable|proc_net_operations
+r_static
+r_struct
+id|file_operations
+id|proc_net_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+id|proc_readnet
+comma
+multiline_comment|/* read - bad */
+l_int|NULL
+comma
+multiline_comment|/* write - bad */
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* select - default */
+l_int|NULL
+comma
+multiline_comment|/* ioctl - default */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* can&squot;t fsync */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
+DECL|variable|proc_net_inode_operations
+r_struct
+id|inode_operations
+id|proc_net_inode_operations
+op_assign
+(brace
+op_amp
+id|proc_net_operations
+comma
+multiline_comment|/* default net file-ops */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
+)brace
+suffix:semicolon
+DECL|variable|proc_netdir_operations
+r_static
+r_struct
+id|file_operations
+id|proc_netdir_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+l_int|NULL
+comma
+multiline_comment|/* read - bad */
+l_int|NULL
+comma
+multiline_comment|/* write - bad */
+id|proc_readnetdir
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* select - default */
+l_int|NULL
+comma
+multiline_comment|/* ioctl - default */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* can&squot;t fsync */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
+DECL|variable|proc_netdir_inode_operations
+r_struct
+id|inode_operations
+id|proc_netdir_inode_operations
+op_assign
+(brace
+op_amp
+id|proc_netdir_operations
+comma
+multiline_comment|/* default net directory file-ops */
+l_int|NULL
+comma
+multiline_comment|/* create */
+id|proc_lookupnet
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
+)brace
+suffix:semicolon
 eof

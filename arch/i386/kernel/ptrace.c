@@ -690,25 +690,25 @@ id|page
 OL
 id|high_memory
 )paren
-(brace
-id|page
-op_add_assign
-id|addr
-op_amp
-op_complement
-id|PAGE_MASK
-suffix:semicolon
 op_star
 (paren
 r_int
 r_int
 op_star
 )paren
+(paren
 id|page
+op_plus
+(paren
+id|addr
+op_amp
+op_complement
+id|PAGE_MASK
+)paren
+)paren
 op_assign
 id|data
 suffix:semicolon
-)brace
 multiline_comment|/* we&squot;re bypassing pagetables, so we have to set the dirty bit ourselves */
 multiline_comment|/* this should also re-instate whatever read-only mode there was before */
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is a trivial part&n; *&t;&t;of the exercise.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is a trivial part&n; *&t;&t;of the exercise.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -19,7 +19,6 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-multiline_comment|/*#include &lt;linux/netprotocol.h&gt;*/
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
@@ -4342,11 +4341,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_UNIX
 comma
-id|unix_get_info
-comma
 l_int|4
 comma
 l_string|&quot;unix&quot;
+comma
+id|unix_get_info
 )brace
 )paren
 suffix:semicolon

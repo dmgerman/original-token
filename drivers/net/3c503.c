@@ -2340,7 +2340,7 @@ DECL|variable|io
 r_int
 id|io
 op_assign
-l_int|0
+l_int|0x300
 suffix:semicolon
 DECL|variable|irq
 r_int
@@ -2383,6 +2383,19 @@ suffix:semicolon
 id|el2pio_drv.irq
 op_assign
 id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;3c503: You should not use auto-probing with insmod!&bslash;n&quot;
+)paren
 suffix:semicolon
 id|rc2
 op_assign

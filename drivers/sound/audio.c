@@ -1610,24 +1610,6 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|wr_buff_no
-(braket
-id|dev
-)braket
-op_ne
-op_minus
-l_int|1
-)paren
-id|info.bytes
-op_add_assign
-id|wr_buff_ptr
-(braket
-id|dev
-)braket
-suffix:semicolon
 id|IOCTL_TO_USER
 (paren
 (paren
@@ -1905,8 +1887,8 @@ id|audio_mode
 (braket
 id|dev
 )braket
-op_ne
-id|AM_WRITE
+op_eq
+id|AM_READ
 )paren
 multiline_comment|/* Wrong direction */
 r_return

@@ -334,14 +334,6 @@ r_void
 suffix:semicolon
 r_static
 r_void
-id|do_mcd_request
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_void
 id|hsg2msf
 c_func
 (paren

@@ -166,24 +166,6 @@ r_int
 id|on
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|proc_net_register
-c_func
-(paren
-r_struct
-id|proc_dir_entry
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|proc_net_unregister
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *&t;Socket files have a set of &squot;special&squot; operations as well as the generic file ones. These don&squot;t appear&n; *&t;in the operation structures but are done directly via the socketcall() multiplexor.&n; */
 DECL|variable|socket_file_ops
 r_static

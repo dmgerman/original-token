@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -47,7 +47,7 @@ id|rt_loopback
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; *&t;Remove a routing table entry.&n; */
+multiline_comment|/*&n; *&t;Remove a routing table entry.&n; *&t;Should we return a status value here ?&n; */
 DECL|function|rt_del
 r_static
 r_void
@@ -58,9 +58,23 @@ r_int
 r_int
 id|dst
 comma
+r_int
+r_int
+id|mask
+comma
 r_char
 op_star
 id|devname
+comma
+r_int
+r_int
+id|gtw
+comma
+r_int
+id|rt_flags
+comma
+r_int
+id|metric
 )paren
 (brace
 r_struct
@@ -106,7 +120,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* Make sure both the destination and the device match */
+multiline_comment|/*&n;&t;&t; *&t;Make sure the destination and netmask match.&n;&t;&t; *&t;metric, gateway and device are also checked&n;&t;&t; *&t;if they were specified.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -115,9 +129,33 @@ op_ne
 id|dst
 op_logical_or
 (paren
-id|devname
+id|mask
+op_logical_and
+id|r-&gt;rt_mask
 op_ne
-l_int|NULL
+id|mask
+)paren
+op_logical_or
+(paren
+id|gtw
+op_logical_and
+id|r-&gt;rt_gateway
+op_ne
+id|gtw
+)paren
+op_logical_or
+(paren
+id|metric
+op_ge
+l_int|0
+op_logical_and
+id|r-&gt;rt_metric
+op_ne
+id|metric
+)paren
+op_logical_or
+(paren
+id|devname
 op_logical_and
 id|strcmp
 c_func
@@ -525,7 +563,6 @@ r_int
 id|irtt
 comma
 r_int
-r_char
 id|metric
 )paren
 (brace
@@ -546,6 +583,11 @@ suffix:semicolon
 r_int
 r_int
 id|cpuflags
+suffix:semicolon
+r_int
+id|duplicate
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;A host is a unique machine and has no network bits.&n;&t; */
 r_if
@@ -841,6 +883,30 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|r-&gt;rt_metric
+op_ne
+id|metric
+op_logical_and
+id|r-&gt;rt_gateway
+op_ne
+id|gw
+)paren
+(brace
+id|duplicate
+op_assign
+l_int|1
+suffix:semicolon
+id|rp
+op_assign
+op_amp
+id|r-&gt;rt_next
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 op_star
 id|rp
 op_assign
@@ -889,6 +955,28 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * When adding a duplicate route, add it before&n;&t;&t; * the route with a higher metric.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|duplicate
+op_logical_and
+id|r-&gt;rt_dst
+op_eq
+id|dst
+op_logical_and
+id|r-&gt;rt_mask
+op_eq
+id|mask
+op_logical_and
+id|r-&gt;rt_metric
+OG
+id|metric
+)paren
+r_break
+suffix:semicolon
+r_else
+multiline_comment|/*&n;&t;&t; * Otherwise, just add it before the&n;&t;&t; * route with a higher generality.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1044,7 +1132,6 @@ comma
 id|gw
 suffix:semicolon
 r_int
-r_char
 id|metric
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;If a device is specified find it.&n;&t; */
@@ -1388,6 +1475,16 @@ id|sockaddr_in
 op_star
 id|trg
 suffix:semicolon
+r_struct
+id|sockaddr_in
+op_star
+id|msk
+suffix:semicolon
+r_struct
+id|sockaddr_in
+op_star
+id|gtw
+suffix:semicolon
 r_char
 op_star
 id|devname
@@ -1404,6 +1501,26 @@ op_star
 )paren
 op_amp
 id|r-&gt;rt_dst
+suffix:semicolon
+id|msk
+op_assign
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+op_amp
+id|r-&gt;rt_genmask
+suffix:semicolon
+id|gtw
+op_assign
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+op_amp
+id|r-&gt;rt_gateway
 suffix:semicolon
 r_if
 c_cond
@@ -1437,12 +1554,23 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * metric can become negative here if it wasn&squot;t filled in&n;&t; * but that&squot;s a fortunate accident; we really use that in rt_del.&n;&t; */
 id|rt_del
 c_func
 (paren
 id|trg-&gt;sin_addr.s_addr
 comma
+id|msk-&gt;sin_addr.s_addr
+comma
 id|devname
+comma
+id|gtw-&gt;sin_addr.s_addr
+comma
+id|r-&gt;rt_flags
+comma
+id|r-&gt;rt_metric
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 r_if

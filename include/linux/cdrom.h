@@ -4,31 +4,33 @@ DECL|macro|_LINUX_CDROM_H
 mdefine_line|#define&t;_LINUX_CDROM_H
 multiline_comment|/*&n; * some fix numbers&n; */
 DECL|macro|CD_MINS
-mdefine_line|#define CD_MINS                   74  /* max. minutes per CD             */
+mdefine_line|#define CD_MINS                    74  /* max. minutes per CD             */
 DECL|macro|CD_SECS
-mdefine_line|#define CD_SECS                   60  /* seconds per minute              */
+mdefine_line|#define CD_SECS                    60  /* seconds per minute              */
 DECL|macro|CD_FRAMES
-mdefine_line|#define CD_FRAMES                 75  /* frames per second               */
+mdefine_line|#define CD_FRAMES                  75  /* frames per second               */
 DECL|macro|CD_CHUNK_SIZE
-mdefine_line|#define CD_CHUNK_SIZE             24  /* lowest-level &quot;data bytes piece&quot; */
+mdefine_line|#define CD_CHUNK_SIZE              24  /* lowest-level &quot;data bytes piece&quot; */
 DECL|macro|CD_NUM_OF_CHUNKS
-mdefine_line|#define CD_NUM_OF_CHUNKS          98  /* chunks per frame                */
+mdefine_line|#define CD_NUM_OF_CHUNKS           98  /* chunks per frame                */
 DECL|macro|CD_FRAMESIZE
-mdefine_line|#define CD_FRAMESIZE            2048  /* bytes per frame, cooked mode    */
+mdefine_line|#define CD_FRAMESIZE             2048  /* bytes per frame, cooked mode    */
 DECL|macro|CD_FRAMESIZE_RAW0
-mdefine_line|#define CD_FRAMESIZE_RAW0       2336  /* bytes per frame, &quot;raw&quot; mode     */
+mdefine_line|#define CD_FRAMESIZE_RAW0        2336  /* bytes per frame, &quot;raw&quot; mode     */
 DECL|macro|CD_FRAMESIZE_XA
-mdefine_line|#define CD_FRAMESIZE_XA         2340  /* bytes per frame, &quot;xa&quot; mode      */
+mdefine_line|#define CD_FRAMESIZE_XA          2340  /* bytes per frame, &quot;xa&quot; mode      */
 DECL|macro|CD_FRAMESIZE_RAW
-mdefine_line|#define CD_FRAMESIZE_RAW        2352  /* bytes per frame, &quot;raw&quot; mode     */
+mdefine_line|#define CD_FRAMESIZE_RAW         2352  /* bytes per frame, &quot;raw&quot; mode     */
 DECL|macro|CD_FRAMESIZE_SUB
-mdefine_line|#define CD_FRAMESIZE_SUB          96  /* subchannel data size            */
+mdefine_line|#define CD_FRAMESIZE_SUB           96  /* subchannel data size            */
 DECL|macro|CD_BLOCK_OFFSET
-mdefine_line|#define CD_BLOCK_OFFSET          150  /* offset of first logical frame   */
+mdefine_line|#define CD_BLOCK_OFFSET           150  /* offset of first logical frame   */
 DECL|macro|CD_XA_HEAD
-mdefine_line|#define CD_XA_HEAD                12  /* header size of XA frame         */
+mdefine_line|#define CD_XA_HEAD                 12  /* header size of XA frame         */
 DECL|macro|CD_XA_TAIL
-mdefine_line|#define CD_XA_TAIL               280  /* tail size of XA frame           */
+mdefine_line|#define CD_XA_TAIL                280  /* tail size of XA frame           */
+DECL|macro|CD_XA_SYNC_HEAD
+mdefine_line|#define CD_XA_SYNC_HEAD (CD_XA_HEAD+12)/* sync bytes + header of XA frame */
 multiline_comment|/*&n; *&n; * For IOCTL calls, we will commandeer byte 0x53, or &squot;S&squot;.&n; *&n; */
 multiline_comment|/*&n; * CD-ROM-specific SCSI command opcodes&n; */
 multiline_comment|/*&n; * Group 2 (10-byte).  All of these are called &squot;optional&squot; by SCSI-II.&n; */
@@ -918,11 +920,9 @@ mdefine_line|#define&t;CDROMRESET&t;&t;0x5312 /* hard-reset the drive */
 DECL|macro|CDROMVOLREAD
 mdefine_line|#define&t;CDROMVOLREAD&t;&t;0x5313 /* let the drive tell its volume setting */
 multiline_comment|/* (struct cdrom_volctrl) */
-DECL|macro|CDROMREADMODE0
-mdefine_line|#define CDROMREADMODE0          0x5314  /*read data in audio mode*/
 DECL|macro|CDROMREADRAW
-mdefine_line|#define CDROMREADRAW            0x5315  /*read data in raw mode*/
+mdefine_line|#define CDROMREADRAW            0x5314  /*read data in raw mode*/
 DECL|macro|CDROMREADCOOKED
-mdefine_line|#define CDROMREADCOOKED         0x5316  /*read data in cooked mode*/
+mdefine_line|#define CDROMREADCOOKED         0x5315  /*read data in cooked mode*/
 macro_line|#endif  _LINUX_CDROM_H
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* arcnet.c&n;&t;Written 1994-95 by Avery Pennarun, derived from skeleton.c by&n;        Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&t;&n;&t;v1.92 ALPHA (95/07/11)&n;&t;  - Fixes to make things work with kernel 1.3.x.  Completely broke&n;&t;    1.2.x support.  Oops?  1.2.x users keep using 1.91 ALPHA until I&n;&t;    get out a version that supports both.&n;&n;&t;v1.91 ALPHA (95/07/02)&n;&t;  - Oops.  Exception packets hit us again!  I remembered to test&n;&t;    them in Windows-protocol mode, but due to the many various&n;&t;    changes they broke in RFC1201 instead.  All fixed.&n;&t;  - A long-standing bug with &quot;exception&quot; packets not setting&n;&t;    protocol_id properly has been corrected.  This would have caused&n;&t;    random problems talking to non-Linux servers.  I&squot;ve also sent in&n;&t;    a patch to fix this in the latest stable ARCnet (now 1.02).&n;&t;  - ARC_P_IPX is an RFC1201 protocol too.  Thanks, Tomasz.&n;&t;  - We&squot;re now &quot;properly&quot; (I think) handling the multiple &squot;tbusy&squot; and&n;&t;    &squot;start&squot; flags (one for each protocol device) better.&n;&t;  - The driver should now start without a NULL-pointer dereference&n;&t;    if you aren&squot;t connected to the network.&n;&t;  &n;&t;v1.90 ALPHA (95/06/18)&n;&t;  - Removal of some outdated and messy config options (no one has&n;&t;    ever complained about the defaults since they were introduced):&n;&t;    DANGER_PROBE, EXTRA_DELAYS, IRQ_XMIT, CAREFUL_XMIT,&n;&t;    STRICT_MEM_DETECT, LIMIT_MTU, USE_TIMER_HANDLER.  Also took out&n;&t;    a few &quot;#if 0&quot; sections which are no longer useful.&n;&t;  - Cleaned up debug levels - now instead of levels, there are&n;&t;    individual flags.  Watch out when changing with ifconfig.&n;&t;  - More cleanups and beautification.  Removed more dead code and&n;&t;    made sure every function was commented.&n;&t;  - Fixed the DETECT_RECONFIGS option so that it actually _won&squot;t_&n;&t;    detect reconfigs.  Previously, the RECON irq would be disabled&n;&t;    but the recon messages would still be logged on the next normal&n;&t;    IRQ.&n;&t;  - Initial support for &quot;multiprotocol&quot; ARCnet (this involved a LOT&n;&t;    of reorganizing!).  Added an arc0w device, which allows us to&n;&t;    talk to &quot;Windows&quot; ARCnet TCP/IP protocol.  To use it, ifconfig&n;&t;    arc0 and arc0w (in that order).  For now, Windows-protocol&n;&t;    hosts should have routes through arc0w - eventually I hope to&n;&t;    make things more automatic.&n;&t;v1.11 ALPHA (95/06/07)&n;&t;  - Tomasz saves the day again with patches to fix operation if the&n;&t;    new VERIFY_ACK option is disabled.&n;&t;  - LOTS of little code cleanups/improvements by Tomasz.&n;&t;  - Changed autoprobe, since the &quot;never-changing command port&quot;&n;&t;    probe was causing problems for some people.  I also reset the&n;&t;    card fewer times during the probe if DANGER_PROBE is defined,&n;&t;    since DANGER_PROBE seems to be a more reliable method anyway.&n;&t;  - It looks like the null-pointer problem was finally REALLY fixed&n;&t;    by some change from Linux 1.2.8 to 1.2.9.  How handy!&n;&t;v1.10 ALPHA (95/04/15)&n;&t;  - Fixed (?) some null-pointer dereference bugs&n;&t;  - Added better network error detection (from Tomasz) - in&n;&t;    particular, we now notice when our network isn&squot;t connected,&n;&t;    also known as a &quot;network reconfiguration.&quot;&n;&t;  - We now increment lp-&gt;stats.tx_dropped in several more places,&n;&t;    on a suggestion from Tomasz.&n;&t;  - Minor cleanups/spelling fixes.&n;&t;  - We now monitor the TXACK bit in the status register: we don&squot;t do&n;&t;    anything with it yet, just notice when a transmitted packet isn&squot;t&n;&t;    acknowledged.&n;&t;  - Minor fix with sequence numbers (sometimes they were being sent in&n;&t;    the wrong order due to Linux&squot;s packet queuing).&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  Currently, we do cause some NE2000&squot;s to&n;           die.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;         - NFS mount freezes after several megabytes to SOSS for DOS. &n; &t;   unmount/remount fixes it.  Is this arcnet-specific?  I don&squot;t know.&n;         - Add support for &quot;old&quot; (RFC1051) protocol arcnet, such as AmiTCP&n;           and NetBSD.  Work in Tomasz&squot; initial support for this.&n;         - How about TCP/IP over netbios?&n;         - Some newer ARCnets support promiscuous mode, supposedly. &n;           If someone sends me information, I&squot;ll try to implement it.&n;         - Remove excess lock variables that are probably not necessary&n;           anymore due to the changes in Linux 1.2.9.&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - The official ARCnet data sheets (!) thanks to Ken Cornetet&n;&t;&t;&lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - RFC&squot;s 1201 and 1051 (mostly 1201) - re: ARCnet IP packets&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info...&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
+multiline_comment|/* arcnet.c&n;&t;Written 1994-95 by Avery Pennarun, derived from skeleton.c by&n;        Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&t;&n;&t;v1.93 ALPHA (95/08/10)&n;&t;  - Should work with both 1.2.x and 1.3.x now. (I hope)&n;&t;  - Renamed arc0w (&quot;Windows&quot; protocol) to arc0e (&quot;Ethernet-Encap&quot;)&n;&t;    because the protocol used isn&squot;t necessarily limited to&n;&t;    Microsoft.&n;&n;&t;v1.92 ALPHA (95/07/11)&n;&t;  - Fixes to make things work with kernel 1.3.x.  Completely broke&n;&t;    1.2.x support.  Oops?  1.2.x users keep using 1.91 ALPHA until I&n;&t;    get out a version that supports both.&n;&n;&t;v1.91 ALPHA (95/07/02)&n;&t;  - Oops.  Exception packets hit us again!  I remembered to test&n;&t;    them in ethernet-protocol mode, but due to the many various&n;&t;    changes they broke in RFC1201 instead.  All fixed.&n;&t;  - A long-standing bug with &quot;exception&quot; packets not setting&n;&t;    protocol_id properly has been corrected.  This would have caused&n;&t;    random problems talking to non-Linux servers.  I&squot;ve also sent in&n;&t;    a patch to fix this in the latest stable ARCnet (now 1.02).&n;&t;  - ARC_P_IPX is an RFC1201 protocol too.  Thanks, Tomasz.&n;&t;  - We&squot;re now &quot;properly&quot; (I think) handling the multiple &squot;tbusy&squot; and&n;&t;    &squot;start&squot; flags (one for each protocol device) better.&n;&t;  - The driver should now start without a NULL-pointer dereference&n;&t;    if you aren&squot;t connected to the network.&n;&t;  &n;&t;v1.90 ALPHA (95/06/18)&n;&t;  - Removal of some outdated and messy config options (no one has&n;&t;    ever complained about the defaults since they were introduced):&n;&t;    DANGER_PROBE, EXTRA_DELAYS, IRQ_XMIT, CAREFUL_XMIT,&n;&t;    STRICT_MEM_DETECT, LIMIT_MTU, USE_TIMER_HANDLER.  Also took out&n;&t;    a few &quot;#if 0&quot; sections which are no longer useful.&n;&t;  - Cleaned up debug levels - now instead of levels, there are&n;&t;    individual flags.  Watch out when changing with ifconfig.&n;&t;  - More cleanups and beautification.  Removed more dead code and&n;&t;    made sure every function was commented.&n;&t;  - Fixed the DETECT_RECONFIGS option so that it actually _won&squot;t_&n;&t;    detect reconfigs.  Previously, the RECON irq would be disabled&n;&t;    but the recon messages would still be logged on the next normal&n;&t;    IRQ.&n;&t;  - Initial support for &quot;multiprotocol&quot; ARCnet (this involved a LOT&n;&t;    of reorganizing!).  Added an arc0w device, which allows us to&n;&t;    talk to ethernet-over-ARCnet TCP/IP protocol.  To use it, ifconfig&n;&t;    arc0 and arc0w (in that order).  For now, ethernet-protocol&n;&t;    hosts should have routes through arc0w - eventually I hope to&n;&t;    make things more automatic.&n;&t;v1.11 ALPHA (95/06/07)&n;&t;  - Tomasz saves the day again with patches to fix operation if the&n;&t;    new VERIFY_ACK option is disabled.&n;&t;  - LOTS of little code cleanups/improvements by Tomasz.&n;&t;  - Changed autoprobe, since the &quot;never-changing command port&quot;&n;&t;    probe was causing problems for some people.  I also reset the&n;&t;    card fewer times during the probe if DANGER_PROBE is defined,&n;&t;    since DANGER_PROBE seems to be a more reliable method anyway.&n;&t;  - It looks like the null-pointer problem was finally REALLY fixed&n;&t;    by some change from Linux 1.2.8 to 1.2.9.  How handy!&n;&t;v1.10 ALPHA (95/04/15)&n;&t;  - Fixed (?) some null-pointer dereference bugs&n;&t;  - Added better network error detection (from Tomasz) - in&n;&t;    particular, we now notice when our network isn&squot;t connected,&n;&t;    also known as a &quot;network reconfiguration.&quot;&n;&t;  - We now increment lp-&gt;stats.tx_dropped in several more places,&n;&t;    on a suggestion from Tomasz.&n;&t;  - Minor cleanups/spelling fixes.&n;&t;  - We now monitor the TXACK bit in the status register: we don&squot;t do&n;&t;    anything with it yet, just notice when a transmitted packet isn&squot;t&n;&t;    acknowledged.&n;&t;  - Minor fix with sequence numbers (sometimes they were being sent in&n;&t;    the wrong order due to Linux&squot;s packet queuing).&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  Currently, we do cause some NE2000&squot;s to&n;           die.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;         - NFS mount freezes after several megabytes to SOSS for DOS. &n; &t;   unmount/remount fixes it.  Is this arcnet-specific?  I don&squot;t know.&n;         - Add support for &quot;old&quot; (RFC1051) protocol arcnet, such as AmiTCP&n;           and NetBSD.  Work in Tomasz&squot; initial support for this.&n;         - How about TCP/IP over netbios?&n;         - Some newer ARCnets support promiscuous mode, supposedly. &n;           If someone sends me information, I&squot;ll try to implement it.&n;         - Remove excess lock variables that are probably not necessary&n;           anymore due to the changes in Linux 1.2.9.&n;         - Dump Linux 1.2 and properly use the extended 1.3.x skb functions.&n;         - Problems forwarding from arc0e to arc0 in 1.3.x? (it may be a&n;           general kernel bug, though, since I heard other people complaining&n;           about forwarding problems on ethernet cards)&n;         - D_SKB doesn&squot;t work right on 1.3.x kernels.&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - The official ARCnet data sheets (!) thanks to Ken Cornetet&n;&t;&t;&lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - RFC&squot;s 1201 and 1051 (mostly 1201) - re: ARCnet IP packets&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info...&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arcnet.c:v1.92 ALPHA 95/07/11 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
+l_string|&quot;arcnet.c:v1.93 ALPHA 95/08/10 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/**************************************************************************/
 multiline_comment|/* Define this if you want to detect network reconfigurations.&n; * They may be a real nuisance on a larger ARCnet network: but if you are&n; * a network administrator you probably would like to count them. &n; * Reconfigurations will be recorded in stats.tx_carrier_errors &n; * (the last field of the /proc/net/dev file).&n; *&n; * The card sends the reconfiguration signal when it loses the connection&n; * to the rest of its network. It is a &squot;Hello, is anybody there?&squot; cry.  This&n; * usually happens when a new computer on the network is powered on or when&n; * the cable is broken.&n; */
@@ -20,10 +20,15 @@ DECL|macro|static
 macro_line|#undef static
 multiline_comment|/**************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif /* MODULE */
+multiline_comment|/* are we Linux 1.2.x? */
+macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
+DECL|macro|LINUX12
+mdefine_line|#define LINUX12
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -113,11 +118,11 @@ DECL|macro|BUGLVL
 mdefine_line|#define BUGLVL(x) if (arcnet_debug&amp;(x))
 multiline_comment|/* Some useful multiprotocol macros */
 DECL|macro|TBUSY
-mdefine_line|#define TBUSY lp-&gt;adev-&gt;tbusy &bslash;&n;&t;&t;=lp-&gt;wdev-&gt;tbusy
+mdefine_line|#define TBUSY lp-&gt;adev-&gt;tbusy &bslash;&n;&t;&t;=lp-&gt;edev-&gt;tbusy
 DECL|macro|IF_TBUSY
-mdefine_line|#define IF_TBUSY (lp-&gt;adev-&gt;tbusy &bslash;&n;&t;&t;|| lp-&gt;wdev-&gt;tbusy)
+mdefine_line|#define IF_TBUSY (lp-&gt;adev-&gt;tbusy &bslash;&n;&t;&t;|| lp-&gt;edev-&gt;tbusy)
 DECL|macro|START
-mdefine_line|#define START lp-&gt;adev-&gt;start &bslash;&n;&t;&t;=lp-&gt;wdev-&gt;start
+mdefine_line|#define START lp-&gt;adev-&gt;start &bslash;&n;&t;&t;=lp-&gt;edev-&gt;start
 multiline_comment|/* The number of low I/O ports used by the ethercard. */
 DECL|macro|ARCNET_TOTAL_SIZE
 mdefine_line|#define ARCNET_TOTAL_SIZE&t;16
@@ -476,13 +481,13 @@ op_star
 id|adev
 suffix:semicolon
 multiline_comment|/* RFC1201 protocol device */
-DECL|member|wdev
+DECL|member|edev
 r_struct
 id|device
 op_star
-id|wdev
+id|edev
 suffix:semicolon
-multiline_comment|/* Windows protocol device */
+multiline_comment|/* Ethernet-Encap device */
 )brace
 suffix:semicolon
 multiline_comment|/* Index to functions, as function prototypes. */
@@ -530,7 +535,7 @@ suffix:semicolon
 macro_line|#endif
 r_static
 r_int
-id|arcnetW_init
+id|arcnetE_init
 c_func
 (paren
 r_struct
@@ -635,7 +640,7 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|arcnetW_send_packet
+id|arcnetE_send_packet
 c_func
 (paren
 r_struct
@@ -715,7 +720,7 @@ id|daddr
 suffix:semicolon
 r_static
 r_void
-id|arcnetW_rx
+id|arcnetE_rx
 c_func
 (paren
 r_struct
@@ -768,7 +773,44 @@ op_star
 id|addrs
 )paren
 suffix:semicolon
-multiline_comment|/* annoying functions for header/arp/etc building */
+multiline_comment|/* functions for header/arp/etc building */
+macro_line|#ifdef LINUX12
+r_int
+id|arcnetA_header
+c_func
+(paren
+r_int
+r_char
+op_star
+id|buff
+comma
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|type
+comma
+r_void
+op_star
+id|daddr
+comma
+r_void
+op_star
+id|saddr
+comma
+r_int
+id|len
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+macro_line|#else
 r_int
 id|arcnetA_header
 c_func
@@ -799,6 +841,7 @@ r_int
 id|len
 )paren
 suffix:semicolon
+macro_line|#endif
 r_int
 id|arcnetA_rebuild_header
 c_func
@@ -1627,6 +1670,12 @@ id|dev-&gt;rebuild_header
 op_assign
 id|arcnetA_rebuild_header
 suffix:semicolon
+macro_line|#ifdef LINUX12
+id|dev-&gt;type_trans
+op_assign
+id|arcnetA_type_trans
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2451,10 +2500,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|arcnetW_init
+DECL|function|arcnetE_init
 r_static
 r_int
-id|arcnetW_init
+id|arcnetE_init
 c_func
 (paren
 r_struct
@@ -2478,7 +2527,7 @@ suffix:semicolon
 id|ether_setup
 c_func
 (paren
-id|lp-&gt;wdev
+id|lp-&gt;edev
 )paren
 suffix:semicolon
 id|dev-&gt;dev_addr
@@ -2500,17 +2549,17 @@ op_assign
 l_int|493
 suffix:semicolon
 multiline_comment|/* MTU is small because of missing packet splitting */
-id|lp-&gt;wdev-&gt;open
+id|lp-&gt;edev-&gt;open
 op_assign
 l_int|NULL
 suffix:semicolon
-id|lp-&gt;wdev-&gt;stop
+id|lp-&gt;edev-&gt;stop
 op_assign
 l_int|NULL
 suffix:semicolon
-id|lp-&gt;wdev-&gt;hard_start_xmit
+id|lp-&gt;edev-&gt;hard_start_xmit
 op_assign
-id|arcnetW_send_packet
+id|arcnetE_send_packet
 suffix:semicolon
 id|BUGLVL
 c_func
@@ -2520,9 +2569,9 @@ id|D_EXTRA
 id|printk
 c_func
 (paren
-l_string|&quot;%s: ARCnet &bslash;&quot;Windows&bslash;&quot; protocol initialized.&bslash;n&quot;
+l_string|&quot;%s: ARCnet &bslash;&quot;Ethernet-Encap&bslash;&quot; protocol initialized.&bslash;n&quot;
 comma
-id|lp-&gt;wdev-&gt;name
+id|lp-&gt;edev-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -2665,8 +2714,8 @@ comma
 id|lp-&gt;adev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* Initialize the Windows protocol driver */
-id|lp-&gt;wdev
+multiline_comment|/* Initialize the ethernet-encap protocol driver */
+id|lp-&gt;edev
 op_assign
 (paren
 r_struct
@@ -2688,7 +2737,7 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|lp-&gt;wdev
+id|lp-&gt;edev
 comma
 id|dev
 comma
@@ -2699,7 +2748,7 @@ id|device
 )paren
 )paren
 suffix:semicolon
-id|lp-&gt;wdev-&gt;name
+id|lp-&gt;edev-&gt;name
 op_assign
 (paren
 r_char
@@ -2716,21 +2765,21 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|lp-&gt;wdev-&gt;name
+id|lp-&gt;edev-&gt;name
 comma
-l_string|&quot;%sw&quot;
+l_string|&quot;%se&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|lp-&gt;wdev-&gt;init
+id|lp-&gt;edev-&gt;init
 op_assign
-id|arcnetW_init
+id|arcnetE_init
 suffix:semicolon
 id|register_netdev
 c_func
 (paren
-id|lp-&gt;wdev
+id|lp-&gt;edev
 )paren
 suffix:semicolon
 multiline_comment|/* we&squot;re started */
@@ -2817,34 +2866,34 @@ id|lp-&gt;adev
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* free the Windows protocol device */
-id|lp-&gt;wdev-&gt;start
+multiline_comment|/* free the ethernet-encap protocol device */
+id|lp-&gt;edev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-id|lp-&gt;wdev-&gt;priv
+id|lp-&gt;edev-&gt;priv
 op_assign
 l_int|NULL
 suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
-id|lp-&gt;wdev
+id|lp-&gt;edev
 )paren
 suffix:semicolon
 id|kfree
 c_func
 (paren
-id|lp-&gt;wdev-&gt;name
+id|lp-&gt;edev-&gt;name
 )paren
 suffix:semicolon
 id|kfree
 c_func
 (paren
-id|lp-&gt;wdev
+id|lp-&gt;edev
 )paren
 suffix:semicolon
-id|lp-&gt;wdev
+id|lp-&gt;edev
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -4448,11 +4497,11 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* Called by the kernel in order to transmit a &quot;Windows&quot; packet.&n; */
+multiline_comment|/* Called by the kernel in order to transmit an ethernet-type packet.&n; */
 r_static
 r_int
-DECL|function|arcnetW_send_packet
-id|arcnetW_send_packet
+DECL|function|arcnetE_send_packet
+id|arcnetE_send_packet
 c_func
 (paren
 r_struct
@@ -4486,7 +4535,7 @@ id|D_DURING
 id|printk
 c_func
 (paren
-l_string|&quot;%s: in arcnetW_send_packet (skb=%p)&bslash;n&quot;
+l_string|&quot;%s: in arcnetE_send_packet (skb=%p)&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4638,11 +4687,11 @@ id|XMTU
 id|printk
 c_func
 (paren
-l_string|&quot;arcnet: MTU for %s and %s must be &lt;= 493 for Windows protocol.&bslash;n&quot;
+l_string|&quot;arcnet: MTU for %s and %s must be &lt;= 493 for ethernet encap.&bslash;n&quot;
 comma
 id|lp-&gt;adev-&gt;name
 comma
-id|lp-&gt;wdev-&gt;name
+id|lp-&gt;edev-&gt;name
 )paren
 suffix:semicolon
 id|printk
@@ -5881,7 +5930,7 @@ suffix:semicolon
 r_case
 id|ARC_P_MS_TCPIP
 suffix:colon
-id|arcnetW_rx
+id|arcnetE_rx
 c_func
 (paren
 id|dev
@@ -6005,6 +6054,26 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* clean out the page to make debugging make more sense :) */
+id|BUGLVL
+c_func
+(paren
+id|D_DURING
+)paren
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arcpacket-&gt;raw
+comma
+l_int|0x42
+comma
+l_int|512
+)paren
+suffix:semicolon
 multiline_comment|/* If any worth-while packets have been received, a mark_bh(NET_BH)&n;&t; * has been done by netif_rx and Linux will handle them after we&n;&t; * return.&n;&t; */
 )brace
 multiline_comment|/* Packet receiver for &quot;standard&quot; RFC1201-style packets&n; */
@@ -6487,6 +6556,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef LINUX12
 id|skb-&gt;protocol
 op_assign
 id|arcnetA_type_trans
@@ -6497,6 +6567,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -7097,6 +7168,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef LINUX12
 id|skb-&gt;protocol
 op_assign
 id|arcnetA_type_trans
@@ -7107,6 +7179,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -7119,11 +7192,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* Packet receiver for non-standard Windows-style packets&n; */
+multiline_comment|/* Packet receiver for non-standard ethernet-style packets&n; */
 r_static
 r_void
-DECL|function|arcnetW_rx
-id|arcnetW_rx
+DECL|function|arcnetE_rx
+id|arcnetE_rx
 c_func
 (paren
 r_struct
@@ -7170,7 +7243,7 @@ id|D_DURING
 id|printk
 c_func
 (paren
-l_string|&quot;arcnet: it&squot;s a Windows packet (length=%d)&bslash;n&quot;
+l_string|&quot;arcnet: it&squot;s an ethernet-encap packet (length=%d)&bslash;n&quot;
 comma
 id|length
 )paren
@@ -7211,7 +7284,7 @@ id|length
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
-id|lp-&gt;wdev
+id|lp-&gt;edev
 suffix:semicolon
 id|memcpy
 c_func
@@ -7304,6 +7377,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef LINUX12
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -7314,6 +7388,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -7426,7 +7501,43 @@ multiline_comment|/* Disable promiscuous mode, use normal mode */
 macro_line|#endif
 )brace
 multiline_comment|/* Create the ARCnet ClientData header for an arbitrary protocol layer&n; *&n; * saddr=NULL&t;means use device source address (always will anyway)&n; * daddr=NULL&t;means leave destination address (eg unresolved arp)&n; */
+macro_line|#ifdef LINUX12
 DECL|function|arcnetA_header
+r_int
+id|arcnetA_header
+c_func
+(paren
+r_int
+r_char
+op_star
+id|buff
+comma
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|type
+comma
+r_void
+op_star
+id|daddr
+comma
+r_void
+op_star
+id|saddr
+comma
+r_int
+id|len
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+macro_line|#else
 r_int
 id|arcnetA_header
 c_func
@@ -7456,6 +7567,7 @@ comma
 r_int
 id|len
 )paren
+macro_line|#endif
 (brace
 r_struct
 id|ClientData
@@ -7467,6 +7579,10 @@ r_struct
 id|ClientData
 op_star
 )paren
+macro_line|#ifdef LINUX12
+id|buff
+suffix:semicolon
+macro_line|#else
 id|skb_push
 c_func
 (paren
@@ -7475,6 +7591,7 @@ comma
 id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&t;struct arcnet_local *lp=(struct arcnet_local *)(dev-&gt;priv);*/
 multiline_comment|/* set the protocol ID according to RFC-1201 */
 r_switch
@@ -7785,6 +7902,7 @@ op_star
 id|dev-&gt;priv
 )paren
 suffix:semicolon
+macro_line|#ifndef LINUX12
 multiline_comment|/* Pull off the arcnet header. */
 id|skb-&gt;mac.raw
 op_assign
@@ -7798,6 +7916,7 @@ comma
 id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -8007,6 +8126,19 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: You should not use auto-probing with insmod!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sprintf
 c_func
 (paren

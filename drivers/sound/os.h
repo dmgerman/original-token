@@ -23,7 +23,7 @@ macro_line|#include &lt;sys/kd.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &quot;linux/soundcard.h&quot;
+macro_line|#include &lt;linux/soundcard.h&gt;
 DECL|typedef|snd_rw_buf
 r_typedef
 r_char
@@ -113,7 +113,7 @@ DECL|macro|DEFINE_TIMER
 mdefine_line|#define DEFINE_TIMER(name, proc) &bslash;&n;  static struct timer_list name = &bslash;&n;  {NULL, NULL, 0, 0, proc}
 multiline_comment|/*&n; * The ACTIVATE_TIMER requests system to call &squot;proc&squot; after &squot;time&squot; ticks.&n; */
 DECL|macro|ACTIVATE_TIMER
-mdefine_line|#define ACTIVATE_TIMER(name, proc, time) &bslash;&n;  {name.expires = jiffies+(time); &bslash;&n;  add_timer (&amp;name);}
+mdefine_line|#define ACTIVATE_TIMER(name, proc, time) &bslash;&n;  {name.expires = time; &bslash;&n;  add_timer (&amp;name);}
 DECL|macro|INB
 mdefine_line|#define INB&t;inb
 DECL|macro|INW

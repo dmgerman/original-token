@@ -1616,13 +1616,13 @@ id|nr_swap_pages
 suffix:semicolon
 id|freepages
 op_sub_assign
+id|MAP_NR
+c_func
 (paren
 id|high_memory
-op_minus
-l_int|0x100000
 )paren
 op_rshift
-l_int|16
+l_int|4
 suffix:semicolon
 id|freepages
 op_sub_assign

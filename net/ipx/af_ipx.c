@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/termios.h&gt;&t;/* For TIOCOUTQ/INQ */
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#ifdef CONFIG_IPX
 multiline_comment|/* Configuration Variables */
 DECL|variable|ipxcfg_max_hops
@@ -8989,11 +8990,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_IPX
 comma
-id|ipx_get_info
-comma
 l_int|3
 comma
 l_string|&quot;ipx&quot;
+comma
+id|ipx_get_info
 )brace
 )paren
 suffix:semicolon
@@ -9008,11 +9009,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_IPX_INTERFACE
 comma
-id|ipx_interface_get_info
-comma
 l_int|13
 comma
 l_string|&quot;ipx_interface&quot;
+comma
+id|ipx_interface_get_info
 )brace
 )paren
 suffix:semicolon
@@ -9027,10 +9028,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_IPX_ROUTE
 comma
-id|ipx_rt_get_info
 l_int|9
 comma
 l_string|&quot;ipx_route&quot;
+comma
+id|ipx_rt_get_info
 )brace
 )paren
 suffix:semicolon

@@ -52,16 +52,16 @@ DECL|variable|ei_debug
 r_int
 id|ei_debug
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef EI_NOPINGPONG
+macro_line|#ifdef EI_PINGPONG
 DECL|variable|ei_pingpong
 r_static
 r_int
 id|ei_pingpong
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 macro_line|#else
 DECL|variable|ei_pingpong
@@ -69,7 +69,7 @@ r_static
 r_int
 id|ei_pingpong
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Max number of packets received at one Intr.&n;   Currently this may only be examined by a kernel debugger. */

@@ -7,21 +7,12 @@ multiline_comment|/*&n; * The second extended filesystem constants/structures&n;
 multiline_comment|/*&n; * Define EXT2FS_DEBUG to produce debug messages&n; */
 DECL|macro|EXT2FS_DEBUG
 macro_line|#undef EXT2FS_DEBUG
-multiline_comment|/*&n; * Define EXT2FS_DEBUG_CACHE to produce cache debug messages&n; */
-DECL|macro|EXT2FS_DEBUG_CACHE
-macro_line|#undef EXT2FS_DEBUG_CACHE
-multiline_comment|/*&n; * Define EXT2FS_CHECK_CACHE to add some checks to the name cache code&n; */
-DECL|macro|EXT2FS_CHECK_CACHE
-macro_line|#undef EXT2FS_CHECK_CACHE
-multiline_comment|/*&n; * Define EXT2FS_PRE_02B_COMPAT to convert ext 2 fs prior to 0.2b&n; */
-DECL|macro|EXT2FS_PRE_02B_COMPAT
-macro_line|#undef EXT2FS_PRE_02B_COMPAT
 multiline_comment|/*&n; * Define EXT2_PREALLOCATE to preallocate data blocks for expanding files&n; */
 DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;95/07/02&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;95/08/09&quot;
 DECL|macro|EXT2FS_VERSION
 mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.5b&quot;
 multiline_comment|/*&n; * Debug code&n; */
@@ -48,8 +39,6 @@ mdefine_line|#define EXT2_UNDEL_DIR_INO&t; 6&t;/* Undelete directory inode */
 DECL|macro|EXT2_FIRST_INO
 mdefine_line|#define EXT2_FIRST_INO&t;&t;11&t;/* First non reserved inode */
 multiline_comment|/*&n; * The second extended file system magic number&n; */
-DECL|macro|EXT2_PRE_02B_MAGIC
-mdefine_line|#define EXT2_PRE_02B_MAGIC&t;0xEF51
 DECL|macro|EXT2_SUPER_MAGIC
 mdefine_line|#define EXT2_SUPER_MAGIC&t;0xEF53
 multiline_comment|/*&n; * Maximal count of links to a file&n; */
@@ -167,37 +156,6 @@ multiline_comment|/* same inode or on next free entry */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Structure of a blocks group descriptor&n; */
-DECL|struct|ext2_old_group_desc
-r_struct
-id|ext2_old_group_desc
-(brace
-DECL|member|bg_block_bitmap
-id|__u32
-id|bg_block_bitmap
-suffix:semicolon
-multiline_comment|/* Blocks bitmap block */
-DECL|member|bg_inode_bitmap
-id|__u32
-id|bg_inode_bitmap
-suffix:semicolon
-multiline_comment|/* Inodes bitmap block */
-DECL|member|bg_inode_table
-id|__u32
-id|bg_inode_table
-suffix:semicolon
-multiline_comment|/* Inodes table block */
-DECL|member|bg_free_blocks_count
-id|__u16
-id|bg_free_blocks_count
-suffix:semicolon
-multiline_comment|/* Free blocks count */
-DECL|member|bg_free_inodes_count
-id|__u16
-id|bg_free_inodes_count
-suffix:semicolon
-multiline_comment|/* Free inodes count */
-)brace
-suffix:semicolon
 DECL|struct|ext2_group_desc
 r_struct
 id|ext2_group_desc
@@ -735,14 +693,23 @@ suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Codes for operating systems&n; */
 DECL|macro|EXT2_OS_LINUX
 mdefine_line|#define EXT2_OS_LINUX&t;&t;0
 DECL|macro|EXT2_OS_HURD
 mdefine_line|#define EXT2_OS_HURD&t;&t;1
 DECL|macro|EXT2_OS_MASIX
 mdefine_line|#define EXT2_OS_MASIX&t;&t;2
+DECL|macro|EXT2_OS_FREEBSD
+mdefine_line|#define EXT2_OS_FREEBSD&t;&t;3
+DECL|macro|EXT2_OS_LITES
+mdefine_line|#define EXT2_OS_LITES&t;&t;4
+multiline_comment|/*&n; * Revision levels&n; */
+DECL|macro|EXT2_GOOD_OLD_REV
+mdefine_line|#define EXT2_GOOD_OLD_REV&t;0&t;/* The good old (original) format */
 DECL|macro|EXT2_CURRENT_REV
-mdefine_line|#define EXT2_CURRENT_REV&t;0
+mdefine_line|#define EXT2_CURRENT_REV&t;EXT2_GOOD_OLD_REV
+multiline_comment|/*&n; * Default values for user and/or group using reserved blocks&n; */
 DECL|macro|EXT2_DEF_RESUID
 mdefine_line|#define&t;EXT2_DEF_RESUID&t;&t;0
 DECL|macro|EXT2_DEF_RESGID

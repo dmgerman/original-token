@@ -915,7 +915,7 @@ suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|proc_net_inode_operations
+id|proc_netdir_inode_operations
 suffix:semicolon
 r_break
 suffix:semicolon

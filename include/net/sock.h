@@ -22,8 +22,9 @@ macro_line|#ifdef CONFIG_ATALK
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/igmp.h&gt;
+multiline_comment|/* Think big (also on some systems a byte is faster) */
 DECL|macro|SOCK_ARRAY_SIZE
-mdefine_line|#define SOCK_ARRAY_SIZE&t;256&t;&t;/* Think big (also on some systems a byte is faster */
+mdefine_line|#define SOCK_ARRAY_SIZE&t;256
 multiline_comment|/*&n; *&t;The AF_UNIX specific socket options&n; */
 DECL|struct|unix_opt
 r_struct
@@ -472,7 +473,7 @@ id|atalk_sock
 id|at
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; *&t;This is where all the private (optional) areas that dont overlap will eventually live&n; *&t;for now just AF_UNIX is here.&n; */
+multiline_comment|/*&n; *&t;This is where all the private (optional) areas that don&squot;t&n; *&t;overlap will eventually live. For now just AF_UNIX is here.&n; */
 r_union
 (brace
 DECL|member|af_unix
@@ -489,12 +490,12 @@ DECL|member|ip_ttl
 r_int
 id|ip_ttl
 suffix:semicolon
-multiline_comment|/* TTL setting &t;&t;&t;&t;*/
+multiline_comment|/* TTL setting */
 DECL|member|ip_tos
 r_int
 id|ip_tos
 suffix:semicolon
-multiline_comment|/* TOS &t;&t;&t;&t;&t;*/
+multiline_comment|/* TOS */
 DECL|member|dummy_th
 r_struct
 id|tcphdr
@@ -505,67 +506,67 @@ r_struct
 id|timer_list
 id|keepalive_timer
 suffix:semicolon
-multiline_comment|/* TCP keepalive hack &t;&t;&t;*/
+multiline_comment|/* TCP keepalive hack */
 DECL|member|retransmit_timer
 r_struct
 id|timer_list
 id|retransmit_timer
 suffix:semicolon
-multiline_comment|/* TCP retransmit timer &t;&t;*/
+multiline_comment|/* TCP retransmit timer */
 DECL|member|ack_timer
 r_struct
 id|timer_list
 id|ack_timer
 suffix:semicolon
-multiline_comment|/* TCP delayed ack timer&t;&t;*/
+multiline_comment|/* TCP delayed ack timer */
 DECL|member|ip_xmit_timeout
 r_int
 id|ip_xmit_timeout
 suffix:semicolon
-multiline_comment|/* Why the timeout is running &t;&t;*/
+multiline_comment|/* Why the timeout is running */
 DECL|member|ip_route_cache
 r_struct
 id|rtable
 op_star
 id|ip_route_cache
 suffix:semicolon
-multiline_comment|/* Cached output route &t;&t;&t;*/
+multiline_comment|/* Cached output route */
 DECL|member|ip_route_stamp
 r_int
 r_int
 id|ip_route_stamp
 suffix:semicolon
-multiline_comment|/* Route cache stamp &t;&t;&t;*/
+multiline_comment|/* Route cache stamp */
 DECL|member|ip_route_daddr
 r_int
 r_int
 id|ip_route_daddr
 suffix:semicolon
-multiline_comment|/* Target address &t;&t;&t;*/
+multiline_comment|/* Target address */
 DECL|member|ip_route_saddr
 r_int
 r_int
 id|ip_route_saddr
 suffix:semicolon
-multiline_comment|/* Source address&t;&t;&t;*/
+multiline_comment|/* Source address */
 DECL|member|ip_route_local
 r_int
 id|ip_route_local
 suffix:semicolon
-multiline_comment|/* State of locality flag&t;&t;*/
+multiline_comment|/* State of locality flag */
 DECL|member|ip_hcache_stamp
 r_int
 r_int
 id|ip_hcache_stamp
 suffix:semicolon
-multiline_comment|/* Header cache stamp&t;&t;&t;*/
+multiline_comment|/* Header cache stamp */
 DECL|member|ip_hcache_ver
 r_int
 r_int
 op_star
 id|ip_hcache_ver
 suffix:semicolon
-multiline_comment|/* Pointer to version of cache&t;&t;*/
+multiline_comment|/* Pointer to version of cache */
 DECL|member|ip_hcache_data
 r_char
 id|ip_hcache_data
@@ -573,36 +574,36 @@ id|ip_hcache_data
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* Cached header&t;&t;&t;*/
+multiline_comment|/* Cached header */
 DECL|member|ip_hcache_state
 r_int
 id|ip_hcache_state
 suffix:semicolon
-multiline_comment|/* Have we a cached header&t;&t;*/
+multiline_comment|/* Have we a cached header */
 DECL|member|ip_option_len
 r_int
 r_char
 id|ip_option_len
 suffix:semicolon
-multiline_comment|/* Length of IP options&t;&t;&t;*/
+multiline_comment|/* Length of IP options */
 DECL|member|ip_option_flen
 r_int
 r_char
 id|ip_option_flen
 suffix:semicolon
-multiline_comment|/* Second fragment option length&t;*/
+multiline_comment|/* Second fragment option length */
 DECL|member|ip_opt_next_strict
 r_int
 r_char
 id|ip_opt_next_strict
 suffix:semicolon
-multiline_comment|/* Next hop is strict route&t;&t;*/
+multiline_comment|/* Next hop is strict route */
 DECL|member|ip_opt_next_hop
 r_int
 r_int
 id|ip_opt_next_hop
 suffix:semicolon
-multiline_comment|/* Next hop if forced&t;&t;&t;*/
+multiline_comment|/* Next hop if forced */
 DECL|member|ip_opt_ptr
 r_int
 r_char
@@ -612,18 +613,18 @@ id|ip_opt_ptr
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* IP option pointers&t;&t;&t;*/
+multiline_comment|/* IP option pointers */
 macro_line|#ifdef CONFIG_IP_MULTICAST  
 DECL|member|ip_mc_ttl
 r_int
 id|ip_mc_ttl
 suffix:semicolon
-multiline_comment|/* Multicasting TTL &t;&t;*/
+multiline_comment|/* Multicasting TTL */
 DECL|member|ip_mc_loop
 r_int
 id|ip_mc_loop
 suffix:semicolon
-multiline_comment|/* Loopback &t;&t;&t;*/
+multiline_comment|/* Loopback */
 DECL|member|ip_mc_name
 r_char
 id|ip_mc_name
@@ -631,14 +632,14 @@ id|ip_mc_name
 id|MAX_ADDR_LEN
 )braket
 suffix:semicolon
-multiline_comment|/* Multicast device name &t;*/
+multiline_comment|/* Multicast device name */
 DECL|member|ip_mc_list
 r_struct
 id|ip_mc_socklist
 op_star
 id|ip_mc_list
 suffix:semicolon
-multiline_comment|/* Group array &t;&t;&t;*/
+multiline_comment|/* Group array */
 macro_line|#endif  
 multiline_comment|/* This part is used for the timeout functions (timer.c). */
 DECL|member|timeout
@@ -651,7 +652,7 @@ r_struct
 id|timer_list
 id|timer
 suffix:semicolon
-multiline_comment|/* This is the TIME_WAIT/receive timer when we are doing IP */
+multiline_comment|/* This is the TIME_WAIT/receive timer&n;&t;&t;&t;&t;&t; * when we are doing IP&n;&t;&t;&t;&t;&t; */
 DECL|member|stamp
 r_struct
 id|timeval
@@ -1348,10 +1349,12 @@ DECL|macro|TIME_DONE
 mdefine_line|#define TIME_DONE&t;5&t;/* used to absorb those last few packets */
 DECL|macro|TIME_PROBE0
 mdefine_line|#define TIME_PROBE0&t;6
+multiline_comment|/* about 10 seconds */
 DECL|macro|SOCK_DESTROY_TIME
-mdefine_line|#define SOCK_DESTROY_TIME 1000&t;/* about 10 seconds&t;&t;&t;*/
+mdefine_line|#define SOCK_DESTROY_TIME (10*HZ)
+multiline_comment|/* Sockets 0-1023 can&squot;t be bound too unless you are superuser */
 DECL|macro|PROT_SOCK
-mdefine_line|#define PROT_SOCK&t;1024&t;/* Sockets 0-1023 can&squot;t be bound too unless you are superuser */
+mdefine_line|#define PROT_SOCK&t;1024
 DECL|macro|SHUTDOWN_MASK
 mdefine_line|#define SHUTDOWN_MASK&t;3
 DECL|macro|RCV_SHUTDOWN
@@ -1651,7 +1654,7 @@ op_star
 id|errcode
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Queue a received datagram if it will fit. Stream and sequenced protocols&n; *&t;can&squot;t normally use this as they need to fit buffers in and play with them.&n; *&n; *&t;Inlined as its very short and called for pretty much every packet ever&n; *&t;received.&n; */
+multiline_comment|/*&n; * &t;Queue a received datagram if it will fit. Stream and sequenced&n; *&t;protocols can&squot;t normally use this as they need to fit buffers in&n; *&t;and play with them.&n; *&n; * &t;Inlined as its very short and called for pretty much every&n; *&t;packet ever received.&n; */
 DECL|function|sock_queue_rcv_skb
 r_extern
 id|__inline__
@@ -1752,6 +1755,7 @@ id|sock
 op_star
 id|timer_base
 suffix:semicolon
+r_extern
 r_void
 id|delete_timer
 (paren
@@ -1760,6 +1764,7 @@ id|sock
 op_star
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|reset_timer
 (paren
@@ -1773,6 +1778,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|net_timer
 (paren

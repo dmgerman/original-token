@@ -284,8 +284,6 @@ op_assign
 (brace
 id|PROC_SCSI
 comma
-l_int|NULL
-comma
 l_int|1
 comma
 l_string|&quot;.&quot;
@@ -293,8 +291,6 @@ l_string|&quot;.&quot;
 comma
 (brace
 id|PROC_ROOT_INO
-comma
-l_int|NULL
 comma
 l_int|2
 comma
@@ -304,8 +300,6 @@ comma
 (brace
 id|PROC_SCSI_NOT_PRESENT
 comma
-l_int|NULL
-comma
 l_int|11
 comma
 l_string|&quot;not.present&quot;
@@ -313,8 +307,6 @@ l_string|&quot;not.present&quot;
 comma
 (brace
 l_int|0
-comma
-l_int|NULL
 comma
 l_int|0
 comma

@@ -8665,6 +8665,19 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;depca: You should not use auto-probing with insmod!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|thisDepca.irq
 op_assign
 id|irq

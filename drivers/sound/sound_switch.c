@@ -81,7 +81,7 @@ suffix:semicolon
 id|l
 OL
 l_int|256
-op_logical_and
+comma
 id|s
 (braket
 id|l
@@ -91,7 +91,7 @@ id|l
 op_increment
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * l=strnlen(s,256);&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * l=strlen(s);&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -269,6 +269,22 @@ id|status_ptr
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef SOUND_UNAME_A
+id|put_status
+(paren
+l_string|&quot;VoxWare Sound Driver:&quot;
+id|SOUND_VERSION_STRING
+l_string|&quot; (&quot;
+id|SOUND_CONFIG_DATE
+l_string|&quot; &quot;
+id|SOUND_CONFIG_BY
+l_string|&quot;,&bslash;n&quot;
+id|SOUND_UNAME_A
+l_string|&quot;)&quot;
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
 id|put_status
 (paren
 l_string|&quot;VoxWare Sound Driver:&quot;
@@ -285,6 +301,7 @@ l_string|&quot;)&quot;
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

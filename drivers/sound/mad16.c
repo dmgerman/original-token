@@ -1,4 +1,6 @@
-multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *&n; * These audio interface chips don&squot;t prduce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic&n; *      0x08    - Secondary IDE&n; *      0x0a    - Primary IDE&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      &n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0a=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; * Copyright by Hannu Savolainen 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+DECL|macro|MAD16_OPL4
+mdefine_line|#define MAD16_OPL4&t;&t;/* Disable this if you have problems with OPL3 */
+multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *&n; * These audio interface chips don&squot;t prduce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;SoundBlaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0a=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; *&n; * Copyright by Hannu Savolainen 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_MAD16)
 DECL|variable|already_initialized
@@ -16,9 +18,9 @@ DECL|macro|C929
 mdefine_line|#define C929&t;3
 multiline_comment|/*&n; *    Registers&n; *&n; *      The MAD16 occupies I/O ports 0xf8d to 0xf93 (fixed locations).&n; *      All ports are inactive by default. They can be activated by&n; *      writing 0xE2 or 0xE3 to the password register. The password is valid&n; *      only until the next I/O read or write.&n; */
 DECL|macro|MC1_PORT
-mdefine_line|#define MC1_PORT&t;0xf8d
+mdefine_line|#define MC1_PORT&t;0xf8d&t;/* SB address, CDROM interface type, joystick */
 DECL|macro|MC2_PORT
-mdefine_line|#define MC2_PORT&t;0xf8e
+mdefine_line|#define MC2_PORT&t;0xf8e&t;/* CDROM address, IRQ, DMA, plus OPL4 bit */
 DECL|macro|MC3_PORT
 mdefine_line|#define MC3_PORT&t;0xf8f
 DECL|macro|PASSWD_REG
@@ -622,6 +624,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Set optional CD-ROM and joystick settings.&n; */
+DECL|macro|MAD16_CONF
+mdefine_line|#define MAD16_CONF 0x06
+DECL|macro|MAD16_CDSEL
+mdefine_line|#define MAD16_CDSEL 0x03
 macro_line|#ifdef MAD16_CONF
 id|tmp
 op_or_assign
@@ -800,11 +806,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef EXCLUDE_MIDI
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
+macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
 r_if
 c_cond
 (paren
@@ -822,6 +824,10 @@ comma
 id|hw_config
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+id|mem_start
+suffix:semicolon
 macro_line|#endif
 )brace
 r_int
@@ -834,11 +840,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef EXCLUDE_MIDI
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#else
+macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
 r_static
 r_int
 id|mpu_attached
@@ -928,7 +930,7 @@ suffix:semicolon
 )brace
 id|tmp
 op_assign
-l_int|0x80
+l_int|0x83
 suffix:semicolon
 multiline_comment|/* MPU-401 enable */
 multiline_comment|/*&n; * Set the MPU base bits&n; */
@@ -1044,11 +1046,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|tmp
-op_or_assign
-l_int|0x03
-suffix:semicolon
-multiline_comment|/* ???????? */
+)brace
 id|mad_write
 (paren
 id|MC6_PORT
@@ -1057,12 +1055,15 @@ id|tmp
 )paren
 suffix:semicolon
 multiline_comment|/* Write MPU401 config */
-)brace
 r_return
 id|probe_mpu401
 (paren
 id|hw_config
 )paren
+suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace

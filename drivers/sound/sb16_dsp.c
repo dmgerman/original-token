@@ -1727,11 +1727,7 @@ l_int|0xd0
 )paren
 suffix:semicolon
 )brace
-id|DMAbuf_reset_dma
-(paren
-id|dev
-)paren
-suffix:semicolon
+multiline_comment|/* DMAbuf_reset_dma (dev); */
 )brace
 r_static
 r_void

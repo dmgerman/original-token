@@ -27,6 +27,7 @@ macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;*&t;&t;&t;Handlers for the socket list&t;&t;&t;*&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;&bslash;************************************************************************/
 DECL|variable|nr_default
 r_struct
@@ -6072,11 +6073,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_NR
 comma
-id|nr_get_info
-comma
 l_int|2
 comma
 l_string|&quot;nr&quot;
+comma
+id|nr_get_info
 )brace
 )paren
 suffix:semicolon
@@ -6091,11 +6092,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_NR_NEIGH
 comma
-id|nr_neigh_get_info
-comma
 l_int|8
 comma
 l_string|&quot;nr_neigh&quot;
+comma
+id|nr_neigh_get_info
 )brace
 )paren
 suffix:semicolon
@@ -6110,11 +6111,11 @@ id|proc_dir_entry
 (brace
 id|PROC_NET_NR_NODES
 comma
-id|nr_nodes_get_info
-comma
 l_int|8
 comma
 l_string|&quot;nr_nodes&quot;
+comma
+id|nr_nodes_get_info
 )brace
 )paren
 suffix:semicolon

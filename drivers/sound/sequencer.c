@@ -7364,7 +7364,7 @@ l_int|493880
 )brace
 suffix:semicolon
 DECL|macro|BASE_OCTAVE
-mdefine_line|#define BASE_OCTAVE&t;4
+mdefine_line|#define BASE_OCTAVE&t;5
 id|octave
 op_assign
 id|note_num

@@ -176,7 +176,7 @@ mdefine_line|#define&t;OUTPUT_READY&t;0x40
 DECL|macro|INPUT_AVAIL
 mdefine_line|#define&t;INPUT_AVAIL&t;0x80
 DECL|macro|MPU_ACK
-mdefine_line|#define&t;MPU_ACK&t;&t;0xF7
+mdefine_line|#define&t;MPU_ACK&t;&t;0xFE
 DECL|macro|MPU_RESET
 mdefine_line|#define&t;MPU_RESET&t;0xFF
 DECL|macro|UART_MODE_ON
@@ -1976,6 +1976,15 @@ id|input_avail
 id|devc-&gt;base
 )paren
 )paren
+r_if
+c_cond
+(paren
+id|devc-&gt;opened
+op_logical_and
+id|devc-&gt;mode
+op_eq
+id|MODE_SYNTH
+)paren
 (brace
 r_if
 c_cond
@@ -1988,6 +1997,24 @@ id|read_data
 (paren
 id|devc-&gt;base
 )paren
+)paren
+op_eq
+id|MPU_ACK
+)paren
+id|ok
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Device is not currently open. Use simplier method */
+r_if
+c_cond
+(paren
+id|read_data
+(paren
+id|devc-&gt;base
 )paren
 op_eq
 id|MPU_ACK
@@ -2184,7 +2211,7 @@ id|RESTORE_INTR
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* printk (&quot;MPU: No response(%d) to command (0x%x)&bslash;n&quot;, i, (int) cmd-&gt;cmd); */
+multiline_comment|/* printk (&quot;MPU: No response(%d) to command (0x%x)&bslash;n&quot;, i, (int) cmd-&gt;cmd);  */
 r_return
 id|RET_ERROR
 (paren
@@ -4151,6 +4178,10 @@ op_assign
 id|hw_config-&gt;irq
 suffix:semicolon
 id|tmp_devc.initialized
+op_assign
+l_int|0
+suffix:semicolon
+id|tmp_devc.opened
 op_assign
 l_int|0
 suffix:semicolon
