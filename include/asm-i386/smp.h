@@ -436,6 +436,11 @@ r_int
 id|cpu_present_map
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|cpu_online_map
+suffix:semicolon
+r_extern
 r_volatile
 r_int
 id|cpu_number_map

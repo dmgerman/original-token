@@ -7310,9 +7310,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|time_after_eq
+c_func
+(paren
 id|jiffies
-op_ge
+comma
 id|tend
+)paren
 )paren
 r_break
 suffix:semicolon

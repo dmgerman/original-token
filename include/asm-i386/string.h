@@ -26,6 +26,13 @@ op_star
 id|src
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -36,24 +43,31 @@ l_string|&quot;stosb&bslash;n&bslash;t&quot;
 l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;a&quot;
+(paren
+id|d2
+)paren
 suffix:colon
-l_string|&quot;S&quot;
+l_string|&quot;0&quot;
 (paren
 id|src
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 id|dest
 )paren
 suffix:colon
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;ax&quot;
-comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -84,6 +98,15 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+comma
+id|d3
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -99,31 +122,41 @@ l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&quot;
 l_string|&quot;2:&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d2
+)paren
+comma
+l_string|&quot;=&amp;a&quot;
+(paren
+id|d3
+)paren
 suffix:colon
-l_string|&quot;S&quot;
+l_string|&quot;0&quot;
 (paren
 id|src
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 id|dest
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;2&quot;
 (paren
 id|count
 )paren
 suffix:colon
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -151,6 +184,15 @@ op_star
 id|src
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+comma
+id|d3
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -164,35 +206,47 @@ l_string|&quot;stosb&bslash;n&bslash;t&quot;
 l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;a&quot;
+(paren
+id|d2
+)paren
+comma
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d3
+)paren
 suffix:colon
-l_string|&quot;S&quot;
+l_string|&quot;0&quot;
 (paren
 id|src
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 id|dest
 )paren
 comma
-l_string|&quot;a&quot;
+l_string|&quot;2&quot;
 (paren
 l_int|0
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;3&quot;
 (paren
 l_int|0xffffffff
 )paren
 suffix:colon
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -222,6 +276,15 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+comma
+id|d3
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -230,7 +293,7 @@ l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;decl %1&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%3&bslash;n&quot;
+l_string|&quot;movl %8,%3&bslash;n&quot;
 l_string|&quot;1:&bslash;tdecl %3&bslash;n&bslash;t&quot;
 l_string|&quot;js 2f&bslash;n&bslash;t&quot;
 l_string|&quot;lodsb&bslash;n&bslash;t&quot;
@@ -240,24 +303,42 @@ l_string|&quot;jne 1b&bslash;n&quot;
 l_string|&quot;2:&bslash;txorl %2,%2&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;a&quot;
+(paren
+id|d2
+)paren
+comma
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d3
+)paren
 suffix:colon
-l_string|&quot;S&quot;
+l_string|&quot;0&quot;
 (paren
 id|src
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 id|dest
 )paren
 comma
-l_string|&quot;a&quot;
+l_string|&quot;2&quot;
 (paren
 l_int|0
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;3&quot;
 (paren
 l_int|0xffffffff
 )paren
@@ -267,14 +348,6 @@ l_string|&quot;g&quot;
 id|count
 )paren
 suffix:colon
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -302,6 +375,11 @@ op_star
 id|ct
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+suffix:semicolon
 r_register
 r_int
 id|__res
@@ -326,20 +404,26 @@ l_string|&quot;=a&quot;
 (paren
 id|__res
 )paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
 suffix:colon
-l_string|&quot;S&quot;
+l_string|&quot;1&quot;
 (paren
 id|cs
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;2&quot;
 (paren
 id|ct
 )paren
-suffix:colon
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
 )paren
 suffix:semicolon
 r_return
@@ -373,6 +457,13 @@ r_register
 r_int
 id|__res
 suffix:semicolon
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -395,27 +486,36 @@ l_string|&quot;=a&quot;
 (paren
 id|__res
 )paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d2
+)paren
 suffix:colon
-l_string|&quot;S&quot;
+l_string|&quot;1&quot;
 (paren
 id|cs
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;2&quot;
 (paren
 id|ct
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;3&quot;
 (paren
 id|count
 )paren
-suffix:colon
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;cx&quot;
 )paren
 suffix:semicolon
 r_return
@@ -441,6 +541,9 @@ r_int
 id|c
 )paren
 (brace
+r_int
+id|d0
+suffix:semicolon
 r_register
 r_char
 op_star
@@ -465,8 +568,13 @@ l_string|&quot;=a&quot;
 (paren
 id|__res
 )paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;S&quot;
+l_string|&quot;1&quot;
 (paren
 id|s
 )paren
@@ -475,8 +583,6 @@ l_string|&quot;0&quot;
 (paren
 id|c
 )paren
-suffix:colon
-l_string|&quot;si&quot;
 )paren
 suffix:semicolon
 r_return
@@ -502,6 +608,11 @@ r_int
 id|c
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+suffix:semicolon
 r_register
 r_char
 op_star
@@ -520,9 +631,19 @@ l_string|&quot;leal -1(%%esi),%0&bslash;n&quot;
 l_string|&quot;2:&bslash;ttestb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&quot;
 suffix:colon
-l_string|&quot;=d&quot;
+l_string|&quot;=g&quot;
 (paren
 id|__res
+)paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;a&quot;
+(paren
+id|d1
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -530,279 +651,15 @@ l_string|&quot;0&quot;
 l_int|0
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;1&quot;
 (paren
 id|s
 )paren
 comma
-l_string|&quot;a&quot;
+l_string|&quot;2&quot;
 (paren
 id|c
 )paren
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;si&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-suffix:semicolon
-)brace
-DECL|macro|__HAVE_ARCH_STRSPN
-mdefine_line|#define __HAVE_ARCH_STRSPN
-DECL|function|strspn
-r_extern
-r_inline
-r_int
-id|strspn
-c_func
-(paren
-r_const
-r_char
-op_star
-id|cs
-comma
-r_const
-r_char
-op_star
-id|ct
-)paren
-(brace
-r_register
-r_char
-op_star
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;je 1b&bslash;n&quot;
-l_string|&quot;2:&bslash;tdecl %0&quot;
-suffix:colon
-l_string|&quot;=S&quot;
-(paren
-id|__res
-)paren
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;c&quot;
-(paren
-l_int|0xffffffff
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|cs
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|ct
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-op_minus
-id|cs
-suffix:semicolon
-)brace
-DECL|macro|__HAVE_ARCH_STRCSPN
-mdefine_line|#define __HAVE_ARCH_STRCSPN
-DECL|function|strcspn
-r_extern
-r_inline
-r_int
-id|strcspn
-c_func
-(paren
-r_const
-r_char
-op_star
-id|cs
-comma
-r_const
-r_char
-op_star
-id|ct
-)paren
-(brace
-r_register
-r_char
-op_star
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;jne 1b&bslash;n&quot;
-l_string|&quot;2:&bslash;tdecl %0&quot;
-suffix:colon
-l_string|&quot;=S&quot;
-(paren
-id|__res
-)paren
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;c&quot;
-(paren
-l_int|0xffffffff
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|cs
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|ct
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-op_minus
-id|cs
-suffix:semicolon
-)brace
-DECL|macro|__HAVE_ARCH_STRPBRK
-mdefine_line|#define __HAVE_ARCH_STRPBRK
-DECL|function|strpbrk
-r_extern
-r_inline
-r_char
-op_star
-id|strpbrk
-c_func
-(paren
-r_const
-r_char
-op_star
-id|cs
-comma
-r_const
-r_char
-op_star
-id|ct
-)paren
-(brace
-r_register
-r_char
-op_star
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
-l_string|&quot;decl %0&bslash;n&bslash;t&quot;
-l_string|&quot;jmp 3f&bslash;n&quot;
-l_string|&quot;2:&bslash;txorl %0,%0&bslash;n&quot;
-l_string|&quot;3:&quot;
-suffix:colon
-l_string|&quot;=S&quot;
-(paren
-id|__res
-)paren
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;c&quot;
-(paren
-l_int|0xffffffff
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|cs
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|ct
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
 )paren
 suffix:semicolon
 r_return
@@ -830,6 +687,15 @@ op_star
 id|ct
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+comma
+id|d3
+suffix:semicolon
 r_register
 r_char
 op_star
@@ -841,14 +707,14 @@ c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
 "&bslash;"
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;movl %8,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
 multiline_comment|/* NOTE! This also sets Z if searchstring=&squot;&squot; */
 l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;1:&bslash;tmovl %4,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tmovl %8,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;movl %%esi,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;repe&bslash;n&bslash;t&quot;
@@ -866,18 +732,38 @@ l_string|&quot;=a&quot;
 (paren
 id|__res
 )paren
+comma
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;d&quot;
+(paren
+id|d2
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d3
+)paren
 suffix:colon
 l_string|&quot;0&quot;
 (paren
 l_int|0
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;1&quot;
 (paren
 l_int|0xffffffff
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;2&quot;
 (paren
 id|cs
 )paren
@@ -886,14 +772,6 @@ l_string|&quot;g&quot;
 (paren
 id|ct
 )paren
-suffix:colon
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;si&quot;
 )paren
 suffix:semicolon
 r_return
@@ -915,6 +793,9 @@ op_star
 id|s
 )paren
 (brace
+r_int
+id|d0
+suffix:semicolon
 r_register
 r_int
 id|__res
@@ -933,8 +814,13 @@ l_string|&quot;=c&quot;
 (paren
 id|__res
 )paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 id|s
 )paren
@@ -948,129 +834,6 @@ l_string|&quot;0&quot;
 (paren
 l_int|0xffffffff
 )paren
-suffix:colon
-l_string|&quot;di&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-suffix:semicolon
-)brace
-DECL|macro|__HAVE_ARCH_STRTOK
-mdefine_line|#define __HAVE_ARCH_STRTOK
-DECL|function|strtok
-r_extern
-r_inline
-r_char
-op_star
-id|strtok
-c_func
-(paren
-r_char
-op_star
-id|s
-comma
-r_const
-r_char
-op_star
-id|ct
-)paren
-(brace
-r_register
-r_char
-op_star
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;testl %1,%1&bslash;n&bslash;t&quot;
-l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
-l_string|&quot;testl %0,%0&bslash;n&bslash;t&quot;
-l_string|&quot;je 8f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %0,%1&bslash;n&quot;
-l_string|&quot;1:&bslash;txorl %0,%0&bslash;n&bslash;t&quot;
-l_string|&quot;movl $-1,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;je 7f&bslash;n&bslash;t&quot;
-multiline_comment|/* empty delimiter-string */
-l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;2:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 7f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;je 2b&bslash;n&bslash;t&quot;
-l_string|&quot;decl %1&bslash;n&bslash;t&quot;
-l_string|&quot;cmpb $0,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;je 7f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %1,%0&bslash;n&quot;
-l_string|&quot;3:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 5f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;jne 3b&bslash;n&bslash;t&quot;
-l_string|&quot;decl %1&bslash;n&bslash;t&quot;
-l_string|&quot;cmpb $0,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;je 5f&bslash;n&bslash;t&quot;
-l_string|&quot;movb $0,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;incl %1&bslash;n&bslash;t&quot;
-l_string|&quot;jmp 6f&bslash;n&quot;
-l_string|&quot;5:&bslash;txorl %1,%1&bslash;n&quot;
-l_string|&quot;6:&bslash;tcmpb $0,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;jne 7f&bslash;n&bslash;t&quot;
-l_string|&quot;xorl %0,%0&bslash;n&quot;
-l_string|&quot;7:&bslash;ttestl %0,%0&bslash;n&bslash;t&quot;
-l_string|&quot;jne 8f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %0,%1&bslash;n&quot;
-l_string|&quot;8:&quot;
-suffix:colon
-l_string|&quot;=b&quot;
-(paren
-id|__res
-)paren
-comma
-l_string|&quot;=S&quot;
-(paren
-id|___strtok
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|___strtok
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|s
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|ct
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1098,23 +861,43 @@ r_int
 id|n
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep ; movsl&bslash;n&bslash;t&quot;
-l_string|&quot;testb $2,%b1&bslash;n&bslash;t&quot;
+l_string|&quot;testb $2,%b4&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
 l_string|&quot;movsw&bslash;n&quot;
-l_string|&quot;1:&bslash;ttestb $1,%b1&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;ttestb $1,%b4&bslash;n&bslash;t&quot;
 l_string|&quot;je 2f&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&bslash;n&quot;
 l_string|&quot;2:&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d2
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;0&quot;
 (paren
 id|n
 op_div
@@ -1126,7 +909,7 @@ l_string|&quot;q&quot;
 id|n
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 (paren
 r_int
@@ -1134,7 +917,7 @@ r_int
 id|to
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;2&quot;
 (paren
 (paren
 r_int
@@ -1142,12 +925,6 @@ r_int
 id|from
 )paren
 suffix:colon
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;si&quot;
-comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -1701,7 +1478,15 @@ id|to
 suffix:semicolon
 )brace
 DECL|macro|COMMON
-mdefine_line|#define COMMON(x) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep ; movsl&quot; &bslash;&n;&t;x &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: &quot;c&quot; (n/4),&quot;D&quot; ((long) to),&quot;S&quot; ((long) from) &bslash;&n;&t;: &quot;cx&quot;,&quot;di&quot;,&quot;si&quot;,&quot;memory&quot;);
+mdefine_line|#define COMMON(x) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep ; movsl&quot; &bslash;&n;&t;x &bslash;&n;&t;: &quot;=&amp;c&quot; (d0), &quot;=&amp;D&quot; (d1), &quot;=&amp;S&quot; (d2) &bslash;&n;&t;: &quot;0&quot; (n/4),&quot;1&quot; ((long) to),&quot;2&quot; ((long) from) &bslash;&n;&t;: &quot;memory&quot;);
+(brace
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1758,6 +1543,7 @@ r_return
 id|to
 suffix:semicolon
 )brace
+)brace
 DECL|macro|COMMON
 macro_line|#undef COMMON
 )brace
@@ -1788,6 +1574,13 @@ r_int
 id|n
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+comma
+id|d2
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1803,28 +1596,37 @@ l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d2
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;0&quot;
 (paren
 id|n
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;1&quot;
 (paren
 id|src
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;2&quot;
 (paren
 id|dest
 )paren
 suffix:colon
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_else
@@ -1837,14 +1639,27 @@ l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&bslash;n&bslash;t&quot;
 l_string|&quot;cld&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d1
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d2
+)paren
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;0&quot;
 (paren
 id|n
 )paren
 comma
-l_string|&quot;S&quot;
+l_string|&quot;1&quot;
 (paren
 id|n
 op_minus
@@ -1858,7 +1673,7 @@ op_star
 id|src
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;2&quot;
 (paren
 id|n
 op_minus
@@ -1871,12 +1686,6 @@ op_star
 id|dest
 )paren
 suffix:colon
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
-comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -1908,6 +1717,9 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|d0
+suffix:semicolon
 r_register
 r_void
 op_star
@@ -1937,23 +1749,26 @@ l_string|&quot;=D&quot;
 (paren
 id|__res
 )paren
+comma
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d0
+)paren
 suffix:colon
 l_string|&quot;a&quot;
 (paren
 id|c
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;0&quot;
 (paren
 id|cs
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;1&quot;
 (paren
 id|count
 )paren
-suffix:colon
-l_string|&quot;cx&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1979,6 +1794,11 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -1987,27 +1807,31 @@ l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
 suffix:colon
 l_string|&quot;a&quot;
 (paren
 id|c
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 id|s
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;0&quot;
 (paren
 id|count
 )paren
 suffix:colon
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;di&quot;
-comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -2039,21 +1863,34 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|d0
+comma
+id|d1
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep ; stosl&bslash;n&bslash;t&quot;
-l_string|&quot;testb $2,%b1&bslash;n&bslash;t&quot;
+l_string|&quot;testb $2,%b3&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
 l_string|&quot;stosw&bslash;n&quot;
-l_string|&quot;1:&bslash;ttestb $1,%b1&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;ttestb $1,%b3&bslash;n&bslash;t&quot;
 l_string|&quot;je 2f&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&quot;
 l_string|&quot;2:&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;c&quot;
+(paren
+id|d0
+)paren
+comma
+l_string|&quot;=&amp;D&quot;
+(paren
+id|d1
+)paren
 suffix:colon
 l_string|&quot;a&quot;
 (paren
@@ -2065,14 +1902,14 @@ l_string|&quot;q&quot;
 id|count
 )paren
 comma
-l_string|&quot;c&quot;
+l_string|&quot;0&quot;
 (paren
 id|count
 op_div
 l_int|4
 )paren
 comma
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 (paren
 r_int
@@ -2080,10 +1917,6 @@ r_int
 id|s
 )paren
 suffix:colon
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;di&quot;
-comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -2112,6 +1945,9 @@ r_int
 id|count
 )paren
 (brace
+r_int
+id|d0
+suffix:semicolon
 r_register
 r_int
 id|__res
@@ -2120,19 +1956,24 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;movl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movl %2,%0&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 2f&bslash;n&quot;
 l_string|&quot;1:&bslash;tcmpb $0,(%0)&bslash;n&bslash;t&quot;
 l_string|&quot;je 3f&bslash;n&bslash;t&quot;
 l_string|&quot;incl %0&bslash;n&quot;
-l_string|&quot;2:&bslash;tdecl %2&bslash;n&bslash;t&quot;
-l_string|&quot;cmpl $-1,%2&bslash;n&bslash;t&quot;
+l_string|&quot;2:&bslash;tdecl %1&bslash;n&bslash;t&quot;
+l_string|&quot;cmpl $-1,%1&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&bslash;n&quot;
-l_string|&quot;3:&bslash;tsubl %1,%0&quot;
+l_string|&quot;3:&bslash;tsubl %2,%0&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
 id|__res
+)paren
+comma
+l_string|&quot;=&amp;d&quot;
+(paren
+id|d0
 )paren
 suffix:colon
 l_string|&quot;c&quot;
@@ -2140,12 +1981,10 @@ l_string|&quot;c&quot;
 id|s
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;1&quot;
 (paren
 id|count
 )paren
-suffix:colon
-l_string|&quot;dx&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2266,7 +2105,13 @@ id|s
 suffix:semicolon
 )brace
 DECL|macro|COMMON
-mdefine_line|#define COMMON(x) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep ; stosl&quot; &bslash;&n;&t;x &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: &quot;a&quot; (pattern),&quot;c&quot; (count/4),&quot;D&quot; ((long) s) &bslash;&n;&t;: &quot;cx&quot;,&quot;di&quot;,&quot;memory&quot;)
+mdefine_line|#define COMMON(x) &bslash;&n;__asm__  __volatile__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep ; stosl&quot; &bslash;&n;&t;x &bslash;&n;&t;: &quot;=&amp;c&quot; (d0), &quot;=&amp;D&quot; (d1) &bslash;&n;&t;: &quot;a&quot; (pattern),&quot;0&quot; (count/4),&quot;1&quot; ((long) s) &bslash;&n;&t;: &quot;memory&quot;)
+(brace
+r_int
+id|d0
+comma
+id|d1
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2322,6 +2167,7 @@ suffix:semicolon
 r_return
 id|s
 suffix:semicolon
+)brace
 )brace
 DECL|macro|COMMON
 macro_line|#undef COMMON

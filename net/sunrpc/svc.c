@@ -949,6 +949,26 @@ id|argp-&gt;len
 op_sub_assign
 l_int|5
 suffix:semicolon
+multiline_comment|/* Used by nfsd to only allow the NULL procedure for amd. */
+r_if
+c_cond
+(paren
+id|rqstp-&gt;rq_auth
+op_logical_and
+op_logical_neg
+id|rqstp-&gt;rq_client
+op_logical_and
+id|proc
+)paren
+(brace
+id|auth_stat
+op_assign
+id|rpc_autherr_badcred
+suffix:semicolon
+r_goto
+id|err_bad_auth
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Decode auth data, and add verifier to reply buffer.&n;&t; * We do this before anything else in order to get a decent&n;&t; * auth verifier.&n;&t; */
 id|svc_authenticate
 c_func

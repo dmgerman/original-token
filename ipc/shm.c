@@ -3064,6 +3064,7 @@ id|code
 op_amp
 id|SHM_ID_MASK
 suffix:semicolon
+macro_line|#ifdef DEBUG_SHM
 r_if
 c_cond
 (paren
@@ -3118,6 +3119,7 @@ r_return
 id|BAD_PAGE
 suffix:semicolon
 )brace
+macro_line|#endif
 id|shp
 op_assign
 id|shm_segs
@@ -3125,6 +3127,7 @@ id|shm_segs
 id|id
 )braket
 suffix:semicolon
+macro_line|#ifdef DEBUG_SHM
 r_if
 c_cond
 (paren
@@ -3148,6 +3151,7 @@ r_return
 id|BAD_PAGE
 suffix:semicolon
 )brace
+macro_line|#endif
 id|idx
 op_assign
 (paren
@@ -3162,6 +3166,7 @@ id|SHM_IDX_SHIFT
 op_amp
 id|SHM_IDX_MASK
 suffix:semicolon
+macro_line|#ifdef DEBUG_SHM
 r_if
 c_cond
 (paren
@@ -3208,6 +3213,7 @@ r_return
 id|BAD_PAGE
 suffix:semicolon
 )brace
+macro_line|#endif
 id|pte
 op_assign
 id|__pte

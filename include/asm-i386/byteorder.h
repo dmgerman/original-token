@@ -19,7 +19,7 @@ id|__u32
 id|x
 )paren
 (brace
-macro_line|#if defined(__KERNEL__) &amp;&amp; !defined(CONFIG_M386)
+macro_line|#ifdef CONFIG_BSWAP
 id|__asm__
 c_func
 (paren

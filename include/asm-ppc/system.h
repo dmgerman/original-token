@@ -4,8 +4,13 @@ mdefine_line|#define __PPC_SYSTEM_H
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+multiline_comment|/*&n; * Memory barrier.&n; * The sync instruction guarantees that all memory accesses initiated&n; * by this processor have been performed (with respect to all other&n; * mechanisms that access memory).&n; */
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
+DECL|macro|rmb
+mdefine_line|#define rmb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
+DECL|macro|wmb
+mdefine_line|#define wmb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;({&bslash;&n;&t;__asm__ __volatile__ (&quot;mfmsr %0&quot; : &quot;=r&quot; ((flags)) : : &quot;memory&quot;); })
 DECL|macro|__save_and_cli

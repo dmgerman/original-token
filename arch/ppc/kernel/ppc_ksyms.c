@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -60,6 +61,9 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+comma
+r_int
+id|isfake
 )paren
 suffix:semicolon
 r_extern
@@ -781,6 +785,85 @@ c_func
 id|xchg_u32
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+DECL|variable|__global_cli
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_cli
+)paren
+suffix:semicolon
+DECL|variable|__global_sti
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_sti
+)paren
+suffix:semicolon
+DECL|variable|__global_save_flags
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_save_flags
+)paren
+suffix:semicolon
+DECL|variable|__global_restore_flags
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_restore_flags
+)paren
+suffix:semicolon
+DECL|variable|_spin_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_spin_lock
+)paren
+suffix:semicolon
+DECL|variable|_spin_unlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_spin_unlock
+)paren
+suffix:semicolon
+DECL|variable|spin_trylock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|spin_trylock
+)paren
+suffix:semicolon
+DECL|variable|_read_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_read_lock
+)paren
+suffix:semicolon
+DECL|variable|_read_unlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_read_unlock
+)paren
+suffix:semicolon
+DECL|variable|_write_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_write_lock
+)paren
+suffix:semicolon
+DECL|variable|_write_unlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_write_unlock
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef CONFIG_MACH_SPECIFIC
 DECL|variable|_machine
 id|EXPORT_SYMBOL

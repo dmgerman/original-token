@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#endif
-macro_line|#if defined(CONFIG_SYSCTL) &amp;&amp; defined(CONFIG_PROC_FS)
+macro_line|#if defined(CONFIG_SYSCTL)
 multiline_comment|/* External variables not in a header file. */
 r_extern
 r_int
@@ -52,6 +52,12 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_overcommit_memory
+suffix:semicolon
+r_extern
+r_int
+id|nr_queued_signals
+comma
+id|max_queued_signals
 suffix:semicolon
 macro_line|#ifdef CONFIG_KMOD
 r_extern
@@ -218,12 +224,14 @@ id|vm_table
 (braket
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET
 r_extern
 id|ctl_table
 id|net_table
 (braket
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|variable|proc_table
 r_static
 id|ctl_table
@@ -405,18 +413,6 @@ r_struct
 id|proc_dir_entry
 id|proc_sys_root
 suffix:semicolon
-r_extern
-r_int
-id|inodes_stat
-(braket
-)braket
-suffix:semicolon
-r_extern
-r_int
-id|dentry_stat
-(braket
-)braket
-suffix:semicolon
 r_static
 r_void
 id|register_proc_table
@@ -444,6 +440,18 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_int
+id|inodes_stat
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|dentry_stat
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/* The default sysctl tables: */
 DECL|variable|root_table
 r_static
@@ -481,6 +489,7 @@ comma
 id|vm_table
 )brace
 comma
+macro_line|#ifdef CONFIG_NET
 (brace
 id|CTL_NET
 comma
@@ -495,6 +504,7 @@ comma
 id|net_table
 )brace
 comma
+macro_line|#endif
 (brace
 id|CTL_PROC
 comma
@@ -969,6 +979,48 @@ id|proc_dointvec
 )brace
 comma
 macro_line|#endif
+(brace
+id|KERN_RTSIGNR
+comma
+l_string|&quot;rtsig-nr&quot;
+comma
+op_amp
+id|nr_queued_signals
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0444
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+(brace
+id|KERN_RTSIGMAX
+comma
+l_string|&quot;rtsig-max&quot;
+comma
+op_amp
+id|max_queued_signals
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
 (brace
 l_int|0
 )brace
@@ -4649,9 +4701,9 @@ id|HZ
 suffix:semicolon
 )brace
 macro_line|#else /* CONFIG_PROC_FS */
-DECL|function|proc_dointvec_jiffies
+DECL|function|proc_dostring
 r_int
-id|proc_dointvec_jiffies
+id|proc_dostring
 c_func
 (paren
 id|ctl_table
@@ -4680,9 +4732,10 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
-DECL|function|proc_dostring
+DECL|function|proc_doutsstring
+r_static
 r_int
-id|proc_dostring
+id|proc_doutsstring
 c_func
 (paren
 id|ctl_table
@@ -5730,7 +5783,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else /* CONFIG_PROC_FS &amp;&amp; CONFIG_SYSCTL */
+macro_line|#else /* CONFIG_SYSCTL */
 DECL|function|sys_sysctl
 r_extern
 id|asmlinkage
@@ -5988,5 +6041,5 @@ id|table
 )paren
 (brace
 )brace
-macro_line|#endif /* CONFIG_PROC_FS &amp;&amp; CONFIG_SYSCTL */
+macro_line|#endif /* CONFIG_SYSCTL */
 eof

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 DECL|variable|firewall_sem
 r_struct
@@ -236,6 +237,11 @@ c_func
 (paren
 op_amp
 id|firewall_sem
+)paren
+suffix:semicolon
+id|synchronize_bh
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

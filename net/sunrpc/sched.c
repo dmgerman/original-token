@@ -161,7 +161,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Add new request to wait queue.&n; *&n; * Swapper tasks always get inserted at the head of the queue.&n; * This should avoid many nasty memory deadlocks and hopefully&n; * improve overall performance.&n; * Everyone else gets appended to the queue to ensure proper FIFO behavior.&n; */
-r_void
+r_int
 DECL|function|rpc_add_wait_queue
 id|rpc_add_wait_queue
 c_func
@@ -190,6 +190,7 @@ id|task-&gt;tk_rpcwait
 op_ne
 id|queue
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -198,6 +199,12 @@ l_string|&quot;RPC: doubly enqueued task!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EWOULDBLOCK
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -247,6 +254,9 @@ c_func
 id|queue
 )paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove request from queue.&n; * Note: must be called with interrupts disabled.&n; */
@@ -508,6 +518,11 @@ id|task
 )paren
 )paren
 (brace
+r_int
+id|status
+suffix:semicolon
+id|status
+op_assign
 id|rpc_add_wait_queue
 c_func
 (paren
@@ -517,6 +532,26 @@ comma
 id|task
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;RPC: failed to add task to queue: error: %d!&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
+id|task-&gt;tk_status
+op_assign
+id|status
+suffix:semicolon
+)brace
 id|wake_up
 c_func
 (paren
@@ -601,6 +636,9 @@ r_int
 r_int
 id|oldflags
 suffix:semicolon
+r_int
+id|status
+suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -629,6 +667,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|status
+op_assign
 id|rpc_add_wait_queue
 c_func
 (paren
@@ -637,6 +677,32 @@ comma
 id|task
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;RPC: failed to add task to queue: error: %d!&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
+id|task-&gt;tk_status
+op_assign
+id|status
+suffix:semicolon
+id|task-&gt;tk_flags
+op_or_assign
+id|RPC_TASK_RUNNING
+suffix:semicolon
+)brace
+r_else
+(brace
 id|task-&gt;tk_callback
 op_assign
 id|action
@@ -659,6 +725,7 @@ op_and_assign
 op_complement
 id|RPC_TASK_RUNNING
 suffix:semicolon
+)brace
 id|restore_flags
 c_func
 (paren

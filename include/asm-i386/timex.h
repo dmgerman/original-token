@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-i386/timex.h&n; *&n; * i386 architec
 macro_line|#ifndef _ASMi386_TIMEX_H
 DECL|macro|_ASMi386_TIMEX_H
 mdefine_line|#define _ASMi386_TIMEX_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|CLOCK_TICK_RATE
 mdefine_line|#define CLOCK_TICK_RATE&t;1193180 /* Underlying HZ */
 DECL|macro|CLOCK_TICK_FACTOR
@@ -28,7 +29,7 @@ id|get_cycles
 r_void
 )paren
 (brace
-macro_line|#if CPU &lt; 586
+macro_line|#ifndef CONFIG_TSC
 r_return
 l_int|0
 suffix:semicolon

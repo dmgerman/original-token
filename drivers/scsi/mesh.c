@@ -6628,8 +6628,19 @@ op_star
 id|ptregs
 )paren
 (brace
-multiline_comment|/*unsigned long flags;*/
-multiline_comment|/*spin_lock_irqsave(&amp;io_request_lock, flags);*/
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|mesh_interrupt
 c_func
 (paren
@@ -6640,7 +6651,15 @@ comma
 id|ptregs
 )paren
 suffix:semicolon
-multiline_comment|/*spin_unlock_irqrestore(&amp;io_request_lock, flags);*/
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|function|handle_error
 r_static
@@ -8214,6 +8233,7 @@ op_star
 id|cmd
 )paren
 (brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -8258,6 +8278,16 @@ c_func
 id|IMMEDIATE_BH
 )paren
 suffix:semicolon
+macro_line|#else
+(paren
+op_star
+id|cmd-&gt;scsi_done
+)paren
+(paren
+id|cmd
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Set up DMA commands for transferring data.&n; */
 r_static

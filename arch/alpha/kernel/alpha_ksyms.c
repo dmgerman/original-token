@@ -381,6 +381,13 @@ c_func
 id|strtok
 )paren
 suffix:semicolon
+DECL|variable|strpbrk
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strpbrk
+)paren
+suffix:semicolon
 DECL|variable|strchr
 id|EXPORT_SYMBOL
 c_func

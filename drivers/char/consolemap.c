@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * consolemap.c&n; *&n; * Mapping from internal code (such as Latin-1 or Unicode or IBM PC code)&n; * to font positions.&n; *&n; * aeb, 950210&n; *&n; * Support for multiple unimaps by Jakub Jelinek &lt;jj@ultra.linux.cz&gt;, July 1998&n; */
+multiline_comment|/*&n; * consolemap.c&n; *&n; * Mapping from internal code (such as Latin-1 or Unicode or IBM PC code)&n; * to font positions.&n; *&n; * aeb, 950210&n; *&n; * Support for multiple unimaps by Jakub Jelinek &lt;jj@ultra.linux.cz&gt;, July 1998&n; *&n; * Fix bug in inverse translation. Stanislav Voronyi &lt;stas@cnti.uanet.kharkov.ua&gt;, Dec 1998&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -2088,6 +2088,9 @@ DECL|variable|inv_translate
 r_static
 r_int
 id|inv_translate
+(braket
+id|MAX_NR_CONSOLES
+)braket
 suffix:semicolon
 DECL|struct|uni_pagedir
 r_struct
@@ -2302,9 +2305,15 @@ c_func
 (paren
 r_int
 id|m
+comma
+r_int
+id|currcons
 )paren
 (brace
 id|inv_translate
+(braket
+id|currcons
+)braket
 op_assign
 id|m
 suffix:semicolon
@@ -2371,6 +2380,9 @@ op_logical_neg
 id|p-&gt;inverse_translations
 (braket
 id|inv_translate
+(braket
+id|conp-&gt;vc_num
+)braket
 )braket
 )paren
 r_return
@@ -2381,6 +2393,9 @@ r_return
 id|p-&gt;inverse_translations
 (braket
 id|inv_translate
+(braket
+id|conp-&gt;vc_num
+)braket
 )braket
 (braket
 id|glyph

@@ -23,7 +23,7 @@ mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * ..but the i386 has somewhat limited tlb flushing capabilities,&n; * and page-granular flushes are available only on i486 and up.&n; */
 DECL|macro|__flush_tlb
 mdefine_line|#define __flush_tlb() &bslash;&n;do { unsigned long tmpreg; __asm__ __volatile__(&quot;movl %%cr3,%0&bslash;n&bslash;tmovl %0,%%cr3&quot;:&quot;=r&quot; (tmpreg) : :&quot;memory&quot;); } while (0)
-macro_line|#ifdef CONFIG_M386
+macro_line|#ifndef CONFIG_INVLPG
 DECL|macro|__flush_tlb_one
 mdefine_line|#define __flush_tlb_one(addr) flush_tlb()
 macro_line|#else
@@ -417,10 +417,8 @@ mdefine_line|#define VMALLOC_END&t;(FIXADDR_START)
 multiline_comment|/*&n; * The 4MB page is guessing..  Detailed in the infamous &quot;Chapter H&quot;&n; * of the Pentium details, but assuming intel did the straightforward&n; * thing, this bit set in the page directory entry just means that&n; * the page directory entry points directly to a 4MB-aligned block of&n; * memory. &n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001
-DECL|macro|_PAGE_PROTNONE
-mdefine_line|#define _PAGE_PROTNONE&t;0x002&t;&t;/* If not present */
 DECL|macro|_PAGE_RW
-mdefine_line|#define _PAGE_RW&t;0x002&t;&t;/* If present */
+mdefine_line|#define _PAGE_RW&t;0x002
 DECL|macro|_PAGE_USER
 mdefine_line|#define _PAGE_USER&t;0x004
 DECL|macro|_PAGE_WT
@@ -432,13 +430,11 @@ mdefine_line|#define _PAGE_ACCESSED&t;0x020
 DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x040
 DECL|macro|_PAGE_4M
-mdefine_line|#define _PAGE_4M&t;0x080&t;/* 4 MB page, Pentium+.. */
+mdefine_line|#define _PAGE_4M&t;0x080&t;/* 4 MB page, Pentium+, if present.. */
 DECL|macro|_PAGE_GLOBAL
 mdefine_line|#define _PAGE_GLOBAL&t;0x100&t;/* Global TLB entry PPro+ */
-DECL|macro|_PAGE_READABLE
-mdefine_line|#define _PAGE_READABLE  (_PAGE_PRESENT)             
-DECL|macro|_PAGE_WRITABLE
-mdefine_line|#define _PAGE_WRITABLE  (_PAGE_PRESENT | _PAGE_RW)
+DECL|macro|_PAGE_PROTNONE
+mdefine_line|#define _PAGE_PROTNONE&t;0x080&t;/* If not present */
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|_KERNPG_TABLE
@@ -709,6 +705,27 @@ op_amp
 id|_PAGE_ACCESSED
 suffix:semicolon
 )brace
+DECL|function|pte_write
+r_extern
+r_inline
+r_int
+id|pte_write
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_RW
+suffix:semicolon
+)brace
 DECL|function|pte_rdprotect
 r_extern
 r_inline
@@ -805,6 +822,30 @@ r_return
 id|pte
 suffix:semicolon
 )brace
+DECL|function|pte_wrprotect
+r_extern
+r_inline
+id|pte_t
+id|pte_wrprotect
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_and_assign
+op_complement
+id|_PAGE_RW
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
 DECL|function|pte_mkread
 r_extern
 r_inline
@@ -892,68 +933,6 @@ id|pte
 )paren
 op_or_assign
 id|_PAGE_ACCESSED
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * These are harder, as writability is two bits, not one..&n; */
-DECL|function|pte_write
-r_extern
-r_inline
-r_int
-id|pte_write
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-(paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_WRITABLE
-)paren
-op_eq
-id|_PAGE_WRITABLE
-suffix:semicolon
-)brace
-DECL|function|pte_wrprotect
-r_extern
-r_inline
-id|pte_t
-id|pte_wrprotect
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_and_assign
-op_complement
-(paren
-(paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_PRESENT
-)paren
-op_lshift
-l_int|1
-)paren
 suffix:semicolon
 r_return
 id|pte
@@ -2056,11 +2035,11 @@ id|pte
 (brace
 )brace
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 2) &amp; 0x3f)
+mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x3f)
 DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; 8))
+mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap

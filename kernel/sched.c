@@ -422,6 +422,9 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* __SMP__ */
+multiline_comment|/*&n; * If there is a dependency between p1 and p2,&n; * don&squot;t be too eager to go into the slow schedule.&n; * In particular, if p1 and p2 both want the kernel&n; * lock, there is no point in trying to make them&n; * extremely parallel..&n; */
+DECL|macro|related
+mdefine_line|#define related(p1,p2) ((p1)-&gt;lock_depth &amp;&amp; (p2)-&gt;lock_depth)
 DECL|function|reschedule_idle
 r_static
 r_inline
@@ -468,10 +471,12 @@ OL
 id|cacheflush_time
 )paren
 op_logical_and
-op_logical_neg
-id|in_interrupt
+id|related
 c_func
 (paren
+id|current
+comma
+id|p
 )paren
 )paren
 r_return

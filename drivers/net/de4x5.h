@@ -156,6 +156,8 @@ DECL|macro|DC21142
 mdefine_line|#define DC21142     (DC2114x_DID | 0x0010)
 DECL|macro|DC21143
 mdefine_line|#define DC21143     (DC2114x_DID | 0x0030)
+DECL|macro|DC2114x_BRK
+mdefine_line|#define DC2114x_BRK 0x0020           /* CFRV break between DC21142 &amp; DC21143 */
 DECL|macro|is_DC21040
 mdefine_line|#define is_DC21040 ((vendor == DC21040_VID) &amp;&amp; (device == DC21040_DID))
 DECL|macro|is_DC21041

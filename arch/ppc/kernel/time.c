@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: time.c,v 1.38 1998/11/16 15:56:15 cort Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; * MPC8xx/MBX changes by Dan Malek (dmalek@jlc.net).&n; *&n; * Since the MPC8xx has a programmable interrupt timer, I decided to&n; * use that rather than the decrementer.  Two reasons: 1.) the clock&n; * frequency is low, causing 2.) a long wait in the timer interrupt&n; *&t;&t;while ((d = get_dec()) == dval)&n; * loop.  The MPC8xx can be driven from a variety of input clocks,&n; * so a number of assumptions have been made here because the kernel&n; * parameter HZ is a constant.  We assume (correctly, today :-) that&n; * the MPC8xx on the MBX board is driven from a 32.768 kHz crystal.&n; * This is then divided by 4, providing a 8192 Hz clock into the PIT.&n; * Since it is not possible to get a nice 100 Hz clock out of this, without&n; * creating a software PLL, I have set HZ to 128.  -- Dan&n; */
+multiline_comment|/*&n; * $Id: time.c,v 1.39 1998/12/28 10:28:51 paulus Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; * MPC8xx/MBX changes by Dan Malek (dmalek@jlc.net).&n; *&n; * Since the MPC8xx has a programmable interrupt timer, I decided to&n; * use that rather than the decrementer.  Two reasons: 1.) the clock&n; * frequency is low, causing 2.) a long wait in the timer interrupt&n; *&t;&t;while ((d = get_dec()) == dval)&n; * loop.  The MPC8xx can be driven from a variety of input clocks,&n; * so a number of assumptions have been made here because the kernel&n; * parameter HZ is a constant.  We assume (correctly, today :-) that&n; * the MPC8xx on the MBX board is driven from a 32.768 kHz crystal.&n; * This is then divided by 4, providing a 8192 Hz clock into the PIT.&n; * Since it is not possible to get a nice 100 Hz clock out of this, without&n; * creating a software PLL, I have set HZ to 128.  -- Dan&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -116,6 +116,84 @@ c_func
 id|cpu
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+(brace
+r_int
+r_int
+id|loops
+op_assign
+l_int|100000000
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|test_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|global_irq_lock
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_eq
+id|global_irq_holder
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;uh oh, interrupt while we hold global irq lock!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|loops
+op_decrement
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;do_IRQ waiting for irq lock (holder=%d)&bslash;n&quot;
+comma
+id|global_irq_holder
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+)brace
+)brace
+macro_line|#endif /* __SMP__ */&t;&t;&t;
 r_while
 c_loop
 (paren
@@ -358,6 +436,8 @@ id|tv
 op_assign
 id|xtime
 suffix:semicolon
+multiline_comment|/* XXX we don&squot;t seem to have the decrementers synced properly yet */
+macro_line|#ifndef __SMP__
 id|tv-&gt;tv_usec
 op_add_assign
 (paren
@@ -389,6 +469,7 @@ id|tv-&gt;tv_sec
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
 id|restore_flags
 c_func
 (paren

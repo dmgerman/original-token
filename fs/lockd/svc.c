@@ -364,12 +364,12 @@ r_else
 r_if
 c_cond
 (paren
-id|time_after
+id|time_before
 c_func
 (paren
-id|jiffies
-comma
 id|nlmsvc_grace_period
+comma
+id|jiffies
 )paren
 )paren
 id|nlmsvc_grace_period

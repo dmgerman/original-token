@@ -34,6 +34,9 @@ c_func
 (paren
 r_int
 id|m
+comma
+r_int
+id|currcons
 )paren
 suffix:semicolon
 r_extern

@@ -2436,6 +2436,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_register
 c_func
 (paren
@@ -2446,5 +2447,6 @@ op_amp
 id|proc_nubus
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 eof

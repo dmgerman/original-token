@@ -3098,6 +3098,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|SMC2
+comma
+id|SMC2_1211TX
+comma
+l_string|&quot;1211 TX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|VORTEX
 comma
 id|VORTEX_GDT60x0
@@ -4547,6 +4557,16 @@ comma
 id|S3_SONICVIBES
 comma
 l_string|&quot;SonicVibes&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|DCI
+comma
+id|DCI_PCCOM4
+comma
+l_string|&quot;PC COM PCI Bus 4 port serial Adapter&quot;
 )paren
 comma
 id|DEVICE
@@ -6165,6 +6185,12 @@ r_return
 l_string|&quot;VIA Technologies&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_SMC2
+suffix:colon
+r_return
+l_string|&quot;SMC&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_VORTEX
 suffix:colon
 r_return
@@ -6451,6 +6477,12 @@ id|PCI_VENDOR_ID_S3
 suffix:colon
 r_return
 l_string|&quot;S3 Inc.&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_DCI
+suffix:colon
+r_return
+l_string|&quot;Decision Computer Int.&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_INTEL

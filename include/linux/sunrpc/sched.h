@@ -375,7 +375,7 @@ id|rpc_action
 id|action
 )paren
 suffix:semicolon
-r_void
+r_int
 id|rpc_add_wait_queue
 c_func
 (paren

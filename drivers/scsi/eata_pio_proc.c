@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * eata_set_info&n; * buffer : pointer to the data that has been written to the hostfile&n; * length : number of bytes written to the hostfile&n; * HBA_ptr: pointer to the Scsi_Host struct&n; */
 DECL|function|eata_pio_set_info
 r_int
@@ -65,6 +66,7 @@ r_int
 id|inout
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 id|Scsi_Device
 op_star
 id|scd
@@ -607,6 +609,11 @@ r_return
 id|len
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif        
 )brace
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * tab-width: 8&n; * End:&n; */
 eof

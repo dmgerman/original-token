@@ -238,7 +238,7 @@ DECL|member|s_type
 id|s32
 id|s_type
 suffix:semicolon
-multiline_comment|/* type of file system: 1 for 512 byte blocks&n;&t;&t;&t;&t;&t;&t;&t;&t;2 for 1024 byte blocks */
+multiline_comment|/* type of file system: 1 for 512 byte blocks&n;&t;&t;&t;&t;&t;&t;&t;&t;2 for 1024 byte blocks&n;&t;&t;&t;&t;&t;&t;&t;&t;3 for 2048 byte blocks */
 )brace
 suffix:semicolon
 multiline_comment|/* Xenix free list block on disk */

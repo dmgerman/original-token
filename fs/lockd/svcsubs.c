@@ -139,6 +139,14 @@ suffix:semicolon
 id|u32
 id|nfserr
 suffix:semicolon
+id|uid_t
+id|saved_cr_uid
+suffix:semicolon
+r_struct
+id|svc_cred
+op_star
+id|cred
+suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -300,7 +308,20 @@ id|file-&gt;f_sema
 op_assign
 id|MUTEX
 suffix:semicolon
-multiline_comment|/* Open the file. Note that this must not sleep for too long, else&n;&t; * we would lock up lockd:-) So no NFS re-exports, folks.&n;&t; */
+multiline_comment|/* Open the file. Note that this must not sleep for too long, else&n;&t; * we would lock up lockd:-) So no NFS re-exports, folks.&n;&t; *&n;&t; * We have to make sure we have the right credential to open&n;&t; * the file.&n;&t; */
+id|cred
+op_assign
+op_amp
+id|rqstp-&gt;rq_cred
+suffix:semicolon
+id|saved_cr_uid
+op_assign
+id|cred-&gt;cr_uid
+suffix:semicolon
+id|cred-&gt;cr_uid
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -336,10 +357,18 @@ id|nfserr
 )paren
 )paren
 suffix:semicolon
+id|cred-&gt;cr_uid
+op_assign
+id|saved_cr_uid
+suffix:semicolon
 r_goto
 id|out_free
 suffix:semicolon
 )brace
+id|cred-&gt;cr_uid
+op_assign
+id|saved_cr_uid
+suffix:semicolon
 id|file-&gt;f_next
 op_assign
 id|nlm_files

@@ -251,8 +251,14 @@ DECL|member|rq_secure
 id|rq_secure
 suffix:colon
 l_int|1
-suffix:semicolon
+comma
 multiline_comment|/* secure port */
+DECL|member|rq_auth
+id|rq_auth
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* check client */
 DECL|member|rq_argp
 r_void
 op_star

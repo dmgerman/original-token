@@ -1095,6 +1095,80 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n; * Check wether we are able to run this kernel safely with this&n; * configuration.  Various configs imply certain minimum requirements&n; * of the machine:&n; *&n; * - In order to run on a i386, we need to be compiled for i386&n; *   (for due to lack of &quot;invlpg&quot; and working WP on a i386)&n; * - In order to run on anything without a TSC, we need to be&n; *   compiled for a i486.&n; * - In order to work on a Pentium/SMP machine, we need to be&n; *   compiled for a Pentium or lower, as a PPro config implies&n; *   a properly working local APIC without the need to do extra&n; *   reads from the APIC.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|check_config
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+multiline_comment|/* Configuring for a i386 will boot on anything */
+macro_line|#ifndef CONFIG_M386
+multiline_comment|/* Configuring for an i486 only implies &squot;invlpg&squot; and a working WP bit */
+r_if
+c_cond
+(paren
+id|boot_cpu_data.x86
+op_eq
+l_int|3
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Kernel requires i486+ for &squot;invlpg&squot; and other features&quot;
+)paren
+suffix:semicolon
+macro_line|#ifndef CONFIG_M486
+macro_line|#ifndef CONFIG_M586
+multiline_comment|/* Configuring for a PPro implies that we have an IO-APIC without the read-before-write bug */
+macro_line|#endif&t;/* CONFIG_M586 */
+macro_line|#endif&t;/* CONFIG_M486 */
+macro_line|#endif&t;/* CONFIG_M386 */
+multiline_comment|/* If we configured ourselves for a TSC, we&squot;d better have one! */
+macro_line|#ifdef CONFIG_TSC
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|boot_cpu_data.x86_capability
+op_amp
+id|X86_FEATURE_TSC
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Kernel compiled for Pentium+, requires TSC&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* If we were told we had a good APIC for SMP, we&squot;d better be a PPro */
+macro_line|#ifdef CONFIG_GOOD_APIC
+r_if
+c_cond
+(paren
+id|smp_found_config
+op_logical_and
+id|boot_cpu_data.x86
+op_le
+l_int|5
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Kernel compiled for PPro+, assumes local APIC without read-before-write bug&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1118,6 +1192,11 @@ c_func
 (paren
 op_amp
 id|boot_cpu_data
+)paren
+suffix:semicolon
+id|check_config
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#ifndef __SMP__

@@ -407,8 +407,11 @@ r_int
 r_int
 id|flush_addr
 suffix:semicolon
-multiline_comment|/*&t;unsigned long flush_end; */
-multiline_comment|/* not used by local_flush_tlb_range */
+DECL|member|flush_end
+r_int
+r_int
+id|flush_end
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern

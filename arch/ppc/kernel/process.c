@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: process.c,v 1.68 1998/11/15 19:59:02 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * $Id: process.c,v 1.69 1998/12/28 10:28:49 paulus Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -647,50 +647,6 @@ id|smp_giveup_fpu
 c_func
 (paren
 id|prev
-)paren
-suffix:semicolon
-multiline_comment|/* be noisy about processor changes for debugging -- Cort */
-r_if
-c_cond
-(paren
-(paren
-r_new
-op_member_access_from_pointer
-id|last_processor
-op_ne
-id|NO_PROC_ID
-)paren
-op_logical_and
-(paren
-r_new
-op_member_access_from_pointer
-id|last_processor
-op_ne
-r_new
-op_member_access_from_pointer
-id|processor
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;switch_to(): changing cpu&squot;s %d -&gt; %d %s/%d&bslash;n&quot;
-comma
-r_new
-op_member_access_from_pointer
-id|last_processor
-comma
-r_new
-op_member_access_from_pointer
-id|processor
-comma
-r_new
-op_member_access_from_pointer
-id|comm
-comma
-r_new
-op_member_access_from_pointer
-id|pid
 )paren
 suffix:semicolon
 id|prev-&gt;last_processor

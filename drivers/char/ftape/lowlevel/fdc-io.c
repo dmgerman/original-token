@@ -5913,7 +5913,6 @@ id|do_ftape
 )paren
 (brace
 multiline_comment|/*  Get fast interrupt handler.&n;&t;&t; */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(1,3,70)
 r_if
 c_cond
 (paren
@@ -5946,38 +5945,6 @@ id|fdc.irq
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|fdc.irq
-comma
-id|ftape_interrupt
-comma
-id|SA_INTERRUPT
-comma
-id|ftape_id
-)paren
-)paren
-(brace
-id|TRACE_ABORT
-c_func
-(paren
-op_minus
-id|EIO
-comma
-id|ft_t_bug
-comma
-l_string|&quot;Unable to grab IRQ%d for ftape driver&quot;
-comma
-id|fdc.irq
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6021,12 +5988,6 @@ id|fdc.dma
 )paren
 suffix:semicolon
 )brace
-id|enable_irq
-c_func
-(paren
-id|fdc.irq
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -6104,13 +6065,6 @@ c_func
 id|fdc.dma
 )paren
 suffix:semicolon
-id|disable_irq
-c_func
-(paren
-id|fdc.irq
-)paren
-suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(1,3,70)
 id|free_irq
 c_func
 (paren
@@ -6119,14 +6073,6 @@ comma
 id|ftape_id
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|fdc.irq
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond

@@ -3465,9 +3465,13 @@ id|HZ
 op_div
 l_int|10
 suffix:semicolon
+id|time_after
+c_func
+(paren
 id|delay
-OG
+comma
 id|jiffies
+)paren
 suffix:semicolon
 )paren
 multiline_comment|/* about 100ms delay */

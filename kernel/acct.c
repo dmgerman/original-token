@@ -287,7 +287,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Process accounting paused&bslash;r&bslash;n&quot;
+l_string|&quot;Process accounting paused&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -310,7 +310,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Process accounting resumed&bslash;r&bslash;n&quot;
+l_string|&quot;Process accounting resumed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

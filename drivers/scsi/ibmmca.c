@@ -4131,14 +4131,7 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pos2
-op_ne
-l_int|0xff
-)paren
-(brace
+singleline_comment|//  if (pos2 != 0xff) {
 r_if
 c_cond
 (paren
@@ -4243,7 +4236,7 @@ id|shpnt
 )paren
 suffix:semicolon
 )brace
-)brace
+singleline_comment|//    }
 multiline_comment|/* now look for other adapters */
 id|list_size
 op_assign

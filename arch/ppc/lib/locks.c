@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: locks.c,v 1.20 1998/10/08 01:17:32 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
+multiline_comment|/*&n; * $Id: locks.c,v 1.21 1998/12/28 10:28:53 paulus Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -11,7 +11,7 @@ mdefine_line|#define DEBUG_LOCKS 1
 DECL|macro|INIT_STUCK
 macro_line|#undef INIT_STUCK
 DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 0xffffffff
+mdefine_line|#define INIT_STUCK 200000000 /*0xffffffff*/
 DECL|function|_spin_lock
 r_void
 id|_spin_lock
@@ -275,15 +275,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* actually I believe eieio only orders */
 id|lp-&gt;lock
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* non-cacheable accesses (on 604 at least) */
 id|eieio
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*  - paulus. */
 )brace
 multiline_comment|/*&n; * Just like x86, implement read-write locks as a 32-bit counter&n; * with the high bit (sign) being the &quot;write&quot; bit.&n; * -- Cort&n; */
 DECL|function|_read_lock

@@ -33,6 +33,8 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT&t;.previous
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA&t;.section&t;&quot;.data.init&quot;,#alloc,#write
+DECL|macro|__cacheline_aligned
+mdefine_line|#define __cacheline_aligned __attribute__ &bslash;&n;&t;&t;&t; ((__section__ (&quot;.data.cacheline_aligned&quot;)))
 macro_line|#else /* not egcs */
 DECL|macro|__init
 mdefine_line|#define __init
@@ -64,6 +66,8 @@ DECL|macro|__openfirmwaredata
 mdefine_line|#define __openfirmwaredata
 DECL|macro|__openfirmwarefunc
 mdefine_line|#define __openfirmwarefunc(x) x
+DECL|macro|__cacheline_aligned
+mdefine_line|#define __cacheline_aligned
 macro_line|#endif /* egcs */
 macro_line|#endif
 eof

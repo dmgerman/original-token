@@ -1962,12 +1962,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|time_after
+id|time_before
 c_func
 (paren
-id|jiffies
-comma
 id|nextstat
+comma
+id|jiffies
 )paren
 )paren
 (brace
@@ -3602,6 +3602,9 @@ id|xprt
 op_assign
 id|req-&gt;rq_xprt
 suffix:semicolon
+r_int
+id|status
+suffix:semicolon
 multiline_comment|/*DEBUG*/
 r_int
 id|ac_debug
@@ -3806,6 +3809,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|status
+op_assign
 id|rpc_add_wait_queue
 c_func
 (paren
@@ -3815,6 +3820,12 @@ comma
 id|task
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|status
+)paren
 id|task-&gt;tk_callback
 op_assign
 l_int|NULL
@@ -3824,6 +3835,28 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;RPC: failed to add task to queue: error: %d!&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
+id|task-&gt;tk_status
+op_assign
+id|status
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Continue transmitting the packet/record. We must be careful&n;&t; * to cope with writespace callbacks arriving _after_ we have&n;&t; * called xprt_sendmsg().&n;&t; */
 r_while
 c_loop

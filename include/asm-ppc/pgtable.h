@@ -181,6 +181,8 @@ DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED&t;0x100&t;/* R: page referenced */
 DECL|macro|_PAGE_HWWRITE
 mdefine_line|#define _PAGE_HWWRITE&t;0x200&t;/* software: _PAGE_RW &amp; _PAGE_DIRTY */
+DECL|macro|_PAGE_SHARED
+mdefine_line|#define _PAGE_SHARED&t;0
 macro_line|#else
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x0001&t;/* Page is valid */
@@ -207,31 +209,27 @@ mdefine_line|#define _PAGE_HWWRITE&t;_PAGE_DIRTY
 macro_line|#endif /* CONFIG_8xx */
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK&t;(PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY)
+macro_line|#ifdef __SMP__
+DECL|macro|_PAGE_BASE
+mdefine_line|#define _PAGE_BASE&t;_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_COHERENT
+macro_line|#else
+DECL|macro|_PAGE_BASE
+mdefine_line|#define _PAGE_BASE&t;_PAGE_PRESENT | _PAGE_ACCESSED
+macro_line|#endif
+DECL|macro|_PAGE_WRENABLE
+mdefine_line|#define _PAGE_WRENABLE&t;_PAGE_RW | _PAGE_DIRTY | _PAGE_HWWRITE
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED)
-macro_line|#ifndef CONFIG_8xx
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | &bslash;&n;&t;&t;&t;&t; _PAGE_ACCESSED)
+mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_BASE | _PAGE_RW | _PAGE_USER | &bslash;&n;&t;&t;&t;&t; _PAGE_SHARED)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_BASE | _PAGE_USER)
 DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_BASE | _PAGE_USER)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | &bslash;&n;&t;&t;&t;&t; _PAGE_HWWRITE | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_BASE | _PAGE_WRENABLE | _PAGE_SHARED)
 DECL|macro|PAGE_KERNEL_CI
-mdefine_line|#define PAGE_KERNEL_CI&t;__pgprot(_PAGE_PRESENT | _PAGE_NO_CACHE | _PAGE_RW | &bslash;&n;&t;&t;&t;&t; _PAGE_HWWRITE | _PAGE_DIRTY | _PAGE_ACCESSED)
-macro_line|#else
-DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | &bslash;&n;&t;&t;&t;&t; _PAGE_ACCESSED | _PAGE_SHARED)
-DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
-DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
-DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | &bslash;&n;&t;&t;&t;&t; _PAGE_SHARED | _PAGE_ACCESSED)
-DECL|macro|PAGE_KERNEL_CI
-mdefine_line|#define PAGE_KERNEL_CI&t;__pgprot(_PAGE_PRESENT | _PAGE_NO_CACHE | _PAGE_RW | &bslash;&n;&t;&t;&t;&t; _PAGE_SHARED | _PAGE_DIRTY | _PAGE_ACCESSED)
-macro_line|#endif /* CONFIG_8xx */
+mdefine_line|#define PAGE_KERNEL_CI&t;__pgprot(_PAGE_BASE | _PAGE_WRENABLE | _PAGE_SHARED | &bslash;&n;&t;&t;&t;&t; _PAGE_NO_CACHE )
 multiline_comment|/*&n; * The PowerPC can only do execute protection on a segment (256MB) basis,&n; * not on a page basis.  So we consider execute permission the same as read.&n; * Also, write permissions imply read permissions.&n; * This is the closest we can get..&n; */
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE

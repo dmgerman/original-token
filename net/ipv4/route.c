@@ -3933,6 +3933,19 @@ id|daddr
 r_goto
 id|martian_destination
 suffix:semicolon
+multiline_comment|/* Accept anything arriving at 0.0.0.0 */
+r_if
+c_cond
+(paren
+id|in_dev-&gt;ifa_list
+op_logical_and
+id|in_dev-&gt;ifa_list-&gt;ifa_local
+op_eq
+l_int|0
+)paren
+r_goto
+id|local_input
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now we are ready to route packet.&n;&t; */
 r_if
 c_cond

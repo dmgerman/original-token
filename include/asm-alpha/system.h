@@ -569,7 +569,7 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldl_l %0,%2&bslash;n&quot;
-l_string|&quot;&t;bis %3,%3,%1&bslash;n&quot;
+l_string|&quot;&t;bis $31,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stl_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
@@ -592,7 +592,7 @@ op_star
 id|m
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;rI&quot;
 (paren
 id|val
 )paren
@@ -635,7 +635,7 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldq_l %0,%2&bslash;n&quot;
-l_string|&quot;&t;bis %3,%3,%1&bslash;n&quot;
+l_string|&quot;&t;bis $31,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stq_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
@@ -658,7 +658,7 @@ op_star
 id|m
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;rI&quot;
 (paren
 id|val
 )paren

@@ -35,7 +35,23 @@ r_int
 r_int
 id|pgtable_cache_sz
 suffix:semicolon
+DECL|member|ipi_count
+r_int
+r_int
+id|ipi_count
+suffix:semicolon
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|32
+)paren
+)paren
+)paren
 suffix:semicolon
 r_extern
 r_struct
@@ -112,25 +128,6 @@ DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id()&t;(current-&gt;processor)
 DECL|macro|cpu_logical_map
 mdefine_line|#define cpu_logical_map(cpu)&t;(cpu)
-multiline_comment|/* For the benefit of panic.  */
-r_void
-id|smp_message_pass
-c_func
-(paren
-r_int
-id|target
-comma
-r_int
-id|msg
-comma
-r_int
-r_int
-id|data
-comma
-r_int
-id|wait
-)paren
-suffix:semicolon
 macro_line|#endif /* __SMP__ */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;(-1)

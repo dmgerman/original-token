@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/sysv/inode.c&n; *&n; *  minix/inode.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  xenix/inode.c&n; *  Copyright (C) 1992  Doug Evans&n; *&n; *  coh/inode.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Paul B. Monday&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Bruno Haible&n; *&n; *  This file contains code for allocating/freeing inodes and for read/writing&n; *  the superblock.&n; */
+multiline_comment|/*&n; *  linux/fs/sysv/inode.c&n; *&n; *  minix/inode.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  xenix/inode.c&n; *  Copyright (C) 1992  Doug Evans&n; *&n; *  coh/inode.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Paul B. Monday&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Bruno Haible&n; *  Copyright (C) 1997, 1998  Krzysztof G. Baranowski&n; *&n; *  This file contains code for allocating/freeing inodes and for read/writing&n; *  the superblock.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -740,6 +740,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|sbd-&gt;s_type
 OG
 l_int|3
@@ -748,12 +749,61 @@ id|sbd-&gt;s_type
 OL
 l_int|1
 )paren
+op_logical_and
+(paren
+id|sbd-&gt;s_type
+OG
+l_int|0x30
+op_logical_or
+id|sbd-&gt;s_type
+OL
+l_int|0x10
+)paren
+)paren
 r_return
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* On Interactive Unix (ISC) Version 4.0/3.x s_type field = 0x10,&n;&t;   0x20 or 0x30 indicates that symbolic links and the 14-character&n;&t;   filename limit is gone. Due to lack of information about this&n;           feature read-only mode seems to be a reasonable approach... -KGB */
+r_if
+c_cond
+(paren
+id|sbd-&gt;s_type
+op_ge
+l_int|0x10
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;SysV FS: can&squot;t handle long file names on %s, &quot;
+l_string|&quot;forcing read-only mode.&bslash;n&quot;
+comma
+id|kdevname
+c_func
+(paren
+id|sb-&gt;s_dev
+)paren
+)paren
+suffix:semicolon
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
+)brace
 id|detected_bs
 c_func
 (paren
+id|sbd-&gt;s_type
+op_ge
+l_int|0x10
+ques
+c_cond
+(paren
+id|sbd-&gt;s_type
+op_rshift
+l_int|4
+)paren
+suffix:colon
 id|sbd-&gt;s_type
 comma
 id|sb

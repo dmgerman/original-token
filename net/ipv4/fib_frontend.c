@@ -1943,13 +1943,6 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|ZERONET
-c_func
-(paren
-id|prefix
-)paren
-op_logical_and
-op_logical_neg
 (paren
 id|ifa-&gt;ifa_flags
 op_amp
@@ -1992,6 +1985,13 @@ multiline_comment|/* Add network specific broadcasts, when it takes a sense */
 r_if
 c_cond
 (paren
+op_logical_neg
+id|ZERONET
+c_func
+(paren
+id|prefix
+)paren
+op_logical_and
 id|ifa-&gt;ifa_prefixlen
 OL
 l_int|31

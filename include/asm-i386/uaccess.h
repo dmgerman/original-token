@@ -2,6 +2,7 @@ macro_line|#ifndef __i386_UACCESS_H
 DECL|macro|__i386_UACCESS_H
 mdefine_line|#define __i386_UACCESS_H
 multiline_comment|/*&n; * User space memory access functions&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|VERIFY_READ
@@ -41,7 +42,7 @@ mdefine_line|#define __addr_ok(addr) ((unsigned long)(addr) &lt; (current-&gt;ad
 multiline_comment|/*&n; * Uhhuh, this needs 33-bit arithmetic. We have a carry..&n; */
 DECL|macro|__range_ok
 mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag,sum; &bslash;&n;&t;asm(&quot;addl %3,%1 ; sbbl %0,%0; cmpl %1,%4; sbbl $0,%0&quot; &bslash;&n;&t;&t;:&quot;=&amp;r&quot; (flag), &quot;=r&quot; (sum) &bslash;&n;&t;&t;:&quot;1&quot; (addr),&quot;g&quot; (size),&quot;g&quot; (current-&gt;addr_limit.seg)); &bslash;&n;&t;flag; })
-macro_line|#if CPU &gt; 386
+macro_line|#ifdef CONFIG_WP_WORKS_OK
 DECL|macro|access_ok
 mdefine_line|#define access_ok(type,addr,size) (__range_ok(addr,size) == 0)
 macro_line|#else

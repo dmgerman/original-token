@@ -1144,8 +1144,10 @@ r_int
 id|get_PCI_configuration
 c_func
 (paren
+r_int
 r_char
 comma
+r_int
 r_char
 comma
 r_int
@@ -12986,9 +12988,11 @@ r_int
 id|get_PCI_configuration
 c_func
 (paren
+r_int
 r_char
 id|bus
 comma
+r_int
 r_char
 id|device_fn
 comma

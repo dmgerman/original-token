@@ -104,6 +104,9 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_struct
+id|pt_regs
+suffix:semicolon
 r_extern
 r_void
 (paren

@@ -64,6 +64,9 @@ id|nfsd_active
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n; * Maximum number of nfsd processes&n; */
+DECL|macro|NFSD_MAXSERVS
+mdefine_line|#define&t;NFSD_MAXSERVS&t;&t;128
 r_int
 DECL|function|nfsd_svc
 id|nfsd_svc
@@ -100,7 +103,7 @@ r_if
 c_cond
 (paren
 id|nrservs
-OL
+op_le
 l_int|0
 )paren
 r_goto
@@ -117,10 +120,30 @@ id|nrservs
 op_assign
 id|NFSD_MAXSERVS
 suffix:semicolon
+id|nfsd_nservers
+op_assign
+id|nrservs
+suffix:semicolon
 id|error
 op_assign
 op_minus
 id|ENOMEM
+suffix:semicolon
+id|nfsd_racache_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Readahead param cache */
+r_if
+c_cond
+(paren
+id|nfsd_nservers
+op_eq
+l_int|0
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|serv
 op_assign
@@ -145,10 +168,6 @@ l_int|NULL
 r_goto
 id|out
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|error
 op_assign
 id|svc_makesock
@@ -160,11 +179,18 @@ id|IPPROTO_UDP
 comma
 id|port
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
 OL
 l_int|0
-op_logical_or
-(paren
+)paren
+r_goto
+id|failure
+suffix:semicolon
+macro_line|#if 0&t;/* Don&squot;t even pretend that TCP works. It doesn&squot;t. */
 id|error
 op_assign
 id|svc_makesock
@@ -176,13 +202,18 @@ id|IPPROTO_TCP
 comma
 id|port
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
 OL
 l_int|0
 )paren
 r_goto
 id|failure
 suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -269,6 +300,11 @@ op_assign
 l_int|1
 suffix:semicolon
 id|current-&gt;pgrp
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Let svc_process check client&squot;s authentication. */
+id|rqstp-&gt;rq_auth
 op_assign
 l_int|1
 suffix:semicolon
@@ -392,45 +428,6 @@ op_amp
 id|rqstp-&gt;rq_addr
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|rqstp-&gt;rq_client
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;nfsd: unauthenticated request &quot;
-l_string|&quot;from (%08lx:%d)&bslash;n&quot;
-comma
-id|ntohl
-c_func
-(paren
-id|rqstp-&gt;rq_addr.sin_addr.s_addr
-)paren
-comma
-id|ntohs
-c_func
-(paren
-id|rqstp-&gt;rq_addr.sin_port
-)paren
-)paren
-suffix:semicolon
-id|svc_drop
-c_func
-(paren
-id|rqstp
-)paren
-suffix:semicolon
-id|serv-&gt;sv_stats-&gt;rpcbadclnt
-op_increment
-suffix:semicolon
-)brace
-r_else
-(brace
 multiline_comment|/* Process request with signals blocked.  */
 id|spin_lock_irq
 c_func
@@ -469,7 +466,6 @@ comma
 id|rqstp
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Unlock export hash tables */
 id|exp_unlock
 c_func
@@ -573,6 +569,12 @@ l_string|&quot;nfsd: last server exiting&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* revoke all exports */
 id|nfsd_export_shutdown
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* release read-ahead cache */
+id|nfsd_racache_shutdown
 c_func
 (paren
 )paren

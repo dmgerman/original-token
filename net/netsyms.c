@@ -4,22 +4,22 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;net/dst.h&gt;
-macro_line|#include &lt;net/checksum.h&gt;
-macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/fddidevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
+macro_line|#include &lt;net/dst.h&gt;
+macro_line|#include &lt;net/checksum.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#ifdef CONFIG_BRIDGE
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
@@ -29,6 +29,7 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
+macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
@@ -37,30 +38,6 @@ r_struct
 id|net_proto_family
 id|inet_family_ops
 suffix:semicolon
-macro_line|#ifdef CONFIG_DLCI_MODULE
-r_extern
-r_int
-(paren
-op_star
-id|dlci_ioctl_hook
-)paren
-(paren
-r_int
-r_int
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
-DECL|variable|dlci_ioctl_hook
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dlci_ioctl_hook
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
@@ -72,6 +49,7 @@ r_extern
 r_int
 id|tcp_tw_death_row_slot
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
@@ -135,6 +113,10 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATALK_MODULE
 macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;net/dst.h&gt;
+macro_line|#include &lt;net/checksum.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SYSCTL
 r_extern
@@ -402,6 +384,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sock_wfree
+)paren
+suffix:semicolon
+DECL|variable|sock_wmalloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_wmalloc
+)paren
+suffix:semicolon
+DECL|variable|sock_rmalloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_rmalloc
+)paren
+suffix:semicolon
+DECL|variable|sock_rspace
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_rspace
 )paren
 suffix:semicolon
 DECL|variable|skb_recv_datagram
@@ -833,6 +836,13 @@ c_func
 id|arp_send
 )paren
 suffix:semicolon
+DECL|variable|arp_broken_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|arp_broken_ops
+)paren
+suffix:semicolon
 DECL|variable|ip_id_count
 id|EXPORT_SYMBOL
 c_func
@@ -910,27 +920,6 @@ c_func
 id|__release_sock
 )paren
 suffix:semicolon
-DECL|variable|arp_find
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|arp_find
-)paren
-suffix:semicolon
-DECL|variable|ip_rcv
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ip_rcv
-)paren
-suffix:semicolon
-DECL|variable|arp_rcv
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|arp_rcv
-)paren
-suffix:semicolon
 multiline_comment|/* needed for ip_gre -cw */
 DECL|variable|ip_statistics
 id|EXPORT_SYMBOL
@@ -939,6 +928,29 @@ c_func
 id|ip_statistics
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_DLCI_MODULE
+r_extern
+r_int
+(paren
+op_star
+id|dlci_ioctl_hook
+)paren
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|variable|dlci_ioctl_hook
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dlci_ioctl_hook
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_IPV6
 DECL|variable|ipv6_addr_type
 id|EXPORT_SYMBOL
@@ -1120,13 +1132,6 @@ id|net_timer
 )paren
 suffix:semicolon
 multiline_comment|/* UDP/TCP exported functions for TCPv6 */
-DECL|variable|sock_rspace
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sock_rspace
-)paren
-suffix:semicolon
 DECL|variable|udp_ioctl
 id|EXPORT_SYMBOL
 c_func
@@ -1696,20 +1701,50 @@ c_func
 id|rtnl_unlock
 )paren
 suffix:semicolon
-DECL|variable|sock_wmalloc
+multiline_comment|/* Used by at least ipip.c.  */
+DECL|variable|ipv4_config
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|sock_wmalloc
+id|ipv4_config
 )paren
 suffix:semicolon
-DECL|variable|sock_rmalloc
+DECL|variable|dev_open
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|sock_rmalloc
+id|dev_open
 )paren
 suffix:semicolon
+DECL|variable|ip_rcv
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ip_rcv
+)paren
+suffix:semicolon
+DECL|variable|arp_rcv
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|arp_rcv
+)paren
+suffix:semicolon
+DECL|variable|arp_tbl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|arp_tbl
+)paren
+suffix:semicolon
+DECL|variable|arp_find
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|arp_find
+)paren
+suffix:semicolon
+macro_line|#endif  /* CONFIG_INET */
 macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)&t;||&t;defined(CONFIG_ULTRA32)&t;&t;|| &bslash;&n;&t;defined(CONFIG_LNE390)&t;||&t;defined(CONFIG_NE3210)
 multiline_comment|/* If 8390 NIC support is built in, we will need these. */
 DECL|variable|ei_open
@@ -1792,22 +1827,6 @@ id|tr_freedev
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Used by at least ipip.c.  */
-DECL|variable|ipv4_config
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ipv4_config
-)paren
-suffix:semicolon
-DECL|variable|dev_open
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dev_open
-)paren
-suffix:semicolon
-macro_line|#endif  /* CONFIG_INET */
 multiline_comment|/* Device callback registration */
 DECL|variable|register_netdevice_notifier
 id|EXPORT_SYMBOL
@@ -2048,6 +2067,20 @@ c_func
 id|dev_mc_add
 )paren
 suffix:semicolon
+DECL|variable|dev_mc_delete
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_mc_delete
+)paren
+suffix:semicolon
+DECL|variable|dev_mc_upload
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_mc_upload
+)paren
+suffix:semicolon
 DECL|variable|n_tty_ioctl
 id|EXPORT_SYMBOL
 c_func
@@ -2067,13 +2100,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|kill_fasync
-)paren
-suffix:semicolon
-DECL|variable|dev_mc_delete
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dev_mc_delete
 )paren
 suffix:semicolon
 DECL|variable|if_port_text

@@ -8062,6 +8062,7 @@ r_int
 id|inout
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 r_struct
 id|Scsi_Host
 op_star
@@ -8980,6 +8981,11 @@ suffix:semicolon
 r_return
 id|totcnt
 suffix:semicolon
+macro_line|#else /* CONFIG_PROC_FS */
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif /* CONFIG_PROC_FS */
 )brace
 macro_line|#endif /* version &gt;= v1.3.0 */
 multiline_comment|/*&n; * advansys_detect()&n; *&n; * Detect function for AdvanSys adapters.&n; *&n; * Argument is a pointer to the host driver&squot;s scsi_hosts entry.&n; *&n; * Return number of adapters found.&n; *&n; * Note: Because this function is called during system initialization&n; * it must not call SCSI mid-level functions including scsi_malloc()&n; * and scsi_free().&n; */

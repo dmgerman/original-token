@@ -34,9 +34,9 @@ mdefine_line|#define MAJOR_NR ACSI_MAJOR
 DECL|macro|CMDSET_TARG_LUN
 mdefine_line|#define CMDSET_TARG_LUN(cmd,targ,lun)&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;cmd[0] = (cmd[0] &amp; ~0xe0) | (targ)&lt;&lt;5;&t;&bslash;&n;&t;&t;cmd[1] = (cmd[1] &amp; ~0xe0) | (lun)&lt;&lt;5;&t;&bslash;&n;&t;} while(0)
 DECL|macro|START_TIMER
-mdefine_line|#define&t;START_TIMER(to)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;        del_timer( &amp;slm_timer );&t;&t;&t;&t;&bslash;&n;        slm_timer.expires = jiffies + (to);&t;&t;&t;&bslash;&n;        add_timer( &amp;slm_timer );&t;&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define&t;START_TIMER(to)&t;mod_timer(&amp;slm_timer, jiffies + (to))
 DECL|macro|STOP_TIMER
-mdefine_line|#define&t;STOP_TIMER()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;        del_timer( &amp;slm_timer );&t;&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define&t;STOP_TIMER()&t;del_timer(&amp;slm_timer)
 DECL|variable|slmreqsense_cmd
 r_static
 r_char

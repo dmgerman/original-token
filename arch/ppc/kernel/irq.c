@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: irq.c,v 1.90 1998/12/10 02:39:46 cort Exp $&n; *&n; *  arch/ppc/kernel/irq.c&n; *&n; *  Derived from arch/i386/kernel/irq.c&n; *    Copyright (C) 1992 Linus Torvalds&n; *  Adapted from arch/i386 by Gary Thomas&n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Cort Dougan&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *  &n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * The MPC8xx has an interrupt mask in the SIU.  If a bit is set, the&n; * interrupt is _enabled_.  As expected, IRQ0 is bit 0 in the 32-bit&n; * mask register (of which only 16 are defined), hence the weird shifting&n; * and compliment of the cached_irq_mask.  I want to be able to stuff&n; * this right into the SIU SMASK register.&n; * Many of the prep/chrp functions are conditional compiled on CONFIG_8xx&n; * to reduce code space and undefined function references.&n; */
+multiline_comment|/*&n; * $Id: irq.c,v 1.91 1998/12/28 10:28:47 paulus Exp $&n; *&n; *  arch/ppc/kernel/irq.c&n; *&n; *  Derived from arch/i386/kernel/irq.c&n; *    Copyright (C) 1992 Linus Torvalds&n; *  Adapted from arch/i386 by Gary Thomas&n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Cort Dougan&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *  &n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * The MPC8xx has an interrupt mask in the SIU.  If a bit is set, the&n; * interrupt is _enabled_.  As expected, IRQ0 is bit 0 in the 32-bit&n; * mask register (of which only 16 are defined), hence the weird shifting&n; * and compliment of the cached_irq_mask.  I want to be able to stuff&n; * this right into the SIU SMASK register.&n; * Many of the prep/chrp functions are conditional compiled on CONFIG_8xx&n; * to reduce code space and undefined function references.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -2020,8 +2020,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|macro|MAXCOUNT
-mdefine_line|#define MAXCOUNT 100000000
 DECL|function|wait_on_irq
 r_static
 r_inline
@@ -2255,6 +2253,12 @@ r_int
 id|cpu
 )paren
 (brace
+r_int
+r_int
+id|loops
+op_assign
+id|MAXCOUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2287,6 +2291,34 @@ r_do
 (brace
 r_do
 (brace
+r_if
+c_cond
+(paren
+id|loops
+op_decrement
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;get_irqlock(%d) waiting, global_irq_holder=%d&bslash;n&quot;
+comma
+id|cpu
+comma
+id|global_irq_holder
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 r_while
 c_loop
@@ -2316,7 +2348,7 @@ id|global_irq_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * We also to make sure that nobody else is running&n;&t; * in an interrupt context. &n;&t; */
+multiline_comment|/* &n;&t; * We also need to make sure that nobody else is running&n;&t; * in an interrupt context. &n;&t; */
 id|wait_on_irq
 c_func
 (paren
@@ -2604,6 +2636,9 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+comma
+r_int
+id|isfake
 )paren
 (brace
 r_int
@@ -2665,12 +2700,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|atomic_read
-c_func
-(paren
-op_amp
-id|n_lost_interrupts
-)paren
+id|isfake
 )paren
 (brace
 r_extern
@@ -2681,6 +2711,23 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+r_static
+r_int
+id|xmon_2nd
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|xmon_2nd
+)paren
+id|xmon
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 id|smp_message_recv
 c_func
 (paren
@@ -2694,6 +2741,82 @@ multiline_comment|/* could be here due to a do_fake_interrupt call but we don&sq
 r_goto
 id|out
 suffix:semicolon
+)brace
+(brace
+r_int
+r_int
+id|loops
+op_assign
+id|MAXCOUNT
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|test_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|global_irq_lock
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_eq
+id|global_irq_holder
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;uh oh, interrupt while we hold global irq lock!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|loops
+op_decrement
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;do_IRQ waiting for irq lock (holder=%d)&bslash;n&quot;
+comma
+id|global_irq_holder
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+)brace
 )brace
 macro_line|#endif /* __SMP__ */&t;&t;&t;
 r_switch

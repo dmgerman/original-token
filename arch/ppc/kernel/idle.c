@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.56 1998/10/13 19:14:36 paulus Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: idle.c,v 1.57 1998/12/28 10:28:46 paulus Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -70,11 +70,15 @@ op_star
 id|unused
 )paren
 (brace
-r_int
-id|ret
+multiline_comment|/* endless loop with no priority at all */
+id|current-&gt;priority
+op_assign
+l_int|0
+suffix:semicolon
+id|current-&gt;counter
 op_assign
 op_minus
-id|EPERM
+l_int|100
 suffix:semicolon
 r_for
 c_loop
@@ -87,15 +91,6 @@ id|__sti
 c_func
 (paren
 )paren
-suffix:semicolon
-multiline_comment|/* endless loop with no priority at all */
-id|current-&gt;priority
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;counter
-op_assign
-l_int|0
 suffix:semicolon
 id|check_pgt_cache
 c_func
@@ -139,25 +134,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|run_task_queue
-c_func
+macro_line|#ifdef __SMP__
+r_if
+c_cond
 (paren
-op_amp
-id|tq_scheduler
+id|current-&gt;need_resched
 )paren
-suffix:semicolon
+macro_line|#endif
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
 r_return
-id|ret
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__

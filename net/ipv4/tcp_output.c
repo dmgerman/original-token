@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.97 1998/11/08 13:21:27 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.98 1998/12/12 06:43:35 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -179,6 +179,19 @@ id|tcphdr
 op_star
 id|th
 suffix:semicolon
+r_int
+id|sysctl_flags
+suffix:semicolon
+DECL|macro|SYSCTL_FLAG_TSTAMPS
+mdefine_line|#define SYSCTL_FLAG_TSTAMPS&t;0x1
+DECL|macro|SYSCTL_FLAG_WSCALE
+mdefine_line|#define SYSCTL_FLAG_WSCALE&t;0x2
+DECL|macro|SYSCTL_FLAG_SACK
+mdefine_line|#define SYSCTL_FLAG_SACK&t;0x4
+id|sysctl_flags
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -207,6 +220,10 @@ id|tcp_header_size
 op_add_assign
 id|TCPOLEN_TSTAMP_ALIGNED
 suffix:semicolon
+id|sysctl_flags
+op_or_assign
+id|SYSCTL_FLAG_TSTAMPS
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -218,12 +235,24 @@ id|tcp_header_size
 op_add_assign
 id|TCPOLEN_WSCALE_ALIGNED
 suffix:semicolon
+id|sysctl_flags
+op_or_assign
+id|SYSCTL_FLAG_WSCALE
+suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
 id|sysctl_tcp_sack
-op_logical_and
+)paren
+(brace
+id|sysctl_flags
+op_or_assign
+id|SYSCTL_FLAG_SACK
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|sysctl_tcp_timestamps
 )paren
@@ -232,6 +261,7 @@ id|tcp_header_size
 op_add_assign
 id|TCPOLEN_SACKPERM_ALIGNED
 suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -410,11 +440,23 @@ l_int|1
 comma
 id|tp-&gt;mss_clamp
 comma
-id|sysctl_tcp_timestamps
+(paren
+id|sysctl_flags
+op_amp
+id|SYSCTL_FLAG_TSTAMPS
+)paren
 comma
-id|sysctl_tcp_sack
+(paren
+id|sysctl_flags
+op_amp
+id|SYSCTL_FLAG_SACK
+)paren
 comma
-id|sysctl_tcp_window_scaling
+(paren
+id|sysctl_flags
+op_amp
+id|SYSCTL_FLAG_WSCALE
+)paren
 comma
 id|tp-&gt;rcv_wscale
 comma
@@ -491,6 +533,12 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+DECL|macro|SYSCTL_FLAG_TSTAMPS
+macro_line|#undef SYSCTL_FLAG_TSTAMPS
+DECL|macro|SYSCTL_FLAG_WSCALE
+macro_line|#undef SYSCTL_FLAG_WSCALE
+DECL|macro|SYSCTL_FLAG_SACK
+macro_line|#undef SYSCTL_FLAG_SACK
 )brace
 multiline_comment|/* This is the main buffer sending routine. We queue the buffer&n; * and decide whether to queue or transmit now.&n; */
 DECL|function|tcp_send_skb

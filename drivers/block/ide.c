@@ -11000,7 +11000,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* zero = nothing matched */
 )brace
-multiline_comment|/*&n; * ide_setup() gets called VERY EARLY during initialization,&n; * to handle kernel &quot;command line&quot; strings beginning with &quot;hdx=&quot;&n; * or &quot;ide&quot;.  Here is the complete set currently supported:&n; *&n; * &quot;hdx=&quot;  is recognized for all &quot;x&quot; from &quot;a&quot; to &quot;h&quot;, such as &quot;hdc&quot;.&n; * &quot;idex=&quot; is recognized for all &quot;x&quot; from &quot;0&quot; to &quot;3&quot;, such as &quot;ide1&quot;.&n; *&n; * &quot;hdx=noprobe&quot;&t;: drive may be present, but do not probe for it&n; * &quot;hdx=none&quot;&t;&t;: drive is NOT present, ignore cmos and do not probe&n; * &quot;hdx=nowerr&quot;&t;&t;: ignore the WRERR_STAT bit on this drive&n; * &quot;hdx=cdrom&quot;&t;&t;: drive is present, and is a cdrom drive&n; * &quot;hdx=cyl,head,sect&quot;&t;: disk drive is present, with specified geometry&n; * &quot;hdx=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;if possible for this drive only.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; *&n; * &quot;idebus=xx&quot;&t;&t;: inform IDE driver of VESA/PCI bus speed in MHz,&n; *&t;&t;&t;&t;where &quot;xx&quot; is between 20 and 66 inclusive,&n; *&t;&t;&t;&t;used when tuning chipset PIO modes.&n; *&t;&t;&t;&t;For PCI bus, 25 is correct for a P75 system,&n; *&t;&t;&t;&t;30 is correct for P90,P120,P180 systems,&n; *&t;&t;&t;&t;and 33 is used for P100,P133,P166 systems.&n; *&t;&t;&t;&t;If in doubt, use idebus=33 for PCI.&n; *&t;&t;&t;&t;As for VLB, it is safest to not specify it.&n; *&n; * &quot;idex=noprobe&quot;&t;: do not attempt to access/use this interface&n; * &quot;idex=base&quot;&t;&t;: probe for an interface at the addr specified,&n; *&t;&t;&t;&t;where &quot;base&quot; is usually 0x1f0 or 0x170&n; *&t;&t;&t;&t;and &quot;ctl&quot; is assumed to be &quot;base&quot;+0x206&n; * &quot;idex=base,ctl&quot;&t;: specify both base and ctl&n; * &quot;idex=base,ctl,irq&quot;&t;: specify base, ctl, and irq number&n; * &quot;idex=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;for all drives on this interface.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; * &quot;idex=noautotune&quot;&t;: driver will NOT attempt to tune interface speed&n; *&t;&t;&t;&t;This is the default for most chipsets,&n; *&t;&t;&t;&t;except the cmd640.&n; * &quot;idex=serialize&quot;&t;: do not overlap operations on idex and ide(x^1)&n; * &quot;idex=four&quot;&t;&t;: four drives on idex and ide(x^1) share same ports&n; * &quot;idex=reset&quot;&t;&t;: reset interface before first use&n; * &quot;idex=dma&quot;&t;&t;: enable DMA by default on both drives if possible&n; *&n; * The following are valid ONLY on ide0,&n; * and the defaults for the base,ctl ports must not be altered.&n; *&n; * &quot;ide0=dtc2278&quot;&t;: probe/support DTC2278 interface&n; * &quot;ide0=ht6560b&quot;&t;: probe/support HT6560B interface&n; * &quot;ide0=cmd640_vlb&quot;&t;: *REQUIRED* for VLB cards with the CMD640 chip&n; *&t;&t;&t;  (not for PCI -- automatically detected)&n; * &quot;ide0=qd6580&quot;&t;: probe/support qd6580 interface&n; * &quot;ide0=ali14xx&quot;&t;: probe/support ali14xx chipsets (ALI M1439, M1443, M1445)&n; * &quot;ide0=umc8672&quot;&t;: probe/support umc8672 chipsets&n; */
+multiline_comment|/*&n; * ide_setup() gets called VERY EARLY during initialization,&n; * to handle kernel &quot;command line&quot; strings beginning with &quot;hdx=&quot;&n; * or &quot;ide&quot;.  Here is the complete set currently supported:&n; *&n; * &quot;hdx=&quot;  is recognized for all &quot;x&quot; from &quot;a&quot; to &quot;h&quot;, such as &quot;hdc&quot;.&n; * &quot;idex=&quot; is recognized for all &quot;x&quot; from &quot;0&quot; to &quot;3&quot;, such as &quot;ide1&quot;.&n; *&n; * &quot;hdx=noprobe&quot;&t;: drive may be present, but do not probe for it&n; * &quot;hdx=none&quot;&t;&t;: drive is NOT present, ignore cmos and do not probe&n; * &quot;hdx=nowerr&quot;&t;&t;: ignore the WRERR_STAT bit on this drive&n; * &quot;hdx=cdrom&quot;&t;&t;: drive is present, and is a cdrom drive&n; * &quot;hdx=cyl,head,sect&quot;&t;: disk drive is present, with specified geometry&n; * &quot;hdx=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;if possible for this drive only.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; *&n; * &quot;hdx=slow&quot;&t;&t;: insert a huge pause after each access to the data&n; *&t;&t;&t;&t;port. Should be used only as a last resort.&n; *&n; * &quot;hdx=swapdata&quot;&t;: when the drive is a disk, byte swap all data&n; * &quot;hdx=bswap&quot;&t;&t;: same as above..........&n; *&n; * &quot;idebus=xx&quot;&t;&t;: inform IDE driver of VESA/PCI bus speed in MHz,&n; *&t;&t;&t;&t;where &quot;xx&quot; is between 20 and 66 inclusive,&n; *&t;&t;&t;&t;used when tuning chipset PIO modes.&n; *&t;&t;&t;&t;For PCI bus, 25 is correct for a P75 system,&n; *&t;&t;&t;&t;30 is correct for P90,P120,P180 systems,&n; *&t;&t;&t;&t;and 33 is used for P100,P133,P166 systems.&n; *&t;&t;&t;&t;If in doubt, use idebus=33 for PCI.&n; *&t;&t;&t;&t;As for VLB, it is safest to not specify it.&n; *&n; * &quot;idex=noprobe&quot;&t;: do not attempt to access/use this interface&n; * &quot;idex=base&quot;&t;&t;: probe for an interface at the addr specified,&n; *&t;&t;&t;&t;where &quot;base&quot; is usually 0x1f0 or 0x170&n; *&t;&t;&t;&t;and &quot;ctl&quot; is assumed to be &quot;base&quot;+0x206&n; * &quot;idex=base,ctl&quot;&t;: specify both base and ctl&n; * &quot;idex=base,ctl,irq&quot;&t;: specify base, ctl, and irq number&n; * &quot;idex=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;for all drives on this interface.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; * &quot;idex=noautotune&quot;&t;: driver will NOT attempt to tune interface speed&n; *&t;&t;&t;&t;This is the default for most chipsets,&n; *&t;&t;&t;&t;except the cmd640.&n; * &quot;idex=serialize&quot;&t;: do not overlap operations on idex and ide(x^1)&n; * &quot;idex=four&quot;&t;&t;: four drives on idex and ide(x^1) share same ports&n; * &quot;idex=reset&quot;&t;&t;: reset interface before first use&n; * &quot;idex=dma&quot;&t;&t;: enable DMA by default on both drives if possible&n; *&n; * The following are valid ONLY on ide0,&n; * and the defaults for the base,ctl ports must not be altered.&n; *&n; * &quot;ide0=dtc2278&quot;&t;: probe/support DTC2278 interface&n; * &quot;ide0=ht6560b&quot;&t;: probe/support HT6560B interface&n; * &quot;ide0=cmd640_vlb&quot;&t;: *REQUIRED* for VLB cards with the CMD640 chip&n; *&t;&t;&t;  (not for PCI -- automatically detected)&n; * &quot;ide0=qd6580&quot;&t;: probe/support qd6580 interface&n; * &quot;ide0=ali14xx&quot;&t;: probe/support ali14xx chipsets (ALI M1439, M1443, M1445)&n; * &quot;ide0=umc8672&quot;&t;: probe/support umc8672 chipsets&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -11135,6 +11135,8 @@ l_string|&quot;slow&quot;
 comma
 l_string|&quot;swapdata&quot;
 comma
+l_string|&quot;bswap&quot;
+comma
 l_int|NULL
 )brace
 suffix:semicolon
@@ -11175,6 +11177,40 @@ id|hwif-&gt;drives
 id|unit
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|s
+op_plus
+l_int|4
+comma
+l_string|&quot;ide-&quot;
+comma
+l_int|4
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|strncpy
+c_func
+(paren
+id|drive-&gt;driver_req
+comma
+id|s
+op_plus
+l_int|4
+comma
+l_int|9
+)paren
+suffix:semicolon
+r_goto
+id|done
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -11309,7 +11345,11 @@ r_case
 op_minus
 l_int|9
 suffix:colon
-multiline_comment|/* swapdata */
+multiline_comment|/* swapdata or bswap */
+r_case
+op_minus
+l_int|10
+suffix:colon
 id|drive-&gt;bswap
 op_assign
 l_int|1
@@ -12194,10 +12234,6 @@ r_int
 r_int
 id|tracks
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|drive
 op_assign
 id|get_info_ptr
@@ -12205,15 +12241,50 @@ c_func
 (paren
 id|i_rdev
 )paren
-)paren
-op_eq
-l_int|NULL
-op_logical_or
-id|drive-&gt;forced_geom
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|drive
 )paren
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;forced_geom
+)paren
+(brace
+multiline_comment|/* bombs otherwise /axboe */
+r_if
+c_cond
+(paren
+id|drive
+op_eq
+l_int|NULL
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Update the current 3D drive values.&n;&t;&t; */
+id|drive-&gt;id-&gt;cur_cyls
+op_assign
+id|drive-&gt;bios_cyl
+suffix:semicolon
+id|drive-&gt;id-&gt;cur_heads
+op_assign
+id|drive-&gt;bios_head
+suffix:semicolon
+id|drive-&gt;id-&gt;cur_sectors
+op_assign
+id|drive-&gt;bios_sect
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -12229,10 +12300,25 @@ id|drive-&gt;bios_sect
 op_eq
 l_int|63
 )paren
+(brace
+multiline_comment|/*&n;&t;&t; * Update the current 3D drive values.&n;&t;&t; */
+id|drive-&gt;id-&gt;cur_cyls
+op_assign
+id|drive-&gt;bios_cyl
+suffix:semicolon
+id|drive-&gt;id-&gt;cur_heads
+op_assign
+id|drive-&gt;bios_head
+suffix:semicolon
+id|drive-&gt;id-&gt;cur_sectors
+op_assign
+id|drive-&gt;bios_sect
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* we already have a translation */
+)brace
 id|printk
 c_func
 (paren
@@ -12264,10 +12350,25 @@ op_star
 l_int|63
 )paren
 )paren
+(brace
+multiline_comment|/*&n;&t;&t; * Update the current 3D drive values.&n;&t;&t; */
+id|drive-&gt;id-&gt;cur_cyls
+op_assign
+id|drive-&gt;bios_cyl
+suffix:semicolon
+id|drive-&gt;id-&gt;cur_heads
+op_assign
+id|drive-&gt;bios_head
+suffix:semicolon
+id|drive-&gt;id-&gt;cur_sectors
+op_assign
+id|drive-&gt;bios_sect
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* small disk: no translation needed */
+)brace
 r_if
 c_cond
 (paren
@@ -12446,6 +12547,19 @@ id|drive-&gt;bios_head
 comma
 id|drive-&gt;bios_sect
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Update the current 3D drive values.&n;&t; */
+id|drive-&gt;id-&gt;cur_cyls
+op_assign
+id|drive-&gt;bios_cyl
+suffix:semicolon
+id|drive-&gt;id-&gt;cur_heads
+op_assign
+id|drive-&gt;bios_head
+suffix:semicolon
+id|drive-&gt;id-&gt;cur_sectors
+op_assign
+id|drive-&gt;bios_sect
 suffix:semicolon
 r_return
 l_int|1
@@ -12707,6 +12821,7 @@ c_func
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEFLOPPY */
 macro_line|#ifdef CONFIG_BLK_DEV_IDESCSI
+macro_line|#ifdef CONFIG_SCSI
 (paren
 r_void
 )paren
@@ -12715,6 +12830,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#else
+macro_line|#warning ide scsi-emulation selected but no SCSI-subsystem in kernel
+macro_line|#endif
 macro_line|#endif /* CONFIG_BLK_DEV_IDESCSI */
 )brace
 DECL|function|default_cleanup

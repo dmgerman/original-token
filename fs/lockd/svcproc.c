@@ -1955,24 +1955,32 @@ id|call
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * NLM Server procedures.&n; */
-DECL|macro|nlmsvc_proc_none
-mdefine_line|#define nlmsvc_proc_none&t;NULL
 DECL|macro|nlmsvc_encode_norep
-mdefine_line|#define nlmsvc_encode_norep&t;NULL
+mdefine_line|#define nlmsvc_encode_norep&t;nlmsvc_encode_void
 DECL|macro|nlmsvc_decode_norep
-mdefine_line|#define nlmsvc_decode_norep&t;NULL
+mdefine_line|#define nlmsvc_decode_norep&t;nlmsvc_decode_void
 DECL|macro|nlmsvc_decode_testres
-mdefine_line|#define nlmsvc_decode_testres&t;NULL
+mdefine_line|#define nlmsvc_decode_testres&t;nlmsvc_decode_void
+DECL|macro|nlmsvc_decode_lockres
+mdefine_line|#define nlmsvc_decode_lockres&t;nlmsvc_decode_void
+DECL|macro|nlmsvc_decode_unlockres
+mdefine_line|#define nlmsvc_decode_unlockres&t;nlmsvc_decode_void
+DECL|macro|nlmsvc_decode_cancelres
+mdefine_line|#define nlmsvc_decode_cancelres&t;nlmsvc_decode_void
+DECL|macro|nlmsvc_decode_grantedres
+mdefine_line|#define nlmsvc_decode_grantedres&t;nlmsvc_decode_void
+DECL|macro|nlmsvc_proc_none
+mdefine_line|#define nlmsvc_proc_none&t;nlmsvc_proc_null
 DECL|macro|nlmsvc_proc_test_res
-mdefine_line|#define nlmsvc_proc_test_res&t;NULL
+mdefine_line|#define nlmsvc_proc_test_res&t;nlmsvc_proc_null
 DECL|macro|nlmsvc_proc_lock_res
-mdefine_line|#define nlmsvc_proc_lock_res&t;NULL
+mdefine_line|#define nlmsvc_proc_lock_res&t;nlmsvc_proc_null
 DECL|macro|nlmsvc_proc_cancel_res
-mdefine_line|#define nlmsvc_proc_cancel_res&t;NULL
+mdefine_line|#define nlmsvc_proc_cancel_res&t;nlmsvc_proc_null
 DECL|macro|nlmsvc_proc_unlock_res
-mdefine_line|#define nlmsvc_proc_unlock_res&t;NULL
+mdefine_line|#define nlmsvc_proc_unlock_res&t;nlmsvc_proc_null
 DECL|macro|nlmsvc_proc_granted_res
-mdefine_line|#define nlmsvc_proc_granted_res&t;NULL
+mdefine_line|#define nlmsvc_proc_granted_res&t;nlmsvc_proc_null
 DECL|struct|nlm_void
 DECL|member|dummy
 r_struct
@@ -2166,7 +2174,7 @@ c_func
 (paren
 id|lock_res
 comma
-id|res
+id|lockres
 comma
 id|norep
 comma
@@ -2180,7 +2188,7 @@ c_func
 (paren
 id|cancel_res
 comma
-id|res
+id|cancelres
 comma
 id|norep
 comma
@@ -2194,7 +2202,7 @@ c_func
 (paren
 id|unlock_res
 comma
-id|res
+id|unlockres
 comma
 id|norep
 comma
@@ -2208,7 +2216,7 @@ c_func
 (paren
 id|granted_res
 comma
-id|res
+id|grantedres
 comma
 id|norep
 comma

@@ -526,6 +526,13 @@ c_func
 id|fput
 )paren
 suffix:semicolon
+DECL|variable|put_filp
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|put_filp
+)paren
+suffix:semicolon
 DECL|variable|check_disk_change
 id|EXPORT_SYMBOL
 c_func
@@ -1879,6 +1886,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__up
+)paren
+suffix:semicolon
+DECL|variable|brw_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|brw_page
 )paren
 suffix:semicolon
 multiline_comment|/* all busmice */

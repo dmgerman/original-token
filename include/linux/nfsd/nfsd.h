@@ -14,9 +14,6 @@ macro_line|#include &lt;linux/nfsd/stats.h&gt;
 multiline_comment|/*&n; * nfsd version&n; */
 DECL|macro|NFSD_VERSION
 mdefine_line|#define NFSD_VERSION&t;&t;&quot;0.4&quot;
-multiline_comment|/*&n; * Maximum number of nfsd processes&n; */
-DECL|macro|NFSD_MAXSERVS
-mdefine_line|#define NFSD_MAXSERVS&t;&t;16
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Special flags for nfsd_permission. These must be different from MAY_READ,&n; * MAY_WRITE, and MAY_EXEC.&n; */
 DECL|macro|MAY_NOP
@@ -166,6 +163,13 @@ op_star
 suffix:semicolon
 r_void
 id|nfsd_racache_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|nfsd_racache_shutdown
 c_func
 (paren
 r_void
@@ -654,6 +658,11 @@ r_extern
 r_struct
 id|timeval
 id|nfssvc_boot
+suffix:semicolon
+multiline_comment|/*&n; * The number of nfsd threads.&n; */
+r_extern
+r_int
+id|nfsd_nservers
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* LINUX_NFSD_NFSD_H */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.38 1998/12/02 21:23:49 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.39 1998/12/28 10:28:51 paulus Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -102,6 +102,10 @@ r_int
 id|first_cpu_booted
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|cacheflush_time
+id|cycles_t
+id|cacheflush_time
 suffix:semicolon
 multiline_comment|/* all cpu mappings are 1-1 -- Cort */
 DECL|variable|cpu_number_map
@@ -502,12 +506,23 @@ r_int
 id|cpu
 )paren
 (brace
+multiline_comment|/* This is only used if `cpu&squot; is running an idle task,&n;&t;   so it will reschedule itself anyway... */
+multiline_comment|/*smp_message_pass(cpu, MSG_RESCHEDULE, 0, 0);*/
+)brace
+DECL|function|smp_send_stop
+r_void
+id|smp_send_stop
+c_func
+(paren
+r_void
+)paren
+(brace
 id|smp_message_pass
 c_func
 (paren
-id|cpu
+id|MSG_ALL_BUT_SELF
 comma
-id|MSG_RESCHEDULE
+id|MSG_STOP_CPU
 comma
 l_int|0
 comma
@@ -708,6 +723,10 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
+r_int
+r_int
+id|a
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -718,13 +737,7 @@ id|first_cpu_booted
 op_assign
 l_int|1
 suffix:semicolon
-id|dcbf
-c_func
-(paren
-op_amp
-id|first_cpu_booted
-)paren
-suffix:semicolon
+multiline_comment|/*dcbf(&amp;first_cpu_booted);*/
 r_for
 c_loop
 (paren
@@ -775,6 +788,13 @@ suffix:semicolon
 id|current-&gt;processor
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * XXX very rough, assumes 20 bus cycles to read a cache line,&n;&t; * timebase increments every 4 bus cycles, 32kB L1 data cache.&n;&t; */
+id|cacheflush_time
+op_assign
+l_int|5
+op_star
+l_int|1024
 suffix:semicolon
 r_if
 c_cond
@@ -827,6 +847,10 @@ id|p-&gt;processor
 op_assign
 l_int|1
 suffix:semicolon
+id|p-&gt;has_cpu
+op_assign
+l_int|1
+suffix:semicolon
 id|current_set
 (braket
 l_int|1
@@ -835,20 +859,45 @@ op_assign
 id|p
 suffix:semicolon
 multiline_comment|/* need to flush here since secondary bat&squot;s aren&squot;t setup */
-id|dcbf
-c_func
+multiline_comment|/* XXX ??? */
+r_for
+c_loop
 (paren
-(paren
-r_void
-op_star
+id|a
+op_assign
+id|KERNELBASE
+suffix:semicolon
+id|a
+OL
+id|KERNELBASE
+op_plus
+l_int|0x800000
+suffix:semicolon
+id|a
+op_add_assign
+l_int|32
 )paren
-op_amp
-id|current_set
-(braket
-l_int|1
-)braket
+id|asm
+r_volatile
+(paren
+l_string|&quot;dcbf 0,%0&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|a
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;sync&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*dcbf((void *)&amp;current_set[1]);*/
 multiline_comment|/* setup entry point of secondary processor */
 op_star
 (paren
@@ -957,7 +1006,7 @@ suffix:semicolon
 id|smp_num_cpus
 op_increment
 suffix:semicolon
-macro_line|#if 0 /* this sync&squot;s the decr&squot;s, but we don&squot;t want this now -- Cort */
+macro_line|#if 1 /* this sync&squot;s the decr&squot;s, but we don&squot;t want this now -- Cort */
 id|set_dec
 c_func
 (paren
@@ -1139,6 +1188,14 @@ suffix:semicolon
 id|__sti
 c_func
 (paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SMP %d: smp_callin done&bslash;n&quot;
+comma
+id|current-&gt;processor
 )paren
 suffix:semicolon
 )brace

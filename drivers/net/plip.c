@@ -1,7 +1,7 @@
 multiline_comment|/* $Id: plip.c,v 1.3.6.2 1997/04/16 15:07:56 phil Exp $ */
 multiline_comment|/* PLIP: A parallel port &quot;network&quot; driver for Linux. */
 multiline_comment|/* This driver is for parallel port with 5-bit cable (LapLink (R) cable). */
-multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *              parport-sharing awareness code by Philip Blundell.&n; *&t;&t;SMP locking by Niibe Yutaka.&n; *&n; * Fixes:&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&t;&t;  - Fix immediate timer problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *              parport-sharing awareness code by Philip Blundell.&n; *&t;&t;SMP locking by Niibe Yutaka.&n; *&n; * Fixes:&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&t;&t;  - Fix immediate timer problem.&n; *&n; *&t;&t;Al Viro&n; *&t;&t;  - Changed {enable,disable}_irq handling to make it work&n; *&t;&t;    with new (&quot;stack&quot;) semantics.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Original version and the name &squot;PLIP&squot; from Donald Becker &lt;becker@super.org&gt;&n; * inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&n; * NOTE:&n; *     Tanabe Hiroyasu had changed the protocol, and it was in Linux v1.0.&n; *     Because of the necessity to communicate to DOS machines with the&n; *     Crynwr packet driver, Peter Bauer changed the protocol again&n; *     back to original protocol.&n; *&n; *     This version follows original PLIP protocol.&n; *     So, this PLIP can&squot;t communicate the PLIP of Linux v1.0.&n; */
 multiline_comment|/*&n; *     To use with DOS box, please do (Turn on ARP switch):&n; *&t;# ifconfig plip[0-2] arp&n; */
 DECL|variable|version
@@ -58,6 +58,10 @@ id|net_debug
 op_assign
 id|NET_DEBUG
 suffix:semicolon
+DECL|macro|ENABLE
+mdefine_line|#define ENABLE(irq) enable_irq(irq)
+DECL|macro|DISABLE
+mdefine_line|#define DISABLE(irq) disable_irq(irq)
 multiline_comment|/* In micro second */
 DECL|macro|PLIP_DELAY_UNIT
 mdefine_line|#define PLIP_DELAY_UNIT&t;&t;   1
@@ -977,6 +981,8 @@ DECL|macro|TIMEOUT
 mdefine_line|#define TIMEOUT   1
 DECL|macro|ERROR
 mdefine_line|#define ERROR     2
+DECL|macro|HS_TIMEOUT
+mdefine_line|#define HS_TIMEOUT&t;3
 DECL|typedef|plip_func
 r_typedef
 r_int
@@ -1177,6 +1183,7 @@ r_int
 r_char
 id|c0
 suffix:semicolon
+multiline_comment|/*&n;&t; * This is tricky. If we got here from the beginning of send (either&n;&t; * with ERROR or HS_TIMEOUT) we have IRQ enabled. Otherwise it&squot;s&n;&t; * already disabled. With the old variant of {enable,disable}_irq()&n;&t; * extra disable_irq() was a no-op. Now it became mortal - it&squot;s&n;&t; * unbalanced and thus we&squot;ll never re-enable IRQ (until rmmod plip,&n;&t; * that is). So we have to treat HS_TIMEOUT and ERROR from send&n;&t; * in a special way.&n;&t; */
 id|spin_lock_irq
 c_func
 (paren
@@ -1208,9 +1215,9 @@ r_if
 c_cond
 (paren
 (paren
-id|snd-&gt;state
+id|error
 op_eq
-id|PLIP_PK_TRIGGER
+id|HS_TIMEOUT
 op_logical_and
 id|nl-&gt;timeout_count
 op_le
@@ -1260,6 +1267,11 @@ id|c0
 )paren
 suffix:semicolon
 )brace
+r_else
+id|error
+op_assign
+id|HS_TIMEOUT
+suffix:semicolon
 id|nl-&gt;enet_stats.tx_errors
 op_increment
 suffix:semicolon
@@ -1405,7 +1417,15 @@ op_amp
 id|nl-&gt;lock
 )paren
 suffix:semicolon
-id|disable_irq
+r_if
+c_cond
+(paren
+id|error
+op_eq
+id|HS_TIMEOUT
+)paren
+(brace
+id|DISABLE
 c_func
 (paren
 id|dev-&gt;irq
@@ -1416,6 +1436,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 id|outb
 c_func
 (paren
@@ -1788,7 +1809,7 @@ id|rcv-&gt;state
 r_case
 id|PLIP_PK_TRIGGER
 suffix:colon
-id|disable_irq
+id|DISABLE
 c_func
 (paren
 id|dev-&gt;irq
@@ -1912,7 +1933,7 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-id|enable_irq
+id|ENABLE
 c_func
 (paren
 id|dev-&gt;irq
@@ -2284,7 +2305,7 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-id|enable_irq
+id|ENABLE
 c_func
 (paren
 id|dev-&gt;irq
@@ -2319,7 +2340,7 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-id|enable_irq
+id|ENABLE
 c_func
 (paren
 id|dev-&gt;irq
@@ -2686,7 +2707,7 @@ op_ne
 l_int|0x80
 )paren
 r_return
-id|TIMEOUT
+id|HS_TIMEOUT
 suffix:semicolon
 multiline_comment|/* Trigger remote rx interrupt. */
 id|outb
@@ -2770,7 +2791,7 @@ op_amp
 id|nl-&gt;lock
 )paren
 suffix:semicolon
-id|disable_irq
+id|DISABLE
 c_func
 (paren
 id|dev-&gt;irq
@@ -2790,6 +2811,13 @@ id|PLIP_CN_RECEIVE
 )paren
 (brace
 multiline_comment|/* Interrupted.&n;&t;&t;&t;&t;&t;   We don&squot;t need to enable irq,&n;&t;&t;&t;&t;&t;   as it is soon disabled.    */
+multiline_comment|/* Yes, we do. New variant of&n;&t;&t;&t;&t;&t;   {enable,disable}_irq *counts*&n;&t;&t;&t;&t;&t;   them.  -- AV  */
+id|ENABLE
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
 id|nl-&gt;enet_stats.collisions
 op_increment
 suffix:semicolon
@@ -2865,7 +2893,7 @@ id|data_addr
 )paren
 suffix:semicolon
 r_return
-id|TIMEOUT
+id|HS_TIMEOUT
 suffix:semicolon
 )brace
 )brace
@@ -3083,7 +3111,7 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-id|enable_irq
+id|ENABLE
 c_func
 (paren
 id|dev-&gt;irq
@@ -3284,7 +3312,7 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-id|enable_irq
+id|ENABLE
 c_func
 (paren
 id|dev-&gt;irq
@@ -4123,7 +4151,7 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-id|disable_irq
+id|DISABLE
 c_func
 (paren
 id|dev-&gt;irq

@@ -75,6 +75,18 @@ DECL|macro|WIN_SETIDLE1
 mdefine_line|#define WIN_SETIDLE1&t;&t;0xE3
 DECL|macro|WIN_SETIDLE2
 mdefine_line|#define WIN_SETIDLE2&t;&t;0x97
+DECL|macro|WIN_STANDBYNOW1
+mdefine_line|#define WIN_STANDBYNOW1&t;&t;0xE0
+DECL|macro|WIN_STANDBYNOW2
+mdefine_line|#define WIN_STANDBYNOW2&t;&t;0x94
+DECL|macro|WIN_SLEEPNOW1
+mdefine_line|#define WIN_SLEEPNOW1&t;&t;0xE6
+DECL|macro|WIN_SLEEPNOW2
+mdefine_line|#define WIN_SLEEPNOW2&t;&t;0x99
+DECL|macro|WIN_CHECKPOWERMODE1
+mdefine_line|#define WIN_CHECKPOWERMODE1&t;0xE5
+DECL|macro|WIN_CHECKPOWERMODE2
+mdefine_line|#define WIN_CHECKPOWERMODE2&t;0x98
 DECL|macro|WIN_DOORLOCK
 mdefine_line|#define WIN_DOORLOCK&t;&t;0xde&t;/* lock door on removable drives */
 DECL|macro|WIN_DOORUNLOCK
@@ -87,6 +99,8 @@ DECL|macro|WIN_SETMULT
 mdefine_line|#define WIN_SETMULT&t;&t;0xC6&t;/* enable/disable multiple mode */
 DECL|macro|WIN_IDENTIFY
 mdefine_line|#define WIN_IDENTIFY&t;&t;0xEC&t;/* ask drive to identify itself&t;*/
+DECL|macro|WIN_IDENTIFY_DMA
+mdefine_line|#define WIN_IDENTIFY_DMA&t;0xEE&t;/* same as WIN_IDENTIFY, but DMA */
 DECL|macro|WIN_SETFEATURES
 mdefine_line|#define WIN_SETFEATURES&t;&t;0xEF&t;/* set special drive features */
 DECL|macro|WIN_READDMA
@@ -125,6 +139,19 @@ DECL|macro|SMART_STATUS
 mdefine_line|#define SMART_STATUS&t;&t;0xda
 DECL|macro|SMART_AUTO_OFFLINE
 mdefine_line|#define SMART_AUTO_OFFLINE&t;0xdb
+multiline_comment|/* WIN_SECURITY sub-commands */
+DECL|macro|SECURITY_SET_PASSWORD
+mdefine_line|#define SECURITY_SET_PASSWORD&t;&t;0xBA&t;/* 0xF1 */
+DECL|macro|SECURITY_UNLOCK
+mdefine_line|#define SECURITY_UNLOCK&t;&t;&t;0xBB&t;/* 0xF2 */
+DECL|macro|SECURITY_ERASE_PREPARE
+mdefine_line|#define SECURITY_ERASE_PREPARE&t;&t;0xBC&t;/* 0xF3 */
+DECL|macro|SECURITY_ERASE_UNIT
+mdefine_line|#define SECURITY_ERASE_UNIT&t;&t;0xBD&t;/* 0xF4 */
+DECL|macro|SECURITY_FREEZE_LOCK
+mdefine_line|#define SECURITY_FREEZE_LOCK&t;&t;0xBE&t;/* 0xF5 */
+DECL|macro|SECURITY_DISABLE_PASSWORD
+mdefine_line|#define SECURITY_DISABLE_PASSWORD&t;0xBF&t;/* 0xF6 */
 multiline_comment|/* Bits for HD_ERROR */
 DECL|macro|MARK_ERR
 mdefine_line|#define MARK_ERR&t;0x01&t;/* Bad address mark */
@@ -541,16 +568,18 @@ r_int
 r_int
 id|word81
 suffix:semicolon
-DECL|member|word82
+DECL|member|command_sets
 r_int
 r_int
-id|word82
+id|command_sets
 suffix:semicolon
+multiline_comment|/* bits 0:Smart 1:Security 2:Removable 3:PM */
 DECL|member|word83
 r_int
 r_int
 id|word83
 suffix:semicolon
+multiline_comment|/* bits 14:Smart Enabled 13:0 zero */
 DECL|member|word84
 r_int
 r_int
@@ -576,12 +605,252 @@ r_int
 r_int
 id|dma_ultra
 suffix:semicolon
+DECL|member|word89
+r_int
+r_int
+id|word89
+suffix:semicolon
+multiline_comment|/* reserved (word 89) */
+DECL|member|word90
+r_int
+r_int
+id|word90
+suffix:semicolon
+multiline_comment|/* reserved (word 90) */
+DECL|member|word91
+r_int
+r_int
+id|word91
+suffix:semicolon
+multiline_comment|/* reserved (word 91) */
+DECL|member|word92
+r_int
+r_int
+id|word92
+suffix:semicolon
+multiline_comment|/* reserved (word 92) */
+DECL|member|word93
+r_int
+r_int
+id|word93
+suffix:semicolon
+multiline_comment|/* reserved (word 93) */
+DECL|member|word94
+r_int
+r_int
+id|word94
+suffix:semicolon
+multiline_comment|/* reserved (word 94) */
+DECL|member|word95
+r_int
+r_int
+id|word95
+suffix:semicolon
+multiline_comment|/* reserved (word 95) */
+DECL|member|word96
+r_int
+r_int
+id|word96
+suffix:semicolon
+multiline_comment|/* reserved (word 96) */
+DECL|member|word97
+r_int
+r_int
+id|word97
+suffix:semicolon
+multiline_comment|/* reserved (word 97) */
+DECL|member|word98
+r_int
+r_int
+id|word98
+suffix:semicolon
+multiline_comment|/* reserved (word 98) */
+DECL|member|word99
+r_int
+r_int
+id|word99
+suffix:semicolon
+multiline_comment|/* reserved (word 99) */
+DECL|member|word100
+r_int
+r_int
+id|word100
+suffix:semicolon
+multiline_comment|/* reserved (word 100) */
+DECL|member|word101
+r_int
+r_int
+id|word101
+suffix:semicolon
+multiline_comment|/* reserved (word 101) */
+DECL|member|word102
+r_int
+r_int
+id|word102
+suffix:semicolon
+multiline_comment|/* reserved (word 102) */
+DECL|member|word103
+r_int
+r_int
+id|word103
+suffix:semicolon
+multiline_comment|/* reserved (word 103) */
+DECL|member|word104
+r_int
+r_int
+id|word104
+suffix:semicolon
+multiline_comment|/* reserved (word 104) */
+DECL|member|word105
+r_int
+r_int
+id|word105
+suffix:semicolon
+multiline_comment|/* reserved (word 105) */
+DECL|member|word106
+r_int
+r_int
+id|word106
+suffix:semicolon
+multiline_comment|/* reserved (word 106) */
+DECL|member|word107
+r_int
+r_int
+id|word107
+suffix:semicolon
+multiline_comment|/* reserved (word 107) */
+DECL|member|word108
+r_int
+r_int
+id|word108
+suffix:semicolon
+multiline_comment|/* reserved (word 108) */
+DECL|member|word109
+r_int
+r_int
+id|word109
+suffix:semicolon
+multiline_comment|/* reserved (word 109) */
+DECL|member|word110
+r_int
+r_int
+id|word110
+suffix:semicolon
+multiline_comment|/* reserved (word 110) */
+DECL|member|word111
+r_int
+r_int
+id|word111
+suffix:semicolon
+multiline_comment|/* reserved (word 111) */
+DECL|member|word112
+r_int
+r_int
+id|word112
+suffix:semicolon
+multiline_comment|/* reserved (word 112) */
+DECL|member|word113
+r_int
+r_int
+id|word113
+suffix:semicolon
+multiline_comment|/* reserved (word 113) */
+DECL|member|word114
+r_int
+r_int
+id|word114
+suffix:semicolon
+multiline_comment|/* reserved (word 114) */
+DECL|member|word115
+r_int
+r_int
+id|word115
+suffix:semicolon
+multiline_comment|/* reserved (word 115) */
+DECL|member|word116
+r_int
+r_int
+id|word116
+suffix:semicolon
+multiline_comment|/* reserved (word 116) */
+DECL|member|word117
+r_int
+r_int
+id|word117
+suffix:semicolon
+multiline_comment|/* reserved (word 117) */
+DECL|member|word118
+r_int
+r_int
+id|word118
+suffix:semicolon
+multiline_comment|/* reserved (word 118) */
+DECL|member|word119
+r_int
+r_int
+id|word119
+suffix:semicolon
+multiline_comment|/* reserved (word 119) */
+DECL|member|word120
+r_int
+r_int
+id|word120
+suffix:semicolon
+multiline_comment|/* reserved (word 120) */
+DECL|member|word121
+r_int
+r_int
+id|word121
+suffix:semicolon
+multiline_comment|/* reserved (word 121) */
+DECL|member|word122
+r_int
+r_int
+id|word122
+suffix:semicolon
+multiline_comment|/* reserved (word 122) */
+DECL|member|word123
+r_int
+r_int
+id|word123
+suffix:semicolon
+multiline_comment|/* reserved (word 123) */
+DECL|member|word124
+r_int
+r_int
+id|word124
+suffix:semicolon
+multiline_comment|/* reserved (word 124) */
+DECL|member|word125
+r_int
+r_int
+id|word125
+suffix:semicolon
+multiline_comment|/* reserved (word 125) */
+DECL|member|word126
+r_int
+r_int
+id|word126
+suffix:semicolon
+multiline_comment|/* reserved (word 126) */
+DECL|member|word127
+r_int
+r_int
+id|word127
+suffix:semicolon
+multiline_comment|/* reserved (word 127) */
+DECL|member|security
+r_int
+r_int
+id|security
+suffix:semicolon
+multiline_comment|/* bits 0:support 1:enabled 2:locked 3:frozen */
 DECL|member|reserved
 r_int
 r_int
 id|reserved
 (braket
-l_int|167
+l_int|127
 )braket
 suffix:semicolon
 )brace

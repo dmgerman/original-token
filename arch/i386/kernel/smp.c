@@ -97,6 +97,13 @@ id|cache_APIC_registers
 r_void
 )paren
 suffix:semicolon
+r_static
+r_void
+id|stop_this_cpu
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|smp_b_stepping
 r_static
 r_int
@@ -128,7 +135,15 @@ id|cpu_present_map
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Bitmask of existing CPUs &t;&t;&t;&t;*/
+multiline_comment|/* Bitmask of physically existing CPUs &t;&t;&t;&t;*/
+DECL|variable|cpu_online_map
+r_int
+r_int
+id|cpu_online_map
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Bitmask of currently online CPUs &t;&t;&t;&t;*/
 DECL|variable|smp_num_cpus
 r_int
 id|smp_num_cpus
@@ -162,10 +177,27 @@ id|NR_CPUS
 suffix:semicolon
 multiline_comment|/* which logical number maps to which CPU&t;&t;*/
 DECL|variable|cpu_callin_map
+r_static
 r_volatile
 r_int
 r_int
 id|cpu_callin_map
+(braket
+id|NR_CPUS
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* We always use 0 the rest is ready for parallel delivery */
+DECL|variable|cpu_callout_map
+r_static
+r_volatile
+r_int
+r_int
+id|cpu_callout_map
 (braket
 id|NR_CPUS
 )braket
@@ -2235,6 +2267,14 @@ r_return
 id|memory_start
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|calibrate_delay
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|smp_callin
 r_void
 id|__init
@@ -2244,15 +2284,14 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_void
-id|calibrate_delay
-c_func
-(paren
-r_void
-)paren
+r_int
+id|cpuid
 suffix:semicolon
 r_int
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/*&n;&t; * (This works even if the APIC is not enabled.)&n;&t; */
 id|cpuid
 op_assign
 id|GET_APIC_ID
@@ -2265,22 +2304,95 @@ id|APIC_ID
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Activate our APIC&n;&t; */
 id|SMP_PRINTK
 c_func
 (paren
 (paren
-l_string|&quot;CALLIN %d %d&bslash;n&quot;
+l_string|&quot;CPU#%d waiting for CALLOUT&bslash;n&quot;
 comma
-id|hard_smp_processor_id
+id|cpuid
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * STARTUP IPIs are fragile beasts as they might sometimes&n;&t; * trigger some glue motherboard logic. Complete APIC bus&n;&t; * silence for 1 second, this overestimates the time the&n;&t; * boot CPU is spending to send the up to 2 STARTUP IPIs&n;&t; * by a factor of two. This should be enough.&n;&t; */
+multiline_comment|/*&n;&t; * Waiting 2s total for startup (udelay is not yet working)&n;&t; */
+id|timeout
+op_assign
+id|jiffies
+op_plus
+l_int|2
+op_star
+id|HZ
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|time_before
+c_func
+(paren
+id|jiffies
+comma
+id|timeout
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Has the boot CPU finished it&squot;s STARTUP sequence?&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|cpuid
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|cpu_callout_map
+(braket
+l_int|0
+)braket
+)paren
+)paren
+r_break
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|time_before
+c_func
+(paren
+id|jiffies
+comma
+id|timeout
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;BUG: CPU%d started up but did not get a callout!&bslash;n&quot;
+comma
+id|cpuid
+)paren
+suffix:semicolon
+id|stop_this_cpu
 c_func
 (paren
 )paren
-comma
-id|smp_processor_id
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * the boot CPU has finished the init stage and is spinning&n;&t; * on callin_map until we finish. We are free to set up this&n;&t; * CPU, first the APIC. (this is probably redundant on most&n;&t; * boards)&n;&t; */
+id|SMP_PRINTK
 c_func
 (paren
-)paren
+(paren
+l_string|&quot;CALLIN, before enable_local_APIC().&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -2295,11 +2407,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sti
+id|__sti
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MTRR
+multiline_comment|/*  Must be done before calibration delay is computed  */
+id|mtrr_init_secondary_cpu
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Get our bogomips.&n;&t; */
 id|calibrate_delay
 c_func
@@ -2371,13 +2490,7 @@ op_star
 id|unused
 )paren
 (brace
-macro_line|#ifdef CONFIG_MTRR
-multiline_comment|/*  Must be done before calibration delay is computed  */
-id|mtrr_init_secondary_cpu
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n;&t; * Dont put anything before smp_callin(), SMP&n;&t; * booting is too fragile that we want to limit the&n;&t; * things done here to the most necessary things.&n;&t; */
 id|smp_callin
 c_func
 (paren
@@ -3068,36 +3181,32 @@ id|timeout
 op_assign
 l_int|0
 suffix:semicolon
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Waiting for send to finish...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_do
 (brace
 id|SMP_PRINTK
 c_func
 (paren
 (paren
-l_string|&quot;Sleeping.&bslash;n&quot;
+l_string|&quot;+&quot;
 )paren
-)paren
-suffix:semicolon
-id|mdelay
-c_func
-(paren
-l_int|1000
 )paren
 suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|100
 )paren
 suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-(paren
 id|send_status
 op_assign
-(paren
 id|apic_read
 c_func
 (paren
@@ -3105,8 +3214,12 @@ id|APIC_ICR
 )paren
 op_amp
 l_int|0x1000
-)paren
-)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|send_status
 op_logical_and
 (paren
 id|timeout
@@ -3116,6 +3229,7 @@ l_int|1000
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Give the other CPU some time to accept the IPI.&n;&t;&t; */
 id|udelay
 c_func
 (paren
@@ -3180,6 +3294,44 @@ id|accept_status
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * allow APs to start initializing.&n;&t;&t; */
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Before Callout %d.&bslash;n&quot;
+comma
+id|i
+)paren
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|i
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|cpu_callout_map
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;After Callout %d.&bslash;n&quot;
+comma
+id|i
+)paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3392,17 +3544,55 @@ id|smp_tune_scheduling
 r_void
 )paren
 (brace
+r_int
+r_int
+id|cachesize
+suffix:semicolon
 multiline_comment|/*&n;&t; * Rough estimation for SMP scheduling, this is the number of&n;&t; * cycles it takes for a fully memory-limited process to flush&n;&t; * the SMP-local cache.&n;&t; *&n;&t; * (For a P5 this pretty much means we will choose another idle&n;&t; *  CPU almost always at wakeup time (this is due to the small&n;&t; *  L1 cache), on PIIs it&squot;s around 50-100 usecs, depending on&n;&t; *  the cache size)&n;&t; */
+r_if
+c_cond
+(paren
+id|boot_cpu_data.x86
+op_le
+l_int|4
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * this basically disables processor-affinity&n;&t;&t; * scheduling on &lt;=i486 based SMP boards.&n;&t;&t; */
+id|cacheflush_time
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|cachesize
+op_assign
+id|boot_cpu_data.x86_cache_size
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cachesize
+op_eq
+op_minus
+l_int|1
+)paren
+id|cachesize
+op_assign
+l_int|8
+suffix:semicolon
+multiline_comment|/* Pentiums */
 id|cacheflush_time
 op_assign
 id|cpu_hz
 op_div
 l_int|1024
 op_star
-id|boot_cpu_data.x86_cache_size
+id|cachesize
 op_div
 l_int|5000
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -3548,6 +3738,7 @@ id|boot_cpu_id
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * not necessary because the MP table should list the boot&n;&t; * CPU too, but we do it for the sake of robustness anyway.&n;&t; * (and for the case when a non-SMP board boots an SMP kernel)&n;&t; */
 id|cpu_present_map
 op_or_assign
 (paren
@@ -3709,6 +3900,16 @@ id|setup_APIC_clock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now scan the CPU present map and fire up the other CPUs.&n;&t; */
+multiline_comment|/*&n;&t; * Add all detected CPUs. (later on we can down individual&n;&t; * CPUs which will change cpu_online_map but not necessarily&n;&t; * cpu_present_map. We are pretty much ready for hot-swap CPUs.)&n;&t; */
+id|cpu_online_map
+op_assign
+id|cpu_present_map
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|SMP_PRINTK
 c_func
 (paren
@@ -3748,7 +3949,7 @@ r_if
 c_cond
 (paren
 (paren
-id|cpu_present_map
+id|cpu_online_map
 op_amp
 (paren
 l_int|1
@@ -3786,7 +3987,7 @@ op_minus
 l_int|1
 op_logical_and
 (paren
-id|cpu_present_map
+id|cpu_online_map
 op_amp
 (paren
 l_int|1
@@ -3799,12 +4000,12 @@ id|i
 id|printk
 c_func
 (paren
-l_string|&quot;CPU #%d not responding. Removing from cpu_present_map.&bslash;n&quot;
+l_string|&quot;CPU #%d not responding. Removing from cpu_online_map.&bslash;n&quot;
 comma
 id|i
 )paren
 suffix:semicolon
-id|cpu_present_map
+id|cpu_online_map
 op_and_assign
 op_complement
 (paren
@@ -3899,7 +4100,7 @@ id|KERN_ERR
 l_string|&quot;Error: only one processor found.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|cpu_present_map
+id|cpu_online_map
 op_assign
 (paren
 l_int|1
@@ -3937,7 +4138,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|cpu_present_map
+id|cpu_online_map
 op_amp
 (paren
 l_int|1
@@ -4047,7 +4248,7 @@ suffix:colon
 )brace
 multiline_comment|/*&n; * the following functions deal with sending IPIs between CPUs.&n; *&n; * We use &squot;broadcast&squot;, CPU-&gt;CPU IPIs and self-IPIs too.&n; */
 multiline_comment|/*&n; * Silly serialization to work around CPU bug in P5s.&n; * We can safely turn it off on a 686.&n; */
-macro_line|#if defined(CONFIG_M686) &amp; !defined(SMP_DEBUG)
+macro_line|#ifdef CONFIG_GOOD_APIC
 DECL|macro|FORCE_APIC_SERIALIZATION
 macro_line|# define FORCE_APIC_SERIALIZATION 0
 macro_line|#else
@@ -4514,12 +4715,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;&t; * The assignment is safe because it&squot;s volatile so the&n;&t; * compiler cannot reorder it, because the i586 has&n;&t; * strict memory ordering and because only the kernel&n;&t; * lock holder may issue a tlb flush. If you break any&n;&t; * one of those three change this to an atomic bus&n;&t; * locked or.&n;&t; */
+multiline_comment|/*&n;&t; * it&squot;s important that we do not generate any APIC traffic&n;&t; * until the AP CPUs have booted up!&n;&t; */
+r_if
+c_cond
+(paren
+id|cpu_online_map
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * The assignment is safe because it&squot;s volatile so the&n;&t;&t; * compiler cannot reorder it, because the i586 has&n;&t;&t; * strict memory ordering and because only the kernel&n;&t;&t; * lock holder may issue a tlb flush. If you break any&n;&t;&t; * one of those three change this to an atomic bus&n;&t;&t; * locked or.&n;&t;&t; */
 id|smp_invalidate_needed
 op_assign
-id|cpu_present_map
+id|cpu_online_map
 suffix:semicolon
-multiline_comment|/*&n;&t; * Processors spinning on some lock with IRQs disabled&n;&t; * will see this IRQ late. The smp_invalidate_needed&n;&t; * map will ensure they don&squot;t do a spurious flush tlb&n;&t; * or miss one.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Processors spinning on some lock with IRQs disabled&n;&t;&t; * will see this IRQ late. The smp_invalidate_needed&n;&t;&t; * map will ensure they don&squot;t do a spurious flush tlb&n;&t;&t; * or miss one.&n;&t;&t; */
 id|__save_flags
 c_func
 (paren
@@ -4537,7 +4745,7 @@ c_func
 id|INVALIDATE_TLB_VECTOR
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Spin waiting for completion&n;&t; */
+multiline_comment|/*&n;&t;&t; * Spin waiting for completion&n;&t;&t; */
 id|stuck
 op_assign
 l_int|50000000
@@ -4548,7 +4756,7 @@ c_loop
 id|smp_invalidate_needed
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Take care of &quot;crossing&quot; invalidates&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Take care of &quot;crossing&quot; invalidates&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4592,16 +4800,17 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Flush the local TLB&n;&t; */
-id|local_flush_tlb
-c_func
-(paren
-)paren
-suffix:semicolon
 id|__restore_flags
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Flush the local TLB&n;&t; */
+id|local_flush_tlb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -4932,16 +5141,27 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;CPU halt call-back&n; */
-DECL|function|smp_stop_cpu_interrupt
-id|asmlinkage
+DECL|function|stop_this_cpu
+r_static
 r_void
-id|smp_stop_cpu_interrupt
-c_func
+id|stop_this_cpu
 (paren
 r_void
 )paren
 (brace
+multiline_comment|/*&n;&t; * Remove this CPU:&n;&t; */
+id|clear_bit
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+op_amp
+id|cpu_online_map
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4974,6 +5194,22 @@ c_loop
 (paren
 suffix:semicolon
 suffix:semicolon
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;CPU halt call-back&n; */
+DECL|function|smp_stop_cpu_interrupt
+id|asmlinkage
+r_void
+id|smp_stop_cpu_interrupt
+c_func
+(paren
+r_void
+)paren
+(brace
+id|stop_this_cpu
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

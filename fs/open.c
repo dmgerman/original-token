@@ -2355,13 +2355,26 @@ id|ATTR_GID
 op_or
 id|ATTR_CTIME
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the owner has been changed, remove the setuid bit&n;&t; */
+multiline_comment|/*&n;&t; * If the user or group of a non-directory has been changed by a&n;&t; * non-root user, remove the setuid bit.&n;&t; * 19981026&t;David C Niemi &lt;niemi@tux.org&gt;&n;&t; *&n;&t; */
 r_if
 c_cond
+(paren
 (paren
 id|inode-&gt;i_mode
 op_amp
 id|S_ISUID
+)paren
+op_eq
+id|S_ISUID
+op_logical_and
+op_logical_neg
+id|S_ISDIR
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+op_logical_and
+id|current-&gt;fsuid
 )paren
 (brace
 id|newattrs.ia_mode
@@ -2374,7 +2387,7 @@ op_or_assign
 id|ATTR_MODE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If the group has been changed, remove the setgid bit&n;&t; *&n;&t; * Don&squot;t remove the setgid bit if no group execute bit.&n;&t; * This is a file marked for mandatory locking.&n;&t; */
+multiline_comment|/*&n;&t; * Likewise, if the user or group of a non-directory has been changed&n;&t; * by a non-root user, remove the setgid bit UNLESS there is no group&n;&t; * execute bit (this would be a file marked for mandatory locking).&n;&t; * 19981026&t;David C Niemi &lt;niemi@tux.org&gt;&n;&t; */
 r_if
 c_cond
 (paren
@@ -2395,6 +2408,15 @@ op_or
 id|S_IXGRP
 )paren
 )paren
+op_logical_and
+op_logical_neg
+id|S_ISDIR
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+op_logical_and
+id|current-&gt;fsuid
 )paren
 (brace
 id|newattrs.ia_mode

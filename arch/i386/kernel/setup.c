@@ -2918,7 +2918,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|cpu_present_map
+id|cpu_online_map
 op_amp
 (paren
 l_int|1

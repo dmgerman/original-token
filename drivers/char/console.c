@@ -5071,6 +5071,8 @@ c_cond
 id|G0_charset
 suffix:colon
 id|G1_charset
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|disp_ctrl
@@ -5093,6 +5095,8 @@ id|set_translate
 c_func
 (paren
 id|IBMPC_MAP
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|disp_ctrl
@@ -5115,6 +5119,8 @@ id|set_translate
 c_func
 (paren
 id|IBMPC_MAP
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|disp_ctrl
@@ -6502,6 +6508,8 @@ c_cond
 id|G1_charset
 suffix:colon
 id|G0_charset
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|update_attr
@@ -6592,6 +6600,8 @@ id|set_translate
 c_func
 (paren
 id|LAT1_MAP
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|G0_charset
@@ -6975,6 +6985,8 @@ id|set_translate
 c_func
 (paren
 id|G1_charset
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|disp_ctrl
@@ -6996,6 +7008,8 @@ id|set_translate
 c_func
 (paren
 id|G0_charset
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|disp_ctrl
@@ -8720,6 +8734,8 @@ id|set_translate
 c_func
 (paren
 id|G0_charset
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|vc_state
@@ -8791,6 +8807,8 @@ id|set_translate
 c_func
 (paren
 id|G1_charset
+comma
+id|currcons
 )paren
 suffix:semicolon
 id|vc_state

@@ -139,6 +139,7 @@ id|full_name_hash
 c_func
 (paren
 r_const
+r_int
 r_char
 op_star
 id|name

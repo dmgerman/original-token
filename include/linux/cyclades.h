@@ -1292,6 +1292,8 @@ DECL|macro|CyISA_Ywin
 mdefine_line|#define&t;CyISA_Ywin&t;0x2000
 DECL|macro|CyPCI_Ywin
 mdefine_line|#define CyPCI_Ywin &t;0x4000
+DECL|macro|CyPCI_Yctl
+mdefine_line|#define CyPCI_Yctl &t;0x80
 DECL|macro|CyPCI_Zctl
 mdefine_line|#define CyPCI_Zctl &t;CTRL_WINDOW_SIZE
 DECL|macro|CyPCI_Zwin

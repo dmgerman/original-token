@@ -342,7 +342,7 @@ DECL|enumerator|VM_PAGE_CLUSTER
 id|VM_PAGE_CLUSTER
 op_assign
 l_int|10
-multiline_comment|/* int: set log2 number of pages to swap together */
+multiline_comment|/* int: set number of pages to swap together */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_NET names: */
@@ -1279,30 +1279,35 @@ suffix:semicolon
 multiline_comment|/* /proc/sys/net/decnet */
 r_enum
 (brace
-DECL|enumerator|NET_DECNET_NODE_TYPE
-id|NET_DECNET_NODE_TYPE
+DECL|enumerator|NET_DECNET_DEF_T3_BROADCAST
+id|NET_DECNET_DEF_T3_BROADCAST
 op_assign
 l_int|1
 comma
-DECL|enumerator|NET_DECNET_NODE_ADDRESS
-id|NET_DECNET_NODE_ADDRESS
+DECL|enumerator|NET_DECNET_DEF_T3_POINTTOPOINT
+id|NET_DECNET_DEF_T3_POINTTOPOINT
 op_assign
 l_int|2
 comma
-DECL|enumerator|NET_DECNET_NODE_NAME
-id|NET_DECNET_NODE_NAME
+DECL|enumerator|NET_DECNET_DEF_T1
+id|NET_DECNET_DEF_T1
 op_assign
 l_int|3
 comma
-DECL|enumerator|NET_DECNET_DEFAULT_DEVICE
-id|NET_DECNET_DEFAULT_DEVICE
+DECL|enumerator|NET_DECNET_DEF_BCT1
+id|NET_DECNET_DEF_BCT1
 op_assign
 l_int|4
+comma
+DECL|enumerator|NET_DECNET_CACHETIMEOUT
+id|NET_DECNET_CACHETIMEOUT
+op_assign
+l_int|5
 comma
 DECL|enumerator|NET_DECNET_DEBUG_LEVEL
 id|NET_DECNET_DEBUG_LEVEL
 op_assign
-l_int|255
+l_int|6
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_PROC names: */

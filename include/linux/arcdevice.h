@@ -140,7 +140,7 @@ multiline_comment|/* Starts receiving packets into recbuf.&n;&t; */
 DECL|macro|EnableReceiver
 mdefine_line|#define EnableReceiver()&t;ACOMMAND(RXcmd|(recbuf&lt;&lt;3)|RXbcasts)
 DECL|macro|JIFFER
-mdefine_line|#define JIFFER(time) for (delayval=jiffies+time; jiffies&lt;delayval;) ;
+mdefine_line|#define JIFFER(time) for (delayval=jiffies+time; time_before(jiffies,delayval);) ;
 multiline_comment|/* a complete ARCnet packet */
 DECL|union|ArcPacket
 r_union

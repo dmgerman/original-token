@@ -283,7 +283,7 @@ DECL|macro|IS_ABORTING
 mdefine_line|#define IS_ABORTING     0x10
 DECL|macro|ASKED_FOR_SENSE
 mdefine_line|#define ASKED_FOR_SENSE 0x20
-macro_line|#ifdef __mc68000__
+macro_line|#if defined(__mc68000__) || defined(CONFIG_APUS)
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|CONTIGUOUS_BUFFERS
 mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) &bslash;&n;&t;(virt_to_phys((X)-&gt;b_data+(X)-&gt;b_size-1)+1==virt_to_phys((Y)-&gt;b_data))

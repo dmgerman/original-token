@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
@@ -137,6 +138,96 @@ id|initialized
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+r_int
+id|exp_procfs_exports
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
+suffix:semicolon
+DECL|function|proc_export_init
+r_void
+id|proc_export_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|proc_dir_entry
+op_star
+id|nfs_export_ent
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|nfs_export_ent
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;fs/nfs&quot;
+comma
+id|S_IFDIR
+comma
+l_int|0
+)paren
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|nfs_export_ent
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;fs/nfs/exports&quot;
+comma
+l_int|0
+comma
+l_int|0
+)paren
+)paren
+)paren
+r_return
+suffix:semicolon
+id|nfs_export_ent-&gt;read_proc
+op_assign
+id|exp_procfs_exports
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Initialize nfsd&n; */
 r_static
 r_void
@@ -179,18 +270,19 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* lockd-&gt;nfsd callbacks */
-id|nfsd_racache_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Readahead param cache */
 id|nfsd_fh_init
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* FH table */
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_export_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|initialized
 op_assign
 l_int|1
@@ -1094,6 +1186,22 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;fs/nfs/exports&quot;
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;fs/nfs&quot;
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|nfsd_stat_shutdown
 c_func
 (paren
