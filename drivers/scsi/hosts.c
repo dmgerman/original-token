@@ -42,6 +42,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_T128
 macro_line|#include &quot;t128.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_NCR53C7xx
+macro_line|#include &quot;53c7,8xx.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
 macro_line|#include &quot;ultrastor.h&quot;
 macro_line|#endif
@@ -115,6 +118,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_T128
 id|TRANTOR_T128
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_NCR53C7xx
+id|NCR53c7xx
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST

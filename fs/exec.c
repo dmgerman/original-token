@@ -4289,6 +4289,8 @@ op_or
 id|MAP_SHARED
 op_or
 id|MAP_DENYWRITE
+op_or
+id|MAP_EXECUTABLE
 comma
 id|fd_offset
 )paren
@@ -4355,6 +4357,8 @@ op_or
 id|MAP_PRIVATE
 op_or
 id|MAP_DENYWRITE
+op_or
+id|MAP_EXECUTABLE
 comma
 id|fd_offset
 op_plus

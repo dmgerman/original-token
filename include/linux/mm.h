@@ -121,6 +121,8 @@ DECL|macro|VM_SHM
 mdefine_line|#define VM_SHM&t;&t;0x0400
 DECL|macro|VM_DENYWRITE
 mdefine_line|#define VM_DENYWRITE&t;0x0800&t;/* ETXTBSY on write attempts.. */
+DECL|macro|VM_EXECUTABLE
+mdefine_line|#define VM_EXECUTABLE&t;0x1000
 DECL|macro|VM_STACK_FLAGS
 mdefine_line|#define VM_STACK_FLAGS&t;0x0177
 multiline_comment|/*&n; * These are the virtual MM functions - opening of an area, closing it (needed to&n; * keep files on disk up-to-date etc), pointer to the functions called when a&n; * no-page or a wp-page exception occurs, and the function which decides on sharing&n; * of pages between different processes.&n; */

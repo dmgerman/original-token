@@ -532,7 +532,6 @@ suffix:semicolon
 )brace
 DECL|function|dcache_lookup
 r_int
-r_int
 id|dcache_lookup
 c_func
 (paren
@@ -548,6 +547,11 @@ id|name
 comma
 r_int
 id|len
+comma
+r_int
+r_int
+op_star
+id|ino
 )paren
 (brace
 r_struct
@@ -613,6 +617,11 @@ id|de
 r_return
 l_int|0
 suffix:semicolon
+op_star
+id|ino
+op_assign
+id|de-&gt;ino
+suffix:semicolon
 id|move_to_level2
 c_func
 (paren
@@ -622,7 +631,7 @@ id|hash
 )paren
 suffix:semicolon
 r_return
-id|de-&gt;ino
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|dcache_add

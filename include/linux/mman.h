@@ -23,5 +23,7 @@ DECL|macro|MAP_GROWSDOWN
 mdefine_line|#define MAP_GROWSDOWN&t;0x0400&t;&t;/* stack-like segment */
 DECL|macro|MAP_DENYWRITE
 mdefine_line|#define MAP_DENYWRITE&t;0x0800&t;&t;/* ETXTBSY */
+DECL|macro|MAP_EXECUTABLE
+mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as a executable */
 macro_line|#endif /* _LINUX_MMAN_H */
 eof

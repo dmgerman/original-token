@@ -1471,9 +1471,19 @@ id|caller-&gt;fl_type
 op_eq
 id|F_UNLCK
 )paren
+(brace
+multiline_comment|/*&n; * XXX - under iBCS-2, attempting to unlock a not-locked region is &n; * &t;not considered an error condition, although I&squot;m not sure if this &n; * &t;should be a default behavior (it makes porting to native Linux easy)&n; * &t;or a personality option.&n; *&n; *&t;Does Xopen/1170 say anything about this?&n; *&t;- drew@Colorado.EDU&n; */
+macro_line|#if 0
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
+)brace
 r_if
 c_cond
 (paren

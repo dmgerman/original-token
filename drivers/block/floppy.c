@@ -6384,7 +6384,7 @@ id|filp
 suffix:semicolon
 r_return
 op_minus
-id|EACCES
+id|EROFS
 suffix:semicolon
 )brace
 )brace

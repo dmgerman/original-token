@@ -1223,7 +1223,7 @@ l_int|2
 )paren
 r_return
 op_minus
-id|EACCES
+id|EROFS
 suffix:semicolon
 id|check_disk_change
 c_func

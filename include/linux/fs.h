@@ -2672,7 +2672,6 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-r_int
 id|dcache_lookup
 c_func
 (paren
@@ -2685,6 +2684,10 @@ r_char
 op_star
 comma
 r_int
+comma
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 DECL|function|iget

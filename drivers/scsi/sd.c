@@ -558,8 +558,10 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d : rw_intr(%d, %d)&bslash;n&quot;
+l_string|&quot;sd%c : rw_intr(%d, %d)&bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|MINOR
 c_func
 (paren
@@ -584,8 +586,10 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d : %d sectors remain.&bslash;n&quot;
+l_string|&quot;sd%c : %d sectors remain.&bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|MINOR
 c_func
 (paren
@@ -823,8 +827,10 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d : handling page request, no buffer&bslash;n&quot;
+l_string|&quot;sd%c : handling page request, no buffer&bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|MINOR
 c_func
 (paren
@@ -1699,8 +1705,10 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d : real dev = /dev/sd%d, block = %d&bslash;n&quot;
+l_string|&quot;sd%c : real dev = /dev/sd%c, block = %d&bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|MINOR
 c_func
 (paren
@@ -3098,8 +3106,10 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d : %s %d/%d 512 byte blocks.&bslash;n&quot;
+l_string|&quot;sd%c : %s %d/%d 512 byte blocks.&bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|MINOR
 c_func
 (paren
@@ -3927,8 +3937,10 @@ id|spintime
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d: Spinning up disk...&quot;
+l_string|&quot;sd%c: Spinning up disk...&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|i
 )paren
 suffix:semicolon
@@ -4328,11 +4340,15 @@ id|the_result
 (brace
 id|printk
 (paren
-l_string|&quot;sd%d : READ CAPACITY failed.&bslash;n&quot;
-l_string|&quot;sd%d : status = %x, message = %02x, host = %d, driver = %02x &bslash;n&quot;
+l_string|&quot;sd%c : READ CAPACITY failed.&bslash;n&quot;
+l_string|&quot;sd%c : status = %x, message = %02x, host = %d, driver = %02x &bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|i
 comma
+l_char|&squot;a&squot;
+op_plus
 id|i
 comma
 id|status_byte
@@ -4374,8 +4390,10 @@ id|DRIVER_SENSE
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d : extended sense code = %1x &bslash;n&quot;
+l_string|&quot;sd%c : extended sense code = %1x &bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|i
 comma
 id|SCpnt-&gt;sense_buffer
@@ -4390,16 +4408,20 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d : sense not available. &bslash;n&quot;
+l_string|&quot;sd%c : sense not available. &bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|i
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;sd%d : block size assumed to be 512 bytes, disk size 1GB.  &bslash;n&quot;
+l_string|&quot;sd%c : block size assumed to be 512 bytes, disk size 1GB.  &bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|i
 )paren
 suffix:semicolon
@@ -4564,8 +4586,10 @@ l_int|256
 (brace
 id|printk
 (paren
-l_string|&quot;sd%d : unsupported sector size %d.&bslash;n&quot;
+l_string|&quot;sd%c : unsupported sector size %d.&bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|i
 comma
 id|rscsi_disks

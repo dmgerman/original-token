@@ -6280,7 +6280,7 @@ l_int|2
 )paren
 r_return
 op_minus
-id|EACCES
+id|EROFS
 suffix:semicolon
 r_if
 c_cond

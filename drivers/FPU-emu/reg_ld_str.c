@@ -3102,7 +3102,7 @@ c_func
 (paren
 id|EX_INTERNAL
 op_or
-l_int|0x106
+l_int|0x163
 )paren
 suffix:semicolon
 r_return
@@ -5941,7 +5941,7 @@ c_func
 (paren
 id|EX_INTERNAL
 op_or
-l_int|0x114
+l_int|0x160
 )paren
 suffix:semicolon
 r_break
@@ -5973,7 +5973,7 @@ c_func
 (paren
 id|EX_INTERNAL
 op_or
-l_int|0x114
+l_int|0x161
 )paren
 suffix:semicolon
 r_break
@@ -5999,7 +5999,7 @@ c_func
 (paren
 id|EX_INTERNAL
 op_or
-l_int|0x114
+l_int|0x162
 )paren
 suffix:semicolon
 )brace

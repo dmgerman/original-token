@@ -1172,8 +1172,14 @@ r_if
 c_cond
 (paren
 id|txc.mode
+op_ne
+id|ADJ_OFFSET_SINGLESHOT
+op_logical_and
+(paren
+id|txc.mode
 op_amp
 id|ADJ_OFFSET
+)paren
 )paren
 multiline_comment|/* Microsec field limited to -131000 .. 131000 usecs */
 r_if

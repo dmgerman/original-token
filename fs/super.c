@@ -3059,6 +3059,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* ugly, ugly */
+r_if
+c_cond
+(paren
+id|floppy_grab_irq_and_dma
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to gram floppy IRQ/DMA for mounting root floppy&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 r_for
 c_loop

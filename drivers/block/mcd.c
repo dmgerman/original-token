@@ -3986,7 +3986,7 @@ l_int|2
 multiline_comment|/* write access? */
 r_return
 op_minus
-id|EACCES
+id|EROFS
 suffix:semicolon
 r_if
 c_cond

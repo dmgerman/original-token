@@ -107,6 +107,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|hlt_works_ok
+op_logical_and
 op_logical_neg
 id|need_resched
 )paren
@@ -754,13 +756,13 @@ r_if
 c_cond
 (paren
 (paren
-id|current-&gt;egid
+id|old_rgid
 op_eq
 id|rgid
 )paren
 op_logical_or
 (paren
-id|old_rgid
+id|current-&gt;egid
 op_eq
 id|rgid
 )paren
@@ -803,6 +805,12 @@ id|egid
 op_logical_or
 (paren
 id|current-&gt;egid
+op_eq
+id|egid
+)paren
+op_logical_or
+(paren
+id|current-&gt;sgid
 op_eq
 id|egid
 )paren

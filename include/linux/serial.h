@@ -312,6 +312,27 @@ DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
 DECL|macro|RS_EVENT_HANGUP
 mdefine_line|#define RS_EVENT_HANGUP&t;&t;1
+multiline_comment|/* Export to allow PCMCIA to use this - Dave Hinds */
+r_extern
+r_int
+id|register_serial
+c_func
+(paren
+r_struct
+id|serial_struct
+op_star
+id|req
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|unregister_serial
+c_func
+(paren
+r_int
+id|line
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_SERIAL_H */
 eof

@@ -7,6 +7,9 @@ mdefine_line|#define CDROM_PORT 0x0230
 DECL|macro|SBPRO
 mdefine_line|#define SBPRO     1
 macro_line|#endif
+multiline_comment|/*&n; * If you have a &quot;compatible&quot; soundcard of type &quot;SBPRO 0&quot; or &quot;SBPRO 2&quot;,&n; * enter your sound card&squot;s base address here if you want sbpcd to turn&n; * the CD sound channels on.&n; *&n; * Example: #define SOUND_BASE 0x220 enables the sound card&squot;s CD channels&n; *          #define SOUND_BASE 0     leaves the soundcard untouched&n; */
+DECL|macro|SOUND_BASE
+mdefine_line|#define SOUND_BASE 0
 multiline_comment|/* ignore the rest if you have only one interface board &amp; driver */
 macro_line|#if !(SBPCD_ISSUE-2) /* second interface board: */
 DECL|macro|CDROM_PORT
@@ -281,12 +284,12 @@ mdefine_line|#define SBPCD_DIS_IRQ 0
 multiline_comment|/*&n; * &quot;write byte to port&quot;&n; */
 DECL|macro|OUT
 mdefine_line|#define OUT(x,y) outb(y,x)
-DECL|macro|MIXER_CD_Volume
-mdefine_line|#define MIXER_CD_Volume&t;0x28
-multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * use &quot;REP INSB&quot; for strobing the data in:&n; */
 DECL|macro|READ_DATA
 mdefine_line|#define READ_DATA(port, buf, nr) insb(port, buf, nr)
+multiline_comment|/*==========================================================================*/
+DECL|macro|MIXER_CD_Volume
+mdefine_line|#define MIXER_CD_Volume&t;0x28 /* internal SB Pro register address */
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * Creative Labs Programmers did this:&n; */
 DECL|macro|MAX_TRACKS

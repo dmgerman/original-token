@@ -131,6 +131,14 @@ id|scsi_devices
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Process ID of SCSI commands */
+DECL|variable|scsi_pid
+r_int
+r_int
+id|scsi_pid
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|generic_sense
 r_static
 r_int
@@ -395,6 +403,15 @@ l_string|&quot;1.06&quot;
 comma
 multiline_comment|/* causes failed REQUEST SENSE on lun 1 for seagate&n;&t;&t;&t;&t; * controller, which causes SCSI code to reset bus.*/
 (brace
+l_string|&quot;QUANTUM&quot;
+comma
+l_string|&quot;LPS525S&quot;
+comma
+l_string|&quot;3110&quot;
+)brace
+comma
+multiline_comment|/* Locks sometimes if polled for lun != 0 */
+(brace
 l_int|NULL
 comma
 l_int|NULL
@@ -575,11 +592,10 @@ suffix:semicolon
 )def_block
 suffix:semicolon
 multiline_comment|/*&n; *&t;As the actual SCSI command runs in the background, we must set up a &n; *&t;flag that tells scan_scsis() when the result it has is valid.  &n; *&t;scan_scsis can set the_result to -1, and watch for it to become the &n; *&t;actual return code for that call.  the scan_scsis_done function() is &n; *&t;our user specified completion function that is passed on to the  &n; *&t;scsi_do_cmd() function.&n; */
-DECL|variable|in_scan
-r_static
+DECL|variable|in_scan_scsis
 r_volatile
 r_int
-id|in_scan
+id|in_scan_scsis
 op_assign
 l_int|0
 suffix:semicolon
@@ -719,7 +735,7 @@ id|Scsi_Cmnd
 id|SCmd
 suffix:semicolon
 op_increment
-id|in_scan
+id|in_scan_scsis
 suffix:semicolon
 id|lun
 op_assign
@@ -1919,7 +1935,7 @@ id|Scsi_Device
 )paren
 )paren
 suffix:semicolon
-id|in_scan
+id|in_scan_scsis
 op_assign
 l_int|0
 suffix:semicolon
@@ -1962,15 +1978,32 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|in_scan
+id|in_scan_scsis
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI host %d timed out - aborting command&bslash;n&quot;
+l_string|&quot;scsi : aborting command due to timeout : pid %lu, scsi%d, id %d, lun %d &quot;
+comma
+id|SCpnt-&gt;pid
 comma
 id|SCpnt-&gt;host-&gt;host_no
+comma
+(paren
+r_int
+)paren
+id|SCpnt-&gt;target
+comma
+(paren
+r_int
+)paren
+id|SCpnt-&gt;lun
+)paren
+suffix:semicolon
+id|print_command
+(paren
+id|SCpnt-&gt;cmnd
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_TIMEOUT
@@ -3305,6 +3338,11 @@ id|host-&gt;host_no
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;We must prevent reentrancy to the lowlevel host driver.  This prevents &n;&t;it - we enter a loop until the host we want to talk to is not busy.   &n;&t;Race conditions are prevented, as interrupts are disabled inbetween the&n;&t;time we check for the host being not busy, and the time we mark it busy&n;&t;ourselves.&n;*/
+id|SCpnt-&gt;pid
+op_assign
+id|scsi_pid
+op_increment
+suffix:semicolon
 r_while
 c_loop
 (paren

@@ -302,7 +302,7 @@ c_cond
 (paren
 id|vma-&gt;vm_flags
 op_amp
-id|VM_DENYWRITE
+id|VM_EXECUTABLE
 )paren
 (brace
 id|inode

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&n; *&t;&t;&t;&n; *&n; */
+multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&n; *&t;&t;&t;&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -686,7 +686,7 @@ suffix:semicolon
 )brace
 id|r
 op_assign
-id|r-&gt;next
+id|r-&gt;nextlocal
 suffix:semicolon
 )brace
 id|restore_flags
@@ -5905,7 +5905,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society IPX 0.26 BETA for NET3.016&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society IPX 0.28 BETA for NET3.016&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

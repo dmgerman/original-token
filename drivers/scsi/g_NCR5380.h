@@ -91,6 +91,10 @@ DECL|macro|NCR5380_abort
 mdefine_line|#define NCR5380_abort generic_NCR5380_abort
 DECL|macro|NCR5380_reset
 mdefine_line|#define NCR5380_reset generic_NCR5380_reset
+DECL|macro|BOARD_NORMAL
+mdefine_line|#define BOARD_NORMAL&t;0
+DECL|macro|BOARD_NCR53C400
+mdefine_line|#define BOARD_NCR53C400&t;1
 macro_line|#endif /* else def HOSTS_C */
 macro_line|#endif /* ndef ASM */
 macro_line|#endif /* GENERIC_NCR5380_H */

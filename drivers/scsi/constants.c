@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;scsi.h&quot;
+macro_line|#include &quot;hosts.h&quot;
 DECL|macro|CONST_COMMAND
 mdefine_line|#define CONST_COMMAND &t;0x01
 DECL|macro|CONST_STATUS
@@ -11,6 +12,10 @@ DECL|macro|CONST_SENSE
 mdefine_line|#define CONST_SENSE &t;0x04
 DECL|macro|CONST_XSENSE
 mdefine_line|#define CONST_XSENSE &t;0x08
+DECL|macro|CONST_CMND
+mdefine_line|#define CONST_CMND&t;0x10
+DECL|macro|CONST_MSG
+mdefine_line|#define CONST_MSG&t;0x20
 DECL|variable|unknown
 r_static
 r_const
@@ -27,7 +32,7 @@ DECL|macro|CONSTANTS
 macro_line|#undef CONSTANTS
 macro_line|#endif
 DECL|macro|CONSTANTS
-mdefine_line|#define CONSTANTS (CONST_COMMAND | CONST_STATUS | CONST_SENSE | CONST_XSENSE)
+mdefine_line|#define CONSTANTS (CONST_COMMAND | CONST_STATUS | CONST_SENSE | CONST_XSENSE | CONST_CMND | CONST_MSG)
 macro_line|#endif
 macro_line|#if (CONSTANTS &amp; CONST_COMMAND)
 DECL|variable|group_0_commands
@@ -452,7 +457,7 @@ id|table
 (braket
 id|opcode
 op_amp
-l_int|0x31
+l_int|0x1f
 )braket
 )paren
 suffix:semicolon
@@ -4663,13 +4668,15 @@ l_string|&quot;Initiate Recovery&quot;
 comma
 l_string|&quot;Release Recovery&quot;
 )brace
+suffix:semicolon
 DECL|macro|NO_ONE_BYTE_MSGS
 mdefine_line|#define NO_ONE_BYTE_MSGS (sizeof(one_byte_msgs)  / sizeof (const char *))
+DECL|variable|two_byte_msgs
 r_static
 r_const
 r_char
 op_star
-id|queue_tag_msgs
+id|two_byte_msgs
 (braket
 )braket
 op_assign
@@ -4683,8 +4690,10 @@ l_string|&quot;Ordered Queue Tag&quot;
 multiline_comment|/* 0x23 */
 l_string|&quot;Ignore Wide Residue&quot;
 )brace
+suffix:semicolon
 DECL|macro|NO_TWO_BYTE_MSGS
 mdefine_line|#define NO_TWO_BYTE_MSGS (sizeof(two_byte_msgs)  / sizeof (const char *))
+DECL|variable|extended_msgs
 r_static
 r_const
 r_char
@@ -4747,25 +4756,20 @@ l_int|1
 )braket
 suffix:semicolon
 macro_line|#if (CONSTANTS &amp; CONST_MSG)
-id|printk
-c_func
-(paren
-l_string|&quot;Extended Message code %s arguments &quot;
-comma
+r_if
+c_cond
 (paren
 id|msg
 (braket
 l_int|2
 )braket
 OL
-id|NO_EXTENDED_MESSAGES
+id|NO_EXTENDED_MSGS
 )paren
-ques
-c_cond
 id|printk
-c_func
 (paren
 l_string|&quot;%s &quot;
+comma
 id|extended_msgs
 (braket
 id|msg
@@ -4774,46 +4778,139 @@ l_int|2
 )braket
 )braket
 )paren
+suffix:semicolon
+r_else
+id|printk
+(paren
+l_string|&quot;Extended Message, reserved code (0x%02x) &quot;
 comma
-id|reserved
+(paren
+r_int
+)paren
+id|msg
+(braket
+l_int|2
+)braket
 )paren
 suffix:semicolon
-r_for
-c_loop
+r_switch
+c_cond
 (paren
-id|i
-op_assign
+id|msg
+(braket
+l_int|2
+)braket
+)paren
+(brace
+r_case
+id|EXTENDED_MODIFY_DATA_POINTER
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;pointer = %d&quot;
+comma
+(paren
+r_int
+)paren
+(paren
+id|msg
+(braket
 l_int|3
-suffix:semicolon
-id|i
-OL
+)braket
+op_lshift
+l_int|24
+)paren
+op_or
+(paren
 id|msg
 (braket
-l_int|1
+l_int|4
 )braket
-suffix:semicolon
-op_increment
-id|i
+op_lshift
+l_int|16
 )paren
-macro_line|#else
+op_or
+(paren
+id|msg
+(braket
+l_int|5
+)braket
+op_lshift
+l_int|8
+)paren
+op_or
+id|msg
+(braket
+l_int|6
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|EXTENDED_SDTR
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;period = %d ns, offset = %d&quot;
+comma
+(paren
+r_int
+)paren
+id|msg
+(braket
+l_int|3
+)braket
+op_star
+l_int|4
+comma
+(paren
+r_int
+)paren
+id|msg
+(braket
+l_int|4
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|EXTENDED_WDTR
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;width = 2^%d bytes&quot;
+comma
+id|msg
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|0
+l_int|2
 suffix:semicolon
 id|i
 OL
-id|msg
-(braket
-l_int|1
-)braket
+id|len
 suffix:semicolon
 op_increment
 id|i
 )paren
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -4825,6 +4922,34 @@ id|i
 )braket
 )paren
 suffix:semicolon
+)brace
+macro_line|#else
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|len
+suffix:semicolon
+op_increment
+id|i
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%02x &quot;
+comma
+id|msg
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Identify */
 )brace
 r_else
@@ -4991,7 +5116,7 @@ op_minus
 l_int|0x20
 )paren
 OL
-id|NO_TWO_BYTE_MESSAGES
+id|NO_TWO_BYTE_MSGS
 )paren
 id|printk
 c_func
@@ -5077,6 +5202,39 @@ suffix:semicolon
 macro_line|#endif
 r_return
 id|len
+suffix:semicolon
+)brace
+DECL|function|print_Scsi_Cmnd
+r_void
+id|print_Scsi_Cmnd
+(paren
+id|Scsi_Cmnd
+op_star
+id|cmd
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : destination target %d, lun %d&bslash;n&quot;
+comma
+id|cmd-&gt;host-&gt;host_no
+comma
+id|cmd-&gt;target
+comma
+id|cmd-&gt;lun
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;        command = &quot;
+)paren
+suffix:semicolon
+id|print_command
+(paren
+id|cmd-&gt;cmnd
+)paren
 suffix:semicolon
 )brace
 eof

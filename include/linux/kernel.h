@@ -231,6 +231,14 @@ suffix:semicolon
 multiline_comment|/*&n; * This is defined as a macro, but at some point this might become a&n; * real subroutine that sets a flag if it returns true (to do&n; * BSD-style accounting where the process is flagged if it uses root&n; * privs).  The implication of this is that you should do normal&n; * permissions checks first, and check suser() last.&n; */
 DECL|macro|suser
 mdefine_line|#define suser() (current-&gt;euid == 0)
+r_extern
+r_int
+id|splx
+(paren
+r_int
+id|new_ipl
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 DECL|macro|SI_LOAD_SHIFT
 mdefine_line|#define SI_LOAD_SHIFT&t;16

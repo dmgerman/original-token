@@ -1,4 +1,6 @@
-multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; * &t;to implement 5380 SCSI drivers under Linux with a non-trantor&n; *&t;architecture.&n; *&n; *&t;Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; * DISTRIBUTION REALEASE 4. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
+DECL|macro|NDEBUG
+mdefine_line|#define NDEBUG (NDEBUG_RESTART_SELECT)
+multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; * &t;to implement 5380 SCSI drivers under Linux with a non-trantor&n; *&t;architecture.&n; *&n; *&t;Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; * DISTRIBUTION REALEASE 6. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
 multiline_comment|/*&n; * $Log: NCR5380.c,v $&n; * Revision 1.5  1994/01/19  09:14:57  drew&n; * Fixed udelay() hack that was being used on DATAOUT phases&n; * instead of a propper wait for the final handshake.&n; *&n; * Revision 1.4  1994/01/19  06:44:25  drew&n; * *** empty log message ***&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; *&n; */
 multiline_comment|/*&n; * Furthur development / testing that should be done : &n; * 1.  Cleanup the NCR5380_transfer_dma function and DMA operation complete&n; *     code so that everything does the same thing that&squot;s done at the &n; *     end of a pseudo-DMA read operation.&n; *&n; * 2.  Fix REAL_DMA (interrupt driven, polled works fine) -&n; *     basically, transfer size needs to be reduced by one &n; *     and the last byte read as is done with PSEUDO_DMA.&n; * &n; * 3.  Test USLEEP code &n; *&n; * 4.  Test SCSI-II tagged queueing (I have no devices which support &n; *&t;tagged queueing)&n; *&n; * 5.  Test linked command handling code after Eric is ready with &n; *      the high level code.&n; */
 macro_line|#ifndef notyet
@@ -1533,8 +1535,183 @@ comma
 id|NCR5380_PUBLIC_RELEASE
 )paren
 suffix:semicolon
+macro_line|#ifdef NCR53C400
+r_if
+c_cond
+(paren
+id|hostdata-&gt;flags
+op_amp
+id|FLAG_NCR53C400
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; ncr53c400 release=%d&quot;
+comma
+id|NCR53C400_PUBLIC_RELEASE
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : void NCR5380_init (struct Scsi_Host *instance)&n; *&n; * Purpose : initializies *instance and corresponding 5380 chip.&n; *&n; * Inputs : instance - instantiation of the 5380 driver.  &n; *&n; * Notes : I assume that the host, hostno, and id bits have been&n; * &t;set correctly.  I don&squot;t care about the irq and other fields. &n; * &n; */
+macro_line|#endif
+)brace
+multiline_comment|/*&n; * Function : void NCR5380_print_status (struct Scsi_Host *instance)&n; *&n; * Purpose : print commands in the various queues, called from&n; *&t;NCR5380_abort and NCR5380_debug to aid debugging.&n; *&n; * Inputs : instance, pointer to this instance.  &n; */
+DECL|function|NCR5380_print_status
+r_void
+id|NCR5380_print_status
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|instance
+)paren
+(brace
+r_struct
+id|NCR5380_hostdata
+op_star
+id|hostdata
+op_assign
+(paren
+r_struct
+id|NCR5380_hostdata
+op_star
+)paren
+id|instance-&gt;hostdata
+suffix:semicolon
+id|Scsi_Cmnd
+op_star
+id|ptr
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;NCR5380 : coroutine is%s running.&bslash;n&quot;
+comma
+id|main_running
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;n&squot;t&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef NDEBUG
+id|NCR5380_print
+(paren
+id|instance
+)paren
+suffix:semicolon
+id|NCR5380_print_phase
+(paren
+id|instance
+)paren
+suffix:semicolon
+macro_line|#endif
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hostdata-&gt;connected
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;scsi%d: no currently connected command&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|print_Scsi_Cmnd
+(paren
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+id|hostdata-&gt;connected
+)paren
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;scsi%d: issue_queue&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|ptr
+op_assign
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+id|hostdata-&gt;issue_queue
+suffix:semicolon
+id|ptr
+suffix:semicolon
+id|ptr
+op_assign
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+id|ptr-&gt;host_scribble
+)paren
+id|print_Scsi_Cmnd
+(paren
+id|ptr
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;scsi%d: disconnected_queue&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|ptr
+op_assign
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+id|hostdata-&gt;disconnected_queue
+suffix:semicolon
+id|ptr
+suffix:semicolon
+id|ptr
+op_assign
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+id|ptr-&gt;host_scribble
+)paren
+id|print_Scsi_Cmnd
+(paren
+id|ptr
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* &n; * Function : void NCR5380_init (struct Scsi_Host *instance, flags)&n; *&n; * Purpose : initializies *instance and corresponding 5380 chip,&n; *&t;with flags OR&squot;d into the initial flags value.&n; *&n; * Inputs : instance - instantiation of the 5380 driver.  &n; *&n; * Notes : I assume that the host, hostno, and id bits have been&n; * &t;set correctly.  I don&squot;t care about the irq and other fields. &n; * &n; */
 DECL|function|NCR5380_init
 r_static
 r_void
@@ -1544,6 +1721,9 @@ r_struct
 id|Scsi_Host
 op_star
 id|instance
+comma
+r_int
+id|flags
 )paren
 (brace
 id|NCR5380_local_declare
@@ -1566,6 +1746,18 @@ op_star
 )paren
 id|instance-&gt;hostdata
 suffix:semicolon
+multiline_comment|/* &n;     * On NCR53C400 boards, NCR5380 registers are mapped 8 past &n;     * the base address.&n;     */
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|FLAG_NCR53C400
+)paren
+id|instance-&gt;io_port
+op_add_assign
+l_int|8
+suffix:semicolon
 id|NCR5380_setup
 c_func
 (paren
@@ -1576,6 +1768,10 @@ id|NCR5380_all_init
 c_func
 (paren
 )paren
+suffix:semicolon
+id|hostdata-&gt;aborted
+op_assign
+l_int|0
 suffix:semicolon
 id|hostdata-&gt;id_mask
 op_assign
@@ -1636,6 +1832,10 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+id|hostdata-&gt;targets_present
+op_assign
+l_int|0
+suffix:semicolon
 id|hostdata-&gt;connected
 op_assign
 l_int|NULL
@@ -1651,6 +1851,8 @@ suffix:semicolon
 id|hostdata-&gt;flags
 op_assign
 id|FLAG_CHECK_LAST_BYTE_SENT
+op_or
+id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -1736,6 +1938,25 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef NCR53C400
+r_if
+c_cond
+(paren
+id|hostdata-&gt;flags
+op_amp
+id|FLAG_NCR53C400
+)paren
+(brace
+id|NCR5380_write
+c_func
+(paren
+id|C400_CONTROL_STATUS_REG
+comma
+id|CSR_BASE
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 multiline_comment|/* &n; * Function : int NCR5380_queue_command (Scsi_Cmnd *cmd, &n; *&t;void (*done)(Scsi_Cmnd *)) &n; *&n; * Purpose :  enqueues a SCSI command&n; *&n; * Inputs : cmd - SCSI command, done - function called on completion, with&n; *&t;a pointer to the command descriptor.&n; * &n; * Returns : 0&n; *&n; * Side effects : &n; *      cmd is added to the per instance issue_queue, with minor &n; *&t;twiddling done to the host specific fields of cmd.  If the &n; *&t;main coroutine is not running, it is restarted.&n; *&n; */
 multiline_comment|/* Only make static if a wrapper function is used */
@@ -2460,6 +2681,43 @@ id|RESET_PARITY_INTERRUPT_REG
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+(paren
+id|NCR5380_read
+c_func
+(paren
+id|STATUS_REG
+)paren
+op_amp
+id|SR_RST
+)paren
+op_eq
+id|SR_RST
+)paren
+(brace
+macro_line|#if (NDEBUG &amp; NDEBUG_INTR)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : RESET interrupt&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+macro_line|#endif
+(paren
+r_void
+)paren
+id|NCR5380_read
+c_func
+(paren
+id|RESET_PARITY_INTERRUPT_REG
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 multiline_comment|/*  &n; * XXX the rest of the interrupt conditions should *only* occur during a &n; * DMA transfer, which I haven&squot;t gotten arround to fixing yet.&n; */
 macro_line|#if defined(REAL_DMA)
@@ -2543,6 +2801,49 @@ c_func
 id|RESET_PARITY_INTERRUPT_REG
 )paren
 suffix:semicolon
+macro_line|#if NCR_TIMEOUT
+(brace
+r_int
+r_int
+id|timeout
+op_assign
+id|jiffies
+op_plus
+id|NCR_TIMEOUT
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|NCR5380_read
+c_func
+(paren
+id|BUS_AND_STATUS_REG
+)paren
+op_amp
+id|BASR_ACK
+op_logical_and
+id|jiffies
+OL
+id|timeout
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|jiffies
+op_ge
+id|timeout
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: timeout at %d&bslash;n&quot;
+comma
+id|__LINE__
+)paren
+suffix:semicolon
+)brace
+macro_line|#else /* NCR_TIMEOUT */
 r_while
 c_loop
 (paren
@@ -2554,8 +2855,8 @@ id|BUS_AND_STATUS_REG
 op_amp
 id|BASR_ACK
 )paren
-)paren
 suffix:semicolon
+macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -2694,6 +2995,10 @@ c_func
 id|instance
 )paren
 suffix:semicolon
+id|hostdata-&gt;restart_select
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#if defined (NDEBUG) &amp;&amp; (NDEBUG &amp; NDEBUG_ARBITRATION) 
 id|NCR5380_print
 c_func
@@ -2712,6 +3017,11 @@ id|instance-&gt;this_id
 )paren
 suffix:semicolon
 macro_line|#endif
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* &n;     * Set the phase bits to 0, otherwise the NCR5380 won&squot;t drive the &n;     * data bus during SELECTION.&n;     */
 id|NCR5380_write
 c_func
@@ -2721,7 +3031,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Start arbitration */
+multiline_comment|/* &n;     * Start arbitration.&n;     */
 id|NCR5380_write
 c_func
 (paren
@@ -2738,7 +3048,82 @@ comma
 id|MR_ARBITRATE
 )paren
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Wait for arbitration logic to complete */
+macro_line|#if NCR_TIMEOUT
+(brace
+r_int
+r_int
+id|timeout
+op_assign
+id|jiffies
+op_plus
+l_int|2
+op_star
+id|NCR_TIMEOUT
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|NCR5380_read
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+)paren
+op_amp
+id|ICR_ARBITRATION_PROGRESS
+)paren
+op_logical_and
+id|jiffies
+OL
+id|timeout
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|jiffies
+op_ge
+id|timeout
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: arbitration timeout at %d&bslash;n&quot;
+comma
+id|__LINE__
+)paren
+suffix:semicolon
+id|NCR5380_write
+c_func
+(paren
+id|MODE_REG
+comma
+id|MR_BASE
+)paren
+suffix:semicolon
+id|NCR5380_write
+c_func
+(paren
+id|SELECT_ENABLE_REG
+comma
+id|hostdata-&gt;id_mask
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+)brace
+macro_line|#else /* NCR_TIMEOUT */
 r_while
 c_loop
 (paren
@@ -2754,6 +3139,7 @@ id|ICR_ARBITRATION_PROGRESS
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#if (NDEBUG &amp; NDEBUG_ARBITRATION) 
 id|printk
 c_func
@@ -2976,7 +3362,7 @@ id|ICR_ASSERT_SEL
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;     * Something weird happens when we cease to drive BSY - looks&n;     * like the board/chip is letting us do another read before the &n;     * appropriate propogation delay has expired, and we&squot;re confusing&n;     * a BSY signal from ourselves as the target&squot;s response to SELECTION.&n;     *&n;     * A small delay (the &squot;C++&squot; frontend breaks the pipeline with an&n;     * unecessary jump, making it work on my 386-33/Trantor T128, the&n;     * tighter &squot;C&squot; code breaks and requires this) solves the problem - &n;     * the 1 us delay is arbitrary, and only used because this delay will &n;     * be the same on other platforms and since it works here, it should &n;     * work there.&n;     */
+multiline_comment|/* &n;     * Something wierd happens when we cease to drive BSY - looks&n;     * like the board/chip is letting us do another read before the &n;     * appropriate propogation delay has expired, and we&squot;re confusing&n;     * a BSY signal from ourselves as the target&squot;s response to SELECTION.&n;     *&n;     * A small delay (the &squot;C++&squot; frontend breaks the pipeline with an&n;     * unecessary jump, making it work on my 386-33/Trantor T128, the&n;     * tighter &squot;C&squot; code breaks and requires this) solves the problem - &n;     * the 1 us delay is arbitrary, and only used because this delay will &n;     * be the same on other platforms and since it works here, it should &n;     * work there.&n;     */
 id|udelay
 c_func
 (paren
@@ -3020,10 +3406,72 @@ c_func
 id|STATUS_REG
 )paren
 op_amp
+(paren
 id|SR_BSY
+op_or
+id|SR_IO
+)paren
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|NCR5380_read
+c_func
+(paren
+id|STATUS_REG
+)paren
+op_amp
+(paren
+id|SR_SEL
+op_or
+id|SR_IO
+)paren
+)paren
+op_eq
+(paren
+id|SR_SEL
+op_or
+id|SR_IO
+)paren
+)paren
+(brace
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
+id|NCR5380_reselect
+c_func
+(paren
+id|instance
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;scsi%d : reselection after won arbitration?&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+id|NCR5380_write
+c_func
+(paren
+id|SELECT_ENABLE_REG
+comma
+id|hostdata-&gt;id_mask
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|NCR5380_write
 c_func
 (paren
@@ -3057,6 +3505,57 @@ comma
 id|ICR_BASE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hostdata-&gt;targets_present
+op_amp
+(paren
+l_int|1
+op_lshift
+id|cmd-&gt;target
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : wierdness&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hostdata-&gt;restart_select
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;trestart select&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef NDEBUG
+id|NCR5380_print
+(paren
+id|instance
+)paren
+suffix:semicolon
+macro_line|#endif
+id|NCR5380_write
+c_func
+(paren
+id|SELECT_ENABLE_REG
+comma
+id|hostdata-&gt;id_mask
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|cmd-&gt;result
 op_assign
 id|DID_BAD_TARGET
@@ -3089,10 +3588,26 @@ id|instance-&gt;host_no
 )paren
 suffix:semicolon
 macro_line|#endif
+id|NCR5380_write
+c_func
+(paren
+id|SELECT_ENABLE_REG
+comma
+id|hostdata-&gt;id_mask
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|hostdata-&gt;targets_present
+op_or_assign
+(paren
+l_int|1
+op_lshift
+id|cmd-&gt;target
+)paren
+suffix:semicolon
 multiline_comment|/*&n;     * Since we followed the SCSI spec, and raised ATN while SEL &n;     * was true but before BSY was false during selection, the information&n;     * transfer phase should be a MESSAGE OUT phase so that we can send the&n;     * IDENTIFY message.&n;     * &n;     * If SCSI-II tagged queing is enabled, we also send a SIMPLE_QUEUE_TAG&n;     * message (2 bytes) with a tag ID that we increment with every command&n;     * until it wraps back to 0.&n;     *&n;     * XXX - it turns out that there are some broken SCSI-II devices,&n;     *&t;     which claim to support tagged queing but fail when more than&n;     *&t;     some number of commands are issued at once.&n;     */
 multiline_comment|/* Wait for start of REQ/ACK handshake */
 r_while
@@ -3615,10 +4130,24 @@ id|instance-&gt;host_no
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; * We have several special cases to consider during REQ/ACK handshaking : &n; * 1.  We were in MSGOUT phase, and we are on the last byte of the &n; *&t;message.  ATN must be dropped as ACK is dropped.&n; *&n; * 2.  We are in a MSGIN phase, and we are on the last byte of the  &n; *&t;message.  We must exit with ACK asserted, so that the calling&n; *&t;code may raise ATN before dropping ACK to reject the message.&n; *&n; * 3.  ACK and ATN are clear and the target may proceed as normal.&n; */
 r_if
 c_cond
 (paren
 op_logical_neg
+(paren
+id|p
+op_eq
+id|PHASE_MSGIN
+op_logical_and
+id|c
+op_eq
+l_int|1
+)paren
+)paren
+(brace
+r_if
+c_cond
 (paren
 id|p
 op_eq
@@ -3628,16 +4157,6 @@ id|c
 OG
 l_int|1
 )paren
-)paren
-id|NCR5380_write
-c_func
-(paren
-id|INITIATOR_COMMAND_REG
-comma
-id|ICR_BASE
-)paren
-suffix:semicolon
-r_else
 id|NCR5380_write
 c_func
 (paren
@@ -3648,6 +4167,16 @@ op_or
 id|ICR_ASSERT_ATN
 )paren
 suffix:semicolon
+r_else
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
+)brace
 )brace
 r_while
 c_loop
@@ -4020,6 +4549,7 @@ id|MODE_REG
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* &n; * FOO stuff. For some UNAPPARANT reason, I&squot;m getting &n; * watchdog timers fired on bootup for NO APPARANT REASON, meaning it&squot;s&n; * probably a timing problem.&n; *&n; * Since this is the only place I have back-to-back writes, perhaps this &n; * is the problem?&n; */
 r_if
 c_cond
 (paren
@@ -4027,6 +4557,15 @@ id|p
 op_amp
 id|SR_IO
 )paren
+(brace
+macro_line|#ifndef FOO
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -4035,8 +4574,17 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
+macro_line|#ifndef FOO
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -4047,6 +4595,14 @@ op_or
 id|ICR_ASSERT_DATA
 )paren
 suffix:semicolon
+macro_line|#ifndef FOO
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
@@ -4055,6 +4611,14 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifndef FOO
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#if defined(REAL_DMA_POLL)
 r_do
@@ -4790,6 +5354,11 @@ op_assign
 id|NOP
 suffix:semicolon
 r_int
+id|sink
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|len
 comma
 id|transfersize
@@ -4804,6 +5373,11 @@ r_char
 id|phase
 comma
 id|tmp
+comma
+id|extended_msg
+(braket
+l_int|10
+)braket
 comma
 id|old_phase
 op_assign
@@ -4877,6 +5451,71 @@ id|instance
 suffix:semicolon
 macro_line|#endif
 )brace
+r_if
+c_cond
+(paren
+id|sink
+op_logical_and
+(paren
+id|phase
+op_ne
+id|PHASE_MSGOUT
+)paren
+)paren
+(brace
+id|NCR5380_write
+c_func
+(paren
+id|TARGET_COMMAND_REG
+comma
+id|PHASE_SR_TO_TCR
+c_func
+(paren
+id|tmp
+)paren
+)paren
+suffix:semicolon
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+op_or
+id|ICR_ASSERT_ATN
+op_or
+id|ICR_ASSERT_ACK
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|NCR5380_read
+c_func
+(paren
+id|STATUS_REG
+)paren
+op_amp
+id|SR_REQ
+)paren
+suffix:semicolon
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+op_or
+id|ICR_ASSERT_ATN
+)paren
+suffix:semicolon
+id|sink
+op_assign
+l_int|0
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -4897,6 +5536,10 @@ l_string|&quot;scsi%d : NDEBUG_NO_DATAOUT set, attempted DATAOUT aborted&bslash;
 comma
 id|instance-&gt;host_no
 )paren
+suffix:semicolon
+id|sink
+op_assign
+l_int|1
 suffix:semicolon
 id|msgout
 op_assign
@@ -5058,10 +5701,15 @@ op_or
 id|ICR_ASSERT_ATN
 )paren
 suffix:semicolon
+id|sink
+op_assign
+l_int|1
+suffix:semicolon
 id|msgout
 op_assign
 id|ABORT
 suffix:semicolon
+multiline_comment|/* XXX - need to source or sink data here, as appropriate */
 )brace
 r_else
 id|cmd-&gt;SCp.this_residual
@@ -5103,7 +5751,6 @@ suffix:semicolon
 r_case
 id|PHASE_MSGIN
 suffix:colon
-multiline_comment|/* &n;&t;&t; * XXX - we don&squot;t handle multi-byte messages here, since we &n;&t;&t; * shouldn&squot;t get them after the I_T_L_Q nexus is established&n;&t;&t; * for tagged queuing, and the host should initiate any &n;&t;&t; * negotiations for sync. SCSI, etc.&n;&t;&t; */
 id|len
 op_assign
 l_int|1
@@ -5146,6 +5793,15 @@ suffix:colon
 r_case
 id|LINKED_FLG_CMD_COMPLETE
 suffix:colon
+multiline_comment|/* Accept message by clearing ACK */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
 macro_line|#if (NDEBUG &amp; NDEBUG_LINKED) 
 id|printk
 c_func
@@ -5178,6 +5834,10 @@ id|cmd-&gt;target
 comma
 id|cmd-&gt;lun
 )paren
+suffix:semicolon
+id|sink
+op_assign
+l_int|1
 suffix:semicolon
 id|msgout
 op_assign
@@ -5252,6 +5912,15 @@ suffix:colon
 r_case
 id|COMMAND_COMPLETE
 suffix:colon
+multiline_comment|/* Accept message by clearing ACK */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
 id|hostdata-&gt;connected
 op_assign
 l_int|NULL
@@ -5477,6 +6146,15 @@ comma
 id|hostdata-&gt;id_mask
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;     * Restore phase bits to 0 so an interrupted selection, &n;&t;&t;     * arbitration can resume.&n;&t;&t;     */
+id|NCR5380_write
+c_func
+(paren
+id|TARGET_COMMAND_REG
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5499,6 +6177,15 @@ suffix:semicolon
 r_case
 id|MESSAGE_REJECT
 suffix:colon
+multiline_comment|/* Accept message by clearing ACK */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -5539,6 +6226,15 @@ suffix:semicolon
 r_case
 id|DISCONNECT
 suffix:colon
+multiline_comment|/* Accept message by clearing ACK */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
 id|cmd-&gt;device-&gt;disconnect
 op_assign
 l_int|1
@@ -5585,6 +6281,15 @@ id|cmd-&gt;lun
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* &n;&t;&t;     * Restore phase bits to 0 so an interrupted selection, &n;&t;&t;     * arbitration can resume.&n;&t;&t;     */
+id|NCR5380_write
+c_func
+(paren
+id|TARGET_COMMAND_REG
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/* Enable reselect interupts */
 id|NCR5380_write
 c_func
@@ -5621,19 +6326,328 @@ suffix:colon
 r_case
 id|RESTORE_POINTERS
 suffix:colon
+multiline_comment|/* Accept message by clearing ACK */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
-r_default
+r_case
+id|EXTENDED_MESSAGE
 suffix:colon
-multiline_comment|/* &n; * XXX rejected messages should be handled in the pio data transfer phase,&n; * since ATN should be raised before ACK goes false when we reject a message&n; */
+multiline_comment|/* &n; * Extended messages are sent in the following format :&n; * Byte &t;&n; * 0&t;&t;EXTENDED_MESSAGE == 1&n; * 1&t;&t;length (includes one byte for code, doesn&squot;t &n; *&t;&t;include first two bytes)&n; * 2 &t;&t;code&n; * 3..length+1&t;arguments&n; *&n; * Start the extended message buffer with the EXTENDED_MESSAGE&n; * byte, since print_msg() wants the whole thing.  &n; */
+id|extended_msg
+(braket
+l_int|0
+)braket
+op_assign
+id|EXTENDED_MESSAGE
+suffix:semicolon
+multiline_comment|/* Accept first byte by clearing ACK */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
+macro_line|#if (NDEBUG &amp; NDEBUG_EXTENDED)
 id|printk
 c_func
 (paren
-l_string|&quot;Unknown message!&bslash;n&quot;
+l_string|&quot;scsi%d : receiving extended message&bslash;n&quot;
+comma
+id|instance-&gt;host_no
 )paren
 suffix:semicolon
-macro_line|#ifdef notyet
+macro_line|#endif
+id|len
+op_assign
+l_int|2
+suffix:semicolon
+id|data
+op_assign
+id|extended_msg
+op_plus
+l_int|1
+suffix:semicolon
+id|phase
+op_assign
+id|PHASE_MSGIN
+suffix:semicolon
+id|NCR5380_transfer_pio
+c_func
+(paren
+id|instance
+comma
+op_amp
+id|phase
+comma
+op_amp
+id|len
+comma
+op_amp
+id|data
+)paren
+suffix:semicolon
+macro_line|#if (NDEBUG &amp; NDEBUG_EXTENDED)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : length=%d, code=0x%02x&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+comma
+(paren
+r_int
+)paren
+id|extended_msg
+(braket
+l_int|1
+)braket
+comma
+(paren
+r_int
+)paren
+id|extended_msg
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|len
+op_logical_and
+id|extended_msg
+(braket
+l_int|1
+)braket
+op_le
+(paren
+r_sizeof
+(paren
+id|extended_msg
+)paren
+op_minus
+l_int|1
+)paren
+)paren
+(brace
+multiline_comment|/* Accept third byte by clearing ACK */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|extended_msg
+(braket
+l_int|1
+)braket
+op_minus
+l_int|1
+suffix:semicolon
+id|data
+op_assign
+id|extended_msg
+op_plus
+l_int|3
+suffix:semicolon
+id|phase
+op_assign
+id|PHASE_MSGIN
+suffix:semicolon
+id|NCR5380_transfer_pio
+c_func
+(paren
+id|instance
+comma
+op_amp
+id|phase
+comma
+op_amp
+id|len
+comma
+op_amp
+id|data
+)paren
+suffix:semicolon
+macro_line|#if (NDEBUG &amp; NDEBUG_EXTENDED)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : message received, residual %d&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+comma
+id|len
+)paren
+suffix:semicolon
+macro_line|#endif
+r_switch
+c_cond
+(paren
+id|extended_msg
+(braket
+l_int|2
+)braket
+)paren
+(brace
+r_case
+id|EXTENDED_SDTR
+suffix:colon
+r_case
+id|EXTENDED_WDTR
+suffix:colon
+r_case
+id|EXTENDED_MODIFY_DATA_POINTER
+suffix:colon
+r_case
+id|EXTENDED_EXTENDED_IDENTIFY
+suffix:colon
+id|tmp
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|len
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: error recieving extended message&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: extended message code %02x length %d is too long&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+comma
+id|extended_msg
+(braket
+l_int|2
+)braket
+comma
+id|extended_msg
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Fall through to reject message */
 multiline_comment|/* &n;  &t;&t; * If we get something wierd that we aren&squot;t expecting, &n; &t;&t; * reject it.&n;&t;&t; */
+r_default
+suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tmp
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: rejecting message &quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+id|print_msg
+(paren
+id|extended_msg
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|tmp
+op_ne
+id|EXTENDED_MESSAGE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: rejecting unknown message %02x from target %d, lun %d&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+comma
+id|tmp
+comma
+id|cmd-&gt;target
+comma
+id|cmd-&gt;lun
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: rejecting unknown extended message code %02x, legnth %d from target %d, lun %d&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+comma
+id|extended_msg
+(braket
+l_int|1
+)braket
+comma
+id|extended_msg
+(braket
+l_int|0
+)braket
+comma
+id|cmd-&gt;target
+comma
+id|cmd-&gt;lun
+)paren
+suffix:semicolon
 id|msgout
 op_assign
 id|MESSAGE_REJECT
@@ -5648,7 +6662,6 @@ op_or
 id|ICR_ASSERT_ATN
 )paren
 suffix:semicolon
-macro_line|#endif 
 r_break
 suffix:semicolon
 )brace
@@ -6003,6 +7016,19 @@ c_func
 id|instance
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     * Disable arbitration, etc. since the host adapter obviously&n;     * lost, and tell an interrupted NCR5380_select() to restart.&n;     */
+id|NCR5380_write
+c_func
+(paren
+id|MODE_REG
+comma
+id|MR_BASE
+)paren
+suffix:semicolon
+id|hostdata-&gt;restart_select
+op_assign
+l_int|1
+suffix:semicolon
 id|target_mask
 op_assign
 id|NCR5380_read
@@ -6075,7 +7101,7 @@ id|SR_REQ
 suffix:semicolon
 id|len
 op_assign
-l_int|3
+l_int|1
 suffix:semicolon
 id|data
 op_assign
@@ -6100,27 +7126,6 @@ op_amp
 id|data
 )paren
 suffix:semicolon
-macro_line|#ifdef SCSI2
-multiline_comment|/*&n;     * If there was no residual from the attempt to transfer three bytes, then&n;     * the target sent the one byte IDENTIFY message followed by a two byte&n;     * queue message.&n;     *&n;     * If there were two bytes of residual, we got the IDENTIFY message&n;     * only.&n;     *&n;     * If there was one byte of residual, we got the IDENTIFY message&n;     * followed by a RESTORE pointers message (which was ignored - &n;     * see MSGIN phase of the NCR5380_information_transfer() function.&n;     */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|len
-)paren
-id|tag
-op_assign
-id|msg
-(braket
-l_int|2
-)braket
-suffix:semicolon
-r_else
-id|tag
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6154,6 +7159,15 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* Accept message by clearing ACK */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_BASE
+)paren
+suffix:semicolon
 id|lun
 op_assign
 (paren
@@ -6165,6 +7179,10 @@ op_amp
 l_int|0x07
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; * We need to add code for SCSI-II to track which devices have&n;&t; * I_T_L_Q nexuses established, and which have simple I_T_L&n;&t; * nexuses so we can chose to do additional data transfer.&n; &t; */
+macro_line|#ifdef SCSI2
+macro_line|#error &quot;SCSI-II tagged queueing is not supported yet&quot;
+macro_line|#endif
 multiline_comment|/* &n;&t; * Find the command corresponding to the I_T_L or I_T_L_Q  nexus we &n;&t; * just restablished, and remove it from the disconnected queue.&n;&t; */
 r_for
 c_loop
@@ -6354,11 +7372,11 @@ l_string|&quot;scsi%d : nexus established, target = %d, lun = %d, tag = %d&bslas
 comma
 id|instance-&gt;host_no
 comma
-id|cmd-&gt;target
+id|tmp-&gt;target
 comma
-id|cmd-&gt;lun
+id|tmp-&gt;lun
 comma
-id|cmd-&gt;tag
+id|tmp-&gt;tag
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -6520,6 +7538,24 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : aborting command&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+id|print_Scsi_Cmnd
+(paren
+id|cmd
+)paren
+suffix:semicolon
+id|NCR5380_print_status
+(paren
+id|instance
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -6559,7 +7595,47 @@ id|STATUS_REG
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* &n; * Case 1 : If the command hasn&squot;t been issued yet, we simply remove it &n; * &t;    from the issue queue.&n; */
+macro_line|#if 0
+multiline_comment|/*&n; * Case 1 : If the command is the currently executing command, &n; * we&squot;ll set the aborted flag and return control so that &n; * information transfer routine can exit cleanly.&n; */
+r_if
+c_cond
+(paren
+id|hostdata-&gt;connected
+op_eq
+id|cmd
+)paren
+(brace
+macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d : aborting connected command&bslash;n&quot;
+comma
+id|instance-&gt;host_no
+)paren
+suffix:semicolon
+macro_line|#endif
+id|hostdata-&gt;aborted
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n; * We should perform BSY checking, and make sure we haven&squot;t slipped&n; * into BUS FREE.&n; */
+id|NCR5380_write
+c_func
+(paren
+id|INITIATOR_COMMAND_REG
+comma
+id|ICR_ASSERT_ATN
+)paren
+suffix:semicolon
+multiline_comment|/* &n; * Since we can&squot;t change phases until we&squot;ve completed the current &n; * handshake, we have to source or sink a byte of data if the current&n; * phase is not MSGOUT.&n; */
+multiline_comment|/* &n; * Return control to the executing NCR drive so we can clear the&n; * aborted flag and get back into our main loop.&n; */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* &n; * Case 2 : If the command hasn&squot;t been issued yet, we simply remove it &n; * &t;    from the issue queue.&n; */
 r_for
 c_loop
 (paren
@@ -6661,7 +7737,7 @@ r_return
 id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Case 2 : If any commands are connected, we&squot;re going to fail the abort&n; *&t;    and let the high level SCSI driver retry at a later time or &n; *&t;    issue a reset.&n; *&n; *&t;    Timeouts, and therefore aborted commands, will be highly unlikely&n; *          and handling them cleanly in this situation would make the common&n; *&t;    case of noresets less efficient, and would pollute our code.  So,&n; *&t;    we fail.&n; */
+multiline_comment|/* &n; * Case 3 : If any commands are connected, we&squot;re going to fail the abort&n; *&t;    and let the high level SCSI driver retry at a later time or &n; *&t;    issue a reset.&n; *&n; *&t;    Timeouts, and therefore aborted commands, will be highly unlikely&n; *          and handling them cleanly in this situation would make the common&n; *&t;    case of noresets less efficient, and would pollute our code.  So,&n; *&t;    we fail.&n; */
 r_if
 c_cond
 (paren
@@ -6687,7 +7763,7 @@ r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Case 3: If the command is currently disconnected from the bus, and &n; * &t;there are no connected commands, we reconnect the I_T_L or &n; *&t;I_T_L_Q nexus associated with it, go into message out, and send &n; *      an abort message.&n; *&n; * This case is especially ugly. In order to resetablish the nexus, we&n; * need to call NCR5380_select().  The easiest way to implement this &n; * function was to abort if the bus was busy, and let the interrupt&n; * handler triggered on the SEL for reselect take care of lost arbitrations&n; * where necessary, meaning interrupts need to be enabled.&n; *&n; * When interrupts are enabled, the queues may change - so we &n; * can&squot;t remove it from the disconnected queue before selecting it&n; * because that could cause a failure in hashing the nexus if that &n; * device reselected.&n; * &n; * Since the queues may change, we can&squot;t use the pointers from when we&n; * first locate it.&n; *&n; * So, we must first locate the command, and if NCR5380_select()&n; * succeeds, then issue the abort, relocate the command and remove&n; * it from the disconnected queue.&n; */
+multiline_comment|/*&n; * Case 4: If the command is currently disconnected from the bus, and &n; * &t;there are no connected commands, we reconnect the I_T_L or &n; *&t;I_T_L_Q nexus associated with it, go into message out, and send &n; *      an abort message.&n; *&n; * This case is especially ugly. In order to resetablish the nexus, we&n; * need to call NCR5380_select().  The easiest way to implement this &n; * function was to abort if the bus was busy, and let the interrupt&n; * handler triggered on the SEL for reselect take care of lost arbitrations&n; * where necessary, meaning interrupts need to be enabled.&n; *&n; * When interrupts are enabled, the queues may change - so we &n; * can&squot;t remove it from the disconnected queue before selecting it&n; * because that could cause a failure in hashing the nexus if that &n; * device reselected.&n; * &n; * Since the queues may change, we can&squot;t use the pointers from when we&n; * first locate it.&n; *&n; * So, we must first locate the command, and if NCR5380_select()&n; * succeeds, then issue the abort, relocate the command and remove&n; * it from the disconnected queue.&n; */
 r_for
 c_loop
 (paren
@@ -6896,7 +7972,7 @@ id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Case 4 : If we reached this point, the command was not found in any of &n; *&t;    the queues.&n; *&n; * We probably reached this point because of an unlikely race condition&n; * between the command completing successfully and the abortion code,&n; * so we won&squot;t panic, but we will notify the user in case somethign really&n; * broke.&n; */
+multiline_comment|/*&n; * Case 5 : If we reached this point, the command was not found in any of &n; *&t;    the queues.&n; *&n; * We probably reached this point because of an unlikely race condition&n; * between the command completing successfully and the abortion code,&n; * so we won&squot;t panic, but we will notify the user in case somethign really&n; * broke.&n; */
 id|sti
 c_func
 (paren
@@ -6939,6 +8015,11 @@ c_func
 id|cmd-&gt;host
 )paren
 suffix:semicolon
+id|NCR5380_print_status
+(paren
+id|cmd-&gt;host
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -6957,7 +8038,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|1
+l_int|25
 )paren
 suffix:semicolon
 id|NCR5380_write

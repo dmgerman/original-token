@@ -940,6 +940,13 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* copy outgoing packets to any sniffer packet handlers */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|where
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -1015,6 +1022,7 @@ suffix:semicolon
 id|nitcount
 op_decrement
 suffix:semicolon
+)brace
 )brace
 )brace
 r_if

@@ -560,6 +560,8 @@ id|NCR5380_init
 c_func
 (paren
 id|instance
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -832,6 +834,32 @@ id|i
 op_assign
 id|len
 suffix:semicolon
+macro_line|#if 0
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|i
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|instance-&gt;base
+(braket
+id|T_STATUS_REG_OFFSET
+)braket
+)paren
+op_amp
+id|T_ST_RDY
+)paren
+suffix:semicolon
+macro_line|#else
 r_while
 c_loop
 (paren
@@ -855,6 +883,8 @@ suffix:semicolon
 op_decrement
 id|i
 )paren
+(brace
+macro_line|#endif
 op_star
 id|d
 op_increment
@@ -862,6 +892,7 @@ op_assign
 op_star
 id|reg
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -911,7 +942,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : watchdog timer fired in NCR5480_pread()&bslash;n&quot;
+l_string|&quot;scsi%d : watchdog timer fired in NCR5380_pread()&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 )paren
@@ -974,6 +1005,32 @@ id|i
 op_assign
 id|len
 suffix:semicolon
+macro_line|#if 0
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|i
+suffix:semicolon
+op_decrement
+id|i
+)paren
+(brace
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|instance-&gt;base
+(braket
+id|T_STATUS_REG_OFFSET
+)braket
+)paren
+op_amp
+id|T_ST_RDY
+)paren
+suffix:semicolon
+macro_line|#else
 r_while
 c_loop
 (paren
@@ -997,6 +1054,8 @@ suffix:semicolon
 op_decrement
 id|i
 )paren
+(brace
+macro_line|#endif
 op_star
 id|reg
 op_assign
@@ -1004,6 +1063,7 @@ op_star
 id|s
 op_increment
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1053,7 +1113,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : watchdog timer fired in NCR5480_pwrite()&bslash;n&quot;
+l_string|&quot;scsi%d : watchdog timer fired in NCR5380_pwrite()&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 )paren

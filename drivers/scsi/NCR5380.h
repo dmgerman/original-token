@@ -1,10 +1,14 @@
-multiline_comment|/* &n; * NCR 5380 defines&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix consulting and custom programming)&n; * &t;drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 4&n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * $Log: NCR5380.h,v $&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; */
+multiline_comment|/* &n; * NCR 5380 defines&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix consulting and custom programming)&n; * &t;drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 6&n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
+multiline_comment|/*&n; * $Log: NCR5380.h,v $&n; */
 macro_line|#ifndef NCR5380_H
 DECL|macro|NCR5380_H
 mdefine_line|#define NCR5380_H
 DECL|macro|NCR5380_PUBLIC_RELEASE
-mdefine_line|#define NCR5380_PUBLIC_RELEASE 4
+mdefine_line|#define NCR5380_PUBLIC_RELEASE 6
+macro_line|#ifdef NCR53C400
+DECL|macro|NCR53C400_PUBLIC_RELEASE
+mdefine_line|#define NCR53C400_PUBLIC_RELEASE 1
+macro_line|#endif
 DECL|macro|NDEBUG_ARBITRATION
 mdefine_line|#define NDEBUG_ARBITRATION&t;0x1
 DECL|macro|NDEBUG_AUTOSENSE
@@ -41,6 +45,10 @@ DECL|macro|NDEBUG_USLEEP
 mdefine_line|#define NDEBUG_USLEEP&t;&t;0x10000
 DECL|macro|NDEBUG_LAST_BYTE_SENT
 mdefine_line|#define NDEBUG_LAST_BYTE_SENT&t;0x20000
+DECL|macro|NDEBUG_RESTART_SELECT
+mdefine_line|#define NDEBUG_RESTART_SELECT&t;0x40000
+DECL|macro|NDEBUG_EXTENDED
+mdefine_line|#define NDEBUG_EXTENDED&t;&t;0x80000
 multiline_comment|/* &n; * The contents of the OUTPUT DATA register are asserted on the bus when&n; * either arbitration is occuring or the phase-indicating signals (&n; * IO, CD, MSG) in the TARGET COMMAND register and the ASSERT DATA&n; * bit in the INTITIATOR COMMAND register is set.&n; */
 DECL|macro|OUTPUT_DATA_REG
 mdefine_line|#define OUTPUT_DATA_REG         0       /* wo DATA lines on SCSI bus */
@@ -168,23 +176,56 @@ mdefine_line|#define RESET_PARITY_INTERRUPT_REG&t;7&t;/* ro */
 multiline_comment|/* Write any value to this register to start an ini mode DMA recieve */
 DECL|macro|START_DMA_INITIATOR_RECIEVE_REG
 mdefine_line|#define START_DMA_INITIATOR_RECIEVE_REG 7&t;/* wo */
+macro_line|#ifdef NCR53C400
+DECL|macro|C400_CONTROL_STATUS_REG
+mdefine_line|#define C400_CONTROL_STATUS_REG                -8      /* rw */
+DECL|macro|CSR_RESET
+mdefine_line|#define CSR_RESET              0x80    /* wo  Resets 53c400 */
+DECL|macro|CSR_53C80_REG
+mdefine_line|#define CSR_53C80_REG          0x80    /* ro  5380 registers busy */
+DECL|macro|CSR_TRANS_DIR
+mdefine_line|#define CSR_TRANS_DIR          0x40    /* rw  Data transfer direction */
+DECL|macro|CSR_SCSI_BUFF_INTR
+mdefine_line|#define CSR_SCSI_BUFF_INTR     0x20    /* rw  Enable int on transfer ready */
+DECL|macro|CSR_53C80_INTR
+mdefine_line|#define CSR_53C80_INTR         0x10    /* rw  Enable 53c80 interupts */
+DECL|macro|CSR_SHARED_INTR
+mdefine_line|#define CSR_SHARED_INTR                0x08    /* rw  Interupt sharing */
+DECL|macro|CSR_HOST_BUF_NOT_RDY
+mdefine_line|#define CSR_HOST_BUF_NOT_RDY   0x04    /* ro  Is Host buffer ready */
+DECL|macro|CSR_SCSI_BUF_RDY
+mdefine_line|#define CSR_SCSI_BUF_RDY       0x02    /* ro  SCSI buffer read */
+DECL|macro|CSR_GATED_53C80_IRQ
+mdefine_line|#define CSR_GATED_53C80_IRQ    0x01    /* ro  Last block xferred */
+DECL|macro|CSR_BASE
+mdefine_line|#define CSR_BASE CSR_SCSI_BUFF_INTR | CSR_53C80_INTR
+multiline_comment|/* Number of 128-byte blocks to be transferred */
+DECL|macro|C400_CLOCK_COUNTER_REG
+mdefine_line|#define C400_CLOCK_COUNTER_REG         -7      /* rw */
+multiline_comment|/* Resume transfer after disconnect */
+DECL|macro|C400_RESUME_TRANSFER_REG
+mdefine_line|#define C400_RESUME_TRANSFER_REG       -6      /* wo */
+multiline_comment|/* Access to host buffer stack */
+DECL|macro|C400_HOST_BUFFER
+mdefine_line|#define C400_HOST_BUFFER                       -4      /* rw */
+macro_line|#endif /* NCR53C400 */
 multiline_comment|/* Note : PHASE_* macros are based on the values of the STATUS register */
 DECL|macro|PHASE_MASK
 mdefine_line|#define PHASE_MASK &t;(SR_MSG | SR_CD | SR_IO)
 DECL|macro|PHASE_DATAOUT
-mdefine_line|#define PHASE_DATAOUT&t;0
+mdefine_line|#define PHASE_DATAOUT&t;&t;0
 DECL|macro|PHASE_DATAIN
-mdefine_line|#define PHASE_DATAIN&t;SR_IO
+mdefine_line|#define PHASE_DATAIN&t;&t;SR_IO
 DECL|macro|PHASE_CMDOUT
-mdefine_line|#define PHASE_CMDOUT&t;SR_CD
+mdefine_line|#define PHASE_CMDOUT&t;&t;SR_CD
 DECL|macro|PHASE_STATIN
-mdefine_line|#define PHASE_STATIN&t;(SR_CD | SR_IO)
+mdefine_line|#define PHASE_STATIN&t;&t;(SR_CD | SR_IO)
 DECL|macro|PHASE_MSGOUT
-mdefine_line|#define PHASE_MSGOUT&t;(SR_MSG | SR_CD)
+mdefine_line|#define PHASE_MSGOUT&t;&t;(SR_MSG | SR_CD)
 DECL|macro|PHASE_MSGIN
-mdefine_line|#define PHASE_MSGIN&t;(SR_MSG | SR_CD | SR_IO)
+mdefine_line|#define PHASE_MSGIN&t;&t;(SR_MSG | SR_CD | SR_IO)
 DECL|macro|PHASE_UNKNOWN
-mdefine_line|#define PHASE_UNKNOWN&t;0xff
+mdefine_line|#define PHASE_UNKNOWN&t;&t;0xff
 multiline_comment|/* &n; * Convert status register phase to something we can use to set phase in &n; * the target register so we can get phase mismatch interrupts on DMA &n; * transfers.&n; */
 DECL|macro|PHASE_SR_TO_TCR
 mdefine_line|#define PHASE_SR_TO_TCR(phase) ((phase) &gt;&gt; 2)&t;
@@ -213,6 +254,8 @@ DECL|macro|FLAG_HAS_LAST_BYTE_SENT
 mdefine_line|#define FLAG_HAS_LAST_BYTE_SENT&t;&t;1&t;/* NCR53c81 or better */
 DECL|macro|FLAG_CHECK_LAST_BYTE_SENT
 mdefine_line|#define FLAG_CHECK_LAST_BYTE_SENT&t;2&t;/* Only test once */
+DECL|macro|FLAG_NCR53C400
+mdefine_line|#define FLAG_NCR53C400&t;&t;&t;4&t;/* NCR53c400 */
 macro_line|#ifndef ASM
 DECL|struct|NCR5380_hostdata
 r_struct
@@ -231,6 +274,12 @@ comma
 id|id_higher_mask
 suffix:semicolon
 multiline_comment|/* 1 &lt;&lt; id, all bits greater */
+DECL|member|targets_present
+r_int
+r_char
+id|targets_present
+suffix:semicolon
+multiline_comment|/* targets we have connected&n;&t;&t;&t;&t;&t;&t;   to, so we can call a select&n;&t;&t;&t;&t;&t;&t;   failure a retryable condition */
 DECL|member|busy
 r_volatile
 r_int
@@ -277,6 +326,20 @@ op_star
 id|disconnected_queue
 suffix:semicolon
 multiline_comment|/* waiting for reconnect */
+DECL|member|restart_select
+r_volatile
+r_int
+id|restart_select
+suffix:semicolon
+multiline_comment|/* we have disconnected,&n;&t;&t;&t;&t;&t;&t;   used to restart &n;&t;&t;&t;&t;&t;&t;   NCR5380_select() */
+DECL|member|aborted
+r_volatile
+r_int
+id|aborted
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag, says aborted */
 DECL|member|flags
 r_int
 id|flags
@@ -329,6 +392,9 @@ r_struct
 id|Scsi_Host
 op_star
 id|instance
+comma
+r_int
+id|flags
 )paren
 suffix:semicolon
 r_static

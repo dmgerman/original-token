@@ -3,7 +3,7 @@ macro_line|#ifndef PAS16_H
 DECL|macro|PAS16_H
 mdefine_line|#define PAS16_H
 DECL|macro|PAS16_PUBLIC_RELEASE
-mdefine_line|#define PAS16_PUBLIC_RELEASE 1
+mdefine_line|#define PAS16_PUBLIC_RELEASE 2
 DECL|macro|PDEBUG_INIT
 mdefine_line|#define PDEBUG_INIT&t;0x1
 DECL|macro|PDEBUG_TRANSFER

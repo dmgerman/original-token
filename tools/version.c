@@ -32,6 +32,8 @@ l_string|&quot; (&quot;
 id|LINUX_COMPILE_BY
 l_string|&quot;@&quot;
 id|LINUX_COMPILE_HOST
+l_string|&quot;) (&quot;
+id|LINUX_COMPILER
 l_string|&quot;) &quot;
 id|UTS_VERSION
 l_string|&quot;&bslash;n&quot;

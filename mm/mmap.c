@@ -462,6 +462,8 @@ op_amp
 id|VM_GROWSDOWN
 op_or
 id|VM_DENYWRITE
+op_or
+id|VM_EXECUTABLE
 )paren
 suffix:semicolon
 r_if

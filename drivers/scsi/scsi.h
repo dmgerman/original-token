@@ -103,6 +103,11 @@ mdefine_line|#define MODE_SELECT_10&t;&t;0x55
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10&t;&t;0x5a
 r_extern
+r_volatile
+r_int
+id|in_scan_scsis
+suffix:semicolon
+r_extern
 r_const
 r_int
 r_char
@@ -118,6 +123,14 @@ DECL|macro|COMMAND_COMPLETE
 mdefine_line|#define COMMAND_COMPLETE&t;0x00
 DECL|macro|EXTENDED_MESSAGE
 mdefine_line|#define EXTENDED_MESSAGE&t;0x01
+DECL|macro|EXTENDED_MODIFY_DATA_POINTER
+mdefine_line|#define &t;EXTENDED_MODIFY_DATA_POINTER&t;0x00
+DECL|macro|EXTENDED_SDTR
+mdefine_line|#define &t;EXTENDED_SDTR&t;&t;&t;0x01
+DECL|macro|EXTENDED_EXTENDED_IDENTIFY
+mdefine_line|#define &t;EXTENDED_EXTENDED_IDENTIFY&t;0x02&t;/* SCSI-I only */
+DECL|macro|EXTENDED_WDTR
+mdefine_line|#define &t;EXTENDED_WDTR&t;&t;&t;0x03
 DECL|macro|SAVE_POINTERS
 mdefine_line|#define SAVE_POINTERS&t;&t;0x02
 DECL|macro|RESTORE_POINTERS
@@ -140,6 +153,10 @@ DECL|macro|LINKED_FLG_CMD_COMPLETE
 mdefine_line|#define LINKED_FLG_CMD_COMPLETE&t;0x0b
 DECL|macro|BUS_DEVICE_RESET
 mdefine_line|#define BUS_DEVICE_RESET&t;0x0c
+DECL|macro|INITIATE_RECOVERY
+mdefine_line|#define INITIATE_RECOVERY&t;0x0f&t;&t;&t;/* SCSI-II only */
+DECL|macro|RELEASE_RECOVERY
+mdefine_line|#define RELEASE_RECOVERY&t;0x10&t;&t;&t;/* SCSI-II only */
 DECL|macro|SIMPLE_QUEUE_TAG
 mdefine_line|#define SIMPLE_QUEUE_TAG&t;0x20
 DECL|macro|HEAD_OF_QUEUE_TAG
@@ -341,6 +358,12 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Used to jumpstart things after an ioctl */
+DECL|member|hostdata
+r_void
+op_star
+id|hostdata
+suffix:semicolon
+multiline_comment|/* available to low-level driver */
 DECL|member|type
 r_char
 id|type
@@ -429,6 +452,25 @@ r_char
 id|current_tag
 suffix:semicolon
 multiline_comment|/* current tag */
+DECL|member|sync
+r_int
+id|sync
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Negotiate for sync transfers */
+DECL|member|sync_min_period
+r_int
+r_char
+id|sync_min_period
+suffix:semicolon
+multiline_comment|/* Not less than this period */
+DECL|member|sync_max_offset
+r_int
+r_char
+id|sync_max_offset
+suffix:semicolon
+multiline_comment|/* Not greater than this offset */
 DECL|typedef|Scsi_Device
 )brace
 id|Scsi_Device
@@ -831,6 +873,12 @@ r_char
 id|tag
 suffix:semicolon
 multiline_comment|/* SCSI-II queued command tag */
+DECL|member|pid
+r_int
+r_int
+id|pid
+suffix:semicolon
+multiline_comment|/* Process ID, starts at 0 */
 DECL|typedef|Scsi_Cmnd
 )brace
 id|Scsi_Cmnd

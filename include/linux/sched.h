@@ -4,7 +4,7 @@ mdefine_line|#define _LINUX_SCHED_H
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 DECL|macro|HZ
 mdefine_line|#define HZ 100
-multiline_comment|/*&n; * System setup flags..&n; */
+multiline_comment|/*&n; * System setup and hardware bug flags..&n; */
 r_extern
 r_int
 id|hard_math
@@ -21,6 +21,12 @@ r_extern
 r_int
 id|wp_works_ok
 suffix:semicolon
+multiline_comment|/* doesn&squot;t work on a 386 */
+r_extern
+r_int
+id|hlt_works_ok
+suffix:semicolon
+multiline_comment|/* problems on some 486Dx4&squot;s and old 386&squot;s */
 r_extern
 r_int
 r_int

@@ -13,6 +13,9 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/termios.h&gt;
+macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#endif
@@ -458,6 +461,19 @@ id|X
 c_func
 (paren
 id|unregister_blkdev
+)paren
+comma
+multiline_comment|/* Module creation of serial units */
+id|X
+c_func
+(paren
+id|register_serial
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_serial
 )paren
 comma
 multiline_comment|/* filesystem registration */
