@@ -1512,6 +1512,10 @@ id|ppp_ldisc.magic
 op_assign
 id|TTY_LDISC_MAGIC
 suffix:semicolon
+id|ppp_ldisc.name
+op_assign
+l_string|&quot;ppp&quot;
+suffix:semicolon
 id|ppp_ldisc.open
 op_assign
 id|ppp_tty_open

@@ -841,16 +841,36 @@ suffix:semicolon
 r_case
 id|START_STOP
 suffix:colon
-r_case
-id|MOVE_MEDIUM
-suffix:colon
 id|timeout
 op_assign
+l_int|2
+op_star
 l_int|60
 op_star
 id|HZ
 suffix:semicolon
-multiline_comment|/* 60 seconds */
+multiline_comment|/* 2 minutes */
+id|retries
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MOVE_MEDIUM
+suffix:colon
+r_case
+id|READ_ELEMENT_STATUS
+suffix:colon
+id|timeout
+op_assign
+l_int|5
+op_star
+l_int|60
+op_star
+id|HZ
+suffix:semicolon
+multiline_comment|/* 5 minutes */
 id|retries
 op_assign
 l_int|1

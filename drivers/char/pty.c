@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/drivers/char/pty.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;pty.c&n; *&n; * This module exports the following pty function:&n; * &n; * &t;int  pty_open(struct tty_struct * tty, struct file * filp);&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -50,6 +49,7 @@ id|MUTEX
 suffix:semicolon
 DECL|variable|pty_driver
 DECL|variable|pty_slave_driver
+r_static
 r_struct
 id|tty_driver
 id|pty_driver
@@ -58,6 +58,7 @@ id|pty_slave_driver
 suffix:semicolon
 DECL|variable|old_pty_driver
 DECL|variable|old_pty_slave_driver
+r_static
 r_struct
 id|tty_driver
 id|old_pty_driver
@@ -215,6 +216,10 @@ op_amp
 id|tty-&gt;write_wait
 )paren
 suffix:semicolon
+id|tty-&gt;packet
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -222,6 +227,10 @@ op_logical_neg
 id|tty-&gt;link
 )paren
 r_return
+suffix:semicolon
+id|tty-&gt;link-&gt;packet
+op_assign
+l_int|0
 suffix:semicolon
 id|wake_up_interruptible
 c_func
@@ -438,6 +447,8 @@ comma
 id|PTY_BUF_SIZE
 )paren
 suffix:semicolon
+id|n
+op_sub_assign
 id|copy_from_user
 c_func
 (paren
@@ -448,6 +459,27 @@ comma
 id|n
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|n
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|c
+)paren
+id|c
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|r
 op_assign
 id|to-&gt;ldisc
@@ -690,6 +722,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|pty_open
+r_static
 r_int
 id|pty_open
 c_func
@@ -982,6 +1015,10 @@ id|pty_driver.magic
 op_assign
 id|TTY_DRIVER_MAGIC
 suffix:semicolon
+id|pty_driver.driver_name
+op_assign
+l_string|&quot;pty_master&quot;
+suffix:semicolon
 id|pty_driver.name
 op_assign
 l_string|&quot;pty&quot;
@@ -1094,6 +1131,14 @@ id|pty_slave_driver
 op_assign
 id|pty_driver
 suffix:semicolon
+id|pty_slave_driver.driver_name
+op_assign
+l_string|&quot;pty_slave&quot;
+suffix:semicolon
+id|pty_slave_driver.proc_entry
+op_assign
+l_int|0
+suffix:semicolon
 id|pty_slave_driver.name
 op_assign
 l_string|&quot;ttyp&quot;
@@ -1143,6 +1188,14 @@ id|old_pty_driver
 op_assign
 id|pty_driver
 suffix:semicolon
+id|old_pty_driver.driver_name
+op_assign
+l_string|&quot;compat_pty_master&quot;
+suffix:semicolon
+id|old_pty_driver.proc_entry
+op_assign
+l_int|0
+suffix:semicolon
 id|old_pty_driver.major
 op_assign
 id|TTY_MAJOR
@@ -1172,6 +1225,14 @@ suffix:semicolon
 id|old_pty_slave_driver
 op_assign
 id|pty_slave_driver
+suffix:semicolon
+id|old_pty_slave_driver.driver_name
+op_assign
+l_string|&quot;compat_pty_slave&quot;
+suffix:semicolon
+id|old_pty_slave_driver.proc_entry
+op_assign
+l_int|0
 suffix:semicolon
 id|old_pty_slave_driver.major
 op_assign

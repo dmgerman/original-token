@@ -12,6 +12,11 @@ DECL|member|magic
 r_int
 id|magic
 suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
 DECL|member|num
 r_int
 id|num

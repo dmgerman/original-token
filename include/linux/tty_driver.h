@@ -12,6 +12,12 @@ r_int
 id|magic
 suffix:semicolon
 multiline_comment|/* magic number for this structure */
+DECL|member|driver_name
+r_const
+r_char
+op_star
+id|driver_name
+suffix:semicolon
 DECL|member|name
 r_const
 r_char
@@ -65,6 +71,13 @@ op_star
 id|refcount
 suffix:semicolon
 multiline_comment|/* for loadable tty drivers */
+DECL|member|proc_entry
+r_struct
+id|proc_dir_entry
+op_star
+id|proc_entry
+suffix:semicolon
+multiline_comment|/* /proc fs entry */
 DECL|member|other
 r_struct
 id|tty_driver
@@ -379,6 +392,59 @@ r_char
 id|ch
 )paren
 suffix:semicolon
+DECL|member|read_proc
+r_int
+(paren
+op_star
+id|read_proc
+)paren
+(paren
+r_char
+op_star
+id|page
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_void
+op_star
+id|data
+)paren
+suffix:semicolon
+DECL|member|write_proc
+r_int
+(paren
+op_star
+id|write_proc
+)paren
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_const
+r_char
+op_star
+id|buffer
+comma
+r_int
+r_int
+id|count
+comma
+r_void
+op_star
+id|data
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * linked list pointers&n;&t; */
 DECL|member|next
 r_struct
@@ -425,5 +491,10 @@ DECL|macro|PTY_TYPE_MASTER
 mdefine_line|#define PTY_TYPE_MASTER&t;&t;&t;0x0001
 DECL|macro|PTY_TYPE_SLAVE
 mdefine_line|#define PTY_TYPE_SLAVE&t;&t;&t;0x0002
+multiline_comment|/* serial subtype definitions */
+DECL|macro|SERIAL_TYPE_NORMAL
+mdefine_line|#define SERIAL_TYPE_NORMAL&t;1
+DECL|macro|SERIAL_TYPE_CALLOUT
+mdefine_line|#define SERIAL_TYPE_CALLOUT&t;2
 macro_line|#endif /* #ifdef _LINUX_TTY_DRIVER_H */
 eof

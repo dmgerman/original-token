@@ -17,6 +17,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -4715,6 +4718,85 @@ id|tty-&gt;count
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/*&n;&t; * Sanity check --- if tty-&gt;count is zero, there shouldn&squot;t be&n;&t; * any waiters on tty-&gt;read_wait or tty-&gt;write_wait.  But just&n;&t; * in case....&n;&t; */
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
+id|tty-&gt;read_wait
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;release_dev: %s: read_wait active?!?&bslash;n&quot;
+comma
+id|tty_name
+c_func
+(paren
+id|tty
+)paren
+)paren
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|tty-&gt;read_wait
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
+id|tty-&gt;write_wait
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;release_dev: %s: write_wait active?!?&bslash;n&quot;
+comma
+id|tty_name
+c_func
+(paren
+id|tty
+)paren
+)paren
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|tty-&gt;write_wait
+)paren
+suffix:semicolon
+)brace
+r_else
+r_break
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * We&squot;re committed; at this point, we must not block!&n;&t; */
 r_if
 c_cond
@@ -5106,6 +5188,14 @@ suffix:semicolon
 id|kdev_t
 id|device
 suffix:semicolon
+r_int
+r_int
+id|saved_flags
+suffix:semicolon
+id|saved_flags
+op_assign
+id|filp-&gt;f_flags
+suffix:semicolon
 id|retry_open
 suffix:colon
 id|noctty
@@ -5140,6 +5230,11 @@ id|device
 op_assign
 id|current-&gt;tty-&gt;device
 suffix:semicolon
+id|filp-&gt;f_flags
+op_or_assign
+id|O_NONBLOCK
+suffix:semicolon
+multiline_comment|/* Don&squot;t let /dev/tty block */
 multiline_comment|/* noctty = 1; */
 )brace
 r_if
@@ -5257,6 +5352,10 @@ id|retval
 op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+id|filp-&gt;f_flags
+op_assign
+id|saved_flags
 suffix:semicolon
 r_if
 c_cond
@@ -7968,6 +8067,14 @@ id|tty_drivers
 op_assign
 id|driver
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_tty_register_driver
+c_func
+(paren
+id|driver
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 r_return
 id|error
 suffix:semicolon
@@ -8123,6 +8230,14 @@ id|driver-&gt;next-&gt;prev
 op_assign
 id|driver-&gt;prev
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_tty_unregister_driver
+c_func
+(paren
+id|driver
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -8296,9 +8411,15 @@ id|dev_tty_driver.magic
 op_assign
 id|TTY_DRIVER_MAGIC
 suffix:semicolon
+id|dev_tty_driver.driver_name
+op_assign
+l_string|&quot;/dev/tty&quot;
+suffix:semicolon
 id|dev_tty_driver.name
 op_assign
-l_string|&quot;tty&quot;
+id|dev_tty_driver.driver_name
+op_plus
+l_int|5
 suffix:semicolon
 id|dev_tty_driver.name_base
 op_assign
@@ -8315,6 +8436,14 @@ suffix:semicolon
 id|dev_tty_driver.num
 op_assign
 l_int|1
+suffix:semicolon
+id|dev_tty_driver.type
+op_assign
+id|TTY_DRIVER_TYPE_SYSTEM
+suffix:semicolon
+id|dev_tty_driver.subtype
+op_assign
+id|SYSTEM_TYPE_TTY
 suffix:semicolon
 r_if
 c_cond
@@ -8336,13 +8465,27 @@ id|dev_console_driver
 op_assign
 id|dev_tty_driver
 suffix:semicolon
+id|dev_console_driver.driver_name
+op_assign
+l_string|&quot;/dev/console&quot;
+suffix:semicolon
 id|dev_console_driver.name
 op_assign
-l_string|&quot;console&quot;
+id|dev_console_driver.driver_name
+op_plus
+l_int|5
 suffix:semicolon
 id|dev_console_driver.major
 op_assign
 id|TTYAUX_MAJOR
+suffix:semicolon
+id|dev_console_driver.type
+op_assign
+id|TTY_DRIVER_TYPE_SYSTEM
+suffix:semicolon
+id|dev_console_driver.subtype
+op_assign
+id|SYSTEM_TYPE_CONSOLE
 suffix:semicolon
 r_if
 c_cond

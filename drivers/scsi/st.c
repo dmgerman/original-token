@@ -2894,15 +2894,6 @@ op_eq
 id|NO_TAPE
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;st%d: No tape.&bslash;n&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
 id|STp-&gt;ready
 op_assign
 id|ST_NO_TAPE

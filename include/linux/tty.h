@@ -1051,40 +1051,7 @@ r_int
 id|arg
 )paren
 suffix:semicolon
-multiline_comment|/* serial.c */
-r_extern
-r_int
-id|rs_open
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-suffix:semicolon
-multiline_comment|/* pty.c */
-r_extern
-r_int
-id|pty_open
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-suffix:semicolon
+multiline_comment|/* pcxx.c */
 r_extern
 r_int
 id|pcxe_open

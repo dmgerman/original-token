@@ -5227,6 +5227,9 @@ op_assign
 id|TTY_LDISC_MAGIC
 comma
 multiline_comment|/* magic */
+l_string|&quot;n_tty&quot;
+comma
+multiline_comment|/* name */
 l_int|0
 comma
 multiline_comment|/* num */

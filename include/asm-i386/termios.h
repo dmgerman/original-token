@@ -99,6 +99,10 @@ DECL|macro|TIOCM_CD
 mdefine_line|#define TIOCM_CD&t;TIOCM_CAR
 DECL|macro|TIOCM_RI
 mdefine_line|#define TIOCM_RI&t;TIOCM_RNG
+DECL|macro|TIOCM_OUT1
+mdefine_line|#define TIOCM_OUT1&t;0x2000
+DECL|macro|TIOCM_OUT2
+mdefine_line|#define TIOCM_OUT2&t;0x4000
 multiline_comment|/* ioctl (fd, TIOCSERGETLSR, &amp;result) where result may be as below */
 multiline_comment|/* line disciplines */
 DECL|macro|N_TTY

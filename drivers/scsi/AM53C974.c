@@ -3477,6 +3477,12 @@ c_func
 id|instance
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|500000
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

@@ -100,10 +100,6 @@ r_int
 id|csum_partial_copy_from_user
 c_func
 (paren
-r_int
-op_star
-id|errp
-comma
 r_char
 op_star
 id|src
@@ -118,6 +114,10 @@ comma
 r_int
 r_int
 id|sum
+comma
+r_int
+op_star
+id|errp
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * this routine is used for miscellaneous IP-like checksums, mainly&n; * in icmp.c&n; */

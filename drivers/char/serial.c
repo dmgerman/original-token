@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; * &n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; * &t;int rs_open(struct tty_struct * tty, struct file * filp)&n; */
+multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; *&n; *  1/97:  Extended dumb serial ports are a config option now.  &n; *         Saves 4k.   Michael A. Griffith &lt;grif@acm.org&gt;&n; * &n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -35,9 +35,9 @@ r_char
 op_star
 id|serial_version
 op_assign
-l_string|&quot;4.22&quot;
+l_string|&quot;4.23&quot;
 suffix:semicolon
-DECL|variable|tq_serial
+r_static
 id|DECLARE_TASK_QUEUE
 c_func
 (paren
@@ -46,6 +46,7 @@ id|tq_serial
 suffix:semicolon
 DECL|variable|serial_driver
 DECL|variable|callout_driver
+r_static
 r_struct
 id|tty_driver
 id|serial_driver
@@ -57,21 +58,41 @@ r_static
 r_int
 id|serial_refcount
 suffix:semicolon
-multiline_comment|/* serial subtype definitions */
-DECL|macro|SERIAL_TYPE_NORMAL
-mdefine_line|#define SERIAL_TYPE_NORMAL&t;1
-DECL|macro|SERIAL_TYPE_CALLOUT
-mdefine_line|#define SERIAL_TYPE_CALLOUT&t;2
 multiline_comment|/* number of characters left in xmit buffer before we ask for more */
 DECL|macro|WAKEUP_CHARS
 mdefine_line|#define WAKEUP_CHARS 256
-multiline_comment|/*&n; * Serial driver configuration section.  Here are the various options:&n; *&n; * CONFIG_HUB6&n; *&t;&t;Enables support for the venerable Bell Technologies&n; *&t;&t;HUB6 card.&n; *&n; * SERIAL_PARANOIA_CHECK&n; * &t;&t;Check the magic number for the async_structure where&n; * &t;&t;ever possible.&n; */
+multiline_comment|/*&n; * Serial driver configuration section.  Here are the various options:&n; *&n; * CONFIG_HUB6&n; *&t;&t;Enables support for the venerable Bell Technologies&n; *&t;&t;HUB6 card.&n; *&n; * CONFIG_SERIAL_MANY_PORTS&n; * &t;&t;Enables support for ports beyond the standard, stupid&n; * &t;&t;COM 1/2/3/4.&n; *&n; * CONFIG_SERIAL_MULTIPORT&n; * &t;&t;Enables support for special multiport board support.&n; *&n; * CONFIG_SERIAL_SHARE_IRQ&n; * &t;&t;Enables support for multiple serial ports on one IRQ&n; *&n; * SERIAL_PARANOIA_CHECK&n; * &t;&t;Check the magic number for the async_structure where&n; * &t;&t;ever possible.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
 DECL|macro|CONFIG_SERIAL_NOPAUSE_IO
 mdefine_line|#define CONFIG_SERIAL_NOPAUSE_IO
 DECL|macro|SERIAL_DO_RESTART
 mdefine_line|#define SERIAL_DO_RESTART
+macro_line|#if 0
+multiline_comment|/* Normally these defines are controlled by the autoconf.h */
+mdefine_line|#define CONFIG_SERIAL_MANY_PORTS
+mdefine_line|#define CONFIG_SERIAL_SHARE_IRQ
+mdefine_line|#define CONFIG_SERIAL_MULTIPORT
+mdefine_line|#define CONFIG_HUB6
+macro_line|#endif
+multiline_comment|/* Sanity checks */
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT
+macro_line|#ifndef CONFIG_SERIAL_SHARE_IRQ
+DECL|macro|CONFIG_SERIAL_SHARE_IRQ
+mdefine_line|#define CONFIG_SERIAL_SHARE_IRQ
+macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_HUB6
+macro_line|#ifndef CONFIG_SERIAL_MANY_PORTS
+DECL|macro|CONFIG_SERIAL_MANY_PORTS
+mdefine_line|#define CONFIG_SERIAL_MANY_PORTS
+macro_line|#endif
+macro_line|#ifndef CONFIG_SERIAL_SHARE_IRQ
+DECL|macro|CONFIG_SERIAL_SHARE_IRQ
+mdefine_line|#define CONFIG_SERIAL_SHARE_IRQ
+macro_line|#endif
+macro_line|#endif
+multiline_comment|/* Set of debugging defines */
 DECL|macro|SERIAL_DEBUG_INTR
 macro_line|#undef SERIAL_DEBUG_INTR
 DECL|macro|SERIAL_DEBUG_OPEN
@@ -106,6 +127,7 @@ id|IRQ_ports
 l_int|16
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT
 DECL|variable|rs_multiport
 r_static
 r_struct
@@ -115,6 +137,7 @@ id|rs_multiport
 l_int|16
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|variable|IRQ_timeout
 r_static
 r_int
@@ -283,6 +306,7 @@ DECL|macro|STD_COM_FLAGS
 mdefine_line|#define STD_COM_FLAGS (ASYNC_BOOT_AUTOCONF | ASYNC_SKIP_TEST )
 DECL|macro|STD_COM4_FLAGS
 mdefine_line|#define STD_COM4_FLAGS ASYNC_BOOT_AUTOCONF
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
 DECL|macro|FOURPORT_FLAGS
 mdefine_line|#define FOURPORT_FLAGS ASYNC_FOURPORT
 DECL|macro|ACCENT_FLAGS
@@ -291,10 +315,12 @@ DECL|macro|BOCA_FLAGS
 mdefine_line|#define BOCA_FLAGS 0
 DECL|macro|HUB6_FLAGS
 mdefine_line|#define HUB6_FLAGS 0
+macro_line|#endif
 multiline_comment|/*&n; * The following define the access methods for the HUB6 card. All&n; * access is through two ports for all 24 possible chips. The card is&n; * selected through the high 2 bits, the port on that card with the&n; * &quot;middle&quot; 3 bits, and the register on that port with the bottom&n; * 3 bits.&n; *&n; * While the access port and interrupt is configurable, the default&n; * port locations are 0x302 for the port control register, and 0x303&n; * for the data read/write register. Normally, the interrupt is at irq3&n; * but can be anything from 3 to 7 inclusive. Note that using 3 will&n; * require disabling com2.&n; */
 DECL|macro|C_P
 mdefine_line|#define C_P(card,port) (((card)&lt;&lt;6|(port)&lt;&lt;3) + 1)
 DECL|variable|rs_table
+r_static
 r_struct
 id|serial_state
 id|rs_table
@@ -355,6 +381,7 @@ id|STD_COM4_FLAGS
 )brace
 comma
 multiline_comment|/* ttyS3 */
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
 (brace
 l_int|0
 comma
@@ -974,6 +1001,7 @@ l_int|5
 comma
 multiline_comment|/* ttyS43 */
 macro_line|#endif
+macro_line|#endif /* CONFIG_SERIAL_MANY_PORTS */
 macro_line|#ifdef CONFIG_MCA
 (brace
 l_int|0
@@ -1799,6 +1827,16 @@ id|ignored
 op_assign
 l_int|0
 suffix:semicolon
+r_struct
+id|async_icount
+op_star
+id|icount
+suffix:semicolon
+id|icount
+op_assign
+op_amp
+id|info-&gt;state-&gt;icount
+suffix:semicolon
 r_do
 (brace
 id|ch
@@ -1814,11 +1852,65 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|tty-&gt;flip.count
+op_ge
+id|TTY_FLIPBUF_SIZE
+)paren
+r_break
+suffix:semicolon
+op_star
+id|tty-&gt;flip.char_buf_ptr
+op_assign
+id|ch
+suffix:semicolon
+id|icount-&gt;rx
+op_increment
+suffix:semicolon
+macro_line|#ifdef SERIAL_DEBUG_INTR
+id|printk
+c_func
+(paren
+l_string|&quot;DR%02x:%02x...&quot;
+comma
+id|ch
+comma
+op_star
+id|status
+)paren
+suffix:semicolon
+macro_line|#endif
+op_star
+id|tty-&gt;flip.flag_buf_ptr
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|status
+op_amp
+(paren
+id|UART_LSR_BI
+op_or
+id|UART_LSR_PE
+op_or
+id|UART_LSR_FE
+op_or
+id|UART_LSR_OE
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * For statistics only&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
 op_star
 id|status
 op_amp
 id|UART_LSR_BI
 )paren
+(brace
 op_star
 id|status
 op_and_assign
@@ -1829,6 +1921,46 @@ op_or
 id|UART_LSR_PE
 )paren
 suffix:semicolon
+id|icount-&gt;brk
+op_increment
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_star
+id|status
+op_amp
+id|UART_LSR_PE
+)paren
+id|icount-&gt;parity
+op_increment
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_star
+id|status
+op_amp
+id|UART_LSR_FE
+)paren
+id|icount-&gt;frame
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|status
+op_amp
+id|UART_LSR_OE
+)paren
+id|icount-&gt;overrun
+op_increment
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Now check to see if character should be&n;&t;&t;&t; * ignored, and mask off conditions which&n;&t;&t;&t; * should be ignored.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1860,18 +1992,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tty-&gt;flip.count
-op_ge
-id|TTY_FLIPBUF_SIZE
-)paren
-r_break
-suffix:semicolon
-id|tty-&gt;flip.count
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_star
 id|status
 op_amp
@@ -1890,7 +2010,6 @@ suffix:semicolon
 macro_line|#endif
 op_star
 id|tty-&gt;flip.flag_buf_ptr
-op_increment
 op_assign
 id|TTY_BREAK
 suffix:semicolon
@@ -1919,7 +2038,6 @@ id|UART_LSR_PE
 )paren
 op_star
 id|tty-&gt;flip.flag_buf_ptr
-op_increment
 op_assign
 id|TTY_PARITY
 suffix:semicolon
@@ -1934,11 +2052,9 @@ id|UART_LSR_FE
 )paren
 op_star
 id|tty-&gt;flip.flag_buf_ptr
-op_increment
 op_assign
 id|TTY_FRAME
 suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -1947,24 +2063,41 @@ id|status
 op_amp
 id|UART_LSR_OE
 )paren
-op_star
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * Overrun is special, since it&squot;s&n;&t;&t;&t;&t; * reported immediately, and doesn&squot;t&n;&t;&t;&t;&t; * affect the current character&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|tty-&gt;flip.count
+OL
+id|TTY_FLIPBUF_SIZE
+)paren
+(brace
+id|tty-&gt;flip.count
+op_increment
+suffix:semicolon
 id|tty-&gt;flip.flag_buf_ptr
 op_increment
+suffix:semicolon
+id|tty-&gt;flip.char_buf_ptr
+op_increment
+suffix:semicolon
+op_star
+id|tty-&gt;flip.flag_buf_ptr
 op_assign
 id|TTY_OVERRUN
 suffix:semicolon
-r_else
-op_star
+)brace
+)brace
+)brace
 id|tty-&gt;flip.flag_buf_ptr
 op_increment
-op_assign
-l_int|0
 suffix:semicolon
-op_star
 id|tty-&gt;flip.char_buf_ptr
 op_increment
-op_assign
-id|ch
+suffix:semicolon
+id|tty-&gt;flip.count
+op_increment
 suffix:semicolon
 id|ignore_char
 suffix:colon
@@ -1999,14 +2132,6 @@ op_amp
 id|tq_timer
 )paren
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_INTR
-id|printk
-c_func
-(paren
-l_string|&quot;DR...&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|transmit_chars
 r_static
@@ -2043,6 +2168,9 @@ id|UART_TX
 comma
 id|info-&gt;x_char
 )paren
+suffix:semicolon
+id|info-&gt;state-&gt;icount.tx
+op_increment
 suffix:semicolon
 id|info-&gt;x_char
 op_assign
@@ -2122,6 +2250,9 @@ id|SERIAL_XMIT_SIZE
 op_minus
 l_int|1
 )paren
+suffix:semicolon
+id|info-&gt;state-&gt;icount.tx
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -2513,6 +2644,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#ifdef CONFIG_SERIAL_SHARE_IRQ
 multiline_comment|/*&n; * This is the serial driver&squot;s generic interrupt routine&n; */
 DECL|function|rs_interrupt
 r_static
@@ -2553,6 +2685,7 @@ id|end_mark
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;
 r_int
 id|first_multi
 op_assign
@@ -2563,6 +2696,7 @@ id|rs_multiport_struct
 op_star
 id|multi
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef SERIAL_DEBUG_INTR
 id|printk
 c_func
@@ -2588,6 +2722,7 @@ id|info
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;
 id|multi
 op_assign
 op_amp
@@ -2609,6 +2744,7 @@ c_func
 id|multi-&gt;port_monitor
 )paren
 suffix:semicolon
+macro_line|#endif
 r_do
 (brace
 r_if
@@ -2762,6 +2898,7 @@ op_ne
 id|info
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;
 r_if
 c_cond
 (paren
@@ -2783,6 +2920,7 @@ id|multi-&gt;port_monitor
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef SERIAL_DEBUG_INTR
 id|printk
 c_func
@@ -2792,6 +2930,7 @@ l_string|&quot;end.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif /* #ifdef CONFIG_SERIAL_SHARE_IRQ */
 multiline_comment|/*&n; * This is the serial driver&squot;s interrupt routine for a single port&n; */
 DECL|function|rs_interrupt_single
 r_static
@@ -2820,21 +2959,23 @@ id|pass_counter
 op_assign
 l_int|0
 suffix:semicolon
+r_struct
+id|async_struct
+op_star
+id|info
+suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;
 r_int
 id|first_multi
 op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|async_struct
-op_star
-id|info
-suffix:semicolon
-r_struct
 id|rs_multiport_struct
 op_star
 id|multi
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef SERIAL_DEBUG_INTR
 id|printk
 c_func
@@ -2863,6 +3004,7 @@ id|info-&gt;tty
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;
 id|multi
 op_assign
 op_amp
@@ -2884,6 +3026,7 @@ c_func
 id|multi-&gt;port_monitor
 )paren
 suffix:semicolon
+macro_line|#endif
 r_do
 (brace
 id|status
@@ -2985,6 +3128,7 @@ id|info-&gt;last_active
 op_assign
 id|jiffies
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;
 r_if
 c_cond
 (paren
@@ -3006,6 +3150,7 @@ id|multi-&gt;port_monitor
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef SERIAL_DEBUG_INTR
 id|printk
 c_func
@@ -3015,6 +3160,7 @@ l_string|&quot;end.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;
 multiline_comment|/*&n; * This is the serial driver&squot;s for multiport boards&n; */
 DECL|function|rs_interrupt_multi
 r_static
@@ -3375,6 +3521,7 @@ l_string|&quot;end.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * -------------------------------------------------------------------&n; * Here ends the serial interrupt routines.&n; * -------------------------------------------------------------------&n; */
 multiline_comment|/*&n; * This routine is used to handle the &quot;bottom half&quot; processing for the&n; * serial driver, known also the &quot;software interrupt&quot; processing.&n; * This processing is done at the kernel interrupt level, after the&n; * rs_interrupt() has returned, BUT WITH INTERRUPTS TURNED ON.  This&n; * is where time-consuming activities which can not be done in the&n; * interrupt driver proper are done; the interrupt driver schedules&n; * them using rs_sched_event(), and they get done here.&n; */
 DECL|function|do_serial_bh
@@ -3599,6 +3746,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_SHARE_IRQ
 r_if
 c_cond
 (paren
@@ -3642,6 +3790,7 @@ c_loop
 id|info
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;&t;&t;&t;&t;
 r_if
 c_cond
 (paren
@@ -3663,6 +3812,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_else
+macro_line|#endif
 id|rs_interrupt
 c_func
 (paren
@@ -3675,6 +3825,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif /* CONFIG_SERIAL_SHARE_IRQ */
 id|rs_interrupt_single
 c_func
 (paren
@@ -3727,6 +3878,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_SHARE_IRQ
 id|rs_interrupt
 c_func
 (paren
@@ -3737,6 +3889,18 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#else
+id|rs_interrupt_single
+c_func
+(paren
+l_int|0
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sti
 c_func
 (paren
@@ -4002,10 +4166,6 @@ id|info
 (brace
 r_int
 r_int
-id|ICP
-suffix:semicolon
-r_int
-r_int
 id|flags
 suffix:semicolon
 r_int
@@ -4038,6 +4198,12 @@ r_int
 r_int
 id|page
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
+r_int
+r_int
+id|ICP
+suffix:semicolon
+macro_line|#endif
 id|page
 op_assign
 id|get_free_page
@@ -4362,6 +4528,7 @@ id|state-&gt;irq
 )braket
 )paren
 (brace
+macro_line|#ifdef CONFIG_SERIAL_SHARE_IRQ
 id|free_irq
 c_func
 (paren
@@ -4370,6 +4537,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT&t;&t;&t;&t;
 r_if
 c_cond
 (paren
@@ -4385,10 +4553,17 @@ op_assign
 id|rs_interrupt_multi
 suffix:semicolon
 r_else
+macro_line|#endif
 id|handler
 op_assign
 id|rs_interrupt
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+macro_line|#endif /* CONFIG_SERIAL_SHARE_IRQ */
 )brace
 r_else
 id|handler
@@ -4559,6 +4734,7 @@ id|UART_MCR_DTR
 op_or
 id|UART_MCR_RTS
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
 r_if
 c_cond
 (paren
@@ -4580,6 +4756,7 @@ id|UART_MCR_OUT1
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif
 (brace
 r_if
 c_cond
@@ -4632,6 +4809,7 @@ id|info-&gt;IER
 )paren
 suffix:semicolon
 multiline_comment|/* enable interrupts */
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
 r_if
 c_cond
 (paren
@@ -4669,6 +4847,7 @@ id|ICP
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * And clear the interrupt registers again for luck.&n;&t; */
 (paren
 r_void
@@ -5006,6 +5185,7 @@ l_int|0x00
 )paren
 suffix:semicolon
 multiline_comment|/* disable all intrs */
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
 r_if
 c_cond
 (paren
@@ -5036,6 +5216,7 @@ id|UART_MCR_OUT1
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif
 id|info-&gt;MCR
 op_and_assign
 op_complement
@@ -5399,6 +5580,19 @@ id|cval
 op_or_assign
 id|UART_LCR_EPAR
 suffix:semicolon
+macro_line|#ifdef CMSPAR
+r_if
+c_cond
+(paren
+id|cflag
+op_amp
+id|CMSPAR
+)paren
+id|cval
+op_or_assign
+id|UART_LCR_SPAR
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Determine divisor based on baud rate */
 id|i
 op_assign
@@ -5585,6 +5779,10 @@ op_div
 l_int|9600
 suffix:semicolon
 )brace
+id|info-&gt;quot
+op_assign
+id|quot
+suffix:semicolon
 id|info-&gt;timeout
 op_assign
 (paren
@@ -5963,6 +6161,13 @@ id|cval
 )paren
 suffix:semicolon
 multiline_comment|/* reset DLAB */
+r_if
+c_cond
+(paren
+id|info-&gt;state-&gt;type
+op_ne
+id|PORT_16750
+)paren
 id|serial_outp
 c_func
 (paren
@@ -6211,7 +6416,7 @@ id|count
 r_int
 id|c
 comma
-id|total
+id|ret
 op_assign
 l_int|0
 suffix:semicolon
@@ -6328,6 +6533,8 @@ c_cond
 id|from_user
 )paren
 (brace
+id|c
+op_sub_assign
 id|copy_from_user
 c_func
 (paren
@@ -6338,6 +6545,27 @@ comma
 id|c
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|c
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|c
 op_assign
 id|MIN
@@ -6418,7 +6646,7 @@ id|count
 op_sub_assign
 id|c
 suffix:semicolon
-id|total
+id|ret
 op_add_assign
 id|c
 suffix:semicolon
@@ -6476,7 +6704,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|total
+id|ret
 suffix:semicolon
 )brace
 DECL|function|rs_write_room
@@ -6678,6 +6906,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function is used to send a high-priority XON/XOFF character to&n; * the device&n; */
 DECL|function|rs_send_xchar
+r_static
 r_void
 id|rs_send_xchar
 c_func
@@ -7100,6 +7329,9 @@ id|tmp.hub6
 op_assign
 id|state-&gt;hub6
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -7114,6 +7346,10 @@ op_star
 id|retinfo
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -7163,13 +7399,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|new_info
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -7183,6 +7412,10 @@ r_sizeof
 id|new_serial
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|state
 op_assign
@@ -7689,6 +7922,7 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
+r_return
 id|put_user
 c_func
 (paren
@@ -7696,9 +7930,6 @@ id|result
 comma
 id|value
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|get_modem_info
@@ -7779,6 +8010,34 @@ id|TIOCM_DTR
 suffix:colon
 l_int|0
 )paren
+macro_line|#ifdef TIOCM_OUT1
+op_or
+(paren
+(paren
+id|control
+op_amp
+id|UART_MCR_OUT1
+)paren
+ques
+c_cond
+id|TIOCM_OUT1
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+(paren
+id|control
+op_amp
+id|UART_MCR_OUT2
+)paren
+ques
+c_cond
+id|TIOCM_OUT2
+suffix:colon
+l_int|0
+)paren
+macro_line|#endif
 op_or
 (paren
 (paren
@@ -7832,6 +8091,7 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
+r_return
 id|put_user
 c_func
 (paren
@@ -7839,9 +8099,6 @@ id|result
 comma
 id|value
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|set_modem_info
@@ -7921,6 +8178,30 @@ id|info-&gt;MCR
 op_or_assign
 id|UART_MCR_DTR
 suffix:semicolon
+macro_line|#ifdef TIOCM_OUT1
+r_if
+c_cond
+(paren
+id|arg
+op_amp
+id|TIOCM_OUT1
+)paren
+id|info-&gt;MCR
+op_or_assign
+id|UART_MCR_OUT1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|arg
+op_amp
+id|TIOCM_OUT2
+)paren
+id|info-&gt;MCR
+op_or_assign
+id|UART_MCR_OUT2
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -7950,6 +8231,32 @@ op_and_assign
 op_complement
 id|UART_MCR_DTR
 suffix:semicolon
+macro_line|#ifdef TIOCM_OUT1
+r_if
+c_cond
+(paren
+id|arg
+op_amp
+id|TIOCM_OUT1
+)paren
+id|info-&gt;MCR
+op_and_assign
+op_complement
+id|UART_MCR_OUT1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|arg
+op_amp
+id|TIOCM_OUT2
+)paren
+id|info-&gt;MCR
+op_and_assign
+op_complement
+id|UART_MCR_OUT2
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -7965,6 +8272,12 @@ op_complement
 (paren
 id|UART_MCR_RTS
 op_or
+macro_line|#ifdef TIOCM_OUT1
+id|UART_MCR_OUT1
+op_or
+id|UART_MCR_OUT2
+op_or
+macro_line|#endif
 id|UART_MCR_DTR
 )paren
 )paren
@@ -7981,6 +8294,34 @@ id|UART_MCR_RTS
 suffix:colon
 l_int|0
 )paren
+macro_line|#ifdef TIOCM_OUT1
+op_or
+(paren
+(paren
+id|arg
+op_amp
+id|TIOCM_OUT1
+)paren
+ques
+c_cond
+id|UART_MCR_OUT1
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+(paren
+id|arg
+op_amp
+id|TIOCM_OUT2
+)paren
+ques
+c_cond
+id|UART_MCR_OUT2
+suffix:colon
+l_int|0
+)paren
+macro_line|#endif
 op_or
 (paren
 (paren
@@ -8391,6 +8732,7 @@ r_return
 id|wild_interrupts
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT
 DECL|function|get_multiport_struct
 r_static
 r_int
@@ -8481,6 +8823,9 @@ id|ret.irq
 op_assign
 id|info-&gt;state-&gt;irq
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -8495,6 +8840,10 @@ op_star
 id|retinfo
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -8568,20 +8917,13 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|in_multi
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 id|state
 op_assign
 id|info-&gt;state
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -8596,6 +8938,10 @@ r_struct
 id|serial_multiport_struct
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -8884,6 +9230,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|rs_ioctl
 r_static
 r_int
@@ -9258,34 +9605,6 @@ suffix:semicolon
 r_case
 id|TIOCMGET
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 r_return
 id|get_modem_info
 c_func
@@ -9328,34 +9647,6 @@ suffix:semicolon
 r_case
 id|TIOCGSERIAL
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|serial_struct
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 r_return
 id|get_serial_info
 c_func
@@ -9373,34 +9664,6 @@ suffix:semicolon
 r_case
 id|TIOCSSERIAL
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|serial_struct
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 r_return
 id|set_serial_info
 c_func
@@ -9428,33 +9691,7 @@ suffix:semicolon
 r_case
 id|TIOCSERGWILD
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
 r_return
-id|error
-suffix:semicolon
 id|put_user
 c_func
 (paren
@@ -9468,42 +9705,10 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 r_case
 id|TIOCSERGETLSR
 suffix:colon
 multiline_comment|/* Get line status register */
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
-r_else
 r_return
 id|get_lsr_info
 c_func
@@ -9536,31 +9741,6 @@ id|EPERM
 suffix:semicolon
 id|error
 op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 id|get_user
 c_func
 (paren
@@ -9573,6 +9753,14 @@ op_star
 )paren
 id|arg
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 r_if
 c_cond
@@ -9595,34 +9783,9 @@ suffix:semicolon
 r_case
 id|TIOCSERGSTRUCT
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|async_struct
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 id|copy_to_user
 c_func
 (paren
@@ -9641,41 +9804,18 @@ r_struct
 id|async_struct
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT
 r_case
 id|TIOCSERGETMULTI
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|serial_multiport_struct
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 r_return
 id|get_multiport_struct
 c_func
@@ -9693,34 +9833,6 @@ suffix:semicolon
 r_case
 id|TIOCSERSETMULTI
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|serial_multiport_struct
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 r_return
 id|set_multiport_struct
 c_func
@@ -9735,6 +9847,7 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Wait for any of the 4 modem inputs (DCD,RI,DSR,CTS) to change&n;&t;&t; * - mask passed in arg for lines of interest&n; &t;&t; *   (use |&squot;ed TIOCM_RNG/DSR/CD/CTS for masking)&n;&t;&t; * Caller should use TIOCGICOUNT to see which one it was&n;&t;&t; */
 r_case
 id|TIOCMIWAIT
@@ -9893,34 +10006,6 @@ multiline_comment|/* &n;&t;&t; * Get counter of input serial line interrupts (DC
 r_case
 id|TIOCGICOUNT
 suffix:colon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|serial_icounter_struct
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 id|cli
 c_func
 (paren
@@ -9944,6 +10029,8 @@ op_star
 )paren
 id|arg
 suffix:semicolon
+id|error
+op_assign
 id|put_user
 c_func
 (paren
@@ -9953,6 +10040,16 @@ op_amp
 id|p_cuser-&gt;cts
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
+suffix:semicolon
+id|error
+op_assign
 id|put_user
 c_func
 (paren
@@ -9962,6 +10059,16 @@ op_amp
 id|p_cuser-&gt;dsr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
+suffix:semicolon
+id|error
+op_assign
 id|put_user
 c_func
 (paren
@@ -9971,6 +10078,16 @@ op_amp
 id|p_cuser-&gt;rng
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
+suffix:semicolon
+id|error
+op_assign
 id|put_user
 c_func
 (paren
@@ -9979,6 +10096,14 @@ comma
 op_amp
 id|p_cuser-&gt;dcd
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
 suffix:semicolon
 r_return
 l_int|0
@@ -10834,6 +10959,7 @@ macro_line|#endif
 )brace
 multiline_comment|/*&n; * rs_hangup() --- called by tty_hangup() when a hangup is signaled.&n; */
 DECL|function|rs_hangup
+r_static
 r_void
 id|rs_hangup
 c_func
@@ -11464,6 +11590,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|get_async_struct
+r_static
 r_int
 id|get_async_struct
 c_func
@@ -11635,6 +11762,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine is called whenever a serial port is opened.  It&n; * enables interrupts for a serial port, linking in its async structure into&n; * the IRQ chain.   It also performs the serial-specific&n; * initialization for the tty structure.&n; */
 DECL|function|rs_open
+r_static
 r_int
 id|rs_open
 c_func
@@ -11912,6 +12040,571 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * /proc fs routines....&n; */
+DECL|function|line_info
+r_static
+r_int
+r_inline
+id|line_info
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_struct
+id|serial_state
+op_star
+id|state
+)paren
+(brace
+r_struct
+id|async_struct
+op_star
+id|info
+op_assign
+id|state-&gt;info
+comma
+id|scr_info
+suffix:semicolon
+r_char
+id|stat_buf
+(braket
+l_int|30
+)braket
+comma
+id|control
+comma
+id|status
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|ret
+op_assign
+id|sprintf
+c_func
+(paren
+id|buf
+comma
+l_string|&quot;%d: uart:%s port:%X irq:%d&quot;
+comma
+id|state-&gt;line
+comma
+id|uart_config
+(braket
+id|state-&gt;type
+)braket
+dot
+id|name
+comma
+id|state-&gt;port
+comma
+id|state-&gt;irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|state-&gt;port
+op_logical_or
+(paren
+id|state-&gt;type
+op_eq
+id|PORT_UNKNOWN
+)paren
+)paren
+(brace
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Figure out the current RS-232 lines&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|info
+)paren
+(brace
+id|info
+op_assign
+op_amp
+id|scr_info
+suffix:semicolon
+multiline_comment|/* This is just for serial_{in,out} */
+id|info-&gt;magic
+op_assign
+id|SERIAL_MAGIC
+suffix:semicolon
+id|info-&gt;port
+op_assign
+id|state-&gt;port
+suffix:semicolon
+id|info-&gt;flags
+op_assign
+id|state-&gt;flags
+suffix:semicolon
+id|info-&gt;quot
+op_assign
+l_int|0
+suffix:semicolon
+id|info-&gt;tty
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|serial_in
+c_func
+(paren
+id|info
+comma
+id|UART_MSR
+)paren
+suffix:semicolon
+id|control
+op_assign
+id|info
+ques
+c_cond
+id|info-&gt;MCR
+suffix:colon
+id|serial_in
+c_func
+(paren
+id|info
+comma
+id|UART_MCR
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|stat_buf
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|stat_buf
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|control
+op_amp
+id|UART_MCR_RTS
+)paren
+id|strcat
+c_func
+(paren
+id|stat_buf
+comma
+l_string|&quot;|RTS&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|UART_MSR_CTS
+)paren
+id|strcat
+c_func
+(paren
+id|stat_buf
+comma
+l_string|&quot;|CTS&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|control
+op_amp
+id|UART_MCR_DTR
+)paren
+id|strcat
+c_func
+(paren
+id|stat_buf
+comma
+l_string|&quot;|DTR&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|UART_MSR_DSR
+)paren
+id|strcat
+c_func
+(paren
+id|stat_buf
+comma
+l_string|&quot;|DSR&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|UART_MSR_DCD
+)paren
+id|strcat
+c_func
+(paren
+id|stat_buf
+comma
+l_string|&quot;|CD&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|UART_MSR_RI
+)paren
+id|strcat
+c_func
+(paren
+id|stat_buf
+comma
+l_string|&quot;|RI&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;quot
+)paren
+(brace
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot; baud:%d&quot;
+comma
+id|state-&gt;baud_base
+op_div
+id|info-&gt;quot
+)paren
+suffix:semicolon
+)brace
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot; tx:%d rx:%d&quot;
+comma
+id|state-&gt;icount.tx
+comma
+id|state-&gt;icount.rx
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|state-&gt;icount.frame
+)paren
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot; fe:%d&quot;
+comma
+id|state-&gt;icount.frame
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|state-&gt;icount.parity
+)paren
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot; pe:%d&quot;
+comma
+id|state-&gt;icount.parity
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|state-&gt;icount.brk
+)paren
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot; brk:%d&quot;
+comma
+id|state-&gt;icount.brk
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|state-&gt;icount.overrun
+)paren
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot; oe:%d&quot;
+comma
+id|state-&gt;icount.overrun
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Last thing is the RS-232 status lines&n;&t; */
+id|ret
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|ret
+comma
+l_string|&quot; %s&bslash;n&quot;
+comma
+id|stat_buf
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|rs_read_proc
+r_int
+id|rs_read_proc
+c_func
+(paren
+r_char
+op_star
+id|page
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+r_int
+id|i
+comma
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|off_t
+id|begin
+op_assign
+l_int|0
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|page
+comma
+l_string|&quot;serinfo:1.0 driver:%s&bslash;n&quot;
+comma
+id|serial_version
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NR_PORTS
+op_logical_and
+id|len
+OL
+l_int|4000
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|len
+op_add_assign
+id|line_info
+c_func
+(paren
+id|page
+op_plus
+id|len
+comma
+op_amp
+id|rs_table
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_plus
+id|begin
+OG
+id|off
+op_plus
+id|count
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_plus
+id|begin
+OL
+id|off
+)paren
+(brace
+id|begin
+op_add_assign
+id|len
+suffix:semicolon
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|off
+op_ge
+id|len
+op_plus
+id|begin
+)paren
+r_return
+l_int|0
+suffix:semicolon
+op_star
+id|start
+op_assign
+id|page
+op_plus
+(paren
+id|begin
+op_minus
+id|off
+)paren
+suffix:semicolon
+r_return
+(paren
+(paren
+id|count
+OL
+id|begin
+op_plus
+id|len
+op_minus
+id|off
+)paren
+ques
+c_cond
+id|count
+suffix:colon
+id|begin
+op_plus
+id|len
+op_minus
+id|off
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * ---------------------------------------------------------------------&n; * rs_init() and friends&n; *&n; * rs_init() is called at boot-time to initialize the serial driver.&n; * ---------------------------------------------------------------------&n; */
 multiline_comment|/*&n; * This routine prints out the appropriate serial driver version&n; * number, and identifies which options were configured into this&n; * driver.&n; */
 DECL|function|show_serial_version
@@ -11980,7 +12673,14 @@ r_char
 id|save_MCR
 comma
 id|save_IER
-comma
+suffix:semicolon
+r_int
+r_int
+id|timeout
+suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
+r_int
+r_char
 id|save_ICP
 op_assign
 l_int|0
@@ -11995,10 +12695,7 @@ id|port
 op_assign
 id|info-&gt;port
 suffix:semicolon
-r_int
-r_int
-id|timeout
-suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Enable interrupts and see who answers&n;&t; */
 id|rs_irq_triggered
 op_assign
@@ -12029,6 +12726,7 @@ comma
 id|UART_MCR
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
 r_if
 c_cond
 (paren
@@ -12097,6 +12795,7 @@ id|ICP
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif
 (brace
 id|serial_outp
 c_func
@@ -12230,6 +12929,7 @@ comma
 id|save_MCR
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
 r_if
 c_cond
 (paren
@@ -12245,6 +12945,7 @@ comma
 id|ICP
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sti
 c_func
 (paren
@@ -12945,7 +13646,7 @@ c_cond
 (paren
 id|scratch
 op_eq
-l_int|7
+l_int|6
 )paren
 id|state-&gt;type
 op_assign
@@ -13268,6 +13969,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT
 id|memset
 c_func
 (paren
@@ -13286,6 +13988,7 @@ id|rs_multiport_struct
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|show_serial_version
 c_func
@@ -13311,6 +14014,10 @@ suffix:semicolon
 id|serial_driver.magic
 op_assign
 id|TTY_DRIVER_MAGIC
+suffix:semicolon
+id|serial_driver.driver_name
+op_assign
+l_string|&quot;serial&quot;
 suffix:semicolon
 id|serial_driver.name
 op_assign
@@ -13441,6 +14148,10 @@ id|serial_driver.wait_until_sent
 op_assign
 id|rs_wait_until_sent
 suffix:semicolon
+id|serial_driver.read_proc
+op_assign
+id|rs_read_proc
+suffix:semicolon
 multiline_comment|/*&n;&t; * The callout device is just like normal device except for&n;&t; * major number and the subtype code.&n;&t; */
 id|callout_driver
 op_assign
@@ -13457,6 +14168,14 @@ suffix:semicolon
 id|callout_driver.subtype
 op_assign
 id|SERIAL_TYPE_CALLOUT
+suffix:semicolon
+id|callout_driver.read_proc
+op_assign
+l_int|0
+suffix:semicolon
+id|callout_driver.proc_entry
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -13560,6 +14279,24 @@ id|state-&gt;icount.dcd
 op_assign
 l_int|0
 suffix:semicolon
+id|state-&gt;icount.rx
+op_assign
+id|state-&gt;icount.tx
+op_assign
+l_int|0
+suffix:semicolon
+id|state-&gt;icount.frame
+op_assign
+id|state-&gt;icount.parity
+op_assign
+l_int|0
+suffix:semicolon
+id|state-&gt;icount.overrun
+op_assign
+id|state-&gt;icount.brk
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -13591,6 +14328,19 @@ id|ASYNC_BOOT_AUTOCONF
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|state-&gt;port
+comma
+l_int|8
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|autoconfig
 c_func
 (paren
@@ -13611,7 +14361,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;tty%02d%s at 0x%04x (irq = %d) is a %s&bslash;n&quot;
+l_string|&quot;ttyS%02d%s at 0x%04x (irq = %d) is a %s&bslash;n&quot;
 comma
 id|state-&gt;line
 comma
@@ -14125,6 +14875,27 @@ id|port
 comma
 l_int|8
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tmp_buf
+)paren
+(brace
+id|free_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|tmp_buf
+)paren
+suffix:semicolon
+id|tmp_buf
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 )brace

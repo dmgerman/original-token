@@ -5258,6 +5258,9 @@ suffix:semicolon
 id|sd_template.nr_dev
 op_decrement
 suffix:semicolon
+id|sd_gendisk.nr_real
+op_decrement
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon

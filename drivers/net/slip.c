@@ -4272,6 +4272,10 @@ id|sl_ldisc.magic
 op_assign
 id|TTY_LDISC_MAGIC
 suffix:semicolon
+id|sl_ldisc.name
+op_assign
+l_string|&quot;slip&quot;
+suffix:semicolon
 id|sl_ldisc.flags
 op_assign
 l_int|0

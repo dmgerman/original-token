@@ -1542,8 +1542,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|intr_count
-op_increment
+)paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
 r_if
@@ -1636,8 +1640,12 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|intr_count
-op_decrement
+)paren
 suffix:semicolon
 id|unlock_kernel
 c_func

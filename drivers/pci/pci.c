@@ -5426,7 +5426,7 @@ comma
 l_int|0xffff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Configure the bus numbers for this bridge:&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Read the existing primary/secondary/subordinate bus&n;&t;&t;&t; * number configuration to determine if the PCI bridge&n;&t;&t;&t; * has already been configured by the system.  If so,&n;&t;&t;&t; * do not modify the configuration, merely note it.&n;&t;&t;&t; */
 id|pcibios_read_config_dword
 c_func
 (paren
@@ -5440,6 +5440,62 @@ op_amp
 id|buses
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|buses
+op_amp
+l_int|0xFFFFFF
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|child-&gt;primary
+op_assign
+id|buses
+op_amp
+l_int|0xFF
+suffix:semicolon
+id|child-&gt;secondary
+op_assign
+(paren
+id|buses
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xFF
+suffix:semicolon
+id|child-&gt;subordinate
+op_assign
+(paren
+id|buses
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xFF
+suffix:semicolon
+id|child-&gt;number
+op_assign
+id|child-&gt;secondary
+suffix:semicolon
+id|max
+op_assign
+id|scan_bus
+c_func
+(paren
+id|child
+comma
+id|mem_startp
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t;&t;     * Configure the bus numbers for this bridge:&n;&t;&t;&t;     */
 id|buses
 op_and_assign
 l_int|0xff000000
@@ -5496,7 +5552,7 @@ comma
 id|buses
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Now we can scan all subordinate buses:&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;     * Now we can scan all subordinate buses:&n;&t;&t;&t;     */
 id|max
 op_assign
 id|scan_bus
@@ -5507,7 +5563,7 @@ comma
 id|mem_startp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Set the subordinate bus number to its real&n;&t;&t;&t; * value:&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;     * Set the subordinate bus number to its real&n;&t;&t;&t;     * value:&n;&t;&t;&t;     */
 id|child-&gt;subordinate
 op_assign
 id|max
@@ -5544,6 +5600,7 @@ comma
 id|buses
 )paren
 suffix:semicolon
+)brace
 id|pcibios_write_config_word
 c_func
 (paren
