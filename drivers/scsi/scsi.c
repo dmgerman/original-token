@@ -3116,6 +3116,9 @@ suffix:colon
 r_case
 id|TYPE_SCANNER
 suffix:colon
+r_case
+id|TYPE_MEDIUM_CHANGER
+suffix:colon
 id|SDpnt-&gt;writeable
 op_assign
 l_int|1

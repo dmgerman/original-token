@@ -1,6 +1,16 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * write support by Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; */
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &quot;ufs_swab.h&quot;
+macro_line|#include &quot;swab.h&quot;
+macro_line|#include &quot;util.h&quot;
+DECL|macro|UFS_DIR_DEBUG
+macro_line|#undef UFS_DIR_DEBUG
+macro_line|#ifdef UFS_DIR_DEBUG
+DECL|macro|UFSD
+mdefine_line|#define UFSD(x) printk(&quot;(%s, %d), %s: &quot;, __FILE__, __LINE__, __FUNCTION__); printk x;
+macro_line|#else
+DECL|macro|UFSD
+mdefine_line|#define UFSD(x)
+macro_line|#endif
 multiline_comment|/*&n; * This is blatantly stolen from ext2fs&n; */
 r_static
 r_int
@@ -51,7 +61,7 @@ op_star
 id|bh
 suffix:semicolon
 r_struct
-id|ufs_direct
+id|ufs_dir_entry
 op_star
 id|de
 suffix:semicolon
@@ -63,8 +73,10 @@ suffix:semicolon
 r_int
 id|de_reclen
 suffix:semicolon
-id|__u32
+r_int
 id|flags
+comma
+id|swab
 suffix:semicolon
 multiline_comment|/* Isn&squot;t that already done in the upper layer???&n;         * the VFS layer really needs some explicit documentation!&n;         */
 r_if
@@ -88,22 +100,19 @@ id|sb
 op_assign
 id|inode-&gt;i_sb
 suffix:semicolon
+id|swab
+op_assign
+id|sb-&gt;u.ufs_sb.s_swab
+suffix:semicolon
 id|flags
 op_assign
 id|sb-&gt;u.ufs_sb.s_flags
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|flags
-op_amp
-id|UFS_DEBUG
-)paren
-(brace
-id|printk
+id|UFSD
 c_func
 (paren
-l_string|&quot;ufs_readdir: ino %lu  f_pos %lu&bslash;n&quot;
+(paren
+l_string|&quot;ENTER, ino %lu  f_pos %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -113,14 +122,7 @@ r_int
 )paren
 id|filp-&gt;f_pos
 )paren
-suffix:semicolon
-id|ufs_print_inode
-c_func
-(paren
-id|inode
 )paren
-suffix:semicolon
-)brace
 id|stored
 op_assign
 l_int|0
@@ -248,7 +250,7 @@ id|de
 op_assign
 (paren
 r_struct
-id|ufs_direct
+id|ufs_dir_entry
 op_star
 )paren
 (paren
@@ -323,7 +325,7 @@ id|de
 op_assign
 (paren
 r_struct
-id|ufs_direct
+id|ufs_dir_entry
 op_star
 )paren
 (paren
@@ -343,7 +345,7 @@ l_int|0
 )paren
 op_logical_or
 (paren
-id|NAMLEN
+id|ufs_namlen
 c_func
 (paren
 id|de
@@ -445,18 +447,11 @@ id|version
 op_assign
 id|inode-&gt;i_version
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|flags
-op_amp
-id|UFS_DEBUG
-)paren
-(brace
-id|printk
+id|UFSD
 c_func
 (paren
-l_string|&quot;ufs_readdir: filldir(%s,%u)&bslash;n&quot;
+(paren
+l_string|&quot;filldir(%s,%u)&bslash;n&quot;
 comma
 id|de-&gt;d_name
 comma
@@ -466,8 +461,20 @@ c_func
 id|de-&gt;d_ino
 )paren
 )paren
-suffix:semicolon
-)brace
+)paren
+id|UFSD
+c_func
+(paren
+(paren
+l_string|&quot;namlen %u&bslash;n&quot;
+comma
+id|ufs_namlen
+c_func
+(paren
+id|de
+)paren
+)paren
+)paren
 id|error
 op_assign
 id|filldir
@@ -477,7 +484,7 @@ id|dirent
 comma
 id|de-&gt;d_name
 comma
-id|NAMLEN
+id|ufs_namlen
 c_func
 (paren
 id|de
@@ -532,30 +539,245 @@ id|bh
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0 /* XXX */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|IS_RDONLY
+id|UPDATE_ATIME
 c_func
 (paren
 id|inode
 )paren
-)paren
-(brace
-id|inode-&gt;i_atime
-op_assign
-id|CURRENT_TIME
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif /* XXX */
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|ufs_check_dir_entry
+r_int
+id|ufs_check_dir_entry
+(paren
+r_const
+r_char
+op_star
+id|function
+comma
+r_struct
+id|inode
+op_star
+id|dir
+comma
+r_struct
+id|ufs_dir_entry
+op_star
+id|de
+comma
+r_struct
+id|buffer_head
+op_star
+id|bh
+comma
+r_int
+r_int
+id|offset
+)paren
+(brace
+r_struct
+id|super_block
+op_star
+id|sb
+suffix:semicolon
+r_const
+r_char
+op_star
+id|error_msg
+suffix:semicolon
+r_int
+id|flags
+comma
+id|swab
+suffix:semicolon
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
+id|flags
+op_assign
+id|sb-&gt;u.ufs_sb.s_flags
+suffix:semicolon
+id|swab
+op_assign
+id|sb-&gt;u.ufs_sb.s_swab
+suffix:semicolon
+id|error_msg
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|SWAB16
+c_func
+(paren
+id|de-&gt;d_reclen
+)paren
+OL
+id|UFS_DIR_REC_LEN
+c_func
+(paren
+l_int|1
+)paren
+)paren
+id|error_msg
+op_assign
+l_string|&quot;reclen is smaller than minimal&quot;
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|SWAB16
+c_func
+(paren
+id|de-&gt;d_reclen
+)paren
+op_mod
+l_int|4
+op_ne
+l_int|0
+)paren
+id|error_msg
+op_assign
+l_string|&quot;reclen % 4 != 0&quot;
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|SWAB16
+c_func
+(paren
+id|de-&gt;d_reclen
+)paren
+OL
+id|UFS_DIR_REC_LEN
+c_func
+(paren
+id|ufs_namlen
+c_func
+(paren
+id|de
+)paren
+)paren
+)paren
+id|error_msg
+op_assign
+l_string|&quot;reclen is too small for namlen&quot;
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|dir
+op_logical_and
+(paren
+(paren
+r_char
+op_star
+)paren
+id|de
+op_minus
+id|bh-&gt;b_data
+)paren
+op_plus
+id|SWAB16
+c_func
+(paren
+id|de-&gt;d_reclen
+)paren
+OG
+id|dir-&gt;i_sb-&gt;s_blocksize
+)paren
+id|error_msg
+op_assign
+l_string|&quot;directory entry across blocks&quot;
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|dir
+op_logical_and
+id|SWAB32
+c_func
+(paren
+id|de-&gt;d_ino
+)paren
+OG
+(paren
+id|sb-&gt;u.ufs_sb.s_uspi-&gt;s_ipg
+op_star
+id|sb-&gt;u.ufs_sb.s_uspi-&gt;s_ncg
+)paren
+)paren
+id|error_msg
+op_assign
+l_string|&quot;inode out of bounds&quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error_msg
+op_ne
+l_int|NULL
+)paren
+id|ufs_error
+(paren
+id|sb
+comma
+id|function
+comma
+l_string|&quot;bad entry in directory #%lu, size %lu: %s - &quot;
+l_string|&quot;offset=%lu, inode=%lu, reclen=%d, namlen=%d&quot;
+comma
+id|dir-&gt;i_ino
+comma
+id|dir-&gt;i_size
+comma
+id|error_msg
+comma
+id|offset
+comma
+(paren
+r_int
+r_int
+)paren
+id|SWAB32
+c_func
+(paren
+id|de-&gt;d_ino
+)paren
+comma
+id|SWAB16
+c_func
+(paren
+id|de-&gt;d_reclen
+)paren
+comma
+id|ufs_namlen
+c_func
+(paren
+id|de
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+id|error_msg
+op_eq
+l_int|NULL
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 )brace
 DECL|variable|ufs_dir_operations
@@ -616,31 +838,31 @@ op_amp
 id|ufs_dir_operations
 comma
 multiline_comment|/* default directory file operations */
-l_int|NULL
+id|ufs_create
 comma
 multiline_comment|/* create */
 id|ufs_lookup
 comma
 multiline_comment|/* lookup */
-l_int|NULL
+id|ufs_link
 comma
 multiline_comment|/* link */
-l_int|NULL
+id|ufs_unlink
 comma
 multiline_comment|/* unlink */
-l_int|NULL
+id|ufs_symlink
 comma
 multiline_comment|/* symlink */
-l_int|NULL
+id|ufs_mkdir
 comma
 multiline_comment|/* mkdir */
-l_int|NULL
+id|ufs_rmdir
 comma
 multiline_comment|/* rmdir */
-l_int|NULL
+id|ufs_mknod
 comma
 multiline_comment|/* mknod */
-l_int|NULL
+id|ufs_rename
 comma
 multiline_comment|/* rename */
 l_int|NULL
@@ -648,17 +870,20 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-l_int|NULL
+id|ufs_bmap
 comma
 multiline_comment|/* bmap */
-l_int|NULL
+id|ufs_truncate
 comma
 multiline_comment|/* truncate */
-l_int|NULL
+id|ufs_permission
 comma
 multiline_comment|/* permission */
 l_int|NULL

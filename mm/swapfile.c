@@ -2513,6 +2513,14 @@ id|error
 r_goto
 id|bad_swap_2
 suffix:semicolon
+id|set_blocksize
+c_func
+(paren
+id|p-&gt;swap_device
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
 id|error
 op_assign
 op_minus

@@ -6530,6 +6530,14 @@ id|invalidate_buffers
 id|devp
 )paren
 suffix:semicolon
+id|set_blocksize
+c_func
+(paren
+id|devp
+comma
+l_int|1024
+)paren
+suffix:semicolon
 )brace
 id|drive-&gt;part
 (braket

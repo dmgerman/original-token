@@ -2,6 +2,7 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef __MSND_CLASSIC_H
 DECL|macro|__MSND_CLASSIC_H
 mdefine_line|#define __MSND_CLASSIC_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|DSP_NUMIO
 mdefine_line|#define DSP_NUMIO&t;&t;0x10
 DECL|macro|HP_MEMM

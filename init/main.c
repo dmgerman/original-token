@@ -33,6 +33,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_DIO
 macro_line|#include &lt;linux/dio.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_MTRR
+macro_line|#  include &lt;asm/mtrr.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Versions of gcc older than that listed below may actually compile&n; * and link okay, but the end product can have subtle run time bugs.&n; * To avoid associated bogus bug reports, we flatly refuse to compile&n; * with a gcc that is known to be too old from the very beginning.&n; */
 macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 6)
 macro_line|#error sorry, your GCC is too old. It builds incorrect kernels.
@@ -4715,13 +4718,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __SMP__
-id|smp_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -4733,6 +4729,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|smp_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_MTRR)&t;/* Do this after SMP initialization */
+multiline_comment|/*&n; * We should probably create some architecture-dependent &quot;fixup after&n; * everything is up&quot; style function where this would belong better&n; * than in init/main.c..&n; */
+id|mtrr_init
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sock_init
 c_func
 (paren

@@ -321,6 +321,8 @@ id|p
 )paren
 (brace
 multiline_comment|/*&n;&t; * For SMP, we try to see if the CPU the task used&n;&t; * to run on is idle..&n;&t; */
+macro_line|#if 0
+multiline_comment|/*&n;&t; * Disable this for now. Ingo has some interesting&n;&t; * code that looks too complex, and I have some ideas,&n;&t; * but in the meantime.. One problem is that &quot;wakeup()&quot;&n;&t; * can be (and is) called before we&squot;ve even initialized&n;&t; * SMP completely, so..&n;&t; */
 macro_line|#ifdef __SMP__
 r_int
 id|want_cpu
@@ -400,6 +402,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 r_if
 c_cond

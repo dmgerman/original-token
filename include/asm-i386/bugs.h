@@ -2,9 +2,6 @@ multiline_comment|/*&n; *  include/asm-i386/bugs.h&n; *&n; *  Copyright (C) 1994
 multiline_comment|/*&n; * This is included by init/main.c to check for architecture-dependent bugs.&n; *&n; * Needs:&n; *&t;void check_bugs(void);&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
-macro_line|#ifdef CONFIG_MTRR
-macro_line|#  include &lt;asm/mtrr.h&gt;
-macro_line|#endif
 DECL|macro|CONFIG_BUGi386
 mdefine_line|#define CONFIG_BUGi386
 DECL|function|__initfunc
@@ -1177,11 +1174,5 @@ l_char|&squot;0&squot;
 op_plus
 id|boot_cpu_data.x86
 suffix:semicolon
-macro_line|#if defined(CONFIG_MTRR)
-id|mtrr_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 eof

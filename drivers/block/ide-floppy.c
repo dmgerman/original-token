@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -4643,6 +4644,70 @@ r_int
 id|arg
 )paren
 (brace
+id|idefloppy_pc_t
+id|pc
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|CDROMEJECT
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|drive-&gt;usage
+OG
+l_int|1
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|idefloppy_create_prevent_cmd
+(paren
+op_amp
+id|pc
+comma
+l_int|0
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|idefloppy_queue_pc_tail
+(paren
+id|drive
+comma
+op_amp
+id|pc
+)paren
+suffix:semicolon
+id|idefloppy_create_start_stop_cmd
+(paren
+op_amp
+id|pc
+comma
+l_int|2
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|idefloppy_queue_pc_tail
+(paren
+id|drive
+comma
+op_amp
+id|pc
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|EIO

@@ -5,6 +5,7 @@ mdefine_line|#define NFSD_SYSCALL_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
+macro_line|#include &lt;linux/posix_types.h&gt;
 macro_line|#include &lt;linux/nfsd/const.h&gt;
 macro_line|#include &lt;linux/nfsd/export.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsfh.h&gt;
@@ -111,11 +112,11 @@ l_int|1
 )braket
 suffix:semicolon
 DECL|member|ex_dev
-id|dev_t
+id|__kernel_dev_t
 id|ex_dev
 suffix:semicolon
 DECL|member|ex_ino
-id|ino_t
+id|__kernel_ino_t
 id|ex_ino
 suffix:semicolon
 DECL|member|ex_flags
@@ -123,11 +124,11 @@ r_int
 id|ex_flags
 suffix:semicolon
 DECL|member|ex_anon_uid
-id|uid_t
+id|__kernel_uid_t
 id|ex_anon_uid
 suffix:semicolon
 DECL|member|ex_anon_gid
-id|gid_t
+id|__kernel_gid_t
 id|ex_anon_gid
 suffix:semicolon
 )brace
@@ -143,7 +144,7 @@ op_star
 id|ug_ident
 suffix:semicolon
 DECL|member|ug_uidbase
-id|uid_t
+id|__kernel_uid_t
 id|ug_uidbase
 suffix:semicolon
 DECL|member|ug_uidlen
@@ -151,12 +152,12 @@ r_int
 id|ug_uidlen
 suffix:semicolon
 DECL|member|ug_udimap
-id|uid_t
+id|__kernel_uid_t
 op_star
 id|ug_udimap
 suffix:semicolon
 DECL|member|ug_gidbase
-id|uid_t
+id|__kernel_gid_t
 id|ug_gidbase
 suffix:semicolon
 DECL|member|ug_gidlen
@@ -164,7 +165,7 @@ r_int
 id|ug_gidlen
 suffix:semicolon
 DECL|member|ug_gdimap
-id|gid_t
+id|__kernel_gid_t
 op_star
 id|ug_gdimap
 suffix:semicolon
@@ -181,11 +182,11 @@ id|sockaddr
 id|gf_addr
 suffix:semicolon
 DECL|member|gf_dev
-id|dev_t
+id|__kernel_dev_t
 id|gf_dev
 suffix:semicolon
 DECL|member|gf_ino
-id|ino_t
+id|__kernel_ino_t
 id|gf_ino
 suffix:semicolon
 DECL|member|gf_version

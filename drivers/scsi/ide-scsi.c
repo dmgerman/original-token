@@ -4037,7 +4037,7 @@ comma
 id|ide_end
 )paren
 suffix:semicolon
-id|spin_lock
+id|spin_lock_irq
 c_func
 (paren
 op_amp
