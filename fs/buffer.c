@@ -1937,12 +1937,15 @@ c_cond
 (paren
 op_logical_neg
 id|bh
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|nr_free_pages
 OG
 l_int|5
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -1957,15 +1960,6 @@ id|size
 r_goto
 id|repeat
 suffix:semicolon
-)brace
-multiline_comment|/* and repeat until we find something good */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|bh
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -4048,6 +4042,8 @@ op_logical_or
 id|tmp-&gt;b_dirt
 op_logical_or
 id|tmp-&gt;b_lock
+op_logical_or
+id|tmp-&gt;b_wait
 )paren
 r_return
 l_int|0

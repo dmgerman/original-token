@@ -86,6 +86,18 @@ DECL|macro|PREFIX_REPNE
 mdefine_line|#define PREFIX_REPNE 0xf2
 DECL|macro|PREFIX_LOCK
 mdefine_line|#define PREFIX_LOCK 0xf0
+DECL|macro|PREFIX_CS_
+mdefine_line|#define PREFIX_CS_ 1
+DECL|macro|PREFIX_DS_
+mdefine_line|#define PREFIX_DS_ 2
+DECL|macro|PREFIX_ES_
+mdefine_line|#define PREFIX_ES_ 3
+DECL|macro|PREFIX_FS_
+mdefine_line|#define PREFIX_FS_ 4
+DECL|macro|PREFIX_GS_
+mdefine_line|#define PREFIX_GS_ 5
+DECL|macro|PREFIX_SS_
+mdefine_line|#define PREFIX_SS_ 6
 multiline_comment|/* These are to defeat the default action, giving the instruction&n;   no net effect: */
 DECL|macro|NO_NET_DATA_EFFECT
 mdefine_line|#define NO_NET_DATA_EFFECT &bslash;&n;      { FPU_data_address = (void *)data_operand_offset; &bslash;&n;&t;FPU_data_selector = operand_selector; }

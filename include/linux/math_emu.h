@@ -27,6 +27,7 @@ id|sigh
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* This structure matches the layout of the data saved to the stack&n;   following a device-not-present interrupt, part of it saved&n;   automatically by the 80386/80486.&n;   */
 DECL|struct|info
 r_struct
 id|info
@@ -107,39 +108,24 @@ DECL|member|___ss
 r_int
 id|___ss
 suffix:semicolon
+DECL|member|___vm86_es
+r_int
+id|___vm86_es
+suffix:semicolon
+multiline_comment|/* This and the following only in vm86 mode */
+DECL|member|___vm86_ds
+r_int
+id|___vm86_ds
+suffix:semicolon
+DECL|member|___vm86_fs
+r_int
+id|___vm86_fs
+suffix:semicolon
+DECL|member|___vm86_gs
+r_int
+id|___vm86_gs
+suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#if 0
-mdefine_line|#define EAX (info-&gt;___eax)
-mdefine_line|#define EBX (info-&gt;___ebx)
-mdefine_line|#define ECX (info-&gt;___ecx)
-mdefine_line|#define EDX (info-&gt;___edx)
-mdefine_line|#define ESI (info-&gt;___esi)
-mdefine_line|#define EDI (info-&gt;___edi)
-mdefine_line|#define EBP (info-&gt;___ebp)
-mdefine_line|#define ESP (info-&gt;___esp)
-mdefine_line|#define EIP (info-&gt;___eip)
-mdefine_line|#define ORIG_EIP (info-&gt;___orig_eip)
-mdefine_line|#define EFLAGS (info-&gt;___eflags)
-mdefine_line|#define DS (*(unsigned short *) &amp;(info-&gt;___ds))
-mdefine_line|#define ES (*(unsigned short *) &amp;(info-&gt;___es))
-mdefine_line|#define FS (*(unsigned short *) &amp;(info-&gt;___fs))
-mdefine_line|#define CS (*(unsigned short *) &amp;(info-&gt;___cs))
-mdefine_line|#define SS (*(unsigned short *) &amp;(info-&gt;___ss))
-macro_line|#endif
-r_void
-id|__math_abort
-c_func
-(paren
-r_struct
-id|info
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-DECL|macro|math_abort
-mdefine_line|#define math_abort(x,y) &bslash;&n;(((volatile void (*)(struct info *,unsigned int)) __math_abort)((x),(y)))
 macro_line|#endif
 eof

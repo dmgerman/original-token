@@ -5799,7 +5799,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: request READ, minor=%x, buf=%lx, count=%x, pos=%x, flags=%x&bslash;n&quot;
+l_string|&quot;: request READ, minor=%x, buf=%p, count=%x, pos=%x, flags=%x&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -5870,7 +5870,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: read: verify_area(WRITE, %lx, %x) failed&bslash;n&quot;
+l_string|&quot;: read: verify_area(WRITE, %p, %x) failed&bslash;n&quot;
 comma
 id|buf
 comma
@@ -6318,7 +6318,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: request WRITE, minor=%x, buf=%lx, count=%x, pos=%x, flags=%x&bslash;n&quot;
+l_string|&quot;: request WRITE, minor=%x, buf=%p, count=%x, pos=%x, flags=%x&bslash;n&quot;
 comma
 id|MINOR
 c_func
@@ -6426,7 +6426,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: write: verify_area(READ, %lx, %x) failed&bslash;n&quot;
+l_string|&quot;: write: verify_area(READ, %p, %x) failed&bslash;n&quot;
 comma
 id|buf
 comma
@@ -6741,7 +6741,7 @@ id|printk
 c_func
 (paren
 id|TPQIC_NAME
-l_string|&quot;: status_bytes_wr %x, buf %x, total_bytes_done %x, count %x&bslash;n&quot;
+l_string|&quot;: status_bytes_wr %x, buf %p, total_bytes_done %x, count %x&bslash;n&quot;
 comma
 id|status_bytes_wr
 comma

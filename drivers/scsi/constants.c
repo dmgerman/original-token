@@ -27,7 +27,7 @@ DECL|macro|CONSTANTS
 macro_line|#undef CONSTANTS
 macro_line|#endif
 DECL|macro|CONSTANTS
-mdefine_line|#define CONSTANTS (CONST_CMD | CONST_STATUS | CONST_SENSE | CONST_XSENSE)
+mdefine_line|#define CONSTANTS (CONST_COMMAND | CONST_STATUS | CONST_SENSE | CONST_XSENSE)
 macro_line|#endif
 macro_line|#if (CONSTANTS &amp; CONST_COMMAND)
 DECL|variable|group_0_commands

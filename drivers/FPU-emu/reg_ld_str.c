@@ -4830,6 +4830,13 @@ op_add_assign
 l_int|0x1c
 suffix:semicolon
 )brace
+macro_line|#ifdef PECULIAR_486
+id|control_word
+op_and_assign
+op_complement
+l_int|0xe080
+suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|top
 op_assign
 (paren
@@ -5338,6 +5345,24 @@ comma
 l_int|14
 )paren
 suffix:semicolon
+macro_line|#ifdef PECULIAR_486
+id|put_fs_long
+c_func
+(paren
+id|control_word
+op_amp
+op_complement
+l_int|0xe080
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+id|d
+)paren
+suffix:semicolon
+macro_line|#else
 id|put_fs_word
 c_func
 (paren
@@ -5351,6 +5376,7 @@ op_star
 id|d
 )paren
 suffix:semicolon
+macro_line|#endif PECULIAR_486
 id|put_fs_word
 c_func
 (paren

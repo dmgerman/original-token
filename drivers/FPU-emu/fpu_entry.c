@@ -2208,7 +2208,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|PREFIX_DS
+id|PREFIX_DS_
 )brace
 suffix:semicolon
 multiline_comment|/* defaults */
@@ -2267,7 +2267,7 @@ id|PREFIX_CS
 suffix:colon
 id|override-&gt;segment
 op_assign
-id|PREFIX_CS
+id|PREFIX_CS_
 suffix:semicolon
 r_goto
 id|do_next_byte
@@ -2277,7 +2277,7 @@ id|PREFIX_ES
 suffix:colon
 id|override-&gt;segment
 op_assign
-id|PREFIX_ES
+id|PREFIX_ES_
 suffix:semicolon
 r_goto
 id|do_next_byte
@@ -2287,7 +2287,7 @@ id|PREFIX_SS
 suffix:colon
 id|override-&gt;segment
 op_assign
-id|PREFIX_SS
+id|PREFIX_SS_
 suffix:semicolon
 r_goto
 id|do_next_byte
@@ -2297,7 +2297,7 @@ id|PREFIX_FS
 suffix:colon
 id|override-&gt;segment
 op_assign
-id|PREFIX_FS
+id|PREFIX_FS_
 suffix:semicolon
 r_goto
 id|do_next_byte
@@ -2307,7 +2307,7 @@ id|PREFIX_GS
 suffix:colon
 id|override-&gt;segment
 op_assign
-id|PREFIX_GS
+id|PREFIX_GS_
 suffix:semicolon
 r_goto
 id|do_next_byte
@@ -2318,7 +2318,7 @@ suffix:colon
 multiline_comment|/* Redundant unless preceded by another override. */
 id|override-&gt;segment
 op_assign
-id|PREFIX_DS
+id|PREFIX_DS_
 suffix:semicolon
 multiline_comment|/* lock is not a valid prefix for FPU instructions,&n;   let the cpu handle it to generate a SIGILL. */
 multiline_comment|/*&t;case PREFIX_LOCK: */
@@ -2411,9 +2411,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__math_abort
+DECL|function|math_abort
 r_void
-id|__math_abort
+id|math_abort
 c_func
 (paren
 r_struct

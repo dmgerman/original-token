@@ -408,7 +408,7 @@ id|arg
 suffix:semicolon
 r_extern
 r_void
-id|__math_abort
+id|math_abort
 c_func
 (paren
 r_struct

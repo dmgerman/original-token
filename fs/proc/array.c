@@ -112,6 +112,8 @@ c_cond
 id|p
 op_ge
 id|high_memory
+op_plus
+id|PAGE_SIZE
 )paren
 r_return
 l_int|0
@@ -122,6 +124,8 @@ c_cond
 id|count
 OG
 id|high_memory
+op_plus
+id|PAGE_SIZE
 op_minus
 id|p
 )paren

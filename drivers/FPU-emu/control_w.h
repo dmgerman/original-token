@@ -37,11 +37,13 @@ DECL|macro|RC_CHOP
 mdefine_line|#define RC_CHOP&t;&t;_Const_(0x0C00)
 multiline_comment|/* p 15-5: Precision control bits affect only the following:&n;   ADD, SUB(R), MUL, DIV(R), and SQRT */
 DECL|macro|PR_24_BITS
-mdefine_line|#define PR_24_BITS      _Const_(0x000)
+mdefine_line|#define PR_24_BITS        _Const_(0x000)
 DECL|macro|PR_53_BITS
-mdefine_line|#define PR_53_BITS      _Const_(0x200)
+mdefine_line|#define PR_53_BITS        _Const_(0x200)
 DECL|macro|PR_64_BITS
-mdefine_line|#define PR_64_BITS      _Const_(0x300)
+mdefine_line|#define PR_64_BITS        _Const_(0x300)
+DECL|macro|PR_RESERVED_BITS
+mdefine_line|#define PR_RESERVED_BITS  _Const_(0x100)
 multiline_comment|/* FULL_PRECISION simulates all exceptions masked */
 DECL|macro|FULL_PRECISION
 mdefine_line|#define FULL_PRECISION  (PR_64_BITS | RC_RND | 0x3f)

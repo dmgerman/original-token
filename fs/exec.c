@@ -361,6 +361,7 @@ comma
 l_int|5
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|memcpy
 c_func
 (paren
@@ -376,6 +377,15 @@ id|current-&gt;comm
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|corefile
+(braket
+l_int|4
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
