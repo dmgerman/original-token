@@ -47,23 +47,23 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|PIPE_WAIT
-mdefine_line|#define PIPE_WAIT(inode)&t;((inode).u.pipe_i.wait)
+mdefine_line|#define PIPE_WAIT(inode)&t;((inode).i_pipe-&gt;wait)
 DECL|macro|PIPE_BASE
-mdefine_line|#define PIPE_BASE(inode)&t;((inode).u.pipe_i.base)
+mdefine_line|#define PIPE_BASE(inode)&t;((inode).i_pipe-&gt;base)
 DECL|macro|PIPE_START
-mdefine_line|#define PIPE_START(inode)&t;((inode).u.pipe_i.start)
+mdefine_line|#define PIPE_START(inode)&t;((inode).i_pipe-&gt;start)
 DECL|macro|PIPE_LEN
 mdefine_line|#define PIPE_LEN(inode)&t;&t;((inode).i_size)
 DECL|macro|PIPE_RD_OPENERS
-mdefine_line|#define PIPE_RD_OPENERS(inode)&t;((inode).u.pipe_i.rd_openers)
+mdefine_line|#define PIPE_RD_OPENERS(inode)&t;((inode).i_pipe-&gt;rd_openers)
 DECL|macro|PIPE_WR_OPENERS
-mdefine_line|#define PIPE_WR_OPENERS(inode)&t;((inode).u.pipe_i.wr_openers)
+mdefine_line|#define PIPE_WR_OPENERS(inode)&t;((inode).i_pipe-&gt;wr_openers)
 DECL|macro|PIPE_READERS
-mdefine_line|#define PIPE_READERS(inode)&t;((inode).u.pipe_i.readers)
+mdefine_line|#define PIPE_READERS(inode)&t;((inode).i_pipe-&gt;readers)
 DECL|macro|PIPE_WRITERS
-mdefine_line|#define PIPE_WRITERS(inode)&t;((inode).u.pipe_i.writers)
+mdefine_line|#define PIPE_WRITERS(inode)&t;((inode).i_pipe-&gt;writers)
 DECL|macro|PIPE_LOCK
-mdefine_line|#define PIPE_LOCK(inode)&t;((inode).u.pipe_i.lock)
+mdefine_line|#define PIPE_LOCK(inode)&t;((inode).i_pipe-&gt;lock)
 DECL|macro|PIPE_SIZE
 mdefine_line|#define PIPE_SIZE(inode)&t;PIPE_LEN(inode)
 DECL|macro|PIPE_EMPTY

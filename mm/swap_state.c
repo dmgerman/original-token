@@ -7,10 +7,89 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* &n; * Keep a reserved false inode which we will use to mark pages in the&n; * page cache are acting as swap cache instead of file cache. &n; *&n; * We only need a unique pointer to satisfy the page cache, but we&squot;ll&n; * reserve an entire zeroed inode structure for the purpose just to&n; * ensure that any mistaken dereferences of this structure cause a&n; * kernel oops.&n; */
+DECL|variable|swapper_inode_operations
+r_static
+r_struct
+id|inode_operations
+id|swapper_inode_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* default file operations */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+comma
+multiline_comment|/* updatepage */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+id|generic_block_flushpage
+comma
+multiline_comment|/* flushpage */
+)brace
+suffix:semicolon
 DECL|variable|swapper_inode
 r_struct
 id|inode
 id|swapper_inode
+op_assign
+(brace
+id|i_op
+suffix:colon
+op_amp
+id|swapper_inode_operations
+)brace
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
 DECL|variable|swap_cache_add_total
@@ -97,11 +176,10 @@ c_func
 id|page
 )paren
 comma
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
-id|page-&gt;count
+id|page
 )paren
 comma
 id|entry
@@ -162,11 +240,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|atomic_inc
+id|get_page
 c_func
 (paren
-op_amp
-id|page-&gt;count
+id|page
 )paren
 suffix:semicolon
 id|page-&gt;inode
@@ -683,21 +760,27 @@ c_func
 id|page
 )paren
 comma
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
-id|page-&gt;count
+id|page
 )paren
 )paren
 suffix:semicolon
 macro_line|#endif
 id|PageClearSwapCache
+c_func
 (paren
 id|page
 )paren
 suffix:semicolon
 id|remove_inode_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -721,6 +804,12 @@ id|entry
 op_assign
 id|page-&gt;offset
 suffix:semicolon
+id|LockPage
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
 id|swap_cache_del_total
 op_increment
@@ -739,11 +828,10 @@ c_func
 id|page
 )paren
 comma
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
-id|page-&gt;count
+id|page
 )paren
 comma
 id|entry
@@ -758,6 +846,12 @@ suffix:semicolon
 id|swap_free
 (paren
 id|entry
+)paren
+suffix:semicolon
+id|UnlockPage
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 )brace
@@ -817,7 +911,7 @@ id|page
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Lookup a swap entry in the swap cache.  We need to be careful about&n; * locked pages.  A found page will be returned with its refcount&n; * incremented.&n; */
+multiline_comment|/*&n; * Lookup a swap entry in the swap cache. A found page will be returned&n; * unlocked and with its refcount incremented - we rely on the kernel&n; * lock getting page table operations atomic even if we drop the page&n; * lock before returning.&n; */
 DECL|function|lookup_swap_cache
 r_struct
 id|page
@@ -848,7 +942,7 @@ l_int|1
 (brace
 id|found
 op_assign
-id|find_page
+id|find_lock_page
 c_func
 (paren
 op_amp
@@ -884,37 +978,19 @@ id|found
 r_goto
 id|out_bad
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|PageLocked
-c_func
-(paren
-id|found
-)paren
-)paren
-(brace
 macro_line|#ifdef SWAP_CACHE_INFO
 id|swap_cache_find_success
 op_increment
 suffix:semicolon
 macro_line|#endif
+id|UnlockPage
+c_func
+(paren
+id|found
+)paren
+suffix:semicolon
 r_return
 id|found
-suffix:semicolon
-)brace
-id|__free_page
-c_func
-(paren
-id|found
-)paren
-suffix:semicolon
-id|__wait_on_page
-c_func
-(paren
-id|found
-)paren
 suffix:semicolon
 )brace
 id|out_bad
@@ -923,6 +999,12 @@ id|printk
 (paren
 id|KERN_ERR
 l_string|&quot;VM: Found a non-swapper swap page!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|UnlockPage
+c_func
+(paren
+id|found
 )paren
 suffix:semicolon
 id|__free_page
@@ -1075,13 +1157,10 @@ id|entry
 r_goto
 id|out_free_page
 suffix:semicolon
-id|set_bit
+id|LockPage
 c_func
 (paren
-id|PG_locked
-comma
-op_amp
-id|new_page-&gt;flags
+id|new_page
 )paren
 suffix:semicolon
 id|rw_swap_page

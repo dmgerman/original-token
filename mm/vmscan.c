@@ -395,13 +395,10 @@ id|entry
 )paren
 suffix:semicolon
 multiline_comment|/* We checked we were unlocked way up above, and we&n;&t;   have been careful not to stall until here */
-id|set_bit
+id|LockPage
 c_func
 (paren
-id|PG_locked
-comma
-op_amp
-id|page_map-&gt;flags
+id|page_map
 )paren
 suffix:semicolon
 multiline_comment|/* OK, do a physical asynchronous write to swap.  */

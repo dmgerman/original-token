@@ -1529,12 +1529,11 @@ id|mapnr
 OL
 id|max_mapnr
 )paren
-id|atomic_inc
+id|get_page
 c_func
 (paren
-op_amp
 id|mem_map
-(braket
+op_plus
 id|MAP_NR
 c_func
 (paren
@@ -1545,9 +1544,6 @@ op_star
 id|src_table
 )paren
 )paren
-)braket
-dot
-id|count
 )paren
 suffix:semicolon
 id|stmp

@@ -1360,7 +1360,12 @@ id|i.sharedram
 comma
 id|i.bufferram
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|page_cache_size
+)paren
 op_star
 id|PAGE_SIZE
 comma
@@ -1388,7 +1393,7 @@ l_string|&quot;MemTotal:  %8lu kB&bslash;n&quot;
 l_string|&quot;MemFree:   %8lu kB&bslash;n&quot;
 l_string|&quot;MemShared: %8lu kB&bslash;n&quot;
 l_string|&quot;Buffers:   %8lu kB&bslash;n&quot;
-l_string|&quot;Cached:    %8lu kB&bslash;n&quot;
+l_string|&quot;Cached:    %8u kB&bslash;n&quot;
 l_string|&quot;SwapTotal: %8lu kB&bslash;n&quot;
 l_string|&quot;SwapFree:  %8lu kB&bslash;n&quot;
 comma
@@ -1408,7 +1413,12 @@ id|i.bufferram
 op_rshift
 l_int|10
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|page_cache_size
+)paren
 op_lshift
 (paren
 id|PAGE_SHIFT
@@ -4267,12 +4277,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
 id|mem_map
-(braket
+op_plus
 id|MAP_NR
 c_func
 (paren
@@ -4282,9 +4291,6 @@ c_func
 id|page
 )paren
 )paren
-)braket
-dot
-id|count
 )paren
 OG
 l_int|1

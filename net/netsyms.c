@@ -1652,13 +1652,6 @@ c_func
 id|rtnetlink_dump_ifinfo
 )paren
 suffix:semicolon
-DECL|variable|rtnl_wlockct
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|rtnl_wlockct
-)paren
-suffix:semicolon
 DECL|variable|rtnl
 id|EXPORT_SYMBOL
 c_func

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/lockd/bind.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -211,6 +212,9 @@ multiline_comment|/* updatepage */
 id|nfs_revalidate
 comma
 multiline_comment|/* revalidate */
+l_int|NULL
+comma
+multiline_comment|/* flushpage */
 )brace
 suffix:semicolon
 multiline_comment|/* Hack for future NFS swap support */
@@ -588,6 +592,12 @@ c_cond
 (paren
 id|bytes
 )paren
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|nfs_updatepage
@@ -602,6 +612,12 @@ comma
 id|bytes
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_return
 id|status
 suffix:semicolon

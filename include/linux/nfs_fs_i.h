@@ -8,12 +8,6 @@ DECL|struct|nfs_inode_info
 r_struct
 id|nfs_inode_info
 (brace
-multiline_comment|/*&n;&t; * This is a place holder so named pipes on NFS filesystems&n;&t; * work (more or less correctly). This must be first in the&n;&t; * struct because the data is really accessed via inode-&gt;u.pipe_i.&n;&t; */
-DECL|member|pipeinfo
-r_struct
-id|pipe_inode_info
-id|pipeinfo
-suffix:semicolon
 multiline_comment|/*&n;&t; * Various flags&n;&t; */
 DECL|member|flags
 r_int

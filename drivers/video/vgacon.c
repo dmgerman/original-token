@@ -418,13 +418,29 @@ r_int
 id|val
 )paren
 (brace
-macro_line|#ifndef SLOW_VGA
 r_int
 r_int
 id|v1
 comma
 id|v2
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;&t; * ddprintk might set the console position from interrupt&n;&t; * handlers, thus the write has to be IRQ-atomic.&n;&t; */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifndef SLOW_VGA
 id|v1
 op_assign
 id|reg
@@ -507,6 +523,12 @@ id|vga_video_port_val
 )paren
 suffix:semicolon
 macro_line|#endif
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|function|__initfunc
 id|__initfunc

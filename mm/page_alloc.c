@@ -362,11 +362,10 @@ c_func
 id|page
 )paren
 op_logical_and
-id|atomic_dec_and_test
+id|put_page_testzero
 c_func
 (paren
-op_amp
-id|page-&gt;count
+id|page
 )paren
 )paren
 (brace
@@ -379,9 +378,10 @@ c_func
 id|page
 )paren
 )paren
-id|panic
+id|PAGE_BUG
+c_func
 (paren
-l_string|&quot;Freeing swap cache page&quot;
+id|page
 )paren
 suffix:semicolon
 id|page-&gt;flags
@@ -461,11 +461,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_dec_and_test
+id|put_page_testzero
 c_func
 (paren
-op_amp
-id|map-&gt;count
+id|map
 )paren
 )paren
 (brace
@@ -478,9 +477,10 @@ c_func
 id|map
 )paren
 )paren
-id|panic
+id|PAGE_BUG
+c_func
 (paren
-l_string|&quot;Freeing swap cache pages&quot;
+id|map
 )paren
 suffix:semicolon
 id|map-&gt;flags
@@ -513,9 +513,9 @@ mdefine_line|#define CAN_DMA(x) (PageDMA(x))
 DECL|macro|ADDRESS
 mdefine_line|#define ADDRESS(x) (PAGE_OFFSET + ((x) &lt;&lt; PAGE_SHIFT))
 DECL|macro|RMQUEUE
-mdefine_line|#define RMQUEUE(order, gfp_mask) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret = prev-&gt;next; &bslash;&n;&t;&t;while (memory_head(area) != ret) { &bslash;&n;&t;&t;&t;if (!(gfp_mask &amp; __GFP_DMA) || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;map_nr = ret - mem_map; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;spin_unlock_irqrestore(&amp;page_alloc_lock, flags); &bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;&t;ret = ret-&gt;next; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
+mdefine_line|#define RMQUEUE(order, gfp_mask) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = memory_head(area), *ret = prev-&gt;next; &bslash;&n;&t;&t;while (memory_head(area) != ret) { &bslash;&n;&t;&t;&t;if (!(gfp_mask &amp; __GFP_DMA) || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;map_nr = ret - mem_map; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;spin_unlock_irqrestore(&amp;page_alloc_lock,flags);&bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;&t;ret = ret-&gt;next; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
 DECL|macro|EXPAND
-mdefine_line|#define EXPAND(map,index,low,high,area) &bslash;&n;do { unsigned long size = 1 &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;area--; high--; size &gt;&gt;= 1; &bslash;&n;&t;&t;add_mem_queue(area, map); &bslash;&n;&t;&t;MARK_USED(index, high, area); &bslash;&n;&t;&t;index += size; &bslash;&n;&t;&t;map += size; &bslash;&n;&t;} &bslash;&n;&t;atomic_set(&amp;map-&gt;count, 1); &bslash;&n;} while (0)
+mdefine_line|#define EXPAND(map,index,low,high,area) &bslash;&n;do { unsigned long size = 1 &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;area--; high--; size &gt;&gt;= 1; &bslash;&n;&t;&t;add_mem_queue(area, map); &bslash;&n;&t;&t;MARK_USED(index, high, area); &bslash;&n;&t;&t;index += size; &bslash;&n;&t;&t;map += size; &bslash;&n;&t;} &bslash;&n;&t;set_page_count(map, 1); &bslash;&n;} while (0)
 DECL|variable|low_on_memory
 r_int
 id|low_on_memory
@@ -1061,11 +1061,10 @@ r_do
 op_decrement
 id|p
 suffix:semicolon
-id|atomic_set
+id|set_page_count
 c_func
 (paren
-op_amp
-id|p-&gt;count
+id|p
 comma
 l_int|0
 )paren

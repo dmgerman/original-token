@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * SyncLink Multiprotocol Serial Adapter Driver&n; *&n; * Copyright (C) 1998 by Microgate Corporation&n; * &n; * Redistribution of this file is permitted under &n; * the terms of the GNU Public License (GPL)&n; */
+multiline_comment|/*&n; * SyncLink Multiprotocol Serial Adapter Driver&n; *&n; * ==FILEDATE 19990523==&n; *&n; * Copyright (C) 1998 by Microgate Corporation&n; * &n; * Redistribution of this file is permitted under &n; * the terms of the GNU Public License (GPL)&n; */
 macro_line|#ifndef _SYNCLINK_H_
 DECL|macro|_SYNCLINK_H_
 mdefine_line|#define _SYNCLINK_H_
@@ -104,16 +104,26 @@ DECL|macro|HDLC_FLAG_RXC_DPLL
 mdefine_line|#define HDLC_FLAG_RXC_DPLL&t;&t;0x0100
 DECL|macro|HDLC_FLAG_RXC_BRG
 mdefine_line|#define HDLC_FLAG_RXC_BRG&t;&t;0x0200
+DECL|macro|HDLC_FLAG_RXC_TXCPIN
+mdefine_line|#define HDLC_FLAG_RXC_TXCPIN&t;0x8000
+DECL|macro|HDLC_FLAG_RXC_RXCPIN
+mdefine_line|#define HDLC_FLAG_RXC_RXCPIN&t;0x0000
 DECL|macro|HDLC_FLAG_TXC_DPLL
 mdefine_line|#define HDLC_FLAG_TXC_DPLL&t;&t;0x0400
 DECL|macro|HDLC_FLAG_TXC_BRG
 mdefine_line|#define HDLC_FLAG_TXC_BRG&t;&t;0x0800
+DECL|macro|HDLC_FLAG_TXC_TXCPIN
+mdefine_line|#define HDLC_FLAG_TXC_TXCPIN&t;0x0000
+DECL|macro|HDLC_FLAG_TXC_RXCPIN
+mdefine_line|#define HDLC_FLAG_TXC_RXCPIN&t;0x0008
 DECL|macro|HDLC_FLAG_DPLL_DIV8
 mdefine_line|#define HDLC_FLAG_DPLL_DIV8&t;&t;0x1000
 DECL|macro|HDLC_FLAG_DPLL_DIV16
 mdefine_line|#define HDLC_FLAG_DPLL_DIV16&t;&t;0x2000
 DECL|macro|HDLC_FLAG_DPLL_DIV32
 mdefine_line|#define HDLC_FLAG_DPLL_DIV32&t;&t;0x0000
+DECL|macro|HDLC_FLAG_HDLC_LOOPMODE
+mdefine_line|#define HDLC_FLAG_HDLC_LOOPMODE&t;&t;0x4000
 DECL|macro|HDLC_CRC_NONE
 mdefine_line|#define HDLC_CRC_NONE&t;&t;&t;0
 DECL|macro|HDLC_CRC_16_CCITT
@@ -140,6 +150,8 @@ DECL|macro|HDLC_ENCODING_NRZI_MARK
 mdefine_line|#define HDLC_ENCODING_NRZI_MARK&t;&t;&t;2
 DECL|macro|HDLC_ENCODING_NRZI_SPACE
 mdefine_line|#define HDLC_ENCODING_NRZI_SPACE&t;&t;3
+DECL|macro|HDLC_ENCODING_NRZI
+mdefine_line|#define HDLC_ENCODING_NRZI&t;&t;&t;HDLC_ENCODING_NRZI_SPACE
 DECL|macro|HDLC_ENCODING_BIPHASE_MARK
 mdefine_line|#define HDLC_ENCODING_BIPHASE_MARK&t;&t;4
 DECL|macro|HDLC_ENCODING_BIPHASE_SPACE
@@ -448,13 +460,13 @@ DECL|macro|MgslEvent_ExitHuntMode
 mdefine_line|#define MgslEvent_ExitHuntMode&t;0x0100
 DECL|macro|MgslEvent_IdleReceived
 mdefine_line|#define MgslEvent_IdleReceived&t;0x0200
-multiline_comment|/* Private IOCTL codes:&n; *&n; * MGSL_IOCSPARAMS&t;set MGSL_PARAMS structure values&n; * MGSL_IOCGPARAMS&t;get current MGSL_PARAMS structure values&n; * MGSL_IOCSTXIDLE&t;set current transmit idle mode&n; * MGSL_IOCGTXIDLE&t;get current transmit idle mode&n; * MGSL_IOCTXENABLE&t;enable or disable transmitter&n; * MGSL_IOCRXENABLE&t;enable or disable receiver&n; * MGSL_IOCTXABORT&t;abort transmitting frame (HDLC)&n; * MGSL_IOCGSTATS&t;return current statistics&n; * MGSL_IOCWAITEVENT&t;wait for specified event to occur&n; */
+multiline_comment|/* Private IOCTL codes:&n; *&n; * MGSL_IOCSPARAMS&t;set MGSL_PARAMS structure values&n; * MGSL_IOCGPARAMS&t;get current MGSL_PARAMS structure values&n; * MGSL_IOCSTXIDLE&t;set current transmit idle mode&n; * MGSL_IOCGTXIDLE&t;get current transmit idle mode&n; * MGSL_IOCTXENABLE&t;enable or disable transmitter&n; * MGSL_IOCRXENABLE&t;enable or disable receiver&n; * MGSL_IOCTXABORT&t;abort transmitting frame (HDLC)&n; * MGSL_IOCGSTATS&t;return current statistics&n; * MGSL_IOCWAITEVENT&t;wait for specified event to occur&n; * MGSL_LOOPTXDONE&t;transmit in HDLC LoopMode done&n; */
 DECL|macro|MGSL_MAGIC_IOC
 mdefine_line|#define MGSL_MAGIC_IOC&t;&squot;m&squot;
 DECL|macro|MGSL_IOCSPARAMS
-mdefine_line|#define MGSL_IOCSPARAMS&t;&t;_IOW(MGSL_MAGIC_IOC,0,sizeof(MGSL_PARAMS))
+mdefine_line|#define MGSL_IOCSPARAMS&t;&t;_IOW(MGSL_MAGIC_IOC,0,struct _MGSL_PARAMS)
 DECL|macro|MGSL_IOCGPARAMS
-mdefine_line|#define MGSL_IOCGPARAMS&t;&t;_IOR(MGSL_MAGIC_IOC,1,sizeof(MGSL_PARAMS))
+mdefine_line|#define MGSL_IOCGPARAMS&t;&t;_IOR(MGSL_MAGIC_IOC,1,struct _MGSL_PARAMS)
 DECL|macro|MGSL_IOCSTXIDLE
 mdefine_line|#define MGSL_IOCSTXIDLE&t;&t;_IO(MGSL_MAGIC_IOC,2)
 DECL|macro|MGSL_IOCGTXIDLE
@@ -468,8 +480,10 @@ mdefine_line|#define MGSL_IOCTXABORT&t;&t;_IO(MGSL_MAGIC_IOC,6)
 DECL|macro|MGSL_IOCGSTATS
 mdefine_line|#define MGSL_IOCGSTATS&t;&t;_IO(MGSL_MAGIC_IOC,7)
 DECL|macro|MGSL_IOCWAITEVENT
-mdefine_line|#define MGSL_IOCWAITEVENT&t;_IO(MGSL_MAGIC_IOC,8)
+mdefine_line|#define MGSL_IOCWAITEVENT&t;_IOWR(MGSL_MAGIC_IOC,8,int)
 DECL|macro|MGSL_IOCCLRMODCOUNT
 mdefine_line|#define MGSL_IOCCLRMODCOUNT&t;_IO(MGSL_MAGIC_IOC,15)
+DECL|macro|MGSL_IOCLOOPTXDONE
+mdefine_line|#define MGSL_IOCLOOPTXDONE&t;_IO(MGSL_MAGIC_IOC,9)
 macro_line|#endif /* _SYNCLINK_H_ */
 eof

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
@@ -1071,6 +1072,12 @@ c_cond
 (paren
 id|bytes
 )paren
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|smb_updatepage
@@ -1085,6 +1092,12 @@ comma
 id|bytes
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_return
 id|status
 suffix:semicolon

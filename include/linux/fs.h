@@ -89,11 +89,11 @@ multiline_comment|/* public flags for file_system_type */
 DECL|macro|FS_REQUIRES_DEV
 mdefine_line|#define FS_REQUIRES_DEV 1 
 DECL|macro|FS_NO_DCACHE
-mdefine_line|#define FS_NO_DCACHE    2 /* Only dcache the necessary things. */
+mdefine_line|#define FS_NO_DCACHE&t;2 /* Only dcache the necessary things. */
 DECL|macro|FS_NO_PRELIM
-mdefine_line|#define FS_NO_PRELIM    4 /* prevent preloading of dentries, even if&n;&t;&t;&t;   * FS_NO_DCACHE is not set.&n;&t;&t;&t;   */
+mdefine_line|#define FS_NO_PRELIM&t;4 /* prevent preloading of dentries, even if&n;&t;&t;&t;   * FS_NO_DCACHE is not set.&n;&t;&t;&t;   */
 DECL|macro|FS_IBASKET
-mdefine_line|#define FS_IBASKET      8 /* FS does callback to free_ibasket() if space gets low. */
+mdefine_line|#define FS_IBASKET&t;8 /* FS does callback to free_ibasket() if space gets low. */
 multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
 DECL|macro|MS_RDONLY
 mdefine_line|#define MS_RDONLY&t; 1&t;/* Mount read-only */
@@ -118,9 +118,9 @@ mdefine_line|#define S_IMMUTABLE&t;512&t;/* Immutable file */
 DECL|macro|MS_NOATIME
 mdefine_line|#define MS_NOATIME&t;1024&t;/* Do not update access times. */
 DECL|macro|MS_NODIRATIME
-mdefine_line|#define MS_NODIRATIME   2048    /* Do not update directory access times */
+mdefine_line|#define MS_NODIRATIME&t;2048&t;/* Do not update directory access times */
 DECL|macro|MS_ODD_RENAME
-mdefine_line|#define MS_ODD_RENAME   32768    /* Temporary stuff; will go away as soon&n;&t;&t;&t;&t;  * as nfs_rename() will be cleaned up&n;&t;&t;&t;&t;  */
+mdefine_line|#define MS_ODD_RENAME&t;32768&t;/* Temporary stuff; will go away as soon&n;&t;&t;&t;&t;  * as nfs_rename() will be cleaned up&n;&t;&t;&t;&t;  */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
 mdefine_line|#define MS_RMT_MASK&t;(MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|&bslash;&n;&t;&t;&t;MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME|MS_NODIRATIME)
@@ -792,6 +792,12 @@ id|i_dquot
 id|MAXQUOTAS
 )braket
 suffix:semicolon
+DECL|member|i_pipe
+r_struct
+id|pipe_inode_info
+op_star
+id|i_pipe
+suffix:semicolon
 DECL|member|i_state
 r_int
 r_int
@@ -801,11 +807,6 @@ DECL|member|i_flags
 r_int
 r_int
 id|i_flags
-suffix:semicolon
-DECL|member|i_pipe
-r_int
-r_char
-id|i_pipe
 suffix:semicolon
 DECL|member|i_sock
 r_int
@@ -827,11 +828,6 @@ id|i_generation
 suffix:semicolon
 r_union
 (brace
-DECL|member|pipe_i
-r_struct
-id|pipe_inode_info
-id|pipe_i
-suffix:semicolon
 DECL|member|minix_i
 r_struct
 id|minix_inode_info
@@ -2288,6 +2284,24 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+DECL|member|flushpage
+r_int
+(paren
+op_star
+id|flushpage
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|page
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|super_operations
@@ -3162,16 +3176,6 @@ id|inuse_filps
 suffix:semicolon
 r_extern
 r_void
-id|refile_buffer
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|set_writetime
 c_func
 (paren
@@ -3193,16 +3197,45 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|nr_buffers
+r_void
+id|__refile_buffer
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|buf
+)paren
 suffix:semicolon
+DECL|function|refile_buffer
+r_extern
+r_inline
+r_void
+id|refile_buffer
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|buf
+)paren
+(brace
+multiline_comment|/*&n;&t; * Subtle, we do not want to refile not hashed buffers ...&n;&t; */
+r_if
+c_cond
+(paren
+id|buf-&gt;b_pprev
+)paren
+id|__refile_buffer
+c_func
+(paren
+id|buf
+)paren
+suffix:semicolon
+)brace
 r_extern
 r_int
 id|buffermem
-suffix:semicolon
-r_extern
-r_int
-id|nr_buffer_heads
 suffix:semicolon
 DECL|macro|BUF_CLEAN
 mdefine_line|#define BUF_CLEAN&t;0
@@ -3923,6 +3956,29 @@ r_char
 op_star
 )paren
 suffix:semicolon
+DECL|typedef|fs_getblock_t
+r_typedef
+r_int
+(paren
+op_star
+id|fs_getblock_t
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+comma
+r_int
+comma
+r_int
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|generic_readpage
@@ -3988,6 +4044,53 @@ id|loff_t
 op_star
 comma
 id|writepage_t
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|generic_block_flushpage
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|page
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|block_write_one_page
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|page
+op_star
+id|page
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|bytes
+comma
+r_const
+r_char
+op_star
+id|buf
+comma
+id|fs_getblock_t
+id|fs_get_block
 )paren
 suffix:semicolon
 r_extern

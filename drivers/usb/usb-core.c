@@ -92,7 +92,7 @@ c_func
 suffix:semicolon
 macro_line|#&t;endif
 macro_line|#&t;ifdef CONFIG_USB_PRINTER
-id|usb_print_init
+id|usb_printer_init
 c_func
 (paren
 )paren

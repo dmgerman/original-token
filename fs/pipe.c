@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/fs/pipe.c&n; *&n; *  Copyright (C) 1991, 1992  
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Define this if you want SunOS compatibility wrt braindead&n; * select behaviour on FIFO&squot;s.&n; */
 macro_line|#ifdef __sparc__
@@ -1323,6 +1324,17 @@ id|inode
 )paren
 )paren
 (brace
+r_struct
+id|pipe_inode_info
+op_star
+id|info
+op_assign
+id|inode-&gt;i_pipe
+suffix:semicolon
+id|inode-&gt;i_pipe
+op_assign
+l_int|NULL
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1330,22 +1342,14 @@ c_func
 r_int
 r_int
 )paren
-id|PIPE_BASE
-c_func
-(paren
-op_star
-id|inode
-)paren
+id|info-&gt;base
 )paren
 suffix:semicolon
-id|PIPE_BASE
+id|kfree
 c_func
 (paren
-op_star
-id|inode
+id|info
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 id|wake_up_interruptible
@@ -1845,14 +1849,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+r_int
+id|page
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|inode
 )paren
-(brace
-r_int
-r_int
+r_goto
+id|fail_inode
+suffix:semicolon
 id|page
 op_assign
 id|__get_free_page
@@ -1867,20 +1876,33 @@ c_cond
 op_logical_neg
 id|page
 )paren
-(brace
-id|iput
+r_goto
+id|fail_iput
+suffix:semicolon
+multiline_comment|/* XXX */
+id|inode-&gt;i_pipe
+op_assign
+id|kmalloc
 c_func
 (paren
-id|inode
+r_sizeof
+(paren
+r_struct
+id|pipe_inode_info
+)paren
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
-id|inode
-op_assign
-l_int|NULL
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode-&gt;i_pipe
+)paren
+r_goto
+id|fail_page
 suffix:semicolon
-)brace
-r_else
-(brace
 id|PIPE_BASE
 c_func
 (paren
@@ -1968,7 +1990,7 @@ id|inode
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Mark the inode dirty from the very beginning,&n;&t;&t;&t; * that way it will never be moved to the dirty&n;&t;&t;&t; * list because &quot;mark_inode_dirty()&quot; will think&n;&t;&t;&t; * that it already _is_ on the dirty list.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t; * Mark the inode dirty from the very beginning,&n;&t; * that way it will never be moved to the dirty&n;&t; * list because &quot;mark_inode_dirty()&quot; will think&n;&t; * that it already _is_ on the dirty list.&n;&t; */
 id|inode-&gt;i_state
 op_assign
 id|I_DIRTY
@@ -2001,10 +2023,29 @@ id|inode-&gt;i_blksize
 op_assign
 id|PAGE_SIZE
 suffix:semicolon
-)brace
-)brace
 r_return
 id|inode
+suffix:semicolon
+id|fail_page
+suffix:colon
+id|free_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|fail_iput
+suffix:colon
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|fail_inode
+suffix:colon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|variable|pipe_inode_operations
@@ -2315,6 +2356,16 @@ op_star
 id|inode
 )paren
 )paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|inode-&gt;i_pipe
+)paren
+suffix:semicolon
+id|inode-&gt;i_pipe
+op_assign
+l_int|NULL
 suffix:semicolon
 id|iput
 c_func

@@ -1833,6 +1833,10 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|inode-&gt;i_pipe
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is called by things like the networking layer&n; * etc that want to get an inode without any inode&n; * number, or filesystems that allocate new inodes with&n; * no pre-existing information.&n; */
 DECL|function|get_empty_inode

@@ -2314,11 +2314,6 @@ id|bh
 (braket
 id|i
 )braket
-op_logical_and
-id|bh
-(braket
-id|i
-)braket
 op_member_access_from_pointer
 id|b_size
 op_ne

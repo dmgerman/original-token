@@ -192,8 +192,7 @@ id|inode
 id|swapper_inode
 suffix:semicolon
 r_extern
-r_int
-r_int
+id|atomic_t
 id|page_cache_size
 suffix:semicolon
 r_extern
@@ -602,11 +601,10 @@ l_int|1
 suffix:semicolon
 id|count
 op_assign
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
-id|page-&gt;count
+id|page
 )paren
 suffix:semicolon
 r_if

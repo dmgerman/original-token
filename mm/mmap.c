@@ -94,7 +94,12 @@ id|PAGE_SHIFT
 suffix:semicolon
 id|free
 op_add_assign
+id|atomic_read
+c_func
+(paren
+op_amp
 id|page_cache_size
+)paren
 suffix:semicolon
 id|free
 op_add_assign
@@ -2762,6 +2767,23 @@ r_int
 id|flags
 comma
 id|retval
+suffix:semicolon
+id|len
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|len
+)paren
+r_return
+id|addr
 suffix:semicolon
 multiline_comment|/*&n;&t; * mlock MCL_FUTURE?&n;&t; */
 r_if

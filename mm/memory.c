@@ -997,16 +997,12 @@ id|pte
 )paren
 )paren
 suffix:semicolon
-id|atomic_inc
+id|get_page
 c_func
 (paren
-op_amp
 id|mem_map
-(braket
+op_plus
 id|page_nr
-)braket
-dot
-id|count
 )paren
 suffix:semicolon
 id|cont_copy_pte_range
@@ -2475,20 +2471,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
 id|mem_map
-(braket
+op_plus
 id|MAP_NR
 c_func
 (paren
 id|page
 )paren
-)braket
-dot
-id|count
 )paren
 op_ne
 l_int|1
@@ -2685,7 +2677,7 @@ suffix:semicolon
 r_struct
 id|page
 op_star
-id|page_map
+id|page
 suffix:semicolon
 id|new_page
 op_assign
@@ -2695,7 +2687,7 @@ c_func
 id|GFP_USER
 )paren
 suffix:semicolon
-multiline_comment|/* Did swap_out() unmapped the protected page while we slept? */
+multiline_comment|/* Did swap_out() unmap the protected page while we slept? */
 r_if
 c_cond
 (paren
@@ -2740,7 +2732,7 @@ suffix:semicolon
 id|tsk-&gt;min_flt
 op_increment
 suffix:semicolon
-id|page_map
+id|page
 op_assign
 id|mem_map
 op_plus
@@ -2754,11 +2746,10 @@ multiline_comment|/*&n;&t; * We can avoid the copy if:&n;&t; * - we&squot;re the
 r_switch
 c_cond
 (paren
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
-id|page_map-&gt;count
+id|page
 )paren
 )paren
 (brace
@@ -2772,7 +2763,7 @@ op_logical_neg
 id|PageSwapCache
 c_func
 (paren
-id|page_map
+id|page
 )paren
 )paren
 r_break
@@ -2783,7 +2774,7 @@ c_cond
 id|swap_count
 c_func
 (paren
-id|page_map-&gt;offset
+id|page-&gt;offset
 )paren
 op_ne
 l_int|1
@@ -2793,7 +2784,7 @@ suffix:semicolon
 id|delete_from_swap_cache
 c_func
 (paren
-id|page_map
+id|page
 )paren
 suffix:semicolon
 multiline_comment|/* FallThrough */
@@ -2870,7 +2861,7 @@ c_cond
 id|PageReserved
 c_func
 (paren
-id|page_map
+id|page
 )paren
 )paren
 op_increment
@@ -2942,7 +2933,7 @@ suffix:semicolon
 id|__free_page
 c_func
 (paren
-id|page_map
+id|page
 )paren
 suffix:semicolon
 r_return
@@ -3580,12 +3571,11 @@ r_else
 r_if
 c_cond
 (paren
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
 id|mem_map
-(braket
+op_plus
 id|MAP_NR
 c_func
 (paren
@@ -3595,9 +3585,6 @@ c_func
 id|page
 )paren
 )paren
-)braket
-dot
-id|count
 )paren
 OG
 l_int|1
@@ -3917,20 +3904,16 @@ r_else
 r_if
 c_cond
 (paren
-id|atomic_read
+id|page_count
 c_func
 (paren
-op_amp
 id|mem_map
-(braket
+op_plus
 id|MAP_NR
 c_func
 (paren
 id|page
 )paren
-)braket
-dot
-id|count
 )paren
 OG
 l_int|1

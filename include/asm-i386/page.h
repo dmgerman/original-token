@@ -133,6 +133,12 @@ multiline_comment|/*&n; * This handles the memory map.. We could make this a con
 macro_line|#include &lt;asm/page_offset.h&gt;
 DECL|macro|__PAGE_OFFSET
 mdefine_line|#define __PAGE_OFFSET&t;&t;(PAGE_OFFSET_RAW)
+macro_line|#ifndef __ASSEMBLY__
+DECL|macro|BUG
+mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
+DECL|macro|PAGE_BUG
+mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;&t;&t;&t;BUG(); } while (0)
+macro_line|#endif /* __ASSEMBLY__ */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;((unsigned long)__PAGE_OFFSET)
 DECL|macro|__pa

@@ -1,34 +1,10 @@
 macro_line|#ifndef _HPFS_FS_I
 DECL|macro|_HPFS_FS_I
 mdefine_line|#define _HPFS_FS_I
-macro_line|#if ANALWARNINGS
-macro_line|#warning Fix the FIFO stuff!
-macro_line|#warning Fix the FIFO stuff!
-macro_line|#warning Fix the FIFO stuff!
-macro_line|#endif
 DECL|struct|hpfs_inode_info
 r_struct
 id|hpfs_inode_info
 (brace
-r_union
-(brace
-multiline_comment|/* Linux sometimes destroys this structure */
-DECL|member|bla
-r_struct
-id|pipe_inode_info
-id|bla
-suffix:semicolon
-multiline_comment|/* due to a bug. Linus doesn&squot;t want to fix */
-DECL|member|ble
-r_struct
-id|socket
-id|ble
-suffix:semicolon
-multiline_comment|/* it so I had to write this workaround :-) */
-DECL|member|dummy
-)brace
-id|dummy
-suffix:semicolon
 DECL|member|i_parent_dir
 id|ino_t
 id|i_parent_dir

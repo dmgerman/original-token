@@ -232,13 +232,10 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Must mark the page invalid after I/O error */
-id|clear_bit
+id|ClearPageUptodate
 c_func
 (paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 r_goto
@@ -1551,11 +1548,10 @@ op_minus
 id|ENOBUFS
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, there&squot;s another user of this page with the new request..&n;&t; * The IO completion will then free the page and the dentry.&n;&t; */
-id|atomic_inc
+id|get_page
 c_func
 (paren
-op_amp
-id|page-&gt;count
+id|page
 )paren
 suffix:semicolon
 id|file-&gt;f_count
@@ -1581,13 +1577,10 @@ id|req-&gt;wb_bytes
 op_eq
 id|PAGE_SIZE
 )paren
-id|set_bit
+id|SetPageUptodate
 c_func
 (paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 id|retval
@@ -1651,13 +1644,10 @@ id|retval
 OL
 l_int|0
 )paren
-id|clear_bit
+id|ClearPageUptodate
 c_func
 (paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 )brace
@@ -2264,13 +2254,10 @@ c_func
 id|req
 )paren
 )paren
-id|clear_bit
+id|ClearPageUptodate
 c_func
 (paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 id|__free_page
