@@ -15,6 +15,8 @@ mdefine_line|#define V2_DINDIRECT_BLOCK(offset) ((DIRECT_BLOCK-offset)&gt;&gt;8)
 DECL|macro|TINDIRECT_BLOCK
 mdefine_line|#define TINDIRECT_BLOCK(offset) ((DIRECT_BLOCK-(offset))&gt;&gt;8)
 multiline_comment|/*&n; * Truncate has the most races in the whole filesystem: coding it is&n; * a pain in the a**, especially as I don&squot;t do any locking.&n; *&n; * The code may look a bit weird, but that&squot;s just because I&squot;ve tried to&n; * handle things like file-size changes in a somewhat graceful manner.&n; * Anyway, truncating a file at the same time somebody else writes to it&n; * is likely to result in pretty weird behaviour...&n; *&n; * The new code handles normal truncates (size = 0) as well as the more&n; * general case (size = XXX). I hope.&n; */
+DECL|macro|DATA_BUFFER_USED
+mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;((bh-&gt;b_count &gt; 1) || buffer_locked(bh))
 multiline_comment|/*&n; * The functions for minix V1 fs truncation.&n; */
 DECL|function|V1_trunc_direct
 r_static
@@ -120,9 +122,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 id|tmp
@@ -403,9 +407,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 id|tmp
@@ -1042,9 +1048,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 id|tmp
@@ -1325,9 +1333,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 id|tmp

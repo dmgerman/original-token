@@ -24,6 +24,8 @@ DECL|macro|DIRECT_BLOCK
 mdefine_line|#define DIRECT_BLOCK howmany (inode-&gt;i_size, uspi-&gt;s_bsize)
 DECL|macro|DIRECT_FRAGMENT
 mdefine_line|#define DIRECT_FRAGMENT howmany (inode-&gt;i_size, uspi-&gt;s_fsize)
+DECL|macro|DATA_BUFFER_USED
+mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;((bh-&gt;b_count &gt; 1) || buffer_locked(bh))
 DECL|function|ufs_trunc_direct
 r_static
 r_int
@@ -319,9 +321,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 id|tmp
@@ -463,9 +467,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 id|tmp
@@ -676,9 +682,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 id|tmp
@@ -1009,9 +1017,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 id|tmp

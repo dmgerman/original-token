@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/sysv_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 multiline_comment|/* Linus&squot; implementation of truncate.&n; * It doesn&squot;t need locking because it can tell from looking at bh-&gt;b_count&n; * whether a given block is in use elsewhere.&n; */
 multiline_comment|/*&n; * Truncate has the most races in the whole filesystem: coding it is&n; * a pain in the a**, especially as I don&squot;t do any locking.&n; *&n; * The code may look a bit weird, but that&squot;s just because I&squot;ve tried to&n; * handle things like file-size changes in a somewhat graceful manner.&n; * Anyway, truncating a file at the same time somebody else writes to it&n; * is likely to result in pretty weird behaviour...&n; *&n; * The new code handles normal truncates (size = 0) as well as the more&n; * general case (size = XXX). I hope.&n; */
+DECL|macro|DATA_BUFFER_USED
+mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;((bh-&gt;b_count &gt; 1) || buffer_locked(bh))
 multiline_comment|/* We throw away any data beyond inode-&gt;i_size. */
 DECL|function|trunc_direct
 r_static
@@ -134,9 +136,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 (paren
@@ -463,9 +467,11 @@ c_cond
 (paren
 id|bh
 op_logical_and
-id|bh-&gt;b_count
-op_ne
-l_int|1
+id|DATA_BUFFER_USED
+c_func
+(paren
+id|bh
+)paren
 )paren
 op_logical_or
 (paren
@@ -551,10 +557,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|DATA_BUFFER_USED
+c_func
 (paren
-id|indbh-&gt;b_count
-op_ne
-l_int|1
+id|indbh
 )paren
 op_logical_or
 (paren
@@ -904,10 +910,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|DATA_BUFFER_USED
+c_func
 (paren
-id|indbh-&gt;b_count
-op_ne
-l_int|1
+id|indbh
 )paren
 op_logical_or
 (paren
@@ -1257,10 +1263,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|DATA_BUFFER_USED
+c_func
 (paren
-id|indbh-&gt;b_count
-op_ne
-l_int|1
+id|indbh
 )paren
 op_logical_or
 (paren

@@ -495,13 +495,6 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* can&squot;t do it atomically, wait for any free space */
-id|up
-c_func
-(paren
-op_amp
-id|inode-&gt;i_sem
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -509,17 +502,10 @@ id|down_interruptible
 c_func
 (paren
 op_amp
-id|inode-&gt;i_atomic_write
+id|inode-&gt;i_sem
 )paren
 )paren
 (brace
-id|down
-c_func
-(paren
-op_amp
-id|inode-&gt;i_sem
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ERESTARTSYS
@@ -782,13 +768,6 @@ suffix:semicolon
 id|errout
 suffix:colon
 id|up
-c_func
-(paren
-op_amp
-id|inode-&gt;i_atomic_write
-)paren
-suffix:semicolon
-id|down
 c_func
 (paren
 op_amp
@@ -1350,6 +1329,9 @@ c_func
 (paren
 id|info
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 id|wake_up_interruptible

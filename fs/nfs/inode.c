@@ -296,7 +296,26 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Flush out any pending write requests ...&n;&t; */
+r_if
+c_cond
+(paren
+id|S_ISDIR
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+)paren
+(brace
+id|nfs_free_dircache
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t; * Flush out any pending write requests ...&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -389,6 +408,7 @@ c_func
 l_string|&quot;NFS: Arghhh, stuck RPC requests!&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 id|failed
 op_assign
@@ -1700,7 +1720,7 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
-id|nfs_invalidate_dircache
+id|nfs_flush_dircache
 c_func
 (paren
 id|inode
@@ -1850,22 +1870,6 @@ id|inode
 )paren
 op_assign
 id|fattr-&gt;mtime.seconds
-suffix:semicolon
-id|NFS_COOKIES
-c_func
-(paren
-id|inode
-)paren
-op_assign
-l_int|NULL
-suffix:semicolon
-id|NFS_WRITEBACK
-c_func
-(paren
-id|inode
-)paren
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 id|nfs_refresh_inode
