@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.60 2000/08/10 23:49:16 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.61 2000/09/23 02:11:22 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
@@ -833,6 +833,10 @@ id|addr
 suffix:semicolon
 )brace
 macro_line|#endif /* __KERNEL__ */
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;do { } while(0)
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;do { } while(0)
 multiline_comment|/* The following routine need not be atomic. */
 DECL|function|test_bit
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.55 2000/07/24 14:13:13 anton Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.56 2000/09/21 06:29:01 anton Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -30,6 +30,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 macro_line|#ifdef CONFIG_IP_PNP
 macro_line|#include &lt;net/ipconfig.h&gt;
 macro_line|#endif
@@ -1932,6 +1933,12 @@ op_amp
 id|prom_con
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Work out if we are starfire early on */
+id|check_if_starfire
+c_func
+(paren
+)paren
+suffix:semicolon
 id|boot_flags_init
 c_func
 (paren

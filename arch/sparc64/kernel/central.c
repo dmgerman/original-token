@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: central.c,v 1.13 1999/12/01 10:44:43 davem Exp $&n; * central.c: Central FHC driver for Sunfire/Starfire/Wildfire.&n; *&n; * Copyright (C) 1997, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: central.c,v 1.14 2000/09/21 06:25:14 anton Exp $&n; * central.c: Central FHC driver for Sunfire/Starfire/Wildfire.&n; *&n; * Copyright (C) 1997, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/fhc.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 DECL|variable|central_bus
 r_struct
 id|linux_central
@@ -1338,15 +1339,12 @@ op_minus
 l_int|1
 )paren
 (brace
-r_extern
-r_void
-id|starfire_check
-c_func
+r_if
+c_cond
 (paren
-r_void
+id|this_is_starfire
 )paren
-suffix:semicolon
-id|starfire_check
+id|starfire_cpu_setup
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.61 2000/08/04 05:35:55 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.62 2000/09/23 02:09:21 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -161,12 +161,12 @@ mdefine_line|#define restore_flags(flags)&t;__global_restore_flags(flags)
 DECL|macro|save_and_cli
 mdefine_line|#define save_and_cli(flags)&t;do { save_flags(flags); cli(); } while(0)
 macro_line|#endif
-DECL|macro|mb
-mdefine_line|#define mb()  &t;&t;__asm__ __volatile__ (&quot;stbar&quot; : : : &quot;memory&quot;)
 DECL|macro|nop
 mdefine_line|#define nop() &t;&t;__asm__ __volatile__ (&quot;nop&quot;)
 DECL|macro|membar
 mdefine_line|#define membar(type)&t;__asm__ __volatile__ (&quot;membar &quot; type : : : &quot;memory&quot;);
+DECL|macro|mb
+mdefine_line|#define mb()&t;&t;&bslash;&n;&t;membar(&quot;#LoadLoad | #LoadStore | #StoreStore | #StoreLoad&quot;);
 DECL|macro|rmb
 mdefine_line|#define rmb()&t;&t;membar(&quot;#LoadLoad&quot;)
 DECL|macro|wmb
@@ -175,6 +175,21 @@ DECL|macro|set_mb
 mdefine_line|#define set_mb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreLoad | #StoreStore&quot;); } while(0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreStore&quot;); } while(0)
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;mb()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;rmb()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;wmb()
+macro_line|#else
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;__asm__ __volatile__(&quot;&quot;:::&quot;memory&quot;);
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;__asm__ __volatile__(&quot;&quot;:::&quot;memory&quot;);
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;__asm__ __volatile__(&quot;&quot;:::&quot;memory&quot;);
+macro_line|#endif
 DECL|macro|flushi
 mdefine_line|#define flushi(addr)&t;__asm__ __volatile__ (&quot;flush %0&quot; : : &quot;r&quot; (addr) : &quot;memory&quot;)
 DECL|macro|flushw_all

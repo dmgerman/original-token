@@ -20,18 +20,6 @@ l_int|0xffffffffUL
 suffix:semicolon
 macro_line|#ifndef CONFIG_PCI
 multiline_comment|/* A &quot;nop&quot; PCI implementation. */
-DECL|function|pcibios_present
-r_int
-id|pcibios_present
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|sys_pciconfig_read
 id|asmlinkage
 r_int
@@ -1202,11 +1190,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1337,11 +1320,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|out
 suffix:colon

@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#include &lt;asm/fhc.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 multiline_comment|/* Probe and map in the Auxiliary I/O register */
 DECL|variable|auxio_register
 r_int
@@ -165,6 +166,8 @@ r_if
 c_cond
 (paren
 id|central_bus
+op_logical_or
+id|this_is_starfire
 )paren
 (brace
 id|auxio_register

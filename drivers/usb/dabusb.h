@@ -81,7 +81,6 @@ id|spinlock_t
 id|lock
 suffix:semicolon
 DECL|member|pending_io
-r_volatile
 id|atomic_t
 id|pending_io
 suffix:semicolon

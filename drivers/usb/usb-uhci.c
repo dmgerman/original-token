@@ -4692,6 +4692,11 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+suffix:semicolon
 id|spin_lock_irqsave
 (paren
 op_amp
@@ -4905,6 +4910,10 @@ id|urb-&gt;hcpriv
 )paren
 suffix:semicolon
 macro_line|#endif
+id|usb_dev
+op_assign
+id|urb-&gt;dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4916,6 +4925,10 @@ c_func
 (paren
 l_string|&quot;unlink_urb: calling completion&quot;
 )paren
+suffix:semicolon
+id|urb-&gt;dev
+op_assign
+l_int|NULL
 suffix:semicolon
 id|urb-&gt;complete
 (paren
@@ -4930,7 +4943,7 @@ suffix:semicolon
 )brace
 id|usb_dec_dev_use
 (paren
-id|urb-&gt;dev
+id|usb_dev
 )paren
 suffix:semicolon
 )brace
@@ -5196,6 +5209,10 @@ c_func
 op_amp
 id|s-&gt;urb_list_lock
 )paren
+suffix:semicolon
+id|urb-&gt;dev
+op_assign
+l_int|NULL
 suffix:semicolon
 id|urb-&gt;complete
 (paren
@@ -9396,6 +9413,10 @@ id|urb-&gt;status
 op_assign
 id|stat
 suffix:semicolon
+id|urb-&gt;dev
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11325,6 +11346,15 @@ id|proceed
 op_assign
 l_int|0
 suffix:semicolon
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+suffix:semicolon
+id|usb_dev
+op_assign
+id|urb-&gt;dev
+suffix:semicolon
 multiline_comment|/* Release bandwidth for Interrupt or Iso transfers */
 r_if
 c_cond
@@ -11517,6 +11547,10 @@ c_func
 l_string|&quot;process_transfer: calling early completion&quot;
 )paren
 suffix:semicolon
+id|urb-&gt;dev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|urb-&gt;complete
 (paren
 (paren
@@ -11542,11 +11576,17 @@ op_minus
 id|ENOENT
 )paren
 )paren
+(brace
+id|urb-&gt;dev
+op_assign
+id|usb_dev
+suffix:semicolon
 id|uhci_submit_urb
 (paren
 id|urb
 )paren
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -11620,6 +11660,10 @@ c_func
 l_string|&quot;process_transfer: calling completion&quot;
 )paren
 suffix:semicolon
+id|urb-&gt;dev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|urb-&gt;complete
 (paren
 (paren
@@ -11632,9 +11676,14 @@ id|urb
 suffix:semicolon
 )brace
 )brace
+id|urb-&gt;dev
+op_assign
+l_int|NULL
+suffix:semicolon
+singleline_comment|// Just in case no completion was called
 id|usb_dec_dev_use
 (paren
-id|urb-&gt;dev
+id|usb_dev
 )paren
 suffix:semicolon
 id|spin_unlock

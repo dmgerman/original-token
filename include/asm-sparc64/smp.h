@@ -5,6 +5,7 @@ mdefine_line|#define _SPARC64_SMP_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* PROM provided per-processor information we need&n; * to start them all up.&n; */
 DECL|struct|prom_cpuinfo
@@ -222,10 +223,6 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_int
-id|this_is_starfire
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -234,14 +231,6 @@ op_ne
 l_int|0
 )paren
 (brace
-r_extern
-r_int
-id|starfire_hard_smp_processor_id
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_return
 id|starfire_hard_smp_processor_id
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: piggyback.c,v 1.1 1997/07/11 11:05:26 jj Exp $&n;   Simple utility to make a single-image install kernel with initial ramdisk&n;   for Sparc64 tftpbooting without need to set up nfs.&n;   &n;   Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
+multiline_comment|/* $Id: piggyback.c,v 1.2 2000/09/19 14:34:39 anton Exp $&n;   Simple utility to make a single-image install kernel with initial ramdisk&n;   for Sparc64 tftpbooting without need to set up nfs.&n;   &n;   Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2 of the License, or&n;   (at your option) any later version.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should have received a copy of the GNU General Public License&n;   along with this program; if not, write to the Free Software&n;   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;ctype.h&gt;
@@ -158,7 +158,7 @@ id|buffer
 op_plus
 l_int|19
 comma
-l_string|&quot;start&bslash;n&quot;
+l_string|&quot;_start&bslash;n&quot;
 )paren
 )paren
 id|start
@@ -185,7 +185,7 @@ id|buffer
 op_plus
 l_int|19
 comma
-l_string|&quot;end&bslash;n&quot;
+l_string|&quot;_end&bslash;n&quot;
 )paren
 )paren
 id|end

@@ -233,6 +233,12 @@ DECL|macro|UNIX98_PTY_MAJOR_COUNT
 mdefine_line|#define UNIX98_PTY_MAJOR_COUNT&t;8
 DECL|macro|UNIX98_PTY_SLAVE_MAJOR
 mdefine_line|#define UNIX98_PTY_SLAVE_MAJOR&t;(UNIX98_PTY_MASTER_MAJOR+UNIX98_PTY_MAJOR_COUNT)
+DECL|macro|VXVM_MAJOR
+mdefine_line|#define VXVM_MAJOR&t;&t;199&t;/* VERITAS volume i/o driver    */
+DECL|macro|VXSPEC_MAJOR
+mdefine_line|#define VXSPEC_MAJOR&t;&t;200&t;/* VERITAS volume config driver */
+DECL|macro|VXDMP_MAJOR
+mdefine_line|#define VXDMP_MAJOR&t;&t;201&t;/* VERITAS volume multipath driver */
 DECL|macro|MSR_MAJOR
 mdefine_line|#define MSR_MAJOR&t;&t;202
 DECL|macro|CPUID_MAJOR

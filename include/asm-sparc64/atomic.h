@@ -7,6 +7,7 @@ DECL|typedef|atomic_t
 r_typedef
 r_struct
 (brace
+r_volatile
 r_int
 id|counter
 suffix:semicolon

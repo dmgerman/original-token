@@ -3,8 +3,6 @@ macro_line|#ifndef __ARCH_SPARC_ATOMIC__
 DECL|macro|__ARCH_SPARC_ATOMIC__
 mdefine_line|#define __ARCH_SPARC_ATOMIC__
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_SMP
-multiline_comment|/* This is a temporary measure. -DaveM */
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
@@ -17,31 +15,18 @@ suffix:semicolon
 )brace
 id|atomic_t
 suffix:semicolon
-DECL|macro|ATOMIC_INIT
-mdefine_line|#define ATOMIC_INIT(i)&t;{ (i &lt;&lt; 8) }
-macro_line|#else
-DECL|member|counter
-DECL|typedef|atomic_t
-r_typedef
-r_struct
-(brace
-r_int
-id|counter
-suffix:semicolon
-)brace
-id|atomic_t
-suffix:semicolon
-DECL|macro|ATOMIC_INIT
-mdefine_line|#define ATOMIC_INIT(i)  { (i) }
-macro_line|#endif
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef CONFIG_SMP
+DECL|macro|ATOMIC_INIT
+mdefine_line|#define ATOMIC_INIT(i)  { (i) }
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)          ((v)-&gt;counter)
 DECL|macro|atomic_set
 mdefine_line|#define atomic_set(v, i)        (((v)-&gt;counter) = i)
 macro_line|#else
 multiline_comment|/* We do the bulk of the actual work out of line in two common&n; * routines in assembler, see arch/sparc/lib/atomic.S for the&n; * &quot;fun&quot; details.&n; *&n; * For SMP the trick is you embed the spin lock byte within&n; * the word, use the low byte so signedness is easily retained&n; * via a quick arithmetic shift.  It looks like this:&n; *&n; *&t;----------------------------------------&n; *&t;| signed 24-bit counter value |  lock  |  atomic_t&n; *&t;----------------------------------------&n; *&t; 31                          8 7      0&n; */
+DECL|macro|ATOMIC_INIT
+mdefine_line|#define ATOMIC_INIT(i)&t;{ (i &lt;&lt; 8) }
 DECL|function|atomic_read
 r_static
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.93 2000/08/31 10:00:39 anton Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.94 2000/09/21 06:27:10 anton Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -23,6 +23,7 @@ macro_line|#include &lt;asm/timer.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 multiline_comment|/* Internal flag, should not be visible elsewhere at all. */
 DECL|macro|SA_IMAP_MASKED
 mdefine_line|#define SA_IMAP_MASKED&t;&t;0x100
@@ -399,10 +400,6 @@ r_int
 id|irq
 )paren
 (brace
-r_extern
-r_int
-id|this_is_starfire
-suffix:semicolon
 r_struct
 id|ino_bucket
 op_star
@@ -476,21 +473,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_extern
-r_int
-r_int
-id|starfire_translate
-c_func
-(paren
-r_int
-r_int
-id|imap
-comma
-r_int
-r_int
-id|upaid
-)paren
-suffix:semicolon
 id|tid
 op_assign
 (paren
@@ -3034,10 +3016,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
-r_extern
-r_int
-id|this_is_starfire
-suffix:semicolon
 r_int
 id|should_forward
 op_assign
@@ -4508,10 +4486,6 @@ r_int
 id|goal_cpu
 )paren
 (brace
-r_extern
-r_int
-id|this_is_starfire
-suffix:semicolon
 r_struct
 id|ino_bucket
 op_star
@@ -4564,21 +4538,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_extern
-r_int
-r_int
-id|starfire_translate
-c_func
-(paren
-r_int
-r_int
-id|imap
-comma
-r_int
-r_int
-id|upaid
-)paren
-suffix:semicolon
 id|tid
 op_assign
 (paren

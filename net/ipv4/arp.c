@@ -4207,6 +4207,7 @@ op_plus
 id|len
 comma
 l_string|&quot;%-16s 0x%-10x0x%-10x%s&quot;
+l_string|&quot;     *        %s&bslash;n&quot;
 comma
 id|tbuf
 comma
@@ -4219,22 +4220,6 @@ id|n
 )paren
 comma
 id|hbuffer
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-op_plus
-id|size
-comma
-l_string|&quot;     %-8s %s&bslash;n&quot;
-comma
-l_string|&quot;*&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -4386,6 +4371,7 @@ op_plus
 id|len
 comma
 l_string|&quot;%-16s 0x%-10x0x%-10x%s&quot;
+l_string|&quot;     *        %s&bslash;n&quot;
 comma
 id|tbuf
 comma
@@ -4396,21 +4382,6 @@ op_or
 id|ATF_PERM
 comma
 l_string|&quot;00:00:00:00:00:00&quot;
-)paren
-suffix:semicolon
-)brace
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-op_plus
-id|size
-comma
-l_string|&quot;     *        %-16s&bslash;n&quot;
 comma
 id|dev
 ques
@@ -4420,6 +4391,7 @@ suffix:colon
 l_string|&quot;*&quot;
 )paren
 suffix:semicolon
+)brace
 id|len
 op_add_assign
 id|size

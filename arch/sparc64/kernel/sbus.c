@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.11 2000/04/14 09:13:04 davem Exp $&n; * sbus.c: UltraSparc SBUS controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.12 2000/09/21 06:25:14 anton Exp $&n; * sbus.c: UltraSparc SBUS controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/upa.h&gt;
 macro_line|#include &lt;asm/cache.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 macro_line|#include &quot;iommu_common.h&quot;
 multiline_comment|/* These should be allocated on an SMP_CACHE_BYTES&n; * aligned boundry for optimal performance.&n; *&n; * On SYSIO, using an 8K page size we have 1GB of SBUS&n; * DMA space mapped.  We divide this space into equally&n; * sized clusters.  Currently we allow clusters up to a&n; * size of 1MB.  If anything begins to generate DMA&n; * mapping requests larger than this we will need to&n; * increase things a bit.&n; */
 DECL|macro|NCLUSTERS
@@ -5244,20 +5245,6 @@ id|iommu-&gt;sbus_control_reg
 )paren
 suffix:semicolon
 multiline_comment|/* Now some Xfire specific grot... */
-(brace
-r_extern
-r_void
-op_star
-id|starfire_hookup
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|this_is_starfire
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5276,7 +5263,6 @@ id|sbus-&gt;starfire_cookie
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 id|sysio_register_error_handlers
 c_func
 (paren

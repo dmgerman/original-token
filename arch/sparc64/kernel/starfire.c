@@ -1,20 +1,21 @@
-multiline_comment|/* $Id: starfire.c,v 1.5 2000/01/31 04:59:12 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: starfire.c,v 1.7 2000/09/22 23:02:13 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; * Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/upa.h&gt;
-multiline_comment|/* A few places around the kernel check this to see if&n; * they need to call us to do things in a Starfire specific&n; * way.&n; */
+macro_line|#include &lt;asm/starfire.h&gt;
+multiline_comment|/*&n; * A few places around the kernel check this to see if&n; * they need to call us to do things in a Starfire specific&n; * way.&n; */
 DECL|variable|this_is_starfire
 r_int
 id|this_is_starfire
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|starfire_check
+DECL|function|check_if_starfire
 r_void
-id|starfire_check
+id|check_if_starfire
 c_func
 (paren
 r_void
@@ -42,14 +43,32 @@ op_minus
 l_int|1
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|this_is_starfire
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Now must fixup cpu MIDs.  OBP gave us a logical&n;&t;&t; * linear cpuid number, not the real upaid.&n;&t;&t; */
+)brace
+)brace
+DECL|function|starfire_cpu_setup
+r_void
+id|starfire_cpu_setup
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|this_is_starfire
+)paren
+(brace
+multiline_comment|/* We do this in starfire_translate - Anton */
+macro_line|#if 0
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Now must fixup cpu MIDs.  OBP gave us a logical&n;&t;&t; * linear cpuid number, not the real upaid.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -116,6 +135,7 @@ op_assign
 id|mid
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 )brace
 DECL|function|starfire_hard_smp_processor_id
@@ -134,7 +154,7 @@ l_int|0x1fff40000d0UL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Each Starfire board has 32 registers which perform translation&n; * and delivery of traditional interrupt packets into the extended&n; * Starfire hardware format.  Essentially UPAID&squot;s now have 2 more&n; * bits than in all previous Sun5 systems.&n; */
+multiline_comment|/*&n; * Each Starfire board has 32 registers which perform translation&n; * and delivery of traditional interrupt packets into the extended&n; * Starfire hardware format.  Essentially UPAID&squot;s now have 2 more&n; * bits than in all previous Sun5 systems.&n; */
 DECL|struct|starfire_irqinfo
 r_struct
 id|starfire_irqinfo
@@ -319,6 +339,28 @@ op_star
 l_int|0x10UL
 )paren
 suffix:semicolon
+multiline_comment|/* Lets play it safe and not overwrite existing mappings */
+r_if
+c_cond
+(paren
+id|upa_readl
+c_func
+(paren
+id|p-&gt;tregs
+(braket
+id|i
+)braket
+)paren
+op_ne
+l_int|0
+)paren
+id|p-&gt;imap_slots
+(braket
+id|i
+)braket
+op_assign
+l_int|0xdeadbeaf
+suffix:semicolon
 )brace
 id|p-&gt;upaid
 op_assign
@@ -502,6 +544,37 @@ id|i
 )braket
 op_assign
 id|imap
+suffix:semicolon
+multiline_comment|/* map to real upaid */
+id|upaid
+op_assign
+(paren
+(paren
+(paren
+id|upaid
+op_amp
+l_int|0x3c
+)paren
+op_lshift
+l_int|1
+)paren
+op_or
+(paren
+(paren
+id|upaid
+op_amp
+l_int|0x40
+)paren
+op_rshift
+l_int|4
+)paren
+op_or
+(paren
+id|upaid
+op_amp
+l_int|0x3
+)paren
+)paren
 suffix:semicolon
 id|upa_writel
 c_func

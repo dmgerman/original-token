@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.30 2000/08/10 23:49:16 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.31 2000/09/23 02:09:21 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -60,6 +60,10 @@ DECL|macro|clear_bit
 mdefine_line|#define clear_bit(nr,addr)&t;&t;((void)__test_and_clear_bit(nr,addr))
 DECL|macro|change_bit
 mdefine_line|#define change_bit(nr,addr)&t;&t;((void)__test_and_change_bit(nr,addr))
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;do { } while(0)
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;do { } while(0)
 DECL|function|test_bit
 r_extern
 id|__inline__

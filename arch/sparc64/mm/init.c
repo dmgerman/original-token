@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.155 2000/09/09 00:02:19 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.156 2000/09/21 06:34:48 anton Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -22,6 +22,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 r_extern
 r_void
 id|device_scan
@@ -4870,40 +4871,10 @@ c_func
 r_int
 )paren
 suffix:semicolon
-r_int
-id|is_starfire
-op_assign
-id|prom_finddevice
-c_func
-(paren
-l_string|&quot;/ssp-serial&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|is_starfire
-op_ne
-l_int|0
-op_logical_and
-id|is_starfire
-op_ne
-op_minus
-l_int|1
-)paren
-id|is_starfire
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-id|is_starfire
-op_assign
-l_int|0
-suffix:semicolon
 id|setup_tba
 c_func
 (paren
-id|is_starfire
+id|this_is_starfire
 )paren
 suffix:semicolon
 )brace

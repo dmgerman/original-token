@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.29 2000/09/16 07:33:45 davem Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: time.c,v 1.32 2000/09/22 23:02:13 davem Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/fhc.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 r_extern
 id|rwlock_t
 id|xtime_lock
@@ -1358,6 +1359,59 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|this_is_starfire
+)paren
+(brace
+multiline_comment|/* davem suggests we keep this within the 4M locked kernel image */
+r_static
+r_char
+id|obp_gettod
+(braket
+l_int|256
+)braket
+suffix:semicolon
+r_static
+id|u32
+id|unix_tod
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|obp_gettod
+comma
+l_string|&quot;h# %08x unix-gettod&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+(paren
+r_int
+)paren
+op_amp
+id|unix_tod
+)paren
+suffix:semicolon
+id|prom_feval
+c_func
+(paren
+id|obp_gettod
+)paren
+suffix:semicolon
+id|xtime.tv_sec
+op_assign
+id|unix_tod
+suffix:semicolon
+id|xtime.tv_usec
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|__save_and_cli
 c_func
 (paren
@@ -2191,6 +2245,13 @@ op_star
 id|tv
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|this_is_starfire
+)paren
+r_return
+suffix:semicolon
 id|write_lock_irq
 c_func
 (paren
@@ -2278,7 +2339,7 @@ suffix:semicolon
 id|u8
 id|tmp
 suffix:semicolon
-multiline_comment|/* Not having a register set can lead to trouble. */
+multiline_comment|/* &n;&t; * Not having a register set can lead to trouble.&n;&t; * Also starfire doesnt have a tod clock.&n;&t; */
 r_if
 c_cond
 (paren

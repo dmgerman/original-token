@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_psycho.c,v 1.16 2000/04/15 10:06:16 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_psycho.c,v 1.17 2000/09/21 06:25:14 anton Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/iommu.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/starfire.h&gt;
 macro_line|#include &quot;pci_impl.h&quot;
 multiline_comment|/* All PSYCHO registers are 64-bits.  The following accessor&n; * routines are how they are accessed.  The REG parameter&n; * is a physical address.&n; */
 DECL|macro|psycho_read
@@ -5281,19 +5282,6 @@ op_star
 id|p
 )paren
 (brace
-r_extern
-r_int
-id|this_is_starfire
-suffix:semicolon
-r_extern
-r_void
-op_star
-id|starfire_hookup
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
 r_int
 r_int
 id|tsbbase

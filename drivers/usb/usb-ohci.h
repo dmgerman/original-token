@@ -237,9 +237,9 @@ id|hwPSW
 id|MAXPSW
 )braket
 suffix:semicolon
-DECL|member|type
+DECL|member|unused
 id|__u8
-id|type
+id|unused
 suffix:semicolon
 DECL|member|index
 id|__u8
@@ -266,23 +266,6 @@ DECL|typedef|td_t
 )brace
 id|td_t
 suffix:semicolon
-multiline_comment|/* TD types */
-DECL|macro|BULK
-mdefine_line|#define BULK&t;&t;0x03
-DECL|macro|INT
-mdefine_line|#define INT&t;&t;&t;0x01
-DECL|macro|CTRL
-mdefine_line|#define CTRL&t;&t;0x02
-DECL|macro|ISO
-mdefine_line|#define ISO&t;&t;&t;0x00
-DECL|macro|SEND
-mdefine_line|#define SEND            0x01
-DECL|macro|ST_ADDR
-mdefine_line|#define ST_ADDR         0x02
-DECL|macro|ADD_LEN
-mdefine_line|#define ADD_LEN         0x04
-DECL|macro|DEL
-mdefine_line|#define DEL             0x08
 DECL|macro|OHCI_ED_SKIP
 mdefine_line|#define OHCI_ED_SKIP&t;(1 &lt;&lt; 14)
 multiline_comment|/*&n; * The HCCA (Host Controller Communications Area) is a 256 byte&n; * structure defined in the OHCI spec. that the host controller is&n; * told the base address of.  It must be 256-byte aligned.&n; */
@@ -718,7 +701,7 @@ r_int
 id|state
 suffix:semicolon
 DECL|member|wait
-r_void
+id|wait_queue_head_t
 op_star
 id|wait
 suffix:semicolon
@@ -884,7 +867,7 @@ r_int
 id|ed_cnt
 suffix:semicolon
 DECL|member|wait
-r_void
+id|wait_queue_head_t
 op_star
 id|wait
 suffix:semicolon

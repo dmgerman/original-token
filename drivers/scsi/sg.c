@@ -7,7 +7,7 @@ r_char
 op_star
 id|sg_version_str
 op_assign
-l_string|&quot;Version: 3.1.17 (20000921)&quot;
+l_string|&quot;Version: 3.1.17 (20001002)&quot;
 suffix:semicolon
 macro_line|#endif
 DECL|variable|sg_version_num
@@ -50,7 +50,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_static
 r_void
 id|sg_proc_cleanup
@@ -59,7 +58,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
@@ -1229,18 +1227,24 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
+(paren
+id|flags
+op_amp
+id|O_NONBLOCK
+)paren
+op_logical_or
 id|scsi_block_when_processing_errors
 c_func
 (paren
 id|sdp-&gt;device
 )paren
 )paren
-(brace
+)paren
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-)brace
 id|SCSI_LOG_TIMEOUT
 c_func
 (paren
@@ -1287,7 +1291,7 @@ c_cond
 id|sdp-&gt;headfp
 op_logical_and
 (paren
-id|filp-&gt;f_flags
+id|flags
 op_amp
 id|O_NONBLOCK
 )paren
@@ -1347,7 +1351,7 @@ multiline_comment|/* some other fd has an exclusive lock on dev */
 r_if
 c_cond
 (paren
-id|filp-&gt;f_flags
+id|flags
 op_amp
 id|O_NONBLOCK
 )paren
@@ -1708,22 +1712,6 @@ id|count
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scsi_block_when_processing_errors
-c_func
-(paren
-id|sdp-&gt;device
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|ENXIO
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2215,12 +2203,6 @@ op_star
 id|srp
 )paren
 (brace
-id|Sg_device
-op_star
-id|sdp
-op_assign
-id|sfp-&gt;parentdp
-suffix:semicolon
 id|sg_io_hdr_t
 op_star
 id|hp
@@ -2233,22 +2215,6 @@ id|k
 comma
 id|len
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scsi_block_when_processing_errors
-c_func
-(paren
-id|sdp-&gt;device
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|ENXIO
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2551,18 +2517,24 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
+(paren
+id|filp-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
+op_logical_or
 id|scsi_block_when_processing_errors
 c_func
 (paren
 id|sdp-&gt;device
 )paren
 )paren
-(brace
+)paren
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3790,22 +3762,6 @@ id|cmd_in
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scsi_block_when_processing_errors
-c_func
-(paren
-id|sdp-&gt;device
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|ENXIO
-suffix:semicolon
-)brace
 id|read_only
 op_assign
 (paren
@@ -5051,6 +5007,25 @@ suffix:semicolon
 r_case
 id|SG_SCSI_RESET
 suffix:colon
+r_if
+c_cond
+(paren
+id|filp-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sdp-&gt;device-&gt;host-&gt;in_recovery
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -7249,7 +7224,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Douglas Gilbert&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;SCSI generic (sg) driver&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -7266,7 +7252,6 @@ comma
 l_string|&quot;size of buffer reserved for each fd&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
 DECL|function|init_sg
 r_static
 r_int
@@ -7277,7 +7262,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef MODULE
 r_if
 c_cond
 (paren
@@ -7289,7 +7273,6 @@ id|sg_big_buff
 op_assign
 id|def_reserved_size
 suffix:semicolon
-macro_line|#endif /* MODULE */
 id|sg_template.module
 op_assign
 id|THIS_MODULE
@@ -14418,7 +14401,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|sg_proc_cleanup
 r_static
 r_void
@@ -14495,7 +14477,6 @@ id|proc_scsi
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|sg_proc_dressz_read
 r_static
 r_int
