@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl32.c,v 1.3 1997/07/09 10:59:55 jj Exp $&n; * sunos_ioctl32.c: SunOS ioctl compatability on sparc64.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl32.c,v 1.4 1997/07/17 02:20:43 davem Exp $&n; * sunos_ioctl32.c: SunOS ioctl compatability on sparc64.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

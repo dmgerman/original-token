@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: advansys.h,v 1997/05/28 00:23:06 bobf Exp bobf $ */
+multiline_comment|/* $Id: advansys.h,v 1.6 1997/05/30 19:25:12 davem Exp $ */
 multiline_comment|/*&n; * advansys.h - Linux Host Driver for AdvanSys SCSI Adapters&n; * &n; * Copyright (c) 1995-1997 Advanced System Products, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * There is an AdvanSys Linux WWW page at:&n; *  http://www.advansys.com/linux.html&n; *&n; * The latest version of the AdvanSys driver is available at:&n; *  ftp://ftp.advansys.com/pub/linux&n; *&n; * Please send questions, comments, bug reports to:&n; * bobf@advansys.com (Bob Frey)&n; */
 macro_line|#ifndef _ADVANSYS_H
 DECL|macro|_ADVANSYS_H

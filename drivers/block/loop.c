@@ -1502,7 +1502,7 @@ id|lo-&gt;lo_inode
 op_assign
 id|inode
 suffix:semicolon
-id|lo_inode-&gt;i_count
+id|lo-&gt;lo_inode-&gt;i_count
 op_increment
 suffix:semicolon
 id|lo-&gt;transfer
