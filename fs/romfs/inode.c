@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ROMFS file system, Linux implementation&n; *&n; * Copyright (C) 1997  Janos Farkas &lt;chexum@shadow.banki.hu&gt;&n; *&n; * Using parts of the minix filesystem&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * and parts of the affs filesystem additionally&n; * Copyright (C) 1993  Ray Burr&n; * Copyright (C) 1996  Hans-Joachim Widmaier&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Changes&n; *&t;&t;&t;&t;&t;Changed for 2.1.19 modules&n; *&t;Jan 1997&t;&t;&t;Initial release&n; *&t;Jun 1997&t;&t;&t;2.1.43+ changes&n; *&t;&t;&t;&t;&t;Proper page locking in readpage&n; *&t;&t;&t;&t;&t;Changed to work with 2.1.45+ fs&n; *&t;Jul 1997&t;&t;&t;Fixed follow_link&n; *&t;&t;&t;2.1.47&n; *&t;&t;&t;&t;&t;lookup shouldn&squot;t return -ENOENT&n; *&t;&t;&t;&t;&t;from Horst von Brand:&n; *&t;&t;&t;&t;&t;  fail on wrong checksum&n; *&t;&t;&t;&t;&t;  double unlock_super was possible&n; *&t;&t;&t;&t;&t;  correct namelen for statfs&n; *&t;&t;&t;&t;&t;spotted by Bill Hawes:&n; *&t;&t;&t;&t;&t;  readlink shouldn&squot;t iput()&n; *&t;Jun 1998&t;2.1.106&t;&t;from Avery Pennarun: glibc scandir()&n; *&t;&t;&t;&t;&t;  exposed a problem in readdir&n; *&t;&t;&t;2.1.107&t;&t;code-freeze spellchecker run&n; *&t;Aug 1998&t;&t;&t;2.1.118+ VFS changes&n; */
+multiline_comment|/*&n; * ROMFS file system, Linux implementation&n; *&n; * Copyright (C) 1997-1999  Janos Farkas &lt;chexum@shadow.banki.hu&gt;&n; *&n; * Using parts of the minix filesystem&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * and parts of the affs filesystem additionally&n; * Copyright (C) 1993  Ray Burr&n; * Copyright (C) 1996  Hans-Joachim Widmaier&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Changes&n; *&t;&t;&t;&t;&t;Changed for 2.1.19 modules&n; *&t;Jan 1997&t;&t;&t;Initial release&n; *&t;Jun 1997&t;&t;&t;2.1.43+ changes&n; *&t;&t;&t;&t;&t;Proper page locking in readpage&n; *&t;&t;&t;&t;&t;Changed to work with 2.1.45+ fs&n; *&t;Jul 1997&t;&t;&t;Fixed follow_link&n; *&t;&t;&t;2.1.47&n; *&t;&t;&t;&t;&t;lookup shouldn&squot;t return -ENOENT&n; *&t;&t;&t;&t;&t;from Horst von Brand:&n; *&t;&t;&t;&t;&t;  fail on wrong checksum&n; *&t;&t;&t;&t;&t;  double unlock_super was possible&n; *&t;&t;&t;&t;&t;  correct namelen for statfs&n; *&t;&t;&t;&t;&t;spotted by Bill Hawes:&n; *&t;&t;&t;&t;&t;  readlink shouldn&squot;t iput()&n; *&t;Jun 1998&t;2.1.106&t;&t;from Avery Pennarun: glibc scandir()&n; *&t;&t;&t;&t;&t;  exposed a problem in readdir&n; *&t;&t;&t;2.1.107&t;&t;code-freeze spellchecker run&n; *&t;Aug 1998&t;&t;&t;2.1.118+ VFS changes&n; */
 multiline_comment|/* todo:&n; *&t;- see Documentation/filesystems/romfs.txt&n; *&t;- use allocated, not stack memory for file names?&n; *&t;- considering write access...&n; *&t;- network (tftp) files?&n; *&t;- merge back some _op tables&n; */
 multiline_comment|/*&n; * Sorry about some optimizations and for some goto&squot;s.  I just wanted&n; * to squeeze some more bytes out of this code.. :)&n; */
 macro_line|#include &lt;linux/module.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|min
 r_static
@@ -1283,9 +1284,10 @@ id|len
 suffix:semicolon
 id|res
 op_assign
-l_int|0
+op_minus
+id|EACCES
 suffix:semicolon
-multiline_comment|/* instead of ENOENT */
+multiline_comment|/* placeholder for &quot;no data here&quot; */
 id|offset
 op_assign
 id|dir-&gt;i_ino
@@ -1352,7 +1354,13 @@ op_logical_or
 id|offset
 op_ge
 id|maxoff
-op_logical_or
+)paren
+r_goto
+id|out0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|romfs_copyfrom
 c_func
 (paren
@@ -1561,27 +1569,30 @@ comma
 id|offset
 )paren
 )paren
-op_eq
-l_int|NULL
 )paren
-(brace
+r_goto
+id|outi
+suffix:semicolon
+multiline_comment|/*&n;&t; * it&squot;s a bit funky, _lookup needs to return an error code&n;&t; * (negative) or a NULL, both as a dentry.  ENOENT should not&n;&t; * be returned, instead we need to create a negative dentry by&n;&t; * d_add(dentry, NULL); and return 0 as no error.&n;&t; * (Although as I see, it only matters on writable file&n;&t; * systems).&n;&t; */
+id|out0
+suffix:colon
+id|inode
+op_assign
+l_int|NULL
+suffix:semicolon
+id|outi
+suffix:colon
 id|res
 op_assign
-op_minus
-id|EACCES
+l_int|0
 suffix:semicolon
-)brace
-r_else
-(brace
 id|d_add
-c_func
 (paren
 id|dentry
 comma
 id|inode
 )paren
 suffix:semicolon
-)brace
 id|out
 suffix:colon
 r_return
@@ -1592,7 +1603,7 @@ id|res
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Ok, we do readpage, to be able to execute programs.  Unfortunately,&n; * we can&squot;t use bmap, since we have looser alignments.&n; */
+multiline_comment|/*&n; * Ok, we do readpage, to be able to execute programs.  Unfortunately,&n; * we can&squot;t use bmap, since we may have looser alignments.&n; */
 r_static
 r_int
 DECL|function|romfs_readpage
@@ -1642,20 +1653,15 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-id|atomic_inc
+id|lock_kernel
 c_func
 (paren
-op_amp
-id|page-&gt;count
 )paren
 suffix:semicolon
-id|set_bit
+id|get_page
 c_func
 (paren
-id|PG_locked
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 id|buf
@@ -1666,23 +1672,13 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|clear_bit
-c_func
+multiline_comment|/* hack? */
+id|page-&gt;owner
+op_assign
 (paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
+r_int
 )paren
-suffix:semicolon
-id|clear_bit
-c_func
-(paren
-id|PG_error
-comma
-op_amp
-id|page-&gt;flags
-)paren
+id|current
 suffix:semicolon
 id|offset
 op_assign
@@ -1765,13 +1761,10 @@ id|readlen
 )paren
 suffix:semicolon
 )brace
-id|set_bit
+id|SetPageUptodate
 c_func
 (paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 id|result
@@ -1786,15 +1779,6 @@ c_cond
 id|result
 )paren
 (brace
-id|set_bit
-c_func
-(paren
-id|PG_error
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -1809,27 +1793,28 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-)brace
-id|clear_bit
+id|SetPageError
 c_func
 (paren
-id|PG_locked
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
-id|wake_up
+)brace
+id|UnlockPage
 c_func
 (paren
-op_amp
-id|page-&gt;wait
+id|page
 )paren
 suffix:semicolon
 id|free_page
 c_func
 (paren
 id|buf
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2207,6 +2192,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap -- not really */
 id|romfs_readpage
 comma
 multiline_comment|/* readpage */
@@ -2215,7 +2203,7 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap -- not really */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
@@ -2225,6 +2213,8 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|romfs_dir_operations
@@ -2323,13 +2313,16 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
@@ -2339,6 +2332,8 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|romfs_link_inode_operations
@@ -2386,13 +2381,16 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
@@ -2402,6 +2400,8 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|romfs_modemap
@@ -2415,20 +2415,32 @@ op_assign
 l_int|0
 comma
 id|S_IFDIR
+op_plus
+l_int|0644
 comma
 id|S_IFREG
+op_plus
+l_int|0644
 comma
 id|S_IFLNK
 op_plus
 l_int|0777
 comma
 id|S_IFBLK
+op_plus
+l_int|0600
 comma
 id|S_IFCHR
+op_plus
+l_int|0600
 comma
 id|S_IFSOCK
+op_plus
+l_int|0644
 comma
 id|S_IFIFO
+op_plus
+l_int|0644
 )brace
 suffix:semicolon
 DECL|variable|romfs_inoops
@@ -2453,19 +2465,16 @@ comma
 op_amp
 id|romfs_link_inode_operations
 comma
-op_amp
-id|blkdev_inode_operations
+l_int|NULL
 comma
-multiline_comment|/* standard handlers */
-op_amp
-id|chrdev_inode_operations
+multiline_comment|/* device/fifo/socket nodes, */
+l_int|NULL
+comma
+multiline_comment|/*   set by init_special_inode */
+l_int|NULL
 comma
 l_int|NULL
 comma
-multiline_comment|/* socket */
-l_int|NULL
-comma
-multiline_comment|/* fifo */
 )brace
 suffix:semicolon
 r_static
@@ -2601,15 +2610,6 @@ id|i-&gt;i_gid
 op_assign
 l_int|0
 suffix:semicolon
-id|i-&gt;i_op
-op_assign
-id|romfs_inoops
-(braket
-id|nextfh
-op_amp
-id|ROMFH_TYPE
-)braket
-suffix:semicolon
 multiline_comment|/* Precalculate the data offset */
 id|ino
 op_assign
@@ -2670,12 +2670,6 @@ suffix:semicolon
 multiline_comment|/* Compute permissions */
 id|ino
 op_assign
-id|S_IRUGO
-op_or
-id|S_IWUSR
-suffix:semicolon
-id|ino
-op_or_assign
 id|romfs_modemap
 (braket
 id|nextfh
@@ -2683,6 +2677,22 @@ op_amp
 id|ROMFH_TYPE
 )braket
 suffix:semicolon
+multiline_comment|/* only &quot;normal&quot; files have ops */
+r_if
+c_cond
+(paren
+(paren
+id|i-&gt;i_op
+op_assign
+id|romfs_inoops
+(braket
+id|nextfh
+op_amp
+id|ROMFH_TYPE
+)braket
+)paren
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -2690,32 +2700,14 @@ id|nextfh
 op_amp
 id|ROMFH_EXEC
 )paren
-(brace
 id|ino
 op_or_assign
 id|S_IXUGO
 suffix:semicolon
-)brace
 id|i-&gt;i_mode
 op_assign
 id|ino
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|S_ISFIFO
-c_func
-(paren
-id|ino
-)paren
-)paren
-id|init_fifo
-c_func
-(paren
-id|i
-)paren
-suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -2729,33 +2721,11 @@ id|i-&gt;i_size
 op_assign
 id|i-&gt;u.romfs_i.i_metasize
 suffix:semicolon
+)brace
 r_else
-r_if
-c_cond
-(paren
-id|S_ISBLK
-c_func
-(paren
-id|ino
-)paren
-op_logical_or
-id|S_ISCHR
-c_func
-(paren
-id|ino
-)paren
-)paren
 (brace
-id|i-&gt;i_mode
-op_and_assign
-op_complement
-(paren
-id|S_IRWXG
-op_or
-id|S_IRWXO
-)paren
-suffix:semicolon
-id|ino
+multiline_comment|/* depending on MBZ for sock/fifos */
+id|nextfh
 op_assign
 id|ntohl
 c_func
@@ -2763,18 +2733,32 @@ c_func
 id|ri.spec
 )paren
 suffix:semicolon
-id|i-&gt;i_rdev
+id|nextfh
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|MKDEV
 c_func
 (paren
-id|ino
+id|nextfh
 op_rshift
 l_int|16
 comma
-id|ino
+id|nextfh
 op_amp
 l_int|0xffff
+)paren
+)paren
+suffix:semicolon
+id|init_special_inode
+c_func
+(paren
+id|i
+comma
+id|ino
+comma
+id|nextfh
 )paren
 suffix:semicolon
 )brace

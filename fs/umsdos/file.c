@@ -255,15 +255,18 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|generic_readpage
+id|fat_bmap
+comma
+multiline_comment|/* bmap */
+id|block_read_full_page
 comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|fat_bmap
+l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|UMSDOS_truncate
 comma
 multiline_comment|/* truncate */
@@ -271,7 +274,10 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 id|fat_smap
+comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* For other with larger and unaligned file system */
@@ -360,13 +366,16 @@ comma
 multiline_comment|/* follow link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|UMSDOS_truncate
 comma
 multiline_comment|/* truncate */
@@ -376,6 +385,8 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* For other with larger and unaligned file system with readpage */
@@ -462,6 +473,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
 id|fat_readpage
 comma
 multiline_comment|/* readpage */
@@ -470,7 +484,7 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|UMSDOS_truncate
 comma
 multiline_comment|/* truncate */
@@ -480,6 +494,8 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 eof

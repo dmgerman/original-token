@@ -99,15 +99,18 @@ multiline_comment|/* readlink&t;&t;&t;*/
 l_int|NULL
 comma
 multiline_comment|/* follow_link&t;&t;&t;*/
-id|generic_readpage
+id|adfs_bmap
+comma
+multiline_comment|/* bmap&t;&t;&t;&t;*/
+id|block_read_full_page
 comma
 multiline_comment|/* readpage&t;&t;&t;*/
 l_int|NULL
 comma
 multiline_comment|/* writepage&t;&t;&t;*/
-id|adfs_bmap
+l_int|NULL
 comma
-multiline_comment|/* bmap&t;&t;&t;&t;*/
+multiline_comment|/* flushpage&t;&t;&t;*/
 l_int|NULL
 comma
 multiline_comment|/* truncate&t;&t;&t;*/
@@ -115,7 +118,10 @@ l_int|NULL
 comma
 multiline_comment|/* permission&t;&t;&t;*/
 l_int|NULL
+comma
 multiline_comment|/* smap&t;&t;&t;&t;*/
+l_int|NULL
+multiline_comment|/* revalidate&t;&t;&t;*/
 )brace
 suffix:semicolon
 eof

@@ -151,6 +151,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
 id|coda_readpage
 comma
 multiline_comment|/* readpage */
@@ -159,7 +162,7 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
@@ -169,9 +172,6 @@ multiline_comment|/* permission */
 l_int|NULL
 comma
 multiline_comment|/* smap */
-l_int|NULL
-comma
-multiline_comment|/* update page */
 id|coda_revalidate_inode
 multiline_comment|/* revalidate */
 )brace
@@ -337,7 +337,7 @@ comma
 id|page-&gt;offset
 )paren
 suffix:semicolon
-id|generic_readpage
+id|block_read_full_page
 c_func
 (paren
 op_amp

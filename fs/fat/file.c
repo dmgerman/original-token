@@ -107,15 +107,18 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|generic_readpage
+id|fat_bmap
+comma
+multiline_comment|/* bmap */
+id|block_read_full_page
 comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|fat_bmap
+l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|fat_truncate
 comma
 multiline_comment|/* truncate */
@@ -123,7 +126,10 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
+comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* #Specification: msdos / special devices / mmap&t;&n;&t;Mmapping does work because a special mmap is provide in that case.&n;&t;Note that it is much less efficient than the generic_file_mmap normally&n;&t;used since it allocate extra buffer. generic_file_mmap is used for&n;&t;normal device (512 bytes hardware sectors).&n;*/
@@ -212,7 +218,10 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|generic_readpage
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+id|block_read_full_page
 comma
 multiline_comment|/* readpage */
 l_int|NULL
@@ -220,7 +229,7 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|fat_truncate
 comma
 multiline_comment|/* truncate */
@@ -228,7 +237,10 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
+comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|fat_file_operations_readpage
@@ -315,6 +327,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
 id|fat_readpage
 comma
 multiline_comment|/* readpage */
@@ -323,7 +338,7 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|fat_truncate
 comma
 multiline_comment|/* truncate */
@@ -331,7 +346,10 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
+comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|macro|MSDOS_PREFETCH

@@ -1148,17 +1148,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|req-&gt;bh
-)paren
-id|mark_buffer_clean
-c_func
-(paren
-id|req-&gt;bh
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_logical_neg
 (paren
 id|tmp
@@ -1636,17 +1625,36 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|buffer_dirty
+id|test_and_clear_bit
+c_func
+(paren
+id|BH_Dirty
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+)paren
+r_goto
+id|end_io
+suffix:semicolon
+multiline_comment|/* Hmmph! Nothing to write */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|refile_buffer
 c_func
 (paren
 id|bh
 )paren
-)paren
-multiline_comment|/* Hmmph! Nothing to write */
-r_goto
-id|end_io
 suffix:semicolon
-multiline_comment|/* We don&squot;t allow the write-requests to fill up the&n;&t;&t;&t; * queue completely:  we want some room for reads,&n;&t;&t;&t; * as they take precedence. The last third of the&n;&t;&t;&t; * requests are only for reads.&n;&t;&t;&t; */
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * We don&squot;t allow the write-requests to fill up the&n;&t;&t;&t; * queue completely:  we want some room for reads,&n;&t;&t;&t; * as they take precedence. The last third of the&n;&t;&t;&t; * requests are only for reads.&n;&t;&t;&t; */
 id|kstat.pgpgout
 op_increment
 suffix:semicolon
@@ -1969,12 +1977,6 @@ suffix:semicolon
 )brace
 r_else
 r_continue
-suffix:semicolon
-id|mark_buffer_clean
-c_func
-(paren
-id|bh
-)paren
 suffix:semicolon
 id|spin_unlock_irqrestore
 c_func

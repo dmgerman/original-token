@@ -143,8 +143,47 @@ id|start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * These are the only things you should do on a core-file: use only these&n; * macros to write out all the necessary info.&n; */
+DECL|function|dump_write
+r_static
+r_int
+id|dump_write
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_const
+r_void
+op_star
+id|addr
+comma
+r_int
+id|nr
+)paren
+(brace
+r_return
+id|file-&gt;f_op
+op_member_access_from_pointer
+id|write
+c_func
+(paren
+id|file
+comma
+id|addr
+comma
+id|nr
+comma
+op_amp
+id|file-&gt;f_pos
+)paren
+op_eq
+id|nr
+suffix:semicolon
+)brace
 DECL|macro|DUMP_WRITE
-mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file-&gt;f_op-&gt;write(file,(char *)(addr),(nr),&amp;file-&gt;f_pos) != (nr)) goto close_coredump
+mdefine_line|#define DUMP_WRITE(addr, nr)&t;&bslash;&n;&t;if (!dump_write(file, (void *)(addr), (nr))) &bslash;&n;&t;&t;goto close_coredump;
 DECL|macro|DUMP_SEEK
 mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file-&gt;f_op-&gt;llseek) { &bslash;&n;&t;if (file-&gt;f_op-&gt;llseek(file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file-&gt;f_pos = (offset)
 multiline_comment|/*&n; * Routine writes a core dump image in the current directory.&n; * Currently only a stub-function.&n; *&n; * Note that setuid/setgid files won&squot;t make a core-dump if the uid/gid&n; * changed due to the set[u|g]id. It&squot;s enforced by the &quot;current-&gt;dumpable&quot;&n; * field, which also makes sure the core-dumps won&squot;t be recursive if the&n; * dumping of the process results in another error..&n; */

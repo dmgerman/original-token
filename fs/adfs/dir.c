@@ -141,13 +141,16 @@ comma
 multiline_comment|/* follow link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* read page */
 l_int|NULL
 comma
 multiline_comment|/* write page */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flush page */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
@@ -155,7 +158,10 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
+comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|function|adfs_val

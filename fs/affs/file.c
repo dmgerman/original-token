@@ -228,15 +228,18 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|generic_readpage
+id|affs_bmap
+comma
+multiline_comment|/* bmap */
+id|block_read_full_page
 comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|affs_bmap
+l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|affs_truncate
 comma
 multiline_comment|/* truncate */
@@ -348,13 +351,16 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 id|affs_truncate
 comma
 multiline_comment|/* truncate */

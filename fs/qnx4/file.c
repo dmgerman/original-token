@@ -737,15 +737,18 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
+id|qnx4_bmap
+comma
+multiline_comment|/* bmap */
 id|qnx4_readpage
 comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-id|qnx4_bmap
+l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* flushpage */
 macro_line|#ifdef CONFIG_QNX4FS_RW
 id|qnx4_truncate
 comma
@@ -758,7 +761,10 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
+comma
 multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|function|qnx4_readpage

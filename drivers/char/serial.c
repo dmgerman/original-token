@@ -45,7 +45,7 @@ mdefine_line|#define RS_STROBE_TIME (10*HZ)
 DECL|macro|RS_ISR_PASS_LIMIT
 mdefine_line|#define RS_ISR_PASS_LIMIT 256
 DECL|macro|IRQ_T
-mdefine_line|#define IRQ_T(info) ((info-&gt;flags &amp; ASYNC_SHARE_IRQ) ? SA_SHIRQ : SA_INTERRUPT)
+mdefine_line|#define IRQ_T(state) &bslash;&n; ((state-&gt;flags &amp; ASYNC_SHARE_IRQ) ? SA_SHIRQ : SA_INTERRUPT)
 DECL|macro|SERIAL_INLINE
 mdefine_line|#define SERIAL_INLINE
 macro_line|#if defined(MODULE) &amp;&amp; defined(SERIAL_DEBUG_MCOUNT)
@@ -3573,7 +3573,7 @@ comma
 id|IRQ_T
 c_func
 (paren
-id|info
+id|state
 )paren
 comma
 l_string|&quot;serial&quot;
@@ -4183,7 +4183,7 @@ comma
 id|IRQ_T
 c_func
 (paren
-id|info
+id|state
 )paren
 comma
 l_string|&quot;serial&quot;
@@ -8414,7 +8414,7 @@ comma
 id|IRQ_T
 c_func
 (paren
-id|info
+id|state
 )paren
 comma
 l_string|&quot;serial&quot;
