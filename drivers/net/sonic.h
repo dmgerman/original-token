@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Helpfile for sonic.c&n; *&n; * (C) Waldorf Electronics
 macro_line|#ifndef SONIC_H
 DECL|macro|SONIC_H
 mdefine_line|#define SONIC_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * SONIC register offsets&n; */
 DECL|macro|SONIC_CMD
 mdefine_line|#define SONIC_CMD              0x00

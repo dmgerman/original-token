@@ -2118,7 +2118,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* If PC hardware is the only type supported, we can optimise a bit.  */
-macro_line|#if (defined(CONFIG_PARPORT_PC) || defined(CONFIG_PARPORT_PC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_AX) || defined(CONFIG_PARPORT_AX_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ARC) || defined(CONFIG_PARPORT_ARC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_AMIGA) || defined(CONFIG_PARPORT_AMIGA_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_MFC3) || defined(CONFIG_PARPORT_MFC3_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ATARI) || defined(CONFIG_PARPORT_ATARI_MODULE)) &amp;&amp; !defined(CONFIG_PARPORT_OTHER) &amp;&amp; !(defined(CONFIG_USB_USS720) || defined(CONFIG_USB_USS720_MODULE))
+macro_line|#if (defined(CONFIG_PARPORT_PC) || defined(CONFIG_PARPORT_PC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_AX) || defined(CONFIG_PARPORT_AX_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ARC) || defined(CONFIG_PARPORT_ARC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_AMIGA) || defined(CONFIG_PARPORT_AMIGA_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_MFC3) || defined(CONFIG_PARPORT_MFC3_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ATARI) || defined(CONFIG_PARPORT_ATARI_MODULE)) &amp;&amp; !defined(CONFIG_PARPORT_OTHER) &amp;&amp; !(defined(CONFIG_USB_USS720) || defined(CONFIG_USB_USS720_MODULE)) &amp;&amp; !defined(CONFIG_PARPORT_OTHER) &amp;&amp; !(defined(CONFIG_USB_USS720) || defined(CONFIG_USB_USS720_MODULE))
 DECL|macro|PARPORT_NEED_GENERIC_OPS
 macro_line|#undef PARPORT_NEED_GENERIC_OPS
 macro_line|#include &lt;linux/parport_pc.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teleint.c,v 1.7 1998/11/15 23:55:26 keil Exp $&n;&n; * teleint.c     low level stuff for TeleInt isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: teleint.c,v $&n; * Revision 1.7  1998/11/15 23:55:26  keil&n; * changes from 2.0&n; *&n; * Revision 1.6  1998/04/15 16:45:31  keil&n; * new init code&n; *&n; * Revision 1.5  1998/02/02 13:40:47  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:53  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:30  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:55:53  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 1.1  1997/09/11 17:32:32  keil&n; * new&n; *&n; *&n; */
+multiline_comment|/* $Id: teleint.c,v 1.9 1999/07/12 21:05:30 keil Exp $&n;&n; * teleint.c     low level stuff for TeleInt isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: teleint.c,v $&n; * Revision 1.9  1999/07/12 21:05:30  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:12:12  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1998/11/15 23:55:26  keil&n; * changes from 2.0&n; *&n; * Revision 1.6  1998/04/15 16:45:31  keil&n; * new init code&n; *&n; * Revision 1.5  1998/02/02 13:40:47  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:53  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:30  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:55:53  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 1.1  1997/09/11 17:32:32  keil&n; * new&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|TeleInt_revision
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -866,10 +866,6 @@ id|dev_id
 suffix:semicolon
 id|u_char
 id|val
-comma
-id|stat
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -909,7 +905,6 @@ c_cond
 (paren
 id|val
 )paren
-(brace
 id|isac_interrupt
 c_func
 (paren
@@ -918,11 +913,6 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|stat
-op_or_assign
-l_int|2
-suffix:semicolon
-)brace
 id|val
 op_assign
 id|readreg
@@ -962,14 +952,6 @@ r_goto
 id|Start_ISAC
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-l_int|2
-)paren
-(brace
 id|writereg
 c_func
 (paren
@@ -998,7 +980,6 @@ comma
 l_int|0x0
 )paren
 suffix:semicolon
-)brace
 )brace
 r_static
 r_void
@@ -1176,7 +1157,13 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|3
+(paren
+l_int|30
+op_star
+id|HZ
+)paren
+op_div
+l_int|1000
 )paren
 suffix:semicolon
 id|cs-&gt;hw.hfc.cirm
@@ -1202,7 +1189,13 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|1
+(paren
+l_int|10
+op_star
+id|HZ
+)paren
+op_div
+l_int|1000
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1260,25 +1253,6 @@ id|cs
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-r_case
-id|CARD_SETIRQ
-suffix:colon
-r_return
-id|request_irq
-c_func
-(paren
-id|cs-&gt;irq
-comma
-op_amp
-id|TeleInt_interrupt
-comma
-id|I4L_IRQ_FLAG
-comma
-l_string|&quot;HiSax&quot;
-comma
-id|cs
-)paren
 suffix:semicolon
 r_case
 id|CARD_INIT
@@ -1353,9 +1327,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|__init
-DECL|function|setup_TeleInt
 id|setup_TeleInt
 c_func
 (paren
@@ -1363,6 +1339,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 r_struct
@@ -1727,6 +1704,11 @@ id|cs-&gt;cardmsg
 op_assign
 op_amp
 id|TeleInt_card_msg
+suffix:semicolon
+id|cs-&gt;irq_func
+op_assign
+op_amp
+id|TeleInt_interrupt
 suffix:semicolon
 id|ISACVersion
 c_func

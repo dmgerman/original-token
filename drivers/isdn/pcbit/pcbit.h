@@ -168,16 +168,16 @@ op_star
 id|write_queue
 suffix:semicolon
 multiline_comment|/* Protocol start */
-macro_line|#if LINUX_VERSION_CODE &lt; 131841
+macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 DECL|member|set_running_wq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|set_running_wq
 suffix:semicolon
 macro_line|#else
 DECL|member|set_running_wq
-id|wait_queue_head_t
+r_struct
+id|wait_queue
+op_star
 id|set_running_wq
 suffix:semicolon
 macro_line|#endif

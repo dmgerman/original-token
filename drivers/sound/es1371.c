@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      es1371.c  --  Creative Ensoniq ES1371.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to Ensoniq&n; *&n; *&n; * Module command line parameters:&n; *   joystick must be set to the base I/O-Port to be used for&n; *   the gameport. Legal values are 0x200, 0x208, 0x210 and 0x218.         &n; *   The gameport is mirrored eight times.&n; *        &n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    04.06.98   0.1   Initial release&n; *                     Mixer stuff should be overhauled; especially optional AC97 mixer bits&n; *                     should be detected. This results in strange behaviour of some mixer&n; *                     settings, like master volume and mic.&n; *    08.06.98   0.2   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.3   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.4   Fix realplayer problems - dac.count issues&n; *    27.10.98   0.5   Fix joystick support&n; *                     -- Oliver Neukum (c188@org.chemie.uni-muenchen.de)&n; *    10.12.98   0.6   Fix drain_dac trying to wait on not yet initialized DMA&n; *    23.12.98   0.7   Fix a few f_file &amp; FMODE_ bugs&n; *                     Don&squot;t wake up app until there are fragsize bytes to read/write&n; *    06.01.99   0.8   remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.9   cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.10  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *    07.04.99   0.11  implemented the following ioctl&squot;s: SOUND_PCM_READ_RATE, &n; *                     SOUND_PCM_READ_CHANNELS, SOUND_PCM_READ_BITS; &n; *                     Alpha fixes reported by Peter Jones &lt;pjones@redhat.com&gt;&n; *                     Another Alpha fix (wait_src_ready in init routine)&n; *                     reported by &quot;Ivan N. Kokshaysky&quot; &lt;ink@jurassic.park.msu.ru&gt;&n; *                     Note: joystick address handling might still be wrong on archs&n; *                     other than i386&n; *    15.06.99   0.12  Fix bad allocation bug.&n; *                     Thanks to Deti Fliegl &lt;fliegl@in.tum.de&gt;&n; *    28.06.99   0.13  Add pci_set_master&n; *    03.08.99   0.14  adapt to Linus&squot; new __setup/__initcall&n; *                     added kernel command line option &quot;es1371=joystickaddr&quot;&n; *                     removed CONFIG_SOUND_ES1371_JOYPORT_BOOT kludge&n; *&n; */
+multiline_comment|/*&n; *      es1371.c  --  Creative Ensoniq ES1371.&n; *&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to Ensoniq&n; *&n; *&n; * Module command line parameters:&n; *   joystick must be set to the base I/O-Port to be used for&n; *   the gameport. Legal values are 0x200, 0x208, 0x210 and 0x218.         &n; *   The gameport is mirrored eight times.&n; *        &n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    04.06.98   0.1   Initial release&n; *                     Mixer stuff should be overhauled; especially optional AC97 mixer bits&n; *                     should be detected. This results in strange behaviour of some mixer&n; *                     settings, like master volume and mic.&n; *    08.06.98   0.2   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.3   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.4   Fix realplayer problems - dac.count issues&n; *    27.10.98   0.5   Fix joystick support&n; *                     -- Oliver Neukum (c188@org.chemie.uni-muenchen.de)&n; *    10.12.98   0.6   Fix drain_dac trying to wait on not yet initialized DMA&n; *    23.12.98   0.7   Fix a few f_file &amp; FMODE_ bugs&n; *                     Don&squot;t wake up app until there are fragsize bytes to read/write&n; *    06.01.99   0.8   remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.9   cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.10  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *    07.04.99   0.11  implemented the following ioctl&squot;s: SOUND_PCM_READ_RATE, &n; *                     SOUND_PCM_READ_CHANNELS, SOUND_PCM_READ_BITS; &n; *                     Alpha fixes reported by Peter Jones &lt;pjones@redhat.com&gt;&n; *                     Another Alpha fix (wait_src_ready in init routine)&n; *                     reported by &quot;Ivan N. Kokshaysky&quot; &lt;ink@jurassic.park.msu.ru&gt;&n; *                     Note: joystick address handling might still be wrong on archs&n; *                     other than i386&n; *    15.06.99   0.12  Fix bad allocation bug.&n; *                     Thanks to Deti Fliegl &lt;fliegl@in.tum.de&gt;&n; *    28.06.99   0.13  Add pci_set_master&n; *    03.08.99   0.14  adapt to Linus&squot; new __setup/__initcall&n; *                     added kernel command line option &quot;es1371=joystickaddr&quot;&n; *                     removed CONFIG_SOUND_ES1371_JOYPORT_BOOT kludge&n; *    10.08.99   0.15  (Re)added S/PDIF module option for cards revision &gt;= 4.&n; *                     Initial version by Dave Platt &lt;dplatt@snulbug.mtview.ca.us&gt;.&n; *                     module_init/__setup fixes&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -126,6 +126,8 @@ comma
 l_int|2
 )brace
 suffix:semicolon
+DECL|macro|CTRL_SPDIFEN_B
+mdefine_line|#define CTRL_SPDIFEN_B  0x04000000
 DECL|macro|CTRL_JOY_SHIFT
 mdefine_line|#define CTRL_JOY_SHIFT  24
 DECL|macro|CTRL_JOY_MASK
@@ -192,6 +194,12 @@ DECL|macro|CTRL_PCICLKDIS
 mdefine_line|#define CTRL_PCICLKDIS  0x00000001  /* 1 = disable PCI clock distribution */
 DECL|macro|STAT_INTR
 mdefine_line|#define STAT_INTR       0x80000000  /* wired or of all interrupt bits */
+DECL|macro|STAT_EN_SPDIF
+mdefine_line|#define STAT_EN_SPDIF   0x00040000  /* enable S/PDIF circuitry */
+DECL|macro|STAT_TS_SPDIF
+mdefine_line|#define STAT_TS_SPDIF   0x00020000  /* test S/PDIF circuitry */
+DECL|macro|STAT_TESTMODE
+mdefine_line|#define STAT_TESTMODE   0x00010000  /* test ASIC */
 DECL|macro|STAT_SYNC_ERR
 mdefine_line|#define STAT_SYNC_ERR   0x00000100  /* 1 = codec sync error */
 DECL|macro|STAT_VC
@@ -7621,11 +7629,17 @@ suffix:semicolon
 )brace
 id|tmo
 op_assign
-(paren
-id|count
+l_int|3
 op_star
 id|HZ
+op_star
+(paren
+id|count
+op_plus
+id|s-&gt;dma_dac1.fragsize
 )paren
+op_div
+l_int|2
 op_div
 id|s-&gt;dac1rate
 suffix:semicolon
@@ -7650,13 +7664,9 @@ id|schedule_timeout
 c_func
 (paren
 id|tmo
-ques
-c_cond
-suffix:colon
+op_plus
 l_int|1
 )paren
-op_logical_and
-id|tmo
 )paren
 id|printk
 c_func
@@ -7830,11 +7840,17 @@ suffix:semicolon
 )brace
 id|tmo
 op_assign
-(paren
-id|count
+l_int|3
 op_star
 id|HZ
+op_star
+(paren
+id|count
+op_plus
+id|s-&gt;dma_dac2.fragsize
 )paren
+op_div
+l_int|2
 op_div
 id|s-&gt;dac2rate
 suffix:semicolon
@@ -7859,13 +7875,9 @@ id|schedule_timeout
 c_func
 (paren
 id|tmo
-ques
-c_cond
-suffix:colon
+op_plus
 l_int|1
 )paren
-op_logical_and
-id|tmo
 )paren
 id|printk
 c_func
@@ -14879,6 +14891,75 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+DECL|variable|spdif
+r_static
+r_int
+id|spdif
+(braket
+id|NR_DEVICE
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|joystick
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_DEVICE
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|joystick
+comma
+l_string|&quot;sets address and enables joystick interface (still need separate driver)&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|spdif
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_DEVICE
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|spdif
+comma
+l_string|&quot;if 1 the output is in S/PDIF digital mode&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;ES1371 AudioPCI97 Driver&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|struct|initvol
 r_static
@@ -14992,13 +15073,11 @@ l_int|0x4040
 )brace
 )brace
 suffix:semicolon
-macro_line|#ifndef MODULE
+DECL|function|init_es1371
 r_static
-macro_line|#endif
-DECL|function|init_module
 r_int
 id|__init
-id|init_module
+id|init_es1371
 c_func
 (paren
 r_void
@@ -15030,6 +15109,12 @@ id|index
 op_assign
 l_int|0
 suffix:semicolon
+id|u8
+id|revision
+suffix:semicolon
+r_int
+id|cssr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -15048,7 +15133,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;es1371: version v0.14 time &quot;
+l_string|&quot;es1371: version v0.15 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -15479,6 +15564,68 @@ id|s-&gt;sctrl
 op_assign
 l_int|0
 suffix:semicolon
+id|cssr
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* check to see if s/pdif mode is being requested */
+id|pci_read_config_byte
+c_func
+(paren
+id|pcidev
+comma
+id|PCI_REVISION_ID
+comma
+op_amp
+id|revision
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|spdif
+(braket
+id|index
+)braket
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|revision
+op_ge
+l_int|4
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;es1371: enabling S/PDIF output&bslash;n&quot;
+)paren
+suffix:semicolon
+id|cssr
+op_or_assign
+id|STAT_EN_SPDIF
+suffix:semicolon
+id|s-&gt;ctrl
+op_or_assign
+id|CTRL_SPDIFEN_B
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;es1371: revision %d does not support S/PDIF&bslash;n&quot;
+comma
+id|revision
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* initialize the chips */
 id|outl
 c_func
@@ -16109,6 +16256,17 @@ c_func
 id|fs
 )paren
 suffix:semicolon
+multiline_comment|/* turn on S/PDIF output driver if requested */
+id|outl
+c_func
+(paren
+id|cssr
+comma
+id|s-&gt;io
+op_plus
+id|ES1371_REG_STATUS
+)paren
+suffix:semicolon
 multiline_comment|/* queue it for later freeing */
 id|s-&gt;next
 op_assign
@@ -16203,45 +16361,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-id|MODULE_PARM
-c_func
-(paren
-id|joystick
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_DEVICE
-)paren
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|joystick
-comma
-l_string|&quot;sets address and enables joystick interface (still need separate driver)&quot;
-)paren
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;ES1371 AudioPCI97 Driver&quot;
-)paren
-suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|cleanup_es1371
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_es1371
 c_func
 (paren
 r_void
@@ -16354,7 +16478,22 @@ l_string|&quot;es1371: unloading&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* MODULE */
+DECL|variable|init_es1371
+id|module_init
+c_func
+(paren
+id|init_es1371
+)paren
+suffix:semicolon
+DECL|variable|cleanup_es1371
+id|module_exit
+c_func
+(paren
+id|cleanup_es1371
+)paren
+suffix:semicolon
+multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifndef MODULE
 multiline_comment|/* format is: es1371=[joystick] */
 DECL|function|es1371_setup
 r_static
@@ -16375,12 +16514,6 @@ id|nr_dev
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|ints
-(braket
-l_int|11
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -16391,6 +16524,9 @@ id|NR_DEVICE
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|get_option
 c_func
 (paren
@@ -16399,6 +16535,21 @@ id|str
 comma
 op_amp
 id|joystick
+(braket
+id|nr_dev
+)braket
+)paren
+op_eq
+l_int|2
+)paren
+id|get_option
+c_func
+(paren
+op_amp
+id|str
+comma
+op_amp
+id|spdif
 (braket
 id|nr_dev
 )braket
@@ -16417,13 +16568,6 @@ c_func
 l_string|&quot;es1371=&quot;
 comma
 id|es1371_setup
-)paren
-suffix:semicolon
-DECL|variable|init_module
-id|__initcall
-c_func
-(paren
-id|init_module
 )paren
 suffix:semicolon
 macro_line|#endif /* MODULE */

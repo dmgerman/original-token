@@ -1553,14 +1553,11 @@ mdefine_line|#define topcat_sid_ok(x)  (((x) == DIO_ID2_LRCATSEYE) || ((x) == DI
 multiline_comment|/* &n; * Initialise the framebuffer&n; */
 DECL|function|hpfb_init
 r_int
-r_int
 id|__init
 id|hpfb_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
+r_void
 )paren
 (brace
 r_int
@@ -1693,11 +1690,11 @@ suffix:semicolon
 )brace
 )brace
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|hpfb_setup
-r_void
+r_int
 id|__init
 id|hpfb_setup
 c_func
@@ -1705,11 +1702,10 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 eof

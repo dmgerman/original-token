@@ -1203,7 +1203,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|dnfb_init
-r_void
+r_int
 id|dnfb_init
 c_func
 (paren
@@ -1363,12 +1363,19 @@ id|fb_info
 OL
 l_int|0
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unable to register apollo frame buffer&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1380,6 +1387,9 @@ c_func
 id|fb_info.node
 )paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|dnfbcon_switch

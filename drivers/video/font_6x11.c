@@ -3145,6 +3145,12 @@ l_int|0x00
 comma
 multiline_comment|/* 00000000 */
 multiline_comment|/* 92 0x5c &squot;&bslash;&squot; */
+l_int|0x40
+comma
+multiline_comment|/* 0 000000 */
+l_int|0x40
+comma
+multiline_comment|/* 0 000000 */
 l_int|0x20
 comma
 multiline_comment|/* 00 00000 */
@@ -3169,12 +3175,6 @@ multiline_comment|/* 00000 00 */
 l_int|0x04
 comma
 multiline_comment|/* 00000 00 */
-l_int|0x02
-comma
-multiline_comment|/* 000000 0 */
-l_int|0x02
-comma
-multiline_comment|/* 000000 0 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
@@ -3268,9 +3268,9 @@ multiline_comment|/* 00000000 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
-l_int|0x7e
+l_int|0xfc
 comma
-multiline_comment|/* 0      0 */
+multiline_comment|/*       00 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
@@ -5800,15 +5800,15 @@ multiline_comment|/* 170 0xaa &squot;&bslash;252&squot; */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
-l_int|0x7a
+l_int|0xf4
 comma
-multiline_comment|/* 0    0 0 */
-l_int|0x2e
+multiline_comment|/*     0 00 */
+l_int|0x5c
 comma
-multiline_comment|/* 00 0   0 */
-l_int|0x2e
+multiline_comment|/* 0 0   00 */
+l_int|0x5c
 comma
-multiline_comment|/* 00 0   0 */
+multiline_comment|/* 0 0   00 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
@@ -7135,9 +7135,9 @@ multiline_comment|/* 00000000 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
-l_int|0x7e
+l_int|0xfc
 comma
-multiline_comment|/* 0      0 */
+multiline_comment|/*       00 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
@@ -7401,21 +7401,21 @@ multiline_comment|/* 00000000 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
-l_int|0x7e
+l_int|0xfc
 comma
-multiline_comment|/* 0      0 */
+multiline_comment|/*       00 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
-l_int|0x7e
+l_int|0xfc
 comma
-multiline_comment|/* 0      0 */
+multiline_comment|/*       00 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
-l_int|0x7e
+l_int|0xfc
 comma
-multiline_comment|/* 0      0 */
+multiline_comment|/*       00 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */

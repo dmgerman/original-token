@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, August 1999&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3750,7 +3750,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot; stepping %02x&quot;
+l_string|&quot; stepping %02x&bslash;n&quot;
 comma
 id|c-&gt;x86_mask
 )paren
@@ -3781,7 +3781,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nCentaur FSR was 0x%X &quot;
+l_string|&quot;Centaur FSR was 0x%X &quot;
 comma
 id|lv
 )paren
@@ -3791,12 +3791,12 @@ op_or_assign
 (paren
 l_int|1
 op_lshift
-l_int|8
-)paren
-suffix:semicolon
-id|lv
-op_or_assign
-(paren
+l_int|1
+op_or
+l_int|1
+op_lshift
+l_int|2
+op_or
 l_int|1
 op_lshift
 l_int|7
@@ -3806,7 +3806,7 @@ multiline_comment|/* lv|=(1&lt;&lt;6);&t;- may help too if the board can cope */
 id|printk
 c_func
 (paren
-l_string|&quot;now 0x%X&quot;
+l_string|&quot;now 0x%X&bslash;n&quot;
 comma
 id|lv
 )paren
@@ -3826,13 +3826,23 @@ id|c-&gt;x86_capability
 op_or_assign
 id|X86_FEATURE_MTRR
 suffix:semicolon
-)brace
-id|printk
-c_func
+multiline_comment|/* Set 3DNow! on Winchip 2 and above. */
+r_if
+c_cond
 (paren
-l_string|&quot;&bslash;n&quot;
+id|c-&gt;x86_model
+op_ge
+l_int|8
 )paren
+id|c-&gt;x86_capability
+op_or_assign
+id|X86_FEATURE_AMD3D
 suffix:semicolon
+id|c-&gt;x86_capability
+op_or_assign
+id|X86_FEATURE_CX8
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;Get CPU information for use by the procfs.&n; */
 DECL|function|get_cpuinfo
@@ -4099,14 +4109,15 @@ id|c-&gt;x86_cache_size
 )paren
 suffix:semicolon
 multiline_comment|/* Modify the capabilities according to chip type */
-r_if
+r_switch
 c_cond
 (paren
 id|c-&gt;x86_vendor
-op_eq
-id|X86_VENDOR_CYRIX
 )paren
 (brace
+r_case
+id|X86_VENDOR_CYRIX
+suffix:colon
 id|x86_cap_flags
 (braket
 l_int|24
@@ -4114,30 +4125,11 @@ l_int|24
 op_assign
 l_string|&quot;cxmmx&quot;
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|c-&gt;x86_vendor
-op_eq
+r_break
+suffix:semicolon
+r_case
 id|X86_VENDOR_AMD
-)paren
-(brace
-id|x86_cap_flags
-(braket
-l_int|16
-)braket
-op_assign
-l_string|&quot;fcmov&quot;
-suffix:semicolon
-id|x86_cap_flags
-(braket
-l_int|31
-)braket
-op_assign
-l_string|&quot;3dnow&quot;
-suffix:semicolon
+suffix:colon
 r_if
 c_cond
 (paren
@@ -4156,16 +4148,25 @@ l_int|10
 op_assign
 l_string|&quot;sep&quot;
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|c-&gt;x86_vendor
-op_eq
+id|x86_cap_flags
+(braket
+l_int|16
+)braket
+op_assign
+l_string|&quot;fcmov&quot;
+suffix:semicolon
+id|x86_cap_flags
+(braket
+l_int|31
+)braket
+op_assign
+l_string|&quot;3dnow&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|X86_VENDOR_INTEL
-)paren
-(brace
+suffix:colon
 id|x86_cap_flags
 (braket
 l_int|6
@@ -4214,6 +4215,33 @@ l_int|24
 )braket
 op_assign
 l_string|&quot;osfxsr&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|X86_VENDOR_CENTAUR
+suffix:colon
+r_if
+c_cond
+(paren
+id|c-&gt;x86_model
+op_ge
+l_int|8
+)paren
+multiline_comment|/* Only Winchip2 and above */
+id|x86_cap_flags
+(braket
+l_int|31
+)braket
+op_assign
+l_string|&quot;3dnow&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* Unknown CPU manufacturer. Transmeta ? :-) */
+r_break
 suffix:semicolon
 )brace
 id|sep_bug

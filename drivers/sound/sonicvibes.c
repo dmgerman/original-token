@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in sv_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.98   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *    06.01.99   0.10  remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.11  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.12  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *    05.04.99   0.13  added code to sv_read and sv_write which should detect&n; *                     lockups of the sound chip and revive it. This is basically&n; *                     an ugly hack, but at least applications using this driver&n; *                     won&squot;t hang forever. I don&squot;t know why these lockups happen,&n; *                     it might well be the motherboard chipset (an early 486 PCI&n; *                     board with ALI chipset), since every busmastering 100MB&n; *                     ethernet card I&squot;ve tried (Realtek 8139 and Macronix tulip clone)&n; *                     exhibit similar behaviour (they work for a couple of packets&n; *                     and then lock up and can be revived by ifconfig down/up).&n; *    07.04.99   0.14  implemented the following ioctl&squot;s: SOUND_PCM_READ_RATE, &n; *                     SOUND_PCM_READ_CHANNELS, SOUND_PCM_READ_BITS; &n; *                     Alpha fixes reported by Peter Jones &lt;pjones@redhat.com&gt;&n; *                     Note: dmaio hack might still be wrong on archs other than i386&n; *    15.06.99   0.15  Fix bad allocation bug.&n; *                     Thanks to Deti Fliegl &lt;fliegl@in.tum.de&gt;&n; *    28.06.99   0.16  Add pci_set_master&n; *    03.08.99   0.17  adapt to Linus&squot; new __setup/__initcall&n; *                     added kernel command line options &quot;sonicvibes=reverb&quot; and &quot;sonicvibesdmaio=dmaioaddr&quot;&n; *&n; */
+multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in sv_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.98   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *    06.01.99   0.10  remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.11  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.12  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *    05.04.99   0.13  added code to sv_read and sv_write which should detect&n; *                     lockups of the sound chip and revive it. This is basically&n; *                     an ugly hack, but at least applications using this driver&n; *                     won&squot;t hang forever. I don&squot;t know why these lockups happen,&n; *                     it might well be the motherboard chipset (an early 486 PCI&n; *                     board with ALI chipset), since every busmastering 100MB&n; *                     ethernet card I&squot;ve tried (Realtek 8139 and Macronix tulip clone)&n; *                     exhibit similar behaviour (they work for a couple of packets&n; *                     and then lock up and can be revived by ifconfig down/up).&n; *    07.04.99   0.14  implemented the following ioctl&squot;s: SOUND_PCM_READ_RATE, &n; *                     SOUND_PCM_READ_CHANNELS, SOUND_PCM_READ_BITS; &n; *                     Alpha fixes reported by Peter Jones &lt;pjones@redhat.com&gt;&n; *                     Note: dmaio hack might still be wrong on archs other than i386&n; *    15.06.99   0.15  Fix bad allocation bug.&n; *                     Thanks to Deti Fliegl &lt;fliegl@in.tum.de&gt;&n; *    28.06.99   0.16  Add pci_set_master&n; *    03.08.99   0.17  adapt to Linus&squot; new __setup/__initcall&n; *                     added kernel command line options &quot;sonicvibes=reverb&quot; and &quot;sonicvibesdmaio=dmaioaddr&quot;&n; *    12.08.99   0.18  module_init/__setup fixes&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -1848,7 +1848,6 @@ l_int|7
 suffix:semicolon
 )brace
 macro_line|#if 0
-DECL|function|getpll
 r_static
 r_int
 id|getpll
@@ -6449,11 +6448,17 @@ suffix:semicolon
 )brace
 id|tmo
 op_assign
-(paren
-id|count
+l_int|3
 op_star
 id|HZ
+op_star
+(paren
+id|count
+op_plus
+id|s-&gt;dma_dac.fragsize
 )paren
+op_div
+l_int|2
 op_div
 id|s-&gt;ratedac
 suffix:semicolon
@@ -6478,13 +6483,9 @@ id|schedule_timeout
 c_func
 (paren
 id|tmo
-ques
-c_cond
-suffix:colon
+op_plus
 l_int|1
 )paren
-op_logical_and
-id|tmo
 )paren
 id|printk
 c_func
@@ -12951,7 +12952,6 @@ comma
 )brace
 suffix:semicolon
 macro_line|#if 0
-DECL|variable|wavetable
 r_static
 r_int
 id|wavetable
@@ -12971,6 +12971,80 @@ r_int
 id|dmaio
 op_assign
 l_int|0xac00
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|reverb
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_DEVICE
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|reverb
+comma
+l_string|&quot;if 1 enables the reverb circuitry. NOTE: your card must have the reverb RAM&quot;
+)paren
+suffix:semicolon
+macro_line|#if 0
+id|MODULE_PARM
+c_func
+(paren
+id|wavetable
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_DEVICE
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|wavetable
+comma
+l_string|&quot;if 1 the wavetable synth is enabled&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|MODULE_PARM
+c_func
+(paren
+id|dmaio
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|dmaio
+comma
+l_string|&quot;if the motherboard BIOS did not allocate DDMA io, allocate them starting at this address&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;S3 SonicVibes Driver&quot;
+)paren
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|struct|initvol
@@ -13049,13 +13123,11 @@ l_int|0x4040
 )brace
 )brace
 suffix:semicolon
-macro_line|#ifndef MODULE
+DECL|function|init_sonicvibes
 r_static
-macro_line|#endif
-DECL|function|init_module
 r_int
 id|__init
-id|init_module
+id|init_sonicvibes
 c_func
 (paren
 r_void
@@ -13103,7 +13175,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;sv: version v0.17 time &quot;
+l_string|&quot;sv: version v0.18 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -14397,85 +14469,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-id|MODULE_PARM
-c_func
-(paren
-id|reverb
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_DEVICE
-)paren
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|reverb
-comma
-l_string|&quot;if 1 enables the reverb circuitry. NOTE: your card must have the reverb RAM&quot;
-)paren
-suffix:semicolon
-macro_line|#if 0
-id|MODULE_PARM
-c_func
-(paren
-id|wavetable
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_DEVICE
-)paren
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|wavetable
-comma
-l_string|&quot;if 1 the wavetable synth is enabled&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-id|MODULE_PARM
-c_func
-(paren
-id|dmaio
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|dmaio
-comma
-l_string|&quot;if the motherboard BIOS did not allocate DDMA io, allocate them starting at this address&quot;
-)paren
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;S3 SonicVibes Driver&quot;
-)paren
-suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|cleanup_sonicvibes
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_sonicvibes
 c_func
 (paren
 r_void
@@ -14647,7 +14645,22 @@ l_string|&quot;sv: unloading&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* MODULE */
+DECL|variable|init_sonicvibes
+id|module_init
+c_func
+(paren
+id|init_sonicvibes
+)paren
+suffix:semicolon
+DECL|variable|cleanup_sonicvibes
+id|module_exit
+c_func
+(paren
+id|cleanup_sonicvibes
+)paren
+suffix:semicolon
+multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifndef MODULE
 multiline_comment|/* format is: sonicvibes=[reverb] sonicvibesdmaio=dmaioaddr */
 DECL|function|sonicvibes_setup
 r_static
@@ -14678,7 +14691,9 @@ id|NR_DEVICE
 r_return
 l_int|0
 suffix:semicolon
-(paren
+macro_line|#if 0
+r_if
+c_cond
 (paren
 id|get_option
 c_func
@@ -14695,8 +14710,6 @@ id|nr_dev
 op_eq
 l_int|2
 )paren
-macro_line|#if 0
-op_logical_and
 id|get_option
 c_func
 (paren
@@ -14709,9 +14722,22 @@ id|wavetable
 id|nr_dev
 )braket
 )paren
-macro_line|#endif
-)brace
 suffix:semicolon
+macro_line|#else
+id|get_option
+c_func
+(paren
+op_amp
+id|str
+comma
+op_amp
+id|reverb
+(braket
+id|nr_dev
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 id|nr_dev
 op_increment
 suffix:semicolon
@@ -14719,6 +14745,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|sonicvibesdmaio_setup
 r_static
 r_int
 id|__init
@@ -14731,35 +14758,24 @@ id|str
 )paren
 (brace
 r_int
-id|ints
-(braket
-l_int|11
-)braket
-suffix:semicolon
-id|get_options
-c_func
-(paren
-id|str
-comma
-id|ints
-)paren
+id|io
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ints
-(braket
-l_int|0
-)braket
-op_ge
-l_int|1
+id|get_option
+c_func
+(paren
+op_amp
+id|str
+comma
+op_amp
+id|io
+)paren
 )paren
 id|dmaio
 op_assign
-id|ints
-(braket
-l_int|1
-)braket
+id|io
 suffix:semicolon
 r_return
 l_int|1
@@ -14779,12 +14795,6 @@ c_func
 l_string|&quot;sonicvibesdmaio=&quot;
 comma
 id|sonicvibesdmaio_setup
-)paren
-suffix:semicolon
-id|__initcall
-c_func
-(paren
-id|init_module
 )paren
 suffix:semicolon
 macro_line|#endif /* MODULE */

@@ -36,6 +36,37 @@ id|buffer
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|function|open_kcore
+r_static
+r_int
+id|open_kcore
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_return
+id|capable
+c_func
+(paren
+id|CAP_SYS_RAWIO
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 DECL|function|read_core
 r_static
 id|ssize_t
@@ -345,6 +376,22 @@ comma
 multiline_comment|/* lseek */
 id|read_core
 comma
+l_int|NULL
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* poll */
+l_int|NULL
+comma
+multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+id|open_kcore
 )brace
 suffix:semicolon
 DECL|variable|proc_kcore_inode_operations

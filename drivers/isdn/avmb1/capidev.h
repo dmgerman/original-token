@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: capidev.h,v 1.1 1997/03/04 21:50:30 calle Exp $&n; *&n; * CAPI 2.0 Interface for Linux&n; *&n; * (c) Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capidev.h,v $&n; * Revision 1.1  1997/03/04 21:50:30  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * $Id: capidev.h,v 1.4 1999/07/01 15:26:32 calle Exp $&n; *&n; * CAPI 2.0 Interface for Linux&n; *&n; * (c) Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capidev.h,v $&n; * Revision 1.4  1999/07/01 15:26:32  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.3  1999/07/01 08:22:58  keil&n; * compatibility macros now in &lt;linux/isdn_compat.h&gt;&n; *&n; * Revision 1.2  1999/06/21 15:24:13  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:50:30  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
 DECL|struct|capidev
 r_struct
 id|capidev
@@ -20,22 +20,48 @@ r_struct
 id|sk_buff_head
 id|recv_queue
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 131841
+macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
+DECL|member|recv_wait
+id|wait_queue_head_t
+id|recv_wait
+suffix:semicolon
+macro_line|#else
 DECL|member|recv_wait
 r_struct
 id|wait_queue
 op_star
 id|recv_wait
 suffix:semicolon
-macro_line|#else
-DECL|member|recv_wait
-id|wait_queue_head_t
-id|recv_wait
-suffix:semicolon
 macro_line|#endif
 DECL|member|errcode
 id|__u16
 id|errcode
+suffix:semicolon
+multiline_comment|/* Statistic */
+DECL|member|nopen
+r_int
+r_int
+id|nopen
+suffix:semicolon
+DECL|member|nrecvctlpkt
+r_int
+r_int
+id|nrecvctlpkt
+suffix:semicolon
+DECL|member|nrecvdatapkt
+r_int
+r_int
+id|nrecvdatapkt
+suffix:semicolon
+DECL|member|nsentctlpkt
+r_int
+r_int
+id|nsentctlpkt
+suffix:semicolon
+DECL|member|nsentdatapkt
+r_int
+r_int
+id|nsentdatapkt
 suffix:semicolon
 )brace
 suffix:semicolon

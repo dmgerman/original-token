@@ -1,18 +1,22 @@
-multiline_comment|/* $Id: isdnl3.h,v 2.3 1998/11/15 23:55:06 keil Exp $&n;&n; * $Log: isdnl3.h,v $&n; * Revision 2.3  1998/11/15 23:55:06  keil&n; * changes from 2.0&n; *&n; * Revision 2.2  1998/05/25 14:10:17  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.1  1998/05/25 12:58:13  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.0  1997/07/27 21:15:42  keil&n; * New Callref based layer3&n; *&n; * Revision 1.4  1997/06/26 11:20:57  keil&n; * ?&n; *&n; * Revision 1.3  1997/04/06 22:54:17  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.2  1997/01/21 22:31:28  keil&n; * new statemachine; L3 timers&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: isdnl3.h,v 2.5 1999/07/25 16:18:32 keil Exp $&n;&n; * $Log: isdnl3.h,v $&n; * Revision 2.5  1999/07/25 16:18:32  keil&n; * Fix Suspend/Resume&n; *&n; * Revision 2.4  1999/07/01 08:11:54  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.3  1998/11/15 23:55:06  keil&n; * changes from 2.0&n; *&n; * Revision 2.2  1998/05/25 14:10:17  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.1  1998/05/25 12:58:13  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.0  1997/07/27 21:15:42  keil&n; * New Callref based layer3&n; *&n; * Revision 1.4  1997/06/26 11:20:57  keil&n; * ?&n; *&n; * Revision 1.3  1997/04/06 22:54:17  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.2  1997/01/21 22:31:28  keil&n; * new statemachine; L3 timers&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|SBIT
 mdefine_line|#define SBIT(state) (1&lt;&lt;state)
 DECL|macro|ALL_STATES
-mdefine_line|#define ALL_STATES  0x00ffffff
+mdefine_line|#define ALL_STATES  0x03ffffff
 DECL|macro|PROTO_DIS_EURO
-mdefine_line|#define&t;PROTO_DIS_EURO&t;0x08
+mdefine_line|#define PROTO_DIS_EURO&t;0x08
 DECL|macro|L3_DEB_WARN
 mdefine_line|#define L3_DEB_WARN&t;0x01
 DECL|macro|L3_DEB_PROTERR
-mdefine_line|#define&t;L3_DEB_PROTERR&t;0x02
+mdefine_line|#define L3_DEB_PROTERR&t;0x02
 DECL|macro|L3_DEB_STATE
-mdefine_line|#define&t;L3_DEB_STATE&t;0x04
+mdefine_line|#define L3_DEB_STATE&t;0x04
 DECL|macro|L3_DEB_CHARGE
-mdefine_line|#define&t;L3_DEB_CHARGE&t;0x08
+mdefine_line|#define L3_DEB_CHARGE&t;0x08
+DECL|macro|L3_DEB_CHECK
+mdefine_line|#define L3_DEB_CHECK&t;0x10
+DECL|macro|L3_DEB_SI
+mdefine_line|#define L3_DEB_SI&t;0x20
 DECL|struct|stateentry
 r_struct
 id|stateentry

@@ -19,8 +19,8 @@ macro_line|#  include &lt;linux/config.h&gt;
 macro_line|#endif
 multiline_comment|/*================================================================&n; * INCLUDE OTHER HEADER FILES&n; *================================================================*/
 multiline_comment|/* reading configuration of sound driver */
-macro_line|#ifdef AWE_OBSOLETE_VOXWARE
 macro_line|#include &lt;i386/isa/sound/sound_config.h&gt;
+macro_line|#ifdef AWE_OBSOLETE_VOXWARE
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_AWE32)
 DECL|macro|CONFIG_AWE32_SYNTH
 mdefine_line|#define CONFIG_AWE32_SYNTH
@@ -29,7 +29,6 @@ macro_line|#else /* AWE_OBSOLETE_VOXWARE */
 macro_line|#ifdef HAS_LOWLEVEL_H
 macro_line|#include &quot;lowlevel.h&quot;
 macro_line|#endif
-macro_line|#include &lt;i386/isa/sound/sound_config.h&gt;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; defined(CONFIG_AWE32)
 DECL|macro|CONFIG_AWE32_SYNTH
 macro_line|#  define CONFIG_AWE32_SYNTH

@@ -164,6 +164,7 @@ l_int|4096
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * for TD &lt;status&gt;:&n; */
 DECL|macro|TD_CTRL_SPD
 mdefine_line|#define TD_CTRL_SPD&t;&t;(1 &lt;&lt; 29)&t;/* Short Packet Detect */
 DECL|macro|TD_CTRL_LS
@@ -188,8 +189,28 @@ DECL|macro|TD_CTRL_BITSTUFF
 mdefine_line|#define TD_CTRL_BITSTUFF&t;(1 &lt;&lt; 17)&t;/* Bit Stuff Error */
 DECL|macro|uhci_ptr_to_virt
 mdefine_line|#define uhci_ptr_to_virt(x)&t;bus_to_virt(x &amp; ~UHCI_PTR_BITS)
+multiline_comment|/*&n; * for TD &lt;flags&gt;:&n; */
 DECL|macro|UHCI_TD_REMOVE
 mdefine_line|#define UHCI_TD_REMOVE&t;&t;0x0001&t;&t;/* Remove when done */
+multiline_comment|/*&n; * for TD &lt;info&gt;: (a.k.a. Token)&n; */
+DECL|macro|TD_TOKEN_TOGGLE
+mdefine_line|#define TD_TOKEN_TOGGLE&t;&t;19
+DECL|macro|uhci_maxlen
+mdefine_line|#define uhci_maxlen(token)&t;((token) &gt;&gt; 21)
+DECL|macro|uhci_toggle
+mdefine_line|#define uhci_toggle(token)&t;(((token) &gt;&gt; TD_TOKEN_TOGGLE) &amp; 1)
+DECL|macro|uhci_endpoint
+mdefine_line|#define uhci_endpoint(token)&t;(((token) &gt;&gt; 15) &amp; 0xf)
+DECL|macro|uhci_devaddr
+mdefine_line|#define uhci_devaddr(token)&t;(((token) &gt;&gt; 8) &amp; 0x7f)
+DECL|macro|uhci_devep
+mdefine_line|#define uhci_devep(token)&t;(((token) &gt;&gt; 8) &amp; 0x7ff)
+DECL|macro|uhci_packetid
+mdefine_line|#define uhci_packetid(token)&t;((token) &amp; 0xff)
+DECL|macro|uhci_packetout
+mdefine_line|#define uhci_packetout(token)&t;(uhci_packetid(token) != USB_PID_IN)
+DECL|macro|uhci_packetin
+mdefine_line|#define uhci_packetin(token)&t;(uhci_packetid(token) == USB_PID_IN)
 multiline_comment|/*&n; * The documentation says &quot;4 words for hardware, 4 words for software&quot;.&n; *&n; * That&squot;s silly, the hardware doesn&squot;t care. The hardware only cares that&n; * the hardware words are 16-byte aligned, and we can have any amount of&n; * sw space after the TD entry as far as I can tell.&n; *&n; * But let&squot;s just go with the documentation, at least for 32-bit machines.&n; * On 64-bit machines we probably want to take advantage of the fact that&n; * hw doesn&squot;t really care about the size of the sw-only area.&n; *&n; * Alas, not anymore, we have more than 4 words for software, woops&n; */
 DECL|struct|uhci_td
 r_struct

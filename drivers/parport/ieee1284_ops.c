@@ -17,24 +17,6 @@ DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(stuff...)
 macro_line|#endif
 multiline_comment|/***                                *&n; * One-way data transfer functions. *&n; *                                ***/
-r_static
-r_inline
-DECL|function|polling
-r_int
-id|polling
-(paren
-r_struct
-id|pardevice
-op_star
-id|dev
-)paren
-(brace
-r_return
-id|dev-&gt;port-&gt;irq
-op_eq
-id|PARPORT_IRQ_NONE
-suffix:semicolon
-)brace
 multiline_comment|/* Compatibility mode. */
 DECL|function|parport_ieee1284_write_compat
 r_int
@@ -59,6 +41,8 @@ id|flags
 (brace
 r_int
 id|no_irq
+op_assign
+l_int|1
 suffix:semicolon
 id|ssize_t
 id|count
@@ -101,21 +85,32 @@ id|port-&gt;irq
 op_ne
 id|PARPORT_IRQ_NONE
 )paren
+(brace
 id|parport_enable_irq
 (paren
 id|port
 )paren
 suffix:semicolon
+id|no_irq
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Clear out previous irqs. */
+r_while
+c_loop
+(paren
+op_logical_neg
+id|down_trylock
+(paren
+op_amp
+id|port-&gt;physport-&gt;ieee1284.irq
+)paren
+)paren
+suffix:semicolon
+)brace
 id|port-&gt;physport-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_DATA
-suffix:semicolon
-id|no_irq
-op_assign
-id|polling
-(paren
-id|dev
-)paren
 suffix:semicolon
 r_while
 c_loop
@@ -161,28 +156,6 @@ op_assign
 id|PARPORT_STATUS_ERROR
 op_or
 id|PARPORT_STATUS_BUSY
-)paren
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-multiline_comment|/* Write the character to the data lines. */
-id|byte
-op_assign
-op_star
-id|addr
-op_increment
-suffix:semicolon
-id|parport_write_data
-(paren
-id|port
-comma
-id|byte
-)paren
-suffix:semicolon
-id|udelay
-(paren
-l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Wait until the peripheral&squot;s ready */
@@ -296,8 +269,7 @@ id|signal_pending
 id|current
 )paren
 )paren
-r_goto
-id|stop
+r_break
 suffix:semicolon
 multiline_comment|/* Wait longer next time. */
 id|wait
@@ -316,6 +288,16 @@ id|expire
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|signal_pending
+(paren
+id|current
+)paren
+)paren
+r_break
+suffix:semicolon
 id|DPRINTK
 (paren
 id|KERN_DEBUG
@@ -328,16 +310,23 @@ r_break
 suffix:semicolon
 id|ready
 suffix:colon
-multiline_comment|/* Clear out previous irqs. */
-r_while
-c_loop
+multiline_comment|/* Write the character to the data lines. */
+id|byte
+op_assign
+op_star
+id|addr
+op_increment
+suffix:semicolon
+id|parport_write_data
 (paren
-op_logical_neg
-id|down_trylock
-(paren
-op_amp
-id|port-&gt;physport-&gt;ieee1284.irq
+id|port
+comma
+id|byte
 )paren
+suffix:semicolon
+id|udelay
+(paren
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Pulse strobe. */
@@ -369,71 +358,7 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* hold */
-r_if
-c_cond
-(paren
-id|no_irq
-)paren
 multiline_comment|/* Assume the peripheral received it. */
-r_goto
-id|done
-suffix:semicolon
-multiline_comment|/* Wait until it&squot;s received, up to 500us (this ought to be&n;&t;&t; * tuneable). */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|500
-suffix:semicolon
-id|i
-suffix:semicolon
-id|i
-op_decrement
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|down_trylock
-(paren
-op_amp
-id|port-&gt;physport-&gt;ieee1284.irq
-)paren
-op_logical_or
-op_logical_neg
-(paren
-id|parport_read_status
-(paren
-id|port
-)paren
-op_amp
-id|PARPORT_STATUS_ACK
-)paren
-)paren
-r_goto
-id|done
-suffix:semicolon
-id|udelay
-(paren
-l_int|1
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Two choices:&n;&t;&t; * 1. Assume that the peripheral got the data and just&n;&t;&t; *    hasn&squot;t acknowledged it yet.&n;&t;&t; * 2. Assume that the peripheral never saw the strobe pulse.&n;&t;&t; *&n;&t;&t; * We can&squot;t know for sure, so let&squot;s be conservative.&n;&t;&t; */
-id|DPRINTK
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: no ack&quot;
-comma
-id|port-&gt;name
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-id|done
-suffix:colon
 id|count
 op_increment
 suffix:semicolon
@@ -1692,10 +1617,9 @@ c_cond
 (paren
 id|count
 op_logical_and
-id|polling
-(paren
-id|dev
-)paren
+id|dev-&gt;port-&gt;irq
+op_ne
+id|PARPORT_IRQ_NONE
 )paren
 (brace
 id|parport_release

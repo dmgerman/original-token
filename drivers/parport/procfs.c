@@ -8,7 +8,15 @@ macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#ifdef CONFIG_SYSCTL
+macro_line|#if defined(CONFIG_SYSCTL) &amp;&amp; defined(CONFIG_PROC_FS)
+DECL|macro|PARPORT_MIN_TIMESLICE_VALUE
+mdefine_line|#define PARPORT_MIN_TIMESLICE_VALUE 1ul 
+DECL|macro|PARPORT_MAX_TIMESLICE_VALUE
+mdefine_line|#define PARPORT_MAX_TIMESLICE_VALUE ((unsigned long) HZ)
+DECL|macro|PARPORT_MIN_SPINTIME_VALUE
+mdefine_line|#define PARPORT_MIN_SPINTIME_VALUE 1
+DECL|macro|PARPORT_MAX_SPINTIME_VALUE
+mdefine_line|#define PARPORT_MAX_SPINTIME_VALUE 1000
 DECL|function|do_active_device
 r_static
 r_int
@@ -727,6 +735,40 @@ DECL|macro|PARPORT_DEV_DIR
 mdefine_line|#define PARPORT_DEV_DIR(child) { CTL_DEV, &quot;dev&quot;, NULL, 0, 0555, child }
 DECL|macro|PARPORT_DEVICES_ROOT_DIR
 mdefine_line|#define PARPORT_DEVICES_ROOT_DIR  { DEV_PARPORT_DEVICES, &quot;devices&quot;, &bslash;&n;                                    NULL, 0, 0555, NULL }
+DECL|variable|parport_min_timeslice_value
+r_static
+r_const
+r_int
+r_int
+id|parport_min_timeslice_value
+op_assign
+id|PARPORT_MIN_TIMESLICE_VALUE
+suffix:semicolon
+DECL|variable|parport_max_timeslice_value
+r_static
+r_const
+r_int
+r_int
+id|parport_max_timeslice_value
+op_assign
+id|PARPORT_MAX_TIMESLICE_VALUE
+suffix:semicolon
+DECL|variable|parport_min_spintime_value
+r_static
+r_const
+r_int
+id|parport_min_spintime_value
+op_assign
+id|PARPORT_MIN_SPINTIME_VALUE
+suffix:semicolon
+DECL|variable|parport_max_spintime_value
+r_static
+r_const
+r_int
+id|parport_max_spintime_value
+op_assign
+id|PARPORT_MAX_SPINTIME_VALUE
+suffix:semicolon
 DECL|struct|parport_sysctl_table
 r_struct
 id|parport_sysctl_table
@@ -802,7 +844,25 @@ comma
 l_int|NULL
 comma
 op_amp
-id|proc_dointvec
+id|proc_dointvec_minmax
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|parport_min_spintime_value
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|parport_max_spintime_value
 )brace
 comma
 (brace
@@ -1066,7 +1126,25 @@ comma
 l_int|NULL
 comma
 op_amp
-id|proc_dointvec
+id|proc_doulongvec_ms_jiffies_minmax
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|parport_min_timeslice_value
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|parport_max_timeslice_value
 )brace
 comma
 )brace
@@ -1213,7 +1291,25 @@ comma
 l_int|NULL
 comma
 op_amp
-id|proc_dointvec
+id|proc_doulongvec_ms_jiffies_minmax
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|parport_min_timeslice_value
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|parport_max_timeslice_value
 )brace
 comma
 (brace
@@ -1226,7 +1322,7 @@ id|parport_default_spintime
 comma
 r_sizeof
 (paren
-id|parport_default_timeslice
+id|parport_default_spintime
 )paren
 comma
 l_int|0644
@@ -1234,7 +1330,25 @@ comma
 l_int|NULL
 comma
 op_amp
-id|proc_dointvec
+id|proc_dointvec_minmax
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|parport_min_spintime_value
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|parport_max_spintime_value
 )brace
 comma
 (brace
@@ -1881,7 +1995,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else /* no sysctl */
+macro_line|#else /* no sysctl or no procfs*/
 DECL|function|parport_proc_register
 r_int
 id|parport_proc_register

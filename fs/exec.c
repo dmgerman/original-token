@@ -3388,6 +3388,9 @@ id|current-&gt;mm-&gt;mm_users
 op_ne
 l_int|1
 )paren
+r_goto
+id|fail
+suffix:semicolon
 id|current-&gt;dumpable
 op_assign
 l_int|0

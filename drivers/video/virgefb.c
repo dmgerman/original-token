@@ -1480,17 +1480,12 @@ id|fb_var_screeninfo
 id|virgefb_default
 suffix:semicolon
 multiline_comment|/*&n; *    Interface used by the world&n; */
-r_void
+r_int
 id|virgefb_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 r_static
@@ -1672,7 +1667,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *    Interface to the low level console driver&n; */
-r_void
+r_int
 id|virgefb_init
 c_func
 (paren
@@ -3747,6 +3742,7 @@ id|y
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Yuck .... MoveCursor on a 3D&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5050,7 +5046,7 @@ id|virgefb_ioctl
 )brace
 suffix:semicolon
 DECL|function|virgefb_setup
-r_void
+r_int
 id|__init
 id|virgefb_setup
 c_func
@@ -5058,10 +5054,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -5086,6 +5078,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -5225,6 +5218,9 @@ comma
 id|virgefb_default.bits_per_pixel
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Initialization&n; */
 DECL|function|virgefb_init
@@ -5269,6 +5265,8 @@ l_int|0
 )paren
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|cd
 op_assign
@@ -5395,6 +5393,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;CV3D detected running in Z2 mode.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5462,7 +5461,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CV3D detected running in Z3 mode&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;CV3D detected running in Z3 mode.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5610,15 +5610,19 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;virgefb.c: register_framebuffer failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: %s frame buffer device, using %ldK of video memory&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -5636,6 +5640,9 @@ l_int|10
 suffix:semicolon
 multiline_comment|/* TODO: This driver cannot be unloaded yet */
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|Cyberfb_switch
@@ -6734,13 +6741,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|virgefb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

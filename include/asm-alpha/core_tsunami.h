@@ -5,10 +5,23 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * TSUNAMI/TYPHOON are the internal names for the core logic chipset which&n; * provides memory controller and PCI access for the 21264 based systems.&n; *&n; * This file is based on:&n; *&n; * Tsunami System Programmers Manual&n; * Preliminary, Chapters 2-5&n; *&n; */
+multiline_comment|/*&n; * We must actually use 2 windows to direct-map the 2GB space, because&n; * of an &quot;idiot-syncracy&quot; of the CYPRESS chip used on DS20 and others.&n; * It may respond to a PCI bus address in the last 1MB of the 4GB&n; * address range, and that is where real memory may appear.&n; *&n; * Sigh...&n; */
 DECL|macro|TSUNAMI_DMA_WIN_BASE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN_BASE_DEFAULT    (1024*1024*1024U)
+mdefine_line|#define TSUNAMI_DMA_WIN_BASE_DEFAULT&t;(1UL*1024*1024*1024)
 DECL|macro|TSUNAMI_DMA_WIN_SIZE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN_SIZE_DEFAULT    (1024*1024*1024U)
+mdefine_line|#define TSUNAMI_DMA_WIN_SIZE_DEFAULT&t;(2UL*1024*1024*1024)
+DECL|macro|TSUNAMI_DMA_WIN0_BASE_DEFAULT
+mdefine_line|#define TSUNAMI_DMA_WIN0_BASE_DEFAULT&t;(1UL*1024*1024*1024)
+DECL|macro|TSUNAMI_DMA_WIN0_SIZE_DEFAULT
+mdefine_line|#define TSUNAMI_DMA_WIN0_SIZE_DEFAULT&t;(1UL*1024*1024*1024)
+DECL|macro|TSUNAMI_DMA_WIN0_TRAN_DEFAULT
+mdefine_line|#define TSUNAMI_DMA_WIN0_TRAN_DEFAULT&t;(0UL)
+DECL|macro|TSUNAMI_DMA_WIN1_BASE_DEFAULT
+mdefine_line|#define TSUNAMI_DMA_WIN1_BASE_DEFAULT&t;(2UL*1024*1024*1024)
+DECL|macro|TSUNAMI_DMA_WIN1_SIZE_DEFAULT
+mdefine_line|#define TSUNAMI_DMA_WIN1_SIZE_DEFAULT&t;(1UL*1024*1024*1024)
+DECL|macro|TSUNAMI_DMA_WIN1_TRAN_DEFAULT
+mdefine_line|#define TSUNAMI_DMA_WIN1_TRAN_DEFAULT&t;(1UL*1024*1024*1024)
 macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
 DECL|macro|TSUNAMI_DMA_WIN_BASE
 mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;&t;alpha_mv.dma_win_base

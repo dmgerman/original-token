@@ -214,7 +214,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Exported functions&n; */
-r_void
+r_int
 id|chips_init
 c_func
 (paren
@@ -3332,7 +3332,7 @@ id|p
 suffix:semicolon
 )brace
 DECL|function|chips_init
-r_void
+r_int
 id|__init
 id|chips_init
 c_func
@@ -3368,6 +3368,9 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_OF */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|chips_of_init
 r_void

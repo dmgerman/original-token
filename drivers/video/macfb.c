@@ -2086,17 +2086,14 @@ id|macfb_ioctl
 )brace
 suffix:semicolon
 DECL|function|macfb_setup
-r_void
+r_int
+id|__init
 id|macfb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -2121,6 +2118,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -2209,6 +2207,9 @@ id|this_opt
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|macfb_switch
 r_static
@@ -2313,7 +2314,7 @@ op_assign
 initialization_block
 suffix:semicolon
 DECL|function|macfb_init
-r_void
+r_int
 id|__init
 id|macfb_init
 c_func
@@ -2329,6 +2330,8 @@ op_logical_neg
 id|MACH_IS_MAC
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|mac_xres
 op_assign
@@ -2524,6 +2527,8 @@ l_int|0
 )paren
 (brace
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|printk
@@ -2543,6 +2548,9 @@ id|mac_videosize
 op_rshift
 l_int|10
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#if 0

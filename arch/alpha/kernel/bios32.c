@@ -1867,14 +1867,6 @@ id|dev-&gt;device
 op_eq
 id|PCI_DEVICE_ID_CONTAQ_82C693
 op_logical_and
-id|dev
-op_member_access_from_pointer
-r_class
-op_rshift
-l_int|8
-op_eq
-id|PCI_CLASS_BRIDGE_ISA
-op_logical_and
 id|idx
 OL
 l_int|2

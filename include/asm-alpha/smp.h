@@ -57,6 +57,21 @@ id|irq_count
 comma
 id|bh_count
 suffix:semicolon
+DECL|member|mcheck_expected
+r_int
+r_char
+id|mcheck_expected
+suffix:semicolon
+DECL|member|mcheck_taken
+r_int
+r_char
+id|mcheck_taken
+suffix:semicolon
+DECL|member|mcheck_hose
+r_int
+r_char
+id|mcheck_hose
+suffix:semicolon
 )brace
 id|__attribute__
 c_func
@@ -98,13 +113,18 @@ id|NR_CPUS
 suffix:semicolon
 DECL|macro|cpu_logical_map
 mdefine_line|#define cpu_logical_map(cpu)  __cpu_logical_map[cpu]
+DECL|macro|hard_smp_processor_id
+mdefine_line|#define hard_smp_processor_id()&t;__hard_smp_processor_id()
+DECL|macro|smp_processor_id
+mdefine_line|#define smp_processor_id()&t;(current-&gt;processor)
+macro_line|#endif /* __SMP__ */
 multiline_comment|/* HACK: Cabrio WHAMI return value is bogus if more than 8 bits used.. :-( */
-DECL|function|hard_smp_processor_id
 r_static
 id|__inline__
 r_int
 r_char
-id|hard_smp_processor_id
+DECL|function|__hard_smp_processor_id
+id|__hard_smp_processor_id
 c_func
 (paren
 r_void
@@ -151,9 +171,6 @@ r_return
 id|__r0
 suffix:semicolon
 )brace
-DECL|macro|smp_processor_id
-mdefine_line|#define smp_processor_id()&t;(current-&gt;processor)
-macro_line|#endif /* __SMP__ */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;(-1)
 macro_line|#endif

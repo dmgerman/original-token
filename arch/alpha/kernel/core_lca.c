@@ -1579,7 +1579,7 @@ id|vector
 comma
 r_int
 r_int
-id|la
+id|la_ptr
 comma
 r_struct
 id|pt_regs
@@ -1587,11 +1587,6 @@ op_star
 id|regs
 )paren
 (brace
-r_int
-r_int
-op_star
-id|ptr
-suffix:semicolon
 r_const
 r_char
 op_star
@@ -1601,26 +1596,6 @@ r_union
 id|el_lca
 id|el
 suffix:semicolon
-r_char
-id|buf
-(braket
-l_int|128
-)braket
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: machine check (la=0x%lx,pc=0x%lx)&bslash;n&quot;
-comma
-id|la
-comma
-id|regs-&gt;pc
-)paren
-suffix:semicolon
 id|el.c
 op_assign
 (paren
@@ -1628,15 +1603,44 @@ r_struct
 id|el_common
 op_star
 )paren
-id|la
+id|la_ptr
+suffix:semicolon
+id|wrmces
+c_func
+(paren
+id|rdmces
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* reset machine check pending flag */
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;LCA machine check: vector=%#lx pc=%#lx code=%#x&bslash;n&quot;
+comma
+id|vector
+comma
+id|regs-&gt;pc
+comma
+(paren
+r_int
+r_int
+)paren
+id|el.c-&gt;code
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The first quadword after the common header always seems to&n;&t; * be the machine check reason---don&squot;t know why this isn&squot;t&n;&t; * part of the common header instead.  In the case of a long&n;&t; * logout frame, the upper 32 bits is the machine check&n;&t; * revision level, which we ignore for now.&n;&t; */
 r_switch
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|el.c-&gt;code
-op_amp
-l_int|0xffffffff
 )paren
 (brace
 r_case
@@ -1693,7 +1697,6 @@ l_string|&quot;MCHK_K_CACKSOFT&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* what&squot;s this? */
 r_case
 id|MCHK_K_BUGCHECK
 suffix:colon
@@ -1762,35 +1765,13 @@ id|MCHK_K_UNKNOWN
 suffix:colon
 r_default
 suffix:colon
-id|sprintf
-c_func
-(paren
-id|buf
-comma
-l_string|&quot;reason for machine-check unknown (0x%lx)&quot;
-comma
-id|el.c-&gt;code
-op_amp
-l_int|0xffffffff
-)paren
-suffix:semicolon
 id|reason
 op_assign
-id|buf
+l_string|&quot;unknown&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|wrmces
-c_func
-(paren
-id|rdmces
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* reset machine check pending flag */
 r_switch
 c_cond
 (paren
@@ -1808,7 +1789,7 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;  Reason: %s (short frame%s, dc_stat=%lx):&bslash;n&quot;
+l_string|&quot;  Reason: %s (short frame%s, dc_stat=%#lx):&bslash;n&quot;
 comma
 id|reason
 comma
@@ -1885,7 +1866,7 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;    reason: %lx  exc_addr: %lx  dc_stat: %lx&bslash;n&quot;
+l_string|&quot;    reason: %#lx  exc_addr: %#lx  dc_stat: %#lx&bslash;n&quot;
 comma
 id|el.l-&gt;pt
 (braket
@@ -1901,7 +1882,7 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;    car: %lx&bslash;n&quot;
+l_string|&quot;    car: %#lx&bslash;n&quot;
 comma
 id|el.l-&gt;car
 )paren
@@ -1955,6 +1936,11 @@ id|el.c-&gt;size
 suffix:semicolon
 )brace
 multiline_comment|/* Dump the logout area to give all info.  */
+macro_line|#if DEBUG_MCHECK &gt; 1
+(brace
+r_int
+r_int
+op_star
 id|ptr
 op_assign
 (paren
@@ -1962,7 +1948,10 @@ r_int
 r_int
 op_star
 )paren
-id|la
+id|la_ptr
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 r_for
 c_loop
@@ -2012,6 +2001,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * The following routines are needed to support the SPEED changing&n; * necessary to successfully manage the thermal problem on the AlphaBook1.&n; */
 r_void

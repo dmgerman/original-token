@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eicon.h,v 1.5 1999/03/29 11:19:41 armin Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; *&n; * Copyright 1998    by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de) &n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon.h,v $&n; * Revision 1.5  1999/03/29 11:19:41  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.4  1999/03/02 12:37:42  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.3  1999/01/24 20:14:07  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.2  1999/01/10 18:46:04  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.1  1999/01/01 18:09:41  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon.h,v 1.8 1999/07/25 15:12:01 armin Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; *&n; * Copyright 1998    by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de) &n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon.h,v $&n; * Revision 1.8  1999/07/25 15:12:01  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.7  1999/07/11 17:16:23  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.6  1999/06/09 19:31:24  armin&n; * Wrong PLX size for request_region() corrected.&n; * Added first MCA code from Erik Weber.&n; *&n; * Revision 1.5  1999/03/29 11:19:41  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.4  1999/03/02 12:37:42  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.3  1999/01/24 20:14:07  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.2  1999/01/10 18:46:04  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.1  1999/01/01 18:09:41  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
 macro_line|#ifndef eicon_h
 DECL|macro|eicon_h
 mdefine_line|#define eicon_h
@@ -96,6 +96,7 @@ mdefine_line|#define EICON_ISA_BOOT_MEMCHK 1
 DECL|macro|EICON_ISA_BOOT_NORMAL
 mdefine_line|#define EICON_ISA_BOOT_NORMAL 2
 multiline_comment|/* Struct for downloading protocol via ioctl for ISA cards */
+multiline_comment|/* same struct for downloading protocol via ioctl for MCA cards */
 r_typedef
 r_struct
 (brace
@@ -367,6 +368,10 @@ r_union
 DECL|member|isa
 id|eicon_isa_codebuf
 id|isa
+suffix:semicolon
+DECL|member|mca
+id|eicon_isa_codebuf
+id|mca
 suffix:semicolon
 DECL|member|pci
 id|eicon_pci_codebuf
@@ -1112,6 +1117,72 @@ DECL|typedef|entity
 )brace
 id|entity
 suffix:semicolon
+DECL|macro|FAX_MAX_SCANLINE
+mdefine_line|#define FAX_MAX_SCANLINE 256
+r_typedef
+r_struct
+(brace
+DECL|member|PrevObject
+id|__u8
+id|PrevObject
+suffix:semicolon
+DECL|member|NextObject
+id|__u8
+id|NextObject
+suffix:semicolon
+DECL|member|abLine
+id|__u8
+id|abLine
+(braket
+id|FAX_MAX_SCANLINE
+)braket
+suffix:semicolon
+DECL|member|abFrame
+id|__u8
+id|abFrame
+(braket
+id|FAX_MAX_SCANLINE
+)braket
+suffix:semicolon
+DECL|member|LineLen
+r_int
+r_int
+id|LineLen
+suffix:semicolon
+DECL|member|LineDataLen
+r_int
+r_int
+id|LineDataLen
+suffix:semicolon
+DECL|member|LineData
+id|__u32
+id|LineData
+suffix:semicolon
+DECL|member|NullBytesPos
+r_int
+r_int
+id|NullBytesPos
+suffix:semicolon
+DECL|member|NullByteExist
+id|__u8
+id|NullByteExist
+suffix:semicolon
+DECL|member|PageCount
+r_int
+id|PageCount
+suffix:semicolon
+DECL|member|Dle
+id|__u8
+id|Dle
+suffix:semicolon
+DECL|member|Eop
+id|__u8
+id|Eop
+suffix:semicolon
+DECL|typedef|eicon_ch_fax_buf
+)brace
+id|eicon_ch_fax_buf
+suffix:semicolon
 r_typedef
 r_struct
 (brace
@@ -1140,18 +1211,15 @@ suffix:semicolon
 multiline_comment|/* EAZ-Mask for this Channel   */
 DECL|member|queued
 r_int
-r_int
 id|queued
 suffix:semicolon
 multiline_comment|/* User-Data Bytes in TX queue */
 DECL|member|waitq
 r_int
-r_int
 id|waitq
 suffix:semicolon
 multiline_comment|/* User-Data Bytes in wait queue */
 DECL|member|waitpq
-r_int
 r_int
 id|waitpq
 suffix:semicolon
@@ -1178,6 +1246,19 @@ r_char
 id|l3prot
 suffix:semicolon
 multiline_comment|/* Layer 3 protocol            */
+macro_line|#ifdef CONFIG_ISDN_TTY_FAX
+DECL|member|fax
+id|T30_s
+op_star
+id|fax
+suffix:semicolon
+multiline_comment|/* pointer to fax data in LL&t;*/
+DECL|member|fax2
+id|eicon_ch_fax_buf
+id|fax2
+suffix:semicolon
+multiline_comment|/* fax related struct&t;&t;*/
+macro_line|#endif
 DECL|member|e
 id|entity
 id|e
@@ -1289,17 +1370,6 @@ mdefine_line|#define EICON_LOCK_TX 0
 DECL|macro|EICON_LOCK_RX
 mdefine_line|#define EICON_LOCK_RX 1
 r_typedef
-r_struct
-(brace
-DECL|member|dummy
-r_int
-id|dummy
-suffix:semicolon
-DECL|typedef|eicon_mca_card
-)brace
-id|eicon_mca_card
-suffix:semicolon
-r_typedef
 r_union
 (brace
 DECL|member|isa
@@ -1311,7 +1381,7 @@ id|eicon_pci_card
 id|pci
 suffix:semicolon
 DECL|member|mca
-id|eicon_mca_card
+id|eicon_isa_card
 id|mca
 suffix:semicolon
 DECL|typedef|eicon_hwif
@@ -1607,6 +1677,13 @@ l_int|35
 )braket
 suffix:semicolon
 multiline_comment|/* Name used for request_region     */
+macro_line|#ifdef CONFIG_MCA
+DECL|member|mca_slot
+r_int
+id|mca_slot
+suffix:semicolon
+multiline_comment|/* # of cards MCA slot              */
+macro_line|#endif
 DECL|typedef|eicon_card
 )brace
 id|eicon_card
@@ -1819,6 +1896,54 @@ op_star
 id|ccard
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MCA
+r_extern
+r_int
+id|eicon_mca_find_card
+c_func
+(paren
+r_int
+comma
+r_int
+comma
+r_int
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|eicon_mca_probe
+c_func
+(paren
+r_int
+comma
+r_int
+comma
+r_int
+comma
+r_int
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|eicon_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_MCA */
 r_extern
 id|ulong
 id|DebugVar

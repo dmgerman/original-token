@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eicon_io.c,v 1.1 1999/03/29 11:19:45 armin Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; * Code for communicating with hardware.&n; *&n; * Copyright 1999    by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * Thanks to&t;Eicon Technology Diehl GmbH &amp; Co. oHG for &n; *&t;&t;documents, informations and hardware. &n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_io.c,v $&n; * Revision 1.1  1999/03/29 11:19:45  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon_io.c,v 1.2 1999/07/25 15:12:05 armin Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; * Code for communicating with hardware.&n; *&n; * Copyright 1999    by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * Thanks to&t;Eicon Technology Diehl GmbH &amp; Co. oHG for &n; *&t;&t;documents, informations and hardware. &n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_io.c,v $&n; * Revision 1.2  1999/07/25 15:12:05  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.1  1999/03/29 11:19:45  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; *&n; */
 macro_line|#include &quot;eicon.h&quot;
 r_void
 DECL|function|eicon_io_rcv_dispatch
@@ -134,7 +134,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;idi_hdl: Ch??: Ind=%d Id=%d Ch=%d MInd=%d MLen=%d Len=%d&bslash;n&quot;
+l_string|&quot;idi_hdl: Ch??: Ind=%d Id=%x Ch=%d MInd=%d MLen=%d Len=%d&bslash;n&quot;
 comma
 id|ind-&gt;Ind
 comma
@@ -1302,6 +1302,7 @@ c_cond
 id|ccard-&gt;type
 )paren
 (brace
+macro_line|#ifdef CONFIG_ISDN_DRV_EICON_ISA
 r_case
 id|EICON_CTYPE_S
 suffix:colon
@@ -1345,6 +1346,7 @@ id|isa_card-&gt;shmem
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|EICON_CTYPE_MAESTRAP
 suffix:colon
@@ -2047,7 +2049,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;eicon: Req=%x Id=%x Ch=%x Len=%x Ref=%d&bslash;n&quot;
+l_string|&quot;eicon: Req=%d Id=%x Ch=%d Len=%d Ref=%d&bslash;n&quot;
 comma
 id|reqbuf-&gt;Req
 comma
@@ -2394,6 +2396,7 @@ c_cond
 id|ccard-&gt;type
 )paren
 (brace
+macro_line|#ifdef CONFIG_ISDN_DRV_EICON_ISA
 r_case
 id|EICON_CTYPE_S
 suffix:colon
@@ -2447,6 +2450,7 @@ id|isa_card-&gt;irqprobe
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|EICON_CTYPE_MAESTRAP
 suffix:colon
@@ -2560,6 +2564,7 @@ c_cond
 id|ccard-&gt;type
 )paren
 (brace
+macro_line|#ifdef CONFIG_ISDN_DRV_EICON_ISA
 r_case
 id|EICON_CTYPE_S
 suffix:colon
@@ -2647,6 +2652,7 @@ op_increment
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|EICON_CTYPE_MAESTRAP
 suffix:colon
@@ -2749,6 +2755,7 @@ c_cond
 id|ccard-&gt;type
 )paren
 (brace
+macro_line|#ifdef CONFIG_ISDN_DRV_EICON_ISA
 r_case
 id|EICON_CTYPE_S
 suffix:colon
@@ -2797,6 +2804,7 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|EICON_CTYPE_MAESTRAP
 suffix:colon
@@ -3032,7 +3040,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;eicon: IRQ Rc=%d Id=%d Ch=%d Ref=%d&bslash;n&quot;
+l_string|&quot;eicon: IRQ Rc=%d Id=%x Ch=%d Ref=%d&bslash;n&quot;
 comma
 id|tmp
 comma
@@ -3223,7 +3231,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;eicon: IRQ Ind=%d Id=%d Ch=%d MInd=%d MLen=%d Len=%d&bslash;n&quot;
+l_string|&quot;eicon: IRQ Ind=%d Id=%x Ch=%d MInd=%d MLen=%d Len=%d&bslash;n&quot;
 comma
 id|tmp
 comma
@@ -3428,7 +3436,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;eicon: IRQ Rc=%d Id=%d Ch=%d Ref=%d&bslash;n&quot;
+l_string|&quot;eicon: IRQ Rc=%d Id=%x Ch=%d Ref=%d&bslash;n&quot;
 comma
 id|Rc
 comma
@@ -3684,7 +3692,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;eicon: IRQ Ind=%d Id=%d Ch=%d MInd=%d MLen=%d Len=%d&bslash;n&quot;
+l_string|&quot;eicon: IRQ Ind=%d Id=%x Ch=%d MInd=%d MLen=%d Len=%d&bslash;n&quot;
 comma
 id|Ind
 comma
@@ -3781,6 +3789,7 @@ c_cond
 id|ccard-&gt;type
 )paren
 (brace
+macro_line|#ifdef CONFIG_ISDN_DRV_EICON_ISA
 r_case
 id|EICON_CTYPE_QUADRO
 suffix:colon
@@ -3828,6 +3837,7 @@ id|isa_card-&gt;intack
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|EICON_CTYPE_MAESTRAP
 suffix:colon

@@ -413,6 +413,7 @@ id|fd_device
 suffix:semicolon
 DECL|member|last_checked
 r_int
+r_int
 id|last_checked
 suffix:semicolon
 multiline_comment|/* when was the drive last checked for a disk &n;&t;&t;&t;   * change? */

@@ -2,7 +2,6 @@ multiline_comment|/*&n; *  linux/drivers/block/hd.c&n; *&n; *  Copyright (C) 199
 multiline_comment|/*&n; * This is the low-level hd interrupt support. It traverses the&n; * request-list, using interrupts to jump between functions. As&n; * all the functions are called within interrupts, we may not&n; * sleep. Special care is recommended.&n; * &n; *  modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  and general streamlining by Mark Lord.&n; *&n; *  Removed 99% of above. Use Mark&squot;s ide driver for those options.&n; *  This is now a lightweight ST-506 driver. (Paul Gortmaker)&n; *&n; *  Modified 1995 Russell King for ARM processor.&n; */
 multiline_comment|/* Uncomment the following if you want verbose error reports. */
 multiline_comment|/* #define VERBOSE_ERRORS */
-macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -27,7 +26,9 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#ifdef __arm__
 DECL|macro|HD_IRQ
 macro_line|#undef  HD_IRQ
+macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#ifdef __arm__
 DECL|macro|HD_IRQ
 mdefine_line|#define HD_IRQ IRQ_HARDDISK
 macro_line|#endif

@@ -2806,7 +2806,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|igafb_init
-r_void
+r_int
 id|__init
 id|igafb_init
 c_func
@@ -2852,6 +2852,8 @@ c_func
 )paren
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|pdev
 op_assign
@@ -2894,6 +2896,8 @@ l_int|NULL
 )paren
 (brace
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 id|iga2000
@@ -2929,6 +2933,8 @@ l_string|&quot;igafb_init: can&squot;t alloc fb_info_iga&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 id|memset
@@ -2947,10 +2953,12 @@ id|fb_info_iga
 suffix:semicolon
 id|info-&gt;frame_buffer
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond
@@ -2966,6 +2974,8 @@ id|info
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 id|pcibios_read_config_dword
@@ -2993,6 +3003,8 @@ op_logical_neg
 id|addr
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|info-&gt;frame_buffer_phys
 op_assign
@@ -3063,6 +3075,8 @@ id|info
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Figure mmap addresses from PCI config space.&n;&t; * We need two regions: for video memory and for I/O ports.&n;&t; * Later one can add region for video coprocessor registers.&n;&t; * However, mmap routine loops until size != 0, so we put&n;&t; * one additional region with size == 0. &n;&t; */
@@ -3103,6 +3117,8 @@ id|info
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 id|memset
@@ -3417,9 +3433,12 @@ op_assign
 id|SRMMU_WRITE
 suffix:semicolon
 macro_line|#endif /* __sparc__ */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|igafb_setup
-r_void
+r_int
 id|__init
 id|igafb_setup
 c_func
@@ -3427,10 +3446,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -3448,6 +3463,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -3562,5 +3578,8 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 eof

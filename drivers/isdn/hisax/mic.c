@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mic.c,v 1.7 1998/04/15 16:44:32 keil Exp $&n;&n; * mic.c  low level stuff for mic cards&n; *&n; * Copyright (C) 1997 &n; *&n; * Author  Stephan von Krawczynski &lt;skraw@ithnet.com&gt;&n; *&n; *&n; * $Log: mic.c,v $&n; * Revision 1.7  1998/04/15 16:44:32  keil&n; * new init code&n; *&n; * Revision 1.6  1998/02/17 15:39:57  keil&n; * fix reset problem&n; *&n; * Revision 1.5  1998/02/02 13:29:43  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:51  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:11  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:51:17  keil&n; * New files&n; *&n; * Revision 1.1.2.1  1997/10/17 22:10:54  keil&n; * new files on 2.0&n; *&n; *&n; */
+multiline_comment|/* $Id: mic.c,v 1.8 1999/07/12 21:05:20 keil Exp $&n;&n; * mic.c  low level stuff for mic cards&n; *&n; * Copyright (C) 1997 &n; *&n; * Author  Stephan von Krawczynski &lt;skraw@ithnet.com&gt;&n; *&n; *&n; * $Log: mic.c,v $&n; * Revision 1.8  1999/07/12 21:05:20  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.7  1998/04/15 16:44:32  keil&n; * new init code&n; *&n; * Revision 1.6  1998/02/17 15:39:57  keil&n; * fix reset problem&n; *&n; * Revision 1.5  1998/02/02 13:29:43  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:51  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:11  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:51:17  keil&n; * New files&n; *&n; * Revision 1.1.2.1  1997/10/17 22:10:54  keil&n; * new files on 2.0&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|mic_revision
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.8 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -501,10 +501,6 @@ id|dev_id
 suffix:semicolon
 id|u_char
 id|val
-comma
-id|stat
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -544,7 +540,6 @@ c_cond
 (paren
 id|val
 )paren
-(brace
 id|hscx_int_main
 c_func
 (paren
@@ -553,11 +548,6 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|stat
-op_or_assign
-l_int|1
-suffix:semicolon
-)brace
 id|val
 op_assign
 id|readreg
@@ -577,7 +567,6 @@ c_cond
 (paren
 id|val
 )paren
-(brace
 id|isac_interrupt
 c_func
 (paren
@@ -586,11 +575,6 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|stat
-op_or_assign
-l_int|2
-suffix:semicolon
-)brace
 id|val
 op_assign
 id|readreg
@@ -667,14 +651,6 @@ r_goto
 id|Start_ISAC
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-l_int|1
-)paren
-(brace
 id|writereg
 c_func
 (paren
@@ -706,6 +682,30 @@ c_func
 (paren
 id|cs-&gt;hw.mic.adr
 comma
+id|cs-&gt;hw.mic.isac
+comma
+id|ISAC_MASK
+comma
+l_int|0xFF
+)paren
+suffix:semicolon
+id|writereg
+c_func
+(paren
+id|cs-&gt;hw.mic.adr
+comma
+id|cs-&gt;hw.mic.isac
+comma
+id|ISAC_MASK
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+id|writereg
+c_func
+(paren
+id|cs-&gt;hw.mic.adr
+comma
 id|cs-&gt;hw.mic.hscx
 comma
 id|HSCX_MASK
@@ -727,40 +727,6 @@ comma
 l_int|0x0
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-l_int|2
-)paren
-(brace
-id|writereg
-c_func
-(paren
-id|cs-&gt;hw.mic.adr
-comma
-id|cs-&gt;hw.mic.isac
-comma
-id|ISAC_MASK
-comma
-l_int|0xFF
-)paren
-suffix:semicolon
-id|writereg
-c_func
-(paren
-id|cs-&gt;hw.mic.adr
-comma
-id|cs-&gt;hw.mic.isac
-comma
-id|ISAC_MASK
-comma
-l_int|0x0
-)paren
-suffix:semicolon
-)brace
 )brace
 r_void
 DECL|function|release_io_mic
@@ -836,25 +802,6 @@ r_return
 l_int|0
 suffix:semicolon
 r_case
-id|CARD_SETIRQ
-suffix:colon
-r_return
-id|request_irq
-c_func
-(paren
-id|cs-&gt;irq
-comma
-op_amp
-id|mic_interrupt
-comma
-id|I4L_IRQ_FLAG
-comma
-l_string|&quot;HiSax&quot;
-comma
-id|cs
-)paren
-suffix:semicolon
-r_case
 id|CARD_INIT
 suffix:colon
 id|inithscx
@@ -886,9 +833,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|__init
-DECL|function|setup_mic
 id|setup_mic
 c_func
 (paren
@@ -896,6 +845,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 r_int
@@ -1084,6 +1034,11 @@ id|cs-&gt;cardmsg
 op_assign
 op_amp
 id|mic_card_msg
+suffix:semicolon
+id|cs-&gt;irq_func
+op_assign
+op_amp
+id|mic_interrupt
 suffix:semicolon
 id|ISACVersion
 c_func

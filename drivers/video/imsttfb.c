@@ -1637,7 +1637,6 @@ op_minus
 l_int|1
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
 DECL|variable|fb_info_imstt_p
 r_static
 r_struct
@@ -1666,7 +1665,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|variable|tvp_reg_init_2
 r_static
 r_struct
@@ -10733,7 +10731,6 @@ comma
 id|tmp
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|fb_info_imstt_p
 (braket
 id|i
@@ -10741,7 +10738,6 @@ id|i
 op_assign
 id|p
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 id|strncpy
 c_func
@@ -11108,7 +11104,7 @@ id|p
 suffix:semicolon
 )brace
 macro_line|#endif
-r_void
+r_int
 id|__init
 DECL|function|imsttfb_init
 id|imsttfb_init
@@ -11117,6 +11113,9 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 macro_line|#if defined(CONFIG_FB_OF) &amp;&amp; !defined(MODULE)
 multiline_comment|/* We don&squot;t want to be called like this. */
 multiline_comment|/* We rely on Open Firmware (offb) instead. */
@@ -11216,12 +11215,12 @@ suffix:semicolon
 )brace
 id|addr
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond
@@ -11251,7 +11250,7 @@ c_cond
 op_logical_neg
 id|p
 )paren
-r_return
+r_continue
 suffix:semicolon
 id|memset
 c_func
@@ -11397,9 +11396,40 @@ id|p
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PCI */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|FB_MAX
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fb_info_imstt_p
+(braket
+id|i
+)braket
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-r_void
+r_int
 id|__init
 DECL|function|imsttfb_setup
 id|imsttfb_setup
@@ -11408,10 +11438,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -11429,6 +11455,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -11715,62 +11742,24 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#else /* MODULE */
 r_int
+id|__init
 DECL|function|init_module
 id|init_module
 (paren
 r_void
 )paren
 (brace
-r_struct
-id|fb_info_imstt
-op_star
-id|p
-suffix:semicolon
-id|__u32
-id|i
-suffix:semicolon
+r_return
 id|imsttfb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|FB_MAX
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|p
-op_assign
-id|fb_info_imstt_p
-(braket
-id|i
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p
-)paren
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_return
-op_minus
-id|ENXIO
 suffix:semicolon
 )brace
 r_void

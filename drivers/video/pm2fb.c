@@ -37,7 +37,7 @@ DECL|macro|PM2FB_MASTER_DEBUG
 mdefine_line|#define PM2FB_MASTER_DEBUG
 macro_line|#ifdef PM2FB_MASTER_DEBUG
 DECL|macro|DPRINTK
-mdefine_line|#define DPRINTK(a,b...)&t;printk(&quot;pm2fb: %s: &quot; a, __FUNCTION__ , ## b)
+mdefine_line|#define DPRINTK(a,b...)&t;printk(KERN_DEBUG &quot;pm2fb: %s: &quot; a, __FUNCTION__ , ## b)
 macro_line|#else
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(a,b...)
@@ -5747,20 +5747,26 @@ c_func
 (paren
 l_string|&quot;PCI board @%08lx %08lx %08lx rom %08lx&bslash;n&quot;
 comma
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 comma
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
 l_int|1
 )braket
+dot
+id|start
 comma
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
 l_int|2
 )braket
+dot
+id|start
 comma
 id|pci-&gt;dev-&gt;rom_address
 )paren
@@ -5776,12 +5782,12 @@ op_star
 id|__pa
 c_func
 (paren
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 )paren
 suffix:semicolon
 id|p-&gt;regions.fb_base
@@ -5794,12 +5800,12 @@ op_star
 id|__pa
 c_func
 (paren
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
 l_int|1
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 )paren
 suffix:semicolon
 macro_line|#else
@@ -5821,12 +5827,12 @@ op_star
 id|__pa
 c_func
 (paren
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 )paren
 suffix:semicolon
 id|p-&gt;regions.fb_base
@@ -5839,12 +5845,12 @@ op_star
 id|__pa
 c_func
 (paren
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
 l_int|1
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 )paren
 suffix:semicolon
 )brace
@@ -5858,12 +5864,12 @@ r_char
 op_star
 )paren
 (paren
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 )paren
 suffix:semicolon
 id|p-&gt;regions.fb_base
@@ -5874,12 +5880,12 @@ r_char
 op_star
 )paren
 (paren
-id|pci-&gt;dev-&gt;base_address
+id|pci-&gt;dev-&gt;resource
 (braket
-l_int|1
+l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 )paren
 suffix:semicolon
 )brace
@@ -10267,7 +10273,7 @@ id|i
 suffix:semicolon
 )brace
 DECL|function|pm2fb_init
-r_void
+r_int
 id|__init
 (def_block
 id|pm2fb_init
@@ -10302,6 +10308,8 @@ id|fb_info
 )paren
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|pm2fb_reset
 c_func
@@ -10432,15 +10440,19 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;pm2fb: unable to register.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: %s (%s), using %uK of video memory.&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -10469,6 +10481,9 @@ l_int|10
 )paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 )def_block
@@ -10596,7 +10611,7 @@ suffix:semicolon
 )brace
 )def_block
 DECL|function|pm2fb_setup
-r_void
+r_int
 id|__init
 (def_block
 id|pm2fb_setup
@@ -10605,10 +10620,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -10745,18 +10756,23 @@ op_assign
 id|next
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 )def_block
 multiline_comment|/***************************************************************************&n; * Begin of module functions&n; ***************************************************************************/
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
+id|__init
 id|init_module
 c_func
 (paren
 r_void
 )paren
 (brace
+r_return
 id|pm2fb_init
 c_func
 (paren

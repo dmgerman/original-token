@@ -16,6 +16,7 @@ multiline_comment|/*&n; * 1995/8/26 -- Andreas Busse -- added Mips support.&n; *
 multiline_comment|/*&n; * 1995/10/18 -- Ralf Baechle -- Portability cleanup; move machine dependent&n; * features to asm/floppy.h.&n; */
 multiline_comment|/*&n; * 1998/06/07 -- Alan Cox -- Merged the 2.0.34 fixes for resource allocation&n; * failures.&n; */
 multiline_comment|/*&n; * 1998/09/20 -- David Weinehall -- Added slow-down code for buggy PS/2-drives.&n; */
+multiline_comment|/*&n; * 1999/08/13 -- Paul Slootman -- floppy stopped working on Alpha after 24&n; * days, 6 hours, 32 minutes and 32 seconds (i.e. MAXINT jiffies; ints were&n; * being used to store jiffies, which are unsigned longs).&n; */
 DECL|macro|FLOPPY_SANITY_CHECK
 mdefine_line|#define FLOPPY_SANITY_CHECK
 DECL|macro|FLOPPY_SILENT_DCL_CLEAR
@@ -2423,12 +2424,14 @@ suffix:semicolon
 DECL|variable|interruptjiffies
 r_static
 r_int
+r_int
 id|interruptjiffies
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|resultjiffies
 r_static
+r_int
 r_int
 id|resultjiffies
 op_assign
@@ -2443,6 +2446,7 @@ l_int|0
 suffix:semicolon
 DECL|variable|lastredo
 r_static
+r_int
 r_int
 id|lastredo
 op_assign
@@ -2535,7 +2539,7 @@ id|fd_timeout.expires
 op_assign
 id|jiffies
 op_plus
-l_int|20
+l_int|20UL
 op_star
 id|HZ
 suffix:semicolon
@@ -2776,7 +2780,7 @@ suffix:semicolon
 id|DPRINT
 c_func
 (paren
-l_string|&quot;jiffies=%ld&bslash;n&quot;
+l_string|&quot;jiffies=%lu&bslash;n&quot;
 comma
 id|jiffies
 )paren
@@ -4229,6 +4233,7 @@ id|wait_for_completion
 c_func
 (paren
 r_int
+r_int
 id|delay
 comma
 id|timeout_fn
@@ -5303,6 +5308,7 @@ comma
 id|spec2
 suffix:semicolon
 r_int
+r_int
 id|srt
 comma
 id|hlt
@@ -5693,7 +5699,7 @@ c_func
 (paren
 id|jiffies
 op_plus
-l_int|2
+l_int|2UL
 op_star
 id|HZ
 op_div
@@ -6133,13 +6139,15 @@ r_void
 r_int
 id|i
 comma
-id|ready_date
-comma
 id|r
 comma
 id|flags
 comma
 id|dflags
+suffix:semicolon
+r_int
+r_int
+id|ready_date
 suffix:semicolon
 id|timeout_fn
 id|function
@@ -6471,7 +6479,7 @@ suffix:semicolon
 id|DPRINT
 c_func
 (paren
-l_string|&quot;jiffies=%ld&bslash;n&quot;
+l_string|&quot;jiffies=%lu&bslash;n&quot;
 comma
 id|jiffies
 )paren
@@ -7600,10 +7608,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;now=%ld last interrupt=%d last called handler=%p&bslash;n&quot;
+l_string|&quot;now=%lu last interrupt=%lu diff=%lu last called handler=%p&bslash;n&quot;
 comma
 id|jiffies
 comma
+id|interruptjiffies
+comma
+id|jiffies
+op_minus
 id|interruptjiffies
 comma
 id|lasthandler
@@ -7641,7 +7653,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;%2x %2x %ld&bslash;n&quot;
+l_string|&quot;%2x %2x %lu&bslash;n&quot;
 comma
 id|output_log
 (braket
@@ -7686,7 +7698,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;last result at %d&bslash;n&quot;
+l_string|&quot;last result at %lu&bslash;n&quot;
 comma
 id|resultjiffies
 )paren
@@ -7694,7 +7706,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;last redo_fd_request at %d&bslash;n&quot;
+l_string|&quot;last redo_fd_request at %lu&bslash;n&quot;
 comma
 id|lastredo
 )paren
@@ -7809,7 +7821,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;expires=%ld&bslash;n&quot;
+l_string|&quot;expires=%lu&bslash;n&quot;
 comma
 id|fd_timeout.expires
 op_minus
@@ -7819,7 +7831,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;now=%ld&bslash;n&quot;
+l_string|&quot;now=%lu&bslash;n&quot;
 comma
 id|jiffies
 )paren
@@ -12787,6 +12799,7 @@ op_star
 id|address
 comma
 r_int
+r_int
 id|size
 )paren
 (brace
@@ -12823,6 +12836,7 @@ r_void
 op_star
 id|address
 comma
+r_int
 r_int
 id|size
 )paren
@@ -16584,9 +16598,14 @@ c_cond
 (paren
 id|UDP-&gt;checkfreq
 OL
+(paren
+r_int
+)paren
+(paren
 id|jiffies
 op_minus
 id|UDRS-&gt;last_checked
+)paren
 )paren
 (brace
 id|lock_fdc
@@ -19229,12 +19248,6 @@ id|cfg
 r_char
 op_star
 id|ptr
-suffix:semicolon
-r_int
-id|ints
-(braket
-l_int|11
-)braket
 suffix:semicolon
 r_while
 c_loop

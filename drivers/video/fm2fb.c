@@ -501,7 +501,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
-r_void
+r_int
 id|fm2fb_init
 c_func
 (paren
@@ -1237,7 +1237,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Initialisation&n;     */
 DECL|function|fm2fb_init
-r_void
+r_int
 id|__init
 id|fm2fb_init
 c_func
@@ -1306,6 +1306,8 @@ l_int|0
 )paren
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|cd
 op_assign
@@ -1329,6 +1331,8 @@ id|cd-&gt;cd_BoardAddr
 )paren
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|zorro_config_board
 c_func
@@ -1815,6 +1819,8 @@ OL
 l_int|0
 )paren
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|printk
 c_func
@@ -1830,9 +1836,12 @@ comma
 id|fb_fix.id
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|fm2fb_setup
-r_void
+r_int
 id|__init
 id|fm2fb_setup
 c_func
@@ -1840,10 +1849,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -1861,6 +1866,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -1926,6 +1932,9 @@ op_assign
 id|FM2FB_MODE_NTSC
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|fm2fbcon_switch
 r_static

@@ -16,6 +16,16 @@ macro_line|#else
 DECL|macro|DBG
 mdefine_line|#define DBG(x...)
 macro_line|#endif
+r_extern
+r_void
+id|pci_namedevice
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+)paren
+suffix:semicolon
 DECL|variable|pci_root
 r_struct
 id|pci_bus

@@ -3222,4 +3222,497 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; */
+DECL|macro|MCHK_K_TPERR
+mdefine_line|#define MCHK_K_TPERR           0x0080
+DECL|macro|MCHK_K_TCPERR
+mdefine_line|#define MCHK_K_TCPERR          0x0082
+DECL|macro|MCHK_K_HERR
+mdefine_line|#define MCHK_K_HERR            0x0084
+DECL|macro|MCHK_K_ECC_C
+mdefine_line|#define MCHK_K_ECC_C           0x0086
+DECL|macro|MCHK_K_ECC_NC
+mdefine_line|#define MCHK_K_ECC_NC          0x0088
+DECL|macro|MCHK_K_OS_BUGCHECK
+mdefine_line|#define MCHK_K_OS_BUGCHECK     0x008A
+DECL|macro|MCHK_K_PAL_BUGCHECK
+mdefine_line|#define MCHK_K_PAL_BUGCHECK    0x0090
+macro_line|#ifndef __SMP__
+DECL|variable|__mcheck_info
+r_struct
+id|mcheck_info
+id|__mcheck_info
+suffix:semicolon
+macro_line|#endif
+r_void
+DECL|function|process_mcheck_info
+id|process_mcheck_info
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_int
+r_int
+id|la_ptr
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_const
+r_char
+op_star
+id|machine
+comma
+r_int
+id|expected
+)paren
+(brace
+r_struct
+id|el_common
+op_star
+id|mchk_header
+suffix:semicolon
+r_const
+r_char
+op_star
+id|reason
+suffix:semicolon
+multiline_comment|/*&n;&t; * See if the machine check is due to a badaddr() and if so,&n;&t; * ignore it.&n;&t; */
+macro_line|#if DEBUG_MCHECK &gt; 0
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;%s machine check %s&bslash;n&quot;
+comma
+id|machine
+comma
+id|expected
+ques
+c_cond
+l_string|&quot;expected.&quot;
+suffix:colon
+l_string|&quot;NOT expected!!!&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|expected
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|mcheck_expected
+c_func
+(paren
+id|cpu
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+id|mcheck_taken
+c_func
+(paren
+id|cpu
+)paren
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|mchk_header
+op_assign
+(paren
+r_struct
+id|el_common
+op_star
+)paren
+id|la_ptr
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;%s machine check: vector=0x%lx pc=0x%lx code=0x%lx&bslash;n&quot;
+comma
+id|machine
+comma
+id|vector
+comma
+id|regs-&gt;pc
+comma
+id|mchk_header-&gt;code
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|mchk_header-&gt;code
+)paren
+(brace
+multiline_comment|/* Machine check reasons.  Defined according to PALcode sources.  */
+r_case
+l_int|0x80
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;tag parity error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x82
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;tag control parity error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x84
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;generic hard error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x86
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;correctable ECC error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x88
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;uncorrectable ECC error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x8A
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;OS-specific PAL bugcheck&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x90
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;callsys in kernel mode&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x96
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;i-cache read retryable error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x98
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;processor detected hard error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* System specific (these are for Alcor, at least): */
+r_case
+l_int|0x203
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;system detected uncorrectable ECC error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x204
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;SIO SERR occurred on PCI bus&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x205
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;parity error detected by CIA&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x206
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;SIO IOCHK occurred on ISA bus&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x207
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;non-existent memory error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x208
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;MCHK_K_DCSR&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x209
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;PCI SERR detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x20b
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;PCI data parity error detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x20d
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;PCI address parity error detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x20f
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;PCI master abort error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x211
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;PCI target abort error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x213
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;scatter/gather PTE invalid error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x215
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;flash ROM write error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x217
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;IOA timeout detected&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x219
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;IOCHK#, EISA add-in board parity or other catastrophic error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x21b
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;EISA fail-safe timer timeout&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x21d
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;EISA bus time-out&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x21f
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;EISA software generated NMI&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x221
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;unexpected ev5 IRQ[3] interrupt&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;unknown&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;machine check type: %s%s&bslash;n&quot;
+comma
+id|reason
+comma
+id|mchk_header-&gt;retry
+ques
+c_cond
+l_string|&quot; (retryable)&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+macro_line|#if DEBUG_MCHECK &gt; 1
+(brace
+multiline_comment|/* Dump the logout area to give all info.  */
+r_int
+r_int
+op_star
+id|ptr
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|la_ptr
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|mchk_header-&gt;size
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+id|i
+op_add_assign
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;   +%8lx %016lx %016lx&bslash;n&quot;
+comma
+id|i
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+comma
+id|ptr
+(braket
+id|i
+)braket
+comma
+id|ptr
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
+)brace
 eof

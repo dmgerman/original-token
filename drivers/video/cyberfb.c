@@ -920,17 +920,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *    Interface used by the world&n; */
-r_void
+r_int
 id|cyberfb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 r_static
@@ -1112,7 +1108,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *    Interface to the low level console driver&n; */
-r_void
+r_int
 id|cyberfb_init
 c_func
 (paren
@@ -4969,7 +4965,7 @@ id|cyberfb_ioctl
 )brace
 suffix:semicolon
 DECL|function|cyberfb_setup
-r_void
+r_int
 id|__init
 id|cyberfb_setup
 c_func
@@ -4977,10 +4973,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -5018,6 +5010,7 @@ l_string|&quot;EXIT - no options&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_for
@@ -5176,10 +5169,13 @@ c_func
 l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Initialization&n; */
 DECL|function|cyberfb_init
-r_void
+r_int
 id|__init
 id|cyberfb_init
 c_func
@@ -5243,6 +5239,8 @@ l_string|&quot;EXIT - zorro_find failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 id|cd
@@ -5527,6 +5525,8 @@ l_string|&quot;EXIT - register_framebuffer failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|printk
@@ -5555,6 +5555,9 @@ c_func
 (paren
 l_string|&quot;EXIT&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|Cyberfb_switch
@@ -6202,13 +6205,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|cyberfb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

@@ -1553,6 +1553,23 @@ id|SCpnt-&gt;request.sem
 )paren
 suffix:semicolon
 )brace
+id|MODULE_PARM
+c_func
+(paren
+id|scsi_logging_level
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|scsi_logging_level
+comma
+l_string|&quot;SCSI logging level; should be zero or nonzero&quot;
+)paren
+suffix:semicolon
+macro_line|#ifndef MODULE
 DECL|function|scsi_logging_setup
 r_static
 r_int
@@ -1621,6 +1638,7 @@ comma
 id|scsi_logging_setup
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_MULTI_LUN
 DECL|variable|max_scsi_luns
 r_static
@@ -1638,6 +1656,23 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
+id|MODULE_PARM
+c_func
+(paren
+id|max_scsi_luns
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|max_scsi_luns
+comma
+l_string|&quot;last scsi LUN (should be between 1 and 8)&quot;
+)paren
+suffix:semicolon
+macro_line|#ifndef MODULE
 DECL|function|scsi_luns_setup
 r_static
 r_int
@@ -1698,6 +1733,7 @@ comma
 id|scsi_luns_setup
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *  Detecting SCSI devices :&n; *  We scan all present host adapter&squot;s busses,  from ID 0 to ID (max_id).&n; *  We use the INQUIRY command, determine device type, and pass the ID /&n; *  lun address of all sequential devices to the tape driver, all random&n; *  devices to the disk driver.&n; */
 DECL|function|scan_scsis
 r_static

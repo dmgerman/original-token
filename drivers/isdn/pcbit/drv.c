@@ -257,7 +257,7 @@ id|pcbit_dev
 )paren
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 131841
+macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 id|init_waitqueue_head
 c_func
 (paren

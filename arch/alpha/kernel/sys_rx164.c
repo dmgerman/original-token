@@ -107,9 +107,9 @@ l_int|0x21
 suffix:semicolon
 multiline_comment|/* ISA PIC1 */
 )brace
+macro_line|#if 0
 r_static
 r_void
-DECL|function|rx164_srm_update_irq_hw
 id|rx164_srm_update_irq_hw
 c_func
 (paren
@@ -125,7 +125,6 @@ r_int
 id|unmask_p
 )paren
 (brace
-macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -186,8 +185,8 @@ l_int|0x21
 )paren
 suffix:semicolon
 multiline_comment|/* ISA PIC1 */
-macro_line|#endif
 )brace
+macro_line|#endif
 r_static
 r_void
 DECL|function|rx164_isa_device_interrupt

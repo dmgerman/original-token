@@ -1022,6 +1022,7 @@ id|first
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Vesafb does not support changing the video mode&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1985,17 +1986,13 @@ id|vesafb_ioctl
 )brace
 suffix:semicolon
 DECL|function|vesafb_setup
-r_void
+r_int
 id|vesafb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -2020,6 +2017,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -2200,6 +2198,9 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|vesafb_switch
 r_static
@@ -2289,7 +2290,7 @@ id|info
 multiline_comment|/* Not supported */
 )brace
 DECL|function|vesafb_init
-r_void
+r_int
 id|__init
 id|vesafb_init
 c_func
@@ -2310,6 +2311,8 @@ op_ne
 id|VIDEO_TYPE_VLFB
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|video_base
 op_assign
@@ -2371,6 +2374,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: framebuffer at 0x%p, mapped to 0x%p, size %dk&bslash;n&quot;
 comma
 id|video_base
@@ -2385,6 +2389,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: mode is %dx%dx%d, linelength=%d, pages=%d&bslash;n&quot;
 comma
 id|video_width
@@ -2407,6 +2412,7 @@ id|screen_info.vesapm_seg
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: protected mode interface info at %04x:%04x&bslash;n&quot;
 comma
 id|screen_info.vesapm_seg
@@ -2444,9 +2450,9 @@ r_int
 r_int
 op_star
 )paren
+id|bus_to_virt
+c_func
 (paren
-id|__PAGE_OFFSET
-op_plus
 (paren
 (paren
 r_int
@@ -2501,6 +2507,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: pmi: set display start = %p, set palette = %p&bslash;n&quot;
 comma
 id|pmi_start
@@ -2520,6 +2527,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: pmi: ports = &quot;
 )paren
 suffix:semicolon
@@ -2577,6 +2585,7 @@ multiline_comment|/*&n;&t;&t;&t;&t; * memory areas not supported (yet?)&n;&t;&t;
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: can&squot;t handle memory requests, pmi disabled&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2624,6 +2633,7 @@ id|video_height
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: scrolling: %s using protected mode interface, yres_virtual=%d&bslash;n&quot;
 comma
 (paren
@@ -2646,6 +2656,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: scrolling: redraw&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2752,6 +2763,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vesafb: directcolor: &quot;
 l_string|&quot;size=%d:%d:%d:%d, shift=%d:%d:%d:%d&bslash;n&quot;
 comma
@@ -2952,10 +2964,13 @@ OL
 l_int|0
 )paren
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: %s frame buffer device&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -2966,6 +2981,9 @@ id|fb_info.node
 comma
 id|fb_info.modename
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-basic-offset: 8&n; * End:&n; */

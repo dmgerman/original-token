@@ -342,7 +342,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *  Interface to the low level console driver&n; */
-r_void
+r_int
 id|g364fb_init
 c_func
 (paren
@@ -1245,7 +1245,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Initialisation&n; */
 DECL|function|g364fb_init
-r_void
+r_int
 id|__init
 id|g364fb_init
 c_func
@@ -1894,6 +1894,8 @@ OL
 l_int|0
 )paren
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|printk
 c_func
@@ -1908,6 +1910,9 @@ id|fb_info.node
 comma
 id|fb_fix.id
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|g364fbcon_switch

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: netjet.c,v 1.8 1998/11/15 23:55:14 keil Exp $&n;&n; * netjet.c     low level stuff for Traverse Technologie NETJet ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to Traverse Technologie Australia for documents and informations&n; *&n; *&n; * $Log: netjet.c,v $&n; * Revision 1.8  1998/11/15 23:55:14  keil&n; * changes from 2.0&n; *&n; * Revision 1.7  1998/09/30 22:24:48  keil&n; * Fix missing line in setstack*&n; *&n; * Revision 1.6  1998/08/13 23:36:54  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.5  1998/05/25 12:58:21  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.4  1998/04/15 16:42:35  keil&n; * new init code&n; * new PCI init (2.1.94)&n; *&n; * Revision 1.3  1998/02/12 23:08:05  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.2  1998/02/02 13:32:06  keil&n; * New&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: netjet.c,v 1.13 1999/08/11 21:01:31 keil Exp $&n;&n; * netjet.c     low level stuff for Traverse Technologie NETJet ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to Traverse Technologie Australia for documents and informations&n; *&n; * $Log: netjet.c,v $&n; * Revision 1.13  1999/08/11 21:01:31  keil&n; * new PCI codefix&n; *&n; * Revision 1.12  1999/08/10 16:02:00  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.11  1999/08/07 17:32:00  keil&n; * Asymetric buffers for improved ping times.  Interframe spacing&n; * fix for NJ&lt;-&gt;NJ thoughput.  Matt Henderson - www.traverse.com.au&n; *&n; *&n; * Revision 1.10  1999/07/12 21:05:22  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.9  1999/07/01 08:12:05  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.8  1998/11/15 23:55:14  keil&n; * changes from 2.0&n; *&n; * Revision 1.7  1998/09/30 22:24:48  keil&n; * Fix missing line in setstack*&n; *&n; * Revision 1.6  1998/08/13 23:36:54  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.5  1998/05/25 12:58:21  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.4  1998/04/15 16:42:35  keil&n; * new init code&n; * new PCI init (2.1.94)&n; *&n; * Revision 1.3  1998/02/12 23:08:05  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.2  1998/02/02 13:32:06  keil&n; * New&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -7,8 +7,19 @@ macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#ifndef COMPAT_HAS_NEW_PCI
+macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
+macro_line|#ifndef bus_to_virt
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt (u_int *)
+macro_line|#endif
+macro_line|#ifndef virt_to_bus
+DECL|macro|virt_to_bus
+mdefine_line|#define virt_to_bus (u_int)
+macro_line|#endif
 r_extern
 r_const
 r_char
@@ -23,7 +34,7 @@ r_char
 op_star
 id|NETjet_revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.13 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -84,8 +95,10 @@ DECL|macro|NETJET_IRQM0_WRITE_1
 mdefine_line|#define NETJET_IRQM0_WRITE_1&t;0x01
 DECL|macro|NETJET_IRQM0_WRITE_2
 mdefine_line|#define NETJET_IRQM0_WRITE_2&t;0x02
-DECL|macro|NETJET_DMA_SIZE
-mdefine_line|#define NETJET_DMA_SIZE 512
+DECL|macro|NETJET_DMA_TXSIZE
+mdefine_line|#define NETJET_DMA_TXSIZE 512
+DECL|macro|NETJET_DMA_RXSIZE
+mdefine_line|#define NETJET_DMA_RXSIZE 128
 DECL|macro|HDLC_ZERO_SEARCH
 mdefine_line|#define HDLC_ZERO_SEARCH 0
 DECL|macro|HDLC_FLAG_SEARCH
@@ -1043,7 +1056,7 @@ id|bcs
 comma
 id|bcs-&gt;hw.tiger.send
 comma
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 comma
 id|bc
 comma
@@ -1143,7 +1156,7 @@ id|bcs
 comma
 id|bcs-&gt;hw.tiger.send
 comma
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 comma
 id|bc
 comma
@@ -1188,7 +1201,7 @@ id|bcs
 comma
 id|bcs-&gt;hw.tiger.send
 comma
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 comma
 op_logical_neg
 id|bc
@@ -1227,7 +1240,7 @@ id|bcs-&gt;hw.tiger.send
 suffix:semicolon
 id|bcs-&gt;hw.tiger.free
 op_assign
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 suffix:semicolon
 id|test_and_set_bit
 c_func
@@ -1740,6 +1753,15 @@ op_increment
 op_assign
 id|s_val
 suffix:semicolon
+id|bcs-&gt;hw.tiger.sendbuf
+(braket
+id|s_cnt
+op_increment
+)braket
+op_assign
+l_int|0xff
+suffix:semicolon
+singleline_comment|// NJ&lt;-&gt;NJ thoughput bug fix
 )brace
 id|bcs-&gt;hw.tiger.sendcnt
 op_assign
@@ -1800,6 +1822,12 @@ l_string|&quot;TIGER: receive out of memory&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
+id|SET_SKB_FREE
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1905,7 +1933,7 @@ id|pend
 op_assign
 id|bcs-&gt;hw.tiger.rec
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_RXSIZE
 op_minus
 l_int|1
 suffix:semicolon
@@ -2699,7 +2727,7 @@ suffix:semicolon
 r_int
 id|cnt
 op_assign
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_RXSIZE
 op_div
 l_int|2
 suffix:semicolon
@@ -2762,7 +2790,7 @@ l_int|0
 dot
 id|hw.tiger.rec
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_RXSIZE
 op_minus
 l_int|1
 suffix:semicolon
@@ -3152,7 +3180,7 @@ l_int|1
 suffix:semicolon
 id|cnt
 op_assign
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_div
 l_int|2
 op_minus
@@ -3173,14 +3201,14 @@ c_cond
 id|cnt
 op_le
 (paren
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_div
 l_int|2
 )paren
 )paren
 id|cnt
 op_add_assign
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_div
 l_int|2
 suffix:semicolon
@@ -3497,10 +3525,12 @@ comma
 id|bcs-&gt;tx_skb-&gt;len
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -3529,7 +3559,7 @@ c_cond
 id|bcs-&gt;hw.tiger.free
 OG
 (paren
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_div
 l_int|2
 )paren
@@ -3807,7 +3837,7 @@ id|p
 comma
 id|cnt
 op_assign
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_div
 l_int|2
 suffix:semicolon
@@ -3870,7 +3900,7 @@ l_int|0
 dot
 id|hw.tiger.send
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_minus
 l_int|1
 suffix:semicolon
@@ -4340,10 +4370,12 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -4566,9 +4598,11 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-id|__init
-DECL|function|inittiger
 id|inittiger
 c_func
 (paren
@@ -4576,6 +4610,7 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
+)paren
 )paren
 (brace
 r_if
@@ -4593,7 +4628,7 @@ op_assign
 id|kmalloc
 c_func
 (paren
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_star
 r_sizeof
 (paren
@@ -4632,7 +4667,7 @@ l_int|0
 dot
 id|hw.tiger.send
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_div
 l_int|2
 op_minus
@@ -4652,7 +4687,7 @@ l_int|0
 dot
 id|hw.tiger.send
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_minus
 l_int|1
 suffix:semicolon
@@ -4710,7 +4745,7 @@ id|hw.tiger.send
 comma
 l_int|0xff
 comma
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_star
 r_sizeof
 (paren
@@ -4747,7 +4782,7 @@ l_int|0
 dot
 id|hw.tiger.send
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_TXSIZE
 op_minus
 l_int|1
 )paren
@@ -4825,7 +4860,7 @@ op_assign
 id|kmalloc
 c_func
 (paren
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_RXSIZE
 op_star
 r_sizeof
 (paren
@@ -4878,7 +4913,7 @@ l_int|0
 dot
 id|hw.tiger.rec
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_RXSIZE
 op_minus
 l_int|1
 )paren
@@ -4910,7 +4945,7 @@ id|hw.tiger.rec
 comma
 l_int|0xff
 comma
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_RXSIZE
 op_star
 r_sizeof
 (paren
@@ -4951,7 +4986,7 @@ l_int|0
 dot
 id|hw.tiger.rec
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_RXSIZE
 op_div
 l_int|2
 op_minus
@@ -4976,7 +5011,7 @@ l_int|0
 dot
 id|hw.tiger.rec
 op_plus
-id|NETJET_DMA_SIZE
+id|NETJET_DMA_RXSIZE
 op_minus
 l_int|1
 )paren
@@ -5661,27 +5696,6 @@ r_return
 l_int|0
 suffix:semicolon
 r_case
-id|CARD_SETIRQ
-suffix:colon
-r_return
-id|request_irq
-c_func
-(paren
-id|cs-&gt;irq
-comma
-op_amp
-id|netjet_interrupt
-comma
-id|I4L_IRQ_FLAG
-op_or
-id|SA_SHIRQ
-comma
-l_string|&quot;HiSax&quot;
-comma
-id|cs
-)paren
-suffix:semicolon
-r_case
 id|CARD_INIT
 suffix:colon
 id|inittiger
@@ -5729,6 +5743,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef COMPAT_HAS_NEW_PCI
 DECL|variable|__initdata
 r_static
 r_struct
@@ -5739,9 +5754,21 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#else
+DECL|variable|__initdata
+r_static
 r_int
-id|__init
-DECL|function|setup_netjet
+id|pci_index
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
 id|setup_netjet
 c_func
 (paren
@@ -5749,6 +5776,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 r_int
@@ -5767,6 +5795,22 @@ id|tmp
 l_int|64
 )braket
 suffix:semicolon
+macro_line|#if CONFIG_PCI
+macro_line|#ifndef COMPAT_HAS_NEW_PCI
+id|u_char
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|pci_irq
+suffix:semicolon
+id|u_int
+id|pci_ioaddr
+comma
+id|found
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 id|strcpy
 c_func
 (paren
@@ -5808,6 +5852,7 @@ id|cs-&gt;HW_Flags
 )paren
 suffix:semicolon
 macro_line|#if CONFIG_PCI
+macro_line|#ifdef COMPAT_HAS_NEW_PCI
 r_if
 c_cond
 (paren
@@ -5871,12 +5916,13 @@ suffix:semicolon
 )brace
 id|cs-&gt;hw.njet.base
 op_assign
-id|dev_netjet-&gt;resource
-(braket
+id|get_pcibase
+c_func
+(paren
+id|dev_netjet
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 op_amp
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
@@ -5898,6 +5944,169 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;NETjet: No PCI card found&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#else
+id|found
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|pci_index
+OL
+l_int|0xff
+suffix:semicolon
+id|pci_index
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pcibios_find_device
+c_func
+(paren
+id|PCI_VENDOR_TRAVERSE_TECH
+comma
+id|PCI_NETJET_ID
+comma
+id|pci_index
+comma
+op_amp
+id|pci_bus
+comma
+op_amp
+id|pci_device_fn
+)paren
+op_eq
+id|PCIBIOS_SUCCESSFUL
+)paren
+id|found
+op_assign
+l_int|1
+suffix:semicolon
+r_else
+r_continue
+suffix:semicolon
+multiline_comment|/* get IRQ */
+id|pcibios_read_config_byte
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_INTERRUPT_LINE
+comma
+op_amp
+id|pci_irq
+)paren
+suffix:semicolon
+multiline_comment|/* get IO address */
+id|pcibios_read_config_dword
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_BASE_ADDRESS_0
+comma
+op_amp
+id|pci_ioaddr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|found
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|found
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;NETjet: No PCI card found&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|pci_index
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pci_irq
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;NETjet: No IRQ for PCI card found&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pci_ioaddr
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;NETjet: No IO-Adr for PCI card found&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|cs-&gt;hw.njet.base
+op_assign
+id|pci_ioaddr
+op_amp
+id|PCI_BASE_ADDRESS_IO_MASK
+suffix:semicolon
+id|cs-&gt;irq
+op_assign
+id|pci_irq
+suffix:semicolon
+macro_line|#endif /* COMPAT_HAS_NEW_PCI */
 id|cs-&gt;hw.njet.auxa
 op_assign
 id|cs-&gt;hw.njet.base
@@ -5914,20 +6123,6 @@ id|bytecnt
 op_assign
 l_int|256
 suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;NETjet: No PCI card found&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 macro_line|#else
 id|printk
 c_func
@@ -6054,6 +6249,15 @@ id|cs-&gt;cardmsg
 op_assign
 op_amp
 id|NETjet_card_msg
+suffix:semicolon
+id|cs-&gt;irq_func
+op_assign
+op_amp
+id|netjet_interrupt
+suffix:semicolon
+id|cs-&gt;irq_flags
+op_or_assign
+id|SA_SHIRQ
 suffix:semicolon
 id|ISACVersion
 c_func

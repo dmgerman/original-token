@@ -260,17 +260,12 @@ multiline_comment|/* par not activated */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *  Interface used by the world&n; */
-r_void
+r_int
 id|sgivwfb_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 r_static
@@ -501,7 +496,7 @@ id|sgivwfb_mmap
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *  Interface to the low level console driver&n; */
-r_void
+r_int
 id|sgivwfb_init
 c_func
 (paren
@@ -747,6 +742,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;sgivwfb: unsupported bpp=%d&bslash;n&quot;
 comma
 id|bpp
@@ -1176,6 +1172,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sgivwfb: pixPerTile=%d wholeTilesX=%d&bslash;n&quot;
 comma
 id|maxPixelsPerTileX
@@ -2351,6 +2348,7 @@ l_int|100000
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;sgivwfb: timeout waiting for frame DMA enable.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3287,6 +3285,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;sgivwfb: requested pixclock=%d ps (%d KHz)&bslash;n&quot;
 comma
 id|var-&gt;pixclock
@@ -3371,6 +3370,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;sgivwfb: granted dot-clock=%d KHz&bslash;n&quot;
 comma
 id|timing-&gt;cfreq
@@ -3707,6 +3707,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;sgivwfb: new video mode xres=%d yres=%d bpp=%d&bslash;n&quot;
 comma
 id|var-&gt;xres
@@ -3719,6 +3720,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;         vxres=%d vyres=%d&bslash;n&quot;
 comma
 id|var-&gt;xres_virtual
@@ -4417,6 +4419,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sgivwfb: mmap framebuffer P(%lx)-&gt;V(%lx)&bslash;n&quot;
 comma
 id|offset
@@ -4429,7 +4432,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sgivwfb_setup
-r_void
+r_int
 id|__init
 id|sgivwfb_setup
 c_func
@@ -4437,10 +4440,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -4465,6 +4464,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -4517,10 +4517,13 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Initialisation&n; */
 DECL|function|sgivwfb_init
-r_void
+r_int
 id|__init
 id|sgivwfb_init
 c_func
@@ -4531,6 +4534,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;sgivwfb: framebuffer at 0x%lx, size %ldk&bslash;n&quot;
 comma
 id|sgivwfb_mem_phys
@@ -4564,6 +4568,7 @@ id|regs
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sgivwfb: couldn&squot;t ioremap registers&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4659,6 +4664,7 @@ id|fbmem
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sgivwfb: couldn&squot;t ioremap fbmem&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4696,6 +4702,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sgivwfb: couldn&squot;t register framebuffer&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4706,6 +4713,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: Virtual frame buffer device, using %ldK of video memory&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -4720,6 +4728,7 @@ l_int|10
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 id|fail_register_framebuffer
 suffix:colon
@@ -4744,6 +4753,8 @@ suffix:semicolon
 id|fail_ioremap_regs
 suffix:colon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 DECL|function|sgivwfbcon_switch
@@ -4855,13 +4866,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|sgivwfb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

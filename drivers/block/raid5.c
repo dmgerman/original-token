@@ -6813,17 +6813,6 @@ id|rw
 op_assign
 id|READ
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|rw
-op_eq
-id|WRITEA
-)paren
-id|rw
-op_assign
-id|WRITE
-suffix:semicolon
 id|new_sector
 op_assign
 id|raid5_compute_sector

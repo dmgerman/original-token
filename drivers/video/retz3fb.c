@@ -1035,7 +1035,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *    Interface used by the world&n; */
-r_void
+r_int
 id|retz3fb_setup
 c_func
 (paren
@@ -1225,7 +1225,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *    Interface to the low level console driver&n; */
-r_void
+r_int
 id|retz3fb_init
 c_func
 (paren
@@ -2301,6 +2301,7 @@ l_int|1024
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MAYDAY: v_total &gt;= 1024; bailing out!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4148,6 +4149,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Illegal color-depth: %i&bslash;n&quot;
 comma
 id|bpp
@@ -6798,7 +6800,7 @@ id|retz3fb_ioctl
 )brace
 suffix:semicolon
 DECL|function|retz3fb_setup
-r_void
+r_int
 id|__init
 id|retz3fb_setup
 c_func
@@ -6806,10 +6808,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -6827,6 +6825,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -6923,10 +6922,13 @@ id|this_opt
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Initialization&n; */
 DECL|function|retz3fb_init
-r_void
+r_int
 id|__init
 id|retz3fb_init
 c_func
@@ -6992,6 +6994,8 @@ l_int|0
 )paren
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 r_if
 c_cond
@@ -7014,6 +7018,8 @@ id|GFP_KERNEL
 )paren
 )paren
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|memset
 c_func
@@ -7361,10 +7367,13 @@ OL
 l_int|0
 )paren
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: %s frame buffer device, using %ldK of video memory&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -7382,6 +7391,9 @@ l_int|10
 suffix:semicolon
 multiline_comment|/* TODO: This driver cannot be unloaded yet */
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|z3fb_switch
@@ -7749,13 +7761,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|retz3fb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

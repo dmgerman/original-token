@@ -233,7 +233,6 @@ id|apm_event_t
 suffix:semicolon
 multiline_comment|/*&n; * Local variables&n; */
 r_static
-id|asmlinkage
 r_struct
 (brace
 DECL|member|offset

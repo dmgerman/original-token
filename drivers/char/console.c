@@ -9888,8 +9888,6 @@ l_int|0
 suffix:semicolon
 id|ushort
 id|myx
-op_assign
-id|x
 suffix:semicolon
 multiline_comment|/* console busy or not yet initialized */
 r_if
@@ -9927,6 +9925,11 @@ op_assign
 id|kmsg_redirect
 op_minus
 l_int|1
+suffix:semicolon
+multiline_comment|/* read `x&squot; only after setting currecons properly (otherwise&n;&t;   the `x&squot; macro will read the x of the foreground console). */
+id|myx
+op_assign
+id|x
 suffix:semicolon
 r_if
 c_cond

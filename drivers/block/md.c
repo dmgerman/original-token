@@ -3191,10 +3191,6 @@ c_cond
 id|rw
 op_eq
 id|WRITE
-op_logical_or
-id|rw
-op_eq
-id|WRITEA
 )paren
 (brace
 r_if

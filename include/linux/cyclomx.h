@@ -2,7 +2,6 @@ multiline_comment|/*&n;* cyclomx.h&t;CYCLOM X Multiprotocol WAN Link Driver.&n;*
 macro_line|#ifndef&t;_CYCLOMX_H
 DECL|macro|_CYCLOMX_H
 mdefine_line|#define&t;_CYCLOMX_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#ifdef&t;__KERNEL__
@@ -72,12 +71,7 @@ r_char
 id|buff_int_mode_unbusy
 suffix:semicolon
 multiline_comment|/* flag for carrying out dev_tint */
-DECL|member|irq_dis_if_send_count
-id|u16
-id|irq_dis_if_send_count
-suffix:semicolon
-multiline_comment|/* Disabling irqs in if_send*/
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020300
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20300)
 DECL|member|wait_stats
 id|wait_queue_head_t
 id|wait_stats
@@ -158,11 +152,10 @@ DECL|member|stats
 id|TX25Stats
 id|stats
 suffix:semicolon
-DECL|member|critical
-r_int
-id|critical
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
-multiline_comment|/* critical section flag */
 DECL|member|connection_keys
 id|u32
 id|connection_keys

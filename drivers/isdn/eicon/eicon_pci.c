@@ -1,5 +1,4 @@
-multiline_comment|/* $Id: eicon_pci.c,v 1.6 1999/04/01 12:48:37 armin Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; * Hardware-specific code for PCI cards.&n; *&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * Thanks to&t;Eicon Technology Diehl GmbH &amp; Co. oHG for &n; *&t;&t;documents, informations and hardware. &n; *&n; *&t;&t;Deutsche Telekom AG for S2M support.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_pci.c,v $&n; * Revision 1.6  1999/04/01 12:48:37  armin&n; * Changed some log outputs.&n; *&n; * Revision 1.5  1999/03/29 11:19:49  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.4  1999/03/02 12:37:48  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.3  1999/01/24 20:14:24  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.2  1999/01/10 18:46:06  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.1  1999/01/01 18:09:45  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* $Id: eicon_pci.c,v 1.9 1999/08/11 21:01:11 keil Exp $&n; *&n; * ISDN low-level module for Eicon.Diehl active ISDN-Cards.&n; * Hardware-specific code for PCI cards.&n; *&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * Thanks to&t;Eicon Technology Diehl GmbH &amp; Co. oHG for &n; *&t;&t;documents, informations and hardware. &n; *&n; *&t;&t;Deutsche Telekom AG for S2M support.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_pci.c,v $&n; * Revision 1.9  1999/08/11 21:01:11  keil&n; * new PCI codefix&n; *&n; * Revision 1.8  1999/08/10 16:02:20  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.7  1999/06/09 19:31:29  armin&n; * Wrong PLX size for request_region() corrected.&n; * Added first MCA code from Erik Weber.&n; *&n; * Revision 1.6  1999/04/01 12:48:37  armin&n; * Changed some log outputs.&n; *&n; * Revision 1.5  1999/03/29 11:19:49  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.4  1999/03/02 12:37:48  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.3  1999/01/24 20:14:24  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.2  1999/01/10 18:46:06  armin&n; * Bug with wrong values in HLC fixed.&n; * Bytes to send are counted and limited now.&n; *&n; * Revision 1.1  1999/01/01 18:09:45  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &quot;eicon.h&quot;
 macro_line|#include &quot;eicon_pci.h&quot;
@@ -8,7 +7,7 @@ r_char
 op_star
 id|eicon_pci_revision
 op_assign
-l_string|&quot;$Revision: 1.6 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 macro_line|#if CONFIG_PCI&t;         /* intire stuff is only for PCI */
 DECL|macro|EICON_PCI_DEBUG
@@ -327,19 +326,25 @@ id|pdev-&gt;irq
 suffix:semicolon
 id|preg
 op_assign
-id|pdev-&gt;base_address
-(braket
+id|get_pcibase
+c_func
+(paren
+id|pdev
+comma
 l_int|2
-)braket
+)paren
 op_amp
 l_int|0xfffffffc
 suffix:semicolon
 id|pcfg
 op_assign
-id|pdev-&gt;base_address
-(braket
+id|get_pcibase
+c_func
+(paren
+id|pdev
+comma
 l_int|1
-)braket
+)paren
 op_amp
 l_int|0xffffff80
 suffix:semicolon
@@ -421,28 +426,37 @@ id|pdev-&gt;irq
 suffix:semicolon
 id|pram
 op_assign
-id|pdev-&gt;base_address
-(braket
+id|get_pcibase
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
+)paren
 op_amp
 l_int|0xfffff000
 suffix:semicolon
 id|preg
 op_assign
-id|pdev-&gt;base_address
-(braket
+id|get_pcibase
+c_func
+(paren
+id|pdev
+comma
 l_int|2
-)braket
+)paren
 op_amp
 l_int|0xfffff000
 suffix:semicolon
 id|pcfg
 op_assign
-id|pdev-&gt;base_address
-(braket
+id|get_pcibase
+c_func
+(paren
+id|pdev
+comma
 l_int|4
-)braket
+)paren
 op_amp
 l_int|0xfffff000
 suffix:semicolon
@@ -598,7 +612,7 @@ c_func
 id|aparms-&gt;PCIcfg
 )paren
 comma
-l_int|0x100
+l_int|0x80
 )paren
 )paren
 (brace
@@ -613,6 +627,14 @@ id|aparms-&gt;PCIcfg
 op_assign
 l_int|0
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|aparms-&gt;PCIreg
+comma
+l_int|0x20
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -623,7 +645,7 @@ c_func
 (paren
 id|aparms-&gt;PCIcfg
 comma
-l_int|0x100
+l_int|0x80
 comma
 l_string|&quot;eicon cfg&quot;
 )paren
@@ -1259,7 +1281,7 @@ c_func
 (paren
 id|card-&gt;PCIcfg
 comma
-l_int|0x100
+l_int|0x80
 )paren
 suffix:semicolon
 r_break

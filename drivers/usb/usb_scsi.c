@@ -337,6 +337,12 @@ c_func
 id|us-&gt;pusb_dev
 comma
 id|pipe
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
 )paren
 op_star
 l_int|16

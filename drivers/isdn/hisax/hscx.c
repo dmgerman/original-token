@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hscx.c,v 1.16 1998/11/15 23:54:48 keil Exp $&n;&n; * hscx.c   HSCX specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: hscx.c,v $&n; * Revision 1.16  1998/11/15 23:54:48  keil&n; * changes from 2.0&n; *&n; * Revision 1.15  1998/08/20 13:50:42  keil&n; * More support for hybrid modem (not working yet)&n; *&n; * Revision 1.14  1998/08/13 23:36:33  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.13  1998/06/26 22:03:28  keil&n; * send flags between hdlc frames&n; *&n; * Revision 1.12  1998/06/09 18:26:01  keil&n; * PH_DEACTIVATE B-channel every time signaled to higher layer&n; *&n; * Revision 1.11  1998/05/25 14:10:07  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 1.10  1998/05/25 12:57:59  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.9  1998/04/15 16:45:33  keil&n; * new init code&n; *&n; * Revision 1.8  1998/03/19 13:16:24  keil&n; * fix the correct release of the hscx&n; *&n; * Revision 1.7  1998/02/12 23:07:36  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.6  1998/02/02 13:41:12  keil&n; * new init&n; *&n; * Revision 1.5  1997/11/06 17:09:34  keil&n; * New 2.1 init code&n; *&n; * Revision 1.4  1997/10/29 19:01:06  keil&n; * changes for 2.1&n; *&n; * Revision 1.3  1997/07/27 21:38:34  keil&n; * new B-channel interface&n; *&n; * Revision 1.2  1997/06/26 11:16:17  keil&n; * first version&n; *&n; *&n; */
+multiline_comment|/* $Id: hscx.c,v 1.17 1999/07/01 08:11:41 keil Exp $&n;&n; * hscx.c   HSCX specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: hscx.c,v $&n; * Revision 1.17  1999/07/01 08:11:41  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.16  1998/11/15 23:54:48  keil&n; * changes from 2.0&n; *&n; * Revision 1.15  1998/08/20 13:50:42  keil&n; * More support for hybrid modem (not working yet)&n; *&n; * Revision 1.14  1998/08/13 23:36:33  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.13  1998/06/26 22:03:28  keil&n; * send flags between hdlc frames&n; *&n; * Revision 1.12  1998/06/09 18:26:01  keil&n; * PH_DEACTIVATE B-channel every time signaled to higher layer&n; *&n; * Revision 1.11  1998/05/25 14:10:07  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 1.10  1998/05/25 12:57:59  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.9  1998/04/15 16:45:33  keil&n; * new init code&n; *&n; * Revision 1.8  1998/03/19 13:16:24  keil&n; * fix the correct release of the hscx&n; *&n; * Revision 1.7  1998/02/12 23:07:36  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.6  1998/02/02 13:41:12  keil&n; * new init&n; *&n; * Revision 1.5  1997/11/06 17:09:34  keil&n; * New 2.1 init code&n; *&n; * Revision 1.4  1997/10/29 19:01:06  keil&n; * changes for 2.1&n; *&n; * Revision 1.3  1997/07/27 21:38:34  keil&n; * new B-channel interface&n; *&n; * Revision 1.2  1997/06/26 11:16:17  keil&n; * first version&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -417,7 +417,7 @@ ques
 c_cond
 l_int|0x7
 suffix:colon
-l_int|0x2f
+id|bcs-&gt;hw.hscx.tsaxr0
 )paren
 suffix:semicolon
 id|cs
@@ -443,7 +443,7 @@ ques
 c_cond
 l_int|0x7
 suffix:colon
-l_int|0x2f
+id|bcs-&gt;hw.hscx.tsaxr0
 )paren
 suffix:semicolon
 )brace
@@ -460,7 +460,7 @@ id|hscx
 comma
 id|HSCX_TSAX
 comma
-l_int|0x3
+id|bcs-&gt;hw.hscx.tsaxr1
 )paren
 suffix:semicolon
 id|cs
@@ -474,7 +474,7 @@ id|hscx
 comma
 id|HSCX_TSAR
 comma
-l_int|0x3
+id|bcs-&gt;hw.hscx.tsaxr1
 )paren
 suffix:semicolon
 )brace
@@ -1081,10 +1081,12 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -1614,6 +1616,42 @@ dot
 id|hw.hscx.hscx
 op_assign
 l_int|1
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|hw.hscx.tsaxr0
+op_assign
+l_int|0x2f
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|hw.hscx.tsaxr1
+op_assign
+l_int|3
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|hw.hscx.tsaxr0
+op_assign
+l_int|0x2f
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|hw.hscx.tsaxr1
+op_assign
+l_int|3
 suffix:semicolon
 id|modehscx
 c_func

@@ -14,9 +14,23 @@ mdefine_line|#define CIA_MEM_R2_MASK 0x07ffffff  /* SPARSE Mem region 2 mask is 
 DECL|macro|CIA_MEM_R3_MASK
 mdefine_line|#define CIA_MEM_R3_MASK 0x03ffffff  /* SPARSE Mem region 3 mask is 26 bits */
 DECL|macro|CIA_DMA_WIN_BASE_DEFAULT
-mdefine_line|#define CIA_DMA_WIN_BASE_DEFAULT&t;(1024*1024*1024)
+mdefine_line|#define CIA_DMA_WIN_BASE_DEFAULT&t;(1UL*1024*1024*1024)
 DECL|macro|CIA_DMA_WIN_SIZE_DEFAULT
-mdefine_line|#define CIA_DMA_WIN_SIZE_DEFAULT&t;(1024*1024*1024)
+mdefine_line|#define CIA_DMA_WIN_SIZE_DEFAULT&t;(2UL*1024*1024*1024)
+multiline_comment|/* Window 0 at 1GB size 1GB mapping to 0.  */
+DECL|macro|CIA_DMA_WIN0_BASE_DEFAULT
+mdefine_line|#define CIA_DMA_WIN0_BASE_DEFAULT      (1UL*1024*1024*1024)
+DECL|macro|CIA_DMA_WIN0_SIZE_DEFAULT
+mdefine_line|#define CIA_DMA_WIN0_SIZE_DEFAULT      (1UL*1024*1024*1024)
+DECL|macro|CIA_DMA_WIN0_TRAN_DEFAULT
+mdefine_line|#define CIA_DMA_WIN0_TRAN_DEFAULT      (0UL)
+multiline_comment|/* Window 1 at 2GB size 1GB mapping to 1GB.  */
+DECL|macro|CIA_DMA_WIN1_BASE_DEFAULT
+mdefine_line|#define CIA_DMA_WIN1_BASE_DEFAULT      (2UL*1024*1024*1024)
+DECL|macro|CIA_DMA_WIN1_SIZE_DEFAULT
+mdefine_line|#define CIA_DMA_WIN1_SIZE_DEFAULT      (1UL*1024*1024*1024)
+DECL|macro|CIA_DMA_WIN1_TRAN_DEFAULT
+mdefine_line|#define CIA_DMA_WIN1_TRAN_DEFAULT      (1UL*1024*1024*1024)
 macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
 DECL|macro|CIA_DMA_WIN_BASE
 mdefine_line|#define CIA_DMA_WIN_BASE&t;&t;alpha_mv.dma_win_base

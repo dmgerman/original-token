@@ -1156,6 +1156,7 @@ macro_line|#else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;get cmap not supported&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1289,6 +1290,7 @@ macro_line|#else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;set cmap not supported&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1321,6 +1323,7 @@ id|info
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;panning not supported&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1600,7 +1603,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|q40fb_init
-r_void
+r_int
 id|q40fb_init
 c_func
 (paren
@@ -1614,6 +1617,8 @@ op_logical_neg
 id|MACH_IS_Q40
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 macro_line|#if 0
 id|q40_screen_addr
@@ -1743,15 +1748,23 @@ id|fb_info
 OL
 l_int|0
 )paren
-id|panic
-c_func
-(paren
-l_string|&quot;unable to register Q40 frame buffer&bslash;n&quot;
-)paren
-suffix:semicolon
+(brace
 id|printk
 c_func
 (paren
+id|KERN_ERR
+l_string|&quot;unable to register Q40 frame buffer&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
 l_string|&quot;fb%d: Q40 frame buffer alive and kicking !&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -1760,6 +1773,9 @@ c_func
 id|fb_info.node
 )paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|q40con_switch

@@ -4,20 +4,6 @@ mdefine_line|#define _LINUX_GENHD_H
 multiline_comment|/*&n; * &t;genhd.h Copyright (C) 1992 Drew Eckhardt&n; *&t;Generic hard disk header file by  &n; * &t;&t;Drew Eckhardt&n; *&n; *&t;&t;&lt;drew@colorado.edu&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-DECL|macro|CONFIG_MSDOS_PARTITION
-mdefine_line|#define CONFIG_MSDOS_PARTITION 1
-macro_line|#ifdef __alpha__
-DECL|macro|CONFIG_OSF_PARTITION
-mdefine_line|#define CONFIG_OSF_PARTITION 1
-macro_line|#endif
-macro_line|#if defined(__sparc__) || defined(CONFIG_SMD_DISKLABEL)
-DECL|macro|CONFIG_SUN_PARTITION
-mdefine_line|#define CONFIG_SUN_PARTITION 1
-macro_line|#endif
-macro_line|#if defined(CONFIG_SGI) || defined(CONFIG_SGI_DISKLABEL)
-DECL|macro|CONFIG_SGI_PARTITION
-mdefine_line|#define CONFIG_SGI_PARTITION 1
-macro_line|#endif
 multiline_comment|/* These three have identical behaviour; use the second one if DOS fdisk gets&n;   confused about extended/logical partitions starting past cylinder 1023. */
 DECL|macro|DOS_EXTENDED_PARTITION
 mdefine_line|#define DOS_EXTENDED_PARTITION 5

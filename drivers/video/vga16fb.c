@@ -3724,17 +3724,13 @@ id|vga16fb_ioctl
 )brace
 suffix:semicolon
 DECL|function|vga16fb_setup
-r_void
+r_int
 id|vga16fb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -3759,6 +3755,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -3820,6 +3817,9 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|vga16fb_switch
 r_static
@@ -4749,7 +4749,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|vga16_init
-r_void
+r_int
 id|__init
 id|vga16_init
 c_func
@@ -4765,6 +4765,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;vga16fb: initializing&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4785,6 +4786,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;vga16fb: mapped to 0x%p&bslash;n&quot;
 comma
 id|vga16fb.video_vbase
@@ -4988,6 +4990,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: %s frame buffer device&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -5004,18 +5007,16 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
+DECL|function|vga16fb_init
+r_int
+id|__init
 id|vga16fb_init
 c_func
 (paren
 r_void
 )paren
-)paren
 (brace
+r_return
 id|vga16_init
 c_func
 (paren
@@ -5023,16 +5024,12 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#else /* MODULE */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_module
 r_int
 id|init_module
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return

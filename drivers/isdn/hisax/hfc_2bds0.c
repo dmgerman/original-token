@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hfc_2bds0.c,v 1.8 1998/11/15 23:54:40 keil Exp $&n; *&n; *  specific routines for CCD&squot;s HFC 2BDS0&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: hfc_2bds0.c,v $&n; * Revision 1.8  1998/11/15 23:54:40  keil&n; * changes from 2.0&n; *&n; * Revision 1.7  1998/09/30 22:24:45  keil&n; * Fix missing line in setstack*&n; *&n; * Revision 1.6  1998/08/13 23:36:26  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.5  1998/06/27 22:52:58  keil&n; * make 16.3c working with 3.0&n; *&n; * Revision 1.4  1998/05/25 12:57:52  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.3  1998/02/12 23:07:22  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.2  1998/02/02 13:26:13  keil&n; * New&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: hfc_2bds0.c,v 1.9 1999/07/01 08:11:35 keil Exp $&n; *&n; *  specific routines for CCD&squot;s HFC 2BDS0&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: hfc_2bds0.c,v $&n; * Revision 1.9  1999/07/01 08:11:35  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.8  1998/11/15 23:54:40  keil&n; * changes from 2.0&n; *&n; * Revision 1.7  1998/09/30 22:24:45  keil&n; * Fix missing line in setstack*&n; *&n; * Revision 1.6  1998/08/13 23:36:26  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.5  1998/06/27 22:52:58  keil&n; * make 16.3c working with 3.0&n; *&n; * Revision 1.4  1998/05/25 12:57:52  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.3  1998/02/12 23:07:22  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.2  1998/02/02 13:26:13  keil&n; * New&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -1179,6 +1179,12 @@ l_string|&quot;HFC: receive out of memory&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
+id|SET_SKB_FREE
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|ptr
 op_assign
 id|skb_put
@@ -1300,10 +1306,12 @@ comma
 id|bcs-&gt;channel
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|skb
+comma
+id|FREE_READ
 )paren
 suffix:semicolon
 id|skb
@@ -1416,10 +1424,12 @@ comma
 l_string|&quot;FIFO CRC error&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|skb
+comma
+id|FREE_READ
 )paren
 suffix:semicolon
 id|skb
@@ -1965,10 +1975,12 @@ comma
 id|bcs-&gt;tx_skb-&gt;len
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -3102,10 +3114,12 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -3361,7 +3375,7 @@ id|cs-&gt;event
 r_switch
 c_cond
 (paren
-id|cs-&gt;ph_state
+id|cs-&gt;dc.hfcd.ph_state
 )paren
 (brace
 r_case
@@ -3949,6 +3963,12 @@ l_int|3
 )paren
 )paren
 (brace
+id|SET_SKB_FREE
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|ptr
 op_assign
 id|skb_put
@@ -4049,10 +4069,12 @@ id|KERN_WARNING
 l_string|&quot;HFC DFIFO channel BUSY Error&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|skb
+comma
+id|FREE_READ
 )paren
 suffix:semicolon
 id|skb
@@ -4163,10 +4185,12 @@ comma
 l_string|&quot;FIFO CRC error&quot;
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|skb
+comma
+id|FREE_READ
 )paren
 suffix:semicolon
 id|skb
@@ -4740,10 +4764,12 @@ op_or
 id|HFCD_SEND
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|cs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|cs-&gt;tx_skb
@@ -4951,12 +4977,12 @@ id|cs
 comma
 l_string|&quot;ph_state chg %d-&gt;%d&quot;
 comma
-id|cs-&gt;ph_state
+id|cs-&gt;dc.hfcd.ph_state
 comma
 id|exval
 )paren
 suffix:semicolon
-id|cs-&gt;ph_state
+id|cs-&gt;dc.hfcd.ph_state
 op_assign
 id|exval
 suffix:semicolon
@@ -5525,6 +5551,7 @@ c_cond
 (paren
 id|cs-&gt;tx_skb
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -5578,10 +5605,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|cs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|cs-&gt;tx_cnt
@@ -5592,6 +5621,7 @@ id|cs-&gt;tx_skb
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -6580,16 +6610,19 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
-id|__init
-DECL|function|init_send_hfcd
 op_star
 id|init_send_hfcd
 c_func
 (paren
 r_int
 id|cnt
+)paren
 )paren
 (brace
 r_int
@@ -6657,9 +6690,11 @@ r_return
 id|send
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-id|__init
-DECL|function|init2bds0
 id|init2bds0
 c_func
 (paren
@@ -6667,6 +6702,7 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
+)paren
 )paren
 (brace
 id|cs-&gt;setstack_d

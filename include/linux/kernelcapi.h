@@ -1,13 +1,44 @@
-multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.1 1997/03/04 21:27:33 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kernelcapi.h,v $&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
-macro_line|#ifndef __KERNEL_CAPI_H__
-DECL|macro|__KERNEL_CAPI_H__
-mdefine_line|#define __KERNEL_CAPI_H__
+multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.3 1999/07/01 15:26:56 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kernelcapi.h,v $&n; * Revision 1.3  1999/07/01 15:26:56  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.2  1999/06/21 15:24:26  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
+macro_line|#ifndef __KERNELCAPI_H__
+DECL|macro|__KERNELCAPI_H__
+mdefine_line|#define __KERNELCAPI_H__
 DECL|macro|CAPI_MAXAPPL
 mdefine_line|#define CAPI_MAXAPPL&t;20&t;/*&n;&t;&t;&t;&t;   * maximum number of applications &n;&t;&t;&t;&t; */
 DECL|macro|CAPI_MAXCONTR
-mdefine_line|#define CAPI_MAXCONTR&t;4&t;/*&n;&t;&t;&t;&t;   * maximum number of controller &n;&t;&t;&t;&t; */
+mdefine_line|#define CAPI_MAXCONTR&t;10&t;/*&n;&t;&t;&t;&t;   * maximum number of controller &n;&t;&t;&t;&t; */
 DECL|macro|CAPI_MAXDATAWINDOW
 mdefine_line|#define CAPI_MAXDATAWINDOW&t;8
+DECL|struct|kcapi_flagdef
+r_typedef
+r_struct
+id|kcapi_flagdef
+(brace
+DECL|member|contr
+r_int
+id|contr
+suffix:semicolon
+DECL|member|flag
+r_int
+id|flag
+suffix:semicolon
+DECL|typedef|kcapi_flagdef
+)brace
+id|kcapi_flagdef
+suffix:semicolon
+multiline_comment|/* new ioctls &gt;= 10 */
+DECL|macro|KCAPI_CMD_TRACE
+mdefine_line|#define KCAPI_CMD_TRACE&t;&t;10
+multiline_comment|/* &n; * flag &gt; 2 =&gt; trace also data&n; * flag &amp; 1 =&gt; show trace&n; */
+DECL|macro|KCAPI_TRACE_OFF
+mdefine_line|#define KCAPI_TRACE_OFF&t;&t;&t;0
+DECL|macro|KCAPI_TRACE_SHORT_NO_DATA
+mdefine_line|#define KCAPI_TRACE_SHORT_NO_DATA&t;1
+DECL|macro|KCAPI_TRACE_FULL_NO_DATA
+mdefine_line|#define KCAPI_TRACE_FULL_NO_DATA&t;2
+DECL|macro|KCAPI_TRACE_SHORT
+mdefine_line|#define KCAPI_TRACE_SHORT&t;&t;3
+DECL|macro|KCAPI_TRACE_FULL
+mdefine_line|#define KCAPI_TRACE_FULL&t;&t;4
 macro_line|#ifdef __KERNEL__
 DECL|struct|capi_interface
 r_struct
@@ -238,6 +269,7 @@ op_star
 id|data
 )paren
 suffix:semicolon
+multiline_comment|/* internal */
 DECL|member|next
 r_struct
 id|capi_interface_user
@@ -313,5 +345,5 @@ mdefine_line|#define CAPI_MSGCTRLERNOTSUPPORTEXTEQUIP  0x110a
 DECL|macro|CAPI_MSGCTRLERONLYSUPPORTEXTEQUIP
 mdefine_line|#define CAPI_MSGCTRLERONLYSUPPORTEXTEQUIP 0x110b
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
-macro_line|#endif&t;&t;&t;&t;/* __KERNEL_CAPI_H__ */
+macro_line|#endif&t;&t;&t;&t;/* __KERNELCAPI_H__ */
 eof

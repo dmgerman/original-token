@@ -19,7 +19,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* for inb(), outb(), etc. */
 DECL|macro|MOD_VERSION
 mdefine_line|#define&t;MOD_VERSION&t;0
 DECL|macro|MOD_RELEASE
-mdefine_line|#define&t;MOD_RELEASE&t;1
+mdefine_line|#define&t;MOD_RELEASE&t;2
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
@@ -290,15 +290,6 @@ comma
 id|MOD_RELEASE
 comma
 id|copyright
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;version=0x%X&bslash;n&quot;
-comma
-id|LINUX_VERSION_CODE
 )paren
 suffix:semicolon
 r_return

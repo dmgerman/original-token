@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: isdnif.h,v 1.25 1998/06/17 19:51:55 he Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.25  1998/06/17 19:51:55  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.24  1998/03/19 13:18:57  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 1.23  1998/02/20 17:36:52  fritz&n; * Added L2-protocols for V.110, changed FEATURE-Flag-constants.&n; *&n; * Revision 1.22  1998/01/31 22:14:12  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.21  1997/10/09 21:28:13  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.20  1997/05/27 15:18:06  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.19  1997/03/25 23:13:56  keil&n; * NI-1 US protocol&n; *&n; * Revision 1.18  1997/03/04 22:09:18  calle&n; * Change macros copy_from_user and copy_to_user in inline function.&n; * These are now correct replacements of the functions for 2.1.xx&n; *&n; * Revision 1.17  1997/02/10 21:12:53  fritz&n; * More setup-interface changes.&n; *&n; * Revision 1.16  1997/02/10 19:42:57  fritz&n; * New interface for reporting incoming calls.&n; *&n; * Revision 1.15  1997/02/09 00:18:42  keil&n; * leased line support&n; *&n; * Revision 1.14  1997/02/03 23:43:00  fritz&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.13  1996/11/13 02:39:59  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.12  1996/11/06 17:38:48  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.11  1996/10/23 11:59:42  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.10  1996/10/22 23:14:19  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdnif.h,v 1.29 1999/07/31 13:00:02 armin Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.29  1999/07/31 13:00:02  armin&n; * Added tty fax capabilities.&n; *&n; * Revision 1.28  1999/07/13 20:57:48  werner&n; * added callback ISDN_STAT_DISCH for limiting b-channel resources.&n; *&n; * Revision 1.27  1999/07/11 17:07:39  armin&n; * Added tty modem register S23.&n; * Added new layer 2 and 3 protocols for Fax and DSP functions.&n; *&n; * Revision 1.26  1999/07/01 08:35:44  keil&n; * compatibility to 2.3&n; *&n; * Revision 1.25  1998/06/17 19:51:55  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.24  1998/03/19 13:18:57  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 1.23  1998/02/20 17:36:52  fritz&n; * Added L2-protocols for V.110, changed FEATURE-Flag-constants.&n; *&n; * Revision 1.22  1998/01/31 22:14:12  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.21  1997/10/09 21:28:13  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.20  1997/05/27 15:18:06  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.19  1997/03/25 23:13:56  keil&n; * NI-1 US protocol&n; *&n; * Revision 1.18  1997/03/04 22:09:18  calle&n; * Change macros copy_from_user and copy_to_user in inline function.&n; * These are now correct replacements of the functions for 2.1.xx&n; *&n; * Revision 1.17  1997/02/10 21:12:53  fritz&n; * More setup-interface changes.&n; *&n; * Revision 1.16  1997/02/10 19:42:57  fritz&n; * New interface for reporting incoming calls.&n; *&n; * Revision 1.15  1997/02/09 00:18:42  keil&n; * leased line support&n; *&n; * Revision 1.14  1997/02/03 23:43:00  fritz&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.13  1996/11/13 02:39:59  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.12  1996/11/06 17:38:48  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.11  1996/10/23 11:59:42  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.10  1996/10/22 23:14:19  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
+macro_line|#include &lt;linux/isdn_compat.h&gt;
 multiline_comment|/*&n; * Values for general protocol-selection&n; */
 DECL|macro|ISDN_PTYPE_UNKNOWN
 mdefine_line|#define ISDN_PTYPE_UNKNOWN   0   /* Protocol undefined   */
@@ -38,15 +39,135 @@ DECL|macro|ISDN_PROTO_L2_V11038
 mdefine_line|#define ISDN_PROTO_L2_V11038 9   /* V.110 bitrate adaption 38400 Baud */
 DECL|macro|ISDN_PROTO_L2_MODEM
 mdefine_line|#define ISDN_PROTO_L2_MODEM  10  /* Analog Modem on Board */
+DECL|macro|ISDN_PROTO_L2_FAX
+mdefine_line|#define ISDN_PROTO_L2_FAX    11  /* Fax Group 2/3         */
 DECL|macro|ISDN_PROTO_L2_MAX
 mdefine_line|#define ISDN_PROTO_L2_MAX    15  /* Max. 16 Protocols                 */
 multiline_comment|/*&n; * Values for Layer-3-protocol-selection&n; */
 DECL|macro|ISDN_PROTO_L3_TRANS
 mdefine_line|#define ISDN_PROTO_L3_TRANS  0   /* Transparent                 */
+DECL|macro|ISDN_PROTO_L3_TRANSDSP
+mdefine_line|#define ISDN_PROTO_L3_TRANSDSP 1   /* Transparent with DSP    */
+DECL|macro|ISDN_PROTO_L3_FAX
+mdefine_line|#define ISDN_PROTO_L3_FAX    2   /* Fax Group 2/3             */
 DECL|macro|ISDN_PROTO_L3_MAX
 mdefine_line|#define ISDN_PROTO_L3_MAX    7   /* Max. 8 Protocols            */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/skbuff.h&gt;
+multiline_comment|/***************************************************************************/
+multiline_comment|/* Extensions made by Werner Cornelius (werner@ikt.de)                     */
+multiline_comment|/*                                                                         */
+multiline_comment|/* The proceed command holds a incoming call in a state to leave processes */
+multiline_comment|/* enough time to check whether ist should be accepted.                    */
+multiline_comment|/* The PROT_IO Command extends the interface to make protocol dependant    */
+multiline_comment|/* features available (call diversion, call waiting...).                   */
+multiline_comment|/*                                                                         */
+multiline_comment|/* The PROT_IO Command is executed with the desired driver id and the arg  */
+multiline_comment|/* parameter coded as follows:                                             */
+multiline_comment|/* The lower 8 bits of arg contain the desired protocol from ISDN_PTYPE    */
+multiline_comment|/* definitions. The upper 24 bits represent the protocol specific cmd/stat.*/
+multiline_comment|/* Any additional data is protocol and command specific.                   */
+multiline_comment|/* This mechanism also applies to the statcallb callback STAT_PROT.        */
+multiline_comment|/*                                                                         */
+multiline_comment|/* This suggested extension permits an easy expansion of protocol specific */
+multiline_comment|/* handling. Extensions may be added at any time without changing the HL   */
+multiline_comment|/* driver code and not getting conflicts without certifications.           */
+multiline_comment|/* The well known CAPI 2.0 interface handles such extensions in a similar  */
+multiline_comment|/* way. Perhaps a protocol specific module may be added and separately     */
+multiline_comment|/* loaded and linked to the basic isdn module for handling.                */
+multiline_comment|/***************************************************************************/
+multiline_comment|/*****************/
+multiline_comment|/* DSS1 commands */
+multiline_comment|/*****************/
+DECL|macro|DSS1_CMD_INVOKE
+mdefine_line|#define DSS1_CMD_INVOKE       ((0x00 &lt;&lt; 8) | ISDN_PTYPE_EURO)   /* invoke a supplementary service */
+DECL|macro|DSS1_CMD_INVOKE_ABORT
+mdefine_line|#define DSS1_CMD_INVOKE_ABORT ((0x01 &lt;&lt; 8) | ISDN_PTYPE_EURO)   /* abort a invoke cmd */
+multiline_comment|/*******************************/
+multiline_comment|/* DSS1 Status callback values */
+multiline_comment|/*******************************/
+DECL|macro|DSS1_STAT_INVOKE_RES
+mdefine_line|#define DSS1_STAT_INVOKE_RES  ((0x80 &lt;&lt; 8) | ISDN_PTYPE_EURO)   /* Result for invocation */
+DECL|macro|DSS1_STAT_INVOKE_ERR
+mdefine_line|#define DSS1_STAT_INVOKE_ERR  ((0x81 &lt;&lt; 8) | ISDN_PTYPE_EURO)   /* Error Return for invocation */
+DECL|macro|DSS1_STAT_INVOKE_BRD
+mdefine_line|#define DSS1_STAT_INVOKE_BRD  ((0x82 &lt;&lt; 8) | ISDN_PTYPE_EURO)   /* Deliver invoke broadcast info */
+multiline_comment|/*********************************************************************/
+multiline_comment|/* structures for DSS1 commands and callback                         */
+multiline_comment|/*                                                                   */
+multiline_comment|/* An action is invoked by sending a DSS1_CMD_INVOKE. The ll_id, proc*/
+multiline_comment|/* timeout, datalen and data fields must be set before calling.      */
+multiline_comment|/*                                                                   */
+multiline_comment|/* The return value is a positive hl_id value also delivered in the  */
+multiline_comment|/* hl_id field. A value of zero signals no more left hl_id capacitys.*/
+multiline_comment|/* A negative return value signals errors in LL. So if the return    */
+multiline_comment|/* value is &lt;= 0 no action in LL will be taken -&gt; request ignored    */
+multiline_comment|/*                                                                   */
+multiline_comment|/* The timeout field must be filled with a positive value specifying */
+multiline_comment|/* the amount of time the INVOKED process waits for a reaction from  */
+multiline_comment|/* the network.                                                      */
+multiline_comment|/* If a response (either error or result) is received during this    */
+multiline_comment|/* intervall, a reporting callback is initiated and the process will */
+multiline_comment|/* be deleted, the hl identifier will be freed.                      */
+multiline_comment|/* If no response is received during the specified intervall, a error*/
+multiline_comment|/* callback is initiated with timeout set to -1 and a datalen set    */
+multiline_comment|/* to 0.                                                             */
+multiline_comment|/* If timeout is set to a value &lt;= 0 during INVOCATION the process is*/
+multiline_comment|/* immediately deleted after sending the data. No callback occurs !  */
+multiline_comment|/*                                                                   */
+multiline_comment|/* A currently waiting process may be aborted with INVOKE_ABORT. No  */
+multiline_comment|/* callback will occur when a process has been aborted.              */
+multiline_comment|/*                                                                   */
+multiline_comment|/* Broadcast invoke frames from the network are reported via the     */
+multiline_comment|/* STAT_INVOKE_BRD callback. The ll_id is set to 0, the other fields */
+multiline_comment|/* are supplied by the network and not by the HL.                    */
+multiline_comment|/*********************************************************************/
+r_typedef
+r_struct
+DECL|member|ll_id
+(brace
+id|ulong
+id|ll_id
+suffix:semicolon
+multiline_comment|/* ID supplied by LL when executing    */
+multiline_comment|/* a command and returned by HL for    */
+multiline_comment|/* INVOKE_RES and INVOKE_ERR           */
+DECL|member|hl_id
+r_int
+id|hl_id
+suffix:semicolon
+multiline_comment|/* ID supplied by HL when called       */
+multiline_comment|/* for executing a cmd and delivered   */
+multiline_comment|/* for results and errors              */
+multiline_comment|/* must be supplied by LL when aborting*/
+DECL|member|proc
+r_int
+id|proc
+suffix:semicolon
+multiline_comment|/* invoke procedure used by CMD_INVOKE */
+multiline_comment|/* returned by callback and broadcast  */
+DECL|member|timeout
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/* timeout for INVOKE CMD in ms        */
+multiline_comment|/* -1  in stat callback when timed out */
+multiline_comment|/* error value when error callback     */
+DECL|member|datalen
+r_int
+id|datalen
+suffix:semicolon
+multiline_comment|/* length of cmd or stat data          */
+DECL|member|data
+id|u_char
+op_star
+id|data
+suffix:semicolon
+multiline_comment|/* pointer to data delivered or send   */
+DECL|typedef|dss1_cmd_stat
+)brace
+id|dss1_cmd_stat
+suffix:semicolon
 multiline_comment|/*&n; * Commands from linklevel to lowlevel&n; *&n; */
 DECL|macro|ISDN_CMD_IOCTL
 mdefine_line|#define ISDN_CMD_IOCTL    0       /* Perform ioctl                         */
@@ -84,8 +205,20 @@ DECL|macro|ISDN_CMD_SUSPEND
 mdefine_line|#define ISDN_CMD_SUSPEND 16       /* Suspend connection                    */
 DECL|macro|ISDN_CMD_RESUME
 mdefine_line|#define ISDN_CMD_RESUME  17       /* Resume connection                     */
+DECL|macro|ISDN_CMD_PROCEED
+mdefine_line|#define ISDN_CMD_PROCEED 18       /* Proceed with call establishment       */
+DECL|macro|ISDN_CMD_ALERT
+mdefine_line|#define ISDN_CMD_ALERT   19       /* Alert after Proceeding                */
+DECL|macro|ISDN_CMD_REDIR
+mdefine_line|#define ISDN_CMD_REDIR   20       /* Redir a incoming call                 */
+DECL|macro|ISDN_CMD_PROT_IO
+mdefine_line|#define ISDN_CMD_PROT_IO 21       /* Protocol specific commands            */
 DECL|macro|CAPI_PUT_MESSAGE
-mdefine_line|#define CAPI_PUT_MESSAGE 18       /* CAPI message send down or up          */
+mdefine_line|#define CAPI_PUT_MESSAGE 22       /* CAPI message send down or up          */
+DECL|macro|ISDN_CMD_FAXCMD
+mdefine_line|#define ISDN_CMD_FAXCMD  23       /* FAX commands to HL-driver             */
+DECL|macro|ISDN_CMD_AUDIO
+mdefine_line|#define ISDN_CMD_AUDIO   24       /* DSP, DTMF, ... settings               */
 multiline_comment|/*&n; * Status-Values delivered from lowlevel to linklevel via&n; * statcallb().&n; *&n; */
 DECL|macro|ISDN_STAT_STAVAIL
 mdefine_line|#define ISDN_STAT_STAVAIL 256    /* Raw status-data available             */
@@ -117,8 +250,27 @@ DECL|macro|ISDN_STAT_ADDCH
 mdefine_line|#define ISDN_STAT_ADDCH   269    /* Add more Channels                     */
 DECL|macro|ISDN_STAT_CAUSE
 mdefine_line|#define ISDN_STAT_CAUSE   270    /* Cause-Message                         */
+DECL|macro|ISDN_STAT_ICALLW
+mdefine_line|#define ISDN_STAT_ICALLW  271    /* Incoming call without B-chan waiting  */
+DECL|macro|ISDN_STAT_REDIR
+mdefine_line|#define ISDN_STAT_REDIR   272    /* Redir result                          */
+DECL|macro|ISDN_STAT_PROT
+mdefine_line|#define ISDN_STAT_PROT    273    /* protocol IO specific callback         */
+DECL|macro|ISDN_STAT_DISPLAY
+mdefine_line|#define ISDN_STAT_DISPLAY 274    /* deliver a received display message    */
 DECL|macro|ISDN_STAT_L1ERR
-mdefine_line|#define ISDN_STAT_L1ERR   271    /* Signal Layer-1 Error                  */
+mdefine_line|#define ISDN_STAT_L1ERR   275    /* Signal Layer-1 Error                  */
+DECL|macro|ISDN_STAT_FAXIND
+mdefine_line|#define ISDN_STAT_FAXIND  276    /* FAX indications from HL-driver        */
+DECL|macro|ISDN_STAT_AUDIO
+mdefine_line|#define ISDN_STAT_AUDIO   277    /* DTMF, DSP indications                 */
+DECL|macro|ISDN_STAT_DISCH
+mdefine_line|#define ISDN_STAT_DISCH   278    /* Disable/Enable channel usage          */
+multiline_comment|/*&n; * Audio commands&n; */
+DECL|macro|ISDN_AUDIO_SETDD
+mdefine_line|#define ISDN_AUDIO_SETDD&t;0&t;/* Set DTMF detection           */
+DECL|macro|ISDN_AUDIO_DTMF
+mdefine_line|#define ISDN_AUDIO_DTMF&t;&t;1&t;/* Rx/Tx DTMF                   */
 multiline_comment|/*&n; * Values for errcode field&n; */
 DECL|macro|ISDN_STAT_L1ERR_SEND
 mdefine_line|#define ISDN_STAT_L1ERR_SEND 1
@@ -148,6 +300,8 @@ DECL|macro|ISDN_FEATURE_L2_V11038
 mdefine_line|#define ISDN_FEATURE_L2_V11038  (0x0001 &lt;&lt; ISDN_PROTO_L2_V11038)
 DECL|macro|ISDN_FEATURE_L2_MODEM
 mdefine_line|#define ISDN_FEATURE_L2_MODEM   (0x0001 &lt;&lt; ISDN_PROTO_L2_MODEM)
+DECL|macro|ISDN_FEATURE_L2_FAX
+mdefine_line|#define ISDN_FEATURE_L2_FAX&t;(0x0001 &lt;&lt; ISDN_PROTO_L2_FAX)
 DECL|macro|ISDN_FEATURE_L2_MASK
 mdefine_line|#define ISDN_FEATURE_L2_MASK    (0x0FFFF) /* Max. 16 protocols */
 DECL|macro|ISDN_FEATURE_L2_SHIFT
@@ -155,6 +309,10 @@ mdefine_line|#define ISDN_FEATURE_L2_SHIFT   (0)
 multiline_comment|/* Layer 3 */
 DECL|macro|ISDN_FEATURE_L3_TRANS
 mdefine_line|#define ISDN_FEATURE_L3_TRANS   (0x10000 &lt;&lt; ISDN_PROTO_L3_TRANS)
+DECL|macro|ISDN_FEATURE_L3_TRANSDSP
+mdefine_line|#define ISDN_FEATURE_L3_TRANSDSP (0x10000 &lt;&lt; ISDN_PROTO_L3_TRANSDSP)
+DECL|macro|ISDN_FEATURE_L3_FAX
+mdefine_line|#define ISDN_FEATURE_L3_FAX&t;(0x10000 &lt;&lt; ISDN_PROTO_L3_FAX)
 DECL|macro|ISDN_FEATURE_L3_MASK
 mdefine_line|#define ISDN_FEATURE_L3_MASK    (0x0FF0000) /* Max. 8 Protocols */
 DECL|macro|ISDN_FEATURE_L3_SHIFT
@@ -223,6 +381,426 @@ DECL|typedef|setup_parm
 )brace
 id|setup_parm
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_TTY_FAX
+multiline_comment|/* T.30 Fax G3 */
+DECL|macro|FAXIDLEN
+mdefine_line|#define FAXIDLEN 21
+DECL|struct|T30_s
+r_typedef
+r_struct
+id|T30_s
+(brace
+multiline_comment|/* session parameters */
+DECL|member|resolution
+id|__u8
+id|resolution
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|rate
+id|__u8
+id|rate
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|width
+id|__u8
+id|width
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|length
+id|__u8
+id|length
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|compression
+id|__u8
+id|compression
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|ecm
+id|__u8
+id|ecm
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|binary
+id|__u8
+id|binary
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|scantime
+id|__u8
+id|scantime
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|id
+id|__u8
+id|id
+(braket
+id|FAXIDLEN
+)braket
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* additional parameters */
+DECL|member|phase
+id|__u8
+id|phase
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|direction
+id|__u8
+id|direction
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|code
+id|__u8
+id|code
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|badlin
+id|__u8
+id|badlin
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|badmul
+id|__u8
+id|badmul
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|bor
+id|__u8
+id|bor
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|fet
+id|__u8
+id|fet
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|pollid
+id|__u8
+id|pollid
+(braket
+id|FAXIDLEN
+)braket
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|cq
+id|__u8
+id|cq
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|cr
+id|__u8
+id|cr
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|ctcrty
+id|__u8
+id|ctcrty
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|minsp
+id|__u8
+id|minsp
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|phcto
+id|__u8
+id|phcto
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|rel
+id|__u8
+id|rel
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|nbc
+id|__u8
+id|nbc
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* remote station parameters */
+DECL|member|r_resolution
+id|__u8
+id|r_resolution
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_rate
+id|__u8
+id|r_rate
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_width
+id|__u8
+id|r_width
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_length
+id|__u8
+id|r_length
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_compression
+id|__u8
+id|r_compression
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_ecm
+id|__u8
+id|r_ecm
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_binary
+id|__u8
+id|r_binary
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_scantime
+id|__u8
+id|r_scantime
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_id
+id|__u8
+id|r_id
+(braket
+id|FAXIDLEN
+)braket
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|r_code
+id|__u8
+id|r_code
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|typedef|T30_s
+)brace
+id|T30_s
+suffix:semicolon
+DECL|macro|ISDN_TTY_FAX_CONN_IN
+mdefine_line|#define ISDN_TTY_FAX_CONN_IN&t;0
+DECL|macro|ISDN_TTY_FAX_CONN_OUT
+mdefine_line|#define ISDN_TTY_FAX_CONN_OUT&t;1
+DECL|macro|ISDN_TTY_FAX_FCON
+mdefine_line|#define ISDN_TTY_FAX_FCON&t;0
+DECL|macro|ISDN_TTY_FAX_DIS
+mdefine_line|#define ISDN_TTY_FAX_DIS &t;1
+DECL|macro|ISDN_TTY_FAX_FTT
+mdefine_line|#define ISDN_TTY_FAX_FTT &t;2
+DECL|macro|ISDN_TTY_FAX_MCF
+mdefine_line|#define ISDN_TTY_FAX_MCF &t;3
+DECL|macro|ISDN_TTY_FAX_DCS
+mdefine_line|#define ISDN_TTY_FAX_DCS &t;4
+DECL|macro|ISDN_TTY_FAX_TRAIN_OK
+mdefine_line|#define ISDN_TTY_FAX_TRAIN_OK&t;5
+DECL|macro|ISDN_TTY_FAX_EOP
+mdefine_line|#define ISDN_TTY_FAX_EOP &t;6
+DECL|macro|ISDN_TTY_FAX_EOM
+mdefine_line|#define ISDN_TTY_FAX_EOM &t;7
+DECL|macro|ISDN_TTY_FAX_MPS
+mdefine_line|#define ISDN_TTY_FAX_MPS &t;8
+DECL|macro|ISDN_TTY_FAX_DTC
+mdefine_line|#define ISDN_TTY_FAX_DTC &t;9
+DECL|macro|ISDN_TTY_FAX_RID
+mdefine_line|#define ISDN_TTY_FAX_RID &t;10
+DECL|macro|ISDN_TTY_FAX_HNG
+mdefine_line|#define ISDN_TTY_FAX_HNG &t;11
+DECL|macro|ISDN_TTY_FAX_DT
+mdefine_line|#define ISDN_TTY_FAX_DT  &t;12
+DECL|macro|ISDN_TTY_FAX_FCON_I
+mdefine_line|#define ISDN_TTY_FAX_FCON_I&t;13
+DECL|macro|ISDN_TTY_FAX_DR
+mdefine_line|#define ISDN_TTY_FAX_DR  &t;14
+DECL|macro|ISDN_TTY_FAX_ET
+mdefine_line|#define ISDN_TTY_FAX_ET  &t;15
+DECL|macro|ISDN_TTY_FAX_CFR
+mdefine_line|#define ISDN_TTY_FAX_CFR &t;16
+DECL|macro|ISDN_TTY_FAX_PTS
+mdefine_line|#define ISDN_TTY_FAX_PTS &t;17
+DECL|macro|ISDN_TTY_FAX_SENT
+mdefine_line|#define ISDN_TTY_FAX_SENT&t;18
+DECL|macro|ISDN_FAX_PHASE_IDLE
+mdefine_line|#define ISDN_FAX_PHASE_IDLE&t;0
+DECL|macro|ISDN_FAX_PHASE_A
+mdefine_line|#define ISDN_FAX_PHASE_A&t;1
+DECL|macro|ISDN_FAX_PHASE_B
+mdefine_line|#define ISDN_FAX_PHASE_B   &t;2
+DECL|macro|ISDN_FAX_PHASE_C
+mdefine_line|#define ISDN_FAX_PHASE_C   &t;3
+DECL|macro|ISDN_FAX_PHASE_D
+mdefine_line|#define ISDN_FAX_PHASE_D   &t;4
+DECL|macro|ISDN_FAX_PHASE_E
+mdefine_line|#define ISDN_FAX_PHASE_E   &t;5
+macro_line|#endif /* TTY_FAX */
 multiline_comment|/* CAPI structs */
 multiline_comment|/* this is compatible to the old union size */
 DECL|macro|MAX_CAPI_PARA_LEN
@@ -289,17 +867,17 @@ DECL|member|driver
 r_int
 id|driver
 suffix:semicolon
-multiline_comment|/* Lowlevel-Driver-ID                    */
+multiline_comment|/* Lowlevel-Driver-ID            */
 DECL|member|command
 r_int
 id|command
 suffix:semicolon
-multiline_comment|/* Command or Status (see above)         */
+multiline_comment|/* Command or Status (see above) */
 DECL|member|arg
 id|ulong
 id|arg
 suffix:semicolon
-multiline_comment|/* Additional Data                       */
+multiline_comment|/* Additional Data               */
 r_union
 (brace
 DECL|member|errcode
@@ -330,6 +908,27 @@ id|capi_msg
 id|cmsg
 suffix:semicolon
 multiline_comment|/* For CAPI like messages&t;&t;*/
+DECL|member|display
+r_char
+id|display
+(braket
+l_int|85
+)braket
+suffix:semicolon
+multiline_comment|/* display message data          */
+DECL|member|dss1_io
+id|dss1_cmd_stat
+id|dss1_io
+suffix:semicolon
+multiline_comment|/* DSS1 IO-parameter/result */
+macro_line|#ifdef CONFIG_ISDN_TTY_FAX
+DECL|member|fax
+id|T30_s
+op_star
+id|fax
+suffix:semicolon
+multiline_comment|/* Pointer to ttys fax struct&t;&t;*/
+macro_line|#endif
 DECL|member|parm
 )brace
 id|parm
@@ -486,9 +1085,6 @@ id|isdn_if
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifndef LINUX_VERSION_CODE
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* isdnif_h */

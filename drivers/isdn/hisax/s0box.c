@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: s0box.c,v 2.1 1998/04/15 16:38:24 keil Exp $&n;&n; * s0box.c      low level stuff for Creatix S0BOX&n; *&n; * Author       S0BOX specific stuff: Enrik Berkhan (enrik@starfleet.inka.de)&n; *&n; *&n; */
+multiline_comment|/* $Id: s0box.c,v 2.2 1999/07/12 21:05:25 keil Exp $&n;&n; * s0box.c      low level stuff for Creatix S0BOX&n; *&n; * Author       S0BOX specific stuff: Enrik Berkhan (enrik@starfleet.inka.de)&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|s0box_revision
 op_assign
-l_string|&quot;$Revision: 2.1 $&quot;
+l_string|&quot;$Revision: 2.2 $&quot;
 suffix:semicolon
 r_static
 r_inline
@@ -919,7 +919,7 @@ id|regs
 )paren
 (brace
 DECL|macro|MAXCOUNT
-mdefine_line|#define MAXCOUNT 20
+mdefine_line|#define MAXCOUNT 5
 r_struct
 id|IsdnCardState
 op_star
@@ -929,10 +929,6 @@ id|dev_id
 suffix:semicolon
 id|u_char
 id|val
-comma
-id|stat
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|count
@@ -978,7 +974,6 @@ c_cond
 (paren
 id|val
 )paren
-(brace
 id|hscx_int_main
 c_func
 (paren
@@ -987,11 +982,6 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|stat
-op_or_assign
-l_int|1
-suffix:semicolon
-)brace
 id|val
 op_assign
 id|readreg
@@ -1011,7 +1001,6 @@ c_cond
 (paren
 id|val
 )paren
-(brace
 id|isac_interrupt
 c_func
 (paren
@@ -1020,11 +1009,6 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|stat
-op_or_assign
-l_int|2
-suffix:semicolon
-)brace
 id|count
 op_increment
 suffix:semicolon
@@ -1129,14 +1113,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-l_int|1
-)paren
-(brace
 id|writereg
 c_func
 (paren
@@ -1172,6 +1148,30 @@ c_func
 (paren
 id|cs-&gt;hw.teles3.cfg_reg
 comma
+id|cs-&gt;hw.teles3.isac
+comma
+id|ISAC_MASK
+comma
+l_int|0xFF
+)paren
+suffix:semicolon
+id|writereg
+c_func
+(paren
+id|cs-&gt;hw.teles3.cfg_reg
+comma
+id|cs-&gt;hw.teles3.isac
+comma
+id|ISAC_MASK
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+id|writereg
+c_func
+(paren
+id|cs-&gt;hw.teles3.cfg_reg
+comma
 id|cs-&gt;hw.teles3.hscx
 (braket
 l_int|0
@@ -1197,40 +1197,6 @@ comma
 l_int|0x0
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-l_int|2
-)paren
-(brace
-id|writereg
-c_func
-(paren
-id|cs-&gt;hw.teles3.cfg_reg
-comma
-id|cs-&gt;hw.teles3.isac
-comma
-id|ISAC_MASK
-comma
-l_int|0xFF
-)paren
-suffix:semicolon
-id|writereg
-c_func
-(paren
-id|cs-&gt;hw.teles3.cfg_reg
-comma
-id|cs-&gt;hw.teles3.isac
-comma
-id|ISAC_MASK
-comma
-l_int|0x0
-)paren
-suffix:semicolon
-)brace
 )brace
 r_void
 DECL|function|release_io_s0box
@@ -1292,25 +1258,6 @@ id|cs
 )paren
 suffix:semicolon
 r_break
-suffix:semicolon
-r_case
-id|CARD_SETIRQ
-suffix:colon
-r_return
-id|request_irq
-c_func
-(paren
-id|cs-&gt;irq
-comma
-op_amp
-id|s0box_interrupt
-comma
-id|I4L_IRQ_FLAG
-comma
-l_string|&quot;HiSax&quot;
-comma
-id|cs
-)paren
 suffix:semicolon
 r_case
 id|CARD_INIT
@@ -1578,6 +1525,11 @@ id|cs-&gt;cardmsg
 op_assign
 op_amp
 id|S0Box_card_msg
+suffix:semicolon
+id|cs-&gt;irq_func
+op_assign
+op_amp
+id|s0box_interrupt
 suffix:semicolon
 id|ISACVersion
 c_func

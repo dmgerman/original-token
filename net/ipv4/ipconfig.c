@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.23 1999/06/28 11:35:07 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.23 1999/06/28 11:35:07 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; *  &n; *  Fixed ip_auto_config_setup calling at startup in the new &quot;Linker Magic&quot;&n; *  initialization scheme.&n; *&t;- Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;, 08/11/1999&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -3723,7 +3723,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ip_auto_config_setup
-r_void
+r_static
+r_int
 id|__init
 id|ip_auto_config_setup
 c_func
@@ -3731,10 +3732,6 @@ c_func
 r_char
 op_star
 id|addrs
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -3774,6 +3771,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -3786,6 +3784,7 @@ id|addrs
 )paren
 )paren
 r_return
+l_int|1
 suffix:semicolon
 multiline_comment|/* Parse the whole string */
 id|ip
@@ -4059,5 +4058,44 @@ id|num
 op_increment
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|function|nfsaddrs_config_setup
+r_static
+r_int
+id|__init
+id|nfsaddrs_config_setup
+c_func
+(paren
+r_char
+op_star
+id|addrs
+)paren
+(brace
+r_return
+id|ip_auto_config_setup
+c_func
+(paren
+id|addrs
+)paren
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;ip=&quot;
+comma
+id|ip_auto_config_setup
+)paren
+suffix:semicolon
+id|__setup
+c_func
+(paren
+l_string|&quot;nfsaddrs=&quot;
+comma
+id|nfsaddrs_config_setup
+)paren
+suffix:semicolon
 eof

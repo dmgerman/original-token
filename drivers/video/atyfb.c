@@ -1720,7 +1720,7 @@ id|info
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
-r_void
+r_int
 id|atyfb_init
 c_func
 (paren
@@ -1739,17 +1739,12 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif
-r_void
+r_int
 id|atyfb_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 DECL|variable|currcon
@@ -2234,7 +2229,7 @@ op_assign
 id|info-&gt;ati_regbase
 suffix:semicolon
 id|asm
-c_func
+r_volatile
 (paren
 l_string|&quot;lwbrx %0,%1,%2&quot;
 suffix:colon
@@ -2262,7 +2257,7 @@ op_plus
 id|regindex
 suffix:semicolon
 id|asm
-c_func
+r_volatile
 (paren
 l_string|&quot;lduwa [%1] %2, %0&quot;
 suffix:colon
@@ -2343,7 +2338,7 @@ op_assign
 id|info-&gt;ati_regbase
 suffix:semicolon
 id|asm
-c_func
+r_volatile
 (paren
 l_string|&quot;stwbrx %0,%1,%2&quot;
 suffix:colon
@@ -2374,7 +2369,7 @@ op_plus
 id|regindex
 suffix:semicolon
 id|asm
-c_func
+r_volatile
 (paren
 l_string|&quot;stwa %0, [%1] %2&quot;
 suffix:colon
@@ -14791,7 +14786,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|atyfb_init
-r_void
+r_int
 id|__init
 id|atyfb_init
 c_func
@@ -14873,6 +14868,8 @@ c_func
 )paren
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 macro_line|#else
 id|u16
@@ -14948,6 +14945,8 @@ l_string|&quot;atyfb_init: can&squot;t alloc fb_info_aty&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 id|memset
@@ -15106,6 +15105,8 @@ id|info
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 id|memset
@@ -15195,45 +15196,22 @@ op_amp
 id|IORESOURCE_IOPORT
 )paren
 suffix:semicolon
-id|pci_read_config_dword
-c_func
-(paren
-id|pdev
-comma
-id|breg
-comma
-op_amp
-id|pbase
-)paren
-suffix:semicolon
-id|pci_write_config_dword
-c_func
-(paren
-id|pdev
-comma
-id|breg
-comma
-l_int|0xffffffff
-)paren
-suffix:semicolon
-id|pci_read_config_dword
-c_func
-(paren
-id|pdev
-comma
-id|breg
-comma
-op_amp
 id|size
-)paren
+op_assign
+id|rp-&gt;end
+op_minus
+id|base
+op_plus
+l_int|1
 suffix:semicolon
-id|pci_write_config_dword
+id|pci_read_config_dword
 c_func
 (paren
 id|pdev
 comma
 id|breg
 comma
+op_amp
 id|pbase
 )paren
 suffix:semicolon
@@ -15245,15 +15223,6 @@ id|io
 id|size
 op_and_assign
 op_complement
-l_int|1
-suffix:semicolon
-id|size
-op_assign
-op_complement
-(paren
-id|size
-)paren
-op_plus
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Map the framebuffer a second time, this time without&n;&t;&t; * the braindead _PAGE_IE setting. This is used by the&n;&t;&t; * fixed Xserver, but we need to maintain the old mapping&n;&t;&t; * to stay compatible with older ones...&n;&t;&t; */
@@ -16039,6 +16008,8 @@ id|info
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 id|info-&gt;ati_regbase_phys
@@ -16127,6 +16098,8 @@ id|info
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 macro_line|#endif /* __sparc__ */
@@ -16161,6 +16134,8 @@ id|info
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 macro_line|#ifdef __sparc__
@@ -16372,6 +16347,8 @@ l_string|&quot;atyfb_init: can&squot;t alloc fb_info_aty&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 id|memset
@@ -16449,10 +16426,15 @@ id|info
 suffix:semicolon
 multiline_comment|/* This is insufficient! kernel_map has added two large chunks!! */
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_FB_OF
 DECL|function|atyfb_of_init
@@ -16832,7 +16814,7 @@ macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
 macro_line|#endif /* CONFIG_FB_OF */
 DECL|function|atyfb_setup
-r_void
+r_int
 id|__init
 id|atyfb_setup
 c_func
@@ -16840,10 +16822,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -16861,6 +16839,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -17299,6 +17278,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ATARI
 DECL|function|store_video_par

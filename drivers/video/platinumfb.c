@@ -633,7 +633,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Interface used by the world&n; */
-r_void
+r_int
 id|platinum_init
 c_func
 (paren
@@ -652,17 +652,12 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif
-r_void
+r_int
 id|platinum_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 DECL|variable|platinumfb_ops
@@ -3250,7 +3245,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|platinum_init
-r_void
+r_int
 id|__init
 id|platinum_init
 c_func
@@ -3286,6 +3281,9 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_OF */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#ifdef __powerpc__
 DECL|macro|invalidate_cache
@@ -3336,13 +3334,16 @@ op_ne
 l_int|2
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;expecting 2 address for platinum (got %d)&quot;
 comma
 id|dp-&gt;n_addrs
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|info
@@ -4391,7 +4392,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; * Parse user speficied options (`video=platinumfb:&squot;)&n; */
 DECL|function|platinum_setup
-r_void
+r_int
 id|__init
 id|platinum_setup
 c_func
@@ -4399,10 +4400,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -4420,6 +4417,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -4652,5 +4650,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 eof

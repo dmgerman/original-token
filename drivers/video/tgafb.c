@@ -2003,20 +2003,15 @@ r_int
 id|user
 )paren
 suffix:semicolon
-r_void
+r_int
 id|tgafb_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
-r_void
+r_int
 id|tgafb_init
 c_func
 (paren
@@ -5895,17 +5890,13 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_void
+r_int
 id|tgafb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 )paren
 (brace
@@ -6064,13 +6055,16 @@ id|this_opt
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Initialisation&n;     */
 DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_void
+r_int
 id|tgafb_init
 c_func
 (paren
@@ -6102,20 +6096,23 @@ op_logical_neg
 id|pdev
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|fb_info.tga_mem_base
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;tgafb_init: mem_base 0x%x&bslash;n&quot;
 comma
 id|fb_info.tga_mem_base
@@ -6362,10 +6359,13 @@ OL
 l_int|0
 )paren
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: %s frame buffer device&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -6376,6 +6376,9 @@ id|fb_info.gen.info.node
 comma
 id|fb_info.gen.info.modename
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Cleanup&n;     */
@@ -6407,13 +6410,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|tgafb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

@@ -320,8 +320,6 @@ DECL|macro|USB_MAXINTERFACES
 mdefine_line|#define USB_MAXINTERFACES&t;32
 DECL|macro|USB_MAXENDPOINTS
 mdefine_line|#define USB_MAXENDPOINTS&t;32
-DECL|macro|USB_MAXSTRINGS
-mdefine_line|#define USB_MAXSTRINGS&t;&t;32
 DECL|struct|usb_device_descriptor
 r_struct
 id|usb_device_descriptor
@@ -1002,8 +1000,12 @@ DECL|member|halted
 r_int
 r_int
 id|halted
+(braket
+l_int|2
+)braket
 suffix:semicolon
-multiline_comment|/* endpoint halts */
+multiline_comment|/* endpoint halts; one bit per endpoint # &amp; direction; */
+multiline_comment|/* [0] = IN, [1] = OUT */
 DECL|member|actconfig
 r_struct
 id|usb_config_descriptor
@@ -1011,14 +1013,22 @@ op_star
 id|actconfig
 suffix:semicolon
 multiline_comment|/* the active configuration */
-DECL|member|epmaxpacket
+DECL|member|epmaxpacketin
 r_int
-id|epmaxpacket
+id|epmaxpacketin
 (braket
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* endpoint specific maximums */
+multiline_comment|/* INput endpoint specific maximums */
+DECL|member|epmaxpacketout
+r_int
+id|epmaxpacketout
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* OUTput endpoint specific maximums */
 DECL|member|ifnum
 r_int
 id|ifnum
@@ -1030,7 +1040,7 @@ id|usb_bus
 op_star
 id|bus
 suffix:semicolon
-multiline_comment|/* Bus we&squot;re apart of */
+multiline_comment|/* Bus we&squot;re part of */
 DECL|member|driver
 r_struct
 id|usb_driver
@@ -1057,15 +1067,12 @@ id|usb_device
 op_star
 id|parent
 suffix:semicolon
-DECL|member|stringindex
+DECL|member|string
 r_char
 op_star
-id|stringindex
-(braket
-id|USB_MAXSTRINGS
-)braket
+id|string
 suffix:semicolon
-multiline_comment|/* pointers to strings */
+multiline_comment|/* pointer to the last string read from the device */
 DECL|member|string_langid
 r_int
 id|string_langid
@@ -1424,7 +1431,7 @@ id|_isodesc
 suffix:semicolon
 multiline_comment|/*&n; * Calling this entity a &quot;pipe&quot; is glorifying it. A USB pipe&n; * is something embarrassingly simple: it basically consists&n; * of the following information:&n; *  - device number (7 bits)&n; *  - endpoint number (4 bits)&n; *  - current Data0/1 state (1 bit)&n; *  - direction (1 bit)&n; *  - speed (1 bit)&n; *  - max packet size (2 bits: 8, 16, 32 or 64)&n; *  - pipe type (2 bits: control, interrupt, bulk, isochronous)&n; *&n; * That&squot;s 18 bits. Really. Nothing more. And the USB people have&n; * documented these eighteen bits as some kind of glorious&n; * virtual data structure.&n; *&n; * Let&squot;s not fall in that trap. We&squot;ll just encode it as a simple&n; * unsigned int. The encoding is:&n; *&n; *  - max size:&t;&t;bits 0-1&t;(00 = 8, 01 = 16, 10 = 32, 11 = 64)&n; *  - direction:&t;bit 7&t;&t;(0 = Host-to-Device, 1 = Device-to-Host)&n; *  - device:&t;&t;bits 8-14&n; *  - endpoint:&t;&t;bits 15-18&n; *  - Data0/1:&t;&t;bit 19&n; *  - speed:&t;&t;bit 26&t;&t;(0 = Full, 1 = Low Speed)&n; *  - pipe type:&t;bits 30-31&t;(00 = isochronous, 01 = interrupt, 10 = control, 11 = bulk)&n; *&n; * Why? Because it&squot;s arbitrary, and whatever encoding we select is really&n; * up to us. This one happens to share a lot of bit positions with the UHCI&n; * specification, so that much of the uhci driver can just mask the bits&n; * appropriately.&n; */
 DECL|macro|usb_maxpacket
-mdefine_line|#define usb_maxpacket(dev,pipe)&t;((dev)-&gt;epmaxpacket[usb_pipeendpoint(pipe)])
+mdefine_line|#define usb_maxpacket(dev, pipe, out)&t;(out &bslash;&n;&t;&t;&t;&t;? (dev)-&gt;epmaxpacketout[usb_pipeendpoint(pipe)] &bslash;&n;&t;&t;&t;&t;: (dev)-&gt;epmaxpacketin [usb_pipeendpoint(pipe)] )
 DECL|macro|usb_packetid
 mdefine_line|#define usb_packetid(pipe)&t;(((pipe) &amp; 0x80) ? 0x69 : 0xE1)
 DECL|macro|usb_pipeout
@@ -1460,13 +1467,15 @@ DECL|macro|usb_dotoggle
 mdefine_line|#define&t;usb_dotoggle(dev, ep, out)  ((dev)-&gt;toggle[out] ^= (1 &lt;&lt; ep))
 DECL|macro|usb_settoggle
 mdefine_line|#define usb_settoggle(dev, ep, out, bit) ((dev)-&gt;toggle[out] = ((dev)-&gt;toggle[out] &amp; ~(1 &lt;&lt; ep)) | ((bit) &lt;&lt; ep))
-multiline_comment|/* Endpoint halt */
+multiline_comment|/* Endpoint halt control/status */
+DECL|macro|usb_endpoint_out
+mdefine_line|#define usb_endpoint_out(ep_dir)&t;(((ep_dir &gt;&gt; 7) &amp; 1) ^ 1)
 DECL|macro|usb_endpoint_halt
-mdefine_line|#define usb_endpoint_halt(dev, ep) ((dev)-&gt;halted |= (1 &lt;&lt; (ep)))
+mdefine_line|#define usb_endpoint_halt(dev, ep, out) ((dev)-&gt;halted[out] |= (1 &lt;&lt; (ep)))
 DECL|macro|usb_endpoint_running
-mdefine_line|#define usb_endpoint_running(dev, ep) ((dev)-&gt;halted &amp;= ~(1 &lt;&lt; (ep)))
+mdefine_line|#define usb_endpoint_running(dev, ep, out) ((dev)-&gt;halted[out] &amp;= ~(1 &lt;&lt; (ep)))
 DECL|macro|usb_endpoint_halted
-mdefine_line|#define usb_endpoint_halted(dev, ep) ((dev)-&gt;halted &amp; (1 &lt;&lt; (ep)))
+mdefine_line|#define usb_endpoint_halted(dev, ep, out) ((dev)-&gt;halted[out] &amp; (1 &lt;&lt; (ep)))
 DECL|function|__create_pipe
 r_static
 r_inline

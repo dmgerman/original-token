@@ -1421,6 +1421,20 @@ c_func
 id|proc_dointvec_minmax
 )paren
 suffix:semicolon
+DECL|variable|proc_doulongvec_ms_jiffies_minmax
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_doulongvec_ms_jiffies_minmax
+)paren
+suffix:semicolon
+DECL|variable|proc_doulongvec_minmax
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_doulongvec_minmax
+)paren
+suffix:semicolon
 multiline_comment|/* interrupt handling */
 DECL|variable|request_irq
 id|EXPORT_SYMBOL

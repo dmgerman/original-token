@@ -27765,21 +27765,25 @@ l_int|64
 )braket
 suffix:semicolon
 multiline_comment|/* &quot;matrox:font:xxxxx&quot; */
+DECL|variable|videomode
+r_static
+r_char
+id|videomode
+(braket
+l_int|64
+)braket
+suffix:semicolon
+multiline_comment|/* &quot;matrox:mode:xxxxx&quot; or &quot;matrox:xxxxx&quot; */
 macro_line|#ifndef MODULE
 DECL|function|matroxfb_setup
-r_void
+r_int
 id|__init
-(def_block
 id|matroxfb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -29001,7 +29005,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-)def_block
 macro_line|#endif
 DECL|function|matroxfb_getmemory
 r_static
@@ -33546,7 +33549,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|matroxfb_init
-r_void
+r_int
 id|__init
 id|matroxfb_init
 c_func

@@ -1,14 +1,15 @@
-multiline_comment|/* $Id: isdnl1.c,v 2.31 1998/11/15 23:54:56 keil Exp $&n;&n; * isdnl1.c     common low level stuff for Siemens Chipsetbased isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; *&n; * $Log: isdnl1.c,v $&n; * Revision 2.31  1998/11/15 23:54:56  keil&n; * changes from 2.0&n; *&n; * Revision 2.30  1998/09/30 22:27:00  keil&n; * Add init of l1.Flags&n; *&n; * Revision 2.29  1998/09/27 23:54:43  keil&n; * cosmetics&n; *&n; * Revision 2.28  1998/09/27 12:52:23  keil&n; * Fix against segfault, if the driver cannot allocate an IRQ channel&n; *&n; * Revision 2.27  1998/08/13 23:36:39  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.26  1998/07/15 15:01:31  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 2.25  1998/05/25 14:10:09  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.24  1998/05/25 12:58:04  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.22  1998/04/15 16:40:13  keil&n; * Add S0Box and Teles PCI support&n; * Fix cardnr overwrite bug&n; *&n; * Revision 2.21  1998/04/10 10:35:28  paul&n; * fixed (silly?) warnings from egcs on Alpha.&n; *&n; * Revision 2.20  1998/03/09 23:19:27  keil&n; * Changes for PCMCIA&n; *&n; * Revision 2.18  1998/02/12 23:07:42  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 2.17  1998/02/11 17:28:07  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.16  1998/02/09 18:46:08  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.15  1998/02/09 10:54:51  keil&n; * fixes for leased mode&n; *&n; * Revision 2.14  1998/02/03 23:31:31  keil&n; * add AMD7930 support&n; *&n; * Revision 2.13  1998/02/02 13:33:02  keil&n; * New card support&n; *&n; * Revision 2.12  1998/01/31 21:41:48  keil&n; * changes for newer 2.1 kernels&n; *&n; * Revision 2.11  1997/11/12 15:01:23  keil&n; * COMPAQ_ISA changes&n; *&n; * Revision 2.10  1997/11/08 21:35:48  keil&n; * new l1 init&n; *&n; * Revision 2.9  1997/11/06 17:09:18  keil&n; * New 2.1 init code&n; *&n; * Revision 2.8  1997/10/29 19:00:05  keil&n; * new layer1,changes for 2.1&n; *&n; * Revision 2.7  1997/10/10 20:56:50  fritz&n; * New HL interface.&n; *&n; * Revision 2.6  1997/09/12 10:05:16  keil&n; * ISDN_CTRL_DEBUG define&n; *&n; * Revision 2.5  1997/09/11 17:24:45  keil&n; * Add new cards&n; *&n; * Revision 2.4  1997/08/15 17:47:09  keil&n; * avoid oops because a uninitialised timer&n; *&n; * Revision 2.3  1997/08/01 11:16:40  keil&n; * cosmetics&n; *&n; * Revision 2.2  1997/07/30 17:11:08  keil&n; * L1deactivated exported&n; *&n; * Revision 2.1  1997/07/27 21:35:38  keil&n; * new layer1 interface&n; *&n; * Revision 2.0  1997/06/26 11:02:53  keil&n; * New Layer and card interface&n; *&n; * Revision 1.15  1997/05/27 15:17:55  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * old changes removed KKe&n; *&n; */
+multiline_comment|/* $Id: isdnl1.c,v 2.34 1999/07/09 13:50:15 keil Exp $&n;&n; * isdnl1.c     common low level stuff for Siemens Chipsetbased isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; *&n; * $Log: isdnl1.c,v $&n; * Revision 2.34  1999/07/09 13:50:15  keil&n; * remove unused variable&n; *&n; * Revision 2.33  1999/07/09 13:34:33  keil&n; * remove debug code&n; *&n; * Revision 2.32  1999/07/01 08:11:47  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.31  1998/11/15 23:54:56  keil&n; * changes from 2.0&n; *&n; * Revision 2.30  1998/09/30 22:27:00  keil&n; * Add init of l1.Flags&n; *&n; * Revision 2.29  1998/09/27 23:54:43  keil&n; * cosmetics&n; *&n; * Revision 2.28  1998/09/27 12:52:23  keil&n; * Fix against segfault, if the driver cannot allocate an IRQ channel&n; *&n; * Revision 2.27  1998/08/13 23:36:39  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.26  1998/07/15 15:01:31  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 2.25  1998/05/25 14:10:09  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.24  1998/05/25 12:58:04  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.22  1998/04/15 16:40:13  keil&n; * Add S0Box and Teles PCI support&n; * Fix cardnr overwrite bug&n; *&n; * Revision 2.21  1998/04/10 10:35:28  paul&n; * fixed (silly?) warnings from egcs on Alpha.&n; *&n; * Revision 2.20  1998/03/09 23:19:27  keil&n; * Changes for PCMCIA&n; *&n; * Revision 2.18  1998/02/12 23:07:42  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 2.17  1998/02/11 17:28:07  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.16  1998/02/09 18:46:08  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.15  1998/02/09 10:54:51  keil&n; * fixes for leased mode&n; *&n; * Revision 2.14  1998/02/03 23:31:31  keil&n; * add AMD7930 support&n; *&n; * Revision 2.13  1998/02/02 13:33:02  keil&n; * New card support&n; *&n; * Revision 2.12  1998/01/31 21:41:48  keil&n; * changes for newer 2.1 kernels&n; *&n; * Revision 2.11  1997/11/12 15:01:23  keil&n; * COMPAQ_ISA changes&n; *&n; * Revision 2.10  1997/11/08 21:35:48  keil&n; * new l1 init&n; *&n; * Revision 2.9  1997/11/06 17:09:18  keil&n; * New 2.1 init code&n; *&n; * Revision 2.8  1997/10/29 19:00:05  keil&n; * new layer1,changes for 2.1&n; *&n; * Revision 2.7  1997/10/10 20:56:50  fritz&n; * New HL interface.&n; *&n; * Revision 2.6  1997/09/12 10:05:16  keil&n; * ISDN_CTRL_DEBUG define&n; *&n; * Revision 2.5  1997/09/11 17:24:45  keil&n; * Add new cards&n; *&n; * Revision 2.4  1997/08/15 17:47:09  keil&n; * avoid oops because a uninitialised timer&n; *&n; * Revision 2.3  1997/08/01 11:16:40  keil&n; * cosmetics&n; *&n; * Revision 2.2  1997/07/30 17:11:08  keil&n; * L1deactivated exported&n; *&n; * Revision 2.1  1997/07/27 21:35:38  keil&n; * new layer1 interface&n; *&n; * Revision 2.0  1997/06/26 11:02:53  keil&n; * New Layer and card interface&n; *&n; * Revision 1.15  1997/05/27 15:17:55  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * old changes removed KKe&n; *&n; */
 DECL|variable|l1_revision
 r_const
 r_char
 op_star
 id|l1_revision
 op_assign
-l_string|&quot;$Revision: 2.31 $&quot;
+l_string|&quot;$Revision: 2.34 $&quot;
 suffix:semicolon
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 DECL|macro|TIMER3_VALUE
@@ -689,6 +690,77 @@ id|stptr
 op_assign
 id|cs-&gt;stlist
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;len
+OL
+l_int|3
+)paren
+(brace
+id|debugl1
+c_func
+(paren
+id|cs
+comma
+l_string|&quot;D-channel frame too short(%d)&quot;
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+id|idev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|skb-&gt;data
+(braket
+l_int|0
+)braket
+op_amp
+l_int|1
+)paren
+op_logical_or
+op_logical_neg
+(paren
+id|skb-&gt;data
+(braket
+l_int|1
+)braket
+op_amp
+l_int|1
+)paren
+)paren
+(brace
+id|debugl1
+c_func
+(paren
+id|cs
+comma
+l_string|&quot;D-channel frame wrong EA0/EA1&quot;
+)paren
+suffix:semicolon
+id|idev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|sapi
 op_assign
 id|skb-&gt;data
@@ -869,10 +941,12 @@ id|stptr-&gt;next
 suffix:semicolon
 )brace
 )brace
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|skb
+comma
+id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -938,10 +1012,12 @@ c_cond
 op_logical_neg
 id|found
 )paren
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|skb
+comma
+id|FREE_READ
 )paren
 suffix:semicolon
 )brace

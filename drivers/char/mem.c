@@ -1951,46 +1951,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-DECL|function|open_mem
-r_static
-r_int
-id|open_mem
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-(brace
-r_return
-(paren
-id|capable
-c_func
-(paren
-id|CAP_SYS_RAWIO
-)paren
-op_logical_or
-op_logical_neg
-(paren
-id|filp-&gt;f_mode
-op_amp
-id|FMODE_WRITE
-)paren
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-op_minus
-id|EPERM
-suffix:semicolon
-)brace
 DECL|macro|mmap_kmem
 mdefine_line|#define mmap_kmem&t;mmap_mem
 DECL|macro|zero_lseek
@@ -2001,6 +1961,8 @@ DECL|macro|write_zero
 mdefine_line|#define write_zero&t;write_null
 DECL|macro|read_full
 mdefine_line|#define read_full       read_zero
+DECL|macro|open_mem
+mdefine_line|#define open_mem&t;open_port
 DECL|macro|open_kmem
 mdefine_line|#define open_kmem&t;open_mem
 DECL|variable|mem_fops

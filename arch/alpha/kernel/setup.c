@@ -791,7 +791,11 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;Booting on %s%s%s using machine vector %s&bslash;n&quot;
+l_string|&quot;Booting &quot;
+macro_line|#ifdef CONFIG_ALPHA_GENERIC
+l_string|&quot;GENERIC &quot;
+macro_line|#endif
+l_string|&quot;on %s%s%s using machine vector %s from %s&bslash;n&quot;
 comma
 id|type_name
 comma
@@ -808,6 +812,15 @@ comma
 id|var_name
 comma
 id|alpha_mv.vector_name
+comma
+(paren
+id|alpha_using_srm
+ques
+c_cond
+l_string|&quot;SRM&quot;
+suffix:colon
+l_string|&quot;MILO&quot;
+)paren
 )paren
 suffix:semicolon
 id|printk

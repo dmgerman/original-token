@@ -132,24 +132,19 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
-r_void
+r_int
 id|offb_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-r_void
+r_int
 id|offb_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 r_static
@@ -1385,9 +1380,22 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_PLATINUM */
+macro_line|#ifdef CONFIG_FB_CLGEN
+r_extern
+r_void
+id|clgen_of_init
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|dp
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_FB_CLGEN */
 multiline_comment|/*&n;     *  Initialisation&n;     */
 DECL|function|offb_init
-r_void
+r_int
 id|__init
 id|offb_init
 c_func
@@ -1789,6 +1797,9 @@ id|dp
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|offb_init_driver
 r_static
@@ -2013,6 +2024,46 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FB_PLATINUM */
+macro_line|#ifdef CONFIG_FB_CLGEN
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;MacPicasso&quot;
+comma
+l_int|10
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;54m30&quot;
+comma
+l_int|10
+)paren
+)paren
+(brace
+id|clgen_of_init
+c_func
+(paren
+id|dp
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_FB_CLGEN */
 r_return
 l_int|0
 suffix:semicolon
@@ -2290,6 +2341,7 @@ id|dp-&gt;n_addrs
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;no framebuffer address found for %s&bslash;n&quot;
 comma
 id|dp-&gt;full_name
@@ -2442,6 +2494,7 @@ l_int|32
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: can&squot;t use depth = %d&bslash;n&quot;
 comma
 id|full_name
@@ -3308,6 +3361,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: Open Firmware frame buffer device on %s&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -3430,17 +3484,13 @@ macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC) */
 )brace
 multiline_comment|/*&n;     *  Setup: parse used options&n;     */
 DECL|function|offb_setup
-r_void
+r_int
 id|offb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_if
@@ -3454,6 +3504,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3470,6 +3521,9 @@ l_string|&quot;ofonly&quot;
 id|ofonly
 op_assign
 l_int|1
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|offbcon_switch

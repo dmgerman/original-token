@@ -7007,7 +7007,7 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-r_void
+r_int
 id|__init
 DECL|function|acornfb_setup
 id|acornfb_setup
@@ -7016,10 +7016,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_struct
@@ -7042,6 +7038,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|acornfb_init_fbinfo
 c_func
@@ -7162,6 +7159,9 @@ id|opt
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Detect type of monitor connected&n; *  For now, we just assume SVGA&n; */
 r_static
@@ -7288,7 +7288,7 @@ id|mb_freed
 )paren
 suffix:semicolon
 )brace
-r_void
+r_int
 id|__init
 DECL|function|acornfb_init
 id|acornfb_init
@@ -7619,12 +7619,24 @@ comma
 id|v_sync
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|register_framebuffer
 c_func
 (paren
 op_amp
 id|fb_info
 )paren
+OL
+l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

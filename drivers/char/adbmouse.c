@@ -12,7 +12,7 @@ macro_line|#include &lt;asm/adb_mouse.h&gt;
 macro_line|#ifdef __powerpc__
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#endif
-macro_line|#ifdef __mc68000__
+macro_line|#if defined(__mc68000__) || defined(MODULE)
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#endif
 macro_line|#include &quot;busmouse.h&quot;
@@ -570,7 +570,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
-macro_line|#include &lt;asm/setup.h&gt;
 DECL|function|init_module
 r_int
 id|init_module

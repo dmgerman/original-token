@@ -295,7 +295,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
-r_void
+r_int
 id|s3triofb_init
 c_func
 (paren
@@ -1191,7 +1191,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 DECL|function|s3triofb_init
-r_void
+r_int
 id|__init
 id|s3triofb_init
 c_func
@@ -1205,6 +1205,9 @@ multiline_comment|/* We rely on Open Firmware (offb) instead. */
 macro_line|#else /* !__powerpc__ */
 multiline_comment|/* To be merged with cybervision */
 macro_line|#endif /* !__powerpc__ */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|s3trio_resetaccel
 r_void
@@ -3688,20 +3691,17 @@ id|fb_info
 suffix:semicolon
 )brace
 DECL|function|s3triofb_setup
-r_void
+r_int
 id|s3triofb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|Trio_WaitQueue

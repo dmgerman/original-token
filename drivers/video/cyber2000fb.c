@@ -4941,7 +4941,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|cyber2000fb_setup
-r_void
+r_int
 id|__init
 id|cyber2000fb_setup
 c_func
@@ -4949,12 +4949,11 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|cyber2000fb_ops
 r_static
@@ -5317,7 +5316,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Initialization&n; */
 DECL|function|cyber2000fb_init
-r_void
+r_int
 id|__init
 id|cyber2000fb_init
 c_func
@@ -5354,6 +5353,8 @@ op_logical_neg
 id|dev
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 id|CyberRegs
 op_assign
@@ -5403,15 +5404,20 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/* this should be done by PCI generic code */
 id|current_par.screen_base_p
 op_assign
 l_int|0x80000000
 op_plus
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
+multiline_comment|/* and this by ioremap... But I have no such device here to test */
+multiline_comment|/* current_par.screen_base = ioremap(dev-&gt;resource[0].start, dev-&gt;resource[0].end - dev-&gt;resource[0].start + 1); */
 id|current_par.screen_base
 op_assign
 (paren
@@ -5420,10 +5426,12 @@ id|u_int
 id|bus_to_virt
 c_func
 (paren
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 )paren
 suffix:semicolon
 id|current_par.screen_size
@@ -5434,10 +5442,12 @@ id|current_par.regs_base_p
 op_assign
 l_int|0x80800000
 op_plus
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 id|cyber2000fb_set_var
 c_func
@@ -5525,27 +5535,31 @@ OL
 l_int|0
 )paren
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* TODO: This driver cannot be unloaded yet */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
+id|__init
 id|init_module
 c_func
 (paren
 r_void
 )paren
 (brace
+r_return
 id|cyber2000fb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

@@ -157,7 +157,7 @@ r_int
 id|apecs_mcheck_taken
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|apecs_pci_clr_err
 c_func
 (paren
@@ -1534,6 +1534,85 @@ id|srm_paging_stop
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+multiline_comment|/* irq.h */
+macro_line|#ifdef __SMP__
+DECL|macro|mcheck_expected
+mdefine_line|#define mcheck_expected(cpu)&t;(cpu_data[cpu].mcheck_expected)
+DECL|macro|mcheck_taken
+mdefine_line|#define mcheck_taken(cpu)&t;(cpu_data[cpu].mcheck_taken)
+DECL|macro|mcheck_hose
+mdefine_line|#define mcheck_hose(cpu)&t;(cpu_data[cpu].mcheck_hose)
+macro_line|#else
+DECL|struct|mcheck_info
+r_extern
+r_struct
+id|mcheck_info
+(brace
+DECL|member|expected
+r_int
+r_char
+id|expected
+id|__attribute__
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|8
+)paren
+)paren
+)paren
+suffix:semicolon
+DECL|member|taken
+r_int
+r_char
+id|taken
+suffix:semicolon
+DECL|member|hose
+r_int
+r_char
+id|hose
+suffix:semicolon
+)brace
+id|__mcheck_info
+suffix:semicolon
+DECL|macro|mcheck_expected
+mdefine_line|#define mcheck_expected(cpu)&t;(__mcheck_info.expected)
+DECL|macro|mcheck_taken
+mdefine_line|#define mcheck_taken(cpu)&t;(__mcheck_info.taken)
+DECL|macro|mcheck_hose
+mdefine_line|#define mcheck_hose(cpu)&t;(__mcheck_info.hose)
+macro_line|#endif
+DECL|macro|DEBUG_MCHECK
+mdefine_line|#define DEBUG_MCHECK 0          /* 0 = minimal, 1 = debug, 2 = debug+dump.  */
+r_extern
+r_void
+id|process_mcheck_info
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_int
+r_int
+id|la_ptr
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_const
+r_char
+op_star
+id|machine
+comma
+r_int
+id|expected
 )paren
 suffix:semicolon
 eof

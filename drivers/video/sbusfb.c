@@ -26,24 +26,19 @@ mdefine_line|#define CURSOR_SHAPE&t;&t;&t;1
 DECL|macro|CURSOR_BLINK
 mdefine_line|#define CURSOR_BLINK&t;&t;&t;2
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
-r_void
+r_int
 id|sbusfb_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-r_void
+r_int
 id|sbusfb_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 DECL|variable|currcon
@@ -4608,7 +4603,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Setup: parse used options&n;     */
 DECL|function|sbusfb_setup
-r_void
+r_int
 id|__init
 id|sbusfb_setup
 c_func
@@ -4616,10 +4611,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -4890,6 +4881,9 @@ id|p
 op_increment
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|sbusfbcon_switch
 r_static
@@ -6802,6 +6796,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: %s&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -6976,7 +6971,7 @@ id|FBTYPE_NOTYPE
 suffix:semicolon
 )brace
 DECL|function|sbusfb_init
-r_void
+r_int
 id|__init
 id|sbusfb_init
 c_func
@@ -7021,6 +7016,8 @@ c_func
 )paren
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 macro_line|#ifdef CONFIG_FB_CREATOR
 (brace
@@ -7304,5 +7301,8 @@ id|sbdp
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 eof

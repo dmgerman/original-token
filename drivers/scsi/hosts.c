@@ -58,6 +58,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_FASTLANE_SCSI
 macro_line|#include &quot;fastlane.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_OKTAGON_SCSI
+macro_line|#include &quot;oktagon_esp.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI_SCSI
 macro_line|#include &quot;atari_scsi.h&quot;
 macro_line|#endif
@@ -232,6 +235,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_JAZZ_ESP
 macro_line|#include &quot;jazz_esp.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SUN3X_ESP
+macro_line|#include &quot;sun3x_esp.h&quot;
+macro_line|#endif
 multiline_comment|/*&n; * Moved ppa driver to the end of the probe list&n; * since it is a removable host adapter.&n; * This means the parallel ZIP drive will not bump&n; * the order of the /dev/sd devices - campbell@torque.net&n; */
 macro_line|#ifdef CONFIG_SCSI_PPA
 macro_line|#include &quot;ppa.h&quot;
@@ -295,6 +301,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_FASTLANE_SCSI
 id|SCSI_FASTLANE
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_OKTAGON_SCSI
+id|SCSI_OKTAGON_ESP
 comma
 macro_line|#endif
 macro_line|#endif
@@ -546,6 +556,10 @@ macro_line|#ifdef CONFIG_SCSI_IMM
 id|IMM
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SUN3X_ESP  
+id|SCSI_SUN3X_ESP
+comma
+macro_line|#endif  
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 id|SCSI_DEBUG
 comma

@@ -85,6 +85,21 @@ id|inverse
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|xxxfb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|xxxfb_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* ------------------- chipset specific functions -------------------------- */
 DECL|function|xxx_detect
 r_static
@@ -742,7 +757,7 @@ suffix:semicolon
 multiline_comment|/* ------------ Hardware Independent Functions ------------ */
 multiline_comment|/*&n;     *  Initialization&n;     */
 DECL|function|xxxfb_init
-r_void
+r_int
 id|__init
 id|xxxfb_init
 c_func
@@ -866,10 +881,13 @@ OL
 l_int|0
 )paren
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: %s frame buffer device&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -883,6 +901,9 @@ id|fb_info.gen.info.modename
 suffix:semicolon
 multiline_comment|/* uncomment this if your driver cannot be unloaded */
 multiline_comment|/* MOD_INC_USE_COUNT; */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Cleanup&n;     */
 DECL|function|xxxfb_cleanup
@@ -907,7 +928,7 @@ multiline_comment|/* ... */
 )brace
 multiline_comment|/*&n;     *  Setup&n;     */
 DECL|function|xxxfb_setup
-r_void
+r_int
 id|__init
 id|xxxfb_setup
 c_func
@@ -915,10 +936,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 multiline_comment|/* Parse user speficied options (`video=xxxfb:&squot;) */
@@ -1008,13 +1025,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|xxxfb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

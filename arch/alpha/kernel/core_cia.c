@@ -15,34 +15,11 @@ DECL|macro|__EXTERN_INLINE
 macro_line|#undef __EXTERN_INLINE
 macro_line|#include &quot;proto.h&quot;
 multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic. &n; * One plausible explanation is that the i/o controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
-multiline_comment|/*&n; * Machine check reasons.  Defined according to PALcode sources&n; * (osf.h and platform.h).&n; */
-DECL|macro|MCHK_K_TPERR
-mdefine_line|#define MCHK_K_TPERR&t;&t;0x0080
-DECL|macro|MCHK_K_TCPERR
-mdefine_line|#define MCHK_K_TCPERR&t;&t;0x0082
-DECL|macro|MCHK_K_HERR
-mdefine_line|#define MCHK_K_HERR&t;&t;0x0084
-DECL|macro|MCHK_K_ECC_C
-mdefine_line|#define MCHK_K_ECC_C&t;&t;0x0086
-DECL|macro|MCHK_K_ECC_NC
-mdefine_line|#define MCHK_K_ECC_NC&t;&t;0x0088
-DECL|macro|MCHK_K_OS_BUGCHECK
-mdefine_line|#define MCHK_K_OS_BUGCHECK&t;0x008A
-DECL|macro|MCHK_K_PAL_BUGCHECK
-mdefine_line|#define MCHK_K_PAL_BUGCHECK&t;0x0090
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-DECL|macro|DEBUG_MCHECK
-mdefine_line|#define DEBUG_MCHECK 0
 DECL|macro|DEBUG_CONFIG
 mdefine_line|#define DEBUG_CONFIG 0
-multiline_comment|/* #define DEBUG_DUMP_REGS */
-macro_line|#if DEBUG_MCHECK
-DECL|macro|DBGM
-macro_line|# define DBGM(args)&t;printk args
-macro_line|#else
-DECL|macro|DBGM
-macro_line|# define DBGM(args)
-macro_line|#endif
+DECL|macro|DEBUG_DUMP_REGS
+mdefine_line|#define DEBUG_DUMP_REGS 0
 macro_line|#if DEBUG_CONFIG
 DECL|macro|DBGC
 macro_line|# define DBGC(args)&t;printk args
@@ -52,30 +29,6 @@ macro_line|# define DBGC(args)
 macro_line|#endif
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int  *
-DECL|variable|CIA_mcheck_expected
-r_static
-r_volatile
-r_int
-r_int
-id|CIA_mcheck_expected
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|CIA_mcheck_taken
-r_static
-r_volatile
-r_int
-r_int
-id|CIA_mcheck_taken
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|CIA_jd
-r_static
-r_int
-r_int
-id|CIA_jd
-suffix:semicolon
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the CIA_HAXR2 register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | |D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., SCSI and Ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 r_static
 r_int
@@ -370,11 +323,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CIA_mcheck_expected
+id|mcheck_expected
+c_func
+(paren
+l_int|0
+)paren
 op_assign
 l_int|1
 suffix:semicolon
-id|CIA_mcheck_taken
+id|mcheck_taken
+c_func
+(paren
+l_int|0
+)paren
 op_assign
 l_int|0
 suffix:semicolon
@@ -406,10 +367,18 @@ multiline_comment|/* magic */
 r_if
 c_cond
 (paren
-id|CIA_mcheck_taken
+id|mcheck_taken
+c_func
+(paren
+l_int|0
+)paren
 )paren
 (brace
-id|CIA_mcheck_taken
+id|mcheck_taken
+c_func
+(paren
+l_int|0
+)paren
 op_assign
 l_int|0
 suffix:semicolon
@@ -423,7 +392,11 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|CIA_mcheck_expected
+id|mcheck_expected
+c_func
+(paren
+l_int|0
+)paren
 op_assign
 l_int|0
 suffix:semicolon
@@ -673,7 +646,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CIA_mcheck_expected
+id|mcheck_expected
+c_func
+(paren
+l_int|0
+)paren
 op_assign
 l_int|1
 suffix:semicolon
@@ -702,7 +679,11 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* magic */
-id|CIA_mcheck_expected
+id|mcheck_expected
+c_func
+(paren
+l_int|0
+)paren
 op_assign
 l_int|0
 suffix:semicolon
@@ -1402,7 +1383,7 @@ r_int
 r_int
 id|cia_tmp
 suffix:semicolon
-macro_line|#ifdef DEBUG_DUMP_REGS
+macro_line|#if DEBUG_DUMP_REGS
 (brace
 r_int
 r_int
@@ -2309,20 +2290,16 @@ macro_line|#endif
 r_case
 l_int|0
 suffix:colon
-multiline_comment|/*&n;&t;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t;&t; * For now, windows 1,2 and 3 are disabled.  In the future,&n;&t;&t; * we may want to use them to do scatter/gather DMA. &n;&t;&t; *&n;&t;&t; * Window 0 goes at 1 GB and is 1 GB large.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t;&t; * For now, windows 2 and 3 are disabled.  In the future,&n;&t;&t; * we may want to use them to do scatter/gather DMA. &n;&t;&t; *&n;&t;&t; * Window 0 goes at 1 GB and is 1 GB large.&n;&t;&t; * Window 1 goes at 2 GB and is 1 GB large.&n;&t;&t; */
 op_star
 (paren
 id|vuip
 )paren
 id|CIA_IOC_PCI_W0_BASE
 op_assign
-l_int|1U
+id|CIA_DMA_WIN0_BASE_DEFAULT
 op_or
-(paren
-id|CIA_DMA_WIN_BASE_DEFAULT
-op_amp
-l_int|0xfff00000U
-)paren
+l_int|1U
 suffix:semicolon
 op_star
 (paren
@@ -2331,7 +2308,7 @@ id|vuip
 id|CIA_IOC_PCI_W0_MASK
 op_assign
 (paren
-id|CIA_DMA_WIN_SIZE_DEFAULT
+id|CIA_DMA_WIN0_SIZE_DEFAULT
 op_minus
 l_int|1
 )paren
@@ -2344,7 +2321,9 @@ id|vuip
 )paren
 id|CIA_IOC_PCI_T0_BASE
 op_assign
-l_int|0
+id|CIA_DMA_WIN0_TRAN_DEFAULT
+op_rshift
+l_int|2
 suffix:semicolon
 op_star
 (paren
@@ -2352,7 +2331,33 @@ id|vuip
 )paren
 id|CIA_IOC_PCI_W1_BASE
 op_assign
-l_int|0x0
+id|CIA_DMA_WIN1_BASE_DEFAULT
+op_or
+l_int|1U
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_PCI_W1_MASK
+op_assign
+(paren
+id|CIA_DMA_WIN1_SIZE_DEFAULT
+op_minus
+l_int|1
+)paren
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_PCI_T1_BASE
+op_assign
+id|CIA_DMA_WIN1_TRAN_DEFAULT
+op_rshift
+l_int|2
 suffix:semicolon
 op_star
 (paren
@@ -2369,6 +2374,11 @@ id|vuip
 id|CIA_IOC_PCI_W3_BASE
 op_assign
 l_int|0x0
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2511,7 +2521,8 @@ multiline_comment|/* read it back. */
 )brace
 )brace
 r_static
-r_int
+r_inline
+r_void
 DECL|function|cia_pci_clr_err
 id|cia_pci_clr_err
 c_func
@@ -2519,7 +2530,11 @@ c_func
 r_void
 )paren
 (brace
-id|CIA_jd
+r_int
+r_int
+id|jd
+suffix:semicolon
+id|jd
 op_assign
 op_star
 (paren
@@ -2527,32 +2542,26 @@ id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
 suffix:semicolon
-id|DBGM
-c_func
-(paren
-(paren
-l_string|&quot;CIA_pci_clr_err: CIA ERR after read 0x%x&bslash;n&quot;
-comma
-id|CIA_jd
-)paren
-)paren
-suffix:semicolon
 op_star
 (paren
 id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
 op_assign
-id|CIA_jd
+id|jd
 suffix:semicolon
 id|mb
 c_func
 (paren
 )paren
 suffix:semicolon
-r_return
-l_int|0
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_ERR
 suffix:semicolon
+multiline_comment|/* re-read to force write.  */
 )brace
 r_void
 DECL|function|cia_machine_check
@@ -2573,514 +2582,7 @@ op_star
 id|regs
 )paren
 (brace
-r_struct
-id|el_common
-op_star
-id|mchk_header
-suffix:semicolon
-r_struct
-id|el_CIA_procdata
-op_star
-id|mchk_procdata
-suffix:semicolon
-r_struct
-id|el_CIA_sysdata_mcheck
-op_star
-id|mchk_sysdata
-suffix:semicolon
-r_int
-r_int
-op_star
-id|ptr
-suffix:semicolon
-r_const
-r_char
-op_star
-id|reason
-suffix:semicolon
-r_char
-id|buf
-(braket
-l_int|128
-)braket
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-id|mchk_header
-op_assign
-(paren
-r_struct
-id|el_common
-op_star
-)paren
-id|la_ptr
-suffix:semicolon
-id|mchk_procdata
-op_assign
-(paren
-r_struct
-id|el_CIA_procdata
-op_star
-)paren
-(paren
-id|la_ptr
-op_plus
-id|mchk_header-&gt;proc_offset
-)paren
-suffix:semicolon
-id|mchk_sysdata
-op_assign
-(paren
-r_struct
-id|el_CIA_sysdata_mcheck
-op_star
-)paren
-(paren
-id|la_ptr
-op_plus
-id|mchk_header-&gt;sys_offset
-)paren
-suffix:semicolon
-id|DBGM
-c_func
-(paren
-(paren
-l_string|&quot;cia_machine_check: vector=0x%lx la_ptr=0x%lx&bslash;n&quot;
-comma
-id|vector
-comma
-id|la_ptr
-)paren
-)paren
-suffix:semicolon
-id|DBGM
-c_func
-(paren
-(paren
-l_string|&quot;                     pc=0x%lx size=0x%x procoffset=0x%x &quot;
-l_string|&quot;sysoffset 0x%x&bslash;n&quot;
-comma
-id|regs-&gt;pc
-comma
-id|mchk_header-&gt;size
-comma
-id|mchk_header-&gt;proc_offset
-comma
-id|mchk_header-&gt;sys_offset
-)paren
-)paren
-suffix:semicolon
-id|DBGM
-c_func
-(paren
-(paren
-l_string|&quot;cia_machine_check: expected %d DCSR 0x%lx PEAR 0x%lx&bslash;n&quot;
-comma
-id|CIA_mcheck_expected
-comma
-id|mchk_sysdata-&gt;epic_dcsr
-comma
-id|mchk_sysdata-&gt;epic_pear
-)paren
-)paren
-suffix:semicolon
-macro_line|#if DEBUG_MCHECK
-(brace
-r_int
-r_int
-op_star
-id|ptr
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-id|ptr
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|la_ptr
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|mchk_header-&gt;size
-op_div
-r_sizeof
-(paren
-r_int
-)paren
-suffix:semicolon
-id|i
-op_add_assign
-l_int|2
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot; +%lx %lx %lx&bslash;n&quot;
-comma
-id|i
-op_star
-r_sizeof
-(paren
-r_int
-)paren
-comma
-id|ptr
-(braket
-id|i
-)braket
-comma
-id|ptr
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if so,&n;&t; * ignore the machine check.&n;&t; */
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* magic */
-r_if
-c_cond
-(paren
-id|CIA_mcheck_expected
-)paren
-(brace
-id|DBGM
-c_func
-(paren
-(paren
-l_string|&quot;CIA machine check expected&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|CIA_mcheck_expected
-op_assign
-l_int|0
-suffix:semicolon
-id|CIA_mcheck_taken
-op_assign
-l_int|1
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* magic */
-id|draina
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cia_pci_clr_err
-c_func
-(paren
-)paren
-suffix:semicolon
-id|wrmces
-c_func
-(paren
-l_int|0x7
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_switch
-c_cond
-(paren
-(paren
-r_int
-r_int
-)paren
-id|mchk_header-&gt;code
-)paren
-(brace
-r_case
-id|MCHK_K_TPERR
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;tag parity error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MCHK_K_TCPERR
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;tag control parity error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MCHK_K_HERR
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;generic hard error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MCHK_K_ECC_C
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;correctable ECC error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MCHK_K_ECC_NC
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;uncorrectable ECC error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MCHK_K_OS_BUGCHECK
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;OS-specific PAL bugcheck&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|MCHK_K_PAL_BUGCHECK
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;callsys in kernel mode&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x96
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;i-cache read retryable error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x98
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;processor detected hard error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* System specific (these are for Alcor, at least): */
-r_case
-l_int|0x203
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;system detected uncorrectable ECC error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x205
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;parity error detected by CIA&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x207
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;non-existent memory error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x209
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;PCI SERR detected&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x20b
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;PCI data parity error detected&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x20d
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;PCI address parity error detected&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x20f
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;PCI master abort error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x211
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;PCI target abort error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x213
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;scatter/gather PTE invalid error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x215
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;flash ROM write error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x217
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;IOA timeout detected&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x219
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;IOCHK#, EISA add-in board parity or other catastrophic error&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x21b
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;EISA fail-safe timer timeout&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x21d
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;EISA bus time-out&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x21f
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;EISA software generated NMI&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x221
-suffix:colon
-id|reason
-op_assign
-l_string|&quot;unexpected ev5 IRQ[3] interrupt&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|sprintf
-c_func
-(paren
-id|buf
-comma
-l_string|&quot;reason for machine-check unknown (0x%x)&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|mchk_header-&gt;code
-)paren
-suffix:semicolon
-id|reason
-op_assign
-id|buf
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
+multiline_comment|/* Clear the error before any reporting.  */
 id|mb
 c_func
 (paren
@@ -3111,98 +2613,29 @@ c_func
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* reset machine check pending flag */
+multiline_comment|/* reset machine check pending flag.  */
 id|mb
 c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
+id|process_mcheck_info
 c_func
 (paren
-id|KERN_CRIT
-l_string|&quot;CIA machine check: %s%s&bslash;n&quot;
-comma
-id|reason
-comma
-id|mchk_header-&gt;retry
-ques
-c_cond
-l_string|&quot; (retryable)&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;   vector=0x%lx la_ptr=0x%lx pc=0x%lx&bslash;n&quot;
-comma
 id|vector
 comma
 id|la_ptr
 comma
-id|regs-&gt;pc
-)paren
-suffix:semicolon
-multiline_comment|/* Dump the logout area to give all info.  */
-id|ptr
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|la_ptr
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|mchk_header-&gt;size
-op_div
-r_sizeof
-(paren
-r_int
-)paren
-suffix:semicolon
-id|i
-op_add_assign
-l_int|2
-)paren
-(brace
-id|printk
+id|regs
+comma
+l_string|&quot;CIA&quot;
+comma
+id|mcheck_expected
 c_func
 (paren
-id|KERN_CRIT
-l_string|&quot;   +%8lx %016lx %016lx&bslash;n&quot;
-comma
-id|i
-op_star
-r_sizeof
-(paren
-r_int
+l_int|0
 )paren
-comma
-id|ptr
-(braket
-id|i
-)braket
-comma
-id|ptr
-(braket
-id|i
-op_plus
-l_int|1
-)braket
 )paren
 suffix:semicolon
-)brace
 )brace
 eof

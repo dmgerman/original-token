@@ -211,7 +211,7 @@ macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Exported functions&n; */
-r_void
+r_int
 id|valkyriefb_init
 c_func
 (paren
@@ -228,17 +228,12 @@ op_star
 id|dp
 )paren
 suffix:semicolon
-r_void
+r_int
 id|valkyriefb_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 r_static
@@ -922,7 +917,7 @@ op_ne
 id|FB_ACTIVATE_NOW
 )paren
 (brace
-multiline_comment|/* printk(&quot;Not activating, in valkyrie_set_var.&bslash;n&quot;); */
+multiline_comment|/* printk(KERN_ERR &quot;Not activating, in valkyrie_set_var.&bslash;n&quot;); */
 id|valkyrie_par_to_var
 c_func
 (paren
@@ -2337,6 +2332,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Monitor sense value = 0x%x, &quot;
 comma
 id|p-&gt;sense
@@ -2467,6 +2463,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;using video mode %d and color mode %d.&bslash;n&quot;
 comma
 id|default_vmode
@@ -2670,6 +2667,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: valkyrie frame buffer device&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -2902,7 +2900,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
 DECL|function|valkyriefb_init
-r_void
+r_int
 id|__init
 id|valkyriefb_init
 c_func
@@ -2938,6 +2936,9 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_OF */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|valkyrie_of_init
 r_void
@@ -2970,13 +2971,16 @@ op_ne
 l_int|1
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;expecting 1 address for valkyrie (got %d)&quot;
 comma
 id|dp-&gt;n_addrs
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|p
@@ -4005,7 +4009,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Parse user speficied options (`video=valkyriefb:&squot;)&n; */
 DECL|function|valkyriefb_setup
-r_void
+r_int
 id|__init
 id|valkyriefb_setup
 c_func
@@ -4013,10 +4017,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -4034,6 +4034,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -4298,5 +4299,8 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 eof

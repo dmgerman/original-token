@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/serial_reg.h&gt;
 DECL|macro|MAX_MODEM_BUF
@@ -1337,10 +1336,12 @@ comma
 id|bcs-&gt;hw.hscx.count
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -2413,10 +2414,12 @@ id|bcs-&gt;rqueue
 )paren
 )paren
 (brace
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|skb
+comma
+id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -2435,10 +2438,12 @@ id|bcs-&gt;squeue
 )paren
 )paren
 (brace
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -2448,10 +2453,12 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|dev_kfree_skb
+id|idev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -3403,16 +3410,26 @@ op_amp
 id|st-&gt;l1.bcs-&gt;Flag
 )paren
 suffix:semicolon
-id|send_arcofi
+id|st-&gt;l1.bcs-&gt;cs-&gt;dc.isac.arcofi_bc
+op_assign
+id|st-&gt;l1.bc
+suffix:semicolon
+id|arcofi_fsm
 c_func
 (paren
 id|st-&gt;l1.bcs-&gt;cs
 comma
+id|ARCOFI_START
+comma
+op_amp
 id|ARCOFI_XOP_0
-comma
-id|st-&gt;l1.bc
-comma
-l_int|0
+)paren
+suffix:semicolon
+id|interruptible_sleep_on
+c_func
+(paren
+op_amp
+id|st-&gt;l1.bcs-&gt;cs-&gt;dc.isac.arcofi_wait
 )paren
 suffix:semicolon
 id|st-&gt;l1.bcs-&gt;cs-&gt;hw.elsa.MFlag

@@ -1,13 +1,15 @@
-multiline_comment|/* $Id: telespci.c,v 2.5 1998/11/15 23:55:28 keil Exp $&n;&n; * telespci.c     low level stuff for Teles PCI isdn cards&n; *&n; * Author       Ton van Rosmalen &n; *              Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: telespci.c,v $&n; * Revision 2.5  1998/11/15 23:55:28  keil&n; * changes from 2.0&n; *&n; * Revision 2.4  1998/10/05 09:38:08  keil&n; * Fix register addressing&n; *&n; * Revision 2.3  1998/05/25 12:58:26  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.1  1998/04/15 16:38:23  keil&n; * Add S0Box and Teles PCI support&n; *&n; *&n; */
+multiline_comment|/* $Id: telespci.c,v 2.9 1999/08/11 21:01:34 keil Exp $&n;&n; * telespci.c     low level stuff for Teles PCI isdn cards&n; *&n; * Author       Ton van Rosmalen &n; *              Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: telespci.c,v $&n; * Revision 2.9  1999/08/11 21:01:34  keil&n; * new PCI codefix&n; *&n; * Revision 2.8  1999/08/10 16:02:10  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 2.7  1999/07/12 21:05:34  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.6  1999/07/01 08:12:15  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.5  1998/11/15 23:55:28  keil&n; * changes from 2.0&n; *&n; * Revision 2.4  1998/10/05 09:38:08  keil&n; * Fix register addressing&n; *&n; * Revision 2.3  1998/05/25 12:58:26  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.1  1998/04/15 16:38:23  keil&n; * Add S0Box and Teles PCI support&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#ifndef COMPAT_HAS_NEW_PCI
+macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#endif
 r_extern
 r_const
 r_char
@@ -22,7 +24,7 @@ r_char
 op_star
 id|telespci_revision
 op_assign
-l_string|&quot;$Revision: 2.5 $&quot;
+l_string|&quot;$Revision: 2.9 $&quot;
 suffix:semicolon
 DECL|macro|ZORAN_PO_RQ_PEN
 mdefine_line|#define ZORAN_PO_RQ_PEN&t;0x02000000
@@ -901,10 +903,6 @@ id|dev_id
 suffix:semicolon
 id|u_char
 id|val
-comma
-id|stat
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -940,7 +938,6 @@ c_cond
 (paren
 id|val
 )paren
-(brace
 id|hscx_int_main
 c_func
 (paren
@@ -949,11 +946,6 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|stat
-op_or_assign
-l_int|1
-suffix:semicolon
-)brace
 id|val
 op_assign
 id|readisac
@@ -969,7 +961,6 @@ c_cond
 (paren
 id|val
 )paren
-(brace
 id|isac_interrupt
 c_func
 (paren
@@ -978,11 +969,6 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|stat
-op_or_assign
-l_int|2
-suffix:semicolon
-)brace
 multiline_comment|/* Clear interrupt register for Zoran PCI controller */
 id|writel
 c_func
@@ -994,14 +980,6 @@ op_plus
 l_int|0x3C
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-l_int|1
-)paren
-(brace
 id|writehscx
 c_func
 (paren
@@ -1026,6 +1004,26 @@ comma
 l_int|0xFF
 )paren
 suffix:semicolon
+id|writeisac
+c_func
+(paren
+id|cs-&gt;hw.teles0.membase
+comma
+id|ISAC_MASK
+comma
+l_int|0xFF
+)paren
+suffix:semicolon
+id|writeisac
+c_func
+(paren
+id|cs-&gt;hw.teles0.membase
+comma
+id|ISAC_MASK
+comma
+l_int|0x0
+)paren
+suffix:semicolon
 id|writehscx
 c_func
 (paren
@@ -1050,36 +1048,6 @@ comma
 l_int|0x0
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-l_int|2
-)paren
-(brace
-id|writeisac
-c_func
-(paren
-id|cs-&gt;hw.teles0.membase
-comma
-id|ISAC_MASK
-comma
-l_int|0xFF
-)paren
-suffix:semicolon
-id|writeisac
-c_func
-(paren
-id|cs-&gt;hw.teles0.membase
-comma
-id|ISAC_MASK
-comma
-l_int|0x0
-)paren
-suffix:semicolon
-)brace
 )brace
 r_void
 DECL|function|release_io_telespci
@@ -1147,27 +1115,6 @@ r_return
 l_int|0
 suffix:semicolon
 r_case
-id|CARD_SETIRQ
-suffix:colon
-r_return
-id|request_irq
-c_func
-(paren
-id|cs-&gt;irq
-comma
-op_amp
-id|telespci_interrupt
-comma
-id|I4L_IRQ_FLAG
-op_or
-id|SA_SHIRQ
-comma
-l_string|&quot;HiSax&quot;
-comma
-id|cs
-)paren
-suffix:semicolon
-r_case
 id|CARD_INIT
 suffix:colon
 id|inithscxisac
@@ -1192,6 +1139,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef COMPAT_HAS_NEW_PCI
 DECL|variable|__initdata
 r_static
 r_struct
@@ -1202,6 +1150,16 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#else
+DECL|variable|__initdata
+r_static
+r_int
+id|pci_index
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1230,6 +1188,23 @@ id|tmp
 l_int|64
 )braket
 suffix:semicolon
+macro_line|#ifndef COMPAT_HAS_NEW_PCI
+id|u_char
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|pci_irq
+suffix:semicolon
+id|u_int
+id|pci_memaddr
+suffix:semicolon
+id|u_char
+id|found
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|strcpy
 c_func
 (paren
@@ -1264,6 +1239,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#if CONFIG_PCI
+macro_line|#ifdef COMPAT_HAS_NEW_PCI
 r_if
 c_cond
 (paren
@@ -1332,10 +1308,13 @@ id|u_int
 id|ioremap
 c_func
 (paren
-id|dev_tel-&gt;base_address
-(braket
+id|get_pcibase
+c_func
+(paren
+id|dev_tel
+comma
 l_int|0
-)braket
+)paren
 comma
 id|PAGE_SIZE
 )paren
@@ -1346,10 +1325,13 @@ c_func
 id|KERN_INFO
 l_string|&quot;Found: Zoran, base-address: 0x%lx, irq: 0x%x&bslash;n&quot;
 comma
-id|dev_tel-&gt;base_address
-(braket
+id|get_pcibase
+c_func
+(paren
+id|dev_tel
+comma
 l_int|0
-)braket
+)paren
 comma
 id|dev_tel-&gt;irq
 )paren
@@ -1368,6 +1350,130 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|pci_index
+OL
+l_int|0xff
+suffix:semicolon
+id|pci_index
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pcibios_find_device
+(paren
+l_int|0x11DE
+comma
+l_int|0x6120
+comma
+id|pci_index
+comma
+op_amp
+id|pci_bus
+comma
+op_amp
+id|pci_device_fn
+)paren
+op_eq
+id|PCIBIOS_SUCCESSFUL
+)paren
+(brace
+id|found
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+r_break
+suffix:semicolon
+)brace
+id|pcibios_read_config_dword
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_BASE_ADDRESS_0
+comma
+op_amp
+id|pci_memaddr
+)paren
+suffix:semicolon
+id|pcibios_read_config_byte
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_INTERRUPT_LINE
+comma
+op_amp
+id|pci_irq
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Found: Zoran, base-address: 0x%x,&quot;
+l_string|&quot; irq: 0x%x&bslash;n&quot;
+comma
+id|pci_memaddr
+comma
+id|pci_irq
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|found
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;TelesPCI: No PCI card found&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|pci_index
+op_increment
+suffix:semicolon
+id|cs-&gt;irq
+op_assign
+id|pci_irq
+suffix:semicolon
+id|cs-&gt;hw.teles0.membase
+op_assign
+(paren
+id|u_int
+)paren
+id|vremap
+c_func
+(paren
+id|pci_memaddr
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+macro_line|#endif /* COMPAT_HAS_NEW_PCI */
 macro_line|#else
 id|printk
 c_func
@@ -1506,6 +1612,15 @@ id|cs-&gt;cardmsg
 op_assign
 op_amp
 id|TelesPCI_card_msg
+suffix:semicolon
+id|cs-&gt;irq_func
+op_assign
+op_amp
+id|telespci_interrupt
+suffix:semicolon
+id|cs-&gt;irq_flags
+op_or_assign
+id|SA_SHIRQ
 suffix:semicolon
 id|ISACVersion
 c_func

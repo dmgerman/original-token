@@ -79,7 +79,7 @@ id|pb
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_PARPORT_1284) || defined(CONFIG_PARPORT_PC_FIFO)
+macro_line|#ifdef CONFIG_PARPORT_PC_FIFO
 multiline_comment|/* Safely change the mode bits in the ECR */
 DECL|function|change_mode
 r_static
@@ -358,6 +358,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PARPORT_1284
 multiline_comment|/* Find FIFO lossage; FIFO is reset */
 DECL|function|get_fifo_residue
 r_static
@@ -535,7 +536,8 @@ r_return
 id|residue
 suffix:semicolon
 )brace
-macro_line|#endif /* IEEE 1284 support or FIFO support */
+macro_line|#endif /* IEEE 1284 support */
+macro_line|#endif /* FIFO support */
 multiline_comment|/*&n; * Clear TIMEOUT BIT in EPP MODE&n; *&n; * This is also used in SPP detection.&n; */
 DECL|function|clear_epp_timeout
 r_static
@@ -7973,7 +7975,6 @@ id|p-&gt;size
 OG
 l_int|3
 )paren
-suffix:semicolon
 id|release_region
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_main.c&t;Cyclades Cyclom X Multiprotocol WAN Link Driver. Main module.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdlamain.c by Gene Kozin &lt;genek@compuserve.com&gt; &amp;&n;*&t;&t;&t; Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/05/19&t;acme&t;&t;works directly linked into the kernel&n;*&t;&t;&t;&t;init_waitqueue_head for 2.3.* kernel&n;* 1999/05/18&t;acme&t;&t;major cleanup (polling not needed), etc&n;* Aug 28, 1998&t;Arnaldo&t;&t;minor cleanup (ioctls for firmware deleted)&n;*&t;&t;&t;&t;queue_task activated&n;* Aug 08, 1998&t;Arnaldo&t;&t;Initial version.&n;*/
+multiline_comment|/*&n;* cycx_main.c&t;Cyclades Cyclom X Multiprotocol WAN Link Driver. Main module.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdlamain.c by Gene Kozin &lt;genek@compuserve.com&gt; &amp;&n;*&t;&t;&t; Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/08/09&t;acme&t;&t;removed references to enable_tx_int&n;*&t;&t;&t;&t;use spinlocks instead of cli/sti in&n;*&t;&t;&t;&t;cyclomx_set_state&n;* 1999/05/19&t;acme&t;&t;works directly linked into the kernel&n;*&t;&t;&t;&t;init_waitqueue_head for 2.3.* kernel&n;* 1999/05/18&t;acme&t;&t;major cleanup (polling not needed), etc&n;* 1998/08/28&t;acme&t;&t;minor cleanup (ioctls for firmware deleted)&n;*&t;&t;&t;&t;queue_task activated&n;* 1998/08/08&t;acme&t;&t;Initial version.&n;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* OS configuration options */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -30,7 +30,7 @@ multiline_comment|/* Defines &amp; Macros */
 DECL|macro|DRV_VERSION
 mdefine_line|#define&t;DRV_VERSION&t;0&t;&t;/* version number */
 DECL|macro|DRV_RELEASE
-mdefine_line|#define&t;DRV_RELEASE&t;3&t;&t;/* release (minor version) number */
+mdefine_line|#define&t;DRV_RELEASE&t;4&t;&t;/* release (minor version) number */
 DECL|macro|MAX_CARDS
 mdefine_line|#define&t;MAX_CARDS&t;1&t;&t;/* max number of adapters */
 macro_line|#ifndef&t;CONFIG_CYCLOMX_CARDS&t;&t;/* configurable option */
@@ -318,10 +318,6 @@ op_member_access_from_pointer
 r_private
 op_assign
 id|card
-suffix:semicolon
-id|wandev-&gt;enable_tx_int
-op_assign
-l_int|0
 suffix:semicolon
 id|wandev-&gt;setup
 op_assign
@@ -764,7 +760,7 @@ c_cond
 id|card-&gt;hw.fwid
 )paren
 (brace
-macro_line|#ifdef&t;CONFIG_CYCLOMX_X25
+macro_line|#ifdef CONFIG_CYCLOMX_X25
 r_case
 id|CFID_X25_2X
 suffix:colon
@@ -823,10 +819,6 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|wandev-&gt;critical
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -907,10 +899,6 @@ id|wandev-&gt;irq
 comma
 id|card
 )paren
-suffix:semicolon
-id|wandev-&gt;critical
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -1056,17 +1044,15 @@ id|state
 (brace
 r_int
 r_int
-id|flags
+id|host_cpu_flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
+op_amp
+id|card-&gt;lock
+comma
+id|host_cpu_flags
 )paren
 suffix:semicolon
 r_if
@@ -1132,10 +1118,13 @@ id|card-&gt;state_tick
 op_assign
 id|jiffies
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
-id|flags
+op_amp
+id|card-&gt;lock
+comma
+id|host_cpu_flags
 )paren
 suffix:semicolon
 )brace

@@ -225,17 +225,12 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* disabled by default */
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
-r_void
+r_int
 id|vfb_setup
 c_func
 (paren
 r_char
 op_star
-id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 r_static
@@ -417,7 +412,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
-r_void
+r_int
 id|vfb_init
 c_func
 (paren
@@ -1688,7 +1683,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 DECL|function|vfb_setup
-r_void
+r_int
 id|__init
 id|vfb_setup
 c_func
@@ -1696,10 +1691,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -1728,6 +1719,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -1780,10 +1772,13 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Initialisation&n;     */
 DECL|function|vfb_init
-r_void
+r_int
 id|__init
 id|vfb_init
 c_func
@@ -1798,6 +1793,8 @@ op_logical_neg
 id|vfb_enable
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 r_if
 c_cond
@@ -1817,6 +1814,8 @@ id|videomemorysize
 )paren
 )paren
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|strcpy
 c_func
@@ -1901,11 +1900,14 @@ id|videomemory
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: Virtual frame buffer device, using %ldK of video memory&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -1918,6 +1920,9 @@ id|videomemorysize
 op_rshift
 l_int|10
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|vfbcon_switch
@@ -2666,13 +2671,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|vfb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

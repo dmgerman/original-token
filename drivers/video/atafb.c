@@ -12461,7 +12461,7 @@ id|info
 suffix:semicolon
 )brace
 DECL|function|atafb_init
-r_void
+r_int
 id|__init
 id|atafb_init
 c_func
@@ -12486,6 +12486,8 @@ op_logical_neg
 id|MACH_IS_ATARI
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 r_do
 (brace
@@ -12969,6 +12971,8 @@ OL
 l_int|0
 )paren
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|printk
 c_func
@@ -13027,6 +13031,9 @@ l_int|10
 suffix:semicolon
 multiline_comment|/* TODO: This driver cannot be unloaded yet */
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* a strtok which returns empty strings, too */
@@ -13133,7 +13140,7 @@ id|sbegin
 suffix:semicolon
 )brace
 DECL|function|atafb_setup
-r_void
+r_int
 id|__init
 id|atafb_setup
 c_func
@@ -13141,10 +13148,6 @@ c_func
 r_char
 op_star
 id|options
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -13215,6 +13218,7 @@ op_star
 id|options
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -14801,6 +14805,9 @@ id|user_invalid
 suffix:colon
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|init_module
@@ -14811,13 +14818,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|atafb_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

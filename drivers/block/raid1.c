@@ -458,7 +458,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * WRITE or WRITEA.&n;&t; */
+multiline_comment|/*&n;&t; * WRITE.&n;&t; */
 id|PRINTK
 c_func
 (paren
@@ -760,7 +760,7 @@ id|raid1_bh
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * make_request() can abort the operation when READA or WRITEA are being&n; * used and no empty request is available.&n; *&n; * Currently, just replace the command with READ/WRITE.&n; */
+multiline_comment|/*&n; * make_request() can abort the operation when READA is being&n; * used and no empty request is available.&n; *&n; * Currently, just replace the command with READ/WRITE.&n; */
 r_if
 c_cond
 (paren
@@ -777,22 +777,7 @@ c_cond
 (paren
 id|rw
 op_eq
-id|WRITEA
-)paren
-id|rw
-op_assign
 id|WRITE
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rw
-op_eq
-id|WRITE
-op_logical_or
-id|rw
-op_eq
-id|WRITEA
 )paren
 id|mark_buffer_clean
 c_func
@@ -1002,7 +987,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * WRITE or WRITEA.&n;&t; */
+multiline_comment|/*&n;&t; * WRITE.&n;&t; */
 id|PRINTK
 c_func
 (paren

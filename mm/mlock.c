@@ -631,6 +631,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|on
+op_logical_and
 op_logical_neg
 id|capable
 c_func

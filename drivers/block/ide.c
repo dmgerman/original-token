@@ -1104,11 +1104,13 @@ id|bytecount
 op_increment
 id|bytecount
 suffix:semicolon
-macro_line|#ifdef CONFIG_ATARI
+macro_line|#if defined(CONFIG_ATARI) || defined(CONFIG_Q40)
 r_if
 c_cond
 (paren
 id|MACH_IS_ATARI
+op_logical_or
+id|MACH_IS_Q40
 )paren
 (brace
 multiline_comment|/* Atari has a byte-swapped IDE interface */
@@ -1193,11 +1195,13 @@ id|bytecount
 op_increment
 id|bytecount
 suffix:semicolon
-macro_line|#ifdef CONFIG_ATARI
+macro_line|#if defined(CONFIG_ATARI) || defined(CONFIG_Q40)
 r_if
 c_cond
 (paren
 id|MACH_IS_ATARI
+op_logical_or
+id|MACH_IS_Q40
 )paren
 (brace
 multiline_comment|/* Atari has a byte-swapped IDE interface */

@@ -315,6 +315,8 @@ c_func
 (paren
 id|tmp-&gt;info
 )paren
+op_xor
+l_int|1
 comma
 (paren
 id|tmp-&gt;info
@@ -489,6 +491,14 @@ c_func
 (paren
 id|tmp-&gt;info
 )paren
+comma
+id|usb_pipeout
+c_func
+(paren
+id|tmp-&gt;info
+)paren
+op_xor
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -525,6 +535,8 @@ c_func
 (paren
 id|tmp-&gt;info
 )paren
+op_xor
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1564,6 +1576,12 @@ c_func
 id|usb_dev
 comma
 id|pipe
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
 )paren
 op_minus
 l_int|1
@@ -3038,6 +3056,12 @@ c_func
 id|usb_dev
 comma
 id|pipe
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
 )paren
 suffix:semicolon
 id|__u32
@@ -3774,6 +3798,12 @@ c_func
 id|usb_dev
 comma
 id|pipe
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3785,6 +3815,12 @@ c_func
 id|usb_dev
 comma
 id|usb_pipeendpoint
+c_func
+(paren
+id|pipe
+)paren
+comma
+id|usb_pipeout
 c_func
 (paren
 id|pipe
@@ -4211,6 +4247,12 @@ c_func
 id|usb_dev
 comma
 id|pipe
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18, 0x69 is IN */
@@ -4219,7 +4261,7 @@ op_assign
 (paren
 id|pipe
 op_amp
-l_int|0x0007ff00
+id|PIPE_DEVEP_MASK
 )paren
 op_or
 id|usb_packetid
@@ -5328,7 +5370,13 @@ c_func
 (paren
 id|status
 comma
-l_int|0
+id|usb_pipeout
+c_func
+(paren
+id|td-&gt;info
+)paren
+op_xor
+l_int|1
 )paren
 comma
 id|bus_to_virt
@@ -5389,6 +5437,8 @@ c_func
 (paren
 id|td-&gt;info
 )paren
+op_xor
+l_int|1
 )paren
 suffix:semicolon
 id|td-&gt;info
@@ -5419,6 +5469,8 @@ c_func
 (paren
 id|td-&gt;info
 )paren
+op_xor
+l_int|1
 )paren
 op_lshift
 l_int|19
@@ -5436,7 +5488,7 @@ id|TD_CTRL_ACTIVE
 op_or
 id|TD_CTRL_IOC
 suffix:semicolon
-multiline_comment|/* The HC removes it, so readd it */
+multiline_comment|/* The HC removes it, so re-add it */
 id|uhci_insert_td_in_qh
 c_func
 (paren
@@ -5485,6 +5537,8 @@ c_func
 (paren
 id|td-&gt;info
 )paren
+op_xor
+l_int|1
 )paren
 suffix:semicolon
 id|uhci_remove_qh

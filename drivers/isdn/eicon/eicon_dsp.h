@@ -1,5 +1,5 @@
-multiline_comment|/* $Id: eicon_dsp.h,v 1.2 1999/03/29 11:19:42 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon.Diehl active cards.&n; *        DSP definitions&n; *&n; * Copyright 1999    by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: eicon_dsp.h,v $&n; * Revision 1.2  1999/03/29 11:19:42  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.1  1999/03/02 12:18:54  armin&n; * First checkin of DSP defines for audio features.&n; *&n; *&n; */
-macro_line|#ifndef DSP_H
+multiline_comment|/* $Id: eicon_dsp.h,v 1.4 1999/07/25 15:12:02 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon.Diehl active cards.&n; *        DSP definitions&n; *&n; * Copyright 1999    by Armin Schindler (mac@melware.de)&n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: eicon_dsp.h,v $&n; * Revision 1.4  1999/07/25 15:12:02  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.3  1999/07/11 17:16:24  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.2  1999/03/29 11:19:42  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.1  1999/03/02 12:18:54  armin&n; * First checkin of DSP defines for audio features.&n; *&n; *&n; */
+macro_line|#ifndef DSP_H 
 DECL|macro|DSP_H
 mdefine_line|#define DSP_H
 DECL|macro|DSP_UDATA_REQUEST_RECONFIGURE
@@ -283,6 +283,23 @@ multiline_comment|/*&n;returns:&n;  - none -&n;  One indication will be sent for
 DECL|macro|DSP_UDATA_REQUEST_ENABLE_DTMF_RECEIVER
 mdefine_line|#define DSP_UDATA_REQUEST_ENABLE_DTMF_RECEIVER  17
 multiline_comment|/*&n;parameters:&n;  &lt;word&gt; tone duration (ms)&n;  &lt;word&gt; gap duration (ms)&n;*/
+DECL|struct|enable_dtmf_s
+r_typedef
+r_struct
+id|enable_dtmf_s
+(brace
+DECL|member|tone
+id|__u16
+id|tone
+suffix:semicolon
+DECL|member|gap
+id|__u16
+id|gap
+suffix:semicolon
+DECL|typedef|enable_dtmf_s
+)brace
+id|enable_dtmf_s
+suffix:semicolon
 DECL|macro|DSP_UDATA_REQUEST_DISABLE_DTMF_RECEIVER
 mdefine_line|#define DSP_UDATA_REQUEST_DISABLE_DTMF_RECEIVER 18
 multiline_comment|/*&n;parameters:&n;  - none -&n;*/
@@ -300,5 +317,367 @@ multiline_comment|/*&n;returns:&n;  - none -&n;*/
 DECL|macro|DSP_UDATA_INDICATION_ANSWER_TONE
 mdefine_line|#define DSP_UDATA_INDICATION_ANSWER_TONE        20
 multiline_comment|/*&n;returns:&n;  - none -&n;*/
+multiline_comment|/* ============= FAX ================ */
+DECL|macro|EICON_FAXID_LEN
+mdefine_line|#define EICON_FAXID_LEN 20
+DECL|struct|eicon_t30_s
+r_typedef
+r_struct
+id|eicon_t30_s
+(brace
+DECL|member|code
+id|__u8
+id|code
+suffix:semicolon
+DECL|member|rate
+id|__u8
+id|rate
+suffix:semicolon
+DECL|member|resolution
+id|__u8
+id|resolution
+suffix:semicolon
+DECL|member|format
+id|__u8
+id|format
+suffix:semicolon
+DECL|member|pages_low
+id|__u8
+id|pages_low
+suffix:semicolon
+DECL|member|pages_high
+id|__u8
+id|pages_high
+suffix:semicolon
+DECL|member|atf
+id|__u8
+id|atf
+suffix:semicolon
+DECL|member|control_bits_low
+id|__u8
+id|control_bits_low
+suffix:semicolon
+DECL|member|control_bits_high
+id|__u8
+id|control_bits_high
+suffix:semicolon
+DECL|member|feature_bits_low
+id|__u8
+id|feature_bits_low
+suffix:semicolon
+DECL|member|feature_bits_high
+id|__u8
+id|feature_bits_high
+suffix:semicolon
+DECL|member|universal_5
+id|__u8
+id|universal_5
+suffix:semicolon
+DECL|member|universal_6
+id|__u8
+id|universal_6
+suffix:semicolon
+DECL|member|universal_7
+id|__u8
+id|universal_7
+suffix:semicolon
+DECL|member|station_id_len
+id|__u8
+id|station_id_len
+suffix:semicolon
+DECL|member|head_line_len
+id|__u8
+id|head_line_len
+suffix:semicolon
+DECL|member|station_id
+id|__u8
+id|station_id
+(braket
+id|EICON_FAXID_LEN
+)braket
+suffix:semicolon
+multiline_comment|/* __u8          head_line[]; */
+DECL|typedef|eicon_t30_s
+)brace
+id|eicon_t30_s
+suffix:semicolon
+multiline_comment|/* EDATA transmit messages */
+DECL|macro|EDATA_T30_DIS
+mdefine_line|#define EDATA_T30_DIS       0x01
+DECL|macro|EDATA_T30_FTT
+mdefine_line|#define EDATA_T30_FTT       0x02
+DECL|macro|EDATA_T30_MCF
+mdefine_line|#define EDATA_T30_MCF       0x03
+multiline_comment|/* EDATA receive messages */
+DECL|macro|EDATA_T30_DCS
+mdefine_line|#define EDATA_T30_DCS       0x81
+DECL|macro|EDATA_T30_TRAIN_OK
+mdefine_line|#define EDATA_T30_TRAIN_OK  0x82
+DECL|macro|EDATA_T30_EOP
+mdefine_line|#define EDATA_T30_EOP       0x83
+DECL|macro|EDATA_T30_MPS
+mdefine_line|#define EDATA_T30_MPS       0x84
+DECL|macro|EDATA_T30_EOM
+mdefine_line|#define EDATA_T30_EOM       0x85
+DECL|macro|EDATA_T30_DTC
+mdefine_line|#define EDATA_T30_DTC       0x86
+DECL|macro|T30_FORMAT_SFF
+mdefine_line|#define T30_FORMAT_SFF            0
+DECL|macro|T30_FORMAT_ASCII
+mdefine_line|#define T30_FORMAT_ASCII          1
+DECL|macro|T30_FORMAT_COUNT
+mdefine_line|#define T30_FORMAT_COUNT          2
+DECL|macro|T30_CONTROL_BIT_DISABLE_FINE
+mdefine_line|#define T30_CONTROL_BIT_DISABLE_FINE      0x0001
+DECL|macro|T30_CONTROL_BIT_ENABLE_ECM
+mdefine_line|#define T30_CONTROL_BIT_ENABLE_ECM        0x0002
+DECL|macro|T30_CONTROL_BIT_ECM_64_BYTES
+mdefine_line|#define T30_CONTROL_BIT_ECM_64_BYTES      0x0004
+DECL|macro|T30_CONTROL_BIT_ENABLE_2D_CODING
+mdefine_line|#define T30_CONTROL_BIT_ENABLE_2D_CODING  0x0008
+DECL|macro|T30_CONTROL_BIT_ENABLE_T6_CODING
+mdefine_line|#define T30_CONTROL_BIT_ENABLE_T6_CODING  0x0010
+DECL|macro|T30_CONTROL_BIT_ENABLE_UNCOMPR
+mdefine_line|#define T30_CONTROL_BIT_ENABLE_UNCOMPR    0x0020
+DECL|macro|T30_CONTROL_BIT_ACCEPT_POLLING
+mdefine_line|#define T30_CONTROL_BIT_ACCEPT_POLLING    0x0040
+DECL|macro|T30_CONTROL_BIT_REQUEST_POLLING
+mdefine_line|#define T30_CONTROL_BIT_REQUEST_POLLING   0x0080
+DECL|macro|T30_CONTROL_BIT_MORE_DOCUMENTS
+mdefine_line|#define T30_CONTROL_BIT_MORE_DOCUMENTS    0x0100
+DECL|macro|T30_CONTROL_BIT_ALL_FEATURES
+mdefine_line|#define T30_CONTROL_BIT_ALL_FEATURES&bslash;&n;  (T30_CONTROL_BIT_ENABLE_ECM | T30_CONTROL_BIT_ENABLE_2D_CODING |&bslash;&n;   T30_CONTROL_BIT_ENABLE_T6_CODING | T30_CONTROL_BIT_ENABLE_UNCOMPR)
+DECL|macro|T30_FEATURE_BIT_FINE
+mdefine_line|#define T30_FEATURE_BIT_FINE              0x0001
+DECL|macro|T30_FEATURE_BIT_ECM
+mdefine_line|#define T30_FEATURE_BIT_ECM               0x0002
+DECL|macro|T30_FEATURE_BIT_ECM_64_BYTES
+mdefine_line|#define T30_FEATURE_BIT_ECM_64_BYTES      0x0004
+DECL|macro|T30_FEATURE_BIT_2D_CODING
+mdefine_line|#define T30_FEATURE_BIT_2D_CODING         0x0008
+DECL|macro|T30_FEATURE_BIT_T6_CODING
+mdefine_line|#define T30_FEATURE_BIT_T6_CODING         0x0010
+DECL|macro|T30_FEATURE_BIT_UNCOMPR_ENABLED
+mdefine_line|#define T30_FEATURE_BIT_UNCOMPR_ENABLED   0x0020
+DECL|macro|T30_FEATURE_BIT_POLLING
+mdefine_line|#define T30_FEATURE_BIT_POLLING           0x0040
+DECL|macro|FAX_OBJECT_DOCU
+mdefine_line|#define FAX_OBJECT_DOCU&t;&t;1
+DECL|macro|FAX_OBJECT_PAGE
+mdefine_line|#define FAX_OBJECT_PAGE&t;&t;2
+DECL|macro|FAX_OBJECT_LINE
+mdefine_line|#define FAX_OBJECT_LINE&t;&t;3
+DECL|macro|T4_EOL
+mdefine_line|#define T4_EOL&t;&t;&t;0x800
+DECL|macro|T4_EOL_BITSIZE
+mdefine_line|#define T4_EOL_BITSIZE&t;&t;12
+DECL|macro|T4_EOL_DWORD
+mdefine_line|#define T4_EOL_DWORD&t;&t;(T4_EOL &lt;&lt; (32 - T4_EOL_BITSIZE))
+DECL|macro|T4_EOL_MASK_DWORD
+mdefine_line|#define T4_EOL_MASK_DWORD&t;((__u32) -1 &lt;&lt; (32 - T4_EOL_BITSIZE))
+DECL|macro|SFF_LEN_FLD_SIZE
+mdefine_line|#define SFF_LEN_FLD_SIZE&t;3
+DECL|macro|_DLE_
+mdefine_line|#define _DLE_&t;0x10
+DECL|macro|_ETX_
+mdefine_line|#define _ETX_&t;0x03
+DECL|struct|eicon_sff_dochead
+r_typedef
+r_struct
+id|eicon_sff_dochead
+(brace
+DECL|member|id
+id|__u32
+id|id
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|version
+id|__u8
+id|version
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|reserved1
+id|__u8
+id|reserved1
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|userinfo
+id|__u16
+id|userinfo
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|pagecount
+id|__u16
+id|pagecount
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|off1pagehead
+id|__u16
+id|off1pagehead
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|offnpagehead
+id|__u32
+id|offnpagehead
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|offdocend
+id|__u32
+id|offdocend
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|typedef|eicon_sff_dochead
+)brace
+id|eicon_sff_dochead
+suffix:semicolon
+DECL|struct|eicon_sff_pagehead
+r_typedef
+r_struct
+id|eicon_sff_pagehead
+(brace
+DECL|member|pageheadid
+id|__u8
+id|pageheadid
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|pageheadlen
+id|__u8
+id|pageheadlen
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|resvert
+id|__u8
+id|resvert
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|reshoriz
+id|__u8
+id|reshoriz
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|coding
+id|__u8
+id|coding
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|reserved2
+id|__u8
+id|reserved2
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|linelength
+id|__u16
+id|linelength
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|pagelength
+id|__u16
+id|pagelength
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|offprevpage
+id|__u32
+id|offprevpage
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|offnextpage
+id|__u32
+id|offnextpage
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|typedef|eicon_sff_pagehead
+)brace
+id|eicon_sff_pagehead
+suffix:semicolon
 macro_line|#endif&t;/* DSP_H */
 eof
