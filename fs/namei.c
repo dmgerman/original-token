@@ -1586,11 +1586,6 @@ id|dentry
 op_star
 id|dentry
 suffix:semicolon
-id|check_dcache_memory
-c_func
-(paren
-)paren
-suffix:semicolon
 id|name
 op_assign
 id|getname
@@ -1840,11 +1835,6 @@ r_struct
 id|dentry
 op_star
 id|dentry
-suffix:semicolon
-id|check_dcache_memory
-c_func
-(paren
-)paren
 suffix:semicolon
 id|mode
 op_and_assign

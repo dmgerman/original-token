@@ -1441,7 +1441,7 @@ r_int
 id|stop
 suffix:semicolon
 multiline_comment|/* Let the dcache know we&squot;re looking for memory ... */
-id|shrink_dcache_memory
+id|shrink_dcache
 c_func
 (paren
 )paren
@@ -1827,6 +1827,12 @@ c_func
 suffix:semicolon
 id|swapstats.wakeups
 op_increment
+suffix:semicolon
+multiline_comment|/* This will gently shrink the dcache.. */
+id|shrink_dcache_memory
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Do the background pageout: be&n;&t;&t; * more aggressive if we&squot;re really&n;&t;&t; * low on free memory.&n;&t;&t; *&n;&t;&t; * Normally this is called 4 times&n;&t;&t; * a second if we need more memory,&n;&t;&t; * so this has a normal rate of&n;&t;&t; * X*4 pages of memory free&squot;d per&n;&t;&t; * second. That rate goes up when&n;&t;&t; *&n;&t;&t; * - we&squot;re really low on memory (we get woken&n;&t;&t; *   up a lot more)&n;&t;&t; * - other processes fail to allocate memory,&n;&t;&t; *   at which time they try to do their own&n;&t;&t; *   freeing.&n;&t;&t; *&n;&t;&t; * A &quot;tries&quot; value of 50 means up to 200 pages&n;&t;&t; * per second (1.6MB/s). This should be a /proc&n;&t;&t; * thing.&n;&t;&t; */
 id|tries

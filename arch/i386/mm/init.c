@@ -328,14 +328,6 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%d free pages&bslash;n&quot;
-comma
-id|free
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;%d reserved pages&bslash;n&quot;
 comma
 id|reserved

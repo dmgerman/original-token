@@ -18765,11 +18765,6 @@ id|fdc
 op_assign
 l_int|0
 suffix:semicolon
-id|fd_enable_irq
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -18826,11 +18821,6 @@ c_func
 )paren
 suffix:semicolon
 id|fd_free_dma
-c_func
-(paren
-)paren
-suffix:semicolon
-id|fd_disable_irq
 c_func
 (paren
 )paren

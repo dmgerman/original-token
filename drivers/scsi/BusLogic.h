@@ -4515,10 +4515,6 @@ op_star
 id|ProcessorFlags
 )paren
 (brace
-r_extern
-id|spinlock_t
-id|io_request_lock
-suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -4547,10 +4543,6 @@ op_star
 id|ProcessorFlags
 )paren
 (brace
-r_extern
-id|spinlock_t
-id|io_request_lock
-suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren

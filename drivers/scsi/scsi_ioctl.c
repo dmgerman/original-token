@@ -569,10 +569,9 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This interface is depreciated - users should use the scsi generics&n; * interface instead, as this is a more flexible approach to performing&n; * generic SCSI commands on a device.&n; */
-DECL|function|ioctl_command
-r_static
+DECL|function|scsi_ioctl_send_command
 r_int
-id|ioctl_command
+id|scsi_ioctl_send_command
 c_func
 (paren
 id|Scsi_Device
@@ -1599,7 +1598,7 @@ id|EACCES
 suffix:semicolon
 )brace
 r_return
-id|ioctl_command
+id|scsi_ioctl_send_command
 c_func
 (paren
 (paren

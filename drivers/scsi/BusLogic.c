@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -3576,10 +3577,18 @@ id|HostAdapter-&gt;HostAdapterBusType
 op_eq
 id|BusLogic_PCI_Bus
 )paren
+(brace
 id|BusLogic_Error
 c_func
 (paren
 l_string|&quot;While configuring BusLogic PCI Host Adapter at&bslash;n&quot;
+comma
+id|HostAdapter
+)paren
+suffix:semicolon
+id|BusLogic_Error
+c_func
+(paren
 l_string|&quot;Bus %d Device %d I/O Address 0x%X PCI Address 0x%X:&bslash;n&quot;
 comma
 id|HostAdapter
@@ -3593,6 +3602,7 @@ comma
 id|HostAdapter-&gt;PCI_Address
 )paren
 suffix:semicolon
+)brace
 r_else
 id|BusLogic_Error
 c_func

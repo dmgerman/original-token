@@ -4849,23 +4849,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
-macro_line|#ifdef CONFIG_KMOD
-(brace
-r_extern
-r_int
-id|kmod_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-id|kmod_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifdef CONFIG_UMSDOS_FS
 (brace
 multiline_comment|/*&n;&t;&t;&t;When mounting a umsdos fs as root, we detect&n;&t;&t;&t;the pseudo_root (/linux) and initialise it here.&n;&t;&t;&t;pseudo_root is defined in fs/umsdos/inode.c&n;&t;&t;*/
