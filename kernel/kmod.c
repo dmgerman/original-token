@@ -171,13 +171,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|set_fs
-c_func
-(paren
-id|KERNEL_DS
-)paren
-suffix:semicolon
-multiline_comment|/* Allow execve args to be in kernel space. */
+multiline_comment|/* Give kmod all privileges.. */
 id|current-&gt;uid
 op_assign
 id|current-&gt;euid
@@ -186,6 +180,26 @@ id|current-&gt;fsuid
 op_assign
 l_int|0
 suffix:semicolon
+id|cap_set_full
+c_func
+(paren
+id|current-&gt;cap_inheritable
+)paren
+suffix:semicolon
+id|cap_set_full
+c_func
+(paren
+id|current-&gt;cap_effective
+)paren
+suffix:semicolon
+multiline_comment|/* Allow execve args to be in kernel space. */
+id|set_fs
+c_func
+(paren
+id|KERNEL_DS
+)paren
+suffix:semicolon
+multiline_comment|/* Go, go, go... */
 r_if
 c_cond
 (paren

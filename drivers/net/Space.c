@@ -86,6 +86,17 @@ id|dev
 suffix:semicolon
 r_extern
 r_int
+id|ne2k_pci_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|ne_probe
 c_func
 (paren
@@ -857,7 +868,15 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#if defined(CONFIG_NE2000) || defined(NE2000)
+macro_line|#if defined(CONFIG_NE2K_PCI)
+op_logical_and
+id|ne2k_pci_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#if defined(CONFIG_NE2000)
 op_logical_and
 id|ne_probe
 c_func

@@ -153,7 +153,7 @@ id|start_page
 suffix:semicolon
 r_static
 r_int
-id|wd_close_card
+id|wd_close
 c_func
 (paren
 r_struct
@@ -430,6 +430,20 @@ l_int|0xFF
 r_return
 id|ENODEV
 suffix:semicolon
+multiline_comment|/* Looks like we have a card. Make sure 8390 support is available. */
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;wd.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
@@ -508,7 +522,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: WD80x3 at %#3x, &quot;
+l_string|&quot;%s: WD80x3 at %#3x,&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1274,6 +1288,27 @@ id|dev-&gt;irq
 op_assign
 l_int|9
 suffix:semicolon
+multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
+r_if
+c_cond
+(paren
+id|ethdev_init
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;&t;   share and the board will usually be enabled. */
 r_if
 c_cond
@@ -1300,37 +1335,18 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
 r_return
 id|EAGAIN
-suffix:semicolon
-)brace
-multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
-r_if
-c_cond
-(paren
-id|ethdev_init
-c_func
-(paren
-id|dev
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|dev
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
 suffix:semicolon
 )brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
@@ -1463,7 +1479,7 @@ suffix:semicolon
 id|dev-&gt;stop
 op_assign
 op_amp
-id|wd_close_card
+id|wd_close
 suffix:semicolon
 id|NS8390_init
 c_func
@@ -2031,8 +2047,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|wd_close_card
-id|wd_close_card
+DECL|function|wd_close
+id|wd_close
 c_func
 (paren
 r_struct
@@ -2417,10 +2433,17 @@ id|found
 op_ne
 l_int|0
 )paren
+(brace
+multiline_comment|/* Got at least one. */
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Got at least one. */
+)brace
 r_return
 op_minus
 id|ENXIO
@@ -2430,6 +2453,11 @@ id|found
 op_increment
 suffix:semicolon
 )brace
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2479,28 +2507,18 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_void
+op_star
+id|priv
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 op_minus
 id|WD_NIC_OFFSET
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
 suffix:semicolon
 id|free_irq
 c_func
@@ -2516,6 +2534,27 @@ c_func
 id|ioaddr
 comma
 id|WD_IO_EXTENT
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|priv
+)paren
+suffix:semicolon
+id|unlock_8390_module
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

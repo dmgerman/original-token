@@ -2,7 +2,7 @@ macro_line|#ifndef __ALPHA_STRING_H__
 DECL|macro|__ALPHA_STRING_H__
 mdefine_line|#define __ALPHA_STRING_H__
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * GCC of any recent vintage doesn&squot;t do stupid things with bcopy.&n; * EGCS-devel knows all about expanding memcpy inline, others don&squot;t.&n; *&n; * Similarly for a memset with data = 0.&n; */
+multiline_comment|/*&n; * GCC of any recent vintage doesn&squot;t do stupid things with bcopy.&n; * EGCS 1.1 knows all about expanding memcpy inline, others don&squot;t.&n; *&n; * Similarly for a memset with data = 0.&n; */
 DECL|macro|__HAVE_ARCH_MEMCPY
 mdefine_line|#define __HAVE_ARCH_MEMCPY
 multiline_comment|/* For backward compatibility with modules.  Unused otherwise.  */

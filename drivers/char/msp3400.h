@@ -18,5 +18,13 @@ DECL|macro|MSP_SET_STEREO
 mdefine_line|#define MSP_SET_STEREO     _IOW(&squot;m&squot;,7,int)
 DECL|macro|MSP_GET_DC
 mdefine_line|#define MSP_GET_DC         _IOW(&squot;m&squot;,8,int)
+DECL|macro|MSP_GET_BASS
+mdefine_line|#define MSP_GET_BASS       _IOR(&squot;m&squot;, 9,int)
+DECL|macro|MSP_SET_BASS
+mdefine_line|#define MSP_SET_BASS       _IOW(&squot;m&squot;,10,int)
+DECL|macro|MSP_GET_TREBLE
+mdefine_line|#define MSP_GET_TREBLE     _IOR(&squot;m&squot;,11,int)
+DECL|macro|MSP_SET_TREBLE
+mdefine_line|#define MSP_SET_TREBLE     _IOW(&squot;m&squot;,12,int)
 macro_line|#endif /* MSP3400_H */
 eof

@@ -160,6 +160,18 @@ id|addr
 suffix:semicolon
 multiline_comment|/* cached version */
 macro_line|#endif /* !__KERNEL__ */
+multiline_comment|/*&n; * EGCS 1.1 does a good job of using insxl.  Expose this bit of&n; * the I/O process to the compiler.&n; */
+macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
+DECL|macro|__kernel_insbl
+macro_line|# define __kernel_insbl(val, shift)  (((val) &amp; 0xfful) &lt;&lt; ((shift) * 8))
+DECL|macro|__kernel_inswl
+macro_line|# define __kernel_inswl(val, shift)  (((val) &amp; 0xfffful) &lt;&lt; ((shift) * 8))
+macro_line|#else
+DECL|macro|__kernel_insbl
+macro_line|# define __kernel_insbl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;insbl %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;ri&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
+DECL|macro|__kernel_inswl
+macro_line|# define __kernel_inswl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;inswl %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;ri&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
+macro_line|#endif
 multiline_comment|/*&n; * There are different chipsets to interface the Alpha CPUs to the world.&n; */
 macro_line|#if defined(CONFIG_ALPHA_LCA)
 macro_line|# include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */

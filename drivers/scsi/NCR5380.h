@@ -256,6 +256,8 @@ DECL|macro|IRQ_AUTO
 mdefine_line|#define IRQ_AUTO&t;254
 DECL|macro|DMA_AUTO
 mdefine_line|#define DMA_AUTO&t;254
+DECL|macro|PORT_AUTO
+mdefine_line|#define PORT_AUTO&t;0xffff&t;&t;/* autoprobe io port for 53c400a */
 DECL|macro|FLAG_HAS_LAST_BYTE_SENT
 mdefine_line|#define FLAG_HAS_LAST_BYTE_SENT&t;&t;1&t;/* NCR53c81 or better */
 DECL|macro|FLAG_CHECK_LAST_BYTE_SENT
@@ -264,6 +266,8 @@ DECL|macro|FLAG_NCR53C400
 mdefine_line|#define FLAG_NCR53C400&t;&t;&t;4&t;/* NCR53c400 */
 DECL|macro|FLAG_NO_PSEUDO_DMA
 mdefine_line|#define FLAG_NO_PSEUDO_DMA&t;&t;8&t;/* Inhibit DMA */
+DECL|macro|FLAG_DTC3181E
+mdefine_line|#define FLAG_DTC3181E&t;&t;&t;16&t;/* DTC3181E */
 macro_line|#ifndef ASM
 DECL|struct|NCR5380_hostdata
 r_struct
@@ -364,6 +368,17 @@ r_struct
 id|Scsi_Host
 op_star
 id|next_timer
+suffix:semicolon
+DECL|member|select_time
+r_int
+id|select_time
+suffix:semicolon
+multiline_comment|/* timer in select for target response */
+DECL|member|selecting
+r_volatile
+id|Scsi_Cmnd
+op_star
+id|selecting
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef NCR5380_STATS

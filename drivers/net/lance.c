@@ -426,6 +426,36 @@ id|PCNET32_POSSIBLE
 )brace
 comma
 (brace
+l_int|0x2623
+comma
+l_string|&quot;PCnet/FAST 79C971&quot;
+comma
+multiline_comment|/* 79C971 PCInetFAST. */
+id|LANCE_ENABLE_AUTOSELECT
+op_plus
+id|LANCE_MUST_REINIT_RING
+op_plus
+id|LANCE_HAS_MISSED_FRAME
+op_plus
+id|PCNET32_POSSIBLE
+)brace
+comma
+(brace
+l_int|0x2624
+comma
+l_string|&quot;PCnet/FAST+ 79C972&quot;
+comma
+multiline_comment|/* 79C972 PCInetFAST+. */
+id|LANCE_ENABLE_AUTOSELECT
+op_plus
+id|LANCE_MUST_REINIT_RING
+op_plus
+id|LANCE_HAS_MISSED_FRAME
+op_plus
+id|PCNET32_POSSIBLE
+)brace
+comma
+(brace
 l_int|0x0
 comma
 l_string|&quot;PCnet (unknown)&quot;
@@ -645,7 +675,7 @@ id|lance_need_isa_bounce_buffers
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_PCI) &amp;&amp; !defined(CONFIG_PCNET32)
+macro_line|#if defined(CONFIG_PCI) &amp;&amp; !(defined(CONFIG_PCNET32) || defined(CONFIG_PCNET32_MODULE))
 r_if
 c_cond
 (paren
@@ -1246,7 +1276,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_PCNET32
+macro_line|#if defined(CONFIG_PCNET32) || defined (CONFIG_PCNET32_MODULE)
 multiline_comment|/*&n;&t; * if pcnet32 is configured and the chip is capable of 32bit mode&n;&t; * leave the card alone&n;&t; */
 r_if
 c_cond

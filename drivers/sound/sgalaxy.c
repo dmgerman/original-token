@@ -380,13 +380,18 @@ comma
 l_string|&quot;SoundGalaxy SB&quot;
 )paren
 suffix:semicolon
-id|n
-op_assign
 id|attach_ms_sound
 c_func
 (paren
 id|ai
 )paren
+suffix:semicolon
+id|n
+op_assign
+id|ai-&gt;slots
+(braket
+l_int|0
+)braket
 suffix:semicolon
 r_if
 c_cond

@@ -476,6 +476,19 @@ l_int|0xff
 r_return
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;smc-ultra32.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
@@ -1719,10 +1732,17 @@ id|found
 OG
 l_int|0
 )paren
+(brace
+multiline_comment|/* Got at least one. */
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Got at least one. */
+)brace
 id|printk
 c_func
 (paren
@@ -1739,6 +1759,11 @@ id|found
 op_increment
 suffix:semicolon
 )brace
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1788,7 +1813,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* NB: ultra32_close_card() does free_irq + irq2dev */
 r_int
 id|ioaddr
 op_assign
@@ -1796,16 +1820,13 @@ id|dev-&gt;base_addr
 op_minus
 id|ULTRA32_NIC_OFFSET
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-id|dev-&gt;priv
+r_void
+op_star
+id|priv
 op_assign
-l_int|NULL
+id|dev-&gt;priv
 suffix:semicolon
+multiline_comment|/* NB: ultra32_close_card() does free_irq */
 id|release_region
 c_func
 (paren
@@ -1814,14 +1835,29 @@ comma
 id|ULTRA32_IO_EXTENT
 )paren
 suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|priv
+)paren
+suffix:semicolon
 )brace
 )brace
+id|unlock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 eof

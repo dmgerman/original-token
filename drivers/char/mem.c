@@ -2154,11 +2154,18 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND
+id|soundcore_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_SOUND_OSS&t;
 id|soundcard_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 macro_line|#endif
 macro_line|#ifdef CONFIG_JOYSTICK
 multiline_comment|/*&n;&t; *&t;Some joysticks only appear when the soundcard they are&n;&t; *&t;connected to is configured. Keep the sound/joystick ordering.&n;&t; */

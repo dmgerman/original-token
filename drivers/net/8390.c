@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;  Alexey Kuznetsov&t;: use the 8390&squot;s six bit hash multicast filter.&n;  Paul Gortmaker&t;: tweak ANK&squot;s above multicast changes a bit.&n;  Paul Gortmaker&t;: update packet statistics for v2.1.x&n;  Alan Cox&t;&t;: support arbitary stupid port mappings on the&n;  &t;&t;&t;  68K Macintosh. Support &gt;16bit I/O spaces&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;  Alexey Kuznetsov&t;: use the 8390&squot;s six bit hash multicast filter.&n;  Paul Gortmaker&t;: tweak ANK&squot;s above multicast changes a bit.&n;  Paul Gortmaker&t;: update packet statistics for v2.1.x&n;  Alan Cox&t;&t;: support arbitary stupid port mappings on the&n;  &t;&t;&t;  68K Macintosh. Support &gt;16bit I/O spaces&n;  Paul Gortmaker&t;: add kmod support for auto-loading of the 8390&n;&t;&t;&t;  module by all drivers that require it.&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
 DECL|variable|version
 r_static
 r_const
@@ -29,6 +29,8 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+DECL|macro|NS8390_CORE
+mdefine_line|#define NS8390_CORE
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;void get_8390_hdr(struct device *dev, struct e8390_hdr *hdr, int ring_page)&n;&t;&t;Read the 4 byte, page aligned 8390 header. *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;&t;void block_input(struct device *dev, int count, struct sk_buff *skb, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into the skb data area. Start &n;&t;&t;reading from RING_OFFSET, the address as the 8390 sees it.  This will always&n;&t;&t;follow the read of the 8390 header. &n;*/
 DECL|macro|ei_reset_8390
@@ -40,14 +42,7 @@ mdefine_line|#define ei_block_input (ei_local-&gt;block_input)
 DECL|macro|ei_get_8390_hdr
 mdefine_line|#define ei_get_8390_hdr (ei_local-&gt;get_8390_hdr)
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
-macro_line|#ifdef EI_DEBUG
-DECL|variable|ei_debug
-r_int
-id|ei_debug
-op_assign
-id|EI_DEBUG
-suffix:semicolon
-macro_line|#else
+macro_line|#ifndef ei_debug
 DECL|variable|ei_debug
 r_int
 id|ei_debug
@@ -2926,7 +2921,7 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* mcast set to accept-all */
-multiline_comment|/* &n;&t; * DP8390 manuals don&squot;t specify any magic sequence for altering&n;&t; * the multicast regs on an already running card. To be safe, we&n;&t; * ensure multicast mode is off prior to loading up the new hash&n;&t; * table. If this proves to be not enough, we can always resort&n;&t; * to stopping the NIC, loading the table and then restarting.&n;&t; */
+multiline_comment|/* &n;&t; * DP8390 manuals don&squot;t specify any magic sequence for altering&n;&t; * the multicast regs on an already running card. To be safe, we&n;&t; * ensure multicast mode is off prior to loading up the new hash&n;&t; * table. If this proves to be not enough, we can always resort&n;&t; * to stopping the NIC, loading the table and then restarting.&n;&t; *&n;&t; * Bug Alert!  The MC regs on the SMC 83C690 (SMC Elite and SMC &n;&t; * Elite16) appear to be write-only. The NS 8390 data sheet lists&n;&t; * them as r/w so this is a bug.  The SMC 83C790 (SMC Ultra and&n;&t; * Ultra32 EISA) appears to have this bug fixed.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2997,6 +2992,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef NOT_83C690
 r_if
 c_cond
 (paren
@@ -3028,6 +3024,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 id|outb_p
 c_func
@@ -3673,18 +3670,6 @@ r_int
 id|start_page
 )paren
 (brace
-r_struct
-id|ei_device
-op_star
-id|ei_local
-op_assign
-(paren
-r_struct
-id|ei_device
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
 r_int
 id|e8390_base
 op_assign
@@ -3776,6 +3761,14 @@ id|E8390_CMD
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+DECL|variable|NS8390_module
+r_struct
+id|module
+op_star
+id|NS8390_module
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -3784,6 +3777,11 @@ c_func
 r_void
 )paren
 (brace
+id|NS8390_module
+op_assign
+op_amp
+id|__this_module
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3796,6 +3794,10 @@ c_func
 r_void
 )paren
 (brace
+id|NS8390_module
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

@@ -1257,6 +1257,16 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Disable SB mode IRQ and DMA */
+multiline_comment|/* bit 2 of MC4 reverses it&squot;s meaning between the C930&n;&t;   and the C931. */
+id|cfg
+op_assign
+id|c931_detected
+ques
+c_cond
+l_int|0x04
+suffix:colon
+l_int|0x00
+suffix:semicolon
 macro_line|#ifdef MAD16_CDSEL
 r_if
 c_cond
@@ -1272,6 +1282,8 @@ c_func
 id|MC4_PORT
 comma
 l_int|0x62
+op_or
+id|cfg
 )paren
 suffix:semicolon
 )brace
@@ -1283,6 +1295,8 @@ c_func
 id|MC4_PORT
 comma
 l_int|0x52
+op_or
+id|cfg
 )paren
 suffix:semicolon
 multiline_comment|/* opl3 */
@@ -1293,6 +1307,8 @@ c_func
 id|MC4_PORT
 comma
 l_int|0x52
+op_or
+id|cfg
 )paren
 suffix:semicolon
 macro_line|#endif

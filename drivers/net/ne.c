@@ -813,6 +813,12 @@ comma
 id|pci_irq_line
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;*&bslash;n* Use of the PCI-NE2000 driver with this card is recommended!&bslash;n*&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1036,6 +1042,19 @@ id|ENODEV
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;ne.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
@@ -1963,6 +1982,10 @@ c_func
 (paren
 id|dev-&gt;priv
 )paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 id|EAGAIN
@@ -3513,10 +3536,17 @@ id|found
 op_ne
 l_int|0
 )paren
+(brace
 multiline_comment|/* Got at least one. */
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3552,6 +3582,11 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3601,6 +3636,12 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_void
+op_star
+id|priv
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 id|free_irq
 c_func
 (paren
@@ -3617,6 +3658,10 @@ comma
 id|NE_IO_EXTENT
 )paren
 suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
@@ -3626,15 +3671,16 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
-id|dev-&gt;priv
+id|priv
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
+)brace
+)brace
+id|unlock_8390_module
+c_func
+(paren
+)paren
 suffix:semicolon
-)brace
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

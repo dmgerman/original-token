@@ -554,6 +554,19 @@ l_int|0x5300
 r_return
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;hp-plus.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
@@ -1051,7 +1064,6 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-op_amp
 id|ei_interrupt
 comma
 l_int|0
@@ -2143,10 +2155,17 @@ id|found
 op_ne
 l_int|0
 )paren
+(brace
+multiline_comment|/* Got at least one. */
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Got at least one. */
+)brace
 r_return
 op_minus
 id|ENXIO
@@ -2156,6 +2175,11 @@ id|found
 op_increment
 suffix:semicolon
 )brace
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2205,13 +2229,31 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* NB: hpp_close() handles free_irq */
 r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 op_minus
 id|NIC_OFFSET
+suffix:semicolon
+r_void
+op_star
+id|priv
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+multiline_comment|/* NB: hpp_close() handles free_irq */
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|HP_IO_EXTENT
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
 suffix:semicolon
 id|unregister_netdev
 c_func
@@ -2222,23 +2264,16 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
-id|dev-&gt;priv
+id|priv
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
-id|release_region
+)brace
+)brace
+id|unlock_8390_module
 c_func
 (paren
-id|ioaddr
-comma
-id|HP_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

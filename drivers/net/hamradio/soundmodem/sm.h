@@ -1,11 +1,12 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;sm.h  --  soundcard radio modem driver internal header.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; */
+multiline_comment|/*&n; *&t;sm.h  --  soundcard radio modem driver internal header.&n; *&n; *&t;Copyright (C) 1996-1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; */
 macro_line|#ifndef _SM_H
 DECL|macro|_SM_H
 mdefine_line|#define _SM_H
 multiline_comment|/* ---------------------------------------------------------------------- */
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/soundmodem.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 DECL|macro|SM_DEBUG
 mdefine_line|#define SM_DEBUG
 multiline_comment|/* ---------------------------------------------------------------------- */
@@ -116,7 +117,7 @@ DECL|member|m
 r_int
 id|m
 (braket
-l_int|32
+l_int|48
 op_div
 r_sizeof
 (paren
@@ -805,6 +806,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * ===================== utility functions ===============================&n; */
+macro_line|#if 0
 r_extern
 r_inline
 r_int
@@ -859,7 +861,6 @@ id|unused
 )paren
 )paren
 suffix:semicolon
-DECL|function|hweight32
 r_extern
 r_inline
 r_int
@@ -964,7 +965,6 @@ l_int|0x0000FFFF
 )paren
 suffix:semicolon
 )brace
-DECL|function|hweight16
 r_extern
 r_inline
 r_int
@@ -1051,7 +1051,6 @@ l_int|0x00FF
 )paren
 suffix:semicolon
 )brace
-DECL|function|hweight8
 r_extern
 r_inline
 r_int
@@ -1120,6 +1119,7 @@ l_int|0x0F
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_extern
 r_inline
 r_int
@@ -1258,13 +1258,10 @@ suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * ===================== profiling =======================================&n; */
 macro_line|#ifdef __i386__
-r_extern
-r_int
-id|sm_x86_capability
-suffix:semicolon
+macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|HAS_RDTSC
-mdefine_line|#define HAS_RDTSC (sm_x86_capability &amp; 0x10)
-multiline_comment|/*&n; * only do 32bit cycle counter arithmetic; we hope we won&squot;t overflow :-)&n; * in fact, overflowing modems would require over 2THz clock speeds :-)&n; */
+mdefine_line|#define HAS_RDTSC (current_cpu_data.x86_capability &amp; 0x10)
+multiline_comment|/*&n; * only do 32bit cycle counter arithmetic; we hope we won&squot;t overflow.&n; * in fact, overflowing modems would require over 2THz CPU clock speeds :-)&n; */
 DECL|macro|time_exec
 mdefine_line|#define time_exec(var,cmd)                                              &bslash;&n;({                                                                      &bslash;&n;&t;if (HAS_RDTSC) {                                                &bslash;&n;&t;&t;unsigned int cnt1, cnt2, cnt3;                          &bslash;&n;&t;&t;__asm__(&quot;.byte 0x0f,0x31&quot; : &quot;=a&quot; (cnt1), &quot;=d&quot; (cnt3));  &bslash;&n;&t;&t;cmd;                                                    &bslash;&n;&t;&t;__asm__(&quot;.byte 0x0f,0x31&quot; : &quot;=a&quot; (cnt2), &quot;=d&quot; (cnt3));  &bslash;&n;&t;&t;var = cnt2-cnt1;                                        &bslash;&n;&t;} else {                                                        &bslash;&n;&t;&t;cmd;                                                    &bslash;&n;&t;}                                                               &bslash;&n;})
 macro_line|#else /* __i386__ */

@@ -2,7 +2,8 @@ macro_line|#ifndef _ALPHA_BYTEORDER_H
 DECL|macro|_ALPHA_BYTEORDER_H
 mdefine_line|#define _ALPHA_BYTEORDER_H
 macro_line|#include &lt;asm/types.h&gt;
-macro_line|#ifdef __GNUC__
+multiline_comment|/* EGCS 1.1 can, without scheduling, do just as good as we do here&n;   with the standard macros.  And since it can schedule, it does even&n;   better in the end.  */
+macro_line|#if defined(__GNUC__) &amp;&amp; __GNUC_MINOR__ &lt; 91
 DECL|function|___arch__swab32
 r_static
 id|__inline__

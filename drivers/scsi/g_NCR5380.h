@@ -243,6 +243,10 @@ DECL|macro|BOARD_NCR5380
 mdefine_line|#define BOARD_NCR5380&t;0
 DECL|macro|BOARD_NCR53C400
 mdefine_line|#define BOARD_NCR53C400&t;1
+DECL|macro|BOARD_NCR53C400A
+mdefine_line|#define BOARD_NCR53C400A 2
+DECL|macro|BOARD_DTC3181E
+mdefine_line|#define BOARD_DTC3181E&t;3
 macro_line|#endif /* else def HOSTS_C */
 macro_line|#endif /* ndef ASM */
 macro_line|#endif /* GENERIC_NCR5380_H */

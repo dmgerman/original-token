@@ -427,6 +427,19 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;wd.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1383,10 +1396,17 @@ id|found
 op_ne
 l_int|0
 )paren
+(brace
+multiline_comment|/* Got at least one. */
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Got at least one. */
+)brace
 r_return
 op_minus
 id|ENXIO
@@ -1396,6 +1416,11 @@ id|found
 op_increment
 suffix:semicolon
 )brace
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1445,6 +1470,12 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_void
+op_star
+id|priv
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 multiline_comment|/* NB: ultra_close_card() does free_irq */
 r_int
 id|ioaddr
@@ -1452,6 +1483,18 @@ op_assign
 id|dev-&gt;base_addr
 op_minus
 id|ULTRA_NIC_OFFSET
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|ULTRA_IO_EXTENT
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
 suffix:semicolon
 id|unregister_netdev
 c_func
@@ -1462,23 +1505,16 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
-id|dev-&gt;priv
+id|priv
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
-id|release_region
+)brace
+)brace
+id|unlock_8390_module
 c_func
 (paren
-id|ioaddr
-comma
-id|ULTRA_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/inet -c smc-mca.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 8&n; *  tab-width: 8&n; * End:&n; */

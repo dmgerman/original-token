@@ -71,6 +71,42 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_RADIO_AZTECH
+r_extern
+r_int
+id|aztech_init
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_RADIO_RTRACK
+r_extern
+r_int
+id|rtrack_init
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_RADIO_SF16FMI
+r_extern
+r_int
+id|fmi_init
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|video_init_list
 r_static
 r_struct
@@ -119,6 +155,12 @@ id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vfl-&gt;read
+)paren
+(brace
 r_return
 id|vfl
 op_member_access_from_pointer
@@ -135,6 +177,12 @@ id|file-&gt;f_flags
 op_amp
 id|O_NONBLOCK
 )paren
+suffix:semicolon
+)brace
+r_else
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Write for now does nothing. No reason it shouldnt do overlay setting&n; *&t;for some boards I guess..&n; */
@@ -176,6 +224,12 @@ id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vfl-&gt;write
+)paren
+(brace
 r_return
 id|vfl
 op_member_access_from_pointer
@@ -192,6 +246,11 @@ id|file-&gt;f_flags
 op_amp
 id|O_NONBLOCK
 )paren
+suffix:semicolon
+)brace
+r_else
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Open a video device.&n; */
@@ -685,6 +744,12 @@ suffix:semicolon
 multiline_comment|/* The init call may sleep so we book the slot out&n;&t;&t;&t;   then call */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vfd-&gt;initialize
+)paren
+(brace
 id|err
 op_assign
 id|vfd
@@ -715,6 +780,7 @@ suffix:semicolon
 r_return
 id|err
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0

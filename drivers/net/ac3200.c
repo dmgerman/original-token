@@ -1,5 +1,5 @@
 multiline_comment|/* ac3200.c: A driver for the Ansel Communications EISA ethernet adaptor. */
-multiline_comment|/*&n;&t;Written 1993, 1994 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov, or&n;    C/O Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is driver for the Ansel Communications Model 3200 EISA Ethernet LAN&n;&t;Adapter.  The programming information is from the users manual, as related&n;&t;by glee@ardnassak.math.clemson.edu.&n;  */
+multiline_comment|/*&n;&t;Written 1993, 1994 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov, or&n;&t;C/O Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is driver for the Ansel Communications Model 3200 EISA Ethernet LAN&n;&t;Adapter.  The programming information is from the users manual, as related&n;&t;by glee@ardnassak.math.clemson.edu.&n;&n;&t;Changelog:&n;&n;&t;Paul Gortmaker 05/98&t;: add support for shared mem above 1MB.&n;&n;  */
 DECL|variable|version
 r_static
 r_const
@@ -19,32 +19,33 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* Offsets from the base address. */
 DECL|macro|AC_NIC_BASE
-mdefine_line|#define AC_NIC_BASE&t;&t;0x00
+mdefine_line|#define AC_NIC_BASE&t;0x00
 DECL|macro|AC_SA_PROM
-mdefine_line|#define AC_SA_PROM&t;&t;0x16&t;&t;&t;/* The station address PROM. */
+mdefine_line|#define AC_SA_PROM&t;0x16&t;&t;&t;/* The station address PROM. */
 DECL|macro|AC_ADDR0
-mdefine_line|#define  AC_ADDR0&t;&t; 0x00&t;&t;&t;/* Prefix station address values. */
+mdefine_line|#define AC_ADDR0&t;0x00&t;&t;&t;/* Prefix station address values. */
 DECL|macro|AC_ADDR1
-mdefine_line|#define  AC_ADDR1&t;&t; 0x40&t;&t;&t;/* !!!!These are just guesses!!!! */
+mdefine_line|#define AC_ADDR1&t;0x40&t;&t;&t;
 DECL|macro|AC_ADDR2
-mdefine_line|#define  AC_ADDR2&t;&t; 0x90
+mdefine_line|#define AC_ADDR2&t;0x90
 DECL|macro|AC_ID_PORT
-mdefine_line|#define AC_ID_PORT&t;&t;0xC80
+mdefine_line|#define AC_ID_PORT&t;0xC80
 DECL|macro|AC_EISA_ID
-mdefine_line|#define AC_EISA_ID&t;&t; 0x0110d305
+mdefine_line|#define AC_EISA_ID&t;0x0110d305
 DECL|macro|AC_RESET_PORT
 mdefine_line|#define AC_RESET_PORT&t;0xC84
 DECL|macro|AC_RESET
-mdefine_line|#define  AC_RESET&t;&t; 0x00
+mdefine_line|#define AC_RESET&t;0x00
 DECL|macro|AC_ENABLE
-mdefine_line|#define  AC_ENABLE&t;&t; 0x01
+mdefine_line|#define AC_ENABLE&t;0x01
 DECL|macro|AC_CONFIG
-mdefine_line|#define AC_CONFIG&t;&t;0xC90&t;/* The configuration port. */
+mdefine_line|#define AC_CONFIG&t;0xC90&t;/* The configuration port. */
 DECL|macro|AC_IO_EXTENT
-mdefine_line|#define AC_IO_EXTENT 0x10&t;&t;/* IS THIS REALLY TRUE ??? */
+mdefine_line|#define AC_IO_EXTENT 0x20
 multiline_comment|/* Actually accessed is:&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_NIC_BASE (0-15)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_SA_PROM (0-5)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_ID_PORT (0-3)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_RESET_PORT&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_CONFIG&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 multiline_comment|/* Decoding of the configuration register. */
 DECL|variable|__initdata
@@ -307,7 +308,6 @@ multiline_comment|/* Don&squot;t probe at all. */
 r_return
 id|ENXIO
 suffix:semicolon
-multiline_comment|/* If you have a pre 0.99pl15 machine you should delete this line. */
 r_if
 c_cond
 (paren
@@ -389,212 +389,46 @@ id|dev
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifndef final_version
-id|printk
-c_func
-(paren
-l_string|&quot;AC3200 ethercard probe at %#3x:&quot;
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|6
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot; %02x&quot;
-comma
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|AC_SA_PROM
-op_plus
-id|i
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/* !!!!The values of AC_ADDRn (see above) should be corrected when we&n;&t;   find out the correct station address prefix!!!! */
 r_if
 c_cond
 (paren
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|AC_SA_PROM
-op_plus
-l_int|0
-)paren
-op_ne
-id|AC_ADDR0
-op_logical_or
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|AC_SA_PROM
-op_plus
-l_int|1
-)paren
-op_ne
-id|AC_ADDR1
-op_logical_or
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|AC_SA_PROM
-op_plus
-l_int|2
-)paren
-op_ne
-id|AC_ADDR2
-)paren
-(brace
-macro_line|#ifndef final_version
-id|printk
-c_func
-(paren
-l_string|&quot; not found (invalid prefix).&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-id|ENODEV
-suffix:semicolon
-)brace
-multiline_comment|/* The correct probe method is to check the EISA ID. */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|inl
+id|inb_p
 c_func
 (paren
 id|ioaddr
 op_plus
 id|AC_ID_PORT
 )paren
-op_ne
-id|AC_EISA_ID
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;EISA ID mismatch, %8x vs %8x.&bslash;n&quot;
-comma
-id|inl
-c_func
-(paren
-id|ioaddr
-op_plus
-id|AC_ID_PORT
-)paren
-comma
-id|AC_EISA_ID
-)paren
-suffix:semicolon
-r_return
-id|ENODEV
-suffix:semicolon
-)brace
-multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
-r_if
-c_cond
-(paren
-id|dev
 op_eq
-l_int|NULL
+l_int|0xff
 )paren
-(brace
-id|printk
-c_func
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+r_if
+c_cond
 (paren
-l_string|&quot;ac3200.c: Passed a NULL device.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ETHER_ADDR_LEN
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|dev-&gt;dev_addr
-(braket
-id|i
-)braket
-op_assign
-id|inb
+id|inl
 c_func
 (paren
 id|ioaddr
 op_plus
-id|AC_SA_PROM
-op_plus
-id|i
+id|AC_ID_PORT
 )paren
+op_ne
+id|AC_EISA_ID
+)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
-)brace
 macro_line|#ifndef final_version
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nAC3200 ethercard configuration register is %#02x,&quot;
+id|KERN_DEBUG
+l_string|&quot;AC3200 ethercard configuration register is %#02x,&quot;
 l_string|&quot; EISA ID %02x %02x %02x %02x.&bslash;n&quot;
 comma
 id|inb
@@ -647,6 +481,153 @@ l_int|3
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ac3200.c: Passed a NULL device.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;AC3200 in EISA slot %d, node&quot;
+comma
+id|ioaddr
+op_div
+l_int|0x1000
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; %02x&quot;
+comma
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|AC_SA_PROM
+op_plus
+id|i
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#if 0
+multiline_comment|/* Check the vendor ID/prefix. Redundant after checking the EISA ID */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|AC_SA_PROM
+op_plus
+l_int|0
+)paren
+op_ne
+id|AC_ADDR0
+op_logical_or
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|AC_SA_PROM
+op_plus
+l_int|1
+)paren
+op_ne
+id|AC_ADDR1
+op_logical_or
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|AC_SA_PROM
+op_plus
+l_int|2
+)paren
+op_ne
+id|AC_ADDR2
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, not found (invalid prefix).&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|ENODEV
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
+r_if
+c_cond
+(paren
+id|ethdev_init
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;, unable to allocate memory for dev-&gt;priv.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 multiline_comment|/* Assign and allocate the interrupt now. */
 r_if
 c_cond
@@ -655,6 +636,7 @@ id|dev-&gt;irq
 op_eq
 l_int|0
 )paren
+(brace
 id|dev-&gt;irq
 op_assign
 id|config2irq
@@ -669,18 +651,30 @@ id|AC_CONFIG
 )paren
 )paren
 suffix:semicolon
-r_else
-r_if
-c_cond
+id|printk
+c_func
 (paren
-id|dev-&gt;irq
-op_eq
-l_int|2
+l_string|&quot;, using&quot;
 )paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|dev-&gt;irq
 op_assign
-l_int|9
+id|irq_cannonicalize
+c_func
+(paren
+id|dev-&gt;irq
+)paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;, assigning&quot;
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -701,44 +695,38 @@ id|dev
 (brace
 id|printk
 (paren
-l_string|&quot; unable to get IRQ %d.&bslash;n&quot;
+l_string|&quot; nothing! Unable to get IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;irq
 )paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
-r_if
-c_cond
-(paren
-id|ethdev_init
-c_func
-(paren
-id|dev
-)paren
-)paren
-(brace
 id|printk
-(paren
-l_string|&quot; unable to allocate memory for dev-&gt;priv.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|free_irq
 c_func
 (paren
+l_string|&quot; IRQ %d, %s port&bslash;n&quot;
+comma
 id|dev-&gt;irq
 comma
-id|dev
+id|port_name
+(braket
+id|dev-&gt;if_port
+)braket
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
 id|request_region
 c_func
 (paren
@@ -849,6 +837,178 @@ id|AC_CONFIG
 )paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: AC3200 at %#3x with %dkB memory at physical address %#lx.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|ioaddr
+comma
+id|AC_STOP_PG
+op_div
+l_int|4
+comma
+id|dev-&gt;mem_start
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *  BEWARE!! Some dain-bramaged EISA SCUs will allow you to put&n;&t; *  the card mem within the region covered by `normal&squot; RAM  !!!&n;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;mem_start
+OG
+l_int|1024
+op_star
+l_int|1024
+)paren
+(brace
+multiline_comment|/* phys addr &gt; 1MB */
+r_if
+c_cond
+(paren
+id|dev-&gt;mem_start
+OL
+(paren
+r_int
+r_int
+)paren
+id|high_memory
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;ac3200.c: Card RAM overlaps with normal memory!!!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;ac3200.c: Use EISA SCU to set card memory below 1MB,&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;ac3200.c: or to an address above %p.&bslash;n&quot;
+comma
+id|high_memory
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;ac3200.c: Driver NOT installed.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+id|EINVAL
+suffix:semicolon
+)brace
+id|dev-&gt;mem_start
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
+id|dev-&gt;mem_start
+comma
+id|AC_STOP_PG
+op_star
+l_int|0x100
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;mem_start
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ac3200.c: Unable to remap card memory above 1MB !!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ac3200.c: Try using EISA SCU to set memory below 1MB.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ac3200.c: Driver NOT installed.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+id|EAGAIN
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;ac3200.c: remapped %dkB card memory to virtual address %#lx&bslash;n&quot;
+comma
+id|AC_STOP_PG
+op_div
+l_int|4
+comma
+id|dev-&gt;mem_start
+)paren
+suffix:semicolon
+)brace
 id|dev-&gt;rmem_start
 op_assign
 id|dev-&gt;mem_start
@@ -892,29 +1052,6 @@ suffix:semicolon
 id|ei_status.word16
 op_assign
 l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n%s: AC3200 at %#x, IRQ %d, %s port, shared memory %#lx-%#lx.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|ioaddr
-comma
-id|dev-&gt;irq
-comma
-id|port_name
-(braket
-id|dev-&gt;if_port
-)braket
-comma
-id|dev-&gt;mem_start
-comma
-id|dev-&gt;mem_end
-op_minus
-l_int|1
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1633,10 +1770,17 @@ id|found
 op_ne
 l_int|0
 )paren
+(brace
+multiline_comment|/* Got at least one. */
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Got at least one. */
+)brace
 r_return
 op_minus
 id|ENXIO
@@ -1646,6 +1790,11 @@ id|found
 op_increment
 suffix:semicolon
 )brace
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1695,21 +1844,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|unregister_netdev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-id|dev-&gt;priv
+r_void
+op_star
+id|priv
 op_assign
-l_int|NULL
+id|dev-&gt;priv
 suffix:semicolon
 multiline_comment|/* Someday free_irq may be in ac_close_card() */
 id|free_irq
@@ -1728,8 +1867,29 @@ comma
 id|AC_IO_EXTENT
 )paren
 suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|priv
+)paren
+suffix:semicolon
 )brace
 )brace
+id|unlock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

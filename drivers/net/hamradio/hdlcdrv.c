@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *  The driver was derived from Donald Beckers skeleton.c&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines &n; *                  (copy_{to,from}_user)&n; *   0.2  21.11.96  various small changes&n; *   0.3  03.03.97  fixed (hopefully) IP not working with ax.25 as a module&n; *   0.4  16.04.97  init code/data tagged&n; *   0.5  30.07.97  made HDLC buffers bigger (solves a problem with the&n; *                  soundmodem driver)&n; */
+multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *&n; *&t;Copyright (C) 1996-1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *  The driver was derived from Donald Beckers skeleton.c&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines &n; *                  (copy_{to,from}_user)&n; *   0.2  21.11.96  various small changes&n; *   0.3  03.03.97  fixed (hopefully) IP not working with ax.25 as a module&n; *   0.4  16.04.97  init code/data tagged&n; *   0.5  30.07.97  made HDLC buffers bigger (solves a problem with the&n; *                  soundmodem driver)&n; *   0.6  05.04.98  add spinlocks&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -9,7 +9,9 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -23,199 +25,6 @@ multiline_comment|/* make genksyms happy */
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
-multiline_comment|/* --------------------------------------------------------------------- */
-multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#else
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-DECL|macro|put_user
-macro_line|#undef put_user
-DECL|macro|get_user
-macro_line|#undef get_user
-DECL|macro|put_user
-mdefine_line|#define put_user(x,ptr) ({ __put_user((unsigned long)(x),(ptr),sizeof(*(ptr))); 0; })
-DECL|macro|get_user
-mdefine_line|#define get_user(x,ptr) ({ x = ((__typeof__(*(ptr)))__get_user((ptr),sizeof(*(ptr)))); 0; })
-DECL|function|copy_from_user
-r_extern
-r_inline
-r_int
-id|copy_from_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
-r_int
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-id|memcpy_fromfs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|copy_to_user
-r_extern
-r_inline
-r_int
-id|copy_to_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
-r_int
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|to
-comma
-id|n
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-id|memcpy_tofs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20115
-DECL|function|dev_init_buffers
-r_extern
-id|__inline__
-r_void
-id|dev_init_buffers
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|skb_queue_head_init
-c_func
-(paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20123
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__init
-mdefine_line|#define __init
-DECL|macro|__initdata
-mdefine_line|#define __initdata
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(x) x
-macro_line|#endif
-multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20125
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit set_bit
-DECL|macro|test_and_clear_bit
-mdefine_line|#define test_and_clear_bit clear_bit
-macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * The name of the card. Is used for messages and in the requests for&n; * io regions, irqs and dma channels&n; */
 DECL|variable|ax25_bcast
@@ -3574,6 +3383,13 @@ id|s-&gt;ptt_keyed
 op_assign
 l_int|0
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|s-&gt;hdlcrx.hbuf.lock
+)paren
+suffix:semicolon
 id|s-&gt;hdlcrx.hbuf.rd
 op_assign
 id|s-&gt;hdlcrx.hbuf.wr
@@ -3587,6 +3403,13 @@ suffix:semicolon
 id|s-&gt;hdlcrx.rx_state
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|s-&gt;hdlctx.hbuf.lock
+)paren
 suffix:semicolon
 id|s-&gt;hdlctx.hbuf.rd
 op_assign
@@ -4179,7 +4002,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hdlcdrv: version 0.5 compiled &quot;
+l_string|&quot;hdlcdrv: version 0.6 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__

@@ -549,7 +549,8 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;sb_midi: Too many midi devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -4357,12 +4357,6 @@ r_struct
 id|task_struct
 op_star
 id|tsk
-op_assign
-id|find_task_by_pid
-c_func
-(paren
-id|pid
-)paren
 suffix:semicolon
 r_int
 id|size

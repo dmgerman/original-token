@@ -144,4 +144,11 @@ c_func
 id|sound_unload_lowlevel_drivers
 )paren
 suffix:semicolon
+DECL|variable|sound_preinit_lowlevel_drivers
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sound_preinit_lowlevel_drivers
+)paren
+suffix:semicolon
 eof

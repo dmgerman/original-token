@@ -27,6 +27,8 @@ DECL|macro|BT848_DSTATUS_NUML
 mdefine_line|#define BT848_DSTATUS_NUML     (1&lt;&lt;4)
 DECL|macro|BT848_DSTATUS_CSEL
 mdefine_line|#define BT848_DSTATUS_CSEL     (1&lt;&lt;3)
+DECL|macro|BT848_DSTATUS_PLOCK
+mdefine_line|#define BT848_DSTATUS_PLOCK    (1&lt;&lt;2)
 DECL|macro|BT848_DSTATUS_LOF
 mdefine_line|#define BT848_DSTATUS_LOF      (1&lt;&lt;1)
 DECL|macro|BT848_DSTATUS_COF
@@ -55,6 +57,8 @@ DECL|macro|BT848_IFORM_XTBOTH
 mdefine_line|#define BT848_IFORM_XTBOTH     (3&lt;&lt;3)
 DECL|macro|BT848_IFORM_NTSC
 mdefine_line|#define BT848_IFORM_NTSC       1
+DECL|macro|BT848_IFORM_NTSC_J
+mdefine_line|#define BT848_IFORM_NTSC_J     2
 DECL|macro|BT848_IFORM_PAL_BDGHI
 mdefine_line|#define BT848_IFORM_PAL_BDGHI  3
 DECL|macro|BT848_IFORM_PAL_M
@@ -63,6 +67,8 @@ DECL|macro|BT848_IFORM_PAL_N
 mdefine_line|#define BT848_IFORM_PAL_N      5
 DECL|macro|BT848_IFORM_SECAM
 mdefine_line|#define BT848_IFORM_SECAM      6
+DECL|macro|BT848_IFORM_PAL_NC
+mdefine_line|#define BT848_IFORM_PAL_NC     7
 DECL|macro|BT848_IFORM_AUTO
 mdefine_line|#define BT848_IFORM_AUTO       0
 DECL|macro|BT848_IFORM_NORM
@@ -147,6 +153,14 @@ DECL|macro|BT848_SCLOOP_HFILT_QCIF
 mdefine_line|#define BT848_SCLOOP_HFILT_QCIF (2&lt;&lt;3)
 DECL|macro|BT848_SCLOOP_HFILT_ICON
 mdefine_line|#define BT848_SCLOOP_HFILT_ICON (3&lt;&lt;3)
+DECL|macro|BT848_SCLOOP_PEAK
+mdefine_line|#define BT848_SCLOOP_PEAK       (1&lt;&lt;7)
+DECL|macro|BT848_SCLOOP_HFILT_MINP
+mdefine_line|#define BT848_SCLOOP_HFILT_MINP (1&lt;&lt;3)
+DECL|macro|BT848_SCLOOP_HFILT_MEDP
+mdefine_line|#define BT848_SCLOOP_HFILT_MEDP (2&lt;&lt;3)
+DECL|macro|BT848_SCLOOP_HFILT_MAXP
+mdefine_line|#define BT848_SCLOOP_HFILT_MAXP (3&lt;&lt;3)
 DECL|macro|BT848_OFORM
 mdefine_line|#define BT848_OFORM            0x048
 DECL|macro|BT848_OFORM_RANGE
@@ -494,5 +508,18 @@ DECL|macro|BT848_RISC_SKIP123
 mdefine_line|#define BT848_RISC_SKIP123     (0x0a&lt;&lt;28)
 DECL|macro|BT848_RISC_WRITE1S23
 mdefine_line|#define BT848_RISC_WRITE1S23   (0x0b&lt;&lt;28)
+multiline_comment|/* Bt848A and Bt849 only !! */
+DECL|macro|BT848_TGLB
+mdefine_line|#define BT848_TGLB             0x080
+DECL|macro|BT848_TGCTRL
+mdefine_line|#define BT848_TGCTRL           0x084
+DECL|macro|BT848_FCAP
+mdefine_line|#define BT848_FCAP             0x0E8
+DECL|macro|BT848_PLL_F_LO
+mdefine_line|#define BT848_PLL_F_LO         0x0F0
+DECL|macro|BT848_PLL_F_HI
+mdefine_line|#define BT848_PLL_F_HI         0x0F4
+DECL|macro|BT848_PLL_XCI
+mdefine_line|#define BT848_PLL_XCI          0x0F8
 macro_line|#endif
 eof

@@ -551,6 +551,19 @@ multiline_comment|/* and disable the secondary interface. */
 r_if
 c_cond
 (paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;e2100.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|ei_debug
 op_logical_and
 id|version_printed
@@ -625,6 +638,27 @@ id|i
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
+r_if
+c_cond
+(paren
+id|ethdev_init
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -739,27 +773,6 @@ id|dev-&gt;irq
 op_assign
 l_int|9
 suffix:semicolon
-multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
-r_if
-c_cond
-(paren
-id|ethdev_init
-c_func
-(paren
-id|dev
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
 multiline_comment|/* Grab the region so we can find a different board if IRQ select fails. */
 id|request_region
 c_func
@@ -1845,10 +1858,17 @@ id|found
 op_ne
 l_int|0
 )paren
+(brace
+multiline_comment|/* Got at least one. */
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Got at least one. */
+)brace
 r_return
 op_minus
 id|ENXIO
@@ -1858,6 +1878,11 @@ id|found
 op_increment
 suffix:semicolon
 )brace
+id|lock_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1907,7 +1932,25 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_void
+op_star
+id|priv
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 multiline_comment|/* NB: e21_close() handles free_irq */
+id|release_region
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|E21_IO_EXTENT
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
@@ -1917,23 +1960,16 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
-id|dev-&gt;priv
+id|priv
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
-id|release_region
+)brace
+)brace
+id|unlock_8390_module
 c_func
 (paren
-id|dev-&gt;base_addr
-comma
-id|E21_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

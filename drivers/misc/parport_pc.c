@@ -1,4 +1,4 @@
-multiline_comment|/* Low-level parallel-port routines for PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; */
+multiline_comment|/* Low-level parallel-port routines for PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; */
 multiline_comment|/* This driver should work with any hardware that is broadly compatible&n; * with that in the IBM PC.  This applies to the majority of integrated&n; * I/O chipsets that are commonly available.  The expected register&n; * layout is:&n; *&n; *&t;base+0&t;&t;data&n; *&t;base+1&t;&t;status&n; *&t;base+2&t;&t;control&n; *&n; * In addition, there are some optional registers:&n; *&n; *&t;base+3&t;&t;EPP command&n; *&t;base+4&t;&t;EPP&n; *&t;base+0x400&t;ECP config A&n; *&t;base+0x401&t;ECP config B&n; *&t;base+0x402&t;ECP control&n; *&n; * All registers are 8 bits wide and read/write.  If your hardware differs&n; * only in register addresses (eg because your registers are on 32-bit&n; * word boundaries) then you can alter the constants in parport_pc.h to&n; * accomodate this.&n; */
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -647,6 +647,26 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|parport_pc_init_state
+r_void
+id|parport_pc_init_state
+c_func
+(paren
+r_struct
+id|parport_state
+op_star
+id|s
+)paren
+(brace
+id|s-&gt;u.pc.ctr
+op_assign
+l_int|0xc
+suffix:semicolon
+id|s-&gt;u.pc.ecr
+op_assign
+l_int|0x0
+suffix:semicolon
+)brace
 DECL|function|parport_pc_save_state
 r_void
 id|parport_pc_save_state
@@ -671,6 +691,13 @@ c_func
 id|p
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;modes
+op_amp
+id|PARPORT_MODE_PCECR
+)paren
 id|s-&gt;u.pc.ecr
 op_assign
 id|parport_pc_read_econtrol
@@ -704,6 +731,13 @@ comma
 id|s-&gt;u.pc.ctr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;modes
+op_amp
+id|PARPORT_MODE_PCECR
+)paren
 id|parport_pc_write_econtrol
 c_func
 (paren
@@ -1029,6 +1063,8 @@ id|parport_pc_ecp_write_block
 comma
 id|parport_pc_ecp_read_block
 comma
+id|parport_pc_init_state
+comma
 id|parport_pc_save_state
 comma
 id|parport_pc_restore_state
@@ -1147,14 +1183,6 @@ id|pb
 )paren
 (brace
 multiline_comment|/* Do a simple read-write test to make sure the port exists. */
-id|parport_pc_write_econtrol
-c_func
-(paren
-id|pb
-comma
-l_int|0xc
-)paren
-suffix:semicolon
 id|parport_pc_write_control
 c_func
 (paren
@@ -1413,12 +1441,6 @@ suffix:semicolon
 r_int
 r_char
 id|oecr
-op_assign
-id|parport_pc_read_econtrol
-c_func
-(paren
-id|pb
-)paren
 suffix:semicolon
 multiline_comment|/* If there is no ECR, we have no hope of supporting ECP. */
 r_if
@@ -1433,6 +1455,14 @@ id|PARPORT_MODE_PCECR
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|oecr
+op_assign
+id|parport_pc_read_econtrol
+c_func
+(paren
+id|pb
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Using LGS chipset it uses ECR register, but&n;&t; * it doesn&squot;t support ECP or FIFO MODE&n;&t; */
 id|parport_pc_write_econtrol
@@ -1616,12 +1646,6 @@ suffix:semicolon
 r_int
 r_char
 id|oecr
-op_assign
-id|parport_pc_read_econtrol
-c_func
-(paren
-id|pb
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1635,6 +1659,14 @@ id|PARPORT_MODE_PCECR
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|oecr
+op_assign
+id|parport_pc_read_econtrol
+c_func
+(paren
+id|pb
+)paren
 suffix:semicolon
 multiline_comment|/* Search for SMC style EPP+ECP mode */
 id|parport_pc_write_econtrol
@@ -1795,12 +1827,6 @@ suffix:semicolon
 r_int
 r_char
 id|oecr
-op_assign
-id|parport_pc_read_econtrol
-c_func
-(paren
-id|pb
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1814,6 +1840,14 @@ id|PARPORT_MODE_PCECR
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|oecr
+op_assign
+id|parport_pc_read_econtrol
+c_func
+(paren
+id|pb
+)paren
 suffix:semicolon
 id|parport_pc_write_econtrol
 c_func
@@ -2086,6 +2120,20 @@ suffix:semicolon
 r_int
 r_char
 id|oecr
+suffix:semicolon
+macro_line|#ifndef ADVANCED_DETECT
+r_return
+id|PARPORT_IRQ_NONE
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|pb-&gt;modes
+op_amp
+id|PARPORT_MODE_PCECR
+)paren
+id|oecr
 op_assign
 id|parport_pc_read_econtrol
 c_func
@@ -2093,11 +2141,6 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-macro_line|#ifndef ADVANCED_DETECT
-r_return
-id|PARPORT_IRQ_NONE
-suffix:semicolon
-macro_line|#endif
 id|sti
 c_func
 (paren
@@ -2176,6 +2219,13 @@ id|probe_irq_off
 id|irqs
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pb-&gt;modes
+op_amp
+id|PARPORT_MODE_PCECR
+)paren
 id|parport_pc_write_econtrol
 c_func
 (paren
@@ -2235,6 +2285,20 @@ suffix:semicolon
 r_int
 r_char
 id|oecr
+suffix:semicolon
+macro_line|#ifndef ADVANCED_DETECT
+r_return
+id|PARPORT_IRQ_NONE
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|pb-&gt;modes
+op_amp
+id|PARPORT_MODE_PCECR
+)paren
+id|oecr
 op_assign
 id|parport_pc_read_econtrol
 c_func
@@ -2242,11 +2306,6 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-macro_line|#ifndef ADVANCED_DETECT
-r_return
-id|PARPORT_IRQ_NONE
-suffix:semicolon
-macro_line|#endif
 id|probe_irq_off
 c_func
 (paren
@@ -2385,6 +2444,13 @@ op_assign
 id|PARPORT_IRQ_NONE
 suffix:semicolon
 multiline_comment|/* No interrupt detected */
+r_if
+c_cond
+(paren
+id|pb-&gt;modes
+op_amp
+id|PARPORT_MODE_PCECR
+)paren
 id|parport_pc_write_econtrol
 c_func
 (paren
@@ -2418,15 +2484,6 @@ op_star
 id|pb
 )paren
 (brace
-r_int
-r_char
-id|oecr
-op_assign
-id|parport_pc_read_econtrol
-(paren
-id|pb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2482,7 +2539,6 @@ op_amp
 id|PARPORT_MODE_PCECPEPP
 )paren
 )paren
-(brace
 id|pb-&gt;irq
 op_assign
 id|irq_probe_EPP
@@ -2491,15 +2547,6 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|parport_pc_write_econtrol
-c_func
-(paren
-id|pb
-comma
-id|oecr
-)paren
-suffix:semicolon
-)brace
 id|epp_clear_timeout
 c_func
 (paren
@@ -2550,13 +2597,6 @@ id|pb
 suffix:semicolon
 id|out
 suffix:colon
-id|parport_pc_write_econtrol
-(paren
-id|pb
-comma
-id|oecr
-)paren
-suffix:semicolon
 r_return
 id|pb-&gt;irq
 suffix:semicolon
@@ -2949,12 +2989,20 @@ op_or_assign
 id|PARPORT_FLAG_COMA
 suffix:semicolon
 multiline_comment|/* Done probing.  Now put the port into a sensible start-up state. */
+r_if
+c_cond
+(paren
+id|p-&gt;modes
+op_amp
+id|PARPORT_MODE_PCECR
+)paren
+multiline_comment|/*&n;&t;&t; * Put the ECP detected port in the more SPP like mode.&n;&t;&t; */
 id|parport_pc_write_econtrol
 c_func
 (paren
 id|p
 comma
-l_int|0xc
+l_int|0x0
 )paren
 suffix:semicolon
 id|parport_pc_write_control

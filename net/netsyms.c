@@ -1642,13 +1642,6 @@ c_func
 id|ei_close
 )paren
 suffix:semicolon
-DECL|variable|ei_debug
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ei_debug
-)paren
-suffix:semicolon
 DECL|variable|ei_interrupt
 id|EXPORT_SYMBOL
 c_func

@@ -150,6 +150,8 @@ multiline_comment|/* ecp_write_block */
 l_int|NULL
 comma
 multiline_comment|/* epp_write_block */
+id|arc_init_state
+comma
 id|arc_save_state
 comma
 id|arc_restore_state

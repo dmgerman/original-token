@@ -14,29 +14,8 @@ DECL|macro|MAX_CLIPRECS
 mdefine_line|#define MAX_CLIPRECS&t;100
 DECL|macro|RISCMEM_LEN
 mdefine_line|#define RISCMEM_LEN&t;(32744*2)
-DECL|macro|MAX_FBUF
-mdefine_line|#define MAX_FBUF&t;0x144000
-DECL|struct|riscprog
-r_struct
-id|riscprog
-(brace
-DECL|member|length
-r_int
-r_int
-id|length
-suffix:semicolon
-DECL|member|busadr
-id|u32
-op_star
-id|busadr
-suffix:semicolon
-DECL|member|prog
-id|u32
-op_star
-id|prog
-suffix:semicolon
-)brace
-suffix:semicolon
+DECL|macro|BTTV_MAX_FBUF
+mdefine_line|#define BTTV_MAX_FBUF&t;0x144000
 multiline_comment|/* clipping rectangle */
 DECL|struct|cliprec
 r_struct
@@ -60,89 +39,6 @@ r_struct
 id|cliprec
 op_star
 id|next
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* grab buffer */
-DECL|struct|gbuffer
-r_struct
-id|gbuffer
-(brace
-DECL|member|next
-r_struct
-id|gbuffer
-op_star
-id|next
-suffix:semicolon
-DECL|member|next_active
-r_struct
-id|gbuffer
-op_star
-id|next_active
-suffix:semicolon
-DECL|member|adr
-r_void
-op_star
-id|adr
-suffix:semicolon
-DECL|member|x
-DECL|member|y
-r_int
-id|x
-comma
-id|y
-suffix:semicolon
-DECL|member|width
-DECL|member|height
-r_int
-id|width
-comma
-id|height
-suffix:semicolon
-DECL|member|bpl
-r_int
-r_int
-id|bpl
-suffix:semicolon
-DECL|member|fmt
-r_int
-r_int
-id|fmt
-suffix:semicolon
-DECL|member|flags
-r_int
-id|flags
-suffix:semicolon
-DECL|macro|GBUF_ODD
-mdefine_line|#define GBUF_ODD  1
-DECL|macro|GBUF_EVEN
-mdefine_line|#define GBUF_EVEN 2
-DECL|macro|GBUF_LFB
-mdefine_line|#define GBUF_LFB  4
-DECL|macro|GBUF_INT
-mdefine_line|#define GBUF_INT  8
-DECL|member|length
-r_int
-r_int
-id|length
-suffix:semicolon
-DECL|member|ro
-r_void
-op_star
-id|ro
-suffix:semicolon
-DECL|member|re
-r_void
-op_star
-id|re
-suffix:semicolon
-DECL|member|bro
-id|u32
-id|bro
-suffix:semicolon
-DECL|member|bre
-id|u32
-id|bre
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -213,6 +109,10 @@ suffix:semicolon
 DECL|member|color_fmt
 r_int
 id|color_fmt
+suffix:semicolon
+DECL|member|depth
+id|ushort
+id|depth
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -335,9 +235,9 @@ DECL|member|user
 r_int
 id|user
 suffix:semicolon
-DECL|member|dbx
+DECL|member|audio_chip
 r_int
-id|dbx
+id|audio_chip
 suffix:semicolon
 DECL|member|radio
 r_int
@@ -456,6 +356,16 @@ r_int
 r_int
 id|gre
 suffix:semicolon
+DECL|member|gro_next
+r_int
+r_int
+id|gro_next
+suffix:semicolon
+DECL|member|gre_next
+r_int
+r_int
+id|gre_next
+suffix:semicolon
 DECL|member|fbuffer
 r_char
 op_star
@@ -480,6 +390,10 @@ suffix:semicolon
 DECL|member|grabcount
 r_int
 id|grabcount
+suffix:semicolon
+DECL|member|pll
+r_int
+id|pll
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -523,6 +437,10 @@ DECL|macro|BTTV_DIAMOND
 mdefine_line|#define BTTV_DIAMOND       0x05 
 DECL|macro|BTTV_AVERMEDIA
 mdefine_line|#define BTTV_AVERMEDIA     0x06 
+DECL|macro|BTTV_MATRIX_VISION
+mdefine_line|#define BTTV_MATRIX_VISION 0x07 
+DECL|macro|BTTV_FLYVIDEO
+mdefine_line|#define BTTV_FLYVIDEO      0x08
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -539,10 +457,16 @@ DECL|macro|AUDIO_MUTE
 mdefine_line|#define AUDIO_MUTE         0x80
 DECL|macro|AUDIO_UNMUTE
 mdefine_line|#define AUDIO_UNMUTE       0x81
+DECL|macro|TDA9850
+mdefine_line|#define TDA9850            0x01
+DECL|macro|TDA8425
+mdefine_line|#define TDA8425            0x02
 DECL|macro|I2C_TSA5522
 mdefine_line|#define I2C_TSA5522        0xc2
 DECL|macro|I2C_TDA9850
 mdefine_line|#define I2C_TDA9850        0xb6
+DECL|macro|I2C_TDA8425
+mdefine_line|#define I2C_TDA8425        0x82
 DECL|macro|I2C_HAUPEE
 mdefine_line|#define I2C_HAUPEE         0xa0
 DECL|macro|I2C_STBEE
@@ -561,5 +485,15 @@ DECL|macro|TDA9850_ALI2
 mdefine_line|#define TDA9850_ALI2       0x09
 DECL|macro|TDA9850_ALI3
 mdefine_line|#define TDA9850_ALI3       0x0a
+DECL|macro|TDA8425_VL
+mdefine_line|#define TDA8425_VL         0x00
+DECL|macro|TDA8425_VR
+mdefine_line|#define TDA8425_VR         0x01
+DECL|macro|TDA8425_BA
+mdefine_line|#define TDA8425_BA         0x02
+DECL|macro|TDA8425_TR
+mdefine_line|#define TDA8425_TR         0x03
+DECL|macro|TDA8425_S1
+mdefine_line|#define TDA8425_S1         0x08
 macro_line|#endif
 eof

@@ -1714,15 +1714,6 @@ comma
 id|devc
 )paren
 suffix:semicolon
-id|sound_unload_mididev
-c_func
-(paren
-id|hw_config-&gt;slots
-(braket
-l_int|4
-)braket
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1760,6 +1751,16 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/* This kills midi_devs[x] */
+id|sound_unload_mididev
+c_func
+(paren
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|variable|io

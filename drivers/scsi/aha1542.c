@@ -612,7 +612,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Similar to aha1542_in, except that we wait a very short period of time.&n;   We use this if we know the board is alive and awake, but we are not sure&n;   if the board will respond to the command we are about to send or not */
+multiline_comment|/* Similar to aha1542_in, except that we wait a very short period of time.&n;   We use this if we know the board is alive and awake, but we are not sure&n;   if the board will respond the command we are about to send or not */
 DECL|function|aha1542_in1
 r_static
 r_int
@@ -854,9 +854,6 @@ op_star
 id|shpnt
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|unchar
 id|inquiry_cmd
 (braket

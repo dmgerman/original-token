@@ -116,4 +116,9 @@ DECL|macro|PSEUDO_DMA_AUTOINIT
 macro_line|#undef PSEUDO_DMA_AUTOINIT
 DECL|macro|ALLOW_BUFFER_MAPPING
 mdefine_line|#define ALLOW_BUFFER_MAPPING
+r_extern
+r_struct
+id|file_operations
+id|oss_sound_fops
+suffix:semicolon
 eof

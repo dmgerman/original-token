@@ -209,14 +209,6 @@ c_func
 id|conf_printf2
 )paren
 suffix:semicolon
-macro_line|#include &quot;sound_firmware.h&quot;
-DECL|variable|mod_firmware_load
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|mod_firmware_load
-)paren
-suffix:semicolon
 r_extern
 r_int
 id|softoss_dev

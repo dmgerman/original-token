@@ -334,6 +334,10 @@ DECL|macro|VIDEO_TUNER_NTSC
 mdefine_line|#define VIDEO_TUNER_NTSC&t;2
 DECL|macro|VIDEO_TUNER_SECAM
 mdefine_line|#define VIDEO_TUNER_SECAM&t;4
+DECL|macro|VIDEO_TUNER_LOW
+mdefine_line|#define VIDEO_TUNER_LOW&t;&t;8&t;/* Uses KHz not MHz */
+DECL|macro|VIDEO_TUNER_STEREO_ON
+mdefine_line|#define VIDEO_TUNER_STEREO_ON&t;128&t;/* Tuner is seeing stereo */
 DECL|member|mode
 id|__u16
 id|mode
@@ -347,6 +351,11 @@ DECL|macro|VIDEO_MODE_SECAM
 mdefine_line|#define VIDEO_MODE_SECAM&t;2
 DECL|macro|VIDEO_MODE_AUTO
 mdefine_line|#define VIDEO_MODE_AUTO&t;&t;3
+DECL|member|signal
+id|__u16
+id|signal
+suffix:semicolon
+multiline_comment|/* Signal strength 16bit scale */
 )brace
 suffix:semicolon
 DECL|struct|video_picture
@@ -396,6 +405,8 @@ DECL|macro|VIDEO_PALETTE_RGB32
 mdefine_line|#define VIDEO_PALETTE_RGB32&t;5&t;/* 32bit RGB */&t;
 DECL|macro|VIDEO_PALETTE_RGB555
 mdefine_line|#define VIDEO_PALETTE_RGB555&t;6&t;/* 555 15bit RGB */
+DECL|macro|VIDEO_PALETTE_YUV422
+mdefine_line|#define VIDEO_PALETTE_YUV422&t;7&t;/* YUV422 capture */
 )brace
 suffix:semicolon
 DECL|struct|video_audio
@@ -641,6 +652,12 @@ DECL|macro|VID_HARDWARE_PSEUDO
 mdefine_line|#define VID_HARDWARE_PSEUDO&t;5
 DECL|macro|VID_HARDWARE_SAA5249
 mdefine_line|#define VID_HARDWARE_SAA5249&t;6
+DECL|macro|VID_HARDWARE_AZTECH
+mdefine_line|#define VID_HARDWARE_AZTECH&t;7
+DECL|macro|VID_HARDWARE_SF16MI
+mdefine_line|#define VID_HARDWARE_SF16MI&t;8
+DECL|macro|VID_HARDWARE_RTRACK
+mdefine_line|#define VID_HARDWARE_RTRACK&t;9
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

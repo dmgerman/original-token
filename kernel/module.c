@@ -4391,9 +4391,15 @@ l_int|0
 op_logical_and
 (paren
 id|mp-&gt;flags
+op_amp
+(paren
+id|MOD_RUNNING
+op_or
+id|MOD_DELETED
+)paren
+)paren
 op_eq
 id|MOD_RUNNING
-)paren
 op_logical_and
 (paren
 id|mp-&gt;nsyms

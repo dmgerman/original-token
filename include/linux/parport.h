@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport.h,v 1.6 1997/12/29 12:31:05 phil Exp $ */
+multiline_comment|/* $Id: parport.h,v 1.1 1998/05/17 10:57:52 andrea Exp andrea $ */
 macro_line|#ifndef _PARPORT_H_
 DECL|macro|_PARPORT_H_
 mdefine_line|#define _PARPORT_H_
@@ -490,6 +490,18 @@ r_int
 )paren
 comma
 r_void
+op_star
+)paren
+suffix:semicolon
+DECL|member|init_state
+r_void
+(paren
+op_star
+id|init_state
+)paren
+(paren
+r_struct
+id|parport_state
 op_star
 )paren
 suffix:semicolon

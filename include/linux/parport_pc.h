@@ -502,6 +502,17 @@ id|p
 suffix:semicolon
 r_extern
 r_void
+id|parport_pc_init_state
+c_func
+(paren
+r_struct
+id|parport_state
+op_star
+id|s
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|parport_pc_save_state
 c_func
 (paren

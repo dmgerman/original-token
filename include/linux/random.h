@@ -164,6 +164,9 @@ id|sseq
 comma
 id|__u32
 id|count
+comma
+id|__u32
+id|data
 )paren
 suffix:semicolon
 macro_line|#ifndef MODULE

@@ -819,11 +819,9 @@ id|irq_func
 suffix:semicolon
 id|port-&gt;ops
 op_member_access_from_pointer
-id|save_state
+id|init_state
 c_func
 (paren
-id|port
-comma
 id|tmp-&gt;state
 )paren
 suffix:semicolon

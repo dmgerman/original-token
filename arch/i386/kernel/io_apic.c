@@ -2419,7 +2419,7 @@ suffix:semicolon
 multiline_comment|/* unmask IRQ now */
 id|entry.dest.logical.logical_dest
 op_assign
-l_int|0xff
+l_int|0x01
 suffix:semicolon
 multiline_comment|/* all CPUs */
 id|entry.vector

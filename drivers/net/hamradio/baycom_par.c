@@ -958,25 +958,6 @@ id|regs
 )paren
 (brace
 r_struct
-id|parport
-op_star
-id|pp
-op_assign
-(paren
-r_struct
-id|parport
-op_star
-)paren
-id|dev_id
-suffix:semicolon
-r_struct
-id|pardevice
-op_star
-id|pd
-op_assign
-id|pp-&gt;cad
-suffix:semicolon
-r_struct
 id|device
 op_star
 id|dev
@@ -986,9 +967,7 @@ r_struct
 id|device
 op_star
 )paren
-id|pd
-op_member_access_from_pointer
-r_private
+id|dev_id
 suffix:semicolon
 r_struct
 id|baycom_state
@@ -1065,7 +1044,7 @@ id|bc-&gt;modem.arb_divider
 op_assign
 l_int|6
 suffix:semicolon
-id|sti
+id|__sti
 c_func
 (paren
 )paren
@@ -1081,7 +1060,7 @@ id|bc-&gt;hdrv
 suffix:semicolon
 )brace
 )brace
-id|sti
+id|__sti
 c_func
 (paren
 )paren
@@ -1102,6 +1081,11 @@ id|dev
 comma
 op_amp
 id|bc-&gt;hdrv
+)paren
+suffix:semicolon
+id|__cli
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1385,6 +1369,10 @@ op_assign
 id|pp-&gt;irq
 suffix:semicolon
 multiline_comment|/* bc-&gt;pdev-&gt;port-&gt;ops-&gt;change_mode(bc-&gt;pdev-&gt;port, PARPORT_MODE_PCSPP);  not yet implemented */
+id|bc-&gt;hdrv.par.bitrate
+op_assign
+l_int|9600
+suffix:semicolon
 multiline_comment|/* switch off PTT */
 id|outb
 c_func

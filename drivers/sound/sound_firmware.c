@@ -1,6 +1,7 @@
 macro_line|#include &quot;os.h&quot;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -275,4 +276,11 @@ r_return
 id|r
 suffix:semicolon
 )brace
+DECL|variable|mod_firmware_load
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mod_firmware_load
+)paren
+suffix:semicolon
 eof
