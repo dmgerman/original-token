@@ -20,6 +20,114 @@ DECL|macro|SCSI_DATA_READ
 mdefine_line|#define SCSI_DATA_READ          2
 DECL|macro|SCSI_DATA_NONE
 mdefine_line|#define SCSI_DATA_NONE          3
+macro_line|#ifdef CONFIG_PCI
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#if ((SCSI_DATA_UNKNOWN == PCI_DMA_BIDIRECTIONAL) &amp;&amp; (SCSI_DATA_WRITE == PCI_DMA_TODEVICE) &amp;&amp; (SCSI_DATA_READ == PCI_DMA_FROMDEVICE) &amp;&amp; (SCSI_DATA_NONE == PCI_DMA_NONE))
+DECL|macro|scsi_to_pci_dma_dir
+mdefine_line|#define scsi_to_pci_dma_dir(scsi_dir)&t;((int)(scsi_dir))
+macro_line|#else
+DECL|function|scsi_to_pci_dma_dir
+r_extern
+id|__inline__
+r_int
+id|scsi_to_pci_dma_dir
+c_func
+(paren
+r_int
+r_char
+id|scsi_dir
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|scsi_dir
+op_eq
+id|SCSI_DATA_UNKNOWN
+)paren
+r_return
+id|PCI_DMA_BIDIRECTIONAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_dir
+op_eq
+id|SCSI_DATA_WRITE
+)paren
+r_return
+id|PCI_DMA_TODEVICE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_dir
+op_eq
+id|SCSI_DATA_READ
+)paren
+r_return
+id|PCI_DMA_FROMDEVICE
+suffix:semicolon
+r_return
+id|PCI_DMA_NONE
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_SBUS
+macro_line|#include &lt;asm/sbus.h&gt;
+macro_line|#if ((SCSI_DATA_UNKNOWN == SBUS_DMA_BIDIRECTIONAL) &amp;&amp; (SCSI_DATA_WRITE == SBUS_DMA_TODEVICE) &amp;&amp; (SCSI_DATA_READ == SBUS_DMA_FROMDEVICE) &amp;&amp; (SCSI_DATA_NONE == SBUS_DMA_NONE))
+DECL|macro|scsi_to_sbus_dma_dir
+mdefine_line|#define scsi_to_sbus_dma_dir(scsi_dir)&t;((int)(scsi_dir))
+macro_line|#else
+DECL|function|scsi_to_sbus_dma_dir
+r_extern
+id|__inline__
+r_int
+id|scsi_to_sbus_dma_dir
+c_func
+(paren
+r_int
+r_char
+id|scsi_dir
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|scsi_dir
+op_eq
+id|SCSI_DATA_UNKNOWN
+)paren
+r_return
+id|SBUS_DMA_BIDIRECTIONAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_dir
+op_eq
+id|SCSI_DATA_WRITE
+)paren
+r_return
+id|SBUS_DMA_TODEVICE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_dir
+op_eq
+id|SCSI_DATA_READ
+)paren
+r_return
+id|SBUS_DMA_FROMDEVICE
+suffix:semicolon
+r_return
+id|SBUS_DMA_NONE
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#endif
 multiline_comment|/*&n; * Some defs, in case these are not defined elsewhere.&n; */
 macro_line|#ifndef TRUE
 DECL|macro|TRUE

@@ -3862,6 +3862,8 @@ comma
 id|skb-&gt;tail
 comma
 id|np-&gt;rx_buf_sz
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|skb-&gt;dev
@@ -4123,6 +4125,8 @@ comma
 id|skb-&gt;data
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|np-&gt;tx_ring
@@ -4652,10 +4656,12 @@ dot
 id|mapping
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 multiline_comment|/* Scavenge the descriptor. */
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -5068,6 +5074,8 @@ dot
 id|mapping
 comma
 id|pkt_len
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 macro_line|#if HAS_IP_COPYSUM&t;&t;&t;/* Call copy + cksum if available. */
@@ -5139,6 +5147,8 @@ dot
 id|mapping
 comma
 id|np-&gt;rx_buf_sz
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|skb
@@ -5453,6 +5463,8 @@ comma
 id|skb-&gt;tail
 comma
 id|np-&gt;rx_buf_sz
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|skb-&gt;dev
@@ -6913,9 +6925,11 @@ dot
 id|mapping
 comma
 id|np-&gt;rx_buf_sz
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
-id|kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|np-&gt;rx_info
@@ -6994,9 +7008,11 @@ dot
 id|mapping
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
-id|kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb

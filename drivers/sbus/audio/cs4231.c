@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cs4231.c,v 1.42 2000/01/28 13:42:48 jj Exp $&n; * drivers/sbus/audio/cs4231.c&n; *&n; * Copyright 1996, 1997, 1998, 1999 Derrick J Brashear (shadow@andrew.cmu.edu)&n; * The 4231/ebus support was written by David Miller, who didn&squot;t bother&n; * crediting himself here, so I will.&n; *&n; * Based on the AMD7930 driver:&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; *&n; * This is the lowlevel driver for the CS4231 audio chip found on some&n; * sun4m and sun4u machines.&n; * &n; * This was culled from the Crystal docs on the 4231a, and the addendum they&n; * faxed me on the 4231.&n; * The APC DMA controller support unfortunately is not documented. Thanks, Sun.&n; */
+multiline_comment|/* $Id: cs4231.c,v 1.43 2000/02/18 13:49:39 davem Exp $&n; * drivers/sbus/audio/cs4231.c&n; *&n; * Copyright 1996, 1997, 1998, 1999 Derrick J Brashear (shadow@andrew.cmu.edu)&n; * The 4231/ebus support was written by David Miller, who didn&squot;t bother&n; * crediting himself here, so I will.&n; *&n; * Based on the AMD7930 driver:&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; *&n; * This is the lowlevel driver for the CS4231 audio chip found on some&n; * sun4m and sun4u machines.&n; * &n; * This was culled from the Crystal docs on the 4231a, and the addendum they&n; * faxed me on the 4231.&n; * The APC DMA controller support unfortunately is not documented. Thanks, Sun.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -5768,6 +5768,8 @@ comma
 id|dma_addr_t
 comma
 r_int
+comma
+r_int
 )paren
 op_assign
 id|sbus_unmap_single
@@ -5793,6 +5795,8 @@ id|sbus_dev
 op_star
 comma
 id|dma_addr_t
+comma
+r_int
 comma
 r_int
 )paren
@@ -5828,6 +5832,8 @@ comma
 id|cs4231_chip-&gt;input_dma_handle
 comma
 id|cs4231_chip-&gt;input_dma_size
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_dma_handle
@@ -5853,6 +5859,8 @@ comma
 id|cs4231_chip-&gt;input_next_dma_handle
 comma
 id|cs4231_chip-&gt;input_next_dma_size
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_next_dma_handle
@@ -5893,6 +5901,8 @@ comma
 id|cs4231_chip-&gt;output_dma_handle
 comma
 id|cs4231_chip-&gt;output_dma_size
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_dma_handle
@@ -5918,6 +5928,8 @@ comma
 id|cs4231_chip-&gt;output_next_dma_handle
 comma
 id|cs4231_chip-&gt;output_next_dma_size
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_next_dma_handle
@@ -6070,6 +6082,8 @@ comma
 id|cs4231_chip-&gt;output_dma_handle
 comma
 id|cs4231_chip-&gt;output_dma_size
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_dma_handle
@@ -6141,6 +6155,8 @@ op_star
 id|cs4231_chip-&gt;output_ptr
 comma
 id|cs4231_chip-&gt;output_size
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_next_dma_size
@@ -6281,6 +6297,8 @@ comma
 id|cs4231_chip-&gt;output_dma_handle
 comma
 id|cs4231_chip-&gt;output_dma_size
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_dma_handle
@@ -6357,6 +6375,8 @@ op_star
 id|cs4231_chip-&gt;output_ptr
 comma
 id|cs4231_chip-&gt;output_size
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_next_dma_size
@@ -6553,6 +6573,8 @@ comma
 id|cs4231_chip-&gt;input_dma_handle
 comma
 id|cs4231_chip-&gt;input_dma_size
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_dma_handle
@@ -6638,6 +6660,8 @@ op_star
 id|cs4231_chip-&gt;input_ptr
 comma
 id|cs4231_chip-&gt;input_size
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_next_dma_size
@@ -6795,6 +6819,8 @@ comma
 id|cs4231_chip-&gt;input_dma_handle
 comma
 id|cs4231_chip-&gt;input_dma_size
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_dma_handle
@@ -6885,6 +6911,8 @@ op_star
 id|cs4231_chip-&gt;input_ptr
 comma
 id|cs4231_chip-&gt;input_size
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_next_dma_size
@@ -7384,6 +7412,8 @@ comma
 id|cs4231_chip-&gt;output_dma_handle
 comma
 id|cs4231_chip-&gt;output_dma_size
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_dma_handle
@@ -7414,6 +7444,8 @@ comma
 id|cs4231_chip-&gt;output_next_dma_handle
 comma
 id|cs4231_chip-&gt;output_next_dma_size
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_next_dma_handle
@@ -7522,6 +7554,8 @@ comma
 id|cs4231_chip-&gt;output_dma_handle
 comma
 id|cs4231_chip-&gt;output_dma_size
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_dma_handle
@@ -7547,6 +7581,8 @@ comma
 id|cs4231_chip-&gt;output_next_dma_handle
 comma
 id|cs4231_chip-&gt;output_next_dma_size
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;output_next_dma_handle
@@ -7983,6 +8019,8 @@ comma
 id|cs4231_chip-&gt;input_dma_handle
 comma
 id|cs4231_chip-&gt;input_dma_size
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_dma_handle
@@ -8008,6 +8046,8 @@ comma
 id|cs4231_chip-&gt;input_next_dma_handle
 comma
 id|cs4231_chip-&gt;input_next_dma_size
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_next_dma_handle
@@ -8247,6 +8287,8 @@ comma
 id|cs4231_chip-&gt;input_dma_handle
 comma
 id|cs4231_chip-&gt;input_dma_size
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_dma_handle
@@ -8277,6 +8319,8 @@ comma
 id|cs4231_chip-&gt;input_next_dma_handle
 comma
 id|cs4231_chip-&gt;input_next_dma_size
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|cs4231_chip-&gt;input_next_dma_handle

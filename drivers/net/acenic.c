@@ -136,9 +136,9 @@ suffix:semicolon
 DECL|macro|pci_free_consistent
 mdefine_line|#define pci_free_consistent(cookie, size, ptr, dma_ptr)&t;kfree(ptr)
 DECL|macro|pci_map_single
-mdefine_line|#define pci_map_single(cookie, address, size)&t;&t;virt_to_bus(address)
+mdefine_line|#define pci_map_single(cookie, address, size, dir)&t;&t;virt_to_bus(address)
 DECL|macro|pci_unmap_single
-mdefine_line|#define pci_unmap_single(cookie, address, size)
+mdefine_line|#define pci_unmap_single(cookie, address, size, dir)
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032b)
 multiline_comment|/*&n; * SoftNet&n; */
@@ -1506,6 +1506,8 @@ l_int|2
 op_plus
 l_int|16
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -1601,6 +1603,8 @@ l_int|2
 op_plus
 l_int|16
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -1689,6 +1693,8 @@ l_int|2
 op_plus
 l_int|16
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -3190,6 +3196,28 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#ifdef __sparc__
+multiline_comment|/* On this platform, we know what the best dma settings&n;&t; * are.  We use 64-byte maximum bursts, because if we&n;&t; * burst larger than the cache line size (or even cross&n;&t; * a 64byte boundry in a single burst) the UltraSparc&n;&t; * PCI controller will disconnect at 64-byte multiples.&n;&t; *&n;&t; * Read-multiple will be properly enabled above, and when&n;&t; * set will give the PCI controller proper hints about&n;&t; * prefetching.&n;&t; */
+id|tmp
+op_assign
+(paren
+id|tmp
+op_amp
+op_complement
+(paren
+l_int|0xfc
+)paren
+)paren
+suffix:semicolon
+id|tmp
+op_or_assign
+id|DMA_READ_MAX_64
+suffix:semicolon
+id|tmp
+op_or_assign
+id|DMA_WRITE_MAX_64
+suffix:semicolon
+macro_line|#endif
 id|writel
 c_func
 (paren
@@ -5327,6 +5355,8 @@ l_int|2
 op_plus
 l_int|16
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|ap-&gt;skb-&gt;rx_std_skbuff
@@ -5595,6 +5625,8 @@ l_int|2
 op_plus
 l_int|16
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|ap-&gt;skb-&gt;rx_mini_skbuff
@@ -5821,6 +5853,8 @@ l_int|2
 op_plus
 l_int|16
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|ap-&gt;skb-&gt;rx_jumbo_skbuff
@@ -6607,6 +6641,8 @@ comma
 id|rip-&gt;mapping
 comma
 id|mapsize
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|skb_put
@@ -6972,6 +7008,8 @@ comma
 id|mapping
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb_irq
@@ -7923,6 +7961,8 @@ comma
 id|mapping
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -8113,6 +8153,8 @@ comma
 id|skb-&gt;data
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|addr

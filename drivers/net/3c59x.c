@@ -6003,6 +6003,8 @@ comma
 id|skb-&gt;tail
 comma
 id|PKT_BUF_SZ
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 )paren
 suffix:semicolon
@@ -8008,6 +8010,8 @@ comma
 id|skb-&gt;data
 comma
 id|len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 comma
 id|ioaddr
@@ -8433,6 +8437,8 @@ comma
 id|skb-&gt;data
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 )paren
 suffix:semicolon
@@ -8931,6 +8937,8 @@ id|addr
 )paren
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb_irq
@@ -9047,6 +9055,8 @@ l_int|3
 op_amp
 op_complement
 l_int|3
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb_irq
@@ -9591,6 +9601,8 @@ id|pkt_len
 )paren
 comma
 id|pkt_len
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|outl
@@ -9652,6 +9664,8 @@ comma
 id|dma
 comma
 id|pkt_len
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 )brace
@@ -10118,6 +10132,8 @@ comma
 id|dma
 comma
 id|PKT_BUF_SZ
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 multiline_comment|/* &squot;skb_put()&squot; points to the start of sk_buff data area. */
@@ -10179,6 +10195,8 @@ comma
 id|dma
 comma
 id|PKT_BUF_SZ
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|rx_nocopy
@@ -10346,6 +10364,8 @@ comma
 id|skb-&gt;tail
 comma
 id|PKT_BUF_SZ
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 )paren
 suffix:semicolon
@@ -10614,6 +10634,8 @@ id|addr
 )paren
 comma
 id|PKT_BUF_SZ
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|DEV_FREE_SKB
@@ -10701,6 +10723,8 @@ id|addr
 )paren
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|DEV_FREE_SKB

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.27 2000/02/15 02:58:40 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: floppy.h,v 1.28 2000/02/18 13:50:54 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef __ASM_SPARC64_FLOPPY_H
 DECL|macro|__ASM_SPARC64_FLOPPY_H
 mdefine_line|#define __ASM_SPARC64_FLOPPY_H
@@ -944,9 +944,12 @@ op_minus
 l_int|1U
 suffix:semicolon
 DECL|variable|sun_pci_dma_len
+DECL|variable|sun_pci_dma_direction
 r_static
 r_int
 id|sun_pci_dma_len
+comma
+id|sun_pci_dma_direction
 suffix:semicolon
 r_extern
 r_void
@@ -1380,6 +1383,8 @@ comma
 id|sun_pci_dma_addr
 comma
 id|sun_pci_dma_len
+comma
+id|sun_pci_dma_direction
 )paren
 suffix:semicolon
 id|sun_pci_dma_addr
@@ -1451,6 +1456,7 @@ id|mode
 op_eq
 id|DMA_MODE_WRITE
 )paren
+(brace
 id|dcsr
 op_and_assign
 op_complement
@@ -1458,11 +1464,22 @@ op_complement
 id|EBUS_DCSR_WRITE
 )paren
 suffix:semicolon
+id|sun_pci_dma_direction
+op_assign
+id|PCI_DMA_TODEVICE
+suffix:semicolon
+)brace
 r_else
+(brace
 id|dcsr
 op_or_assign
 id|EBUS_DCSR_WRITE
 suffix:semicolon
+id|sun_pci_dma_direction
+op_assign
+id|PCI_DMA_FROMDEVICE
+suffix:semicolon
+)brace
 id|writel
 c_func
 (paren
@@ -1524,6 +1541,8 @@ comma
 id|buffer
 comma
 id|sun_pci_dma_len
+comma
+id|sun_pci_dma_direction
 )paren
 suffix:semicolon
 id|writel

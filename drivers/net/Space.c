@@ -764,6 +764,17 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|skfp_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Fibre Channel adapters */
 r_extern
 r_int
@@ -1820,6 +1831,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_APFDDI
 op_logical_and
 id|apfddi_init
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_SKFP
+op_logical_and
+id|skfp_probe
 c_func
 (paren
 id|dev

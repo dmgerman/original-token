@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.8 2000/02/16 07:31:34 davem Exp $&n; * sbus.c: UltraSparc SBUS controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.9 2000/02/18 13:48:57 davem Exp $&n; * sbus.c: UltraSparc SBUS controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1411,6 +1411,9 @@ id|ptr
 comma
 r_int
 id|size
+comma
+r_int
+id|dir
 )paren
 (brace
 r_struct
@@ -1436,6 +1439,22 @@ id|u32
 id|dma_base
 comma
 id|offset
+suffix:semicolon
+r_int
+r_int
+id|iopte_bits
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dir
+op_eq
+id|SBUS_DMA_NONE
+)paren
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 id|phys_base
 op_assign
@@ -1534,6 +1553,25 @@ id|size
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
+id|iopte_bits
+op_assign
+id|IOPTE_VALID
+op_or
+id|IOPTE_STBUF
+op_or
+id|IOPTE_CACHE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dir
+op_ne
+id|SBUS_DMA_TODEVICE
+)paren
+id|iopte_bits
+op_or_assign
+id|IOPTE_WRITE
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1548,13 +1586,7 @@ op_assign
 id|__iopte
 c_func
 (paren
-id|IOPTE_VALID
-op_or
-id|IOPTE_STBUF
-op_or
-id|IOPTE_CACHE
-op_or
-id|IOPTE_WRITE
+id|iopte_bits
 op_or
 (paren
 id|phys_base
@@ -1616,6 +1648,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 r_struct
@@ -1711,6 +1746,10 @@ id|sg
 comma
 r_int
 id|nused
+comma
+r_int
+r_int
+id|iopte_bits
 )paren
 (brace
 r_struct
@@ -1918,13 +1957,7 @@ op_amp
 id|IOPTE_PAGE
 )paren
 op_or
-id|IOPTE_VALID
-op_or
-id|IOPTE_STBUF
-op_or
-id|IOPTE_CACHE
-op_or
-id|IOPTE_WRITE
+id|iopte_bits
 )paren
 suffix:semicolon
 r_while
@@ -2084,6 +2117,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|dir
 )paren
 (brace
 r_struct
@@ -2114,6 +2150,22 @@ suffix:semicolon
 r_int
 id|used
 suffix:semicolon
+r_int
+r_int
+id|iopte_bits
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dir
+op_eq
+id|SBUS_DMA_NONE
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Fast path single entry scatterlists. */
 r_if
 c_cond
@@ -2133,6 +2185,8 @@ comma
 id|sg-&gt;address
 comma
 id|sg-&gt;length
+comma
+id|dir
 )paren
 suffix:semicolon
 id|sg-&gt;dvma_length
@@ -2220,6 +2274,25 @@ id|nents
 op_minus
 id|used
 suffix:semicolon
+id|iopte_bits
+op_assign
+id|IOPTE_VALID
+op_or
+id|IOPTE_STBUF
+op_or
+id|IOPTE_CACHE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dir
+op_ne
+id|SBUS_DMA_TODEVICE
+)paren
+id|iopte_bits
+op_or_assign
+id|IOPTE_WRITE
+suffix:semicolon
 id|fill_sg
 c_func
 (paren
@@ -2228,6 +2301,8 @@ comma
 id|sg
 comma
 id|used
+comma
+id|iopte_bits
 )paren
 suffix:semicolon
 macro_line|#ifdef VERIFY_SG
@@ -2284,6 +2359,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 r_int
@@ -2320,6 +2398,8 @@ comma
 id|sg-&gt;dvma_address
 comma
 id|sg-&gt;dvma_length
+comma
+id|direction
 )paren
 suffix:semicolon
 r_return
@@ -2453,6 +2533,9 @@ id|base
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 r_struct
@@ -2534,6 +2617,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 r_struct

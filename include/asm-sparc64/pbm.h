@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.19 1999/12/17 12:32:13 jj Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.20 2000/02/18 13:50:55 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
@@ -88,6 +88,11 @@ id|lowest_free
 (braket
 id|PBM_NCLUSTERS
 )braket
+suffix:semicolon
+multiline_comment|/* Here a PCI controller driver describes the areas of&n;&t; * PCI memory space where DMA to/from physical memory&n;&t; * are addressed.  Drivers interrogate the PCI layer&n;&t; * if their device has addressing limitations.  They&n;&t; * do so via pci_dma_supported, and pass in a mask of&n;&t; * DMA address bits their device can actually drive.&n;&t; *&n;&t; * The test for being usable is:&n;&t; * &t;(device_mask &amp; dma_addr_mask) == dma_addr_mask&n;&t; */
+DECL|member|dma_addr_mask
+id|u32
+id|dma_addr_mask
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -66,6 +66,9 @@ id|ptr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 id|consistent_sync
@@ -104,6 +107,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 multiline_comment|/* nothing to do */
@@ -128,6 +134,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 r_int
@@ -184,6 +193,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 multiline_comment|/* nothing to do */
@@ -206,6 +218,9 @@ id|dma_handle
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 id|consistent_sync
@@ -243,6 +258,9 @@ id|sg
 comma
 r_int
 id|nelems
+comma
+r_int
+id|direction
 )paren
 (brace
 r_int
@@ -274,6 +292,27 @@ id|sg-&gt;length
 comma
 l_int|3
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* Return whether the given PCI device DMA address mask can&n; * be supported properly.  For example, if your device can&n; * only drive the low 24-bits during PCI bus mastering, then&n; * you would pass 0x00ffffff as the mask to this function.&n; */
+DECL|function|pci_dma_supported
+r_extern
+r_inline
+r_int
+id|pci_dma_supported
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|hwdev
+comma
+id|dma_addr_t
+id|mask
+)paren
+(brace
+r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* These macros should be used after a pci_map_sg call has been done&n; * to get bus addresses of each of the SG entries and their lengths.&n; * You should only work with the number of sg entries pci_map_sg&n; * returns, or alternatively stop on the first sg_dma_len(sg) which&n; * is 0.&n; */

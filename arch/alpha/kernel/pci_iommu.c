@@ -470,6 +470,9 @@ id|cpu_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 r_struct
@@ -748,6 +751,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 r_struct
@@ -1020,6 +1026,8 @@ comma
 id|cpu_addr
 comma
 id|size
+comma
+id|PCI_DMA_BIDIRECTIONAL
 )paren
 suffix:semicolon
 r_if
@@ -1100,6 +1108,8 @@ comma
 id|dma_addr
 comma
 id|size
+comma
+id|PCI_DMA_BIDIRECTIONAL
 )paren
 suffix:semicolon
 id|free_pages
@@ -1794,6 +1804,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 r_struct
@@ -1843,6 +1856,8 @@ comma
 id|sg-&gt;address
 comma
 id|sg-&gt;length
+comma
+id|direction
 )paren
 suffix:semicolon
 r_return
@@ -2068,6 +2083,8 @@ comma
 id|out
 op_minus
 id|start
+comma
+id|direction
 )paren
 suffix:semicolon
 r_return
@@ -2092,6 +2109,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 r_struct

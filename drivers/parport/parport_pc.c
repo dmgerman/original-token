@@ -2347,6 +2347,8 @@ op_star
 id|buf
 comma
 id|length
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 )brace
@@ -2766,6 +2768,8 @@ comma
 id|dma_handle
 comma
 id|length
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 r_return

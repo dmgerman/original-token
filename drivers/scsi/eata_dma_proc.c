@@ -1016,6 +1016,10 @@ id|scmd-&gt;cmd_len
 op_assign
 l_int|10
 suffix:semicolon
+id|scmd-&gt;sc_data_direction
+op_assign
+id|DATA_READ
+suffix:semicolon
 multiline_comment|/*&n;&t; * Do the command and wait for it to finish.&n;&t; */
 id|scsi_wait_cmd
 (paren
@@ -1953,6 +1957,10 @@ suffix:semicolon
 id|scmd-&gt;cmd_len
 op_assign
 l_int|10
+suffix:semicolon
+id|scmd-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_READ
 suffix:semicolon
 multiline_comment|/*&n;&t;     * Do the command and wait for it to finish.&n;&t;     */
 id|scsi_wait_cmd

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.91 2000/02/17 18:29:02 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.92 2000/02/18 13:49:22 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -796,11 +796,11 @@ mdefine_line|#define hme_write_txd(__hp, __txd, __flags, __addr) &bslash;&n;&t;(
 DECL|macro|hme_read_desc32
 mdefine_line|#define hme_read_desc32(__hp, __p) &bslash;&n;&t;((__hp)-&gt;read_desc32(__p))
 DECL|macro|hme_dma_map
-mdefine_line|#define hme_dma_map(__hp, __ptr, __size) &bslash;&n;&t;((__hp)-&gt;dma_map((__hp)-&gt;happy_dev, (__ptr), (__size)))
+mdefine_line|#define hme_dma_map(__hp, __ptr, __size, __dir) &bslash;&n;&t;((__hp)-&gt;dma_map((__hp)-&gt;happy_dev, (__ptr), (__size), (__dir)))
 DECL|macro|hme_dma_unmap
-mdefine_line|#define hme_dma_unmap(__hp, __addr, __size) &bslash;&n;&t;((__hp)-&gt;dma_unmap((__hp)-&gt;happy_dev, (__addr), (__size)))
+mdefine_line|#define hme_dma_unmap(__hp, __addr, __size, __dir) &bslash;&n;&t;((__hp)-&gt;dma_unmap((__hp)-&gt;happy_dev, (__addr), (__size), (__dir)))
 DECL|macro|hme_dma_sync
-mdefine_line|#define hme_dma_sync(__hp, __addr, __size) &bslash;&n;&t;((__hp)-&gt;dma_sync((__hp)-&gt;happy_dev, (__addr), (__size)))
+mdefine_line|#define hme_dma_sync(__hp, __addr, __size, __dir) &bslash;&n;&t;((__hp)-&gt;dma_sync((__hp)-&gt;happy_dev, (__addr), (__size), (__dir)))
 macro_line|#else
 macro_line|#ifdef CONFIG_SBUS
 multiline_comment|/* SBUS only compilation */
@@ -815,11 +815,11 @@ mdefine_line|#define hme_write_txd(__hp, __txd, __flags, __addr) &bslash;&n;do {
 DECL|macro|hme_read_desc32
 mdefine_line|#define hme_read_desc32(__hp, __p)&t;(*(__p))
 DECL|macro|hme_dma_map
-mdefine_line|#define hme_dma_map(__hp, __ptr, __size) &bslash;&n;&t;sbus_map_single((__hp)-&gt;happy_dev, (__ptr), (__size))
+mdefine_line|#define hme_dma_map(__hp, __ptr, __size, __dir) &bslash;&n;&t;sbus_map_single((__hp)-&gt;happy_dev, (__ptr), (__size), (__dir))
 DECL|macro|hme_dma_unmap
-mdefine_line|#define hme_dma_unmap(__hp, __addr, __size) &bslash;&n;&t;sbus_unmap_single((__hp)-&gt;happy_dev, (__addr), (__size))
+mdefine_line|#define hme_dma_unmap(__hp, __addr, __size) &bslash;&n;&t;sbus_unmap_single((__hp)-&gt;happy_dev, (__addr), (__size), (__dir))
 DECL|macro|hme_dma_sync
-mdefine_line|#define hme_dma_sync(__hp, __addr, __size) &bslash;&n;&t;sbus_dma_sync_single((__hp)-&gt;happy_dev, (__addr), (__size))
+mdefine_line|#define hme_dma_sync(__hp, __addr, __size, __dir) &bslash;&n;&t;sbus_dma_sync_single((__hp)-&gt;happy_dev, (__addr), (__size), (__dir))
 macro_line|#else
 multiline_comment|/* PCI only compilation */
 DECL|macro|hme_write32
@@ -833,13 +833,19 @@ mdefine_line|#define hme_write_txd(__hp, __txd, __flags, __addr) &bslash;&n;do {
 DECL|macro|hme_read_desc32
 mdefine_line|#define hme_read_desc32(__hp, __p)&t;cpu_to_le32p(__p)
 DECL|macro|hme_dma_map
-mdefine_line|#define hme_dma_map(__hp, __ptr, __size) &bslash;&n;&t;pci_map_single((__hp)-&gt;happy_dev, (__ptr), (__size))
+mdefine_line|#define hme_dma_map(__hp, __ptr, __size, __dir) &bslash;&n;&t;pci_map_single((__hp)-&gt;happy_dev, (__ptr), (__size), (__dir))
 DECL|macro|hme_dma_unmap
-mdefine_line|#define hme_dma_unmap(__hp, __addr, __size) &bslash;&n;&t;pci_unmap_single((__hp)-&gt;happy_dev, (__addr), (__size))
+mdefine_line|#define hme_dma_unmap(__hp, __addr, __size, __dir) &bslash;&n;&t;pci_unmap_single((__hp)-&gt;happy_dev, (__addr), (__size), (__dir))
 DECL|macro|hme_dma_sync
-mdefine_line|#define hme_dma_sync(__hp, __addr, __size) &bslash;&n;&t;pci_dma_sync_single((__hp)-&gt;happy_dev, (__addr), (__size))
+mdefine_line|#define hme_dma_sync(__hp, __addr, __size, __dir) &bslash;&n;&t;pci_dma_sync_single((__hp)-&gt;happy_dev, (__addr), (__size), (__dir))
 macro_line|#endif
 macro_line|#endif
+DECL|macro|DMA_BIDIRECTIONAL
+mdefine_line|#define DMA_BIDIRECTIONAL&t;SBUS_DMA_BIDIRECTIONAL
+DECL|macro|DMA_FROMDEVICE
+mdefine_line|#define DMA_FROMDEVICE&t;&t;SBUS_DMA_FROMDEVICE
+DECL|macro|DMA_TODEVICE
+mdefine_line|#define DMA_TODEVICE&t;&t;SBUS_DMA_TODEVICE
 multiline_comment|/* Oh yes, the MIF BitBang is mighty fun to program.  BitBucket is more like it. */
 DECL|function|BB_PUT_BIT
 r_static
@@ -5227,6 +5233,8 @@ comma
 id|dma_addr
 comma
 id|RX_BUF_ALLOC_SIZE
+comma
+id|DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb_any
@@ -5315,6 +5323,8 @@ comma
 id|dma_addr
 comma
 id|skb-&gt;len
+comma
+id|DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb_any
@@ -5538,6 +5548,8 @@ comma
 id|skb-&gt;data
 comma
 id|RX_BUF_ALLOC_SIZE
+comma
+id|DMA_FROMDEVICE
 )paren
 )paren
 suffix:semicolon
@@ -8897,6 +8909,8 @@ comma
 id|dma_addr
 comma
 id|skb-&gt;len
+comma
+id|DMA_TODEVICE
 )paren
 suffix:semicolon
 id|hp-&gt;tx_skbs
@@ -9250,6 +9264,8 @@ comma
 id|dma_addr
 comma
 id|RX_BUF_ALLOC_SIZE
+comma
+id|DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|hp-&gt;rx_skbs
@@ -9304,6 +9320,8 @@ comma
 id|new_skb-&gt;data
 comma
 id|RX_BUF_ALLOC_SIZE
+comma
+id|DMA_FROMDEVICE
 )paren
 )paren
 suffix:semicolon
@@ -9383,6 +9401,8 @@ comma
 id|dma_addr
 comma
 id|len
+comma
+id|DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|memcpy
@@ -10290,6 +10310,8 @@ comma
 id|skb-&gt;data
 comma
 id|len
+comma
+id|DMA_TODEVICE
 )paren
 suffix:semicolon
 id|spin_lock_irq
@@ -12611,6 +12633,8 @@ r_void
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 )paren
 id|sbus_map_single
@@ -12629,6 +12653,8 @@ comma
 id|u32
 comma
 r_int
+comma
+r_int
 )paren
 )paren
 id|sbus_unmap_single
@@ -12645,6 +12671,8 @@ r_void
 op_star
 comma
 id|u32
+comma
+r_int
 comma
 r_int
 )paren
@@ -13522,6 +13550,8 @@ r_void
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 )paren
 id|pci_map_single
@@ -13540,6 +13570,8 @@ comma
 id|u32
 comma
 r_int
+comma
+r_int
 )paren
 )paren
 id|pci_unmap_single
@@ -13556,6 +13588,8 @@ r_void
 op_star
 comma
 id|u32
+comma
+r_int
 comma
 r_int
 )paren

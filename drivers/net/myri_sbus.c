@@ -1020,6 +1020,8 @@ comma
 id|dma_addr
 comma
 id|RX_ALLOC_SIZE
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -1141,6 +1143,8 @@ l_int|3
 op_amp
 op_complement
 l_int|3
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -1298,6 +1302,8 @@ comma
 id|skb-&gt;data
 comma
 id|RX_ALLOC_SIZE
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|sbus_writel
@@ -1742,6 +1748,8 @@ comma
 id|dma_addr
 comma
 id|skb-&gt;len
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -2170,6 +2178,8 @@ id|addr
 )paren
 comma
 id|RX_ALLOC_SIZE
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 r_if
@@ -2395,6 +2405,8 @@ id|addr
 )paren
 comma
 id|RX_ALLOC_SIZE
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|mp-&gt;rx_skbs
@@ -2426,6 +2438,8 @@ comma
 id|new_skb-&gt;data
 comma
 id|RX_ALLOC_SIZE
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|sbus_writel
@@ -3411,6 +3425,8 @@ comma
 id|skb-&gt;data
 comma
 id|len
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|sbus_writel

@@ -5958,6 +5958,8 @@ comma
 id|pMessage-&gt;data
 comma
 id|pMessage-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|pTxd-&gt;VDataLow
@@ -6228,6 +6230,8 @@ comma
 id|PhysAddr
 comma
 id|pTxd-&gt;pMBuf-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 multiline_comment|/* free message */
@@ -6443,6 +6447,8 @@ comma
 id|pAC-&gt;RxBufSize
 op_minus
 l_int|2
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|pRxd-&gt;VDataLow
@@ -6842,6 +6848,8 @@ id|dma_addr_t
 id|PhysAddr
 comma
 id|FrameLength
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|eth_copy_and_sum
@@ -6918,6 +6926,8 @@ comma
 id|pAC-&gt;RxBufSize
 op_minus
 l_int|2
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 multiline_comment|/* set length in message */
@@ -7633,6 +7643,8 @@ comma
 id|pAC-&gt;RxBufSize
 op_minus
 l_int|2
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|DEV_KFREE_SKB_IRQ
@@ -7830,6 +7842,8 @@ comma
 id|pAC-&gt;RxBufSize
 op_minus
 l_int|2
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|DEV_KFREE_SKB
@@ -13600,10 +13614,10 @@ id|TX_PRIO_LOW
 comma
 id|pMsg
 )paren
-op_le
+OL
 l_int|0
 )paren
-id|DEV_KFREE_SKB
+id|DEV_KFREE_SKB_ANY
 c_func
 (paren
 id|pMsg

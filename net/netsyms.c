@@ -21,10 +21,8 @@ macro_line|#include &lt;linux/hippidevice.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
+macro_line|#include &lt;linux/if_bridge.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
-macro_line|#ifdef CONFIG_BRIDGE
-macro_line|#include &lt;net/br.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_NET
 r_extern
 id|__u32
@@ -787,26 +785,19 @@ c_func
 id|scm_detach_fds
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BRIDGE 
-DECL|variable|br_ioctl
+macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
+DECL|variable|br_handle_frame_hook
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|br_ioctl
+id|br_handle_frame_hook
 )paren
 suffix:semicolon
-DECL|variable|port_info
+DECL|variable|br_ioctl_hook
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|port_info
-)paren
-suffix:semicolon
-DECL|variable|br_avl_find_addr
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|br_avl_find_addr
+id|br_ioctl_hook
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2716,6 +2707,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|register_gifconf
+)paren
+suffix:semicolon
+DECL|variable|net_call_rx_atomic
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|net_call_rx_atomic
 )paren
 suffix:semicolon
 DECL|variable|softirq_state

@@ -8278,6 +8278,12 @@ comma
 id|sg
 comma
 id|cmd-&gt;use_sg
+comma
+id|scsi_to_pci_dma_dir
+c_func
+(paren
+id|cmd-&gt;sc_data_direction
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -8312,6 +8318,12 @@ l_int|0
 )braket
 dot
 id|length
+)paren
+comma
+id|scsi_to_pci_dma_dir
+c_func
+(paren
+id|cmd-&gt;sc_data_direction
 )paren
 )paren
 suffix:semicolon
@@ -16650,6 +16662,12 @@ comma
 r_sizeof
 (paren
 id|cmd-&gt;sense_buffer
+)paren
+comma
+id|scsi_to_pci_dma_dir
+c_func
+(paren
+id|cmd-&gt;sc_data_direction
 )paren
 )paren
 )paren
@@ -40683,6 +40701,10 @@ id|cmd-&gt;request_buffer
 op_assign
 id|buffer
 suffix:semicolon
+id|cmd-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_READ
+suffix:semicolon
 id|cmd-&gt;use_sg
 op_assign
 id|cmd-&gt;old_use_sg
@@ -42003,6 +42025,12 @@ comma
 id|sg
 comma
 id|cmd-&gt;use_sg
+comma
+id|scsi_to_pci_dma_dir
+c_func
+(paren
+id|cmd-&gt;sc_data_direction
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Copy the segments into the SG array.  NOTE!!! - We used to&n;     * have the first entry both in the data_pointer area and the first&n;     * SG element.  That has changed somewhat.  We still have the first&n;     * entry in both places, but now we download the address of&n;     * scb-&gt;sg_list[1] instead of 0 to the sg pointer in the hscb.&n;     */
@@ -42136,6 +42164,12 @@ comma
 id|cmd-&gt;request_buffer
 comma
 id|cmd-&gt;request_bufflen
+comma
+id|scsi_to_pci_dma_dir
+c_func
+(paren
+id|cmd-&gt;sc_data_direction
+)paren
 )paren
 suffix:semicolon
 id|scb-&gt;sg_list

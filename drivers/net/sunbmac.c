@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunbmac.c,v 1.17 2000/02/17 18:29:04 davem Exp $&n; * sunbmac.c: Driver for Sparc BigMAC 100baseT ethernet adapters.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunbmac.c,v 1.18 2000/02/18 13:49:21 davem Exp $&n; * sunbmac.c: Driver for Sparc BigMAC 100baseT ethernet adapters.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -867,6 +867,8 @@ comma
 id|RX_BUF_ALLOC_SIZE
 op_minus
 l_int|34
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|bb-&gt;be_rxd
@@ -3761,6 +3763,8 @@ comma
 id|this-&gt;tx_addr
 comma
 id|skb-&gt;len
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|DTX
@@ -4016,6 +4020,8 @@ comma
 id|RX_BUF_ALLOC_SIZE
 op_minus
 l_int|34
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|bp-&gt;rx_skbs
@@ -4057,6 +4063,8 @@ comma
 id|RX_BUF_ALLOC_SIZE
 op_minus
 l_int|34
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|this-&gt;rx_flags
@@ -4143,6 +4151,8 @@ comma
 id|this-&gt;rx_addr
 comma
 id|len
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|eth_copy_and_sum
@@ -4634,6 +4644,8 @@ comma
 id|skb-&gt;data
 comma
 id|len
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 multiline_comment|/* Avoid a race... */

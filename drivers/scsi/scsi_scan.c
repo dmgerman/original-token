@@ -3423,7 +3423,7 @@ l_int|0
 suffix:semicolon
 id|SCpnt-&gt;sc_data_direction
 op_assign
-id|SCSI_DATA_NONE
+id|SCSI_DATA_READ
 suffix:semicolon
 id|scsi_wait_cmd
 (paren

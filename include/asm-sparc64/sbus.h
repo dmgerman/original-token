@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.13 2000/01/28 13:43:14 jj Exp $&n; * sbus.h: Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.14 2000/02/18 13:50:55 davem Exp $&n; * sbus.h: Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _SPARC64_SBUS_H
 DECL|macro|_SPARC64_SBUS_H
 mdefine_line|#define _SPARC64_SBUS_H
@@ -313,6 +313,14 @@ comma
 id|dma_addr_t
 )paren
 suffix:semicolon
+DECL|macro|SBUS_DMA_BIDIRECTIONAL
+mdefine_line|#define SBUS_DMA_BIDIRECTIONAL&t;0
+DECL|macro|SBUS_DMA_TODEVICE
+mdefine_line|#define SBUS_DMA_TODEVICE&t;1
+DECL|macro|SBUS_DMA_FROMDEVICE
+mdefine_line|#define SBUS_DMA_FROMDEVICE&t;2
+DECL|macro|SBUS_DMA_NONE
+mdefine_line|#define&t;SBUS_DMA_NONE&t;&t;3
 multiline_comment|/* All the rest use streaming mode mappings. */
 r_extern
 id|dma_addr_t
@@ -327,6 +335,8 @@ r_void
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -339,6 +349,8 @@ id|sbus_dev
 op_star
 comma
 id|dma_addr_t
+comma
+r_int
 comma
 r_int
 )paren
@@ -357,6 +369,8 @@ id|scatterlist
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -371,6 +385,8 @@ comma
 r_struct
 id|scatterlist
 op_star
+comma
+r_int
 comma
 r_int
 )paren
@@ -388,6 +404,8 @@ comma
 id|dma_addr_t
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -402,6 +420,8 @@ comma
 r_struct
 id|scatterlist
 op_star
+comma
+r_int
 comma
 r_int
 )paren

@@ -1045,6 +1045,11 @@ r_int
 id|sg_nents
 suffix:semicolon
 multiline_comment|/* Current number of entries in it */
+DECL|member|sg_dma_direction
+r_int
+id|sg_dma_direction
+suffix:semicolon
+multiline_comment|/* dma transfer direction */
 DECL|member|mate
 r_struct
 id|hwif_s

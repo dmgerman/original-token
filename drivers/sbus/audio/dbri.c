@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dbri.c,v 1.18 2000/01/28 13:42:50 jj Exp $&n; * drivers/sbus/audio/dbri.c&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; * Copyright (C) 1998, 1999 Brent Baccala (baccala@freesoft.org)&n; *&n; * This is the lowlevel driver for the DBRI &amp; MMCODEC duo used for ISDN &amp; AUDIO&n; * on Sun SPARCstation 10, 20, LX and Voyager models.&n; *&n; * - DBRI: AT&amp;T T5900FX Dual Basic Rates ISDN Interface. It is a 32 channel&n; *   data time multiplexer with ISDN support (aka T7259)&n; *   Interfaces: SBus,ISDN NT &amp; TE, CHI, 4 bits parallel.&n; *   CHI: (spelled ki) Concentration Highway Interface (AT&amp;T or Intel bus ?).&n; *   Documentation:&n; *   - &quot;STP 4000SBus Dual Basic Rate ISDN (DBRI) Tranceiver&quot; from&n; *     Sparc Technology Business (courtesy of Sun Support)&n; *   - Data sheet of the T7903, a newer but very similar ISA bus equivalent&n; *     available from the Lucent (formarly AT&amp;T microelectronics) home&n; *     page.&n; * - MMCODEC: Crystal Semiconductor CS4215 16 bit Multimedia Audio Codec&n; *   Interfaces: CHI, Audio In &amp; Out, 2 bits parallel&n; *   Documentation: from the Crystal Semiconductor home page.&n; *&n; * The DBRI is a 32 pipe machine, each pipe can transfer some bits between&n; * memory and a serial device (long pipes, nr 0-15) or between two serial&n; * devices (short pipes, nr 16-31), or simply send a fixed data to a serial&n; * device (short pipes).&n; * A timeslot defines the bit-offset and nr of bits read from a serial device.&n; * The timeslots are linked to 6 circular lists, one for each direction for&n; * each serial device (NT,TE,CHI). A timeslot is associated to 1 or 2 pipes&n; * (the second one is a monitor/tee pipe, valid only for serial input).&n; *&n; * The mmcodec is connected via the CHI bus and needs the data &amp; some&n; * parameters (volume, balance, output selection) timemultiplexed in 8 byte&n; * chunks. It also has a control mode, which serves for audio format setting.&n; *&n; * Looking at the CS4215 data sheet it is easy to set up 2 or 4 codecs on&n; * the same CHI bus, so I thought perhaps it is possible to use the onboard&n; * &amp; the speakerbox codec simultanously, giving 2 (not very independent :-)&n; * audio devices. But the SUN HW group decided against it, at least on my&n; * LX the speakerbox connector has at least 1 pin missing and 1 wrongly&n; * connected.&n; */
+multiline_comment|/* $Id: dbri.c,v 1.19 2000/02/18 13:49:42 davem Exp $&n; * drivers/sbus/audio/dbri.c&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; * Copyright (C) 1998, 1999 Brent Baccala (baccala@freesoft.org)&n; *&n; * This is the lowlevel driver for the DBRI &amp; MMCODEC duo used for ISDN &amp; AUDIO&n; * on Sun SPARCstation 10, 20, LX and Voyager models.&n; *&n; * - DBRI: AT&amp;T T5900FX Dual Basic Rates ISDN Interface. It is a 32 channel&n; *   data time multiplexer with ISDN support (aka T7259)&n; *   Interfaces: SBus,ISDN NT &amp; TE, CHI, 4 bits parallel.&n; *   CHI: (spelled ki) Concentration Highway Interface (AT&amp;T or Intel bus ?).&n; *   Documentation:&n; *   - &quot;STP 4000SBus Dual Basic Rate ISDN (DBRI) Tranceiver&quot; from&n; *     Sparc Technology Business (courtesy of Sun Support)&n; *   - Data sheet of the T7903, a newer but very similar ISA bus equivalent&n; *     available from the Lucent (formarly AT&amp;T microelectronics) home&n; *     page.&n; * - MMCODEC: Crystal Semiconductor CS4215 16 bit Multimedia Audio Codec&n; *   Interfaces: CHI, Audio In &amp; Out, 2 bits parallel&n; *   Documentation: from the Crystal Semiconductor home page.&n; *&n; * The DBRI is a 32 pipe machine, each pipe can transfer some bits between&n; * memory and a serial device (long pipes, nr 0-15) or between two serial&n; * devices (short pipes, nr 16-31), or simply send a fixed data to a serial&n; * device (short pipes).&n; * A timeslot defines the bit-offset and nr of bits read from a serial device.&n; * The timeslots are linked to 6 circular lists, one for each direction for&n; * each serial device (NT,TE,CHI). A timeslot is associated to 1 or 2 pipes&n; * (the second one is a monitor/tee pipe, valid only for serial input).&n; *&n; * The mmcodec is connected via the CHI bus and needs the data &amp; some&n; * parameters (volume, balance, output selection) timemultiplexed in 8 byte&n; * chunks. It also has a control mode, which serves for audio format setting.&n; *&n; * Looking at the CS4215 data sheet it is easy to set up 2 or 4 codecs on&n; * the same CHI bus, so I thought perhaps it is possible to use the onboard&n; * &amp; the speakerbox codec simultanously, giving 2 (not very independent :-)&n; * audio devices. But the SUN HW group decided against it, at least on my&n; * LX the speakerbox connector has at least 1 pin missing and 1 wrongly&n; * connected.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1165,6 +1165,8 @@ id|td
 )braket
 dot
 id|len
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|callback
@@ -1365,6 +1367,8 @@ id|rd
 )braket
 dot
 id|len
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|callback
@@ -2327,6 +2331,15 @@ id|desc
 )braket
 dot
 id|len
+comma
+id|output_callback
+op_ne
+l_int|NULL
+ques
+c_cond
+id|SBUS_DMA_TODEVICE
+suffix:colon
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|dbri-&gt;descs
@@ -3568,6 +3581,8 @@ comma
 id|buffer
 comma
 id|len
+comma
+id|SBUS_DMA_TODEVICE
 )paren
 suffix:semicolon
 r_while
@@ -3814,6 +3829,22 @@ op_minus
 l_int|1
 )paren
 (brace
+id|sbus_unmap_single
+c_func
+(paren
+id|dbri-&gt;sdev
+comma
+id|dvma_buffer_base
+comma
+id|dvma_buffer
+op_minus
+id|dvma_buffer_base
+op_plus
+id|len
+comma
+id|SBUS_DMA_TODEVICE
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3855,6 +3886,10 @@ id|last_td
 dot
 id|len
 op_assign
+id|dvma_buffer
+op_minus
+id|dvma_buffer_base
+op_plus
 id|len
 suffix:semicolon
 id|dbri-&gt;descs
@@ -4302,6 +4337,8 @@ comma
 id|buffer
 comma
 id|len
+comma
+id|SBUS_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 r_while
@@ -4568,8 +4605,26 @@ op_eq
 op_minus
 l_int|1
 )paren
+(brace
+id|sbus_unmap_single
+c_func
+(paren
+id|dbri-&gt;sdev
+comma
+id|bus_buffer_base
+comma
+id|bus_buffer
+op_minus
+id|bus_buffer_base
+op_plus
+id|len
+comma
+id|SBUS_DMA_FROMDEVICE
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -4658,6 +4713,10 @@ id|last_rd
 dot
 id|len
 op_assign
+id|bus_buffer
+op_minus
+id|bus_buffer_base
+op_plus
 id|len
 suffix:semicolon
 id|dbri-&gt;descs

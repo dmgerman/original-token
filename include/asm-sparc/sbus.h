@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.21 2000/01/28 13:43:11 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.22 2000/02/18 13:50:50 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SBUS_H
 DECL|macro|_SPARC_SBUS_H
 mdefine_line|#define _SPARC_SBUS_H
@@ -279,9 +279,9 @@ DECL|macro|for_all_sbusdev
 mdefine_line|#define for_all_sbusdev(device, bus) &bslash;&n;&t;for((bus) = sbus_root, ((device) = (bus) ? (bus)-&gt;devices : 0); (bus); (device)=((device)-&gt;next ? (device)-&gt;next : ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
 multiline_comment|/* Driver DVMA interfaces. */
 DECL|macro|sbus_can_dma_64bit
-mdefine_line|#define sbus_can_dma_64bit(sdev)&t;(1)
+mdefine_line|#define sbus_can_dma_64bit(sdev)&t;(0) /* actually, sparc_cpu_model==sun4d */
 DECL|macro|sbus_can_burst64
-mdefine_line|#define sbus_can_burst64(sdev)&t;&t;(1)
+mdefine_line|#define sbus_can_burst64(sdev)&t;&t;(0) /* actually, sparc_cpu_model==sun4d */
 r_extern
 r_void
 id|sbus_set_sbus64
@@ -329,6 +329,14 @@ comma
 id|u32
 )paren
 suffix:semicolon
+DECL|macro|SBUS_DMA_BIDIRECTIONAL
+mdefine_line|#define SBUS_DMA_BIDIRECTIONAL&t;0
+DECL|macro|SBUS_DMA_TODEVICE
+mdefine_line|#define SBUS_DMA_TODEVICE&t;1
+DECL|macro|SBUS_DMA_FROMDEVICE
+mdefine_line|#define SBUS_DMA_FROMDEVICE&t;2
+DECL|macro|SBUS_DMA_NONE
+mdefine_line|#define&t;SBUS_DMA_NONE&t;&t;3
 multiline_comment|/* All the rest use streaming mode mappings. */
 r_extern
 id|u32
@@ -343,6 +351,8 @@ r_void
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -355,6 +365,8 @@ id|sbus_dev
 op_star
 comma
 id|u32
+comma
+r_int
 comma
 r_int
 )paren
@@ -373,6 +385,8 @@ id|scatterlist
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -387,6 +401,8 @@ comma
 r_struct
 id|scatterlist
 op_star
+comma
+r_int
 comma
 r_int
 )paren
@@ -404,6 +420,8 @@ comma
 id|u32
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -418,6 +436,8 @@ comma
 r_struct
 id|scatterlist
 op_star
+comma
+r_int
 comma
 r_int
 )paren

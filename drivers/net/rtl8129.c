@@ -4949,6 +4949,8 @@ comma
 id|rp-&gt;mapping
 comma
 id|rp-&gt;skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|rp-&gt;mapping
@@ -5058,6 +5060,8 @@ comma
 id|skb-&gt;data
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|outl
@@ -5438,6 +5442,8 @@ comma
 id|skb-&gt;data
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|outl
@@ -5979,6 +5985,8 @@ id|entry
 )braket
 dot
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|tp-&gt;tx_info
@@ -7326,6 +7334,8 @@ comma
 id|mapping
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb

@@ -44,14 +44,6 @@ id|e802_table
 )braket
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BRIDGE
-r_extern
-id|ctl_table
-id|bridge_table
-(braket
-)braket
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_IPV6
 r_extern
 id|ctl_table
@@ -164,22 +156,6 @@ comma
 l_int|0555
 comma
 id|ipx_table
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_BRIDGE
-(brace
-id|NET_BRIDGE
-comma
-l_string|&quot;bridge&quot;
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0555
-comma
-id|bridge_table
 )brace
 comma
 macro_line|#endif

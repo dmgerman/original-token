@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_psycho.c,v 1.12 2000/02/17 08:58:18 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_psycho.c,v 1.13 2000/02/18 13:48:54 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -5317,6 +5317,10 @@ suffix:semicolon
 id|p-&gt;iommu.page_table_map_base
 op_assign
 l_int|0xc0000000
+suffix:semicolon
+id|p-&gt;iommu.dma_addr_mask
+op_assign
+l_int|0xffffffff
 suffix:semicolon
 id|memset
 c_func

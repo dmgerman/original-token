@@ -166,6 +166,8 @@ r_void
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Unmap a single streaming mode DMA translation.  The DMA_ADDR and&n;   SIZE must match what was provided for in a previous pci_map_single&n;   call.  All other usages are undefined.  After this call, reads by&n;   the cpu to the buffer are guarenteed to see whatever the device&n;   wrote there.  */
@@ -179,6 +181,8 @@ id|pci_dev
 op_star
 comma
 id|dma_addr_t
+comma
+r_int
 comma
 r_int
 )paren
@@ -198,6 +202,8 @@ id|scatterlist
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Unmap a set of streaming mode DMA translations.  Again, cpu read&n;   rules concerning calls here are the same as for pci_unmap_single()&n;   above.  */
@@ -213,6 +219,8 @@ comma
 r_struct
 id|scatterlist
 op_star
+comma
+r_int
 comma
 r_int
 )paren
@@ -235,6 +243,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 multiline_comment|/* Nothing to do.  */
@@ -259,9 +270,33 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 multiline_comment|/* Nothing to do.  */
+)brace
+multiline_comment|/* Return whether the given PCI device DMA address mask can&n; * be supported properly.  For example, if your device can&n; * only drive the low 24-bits during PCI bus mastering, then&n; * you would pass 0x00ffffff as the mask to this function.&n; */
+DECL|function|pci_dma_supported
+r_extern
+r_inline
+r_int
+id|pci_dma_supported
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|hwdev
+comma
+id|dma_addr_t
+id|mask
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 macro_line|#endif /* __ALPHA_PCI_H */
 eof

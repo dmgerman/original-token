@@ -1621,8 +1621,8 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-r_if
-c_cond
+r_while
+c_loop
 (paren
 id|test_bit
 c_func

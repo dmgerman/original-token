@@ -6313,6 +6313,8 @@ id|des1
 )paren
 op_amp
 id|TD_TBS1
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 r_if
@@ -7461,6 +7463,8 @@ comma
 id|flags
 op_amp
 id|TD_TBS1
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|lp-&gt;tx_ring

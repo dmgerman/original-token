@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.33 2000/02/16 07:31:29 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; *&n; * 2000/01/29&n; * &lt;rth&gt; zait: as long as pci_alloc_consistent produces something addressable, &n; *&t;things are ok.&n; * &lt;zaitcev&gt; rth: no, it is relevant, because get_free_pages returns you a&n; *&t;pointer into the big page mapping&n; * &lt;rth&gt; zait: so what?&n; * &lt;rth&gt; zait: remap_it_my_way(virt_to_phys(get_free_page()))&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Suppose I did this remap_it_my_way(virt_to_phys(get_free_page())).&n; *&t;So far so good.&n; * &lt;zaitcev&gt; Now, driver calls pci_free_consistent(with result of&n; *&t;remap_it_my_way()).&n; * &lt;zaitcev&gt; How do you find the address to pass to free_pages()?&n; * &lt;rth&gt; zait: walk the page tables?  It&squot;s only two or three level after all.&n; * &lt;rth&gt; zait: you have to walk them anyway to remove the mapping.&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Sounds reasonable&n; */
+multiline_comment|/* $Id: ioport.c,v 1.34 2000/02/18 13:48:48 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; *&n; * 2000/01/29&n; * &lt;rth&gt; zait: as long as pci_alloc_consistent produces something addressable, &n; *&t;things are ok.&n; * &lt;zaitcev&gt; rth: no, it is relevant, because get_free_pages returns you a&n; *&t;pointer into the big page mapping&n; * &lt;rth&gt; zait: so what?&n; * &lt;rth&gt; zait: remap_it_my_way(virt_to_phys(get_free_page()))&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Suppose I did this remap_it_my_way(virt_to_phys(get_free_page())).&n; *&t;So far so good.&n; * &lt;zaitcev&gt; Now, driver calls pci_free_consistent(with result of&n; *&t;remap_it_my_way()).&n; * &lt;zaitcev&gt; How do you find the address to pass to free_pages()?&n; * &lt;rth&gt; zait: walk the page tables?  It&squot;s only two or three level after all.&n; * &lt;rth&gt; zait: you have to walk them anyway to remove the mapping.&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Sounds reasonable&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1457,6 +1457,9 @@ id|va
 comma
 r_int
 id|len
+comma
+r_int
+id|direction
 )paren
 (brace
 macro_line|#if 0 /* This is the version that abuses consistent space */
@@ -1689,6 +1692,9 @@ id|ba
 comma
 r_int
 id|n
+comma
+r_int
+id|direction
 )paren
 (brace
 macro_line|#if 0 /* This is the version that abuses consistent space */
@@ -1854,6 +1860,9 @@ id|sg
 comma
 r_int
 id|n
+comma
+r_int
+id|direction
 )paren
 (brace
 id|mmu_get_scsi_sgl
@@ -1888,6 +1897,9 @@ id|sg
 comma
 r_int
 id|n
+comma
+r_int
+id|direction
 )paren
 (brace
 id|mmu_release_scsi_sgl
@@ -1917,6 +1929,9 @@ id|ba
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 r_int
@@ -2005,6 +2020,9 @@ id|sg
 comma
 r_int
 id|n
+comma
+r_int
+id|direction
 )paren
 (brace
 id|printk
@@ -2597,8 +2615,23 @@ id|ptr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|PCI_DMA_NONE
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|virt_to_bus
 c_func
@@ -2623,8 +2656,23 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|PCI_DMA_NONE
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Nothing to do... */
 )brace
 multiline_comment|/* Map a set of buffers described by scatterlist in streaming&n; * mode for DMA.  This is the scather-gather version of the&n; * above pci_map_single interface.  Here the scatter gather list&n; * elements are each tagged with the appropriate dma address&n; * and length.  They are obtained via sg_dma_{address,length}(SG).&n; *&n; * NOTE: An implementation may be able to use a smaller number of&n; *       DMA address/length pairs than there are SG table elements.&n; *       (for example via virtual mapping capabilities)&n; *       The routine returns the number of addr/length pairs actually&n; *       used, at most nents.&n; *&n; * Device ownership issues as mentioned above for pci_map_single are&n; * the same here.&n; */
@@ -2645,10 +2693,25 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 r_int
 id|n
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|PCI_DMA_NONE
+)paren
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -2703,8 +2766,23 @@ id|sg
 comma
 r_int
 id|nhwents
+comma
+r_int
+id|direction
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|PCI_DMA_NONE
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Nothing to do... */
 )brace
 multiline_comment|/* Make physical memory consistent for a single&n; * streaming mode DMA translation after a transfer.&n; *&n; * If you perform a pci_map_single() but wish to interrogate the&n; * buffer using the cpu, yet do not wish to teardown the PCI dma&n; * mapping, you must call this function before doing so.  At the&n; * next point you give the PCI dma address back to the card, the&n; * device again owns the buffer.&n; */
@@ -2723,8 +2801,23 @@ id|ba
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|PCI_DMA_NONE
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mmu_inval_dma_area
 c_func
 (paren
@@ -2768,8 +2861,23 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|PCI_DMA_NONE
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_sabre.c,v 1.13 2000/02/16 07:31:34 davem Exp $&n; * pci_sabre.c: Sabre specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_sabre.c,v 1.14 2000/02/18 13:48:55 davem Exp $&n; * pci_sabre.c: Sabre specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -4728,6 +4728,9 @@ comma
 r_int
 r_int
 id|dvma_offset
+comma
+id|u32
+id|dma_mask
 )paren
 (brace
 r_int
@@ -4907,6 +4910,10 @@ suffix:semicolon
 id|p-&gt;iommu.page_table_map_base
 op_assign
 id|dvma_offset
+suffix:semicolon
+id|p-&gt;iommu.dma_addr_mask
+op_assign
+id|dma_mask
 suffix:semicolon
 id|memset
 c_func
@@ -5924,6 +5931,8 @@ l_int|2
 suffix:semicolon
 id|u32
 id|upa_portid
+comma
+id|dma_mask
 suffix:semicolon
 r_int
 id|bus
@@ -6198,6 +6207,13 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|dma_mask
+op_assign
+id|vdma
+(braket
+l_int|0
+)braket
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -6210,6 +6226,10 @@ l_int|1
 r_case
 l_int|0x20000000
 suffix:colon
+id|dma_mask
+op_or_assign
+l_int|0x1fffffff
+suffix:semicolon
 id|tsbsize
 op_assign
 l_int|64
@@ -6219,9 +6239,23 @@ suffix:semicolon
 r_case
 l_int|0x40000000
 suffix:colon
+id|dma_mask
+op_or_assign
+l_int|0x3fffffff
+suffix:semicolon
+id|tsbsize
+op_assign
+l_int|128
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|0x80000000
 suffix:colon
+id|dma_mask
+op_or_assign
+l_int|0x7fffffff
+suffix:semicolon
 id|tsbsize
 op_assign
 l_int|128
@@ -6253,6 +6287,8 @@ id|vdma
 (braket
 l_int|0
 )braket
+comma
+id|dma_mask
 )paren
 suffix:semicolon
 id|printk

@@ -4776,6 +4776,8 @@ r_sizeof
 r_struct
 id|RxFD
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|skb_reserve
@@ -5341,6 +5343,8 @@ comma
 id|skb-&gt;data
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 )paren
 suffix:semicolon
@@ -5833,6 +5837,8 @@ id|entry
 )braket
 op_member_access_from_pointer
 id|len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb_irq
@@ -5878,6 +5884,8 @@ comma
 id|sp-&gt;mc_setup_dma
 comma
 id|sp-&gt;mc_setup_frm_len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|sp-&gt;mc_setup_busy
@@ -6291,6 +6299,8 @@ r_sizeof
 r_struct
 id|RxFD
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 macro_line|#if 1 || USE_IP_CSUM
@@ -6419,6 +6429,8 @@ r_sizeof
 r_struct
 id|RxFD
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 )brace
@@ -6572,6 +6584,8 @@ r_sizeof
 r_struct
 id|RxFD
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|skb-&gt;dev
@@ -6820,6 +6834,8 @@ r_sizeof
 r_struct
 id|RxFD
 )paren
+comma
+id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -6886,6 +6902,8 @@ id|tx_buf_addr0
 )paren
 comma
 id|skb-&gt;len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -8211,6 +8229,8 @@ comma
 id|mc_setup_frm
 comma
 id|sp-&gt;mc_setup_frm_len
+comma
+id|PCI_DMA_TODEVICE
 )paren
 suffix:semicolon
 id|sp-&gt;tx_ring

@@ -769,11 +769,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Bridge stuff */
-DECL|member|bridge_port_id
-r_int
-id|bridge_port_id
-suffix:semicolon
 multiline_comment|/* Pointers to interface service routines.&t;*/
 DECL|member|open
 r_int
@@ -1068,6 +1063,13 @@ r_struct
 id|dst_entry
 op_star
 )paren
+suffix:semicolon
+multiline_comment|/* bridge stuff */
+DECL|member|br_port
+r_struct
+id|net_bridge_port
+op_star
+id|br_port
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
 DECL|macro|NETDEV_FASTROUTE_HMASK
@@ -1955,6 +1957,21 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|net_call_rx_atomic
+c_func
+(paren
+r_void
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+)paren
+)paren
+suffix:semicolon
 DECL|macro|HAVE_NETIF_RX
 mdefine_line|#define HAVE_NETIF_RX 1
 r_extern

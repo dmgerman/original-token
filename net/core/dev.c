@@ -22,7 +22,7 @@ macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/slhc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;net/br.h&gt;
+macro_line|#include &lt;linux/if_bridge.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/profile.h&gt;
@@ -2519,103 +2519,6 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_BRIDGE
-DECL|function|handle_bridge
-r_static
-r_inline
-r_void
-id|handle_bridge
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_int
-r_int
-id|type
-)paren
-(brace
-multiline_comment|/* &n;&t; * The br_stats.flags is checked here to save the expense of a &n;&t; * function call.&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|br_stats.flags
-op_amp
-id|BR_UP
-)paren
-op_logical_and
-id|br_call_bridge
-c_func
-(paren
-id|skb
-comma
-id|type
-)paren
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; *&t;We pass the bridge a complete frame. This means&n;&t;&t; *&t;recovering the MAC header first.&n;&t;&t; */
-r_int
-id|offset
-suffix:semicolon
-id|skb
-op_assign
-id|skb_clone
-c_func
-(paren
-id|skb
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-r_return
-suffix:semicolon
-id|offset
-op_assign
-id|skb-&gt;data
-op_minus
-id|skb-&gt;mac.raw
-suffix:semicolon
-id|skb_push
-c_func
-(paren
-id|skb
-comma
-id|offset
-)paren
-suffix:semicolon
-multiline_comment|/* Put header back on for bridge */
-r_if
-c_cond
-(paren
-id|br_receive_frame
-c_func
-(paren
-id|skb
-)paren
-)paren
-r_return
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-)brace
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Deliver skb to an old protocol, which is not threaded well&n;   or which do not understand shared skbs.&n; */
 DECL|function|deliver_to_old_ones
 r_static
@@ -2976,6 +2879,60 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|net_call_rx_atomic
+r_void
+id|net_call_rx_atomic
+c_func
+(paren
+r_void
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+)paren
+)paren
+(brace
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
+id|fn
+c_func
+(paren
+)paren
+suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
+)brace
+macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
+DECL|variable|br_handle_frame_hook
+r_void
+(paren
+op_star
+id|br_handle_frame_hook
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
+DECL|macro|HANDLE_BRIDGE
+mdefine_line|#define HANDLE_BRIDGE(SKB, PT_PREV)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((SKB)-&gt;dev-&gt;br_port != NULL &amp;&amp;&t;&t;&t;&t;&bslash;&n;&t;    br_handle_frame_hook != NULL) {&t;&t;&t;&t;&bslash;&n;&t;&t;if (PT_PREV)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;if (!(PT_PREV-&gt;data))&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;deliver_to_old_ones(PT_PREV, SKB, 1);&t;&bslash;&n;&t;&t;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;pt_prev-&gt;func(SKB, SKB-&gt;dev, PT_PREV);&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;br_handle_frame_hook(SKB);&t;&t;&t;&t;&bslash;&n;&t;&t;continue;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
 DECL|function|net_rx_action
 r_static
 r_void
@@ -3119,16 +3076,6 @@ id|type
 op_assign
 id|skb-&gt;protocol
 suffix:semicolon
-macro_line|#ifdef CONFIG_BRIDGE
-id|handle_bridge
-c_func
-(paren
-id|skb
-comma
-id|type
-)paren
-suffix:semicolon
-macro_line|#endif
 id|pt_prev
 op_assign
 l_int|NULL
@@ -3211,6 +3158,16 @@ id|ptype
 suffix:semicolon
 )brace
 )brace
+macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
+id|HANDLE_BRIDGE
+c_func
+(paren
+id|skb
+comma
+id|pt_prev
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -7383,14 +7340,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;The bridge has to be up before the devices&n;&t; */
-macro_line|#ifdef CONFIG_BRIDGE&t; 
-id|br_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 macro_line|#ifdef CONFIG_NET_PROFILE
 id|net_profile_init
 c_func
@@ -7647,14 +7596,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BRIDGE
-multiline_comment|/*&n;&t; * Register any statically linked ethernet devices with the bridge&n;&t; */
-id|br_spacedevice_register
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Initialise network devices&n;&t; */
 id|net_device_init
 c_func
