@@ -32,7 +32,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR OPTICS_CDROM_MAJOR
-macro_line|# include &quot;blk.h&quot;
+macro_line|# include &lt;linux/blk.h&gt;
 DECL|macro|optcd_port
 mdefine_line|#define optcd_port optcd&t;/* Needed for the modutils. */
 macro_line|# include &lt;linux/optcd.h&gt;

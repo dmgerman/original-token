@@ -38,7 +38,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MITSUMI_CDROM_MAJOR
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|mcd_port
 mdefine_line|#define mcd_port mcd    /* for compatible parameter passing with &quot;insmod&quot; */
 macro_line|#include &lt;linux/mcd.h&gt;

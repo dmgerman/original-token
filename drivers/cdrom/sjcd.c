@@ -31,7 +31,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SANYO_CDROM_MAJOR
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/sjcd.h&gt;
 multiline_comment|/* Some (Media)Magic */
 multiline_comment|/* define types of drive the interface on an ISP16 card may be looking at */

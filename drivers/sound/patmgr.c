@@ -475,7 +475,6 @@ l_int|0
 )paren
 comma
 (paren
-(paren
 r_char
 op_star
 )paren
@@ -483,11 +482,8 @@ id|mbox
 (braket
 id|dev
 )braket
-)paren
 comma
-(paren
 id|count
-)paren
 )paren
 suffix:semicolon
 id|msg_direction
@@ -569,12 +565,10 @@ suffix:semicolon
 )brace
 id|memcpy_fromfs
 (paren
-(paren
 id|mbox
 (braket
 id|dev
 )braket
-)paren
 comma
 op_amp
 (paren
@@ -586,9 +580,7 @@ l_int|0
 )braket
 )paren
 comma
-(paren
 l_int|4
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -721,7 +713,6 @@ id|dev
 (brace
 id|memcpy_fromfs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -736,7 +727,6 @@ id|dev
 (braket
 l_int|4
 )braket
-)paren
 comma
 op_amp
 (paren
@@ -748,11 +738,9 @@ l_int|4
 )braket
 )paren
 comma
-(paren
 id|count
 op_minus
 l_int|4
-)paren
 )paren
 suffix:semicolon
 id|msg_direction
@@ -1136,13 +1124,6 @@ r_struct
 id|patmgr_info
 op_star
 )paren
-(paren
-(brace
-id|caddr_t
-id|x
-suffix:semicolon
-id|x
-op_assign
 id|kmalloc
 (paren
 r_sizeof
@@ -1152,11 +1133,6 @@ id|patmgr_info
 )paren
 comma
 id|GFP_KERNEL
-)paren
-suffix:semicolon
-id|x
-suffix:semicolon
-)brace
 )paren
 )paren
 op_eq

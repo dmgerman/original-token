@@ -33,7 +33,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR AZTECH_CDROM_MAJOR 
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#else
 DECL|macro|MOD_INC_USE_COUNT

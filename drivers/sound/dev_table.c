@@ -196,7 +196,6 @@ id|config
 )paren
 )paren
 (brace
-macro_line|#ifndef SHORT_BANNERS
 id|printk
 (paren
 l_string|&quot;snd%d&quot;
@@ -209,7 +208,6 @@ dot
 id|card_type
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mem_start
 op_assign
 id|sound_drivers
@@ -230,7 +228,6 @@ dot
 id|config
 )paren
 suffix:semicolon
-macro_line|#ifndef SHORT_BANNERS
 id|printk
 (paren
 l_string|&quot; at 0x%x irq %d drq %d&quot;
@@ -288,7 +285,6 @@ id|printk
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 id|snd_installed_cards

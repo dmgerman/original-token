@@ -54,7 +54,7 @@ macro_line|#if !(SBPCD_ISSUE-4)
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MATSUSHITA_CDROM4_MAJOR /* fourth driver issue */
 macro_line|#endif
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;v3.9 Eberhard Moenkeberg &lt;emoenke@gwdg.de&gt;&quot;
 multiline_comment|/*==========================================================================*/

@@ -117,7 +117,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|GLOBAL_WRITTEN
-mdefine_line|#define GLOBAL_WRITTEN 1
+mdefine_line|#define GLOBAL_WRITTEN  1
+DECL|macro|CFG_DUP
+mdefine_line|#define CFG_DUP &t;2
 DECL|struct|kconfig
 r_struct
 id|kconfig

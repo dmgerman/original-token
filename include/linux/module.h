@@ -241,10 +241,6 @@ multiline_comment|/*&n; * The first word of the module contains the use count.&n
 DECL|macro|GET_USE_COUNT
 mdefine_line|#define GET_USE_COUNT(module)&t;(* (long *) (module)-&gt;addr)
 multiline_comment|/*&n; * define the count variable, and usage macros.&n; */
-r_extern
-r_int
-id|mod_use_count_
-suffix:semicolon
 macro_line|#if defined(CONFIG_MODVERSIONS) &amp;&amp; defined(MODULE) &amp;&amp; !defined(__GENKSYMS__)
 DECL|variable|Using_Versions
 r_int
@@ -253,6 +249,10 @@ suffix:semicolon
 multiline_comment|/* gcc will handle this global (used as a flag) correctly */
 macro_line|#endif
 macro_line|#ifdef MODULE
+r_extern
+r_int
+id|mod_use_count_
+suffix:semicolon
 DECL|macro|MOD_INC_USE_COUNT
 mdefine_line|#define MOD_INC_USE_COUNT      mod_use_count_++
 DECL|macro|MOD_DEC_USE_COUNT

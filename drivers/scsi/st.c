@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sat Sep 30 15:54:57 1995 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Tue Oct 17 21:46:26 1995 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -21,7 +21,7 @@ DECL|macro|DEBUG
 mdefine_line|#define DEBUG 0
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_TAPE_MAJOR
-macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
@@ -348,6 +348,13 @@ comma
 id|SCpnt
 )paren
 suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 id|scode
@@ -404,6 +411,13 @@ op_logical_and
 id|scode
 op_ne
 id|VOLUME_OVERFLOW
+op_logical_and
+id|SCpnt-&gt;data_cmnd
+(braket
+l_int|0
+)braket
+op_ne
+id|MODE_SENSE
 )paren
 )paren
 (brace
@@ -418,6 +432,7 @@ comma
 id|result
 )paren
 suffix:semicolon
+macro_line|#if !DEBUG
 r_if
 c_cond
 (paren
@@ -444,6 +459,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -785,30 +801,21 @@ id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_SCSI_DONE
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|STp-&gt;buffer
-)paren
-op_member_access_from_pointer
-id|writing
-op_logical_or
-id|STp-&gt;write_pending
-)paren
-id|wake_up
-c_func
-(paren
-op_amp
-(paren
-id|STp-&gt;waiting
-)paren
-)paren
-suffix:semicolon
+macro_line|#if DEBUG
 id|STp-&gt;write_pending
 op_assign
 l_int|0
+suffix:semicolon
+macro_line|#endif
+id|up
+c_func
+(paren
+id|SCpnt-&gt;request.sem
+)paren
+suffix:semicolon
+id|SCpnt-&gt;request.sem
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#if DEBUG
@@ -859,10 +866,6 @@ r_int
 id|retries
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -919,6 +922,17 @@ l_int|5
 op_amp
 l_int|0xe0
 suffix:semicolon
+id|STp-&gt;sem
+op_assign
+id|MUTEX_LOCKED
+suffix:semicolon
+id|SCpnt-&gt;request.sem
+op_assign
+op_amp
+(paren
+id|STp-&gt;sem
+)paren
+suffix:semicolon
 id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_SCSI_BUSY
@@ -953,37 +967,10 @@ comma
 id|retries
 )paren
 suffix:semicolon
-multiline_comment|/* this must be done with interrupts off */
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
+id|down
 c_func
 (paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|SCpnt-&gt;request.rq_status
-op_ne
-id|RQ_SCSI_DONE
-)paren
-id|sleep_on
-c_func
-(paren
-op_amp
-(paren
-id|STp-&gt;waiting
-)paren
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
+id|SCpnt-&gt;request.sem
 )paren
 suffix:semicolon
 (paren
@@ -1018,60 +1005,31 @@ id|ST_buffer
 op_star
 id|STbuffer
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|STbuffer
 op_assign
 id|STp-&gt;buffer
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
 id|STp-&gt;write_pending
 )paren
-(brace
-macro_line|#if DEBUG
 id|STp-&gt;nbr_waits
 op_increment
 suffix:semicolon
-macro_line|#endif
-id|sleep_on
-c_func
-(paren
-op_amp
-(paren
-id|STp-&gt;waiting
-)paren
-)paren
-suffix:semicolon
-id|STp-&gt;write_pending
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#if DEBUG
 r_else
 id|STp-&gt;nbr_finished
 op_increment
 suffix:semicolon
 macro_line|#endif
-id|restore_flags
+id|down
 c_func
 (paren
-id|flags
+op_amp
+(paren
+id|STp-&gt;sem
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2150,10 +2108,6 @@ id|STp-&gt;dirty
 op_assign
 l_int|0
 suffix:semicolon
-id|STp-&gt;write_pending
-op_assign
-l_int|0
-suffix:semicolon
 id|STp-&gt;rw
 op_assign
 id|ST_IDLE
@@ -2752,6 +2706,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Prevent error propagation */
+id|STp-&gt;drv_write_prot
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -2983,6 +2941,23 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
+id|STp-&gt;drv_write_prot
+op_assign
+(paren
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|b_data
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x80
+)paren
+op_ne
+l_int|0
+suffix:semicolon
 )brace
 id|SCpnt-&gt;request.rq_status
 op_assign
@@ -3058,23 +3033,6 @@ id|buffer_blocks
 )paren
 suffix:semicolon
 macro_line|#endif
-id|STp-&gt;drv_write_prot
-op_assign
-(paren
-(paren
-id|STp-&gt;buffer
-)paren
-op_member_access_from_pointer
-id|b_data
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0x80
-)paren
-op_ne
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4862,6 +4820,17 @@ l_int|4
 op_assign
 id|blks
 suffix:semicolon
+id|STp-&gt;sem
+op_assign
+id|MUTEX_LOCKED
+suffix:semicolon
+id|SCpnt-&gt;request.sem
+op_assign
+op_amp
+(paren
+id|STp-&gt;sem
+)paren
+suffix:semicolon
 id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_SCSI_BUSY
@@ -4870,10 +4839,12 @@ id|SCpnt-&gt;request.rq_dev
 op_assign
 id|STp-&gt;devt
 suffix:semicolon
+macro_line|#if DEBUG
 id|STp-&gt;write_pending
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif
 id|scsi_do_cmd
 (paren
 id|SCpnt

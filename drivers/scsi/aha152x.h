@@ -3,7 +3,7 @@ DECL|macro|_AHA152X_H
 mdefine_line|#define _AHA152X_H
 multiline_comment|/*&n; * $Id: aha152x.h,v 1.9 1995/03/18 09:21:04 root Exp root $&n; */
 macro_line|#if defined(__KERNEL__)
-macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &lt;asm/io.h&gt;
 r_int

@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
 macro_line|#include &quot;hosts.h&quot;

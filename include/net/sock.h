@@ -127,7 +127,7 @@ DECL|member|urg_data
 id|__u32
 id|urg_data
 suffix:semicolon
-multiline_comment|/*&n;   * Not all are volatile, but some are, so we&n;   * might as well say they all are.&n;   */
+multiline_comment|/*&n;   *&t;Not all are volatile, but some are, so we&n;   * &t;might as well say they all are.&n;   */
 DECL|member|inuse
 r_volatile
 r_char
@@ -270,6 +270,12 @@ DECL|member|saddr
 id|__u32
 id|saddr
 suffix:semicolon
+multiline_comment|/* Sending source */
+DECL|member|rcv_saddr
+id|__u32
+id|rcv_saddr
+suffix:semicolon
+multiline_comment|/* Bound address */
 DECL|member|max_unacked
 r_int
 r_int
@@ -285,7 +291,7 @@ r_int
 r_int
 id|bytes_rcv
 suffix:semicolon
-multiline_comment|/* mss is min(mtu, max_window) */
+multiline_comment|/*&n; *&t;mss is min(mtu, max_window) &n; */
 DECL|member|mtu
 r_int
 r_int
@@ -370,7 +376,7 @@ r_int
 r_int
 id|rto
 suffix:semicolon
-multiline_comment|/* currently backoff isn&squot;t used, but I&squot;m maintaining it in case&n; * we want to go back to a backoff formula that needs it&n; */
+multiline_comment|/*&n; *&t;currently backoff isn&squot;t used, but I&squot;m maintaining it in case&n; *&t;we want to go back to a backoff formula that needs it&n; */
 DECL|member|backoff
 r_volatile
 r_int
@@ -436,6 +442,7 @@ id|localroute
 suffix:semicolon
 multiline_comment|/* Route locally only */
 macro_line|#ifdef CONFIG_IPX
+multiline_comment|/*&n; *&t;Once the IPX ncpd patches are in these are going into protinfo&n; */
 DECL|member|ipx_dest_addr
 id|ipx_address
 id|ipx_dest_addr
@@ -470,13 +477,6 @@ id|nr
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK
-DECL|member|at
-r_struct
-id|atalk_sock
-id|at
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;This is where all the private (optional) areas that don&squot;t&n; *&t;overlap will eventually live. For now just AF_UNIX is here.&n; */
 r_union
 (brace
@@ -485,11 +485,18 @@ r_struct
 id|unix_opt
 id|af_unix
 suffix:semicolon
+macro_line|#ifdef CONFIG_ATALK
+DECL|member|af_at
+r_struct
+id|atalk_sock
+id|af_at
+suffix:semicolon
+macro_line|#endif
 DECL|member|protinfo
 )brace
 id|protinfo
 suffix:semicolon
-multiline_comment|/* IP &squot;private area&squot; or will be eventually */
+multiline_comment|/* &n; *&t;IP &squot;private area&squot; or will be eventually &n; */
 DECL|member|ip_ttl
 r_int
 id|ip_ttl
@@ -651,7 +658,7 @@ id|ip_mc_list
 suffix:semicolon
 multiline_comment|/* Group array */
 macro_line|#endif  
-multiline_comment|/* This part is used for the timeout functions (timer.c). */
+multiline_comment|/*&n; *&t;This part is used for the timeout functions (timer.c). &n; */
 DECL|member|timeout
 r_int
 id|timeout
@@ -668,14 +675,14 @@ r_struct
 id|timeval
 id|stamp
 suffix:semicolon
-multiline_comment|/* identd */
+multiline_comment|/*&n;  *&t;Identd &n;  */
 DECL|member|socket
 r_struct
 id|socket
 op_star
 id|socket
 suffix:semicolon
-multiline_comment|/* Callbacks */
+multiline_comment|/*&n;   *&t;Callbacks &n;   */
 DECL|member|state_change
 r_void
 (paren
@@ -733,124 +740,11 @@ id|sk
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;IP protocol blocks we attach to sockets.&n; */
 DECL|struct|proto
 r_struct
 id|proto
 (brace
-DECL|member|wmalloc
-r_struct
-id|sk_buff
-op_star
-(paren
-op_star
-id|wmalloc
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-r_int
-id|size
-comma
-r_int
-id|force
-comma
-r_int
-id|priority
-)paren
-suffix:semicolon
-DECL|member|rmalloc
-r_struct
-id|sk_buff
-op_star
-(paren
-op_star
-id|rmalloc
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-r_int
-id|size
-comma
-r_int
-id|force
-comma
-r_int
-id|priority
-)paren
-suffix:semicolon
-DECL|member|wfree
-r_void
-(paren
-op_star
-id|wfree
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-DECL|member|rfree
-r_void
-(paren
-op_star
-id|rfree
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-DECL|member|rspace
-r_int
-r_int
-(paren
-op_star
-id|rspace
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
-DECL|member|wspace
-r_int
-r_int
-(paren
-op_star
-id|wspace
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
 DECL|member|close
 r_void
 (paren
@@ -1306,6 +1200,64 @@ op_star
 id|option
 )paren
 suffix:semicolon
+DECL|member|sendmsg
+r_int
+(paren
+op_star
+id|sendmsg
+)paren
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|msghdr
+op_star
+id|msg
+comma
+r_int
+id|len
+comma
+r_int
+id|noblock
+comma
+r_int
+id|flags
+)paren
+suffix:semicolon
+DECL|member|recvmsg
+r_int
+(paren
+op_star
+id|recvmsg
+)paren
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|msghdr
+op_star
+id|msg
+comma
+r_int
+id|len
+comma
+r_int
+id|noblock
+comma
+r_int
+id|flags
+comma
+r_int
+op_star
+id|addr_len
+)paren
+suffix:semicolon
 DECL|member|max_header
 r_int
 r_int
@@ -1350,13 +1302,13 @@ mdefine_line|#define TIME_KEEPOPEN&t;3
 DECL|macro|TIME_DESTROY
 mdefine_line|#define TIME_DESTROY&t;4
 DECL|macro|TIME_DONE
-mdefine_line|#define TIME_DONE&t;5&t;/* used to absorb those last few packets */
+mdefine_line|#define TIME_DONE&t;5&t;/* Used to absorb those last few packets */
 DECL|macro|TIME_PROBE0
 mdefine_line|#define TIME_PROBE0&t;6
-multiline_comment|/* about 10 seconds */
+multiline_comment|/*&n; *&t;About 10 seconds &n; */
 DECL|macro|SOCK_DESTROY_TIME
 mdefine_line|#define SOCK_DESTROY_TIME (10*HZ)
-multiline_comment|/* Sockets 0-1023 can&squot;t be bound too unless you are superuser */
+multiline_comment|/*&n; *&t;Sockets 0-1023 can&squot;t be bound too unless you are superuser &n; */
 DECL|macro|PROT_SOCK
 mdefine_line|#define PROT_SOCK&t;1024
 DECL|macro|SHUTDOWN_MASK
@@ -1756,7 +1708,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* declarations from timer.c */
+multiline_comment|/* &n; *&t;Declarations from timer.c &n; */
 r_extern
 r_struct
 id|sock
@@ -1794,7 +1746,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Enable debug/info messages */
+multiline_comment|/* &n; *&t;Enable debug/info messages &n; */
 DECL|macro|NETDEBUG
 mdefine_line|#define NETDEBUG(x)&t;&t;x
 macro_line|#endif&t;/* _SOCK_H */

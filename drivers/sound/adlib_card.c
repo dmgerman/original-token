@@ -14,17 +14,6 @@ op_star
 id|hw_config
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|opl3_detect
-(paren
-id|hw_config-&gt;io_base
-comma
-id|hw_config-&gt;osp
-)paren
-)paren
-(brace
 id|mem_start
 op_assign
 id|opl3_init
@@ -45,7 +34,6 @@ comma
 l_string|&quot;OPL3/OPL2&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 id|mem_start
 suffix:semicolon

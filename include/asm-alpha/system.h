@@ -134,7 +134,7 @@ id|pctxp
 )paren
 suffix:semicolon
 DECL|macro|switch_to
-mdefine_line|#define switch_to(p) do { &bslash;&n;&t;current = p; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;(p)-&gt;tss - 0xfffffc0000000000); &bslash;&n;} while (0)
+mdefine_line|#define switch_to(p) do { &bslash;&n;&t;current_set[0] = p; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;(p)-&gt;tss - 0xfffffc0000000000); &bslash;&n;} while (0)
 DECL|macro|mb
 mdefine_line|#define mb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
 DECL|macro|draina

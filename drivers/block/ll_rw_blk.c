@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
 DECL|variable|all_requests
 r_static

@@ -3783,8 +3783,8 @@ id|nr_voices
 suffix:semicolon
 id|memcpy_tofs
 (paren
-op_amp
 (paren
+op_amp
 (paren
 (paren
 r_char
@@ -3797,16 +3797,12 @@ l_int|0
 )braket
 )paren
 comma
-(paren
 op_amp
 id|gus_info
-)paren
 comma
-(paren
 r_sizeof
 (paren
 id|gus_info
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -4329,7 +4325,7 @@ id|ramp_time
 )paren
 (brace
 r_int
-id|current
+id|curr
 comma
 id|target
 comma
@@ -4375,7 +4371,7 @@ id|gus_select_voice
 id|voice
 )paren
 suffix:semicolon
-id|current
+id|curr
 op_assign
 id|gus_read16
 (paren
@@ -4447,7 +4443,7 @@ c_cond
 (paren
 id|target
 op_minus
-id|current
+id|curr
 )paren
 op_div
 l_int|64
@@ -4478,7 +4474,7 @@ c_cond
 (paren
 id|target
 OG
-id|current
+id|curr
 )paren
 (brace
 r_if
@@ -4500,7 +4496,7 @@ l_int|65
 suffix:semicolon
 id|gus_ramp_range
 (paren
-id|current
+id|curr
 comma
 id|target
 )paren
@@ -4529,7 +4525,7 @@ id|gus_ramp_range
 (paren
 id|target
 comma
-id|current
+id|curr
 )paren
 suffix:semicolon
 id|gus_rampon
@@ -5632,6 +5628,7 @@ id|voice
 suffix:semicolon
 )brace
 r_else
+(brace
 id|compute_and_set_volume
 (paren
 id|voice
@@ -5641,6 +5638,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
 id|save_flags
 (paren
 id|flags
@@ -5979,6 +5977,7 @@ id|volume_irq_mode
 op_eq
 id|VMODE_START_NOTE
 )paren
+(brace
 id|voices
 (braket
 id|voice
@@ -5988,6 +5987,7 @@ id|volume_pending
 op_assign
 id|volume
 suffix:semicolon
+)brace
 r_else
 (brace
 id|ret_val
@@ -6543,7 +6543,6 @@ suffix:semicolon
 multiline_comment|/*&n;   * Copy the header from user space but ignore the first bytes which have&n;   * been transferred already.&n;   */
 id|memcpy_fromfs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -6556,7 +6555,6 @@ id|patch
 (braket
 id|offs
 )braket
-)paren
 comma
 op_amp
 (paren
@@ -6568,11 +6566,9 @@ id|offs
 )braket
 )paren
 comma
-(paren
 id|sizeof_patch
 op_minus
 id|offs
-)paren
 )paren
 suffix:semicolon
 id|instr
@@ -7065,14 +7061,12 @@ suffix:semicolon
 multiline_comment|/*&n;&t;   * OK, move now. First in and then out.&n;&t;   */
 id|memcpy_fromfs
 (paren
-(paren
 id|audio_devs
 (braket
 id|gus_devnum
 )braket
 op_member_access_from_pointer
 id|dmap_out-&gt;raw_buf
-)paren
 comma
 op_amp
 (paren
@@ -7086,9 +7080,7 @@ id|src_offs
 )braket
 )paren
 comma
-(paren
 id|blk_size
-)paren
 )paren
 suffix:semicolon
 id|save_flags
@@ -10064,13 +10056,11 @@ l_int|1
 (brace
 id|memcpy_fromfs
 (paren
-(paren
 op_amp
 id|localbuf
 (braket
 id|localoffs
 )braket
-)paren
 comma
 op_amp
 (paren
@@ -10082,9 +10072,7 @@ id|useroffs
 )braket
 )paren
 comma
-(paren
 id|len
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -12684,12 +12672,14 @@ l_int|8
 suffix:semicolon
 macro_line|#endif
 )brace
-(brace
-id|caddr_t
-id|ptr
-suffix:semicolon
-id|ptr
+id|samples
 op_assign
+(paren
+r_struct
+id|patch_info
+op_star
+)paren
+(paren
 id|sound_mem_blocks
 (braket
 id|sound_num_blocks
@@ -12711,6 +12701,7 @@ id|samples
 comma
 id|GFP_KERNEL
 )paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -12722,16 +12713,6 @@ l_int|1024
 id|sound_num_blocks
 op_increment
 suffix:semicolon
-id|samples
-op_assign
-(paren
-r_struct
-id|patch_info
-op_star
-)paren
-id|ptr
-suffix:semicolon
-)brace
 suffix:semicolon
 id|reset_sample_memory
 (paren

@@ -30,6 +30,10 @@ macro_line|#ifdef CONFIG_NET
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#ifdef CONFIG_AX25
+macro_line|#include &lt;net/ax25.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -1169,7 +1173,7 @@ id|si_meminfo
 )paren
 comma
 macro_line|#ifdef CONFIG_NET
-multiline_comment|/* socket layer registration */
+multiline_comment|/* Socket layer registration */
 id|X
 c_func
 (paren
@@ -1182,8 +1186,23 @@ c_func
 id|sock_unregister
 )paren
 comma
-multiline_comment|/* Internet layer registration */
+macro_line|#ifdef CONFIG_FIREWALL
+multiline_comment|/* Firewall registration */
+id|X
+c_func
+(paren
+id|register_firewall
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_firewall
+)paren
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET&t;
+multiline_comment|/* Internet layer registration */
 id|X
 c_func
 (paren
@@ -1282,8 +1301,22 @@ id|unregister_netdevice_notifier
 )paren
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_INET
 multiline_comment|/* support for loadable net drivers */
+macro_line|#ifdef CONFIG_AX25
+id|X
+c_func
+(paren
+id|ax25_encapsulate
+)paren
+comma
+id|X
+c_func
+(paren
+id|ax25_rebuild_header
+)paren
+comma
+macro_line|#endif&t;
+macro_line|#ifdef CONFIG_INET
 id|X
 c_func
 (paren

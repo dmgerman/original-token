@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|# include &lt;linux/module.h&gt;
 macro_line|# include &lt;linux/version.h&gt;
-macro_line|# ifndef CONFIG_MODVERSIONS
 DECL|variable|kernel_version
 r_char
 id|kernel_version
@@ -14,7 +13,6 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
-macro_line|# endif
 macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -35,7 +33,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/cdu31a.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR CDU31A_CDROM_MAJOR
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG 0
 DECL|macro|CDU31A_READAHEAD
@@ -9654,6 +9652,8 @@ suffix:semicolon
 id|sony_usage
 op_increment
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9697,6 +9697,8 @@ l_int|0
 (brace
 id|sony_usage
 op_decrement
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 r_if
@@ -9983,6 +9985,7 @@ op_assign
 l_int|0x20
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Set up base I/O and interrupts, called from main.c.&n; */
 r_void
 DECL|function|cdu31a_setup
@@ -10085,6 +10088,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 DECL|variable|cdu31a_block_size
 r_static
 r_int
@@ -10671,23 +10675,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sony_usage
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;cdu31a module in use - can&squot;t remove it.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -667,11 +667,15 @@ DECL|member|processor
 r_int
 id|processor
 suffix:semicolon
+DECL|member|last_processor
+r_int
+id|last_processor
+suffix:semicolon
 DECL|member|lock_depth
 r_int
 id|lock_depth
 suffix:semicolon
-multiline_comment|/* Lock depth. We can context swithc in and out of holding a syscall kernel lock... */
+multiline_comment|/* Lock depth. We can context switch in and out of holding a syscall kernel lock... */
 macro_line|#endif&t;
 )brace
 suffix:semicolon
@@ -692,9 +696,11 @@ mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* Process used the FPU this quan
 multiline_comment|/*&n; * Limit the stack by to some sane default: root can always&n; * increase this limit if needed..  8MB seems reasonable.&n; */
 DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)
+DECL|macro|DEF_PRIORITY
+mdefine_line|#define DEF_PRIORITY&t;(15*HZ/100)&t;/* 150 ms time slices */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15*HZ/100,15*HZ/100,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;0,0,0,0,0, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}, &bslash;&n;&t;&t;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;&amp;init_signals, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,DEF_PRIORITY,DEF_PRIORITY,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;0,0,0,0,0, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}, &bslash;&n;&t;&t;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;&amp;init_signals, &bslash;&n;}
 r_extern
 r_struct
 id|mm_struct
@@ -731,7 +737,7 @@ id|NR_CPUS
 suffix:semicolon
 multiline_comment|/*&n; *&t;On a single processor system this comes out as current_set[0] when cpp&n; *&t;has finished with it, which gcc will optimise away.&n; */
 DECL|macro|current
-mdefine_line|#define current (current_set[smp_processor_id()])&t;/* Current on this processor */
+mdefine_line|#define current (0+current_set[smp_processor_id()])&t;/* Current on this processor */
 r_extern
 r_int
 r_int

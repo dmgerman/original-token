@@ -8,7 +8,7 @@ multiline_comment|/*&n; * $Log: t128.c,v $&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;t128.h&quot;

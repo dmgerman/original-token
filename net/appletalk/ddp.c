@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -29,6 +29,7 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#ifdef CONFIG_ATALK
 DECL|macro|APPLETALK_DEBUG
 mdefine_line|#define APPLETALK_DEBUG
@@ -242,7 +243,7 @@ c_cond
 (paren
 id|to-&gt;sat_port
 op_ne
-id|s-&gt;at.src_port
+id|s-&gt;protinfo.af_at.src_port
 )paren
 (brace
 r_continue
@@ -259,7 +260,7 @@ id|to-&gt;sat_addr.s_node
 op_eq
 id|ATADDR_BCAST
 op_logical_and
-id|s-&gt;at.src_net
+id|s-&gt;protinfo.af_at.src_net
 op_eq
 id|atif-&gt;address.s_net
 )paren
@@ -272,11 +273,11 @@ c_cond
 (paren
 id|to-&gt;sat_addr.s_net
 op_eq
-id|s-&gt;at.src_net
+id|s-&gt;protinfo.af_at.src_net
 op_logical_and
 id|to-&gt;sat_addr.s_node
 op_eq
-id|s-&gt;at.src_node
+id|s-&gt;protinfo.af_at.src_node
 )paren
 (brace
 r_break
@@ -325,7 +326,7 @@ id|s-&gt;next
 r_if
 c_cond
 (paren
-id|s-&gt;at.src_net
+id|s-&gt;protinfo.af_at.src_net
 op_ne
 id|sat-&gt;sat_addr.s_net
 )paren
@@ -336,7 +337,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s-&gt;at.src_node
+id|s-&gt;protinfo.af_at.src_node
 op_ne
 id|sat-&gt;sat_addr.s_node
 )paren
@@ -347,7 +348,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s-&gt;at.src_port
+id|s-&gt;protinfo.af_at.src_port
 op_ne
 id|sat-&gt;sat_port
 )paren
@@ -510,7 +511,7 @@ id|sk-&gt;timer
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Called from proc fs */
+multiline_comment|/*&n; *&t;Called from proc fs &n; */
 DECL|function|atalk_get_info
 r_int
 id|atalk_get_info
@@ -554,8 +555,7 @@ id|begin
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Fill this in to print out the appletalk info you want&n;&t; */
-multiline_comment|/* Theory.. Keep printing in the same place until we pass offset */
+multiline_comment|/*&n;&t; *&t;Output the appletalk data for the /proc virtual fs.&n;&t; */
 id|len
 op_add_assign
 id|sprintf
@@ -604,11 +604,11 @@ id|len
 comma
 l_string|&quot;%04X:%02X:%02X  &quot;
 comma
-id|s-&gt;at.src_net
+id|s-&gt;protinfo.af_at.src_net
 comma
-id|s-&gt;at.src_node
+id|s-&gt;protinfo.af_at.src_node
 comma
-id|s-&gt;at.src_port
+id|s-&gt;protinfo.af_at.src_port
 )paren
 suffix:semicolon
 id|len
@@ -621,11 +621,11 @@ id|len
 comma
 l_string|&quot;%04X:%02X:%02X  &quot;
 comma
-id|s-&gt;at.dest_net
+id|s-&gt;protinfo.af_at.dest_net
 comma
-id|s-&gt;at.dest_node
+id|s-&gt;protinfo.af_at.dest_node
 comma
-id|s-&gt;at.dest_port
+id|s-&gt;protinfo.af_at.dest_port
 )paren
 suffix:semicolon
 id|len
@@ -1446,10 +1446,8 @@ op_amp
 id|ATIF_PROBE
 )paren
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1461,11 +1459,9 @@ id|iface-&gt;address.s_node
 op_eq
 id|node
 )paren
-(brace
 r_return
 id|iface
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|NULL
@@ -1932,10 +1928,12 @@ c_func
 id|iface-&gt;nets.nr_lastnet
 )paren
 )paren
+(brace
 id|riface
 op_assign
 id|iface
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4176,27 +4174,27 @@ id|sk-&gt;debug
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;at.src_net
+id|sk-&gt;protinfo.af_at.src_net
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;at.src_node
+id|sk-&gt;protinfo.af_at.src_node
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;at.src_port
+id|sk-&gt;protinfo.af_at.src_port
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;at.dest_net
+id|sk-&gt;protinfo.af_at.dest_net
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;at.dest_node
+id|sk-&gt;protinfo.af_at.dest_node
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;at.dest_port
+id|sk-&gt;protinfo.af_at.dest_port
 op_assign
 l_int|0
 suffix:semicolon
@@ -4378,6 +4376,7 @@ suffix:semicolon
 id|sat-&gt;sat_port
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -4392,6 +4391,7 @@ l_int|NULL
 r_return
 id|sat-&gt;sat_port
 suffix:semicolon
+)brace
 r_return
 op_minus
 id|EBUSY
@@ -4444,13 +4444,13 @@ r_return
 op_minus
 id|EADDRNOTAVAIL
 suffix:semicolon
-id|sk-&gt;at.src_net
+id|sk-&gt;protinfo.af_at.src_net
 op_assign
 id|sat.sat_addr.s_net
 op_assign
 id|ap-&gt;s_net
 suffix:semicolon
-id|sk-&gt;at.src_node
+id|sk-&gt;protinfo.af_at.src_node
 op_assign
 id|sat.sat_addr.s_node
 op_assign
@@ -4475,7 +4475,7 @@ l_int|0
 r_return
 id|n
 suffix:semicolon
-id|sk-&gt;at.src_port
+id|sk-&gt;protinfo.af_at.src_port
 op_assign
 id|n
 suffix:semicolon
@@ -4616,13 +4616,13 @@ op_minus
 id|EADDRNOTAVAIL
 suffix:semicolon
 )brace
-id|sk-&gt;at.src_net
+id|sk-&gt;protinfo.af_at.src_net
 op_assign
 id|addr-&gt;sat_addr.s_net
 op_assign
 id|ap-&gt;s_net
 suffix:semicolon
-id|sk-&gt;at.src_node
+id|sk-&gt;protinfo.af_at.src_node
 op_assign
 id|addr-&gt;sat_addr.s_node
 op_assign
@@ -4648,11 +4648,11 @@ r_return
 op_minus
 id|EADDRNOTAVAIL
 suffix:semicolon
-id|sk-&gt;at.src_net
+id|sk-&gt;protinfo.af_at.src_net
 op_assign
 id|addr-&gt;sat_addr.s_net
 suffix:semicolon
-id|sk-&gt;at.src_node
+id|sk-&gt;protinfo.af_at.src_node
 op_assign
 id|addr-&gt;sat_addr.s_node
 suffix:semicolon
@@ -4686,7 +4686,7 @@ r_return
 id|n
 suffix:semicolon
 )brace
-id|sk-&gt;at.src_port
+id|sk-&gt;protinfo.af_at.src_port
 op_assign
 id|addr-&gt;sat_port
 op_assign
@@ -4694,7 +4694,7 @@ id|n
 suffix:semicolon
 )brace
 r_else
-id|sk-&gt;at.src_port
+id|sk-&gt;protinfo.af_at.src_port
 op_assign
 id|addr-&gt;sat_port
 suffix:semicolon
@@ -4875,15 +4875,15 @@ op_minus
 id|ENETUNREACH
 suffix:semicolon
 )brace
-id|sk-&gt;at.dest_port
+id|sk-&gt;protinfo.af_at.dest_port
 op_assign
 id|addr-&gt;sat_port
 suffix:semicolon
-id|sk-&gt;at.dest_net
+id|sk-&gt;protinfo.af_at.dest_net
 op_assign
 id|addr-&gt;sat_addr.s_net
 suffix:semicolon
-id|sk-&gt;at.dest_node
+id|sk-&gt;protinfo.af_at.dest_node
 op_assign
 id|addr-&gt;sat_addr.s_node
 suffix:semicolon
@@ -5061,30 +5061,30 @@ suffix:semicolon
 )brace
 id|sat.sat_addr.s_net
 op_assign
-id|sk-&gt;at.dest_net
+id|sk-&gt;protinfo.af_at.dest_net
 suffix:semicolon
 id|sat.sat_addr.s_node
 op_assign
-id|sk-&gt;at.dest_node
+id|sk-&gt;protinfo.af_at.dest_node
 suffix:semicolon
 id|sat.sat_port
 op_assign
-id|sk-&gt;at.dest_port
+id|sk-&gt;protinfo.af_at.dest_port
 suffix:semicolon
 )brace
 r_else
 (brace
 id|sat.sat_addr.s_net
 op_assign
-id|sk-&gt;at.src_net
+id|sk-&gt;protinfo.af_at.src_net
 suffix:semicolon
 id|sat.sat_addr.s_node
 op_assign
-id|sk-&gt;at.src_node
+id|sk-&gt;protinfo.af_at.src_node
 suffix:semicolon
 id|sat.sat_port
 op_assign
-id|sk-&gt;at.src_port
+id|sk-&gt;protinfo.af_at.src_port
 suffix:semicolon
 )brace
 id|sat.sat_family
@@ -5225,7 +5225,7 @@ id|ddp-&gt;deh_len
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Size check to see if ddp-&gt;deh_len was crap&n;&t; *&t;(Otherwise we&squot;ll detonate most spectacularly&n;&t; *&t; in the middle of recvfrom()).&n;&t; */
+multiline_comment|/*&n;&t; *&t;Size check to see if ddp-&gt;deh_len was crap&n;&t; *&t;(Otherwise we&squot;ll detonate most spectacularly&n;&t; *&t; in the middle of recvmsg()).&n;&t; */
 r_if
 c_cond
 (paren
@@ -5280,6 +5280,36 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|call_in_firewall
+c_func
+(paren
+id|AF_APPLETALK
+comma
+id|skb
+comma
+id|ddp
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif&t;
 multiline_comment|/* Check the packet is aimed at us */
 r_if
 c_cond
@@ -5355,6 +5385,37 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_FIREWALL&t;&t;
+multiline_comment|/*&n;&t;&t; *&t;Check firewall allows this routing&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|call_fw_firewall
+c_func
+(paren
+id|AF_APPLETALK
+comma
+id|skb
+comma
+id|ddp
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 id|ta.s_net
 op_assign
 id|ddp-&gt;deh_dnet
@@ -5772,15 +5833,15 @@ id|AF_APPLETALK
 suffix:semicolon
 id|usat-&gt;sat_port
 op_assign
-id|sk-&gt;at.dest_port
+id|sk-&gt;protinfo.af_at.dest_port
 suffix:semicolon
 id|usat-&gt;sat_addr.s_node
 op_assign
-id|sk-&gt;at.dest_node
+id|sk-&gt;protinfo.af_at.dest_node
 suffix:semicolon
 id|usat-&gt;sat_addr.s_net
 op_assign
-id|sk-&gt;at.dest_net
+id|sk-&gt;protinfo.af_at.dest_net
 suffix:semicolon
 )brace
 multiline_comment|/* Build a packet */
@@ -5863,7 +5924,7 @@ l_int|0
 suffix:semicolon
 id|at_hint.s_net
 op_assign
-id|sk-&gt;at.src_net
+id|sk-&gt;protinfo.af_at.src_net
 suffix:semicolon
 id|rt
 op_assign
@@ -6057,7 +6118,7 @@ id|usat-&gt;sat_addr.s_net
 suffix:semicolon
 id|ddp-&gt;deh_snet
 op_assign
-id|sk-&gt;at.src_net
+id|sk-&gt;protinfo.af_at.src_net
 suffix:semicolon
 id|ddp-&gt;deh_dnode
 op_assign
@@ -6065,7 +6126,7 @@ id|usat-&gt;sat_addr.s_node
 suffix:semicolon
 id|ddp-&gt;deh_snode
 op_assign
-id|sk-&gt;at.src_node
+id|sk-&gt;protinfo.af_at.src_node
 suffix:semicolon
 id|ddp-&gt;deh_dport
 op_assign
@@ -6073,7 +6134,7 @@ id|usat-&gt;sat_port
 suffix:semicolon
 id|ddp-&gt;deh_sport
 op_assign
-id|sk-&gt;at.src_port
+id|sk-&gt;protinfo.af_at.src_port
 suffix:semicolon
 r_if
 c_cond
@@ -6138,6 +6199,37 @@ id|ddp
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|call_out_firewall
+c_func
+(paren
+id|AF_APPLETALK
+comma
+id|skb
+comma
+id|ddp
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Loopback broadcast packets to non gateway targets (ie routes&n;&t; *&t;to group we are in)&n;&t; */
 r_if
 c_cond
@@ -7730,7 +7822,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Appletalk BETA 0.13 for Linux NET3.031&bslash;n&quot;
+l_string|&quot;Appletalk 0.14 for Linux NET3.032&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

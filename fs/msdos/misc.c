@@ -405,7 +405,7 @@ id|limit
 comma
 id|last
 comma
-id|current
+id|curr
 comma
 id|sector
 comma
@@ -687,7 +687,7 @@ r_if
 c_cond
 (paren
 (paren
-id|current
+id|curr
 op_assign
 id|MSDOS_I
 c_func
@@ -712,7 +712,7 @@ op_amp
 id|last
 comma
 op_amp
-id|current
+id|curr
 )paren
 suffix:semicolon
 id|file_cluster
@@ -722,9 +722,9 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|current
+id|curr
 op_logical_and
-id|current
+id|curr
 op_ne
 op_minus
 l_int|1
@@ -745,7 +745,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current
+id|curr
 op_assign
 id|fat_access
 c_func
@@ -754,7 +754,7 @@ id|inode-&gt;i_sb
 comma
 id|last
 op_assign
-id|current
+id|curr
 comma
 op_minus
 l_int|1
@@ -2322,7 +2322,7 @@ suffix:semicolon
 r_int
 id|error
 comma
-id|current
+id|curr
 comma
 id|prev
 comma
@@ -2370,7 +2370,7 @@ r_if
 c_cond
 (paren
 (paren
-id|current
+id|curr
 op_assign
 id|raw_scan
 c_func
@@ -2413,14 +2413,14 @@ c_func
 )paren
 suffix:semicolon
 r_return
-id|current
+id|curr
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|current
+id|curr
 )paren
 id|nr
 op_assign
@@ -2439,7 +2439,7 @@ c_func
 (paren
 id|dir-&gt;i_sb
 comma
-id|current
+id|curr
 comma
 id|MSDOS_DOTDOT
 comma
@@ -2488,7 +2488,7 @@ comma
 l_int|NULL
 comma
 op_amp
-id|current
+id|curr
 comma
 op_amp
 id|nr

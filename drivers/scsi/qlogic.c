@@ -67,7 +67,7 @@ macro_line|#ifdef PCMCIA
 DECL|macro|MODULE
 macro_line|#undef MODULE
 macro_line|#endif 
-macro_line|#include &quot;../block/blk.h&quot;&t;/* to get disk capacity */
+macro_line|#include &lt;linux/blk.h&gt;&t;/* to get disk capacity */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;

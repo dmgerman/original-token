@@ -60,6 +60,13 @@ id|dma16
 comma
 id|dma8
 suffix:semicolon
+DECL|variable|trigger_bits
+r_static
+r_int
+id|trigger_bits
+op_assign
+l_int|0x7fffffff
+suffix:semicolon
 DECL|variable|dsp_count
 r_static
 r_int
@@ -922,6 +929,10 @@ id|dsp_busy
 op_assign
 l_int|1
 suffix:semicolon
+id|trigger_bits
+op_assign
+id|irq_mode
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1713,6 +1724,20 @@ id|bits
 r_if
 c_cond
 (paren
+id|bits
+op_eq
+id|trigger_bits
+)paren
+multiline_comment|/* No change */
+r_return
+suffix:semicolon
+id|trigger_bits
+op_assign
+id|bits
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|bits
 )paren
@@ -2265,10 +2290,6 @@ id|irq_mode
 r_case
 id|IMODE_OUTPUT
 suffix:colon
-id|intr_active
-op_assign
-l_int|0
-suffix:semicolon
 id|DMAbuf_outputintr
 (paren
 id|my_dev
@@ -2281,10 +2302,6 @@ suffix:semicolon
 r_case
 id|IMODE_INPUT
 suffix:colon
-id|intr_active
-op_assign
-l_int|0
-suffix:semicolon
 id|DMAbuf_inputintr
 (paren
 id|my_dev

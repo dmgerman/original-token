@@ -441,7 +441,9 @@ r_void
 id|sequencer_timer
 c_func
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 suffix:semicolon
 r_int

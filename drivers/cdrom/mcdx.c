@@ -63,7 +63,7 @@ mdefine_line|#define DEVICE_OFF(device)
 macro_line|#endif
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MITSUMI_X_CDROM_MAJOR
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|mcdx_drive_map
 mdefine_line|#define&t;mcdx_drive_map mcdx     /* for compatible parameter passing with &quot;insmod&quot; */
 macro_line|#include &lt;linux/mcdx.h&gt;

@@ -26,6 +26,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 multiline_comment|/**********************************************************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;       *&n;*&t;&t;&t;&t;&t;&t;Handlers for the socket list.&t;&t;&t;&t;&t;       *&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;       *&n;&bslash;**********************************************************************************************************************/
@@ -5537,6 +5538,36 @@ id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|call_in_firewall
+c_func
+(paren
+id|PF_AX25
+comma
+id|skb
+comma
+id|skb-&gt;h.raw
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif&t;
 multiline_comment|/*&n;&t; *&t;Parse the address header.&n;&t; */
 r_if
 c_cond
@@ -5790,6 +5821,36 @@ comma
 id|MODULUS
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|call_fw_firewall
+c_func
+(paren
+id|PF_AX25
+comma
+id|skb
+comma
+id|skb-&gt;data
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif&t;&t;&t;&t;&t;&t;
 id|skb-&gt;arp
 op_assign
 l_int|1
@@ -9610,7 +9671,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.30 ALPHA for Linux NET3.031 (Linux 1.3.25)&bslash;n&quot;
+l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.30 BETA for Linux NET3.032 (Linux 1.3.35)&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -9663,6 +9724,35 @@ suffix:semicolon
 r_int
 id|size
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|call_out_firewall
+c_func
+(paren
+id|PF_AX25
+comma
+id|skb
+comma
+id|skb-&gt;data
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif&t;
 r_if
 c_cond
 (paren

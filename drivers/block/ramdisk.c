@@ -10,7 +10,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR  MEM_MAJOR
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|RAMDISK_MINOR
 mdefine_line|#define RAMDISK_MINOR&t;1
 r_extern

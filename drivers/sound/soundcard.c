@@ -3,9 +3,6 @@ multiline_comment|/*&n; * Created modular version by Peter Trattler (peter@sbox.
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#ifndef EXCLUDE_PNP
-macro_line|#include &lt;linux/pnp.h&gt;
-macro_line|#endif
 DECL|variable|soundcards_installed
 r_static
 r_int
@@ -14,6 +11,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Number of installed cards */
+DECL|variable|chrdev_registered
+r_static
+r_int
+id|chrdev_registered
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * Table for permanently allocated memory (used when unloading the module)&n; */
 DECL|variable|sound_mem_blocks
 id|caddr_t
@@ -1194,6 +1198,10 @@ op_amp
 id|sound_fops
 )paren
 suffix:semicolon
+id|chrdev_registered
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#endif
 id|soundcard_configured
 op_assign
@@ -1205,12 +1213,6 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize call tables and&n;&t;&t;&t;&t;   * detect cards */
-macro_line|#ifndef EXCLUDE_PNP
-id|sound_pnp_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1461,6 +1463,10 @@ r_return
 id|err
 suffix:semicolon
 )brace
+id|chrdev_registered
+op_assign
+l_int|1
+suffix:semicolon
 id|soundcard_init
 (paren
 )paren
@@ -1504,6 +1510,11 @@ r_else
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|chrdev_registered
+)paren
 id|unregister_chrdev
 (paren
 id|SOUND_MAJOR
@@ -1584,12 +1595,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef EXCLUDE_PNP
-id|sound_pnp_disconnect
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 macro_line|#endif
@@ -1937,6 +1942,24 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#ifndef EXCLUDE_SEQUENCER
+DECL|variable|seq_timer
+r_static
+r_struct
+id|timer_list
+id|seq_timer
+op_assign
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|sequencer_timer
+)brace
+suffix:semicolon
 r_void
 DECL|function|request_sound_timer
 id|request_sound_timer
@@ -1971,29 +1994,26 @@ id|count
 op_add_assign
 id|seq_time
 suffix:semicolon
-id|timer_table
-(braket
-id|SOUND_TIMER
-)braket
-dot
-id|fn
+(brace
+id|seq_timer.expires
 op_assign
-id|sequencer_timer
-suffix:semicolon
-id|timer_table
-(braket
-id|SOUND_TIMER
-)braket
-dot
-id|expires
-op_assign
+(paren
+(paren
 id|count
+op_minus
+id|jiffies
+)paren
+)paren
+op_plus
+id|jiffies
 suffix:semicolon
-id|timer_active
-op_or_assign
-l_int|1
-op_lshift
-id|SOUND_TIMER
+id|add_timer
+(paren
+op_amp
+id|seq_timer
+)paren
+suffix:semicolon
+)brace
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -2004,23 +2024,12 @@ id|sound_stop_timer
 r_void
 )paren
 (brace
-id|timer_table
-(braket
-id|SOUND_TIMER
-)braket
-dot
-id|expires
-op_assign
-l_int|0
-suffix:semicolon
-id|timer_active
-op_and_assign
-op_complement
+id|del_timer
 (paren
-l_int|1
-op_lshift
-id|SOUND_TIMER
+op_amp
+id|seq_timer
 )paren
+suffix:semicolon
 suffix:semicolon
 )brace
 macro_line|#ifndef EXCLUDE_AUDIO

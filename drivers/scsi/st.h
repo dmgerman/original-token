@@ -87,11 +87,6 @@ r_int
 r_char
 id|dirty
 suffix:semicolon
-DECL|member|write_pending
-r_int
-r_char
-id|write_pending
-suffix:semicolon
 DECL|member|rw
 r_int
 r_char
@@ -177,6 +172,11 @@ id|ST_buffer
 op_star
 id|buffer
 suffix:semicolon
+DECL|member|sem
+r_struct
+id|semaphore
+id|sem
+suffix:semicolon
 DECL|member|block_size
 r_int
 id|block_size
@@ -223,6 +223,11 @@ id|Scsi_Cmnd
 id|SCpnt
 suffix:semicolon
 macro_line|#if DEBUG
+DECL|member|write_pending
+r_int
+r_char
+id|write_pending
+suffix:semicolon
 DECL|member|nbr_finished
 r_int
 id|nbr_finished

@@ -14,30 +14,9 @@ macro_line|#undef LOADABLE_SOUNDCARD
 macro_line|#endif
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
-macro_line|#if !defined(PSS_MPU_BASE) &amp;&amp; defined(EXCLUDE_SSCAPE) &amp;&amp; &bslash;&n;      defined(EXCLUDE_TRIX) &amp;&amp; !defined(MAD16_MPU_BASE) &amp;&amp; &bslash;&n;      defined(EXCLUDE_CS4232) &amp;&amp; defined(EXCLUDE_MAUI)
-DECL|macro|EXCLUDE_MPU_EMU
-mdefine_line|#define EXCLUDE_MPU_EMU
-macro_line|#endif
 macro_line|#if defined(ISC) || defined(SCO) || defined(SVR42)
 DECL|macro|GENERIC_SYSV
 mdefine_line|#define GENERIC_SYSV
-macro_line|#endif
-multiline_comment|/*&n; * Disable the AD1848 driver if there are no other drivers requiring it.&n; */
-macro_line|#if defined(EXCLUDE_GUS16) &amp;&amp; defined(EXCLUDE_MSS) &amp;&amp; &bslash;&n;    defined(EXCLUDE_PSS) &amp;&amp; defined(EXCLUDE_GUSMAX) &amp;&amp; &bslash;&n;    defined(EXCLUDE_SSCAPE) &amp;&amp; defined(EXCLUDE_TRIX) &amp;&amp; defined(EXCLUDE_MAD16) &amp;&amp; &bslash;&n;    defined(EXCLUDE_CS4232) &amp;&amp; defined(EXCLUDE_PNP)
-DECL|macro|EXCLUDE_AD1848
-mdefine_line|#define EXCLUDE_AD1848
-macro_line|#endif
-macro_line|#ifdef PSS_MSS_BASE
-DECL|macro|EXCLUDE_AD1848
-macro_line|#undef EXCLUDE_AD1848
-macro_line|#endif
-macro_line|#ifdef EXCLUDE_SEQUENCER
-DECL|macro|EXCLUDE_MIDI
-mdefine_line|#define EXCLUDE_MIDI
-DECL|macro|EXCLUDE_YM3812
-mdefine_line|#define EXCLUDE_YM3812
-DECL|macro|EXCLUDE_OPL3
-mdefine_line|#define EXCLUDE_OPL3
 macro_line|#endif
 macro_line|#ifndef SND_DEFAULT_ENABLE
 DECL|macro|SND_DEFAULT_ENABLE

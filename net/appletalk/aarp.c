@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the Appletalk aarp protocol for&n; *&t;&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;This doesn&squot;t fit cleanly with the IP arp. This isn&squot;t a problem as&n; *&t;the IP arp wants extracting from the device layer in 1.3.x anyway.&n; *&t;[see the pre-1.3 test code for details 8)]&n; *&n; *&t;FIXME:&n; *&t;&t;We ought to handle the retransmits with a single list and a &n; *&t;seperate fast timer for when it is needed.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;References:&n; *&t;&t;Inside Appletalk (2nd Ed).&n; */
+multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the Appletalk aarp protocol for&n; *&t;&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;alan@cymru.net&gt;&n; *&n; *&t;This doesn&squot;t fit cleanly with the IP arp. This isn&squot;t a problem as&n; *&t;the IP arp wants extracting from the device layer in 1.3.x anyway.&n; *&t;[see the pre-1.3 test code for details 8)]&n; *&n; *&t;FIXME:&n; *&t;&t;We ought to handle the retransmits with a single list and a &n; *&t;seperate fast timer for when it is needed.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;References:&n; *&t;&t;Inside Appletalk (2nd Ed).&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -1812,6 +1812,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;An entry in the aarp unresolved queue has become resolved. Send&n; *&t;all the frames queued under it.&n; */
 DECL|function|aarp_resolved
 r_static
 r_void
@@ -1864,7 +1865,7 @@ id|list
 op_assign
 id|a-&gt;next
 suffix:semicolon
-multiline_comment|/* Move into the resolved list */
+multiline_comment|/* &n;&t;&t;&t; *&t;Move into the resolved list &n;&t;&t;&t; */
 id|a-&gt;next
 op_assign
 id|resolved
@@ -1879,7 +1880,7 @@ id|hash
 op_assign
 id|a
 suffix:semicolon
-multiline_comment|/* Kick frames off */
+multiline_comment|/*&n;&t;&t;&t; *&t;Kick frames off &n;&t;&t;&t; */
 r_while
 c_loop
 (paren
@@ -1964,6 +1965,7 @@ id|next
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; *&t;This is called by the SNAP driver whenever we see an AARP SNAP&n; *&t;frame. We currently only support ethernet.&n; */
 DECL|function|aarp_rcv
 r_static
 r_int

@@ -1244,27 +1244,57 @@ c_cond
 op_logical_neg
 id|kilroy_was_here
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Trix: WSS and SB modes must be initialized before MPU&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* AudioTriX Pro has not been detected earlier */
+)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|sb_initialized
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Trix: SB mode must be initialized before MPU&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|mpu_initialized
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Trix: MPU mode already initialized&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1292,9 +1322,18 @@ id|hw_config-&gt;irq
 OG
 l_int|9
 )paren
+(brace
+id|printk
+(paren
+l_string|&quot;AudioTriX: Bad MPU IRQ %d&bslash;n&quot;
+comma
+id|hw_config-&gt;irq
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1306,9 +1345,18 @@ op_eq
 op_minus
 l_int|1
 )paren
+(brace
+id|printk
+(paren
+l_string|&quot;AudioTriX: Bad MPU IRQ %d&bslash;n&quot;
+comma
+id|hw_config-&gt;irq
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren

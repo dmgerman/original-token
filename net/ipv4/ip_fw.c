@@ -24,6 +24,7 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -6248,6 +6249,107 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef CONFIG_IP_FIREWALL
+multiline_comment|/*&n; *&t;Interface to the generic firewall chains.&n; */
+DECL|function|ipfw_input_check
+r_int
+id|ipfw_input_check
+c_func
+(paren
+r_struct
+id|firewall_ops
+op_star
+id|this
+comma
+r_int
+id|pf
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_void
+op_star
+id|phdr
+)paren
+(brace
+r_return
+id|ip_fw_chk
+c_func
+(paren
+id|phdr
+comma
+id|skb-&gt;dev
+comma
+id|ip_fw_blk_chain
+comma
+id|ip_fw_blk_policy
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+DECL|function|ipfw_forward_check
+r_int
+id|ipfw_forward_check
+c_func
+(paren
+r_struct
+id|firewall_ops
+op_star
+id|this
+comma
+r_int
+id|pf
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_void
+op_star
+id|phdr
+)paren
+(brace
+r_return
+id|ip_fw_chk
+c_func
+(paren
+id|phdr
+comma
+id|skb-&gt;dev
+comma
+id|ip_fw_fwd_chain
+comma
+id|ip_fw_fwd_policy
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+DECL|variable|ipfw_ops
+r_struct
+id|firewall_ops
+id|ipfw_ops
+op_assign
+(brace
+l_int|NULL
+comma
+id|ipfw_forward_check
+comma
+id|ipfw_input_check
+comma
+id|ipfw_input_check
+comma
+id|PF_INET
+comma
+l_int|0
+multiline_comment|/* We don&squot;t even allow a fall through so we are last */
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|ip_fw_init
 r_void
 id|ip_fw_init
@@ -6295,6 +6397,28 @@ id|ip_acct_procinfo
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_FIREWALL
+r_if
+c_cond
+(paren
+id|register_firewall
+c_func
+(paren
+id|PF_INET
+comma
+op_amp
+id|ipfw_ops
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;Unable to register IP firewall.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|proc_net_register
 c_func
 (paren

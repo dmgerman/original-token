@@ -976,8 +976,8 @@ id|SNDCTL_SYNTH_INFO
 suffix:colon
 id|memcpy_tofs
 (paren
-op_amp
 (paren
+op_amp
 (paren
 (paren
 r_char
@@ -990,21 +990,17 @@ l_int|0
 )braket
 )paren
 comma
-(paren
 id|synth_devs
 (braket
 id|dev
 )braket
 op_member_access_from_pointer
 id|info
-)paren
 comma
-(paren
 r_sizeof
 (paren
 r_struct
 id|synth_info
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -1958,7 +1954,6 @@ suffix:semicolon
 multiline_comment|/*&n;   * Copy the header from user space but ignore the first bytes which have&n;   * been transferred already.&n;   */
 id|memcpy_fromfs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -1971,7 +1966,6 @@ id|sysex
 (braket
 id|offs
 )braket
-)paren
 comma
 op_amp
 (paren
@@ -1983,11 +1977,9 @@ id|offs
 )braket
 )paren
 comma
-(paren
 id|hdr_size
 op_minus
 id|offs
-)paren
 )paren
 suffix:semicolon
 r_if

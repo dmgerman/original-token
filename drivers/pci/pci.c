@@ -214,7 +214,7 @@ comma
 l_string|&quot;P9100&quot;
 )paren
 comma
-id|DEVICE
+id|BRIDGE
 c_func
 (paren
 id|DEC
@@ -222,6 +222,8 @@ comma
 id|DEC_BRD
 comma
 l_string|&quot;DC21050&quot;
+comma
+l_int|0x00
 )paren
 comma
 id|DEVICE
@@ -1223,6 +1225,16 @@ comma
 id|ADAPTEC_2940
 comma
 l_string|&quot;2940&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ADAPTEC
+comma
+id|ADAPTEC_7872
+comma
+l_string|&quot;AIC-7872&quot;
 )paren
 comma
 id|DEVICE

@@ -9,6 +9,16 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 mdefine_line|#define FALSE (0)
 macro_line|#endif
+multiline_comment|/*&n; * This prevents the Prev/Next buttons from going through the entire sequence&n; * of submenus.  I need to fix the window titles before it would really be&n; * appropriate to enable this.&n; */
+multiline_comment|/* #define PREVLAST_LIMITED_RANGE */
+multiline_comment|/*&n; * This is the total number of submenus that we have.&n; */
+DECL|variable|tot_menu_num
+r_static
+r_int
+id|tot_menu_num
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * Generate portion of wish script for the beginning of a submenu.&n; * The guts get filled in with the various options.&n; */
 DECL|function|start_proc
 r_static
@@ -74,7 +84,9 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;t&bslash;t&bslash;&quot;$title&bslash;&quot;  -relief raised -bg grey&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t&bslash;&quot;%s&bslash;&quot;  -relief raised -bg grey&bslash;n&quot;
+comma
+id|label
 )paren
 suffix:semicolon
 id|printf
@@ -86,7 +98,9 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;twm title $w &bslash;&quot;$title&bslash;&quot; &bslash;n&bslash;n&bslash;n&quot;
+l_string|&quot;&bslash;twm title $w &bslash;&quot;%s&bslash;&quot; &bslash;n&bslash;n&bslash;n&quot;
+comma
+id|label
 )paren
 suffix:semicolon
 )brace
@@ -216,6 +230,28 @@ suffix:semicolon
 id|cond
 op_assign
 id|cond-&gt;next
+suffix:semicolon
+)brace
+multiline_comment|/*&n;   * Now write this option.&n;   */
+r_if
+c_cond
+(paren
+(paren
+id|item-&gt;flags
+op_amp
+id|GLOBAL_WRITTEN
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tglobal %s&bslash;n&quot;
+comma
+id|item-&gt;optionname
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Now generate the body of the conditional.&n;   */
@@ -576,6 +612,16 @@ suffix:semicolon
 id|printf
 c_func
 (paren
+l_string|&quot;set %s [expr $%s&amp;15];&quot;
+comma
+id|item-&gt;optionname
+comma
+id|item-&gt;optionname
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
 l_string|&quot;} else { &quot;
 )paren
 suffix:semicolon
@@ -607,6 +653,16 @@ comma
 id|menu_num
 comma
 id|line_num
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;set %s [expr $%s|16];&quot;
+comma
+id|item-&gt;optionname
+comma
+id|item-&gt;optionname
 )paren
 suffix:semicolon
 id|printf
@@ -722,6 +778,17 @@ comma
 id|line_num
 )paren
 suffix:semicolon
+multiline_comment|/*&n;       * Or in a bit to the variable - this causes all of the radiobuttons&n;       * to be deselected (i.e. not be red).&n;       */
+id|printf
+c_func
+(paren
+l_string|&quot;set %s [expr $%s&amp;15];&quot;
+comma
+id|item-&gt;optionname
+comma
+id|item-&gt;optionname
+)paren
+suffix:semicolon
 id|printf
 c_func
 (paren
@@ -766,6 +833,17 @@ comma
 id|menu_num
 comma
 id|line_num
+)paren
+suffix:semicolon
+multiline_comment|/*&n;       * Clear the disable bit - this causes the correct radiobutton&n;       * to appear selected (i.e. turn red).&n;       */
+id|printf
+c_func
+(paren
+l_string|&quot;set %s [expr $%s|16];&quot;
+comma
+id|item-&gt;optionname
+comma
+id|item-&gt;optionname
 )paren
 suffix:semicolon
 id|printf
@@ -1211,6 +1289,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef PREVLAST_LIMITED_RANGE
 r_if
 c_cond
 (paren
@@ -1226,6 +1305,23 @@ l_string|&quot;&bslash;t$w.f.prev configure -state disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+r_if
+c_cond
+(paren
+l_int|1
+op_eq
+id|menu_num
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;t$w.f.prev configure -state disabled&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|printf
 c_func
 (paren
@@ -1246,6 +1342,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef PREVLAST_LIMITED_RANGE
 r_if
 c_cond
 (paren
@@ -1261,6 +1358,23 @@ l_string|&quot;&bslash;t$w.f.next configure -state disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|last
+op_eq
+id|tot_menu_num
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;t$w.f.next configure -state disabled&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|printf
 c_func
 (paren
@@ -1302,7 +1416,19 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;twm geometry $w +30+35&bslash;n&quot;
+l_string|&quot;&bslash;tglobal winx; global winy&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tset winx [expr [winfo x .]+30]; set winy [expr [winfo y .]+30]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;twm geometry $w +$winx+$winy&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -1591,6 +1717,10 @@ id|kconfig
 op_star
 id|cfg
 suffix:semicolon
+r_char
+op_star
+id|menulabel
+suffix:semicolon
 multiline_comment|/*&n;   * Start by assigning menu numbers, and submenu numbers.&n;   */
 r_for
 c_loop
@@ -1709,6 +1839,13 @@ suffix:semicolon
 )brace
 suffix:semicolon
 )brace
+multiline_comment|/*&n;   * Record this so we can set up the prev/next buttons correctly.&n;   * We will be adding one more menu for sound configuration, so&n;   * take this into account.&n;   */
+id|tot_menu_num
+op_assign
+id|menu_num
+op_plus
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;   * Now start generating the actual wish script that we will use.&n;   * We need to keep track of the menu numbers of the min/max menu&n;   * for a range of submenus so that we can correctly limit the&n;   * prev and next buttons so that they don&squot;t go over into some other&n;   * category.&n;   */
 r_for
 c_loop
@@ -1768,6 +1905,10 @@ id|menu_max
 )paren
 suffix:semicolon
 )brace
+id|menulabel
+op_assign
+id|cfg-&gt;label
+suffix:semicolon
 id|start_proc
 c_func
 (paren
@@ -1817,7 +1958,7 @@ suffix:semicolon
 id|start_proc
 c_func
 (paren
-id|cfg-&gt;label
+id|menulabel
 comma
 id|cfg-&gt;menu_number
 comma
@@ -1871,7 +2012,7 @@ suffix:semicolon
 id|start_proc
 c_func
 (paren
-id|cfg-&gt;label
+id|menulabel
 comma
 id|cfg-&gt;menu_number
 comma
@@ -1925,7 +2066,7 @@ suffix:semicolon
 id|start_proc
 c_func
 (paren
-id|cfg-&gt;label
+id|menulabel
 comma
 id|cfg-&gt;menu_number
 comma
@@ -1960,6 +2101,39 @@ suffix:semicolon
 r_case
 id|tok_int
 suffix:colon
+r_if
+c_cond
+(paren
+id|cfg-&gt;menu_number
+op_ne
+id|menu_num
+)paren
+(brace
+id|end_proc
+c_func
+(paren
+id|menu_num
+comma
+id|menu_min
+comma
+id|menu_max
+)paren
+suffix:semicolon
+id|start_proc
+c_func
+(paren
+id|menulabel
+comma
+id|cfg-&gt;menu_number
+comma
+id|FALSE
+)paren
+suffix:semicolon
+id|menu_num
+op_assign
+id|cfg-&gt;menu_number
+suffix:semicolon
+)brace
 id|printf
 c_func
 (paren

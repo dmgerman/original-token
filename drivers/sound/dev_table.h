@@ -1538,7 +1538,6 @@ comma
 id|unload_pss
 )brace
 comma
-macro_line|#&t;ifdef PSS_MPU_BASE
 (brace
 l_string|&quot;PSSMPU&quot;
 comma
@@ -1553,8 +1552,6 @@ comma
 id|unload_pss_mpu
 )brace
 comma
-macro_line|#&t;endif
-macro_line|#&t;ifdef PSS_MSS_BASE
 (brace
 l_string|&quot;PSSMSS&quot;
 comma
@@ -1569,7 +1566,6 @@ comma
 id|unload_pss_mss
 )brace
 comma
-macro_line|#&t;endif
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_MSS
 (brace
@@ -1945,9 +1941,10 @@ comma
 (brace
 id|PSS_BASE
 comma
-id|PSS_IRQ
+l_int|0
 comma
-id|PSS_DMA
+op_minus
+l_int|1
 comma
 op_minus
 l_int|1

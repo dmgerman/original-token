@@ -1869,6 +1869,11 @@ comma
 id|esp
 suffix:semicolon
 r_int
+id|priority
+comma
+id|nice
+suffix:semicolon
+r_int
 id|i
 comma
 id|tty_pgrp
@@ -2068,6 +2073,39 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/* scale priority and nice values from timeslices to 0..40 */
+id|priority
+op_assign
+id|tsk-&gt;counter
+suffix:semicolon
+id|priority
+op_assign
+(paren
+id|priority
+op_star
+l_int|10
+op_plus
+l_int|5
+)paren
+op_div
+id|DEF_PRIORITY
+suffix:semicolon
+id|nice
+op_assign
+id|tsk-&gt;priority
+suffix:semicolon
+id|nice
+op_assign
+(paren
+id|nice
+op_star
+l_int|20
+op_plus
+l_int|10
+)paren
+op_div
+id|DEF_PRIORITY
+suffix:semicolon
 r_return
 id|sprintf
 c_func
@@ -2119,12 +2157,12 @@ id|tsk-&gt;cutime
 comma
 id|tsk-&gt;cstime
 comma
-id|tsk-&gt;counter
+id|priority
 comma
-multiline_comment|/* this is the kernel priority ---&n;&t;&t;&t;&t;   subtract 30 in your user-level program. */
-id|tsk-&gt;priority
+multiline_comment|/* this is the kernel priority ---&n;&t;&t;&t;&t;   subtract 20 in your user-level program. */
+id|nice
 comma
-multiline_comment|/* this is the nice value ---&n;&t;&t;&t;&t;   subtract 15 in your user-level program. */
+multiline_comment|/* this is the nice value ---&n;&t;&t;&t;&t;   subtract 20 in your user-level program. */
 id|tsk-&gt;timeout
 comma
 id|tsk-&gt;it_real_value

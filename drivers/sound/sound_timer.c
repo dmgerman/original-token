@@ -983,6 +983,7 @@ l_int|0xffffffff
 suffix:semicolon
 id|sequencer_timer
 (paren
+l_int|0
 )paren
 suffix:semicolon
 )brace

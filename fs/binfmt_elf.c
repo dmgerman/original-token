@@ -2709,6 +2709,7 @@ op_assign
 id|k
 suffix:semicolon
 )brace
+macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -2722,7 +2723,23 @@ id|end_code
 OL
 id|k
 )paren
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|elf_ppnt-&gt;p_flags
+op_amp
+id|PF_W
+)paren
+op_logical_and
+id|end_code
+OL
+id|k
+)paren
 (brace
+macro_line|#endif
 id|end_code
 op_assign
 id|k

@@ -13,7 +13,7 @@ macro_line|#undef MODULE
 macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;

@@ -29,6 +29,10 @@ macro_line|#ifndef SUPPORT_HT6560B&t;&t;&t;/* 1 to support HT6560B chipset */
 DECL|macro|SUPPORT_HT6560B
 mdefine_line|#define SUPPORT_HT6560B&t;&t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
+macro_line|#ifndef SUPPORT_QD6580&t;&t;&t;/* 1 to support QD6580 chipset */
+DECL|macro|SUPPORT_QD6580
+mdefine_line|#define SUPPORT_QD6580&t;&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
 macro_line|#ifndef SUPPORT_DTC2278&t;&t;&t;/* 1 to support DTC2278 chipset */
 DECL|macro|SUPPORT_DTC2278
 mdefine_line|#define SUPPORT_DTC2278&t;&t;1&t;/* 0 to reduce kernel size */
@@ -981,7 +985,7 @@ suffix:semicolon
 multiline_comment|/*&n; * One final include file, which references some of the data/defns from above&n; */
 DECL|macro|IDE_DRIVER
 mdefine_line|#define IDE_DRIVER&t;/* &quot;parameter&quot; for blk.h */
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 r_void
 id|ide_set_recovery_timer

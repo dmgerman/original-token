@@ -356,14 +356,6 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|macro|FW_BLOCK
-mdefine_line|#define FW_BLOCK&t;0
-DECL|macro|FW_ACCEPT
-mdefine_line|#define FW_ACCEPT&t;1
-DECL|macro|FW_REJECT
-mdefine_line|#define FW_REJECT&t;(-1)
-DECL|macro|FW_MASQUERADE
-mdefine_line|#define FW_MASQUERADE&t;2
 r_extern
 r_int
 id|ip_fw_chk

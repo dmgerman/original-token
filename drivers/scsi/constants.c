@@ -13,7 +13,7 @@ DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;

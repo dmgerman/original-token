@@ -33,7 +33,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR CM206_CDROM_MAJOR
-macro_line|#include &quot;blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/cm206.h&gt;
 multiline_comment|/* This variable defines whether or not to probe for adapter base port &n;   address and interrupt request. It can be overridden by the boot &n;   parameter `auto&squot;.&n;*/
 DECL|variable|auto_probe

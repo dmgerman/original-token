@@ -6,7 +6,7 @@ id|id
 (braket
 )braket
 op_assign
-l_string|&quot;$Id: aic7xxx_asm.c,v 2.0 1995/08/02 05:28:42 deang Exp $&quot;
+l_string|&quot;$Id: aic7xxx_asm.c,v 2.1 1995/08/23 04:31:40 deang Exp $&quot;
 suffix:semicolon
 macro_line|#include &lt;ctype.h&gt;
 macro_line|#include &lt;stdio.h&gt;

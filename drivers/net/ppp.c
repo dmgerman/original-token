@@ -1,4 +1,4 @@
-multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  ==FILEVERSION 4==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, increment the number above.&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  ==FILEVERSION 6==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, increment the number above.&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   OPTIMIZE_FLAG_TIME - Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If zero then the leading&n;&t;&t;&t;flag is always sent.&n;&n;   CHECK_CHARACTERS   - Enable the checking on all received characters for&n;&t;&t;&t;8 data bits, no parity. This adds a small amount of&n;&t;&t;&t;processing for each received character.&n;&t;&t;&t;&n;   NEW_SKBUFF&t;      - Use NET3.020 sk_buff&squot;s&n;*/
 multiline_comment|/* #define NEW_SKBUFF&t;&t;1 */
 DECL|macro|OPTIMIZE_FLAG_TIME
@@ -24,10 +24,10 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/version.h&gt;
 DECL|macro|STATIC
-mdefine_line|#define STATIC
+mdefine_line|#define  STATIC
 macro_line|#else
 DECL|macro|STATIC
-mdefine_line|#define STATIC static
+mdefine_line|#define  STATIC static
 macro_line|#endif /* def MODULE */
 macro_line|#include &lt;endian.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2147,24 +2147,28 @@ id|ppp_syms
 op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
+DECL|macro|Y
+mdefine_line|#define Y(sym) { (void *) &amp;sym, SYMBOL_NAME_STR (sym) }
+id|Y
 c_func
 (paren
 id|ppp_register_compressor
 )paren
 comma
-id|X
+id|Y
 c_func
 (paren
 id|ppp_unregister_compressor
 )paren
 comma
-id|X
+id|Y
 c_func
 (paren
 id|ppp_crc16_table
 )paren
 comma
+DECL|macro|Y
+macro_line|#undef Y
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon

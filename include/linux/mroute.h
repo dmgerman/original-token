@@ -1,6 +1,8 @@
 macro_line|#ifndef __LINUX_MROUTE_H
 DECL|macro|__LINUX_MROUTE_H
 mdefine_line|#define __LINUX_MROUTE_H
+macro_line|#include &lt;linux/sockios.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
 multiline_comment|/*&n; *&t;Based on the MROUTING 3.5 defines primarily to keep&n; *&t;source compatibility with BSD.&n; *&n; *&t;See the mrouted code for the original history.&n; *&n; */
 DECL|macro|MRT_BASE
 mdefine_line|#define MRT_BASE&t;200

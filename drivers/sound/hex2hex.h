@@ -374,7 +374,7 @@ c_func
 (paren
 id|outf
 comma
-l_string|&quot;%s[] = {&bslash;n&quot;
+l_string|&quot;static unsigned char %s[] = {&bslash;n&quot;
 comma
 id|varline
 )paren

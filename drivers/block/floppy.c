@@ -11,7 +11,9 @@ multiline_comment|/* 1994/6/24 --bbroad-- added the floppy table entries and mad
 multiline_comment|/* 1994/7/13 -- Paul Vojta -- modified the probing code to allow three or more&n; * disk types.&n; */
 multiline_comment|/*&n; * 1994/8/8 -- Alain Knaff -- Switched to fdpatch driver: Support for bigger&n; * format bug fixes, but unfortunately some new bugs too...&n; */
 multiline_comment|/* 1994/9/17 -- Koen Holtman -- added logging of physical floppy write&n; * errors to allow safe writing by specialized programs.&n; */
+multiline_comment|/*&n; * 1995/8/26 -- Andreas Busse -- added Mips support.&n; */
 multiline_comment|/* 1995/4/24 -- Dan Fandrich -- added support for Commodore 1581 3.5&quot; disks&n; * by defining bit 1 of the &quot;stretch&quot; parameter to mean put sectors on the&n; * opposite side of the disk, leaving the sector IDs alone (i.e. Commodore&squot;s&n; * drives are &quot;upside-down&quot;).&n; */
+multiline_comment|/*&n; * 1995/18/10 -- Ralf Baechle -- Portability cleanup; move machine dependend&n; * features to asm/floppy.h.&n; */
 DECL|macro|CONFIG_FLOPPY_SANITY
 mdefine_line|#define CONFIG_FLOPPY_SANITY
 DECL|macro|CONFIG_FLOPPY_SILENT_DCL_CLEAR
@@ -63,19 +65,6 @@ id|ALLOWED_DRIVE_MASK
 op_assign
 l_int|0x33
 suffix:semicolon
-DECL|variable|FDC1
-r_int
-id|FDC1
-op_assign
-l_int|0x3f0
-suffix:semicolon
-DECL|variable|FDC2
-r_int
-id|FDC2
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef FD_MODULE
 multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
@@ -90,16 +79,6 @@ DECL|macro|FLOPPY_IRQ
 mdefine_line|#define FLOPPY_IRQ 6
 DECL|macro|FLOPPY_DMA
 mdefine_line|#define FLOPPY_DMA 2
-DECL|macro|FDC1
-mdefine_line|#define FDC1 0x3f0
-DECL|variable|FDC2
-r_static
-r_int
-id|FDC2
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 macro_line|#endif
 DECL|macro|MODULE_AWARE_DRIVER
 mdefine_line|#define MODULE_AWARE_DRIVER
@@ -308,14 +287,15 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt; /* CMOS defines */
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/floppy.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
-macro_line|#include &quot;blk.h&quot;
-multiline_comment|/* Dma Memory related stuff */
+macro_line|#include &lt;linux/blk.h&gt;
+multiline_comment|/*&n; * Dma Memory related stuff&n; */
 multiline_comment|/* Pure 2^n version of get_order */
 DECL|function|__get_order
 r_static
@@ -424,7 +404,6 @@ id|order
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* End dma memory related stuff */
 DECL|variable|fake_change
 r_static
 r_int
@@ -440,22 +419,6 @@ id|initialising
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n; * Again, the CMOS information doesn&squot;t work on the alpha..&n; */
-macro_line|#ifdef __alpha__
-DECL|macro|FLOPPY0_TYPE
-mdefine_line|#define FLOPPY0_TYPE 6
-DECL|macro|FLOPPY1_TYPE
-mdefine_line|#define FLOPPY1_TYPE 0
-macro_line|#else
-DECL|macro|FLOPPY0_TYPE
-mdefine_line|#define FLOPPY0_TYPE&t;((CMOS_READ(0x10) &gt;&gt; 4) &amp; 15)
-DECL|macro|FLOPPY1_TYPE
-mdefine_line|#define FLOPPY1_TYPE&t;(CMOS_READ(0x10) &amp; 15)
-macro_line|#endif
-DECL|macro|N_FDC
-mdefine_line|#define N_FDC 2
-DECL|macro|N_DRIVE
-mdefine_line|#define N_DRIVE 8
 DECL|function|TYPE
 r_static
 r_inline
@@ -604,14 +567,6 @@ DECL|macro|MAX_DISK_SIZE
 mdefine_line|#define MAX_DISK_SIZE 2 /* 3984*/
 DECL|macro|K_64
 mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
-multiline_comment|/*&n; * The DMA channel used by the floppy controller cannot access data at&n; * addresses &gt;= 16MB&n; *&n; * Went back to the 1MB limit, as some people had problems with the floppy&n; * driver otherwise. It doesn&squot;t matter much for performance anyway, as most&n; * floppy accesses go through the track buffer.&n; */
-macro_line|#ifdef __alpha__
-DECL|macro|CROSS_64KB
-macro_line|# define CROSS_64KB(a,s)&t;(0)
-macro_line|#else
-DECL|macro|CROSS_64KB
-macro_line|# define CROSS_64KB(a,s) ((unsigned long)(a)/K_64 != ((unsigned long)(a) + (s) - 1) / K_64)
-macro_line|#endif
 multiline_comment|/*&n; * globals used by &squot;result()&squot;&n; */
 DECL|macro|MAX_REPLIES
 mdefine_line|#define MAX_REPLIES 10
@@ -2850,7 +2805,7 @@ c_func
 (paren
 l_string|&quot;disk change line=%x&bslash;n&quot;
 comma
-id|inb_p
+id|fd_inb
 c_func
 (paren
 id|FD_DIR
@@ -2887,7 +2842,7 @@ r_if
 c_cond
 (paren
 (paren
-id|inb_p
+id|fd_inb
 c_func
 (paren
 id|FD_DIR
@@ -3157,7 +3112,7 @@ id|FDCS-&gt;dor
 op_assign
 id|newdor
 suffix:semicolon
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|newdor
@@ -3254,7 +3209,7 @@ id|DP-&gt;select_delay
 )paren
 r_return
 suffix:semicolon
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|FDCS-&gt;dor
@@ -3273,7 +3228,7 @@ comma
 id|FD_DOR
 )paren
 suffix:semicolon
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|FDCS-&gt;dor
@@ -3433,7 +3388,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inb_p
+id|fd_inb
 c_func
 (paren
 id|FD_STATUS
@@ -3441,12 +3396,10 @@ id|FD_STATUS
 op_ne
 id|STATUS_READY
 )paren
-(brace
 id|FDCS-&gt;reset
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* locks the driver */
 DECL|function|lock_fdc
@@ -4553,23 +4506,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|disable_dma
+id|fd_disable_dma
 c_func
 (paren
-id|FLOPPY_DMA
 )paren
 suffix:semicolon
-id|clear_dma_ff
+id|fd_clear_dma_ff
 c_func
 (paren
-id|FLOPPY_DMA
 )paren
 suffix:semicolon
-id|set_dma_mode
+id|fd_set_dma_mode
 c_func
 (paren
-id|FLOPPY_DMA
-comma
 (paren
 id|raw_cmd-&gt;flags
 op_amp
@@ -4582,11 +4531,9 @@ suffix:colon
 id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
-id|set_dma_addr
+id|fd_set_dma_addr
 c_func
 (paren
-id|FLOPPY_DMA
-comma
 id|virt_to_bus
 c_func
 (paren
@@ -4594,18 +4541,15 @@ id|raw_cmd-&gt;kernel_data
 )paren
 )paren
 suffix:semicolon
-id|set_dma_count
+id|fd_set_dma_count
 c_func
 (paren
-id|FLOPPY_DMA
-comma
 id|raw_cmd-&gt;length
 )paren
 suffix:semicolon
-id|enable_dma
+id|fd_enable_dma
 c_func
 (paren
-id|FLOPPY_DMA
 )paren
 suffix:semicolon
 id|sti
@@ -4672,7 +4616,7 @@ op_increment
 (brace
 id|rstatus
 op_assign
-id|inb_p
+id|fd_inb
 c_func
 (paren
 id|FD_STATUS
@@ -4710,7 +4654,7 @@ op_eq
 id|STATUS_READY
 )paren
 (brace
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|byte
@@ -4842,7 +4786,7 @@ op_increment
 (brace
 id|status
 op_assign
-id|inb_p
+id|fd_inb
 c_func
 (paren
 id|FD_STATUS
@@ -4938,7 +4882,7 @@ id|i
 op_increment
 )braket
 op_assign
-id|inb_p
+id|fd_inb
 c_func
 (paren
 id|FD_DATA
@@ -5477,7 +5421,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Set dtr */
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|raw_cmd-&gt;rate
@@ -7276,7 +7220,7 @@ id|FDCS-&gt;version
 op_ge
 id|FDC_82077
 )paren
-id|outb_p
+id|fd_outb
 c_func
 (paren
 l_int|0x80
@@ -7292,7 +7236,7 @@ id|FD_STATUS
 suffix:semicolon
 r_else
 (brace
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|FDCS-&gt;dor
@@ -7309,7 +7253,7 @@ c_func
 id|FD_RESET_DELAY
 )paren
 suffix:semicolon
-id|outb
+id|fd_outb
 c_func
 (paren
 id|FDCS-&gt;dor
@@ -7536,7 +7480,7 @@ dot
 id|dor
 )paren
 suffix:semicolon
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|fdc_state
@@ -7571,7 +7515,7 @@ c_func
 (paren
 l_string|&quot;status=%x&bslash;n&quot;
 comma
-id|inb_p
+id|fd_inb
 c_func
 (paren
 id|FD_STATUS
@@ -7748,10 +7692,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|disable_dma
+id|fd_disable_dma
 c_func
 (paren
-id|FLOPPY_DMA
 )paren
 suffix:semicolon
 multiline_comment|/* avoid dma going to a random drive after shutdown */
@@ -10265,6 +10208,15 @@ id|COMMAND
 op_eq
 id|FD_READ
 )paren
+(brace
+id|fd_cacheflush
+c_func
+(paren
+id|dma_buffer
+comma
+id|size
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -10275,7 +10227,9 @@ comma
 id|size
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 id|memcpy
 c_func
 (paren
@@ -10286,6 +10240,15 @@ comma
 id|size
 )paren
 suffix:semicolon
+id|fd_cacheflush
+c_func
+(paren
+id|dma_buffer
+comma
+id|size
+)paren
+suffix:semicolon
+)brace
 id|remaining
 op_sub_assign
 id|size
@@ -12428,6 +12391,16 @@ id|i
 r_return
 id|i
 suffix:semicolon
+id|fd_cacheflush
+c_func
+(paren
+id|address
+comma
+id|size
+)paren
+suffix:semicolon
+multiline_comment|/* is this necessary ??? */
+multiline_comment|/* Ralf: Yes; only the l2 cache is completly chipset&n;&t;&t;&t;   controlled */
 id|memcpy_tofs
 c_func
 (paren
@@ -17647,6 +17620,12 @@ l_string|&quot;fd&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|virtual_dma_init
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|have_no_fdc
 suffix:semicolon
@@ -17727,7 +17706,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|FDCS-&gt;dor
@@ -17752,18 +17731,9 @@ multiline_comment|/* avoid immediate interrupt */
 r_if
 c_cond
 (paren
-id|request_irq
+id|fd_request_irq
 c_func
 (paren
-id|FLOPPY_IRQ
-comma
-id|floppy_interrupt
-comma
-id|SA_INTERRUPT
-op_or
-id|SA_SAMPLE_RANDOM
-comma
-l_string|&quot;floppy&quot;
 )paren
 )paren
 (brace
@@ -17783,12 +17753,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|request_dma
+id|fd_request_dma
 c_func
 (paren
-id|FLOPPY_DMA
-comma
-l_string|&quot;floppy&quot;
 )paren
 )paren
 (brace
@@ -17800,10 +17767,9 @@ comma
 id|FLOPPY_DMA
 )paren
 suffix:semicolon
-id|free_irq
+id|fd_free_irq
 c_func
 (paren
-id|FLOPPY_IRQ
 )paren
 suffix:semicolon
 r_return
@@ -17834,7 +17800,7 @@ op_minus
 l_int|1
 )paren
 (brace
-id|outb_p
+id|fd_outb
 c_func
 (paren
 id|FDCS-&gt;dor
@@ -17847,10 +17813,9 @@ id|fdc
 op_assign
 l_int|0
 suffix:semicolon
-id|enable_irq
+id|fd_enable_irq
 c_func
 (paren
-id|FLOPPY_IRQ
 )paren
 suffix:semicolon
 r_return
@@ -17907,28 +17872,24 @@ macro_line|#ifdef FD_MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
-id|disable_dma
+id|fd_disable_dma
 c_func
 (paren
-id|FLOPPY_DMA
 )paren
 suffix:semicolon
-id|free_dma
+id|fd_free_dma
 c_func
 (paren
-id|FLOPPY_DMA
 )paren
 suffix:semicolon
-id|disable_irq
+id|fd_disable_irq
 c_func
 (paren
-id|FLOPPY_IRQ
 )paren
 suffix:semicolon
-id|free_irq
+id|fd_free_irq
 c_func
 (paren
-id|FLOPPY_IRQ
 )paren
 suffix:semicolon
 id|set_dor

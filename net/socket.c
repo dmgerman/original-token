@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -5618,7 +5619,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society NET3.031 Snap #3 for Linux 1.3.30&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society NET3.032 for Linux 1.3.35&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */
@@ -5659,6 +5660,14 @@ c_func
 id|NETLINK_ROUTE
 comma
 id|netlink_donothing
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; *&t;Attach the firewall module if configured&n;&t; */
+macro_line|#ifdef CONFIG_FIREWALL&t; 
+id|fwchain_init
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#endif

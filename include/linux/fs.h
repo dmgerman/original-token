@@ -108,11 +108,11 @@ mdefine_line|#define BLKRASET 4706 /* Set read ahead for block device */
 DECL|macro|BLKRAGET
 mdefine_line|#define BLKRAGET 4707 /* get current read ahead setting */
 DECL|macro|BMAP_IOCTL
-mdefine_line|#define BMAP_IOCTL 1&t;/* obsolete - kept for compatibility */
+mdefine_line|#define BMAP_IOCTL 1&t;&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP
-mdefine_line|#define FIBMAP&t;   1&t;/* bmap access */
+mdefine_line|#define FIBMAP&t;   0x0001&t;/* bmap access */
 DECL|macro|FIGETBSZ
-mdefine_line|#define FIGETBSZ   2&t;/* get the block size used for bmap */
+mdefine_line|#define FIGETBSZ   0x0002&t;/* get the block size used for bmap */
 macro_line|#ifdef __KERNEL__
 r_extern
 r_void
@@ -2601,6 +2601,17 @@ suffix:semicolon
 r_extern
 r_void
 id|brelse
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|buf
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|bforget
 c_func
 (paren
 r_struct

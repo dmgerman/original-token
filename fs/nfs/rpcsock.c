@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/rpcsock.h&gt;
 DECL|macro|msleep
-mdefine_line|#define msleep(sec)&t;{ current-&gt;timeout = sec * HZ / 1000; &bslash;&n;&t;&t;&t;  current-&gt;state = TAKS_INTERRUPTIBLE; &bslash;&n;&t;&t;&t;  schedule(); &bslash;&n;&t;&t;&t;}
+mdefine_line|#define msleep(sec)&t;{ current-&gt;timeout = sec * HZ / 1000; &bslash;&n;&t;&t;&t;  current-&gt;state = TASK_INTERRUPTIBLE; &bslash;&n;&t;&t;&t;  schedule(); &bslash;&n;&t;&t;&t;}
 DECL|macro|dprintk
 mdefine_line|#define dprintk&t;&t;if (0) printk
 r_static
@@ -754,10 +754,6 @@ op_ne
 id|slot
 )paren
 (brace
-id|slot-&gt;wait
-op_assign
-l_int|NULL
-suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren
@@ -1405,7 +1401,7 @@ id|rsock-&gt;free
 op_assign
 id|slot
 suffix:semicolon
-multiline_comment|/* wake up tasks that haven&squot;t sent anything yet. (Waking&n;&t;&t; * up the first one the wait queue would be enough) */
+multiline_comment|/* wake up tasks that haven&squot;t sent anything yet. (Waking&n;&t;&t; * up the first one on the wait queue would be enough) */
 r_if
 c_cond
 (paren
@@ -1491,6 +1487,21 @@ l_int|NULL
 r_return
 l_int|NULL
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|rsock
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|rsock
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Nnnngh! */
 id|rsock-&gt;sock
 op_assign
 op_amp
@@ -1537,24 +1548,7 @@ id|slot-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|rsock-&gt;backlog
-op_assign
-l_int|NULL
-suffix:semicolon
-id|rsock-&gt;head
-op_assign
-id|rsock-&gt;tail
-op_assign
-l_int|NULL
-suffix:semicolon
-id|rsock-&gt;shutwait
-op_assign
-l_int|NULL
-suffix:semicolon
-id|rsock-&gt;shutdown
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* --- taken care of by memset above ---&n;&t;rsock-&gt;backlog = NULL;&n;&t;rsock-&gt;head = rsock-&gt;tail = NULL;&n;&n;&t;rsock-&gt;shutwait = NULL;&n;&t;rsock-&gt;shutdown = 0;&n;&t; */
 id|dprintk
 c_func
 (paren
@@ -1595,6 +1589,8 @@ r_while
 c_loop
 (paren
 id|rsock-&gt;head
+op_logical_or
+id|rsock-&gt;backlog
 )paren
 (brace
 id|interruptible_sleep_on

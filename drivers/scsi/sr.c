@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_CDROM_MAJOR
-macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sr.h&quot;

@@ -1674,9 +1674,7 @@ c_cond
 (paren
 id|rw
 )paren
-id|skb-&gt;sk-&gt;prot
-op_member_access_from_pointer
-id|rfree
+id|sock_rfree
 c_func
 (paren
 id|skb-&gt;sk
@@ -1685,9 +1683,7 @@ id|skb
 )paren
 suffix:semicolon
 r_else
-id|skb-&gt;sk-&gt;prot
-op_member_access_from_pointer
-id|wfree
+id|sock_wfree
 c_func
 (paren
 id|skb-&gt;sk

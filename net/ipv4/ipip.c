@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/ipip.h&gt;
-macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
 multiline_comment|/*&n; * NB. we must include the kernel idenfication string in to install the module.&n; */
 macro_line|#if ( defined(CONFIG_NET_IPIP) &amp;&amp; defined(CONFIG_IP_FORWARD)) || defined(MODULE)
 macro_line|#ifdef MODULE
@@ -166,7 +166,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_IP_FIREWALL
+macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/*&n;&t; *&t;Check the firewall [well spotted Olaf]&n;&t; */
 r_if
 c_cond
@@ -174,18 +174,14 @@ c_cond
 (paren
 id|err
 op_assign
-id|ip_fw_chk
+id|call_in_firewall
 c_func
 (paren
+id|PF_INET
+comma
+id|skb
+comma
 id|skb-&gt;ip_hdr
-comma
-id|dev
-comma
-id|ip_fw_blk_chain
-comma
-id|ip_fw_blk_policy
-comma
-l_int|0
 )paren
 )paren
 OL

@@ -2,7 +2,7 @@ multiline_comment|/********************************************************&n;* 
 macro_line|#ifndef _EATA_PIO_H
 DECL|macro|_EATA_PIO_H
 mdefine_line|#define _EATA_PIO_H
-macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;linux/scsicam.h&gt;

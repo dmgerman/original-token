@@ -2,6 +2,10 @@ DECL|macro|ALLOW_SELECT
 mdefine_line|#define ALLOW_SELECT
 DECL|macro|ALLOW_BUFFER_MAPPING
 mdefine_line|#define ALLOW_BUFFER_MAPPING
+DECL|macro|NO_INLINE_ASM
+macro_line|#undef NO_INLINE_ASM
+DECL|macro|SHORT_BANNERS
+macro_line|#undef SHORT_BANNERS
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;

@@ -183,7 +183,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;Maui: Transmit timeout&bslash;n&quot;
+l_string|&quot;Maui: Write timeout&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -329,7 +329,6 @@ suffix:semicolon
 multiline_comment|/*&n;   * Copy the header from user space but ignore the first bytes which have&n;   * been transferred already.&n;   */
 id|memcpy_fromfs
 (paren
-(paren
 op_amp
 (paren
 (paren
@@ -342,7 +341,6 @@ id|header
 (braket
 id|offs
 )braket
-)paren
 comma
 op_amp
 (paren
@@ -354,11 +352,9 @@ id|offs
 )braket
 )paren
 comma
-(paren
 id|hdr_size
 op_minus
 id|offs
-)paren
 )paren
 suffix:semicolon
 r_if

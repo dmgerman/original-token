@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;First attempt.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Use SIOCADDRT/SIOCDELRT ioctl values&n; *&t;&t;&t;&t;&t;for NET/ROM routes.&n; *&n; *&t;TO DO&n; *&t;Sort out the which pointer when shuffling entries in the routes&n; *&t;section. Also reset the which pointer when a route becomes &quot;good&quot;&n; *&t;again, ie when a NODES broadcast is processed via calls to&n; *&t;nr_add_node().&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;First attempt.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Use SIOCADDRT/SIOCDELRT ioctl values&n; *&t;&t;&t;&t;&t;for NET/ROM routes.&n; *&t;&t;&t;Alan Cox(GW4PTS) Added the firewall hooks.&n; *&n; *&t;TO DO&n; *&t;Sort out the which pointer when shuffling entries in the routes&n; *&t;section. Also reset the which pointer when a route becomes &quot;good&quot;&n; *&t;again, ie when a NODES broadcast is processed via calls to&n; *&t;nr_add_node().&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;linux/errno.h&gt;
@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/termios.h&gt;&t;/* For TIOCINQ/OUTQ */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;net/netrom.h&gt;
 DECL|variable|nr_neigh_no
 r_static
@@ -2856,6 +2857,53 @@ r_char
 op_star
 id|dptr
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|ax25
+op_logical_and
+id|call_in_firewall
+c_func
+(paren
+id|PF_NETROM
+comma
+id|skb
+comma
+id|skb-&gt;data
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ax25
+op_logical_and
+id|call_out_firewall
+c_func
+(paren
+id|PF_NETROM
+comma
+id|skb
+comma
+id|skb-&gt;data
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 id|nr_src
 op_assign
 (paren
@@ -3060,6 +3108,30 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|ax25
+op_logical_and
+id|call_fw_firewall
+c_func
+(paren
+id|PF_NETROM
+comma
+id|skb
+comma
+id|skb-&gt;data
+)paren
+op_ne
+id|FW_ACCEPT
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 id|dptr
 op_assign
 id|skb_push
