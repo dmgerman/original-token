@@ -71,6 +71,7 @@ op_star
 )paren
 id|current-&gt;thread.faddr
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -83,6 +84,7 @@ comma
 id|siginfo.si_code
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

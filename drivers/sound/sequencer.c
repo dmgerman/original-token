@@ -2393,8 +2393,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 )brace
 DECL|macro|dev
 macro_line|#undef dev
@@ -2999,8 +2998,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 )brace
 )brace
 DECL|function|seq_timing_event
@@ -3242,8 +3240,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 )brace
 r_return
 id|TIMER_NOT_ARMED
@@ -3307,8 +3304,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 )brace
 )brace
 DECL|function|seq_sysex_message
@@ -3963,8 +3959,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 )brace
 r_return
 l_int|0

@@ -3,6 +3,7 @@ DECL|macro|_ASM_IA64_IA32_H
 mdefine_line|#define _ASM_IA64_IA32_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_IA32_SUPPORT
+macro_line|#include &lt;linux/param.h&gt;
 multiline_comment|/*&n; * 32 bit structures for IA32 support.&n; */
 multiline_comment|/* 32bit compatibility types */
 DECL|typedef|__kernel_size_t32
@@ -113,6 +114,10 @@ DECL|macro|IA32_PAGE_SHIFT
 mdefine_line|#define IA32_PAGE_SHIFT&t;&t;12&t;/* 4KB pages */
 DECL|macro|IA32_PAGE_SIZE
 mdefine_line|#define IA32_PAGE_SIZE&t;&t;(1ULL &lt;&lt; IA32_PAGE_SHIFT)
+DECL|macro|IA32_CLOCKS_PER_SEC
+mdefine_line|#define IA32_CLOCKS_PER_SEC&t;100&t;/* Cast in stone for IA32 Linux */
+DECL|macro|IA32_TICK
+mdefine_line|#define IA32_TICK(tick)&t;&t;((unsigned long long)(tick) * IA32_CLOCKS_PER_SEC / CLOCKS_PER_SEC)
 multiline_comment|/* fcntl.h */
 DECL|struct|flock32
 r_struct

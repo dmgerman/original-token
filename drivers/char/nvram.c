@@ -74,10 +74,6 @@ macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-r_extern
-id|spinlock_t
-id|rtc_lock
-suffix:semicolon
 DECL|variable|nvram_open_cnt
 r_static
 r_int

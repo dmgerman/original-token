@@ -664,8 +664,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 )brace
 id|ifp-&gt;timer.expires
 op_assign
@@ -9085,8 +9084,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 multiline_comment|/* Ignore all other */
 )brace
 )brace

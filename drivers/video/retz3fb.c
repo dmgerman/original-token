@@ -7230,7 +7230,7 @@ op_rshift
 l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* TODO: This driver cannot be unloaded yet */
+multiline_comment|/* FIXME: This driver cannot be unloaded yet */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|res
@@ -7622,15 +7622,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/*&n;&t; * Not reached because the usecount will never&n;&t; * be decremented to zero&n;&t; */
-id|unregister_framebuffer
-c_func
-(paren
-op_amp
-id|fb_info
-)paren
-suffix:semicolon
-multiline_comment|/* TODO: clean up ... */
+multiline_comment|/*&n;&t; * Not reached because the usecount will never&n;&t; * be decremented to zero&n;&t; *&n;&t; * FIXME: clean up ... *&n;&t; */
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *  Text console acceleration&n; */

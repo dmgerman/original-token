@@ -842,10 +842,54 @@ r_struct
 id|usb_device
 suffix:semicolon
 multiline_comment|/*&n; * Device table entry for &quot;new style&quot; table-driven USB drivers.&n; * User mode code can read these tables to choose which modules to load.&n; * Declare the table as __devinitdata, and as a MODULE_DEVICE_TABLE.&n; *&n; * With a device table provide bind() instead of probe().  Then the&n; * third bind() parameter will point to a matching entry from this&n; * table.  (Null value reserved.)&n; * &n; * Terminate the driver&squot;s table with an all-zeroes entry.&n; * Init the fields you care about; zeroes are not used in comparisons.&n; */
+DECL|macro|USB_DEVICE_ID_MATCH_VENDOR
+mdefine_line|#define USB_DEVICE_ID_MATCH_VENDOR&t;&t;0x0001
+DECL|macro|USB_DEVICE_ID_MATCH_PRODUCT
+mdefine_line|#define USB_DEVICE_ID_MATCH_PRODUCT&t;&t;0x0002
+DECL|macro|USB_DEVICE_ID_MATCH_DEV_LO
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEV_LO&t;&t;0x0004
+DECL|macro|USB_DEVICE_ID_MATCH_DEV_HI
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEV_HI&t;&t;0x0008
+DECL|macro|USB_DEVICE_ID_MATCH_DEV_CLASS
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEV_CLASS&t;&t;0x0010
+DECL|macro|USB_DEVICE_ID_MATCH_DEV_SUBCLASS
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEV_SUBCLASS&t;0x0020
+DECL|macro|USB_DEVICE_ID_MATCH_DEV_PROTOCOL
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEV_PROTOCOL&t;0x0040
+DECL|macro|USB_DEVICE_ID_MATCH_INT_CLASS
+mdefine_line|#define USB_DEVICE_ID_MATCH_INT_CLASS&t;&t;0x0080
+DECL|macro|USB_DEVICE_ID_MATCH_INT_SUBCLASS
+mdefine_line|#define USB_DEVICE_ID_MATCH_INT_SUBCLASS&t;0x0100
+DECL|macro|USB_DEVICE_ID_MATCH_INT_PROTOCOL
+mdefine_line|#define USB_DEVICE_ID_MATCH_INT_PROTOCOL&t;0x0200
+DECL|macro|USB_DEVICE_ID_MATCH_DEVICE
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEVICE&t;&t;(USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_PRODUCT)
+DECL|macro|USB_DEVICE_ID_MATCH_DEV_RANGE
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEV_RANGE&t;&t;(USB_DEVICE_ID_MATCH_DEV_LO | USB_DEVICE_ID_MATCH_DEV_HI)
+DECL|macro|USB_DEVICE_ID_MATCH_DEVICE_AND_VERSION
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEVICE_AND_VERSION&t;(USB_DEVICE_ID_MATCH_DEVICE | USB_DEVICE_ID_MATCH_DEV_RANGE)
+DECL|macro|USB_DEVICE_ID_MATCH_DEV_INFO
+mdefine_line|#define USB_DEVICE_ID_MATCH_DEV_INFO &bslash;&n;&t;(USB_DEVICE_ID_MATCH_DEV_CLASS | USB_DEVICE_ID_MATCH_DEV_SUBCLASS | USB_DEVICE_ID_MATCH_DEV_PROTOCOL)
+DECL|macro|USB_DEVICE_ID_MATCH_INT_INFO
+mdefine_line|#define USB_DEVICE_ID_MATCH_INT_INFO &bslash;&n;&t;(USB_DEVICE_ID_MATCH_INT_CLASS | USB_DEVICE_ID_MATCH_INT_SUBCLASS | USB_DEVICE_ID_MATCH_INT_PROTOCOL)
+multiline_comment|/* Some useful macros */
+DECL|macro|USB_DEVICE
+mdefine_line|#define USB_DEVICE(vend,prod) &bslash;&n;&t;match_flags: USB_DEVICE_ID_MATCH_DEVICE, idVendor: (vend), idProduct: (prod)
+DECL|macro|USB_DEVICE_VER
+mdefine_line|#define USB_DEVICE_VER(vend,prod,lo,hi) &bslash;&n;&t;match_flags: USB_DEVICE_ID_MATCH_DEVICE_AND_VERSION, idVendor: (vend), idProduct: (prod), bcdDevice_lo: (lo), bcdDevice_hi: (hi)
+DECL|macro|USB_DEVICE_INFO
+mdefine_line|#define USB_DEVICE_INFO(cl,sc,pr) &bslash;&n;&t;match_flags: USB_DEVICE_ID_MATCH_DEV_INFO, bDeviceClass: (cl), bDeviceSubClass: (sc), bDeviceProtocol: (pr)
+DECL|macro|USB_INTERFACE_INFO
+mdefine_line|#define USB_INTERFACE_INFO(cl,sc,pr) &bslash;&n;&t;match_flags: USB_DEVICE_ID_MATCH_INT_INFO, bInterfaceClass: (cl), bInterfaceSubClass: (sc), bInterfaceProtocol: (pr)
 DECL|struct|usb_device_id
 r_struct
 id|usb_device_id
 (brace
+multiline_comment|/* This bitmask is used to determine which of the following fields&n;&t; * are to be used for matching.&n;&t; */
+DECL|member|match_flags
+id|__u16
+id|match_flags
+suffix:semicolon
 multiline_comment|/*&n;&t; * vendor/product codes are checked, if vendor is nonzero&n;&t; * Range is for device revision (bcdDevice), inclusive;&n;&t; * zero values here mean range isn&squot;t considered&n;&t; */
 DECL|member|idVendor
 id|__u16

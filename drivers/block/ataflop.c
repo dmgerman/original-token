@@ -1136,9 +1136,7 @@ r_void
 id|check_change
 c_func
 (paren
-r_int
-r_int
-id|dummy
+r_void
 )paren
 suffix:semicolon
 r_static
@@ -1536,9 +1534,7 @@ DECL|function|start_check_change_timer
 id|start_check_change_timer
 c_func
 (paren
-r_int
-r_int
-id|dummy
+r_void
 )paren
 (brace
 id|mod_timer

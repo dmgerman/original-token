@@ -15744,6 +15744,14 @@ id|usb_audio_ids
 op_assign
 (brace
 (brace
+id|match_flags
+suffix:colon
+(paren
+id|USB_DEVICE_ID_MATCH_INT_CLASS
+op_or
+id|USB_DEVICE_ID_MATCH_INT_SUBCLASS
+)paren
+comma
 id|bInterfaceClass
 suffix:colon
 id|USB_CLASS_AUDIO

@@ -2491,4 +2491,12 @@ l_string|&quot;mac_esp: dma_setup_quick&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|variable|driver_template
+r_static
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|SCSI_MAC_ESP
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
 eof

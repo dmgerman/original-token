@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.117 2000/10/16 14:32:50 anton Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.118 2000/12/29 07:52:41 anton Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1439,11 +1439,16 @@ id|pgd_k
 r_goto
 id|bad_area_nosemaphore
 suffix:semicolon
-id|pgd_set
+id|pgd_val
 c_func
 (paren
+op_star
 id|pgd
-comma
+)paren
+op_assign
+id|pgd_val
+c_func
+(paren
 op_star
 id|pgd_k
 )paren
@@ -1492,11 +1497,16 @@ id|pmd_k
 r_goto
 id|bad_area_nosemaphore
 suffix:semicolon
-id|pmd_set
+id|pmd_val
 c_func
 (paren
+op_star
 id|pmd
-comma
+)paren
+op_assign
+id|pmd_val
+c_func
+(paren
 op_star
 id|pmd_k
 )paren

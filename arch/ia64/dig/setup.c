@@ -193,4 +193,29 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* XXX fake */
 )brace
+r_void
+DECL|function|dig_irq_init
+id|dig_irq_init
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/*&n;&t; * Disable the compatibility mode interrupts (8259 style), needs IN/OUT support&n;&t; * enabled.&n;&t; */
+id|outb
+c_func
+(paren
+l_int|0xff
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xff
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+)brace
 eof

@@ -8758,7 +8758,7 @@ id|msec
 id|mdelay
 c_func
 (paren
-id|mseconds
+id|msec
 )paren
 suffix:semicolon
 )brace

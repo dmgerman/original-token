@@ -48,6 +48,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Modular too */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;lec.h&quot;
 macro_line|#include &quot;lec_arpc.h&quot;
 macro_line|#include &quot;resources.h&quot;  /* for bind_vcc() */
@@ -3999,10 +4000,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|lane_module_init
+r_static
 r_int
-id|init_module
+id|__init
+id|lane_module_init
 c_func
 (paren
 r_void
@@ -4024,9 +4026,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|lane_module_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|lane_module_cleanup
 c_func
 (paren
 r_void
@@ -4045,22 +4049,6 @@ id|lec_priv
 op_star
 id|priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;lec.c: module in use&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|atm_lane_ops.lecd_attach
 op_assign
 l_int|NULL
@@ -4117,6 +4105,7 @@ id|i
 op_member_access_from_pointer
 id|priv
 suffix:semicolon
+macro_line|#if defined(CONFIG_TR)
 id|unregister_trdev
 c_func
 (paren
@@ -4126,6 +4115,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#endif
 id|kfree
 c_func
 (paren
@@ -4147,7 +4137,20 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|lane_module_init
+id|module_init
+c_func
+(paren
+id|lane_module_init
+)paren
+suffix:semicolon
+DECL|variable|lane_module_cleanup
+id|module_exit
+c_func
+(paren
+id|lane_module_cleanup
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * LANE2: 3.1.3, LE_RESOLVE.request&n; * Non force allocates memory and fills in *tlvs, fills in *sizeoftlvs.&n; * If sizeoftlvs == NULL the default TLVs associated with with this&n; * lec will be used.&n; * If dst_mac == NULL, targetless LE_ARP will be sent&n; */
 DECL|function|lane2_resolve
 r_static

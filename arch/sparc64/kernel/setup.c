@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.57 2000/10/14 10:09:00 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.58 2001/01/01 01:46:15 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2484,14 +2484,22 @@ comma
 id|smp_num_cpus
 macro_line|#ifndef CONFIG_SMP
 comma
-id|loops_per_sec
+id|loops_per_jiffy
 op_div
+(paren
 l_int|500000
+op_div
+id|HZ
+)paren
 comma
 (paren
-id|loops_per_sec
+id|loops_per_jiffy
 op_div
+(paren
 l_int|5000
+op_div
+id|HZ
+)paren
 )paren
 op_mod
 l_int|100

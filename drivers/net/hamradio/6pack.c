@@ -21,13 +21,272 @@ macro_line|#include &lt;linux/if_slip.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
-multiline_comment|/* &n;#include &lt;sys/types.h&gt;&n;#include &lt;sys/stat.h&gt;&n;#include &lt;fcntl.h&gt;&n;#include &lt;stdio.h&gt;&n;#include &lt;unistd.h&gt; &n;*/
-macro_line|#include &quot;6pack.h&quot;
-DECL|typedef|byte
-r_typedef
+DECL|macro|SIXPACK_VERSION
+mdefine_line|#define SIXPACK_VERSION    &quot;Revision: 0.3.0&quot;
+multiline_comment|/* sixpack priority commands */
+DECL|macro|SIXP_SEOF
+mdefine_line|#define SIXP_SEOF&t;0x40&t;/* start and end of a 6pack frame */
+DECL|macro|SIXP_TX_URUN
+mdefine_line|#define SIXP_TX_URUN&t;0x48&t;/* transmit overrun */
+DECL|macro|SIXP_RX_ORUN
+mdefine_line|#define SIXP_RX_ORUN&t;0x50&t;/* receive overrun */
+DECL|macro|SIXP_RX_BUF_OVL
+mdefine_line|#define SIXP_RX_BUF_OVL&t;0x58&t;/* receive buffer overflow */
+DECL|macro|SIXP_CHKSUM
+mdefine_line|#define SIXP_CHKSUM&t;0xFF&t;/* valid checksum of a 6pack frame */
+multiline_comment|/* masks to get certain bits out of the status bytes sent by the TNC */
+DECL|macro|SIXP_CMD_MASK
+mdefine_line|#define SIXP_CMD_MASK&t;&t;0xC0
+DECL|macro|SIXP_CHN_MASK
+mdefine_line|#define SIXP_CHN_MASK&t;&t;0x07
+DECL|macro|SIXP_PRIO_CMD_MASK
+mdefine_line|#define SIXP_PRIO_CMD_MASK&t;0x80
+DECL|macro|SIXP_STD_CMD_MASK
+mdefine_line|#define SIXP_STD_CMD_MASK&t;0x40
+DECL|macro|SIXP_PRIO_DATA_MASK
+mdefine_line|#define SIXP_PRIO_DATA_MASK&t;0x38
+DECL|macro|SIXP_TX_MASK
+mdefine_line|#define SIXP_TX_MASK&t;&t;0x20
+DECL|macro|SIXP_RX_MASK
+mdefine_line|#define SIXP_RX_MASK&t;&t;0x10
+DECL|macro|SIXP_RX_DCD_MASK
+mdefine_line|#define SIXP_RX_DCD_MASK&t;0x18
+DECL|macro|SIXP_LEDS_ON
+mdefine_line|#define SIXP_LEDS_ON&t;&t;0x78
+DECL|macro|SIXP_LEDS_OFF
+mdefine_line|#define SIXP_LEDS_OFF&t;&t;0x60
+DECL|macro|SIXP_CON
+mdefine_line|#define SIXP_CON&t;&t;0x08
+DECL|macro|SIXP_STA
+mdefine_line|#define SIXP_STA&t;&t;0x10
+DECL|macro|SIXP_FOUND_TNC
+mdefine_line|#define SIXP_FOUND_TNC&t;&t;0xe9
+DECL|macro|SIXP_CON_ON
+mdefine_line|#define SIXP_CON_ON&t;&t;0x68
+DECL|macro|SIXP_DCD_MASK
+mdefine_line|#define SIXP_DCD_MASK&t;&t;0x08
+DECL|macro|SIXP_DAMA_OFF
+mdefine_line|#define SIXP_DAMA_OFF&t;&t;0
+multiline_comment|/* default level 2 parameters */
+DECL|macro|SIXP_TXDELAY
+mdefine_line|#define SIXP_TXDELAY&t;&t;&t;25&t;/* in 10 ms */
+DECL|macro|SIXP_PERSIST
+mdefine_line|#define SIXP_PERSIST&t;&t;&t;50&t;/* in 256ths */
+DECL|macro|SIXP_SLOTTIME
+mdefine_line|#define SIXP_SLOTTIME&t;&t;&t;10&t;/* in 10 ms */
+DECL|macro|SIXP_INIT_RESYNC_TIMEOUT
+mdefine_line|#define SIXP_INIT_RESYNC_TIMEOUT&t;150&t;/* in 10 ms */
+DECL|macro|SIXP_RESYNC_TIMEOUT
+mdefine_line|#define SIXP_RESYNC_TIMEOUT&t;&t;500&t;/* in 10 ms */
+multiline_comment|/* 6pack configuration. */
+DECL|macro|SIXP_NRUNIT
+mdefine_line|#define SIXP_NRUNIT&t;&t;&t;256&t;/* MAX number of 6pack channels */
+DECL|macro|SIXP_MTU
+mdefine_line|#define SIXP_MTU&t;&t;&t;256&t;/* Default MTU */
+DECL|enum|sixpack_flags
+r_enum
+id|sixpack_flags
+(brace
+DECL|enumerator|SIXPF_INUSE
+id|SIXPF_INUSE
+comma
+multiline_comment|/* Channel in use&t;*/
+DECL|enumerator|SIXPF_ERROR
+id|SIXPF_ERROR
+comma
+multiline_comment|/* Parity, etc. error&t;*/
+)brace
+suffix:semicolon
+DECL|struct|sixpack
+r_struct
+id|sixpack
+(brace
+DECL|member|magic
+r_int
+id|magic
+suffix:semicolon
+multiline_comment|/* Various fields. */
+DECL|member|tty
+r_struct
+id|tty_struct
+op_star
+id|tty
+suffix:semicolon
+multiline_comment|/* ptr to TTY structure&t;&t;*/
+DECL|member|dev
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* easy for intr handling&t;*/
+multiline_comment|/* These are pointers to the malloc()ed frame buffers. */
+DECL|member|rbuff
 r_int
 r_char
-id|byte
+op_star
+id|rbuff
+suffix:semicolon
+multiline_comment|/* receiver buffer&t;&t;*/
+DECL|member|rcount
+r_int
+id|rcount
+suffix:semicolon
+multiline_comment|/* received chars counter       */
+DECL|member|xbuff
+r_int
+r_char
+op_star
+id|xbuff
+suffix:semicolon
+multiline_comment|/* transmitter buffer&t;&t;*/
+DECL|member|xhead
+r_int
+r_char
+op_star
+id|xhead
+suffix:semicolon
+multiline_comment|/* pointer to next byte to XMIT */
+DECL|member|xleft
+r_int
+id|xleft
+suffix:semicolon
+multiline_comment|/* bytes left in XMIT queue     */
+DECL|member|raw_buf
+r_int
+r_char
+id|raw_buf
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|cooked_buf
+r_int
+r_char
+id|cooked_buf
+(braket
+l_int|400
+)braket
+suffix:semicolon
+DECL|member|rx_count
+r_int
+r_int
+id|rx_count
+suffix:semicolon
+DECL|member|rx_count_cooked
+r_int
+r_int
+id|rx_count_cooked
+suffix:semicolon
+multiline_comment|/* 6pack interface statistics. */
+DECL|member|stats
+r_struct
+id|net_device_stats
+id|stats
+suffix:semicolon
+DECL|member|mtu
+r_int
+id|mtu
+suffix:semicolon
+multiline_comment|/* Our mtu (to spot changes!)   */
+DECL|member|buffsize
+r_int
+id|buffsize
+suffix:semicolon
+multiline_comment|/* Max buffers sizes            */
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* Flag values/ mode etc&t;*/
+DECL|member|mode
+r_int
+r_char
+id|mode
+suffix:semicolon
+multiline_comment|/* 6pack mode&t;&t;&t;*/
+multiline_comment|/* 6pack stuff */
+DECL|member|tx_delay
+r_int
+r_char
+id|tx_delay
+suffix:semicolon
+DECL|member|persistance
+r_int
+r_char
+id|persistance
+suffix:semicolon
+DECL|member|slottime
+r_int
+r_char
+id|slottime
+suffix:semicolon
+DECL|member|duplex
+r_int
+r_char
+id|duplex
+suffix:semicolon
+DECL|member|led_state
+r_int
+r_char
+id|led_state
+suffix:semicolon
+DECL|member|status
+r_int
+r_char
+id|status
+suffix:semicolon
+DECL|member|status1
+r_int
+r_char
+id|status1
+suffix:semicolon
+DECL|member|status2
+r_int
+r_char
+id|status2
+suffix:semicolon
+DECL|member|tx_enable
+r_int
+r_char
+id|tx_enable
+suffix:semicolon
+DECL|member|tnc_ok
+r_int
+r_char
+id|tnc_ok
+suffix:semicolon
+DECL|member|tx_t
+r_struct
+id|timer_list
+id|tx_t
+suffix:semicolon
+DECL|member|resync_t
+r_struct
+id|timer_list
+id|resync_t
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* should later be moved to include/net/ax25.h */
+DECL|macro|AX25_6PACK_HEADER_LEN
+mdefine_line|#define AX25_6PACK_HEADER_LEN 0
+DECL|macro|SIXPACK_MAGIC
+mdefine_line|#define SIXPACK_MAGIC 0x5304
+DECL|variable|__initdata
+r_static
+r_const
+r_char
+id|banner
+(braket
+)braket
+id|__initdata
+op_assign
+id|KERN_INFO
+l_string|&quot;AX.25: 6pack driver, &quot;
+id|SIXPACK_VERSION
+l_string|&quot; (dynamic channels, max=%d)&bslash;n&quot;
 suffix:semicolon
 DECL|struct|sixpack_ctrl
 r_typedef
@@ -56,8 +315,6 @@ id|sixpack_ctrl_t
 op_star
 op_star
 id|sixpack_ctrls
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|sixpack_maxdev
 r_int
@@ -100,6 +357,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_static
 r_void
 id|sixpack_decode
 c_func
@@ -116,6 +374,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_static
 r_int
 id|encode_sixpack
 c_func
@@ -134,33 +393,50 @@ r_int
 r_char
 )paren
 suffix:semicolon
+r_static
+r_int
+id|sixpack_init
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
 r_void
 id|decode_prio_command
 c_func
 (paren
-id|byte
+r_int
+r_char
 comma
 r_struct
 id|sixpack
 op_star
 )paren
 suffix:semicolon
+r_static
 r_void
 id|decode_std_command
 c_func
 (paren
-id|byte
+r_int
+r_char
 comma
 r_struct
 id|sixpack
 op_star
 )paren
 suffix:semicolon
+r_static
 r_void
 id|decode_data
 c_func
 (paren
-id|byte
+r_int
+r_char
 comma
 r_struct
 id|sixpack
@@ -178,12 +454,12 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Find a free 6pack channel, and link in this `tty&squot; line. */
+DECL|function|sp_alloc
 r_static
 r_inline
 r_struct
 id|sixpack
 op_star
-DECL|function|sp_alloc
 id|sp_alloc
 c_func
 (paren
@@ -199,17 +475,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sixpack_ctrls
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Master array missing ! */
 r_for
 c_loop
 (paren
@@ -355,9 +620,7 @@ r_void
 op_star
 )paren
 op_amp
-(paren
 id|spp-&gt;ctrl
-)paren
 suffix:semicolon
 id|spp-&gt;dev.next
 op_assign
@@ -386,9 +649,7 @@ id|register_netdev
 c_func
 (paren
 op_amp
-(paren
 id|spp-&gt;dev
-)paren
 )paren
 op_eq
 l_int|0
@@ -406,9 +667,7 @@ suffix:semicolon
 id|spp-&gt;ctrl.dev
 op_assign
 op_amp
-(paren
 id|spp-&gt;dev
-)paren
 suffix:semicolon
 id|spp-&gt;dev.priv
 op_assign
@@ -417,17 +676,18 @@ r_void
 op_star
 )paren
 op_amp
-(paren
 id|spp-&gt;ctrl
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+op_amp
+id|spp-&gt;dev
 )paren
 suffix:semicolon
 r_return
-(paren
 op_amp
-(paren
 id|spp-&gt;ctrl
-)paren
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -438,9 +698,7 @@ c_func
 id|SIXPF_INUSE
 comma
 op_amp
-(paren
 id|spp-&gt;ctrl.flags
-)paren
 )paren
 suffix:semicolon
 id|printk
@@ -457,10 +715,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Free a 6pack channel. */
+DECL|function|sp_free
 r_static
 r_inline
 r_void
-DECL|function|sp_free
 id|sp_free
 c_func
 (paren
@@ -491,14 +749,12 @@ c_cond
 (paren
 id|sp-&gt;xbuff
 )paren
-(brace
 id|kfree
 c_func
 (paren
 id|sp-&gt;xbuff
 )paren
 suffix:semicolon
-)brace
 id|sp-&gt;xbuff
 op_assign
 l_int|NULL
@@ -516,7 +772,6 @@ op_amp
 id|sp-&gt;flags
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -527,12 +782,11 @@ id|sp-&gt;dev-&gt;name
 )paren
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* Send one completely decapsulated IP datagram to the IP layer. */
 multiline_comment|/* This is the routine that sends the received data to the kernel AX.25.&n;   &squot;cmd&squot; is the KISS command. For AX.25 data, it is zero. */
+DECL|function|sp_bump
 r_static
 r_void
-DECL|function|sp_bump
 id|sp_bump
 c_func
 (paren
@@ -564,10 +818,14 @@ id|sp-&gt;rcount
 op_plus
 l_int|1
 suffix:semicolon
-id|sp-&gt;rx_bytes
+id|sp-&gt;stats.rx_bytes
 op_add_assign
 id|count
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -575,11 +833,7 @@ c_func
 (paren
 id|count
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
+)paren
 op_eq
 l_int|NULL
 )paren
@@ -593,7 +847,7 @@ comma
 id|sp-&gt;dev-&gt;name
 )paren
 suffix:semicolon
-id|sp-&gt;rx_dropped
+id|sp-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
 r_return
@@ -652,15 +906,15 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|sp-&gt;rx_packets
+id|sp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* ----------------------------------------------------------------------- */
 multiline_comment|/* Encapsulate one AX.25 frame and stuff into a TTY queue. */
+DECL|function|sp_encaps
 r_static
 r_void
-DECL|function|sp_encaps
 id|sp_encaps
 c_func
 (paren
@@ -695,12 +949,8 @@ id|len
 OG
 id|sp-&gt;mtu
 )paren
-multiline_comment|/* sp-&gt;mtu = AX25_MTU = max. PACLEN = 256 */
 (brace
-id|len
-op_assign
-id|sp-&gt;mtu
-suffix:semicolon
+multiline_comment|/* sp-&gt;mtu = AX25_MTU = max. PACLEN = 256 */
 id|printk
 c_func
 (paren
@@ -710,7 +960,7 @@ comma
 id|sp-&gt;dev-&gt;name
 )paren
 suffix:semicolon
-id|sp-&gt;tx_dropped
+id|sp-&gt;stats.tx_dropped
 op_increment
 suffix:semicolon
 id|netif_start_queue
@@ -826,7 +1076,7 @@ c_func
 id|sp-&gt;dev
 )paren
 suffix:semicolon
-id|sp-&gt;tx_dropped
+id|sp-&gt;stats.tx_dropped
 op_increment
 suffix:semicolon
 r_return
@@ -957,9 +1207,7 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
@@ -1010,9 +1258,7 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
@@ -1094,10 +1340,8 @@ c_func
 id|sp-&gt;dev
 )paren
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1107,7 +1351,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Now serial buffer is almost free &amp; we can start&n;&t;&t; * transmission of another packet */
-id|sp-&gt;tx_packets
+id|sp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 id|tty-&gt;flags
@@ -1168,9 +1412,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* ----------------------------------------------------------------------- */
 multiline_comment|/* Encapsulate an IP datagram and kick it into a TTY queue. */
+DECL|function|sp_xmit
 r_static
 r_int
-DECL|function|sp_xmit
 id|sp_xmit
 c_func
 (paren
@@ -1195,30 +1439,19 @@ r_struct
 id|sixpack
 op_star
 )paren
-(paren
 id|dev-&gt;priv
-)paren
 suffix:semicolon
 multiline_comment|/* We were not busy, so we are now... :-) */
-r_if
-c_cond
-(paren
-id|skb
-op_ne
-l_int|NULL
-)paren
-(brace
 id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|sp-&gt;tx_bytes
+id|sp-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-multiline_comment|/*---2.1.x---*/
 id|sp_encaps
 c_func
 (paren
@@ -1235,15 +1468,13 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* #endif */
 multiline_comment|/* perform the persistence/slottime algorithm for CSMA access. If the persistence&n;   check was successful, write the data to the serial driver. Note that in case&n;   of DAMA operation, the data is not sent here. */
-r_static
 DECL|function|sp_xmit_on_air
+r_static
 r_void
 id|sp_xmit_on_air
 c_func
@@ -1315,9 +1546,7 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
@@ -1364,9 +1593,7 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
@@ -1384,8 +1611,6 @@ id|sp
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* sp_xmit */
-multiline_comment|/* #if defined(CONFIG_6PACK) || defined(CONFIG_6PACK_MODULE) */
 multiline_comment|/* Return the frame type ID */
 DECL|function|sp_header
 r_static
@@ -1479,12 +1704,10 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* #endif */
-multiline_comment|/* CONFIG_{AX25,AX25_MODULE} */
 multiline_comment|/* Open the low-level part of the 6pack channel. */
+DECL|function|sp_open
 r_static
 r_int
-DECL|function|sp_open
 id|sp_open
 c_func
 (paren
@@ -1504,9 +1727,7 @@ r_struct
 id|sixpack
 op_star
 )paren
-(paren
 id|dev-&gt;priv
-)paren
 suffix:semicolon
 r_int
 r_int
@@ -1523,7 +1744,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-multiline_comment|/*&n;&t; * Allocate the 6pack frame buffers:&n;&t; *&n;&t; * rbuff&t;Receive buffer.&n;&t; * xbuff&t;Transmit buffer.&n;&t; * cbuff        Temporary compression buffer.&n;&t; */
+multiline_comment|/*&n;&t; * Allocate the 6pack frame buffers:&n;&t; *&n;&t; * rbuff&t;Receive buffer.&n;&t; * xbuff&t;Transmit buffer.&n;&t; */
 multiline_comment|/* !!! length of the buffers. MTU is IP MTU, not PACLEN!&n;&t; */
 id|len
 op_assign
@@ -1531,13 +1752,12 @@ id|dev-&gt;mtu
 op_star
 l_int|2
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|sp-&gt;rbuff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -1547,11 +1767,7 @@ l_int|4
 comma
 id|GFP_KERNEL
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sp-&gt;rbuff
+)paren
 op_eq
 l_int|NULL
 )paren
@@ -1559,13 +1775,12 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|sp-&gt;xbuff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -1575,11 +1790,7 @@ l_int|4
 comma
 id|GFP_KERNEL
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sp-&gt;xbuff
+)paren
 op_eq
 l_int|NULL
 )paren
@@ -1695,9 +1906,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Close the low-level part of the 6pack channel. */
+DECL|function|sp_close
 r_static
 r_int
-DECL|function|sp_close
 id|sp_close
 c_func
 (paren
@@ -1717,9 +1928,7 @@ r_struct
 id|sixpack
 op_star
 )paren
-(paren
 id|dev-&gt;priv
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1728,12 +1937,10 @@ id|sp-&gt;tty
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
 id|sp-&gt;tty-&gt;flags
 op_and_assign
 op_complement
@@ -1753,9 +1960,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sixpack_receive_room
 r_static
 r_int
-DECL|function|sixpack_receive_room
 id|sixpack_receive_room
 c_func
 (paren
@@ -1772,9 +1979,9 @@ multiline_comment|/* We can handle an infinite amount of data. :-) */
 )brace
 multiline_comment|/* !!! receive state machine */
 multiline_comment|/*&n; * Handle the &squot;receiver data ready&squot; interrupt.&n; * This function is called by the &squot;tty_io&squot; module in the kernel when&n; * a block of 6pack data has been received, which can now be decapsulated&n; * and sent on to some IP layer for further processing.&n; */
+DECL|function|sixpack_receive_buf
 r_static
 r_void
-DECL|function|sixpack_receive_buf
 id|sixpack_receive_buf
 c_func
 (paren
@@ -1922,11 +2129,9 @@ op_amp
 id|sp-&gt;flags
 )paren
 )paren
-(brace
-id|sp-&gt;rx_errors
+id|sp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
-)brace
 r_continue
 suffix:semicolon
 )brace
@@ -1943,9 +2148,9 @@ id|count1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Open the high-level part of the 6pack channel.&n; * This function is called by the TTY module when the&n; * 6pack line discipline is called for.  Because we are&n; * sure the tty line exists, we only have to link it to&n; * a free 6pcack channel...&n; */
+DECL|function|sixpack_open
 r_static
 r_int
-DECL|function|sixpack_open
 id|sixpack_open
 c_func
 (paren
@@ -2059,8 +2264,6 @@ id|sp-&gt;dev
 r_return
 id|err
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* Done.  We have linked the TTY line to a channel. */
 id|tnc_init
 c_func
@@ -2073,9 +2276,9 @@ id|sp-&gt;dev-&gt;base_addr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Close down a 6pack channel.&n; * This means flushing out any pending queues, and then restoring the&n; * TTY line discipline to what it was before it got hooked to 6pack&n; * (which usually is TTY again).&n; */
+DECL|function|sixpack_close
 r_static
 r_void
-DECL|function|sixpack_close
 id|sixpack_close
 c_func
 (paren
@@ -2115,16 +2318,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sp-&gt;dev-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-(paren
-r_void
-)paren
 id|dev_close
 c_func
 (paren
@@ -2135,18 +2328,14 @@ id|del_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;tx_t
-)paren
 )paren
 suffix:semicolon
 id|del_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;resync_t
-)paren
 )paren
 suffix:semicolon
 id|tty-&gt;disc_data
@@ -2157,14 +2346,13 @@ id|sp-&gt;tty
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* VSV = very important to remove timers */
 id|sp_free
 c_func
 (paren
 id|sp
 )paren
 suffix:semicolon
-id|unregister_netdev
+id|unregister_netdevice
 c_func
 (paren
 id|sp-&gt;dev
@@ -2175,14 +2363,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
+DECL|function|sp_get_stats
 r_static
 r_struct
 id|net_device_stats
 op_star
-DECL|function|sp_get_stats
 id|sp_get_stats
 c_func
 (paren
@@ -2192,11 +2378,6 @@ op_star
 id|dev
 )paren
 (brace
-r_static
-r_struct
-id|net_device_stats
-id|stats
-suffix:semicolon
 r_struct
 id|sixpack
 op_star
@@ -2207,70 +2388,16 @@ r_struct
 id|sixpack
 op_star
 )paren
-(paren
 id|dev-&gt;priv
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|stats
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device_stats
-)paren
-)paren
-suffix:semicolon
-id|stats.rx_packets
-op_assign
-id|sp-&gt;rx_packets
-suffix:semicolon
-id|stats.tx_packets
-op_assign
-id|sp-&gt;tx_packets
-suffix:semicolon
-id|stats.rx_bytes
-op_assign
-id|sp-&gt;rx_bytes
-suffix:semicolon
-id|stats.tx_bytes
-op_assign
-id|sp-&gt;tx_bytes
-suffix:semicolon
-id|stats.rx_dropped
-op_assign
-id|sp-&gt;rx_dropped
-suffix:semicolon
-id|stats.tx_dropped
-op_assign
-id|sp-&gt;tx_dropped
-suffix:semicolon
-id|stats.tx_errors
-op_assign
-id|sp-&gt;tx_errors
-suffix:semicolon
-id|stats.rx_errors
-op_assign
-id|sp-&gt;rx_errors
-suffix:semicolon
-id|stats.rx_over_errors
-op_assign
-id|sp-&gt;rx_over_errors
 suffix:semicolon
 r_return
-(paren
 op_amp
-id|stats
-)paren
+id|sp-&gt;stats
 suffix:semicolon
 )brace
-r_int
 DECL|function|sp_set_mac_address
+r_static
+r_int
 id|sp_set_mac_address
 c_func
 (paren
@@ -2284,31 +2411,7 @@ op_star
 id|addr
 )paren
 (brace
-r_int
-id|err
-suffix:semicolon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|addr
-comma
-id|AX25_ADDR_LEN
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
 r_return
-id|err
-suffix:semicolon
-)brace
 id|copy_from_user
 c_func
 (paren
@@ -2318,15 +2421,17 @@ id|addr
 comma
 id|AX25_ADDR_LEN
 )paren
-suffix:semicolon
-multiline_comment|/* addr is an AX.25 shifted ASCII mac address */
-r_return
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sp_set_dev_mac_address
 r_static
 r_int
-DECL|function|sp_set_dev_mac_address
 id|sp_set_dev_mac_address
 c_func
 (paren
@@ -2362,9 +2467,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Perform I/O control on an active 6pack channel. */
+DECL|function|sixpack_ioctl
 r_static
 r_int
-DECL|function|sixpack_ioctl
 id|sixpack_ioctl
 c_func
 (paren
@@ -2398,9 +2503,6 @@ op_star
 id|tty-&gt;disc_data
 suffix:semicolon
 r_int
-id|err
-suffix:semicolon
-r_int
 r_int
 id|tmp
 suffix:semicolon
@@ -2415,12 +2517,10 @@ id|sp-&gt;magic
 op_ne
 id|SIXPACK_MAGIC
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -2430,34 +2530,7 @@ id|cmd
 r_case
 id|SIOCGIFNAME
 suffix:colon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|arg
-comma
-id|strlen
-c_func
-(paren
-id|sp-&gt;dev-&gt;name
-)paren
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
 r_return
-id|err
-suffix:semicolon
-)brace
 id|copy_to_user
 c_func
 (paren
@@ -2473,38 +2546,17 @@ id|sp-&gt;dev-&gt;name
 op_plus
 l_int|1
 )paren
-suffix:semicolon
-r_return
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
 l_int|0
 suffix:semicolon
 r_case
 id|SIOCGIFENCAP
 suffix:colon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
 r_return
-id|err
-suffix:semicolon
-)brace
 id|put_user
 c_func
 (paren
@@ -2517,37 +2569,12 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 r_case
 id|SIOCSIFENCAP
 suffix:colon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
 id|get_user
 c_func
 (paren
@@ -2559,6 +2586,10 @@ op_star
 )paren
 id|arg
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|sp-&gt;mode
 op_assign
@@ -2655,9 +2686,7 @@ r_struct
 id|sixpack
 op_star
 )paren
-(paren
 id|dev-&gt;priv
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2666,22 +2695,20 @@ id|sp-&gt;tty
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize 6pack control device -- register 6pack line discipline */
-DECL|function|sixpack_init_ctrl_dev
+DECL|function|sixpack_init_driver
 r_static
 r_int
 id|__init
-id|sixpack_init_ctrl_dev
+id|sixpack_init_driver
 c_func
 (paren
 r_void
@@ -2705,10 +2732,7 @@ multiline_comment|/* Sanity */
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;AX.25: 6pack driver, %s (dynamic channels, max=%d)&bslash;n&quot;
-comma
-id|SIXPACK_VERSION
+id|banner
 comma
 id|sixpack_maxdev
 )paren
@@ -2773,20 +2797,6 @@ id|sixpack_maxdev
 suffix:semicolon
 multiline_comment|/* Pointers */
 multiline_comment|/* Fill in our line protocol discipline, and register it */
-id|memset
-c_func
-(paren
-op_amp
-id|sp_ldisc
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|sp_ldisc
-)paren
-)paren
-suffix:semicolon
 id|sp_ldisc.magic
 op_assign
 id|TTY_LDISC_MAGIC
@@ -2884,6 +2894,12 @@ comma
 id|status
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|sixpack_ctrls
+)paren
+suffix:semicolon
 )brace
 r_return
 id|status
@@ -2902,14 +2918,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sixpack_ctrls
-op_ne
-l_int|NULL
-)paren
-(brace
 r_for
 c_loop
 (paren
@@ -2934,7 +2942,7 @@ id|i
 )braket
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * VSV = if dev-&gt;start==0, then device&n;&t;&t;&t;&t; * unregistered while close proc.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;* VSV = if dev-&gt;start==0, then device&n;&t;&t;&t;* unregistered while close proc.&n;&t;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -2971,13 +2979,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|sixpack_ctrls
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 )brace
 )brace
 id|kfree
@@ -2986,11 +2987,6 @@ c_func
 id|sixpack_ctrls
 )paren
 suffix:semicolon
-id|sixpack_ctrls
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3006,7 +3002,6 @@ l_int|NULL
 )paren
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -3017,10 +3012,10 @@ id|i
 )paren
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* Initialize the 6pack driver.  Called by DDI. */
-r_int
 DECL|function|sixpack_init
+r_static
+r_int
 id|sixpack_init
 c_func
 (paren
@@ -3040,9 +3035,7 @@ r_struct
 id|sixpack
 op_star
 )paren
-(paren
 id|dev-&gt;priv
-)paren
 suffix:semicolon
 r_static
 r_char
@@ -3244,9 +3237,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; 6pack timer interrupt handler and friends. &lt;---- */
+DECL|function|sp_start_tx_timer
 r_static
 r_void
-DECL|function|sp_start_tx_timer
 id|sp_start_tx_timer
 c_func
 (paren
@@ -3265,9 +3258,7 @@ id|del_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;tx_t
-)paren
 )paren
 suffix:semicolon
 id|sp-&gt;tx_t.data
@@ -3302,30 +3293,32 @@ id|add_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;tx_t
-)paren
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* encode an AX.25 packet into 6pack */
 DECL|function|encode_sixpack
+r_static
 r_int
 id|encode_sixpack
 c_func
 (paren
-id|byte
+r_int
+r_char
 op_star
 id|tx_buf
 comma
-id|byte
+r_int
+r_char
 op_star
 id|tx_buf_raw
 comma
 r_int
 id|length
 comma
-id|byte
+r_int
+r_char
 id|tx_delay
 )paren
 (brace
@@ -3334,7 +3327,8 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|byte
+r_int
+r_char
 id|checksum
 op_assign
 l_int|0
@@ -3388,7 +3382,6 @@ suffix:semicolon
 id|count
 op_increment
 )paren
-(brace
 id|buf
 (braket
 id|count
@@ -3399,7 +3392,6 @@ id|tx_buf
 id|count
 )braket
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -3414,7 +3406,6 @@ suffix:semicolon
 id|count
 op_increment
 )paren
-(brace
 id|checksum
 op_add_assign
 id|buf
@@ -3422,14 +3413,14 @@ id|buf
 id|count
 )braket
 suffix:semicolon
-)brace
 id|buf
 (braket
 id|length
 )braket
 op_assign
 (paren
-id|byte
+r_int
+r_char
 )paren
 l_int|0xff
 op_minus
@@ -3576,9 +3567,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* else */
 )brace
-multiline_comment|/* for */
 r_if
 c_cond
 (paren
@@ -3606,6 +3595,7 @@ id|raw_count
 suffix:semicolon
 )brace
 multiline_comment|/* decode a 6pack packet */
+r_static
 r_void
 DECL|function|sixpack_decode
 id|sixpack_decode
@@ -3626,7 +3616,8 @@ r_int
 id|count
 )paren
 (brace
-id|byte
+r_int
+r_char
 id|inbyte
 suffix:semicolon
 r_int
@@ -3677,9 +3668,7 @@ id|del_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;resync_t
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3694,7 +3683,6 @@ id|SIXP_PRIO_CMD_MASK
 op_ne
 l_int|0
 )paren
-(brace
 id|decode_prio_command
 c_func
 (paren
@@ -3703,7 +3691,6 @@ comma
 id|sp
 )paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -3716,7 +3703,6 @@ id|SIXP_STD_CMD_MASK
 op_ne
 l_int|0
 )paren
-(brace
 id|decode_std_command
 c_func
 (paren
@@ -3725,9 +3711,7 @@ comma
 id|sp
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 r_if
 c_cond
 (paren
@@ -3748,13 +3732,10 @@ id|sp
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* else */
 )brace
-multiline_comment|/* for */
-)brace
+DECL|function|tnc_init
 r_static
 r_int
-DECL|function|tnc_init
 id|tnc_init
 c_func
 (paren
@@ -3764,10 +3745,8 @@ op_star
 id|sp
 )paren
 (brace
-r_static
-id|byte
-id|inbyte
-suffix:semicolon
+r_int
+r_char
 id|inbyte
 op_assign
 l_int|0xe8
@@ -3791,9 +3770,7 @@ id|del_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;resync_t
-)paren
 )paren
 suffix:semicolon
 id|sp-&gt;resync_t.data
@@ -3818,9 +3795,7 @@ id|add_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;resync_t
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3829,11 +3804,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* identify and execute a 6pack priority command byte */
 DECL|function|decode_prio_command
+r_static
 r_void
 id|decode_prio_command
 c_func
 (paren
-id|byte
+r_int
+r_char
 id|cmd
 comma
 r_struct
@@ -3842,7 +3819,8 @@ op_star
 id|sp
 )paren
 (brace
-id|byte
+r_int
+r_char
 id|channel
 suffix:semicolon
 r_int
@@ -3924,7 +3902,6 @@ op_amp
 id|SIXP_PRIO_DATA_MASK
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 r_else
 (brace
 multiline_comment|/* output watchdog char if idle */
@@ -3958,9 +3935,7 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
@@ -4002,9 +3977,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 )brace
-multiline_comment|/* else */
 multiline_comment|/* needed to trigger the TNC watchdog */
 id|sp-&gt;tty-&gt;driver
 dot
@@ -4016,9 +3989,7 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
@@ -4036,9 +4007,7 @@ id|del_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;resync_t
-)paren
 )paren
 suffix:semicolon
 id|sp-&gt;resync_t.data
@@ -4063,9 +4032,7 @@ id|add_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;resync_t
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -4077,9 +4044,9 @@ id|SIXP_PRIO_DATA_MASK
 suffix:semicolon
 )brace
 multiline_comment|/* try to resync the TNC. Called by the resync timer defined in&n;  decode_prio_command */
+DECL|function|resync_tnc
 r_static
 r_void
-DECL|function|resync_tnc
 id|resync_tnc
 c_func
 (paren
@@ -4154,9 +4121,7 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
@@ -4181,9 +4146,7 @@ id|del_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;resync_t
-)paren
 )paren
 suffix:semicolon
 id|sp-&gt;resync_t.data
@@ -4208,19 +4171,19 @@ id|add_timer
 c_func
 (paren
 op_amp
-(paren
 id|sp-&gt;resync_t
-)paren
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* identify and execute a standard 6pack command byte */
 DECL|function|decode_std_command
+r_static
 r_void
 id|decode_std_command
 c_func
 (paren
-id|byte
+r_int
+r_char
 id|cmd
 comma
 r_struct
@@ -4229,7 +4192,8 @@ op_star
 id|sp
 )paren
 (brace
-id|byte
+r_int
+r_char
 id|checksum
 op_assign
 l_int|0
@@ -4303,15 +4267,12 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 )brace
 r_else
 (brace
@@ -4330,9 +4291,7 @@ comma
 l_int|0
 comma
 op_amp
-(paren
 id|sp-&gt;led_state
-)paren
 comma
 l_int|1
 )paren
@@ -4362,7 +4321,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|decode_data
 c_func
 (paren
@@ -4371,7 +4329,6 @@ comma
 id|sp
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4451,13 +4408,11 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* else */
 id|sp-&gt;rx_count_cooked
 op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* else */
 r_break
 suffix:semicolon
 r_case
@@ -4495,16 +4450,16 @@ l_string|&quot;6pack: RX buffer overflow&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* switch */
 )brace
-multiline_comment|/* function */
 multiline_comment|/* decode 4 sixpack-encoded bytes into 3 data bytes */
 DECL|function|decode_data
+r_static
 r_void
 id|decode_data
 c_func
 (paren
-id|byte
+r_int
+r_char
 id|inbyte
 comma
 r_struct
@@ -4630,11 +4585,27 @@ c_func
 l_string|&quot;6pack driver for AX.25&quot;
 )paren
 suffix:semicolon
-DECL|variable|sixpack_init_ctrl_dev
+id|MODULE_PARM
+c_func
+(paren
+id|sixpack_maxdev
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|sixpack_maxdev
+comma
+l_string|&quot;number of 6PACK devices&quot;
+)paren
+suffix:semicolon
+DECL|variable|sixpack_init_driver
 id|module_init
 c_func
 (paren
-id|sixpack_init_ctrl_dev
+id|sixpack_init_driver
 )paren
 suffix:semicolon
 DECL|variable|sixpack_cleanup_driver

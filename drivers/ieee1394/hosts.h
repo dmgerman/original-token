@@ -341,6 +341,29 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+multiline_comment|/* This function is mainly to redirect local CSR reads/locks to the iso&n;         * management registers (bus manager id, bandwidth available, channels&n;         * available) to the hardware registers in OHCI.  reg is 0,1,2,3 for bus&n;         * mgr, bwdth avail, ch avail hi, ch avail lo respectively (the same ids&n;         * as OHCI uses).  data and compare are the new data and expected data&n;         * respectively, return value is the old value.&n;         */
+DECL|member|hw_csr_reg
+id|quadlet_t
+(paren
+op_star
+id|hw_csr_reg
+)paren
+(paren
+r_struct
+id|hpsb_host
+op_star
+id|host
+comma
+r_int
+id|reg
+comma
+id|quadlet_t
+id|data
+comma
+id|quadlet_t
+id|compare
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* mid level internal use */

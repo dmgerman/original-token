@@ -253,6 +253,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* We have the 16-bit (vs 8-bit) version of the card. */
+DECL|member|bigendian
+r_int
+id|bigendian
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* 16-bit big endian mode */
 DECL|member|txing
 r_int
 id|txing
@@ -400,7 +407,7 @@ mdefine_line|#define E8390_PAGE1&t;0x40&t;/* using the two high-order bits */
 DECL|macro|E8390_PAGE2
 mdefine_line|#define E8390_PAGE2&t;0x80&t;/* Page 3 is invalid. */
 multiline_comment|/*&n; *&t;Only generate indirect loads given a machine that needs them.&n; */
-macro_line|#if defined(CONFIG_MAC) || defined(CONFIG_AMIGA_PCMCIA) || &bslash;&n;    defined(CONFIG_ARIADNE2) || defined(CONFIG_ARIADNE2_MODULE)
+macro_line|#if defined(CONFIG_MAC) || defined(CONFIG_AMIGA_PCMCIA) || &bslash;&n;    defined(CONFIG_ARIADNE2) || defined(CONFIG_ARIADNE2_MODULE) || &bslash;&n;    defined(CONFIG_HYDRA) || defined(CONFIG_HYDRA_MODULE)
 DECL|macro|EI_SHIFT
 mdefine_line|#define EI_SHIFT(x)&t;(ei_local-&gt;reg_offset[x])
 macro_line|#else
@@ -484,6 +491,8 @@ mdefine_line|#define ENISR_ALL&t;0x3f&t;/* Interrupts we will enable */
 multiline_comment|/* Bits in EN0_DCFG - Data config register */
 DECL|macro|ENDCFG_WTS
 mdefine_line|#define ENDCFG_WTS&t;0x01&t;/* word transfer mode selection */
+DECL|macro|ENDCFG_BOS
+mdefine_line|#define ENDCFG_BOS&t;0x02&t;/* byte order selection */
 multiline_comment|/* Page 1 register offsets. */
 DECL|macro|EN1_PHYS
 mdefine_line|#define EN1_PHYS   EI_SHIFT(0x01)&t;/* This board&squot;s physical enet addr RD WR */

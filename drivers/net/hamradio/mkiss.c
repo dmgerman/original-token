@@ -3102,7 +3102,7 @@ id|AX25_MAGIC
 )paren
 r_return
 suffix:semicolon
-id|dev_close
+id|unregister_netdev
 c_func
 (paren
 id|ax-&gt;dev
@@ -3120,12 +3120,6 @@ id|ax_free
 c_func
 (paren
 id|ax
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|ax-&gt;dev
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT

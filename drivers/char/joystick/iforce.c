@@ -1251,13 +1251,13 @@ id|iforce_usb_ids
 op_assign
 (brace
 (brace
-id|idVendor
-suffix:colon
+id|USB_DEVICE
+c_func
+(paren
 id|USB_VENDOR_ID_LOGITECH
 comma
-id|idProduct
-suffix:colon
 id|USB_DEVICE_ID_LOGITECH_WMFORCE
+)paren
 )brace
 comma
 (brace

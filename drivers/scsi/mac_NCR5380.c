@@ -9878,6 +9878,14 @@ id|SCSI_RESET_BUS_RESET
 suffix:semicolon
 macro_line|#endif /* 1 */
 )brace
+DECL|variable|driver_template
+r_static
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|MAC_NCR5380
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
 multiline_comment|/* Local Variables: */
 multiline_comment|/* tab-width: 8     */
 multiline_comment|/* End:             */

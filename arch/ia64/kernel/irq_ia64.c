@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/ia64/kernel/irq.c&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; *  6/10/99: Updated to bring in sync with x86 version to facilitate&n; *&t;     support for SMP and different interrupt controllers.&n; */
+multiline_comment|/*&n; * linux/arch/ia64/kernel/irq.c&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; *  6/10/99: Updated to bring in sync with x86 version to facilitate&n; *&t;     support for SMP and different interrupt controllers.&n; *&n; * 09/15/00 Goutham Rao &lt;goutham.rao@intel.com&gt; Implemented pci_irq_to_vector&n; *                      PCI to vector allocation routine.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -22,12 +22,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|IRQ_DEBUG
 mdefine_line|#define IRQ_DEBUG&t;0
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-DECL|variable|ivr_read_lock
-id|spinlock_t
-id|ivr_read_lock
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* default base addr of IPI table */
 DECL|variable|ipi_base_addr
 r_int
@@ -40,7 +34,7 @@ op_or
 id|IPI_DEFAULT_BASE_ADDR
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Legacy IRQ to IA-64 vector translation table.  Any vector not in&n; * this table maps to itself (ie: irq 0x30 =&gt; IA64 vector 0x30)&n; */
+multiline_comment|/*&n; * Legacy IRQ to IA-64 vector translation table.&n; */
 DECL|variable|isa_irq_to_vector_map
 id|__u8
 id|isa_irq_to_vector_map
@@ -50,78 +44,71 @@ l_int|16
 op_assign
 (brace
 multiline_comment|/* 8259 IRQ translation, first 16 entries */
-l_int|0x60
+l_int|0x2f
 comma
-l_int|0x50
+l_int|0x20
 comma
-l_int|0x10
+l_int|0x2e
 comma
-l_int|0x51
+l_int|0x2d
 comma
-l_int|0x52
+l_int|0x2c
 comma
-l_int|0x53
+l_int|0x2b
 comma
-l_int|0x43
+l_int|0x2a
 comma
-l_int|0x54
+l_int|0x29
 comma
-l_int|0x55
+l_int|0x28
 comma
-l_int|0x56
+l_int|0x27
 comma
-l_int|0x57
+l_int|0x26
 comma
-l_int|0x58
+l_int|0x25
 comma
-l_int|0x59
+l_int|0x24
 comma
-l_int|0x5a
+l_int|0x23
 comma
-l_int|0x40
+l_int|0x22
 comma
-l_int|0x41
+l_int|0x21
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-DECL|variable|usbfix
 r_int
-id|usbfix
-suffix:semicolon
-r_static
-r_int
-id|__init
-DECL|function|usbfix_option
-id|usbfix_option
+DECL|function|ia64_alloc_irq
+id|ia64_alloc_irq
 (paren
-r_char
-op_star
-id|str
+r_void
 )paren
 (brace
-id|printk
+r_static
+r_int
+id|next_irq
+op_assign
+id|FIRST_DEVICE_IRQ
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|next_irq
+OG
+id|LAST_DEVICE_IRQ
+)paren
+multiline_comment|/* XXX could look for sharable vectors instead of panic&squot;ing... */
+id|panic
 c_func
 (paren
-l_string|&quot;irq: enabling USB workaround&bslash;n&quot;
+l_string|&quot;ia64_alloc_irq: out of interrupt vectors!&quot;
 )paren
-suffix:semicolon
-id|usbfix
-op_assign
-l_int|1
 suffix:semicolon
 r_return
-l_int|1
+id|next_irq
+op_increment
 suffix:semicolon
 )brace
-id|__setup
-c_func
-(paren
-l_string|&quot;usbfix&quot;
-comma
-id|usbfix_option
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_ITANIUM_A1_SPECIFIC */
 multiline_comment|/*&n; * That&squot;s where the IVT branches when we get an external&n; * interrupt. This branches to the correct hardware IRQ handler via&n; * function ptr.&n; */
 r_void
 DECL|function|ia64_handle_irq
@@ -141,122 +128,6 @@ r_int
 r_int
 id|saved_tpr
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-r_int
-r_int
-id|eoi_ptr
-suffix:semicolon
-macro_line|# ifdef CONFIG_USB
-r_extern
-r_void
-id|reenable_usb
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|disable_usb
-(paren
-r_void
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|usbfix
-)paren
-id|disable_usb
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|# endif
-multiline_comment|/*&n;&t; * Stop IPIs by getting the ivr_read_lock&n;&t; */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|ivr_read_lock
-)paren
-suffix:semicolon
-(brace
-r_int
-r_int
-id|tmp
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Disable PCI writes&n;&t;&t; */
-id|outl
-c_func
-(paren
-l_int|0x80ff81c0
-comma
-l_int|0xcf8
-)paren
-suffix:semicolon
-id|tmp
-op_assign
-id|inl
-c_func
-(paren
-l_int|0xcfc
-)paren
-suffix:semicolon
-id|outl
-c_func
-(paren
-id|tmp
-op_or
-l_int|0x400
-comma
-l_int|0xcfc
-)paren
-suffix:semicolon
-id|eoi_ptr
-op_assign
-id|inl
-c_func
-(paren
-l_int|0xcfc
-)paren
-suffix:semicolon
-id|vector
-op_assign
-id|ia64_get_ivr
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Enable PCI writes&n;&t;&t; */
-id|outl
-c_func
-(paren
-id|tmp
-comma
-l_int|0xcfc
-)paren
-suffix:semicolon
-)brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|ivr_read_lock
-)paren
-suffix:semicolon
-macro_line|# ifdef CONFIG_USB
-r_if
-c_cond
-(paren
-id|usbfix
-)paren
-id|reenable_usb
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|# endif
-macro_line|#endif /* CONFIG_ITANIUM_A1_SPECIFIC */
 macro_line|#if IRQ_DEBUG
 (brace
 r_int
@@ -411,6 +282,31 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|irq_desc
+(braket
+id|vector
+)braket
+dot
+id|status
+op_amp
+id|IRQ_PER_CPU
+)paren
+op_ne
+l_int|0
+)paren
+id|do_IRQ_per_cpu
+c_func
+(paren
+id|vector
+comma
+id|regs
+)paren
+suffix:semicolon
+r_else
 id|do_IRQ
 c_func
 (paren
@@ -436,10 +332,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-r_break
-suffix:semicolon
-macro_line|#endif
 id|vector
 op_assign
 id|ia64_get_ivr
@@ -599,8 +491,8 @@ l_int|0
 suffix:semicolon
 )brace
 r_void
-DECL|function|ipi_send
-id|ipi_send
+DECL|function|ia64_send_ipi
+id|ia64_send_ipi
 (paren
 r_int
 id|cpu
@@ -627,12 +519,6 @@ r_int
 r_int
 id|phys_cpu_id
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-r_int
-r_int
-id|flags
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SMP
 id|phys_cpu_id
 op_assign
@@ -692,17 +578,6 @@ op_lshift
 l_int|3
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|ivr_read_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
 id|writeq
 c_func
 (paren
@@ -711,16 +586,5 @@ comma
 id|ipi_addr
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|ivr_read_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 eof

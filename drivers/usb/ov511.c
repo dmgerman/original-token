@@ -519,35 +519,35 @@ id|device_table
 op_assign
 (brace
 (brace
-id|idVendor
-suffix:colon
+id|USB_DEVICE
+c_func
+(paren
 l_int|0x05a9
 comma
-id|idProduct
-suffix:colon
 l_int|0x0511
+)paren
 )brace
 comma
 multiline_comment|/* OV511 */
 (brace
-id|idVendor
-suffix:colon
+id|USB_DEVICE
+c_func
+(paren
 l_int|0x05a9
 comma
-id|idProduct
-suffix:colon
 l_int|0xA511
+)paren
 )brace
 comma
 multiline_comment|/* OV511+ */
 (brace
-id|idVendor
-suffix:colon
+id|USB_DEVICE
+c_func
+(paren
 l_int|0x0813
 comma
-id|idProduct
-suffix:colon
 l_int|0x0002
+)paren
 )brace
 comma
 multiline_comment|/* Intel Play Me2Cam OV511+ */
@@ -16965,7 +16965,6 @@ multiline_comment|/*************************************************************
 r_static
 r_void
 op_star
-id|__devinit
 DECL|function|ov511_probe
 id|ov511_probe
 c_func
@@ -17428,7 +17427,6 @@ suffix:semicolon
 )brace
 r_static
 r_void
-id|__devexit
 DECL|function|ov511_disconnect
 id|ov511_disconnect
 c_func

@@ -45,7 +45,7 @@ mdefine_line|#define IRDA_DEBUG_LEVEL 0
 DECL|macro|IRDA_DEBUG
 mdefine_line|#define IRDA_DEBUG(n, args...) (irda_debug &gt;= (n)) ? (printk(KERN_DEBUG args)) : 0
 DECL|macro|ASSERT
-mdefine_line|#define ASSERT(expr, func) &bslash;&n;if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__); &bslash;&n;        ##func}
+mdefine_line|#define ASSERT(expr, func) &bslash;&n;if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s:%s:%d %s&bslash;n&quot;, &bslash;&n;        __FILE__,__FUNCTION__,__LINE__,(#expr));  &bslash;&n;        func }
 macro_line|#else
 DECL|macro|IRDA_DEBUG
 mdefine_line|#define IRDA_DEBUG(n, args...)

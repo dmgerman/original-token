@@ -2247,20 +2247,12 @@ c_func
 id|do_settimeofday
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_X86
+macro_line|#if !defined(__ia64__)
 DECL|variable|loops_per_jiffy
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|loops_per_jiffy
-)paren
-suffix:semicolon
-macro_line|#elif !defined(__ia64__)
-DECL|variable|loops_per_sec
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|loops_per_sec
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -59,9 +59,9 @@ DECL|macro|NF_IP6_POST_ROUTING
 mdefine_line|#define NF_IP6_POST_ROUTING&t;4
 DECL|macro|NF_IP6_NUMHOOKS
 mdefine_line|#define NF_IP6_NUMHOOKS&t;&t;5
-DECL|enum|nf_ip_hook_priorities
+DECL|enum|nf_ip6_hook_priorities
 r_enum
-id|nf_ip_hook_priorities
+id|nf_ip6_hook_priorities
 (brace
 DECL|enumerator|NF_IP6_PRI_FIRST
 id|NF_IP6_PRI_FIRST

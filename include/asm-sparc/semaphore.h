@@ -13,9 +13,9 @@ DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
-DECL|member|waking
-id|atomic_t
-id|waking
+DECL|member|sleepers
+r_int
+id|sleepers
 suffix:semicolon
 DECL|member|wait
 id|wait_queue_head_t
@@ -37,7 +37,7 @@ DECL|macro|__SEM_DEBUG_INIT
 macro_line|# define __SEM_DEBUG_INIT(name)
 macro_line|#endif
 DECL|macro|__SEMAPHORE_INITIALIZER
-mdefine_line|#define __SEMAPHORE_INITIALIZER(name,count) &bslash;&n;{ ATOMIC_INIT(count), ATOMIC_INIT(0), __WAIT_QUEUE_HEAD_INITIALIZER((name).wait) &bslash;&n;&t;__SEM_DEBUG_INIT(name) }
+mdefine_line|#define __SEMAPHORE_INITIALIZER(name,count) &bslash;&n;{ ATOMIC_INIT(count), 0, __WAIT_QUEUE_HEAD_INITIALIZER((name).wait) &bslash;&n;&t;__SEM_DEBUG_INIT(name) }
 DECL|macro|__MUTEX_INITIALIZER
 mdefine_line|#define __MUTEX_INITIALIZER(name) &bslash;&n;&t;__SEMAPHORE_INITIALIZER(name,1)
 DECL|macro|__DECLARE_SEMAPHORE_GENERIC
@@ -47,7 +47,7 @@ mdefine_line|#define DECLARE_MUTEX(name) __DECLARE_SEMAPHORE_GENERIC(name,1)
 DECL|macro|DECLARE_MUTEX_LOCKED
 mdefine_line|#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
 DECL|function|sema_init
-r_extern
+r_static
 r_inline
 r_void
 id|sema_init
@@ -70,14 +70,9 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|atomic_set
-c_func
-(paren
-op_amp
-id|sem-&gt;waking
-comma
+id|sem-&gt;sleepers
+op_assign
 l_int|0
-)paren
 suffix:semicolon
 id|init_waitqueue_head
 c_func
@@ -184,7 +179,7 @@ id|sem
 )paren
 suffix:semicolon
 DECL|function|down
-r_extern
+r_static
 r_inline
 r_void
 id|down
@@ -378,7 +373,7 @@ l_string|&quot;cc&quot;
 suffix:semicolon
 )brace
 DECL|function|down_interruptible
-r_extern
+r_static
 r_inline
 r_int
 id|down_interruptible
@@ -586,7 +581,7 @@ id|increment
 suffix:semicolon
 )brace
 DECL|function|down_trylock
-r_extern
+r_static
 r_inline
 r_int
 id|down_trylock
@@ -794,7 +789,7 @@ id|increment
 suffix:semicolon
 )brace
 DECL|function|up
-r_extern
+r_static
 r_inline
 r_void
 id|up
@@ -1055,7 +1050,7 @@ mdefine_line|#define DECLARE_RWSEM_READ_LOCKED(name) __DECLARE_RWSEM_GENERIC(nam
 DECL|macro|DECLARE_RWSEM_WRITE_LOCKED
 mdefine_line|#define DECLARE_RWSEM_WRITE_LOCKED(name) __DECLARE_RWSEM_GENERIC(name,0)
 DECL|function|init_rwsem
-r_extern
+r_static
 r_inline
 r_void
 id|init_rwsem
@@ -1163,7 +1158,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|function|down_read
-r_extern
+r_static
 r_inline
 r_void
 id|down_read
@@ -1293,7 +1288,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|down_write
-r_extern
+r_static
 r_inline
 r_void
 id|down_write
@@ -1450,7 +1445,7 @@ macro_line|#endif
 )brace
 multiline_comment|/* When a reader does a release, the only significant&n; * case is when there was a writer waiting, and we&squot;ve&n; * bumped the count to 0: we must wake the writer up.&n; */
 DECL|function|__up_read
-r_extern
+r_static
 r_inline
 r_void
 id|__up_read
@@ -1538,7 +1533,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* releasing the writer is easy -- just release it and&n; * wake up any sleepers.&n; */
 DECL|function|__up_write
-r_extern
+r_static
 r_inline
 r_void
 id|__up_write
@@ -1625,7 +1620,7 @@ l_string|&quot;cc&quot;
 suffix:semicolon
 )brace
 DECL|function|up_read
-r_extern
+r_static
 r_inline
 r_void
 id|up_read
@@ -1680,7 +1675,7 @@ id|sem
 suffix:semicolon
 )brace
 DECL|function|up_write
-r_extern
+r_static
 r_inline
 r_void
 id|up_write

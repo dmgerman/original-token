@@ -418,6 +418,9 @@ op_star
 id|data
 )paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|cciss_procinit
 r_static

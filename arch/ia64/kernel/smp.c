@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * SMP Support&n; *&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * &n; * Lots of stuff stolen from arch/alpha/kernel/smp.c&n; *&n; *  00/09/11 David Mosberger &lt;davidm@hpl.hp.com&gt; Do loops_per_sec calibration on each CPU.&n; *  00/08/23 Asit Mallick &lt;asit.k.mallick@intel.com&gt; fixed logical processor id&n; *  00/03/31 Rohit Seth &lt;rohit.seth@intel.com&gt;&t;Fixes for Bootstrap Processor &amp; cpu_online_map&n; *&t;&t;&t;now gets done here (instead of setup.c)&n; *  99/10/05 davidm&t;Update to bring it in sync with new command-line processing scheme.&n; */
+multiline_comment|/*&n; * SMP Support&n; *&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * &n; * Lots of stuff stolen from arch/alpha/kernel/smp.c&n; *&n; *  00/09/11 David Mosberger &lt;davidm@hpl.hp.com&gt; Do loops_per_jiffy calibration on each CPU.&n; *  00/08/23 Asit Mallick &lt;asit.k.mallick@intel.com&gt; fixed logical processor id&n; *  00/03/31 Rohit Seth &lt;rohit.seth@intel.com&gt;&t;Fixes for Bootstrap Processor &amp; cpu_online_map&n; *&t;&t;&t;now gets done here (instead of setup.c)&n; *  99/10/05 davidm&t;Update to bring it in sync with new command-line processing scheme.&n; *  10/13/00 Goutham Rao &lt;goutham.rao@intel.com&gt; Updated smp_call_function and&n; *&t;&t;smp_call_function_single to resend IPI on timeouts&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/current.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -218,12 +219,6 @@ id|smp_call_struct
 op_star
 id|smp_call_function_data
 suffix:semicolon
-macro_line|#ifdef&t;CONFIG_ITANIUM_A1_SPECIFIC
-r_extern
-id|spinlock_t
-id|ivr_read_lock
-suffix:semicolon
-macro_line|#endif
 DECL|macro|IPI_RESCHEDULE
 mdefine_line|#define IPI_RESCHEDULE&t;        0
 DECL|macro|IPI_CALL_FUNC
@@ -850,7 +845,6 @@ r_inline
 r_void
 DECL|function|send_IPI_single
 id|send_IPI_single
-c_func
 (paren
 r_int
 id|dest_cpu
@@ -881,7 +875,7 @@ id|dest_cpu
 )braket
 )paren
 suffix:semicolon
-id|ipi_send
+id|platform_send_ipi
 c_func
 (paren
 id|dest_cpu
@@ -1168,6 +1162,8 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+id|resend
+suffix:colon
 multiline_comment|/*  Send a message to all other CPUs and wait for them to respond  */
 id|send_IPI_single
 c_func
@@ -1224,6 +1220,11 @@ OG
 l_int|0
 )paren
 (brace
+macro_line|#if (defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) || defined(CONFIG_ITANIUM_BSTEP_SPECIFIC))
+r_goto
+id|resend
+suffix:semicolon
+macro_line|#else
 id|smp_call_function_data
 op_assign
 l_int|NULL
@@ -1232,6 +1233,7 @@ r_return
 op_minus
 id|ETIMEDOUT
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -1372,6 +1374,8 @@ c_func
 id|IPI_CALL_FUNC
 )paren
 suffix:semicolon
+id|retry
+suffix:colon
 multiline_comment|/*  Wait for response  */
 id|timeout
 op_assign
@@ -1419,6 +1423,52 @@ OG
 l_int|0
 )paren
 (brace
+macro_line|#if (defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) || defined(CONFIG_ITANIUM_BSTEP_SPECIFIC))
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|i
+op_ne
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+id|platform_send_ipi
+c_func
+(paren
+id|i
+comma
+id|IPI_IRQ
+comma
+id|IA64_IPI_DM_INT
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_goto
+id|retry
+suffix:semicolon
+macro_line|#else
 id|smp_call_function_data
 op_assign
 l_int|NULL
@@ -1427,6 +1477,7 @@ r_return
 op_minus
 id|ETIMEDOUT
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -1459,7 +1510,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Flush all other CPU&squot;s tlb and then mine.  Do this with smp_call_function() as we&n; * want to ensure all TLB&squot;s flushed before proceeding.&n; *&n; * XXX: Is it OK to use the same ptc.e info on all cpus?&n; */
+multiline_comment|/*&n; * Flush all other CPU&squot;s tlb and then mine.  Do this with smp_call_function() as we&n; * want to ensure all TLB&squot;s flushed before proceeding.&n; */
 r_void
 DECL|function|smp_flush_tlb_all
 id|smp_flush_tlb_all
@@ -1723,9 +1774,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|my_cpu_data.loops_per_sec
+id|my_cpu_data.loops_per_jiffy
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 multiline_comment|/* allow the master to continue */
 id|set_bit
@@ -1881,7 +1932,7 @@ op_assign
 id|cpu
 suffix:semicolon
 multiline_comment|/* Kick the AP in the butt */
-id|ipi_send
+id|platform_send_ipi
 c_func
 (paren
 id|cpu
@@ -2007,9 +2058,9 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* on the BP, the kernel already called calibrate_delay_loop() in init/main.c */
-id|my_cpu_data.loops_per_sec
+id|my_cpu_data.loops_per_jiffy
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 macro_line|#if 0
 id|smp_tune_scheduling
@@ -2241,32 +2292,27 @@ id|cpu_data
 id|i
 )braket
 dot
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 )brace
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;SMP: Total of %d processors activated &quot;
-l_string|&quot;(%lu.%02lu BogoMIPS).&bslash;n&quot;
+l_string|&quot;SMP: Total of %d processors activated (%lu.%02lu BogoMIPS).&bslash;n&quot;
 comma
 id|cpu_count
 comma
-(paren
 id|bogosum
-op_plus
-l_int|2500
-)paren
+op_star
+id|HZ
 op_div
 l_int|500000
 comma
 (paren
-(paren
 id|bogosum
-op_plus
-l_int|2500
-)paren
+op_star
+id|HZ
 op_div
 l_int|5000
 )paren

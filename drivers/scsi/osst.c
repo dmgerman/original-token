@@ -23,6 +23,7 @@ DECL|macro|OSST_FW_NEED_POLL_MAX
 mdefine_line|#define OSST_FW_NEED_POLL_MAX 10708 /*(108D)*/
 DECL|macro|OSST_FW_NEED_POLL
 mdefine_line|#define OSST_FW_NEED_POLL(x,d) ((x) &gt;= OSST_FW_NEED_POLL_MIN &amp;&amp; (x) &lt;= OSST_FW_NEED_POLL_MAX &amp;&amp; d-&gt;host-&gt;this_id != 7)
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

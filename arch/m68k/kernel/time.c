@@ -461,10 +461,9 @@ id|tv
 )paren
 (brace
 r_extern
-r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
 r_int
 r_int
@@ -496,7 +495,9 @@ c_func
 suffix:semicolon
 id|lost
 op_assign
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 suffix:semicolon
 r_if
 c_cond

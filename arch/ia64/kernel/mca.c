@@ -5,13 +5,13 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/mca.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/machvec.h&gt;
 DECL|struct|ia64_fptr
 r_typedef
 r_struct
@@ -1062,7 +1062,7 @@ r_int
 id|cpu
 )paren
 (brace
-id|ipi_send
+id|platform_send_ipi
 c_func
 (paren
 id|cpu

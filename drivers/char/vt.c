@@ -15,6 +15,9 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#if defined(__mc68000__) || defined(CONFIG_APUS)
+macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/kbd_diacr.h&gt;
@@ -2158,6 +2161,113 @@ id|ENXIO
 suffix:colon
 l_int|0
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(__mc68000__) || defined(CONFIG_APUS)
+multiline_comment|/* Linux/m68k interface for setting the keyboard delay/repeat rate */
+r_case
+id|KDKBDREP
+suffix:colon
+(brace
+r_struct
+id|kbd_repeat
+id|kbrep
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mach_kbdrate
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
+(paren
+op_amp
+id|kbrep
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_struct
+id|kbd_repeat
+)paren
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|i
+op_assign
+id|mach_kbdrate
+c_func
+(paren
+op_amp
+id|kbrep
+)paren
+)paren
+)paren
+r_return
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+op_amp
+id|kbrep
+comma
+r_sizeof
+(paren
+r_struct
+id|kbd_repeat
+)paren
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#endif
 r_case
 id|KDSETMODE

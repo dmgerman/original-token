@@ -3091,9 +3091,9 @@ op_logical_and
 id|self-&gt;txpending
 )paren
 )paren
-id|udelay
+id|mdelay
 (paren
-l_int|100000
+l_int|100
 )paren
 suffix:semicolon
 id|toshoboe_stopchip

@@ -15,7 +15,7 @@ id|version
 )braket
 id|__devinitdata
 op_assign
-l_string|&quot;Linux Tulip driver version 0.9.12 (December 17, 2000)&bslash;n&quot;
+l_string|&quot;Linux Tulip driver version 0.9.13 (January 2, 2001)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values. */
 multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
@@ -6210,6 +6210,7 @@ comma
 id|version
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Lan media wire a tulip chip to a wan interface. Needs a very&n;&t; *&t;different driver (lmc driver)&n;&t; */
 r_if
 c_cond
 (paren
@@ -6230,6 +6231,94 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Early DM9100&squot;s need software CRC and the DMFE driver&n;&t; */
+r_if
+c_cond
+(paren
+id|pdev-&gt;vendor
+op_eq
+l_int|0x1282
+op_logical_and
+id|pdev-&gt;device
+op_eq
+l_int|0x9100
+)paren
+(brace
+id|u32
+id|dev_rev
+suffix:semicolon
+multiline_comment|/* Read Chip revision */
+id|pci_read_config_dword
+c_func
+(paren
+id|pdev
+comma
+id|PCI_REVISION_ID
+comma
+op_amp
+id|dev_rev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev_rev
+OL
+l_int|0x02000030
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+id|PFX
+l_string|&quot;skipping early DM9100 with Crc bug (use dmfe)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; *&t;Looks for early PCI chipsets where people report hangs &n;&t; *&t;without the workarounds being on.&n;&t; */
+multiline_comment|/* Intel Saturn. Switch to 8 long words burst, 8 long word cache aligned &n;&t;   Aries might need this too. The Saturn errata are not pretty reading but&n;&t;   thankfully its an old 486 chipset.&n;&t;*/
+r_if
+c_cond
+(paren
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_INTEL
+comma
+l_int|0x0483
+comma
+l_int|NULL
+)paren
+)paren
+id|csr0
+op_assign
+l_int|0x00A04800
+suffix:semicolon
+multiline_comment|/* The dreaded SiS496 486 chipset. Same workaround as above. */
+r_if
+c_cond
+(paren
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_SI
+comma
+l_int|0x0496
+comma
+l_int|NULL
+)paren
+)paren
+id|csr0
+op_assign
+l_int|0x00A04800
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;And back to business&n;&t; */
 id|ioaddr
 op_assign
 id|pci_resource_start

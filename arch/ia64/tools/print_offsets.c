@@ -1292,7 +1292,7 @@ m_offsetof
 r_struct
 id|switch_stack
 comma
-id|b0
+id|pr
 )paren
 )brace
 comma

@@ -6,14 +6,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
 r_extern
 r_int
-id|mkiss_init_ctrl_dev
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|slip_init_ctrl_dev
 c_func
 (paren
@@ -39,14 +31,6 @@ suffix:semicolon
 r_extern
 r_int
 id|dmascc_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|yam_init
 c_func
 (paren
 r_void
@@ -298,15 +282,6 @@ l_int|0
 comma
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/*&n; *&t;Amateur Radio Drivers&n; */
-macro_line|#ifdef CONFIG_YAM
-(brace
-id|yam_init
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif&t;/* CONFIG_YAM */
 multiline_comment|/*&n; *&t;Token Ring Drivers&n; */
 macro_line|#ifdef CONFIG_MADGEMC
 (brace
@@ -384,13 +359,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_X25_ASY)
 id|x25_asy_init_ctrl_dev
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_MKISS)
-id|mkiss_init_ctrl_dev
 c_func
 (paren
 )paren

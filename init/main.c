@@ -2702,6 +2702,12 @@ op_amp
 id|__initcall_end
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure there is no pending stuff from the initcall sequence */
+id|flush_scheduled_tasks
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Ok, the machine is now initialized. None of the devices&n; * have been touched yet, but the CPU subsystem is up and&n; * running, and memory and process management works.&n; *&n; * Now we can finally start doing some real work..&n; */
 DECL|function|do_basic_setup

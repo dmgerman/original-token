@@ -1397,7 +1397,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;ide_cs: ide_register() at 0x%3x &amp; 0x%3x&quot;
+l_string|&quot;ide_cs: ide_register() at 0x%03x &amp; 0x%03x&quot;
 l_string|&quot;, irq %u failed&bslash;n&quot;
 comma
 id|io_base

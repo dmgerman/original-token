@@ -176,18 +176,6 @@ id|zone_t
 op_star
 id|zone
 suffix:semicolon
-multiline_comment|/*&n;&t; * Subtle. We do not want to test this in the inlined part of&n;&t; * __free_page() - it&squot;s a rare condition and just increases&n;&t; * cache footprint unnecesserily. So we do an &squot;incorrect&squot;&n;&t; * decrement on page-&gt;count for reserved pages, but this part&n;&t; * makes it safe.&n;&t; */
-r_if
-c_cond
-(paren
-id|PageReserved
-c_func
-(paren
-id|page
-)paren
-)paren
-r_return
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1467,6 +1455,10 @@ op_assign
 id|zonelist-&gt;zones
 suffix:semicolon
 multiline_comment|/* First, clean some dirty pages. */
+id|current-&gt;flags
+op_or_assign
+id|PF_MEMALLOC
+suffix:semicolon
 id|page_launder
 c_func
 (paren
@@ -1474,6 +1466,11 @@ id|gfp_mask
 comma
 l_int|1
 )paren
+suffix:semicolon
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_MEMALLOC
 suffix:semicolon
 r_for
 c_loop
@@ -1886,6 +1883,13 @@ id|order
 r_if
 c_cond
 (paren
+op_logical_neg
+id|PageReserved
+c_func
+(paren
+id|page
+)paren
+op_logical_and
 id|put_page_testzero
 c_func
 (paren

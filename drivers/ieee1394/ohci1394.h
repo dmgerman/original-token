@@ -4,9 +4,12 @@ DECL|macro|_OHCI1394_H
 mdefine_line|#define _OHCI1394_H
 macro_line|#include &quot;ieee1394_types.h&quot;
 DECL|macro|IEEE1394_USE_BOTTOM_HALVES
-mdefine_line|#define IEEE1394_USE_BOTTOM_HALVES 0
+mdefine_line|#define IEEE1394_USE_BOTTOM_HALVES 1
 DECL|macro|OHCI1394_DRIVER_NAME
 mdefine_line|#define OHCI1394_DRIVER_NAME      &quot;ohci1394&quot;
+DECL|macro|USE_DEVICE
+mdefine_line|#define USE_DEVICE 0
+macro_line|#if USE_DEVICE
 macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_LV22
 DECL|macro|PCI_DEVICE_ID_TI_OHCI1394_LV22
 mdefine_line|#define PCI_DEVICE_ID_TI_OHCI1394_LV22 0x8009
@@ -18,6 +21,10 @@ macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_LV26
 DECL|macro|PCI_DEVICE_ID_TI_OHCI1394_LV26
 mdefine_line|#define PCI_DEVICE_ID_TI_OHCI1394_LV26 0x8020
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_PCI4450
+DECL|macro|PCI_DEVICE_ID_TI_OHCI1394_PCI4450
+mdefine_line|#define PCI_DEVICE_ID_TI_OHCI1394_PCI4450 0x8011
 macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_VIA_OHCI1394
 DECL|macro|PCI_DEVICE_ID_VIA_OHCI1394
@@ -63,6 +70,7 @@ macro_line|#ifndef PCI_DEVICE_ID_LUCENT_FW323
 DECL|macro|PCI_DEVICE_ID_LUCENT_FW323
 mdefine_line|#define PCI_DEVICE_ID_LUCENT_FW323 0x5811
 macro_line|#endif
+macro_line|#endif /* USE_DEVICE */
 DECL|macro|MAX_OHCI1394_CARDS
 mdefine_line|#define MAX_OHCI1394_CARDS        4
 DECL|macro|OHCI1394_MAX_AT_REQ_RETRIES
@@ -448,10 +456,6 @@ id|dma_rcv_ctx
 op_star
 id|ir_context
 suffix:semicolon
-DECL|member|IR_channel_usage
-id|u64
-id|IR_channel_usage
-suffix:semicolon
 DECL|member|IR_channel_lock
 id|spinlock_t
 id|IR_channel_lock
@@ -464,6 +468,10 @@ multiline_comment|/* iso transmit */
 DECL|member|nb_iso_xmit_ctx
 r_int
 id|nb_iso_xmit_ctx
+suffix:semicolon
+DECL|member|ISO_channel_usage
+id|u64
+id|ISO_channel_usage
 suffix:semicolon
 multiline_comment|/* IEEE-1394 part follows */
 DECL|member|host
@@ -990,6 +998,8 @@ DECL|macro|DMA_SPEED_200
 mdefine_line|#define DMA_SPEED_200                    0x1
 DECL|macro|DMA_SPEED_400
 mdefine_line|#define DMA_SPEED_400                    0x2
+DECL|macro|OHCI1394_TCODE_PHY
+mdefine_line|#define OHCI1394_TCODE_PHY               0xE
 r_void
 id|ohci1394_stop_context
 c_func

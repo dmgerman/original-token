@@ -456,31 +456,6 @@ r_int
 r_int
 id|new_itm
 suffix:semicolon
-macro_line|#if 0
-r_static
-r_int
-r_int
-id|last_time
-suffix:semicolon
-r_static
-r_int
-r_char
-id|count
-suffix:semicolon
-r_int
-id|printed
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t; * Here we are in the timer irq handler. We have irqs locally&n;&t; * disabled, but we don&squot;t know if the timer_bh is running on&n;&t; * another CPU. We need to avoid to SMP race by acquiring the&n;&t; * xtime_lock.&n;&t; */
-id|write_lock
-c_func
-(paren
-op_amp
-id|xtime_lock
-)paren
-suffix:semicolon
 id|new_itm
 op_assign
 id|itm.next
@@ -524,7 +499,7 @@ c_loop
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Do kernel PC profiling here.  We multiply the&n;&t;&t; * instruction number by four so that we can use a&n;&t;&t; * prof_shift of 2 to get instruction-level instead of&n;&t;&t; * just bundle-level accuracy.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Do kernel PC profiling here.  We multiply the instruction number by&n;&t;&t; * four so that we can use a prof_shift of 2 to get instruction-level&n;&t;&t; * instead of just bundle-level accuracy.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -558,6 +533,7 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -568,20 +544,29 @@ c_func
 op_eq
 l_int|0
 )paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * Here we are in the timer irq handler. We have irqs locally&n;&t;&t;&t; * disabled, but we don&squot;t know if the timer_bh is running on&n;&t;&t;&t; * another CPU. We need to avoid to SMP race by acquiring the&n;&t;&t;&t; * xtime_lock.&n;&t;&t;&t; */
+id|write_lock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 id|do_timer
 c_func
 (paren
 id|regs
 )paren
 suffix:semicolon
-macro_line|#else
-id|do_timer
+id|write_unlock
 c_func
 (paren
-id|regs
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
 id|new_itm
 op_add_assign
 id|itm.delta
@@ -611,92 +596,7 @@ c_func
 )paren
 r_break
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n;&t;&t; * SoftSDV in SMP mode is _slow_, so we do &quot;lose&quot; ticks, &n;&t;&t; * but it&squot;s really OK...&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|count
-OG
-l_int|0
-op_logical_and
-id|jiffies
-op_minus
-id|last_time
-OG
-l_int|5
-op_star
-id|HZ
-)paren
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|count
-op_increment
-op_eq
-l_int|0
-)paren
-(brace
-id|last_time
-op_assign
-id|jiffies
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|printed
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Lost clock tick on CPU %d (now=%lx, next=%lx)!!&bslash;n&quot;
-comma
-id|cpu
-comma
-id|ia64_get_itc
-c_func
-(paren
-)paren
-comma
-id|itm.next
-(braket
-id|cpu
-)braket
-dot
-id|count
-)paren
-suffix:semicolon
-id|printed
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|# ifdef CONFIG_IA64_DEBUG_IRQ
-id|printk
-c_func
-(paren
-l_string|&quot;last_cli_ip=%lx&bslash;n&quot;
-comma
-id|last_cli_ip
-)paren
-suffix:semicolon
-macro_line|# endif
 )brace
-)brace
-macro_line|#endif
-)brace
-id|write_unlock
-c_func
-(paren
-op_amp
-id|xtime_lock
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * If we&squot;re too close to the next clock tick for comfort, we&n;&t; * increase the saftey margin by intentionally dropping the&n;&t; * next tick(s).  We do NOT update itm.next accordingly&n;&t; * because that would force us to call do_timer() which in&n;&t; * turn would let our clock run too fast (with the potentially&n;&t; * devastating effect of losing monotony of time).&n;&t; */
 r_while
 c_loop
@@ -728,7 +628,7 @@ id|new_itm
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) || defined(CONFIG_IA64_SOFTSDV_HACKS)
+macro_line|#ifdef CONFIG_IA64_SOFTSDV_HACKS
 multiline_comment|/*&n; * Interrupts must be disabled before calling this routine.&n; */
 r_void
 DECL|function|ia64_reset_itm
@@ -752,7 +652,7 @@ id|current
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_ITANIUM_ASTEP_SPECIFIC */
+macro_line|#endif
 multiline_comment|/*&n; * Encapsulate access to the itm structure for SMP.&n; */
 r_void
 id|__init

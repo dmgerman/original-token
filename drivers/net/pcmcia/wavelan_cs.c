@@ -181,10 +181,10 @@ id|hacr
 )paren
 suffix:semicolon
 multiline_comment|/* delay might only be needed sometimes */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000L
+l_int|1L
 )paren
 suffix:semicolon
 )brace
@@ -407,10 +407,10 @@ l_int|100
 )paren
 )paren
 (brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1613,10 +1613,10 @@ id|MMW_FEE_CTRL_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* Wavelan doc says : wait at least 10 ms for EEBUSY = 0 */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 id|fee_wait
@@ -14233,10 +14233,10 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000L
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* A bit crude ! */

@@ -1326,6 +1326,8 @@ id|DPRINTK
 (paren
 id|KERN_INFO
 l_string|&quot;%s: Timeout at event 31&bslash;n&quot;
+comma
+id|port-&gt;name
 )paren
 suffix:semicolon
 id|port-&gt;ieee1284.phase

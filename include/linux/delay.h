@@ -8,7 +8,7 @@ r_int
 id|loops_per_jiffy
 suffix:semicolon
 macro_line|#include &lt;asm/delay.h&gt;
-multiline_comment|/*&n; * Using udelay() for intervals greater than a few milliseconds can&n; * risk overflow for high loops_per_sec (high bogomips) machines. The&n; * mdelay() provides a wrapper to prevent this.  For delays greater&n; * than MAX_UDELAY_MS milliseconds, the wrapper is used.  Architecture&n; * specific values can be defined in asm-???/delay.h as an override.&n; * The 2nd mdelay() definition ensures GCC will optimize away the &n; * while loop for the common cases where n &lt;= MAX_UDELAY_MS  --  Paul G.&n; */
+multiline_comment|/*&n; * Using udelay() for intervals greater than a few milliseconds can&n; * risk overflow for high loops_per_jiffy (high bogomips) machines. The&n; * mdelay() provides a wrapper to prevent this.  For delays greater&n; * than MAX_UDELAY_MS milliseconds, the wrapper is used.  Architecture&n; * specific values can be defined in asm-???/delay.h as an override.&n; * The 2nd mdelay() definition ensures GCC will optimize away the &n; * while loop for the common cases where n &lt;= MAX_UDELAY_MS  --  Paul G.&n; */
 macro_line|#ifndef MAX_UDELAY_MS
 DECL|macro|MAX_UDELAY_MS
 mdefine_line|#define MAX_UDELAY_MS&t;5

@@ -20,6 +20,8 @@ id|regs
 )paren
 suffix:semicolon
 DECL|macro|MAX_DMA_ADDRESS
+macro_line|#undef MAX_DMA_ADDRESS
+DECL|macro|MAX_DMA_ADDRESS
 mdefine_line|#define MAX_DMA_ADDRESS   0x00  /* nothing like that */
 r_extern
 id|spinlock_t

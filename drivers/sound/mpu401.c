@@ -5890,8 +5890,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 )brace
 r_return
 id|TIMER_NOT_ARMED
@@ -6345,8 +6344,7 @@ l_int|0
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 )brace
 r_return
 op_minus

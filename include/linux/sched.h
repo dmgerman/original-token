@@ -152,6 +152,10 @@ id|spinlock_t
 id|runqueue_lock
 suffix:semicolon
 r_extern
+id|spinlock_t
+id|mmlist_lock
+suffix:semicolon
+r_extern
 r_void
 id|sched_init
 c_func
@@ -408,6 +412,12 @@ DECL|member|page_table_lock
 id|spinlock_t
 id|page_table_lock
 suffix:semicolon
+DECL|member|mmlist
+r_struct
+id|list_head
+id|mmlist
+suffix:semicolon
+multiline_comment|/* List of all active mm&squot;s */
 DECL|member|start_code
 DECL|member|end_code
 DECL|member|start_data
@@ -487,7 +497,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM(name) &bslash;&n;{&t;&t;&t; &t;&t;&t;&t;&bslash;&n;&t;mmap:&t;&t;&amp;init_mmap, &t;&t;&t;&bslash;&n;&t;mmap_avl:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;mmap_cache:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;pgd:&t;&t;swapper_pg_dir, &t;&t;&bslash;&n;&t;mm_users:&t;ATOMIC_INIT(2), &t;&t;&bslash;&n;&t;mm_count:&t;ATOMIC_INIT(1), &t;&t;&bslash;&n;&t;map_count:&t;1, &t;&t;&t;&t;&bslash;&n;&t;mmap_sem:&t;__MUTEX_INITIALIZER(name.mmap_sem), &bslash;&n;&t;page_table_lock: SPIN_LOCK_UNLOCKED, &t;&t;&bslash;&n;}
+mdefine_line|#define INIT_MM(name) &bslash;&n;{&t;&t;&t; &t;&t;&t;&t;&bslash;&n;&t;mmap:&t;&t;&amp;init_mmap, &t;&t;&t;&bslash;&n;&t;mmap_avl:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;mmap_cache:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;pgd:&t;&t;swapper_pg_dir, &t;&t;&bslash;&n;&t;mm_users:&t;ATOMIC_INIT(2), &t;&t;&bslash;&n;&t;mm_count:&t;ATOMIC_INIT(1), &t;&t;&bslash;&n;&t;map_count:&t;1, &t;&t;&t;&t;&bslash;&n;&t;mmap_sem:&t;__MUTEX_INITIALIZER(name.mmap_sem), &bslash;&n;&t;page_table_lock: SPIN_LOCK_UNLOCKED, &t;&t;&bslash;&n;&t;mmlist:&t;&t;LIST_HEAD_INIT(name.mmlist),&t;&bslash;&n;}
 DECL|struct|signal_struct
 r_struct
 id|signal_struct

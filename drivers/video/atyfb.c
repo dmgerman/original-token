@@ -8491,10 +8491,10 @@ comma
 id|info
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|15000
+l_int|15
 )paren
 suffix:semicolon
 multiline_comment|/* delay for 50 (15) ms */
@@ -8684,10 +8684,10 @@ comma
 id|info
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|50000
+l_int|50
 )paren
 suffix:semicolon
 multiline_comment|/* delay for 50 (15) ms */

@@ -3616,6 +3616,11 @@ id|pcicmd
 op_amp
 id|PCI_COMMAND_MEMORY
 )paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
 )braket
 )paren
 suffix:semicolon

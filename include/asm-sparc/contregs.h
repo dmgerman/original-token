@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: contregs.h,v 1.7 1998/01/30 10:59:48 jj Exp $ */
+multiline_comment|/* $Id: contregs.h,v 1.8 2000/12/28 22:49:11 davem Exp $ */
 macro_line|#ifndef _SPARC_CONTREGS_H
 DECL|macro|_SPARC_CONTREGS_H
 mdefine_line|#define _SPARC_CONTREGS_H

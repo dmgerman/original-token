@@ -340,7 +340,7 @@ suffix:semicolon
 id|force_sig_info
 c_func
 (paren
-id|SIGTRAP
+id|siginfo.si_signo
 comma
 op_amp
 id|siginfo

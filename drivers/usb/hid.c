@@ -7948,6 +7948,10 @@ id|hid_usb_ids
 op_assign
 (brace
 (brace
+id|match_flags
+suffix:colon
+id|USB_DEVICE_ID_MATCH_INT_CLASS
+comma
 id|bInterfaceClass
 suffix:colon
 id|USB_INTERFACE_CLASS_HID

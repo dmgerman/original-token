@@ -1778,10 +1778,6 @@ id|sal_systab-&gt;entry_count
 op_assign
 l_int|1
 suffix:semicolon
-id|sal_systab-&gt;ia32_bios_present
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#ifdef CONFIG_IA64_GENERIC
 id|strcpy
 c_func

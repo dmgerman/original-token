@@ -1291,7 +1291,7 @@ l_int|1
 comma
 l_string|&quot;hello.c&quot;
 comma
-macro_line|#elseif
+macro_line|#else
 multiline_comment|/*&n; * I find the three examples below very unfortunate.  I propose to&n; * convert them to lower case in a quick preliminary pass, then test&n; * whether there are other troublesome characters.  I have not made&n; * this change, because it is not easy, but I wanted to mention the &n; * principle.  Obviously something like that would increase the chance&n; * of collisions, for example between &quot;HELLO&quot; and &quot;Hello&quot;, but these&n; * can be treated elsewhere along with the other collisions.&n; */
 l_string|&quot;HELLO&quot;
 comma

@@ -7,7 +7,7 @@ multiline_comment|/* selection of hardware types */
 DECL|macro|PA0HZP
 mdefine_line|#define PA0HZP&t;&t;0x00&t;/* hardware type for PA0HZP SCC card and compatible */
 DECL|macro|EAGLE
-mdefine_line|#define EAGLE         &t;0x01    /* hardware type for EAGLE card */
+mdefine_line|#define EAGLE&t;&t;0x01    /* hardware type for EAGLE card */
 DECL|macro|PC100
 mdefine_line|#define PC100&t;&t;0x02&t;/* hardware type for PC100 card */
 DECL|macro|PRIMUS
@@ -51,9 +51,6 @@ DECL|enumerator|SIOCSCCCAL
 id|SIOCSCCCAL
 )brace
 suffix:semicolon
-multiline_comment|/* magic number */
-DECL|macro|SCC_MAGIC
-mdefine_line|#define SCC_MAGIC&t;0x8530&t;&t;/* ;-) */
 multiline_comment|/* Device parameter control (from WAMPES) */
 DECL|enum|L1_params
 r_enum
@@ -726,13 +723,6 @@ id|tx_wdog
 suffix:semicolon
 multiline_comment|/* tx watchdogs */
 )brace
-suffix:semicolon
-r_int
-id|scc_init
-c_func
-(paren
-r_void
-)paren
 suffix:semicolon
 macro_line|#endif /* defined(__KERNEL__) */
 macro_line|#endif /* defined(_SCC_H) */

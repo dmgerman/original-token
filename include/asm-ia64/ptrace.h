@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_PTRACE_H
 DECL|macro|_ASM_IA64_PTRACE_H
 mdefine_line|#define _ASM_IA64_PTRACE_H
-multiline_comment|/*&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; *&n; * 12/07/98&t;S. Eranian&t;added pt_regs &amp; switch_stack&n; * 12/21/98&t;D. Mosberger&t;updated to match latest code&n; *  6/17/99&t;D. Mosberger&t;added second unat member to &quot;struct switch_stack&quot;&n; *&n; */
+multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; *&n; * 12/07/98&t;S. Eranian&t;added pt_regs &amp; switch_stack&n; * 12/21/98&t;D. Mosberger&t;updated to match latest code&n; *  6/17/99&t;D. Mosberger&t;added second unat member to &quot;struct switch_stack&quot;&n; *&n; */
 multiline_comment|/*&n; * When a user process is blocked, its state looks as follows:&n; *&n; *            +----------------------+&t;-------&t;IA64_STK_OFFSET&n; *     &t;      |&t;&t;&t;     |&t; ^&n; *            | struct pt_regs       |&t; |&n; *&t;      |&t;&t;&t;     |&t; |&n; *            +----------------------+&t; |&n; *&t;      |&t;&t;&t;     |&t; |&n; *     &t;      |&t;   memory stack&t;     |&t; |&n; *&t;      |&t;(growing downwards)  |&t; |&n; *&t;      //.....................//&t; |&n; *&t;&t;&t;&t;&t; |&n; *&t;      //.....................//&t; |&n; *&t;      |&t;&t;&t;     |&t; |&n; *            +----------------------+&t; |&n; *            | struct switch_stack  |&t; |&n; *&t;      |&t;&t;&t;     |&t; |&n; *&t;      +----------------------+&t; |&n; *&t;      |&t;&t;&t;     |&t; |&n; *&t;      //.....................//&t; |&n; *&t;&t;&t;&t;&t; |&n; *&t;      //.....................//&t; |&n; *&t;      |&t;&t;&t;     |&t; |&n; *&t;      |&t; register stack&t;     |&t; |&n; *&t;      |&t;(growing upwards)    |&t; |&n; *            |&t;&t;&t;     |&t; |&n; *&t;      +----------------------+&t; |  ---&t;IA64_RBS_OFFSET&n; *&t;      |&t;&t;&t;     |&t; |  ^&n; *            |  struct task_struct  |&t; |  |&n; * current -&gt; |&t;&t;&t;     |   |  |&n; *&t;      +----------------------+ -------&n; *&n; * Note that ar.ec is not saved explicitly in pt_reg or switch_stack.&n; * This is because ar.ec is saved as part of ar.pfs.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
@@ -27,6 +27,8 @@ mdefine_line|#define IA64_STK_OFFSET&t;&t;&t;((1 &lt;&lt; IA64_TASK_STRUCT_LOG_N
 DECL|macro|INIT_TASK_SIZE
 mdefine_line|#define INIT_TASK_SIZE&t;&t;&t;IA64_STK_OFFSET
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;asm/current.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * This struct defines the way the registers are saved on system&n; * calls.&n; *&n; * We don&squot;t save all floating point register because the kernel&n; * is compiled to use only a very small subset, so the other are&n; * untouched.&n; *&n; * THIS STRUCTURE MUST BE A MULTIPLE 16-BYTE IN SIZE&n; * (because the memory stack pointer MUST ALWAYS be aligned this way)&n; *&n; */
 DECL|struct|pt_regs
 r_struct
@@ -753,7 +755,27 @@ op_star
 id|pt
 )paren
 suffix:semicolon
-macro_line|#endif
+r_static
+r_inline
+r_void
+DECL|function|force_successful_syscall_return
+id|force_successful_syscall_return
+(paren
+r_void
+)paren
+(brace
+id|ia64_task_regs
+c_func
+(paren
+id|current
+)paren
+op_member_access_from_pointer
+id|r8
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* !__KERNEL__ */
 macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/*&n; * The numbers chosen here are somewhat arbitrary but absolutely MUST&n; * not overlap with any of the number assigned in &lt;linux/ptrace.h&gt;.&n; */
 DECL|macro|PTRACE_SINGLEBLOCK

@@ -1369,6 +1369,7 @@ id|sk
 suffix:semicolon
 id|out
 suffix:colon
+suffix:semicolon
 )brace
 DECL|function|tcp_write_timer
 r_static

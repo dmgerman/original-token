@@ -2525,6 +2525,13 @@ op_and_assign
 op_complement
 l_int|0x01
 suffix:semicolon
+id|le16_to_cpus
+c_func
+(paren
+op_amp
+id|hdr-&gt;count
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Block input and output, similar to the Crynwr packet driver.  If you&n;   are porting to a new ethercard, look at the packet driver source for hints.&n;   The NEx000 doesn&squot;t share the on-board packet memory -- you have to put&n;   the packet out through the &quot;remote DMA&quot; dataport using outb. */
 DECL|function|ne_block_input

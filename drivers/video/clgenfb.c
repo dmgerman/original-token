@@ -7610,9 +7610,9 @@ l_int|0x00
 )paren
 suffix:semicolon
 multiline_comment|/* disable flickerfixer */
-id|udelay
+id|mdelay
 (paren
-l_int|100000
+l_int|100
 )paren
 suffix:semicolon
 id|vga_wgfx

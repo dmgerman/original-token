@@ -5399,7 +5399,7 @@ l_string|&quot;Multi-volume CD somehow got mounted.&bslash;n&quot;
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif IGNORE_WRONG_MULTI_VOLUME_SPECS
+macro_line|#endif /*IGNORE_WRONG_MULTI_VOLUME_SPECS */
 (brace
 r_if
 c_cond

@@ -1062,6 +1062,10 @@ r_int
 r_int
 id|pteaddr
 suffix:semicolon
+r_int
+r_int
+id|ptea
+suffix:semicolon
 id|save_and_cli
 c_func
 (paren
@@ -1165,7 +1169,8 @@ comma
 id|MMU_PTEH
 )paren
 suffix:semicolon
-multiline_comment|/* Set PTEL register */
+multiline_comment|/* Set PTEA register */
+multiline_comment|/* TODO: make this look less hacky */
 id|pteval
 op_assign
 id|pte_val
@@ -1174,11 +1179,41 @@ c_func
 id|pte
 )paren
 suffix:semicolon
+macro_line|#if defined(__SH4__)
+id|ptea
+op_assign
+(paren
+(paren
+id|pteval
+op_rshift
+l_int|28
+)paren
+op_amp
+l_int|0xe
+)paren
+op_or
+(paren
+id|pteval
+op_amp
+l_int|0x1
+)paren
+suffix:semicolon
+id|ctrl_outl
+c_func
+(paren
+id|ptea
+comma
+id|MMU_PTEA
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Set PTEL register */
 id|pteval
 op_and_assign
 id|_PAGE_FLAGS_HARDWARE_MASK
 suffix:semicolon
 multiline_comment|/* drop software flags */
+multiline_comment|/* conveniently, we want all the software flags to be 0 anyway */
 id|ctrl_outl
 c_func
 (paren

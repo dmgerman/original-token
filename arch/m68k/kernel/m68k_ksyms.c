@@ -20,6 +20,17 @@ macro_line|#include &lt;asm/softirq.h&gt;
 id|asmlinkage
 r_int
 r_int
+id|__ashldi3
+(paren
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+id|asmlinkage
+r_int
+r_int
 id|__ashrdi3
 (paren
 r_int
@@ -102,6 +113,21 @@ c_func
 id|m68k_is040or060
 )paren
 suffix:semicolon
+DECL|variable|m68k_realnum_memory
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|m68k_realnum_memory
+)paren
+suffix:semicolon
+DECL|variable|m68k_memory
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|m68k_memory
+)paren
+suffix:semicolon
+macro_line|#ifndef CONFIG_SUN3
 DECL|variable|cache_push
 id|EXPORT_SYMBOL
 c_func
@@ -138,22 +164,7 @@ c_func
 id|mm_end_of_chunk
 )paren
 suffix:semicolon
-macro_line|#endif
-DECL|variable|m68k_realnum_memory
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|m68k_realnum_memory
-)paren
-suffix:semicolon
-DECL|variable|m68k_memory
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|m68k_memory
-)paren
-suffix:semicolon
-macro_line|#ifndef CONFIG_SUN3
+macro_line|#endif /* !CONFIG_SINGLE_MEMORY_CHUNK */
 DECL|variable|mm_vtop_fallback
 id|EXPORT_SYMBOL
 c_func
@@ -182,7 +193,7 @@ c_func
 id|kernel_set_cachemode
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* !CONFIG_SUN3 */
 DECL|variable|m68k_debug_device
 id|EXPORT_SYMBOL
 c_func
@@ -225,6 +236,13 @@ c_func
 id|strstr
 )paren
 suffix:semicolon
+DECL|variable|strtok
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strtok
+)paren
+suffix:semicolon
 DECL|variable|enable_irq
 id|EXPORT_SYMBOL
 c_func
@@ -264,6 +282,13 @@ id|csum_partial_copy
 )paren
 suffix:semicolon
 multiline_comment|/* The following are special because they&squot;re not called&n;   explicitly (the C compiler generates them).  Fortunately,&n;   their interface isn&squot;t gonna change any time soon now, so&n;   it&squot;s OK to leave it out of version control.  */
+DECL|variable|__ashldi3
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__ashldi3
+)paren
+suffix:semicolon
 DECL|variable|__ashrdi3
 id|EXPORT_SYMBOL_NOVERS
 c_func

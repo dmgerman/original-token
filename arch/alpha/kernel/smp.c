@@ -250,9 +250,9 @@ id|cpu_data
 id|cpuid
 )braket
 dot
-id|loops_per_sec
+id|loops_per_jiffy
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 id|cpu_data
 (braket
@@ -2113,7 +2113,7 @@ id|cpu_data
 id|i
 )braket
 dot
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 )brace
 id|printk
@@ -2131,7 +2131,11 @@ op_plus
 l_int|2500
 )paren
 op_div
+(paren
 l_int|500000
+op_div
+id|HZ
+)paren
 comma
 (paren
 (paren
@@ -2140,7 +2144,11 @@ op_plus
 l_int|2500
 )paren
 op_div
+(paren
 l_int|5000
+op_div
+id|HZ
+)paren
 )paren
 op_mod
 l_int|100

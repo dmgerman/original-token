@@ -10,6 +10,8 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/sn/mmzone_sn1.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -74,6 +76,7 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#ifdef CONFIG_DISCONTIGMEM
 r_return
 id|MAP_NR_SN1
 c_func
@@ -81,8 +84,18 @@ c_func
 id|addr
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+id|MAP_NR_DENSE
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_void
+id|__init
 DECL|function|sn1_setup
 id|sn1_setup
 c_func
@@ -93,6 +106,14 @@ op_star
 id|cmdline_p
 )paren
 (brace
+r_extern
+r_void
+id|init_sn1_smp_config
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 id|ROOT_DEV
 op_assign
 id|to_kdev_t
@@ -102,8 +123,14 @@ l_int|0x0301
 )paren
 suffix:semicolon
 multiline_comment|/* default to first IDE drive */
+id|init_sn1_smp_config
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef ZZZ
 macro_line|#if !defined (CONFIG_IA64_SOFTSDV_HACKS)
-multiline_comment|/* &n;&t; * Program the timer to deliver timer ticks.  0x40 is the I/O port&n;&t; * address of PIT counter 0, 0x43 is the I/O port address of the &n;&t; * PIT control word. &n;&t; */
+multiline_comment|/*&n;         * Program the timer to deliver timer ticks.  0x40 is the I/O port&n;         * address of PIT counter 0, 0x43 is the I/O port address of the&n;         * PIT control word.&n;         */
 id|request_region
 c_func
 (paren
@@ -162,6 +189,7 @@ id|HZ
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
 macro_line|#ifdef CONFIG_SMP
 id|init_smp_config
 c_func
@@ -173,5 +201,44 @@ id|screen_info
 op_assign
 id|sn1_screen_info
 suffix:semicolon
+)brace
+r_int
+DECL|function|IS_RUNNING_ON_SIMULATOR
+id|IS_RUNNING_ON_SIMULATOR
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_IA64_SGI_SN1_SIM
+r_int
+id|sn
+suffix:semicolon
+id|asm
+c_func
+(paren
+l_string|&quot;mov %0=cpuid[%1]&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|sn
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|2
+)paren
+)paren
+suffix:semicolon
+r_return
+id|sn
+op_eq
+id|SNMAGIC
+suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

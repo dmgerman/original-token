@@ -2694,8 +2694,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 multiline_comment|/* printk(KERN_WARN &quot;ESS: Unexpected interrupt&bslash;n&quot;); */
 )brace
 )brace

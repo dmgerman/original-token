@@ -88,11 +88,12 @@ id|isdn_v110_revision
 suffix:semicolon
 macro_line|#ifdef CONFIG_ISDN_DIVERSION
 DECL|variable|divert_if
+r_static
 id|isdn_divert_if
 op_star
 id|divert_if
 suffix:semicolon
-multiline_comment|/* interface to diversion module */
+multiline_comment|/* = NULL */
 macro_line|#endif CONFIG_ISDN_DIVERSION
 r_static
 r_int
@@ -10876,11 +10877,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef CONFIG_ISDN_DIVERSION
-r_extern
-id|isdn_divert_if
-op_star
-id|divert_if
-suffix:semicolon
 DECL|function|map_drvname
 r_static
 r_char

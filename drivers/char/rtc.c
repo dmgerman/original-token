@@ -48,10 +48,6 @@ c_func
 id|rtc_wait
 )paren
 suffix:semicolon
-r_extern
-id|spinlock_t
-id|rtc_lock
-suffix:semicolon
 DECL|variable|rtc_irq_timer
 r_static
 r_struct

@@ -1170,6 +1170,29 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#if defined(DISPLAY_CS5530_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cs5530_proc
+)paren
+(brace
+id|cs5530_proc
+op_assign
+l_int|1
+suffix:semicolon
+id|bmide_dev
+op_assign
+id|dev
+suffix:semicolon
+id|cs5530_display_info
+op_assign
+op_amp
+id|cs5530_get_info
+suffix:semicolon
+)brace
+macro_line|#endif /* DISPLAY_CS5530_TIMINGS &amp;&amp; CONFIG_PROC_FS */
 id|pci_for_each_dev
 (paren
 id|dev
@@ -1356,29 +1379,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#if defined(DISPLAY_CS5530_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cs5530_proc
-)paren
-(brace
-id|cs5530_proc
-op_assign
-l_int|1
-suffix:semicolon
-id|bmide_dev
-op_assign
-id|dev
-suffix:semicolon
-id|cs5530_display_info
-op_assign
-op_amp
-id|cs5530_get_info
-suffix:semicolon
-)brace
-macro_line|#endif /* DISPLAY_CS5530_TIMINGS &amp;&amp; CONFIG_PROC_FS */
 r_return
 l_int|0
 suffix:semicolon

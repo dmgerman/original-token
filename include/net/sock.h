@@ -1101,7 +1101,7 @@ DECL|macro|SOCK_DEBUGGING
 mdefine_line|#define SOCK_DEBUGGING
 macro_line|#ifdef SOCK_DEBUGGING
 DECL|macro|SOCK_DEBUG
-mdefine_line|#define SOCK_DEBUG(sk, msg...) do { if((sk) &amp;&amp; ((sk)-&gt;debug)) printk(KERN_DEBUG ## msg); } while (0)
+mdefine_line|#define SOCK_DEBUG(sk, msg...) do { if((sk) &amp;&amp; ((sk)-&gt;debug)) printk(KERN_DEBUG msg); } while (0)
 macro_line|#else
 DECL|macro|SOCK_DEBUG
 mdefine_line|#define SOCK_DEBUG(sk, msg...) do { } while (0)

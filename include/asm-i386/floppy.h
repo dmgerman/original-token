@@ -1128,10 +1128,11 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n; * Floppy types are stored in the rtc&squot;s CMOS RAM and so rtc_lock&n; * is needed to prevent corrupted CMOS RAM in case &quot;insmod floppy&quot;&n; * coincides with another rtc CMOS user.&t;&t;Paul G.&n; */
 DECL|macro|FLOPPY0_TYPE
-mdefine_line|#define FLOPPY0_TYPE&t;((CMOS_READ(0x10) &gt;&gt; 4) &amp; 15)
+mdefine_line|#define FLOPPY0_TYPE&t;({&t;&t;&t;&t;&bslash;&n;&t;unsigned long flags;&t;&t;&t;&t;&bslash;&n;&t;unsigned char val;&t;&t;&t;&t;&bslash;&n;&t;spin_lock_irqsave(&amp;rtc_lock, flags);&t;&t;&bslash;&n;&t;val = (CMOS_READ(0x10) &gt;&gt; 4) &amp; 15;&t;&t;&bslash;&n;&t;spin_unlock_irqrestore(&amp;rtc_lock, flags);&t;&bslash;&n;&t;val;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|FLOPPY1_TYPE
-mdefine_line|#define FLOPPY1_TYPE&t;(CMOS_READ(0x10) &amp; 15)
+mdefine_line|#define FLOPPY1_TYPE&t;({&t;&t;&t;&t;&bslash;&n;&t;unsigned long flags;&t;&t;&t;&t;&bslash;&n;&t;unsigned char val;&t;&t;&t;&t;&bslash;&n;&t;spin_lock_irqsave(&amp;rtc_lock, flags);&t;&t;&bslash;&n;&t;val = CMOS_READ(0x10) &amp; 15;&t;&t;&t;&bslash;&n;&t;spin_unlock_irqrestore(&amp;rtc_lock, flags);&t;&bslash;&n;&t;val;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|N_FDC
 mdefine_line|#define N_FDC 2
 DECL|macro|N_DRIVE

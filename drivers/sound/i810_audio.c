@@ -123,7 +123,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * we have 3 seperate dma engines.  pcm in, pcm out, and mic.&n; * each dma engine has controlling registers.  These goofy&n; * names are from the datasheet, but make it easy to write&n; * code while leafing through it.&n; */
 DECL|macro|ENUM_ENGINE
-mdefine_line|#define ENUM_ENGINE(PRE,DIG) &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;enum {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;##PRE##_BDBAR =&t;0x##DIG##0,&t;&t;/* Buffer Descriptor list Base Address */&t;&bslash;&n;&t;##PRE##_CIV =&t;0x##DIG##4,&t;&t;/* Current Index Value */&t;&t;&t;&bslash;&n;&t;##PRE##_LVI =&t;0x##DIG##5,&t;&t;/* Last Valid Index */&t;&t;&t;&t;&bslash;&n;&t;##PRE##_SR =&t;0x##DIG##6,&t;&t;/* Status Register */&t;&t;&t;&t;&bslash;&n;&t;##PRE##_PICB =&t;0x##DIG##8,&t;&t;/* Position In Current Buffer */&t;&t;&bslash;&n;&t;##PRE##_PIV =&t;0x##DIG##a,&t;&t;/* Prefetched Index Value */&t;&t;&t;&bslash;&n;&t;##PRE##_CR =&t;0x##DIG##b&t;&t;/* Control Register */&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define ENUM_ENGINE(PRE,DIG) &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;enum {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;PRE##_BDBAR =&t;0x##DIG##0,&t;&t;/* Buffer Descriptor list Base Address */&t;&bslash;&n;&t;PRE##_CIV =&t;0x##DIG##4,&t;&t;/* Current Index Value */&t;&t;&t;&bslash;&n;&t;PRE##_LVI =&t;0x##DIG##5,&t;&t;/* Last Valid Index */&t;&t;&t;&t;&bslash;&n;&t;PRE##_SR =&t;0x##DIG##6,&t;&t;/* Status Register */&t;&t;&t;&t;&bslash;&n;&t;PRE##_PICB =&t;0x##DIG##8,&t;&t;/* Position In Current Buffer */&t;&t;&bslash;&n;&t;PRE##_PIV =&t;0x##DIG##a,&t;&t;/* Prefetched Index Value */&t;&t;&t;&bslash;&n;&t;PRE##_CR =&t;0x##DIG##b&t;&t;/* Control Register */&t;&t;&t;&t;&bslash;&n;}
 id|ENUM_ENGINE
 c_func
 (paren
@@ -2804,6 +2804,12 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dmabuf-&gt;dmasize
+)paren
+(brace
 id|len
 op_assign
 id|swptr
@@ -2813,6 +2819,12 @@ id|dmabuf-&gt;dmasize
 op_div
 id|SG_LEN
 )paren
+suffix:semicolon
+)brace
+r_else
+id|len
+op_assign
+l_int|0
 suffix:semicolon
 id|memset
 c_func
@@ -8416,36 +8428,6 @@ suffix:semicolon
 id|pci_dev-&gt;dma_mask
 op_assign
 id|I810_DMA_MASK
-suffix:semicolon
-singleline_comment|//&t;printk(&quot;resetting codec?&bslash;n&quot;);
-id|outl
-c_func
-(paren
-l_int|0
-comma
-id|card-&gt;iobase
-op_plus
-id|GLOB_CNT
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|500
-)paren
-suffix:semicolon
-singleline_comment|//&t;printk(&quot;bringing it back?&bslash;n&quot;);
-id|outl
-c_func
-(paren
-l_int|1
-op_lshift
-l_int|1
-comma
-id|card-&gt;iobase
-op_plus
-id|GLOB_CNT
-)paren
 suffix:semicolon
 r_return
 l_int|0

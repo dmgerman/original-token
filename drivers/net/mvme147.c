@@ -157,7 +157,8 @@ r_int
 suffix:semicolon
 DECL|typedef|readrdp_t
 r_typedef
-r_void
+r_int
+r_int
 (paren
 op_star
 id|readrdp_t
@@ -311,6 +312,11 @@ id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|lance_set_multicast
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|lance_tx_timeout
 suffix:semicolon
 id|dev-&gt;dma
 op_assign

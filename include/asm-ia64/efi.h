@@ -488,6 +488,8 @@ DECL|macro|MPS_TABLE_GUID
 mdefine_line|#define MPS_TABLE_GUID    &bslash;&n;    ((efi_guid_t) { 0xeb9d2d2f, 0x2d88, 0x11d3, { 0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d }})
 DECL|macro|ACPI_TABLE_GUID
 mdefine_line|#define ACPI_TABLE_GUID    &bslash;&n;    ((efi_guid_t) { 0xeb9d2d30, 0x2d88, 0x11d3, { 0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d }})
+DECL|macro|ACPI_20_TABLE_GUID
+mdefine_line|#define ACPI_20_TABLE_GUID    &bslash;&n;    ((efi_guid_t) { 0x8868e871, 0xe4f1, 0x11d3, { 0xbc, 0x22, 0x0, 0x80, 0xc7, 0x3c, 0x88, 0x81 }})
 DECL|macro|SMBIOS_TABLE_GUID
 mdefine_line|#define SMBIOS_TABLE_GUID    &bslash;&n;    ((efi_guid_t) { 0xeb9d2d31, 0x2d88, 0x11d3, { 0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d }})
 DECL|macro|SAL_SYSTEM_TABLE_GUID
@@ -594,7 +596,13 @@ r_void
 op_star
 id|acpi
 suffix:semicolon
-multiline_comment|/* ACPI table */
+multiline_comment|/* ACPI table  (IA64 ext 0.71) */
+DECL|member|acpi20
+r_void
+op_star
+id|acpi20
+suffix:semicolon
+multiline_comment|/* ACPI table  (ACPI 2.0) */
 DECL|member|smbios
 r_void
 op_star

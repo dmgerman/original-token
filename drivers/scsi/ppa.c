@@ -70,6 +70,12 @@ r_int
 id|jstart
 suffix:semicolon
 multiline_comment|/* Jiffies at start             */
+DECL|member|recon_tmo
+r_int
+r_int
+id|recon_tmo
+suffix:semicolon
+multiline_comment|/* How many usecs to wait for reconnection (6th bit) */
 DECL|member|failed
 r_int
 r_int
@@ -91,7 +97,7 @@ DECL|typedef|ppa_struct
 id|ppa_struct
 suffix:semicolon
 DECL|macro|PPA_EMPTY
-mdefine_line|#define PPA_EMPTY&t;&bslash;&n;{&t;dev:&t;&t;NULL,&t;&t;&bslash;&n;&t;base:&t;&t;-1,&t;&t;&bslash;&n;&t;mode:&t;&t;PPA_AUTODETECT,&t;&bslash;&n;&t;host:&t;&t;-1,&t;&t;&bslash;&n;&t;cur_cmd:&t;NULL,&t;&t;&bslash;&n;&t;ppa_tq:&t;&t;{ routine: ppa_interrupt },&t;&bslash;&n;&t;jstart:&t;&t;0,&t;&t;&bslash;&n;&t;failed:&t;&t;0,&t;&t;&bslash;&n;&t;p_busy:&t;&t;0&t;&t;&bslash;&n;}
+mdefine_line|#define PPA_EMPTY&t;&bslash;&n;{&t;dev:&t;&t;NULL,&t;&t;&bslash;&n;&t;base:&t;&t;-1,&t;&t;&bslash;&n;&t;mode:&t;&t;PPA_AUTODETECT,&t;&bslash;&n;&t;host:&t;&t;-1,&t;&t;&bslash;&n;&t;cur_cmd:&t;NULL,&t;&t;&bslash;&n;&t;ppa_tq:&t;&t;{ routine: ppa_interrupt },&t;&bslash;&n;&t;jstart:&t;&t;0,&t;&t;&bslash;&n;&t;recon_tmo:      PPA_RECON_TMO,&t;&bslash;&n;&t;failed:&t;&t;0,&t;&t;&bslash;&n;&t;p_busy:&t;&t;0&t;&t;&bslash;&n;}
 macro_line|#include  &quot;ppa.h&quot;
 DECL|macro|NO_HOSTS
 mdefine_line|#define NO_HOSTS 4
@@ -939,6 +945,65 @@ r_return
 id|length
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|length
+OG
+l_int|10
+)paren
+op_logical_and
+(paren
+id|strncmp
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;recon_tmo=&quot;
+comma
+l_int|10
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|x
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|buffer
+op_plus
+l_int|10
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|ppa_hosts
+(braket
+id|hostno
+)braket
+dot
+id|recon_tmo
+op_assign
+id|x
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ppa: recon_tmo set to %ld&bslash;n&quot;
+comma
+id|x
+)paren
+suffix:semicolon
+r_return
+id|length
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1086,6 +1151,27 @@ id|mode
 )braket
 )paren
 suffix:semicolon
+macro_line|#if PPA_DEBUG &gt; 0
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;recon_tmo : %lu&bslash;n&quot;
+comma
+id|ppa_hosts
+(braket
+id|i
+)braket
+dot
+id|recon_tmo
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Request for beyond end of buffer */
 r_if
 c_cond
@@ -2504,6 +2590,12 @@ r_do
 id|k
 op_decrement
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -2585,6 +2677,12 @@ r_do
 (brace
 id|k
 op_decrement
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
 suffix:semicolon
 )brace
 r_while
@@ -2888,6 +2986,16 @@ id|cmd-&gt;host-&gt;unique_id
 suffix:semicolon
 r_int
 r_int
+id|ppb
+op_assign
+id|PPA_BASE
+c_func
+(paren
+id|host_no
+)paren
+suffix:semicolon
+r_int
+r_int
 id|start_jiffies
 op_assign
 id|jiffies
@@ -2940,15 +3048,19 @@ id|WRITE_10
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     * We only get here if the drive is ready to comunicate,&n;     * hence no need for a full ppa_wait.&n;     */
 id|r
 op_assign
-id|ppa_wait
+(paren
+id|r_str
 c_func
 (paren
-id|host_no
+id|ppb
+)paren
+op_amp
+l_int|0xf0
 )paren
 suffix:semicolon
-multiline_comment|/* Need a ppa_wait() - PJC */
 r_while
 c_loop
 (paren
@@ -2982,16 +3094,6 @@ r_if
 c_cond
 (paren
 (paren
-(paren
-id|r
-op_amp
-l_int|0xc0
-)paren
-op_ne
-l_int|0xc0
-)paren
-op_logical_or
-(paren
 id|cmd-&gt;SCp.this_residual
 op_le
 l_int|0
@@ -3011,6 +3113,78 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* ERROR_RETURN */
+)brace
+multiline_comment|/* On some hardware we have SCSI disconnected (6th bit low)&n;&t; * for about 100usecs. It is too expensive to wait a &n;&t; * tick on every loop so we busy wait for no more than&n;&t; * 500usecs to give the drive a chance first. We do not &n;&t; * change things for &quot;normal&quot; hardware since generally &n;&t; * the 6th bit is always high.&n;&t; * This makes the CPU load higher on some hardware &n;&t; * but otherwise we can not get more then 50K/secs &n;&t; * on this problem hardware.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|r
+op_amp
+l_int|0xc0
+)paren
+op_ne
+l_int|0xc0
+)paren
+(brace
+multiline_comment|/* Wait for reconnection should be no more than &n;&t;    * jiffy/2 = 5ms = 5000 loops&n;&t;    */
+r_int
+r_int
+id|k
+op_assign
+id|ppa_hosts
+(braket
+id|host_no
+)braket
+dot
+id|recon_tmo
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|k
+op_logical_and
+(paren
+(paren
+id|r
+op_assign
+(paren
+id|r_str
+c_func
+(paren
+id|ppb
+)paren
+op_amp
+l_int|0xf0
+)paren
+)paren
+op_amp
+l_int|0xc0
+)paren
+op_ne
+l_int|0xc0
+suffix:semicolon
+id|k
+op_decrement
+)paren
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|k
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* determine if we should use burst I/O */
 id|fast
@@ -3128,13 +3302,16 @@ suffix:semicolon
 multiline_comment|/* Now check to see if the drive is ready to comunicate */
 id|r
 op_assign
-id|ppa_wait
+(paren
+id|r_str
 c_func
 (paren
-id|host_no
+id|ppb
+)paren
+op_amp
+l_int|0xf0
 )paren
 suffix:semicolon
-multiline_comment|/* need ppa_wait() - PJC */
 multiline_comment|/* If not, drop back down to the scheduler and wait a timer tick */
 r_if
 c_cond

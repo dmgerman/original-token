@@ -3488,6 +3488,37 @@ c_func
 id|sdp-&gt;device
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|SRpnt
+op_eq
+l_int|NULL
+)paren
+(brace
+id|SCSI_LOG_TIMEOUT
+c_func
+(paren
+l_int|1
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;sg_write: no mem&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|sg_finish_rem_req
+c_func
+(paren
+id|srp
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 multiline_comment|/*  SCSI_LOG_TIMEOUT(7, printk(&quot;sg_write: device allocated&bslash;n&quot;)); */
 id|srp-&gt;my_cmdp
 op_assign

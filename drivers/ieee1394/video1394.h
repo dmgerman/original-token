@@ -49,6 +49,10 @@ DECL|enumerator|VIDEO1394_TALK_WAIT_BUFFER
 id|VIDEO1394_TALK_WAIT_BUFFER
 )brace
 suffix:semicolon
+DECL|macro|VIDEO1394_SYNC_FRAMES
+mdefine_line|#define VIDEO1394_SYNC_FRAMES         0x00000001
+DECL|macro|VIDEO1394_INCLUDE_ISO_HEADERS
+mdefine_line|#define VIDEO1394_INCLUDE_ISO_HEADERS 0x00000002
 DECL|struct|video1394_mmap
 r_struct
 id|video1394_mmap
@@ -76,6 +80,10 @@ suffix:semicolon
 DECL|member|fps
 r_int
 id|fps
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
 suffix:semicolon
 )brace
 suffix:semicolon

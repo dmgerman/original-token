@@ -15,7 +15,7 @@ DECL|macro|SWAPPER_PGD_ADDR
 mdefine_line|#define SWAPPER_PGD_ADDR&t;(IVT_END_ADDR + 1*PAGE_SIZE)
 DECL|macro|GATE_ADDR
 mdefine_line|#define GATE_ADDR&t;&t;(0xa000000000000000 + PAGE_SIZE)
-macro_line|#if defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) || defined(CONFIG_ITANIUM_BSTEP_SPECIFIC)
+macro_line|#if defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) &bslash;&n;    || defined(CONFIG_ITANIUM_B0_SPECIFIC) || defined(CONFIG_ITANIUM_B1_SPECIFIC)
 multiline_comment|/* Workaround for Errata 97.  */
 DECL|macro|IA64_SEMFIX_INSN
 macro_line|# define IA64_SEMFIX_INSN&t;mf;

@@ -248,7 +248,7 @@ macro_line|# define MMU060_RW_R&t;(0x01000000)&t;/* read */
 DECL|macro|MMU060_RW_RMW
 macro_line|# define MMU060_RW_RMW&t;(0x01800000)&t;/* read/modify/write */
 DECL|macro|MMU060_W
-macro_line|# define MMU060_W&t;&t;(0x00800000)&t;/* general write, includes rmw */
+macro_line|# define MMU060_W&t;(0x00800000)&t;/* general write, includes rmw */
 DECL|macro|MMU060_SIZ
 mdefine_line|#define&t;MMU060_SIZ&t;(0x00600000)&t;/* transfer size */
 DECL|macro|MMU060_TT
@@ -287,10 +287,10 @@ DECL|macro|MMU060_SEE
 mdefine_line|#define&t;MMU060_SEE&t;(0x00000001)&t;/* software emulated error */
 multiline_comment|/* cases of missing or invalid descriptors */
 DECL|macro|MMU060_DESC_ERR
-mdefine_line|#define MMU060_DESC_ERR&t;(MMU060_TWE | MMU060_PTA | MMU060_PTB | &bslash;&n;&t;&t;&t;&t;&t;&t; MMU060_IL  | MMU060_PF)
+mdefine_line|#define MMU060_DESC_ERR (MMU060_PTA | MMU060_PTB | &bslash;&n;&t;&t;&t; MMU060_IL  | MMU060_PF)
 multiline_comment|/* bits that indicate real errors */
 DECL|macro|MMU060_ERR_BITS
-mdefine_line|#define MMU060_ERR_BITS&t;(MMU060_PBE | MMU060_SBE | MMU060_DESC_ERR | &bslash;&n;&t;&t;&t;&t;&t;&t; MMU060_SP  | MMU060_WP  | MMU060_RE | &bslash;&n;&t;&t;&t;&t;&t;&t; MMU060_WE)
+mdefine_line|#define MMU060_ERR_BITS (MMU060_PBE | MMU060_SBE | MMU060_DESC_ERR | MMU060_SP | &bslash;&n;&t;&t;&t; MMU060_WP  | MMU060_TWE | MMU060_RE       | MMU060_WE)
 multiline_comment|/* structure for stack frames */
 DECL|struct|frame
 r_struct

@@ -10,8 +10,9 @@ r_extern
 id|spinlock_t
 id|sal_lock
 suffix:semicolon
+multiline_comment|/* SAL spec _requires_ eight args for each call. */
 DECL|macro|__SAL_CALL
-mdefine_line|#define __SAL_CALL(result,args...)&t;result = (*ia64_sal)(args)
+mdefine_line|#define __SAL_CALL(result,a0,a1,a2,a3,a4,a5,a6,a7)&t;&bslash;&n;&t;result = (*ia64_sal)(a0,a1,a2,a3,a4,a5,a6,a7)
 macro_line|#ifdef CONFIG_SMP
 DECL|macro|SAL_CALL
 macro_line|# define SAL_CALL(result,args...) do {&t;&t;&bslash;&n;&t;  spin_lock(&amp;sal_lock);&t;&t;&t;&bslash;&n;&t;  __SAL_CALL(result,args);&t;&t;&bslash;&n;&t;  spin_unlock(&amp;sal_lock);&t;&t;&bslash;&n;} while (0)
@@ -102,13 +103,13 @@ op_assign
 l_int|2
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The SAL system table is followed by a variable number of variable&n; * length descriptors.  The structure of these descriptors follows&n; * below.&n; */
+multiline_comment|/*&n; * The SAL system table is followed by a variable number of variable&n; * length descriptors.  The structure of these descriptors follows&n; * below.&n; * The defininition follows SAL specs from July 2000&n; */
 DECL|struct|ia64_sal_systab
 r_struct
 id|ia64_sal_systab
 (brace
 DECL|member|signature
-r_char
+id|u8
 id|signature
 (braket
 l_int|4
@@ -116,50 +117,60 @@ l_int|4
 suffix:semicolon
 multiline_comment|/* should be &quot;SST_&quot; */
 DECL|member|size
-r_int
+id|u32
 id|size
 suffix:semicolon
 multiline_comment|/* size of this table in bytes */
 DECL|member|sal_rev_minor
-r_int
-r_char
+id|u8
 id|sal_rev_minor
 suffix:semicolon
 DECL|member|sal_rev_major
-r_int
-r_char
+id|u8
 id|sal_rev_major
 suffix:semicolon
 DECL|member|entry_count
-r_int
-r_int
+id|u16
 id|entry_count
 suffix:semicolon
 multiline_comment|/* # of entries in variable portion */
 DECL|member|checksum
-r_int
-r_char
+id|u8
 id|checksum
 suffix:semicolon
-DECL|member|ia32_bios_present
-r_char
-id|ia32_bios_present
-suffix:semicolon
 DECL|member|reserved1
-r_int
-r_int
+id|u8
 id|reserved1
+(braket
+l_int|7
+)braket
 suffix:semicolon
+DECL|member|sal_a_rev_minor
+id|u8
+id|sal_a_rev_minor
+suffix:semicolon
+DECL|member|sal_a_rev_major
+id|u8
+id|sal_a_rev_major
+suffix:semicolon
+DECL|member|sal_b_rev_minor
+id|u8
+id|sal_b_rev_minor
+suffix:semicolon
+DECL|member|sal_b_rev_major
+id|u8
+id|sal_b_rev_major
+suffix:semicolon
+multiline_comment|/* oem_id &amp; product_id: terminating NUL is missing if string is exactly 32 bytes long. */
 DECL|member|oem_id
-r_char
+id|u8
 id|oem_id
 (braket
 l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* ASCII NUL terminated OEM id&n;&t;&t;&t;&t;   (terminating NUL is missing if&n;&t;&t;&t;&t;   string is exactly 32 bytes long). */
 DECL|member|product_id
-r_char
+id|u8
 id|product_id
 (braket
 l_int|32
@@ -167,17 +178,17 @@ l_int|32
 suffix:semicolon
 multiline_comment|/* ASCII product id  */
 DECL|member|reserved2
-r_char
+id|u8
 id|reserved2
 (braket
-l_int|16
+l_int|8
 )braket
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|enum|SAL_Systab_Entry_Type
+DECL|enum|sal_systab_entry_type
 r_enum
-id|SAL_Systab_Entry_Type
+id|sal_systab_entry_type
 (brace
 DECL|enumerator|SAL_DESC_ENTRY_POINT
 id|SAL_DESC_ENTRY_POINT
@@ -214,107 +225,111 @@ multiline_comment|/*&n; * Entry type:&t;Size:&n; *&t;0&t;48&n; *&t;1&t;32&n; *&t
 DECL|macro|SAL_DESC_SIZE
 mdefine_line|#define SAL_DESC_SIZE(type)&t;&quot;&bslash;060&bslash;040&bslash;020&bslash;040&bslash;020&bslash;020&quot;[(unsigned) type]
 DECL|struct|ia64_sal_desc_entry_point
+r_typedef
 r_struct
 id|ia64_sal_desc_entry_point
 (brace
 DECL|member|type
-r_char
+id|u8
 id|type
 suffix:semicolon
 DECL|member|reserved1
-r_char
+id|u8
 id|reserved1
 (braket
 l_int|7
 )braket
 suffix:semicolon
 DECL|member|pal_proc
-id|s64
+id|u64
 id|pal_proc
 suffix:semicolon
 DECL|member|sal_proc
-id|s64
+id|u64
 id|sal_proc
 suffix:semicolon
 DECL|member|gp
-id|s64
+id|u64
 id|gp
 suffix:semicolon
 DECL|member|reserved2
-r_char
+id|u8
 id|reserved2
 (braket
 l_int|16
 )braket
 suffix:semicolon
+DECL|typedef|ia64_sal_desc_entry_point_t
 )brace
+id|ia64_sal_desc_entry_point_t
 suffix:semicolon
 DECL|struct|ia64_sal_desc_memory
+r_typedef
 r_struct
 id|ia64_sal_desc_memory
 (brace
 DECL|member|type
-r_char
+id|u8
 id|type
 suffix:semicolon
 DECL|member|used_by_sal
-r_char
+id|u8
 id|used_by_sal
 suffix:semicolon
 multiline_comment|/* needs to be mapped for SAL? */
 DECL|member|mem_attr
-r_char
+id|u8
 id|mem_attr
 suffix:semicolon
 multiline_comment|/* current memory attribute setting */
 DECL|member|access_rights
-r_char
+id|u8
 id|access_rights
 suffix:semicolon
 multiline_comment|/* access rights set up by SAL */
 DECL|member|mem_attr_mask
-r_char
+id|u8
 id|mem_attr_mask
 suffix:semicolon
 multiline_comment|/* mask of supported memory attributes */
 DECL|member|reserved1
-r_char
+id|u8
 id|reserved1
 suffix:semicolon
 DECL|member|mem_type
-r_char
+id|u8
 id|mem_type
 suffix:semicolon
 multiline_comment|/* memory type */
 DECL|member|mem_usage
-r_char
+id|u8
 id|mem_usage
 suffix:semicolon
 multiline_comment|/* memory usage */
 DECL|member|addr
-id|s64
+id|u64
 id|addr
 suffix:semicolon
 multiline_comment|/* physical address of memory */
 DECL|member|length
-r_int
-r_int
+id|u32
 id|length
 suffix:semicolon
 multiline_comment|/* length (multiple of 4KB pages) */
 DECL|member|reserved2
-r_int
-r_int
+id|u32
 id|reserved2
 suffix:semicolon
 DECL|member|oem_reserved
-r_char
+id|u8
 id|oem_reserved
 (braket
 l_int|8
 )braket
 suffix:semicolon
+DECL|typedef|ia64_sal_desc_memory_t
 )brace
+id|ia64_sal_desc_memory_t
 suffix:semicolon
 DECL|macro|IA64_SAL_PLATFORM_FEATURE_BUS_LOCK
 mdefine_line|#define IA64_SAL_PLATFORM_FEATURE_BUS_LOCK&t;&t;(1 &lt;&lt; 0)
@@ -323,70 +338,75 @@ mdefine_line|#define IA64_SAL_PLATFORM_FEATURE_IRQ_REDIR_HINT&t;(1 &lt;&lt; 1)
 DECL|macro|IA64_SAL_PLATFORM_FEATURE_IPI_REDIR_HINT
 mdefine_line|#define IA64_SAL_PLATFORM_FEATURE_IPI_REDIR_HINT&t;(1 &lt;&lt; 2)
 DECL|struct|ia64_sal_desc_platform_feature
+r_typedef
 r_struct
 id|ia64_sal_desc_platform_feature
 (brace
 DECL|member|type
-r_char
+id|u8
 id|type
 suffix:semicolon
 DECL|member|feature_mask
-r_int
-r_char
+id|u8
 id|feature_mask
 suffix:semicolon
 DECL|member|reserved1
-r_char
+id|u8
 id|reserved1
 (braket
 l_int|14
 )braket
 suffix:semicolon
+DECL|typedef|ia64_sal_desc_platform_feature_t
 )brace
+id|ia64_sal_desc_platform_feature_t
 suffix:semicolon
 DECL|struct|ia64_sal_desc_tr
+r_typedef
 r_struct
 id|ia64_sal_desc_tr
 (brace
 DECL|member|type
-r_char
+id|u8
 id|type
 suffix:semicolon
 DECL|member|tr_type
-r_char
+id|u8
 id|tr_type
 suffix:semicolon
 multiline_comment|/* 0 == instruction, 1 == data */
 DECL|member|regnum
-r_char
+id|u8
 id|regnum
 suffix:semicolon
 multiline_comment|/* translation register number */
 DECL|member|reserved1
-r_char
+id|u8
 id|reserved1
 (braket
 l_int|5
 )braket
 suffix:semicolon
 DECL|member|addr
-id|s64
+id|u64
 id|addr
 suffix:semicolon
 multiline_comment|/* virtual address of area covered */
 DECL|member|page_size
-id|s64
+id|u64
 id|page_size
 suffix:semicolon
 multiline_comment|/* encoded page size */
 DECL|member|reserved2
-r_char
+id|u8
 id|reserved2
 (braket
 l_int|8
 )braket
 suffix:semicolon
+DECL|typedef|ia64_sal_desc_tr_t
 )brace
+id|ia64_sal_desc_tr_t
 suffix:semicolon
 DECL|struct|ia64_sal_desc_ptc
 r_typedef
@@ -394,24 +414,23 @@ r_struct
 id|ia64_sal_desc_ptc
 (brace
 DECL|member|type
-r_char
+id|u8
 id|type
 suffix:semicolon
 DECL|member|reserved1
-r_char
+id|u8
 id|reserved1
 (braket
 l_int|3
 )braket
 suffix:semicolon
 DECL|member|num_domains
-r_int
-r_int
+id|u32
 id|num_domains
 suffix:semicolon
 multiline_comment|/* # of coherence domains */
 DECL|member|domain_info
-id|s64
+id|u64
 id|domain_info
 suffix:semicolon
 multiline_comment|/* physical address of domain info table */
@@ -425,13 +444,12 @@ r_struct
 id|ia64_sal_ptc_domain_info
 (brace
 DECL|member|proc_count
-r_int
-r_int
+id|u64
 id|proc_count
 suffix:semicolon
 multiline_comment|/* number of processors in domain */
 DECL|member|proc_list
-r_int
+id|u64
 id|proc_list
 suffix:semicolon
 multiline_comment|/* physical address of LID array */
@@ -444,18 +462,32 @@ r_typedef
 r_struct
 id|ia64_sal_ptc_domain_proc_entry
 (brace
-DECL|member|id
-r_int
-r_char
-id|id
+DECL|member|reserved
+id|u64
+id|reserved
+suffix:colon
+l_int|16
 suffix:semicolon
-multiline_comment|/* id of processor */
 DECL|member|eid
-r_int
-r_char
+id|u64
 id|eid
+suffix:colon
+l_int|8
 suffix:semicolon
 multiline_comment|/* eid of processor */
+DECL|member|id
+id|u64
+id|id
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* id of processor */
+DECL|member|ignored
+id|u64
+id|ignored
+suffix:colon
+l_int|32
+suffix:semicolon
 DECL|typedef|ia64_sal_ptc_domain_proc_entry_t
 )brace
 id|ia64_sal_ptc_domain_proc_entry_t
@@ -463,31 +495,34 @@ suffix:semicolon
 DECL|macro|IA64_SAL_AP_EXTERNAL_INT
 mdefine_line|#define IA64_SAL_AP_EXTERNAL_INT 0
 DECL|struct|ia64_sal_desc_ap_wakeup
+r_typedef
 r_struct
 id|ia64_sal_desc_ap_wakeup
 (brace
 DECL|member|type
-r_char
+id|u8
 id|type
 suffix:semicolon
 DECL|member|mechanism
-r_char
+id|u8
 id|mechanism
 suffix:semicolon
 multiline_comment|/* 0 == external interrupt */
 DECL|member|reserved1
-r_char
+id|u8
 id|reserved1
 (braket
 l_int|6
 )braket
 suffix:semicolon
 DECL|member|vector
-r_int
+id|u64
 id|vector
 suffix:semicolon
 multiline_comment|/* interrupt vector in range 0x10-0xff */
+DECL|typedef|ia64_sal_desc_ap_wakeup_t
 )brace
+id|ia64_sal_desc_ap_wakeup_t
 suffix:semicolon
 r_extern
 id|ia64_sal_handler
@@ -610,10 +645,10 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* Definition of the SAL Error Log from the SAL spec */
 multiline_comment|/* Definition of timestamp according to SAL spec for logging purposes */
-DECL|struct|sal_log_timestamp_s
+DECL|struct|sal_log_timestamp
 r_typedef
 r_struct
-id|sal_log_timestamp_s
+id|sal_log_timestamp
 (brace
 DECL|member|slh_century
 id|u8
@@ -664,10 +699,10 @@ DECL|macro|MAX_TLB_ERRORS
 mdefine_line|#define MAX_TLB_ERRORS&t;&t;&t;&t;6
 DECL|macro|MAX_BUS_ERRORS
 mdefine_line|#define MAX_BUS_ERRORS&t;&t;&t;&t;1
-DECL|struct|sal_log_processor_info_s
+DECL|struct|sal_log_processor_info
 r_typedef
 r_struct
-id|sal_log_processor_info_s
+id|sal_log_processor_info
 (brace
 r_struct
 (brace
@@ -1192,28 +1227,28 @@ DECL|macro|sal_log_processor_info_rr_valid
 mdefine_line|#define sal_log_processor_info_rr_valid&t;&t;&t;slpi_valid.slpi_rr
 DECL|macro|sal_log_processor_info_fr_valid
 mdefine_line|#define sal_log_processor_info_fr_valid&t;&t;&t;slpi_valid.slpi_fr
-DECL|struct|sal_log_header_s
+DECL|struct|sal_log_header
 r_typedef
 r_struct
-id|sal_log_header_s
+id|sal_log_header
 (brace
 DECL|member|slh_next_log
 id|u64
 id|slh_next_log
 suffix:semicolon
-multiline_comment|/* Offset of the next log from the &n;&t;&t;&t;&t;&t;&t;&t; * beginning of  this structure.&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Offset of the next log from the beginning of this structure */
 DECL|member|slh_log_len
-id|uint
+id|u32
 id|slh_log_len
 suffix:semicolon
 multiline_comment|/* Length of this error log in bytes */
 DECL|member|slh_log_type
-id|ushort
+id|u16
 id|slh_log_type
 suffix:semicolon
 multiline_comment|/* Type of log (0 - cpu ,1 - platform) */
 DECL|member|slh_log_sub_type
-id|ushort
+id|u16
 id|slh_log_sub_type
 suffix:semicolon
 multiline_comment|/* SGI specific sub type */
@@ -1278,6 +1313,18 @@ comma
 id|SAL_FREQ_BASE
 comma
 id|which
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 op_star
@@ -1317,6 +1364,18 @@ comma
 id|SAL_CACHE_FLUSH
 comma
 id|cache_type
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1343,6 +1402,20 @@ c_func
 id|isrv
 comma
 id|SAL_CACHE_INIT
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1377,6 +1450,16 @@ comma
 id|sal_info_type
 comma
 id|sal_info_sub_type
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1417,6 +1500,14 @@ comma
 id|sal_info_sub_type
 comma
 id|sal_info
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1459,6 +1550,16 @@ comma
 id|sal_info_type
 comma
 id|sal_info_sub_type
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1493,6 +1594,20 @@ c_func
 id|isrv
 comma
 id|SAL_MC_RENDEZ
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1537,6 +1652,12 @@ comma
 id|i_or_m_val
 comma
 id|timeout
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1565,26 +1686,6 @@ r_struct
 id|ia64_sal_retval
 id|isrv
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-r_extern
-id|spinlock_t
-id|ivr_read_lock
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/*&n;&t; * Avoid PCI configuration read/write overwrite -- A0 Interrupt loss workaround&n;&t; */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|ivr_read_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
 id|SAL_CALL
 c_func
 (paren
@@ -1595,19 +1696,18 @@ comma
 id|pci_config_addr
 comma
 id|size
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|ivr_read_lock
 comma
-id|flags
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1643,26 +1743,6 @@ r_struct
 id|ia64_sal_retval
 id|isrv
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-r_extern
-id|spinlock_t
-id|ivr_read_lock
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/*&n;&t; * Avoid PCI configuration read/write overwrite -- A0 Interrupt loss workaround&n;&t; */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|ivr_read_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
 id|SAL_CALL
 c_func
 (paren
@@ -1675,19 +1755,16 @@ comma
 id|size
 comma
 id|value
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|ivr_read_lock
 comma
-id|flags
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|isrv.status
 suffix:semicolon
@@ -1720,6 +1797,16 @@ comma
 id|phys_entry
 comma
 id|phys_addr
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1826,6 +1913,14 @@ comma
 id|scratch_buf
 comma
 id|scratch_buf_size
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if

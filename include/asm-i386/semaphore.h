@@ -3,7 +3,7 @@ DECL|macro|_I386_SEMAPHORE_H
 mdefine_line|#define _I386_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * Modified 1996-12-23 by Dave Grothe &lt;dave@gcom.com&gt; to fix bugs in&n; *                     the original code and to make semaphore waits&n; *                     interruptible so that processes waiting on&n; *                     semaphores can be killed.&n; * Modified 1999-02-14 by Andrea Arcangeli, split the sched.c helper&n; *&t;&t;       functions in asm/sempahore-helper.h while fixing a&n; *&t;&t;       potential and subtle race discovered by Ulrich Schmid&n; *&t;&t;       in down_interruptible(). Since I started to play here I&n; *&t;&t;       also implemented the `trylock&squot; semaphore operation.&n; *          1999-07-02 Artur Skawina &lt;skawina@geocities.com&gt;&n; *                     Optimized &quot;0(ecx)&quot; -&gt; &quot;(ecx)&quot; (the assembler does not&n; *                     do this). Changed calling sequences from push/jmp to&n; *                     traditional call/ret.&n; *&n; * If you would like to see an analysis of this implementation, please&n; * ftp to gcom.com and download the file&n; * /pub/linux/src/semaphore/semaphore-2.0.24.tar.gz.&n; *&n; */
+multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * Modified 1996-12-23 by Dave Grothe &lt;dave@gcom.com&gt; to fix bugs in&n; *                     the original code and to make semaphore waits&n; *                     interruptible so that processes waiting on&n; *                     semaphores can be killed.&n; * Modified 1999-02-14 by Andrea Arcangeli, split the sched.c helper&n; *&t;&t;       functions in asm/sempahore-helper.h while fixing a&n; *&t;&t;       potential and subtle race discovered by Ulrich Schmid&n; *&t;&t;       in down_interruptible(). Since I started to play here I&n; *&t;&t;       also implemented the `trylock&squot; semaphore operation.&n; *          1999-07-02 Artur Skawina &lt;skawina@geocities.com&gt;&n; *                     Optimized &quot;0(ecx)&quot; -&gt; &quot;(ecx)&quot; (the assembler does not&n; *                     do this). Changed calling sequences from push/jmp to&n; *                     traditional call/ret.&n; * Modified 2001-01-01 Andreas Franck &lt;afranck@gmx.de&gt;&n; *&t;&t;       Some hacks to ensure compatibility with recent&n; *&t;&t;       GCC snapshots, to avoid stack corruption when compiling&n; *&t;&t;       with -fomit-frame-pointer. It&squot;s not sure if this will&n; *&t;&t;       be fixed in GCC, as our previous implementation was a&n; *&t;&t;       bit dubious.&n; *&n; * If you would like to see an analysis of this implementation, please&n; * ftp to gcom.com and download the file&n; * /pub/linux/src/semaphore/semaphore-2.0.24.tar.gz.&n; *&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/rwlock.h&gt;
@@ -246,7 +246,7 @@ c_func
 (paren
 l_string|&quot;# atomic down operation&bslash;n&bslash;t&quot;
 id|LOCK
-l_string|&quot;decl (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;decl %0&bslash;n&bslash;t&quot;
 multiline_comment|/* --sem-&gt;count */
 l_string|&quot;js 2f&bslash;n&quot;
 l_string|&quot;1:&bslash;n&quot;
@@ -255,7 +255,10 @@ l_string|&quot;2:&bslash;tcall __down_failed&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-multiline_comment|/* no outputs */
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;count
+)paren
 suffix:colon
 l_string|&quot;c&quot;
 (paren
@@ -296,7 +299,7 @@ c_func
 (paren
 l_string|&quot;# atomic interruptible down operation&bslash;n&bslash;t&quot;
 id|LOCK
-l_string|&quot;decl (%1)&bslash;n&bslash;t&quot;
+l_string|&quot;decl %1&bslash;n&bslash;t&quot;
 multiline_comment|/* --sem-&gt;count */
 l_string|&quot;js 2f&bslash;n&bslash;t&quot;
 l_string|&quot;xorl %0,%0&bslash;n&quot;
@@ -309,6 +312,11 @@ suffix:colon
 l_string|&quot;=a&quot;
 (paren
 id|result
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;count
 )paren
 suffix:colon
 l_string|&quot;c&quot;
@@ -353,7 +361,7 @@ c_func
 (paren
 l_string|&quot;# atomic interruptible down operation&bslash;n&bslash;t&quot;
 id|LOCK
-l_string|&quot;decl (%1)&bslash;n&bslash;t&quot;
+l_string|&quot;decl %1&bslash;n&bslash;t&quot;
 multiline_comment|/* --sem-&gt;count */
 l_string|&quot;js 2f&bslash;n&bslash;t&quot;
 l_string|&quot;xorl %0,%0&bslash;n&quot;
@@ -366,6 +374,11 @@ suffix:colon
 l_string|&quot;=a&quot;
 (paren
 id|result
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;count
 )paren
 suffix:colon
 l_string|&quot;c&quot;
@@ -408,7 +421,7 @@ c_func
 (paren
 l_string|&quot;# atomic up operation&bslash;n&bslash;t&quot;
 id|LOCK
-l_string|&quot;incl (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;incl %0&bslash;n&bslash;t&quot;
 multiline_comment|/* ++sem-&gt;count */
 l_string|&quot;jle 2f&bslash;n&quot;
 l_string|&quot;1:&bslash;n&quot;
@@ -417,7 +430,10 @@ l_string|&quot;2:&bslash;tcall __up_wakeup&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-multiline_comment|/* no outputs */
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;count
+)paren
 suffix:colon
 l_string|&quot;c&quot;
 (paren
@@ -820,7 +836,7 @@ c_func
 (paren
 l_string|&quot;# up_read&bslash;n&bslash;t&quot;
 id|LOCK
-l_string|&quot;incl (%%eax)&bslash;n&bslash;t&quot;
+l_string|&quot;incl %0&bslash;n&bslash;t&quot;
 l_string|&quot;jz 2f&bslash;n&quot;
 multiline_comment|/* only do the wake if result == 0 (ie, a writer) */
 l_string|&quot;1:&bslash;n&bslash;t&quot;
@@ -828,7 +844,12 @@ l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&bslash;tcall __rwsem_wake&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
-op_scope_resolution
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;count
+)paren
+suffix:colon
 l_string|&quot;a&quot;
 (paren
 id|sem
@@ -860,7 +881,7 @@ l_string|&quot;# up_write&bslash;n&bslash;t&quot;
 id|LOCK
 l_string|&quot;addl $&quot;
 id|RW_LOCK_BIAS_STR
-l_string|&quot;,(%%eax)&bslash;n&quot;
+l_string|&quot;,%0&bslash;n&quot;
 l_string|&quot;jc 2f&bslash;n&quot;
 multiline_comment|/* only do the wake if the result was -&squot;ve to 0/+&squot;ve */
 l_string|&quot;1:&bslash;n&bslash;t&quot;
@@ -868,7 +889,12 @@ l_string|&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&bslash;tcall __rwsem_wake&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
-op_scope_resolution
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;count
+)paren
+suffix:colon
 l_string|&quot;a&quot;
 (paren
 id|sem

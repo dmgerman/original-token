@@ -1,8 +1,9 @@
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_IA64_GENERIC
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
-macro_line|#ifdef CONFIG_IA64_GENERIC
 DECL|variable|ia64_mv
 r_struct
 id|ia64_machine_vector

@@ -372,6 +372,10 @@ id|inode-&gt;i_rdev
 suffix:semicolon
 r_int
 id|err
+comma
+id|retval
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|video_device
@@ -391,6 +395,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|vfl
 op_assign
 id|video_device
@@ -443,10 +452,16 @@ id|vfl
 op_eq
 l_int|NULL
 )paren
-r_return
+(brace
+id|retval
+op_assign
 op_minus
 id|ENODEV
 suffix:semicolon
+r_goto
+id|error_out
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -454,9 +469,13 @@ c_cond
 id|vfl-&gt;busy
 )paren
 (brace
-r_return
+id|retval
+op_assign
 op_minus
 id|EBUSY
+suffix:semicolon
+r_goto
+id|error_out
 suffix:semicolon
 )brace
 id|vfl-&gt;busy
@@ -464,6 +483,11 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* In case vfl-&gt;open sleeps */
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -500,6 +524,16 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+id|error_out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Last close of a video for Linux device&n; */

@@ -1,12 +1,12 @@
 multiline_comment|/* sun3x_esp.c:  EnhancedScsiProcessor Sun3x SCSI driver code.&n; *&n; * (C) 1999 Thomas Bogendoerfer (tsbogend@alpha.franken.de)&n; *&n; * Based on David S. Miller&squot;s esp driver&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;NCR53C9x.h&quot;
@@ -1395,4 +1395,12 @@ id|sp-&gt;SCp.buffer-&gt;dvma_address
 )paren
 suffix:semicolon
 )brace
+DECL|variable|driver_template
+r_static
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|SCSI_SUN3X_ESP
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
 eof

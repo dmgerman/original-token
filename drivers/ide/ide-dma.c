@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+DECL|macro|CONFIG_BLK_DEV_IDEDMA_TIMEOUT
+macro_line|#undef CONFIG_BLK_DEV_IDEDMA_TIMEOUT
 r_extern
 r_char
 op_star
@@ -703,6 +705,7 @@ c_func
 id|sg
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Fill in the dma table, without crossing any 64kB boundaries.&n;&t;&t; * Most hardware requires 16-bit alignment of all blocks,&n;&t;&t; * but the trm290 requires 32-bit alignment.&n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -2081,13 +2084,16 @@ id|drive
 )paren
 suffix:semicolon
 r_case
+id|ide_dma_timeout
+suffix:colon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_TIMEOUT
+multiline_comment|/*&n;&t;&t;&t; * Have to issue an abort and requeue the request&n;&t;&t;&t; * DMA engine got turned off by a goofy ASIC, and&n;&t;&t;&t; * we have to clean up the mess, and here is as good&n;&t;&t;&t; * as any.  Do it globally for all chipsets.&n;&t;&t;&t; */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_TIMEOUT */
+r_case
 id|ide_dma_retune
 suffix:colon
 r_case
 id|ide_dma_lostirq
-suffix:colon
-r_case
-id|ide_dma_timeout
 suffix:colon
 id|printk
 c_func

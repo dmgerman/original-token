@@ -1907,13 +1907,13 @@ id|rio_table
 op_assign
 (brace
 (brace
-id|idVendor
-suffix:colon
+id|USB_DEVICE
+c_func
+(paren
 l_int|0x0841
 comma
-id|idProduct
-suffix:colon
 l_int|1
+)paren
 )brace
 comma
 multiline_comment|/* Rio 500 */

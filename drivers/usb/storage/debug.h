@@ -46,9 +46,9 @@ id|ascq
 )paren
 suffix:semicolon
 DECL|macro|US_DEBUGP
-mdefine_line|#define US_DEBUGP(x...) printk( KERN_DEBUG USB_STORAGE ## x )
+mdefine_line|#define US_DEBUGP(x...) printk( KERN_DEBUG USB_STORAGE x )
 DECL|macro|US_DEBUGPX
-mdefine_line|#define US_DEBUGPX(x...) printk( ## x )
+mdefine_line|#define US_DEBUGPX(x...) printk( x )
 DECL|macro|US_DEBUG
 mdefine_line|#define US_DEBUG(x) x 
 macro_line|#else

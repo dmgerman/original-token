@@ -362,17 +362,8 @@ id|DMAF_SETCLR
 op_or
 id|DMAF_AUD2
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 r_else
-(brace
 id|nosound
 c_func
 (paren
@@ -385,9 +376,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 )brace
 DECL|function|nosound
 r_static

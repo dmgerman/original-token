@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -698,24 +699,40 @@ r_int
 id|length
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Write zero to CMOS register number 0x0f, which the BIOS POST&n;&t;   routine will recognize as telling it to do a proper reboot.  (Well&n;&t;   that&squot;s what this book in front of me says -- it may only apply to&n;&t;   the Phoenix BIOS though, it&squot;s not clear).  At the same time,&n;&t;   disable NMIs by setting the top bit in the CMOS address register,&n;&t;   as we&squot;re about to do peculiar things to the CPU.  I&squot;m not sure if&n;&t;   `outb_p&squot; is needed instead of just `outb&squot;.  Use it to be on the&n;&t;   safe side. */
-id|outb_p
+multiline_comment|/* Write zero to CMOS register number 0x0f, which the BIOS POST&n;&t;   routine will recognize as telling it to do a proper reboot.  (Well&n;&t;   that&squot;s what this book in front of me says -- it may only apply to&n;&t;   the Phoenix BIOS though, it&squot;s not clear).  At the same time,&n;&t;   disable NMIs by setting the top bit in the CMOS address register,&n;&t;   as we&squot;re about to do peculiar things to the CPU.  I&squot;m not sure if&n;&t;   `outb_p&squot; is needed instead of just `outb&squot;.  Use it to be on the&n;&t;   safe side.  (Yes, CMOS_WRITE does outb_p&squot;s. -  Paul G.)&n;&t; */
+id|spin_lock_irqsave
+c_func
 (paren
-l_int|0x8f
+op_amp
+id|rtc_lock
 comma
-l_int|0x70
+id|flags
 )paren
 suffix:semicolon
-id|outb_p
+id|CMOS_WRITE
+c_func
 (paren
 l_int|0x00
 comma
-l_int|0x71
+l_int|0x8f
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|rtc_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Remap the kernel at virtual address zero, as well as offset zero&n;&t;   from the kernel segment.  This assumes the kernel segment starts at&n;&t;   virtual address PAGE_OFFSET. */
@@ -1052,6 +1069,17 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|show_trace
+c_func
+(paren
+r_int
+r_int
+op_star
+id|esp
+)paren
+suffix:semicolon
 DECL|function|show_regs
 r_void
 id|show_regs
@@ -1090,13 +1118,18 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;EIP: %04x:[&lt;%08lx&gt;]&quot;
+l_string|&quot;EIP: %04x:[&lt;%08lx&gt;] CPU: %d&quot;
 comma
 l_int|0xffff
 op_amp
 id|regs-&gt;xcs
 comma
 id|regs-&gt;eip
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1232,6 +1265,13 @@ comma
 id|cr3
 comma
 id|cr4
+)paren
+suffix:semicolon
+id|show_trace
+c_func
+(paren
+op_amp
+id|regs-&gt;esp
 )paren
 suffix:semicolon
 )brace

@@ -708,6 +708,23 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef&t;CONFIG_ACPI20
+r_if
+c_cond
+(paren
+id|efi.acpi20
+)paren
+(brace
+multiline_comment|/* Parse the ACPI 2.0 tables */
+id|acpi20_parse
+c_func
+(paren
+id|efi.acpi20
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -756,22 +773,6 @@ c_func
 id|cmdline_p
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SWIOTLB
-(brace
-r_extern
-r_void
-id|setup_swiotlb
-(paren
-r_void
-)paren
-suffix:semicolon
-id|setup_swiotlb
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Display cpu info for all cpu&squot;s.&n; */
 r_int
@@ -784,10 +785,10 @@ id|buffer
 )paren
 (brace
 macro_line|#ifdef CONFIG_SMP
-DECL|macro|lps
-macro_line|#&t;define lps&t;c-&gt;loops_per_sec
+DECL|macro|lpj
+macro_line|#&t;define lpj&t;c-&gt;loops_per_jiffy
 macro_line|#else
-macro_line|#&t;define lps&t;loops_per_sec
+macro_line|#&t;define lpj&t;loops_per_jiffy
 macro_line|#endif
 r_char
 id|family
@@ -1046,12 +1047,16 @@ id|c-&gt;itc_freq
 op_mod
 l_int|1000000
 comma
-id|lps
+id|lpj
+op_star
+id|HZ
 op_div
 l_int|500000
 comma
 (paren
-id|lps
+id|lpj
+op_star
+id|HZ
 op_div
 l_int|5000
 )paren
@@ -1260,18 +1265,10 @@ op_eq
 id|PAL_STATUS_SUCCESS
 )paren
 (brace
-macro_line|#if 1
-multiline_comment|/*&n;&t;&t; * XXX the current PAL code returns IMPL_VA_MSB==60, which is dead-wrong.&n;&t;&t; * --davidm 00/05/26&n;&t;&t; s*/
-id|impl_va_msb
-op_assign
-l_int|50
-suffix:semicolon
-macro_line|#else
 id|impl_va_msb
 op_assign
 id|vm2.pal_vm_info_2_s.impl_va_msb
 suffix:semicolon
-macro_line|#endif
 id|phys_addr_size
 op_assign
 id|vm1.pal_vm_info_1_s.phys_add_size
@@ -1388,6 +1385,13 @@ id|ia64_tlb_init
 r_void
 )paren
 suffix:semicolon
+id|pal_vm_info_2_u_t
+id|vmi
+suffix:semicolon
+r_int
+r_int
+id|max_ctx
+suffix:semicolon
 id|identify_cpu
 c_func
 (paren
@@ -1414,15 +1418,23 @@ id|pt_regs
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Initialize default control register to defer speculative&n;&t; * faults.  On a speculative load, we want to defer access&n;&t; * right, key miss, and key permission faults.  We currently&n;&t; * do NOT defer TLB misses, page-not-present, access bit, or&n;&t; * debug faults but kernel code should not rely on any&n;&t; * particular setting of these bits.&n;&t;ia64_set_dcr(IA64_DCR_DR | IA64_DCR_DK | IA64_DCR_DX | IA64_DCR_PP);&n;&t; */
+multiline_comment|/*&n;&t; * Initialize default control register to defer all speculative faults.  The&n;&t; * kernel MUST NOT depend on a particular setting of these bits (in other words,&n;&t; * the kernel must have recovery code for all speculative accesses).&n;&t; */
 id|ia64_set_dcr
 c_func
 (paren
-id|IA64_DCR_DR
+id|IA64_DCR_DM
+op_or
+id|IA64_DCR_DP
 op_or
 id|IA64_DCR_DK
 op_or
 id|IA64_DCR_DX
+op_or
+id|IA64_DCR_DR
+op_or
+id|IA64_DCR_DA
+op_or
+id|IA64_DCR_DD
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_SMP
@@ -1488,5 +1500,87 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* set ia64_ctx.max_rid to the maximum RID that is supported by all CPUs: */
+r_if
+c_cond
+(paren
+id|ia64_pal_vm_summary
+c_func
+(paren
+l_int|NULL
+comma
+op_amp
+id|vmi
+)paren
+op_eq
+l_int|0
+)paren
+id|max_ctx
+op_assign
+(paren
+l_int|1U
+op_lshift
+(paren
+id|vmi.pal_vm_info_2_s.rid_size
+op_minus
+l_int|3
+)paren
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ia64_rid_init: PAL VM summary failed, assuming 18 RID bits&bslash;n&quot;
+)paren
+suffix:semicolon
+id|max_ctx
+op_assign
+(paren
+l_int|1U
+op_lshift
+l_int|15
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* use architected minimum */
+)brace
+r_while
+c_loop
+(paren
+id|max_ctx
+OL
+id|ia64_ctx.max_ctx
+)paren
+(brace
+r_int
+r_int
+id|old
+op_assign
+id|ia64_ctx.max_ctx
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmpxchg
+c_func
+(paren
+op_amp
+id|ia64_ctx.max_ctx
+comma
+id|old
+comma
+id|max_ctx
+)paren
+op_eq
+id|old
+)paren
+r_break
+suffix:semicolon
+)brace
 )brace
 eof

@@ -214,9 +214,29 @@ DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED &t;0x400  /* software: page referenced */
 DECL|macro|_PAGE_U0_SHARED
 mdefine_line|#define _PAGE_U0_SHARED 0x800  /* software: page is shared in user space */
+multiline_comment|/* software: moves to PTEA.TC (Timing Control) */
+DECL|macro|_PAGE_PCC_AREA5
+mdefine_line|#define _PAGE_PCC_AREA5&t;0x00000000&t;/* use BSC registers for area5 */
+DECL|macro|_PAGE_PCC_AREA6
+mdefine_line|#define _PAGE_PCC_AREA6&t;0x80000000&t;/* use BSC registers for area6 */
+multiline_comment|/* software: moves to PTEA.SA[2:0] (Space Attributes) */
+DECL|macro|_PAGE_PCC_IODYN
+mdefine_line|#define _PAGE_PCC_IODYN 0x00000001&t;/* IO space, dynamically sized bus */
+DECL|macro|_PAGE_PCC_IO8
+mdefine_line|#define _PAGE_PCC_IO8&t;0x20000000&t;/* IO space, 8 bit bus */
+DECL|macro|_PAGE_PCC_IO16
+mdefine_line|#define _PAGE_PCC_IO16&t;0x20000001&t;/* IO space, 16 bit bus */
+DECL|macro|_PAGE_PCC_COM8
+mdefine_line|#define _PAGE_PCC_COM8&t;0x40000000&t;/* Common Memory space, 8 bit bus */
+DECL|macro|_PAGE_PCC_COM16
+mdefine_line|#define _PAGE_PCC_COM16&t;0x40000001&t;/* Common Memory space, 16 bit bus */
+DECL|macro|_PAGE_PCC_ATR8
+mdefine_line|#define _PAGE_PCC_ATR8&t;0x60000000&t;/* Attribute Memory space, 8 bit bus */
+DECL|macro|_PAGE_PCC_ATR16
+mdefine_line|#define _PAGE_PCC_ATR16&t;0x60000001&t;/* Attribute Memory space, 6 bit bus */
 multiline_comment|/* Mask which drop software flags */
 DECL|macro|_PAGE_FLAGS_HARDWARE_MASK
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff1ff
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff1fe
 multiline_comment|/* Hardware flags: SZ=1 (4k-byte) */
 DECL|macro|_PAGE_FLAGS_HARD
 mdefine_line|#define _PAGE_FLAGS_HARD&t;&t;0x00000010
@@ -245,6 +265,8 @@ DECL|macro|PAGE_KERNEL
 mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_CACHABLE | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_HW_SHARED | _PAGE_FLAGS_HARD)
 DECL|macro|PAGE_KERNEL_RO
 mdefine_line|#define PAGE_KERNEL_RO&t;__pgprot(_PAGE_PRESENT | _PAGE_CACHABLE | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_HW_SHARED | _PAGE_FLAGS_HARD)
+DECL|macro|PAGE_KERNEL_PCC
+mdefine_line|#define PAGE_KERNEL_PCC(slot, type) &bslash;&n;&t;&t;&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_FLAGS_HARD | (slot ? _PAGE_PCC_AREA5 : _PAGE_PCC_AREA6) | (type))
 multiline_comment|/*&n; * As i386 and MIPS, SuperH can&squot;t do page protection for execute, and&n; * considers that the same as a read.  Also, write permissions imply&n; * read permissions. This is the closest we can get..  &n; */
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE
@@ -322,7 +344,7 @@ DECL|macro|pte_page
 mdefine_line|#define pte_page(x) (mem_map+(unsigned long)(((pte_val(x) -__MEMORY_START) &gt;&gt; PAGE_SHIFT)))
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|function|pte_read
-r_extern
+r_static
 r_inline
 r_int
 id|pte_read
@@ -343,7 +365,7 @@ id|_PAGE_USER
 suffix:semicolon
 )brace
 DECL|function|pte_exec
-r_extern
+r_static
 r_inline
 r_int
 id|pte_exec
@@ -364,7 +386,7 @@ id|_PAGE_USER
 suffix:semicolon
 )brace
 DECL|function|pte_dirty
-r_extern
+r_static
 r_inline
 r_int
 (def_block
@@ -387,7 +409,7 @@ suffix:semicolon
 )brace
 )def_block
 DECL|function|pte_young
-r_extern
+r_static
 r_inline
 r_int
 (def_block
@@ -410,7 +432,7 @@ suffix:semicolon
 )brace
 )def_block
 DECL|function|pte_write
-r_extern
+r_static
 r_inline
 r_int
 (def_block
@@ -433,7 +455,7 @@ suffix:semicolon
 )brace
 )def_block
 DECL|function|pte_shared
-r_extern
+r_static
 r_inline
 r_int
 (def_block
@@ -456,7 +478,7 @@ suffix:semicolon
 )brace
 )def_block
 DECL|function|pte_rdprotect
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_rdprotect
@@ -491,7 +513,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_exprotect
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_exprotect
@@ -526,7 +548,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_mkclean
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_mkclean
@@ -561,7 +583,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_mkold
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_mkold
@@ -596,7 +618,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_wrprotect
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_wrprotect
@@ -631,7 +653,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_mkread
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_mkread
@@ -665,7 +687,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_mkexec
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_mkexec
@@ -699,7 +721,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_mkdirty
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_mkdirty
@@ -733,7 +755,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_mkyoung
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_mkyoung
@@ -767,7 +789,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|function|pte_mkwrite
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_mkwrite
@@ -807,7 +829,7 @@ multiline_comment|/* This takes a physical page address that is used by the rema
 DECL|macro|mk_pte_phys
 mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; set_pte(&amp;__pte, __pte(physpage + pgprot_val(pgprot))); __pte; })
 DECL|function|pte_modify
-r_extern
+r_static
 r_inline
 id|pte_t
 id|pte_modify

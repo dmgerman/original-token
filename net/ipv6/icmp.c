@@ -2097,8 +2097,7 @@ suffix:semicolon
 )brace
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 multiline_comment|/* CHECKSUM_UNNECESSARY */
 )brace
 suffix:semicolon

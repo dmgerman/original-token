@@ -1308,6 +1308,10 @@ id|pskb
 op_member_access_from_pointer
 id|mac.raw
 op_ne
+(paren
+r_void
+op_star
+)paren
 id|iph
 )paren
 (brace

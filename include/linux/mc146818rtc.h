@@ -6,6 +6,11 @@ mdefine_line|#define _MC146818RTC_H
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/rtc.h&gt;&t;&t;&t;/* get the user-level API */
 macro_line|#include &lt;asm/mc146818rtc.h&gt;&t;&t;/* register access macros */
+r_extern
+id|spinlock_t
+id|rtc_lock
+suffix:semicolon
+multiline_comment|/* serialize CMOS RAM access */
 multiline_comment|/**********************************************************************&n; * register summary&n; **********************************************************************/
 DECL|macro|RTC_SECONDS
 mdefine_line|#define RTC_SECONDS&t;&t;0

@@ -2567,13 +2567,13 @@ id|mdc800_table
 op_assign
 (brace
 (brace
-id|idVendor
-suffix:colon
+id|USB_DEVICE
+c_func
+(paren
 id|MDC800_VENDOR_ID
 comma
-id|idProduct
-suffix:colon
 id|MDC800_PRODUCT_ID
+)paren
 )brace
 comma
 (brace

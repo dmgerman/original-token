@@ -3487,6 +3487,15 @@ c_cond
 l_int|0x48
 op_or
 id|ENDCFG_WTS
+op_or
+(paren
+id|ei_local-&gt;bigendian
+ques
+c_cond
+id|ENDCFG_BOS
+suffix:colon
+l_int|0
+)paren
 )paren
 suffix:colon
 l_int|0x48

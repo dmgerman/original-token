@@ -100,18 +100,16 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|__m
 mdefine_line|#define __m(x) (*(struct __large_struct *)(x))
+multiline_comment|/* We need to declare the __ex_table section before we can use it in .xdata.  */
+id|__asm__
+(paren
+l_string|&quot;.section &bslash;&quot;__ex_table&bslash;&quot;, &bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t.previous&quot;
+)paren
+suffix:semicolon
 DECL|macro|__get_user_64
-mdefine_line|#define __get_user_64(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld8 %0=%2%P2&bslash;t
+mdefine_line|#define __get_user_64(addr)&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld8 %0=%2%P2&bslash;t
 singleline_comment|// %0 and %1 get overwritten by exception handler&bslash;n&quot;&t;&bslash;
-l_string|&quot;2:&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 @gprel(1b)&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 (2b-1b)|1&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.previous&quot;
+l_string|&quot;2:&bslash;n&bslash;t.xdata4 &bslash;&quot;__ex_table&bslash;&quot;, @gprel(1b), (2b-1b)|1&bslash;n&quot;
 "&bslash;"
 suffix:colon
 l_string|&quot;=r&quot;
@@ -123,7 +121,6 @@ l_string|&quot;=r&quot;
 (paren
 id|__gu_err
 )paren
-"&bslash;"
 suffix:colon
 l_string|&quot;m&quot;
 (paren
@@ -141,17 +138,9 @@ id|__gu_err
 )paren
 suffix:semicolon
 DECL|macro|__get_user_32
-mdefine_line|#define __get_user_32(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld4 %0=%2%P2&bslash;t
+mdefine_line|#define __get_user_32(addr)&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld4 %0=%2%P2&bslash;t
 singleline_comment|// %0 and %1 get overwritten by exception handler&bslash;n&quot;&t;&bslash;
-l_string|&quot;2:&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 @gprel(1b)&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 (2b-1b)|1&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.previous&quot;
+l_string|&quot;2:&bslash;n&bslash;t.xdata4 &bslash;&quot;__ex_table&bslash;&quot;, @gprel(1b), (2b-1b)|1&bslash;n&quot;
 "&bslash;"
 suffix:colon
 l_string|&quot;=r&quot;
@@ -163,7 +152,6 @@ l_string|&quot;=r&quot;
 (paren
 id|__gu_err
 )paren
-"&bslash;"
 suffix:colon
 l_string|&quot;m&quot;
 (paren
@@ -181,17 +169,9 @@ id|__gu_err
 )paren
 suffix:semicolon
 DECL|macro|__get_user_16
-mdefine_line|#define __get_user_16(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld2 %0=%2%P2&bslash;t
+mdefine_line|#define __get_user_16(addr)&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld2 %0=%2%P2&bslash;t
 singleline_comment|// %0 and %1 get overwritten by exception handler&bslash;n&quot;&t;&bslash;
-l_string|&quot;2:&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 @gprel(1b)&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 (2b-1b)|1&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.previous&quot;
+l_string|&quot;2:&bslash;n&bslash;t.xdata4 &bslash;&quot;__ex_table&bslash;&quot;, @gprel(1b), (2b-1b)|1&bslash;n&quot;
 "&bslash;"
 suffix:colon
 l_string|&quot;=r&quot;
@@ -203,7 +183,6 @@ l_string|&quot;=r&quot;
 (paren
 id|__gu_err
 )paren
-"&bslash;"
 suffix:colon
 l_string|&quot;m&quot;
 (paren
@@ -221,17 +200,9 @@ id|__gu_err
 )paren
 suffix:semicolon
 DECL|macro|__get_user_8
-mdefine_line|#define __get_user_8(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld1 %0=%2%P2&bslash;t
+mdefine_line|#define __get_user_8(addr)&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld1 %0=%2%P2&bslash;t
 singleline_comment|// %0 and %1 get overwritten by exception handler&bslash;n&quot;&t;&bslash;
-l_string|&quot;2:&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 @gprel(1b)&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 (2b-1b)|1&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.previous&quot;
+l_string|&quot;2:&bslash;n&bslash;t.xdata4 &bslash;&quot;__ex_table&bslash;&quot;, @gprel(1b), (2b-1b)|1&bslash;n&quot;
 "&bslash;"
 suffix:colon
 l_string|&quot;=r&quot;
@@ -243,7 +214,6 @@ l_string|&quot;=r&quot;
 (paren
 id|__gu_err
 )paren
-"&bslash;"
 suffix:colon
 l_string|&quot;m&quot;
 (paren
@@ -275,22 +245,13 @@ multiline_comment|/*&n; * The &quot;__put_user_xx()&quot; macros tell gcc they r
 DECL|macro|__put_user_64
 mdefine_line|#define __put_user_64(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst8 %1=%r2%P1&bslash;t
 singleline_comment|// %0 gets overwritten by exception handler&bslash;n&quot;&t;&bslash;
-l_string|&quot;2:&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 @gprel(1b)&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 2b-1b&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.previous&quot;
+l_string|&quot;2:&bslash;n&bslash;t.xdata4 &bslash;&quot;__ex_table&bslash;&quot;, @gprel(1b), (2b-1b)&bslash;n&quot;
 "&bslash;"
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|__pu_err
 )paren
-"&bslash;"
 suffix:colon
 l_string|&quot;m&quot;
 (paren
@@ -314,22 +275,13 @@ id|__pu_err
 DECL|macro|__put_user_32
 mdefine_line|#define __put_user_32(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst4 %1=%r2%P1&bslash;t
 singleline_comment|// %0 gets overwritten by exception handler&bslash;n&quot;&t;&bslash;
-l_string|&quot;2:&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 @gprel(1b)&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 2b-1b&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.previous&quot;
+l_string|&quot;2:&bslash;n&bslash;t.xdata4 &bslash;&quot;__ex_table&bslash;&quot;, @gprel(1b), (2b-1b)&bslash;n&quot;
 "&bslash;"
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|__pu_err
 )paren
-"&bslash;"
 suffix:colon
 l_string|&quot;m&quot;
 (paren
@@ -353,22 +305,13 @@ id|__pu_err
 DECL|macro|__put_user_16
 mdefine_line|#define __put_user_16(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst2 %1=%r2%P1&bslash;t
 singleline_comment|// %0 gets overwritten by exception handler&bslash;n&quot;&t;&bslash;
-l_string|&quot;2:&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 @gprel(1b)&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 2b-1b&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.previous&quot;
+l_string|&quot;2:&bslash;n&bslash;t.xdata4 &bslash;&quot;__ex_table&bslash;&quot;, @gprel(1b), (2b-1b)&bslash;n&quot;
 "&bslash;"
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|__pu_err
 )paren
-"&bslash;"
 suffix:colon
 l_string|&quot;m&quot;
 (paren
@@ -392,22 +335,13 @@ id|__pu_err
 DECL|macro|__put_user_8
 mdefine_line|#define __put_user_8(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst1 %1=%r2%P1&bslash;t
 singleline_comment|// %0 gets overwritten by exception handler&bslash;n&quot;&t;&bslash;
-l_string|&quot;2:&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 @gprel(1b)&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t&bslash;tdata4 2b-1b&bslash;n&quot;
-"&bslash;"
-l_string|&quot;&bslash;t.previous&quot;
+l_string|&quot;2:&bslash;n&bslash;t.xdata4 &bslash;&quot;__ex_table&bslash;&quot;, @gprel(1b), (2b-1b)&bslash;n&quot;
 "&bslash;"
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|__pu_err
 )paren
-"&bslash;"
 suffix:colon
 l_string|&quot;m&quot;
 (paren

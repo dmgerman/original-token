@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Initialize MMU support.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * Initialize MMU support.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
 macro_line|#include &lt;asm/ia32.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1120,7 +1121,7 @@ c_func
 (paren
 id|pte
 comma
-id|page_pte_prot
+id|mk_pte
 c_func
 (paren
 id|page
@@ -1150,8 +1151,14 @@ id|rid
 comma
 id|pta
 comma
-id|impl_va_msb
+id|impl_va_bits
 suffix:semicolon
+macro_line|#ifdef CONFIG_DISABLE_VHPT
+DECL|macro|VHPT_ENABLE_BIT
+macro_line|#&t;define VHPT_ENABLE_BIT&t;0
+macro_line|#else
+macro_line|#&t;define VHPT_ENABLE_BIT&t;1
+macro_line|#endif
 multiline_comment|/* Set up the kernel identity mappings (regions 6 &amp; 7) and the vmalloc area (region 5): */
 id|ia64_clear_ic
 c_func
@@ -1251,18 +1258,17 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check if the virtually mapped linear page table (VMLPT)&n;&t; * overlaps with a mapped address space.  The IA-64&n;&t; * architecture guarantees that at least 50 bits of virtual&n;&t; * address space are implemented but if we pick a large enough&n;&t; * page size (e.g., 64KB), the VMLPT is big enough that it&n;&t; * will overlap with the upper half of the kernel mapped&n;&t; * region.  I assume that once we run on machines big enough&n;&t; * to warrant 64KB pages, IMPL_VA_MSB will be significantly&n;&t; * bigger, so we can just adjust the number below to get&n;&t; * things going.  Alternatively, we could truncate the upper&n;&t; * half of each regions address space to not permit mappings&n;&t; * that would overlap with the VMLPT.  --davidm 99/11/13&n;&t; */
-DECL|macro|ld_pte_size
-macro_line|#&t;define ld_pte_size&t;&t;3
-DECL|macro|ld_max_addr_space_pages
-macro_line|#&t;define ld_max_addr_space_pages&t;3*(PAGE_SHIFT - ld_pte_size) /* max # of mappable pages */
-DECL|macro|ld_max_addr_space_size
-macro_line|#&t;define ld_max_addr_space_size&t;(ld_max_addr_space_pages + PAGE_SHIFT)
-DECL|macro|ld_max_vpt_size
-macro_line|#&t;define ld_max_vpt_size&t;&t;(ld_max_addr_space_pages + ld_pte_size)
+multiline_comment|/*&n;&t; * Check if the virtually mapped linear page table (VMLPT) overlaps with a mapped&n;&t; * address space.  The IA-64 architecture guarantees that at least 50 bits of&n;&t; * virtual address space are implemented but if we pick a large enough page size&n;&t; * (e.g., 64KB), the mapped address space is big enough that it will overlap with&n;&t; * VMLPT.  I assume that once we run on machines big enough to warrant 64KB pages,&n;&t; * IMPL_VA_MSB will be significantly bigger, so this is unlikely to become a&n;&t; * problem in practice.  Alternatively, we could truncate the top of the mapped&n;&t; * address space to not permit mappings that would overlap with the VMLPT.&n;&t; * --davidm 00/12/06&n;&t; */
+DECL|macro|pte_bits
+macro_line|#&t;define pte_bits&t;&t;&t;3
+DECL|macro|mapped_space_bits
+macro_line|#&t;define mapped_space_bits&t;(3*(PAGE_SHIFT - pte_bits) + PAGE_SHIFT)
+multiline_comment|/*&n;&t; * The virtual page table has to cover the entire implemented address space within&n;&t; * a region even though not all of this space may be mappable.  The reason for&n;&t; * this is that the Access bit and Dirty bit fault handlers perform&n;&t; * non-speculative accesses to the virtual page table, so the address range of the&n;&t; * virtual page table itself needs to be covered by virtual page table.&n;&t; */
+DECL|macro|vmlpt_bits
+macro_line|#&t;define vmlpt_bits&t;&t;(impl_va_bits - PAGE_SHIFT + pte_bits)
 DECL|macro|POW2
 macro_line|#&t;define POW2(n)&t;&t;&t;(1ULL &lt;&lt; (n))
-id|impl_va_msb
+id|impl_va_bits
 op_assign
 id|ffz
 c_func
@@ -1270,54 +1276,25 @@ c_func
 op_complement
 id|my_cpu_data.unimpl_va_mask
 )paren
-op_minus
-l_int|1
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|impl_va_msb
+id|impl_va_bits
 template_param
-l_int|60
+l_int|61
 )paren
 id|panic
 c_func
 (paren
-l_string|&quot;Bogus impl_va_msb value of %lu!&bslash;n&quot;
+l_string|&quot;CPU has bogus IMPL_VA_MSB value of %lu!&bslash;n&quot;
 comma
-id|impl_va_msb
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|POW2
-c_func
-(paren
-id|ld_max_addr_space_size
+id|impl_va_bits
 op_minus
 l_int|1
 )paren
-op_plus
-id|POW2
-c_func
-(paren
-id|ld_max_vpt_size
-)paren
-OG
-id|POW2
-c_func
-(paren
-id|impl_va_msb
-)paren
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;mm/init: overlap between virtually mapped linear page table and &quot;
-l_string|&quot;mapped kernel space!&quot;
-)paren
 suffix:semicolon
+multiline_comment|/* place the VMLPT at the end of each page-table mapped region: */
 id|pta
 op_assign
 id|POW2
@@ -1329,10 +1306,27 @@ op_minus
 id|POW2
 c_func
 (paren
-id|impl_va_msb
+id|vmlpt_bits
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_DISABLE_VHPT
+r_if
+c_cond
+(paren
+id|POW2
+c_func
+(paren
+id|mapped_space_bits
+)paren
+op_ge
+id|pta
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;mm/init: overlap between virtually mapped linear page table and &quot;
+l_string|&quot;mapped kernel space!&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Set the (virtually mapped linear) page table address.  Bit&n;&t; * 8 selects between the short and long format, bits 2-7 the&n;&t; * size of the table, and bit 0 whether the VHPT walker is&n;&t; * enabled.&n;&t; */
 id|ia64_set_pta
 c_func
@@ -1346,56 +1340,14 @@ l_int|8
 )paren
 op_or
 (paren
-(paren
-l_int|3
-op_star
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|3
-)paren
-op_plus
-l_int|3
-)paren
+id|vmlpt_bits
 op_lshift
 l_int|2
 )paren
 op_or
-l_int|1
+id|VHPT_ENABLE_BIT
 )paren
 suffix:semicolon
-macro_line|#else
-id|ia64_set_pta
-c_func
-(paren
-id|pta
-op_or
-(paren
-l_int|0
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-(paren
-l_int|3
-op_star
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|3
-)paren
-op_plus
-l_int|3
-)paren
-op_lshift
-l_int|2
-)paren
-op_or
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Set up the page tables.&n; */
 r_void
@@ -1627,6 +1579,14 @@ id|datasize
 comma
 id|initsize
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+multiline_comment|/*&n;&t; * This needs to be called _after_ the command line has been parsed but _before_&n;&t; * any drivers that may need the PCI DMA interface are initialized or bootmem has&n;&t; * been freed.&n;&t; */
+id|platform_pci_dma_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

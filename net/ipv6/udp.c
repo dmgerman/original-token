@@ -234,6 +234,7 @@ id|result
 suffix:semicolon
 id|next
 suffix:colon
+suffix:semicolon
 )brace
 id|result
 op_assign

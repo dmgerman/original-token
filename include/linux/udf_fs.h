@@ -14,12 +14,12 @@ DECL|macro|UDFFS_DEBUG
 mdefine_line|#define UDFFS_DEBUG
 macro_line|#ifdef UDFFS_DEBUG
 DECL|macro|udf_debug
-mdefine_line|#define udf_debug(f, a...) &bslash;&n;&t;{ &bslash;&n;&t;&t;printk (KERN_DEBUG &quot;UDF-fs DEBUG (%s, %d): %s: &quot;, &bslash;&n;&t;&t;&t;__FILE__, __LINE__, __FUNCTION__); &bslash;&n;&t;&t;printk (## f, ## a); &bslash;&n;&t;}
+mdefine_line|#define udf_debug(f, a...) &bslash;&n;&t;{ &bslash;&n;&t;&t;printk (KERN_DEBUG &quot;UDF-fs DEBUG %s:%d:%s: &quot;, &bslash;&n;&t;&t;&t;__FILE__, __LINE__, __FUNCTION__); &bslash;&n;&t;&t;printk (f, ##a); &bslash;&n;&t;}
 macro_line|#else
 DECL|macro|udf_debug
 mdefine_line|#define udf_debug(f, a...) /**/
 macro_line|#endif
 DECL|macro|udf_info
-mdefine_line|#define udf_info(f, a...) &bslash;&n;&t;&t;printk (KERN_INFO &quot;UDF-fs INFO &quot; ## f, ## a);
+mdefine_line|#define udf_info(f, a...) &bslash;&n;&t;&t;printk (KERN_INFO &quot;UDF-fs INFO &quot; f, ##a);
 macro_line|#endif /* !defined(_LINUX_UDF_FS_H) */
 eof

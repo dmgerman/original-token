@@ -184,13 +184,13 @@ id|usb_dsbr100_table
 op_assign
 (brace
 (brace
-id|idVendor
-suffix:colon
+id|USB_DEVICE
+c_func
+(paren
 id|DSB100_VENDOR
 comma
-id|idProduct
-suffix:colon
 id|DSB100_PRODUCT
+)paren
 )brace
 comma
 (brace

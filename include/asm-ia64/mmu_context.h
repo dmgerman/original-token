@@ -2,24 +2,12 @@ macro_line|#ifndef _ASM_IA64_MMU_CONTEXT_H
 DECL|macro|_ASM_IA64_MMU_CONTEXT_H
 mdefine_line|#define _ASM_IA64_MMU_CONTEXT_H
 multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/*&n; * Routines to manage the allocation of task context numbers.  Task&n; * context numbers are used to reduce or eliminate the need to perform&n; * TLB flushes due to context switches.  Context numbers are&n; * implemented using ia-64 region ids.  Since ia-64 TLBs do not&n; * guarantee that the region number is checked when performing a TLB&n; * lookup, we need to assign a unique region id to each region in a&n; * process.  We use the least significant three bits in a region id&n; * for this purpose.  On processors where the region number is checked&n; * in TLB lookups, we can get back those two bits by defining&n; * CONFIG_IA64_TLB_CHECKS_REGION_NUMBER.  The macro&n; * IA64_REGION_ID_BITS gives the number of bits in a region id.  The&n; * architecture manual guarantees this number to be in the range&n; * 18-24.&n; *&n; * Copyright (C) 1998 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 DECL|macro|IA64_REGION_ID_KERNEL
 mdefine_line|#define IA64_REGION_ID_KERNEL&t;0 /* the kernel&squot;s region id (tlb.c depends on this being 0) */
-DECL|macro|IA64_REGION_ID_BITS
-mdefine_line|#define IA64_REGION_ID_BITS&t;18
-macro_line|#ifdef CONFIG_IA64_TLB_CHECKS_REGION_NUMBER
-DECL|macro|IA64_HW_CONTEXT_BITS
-macro_line|# define IA64_HW_CONTEXT_BITS&t;IA64_REGION_ID_BITS
-macro_line|#else
-DECL|macro|IA64_HW_CONTEXT_BITS
-macro_line|# define IA64_HW_CONTEXT_BITS&t;(IA64_REGION_ID_BITS - 3)
-macro_line|#endif
-DECL|macro|IA64_HW_CONTEXT_MASK
-mdefine_line|#define IA64_HW_CONTEXT_MASK&t;((1UL &lt;&lt; IA64_HW_CONTEXT_BITS) - 1)
 DECL|struct|ia64_ctx
 r_struct
 id|ia64_ctx
@@ -40,6 +28,12 @@ r_int
 id|limit
 suffix:semicolon
 multiline_comment|/* next &gt;= limit =&gt; must call wrap_mmu_context() */
+DECL|member|max_ctx
+r_int
+r_int
+id|max_ctx
+suffix:semicolon
+multiline_comment|/* max. context value supported by all CPUs */
 )brace
 suffix:semicolon
 r_extern
@@ -94,11 +88,6 @@ r_int
 id|region_addr
 )paren
 (brace
-macro_line|# ifdef CONFIG_IA64_TLB_CHECKS_REGION_NUMBER
-r_return
-id|context
-suffix:semicolon
-macro_line|# else
 r_return
 id|context
 op_lshift
@@ -110,7 +99,6 @@ op_rshift
 l_int|61
 )paren
 suffix:semicolon
-macro_line|# endif
 )brace
 r_static
 r_inline
@@ -262,10 +250,7 @@ suffix:semicolon
 id|rid
 op_assign
 id|mm-&gt;context
-suffix:semicolon
-macro_line|#ifndef CONFIG_IA64_TLB_CHECKS_REGION_NUMBER
-id|rid
-op_lshift_assign
+op_lshift
 l_int|3
 suffix:semicolon
 multiline_comment|/* make space for encoding the region number */
@@ -275,7 +260,6 @@ l_int|1
 op_lshift
 l_int|8
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* encode the region id, preferred page size, and VHPT enable bit: */
 id|rr0
 op_assign
@@ -382,12 +366,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Switch from address space PREV to address space NEXT.  Note that&n; * TSK may be NULL.&n; */
+multiline_comment|/*&n; * Switch from address space PREV to address space NEXT.&n; */
 r_static
 r_inline
 r_void
-DECL|function|switch_mm
-id|switch_mm
+DECL|function|activate_mm
+id|activate_mm
 (paren
 r_struct
 id|mm_struct
@@ -398,14 +382,6 @@ r_struct
 id|mm_struct
 op_star
 id|next
-comma
-r_struct
-id|task_struct
-op_star
-id|tsk
-comma
-r_int
-id|cpu
 )paren
 (brace
 multiline_comment|/*&n;&t; * We may get interrupts here, but that&squot;s OK because interrupt&n;&t; * handlers cannot touch user-space.&n;&t; */
@@ -437,7 +413,7 @@ id|next
 )paren
 suffix:semicolon
 )brace
-DECL|macro|activate_mm
-mdefine_line|#define activate_mm(prev,next)&t;&t;&t;&t;&t;&bslash;&n;&t;switch_mm((prev), (next), NULL, smp_processor_id())
+DECL|macro|switch_mm
+mdefine_line|#define switch_mm(prev_mm,next_mm,next_task,cpu)&t;activate_mm(prev_mm, next_mm)
 macro_line|#endif /* _ASM_IA64_MMU_CONTEXT_H */
 eof

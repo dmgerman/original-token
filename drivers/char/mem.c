@@ -516,6 +516,7 @@ op_or
 id|_PAGE_GUARDED
 suffix:semicolon
 macro_line|#elif defined(__mc68000__)
+macro_line|#ifdef SUN3_PAGE_NOCACHE
 r_if
 c_cond
 (paren
@@ -526,6 +527,7 @@ op_or_assign
 id|SUN3_PAGE_NOCACHE
 suffix:semicolon
 r_else
+macro_line|#endif
 r_if
 c_cond
 (paren

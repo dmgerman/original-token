@@ -299,8 +299,7 @@ DECL|macro|__NR_nfsservctl
 mdefine_line|#define __NR_nfsservctl&t;&t;&t;1169
 DECL|macro|__NR_prctl
 mdefine_line|#define __NR_prctl&t;&t;&t;1170
-DECL|macro|__NR_getpagesize
-mdefine_line|#define __NR_getpagesize&t;&t;1171
+multiline_comment|/* 1171 is reserved for backwards compatibility with old __NR_getpagesize */
 DECL|macro|__NR_mmap2
 mdefine_line|#define __NR_mmap2&t;&t;&t;1172
 DECL|macro|__NR_pciconfig_read
@@ -371,8 +370,8 @@ DECL|macro|__NR_sendmsg
 mdefine_line|#define __NR_sendmsg&t;&t;&t;1205
 DECL|macro|__NR_recvmsg
 mdefine_line|#define __NR_recvmsg&t;&t;&t;1206
-DECL|macro|__NR_sys_pivot_root
-mdefine_line|#define __NR_sys_pivot_root&t;&t;1207
+DECL|macro|__NR_pivot_root
+mdefine_line|#define __NR_pivot_root&t;&t;&t;1207
 DECL|macro|__NR_mincore
 mdefine_line|#define __NR_mincore&t;&t;&t;1208
 DECL|macro|__NR_madvise

@@ -423,21 +423,15 @@ c_func
 l_string|&quot;bad signature in system table!&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; * revisions are coded in BCD, so %x does the job for us&n;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot;SAL v%u.%02u: ia32bios=%s, oem=%.32s, product=%.32s&bslash;n&quot;
+l_string|&quot;SAL v%x.%02x: oem=%.32s, product=%.32s&bslash;n&quot;
 comma
 id|systab-&gt;sal_rev_major
 comma
 id|systab-&gt;sal_rev_minor
-comma
-id|systab-&gt;ia32_bios_present
-ques
-c_cond
-l_string|&quot;present&quot;
-suffix:colon
-l_string|&quot;absent&quot;
 comma
 id|systab-&gt;oem_id
 comma

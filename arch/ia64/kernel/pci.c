@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * pci.c - Low-Level PCI Access in IA64&n; * &n; * Derived from bios32.c of i386 tree.&n; *&n; */
+multiline_comment|/*&n; * pci.c - Low-Level PCI Access in IA-64&n; * &n; * Derived from bios32.c of i386 tree.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -49,21 +49,9 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|macro|PCI_NO_CHECKS
-mdefine_line|#define PCI_NO_CHECKS&t;&t;0x400
-DECL|macro|PCI_NO_PEER_FIXUP
-mdefine_line|#define PCI_NO_PEER_FIXUP&t;0x800
-DECL|variable|pci_probe
-r_static
-r_int
-r_int
-id|pci_probe
-op_assign
-id|PCI_NO_CHECKS
-suffix:semicolon
 multiline_comment|/* Macro to build a PCI configuration address to be passed as a parameter to SAL. */
 DECL|macro|PCI_CONFIG_ADDRESS
-mdefine_line|#define PCI_CONFIG_ADDRESS(dev, where) (((u64) dev-&gt;bus-&gt;number &lt;&lt; 16) | ((u64) (dev-&gt;devfn &amp; 0xff) &lt;&lt; 8) | (where &amp; 0xff))
+mdefine_line|#define PCI_CONFIG_ADDRESS(dev, where) &bslash;&n;&t;(((u64) dev-&gt;bus-&gt;number &lt;&lt; 16) | ((u64) (dev-&gt;devfn &amp; 0xff) &lt;&lt; 8) | (where &amp; 0xff))
 r_static
 r_int
 DECL|function|pci_conf_read_config_byte
@@ -329,7 +317,6 @@ id|value
 suffix:semicolon
 )brace
 DECL|variable|pci_conf
-r_static
 r_struct
 id|pci_ops
 id|pci_conf
@@ -348,70 +335,27 @@ comma
 id|pci_conf_write_config_dword
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Try to find PCI BIOS.  This will always work for IA64.&n; */
-r_static
-r_struct
-id|pci_ops
-op_star
-id|__init
-DECL|function|pci_find_bios
-id|pci_find_bios
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-op_amp
-id|pci_conf
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Initialization. Uses the SAL interface&n; */
-DECL|macro|PCI_BUSES_TO_SCAN
-mdefine_line|#define PCI_BUSES_TO_SCAN 255
 r_void
 id|__init
 DECL|function|pcibios_init
 id|pcibios_init
-c_func
 (paren
 r_void
 )paren
 (brace
-r_struct
-id|pci_ops
-op_star
-id|ops
-op_assign
-l_int|NULL
-suffix:semicolon
+DECL|macro|PCI_BUSES_TO_SCAN
+macro_line|#&t;define PCI_BUSES_TO_SCAN 255
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ops
-op_assign
-id|pci_find_bios
+id|platform_pci_fixup
 c_func
 (paren
-)paren
-)paren
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;PCI: No PCI bus detected&bslash;n&quot;
+l_int|0
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
+multiline_comment|/* phase 0 initialization (before PCI bus has been scanned) */
 id|printk
 c_func
 (paren
@@ -437,7 +381,8 @@ c_func
 (paren
 id|i
 comma
-id|ops
+op_amp
+id|pci_conf
 comma
 l_int|NULL
 )paren
@@ -445,8 +390,10 @@ suffix:semicolon
 id|platform_pci_fixup
 c_func
 (paren
+l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* phase 1 initialization (after PCI bus has been scanned) */
 r_return
 suffix:semicolon
 )brace
@@ -455,7 +402,6 @@ r_void
 id|__init
 DECL|function|pcibios_fixup_bus
 id|pcibios_fixup_bus
-c_func
 (paren
 r_struct
 id|pci_bus
@@ -470,7 +416,6 @@ r_void
 id|__init
 DECL|function|pcibios_update_resource
 id|pcibios_update_resource
-c_func
 (paren
 r_struct
 id|pci_dev
@@ -567,7 +512,6 @@ r_void
 id|__init
 DECL|function|pcibios_update_irq
 id|pcibios_update_irq
-c_func
 (paren
 r_struct
 id|pci_dev
@@ -658,27 +602,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * PCI BIOS setup, always defaults to SAL interface&n; */
-r_char
-op_star
-id|__init
-DECL|function|pcibios_setup
-id|pcibios_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-)paren
-(brace
-id|pci_probe
-op_assign
-id|PCI_NO_CHECKS
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 r_void
 DECL|function|pcibios_align_resource
 id|pcibios_align_resource
@@ -697,5 +620,21 @@ r_int
 id|size
 )paren
 (brace
+)brace
+multiline_comment|/*&n; * PCI BIOS setup, always defaults to SAL interface&n; */
+r_char
+op_star
+id|__init
+DECL|function|pcibios_setup
+id|pcibios_setup
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
 )brace
 eof

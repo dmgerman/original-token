@@ -32,6 +32,10 @@ DECL|macro|MAP_LOCKED
 mdefine_line|#define MAP_LOCKED&t;0x2000&t;&t;/* pages are locked */
 DECL|macro|MAP_NORESERVE
 mdefine_line|#define MAP_NORESERVE&t;0x4000&t;&t;/* don&squot;t check for reservations */
+DECL|macro|MAP_WRITECOMBINED
+mdefine_line|#define MAP_WRITECOMBINED 0x10000&t;/* write-combine the area */
+DECL|macro|MAP_NONCACHED
+mdefine_line|#define MAP_NONCACHED&t;0x20000&t;&t;/* don&squot;t cache the memory */
 DECL|macro|MS_ASYNC
 mdefine_line|#define MS_ASYNC&t;1&t;&t;/* sync memory asynchronously */
 DECL|macro|MS_INVALIDATE

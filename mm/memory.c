@@ -1971,6 +1971,13 @@ c_cond
 (paren
 id|map
 )paren
+(brace
+id|flush_dcache_page
+c_func
+(paren
+id|map
+)paren
+suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -1978,6 +1985,7 @@ op_amp
 id|map-&gt;count
 )paren
 suffix:semicolon
+)brace
 r_else
 id|printk
 (paren

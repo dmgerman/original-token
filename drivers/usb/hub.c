@@ -3496,6 +3496,10 @@ id|hub_id_table
 op_assign
 (brace
 (brace
+id|match_flags
+suffix:colon
+id|USB_DEVICE_ID_MATCH_INT_CLASS
+comma
 id|bInterfaceClass
 suffix:colon
 id|USB_CLASS_HUB

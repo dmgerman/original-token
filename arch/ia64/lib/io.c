@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Copy data from IO memory space to &quot;real&quot; memory space.&n; * This needs to be optimized.&n; */
@@ -158,4 +159,167 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_IA64_GENERIC
+r_int
+r_int
+DECL|function|ia64_inb
+id|ia64_inb
+(paren
+r_int
+r_int
+id|port
+)paren
+(brace
+r_return
+id|__ia64_inb
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
+)brace
+r_int
+r_int
+DECL|function|ia64_inw
+id|ia64_inw
+(paren
+r_int
+r_int
+id|port
+)paren
+(brace
+r_return
+id|__ia64_inw
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
+)brace
+r_int
+r_int
+DECL|function|ia64_inl
+id|ia64_inl
+(paren
+r_int
+r_int
+id|port
+)paren
+(brace
+r_return
+id|__ia64_inl
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|ia64_outb
+id|ia64_outb
+(paren
+r_int
+r_char
+id|val
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+id|__ia64_outb
+c_func
+(paren
+id|val
+comma
+id|port
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|ia64_outw
+id|ia64_outw
+(paren
+r_int
+r_int
+id|val
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+id|__ia64_outw
+c_func
+(paren
+id|val
+comma
+id|port
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|ia64_outl
+id|ia64_outl
+(paren
+r_int
+r_int
+id|val
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+id|__ia64_outl
+c_func
+(paren
+id|val
+comma
+id|port
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* define aliases: */
+id|asm
+(paren
+l_string|&quot;.global __ia64_inb, __ia64_inw, __ia64_inl&quot;
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;__ia64_inb = ia64_inb&quot;
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;__ia64_inw = ia64_inw&quot;
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;__ia64_inl = ia64_inl&quot;
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;.global __ia64_outb, __ia64_outw, __ia64_outl&quot;
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;__ia64_outb = ia64_outb&quot;
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;__ia64_outw = ia64_outw&quot;
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;__ia64_outl = ia64_outl&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_IA64_GENERIC */
 eof

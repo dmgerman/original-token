@@ -1,7 +1,8 @@
-multiline_comment|/* drm.h -- Header for Direct Rendering Manager -*- linux-c -*-&n; * Created: Mon Jan  4 10:05:05 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All rights reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *&n; * Acknowledgements:&n; * Dec 1999, Richard Henderson &lt;rth@twiddle.net&gt;, move to generic cmpxchg.&n; *&n; */
+multiline_comment|/* drm.h -- Header for Direct Rendering Manager -*- linux-c -*-&n; * Created: Mon Jan  4 10:05:05 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All rights reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *&n; * Acknowledgements:&n; * Dec 1999, Richard Henderson &lt;rth@twiddle.net&gt;, move to generic cmpxchg.&n; *&n; */
 macro_line|#ifndef _DRM_H_
 DECL|macro|_DRM_H_
 mdefine_line|#define _DRM_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(__linux__)
 macro_line|#include &lt;asm/ioctl.h&gt;&t;&t;/* For _IO* macros */
 DECL|macro|DRM_IOCTL_NR
@@ -101,6 +102,9 @@ multiline_comment|/* Seperate include files for the i810/mga/r128 specific struc
 macro_line|#include &quot;mga_drm.h&quot;
 macro_line|#include &quot;i810_drm.h&quot;
 macro_line|#include &quot;r128_drm.h&quot;
+macro_line|#ifdef CONFIG_DRM_SIS
+macro_line|#include &quot;sis_drm.h&quot;
+macro_line|#endif
 DECL|struct|drm_version
 r_typedef
 r_struct
@@ -1001,6 +1005,8 @@ DECL|macro|DRM_IOCTL_MGA_FLUSH
 mdefine_line|#define DRM_IOCTL_MGA_FLUSH   DRM_IOW( 0x45, drm_lock_t )
 DECL|macro|DRM_IOCTL_MGA_INDICES
 mdefine_line|#define DRM_IOCTL_MGA_INDICES DRM_IOW( 0x46, drm_mga_indices_t)
+DECL|macro|DRM_IOCTL_MGA_BLIT
+mdefine_line|#define DRM_IOCTL_MGA_BLIT    DRM_IOW( 0x47, drm_mga_blit_t)
 multiline_comment|/* I810 specific ioctls */
 DECL|macro|DRM_IOCTL_I810_INIT
 mdefine_line|#define DRM_IOCTL_I810_INIT    DRM_IOW( 0x40, drm_i810_init_t)
@@ -1022,16 +1028,51 @@ DECL|macro|DRM_IOCTL_I810_DOCOPY
 mdefine_line|#define DRM_IOCTL_I810_DOCOPY  DRM_IO ( 0x48)
 multiline_comment|/* Rage 128 specific ioctls */
 DECL|macro|DRM_IOCTL_R128_INIT
-mdefine_line|#define DRM_IOCTL_R128_INIT&t;DRM_IOW( 0x40, drm_r128_init_t)
+mdefine_line|#define DRM_IOCTL_R128_INIT&t; DRM_IOW( 0x40, drm_r128_init_t)
+DECL|macro|DRM_IOCTL_R128_CCE_START
+mdefine_line|#define DRM_IOCTL_R128_CCE_START DRM_IO(  0x41)
+DECL|macro|DRM_IOCTL_R128_CCE_STOP
+mdefine_line|#define DRM_IOCTL_R128_CCE_STOP&t; DRM_IOW( 0x42, drm_r128_cce_stop_t)
+DECL|macro|DRM_IOCTL_R128_CCE_RESET
+mdefine_line|#define DRM_IOCTL_R128_CCE_RESET DRM_IO(  0x43)
+DECL|macro|DRM_IOCTL_R128_CCE_IDLE
+mdefine_line|#define DRM_IOCTL_R128_CCE_IDLE&t; DRM_IO(  0x44)
 DECL|macro|DRM_IOCTL_R128_RESET
-mdefine_line|#define DRM_IOCTL_R128_RESET&t;DRM_IO(  0x41)
-DECL|macro|DRM_IOCTL_R128_FLUSH
-mdefine_line|#define DRM_IOCTL_R128_FLUSH&t;DRM_IO(  0x42)
-DECL|macro|DRM_IOCTL_R128_IDLE
-mdefine_line|#define DRM_IOCTL_R128_IDLE&t;DRM_IO(  0x43)
-DECL|macro|DRM_IOCTL_R128_PACKET
-mdefine_line|#define DRM_IOCTL_R128_PACKET&t;DRM_IOW( 0x44, drm_r128_packet_t)
+mdefine_line|#define DRM_IOCTL_R128_RESET&t; DRM_IO(  0x46)
+DECL|macro|DRM_IOCTL_R128_SWAP
+mdefine_line|#define DRM_IOCTL_R128_SWAP&t; DRM_IO(  0x47)
+DECL|macro|DRM_IOCTL_R128_CLEAR
+mdefine_line|#define DRM_IOCTL_R128_CLEAR&t; DRM_IOW( 0x48, drm_r128_clear_t)
 DECL|macro|DRM_IOCTL_R128_VERTEX
-mdefine_line|#define DRM_IOCTL_R128_VERTEX&t;DRM_IOW( 0x45, drm_r128_vertex_t)
+mdefine_line|#define DRM_IOCTL_R128_VERTEX&t; DRM_IOW( 0x49, drm_r128_vertex_t)
+DECL|macro|DRM_IOCTL_R128_INDICES
+mdefine_line|#define DRM_IOCTL_R128_INDICES&t; DRM_IOW( 0x4a, drm_r128_indices_t)
+DECL|macro|DRM_IOCTL_R128_BLIT
+mdefine_line|#define DRM_IOCTL_R128_BLIT&t; DRM_IOW( 0x4b, drm_r128_blit_t)
+DECL|macro|DRM_IOCTL_R128_DEPTH
+mdefine_line|#define DRM_IOCTL_R128_DEPTH&t; DRM_IOW( 0x4c, drm_r128_depth_t)
+DECL|macro|DRM_IOCTL_R128_STIPPLE
+mdefine_line|#define DRM_IOCTL_R128_STIPPLE&t; DRM_IOW( 0x4d, drm_r128_stipple_t)
+DECL|macro|DRM_IOCTL_R128_PACKET
+mdefine_line|#define DRM_IOCTL_R128_PACKET&t; DRM_IOWR(0x4e, drm_r128_packet_t)
+macro_line|#ifdef CONFIG_DRM_SIS
+multiline_comment|/* SiS specific ioctls */
+DECL|macro|SIS_IOCTL_FB_ALLOC
+mdefine_line|#define SIS_IOCTL_FB_ALLOC     DRM_IOWR( 0x44, drm_sis_mem_t)
+DECL|macro|SIS_IOCTL_FB_FREE
+mdefine_line|#define SIS_IOCTL_FB_FREE      DRM_IOW( 0x45, drm_sis_mem_t)
+DECL|macro|SIS_IOCTL_AGP_INIT
+mdefine_line|#define SIS_IOCTL_AGP_INIT     DRM_IOWR( 0x53, drm_sis_agp_t)
+DECL|macro|SIS_IOCTL_AGP_ALLOC
+mdefine_line|#define SIS_IOCTL_AGP_ALLOC    DRM_IOWR( 0x54, drm_sis_mem_t)
+DECL|macro|SIS_IOCTL_AGP_FREE
+mdefine_line|#define SIS_IOCTL_AGP_FREE     DRM_IOW( 0x55, drm_sis_mem_t)
+DECL|macro|SIS_IOCTL_FLIP
+mdefine_line|#define SIS_IOCTL_FLIP         DRM_IOW( 0x48, drm_sis_flip_t)
+DECL|macro|SIS_IOCTL_FLIP_INIT
+mdefine_line|#define SIS_IOCTL_FLIP_INIT    DRM_IO( 0x49)
+DECL|macro|SIS_IOCTL_FLIP_FINAL
+mdefine_line|#define SIS_IOCTL_FLIP_FINAL   DRM_IO( 0x50)
+macro_line|#endif
 macro_line|#endif
 eof

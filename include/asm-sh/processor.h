@@ -37,10 +37,10 @@ r_enum
 id|cpu_type
 id|type
 suffix:semicolon
-DECL|member|loops_per_sec
+DECL|member|loops_per_jiffy
 r_int
 r_int
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 DECL|member|hard_math
 r_char
@@ -318,9 +318,9 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;stc&t;sr, %0&bslash;n&bslash;t&quot;
 l_string|&quot;or&t;%1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;ldc&t;%0, $sr&quot;
+l_string|&quot;ldc&t;%0, sr&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -353,9 +353,9 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;stc&t;sr, %0&bslash;n&bslash;t&quot;
 l_string|&quot;and&t;%1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;ldc&t;%0, $sr&quot;
+l_string|&quot;ldc&t;%0, sr&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren

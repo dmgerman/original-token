@@ -31,15 +31,15 @@ id|products
 )braket
 op_assign
 (brace
-(brace
 singleline_comment|// reference design
-id|idProduct
-suffix:colon
+(brace
+id|USB_DEVICE
+c_func
+(paren
 l_int|0x1080
 comma
-id|idVendor
-suffix:colon
-l_int|0x0525
+l_int|0x525
+)paren
 comma
 id|driver_info
 suffix:colon
@@ -48,7 +48,6 @@ r_int
 r_int
 )paren
 l_string|&quot;NetChip TurboCONNECT&quot;
-comma
 )brace
 comma
 singleline_comment|// Belkin, ...

@@ -324,14 +324,16 @@ r_int
 r_int
 id|i
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 OG
 l_int|1
 ques
 c_cond
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:colon
 l_int|10000000
+op_div
+id|HZ
 suffix:semicolon
 r_while
 c_loop
@@ -775,7 +777,7 @@ suffix:semicolon
 )brace
 DECL|macro|SCC_WRITE
 mdefine_line|#define SCC_WRITE(reg,val)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (reg);&t;&t;&t;&t;&bslash;&n;&t;MFPDELAY();&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (val);&t;&t;&t;&t;&bslash;&n;&t;MFPDELAY();&t;&t;&t;&t;&t;&bslash;&n;    } while(0)
-multiline_comment|/* loops_per_sec isn&squot;t initialized yet, so we can&squot;t use udelay(). This does a&n; * delay of ~ 60us. */
+multiline_comment|/* loops_per_jiffy isn&squot;t initialized yet, so we can&squot;t use udelay(). This does a&n; * delay of ~ 60us. */
 DECL|macro|LONG_DELAY
 mdefine_line|#define LONG_DELAY()&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&bslash;&n;&t;for( i = 100; i &gt; 0; --i )&t;&t;&bslash;&n;&t;    MFPDELAY();&t;&t;&t;&t;&bslash;&n;    } while(0)
 macro_line|#ifndef CONFIG_SERIAL_CONSOLE

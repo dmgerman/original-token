@@ -726,15 +726,30 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Motherboard Resources present in all Amiga models&n;     */
-DECL|variable|mb_resource
 r_static
 r_struct
+(brace
+DECL|member|_ciab
+DECL|member|_ciaa
+DECL|member|_custom
+DECL|member|_kickstart
+r_struct
 id|resource
-id|mb_resource
-(braket
-)braket
+id|_ciab
+comma
+id|_ciaa
+comma
+id|_custom
+comma
+id|_kickstart
+suffix:semicolon
+DECL|variable|mb_resources
+)brace
+id|mb_resources
 op_assign
 (brace
+id|_ciab
+suffix:colon
 (brace
 l_string|&quot;CIA B&quot;
 comma
@@ -743,6 +758,8 @@ comma
 l_int|0x00bfdfff
 )brace
 comma
+id|_ciaa
+suffix:colon
 (brace
 l_string|&quot;CIA A&quot;
 comma
@@ -751,6 +768,8 @@ comma
 l_int|0x00bfefff
 )brace
 comma
+id|_custom
+suffix:colon
 (brace
 l_string|&quot;Custom I/O&quot;
 comma
@@ -759,6 +778,8 @@ comma
 l_int|0x00dfffff
 )brace
 comma
+id|_kickstart
+suffix:colon
 (brace
 l_string|&quot;Kickstart ROM&quot;
 comma
@@ -973,7 +994,7 @@ c_func
 l_string|&quot;amiga_parse_bootinfo: too many AutoConfig devices&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_ZORRO */
 r_break
 suffix:semicolon
 r_case
@@ -1773,18 +1794,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-r_sizeof
-(paren
-id|mb_resource
-)paren
-op_div
-r_sizeof
-(paren
-id|mb_resource
-(braket
-l_int|0
-)braket
-)paren
+l_int|4
 suffix:semicolon
 id|i
 op_increment
@@ -1796,7 +1806,15 @@ op_amp
 id|iomem_resource
 comma
 op_amp
-id|mb_resource
+(paren
+(paren
+r_struct
+id|resource
+op_star
+)paren
+op_amp
+id|mb_resources
+)paren
 (braket
 id|i
 )braket
@@ -1937,11 +1955,13 @@ id|mach_reset
 op_assign
 id|amiga_reset
 suffix:semicolon
+macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 id|conswitchp
 op_assign
 op_amp
 id|dummy_con
 suffix:semicolon
+macro_line|#endif
 id|kd_mksound
 op_assign
 id|amiga_mksound
@@ -2364,6 +2384,11 @@ id|sched_res
 op_assign
 (brace
 l_string|&quot;timer&quot;
+comma
+l_int|0x00bfd400
+comma
+l_int|0x00bfd5ff
+comma
 )brace
 suffix:semicolon
 id|jiffy_ticks
@@ -2381,17 +2406,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|request_mem_region
+id|request_resource
 c_func
 (paren
-id|CIAB_PHYSADDR
-op_plus
-l_int|0x400
+op_amp
+id|mb_resources._ciab
 comma
-l_int|0x200
-comma
-l_string|&quot;timer&quot;
+op_amp
+id|sched_res
 )paren
 )paren
 id|printk
@@ -2920,6 +2942,17 @@ l_int|10
 op_plus
 id|tod-&gt;year2
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;year
+op_le
+l_int|69
+)paren
+id|t-&gt;year
+op_add_assign
+l_int|100
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -3002,6 +3035,17 @@ l_int|1
 )paren
 op_mod
 l_int|10
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;year
+op_ge
+l_int|100
+)paren
+id|t-&gt;year
+op_sub_assign
+l_int|100
 suffix:semicolon
 id|tod-&gt;year1
 op_assign
@@ -3109,6 +3153,17 @@ op_star
 l_int|10
 op_plus
 id|tod-&gt;year2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;year
+op_le
+l_int|69
+)paren
+id|t-&gt;year
+op_add_assign
+l_int|100
 suffix:semicolon
 r_if
 c_cond
@@ -3274,6 +3329,17 @@ l_int|1
 )paren
 op_mod
 l_int|10
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;year
+op_ge
+l_int|100
+)paren
+id|t-&gt;year
+op_sub_assign
+l_int|100
 suffix:semicolon
 id|tod-&gt;year1
 op_assign
@@ -4725,7 +4791,7 @@ suffix:colon
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_ZORRO */
 DECL|macro|AMIGAHW_ANNOUNCE
 macro_line|#undef AMIGAHW_ANNOUNCE
 r_return

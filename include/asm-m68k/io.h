@@ -9,7 +9,7 @@ DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO&t;do { if (MACH_IS_ATARI) MFPDELAY(); } while (0)
 macro_line|#endif
 macro_line|#include &lt;asm/virtconvert.h&gt;
-multiline_comment|/*&n; * These are for ISA/PCI shared memory _only_ and should never be used&n; * on any other type of memory, including Zorro memory. They are meant to&n; * access the bus in the bus byte order which is little-endian!.&n; *&n; * readX/writeX() are used to access memory mapped devices. On some&n; * architectures the memory mapped IO stuff needs to be accessed&n; * differently. On the m68k architecture, we just read/write the&n; * memory location directly.&n; */
+multiline_comment|/*&n; * These are for PCI shared memory _only_ and should never be used&n; * on any other type of memory, including Zorro memory. They are meant to&n; * access the bus in the bus byte order which is little-endian!.&n; *&n; * readX/writeX() are used to access memory mapped devices. On some&n; * architectures the memory mapped IO stuff needs to be accessed&n; * differently. On the m68k architecture, we just read/write the&n; * memory location directly.&n; */
 multiline_comment|/* ++roman: The assignments to temp. vars avoid that gcc sometimes generates&n; * two accesses to memory, which may be undesireable for some devices.&n; */
 DECL|macro|readb
 mdefine_line|#define readb(addr) &bslash;&n;    ({ unsigned char __v = (*(volatile unsigned char *) (addr)); __v; })
@@ -37,8 +37,13 @@ DECL|macro|outb
 mdefine_line|#define outb(x,addr) ((void) writeb(x,addr))
 DECL|macro|outb_p
 mdefine_line|#define outb_p(x,addr) outb(x,addr)
+macro_line|#ifndef CONFIG_SUN3
 DECL|macro|IO_SPACE_LIMIT
 mdefine_line|#define IO_SPACE_LIMIT 0xffff
+macro_line|#else
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0x0fffffff
+macro_line|#endif
 multiline_comment|/* Values for nocacheflag and cmode */
 DECL|macro|IOMAP_FULL_CACHING
 mdefine_line|#define IOMAP_FULL_CACHING&t;&t;0

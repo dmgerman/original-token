@@ -1,17 +1,22 @@
 macro_line|#ifndef _ASM_IA64_PROCESSOR_H
 DECL|macro|_ASM_IA64_PROCESSOR_H
 mdefine_line|#define _ASM_IA64_PROCESSOR_H
-multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999 Asit Mallick &lt;asit.k.mallick@intel.com&gt;&n; * Copyright (C) 1999 Don Dugger &lt;don.dugger@intel.com&gt;&n; *&n; * 11/24/98&t;S.Eranian&t;added ia64_set_iva()&n; * 12/03/99&t;D. Mosberger&t;implement thread_saved_pc() via kernel unwind API&n; * 06/16/00&t;A. Mallick&t;added csd/ssd/tssd for ia32 support&n; */
+multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998-2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999 Asit Mallick &lt;asit.k.mallick@intel.com&gt;&n; * Copyright (C) 1999 Don Dugger &lt;don.dugger@intel.com&gt;&n; *&n; * 11/24/98&t;S.Eranian&t;added ia64_set_iva()&n; * 12/03/99&t;D. Mosberger&t;implement thread_saved_pc() via kernel unwind API&n; * 06/16/00&t;A. Mallick&t;added csd/ssd/tssd for ia32 support&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 DECL|macro|IA64_NUM_DBG_REGS
 mdefine_line|#define IA64_NUM_DBG_REGS&t;8
-DECL|macro|IA64_NUM_PM_REGS
-mdefine_line|#define IA64_NUM_PM_REGS&t;4
-multiline_comment|/*&n; * TASK_SIZE really is a mis-named.  It really is the maximum user&n; * space address (plus one).  On ia-64, there are five regions of 2TB&n; * each (assuming 8KB page size), for a total of 8TB of user virtual&n; * address space.&n; */
+multiline_comment|/*&n; * Limits for PMC and PMD are set to less than maximum architected values&n; * but should be sufficient for a while&n; */
+DECL|macro|IA64_NUM_PMC_REGS
+mdefine_line|#define IA64_NUM_PMC_REGS&t;32
+DECL|macro|IA64_NUM_PMD_REGS
+mdefine_line|#define IA64_NUM_PMD_REGS&t;32
+DECL|macro|IA64_NUM_PMD_COUNTERS
+mdefine_line|#define IA64_NUM_PMD_COUNTERS&t;4
+multiline_comment|/*&n; * TASK_SIZE really is a mis-named.  It really is the maximum user&n; * space address (plus one).  On IA-64, there are five regions of 2TB&n; * each (assuming 8KB page size), for a total of 8TB of user virtual&n; * address space.&n; */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;&t;0xa000000000000000
+mdefine_line|#define TASK_SIZE&t;&t;(current-&gt;thread.task_size)
 multiline_comment|/*&n; * This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;(current-&gt;thread.map_base)
@@ -232,6 +237,8 @@ DECL|macro|IA64_THREAD_UAC_SIGBUS
 mdefine_line|#define IA64_THREAD_UAC_SIGBUS&t;(__IA64_UL(1) &lt;&lt; 4)&t;/* generate SIGBUS on unaligned acc. */
 DECL|macro|IA64_THREAD_KRBS_SYNCED
 mdefine_line|#define IA64_THREAD_KRBS_SYNCED&t;(__IA64_UL(1) &lt;&lt; 5)&t;/* krbs synced with process vm? */
+DECL|macro|IA64_THREAD_MAP_SHARED
+mdefine_line|#define IA64_THREAD_MAP_SHARED&t;(__IA64_UL(1) &lt;&lt; 6)&t;/* ugly: just a tmp flag for mmap() */
 DECL|macro|IA64_KERNEL_DEATH
 mdefine_line|#define IA64_KERNEL_DEATH&t;(__IA64_UL(1) &lt;&lt; 63)&t;/* see die_if_kernel()... */
 DECL|macro|IA64_THREAD_UAC_SHIFT
@@ -556,10 +563,28 @@ id|__u64
 id|unimpl_pa_mask
 suffix:semicolon
 multiline_comment|/* mask of unimplemented physical address bits (from PAL) */
-macro_line|#ifdef CONFIG_SMP
-DECL|member|loops_per_sec
+DECL|member|ptce_base
 id|__u64
-id|loops_per_sec
+id|ptce_base
+suffix:semicolon
+DECL|member|ptce_count
+id|__u32
+id|ptce_count
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|ptce_stride
+id|__u32
+id|ptce_stride
+(braket
+l_int|2
+)braket
+suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+DECL|member|loops_per_jiffy
+id|__u64
+id|loops_per_jiffy
 suffix:semicolon
 DECL|member|ipi_count
 id|__u64
@@ -578,13 +603,6 @@ macro_line|#endif
 suffix:semicolon
 DECL|macro|my_cpu_data
 mdefine_line|#define my_cpu_data&t;&t;cpu_data[smp_processor_id()]
-macro_line|#ifdef CONFIG_SMP
-DECL|macro|ia64_loops_per_sec
-macro_line|# define ia64_loops_per_sec()&t;my_cpu_data.loops_per_sec
-macro_line|#else
-DECL|macro|ia64_loops_per_sec
-macro_line|# define ia64_loops_per_sec()&t;loops_per_sec
-macro_line|#endif
 r_extern
 r_struct
 id|cpuinfo_ia64
@@ -673,25 +691,47 @@ DECL|member|pmc
 id|__u64
 id|pmc
 (braket
-id|IA64_NUM_PM_REGS
+id|IA64_NUM_PMC_REGS
 )braket
 suffix:semicolon
 DECL|member|pmd
 id|__u64
 id|pmd
 (braket
-id|IA64_NUM_PM_REGS
+id|IA64_NUM_PMD_REGS
 )braket
 suffix:semicolon
-DECL|member|pmod
+r_struct
+(brace
+DECL|member|val
 id|__u64
-id|pmod
+id|val
+suffix:semicolon
+multiline_comment|/* virtual 64bit counter */
+DECL|member|rval
+id|__u64
+id|rval
+suffix:semicolon
+multiline_comment|/* reset value on overflow */
+DECL|member|sig
+r_int
+id|sig
+suffix:semicolon
+multiline_comment|/* signal used to notify */
+DECL|member|pid
+r_int
+id|pid
+suffix:semicolon
+multiline_comment|/* process to notify */
+DECL|member|pmu_counters
+)brace
+id|pmu_counters
 (braket
-id|IA64_NUM_PM_REGS
+id|IA64_NUM_PMD_COUNTERS
 )braket
 suffix:semicolon
 DECL|macro|INIT_THREAD_PM
-macro_line|# define INIT_THREAD_PM&t;&t;{0, }, {0, }, {0, },
+macro_line|# define INIT_THREAD_PM&t;&t;{0, }, {0, }, {{ 0, 0, 0, 0}, },
 macro_line|#else
 DECL|macro|INIT_THREAD_PM
 macro_line|# define INIT_THREAD_PM
@@ -700,7 +740,12 @@ DECL|member|map_base
 id|__u64
 id|map_base
 suffix:semicolon
-multiline_comment|/* base address for mmap() */
+multiline_comment|/* base address for get_unmapped_area() */
+DECL|member|task_size
+id|__u64
+id|task_size
+suffix:semicolon
+multiline_comment|/* limit for task size */
 macro_line|#ifdef CONFIG_IA32_SUPPORT
 DECL|member|eflag
 id|__u64
@@ -759,7 +804,7 @@ DECL|member|un
 id|un
 suffix:semicolon
 DECL|macro|INIT_THREAD_IA32
-macro_line|# define INIT_THREAD_IA32&t;, 0, 0, 0x17800000037fULL, 0, 0, 0, 0, 0, 0, {0}
+macro_line|# define INIT_THREAD_IA32&t;0, 0, 0x17800000037fULL, 0, 0, 0, 0, 0, 0, {0},
 macro_line|#else
 DECL|macro|INIT_THREAD_IA32
 macro_line|# define INIT_THREAD_IA32
@@ -776,7 +821,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&amp;init_mm, PAGE_OFFSET, PAGE_OFFSET + 0x10000000, NULL, PAGE_SHARED,&t;&bslash;&n;        VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;INIT_THREAD_PM&t;&t;&t;&t;&t;&bslash;&n;&t;0x2000000000000000&t;&t;/* map_base */&t;&bslash;&n;&t;INIT_THREAD_IA32,&t;&t;&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;/* siginfo */&t;&bslash;&n;}
+mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;INIT_THREAD_PM&t;&t;&t;&t;&t;&bslash;&n;&t;0x2000000000000000,&t;&t;/* map_base */&t;&bslash;&n;&t;0xa000000000000000,&t;&t;/* task_size */&t;&bslash;&n;&t;INIT_THREAD_IA32&t;&t;&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;/* siginfo */&t;&bslash;&n;}
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;dfh = 1;&t;/* disable fph */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;mfh = 0;&t;/* clear mfh */&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;is = 0;&t;&t;/* IA-64 instruction set */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rsc = 0xf;&t;&t;/* eager mode, privilege level 3 */&t;&bslash;&n;&t;regs-&gt;r12 = new_sp - 16;&t;/* allocate 16 byte scratch area */&t;&bslash;&n;&t;regs-&gt;ar_bspstore = IA64_RBS_BOT;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declarations, a strange C thing... */
@@ -967,9 +1012,9 @@ r_void
 id|ia64_save_pm_regs
 (paren
 r_struct
-id|thread_struct
+id|task_struct
 op_star
-id|thread
+id|task
 )paren
 suffix:semicolon
 r_extern
@@ -977,9 +1022,9 @@ r_void
 id|ia64_load_pm_regs
 (paren
 r_struct
-id|thread_struct
+id|task_struct
 op_star
-id|thread
+id|task
 )paren
 suffix:semicolon
 macro_line|#endif

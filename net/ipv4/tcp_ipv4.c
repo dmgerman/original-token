@@ -7069,6 +7069,7 @@ suffix:semicolon
 r_case
 id|TCP_TW_SUCCESS
 suffix:colon
+suffix:semicolon
 )brace
 r_goto
 id|discard_it

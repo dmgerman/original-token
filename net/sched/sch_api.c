@@ -5376,7 +5376,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|macro|INIT_QDISC
-mdefine_line|#define INIT_QDISC(name) { &bslash;&n;          extern struct Qdisc_ops name##_qdisc_ops; &bslash;&n;          register_qdisc(&amp;##name##_qdisc_ops); &bslash;&n;&t;}
+mdefine_line|#define INIT_QDISC(name) { &bslash;&n;          extern struct Qdisc_ops name##_qdisc_ops; &bslash;&n;          register_qdisc(&amp; name##_qdisc_ops);       &bslash;&n;&t;}
 id|INIT_QDISC
 c_func
 (paren

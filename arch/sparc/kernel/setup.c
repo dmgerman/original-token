@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.120 2000/10/14 10:09:00 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.122 2001/01/01 01:46:15 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 2000  Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -80,14 +80,6 @@ l_int|16
 multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
-DECL|variable|phys_bytes_of_ram
-DECL|variable|end_of_phys_memory
-r_int
-r_int
-id|phys_bytes_of_ram
-comma
-id|end_of_phys_memory
-suffix:semicolon
 multiline_comment|/* Typing sync at the prom prompt calls the function pointed to by&n; * romvec-&gt;pv_synchook which I set to the following function.&n; * This should sync all filesystems and return, for now it just&n; * prints out pretty messages and returns.&n; */
 r_extern
 r_int
@@ -142,6 +134,7 @@ id|prom_tbr
 comma
 id|flags
 suffix:semicolon
+multiline_comment|/* XXX Badly broken. FIX! - Anton */
 id|save_and_cli
 c_func
 (paren
@@ -266,10 +259,13 @@ id|tty_num
 )paren
 suffix:semicolon
 multiline_comment|/* sparc/serial.c */
-DECL|variable|boot_flags
+DECL|variable|__initdata
 r_int
 r_int
 id|boot_flags
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 DECL|macro|BOOTME_DEBUG
 mdefine_line|#define BOOTME_DEBUG  0x1
@@ -282,10 +278,11 @@ mdefine_line|#define BOOTME_KGDBB  0x8
 DECL|macro|BOOTME_KGDB
 mdefine_line|#define BOOTME_KGDB   0xc
 macro_line|#ifdef CONFIG_SUN_CONSOLE
-DECL|variable|console_fb
+DECL|variable|__initdata
 r_static
 r_int
 id|console_fb
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
@@ -431,7 +428,7 @@ c_func
 l_string|&quot;boot_flags_init: Halt!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|halt
+id|prom_halt
 c_func
 (paren
 )paren
@@ -957,27 +954,12 @@ DECL|variable|fake_swapper_regs
 r_struct
 id|pt_regs
 id|fake_swapper_regs
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-(brace
-l_int|0
-comma
-)brace
-)brace
 suffix:semicolon
 macro_line|#ifdef PROM_DEBUG_CONSOLE
-DECL|function|prom_cons_write
 r_static
 r_void
-id|prom_cons_write
+DECL|function|prom_console_write
+id|prom_console_write
 c_func
 (paren
 r_struct
@@ -988,26 +970,18 @@ comma
 r_const
 r_char
 op_star
-id|str
+id|s
 comma
 r_int
-id|count
+id|n
 )paren
 (brace
-r_while
-c_loop
-(paren
-id|count
-op_decrement
-)paren
 id|prom_printf
 c_func
 (paren
-l_string|&quot;%c&quot;
+l_string|&quot;%s&quot;
 comma
-op_star
-id|str
-op_increment
+id|s
 )paren
 suffix:semicolon
 )brace
@@ -1020,15 +994,20 @@ op_assign
 (brace
 id|name
 suffix:colon
-l_string|&quot;PROM&quot;
+l_string|&quot;debug&quot;
 comma
 id|write
 suffix:colon
-id|prom_cons_write
+id|prom_console_write
 comma
 id|flags
 suffix:colon
 id|CON_PRINTBUFFER
+comma
+id|index
+suffix:colon
+op_minus
+l_int|1
 comma
 )brace
 suffix:semicolon
@@ -1990,14 +1969,22 @@ comma
 id|smp_num_cpus
 macro_line|#ifndef CONFIG_SMP
 comma
-id|loops_per_sec
+id|loops_per_jiffy
 op_div
+(paren
 l_int|500000
+op_div
+id|HZ
+)paren
 comma
 (paren
-id|loops_per_sec
+id|loops_per_jiffy
 op_div
+(paren
 l_int|5000
+op_div
+id|HZ
+)paren
 )paren
 op_mod
 l_int|100

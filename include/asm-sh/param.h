@@ -17,5 +17,9 @@ mdefine_line|#define NOGROUP&t;&t;(-1)
 macro_line|#endif
 DECL|macro|MAXHOSTNAMELEN
 mdefine_line|#define MAXHOSTNAMELEN&t;64&t;/* max length of hostname */
+macro_line|#ifdef __KERNEL__
+DECL|macro|CLOCKS_PER_SEC
+mdefine_line|#define CLOCKS_PER_SEC&t;HZ&t;/* frequency at which times() counts */
+macro_line|#endif
 macro_line|#endif /* __ASM_SH_PARAM_H */
 eof

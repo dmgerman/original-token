@@ -249,7 +249,7 @@ id|id
 dot
 id|udelay_val
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 multiline_comment|/* this is it on sparc. */
 )brace
@@ -1262,7 +1262,11 @@ id|i
 dot
 id|udelay_val
 op_div
+(paren
 l_int|500000
+op_div
+id|HZ
+)paren
 comma
 (paren
 id|cpu_data
@@ -1272,7 +1276,11 @@ id|i
 dot
 id|udelay_val
 op_div
+(paren
 l_int|5000
+op_div
+id|HZ
+)paren
 )paren
 op_mod
 l_int|100

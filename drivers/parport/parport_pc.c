@@ -9391,6 +9391,13 @@ suffix:semicolon
 )brace
 DECL|macro|printmode
 macro_line|#undef printmode
+macro_line|#ifndef CONFIG_PARPORT_1284
+id|printk
+(paren
+l_string|&quot;(,...)&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PARPORT_1284 */
 id|printk
 c_func
 (paren
@@ -9648,11 +9655,12 @@ id|pdev
 )paren
 (brace
 id|u8
+id|tmp
+suffix:semicolon
+r_int
 id|dma
 comma
 id|irq
-comma
-id|tmp
 suffix:semicolon
 r_int
 id|port1
@@ -9852,14 +9860,14 @@ comma
 l_int|0x50
 comma
 op_amp
-id|dma
+id|tmp
 )paren
 suffix:semicolon
 id|dma
 op_assign
 (paren
 (paren
-id|dma
+id|tmp
 op_rshift
 l_int|2
 )paren
@@ -9875,14 +9883,14 @@ comma
 l_int|0x51
 comma
 op_amp
-id|irq
+id|tmp
 )paren
 suffix:semicolon
 id|irq
 op_assign
 (paren
 (paren
-id|irq
+id|tmp
 op_rshift
 l_int|4
 )paren
@@ -9891,7 +9899,6 @@ l_int|0x0F
 )paren
 suffix:semicolon
 multiline_comment|/* filter bogus IRQs */
-multiline_comment|/* 255 means NONE, and is bogus as well */
 r_switch
 c_cond
 (paren
@@ -9910,9 +9917,6 @@ suffix:colon
 r_case
 l_int|13
 suffix:colon
-r_case
-l_int|255
-suffix:colon
 id|irq
 op_assign
 id|PARPORT_IRQ_NONE
@@ -9926,16 +9930,11 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* if ECP not enabled, DMA is not enabled, assumed bogus &squot;dma&squot; value */
-multiline_comment|/* 255 means NONE. Looks like some BIOS don&squot;t set the DMA correctly&n;&t; * even on ECP mode */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|have_eppecp
-op_logical_or
-id|dma
-op_eq
-l_int|255
 )paren
 id|dma
 op_assign
@@ -9962,13 +9961,42 @@ l_int|NULL
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;parport_pc: Via 686A parallel port: io=0x%X, irq=%d, dma=%d&bslash;n&quot;
+l_string|&quot;parport_pc: Via 686A parallel port: io=0x%X&quot;
 comma
 id|port1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_ne
+id|PARPORT_IRQ_NONE
+)paren
+id|printk
+(paren
+l_string|&quot;, irq=%d&quot;
 comma
 id|irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dma
+op_ne
+id|PARPORT_DMA_NONE
+)paren
+id|printk
+(paren
+l_string|&quot;, dma=%d&quot;
 comma
 id|dma
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

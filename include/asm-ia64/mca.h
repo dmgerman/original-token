@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/param.h&gt;
 macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 multiline_comment|/* These are the return codes from all the IA64_MCA specific interfaces */
 DECL|typedef|ia64_mca_return_code_t
 r_typedef
@@ -33,11 +34,11 @@ DECL|macro|IA64_MCA_RENDEZ_TIMEOUT
 mdefine_line|#define IA64_MCA_RENDEZ_TIMEOUT&t;&t;(100 * HZ)&t;/* 1000 milliseconds */
 multiline_comment|/* Interrupt vectors reserved for MC handling. */
 DECL|macro|IA64_MCA_RENDEZ_INT_VECTOR
-mdefine_line|#define IA64_MCA_RENDEZ_INT_VECTOR&t;0xF3&t;/* Rendez interrupt */
+mdefine_line|#define IA64_MCA_RENDEZ_INT_VECTOR&t;MCA_RENDEZ_IRQ&t;/* Rendez interrupt */
 DECL|macro|IA64_MCA_WAKEUP_INT_VECTOR
-mdefine_line|#define IA64_MCA_WAKEUP_INT_VECTOR&t;0x12&t;/* Wakeup interrupt */
+mdefine_line|#define IA64_MCA_WAKEUP_INT_VECTOR&t;MCA_WAKEUP_IRQ&t;/* Wakeup interrupt */
 DECL|macro|IA64_MCA_CMC_INT_VECTOR
-mdefine_line|#define IA64_MCA_CMC_INT_VECTOR&t;&t;0xF2&t;/* Correctable machine check interrupt */
+mdefine_line|#define IA64_MCA_CMC_INT_VECTOR&t;&t;CMC_IRQ&t;/* Correctable machine check interrupt */
 DECL|macro|IA64_CMC_INT_DISABLE
 mdefine_line|#define IA64_CMC_INT_DISABLE&t;&t;0
 DECL|macro|IA64_CMC_INT_ENABLE
@@ -69,27 +70,15 @@ id|cmcr_vector
 suffix:colon
 l_int|8
 suffix:semicolon
-DECL|member|cmcr_ignored1
-id|u64
-id|cmcr_ignored1
-suffix:colon
-l_int|47
-suffix:semicolon
-DECL|member|cmcr_mask
-id|u64
-id|cmcr_mask
-suffix:colon
-l_int|1
-suffix:semicolon
 DECL|member|cmcr_reserved1
 id|u64
 id|cmcr_reserved1
 suffix:colon
-l_int|3
+l_int|4
 suffix:semicolon
-DECL|member|cmcr_ignored2
+DECL|member|cmcr_ignored1
 id|u64
-id|cmcr_ignored2
+id|cmcr_ignored1
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -97,7 +86,19 @@ DECL|member|cmcr_reserved2
 id|u64
 id|cmcr_reserved2
 suffix:colon
-l_int|4
+l_int|3
+suffix:semicolon
+DECL|member|cmcr_mask
+id|u64
+id|cmcr_mask
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|cmcr_ignored2
+id|u64
+id|cmcr_ignored2
+suffix:colon
+l_int|47
 suffix:semicolon
 DECL|member|cmcv_reg_s
 )brace

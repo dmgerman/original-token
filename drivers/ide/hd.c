@@ -3520,6 +3520,10 @@ op_amp
 id|drive_info
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|cmos_disks
 suffix:semicolon
 r_for
@@ -3656,11 +3660,16 @@ op_add_assign
 l_int|16
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;We query CMOS about hard disks : it could be that &n;&t;&t;we have a SCSI/ESDI/etc controller that is BIOS&n;&t;&t;compatible with ST-506, and thus showing up in our&n;&t;&t;BIOS table, but not register compatible, and therefore&n;&t;&t;not present in CMOS.&n;&n;&t;&t;Furthermore, we will assume that our ST-506 drives&n;&t;&t;&lt;if any&gt; are the primary drives in the system, and &n;&t;&t;the ones reflected as drive 1 or 2.&n;&n;&t;&t;The first drive is stored in the high nibble of CMOS&n;&t;&t;byte 0x12, the second in the low nibble.  This will be&n;&t;&t;either a 4 bit drive type or 0xf indicating use byte 0x19 &n;&t;&t;for an 8 bit type, drive 1, 0x1a for drive 2 in CMOS.&n;&n;&t;&t;Needless to say, a non-zero value means we have &n;&t;&t;an AT controller hard disk for that drive.&n;&n;&t;&t;&n;&t;*/
-r_if
-c_cond
+multiline_comment|/*&n;&t;&t;We query CMOS about hard disks : it could be that &n;&t;&t;we have a SCSI/ESDI/etc controller that is BIOS&n;&t;&t;compatible with ST-506, and thus showing up in our&n;&t;&t;BIOS table, but not register compatible, and therefore&n;&t;&t;not present in CMOS.&n;&n;&t;&t;Furthermore, we will assume that our ST-506 drives&n;&t;&t;&lt;if any&gt; are the primary drives in the system, and &n;&t;&t;the ones reflected as drive 1 or 2.&n;&n;&t;&t;The first drive is stored in the high nibble of CMOS&n;&t;&t;byte 0x12, the second in the low nibble.  This will be&n;&t;&t;either a 4 bit drive type or 0xf indicating use byte 0x19 &n;&t;&t;for an 8 bit type, drive 1, 0x1a for drive 2 in CMOS.&n;&n;&t;&t;Needless to say, a non-zero value means we have &n;&t;&t;an AT controller hard disk for that drive.&n;&n;&t;&t;Currently the rtc_lock is a bit academic since this&n;&t;&t;driver is non-modular, but someday... ?         Paul G.&n;&t;*/
+id|spin_lock_irqsave
+c_func
 (paren
-(paren
+op_amp
+id|rtc_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|cmos_disks
 op_assign
 id|CMOS_READ
@@ -3668,7 +3677,20 @@ c_func
 (paren
 l_int|0x12
 )paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|rtc_lock
+comma
+id|flags
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmos_disks
 op_amp
 l_int|0xf0
 )paren

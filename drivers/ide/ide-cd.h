@@ -1439,6 +1439,10 @@ DECL|member|dma
 r_int
 id|dma
 suffix:semicolon
+DECL|member|cmd
+r_int
+id|cmd
+suffix:semicolon
 DECL|member|last_block
 r_int
 r_int

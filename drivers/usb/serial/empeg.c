@@ -190,13 +190,13 @@ id|id_table
 op_assign
 (brace
 (brace
-id|idVendor
-suffix:colon
+id|USB_DEVICE
+c_func
+(paren
 id|EMPEG_VENDOR_ID
 comma
-id|idProduct
-suffix:colon
 id|EMPEG_PRODUCT_ID
+)paren
 )brace
 comma
 (brace

@@ -33,7 +33,7 @@ mdefine_line|#define access_ok(type,addr,size) (__range_ok(addr,size) == 0)
 DECL|macro|__access_ok
 mdefine_line|#define __access_ok(addr,size) (__range_ok(addr,size) == 0)
 DECL|function|verify_area
-r_extern
+r_static
 r_inline
 r_int
 id|verify_area
@@ -70,7 +70,7 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Uh, these should become the main single-value transfer routines ...&n; * They automatically use the right size if we just have the right&n; * pointer type ...&n; *&n; * As MIPS uses the same address space for kernel and user data, we&n; * can just do these as direct assignments.&n; *&n; * Careful to not&n; * (a) re-use the arguments for side effects (sizeof is ok)&n; * (b) require any knowledge of processes at this stage&n; */
+multiline_comment|/*&n; * Uh, these should become the main single-value transfer routines ...&n; * They automatically use the right size if we just have the right&n; * pointer type ...&n; *&n; * As SuperH uses the same address space for kernel and user data, we&n; * can just do these as direct assignments.&n; *&n; * Careful to not&n; * (a) re-use the arguments for side effects (sizeof is ok)&n; * (b) require any knowledge of processes at this stage&n; */
 DECL|macro|put_user
 mdefine_line|#define put_user(x,ptr)&t;__put_user_check((x),(ptr),sizeof(*(ptr)))
 DECL|macro|get_user

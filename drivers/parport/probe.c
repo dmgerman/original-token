@@ -395,8 +395,6 @@ id|sep
 r_char
 op_star
 id|u
-op_assign
-id|p
 suffix:semicolon
 op_star
 (paren
@@ -405,6 +403,30 @@ op_increment
 )paren
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* Get rid of trailing blanks */
+id|u
+op_assign
+id|strchr
+(paren
+id|sep
+comma
+l_char|&squot; &squot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|u
+)paren
+op_star
+id|u
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|u
+op_assign
+id|p
 suffix:semicolon
 r_while
 c_loop

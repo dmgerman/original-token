@@ -117,6 +117,13 @@ c_func
 id|csum_partial_copy
 )paren
 suffix:semicolon
+DECL|variable|simple_strtol
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|simple_strtol
+)paren
+suffix:semicolon
 DECL|variable|strtok
 id|EXPORT_SYMBOL
 c_func
@@ -150,6 +157,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|strchr
+)paren
+suffix:semicolon
+DECL|variable|strcat
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strcat
 )paren
 suffix:semicolon
 multiline_comment|/* mem exports */

@@ -371,7 +371,7 @@ c_func
 (paren
 id|pci
 comma
-id|rcpci_pci_table
+id|rcpci45_pci_table
 )paren
 suffix:semicolon
 DECL|function|rcpci45_remove_one

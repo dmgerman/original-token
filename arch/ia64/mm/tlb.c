@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * TLB support routines.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; * 08/02/00 A. Mallick &lt;asit.k.mallick@intel.com&gt;&t;&n; *&t;&t;Modified RID allocation for SMP &n; */
+multiline_comment|/*&n; * TLB support routines.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; * 08/02/00 A. Mallick &lt;asit.k.mallick@intel.com&gt;&t;&n; *&t;&t;Modified RID allocation for SMP &n; *          Goutham Rao &lt;goutham.rao@intel.com&gt;&n; *              IPI based ptc implementation and A-step IPI implementation.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/pal.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 DECL|macro|SUPPORTED_PGBITS
 mdefine_line|#define SUPPORTED_PGBITS (&t;&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_256M |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_64M  |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_16M  |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_4M   |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_1M   |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_256K |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_64K  |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_16K  |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_8K   |&t;&t;&bslash;&n;&t;&t;1 &lt;&lt; _PAGE_SIZE_4K )
 DECL|variable|ia64_ctx
@@ -27,16 +28,19 @@ comma
 id|limit
 suffix:colon
 (paren
-l_int|1UL
+l_int|1
 op_lshift
-id|IA64_HW_CONTEXT_BITS
+l_int|15
 )paren
+op_minus
+l_int|1
+comma
+multiline_comment|/* start out with the safe (architected) limit */
+id|max_ctx
+suffix:colon
+op_complement
+l_int|0U
 )brace
-suffix:semicolon
-multiline_comment|/*&n;  * Put everything in a struct so we avoid the global offset table whenever&n;  * possible.&n;  */
-DECL|variable|ia64_ptce_info
-id|ia64_ptce_info_t
-id|ia64_ptce_info
 suffix:semicolon
 multiline_comment|/*&n; * Seralize usage of ptc.g &n; */
 DECL|variable|ptcg_lock
@@ -247,6 +251,72 @@ c_func
 suffix:semicolon
 multiline_comment|/* srlz.i implies srlz.d */
 multiline_comment|/*&n;&t; * Wait for other CPUs to finish purging entries.&n;&t; */
+macro_line|#if (defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) || defined(CONFIG_ITANIUM_BSTEP_SPECIFIC))
+(brace
+r_int
+r_int
+id|start
+op_assign
+id|ia64_get_itc
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|flush_cpu_count
+)paren
+OG
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|ia64_get_itc
+c_func
+(paren
+)paren
+op_minus
+id|start
+)paren
+OG
+l_int|40000UL
+)paren
+(brace
+id|atomic_set
+c_func
+(paren
+op_amp
+id|flush_cpu_count
+comma
+id|smp_num_cpus
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|smp_send_flush_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|start
+op_assign
+id|ia64_get_itc
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+macro_line|#else
 r_while
 c_loop
 (paren
@@ -260,6 +330,7 @@ id|flush_cpu_count
 (brace
 multiline_comment|/* Nothing */
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -301,25 +372,25 @@ op_star
 id|mm
 )paren
 (brace
+r_int
+r_int
+id|tsk_context
+comma
+id|max_ctx
+op_assign
+id|ia64_ctx.max_ctx
+suffix:semicolon
 r_struct
 id|task_struct
 op_star
 id|tsk
 suffix:semicolon
-r_int
-r_int
-id|tsk_context
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|ia64_ctx.next
-op_ge
-(paren
-l_int|1UL
-op_lshift
-id|IA64_HW_CONTEXT_BITS
-)paren
+OG
+id|max_ctx
 )paren
 id|ia64_ctx.next
 op_assign
@@ -328,11 +399,9 @@ suffix:semicolon
 multiline_comment|/* skip daemons */
 id|ia64_ctx.limit
 op_assign
-(paren
-l_int|1UL
-op_lshift
-id|IA64_HW_CONTEXT_BITS
-)paren
+id|max_ctx
+op_plus
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; * Scan all the task&squot;s mm-&gt;context and set proper safe range&n;&t; */
 id|read_lock
@@ -384,12 +453,8 @@ r_if
 c_cond
 (paren
 id|ia64_ctx.next
-op_ge
-(paren
-l_int|1UL
-op_lshift
-id|IA64_HW_CONTEXT_BITS
-)paren
+OG
+id|max_ctx
 )paren
 id|ia64_ctx.next
 op_assign
@@ -397,11 +462,9 @@ l_int|300
 suffix:semicolon
 id|ia64_ctx.limit
 op_assign
-(paren
-l_int|1UL
-op_lshift
-id|IA64_HW_CONTEXT_BITS
-)paren
+id|max_ctx
+op_plus
+l_int|1
 suffix:semicolon
 r_goto
 id|repeat
@@ -465,33 +528,35 @@ comma
 id|stride1
 comma
 id|addr
+suffix:semicolon
+id|addr
 op_assign
-id|ia64_ptce_info.base
+id|my_cpu_data.ptce_base
 suffix:semicolon
 id|count0
 op_assign
-id|ia64_ptce_info.count
+id|my_cpu_data.ptce_count
 (braket
 l_int|0
 )braket
 suffix:semicolon
 id|count1
 op_assign
-id|ia64_ptce_info.count
+id|my_cpu_data.ptce_count
 (braket
 l_int|1
 )braket
 suffix:semicolon
 id|stride0
 op_assign
-id|ia64_ptce_info.stride
+id|my_cpu_data.ptce_stride
 (braket
 l_int|0
 )braket
 suffix:semicolon
 id|stride1
 op_assign
-id|ia64_ptce_info.stride
+id|my_cpu_data.ptce_stride
 (braket
 l_int|1
 )braket
@@ -615,10 +680,18 @@ id|current-&gt;active_mm
 )paren
 (brace
 multiline_comment|/* this does happen, but perhaps it&squot;s not worth optimizing for? */
+macro_line|#ifdef CONFIG_SMP
+id|flush_tlb_all
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|mm-&gt;context
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -816,12 +889,59 @@ id|ia64_tlb_init
 r_void
 )paren
 (brace
+id|ia64_ptce_info_t
+id|ptce_info
+suffix:semicolon
 id|ia64_get_ptce
 c_func
 (paren
 op_amp
-id|ia64_ptce_info
+id|ptce_info
 )paren
+suffix:semicolon
+id|my_cpu_data.ptce_base
+op_assign
+id|ptce_info.base
+suffix:semicolon
+id|my_cpu_data.ptce_count
+(braket
+l_int|0
+)braket
+op_assign
+id|ptce_info.count
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|my_cpu_data.ptce_count
+(braket
+l_int|1
+)braket
+op_assign
+id|ptce_info.count
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|my_cpu_data.ptce_stride
+(braket
+l_int|0
+)braket
+op_assign
+id|ptce_info.stride
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|my_cpu_data.ptce_stride
+(braket
+l_int|1
+)braket
+op_assign
+id|ptce_info.stride
+(braket
+l_int|1
+)braket
 suffix:semicolon
 id|__flush_tlb_all
 c_func

@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: delay.h,v 1.9 2000/05/09 17:40:15 davem Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: delay.h,v 1.11 2001/01/02 08:15:32 davem Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef __SPARC64_DELAY_H
 DECL|macro|__SPARC64_DELAY_H
 mdefine_line|#define __SPARC64_DELAY_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/param.h&gt;
 macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
@@ -143,6 +144,8 @@ id|__delay
 c_func
 (paren
 id|usecs
+op_star
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -151,7 +154,7 @@ DECL|macro|__udelay_val
 mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
 macro_line|#else
 DECL|macro|__udelay_val
-mdefine_line|#define __udelay_val loops_per_sec
+mdefine_line|#define __udelay_val loops_per_jiffy
 macro_line|#endif
 DECL|macro|udelay
 mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)

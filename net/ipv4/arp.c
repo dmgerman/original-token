@@ -605,6 +605,7 @@ r_return
 l_int|0
 suffix:semicolon
 macro_line|#endif
+suffix:semicolon
 )brace
 macro_line|#endif
 r_if

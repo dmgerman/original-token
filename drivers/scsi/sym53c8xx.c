@@ -35649,6 +35649,7 @@ r_return
 suffix:semicolon
 id|out_stuck
 suffix:colon
+suffix:semicolon
 )brace
 multiline_comment|/*==========================================================&n;**&n;**&n;**&t;Aquire a control block&n;**&n;**&n;**==========================================================&n;*/
 DECL|function|ncr_get_ccb
@@ -46763,13 +46764,13 @@ id|retv
 suffix:semicolon
 )brace
 DECL|macro|SET_BIT
-macro_line|#undef SET_BIT 0
+macro_line|#undef SET_BIT /* 0 */
 DECL|macro|CLR_BIT
-macro_line|#undef CLR_BIT 1
+macro_line|#undef CLR_BIT /* 1 */
 DECL|macro|SET_CLK
-macro_line|#undef SET_CLK 2
+macro_line|#undef SET_CLK /* 2 */
 DECL|macro|CLR_CLK
-macro_line|#undef CLR_CLK 3
+macro_line|#undef CLR_CLK /* 3 */
 multiline_comment|/*&n; *  Try reading Symbios NVRAM.&n; *  Return 0 if OK.&n; */
 DECL|function|sym_read_Symbios_nvram
 r_static

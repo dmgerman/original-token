@@ -3,6 +3,7 @@ DECL|macro|_ASM_IA64_PGALLOC_H
 mdefine_line|#define _ASM_IA64_PGALLOC_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to allocate&n; * page tables.&n; *&n; * This hopefully works with any (fixed) ia-64 page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 2000, Goutham Rao &lt;goutham.rao@intel.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -679,17 +680,6 @@ c_cond
 id|pmd_page
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|pgd_none
-c_func
-(paren
-op_star
-id|pgd
-)paren
-)paren
-(brace
 id|pgd_set
 c_func
 (paren
@@ -702,14 +692,6 @@ r_return
 id|pmd_page
 op_plus
 id|offset
-suffix:semicolon
-)brace
-r_else
-id|free_pmd_fast
-c_func
-(paren
-id|pmd_page
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -766,9 +748,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This establishes kernel virtual mappings (e.g., as a result of a&n; * vmalloc call).  Since ia-64 uses a separate kernel page table,&n; * there is nothing to do here... :)&n; */
-DECL|macro|set_pgdir
-mdefine_line|#define set_pgdir(vmaddr, entry)&t;do { } while(0)
 multiline_comment|/*&n; * Now for some TLB flushing routines.  This is the kind of stuff that&n; * can be very expensive, so try to avoid them whenever possible.&n; */
 multiline_comment|/*&n; * Flush everything (kernel mapping may also have changed due to&n; * vmalloc/vfree).&n; */
 r_extern
@@ -879,18 +858,56 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP
 id|flush_tlb_range
 c_func
 (paren
 id|vma-&gt;vm_mm
 comma
+(paren
 id|addr
+op_amp
+id|PAGE_MASK
+)paren
 comma
+(paren
 id|addr
+op_amp
+id|PAGE_MASK
+)paren
 op_plus
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_mm
+op_eq
+id|current-&gt;active_mm
+)paren
+id|asm
+r_volatile
+(paren
+l_string|&quot;ptc.l %0,%1&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|PAGE_SHIFT
+op_lshift
+l_int|2
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Flush the TLB entries mapping the virtually mapped linear page&n; * table corresponding to address range [START-END).&n; */
 r_static
@@ -913,7 +930,6 @@ r_int
 id|end
 )paren
 (brace
-multiline_comment|/*&n;&t; * XXX fix mmap(), munmap() et al to guarantee that there are no mappings&n;&t; * across region boundaries. --davidm 00/02/23&n;&t; */
 r_if
 c_cond
 (paren
@@ -929,14 +945,12 @@ c_func
 id|end
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;flush_tlb_pgtables: can&squot;t flush across regions!!&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|flush_tlb_range
 c_func
 (paren
@@ -955,6 +969,211 @@ id|end
 )paren
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n; * Now for some cache flushing routines.  This is the kind of stuff&n; * that can be very expensive, so try to avoid them whenever possible.&n; */
+multiline_comment|/* Caches aren&squot;t brain-dead on the IA-64. */
+DECL|macro|flush_cache_all
+mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
+DECL|macro|flush_cache_mm
+mdefine_line|#define flush_cache_mm(mm)&t;&t;&t;do { } while (0)
+DECL|macro|flush_cache_range
+mdefine_line|#define flush_cache_range(mm, start, end)&t;do { } while (0)
+DECL|macro|flush_cache_page
+mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+r_extern
+r_void
+id|flush_icache_range
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+r_static
+r_inline
+r_void
+DECL|function|flush_dcache_page
+id|flush_dcache_page
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+id|clear_bit
+c_func
+(paren
+id|PG_arch_1
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
+)brace
+r_static
+r_inline
+r_void
+DECL|function|clear_user_page
+id|clear_user_page
+(paren
+r_void
+op_star
+id|addr
+comma
+r_int
+r_int
+id|vaddr
+comma
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+id|clear_page
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+)brace
+r_static
+r_inline
+r_void
+DECL|function|copy_user_page
+id|copy_user_page
+(paren
+r_void
+op_star
+id|to
+comma
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|vaddr
+comma
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+id|copy_page
+c_func
+(paren
+id|to
+comma
+id|from
+)paren
+suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * IA-64 doesn&squot;t have any external MMU info: the page tables contain all the necessary&n; * information.  However, we use this macro to take care of any (delayed) i-cache flushing&n; * that may be necessary.&n; */
+r_static
+r_inline
+r_void
+DECL|function|update_mmu_cache
+id|update_mmu_cache
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+id|pte_t
+id|pte
+)paren
+(brace
+r_struct
+id|page
+op_star
+id|page
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pte_exec
+c_func
+(paren
+id|pte
+)paren
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* not an executable page... */
+id|page
+op_assign
+id|pte_page
+c_func
+(paren
+id|pte
+)paren
+suffix:semicolon
+id|address
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|PG_arch_1
+comma
+op_amp
+id|page-&gt;flags
+)paren
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* i-cache is already coherent with d-cache */
+id|flush_icache_range
+c_func
+(paren
+id|address
+comma
+id|address
+op_plus
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|PG_arch_1
+comma
+op_amp
+id|page-&gt;flags
+)paren
+suffix:semicolon
+multiline_comment|/* mark page as clean */
 )brace
 macro_line|#endif /* _ASM_IA64_PGALLOC_H */
 eof

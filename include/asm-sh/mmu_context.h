@@ -205,6 +205,8 @@ DECL|macro|MMU_TTB
 mdefine_line|#define MMU_TTB&t;&t;0xFF000008&t;/* Translation table base register */
 DECL|macro|MMU_TEA
 mdefine_line|#define MMU_TEA&t;&t;0xFF00000C&t;/* TLB Exception Address */
+DECL|macro|MMU_PTEA
+mdefine_line|#define MMU_PTEA&t;0xFF000034&t;/* Page table entry assistance register */
 DECL|macro|MMUCR
 mdefine_line|#define MMUCR&t;&t;0xFF000010&t;/* MMU Control Register */
 DECL|macro|MMU_ITLB_ADDRESS_ARRAY

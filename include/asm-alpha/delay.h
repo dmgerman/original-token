@@ -2,8 +2,9 @@ macro_line|#ifndef __ALPHA_DELAY_H
 DECL|macro|__ALPHA_DELAY_H
 mdefine_line|#define __ALPHA_DELAY_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/param.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
-multiline_comment|/*&n; * Copyright (C) 1993, 2000 Linus Torvalds&n; *&n; * Delay routines, using a pre-computed &quot;loops_per_second&quot; value.&n; */
+multiline_comment|/*&n; * Copyright (C) 1993, 2000 Linus Torvalds&n; *&n; * Delay routines, using a pre-computed &quot;loops_per_jiffy&quot; value.&n; */
 multiline_comment|/*&n; * Use only for very small delays (&lt; 1 msec). &n; *&n; * The active part of our cycle counter is only 32-bits wide, and&n; * we&squot;re treating the difference between two marks as signed.  On&n; * a 1GHz box, that&squot;s about 2 seconds.&n; */
 r_extern
 id|__inline__
@@ -59,14 +60,18 @@ id|usecs
 comma
 r_int
 r_int
-id|lps
+id|lpj
 )paren
 (brace
 id|usecs
 op_mul_assign
 (paren
 (paren
-l_int|1UL
+(paren
+r_int
+r_int
+)paren
+id|HZ
 op_lshift
 l_int|32
 )paren
@@ -74,7 +79,7 @@ op_div
 l_int|1000000
 )paren
 op_star
-id|lps
+id|lpj
 suffix:semicolon
 id|__delay
 c_func
@@ -90,10 +95,10 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SMP
 DECL|macro|udelay
-mdefine_line|#define udelay(u)  __udelay((u), cpu_data[smp_processor_id()].loops_per_sec)
+mdefine_line|#define udelay(u)  __udelay((u), cpu_data[smp_processor_id()].loops_per_jiffy)
 macro_line|#else
 DECL|macro|udelay
-mdefine_line|#define udelay(u)  __udelay((u), loops_per_sec)
+mdefine_line|#define udelay(u)  __udelay((u), loops_per_jiffy)
 macro_line|#endif
 macro_line|#endif /* defined(__ALPHA_DELAY_H) */
 eof

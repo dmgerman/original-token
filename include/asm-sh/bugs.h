@@ -17,7 +17,7 @@ r_void
 r_extern
 r_int
 r_int
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 r_char
 op_star
@@ -30,9 +30,9 @@ l_int|2
 )braket
 suffix:semicolon
 multiline_comment|/* &quot;sh&quot; */
-id|cpu_data-&gt;loops_per_sec
+id|cpu_data-&gt;loops_per_jiffy
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 r_switch
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.60 2000/10/14 10:09:04 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.61 2001/01/03 08:08:49 ecd Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3743,10 +3743,6 @@ id|info
 )paren
 (brace
 r_int
-r_int
-id|port
-suffix:semicolon
-r_int
 id|cflag
 suffix:semicolon
 r_int
@@ -3779,11 +3775,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|port
-op_assign
 id|info-&gt;port
-)paren
 )paren
 r_return
 suffix:semicolon
@@ -8251,7 +8243,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.60 $&quot;
+l_string|&quot;$Revision: 1.61 $&quot;
 suffix:semicolon
 r_char
 op_star

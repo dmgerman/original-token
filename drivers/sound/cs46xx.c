@@ -9283,16 +9283,6 @@ op_assign
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|remove_wait_queue
-c_func
-(paren
-op_amp
-id|state-&gt;dmabuf.wait
-comma
-op_amp
-id|wait
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * IA-32 ELF support.&n; *&n; * Copyright (C) 1999 Arun Sharma &lt;arun.sharma@intel.com&gt;&n; *&n; * 06/16/00&t;A. Mallick&t;initialize csd/ssd/tssd/cflg for ia32_load_state&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;asm/param.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#include &lt;asm/ia32.h&gt;
 DECL|macro|CONFIG_BINFMT_ELF32
@@ -28,6 +29,10 @@ macro_line|#ifdef CONFIG_BINFMT_ELF32_MODULE
 DECL|macro|CONFIG_BINFMT_ELF_MODULE
 macro_line|# define CONFIG_BINFMT_ELF_MODULE&t;CONFIG_BINFMT_ELF32_MODULE
 macro_line|#endif
+DECL|macro|CLOCKS_PER_SEC
+macro_line|#undef CLOCKS_PER_SEC
+DECL|macro|CLOCKS_PER_SEC
+mdefine_line|#define CLOCKS_PER_SEC&t;IA32_CLOCKS_PER_SEC
 r_extern
 r_void
 id|ia64_elf32_init
@@ -338,6 +343,11 @@ id|current-&gt;thread.map_base
 op_assign
 l_int|0x40000000
 suffix:semicolon
+id|current-&gt;thread.task_size
+op_assign
+l_int|0xc0000000
+suffix:semicolon
+multiline_comment|/* use what Linux/x86 uses... */
 multiline_comment|/* setup ia32 state for ia32_load_state */
 id|current-&gt;thread.eflag
 op_assign
@@ -1131,6 +1141,18 @@ id|eppnt-&gt;p_memsz
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+multiline_comment|/*&n;&t; *  Make sure the elf interpreter doesn&squot;t get loaded at location 0&n;&t; *    so that NULL pointers correctly cause segfaults.&n;&t; */
+r_if
+c_cond
+(paren
+id|addr
+op_eq
+l_int|0
+)paren
+id|addr
+op_add_assign
+id|PAGE_SIZE
 suffix:semicolon
 macro_line|#if 1
 id|set_brk

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/ide/macide.c -- Macintosh IDE Driver&n; *&n; *     Copyright (C) 1998 by Michael Schmitz&n; *&n; *  This driver was written based on information obtained from the MacOS IDE&n; *  driver binary by Mikael Forselius&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -6,69 +7,84 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/machw.h&gt;
 macro_line|#include &lt;asm/macintosh.h&gt;
 macro_line|#include &lt;asm/macints.h&gt;
-multiline_comment|/*&n;     *  Base of the IDE interface (see ATAManager ROM code)&n;     */
-DECL|macro|MAC_HD_BASE
-mdefine_line|#define MAC_HD_BASE&t;0x50f1a000
-multiline_comment|/*&n;     *  Offsets from the above base (scaling 4)&n;     */
-DECL|macro|MAC_HD_DATA
-mdefine_line|#define MAC_HD_DATA&t;0x00
-DECL|macro|MAC_HD_ERROR
-mdefine_line|#define MAC_HD_ERROR&t;0x04&t;&t;/* see err-bits */
-DECL|macro|MAC_HD_NSECTOR
-mdefine_line|#define MAC_HD_NSECTOR&t;0x08&t;&t;/* nr of sectors to read/write */
-DECL|macro|MAC_HD_SECTOR
-mdefine_line|#define MAC_HD_SECTOR&t;0x0c&t;&t;/* starting sector */
-DECL|macro|MAC_HD_LCYL
-mdefine_line|#define MAC_HD_LCYL&t;0x10&t;&t;/* starting cylinder */
-DECL|macro|MAC_HD_HCYL
-mdefine_line|#define MAC_HD_HCYL&t;0x14&t;&t;/* high byte of starting cyl */
-DECL|macro|MAC_HD_SELECT
-mdefine_line|#define MAC_HD_SELECT&t;0x18&t;&t;/* 101dhhhh , d=drive, hhhh=head */
-DECL|macro|MAC_HD_STATUS
-mdefine_line|#define MAC_HD_STATUS&t;0x1c&t;&t;/* see status-bits */
-DECL|macro|MAC_HD_CONTROL
-mdefine_line|#define MAC_HD_CONTROL&t;0x38&t;&t;/* control/altstatus */
+macro_line|#include &lt;asm/mac_baboon.h&gt;
+DECL|macro|IDE_BASE
+mdefine_line|#define IDE_BASE 0x50F1A000&t;/* Base address of IDE controller */
+multiline_comment|/*&n; * Generic IDE registers as offsets from the base&n; * These match MkLinux so they should be correct.&n; */
+DECL|macro|IDE_DATA
+mdefine_line|#define IDE_DATA&t;0x00
+DECL|macro|IDE_ERROR
+mdefine_line|#define IDE_ERROR&t;0x04&t;/* see err-bits */
+DECL|macro|IDE_NSECTOR
+mdefine_line|#define IDE_NSECTOR&t;0x08&t;/* nr of sectors to read/write */
+DECL|macro|IDE_SECTOR
+mdefine_line|#define IDE_SECTOR&t;0x0c&t;/* starting sector */
+DECL|macro|IDE_LCYL
+mdefine_line|#define IDE_LCYL&t;0x10&t;/* starting cylinder */
+DECL|macro|IDE_HCYL
+mdefine_line|#define IDE_HCYL&t;0x14&t;/* high byte of starting cyl */
+DECL|macro|IDE_SELECT
+mdefine_line|#define IDE_SELECT&t;0x18&t;/* 101dhhhh , d=drive, hhhh=head */
+DECL|macro|IDE_STATUS
+mdefine_line|#define IDE_STATUS&t;0x1c&t;/* see status-bits */
+DECL|macro|IDE_CONTROL
+mdefine_line|#define IDE_CONTROL&t;0x38&t;/* control/altstatus */
+multiline_comment|/*&n; * Mac-specific registers&n; */
+multiline_comment|/*&n; * this register is odd; it doesn&squot;t seem to do much and it&squot;s&n; * not word-aligned like virtually every other hardware register&n; * on the Mac...&n; */
+DECL|macro|IDE_IFR
+mdefine_line|#define IDE_IFR&t;&t;0x101&t;/* (0x101) IDE interrupt flags on Quadra:&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; * Bit 0+1: some interrupt flags&n;&t;&t;&t;&t; * Bit 2+3: some interrupt enable&n;&t;&t;&t;&t; * Bit 4:   ??&n;&t;&t;&t;&t; * Bit 5:   IDE interrupt flag (any hwif)&n;&t;&t;&t;&t; * Bit 6:   maybe IDE interrupt enable (any hwif) ??&n;&t;&t;&t;&t; * Bit 7:   Any interrupt condition&n;&t;&t;&t;&t; */
+DECL|variable|ide_ifr
+r_volatile
+r_int
+r_char
+op_star
+id|ide_ifr
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|IDE_BASE
+op_plus
+id|IDE_IFR
+)paren
+suffix:semicolon
 DECL|variable|macide_offsets
 r_static
 r_int
-id|__init
 id|macide_offsets
 (braket
 id|IDE_NR_PORTS
 )braket
 op_assign
 (brace
-id|MAC_HD_DATA
+id|IDE_DATA
 comma
-id|MAC_HD_ERROR
+id|IDE_ERROR
 comma
-id|MAC_HD_NSECTOR
+id|IDE_NSECTOR
 comma
-id|MAC_HD_SECTOR
+id|IDE_SECTOR
 comma
-id|MAC_HD_LCYL
+id|IDE_LCYL
 comma
-id|MAC_HD_HCYL
+id|IDE_HCYL
 comma
-id|MAC_HD_SELECT
+id|IDE_SELECT
 comma
-id|MAC_HD_STATUS
+id|IDE_STATUS
 comma
-id|MAC_HD_CONTROL
+id|IDE_CONTROL
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t; * Other registers&n;&t; */
-multiline_comment|/* &n;&t; * IDE interrupt status register for both (?) hwifs on Quadra&n;&t; * Initial setting: 0xc&n;&t; * Guessing again:&n;&t; * Bit 0+1: some interrupt flags&n;&t; * Bit 2+3: some interrupt enable&n;&t; * Bit 4:   ??&n;&t; * Bit 5:   IDE interrupt flag (any hwif)&n;&t; * Bit 6:   maybe IDE interrupt enable (any hwif) ??&n;&t; * Bit 7:   Any interrupt condition&n;&t; *&n;&t; * Only relevant item: bit 5, to be checked by mac_ack_intr&n;&t; */
-DECL|macro|MAC_HD_ISR
-mdefine_line|#define MAC_HD_ISR&t;0x101
-DECL|function|mac_ack_intr
-r_static
+DECL|function|macide_ack_intr
 r_int
-id|mac_ack_intr
+id|macide_ack_intr
 c_func
 (paren
 id|ide_hwif_t
@@ -76,48 +92,20 @@ op_star
 id|hwif
 )paren
 (brace
-r_int
-r_char
-id|isr
-suffix:semicolon
-id|isr
-op_assign
-id|readb
-c_func
-(paren
-id|MAC_HD_BASE
-op_plus
-id|MAC_HD_ISR
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|isr
+op_star
+id|ide_ifr
 op_amp
-(paren
-l_int|1
-op_lshift
-l_int|5
-)paren
+l_int|0x20
 )paren
 (brace
-id|writeb
-c_func
-(paren
-id|isr
-op_amp
+op_star
+id|ide_ifr
+op_and_assign
 op_complement
-(paren
-l_int|1
-op_lshift
-l_int|5
-)paren
-comma
-id|MAC_HD_BASE
-op_plus
-id|MAC_HD_ISR
-)paren
+l_int|0x20
 suffix:semicolon
 r_return
 l_int|1
@@ -127,10 +115,51 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Probe for a Macintosh IDE interface&n;     */
+macro_line|#ifdef CONFIG_BLK_DEV_MAC_MEDIABAY
+DECL|function|macide_mediabay_interrupt
+r_static
+r_void
+id|macide_mediabay_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+id|state
+op_assign
+id|baboon-&gt;mb_status
+op_amp
+l_int|0x04
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;macide: media bay %s detected&bslash;n&quot;
+comma
+id|state
+ques
+c_cond
+l_string|&quot;removal&quot;
+suffix:colon
+l_string|&quot;insertion&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n; * Probe for a Macintosh IDE interface&n; */
 DECL|function|macide_init
 r_void
-id|__init
 id|macide_init
 c_func
 (paren
@@ -145,18 +174,6 @@ id|index
 op_assign
 op_minus
 l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|MACH_IS_MAC
-op_logical_or
-id|macintosh_config-&gt;ide_type
-op_eq
-l_int|0
-)paren
-r_return
 suffix:semicolon
 r_switch
 c_cond
@@ -176,22 +193,15 @@ comma
 (paren
 id|ide_ioreg_t
 )paren
-id|MAC_HD_BASE
+id|IDE_BASE
 comma
 id|macide_offsets
 comma
 l_int|0
 comma
-(paren
-id|ide_ioreg_t
-)paren
-(paren
-id|MAC_HD_BASE
-op_plus
-id|MAC_HD_ISR
-)paren
+l_int|0
 comma
-id|mac_ack_intr
+id|macide_ack_intr
 comma
 id|IRQ_NUBUS_F
 )paren
@@ -209,7 +219,8 @@ l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
-r_default
+r_case
+id|MAC_IDE_PB
 suffix:colon
 id|ide_setup_ports
 c_func
@@ -220,7 +231,7 @@ comma
 (paren
 id|ide_ioreg_t
 )paren
-id|MAC_HD_BASE
+id|IDE_BASE
 comma
 id|macide_offsets
 comma
@@ -228,7 +239,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|NULL
+id|macide_ack_intr
 comma
 id|IRQ_NUBUS_C
 )paren
@@ -245,6 +256,110 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_break
+suffix:semicolon
+r_case
+id|MAC_IDE_BABOON
+suffix:colon
+id|ide_setup_ports
+c_func
+(paren
+op_amp
+id|hw
+comma
+(paren
+id|ide_ioreg_t
+)paren
+id|BABOON_BASE
+comma
+id|macide_offsets
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|IRQ_BABOON_1
+)paren
+suffix:semicolon
+id|index
+op_assign
+id|ide_register_hw
+c_func
+(paren
+op_amp
+id|hw
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|index
+op_eq
+op_minus
+l_int|1
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;ident
+op_eq
+id|MAC_MODEL_PB190
+)paren
+(brace
+multiline_comment|/* Fix breakage in ide-disk.c: drive capacity&t;*/
+multiline_comment|/* is not initialized for drives without a &t;*/
+multiline_comment|/* hardware ID, and we cna&squot;t get that without&t;*/
+multiline_comment|/* probing the drive which freezes a 190.&t;*/
+id|ide_drive_t
+op_star
+id|drive
+op_assign
+op_amp
+id|ide_hwifs
+(braket
+id|index
+)braket
+dot
+id|drives
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|drive-&gt;capacity
+op_assign
+id|drive-&gt;cyl
+op_star
+id|drive-&gt;head
+op_star
+id|drive-&gt;sect
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_MAC_MEDIABAY
+id|request_irq
+c_func
+(paren
+id|IRQ_BABOON_2
+comma
+id|macide_mediabay_interrupt
+comma
+id|IRQ_FLG_FAST
+comma
+l_string|&quot;mediabay&quot;
+comma
+id|macide_mediabay_interrupt
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_return
 suffix:semicolon
 )brace
 r_if
@@ -272,10 +387,42 @@ id|index
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;ide_type
+op_eq
+id|MAC_IDE_PB
+)paren
 id|printk
 c_func
 (paren
 l_string|&quot;ide%d: Macintosh Powerbook IDE interface&bslash;n&quot;
+comma
+id|index
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;ide_type
+op_eq
+id|MAC_IDE_BABOON
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ide%d: Macintosh Powerbook Baboon IDE interface&bslash;n&quot;
+comma
+id|index
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;ide%d: Unknown Macintosh IDE interface&bslash;n&quot;
 comma
 id|index
 )paren

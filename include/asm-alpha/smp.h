@@ -63,10 +63,10 @@ DECL|struct|cpuinfo_alpha
 r_struct
 id|cpuinfo_alpha
 (brace
-DECL|member|loops_per_sec
+DECL|member|loops_per_jiffy
 r_int
 r_int
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 DECL|member|last_asn
 r_int
