@@ -2648,7 +2648,7 @@ id|chan-&gt;protocol
 (brace
 id|hdr_len
 op_assign
-id|wan_encapsulate
+id|wanrouter_encapsulate
 c_func
 (paren
 id|skb
@@ -3781,7 +3781,7 @@ op_logical_neg
 id|skb-&gt;protocol
 op_logical_and
 op_logical_neg
-id|wan_type_trans
+id|wanrouter_type_trans
 c_func
 (paren
 id|skb

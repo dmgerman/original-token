@@ -395,7 +395,7 @@ id|ioctl
 suffix:semicolon
 id|err
 op_assign
-id|register_wandev
+id|register_wan_device
 c_func
 (paren
 id|wandev
@@ -481,7 +481,7 @@ id|card_array
 id|i
 )braket
 suffix:semicolon
-id|unregister_wandev
+id|unregister_wan_device
 c_func
 (paren
 id|card-&gt;devname

@@ -2216,6 +2216,8 @@ id|sk-&gt;mtu
 op_assign
 id|dst-&gt;pmtu
 suffix:semicolon
+id|mss_now
+op_assign
 id|sk-&gt;mss
 op_assign
 id|sk-&gt;mtu

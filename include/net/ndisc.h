@@ -325,6 +325,14 @@ r_int
 id|len
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|igmp6_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|ndisc_get_neigh
 r_extern
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.78 1998/04/16 16:29:22 freitag Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.80 1998/05/02 12:47:15 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -468,18 +468,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|result
 op_eq
 l_int|0
 )paren
-op_logical_and
+(brace
+r_if
+c_cond
 (paren
 id|tb
 op_eq
 l_int|NULL
 )paren
-op_logical_and
+(brace
+r_if
+c_cond
 (paren
 id|tcp_bucket_create
 c_func
@@ -489,12 +492,43 @@ id|snum
 op_eq
 l_int|NULL
 )paren
-)paren
 (brace
 id|result
 op_assign
 l_int|1
 suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* It could be pending garbage collection, this&n;&t;&t;&t; * kills the race and prevents it from disappearing&n;&t;&t;&t; * out from under us by the time we use it.  -DaveM&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|tb-&gt;owners
+op_eq
+l_int|NULL
+op_logical_and
+op_logical_neg
+(paren
+id|tb-&gt;flags
+op_amp
+id|TCPB_FLAG_LOCKED
+)paren
+)paren
+(brace
+id|tb-&gt;flags
+op_assign
+id|TCPB_FLAG_LOCKED
+suffix:semicolon
+id|tcp_dec_slow_timer
+c_func
+(paren
+id|TCP_SLT_BUCKETGC
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 id|go_like_smoke
 suffix:colon
@@ -3196,7 +3230,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;There are no SYN attacks on IPv6, yet...&n;&t; */
+multiline_comment|/*&n;&t; *&t;There are no SYN attacks on IPv6, yet...&t;&n;&t; */
 r_if
 c_cond
 (paren

@@ -1320,7 +1320,7 @@ id|this_dev
 suffix:semicolon
 id|dev-&gt;init
 op_assign
-id|ultra_probe
+id|ultramca_probe
 suffix:semicolon
 r_if
 c_cond

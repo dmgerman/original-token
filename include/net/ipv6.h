@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.9 1998/03/08 05:55:20 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.10 1998/04/30 16:24:14 freitag Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _NET_IPV6_H
 DECL|macro|_NET_IPV6_H
 mdefine_line|#define _NET_IPV6_H
@@ -145,6 +145,16 @@ id|__u32
 id|id
 suffix:semicolon
 multiline_comment|/* fragment id&t;&t;*/
+DECL|member|saddr
+r_struct
+id|in6_addr
+id|saddr
+suffix:semicolon
+DECL|member|daddr
+r_struct
+id|in6_addr
+id|daddr
+suffix:semicolon
 DECL|member|timer
 r_struct
 id|timer_list
@@ -768,6 +778,26 @@ r_struct
 id|ipv6_options
 op_star
 id|opt
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|ipv6_opt_hdr
+op_star
+id|ipv6_skip_exthdr
+c_func
+(paren
+r_struct
+id|ipv6_opt_hdr
+op_star
+id|hdr
+comma
+id|u8
+op_star
+id|nexthdrp
+comma
+r_int
+id|len
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;socket options (ipv6_sockglue.c)&n; */

@@ -66,6 +66,29 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;type specific data&n;&t; *&t;variable length field&n;&t; */
 )brace
 suffix:semicolon
+DECL|struct|ipv6_opt_hdr
+r_struct
+id|ipv6_opt_hdr
+(brace
+DECL|member|nexthdr
+id|__u8
+id|nexthdr
+suffix:semicolon
+DECL|member|hdrlen
+id|__u8
+id|hdrlen
+suffix:semicolon
+multiline_comment|/* &n;&t; * TLV encoded option data follows.&n;&t; */
+)brace
+suffix:semicolon
+DECL|macro|ipv6_destopt_hdr
+mdefine_line|#define ipv6_destopt_hdr ipv6_opt_hdr
+DECL|macro|ipv6_hopopt_hdr
+mdefine_line|#define ipv6_hopopt_hdr  ipv6_opt_hdr
+macro_line|#ifdef __KERNEL__
+DECL|macro|ipv6_optlen
+mdefine_line|#define ipv6_optlen(p)  (((p)-&gt;hdrlen+1) &lt;&lt; 3)
+macro_line|#endif
 multiline_comment|/*&n; *&t;routing header type 0 (used in cmsghdr struct)&n; */
 DECL|struct|rt0_hdr
 r_struct
@@ -171,7 +194,7 @@ id|__u16
 id|opt_nflen
 suffix:semicolon
 multiline_comment|/* before fragment hdr */
-multiline_comment|/* &n;&t; * protocol options &n;&t; * usualy carried in IPv6 extension headers&n;&t; */
+multiline_comment|/* &n;&t; * protocol options &n;&t; * usually carried in IPv6 extension headers&n;&t; */
 DECL|member|srcrt
 r_struct
 id|ipv6_rt_hdr

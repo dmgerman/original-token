@@ -2159,7 +2159,7 @@ id|qdisc_kill_estimator
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_NET_POLICE
+macro_line|#ifdef CONFIG_NET_CLS_POLICE
 DECL|variable|tcf_police
 id|EXPORT_SYMBOL
 c_func

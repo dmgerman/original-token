@@ -3456,7 +3456,7 @@ id|type
 suffix:semicolon
 id|hdr_len
 op_assign
-id|wan_encapsulate
+id|wanrouter_encapsulate
 c_func
 (paren
 id|skb
@@ -6406,7 +6406,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|wan_type_trans
+id|wanrouter_type_trans
 c_func
 (paren
 id|skb
@@ -6911,7 +6911,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|wan_type_trans
+id|wanrouter_type_trans
 c_func
 (paren
 id|skb
@@ -12089,7 +12089,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|wan_type_trans
+id|wanrouter_type_trans
 c_func
 (paren
 id|new_skb
@@ -13500,7 +13500,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|wan_type_trans
+id|wanrouter_type_trans
 c_func
 (paren
 id|new_skb

@@ -5733,6 +5733,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_8xx
+r_extern
+r_int
+id|cpm_enet_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_net_dev
 r_static
@@ -5918,6 +5928,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_ARCNET)
 id|arcnet_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_8xx)
+id|cpm_enet_init
 c_func
 (paren
 )paren

@@ -39,6 +39,12 @@ id|htons
 id|ETH_P_IPX
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;hard_header
+)paren
+(brace
 id|dev
 op_member_access_from_pointer
 id|hard_header
@@ -57,6 +63,7 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
+)brace
 )brace
 r_struct
 id|datalink_proto

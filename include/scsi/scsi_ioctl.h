@@ -9,6 +9,10 @@ DECL|macro|SCSI_IOCTL_BENCHMARK_COMMAND
 mdefine_line|#define SCSI_IOCTL_BENCHMARK_COMMAND 3
 DECL|macro|SCSI_IOCTL_SYNC
 mdefine_line|#define SCSI_IOCTL_SYNC 4&t;&t;&t;/* Request synchronous parameters */
+DECL|macro|SCSI_IOCTL_START_UNIT
+mdefine_line|#define SCSI_IOCTL_START_UNIT 5
+DECL|macro|SCSI_IOCTL_STOP_UNIT
+mdefine_line|#define SCSI_IOCTL_STOP_UNIT 6
 multiline_comment|/* The door lock/unlock constants are compatible with Sun constants for&n;   the cdrom */
 DECL|macro|SCSI_IOCTL_DOORLOCK
 mdefine_line|#define SCSI_IOCTL_DOORLOCK 0x5380&t;&t;/* lock the eject mechanism */

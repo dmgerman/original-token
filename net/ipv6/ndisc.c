@@ -5066,9 +5066,6 @@ l_string|&quot;Failed to create the NDISC control socket.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Eeeh... What is it? --ANK */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|sk
 op_assign
 id|ndisc_socket-&gt;sk

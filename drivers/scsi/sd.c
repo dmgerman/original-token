@@ -4544,6 +4544,7 @@ op_assign
 id|full_dev
 suffix:semicolon
 multiline_comment|/* This is all we really need here */
+multiline_comment|/* Using Start/Stop enables differentiation between drive with&n;     * no cartridge loaded - NOT READY, drive with changed cartridge -&n;     * UNIT ATTENTION, or with same cartridge - GOOD STATUS.&n;     * This also handles drives that auto spin down. eg iomega jaz 1GB&n;     * as this will spin up the drive.&n;     */
 id|retval
 op_assign
 id|sd_ioctl
@@ -4554,7 +4555,7 @@ id|inode
 comma
 l_int|NULL
 comma
-id|SCSI_IOCTL_TEST_UNIT_READY
+id|SCSI_IOCTL_START_UNIT
 comma
 l_int|0
 )paren

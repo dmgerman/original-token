@@ -1,8 +1,7 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.142 1998/04/30 12:00:45 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.145 1998/05/02 12:47:13 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Andi Kleen&t;&t;:&t;Fix new listen.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -12,6 +11,7 @@ macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/stddef.h&gt;
 r_extern
 r_int
 id|sysctl_tcp_timestamps
@@ -31,6 +31,14 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_ip_dynaddr
+suffix:semicolon
+r_extern
+id|__u32
+id|sysctl_wmem_max
+suffix:semicolon
+r_extern
+id|__u32
+id|sysctl_rmem_max
 suffix:semicolon
 multiline_comment|/* Check TCP sequence numbers in ICMP packets. */
 DECL|macro|ICMP_MIN_LENGTH
@@ -430,6 +438,7 @@ r_return
 id|tb
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
 multiline_comment|/* Ensure that the bound bucket for the port exists.&n; * Return 0 on success.&n; */
 DECL|function|tcp_bucket_check
 r_static
@@ -443,9 +452,11 @@ r_int
 id|snum
 )paren
 (brace
-r_if
-c_cond
-(paren
+r_struct
+id|tcp_bind_bucket
+op_star
+id|tb
+op_assign
 id|tcp_bound_hash
 (braket
 id|tcp_bhashfn
@@ -454,6 +465,32 @@ c_func
 id|snum
 )paren
 )braket
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+(paren
+id|tb
+op_logical_and
+(paren
+id|tb-&gt;port
+op_ne
+id|snum
+)paren
+)paren
+suffix:semicolon
+id|tb
+op_assign
+id|tb-&gt;next
+)paren
+(brace
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tb
 op_eq
 l_int|NULL
 op_logical_and
@@ -465,14 +502,17 @@ id|snum
 op_eq
 l_int|NULL
 )paren
+(brace
 r_return
 l_int|1
 suffix:semicolon
+)brace
 r_else
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|tcp_v4_verify_bind
 r_static
 r_int
@@ -653,18 +693,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|result
 op_eq
 l_int|0
 )paren
-op_logical_and
+(brace
+r_if
+c_cond
 (paren
 id|tb
 op_eq
 l_int|NULL
 )paren
-op_logical_and
+(brace
+r_if
+c_cond
 (paren
 id|tcp_bucket_create
 c_func
@@ -674,12 +717,43 @@ id|snum
 op_eq
 l_int|NULL
 )paren
-)paren
 (brace
 id|result
 op_assign
 l_int|1
 suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* It could be pending garbage collection, this&n;&t;&t;&t; * kills the race and prevents it from disappearing&n;&t;&t;&t; * out from under us by the time we use it.  -DaveM&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|tb-&gt;owners
+op_eq
+l_int|NULL
+op_logical_and
+op_logical_neg
+(paren
+id|tb-&gt;flags
+op_amp
+id|TCPB_FLAG_LOCKED
+)paren
+)paren
+(brace
+id|tb-&gt;flags
+op_assign
+id|TCPB_FLAG_LOCKED
+suffix:semicolon
+id|tcp_dec_slow_timer
+c_func
+(paren
+id|TCP_SLT_BUCKETGC
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 id|go_like_smoke
 suffix:colon
@@ -5401,6 +5475,54 @@ id|newsk
 )paren
 r_goto
 m_exit
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|newsk-&gt;rcvbuf
+OL
+(paren
+l_int|3
+op_star
+id|newsk-&gt;mtu
+)paren
+)paren
+id|newsk-&gt;rcvbuf
+op_assign
+id|min
+(paren
+(paren
+l_int|3
+op_star
+id|newsk-&gt;mtu
+)paren
+comma
+id|sysctl_rmem_max
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|newsk-&gt;sndbuf
+OL
+(paren
+l_int|3
+op_star
+id|newsk-&gt;mtu
+)paren
+)paren
+id|newsk-&gt;sndbuf
+op_assign
+id|min
+(paren
+(paren
+l_int|3
+op_star
+id|newsk-&gt;mtu
+)paren
+comma
+id|sysctl_wmem_max
+)paren
 suffix:semicolon
 id|sk-&gt;tp_pinfo.af_tcp.syn_backlog
 op_decrement
