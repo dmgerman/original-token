@@ -4,11 +4,12 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/* A note on resource allocation:&n; *&n; * All drivers needing DMA channels, should allocate and release them&n; * through the public routines `request_dma()&squot; and `free_dma()&squot;.&n; *&n; * In order to avoid problems, all processes should allocate resources in&n; * the same sequence and release them in the reverse order.&n; * &n; * So, when allocating DMAs and IRQs, first allocate the IRQ, then the DMA.&n; * When releasing them, first release the DMA, then release the IRQ.&n; * If you don&squot;t, you may cause allocation requests to fail unnecessarily.&n; * This doesn&squot;t really matter now, but it will once we get real semaphores&n; * in the kernel.&n; */
 multiline_comment|/* Channel n is busy iff dma_chan_busy[n] != 0.&n; * DMA0 used to be reserved for DRAM refresh, but apparently not any more...&n; * DMA4 is reserved for cascading.&n; */
+multiline_comment|/*&n;static volatile unsigned int dma_chan_busy[MAX_DMA_CHANNELS] = {&n;&t;0, 0, 0, 0, 1, 0, 0, 0&n;};&n;*/
 DECL|variable|dma_chan_busy
 r_static
 r_volatile
-r_int
-r_int
+r_char
+op_star
 id|dma_chan_busy
 (braket
 id|MAX_DMA_CHANNELS
@@ -23,7 +24,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|1
+l_string|&quot;cascade&quot;
 comma
 l_int|0
 comma
@@ -89,6 +90,72 @@ id|semval
 suffix:semicolon
 )brace
 multiline_comment|/* mutex_atomic_swap */
+DECL|function|get_dma_list
+r_int
+id|get_dma_list
+c_func
+(paren
+r_char
+op_star
+id|buf
+)paren
+(brace
+r_int
+id|i
+comma
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_DMA_CHANNELS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dma_chan_busy
+(braket
+id|i
+)braket
+)paren
+(brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;%2d: %s&bslash;n&quot;
+comma
+id|i
+comma
+id|dma_chan_busy
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+r_return
+id|len
+suffix:semicolon
+)brace
 DECL|function|request_dma
 r_int
 id|request_dma
@@ -97,6 +164,10 @@ c_func
 r_int
 r_int
 id|dmanr
+comma
+r_char
+op_star
+id|deviceID
 )paren
 (brace
 r_if
@@ -116,13 +187,22 @@ c_cond
 id|mutex_atomic_swap
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 op_amp
 id|dma_chan_busy
 (braket
 id|dmanr
 )braket
 comma
-l_int|1
+(paren
+r_int
+r_int
+)paren
+id|deviceID
 )paren
 op_ne
 l_int|0
@@ -131,7 +211,6 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-r_else
 multiline_comment|/* old flag was 0, now contains 1 to indicate busy */
 r_return
 l_int|0
@@ -173,6 +252,11 @@ c_cond
 id|mutex_atomic_swap
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 op_amp
 id|dma_chan_busy
 (braket
@@ -184,6 +268,7 @@ l_int|0
 op_eq
 l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -192,6 +277,9 @@ comma
 id|dmanr
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* free_dma */
 eof

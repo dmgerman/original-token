@@ -1538,8 +1538,6 @@ id|s
 )paren
 op_assign
 id|pattern
-op_rshift
-l_int|16
 suffix:semicolon
 r_return
 id|s

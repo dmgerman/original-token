@@ -743,6 +743,8 @@ id|request_dma
 c_func
 (paren
 id|dev-&gt;dma
+comma
+l_string|&quot;skeleton ethernet&quot;
 )paren
 )paren
 (brace

@@ -3330,6 +3330,8 @@ c_cond
 id|ALLOC_DMA_CHN
 (paren
 id|chan
+comma
+l_string|&quot;audio&quot;
 )paren
 )paren
 (brace

@@ -728,6 +728,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|check_disk_change
+c_func
+(paren
+id|ROOT_DEV
+)paren
+suffix:semicolon
 id|do_load
 c_func
 (paren

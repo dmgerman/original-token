@@ -201,7 +201,7 @@ id|serial_no
 l_int|20
 )braket
 suffix:semicolon
-multiline_comment|/* big_endian; 0 = not_specified */
+multiline_comment|/* 0 = not_specified */
 DECL|member|buf_type
 r_int
 r_int
@@ -227,7 +227,7 @@ id|fw_rev
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* big_endian; 0 = not_specified */
+multiline_comment|/* 0 = not_specified */
 DECL|member|model
 r_int
 r_char
@@ -236,7 +236,7 @@ id|model
 l_int|40
 )braket
 suffix:semicolon
-multiline_comment|/* big_endian; 0 = not_specified */
+multiline_comment|/* 0 = not_specified */
 DECL|member|max_multsect
 r_int
 r_char

@@ -786,6 +786,8 @@ id|request_dma
 c_func
 (paren
 id|xd_dma
+comma
+l_string|&quot;xd&quot;
 )paren
 )paren
 (brace

@@ -10043,6 +10043,8 @@ id|request_dma
 c_func
 (paren
 id|QIC02_TAPE_DMA
+comma
+l_string|&quot;QIC-02&quot;
 )paren
 )paren
 (brace

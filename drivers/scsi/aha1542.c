@@ -4459,6 +4459,8 @@ id|request_dma
 c_func
 (paren
 id|dma_chan
+comma
+l_string|&quot;aha1542&quot;
 )paren
 )paren
 (brace

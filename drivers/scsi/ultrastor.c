@@ -1483,6 +1483,8 @@ id|request_dma
 c_func
 (paren
 id|config.dma_channel
+comma
+l_string|&quot;Ultrastor&quot;
 )paren
 )paren
 (brace

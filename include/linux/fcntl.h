@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_FCNTL_H
 DECL|macro|_LINUX_FCNTL_H
 mdefine_line|#define _LINUX_FCNTL_H
-multiline_comment|/* open/fcntl - O_SYNC isn&squot;t implemented yet */
+multiline_comment|/* open/fcntl - O_SYNC is only implemented on blocks devices and on files&n;   located on an ext2 file system */
 DECL|macro|O_ACCMODE
 mdefine_line|#define O_ACCMODE&t;  0003
 DECL|macro|O_RDONLY

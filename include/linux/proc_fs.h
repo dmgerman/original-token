@@ -58,6 +58,9 @@ id|PROC_FILESYSTEMS
 comma
 DECL|enumerator|PROC_KSYMS
 id|PROC_KSYMS
+comma
+DECL|enumerator|PROC_DMA
+id|PROC_DMA
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

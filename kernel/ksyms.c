@@ -54,6 +54,10 @@ c_func
 r_int
 r_int
 id|dmanr
+comma
+r_char
+op_star
+id|deviceID
 )paren
 suffix:semicolon
 r_extern

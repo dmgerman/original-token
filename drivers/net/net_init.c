@@ -223,10 +223,7 @@ id|dev
 comma
 l_int|0
 comma
-r_sizeof
-(paren
 id|alloc_size
-)paren
 )paren
 suffix:semicolon
 r_if

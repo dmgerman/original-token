@@ -1005,6 +1005,8 @@ c_func
 (paren
 id|inode
 )paren
+op_logical_or
+id|inode-&gt;u.ext2_i.i_osync
 )paren
 id|ext2_sync_inode
 (paren
@@ -1389,6 +1391,8 @@ c_func
 (paren
 id|inode
 )paren
+op_logical_or
+id|inode-&gt;u.ext2_i.i_osync
 )paren
 (brace
 id|ll_rw_block
@@ -2752,6 +2756,10 @@ suffix:semicolon
 id|inode-&gt;u.ext2_i.i_frag_size
 op_assign
 id|raw_inode-&gt;i_fsize
+suffix:semicolon
+id|inode-&gt;u.ext2_i.i_osync
+op_assign
+l_int|0
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_file_acl
 op_assign

@@ -203,9 +203,9 @@ r_extern
 r_inline
 r_int
 id|find_first_zero_bit
+c_func
 (paren
-r_int
-r_int
+r_void
 op_star
 id|addr
 comma
@@ -356,8 +356,7 @@ r_inline
 r_int
 id|find_next_zero_bit
 (paren
-r_int
-r_int
+r_void
 op_star
 id|addr
 comma
@@ -487,6 +486,11 @@ op_star
 (paren
 id|p
 op_minus
+(paren
+r_int
+r_int
+op_star
+)paren
 id|addr
 )paren
 )paren

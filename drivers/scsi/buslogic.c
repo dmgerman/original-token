@@ -4448,6 +4448,8 @@ id|request_dma
 c_func
 (paren
 id|dma
+comma
+l_string|&quot;buslogic&quot;
 )paren
 )paren
 (brace

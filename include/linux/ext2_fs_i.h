@@ -35,10 +35,10 @@ r_int
 r_char
 id|i_frag_size
 suffix:semicolon
-DECL|member|i_pad1
+DECL|member|i_osync
 r_int
 r_int
-id|i_pad1
+id|i_osync
 suffix:semicolon
 DECL|member|i_file_acl
 r_int

@@ -815,6 +815,8 @@ c_cond
 id|ALLOC_DMA_CHN
 (paren
 id|dma8
+comma
+l_string|&quot;sb16 8bit&quot;
 )paren
 )paren
 (brace
@@ -849,6 +851,8 @@ c_cond
 id|ALLOC_DMA_CHN
 (paren
 id|dma16
+comma
+l_string|&quot;sb16 16bit&quot;
 )paren
 )paren
 (brace

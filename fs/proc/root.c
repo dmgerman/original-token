@@ -286,6 +286,14 @@ comma
 l_string|&quot;ksyms&quot;
 )brace
 comma
+(brace
+id|PROC_DMA
+comma
+l_int|3
+comma
+l_string|&quot;dma&quot;
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

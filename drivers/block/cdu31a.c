@@ -7221,6 +7221,8 @@ id|request_dma
 c_func
 (paren
 id|dma_channel
+comma
+l_string|&quot;cdu31a&quot;
 )paren
 )paren
 (brace

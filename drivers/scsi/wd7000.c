@@ -3426,6 +3426,8 @@ id|request_dma
 c_func
 (paren
 id|host-&gt;dma
+comma
+l_string|&quot;wd7000&quot;
 )paren
 )paren
 (brace

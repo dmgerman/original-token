@@ -2597,7 +2597,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; Ok.&bslash;n&quot;
+l_string|&quot;Ok.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

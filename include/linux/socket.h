@@ -49,8 +49,6 @@ DECL|macro|SOCK_RDM
 mdefine_line|#define SOCK_RDM&t;4&t;&t;/* reliably-delivered message&t;*/
 DECL|macro|SOCK_SEQPACKET
 mdefine_line|#define SOCK_SEQPACKET&t;5&t;&t;/* sequential packet socket&t;*/
-DECL|macro|SOCK_NCP
-mdefine_line|#define SOCK_NCP&t;6&t;&t;/* Novell NCP socket&t;&t;*/
 DECL|macro|SOCK_PACKET
 mdefine_line|#define SOCK_PACKET&t;10&t;&t;/* linux specific way of&t;*/
 multiline_comment|/* getting packets at the dev&t;*/

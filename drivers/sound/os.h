@@ -81,7 +81,7 @@ mdefine_line|#define SOMEONE_WAITING(q, f) (f.mode &amp; WK_SLEEP)
 DECL|macro|WAKE_UP
 mdefine_line|#define WAKE_UP(q, f)&t;&t;&t;{f.mode = WK_WAKEUP;wake_up(&amp;q);}
 DECL|macro|ALLOC_DMA_CHN
-mdefine_line|#define ALLOC_DMA_CHN(chn)&t;&t;request_dma(chn)
+mdefine_line|#define ALLOC_DMA_CHN(chn,deviceID)&t;request_dma(chn,deviceID)
 DECL|macro|RELEASE_DMA_CHN
 mdefine_line|#define RELEASE_DMA_CHN(chn)&t;&t;free_dma(chn)
 DECL|macro|GET_TIME

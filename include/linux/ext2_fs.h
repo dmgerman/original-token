@@ -20,7 +20,7 @@ DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;94/08/12&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;94/08/24&quot;
 DECL|macro|EXT2FS_VERSION
 mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.5a&quot;
 multiline_comment|/*&n; * Debug code&n; */
@@ -777,12 +777,18 @@ r_int
 id|s_creator_os
 suffix:semicolon
 multiline_comment|/* OS */
+DECL|member|s_rev_level
+r_int
+r_int
+id|s_rev_level
+suffix:semicolon
+multiline_comment|/* Revision level */
 DECL|member|s_reserved
 r_int
 r_int
 id|s_reserved
 (braket
-l_int|237
+l_int|236
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
@@ -794,6 +800,8 @@ DECL|macro|EXT2_OS_HURD
 mdefine_line|#define EXT2_OS_HURD&t;&t;1
 DECL|macro|EXT2_OS_MASIX
 mdefine_line|#define EXT2_OS_MASIX&t;&t;2
+DECL|macro|EXT2_CURRENT_REV
+mdefine_line|#define EXT2_CURRENT_REV&t;0
 multiline_comment|/*&n; * Structure of a directory entry&n; */
 DECL|macro|EXT2_NAME_LEN
 mdefine_line|#define EXT2_NAME_LEN 255

@@ -1290,6 +1290,8 @@ id|request_dma
 c_func
 (paren
 id|dev-&gt;dma
+comma
+l_string|&quot;lance&quot;
 )paren
 )paren
 (brace

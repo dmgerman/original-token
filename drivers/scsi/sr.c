@@ -3170,8 +3170,8 @@ c_func
 (paren
 l_string|&quot;Detected scsi CD-ROM sr%d at scsi%d, id %d, lun %d&bslash;n&quot;
 comma
-op_increment
 id|sr_template.dev_noticed
+op_increment
 comma
 id|SDp-&gt;host-&gt;host_no
 comma

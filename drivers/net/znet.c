@@ -755,12 +755,16 @@ id|request_dma
 c_func
 (paren
 id|zn.rx_dma
+comma
+l_string|&quot;ZNet rx&quot;
 )paren
 op_logical_or
 id|request_dma
 c_func
 (paren
 id|zn.tx_dma
+comma
+l_string|&quot;ZNet tx&quot;
 )paren
 )paren
 (brace
