@@ -2421,12 +2421,6 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;FKS: set_recmask not handled by ess_set_recmask&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1,6 +1,7 @@
 macro_line|#ifndef __MEGARAID_H__
 DECL|macro|__MEGARAID_H__
 mdefine_line|#define __MEGARAID_H__
+macro_line|#include &lt;linux/version.h&gt;
 DECL|macro|IN_ISR
 mdefine_line|#define IN_ISR                  0x80000000L
 DECL|macro|NO_INTR

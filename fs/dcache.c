@@ -1445,44 +1445,6 @@ id|dentry
 op_star
 id|dentry
 suffix:semicolon
-multiline_comment|/*&n;&t; * Prune the dcache if there are too many unused dentries.&n;&t; */
-r_if
-c_cond
-(paren
-id|dentry_stat.nr_unused
-OG
-l_int|3
-op_star
-(paren
-id|nr_inodes
-op_rshift
-l_int|1
-)paren
-)paren
-(brace
-macro_line|#ifdef DCACHE_DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;d_alloc: %d unused, pruning dcache&bslash;n&quot;
-comma
-id|dentry_stat.nr_unused
-)paren
-suffix:semicolon
-macro_line|#endif
-id|prune_dcache
-c_func
-(paren
-l_int|8
-)paren
-suffix:semicolon
-id|free_inode_memory
-c_func
-(paren
-l_int|8
-)paren
-suffix:semicolon
-)brace
 id|dentry
 op_assign
 id|kmem_cache_alloc

@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __I386_COBALT_H
 DECL|macro|__I386_COBALT_H
 mdefine_line|#define __I386_COBALT_H

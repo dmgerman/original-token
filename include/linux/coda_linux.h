@@ -137,6 +137,16 @@ op_star
 id|f
 )paren
 suffix:semicolon
+r_char
+op_star
+id|coda_f2s2
+c_func
+(paren
+id|ViceFid
+op_star
+id|f
+)paren
+suffix:semicolon
 r_int
 id|coda_isroot
 c_func

@@ -1128,6 +1128,14 @@ id|memory_end_p
 op_assign
 id|memory_end
 suffix:semicolon
+macro_line|#ifdef __SMP__
+multiline_comment|/*&n;&t; *&t;Save possible boot-time SMP configuration:&n;&t; */
+id|init_smp_config
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 r_if
 c_cond

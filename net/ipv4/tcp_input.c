@@ -6426,16 +6426,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-(paren
 id|skb
-op_assign
-id|__skb_dequeue_tail
-c_func
-(paren
-op_amp
-id|tp-&gt;out_of_order_queue
-)paren
-)paren
 op_ne
 l_int|NULL
 )paren

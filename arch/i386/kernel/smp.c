@@ -5,18 +5,8 @@ macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifdef CONFIG_MTRR
-macro_line|#  include &lt;asm/mtrr.h&gt;
-macro_line|#endif
-DECL|macro|__KERNEL_SYSCALLS__
-mdefine_line|#define __KERNEL_SYSCALLS__
-macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#include &quot;irq.h&quot;
 r_extern
 r_int
@@ -59,35 +49,6 @@ id|kernel_flag
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/*&n; *&t;Why isn&squot;t this somewhere standard ??&n; *&n; * Maybe because this procedure is horribly buggy, and does&n; * not deserve to live.  Think about signedness issues for five&n; * seconds to see why.&t;&t;- Linus&n; */
-DECL|function|max
-r_extern
-id|__inline
-r_int
-id|max
-c_func
-(paren
-r_int
-id|a
-comma
-r_int
-id|b
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|a
-OG
-id|b
-)paren
-r_return
-id|a
-suffix:semicolon
-r_return
-id|b
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * function prototypes:&n; */
 r_static
 r_void
@@ -381,6 +342,9 @@ macro_line|#else
 DECL|macro|SMP_PRINTK
 mdefine_line|#define SMP_PRINTK(x)
 macro_line|#endif
+multiline_comment|/*&n; * IA s/w dev Vol 3, Section 7.4&n; */
+DECL|macro|APIC_DEFAULT_PHYS_BASE
+mdefine_line|#define APIC_DEFAULT_PHYS_BASE 0xfee00000
 multiline_comment|/*&n; *&t;Setup routine for controlling SMP activation&n; *&n; *&t;Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; *      activation entirely (the MPS table probe still happens, though).&n; *&n; *&t;Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; *&t;greater than 0, limits the maximum number of CPUs activated in&n; *&t;SMP mode to &lt;NUM&gt;.&n; */
 DECL|function|smp_setup
 r_void
@@ -448,45 +412,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_X86_VISWS_APIC
-multiline_comment|/*&n; * hacky!&n; */
-DECL|function|smp_scan_config
-r_int
-id|__init
-id|smp_scan_config
-c_func
-(paren
-r_int
-r_int
-id|base
-comma
-r_int
-r_int
-id|length
-)paren
-(brace
-id|cpu_present_map
-op_or_assign
-l_int|2
-suffix:semicolon
-multiline_comment|/* or in id 1 */
-id|apic_version
-(braket
-l_int|1
-)braket
-op_or_assign
-l_int|0x10
-suffix:semicolon
-multiline_comment|/* integrated APIC */
-id|num_processors
-op_assign
-l_int|2
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#else
+multiline_comment|/*&n; * Intel MP BIOS table parsing routines:&n; */
+macro_line|#ifndef CONFIG_X86_VISWS_APIC
 multiline_comment|/*&n; *&t;Checksum an MP configuration block.&n; */
 DECL|function|mpf_checksum
 r_static
@@ -1437,6 +1364,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Scan the memory blocks for an SMP configuration block.&n; */
 DECL|function|smp_scan_config
+r_static
 r_int
 id|__init
 id|smp_scan_config
@@ -1606,7 +1534,7 @@ suffix:semicolon
 multiline_comment|/* local APIC has default address */
 id|mp_lapic_addr
 op_assign
-l_int|0xFEE00000
+id|APIC_DEFAULT_PHYS_BASE
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;We need to know what the local&n;&t;&t;&t;&t;&t; *&t;APIC id of the boot CPU is!&n;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n; *&n; *&t;HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK&n; *&n; *&t;It&squot;s not just a crazy hack.  ;-)&n; */
@@ -1858,7 +1786,157 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|init_intel_smp
+r_void
+id|__init
+id|init_intel_smp
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/*&n;&t; * FIXME: Linux assumes you have 640K of base ram..&n;&t; * this continues the error...&n;&t; *&n;&t; * 1) Scan the bottom 1K for a signature&n;&t; * 2) Scan the top 1K of base RAM&n;&t; * 3) Scan the 64K of bios&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|smp_scan_config
+c_func
+(paren
+l_int|0x0
+comma
+l_int|0x400
+)paren
+op_logical_and
+op_logical_neg
+id|smp_scan_config
+c_func
+(paren
+l_int|639
+op_star
+l_int|0x400
+comma
+l_int|0x400
+)paren
+op_logical_and
+op_logical_neg
+id|smp_scan_config
+c_func
+(paren
+l_int|0xF0000
+comma
+l_int|0x10000
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * If it is an SMP machine we should know now, unless the&n;&t;&t; * configuration is in an EISA/MCA bus machine with an&n;&t;&t; * extended bios data area. &n;&t;&t; *&n;&t;&t; * there is a real-mode segmented pointer pointing to the&n;&t;&t; * 4K EBDA area at 0x40E, calculate and scan it here.&n;&t;&t; *&n;&t;&t; * NOTE! There are Linux loaders that will corrupt the EBDA&n;&t;&t; * area, and as such this kind of SMP config may be less&n;&t;&t; * trustworthy, simply because the SMP table may have been&n;&t;&t; * stomped on during early boot. These loaders are buggy and&n;&t;&t; * should be fixed.&n;&t;&t; */
+r_int
+r_int
+id|address
+suffix:semicolon
+id|address
+op_assign
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|phys_to_virt
+c_func
+(paren
+l_int|0x40E
+)paren
+suffix:semicolon
+id|address
+op_lshift_assign
+l_int|4
+suffix:semicolon
+id|smp_scan_config
+c_func
+(paren
+id|address
+comma
+l_int|0x1000
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smp_found_config
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;WARNING: MP table in the EBDA can be UNSAFE, contact linux-smp@vger.rutgers.edu if you experience SMP problems!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#else
+multiline_comment|/*&n; * The Visual Workstation is Intel MP compliant in the hardware&n; * sense, but it doesnt have a BIOS(-configuration table).&n; * No problem for Linux.&n; */
+DECL|function|init_visws_smp
+r_void
+id|__init
+id|init_visws_smp
+c_func
+(paren
+r_void
+)paren
+(brace
+id|smp_found_config
+op_assign
+l_int|1
+suffix:semicolon
+id|cpu_present_map
+op_or_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* or in id 1 */
+id|apic_version
+(braket
+l_int|1
+)braket
+op_or_assign
+l_int|0x10
+suffix:semicolon
+multiline_comment|/* integrated APIC */
+id|apic_version
+(braket
+l_int|0
+)braket
+op_or_assign
+l_int|0x10
+suffix:semicolon
+id|mp_lapic_addr
+op_assign
+id|APIC_DEFAULT_PHYS_BASE
+suffix:semicolon
+)brace
 macro_line|#endif
+multiline_comment|/*&n; * - Intel MP Configuration Table&n; * - or SGI Visual Workstation configuration&n; */
+DECL|function|init_smp_config
+r_void
+id|__init
+id|init_smp_config
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifndef CONFIG_VISWS
+id|init_intel_smp
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|init_visws_smp
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/*&n; *&t;Trampoline 80x86 program as an array.&n; */
 r_extern
 r_int
@@ -2158,6 +2236,82 @@ comma
 id|value
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Set arbitrarion priority to 0&n;&t; */
+id|value
+op_assign
+id|apic_read
+c_func
+(paren
+id|APIC_ARBPRI
+)paren
+suffix:semicolon
+id|value
+op_and_assign
+op_complement
+id|APIC_ARBPRI_MASK
+suffix:semicolon
+id|apic_write
+c_func
+(paren
+id|APIC_ARBPRI
+comma
+id|value
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Set the logical destination ID to &squot;all&squot;, just to be safe.&n;&t; * also, put the APIC into flat delivery mode.&n;&t; */
+id|value
+op_assign
+id|apic_read
+c_func
+(paren
+id|APIC_LDR
+)paren
+suffix:semicolon
+id|value
+op_and_assign
+op_complement
+id|APIC_LDR_MASK
+suffix:semicolon
+id|value
+op_or_assign
+id|SET_APIC_LOGICAL_ID
+c_func
+(paren
+l_int|0xff
+)paren
+suffix:semicolon
+id|apic_write
+c_func
+(paren
+id|APIC_LDR
+comma
+id|value
+)paren
+suffix:semicolon
+id|value
+op_assign
+id|apic_read
+c_func
+(paren
+id|APIC_DFR
+)paren
+suffix:semicolon
+id|value
+op_or_assign
+id|SET_APIC_DFR
+c_func
+(paren
+l_int|0xf
+)paren
+suffix:semicolon
+id|apic_write
+c_func
+(paren
+id|APIC_DFR
+comma
+id|value
+)paren
+suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -2192,8 +2346,6 @@ id|memory_start
 r_int
 r_int
 id|apic_phys
-comma
-id|ioapic_phys
 suffix:semicolon
 id|memory_start
 op_assign
@@ -2213,12 +2365,6 @@ id|apic_phys
 op_assign
 id|mp_lapic_addr
 suffix:semicolon
-macro_line|#ifdef CONFIG_X86_IO_APIC
-id|ioapic_phys
-op_assign
-id|mp_ioapic_addr
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -2229,16 +2375,6 @@ id|__pa
 c_func
 (paren
 id|memory_start
-)paren
-suffix:semicolon
-id|ioapic_phys
-op_assign
-id|__pa
-c_func
-(paren
-id|memory_start
-op_plus
-id|PAGE_SIZE
 )paren
 suffix:semicolon
 id|memset
@@ -2252,33 +2388,20 @@ id|memory_start
 comma
 l_int|0
 comma
-l_int|2
-op_star
 id|PAGE_SIZE
 )paren
 suffix:semicolon
 id|memory_start
 op_add_assign
-l_int|2
-op_star
 id|PAGE_SIZE
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_X86_IO_APIC
 id|set_fixmap
 c_func
 (paren
 id|FIX_APIC_BASE
 comma
 id|apic_phys
-)paren
-suffix:semicolon
-id|set_fixmap
-c_func
-(paren
-id|FIX_IO_APIC_BASE
-comma
-id|ioapic_phys
 )paren
 suffix:semicolon
 id|printk
@@ -2289,6 +2412,60 @@ comma
 id|APIC_BASE
 comma
 id|apic_phys
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_X86_IO_APIC
+(brace
+r_int
+r_int
+id|ioapic_phys
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smp_found_config
+)paren
+(brace
+id|ioapic_phys
+op_assign
+id|mp_ioapic_addr
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ioapic_phys
+op_assign
+id|__pa
+c_func
+(paren
+id|memory_start
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|memory_start
+comma
+l_int|0
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|memory_start
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+)brace
+id|set_fixmap
+c_func
+(paren
+id|FIX_IO_APIC_BASE
+comma
+id|ioapic_phys
 )paren
 suffix:semicolon
 id|printk
@@ -2305,6 +2482,7 @@ comma
 id|ioapic_phys
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 id|memory_start
@@ -2975,8 +3153,6 @@ multiline_comment|/* Clear bits &t;&t;*/
 id|cfg
 op_or_assign
 (paren
-id|APIC_DEST_FIELD
-op_or
 id|APIC_DEST_LEVELTRIG
 op_or
 id|APIC_DEST_ASSERT
@@ -3051,8 +3227,6 @@ multiline_comment|/* Clear bits &t;&t;*/
 id|cfg
 op_or_assign
 (paren
-id|APIC_DEST_FIELD
-op_or
 id|APIC_DEST_LEVELTRIG
 op_or
 id|APIC_DEST_DM_INIT
@@ -3183,8 +3357,6 @@ multiline_comment|/* Clear bits &t;&t;*/
 id|cfg
 op_or_assign
 (paren
-id|APIC_DEST_FIELD
-op_or
 id|APIC_DEST_DM_STARTUP
 op_or
 (paren
@@ -3701,10 +3873,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-r_int
-r_int
-id|cfg
-suffix:semicolon
 macro_line|#ifdef CONFIG_MTRR
 multiline_comment|/*  Must be done before other processors booted  */
 id|mtrr_init_boot_cpu
@@ -3801,8 +3969,7 @@ id|boot_cpu_id
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_X86_IO_APIC
-multiline_comment|/*&n;&t; *&t;If we don&squot;t conform to the Intel MPS standard, get out&n;&t; *&t;of here now!&n;&t; */
+multiline_comment|/*&n;&t; * If we couldnt find an SMP configuration at boot time,&n;&t; * get out of here now!&n;&t; */
 r_if
 c_cond
 (paren
@@ -3817,10 +3984,12 @@ id|KERN_NOTICE
 l_string|&quot;SMP motherboard not detected. Using dummy APIC emulation.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_VISWS
 id|io_apic_irqs
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|cpu_online_map
 op_assign
 id|cpu_present_map
@@ -3829,7 +3998,6 @@ r_goto
 id|smp_done
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;If SMP should be disabled, then really disable it!&n;&t; */
 r_if
 c_cond
@@ -4067,7 +4235,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Cleanup possible dangling ends...&n;&t; */
-multiline_comment|/*&n;&t; *&t;Install writable page 0 entry.&n;&t; */
+macro_line|#ifndef CONFIG_VISWS
+(brace
+r_int
+r_int
+id|cfg
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Install writable page 0 entry.&n;&t;&t; */
 id|cfg
 op_assign
 id|pg0
@@ -4088,7 +4262,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Paranoid:  Set warm reset code and vector here back&n;&t; *&t;to default values.&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Paranoid:  Set warm reset code and vector here back&n;&t;&t; *&t;to default values.&n;&t;&t; */
 id|CMOS_WRITE
 c_func
 (paren
@@ -4113,7 +4287,7 @@ l_int|0x467
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Restore old page 0 entry.&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Restore old page 0 entry.&n;&t;&t; */
 id|pg0
 (braket
 l_int|0
@@ -4126,6 +4300,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Allow the user to impress friends.&n;&t; */
 id|SMP_PRINTK
 c_func
@@ -4281,7 +4457,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_X86_IO_APIC
+macro_line|#ifndef CONFIG_VISWS
 multiline_comment|/*&n;&t; * Here we can be sure that there is an IO-APIC in the system. Let&squot;s&n;&t; * go and set it up:&n;&t; */
 r_if
 c_cond
@@ -4294,9 +4470,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|smp_done
 suffix:colon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * the following functions deal with sending IPIs between CPUs.&n; *&n; * We use &squot;broadcast&squot;, CPU-&gt;CPU IPIs and self-IPIs too.&n; */
 multiline_comment|/*&n; * Silly serialization to work around CPU bug in P5s.&n; * We can safely turn it off on a 686.&n; */
@@ -4492,8 +4668,6 @@ c_func
 suffix:semicolon
 id|cfg
 op_or_assign
-id|APIC_DEST_FIELD
-op_or
 id|APIC_DEST_DM_FIXED
 op_or
 id|shortcut
@@ -5702,7 +5876,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;..... APIC bus clock speed is %ld.%04ld MHz.&bslash;n&quot;
+l_string|&quot;..... system bus clock speed is %ld.%04ld MHz.&bslash;n&quot;
 comma
 id|calibration_result
 op_div

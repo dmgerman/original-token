@@ -578,6 +578,8 @@ DECL|macro|__NR_capget
 mdefine_line|#define __NR_capget&t;&t;&t;368
 DECL|macro|__NR_capset
 mdefine_line|#define __NR_capset&t;&t;&t;369
+DECL|macro|__NR_sendfile
+mdefine_line|#define __NR_sendfile&t;&t;&t;370
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 DECL|macro|_syscall_return
 mdefine_line|#define _syscall_return(type)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return (_sc_err ? errno = _sc_ret, _sc_ret = -1L : 0), (type) _sc_ret

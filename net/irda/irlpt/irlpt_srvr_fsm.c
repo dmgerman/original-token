@@ -1,5 +1,4 @@
 multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlpt_srvr_fsm.c&n; * Version:       0.1&n; * Sources:       irlan_event.c&n; * &n; *     Copyright (c) 1997, Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software. This &n; *     material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/irda/iriap.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;

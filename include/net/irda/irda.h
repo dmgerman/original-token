@@ -2,6 +2,7 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef IRDA_H
 DECL|macro|IRDA_H
 mdefine_line|#define IRDA_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifndef TRUE
 DECL|macro|TRUE

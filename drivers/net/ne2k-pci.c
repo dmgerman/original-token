@@ -122,6 +122,14 @@ l_string|&quot;SureCom NE34&quot;
 )brace
 comma
 (brace
+l_int|0x1050
+comma
+l_int|0x5a5a
+comma
+l_string|&quot;Winbond&quot;
+)brace
+comma
+(brace
 l_int|0
 comma
 )brace

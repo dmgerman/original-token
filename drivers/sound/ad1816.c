@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&n;AD1816 lowlevel sound driver for Linux 2.1.128 (and above)&n;&n;Copyright (C) 1998 by Thorsten Knabe &lt;tek@rbg.informatik.tu-darmstadt.de&gt;&n;Based on the CS4232/AD1848 driver Copyright (C) by Hannu Savolainen 1993-1996&n;&n;This program is free software; you can redistribute it and/or modify&n;it under the terms of the GNU General Public License as published by&n;the Free Software Foundation; either version 2 of the License, or&n;(at your option) any later version.&n;&n;This program is distributed in the hope that it will be useful,&n;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;GNU General Public License for more details.&n;&n;You should have received a copy of the GNU General Public License&n;along with this program; if not, write to the Free Software&n;Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA&n;&n;-------------------------------------------------------------------------------&n;NOTE!   NOTE!   NOTE!   NOTE!   NOTE!   NOTE!   NOTE!   NOTE!   NOTE!&n;&n;This software is still under development. New versions of the driver &n;are available from:&n;  http://www.student.informatik.tu-darmstadt.de/~tek/projects/linux.html&n;or&n;  http://www.tu-darmstadt.de/~tek01/projects/linux.html&n;&n;Please report any bugs to: tek@rbg.informatik.tu-darmstadt.de&n;&n;-------------------------------------------------------------------------------&n;&n;version: 1.1&n;cvs: $Header: /home/tek/tmp/CVSROOT/sound21/ad1816.c,v 1.24.2.8 1998/12/04 16:39:46 tek Exp $&n;status: experimental&n;date: 1998/12/04&n;&n;Changes:&n;&t;Oleg Drokin: Some cleanup of load/unload functions.    1998/11/24&n;&t;&n;&t;Thorsten Knabe: attach and unload rewritten, &n;&t;some argument checks added                             1998/11/30&n;*/
+multiline_comment|/*&n;&n;AD1816 lowlevel sound driver for Linux 2.2.0 and above&n;&n;Copyright (C) 1998 by Thorsten Knabe &lt;tek@rbg.informatik.tu-darmstadt.de&gt;&n;Based on the CS4232/AD1848 driver Copyright (C) by Hannu Savolainen 1993-1996&n;&n;This program is free software; you can redistribute it and/or modify&n;it under the terms of the GNU General Public License as published by&n;the Free Software Foundation; either version 2 of the License, or&n;(at your option) any later version.&n;&n;This program is distributed in the hope that it will be useful,&n;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;GNU General Public License for more details.&n;&n;You should have received a copy of the GNU General Public License&n;along with this program; if not, write to the Free Software&n;Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA&n;&n;-------------------------------------------------------------------------------&n;NOTE!   NOTE!   NOTE!   NOTE!   NOTE!   NOTE!   NOTE!   NOTE!   NOTE!&n;&n;This software is still under development. New versions of the driver &n;are available from:&n;  http://www.student.informatik.tu-darmstadt.de/~tek/projects/linux.html&n;or&n;  http://www.tu-darmstadt.de/~tek01/projects/linux.html&n;&n;Please report any bugs to: tek@rbg.informatik.tu-darmstadt.de&n;&n;-------------------------------------------------------------------------------&n;&n;version: 1.2&n;cvs: $Header: /home/tek/tmp/CVSROOT/sound21/ad1816.c,v 1.28 1999/01/16 19:01:36 tek Exp $&n;status: experimental&n;date: 1999/01/16&n;&n;Changes:&n;&t;Oleg Drokin: Some cleanup of load/unload functions.    1998/11/24&n;&t;&n;&t;Thorsten Knabe: attach and unload rewritten, &n;&t;some argument checks added                             1998/11/30&n;&n;&t;Thorsten Knabe: Buggy isa bridge workaround added      1999/01/16&n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
@@ -432,6 +432,13 @@ id|cli
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
 id|disable_dma
 c_func
 (paren
@@ -443,6 +450,7 @@ op_member_access_from_pointer
 id|dmap_in-&gt;dma
 )paren
 suffix:semicolon
+)brace
 id|buffer
 op_assign
 id|inb
@@ -476,6 +484,13 @@ l_int|9
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
 id|enable_dma
 c_func
 (paren
@@ -487,6 +502,7 @@ op_member_access_from_pointer
 id|dmap_in-&gt;dma
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Clear interrupt status */
 id|outb
 (paren
@@ -578,6 +594,13 @@ op_or
 l_int|0x8080
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
 id|disable_dma
 c_func
 (paren
@@ -589,6 +612,7 @@ op_member_access_from_pointer
 id|dmap_out-&gt;dma
 )paren
 suffix:semicolon
+)brace
 id|buffer
 op_assign
 id|inb
@@ -622,6 +646,13 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
 id|enable_dma
 c_func
 (paren
@@ -633,6 +664,7 @@ op_member_access_from_pointer
 id|dmap_out-&gt;dma
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Clear interrupt status */
 id|outb
 (paren
@@ -2970,7 +3002,7 @@ id|SOUND_MIXER_NRDEVICES
 )braket
 op_assign
 (brace
-l_int|0x6464
+l_int|0x4343
 comma
 multiline_comment|/* Master Volume */
 l_int|0x3232
@@ -2982,7 +3014,7 @@ multiline_comment|/* Treble */
 l_int|0x0000
 comma
 multiline_comment|/* FM */
-l_int|0x6464
+l_int|0x4343
 comma
 multiline_comment|/* PCM */
 l_int|0x0000
@@ -4455,7 +4487,23 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ad1816: $Header: /home/tek/tmp/CVSROOT/sound21/ad1816.c,v 1.24.2.8 1998/12/04 16:39:46 tek Exp $&bslash;n&quot;
+l_string|&quot;ad1816: $Header: /home/tek/tmp/CVSROOT/sound21/ad1816.c,v 1.28 1999/01/16 19:01:36 tek Exp $&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ad1816: io=0x%x, irq=%d, dma=%d, dma2=%d, isadmabug=%d&bslash;n&quot;
+comma
+id|hw_config-&gt;io_base
+comma
+id|hw_config-&gt;irq
+comma
+id|hw_config-&gt;dma
+comma
+id|hw_config-&gt;dma2
+comma
+id|isa_dma_bridge_buggy
 )paren
 suffix:semicolon
 r_if

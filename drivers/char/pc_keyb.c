@@ -136,10 +136,7 @@ DECL|macro|AUX_INTS_ON
 mdefine_line|#define AUX_INTS_ON  (KBD_MODE_KCC | KBD_MODE_SYS | KBD_MODE_MOUSE_INT | KBD_MODE_KBD_INT)
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES&t;60&t;&t;/* some aux operations take long time*/
-macro_line|#if defined(__alpha__) &amp;&amp; !defined(CONFIG_PCI)
-DECL|macro|AUX_IRQ
-macro_line|# define AUX_IRQ&t;9&t;&t;/* Jensen is odd indeed */
-macro_line|#else
+macro_line|#ifndef AUX_IRQ
 DECL|macro|AUX_IRQ
 macro_line|# define AUX_IRQ&t;12
 macro_line|#endif
@@ -2698,9 +2695,9 @@ multiline_comment|/* Disable controller ints */
 id|kbd_write
 c_func
 (paren
-id|KBD_CCMD_MOUSE_DISABLE
-comma
 id|KBD_CNTL_REG
+comma
+id|KBD_CCMD_MOUSE_DISABLE
 )paren
 suffix:semicolon
 id|free_irq
@@ -2780,9 +2777,9 @@ suffix:semicolon
 id|kbd_write
 c_func
 (paren
-id|KBD_CCMD_MOUSE_ENABLE
-comma
 id|KBD_CNTL_REG
+comma
+id|KBD_CCMD_MOUSE_ENABLE
 )paren
 suffix:semicolon
 multiline_comment|/* Enable the&n;&t;&t;&t;&t;&t;&t;&t;   auxiliary port on&n;&t;&t;&t;&t;&t;&t;&t;   controller. */
@@ -3277,9 +3274,9 @@ macro_line|#ifdef INITIALIZE_MOUSE
 id|kbd_write
 c_func
 (paren
-id|KBD_CCMD_MOUSE_ENABLE
-comma
 id|KBD_CNTL_REG
+comma
+id|KBD_CCMD_MOUSE_ENABLE
 )paren
 suffix:semicolon
 multiline_comment|/* Enable Aux. */
@@ -3320,9 +3317,9 @@ macro_line|#endif /* INITIALIZE_MOUSE */
 id|kbd_write
 c_func
 (paren
-id|KBD_CCMD_MOUSE_DISABLE
-comma
 id|KBD_CNTL_REG
+comma
+id|KBD_CCMD_MOUSE_DISABLE
 )paren
 suffix:semicolon
 multiline_comment|/* Disable aux device. */

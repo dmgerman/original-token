@@ -1,6 +1,7 @@
 macro_line|#ifndef __I386_LITHIUM_H
 DECL|macro|__I386_LITHIUM_H
 mdefine_line|#define __I386_LITHIUM_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Lithium is the I/O ASIC on the SGI 320 and 540 Visual Workstations&n; */
 DECL|macro|LI_PCI_A_PHYS
 mdefine_line|#define&t;LI_PCI_A_PHYS&t;&t;0xfc000000&t;/* Enet is dev 3 */
@@ -16,6 +17,7 @@ DECL|macro|LI_PCI_BUSNUM
 mdefine_line|#define&t;LI_PCI_BUSNUM&t;0x44&t;&t;&t;/* lo8: primary, hi8: sub */
 DECL|macro|LI_PCI_INTEN
 mdefine_line|#define LI_PCI_INTEN    0x46
+macro_line|#ifdef CONFIG_X86_VISWS_APIC
 multiline_comment|/* More special purpose macros... */
 DECL|function|li_pcia_write16
 r_extern
@@ -145,5 +147,6 @@ id|reg
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

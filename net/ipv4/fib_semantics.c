@@ -4370,7 +4370,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_int|0
+l_char|&squot; &squot;
 comma
 l_int|127
 op_minus

@@ -9122,7 +9122,6 @@ comma
 id|new_inode
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -9131,6 +9130,7 @@ id|res
 r_goto
 id|rename_done
 suffix:semicolon
+)brace
 multiline_comment|/* Serious lossage here. FAT uses braindead inode numbers scheme,&n;&t; * so we can&squot;t simply cannibalize the entry. It means that we have&n;&t; * no warranties that crash here will not make target disappear&n;&t; * after reboot. Lose, lose. Nothing to do with that until we&squot;ll&n;&t; * separate the functions of i_ino: it serves both as a search key&n;&t; * in icache and as a part of stat output. It would kill all the&n;&t; * &squot;busy&squot; stuff on the spot. Later.&n;&t; */
 r_if
 c_cond

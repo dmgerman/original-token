@@ -2,6 +2,7 @@ macro_line|#ifndef __LINUX_VIDEODEV_H
 DECL|macro|__LINUX_VIDEODEV_H
 mdefine_line|#define __LINUX_VIDEODEV_H
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;linux/poll.h&gt;

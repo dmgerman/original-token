@@ -3,7 +3,7 @@ macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE 0x000520
+mdefine_line|#define BTTV_VERSION_CODE 0x000523
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
@@ -18,10 +18,8 @@ DECL|macro|MAX_GBUFFERS
 mdefine_line|#define MAX_GBUFFERS&t;2
 DECL|macro|RISCMEM_LEN
 mdefine_line|#define RISCMEM_LEN&t;(32744*2)
-DECL|macro|VBI_MAXLINES
-mdefine_line|#define VBI_MAXLINES    19
 DECL|macro|VBIBUF_SIZE
-mdefine_line|#define VBIBUF_SIZE     (2048*VBI_MAXLINES*2)
+mdefine_line|#define VBIBUF_SIZE     65536
 multiline_comment|/* maximum needed buffer size for extended VBI frame mode capturing */
 DECL|macro|BTTV_MAX_FBUF
 mdefine_line|#define BTTV_MAX_FBUF&t;0x190000
@@ -582,6 +580,8 @@ DECL|macro|BTTV_ADSTECH_TV
 mdefine_line|#define BTTV_ADSTECH_TV    0x0c
 DECL|macro|BTTV_AVERMEDIA98
 mdefine_line|#define BTTV_AVERMEDIA98   0x0d
+DECL|macro|BTTV_VHX
+mdefine_line|#define BTTV_VHX   &t;   0x0e
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -616,6 +616,8 @@ DECL|macro|I2C_HAUPEE
 mdefine_line|#define I2C_HAUPEE         0xa0
 DECL|macro|I2C_STBEE
 mdefine_line|#define I2C_STBEE          0xae
+DECL|macro|I2C_VHX
+mdefine_line|#define I2C_VHX &t;   0xc0
 DECL|macro|TDA9840_SW
 mdefine_line|#define TDA9840_SW&t;   0x00
 DECL|macro|TDA9840_LVADJ

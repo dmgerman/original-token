@@ -2488,13 +2488,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#if defined(__SMP__)
-multiline_comment|/* Skip IRQ detection if SMP (doesn&squot;t work) */
-id|devc-&gt;irq_ok
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -2602,7 +2595,6 @@ id|devc-&gt;irq
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif&t;&t;&t;&t;/* __SMP__ */
 )brace
 multiline_comment|/* IRQ setup */
 id|request_region

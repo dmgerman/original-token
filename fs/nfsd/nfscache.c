@@ -891,6 +891,16 @@ id|cache_disabled
 )paren
 r_return
 suffix:semicolon
+id|len
+op_assign
+id|resp-&gt;len
+op_minus
+(paren
+id|statp
+op_minus
+id|resp-&gt;base
+)paren
+suffix:semicolon
 multiline_comment|/* Don&squot;t cache excessive amounts of data and XDR failures */
 r_if
 c_cond
@@ -898,13 +908,7 @@ c_cond
 op_logical_neg
 id|statp
 op_logical_or
-(paren
 id|len
-op_assign
-id|resp-&gt;buf
-op_minus
-id|statp
-)paren
 OG
 (paren
 l_int|256

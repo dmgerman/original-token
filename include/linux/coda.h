@@ -1,4 +1,7 @@
-multiline_comment|/*&n; *&n; * Based on cfs.h from Mach, but revamped for increased simplicity.&n; * Linux modifications by Peter Braam, Aug 1996&n; */
+multiline_comment|/* &n;   You may distribute this file under either of the two licenses that&n;   follow at your discretion.&n;*/
+multiline_comment|/* BLURB lgpl&n;&n;                           Coda File System&n;                              Release 5&n;&n;          Copyright (c) 1987-1999 Carnegie Mellon University&n;                  Additional copyrights listed below&n;&n;This code is distributed &quot;AS IS&quot; without warranty of any kind under&n;the terms of the GNU Library General Public Licence Version 2, as&n;shown in the file LICENSE, or under the license shown below. The&n;technical and financial contributors to Coda are listed in the file&n;CREDITS.&n;&n;                        Additional copyrights &n;*/
+multiline_comment|/*&n;&n;            Coda: an Experimental Distributed File System&n;                             Release 4.0&n;&n;          Copyright (c) 1987-1999 Carnegie Mellon University&n;                         All Rights Reserved&n;&n;Permission  to  use, copy, modify and distribute this software and its&n;documentation is hereby granted,  provided  that  both  the  copyright&n;notice  and  this  permission  notice  appear  in  all  copies  of the&n;software, derivative works or  modified  versions,  and  any  portions&n;thereof, and that both notices appear in supporting documentation, and&n;that credit is given to Carnegie Mellon University  in  all  documents&n;and publicity pertaining to direct or indirect use of this code or its&n;derivatives.&n;&n;CODA IS AN EXPERIMENTAL SOFTWARE SYSTEM AND IS  KNOWN  TO  HAVE  BUGS,&n;SOME  OF  WHICH MAY HAVE SERIOUS CONSEQUENCES.  CARNEGIE MELLON ALLOWS&n;FREE USE OF THIS SOFTWARE IN ITS &quot;AS IS&quot; CONDITION.   CARNEGIE  MELLON&n;DISCLAIMS  ANY  LIABILITY  OF  ANY  KIND  FOR  ANY  DAMAGES WHATSOEVER&n;RESULTING DIRECTLY OR INDIRECTLY FROM THE USE OF THIS SOFTWARE  OR  OF&n;ANY DERIVATIVE WORK.&n;&n;Carnegie  Mellon  encourages  users  of  this  software  to return any&n;improvements or extensions that  they  make,  and  to  grant  Carnegie&n;Mellon the rights to redistribute these changes without encumbrance.&n;*/
+multiline_comment|/*&n; *&n; * Based on cfs.h from Mach, but revamped for increased simplicity.&n; * Linux modifications by &n; * Peter Braam, Aug 1996&n; */
 macro_line|#ifndef _CODA_HEADER_
 DECL|macro|_CODA_HEADER_
 mdefine_line|#define _CODA_HEADER_
@@ -395,7 +398,6 @@ id|cr_suid
 comma
 id|cr_fsuid
 suffix:semicolon
-multiline_comment|/* Real, efftve, set, fs uid*/
 DECL|member|cr_groupid
 DECL|member|cr_egid
 DECL|member|cr_sgid
@@ -409,7 +411,19 @@ id|cr_sgid
 comma
 id|cr_fsgid
 suffix:semicolon
-multiline_comment|/* same for groups */
+macro_line|#if   defined(CODA_SUPPORTS_SUPPLEMENTARY_GROUPS)
+DECL|member|cr_nsupgps
+r_int
+id|cr_nsupgps
+suffix:semicolon
+DECL|member|cr_supgps
+id|vgid_t
+id|cr_supgps
+(braket
+id|NGROUPS
+)braket
+suffix:semicolon
+macro_line|#endif        /* defined(CODA_SUPPORTS_SUPPLEMENTARY_GROUPS) */
 )brace
 suffix:semicolon
 macro_line|#endif 

@@ -121,6 +121,8 @@ r_static
 r_struct
 id|semaphore
 id|mfw_sema
+op_assign
+id|MUTEX
 suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|variable|mfw_lock
@@ -2678,15 +2680,6 @@ r_void
 )paren
 )paren
 (brace
-id|sema_init
-c_func
-(paren
-op_amp
-id|mfw_sema
-comma
-l_int|1
-)paren
-suffix:semicolon
 r_return
 id|register_ip_masq_mod
 (paren

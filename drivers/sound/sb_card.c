@@ -458,6 +458,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do acer notebook init */
+DECL|variable|esstype
+r_int
+id|esstype
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* ESS chip type */
 id|MODULE_PARM
 c_func
 (paren
@@ -534,6 +541,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|sm_games
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|esstype
 comma
 l_string|&quot;i&quot;
 )paren

@@ -20,6 +20,8 @@ DECL|macro|POLARIS_DENSE_IO_BASE
 mdefine_line|#define&t;&t;POLARIS_DENSE_IO_BASE&t;&t;(IDENT_ADDR + 0xf9fc000000)
 DECL|macro|POLARIS_DENSE_CONFIG_BASE
 mdefine_line|#define&t;&t;POLARIS_DENSE_CONFIG_BASE&t;(IDENT_ADDR + 0xf9fe000000)
+DECL|macro|POLARIS_IACK_SC
+mdefine_line|#define&t;&t;POLARIS_IACK_SC&t;&t;&t;POLARIS_IACK_BASE
 multiline_comment|/* The Polaris command/status registers live in PCI Config space for&n; * bus 0/device 0.  As such, they may be bytes, words, or doublewords.&n; */
 DECL|macro|POLARIS_W_VENID
 mdefine_line|#define&t;&t;POLARIS_W_VENID&t;&t;(POLARIS_DENSE_CONFIG_BASE)

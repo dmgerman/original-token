@@ -16,6 +16,8 @@ DECL|macro|APIC_TPRI_MASK
 mdefine_line|#define&t;&t;&t;APIC_TPRI_MASK&t;&t;0xFF
 DECL|macro|APIC_ARBPRI
 mdefine_line|#define&t;&t;APIC_ARBPRI&t;0x90
+DECL|macro|APIC_ARBPRI_MASK
+mdefine_line|#define&t;&t;&t;APIC_ARBPRI_MASK&t;0xFF
 DECL|macro|APIC_PROCPRI
 mdefine_line|#define&t;&t;APIC_PROCPRI&t;0xA0
 DECL|macro|APIC_EOI
@@ -26,8 +28,12 @@ DECL|macro|APIC_RRR
 mdefine_line|#define&t;&t;APIC_RRR&t;0xC0
 DECL|macro|APIC_LDR
 mdefine_line|#define&t;&t;APIC_LDR&t;0xD0
+DECL|macro|APIC_LDR_MASK
+mdefine_line|#define&t;&t;&t;APIC_LDR_MASK&t;&t;(0xFF&lt;&lt;24)
 DECL|macro|GET_APIC_LOGICAL_ID
 mdefine_line|#define&t;&t;&t;GET_APIC_LOGICAL_ID(x)&t;(((x)&gt;&gt;24)&amp;0xFF)
+DECL|macro|SET_APIC_LOGICAL_ID
+mdefine_line|#define&t;&t;&t;SET_APIC_LOGICAL_ID(x)&t;(((x)&lt;&lt;24))
 DECL|macro|APIC_DFR
 mdefine_line|#define&t;&t;APIC_DFR&t;0xE0
 DECL|macro|GET_APIC_DFR
@@ -60,8 +66,6 @@ DECL|macro|APIC_ESR_ILLREGA
 mdefine_line|#define&t;&t;&t;APIC_ESR_ILLREGA&t;0x00080
 DECL|macro|APIC_ICR
 mdefine_line|#define&t;&t;APIC_ICR&t;0x300
-DECL|macro|APIC_DEST_FIELD
-mdefine_line|#define&t;&t;&t;APIC_DEST_FIELD&t;&t;0x00000
 DECL|macro|APIC_DEST_SELF
 mdefine_line|#define&t;&t;&t;APIC_DEST_SELF&t;&t;0x40000
 DECL|macro|APIC_DEST_ALLINC

@@ -823,8 +823,6 @@ id|common_swizzle
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The System Vector&n; */
-DECL|macro|POLARIS_IACK_SC
-mdefine_line|#define POLARIS_IACK_SC&t;POLARIS_IACK_BASE /* hack, move to header */
 DECL|variable|__initmv
 r_struct
 id|alpha_machine_vector

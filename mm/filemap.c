@@ -401,11 +401,7 @@ id|count
 suffix:semicolon
 id|count
 op_assign
-(paren
 id|limit
-op_lshift
-l_int|1
-)paren
 op_rshift
 id|priority
 suffix:semicolon
@@ -466,9 +462,6 @@ op_minus
 id|mem_map
 suffix:semicolon
 )brace
-id|count
-op_decrement
-suffix:semicolon
 id|referenced
 op_assign
 id|test_and_clear_bit
@@ -523,6 +516,9 @@ op_ne
 l_int|1
 )paren
 r_continue
+suffix:semicolon
+id|count
+op_decrement
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Is it a page swap page? If so, we want to&n;&t;&t; * drop it if it is no longer used, even if it&n;&t;&t; * were to be marked referenced..&n;&t;&t; */
 r_if

@@ -3189,6 +3189,10 @@ id|device
 op_star
 id|dev
 suffix:semicolon
+id|dev
+op_assign
+id|dev_id
+suffix:semicolon
 macro_line|#if TR_VERBOSE
 id|DPRINTK
 c_func
@@ -3199,10 +3203,6 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
-id|dev
-op_assign
-id|dev_id
-suffix:semicolon
 id|ti
 op_assign
 (paren
