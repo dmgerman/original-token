@@ -754,16 +754,7 @@ r_char
 op_star
 id|buffer
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/*&n;&t; * If some higher layer thinks we&squot;ve missed a&n;&t; * tx-done interrupt we are passed NULL.&n;&t; * Caution: dev_tint() handles the cli()/sti() itself.&n;&t; */
 r_if
@@ -799,9 +790,7 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|dev
 )paren
@@ -1580,19 +1569,10 @@ id|skb-&gt;mem_addr
 op_assign
 id|skb
 suffix:semicolon
-multiline_comment|/* &squot;skb + 1&squot; points to the start of sk_buff data area. */
+multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 id|buffer
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/* copy the packet into the buffer */
 id|d_link_setup_address

@@ -2801,14 +2801,12 @@ r_if
 c_cond
 (paren
 id|current-&gt;priority
-op_ne
+OL
 l_int|15
 )paren
-(brace
 id|kstat.cpu_nice
 op_increment
 suffix:semicolon
-)brace
 r_else
 id|kstat.cpu_user
 op_increment

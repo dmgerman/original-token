@@ -854,9 +854,7 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|dev
 )paren
@@ -890,16 +888,7 @@ c_func
 (paren
 id|dev
 comma
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 id|skb-&gt;len
 )paren
@@ -1900,22 +1889,13 @@ suffix:semicolon
 )brace
 (brace
 multiline_comment|/* phase of receiving the data */
-multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
+multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 r_int
 r_char
 op_star
 id|buf
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 r_int
 r_char

@@ -474,9 +474,7 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|dev
 )paren
@@ -759,16 +757,7 @@ id|dev
 comma
 id|length
 comma
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 id|output_page
 )paren
@@ -852,16 +841,7 @@ id|dev
 comma
 id|length
 comma
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 id|ei_local-&gt;tx_start_page
 )paren
@@ -2183,7 +2163,7 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
+multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 id|ei_block_input
 c_func
 (paren
@@ -2195,11 +2175,7 @@ comma
 r_char
 op_star
 )paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 id|current_offset
 op_plus

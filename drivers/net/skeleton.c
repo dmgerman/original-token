@@ -1027,9 +1027,7 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|dev
 )paren
@@ -1098,15 +1096,7 @@ r_char
 op_star
 id|buf
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 id|hardware_send_packet
 c_func
@@ -1512,20 +1502,11 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
+multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 id|memcpy
 c_func
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 (paren
 r_void
@@ -1542,15 +1523,7 @@ c_func
 (paren
 id|ioaddr
 comma
-(paren
-r_void
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 (paren
 id|pkt_len
