@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/joystick.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/raw.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -2361,6 +2362,11 @@ id|MEM_MAJOR
 )paren
 suffix:semicolon
 id|rand_initialize
+c_func
+(paren
+)paren
+suffix:semicolon
+id|raw_init
 c_func
 (paren
 )paren

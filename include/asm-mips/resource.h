@@ -27,7 +27,7 @@ DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS 10&t;&t;&t;/* Number of limit flavors.  */
 macro_line|#ifdef __KERNEL__
 DECL|macro|INIT_RLIMITS
-mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ _STK_LIM, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{        0, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ NR_OPEN, NR_OPEN },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ MAX_TASKS_PER_USER, MAX_TASKS_PER_USER },&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ _STK_LIM, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{        0, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ INR_OPEN, INR_OPEN },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ MAX_TASKS_PER_USER, MAX_TASKS_PER_USER },&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;}
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASM_MIPS_RESOURCE_H */
 eof

@@ -296,7 +296,6 @@ c_func
 (paren
 id|fd
 comma
-op_amp
 id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
@@ -310,7 +309,6 @@ c_func
 (paren
 id|fd
 comma
-op_amp
 id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon

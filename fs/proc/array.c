@@ -3006,6 +3006,7 @@ l_string|&quot;Pid:&bslash;t%d&bslash;n&quot;
 l_string|&quot;PPid:&bslash;t%d&bslash;n&quot;
 l_string|&quot;Uid:&bslash;t%d&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
 l_string|&quot;Gid:&bslash;t%d&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
+l_string|&quot;FDSize:&bslash;t%d&bslash;n&quot;
 l_string|&quot;Groups:&bslash;t&quot;
 comma
 id|get_task_state
@@ -3033,6 +3034,13 @@ comma
 id|p-&gt;sgid
 comma
 id|p-&gt;fsgid
+comma
+id|p-&gt;files
+ques
+c_cond
+id|p-&gt;files-&gt;max_fds
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 r_for

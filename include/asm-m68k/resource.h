@@ -26,7 +26,7 @@ DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS&t;10
 macro_line|#ifdef __KERNEL__
 DECL|macro|INIT_RLIMITS
-mdefine_line|#define INIT_RLIMITS&t;&bslash;&n;{                       &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {_STK_LIM, LONG_MAX}, &bslash;&n;  {       0, LONG_MAX}, &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, &bslash;&n;  {NR_OPEN, NR_OPEN},   &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {LONG_MAX, LONG_MAX}  &bslash;&n;}
+mdefine_line|#define INIT_RLIMITS&t;&bslash;&n;{                       &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {_STK_LIM, LONG_MAX}, &bslash;&n;  {       0, LONG_MAX}, &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, &bslash;&n;  {INR_OPEN, INR_OPEN}, &bslash;&n;  {LONG_MAX, LONG_MAX}, &bslash;&n;  {LONG_MAX, LONG_MAX}  &bslash;&n;}
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _M68K_RESOURCE_H */
 eof

@@ -1662,6 +1662,17 @@ multiline_comment|/* reads take precedence */
 r_break
 suffix:semicolon
 r_case
+id|WRITERAW
+suffix:colon
+id|rw
+op_assign
+id|WRITE
+suffix:semicolon
+r_goto
+id|do_write
+suffix:semicolon
+multiline_comment|/* Skip the buffer refile */
+r_case
 id|WRITEA
 suffix:colon
 id|rw_ahead
@@ -1699,6 +1710,8 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|do_write
+suffix:colon
 multiline_comment|/*&n;&t;&t;&t; * We don&squot;t allow the write-requests to fill up the&n;&t;&t;&t; * queue completely:  we want some room for reads,&n;&t;&t;&t; * as they take precedence. The last third of the&n;&t;&t;&t; * requests are only for reads.&n;&t;&t;&t; */
 id|kstat.pgpgout
 op_increment
@@ -2544,12 +2557,8 @@ c_cond
 (paren
 (paren
 id|rw
-op_eq
+op_amp
 id|WRITE
-op_logical_or
-id|rw
-op_eq
-id|WRITEA
 )paren
 op_logical_and
 id|is_read_only

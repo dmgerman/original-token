@@ -4982,7 +4982,7 @@ c_cond
 (paren
 id|fd
 op_ge
-id|NR_OPEN
+id|current-&gt;files-&gt;max_fds
 )paren
 (brace
 r_goto
@@ -5356,7 +5356,7 @@ c_cond
 (paren
 id|fd
 op_ge
-id|NR_OPEN
+id|current-&gt;files-&gt;max_fds
 )paren
 (brace
 r_goto

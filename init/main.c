@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/iobuf.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bugs.h&gt;
 macro_line|#ifdef CONFIG_PCI
@@ -5153,6 +5154,11 @@ c_func
 id|memory_end
 op_minus
 id|memory_start
+)paren
+suffix:semicolon
+id|kiobuf_init
+c_func
+(paren
 )paren
 suffix:semicolon
 id|signals_init

@@ -20,12 +20,14 @@ macro_line|#include &lt;asm/cache.h&gt;
 r_struct
 id|poll_table_struct
 suffix:semicolon
-multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
+multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but you can change&n; * the file limit at runtime and only root can increase the per-process&n; * nr_file rlimit, so it&squot;s safe to set up a ridiculously high absolute&n; * upper limit on files-per-process.&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..  &n; */
 multiline_comment|/* Fixed constants first: */
 DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
 DECL|macro|NR_OPEN
-mdefine_line|#define NR_OPEN 1024
+mdefine_line|#define NR_OPEN (1024*1024)&t;/* Absolute upper limit on fd num */
+DECL|macro|INR_OPEN
+mdefine_line|#define INR_OPEN 1024&t;&t;/* Initial setting for nfile rlimits */
 DECL|macro|BLOCK_SIZE_BITS
 mdefine_line|#define BLOCK_SIZE_BITS 10
 DECL|macro|BLOCK_SIZE
@@ -73,6 +75,8 @@ DECL|macro|READA
 mdefine_line|#define READA 2&t;&t;/* read-ahead  - don&squot;t block if no resources */
 DECL|macro|WRITEA
 mdefine_line|#define WRITEA 3&t;/* write-ahead - don&squot;t block if no resources */
+DECL|macro|WRITERAW
+mdefine_line|#define WRITERAW 5&t;/* raw write - don&squot;t play with buffer lists */
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -391,6 +395,13 @@ DECL|member|b_wait
 id|wait_queue_head_t
 id|b_wait
 suffix:semicolon
+DECL|member|b_kiobuf
+r_struct
+id|kiobuf
+op_star
+id|b_kiobuf
+suffix:semicolon
+multiline_comment|/* kiobuf which owns this IO */
 )brace
 suffix:semicolon
 DECL|typedef|bh_end_io_t
@@ -2685,6 +2696,18 @@ id|sys_close
 c_func
 (paren
 r_int
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* yes, it&squot;s really unsigned */
+r_extern
+r_int
+id|do_close
+c_func
+(paren
+r_int
+r_int
+comma
 r_int
 )paren
 suffix:semicolon

@@ -1718,6 +1718,10 @@ c_cond
 id|i
 op_ge
 id|files-&gt;max_fds
+op_logical_or
+id|i
+op_ge
+id|files-&gt;max_fdset
 )paren
 r_break
 suffix:semicolon
@@ -1727,7 +1731,7 @@ id|xchg
 c_func
 (paren
 op_amp
-id|files-&gt;close_on_exec.fds_bits
+id|files-&gt;close_on_exec-&gt;fds_bits
 (braket
 id|j
 )braket

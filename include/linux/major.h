@@ -186,6 +186,8 @@ DECL|macro|IDE7_MAJOR
 mdefine_line|#define IDE7_MAJOR&t;89
 DECL|macro|AURORA_MAJOR
 mdefine_line|#define AURORA_MAJOR 79
+DECL|macro|RAW_MAJOR
+mdefine_line|#define RAW_MAJOR&t;162
 DECL|macro|UNIX98_PTY_MASTER_MAJOR
 mdefine_line|#define UNIX98_PTY_MASTER_MAJOR&t;128
 DECL|macro|UNIX98_PTY_MAJOR_COUNT
