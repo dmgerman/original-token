@@ -26,7 +26,7 @@ mdefine_line|#define XIAFS_BITS_PER_Z_BITS(sp)&t;(BLOCK_SIZE_BITS + 3 + XIAFS_ZS
 DECL|macro|XIAFS_INODES_PER_Z
 mdefine_line|#define XIAFS_INODES_PER_Z(sp)&t;(_XIAFS_INODES_PER_BLOCK &lt;&lt; XIAFS_ZSHIFT(sp))
 multiline_comment|/* Use the most significant bytes of zone pointers to store block counter. */
-multiline_comment|/* This is ugly, but it works. Note, We have another 7 bytes for &quot;expension&quot;. */
+multiline_comment|/* This is ugly, but it works. Note, We have another 7 bytes for &quot;expansion&quot;. */
 DECL|macro|XIAFS_GET_BLOCKS
 mdefine_line|#define XIAFS_GET_BLOCKS(row_ip, blocks)  &bslash;&n;  blocks=((((row_ip)-&gt;i_zone[0] &gt;&gt; 24) &amp; 0xff )|&bslash;&n;&t;  (((row_ip)-&gt;i_zone[1] &gt;&gt; 16) &amp; 0xff00 )|&bslash;&n;&t;  (((row_ip)-&gt;i_zone[2] &gt;&gt;  8) &amp; 0xff0000 ) )
 multiline_comment|/* XIAFS_PUT_BLOCKS should be called before saving zone pointers */

@@ -1,5 +1,5 @@
 multiline_comment|/* e2100.c: A Cabletron E2100 series ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993-1994 by Donald Becker.&n;&n;&t;Copyright 1994 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.  This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;This is a driver for the Cabletron E2100 series ethercards.&n;&n;&t;The Author may be reached as becker@cesdis.gsfc.nasa.gov, or&n;&t;C/O Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;The E2100 series ethercard is a fairly generic shared memory 8390&n;&t;implementation.  The only unusual aspect is the way the shared memory&n;&t;registers are set: first you do an inb() in what is normally the&n;&t;station address region, and the low three bits of next outb() *address*&n;&t;is used&t;as the write value for that register.  Either someone wasn&squot;t&n;&t;too used to dem bit en bites, or they were trying to obfusicate the&n;&t;programming&t;interface.&n;&n;&t;There is an additional complication when setting the window on the packet&n;&t;buffer.  You must first do a read into the packet buffer region with the&n;&t;low 8 address bits the address setting the page for the start of the packet&n;&t;buffer window, and then do the above operation.  See mem_on() for details.&n;&n;&t;One bug on the chip is that even a hard reset won&squot;t disable the memory&n;&t;window, usually resulting in a hung machine if mem_off() isn&squot;t called.&n;&t;If this happens, you must power down the machine for about 30 seconds.&n;*/
+multiline_comment|/*&n;&t;Written 1993-1994 by Donald Becker.&n;&n;&t;Copyright 1994 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.  This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;This is a driver for the Cabletron E2100 series ethercards.&n;&n;&t;The Author may be reached as becker@cesdis.gsfc.nasa.gov, or&n;&t;C/O Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;The E2100 series ethercard is a fairly generic shared memory 8390&n;&t;implementation.  The only unusual aspect is the way the shared memory&n;&t;registers are set: first you do an inb() in what is normally the&n;&t;station address region, and the low three bits of next outb() *address*&n;&t;is used&t;as the write value for that register.  Either someone wasn&squot;t&n;&t;too used to dem bit en bites, or they were trying to obfuscate the&n;&t;programming&t;interface.&n;&n;&t;There is an additional complication when setting the window on the packet&n;&t;buffer.  You must first do a read into the packet buffer region with the&n;&t;low 8 address bits the address setting the page for the start of the packet&n;&t;buffer window, and then do the above operation.  See mem_on() for details.&n;&n;&t;One bug on the chip is that even a hard reset won&squot;t disable the memory&n;&t;window, usually resulting in a hung machine if mem_off() isn&squot;t called.&n;&t;If this happens, you must power down the machine for about 30 seconds.&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -37,7 +37,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* Offsets from the base_addr.&n;   Read from the ASIC register, and the low three bits of the next outb()&n;   address is used to set the cooresponding register. */
+multiline_comment|/* Offsets from the base_addr.&n;   Read from the ASIC register, and the low three bits of the next outb()&n;   address is used to set the corresponding register. */
 DECL|macro|E21_NIC_OFFSET
 mdefine_line|#define E21_NIC_OFFSET  0&t;&t;/* Offset to the 8390 NIC. */
 DECL|macro|E21_ASIC
@@ -607,6 +607,10 @@ id|i
 )braket
 comma
 l_int|NULL
+comma
+l_int|0
+comma
+l_string|&quot;bogus&quot;
 )paren
 op_ne
 op_minus
@@ -884,12 +888,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
+c_func
 (paren
 id|dev-&gt;irq
 comma
-op_amp
-id|ei_sigaction
+id|ei_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;e2100&quot;
 )paren
 )paren
 (brace
@@ -1220,7 +1228,7 @@ op_star
 )paren
 id|dev-&gt;mem_start
 suffix:semicolon
-multiline_comment|/* Set the shared memory window start by doing a read, with the low address&n;&t;   bits specifing the starting page. */
+multiline_comment|/* Set the shared memory window start by doing a read, with the low address&n;&t;   bits specifying the starting page. */
 op_star
 (paren
 id|shared_mem

@@ -9892,23 +9892,6 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-multiline_comment|/* Attribute `SA_INTERRUPT&squot; makes the interrupt atomic with&n; * interrupts disabled. We could do without the atomic stuff, but&n; * then dma_transfer() would have to disable interrupts explicitly.&n; * System load is high enough as it is :-(&n; */
-DECL|variable|qic02_tape_sigaction
-r_static
-r_struct
-id|sigaction
-id|qic02_tape_sigaction
-op_assign
-(brace
-id|qic02_tape_interrupt
-comma
-l_int|0
-comma
-id|SA_INTERRUPT
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 multiline_comment|/* align `a&squot; at `size&squot; bytes. `size&squot; must be a power of 2 */
 DECL|function|align_buffer
 r_static
@@ -10021,13 +10004,16 @@ multiline_comment|/* get IRQ */
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|QIC02_TAPE_IRQ
 comma
-op_amp
-id|qic02_tape_sigaction
+id|qic02_tape_interrupt
+comma
+id|SA_INTERRUP
+comma
+l_string|&quot;QIC-02&quot;
 )paren
 )paren
 (brace

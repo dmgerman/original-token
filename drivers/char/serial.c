@@ -137,7 +137,7 @@ DECL|macro|BOCA_FLAGS
 mdefine_line|#define BOCA_FLAGS 0
 DECL|macro|HUB6_FLAGS
 mdefine_line|#define HUB6_FLAGS 0
-multiline_comment|/*&n; * The following define the access methods for the HUB6 card. All&n; * access is through two ports for all 24 possible chips. The card is&n; * selected through the high 2 bits, the port on that card with the&n; * &quot;middle&quot; 3 bits, and the register on that port with the bottom&n; * 3 bits.&n; *&n; * While the access port and interrupt is configurable, the default&n; * port locations are 0x302 for the port control register, and 0x303&n; * for the data read/write register. Normally, the interrupt is at irq3&n; * but can be anything from 3 to 7 inclusive. Note tht using 3 will&n; * require disabling com2.&n; */
+multiline_comment|/*&n; * The following define the access methods for the HUB6 card. All&n; * access is through two ports for all 24 possible chips. The card is&n; * selected through the high 2 bits, the port on that card with the&n; * &quot;middle&quot; 3 bits, and the register on that port with the bottom&n; * 3 bits.&n; *&n; * While the access port and interrupt is configurable, the default&n; * port locations are 0x302 for the port control register, and 0x303&n; * for the data read/write register. Normally, the interrupt is at irq3&n; * but can be anything from 3 to 7 inclusive. Note that using 3 will&n; * require disabling com2.&n; */
 DECL|macro|C_P
 mdefine_line|#define C_P(card,port) (((card)&lt;&lt;6|(port)&lt;&lt;3) + 1)
 DECL|variable|rs_table
@@ -980,7 +980,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is used to figure out the divsor speeds and the timeouts&n; */
+multiline_comment|/*&n; * This is used to figure out the divisor speeds and the timeouts&n; */
 DECL|variable|baud_table
 r_static
 r_int
@@ -2968,7 +2968,7 @@ id|tty-&gt;write_wait
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This subroutine is called when the RS_TIMER goes off.  It is used&n; * by the serial driver to handle ports that do not have an interrupt&n; * (irq=0).  This doesn&squot;t work very well for 16450&squot;s, but gives bearly&n; * passable results for a 16550A.  (Although at the expense of much&n; * CPU overhead).&n; */
+multiline_comment|/*&n; * This subroutine is called when the RS_TIMER goes off.  It is used&n; * by the serial driver to handle ports that do not have an interrupt&n; * (irq=0).  This doesn&squot;t work very well for 16450&squot;s, but gives barely&n; * passable results for a 16550A.  (Although at the expense of much&n; * CPU overhead).&n; */
 DECL|function|rs_timer
 r_static
 r_void
@@ -3195,28 +3195,6 @@ id|i
 comma
 id|mask
 suffix:semicolon
-r_struct
-id|sigaction
-id|sa
-suffix:semicolon
-id|sa.sa_handler
-op_assign
-id|rs_probe
-suffix:semicolon
-id|sa.sa_flags
-op_assign
-(paren
-id|SA_INTERRUPT
-)paren
-suffix:semicolon
-id|sa.sa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|sa.sa_restorer
-op_assign
-l_int|NULL
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3251,13 +3229,16 @@ id|dontgrab
 )paren
 op_logical_and
 op_logical_neg
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|i
 comma
-op_amp
-id|sa
+id|rs_probe
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;serial probe&quot;
 )paren
 )paren
 (brace
@@ -3435,9 +3416,14 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
-r_struct
-id|sigaction
-id|sa
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3656,39 +3642,28 @@ c_func
 id|info-&gt;irq
 )paren
 suffix:semicolon
-id|sa.sa_handler
+id|handler
 op_assign
 id|rs_interrupt
 suffix:semicolon
 )brace
 r_else
-id|sa.sa_handler
+id|handler
 op_assign
 id|rs_interrupt_single
 suffix:semicolon
-id|sa.sa_flags
-op_assign
-(paren
-id|SA_INTERRUPT
-)paren
-suffix:semicolon
-id|sa.sa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|sa.sa_restorer
-op_assign
-l_int|NULL
-suffix:semicolon
 id|retval
 op_assign
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|info-&gt;irq
 comma
-op_amp
-id|sa
+id|handler
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;serial&quot;
 )paren
 suffix:semicolon
 r_if
@@ -4053,10 +4028,6 @@ op_star
 id|info
 )paren
 (brace
-r_struct
-id|sigaction
-id|sa
-suffix:semicolon
 r_int
 r_int
 id|flags
@@ -4175,33 +4146,18 @@ c_func
 id|info-&gt;irq
 )paren
 suffix:semicolon
-id|sa.sa_flags
-op_assign
-(paren
-id|SA_INTERRUPT
-)paren
-suffix:semicolon
-id|sa.sa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|sa.sa_restorer
-op_assign
-l_int|NULL
-suffix:semicolon
-id|sa.sa_handler
-op_assign
-id|rs_interrupt_single
-suffix:semicolon
 id|retval
 op_assign
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|info-&gt;irq
 comma
-op_amp
-id|sa
+id|rs_interrupt_single
+comma
+l_int|0
+comma
+l_string|&quot;serial&quot;
 )paren
 suffix:semicolon
 r_if
@@ -4212,7 +4168,7 @@ id|retval
 id|printk
 c_func
 (paren
-l_string|&quot;serial shutdown: irqaction: error %d&quot;
+l_string|&quot;serial shutdown: request_irq: error %d&quot;
 l_string|&quot;  Couldn&squot;t reacquire IRQ.&bslash;n&quot;
 comma
 id|retval
@@ -4288,7 +4244,7 @@ l_int|0x01F
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Bebore we drop DTR, make sure the UART transmitter has&n;&t; * completely drained; this is especially important if there&n;&t; * is a transmit FIFO!&n;&t; * &n;&t; * We busy loop here, which is not great; unfortunately the&n;&t; * UART does not provide an interrupt for TEMT, and putting it&n;&t; * in the interrupt handler would slow down normal accesses&n;&t; * anyway.&n;&t; */
+multiline_comment|/*&n;&t; * Before we drop DTR, make sure the UART transmitter has&n;&t; * completely drained; this is especially important if there&n;&t; * is a transmit FIFO!&n;&t; * &n;&t; * We busy loop here, which is not great; unfortunately the&n;&t; * UART does not provide an interrupt for TEMT, and putting it&n;&t; * in the interrupt handler would slow down normal accesses&n;&t; * anyway.&n;&t; */
 id|sti
 c_func
 (paren
@@ -8609,7 +8565,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine is called whenever a serial port is opened.  It&n; * enables interrupts for a serial port, linking in its async structure into&n; * the IRQ chain.   It also performs the serial-speicific&n; * initalization for the tty structure.&n; */
+multiline_comment|/*&n; * This routine is called whenever a serial port is opened.  It&n; * enables interrupts for a serial port, linking in its async structure into&n; * the IRQ chain.   It also performs the serial-specific&n; * initialization for the tty structure.&n; */
 DECL|function|rs_open
 r_int
 id|rs_open
@@ -9460,7 +9416,7 @@ r_return
 suffix:semicolon
 multiline_comment|/* We failed; there&squot;s nothing here */
 )brace
-multiline_comment|/* &n;&t; * Check to see if a UART is really there.  Certain broken&n;&t; * internal modems based on the Rockwell chipset fail this&n;&t; * test, because they apparently don&squot;t implement the loopback&n;&t; * test mode.  So this test is skipped on the COM 1 through&n;&t; * COM 4 ports.  This *should* be safe, since no board&n;&t; * manufactucturer would be stupid enough to design a board&n;&t; * that conflicts with COM 1-4 --- we hope!&n;&t; */
+multiline_comment|/* &n;&t; * Check to see if a UART is really there.  Certain broken&n;&t; * internal modems based on the Rockwell chipset fail this&n;&t; * test, because they apparently don&squot;t implement the loopback&n;&t; * test mode.  So this test is skipped on the COM 1 through&n;&t; * COM 4 ports.  This *should* be safe, since no board&n;&t; * manufacturer would be stupid enough to design a board&n;&t; * that conflicts with COM 1-4 --- we hope!&n;&t; */
 r_if
 c_cond
 (paren

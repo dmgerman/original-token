@@ -159,7 +159,7 @@ mdefine_line|#define SIEN0_REG_800&t;&t;0x40
 DECL|macro|SIEN_MA
 mdefine_line|#define SIEN_MA&t;&t;&t;0x80&t;/* Phase mismatch (ini) or ATN (tgt) */
 DECL|macro|SIEN_FC
-mdefine_line|#define SIEN_FC&t;&t;&t;0x40&t;/* Functin complete */
+mdefine_line|#define SIEN_FC&t;&t;&t;0x40&t;/* Function complete */
 DECL|macro|SIEN_700_STO
 mdefine_line|#define SIEN_700_STO&t;&t;0x20&t;/* Selection or reselection timeout */
 DECL|macro|SIEN_800_SEL
@@ -268,7 +268,7 @@ DECL|macro|SBCL_PHASE_STATIN
 mdefine_line|#define SBCL_PHASE_STATIN&t;(SBCL_CD|SBCL_IO)
 DECL|macro|SBCL_PHASE_MASK
 mdefine_line|#define SBCL_PHASE_MASK&t;&t;(SBCL_CD|SBCL_IO|SBCL_MSG)
-multiline_comment|/* &n; * SCSI first byte recieved latch ro &n; * This register contains the first byte received during a block MOVE &n; * SCSI SCRIPTS instruction, including&n; * &n; * Initiator mode&t;Target mode&n; * Message in&t;&t;Command&n; * Status&t;&t;Message out&n; * Data in&t;&t;Data out&n; *&n; * It also contains the selecting or reselecting device&squot;s ID and our &n; * ID.&n; *&n; * Note that this is the register the various IF conditionals can &n; * operate on.&n; */
+multiline_comment|/* &n; * SCSI first byte received latch ro &n; * This register contains the first byte received during a block MOVE &n; * SCSI SCRIPTS instruction, including&n; * &n; * Initiator mode&t;Target mode&n; * Message in&t;&t;Command&n; * Status&t;&t;Message out&n; * Data in&t;&t;Data out&n; *&n; * It also contains the selecting or reselecting device&squot;s ID and our &n; * ID.&n; *&n; * Note that this is the register the various IF conditionals can &n; * operate on.&n; */
 DECL|macro|SFBR_REG
 mdefine_line|#define SFBR_REG&t;&t;0x08&t;
 multiline_comment|/* &n; * SCSI input data latch ro&n; * In initiator mode, data is latched into this register on the rising&n; * edge of REQ/. In target mode, data is latched on the rising edge of &n; * ACK/&n; */
@@ -276,7 +276,7 @@ DECL|macro|SIDL_REG_700
 mdefine_line|#define SIDL_REG_700&t;&t;0x09
 DECL|macro|SIDL_REG_800
 mdefine_line|#define SIDL_REG_800&t;&t;0x50
-multiline_comment|/* &n; * SCSI bus data lines ro &n; * This register reflects the instantenous status of the SCSI data &n; * lines.  Note that SCNTL0 must be set to disable parity checking, &n; * otherwise reading this register will latch new parity.&n; */
+multiline_comment|/* &n; * SCSI bus data lines ro &n; * This register reflects the instantaneous status of the SCSI data &n; * lines.  Note that SCNTL0 must be set to disable parity checking, &n; * otherwise reading this register will latch new parity.&n; */
 DECL|macro|SBDL_REG_700
 mdefine_line|#define SBDL_REG_700&t;&t;0x0a
 DECL|macro|SBDL_REG_800
@@ -306,7 +306,7 @@ DECL|macro|SOCL_CD
 mdefine_line|#define SOCL_CD&t;&t;&t;0x02&t;/*  C/D ro */
 DECL|macro|SOCL_IO
 mdefine_line|#define SOCL_IO&t;&t;&t;0x01&t;/*  I/O ro */
-multiline_comment|/* &n; * Syncronous SCSI Clock Control bits &n; * 0 - set by DCNTL &n; * 1 - SCLK / 1.0&n; * 2 - SCLK / 1.5&n; * 3 - SCLK / 2.0 &n; */
+multiline_comment|/* &n; * Synchronous SCSI Clock Control bits &n; * 0 - set by DCNTL &n; * 1 - SCLK / 1.0&n; * 2 - SCLK / 1.5&n; * 3 - SCLK / 2.0 &n; */
 DECL|macro|SBCL_SSCF1
 mdefine_line|#define SBCL_SSCF1&t;&t;0x02&t;/* wo, -66 only */
 DECL|macro|SBCL_SSCF0
@@ -380,7 +380,7 @@ mdefine_line|#define SSTAT1_SDP&t;&t;0x01&t;/* Instant readout of SDP/ */
 DECL|macro|SSTAT2_REG
 mdefine_line|#define SSTAT2_REG&t;&t;0x0f&t;/* SCSI status 2 ro */
 DECL|macro|SSTAT2_FF3
-mdefine_line|#define SSTAT2_FF3&t;&t;0x80 &t;/* number of bytes in syncronous */
+mdefine_line|#define SSTAT2_FF3&t;&t;0x80 &t;/* number of bytes in synchronous */
 DECL|macro|SSTAT2_FF2
 mdefine_line|#define SSTAT2_FF2&t;&t;0x40&t;/* data FIFO */
 DECL|macro|SSTAT2_FF1
@@ -447,7 +447,7 @@ DECL|macro|CTEST2_800_CM
 mdefine_line|#define CTEST2_800_CM&t;&t;0x10&t;/* Configured as memory */
 multiline_comment|/* 0x80 - 0x40 are reserved on 700 series chips */
 DECL|macro|CTEST2_700_SOFF
-mdefine_line|#define CTEST2_700_SOFF&t;&t;0x20&t;/* SCSI Offset Compare,&n;&t;&t;&t;&t;&t; * As an initator, this bit is &n;&t;&t;&t;&t;&t; * one when the synchronous offset&n;&t;&t;&t;&t;&t; * is zero, as a target this bit &n;&t;&t;&t;&t;&t; * is one when the synchronous &n;&t;&t;&t;&t;&t; * offset is at the maximum&n;&t;&t;&t;&t;&t; * defined in SXFER&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define CTEST2_700_SOFF&t;&t;0x20&t;/* SCSI Offset Compare,&n;&t;&t;&t;&t;&t; * As an initiator, this bit is &n;&t;&t;&t;&t;&t; * one when the synchronous offset&n;&t;&t;&t;&t;&t; * is zero, as a target this bit &n;&t;&t;&t;&t;&t; * is one when the synchronous &n;&t;&t;&t;&t;&t; * offset is at the maximum&n;&t;&t;&t;&t;&t; * defined in SXFER&n;&t;&t;&t;&t;&t; */
 DECL|macro|CTEST2_700_SFP
 mdefine_line|#define CTEST2_700_SFP&t;&t;0x10&t;/* SCSI FIFO parity bit,&n;&t;&t;&t;&t;&t; * reading CTEST3 unloads a byte&n;&t;&t;&t;&t;&t; * from the FIFO and sets this&n;&t;&t;&t;&t;&t; */
 DECL|macro|CTEST2_700_DFP
@@ -528,7 +528,7 @@ mdefine_line|#define CTEST5_ADCK&t;&t;0x80
 multiline_comment|/*&n; * Clock Byte Counter.  When set, it decrements the DBC register to&n; * the next bus size boundary.&n; */
 DECL|macro|CTEST5_BBCK
 mdefine_line|#define CTEST5_BBCK&t;&t;0x40
-multiline_comment|/*&n; * Reset SCSI Offset.  Setting this bit to 1 cleares the current offset&n; * pointer in the SCSI synchronous offset counter (SSTAT).  This bit&n; * is set to 1 if a SCSI Gross Error Condition occurs.  The offset should&n; * be cleared when a synchronous transfer fails.  When written, it is &n; * automatically cleared after the SCSI syncrnous offset counter is &n; * reset.&n; */
+multiline_comment|/*&n; * Reset SCSI Offset.  Setting this bit to 1 clears the current offset&n; * pointer in the SCSI synchronous offset counter (SSTAT).  This bit&n; * is set to 1 if a SCSI Gross Error Condition occurs.  The offset should&n; * be cleared when a synchronous transfer fails.  When written, it is &n; * automatically cleared after the SCSI synchronous offset counter is &n; * reset.&n; */
 multiline_comment|/* Bit 5 is reserved on 800 series chips */
 DECL|macro|CTEST5_700_ROFF
 mdefine_line|#define CTEST5_700_ROFF&t;&t;0x20
@@ -624,7 +624,7 @@ mdefine_line|#define ISTAT_CON&t;&t;0x08&t;/* 1 when connected */
 DECL|macro|ISTAT_800_INTF
 mdefine_line|#define ISTAT_800_INTF&t;&t;0x04&t;/* Interrupt on the fly */
 DECL|macro|ISTAT_700_PRE
-mdefine_line|#define ISTAT_700_PRE&t;&t;0x04&t;/* Pointer register empty.&n;&t;&t;&t;&t;&t; * Set to 1 when DSPS and DSP&n;&t;&t;&t;&t;&t; * registers are empty in pipeline&n;&t;&t;&t;&t;&t; * mode, allways set otherwise.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define ISTAT_700_PRE&t;&t;0x04&t;/* Pointer register empty.&n;&t;&t;&t;&t;&t; * Set to 1 when DSPS and DSP&n;&t;&t;&t;&t;&t; * registers are empty in pipeline&n;&t;&t;&t;&t;&t; * mode, always set otherwise.&n;&t;&t;&t;&t;&t; */
 DECL|macro|ISTAT_SIP
 mdefine_line|#define ISTAT_SIP&t;&t;0x02&t;/* SCSI interrupt pending from&n;&t;&t;&t;&t;&t; * SCSI portion of SIOP see&n;&t;&t;&t;&t;&t; * SSTAT0&n;&t;&t;&t;&t;&t; */
 DECL|macro|ISTAT_DIP
@@ -666,15 +666,15 @@ DECL|macro|CTEST8_10_FM
 mdefine_line|#define CTEST8_10_FM&t;&t;0x02&t;/* Fetch pin mode */
 DECL|macro|CTEST8_10_SM
 mdefine_line|#define CTEST8_10_SM&t;&t;0x01&t;/* Snoop pin mode */
-multiline_comment|/* &n; * The CTEST9 register may be used to diffentiate between a&n; * NCR53c700 and a NCR53c710.  &n; *&n; * Write 0xff to this register.&n; * Read it.&n; * If the contents are 0xff, it is a NCR53c700&n; * If the contents are 0x00, it is a NCR53c700-66 first revision&n; * If the contents are zome other value, it is some other NCR53c700-66&n; */
+multiline_comment|/* &n; * The CTEST9 register may be used to differentiate between a&n; * NCR53c700 and a NCR53c710.  &n; *&n; * Write 0xff to this register.&n; * Read it.&n; * If the contents are 0xff, it is a NCR53c700&n; * If the contents are 0x00, it is a NCR53c700-66 first revision&n; * If the contents are some other value, it is some other NCR53c700-66&n; */
 DECL|macro|CTEST9_REG_00
 mdefine_line|#define CTEST9_REG_00&t;&t;0x23&t;/* Chip test 9 ro */
 DECL|macro|LCRC_REG_10
 mdefine_line|#define LCRC_REG_10&t;&t;0x23&t;
-multiline_comment|/*&n; * 0x24 through 0x27 are the DMA byte counter register.  Instructions&n; * write their high 8 bits into the DCMD register, the low 24 bits into&n; * the DBC register.&n; *&n; * Function is dependant on the command type being executed.&n; */
+multiline_comment|/*&n; * 0x24 through 0x27 are the DMA byte counter register.  Instructions&n; * write their high 8 bits into the DCMD register, the low 24 bits into&n; * the DBC register.&n; *&n; * Function is dependent on the command type being executed.&n; */
 DECL|macro|DBC_REG
 mdefine_line|#define DBC_REG&t;&t;&t;0x24
-multiline_comment|/* &n; * For Block Move Instructions, DBC is a 24 bit quantity representing &n; *     the number of bytes to transfer.&n; * For Transfer Control Intructions, DBC is bit fielded as follows : &n; */
+multiline_comment|/* &n; * For Block Move Instructions, DBC is a 24 bit quantity representing &n; *     the number of bytes to transfer.&n; * For Transfer Control Instructions, DBC is bit fielded as follows : &n; */
 multiline_comment|/* Bits 20 - 23 should be clear */
 DECL|macro|DBC_TCI_TRUE
 mdefine_line|#define DBC_TCI_TRUE&t;&t;(1 &lt;&lt; 19) &t;/* Jump when true */
@@ -749,7 +749,7 @@ mdefine_line|#define DCMD_RWRI_OPC_WRITE&t;0x28&t;/* Write SFBR to register */
 DECL|macro|DCMD_RWRI_OPC_READ
 mdefine_line|#define DCMD_RWRI_OPC_READ&t;0x30&t;/* Read register to SFBR */
 DECL|macro|DCMD_RWRI_OPC_MODIFY
-mdefine_line|#define DCMD_RWRI_OPC_MODIFY&t;0x38&t;/* Modify inplace */
+mdefine_line|#define DCMD_RWRI_OPC_MODIFY&t;0x38&t;/* Modify in place */
 DECL|macro|DCMD_RWRI_OP_MASK
 mdefine_line|#define DCMD_RWRI_OP_MASK&t;0x07
 DECL|macro|DCMD_RWRI_OP_MOVE
@@ -877,7 +877,7 @@ multiline_comment|/* 0x02 is reserved */
 DECL|macro|DCNTL_00_RST
 mdefine_line|#define DCNTL_00_RST&t;&t;0x01&t;/* Software reset, resets everything&n;&t;&t;&t;&t;&t; * but 286 mode bit  in DMODE. On the&n;&t;&t;&t;&t;&t; * NCR53c710, this bit moved to CTEST8&n;&t;&t;&t;&t;&t; */
 DECL|macro|DCNTL_10_COM
-mdefine_line|#define DCNTL_10_COM&t;&t;0x01&t;/* 700 software compatability mode */
+mdefine_line|#define DCNTL_10_COM&t;&t;0x01&t;/* 700 software compatibility mode */
 DECL|macro|DCNTL_700_SAVE
 mdefine_line|#define DCNTL_700_SAVE ( DCNTL_CF_MASK | DCNTL_S16)
 multiline_comment|/* NCR53c700-66 only */
@@ -964,7 +964,7 @@ mdefine_line|#define STEST2_800_SCE&t;&t;0x80&t;/* Enable SOCL/SODL */
 DECL|macro|STEST2_800_ROF
 mdefine_line|#define STEST2_800_ROF&t;&t;0x40&t;/* Reset SCSI sync offset */
 DECL|macro|STEST2_800_SLB
-mdefine_line|#define STEST2_800_SLB&t;&t;0x10&t;/* Enable SCSI looback mode */
+mdefine_line|#define STEST2_800_SLB&t;&t;0x10&t;/* Enable SCSI loopback mode */
 DECL|macro|STEST2_800_SZM
 mdefine_line|#define STEST2_800_SZM&t;&t;0x08&t;/* SCSI high impedance mode */
 DECL|macro|STEST2_800_EXT
@@ -992,7 +992,7 @@ mdefine_line|#define OPTION_PARITY &t;&t;0x1&t;/* Enable parity checking */
 DECL|macro|OPTION_TAGGED_QUEUE
 mdefine_line|#define OPTION_TAGGED_QUEUE&t;0x2&t;/* Enable SCSI-II tagged queuing */
 DECL|macro|OPTION_700
-mdefine_line|#define OPTION_700&t;&t;0x8&t;/* Allways run NCR53c700 scripts */
+mdefine_line|#define OPTION_700&t;&t;0x8&t;/* Always run NCR53c700 scripts */
 DECL|macro|OPTION_INTFLY
 mdefine_line|#define OPTION_INTFLY&t;&t;0x10&t;/* Use INTFLY interrupts */
 DECL|macro|OPTION_DEBUG_INTR
@@ -1070,7 +1070,7 @@ suffix:semicolon
 DECL|macro|CMD_FLAG_SDTR
 mdefine_line|#define CMD_FLAG_SDTR &t;&t;1&t;/* Initiating synchronous &n;&t;&t;&t;&t;&t;   transfer negotiation */
 DECL|macro|CMD_FLAG_WDTR
-mdefine_line|#define CMD_FLAG_WDTR&t;&t;2&t;/* Initiating wide tranfer&n;&t;&t;&t;&t;&t;   negotiation */
+mdefine_line|#define CMD_FLAG_WDTR&t;&t;2&t;/* Initiating wide transfer&n;&t;&t;&t;&t;&t;   negotiation */
 DECL|macro|CMD_FLAG_DID_SDTR
 mdefine_line|#define CMD_FLAG_DID_SDTR&t;4&t;/* did SDTR */
 DECL|struct|NCR53c7x0_table_indirect
@@ -1201,13 +1201,13 @@ suffix:semicolon
 multiline_comment|/* Indicates that the NCR is not executing code */
 DECL|macro|STATE_HALTED
 mdefine_line|#define STATE_HALTED&t;0&t;&t;
-multiline_comment|/* &n; * Indicates that the NCR is executing the wait for select / reselect &n; * script.  Only used when running NCR53c700 compatable scripts, only &n; * state during which an ABORT is _not_ considered an error condition.&n; */
+multiline_comment|/* &n; * Indicates that the NCR is executing the wait for select / reselect &n; * script.  Only used when running NCR53c700 compatible scripts, only &n; * state during which an ABORT is _not_ considered an error condition.&n; */
 DECL|macro|STATE_WAITING
 mdefine_line|#define STATE_WAITING&t;1&t;&t;
 multiline_comment|/* Indicates that the NCR is executing other code. */
 DECL|macro|STATE_RUNNING
 mdefine_line|#define STATE_RUNNING&t;2&t;&t;
-multiline_comment|/* &n; * Indicates that the NCR was being aborted.  Only used when running &n; * NCR53c700 compatable scripts.  &n; */
+multiline_comment|/* &n; * Indicates that the NCR was being aborted.  Only used when running &n; * NCR53c700 compatible scripts.  &n; */
 DECL|macro|STATE_ABORTING
 mdefine_line|#define STATE_ABORTING&t;3
 multiline_comment|/* &n; * Where knowledge of SCSI SCRIPT(tm) specified values are needed &n; * in an interrupt handler, an interrupt handler exists for each &n; * different SCSI script so we don&squot;t have name space problems.&n; * &n; * Return values of these handlers are as follows : &n; */
@@ -1743,7 +1743,7 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* number of commands &n;&t;&t;&t;&t;&t;&t;   executing on each target&n;    &t;    &t;    &t;    &t;    &t;    &t; */
-multiline_comment|/* &n;     * Eventually, I&squot;ll switch to a corroutine for calling &n;     * cmd-&gt;done(cmd), etc. so that we can overlap interrupt&n;     * processing with this code for maximum performance.&n;     */
+multiline_comment|/* &n;     * Eventually, I&squot;ll switch to a coroutine for calling &n;     * cmd-&gt;done(cmd), etc. so that we can overlap interrupt&n;     * processing with this code for maximum performance.&n;     */
 DECL|member|finished_queue
 r_volatile
 r_struct

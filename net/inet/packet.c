@@ -72,7 +72,7 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;When we registered the protcol we saved the socket in the data&n;&t; *&t;field for just this event.&n;&t; */
+multiline_comment|/*&n;&t; *&t;When we registered the protocol we saved the socket in the data&n;&t; *&t;field for just this event.&n;&t; */
 id|sk
 op_assign
 (paren
@@ -95,7 +95,7 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Charge the memory to the socket. This is done specificially&n;&t; *&t;to prevent sockets using all the memory up.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Charge the memory to the socket. This is done specifically&n;&t; *&t;to prevent sockets using all the memory up.&n;&t; */
 r_if
 c_cond
 (paren
@@ -577,7 +577,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Pull a packet from our receive queue and hand it to the user.&n; *&t;If neccessary we block.&n; */
+multiline_comment|/*&n; *&t;Pull a packet from our receive queue and hand it to the user.&n; *&t;If necessary we block.&n; */
 DECL|function|packet_recvfrom
 r_int
 id|packet_recvfrom

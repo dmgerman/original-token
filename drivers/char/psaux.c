@@ -829,6 +829,10 @@ c_func
 id|AUX_IRQ
 comma
 id|aux_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;PS/2 Mouse&quot;
 )paren
 )paren
 (brace
@@ -933,6 +937,10 @@ c_func
 id|QP_IRQ
 comma
 id|qp_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;PS/2 Mouse&quot;
 )paren
 )paren
 r_return

@@ -1,5 +1,5 @@
 multiline_comment|/* eexpress.c: Intel EtherExpress device driver for Linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorported herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Things remaining to do:&n;&t;Check that the 586 and ASIC are reset/unreset at the right times.&n;&t;Check tx and rx buffer setup.&n;&t;The current Tx is single-buffer-only.&n;&t;Move the theory of operation and memory map documentation.&n;&t;Rework the board error reset&n;&t;The statistics need to be updated correctly.&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Things remaining to do:&n;&t;Check that the 586 and ASIC are reset/unreset at the right times.&n;&t;Check tx and rx buffer setup.&n;&t;The current Tx is single-buffer-only.&n;&t;Move the theory of operation and memory map documentation.&n;&t;Rework the board error reset&n;&t;The statistics need to be updated correctly.&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -9,7 +9,7 @@ op_assign
 l_string|&quot;eexpress.c:v0.07 1/19/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documention.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990. It provides just enough&n;&t;info that the casual reader might think that it documents the i82586.&n;*/
+multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documentation.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990. It provides just enough&n;&t;info that the casual reader might think that it documents the i82586.&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -41,7 +41,7 @@ id|net_debug
 op_assign
 id|NET_DEBUG
 suffix:semicolon
-multiline_comment|/*&n;  &t;&t;&t;Details of the i82586.&n;&n;   You&squot;ll really need the databook to understand the details of this part,&n;   but the outline is that the i82586 has two seperate processing units.&n;&n;   The Rx unit uses a list of frame descriptors and a list of data buffer&n;   descriptors.  We use full-sized (1518 byte) data buffers, so there is&n;   a one-to-one pairing of frame descriptors to buffer descriptors.&n;&n;   The Tx (&quot;command&quot;) unit executes a list of commands that look like:&n;&t;&t;Status word&t;&t;Written by the 82586 when the command is done.&n;&t;&t;Command word&t;Command in lower 3 bits, post-command action in upper 3&n;&t;&t;Link word&t;&t;The address of the next command.&n;&t;&t;Parameters&t;&t;(as needed).&n;&n;&t;Some definitions related to the Command Word are:&n; */
+multiline_comment|/*&n;  &t;&t;&t;Details of the i82586.&n;&n;   You&squot;ll really need the databook to understand the details of this part,&n;   but the outline is that the i82586 has two separate processing units.&n;&n;   The Rx unit uses a list of frame descriptors and a list of data buffer&n;   descriptors.  We use full-sized (1518 byte) data buffers, so there is&n;   a one-to-one pairing of frame descriptors to buffer descriptors.&n;&n;   The Tx (&quot;command&quot;) unit executes a list of commands that look like:&n;&t;&t;Status word&t;&t;Written by the 82586 when the command is done.&n;&t;&t;Command word&t;Command in lower 3 bits, post-command action in upper 3&n;&t;&t;Link word&t;&t;The address of the next command.&n;&t;&t;Parameters&t;&t;(as needed).&n;&n;&t;Some definitions related to the Command Word are:&n; */
 DECL|macro|CMD_EOL
 mdefine_line|#define CMD_EOL&t;&t;0x8000&t;&t;&t;/* The last command of the list, stop. */
 DECL|macro|CMD_SUSP
@@ -559,7 +559,7 @@ id|dev
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, (detachable devices only) alloate space for the&n;   device and return success.&n;   */
+multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, (detachable devices only) allocate space for the&n;   device and return success.&n;   */
 r_int
 DECL|function|express_probe
 id|express_probe
@@ -838,7 +838,7 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/* Check the first three octets of the S.A. for the manufactor&squot;s code. */
+multiline_comment|/* Check the first three octets of the S.A. for the manufacturer&squot;s code. */
 r_if
 c_cond
 (paren
@@ -1249,6 +1249,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|eexp_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;EExpress&quot;
 )paren
 )paren
 (brace

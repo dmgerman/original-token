@@ -389,7 +389,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t; * We have to worry if the protocol being deleted is&n;&t; * the last one on the list, then we may need to reset&n;&t; * someones copied bit.&n;&t; */
+multiline_comment|/*&n;&t; * We have to worry if the protocol being deleted is&n;&t; * the last one on the list, then we may need to reset&n;&t; * someone&squot;s copied bit.&n;&t; */
 r_if
 c_cond
 (paren

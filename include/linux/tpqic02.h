@@ -43,7 +43,7 @@ mdefine_line|#define QIC02_TAPE_IFC&t;&t;WANGTEK&t;/* interface card type */
 multiline_comment|/* #define QIC02_TAPE_IFC&t;&t;ARCHIVE */
 multiline_comment|/* #define QIC02_TAPE_IFC&t;&t;MOUNTAIN */
 DECL|macro|QIC02_TAPE_PORT
-mdefine_line|#define QIC02_TAPE_PORT &t;0x300&t;/* controller port adress */
+mdefine_line|#define QIC02_TAPE_PORT &t;0x300&t;/* controller port address */
 DECL|macro|QIC02_TAPE_IRQ
 mdefine_line|#define QIC02_TAPE_IRQ&t;&t;5&t;/* For IRQ2, use 9 here, others normal. */
 DECL|macro|QIC02_TAPE_DMA

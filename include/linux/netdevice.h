@@ -212,7 +212,7 @@ r_int
 r_char
 id|addr_len
 suffix:semicolon
-multiline_comment|/* harfware address length&t;*/
+multiline_comment|/* hardware address length&t;*/
 DECL|member|pa_addr
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioclts and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;&n;&t;October 1993 Bernd Huebner and Ruediger Helsch, Unifix Software GmbH,&n;&t;Braunschweig, Germany: Total rework to speed up data read operation.&n;&t;Also enabled definition of irq and address from bootstrap, using the&n;&t;environment. linux/init/main.c must be patched to export the env.&n;&t;November 93 added code for FX001 S,D (single &amp; double speed).&n;&t;February 94 added code for broken M 5/6 series of 16-bit single speed.&n;*/
+multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n;&t;Copyright (C) 1992  Martin Harriss&n;&n;&t;martin@bdsi.com&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&n;&t;0.1&t;First attempt - internal use only&n;&t;0.2&t;Cleaned up delays and use of timer - alpha release&n;&t;0.3&t;Audio support added&n;&t;0.3.1 Changes for mitsumi CRMC LU005S march version&n;&t;&t;   (stud11@cc4.kuleuven.ac.be)&n;        0.3.2 bug fixes to the ioctls and merged with ALPHA0.99-pl12&n;&t;&t;   (Jon Tombs &lt;jon@robots.ox.ac.uk&gt;)&n;        0.3.3 Added more #defines and mcd_setup()&n;   &t;&t;   (Jon Tombs &lt;jon@gtex02.us.es&gt;)&n;&n;&t;October 1993 Bernd Huebner and Ruediger Helsch, Unifix Software GmbH,&n;&t;Braunschweig, Germany: Total rework to speed up data read operation.&n;&t;Also enabled definition of irq and address from bootstrap, using the&n;&t;environment. linux/init/main.c must be patched to export the env.&n;&t;November 93 added code for FX001 S,D (single &amp; double speed).&n;&t;February 94 added code for broken M 5/6 series of 16-bit single speed.&n;*/
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2004,7 +2004,7 @@ suffix:semicolon
 r_case
 id|CDROMEJECT
 suffix:colon
-multiline_comment|/* all drives can atleast stop! */
+multiline_comment|/* all drives can at least stop! */
 r_if
 c_cond
 (paren
@@ -2680,7 +2680,7 @@ op_assign
 id|MCD_S_STOP
 suffix:semicolon
 )brace
-id|immediatly
+id|immediately
 suffix:colon
 r_switch
 c_cond
@@ -2790,7 +2790,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|set_mode_immediatly
+id|set_mode_immediately
 suffix:colon
 r_if
 c_cond
@@ -2828,7 +2828,7 @@ op_assign
 id|MCD_S_START
 suffix:semicolon
 r_goto
-id|immediatly
+id|immediately
 suffix:semicolon
 )brace
 id|printk
@@ -2952,7 +2952,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|read_immediatly
+id|read_immediately
 suffix:colon
 r_if
 c_cond
@@ -2990,7 +2990,7 @@ op_assign
 id|MCD_S_START
 suffix:semicolon
 r_goto
-id|immediatly
+id|immediately
 suffix:semicolon
 )brace
 id|printk
@@ -3093,7 +3093,7 @@ op_assign
 id|MCD_S_STOP
 suffix:semicolon
 r_goto
-id|immediatly
+id|immediately
 suffix:semicolon
 )brace
 )brace
@@ -3126,7 +3126,7 @@ op_amp
 id|MFL_STATUSorDATA
 )paren
 suffix:semicolon
-id|data_immediatly
+id|data_immediately
 suffix:colon
 macro_line|#ifdef TEST5
 id|printk
@@ -3218,7 +3218,7 @@ op_assign
 id|READ_TIMEOUT
 suffix:semicolon
 r_goto
-id|immediatly
+id|immediately
 suffix:semicolon
 r_case
 id|MFL_STATUSorDATA
@@ -3247,7 +3247,7 @@ op_assign
 id|MCD_S_STOP
 suffix:semicolon
 r_goto
-id|immediatly
+id|immediately
 suffix:semicolon
 )brace
 id|mcd_buf_bn
@@ -3372,7 +3372,7 @@ op_assign
 id|MCD_S_STOP
 suffix:semicolon
 r_goto
-id|immediatly
+id|immediately
 suffix:semicolon
 )brace
 id|McdTimeout
@@ -3445,7 +3445,7 @@ id|count
 suffix:semicolon
 macro_line|#   endif
 r_goto
-id|data_immediatly
+id|data_immediately
 suffix:semicolon
 )brace
 )brace
@@ -3829,11 +3829,11 @@ op_eq
 l_int|1
 )paren
 r_goto
-id|read_immediatly
+id|read_immediately
 suffix:semicolon
 r_else
 r_goto
-id|set_mode_immediatly
+id|set_mode_immediately
 suffix:semicolon
 )brace
 r_else
@@ -4163,23 +4163,6 @@ comma
 multiline_comment|/* media change */
 l_int|NULL
 multiline_comment|/* revalidate */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * MCD interrupt descriptor&n; */
-DECL|variable|mcd_sigaction
-r_static
-r_struct
-id|sigaction
-id|mcd_sigaction
-op_assign
-(brace
-id|mcd_interrupt
-comma
-l_int|0
-comma
-id|SA_INTERRUPT
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Test for presence of drive and initialize it.  Called at boot time.&n; */
@@ -4575,13 +4558,16 @@ multiline_comment|/* don&squot;t get the IRQ until we know for sure the drive is
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|mcd_irq
 comma
-op_amp
-id|mcd_sigaction
+id|mcd_interrupt
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;Mitsumi CD&quot;
 )paren
 )paren
 (brace
@@ -5564,7 +5550,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read the table of contents (TOC) and TOC header if neccessary&n; */
+multiline_comment|/*&n; * Read the table of contents (TOC) and TOC header if necessary&n; */
 r_static
 r_int
 DECL|function|updateToc

@@ -453,15 +453,7 @@ id|net_dir
 op_assign
 (brace
 (brace
-l_int|1
-comma
-l_int|2
-comma
-l_string|&quot;..&quot;
-)brace
-comma
-(brace
-l_int|8
+id|PROC_NET
 comma
 l_int|1
 comma
@@ -469,16 +461,24 @@ l_string|&quot;.&quot;
 )brace
 comma
 (brace
-l_int|128
+id|PROC_ROOT_INO
+comma
+l_int|2
+comma
+l_string|&quot;..&quot;
+)brace
+comma
+(brace
+id|PROC_NET_UNIX
 comma
 l_int|4
 comma
 l_string|&quot;unix&quot;
 )brace
-macro_line|#ifdef CONFIG_INET
 comma
+macro_line|#ifdef CONFIG_INET
 (brace
-l_int|129
+id|PROC_NET_ARP
 comma
 l_int|3
 comma
@@ -486,7 +486,7 @@ l_string|&quot;arp&quot;
 )brace
 comma
 (brace
-l_int|130
+id|PROC_NET_ROUTE
 comma
 l_int|5
 comma
@@ -494,7 +494,7 @@ l_string|&quot;route&quot;
 )brace
 comma
 (brace
-l_int|131
+id|PROC_NET_DEV
 comma
 l_int|3
 comma
@@ -502,7 +502,7 @@ l_string|&quot;dev&quot;
 )brace
 comma
 (brace
-l_int|132
+id|PROC_NET_RAW
 comma
 l_int|3
 comma
@@ -510,7 +510,7 @@ l_string|&quot;raw&quot;
 )brace
 comma
 (brace
-l_int|133
+id|PROC_NET_TCP
 comma
 l_int|3
 comma
@@ -518,7 +518,7 @@ l_string|&quot;tcp&quot;
 )brace
 comma
 (brace
-l_int|134
+id|PROC_NET_UDP
 comma
 l_int|3
 comma
@@ -526,27 +526,27 @@ l_string|&quot;udp&quot;
 )brace
 comma
 (brace
-l_int|135
+id|PROC_NET_SNMP
 comma
 l_int|4
 comma
 l_string|&quot;snmp&quot;
 )brace
-macro_line|#ifdef CONFIG_INET_RARP
 comma
+macro_line|#ifdef CONFIG_INET_RARP
 (brace
-l_int|136
+id|PROC_NET_RARP
 comma
 l_int|4
 comma
 l_string|&quot;rarp&quot;
 )brace
+comma
 macro_line|#endif
 macro_line|#endif&t;/* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
-comma
 (brace
-l_int|137
+id|PROC_NET_IPX_ROUTE
 comma
 l_int|9
 comma
@@ -554,17 +554,17 @@ l_string|&quot;ipx_route&quot;
 )brace
 comma
 (brace
-l_int|138
+id|PROC_NET_IPX
 comma
 l_int|3
 comma
 l_string|&quot;ipx&quot;
 )brace
+comma
 macro_line|#endif /* CONFIG_IPX */
 macro_line|#ifdef CONFIG_AX25
-comma
 (brace
-l_int|139
+id|PROC_NET_AX25_ROUTE
 comma
 l_int|10
 comma
@@ -572,16 +572,16 @@ l_string|&quot;ax25_route&quot;
 )brace
 comma
 (brace
-l_int|140
+id|PROC_NET_AX25
 comma
 l_int|4
 comma
 l_string|&quot;ax25&quot;
 )brace
-macro_line|#ifdef CONFIG_NETROM
 comma
+macro_line|#ifdef CONFIG_NETROM
 (brace
-l_int|141
+id|PROC_NET_NR_NODES
 comma
 l_int|8
 comma
@@ -589,7 +589,7 @@ l_string|&quot;nr_nodes&quot;
 )brace
 comma
 (brace
-l_int|142
+id|PROC_NET_NR_NEIGH
 comma
 l_int|8
 comma
@@ -597,18 +597,26 @@ l_string|&quot;nr_neigh&quot;
 )brace
 comma
 (brace
-l_int|143
+id|PROC_NET_NR
 comma
 l_int|2
 comma
 l_string|&quot;nr&quot;
 )brace
+comma
 macro_line|#endif /* CONFIG_NETROM */
 macro_line|#endif /* CONFIG_AX25 */
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+)brace
 )brace
 suffix:semicolon
 DECL|macro|NR_NET_DIRENTRY
-mdefine_line|#define NR_NET_DIRENTRY ((sizeof (net_dir))/(sizeof (net_dir[0])))
+mdefine_line|#define NR_NET_DIRENTRY ((sizeof (net_dir))/(sizeof (net_dir[0])) - 1)
 DECL|function|proc_lookupnet
 r_static
 r_int
@@ -635,12 +643,10 @@ op_star
 id|result
 )paren
 (brace
-r_int
-r_int
-id|ino
-suffix:semicolon
-r_int
-id|i
+r_struct
+id|proc_dir_entry
+op_star
+id|de
 suffix:semicolon
 op_star
 id|result
@@ -679,18 +685,22 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-id|i
-op_assign
-id|NR_NET_DIRENTRY
-suffix:semicolon
-r_while
+r_for
 c_loop
 (paren
-id|i
-op_decrement
-OG
-l_int|0
-op_logical_and
+id|de
+op_assign
+id|net_dir
+suffix:semicolon
+id|de-&gt;name
+suffix:semicolon
+id|de
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|proc_match
 c_func
@@ -699,46 +709,11 @@ id|len
 comma
 id|name
 comma
-id|net_dir
-op_plus
-id|i
+id|de
 )paren
 )paren
-multiline_comment|/* nothing */
+r_continue
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-OL
-l_int|0
-)paren
-(brace
-id|iput
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-)brace
-id|ino
-op_assign
-id|net_dir
-(braket
-id|i
-)braket
-dot
-id|low_ino
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 op_star
 id|result
 op_assign
@@ -747,30 +722,33 @@ c_func
 (paren
 id|dir-&gt;i_sb
 comma
-id|ino
+id|de-&gt;low_ino
 )paren
-)paren
-)paren
-(brace
+suffix:semicolon
 id|iput
 c_func
 (paren
 id|dir
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_star
+id|result
+)paren
 r_return
 op_minus
 id|ENOENT
 suffix:semicolon
-)brace
-id|iput
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|ENOENT
 suffix:semicolon
 )brace
 DECL|function|proc_readnetdir
@@ -1045,7 +1023,7 @@ id|ino
 )paren
 (brace
 r_case
-l_int|128
+id|PROC_NET_UNIX
 suffix:colon
 id|length
 op_assign
@@ -1066,7 +1044,7 @@ r_break
 suffix:semicolon
 macro_line|#ifdef CONFIG_INET
 r_case
-l_int|129
+id|PROC_NET_ARP
 suffix:colon
 id|length
 op_assign
@@ -1086,7 +1064,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|130
+id|PROC_NET_ROUTE
 suffix:colon
 id|length
 op_assign
@@ -1106,7 +1084,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|131
+id|PROC_NET_DEV
 suffix:colon
 id|length
 op_assign
@@ -1126,7 +1104,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|132
+id|PROC_NET_RAW
 suffix:colon
 id|length
 op_assign
@@ -1146,7 +1124,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|133
+id|PROC_NET_TCP
 suffix:colon
 id|length
 op_assign
@@ -1166,7 +1144,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|134
+id|PROC_NET_UDP
 suffix:colon
 id|length
 op_assign
@@ -1186,7 +1164,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|135
+id|PROC_NET_SNMP
 suffix:colon
 id|length
 op_assign
@@ -1207,7 +1185,7 @@ r_break
 suffix:semicolon
 macro_line|#ifdef CONFIG_INET_RARP&t;&t;&t;&t;
 r_case
-l_int|136
+id|PROC_NET_RARP
 suffix:colon
 id|length
 op_assign
@@ -1230,7 +1208,7 @@ macro_line|#endif /* CONFIG_INET_RARP */&t;&t;&t;&t;
 macro_line|#endif /* CONFIG_INET */
 macro_line|#ifdef CONFIG_IPX
 r_case
-l_int|137
+id|PROC_NET_IPX_ROUTE
 suffix:colon
 id|length
 op_assign
@@ -1250,7 +1228,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|138
+id|PROC_NET_IPX
 suffix:colon
 id|length
 op_assign
@@ -1272,7 +1250,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_IPX */
 macro_line|#ifdef CONFIG_AX25
 r_case
-l_int|139
+id|PROC_NET_AX25_ROUTE
 suffix:colon
 id|length
 op_assign
@@ -1292,7 +1270,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|140
+id|PROC_NET_AX25
 suffix:colon
 id|length
 op_assign
@@ -1313,7 +1291,7 @@ r_break
 suffix:semicolon
 macro_line|#ifdef CONFIG_NETROM
 r_case
-l_int|141
+id|PROC_NET_NR_NODES
 suffix:colon
 id|length
 op_assign
@@ -1333,7 +1311,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|142
+id|PROC_NET_NR_NEIGH
 suffix:colon
 id|length
 op_assign
@@ -1353,7 +1331,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|143
+id|PROC_NET_NR
 suffix:colon
 id|length
 op_assign

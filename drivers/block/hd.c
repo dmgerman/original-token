@@ -5241,22 +5241,6 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the harddisk IRQ description. The SA_INTERRUPT in sa_flags&n; * means we run the IRQ-handler with interrupts disabled: this is bad for&n; * interrupt latency, but anything else has led to problems on some&n; * machines...&n; *&n; * We enable interrupts in some of the routines after making sure it&squot;s&n; * safe.&n; */
-DECL|variable|hd_sigaction
-r_static
-r_struct
-id|sigaction
-id|hd_sigaction
-op_assign
-(brace
-id|hd_interrupt
-comma
-l_int|0
-comma
-id|SA_INTERRUPT
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 DECL|function|hd_geninit
 r_static
 r_void
@@ -5475,7 +5459,7 @@ op_add_assign
 l_int|16
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;We querry CMOS about hard disks : it could be that &n;&t;&t;we have a SCSI/ESDI/etc controller that is BIOS&n;&t;&t;compatable with ST-506, and thus showing up in our&n;&t;&t;BIOS table, but not register compatable, and therefore&n;&t;&t;not present in CMOS.&n;&n;&t;&t;Furthurmore, we will assume that our ST-506 drives&n;&t;&t;&lt;if any&gt; are the primary drives in the system, and &n;&t;&t;the ones reflected as drive 1 or 2.&n;&n;&t;&t;The first drive is stored in the high nibble of CMOS&n;&t;&t;byte 0x12, the second in the low nibble.  This will be&n;&t;&t;either a 4 bit drive type or 0xf indicating use byte 0x19 &n;&t;&t;for an 8 bit type, drive 1, 0x1a for drive 2 in CMOS.&n;&n;&t;&t;Needless to say, a non-zero value means we have &n;&t;&t;an AT controller hard disk for that drive.&n;&n;&t;&t;&n;&t;*/
+multiline_comment|/*&n;&t;&t;We query CMOS about hard disks : it could be that &n;&t;&t;we have a SCSI/ESDI/etc controller that is BIOS&n;&t;&t;compatible with ST-506, and thus showing up in our&n;&t;&t;BIOS table, but not register compatible, and therefore&n;&t;&t;not present in CMOS.&n;&n;&t;&t;Furthermore, we will assume that our ST-506 drives&n;&t;&t;&lt;if any&gt; are the primary drives in the system, and &n;&t;&t;the ones reflected as drive 1 or 2.&n;&n;&t;&t;The first drive is stored in the high nibble of CMOS&n;&t;&t;byte 0x12, the second in the low nibble.  This will be&n;&t;&t;either a 4 bit drive type or 0xf indicating use byte 0x19 &n;&t;&t;for an 8 bit type, drive 1, 0x1a for drive 2 in CMOS.&n;&n;&t;&t;Needless to say, a non-zero value means we have &n;&t;&t;an AT controller hard disk for that drive.&n;&n;&t;&t;&n;&t;*/
 r_if
 c_cond
 (paren
@@ -5638,13 +5622,16 @@ id|NR_HD
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|HD_IRQ
 comma
-op_amp
-id|hd_sigaction
+id|hd_interrupt
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;hd&quot;
 )paren
 )paren
 (brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *&t;inpired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *&t;inspired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -141,7 +141,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;See inode.c&n;&t;&n;&t;Some entry point are filled dynamicly with function pointers&n;&t;from the msdos file_operations and file_inode_operations.&n;&t;&n;&t;The idea is to have the code as independant as possible from&n;&t;the msdos file system.&n;*/
+multiline_comment|/*&n;&t;See inode.c&n;&t;&n;&t;Some entry point are filled dynamically with function pointers&n;&t;from the msdos file_operations and file_inode_operations.&n;&t;&n;&t;The idea is to have the code as independent as possible from&n;&t;the msdos file system.&n;*/
 DECL|variable|umsdos_file_operations
 r_struct
 id|file_operations

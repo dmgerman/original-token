@@ -1,7 +1,7 @@
 macro_line|#ifndef _ELF_H
 DECL|macro|_ELF_H
 mdefine_line|#define _ELF_H
-multiline_comment|/* THese constants are for the segment types stored in the image headers */
+multiline_comment|/* These constants are for the segment types stored in the image headers */
 DECL|macro|PT_NULL
 mdefine_line|#define PT_NULL    0
 DECL|macro|PT_LOAD
@@ -153,7 +153,7 @@ id|d_un
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* THe following are used with relocations */
+multiline_comment|/* The following are used with relocations */
 DECL|macro|ELF32_R_SYM
 mdefine_line|#define ELF32_R_SYM(x) ((x) &gt;&gt; 8)
 DECL|macro|ELF32_R_TYPE

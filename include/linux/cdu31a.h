@@ -126,7 +126,7 @@ DECL|macro|SONY_READ_BUFFER_CMD
 mdefine_line|#define SONY_READ_BUFFER_CMD&t;&t;0x61
 DECL|macro|SONY_DIAGNOSTICS_CMD
 mdefine_line|#define SONY_DIAGNOSTICS_CMD&t;&t;0x62
-multiline_comment|/*&n; * The following are command paramters for the set drive parameter command&n; */
+multiline_comment|/*&n; * The following are command parameters for the set drive parameter command&n; */
 DECL|macro|SONY_SD_DECODE_PARAM
 mdefine_line|#define SONY_SD_DECODE_PARAM&t;&t;0x00
 DECL|macro|SONY_SD_INTERFACE_PARAM
@@ -521,7 +521,7 @@ DECL|macro|SONY_TIMEOUT_OP_ERR
 mdefine_line|#define SONY_TIMEOUT_OP_ERR&t;&t;0x01
 DECL|macro|SONY_SIGNAL_OP_ERR
 mdefine_line|#define SONY_SIGNAL_OP_ERR&t;&t;0x02
-multiline_comment|/*&n; * The following are attention code for asyncronous events from the drive.&n; */
+multiline_comment|/*&n; * The following are attention code for asynchronous events from the drive.&n; */
 multiline_comment|/* Standard attention group */
 DECL|macro|SONY_EMER_EJECT_ATTN
 mdefine_line|#define SONY_EMER_EJECT_ATTN&t;&t;0x2c

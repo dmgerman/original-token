@@ -143,7 +143,7 @@ id|d-&gt;next
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t; Create the Ethernet MAC header for an arbitary protocol layer &n; *&n; *&t;saddr=NULL&t;means use device source address&n; *&t;daddr=NULL&t;means leave destination address (eg unresolved arp)&n; */
+multiline_comment|/*&n; *&t; Create the Ethernet MAC header for an arbitrary protocol layer &n; *&n; *&t;saddr=NULL&t;means use device source address&n; *&t;daddr=NULL&t;means leave destination address (eg unresolved arp)&n; */
 DECL|function|eth_header
 r_int
 id|eth_header
@@ -349,7 +349,7 @@ id|ETH_P_IP
 id|printk
 c_func
 (paren
-l_string|&quot;eth_rebuild_header: Don&squot;t know how to resolve type %d addreses?&bslash;n&quot;
+l_string|&quot;eth_rebuild_header: Don&squot;t know how to resolve type %d addresses?&bslash;n&quot;
 comma
 (paren
 r_int

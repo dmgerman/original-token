@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&n; *&t;Note:&n; *&t;&t;A lot of this will change when the protocol/socket seperation&n; *&t;occurs. Using this will make things reasonably clean.&n; */
+multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&n; *&t;Note:&n; *&t;&t;A lot of this will change when the protocol/socket separation&n; *&t;occurs. Using this will make things reasonably clean.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -233,7 +233,7 @@ id|sk-&gt;err
 op_ne
 l_int|0
 )paren
-multiline_comment|/* Error while waiting for packet&n;&t;&t;&t;&t;&t;&t;   eg an icmp sent earlier by the&n;&t;&t;&t;&t;&t;&t;   peer has finaly turned up now */
+multiline_comment|/* Error while waiting for packet&n;&t;&t;&t;&t;&t;&t;   eg an icmp sent earlier by the&n;&t;&t;&t;&t;&t;&t;   peer has finally turned up now */
 (brace
 op_star
 id|err
@@ -265,7 +265,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Again only user level code calls this function, so nothing interrupt level&n;&t;     will suddenely eat the receive_queue */
+multiline_comment|/* Again only user level code calls this function, so nothing interrupt level&n;&t;     will suddenly eat the receive_queue */
 r_if
 c_cond
 (paren

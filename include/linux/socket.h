@@ -53,7 +53,7 @@ DECL|macro|SOCK_PACKET
 mdefine_line|#define SOCK_PACKET&t;10&t;&t;/* linux specific way of&t;*/
 multiline_comment|/* getting packets at the dev&t;*/
 multiline_comment|/* level.  For writing rarp and&t;*/
-multiline_comment|/* other similiar things on the&t;*/
+multiline_comment|/* other similar things on the&t;*/
 multiline_comment|/* user level.&t;&t;&t;*/
 multiline_comment|/* Supported address families. */
 DECL|macro|AF_UNSPEC

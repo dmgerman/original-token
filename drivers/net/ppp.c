@@ -1,5 +1,5 @@
 multiline_comment|/*&n;   PPP for Linux&n;*/
-multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   NET02D&t;      -&t;Define if using Net-2-Debugged in kernels earler&n;   &t;&t;&t;than v1.1.4.&n;&n;   NEW_TTY_DRIVERS    -&t;Define if using new Ted Ts&squot;o&squot;s alpha TTY drivers&n;   &t;&t;&t;from tsx-11.mit.edu. From Ted Ts&squot;o.&n;&n;   OPTIMIZE_FLAG_TIME -&t;Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If not defined then the leading&n;&t;&t;&t;flag is always sent.  &n;*/
+multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   NET02D&t;      -&t;Define if using Net-2-Debugged in kernels earlier&n;   &t;&t;&t;than v1.1.4.&n;&n;   NEW_TTY_DRIVERS    -&t;Define if using new Ted Ts&squot;o&squot;s alpha TTY drivers&n;   &t;&t;&t;from tsx-11.mit.edu. From Ted Ts&squot;o.&n;&n;   OPTIMIZE_FLAG_TIME -&t;Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If not defined then the leading&n;&t;&t;&t;flag is always sent.  &n;*/
 multiline_comment|/* #define NET02D&t;&t;&t;&t;-* */
 DECL|macro|NEW_TTY_DRIVERS
 mdefine_line|#define NEW_TTY_DRIVERS&t;&t;&t;&t;/* */
@@ -70,7 +70,7 @@ id|ppp_debug_netpackets
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Define this string only once for all macro envocations */
+multiline_comment|/* Define this string only once for all macro invocations */
 DECL|variable|ppp_warning
 r_static
 r_char
@@ -5062,7 +5062,7 @@ l_int|1
 comma
 (paren
 id|KERN_ERR
-l_string|&quot;ppp_read: cannnot find ppp channel&bslash;n&quot;
+l_string|&quot;ppp_read: cannot find ppp channel&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon

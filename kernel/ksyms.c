@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
@@ -118,28 +119,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
-r_extern
-r_void
-id|snarf_region
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|device
-op_star
-id|irq2dev_map
-(braket
-)braket
-suffix:semicolon
-macro_line|#endif
 DECL|variable|symbol_table
 r_struct
 id|symbol_table
@@ -381,12 +360,6 @@ id|unregister_exec_domain
 )paren
 comma
 multiline_comment|/* interrupt handling */
-id|X
-c_func
-(paren
-id|irqaction
-)paren
-comma
 id|X
 c_func
 (paren
@@ -642,6 +615,12 @@ id|X
 c_func
 (paren
 id|kfree_skb
+)paren
+comma
+id|X
+c_func
+(paren
+id|dev_kfree_skb
 )paren
 comma
 id|X

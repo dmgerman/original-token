@@ -1699,7 +1699,7 @@ id|ext2_error
 (paren
 id|sb
 comma
-l_string|&quot;ext2_check_desciptors&quot;
+l_string|&quot;ext2_check_descriptors&quot;
 comma
 l_string|&quot;Block bitmap for group %d&quot;
 l_string|&quot; not in group (block %lu)!&quot;
@@ -1735,7 +1735,7 @@ id|ext2_error
 (paren
 id|sb
 comma
-l_string|&quot;ext2_check_desciptors&quot;
+l_string|&quot;ext2_check_descriptors&quot;
 comma
 l_string|&quot;Inode bitmap for group %d&quot;
 l_string|&quot; not in group (block %lu)!&quot;
@@ -1773,7 +1773,7 @@ id|ext2_error
 (paren
 id|sb
 comma
-l_string|&quot;ext2_check_desciptors&quot;
+l_string|&quot;ext2_check_descriptors&quot;
 comma
 l_string|&quot;Inode table for group %d&quot;
 l_string|&quot; not in group (block %lu)!&quot;

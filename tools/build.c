@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/tools/build.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * This file builds a disk-image from three different files:&n; *&n; * - bootsect: max 510 bytes of 8086 machine code, loads the rest&n; * - setup: max 4 sectors of 8086 machine code, sets up system parm&n; * - system: 80386 code for actual system&n; *&n; * It does some checking that all files are of the correct type, and&n; * just writes the result to stdout, removing headers and padding to&n; * the right amount. It also writes some system data to stderr.&n; */
+multiline_comment|/*&n; * This file builds a disk-image from three different files:&n; *&n; * - bootsect: exactly 512 bytes of 8086 machine code, loads the rest&n; * - setup: 8086 machine code, sets up system parm&n; * - system: 80386 code for actual system&n; *&n; * It does some checking that all files are of the correct type, and&n; * just writes the result to stdout, removing headers and padding to&n; * the right amount. It also writes some system data to stderr.&n; */
 multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; */
 macro_line|#include &lt;stdio.h&gt;&t;/* fprintf */
 macro_line|#include &lt;string.h&gt;
@@ -269,6 +269,10 @@ suffix:semicolon
 r_struct
 id|stat
 id|sb
+suffix:semicolon
+r_int
+r_char
+id|setup_sectors
 suffix:semicolon
 r_if
 c_cond
@@ -1043,26 +1047,33 @@ id|close
 id|id
 )paren
 suffix:semicolon
+id|setup_sectors
+op_assign
+(paren
+r_int
+r_char
+)paren
+(paren
+(paren
+id|i
+op_plus
+l_int|511
+)paren
+op_div
+l_int|512
+)paren
+suffix:semicolon
+multiline_comment|/* for compatibility with LILO */
 r_if
 c_cond
 (paren
-id|i
-OG
-id|SETUP_SECTS
-op_star
-l_int|512
-)paren
-id|die
-c_func
-(paren
-l_string|&quot;Setup exceeds &quot;
-id|STRINGIFY
-c_func
-(paren
+id|setup_sectors
+OL
 id|SETUP_SECTS
 )paren
-l_string|&quot; sectors - rewrite build/boot/setup&quot;
-)paren
+id|setup_sectors
+op_assign
+id|SETUP_SECTS
 suffix:semicolon
 id|fprintf
 c_func
@@ -1103,14 +1114,14 @@ c_loop
 (paren
 id|i
 OL
-id|SETUP_SECTS
+id|setup_sectors
 op_star
 l_int|512
 )paren
 (brace
 id|c
 op_assign
-id|SETUP_SECTS
+id|setup_sectors
 op_star
 l_int|512
 op_minus
@@ -1440,6 +1451,45 @@ c_func
 id|id
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|lseek
+c_func
+(paren
+l_int|1
+comma
+l_int|497
+comma
+l_int|0
+)paren
+op_eq
+l_int|497
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|write
+c_func
+(paren
+l_int|1
+comma
+op_amp
+id|setup_sectors
+comma
+l_int|1
+)paren
+op_ne
+l_int|1
+)paren
+id|die
+c_func
+(paren
+l_string|&quot;Write of setup sectors failed&quot;
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

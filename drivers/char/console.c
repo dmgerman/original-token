@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *&t;&squot;long console_init(long, long)&squot;&n; *&t;&squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; * &t;&squot;void update_screen(int new_console)&squot;&n; * &t;&squot;void blank_screen(void)&squot;&n; * &t;&squot;void unblank_screen(void)&squot;&n; *&n; *      &squot;int  con_get_font(char *)&squot; &n; *      &squot;int  con_set_font(char *)&squot; &n; *      &squot;int  con_get_trans(char *)&squot;&n; *      &squot;int  con_set_trans(char *)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; * &t;&squot;void update_screen(int new_console)&squot;&n; * &t;&squot;void blank_screen(void)&squot;&n; * &t;&squot;void unblank_screen(void)&squot;&n; *&n; *      &squot;int  con_get_font(char *)&squot; &n; *      &squot;int  con_set_font(char *)&squot; &n; *      &squot;int  con_get_trans(char *)&squot;&n; *      &squot;int  con_set_trans(char *)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; */
 DECL|macro|CAN_LOAD_EGA_FONTS
 mdefine_line|#define CAN_LOAD_EGA_FONTS    /* undefine if the user must not do this */
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
@@ -6668,17 +6668,14 @@ id|vt-&gt;paste_wait
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  long console_init(long, long);&n; *&n; * This routine initalizes console interrupts, and does nothing&n; * else. If you want the screen to clear, call tty_write with&n; * the appropriate escape-sequece.&n; *&n; * Reads the information preserved by setup.s to determine the current display&n; * type and sets everything accordingly.&n; */
-DECL|function|console_init
+multiline_comment|/*&n; *  long con_init(long);&n; *&n; * This routine initializes console interrupts, and does nothing&n; * else. If you want the screen to clear, call tty_write with&n; * the appropriate escape-sequence.&n; *&n; * Reads the information preserved by setup.s to determine the current display&n; * type and sets everything accordingly.&n; */
+DECL|function|con_init
 r_int
-id|console_init
+id|con_init
 c_func
 (paren
 r_int
 id|kmem_start
-comma
-r_int
-id|kmem_end
 )paren
 (brace
 r_char
@@ -8270,7 +8267,7 @@ op_amp
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* set inwordLut conntents. Invoked by ioctl(). */
+multiline_comment|/* set inwordLut contents. Invoked by ioctl(). */
 DECL|function|sel_loadlut
 r_int
 id|sel_loadlut
@@ -9836,7 +9833,7 @@ comma
 id|seq_port_reg
 )paren
 suffix:semicolon
-multiline_comment|/* Frist, the sequencer */
+multiline_comment|/* First, the sequencer */
 id|outb_p
 c_func
 (paren

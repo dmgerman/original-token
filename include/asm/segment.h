@@ -782,7 +782,7 @@ DECL|macro|memcpy_fromfs
 mdefine_line|#define memcpy_fromfs(to, from, n) &bslash;&n;(__builtin_constant_p(n) ? &bslash;&n; __constant_memcpy_fromfs((to),(from),(n)) : &bslash;&n; __generic_memcpy_fromfs((to),(from),(n)))
 DECL|macro|memcpy_tofs
 mdefine_line|#define memcpy_tofs(to, from, n) &bslash;&n;(__builtin_constant_p(n) ? &bslash;&n; __constant_memcpy_tofs((to),(from),(n)) : &bslash;&n; __generic_memcpy_tofs((to),(from),(n)))
-multiline_comment|/*&n; * Someone who knows GNU asm better than I should double check the followig.&n; * It seems to work, but I don&squot;t know if I&squot;m doing something subtly wrong.&n; * --- TYT, 11/24/91&n; * [ nothing wrong here, Linus: I just changed the ax to be any reg ]&n; */
+multiline_comment|/*&n; * Someone who knows GNU asm better than I should double check the following.&n; * It seems to work, but I don&squot;t know if I&squot;m doing something subtly wrong.&n; * --- TYT, 11/24/91&n; * [ nothing wrong here, Linus: I just changed the ax to be any reg ]&n; */
 DECL|function|get_fs
 r_static
 r_inline

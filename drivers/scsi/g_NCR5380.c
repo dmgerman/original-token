@@ -33,7 +33,6 @@ DECL|member|dma
 r_int
 id|dma
 suffix:semicolon
-DECL|variable|overrides
 )brace
 id|overrides
 macro_line|#ifdef GENERIC_NCR5380_OVERRIDE 
@@ -143,23 +142,7 @@ id|commandline_current
 suffix:semicolon
 )brace
 )brace
-r_static
-r_struct
-id|sigaction
-id|sa
-op_assign
-(brace
-id|generic_NCR5380_intr
-comma
-l_int|0
-comma
-id|SA_INTERRUPT
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 multiline_comment|/* &n; * Function : int generic_NCR5380_detect(Scsi_Host_Templace * tpnt)&n; *&n; * Purpose : initializes generic NCR5380 driver based on the &n; *&t;command line / compile time port and irq definitions.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
-DECL|function|generic_NCR5380_detect
 r_int
 id|generic_NCR5380_detect
 c_func
@@ -285,12 +268,16 @@ id|IRQ_NONE
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
+c_func
 (paren
 id|instance-&gt;irq
 comma
-op_amp
-id|sa
+id|generic_NCR5380_intr
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;NCR5380&quot;
 )paren
 )paren
 (brace
@@ -399,7 +386,6 @@ r_return
 id|count
 suffix:semicolon
 )brace
-DECL|function|generic_NCR5380_info
 r_const
 r_char
 op_star

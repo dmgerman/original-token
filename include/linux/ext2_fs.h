@@ -444,7 +444,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * File system states&n; */
 DECL|macro|EXT2_VALID_FS
-mdefine_line|#define&t;EXT2_VALID_FS&t;&t;&t;0x0001&t;/* Unmounted cleany */
+mdefine_line|#define&t;EXT2_VALID_FS&t;&t;&t;0x0001&t;/* Unmounted cleanly */
 DECL|macro|EXT2_ERROR_FS
 mdefine_line|#define&t;EXT2_ERROR_FS&t;&t;&t;0x0002&t;/* Errors detected */
 multiline_comment|/*&n; * Mount flags&n; */

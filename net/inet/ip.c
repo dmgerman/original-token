@@ -1843,7 +1843,7 @@ id|iph-&gt;ihl
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Generate a checksym for an outgoing IP datagram.&n; */
+multiline_comment|/*&n; *&t;Generate a checksum for an outgoing IP datagram.&n; */
 DECL|function|ip_send_check
 r_static
 r_void
@@ -2482,7 +2482,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Allocate memory for the IP header (plus 8 octects for ICMP).&n;&t; */
+multiline_comment|/*&n;&t; *&t;Allocate memory for the IP header (plus 8 octets for ICMP).&n;&t; */
 id|ihlen
 op_assign
 (paren
@@ -2805,7 +2805,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;IP: queue_glue: no memory for glueing queue 0x%X&bslash;n&quot;
+l_string|&quot;IP: queue_glue: no memory for gluing queue 0x%X&bslash;n&quot;
 comma
 (paren
 r_int
@@ -3330,7 +3330,7 @@ op_assign
 id|next
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * &t;We found where to put this one.&n;&t; * &t;Check for overlap with preceeding fragment, and, if needed,&n;&t; * &t;align things so that any overlaps are eliminated.&n;&t; */
+multiline_comment|/*&n;&t; * &t;We found where to put this one.&n;&t; * &t;Check for overlap with preceding fragment, and, if needed,&n;&t; * &t;align things so that any overlaps are eliminated.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3904,7 +3904,7 @@ op_star
 )paren
 id|skb2-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Charge the memory for the fragment to any owner&n;&t;&t; *&t;it might posess&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Charge the memory for the fragment to any owner&n;&t;&t; *&t;it might possess&n;&t;&t; */
 id|save_flags
 c_func
 (paren
@@ -4579,7 +4579,7 @@ c_func
 id|iph-&gt;tot_len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Next anaylse the packet for options. Studies show under one packet in&n;&t; *&t;a thousand have options....&n;&t; */
+multiline_comment|/*&n;&t; *&t;Next analyse the packet for options. Studies show under one packet in&n;&t; *&t;a thousand have options....&n;&t; */
 r_if
 c_cond
 (paren
@@ -4657,7 +4657,7 @@ id|is_frag
 op_or_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Do any IP forwarding required.  chk_addr() is expensive -- avoid it someday.&n;&t; *&n;&t; *&t;This is inefficient. While finding out if it is for us we could also compute&n;&t; *&t;the routing table entry. This is where the great unified cache theory comes&n;&t; *&t;in as and when someone impliments it&n;&t; */
+multiline_comment|/*&n;&t; *&t;Do any IP forwarding required.  chk_addr() is expensive -- avoid it someday.&n;&t; *&n;&t; *&t;This is inefficient. While finding out if it is for us we could also compute&n;&t; *&t;the routing table entry. This is where the great unified cache theory comes&n;&t; *&t;in as and when someone implements it&n;&t; */
 r_if
 c_cond
 (paren
@@ -4950,7 +4950,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Queues a packet to be sent, and starts the transmitter&n; * if necessary.  if free = 1 then we free the block after&n; * transmit, otherwise we don&squot;t. If free==2 we not only&n; * free the block but also dont assign a new ip seq number.&n; * This routine also needs to put in the total length,&n; * and compute the checksum&n; */
+multiline_comment|/*&n; * Queues a packet to be sent, and starts the transmitter&n; * if necessary.  if free = 1 then we free the block after&n; * transmit, otherwise we don&squot;t. If free==2 we not only&n; * free the block but also don&squot;t assign a new ip seq number.&n; * This routine also needs to put in the total length,&n; * and compute the checksum&n; */
 DECL|function|ip_queue_xmit
 r_void
 id|ip_queue_xmit
@@ -5160,7 +5160,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;If a sender wishes the packet to remain unfreed&n;&t; *&t;we add it to his send queue. This arguably belongs&n;&t; *&t;in the TCP level since nobody elses uses it. BUT&n;&t; *&t;remember IPng might change all the rules.&n;&t; */
+multiline_comment|/*&n;&t; *&t;If a sender wishes the packet to remain unfreed&n;&t; *&t;we add it to his send queue. This arguably belongs&n;&t; *&t;in the TCP level since nobody else uses it. BUT&n;&t; *&t;remember IPng might change all the rules.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5653,7 +5653,7 @@ id|sk-&gt;rto
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Socket option code for IP. This is the end of the line after any TCP,UDP etc options on&n; *&t;an IP socket.&n; *&n; *&t;We impliment IP_TOS (type of service), IP_TTL (time to live).&n; *&n; *&t;Next release we will sort out IP_OPTIONS since for some people are kind of important.&n; */
+multiline_comment|/*&n; *&t;Socket option code for IP. This is the end of the line after any TCP,UDP etc options on&n; *&t;an IP socket.&n; *&n; *&t;We implement IP_TOS (type of service), IP_TTL (time to live).&n; *&n; *&t;Next release we will sort out IP_OPTIONS since for some people are kind of important.&n; */
 DECL|function|ip_setsockopt
 r_int
 id|ip_setsockopt

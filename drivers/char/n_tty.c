@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * n_tty.c --- implements the N_TTY line discpline.&n; * &n; * This code used to be in tty_io.c, but things are getting hairy&n; * enough that it made sense to split things off.  (The N_TTY&n; * processing has changed so much that it&squot;s hardly recognizable,&n; * anyway...)&n; *&n; * Note that the open routine for N_TTY is guaranteed never to return&n; * an error.  This is because Linux will fall back to setting a line&n; * to N_TTY if it can not switch to any other line discpline.  &n; *&n; * Written by Theodore Ts&squot;o, Copyright 1994.&n; * &n; * This file also contains code originally written by Linus Torvalds,&n; * Copyright 1991, 1992, 1993, and by Julian Cowley, Copyright 1994.&n; * &n; * This file may be redistributed under the terms of the GNU Public&n; * License.&n; */
+multiline_comment|/*&n; * n_tty.c --- implements the N_TTY line discipline.&n; * &n; * This code used to be in tty_io.c, but things are getting hairy&n; * enough that it made sense to split things off.  (The N_TTY&n; * processing has changed so much that it&squot;s hardly recognizable,&n; * anyway...)&n; *&n; * Note that the open routine for N_TTY is guaranteed never to return&n; * an error.  This is because Linux will fall back to setting a line&n; * to N_TTY if it can not switch to any other line discipline.  &n; *&n; * Written by Theodore Ts&squot;o, Copyright 1994.&n; * &n; * This file also contains code originally written by Linus Torvalds,&n; * Copyright 1991, 1992, 1993, and by Julian Cowley, Copyright 1994.&n; * &n; * This file may be redistributed under the terms of the GNU Public&n; * License.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -160,7 +160,7 @@ id|tty-&gt;link-&gt;read_wait
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Return number of characters buffered to be delievered to user&n; */
+multiline_comment|/*&n; * Return number of characters buffered to be delivered to user&n; */
 DECL|function|n_tty_chars_in_buffer
 r_int
 id|n_tty_chars_in_buffer

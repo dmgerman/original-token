@@ -147,15 +147,7 @@ id|base_dir
 op_assign
 (brace
 (brace
-l_int|1
-comma
-l_int|2
-comma
-l_string|&quot;..&quot;
-)brace
-comma
-(brace
-l_int|2
+id|PROC_PID_INO
 comma
 l_int|1
 comma
@@ -163,7 +155,15 @@ l_string|&quot;.&quot;
 )brace
 comma
 (brace
-l_int|3
+id|PROC_ROOT_INO
+comma
+l_int|2
+comma
+l_string|&quot;..&quot;
+)brace
+comma
+(brace
+id|PROC_PID_MEM
 comma
 l_int|3
 comma
@@ -171,7 +171,7 @@ l_string|&quot;mem&quot;
 )brace
 comma
 (brace
-l_int|4
+id|PROC_PID_CWD
 comma
 l_int|3
 comma
@@ -179,7 +179,7 @@ l_string|&quot;cwd&quot;
 )brace
 comma
 (brace
-l_int|5
+id|PROC_PID_ROOT
 comma
 l_int|4
 comma
@@ -187,7 +187,7 @@ l_string|&quot;root&quot;
 )brace
 comma
 (brace
-l_int|6
+id|PROC_PID_EXE
 comma
 l_int|3
 comma
@@ -195,7 +195,7 @@ l_string|&quot;exe&quot;
 )brace
 comma
 (brace
-l_int|7
+id|PROC_PID_FD
 comma
 l_int|2
 comma
@@ -203,7 +203,7 @@ l_string|&quot;fd&quot;
 )brace
 comma
 (brace
-l_int|9
+id|PROC_PID_ENVIRON
 comma
 l_int|7
 comma
@@ -211,7 +211,7 @@ l_string|&quot;environ&quot;
 )brace
 comma
 (brace
-l_int|10
+id|PROC_PID_CMDLINE
 comma
 l_int|7
 comma
@@ -219,7 +219,7 @@ l_string|&quot;cmdline&quot;
 )brace
 comma
 (brace
-l_int|11
+id|PROC_PID_STAT
 comma
 l_int|4
 comma
@@ -227,7 +227,7 @@ l_string|&quot;stat&quot;
 )brace
 comma
 (brace
-l_int|12
+id|PROC_PID_STATM
 comma
 l_int|5
 comma
@@ -235,7 +235,7 @@ l_string|&quot;statm&quot;
 )brace
 comma
 (brace
-l_int|15
+id|PROC_PID_MAPS
 comma
 l_int|4
 comma

@@ -21,7 +21,7 @@ c_cond
 id|info-&gt;msdos_reject
 )paren
 (brace
-multiline_comment|/* #Specification: file name / non MSDOS conforming / mangling&n;&t;&t;&t;Each non MSDOS conforming file has a special extension&n;&t;&t;&t;build from the entry position in the EMD file.&n;&n;&t;&t;&t;This number is then transform in a base 32 number, where&n;&t;&t;&t;each digit is expressed like hexadecimal number, using&n;&t;&t;&t;digit and letter, except it uses 22 letters from &squot;a&squot; to &squot;v&squot;.&n;&t;&t;&t;The number 32 comes from 2**5. It is faster to split a binary&n;&t;&t;&t;number using a base which is a power of two. And I was 32&n;&t;&t;&t;when I started this project. Pick your answer :-) .&n;&n;&t;&t;&t;If the result is &squot;0&squot;, it is replace with &squot;_&squot;, simply&n;&t;&t;&t;to make it odd.&n;&n;&t;&t;&t;This is true for the first two character of the extension.&n;&t;&t;&t;The last one is taken from a list of odd character, which&n;&t;&t;&t;are:&n;&n;&t;&t;&t;&t;{ } ( ) ! ` ^ &amp; @&n;&n;&t;&t;&t;With this scheme, we can produce 9216 ( 9* 32 * 32)&n;&t;&t;&t;different extensions which should not clash with any useful&n;&t;&t;&t;extension already popular or meaningful. Since most directory&n;&t;&t;&t;have much less than 32 * 32 files in it, the first character&n;&t;&t;&t;of the extension of any mangle name will be {.&n;&n;&t;&t;&t;Here are the reason to do this (this kind of mangling).&n;&n;&t;&t;&t;-The mangling is deterministic. Just by the extension, we&n;&t;&t;&t; are able to locate the entry in the EMD file.&n;&n;&t;&t;&t;-By keeping to beginning of the file name almost unchange,&n;&t;&t;&t; we are helping the MSDOS user.&n;&n;&t;&t;&t;-The mangling produces names not too ugly, so an msdos user&n;&t;&t;&t; may live with it (remember it, type it, etc...).&n;&n;&t;&t;&t;-The mangling produces names ugly enough so no one will&n;&t;&t;&t; ever think of using such a name in real life. This is not&n;&t;&t;&t; fool proof. I don&squot;t think there is a total solution to this.&n;&t;&t;*/
+multiline_comment|/* #Specification: file name / non MSDOS conforming / mangling&n;&t;&t;&t;Each non MSDOS conforming file has a special extension&n;&t;&t;&t;build from the entry position in the EMD file.&n;&n;&t;&t;&t;This number is then transform in a base 32 number, where&n;&t;&t;&t;each digit is expressed like hexadecimal number, using&n;&t;&t;&t;digit and letter, except it uses 22 letters from &squot;a&squot; to &squot;v&squot;.&n;&t;&t;&t;The number 32 comes from 2**5. It is faster to split a binary&n;&t;&t;&t;number using a base which is a power of two. And I was 32&n;&t;&t;&t;when I started this project. Pick your answer :-) .&n;&n;&t;&t;&t;If the result is &squot;0&squot;, it is replace with &squot;_&squot;, simply&n;&t;&t;&t;to make it odd.&n;&n;&t;&t;&t;This is true for the first two character of the extension.&n;&t;&t;&t;The last one is taken from a list of odd character, which&n;&t;&t;&t;are:&n;&n;&t;&t;&t;&t;{ } ( ) ! ` ^ &amp; @&n;&n;&t;&t;&t;With this scheme, we can produce 9216 ( 9* 32 * 32)&n;&t;&t;&t;different extensions which should not clash with any useful&n;&t;&t;&t;extension already popular or meaningful. Since most directory&n;&t;&t;&t;have much less than 32 * 32 files in it, the first character&n;&t;&t;&t;of the extension of any mangle name will be {.&n;&n;&t;&t;&t;Here are the reason to do this (this kind of mangling).&n;&n;&t;&t;&t;-The mangling is deterministic. Just by the extension, we&n;&t;&t;&t; are able to locate the entry in the EMD file.&n;&n;&t;&t;&t;-By keeping to beginning of the file name almost unchanged,&n;&t;&t;&t; we are helping the MSDOS user.&n;&n;&t;&t;&t;-The mangling produces names not too ugly, so an msdos user&n;&t;&t;&t; may live with it (remember it, type it, etc...).&n;&n;&t;&t;&t;-The mangling produces names ugly enough so no one will&n;&t;&t;&t; ever think of using such a name in real life. This is not&n;&t;&t;&t; fool proof. I don&squot;t think there is a total solution to this.&n;&t;&t;*/
 r_union
 (brace
 r_int
@@ -302,7 +302,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* First place we saw a . in fname */
-multiline_comment|/* #Specification: file name / non MSDOS conforming / base length 0&n;&t;&t;&t;file name beginning with a period &squot;.&squot; are invalid for MsDOS.&n;&t;&t;&t;It needs absolutly a base name. So the file name is mangled&n;&t;&t;*/
+multiline_comment|/* #Specification: file name / non MSDOS conforming / base length 0&n;&t;&t;&t;file name beginning with a period &squot;.&squot; are invalid for MsDOS.&n;&t;&t;&t;It needs absolutely a base name. So the file name is mangled&n;&t;&t;*/
 r_int
 id|ivldchar
 op_assign
@@ -524,7 +524,7 @@ op_assign
 l_char|&squot;#&squot;
 suffix:semicolon
 )brace
-multiline_comment|/*&t;GLU&n;&t;&t;&t;file name wich are longer than 8+&squot;.&squot;+3 are invalid for MsDOS.&n;&t;&t;&t;So the file name is to be mangled no more test needed.&n;&t;&t;&t;This Speed Up for long and very long name.&n;&t;&t;&t;The position of the last point is no more necessary anyway.&n;&t;&t;*/
+multiline_comment|/*&t;GLU&n;&t;&t;&t;file name which are longer than 8+&squot;.&squot;+3 are invalid for MsDOS.&n;&t;&t;&t;So the file name is to be mangled no more test needed.&n;&t;&t;&t;This Speed Up for long and very long name.&n;&t;&t;&t;The position of the last point is no more necessary anyway.&n;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -802,7 +802,7 @@ l_int|8
 suffix:colon
 id|msdos_len
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;There is no &squot;.&squot; any more so we know for a fact that&n;&t;&t;&t;&t;the base lenght is the lenght.&n;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;There is no &squot;.&squot; any more so we know for a fact that&n;&t;&t;&t;&t;the base length is the length.&n;&t;&t;&t;*/
 id|memcpy
 (paren
 id|info-&gt;fake.fname

@@ -1,5 +1,5 @@
 multiline_comment|/* 3c507.c: An EtherLink16 device driver for Linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorported herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Thanks go to jennings@Montrouge.SMR.slb.com ( Patrick Jennings)&n;&t;and jrs@world.std.com (Rick Sladkey) for testing and bugfixes.&n;&t;Mark Salazar &lt;leslie@access.digex.net&gt; made the changes for cards with&n;&t;only 16K packet buffers.&n;&n;&t;Things remaining to do:&n;&t;Verify that the tx and rx buffers don&squot;t have fencepost errors.&n;&t;Move the theory of operation and memory map documentation.&n;&t;The statistics need to be updated correctly.&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Thanks go to jennings@Montrouge.SMR.slb.com ( Patrick Jennings)&n;&t;and jrs@world.std.com (Rick Sladkey) for testing and bugfixes.&n;&t;Mark Salazar &lt;leslie@access.digex.net&gt; made the changes for cards with&n;&t;only 16K packet buffers.&n;&n;&t;Things remaining to do:&n;&t;Verify that the tx and rx buffers don&squot;t have fencepost errors.&n;&t;Move the theory of operation and memory map documentation.&n;&t;The statistics need to be updated correctly.&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -9,7 +9,7 @@ op_assign
 l_string|&quot;3c507.c:v0.99-15f 2/17/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documention.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990. It provides just enough&n;&t;info that the casual reader might think that it documents the i82586.&n;*/
+multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documentation.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990. It provides just enough&n;&t;info that the casual reader might think that it documents the i82586.&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -41,7 +41,7 @@ id|net_debug
 op_assign
 id|NET_DEBUG
 suffix:semicolon
-multiline_comment|/*&n;  &t;&t;&t;Details of the i82586.&n;&n;   You&squot;ll really need the databook to understand the details of this part,&n;   but the outline is that the i82586 has two seperate processing units.&n;   Both are started from a list of three configuration tables, of which only&n;   the last, the System Control Block (SCB), is used after reset-time.  The SCB&n;   has the following fileds:&n;&t;&t;Status word&n;&t;&t;Command word&n;&t;&t;Tx/Command block addr.&n;&t;&t;Rx block addr.&n;   The command word accepts the following controls for the Tx and Rx units:&n;  */
+multiline_comment|/*&n;  &t;&t;&t;Details of the i82586.&n;&n;   You&squot;ll really need the databook to understand the details of this part,&n;   but the outline is that the i82586 has two separate processing units.&n;   Both are started from a list of three configuration tables, of which only&n;   the last, the System Control Block (SCB), is used after reset-time.  The SCB&n;   has the following fields:&n;&t;&t;Status word&n;&t;&t;Command word&n;&t;&t;Tx/Command block addr.&n;&t;&t;Rx block addr.&n;   The command word accepts the following controls for the Tx and Rx units:&n;  */
 DECL|macro|CUC_START
 mdefine_line|#define&t; CUC_START&t; 0x0100
 DECL|macro|CUC_RESUME
@@ -170,7 +170,7 @@ DECL|macro|iSCB_CBL
 mdefine_line|#define iSCB_CBL&t;&t;0xC&t;/* Command BLock offset. */
 DECL|macro|iSCB_RFA
 mdefine_line|#define iSCB_RFA&t;&t;0xE&t;/* Rx Frame Area offset. */
-multiline_comment|/*  Since the 3c507 maps the shared memory window so that the last byte is&n;&t;at 82586 address FFFF, the first byte is at 82586 address 0, 16K, 32K, or&n;&t;48K cooresponding to window sizes of 64K, 48K, 32K and 16K respectively. &n;&t;We can account for this be setting the &squot;SBC Base&squot; entry in the ISCP table&n;&t;below for all the 16 bit offset addresses, and also adding the &squot;SCB Base&squot;&n;&t;value to all 24 bit physical addresses (in the SCP table and the TX and RX&n;&t;Buffer Descriptors).&n;&t;&t;&t;&t;&t;-Mark&t;&n;&t;*/
+multiline_comment|/*  Since the 3c507 maps the shared memory window so that the last byte is&n;&t;at 82586 address FFFF, the first byte is at 82586 address 0, 16K, 32K, or&n;&t;48K corresponding to window sizes of 64K, 48K, 32K and 16K respectively. &n;&t;We can account for this be setting the &squot;SBC Base&squot; entry in the ISCP table&n;&t;below for all the 16 bit offset addresses, and also adding the &squot;SCB Base&squot;&n;&t;value to all 24 bit physical addresses (in the SCP table and the TX and RX&n;&t;Buffer Descriptors).&n;&t;&t;&t;&t;&t;-Mark&t;&n;&t;*/
 DECL|macro|SCB_BASE
 mdefine_line|#define SCB_BASE&t;&t;((unsigned)64*1024 - (dev-&gt;mem_end - dev-&gt;mem_start))
 multiline_comment|/*&n;  What follows in &squot;init_words[]&squot; is the &quot;program&quot; that is downloaded to the&n;  82586 memory.&t; It&squot;s mostly tables and command blocks, and starts at the&n;  reset address 0xfffff6.  This is designed to be similar to the EtherExpress,&n;  thus the unusual location of the SCB at 0x0008.&n;&n;  Even with the additional &quot;don&squot;t care&quot; values, doing it this way takes less&n;  program space than initializing the individual tables, and I feel it&squot;s much&n;  cleaner.&n;&n;  The databook is particularly useless for the first two structures, I had&n;  to use the Crynwr driver as an example.&n;&n;   The memory setup is as follows:&n;   */
@@ -471,7 +471,7 @@ id|dev
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;&t;If dev-&gt;base_addr == 0, probe all likely locations.&n;&t;If dev-&gt;base_addr == 1, always return failure.&n;&t;If dev-&gt;base_addr == 2, (detachable devices only) alloate space for the&n;&t;device and return success.&n;&t;*/
+multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;&t;If dev-&gt;base_addr == 0, probe all likely locations.&n;&t;If dev-&gt;base_addr == 1, always return failure.&n;&t;If dev-&gt;base_addr == 2, (detachable devices only) allocate space for the&n;&t;device and return success.&n;&t;*/
 r_int
 DECL|function|el16_probe
 id|el16_probe
@@ -830,7 +830,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* We should make a few more checks here, like the first three octets of&n;&t;   the S.A. for the manufactor&squot;s code. */
+multiline_comment|/* We should make a few more checks here, like the first three octets of&n;&t;   the S.A. for the manufacturer&squot;s code. */
 id|irq
 op_assign
 id|inb
@@ -852,6 +852,10 @@ id|irq
 comma
 op_amp
 id|el16_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;3c507&quot;
 )paren
 suffix:semicolon
 r_if

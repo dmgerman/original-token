@@ -7,7 +7,7 @@ id|version
 op_assign
 l_string|&quot;znet.c:v1.01 7/1/94 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n;&t;Written by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov.&n;&t;This driver is based on the Linux skeleton driver.  The copyright of the&n;&t;skeleton driver is held by the United States Government, as represented&n;&t;by DIRNSA, and it is released under the GPL.&n;&n;&t;Thanks to Mike Hollick for alpha testing and suggestions.&n;&n;  References:&n;&t;   The Crynwr packet driver.&n;&n;&t;  &quot;82593 CSMA/CD Core LAN Controller&quot; Intel datasheet, 1992&n;&t;  Intel Microcommunications Databook, Vol. 1, 1990.&n;    As usual with Intel, the documentation is incomplete and inaccurate.&n;&t;I had to read the Crynwr packet driver to figure out how to actually&n;&t;use the i82593, and guess at what register bits matched the loosely&n;&t;related i82586.&n;&n;&t;&t;&t;&t;&t;Theory of Operation&n;&n;&t;The i82593 used in the Zenith Z-Note series operates using two(!) slave&n;&t;DMA&t;channels, one interrupt, and one 8-bit I/O port.&n;&n;&t;While there&t;several ways to configure &squot;593 DMA system, I chose the one&n;&t;that seemed commesurate with the highest system performance in the face&n;&t;of moderate interrupt latency: Both DMA channels are configued as&n;&t;recirculating ring buffers, with one channel (#0) dedicated to Rx and&n;&t;the other channel (#1) to Tx and configuration.  (Note that this is&n;&t;different than the Crynwr driver, where the Tx DMA channel is initialized&n;&t;before each operation.  That approach simplifies operation and Tx error&n;&t;recovery, but requires additional I/O in normal operation and precludes&n;&t;transmit buffer&t;chaining.)&n;&n;&t;Both rings are set to 8192 bytes using {TX,RX}_RING_SIZE.  This provides&n;&t;a reasonable ring size for Rx, while simplifying DMA buffer allocation --&n;&t;DMA buffers must not cross a 128K boundary.  (In truth the size selection&n;&t;was influenced by my lack of &squot;593 documentation.  I thus was constrained&n;&t;to use the Crynwr &squot;593 initialization table, which sets the Rx ring size&n;&t;to 8K.)&n;&n;&t;Despite my usual low opinion about Intel-designed parts, I must admit&n;&t;that the bulk data handling of the i82593 is a good design for&n;&t;an integrated system, like a laptop, where using two slave DMA channels&n;&t;doesn&squot;t pose a problem.  I still take issue with using only a single I/O&n;&t;port.  In the same controlled environment there are essentially no&n;&t;limitations on I/O space, and using multiple locations would eliminate&n;&t;the&t;need for multiple operations when looking at status registers,&n;&t;setting the Rx ring boundary, or switching to promiscuous mode.&n;&n;&t;I also question Zenith&squot;s selection of the &squot;593: one of the advertised&n;&t;advantages of earlier Intel parts was that if you figured out the magic&n;&t;initialization incantation you could use the same part on many different&n;&t;network types.  Zenith&squot;s use of the &quot;FriendlyNet&quot; (sic) connector rather&n;&t;than an&t;on-board transceiver leads me to believe that they were planning&n;&t;to take advantage of this.  But, uhmmm, the &squot;593 omits all but ethernet&n;&t;functionality from the serial subsystem.&n; */
+multiline_comment|/*&n;&t;Written by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov.&n;&t;This driver is based on the Linux skeleton driver.  The copyright of the&n;&t;skeleton driver is held by the United States Government, as represented&n;&t;by DIRNSA, and it is released under the GPL.&n;&n;&t;Thanks to Mike Hollick for alpha testing and suggestions.&n;&n;  References:&n;&t;   The Crynwr packet driver.&n;&n;&t;  &quot;82593 CSMA/CD Core LAN Controller&quot; Intel datasheet, 1992&n;&t;  Intel Microcommunications Databook, Vol. 1, 1990.&n;    As usual with Intel, the documentation is incomplete and inaccurate.&n;&t;I had to read the Crynwr packet driver to figure out how to actually&n;&t;use the i82593, and guess at what register bits matched the loosely&n;&t;related i82586.&n;&n;&t;&t;&t;&t;&t;Theory of Operation&n;&n;&t;The i82593 used in the Zenith Z-Note series operates using two(!) slave&n;&t;DMA&t;channels, one interrupt, and one 8-bit I/O port.&n;&n;&t;While there&t;several ways to configure &squot;593 DMA system, I chose the one&n;&t;that seemed commensurate with the highest system performance in the face&n;&t;of moderate interrupt latency: Both DMA channels are configured as&n;&t;recirculating ring buffers, with one channel (#0) dedicated to Rx and&n;&t;the other channel (#1) to Tx and configuration.  (Note that this is&n;&t;different than the Crynwr driver, where the Tx DMA channel is initialized&n;&t;before each operation.  That approach simplifies operation and Tx error&n;&t;recovery, but requires additional I/O in normal operation and precludes&n;&t;transmit buffer&t;chaining.)&n;&n;&t;Both rings are set to 8192 bytes using {TX,RX}_RING_SIZE.  This provides&n;&t;a reasonable ring size for Rx, while simplifying DMA buffer allocation --&n;&t;DMA buffers must not cross a 128K boundary.  (In truth the size selection&n;&t;was influenced by my lack of &squot;593 documentation.  I thus was constrained&n;&t;to use the Crynwr &squot;593 initialization table, which sets the Rx ring size&n;&t;to 8K.)&n;&n;&t;Despite my usual low opinion about Intel-designed parts, I must admit&n;&t;that the bulk data handling of the i82593 is a good design for&n;&t;an integrated system, like a laptop, where using two slave DMA channels&n;&t;doesn&squot;t pose a problem.  I still take issue with using only a single I/O&n;&t;port.  In the same controlled environment there are essentially no&n;&t;limitations on I/O space, and using multiple locations would eliminate&n;&t;the&t;need for multiple operations when looking at status registers,&n;&t;setting the Rx ring boundary, or switching to promiscuous mode.&n;&n;&t;I also question Zenith&squot;s selection of the &squot;593: one of the advertised&n;&t;advantages of earlier Intel parts was that if you figured out the magic&n;&t;initialization incantation you could use the same part on many different&n;&t;network types.  Zenith&squot;s use of the &quot;FriendlyNet&quot; (sic) connector rather&n;&t;than an&t;on-board transceiver leads me to believe that they were planning&n;&t;to take advantage of this.  But, uhmmm, the &squot;593 omits all but ethernet&n;&t;functionality from the serial subsystem.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -143,7 +143,7 @@ DECL|member|tx_buf_len
 id|ushort
 id|tx_buf_len
 suffix:semicolon
-multiline_comment|/* Tx buffer lenght, in words. */
+multiline_comment|/* Tx buffer length, in words. */
 )brace
 suffix:semicolon
 multiline_comment|/* Only one can be built-in;-&gt; */
@@ -185,7 +185,7 @@ op_plus
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* The configuration block.  What an undocumented nightmare.  The first&n;   set of values are those suggested (without explaination) for ethernet&n;   in the Intel 82586 databook.&t; The rest appear to be completely undocumented,&n;   except for cryptic notes in the Crynwr packet driver.  This driver uses&n;   the Crynwr values verbatim. */
+multiline_comment|/* The configuration block.  What an undocumented nightmare.  The first&n;   set of values are those suggested (without explanation) for ethernet&n;   in the Intel 82586 databook.&t; The rest appear to be completely undocumented,&n;   except for cryptic notes in the Crynwr packet driver.  This driver uses&n;   the Crynwr values verbatim. */
 DECL|variable|i593_init
 r_static
 r_int
@@ -198,7 +198,7 @@ op_assign
 l_int|0xAA
 comma
 multiline_comment|/* 0: 16-byte input &amp; 80-byte output FIFO. */
-multiline_comment|/*&t;  threshhold, 96-byte FIFO, 82593 mode. */
+multiline_comment|/*&t;  threshold, 96-byte FIFO, 82593 mode. */
 l_int|0x88
 comma
 multiline_comment|/* 1: Continuous w/interrupts, 128-clock DMA.*/
@@ -745,6 +745,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|znet_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;ZNet&quot;
 )paren
 op_logical_or
 id|request_dma

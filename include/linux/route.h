@@ -117,13 +117,13 @@ multiline_comment|/* Window clamping */
 )brace
 suffix:semicolon
 DECL|macro|RTF_UP
-mdefine_line|#define&t;RTF_UP&t;&t;0x0001&t;&t;/* route useable&t;&t;  */
+mdefine_line|#define&t;RTF_UP&t;&t;0x0001&t;&t;/* route usable&t;&t;  */
 DECL|macro|RTF_GATEWAY
 mdefine_line|#define&t;RTF_GATEWAY&t;0x0002&t;&t;/* destination is a gateway&t;  */
 DECL|macro|RTF_HOST
 mdefine_line|#define&t;RTF_HOST&t;0x0004&t;&t;/* host entry (net otherwise)&t;  */
 DECL|macro|RTF_REINSTATE
-mdefine_line|#define RTF_REINSTATE&t;0x0008&t;&t;/* re-instate route after tmout&t;  */
+mdefine_line|#define RTF_REINSTATE&t;0x0008&t;&t;/* reinstate route after tmout&t;  */
 DECL|macro|RTF_DYNAMIC
 mdefine_line|#define&t;RTF_DYNAMIC&t;0x0010&t;&t;/* created dyn. (by redirect)&t;  */
 DECL|macro|RTF_MODIFIED

@@ -118,7 +118,7 @@ id|start_page
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/*  Probe for various non-shared-memory ethercards.&n;&n;   NEx000-clone boards have a Station Address PROM (SAPROM) in the packet&n;   buffer memory space.  NE2000 clones have 0x57,0x57 in bytes 0x0e,0x0f of&n;   the SAPROM, while other supposed NE2000 clones must be detected by their&n;   SA prefix.&n;&n;   Reading the SAPROM from a word-wide card with the 8390 set in byte-wide&n;   mode results in doubled values, which can be detected and compansated for.&n;&n;   The probe is also responsible for initializing the card and filling&n;   in the &squot;dev&squot; and &squot;ei_status&squot; structures.&n;&n;   We use the minimum memory size for some ethercard product lines, iff we can&squot;t&n;   distinguish models.  You can increase the packet buffer size by setting&n;   PACKETBUF_MEMSIZE.  Reported Cabletron packet buffer locations are:&n;&t;E1010   starts at 0x100 and ends at 0x2000.&n;&t;E1010-x starts at 0x100 and ends at 0x8000. (&quot;-x&quot; means &quot;more memory&quot;)&n;&t;E2010&t; starts at 0x100 and ends at 0x4000.&n;&t;E2010-x starts at 0x100 and ends at 0xffff.  */
+multiline_comment|/*  Probe for various non-shared-memory ethercards.&n;&n;   NEx000-clone boards have a Station Address PROM (SAPROM) in the packet&n;   buffer memory space.  NE2000 clones have 0x57,0x57 in bytes 0x0e,0x0f of&n;   the SAPROM, while other supposed NE2000 clones must be detected by their&n;   SA prefix.&n;&n;   Reading the SAPROM from a word-wide card with the 8390 set in byte-wide&n;   mode results in doubled values, which can be detected and compensated for.&n;&n;   The probe is also responsible for initializing the card and filling&n;   in the &squot;dev&squot; and &squot;ei_status&squot; structures.&n;&n;   We use the minimum memory size for some ethercard product lines, iff we can&squot;t&n;   distinguish models.  You can increase the packet buffer size by setting&n;   PACKETBUF_MEMSIZE.  Reported Cabletron packet buffer locations are:&n;&t;E1010   starts at 0x100 and ends at 0x2000.&n;&t;E1010-x starts at 0x100 and ends at 0x8000. (&quot;-x&quot; means &quot;more memory&quot;)&n;&t;E2010&t; starts at 0x100 and ends at 0x4000.&n;&t;E2010-x starts at 0x100 and ends at 0xffff.  */
 DECL|function|ne_probe
 r_int
 id|ne_probe
@@ -1079,12 +1079,15 @@ multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting
 r_int
 id|irqval
 op_assign
-id|irqaction
+id|request_irq
 (paren
 id|dev-&gt;irq
 comma
-op_amp
-id|ei_sigaction
+id|ei_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;ne&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1516,7 +1519,7 @@ id|count
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       encountering problems that it is still here.  If you see&n;       this message you either 1) have an slightly imcompatible clone&n;       or 2) have noise/speed problems with your bus. */
+multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       encountering problems that it is still here.  If you see&n;       this message you either 1) have a slightly incompatible clone&n;       or 2) have noise/speed problems with your bus. */
 r_if
 c_cond
 (paren
@@ -1730,7 +1733,7 @@ suffix:semicolon
 id|retry
 suffix:colon
 macro_line|#if defined(rw_bugfix)
-multiline_comment|/* Handle the read-before-write bug the same way as the&n;       Crynwr packet driver -- the NatSemi method doesn&squot;t work.&n;       Actually this doesn&squot;t aways work either, but if you have&n;       problems with your NEx000 this is better than nothing! */
+multiline_comment|/* Handle the read-before-write bug the same way as the&n;       Crynwr packet driver -- the NatSemi method doesn&squot;t work.&n;       Actually this doesn&squot;t always work either, but if you have&n;       problems with your NEx000 this is better than nothing! */
 id|outb_p
 c_func
 (paren

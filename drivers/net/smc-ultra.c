@@ -827,13 +827,16 @@ multiline_comment|/* ASIC addr */
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|dev-&gt;irq
 comma
-op_amp
-id|ei_sigaction
+id|ei_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;SMC Ultra&quot;
 )paren
 )paren
 r_return

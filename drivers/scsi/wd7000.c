@@ -123,7 +123,7 @@ DECL|typedef|Adapter
 )brace
 id|Adapter
 suffix:semicolon
-multiline_comment|/*&n; * The following is set up by wd7000_detect, and used thereafter by&n; * wd7000_intr_handle to map the irq level to the corresponding Adapter.&n; * Note that if request_irq instead of irqaction to allocate the IRQ,&n; * or if SA_INTERRUPT is not used, wd7000_intr_handle must be changed &n; * to pick up the IRQ level correctly.&n; */
+multiline_comment|/*&n; * The following is set up by wd7000_detect, and used thereafter by&n; * wd7000_intr_handle to map the irq level to the corresponding Adapter.&n; * Note that if SA_INTERRUPT is not used, wd7000_intr_handle must be&n; * changed to pick up the IRQ level correctly.&n; */
 DECL|variable|irq2host
 id|Adapter
 op_star
@@ -2256,7 +2256,7 @@ id|irq
 )paren
 (brace
 macro_line|#ifdef 0
-multiline_comment|/*&n;     * Use irqp as the parm, and the following declaration, if request_irq&n;     * is used or if SA_INTERRUPT is not used.&n;     */
+multiline_comment|/*&n;     * Use irqp as the parm, and the following declaration, if&n;     * SA_INTERRUPT is not used.&n;     */
 r_register
 r_int
 id|irq
@@ -3142,20 +3142,6 @@ comma
 id|ICMB_CNT
 )brace
 suffix:semicolon
-r_struct
-id|sigaction
-id|sa
-op_assign
-(brace
-id|wd7000_intr_handle
-comma
-l_int|0
-comma
-id|SA_INTERRUPT
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 r_int
 id|diag
 suffix:semicolon
@@ -3408,13 +3394,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|host-&gt;irq
 comma
-op_amp
-id|sa
+id|wd7000_intr_handle
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;wd7000&quot;
 )paren
 )paren
 (brace

@@ -734,10 +734,6 @@ r_char
 op_star
 id|name
 op_assign
-(paren
-r_char
-op_star
-)paren
 l_int|NULL
 suffix:semicolon
 r_int
@@ -867,10 +863,7 @@ c_cond
 op_star
 id|name
 op_ne
-(paren
-r_char
-)paren
-l_int|NULL
+l_char|&squot;&bslash;0&squot;
 )paren
 (brace
 multiline_comment|/* one found? */
@@ -895,10 +888,7 @@ c_cond
 op_star
 id|name
 op_ne
-(paren
-r_char
-)paren
-l_int|NULL
+l_char|&squot;&bslash;0&squot;
 )paren
 (brace
 multiline_comment|/* found a DEPCA device */
@@ -977,10 +967,6 @@ comma
 l_string|&quot;DE100&quot;
 )paren
 op_ne
-(paren
-r_char
-op_star
-)paren
 l_int|NULL
 )paren
 (brace
@@ -1103,10 +1089,6 @@ comma
 l_string|&quot;DEPCA&quot;
 )paren
 op_eq
-(paren
-r_char
-op_star
-)paren
 l_int|NULL
 )paren
 (brace
@@ -1222,10 +1204,6 @@ comma
 l_string|&quot;DEPCA&quot;
 )paren
 op_eq
-(paren
-r_char
-op_star
-)paren
 l_int|NULL
 )paren
 (brace
@@ -1803,6 +1781,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|depca_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;depca&quot;
 )paren
 )paren
 (brace
@@ -5002,13 +4984,11 @@ op_star
 id|isa_probe
 c_func
 (paren
-id|dev
-)paren
 r_struct
 id|device
 op_star
 id|dev
-suffix:semicolon
+)paren
 (brace
 r_int
 op_star
@@ -5133,13 +5113,11 @@ op_star
 id|eisa_probe
 c_func
 (paren
-id|dev
-)paren
 r_struct
 id|device
 op_star
 id|dev
-suffix:semicolon
+)paren
 (brace
 r_int
 id|i
@@ -5255,18 +5233,14 @@ op_star
 id|alloc_device
 c_func
 (paren
-id|dev
-comma
-id|ioaddr
-)paren
 r_struct
 id|device
 op_star
 id|dev
-suffix:semicolon
+comma
 r_int
 id|ioaddr
-suffix:semicolon
+)paren
 (brace
 multiline_comment|/*&n;  ** Check the device structures for an end of list or unused device&n;  */
 r_while
@@ -5274,11 +5248,6 @@ c_loop
 (paren
 id|dev-&gt;next
 op_ne
-(paren
-r_struct
-id|device
-op_star
-)paren
 l_int|NULL
 )paren
 (brace
@@ -5307,11 +5276,6 @@ c_cond
 (paren
 id|dev-&gt;next
 op_eq
-(paren
-r_struct
-id|device
-op_star
-)paren
 l_int|NULL
 )paren
 (brace
@@ -5341,11 +5305,6 @@ c_cond
 (paren
 id|dev-&gt;next
 op_eq
-(paren
-r_struct
-id|device
-op_star
-)paren
 l_int|NULL
 )paren
 (brace
@@ -5366,11 +5325,6 @@ c_cond
 (paren
 id|dev-&gt;next
 op_ne
-(paren
-r_struct
-id|device
-op_star
-)paren
 l_int|NULL
 )paren
 op_logical_and
@@ -5401,11 +5355,7 @@ op_star
 (paren
 id|dev
 op_plus
-r_sizeof
-(paren
-r_struct
-id|device
-)paren
+l_int|1
 )paren
 suffix:semicolon
 id|sprintf
@@ -5426,11 +5376,6 @@ suffix:semicolon
 multiline_comment|/* assign the io address */
 id|dev-&gt;next
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* mark the end of list */
@@ -5536,10 +5481,7 @@ id|tmpstr
 id|i
 )braket
 op_assign
-(paren
-r_char
-)paren
-l_int|NULL
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|strcpy
 c_func
@@ -5562,18 +5504,12 @@ id|signatures
 id|i
 )braket
 op_ne
-(paren
-r_char
-)paren
-l_int|NULL
+l_char|&squot;&bslash;0&squot;
 op_logical_and
 op_star
 id|thisName
 op_eq
-(paren
-r_char
-)paren
-l_int|NULL
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|i
 op_increment
@@ -5798,10 +5734,7 @@ id|devSig
 id|i
 )braket
 op_ne
-(paren
-r_char
-)paren
-l_int|NULL
+l_char|&squot;&bslash;0&squot;
 op_logical_and
 op_logical_neg
 id|status

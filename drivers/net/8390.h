@@ -460,7 +460,7 @@ r_int
 r_int
 id|count
 suffix:semicolon
-multiline_comment|/* header + packet lenght in bytes */
+multiline_comment|/* header + packet length in bytes */
 )brace
 suffix:semicolon
 macro_line|#endif /* _8390_h */

@@ -1,4 +1,4 @@
-multiline_comment|/* Seperate to keep compilation of Space.c simpler */
+multiline_comment|/* Separate to keep compilation of Space.c simpler */
 r_extern
 r_void
 id|p8022_proto_init

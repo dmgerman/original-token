@@ -1760,7 +1760,7 @@ id|ext2_debug
 l_string|&quot;Bit not found near goal&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * There has been no free block found in the near vicinity&n;&t;&t; * of the goal: do a search forward through the block groups,&n;&t;&t; * searching in each group first for an entire free byte in&n;&t;&t; * the bitmap and then for any free bit.&n;&t;&t; * &n;&t;&t; * Search first in the remainder of the current group; then,&n;&t;&t; * cyclicly search throught the rest of the groups.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * There has been no free block found in the near vicinity&n;&t;&t; * of the goal: do a search forward through the block groups,&n;&t;&t; * searching in each group first for an entire free byte in&n;&t;&t; * the bitmap and then for any free bit.&n;&t;&t; * &n;&t;&t; * Search first in the remainder of the current group; then,&n;&t;&t; * cyclicly search through the rest of the groups.&n;&t;&t; */
 id|p
 op_assign
 (paren

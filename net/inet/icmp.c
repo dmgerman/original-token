@@ -924,9 +924,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;redirect from %08lx&bslash;n&quot;
+l_string|&quot;redirect from %s&bslash;n&quot;
 comma
+id|in_ntoa
+c_func
+(paren
 id|source
+)paren
 )paren
 suffix:semicolon
 id|ip_rt_add
@@ -1626,7 +1630,7 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Handle ICMP_ADRESS_MASK requests. &n; */
+multiline_comment|/* &n; *&t;Handle ICMP_ADDRESS_MASK requests. &n; */
 DECL|function|icmp_address
 r_static
 r_void

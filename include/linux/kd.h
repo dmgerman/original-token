@@ -279,7 +279,7 @@ mdefine_line|#define KDQUEMODE&t;0x4B38&t;/* enable/disable special queue mode *
 DECL|macro|KDSBORDER
 mdefine_line|#define KDSBORDER&t;0x4B39&t;/* set screen boarder in ega text mode */
 DECL|macro|KDSETMODE
-mdefine_line|#define KDSETMODE&t;0x4B3A&t;/* set text/grahics mode */
+mdefine_line|#define KDSETMODE&t;0x4B3A&t;/* set text/graphics mode */
 DECL|macro|KD_TEXT
 mdefine_line|#define&t;&t;KD_TEXT&t;&t;0x00
 DECL|macro|KD_GRAPHICS

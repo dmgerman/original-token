@@ -998,6 +998,10 @@ c_func
 id|DE620_IRQ
 comma
 id|de620_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;de620&quot;
 )paren
 )paren
 (brace
@@ -3028,7 +3032,7 @@ r_int
 r_int
 id|wrd
 suffix:semicolon
-multiline_comment|/* D-Link Ethernet adresses are in the series  00:80:c8:7X:XX:XX:XX */
+multiline_comment|/* D-Link Ethernet addresses are in the series  00:80:c8:7X:XX:XX:XX */
 id|wrd
 op_assign
 id|ReadAWord

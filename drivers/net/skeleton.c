@@ -255,7 +255,7 @@ id|startp
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, alloate space for the device and return success&n;   (detachable devices only).&n;   */
+multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
 r_int
 DECL|function|netcard_probe
 id|netcard_probe
@@ -450,7 +450,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check the first three octets of the S.A. for the manufactor&squot;s code. */
+multiline_comment|/* Check the first three octets of the S.A. for the manufacturer&squot;s code. */
 r_if
 c_cond
 (paren
@@ -495,7 +495,7 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#ifdef jumpered_interrupts
-multiline_comment|/* If this board has jumpered interrupts, snarf the interrupt vector&n;&t;   now.&t; There is no point in waiting since no other device can use&n;&t;   the interrupt, and this marks the &squot;irqaction&squot; as busy. */
+multiline_comment|/* If this board has jumpered interrupts, snarf the interrupt vector&n;&t;   now.&t; There is no point in waiting since no other device can use&n;&t;   the interrupt, and this marks the irq as busy. */
 r_if
 c_cond
 (paren
@@ -571,6 +571,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|net_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;skeleton&quot;
 )paren
 suffix:semicolon
 r_if
@@ -719,6 +723,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|net_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;skeleton&quot;
 )paren
 )paren
 (brace

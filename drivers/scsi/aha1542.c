@@ -1068,26 +1068,6 @@ op_minus
 l_int|9
 )braket
 suffix:semicolon
-id|mb
-op_assign
-id|HOSTDATA
-c_func
-(paren
-id|shost
-)paren
-op_member_access_from_pointer
-id|mb
-suffix:semicolon
-id|ccb
-op_assign
-id|HOSTDATA
-c_func
-(paren
-id|shost
-)paren
-op_member_access_from_pointer
-id|ccb
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1102,6 +1082,26 @@ l_string|&quot;Splunge!&quot;
 )paren
 suffix:semicolon
 )brace
+id|mb
+op_assign
+id|HOSTDATA
+c_func
+(paren
+id|shost
+)paren
+op_member_access_from_pointer
+id|mb
+suffix:semicolon
+id|ccb
+op_assign
+id|HOSTDATA
+c_func
+(paren
+id|shost
+)paren
+op_member_access_from_pointer
+id|ccb
+suffix:semicolon
 macro_line|#ifdef DEBUG
 (brace
 id|flag
@@ -3025,7 +3025,7 @@ id|commlinkid
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUGd
+macro_line|#ifdef DEBUG
 (brace
 r_int
 id|i
@@ -4427,6 +4427,10 @@ c_func
 id|irq_level
 comma
 id|aha1542_intr_handle
+comma
+l_int|0
+comma
+l_string|&quot;aha1542&quot;
 )paren
 )paren
 (brace

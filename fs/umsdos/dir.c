@@ -87,7 +87,7 @@ id|umsdos_dirent
 op_star
 id|u_entry
 comma
-multiline_comment|/* Optionnal umsdos entry */
+multiline_comment|/* Optional umsdos entry */
 r_int
 id|follow_hlink
 comma
@@ -760,7 +760,7 @@ id|emd_pos
 (brace
 multiline_comment|/*&n;&t;&t;This function modify the state of a dir inode. It decides&n;&t;&t;if the dir is a umsdos dir or a dos dir. This is done&n;&t;&t;deeper in umsdos_patch_inode() called at the end of this function.&n;&n;&t;&t;umsdos_patch_inode() may block because it is doing disk access.&n;&t;&t;At the same time, another process may get here to initialise&n;&t;&t;the same dir inode. There is 3 cases.&n;&n;&t;&t;1-The inode is already initialised. We do nothing.&n;&t;&t;2-The inode is not initialised. We lock access and do it.&n;&t;&t;3-Like 2 but another process has lock the inode, so we try&n;&t;&t;  to lock it and right after check if initialisation is still&n;&t;&t;  needed.&n;&n;&n;&t;&t;Thanks to the mem option of the kernel command line, it was&n;&t;&t;possible to consistently reproduce this problem by limiting&n;&t;&t;my mem to 4 meg and running X.&n;&t;*/
 multiline_comment|/*&n;&t;&t;Do this only if the inode is freshly read, because we will lose&n;&t;&t;the current (updated) content.&n;&t;*/
-multiline_comment|/*&n;&t;&t;A lookup of a mount point directory yield the inode into&n;&t;&t;the other fs, so we don&squot;t care about initialising it. iget()&n;&t;&t;does this automaticly.&n;&t;*/
+multiline_comment|/*&n;&t;&t;A lookup of a mount point directory yield the inode into&n;&t;&t;the other fs, so we don&squot;t care about initialising it. iget()&n;&t;&t;does this automatically.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -2061,7 +2061,7 @@ id|nopseudo
 )paren
 (brace
 multiline_comment|/* #Specification: pseudo root / dir lookup&n;&t;&t;&t;&t;&t;&t;For the same reason as readdir, a lookup in /DOS for&n;&t;&t;&t;&t;&t;&t;the pseudo root directory (linux) will fail.&n;&t;&t;&t;&t;&t;*/
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;This has to be allowed for resolving hard link&n;&t;&t;&t;&t;&t;&t;which are recorded independantly of the pseudo-root&n;&t;&t;&t;&t;&t;&t;mode.&n;&t;&t;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;This has to be allowed for resolving hard link&n;&t;&t;&t;&t;&t;&t;which are recorded independently of the pseudo-root&n;&t;&t;&t;&t;&t;&t;mode.&n;&t;&t;&t;&t;&t;*/
 id|iput
 (paren
 id|pseudo_root

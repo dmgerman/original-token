@@ -2,7 +2,7 @@ macro_line|#ifndef SOUNDCARD_H
 DECL|macro|SOUNDCARD_H
 mdefine_line|#define SOUNDCARD_H
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * &n; */
-multiline_comment|/* &n;  * If you make modifications to this file, please contact me before&n;  * distributing the modified version. There is already enough &n;  * divercity in the world.&n;  *&n;  * Regards,&n;  * Hannu Savolainen&n;  * hannu@voxware.pp.fi&n;  */
+multiline_comment|/* &n;  * If you make modifications to this file, please contact me before&n;  * distributing the modified version. There is already enough &n;  * diversity in the world.&n;  *&n;  * Regards,&n;  * Hannu Savolainen&n;  * hannu@voxware.pp.fi&n;  */
 DECL|macro|SOUND_VERSION
 mdefine_line|#define SOUND_VERSION&t;203
 DECL|macro|VOXWARE
@@ -31,6 +31,8 @@ DECL|macro|SNDCARD_MSS
 mdefine_line|#define SNDCARD_MSS&t;&t;10
 DECL|macro|SNDCARD_PSS
 mdefine_line|#define SNDCARD_PSS     &t;11
+DECL|macro|SNDCARD_SSCAPE
+mdefine_line|#define SNDCARD_SSCAPE&t;&t;12
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _IOWR
 multiline_comment|/*&t;@(#)ioctlp.h */
@@ -121,7 +123,7 @@ DECL|macro|SNDCTL_TMR_METRONOME
 mdefine_line|#define SNDCTL_TMR_METRONOME&t;&t;_IOW (&squot;T&squot;, 7, int)
 DECL|macro|SNDCTL_TMR_SELECT
 mdefine_line|#define SNDCTL_TMR_SELECT&t;&t;_IOW (&squot;T&squot;, 8, int)
-multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is propably too limited.&n; */
+multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is probably too limited.&n; */
 DECL|struct|patch_info
 r_struct
 id|patch_info
@@ -1186,11 +1188,13 @@ DECL|macro|SEQ_CONTROL
 mdefine_line|#define SEQ_CONTROL(dev, chn, controller, value) &bslash;&n;&t;&t;_CHN_COMMON(dev, MIDI_CTL_CHANGE, chn, controller, 0, value)
 DECL|macro|SEQ_BENDER
 mdefine_line|#define SEQ_BENDER(dev, chn, value) &bslash;&n;&t;&t;_CHN_COMMON(dev, MIDI_PITCH_BEND, chn, 0, 0, value)
+DECL|macro|SEQ_V2_X_CONTROL
+mdefine_line|#define SEQ_V2_X_CONTROL(dev, voice, controller, value)&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_EXTENDED;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = SEQ_CONTROLLER;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (voice);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+4] = (controller);&bslash;&n;&t;&t;&t;&t;&t;*(short *)&amp;_seqbuf[_seqbufptr+5] = (value);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+7] = 0;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 multiline_comment|/*&n; * The following 5 macros are incorrectly implemented and obsolete.&n; * Use SEQ_BENDER and SEQ_CONTROL (with proper controller) instead.&n; */
 DECL|macro|SEQ_PITCHBEND
-mdefine_line|#define SEQ_PITCHBEND(dev, voice, value) SEQ_CONTROL(dev, voice, CTRL_PITCH_BENDER, value)
+mdefine_line|#define SEQ_PITCHBEND(dev, voice, value) SEQ_V2_X_CONTROL(dev, voice, CTRL_PITCH_BENDER, value)
 DECL|macro|SEQ_BENDER_RANGE
-mdefine_line|#define SEQ_BENDER_RANGE(dev, voice, value) SEQ_CONTROL(dev, voice, CTRL_PITCH_BENDER_RANGE, value)
+mdefine_line|#define SEQ_BENDER_RANGE(dev, voice, value) SEQ_V2_X_CONTROL(dev, voice, CTRL_PITCH_BENDER_RANGE, value)
 DECL|macro|SEQ_EXPRESSION
 mdefine_line|#define SEQ_EXPRESSION(dev, voice, value) SEQ_CONTROL(dev, voice, CTL_EXPRESSION, value*128)
 DECL|macro|SEQ_MAIN_VOLUME
@@ -1200,7 +1204,7 @@ mdefine_line|#define SEQ_PANNING(dev, voice, pos) SEQ_CONTROL(dev, voice, CTL_PA
 macro_line|#if 0
 mdefine_line|#define SEQ_PANNING(dev, voice, pos)&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_EXTENDED;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = SEQ_BALANCE;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (voice);&bslash;&n;&t;&t;&t;&t;&t;(char)_seqbuf[_seqbufptr+4] = (pos);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+6] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+7] = 1;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 macro_line|#endif
-multiline_comment|/*&n; * Timing and syncronization macros&n; */
+multiline_comment|/*&n; * Timing and synchronization macros&n; */
 DECL|macro|_TIMER_EVENT
 mdefine_line|#define _TIMER_EVENT(ev, parm)&t;&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+0] = EV_TIMING; &bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+1] = (ev); &bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = 0;&bslash;&n;&t;&t;&t;&t; &t;*(unsigned int *)&amp;_seqbuf[_seqbufptr+4] = (parm); &bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 DECL|macro|SEQ_START_TIMER

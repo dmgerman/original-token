@@ -1,4 +1,4 @@
-multiline_comment|/* These structs are used by the system-use-sharing protocol, in which the&n;   Rock Ridge extensions are imbedded.  It is quite possible that other&n;   extensions are present on the disk, and this is fine as long as they&n;   all use SUSP */
+multiline_comment|/* These structs are used by the system-use-sharing protocol, in which the&n;   Rock Ridge extensions are embedded.  It is quite possible that other&n;   extensions are present on the disk, and this is fine as long as they&n;   all use SUSP */
 DECL|struct|SU_SP
 r_struct
 id|SU_SP

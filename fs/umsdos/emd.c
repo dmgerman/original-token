@@ -233,7 +233,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Read a block of bytes from one EMD file.&n;&t;The block of data is NOT in user space.&n;&t;Retourne 0 if ok, -EIO if any error.&n;*/
+multiline_comment|/*&n;&t;Read a block of bytes from one EMD file.&n;&t;The block of data is NOT in user space.&n;&t;Return 0 if ok, -EIO if any error.&n;*/
 DECL|function|umsdos_emd_dir_read
 r_int
 id|umsdos_emd_dir_read
@@ -305,7 +305,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Locate the EMD file in a directory and optionnally, creates it.&n;&n;&t;Return NULL if error. If ok, dir-&gt;u.umsdos_i.emd_inode &n;*/
+multiline_comment|/*&n;&t;Locate the EMD file in a directory and optionally, creates it.&n;&n;&t;Return NULL if error. If ok, dir-&gt;u.umsdos_i.emd_inode &n;*/
 DECL|function|umsdos_emd_dir_lookup
 r_struct
 id|inode
@@ -638,7 +638,7 @@ c_cond
 id|free_entry
 )paren
 (brace
-multiline_comment|/* #Specification: EMD file / empty entries&n;&t;&t;&t;Unused entry in the EMD file are identify&n;&t;&t;&t;by the name_len field equal to 0. However to&n;&t;&t;&t;help future extension (or bug corretion :-( ),&n;&t;&t;&t;empty entries are filled with 0.&n;&t;&t;*/
+multiline_comment|/* #Specification: EMD file / empty entries&n;&t;&t;&t;Unused entry in the EMD file are identify&n;&t;&t;&t;by the name_len field equal to 0. However to&n;&t;&t;&t;help future extension (or bug correction :-( ),&n;&t;&t;&t;empty entries are filled with 0.&n;&t;&t;*/
 id|memset
 (paren
 op_amp
@@ -781,7 +781,7 @@ id|filp
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;Fill the read buffer and take care of the byte remaining inside.&n;&t;Unread bytes are simply move to the beginning.&n;&n;&t;Return -ENOENT if EOF, 0 if ok, a negativ error code if any problem.&n;*/
+multiline_comment|/*&n;&t;Fill the read buffer and take care of the byte remaining inside.&n;&t;Unread bytes are simply move to the beginning.&n;&n;&t;Return -ENOENT if EOF, 0 if ok, a negative error code if any problem.&n;*/
 DECL|function|umsdos_fillbuf
 r_static
 r_int

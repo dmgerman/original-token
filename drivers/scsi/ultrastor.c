@@ -1455,6 +1455,10 @@ c_func
 id|config.interrupt
 comma
 id|ultrastor_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;Ultrastor&quot;
 )paren
 )paren
 (brace
@@ -1753,6 +1757,10 @@ c_func
 id|config.interrupt
 comma
 id|ultrastor_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;Ultrastor&quot;
 )paren
 )paren
 (brace

@@ -7,9 +7,9 @@ mdefine_line|#define UART_RX&t;&t;0&t;/* In:  Receive buffer (DLAB=0) */
 DECL|macro|UART_TX
 mdefine_line|#define UART_TX&t;&t;0&t;/* Out: Transmit buffer (DLAB=0) */
 DECL|macro|UART_DLL
-mdefine_line|#define UART_DLL&t;0&t;/* Out: Devisor Latch Low (DLAB=1) */
+mdefine_line|#define UART_DLL&t;0&t;/* Out: Divisor Latch Low (DLAB=1) */
 DECL|macro|UART_DLM
-mdefine_line|#define UART_DLM&t;1&t;/* Out: Devisor Latch High (DLAB=1) */
+mdefine_line|#define UART_DLM&t;1&t;/* Out: Divisor Latch High (DLAB=1) */
 DECL|macro|UART_IER
 mdefine_line|#define UART_IER&t;1&t;/* Out: Interrupt Enable Register */
 DECL|macro|UART_IIR
@@ -47,13 +47,13 @@ DECL|macro|UART_FCR_TRIGGER_14
 mdefine_line|#define UART_FCR_TRIGGER_14&t;0xC0 /* Mask for trigger set at 14 */
 multiline_comment|/*&n; * These are the definitions for the Line Control Register&n; * &n; * Note: if the word length is 5 bits (UART_LCR_WLEN5), then setting &n; * UART_LCR_STOP will select 1.5 stop bits, not 2 stop bits.&n; */
 DECL|macro|UART_LCR_DLAB
-mdefine_line|#define UART_LCR_DLAB&t;0x80&t;/* Devisor latch access bit */
+mdefine_line|#define UART_LCR_DLAB&t;0x80&t;/* Divisor latch access bit */
 DECL|macro|UART_LCR_SBC
 mdefine_line|#define UART_LCR_SBC&t;0x40&t;/* Set break control */
 DECL|macro|UART_LCR_SPAR
 mdefine_line|#define UART_LCR_SPAR&t;0x20&t;/* Stick parity (?) */
 DECL|macro|UART_LCR_EPAR
-mdefine_line|#define UART_LCR_EPAR&t;0x10&t;/* Even paraity select */
+mdefine_line|#define UART_LCR_EPAR&t;0x10&t;/* Even parity select */
 DECL|macro|UART_LCR_PARITY
 mdefine_line|#define UART_LCR_PARITY&t;0x08&t;/* Parity Enable */
 DECL|macro|UART_LCR_STOP
@@ -81,7 +81,7 @@ DECL|macro|UART_LSR_OE
 mdefine_line|#define UART_LSR_OE&t;0x02&t;/* Overrun error indicator */
 DECL|macro|UART_LSR_DR
 mdefine_line|#define UART_LSR_DR&t;0x01&t;/* Receiver data ready */
-multiline_comment|/*&n; * These are the definitions for the Interrupt Indentification Register&n; */
+multiline_comment|/*&n; * These are the definitions for the Interrupt Identification Register&n; */
 DECL|macro|UART_IIR_NO_INT
 mdefine_line|#define UART_IIR_NO_INT&t;0x01&t;/* No interrupts pending */
 DECL|macro|UART_IIR_ID

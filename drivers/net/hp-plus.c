@@ -23,7 +23,7 @@ macro_line|#else
 macro_line|#include &quot;dev.h&quot;
 macro_line|#endif
 macro_line|#include &quot;8390.h&quot;
-multiline_comment|/*&n;   The HP EtherTwist chip implementation is a fairly routine DP8390&n;   implementation.  It allows both shared memory and programmed-I/O buffer&n;   access, using a custom interface for both.  The programed-I/O mode is&n;   entirely implemented in the HP EtherTwist chip, bypassing the problem&n;   ridden built-in 8390 facilities used on NE2000 designs.  The shared&n;   memory mode is likewise special, with an offset register used to make&n;   packets appear at the shared memory base.  Both modes use a base and bounds&n;   page register to hide the Rx ring buffer wrap -- a packet that spans the&n;   end of physical buffer memory appears continuous to the driver. (c.f. the&n;   3c503 and Cabletron E2100)&n;&n;   A special note: the internal buffer of the board is only 8 bits wide.&n;   This lays several nasty traps for the unaware:&n;   - the 8390 must be programmed for byte-wide operations&n;   - all I/O and memory operations must work on whole words (the access&n;     latches are serially preloaded and have no byte-swapping ability).&n;&n;   This board is laid out in I/O space much like the earlier HP boards:&n;   the first 16 locations are for the board registers, and the second 16 are&n;   for the 8390.  The board is easy to identify, with both a dedicated 16 bit&n;   ID register and a constant 0x530* value in the upper bits of the paging&n;   register.&n;*/
+multiline_comment|/*&n;   The HP EtherTwist chip implementation is a fairly routine DP8390&n;   implementation.  It allows both shared memory and programmed-I/O buffer&n;   access, using a custom interface for both.  The programmed-I/O mode is&n;   entirely implemented in the HP EtherTwist chip, bypassing the problem&n;   ridden built-in 8390 facilities used on NE2000 designs.  The shared&n;   memory mode is likewise special, with an offset register used to make&n;   packets appear at the shared memory base.  Both modes use a base and bounds&n;   page register to hide the Rx ring buffer wrap -- a packet that spans the&n;   end of physical buffer memory appears continuous to the driver. (c.f. the&n;   3c503 and Cabletron E2100)&n;&n;   A special note: the internal buffer of the board is only 8 bits wide.&n;   This lays several nasty traps for the unaware:&n;   - the 8390 must be programmed for byte-wide operations&n;   - all I/O and memory operations must work on whole words (the access&n;     latches are serially preloaded and have no byte-swapping ability).&n;&n;   This board is laid out in I/O space much like the earlier HP boards:&n;   the first 16 locations are for the board registers, and the second 16 are&n;   for the 8390.  The board is easy to identify, with both a dedicated 16 bit&n;   ID register and a constant 0x530* value in the upper bits of the paging&n;   register.&n;*/
 DECL|macro|HPP_PROBE_LIST
 mdefine_line|#define HPP_PROBE_LIST {0x200, 0x240, 0x280, 0x2C0, 0x300, 0x320, 0x340, 0}
 DECL|macro|HP_IO_EXTENT
@@ -903,6 +903,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|ei_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;hp-plus&quot;
 )paren
 )paren
 (brace

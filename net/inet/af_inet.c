@@ -358,7 +358,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* We can&squot;t have an interupt re-enter here. */
+multiline_comment|/* We can&squot;t have an interrupt re-enter here. */
 id|cli
 c_func
 (paren
@@ -1760,7 +1760,7 @@ id|sk-&gt;no_check
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Doesn&squot;t matter no checksum is&n;&t;&t;&t;&t;&t;&t; * preformed anyway.&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Doesn&squot;t matter no checksum is&n;&t;&t;&t;&t;&t;&t; * performed anyway.&n;&t;&t;&t;&t;&t;&t; */
 id|sk-&gt;num
 op_assign
 id|protocol
@@ -1842,7 +1842,7 @@ id|sk-&gt;no_check
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Doesn&squot;t matter no checksum is&n;&t;&t;&t;&t;&t;&t; * preformed anyway.&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Doesn&squot;t matter no checksum is&n;&t;&t;&t;&t;&t;&t; * performed anyway.&n;&t;&t;&t;&t;&t;&t; */
 id|sk-&gt;num
 op_assign
 id|protocol
@@ -2547,7 +2547,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* this needs to be changed to dissallow&n;   the rebinding of sockets.   What error&n;   should it return? */
+multiline_comment|/* this needs to be changed to disallow&n;   the rebinding of sockets.   What error&n;   should it return? */
 DECL|function|inet_bind
 r_static
 r_int
@@ -2926,7 +2926,7 @@ op_minus
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Connect to a remote host. There is regretably still a little&n; *&t;TCP &squot;magic&squot; in here.&n; */
+multiline_comment|/*&n; *&t;Connect to a remote host. There is regrettably still a little&n; *&t;TCP &squot;magic&squot; in here.&n; */
 DECL|function|inet_connect
 r_static
 r_int
@@ -4361,7 +4361,7 @@ id|wait
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;ioctl() calls you can issue on an INET socket. Most of these are&n; *&t;device configuration and stuff and very rarely used. Some ioctls&n; *&t;pass on to the socket itself.&n; *&n; *&t;NOTE: I like the idea of a module for the config stuff. ie ifconfig&n; *&t;loads the devconfigure module does its configuring and unloads it.&n; *&t;Theres a good 20K of config code hanging around the kernel.&n; */
+multiline_comment|/*&n; *&t;ioctl() calls you can issue on an INET socket. Most of these are&n; *&t;device configuration and stuff and very rarely used. Some ioctls&n; *&t;pass on to the socket itself.&n; *&n; *&t;NOTE: I like the idea of a module for the config stuff. ie ifconfig&n; *&t;loads the devconfigure module does its configuring and unloads it.&n; *&t;There&squot;s a good 20K of config code hanging around the kernel.&n; */
 DECL|function|inet_ioctl
 r_static
 r_int
@@ -4767,7 +4767,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine must find a socket given a TCP or UDP header.&n; * Everyhting is assumed to be in net order.&n; */
+multiline_comment|/*&n; * This routine must find a socket given a TCP or UDP header.&n; * Everything is assumed to be in net order.&n; */
 DECL|function|get_sock
 r_struct
 id|sock

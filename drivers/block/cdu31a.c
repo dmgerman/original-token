@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Sony CDU-31A CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunatly) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asyncronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * NEWS FLASH - The driver now supports interrupts and DMA, but they are&n; * turned off by default.  Use of interrupts is highly encouraged, it&n; * cuts CPU usage down to a reasonable level.  For a single-speed drive,&n; * DMA is ok, but the 8-bit DMA cannot keep up with the double speed&n; * drives.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/*&n; * Sony CDU-31A CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * NEWS FLASH - The driver now supports interrupts and DMA, but they are&n; * turned off by default.  Use of interrupts is highly encouraged, it&n; * cuts CPU usage down to a reasonable level.  For a single-speed drive,&n; * DMA is ok, but the 8-bit DMA cannot keep up with the double speed&n; * drives.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 multiline_comment|/*&n; *&n; * Setting up the Sony CDU31A/CDU33A drive interface card.  If&n; * You have another card, you are on your own.&n; * &n; *      +----------+-----------------+----------------------+&n; *      |  JP1     |  34 Pin Conn    |     &t;&t;    |&n; *      |  JP2     +-----------------+     &t;&t;    |&n; *      |  JP3     &t;        &t;&t;&t;    |&n; *      |  JP4     &t;        &t;&t;&t;    |&n; *      |&t;&t;&t;        &t;&t;    +--+&n; *      |&t;&t;&t;                            |  +-+&n; *      |&t;&t;&t;        &t;&t;    |  | |  External&n; *      |&t;&t;&t;        &t;&t;    |  | |  Connector&n; *      |&t;&t;&t;&t;&t;&t;    |  | |&n; *      |&t;&t;&t;&t;&t;&t;    |  +-+&n; *      |&t;&t;&t;&t;&t;&t;    +--+&n; *      |&t;&t;&t;&t;&t;&t;    |&n; *      |&t;&t;&t;&t;&t;   +--------+&n; *      |&t;&t;&t;&t;&t;   |&n; *      +------------------------------------------+&n; * &n; *    JP1 sets the Base Address, using the following settings:&n; * &n; * &t;Address&t;&t;Pin 1&t;&t;Pin 2&n; * &t;-------&t;&t;-----&t;&t;-----&n; * &t;0x320&t;&t;Short&t;&t;Short&n; * &t;0x330&t;&t;Short&t;&t;Open&n; * &t;0x340&t;&t;Open&t;&t;Short&n; * &t;0x360&t;&t;Open&t;&t;Open&n; * &n; *    JP2 and JP3 configure the DMA channel; they must be set the same.&n; * &n; * &t;DMA&t;&t;Pin 1&t;&t;Pin 2&t;&t;Pin 3&n; * &t;---&t;&t;-----&t;&t;-----&t;&t;-----&n; * &t;1&t;&t;On&t;&t;Off&t;&t;On&n; * &t;2&t;&t;Off&t;&t;On&t;&t;Off&n; * &t;3&t;&t;Off&t;&t;Off&t;&t;On&n; * &n; *    JP4 Configures the IRQ:&n; * &n; * &t;IRQ&t;Pin 1&t;&t;Pin 2&t;&t;Pin 3&t;&t;Pin 4&n; * &t;---&t;-----&t;&t;-----&t;&t;-----&t;&t;-----&n; * &t;3&t;Off&t;&t;Off&t;&t;On&t;&t;Off&n; * &t;4&t;Off&t;&t;Off*&t;&t;Off&t;&t;On&n; * &t;5&t;On&t;&t;Off&t;&t;Off&t;&t;Off&n; * &t;6&t;Off&t;&t;On&t;&t;Off&t;&t;Off&n; * &n; * &t;&t;* The documentation states to set this for interrupt&n; * &t;&t;  4, but I think that is a mistake.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1624,7 +1624,7 @@ id|result_size
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;    * 0x20 means an error occured.  Byte 2 will have the error code.&n;    * Otherwise, the command succeded, byte 2 will have the count of&n;    * how many more status bytes are coming.&n;    *&n;    * The result register can be read 10 bytes at a time, a wait for&n;    * result ready to be asserted must be done between every 10 bytes.&n;    */
+multiline_comment|/*&n;    * 0x20 means an error occured.  Byte 2 will have the error code.&n;    * Otherwise, the command succeeded, byte 2 will have the count of&n;    * how many more status bytes are coming.&n;    *&n;    * The result register can be read 10 bytes at a time, a wait for&n;    * result ready to be asserted must be done between every 10 bytes.&n;    */
 r_if
 c_cond
 (paren
@@ -2695,7 +2695,7 @@ suffix:semicolon
 id|num_retries
 op_increment
 suffix:semicolon
-multiline_comment|/* Issue a reset on an error (the second time), othersize just delay */
+multiline_comment|/* Issue a reset on an error (the second time), otherwise just delay */
 r_if
 c_cond
 (paren
@@ -3972,7 +3972,7 @@ suffix:colon
 id|panic
 c_func
 (paren
-l_string|&quot;Unkown SONY CD cmd&quot;
+l_string|&quot;Unknown SONY CD cmd&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6887,22 +6887,6 @@ op_assign
 l_int|0x20
 suffix:semicolon
 )brace
-DECL|variable|cdu31a_sigaction
-r_static
-r_struct
-id|sigaction
-id|cdu31a_sigaction
-op_assign
-(brace
-id|cdu31a_interrupt
-comma
-l_int|0
-comma
-id|SA_INTERRUPT
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 DECL|variable|cdu31a_block_size
 r_static
 r_int
@@ -7186,13 +7170,16 @@ l_int|0
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|irq_used
 comma
-op_amp
-id|cdu31a_sigaction
+id|cdu31a_interrupt
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;cdu31a&quot;
 )paren
 )paren
 (brace

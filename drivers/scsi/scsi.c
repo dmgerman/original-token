@@ -1197,6 +1197,8 @@ id|printk
 c_func
 (paren
 l_string|&quot;scsi: INQUIRY failed with code %08x&bslash;n&quot;
+comma
+id|the_result
 )paren
 suffix:semicolon
 macro_line|#endif

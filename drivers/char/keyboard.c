@@ -1786,7 +1786,7 @@ id|tty
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; * Note: SCROLLOCK wil be set (cleared) by stop_tty (start_tty);&n;&t; * these routines are also activated by ^S/^Q.&n;&t; * (And SCROLLOCK can also be set by the ioctl KDSETLED.)&n;&t; */
+multiline_comment|/*&n;&t; * Note: SCROLLOCK will be set (cleared) by stop_tty (start_tty);&n;&t; * these routines are also activated by ^S/^Q.&n;&t; * (And SCROLLOCK can also be set by the ioctl KDSETLED.)&n;&t; */
 r_if
 c_cond
 (paren
@@ -3839,6 +3839,10 @@ c_func
 id|KEYBOARD_IRQ
 comma
 id|keyboard_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;keyboard&quot;
 )paren
 suffix:semicolon
 id|mark_bh

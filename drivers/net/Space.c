@@ -6,7 +6,7 @@ DECL|macro|LOOPBACK
 mdefine_line|#define LOOPBACK&t;&t;&t;/* always present, right?&t;*/
 DECL|macro|NEXT_DEV
 mdefine_line|#define&t;NEXT_DEV&t;NULL
-multiline_comment|/* A unifed ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
+multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
 r_extern
 r_int
 id|ultra_probe

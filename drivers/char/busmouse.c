@@ -374,6 +374,10 @@ c_func
 id|mouse_irq
 comma
 id|mouse_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;Busmouse&quot;
 )paren
 )paren
 r_return

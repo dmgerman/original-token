@@ -600,22 +600,6 @@ comma
 id|j
 suffix:semicolon
 macro_line|#endif 
-r_static
-r_struct
-id|sigaction
-id|seagate_sigaction
-op_assign
-(brace
-op_amp
-id|seagate_reconnect_intr
-comma
-l_int|0
-comma
-id|SA_INTERRUPT
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 multiline_comment|/*&n; *&t;First, we try for the manual override.&n; */
 macro_line|#ifdef DEBUG 
 id|printk
@@ -907,7 +891,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
 c_func
 (paren
 (paren
@@ -915,8 +899,11 @@ r_int
 )paren
 id|irq
 comma
-op_amp
-id|seagate_sigaction
+id|seagate_reconnect_intr
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;seagate&quot;
 )paren
 )paren
 (brace
@@ -4472,7 +4459,7 @@ l_string|&quot;SCSI bus reset.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 r_return
-id|SCSI_RESET_PENDING
+id|SCSI_RESET_WAKEUP
 suffix:semicolon
 )brace
 macro_line|#include &lt;asm/segment.h&gt;

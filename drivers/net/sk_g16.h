@@ -14,7 +14,7 @@ mdefine_line|#define CSR0_MISS&t;0x1000&t;/* Missed packet (RC) */
 DECL|macro|CSR0_MERR
 mdefine_line|#define CSR0_MERR&t;0x0800&t;/* Memory Error  (RC) */ 
 DECL|macro|CSR0_RINT
-mdefine_line|#define CSR0_RINT&t;0x0400&t;/* Reciever Interrupt (RC) */
+mdefine_line|#define CSR0_RINT&t;0x0400&t;/* Receiver Interrupt (RC) */
 DECL|macro|CSR0_TINT
 mdefine_line|#define CSR0_TINT       0x0200&t;/* Transmit Interrupt (RC) */ 
 DECL|macro|CSR0_IDON
@@ -60,7 +60,7 @@ mdefine_line|#define MODE_LOOP&t;0x0004&t;/* Loopback */
 DECL|macro|MODE_DTX
 mdefine_line|#define MODE_DTX&t;0x0002&t;/* Disable the Transmitter */ 
 DECL|macro|MODE_DRX
-mdefine_line|#define MODE_DRX&t;0x0001  /* Disable the Reciever */
+mdefine_line|#define MODE_DRX&t;0x0001  /* Disable the Receiver */
 DECL|macro|MODE_NORMAL
 mdefine_line|#define MODE_NORMAL &t;0x0000  /* Normal operation mode */
 multiline_comment|/*&n; * &t;Receive message descriptor status bit definitions.&n; */

@@ -38,7 +38,7 @@ mdefine_line|#define W_DUMMY&t;&t;0x00&t;/* DIC reserved command */
 DECL|macro|W_CR
 mdefine_line|#define W_CR&t;&t;0x20&t;/* DIC write command register */
 DECL|macro|W_NPR
-mdefine_line|#define W_NPR&t;&t;0x40&t;/* DIC write Nect Page Register */
+mdefine_line|#define W_NPR&t;&t;0x40&t;/* DIC write Next Page Register */
 DECL|macro|W_TBR
 mdefine_line|#define W_TBR&t;&t;0x60&t;/* DIC write Tx Byte Count 1 reg */
 DECL|macro|W_RSA
@@ -76,17 +76,17 @@ mdefine_line|#define&t;W_TCR&t;&t;0xa8&t;/* write Transceiver Configuration reg 
 DECL|macro|W_EIP
 mdefine_line|#define&t;W_EIP&t;&t;0xa9&t;/* write EEPM Interface port */
 DECL|macro|W_PAR0
-mdefine_line|#define&t;W_PAR0&t;&t;0xaa&t;/* write physical address registr 0 */
+mdefine_line|#define&t;W_PAR0&t;&t;0xaa&t;/* write physical address register 0 */
 DECL|macro|W_PAR1
-mdefine_line|#define&t;W_PAR1&t;&t;0xab&t;/* write physical address registr 1 */
+mdefine_line|#define&t;W_PAR1&t;&t;0xab&t;/* write physical address register 1 */
 DECL|macro|W_PAR2
-mdefine_line|#define&t;W_PAR2&t;&t;0xac&t;/* write physical address registr 2 */
+mdefine_line|#define&t;W_PAR2&t;&t;0xac&t;/* write physical address register 2 */
 DECL|macro|W_PAR3
-mdefine_line|#define&t;W_PAR3&t;&t;0xad&t;/* write physical address registr 3 */
+mdefine_line|#define&t;W_PAR3&t;&t;0xad&t;/* write physical address register 3 */
 DECL|macro|W_PAR4
-mdefine_line|#define&t;W_PAR4&t;&t;0xae&t;/* write physical address registr 4 */
+mdefine_line|#define&t;W_PAR4&t;&t;0xae&t;/* write physical address register 4 */
 DECL|macro|W_PAR5
-mdefine_line|#define&t;W_PAR5&t;&t;0xaf&t;/* write physical address registr 5 */
+mdefine_line|#define&t;W_PAR5&t;&t;0xaf&t;/* write physical address register 5 */
 multiline_comment|/* IDC 2 Command */
 DECL|macro|R_STS
 mdefine_line|#define&t;R_STS&t;&t;0xc0&t;/* read status register */
@@ -160,7 +160,7 @@ DECL|macro|AUTOFFSET
 mdefine_line|#define AUTOFFSET&t;0x02&t;/* auto shift address to TPR+12 */
 DECL|macro|AUTOTX
 mdefine_line|#define AUTOTX&t;&t;0x01&t;/* auto tx when leave RW mode */
-multiline_comment|/* Tranceiver Configuration Register */
+multiline_comment|/* Transceiver Configuration Register */
 DECL|macro|JABBER
 mdefine_line|#define JABBER&t;&t;0x80&t;/* generate jabber condition */
 DECL|macro|TXSUCINT

@@ -57,7 +57,7 @@ mdefine_line|#define PPP_CONTROL&t;0x03&t;/* second character of frame  &lt;-- c
 DECL|macro|PPP_TRANS
 mdefine_line|#define&t;PPP_TRANS&t;0x20&t;/* Asynchronous transparency modifier */
 DECL|macro|PPP_ESC
-mdefine_line|#define PPP_ESC&t;&t;0x7d&t;/* escape charecter -- next character is&n;&t;&t;&t;&t;   data, and the PPP_TRANS bit should be&n;&t;&t;&t;&t;   toggled. PPP_ESC PPP_FLAG is illegal */
+mdefine_line|#define PPP_ESC&t;&t;0x7d&t;/* escape character -- next character is&n;&t;&t;&t;&t;   data, and the PPP_TRANS bit should be&n;&t;&t;&t;&t;   toggled. PPP_ESC PPP_FLAG is illegal */
 multiline_comment|/* protocol numbers */
 DECL|macro|PROTO_IP
 mdefine_line|#define PROTO_IP       0x0021
@@ -171,7 +171,7 @@ r_int
 r_int
 id|PeerInOctets
 suffix:semicolon
-multiline_comment|/* Copeid from SavedInOctets&t; */
+multiline_comment|/* Copied from SavedInOctets&t; */
 DECL|member|PeerOutLQRs
 r_int
 r_int
@@ -202,7 +202,7 @@ r_int
 r_int
 id|SaveInLQRs
 suffix:semicolon
-multiline_comment|/* Current InLQRs on receiption&t; */
+multiline_comment|/* Current InLQRs on reception&t; */
 DECL|member|SaveInPackets
 r_int
 r_int
@@ -229,7 +229,7 @@ suffix:semicolon
 multiline_comment|/* Current ifInOctects&t;&t; */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * PPP LQP packet. The packet is changed by the driver immediately prior&n; * to transmission and updated upon receiption with the current values.&n; * So, it must be known to the driver as well as the pppd software.&n; */
+multiline_comment|/*&n; * PPP LQP packet. The packet is changed by the driver immediately prior&n; * to transmission and updated upon reception with the current values.&n; * So, it must be known to the driver as well as the pppd software.&n; */
 DECL|struct|ppp_lpq_packet
 r_struct
 id|ppp_lpq_packet

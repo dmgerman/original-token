@@ -1,4 +1,4 @@
-multiline_comment|/* Seperate to keep compilation of protocols.c simpler */
+multiline_comment|/* Separate to keep compilation of protocols.c simpler */
 r_extern
 r_void
 id|ipx_proto_init

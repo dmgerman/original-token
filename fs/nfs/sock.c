@@ -768,7 +768,7 @@ l_string|&quot;nfs_rpc_call: XID mismatch&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* JEJB/JSP 2/7/94&n;&t; *&n;&t; * we have the correct xid, so read into the correct place and&n;&t; * return it&n;&t; *&n;&t; * Here we need to know the size given to alloc, server-&gt;wsize for&n;&t; * writes or server-&gt;rsize for reads.  In practice these are the&n;&t; * same. &n;&t; *&n;&t; * If they are not the same then a reply to a write request will be&n;&t; * a small acknowledgement, so even if wsize &lt; rsize we should never&n;&t; * cause data to be written past the end of the buffer (unless some&n;&t; * brain damaged implementation sends out a large write acknowledge).&n;&t; *&n;&t; * FIXME:  I should really know how big a packet was alloc&squot;d --&n;&t; *         should pass it to do_nfs_rpc. */
+multiline_comment|/* JEJB/JSP 2/7/94&n;&t; *&n;&t; * we have the correct xid, so read into the correct place and&n;&t; * return it&n;&t; *&n;&t; * Here we need to know the size given to alloc, server-&gt;wsize for&n;&t; * writes or server-&gt;rsize for reads.  In practice these are the&n;&t; * same. &n;&t; *&n;&t; * If they are not the same then a reply to a write request will be&n;&t; * a small acknowledgment, so even if wsize &lt; rsize we should never&n;&t; * cause data to be written past the end of the buffer (unless some&n;&t; * brain damaged implementation sends out a large write acknowledge).&n;&t; *&n;&t; * FIXME:  I should really know how big a packet was alloc&squot;d --&n;&t; *         should pass it to do_nfs_rpc. */
 id|result
 op_assign
 id|sock-&gt;ops
@@ -812,7 +812,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * For now we lock out other simulaneous nfs calls for the same filesytem&n; * because we are single-threaded and don&squot;t want to get mismatched&n; * RPC replies.&n; */
+multiline_comment|/*&n; * For now we lock out other simultaneous nfs calls for the same filesystem&n; * because we are single-threaded and don&squot;t want to get mismatched&n; * RPC replies.&n; */
 DECL|function|nfs_rpc_call
 r_int
 id|nfs_rpc_call

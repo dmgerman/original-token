@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-multiline_comment|/* There are two different implementations of truncate() here.&n; * One (by Bruno) needs to do locking to ensure that noone is writing&n; * to a block being truncated away and incorporated into the free list.&n; * The better one (by Linus) doesn&squot;t need locking because it can tell from&n; * looking at bh-&gt;b_count whether a given block is in use elsewhere.&n; * Alas, this doesn&squot;t work if block_size &lt; BLOCK_SIZE.&n; */
+multiline_comment|/* There are two different implementations of truncate() here.&n; * One (by Bruno) needs to do locking to ensure that no one is writing&n; * to a block being truncated away and incorporated into the free list.&n; * The better one (by Linus) doesn&squot;t need locking because it can tell from&n; * looking at bh-&gt;b_count whether a given block is in use elsewhere.&n; * Alas, this doesn&squot;t work if block_size &lt; BLOCK_SIZE.&n; */
 multiline_comment|/* Bruno&squot;s implementation of truncate. */
 multiline_comment|/* Leave at most `blocks&squot; direct blocks. */
 DECL|function|coh_trunc_direct

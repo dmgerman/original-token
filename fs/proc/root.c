@@ -148,7 +148,7 @@ id|root_dir
 op_assign
 (brace
 (brace
-l_int|1
+id|PROC_ROOT_INO
 comma
 l_int|1
 comma
@@ -156,7 +156,7 @@ l_string|&quot;.&quot;
 )brace
 comma
 (brace
-l_int|1
+id|PROC_ROOT_INO
 comma
 l_int|2
 comma
@@ -164,7 +164,7 @@ l_string|&quot;..&quot;
 )brace
 comma
 (brace
-l_int|2
+id|PROC_LOADAVG
 comma
 l_int|7
 comma
@@ -172,7 +172,7 @@ l_string|&quot;loadavg&quot;
 )brace
 comma
 (brace
-l_int|3
+id|PROC_UPTIME
 comma
 l_int|6
 comma
@@ -180,7 +180,7 @@ l_string|&quot;uptime&quot;
 )brace
 comma
 (brace
-l_int|4
+id|PROC_MEMINFO
 comma
 l_int|7
 comma
@@ -188,7 +188,7 @@ l_string|&quot;meminfo&quot;
 )brace
 comma
 (brace
-l_int|5
+id|PROC_KMSG
 comma
 l_int|4
 comma
@@ -196,7 +196,7 @@ l_string|&quot;kmsg&quot;
 )brace
 comma
 (brace
-l_int|6
+id|PROC_VERSION
 comma
 l_int|7
 comma
@@ -204,7 +204,7 @@ l_string|&quot;version&quot;
 )brace
 comma
 (brace
-l_int|7
+id|PROC_SELF
 comma
 l_int|4
 comma
@@ -213,7 +213,7 @@ l_string|&quot;self&quot;
 comma
 multiline_comment|/* will change inode # */
 (brace
-l_int|8
+id|PROC_NET
 comma
 l_int|3
 comma
@@ -222,7 +222,7 @@ l_string|&quot;net&quot;
 comma
 macro_line|#ifdef CONFIG_DEBUG_MALLOC
 (brace
-l_int|13
+id|PROC_MALLOC
 comma
 l_int|6
 comma
@@ -231,7 +231,7 @@ l_string|&quot;malloc&quot;
 comma
 macro_line|#endif
 (brace
-l_int|14
+id|PROC_KCORE
 comma
 l_int|5
 comma
@@ -239,7 +239,7 @@ l_string|&quot;kcore&quot;
 )brace
 comma
 (brace
-l_int|16
+id|PROC_MODULES
 comma
 l_int|7
 comma
@@ -247,7 +247,7 @@ l_string|&quot;modules&quot;
 )brace
 comma
 (brace
-l_int|17
+id|PROC_STAT
 comma
 l_int|4
 comma
@@ -255,7 +255,7 @@ l_string|&quot;stat&quot;
 )brace
 comma
 (brace
-l_int|18
+id|PROC_DEVICES
 comma
 l_int|7
 comma
@@ -263,7 +263,15 @@ l_string|&quot;devices&quot;
 )brace
 comma
 (brace
-l_int|19
+id|PROC_INTERRUPTS
+comma
+l_int|10
+comma
+l_string|&quot;interrupts&quot;
+)brace
+comma
+(brace
+id|PROC_FILESYSTEMS
 comma
 l_int|11
 comma
@@ -271,7 +279,7 @@ l_string|&quot;filesystems&quot;
 )brace
 comma
 (brace
-l_int|20
+id|PROC_KSYMS
 comma
 l_int|5
 comma

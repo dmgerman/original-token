@@ -1942,7 +1942,7 @@ op_ge
 id|sk-&gt;cong_window
 )paren
 (brace
-multiline_comment|/* checksum will be supplied by tcp_write_xmit.  So&n;&t;&t; * we shouldn&squot;t need to set it at all.  I&squot;m being paraoid */
+multiline_comment|/* checksum will be supplied by tcp_write_xmit.  So&n;&t;&t; * we shouldn&squot;t need to set it at all.  I&squot;m being paranoid */
 id|th-&gt;check
 op_assign
 l_int|0
@@ -3385,7 +3385,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We also need to worry about the window.&n; &t; * If window &lt; 1/2 the maximum window we&squot;ve seen from this&n; &t; *   host, don&squot;t use it.  This is sender side&n; &t; *   silly window prevention, as specified in RFC1122.&n; &t; *   (Note that this is diffferent than earlier versions of&n; &t; *   SWS prevention, e.g. RFC813.).  What we actually do is &n;&t; *   use the whole MSS.  Since the results in the right&n;&t; *   edge of the packet being outside the window, it will&n;&t; *   be queued for later rather than sent.&n;&t; */
+multiline_comment|/*&n;&t; * We also need to worry about the window.&n; &t; * If window &lt; 1/2 the maximum window we&squot;ve seen from this&n; &t; *   host, don&squot;t use it.  This is sender side&n; &t; *   silly window prevention, as specified in RFC1122.&n; &t; *   (Note that this is different than earlier versions of&n; &t; *   SWS prevention, e.g. RFC813.).  What we actually do is &n;&t; *   use the whole MSS.  Since the results in the right&n;&t; *   edge of the packet being outside the window, it will&n;&t; *   be queued for later rather than sent.&n;&t; */
 id|copy
 op_assign
 id|sk-&gt;window_seq
@@ -3910,7 +3910,7 @@ id|sk-&gt;err
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *&t;Nagles rule. Turn Nagle off with TCP_NODELAY for highly&n; *&t;interactive fast network servers. It&squot;s meant to be on and&n; *&t;it really improves the throughput though not the echo time&n; *&t;on my slow slip link - Alan&n; */
+multiline_comment|/*&n; *&t;Nagle&squot;s rule. Turn Nagle off with TCP_NODELAY for highly&n; *&t;interactive fast network servers. It&squot;s meant to be on and&n; *&t;it really improves the throughput though not the echo time&n; *&t;on my slow slip link - Alan&n; */
 multiline_comment|/*&n; *&t;Avoid possible race on send_tmp - c/o Johannes Stille &n; */
 r_if
 c_cond
@@ -4532,7 +4532,7 @@ op_ne
 id|left
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * This area has caused the most trouble.  The current strategy&n;&t;&t; * is to simply do nothing if the other end has room to send at&n;&t;&t; * least 3 full packets, because the ack from those will auto-&n;&t;&t; * matically update the window.  If the other end doesn&squot;t think&n;&t;&t; * we have much space left, but we have room for atleast 1 more&n;&t;&t; * complete packet than it thinks we do, we will send an ack&n;&t;&t; * immediatedly.  Otherwise we will wait up to .5 seconds in case&n;&t;&t; * the user reads some more.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * This area has caused the most trouble.  The current strategy&n;&t;&t; * is to simply do nothing if the other end has room to send at&n;&t;&t; * least 3 full packets, because the ack from those will auto-&n;&t;&t; * matically update the window.  If the other end doesn&squot;t think&n;&t;&t; * we have much space left, but we have room for at least 1 more&n;&t;&t; * complete packet than it thinks we do, we will send an ack&n;&t;&t; * immediately.  Otherwise we will wait up to .5 seconds in case&n;&t;&t; * the user reads some more.&n;&t;&t; */
 id|sk-&gt;ack_backlog
 op_increment
 suffix:semicolon
@@ -7212,7 +7212,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef CONFIG_INET_SNARL&t;/* Sub Nets ARe Local */
+macro_line|#ifdef CONFIG_INET_SNARL&t;/* Sub Nets Are Local */
 r_if
 c_cond
 (paren
@@ -10227,7 +10227,7 @@ id|SHUTDOWN_MASK
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Incomming ACK to a FIN we sent in the case of our initiating the close.&n;&t; *&n;&t; * Move to FIN_WAIT2 to await a FIN from the other end.&n;&t; */
+multiline_comment|/*&n;&t; * Incoming ACK to a FIN we sent in the case of our initiating the close.&n;&t; *&n;&t; * Move to FIN_WAIT2 to await a FIN from the other end.&n;&t; */
 r_if
 c_cond
 (paren
@@ -10290,7 +10290,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Incoming ACK to a FIN we sent in the case of a simultanious close.&n;&t; *&n;&t; *&t;Move to TIME_WAIT&n;&t; */
+multiline_comment|/*&n;&t; *&t;Incoming ACK to a FIN we sent in the case of a simultaneous close.&n;&t; *&n;&t; *&t;Move to TIME_WAIT&n;&t; */
 r_if
 c_cond
 (paren
@@ -10333,7 +10333,7 @@ id|sk
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * I make no guarantees about the first clause in the following&n;&t; * test, i.e. &quot;(!flag) || (flag&amp;4)&quot;.  I&squot;m not entirely sure under&n;&t; * what conditions &quot;!flag&quot; would be true.  However I think the rest&n;&t; * of the conditions would prevent that from causing any&n;&t; * unnecessary retransmission. &n;&t; *   Clearly if the first packet has expired it should be &n;&t; * retransmitted.  The other alternative, &quot;flag&amp;2 &amp;&amp; retransmits&quot;, is&n;&t; * harder to explain:  You have to look carefully at how and when the&n;&t; * timer is set and with what timeout.  The most recent transmission always&n;&t; * sets the timer.  So in general if the most recent thing has timed&n;&t; * out, everything before it has as well.  So we want to go ahead and&n;&t; * retransmit some more.  If we didn&squot;t explicitly test for this&n;&t; * condition with &quot;flag&amp;2 &amp;&amp; retransmits&quot;, chances are &quot;when + rto &lt; jiffies&quot;&n;&t; * would not be true.  If you look at the pattern of timing, you can&n;&t; * show that rto is increased fast enough that the next packet would&n;&t; * almost never be retransmitted immediately.  Then you&squot;d end up&n;&t; * waiting for a timeout to send each packet on the retranmission&n;&t; * queue.  With my implementation of the Karn sampling algorithm,&n;&t; * the timeout would double each time.  The net result is that it would&n;&t; * take a hideous amount of time to recover from a single dropped packet.&n;&t; * It&squot;s possible that there should also be a test for TIME_WRITE, but&n;&t; * I think as long as &quot;send_head != NULL&quot; and &quot;retransmit&quot; is on, we&squot;ve&n;&t; * got to be in real retransmission mode.&n;&t; *   Note that ip_do_retransmit is called with all==1.  Setting cong_window&n;&t; * back to 1 at the timeout will cause us to send 1, then 2, etc. packets.&n;&t; * As long as no further losses occur, this seems reasonable.&n;&t; */
+multiline_comment|/*&n;&t; * I make no guarantees about the first clause in the following&n;&t; * test, i.e. &quot;(!flag) || (flag&amp;4)&quot;.  I&squot;m not entirely sure under&n;&t; * what conditions &quot;!flag&quot; would be true.  However I think the rest&n;&t; * of the conditions would prevent that from causing any&n;&t; * unnecessary retransmission. &n;&t; *   Clearly if the first packet has expired it should be &n;&t; * retransmitted.  The other alternative, &quot;flag&amp;2 &amp;&amp; retransmits&quot;, is&n;&t; * harder to explain:  You have to look carefully at how and when the&n;&t; * timer is set and with what timeout.  The most recent transmission always&n;&t; * sets the timer.  So in general if the most recent thing has timed&n;&t; * out, everything before it has as well.  So we want to go ahead and&n;&t; * retransmit some more.  If we didn&squot;t explicitly test for this&n;&t; * condition with &quot;flag&amp;2 &amp;&amp; retransmits&quot;, chances are &quot;when + rto &lt; jiffies&quot;&n;&t; * would not be true.  If you look at the pattern of timing, you can&n;&t; * show that rto is increased fast enough that the next packet would&n;&t; * almost never be retransmitted immediately.  Then you&squot;d end up&n;&t; * waiting for a timeout to send each packet on the retransmission&n;&t; * queue.  With my implementation of the Karn sampling algorithm,&n;&t; * the timeout would double each time.  The net result is that it would&n;&t; * take a hideous amount of time to recover from a single dropped packet.&n;&t; * It&squot;s possible that there should also be a test for TIME_WRITE, but&n;&t; * I think as long as &quot;send_head != NULL&quot; and &quot;retransmit&quot; is on, we&squot;ve&n;&t; * got to be in real retransmission mode.&n;&t; *   Note that ip_do_retransmit is called with all==1.  Setting cong_window&n;&t; * back to 1 at the timeout will cause us to send 1, then 2, etc. packets.&n;&t; * As long as no further losses occur, this seems reasonable.&n;&t; */
 r_if
 c_cond
 (paren
@@ -11543,7 +11543,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  This deals with incoming fins. &squot;Linus at 9 O&squot;clock&squot; 8-) &n; *&n; *  If we are ESTABLISHED, a received fin moves us to CLOSE-WAIT&n; *  (and thence onto LAST-ACK and finally, CLOSE, we never enter&n; *  TIME-WAIT)&n; *&n; *  If we are in FINWAIT-1, a received FIN indicates simultanious&n; *  close and we go into CLOSING (and later onto TIME-WAIT)&n; *&n; *  If we are in FINWAIT-2, a received FIN moves us to TIME-WAIT.&n; *&n; */
+multiline_comment|/*&n; *  This deals with incoming fins. &squot;Linus at 9 O&squot;clock&squot; 8-) &n; *&n; *  If we are ESTABLISHED, a received fin moves us to CLOSE-WAIT&n; *  (and thence onto LAST-ACK and finally, CLOSE, we never enter&n; *  TIME-WAIT)&n; *&n; *  If we are in FINWAIT-1, a received FIN indicates simultaneous&n; *  close and we go into CLOSING (and later onto TIME-WAIT)&n; *&n; *  If we are in FINWAIT-2, a received FIN moves us to TIME-WAIT.&n; *&n; */
 DECL|function|tcp_fin
 r_static
 r_int
@@ -11675,7 +11675,7 @@ suffix:semicolon
 r_case
 id|TCP_FIN_WAIT1
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * This case occurs when a simultanious close&n;&t;&t;&t; * happens, we must ack the received FIN and&n;&t;&t;&t; * enter the CLOSING state.&n;&t;&t;&t; *&n;&t;&t;&t; * XXX timeout not set properly&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * This case occurs when a simultaneous close&n;&t;&t;&t; * happens, we must ack the received FIN and&n;&t;&t;&t; * enter the CLOSING state.&n;&t;&t;&t; *&n;&t;&t;&t; * XXX timeout not set properly&n;&t;&t;&t; */
 id|tcp_statistics.TcpCurrEstab
 op_decrement
 suffix:semicolon
@@ -12174,7 +12174,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We need to build the routing stuff fromt the things saved in skb. &n;&t; */
+multiline_comment|/*&n;&t; *&t;We need to build the routing stuff from the things saved in skb. &n;&t; */
 id|tmp
 op_assign
 id|sk-&gt;prot
@@ -13170,7 +13170,7 @@ id|skb-&gt;mem_len
 suffix:semicolon
 macro_line|#ifdef TCP_FASTPATH
 multiline_comment|/*&n; *&t;Incoming data stream fastpath. &n; *&n; *&t;We try to optimise two things.&n; *&t;1) Spot general data arriving without funny options and skip extra checks and the switch.&n; *&t;2) Spot the common case in raw data receive streams of a packet that has no funny options,&n; *&t;fits exactly on the end of the current queue and may or may not have the ack bit set.&n; *&n; *&t;Case two especially is done inline in this routine so there are no long jumps causing heavy&n; *&t;cache thrashing, no function call overhead (except for the ack sending if needed) and for&n; *&t;speed although further optimizing here is possible.&n; */
-multiline_comment|/* Im trusting gcc to optimise this sensibly... might need judicious application of a software mallet */
+multiline_comment|/* I&squot;m trusting gcc to optimise this sensibly... might need judicious application of a software mallet */
 r_if
 c_cond
 (paren
@@ -14815,7 +14815,7 @@ id|sk-&gt;zapped
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Afer a valid reset we can send no more */
+multiline_comment|/* After a valid reset we can send no more */
 multiline_comment|/*&n;&t; * Write data can still be transmitted/retransmitted in the&n;&t; * following states.  If any other state is encountered, return.&n;&t; */
 r_if
 c_cond
@@ -15118,7 +15118,7 @@ id|sk-&gt;zapped
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Afer a valid reset we can send no more */
+multiline_comment|/* After a valid reset we can send no more */
 id|tcp_write_wakeup
 c_func
 (paren

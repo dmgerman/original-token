@@ -107,7 +107,7 @@ comma
 multiline_comment|/* All personalities. */
 id|ident_map
 comma
-multiline_comment|/* Identify map signals. */
+multiline_comment|/* Identity map signals. */
 id|ident_map
 comma
 multiline_comment|/*  - both ways. */

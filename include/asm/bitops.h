@@ -3,7 +3,7 @@ DECL|macro|_ASM_BITOPS_H
 mdefine_line|#define _ASM_BITOPS_H
 multiline_comment|/*&n; * Copyright 1992, Linus Torvalds.&n; */
 macro_line|#ifdef i386
-multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bitoperations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
+multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bit operations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
 multiline_comment|/*&n; * Some hacks to defeat gcc over-optimizations..&n; */
 DECL|struct|__dummy
 DECL|member|a
@@ -199,7 +199,7 @@ id|oldbit
 suffix:semicolon
 )brace
 macro_line|#else
-multiline_comment|/*&n; * For the benefit of those who are trying to port Linux to another&n; * architecture, here are some C-language equivalents.  You should&n; * recode these in the native assmebly language, if at all possible.&n; * To guarantee atomicity, these routines call cli() and sti() to&n; * disable interrupts while they operate.  (You have to provide inline&n; * routines to cli() and sti().)&n; *&n; * Also note, these routines assume that you have 32 bit integers.&n; * You will have to change this if you are trying to port Linux to the&n; * Alpha architecture or to a Cray.  :-)&n; * &n; * C language equivalents written by Theodore Ts&squot;o, 9/26/92&n; */
+multiline_comment|/*&n; * For the benefit of those who are trying to port Linux to another&n; * architecture, here are some C-language equivalents.  You should&n; * recode these in the native assembly language, if at all possible.&n; * To guarantee atomicity, these routines call cli() and sti() to&n; * disable interrupts while they operate.  (You have to provide inline&n; * routines to cli() and sti().)&n; *&n; * Also note, these routines assume that you have 32 bit integers.&n; * You will have to change this if you are trying to port Linux to the&n; * Alpha architecture or to a Cray.  :-)&n; * &n; * C language equivalents written by Theodore Ts&squot;o, 9/26/92&n; */
 DECL|function|set_bit
 r_extern
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Linux ethernet device driver for the 3Com Etherlink Plus (3C505)&n; * &t;By Craig Southeren&n; *&n; * elplus.c&t;This module implements an interface to the 3Com&n; *&t;&t;Etherlink Plus (3c505) ethernet card. Linux device &n; *&t;&t;driver interface reverse engineered from the Linux 3C509&n; *&t;&t;device drivers. Vital 3C505 information gleaned from&n; *&t;&t;the Crynwr packet driver&n; *&n; * Version:&t;@(#)elplus.c&t;0.5&t;11-Jun-94&n; *&n; * Authors:&t;Linux 3c505 device driver by:&n; *&t;&t;&t;Craig Southeren, &lt;geoffw@extro.ucc.su.oz.au&gt;&n; *              Final debugging by:&n; *&t;&t;&t;Andrew Tridgell, &lt;tridge@nimbus.anu.edu.au&gt;&n; *&t;&t;Auto irq, auto detect, cleanup and v1.1.4+ kernel mods by:&n; *&t;&t;&t;Juha Laiho, &lt;jlaiho@ichaos.nullnet.fi&gt;&n; *              Linux 3C509 driver by:&n; *             &t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Crynwr packet driver by&n; *&t;&t;&t;Krishnan Gopalan and Gregg Stefancik,&n; * &t;&t;&t;   Clemson Univesity Engineering Computer Operations.&n; *&t;&t;&t;Portions of the code have been adapted from the 3c505&n; *&t;&t;&t;   driver for NCSA Telnet by Bruce Orchard and later&n; *&t;&t;&t;   modified by Warren Van Houten and krus@diku.dk.&n; *              3C505 technical information provided by&n; *                      Terry Murphy, of 3Com Network Adapter Division&n; *                     &n; */
+multiline_comment|/*&n; * Linux ethernet device driver for the 3Com Etherlink Plus (3C505)&n; * &t;By Craig Southeren&n; *&n; * elplus.c&t;This module implements an interface to the 3Com&n; *&t;&t;Etherlink Plus (3c505) ethernet card. Linux device &n; *&t;&t;driver interface reverse engineered from the Linux 3C509&n; *&t;&t;device drivers. Vital 3C505 information gleaned from&n; *&t;&t;the Crynwr packet driver&n; *&n; * Version:&t;@(#)elplus.c&t;0.5&t;11-Jun-94&n; *&n; * Authors:&t;Linux 3c505 device driver by:&n; *&t;&t;&t;Craig Southeren, &lt;geoffw@extro.ucc.su.oz.au&gt;&n; *              Final debugging by:&n; *&t;&t;&t;Andrew Tridgell, &lt;tridge@nimbus.anu.edu.au&gt;&n; *&t;&t;Auto irq, auto detect, cleanup and v1.1.4+ kernel mods by:&n; *&t;&t;&t;Juha Laiho, &lt;jlaiho@ichaos.nullnet.fi&gt;&n; *              Linux 3C509 driver by:&n; *             &t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Crynwr packet driver by&n; *&t;&t;&t;Krishnan Gopalan and Gregg Stefancik,&n; * &t;&t;&t;   Clemson University Engineering Computer Operations.&n; *&t;&t;&t;Portions of the code have been adapted from the 3c505&n; *&t;&t;&t;   driver for NCSA Telnet by Bruce Orchard and later&n; *&t;&t;&t;   modified by Warren Van Houten and krus@diku.dk.&n; *              3C505 technical information provided by&n; *                      Terry Murphy, of 3Com Network Adapter Division&n; *                     &n; */
 multiline_comment|/*********************************************************&n; *&n; *  set ELP_KERNEL_TYPE to the following values depending upon&n; *  the kernel type:&n; *       0   = 0.99pl14 or earlier&n; *       1   = 0.99pl15 through 1.1.3&n; *       2   = 1.1.4 through 1.1.11&n; *       3   = 1.1.12 through 1.1.19&n; *       4   = 1.1.20&n; *&n; *********************************************************/
 DECL|macro|ELP_KERNEL_TYPE
 mdefine_line|#define&t;ELP_KERNEL_TYPE&t;4
@@ -2651,6 +2651,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|elp_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;3c505&quot;
 )paren
 )paren
 r_return
@@ -2676,7 +2680,7 @@ op_plus
 id|PORT_CONTROL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * device is now offically open!&n;   */
+multiline_comment|/*&n;   * device is now officially open!&n;   */
 id|dev-&gt;start
 op_assign
 l_int|1

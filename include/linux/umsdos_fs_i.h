@@ -30,7 +30,7 @@ id|creating
 suffix:semicolon
 multiline_comment|/* Is there any creation going on here */
 multiline_comment|/* Only one at a time, although one */
-multiline_comment|/* may recursivly lock, so it is a counter */
+multiline_comment|/* may recursively lock, so it is a counter */
 DECL|member|pid
 r_int
 id|pid
@@ -125,7 +125,7 @@ id|creating
 suffix:semicolon
 multiline_comment|/* Is there any creation going on here */
 multiline_comment|/* Only one at a time, although one */
-multiline_comment|/* may recursivly lock, so it is a counter */
+multiline_comment|/* may recursively lock, so it is a counter */
 DECL|member|pid
 r_int
 id|pid

@@ -65,7 +65,7 @@ DECL|macro|SK_POS4
 mdefine_line|#define SK_POS4     ioaddr+4    /* IRQ */
 multiline_comment|/* POS5 - POS7 are unused */
 multiline_comment|/* &n; * SK_G16 MAC PREFIX &n; * -----------------&n; */
-multiline_comment|/* &n; * Scheider &amp; Koch manufactorer code (00:00:a5).&n; * This must be checked, that we are sure it is a SK card.&n; */
+multiline_comment|/* &n; * Scheider &amp; Koch manufacturer code (00:00:a5).&n; * This must be checked, that we are sure it is a SK card.&n; */
 DECL|macro|SK_MAC0
 mdefine_line|#define SK_MAC0         0x00
 DECL|macro|SK_MAC1
@@ -103,7 +103,7 @@ mdefine_line|#define SK_PORT         (board-&gt;port)  /* Control, Status regist
 DECL|macro|SK_IOCOM
 mdefine_line|#define SK_IOCOM        (board-&gt;iocom) /* I/O Command               */
 multiline_comment|/* &n; * SK_G16 Status/Control Register bits&n; * -----------------------------------&n; *&n; * (C) Controlreg (S) Statusreg &n; */
-multiline_comment|/* &n; * Register transfer: 0 = no transfer&n; *                    1 = transfering data between LANCE and I/O reg &n; */
+multiline_comment|/* &n; * Register transfer: 0 = no transfer&n; *                    1 = transferring data between LANCE and I/O reg &n; */
 DECL|macro|SK_IORUN
 mdefine_line|#define SK_IORUN        0x20   
 multiline_comment|/* &n; * LANCE interrupt: 0 = LANCE interrupt occured&t;&n; *                  1 = no LANCE interrupt occured&n; */
@@ -127,8 +127,8 @@ multiline_comment|/* &n; * SK_G16 I/O Command &n; * ------------------&n; */
 multiline_comment|/* &n; * Any bitcombination sets the internal I/O bit (transfer will start) &n; * when written to I/O Command&n; */
 DECL|macro|SK_DOIO
 mdefine_line|#define SK_DOIO         0x80   /* Do Transfer */ 
-multiline_comment|/* &n; * LANCE RAP (Register Adress Port). &n; * ---------------------------------&n; */
-multiline_comment|/*   &n; * The LANCE internal registers are selected through the RAP. &n; * The Registers are:&n; *&n; * CSR0 - Status and Control flags &n; * CSR1 - Low order bits of initialize block (bits 15:00)&n; * CSR2 - High order bits of initialize block (bits 07:00, 15:08 are reserved)&n; * CSR3 - Allows redifinition of the Bus Master Interface.&n; *        This register must be set to 0x0002, which means BSWAP = 0,&n; *        ACON = 1, BCON = 0;&n; *&n; */
+multiline_comment|/* &n; * LANCE RAP (Register Address Port). &n; * ---------------------------------&n; */
+multiline_comment|/*   &n; * The LANCE internal registers are selected through the RAP. &n; * The Registers are:&n; *&n; * CSR0 - Status and Control flags &n; * CSR1 - Low order bits of initialize block (bits 15:00)&n; * CSR2 - High order bits of initialize block (bits 07:00, 15:08 are reserved)&n; * CSR3 - Allows redefinition of the Bus Master Interface.&n; *        This register must be set to 0x0002, which means BSWAP = 0,&n; *        ACON = 1, BCON = 0;&n; *&n; */
 DECL|macro|CSR0
 mdefine_line|#define CSR0            0x00   
 DECL|macro|CSR1
@@ -166,7 +166,7 @@ mdefine_line|#define check_region(ioaddr, size)              0
 DECL|macro|snarf_region
 mdefine_line|#define snarf_region(ioaddr, size);             do ; while (0)
 macro_line|#endif
-multiline_comment|/* &n; * SK_DEBUG&n; *&n; * Here you can choose what level of debugging wanted.&n; *&n; * If SK_DEBUG and SK_DEBUG2 are undefined, then only the&n; *  necessary messages will be printed.&n; *&n; * If SK_DEBUG is defined, there will be many debugging prints&n; *  which can help to find some mistakes in configuration or even&n; *  in the driver code.&n; *&n; * If SK_DEBUG2 is defined, many many messages will be printed &n; *  which normally you don&squot;t need. I used this to check the interrupt&n; *  routine. &n; *&n; * (If you define only SK_DEBUG2 then only the messages for &n; *  checking interrupts will be printed!)&n; *&n; * Normal way of live is: &n; *&n; * For the whole thing get going let both symbolic constants&n; * undefined. If you face any problems and you know whats going&n; * on (you know something about the card and you can interpret some&n; * hex LANCE register output) then define SK_DEBUG&n; * &n; */
+multiline_comment|/* &n; * SK_DEBUG&n; *&n; * Here you can choose what level of debugging wanted.&n; *&n; * If SK_DEBUG and SK_DEBUG2 are undefined, then only the&n; *  necessary messages will be printed.&n; *&n; * If SK_DEBUG is defined, there will be many debugging prints&n; *  which can help to find some mistakes in configuration or even&n; *  in the driver code.&n; *&n; * If SK_DEBUG2 is defined, many many messages will be printed &n; *  which normally you don&squot;t need. I used this to check the interrupt&n; *  routine. &n; *&n; * (If you define only SK_DEBUG2 then only the messages for &n; *  checking interrupts will be printed!)&n; *&n; * Normal way of live is: &n; *&n; * For the whole thing get going let both symbolic constants&n; * undefined. If you face any problems and you know what&squot;s going&n; * on (you know something about the card and you can interpret some&n; * hex LANCE register output) then define SK_DEBUG&n; * &n; */
 DECL|macro|SK_DEBUG
 macro_line|#undef  SK_DEBUG&t;/* debugging */
 DECL|macro|SK_DEBUG2
@@ -185,7 +185,7 @@ macro_line|#else
 DECL|macro|PRINTK2
 mdefine_line|#define PRINTK2(x) /**/
 macro_line|#endif
-multiline_comment|/* &n; * SK_G16 RAM&n; *&n; * The components are memory mapped and can be set in a region from&n; * 0x00000 through 0xfc000 in 16KB steps. &n; *&n; * The Network components are: dual ported RAM, Prom, I/O Reg, Status-,&n; * Controlregister and I/O Command.&n; *&n; * dual ported RAM: This is the only memory region which the LANCE chip&n; *      has access to. From the Lance it is addressed from 0x0000 to&n; *      0x3fbf. The host accesses it normaly.&n; *&n; * PROM: The PROM obtains the ETHERNET-MAC-Address. It is realised as a&n; *       8-Bit PROM, this means only the 16 even addresses are used of the&n; *       32 Byte Address region. Access to a odd address results in invalid&n; *       data.&n; * &n; * LANCE I/O Reg: The I/O Reg is build of 4 single Registers, Low-Byte Write,&n; *       Hi-Byte Write, Low-Byte Read, Hi-Byte Read.&n; *       Transfer from or to the LANCE is always in 16Bit so Low and High&n; *       registers are always relevant.&n; *&n; *       The Data from the Readregister is not the data in the Writeregister!!&n; *       &n; * Port: Status- and Controlregister. &n; *       Two different registers which share the same address, Status is &n; *       read-only, Control is write-only.&n; *    &n; * I/O Command: &n; *       Any bitcombination written in here starts the transmission between&n; *       Host and LANCE.&n; */
+multiline_comment|/* &n; * SK_G16 RAM&n; *&n; * The components are memory mapped and can be set in a region from&n; * 0x00000 through 0xfc000 in 16KB steps. &n; *&n; * The Network components are: dual ported RAM, Prom, I/O Reg, Status-,&n; * Controlregister and I/O Command.&n; *&n; * dual ported RAM: This is the only memory region which the LANCE chip&n; *      has access to. From the Lance it is addressed from 0x0000 to&n; *      0x3fbf. The host accesses it normally.&n; *&n; * PROM: The PROM obtains the ETHERNET-MAC-Address. It is realised as a&n; *       8-Bit PROM, this means only the 16 even addresses are used of the&n; *       32 Byte Address region. Access to a odd address results in invalid&n; *       data.&n; * &n; * LANCE I/O Reg: The I/O Reg is build of 4 single Registers, Low-Byte Write,&n; *       Hi-Byte Write, Low-Byte Read, Hi-Byte Read.&n; *       Transfer from or to the LANCE is always in 16Bit so Low and High&n; *       registers are always relevant.&n; *&n; *       The Data from the Readregister is not the data in the Writeregister!!&n; *       &n; * Port: Status- and Controlregister. &n; *       Two different registers which share the same address, Status is &n; *       read-only, Control is write-only.&n; *    &n; * I/O Command: &n; *       Any bitcombination written in here starts the transmission between&n; *       Host and LANCE.&n; */
 r_typedef
 r_struct
 (brace
@@ -569,7 +569,7 @@ r_int
 id|value
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Debuging functions&n; * ------------------&n; */
+multiline_comment|/* &n; * Debugging functions&n; * -------------------&n; */
 r_void
 id|SK_print_pos
 c_func
@@ -610,7 +610,7 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/*-&n; * Function       : SK_init&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Check for a SK_G16 network adaptor and initialize it.&n; *                  This function gets called by dev_init which initializes&n; *                  all Network devices.&n; *&n; * Parameters     : I : struct device *dev - structure preconfigured &n; *                                           from Space.c&n; * Return Value   : 0 = Driver Found and initialized &n; * Errors         : ENODEV - no device found&n; *                  ENXIO  - not probed&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
-multiline_comment|/* &n; * Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, alloate space for the device and return success&n; *                         (detachable devices only).&n; */
+multiline_comment|/* &n; * Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; *                         (detachable devices only).&n; */
 DECL|function|SK_init
 r_int
 id|SK_init
@@ -835,7 +835,7 @@ multiline_comment|/* Failed to find or init driver */
 )brace
 multiline_comment|/* End of SK_init */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_probe&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called by SK_init and &n; *                  does the main part of initialization.&n; *                  &n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; *                  I : short ioaddr       - I/O Port address where POS is.&n; * Return Value   : 0 = Initilization done             &n; * Errors         : ENODEV - No SK_G16 found&n; *                  -1     - Configuration problem&n; * Globals        : irq2dev_map - Which device uses which IRQ&n; *                : board       - pointer to SK_RAM&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     94/06/30  pwe  SK_ADDR now checked and at the correct place&n;-*/
+multiline_comment|/*-&n; * Function       : SK_probe&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called by SK_init and &n; *                  does the main part of initialization.&n; *                  &n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; *                  I : short ioaddr       - I/O Port address where POS is.&n; * Return Value   : 0 = Initialization done             &n; * Errors         : ENODEV - No SK_G16 found&n; *                  -1     - Configuration problem&n; * Globals        : irq2dev_map - Which device uses which IRQ&n; *                : board       - pointer to SK_RAM&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     94/06/30  pwe  SK_ADDR now checked and at the correct place&n;-*/
 DECL|function|SK_probe
 r_int
 id|SK_probe
@@ -1299,7 +1299,7 @@ id|j
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/* Check for manufactorer code */
+multiline_comment|/* Check for manufacturer code */
 r_if
 c_cond
 (paren
@@ -1389,7 +1389,7 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Grap the I/O Port region */
+multiline_comment|/* Grab the I/O Port region */
 id|snarf_region
 c_func
 (paren
@@ -1597,7 +1597,7 @@ multiline_comment|/* Initialization done */
 )brace
 multiline_comment|/* End of SK_probe() */
 "&f;"
-multiline_comment|/*- &n; * Function       : SK_open&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called sometimes after booting &n; *                  when ifconfig programm is run.&n; *&n; *                  This function requests an IRQ, sets the correct&n; *                  IRQ in the card. Then calls SK_lance_init() to &n; *                  init and start the LANCE chip. Then if everthing is &n; *                  ok returns with 0 (OK), which means SK_G16 is now&n; *                  opened and operational.&n; *&n; *                  (Called by dev_open() /net/inet/dev.c)&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : 0 - Device opened&n; * Errors         : -EAGAIN - Open failed&n; * Globals        : irq2dev_map - which device uses which irq&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*- &n; * Function       : SK_open&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called sometimes after booting &n; *                  when ifconfig program is run.&n; *&n; *                  This function requests an IRQ, sets the correct&n; *                  IRQ in the card. Then calls SK_lance_init() to &n; *                  init and start the LANCE chip. Then if everything is &n; *                  ok returns with 0 (OK), which means SK_G16 is now&n; *                  opened and operational.&n; *&n; *                  (Called by dev_open() /net/inet/dev.c)&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : 0 - Device opened&n; * Errors         : -EAGAIN - Open failed&n; * Globals        : irq2dev_map - which device uses which irq&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_open
 r_static
 r_int
@@ -1688,6 +1688,10 @@ id|i
 comma
 op_amp
 id|SK_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;sk_g16&quot;
 )paren
 suffix:semicolon
 id|i
@@ -1765,6 +1769,10 @@ l_int|9
 comma
 op_amp
 id|SK_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;sk_g16&quot;
 )paren
 )paren
 (brace
@@ -1815,6 +1823,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|SK_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;sk_g16&quot;
 )paren
 )paren
 (brace
@@ -2286,7 +2298,7 @@ op_assign
 op_minus
 id|PKT_BUF_SZ
 suffix:semicolon
-multiline_comment|/* Buffer Size in a two&squot;s comliment */
+multiline_comment|/* Buffer Size in a two&squot;s complement */
 id|rmdp-&gt;mlen
 op_assign
 l_int|0
@@ -2348,7 +2360,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-multiline_comment|/* Set multicast, logical adress */
+multiline_comment|/* Set multicast, logical address */
 (brace
 (paren
 id|p-&gt;ram
@@ -2390,7 +2402,7 @@ id|p-&gt;tmdhead
 op_or
 id|TMDNUMMASK
 suffix:semicolon
-multiline_comment|/* Prepare LANCE Controll and Status Registers */
+multiline_comment|/* Prepare LANCE Control and Status Registers */
 id|cli
 c_func
 (paren
@@ -2405,7 +2417,7 @@ id|CSR3_ACON
 )paren
 suffix:semicolon
 multiline_comment|/* Ale Control !!!THIS MUST BE SET!!!! */
-multiline_comment|/* &n;     * LANCE addresses the RAM from 0x0000 to 0x3fbf and has no access to&n;     * PC Memory locations.&n;     *&n;     * In structure SK_ram is defined that the first thing in ram&n;     * is the initalization block. So his address is for LANCE always&n;     * 0x0000&n;     *&n;     * CSR1 contains low order bits 15:0 of initialization block address&n;     * CSR2 is built of: &n;     *    7:0  High order bits 23:16 of initialization block address&n;     *   15:8  reserved, must be 0&n;     */
+multiline_comment|/* &n;     * LANCE addresses the RAM from 0x0000 to 0x3fbf and has no access to&n;     * PC Memory locations.&n;     *&n;     * In structure SK_ram is defined that the first thing in ram&n;     * is the initialization block. So his address is for LANCE always&n;     * 0x0000&n;     *&n;     * CSR1 contains low order bits 15:0 of initialization block address&n;     * CSR2 is built of: &n;     *    7:0  High order bits 23:16 of initialization block address&n;     *   15:8  reserved, must be 0&n;     */
 multiline_comment|/* Set initialization block address (must be on word boundary) */
 id|SK_write_reg
 c_func
@@ -2442,7 +2454,7 @@ id|CSR0
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize LANCE */
-multiline_comment|/* &n;     * INIT = Initialize, when set, cuases the LANCE to begin the&n;     * initialization procedure and access the Init Block.&n;     */
+multiline_comment|/* &n;     * INIT = Initialize, when set, causes the LANCE to begin the&n;     * initialization procedure and access the Init Block.&n;     */
 id|SK_write_reg
 c_func
 (paren
@@ -3263,7 +3275,7 @@ multiline_comment|/* Underflow error ? */
 id|p-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* &n;             * If UFLO error occurs it will turn tranmitter of.&n;             * So we must reinit LANCE&n;             */
+multiline_comment|/* &n;             * If UFLO error occurs it will turn transmitter of.&n;             * So we must reinit LANCE&n;             */
 id|SK_lance_init
 c_func
 (paren
@@ -3537,7 +3549,7 @@ id|rmdp-&gt;u.s.status
 op_assign
 id|RX_OWN
 suffix:semicolon
-multiline_comment|/* Reliquish ownershipt to LANCE */
+multiline_comment|/* Relinquish ownership to LANCE */
 id|printk
 c_func
 (paren
@@ -3659,7 +3671,7 @@ multiline_comment|/* Card down */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Shuting %s down CSR0 %#06x&bslash;n&quot;
+l_string|&quot;%s: Shutting %s down CSR0 %#06x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3702,7 +3714,7 @@ multiline_comment|/* Mark IRQ as unused */
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* always succed */
+multiline_comment|/* always succeed */
 )brace
 multiline_comment|/* End of SK_close() */
 "&f;"
@@ -3758,8 +3770,8 @@ multiline_comment|/* Return Device status */
 multiline_comment|/* End of SK_get_stats() */
 macro_line|#ifdef HAVE_MULTICAST
 "&f;"
-multiline_comment|/*-&n; * Function       : set_multicast_list&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function gets called when a programm performs&n; *                  a SIOCSIFFLAGS call. Ifconfig does this if you call&n; *                  &squot;ifconfig [-]allmultie&squot; which enables or disables the&n; *                  Promiscous mode.&n; *                  Promiscous mode is when the Network card accepts all&n; *                  packets, not only the packets which match our MAC &n; *                  Address. It is useful for writing a network monitor,&n; *                  but it is also a security problem. You have to remeber&n; *                  that all information on the net is not encrypted.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device Structure&n; *                  I : int num_addrs      - explanation further down&n; *                  I : void *addrs        - &n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
-multiline_comment|/* Set or clear the multicast filter for SK_G16.&n; *&n; * num_addrs == -1      Promiscous mode, receive all packets&n; * num_addrs == 0       Normal mode, clear multicast list&n; * num_addrs &gt; 0        Multicast mode, receive normal and MC packets&n; */
+multiline_comment|/*-&n; * Function       : set_multicast_list&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function gets called when a program performs&n; *                  a SIOCSIFFLAGS call. Ifconfig does this if you call&n; *                  &squot;ifconfig [-]allmulti&squot; which enables or disables the&n; *                  Promiscuous mode.&n; *                  Promiscuous mode is when the Network card accepts all&n; *                  packets, not only the packets which match our MAC &n; *                  Address. It is useful for writing a network monitor,&n; *                  but it is also a security problem. You have to remember&n; *                  that all information on the net is not encrypted.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device Structure&n; *                  I : int num_addrs      - explanation further down&n; *                  I : void *addrs        - &n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/* Set or clear the multicast filter for SK_G16.&n; *&n; * num_addrs == -1      Promiscuous mode, receive all packets&n; * num_addrs == 0       Normal mode, clear multicast list&n; * num_addrs &gt; 0        Multicast mode, receive normal and MC packets&n; */
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -4066,7 +4078,7 @@ id|SK_PORT
 op_assign
 l_int|0x00
 suffix:semicolon
-multiline_comment|/* Reset aktiv */
+multiline_comment|/* Reset active */
 r_for
 c_loop
 (paren
@@ -4091,7 +4103,7 @@ multiline_comment|/* Set back to normal operation */
 )brace
 multiline_comment|/* End of SK_reset_board() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_set_RAP&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/25&n; *&n; * Description    : Set LANCE Register Address Port to register&n; *                  for later data trasfer.&n; *&n; * Parameters     : I : reg_number - which CSR to read/write from/to&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : SK_RAM *board - SK_RAM structure pointer&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_set_RAP&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/25&n; *&n; * Description    : Set LANCE Register Address Port to register&n; *                  for later data transfer.&n; *&n; * Parameters     : I : reg_number - which CSR to read/write from/to&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : SK_RAM *board - SK_RAM structure pointer&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_set_RAP
 r_void
 id|SK_set_RAP
@@ -4444,7 +4456,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* End of SK_print_dev() */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_print_ram&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/06/02&n; *&n; * Description    : This function is used to check how are things set up&n; *                  in the 16KB RAM. Also the pointers to the receive and &n; *                  transmit descriptor rings and rx und tx buffers locations.&n; *                  It contains a minor bug in printing, but has no effect to the values&n; *                  only newlines are not correct.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_print_ram&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/06/02&n; *&n; * Description    : This function is used to check how are things set up&n; *                  in the 16KB RAM. Also the pointers to the receive and &n; *                  transmit descriptor rings and rx and tx buffers locations.&n; *                  It contains a minor bug in printing, but has no effect to the values&n; *                  only newlines are not correct.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_print_ram
 r_void
 id|SK_print_ram

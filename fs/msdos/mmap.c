@@ -84,7 +84,7 @@ op_le
 l_int|0
 )paren
 (brace
-multiline_comment|/* mmaping beyong end of file */
+multiline_comment|/* mmaping beyond end of file */
 id|clear
 op_assign
 id|PAGE_SIZE

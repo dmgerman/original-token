@@ -29,6 +29,10 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;8390.h&quot;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;int block_input(struct device *dev, int count, char *buf, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into BUF.  Start reading from&n;&t;&t;RING_OFFSET, the address as the 8390 sees it.  The first read will&n;&t;&t;always be the 4 byte, page aligned 8390 header.  *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;*/
 DECL|macro|ei_reset_8390
 mdefine_line|#define ei_reset_8390 (ei_local-&gt;reset_8390)
@@ -133,22 +137,6 @@ id|addrs
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|ei_sigaction
-r_struct
-id|sigaction
-id|ei_sigaction
-op_assign
-(brace
-id|ei_interrupt
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-)brace
-suffix:semicolon
 "&f;"
 multiline_comment|/* Open/initialize the board.  This routine goes all-out, setting everything&n;   up anew at each open, even though many of these registers should only&n;   need to be set once at boot.&n;   */
 DECL|function|ei_open
@@ -279,6 +267,8 @@ id|EN0_TSR
 )paren
 comma
 id|isr
+comma
+id|cmd
 suffix:semicolon
 r_int
 id|tickssofar
@@ -321,6 +311,44 @@ id|e8390_base
 op_plus
 id|EN0_ISR
 )paren
+suffix:semicolon
+id|cmd
+op_assign
+id|inb
+c_func
+(paren
+id|e8390_base
+op_plus
+id|E8390_CMD
+)paren
+op_amp
+(paren
+id|E8390_STOP
+op_or
+id|E8390_START
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|cmd
+op_eq
+l_int|0
+)paren
+op_logical_or
+(paren
+id|cmd
+op_eq
+(paren
+id|E8390_STOP
+op_or
+id|E8390_START
+)paren
+)paren
+)paren
+r_return
+l_int|1
 suffix:semicolon
 id|printk
 c_func
@@ -812,6 +840,8 @@ suffix:semicolon
 r_int
 id|interrupts
 comma
+id|cmd
+comma
 id|boguscount
 op_assign
 l_int|0
@@ -968,6 +998,57 @@ OL
 l_int|9
 )paren
 (brace
+id|cmd
+op_assign
+id|inb
+c_func
+(paren
+id|e8390_base
+op_plus
+id|E8390_CMD
+)paren
+op_amp
+(paren
+id|E8390_STOP
+op_or
+id|E8390_START
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|cmd
+op_eq
+l_int|0
+)paren
+op_logical_or
+(paren
+id|cmd
+op_eq
+(paren
+id|E8390_STOP
+op_or
+id|E8390_START
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: card not present&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|interrupts
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2954,6 +3035,37 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c 8390.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

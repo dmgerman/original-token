@@ -566,7 +566,7 @@ l_int|3
 suffix:semicolon
 id|file-&gt;f_flags
 op_assign
-l_int|0
+id|O_RDWR
 suffix:semicolon
 id|file-&gt;f_count
 op_assign

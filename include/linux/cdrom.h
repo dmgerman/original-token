@@ -759,7 +759,7 @@ id|cdread_buflen
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * preliminary extensions for transfering audio frames&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
+multiline_comment|/*&n; * preliminary extensions for transferring audio frames&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
 DECL|struct|cdrom_read_audio
 r_struct
 id|cdrom_read_audio
@@ -845,7 +845,7 @@ DECL|macro|CDROMEJECT
 mdefine_line|#define&t;CDROMEJECT&t;&t;0x5309&t;&t;/* eject CD-ROM media&t;&t;*/
 DECL|macro|CDROMVOLCTRL
 mdefine_line|#define&t;CDROMVOLCTRL&t;&t;0x530a&t;&t;/* (struct cdrom_volctrl)&t;*/
-multiline_comment|/* vlume control&t;&t;*/
+multiline_comment|/* volume control&t;&t;*/
 DECL|macro|CDROMSUBCHNL
 mdefine_line|#define&t;CDROMSUBCHNL&t;&t;0x530b&t;&t;/* (struct cdrom_subchnl)&t;*/
 multiline_comment|/* read Q sub-channel data &t;*/
@@ -855,7 +855,7 @@ multiline_comment|/* read type-2 data (not suppt)&t;*/
 DECL|macro|CDROMREADMODE1
 mdefine_line|#define&t;CDROMREADMODE1&t;&t;0x530d&t;&t;/* (struct cdrom_read)&t;&t;*/
 multiline_comment|/* read type-1 data &t;&t;*/
-multiline_comment|/*&n; * preliminary extension for transfering audio frames&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
+multiline_comment|/*&n; * preliminary extension for transferring audio frames&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
 DECL|macro|CDROMREADAUDIO
 mdefine_line|#define&t;CDROMREADAUDIO&t;&t;0x530e&t;&t;/* (struct cdrom_read_audio)&t;*/
 macro_line|#endif  _LINUX_CDROM_H

@@ -5,7 +5,7 @@ multiline_comment|/*&n; * Define SCSI_MALLOC to use scsi_malloc instead of kmall
 DECL|macro|SCSI_MALLOC
 mdefine_line|#define SCSI_MALLOC
 multiline_comment|/*&n; * Sponsored by &n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@Colorado.EDU&n; *&t;+1 (303) 786-7975&n; *&n; * TolerANT and SCSI SCRIPTS are registered trademarks of NCR Corporation.&n; * &n; * PRE-ALPHA&n; *&n; * For more information, please consult &n; *&n; *&n; * NCR 53C700/53C700-66&n; * SCSI I/O Processor&n; * Data Manual&n; *&n; * NCR53C710 &n; * SCSI I/O Processor&n; * Programmer&squot;s Guide&n; *&n; * NCR 53C810&n; * PCI-SCSI I/O Processor&n; * Data Manual&n; *&n; * NCR 53C810/53C820&n; * PCI-SCSI I/O Processor Design In Guide&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * +1 (719) 578-3400&n; *&n; * Toll free literature number&n; * +1 (800) 334-5454&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000 &n; * +1 (800) 433-5177&n; */
-multiline_comment|/*&n; * Design issues : &n; * The cumulative latency needed to propogate a read/write request &n; * through the filesystem, buffer cache, driver stacks, SCSI host, and &n; * SCSI device is ultimately the limiting factor in throughput once we &n; * have a sufficiently fast host adapter.&n; *  &n; * So, to maximize performance we want to keep the ratio of latency to data &n; * transfer time to a minimum by&n; * 1.  Minimizing the total number of commands sent (typical command latency&n; *&t;including drive and busmatering host overhead is as high as 4.5ms)&n; *&t;to transfer a given amount of data.  &n; *&n; *      This is accomplished by placing no arbitrary limit on the number&n; *&t;of scatter/gather buffers supported, since we can transfer 1K&n; *&t;per scatter/gather buffer without Eric&squot;s cluster patches, &n; *&t;4K with.  &n; *&n; * 2.  Minimizing the number of fatal interrupts serviced, since&n; * &t;fatal interrupts halt the SCSI I/O processor.  Basically,&n; *&t;this means offloading the practical maximum amount of processing &n; *&t;to the SCSI chip.&n; * &n; *&t;On the NCR53c810/820,  this is accomplished by using &n; *&t;&t;interrupt-on-the-fly signals with the DSA address as a &n; *&t;&t;parameter when commands complete, and only handling fatal &n; *&t;&t;errors and SDTR / WDTR &t;messages in the host code.&n; *&n; *&t;On the NCR53c710/720, interrupts are generated as on the NCR53c8x0,&n; *&t;&t;only the lack of a interrupt-on-the-fly facility complicates&n; *&t;&t;things.  &n; *&t;&t;&n; * &t;On the NCR53c700 and NCR53c700-66, operations that were done via &n; *&t;&t;indirect, table mode on the more advanced chips have&n; *&t;&t;been replaced by calls through a jump table which &n; *&t;&t;acts as a surrogate for the DSA.  Unfortunately, this &n; * &t;&t;means that we must service an interrupt for each &n; *&t;&t;disconnect/reconnect.&n; * &n; * 3.  Eliminating latency by piplining operations at the different levels.&n; * &t;&n; *&t;This driver allows a configurable number of commands to be enqueued&n; *&t;for each target/lun combination (experimentally, I have discovered&n; *&t;that two seems to work best) and will ultimately allow for &n; *&t;SCSI-II tagged queueing.&n; * &t;&n; *&n; * Architecture : &n; * This driver is built arround two queues of commands waiting to &n; * be executed - the Linux issue queue, and the shared Linux/NCR  &n; * queue which are manipulated by the NCR53c7xx_queue_command and &n; * NCR53c7x0_intr routines.&n; *&n; * When the higher level routines pass a SCSI request down to &n; * NCR53c7xx_queue_command, it looks to see if that target/lun &n; * is currently busy. If not, the command is inserted into the &n; * shared Linux/NCR queue, otherwise it is inserted into the Linux &n; * queue.&n; *&n; * As commands are completed, the interrupt routine is triggered,&n; * looks for commands in the linked list of completed commands with&n; * valid status, removes these commands from the list, calls &n; * the done routine, and flags their target/luns as not busy.&n; *&n; * Due to limitations in the intelligence of the NCR chips, certain&n; * concessions are made.  In many cases, it is easier to dynamically &n; * generate/fixup code rather than calculate on the NCR at run time.  &n; * So, code is generated or fixed up for&n; *&n; * - Handling data transfers, using a variable number of MOVE instructions&n; *&t;interspersed with CALL MSG_IN, WHEN MSGIN instructions.&n; *&n; * &t;The DATAIN and DATAOUT routines&t;are separate, so that an incorrect&n; *&t;direction can be trapped, and space isn&squot;t wasted. &n; *&n; *&t;It may turn out that we&squot;re better off using some sort &n; *&t;of table indirect instruction in a loop with a variable&n; *&t;sized table on the NCR53c710 and newer chips.&n; *&n; * - Checking for reselection (NCR53c710 and better)&n; *&n; * - Handling the details of SCSI context switches (NCR53c710 and better),&n; *&t;such as reprogramming appropriate synchronous parameters, &n; *&t;removing the dsa structure from the NCR&squot;s queue of outstanding&n; *&t;commands, etc.&n; *&n; */
+multiline_comment|/*&n; * Design issues : &n; * The cumulative latency needed to propagate a read/write request &n; * through the filesystem, buffer cache, driver stacks, SCSI host, and &n; * SCSI device is ultimately the limiting factor in throughput once we &n; * have a sufficiently fast host adapter.&n; *  &n; * So, to maximize performance we want to keep the ratio of latency to data &n; * transfer time to a minimum by&n; * 1.  Minimizing the total number of commands sent (typical command latency&n; *&t;including drive and busmastering host overhead is as high as 4.5ms)&n; *&t;to transfer a given amount of data.  &n; *&n; *      This is accomplished by placing no arbitrary limit on the number&n; *&t;of scatter/gather buffers supported, since we can transfer 1K&n; *&t;per scatter/gather buffer without Eric&squot;s cluster patches, &n; *&t;4K with.  &n; *&n; * 2.  Minimizing the number of fatal interrupts serviced, since&n; * &t;fatal interrupts halt the SCSI I/O processor.  Basically,&n; *&t;this means offloading the practical maximum amount of processing &n; *&t;to the SCSI chip.&n; * &n; *&t;On the NCR53c810/820,  this is accomplished by using &n; *&t;&t;interrupt-on-the-fly signals with the DSA address as a &n; *&t;&t;parameter when commands complete, and only handling fatal &n; *&t;&t;errors and SDTR / WDTR &t;messages in the host code.&n; *&n; *&t;On the NCR53c710/720, interrupts are generated as on the NCR53c8x0,&n; *&t;&t;only the lack of a interrupt-on-the-fly facility complicates&n; *&t;&t;things.  &n; *&t;&t;&n; * &t;On the NCR53c700 and NCR53c700-66, operations that were done via &n; *&t;&t;indirect, table mode on the more advanced chips have&n; *&t;&t;been replaced by calls through a jump table which &n; *&t;&t;acts as a surrogate for the DSA.  Unfortunately, this &n; * &t;&t;means that we must service an interrupt for each &n; *&t;&t;disconnect/reconnect.&n; * &n; * 3.  Eliminating latency by pipelining operations at the different levels.&n; * &t;&n; *&t;This driver allows a configurable number of commands to be enqueued&n; *&t;for each target/lun combination (experimentally, I have discovered&n; *&t;that two seems to work best) and will ultimately allow for &n; *&t;SCSI-II tagged queueing.&n; * &t;&n; *&n; * Architecture : &n; * This driver is built around two queues of commands waiting to &n; * be executed - the Linux issue queue, and the shared Linux/NCR  &n; * queue which are manipulated by the NCR53c7xx_queue_command and &n; * NCR53c7x0_intr routines.&n; *&n; * When the higher level routines pass a SCSI request down to &n; * NCR53c7xx_queue_command, it looks to see if that target/lun &n; * is currently busy. If not, the command is inserted into the &n; * shared Linux/NCR queue, otherwise it is inserted into the Linux &n; * queue.&n; *&n; * As commands are completed, the interrupt routine is triggered,&n; * looks for commands in the linked list of completed commands with&n; * valid status, removes these commands from the list, calls &n; * the done routine, and flags their target/luns as not busy.&n; *&n; * Due to limitations in the intelligence of the NCR chips, certain&n; * concessions are made.  In many cases, it is easier to dynamically &n; * generate/fixup code rather than calculate on the NCR at run time.  &n; * So, code is generated or fixed up for&n; *&n; * - Handling data transfers, using a variable number of MOVE instructions&n; *&t;interspersed with CALL MSG_IN, WHEN MSGIN instructions.&n; *&n; * &t;The DATAIN and DATAOUT routines&t;are separate, so that an incorrect&n; *&t;direction can be trapped, and space isn&squot;t wasted. &n; *&n; *&t;It may turn out that we&squot;re better off using some sort &n; *&t;of table indirect instruction in a loop with a variable&n; *&t;sized table on the NCR53c710 and newer chips.&n; *&n; * - Checking for reselection (NCR53c710 and better)&n; *&n; * - Handling the details of SCSI context switches (NCR53c710 and better),&n; *&t;such as reprogramming appropriate synchronous parameters, &n; *&t;removing the dsa structure from the NCR&squot;s queue of outstanding&n; *&t;commands, etc.&n; *&n; */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -187,7 +187,7 @@ id|the_template
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Alocate storage space for constant messages, etc. */
+multiline_comment|/* Allocate storage space for constant messages, etc. */
 DECL|variable|NCR53c7xx_zero
 r_static
 r_int
@@ -238,8 +238,8 @@ id|scan_scsis_buf
 l_int|512
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * TODO : &n; *&n; * 1.  Implement single step / trace code?&n; * &n; * 2.  The initial code has been tested on the NCR53c810.  I don&squot;t &n; *     have access to NCR53c700, 700-66 (Forex boards), NCR53c710&n; *     (NCR Pentium systems), NCR53c720, or NCR53c820 boards to finish&n; *     development on those platforms.&n; *&n; *     NCR53c820/720 - need to add wide transfer support, including WDTR &n; *     &t;&t;negotiation, programming of wide transfer capabilities&n; *&t;&t;on reselection and table indirect selection.&n; *&n; *     NCR53c720/710 - need to add fatal interrupt or GEN code for &n; *&t;&t;command completion signaling.   Need to take care of &n; *&t;        ADD WITH CARRY instructions since carry is unimplemented.&n; *&t;&t;Also need to modify all SDID, SCID, etc. registers,&n; *&t;&t;and table indirect select code since these use bit&n; *&t;&t;fielded (ie 1&lt;&lt;target) instead of binary encoded&n; *&t;&t;target ids.  Also, SCNTL3 is _not_ automatically&n; *&t;&t;programmed on selection, so we need to add more code.&n; * &n; *     NCR53c700/700-66 - need to add code to refix addresses on &n; *&t;&t;every nexus change, elimate all table indirect code.&n; *&n; * 3.  The NCR53c7x0 series is very popular on other platforms that &n; *     could be running Linux - ie, some high performance AMIGA SCSI &n; *     boards use it.  &n; *&t;&n; *     So, I should include #ifdef&squot;d code so that it is &n; *     compatable with these systems.&n; *&t;&n; *     Specifically, the little Endian assumptions I made in my &n; *     bit fields need to change, and if the NCR doesn&squot;t see memory&n; *     the right way, we need to provide options to reverse words&n; *     when the scripts are relocated.&n; *&n; * 4.  Implement code to include page table entries for the &n; *     area occupied by memory mapped boards so we don&squot;t have &n; *     to use the potentially slower I/O accesses.&n; */
-multiline_comment|/* &n; * XXX - note that my assembler was modified so that internally,&n; * the names used can take a prefix, so that there is no conflict&n; * between multiple copies of the same script assembled with &n; * different defines.&n; *&n; *&n; * Allow for simultaneous existance of mutliple SCSI scripts so we &n; * can have a single driver binary for all of the family.&n; *&n; * - one for NCR53c700 and NCR53c700-66 chips&t;(not yet supported)&n; * - one for NCR53c710 and NCR53c720 chips&t;(not yet supported)&n; * - one for NCR53c810 and NCR53c820 chips &t;(only the NCR53c810 is&n; *&t;currently supported)&n; *&n; * For the very similar chips, we should probably hack the fixup code&n; * and interrupt code so that it works everywhere, but I suspect the &n; * NCR53c700 is going&n; * to need it&squot;s own fixup routine.&n; */
+multiline_comment|/*&n; * TODO : &n; *&n; * 1.  Implement single step / trace code?&n; * &n; * 2.  The initial code has been tested on the NCR53c810.  I don&squot;t &n; *     have access to NCR53c700, 700-66 (Forex boards), NCR53c710&n; *     (NCR Pentium systems), NCR53c720, or NCR53c820 boards to finish&n; *     development on those platforms.&n; *&n; *     NCR53c820/720 - need to add wide transfer support, including WDTR &n; *     &t;&t;negotiation, programming of wide transfer capabilities&n; *&t;&t;on reselection and table indirect selection.&n; *&n; *     NCR53c720/710 - need to add fatal interrupt or GEN code for &n; *&t;&t;command completion signaling.   Need to take care of &n; *&t;        ADD WITH CARRY instructions since carry is unimplemented.&n; *&t;&t;Also need to modify all SDID, SCID, etc. registers,&n; *&t;&t;and table indirect select code since these use bit&n; *&t;&t;fielded (ie 1&lt;&lt;target) instead of binary encoded&n; *&t;&t;target ids.  Also, SCNTL3 is _not_ automatically&n; *&t;&t;programmed on selection, so we need to add more code.&n; * &n; *     NCR53c700/700-66 - need to add code to refix addresses on &n; *&t;&t;every nexus change, eliminate all table indirect code.&n; *&n; * 3.  The NCR53c7x0 series is very popular on other platforms that &n; *     could be running Linux - ie, some high performance AMIGA SCSI &n; *     boards use it.  &n; *&t;&n; *     So, I should include #ifdef&squot;d code so that it is &n; *     compatible with these systems.&n; *&t;&n; *     Specifically, the little Endian assumptions I made in my &n; *     bit fields need to change, and if the NCR doesn&squot;t see memory&n; *     the right way, we need to provide options to reverse words&n; *     when the scripts are relocated.&n; *&n; * 4.  Implement code to include page table entries for the &n; *     area occupied by memory mapped boards so we don&squot;t have &n; *     to use the potentially slower I/O accesses.&n; */
+multiline_comment|/* &n; * XXX - note that my assembler was modified so that internally,&n; * the names used can take a prefix, so that there is no conflict&n; * between multiple copies of the same script assembled with &n; * different defines.&n; *&n; *&n; * Allow for simultaneous existence of multiple SCSI scripts so we &n; * can have a single driver binary for all of the family.&n; *&n; * - one for NCR53c700 and NCR53c700-66 chips&t;(not yet supported)&n; * - one for NCR53c710 and NCR53c720 chips&t;(not yet supported)&n; * - one for NCR53c810 and NCR53c820 chips &t;(only the NCR53c810 is&n; *&t;currently supported)&n; *&n; * For the very similar chips, we should probably hack the fixup code&n; * and interrupt code so that it works everywhere, but I suspect the &n; * NCR53c700 is going&n; * to need it&squot;s own fixup routine.&n; */
 multiline_comment|/*&n; * Use to translate between device IDs of various types.&n; */
 DECL|struct|pci_chip
 r_struct
@@ -422,7 +422,7 @@ macro_line|#else
 DECL|macro|OVERRIDE_LIMIT
 mdefine_line|#define OVERRIDE_LIMIT commandline_current
 macro_line|#endif
-multiline_comment|/*&n; * Function : static internal_setup(int board, int chip, char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : board - currently, unsupported.  chip - 700, 70066, 710, 720&n; * &t;810, 815, 820, 825, allthough currently only the NCR53c810 is &n; *&t;supported.&n; * &n; */
+multiline_comment|/*&n; * Function : static internal_setup(int board, int chip, char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : board - currently, unsupported.  chip - 700, 70066, 710, 720&n; * &t;810, 815, 820, 825, although currently only the NCR53c810 is &n; *&t;supported.&n; * &n; */
 DECL|function|internal_setup
 r_static
 r_void
@@ -723,22 +723,6 @@ c_func
 (paren
 l_int|825
 )paren
-DECL|variable|NCR53c7x0_sigaction
-r_static
-r_struct
-id|sigaction
-id|NCR53c7x0_sigaction
-op_assign
-(brace
-id|NCR53c7x0_intr
-comma
-l_int|0
-comma
-id|SA_INTERRUPT
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 multiline_comment|/* &n; * Function : static int NCR53c7x0_init (struct Scsi_Host *host)&n; *&n; * Purpose :  initialize the internal structures for a given SCSI host&n; *&n; * Inputs : host - pointer to this host adapter&squot;s structure/ &n; *&n; * Preconditions : when this function is called, the chip_type &n; * &t;field of the hostdata structure MUST have been set.&n; */
 DECL|function|NCR53c7x0_init
 r_static
@@ -851,7 +835,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Set up an interrupt handler if we aren&squot;t allready sharing an IRQ&n;     * with another board.&n;     */
+multiline_comment|/*&n;     * Set up an interrupt handler if we aren&squot;t already sharing an IRQ&n;     * with another board.&n;     */
 r_for
 c_loop
 (paren
@@ -888,12 +872,16 @@ id|search
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
+c_func
 (paren
 id|host-&gt;irq
 comma
-op_amp
-id|NCR53c7x0_sigaction
+id|NCR53c7x0_intr
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;53c7,8xx&quot;
 )paren
 )paren
 (brace
@@ -983,7 +971,7 @@ id|ISTAT_REG_800
 suffix:colon
 id|ISTAT_REG_700
 suffix:semicolon
-multiline_comment|/* &n; * XXX - the NCR53c700 uses bitfielded registers for SCID, SDID, etc,&n; *&t;as does the 710 with one bit per SCSI ID.  Conversly, the NCR&n; * &t;uses a normal, 3 bit binary representation of these values.&n; *&n; * Get the rest of the NCR documentation, and FIND OUT where the change&n; * was.&n; */
+multiline_comment|/* &n; * XXX - the NCR53c700 uses bitfielded registers for SCID, SDID, etc,&n; *&t;as does the 710 with one bit per SCSI ID.  Conversely, the NCR&n; * &t;uses a normal, 3 bit binary representation of these values.&n; *&n; * Get the rest of the NCR documentation, and FIND OUT where the change&n; * was.&n; */
 macro_line|#if 0
 id|tmp
 op_assign
@@ -1081,7 +1069,7 @@ op_amp
 id|CTEST7_SAVE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * On NCR53c700 series chips, DCNTL controls the SCSI clock dvisior,&n;     * on 800 series chips, it allows for a totem-pole IRQ driver.&n;     */
+multiline_comment|/*&n;     * On NCR53c700 series chips, DCNTL controls the SCSI clock divisor,&n;     * on 800 series chips, it allows for a totem-pole IRQ driver.&n;     */
 id|hostdata-&gt;saved_dcntl
 op_assign
 id|NCR53c7x0_read8
@@ -1375,7 +1363,7 @@ id|j
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; * NCR53c700 and NCR53c700-66 chips lack the DSA and use a &n;&t; * different architecture.  For chips using the DSA architecutre,&n;&t; * initialize the per-target synchronous parameters. &n;&t; */
+multiline_comment|/* &n;&t; * NCR53c700 and NCR53c700-66 chips lack the DSA and use a &n;&t; * different architecture.  For chips using the DSA architecture,&n;&t; * initialize the per-target synchronous parameters. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1583,7 +1571,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : static int normal_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int base, int io_port, int irq, int dma, int pcivalid,&n; *&t;unsigned char pci_bus, unsigned char pci_device_fn,&n; *&t;int options);&n; *&n; * Purpose : initializes a NCR53c7,8x0 based on base addresses,&n; *&t;IRQ, and DMA channel.&t;&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatable with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
+multiline_comment|/* &n; * Function : static int normal_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int base, int io_port, int irq, int dma, int pcivalid,&n; *&t;unsigned char pci_bus, unsigned char pci_device_fn,&n; *&t;int options);&n; *&n; * Purpose : initializes a NCR53c7,8x0 based on base addresses,&n; *&t;IRQ, and DMA channel.&t;&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
 DECL|function|normal_init
 r_static
 r_int
@@ -1865,7 +1853,7 @@ op_assign
 id|pci_device_fn
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Being memory mapped is more desireable, since &n;     *&n;     * - Memory accesses may be faster.&n;     *&n;     * - The destination and source addresse spaces are the same for &n;     *&t; all instructions, meaning we don&squot;t have to twiddle dmode or &n;     *&t; any other registers.&n;     *&n;     * So, we try for memory mapped, and if we don&squot;t get it,&n;     * we go for port mapped, and that failing we tell the user&n;     * it can&squot;t work.&n;     */
+multiline_comment|/*&n;     * Being memory mapped is more desirable, since &n;     *&n;     * - Memory accesses may be faster.&n;     *&n;     * - The destination and source address spaces are the same for &n;     *&t; all instructions, meaning we don&squot;t have to twiddle dmode or &n;     *&t; any other registers.&n;     *&n;     * So, we try for memory mapped, and if we don&squot;t get it,&n;     * we go for port mapped, and that failing we tell the user&n;     * it can&squot;t work.&n;     */
 r_if
 c_cond
 (paren
@@ -1982,7 +1970,7 @@ id|instance
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : static int pci_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int bus, int device_fn, int options)&n; *&n; * Purpose : initializes a NCR53c800 family based on the PCI&n; *&t;bus, device, and function location of it.  Allows &n; * &t;reprogramming of latency timer and determining addresses&n; *&t;and weather bus mastering, etc. are OK.&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatable with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
+multiline_comment|/* &n; * Function : static int pci_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int bus, int device_fn, int options)&n; *&n; * Purpose : initializes a NCR53c800 family based on the PCI&n; *&t;bus, device, and function location of it.  Allows &n; * &t;reprogramming of latency timer and determining addresses&n; *&t;and weather bus mastering, etc. are OK.&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
 DECL|function|pci_init
 r_static
 r_int
@@ -2208,7 +2196,7 @@ id|irq
 id|printk
 (paren
 l_string|&quot;scsi-ncr53c7,8xx : error %s not initializing due to error reading configuration space&bslash;n&quot;
-l_string|&quot;&t; perhaps you specied an incorrect PCI bus, device, or function.&bslash;n&quot;
+l_string|&quot;&t; perhaps you specified an incorrect PCI bus, device, or function.&bslash;n&quot;
 comma
 id|pcibios_strerror
 c_func
@@ -2555,7 +2543,7 @@ id|options
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : int NCR53c7xx_detect(Scsi_Host_Template *tpnt)&n; *&n; * Purpose : detects and initializes NCR53c7,8x0 SCSI chips&n; *&t;that were autoprobed, overriden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter&n; * &n; * Returns : number of host adapters detected&n; *&n; */
+multiline_comment|/* &n; * Function : int NCR53c7xx_detect(Scsi_Host_Template *tpnt)&n; *&n; * Purpose : detects and initializes NCR53c7,8x0 SCSI chips&n; *&t;that were autoprobed, overridden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter&n; * &n; * Returns : number of host adapters detected&n; *&n; */
 DECL|function|NCR53c7xx_detect
 r_int
 id|NCR53c7xx_detect
@@ -3092,7 +3080,7 @@ op_plus
 id|TEMP_REG
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * I needed some variables in the script to be accessable to &n;     * both the NCR chip and the host processor. For these variables,&n;     * I made the arbitrary decession to store them directly in the &n;     * hostdata structure rather than in the RELATIVE area of the &n;     * SCRIPTS.&n;     */
+multiline_comment|/*&n;     * I needed some variables in the script to be accessible to &n;     * both the NCR chip and the host processor. For these variables,&n;     * I made the arbitrary decision to store them directly in the &n;     * hostdata structure rather than in the RELATIVE area of the &n;     * SCRIPTS.&n;     */
 id|patch_abs_rwri_data
 (paren
 id|hostdata-&gt;script
@@ -3423,7 +3411,7 @@ id|hostdata-&gt;script
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : static int NCR53c8xx_run_tests (struct Scsi_Host *host)&n; *&n; * Purpose : run various verification tests on the NCR chip, &n; *&t;including interrupt generation, and propper bus mastering&n; * &t;operation.&n; * &n; * Inputs : host - a properly initialized Scsi_Host structure&n; *&n; * Preconditions : the NCR chip must be in a halted state.&n; *&n; * Returns : 0 if all tests were successful, -1 on error.&n; * &n; */
+multiline_comment|/*&n; * Function : static int NCR53c8xx_run_tests (struct Scsi_Host *host)&n; *&n; * Purpose : run various verification tests on the NCR chip, &n; *&t;including interrupt generation, and proper bus mastering&n; * &t;operation.&n; * &n; * Inputs : host - a properly initialized Scsi_Host structure&n; *&n; * Preconditions : the NCR chip must be in a halted state.&n; *&n; * Returns : 0 if all tests were successful, -1 on error.&n; * &n; */
 DECL|function|NCR53c8xx_run_tests
 r_static
 r_int
@@ -4720,7 +4708,7 @@ id|old_level
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : static void intr_break (struct Scsi_Host *host,&n; * &t;struct NCR53c7x0_cmd *cmd)&n; *&n; * Purpose :  Handler for breakpoint interrutps from a SCSI script&n; *&n; * Inputs : host - pointer to this host adapter&squot;s structure,&n; * &t;cmd - pointer to the command (if any) dsa was pointing &n; * &t;to.&n; *&n; */
+multiline_comment|/* &n; * Function : static void intr_break (struct Scsi_Host *host,&n; * &t;struct NCR53c7x0_cmd *cmd)&n; *&n; * Purpose :  Handler for breakpoint interrupts from a SCSI script&n; *&n; * Inputs : host - pointer to this host adapter&squot;s structure,&n; * &t;cmd - pointer to the command (if any) dsa was pointing &n; * &t;to.&n; *&n; */
 DECL|function|intr_break
 r_static
 r_void
@@ -5235,7 +5223,7 @@ l_int|7
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Function : static void synchronous (struct Scsi_Host *host, int target, &n; *&t;char *msg)&n; *&n; * Purpose : reprogram transfers between the selected SCSI initiator and &n; *&t;target for synchronous SCSI transfers such that the synchronous &n; *&t;offset is less than that requested and period at least as long &n; *&t;as that requestion.  Also modify *msg such that it contains &n; *&t;an appropriate response. &n; *&n; * Inputs : host - NCR53c7,8xx SCSI host, target - number SCSI target id,&n; *&t;msg - synchronous tranfer request.&n; */
+multiline_comment|/*&n; * Function : static void synchronous (struct Scsi_Host *host, int target, &n; *&t;char *msg)&n; *&n; * Purpose : reprogram transfers between the selected SCSI initiator and &n; *&t;target for synchronous SCSI transfers such that the synchronous &n; *&t;offset is less than that requested and period at least as long &n; *&t;as that requested.  Also modify *msg such that it contains &n; *&t;an appropriate response. &n; *&n; * Inputs : host - NCR53c7,8xx SCSI host, target - number SCSI target id,&n; *&t;msg - synchronous transfer request.&n; */
 DECL|function|synchronous
 r_static
 r_void
@@ -5286,7 +5274,7 @@ id|scntl3
 comma
 id|sxfer
 suffix:semicolon
-multiline_comment|/* Scale divisor by 10 to accomodate fractions */
+multiline_comment|/* Scale divisor by 10 to accommodate fractions */
 id|desire
 op_assign
 l_int|1000000000L
@@ -5836,7 +5824,7 @@ id|INITIATE_RECOVERY
 suffix:colon
 id|printk
 (paren
-l_string|&quot;scsi%d : extended contingent allegience not supported yet, rejecting&bslash;n&quot;
+l_string|&quot;scsi%d : extended contingent allegiance not supported yet, rejecting&bslash;n&quot;
 comma
 id|host-&gt;host_no
 )paren
@@ -6242,7 +6230,7 @@ suffix:semicolon
 r_return
 id|SPECIFIC_INT_NOTHING
 suffix:semicolon
-multiline_comment|/*&n; * Since contingent allegience conditions are cleared by the next &n; * command issued to a target, we must issue a REQUEST SENSE &n; * command after receiving a CHECK CONDITION status, before&n; * another command is issued.&n; * &n; * Since this NCR53c7x0_cmd will be freed after use, we don&squot;t &n; * care if we step on the various fields, so modify a few things.&n; */
+multiline_comment|/*&n; * Since contingent allegiance conditions are cleared by the next &n; * command issued to a target, we must issue a REQUEST SENSE &n; * command after receiving a CHECK CONDITION status, before&n; * another command is issued.&n; * &n; * Since this NCR53c7x0_cmd will be freed after use, we don&squot;t &n; * care if we step on the various fields, so modify a few things.&n; */
 r_case
 id|A_int_err_check_condition
 suffix:colon
@@ -6281,7 +6269,7 @@ r_return
 id|SPECIFIC_INT_PANIC
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * When a contingent allegience condition is created, the target &n; * reverts to asynchronous transfers.&n; */
+multiline_comment|/*&n; * When a contingent allegiance condition is created, the target &n; * reverts to asynchronous transfers.&n; */
 id|asynchronous
 (paren
 id|host
@@ -6289,7 +6277,7 @@ comma
 id|c-&gt;target
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; * Use normal one-byte selection message, with no attempts to &n;    &t; * restablish synchronous or wide messages since this may&n;    &t; * be the crux of our problem.&n;&t; *&n;&t; * XXX - once SCSI-II tagged queing is implemented, we&squot;ll&n;&t; * &t;have to set this up so that the rest of the DSA&n;&t; *&t;aggrees with this being an untagged queue&squot;d command.&n;&t; */
+multiline_comment|/* &n;&t; * Use normal one-byte selection message, with no attempts to &n;    &t; * reestablish synchronous or wide messages since this may&n;    &t; * be the crux of our problem.&n;&t; *&n;&t; * XXX - once SCSI-II tagged queuing is implemented, we&squot;ll&n;&t; * &t;have to set this up so that the rest of the DSA&n;&t; *&t;agrees with this being an untagged queue&squot;d command.&n;&t; */
 id|patch_dsa_32
 (paren
 id|cmd-&gt;dsa
@@ -6441,7 +6429,7 @@ l_int|3
 op_assign
 id|hostdata-&gt;E_other_transfer
 suffix:semicolon
-multiline_comment|/*&n;    &t; * Currently, this command is flagged as completed, ie &n;    &t; * it has valid status and message data.  Reflag it as&n;    &t; * incomplete.  Q - need to do something so that original&n;&t; * status, etc are uesed.&n;    &t; */
+multiline_comment|/*&n;    &t; * Currently, this command is flagged as completed, ie &n;    &t; * it has valid status and message data.  Reflag it as&n;    &t; * incomplete.  Q - need to do something so that original&n;&t; * status, etc are used.&n;    &t; */
 id|cmd-&gt;cmd-&gt;result
 op_assign
 l_int|0xffff
@@ -8820,7 +8808,7 @@ id|tmp-&gt;prev
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* &n;     * Calculate addresses of dynamnic code to fill in DSA&n;     */
+multiline_comment|/* &n;     * Calculate addresses of dynamic code to fill in DSA&n;     */
 id|tmp-&gt;data_transfer_start
 op_assign
 id|tmp-&gt;dsa
@@ -9177,7 +9165,7 @@ l_int|2
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* &n; * XXX - I&squot;m undecided weather all of this nonsense is faster&n; * in the long run, or weather I should just go and implement a loop&n; * on the NCR chip using table indirect mode?&n; *&n; * In any case, this is how it _must_ be done for 53c700/700-66 chips,&n; * so this stays even when we come up with something better.&n; *&n; * When we&squot;re limited to 1 simultaenous command, no overlapping processing,&n; * we&squot;re seeing 630K/sec, with 7% CPU usage on a slow Syquest 45M&n; * drive.&n; *&n; * Not bad, not good. We&squot;ll see.&n; */
+multiline_comment|/* &n; * XXX - I&squot;m undecided weather all of this nonsense is faster&n; * in the long run, or weather I should just go and implement a loop&n; * on the NCR chip using table indirect mode?&n; *&n; * In any case, this is how it _must_ be done for 53c700/700-66 chips,&n; * so this stays even when we come up with something better.&n; *&n; * When we&squot;re limited to 1 simultaneous command, no overlapping processing,&n; * we&squot;re seeing 630K/sec, with 7% CPU usage on a slow Syquest 45M&n; * drive.&n; *&n; * Not bad, not good. We&squot;ll see.&n; */
 r_for
 c_loop
 (paren
@@ -9855,7 +9843,7 @@ id|cmd-&gt;result
 op_assign
 l_int|0xffff
 suffix:semicolon
-multiline_comment|/* The NCR will overwite message&n;&t;&t;&t;&t;&t;   and status with valid data */
+multiline_comment|/* The NCR will overwrite message&n;&t;&t;&t;&t;&t;   and status with valid data */
 id|cmd-&gt;host_scribble
 op_assign
 (paren
@@ -9871,7 +9859,7 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * On NCR53c710 and better chips, we have two issue queues : &n;     * The queue maintained by the Linux driver, and the queue &n;     * maintained by the NCR chip.&n;     * &n;     * The Linux queue includes commands which have been generated,&n;     * but may be unable to execute because the device is busy, &n;     * where as the NCR queue contains commands to issue as soon&n;     * as BUS FREE is detected.&n;     *&n;     * NCR53c700 and NCR53c700-66 chips use only the Linux driver&n;     * queue. &n;     * &n;     * So, insert into the Linux queue if the device is busy or &n;     * we are running on an old chip, otherwise insert directly into&n;     * the NCR queue.&n;     */
-multiline_comment|/*&n;     * REQUEST sense commands need to be executed before all other &n;     * commands since any command will clear the contingent allegience &n;     * condition that exists and the sense data is only guranteed to be &n;     * valid while the condition exists.&n;     */
+multiline_comment|/*&n;     * REQUEST sense commands need to be executed before all other &n;     * commands since any command will clear the contingent allegiance &n;     * condition that exists and the sense data is only guaranteed to be &n;     * valid while the condition exists.&n;     */
 id|old_level
 op_assign
 id|splx
@@ -11054,7 +11042,7 @@ id|cmd
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : very wierd.&bslash;n&quot;
+l_string|&quot;scsi%d : very weird.&bslash;n&quot;
 comma
 id|host-&gt;host_no
 )paren
@@ -11076,7 +11064,7 @@ id|cmd-&gt;cmd
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : wierd.  NCR53c7x0_cmd has no Scsi_Cmnd&bslash;n&quot;
+l_string|&quot;scsi%d : weird.  NCR53c7x0_cmd has no Scsi_Cmnd&bslash;n&quot;
 comma
 id|host-&gt;host_no
 )paren
@@ -11125,7 +11113,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Important - remove from list _before_ done is called */
-multiline_comment|/* XXX - SLL.  Seems like DLL is unecessary */
+multiline_comment|/* XXX - SLL.  Seems like DLL is unnecessary */
 r_if
 c_cond
 (paren
@@ -12161,7 +12149,7 @@ suffix:semicolon
 )brace
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; * MSGOUT phase - shouldn&squot;t happen, because we haven&squot;t &n;&t; *&t;&t;asserted ATN.&n;&t; * CMDOUT phase - shouldn&squot;t happen, since we&squot;ve allready&n;&t; * &t;&t;sent a valid command.&n;&t; * DATAIN/DATAOUT - other one shouldn&squot;t happen, since &n;&t; * &t;&t;SCSI commands can ONLY have one or the other.&n;&t; *&n;&t; * So, we abort the command if one of these things happens.&n;&t; */
+multiline_comment|/*&n;&t; * MSGOUT phase - shouldn&squot;t happen, because we haven&squot;t &n;&t; *&t;&t;asserted ATN.&n;&t; * CMDOUT phase - shouldn&squot;t happen, since we&squot;ve already&n;&t; * &t;&t;sent a valid command.&n;&t; * DATAIN/DATAOUT - other one shouldn&squot;t happen, since &n;&t; * &t;&t;SCSI commands can ONLY have one or the other.&n;&t; *&n;&t; * So, we abort the command if one of these things happens.&n;&t; */
 r_default
 suffix:colon
 id|printk
@@ -12387,7 +12375,7 @@ c_func
 id|DSA_REG
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * DSTAT_ABRT is the aborted interrupt.  This is set whenver the &n;     * SCSI chip is aborted.  &n;     * &n;     * With NCR53c700 and NCR53c700-66 style chips, we should only &n;     * get this when the chip is currently running the accept &n;     * reselect/select code and we have set the abort bit in the &n;     * ISTAT register.&n;     *&n;     */
+multiline_comment|/*&n;     * DSTAT_ABRT is the aborted interrupt.  This is set whenever the &n;     * SCSI chip is aborted.  &n;     * &n;     * With NCR53c700 and NCR53c700-66 style chips, we should only &n;     * get this when the chip is currently running the accept &n;     * reselect/select code and we have set the abort bit in the &n;     * ISTAT register.&n;     *&n;     */
 r_if
 c_cond
 (paren
@@ -13195,7 +13183,7 @@ r_return
 id|size
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : int NCR53c7xx_abort (Scsi_Cmnd *cmd)&n; * &n; * Purpose : Abort an erratant SCSI command, doing all necessary&n; *&t;cleanup of the issue_queue, running_list, shared Linux/NCR&n; *&t;dsa issue and reconnect queues.&n; *&n; * Inputs : cmd - command to abort, code - entire result field&n; *&n; * Returns : 0 on success, -1 on failure.&n; */
+multiline_comment|/*&n; * Function : int NCR53c7xx_abort (Scsi_Cmnd *cmd)&n; * &n; * Purpose : Abort an errant SCSI command, doing all necessary&n; *&t;cleanup of the issue_queue, running_list, shared Linux/NCR&n; *&t;dsa issue and reconnect queues.&n; *&n; * Inputs : cmd - command to abort, code - entire result field&n; *&n; * Returns : 0 on success, -1 on failure.&n; */
 DECL|function|NCR53c7xx_abort
 r_int
 id|NCR53c7xx_abort
@@ -13360,7 +13348,7 @@ r_return
 id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * That failing, the command could be in our list of allready executing &n; * commands.  If this is the case, drastic measures are called for.  &n; */
+multiline_comment|/* &n; * That failing, the command could be in our list of already executing &n; * commands.  If this is the case, drastic measures are called for.  &n; */
 r_for
 c_loop
 (paren

@@ -128,7 +128,7 @@ l_int|NULL
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
-multiline_comment|/* This is a heuristic to determine if a file is text of binary.  If it&n; * is text, then we translate all 0x0d characters to spaces.  If the 0x0d&n; * character is not preceeded or followed by a 0x0a, then we turn it into&n; * a 0x0a.  A control-Z is also turned into a linefeed.&n; */
+multiline_comment|/* This is a heuristic to determine if a file is text of binary.  If it&n; * is text, then we translate all 0x0d characters to spaces.  If the 0x0d&n; * character is not preceded or followed by a 0x0a, then we turn it into&n; * a 0x0a.  A control-Z is also turned into a linefeed.&n; */
 DECL|function|unixify_to_fs
 r_static
 r_inline

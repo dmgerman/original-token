@@ -68,7 +68,7 @@ DECL|macro|ST1_EOC
 mdefine_line|#define ST1_EOC&t;&t;0x80&t;&t;/* End Of Cylinder */
 multiline_comment|/* Bits of FD_ST2 */
 DECL|macro|ST2_MAM
-mdefine_line|#define ST2_MAM&t;&t;0x01&t;&t;/* Missing Addess Mark (again) */
+mdefine_line|#define ST2_MAM&t;&t;0x01&t;&t;/* Missing Address Mark (again) */
 DECL|macro|ST2_BC
 mdefine_line|#define ST2_BC&t;&t;0x02&t;&t;/* Bad Cylinder */
 DECL|macro|ST2_SNS

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Microsoft busmouse driver based on Logitech driver (see busmouse.c)&n; *&n; * Microsoft BusMouse support by Teemu Rantanen (tvr@cs.hut.fi) (02AUG92)&n; *&n; * Microsoft Bus Mouse support modified by Derrick Cole (cole@concert.net)&n; *    8/28/92&n; *&n; * Microsoft Bus Mouse support folded into 0.97pl4 code&n; *    by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; * Changes:  Logitech and Microsoft support in the same kernel.&n; *           Defined new constants in busmouse.h for MS mice.&n; *           Added int mse_busmouse_type to distinguish busmouse types&n; *           Added a couple of new functions to handle differences in using&n; *             MS vs. Logitech (where the int variable wasn&squot;t appropriate).&n; *&n; * Modified by Peter Cervasio (address above) (26SEP92)&n; * Changes:  Included code to (properly?) detect when a Microsoft mouse is&n; *           really attached to the machine.  Don&squot;t know what this does to&n; *           Logitech bus mice, but all it does is read ports.&n; *&n; * Modified by Christoph Niemann (niemann@rubdv15.etdv.ruhr-uni-bochum.de)&n; * Changes:  Better interrupt-handler (like in busmouse.c).&n; *&t;     Some changes to reduce code-size.&n; *&t;     Changed dectection code to use inb_p() instead of doing empty&n; *&t;     loops to delay i/o.&n; *&n; * version 0.3a&n; */
+multiline_comment|/*&n; * Microsoft busmouse driver based on Logitech driver (see busmouse.c)&n; *&n; * Microsoft BusMouse support by Teemu Rantanen (tvr@cs.hut.fi) (02AUG92)&n; *&n; * Microsoft Bus Mouse support modified by Derrick Cole (cole@concert.net)&n; *    8/28/92&n; *&n; * Microsoft Bus Mouse support folded into 0.97pl4 code&n; *    by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; * Changes:  Logitech and Microsoft support in the same kernel.&n; *           Defined new constants in busmouse.h for MS mice.&n; *           Added int mse_busmouse_type to distinguish busmouse types&n; *           Added a couple of new functions to handle differences in using&n; *             MS vs. Logitech (where the int variable wasn&squot;t appropriate).&n; *&n; * Modified by Peter Cervasio (address above) (26SEP92)&n; * Changes:  Included code to (properly?) detect when a Microsoft mouse is&n; *           really attached to the machine.  Don&squot;t know what this does to&n; *           Logitech bus mice, but all it does is read ports.&n; *&n; * Modified by Christoph Niemann (niemann@rubdv15.etdv.ruhr-uni-bochum.de)&n; * Changes:  Better interrupt-handler (like in busmouse.c).&n; *&t;     Some changes to reduce code-size.&n; *&t;     Changed detection code to use inb_p() instead of doing empty&n; *&t;     loops to delay i/o.&n; *&n; * version 0.3a&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/busmouse.h&gt;
@@ -280,6 +280,10 @@ c_func
 id|MOUSE_IRQ
 comma
 id|ms_mouse_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;MS Busmouse&quot;
 )paren
 )paren
 (brace

@@ -2254,6 +2254,10 @@ c_func
 id|irq_level
 comma
 id|aha1740_intr_handle
+comma
+l_int|0
+comma
+l_string|&quot;aha1740&quot;
 )paren
 )paren
 (brace

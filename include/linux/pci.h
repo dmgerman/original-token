@@ -87,7 +87,7 @@ DECL|macro|PCI_BIST_START
 mdefine_line|#define PCI_BIST_START&t;&t;0x40&t;/* 1 to start BIST, 2 secs or less */
 DECL|macro|PCI_BIST_CAPABLE
 mdefine_line|#define PCI_BIST_CAPABLE&t;0x80&t;/* 1 if BIST capable */
-multiline_comment|/*&n; * Base adddresses specify locations in memory or I/O space.&n; * Decoded size can be determined by writing a value of &n; * 0xffffffff to the register, and reading it back.  Only &n; * 1 bits are decoded.&n; */
+multiline_comment|/*&n; * Base addresses specify locations in memory or I/O space.&n; * Decoded size can be determined by writing a value of &n; * 0xffffffff to the register, and reading it back.  Only &n; * 1 bits are decoded.&n; */
 DECL|macro|PCI_BASE_ADDRESS_0
 mdefine_line|#define PCI_BASE_ADDRESS_0&t;0x10&t;/* 32 bits */
 DECL|macro|PCI_BASE_ADDRESS_1

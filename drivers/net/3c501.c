@@ -652,6 +652,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|el_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;3c501&quot;
 )paren
 )paren
 (brace

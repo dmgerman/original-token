@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independant device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
 multiline_comment|/*&n; *&t;A lot of these includes will be going walkies very soon &n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -385,7 +385,7 @@ id|pt1-&gt;next
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*****************************************************************************************&n;&n;&t;&t;&t;    Device Inteface Subroutines&n;&n;******************************************************************************************/
+multiline_comment|/*****************************************************************************************&n;&n;&t;&t;&t;    Device Interface Subroutines&n;&n;******************************************************************************************/
 multiline_comment|/* &n; *&t;Find an interface by name.&n; */
 DECL|function|dev_get
 r_struct
@@ -674,7 +674,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* used to say if the packet should go&t;*/
 multiline_comment|/* at the front or the back of the&t;*/
-multiline_comment|/* queue - front is a retranmsit try&t;*/
+multiline_comment|/* queue - front is a retransmit try&t;*/
 r_if
 c_cond
 (paren
@@ -1128,7 +1128,7 @@ op_assign
 id|xtime
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Check that we aren&squot;t oevrdoing things.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Check that we aren&squot;t overdoing things.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1515,7 +1515,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/**********************************************************************************&n;&n;&t;&t;&t;Receive Queue Processor&n;&t;&t;&t;&n;***********************************************************************************/
-multiline_comment|/*&n; *&t;This is a single non-rentrant routine which takes the received packet&n; *&t;queue and throws it at the networking layers in the hope that something&n; *&t;useful will emerge.&n; */
+multiline_comment|/*&n; *&t;This is a single non-reentrant routine which takes the received packet&n; *&t;queue and throws it at the networking layers in the hope that something&n; *&t;useful will emerge.&n; */
 DECL|variable|in_bh
 r_volatile
 r_char
@@ -1523,7 +1523,7 @@ id|in_bh
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Non-rentrant remember */
+multiline_comment|/* Non-reentrant remember */
 DECL|function|in_net_bh
 r_int
 id|in_net_bh
@@ -2393,7 +2393,7 @@ r_return
 id|size
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Called from the PROCfs module. This now uses the new arbitary sized /proc/net interface&n; *&t;to create /proc/net/dev&n; */
+multiline_comment|/*&n; *&t;Called from the PROCfs module. This now uses the new arbitrary sized /proc/net interface&n; *&t;to create /proc/net/dev&n; */
 DECL|function|dev_get_info
 r_int
 id|dev_get_info
@@ -2968,7 +2968,7 @@ op_complement
 id|IFF_UP
 suffix:semicolon
 )brace
-multiline_comment|/* Didnt open so down the if */
+multiline_comment|/* Didn&squot;t open so down the if */
 )brace
 )brace
 r_break
@@ -3325,7 +3325,7 @@ suffix:semicolon
 r_case
 id|SIOCGIFMETRIC
 suffix:colon
-multiline_comment|/* Get the metric on the inteface (currently unused) */
+multiline_comment|/* Get the metric on the interface (currently unused) */
 id|ifr.ifr_metric
 op_assign
 id|dev-&gt;metric

@@ -81,7 +81,7 @@ mdefine_line|#define CMD_SUSP&t;0x4000&t;/* Suspend after doing cmd. */
 DECL|macro|CMD_INTR
 mdefine_line|#define CMD_INTR&t;0x2000&t;/* Interrupt after doing cmd. */
 DECL|macro|CMD_FLEX
-mdefine_line|#define CMD_FLEX&t;0x0008&t;/* Enable flexable memory model */
+mdefine_line|#define CMD_FLEX&t;0x0008&t;/* Enable flexible memory model */
 DECL|enum|commands
 r_enum
 id|commands
@@ -2059,6 +2059,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|i596_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;apricot&quot;
 )paren
 )paren
 (brace
@@ -3698,7 +3702,7 @@ op_or_assign
 id|RX_START
 suffix:semicolon
 )brace
-multiline_comment|/* acknowlage the interrupt */
+multiline_comment|/* acknowledge the interrupt */
 multiline_comment|/*&n;    if ((lp-&gt;scb.cmd != (struct i596_cmd *) -1) &amp;&amp; (dev-&gt;start)) ack_cmd |= CUC_START;&n;*/
 id|boguscnt
 op_assign

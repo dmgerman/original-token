@@ -189,7 +189,7 @@ DECL|member|x_char
 r_int
 id|x_char
 suffix:semicolon
-multiline_comment|/* xon/xoff characater */
+multiline_comment|/* xon/xoff character */
 DECL|member|close_delay
 r_int
 id|close_delay

@@ -107,10 +107,10 @@ DECL|macro|VIDEO_TYPE_EGAM
 mdefine_line|#define VIDEO_TYPE_EGAM&t;&t;0x20&t;/* EGA/VGA in Monochrome Mode&t;*/
 DECL|macro|VIDEO_TYPE_EGAC
 mdefine_line|#define VIDEO_TYPE_EGAC&t;&t;0x21&t;/* EGA/VGA in Color Mode&t;*/
-multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR ahs no character etc)&n; */
+multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR has no character etc)&n; */
 DECL|macro|__DISABLED_CHAR
 mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;
-multiline_comment|/*&n; * This is the flip buffer used for the tty driver.  The buffer is&n; * located in the tty structure, and is used as a high speed interface&n; * between the tty driver and the tty line discpline.&n; */
+multiline_comment|/*&n; * This is the flip buffer used for the tty driver.  The buffer is&n; * located in the tty structure, and is used as a high speed interface&n; * between the tty driver and the tty line discipline.&n; */
 DECL|macro|TTY_FLIPBUF_SIZE
 mdefine_line|#define TTY_FLIPBUF_SIZE 512
 DECL|struct|tty_flip_buffer
@@ -442,7 +442,7 @@ id|driver_data
 suffix:semicolon
 DECL|macro|N_TTY_BUF_SIZE
 mdefine_line|#define N_TTY_BUF_SIZE 4096
-multiline_comment|/*&n;&t; * The following is data for the N_TTY line discpline.  For&n;&t; * historical reasons, this is included in the tty structure.&n;&t; */
+multiline_comment|/*&n;&t; * The following is data for the N_TTY line discipline.  For&n;&t; * historical reasons, this is included in the tty structure.&n;&t; */
 DECL|member|column
 r_int
 r_int
@@ -542,7 +542,7 @@ suffix:semicolon
 multiline_comment|/* tty magic number */
 DECL|macro|TTY_MAGIC
 mdefine_line|#define TTY_MAGIC&t;&t;0x5401
-multiline_comment|/*&n; * These bits are used in the flags field of the tty structure.&n; * &n; * So that interrupts won&squot;t be able to mess up the queues,&n; * copy_to_cooked must be atomic with repect to itself, as must&n; * tty-&gt;write.  Thus, you must use the inline functions set_bit() and&n; * clear_bit() to make things atomic.&n; */
+multiline_comment|/*&n; * These bits are used in the flags field of the tty structure.&n; * &n; * So that interrupts won&squot;t be able to mess up the queues,&n; * copy_to_cooked must be atomic with respect to itself, as must&n; * tty-&gt;write.  Thus, you must use the inline functions set_bit() and&n; * clear_bit() to make things atomic.&n; */
 DECL|macro|TTY_THROTTLED
 mdefine_line|#define TTY_THROTTLED 0
 DECL|macro|TTY_IO_ERROR

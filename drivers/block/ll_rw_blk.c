@@ -1554,7 +1554,7 @@ op_assign
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/* Verify requested block sizees.  */
+multiline_comment|/* Verify requested block sizes.  */
 r_for
 c_loop
 (paren

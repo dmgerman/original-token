@@ -1219,6 +1219,10 @@ c_func
 id|dev-&gt;irq
 comma
 id|plip_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;plip&quot;
 )paren
 op_ne
 l_int|0
@@ -1591,7 +1595,7 @@ id|ETH_P_IP
 id|printk
 c_func
 (paren
-l_string|&quot;plip_rebuild_header: Don&squot;t know how to resolve type %d addreses?&bslash;n&quot;
+l_string|&quot;plip_rebuild_header: Don&squot;t know how to resolve type %d addresses?&bslash;n&quot;
 comma
 (paren
 r_int

@@ -2,7 +2,7 @@ macro_line|#ifndef _LINUX_NFS_MOUNT_H
 DECL|macro|_LINUX_NFS_MOUNT_H
 mdefine_line|#define _LINUX_NFS_MOUNT_H
 multiline_comment|/*&n; *  linux/include/linux/nfs_mount.h&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  structure passed from user-space to kernel-space during an nfs mount&n; */
-multiline_comment|/*&n; * WARNING!  Do not delete or change the order of these fields.  If&n; * a new field is required then add it to the end.  The version field&n; * tracks which fields are present.  This will ensure some measure of&n; * mount-to-kernel version compatibilty.  Some of these aren&squot;t used yet&n; * but here they are anyway.&n; */
+multiline_comment|/*&n; * WARNING!  Do not delete or change the order of these fields.  If&n; * a new field is required then add it to the end.  The version field&n; * tracks which fields are present.  This will ensure some measure of&n; * mount-to-kernel version compatibility.  Some of these aren&squot;t used yet&n; * but here they are anyway.&n; */
 DECL|macro|NFS_MOUNT_VERSION
 mdefine_line|#define NFS_MOUNT_VERSION&t;1&t;/* current version */
 DECL|struct|nfs_mount_data

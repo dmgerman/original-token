@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1992 by Jacques Gelinas&n; *&t;inpired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1992 by Jacques Gelinas&n; *&t;inspired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,7 +13,7 @@ DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 DECL|macro|Printk
 mdefine_line|#define Printk(x)&t;printk x
-multiline_comment|/*&n;&t;Read the data associate with the symlink.&n;&t;Return lenght read in buffer or  a negative error code.&n;*/
+multiline_comment|/*&n;&t;Read the data associate with the symlink.&n;&t;Return length read in buffer or  a negative error code.&n;*/
 DECL|function|umsdos_readlink_x
 r_static
 r_int
@@ -107,7 +107,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Follow a symbolic link chain by calling open_namei recursivly&n;&t;until an inode is found.&n;&n;&t;Return 0 if ok, or a negative error code if not.&n;*/
+multiline_comment|/*&n;&t;Follow a symbolic link chain by calling open_namei recursively&n;&t;until an inode is found.&n;&n;&t;Return 0 if ok, or a negative error code if not.&n;*/
 DECL|function|UMSDOS_follow_link
 r_static
 r_int

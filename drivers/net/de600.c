@@ -141,11 +141,11 @@ DECL|macro|HI_NIBBLE
 mdefine_line|#define HI_NIBBLE&t;0x08 /* read/write the high nibble of data,&n;&t;&t;&t;&t;or-ed with rest of command */
 multiline_comment|/*&n; * command register, accessed through DATA_PORT with low bits = COMMAND&n; */
 DECL|macro|RX_ALL
-mdefine_line|#define RX_ALL&t;&t;0x01 /* PROMISCIOUS */
+mdefine_line|#define RX_ALL&t;&t;0x01 /* PROMISCUOUS */
 DECL|macro|RX_BP
-mdefine_line|#define RX_BP&t;&t;0x02 /* default: BROADCAST &amp; PHYSICAL ADRESS */
+mdefine_line|#define RX_BP&t;&t;0x02 /* default: BROADCAST &amp; PHYSICAL ADDRESS */
 DECL|macro|RX_MBP
-mdefine_line|#define RX_MBP&t;&t;0x03 /* MULTICAST, BROADCAST &amp; PHYSICAL ADRESS */
+mdefine_line|#define RX_MBP&t;&t;0x03 /* MULTICAST, BROADCAST &amp; PHYSICAL ADDRESS */
 DECL|macro|TX_ENABLE
 mdefine_line|#define TX_ENABLE&t;0x04 /* bit 2 */
 DECL|macro|RX_ENABLE
@@ -557,6 +557,10 @@ c_func
 id|DE600_IRQ
 comma
 id|de600_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;de600&quot;
 )paren
 )paren
 (brace
@@ -2286,7 +2290,7 @@ DECL|macro|DE600_MAX_WINDOW
 mdefine_line|#define DE600_MAX_WINDOW 2048
 DECL|macro|DE600_TCP_WINDOW_DIFF
 mdefine_line|#define DE600_TCP_WINDOW_DIFF 1024
-multiline_comment|/*&n; * Copied from &quot;net/inet/sock.c&quot;&n; *&n; * Sets a lower max receive window in order to achieve &lt;= 2&n; * packets arriving at the adapter in fast succession.&n; * (No way that a DE-600 can keep up with a net saturated&n; *  with packets homing in on it :-( )&n; *&n; * Since there are only 2 receive buffers in the DE-600&n; * and it takes some time to copy from the adapter,&n; * this is absolutely necessary for any TCP performance whatsoever!&n; *&n; * Note that the returned window info will never be smaller than&n; * DE600_MIN_WINDOW, i.e. 1024&n; * This differs from the standard function, that can return an&n; * arbitraily small window!&n; */
+multiline_comment|/*&n; * Copied from &quot;net/inet/sock.c&quot;&n; *&n; * Sets a lower max receive window in order to achieve &lt;= 2&n; * packets arriving at the adapter in fast succession.&n; * (No way that a DE-600 can keep up with a net saturated&n; *  with packets homing in on it :-( )&n; *&n; * Since there are only 2 receive buffers in the DE-600&n; * and it takes some time to copy from the adapter,&n; * this is absolutely necessary for any TCP performance whatsoever!&n; *&n; * Note that the returned window info will never be smaller than&n; * DE600_MIN_WINDOW, i.e. 1024&n; * This differs from the standard function, that can return an&n; * arbitrarily small window!&n; */
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 r_static

@@ -13,7 +13,7 @@ mdefine_line|#define SIG(A,B) ((A &lt;&lt; 8) | B)
 multiline_comment|/* This is a way of ensuring that we have something in the system&n;   use fields that is compatible with Rock Ridge */
 DECL|macro|CHECK_SP
 mdefine_line|#define CHECK_SP(FAIL)&t;       &t;&t;&t;&bslash;&n;      if(rr-&gt;u.SP.magic[0] != 0xbe) FAIL;&t;&bslash;&n;      if(rr-&gt;u.SP.magic[1] != 0xef) FAIL;
-multiline_comment|/* We define a series of macros because each function must do exactly the&n;   same thing in certain places.  We use the macros to ensure that everyting&n;   is done correctly */
+multiline_comment|/* We define a series of macros because each function must do exactly the&n;   same thing in certain places.  We use the macros to ensure that everything&n;   is done correctly */
 DECL|macro|CONTINUE_DECLS
 mdefine_line|#define CONTINUE_DECLS &bslash;&n;  int cont_extent = 0, cont_offset = 0, cont_size = 0;   &bslash;&n;  void * buffer = 0
 DECL|macro|CHECK_CE

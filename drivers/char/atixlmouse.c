@@ -305,6 +305,10 @@ c_func
 id|ATIXL_MOUSE_IRQ
 comma
 id|mouse_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;ATIXL mouse&quot;
 )paren
 )paren
 (brace

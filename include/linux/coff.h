@@ -1,11 +1,11 @@
-multiline_comment|/* This file is derrived from the GAS 2.1.4 assembler control file.&n;   The GAS product is under the GNU Public License, version 2 or later.&n;   As such, this file is also uder that license.&n;&n;   If the file format changes in the COFF object, this file should be&n;   subsequently updated to reflect the changes.&n;&n;   The actual loader module only uses a few of these structures. The full&n;   set is documented here because I received the full set. If you wish&n;   more information about COFF, then O&squot;Rielly has a very excellent book.&n;*/
+multiline_comment|/* This file is derived from the GAS 2.1.4 assembler control file.&n;   The GAS product is under the GNU Public License, version 2 or later.&n;   As such, this file is also under that license.&n;&n;   If the file format changes in the COFF object, this file should be&n;   subsequently updated to reflect the changes.&n;&n;   The actual loader module only uses a few of these structures. The full&n;   set is documented here because I received the full set. If you wish&n;   more information about COFF, then O&squot;Reilly has a very excellent book.&n;*/
 DECL|macro|E_SYMNMLEN
 mdefine_line|#define  E_SYMNMLEN  8   /* Number of characters in a symbol name         */
 DECL|macro|E_FILNMLEN
 mdefine_line|#define  E_FILNMLEN 14   /* Number of characters in a file name           */
 DECL|macro|E_DIMNUM
 mdefine_line|#define  E_DIMNUM    4   /* Number of array dimensions in auxiliary entry */
-multiline_comment|/*&n; * These defines are byte order independant. There is no alignment of fields&n; * permitted in the structures. Therefore they are declared as characters&n; * and the values loaded from the character positions. It also makes it&n; * nice to have it &quot;endian&quot; independant.&n; */
+multiline_comment|/*&n; * These defines are byte order independent. There is no alignment of fields&n; * permitted in the structures. Therefore they are declared as characters&n; * and the values loaded from the character positions. It also makes it&n; * nice to have it &quot;endian&quot; independent.&n; */
 multiline_comment|/* Load a short int from the following tables with little-endian formats */
 DECL|macro|COFF_SHORT_L
 mdefine_line|#define COFF_SHORT_L(ps) ((short)(((unsigned short)((unsigned char)ps[1])&lt;&lt;8)|&bslash;&n;&t;&t;&t;&t;  ((unsigned short)((unsigned char)ps[0]))))
@@ -18,7 +18,7 @@ mdefine_line|#define COFF_SHORT_H(ps) ((short)(((unsigned short)((unsigned char)
 multiline_comment|/* Load a long int from the following tables with big-endian formats */
 DECL|macro|COFF_LONG_H
 mdefine_line|#define COFF_LONG_H(ps) (((long)(((unsigned long)((unsigned char)ps[0])&lt;&lt;24) |&bslash;&n;&t;&t;&t;&t; ((unsigned long)((unsigned char)ps[1])&lt;&lt;16) |&bslash;&n;&t;&t;&t;&t; ((unsigned long)((unsigned char)ps[2])&lt;&lt;8)  |&bslash;&n;&t;&t;&t;&t; ((unsigned long)((unsigned char)ps[3])))))
-multiline_comment|/* These may be overriden later by brain dead implementations which generate&n;   a big-endian header with little-endian data. In that case, generate a&n;   replacement macro which tests a flag and uses either of the two above&n;   as appropriate. */
+multiline_comment|/* These may be overridden later by brain dead implementations which generate&n;   a big-endian header with little-endian data. In that case, generate a&n;   replacement macro which tests a flag and uses either of the two above&n;   as appropriate. */
 DECL|macro|COFF_LONG
 mdefine_line|#define COFF_LONG(v)   COFF_LONG_L(v)
 DECL|macro|COFF_SHORT
@@ -87,7 +87,7 @@ suffix:semicolon
 multiline_comment|/* flags&t;&t;&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *   Bits for f_flags:&n; *&n; *&t;F_RELFLG&t;relocation info stripped from file&n; *&t;F_EXEC&t;&t;file is executable  (i.e. no unresolved externel&n; *&t;&t;&t;references)&n; *&t;F_LNNO&t;&t;line nunbers stripped from file&n; *&t;F_LSYMS&t;&t;local symbols stripped from file&n; *&t;F_MINMAL&t;this is a minimal object file (&quot;.m&quot;) output of fextract&n; *&t;F_UPDATE&t;this is a fully bound update file, output of ogen&n; *&t;F_SWABD&t;&t;this file has had its bytes swabbed (in names)&n; *&t;F_AR16WR&t;this file has the byte ordering of an AR16WR&n; *&t;&t;&t;(e.g. 11/70) machine&n; *&t;F_AR32WR&t;this file has the byte ordering of an AR32WR machine&n; *&t;&t;&t;(e.g. vax and iNTEL 386)&n; *&t;F_AR32W&t;&t;this file has the byte ordering of an AR32W machine&n; *&t;&t;&t;(e.g. 3b,maxi)&n; *&t;F_PATCH&t;&t;file contains &quot;patch&quot; list in optional header&n; *&t;F_NODF&t;&t;(minimal file only) no decision functions for&n; *&t;&t;&t;replaced functions&n; */
+multiline_comment|/*&n; *   Bits for f_flags:&n; *&n; *&t;F_RELFLG&t;relocation info stripped from file&n; *&t;F_EXEC&t;&t;file is executable  (i.e. no unresolved external&n; *&t;&t;&t;references)&n; *&t;F_LNNO&t;&t;line numbers stripped from file&n; *&t;F_LSYMS&t;&t;local symbols stripped from file&n; *&t;F_MINMAL&t;this is a minimal object file (&quot;.m&quot;) output of fextract&n; *&t;F_UPDATE&t;this is a fully bound update file, output of ogen&n; *&t;F_SWABD&t;&t;this file has had its bytes swabbed (in names)&n; *&t;F_AR16WR&t;this file has the byte ordering of an AR16WR&n; *&t;&t;&t;(e.g. 11/70) machine&n; *&t;F_AR32WR&t;this file has the byte ordering of an AR32WR machine&n; *&t;&t;&t;(e.g. vax and iNTEL 386)&n; *&t;F_AR32W&t;&t;this file has the byte ordering of an AR32W machine&n; *&t;&t;&t;(e.g. 3b,maxi)&n; *&t;F_PATCH&t;&t;file contains &quot;patch&quot; list in optional header&n; *&t;F_NODF&t;&t;(minimal file only) no decision functions for&n; *&t;&t;&t;replaced functions&n; */
 DECL|macro|COFF_F_RELFLG
 mdefine_line|#define  COFF_F_RELFLG&t;&t;0000001
 DECL|macro|COFF_F_EXEC
@@ -210,7 +210,7 @@ mdefine_line|#define COFF_JMAGIC     0407    /* dirty text and data image, can&s
 DECL|macro|COFF_DMAGIC
 mdefine_line|#define COFF_DMAGIC     0410    /* dirty text segment, data aligned        */
 DECL|macro|COFF_ZMAGIC
-mdefine_line|#define COFF_ZMAGIC     0413    /* The proper magic number for executabls  */
+mdefine_line|#define COFF_ZMAGIC     0413    /* The proper magic number for executables  */
 DECL|macro|COFF_SHMAGIC
 mdefine_line|#define COFF_SHMAGIC&t;0443&t;/* shared library header                   */
 multiline_comment|/********************** SECTION HEADER **********************/
@@ -777,7 +777,7 @@ DECL|macro|COFF_DEF_BSS_SECTION_ALIGNMENT
 mdefine_line|#define COFF_DEF_BSS_SECTION_ALIGNMENT   4
 DECL|macro|COFF_DEF_TEXT_SECTION_ALIGNMENT
 mdefine_line|#define COFF_DEF_TEXT_SECTION_ALIGNMENT  4
-multiline_comment|/* For new sections we havn&squot;t heard of before */
+multiline_comment|/* For new sections we haven&squot;t heard of before */
 DECL|macro|COFF_DEF_SECTION_ALIGNMENT
 mdefine_line|#define COFF_DEF_SECTION_ALIGNMENT       4
 eof

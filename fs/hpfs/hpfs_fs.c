@@ -2486,7 +2486,7 @@ id|s
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * statfs.  For free inode counts we report the count of dnodes in the&n; * directory band -- not exactly right but pretty analagous.&n; */
+multiline_comment|/*&n; * statfs.  For free inode counts we report the count of dnodes in the&n; * directory band -- not exactly right but pretty analogous.&n; */
 DECL|function|hpfs_statfs
 r_static
 r_void

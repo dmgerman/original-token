@@ -3628,6 +3628,10 @@ r_int
 )paren
 )paren
 id|do_timer
+comma
+l_int|0
+comma
+l_string|&quot;timer&quot;
 )paren
 op_ne
 l_int|0

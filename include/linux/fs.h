@@ -136,7 +136,7 @@ DECL|macro|MS_MGC_VAL
 mdefine_line|#define MS_MGC_VAL 0xC0ED0000 /* magic flag number to indicate &quot;new&quot; flags */
 DECL|macro|MS_MGC_MSK
 mdefine_line|#define MS_MGC_MSK 0xffff0000 /* magic flag number mask */
-multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to overrride it sevelctively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; */
+multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; */
 DECL|macro|IS_RDONLY
 mdefine_line|#define IS_RDONLY(inode) (((inode)-&gt;i_sb) &amp;&amp; ((inode)-&gt;i_sb-&gt;s_flags &amp; MS_RDONLY))
 DECL|macro|IS_NOSUID
@@ -165,7 +165,7 @@ mdefine_line|#define BLKRAGET 4707 /* get current read ahead setting */
 multiline_comment|/* These are a few other constants  only used by scsi  devices */
 DECL|macro|SCSI_IOCTL_GET_IDLUN
 mdefine_line|#define SCSI_IOCTL_GET_IDLUN 0x5382
-multiline_comment|/* Used to turn on and off tagged queueing for scsi devices */
+multiline_comment|/* Used to turn on and off tagged queuing for scsi devices */
 DECL|macro|SCSI_IOCTL_TAGGED_ENABLE
 mdefine_line|#define SCSI_IOCTL_TAGGED_ENABLE 0x5383
 DECL|macro|SCSI_IOCTL_TAGGED_DISABLE

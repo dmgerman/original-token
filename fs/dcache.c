@@ -718,6 +718,10 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|de-&gt;ino
+op_assign
+id|ino
+suffix:semicolon
 id|update_lru
 c_func
 (paren

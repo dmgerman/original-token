@@ -538,7 +538,7 @@ op_minus
 id|begin
 )paren
 suffix:semicolon
-multiline_comment|/* Remove unwanted header data from lenth */
+multiline_comment|/* Remove unwanted header data from length */
 r_if
 c_cond
 (paren

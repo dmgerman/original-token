@@ -772,6 +772,10 @@ c_func
 id|xd_irq
 comma
 id|xd_interrupt_handler
+comma
+l_int|0
+comma
+l_string|&quot;XT harddisk&quot;
 )paren
 )paren
 (brace

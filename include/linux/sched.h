@@ -1139,6 +1139,15 @@ id|handler
 (paren
 r_int
 )paren
+comma
+r_int
+r_int
+id|flags
+comma
+r_const
+r_char
+op_star
+id|device
 )paren
 suffix:semicolon
 r_extern
@@ -1149,21 +1158,6 @@ c_func
 r_int
 r_int
 id|irq
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|irqaction
-c_func
-(paren
-r_int
-r_int
-id|irq
-comma
-r_struct
-id|sigaction
-op_star
-id|sa
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - nul&n; *   1 - kernel code segment&n; *   2 - kernel data segment&n; *   3 - user code segment&n; *   4 - user data segment&n; * ...&n; *   8 - TSS #0&n; *   9 - LDT #0&n; *  10 - TSS #1&n; *  11 - LDT #1&n; */

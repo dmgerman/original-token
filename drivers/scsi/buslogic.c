@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *&t;buslogic.c&t;(C) 1993 David B. Gentzel&n; *&t;Low-level scsi driver for BusLogic adapters&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to BusLogic for providing the necessary documentation&n; *&n; *&t;The original version of this driver was derived from aha1542.[ch] which&n; *&t;is Copyright (C) 1992 Tommy Thorn.  Much has been reworked, but most of&n; *&t;basic structure and substantial chunks of code still remain.&n; */
-multiline_comment|/*&n; * TODO:&n; *&t;1. Cleanup error handling &amp; reporting.&n; *&t;2. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;3. Add multiple outstanding requests.&n; *&t;4. See if we can make good use of having more than one command per lun.&n; *&t;5. Test/improve/fix abort &amp; reset functions.&n; *&t;6. Look at command linking.&n; */
+multiline_comment|/*&n; *&t;buslogic.c&t;(C) 1993, 1994 David B. Gentzel&n; *&t;Low-level scsi driver for BusLogic adapters&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to BusLogic for providing the necessary documentation&n; *&n; *&t;The original version of this driver was derived from aha1542.[ch] which&n; *&t;is Copyright (C) 1992 Tommy Thorn.  Much has been reworked, but most of&n; *&t;basic structure and substantial chunks of code still remain.&n; */
+multiline_comment|/*&n; * TODO:&n; *&t;1. Cleanup error handling &amp; reporting.&n; *&t;2. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;3. Add multiple outstanding requests.&n; *&t;4. See if we can make good use of having more than one command per lun.&n; *&t;5. Test/improve/fix abort &amp; reset functions.&n; *&t;6. Look at command linking.&n; *&t;7. Allow multiple boards to share an IRQ if the bus allows (e.g. EISA).&n; */
 multiline_comment|/*&n; * NOTES:&n; *    BusLogic (formerly BusTek) manufactures an extensive family of&n; *    intelligent, high performance SCSI-2 host adapters.  They all support&n; *    command queueing and scatter/gather I/O.  Most importantly, they all&n; *    support identical programming interfaces, so a single driver can be used&n; *    for all boards.&n; *&n; *    Actually, they all support TWO identical programming interfaces!  They&n; *    have an Adaptec 154x compatible interface (complete with 24 bit&n; *    addresses) as well as a &quot;native&quot; 32 bit interface.  As such, the Linux&n; *    aha1542 driver can be used to drive them, but with less than optimal&n; *    performance (at least for the EISA, VESA, and MCA boards).&n; *&n; *    Here is the scoop on the various models:&n; *&t;BT-542B - ISA first-party DMA with floppy support.&n; *&t;BT-545S - 542B + FAST SCSI and active termination.&n; *&t;BT-545D - 545S + differential termination.&n; *&t;BT-445S - VESA bus-master FAST SCSI with active termination and floppy&n; *&t;&t;  support.&n; *&t;BT-640A - MCA bus-master with floppy support.&n; *&t;BT-646S - 640A + FAST SCSI and active termination.&n; *&t;BT-646D - 646S + differential termination.&n; *&t;BT-742A - EISA bus-master with floppy support.&n; *&t;BT-747S - 742A + FAST SCSI, active termination, and 2.88M floppy.&n; *&t;BT-747D - 747S + differential termination.&n; *&t;BT-757S - 747S + WIDE SCSI.&n; *&t;BT-757D - 747D + WIDE SCSI.&n; *&n; *    Should you require further information on any of these boards, BusLogic&n; *    can be reached at (408)492-9090.&n; *&n; *    This driver SHOULD support all of these boards.  It has only been tested&n; *    with a 747S.  An earlier version was tested with a 445S.&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7,13 +7,14 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|# include &quot;sd.h&quot;
+macro_line|#include &quot;sd.h&quot;
 DECL|macro|BUSLOGIC_PRIVATE_H
 mdefine_line|#define BUSLOGIC_PRIVATE_H&t;/* Get the &quot;private&quot; stuff */
 macro_line|#include &quot;buslogic.h&quot;
@@ -23,10 +24,6 @@ macro_line|# define BUSLOGIC_DEBUG UD_ABORT
 macro_line|#endif
 DECL|macro|BUSLOGIC_VERSION
 mdefine_line|#define BUSLOGIC_VERSION &quot;1.00&quot;
-multiline_comment|/* ??? This *MAY* work to properly report the geometry of disks &gt; 1G when the&n;   alternate geometry is enabled on the host adapter.  It is completely&n;   untested as I have no such disk to experiment with.  I rarely refuse gifts,&n;   however... */
-multiline_comment|/* Check out the stuff in aha1542.c - is this the same as how buslogic does&n;   it? - ERY */
-multiline_comment|/* ??? Not Yet Implemented */
-multiline_comment|/*#ifdef BUSLOGIC_ALTERNATE_MAPPING*/
 multiline_comment|/* Not a random value - if this is too large, the system hangs for a long time&n;   waiting for something to happen if a board is not installed. */
 DECL|macro|WAITNEXTTIMEOUT
 mdefine_line|#define WAITNEXTTIMEOUT 3000000
@@ -47,7 +44,7 @@ DECL|macro|CASCADE
 mdefine_line|#define&t;CASCADE 0xC0
 DECL|macro|BUSLOGIC_MAILBOXES
 mdefine_line|#define BUSLOGIC_MAILBOXES 16&t;/* ??? Arbitrary? */
-multiline_comment|/* BusLogic boards can be configured for quite a number of port addresses (six&n;   to be exact), but I generally do not want the driver poking around at&n;   random.  We allow two port addresses - this allows people to use a BusLogic&n;   with a MIDI card, which frequently also used 0x330.  If different port&n;   addresses are needed (e.g. to install more than two cards), you must define&n;   BUSLOGIC_PORT_OVERRIDE to be a list of the addresses which will be checked.&n;   This can also be used to resolve a conflict if the port-probing at a&n;   standard port causes problems with another board. */
+multiline_comment|/* BusLogic boards can be configured for quite a number of port addresses (six&n;   to be exact), but I generally do not want the driver poking around at&n;   random.  We allow two port addresses - this allows people to use a BusLogic&n;   with a MIDI card, which frequently also uses 0x330.  If different port&n;   addresses are needed (e.g. to install more than two cards), you must define&n;   BUSLOGIC_PORT_OVERRIDE to be a list of the addresses which will be checked.&n;   This can also be used to resolve a conflict if the port-probing at a&n;   standard port causes problems with another board. */
 DECL|variable|bases
 r_static
 r_const
@@ -70,9 +67,9 @@ macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|BIOS_TRANSLATION_6432
-mdefine_line|#define BIOS_TRANSLATION_6432 1&t;&t;/* Default case */
+mdefine_line|#define BIOS_TRANSLATION_6432 0&t;&t;/* Default case */
 DECL|macro|BIOS_TRANSLATION_25563
-mdefine_line|#define BIOS_TRANSLATION_25563 2&t;/* Big disk case */
+mdefine_line|#define BIOS_TRANSLATION_25563 1&t;/* Big disk case */
 DECL|struct|hostdata
 r_struct
 id|hostdata
@@ -95,10 +92,10 @@ DECL|member|last_mbo_used
 r_int
 id|last_mbo_used
 suffix:semicolon
-DECL|member|SCint
+DECL|member|sc
 id|Scsi_Cmnd
 op_star
-id|SCint
+id|sc
 (braket
 id|BUSLOGIC_MAILBOXES
 )braket
@@ -153,7 +150,18 @@ comma
 r_struct
 id|Scsi_Host
 op_star
-id|SHpnt
+id|shpnt
+)paren
+suffix:semicolon
+r_static
+r_int
+id|restart
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
 )paren
 suffix:semicolon
 DECL|macro|INTR_RESET
@@ -163,11 +171,18 @@ mdefine_line|#define buslogic_printk buslogic_prefix(),printk
 DECL|macro|CHECK
 mdefine_line|#define CHECK(cond) if (cond) ; else goto fail
 DECL|macro|WAIT
-mdefine_line|#define WAIT(port, mask, allof, noneof) CHECK(wait(port, mask, allof, noneof))
+mdefine_line|#define WAIT(port, mask, allof, noneof) &bslash;&n;    CHECK(wait(port, mask, allof, noneof, WAITNEXTTIMEOUT, FALSE))
 DECL|macro|WAIT_WHILE
 mdefine_line|#define WAIT_WHILE(port, mask) WAIT(port, mask, 0, mask)
 DECL|macro|WAIT_UNTIL
 mdefine_line|#define WAIT_UNTIL(port, mask) WAIT(port, mask, mask, 0)
+DECL|macro|WAIT_FAST
+mdefine_line|#define WAIT_FAST(port, mask, allof, noneof) &bslash;&n;    CHECK(wait(port, mask, allof, noneof, 100, TRUE))
+DECL|macro|WAIT_WHILE_FAST
+mdefine_line|#define WAIT_WHILE_FAST(port, mask) WAIT_FAST(port, mask, 0, mask)
+DECL|macro|WAIT_UNTIL_FAST
+mdefine_line|#define WAIT_UNTIL_FAST(port, mask) WAIT_FAST(port, mask, mask, 0)
+multiline_comment|/* If delay != 0, we use the udelay call to regulate the amount of time we&n;   wait. */
 DECL|function|wait
 r_static
 id|__inline__
@@ -190,16 +205,17 @@ comma
 r_int
 r_char
 id|noneof
+comma
+r_int
+r_int
+id|timeout
+comma
+r_int
+id|delay
 )paren
 (brace
 r_int
 id|bits
-suffix:semicolon
-r_int
-r_int
-id|timeout
-op_assign
-id|WAITNEXTTIMEOUT
 suffix:semicolon
 r_for
 c_loop
@@ -237,7 +253,19 @@ id|noneof
 op_eq
 l_int|0
 )paren
-r_break
+r_return
+id|TRUE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|delay
+)paren
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -251,9 +279,6 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-r_return
-id|TRUE
-suffix:semicolon
 )brace
 DECL|function|buslogic_prefix
 r_static
@@ -271,7 +296,8 @@ l_string|&quot;BusLogic SCSI: &quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if BUSLOGIC_DEBUG
+DECL|function|buslogic_stat
 r_static
 r_void
 id|buslogic_stat
@@ -500,6 +526,7 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
+multiline_comment|/* Only used at boot time, so we do not need to worry about latency as much&n;   here. */
 DECL|function|buslogic_in
 r_static
 r_int
@@ -593,6 +620,85 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
+macro_line|#if 0
+multiline_comment|/* Similar to buslogic_in, except that we wait a very short period of time.&n;   We use this if we know the board is alive and awake, but we are not sure&n;   whether the board will respond the the command we are about to send. */
+r_static
+r_int
+id|buslogic_in_fast
+c_func
+(paren
+r_int
+r_int
+id|base
+comma
+r_int
+r_char
+op_star
+id|cmdp
+comma
+r_int
+id|len
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|len
+op_decrement
+)paren
+(brace
+id|WAIT_UNTIL_FAST
+c_func
+(paren
+id|STATUS
+c_func
+(paren
+id|base
+)paren
+comma
+id|DIRRDY
+)paren
+suffix:semicolon
+op_star
+id|cmdp
+op_increment
+op_assign
+id|inb
+c_func
+(paren
+id|DATA_IN
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+)brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|FALSE
+suffix:semicolon
+id|fail
+suffix:colon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|TRUE
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|makecode
 r_static
 r_int
@@ -651,7 +757,6 @@ id|hosterr
 op_assign
 id|DID_RESET
 suffix:semicolon
-multiline_comment|/* ??? Is this right? */
 r_break
 suffix:semicolon
 r_case
@@ -765,7 +870,7 @@ comma
 r_struct
 id|Scsi_Host
 op_star
-id|SHpnt
+id|shpnt
 )paren
 (brace
 r_int
@@ -831,6 +936,14 @@ l_string|&quot;test_port called&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* In case some other card was probing here, reset interrupts. */
+id|INTR_RESET
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+multiline_comment|/* reset interrupts, so they don&squot;t block */
 id|outb
 c_func
 (paren
@@ -1112,16 +1225,21 @@ suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
-id|SHpnt
+id|shpnt
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
-id|SCtmp
+id|sctmp
 suffix:semicolon
 r_int
 id|irqno
 comma
 id|base
+comma
+id|flag
+suffix:semicolon
+r_int
+id|needs_restart
 suffix:semicolon
 r_struct
 id|mailbox
@@ -1148,7 +1266,7 @@ op_minus
 l_int|2
 )braket
 suffix:semicolon
-id|SHpnt
+id|shpnt
 op_assign
 id|host
 (braket
@@ -1161,7 +1279,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|SHpnt
+id|shpnt
 )paren
 id|panic
 c_func
@@ -1174,7 +1292,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|mb
@@ -1184,18 +1302,16 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|ccbs
 suffix:semicolon
 id|base
 op_assign
-id|SHpnt-&gt;io_port
+id|shpnt-&gt;io_port
 suffix:semicolon
 macro_line|#if BUSLOGIC_DEBUG
-(brace
-r_int
 id|flag
 op_assign
 id|inb
@@ -1298,9 +1414,12 @@ id|base
 )paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|number_serviced
+op_assign
+l_int|0
+suffix:semicolon
+id|needs_restart
 op_assign
 l_int|0
 suffix:semicolon
@@ -1311,6 +1430,74 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|flag
+op_assign
+id|inb
+c_func
+(paren
+id|INTERRUPT
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Check for unusual interrupts.  If any of these happen, we should&n;&t;   probably do something special, but for now just printing a message&n;&t;   is sufficient.  A SCSI reset detected is something that we really&n;&t;   need to deal with in some way. */
+r_if
+c_cond
+(paren
+id|flag
+op_amp
+op_complement
+id|IMBL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|flag
+op_amp
+id|MBOR
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;MBOR &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flag
+op_amp
+id|CMDC
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;CMDC &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flag
+op_amp
+id|RSTS
+)paren
+(brace
+id|needs_restart
+op_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;RSTS &quot;
+)paren
+suffix:semicolon
+)brace
+)brace
 id|INTR_RESET
 c_func
 (paren
@@ -1327,7 +1514,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|last_mbi_used
@@ -1399,7 +1586,7 @@ op_ne
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|last_mbi_used
@@ -1448,7 +1635,7 @@ suffix:semicolon
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|last_mbi_used
@@ -1472,14 +1659,28 @@ multiline_comment|/* Hmm, no mail.  Must have read it the last time around. */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|number_serviced
+op_logical_and
+op_logical_neg
+id|needs_restart
 )paren
-r_return
-suffix:semicolon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;interrupt received, but no mail&bslash;n&quot;
+l_string|&quot;interrupt received, but no mail.&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* We detected a reset.  Restart all pending commands for devices&n;&t;       that use the hard reset option. */
+r_if
+c_cond
+(paren
+id|needs_restart
+)paren
+id|restart
+c_func
+(paren
+id|shpnt
 )paren
 suffix:semicolon
 r_return
@@ -1560,15 +1761,15 @@ id|mbi
 )paren
 suffix:semicolon
 macro_line|#endif
-id|SCtmp
+id|sctmp
 op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 (braket
 id|mbo
 )braket
@@ -1577,10 +1778,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|SCtmp
+id|sctmp
 op_logical_or
 op_logical_neg
-id|SCtmp-&gt;scsi_done
+id|sctmp-&gt;scsi_done
 )paren
 (brace
 id|buslogic_printk
@@ -1589,26 +1790,103 @@ c_func
 l_string|&quot;buslogic_interrupt: Unexpected interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;tarstat=%02X, hastat=%02X id=%d lun=%d ccb#=%d&bslash;n&quot;
+comma
+id|ccb
+(braket
+id|mbo
+)braket
+dot
+id|tarstat
+comma
+id|ccb
+(braket
+id|mbo
+)braket
+dot
+id|hastat
+comma
+id|ccb
+(braket
+id|mbo
+)braket
+dot
+id|id
+comma
+id|ccb
+(braket
+id|mbo
+)braket
+dot
+id|lun
+comma
+id|mbo
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|my_done
 op_assign
-id|SCtmp-&gt;scsi_done
+id|sctmp-&gt;scsi_done
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|SCtmp-&gt;host_scribble
+id|sctmp-&gt;host_scribble
 )paren
 id|scsi_free
 c_func
 (paren
-id|SCtmp-&gt;host_scribble
+id|sctmp-&gt;host_scribble
 comma
 id|BUSLOGIC_SG_MALLOC
 )paren
 suffix:semicolon
+macro_line|#if 0&t;/* ??? */
+multiline_comment|/* Fetch the sense data, and tuck it away, in the required slot.  The&n;&t;   BusLogic automatically fetches it, and there is no guarantee that we&n;&t;   will still have it in the cdb when we come back. */
+r_if
+c_cond
+(paren
+id|ccb
+(braket
+id|mbo
+)braket
+dot
+id|tarstat
+op_eq
+l_int|2
+)paren
+multiline_comment|/* ??? */
+id|memcpy
+c_func
+(paren
+id|sctmp-&gt;sense_buffer
+comma
+op_amp
+id|ccb
+(braket
+id|mbo
+)braket
+dot
+id|cdb
+(braket
+id|ccb
+(braket
+id|mbo
+)braket
+dot
+id|cdblen
+)braket
+comma
+r_sizeof
+id|sctmp-&gt;sense_buffer
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* ??? more error checking left out here */
 r_if
 c_cond
@@ -1694,7 +1972,7 @@ suffix:semicolon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;buslogic_interrupt: sense: &quot;
+l_string|&quot;buslogic_interrupt: sense:&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1707,7 +1985,7 @@ suffix:semicolon
 id|i
 OL
 r_sizeof
-id|SCtmp-&gt;sense_buffer
+id|sctmp-&gt;sense_buffer
 suffix:semicolon
 id|i
 op_increment
@@ -1717,7 +1995,7 @@ c_func
 (paren
 l_string|&quot; %02X&quot;
 comma
-id|SCtmp-&gt;sense_buffer
+id|sctmp-&gt;sense_buffer
 (braket
 id|i
 )braket
@@ -1744,28 +2022,28 @@ id|errstatus
 )paren
 suffix:semicolon
 macro_line|#endif
-id|SCtmp-&gt;result
+id|sctmp-&gt;result
 op_assign
 id|errstatus
 suffix:semicolon
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 (braket
 id|mbo
 )braket
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* This effectively frees up&n;&t;&t;&t;&t;&t;&t;   the mailbox slot, as far as&n;&t;&t;&t;&t;&t;&t;   queuecommand is concerned. */
+multiline_comment|/* This effectively frees up&n;&t;&t;&t;&t;&t;&t;   the mailbox slot, as far as&n;&t;&t;&t;&t;&t;&t;   queuecommand is&n;&t;&t;&t;&t;&t;&t;   concerned. */
 id|my_done
 c_func
 (paren
-id|SCtmp
+id|sctmp
 )paren
 suffix:semicolon
 id|number_serviced
@@ -1780,7 +2058,7 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-id|SCpnt
+id|scpnt
 comma
 r_void
 (paren
@@ -1819,30 +2097,30 @@ r_int
 r_char
 op_star
 )paren
-id|SCpnt-&gt;cmnd
+id|scpnt-&gt;cmnd
 suffix:semicolon
 r_int
 r_char
 id|target
 op_assign
-id|SCpnt-&gt;target
+id|scpnt-&gt;target
 suffix:semicolon
 r_int
 r_char
 id|lun
 op_assign
-id|SCpnt-&gt;lun
+id|scpnt-&gt;lun
 suffix:semicolon
 r_void
 op_star
 id|buff
 op_assign
-id|SCpnt-&gt;request_buffer
+id|scpnt-&gt;request_buffer
 suffix:semicolon
 r_int
 id|bufflen
 op_assign
-id|SCpnt-&gt;request_bufflen
+id|scpnt-&gt;request_bufflen
 suffix:semicolon
 r_int
 id|mbo
@@ -1866,7 +2144,7 @@ OG
 l_int|1
 )paren
 (brace
-id|SCpnt-&gt;result
+id|scpnt-&gt;result
 op_assign
 id|DID_TIME_OUT
 op_lshift
@@ -1875,7 +2153,7 @@ suffix:semicolon
 id|done
 c_func
 (paren
-id|SCpnt
+id|scpnt
 )paren
 suffix:semicolon
 r_return
@@ -1899,27 +2177,28 @@ c_cond
 id|bufflen
 op_ne
 r_sizeof
-id|SCpnt-&gt;sense_buffer
+id|scpnt-&gt;sense_buffer
 )paren
 (brace
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;Wrong buffer length supplied for request sense (%d)&bslash;n&quot;
+l_string|&quot;Wrong buffer length supplied for request sense&quot;
+l_string|&quot; (%d)&bslash;n&quot;
 comma
 id|bufflen
 )paren
 suffix:semicolon
 )brace
 macro_line|#endif
-id|SCpnt-&gt;result
+id|scpnt-&gt;result
 op_assign
 l_int|0
 suffix:semicolon
 id|done
 c_func
 (paren
-id|SCpnt
+id|scpnt
 )paren
 suffix:semicolon
 r_return
@@ -1943,21 +2222,7 @@ op_star
 id|cmd
 op_eq
 id|WRITE_10
-)paren
-id|i
-op_assign
-id|xscsi2int
-c_func
-(paren
-id|cmd
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
+op_logical_or
 op_star
 id|cmd
 op_eq
@@ -1970,8 +2235,11 @@ id|WRITE_6
 )paren
 id|i
 op_assign
-id|scsi2int
-c_func
+op_star
+(paren
+r_int
+op_star
+)paren
 (paren
 id|cmd
 op_plus
@@ -1987,7 +2255,8 @@ suffix:semicolon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;buslogic_queuecommand: dev %d cmd %02X pos %d len %d &quot;
+l_string|&quot;buslogic_queuecommand:&quot;
+l_string|&quot; dev %d cmd %02X pos %d len %d &quot;
 comma
 id|target
 comma
@@ -2002,13 +2271,13 @@ suffix:semicolon
 id|buslogic_stat
 c_func
 (paren
-id|SCpnt-&gt;host-&gt;io_port
+id|scpnt-&gt;host-&gt;io_port
 )paren
 suffix:semicolon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;buslogic_queuecommand: dumping scsi cmd: &quot;
+l_string|&quot;buslogic_queuecommand: dumping scsi cmd:&quot;
 )paren
 suffix:semicolon
 r_for
@@ -2073,7 +2342,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|mb
@@ -2083,7 +2352,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|ccbs
@@ -2099,7 +2368,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|last_mbo_used
@@ -2134,10 +2403,10 @@ op_logical_and
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 (braket
 id|mbo
 )braket
@@ -2169,7 +2438,7 @@ op_ne
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|last_mbo_used
@@ -2190,16 +2459,16 @@ op_logical_or
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 (braket
 id|mbo
 )braket
 )paren
 (brace
-multiline_comment|/* ??? Instead of panicing, we should enable OMBR interrupts and&n;&t;   sleep until we get one. */
+multiline_comment|/* ??? Instead of panicing, should we enable OMBR interrupts and&n;&t;   sleep until we get one? */
 id|panic
 c_func
 (paren
@@ -2210,21 +2479,21 @@ suffix:semicolon
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 (braket
 id|mbo
 )braket
 op_assign
-id|SCpnt
+id|scpnt
 suffix:semicolon
 multiline_comment|/* This will effectively&n;&t;&t;&t;&t;&t;&t;   prevent someone else from&n;&t;&t;&t;&t;&t;&t;   screwing with this cdb. */
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|last_mbo_used
@@ -2357,7 +2626,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;use_sg
+id|scpnt-&gt;use_sg
 )paren
 (brace
 r_struct
@@ -2382,8 +2651,8 @@ id|op
 op_assign
 id|CCB_OP_INIT_SG
 suffix:semicolon
-multiline_comment|/* SCSI Initiator Command w/scatter-gather */
-id|SCpnt-&gt;host_scribble
+multiline_comment|/* SCSI Initiator Command&n;&t;&t;&t;&t;&t;   w/scatter-gather */
+id|scpnt-&gt;host_scribble
 op_assign
 (paren
 r_int
@@ -2399,7 +2668,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;host_scribble
+id|scpnt-&gt;host_scribble
 op_eq
 l_int|NULL
 )paren
@@ -2416,7 +2685,7 @@ r_struct
 id|scatterlist
 op_star
 )paren
-id|SCpnt-&gt;request_buffer
+id|scpnt-&gt;request_buffer
 suffix:semicolon
 id|cptr
 op_assign
@@ -2425,24 +2694,25 @@ r_struct
 id|chain
 op_star
 )paren
-id|SCpnt-&gt;host_scribble
+id|scpnt-&gt;host_scribble
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;use_sg
+id|scpnt-&gt;use_sg
 OG
-id|SCpnt-&gt;host-&gt;sg_tablesize
+id|scpnt-&gt;host-&gt;sg_tablesize
 )paren
 (brace
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;buslogic_queuecommand bad segment list, %d &gt; %d&bslash;n&quot;
+l_string|&quot;buslogic_queuecommand: bad segment list,&quot;
+l_string|&quot; %d &gt; %d&bslash;n&quot;
 comma
-id|SCpnt-&gt;use_sg
+id|scpnt-&gt;use_sg
 comma
-id|SCpnt-&gt;host-&gt;sg_tablesize
+id|scpnt-&gt;host-&gt;sg_tablesize
 )paren
 suffix:semicolon
 id|panic
@@ -2461,7 +2731,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|SCpnt-&gt;use_sg
+id|scpnt-&gt;use_sg
 suffix:semicolon
 id|i
 op_increment
@@ -2503,7 +2773,7 @@ id|mbo
 dot
 id|datalen
 op_assign
-id|SCpnt-&gt;use_sg
+id|scpnt-&gt;use_sg
 op_star
 r_sizeof
 (paren
@@ -2530,7 +2800,7 @@ suffix:semicolon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;cptr %08X: &quot;
+l_string|&quot;cptr %08X:&quot;
 comma
 id|cptr
 )paren
@@ -2590,7 +2860,7 @@ op_assign
 id|CCB_OP_INIT
 suffix:semicolon
 multiline_comment|/* SCSI Initiator Command */
-id|SCpnt-&gt;host_scribble
+id|scpnt-&gt;host_scribble
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2648,7 +2918,7 @@ dot
 id|rsalen
 op_assign
 r_sizeof
-id|SCpnt-&gt;sense_buffer
+id|scpnt-&gt;sense_buffer
 suffix:semicolon
 id|ccb
 (braket
@@ -2657,7 +2927,7 @@ id|mbo
 dot
 id|senseptr
 op_assign
-id|SCpnt-&gt;sense_buffer
+id|scpnt-&gt;sense_buffer
 suffix:semicolon
 id|ccb
 (braket
@@ -2702,6 +2972,8 @@ id|ccb
 (braket
 id|mbo
 )braket
+op_minus
+l_int|10
 suffix:semicolon
 id|i
 op_increment
@@ -2752,11 +3024,11 @@ suffix:semicolon
 id|buslogic_stat
 c_func
 (paren
-id|SCpnt-&gt;host-&gt;io_port
+id|scpnt-&gt;host-&gt;io_port
 )paren
 suffix:semicolon
 macro_line|#endif
-id|SCpnt-&gt;scsi_done
+id|scpnt-&gt;scsi_done
 op_assign
 id|done
 suffix:semicolon
@@ -2773,7 +3045,7 @@ multiline_comment|/* start scsi command */
 id|buslogic_out
 c_func
 (paren
-id|SCpnt-&gt;host-&gt;io_port
+id|scpnt-&gt;host-&gt;io_port
 comma
 id|buscmd
 comma
@@ -2782,16 +3054,10 @@ id|buscmd
 )paren
 suffix:semicolon
 macro_line|#if BUSLOGIC_DEBUG
-id|buslogic_printk
-c_func
-(paren
-l_string|&quot;buslogic_queuecommand: status: &quot;
-)paren
-suffix:semicolon
 id|buslogic_stat
 c_func
 (paren
-id|SCpnt-&gt;host-&gt;io_port
+id|scpnt-&gt;host-&gt;io_port
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2815,10 +3081,10 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-id|SCpnt
+id|scpnt
 )paren
 (brace
-id|SCpnt-&gt;SCp.Status
+id|scpnt-&gt;SCp.Status
 op_increment
 suffix:semicolon
 )brace
@@ -2828,7 +3094,7 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-id|SCpnt
+id|scpnt
 )paren
 (brace
 macro_line|#if BUSLOGIC_DEBUG
@@ -2842,12 +3108,12 @@ macro_line|#endif
 id|buslogic_queuecommand
 c_func
 (paren
-id|SCpnt
+id|scpnt
 comma
 id|internal_done
 )paren
 suffix:semicolon
-id|SCpnt-&gt;SCp.Status
+id|scpnt-&gt;SCp.Status
 op_assign
 l_int|0
 suffix:semicolon
@@ -2855,15 +3121,12 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|SCpnt-&gt;SCp.Status
+id|scpnt-&gt;SCp.Status
 )paren
 r_continue
 suffix:semicolon
 r_return
-id|SCpnt-&gt;result
-suffix:semicolon
-r_return
-id|internal_done_errcode
+id|scpnt-&gt;result
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -2881,7 +3144,7 @@ comma
 r_struct
 id|Scsi_Host
 op_star
-id|SHpnt
+id|shpnt
 )paren
 (brace
 r_int
@@ -2901,7 +3164,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|mb
@@ -2914,7 +3177,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|ccbs
@@ -3083,9 +3346,6 @@ id|ok
 op_assign
 id|TRUE
 suffix:semicolon
-r_return
-id|ok
-suffix:semicolon
 id|must_be_adaptec
 suffix:colon
 id|INTR_RESET
@@ -3094,13 +3354,19 @@ c_func
 id|base
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ok
+)paren
 id|printk
 c_func
 (paren
 l_string|&quot;- must be Adaptec&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* So that the adaptec detect looks clean */
+multiline_comment|/* So that the adaptec detect looks&n;&t;&t;&t;&t;&t;   clean */
 r_return
 id|ok
 suffix:semicolon
@@ -3317,7 +3583,8 @@ suffix:colon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;Unable to determine BusLogic IRQ level.  Disabling board.&bslash;n&quot;
+l_string|&quot;Unable to determine BusLogic IRQ level.&quot;
+l_string|&quot;  Disabling board.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3488,7 +3755,7 @@ id|dma
 r_case
 l_int|0
 suffix:colon
-multiline_comment|/* This indicates a that no DMA channel is used. */
+multiline_comment|/* This indicates that no DMA channel is used. */
 op_star
 id|dma
 op_assign
@@ -3531,7 +3798,8 @@ suffix:colon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;Unable to determine BusLogic DMA channel.  Disabling board.&bslash;n&quot;
+l_string|&quot;Unable to determine BusLogic DMA channel.&quot;
+l_string|&quot;  Disabling board.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3566,6 +3834,22 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
+DECL|function|get_translation
+r_static
+r_int
+id|get_translation
+c_func
+(paren
+r_int
+r_int
+id|base
+)paren
+(brace
+multiline_comment|/* ??? This is wrong if disk is configured for &gt; 1G mapping.&n;       Unfortunately, unlike UltraStor, I see know way of determining whether&n;       &gt; 1G mapping has been enabled. */
+r_return
+id|BIOS_TRANSLATION_6432
+suffix:semicolon
+)brace
 multiline_comment|/* Query the board to find out the model. */
 DECL|function|buslogic_query
 r_static
@@ -3582,8 +3866,9 @@ op_star
 id|trans
 )paren
 (brace
-r_int
+r_static
 r_const
+r_int
 r_char
 id|inquiry_cmd
 (braket
@@ -3673,10 +3958,11 @@ c_func
 id|base
 )paren
 suffix:semicolon
+macro_line|#if 1 /* ??? Temporary */
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;Inquiry Bytes: %X %X %X %X&bslash;n&quot;
+l_string|&quot;Inquiry Bytes: %02X %02X %02X %02X&bslash;n&quot;
 comma
 id|inquiry_result
 (braket
@@ -3699,6 +3985,7 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -3720,9 +4007,12 @@ suffix:semicolon
 op_star
 id|trans
 op_assign
-id|BIOS_TRANSLATION_6432
+id|get_translation
+c_func
+(paren
+id|base
+)paren
 suffix:semicolon
-multiline_comment|/* Default case */
 r_return
 id|FALSE
 suffix:semicolon
@@ -3770,7 +4060,7 @@ suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
-id|SHpnt
+id|shpnt
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3781,9 +4071,6 @@ l_int|0
 suffix:semicolon
 r_int
 id|indx
-suffix:semicolon
-r_int
-id|val
 suffix:semicolon
 macro_line|#if BUSLOGIC_DEBUG
 id|buslogic_printk
@@ -3827,7 +4114,7 @@ l_int|3
 )paren
 )paren
 (brace
-id|SHpnt
+id|shpnt
 op_assign
 id|scsi_register
 c_func
@@ -3856,7 +4143,7 @@ c_func
 (paren
 id|base
 comma
-id|SHpnt
+id|shpnt
 )paren
 )paren
 r_goto
@@ -3963,7 +4250,8 @@ suffix:colon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;buslogic_detect: setting bus on/off-time failed&bslash;n&quot;
+l_string|&quot;buslogic_detect:&quot;
+l_string|&quot; setting bus on/off-time failed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4034,7 +4322,7 @@ c_func
 (paren
 id|base
 comma
-id|SHpnt
+id|shpnt
 )paren
 )paren
 r_goto
@@ -4116,20 +4404,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|val
-op_assign
+r_if
+c_cond
+(paren
 id|request_irq
 c_func
 (paren
 id|irq
 comma
 id|buslogic_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;buslogic&quot;
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|val
 )paren
 (brace
 id|buslogic_printk
@@ -4227,15 +4515,15 @@ op_minus
 l_int|9
 )braket
 op_assign
-id|SHpnt
+id|shpnt
 suffix:semicolon
-id|SHpnt-&gt;this_id
+id|shpnt-&gt;this_id
 op_assign
 id|id
 suffix:semicolon
 macro_line|#ifdef CONFIG_NO_BUGGY_BUSLOGIC
 multiline_comment|/* Only type &squot;A&squot; (AT/ISA) bus adapters use unchecked DMA. */
-id|SHpnt-&gt;unchecked_isa_dma
+id|shpnt-&gt;unchecked_isa_dma
 op_assign
 (paren
 id|bus_type
@@ -4244,49 +4532,49 @@ l_char|&squot;A&squot;
 )paren
 suffix:semicolon
 macro_line|#else
-multiline_comment|/* bugs in the firmware with 16M+. Gaah */
-id|SHpnt-&gt;unchecked_isa_dma
+multiline_comment|/* Bugs in the firmware of the 445S with &gt;16M.  This does not seem&n;&t;       to affect Revision E boards with firmware 3.37. */
+id|shpnt-&gt;unchecked_isa_dma
 op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-id|SHpnt-&gt;sg_tablesize
+id|shpnt-&gt;sg_tablesize
 op_assign
 id|max_sg
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|SHpnt-&gt;sg_tablesize
+id|shpnt-&gt;sg_tablesize
 OG
 id|BUSLOGIC_MAX_SG
 )paren
-id|SHpnt-&gt;sg_tablesize
+id|shpnt-&gt;sg_tablesize
 op_assign
 id|BUSLOGIC_MAX_SG
 suffix:semicolon
 multiline_comment|/* ??? If we can dynamically allocate the mailbox arrays, I&squot;ll&n;&t;       probably bump up this number. */
-id|SHpnt-&gt;hostt-&gt;can_queue
+id|shpnt-&gt;hostt-&gt;can_queue
 op_assign
 id|BUSLOGIC_MAILBOXES
 suffix:semicolon
-multiline_comment|/*SHpnt-&gt;base = ???;*/
-id|SHpnt-&gt;io_port
+multiline_comment|/*shpnt-&gt;base = ???;*/
+id|shpnt-&gt;io_port
 op_assign
 id|base
 suffix:semicolon
-id|SHpnt-&gt;dma_channel
+id|shpnt-&gt;dma_channel
 op_assign
 id|dma
 suffix:semicolon
-id|SHpnt-&gt;irq
+id|shpnt-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|bios_translation
@@ -4309,7 +4597,7 @@ suffix:semicolon
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|last_mbi_used
@@ -4323,7 +4611,7 @@ suffix:semicolon
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
 id|last_mbo_used
@@ -4338,10 +4626,10 @@ c_func
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 comma
 l_int|0
 comma
@@ -4349,10 +4637,10 @@ r_sizeof
 id|HOSTDATA
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 )paren
 suffix:semicolon
 id|sti
@@ -4465,24 +4753,28 @@ id|buf
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;bus_detect: LU %u sector_size %d &quot;
-l_string|&quot;device_size %d&bslash;n&quot;
+l_string|&quot;buslogic_detect: LU %u &quot;
+l_string|&quot;sector_size %d device_size %d&bslash;n&quot;
 comma
 id|i
 comma
-id|xscsi2int
-c_func
+op_star
+(paren
+r_int
+op_star
+)paren
 (paren
 id|buf
 op_plus
 l_int|4
 )paren
 comma
-id|xscsi2int
-c_func
+op_star
 (paren
-id|buf
+r_int
+op_star
 )paren
+id|buf
 )paren
 suffix:semicolon
 )brace
@@ -4605,12 +4897,144 @@ suffix:colon
 id|scsi_unregister
 c_func
 (paren
-id|SHpnt
+id|shpnt
 )paren
 suffix:semicolon
 )brace
 r_return
 id|count
+suffix:semicolon
+)brace
+DECL|function|restart
+r_static
+r_int
+id|restart
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+)paren
+(brace
+r_int
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#if 0
+r_static
+r_const
+r_int
+r_char
+id|buscmd
+(braket
+)braket
+op_assign
+(brace
+id|CMD_START_SCSI
+)brace
+suffix:semicolon
+macro_line|#endif
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|BUSLOGIC_MAILBOXES
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|sc
+(braket
+id|i
+)braket
+op_logical_and
+op_logical_neg
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|sc
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|device-&gt;soft_reset
+)paren
+(brace
+macro_line|#if 0
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|mb
+(braket
+id|i
+)braket
+dot
+id|status
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Indicate ready to&n;&t;&t;&t;&t;&t;&t;   restart... */
+macro_line|#endif
+id|count
+op_increment
+suffix:semicolon
+)brace
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;Potential to restart %d stalled commands...&bslash;n&quot;
+comma
+id|count
+)paren
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* start scsi command */
+r_if
+c_cond
+(paren
+id|count
+)paren
+id|buslogic_out
+c_func
+(paren
+id|shpnt-&gt;host-&gt;io_port
+comma
+id|buscmd
+comma
+r_sizeof
+id|buscmd
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ??? The abort command for the aha1542 does not leave the device in a clean&n;   state where it is available to be used again.  As it is not clear whether&n;   the same problem exists with BusLogic boards, we will enable this and see&n;   if it works. */
@@ -4621,9 +5045,10 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-id|SCpnt
+id|scpnt
 )paren
 (brace
+macro_line|#if 1
 r_static
 r_const
 r_int
@@ -4645,7 +5070,9 @@ r_int
 id|mbi
 comma
 id|mbo
-comma
+suffix:semicolon
+r_int
+r_int
 id|i
 suffix:semicolon
 id|buslogic_printk
@@ -4659,7 +5086,7 @@ c_func
 id|STATUS
 c_func
 (paren
-id|SCpnt-&gt;host-&gt;io_port
+id|scpnt-&gt;host-&gt;io_port
 )paren
 )paren
 comma
@@ -4669,7 +5096,7 @@ c_func
 id|INTERRUPT
 c_func
 (paren
-id|SCpnt-&gt;host-&gt;io_port
+id|scpnt-&gt;host-&gt;io_port
 )paren
 )paren
 )paren
@@ -4684,7 +5111,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|mb
@@ -4694,7 +5121,7 @@ op_assign
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|last_mbi_used
@@ -4755,7 +5182,7 @@ op_ne
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|last_mbi_used
@@ -4782,9 +5209,10 @@ id|MBX_NOT_IN_USE
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;Lost interrupt discovered on irq %d - attempting to recover&bslash;n&quot;
+l_string|&quot;Lost interrupt discovered on irq %d&quot;
+l_string|&quot; - attempting to recover&bslash;n&quot;
 comma
-id|SCpnt-&gt;host-&gt;irq
+id|scpnt-&gt;host-&gt;irq
 )paren
 suffix:semicolon
 (brace
@@ -4799,7 +5227,7 @@ id|intval
 l_int|0
 )braket
 op_assign
-id|SCpnt-&gt;host-&gt;irq
+id|scpnt-&gt;host-&gt;irq
 suffix:semicolon
 id|buslogic_interrupt
 c_func
@@ -4840,10 +5268,10 @@ c_cond
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 (braket
 id|i
 )braket
@@ -4855,15 +5283,15 @@ c_cond
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 (braket
 id|i
 )braket
 op_eq
-id|SCpnt
+id|scpnt
 )paren
 (brace
 id|buslogic_printk
@@ -4871,7 +5299,7 @@ c_func
 (paren
 l_string|&quot;Timed out command pending for %4.4X&bslash;n&quot;
 comma
-id|SCpnt-&gt;request.dev
+id|scpnt-&gt;request.dev
 )paren
 suffix:semicolon
 r_if
@@ -4880,7 +5308,7 @@ c_cond
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
 id|mb
@@ -4902,7 +5330,7 @@ suffix:semicolon
 id|buslogic_out
 c_func
 (paren
-id|SCpnt-&gt;host-&gt;io_port
+id|scpnt-&gt;host-&gt;io_port
 comma
 id|buscmd
 comma
@@ -4918,10 +5346,11 @@ c_func
 (paren
 l_string|&quot;Other pending command %4.4X&bslash;n&quot;
 comma
-id|SCpnt-&gt;request.dev
+id|scpnt-&gt;request.dev
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#if (BUSLOGIC_DEBUG &amp; BD_ABORT)
 id|buslogic_printk
 c_func
@@ -4954,26 +5383,20 @@ op_increment
 r_if
 c_cond
 (paren
-id|SCpnt
+id|scpnt
 op_eq
 id|HOSTDATA
 c_func
 (paren
-id|SCpnt-&gt;host
+id|scpnt-&gt;host
 )paren
 op_member_access_from_pointer
-id|SCint
+id|sc
 (braket
 id|mbo
 )braket
 )paren
 (brace
-id|HOSTDATA
-c_func
-(paren
-id|SCpnt-&gt;host
-)paren
-op_member_access_from_pointer
 id|mb
 (braket
 id|mbo
@@ -4986,7 +5409,7 @@ suffix:semicolon
 id|buslogic_out
 c_func
 (paren
-id|SCpnt-&gt;host-&gt;io_port
+id|scpnt-&gt;host-&gt;io_port
 comma
 id|buscmd
 comma
@@ -5004,10 +5427,10 @@ c_func
 suffix:semicolon
 macro_line|#endif
 r_return
-id|SCSI_ABORT_PENDING
+id|SCSI_ABORT_SNOOZE
 suffix:semicolon
 )brace
-multiline_comment|/* We do not implement a reset function here, but the upper level code assumes&n;   that it will get some kind of response for the command in SCpnt.  We must&n;   oblige, or the command will hang the SCSI system. */
+multiline_comment|/* We do not implement a reset function here, but the upper level code assumes&n;   that it will get some kind of response for the command in scpnt.  We must&n;   oblige, or the command will hang the SCSI system.  For a first go, we assume&n;   that the BusLogic notifies us with all of the pending commands (it does&n;   implement soft reset, after all). */
 DECL|function|buslogic_reset
 r_int
 id|buslogic_reset
@@ -5015,9 +5438,25 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
-id|SCpnt
+id|scpnt
 )paren
 (brace
+r_static
+r_const
+r_int
+r_char
+id|buscmd
+(braket
+)braket
+op_assign
+(brace
+id|CMD_START_SCSI
+)brace
+suffix:semicolon
+r_int
+r_int
+id|i
+suffix:semicolon
 macro_line|#if BUSLOGIC_DEBUG
 id|buslogic_printk
 c_func
@@ -5026,6 +5465,227 @@ l_string|&quot;buslogic_reset&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if 0
+multiline_comment|/* This does a scsi reset for all devices on the bus. */
+id|outb
+c_func
+(paren
+id|RSBUS
+comma
+id|CONTROL
+c_func
+(paren
+id|scpnt-&gt;host-&gt;io_port
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* This does a selective reset of just the one device. */
+multiline_comment|/* First locate the ccb for this command. */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|BUSLOGIC_MAILBOXES
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|HOSTDATA
+c_func
+(paren
+id|scpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|sc
+(braket
+id|i
+)braket
+op_eq
+id|scpnt
+)paren
+(brace
+id|HOSTDATA
+c_func
+(paren
+id|scpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|ccbs
+(braket
+id|i
+)braket
+dot
+id|op
+op_assign
+l_int|0x81
+suffix:semicolon
+multiline_comment|/* ??? BUS DEVICE&n;&t;&t;&t;&t;&t;&t;&t;   RESET */
+multiline_comment|/* Now tell the BusLogic to flush all pending commands for this&n;&t;       target. */
+id|buslogic_out
+c_func
+(paren
+id|scpnt-&gt;host-&gt;io_port
+comma
+id|buscmd
+comma
+r_sizeof
+id|buscmd
+)paren
+suffix:semicolon
+multiline_comment|/* Here is the tricky part.  What to do next.  Do we get an&n;&t;       interrupt for the commands that we aborted with the specified&n;&t;       target, or do we generate this on our own?  Try it without first&n;&t;       and see what happens. */
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;Sent BUS DEVICE RESET to target %d&bslash;n&quot;
+comma
+id|scpnt-&gt;target
+)paren
+suffix:semicolon
+multiline_comment|/* If the first does not work, then try the second.  I think the&n;&t;       first option is more likely to be correct.  Free the command&n;&t;       block for all commands running on this target... */
+macro_line|#if 1
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|BUSLOGIC_MAILBOXES
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|HOSTDATA
+c_func
+(paren
+id|scpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|sc
+(braket
+id|i
+)braket
+op_logical_and
+id|HOSTDATA
+c_func
+(paren
+id|scpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|sc
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|target
+op_eq
+id|scpnt-&gt;target
+)paren
+(brace
+id|Scsi_Cmnd
+op_star
+id|sctmp
+op_assign
+id|HOSTDATA
+c_func
+(paren
+id|scpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|sc
+(braket
+id|i
+)braket
+suffix:semicolon
+id|sctmp-&gt;result
+op_assign
+id|DID_RESET
+op_lshift
+l_int|16
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sctmp-&gt;host_scribble
+)paren
+id|scsi_free
+c_func
+(paren
+id|sctmp-&gt;host_scribble
+comma
+id|BUSLOGIC_SG_MALLOC
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Sending DID_RESET for target %d&bslash;n&quot;
+comma
+id|scpnt-&gt;target
+)paren
+suffix:semicolon
+id|sctmp
+op_member_access_from_pointer
+id|scsi_done
+c_func
+(paren
+id|scpnt
+)paren
+suffix:semicolon
+id|HOSTDATA
+c_func
+(paren
+id|scpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|sc
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|HOSTDATA
+c_func
+(paren
+id|scpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|mb
+(braket
+id|i
+)braket
+dot
+id|status
+op_assign
+id|MBX_NOT_IN_USE
+suffix:semicolon
+)brace
+r_return
+id|SCSI_RESET_SUCCESS
+suffix:semicolon
+macro_line|#else
+r_return
+id|SCSI_RESET_PENDING
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#endif
+multiline_comment|/* No active command at this time, so this means that each time we got some&n;       kind of response the last time through.  Tell the mid-level code to&n;       request sense information in order to decide what to do next. */
 r_return
 id|SCSI_RESET_PUNT
 suffix:semicolon
@@ -5055,7 +5715,6 @@ suffix:semicolon
 r_int
 id|translation_algorithm
 suffix:semicolon
-multiline_comment|/* ??? This is wrong if disk is configured for &gt; 1G mapping.&n;     Unfortunately, unlike UltraStor, I see know way of determining whether&n;     &gt; 1G mapping has been enabled. */
 id|translation_algorithm
 op_assign
 id|HOSTDATA

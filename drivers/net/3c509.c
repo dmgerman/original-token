@@ -502,7 +502,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif&t;  
-multiline_comment|/* Next check for all ISA bus boards by sending the ID sequence to the&n;&t;   ID_PORT.  We find cards past the first by setting the &squot;current_tag&squot;&n;&t;   on cards as they are found.  Cards with their tag set will not&n;&t;   respond to subseqent ID seqences. */
+multiline_comment|/* Next check for all ISA bus boards by sending the ID sequence to the&n;&t;   ID_PORT.  We find cards past the first by setting the &squot;current_tag&squot;&n;&t;   on cards as they are found.  Cards with their tag set will not&n;&t;   respond to subsequent ID sequences. */
 id|outb
 c_func
 (paren
@@ -1108,6 +1108,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|el3_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;3c509&quot;
 )paren
 )paren
 (brace
@@ -1545,7 +1549,7 @@ l_int|4
 id|printk
 c_func
 (paren
-l_string|&quot;%s: el3_start_xmit(lenght = %ld) called, status %4.4x.&bslash;n&quot;
+l_string|&quot;%s: el3_start_xmit(length = %ld) called, status %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

@@ -382,7 +382,7 @@ suffix:semicolon
 multiline_comment|/* The bad block list is 4 sectors long.  The first word must be zero,&n;   the remaining words give n_badblocks bad block numbers.&n;   I bet you can see it coming... */
 DECL|macro|BAD_MAGIC
 mdefine_line|#define BAD_MAGIC 0
-multiline_comment|/* The hotfix map is 4 sectors long.  It looks like&n;&n;       secno from[n_spares];&n;       secno to[n_spares];&n;&n;   The to[] list is initalized to point to n_spares preallocated empty&n;   sectors.  The from[] list contains the sector numbers of bad blocks&n;   which have been remapped to corresponding sectors in the to[] list.&n;   n_spares_used gives the length of the from[] list. */
+multiline_comment|/* The hotfix map is 4 sectors long.  It looks like&n;&n;       secno from[n_spares];&n;       secno to[n_spares];&n;&n;   The to[] list is initialized to point to n_spares preallocated empty&n;   sectors.  The from[] list contains the sector numbers of bad blocks&n;   which have been remapped to corresponding sectors in the to[] list.&n;   n_spares_used gives the length of the from[] list. */
 multiline_comment|/* Sectors 18 and 19 are preallocated and unused.&n;   Maybe they&squot;re spares for 16 and 17, but simple substitution fails. */
 multiline_comment|/* The code page info pointed to by the spare block consists of an index&n;   block and blocks containing character maps.  The following is pretty&n;   sketchy, but Linux doesn&squot;t use code pages so it doesn&squot;t matter. */
 multiline_comment|/* block pointed to by spareblock-&gt;code_page_dir */

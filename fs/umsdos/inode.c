@@ -101,7 +101,7 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Call msdos_lookup, but set back the original msdos function table.&n;&t;Retourne 0 if ok, or a negative error code if not.&n;*/
+multiline_comment|/*&n;&t;Call msdos_lookup, but set back the original msdos function table.&n;&t;Return 0 if ok, or a negative error code if not.&n;*/
 DECL|function|umsdos_real_lookup
 r_int
 id|umsdos_real_lookup
@@ -254,7 +254,7 @@ op_assign
 id|f_pos
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Tells if an Umsdos inode has been &quot;patched&quot; once.&n;&t;Returne != 0 if so.&n;*/
+multiline_comment|/*&n;&t;Tells if an Umsdos inode has been &quot;patched&quot; once.&n;&t;Return != 0 if so.&n;*/
 DECL|function|umsdos_isinit
 r_int
 id|umsdos_isinit
@@ -305,7 +305,7 @@ id|off_t
 id|f_pos
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;This function is called very early to setup the inode, somewhat&n;&t;&t;too early (called by UMSDOS_read_inode). At this point, we can&squot;t&n;&t;&t;do to much, such as lookup up EMD files and so on. This causes&n;&t;&t;confusion in the kernel. This is why some initialisation&n;&t;&t;will be done when dir != NULL only.&n;&n;&t;&t;UMSDOS do run piggy back on top of msdos fs. It looks like something&n;&t;&t;is missing in the VFS to accomodate stacked fs. Still unclear what&n;&t;&t;(quite honestly).&n;&n;&t;&t;Well, maybe one! A new entry &quot;may_unmount&quot; which would allow&n;&t;&t;the stacked fs to allocate some inode permanently and release&n;&t;&t;them at the end. Doing that now introduce a problem. unmount&n;&t;&t;always fail because some inodes are in use.&n;&t;*/
+multiline_comment|/*&n;&t;&t;This function is called very early to setup the inode, somewhat&n;&t;&t;too early (called by UMSDOS_read_inode). At this point, we can&squot;t&n;&t;&t;do to much, such as lookup up EMD files and so on. This causes&n;&t;&t;confusion in the kernel. This is why some initialisation&n;&t;&t;will be done when dir != NULL only.&n;&n;&t;&t;UMSDOS do run piggy back on top of msdos fs. It looks like something&n;&t;&t;is missing in the VFS to accommodate stacked fs. Still unclear what&n;&t;&t;(quite honestly).&n;&n;&t;&t;Well, maybe one! A new entry &quot;may_unmount&quot; which would allow&n;&t;&t;the stacked fs to allocate some inode permanently and release&n;&t;&t;them at the end. Doing that now introduce a problem. unmount&n;&t;&t;always fail because some inodes are in use.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -344,7 +344,7 @@ op_logical_neg
 id|is_init
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t;I don&squot;t want to change the msdos file system code&n;&t;&t;&t;&t;&t;so I get the adress of some subroutine dynamicly&n;&t;&t;&t;&t;&t;once.&n;&t;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;&t;I don&squot;t want to change the msdos file system code&n;&t;&t;&t;&t;&t;so I get the address of some subroutine dynamically&n;&t;&t;&t;&t;&t;once.&n;&t;&t;&t;&t;*/
 id|umsdos_file_inode_operations.bmap
 op_assign
 id|inode-&gt;i_op-&gt;bmap
@@ -706,7 +706,7 @@ id|inode-&gt;u.umsdos_i.u.dir_info.p
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* #Specification: Inode / post initialisation&n;&t;&t;To completly initialise an inode, we need access to the owner&n;&t;&t;directory, so we can locate more info in the EMD file. This is&n;&t;&t;not available the first time the inode is access, we use&n;&t;&t;a value in the inode to tell if it has been finally initialised.&n;&n;&t;&t;At first, we have tried testing i_count but it was causing&n;&t;&t;problem. It is possible that two or more process use the&n;&t;&t;newly accessed inode. While the first one block during&n;&t;&t;the initialisation (probably while reading the EMD file), the&n;&t;&t;others believe all is well because i_count &gt; 1. They go banana&n;&t;&t;with a broken inode. See umsdos_lookup_patch and umsdos_patch_inode.&n;&t;*/
+multiline_comment|/* #Specification: Inode / post initialisation&n;&t;&t;To completely initialise an inode, we need access to the owner&n;&t;&t;directory, so we can locate more info in the EMD file. This is&n;&t;&t;not available the first time the inode is access, we use&n;&t;&t;a value in the inode to tell if it has been finally initialised.&n;&n;&t;&t;At first, we have tried testing i_count but it was causing&n;&t;&t;problem. It is possible that two or more process use the&n;&t;&t;newly accessed inode. While the first one block during&n;&t;&t;the initialisation (probably while reading the EMD file), the&n;&t;&t;others believe all is well because i_count &gt; 1. They go banana&n;&t;&t;with a broken inode. See umsdos_lookup_patch and umsdos_patch_inode.&n;&t;*/
 id|umsdos_patch_inode
 c_func
 (paren
@@ -1116,7 +1116,7 @@ r_int
 id|silent
 )paren
 (brace
-multiline_comment|/* #Specification: mount / options&n;&t;&t;Umsdos run on top of msdos. Currently, it supports no&n;&t;&t;mount option, but happily pass all option received to&n;&t;&t;the msdos driver. I am not sure if all msdos mount option&n;&t;&t;make sens with Umsdos. Here are at least those who&n;&t;&t;are useful.&n;&t;&t;&t;uid=&n;&t;&t;&t;gid=&n;&n;&t;&t;These options affect the operation of umsdos in directories&n;&t;&t;which do not have an EMD file. They behave like normal&n;&t;&t;msdos directory, with all limitation of msdos.&n;&t;*/
+multiline_comment|/* #Specification: mount / options&n;&t;&t;Umsdos run on top of msdos. Currently, it supports no&n;&t;&t;mount option, but happily pass all option received to&n;&t;&t;the msdos driver. I am not sure if all msdos mount option&n;&t;&t;make sense with Umsdos. Here are at least those who&n;&t;&t;are useful.&n;&t;&t;&t;uid=&n;&t;&t;&t;gid=&n;&n;&t;&t;These options affect the operation of umsdos in directories&n;&t;&t;which do not have an EMD file. They behave like normal&n;&t;&t;msdos directory, with all limitation of msdos.&n;&t;*/
 r_struct
 id|super_block
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;   Written 1993 by Donald Becker.  This is a alpha test limited release.&n;   This version may only be used and distributed according to the terms of the&n;   GNU Public License, incorporated herein by reference.&n;&n;   The author may be reached as becker@super.org or&n;   C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;   This is a device driver for the Allied Telesis AT1700, which is a&n;   straight-foward Fujitsu MB86965 implementation.&n;*/
+multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;   Written 1993 by Donald Becker.  This is a alpha test limited release.&n;   This version may only be used and distributed according to the terms of the&n;   GNU Public License, incorporated herein by reference.&n;&n;   The author may be reached as becker@super.org or&n;   C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;   This is a device driver for the Allied Telesis AT1700, which is a&n;   straightforward Fujitsu MB86965 implementation.&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -288,7 +288,7 @@ id|addrs
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, alloate space for the device and return success&n;   (detachable devices only).&n;   */
+multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
 r_int
 DECL|function|at1700_probe
 id|at1700_probe
@@ -665,6 +665,10 @@ id|irq
 comma
 op_amp
 id|net_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;at1700&quot;
 )paren
 )paren
 (brace
@@ -758,7 +762,7 @@ id|eeprom_val
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* The EEPROM word 12 bit 0x0400 means use regular 100 ohm 10baseT signals,&n;&t;   rather than 150 ohm shielded twisted pair compansation.&n;&t;   0x0000 == auto-sense the interface&n;&t;   0x0800 == use TP interface&n;&t;   0x1800 == use coax interface&n;&t;   */
+multiline_comment|/* The EEPROM word 12 bit 0x0400 means use regular 100 ohm 10baseT signals,&n;&t;   rather than 150 ohm shielded twisted pair compensation.&n;&t;   0x0000 == auto-sense the interface&n;&t;   0x0800 == use TP interface&n;&t;   0x1800 == use coax interface&n;&t;   */
 (brace
 r_char
 op_star

@@ -3,7 +3,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/minix_fs.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 r_static
 r_int
@@ -263,7 +263,7 @@ id|ino
 )paren
 (brace
 r_case
-l_int|4
+id|PROC_PID_CWD
 suffix:colon
 id|inode
 op_assign
@@ -272,7 +272,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|5
+id|PROC_PID_ROOT
 suffix:colon
 id|inode
 op_assign
@@ -281,7 +281,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|6
+id|PROC_PID_EXE
 suffix:colon
 (brace
 r_struct
@@ -333,7 +333,7 @@ l_int|8
 )paren
 (brace
 r_case
-l_int|1
+id|PROC_PID_FD_DIR
 suffix:colon
 id|ino
 op_and_assign
@@ -361,71 +361,6 @@ op_member_access_from_pointer
 id|f_inode
 suffix:semicolon
 r_break
-suffix:semicolon
-r_case
-l_int|2
-suffix:colon
-id|ino
-op_and_assign
-l_int|0xff
-suffix:semicolon
-(brace
-r_int
-id|j
-op_assign
-id|ino
-suffix:semicolon
-r_struct
-id|vm_area_struct
-op_star
-id|mpnt
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|mpnt
-op_assign
-id|p-&gt;mm-&gt;mmap
-suffix:semicolon
-id|mpnt
-op_logical_and
-id|j
-op_ge
-l_int|0
-suffix:semicolon
-id|mpnt
-op_assign
-id|mpnt-&gt;vm_next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|mpnt-&gt;vm_inode
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|j
-op_eq
-l_int|0
-)paren
-(brace
-id|inode
-op_assign
-id|mpnt-&gt;vm_inode
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-suffix:semicolon
-id|j
-op_decrement
-suffix:semicolon
-)brace
-)brace
-)brace
 suffix:semicolon
 )brace
 )brace

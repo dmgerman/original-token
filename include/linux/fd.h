@@ -26,13 +26,13 @@ mdefine_line|#define&t;FDFMTTRK 7 /* format the specified track */
 DECL|macro|FDFMTEND
 mdefine_line|#define FDFMTEND 8 /* end formatting a disk */
 DECL|macro|FDSETEMSGTRESH
-mdefine_line|#define FDSETEMSGTRESH&t;10&t;/* set fdc error reporting treshold */
+mdefine_line|#define FDSETEMSGTRESH&t;10&t;/* set fdc error reporting threshold */
 DECL|macro|FDFLUSH
 mdefine_line|#define FDFLUSH  11 /* flush buffers for media; either for verifying media, or for&n;                       handling a media change without closing the file&n;&t;&t;       descriptor */
 DECL|macro|FDSETMAXERRS
-mdefine_line|#define FDSETMAXERRS 12 /* set abortion and read_track treshold */
+mdefine_line|#define FDSETMAXERRS 12 /* set abortion and read_track threshold */
 DECL|macro|FDGETMAXERRS
-mdefine_line|#define FDGETMAXERRS 14 /* get abortion and read_track treshold */
+mdefine_line|#define FDGETMAXERRS 14 /* get abortion and read_track threshold */
 DECL|macro|FDGETDRVTYP
 mdefine_line|#define FDGETDRVTYP 16          /* get drive type: 5 1/4 or 3 1/2 */
 DECL|macro|FDSETDRVPRM

@@ -370,7 +370,7 @@ r_char
 op_star
 id|cp
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check for a super block on the diskette.&n;&t; * The old-style boot/root diskettes had their RAM image&n;&t; * starting at block 512 of the boot diskette.  LINUX/Pro&n;&t; * uses the enire diskette as a file system, so in that&n;&t; * case, we have to look at block 0.  Be intelligent about&n;&t; * this, and check both... - FvK&n;&t; */
+multiline_comment|/*&n;&t; * Check for a super block on the diskette.&n;&t; * The old-style boot/root diskettes had their RAM image&n;&t; * starting at block 512 of the boot diskette.  LINUX/Pro&n;&t; * uses the entire diskette as a file system, so in that&n;&t; * case, we have to look at block 0.  Be intelligent about&n;&t; * this, and check both... - FvK&n;&t; */
 r_for
 c_loop
 (paren

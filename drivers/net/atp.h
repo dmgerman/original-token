@@ -276,7 +276,7 @@ r_return
 id|_v
 suffix:semicolon
 )brace
-multiline_comment|/* Read register OFFSET.&n;   This command should aways be terminated with read_end(). */
+multiline_comment|/* Read register OFFSET.&n;   This command should always be terminated with read_end(). */
 DECL|function|read_nibble
 r_extern
 r_inline

@@ -456,7 +456,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Probe for the Etherlink II card at I/O port base IOADDR,&n;   returning non-zero on sucess.  If found, set the station&n;   address and memory parameters in DEVICE. */
+multiline_comment|/* Probe for the Etherlink II card at I/O port base IOADDR,&n;   returning non-zero on success.  If found, set the station&n;   address and memory parameters in DEVICE. */
 r_int
 DECL|function|el2probe1
 id|el2probe1
@@ -1122,6 +1122,10 @@ op_star
 id|irqp
 comma
 l_int|NULL
+comma
+l_int|0
+comma
+l_string|&quot;bogus&quot;
 )paren
 op_ne
 op_minus
@@ -1188,6 +1192,10 @@ id|irqp
 comma
 op_amp
 id|ei_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;3c503&quot;
 )paren
 op_eq
 l_int|0
@@ -1240,6 +1248,10 @@ id|dev-&gt;irq
 comma
 op_amp
 id|ei_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;3c503&quot;
 )paren
 )paren
 (brace

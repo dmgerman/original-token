@@ -973,7 +973,7 @@ l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;je 7f&bslash;n&bslash;t&quot;
-multiline_comment|/* empty delimeter-string */
+multiline_comment|/* empty delimiter-string */
 l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
 l_string|&quot;2:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
