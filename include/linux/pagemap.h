@@ -3,6 +3,8 @@ DECL|macro|_LINUX_PAGEMAP_H
 mdefine_line|#define _LINUX_PAGEMAP_H
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Page-mapping primitive inline functions&n; *&n; * Copyright 1995 Linus Torvalds&n; */
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 DECL|function|page_address
 r_static
 r_inline
@@ -164,6 +166,7 @@ id|offset
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* Found the page. */
 id|save_flags
 c_func
 (paren

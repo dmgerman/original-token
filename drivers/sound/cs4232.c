@@ -181,6 +181,8 @@ id|hw_config
 (brace
 r_int
 id|i
+comma
+id|n
 suffix:semicolon
 r_int
 id|base
@@ -244,6 +246,22 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* The card is already active */
 multiline_comment|/*&n; * This version of the driver doesn&squot;t use the PnP method when configuring&n; * the card but a simplified method defined by Crystal. This means that&n; * just one CS4232 compatible device can exist on the system. Also this&n; * method conflicts with possible PnP support in the OS. For this reason &n; * driver is just a temporary kludge.&n; */
+multiline_comment|/*&n; * Repeat initialization few times since it doesn&squot;t always succeed in&n; * first time.&n; */
+r_for
+c_loop
+(paren
+id|n
+op_assign
+l_int|0
+suffix:semicolon
+id|n
+OL
+l_int|4
+suffix:semicolon
+id|n
+op_increment
+)paren
+(brace
 multiline_comment|/*&n; * Wake up the card by sending a 32 byte Crystal key to the key port.&n; */
 r_for
 c_loop
@@ -456,7 +474,9 @@ l_int|0x79
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Then try to detect the codec part of the chip&n; */
-r_return
+r_if
+c_cond
+(paren
 id|ad1848_detect
 (paren
 id|hw_config-&gt;io_base
@@ -465,6 +485,13 @@ l_int|NULL
 comma
 id|hw_config-&gt;osp
 )paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_int

@@ -4,6 +4,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+multiline_comment|/* Define this is you want slow routines that try to trip errors */
+DECL|macro|SADISTIC_KMALLOC
+macro_line|#undef SADISTIC_KMALLOC
 multiline_comment|/* Private flags. */
 DECL|macro|MF_USED
 mdefine_line|#define MF_USED 0xffaa0055
@@ -1392,6 +1395,20 @@ id|p-&gt;bh_length
 op_assign
 id|size
 suffix:semicolon
+macro_line|#ifdef SADISTIC_KMALLOC
+id|memset
+c_func
+(paren
+id|p
+op_plus
+l_int|1
+comma
+l_int|0xf0
+comma
+id|size
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|p
 op_plus
@@ -1571,6 +1588,20 @@ op_assign
 id|MF_FREE
 suffix:semicolon
 multiline_comment|/* As of now this block is officially free */
+macro_line|#ifdef SADISTIC_KMALLOC
+id|memset
+c_func
+(paren
+id|p
+op_plus
+l_int|1
+comma
+l_int|0xe0
+comma
+id|size
+)paren
+suffix:semicolon
+macro_line|#endif
 id|save_flags
 c_func
 (paren

@@ -888,6 +888,9 @@ l_int|0xff
 op_star
 l_int|16
 op_div
+(paren
+r_int
+)paren
 l_int|100
 )paren
 op_lshift
@@ -907,6 +910,9 @@ l_int|0xff
 op_star
 l_int|16
 op_div
+(paren
+r_int
+)paren
 l_int|100
 )paren
 op_amp
@@ -938,6 +944,9 @@ l_int|0xff
 op_star
 l_int|16
 op_div
+(paren
+r_int
+)paren
 l_int|100
 )paren
 op_lshift
@@ -961,6 +970,9 @@ l_int|0xff
 op_star
 l_int|16
 op_div
+(paren
+r_int
+)paren
 l_int|100
 )paren
 op_amp

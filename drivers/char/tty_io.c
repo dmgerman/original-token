@@ -7854,11 +7854,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL
 id|rs_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCC
 id|scc_init
 c_func

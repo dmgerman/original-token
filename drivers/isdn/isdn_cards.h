@@ -1,0 +1,9 @@
+r_extern
+r_void
+id|isdn_cards_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+eof

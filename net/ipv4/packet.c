@@ -446,7 +446,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Attach a packer hook to a device.&n; */
+multiline_comment|/*&n; *&t;Attach a packet hook to a device.&n; */
 DECL|function|packet_attach
 r_int
 id|packet_attach
@@ -456,6 +456,11 @@ r_struct
 id|sock
 op_star
 id|sk
+comma
+r_struct
+id|device
+op_star
+id|dev
 )paren
 (brace
 r_struct
@@ -509,7 +514,7 @@ id|sk
 suffix:semicolon
 id|p-&gt;dev
 op_assign
-l_int|NULL
+id|dev
 suffix:semicolon
 id|dev_add_pack
 c_func
@@ -521,6 +526,10 @@ multiline_comment|/*&n;&t; *&t;We need to remember this somewhere. &n;&t; */
 id|sk-&gt;protinfo.af_packet.prot_hook
 op_assign
 id|p
+suffix:semicolon
+id|sk-&gt;protinfo.af_packet.bound_dev
+op_assign
+id|dev
 suffix:semicolon
 r_return
 l_int|0
@@ -548,10 +557,15 @@ id|addr_len
 )paren
 (brace
 r_char
-id|dev
+id|name
 (braket
 l_int|15
 )braket
+suffix:semicolon
+r_struct
+id|device
+op_star
+id|dev
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Check legality&n;&t; */
 r_if
@@ -574,14 +588,14 @@ suffix:semicolon
 id|strncpy
 c_func
 (paren
-id|dev
+id|name
 comma
 id|uaddr-&gt;sa_data
 comma
 l_int|14
 )paren
 suffix:semicolon
-id|dev
+id|name
 (braket
 l_int|14
 )braket
@@ -594,18 +608,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|sk-&gt;protinfo.af_packet.bound_dev
+id|dev
 op_assign
 id|dev_get
 c_func
 (paren
+id|name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|dev
-)paren
-)paren
 op_eq
 l_int|NULL
 )paren
@@ -625,7 +639,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|sk-&gt;protinfo.af_packet.bound_dev-&gt;flags
+id|dev-&gt;flags
 op_amp
 id|IFF_UP
 )paren
@@ -647,11 +661,12 @@ c_func
 (paren
 id|sk-&gt;protinfo.af_packet.device_name
 comma
-id|dev
+id|name
 comma
 l_int|15
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Rewrite an existing hook if present.&n;&t; */
 r_if
 c_cond
 (paren
@@ -659,6 +674,20 @@ id|sk-&gt;protinfo.af_packet.prot_hook
 )paren
 (brace
 id|dev_remove_pack
+c_func
+(paren
+id|sk-&gt;protinfo.af_packet.prot_hook
+)paren
+suffix:semicolon
+id|sk-&gt;protinfo.af_packet.prot_hook-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|sk-&gt;protinfo.af_packet.bound_dev
+op_assign
+id|dev
+suffix:semicolon
+id|dev_add_pack
 c_func
 (paren
 id|sk-&gt;protinfo.af_packet.prot_hook
@@ -674,6 +703,8 @@ id|packet_attach
 c_func
 (paren
 id|sk
+comma
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -692,16 +723,6 @@ id|err
 suffix:semicolon
 )brace
 )brace
-id|sk-&gt;protinfo.af_packet.prot_hook-&gt;dev
-op_assign
-id|sk-&gt;protinfo.af_packet.bound_dev
-suffix:semicolon
-id|dev_add_pack
-c_func
-(paren
-id|sk-&gt;protinfo.af_packet.prot_hook
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now the notifier is set up right this lot is safe.&n;&t; */
 id|dev_unlock_list
 c_func
@@ -804,6 +825,8 @@ id|packet_attach
 c_func
 (paren
 id|sk
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

@@ -2150,7 +2150,7 @@ op_assign
 l_int|1
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -2289,6 +2289,17 @@ op_star
 id|hw_config
 )paren
 (brace
+r_extern
+r_int
+id|Jazz16_detected
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|Jazz16_detected
+)paren
+r_return
+suffix:semicolon
 id|sound_free_dma
 (paren
 id|dma8

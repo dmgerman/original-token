@@ -11,9 +11,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
-multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; *&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
-DECL|macro|NR_REQUEST
-mdefine_line|#define NR_REQUEST&t;64
+multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
 DECL|variable|all_requests
 r_static
 r_struct
@@ -803,8 +801,14 @@ l_string|&quot;drive_stat_acct: cmd not R/W?&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts so that it can muck with the&n; * request-lists in peace.&n; *&n; * By this point, req-&gt;cmd is always either READ/WRITE, never READA/WRITEA,&n; * which is important for drive_stat_acct() above.&n; */
+DECL|variable|request_lock
+r_struct
+id|semaphore
+id|request_lock
+op_assign
+id|MUTEX
+suffix:semicolon
 DECL|function|add_request
-r_static
 r_void
 id|add_request
 c_func
@@ -827,6 +831,12 @@ id|tmp
 suffix:semicolon
 r_int
 id|disk_index
+suffix:semicolon
+id|down
+(paren
+op_amp
+id|request_lock
+)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -956,6 +966,10 @@ r_if
 c_cond
 (paren
 id|req-&gt;bh
+op_logical_and
+id|req-&gt;bh-&gt;b_dev
+op_eq
+id|req-&gt;bh-&gt;b_rdev
 )paren
 id|mark_buffer_clean
 c_func
@@ -977,6 +991,12 @@ id|dev-&gt;current_request
 id|dev-&gt;current_request
 op_assign
 id|req
+suffix:semicolon
+id|up
+(paren
+op_amp
+id|request_lock
+)paren
 suffix:semicolon
 (paren
 id|dev-&gt;request_fn
@@ -1044,6 +1064,12 @@ id|tmp-&gt;next
 op_assign
 id|req
 suffix:semicolon
+id|up
+(paren
+op_amp
+id|request_lock
+)paren
+suffix:semicolon
 multiline_comment|/* for SCSI devices, call request_fn unconditionally */
 r_if
 c_cond
@@ -1057,6 +1083,14 @@ c_func
 id|req-&gt;rq_dev
 )paren
 )paren
+op_logical_and
+id|MAJOR
+c_func
+(paren
+id|req-&gt;rq_dev
+)paren
+op_ne
+id|MD_MAJOR
 )paren
 (paren
 id|dev-&gt;request_fn
@@ -1311,6 +1345,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|down
+(paren
+op_amp
+id|request_lock
+)paren
+suffix:semicolon
 multiline_comment|/* The scsi disk and cdrom drivers completely remove the request&n; * from the queue when they start processing an entry.  For this reason&n; * it is safe to continue to add links to the top entry for those devices.&n; */
 r_if
 c_cond
@@ -1324,6 +1364,10 @@ op_logical_or
 id|major
 op_eq
 id|IDE1_MAJOR
+op_logical_or
+id|major
+op_eq
+id|MD_MAJOR
 op_logical_or
 id|major
 op_eq
@@ -1422,6 +1466,12 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|up
+(paren
+op_amp
+id|request_lock
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -1485,6 +1535,12 @@ id|req-&gt;bh
 op_assign
 id|bh
 suffix:semicolon
+id|up
+(paren
+op_amp
+id|request_lock
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -1499,6 +1555,12 @@ id|req-&gt;next
 suffix:semicolon
 )brace
 )brace
+id|up
+(paren
+op_amp
+id|request_lock
+)paren
+suffix:semicolon
 multiline_comment|/* find an unused request. */
 id|req
 op_assign
@@ -1601,6 +1663,32 @@ id|req
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_MD
+DECL|function|get_md_request
+r_struct
+id|request
+op_star
+id|get_md_request
+(paren
+r_int
+id|max_req
+comma
+id|kdev_t
+id|dev
+)paren
+(brace
+r_return
+(paren
+id|get_request_wait
+(paren
+id|max_req
+comma
+id|dev
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Swap partitions are now read via brw_page.  ll_rw_page is an&n; * asynchronous function now --- we must call wait_on_page afterwards&n; * if synchronous IO is required.  &n; */
 DECL|function|ll_rw_page
 r_void
@@ -2116,6 +2204,21 @@ id|i
 op_member_access_from_pointer
 id|b_state
 )paren
+suffix:semicolon
+multiline_comment|/* Md needs this for error recovery */
+id|bh
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|b_rdev
+op_assign
+id|bh
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|b_dev
 suffix:semicolon
 id|make_request
 c_func
@@ -2777,6 +2880,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SJCD
+macro_line|#ifdef CONFIG_BLK_DEV_MD
+id|md_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_BLK_DEV_MD
 r_return
 l_int|0
 suffix:semicolon

@@ -1271,7 +1271,7 @@ r_int
 id|current-&gt;mm-&gt;end_code
 )paren
 op_rshift
-l_int|12
+id|PAGE_SHIFT
 suffix:semicolon
 id|dump-&gt;u_dsize
 op_assign
@@ -1291,7 +1291,7 @@ l_int|1
 )paren
 )paren
 op_rshift
-l_int|12
+id|PAGE_SHIFT
 suffix:semicolon
 id|dump-&gt;u_dsize
 op_sub_assign
@@ -1332,7 +1332,6 @@ id|dump-&gt;start_stack
 OL
 id|TASK_SIZE
 )paren
-(brace
 id|dump-&gt;u_ssize
 op_assign
 (paren
@@ -1347,9 +1346,8 @@ id|dump-&gt;start_stack
 )paren
 )paren
 op_rshift
-l_int|12
+id|PAGE_SHIFT
 suffix:semicolon
-)brace
 id|dump-&gt;regs
 op_assign
 op_star

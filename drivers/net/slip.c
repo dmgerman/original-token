@@ -1667,23 +1667,6 @@ op_lshift
 id|TTY_DO_WRITE_WAKEUP
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|sl-&gt;dev-&gt;tbusy
-)paren
-)paren
-multiline_comment|/* add by VSV */
 id|sl_unlock
 c_func
 (paren
@@ -2836,6 +2819,37 @@ id|sl-&gt;tty
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* VSV = very important to remove timers */
+macro_line|#ifdef CONFIG_SLIP_SMART
+r_if
+c_cond
+(paren
+id|sl-&gt;keepalive
+)paren
+(paren
+r_void
+)paren
+id|del_timer
+(paren
+op_amp
+id|sl-&gt;keepalive_timer
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sl-&gt;outfill
+)paren
+(paren
+r_void
+)paren
+id|del_timer
+(paren
+op_amp
+id|sl-&gt;outfill_timer
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sl_free
 c_func
 (paren
@@ -4120,6 +4134,9 @@ c_cond
 (paren
 id|sl-&gt;keepalive
 )paren
+(paren
+r_void
+)paren
 id|del_timer
 (paren
 op_amp
@@ -5095,9 +5112,10 @@ id|slip_ctrls
 (braket
 id|i
 )braket
-op_ne
-l_int|NULL
+op_member_access_from_pointer
+id|dev.start
 )paren
+multiline_comment|/* VSV = if dev-&gt;start==0, then device&n;&t;&t;&t;unregistred while close proc. */
 (brace
 id|unregister_netdev
 c_func
@@ -5192,7 +5210,7 @@ c_cond
 (paren
 id|sls
 op_eq
-l_int|NULL
+l_int|0L
 )paren
 (brace
 r_return
@@ -5262,14 +5280,6 @@ id|sl-&gt;dev-&gt;tbusy
 )paren
 (brace
 multiline_comment|/* if device busy no outfill */
-id|sl-&gt;tty-&gt;flags
-op_or_assign
-(paren
-l_int|1
-op_lshift
-id|TTY_DO_WRITE_WAKEUP
-)paren
-suffix:semicolon
 id|sl-&gt;tty-&gt;driver
 dot
 id|write

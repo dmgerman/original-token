@@ -172,6 +172,7 @@ multiline_comment|/*&n;&t;&t;Well, not all case require write access, but it sim
 r_if
 c_cond
 (paren
+(paren
 id|err
 op_assign
 id|verify_area
@@ -189,6 +190,7 @@ r_sizeof
 (paren
 r_struct
 id|umsdos_ioctl
+)paren
 )paren
 )paren
 OL

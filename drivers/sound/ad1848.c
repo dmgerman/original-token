@@ -37,6 +37,10 @@ id|saved_regs
 l_int|16
 )braket
 suffix:semicolon
+DECL|member|debug_flag
+r_int
+id|debug_flag
+suffix:semicolon
 DECL|member|speed
 r_int
 id|speed
@@ -2734,7 +2738,7 @@ id|devc-&gt;speed_bits
 op_assign
 id|speed_table
 (braket
-id|selected
+l_int|3
 )braket
 dot
 id|bits
@@ -3586,6 +3590,24 @@ c_cond
 id|dma_restart
 )paren
 (brace
+id|ad_write
+(paren
+id|devc
+comma
+l_int|9
+comma
+id|ad_read
+(paren
+id|devc
+comma
+l_int|9
+)paren
+op_amp
+op_complement
+l_int|0x01
+)paren
+suffix:semicolon
+multiline_comment|/* Playback disable */
 multiline_comment|/* ad1848_halt (dev); */
 id|DMAbuf_start_dma
 (paren
@@ -3637,8 +3659,6 @@ l_int|0xff
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* ad_write (devc, 9, ad_read (devc, 9) | 0x01); */
-multiline_comment|/* Playback enable */
 id|ad_unmute
 (paren
 id|devc
@@ -3806,6 +3826,24 @@ id|dma_restart
 )paren
 (brace
 multiline_comment|/* ad1848_halt (dev); */
+id|ad_write
+(paren
+id|devc
+comma
+l_int|9
+comma
+id|ad_read
+(paren
+id|devc
+comma
+l_int|9
+)paren
+op_amp
+op_complement
+l_int|0x02
+)paren
+suffix:semicolon
+multiline_comment|/* Capture disable */
 id|DMAbuf_start_dma
 (paren
 id|dev
@@ -3911,8 +3949,6 @@ l_int|0xff
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*  ad_write (devc, 9, ad_read (devc, 9) | 0x02); */
-multiline_comment|/* Capture enable */
 id|ad_unmute
 (paren
 id|devc
@@ -4060,12 +4096,6 @@ l_int|0xff
 suffix:semicolon
 multiline_comment|/* Speed LSB */
 )brace
-r_if
-c_cond
-(paren
-id|fs
-op_eq
-(paren
 id|old_fs
 op_assign
 id|ad_read
@@ -4074,7 +4104,13 @@ id|devc
 comma
 l_int|8
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fs
+op_eq
+id|old_fs
 )paren
 multiline_comment|/* No change */
 (brace
@@ -4328,7 +4364,7 @@ id|devc
 comma
 l_int|15
 comma
-l_int|0
+l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Clear DMA counter */
@@ -4356,7 +4392,7 @@ id|devc
 comma
 l_int|30
 comma
-l_int|0
+l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Clear DMA counter */
@@ -4380,7 +4416,7 @@ l_int|0
 suffix:semicolon
 id|timeout
 OL
-l_int|1000
+l_int|10000
 op_logical_and
 op_logical_neg
 (paren
@@ -4532,6 +4568,28 @@ l_int|0x02
 )paren
 suffix:semicolon
 multiline_comment|/* Stop capture */
+id|outb
+(paren
+l_int|0
+comma
+id|io_Status
+(paren
+id|devc
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Clear interrupt status */
+id|outb
+(paren
+l_int|0
+comma
+id|io_Status
+(paren
+id|devc
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Clear interrupt status */
 id|devc-&gt;irq_mode
 op_and_assign
 op_complement
@@ -4619,6 +4677,28 @@ l_int|0x01
 )paren
 suffix:semicolon
 multiline_comment|/* Stop playback */
+id|outb
+(paren
+l_int|0
+comma
+id|io_Status
+(paren
+id|devc
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Clear interrupt status */
+id|outb
+(paren
+l_int|0
+comma
+id|io_Status
+(paren
+id|devc
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Clear interrupt status */
 id|devc-&gt;irq_mode
 op_and_assign
 op_complement
@@ -4868,6 +4948,10 @@ multiline_comment|/* AD1848 or CS4248 */
 id|devc-&gt;osp
 op_assign
 id|osp
+suffix:semicolon
+id|devc-&gt;debug_flag
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;     * Check that the I/O address is in use.&n;     *&n;     * The bit 0x80 of the base I/O port is known to be 0 after the&n;     * chip has performed it&squot;s power on initialization. Just assume&n;     * this has happened before the OS is starting.&n;     *&n;     * If the I/O address is unused, it typically returns 0xff.&n;   */
 id|DDB
@@ -5996,32 +6080,6 @@ c_cond
 (paren
 id|devc-&gt;mode
 op_eq
-id|MD_4231A
-op_logical_or
-id|devc-&gt;mode
-op_eq
-id|MD_4232
-)paren
-id|ad_write
-(paren
-id|devc
-comma
-l_int|9
-comma
-id|init_values
-(braket
-l_int|9
-)braket
-op_or
-l_int|0x18
-)paren
-suffix:semicolon
-multiline_comment|/* Enable full calibration */
-r_if
-c_cond
-(paren
-id|devc-&gt;mode
-op_eq
 id|MD_1845
 )paren
 id|ad_write
@@ -6030,10 +6088,12 @@ id|devc
 comma
 l_int|27
 comma
-id|init_values
-(braket
+id|ad_read
+(paren
+id|devc
+comma
 l_int|27
-)braket
+)paren
 op_or
 l_int|0x08
 )paren
@@ -6187,6 +6247,8 @@ id|irq2dev
 (braket
 id|irq
 )braket
+op_assign
+id|devc-&gt;dev_no
 op_assign
 id|my_dev
 suffix:semicolon
@@ -6579,6 +6641,8 @@ id|devc
 op_eq
 l_int|NULL
 op_logical_and
+id|i
+OL
 id|nr_ad1848_devs
 suffix:semicolon
 id|i

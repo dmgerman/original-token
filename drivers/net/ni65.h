@@ -84,10 +84,12 @@ mdefine_line|#define XMIT_START&t;0x02&t;/* Start of Packet */
 DECL|macro|XMIT_END
 mdefine_line|#define XMIT_END&t;0x01&t;/* End of Packet */
 multiline_comment|/*&n; * transmit status (2) (valid if XMIT_ERR == 1)&n; */
+DECL|macro|XMIT_TDRMASK
+mdefine_line|#define XMIT_TDRMASK    0x03ff  /* time-domain-reflectometer-value */
 DECL|macro|XMIT_RTRY
-mdefine_line|#define XMIT_RTRY &t;0x0200  /* Failed after 16 retransmissions  */
+mdefine_line|#define XMIT_RTRY &t;0x0400  /* Failed after 16 retransmissions  */
 DECL|macro|XMIT_LCAR
-mdefine_line|#define XMIT_LCAR &t;0x0400  /* Loss of Carrier */
+mdefine_line|#define XMIT_LCAR &t;0x0800  /* Loss of Carrier */
 DECL|macro|XMIT_LCOL
 mdefine_line|#define XMIT_LCOL &t;0x1000  /* Late collision */
 DECL|macro|XMIT_RESERV
@@ -96,8 +98,6 @@ DECL|macro|XMIT_UFLO
 mdefine_line|#define XMIT_UFLO &t;0x4000  /* Underflow (late memory) */
 DECL|macro|XMIT_BUFF
 mdefine_line|#define XMIT_BUFF &t;0x8000  /* Buffering error (no ENP) */
-DECL|macro|XMIT_TDRMASK
-mdefine_line|#define XMIT_TDRMASK    0x003f  /* time-domain-reflectometer-value */
 DECL|struct|init_block
 r_struct
 id|init_block
@@ -123,30 +123,20 @@ id|filter
 l_int|8
 )braket
 suffix:semicolon
-DECL|member|rrplow
+multiline_comment|/* bit 29-31: number of rmd&squot;s (power of 2) */
+DECL|member|rrp
 r_int
 r_int
-id|rrplow
+id|rrp
 suffix:semicolon
 multiline_comment|/* receive ring pointer (align 8) */
-DECL|member|rrphigh
+multiline_comment|/* bit 29-31: number of tmd&squot;s (power of 2) */
+DECL|member|trp
 r_int
 r_int
-id|rrphigh
-suffix:semicolon
-multiline_comment|/* bit 13-15: number of rmd&squot;s (power of 2) */
-DECL|member|trplow
-r_int
-r_int
-id|trplow
+id|trp
 suffix:semicolon
 multiline_comment|/* transmit ring pointer (align 8) */
-DECL|member|trphigh
-r_int
-r_int
-id|trphigh
-suffix:semicolon
-multiline_comment|/* bit 13-15: number of tmd&squot;s (power of 2) */
 )brace
 suffix:semicolon
 DECL|struct|rmd

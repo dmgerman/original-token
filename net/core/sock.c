@@ -1551,23 +1551,6 @@ id|sk-&gt;sndbuf
 )paren
 macro_line|#endif
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;wmem_alloc
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;sock.c: Look where I am %ld&lt;%ld&bslash;n&quot;
-comma
-id|tmp
-comma
-id|sk-&gt;wmem_alloc
-)paren
-suffix:semicolon
 id|sk-&gt;socket-&gt;flags
 op_and_assign
 op_complement

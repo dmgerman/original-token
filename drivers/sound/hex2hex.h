@@ -438,6 +438,8 @@ id|outf
 comma
 l_string|&quot;static int %s_len = %d&bslash;n&quot;
 comma
+id|varline
+comma
 id|l
 )paren
 suffix:semicolon

@@ -147,6 +147,13 @@ id|devc
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|force_opl3_mode
+r_static
+r_int
+id|force_opl3_mode
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|detected_model
 r_static
 r_int
@@ -228,7 +235,10 @@ r_int
 id|both
 )paren
 (brace
-multiline_comment|/* NOP */
+id|force_opl3_mode
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -839,6 +849,9 @@ c_cond
 id|signature
 op_eq
 l_int|0x06
+op_logical_and
+op_logical_neg
+id|force_opl3_mode
 )paren
 multiline_comment|/* OPL2 */
 (brace

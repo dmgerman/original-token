@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;xiafs_mac.h&quot;
@@ -1112,6 +1113,28 @@ l_int|1
 op_plus
 id|bh-&gt;b_data
 suffix:semicolon
+id|memcpy_fromfs
+c_func
+(paren
+id|cp
+comma
+id|buf
+comma
+id|c
+)paren
+suffix:semicolon
+id|update_vm_cache
+c_func
+(paren
+id|inode
+comma
+id|pos
+comma
+id|cp
+comma
+id|c
+)paren
+suffix:semicolon
 id|pos
 op_add_assign
 id|c
@@ -1136,16 +1159,6 @@ suffix:semicolon
 id|written
 op_add_assign
 id|c
-suffix:semicolon
-id|memcpy_fromfs
-c_func
-(paren
-id|cp
-comma
-id|buf
-comma
-id|c
-)paren
 suffix:semicolon
 id|buf
 op_add_assign

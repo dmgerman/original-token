@@ -179,6 +179,8 @@ DECL|macro|DMA_ACTIVE
 mdefine_line|#define DMA_ACTIVE&t;0x00000004
 DECL|macro|DMA_STARTED
 mdefine_line|#define DMA_STARTED&t;0x00000008
+DECL|macro|DMA_EMPTY
+mdefine_line|#define DMA_EMPTY&t;0x00000010&t;
 DECL|macro|DMA_ALLOC_DONE
 mdefine_line|#define DMA_ALLOC_DONE&t;0x00000020
 DECL|member|open_mode
@@ -363,6 +365,8 @@ DECL|macro|DMA_AUTOMODE
 mdefine_line|#define DMA_AUTOMODE&t;&t;2
 DECL|macro|DMA_DUPLEX
 mdefine_line|#define DMA_DUPLEX&t;&t;4
+DECL|macro|DMA_PSEUDO_AUTOMODE
+mdefine_line|#define DMA_PSEUDO_AUTOMODE&t;8
 DECL|member|format_mask
 r_int
 id|format_mask
@@ -1960,6 +1964,24 @@ comma
 id|probe_trix_mpu
 comma
 id|unload_trix_mpu
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PNP
+(brace
+l_string|&quot;AD1848&quot;
+comma
+l_int|0
+comma
+l_int|500
+comma
+l_string|&quot;SoundPort&quot;
+comma
+id|attach_pnp_ad1848
+comma
+id|probe_pnp_ad1848
+comma
+id|unload_pnp_ad1848
 )brace
 comma
 macro_line|#endif

@@ -8,12 +8,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-r_extern
-r_int
-r_int
-id|high_memory
-suffix:semicolon
 DECL|function|check_one_table
 r_static
 r_int

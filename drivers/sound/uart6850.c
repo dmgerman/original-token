@@ -11,6 +11,12 @@ id|uart6850_base
 op_assign
 l_int|0x330
 suffix:semicolon
+DECL|variable|uart6850_osp
+r_static
+r_int
+op_star
+id|uart6850_osp
+suffix:semicolon
 DECL|macro|DATAPORT
 mdefine_line|#define&t;DATAPORT   (uart6850_base)
 DECL|macro|COMDPORT
@@ -150,12 +156,6 @@ r_int
 r_int
 id|dummy
 )paren
-suffix:semicolon
-DECL|variable|uart6850_osp
-r_static
-r_int
-op_star
-id|uart6850_osp
 suffix:semicolon
 DECL|variable|uart6850_timer
 r_static

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -1797,6 +1798,11 @@ c_func
 (paren
 id|cpuid
 comma
+(paren
+r_int
+r_int
+op_star
+)paren
 op_amp
 id|cpu_callin_map
 (braket
@@ -2166,7 +2172,6 @@ id|cfg
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;This gunge runs the startup process for&n;&t;&t;&t; *&t;the targeted processor.&n;&t;&t;&t; */
-macro_line|#ifdef EEK
 id|SMP_PRINTK
 c_func
 (paren
@@ -2175,6 +2180,7 @@ l_string|&quot;Setting warm reset code and vector.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Needed to boot a 486 board.&n;&t;&t;&t; */
 id|CMOS_WRITE
 c_func
 (paren
@@ -2182,6 +2188,13 @@ l_int|0xa
 comma
 l_int|0xf
 )paren
+suffix:semicolon
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+l_int|7
 suffix:semicolon
 op_star
 (paren
@@ -2195,14 +2208,14 @@ l_int|0x467
 )paren
 op_assign
 (paren
+(paren
 r_int
 r_int
 )paren
-(paren
 id|stack
+)paren
 op_rshift
 l_int|4
-)paren
 suffix:semicolon
 op_star
 (paren
@@ -2217,7 +2230,24 @@ l_int|0x469
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+id|pte_val
+c_func
+(paren
+id|mk_pte
+c_func
+(paren
+l_int|0
+comma
+id|PAGE_READONLY
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Clean up the errors&n;&t;&t;&t; */
 id|apic_write
 c_func
 (paren
@@ -2238,6 +2268,7 @@ op_amp
 l_int|0xEF
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Status is now clean&n;&t;&t;&t; */
 id|send_status
 op_assign
 l_int|0
@@ -2254,6 +2285,7 @@ l_string|&quot;Asserting INIT.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Turn INIT on&n;&t;&t;&t; */
 id|cfg
 op_assign
 id|apic_read
@@ -2382,6 +2414,7 @@ l_int|0xEF
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n;&t;&t;&t; *&t;And off again&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2884,7 +2917,6 @@ comma
 id|accept_status
 )paren
 suffix:semicolon
-r_else
 (brace
 r_for
 c_loop
@@ -4154,6 +4186,11 @@ c_func
 (paren
 id|i
 comma
+(paren
+r_int
+r_int
+op_star
+)paren
 op_amp
 id|smp_invalidate_needed
 )paren
@@ -4170,6 +4207,11 @@ c_func
 (paren
 id|i
 comma
+(paren
+r_int
+r_int
+op_star
+)paren
 op_amp
 id|cpu_callin_map
 (braket

@@ -100,6 +100,142 @@ l_int|15
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;Once the IPX ncpd patches are in these are going into protinfo&n; */
+macro_line|#ifdef CONFIG_IPX 
+DECL|struct|ipx_opt
+r_struct
+id|ipx_opt
+(brace
+DECL|member|dest_addr
+id|ipx_address
+id|dest_addr
+suffix:semicolon
+DECL|member|intrfc
+id|ipx_interface
+op_star
+id|intrfc
+suffix:semicolon
+DECL|member|port
+r_int
+r_int
+id|port
+suffix:semicolon
+macro_line|#ifdef CONFIG_IPX_INTERN
+DECL|member|node
+r_int
+r_char
+id|node
+(braket
+id|IPX_NODE_LEN
+)braket
+suffix:semicolon
+macro_line|#endif
+DECL|member|type
+r_int
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* &n; * To handle asynchronous messages from the NetWare server, we have to&n; * know the connection this socket belongs to. &n; */
+DECL|member|ncp_server
+r_struct
+id|ncp_server
+op_star
+id|ncp_server
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NUTCP
+DECL|struct|tcp_opt
+r_struct
+id|tcp_opt
+(brace
+multiline_comment|/*&n; *&t;RFC793 variables by their proper names. This means you can&n; *&t;read the code and the spec side by side (and laugh ...)&n; *&t;See RFC793 and RFC1122. The RFC writes these in capitals.&n; */
+DECL|member|rcv_nxt
+id|__u32
+id|rcv_nxt
+suffix:semicolon
+multiline_comment|/* What we want to receive next &t;*/
+DECL|member|rcv_up
+id|__u32
+id|rcv_up
+suffix:semicolon
+multiline_comment|/* The urgent point (may not be valid) &t;*/
+DECL|member|rcv_wnd
+id|__u32
+id|rcv_wnd
+suffix:semicolon
+multiline_comment|/* Current receiver window&t;&t;*/
+DECL|member|snd_nxt
+id|__u32
+id|snd_nxt
+suffix:semicolon
+multiline_comment|/* Next sequence we send&t;&t;*/
+DECL|member|snd_una
+id|__u32
+id|snd_una
+suffix:semicolon
+multiline_comment|/* First byte we want an ack for&t;*/
+DECL|member|snd_up
+id|__u32
+id|snd_up
+suffix:semicolon
+multiline_comment|/* Outgoing urgent pointer&t;&t;*/
+DECL|member|snd_wl1
+id|__u32
+id|snd_wl1
+suffix:semicolon
+multiline_comment|/* Sequence for window update&t;&t;*/
+DECL|member|snd_wl2
+id|__u32
+id|snd_wl2
+suffix:semicolon
+multiline_comment|/* Ack sequence for update&t;&t;*/
+multiline_comment|/*&n; *&t;Slow start and congestion control (see also Nagle, and Karn &amp; Partridge)&n; */
+DECL|member|snd_cwnd
+id|__u32
+id|snd_cwnd
+suffix:semicolon
+multiline_comment|/* Sending congestion window&t;&t;*/
+DECL|member|snd_ssthresh
+id|__u32
+id|snd_ssthresh
+suffix:semicolon
+multiline_comment|/* Slow start size threshold&t;&t;*/
+multiline_comment|/*&n; *&t;Timers used by the TCP protocol layer&n; */
+DECL|member|delack_timer
+r_struct
+id|timer_list
+id|delack_timer
+suffix:semicolon
+multiline_comment|/* Ack delay &t;*/
+DECL|member|idle_timer
+r_struct
+id|timer_list
+id|idle_timer
+suffix:semicolon
+multiline_comment|/* Idle watch &t;*/
+DECL|member|completion_timer
+r_struct
+id|timer_list
+id|completion_timer
+suffix:semicolon
+multiline_comment|/* Up/Down timer */
+DECL|member|probe_timer
+r_struct
+id|timer_list
+id|probe_timer
+suffix:semicolon
+multiline_comment|/* Probes&t;*/
+DECL|member|retransmit_timer
+r_struct
+id|timer_list
+id|retransmit_timer
+suffix:semicolon
+multiline_comment|/* Resend (no ack) */
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
 DECL|struct|sock
 r_struct
@@ -507,45 +643,6 @@ r_char
 id|localroute
 suffix:semicolon
 multiline_comment|/* Route locally only */
-macro_line|#ifdef CONFIG_IPX
-multiline_comment|/*&n; *&t;Once the IPX ncpd patches are in these are going into protinfo&n; */
-DECL|member|ipx_dest_addr
-id|ipx_address
-id|ipx_dest_addr
-suffix:semicolon
-DECL|member|ipx_intrfc
-id|ipx_interface
-op_star
-id|ipx_intrfc
-suffix:semicolon
-DECL|member|ipx_port
-r_int
-r_int
-id|ipx_port
-suffix:semicolon
-multiline_comment|/* To handle asynchronous messages from the NetWare server, we have to&n; * know the connection this socket belongs to. Sorry to blow up this&n; * structure even more. */
-DECL|member|ipx_ncp_server
-r_struct
-id|ncp_server
-op_star
-id|ipx_ncp_server
-suffix:semicolon
-macro_line|#ifdef CONFIG_IPX_INTERN
-DECL|member|ipx_node
-r_int
-r_char
-id|ipx_node
-(braket
-id|IPX_NODE_LEN
-)braket
-suffix:semicolon
-macro_line|#endif
-DECL|member|ipx_type
-r_int
-r_int
-id|ipx_type
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_AX25
 DECL|member|ax25
 id|ax25_cb
@@ -575,12 +672,26 @@ id|atalk_sock
 id|af_at
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_IPX
+DECL|member|af_ipx
+r_struct
+id|ipx_opt
+id|af_ipx
+suffix:semicolon
+macro_line|#endif&t;&t;
 macro_line|#ifdef CONFIG_INET
 DECL|member|af_packet
 r_struct
 id|inet_packet_opt
 id|af_packet
 suffix:semicolon
+macro_line|#ifdef CONFIG_NUTCP&t;&t;
+DECL|member|af_tcp
+r_struct
+id|tcp_opt
+id|af_tcp
+suffix:semicolon
+macro_line|#endif&t;&t;
 macro_line|#endif
 DECL|member|protinfo
 )brace

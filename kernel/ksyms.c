@@ -731,6 +731,7 @@ c_func
 id|get_blkfops
 )paren
 comma
+macro_line|#ifdef CONFIG_SERIAL&t;
 multiline_comment|/* Module creation of serial units */
 id|X
 c_func
@@ -744,6 +745,7 @@ c_func
 id|unregister_serial
 )paren
 comma
+macro_line|#endif
 multiline_comment|/* tty routines */
 id|X
 c_func

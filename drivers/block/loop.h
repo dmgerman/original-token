@@ -214,7 +214,7 @@ mdefine_line|#define LO_CRYPT_XOR&t;1
 DECL|macro|LO_CRYPT_DES
 mdefine_line|#define LO_CRYPT_DES&t;2
 DECL|macro|LO_CRYPT_IDEA
-mdefine_line|#define LO_CRYPT_IDEA&t;5
+mdefine_line|#define LO_CRYPT_IDEA&t;3
 DECL|macro|MAX_LO_CRYPT
 mdefine_line|#define MAX_LO_CRYPT&t;4
 multiline_comment|/*&n; * IOCTL commands --- we will commandeer 0x4C (&squot;L&squot;)&n; */

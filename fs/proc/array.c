@@ -3902,9 +3902,9 @@ DECL|macro|MAPS_LINE_SHIFT
 mdefine_line|#define MAPS_LINE_SHIFT&t;&t;10
 multiline_comment|/*&n; * f_pos = (number of the vma in the task-&gt;mm-&gt;mmap list) * MAPS_LINE_LENGTH&n; *         + (index into the line)&n; */
 DECL|macro|MAPS_LINE_FORMAT
-mdefine_line|#define MAPS_LINE_FORMAT&t;  &quot;%08lx-%08lx %s %08lx %02x:%02x %lu&bslash;n&quot;
+mdefine_line|#define MAPS_LINE_FORMAT&t;  &quot;%08lx-%08lx %s %08lx %s %lu&bslash;n&quot;
 DECL|macro|MAPS_LINE_MAX
-mdefine_line|#define MAPS_LINE_MAX&t;49 /* sum of 8  1  8  1 4 1 8  1  2 1  2 1 10 1 */
+mdefine_line|#define MAPS_LINE_MAX&t;49 /* sum of 8  1  8  1 4 1 8 1 5 1 10 1 */
 DECL|function|read_maps
 r_static
 r_int
@@ -4201,13 +4201,7 @@ id|str
 comma
 id|map-&gt;vm_offset
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -4431,6 +4425,14 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|get_md_status
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 macro_line|#ifdef __SMP_PROF__
 r_extern
 r_int
@@ -4635,6 +4637,18 @@ c_func
 id|page
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_MD
+r_case
+id|PROC_MD
+suffix:colon
+r_return
+id|get_md_status
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 r_case
 id|PROC_APM

@@ -10,13 +10,6 @@ op_star
 id|name
 )paren
 suffix:semicolon
-DECL|variable|separate_output
-r_static
-r_int
-id|separate_output
-op_assign
-l_int|0
-suffix:semicolon
 DECL|typedef|jumperFn
 r_typedef
 r_int
@@ -441,32 +434,6 @@ op_plus
 l_int|1
 )braket
 comma
-l_string|&quot;--separate-output&quot;
-)paren
-)paren
-(brace
-id|separate_output
-op_assign
-l_int|1
-suffix:semicolon
-id|offset
-op_increment
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
-(paren
-id|argv
-(braket
-id|offset
-op_plus
-l_int|1
-)braket
-comma
 l_string|&quot;--clear&quot;
 )paren
 )paren
@@ -720,7 +687,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;&n;&bslash;ndialog, by Savio Lam (lam836@cs.cuhk.hk).&bslash;&n;&bslash;n  patched by Stuart Herbert (S.Herbert@shef.ac.uk)&bslash;&n;&bslash;n  modified/gutted for use as a Linux kernel config tool by &bslash;&n;&bslash;n  William Roadcap (roadcapw@cfw.com)&bslash;&n;&bslash;n&bslash;&n;&bslash;n* Display dialog boxes from shell scripts *&bslash;&n;&bslash;n&bslash;&n;&bslash;nUsage: %s --clear&bslash;&n;&bslash;n       %s [--title &lt;title&gt;] [--separate-output] [--backtitle &lt;backtitle&gt;] --clear &lt;Box options&gt;&bslash;&n;&bslash;n&bslash;&n;&bslash;nBox options:&bslash;&n;&bslash;n&bslash;&n;&bslash;n  --menu      &lt;text&gt; &lt;height&gt; &lt;width&gt; &lt;menu height&gt; &lt;tag1&gt; &lt;item1&gt;...&bslash;&n;&bslash;n  --checklist &lt;text&gt; &lt;height&gt; &lt;width&gt; &lt;list height&gt; &lt;tag1&gt; &lt;item1&gt; &lt;status1&gt;...&bslash;&n;&bslash;n  --radiolist &lt;text&gt; &lt;height&gt; &lt;width&gt; &lt;list height&gt; &lt;tag1&gt; &lt;item1&gt; &lt;status1&gt;...&bslash;&n;&bslash;n  --textbox   &lt;file&gt; &lt;height&gt; &lt;width&gt;&bslash;&n;&bslash;n  --inputbox  &lt;text&gt; &lt;height&gt; &lt;width&gt; [&lt;init&gt;]&bslash;&n;&bslash;n  --yesno     &lt;text&gt; &lt;height&gt; &lt;width&gt;&bslash;&n;&quot;
+l_string|&quot;&bslash;&n;&bslash;ndialog, by Savio Lam (lam836@cs.cuhk.hk).&bslash;&n;&bslash;n  patched by Stuart Herbert (S.Herbert@shef.ac.uk)&bslash;&n;&bslash;n  modified/gutted for use as a Linux kernel config tool by &bslash;&n;&bslash;n  William Roadcap (roadcapw@cfw.com)&bslash;&n;&bslash;n&bslash;&n;&bslash;n* Display dialog boxes from shell scripts *&bslash;&n;&bslash;n&bslash;&n;&bslash;nUsage: %s --clear&bslash;&n;&bslash;n       %s [--title &lt;title&gt;] [--backtitle &lt;backtitle&gt;] --clear &lt;Box options&gt;&bslash;&n;&bslash;n&bslash;&n;&bslash;nBox options:&bslash;&n;&bslash;n&bslash;&n;&bslash;n  --menu      &lt;text&gt; &lt;height&gt; &lt;width&gt; &lt;menu height&gt; &lt;tag1&gt; &lt;item1&gt;...&bslash;&n;&bslash;n  --checklist &lt;text&gt; &lt;height&gt; &lt;width&gt; &lt;list height&gt; &lt;tag1&gt; &lt;item1&gt; &lt;status1&gt;...&bslash;&n;&bslash;n  --radiolist &lt;text&gt; &lt;height&gt; &lt;width&gt; &lt;list height&gt; &lt;tag1&gt; &lt;item1&gt; &lt;status1&gt;...&bslash;&n;&bslash;n  --textbox   &lt;file&gt; &lt;height&gt; &lt;width&gt;&bslash;&n;&bslash;n  --inputbox  &lt;text&gt; &lt;height&gt; &lt;width&gt; [&lt;init&gt;]&bslash;&n;&bslash;n  --yesno     &lt;text&gt; &lt;height&gt; &lt;width&gt;&bslash;&n;&quot;
 comma
 id|name
 comma
@@ -875,8 +842,6 @@ op_plus
 l_int|6
 comma
 id|FLAG_CHECK
-comma
-id|separate_output
 )paren
 suffix:semicolon
 )brace
@@ -947,8 +912,6 @@ op_plus
 l_int|6
 comma
 id|FLAG_RADIO
-comma
-id|separate_output
 )paren
 suffix:semicolon
 )brace

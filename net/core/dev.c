@@ -368,6 +368,7 @@ op_star
 id|name
 )paren
 (brace
+r_const
 r_char
 op_star
 id|sptr
@@ -3653,6 +3654,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|ni65_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|pi_init
 c_func
 (paren
@@ -3695,6 +3704,13 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * This is VeryUgly(tm).&n;&t; *&n;&t; * Some devices want to be initialized eary..&n;&t; */
 macro_line|#if defined(CONFIG_LANCE)
 id|lance_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_NI65)
+id|ni65_init
 c_func
 (paren
 )paren

@@ -3612,9 +3612,16 @@ id|reset_mpu401
 id|devc
 )paren
 )paren
+(brace
+id|printk
+(paren
+l_string|&quot;MPU401: Device didn&squot;t respond&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

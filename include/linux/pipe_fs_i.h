@@ -1,10 +1,17 @@
 macro_line|#ifndef _LINUX_PIPE_FS_I_H
 DECL|macro|_LINUX_PIPE_FS_I_H
 mdefine_line|#define _LINUX_PIPE_FS_I_H
+macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 DECL|struct|pipe_inode_info
 r_struct
 id|pipe_inode_info
 (brace
+DECL|member|dummy
+r_struct
+id|nfs_inode_info
+id|dummy
+suffix:semicolon
+multiline_comment|/* NFS/fifo conflict workaround */
 DECL|member|wait
 r_struct
 id|wait_queue

@@ -8,9 +8,6 @@ mdefine_line|#define OPTCD_PORTBASE&t;0x340
 multiline_comment|/* enable / disable parts of driver by define / undef */
 DECL|macro|MULTISESSION
 mdefine_line|#define&t;MULTISESSION&t;&t;/* multisession support (ALPHA) */
-DECL|macro|PROBE_ISP16
-mdefine_line|#define&t;PROBE_ISP16&t;&t;/* ISP16 interface card probing */
-multiline_comment|/* ISP16 probing can also be suppressed with kernel command line option&n;   &squot;noisp16&squot;, or with insmod parameter &squot;noisp16=1&squot;. */
 multiline_comment|/* Change 0 to 1 to debug various parts of the driver */
 DECL|macro|DEBUG_DRIVE_IF
 mdefine_line|#define&t;DEBUG_DRIVE_IF&t;0&t;/* Low level drive interface */
@@ -28,7 +25,8 @@ DECL|macro|DEBUG_MULTIS
 mdefine_line|#define&t;DEBUG_MULTIS&t;0&t;/* Multisession code */
 DECL|macro|DEBUG_VFS
 mdefine_line|#define&t;DEBUG_VFS&t;0&t;/* VFS interface */
-multiline_comment|/* Various timeout loop repetition counts. Don&squot;t touch unless you know&n;   what you&squot;re doing. */
+multiline_comment|/* Don&squot;t touch these unless you know what you&squot;re doing. */
+multiline_comment|/* Various timeout loop repetition counts. */
 DECL|macro|BUSY_TIMEOUT
 mdefine_line|#define BUSY_TIMEOUT&t;&t;10000000&t;/* for busy wait */
 DECL|macro|FAST_TIMEOUT
@@ -43,5 +41,8 @@ DECL|macro|STOP_TIMEOUT
 mdefine_line|#define STOP_TIMEOUT&t;&t;1000&t;&t;/* for poll wait */
 DECL|macro|RESET_WAIT
 mdefine_line|#define RESET_WAIT&t;&t;1000&t;&t;/* busy wait at drive reset */
+multiline_comment|/* # of buffer for block size conversion. 6 is optimal for my setup (P75),&n;   giving 280 kb/s, with 0.4% CPU usage. Experiment to find your optimal&n;   setting */
+DECL|macro|N_BUFS
+mdefine_line|#define N_BUFS&t;&t;6
 macro_line|#endif _LINUX_OPTCD_H
 eof

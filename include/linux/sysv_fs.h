@@ -961,7 +961,6 @@ multiline_comment|/* up to 14 characters, the rest are zeroes */
 suffix:semicolon
 DECL|macro|SYSV_DIRSIZE
 mdefine_line|#define SYSV_DIRSIZE&t;sizeof(struct sysv_dir_entry)&t;/* size of every directory entry */
-macro_line|#ifdef __KERNEL__
 multiline_comment|/* Operations */
 multiline_comment|/* ========== */
 multiline_comment|/* identify the FS in memory */
@@ -983,6 +982,7 @@ DECL|macro|SYSV2_SUPER_MAGIC
 mdefine_line|#define SYSV2_SUPER_MAGIC&t;(SYSV_MAGIC_BASE+FSTYPE_SYSV2)
 DECL|macro|COH_SUPER_MAGIC
 mdefine_line|#define COH_SUPER_MAGIC&t;&t;(SYSV_MAGIC_BASE+FSTYPE_COH)
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* sv_get_hash_table(sb,dev,block) is equivalent to  get_hash_table(dev,block,block_size)  */
 r_static
 r_inline

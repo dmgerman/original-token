@@ -10,6 +10,13 @@ id|chrdev_registered
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|sound_major
+r_static
+r_int
+id|sound_major
+op_assign
+id|SOUND_MAJOR
+suffix:semicolon
 DECL|variable|is_unloading
 r_static
 r_int
@@ -1233,7 +1240,7 @@ r_void
 macro_line|#ifndef MODULE
 id|module_register_chrdev
 (paren
-id|SOUND_MAJOR
+id|sound_major
 comma
 l_string|&quot;sound&quot;
 comma
@@ -1363,7 +1370,7 @@ id|i
 (brace
 id|printk
 (paren
-l_string|&quot;Sound warning: IRQ%d was left allocated. Fixed.&bslash;n&quot;
+l_string|&quot;Sound warning: IRQ%d was left allocated - fixed.&bslash;n&quot;
 comma
 id|i
 )paren
@@ -1501,7 +1508,7 @@ id|err
 op_assign
 id|module_register_chrdev
 (paren
-id|SOUND_MAJOR
+id|sound_major
 comma
 l_string|&quot;sound&quot;
 comma
@@ -1578,7 +1585,7 @@ id|chrdev_registered
 )paren
 id|module_unregister_chrdev
 (paren
-id|SOUND_MAJOR
+id|sound_major
 comma
 l_string|&quot;sound&quot;
 )paren
@@ -1647,7 +1654,7 @@ id|DMA_MAP_UNAVAIL
 (brace
 id|printk
 (paren
-l_string|&quot;Sound: Hmm, DMA%d was left allocated&bslash;n&quot;
+l_string|&quot;Sound: Hmm, DMA%d was left allocated - fixed&bslash;n&quot;
 comma
 id|i
 )paren
@@ -2190,7 +2197,7 @@ id|debugmem
 )paren
 id|printk
 (paren
-l_string|&quot;sound: buffsize%d %lu&bslash;n&quot;
+l_string|&quot;sound: buffsize[%d] = %lu&bslash;n&quot;
 comma
 id|dev
 comma
@@ -2719,6 +2726,16 @@ id|printk
 (paren
 l_string|&quot; irq %d&quot;
 comma
+(paren
+id|hw_config-&gt;irq
+OG
+l_int|0
+)paren
+ques
+c_cond
+id|hw_config-&gt;irq
+suffix:colon
+op_minus
 id|hw_config-&gt;irq
 )paren
 suffix:semicolon
@@ -2812,6 +2829,16 @@ id|printk
 (paren
 l_string|&quot; irq %d&quot;
 comma
+(paren
+id|irq
+OG
+l_int|0
+)paren
+ques
+c_cond
+id|irq
+suffix:colon
+op_minus
 id|irq
 )paren
 suffix:semicolon

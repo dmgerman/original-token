@@ -1,11 +1,11 @@
-multiline_comment|/* $Id: advansys.c,v 1.11 1996/01/16 22:39:19 bobf Exp bobf $ */
+multiline_comment|/* $Id: advansys.c,v 1.12 1996/02/23 20:48:27 bobf Exp bobf $ */
 multiline_comment|/*&n; * advansys.c - Linux Host Driver for AdvanSys SCSI Adapters&n; * &n; * Copyright (c) 1995-1996 Advanced System Products, Inc.&n; * All Rights Reserved.&n; *&n; * This driver may be modified and freely distributed provided that&n; * the above copyright message and this comment are included in the&n; * distribution. The latest version of this driver is available at&n; * the AdvanSys FTP and BBS sites listed below.&n; *&n; * Please send questions, comments, bug reports to:&n; * bobf@advansys.com (Bob Frey)&n; */
-multiline_comment|/* The driver has been tested with Linux 1.2.1 and 1.3.57 kernels. */
+multiline_comment|/* The driver has been tested with Linux v1.2.1 and v1.3.57 kernels. */
 DECL|macro|ASC_VERSION
-mdefine_line|#define ASC_VERSION &quot;1.2&quot;&t;/* AdvanSys Driver Version */
-multiline_comment|/*&n;&n;  Documentation for the AdvanSys Driver&n;&n;  A. Adapters Supported by this Driver&n;  B. Linux 1.2.X - Directions for Adding the AdvanSys Driver&n;  C. Linux 1.3.X - Directions for Adding the AdvanSys Driver&n;  D. Source Comments&n;  E. Driver Compile Time Options and Debugging&n;  F. Driver LILO Option&n;  G. Release History&n;  H. Known Problems or Issues&n;  I. Credits&n;  J. AdvanSys Contact Information&n;&n;&n;  A. Adapters Supported by this Driver&n; &n;     AdvanSys (Advanced System Products, Inc.) manufactures the following&n;     Bus-Mastering SCSI-2 Host Adapters for the ISA, EISA, VL, and PCI&n;     buses. This Linux driver supports all of these adapters.&n;     &n;     The CDB counts below indicate the number of SCSI CDB (Command&n;     Descriptor Block) requests that can be stored in the RISC chip&n;     cache and board LRAM. The driver detect routine will display the&n;     number of CDBs available for each adapter detected. This value&n;     can be lowered in the BIOS by changing the &squot;Host Queue Size&squot;&n;     adapter setting.&n;&n;     Connectivity Products:&n;       ABP920 - Bus-Master PCI 16 CDB&n;       ABP930 - Bus-Master PCI 16 CDB&n;       ABP5140 - Bus-Master PnP ISA 16 CDB&n;   &n;     Single Channel Products:&n;       ABP542 - Bus-Master ISA 240 CDB&n;       ABP5150 - Bus-Master ISA 240 CDB *&n;       ABP742 - Bus-Master EISA 240 CDB&n;       ABP842 - Bus-Master VL 240 CDB&n;       ABP940 - Bus-Master PCI 240 CDB&n;   &n;     Dual Channel Products:&n;       ABP950 - Dual Channel Bus-Master PCI 240 CDB Per Channel&n;       ABP852 - Dual Channel Bus-Master VL 240 CDB Per Channel&n;       ABP752 - Dual Channel Bus-Master EISA 240 CDB Per Channel&n;&n;     * This board is shipped by HP with the 4020i CD-R drive. It has&n;       no BIOS so it cannot control a boot device, but it can control&n;       any secondary devices.&n; &n;  B. Linux 1.2.X - Directions for Adding the AdvanSys Driver&n; &n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;    &n;     1. Add the following line to /usr/src/linux/arch/i386/config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;    &n;          bool &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS y&n;    &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;    &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;    &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;    &n;          ifdef CONFIG_SCSI_ADVANSYS&n;          SCSI_SRCS := $(SCSI_SRCS) advansys.c&n;          SCSI_OBJS := $(SCSI_OBJS) advansys.o&n;          else&n;          SCSI_MODULE_OBJS := $(SCSI_MODULE_OBJS) advansys.o&n;          endif&n;&n;     4. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;&n;          extern void advansys_setup(char *str, int *ints);&n;&n;        and add the following lines to the bootsetups[] array.&n;&n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;&n;     5. If you have the HP 4020i CD-R driver and Linux 1.2.X you should&n;        add a fix to the CD-ROM target driver. This fix will allow&n;        you to mount CDs with the iso9660 file system. Linux 1.3.X&n;        already has this fix. In the file /usr/src/linux/drivers/scsi/sr.c&n;        and function get_sectorsize() after the line:&n;&n;        if(scsi_CDs[i].sector_size == 0) scsi_CDs[i].sector_size = 2048;&n;&n;        add the following line:&n;&n;        if(scsi_CDs[i].sector_size == 2340) scsi_CDs[i].sector_size = 2048;&n;&n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n; &n;  C. Linux 1.3.X - Directions for Adding the AdvanSys Driver&n;&n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;   &n;     1. Add the following line to /usr/src/linux/drivers/scsi/Config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;   &n;          dep_tristate &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS $CONFIG_SCSI&n;   &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;   &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;   &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;   &n;          ifeq ($(CONFIG_SCSI_ADVANSYS),y)&n;          L_OBJS += advansys.o&n;          else&n;            ifeq ($(CONFIG_SCSI_ADVANSYS),m)&n;            M_OBJS += advansys.o&n;            endif&n;          endif&n;   &n;     4. Add the following line to /usr/src/linux/include/linux/proc_fs.h&n;        in the enum scsi_directory_inos array:&n;   &n;          PROC_SCSI_ADVANSYS,&n;   &n;     5. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;   &n;          extern void advansys_setup(char *str, int *ints);&n;   &n;        and add the following lines to the bootsetups[] array.&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;   &n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n;&n;  D. Source Comments&n; &n;     1. Use tab stops set to 4 for the source files. For vi use &squot;se tabstops=4&squot;.&n; &n;     2. This driver should be maintained in multiple files. But to make&n;        it easier to include with Linux and to follow Linux conventions,&n;        the whole driver is maintained in the source files advansys.h and&n;        advansys.c. In this file logical sections of the driver begin with&n;        a comment that contains &squot;---&squot;. The following are the logical sections&n;        of the driver below.&n; &n;           --- Linux Version&n;           --- Linux Include Files &n;           --- Driver Options&n;           --- Asc Library Constants and Macros&n;           --- Debugging Header&n;           --- Driver Constants&n;           --- Driver Macros&n;           --- Driver Structures&n;           --- Driver Data&n;           --- Driver Function Prototypes&n;           --- Linux &squot;Scsi_Host_Template&squot; and advansys_setup() Functions&n;           --- Loadable Driver Support&n;           --- Miscellaneous Driver Functions&n;           --- Functions Required by the Asc Library&n;           --- Tracing and Debugging Functions&n;           --- Asc Library Functions&n; &n;     3. The string &squot;XXX&squot; is used to flag code that needs to be re-written&n;        or that contains a problem that needs to be addressed.&n; &n;     4. I have stripped comments from and reformatted the source for the&n;        Asc Library which is included in this file. I haven&squot;t done this&n;        to obfuscate the code. Actually I have done this to deobfuscate&n;        the code. The Asc Library source can be found under the following&n;        headings.&n; &n;           --- Asc Library Constants and Macros&n;           --- Asc Library Functions&n; &n;  E. Driver Compile Time Options and Debugging&n; &n;     In this source file the following constants can be defined. They are&n;     defined in the source below. Both of these options are enabled by&n;     default.&n; &n;     1. ADVANSYS_DEBUG - enable for debugging and assertions&n; &n;        The amount of debugging output can be controlled with the global&n;        variable &squot;asc_dbglvl&squot;. The higher the number the more output. By&n;        default the debug level is 0.&n;        &n;        If the driver is loaded at boot time and the LILO Driver Option&n;        is included in the system, the debug level can be changed by&n;        specifying a 5th (ASC_NUM_BOARD_SUPPORTED + 1) I/O Port. The&n;        first three hex digits of the pseudo I/O Port must be set to&n;        &squot;deb&squot; and the fourth hex digit specifies the debug level: 0 - F.&n;        The following command line will look for an adapter at 0x330&n;        and set the debug level to 2.&n;&n;           linux advansys=0x330,0x0,0x0,0x0,0xdeb2&n;&n;        If the driver is built as a loadable module this variable can be&n;        defined when the driver is loaded. The following insmod command&n;        will set the debug level to one.&n;  &n;           insmod advansys.o asc_dbglvl=1&n; &n; &n;        Debugging Message Levels:&n;           0: Errors Only&n;           1: High-Level Tracing&n;           2-N: Verbose Tracing&n; &n;        I don&squot;t know the approved way for turning on printk()s to the&n;        console. Here&squot;s a program I use to do this. Debug output is&n;        logged in /var/adm/messages.&n; &n;          main()&n;          {&n;                  syscall(103, 7, 0, 0);&n;          }&n; &n;        I found that increasing LOG_BUF_LEN to 40960 in kernel/printk.c&n;        prevents most level 1 debug messages from being lost.&n; &n;     2. ADVANSYS_STATS - enable statistics and tracing&n; &n;        For Linux 1.2.X if ADVANSYS_STATS_1_2_PRINT is defined every&n;        10,000 I/O operations the driver will print statistics to the&n;        console. This value can be changed by modifying the constant&n;        used in advansys_queuecommand(). ADVANSYS_STATS_1_2_PRINT is&n;        off by default.&n;&n;        For Linux 1.3.X statistics can be accessed by reading the&n;        /proc/scsi/advansys/[0-9] files.&n;&n;        Note: these statistics are currently maintained on a global driver&n;        basis and not per board.&n;&n;  F. Driver LILO Option&n; &n;     If init/main.c is modified as described in the &squot;Directions for Adding&n;     the AdvanSys Driver to Linux&squot; section (B.4.) above, the driver will&n;     recognize the &squot;advansys&squot; LILO command line and /etc/lilo.conf option.&n;     This option can be used to either disable I/O port scanning or to limit&n;     scanning to 1 - 4 I/O ports. Regardless of the option setting EISA and&n;     PCI boards will still be searched for and detected. This option only&n;     affects searching for ISA and VL boards.&n;&n;     Examples:&n;       1. Eliminate I/O port scanning:&n;            boot: linux advansys=&n;              or&n;            boot: linux advansys=0x0&n;       2. Limit I/O port scanning to one I/O port:&n;            boot: linux advansys=0x110&n;       3. Limit I/O port scanning to four I/O ports:&n;            boot: linux advansys=0x110,0x210,0x230,0x330&n;&n;     For a loadable module the same effect can be achieved by setting&n;     the &squot;asc_iopflag&squot; variable and &squot;asc_ioport&squot; array when loading&n;     the driver, e.g.&n;&n;           insmod advansys.o asc_iopflag=1 asc_ioport=0x110,0x330&n;&n;     If ADVANSYS_DEBUG is defined a 5th (ASC_NUM_BOARD_SUPPORTED + 1)&n;     I/O Port may be added to specify the driver debug level. Refer to&n;     the &squot;Driver Compile Time Options and Debugging&squot; section above for&n;     more information.&n;&n;  G. Release History&n;&n;     12/23/95 BETA-1.0:&n;         First Release&n;&n;     12/28/95 BETA-1.1:&n;         1. Prevent advansys_detect() from being called twice.&n;         2. Add LILO 0xdeb[0-f] option to set &squot;asc_dbglvl&squot;.&n;&n;     1/12/96 1.2:&n;         1. Prevent re-entrancy in the interrupt handler which&n;            resulted in the driver hanging Linux.&n;         2. Fix problem that prevented ABP-940 cards from being&n;            recognized on some PCI motherboards.&n;         3. Add support for the ABP-5140 PnP ISA card.&n;         4. Fix check condition return status.&n;         5. Add conditionally compiled code for Linux 1.3.X.&n;        &n;  H. Known Problems or Issues&n;&n;     1. The setting for &squot;cmd_per_lun&squot; needs to be changed. It is currently&n;        less then what the AdvanSys boards can queue. Because the target and&n;        mid-level Linux drivers base memory allocation on &squot;cmd_per_lun&squot; (as&n;        well as &squot;sg_tablesize&squot;) memory use gets out of hand with a large&n;        &squot;cmd_per_lun&squot;. &squot;cmd_per_lun&squot; should be per device instead of per&n;        adapter. When the driver is compiled as a loadable module both&n;        &squot;cmd_per_lun&squot; and &squot;sg_tablesize&squot; are tuned down to try to prevent&n;        memory allocation errors.&n;&n;     2. For the first scsi command sent to a device the driver increases&n;        the timeout value. This gives the driver more time to perform&n;        its own initialization for the board and each device. The timeout&n;        value is only changed on the first scsi command for each device&n;        and never thereafter.&n;&n;  I. Credits&n;&n;     Nathan Hartwell (mage@cdc3.cdc.net) provided the directions and&n;     and basis for the Linux 1.3.X changes which were included in the&n;     1.2 release.&n;&n;  J. AdvanSys Contact Information&n; &n;     Mail:                   Advanced System Products, Inc.&n;                             1150 Ringwood Court&n;                             San Jose, CA 95131 USA&n;     Operator:               1-408-383-9400&n;     FAX:                    1-408-383-9612&n;     Tech Support:           1-800-525-7440&n;     BBS:                    1-408-383-9540 (9600,N,8,1)&n;     Interactive FAX:        1-408-383-9753&n;     Customer Direct Sales:  1-800-883-1099&n;     Tech Support E-Mail:    support@advansys.com&n;     Linux Support E-Mail:   bobf@advansys.com&n;     FTP Site:               ftp.advansys.com (login: anonymous)&n;     Web Site:               http://www.advansys.com&n;&n;*/
+mdefine_line|#define ASC_VERSION &quot;1.3&quot;&t;/* AdvanSys Driver Version */
+multiline_comment|/*&n;&n;  Documentation for the AdvanSys Driver&n;&n;  A. Adapters Supported by this Driver&n;  B. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;  C. Linux v1.3.X - Directions for Adding the AdvanSys Driver&n;  D. Source Comments&n;  E. Driver Compile Time Options and Debugging&n;  F. Driver LILO Option&n;  G. Release History&n;  H. Known Problems or Issues&n;  I. Credits&n;  J. AdvanSys Contact Information&n;&n;&n;  A. Adapters Supported by this Driver&n; &n;     AdvanSys (Advanced System Products, Inc.) manufactures the following&n;     Bus-Mastering SCSI-2 Host Adapters for the ISA, EISA, VL, and PCI&n;     buses. This Linux driver supports all of these adapters.&n;     &n;     The CDB counts below indicate the number of SCSI CDB (Command&n;     Descriptor Block) requests that can be stored in the RISC chip&n;     cache and board LRAM. The driver detect routine will display the&n;     number of CDBs available for each adapter detected. This value&n;     can be lowered in the BIOS by changing the &squot;Host Queue Size&squot;&n;     adapter setting.&n;&n;     Connectivity Products:&n;       ABP920 - Bus-Master PCI 16 CDB&n;       ABP930 - Bus-Master PCI 16 CDB&n;       ABP5140 - Bus-Master PnP ISA 16 CDB&n;   &n;     Single Channel Products:&n;       ABP542 - Bus-Master ISA 240 CDB&n;       ABP5150 - Bus-Master ISA 240 CDB *&n;       ABP742 - Bus-Master EISA 240 CDB&n;       ABP842 - Bus-Master VL 240 CDB&n;       ABP940 - Bus-Master PCI 240 CDB&n;   &n;     Dual Channel Products:&n;       ABP950 - Dual Channel Bus-Master PCI 240 CDB Per Channel&n;       ABP852 - Dual Channel Bus-Master VL 240 CDB Per Channel&n;       ABP752 - Dual Channel Bus-Master EISA 240 CDB Per Channel&n;&n;     * This board is shipped by HP with the 4020i CD-R drive. It has&n;       no BIOS so it cannot control a boot device, but it can control&n;       any secondary devices.&n; &n;  B. Linux v1.2.X - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.2.1. For versions that follow v1.2.1&n;     but precede v1.3.57 some of the changes for Linux v1.3.X listed&n;     below may need to be modified or included.&n; &n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;    &n;     1. Add the following line to /usr/src/linux/arch/i386/config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;    &n;          bool &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS y&n;    &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;    &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;    &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;    &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;    &n;          ifdef CONFIG_SCSI_ADVANSYS&n;          SCSI_SRCS := $(SCSI_SRCS) advansys.c&n;          SCSI_OBJS := $(SCSI_OBJS) advansys.o&n;          else&n;          SCSI_MODULE_OBJS := $(SCSI_MODULE_OBJS) advansys.o&n;          endif&n;&n;     4. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;&n;          extern void advansys_setup(char *str, int *ints);&n;&n;        and add the following lines to the bootsetups[] array.&n;&n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;&n;     5. If you have the HP 4020i CD-R driver and Linux v1.2.X you should&n;        add a fix to the CD-ROM target driver. This fix will allow&n;        you to mount CDs with the iso9660 file system. Linux v1.3.X&n;        already has this fix. In the file /usr/src/linux/drivers/scsi/sr.c&n;        and function get_sectorsize() after the line:&n;&n;        if(scsi_CDs[i].sector_size == 0) scsi_CDs[i].sector_size = 2048;&n;&n;        add the following line:&n;&n;        if(scsi_CDs[i].sector_size == 2340) scsi_CDs[i].sector_size = 2048;&n;&n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n; &n;  C. Linux v1.3.X - Directions for Adding the AdvanSys Driver&n;&n;     These directions apply to v1.3.57. For versions that precede v1.3.57&n;     some of these changes may need to be modified or eliminated. Beginning&n;     with v1.3.58 this driver is included with the Linux distribution.&n;&n;     There are two source files: advansys.h and advansys.c. Copy&n;     both of these files to the directory /usr/src/linux/drivers/scsi.&n;   &n;     1. Add the following line to /usr/src/linux/drivers/scsi/Config.in&n;        after &quot;comment &squot;SCSI low-level drivers&squot;&quot;:&n;   &n;          dep_tristate &squot;AdvanSys SCSI support&squot; CONFIG_SCSI_ADVANSYS $CONFIG_SCSI&n;   &n;     2. Add the following lines to /usr/src/linux/drivers/scsi/hosts.c&n;        after &quot;#include &quot;hosts.h&quot;&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          #include &quot;advansys.h&quot;&n;          #endif&n;   &n;        and after &quot;static Scsi_Host_Template builtin_scsi_hosts[] =&quot;:&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;          ADVANSYS,&n;          #endif&n;   &n;     3. Add the following lines to /usr/src/linux/drivers/scsi/Makefile:&n;   &n;          ifeq ($(CONFIG_SCSI_ADVANSYS),y)&n;          L_OBJS += advansys.o&n;          else&n;            ifeq ($(CONFIG_SCSI_ADVANSYS),m)&n;            M_OBJS += advansys.o&n;            endif&n;          endif&n;   &n;     4. Add the following line to /usr/src/linux/include/linux/proc_fs.h&n;        in the enum scsi_directory_inos array:&n;   &n;          PROC_SCSI_ADVANSYS,&n;   &n;     5. (Optional) If you would like to enable the LILO command line&n;        and /etc/lilo.conf &squot;advansys&squot; option, make the following changes.&n;        This option can be used to disable I/O port scanning or to limit&n;        I/O port scanning to specific addresses. Refer to the &squot;Driver&n;        LILO Option&squot; section below. Add the following lines to&n;        /usr/src/linux/init/main.c in the prototype section:&n;   &n;          extern void advansys_setup(char *str, int *ints);&n;   &n;        and add the following lines to the bootsetups[] array.&n;   &n;          #ifdef CONFIG_SCSI_ADVANSYS&n;             { &quot;advansys=&quot;, advansys_setup },&n;          #endif&n;   &n;     6. In the directory /usr/src/linux run &squot;make config&squot; to configure&n;        the AdvanSys driver, then run &squot;make vmlinux&squot; or &squot;make zlilo&squot; to&n;        make the kernel. If the AdvanSys driver is not configured, then&n;        a loadable module can be built by running &squot;make modules&squot; and&n;        &squot;make modules_install&squot;. Use &squot;insmod&squot; and &squot;rmmod&squot; to install&n;        and remove advansys.o.&n;&n;  D. Source Comments&n; &n;     1. Use tab stops set to 4 for the source files. For vi use &squot;se tabstops=4&squot;.&n; &n;     2. This driver should be maintained in multiple files. But to make&n;        it easier to include with Linux and to follow Linux conventions,&n;        the whole driver is maintained in the source files advansys.h and&n;        advansys.c. In this file logical sections of the driver begin with&n;        a comment that contains &squot;---&squot;. The following are the logical sections&n;        of the driver below.&n; &n;           --- Linux Version&n;           --- Linux Include Files &n;           --- Driver Options&n;           --- Asc Library Constants and Macros&n;           --- Debugging Header&n;           --- Driver Constants&n;           --- Driver Macros&n;           --- Driver Structures&n;           --- Driver Data&n;           --- Driver Function Prototypes&n;           --- Linux &squot;Scsi_Host_Template&squot; and advansys_setup() Functions&n;           --- Loadable Driver Support&n;           --- Miscellaneous Driver Functions&n;           --- Functions Required by the Asc Library&n;           --- Tracing and Debugging Functions&n;           --- Asc Library Functions&n; &n;     3. The string &squot;XXX&squot; is used to flag code that needs to be re-written&n;        or that contains a problem that needs to be addressed.&n; &n;     4. I have stripped comments from and reformatted the source for the&n;        Asc Library which is included in this file. I haven&squot;t done this&n;        to obfuscate the code. Actually I have done this to deobfuscate&n;        the code. The Asc Library source can be found under the following&n;        headings.&n; &n;           --- Asc Library Constants and Macros&n;           --- Asc Library Functions&n; &n;  E. Driver Compile Time Options and Debugging&n; &n;     In this source file the following constants can be defined. They are&n;     defined in the source below. Both of these options are enabled by&n;     default.&n; &n;     1. ADVANSYS_DEBUG - enable for debugging and assertions&n; &n;        The amount of debugging output can be controlled with the global&n;        variable &squot;asc_dbglvl&squot;. The higher the number the more output. By&n;        default the debug level is 0.&n;        &n;        If the driver is loaded at boot time and the LILO Driver Option&n;        is included in the system, the debug level can be changed by&n;        specifying a 5th (ASC_NUM_BOARD_SUPPORTED + 1) I/O Port. The&n;        first three hex digits of the pseudo I/O Port must be set to&n;        &squot;deb&squot; and the fourth hex digit specifies the debug level: 0 - F.&n;        The following command line will look for an adapter at 0x330&n;        and set the debug level to 2.&n;&n;           linux advansys=0x330,0,0,0,0xdeb2&n;&n;        If the driver is built as a loadable module this variable can be&n;        defined when the driver is loaded. The following insmod command&n;        will set the debug level to one.&n;  &n;           insmod advansys.o asc_dbglvl=1&n; &n; &n;        Debugging Message Levels:&n;           0: Errors Only&n;           1: High-Level Tracing&n;           2-N: Verbose Tracing&n; &n;        I don&squot;t know the approved way for turning on printk()s to the&n;        console. Here&squot;s a program I use to do this. Debug output is&n;        logged in /var/adm/messages.&n; &n;          main()&n;          {&n;                  syscall(103, 7, 0, 0);&n;          }&n; &n;        I found that increasing LOG_BUF_LEN to 40960 in kernel/printk.c&n;        prevents most level 1 debug messages from being lost.&n; &n;     2. ADVANSYS_STATS - enable statistics and tracing&n; &n;        For Linux v1.2.X if ADVANSYS_STATS_1_2_PRINT is defined every&n;        10,000 I/O operations the driver will print statistics to the&n;        console. This value can be changed by modifying the constant&n;        used in advansys_queuecommand(). ADVANSYS_STATS_1_2_PRINT is&n;        off by default.&n;&n;        For Linux v1.3.X statistics can be accessed by reading the&n;        /proc/scsi/advansys/[0-(ASC_NUM_BOARD_SUPPORTED-1)] files.&n;&n;        Note: these statistics are currently maintained on a global driver&n;        basis and not per board.&n;&n;  F. Driver LILO Option&n; &n;     If init/main.c is modified as described in the &squot;Directions for Adding&n;     the AdvanSys Driver to Linux&squot; section (B.4.) above, the driver will&n;     recognize the &squot;advansys&squot; LILO command line and /etc/lilo.conf option.&n;     This option can be used to either disable I/O port scanning or to limit&n;     scanning to 1 - 4 I/O ports. Regardless of the option setting EISA and&n;     PCI boards will still be searched for and detected. This option only&n;     affects searching for ISA and VL boards.&n;&n;     Examples:&n;       1. Eliminate I/O port scanning:&n;            boot: linux advansys=&n;              or&n;            boot: linux advansys=0x0&n;       2. Limit I/O port scanning to one I/O port:&n;            boot: linux advansys=0x110&n;       3. Limit I/O port scanning to four I/O ports:&n;            boot: linux advansys=0x110,0x210,0x230,0x330&n;&n;     For a loadable module the same effect can be achieved by setting&n;     the &squot;asc_iopflag&squot; variable and &squot;asc_ioport&squot; array when loading&n;     the driver, e.g.&n;&n;           insmod advansys.o asc_iopflag=1 asc_ioport=0x110,0x330&n;&n;     If ADVANSYS_DEBUG is defined a 5th (ASC_NUM_BOARD_SUPPORTED + 1)&n;     I/O Port may be added to specify the driver debug level. Refer to&n;     the &squot;Driver Compile Time Options and Debugging&squot; section above for&n;     more information.&n;&n;  G. Release History&n;&n;     12/23/95 BETA-1.0:&n;         First Release&n;&n;     12/28/95 BETA-1.1:&n;         1. Prevent advansys_detect() from being called twice.&n;         2. Add LILO 0xdeb[0-f] option to set &squot;asc_dbglvl&squot;.&n;&n;     1/12/96 1.2:&n;         1. Prevent re-entrancy in the interrupt handler which&n;            resulted in the driver hanging Linux.&n;         2. Fix problem that prevented ABP-940 cards from being&n;            recognized on some PCI motherboards.&n;         3. Add support for the ABP-5140 PnP ISA card.&n;         4. Fix check condition return status.&n;         5. Add conditionally compiled code for Linux v1.3.X.&n;&n;     2/23/96 1.3:&n;         1. Fix problem in advansys_biosparam() that resulted in the&n;            wrong drive geometry being returned for drives &gt; 1GB with&n;            extended translation enabled.&n;         2. Add additional tracing during device initialization.&n;         3. Change code that only applies to ISA PnP adapter.&n;         4. Eliminate &squot;make dep&squot; warning.&n;         5. Try to fix problem with handling resets by increasing their&n;            timeout value.&n;        &n;  H. Known Problems or Issues&n;&n;     1. The setting for &squot;cmd_per_lun&squot; needs to be changed. It is currently&n;        less then what the AdvanSys boards can queue. Because the target and&n;        mid-level Linux drivers base memory allocation on &squot;cmd_per_lun&squot; (as&n;        well as &squot;sg_tablesize&squot;) memory use gets out of hand with a large&n;        &squot;cmd_per_lun&squot;. &squot;cmd_per_lun&squot; should be per device instead of per&n;        adapter. When the driver is compiled as a loadable module both&n;        &squot;cmd_per_lun&squot; and &squot;sg_tablesize&squot; are tuned down to try to prevent&n;        memory allocation errors.&n;&n;     2. For the first scsi command sent to a device the driver increases&n;        the timeout value. This gives the driver more time to perform&n;        its own initialization for the board and each device. The timeout&n;        value is only changed on the first scsi command for each device&n;        and never thereafter. The same change is made for reset commands.&n;&n;     3. The driver occasionally enters a loop handling reset requests. It&n;        isn&squot;t clear yet whether this is a bug in the upper or mid-level&n;        scsi modules or in this driver.&n;&n;  I. Credits&n;&n;     Nathan Hartwell &lt;mage@cdc3.cdc.net&gt; provided the directions and&n;     and basis for the Linux v1.3.X changes which were included in the&n;     1.2 release.&n;&n;     Thomas E Zerucha &lt;zerucha@shell.portal.com&gt; pointed out the bug&n;     in advansys_biosparam() which was fixed the 1.3 release.&n;&n;  J. AdvanSys Contact Information&n; &n;     Mail:                   Advanced System Products, Inc.&n;                             1150 Ringwood Court&n;                             San Jose, CA 95131 USA&n;     Operator:               1-408-383-9400&n;     FAX:                    1-408-383-9612&n;     Tech Support:           1-800-525-7440&n;     BBS:                    1-408-383-9540 (9600,N,8,1)&n;     Interactive FAX:        1-408-383-9753&n;     Customer Direct Sales:  1-800-883-1099&n;     Tech Support E-Mail:    support@advansys.com&n;     Linux Support E-Mail:   bobf@advansys.com&n;     FTP Site:               ftp.advansys.com (login: anonymous)&n;     Web Site:               http://www.advansys.com&n;&n;*/
 multiline_comment|/*&n; * --- Linux Version&n; */
-multiline_comment|/*&n; * The driver can be used in Linux 1.2.X or 1.3.X.&n; */
+multiline_comment|/*&n; * The driver can be used in Linux v1.2.X or v1.3.X.&n; */
 macro_line|#if !defined(LINUX_1_2) &amp;&amp; !defined(LINUX_1_3)
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
@@ -19,12 +19,11 @@ mdefine_line|#define LINUX_1_2
 macro_line|#endif /* LINUX_VERSION_CODE */
 macro_line|#endif /* !defined(LINUX_1_2) &amp;&amp; !defined(LINUX_1_3) */
 multiline_comment|/*&n; * --- Linux Include Files &n; */
-macro_line|#ifdef MODULE
 macro_line|#ifdef LINUX_1_3
-macro_line|#include &lt;linux/autoconf.h&gt;
-macro_line|#endif /* LINUX_1_3 */ 
+macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif /* MODULE */
+macro_line|#endif /* LINUX_1_3 */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -33,7 +32,6 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef LINUX_1_3
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif /* LINUX_1_3 */ 
@@ -5971,7 +5969,7 @@ suffix:semicolon
 macro_line|#endif /* ADVANSYS_DEBUG */
 multiline_comment|/*&n; * --- Linux &squot;Scsi_Host_Template&squot; and advansys_setup() Functions&n; */
 macro_line|#ifdef LINUX_1_3
-multiline_comment|/*&n; * advansys_proc_info() - /proc/scsi/advansys/[0-ASC_NUM_BOARD_SUPPORTED]&n; *&n; * *buffer: I/O buffer&n; * **start: if inout == FALSE pointer into buffer where user read should start&n; * offset: current offset into /proc/scsi/advansys file&n; * length: length of buffer&n; * hostno: Scsi_Host host_no&n; * inout: TRUE - user is writing; FALSE - user is reading&n; *&n; * Return the number of bytes read from or written to&n; * /proc/scsi/advansys file.&n; */
+multiline_comment|/*&n; * advansys_proc_info() - /proc/scsi/advansys/[0-(ASC_NUM_BOARD_SUPPORTED-1)]&n; *&n; * *buffer: I/O buffer&n; * **start: if inout == FALSE pointer into buffer where user read should start&n; * offset: current offset into /proc/scsi/advansys file&n; * length: length of buffer&n; * hostno: Scsi_Host host_no&n; * inout: TRUE - user is writing; FALSE - user is reading&n; *&n; * Return the number of bytes read from or written to&n; * /proc/scsi/advansys file.&n; */
 r_int
 DECL|function|advansys_proc_info
 id|advansys_proc_info
@@ -8242,7 +8240,7 @@ r_return
 id|info
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * advansys_command()&n; *&n; * Polled-I/O. Apparently host driver shouldn&squot;t return until&n; * command is finished.&n; *&n; * XXX - Can host driver block here instead of spinning on command status?&n; */
+multiline_comment|/*&n; * advansys_command()&n; *&n; * Polled-I/O. Apparently host drivers shouldn&squot;t return until&n; * command is finished.&n; *&n; * XXX - Can host drivers block here instead of spinning on command status?&n; */
 r_int
 DECL|function|advansys_command
 id|advansys_command
@@ -8355,7 +8353,7 @@ op_assign
 id|scp-&gt;host
 suffix:semicolon
 macro_line|#ifdef LINUX_1_2
-multiline_comment|/*&n;&t; * For LINUX_1_3, if statistics are enabled they can be accessed&n;&t; * by reading /proc/scsi/advansys/[0-9].&n;&t; */
+multiline_comment|/*&n;&t; * For LINUX_1_3, if statistics are enabled they can be accessed&n;&t; * by reading /proc/scsi/advansys/[0-(ASC_NUM_BOARD_SUPPORTED-1)].&n;&t; */
 macro_line|#ifdef ADVANSYS_STATS_1_2_PRINT
 multiline_comment|/* Display statistics every 10000 commands. */
 r_if
@@ -8919,6 +8917,12 @@ id|tscp
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t;&t; * XXX - Host drivers should not modify the timeout field.&n;&t;&t; * Allow the SCSI bus reset more time to complete.&n;&t;&t; */
+id|scp-&gt;timeout
+op_add_assign
+l_int|2000
+suffix:semicolon
+multiline_comment|/* Add 5 seconds to the request timeout. */
 multiline_comment|/* Must enable interrupts for AscResetSB() */
 id|sti
 c_func
@@ -8962,7 +8966,7 @@ c_func
 (paren
 l_int|1
 comma
-l_string|&quot;advansys_abort: AscResetSB() TRUE&bslash;n&quot;
+l_string|&quot;advansys_reset: AscResetSB() TRUE&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -8981,7 +8985,7 @@ c_func
 (paren
 l_int|1
 comma
-l_string|&quot;advansys_abort: AscResetSB() ERROR&bslash;n&quot;
+l_string|&quot;advansys_reset: AscResetSB() ERROR&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -9095,7 +9099,7 @@ id|ip
 l_int|1
 )braket
 op_assign
-l_int|64
+l_int|63
 suffix:semicolon
 )brace
 r_else
@@ -32270,8 +32274,12 @@ r_else
 r_if
 c_cond
 (paren
+(paren
 id|asc_dvc-&gt;bus_type
 op_amp
+id|ASC_IS_ISAPNP
+)paren
+op_eq
 id|ASC_IS_ISAPNP
 )paren
 (brace
@@ -34506,6 +34514,19 @@ id|inq
 )paren
 suffix:semicolon
 macro_line|#endif
+id|ASC_DBG_PRT_INQUIRY
+c_func
+(paren
+l_int|2
+comma
+id|inq
+comma
+r_sizeof
+(paren
+id|ASC_SCSI_INQUIRY
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -34514,6 +34535,56 @@ op_eq
 l_int|0
 )paren
 (brace
+id|ASC_DBG1
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;AscInitPollTarget: vendor_id: &bslash;&quot;%.8s&bslash;&quot;&bslash;n&quot;
+comma
+id|inq-&gt;vendor_id
+)paren
+suffix:semicolon
+id|ASC_DBG1
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;AscInitPollTarget: product_id: &bslash;&quot;%.16s&bslash;&quot;&bslash;n&quot;
+comma
+id|inq-&gt;product_id
+)paren
+suffix:semicolon
+id|ASC_DBG1
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;AscInitPollTarget: product_rev_level: &bslash;&quot;%.4s&bslash;&quot;&bslash;n&quot;
+comma
+id|inq-&gt;product_rev_level
+)paren
+suffix:semicolon
+id|ASC_DBG1
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;AscInitPollTarget: byte3.rsp_data_fmt %x&bslash;n&quot;
+comma
+id|inq-&gt;byte3.rsp_data_fmt
+)paren
+suffix:semicolon
+id|ASC_DBG1
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;AscInitPollTarget: byte3.ansi_apr_ver %x&bslash;n&quot;
+comma
+id|inq-&gt;byte2.ansi_apr_ver
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -34530,6 +34601,16 @@ l_int|2
 )paren
 )paren
 (brace
+id|ASC_DBG1
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;AscInitPollTarget: byte7.CmdQue %x&bslash;n&quot;
+comma
+id|inq-&gt;byte7.CmdQue
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -34564,6 +34645,16 @@ id|tid_no
 suffix:semicolon
 )brace
 )brace
+id|ASC_DBG1
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;AscInitPollTarget: byte7.Sync %x&bslash;n&quot;
+comma
+id|inq-&gt;byte7.Sync
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

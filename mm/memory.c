@@ -2072,6 +2072,12 @@ id|dir
 suffix:semicolon
 r_int
 r_int
+id|beg
+op_assign
+id|address
+suffix:semicolon
+r_int
+r_int
 id|end
 op_assign
 id|address
@@ -2180,9 +2186,7 @@ c_func
 (paren
 id|current-&gt;mm
 comma
-id|end
-op_minus
-id|size
+id|beg
 comma
 id|end
 )paren
@@ -2475,6 +2479,12 @@ id|dir
 suffix:semicolon
 r_int
 r_int
+id|beg
+op_assign
+id|from
+suffix:semicolon
+r_int
+r_int
 id|end
 op_assign
 id|from
@@ -2574,9 +2584,7 @@ c_func
 (paren
 id|current-&gt;mm
 comma
-id|from
-op_minus
-id|size
+id|beg
 comma
 id|from
 )paren

@@ -620,7 +620,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.config.f.x%d.x configure -state normal -fore black; &quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state normal; &quot;
 comma
 id|menu_num
 comma

@@ -3936,8 +3936,8 @@ r_if
 c_cond
 (paren
 id|sample_no
-OL
-l_int|0
+op_eq
+id|NOT_SAMPLE
 )paren
 (brace
 id|printk
@@ -10619,6 +10619,10 @@ op_logical_and
 id|ptr
 OL
 id|free_sample
+op_logical_and
+id|ptr
+op_ne
+id|NOT_SAMPLE
 )paren
 (brace
 id|rec-&gt;data.data8
@@ -10670,6 +10674,10 @@ op_logical_and
 id|ptr
 OL
 id|free_sample
+op_logical_and
+id|ptr
+op_ne
+id|NOT_SAMPLE
 )paren
 (brace
 id|rec-&gt;data.data32

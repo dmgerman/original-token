@@ -3,9 +3,9 @@ DECL|macro|SOUNDCARD_H
 mdefine_line|#define SOUNDCARD_H
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 DECL|macro|SOUND_VERSION
-mdefine_line|#define SOUND_VERSION&t;301
-DECL|macro|VOXWARE
-mdefine_line|#define VOXWARE
+mdefine_line|#define SOUND_VERSION&t;350
+DECL|macro|UNIX_SOUND_SYSTEM
+mdefine_line|#define UNIX_SOUND_SYSTEM
 macro_line|#include &lt;sys/ioctl.h&gt;
 multiline_comment|/*&n; *&t;Supported card ID numbers (Should be somewhere else?)&n; */
 DECL|macro|SNDCARD_ADLIB
@@ -972,6 +972,8 @@ multiline_comment|/* Sometimes it&squot;s a DSP */
 multiline_comment|/* but usually not */
 DECL|macro|DSP_CAP_TRIGGER
 macro_line|#&t;define DSP_CAP_TRIGGER&t;&t;0x00001000&t;/* Supports SETTRIGGER */
+DECL|macro|DSP_CAP_MMAP
+macro_line|#&t;define DSP_CAP_MMAP&t;&t;0x00002000&t;/* Supports mmap() */
 DECL|macro|SNDCTL_DSP_GETTRIGGER
 mdefine_line|#define SNDCTL_DSP_GETTRIGGER&t;&t;_IOR (&squot;P&squot;,16, int)
 DECL|macro|SNDCTL_DSP_SETTRIGGER
@@ -1240,14 +1242,14 @@ DECL|macro|SOUND_ONOFF_MIN
 mdefine_line|#define SOUND_ONOFF_MIN&t;&t;28
 DECL|macro|SOUND_ONOFF_MAX
 mdefine_line|#define SOUND_ONOFF_MAX&t;&t;30
+multiline_comment|/* Note!&t;Number 31 cannot be used since the sign bit is reserved */
+multiline_comment|/*&n; * The following unsupported macros will be removed from the API in near&n; * future.&n; */
+DECL|macro|SOUND_MIXER_ENHANCE
+mdefine_line|#define SOUND_MIXER_ENHANCE&t;29&t;/* Enhanced stereo (0, 40, 60 or 80) */
 DECL|macro|SOUND_MIXER_MUTE
 mdefine_line|#define SOUND_MIXER_MUTE&t;28&t;/* 0 or 1 */
 DECL|macro|SOUND_MIXER_LOUD
 mdefine_line|#define SOUND_MIXER_LOUD&t;30&t;/* 0 or 1 */
-multiline_comment|/* Note!&t;Number 31 cannot be used since the sign bit is reserved */
-multiline_comment|/*&n; * SOUND_MIXER_ENHANCE is an unsupported and undocumented call which&n; * will be removed from the API in future.&n; */
-DECL|macro|SOUND_MIXER_ENHANCE
-mdefine_line|#define SOUND_MIXER_ENHANCE&t;29&t;/* Enhanced stereo (0, 40, 60 or 80) */
 DECL|macro|SOUND_DEVICE_LABELS
 mdefine_line|#define SOUND_DEVICE_LABELS&t;{&quot;Vol  &quot;, &quot;Bass &quot;, &quot;Trebl&quot;, &quot;Synth&quot;, &quot;Pcm  &quot;, &quot;Spkr &quot;, &quot;Line &quot;, &bslash;&n;&t;&t;&t;&t; &quot;Mic  &quot;, &quot;CD   &quot;, &quot;Mix  &quot;, &quot;Pcm2 &quot;, &quot;Rec  &quot;, &quot;IGain&quot;, &quot;OGain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;Line1&quot;, &quot;Line2&quot;, &quot;Line3&quot;}
 DECL|macro|SOUND_DEVICE_NAMES

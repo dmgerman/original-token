@@ -20,7 +20,7 @@ r_static
 r_int
 id|sb16midi_base
 op_assign
-l_int|0x330
+l_int|0
 suffix:semicolon
 r_static
 r_int
@@ -225,6 +225,15 @@ r_int
 id|unit
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sb16midi_base
+op_eq
+l_int|0
+)paren
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *&t; PnP support is not included in this driver version.&n; *       AEDSP16 will not work without significant changes.&n; */
+multiline_comment|/*&n; *&t; PnP soundcard support is not included in this version.&n; *&n; *       AEDSP16 will not work without significant changes.&n; *&n; *       SB Pro and SB16 drivers are always enabled together with SB.&n; */
 DECL|macro|DISABLED_OPTIONS
-mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_PNP)|B(OPT_AEDSP16))
+mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_PNP)|B(OPT_AEDSP16)|B(OPT_SBPRO)|B(OPT_SB16))
 multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; */
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 macro_line|#include &lt;stdio.h&gt;
@@ -591,7 +591,7 @@ op_assign
 (brace
 l_string|&quot;ProAudioSpectrum 16 support&quot;
 comma
-l_string|&quot;SoundBlaster support&quot;
+l_string|&quot;SoundBlaster (SB, SBPro, SB16, clones) support&quot;
 comma
 l_string|&quot;Generic OPL2/OPL3 FM synthesizer support&quot;
 comma
@@ -1900,6 +1900,62 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|tmp
+comma
+l_string|&quot;JAZZ_DMA16&quot;
+)paren
+op_eq
+l_int|0
+)paren
+multiline_comment|/* Rename it (hack) */
+(brace
+id|printf
+(paren
+l_string|&quot;#define SB_DMA2 %s&bslash;n&quot;
+comma
+op_amp
+id|buf
+(braket
+l_int|18
+)braket
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|tmp
+comma
+l_string|&quot;SB16_DMA&quot;
+)paren
+op_eq
+l_int|0
+)paren
+multiline_comment|/* Rename it (hack) */
+(brace
+id|printf
+(paren
+l_string|&quot;#define SB_DMA2 %s&bslash;n&quot;
+comma
+op_amp
+id|buf
+(braket
+l_int|16
+)braket
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|tmp
 (braket
 l_int|8
@@ -2783,6 +2839,29 @@ l_int|0
 id|printf
 (paren
 l_string|&quot;#define BROKEN_BUS_CLOCK&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;PAS16 has SoundBlaster emulation. You should disable&bslash;n&quot;
+l_string|&quot;this feature if you have another SB compatible card&bslash;n&quot;
+l_string|&quot;on the machine&bslash;n&quot;
+l_string|&quot;Do you want to disable SB emulation of PAS16 (y/N) ?&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|think_positively
+(paren
+l_int|0
+)paren
+)paren
+id|printf
+(paren
+l_string|&quot;#define DISABLE_SB_EMULATION&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5162,6 +5241,28 @@ l_string|&quot;#define INCLUDE_TRIX_BOOT&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|selected_options
+op_amp
+id|B
+(paren
+id|OPT_SB
+)paren
+)paren
+id|selected_options
+op_or_assign
+id|B
+(paren
+id|OPT_SBPRO
+)paren
+op_or
+id|B
+(paren
+id|OPT_SB16
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

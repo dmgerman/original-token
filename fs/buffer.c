@@ -333,7 +333,7 @@ id|blksize_size
 (braket
 )braket
 suffix:semicolon
-multiline_comment|/* Here is the parameter block for the bdflush process. */
+multiline_comment|/* Here is the parameter block for the bdflush process. If you add or&n; * remove any of the parameters, make sure to update kernel/sysctl.c.&n; */
 r_static
 r_void
 id|wakeup_bdflush
@@ -347,7 +347,6 @@ mdefine_line|#define N_PARAM 9
 DECL|macro|LAV
 mdefine_line|#define LAV
 DECL|union|bdflush_param
-r_static
 r_union
 id|bdflush_param
 (brace
@@ -443,7 +442,6 @@ suffix:semicolon
 multiline_comment|/* The lav constant is set for 1 minute, as long as the update process runs&n;   every 5 seconds.  If you change the frequency of update, the time&n;   constant will also change. */
 multiline_comment|/* These are the min and max parameter values that we will allow to be assigned */
 DECL|variable|bdflush_min
-r_static
 r_int
 id|bdflush_min
 (braket
@@ -457,7 +455,7 @@ l_int|10
 comma
 l_int|5
 comma
-l_int|25
+l_int|60
 comma
 l_int|0
 comma
@@ -471,7 +469,6 @@ l_int|1
 )brace
 suffix:semicolon
 DECL|variable|bdflush_max
-r_static
 r_int
 id|bdflush_max
 (braket
@@ -5954,28 +5951,6 @@ suffix:semicolon
 id|page-&gt;count
 op_increment
 suffix:semicolon
-id|wait_on_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|page-&gt;uptodate
-)paren
-(brace
-id|free_page
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|page-&gt;locked
 op_assign
 l_int|1

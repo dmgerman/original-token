@@ -434,9 +434,6 @@ id|items
 comma
 r_int
 id|flag
-comma
-r_int
-id|separate_output
 )paren
 suffix:semicolon
 r_extern

@@ -633,6 +633,7 @@ id|v
 op_star
 (paren
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -664,6 +665,7 @@ r_return
 op_star
 (paren
 (paren
+r_volatile
 r_int
 r_int
 op_star

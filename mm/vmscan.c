@@ -1416,9 +1416,7 @@ c_loop
 id|i
 op_decrement
 )paren
-(brace
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|0

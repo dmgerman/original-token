@@ -616,14 +616,6 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_NI65
-op_logical_and
-id|ni65_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
 op_logical_and
 l_int|1
 )paren

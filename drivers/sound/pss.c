@@ -2794,6 +2794,16 @@ id|timeout
 op_increment
 )paren
 suffix:semicolon
+id|outb
+(paren
+l_int|0x0b
+comma
+id|hw_config-&gt;io_base
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* Required by some cards */
 r_return
 id|probe_ms_sound
 (paren

@@ -1112,8 +1112,7 @@ DECL|macro|GFP_DMA
 mdefine_line|#define GFP_DMA&t;&t;0x80
 DECL|macro|GFP_LEVEL_MASK
 mdefine_line|#define GFP_LEVEL_MASK 0xf
-DECL|macro|avl_empty
-mdefine_line|#define avl_empty&t;(struct vm_area_struct *) NULL
+multiline_comment|/* vma is the first one with  address &lt; vma-&gt;vm_end,&n; * and even  address &lt; vma-&gt;vm_start. Have to extend vma. */
 DECL|function|expand_stack
 r_static
 r_inline
@@ -1194,6 +1193,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|macro|avl_empty
+mdefine_line|#define avl_empty&t;(struct vm_area_struct *) NULL
 multiline_comment|/* Look up the first VMA which satisfies  addr &lt; vm_end,  NULL if none. */
 DECL|function|find_vma
 r_static

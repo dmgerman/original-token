@@ -656,7 +656,7 @@ comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
+macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
 (brace
 r_struct
 id|address_info
@@ -994,7 +994,7 @@ id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
+macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
 id|sb_dsp_disable_midi
 (paren
 )paren

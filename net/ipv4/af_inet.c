@@ -4060,6 +4060,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|sk
+op_logical_or
+op_logical_neg
 id|tcp_connected
 c_func
 (paren

@@ -108,8 +108,10 @@ DECL|macro|VM_KSWAPD
 mdefine_line|#define VM_KSWAPD&t;2&t;/* struct: control background pagout */
 DECL|macro|VM_FREEPG
 mdefine_line|#define VM_FREEPG&t;3&t;/* struct: Set free page thresholds */
+DECL|macro|VM_BDFLUSH
+mdefine_line|#define VM_BDFLUSH&t;4&t;/* struct: Control buffer cache flushing */
 DECL|macro|VM_MAXID
-mdefine_line|#define VM_MAXID&t;4
+mdefine_line|#define VM_MAXID&t;5
 multiline_comment|/* CTL_NET names: */
 multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */
@@ -248,6 +250,27 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|proc_dointvec_minmax
+c_func
+(paren
+id|ctl_table
+op_star
+comma
+r_int
+comma
+r_struct
+id|file
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|do_sysctl
 (paren
 r_int
@@ -312,6 +335,10 @@ suffix:semicolon
 r_extern
 id|ctl_handler
 id|sysctl_string
+suffix:semicolon
+r_extern
+id|ctl_handler
+id|sysctl_intvec
 suffix:semicolon
 r_extern
 r_int
@@ -455,6 +482,16 @@ op_star
 id|de
 suffix:semicolon
 multiline_comment|/* /proc control block */
+DECL|member|extra1
+r_void
+op_star
+id|extra1
+suffix:semicolon
+DECL|member|extra2
+r_void
+op_star
+id|extra2
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* struct ctl_table_header is used to maintain dynamic lists of&n;   ctl_table trees. */

@@ -2911,14 +2911,17 @@ id|tmp.f_type
 op_assign
 id|sb-&gt;s_magic
 suffix:semicolon
+multiline_comment|/* type of filesystem */
 id|tmp.f_bsize
 op_assign
 id|sb-&gt;sv_block_size
 suffix:semicolon
+multiline_comment|/* block size */
 id|tmp.f_blocks
 op_assign
 id|sb-&gt;sv_ndatazones
 suffix:semicolon
+multiline_comment|/* total data blocks in file system */
 id|tmp.f_bfree
 op_assign
 id|sysv_count_free_blocks
@@ -2927,14 +2930,17 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+multiline_comment|/* free blocks in fs */
 id|tmp.f_bavail
 op_assign
 id|tmp.f_bfree
 suffix:semicolon
+multiline_comment|/* free blocks available to non-superuser */
 id|tmp.f_files
 op_assign
 id|sb-&gt;sv_ninodes
 suffix:semicolon
+multiline_comment|/* total file nodes in file system */
 id|tmp.f_ffree
 op_assign
 id|sysv_count_free_inodes
@@ -2943,10 +2949,13 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+multiline_comment|/* free file nodes in fs */
 id|tmp.f_namelen
 op_assign
 id|SYSV_NAMELEN
 suffix:semicolon
+multiline_comment|/* Don&squot;t know what value to put in tmp.f_fsid */
+multiline_comment|/* file system id */
 id|memcpy_tofs
 c_func
 (paren

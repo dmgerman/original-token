@@ -28,6 +28,9 @@ DECL|macro|CD_FRAMESIZE_RAW1
 mdefine_line|#define CD_FRAMESIZE_RAW1 (CD_FRAMESIZE_RAW-CD_SYNC_SIZE) /* 2340 */
 DECL|macro|CD_FRAMESIZE_RAW0
 mdefine_line|#define CD_FRAMESIZE_RAW0 (CD_FRAMESIZE_RAW-CD_SYNC_SIZE-CD_HEAD_SIZE) /* 2336 */
+multiline_comment|/* Optics drive also has a &squot;read all&squot; mode: */
+DECL|macro|CD_FRAMESIZE_RAWER
+mdefine_line|#define CD_FRAMESIZE_RAWER 2646 /* bytes per frame */
 DECL|macro|CD_EDC_SIZE
 mdefine_line|#define CD_EDC_SIZE         4 /* bytes EDC per most raw data frame types */
 DECL|macro|CD_ZERO_SIZE
@@ -143,6 +146,41 @@ suffix:semicolon
 multiline_comment|/* end track */
 )brace
 suffix:semicolon
+DECL|struct|cdrom_msf0
+r_struct
+id|cdrom_msf0
+multiline_comment|/* address in MSF format */
+(brace
+DECL|member|minute
+id|u_char
+id|minute
+suffix:semicolon
+DECL|member|second
+id|u_char
+id|second
+suffix:semicolon
+DECL|member|frame
+id|u_char
+id|frame
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|union|cdrom_addr
+r_union
+id|cdrom_addr
+multiline_comment|/* address in either MSF or logical format */
+(brace
+DECL|member|msf
+r_struct
+id|cdrom_msf0
+id|msf
+suffix:semicolon
+DECL|member|lba
+r_int
+id|lba
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|cdrom_tocentry
 r_struct
 id|cdrom_tocentry
@@ -167,32 +205,9 @@ DECL|member|cdte_format
 id|u_char
 id|cdte_format
 suffix:semicolon
-r_union
-(brace
-r_struct
-(brace
-DECL|member|minute
-id|u_char
-id|minute
-suffix:semicolon
-DECL|member|second
-id|u_char
-id|second
-suffix:semicolon
-DECL|member|frame
-id|u_char
-id|frame
-suffix:semicolon
-DECL|member|msf
-)brace
-id|msf
-suffix:semicolon
-DECL|member|lba
-r_int
-id|lba
-suffix:semicolon
 DECL|member|cdte_addr
-)brace
+r_union
+id|cdrom_addr
 id|cdte_addr
 suffix:semicolon
 DECL|member|cdte_datamode
@@ -244,60 +259,14 @@ DECL|member|cdsc_ind
 id|u_char
 id|cdsc_ind
 suffix:semicolon
-r_union
-(brace
-r_struct
-(brace
-DECL|member|minute
-id|u_char
-id|minute
-suffix:semicolon
-DECL|member|second
-id|u_char
-id|second
-suffix:semicolon
-DECL|member|frame
-id|u_char
-id|frame
-suffix:semicolon
-DECL|member|msf
-)brace
-id|msf
-suffix:semicolon
-DECL|member|lba
-r_int
-id|lba
-suffix:semicolon
 DECL|member|cdsc_absaddr
-)brace
+r_union
+id|cdrom_addr
 id|cdsc_absaddr
 suffix:semicolon
-r_union
-(brace
-r_struct
-(brace
-DECL|member|minute
-id|u_char
-id|minute
-suffix:semicolon
-DECL|member|second
-id|u_char
-id|second
-suffix:semicolon
-DECL|member|frame
-id|u_char
-id|frame
-suffix:semicolon
-DECL|member|msf
-)brace
-id|msf
-suffix:semicolon
-DECL|member|lba
-r_int
-id|lba
-suffix:semicolon
 DECL|member|cdsc_reladdr
-)brace
+r_union
+id|cdrom_addr
 id|cdsc_reladdr
 suffix:semicolon
 )brace
@@ -360,32 +329,9 @@ DECL|struct|cdrom_read_audio
 r_struct
 id|cdrom_read_audio
 (brace
-r_union
-(brace
-r_struct
-(brace
-DECL|member|minute
-id|u_char
-id|minute
-suffix:semicolon
-DECL|member|second
-id|u_char
-id|second
-suffix:semicolon
-DECL|member|frame
-id|u_char
-id|frame
-suffix:semicolon
-DECL|member|msf
-)brace
-id|msf
-suffix:semicolon
-DECL|member|lba
-r_int
-id|lba
-suffix:semicolon
 DECL|member|addr
-)brace
+r_union
+id|cdrom_addr
 id|addr
 suffix:semicolon
 multiline_comment|/* frame address */
@@ -412,32 +358,9 @@ DECL|struct|cdrom_multisession
 r_struct
 id|cdrom_multisession
 (brace
-r_union
-(brace
-r_struct
-(brace
-DECL|member|minute
-id|u_char
-id|minute
-suffix:semicolon
-DECL|member|second
-id|u_char
-id|second
-suffix:semicolon
-DECL|member|frame
-id|u_char
-id|frame
-suffix:semicolon
-DECL|member|msf
-)brace
-id|msf
-suffix:semicolon
-DECL|member|lba
-r_int
-id|lba
-suffix:semicolon
 DECL|member|addr
-)brace
+r_union
+id|cdrom_addr
 id|addr
 suffix:semicolon
 multiline_comment|/* frame address: start-of-last-session (not the new &quot;frame 16&quot;!)*/
@@ -507,7 +430,7 @@ mdefine_line|#define CDROMRESET&t;&t;0x5312&t;/* hard-reset the drive */
 DECL|macro|CDROMVOLREAD
 mdefine_line|#define CDROMVOLREAD&t;&t;0x5313&t;/* let the drive tell its volume setting */
 multiline_comment|/* (struct cdrom_volctrl) */
-multiline_comment|/* &n; * these ioctls are used in aztcd.c&n; */
+multiline_comment|/* &n; * these ioctls are used in aztcd.c and optcd.c&n; */
 DECL|macro|CDROMREADRAW
 mdefine_line|#define CDROMREADRAW&t;&t;0x5314&t;/* read data in raw mode */
 DECL|macro|CDROMREADCOOKED
@@ -517,6 +440,11 @@ mdefine_line|#define CDROMSEEK&t;&t;0x5316  /* seek msf address */
 multiline_comment|/*&n; * for playing audio in logical block addressing mode&n; */
 DECL|macro|CDROMPLAYBLK
 mdefine_line|#define CDROMPLAYBLK&t;&t;0x5317&t;/* (struct cdrom_blk) */
+multiline_comment|/* &n; * these ioctls are used in optcd.c&n; */
+DECL|macro|CDROMREADALL
+mdefine_line|#define CDROMREADALL&t;&t;0x5318&t;/* read all 2646 bytes */
+DECL|macro|CDROMCLOSETRAY
+mdefine_line|#define CDROMCLOSETRAY&t;&t;0x5319&t;/* pendant of CDROMEJECT */
 multiline_comment|/*&n; * CD-ROM-specific SCSI command opcodes&n; */
 multiline_comment|/*&n; * Group 2 (10-byte).  All of these are called &squot;optional&squot; by SCSI-II.&n; */
 DECL|macro|SCMD_READ_TOC

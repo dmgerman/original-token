@@ -2135,12 +2135,13 @@ suffix:semicolon
 multiline_comment|/*&n; * Unnamed block devices are dummy devices used by virtual&n; * filesystems which don&squot;t use real block-devices.  -- jrs&n; */
 DECL|variable|unnamed_dev_in_use
 r_static
-r_char
+r_int
+r_int
 id|unnamed_dev_in_use
 (braket
 l_int|256
 op_div
-l_int|8
+l_int|32
 )braket
 op_assign
 (brace
@@ -2941,10 +2942,21 @@ comma
 id|dir_name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vfsmnt
+)paren
+(brace
 id|vfsmnt-&gt;mnt_sb
 op_assign
 id|sb
 suffix:semicolon
+id|vfsmnt-&gt;mnt_flags
+op_assign
+id|flags
+suffix:semicolon
+)brace
 id|sb-&gt;s_covered
 op_assign
 id|dir_i

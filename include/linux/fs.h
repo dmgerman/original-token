@@ -233,6 +233,11 @@ id|kdev_t
 id|b_dev
 suffix:semicolon
 multiline_comment|/* device (B_FREE = free) */
+DECL|member|b_rdev
+id|kdev_t
+id|b_rdev
+suffix:semicolon
+multiline_comment|/* Real device */
 DECL|member|b_next
 r_struct
 id|buffer_head

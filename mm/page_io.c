@@ -452,7 +452,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;re_swap_page: no swap file or device&bslash;n&quot;
+l_string|&quot;rw_swap_page: no swap file or device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

@@ -990,6 +990,10 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|0
+suffix:semicolon
 id|set_inode_dtime
 (paren
 id|inode

@@ -1043,13 +1043,7 @@ op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* Small queue */
-id|it
-id|should
-id|all
-id|run
-id|through
-op_star
-op_div
+multiline_comment|/* it should all run through */
 id|memset
 c_func
 (paren

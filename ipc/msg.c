@@ -873,6 +873,7 @@ id|IPC_KERNELD
 op_eq
 l_int|0
 )paren
+(brace
 multiline_comment|/*&n;&t;&t;&t; * Non-root processes may receive from kerneld! &n;&t;&t;&t; * i.e. no permission check if called from the kernel&n;&t;&t;&t; * otoh we don&squot;t want user level non-root snoopers...&n;&t;&t;&t; */
 r_if
 c_cond
@@ -888,6 +889,7 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

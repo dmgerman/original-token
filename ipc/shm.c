@@ -1832,7 +1832,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The per process internal structure for managing segments is&n; * `struct vm_area_struct&squot;.&n; * A shmat will add to and shmdt will remove from the list.&n; * shmd-&gt;vm_task&t;the attacher&n; * shmd-&gt;vm_start&t;virt addr of attach, multiple of SHMLBA&n; * shmd-&gt;vm_end&t;&t;multiple of SHMLBA&n; * shmd-&gt;vm_next&t;next attach for task&n; * shmd-&gt;vm_next_share&t;next attach for segment&n; * shmd-&gt;vm_offset&t;offset into segment&n; * shmd-&gt;vm_pte&t;&t;signature for this attach&n; */
+multiline_comment|/*&n; * The per process internal structure for managing segments is&n; * `struct vm_area_struct&squot;.&n; * A shmat will add to and shmdt will remove from the list.&n; * shmd-&gt;vm_mm&t;&t;the attacher&n; * shmd-&gt;vm_start&t;virt addr of attach, multiple of SHMLBA&n; * shmd-&gt;vm_end&t;&t;multiple of SHMLBA&n; * shmd-&gt;vm_next&t;next attach for task&n; * shmd-&gt;vm_next_share&t;next attach for segment&n; * shmd-&gt;vm_offset&t;offset into segment&n; * shmd-&gt;vm_pte&t;&t;signature for this attach&n; */
 DECL|variable|shm_vm_ops
 r_static
 r_struct
@@ -3922,14 +3922,12 @@ l_int|0
 id|shmd-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
-id|invalidate_range
+id|invalidate_page
 c_func
 (paren
-id|shmd-&gt;vm_mm
+id|shmd
 comma
-id|shmd-&gt;vm_start
-comma
-id|shmd-&gt;vm_end
+id|tmp
 )paren
 suffix:semicolon
 multiline_comment|/* continue looping through circular list */

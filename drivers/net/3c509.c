@@ -3475,6 +3475,9 @@ c_cond
 (paren
 op_logical_neg
 id|EISA_bus
+op_logical_and
+op_logical_neg
+id|io
 )paren
 (brace
 id|printk

@@ -99,18 +99,28 @@ DECL|struct|scb_struct
 r_struct
 id|scb_struct
 (brace
-DECL|member|status
+DECL|member|rus
 r_int
-r_int
-id|status
+r_char
+id|rus
 suffix:semicolon
-multiline_comment|/* status word */
-DECL|member|cmd
+DECL|member|cus
 r_int
-r_int
-id|cmd
+r_char
+id|cus
 suffix:semicolon
-multiline_comment|/* command word */
+DECL|member|cmd_ruc
+r_int
+r_char
+id|cmd_ruc
+suffix:semicolon
+multiline_comment|/* command word: RU part */
+DECL|member|cmd_cuc
+r_int
+r_char
+id|cmd_cuc
+suffix:semicolon
+multiline_comment|/* command word: CU part &amp; ACK */
 DECL|member|cbl_offset
 r_int
 r_int
@@ -163,44 +173,44 @@ mdefine_line|#define RUC_SUSPEND&t;0x0030&t;/* suspend RU */
 DECL|macro|RUC_ABORT
 mdefine_line|#define RUC_ABORT&t;0x0040&t;/* abort receiver operation immediately */
 DECL|macro|CUC_MASK
-mdefine_line|#define CUC_MASK&t;0x0700&t;/* mask for CU command */
+mdefine_line|#define CUC_MASK        0x07  /* mask for CU command */
 DECL|macro|CUC_NOP
-mdefine_line|#define CUC_NOP&t;&t;0x0000&t;/* NOP-command */
+mdefine_line|#define CUC_NOP         0x00  /* NOP-command */
 DECL|macro|CUC_START
-mdefine_line|#define CUC_START&t;0x0100&t;/* start execution of 1. cmd on the CBL */
+mdefine_line|#define CUC_START       0x01  /* start execution of 1. cmd on the CBL */
 DECL|macro|CUC_RESUME
-mdefine_line|#define CUC_RESUME&t;0x0200&t;/* resume after suspend */
+mdefine_line|#define CUC_RESUME      0x02  /* resume after suspend */
 DECL|macro|CUC_SUSPEND
-mdefine_line|#define CUC_SUSPEND&t;0x0300&t;/* Suspend CU */
+mdefine_line|#define CUC_SUSPEND     0x03  /* Suspend CU */
 DECL|macro|CUC_ABORT
-mdefine_line|#define CUC_ABORT&t;0x0400&t;/* abort command operation immediately */
+mdefine_line|#define CUC_ABORT       0x04  /* abort command operation immediately */
 DECL|macro|ACK_MASK
-mdefine_line|#define ACK_MASK&t;0xf000&t;/* mask for ACK command */
+mdefine_line|#define ACK_MASK        0xf0  /* mask for ACK command */
 DECL|macro|ACK_CX
-mdefine_line|#define ACK_CX&t;&t;0x8000&t;/* acknowledges STAT_CX */
+mdefine_line|#define ACK_CX          0x80  /* acknowledges STAT_CX */
 DECL|macro|ACK_FR
-mdefine_line|#define ACK_FR&t;&t;0x4000&t;/* ack. STAT_FR */
+mdefine_line|#define ACK_FR          0x40  /* ack. STAT_FR */
 DECL|macro|ACK_CNA
-mdefine_line|#define ACK_CNA&t;&t;0x2000&t;/* ack. STAT_CNA */
+mdefine_line|#define ACK_CNA         0x20  /* ack. STAT_CNA */
 DECL|macro|ACK_RNR
-mdefine_line|#define ACK_RNR&t;&t;0x1000&t;/* ack. STAT_RNR */
+mdefine_line|#define ACK_RNR         0x10  /* ack. STAT_RNR */
 multiline_comment|/*&n; * possible status values for the status word&n; */
 DECL|macro|STAT_MASK
-mdefine_line|#define STAT_MASK&t;0xf000&t;/* mask for cause of interrupt */
+mdefine_line|#define STAT_MASK       0xf0  /* mask for cause of interrupt */
 DECL|macro|STAT_CX
-mdefine_line|#define STAT_CX&t;&t;0x8000&t;/* CU finished cmd with its I bit set */
+mdefine_line|#define STAT_CX         0x80  /* CU finished cmd with its I bit set */
 DECL|macro|STAT_FR
-mdefine_line|#define STAT_FR&t;&t;0x4000&t;/* RU finished receiving a frame */
+mdefine_line|#define STAT_FR         0x40  /* RU finished receiving a frame */
 DECL|macro|STAT_CNA
-mdefine_line|#define STAT_CNA&t;0x2000&t;/* CU left active state */
+mdefine_line|#define STAT_CNA        0x20  /* CU left active state */
 DECL|macro|STAT_RNR
-mdefine_line|#define STAT_RNR&t;0x1000&t;/* RU left ready state */
+mdefine_line|#define STAT_RNR        0x10  /* RU left ready state */
 DECL|macro|CU_STATUS
-mdefine_line|#define CU_STATUS&t;0x700&t;/* CU status, 0=idle */
+mdefine_line|#define CU_STATUS       0x7   /* CU status, 0=idle */
 DECL|macro|CU_SUSPEND
-mdefine_line|#define CU_SUSPEND&t;0x100&t;/* CU is suspended */
+mdefine_line|#define CU_SUSPEND      0x1   /* CU is suspended */
 DECL|macro|CU_ACTIVE
-mdefine_line|#define CU_ACTIVE&t;0x200&t;/* CU is active */
+mdefine_line|#define CU_ACTIVE       0x2   /* CU is active */
 DECL|macro|RU_STATUS
 mdefine_line|#define RU_STATUS&t;0x70&t;/* RU status, 0=idle */
 DECL|macro|RU_SUSPEND
@@ -214,15 +224,27 @@ DECL|struct|rfd_struct
 r_struct
 id|rfd_struct
 (brace
-DECL|member|status
+DECL|member|stat_low
 r_int
-r_int
-id|status
+r_char
+id|stat_low
 suffix:semicolon
 multiline_comment|/* status word */
+DECL|member|stat_high
+r_int
+r_char
+id|stat_high
+suffix:semicolon
+multiline_comment|/* status word */
+DECL|member|rfd_sf
+r_int
+r_char
+id|rfd_sf
+suffix:semicolon
+multiline_comment|/* 82596 mode only */
 DECL|member|last
 r_int
-r_int
+r_char
 id|last
 suffix:semicolon
 multiline_comment|/* Bit15,Last Frame on List / Bit14,suspend */
@@ -271,15 +293,35 @@ multiline_comment|/* dummy */
 )brace
 suffix:semicolon
 DECL|macro|RFD_LAST
-mdefine_line|#define RFD_LAST     0x8000&t;/* last: last rfd in the list */
+mdefine_line|#define RFD_LAST     0x80&t;/* last: last rfd in the list */
 DECL|macro|RFD_SUSP
-mdefine_line|#define RFD_SUSP     0x4000&t;/* last: suspend RU after  */
-DECL|macro|RFD_ERRMASK
-mdefine_line|#define RFD_ERRMASK  0x0fe1     /* status: errormask */
+mdefine_line|#define RFD_SUSP     0x40&t;/* last: suspend RU after  */
+DECL|macro|RFD_COMPL
+mdefine_line|#define RFD_COMPL    0x80
+DECL|macro|RFD_OK
+mdefine_line|#define RFD_OK       0x20
+DECL|macro|RFD_BUSY
+mdefine_line|#define RFD_BUSY     0x40
+DECL|macro|RFD_ERR_LEN
+mdefine_line|#define RFD_ERR_LEN  0x10     /* Length error (if enabled length-checking */
+DECL|macro|RFD_ERR_CRC
+mdefine_line|#define RFD_ERR_CRC  0x08     /* CRC error */
+DECL|macro|RFD_ERR_ALGN
+mdefine_line|#define RFD_ERR_ALGN 0x04     /* Alignment error */
+DECL|macro|RFD_ERR_RNR
+mdefine_line|#define RFD_ERR_RNR  0x02     /* status: receiver out of resources */
+DECL|macro|RFD_ERR_OVR
+mdefine_line|#define RFD_ERR_OVR  0x01     /* DMA Overrun! */
+DECL|macro|RFD_ERR_FTS
+mdefine_line|#define RFD_ERR_FTS  0x0080&t;/* Frame to short */
+DECL|macro|RFD_ERR_NEOP
+mdefine_line|#define RFD_ERR_NEOP 0x0040&t;/* No EOP flag (for bitstuffing only) */
+DECL|macro|RFD_ERR_TRUN
+mdefine_line|#define RFD_ERR_TRUN 0x0020&t;/* (82596 only/SF mode) indicates truncated frame */
 DECL|macro|RFD_MATCHADD
-mdefine_line|#define RFD_MATCHADD 0x0002     /* status: Destinationaddress !matches IA */
-DECL|macro|RFD_RNR
-mdefine_line|#define RFD_RNR      0x0200&t;/* status: receiver out of resources */
+mdefine_line|#define RFD_MATCHADD 0x0002     /* status: Destinationaddress !matches IA (only 82596) */
+DECL|macro|RFD_COLLDET
+mdefine_line|#define RFD_COLLDET  0x0001&t;/* Detected collision during reception */
 multiline_comment|/*&n; * Receive Buffer Descriptor (RBD)&n; */
 DECL|struct|rbd_struct
 r_struct
@@ -541,6 +583,34 @@ l_int|6
 )braket
 suffix:semicolon
 multiline_comment|/* pointer to 6 bytes entries */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * DUMP command&n; */
+DECL|struct|dump_cmd_struct
+r_struct
+id|dump_cmd_struct
+(brace
+DECL|member|cmd_status
+r_int
+r_int
+id|cmd_status
+suffix:semicolon
+DECL|member|cmd_cmd
+r_int
+r_int
+id|cmd_cmd
+suffix:semicolon
+DECL|member|cmd_link
+r_int
+r_int
+id|cmd_link
+suffix:semicolon
+DECL|member|dump_offset
+r_int
+r_int
+id|dump_offset
+suffix:semicolon
+multiline_comment|/* pointeroffset to DUMP space */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * transmit command &n; */

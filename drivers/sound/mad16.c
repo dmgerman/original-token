@@ -1200,51 +1200,6 @@ op_assign
 l_int|0x04
 suffix:semicolon
 multiline_comment|/* Enable capture DMA */
-multiline_comment|/* Change SB DMA so that it doesn&squot;t conflict with codec&squot;s DMAs */
-r_if
-c_cond
-(paren
-id|dma
-op_eq
-l_int|3
-)paren
-id|mad_write
-(paren
-id|MC3_PORT
-comma
-(paren
-id|mad_read
-(paren
-id|MC3_PORT
-)paren
-op_amp
-op_complement
-l_int|0x30
-)paren
-op_or
-l_int|0x00
-)paren
-suffix:semicolon
-multiline_comment|/*DMA1 */
-r_else
-id|mad_write
-(paren
-id|MC3_PORT
-comma
-(paren
-id|mad_read
-(paren
-id|MC3_PORT
-)paren
-op_amp
-op_complement
-l_int|0x30
-)paren
-op_or
-l_int|0x20
-)paren
-suffix:semicolon
-multiline_comment|/*DMA3 */
 )brace
 r_else
 (brace

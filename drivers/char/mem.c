@@ -24,6 +24,15 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN
+r_void
+id|isdn_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|read_ram
 r_static
 r_int
@@ -1529,6 +1538,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if CONFIG_QIC02_TAPE
 id|qic02_tape_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if CONFIG_ISDN
+id|isdn_init
 c_func
 (paren
 )paren

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
@@ -1601,6 +1602,28 @@ op_sub_assign
 id|left
 suffix:semicolon
 )brace
+id|update_vm_cache
+c_func
+(paren
+id|inode
+comma
+id|filp-&gt;f_pos
+comma
+id|bh-&gt;b_data
+op_plus
+(paren
+id|filp-&gt;f_pos
+op_amp
+(paren
+id|SECTOR_SIZE
+op_minus
+l_int|1
+)paren
+)paren
+comma
+id|written
+)paren
+suffix:semicolon
 id|filp-&gt;f_pos
 op_add_assign
 id|written

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 multiline_comment|/*&n; *&t;Policy code extracted so its now seperate&n; */
@@ -3894,10 +3894,7 @@ c_cond
 op_logical_neg
 id|sk-&gt;delay_acks
 op_logical_or
-id|sk-&gt;ack_backlog
-op_ge
-id|sk-&gt;max_ack_backlog
-op_logical_or
+multiline_comment|/* sk-&gt;ack_backlog &gt;= sk-&gt;max_ack_backlog || */
 id|sk-&gt;bytes_rcv
 OG
 id|sk-&gt;max_unacked
@@ -3917,7 +3914,20 @@ id|sk
 )paren
 )paren
 (brace
-multiline_comment|/*&t;&t;&t;tcp_send_ack(sk-&gt;sent_seq, sk-&gt;acked_seq,sk,th, saddr); */
+id|tcp_send_ack
+c_func
+(paren
+id|sk-&gt;sent_seq
+comma
+id|sk-&gt;acked_seq
+comma
+id|sk
+comma
+id|th
+comma
+id|saddr
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -4051,27 +4061,10 @@ c_func
 (paren
 id|sk-&gt;ato
 comma
-l_float|0.5
-op_star
 id|HZ
+op_div
+l_int|2
 )paren
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|tcp_send_ack
-c_func
-(paren
-id|sk-&gt;sent_seq
-comma
-id|sk-&gt;acked_seq
-comma
-id|sk
-comma
-id|th
-comma
-id|saddr
 )paren
 suffix:semicolon
 )brace

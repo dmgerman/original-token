@@ -108,7 +108,7 @@ DECL|variable|sbc_minor
 r_int
 id|sbc_major
 op_assign
-l_int|1
+l_int|0
 comma
 id|sbc_minor
 op_assign
@@ -808,7 +808,7 @@ id|speed
 )paren
 (brace
 r_int
-id|rate
+id|divider
 suffix:semicolon
 r_int
 r_char
@@ -851,7 +851,7 @@ id|bits
 op_assign
 l_int|0x80
 suffix:semicolon
-id|rate
+id|divider
 op_assign
 l_int|256
 op_minus
@@ -865,20 +865,20 @@ l_int|2
 op_div
 id|speed
 suffix:semicolon
-id|speed
+id|dsp_current_speed
 op_assign
 l_int|795500
 op_div
 (paren
 l_int|256
 op_minus
-id|rate
+id|divider
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|rate
+id|divider
 op_assign
 l_int|128
 op_minus
@@ -892,14 +892,14 @@ l_int|2
 op_div
 id|speed
 suffix:semicolon
-id|speed
+id|dsp_current_speed
 op_assign
 l_int|397700
 op_div
 (paren
 l_int|128
 op_minus
-id|rate
+id|divider
 )paren
 suffix:semicolon
 )brace
@@ -909,7 +909,7 @@ op_or_assign
 r_int
 r_char
 )paren
-id|rate
+id|divider
 suffix:semicolon
 id|ess_write
 (paren
@@ -918,12 +918,39 @@ comma
 id|bits
 )paren
 suffix:semicolon
-id|dsp_current_speed
-op_assign
+multiline_comment|/*&n; * Set filter divider register&n; */
 id|speed
+op_assign
+(paren
+id|speed
+op_star
+l_int|9
+)paren
+op_div
+l_int|20
+suffix:semicolon
+multiline_comment|/* Set filter rolloff to 90% of speed/2 */
+id|divider
+op_assign
+l_int|256
+op_minus
+l_int|7160000
+op_div
+(paren
+id|speed
+op_star
+l_int|82
+)paren
+suffix:semicolon
+id|ess_write
+(paren
+l_int|0xa2
+comma
+id|divider
+)paren
 suffix:semicolon
 r_return
-id|speed
+id|dsp_current_speed
 suffix:semicolon
 )brace
 r_static
@@ -1493,11 +1520,9 @@ id|AudioDrive
 r_int
 id|c
 op_assign
-l_int|0xffff
 op_minus
 id|nr_bytes
 suffix:semicolon
-multiline_comment|/* ES1688 increments the count */
 id|ess_write
 (paren
 l_int|0xa4
@@ -1507,6 +1532,10 @@ r_int
 r_char
 )paren
 (paren
+(paren
+r_int
+r_int
+)paren
 id|c
 op_amp
 l_int|0xff
@@ -1523,6 +1552,10 @@ r_char
 )paren
 (paren
 (paren
+(paren
+r_int
+r_int
+)paren
 id|c
 op_rshift
 l_int|8
@@ -1845,11 +1878,9 @@ id|AudioDrive
 r_int
 id|c
 op_assign
-l_int|0xffff
 op_minus
 id|nr_bytes
 suffix:semicolon
-multiline_comment|/* ES1688 increments the count */
 id|ess_write
 (paren
 l_int|0xa4
@@ -1859,6 +1890,10 @@ r_int
 r_char
 )paren
 (paren
+(paren
+r_int
+r_int
+)paren
 id|c
 op_amp
 l_int|0xff
@@ -1875,6 +1910,10 @@ r_char
 )paren
 (paren
 (paren
+(paren
+r_int
+r_int
+)paren
 id|c
 op_rshift
 l_int|8
@@ -2741,6 +2780,15 @@ r_int
 id|dev
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|AudioDrive
+)paren
+id|sb_reset_dsp
+(paren
+)paren
+suffix:semicolon
 )brace
 r_static
 r_int
@@ -2990,6 +3038,15 @@ id|dma16
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|AudioDrive
+)paren
+id|sb_reset_dsp
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* DMAbuf_close_dma (dev); */
 id|sb_free_irq
 (paren
@@ -4241,6 +4298,15 @@ op_star
 id|hw_config
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sb_dsp_ok
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * Already initialized&n;&t;&t;&t;&t; */
 id|sbc_base
 op_assign
 id|hw_config-&gt;io_base
@@ -4257,15 +4323,6 @@ id|sb_osp
 op_assign
 id|hw_config-&gt;osp
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb_dsp_ok
-)paren
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Already initialized&n;&t;&t;&t;&t; */
 id|dma8
 op_assign
 id|dma16
@@ -4401,11 +4458,6 @@ id|AudioDrive
 op_assign
 l_int|1
 suffix:semicolon
-id|sb_no_recording
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Temporary kludge */
 r_if
 c_cond
 (paren
@@ -5001,6 +5053,13 @@ id|mixer_type
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sbc_major
+op_eq
+l_int|0
+)paren
 id|dsp_get_vers
 (paren
 id|hw_config
