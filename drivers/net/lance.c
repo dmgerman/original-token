@@ -2312,7 +2312,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Gimme!!! */
+multiline_comment|/* We can&squot;t free the packet yet, so we inform the memory management&n;&t;   code that we are still using it. */
 r_if
 c_cond
 (paren
@@ -2800,7 +2800,7 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-multiline_comment|/* Warning: skb may well vanish at the point you call device_release! */
+multiline_comment|/* Warning: skb may well vanish at the point you call&n;&t;&t;   device_release! */
 )brace
 id|dirty_tx
 op_increment
@@ -3013,14 +3013,24 @@ r_if
 c_cond
 (paren
 id|status
-op_amp
-l_int|0x40
+op_ne
+l_int|0x03
 )paren
 (brace
 multiline_comment|/* There was an error. */
+multiline_comment|/* There is an tricky error noted by John Murphy,&n;&t;       &lt;murf@perftech.com&gt; to Russ Nelson: Even with full-sized&n;&t;       buffers it&squot;s possible for a jabber packet to use two&n;&t;       buffers, with only the last correctly noting the error. */
+r_if
+c_cond
+(paren
+id|status
+op_amp
+l_int|0x01
+)paren
+multiline_comment|/* Only count a general error at the */
 id|lp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
+multiline_comment|/* end of a packet.*/
 r_if
 c_cond
 (paren

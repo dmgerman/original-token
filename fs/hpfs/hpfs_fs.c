@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/hpfs/hpfs_fs.c&n; *  read-only HPFS&n; *  version 1.0&n; *&n; *  Chris Smith 1993&n; *&n; *  Sources &amp; references:&n; *   Duncan, _Design ... of HPFS_, MSSJ 4(5)   (C) 1989 Microsoft Corp&n; *   linux/fs/minix  Copyright (C) 1991, 1992, 1993  Linus Torvalds&n; *   linux/fs/msdos  Written 1992, 1993 by Werner Almesberger&n; *   linux/fs/isofs  Copyright (C) 1991  Eric Youngdale&n; */
+multiline_comment|/*&n; *  linux/fs/hpfs/hpfs_fs.c&n; *  read-only HPFS&n; *  version 1.0&n; *&n; *  Chris Smith 1993&n; *&n; *  Sources &amp; references:&n; *   Duncan, _Design ... of HPFS_, MSJ 4(5)   (C) 1989 Microsoft Corp&n; *   linux/fs/minix  Copyright (C) 1991, 1992, 1993  Linus Torvalds&n; *   linux/fs/msdos  Written 1992, 1993 by Werner Almesberger&n; *   linux/fs/isofs  Copyright (C) 1991  Eric Youngdale&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/hpfs_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

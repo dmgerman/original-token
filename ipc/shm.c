@@ -2484,6 +2484,15 @@ id|shp-&gt;shm_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|raddr
+)paren
+r_return
+id|addr
+suffix:semicolon
 id|put_fs_long
 (paren
 id|addr

@@ -452,6 +452,7 @@ id|task_struct
 (brace
 multiline_comment|/* these are hardcoded - don&squot;t touch */
 DECL|member|state
+r_volatile
 r_int
 id|state
 suffix:semicolon

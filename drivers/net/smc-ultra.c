@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v0.06 2/9/94 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v0.07 3/1/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -191,7 +191,6 @@ OG
 l_int|0x1ff
 )paren
 r_return
-op_logical_neg
 id|ultraprobe1
 c_func
 (paren
@@ -737,7 +736,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;,%s IRQ %d memory %#x-%#x.&bslash;n&quot;
+l_string|&quot;,%s IRQ %d memory %#lx-%#lx.&bslash;n&quot;
 comma
 id|eeprom_irq
 ques
@@ -917,7 +916,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;resetting Ultra, t=%d...&quot;
+l_string|&quot;resetting Ultra, t=%ld...&quot;
 comma
 id|jiffies
 )paren

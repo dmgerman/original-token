@@ -1305,6 +1305,10 @@ op_assign
 op_amp
 id|rr-&gt;u.SL.link
 suffix:semicolon
+id|inode-&gt;i_size
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren

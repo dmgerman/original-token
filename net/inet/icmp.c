@@ -870,6 +870,7 @@ l_int|7
 r_case
 id|ICMP_REDIR_NET
 suffix:colon
+macro_line|#ifdef not_a_good_idea
 id|rt_add
 c_func
 (paren
@@ -892,6 +893,7 @@ id|dev
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|ICMP_REDIR_HOST
 suffix:colon

@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;atp.c:v0.03 1/19/94 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;atp.c:v0.04 2/25/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;&t;This file is a device driver for the RealTek (aka AT-Lan-Tec) pocket&n;&t;ethernet adaptor.  This is a common low-cost OEM pocket ethernet&n;&t;adaptor, sold under many names.&n;&n;  Sources:&n;&t;This driver was written from the packet driver assembly code provided by&n;&t;Vincent Bono of AT-Lan-Tec.&t; Ever try to figure out how a complicated&n;&t;device works just from the assembly code?  It ain&squot;t pretty.  The following&n;&t;description is written based on guesses and writing lots of special-purpose&n;&t;code to test my theorized operation.&n;&n;&t;&t;&t;&t;&t;Theory of Operation&n;&t;&n;&t;The RTL8002 adaptor seems to be built around a custom spin of the SEEQ&n;&t;controller core.  It probably has a 16K or 64K internal packet buffer, of&n;&t;which the first 4K is devoted to transmit and the rest to receive.&n;&t;The controller maintains the queue of received packet and the packet buffer&n;&t;access pointer internally, with only &squot;reset to beginning&squot; and &squot;skip to next&n;&t;packet&squot; commands visible.  The transmit packet queue holds two (or more?)&n;&t;packets: both &squot;retransmit this packet&squot; (due to collision) and &squot;transmit next&n;&t;packet&squot; commands must be started by hand.&n;&n;&t;The station address is stored in a standard bit-serial EEPROM which must be&n;&t;read (ughh) by the device driver.  (Provisions have been made for&n;&t;substituting a 74S288 PROM, but I haven&squot;t gotten reports of any models&n;&t;using it.)  Unlike built-in devices, a pocket adaptor can temporarily lose&n;&t;power without indication to the device driver.  The major effect is that&n;&t;the station address, receive filter (promiscuous, etc.) and transceiver&n;&t;must be reset.&n;&n;&t;The controller itself has 16 registers, some of which use only the lower&n;&t;bits.  The registers are read and written 4 bits at a time.  The four bit&n;&t;register address is presented on the data lines along with a few additional&n;&t;timing and control bits.  The data is then read from status port or written&n;&t;to the data port.&n;&n;&t;Since the bulk data transfer of the actual packets through the slow&n;&t;parallel port dominates the driver&squot;s running time, four distinct data&n;&t;(non-register) transfer modes are provided by the adaptor, two in each&n;&t;direction.  In the first mode timing for the nibble transfers is&n;&t;provided through the data port.  In the second mode the same timing is&n;&t;provided through the control port.  In either case the data is read from&n;&t;the status port and written to the data port, just as it is accessing&n;&t;registers.&n;&n;&t;In addition to the basic data transfer methods, several more are modes are&n;&t;created by adding some delay by doing multiple reads of the data to allow&n;&t;it to stabilize.  This delay seems to be needed on most machines.&n;&n;&t;The data transfer mode is stored in the &squot;dev-&gt;if_port&squot; field.  Its default&n;&t;value is &squot;4&squot;.  It may be overriden at boot-time using the third parameter&n;&t;to the &quot;ether=...&quot; initialization.&n;&n;&t;The header file &lt;atp.h&gt; provides inline functions that encapsulate the&n;&t;register and data access methods.  These functions are hand-tuned to&n;&t;generate reasonable object code.  This header file also documents my&n;&t;interpretations of the device registers.&n;*/
 macro_line|#include &lt;linux/config.h&gt;&t;&t;/* Used only to override default values. */
@@ -1860,9 +1860,7 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|dev
 )paren
@@ -1931,15 +1929,7 @@ r_char
 op_star
 id|buf
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 r_int
 id|flags
@@ -2599,7 +2589,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Missed packet? No Rx after %d Tx and %d jiffies&quot;
+l_string|&quot;%s: Missed packet? No Rx after %d Tx and %ld jiffies&quot;
 l_string|&quot; status %02x  CMR1 %02x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2647,6 +2637,7 @@ r_else
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* This following code fixes a rare (and very difficult to track down)&n;&t;   problem where the adaptor forgets its ethernet address. */
 (brace
 r_int
 id|i
@@ -2968,7 +2959,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
 id|read_block
 c_func
 (paren
@@ -2976,16 +2966,7 @@ id|ioaddr
 comma
 id|pkt_len
 comma
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 id|dev-&gt;if_port
 )paren
@@ -3003,21 +2984,13 @@ r_char
 op_star
 id|data
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; data %02x%02x%02x %02x%02x%02x %02x%02x%02x %02x%02x%02x %02x%02x..&quot;
+l_string|&quot; data %02x%02x%02x %02x%02x%02x %02x%02x%02x&quot;
+l_string|&quot;%02x%02x%02x %02x%02x..&quot;
 comma
 id|data
 (braket

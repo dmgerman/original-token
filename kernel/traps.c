@@ -210,6 +210,27 @@ id|err
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|esp
+suffix:semicolon
+r_int
+r_int
+id|ss
+suffix:semicolon
+id|esp
+op_assign
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|regs-&gt;esp
+suffix:semicolon
+id|ss
+op_assign
+id|KERNEL_DS
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -229,6 +250,23 @@ l_int|3
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|regs-&gt;cs
+op_amp
+l_int|3
+)paren
+(brace
+id|esp
+op_assign
+id|regs-&gt;esp
+suffix:semicolon
+id|ss
+op_assign
+id|regs-&gt;ss
+suffix:semicolon
+)brace
 id|console_verbose
 c_func
 (paren
@@ -277,19 +315,21 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;esi: %08lx   edi: %08lx   ebp: %08lx&bslash;n&quot;
+l_string|&quot;esi: %08lx   edi: %08lx   ebp: %08lx   esp: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;esi
 comma
 id|regs-&gt;edi
 comma
 id|regs-&gt;ebp
+comma
+id|esp
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ds: %04x   es: %04x   fs: %04x   gs: %04x&bslash;n&quot;
+l_string|&quot;ds: %04x   es: %04x   fs: %04x   gs: %04x   ss: %04x&bslash;n&quot;
 comma
 id|regs-&gt;ds
 comma
@@ -298,6 +338,8 @@ comma
 id|regs-&gt;fs
 comma
 id|regs-&gt;gs
+comma
+id|ss
 )paren
 suffix:semicolon
 id|store_TR
@@ -309,7 +351,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Pid: %d, process nr: %d (%s)&bslash;n&quot;
+l_string|&quot;Pid: %d, process nr: %d (%s)&bslash;nCode: &quot;
 comma
 id|current-&gt;pid
 comma
@@ -355,6 +397,51 @@ r_char
 op_star
 )paren
 id|regs-&gt;eip
+)paren
+)paren
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;nStack: &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|5
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%08lx &quot;
+comma
+id|get_seg_long
+c_func
+(paren
+id|ss
+comma
+(paren
+id|i
+op_plus
+(paren
+r_int
+r_int
+op_star
+)paren
+id|esp
 )paren
 )paren
 )paren

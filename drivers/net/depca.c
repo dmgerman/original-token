@@ -26,25 +26,6 @@ macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;depca.h&quot;
-r_extern
-r_int
-id|vsprintf
-c_func
-(paren
-r_char
-op_star
-id|buf
-comma
-r_const
-r_char
-op_star
-id|fmt
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
 macro_line|#ifdef DEPCA_DEBUG
 DECL|variable|depca_debug
 r_int
@@ -793,7 +774,7 @@ id|device
 )paren
 )paren
 suffix:semicolon
-id|vsprintf
+id|sprintf
 c_func
 (paren
 id|dev-&gt;name

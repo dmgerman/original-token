@@ -345,11 +345,11 @@ mdefine_line|#define   VT0&t;0000000
 DECL|macro|VT1
 mdefine_line|#define   VT1&t;0040000
 DECL|macro|FFDLY
-mdefine_line|#define FFDLY&t;0040000
+mdefine_line|#define FFDLY&t;0100000
 DECL|macro|FF0
 mdefine_line|#define   FF0&t;0000000
 DECL|macro|FF1
-mdefine_line|#define   FF1&t;0040000
+mdefine_line|#define   FF1&t;0100000
 multiline_comment|/* c_cflag bit meaning */
 DECL|macro|CBAUD
 mdefine_line|#define CBAUD&t;0000017

@@ -1019,10 +1019,6 @@ id|i
 suffix:semicolon
 id|timeout
 op_assign
-id|jiffies
-suffix:semicolon
-id|timeout
-op_add_assign
 id|ROUND_UP
 c_func
 (paren
@@ -1065,12 +1061,12 @@ r_if
 c_cond
 (paren
 id|timeout
-op_le
-id|jiffies
 )paren
 id|timeout
-op_assign
-l_int|0
+op_add_assign
+id|jiffies
+op_plus
+l_int|1
 suffix:semicolon
 )brace
 id|current-&gt;timeout

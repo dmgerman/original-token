@@ -160,13 +160,11 @@ comma
 id|dest
 )paren
 suffix:semicolon
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* The 80486 book says that the answer is +0, but a real&n;&t; 80486 appears to behave this way... */
+multiline_comment|/* The 80486 book says that the answer is +0, but a real&n;&t; 80486 behaves this way.&n;&t; IEEE-754 apparently says it should be this way. */
 id|dest-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_return
 l_int|0
 suffix:semicolon

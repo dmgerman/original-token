@@ -8522,7 +8522,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* CONFIG_SELECTION */
-multiline_comment|/*&n; * PIO_FONT support.&n; */
+multiline_comment|/*&n; * PIO_FONT support.&n; *&n; * The font loading code goes back to the codepage package by&n; * Joel Hoffman (joel@wam.umd.edu). (He reports that the original&n; * reference is: &quot;From: p. 307 of _Programmer&squot;s Guide to PC &amp; PS/2&n; * Video Systems_ by Richard Wilton. 1987.  Microsoft Press&quot;.)&n; *&n; * Change for certain monochrome monitors by Yury Shevchuck&n; * (sizif@botik.yaroslavl.su).&n; */
 DECL|macro|colourmap
 mdefine_line|#define colourmap ((char *)0xa0000)
 DECL|macro|blackwmap
@@ -8559,6 +8559,9 @@ r_char
 op_star
 id|charmap
 suffix:semicolon
+r_int
+id|beg
+suffix:semicolon
 multiline_comment|/* no use to &quot;load&quot; CGA... */
 r_if
 c_cond
@@ -8567,10 +8570,16 @@ id|video_type
 op_eq
 id|VIDEO_TYPE_EGAC
 )paren
+(brace
 id|charmap
 op_assign
 id|colourmap
 suffix:semicolon
+id|beg
+op_assign
+l_int|0x0e
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -8579,10 +8588,16 @@ id|video_type
 op_eq
 id|VIDEO_TYPE_EGAM
 )paren
+(brace
 id|charmap
 op_assign
 id|blackwmap
 suffix:semicolon
+id|beg
+op_assign
+l_int|0x0a
+suffix:semicolon
+)brace
 r_else
 r_return
 op_minus
@@ -8932,12 +8947,12 @@ suffix:semicolon
 id|outb_p
 c_func
 (paren
-l_int|0x0e
+id|beg
 comma
 id|gr_port_val
 )paren
 suffix:semicolon
-multiline_comment|/* map starts at b800:0000 */
+multiline_comment|/* map starts at b800:0 or b000:0 */
 id|sti
 c_func
 (paren

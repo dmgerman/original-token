@@ -322,9 +322,11 @@ id|CURRENT_TIME
 suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
+l_int|0
+suffix:semicolon
 id|inode-&gt;i_blksize
 op_assign
-l_int|0
+l_int|1024
 suffix:semicolon
 id|ino
 op_assign
