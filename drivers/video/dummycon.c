@@ -23,7 +23,6 @@ r_static
 r_const
 r_char
 op_star
-id|__init
 id|dummycon_startup
 c_func
 (paren

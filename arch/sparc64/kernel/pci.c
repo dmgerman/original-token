@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci.c,v 1.13 2000/01/06 23:51:49 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: pci.c,v 1.14 2000/01/13 00:05:43 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -815,6 +815,21 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 multiline_comment|/* :-)... actually implement this soon */
+)brace
+DECL|function|pcibios_enable_device
+r_int
+id|pcibios_enable_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|pdev
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|pcibios_setup
 r_char

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.75 2000/01/07 20:21:42 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.76 2000/01/09 09:13:38 anton Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/btfixup.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
@@ -250,6 +251,11 @@ DECL|member|new_signal
 r_int
 id|new_signal
 suffix:semicolon
+DECL|member|refcount
+id|atomic_t
+id|refcount
+suffix:semicolon
+multiline_comment|/* used for sun4c only */
 )brace
 suffix:semicolon
 DECL|macro|SPARC_FLAG_KTHREAD
@@ -482,11 +488,23 @@ r_struct
 id|task_struct
 op_star
 )paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|get_task_struct
+comma
+r_struct
+id|task_struct
+op_star
+)paren
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() BTFIXUP_CALL(alloc_task_struct)()
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(tsk) BTFIXUP_CALL(free_task_struct)(tsk)
-multiline_comment|/* XXX Anton, here is where you implement get_task_struct et al. */
+DECL|macro|get_task_struct
+mdefine_line|#define get_task_struct(tsk) BTFIXUP_CALL(get_task_struct)(tsk)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

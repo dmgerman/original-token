@@ -32,6 +32,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/mmzone.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
+macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
@@ -2274,6 +2275,22 @@ c_func
 id|brw_page
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_UID16
+DECL|variable|fs_overflowuid
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fs_overflowuid
+)paren
+suffix:semicolon
+DECL|variable|fs_overflowgid
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fs_overflowgid
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* all busmice */
 DECL|variable|add_mouse_randomness
 id|EXPORT_SYMBOL

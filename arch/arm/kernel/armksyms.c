@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -97,30 +98,6 @@ id|local_irq_count
 (braket
 id|NR_CPUS
 )braket
-suffix:semicolon
-r_extern
-id|pid_t
-id|kernel_thread
-c_func
-(paren
-r_int
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-id|arg
-comma
-r_int
-r_int
-id|flags
-)paren
 suffix:semicolon
 multiline_comment|/*&n; * syscalls&n; */
 r_extern
@@ -616,13 +593,6 @@ id|__machine_arch_type
 )paren
 suffix:semicolon
 multiline_comment|/* networking */
-DECL|variable|csum_partial_copy
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|csum_partial_copy
-)paren
-suffix:semicolon
 DECL|variable|csum_partial_copy_nocheck
 id|EXPORT_SYMBOL
 c_func
@@ -839,13 +809,6 @@ c_func
 id|strstr
 )paren
 suffix:semicolon
-DECL|variable|__memset
-id|EXPORT_SYMBOL_NOVERS
-c_func
-(paren
-id|__memset
-)paren
-suffix:semicolon
 DECL|variable|memset
 id|EXPORT_SYMBOL_NOVERS
 c_func
@@ -853,7 +816,6 @@ c_func
 id|memset
 )paren
 suffix:semicolon
-multiline_comment|/* needed for some versions of gcc */
 DECL|variable|memcpy
 id|EXPORT_SYMBOL_NOVERS
 c_func

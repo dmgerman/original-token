@@ -12,21 +12,12 @@ macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &quot;whiteheat.h&quot;
+macro_line|#ifdef CONFIG_USB_SERIAL_WHITEHEAT
+macro_line|#include &quot;whiteheat.h&quot;&t;&t;/* firmware for the ConnectTech WhiteHEAT device */
+macro_line|#endif
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 macro_line|#include &quot;usb.h&quot;
-multiline_comment|/* different configuration options to cut down on code size if you wish */
-DECL|macro|CONFIG_BELKIN_SERIAL
-mdefine_line|#define CONFIG_BELKIN_SERIAL
-DECL|macro|CONFIG_PERACOM_SERIAL
-mdefine_line|#define CONFIG_PERACOM_SERIAL
-DECL|macro|CONFIG_VISOR_SERIAL
-mdefine_line|#define CONFIG_VISOR_SERIAL
-DECL|macro|CONFIG_WHITEHEAT_SERIAL
-mdefine_line|#define CONFIG_WHITEHEAT_SERIAL
-DECL|macro|CONFIG_GENERIC_SERIAL
-mdefine_line|#define CONFIG_GENERIC_SERIAL
 multiline_comment|/* Module information */
 id|MODULE_AUTHOR
 c_func
@@ -40,19 +31,20 @@ c_func
 l_string|&quot;USB Serial Driver&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_USB_SERIAL_GENERIC
 DECL|variable|vendor
 r_static
 id|__u16
 id|vendor
 op_assign
-l_int|0
+l_int|0x05f7
 suffix:semicolon
 DECL|variable|product
 r_static
 id|__u16
 id|product
 op_assign
-l_int|0
+l_int|0xffff
 suffix:semicolon
 id|MODULE_PARM
 c_func
@@ -86,6 +78,7 @@ comma
 l_string|&quot;User specified USB idProduct&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* USB Serial devices vendor ids and device ids that this driver supports */
 DECL|macro|BELKIN_VENDOR_ID
 mdefine_line|#define BELKIN_VENDOR_ID&t;&t;0x056c
@@ -678,6 +671,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* function prototypes for a &quot;generic&quot; type serial converter (no flow control, not all endpoints needed) */
+multiline_comment|/* need to always compile these in, as some of the other devices use these functions as their own. */
 r_static
 r_int
 id|generic_serial_open
@@ -764,6 +758,7 @@ op_star
 id|tty
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_USB_SERIAL_GENERIC
 multiline_comment|/* All of the device info needed for the Generic Serial Converter */
 DECL|variable|generic_device
 r_static
@@ -841,7 +836,8 @@ id|generic_chars_in_buffer
 comma
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_BELKIN_SERIAL) || defined(CONFIG_PERACOM_SERIAL)
+macro_line|#endif
+macro_line|#if defined(CONFIG_USB_SERIAL_BELKIN) || defined(CONFIG_USB_SERIAL_PERACOM)
 multiline_comment|/* function prototypes for the eTek type converters (this includes Belkin and Peracom) */
 r_static
 r_int
@@ -874,7 +870,7 @@ id|filp
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BELKIN_SERIAL
+macro_line|#ifdef CONFIG_USB_SERIAL_BELKIN
 multiline_comment|/* All of the device info needed for the Belkin Serial Converter */
 DECL|variable|belkin_vendor_id
 r_static
@@ -967,7 +963,7 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PERACOM_SERIAL
+macro_line|#ifdef CONFIG_USB_SERIAL_PERACOM
 multiline_comment|/* All of the device info needed for the Peracom Serial Converter */
 DECL|variable|peracom_vendor_id
 r_static
@@ -1060,7 +1056,7 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_WHITEHEAT_SERIAL
+macro_line|#ifdef CONFIG_USB_SERIAL_WHITEHEAT
 multiline_comment|/* function prototypes for the Connect Tech WhiteHEAT serial converter */
 r_static
 r_int
@@ -1283,7 +1279,7 @@ id|whiteheat_unthrottle
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_VISOR_SERIAL
+macro_line|#ifdef CONFIG_USB_SERIAL_VISOR
 multiline_comment|/* function prototypes for a handspring visor */
 r_static
 r_int
@@ -1445,10 +1441,12 @@ id|usb_serial_devices
 )braket
 op_assign
 (brace
+macro_line|#ifdef CONFIG_USB_SERIAL_GENERIC
 op_amp
 id|generic_device
 comma
-macro_line|#ifdef CONFIG_WHITEHEAT_SERIAL
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_SERIAL_WHITEHEAT
 op_amp
 id|whiteheat_fake_device
 comma
@@ -1456,17 +1454,17 @@ op_amp
 id|whiteheat_device
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_BELKIN_SERIAL
+macro_line|#ifdef CONFIG_USB_SERIAL_BELKIN
 op_amp
 id|belkin_device
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_PERACOM_SERIAL
+macro_line|#ifdef CONFIG_USB_SERIAL_PERACOM
 op_amp
 id|peracom_device
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_VISOR_SERIAL
+macro_line|#ifdef CONFIG_USB_SERIAL_VISOR
 op_amp
 id|handspring_device
 comma
@@ -2763,7 +2761,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_BELKIN_SERIAL) || defined(CONFIG_PERACOM_SERIAL)
+macro_line|#if defined(CONFIG_USB_SERIAL_BELKIN) || defined(CONFIG_USB_SERIAL_PERACOM)
 multiline_comment|/*****************************************************************************&n; * eTek specific driver functions&n; *****************************************************************************/
 DECL|function|etek_serial_open
 r_static
@@ -2917,8 +2915,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* defined(CONFIG_BELKIN_SERIAL) || defined(CONFIG_PERACOM_SERIAL) */
-macro_line|#ifdef CONFIG_WHITEHEAT_SERIAL
+macro_line|#endif&t;/* defined(CONFIG_USB_SERIAL_BELKIN) || defined(CONFIG_USB_SERIAL_PERACOM) */
+macro_line|#ifdef CONFIG_USB_SERIAL_WHITEHEAT
 multiline_comment|/*****************************************************************************&n; * Connect Tech&squot;s White Heat specific driver functions&n; *****************************************************************************/
 DECL|function|whiteheat_serial_open
 r_static
@@ -3544,8 +3542,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_WHITEHEAT_SERIAL */
-macro_line|#ifdef CONFIG_VISOR_SERIAL
+macro_line|#endif&t;/* CONFIG_USB_SERIAL_WHITEHEAT */
+macro_line|#ifdef CONFIG_USB_SERIAL_VISOR
 multiline_comment|/******************************************************************************&n; * Handspring Visor specific driver functions&n; ******************************************************************************/
 DECL|function|visor_serial_open
 r_static
@@ -3741,7 +3739,7 @@ multiline_comment|/* FIXME!!! */
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_VISOR_SERIAL*/
+macro_line|#endif&t;/* CONFIG_USB_SERIAL_VISOR*/
 multiline_comment|/*****************************************************************************&n; * generic devices specific driver functions&n; *****************************************************************************/
 DECL|function|generic_serial_open
 r_static

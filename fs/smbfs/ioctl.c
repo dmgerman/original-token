@@ -63,7 +63,7 @@ op_assign
 id|put_user
 c_func
 (paren
-id|high2lowuid
+id|NEW_TO_OLD_UID
 c_func
 (paren
 id|server-&gt;mnt-&gt;mounted_uid

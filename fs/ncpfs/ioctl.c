@@ -649,7 +649,7 @@ suffix:semicolon
 id|put_user
 c_func
 (paren
-id|high2lowuid
+id|NEW_TO_OLD_UID
 c_func
 (paren
 id|server-&gt;m.mounted_uid

@@ -2044,7 +2044,7 @@ suffix:semicolon
 multiline_comment|/*&n; * grow_fork()&n; *&n; * Try to add enough allocation blocks to &squot;fork&squot;&n; * so that it is &squot;ablock&squot; allocation blocks long. &n; */
 DECL|function|grow_fork
 r_static
-r_void
+r_int
 id|grow_fork
 c_func
 (paren
@@ -2120,7 +2120,9 @@ OL
 l_int|1
 )paren
 (brace
+multiline_comment|/* no need to grow the fork */
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* round up to clumpsize */
@@ -2182,6 +2184,8 @@ l_int|1
 (brace
 multiline_comment|/* somehow we couldn&squot;t find the end of the file! */
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* determine which is the last used extent in the record */
@@ -2313,6 +2317,8 @@ id|ext
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|zero_blocks
@@ -2440,6 +2446,8 @@ id|ext
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|zero_blocks
@@ -2564,6 +2572,8 @@ id|mdb
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -2597,6 +2607,7 @@ id|ext
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*================ Global functions ================*/
@@ -2974,9 +2985,10 @@ id|fork-&gt;psize
 r_if
 c_cond
 (paren
+op_logical_neg
 id|create
-)paren
-(brace
+op_logical_or
+(paren
 id|grow_fork
 c_func
 (paren
@@ -2986,14 +2998,13 @@ id|ablock
 op_plus
 l_int|1
 )paren
-suffix:semicolon
-)brace
-r_else
-(brace
+OL
+l_int|0
+)paren
+)paren
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 macro_line|#if defined(DEBUG_EXTENTS) || defined(DEBUG_ALL)
 id|hfs_warn

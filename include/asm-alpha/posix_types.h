@@ -119,18 +119,6 @@ r_int
 r_int
 id|__kernel_gid16_t
 suffix:semicolon
-DECL|typedef|__kernel_uid32_t
-r_typedef
-r_int
-r_int
-id|__kernel_uid32_t
-suffix:semicolon
-DECL|typedef|__kernel_gid32_t
-r_typedef
-r_int
-r_int
-id|__kernel_gid32_t
-suffix:semicolon
 r_typedef
 r_struct
 (brace
@@ -145,6 +133,28 @@ DECL|typedef|__kernel_fsid_t
 )brace
 id|__kernel_fsid_t
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|typedef|__kernel_old_uid_t
+r_typedef
+id|__kernel_uid_t
+id|__kernel_old_uid_t
+suffix:semicolon
+DECL|typedef|__kernel_old_gid_t
+r_typedef
+id|__kernel_gid_t
+id|__kernel_old_gid_t
+suffix:semicolon
+DECL|typedef|__kernel_uid32_t
+r_typedef
+id|__kernel_uid_t
+id|__kernel_uid32_t
+suffix:semicolon
+DECL|typedef|__kernel_gid32_t
+r_typedef
+id|__kernel_gid_t
+id|__kernel_gid32_t
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __GNUC__
 DECL|macro|__FD_SET

@@ -265,7 +265,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. lost_ticks is&n;&t; * nonzero if the tiemr bottom half hasnt executed yet.&n;&t; */
+multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. lost_ticks is&n;&t; * nonzero if the timer bottom half hasnt executed yet.&n;&t; */
 r_if
 c_cond
 (paren

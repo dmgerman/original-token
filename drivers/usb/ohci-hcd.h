@@ -701,6 +701,19 @@ DECL|macro|RH_PS_OCIC
 mdefine_line|#define RH_PS_OCIC           0x00080000    
 DECL|macro|RH_PS_PRSC
 mdefine_line|#define RH_PS_PRSC           0x00100000   
+multiline_comment|/* Root hub status bits */
+DECL|macro|RH_HS_LPS
+mdefine_line|#define RH_HS_LPS&t;     0x00000001
+DECL|macro|RH_HS_OCI
+mdefine_line|#define RH_HS_OCI&t;     0x00000002
+DECL|macro|RH_HS_DRWE
+mdefine_line|#define RH_HS_DRWE&t;     0x00008000
+DECL|macro|RH_HS_LPSC
+mdefine_line|#define RH_HS_LPSC&t;     0x00010000
+DECL|macro|RH_HS_OCIC
+mdefine_line|#define RH_HS_OCIC&t;     0x00020000
+DECL|macro|RH_HS_CRWE
+mdefine_line|#define RH_HS_CRWE&t;     0x80000000
 DECL|macro|min
 mdefine_line|#define min(a,b) (((a)&lt;(b))?(a):(b))  
 multiline_comment|/* urb */

@@ -5,6 +5,7 @@ r_void
 id|die
 c_func
 (paren
+r_const
 r_char
 op_star
 id|msg
@@ -326,7 +327,7 @@ suffix:semicolon
 )brace
 DECL|function|do_page_fault
 r_static
-r_void
+r_int
 id|do_page_fault
 c_func
 (paren
@@ -524,6 +525,7 @@ id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Something tried to access memory that isn&squot;t in our memory map..&n;&t; * Fix it, but check if it&squot;s kernel or user first..&n;&t; */
 id|bad_area
@@ -546,6 +548,10 @@ id|regs
 )paren
 )paren
 (brace
+id|tsk-&gt;thread.address
+op_assign
+id|addr
+suffix:semicolon
 id|tsk-&gt;thread.error_code
 op_assign
 id|mode
@@ -581,6 +587,7 @@ id|tsk
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|no_context
@@ -628,6 +635,7 @@ op_assign
 id|fixup
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|kernel_page_fault
@@ -645,6 +653,7 @@ id|mm
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 id|do_sigbus
 suffix:colon
@@ -657,6 +666,10 @@ id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; */
+id|tsk-&gt;thread.address
+op_assign
+id|addr
+suffix:semicolon
 id|tsk-&gt;thread.error_code
 op_assign
 id|mode
@@ -686,6 +699,9 @@ id|regs
 )paren
 r_goto
 id|no_context
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

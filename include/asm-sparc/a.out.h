@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: a.out.h,v 1.12 1998/02/05 14:20:00 jj Exp $ */
+multiline_comment|/* $Id: a.out.h,v 1.13 2000/01/09 10:46:53 anton Exp $ */
 macro_line|#ifndef __SPARC_A_OUT_H__
 DECL|macro|__SPARC_A_OUT_H__
 mdefine_line|#define __SPARC_A_OUT_H__
@@ -237,31 +237,9 @@ suffix:semicolon
 DECL|macro|N_RELOCATION_INFO_DECLARED
 mdefine_line|#define N_RELOCATION_INFO_DECLARED 1
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/btfixup.h&gt;
-macro_line|#ifdef CONFIG_SUN4
+macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|STACK_TOP
-mdefine_line|#define STACK_TOP&t;(0xefffe000UL)
-macro_line|#else
-r_extern
-r_int
-r_int
-id|stack_top
-suffix:semicolon
-macro_line|#  ifndef MODULE
-id|BTFIXUPDEF_SETHI_INIT
-c_func
-(paren
-id|stack_top
-comma
-l_int|0xeffff000
-)paren
-DECL|macro|STACK_TOP
-macro_line|#    define STACK_TOP&t;((unsigned long)BTFIXUP_SETHI(stack_top))
-macro_line|#  else /* MODULE */
-macro_line|#    define STACK_TOP&t;(stack_top)
-macro_line|#  endif /* MODULE */
-macro_line|#endif /* !CONFIG_SUN4 */
+mdefine_line|#define STACK_TOP&t;(PAGE_OFFSET - PAGE_SIZE)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __SPARC_A_OUT_H__ */
 eof

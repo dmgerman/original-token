@@ -3012,6 +3012,8 @@ comma
 l_int|0xe0
 comma
 id|ECR_TST
+op_lshift
+l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Adjust for the contents of the FIFO. */

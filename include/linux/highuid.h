@@ -1,9 +1,10 @@
 macro_line|#ifndef _LINUX_HIGHUID_H
 DECL|macro|_LINUX_HIGHUID_H
 mdefine_line|#define _LINUX_HIGHUID_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-multiline_comment|/*&n; * general notes:&n; *&n; * UID16_COMPAT_NEEDED is defined in include/asm-{arch}/posix_types.h&n; * if the given architecture needs to support backwards compatibility&n; * for old system calls.&n; *&n; * old_uid_t and old_gid_t are only used if UID16_COMPAT_NEEDED&n; * is defined.&n; *&n; * uid16_t and gid16_t are used on all architectures. (when dealing&n; * with structures hard coded to 16 bits, such as in filesystems)&n; */
-macro_line|#ifdef UID16_COMPAT_NEEDED
+multiline_comment|/*&n; * general notes:&n; *&n; * CONFIG_UID16 is defined if the given architecture needs to&n; * support backwards compatibility for old system calls.&n; *&n; * kernel code should use uid_t and gid_t at all times when dealing with&n; * kernel-private data.&n; *&n; * old_uid_t and old_gid_t are only used if CONFIG_UID16 is defined.&n; *&n; * uid16_t and gid16_t are used on all architectures. (when dealing&n; * with structures hard coded to 16 bits, such as in filesystems)&n; */
+macro_line|#ifdef CONFIG_UID16
 multiline_comment|/*&n; * This is the &quot;overflow&quot; UID and GID. They are used to signify uid/gid&n; * overflow to old programs when they request uid/gid information but are&n; * using the old 16 bit interfaces.&n; * When you run a libc5 program, it will think that all highuid files or&n; * processes are owned by this uid/gid.&n; * The idea is that it&squot;s better to do so than possibly return 0 in lieu of&n; * 65536, etc.&n; */
 r_extern
 r_int
@@ -36,6 +37,7 @@ DECL|macro|NEW_TO_OLD_UID
 mdefine_line|#define NEW_TO_OLD_UID(uid)&t;high2lowuid(uid)
 DECL|macro|NEW_TO_OLD_GID
 mdefine_line|#define NEW_TO_OLD_GID(gid)&t;high2lowgid(gid)
+multiline_comment|/* specific to fs/stat.c */
 DECL|macro|SET_OLDSTAT_UID
 mdefine_line|#define SET_OLDSTAT_UID(stat, uid)&t;(stat).st_uid = high2lowuid(uid)
 DECL|macro|SET_OLDSTAT_GID
@@ -44,6 +46,14 @@ DECL|macro|SET_STAT_UID
 mdefine_line|#define SET_STAT_UID(stat, uid)&t;&t;(stat).st_uid = high2lowuid(uid)
 DECL|macro|SET_STAT_GID
 mdefine_line|#define SET_STAT_GID(stat, gid)&t;&t;(stat).st_gid = high2lowgid(gid)
+multiline_comment|/* specific to kernel/signal.c */
+macro_line|#ifdef UID16_SIGINFO_COMPAT_NEEDED
+DECL|macro|SET_SIGINFO_UID16
+mdefine_line|#define SET_SIGINFO_UID16(var, uid)&t;var = high2lowuid(uid)
+macro_line|#else
+DECL|macro|SET_SIGINFO_UID16
+mdefine_line|#define SET_SIGINFO_UID16(var, uid)&t;do { ; } while (0)
+macro_line|#endif
 macro_line|#else
 DECL|macro|SET_UID16
 mdefine_line|#define SET_UID16(var, uid)&t;do { ; } while (0)
@@ -61,9 +71,9 @@ DECL|macro|SET_STAT_UID
 mdefine_line|#define SET_STAT_UID(stat, uid)&t;&t;(stat).st_uid = uid
 DECL|macro|SET_STAT_GID
 mdefine_line|#define SET_STAT_GID(stat, gid)&t;&t;(stat).st_gid = gid
-DECL|macro|high2lowuid
-mdefine_line|#define high2lowuid(x)&t;&t;(x)
-macro_line|#endif /* UID16_COMPAT_NEEDED */
+DECL|macro|SET_SIGINFO_UID16
+mdefine_line|#define SET_SIGINFO_UID16(var, uid)&t;do { ; } while (0)
+macro_line|#endif /* CONFIG_UID16 */
 multiline_comment|/*&n; * Everything below this line is needed on all architectures, to deal with&n; * filesystems that only store 16 bits of the UID/GID, etc.&n; */
 multiline_comment|/*&n; * This is the UID and GID that will get written to disk if a filesystem&n; * only supports 16-bit UIDs and the kernel has a high UID/GID to write&n; */
 r_extern

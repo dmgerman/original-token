@@ -19208,10 +19208,9 @@ suffix:colon
 id|tulip_resume
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|module_init
+DECL|function|tulip_init
 r_int
-id|module_init
+id|tulip_init
 c_func
 (paren
 r_void
@@ -19228,9 +19227,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|module_cleanup
+DECL|function|tulip_exit
 r_void
-id|module_cleanup
+id|tulip_exit
 c_func
 (paren
 r_void
@@ -19244,24 +19243,16 @@ id|tulip_ops
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|function|tulip_probe
-r_void
-id|tulip_probe
+id|module_init
 c_func
 (paren
-r_void
+id|tulip_init
 )paren
-(brace
-id|pci_register_driver
+id|module_exit
 c_func
 (paren
-op_amp
-id|tulip_ops
+id|tulip_exit
 )paren
-suffix:semicolon
-)brace
-macro_line|#endif
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c tulip.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c tulip.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c tulip.c -o tulip_cb.o -I/usr/src/pcmcia-cs-3.0.9/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

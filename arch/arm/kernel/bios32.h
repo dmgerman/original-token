@@ -68,4 +68,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_void
+id|__init
+id|plx90x0_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-sa1100.c&n; *&n; * Extra MM routines for the SA1100 architecture&n; *&n; * Copyright (C) 1998-1999 Russell King&n; * Copyright (C) 1999 Hugo Fiennes&n; *&n; * 1999/09/12 Nicolas Pitre &lt;nico@visuaide.com&gt;&n; *&t;Specific RAM implementation details are in&n; *&t;linux/include/asm/arch-sa1100/memory.h now.&n; *&t;Allows for better macro optimisations when possible.&n; */
+multiline_comment|/*&n; * arch/arm/mm/mm-sa1100.c&n; *&n; * Extra MM routines for the SA1100 architecture&n; *&n; * Copyright (C) 1998-1999 Russell King&n; * Copyright (C) 1999 Hugo Fiennes&n; *&n; * 1999/12/04 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Converted memory definition for struct meminfo initialisations.&n; *&t;Memory is listed physically now.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -7,104 +7,120 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &quot;map.h&quot;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
-multiline_comment|/*&n; * These are the memory size mappings for the&n; * SA1100.  Note that LART is a special case -&n; * it doesn&squot;t use physical address A23 on the&n; * DRAM, so we effectively have 4 * 8MB in&n; * two banks.&n; */
-DECL|variable|__initdata
+multiline_comment|/*&n; * These are the RAM memory mappings for SA1100 implementations.&n; * Note that LART is a special case - it doesn&squot;t use physical &n; * address line A23 on the DRAM, so we effectively have 4 * 8MB&n; * in two banks.&n; */
+DECL|struct|mem_desc
 r_struct
 id|mem_desc
+(brace
+DECL|member|phys_start
+r_int
+r_int
+id|phys_start
+suffix:semicolon
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+DECL|variable|__initdata
+)brace
 id|mem_desc
 (braket
 )braket
 id|__initdata
 op_assign
 (brace
-multiline_comment|/* virt start virt end */
 macro_line|#if defined(CONFIG_SA1100_BRUTUS)
 (brace
 l_int|0xc0000000
 comma
-l_int|0xc0400000
+l_int|0x00400000
 )brace
 comma
 multiline_comment|/* 4MB */
 (brace
-l_int|0xc1000000
+l_int|0xc8000000
 comma
-l_int|0xc1400000
+l_int|0x00400000
+)brace
+comma
+multiline_comment|/* 4MB */
+macro_line|#if 0&t;/* only two banks until the bootmem stuff is fixed... */
+(brace
+l_int|0xd0000000
+comma
+l_int|0x00400000
 )brace
 comma
 multiline_comment|/* 4MB */
 (brace
-l_int|0xc2000000
+l_int|0xd8000000
 comma
-l_int|0xc2400000
-)brace
-comma
-multiline_comment|/* 4MB */
-(brace
-l_int|0xc3000000
-comma
-l_int|0xc3400000
+l_int|0x00400000
 )brace
 multiline_comment|/* 4MB */
+macro_line|#endif
 macro_line|#elif defined(CONFIG_SA1100_EMPEG)
 (brace
 l_int|0xc0000000
 comma
-l_int|0xc0400000
+l_int|0x00400000
 )brace
 comma
 multiline_comment|/* 4MB */
 (brace
-l_int|0xc1000000
+l_int|0xc8000000
 comma
-l_int|0xc1400000
+l_int|0x00400000
 )brace
 multiline_comment|/* 4MB */
 macro_line|#elif defined(CONFIG_SA1100_LART)
 (brace
 l_int|0xc0000000
 comma
-l_int|0xc0800000
+l_int|0x00800000
 )brace
 comma
-multiline_comment|/* 16MB */
+multiline_comment|/* 8MB */
 (brace
 l_int|0xc1000000
 comma
-l_int|0xc1800000
+l_int|0x00800000
 )brace
 comma
+multiline_comment|/* 8MB */
 (brace
-l_int|0xc2000000
+l_int|0xc8000000
 comma
-l_int|0xc2800000
+l_int|0x00800000
 )brace
 comma
-multiline_comment|/* 16MB */
+multiline_comment|/* 8MB */
 (brace
-l_int|0xc3000000
+l_int|0xc9000000
 comma
-l_int|0xc3800000
+l_int|0x00800000
 )brace
+multiline_comment|/* 8MB */
 macro_line|#elif defined(CONFIG_SA1100_VICTOR)
 (brace
 l_int|0xc0000000
 comma
-l_int|0xc0400000
+l_int|0x00400000
 )brace
 multiline_comment|/* 4MB */
 macro_line|#elif defined(CONFIG_SA1100_TIFON)
 (brace
 l_int|0xc0000000
 comma
-l_int|0xc1000000
+l_int|0x01000000
 )brace
 comma
 multiline_comment|/* 16MB */
 (brace
-l_int|0xc1000000
+l_int|0xc8000000
 comma
-l_int|0xc2000000
+l_int|0x01000000
 )brace
 multiline_comment|/* 16MB */
 macro_line|#else

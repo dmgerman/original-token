@@ -934,9 +934,17 @@ id|csrio.flags
 op_assign
 id|IORESOURCE_IO
 suffix:semicolon
+id|csrio.name
+op_assign
+l_string|&quot;DC21285&quot;
+suffix:semicolon
 id|csrmem.flags
 op_assign
 id|IORESOURCE_MEM
+suffix:semicolon
+id|csrmem.name
+op_assign
+l_string|&quot;DC21285&quot;
 suffix:semicolon
 id|allocate_resource
 c_func

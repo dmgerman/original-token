@@ -482,7 +482,7 @@ id|info-&gt;si_uid
 op_assign
 l_int|0
 suffix:semicolon
-id|SET_UID16
+id|SET_SIGINFO_UID16
 c_func
 (paren
 id|info-&gt;si_uid16
@@ -634,7 +634,7 @@ id|info-&gt;si_uid
 op_assign
 l_int|0
 suffix:semicolon
-id|SET_UID16
+id|SET_SIGINFO_UID16
 c_func
 (paren
 id|info-&gt;si_uid16
@@ -1260,7 +1260,7 @@ id|q-&gt;info.si_uid
 op_assign
 id|current-&gt;uid
 suffix:semicolon
-id|SET_UID16
+id|SET_SIGINFO_UID16
 c_func
 (paren
 id|q-&gt;info.si_uid16
@@ -1293,7 +1293,7 @@ id|q-&gt;info.si_uid
 op_assign
 l_int|0
 suffix:semicolon
-id|SET_UID16
+id|SET_SIGINFO_UID16
 c_func
 (paren
 id|q-&gt;info.si_uid16
@@ -3227,7 +3227,7 @@ id|info.si_uid
 op_assign
 id|current-&gt;uid
 suffix:semicolon
-id|SET_UID16
+id|SET_SIGINFO_UID16
 c_func
 (paren
 id|info.si_uid16

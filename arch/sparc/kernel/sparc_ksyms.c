@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.85 2000/01/08 16:38:18 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.86 2000/01/09 10:46:49 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -460,15 +460,6 @@ c_func
 id|sparc_valid_addr_bitmap
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_SUN4
-DECL|variable|stack_top
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|stack_top
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Atomic operations. */
 DECL|variable|_atomic_add
 id|EXPORT_SYMBOL_PRIVATE

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.142 1999/12/27 06:08:31 anton Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.143 2000/01/09 09:13:28 anton Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -2164,6 +2164,16 @@ macro_line|#endif
 id|p-&gt;thread.kwim
 op_assign
 id|current-&gt;thread.fork_kwim
+suffix:semicolon
+multiline_comment|/* This is used for sun4c only */
+id|atomic_set
+c_func
+(paren
+op_amp
+id|p-&gt;thread.refcount
+comma
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.8 1998/05/12 07:36:04 mj Exp $&n; *&n; *&t;PCI Bus Services -- Exported Symbols&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;&t;/* isa_dma_bridge_buggy */
@@ -91,13 +92,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_set_master
-)paren
-suffix:semicolon
-DECL|variable|pci_simple_probe
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_simple_probe
 )paren
 suffix:semicolon
 DECL|variable|pci_set_power_state

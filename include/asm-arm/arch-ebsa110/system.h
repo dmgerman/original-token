@@ -4,6 +4,8 @@ DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
 DECL|macro|arch_do_idle
 mdefine_line|#define arch_do_idle()&t;&t;cpu_do_idle()
+DECL|macro|arch_power_off
+mdefine_line|#define arch_power_off()&t;do { } while (0)
 DECL|function|arch_reset
 r_extern
 id|__inline__

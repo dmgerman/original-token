@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_psycho.c,v 1.7 1999/12/17 12:31:57 jj Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_psycho.c,v 1.9 2000/01/11 23:38:32 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -5352,6 +5352,41 @@ id|p-&gt;iommu.page_table_map_base
 op_assign
 l_int|0xc0000000
 suffix:semicolon
+macro_line|#ifndef NEW_PCI_DMA_MAP
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|tsbbase
+comma
+l_int|0
+comma
+id|PAGE_SIZE
+op_lshift
+l_int|5
+)paren
+suffix:semicolon
+macro_line|#else
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|tsbbase
+comma
+l_int|0
+comma
+id|PAGE_SIZE
+op_lshift
+l_int|7
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef NEW_PCI_DMA_MAP
 id|iopte
 op_assign

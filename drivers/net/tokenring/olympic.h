@@ -420,6 +420,10 @@ r_char
 op_star
 id|olympic_card_name
 suffix:semicolon
+DECL|member|olympic_lock
+id|spinlock_t
+id|olympic_lock
+suffix:semicolon
 DECL|member|srb_queued
 r_volatile
 r_int

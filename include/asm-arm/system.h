@@ -72,6 +72,8 @@ DECL|macro|MACH_TYPE_CLPS7500
 mdefine_line|#define MACH_TYPE_CLPS7500&t;14
 DECL|macro|MACH_TYPE_SHARK
 mdefine_line|#define MACH_TYPE_SHARK&t;&t;15
+DECL|macro|MACH_TYPE_SA1100
+mdefine_line|#define MACH_TYPE_SA1100&t;16
 multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; */
 macro_line|#ifdef CONFIG_ARCH_EBSA110
 macro_line|# ifdef machine_arch_type
@@ -168,6 +170,22 @@ macro_line|# define machine_is_co285()&t;(machine_arch_type == MACH_TYPE_CO285)
 macro_line|#else
 DECL|macro|machine_is_co285
 macro_line|# define machine_is_co285()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_SA1100
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_SA1100
+macro_line|# endif
+DECL|macro|machine_is_sa1100
+macro_line|# define machine_is_sa1100()&t;(machine_arch_type == MACH_TYPE_SA1100
+macro_line|#else
+DECL|macro|machine_is_sa1100
+macro_line|# define machine_is_sa1100()&t;(0)
 macro_line|#endif
 macro_line|#ifndef machine_arch_type
 DECL|macro|machine_arch_type

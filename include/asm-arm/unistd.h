@@ -4,8 +4,6 @@ mdefine_line|#define __ASM_ARM_UNISTD_H
 DECL|macro|__NR_SYSCALL_BASE
 mdefine_line|#define __NR_SYSCALL_BASE&t;0x900000
 multiline_comment|/*&n; * This file contains the system call numbers.&n; */
-DECL|macro|__NR_setup
-mdefine_line|#define __NR_setup&t;&t;&t;(__NR_SYSCALL_BASE+  0)&t;/* used only by init, to get system going */
 DECL|macro|__NR_exit
 mdefine_line|#define __NR_exit&t;&t;&t;(__NR_SYSCALL_BASE+  1)
 DECL|macro|__NR_fork
@@ -40,8 +38,6 @@ DECL|macro|__NR_lchown
 mdefine_line|#define __NR_lchown&t;&t;&t;(__NR_SYSCALL_BASE+ 16)
 DECL|macro|__NR_break
 mdefine_line|#define __NR_break&t;&t;&t;(__NR_SYSCALL_BASE+ 17)
-DECL|macro|__NR_oldstat
-mdefine_line|#define __NR_oldstat&t;&t;&t;(__NR_SYSCALL_BASE+ 18)
 DECL|macro|__NR_lseek
 mdefine_line|#define __NR_lseek&t;&t;&t;(__NR_SYSCALL_BASE+ 19)
 DECL|macro|__NR_getpid
@@ -60,8 +56,6 @@ DECL|macro|__NR_ptrace
 mdefine_line|#define __NR_ptrace&t;&t;&t;(__NR_SYSCALL_BASE+ 26)
 DECL|macro|__NR_alarm
 mdefine_line|#define __NR_alarm&t;&t;&t;(__NR_SYSCALL_BASE+ 27)
-DECL|macro|__NR_oldfstat
-mdefine_line|#define __NR_oldfstat&t;&t;&t;(__NR_SYSCALL_BASE+ 28)
 DECL|macro|__NR_pause
 mdefine_line|#define __NR_pause&t;&t;&t;(__NR_SYSCALL_BASE+ 29)
 DECL|macro|__NR_utime
@@ -157,7 +151,7 @@ mdefine_line|#define __NR_sethostname&t;&t;(__NR_SYSCALL_BASE+ 74)
 DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit&t;&t;&t;(__NR_SYSCALL_BASE+ 75)
 DECL|macro|__NR_old_getrlimit
-mdefine_line|#define __NR_old_getrlimit&t;&t;(__NR_SYSCALL_BASE+ 76)
+mdefine_line|#define __NR_old_getrlimit&t;&t;(__NR_SYSCALL_BASE+ 76)&t;/* Back compat 2GB limited rlimit */
 DECL|macro|__NR_getrusage
 mdefine_line|#define __NR_getrusage&t;&t;&t;(__NR_SYSCALL_BASE+ 77)
 DECL|macro|__NR_gettimeofday
@@ -172,8 +166,6 @@ DECL|macro|__NR_select
 mdefine_line|#define __NR_select&t;&t;&t;(__NR_SYSCALL_BASE+ 82)
 DECL|macro|__NR_symlink
 mdefine_line|#define __NR_symlink&t;&t;&t;(__NR_SYSCALL_BASE+ 83)
-DECL|macro|__NR_oldlstat
-mdefine_line|#define __NR_oldlstat&t;&t;&t;(__NR_SYSCALL_BASE+ 84)
 DECL|macro|__NR_readlink
 mdefine_line|#define __NR_readlink&t;&t;&t;(__NR_SYSCALL_BASE+ 85)
 DECL|macro|__NR_uselib
@@ -385,7 +377,7 @@ multiline_comment|/* 189 reserved */
 DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;&t;(__NR_SYSCALL_BASE+190)
 DECL|macro|__NR_getrlimit
-mdefine_line|#define __NR_getrlimit&t;&t;&t;(__NR_SYSCALL_BASE+191)
+mdefine_line|#define __NR_getrlimit&t;&t;&t;(__NR_SYSCALL_BASE+191)&t;/* SuS compliant getrlimit */
 DECL|macro|__NR_mmap2
 mdefine_line|#define __NR_mmap2&t;&t;&t;(__NR_SYSCALL_BASE+192)
 DECL|macro|__NR_truncate64

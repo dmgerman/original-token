@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ns87303.h,v 1.2 1998/09/13 15:38:50 ecd Exp $&n; * ns87303.h: Configuration Register Description for the&n; *            National Semiconductor PC87303 (SuperIO).&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ns87303.h,v 1.3 2000/01/09 15:16:34 ecd Exp $&n; * ns87303.h: Configuration Register Description for the&n; *            National Semiconductor PC87303 (SuperIO).&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_NS87303_H
 DECL|macro|_SPARC_NS87303_H
 mdefine_line|#define _SPARC_NS87303_H 1
@@ -56,7 +56,7 @@ DECL|macro|FCR_LDE
 mdefine_line|#define FCR_LDE&t;&t;0x10&t;/* Logical Drive Exchange                    */
 DECL|macro|FCR_ZWS_ENA
 mdefine_line|#define FCR_ZWS_ENA&t;0x20&t;/* Enable short host read/write in ECP/EPP   */
-multiline_comment|/* Printer Controll Register (PCR) bits */
+multiline_comment|/* Printer Control Register (PCR) bits */
 DECL|macro|PCR_EPP_ENABLE
 mdefine_line|#define PCR_EPP_ENABLE&t;0x01
 DECL|macro|PCR_EPP_IEEE
@@ -78,14 +78,42 @@ DECL|macro|ASC_LPT_IRQ7
 mdefine_line|#define ASC_LPT_IRQ7&t;0x01&t;/* Allways use IRQ7 for LPT                  */
 DECL|macro|ASC_DRV2_SEL
 mdefine_line|#define ASC_DRV2_SEL&t;0x02&t;/* Logical Drive Exchange controlled by TDR  */
+DECL|macro|FER_RESERVED
+mdefine_line|#define FER_RESERVED&t;0x00
+DECL|macro|FAR_RESERVED
+mdefine_line|#define FAR_RESERVED&t;0x00
+DECL|macro|PTR_RESERVED
+mdefine_line|#define PTR_RESERVED&t;0x73
+DECL|macro|FCR_RESERVED
+mdefine_line|#define FCR_RESERVED&t;0xc4
+DECL|macro|PCR_RESERVED
+mdefine_line|#define PCR_RESERVED&t;0x10
+DECL|macro|KRR_RESERVED
+mdefine_line|#define KRR_RESERVED&t;0x00
+DECL|macro|PMC_RESERVED
+mdefine_line|#define PMC_RESERVED&t;0x98
+DECL|macro|TUP_RESERVED
+mdefine_line|#define TUP_RESERVED&t;0xfb
+DECL|macro|SIP_RESERVED
+mdefine_line|#define SIP_RESERVED&t;0x00
+DECL|macro|ASC_RESERVED
+mdefine_line|#define ASC_RESERVED&t;0x18
+DECL|macro|CS0CF0_RESERVED
+mdefine_line|#define CS0CF0_RESERVED&t;0x00
+DECL|macro|CS0CF1_RESERVED
+mdefine_line|#define CS0CF1_RESERVED&t;0x08
+DECL|macro|CS1CF0_RESERVED
+mdefine_line|#define CS1CF0_RESERVED&t;0x00
+DECL|macro|CS1CF1_RESERVED
+mdefine_line|#define CS1CF1_RESERVED&t;0x08
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-DECL|function|ns87303_writeb
+DECL|function|ns87303_modify
 r_static
 id|__inline__
-r_void
-id|ns87303_writeb
+r_int
+id|ns87303_modify
 c_func
 (paren
 r_int
@@ -93,16 +121,73 @@ r_int
 id|port
 comma
 r_int
+r_int
 id|index
 comma
 r_int
 r_char
-id|value
+id|clr
+comma
+r_int
+r_char
+id|set
 )paren
 (brace
+r_static
+r_int
+r_char
+id|reserved
+(braket
+)braket
+op_assign
+(brace
+id|FER_RESERVED
+comma
+id|FAR_RESERVED
+comma
+id|PTR_RESERVED
+comma
+id|FCR_RESERVED
+comma
+id|PCR_RESERVED
+comma
+id|KRR_RESERVED
+comma
+id|PMC_RESERVED
+comma
+id|TUP_RESERVED
+comma
+id|SIP_RESERVED
+comma
+id|ASC_RESERVED
+comma
+id|CS0CF0_RESERVED
+comma
+id|CS0CF1_RESERVED
+comma
+id|CS1CF0_RESERVED
+comma
+id|CS1CF1_RESERVED
+)brace
+suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_int
+r_char
+id|value
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|index
+OG
+l_int|0x0d
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|save_flags
 c_func
@@ -122,6 +207,32 @@ id|index
 comma
 id|port
 )paren
+suffix:semicolon
+id|value
+op_assign
+id|inb
+c_func
+(paren
+id|port
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+id|value
+op_and_assign
+op_complement
+(paren
+id|reserved
+(braket
+id|index
+)braket
+op_or
+id|clr
+)paren
+suffix:semicolon
+id|value
+op_or_assign
+id|set
 suffix:semicolon
 id|outb
 c_func
@@ -149,39 +260,8 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-)brace
-DECL|function|ns87303_readb
-r_static
-id|__inline__
-r_int
-r_char
-id|ns87303_readb
-c_func
-(paren
-r_int
-r_int
-id|port
-comma
-r_int
-id|index
-)paren
-(brace
-id|outb
-c_func
-(paren
-id|index
-comma
-id|port
-)paren
-suffix:semicolon
 r_return
-id|inb
-c_func
-(paren
-id|port
-op_plus
-l_int|1
-)paren
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* __KERNEL__ */

@@ -135,10 +135,6 @@ mdefine_line|#define insw_p(port,to,len)&t;&t;insw(port,to,len)
 DECL|macro|insl_p
 mdefine_line|#define insl_p(port,to,len)&t;&t;insl(port,to,len)
 macro_line|#ifdef __KERNEL__
-macro_line|#ifndef NULL
-DECL|macro|NULL
-mdefine_line|#define NULL&t;((void *) 0)
-macro_line|#endif
 macro_line|#include &lt;asm/arch/memory.h&gt;
 DECL|function|virt_to_phys
 r_extern
@@ -302,6 +298,18 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|macro|__raw_writeb
+mdefine_line|#define __raw_writeb(val,addr)&t;&t;__arch_putb(val,addr)
+DECL|macro|__raw_writew
+mdefine_line|#define __raw_writew(val,addr)&t;&t;__arch_putw(val,addr)
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel(val,addr)&t;&t;__arch_putl(val,addr)
+DECL|macro|__raw_readb
+mdefine_line|#define __raw_readb(addr)&t;&t;__arch_getb(addr)
+DECL|macro|__raw_readw
+mdefine_line|#define __raw_readw(addr)&t;&t;__arch_getw(addr)
+DECL|macro|__raw_readl
+mdefine_line|#define __raw_readl(addr)&t;&t;__arch_getl(addr)
 multiline_comment|/*&n; * If this architecture has PCI memory IO, then define the read/write&n; * macros.&n; */
 macro_line|#ifdef __mem_pci
 DECL|macro|readb
@@ -428,11 +436,11 @@ mdefine_line|#define isa_writel(val,addr)&t;&t;__arch_putl(val,__mem_isa(addr))
 DECL|macro|isa_memset_io
 mdefine_line|#define isa_memset_io(a,b,c)&t;&t;_memset_io(__mem_isa(a),(b),(c))
 DECL|macro|isa_memcpy_fromio
-mdefine_line|#define isa_memcpy_fromio(a,b,c)&t;_memcpy_fromio((a),__mem_isa((b)),(c))
+mdefine_line|#define isa_memcpy_fromio(a,b,c)&t;_memcpy_fromio((a),__mem_isa(b),(c))
 DECL|macro|isa_memcpy_toio
 mdefine_line|#define isa_memcpy_toio(a,b,c)&t;&t;_memcpy_toio(__mem_isa((a)),(b),(c))
 DECL|macro|isa_eth_io_copy_and_sum
-mdefine_line|#define isa_eth_io_copy_and_sum(a,b,c,d) &bslash;&n;&t;&t;&t;&t;eth_copy_and_sum((a),__mem_isa((b),(c),(d))
+mdefine_line|#define isa_eth_io_copy_and_sum(a,b,c,d) &bslash;&n;&t;&t;&t;&t;eth_copy_and_sum((a),__mem_isa(b),(c),(d))
 r_static
 r_inline
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.32 2000/01/05 01:00:40 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.33 2000/01/11 17:33:25 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/ipc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
 macro_line|#include &lt;asm/utrap.h&gt;
@@ -317,6 +318,8 @@ id|sys_semctl
 id|first
 comma
 id|second
+op_or
+id|IPC_64
 comma
 (paren
 r_int
@@ -438,6 +441,8 @@ id|sys_msgctl
 id|first
 comma
 id|second
+op_or
+id|IPC_64
 comma
 (paren
 r_struct
@@ -548,6 +553,8 @@ id|sys_shmctl
 id|first
 comma
 id|second
+op_or
+id|IPC_64
 comma
 (paren
 r_struct

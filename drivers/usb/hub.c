@@ -174,7 +174,7 @@ id|HZ
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
+DECL|function|usb_clear_hub_feature
 r_static
 r_int
 id|usb_clear_hub_feature
@@ -219,7 +219,6 @@ id|HZ
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|usb_clear_port_feature
 r_static
 r_int
@@ -1736,13 +1735,19 @@ id|MAX_TRIES
 id|err
 c_func
 (paren
-l_string|&quot;can not enable port %i after %i retries, disabling port&quot;
+l_string|&quot;Cannot enable port %i after %i retries, disabling port.&quot;
 comma
 id|port
 op_plus
 l_int|1
 comma
 id|MAX_TRIES
+)paren
+suffix:semicolon
+id|err
+c_func
+(paren
+l_string|&quot;Maybe the USB cable is bad?&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1868,6 +1873,16 @@ r_struct
 id|usb_hub
 op_star
 id|hub
+suffix:semicolon
+r_struct
+id|usb_hub_status
+id|hubsts
+suffix:semicolon
+r_int
+r_int
+id|hubstatus
+comma
+id|hubchange
 suffix:semicolon
 multiline_comment|/*&n;&t; *  We restart the list everytime to avoid a deadlock with&n;&t; * deleting hubs downstream from this one. This should be&n;&t; * safe since we delete the hub from the event list.&n;&t; * Not the most efficient, but avoids deadlocks.&n;&t; */
 r_while
@@ -2104,6 +2119,7 @@ id|portchange
 op_amp
 id|USB_PORT_STAT_C_OVERCURRENT
 )paren
+(brace
 id|dbg
 c_func
 (paren
@@ -2114,6 +2130,19 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+id|usb_clear_port_feature
+c_func
+(paren
+id|dev
+comma
+id|i
+op_plus
+l_int|1
+comma
+id|USB_PORT_FEAT_C_OVER_CURRENT
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2147,6 +2176,96 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* end for i */
+multiline_comment|/* deal with hub status changes */
+r_if
+c_cond
+(paren
+id|usb_get_hub_status
+c_func
+(paren
+id|dev
+comma
+op_amp
+id|hubsts
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;get_hub_status failed&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|hubstatus
+op_assign
+id|le16_to_cpup
+c_func
+(paren
+op_amp
+id|hubsts.wHubStatus
+)paren
+suffix:semicolon
+id|hubchange
+op_assign
+id|le16_to_cpup
+c_func
+(paren
+op_amp
+id|hubsts.wHubChange
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hubchange
+op_amp
+id|HUB_CHANGE_LOCAL_POWER
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;hub power change&quot;
+)paren
+suffix:semicolon
+id|usb_clear_hub_feature
+c_func
+(paren
+id|dev
+comma
+id|C_HUB_LOCAL_POWER
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|hubchange
+op_amp
+id|HUB_CHANGE_OVERCURRENT
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;hub overcurrent change&quot;
+)paren
+suffix:semicolon
+id|usb_clear_hub_feature
+c_func
+(paren
+id|dev
+comma
+id|C_HUB_OVER_CURRENT
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 multiline_comment|/* end while (1) */
 id|he_unlock

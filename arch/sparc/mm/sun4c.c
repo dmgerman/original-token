@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.183 2000/01/08 16:38:20 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.184 2000/01/09 09:13:34 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -5178,6 +5178,21 @@ c_func
 id|tsaddr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+(paren
+id|tsk
+)paren
+op_member_access_from_pointer
+id|thread.refcount
+)paren
+)paren
+(brace
 multiline_comment|/* We are deleting a mapping, so the flush here is mandatory. */
 id|sun4c_flush_page_hw
 c_func
@@ -5248,6 +5263,7 @@ id|entry
 )paren
 suffix:semicolon
 )brace
+)brace
 DECL|function|sun4c_free_task_struct_sw
 r_static
 r_void
@@ -5293,6 +5309,21 @@ c_func
 id|tsaddr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+(paren
+id|tsk
+)paren
+op_member_access_from_pointer
+id|thread.refcount
+)paren
+)paren
+(brace
 multiline_comment|/* We are deleting a mapping, so the flush here is mandatory. */
 id|sun4c_flush_page_sw
 c_func
@@ -5360,6 +5391,31 @@ id|garbage_collect
 c_func
 (paren
 id|entry
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|sun4c_get_task_struct
+r_static
+r_void
+id|sun4c_get_task_struct
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+)paren
+(brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+(paren
+id|tsk
+)paren
+op_member_access_from_pointer
+id|thread.refcount
 )paren
 suffix:semicolon
 )brace
@@ -13383,6 +13439,16 @@ c_func
 id|alloc_task_struct
 comma
 id|sun4c_alloc_task_struct
+comma
+id|BTFIXUPCALL_NORM
+)paren
+suffix:semicolon
+id|BTFIXUPSET_CALL
+c_func
+(paren
+id|get_task_struct
+comma
+id|sun4c_get_task_struct
 comma
 id|BTFIXUPCALL_NORM
 )paren

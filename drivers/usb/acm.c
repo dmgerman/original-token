@@ -15,6 +15,11 @@ macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 macro_line|#include &quot;usb.h&quot;
+multiline_comment|/*&n; * CMSPAR, some architectures can&squot;t have space and mark parity.&n; */
+macro_line|#ifndef CMSPAR
+DECL|macro|CMSPAR
+mdefine_line|#define CMSPAR&t;&t;&t;0
+macro_line|#endif
 multiline_comment|/*&n; * Major and minor numbers.&n; */
 DECL|macro|ACM_TTY_MAJOR
 mdefine_line|#define ACM_TTY_MAJOR&t;&t;166
@@ -418,6 +423,10 @@ op_assign
 id|le16_to_cpup
 c_func
 (paren
+(paren
+id|__u16
+op_star
+)paren
 id|data
 )paren
 suffix:semicolon

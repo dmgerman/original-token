@@ -21,6 +21,13 @@ DECL|macro|ndMapNode
 mdefine_line|#define ndMapNode&t;0x02&t;/* Holds part of the bitmap of used nodes */
 DECL|macro|ndLeafNode
 mdefine_line|#define ndLeafNode&t;0xFF&t;/* A leaf (ndNHeight==1) node */
+multiline_comment|/*&n; * Legal values for the bthAtrb field of a (struct BTHdrRec)&n; *&n; * Reference: TN 1150&n; */
+DECL|macro|bthBadClose
+mdefine_line|#define bthBadClose     0x00000001  /* b-tree not closed properly. not&n;                                       used by hfsplus. */
+DECL|macro|bthBigKeys
+mdefine_line|#define bthBigKeys      0x00000002  /* key length is u16 instead of u8.&n;&t;&t;&t;&t;       used by hfsplus. */
+DECL|macro|bthVarIndxKeys
+mdefine_line|#define bthVarIndxKeys  0x00000004  /* variable key length instead of&n;                                       max key length. use din catalog&n;                                       b-tree but not in extents&n;                                       b-tree (hfsplus). */
 multiline_comment|/*================ Function-like macros ================*/
 multiline_comment|/* Access the cache slot which should contain the desired node */
 DECL|macro|bhash
@@ -82,11 +89,36 @@ id|hfs_lword_t
 id|bthFree
 suffix:semicolon
 multiline_comment|/* (V) The number of unused nodes */
-DECL|member|bthResv
+DECL|member|bthResv1
+id|hfs_word_t
+id|bthResv1
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|bthClpSiz
+id|hfs_lword_t
+id|bthClpSiz
+suffix:semicolon
+multiline_comment|/* (F) clump size. not usually used. */
+DECL|member|bthType
 id|hfs_byte_t
-id|bthResv
+id|bthType
+suffix:semicolon
+multiline_comment|/* (F) BTree type */
+DECL|member|bthResv2
+id|hfs_byte_t
+id|bthResv2
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|bthAtrb
+id|hfs_lword_t
+id|bthAtrb
+suffix:semicolon
+multiline_comment|/* (F) attributes */
+DECL|member|bthResv3
+id|hfs_lword_t
+id|bthResv3
 (braket
-l_int|76
+l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* Reserved */
@@ -193,6 +225,16 @@ id|hfs_u32
 id|node
 suffix:semicolon
 multiline_comment|/* Node number */
+DECL|member|nodeSize
+id|hfs_u16
+id|nodeSize
+suffix:semicolon
+multiline_comment|/* node size */
+DECL|member|keyLen
+id|hfs_u16
+id|keyLen
+suffix:semicolon
+multiline_comment|/* key length */
 multiline_comment|/* locking related fields: */
 DECL|member|wqueue
 id|hfs_wait_queue
@@ -307,6 +349,10 @@ suffix:semicolon
 DECL|member|dirt
 r_int
 id|dirt
+suffix:semicolon
+DECL|member|keySize
+r_int
+id|keySize
 suffix:semicolon
 multiline_comment|/* Fields from the BTHdrRec in native byte-order: */
 DECL|member|bthRoot

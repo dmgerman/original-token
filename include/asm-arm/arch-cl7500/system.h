@@ -8,5 +8,7 @@ mdefine_line|#define arch_reset(mode) {&t;&t;&t;&bslash;&n;&t;outb (0, IOMD_ROMC
 multiline_comment|/*&n; * We can wait for an interrupt...&n; */
 DECL|macro|arch_do_idle
 mdefine_line|#define arch_do_idle()&t;&t;&t;&t;&bslash;&n;&t;outb(0, IOMD_SUSMODE)
+DECL|macro|arch_power_off
+mdefine_line|#define arch_power_off()&t;do { } while (0)
 macro_line|#endif
 eof

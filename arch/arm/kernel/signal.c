@@ -1383,6 +1383,16 @@ id|err
 op_or_assign
 id|__put_user
 (paren
+id|current-&gt;thread.address
+comma
+op_amp
+id|sc-&gt;fault_address
+)paren
+suffix:semicolon
+id|err
+op_or_assign
+id|__put_user
+(paren
 id|mask
 comma
 op_amp

@@ -198,6 +198,73 @@ suffix:semicolon
 multiline_comment|/* &squot;descr&squot; ordered by offset */
 )brace
 suffix:semicolon
+multiline_comment|/* header layout for netatalk&squot;s v1 appledouble file format */
+DECL|struct|hfs_nat_hdr
+r_struct
+id|hfs_nat_hdr
+(brace
+DECL|member|magic
+id|hfs_lword_t
+id|magic
+suffix:semicolon
+DECL|member|version
+id|hfs_lword_t
+id|version
+suffix:semicolon
+DECL|member|homefs
+id|hfs_byte_t
+id|homefs
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|entries
+id|hfs_word_t
+id|entries
+suffix:semicolon
+DECL|member|descrs
+id|hfs_byte_t
+id|descrs
+(braket
+l_int|12
+op_star
+l_int|5
+)braket
+suffix:semicolon
+DECL|member|real_name
+id|hfs_byte_t
+id|real_name
+(braket
+l_int|255
+)braket
+suffix:semicolon
+multiline_comment|/* id=3 */
+DECL|member|comment
+id|hfs_byte_t
+id|comment
+(braket
+l_int|200
+)braket
+suffix:semicolon
+multiline_comment|/* id=4 XXX: not yet implemented */
+DECL|member|old_info
+id|hfs_byte_t
+id|old_info
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* id=7 */
+DECL|member|finderinfo
+id|hfs_u8
+id|finderinfo
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* id=9 */
+)brace
+suffix:semicolon
 multiline_comment|/* &n; * Default header layout for Netatalk and AppleDouble&n; */
 DECL|struct|hfs_dbl_hdr
 r_struct

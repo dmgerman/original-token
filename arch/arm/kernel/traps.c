@@ -907,9 +907,14 @@ op_amp
 id|die_lock
 )paren
 suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
 )brace
 DECL|function|die_if_kernel
-r_static
 r_void
 id|die_if_kernel
 c_func
@@ -1148,7 +1153,7 @@ l_string|&quot;You may have a hardware problem...&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * bad_mode handles the impossible case in the vectors.&n; * If you see one of these, then it&squot;s extremely serious,&n; * and could mean you have buggy hardware.  It never&n; * returns, and never tries to sync.  We hope that we&n; * can dump out some state information...&n; */
+multiline_comment|/*&n; * bad_mode handles the impossible case in the vectors.  If you see one of&n; * these, then it&squot;s extremely serious, and could mean you have buggy hardware.&n; * It never returns, and never tries to sync.  We hope that we can at least&n; * dump out some state information...&n; */
 DECL|function|bad_mode
 id|asmlinkage
 r_void
@@ -1189,7 +1194,7 @@ id|proc_mode
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Dump out the vectors and stub routines&n;&t; */
+multiline_comment|/*&n;&t; * Dump out the vectors and stub routines.  Maybe a better solution&n;&t; * would be to dump them out only if we detect that they are corrupted.&n;&t; */
 id|printk
 c_func
 (paren
@@ -1258,6 +1263,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Handle some more esoteric system calls&n; */
 DECL|function|arm_syscall
 id|asmlinkage
 r_int
@@ -1333,7 +1339,7 @@ l_int|2
 suffix:colon
 multiline_comment|/* sys_cacheflush */
 macro_line|#ifdef CONFIG_CPU_32
-multiline_comment|/* r0 = start, r1 = length, r2 = flags */
+multiline_comment|/* r0 = start, r1 = end, r2 = flags */
 id|cpu_flush_cache_area
 c_func
 (paren
@@ -1364,7 +1370,7 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 macro_line|#ifdef CONFIG_DEBUG_USER
-multiline_comment|/* experiance shows that these seem to indicate that&n;&t;&t; * something catastrophic has happened&n;&t;&t; */
+multiline_comment|/* experience shows that these seem to indicate that&n;&t;&t; * something catastrophic has happened&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -1593,10 +1599,10 @@ id|size
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_CPU_26
-DECL|function|baddataabort
+multiline_comment|/*&n; * A data abort trap was taken, but the instruction was not an instruction&n; * which should cause the trap to be taken.  Try to abort it.  Note that&n; * the while(1) is there because we cannot currently handle returning from&n; * this function.&n; */
 id|asmlinkage
 r_void
+DECL|function|baddataabort
 id|baddataabort
 c_func
 (paren
@@ -1626,28 +1632,10 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_DEBUG_ERRORS
-id|printk
-c_func
-(paren
-l_string|&quot;pid=%d&bslash;n&quot;
-comma
-id|current-&gt;pid
-)paren
-suffix:semicolon
-id|show_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
 id|dump_instr
 c_func
 (paren
-id|instruction_pointer
-c_func
-(paren
-id|regs
-)paren
+id|addr
 comma
 l_int|1
 )paren
@@ -1776,24 +1764,31 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-id|panic
+id|force_sig
 c_func
 (paren
-l_string|&quot;unknown data abort code %d [pc=%08lx *pc=%08lx lr=%08lx sp=%08lx]&quot;
+id|SIGILL
 comma
-id|code
+id|current
+)paren
+suffix:semicolon
+id|die_if_kernel
+c_func
+(paren
+l_string|&quot;unknown data abort code&quot;
 comma
-id|regs-&gt;ARM_pc
+id|regs
 comma
 id|instr
-comma
-id|regs-&gt;ARM_lr
-comma
-id|regs-&gt;ARM_sp
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|__bug
 r_void
 id|__bug
@@ -1987,6 +1982,50 @@ suffix:semicolon
 id|__backtrace
 c_func
 (paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|abort
+r_void
+m_abort
+(paren
+r_void
+)paren
+(brace
+r_void
+op_star
+id|lr
+op_assign
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;abort() called from %p!  (Please &quot;
+l_string|&quot;report to rmk@arm.linux.org.uk)&bslash;n&quot;
+comma
+id|lr
+)paren
+suffix:semicolon
+op_star
+(paren
+r_int
+op_star
+)paren
+l_int|0
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* if that doesn&squot;t kill us, halt */
+id|panic
+c_func
+(paren
+l_string|&quot;Oops failed to kill thread&quot;
 )paren
 suffix:semicolon
 )brace

@@ -14,7 +14,7 @@ DECL|macro|IOMD_KARTRX
 mdefine_line|#define IOMD_KARTRX&t;__IOMD(0x004)
 DECL|macro|IOMD_KCTRL
 mdefine_line|#define IOMD_KCTRL&t;__IOMD(0x008)
-macro_line|#ifdef CONFIG_ARCH_CL7500
+macro_line|#ifdef CONFIG_ARCH_CLPS7500
 DECL|macro|IOMD_IOLINES
 mdefine_line|#define IOMD_IOLINES&t;__IOMD(0x00C)
 macro_line|#endif
@@ -26,6 +26,10 @@ DECL|macro|IOMD_IRQCLRA
 mdefine_line|#define IOMD_IRQCLRA&t;__IOMD(0x014)
 DECL|macro|IOMD_IRQMASKA
 mdefine_line|#define IOMD_IRQMASKA&t;__IOMD(0x018)
+macro_line|#ifdef CONFIG_ARCH_CLPS7500
+DECL|macro|IOMD_SUSMODE
+mdefine_line|#define IOMD_SUSMODE&t;__IOMD(0x01C)
+macro_line|#endif
 DECL|macro|IOMD_IRQSTATB
 mdefine_line|#define IOMD_IRQSTATB&t;__IOMD(0x020)
 DECL|macro|IOMD_IRQREQB
@@ -38,6 +42,10 @@ DECL|macro|IOMD_FIQREQ
 mdefine_line|#define IOMD_FIQREQ&t;__IOMD(0x034)
 DECL|macro|IOMD_FIQMASK
 mdefine_line|#define IOMD_FIQMASK&t;__IOMD(0x038)
+macro_line|#ifdef CONFIG_ARCH_CLPS7500
+DECL|macro|IOMD_CLKCTL
+mdefine_line|#define IOMD_CLKCTL&t;__IOMD(0x03C)
+macro_line|#endif
 DECL|macro|IOMD_T0CNTL
 mdefine_line|#define IOMD_T0CNTL&t;__IOMD(0x040)
 DECL|macro|IOMD_T0LTCHL
@@ -62,7 +70,7 @@ DECL|macro|IOMD_T1GO
 mdefine_line|#define IOMD_T1GO&t;__IOMD(0x058)
 DECL|macro|IOMD_T1LATCH
 mdefine_line|#define IOMD_T1LATCH&t;__IOMD(0x05c)
-macro_line|#ifdef CONFIG_ARCH_CL7500
+macro_line|#ifdef CONFIG_ARCH_CLPS7500
 DECL|macro|IOMD_IRQSTATC
 mdefine_line|#define IOMD_IRQSTATC&t;__IOMD(0x060)
 DECL|macro|IOMD_IRQREQC
@@ -86,8 +94,8 @@ macro_line|#ifdef CONFIG_ARCH_RPC
 DECL|macro|IOMD_DRAMCR
 mdefine_line|#define IOMD_DRAMCR&t;__IOMD(0x088)
 macro_line|#endif
-DECL|macro|IOMD_VREFCR
-mdefine_line|#define IOMD_VREFCR&t;__IOMD(0x08C)
+DECL|macro|IOMD_REFCR
+mdefine_line|#define IOMD_REFCR&t;__IOMD(0x08C)
 DECL|macro|IOMD_FSIZE
 mdefine_line|#define IOMD_FSIZE&t;__IOMD(0x090)
 DECL|macro|IOMD_ID0
@@ -102,7 +110,7 @@ mdefine_line|#define IOMD_MOUSEX&t;__IOMD(0x0A0)
 DECL|macro|IOMD_MOUSEY
 mdefine_line|#define IOMD_MOUSEY&t;__IOMD(0x0A4)
 macro_line|#endif
-macro_line|#ifdef CONFIG_ARCH_CL7500
+macro_line|#ifdef CONFIG_ARCH_CLPS7500
 DECL|macro|IOMD_MSEDAT
 mdefine_line|#define IOMD_MSEDAT&t;__IOMD(0x0A8)
 DECL|macro|IOMD_MSECTL
@@ -120,7 +128,7 @@ macro_line|#ifdef CONFIG_ARCH_RPC
 DECL|macro|IOMD_DMAEXT
 mdefine_line|#define IOMD_DMAEXT&t;__IOMD(0x0CC)
 macro_line|#endif
-macro_line|#ifdef CONFIG_ARCH_CL7500
+macro_line|#ifdef CONFIG_ARCH_CLPS7500
 DECL|macro|IOMD_ASTCR
 mdefine_line|#define IOMD_ASTCR&t;__IOMD(0x0CC)
 DECL|macro|IOMD_DRAMCR

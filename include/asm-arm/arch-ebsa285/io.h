@@ -7,8 +7,10 @@ mdefine_line|#define IO_SPACE_LIMIT 0xffff
 multiline_comment|/*&n; * Translation of various region addresses to virtual addresses&n; */
 DECL|macro|__io_pci
 mdefine_line|#define __io_pci(a)&t;&t;(PCIO_BASE + (a))
-macro_line|#if 0
+macro_line|#if 1
+DECL|macro|__mem_pci
 mdefine_line|#define __mem_pci(a)&t;&t;((unsigned long)(a))
+DECL|macro|__mem_isa
 mdefine_line|#define __mem_isa(a)&t;&t;(PCIMEM_BASE + (unsigned long)(a))
 macro_line|#else
 DECL|function|___mem_pci
@@ -187,6 +189,6 @@ DECL|macro|io_to_phys
 mdefine_line|#define io_to_phys(off)&t;&t;((off) + DC21285_PCI_MEM)
 multiline_comment|/*&n; * ioremap takes a PCI memory address, as specified in&n; * linux/Documentation/IO-mapping.txt&n; */
 DECL|macro|__arch_ioremap
-mdefine_line|#define __arch_ioremap(off,size,nocache)&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long _off = (off), _size = (size);&t;&t;&bslash;&n;&t;void *_ret = NULL;&t;&t;&t;&t;&t;&bslash;&n;&t;if (valid_ioaddr(_off, _size))&t;&t;&t;&t;&bslash;&n;&t;&t;_ret = __ioremap(io_to_phys(_off), _size, 0);&t;&bslash;&n;&t;_ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __arch_ioremap(off,size,nocache)&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long _off = (off), _size = (size);&t;&t;&bslash;&n;&t;void *_ret = (void *)0;&t;&t;&t;&t;&t;&bslash;&n;&t;if (valid_ioaddr(_off, _size))&t;&t;&t;&t;&bslash;&n;&t;&t;_ret = __ioremap(io_to_phys(_off), _size, 0);&t;&bslash;&n;&t;_ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 macro_line|#endif
 eof

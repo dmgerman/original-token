@@ -13,64 +13,10 @@ mdefine_line|#define RS_TABLE_SIZE&t;16
 macro_line|#if defined(CONFIG_ARCH_A5K)
 multiline_comment|/* UART CLK        PORT  IRQ     FLAGS        */
 DECL|macro|STD_SERIAL_PORT_DEFNS
-mdefine_line|#define STD_SERIAL_PORT_DEFNS
-(brace
-l_int|0
-comma
-id|BASE_BAUD
-comma
-l_int|0x3F8
-comma
-l_int|10
-comma
-id|STD_COM_FLAGS
-)brace
-comma
-multiline_comment|/* ttyS0 */
-"&bslash;"
-(brace
-l_int|0
-comma
-id|BASE_BAUD
-comma
-l_int|0x2F8
-comma
-l_int|10
-comma
-id|STD_COM_FLAGS
-)brace
-comma
-multiline_comment|/* ttyS1 */
+mdefine_line|#define STD_SERIAL_PORT_DEFNS&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0x3F8, 10, STD_COM_FLAGS },&t;/* ttyS0 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0x2F8, 10, STD_COM_FLAGS },&t;/* ttyS1 */
 macro_line|#else
 DECL|macro|STD_SERIAL_PORT_DEFNS
-mdefine_line|#define STD_SERIAL_PORT_DEFNS
-(brace
-l_int|0
-comma
-id|BASE_BAUD
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|STD_COM_FLAGS
-)brace
-comma
-multiline_comment|/* ttyS0 */
-"&bslash;"
-(brace
-l_int|0
-comma
-id|BASE_BAUD
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|STD_COM_FLAGS
-)brace
-comma
-multiline_comment|/* ttyS1 */
+mdefine_line|#define STD_SERIAL_PORT_DEFNS&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS0 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS1 */
 macro_line|#endif
 DECL|macro|EXTRA_SERIAL_PORT_DEFNS
 mdefine_line|#define EXTRA_SERIAL_PORT_DEFNS &bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS2 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS3 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS }, &t;/* ttyS4 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS5 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS6 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS7 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS8 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS9 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS10 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS11 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS12 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    ,  0, STD_COM_FLAGS },&t;/* ttyS13 */

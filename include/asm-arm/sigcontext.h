@@ -106,6 +106,11 @@ r_int
 r_int
 id|arm_cpsr
 suffix:semicolon
+DECL|member|fault_address
+r_int
+r_int
+id|fault_address
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -1646,7 +1646,12 @@ multiline_comment|/* kswapd is critical to provide GFP_ATOMIC&n;&t;&t;&t;   allo
 r_if
 c_cond
 (paren
-id|nr_free_buffer_pages
+id|nr_free_pages
+c_func
+(paren
+)paren
+op_minus
+id|nr_free_highpages
 c_func
 (paren
 )paren

@@ -2,23 +2,12 @@ macro_line|#ifndef __ARCH_SPARC_POSIX_TYPES_H
 DECL|macro|__ARCH_SPARC_POSIX_TYPES_H
 mdefine_line|#define __ARCH_SPARC_POSIX_TYPES_H
 multiline_comment|/*&n; * This file is generally used by user-level software, so you need to&n; * be a little careful about namespace pollution etc.  Also, we cannot&n; * assume GCC is being used.&n; */
-multiline_comment|/* When cross-compilation is no longer an issue, fix this. */
-macro_line|#if defined(__svr4__) || defined(__ELF__)
 DECL|typedef|__kernel_size_t
 r_typedef
 r_int
 r_int
 id|__kernel_size_t
 suffix:semicolon
-macro_line|#else
-DECL|typedef|__kernel_size_t
-r_typedef
-r_int
-r_int
-r_int
-id|__kernel_size_t
-suffix:semicolon
-macro_line|#endif /* !(__svr4__ || __ELF__) */
 DECL|typedef|__kernel_ssize_t
 r_typedef
 r_int
@@ -113,6 +102,46 @@ r_char
 op_star
 id|__kernel_caddr_t
 suffix:semicolon
+DECL|typedef|__kernel_uid16_t
+r_typedef
+r_int
+r_int
+id|__kernel_uid16_t
+suffix:semicolon
+DECL|typedef|__kernel_gid16_t
+r_typedef
+r_int
+r_int
+id|__kernel_gid16_t
+suffix:semicolon
+DECL|typedef|__kernel_uid32_t
+r_typedef
+r_int
+r_int
+id|__kernel_uid32_t
+suffix:semicolon
+DECL|typedef|__kernel_gid32_t
+r_typedef
+r_int
+r_int
+id|__kernel_gid32_t
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|UID16_COMPAT_NEEDED
+mdefine_line|#define UID16_COMPAT_NEEDED
+DECL|typedef|__kernel_old_uid_t
+r_typedef
+r_int
+r_int
+id|__kernel_old_uid_t
+suffix:semicolon
+DECL|typedef|__kernel_old_gid_t
+r_typedef
+r_int
+r_int
+id|__kernel_old_gid_t
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __GNUC__
 DECL|typedef|__kernel_loff_t
 r_typedef

@@ -2468,17 +2468,17 @@ id|index
 suffix:semicolon
 macro_line|#ifdef DEBUG
 DECL|macro|dbg
-mdefine_line|#define dbg(format, arg...) printk(KERN_DEBUG __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
+mdefine_line|#define dbg(format, arg...) printk(KERN_DEBUG __FILE__ &quot;: &quot; format &quot;&bslash;n&quot; , ## arg)
 macro_line|#else
 DECL|macro|dbg
 mdefine_line|#define dbg(format, arg...) do {} while (0)
 macro_line|#endif
 DECL|macro|err
-mdefine_line|#define err(format, arg...) printk(KERN_ERR __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
+mdefine_line|#define err(format, arg...) printk(KERN_ERR __FILE__ &quot;: &quot; format &quot;&bslash;n&quot; , ## arg)
 DECL|macro|info
-mdefine_line|#define info(format, arg...) printk(KERN_INFO __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
+mdefine_line|#define info(format, arg...) printk(KERN_INFO __FILE__ &quot;: &quot; format &quot;&bslash;n&quot; , ## arg)
 DECL|macro|warn
-mdefine_line|#define warn(format, arg...) printk(KERN_WARNING __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
+mdefine_line|#define warn(format, arg...) printk(KERN_WARNING __FILE__ &quot;: &quot; format &quot;&bslash;n&quot; , ## arg)
 multiline_comment|/*&n; * bus and driver list&n; */
 r_extern
 r_struct

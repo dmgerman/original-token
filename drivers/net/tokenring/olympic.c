@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  &n; *  To Do:&n; *&n; *  Sanitize for smp&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
+multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  1/11/00 - Added spinlocks for smp&n; *  &n; *  To Do:&n; *&n; *  IPv6 Multicast&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
 multiline_comment|/* Change OLYMPIC_DEBUG to 1 to get verbose, and I mean really verbose, messages */
 DECL|macro|OLYMPIC_DEBUG
 mdefine_line|#define OLYMPIC_DEBUG 0
@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -36,7 +37,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;Olympic.c v0.3.0 8/18/99 - Peter De Schrijver &amp; Mike Phillips&quot;
+l_string|&quot;Olympic.c v0.3.1 1/11/00 - Peter De Schrijver &amp; Mike Phillips&quot;
 suffix:semicolon
 DECL|variable|open_maj_error
 r_static
@@ -928,6 +929,13 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|olympic_priv-&gt;olympic_lock
+)paren
+suffix:semicolon
 macro_line|#if OLYMPIC_DEBUG
 id|printk
 c_func
@@ -4252,6 +4260,13 @@ id|SISR_MI
 multiline_comment|/* Interrupt isn&squot;t for us */
 r_return
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|olympic_priv-&gt;olympic_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4695,6 +4710,13 @@ op_plus
 id|SISR_MASK_SUM
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|olympic_priv-&gt;olympic_lock
+)paren
+suffix:semicolon
 )brace
 DECL|function|olympic_xmit
 r_static
@@ -4731,6 +4753,19 @@ id|olympic_mmio
 op_assign
 id|olympic_priv-&gt;olympic_mmio
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|olympic_priv-&gt;olympic_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4750,6 +4785,15 @@ op_ne
 l_int|0
 )paren
 (brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|olympic_priv-&gt;olympic_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -4839,14 +4883,34 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|olympic_priv-&gt;olympic_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 r_else
+(brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|olympic_priv-&gt;olympic_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 )brace
 DECL|function|olympic_close
 r_static

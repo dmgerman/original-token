@@ -17,6 +17,8 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
+DECL|macro|OHCI_USE_NPS
+mdefine_line|#define OHCI_USE_NPS
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;ohci-hcd.h&quot;
 macro_line|#ifdef CONFIG_APM
@@ -513,45 +515,35 @@ id|j
 op_decrement
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot; ed: %4x;&quot;
-comma
-(paren
-(paren
+id|ed_t
+op_star
+id|ed
+op_assign
 (paren
 id|ed_t
 op_star
 )paren
 id|bus_to_virt
+c_func
 (paren
-op_star
+id|le32_to_cpup
+c_func
+(paren
 id|ed_p
 )paren
 )paren
-op_member_access_from_pointer
-id|hwINFO
-)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot; ed: %4x;&quot;
+comma
+id|ed-&gt;hwINFO
 )paren
 suffix:semicolon
 id|ed_p
 op_assign
 op_amp
-(paren
-(paren
-(paren
-id|ed_t
-op_star
-)paren
-id|bus_to_virt
-(paren
-op_star
-id|ed_p
-)paren
-)paren
-op_member_access_from_pointer
-id|hwNextED
-)paren
+id|ed-&gt;hwNextED
 suffix:semicolon
 )brace
 id|printk
@@ -2276,9 +2268,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -2300,9 +2291,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -2324,9 +2314,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -2453,9 +2442,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -2477,9 +2465,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -2576,8 +2563,9 @@ l_int|NULL
 (brace
 id|writel
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwNextED
 )paren
 comma
@@ -2615,8 +2603,9 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwNextED
 )paren
 )paren
@@ -2642,8 +2631,9 @@ l_int|NULL
 (brace
 id|writel
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwNextED
 )paren
 comma
@@ -2681,8 +2671,9 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwNextED
 )paren
 )paren
@@ -2776,9 +2767,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -2800,9 +2790,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -2822,9 +2811,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -2902,8 +2890,9 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwNextED
 )paren
 )paren
@@ -2982,9 +2971,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -3007,9 +2995,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -3028,9 +3015,8 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
-op_star
 id|ed_p
 )paren
 )paren
@@ -3578,8 +3564,9 @@ op_star
 )paren
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|urb_priv-&gt;ed-&gt;hwTailP
 )paren
 op_amp
@@ -4404,8 +4391,9 @@ id|td_list
 suffix:semicolon
 id|td_list_hc
 op_assign
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|td_list-&gt;hwNextTD
 )paren
 op_amp
@@ -4514,8 +4502,9 @@ id|tdTailP
 op_assign
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwTailP
 )paren
 op_amp
@@ -4526,8 +4515,9 @@ id|tdHeadP
 op_assign
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwHeadP
 )paren
 op_amp
@@ -4536,8 +4526,9 @@ l_int|0xfffffff0
 suffix:semicolon
 id|edINFO
 op_assign
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwINFO
 )paren
 suffix:semicolon
@@ -4578,8 +4569,9 @@ id|td_next
 op_assign
 id|bus_to_virt
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|td-&gt;hwNextTD
 )paren
 op_amp
@@ -5215,8 +5207,9 @@ id|ED_NEW
 (brace
 id|edHeadP
 op_assign
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwHeadP
 )paren
 op_amp
@@ -5224,8 +5217,9 @@ l_int|0xfffffff0
 suffix:semicolon
 id|edTailP
 op_assign
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ed-&gt;hwTailP
 )paren
 suffix:semicolon
@@ -5518,7 +5512,11 @@ op_star
 (paren
 id|data
 op_plus
+(paren
 id|i
+op_plus
+l_int|1
+)paren
 op_div
 l_int|8
 )paren
@@ -5565,7 +5563,11 @@ op_star
 (paren
 id|data
 op_plus
+(paren
 id|i
+op_plus
+l_int|1
+)paren
 op_div
 l_int|8
 )paren
@@ -6101,6 +6103,15 @@ id|wValue
 )paren
 (brace
 r_case
+id|RH_C_HUB_LOCAL_POWER
+suffix:colon
+id|OK
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_case
 (paren
 id|RH_C_HUB_OVER_CURRENT
 )paren
@@ -6108,7 +6119,7 @@ suffix:colon
 id|WR_RH_STAT
 c_func
 (paren
-id|RH_PS_OCIC
+id|RH_HS_OCIC
 )paren
 suffix:semicolon
 id|OK
@@ -7141,6 +7152,52 @@ op_amp
 id|ohci-&gt;regs-&gt;intrstatus
 )paren
 suffix:semicolon
+macro_line|#ifdef OHCI_USE_NPS
+id|writel
+(paren
+(paren
+id|readl
+c_func
+(paren
+op_amp
+id|ohci-&gt;regs-&gt;roothub.a
+)paren
+op_or
+l_int|0x200
+)paren
+op_amp
+op_complement
+l_int|0x100
+comma
+op_amp
+id|ohci-&gt;regs-&gt;roothub.a
+)paren
+suffix:semicolon
+id|writel
+(paren
+l_int|0x10000
+comma
+op_amp
+id|ohci-&gt;regs-&gt;roothub.status
+)paren
+suffix:semicolon
+id|mdelay
+(paren
+(paren
+id|readl
+c_func
+(paren
+op_amp
+id|ohci-&gt;regs-&gt;roothub.a
+)paren
+op_rshift
+l_int|23
+)paren
+op_amp
+l_int|0x1fe
+)paren
+suffix:semicolon
+macro_line|#endif /* OHCI_USE_NPS */
 multiline_comment|/* connect the virtual root hub */
 id|usb_dev
 op_assign
@@ -7249,8 +7306,9 @@ l_int|0
 op_logical_and
 op_logical_neg
 (paren
-id|le32_to_cpu
+id|le32_to_cpup
 (paren
+op_amp
 id|ohci-&gt;hcca.done_head
 )paren
 op_amp
@@ -7735,11 +7793,12 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;USB HC found: irq= %d membase= %x&quot;
+l_string|&quot;USB HC found: irq= %d membase= %lx&quot;
 comma
 id|irq
 comma
 (paren
+r_int
 r_int
 )paren
 id|mem_base

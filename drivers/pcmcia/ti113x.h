@@ -2,6 +2,7 @@ multiline_comment|/*&n; * ti113x.h 1.16 1999/10/25 20:03:34&n; *&n; * The conten
 macro_line|#ifndef _LINUX_TI113X_H
 DECL|macro|_LINUX_TI113X_H
 mdefine_line|#define _LINUX_TI113X_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Register definitions for TI 113X PCI-to-CardBus bridges */
 multiline_comment|/* System Control Register */
 DECL|macro|TI113X_SYSTEM_CONTROL

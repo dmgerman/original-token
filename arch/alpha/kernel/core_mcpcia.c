@@ -2343,6 +2343,7 @@ id|expected
 r_case
 l_int|0
 suffix:colon
+(brace
 multiline_comment|/* FIXME: how do we figure out which hose the&n;&t;&t;   error was on?  */
 r_struct
 id|pci_controler
@@ -2374,6 +2375,7 @@ id|hose-&gt;index
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 r_case
 l_int|1
 suffix:colon

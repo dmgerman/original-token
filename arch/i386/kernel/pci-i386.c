@@ -85,7 +85,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Bug?  */
+multiline_comment|/* Somebody might have asked allocation of a non-standard resource */
 r_return
 suffix:semicolon
 )brace
@@ -113,9 +113,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 r_new
-op_ne
+op_xor
 id|check
+)paren
+op_amp
+(paren
+(paren
+r_new
+op_amp
+id|PCI_BASE_ADDRESS_SPACE_IO
+)paren
+ques
+c_cond
+id|PCI_BASE_ADDRESS_IO_MASK
+suffix:colon
+id|PCI_BASE_ADDRESS_MEM_MASK
+)paren
 )paren
 (brace
 id|printk

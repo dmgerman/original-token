@@ -47,7 +47,7 @@ comma
 id|r0
 comma
 id|lsr
-macro_line|#4
+macro_line|#5
 id|mcreq
 id|p15
 comma

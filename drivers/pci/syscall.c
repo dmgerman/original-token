@@ -517,7 +517,7 @@ r_break
 suffix:semicolon
 id|err
 op_assign
-id|pci_write_config_byte
+id|pci_write_config_word
 c_func
 (paren
 id|dev
@@ -565,7 +565,9 @@ id|err
 )paren
 r_break
 suffix:semicolon
-id|pci_write_config_byte
+id|err
+op_assign
+id|pci_write_config_dword
 c_func
 (paren
 id|dev

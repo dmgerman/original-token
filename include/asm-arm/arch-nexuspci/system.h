@@ -6,5 +6,7 @@ DECL|macro|arch_do_idle
 mdefine_line|#define arch_do_idle()&t;&t;do { } while (0)
 DECL|macro|arch_reset
 mdefine_line|#define arch_reset(mode)&t;do { } while (0)
+DECL|macro|arch_power_off
+mdefine_line|#define arch_power_off()&t;do { } while (0)
 macro_line|#endif
 eof

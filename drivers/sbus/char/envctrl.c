@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: envctrl.c,v 1.13 1999/12/19 23:28:07 davem Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: envctrl.c,v 1.14 2000/01/09 15:43:45 ecd Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -21,9 +21,9 @@ mdefine_line|#define ENVCTRL_MINOR&t;162
 DECL|macro|U450_SUPPORT
 macro_line|#undef U450_SUPPORT&t;&t;/* might fry you machine, careful here !!! */
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG&t;&t;1
+macro_line|#undef DEBUG
 DECL|macro|DEBUG_BUS_SCAN
-mdefine_line|#define DEBUG_BUS_SCAN&t;1
+macro_line|#undef DEBUG_BUS_SCAN
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,2,0)
 DECL|macro|schedule_timeout
 mdefine_line|#define schedule_timeout(a) { current-&gt;timeout = jiffies + (a); schedule(); }

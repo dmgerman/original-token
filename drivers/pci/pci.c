@@ -949,7 +949,6 @@ c_func
 id|pci_drivers
 )paren
 suffix:semicolon
-r_static
 r_struct
 id|pci_device_id
 op_star

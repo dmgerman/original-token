@@ -88,7 +88,7 @@ op_assign
 l_int|1
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|hlt_setup
@@ -108,7 +108,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 id|__setup
@@ -289,6 +289,11 @@ c_func
 r_void
 )paren
 (brace
+id|arch_power_off
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|show_regs
 r_void
@@ -1030,6 +1035,7 @@ id|current-&gt;thread.fpstate.soft
 comma
 r_sizeof
 (paren
+op_star
 id|fp
 )paren
 )paren

@@ -3450,7 +3450,7 @@ l_int|1024
 suffix:semicolon
 id|min
 op_assign
-l_int|0x10000000
+id|PCIBIOS_MIN_MEM
 suffix:semicolon
 id|max
 op_assign
@@ -3475,7 +3475,7 @@ l_int|256
 suffix:semicolon
 id|min
 op_assign
-l_int|0x1000
+id|PCIBIOS_MIN_IO
 suffix:semicolon
 id|max
 op_assign

@@ -84,6 +84,7 @@ op_eq
 id|HFS_FK_DATA
 )paren
 (brace
+macro_line|#if 0 /* XXX: disable crlf translations for now */
 id|hfs_u32
 id|type
 op_assign
@@ -92,11 +93,6 @@ c_func
 (paren
 id|entry-&gt;info.file.finfo.fdType
 )paren
-suffix:semicolon
-id|fk
-op_assign
-op_amp
-id|entry-&gt;u.file.data_fork
 suffix:semicolon
 id|HFS_I
 c_func
@@ -158,6 +154,23 @@ l_int|0x7474726f
 )paren
 suffix:semicolon
 multiline_comment|/* &quot;ttro&quot; */
+macro_line|#else
+id|HFS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|convert
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+id|fk
+op_assign
+op_amp
+id|entry-&gt;u.file.data_fork
+suffix:semicolon
 )brace
 r_else
 (brace

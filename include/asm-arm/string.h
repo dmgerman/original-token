@@ -59,24 +59,8 @@ id|__kernel_size_t
 id|n
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|__memset
-c_func
-(paren
-r_void
-op_star
-id|ptr
-comma
-r_int
-id|v
-comma
-id|__kernel_size_t
-id|n
-)paren
-suffix:semicolon
 DECL|macro|memset
-mdefine_line|#define memset(p,v,n)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((n) != 0) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;if (__builtin_constant_p((v)) &amp;&amp; (v) == 0)&t;&bslash;&n;&t;&t;&t;&t;__memzero((p),(n));&t;&t;&t;&bslash;&n;&t;&t;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;__memset((p),(v),(n));&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;(p);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;})
+mdefine_line|#define memset(p,v,n)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((n) != 0) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;if (__builtin_constant_p((v)) &amp;&amp; (v) == 0)&t;&bslash;&n;&t;&t;&t;&t;__memzero((p),(n));&t;&t;&t;&bslash;&n;&t;&t;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;memset((p),(v),(n));&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;(p);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;})
 DECL|macro|memzero
 mdefine_line|#define memzero(p,n) ({ if ((n) != 0) __memzero((p),(n)); (p); })
 macro_line|#endif

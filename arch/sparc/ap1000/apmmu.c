@@ -5129,12 +5129,6 @@ id|init_mm.mmap-&gt;vm_start
 op_assign
 id|PAGE_OFFSET
 suffix:semicolon
-id|stack_top
-op_assign
-id|PAGE_OFFSET
-op_minus
-id|PAGE_SIZE
-suffix:semicolon
 )brace
 r_extern
 r_int

@@ -1288,6 +1288,7 @@ comma
 id|random_table
 )brace
 comma
+macro_line|#ifdef CONFIG_UID16
 (brace
 id|KERN_OVERFLOWUID
 comma
@@ -1352,6 +1353,7 @@ op_amp
 id|maxolduid
 )brace
 comma
+macro_line|#endif /* CONFIG_UID16 */
 (brace
 l_int|0
 )brace

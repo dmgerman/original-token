@@ -88,7 +88,7 @@ l_int|6
 suffix:semicolon
 DECL|member|buttons
 r_int
-r_char
+r_int
 id|buttons
 suffix:semicolon
 DECL|member|ready

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.114 2000/01/09 02:19:43 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.116 2000/01/13 00:19:49 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&t;&t;Andrea Arcangeli:&t;SYNACK carry ts_recent in tsecr.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -4004,7 +4004,13 @@ suffix:semicolon
 multiline_comment|/* Stay within the limit we were given */
 id|timeout
 op_assign
+(paren
 id|tp-&gt;ato
+op_lshift
+l_int|1
+)paren
+op_rshift
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -4144,7 +4150,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* Force it to send an ack. We don&squot;t have to do this&n;&t;&t;&t; * (ACK is unreliable) but it&squot;s much better use of&n;&t;&t;&t; * bandwidth on slow links to send a spare ack than&n;&t;&t;&t; * resend packets.&n;&t;&t;&t; *&n;&t;&t;&t; * This is the one possible way that we can delay an&n;&t;&t;&t; * ACK and have tp-&gt;ato indicate that we are in&n;&t;&t;&t; * quick ack mode, so clear it.&n;&t;&t;&t; */
+multiline_comment|/* Force it to send an ack. We don&squot;t have to do this&n;&t;&t;&t; * (ACK is unreliable) but it&squot;s much better use of&n;&t;&t;&t; * bandwidth on slow links to send a spare ack than&n;&t;&t;&t; * resend packets.&n;&t;&t;&t; *&n;&t;&t;&t; * This is the one possible way that we can delay an&n;&t;&t;&t; * ACK and have tp-&gt;ato indicate that we are in&n;&t;&t;&t; * quick ack mode, so clear it.  It is also the only&n;&t;&t;&t; * possible way for ato to be zero, when ACK&squot;ing a&n;&t;&t;&t; * SYNACK because we&squot;ve taken no ATO measurement yet.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4154,14 +4160,22 @@ c_func
 id|tp
 )paren
 )paren
-(brace
 id|tcp_exit_quickack_mode
 c_func
 (paren
 id|tp
 )paren
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tp-&gt;ato
+)paren
+id|tp-&gt;ato
+op_assign
+id|tp-&gt;rto
+suffix:semicolon
 id|tcp_send_delayed_ack
 c_func
 (paren

@@ -164,6 +164,8 @@ mdefine_line|#define&t;SLAB_POISON_BYTE&t;0x5a&t;&t;/* byte value for poisoning 
 DECL|macro|SLAB_POISON_END
 mdefine_line|#define&t;SLAB_POISON_END&t;0xa5&t;&t;/* end-byte of poisoning */
 macro_line|#endif&t;/* SLAB_DEBUG_SUPPORT */
+DECL|macro|SLAB_CACHE_NAME_LEN
+mdefine_line|#define SLAB_CACHE_NAME_LEN&t;20&t;/* max name length for a slab cache */
 multiline_comment|/* Cache struct - manages a cache.&n; * First four members are commonly referenced during an alloc/free operation.&n; */
 DECL|struct|kmem_cache_s
 r_struct
@@ -298,10 +300,11 @@ r_int
 id|c_failures
 suffix:semicolon
 DECL|member|c_name
-r_const
 r_char
-op_star
 id|c_name
+(braket
+id|SLAB_CACHE_NAME_LEN
+)braket
 suffix:semicolon
 DECL|member|c_nextp
 r_struct
@@ -1783,7 +1786,7 @@ id|num
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Create a cache:&n; * Returns a ptr to the cache on success, NULL on failure.&n; * Cannot be called within a int, but can be interrupted.&n; * NOTE: The &squot;name&squot; is assumed to be memory that is _not_  going to disappear.&n; */
+multiline_comment|/* Create a cache:&n; * Returns a ptr to the cache on success, NULL on failure.&n; * Cannot be called within a int, but can be interrupted.&n; */
 id|kmem_cache_t
 op_star
 DECL|function|kmem_cache_create
@@ -1878,6 +1881,30 @@ id|printk
 c_func
 (paren
 l_string|&quot;%sNULL ptr&bslash;n&quot;
+comma
+id|func_nm
+)paren
+suffix:semicolon
+r_goto
+id|opps
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|strlen
+c_func
+(paren
+id|name
+)paren
+op_ge
+id|SLAB_CACHE_NAME_LEN
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%sname too long&bslash;n&quot;
 comma
 id|func_nm
 )paren
@@ -3019,11 +3046,15 @@ id|cachep-&gt;c_magic
 op_assign
 id|SLAB_C_MAGIC
 suffix:semicolon
+multiline_comment|/* Copy name over so we don&squot;t have problems with unloaded modules */
+id|strcpy
+c_func
+(paren
 id|cachep-&gt;c_name
-op_assign
+comma
 id|name
+)paren
 suffix:semicolon
-multiline_comment|/* Simply point to the name. */
 id|spin_lock_init
 c_func
 (paren
@@ -3308,7 +3339,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* Shrink a cache.  Releases as many slabs as possible for a cache.&n; * It is expected this function will be called by a module when it is&n; * unloaded.  The cache is _not_ removed, this creates too many problems and&n; * the cache-structure does not take up much room.  A module should keep its&n; * cache pointer(s) in unloaded memory, so when reloaded it knows the cache&n; * is available.  To help debugging, a zero exit status indicates all slabs&n; * were released.&n; */
+multiline_comment|/* Shrink a cache.  Releases as many slabs as possible for a cache.&n; * To help debugging, a zero exit status indicates all slabs were released.&n; */
 r_int
 DECL|function|kmem_cache_shrink
 id|kmem_cache_shrink
@@ -3366,7 +3397,7 @@ id|cachep
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Remove a kmem_cache_t object from the slab cache. When returns 0 it&n; * completed succesfully. -arca&n; */
+multiline_comment|/*&n; * Remove a kmem_cache_t object from the slab cache. When returns 0 it&n; * completed succesfully. -arca&n; *&n; * It is expected this function will be called by a module when it is&n; * unloaded.  This will remove the cache completely, and avoid a duplicate&n; * cache being allocated each time a module is loaded and unloaded, if the&n; * module doesn&squot;t have persistent in-kernel storage across loads and unloads.&n; *&n; */
 DECL|function|kmem_cache_destroy
 r_int
 id|kmem_cache_destroy
