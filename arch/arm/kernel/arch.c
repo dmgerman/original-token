@@ -770,6 +770,7 @@ l_string|&quot;.arch.info&quot;
 )paren
 op_assign
 (brace
+macro_line|#ifdef CONFIG_ARCH_EBSA110
 (brace
 id|MACH_TYPE_EBSA110
 comma
@@ -793,6 +794,8 @@ comma
 l_int|NULL
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_RPC
 (brace
 id|MACH_TYPE_RISCPC
 comma
@@ -816,28 +819,8 @@ comma
 id|fixup_acorn
 )brace
 comma
-(brace
-l_int|2
-comma
-l_string|&quot;unknown&quot;
-comma
-id|NO_PARAMS
-comma
-id|NO_VIDEO
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-)brace
-comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_NEXUSPCI
 (brace
 id|MACH_TYPE_NEXUSPCI
 comma
@@ -861,6 +844,8 @@ comma
 l_int|NULL
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_EBSA285
 (brace
 id|MACH_TYPE_EBSA285
 comma
@@ -886,6 +871,8 @@ comma
 id|fixup_ebsa285
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_NETWINDER
 (brace
 id|MACH_TYPE_NETWINDER
 comma
@@ -911,6 +898,8 @@ comma
 id|fixup_netwinder
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_CATS
 (brace
 id|MACH_TYPE_CATS
 comma
@@ -936,6 +925,8 @@ comma
 id|fixup_cats
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_TBOX
 (brace
 id|MACH_TYPE_TBOX
 comma
@@ -959,6 +950,8 @@ comma
 l_int|NULL
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_CO285
 (brace
 id|MACH_TYPE_CO285
 comma
@@ -982,6 +975,8 @@ comma
 id|fixup_coebsa285
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_CLPS7110
 (brace
 id|MACH_TYPE_CLPS7110
 comma
@@ -1005,6 +1000,8 @@ comma
 l_int|NULL
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_ARC
 (brace
 id|MACH_TYPE_ARCHIMEDES
 comma
@@ -1028,6 +1025,8 @@ comma
 id|fixup_acorn
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_A5K
 (brace
 id|MACH_TYPE_A5K
 comma
@@ -1051,6 +1050,8 @@ comma
 id|fixup_acorn
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_ETOILE
 (brace
 id|MACH_TYPE_ETOILE
 comma
@@ -1074,6 +1075,8 @@ comma
 l_int|NULL
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_LACIE_NAS
 (brace
 id|MACH_TYPE_LACIE_NAS
 comma
@@ -1097,6 +1100,8 @@ comma
 l_int|NULL
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_CLPS7500
 (brace
 id|MACH_TYPE_CLPS7500
 comma
@@ -1120,6 +1125,8 @@ comma
 l_int|NULL
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_SHARK
 (brace
 id|MACH_TYPE_SHARK
 comma
@@ -1147,6 +1154,8 @@ comma
 l_int|NULL
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_SA1100
 (brace
 id|MACH_TYPE_SA1100
 comma
@@ -1170,6 +1179,8 @@ comma
 id|fixup_sa1100
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_PERSONAL_SERVER
 (brace
 id|MACH_TYPE_PERSONAL_SERVER
 comma
@@ -1191,6 +1202,7 @@ l_int|0
 comma
 l_int|NULL
 )brace
+macro_line|#endif
 )brace
 suffix:semicolon
 eof

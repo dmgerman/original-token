@@ -1,3 +1,35 @@
+DECL|macro|MAX_NR_BUS
+mdefine_line|#define MAX_NR_BUS&t;2
+DECL|struct|arm_bus_sysdata
+r_struct
+id|arm_bus_sysdata
+(brace
+multiline_comment|/*&n;&t; * bitmask of features we can turn.&n;&t; * See PCI command register for more info.&n;&t; */
+DECL|member|features
+id|u16
+id|features
+suffix:semicolon
+multiline_comment|/*&n;&t; * Maximum devsel for this bus.&n;&t; */
+DECL|member|maxdevsel
+id|u16
+id|maxdevsel
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|arm_pci_sysdata
+r_struct
+id|arm_pci_sysdata
+(brace
+DECL|member|bus
+r_struct
+id|arm_bus_sysdata
+id|bus
+(braket
+id|MAX_NR_BUS
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|hw_pci
 r_struct
 id|hw_pci

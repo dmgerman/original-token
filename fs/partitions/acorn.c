@@ -478,7 +478,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; &gt;&quot;
+l_string|&quot; &gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -729,7 +729,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; &gt;&quot;
+l_string|&quot; &gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Prevent someone doing a mkswap or mkfs on this partition&n;&t; */

@@ -482,11 +482,6 @@ macro_line|#else
 DECL|macro|get_u16
 mdefine_line|#define get_u16(ptr) (((u8*)(ptr))[0] + (((u8*)(ptr))[1]&lt;&lt;8))
 macro_line|#endif
-multiline_comment|/* Condensed operations for readability. */
-DECL|macro|virt_to_le32desc
-mdefine_line|#define virt_to_le32desc(addr)  cpu_to_le32(virt_to_bus(addr))
-DECL|macro|le32desc_to_virt
-mdefine_line|#define le32desc_to_virt(addr)  bus_to_virt(le32_to_cpu(addr))
 DECL|struct|medialeaf
 r_struct
 id|medialeaf
@@ -587,6 +582,22 @@ id|info
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|ring_info
+r_struct
+id|ring_info
+(brace
+DECL|member|skb
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+DECL|member|mapping
+id|dma_addr_t
+id|mapping
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|tulip_private
 r_struct
 id|tulip_private
@@ -624,31 +635,23 @@ id|dma_addr_t
 id|tx_ring_dma
 suffix:semicolon
 multiline_comment|/* The saved address of a sent-in-place packet/buffer, for skfree(). */
-DECL|member|tx_skbuff
+DECL|member|tx_buffers
 r_struct
-id|sk_buff
-op_star
-id|tx_skbuff
+id|ring_info
+id|tx_buffers
 (braket
 id|TX_RING_SIZE
 )braket
 suffix:semicolon
 multiline_comment|/* The addresses of receive-in-place skbuffs. */
-DECL|member|rx_skbuff
+DECL|member|rx_buffers
 r_struct
-id|sk_buff
-op_star
-id|rx_skbuff
+id|ring_info
+id|rx_buffers
 (braket
 id|RX_RING_SIZE
 )braket
 suffix:semicolon
-DECL|member|rx_buffs
-r_char
-op_star
-id|rx_buffs
-suffix:semicolon
-multiline_comment|/* Address of temporary Rx buffers. */
 DECL|member|setup_frame
 id|u16
 id|setup_frame

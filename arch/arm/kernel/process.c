@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/kernel/process.c&n; *&n; *  Copyright (C) 1996-1999 Russell King - Converted to ARM.&n; *  Origional Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/process.c&n; *&n; *  Copyright (C) 1996-2000 Russell King - Converted to ARM.&n; *  Origional Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -28,6 +28,15 @@ op_star
 id|processor_modes
 (braket
 )braket
+suffix:semicolon
+r_extern
+r_void
+id|setup_mm_for_reboot
+c_func
+(paren
+r_char
+id|mode
+)paren
 suffix:semicolon
 id|asmlinkage
 r_void
@@ -236,18 +245,27 @@ op_star
 id|__unused
 )paren
 (brace
-multiline_comment|/*&n;&t; * Turn off caches, interrupts, etc&n;&t; */
+multiline_comment|/*&n;&t; * Clean and disable cache, and turn off interrupts&n;&t; */
 id|cpu_proc_fin
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Tell the mm system that we are going to reboot -&n;&t; * we may need it to insert some 1:1 mappings so that&n;&t; * soft boot works.&n;&t; */
+id|setup_mm_for_reboot
+c_func
+(paren
+id|reboot_mode
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Now call the architecture specific reboot code.&n;&t; */
 id|arch_reset
 c_func
 (paren
 id|reboot_mode
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Whoops - the architecture was unable to reboot.&n;&t; * Tell the user!&n;&t; */
 id|mdelay
 c_func
 (paren
@@ -258,11 +276,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;Reboot failed -- System halted&bslash;n&quot;
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_while

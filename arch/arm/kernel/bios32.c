@@ -635,6 +635,153 @@ op_assign
 op_amp
 id|bus-&gt;devices
 suffix:semicolon
+r_struct
+id|arm_pci_sysdata
+op_star
+id|sysdata
+op_assign
+(paren
+r_struct
+id|arm_pci_sysdata
+op_star
+)paren
+id|bus-&gt;sysdata
+suffix:semicolon
+r_struct
+id|arm_bus_sysdata
+op_star
+id|busdata
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bus-&gt;number
+OL
+id|MAX_NR_BUS
+)paren
+id|busdata
+op_assign
+id|sysdata-&gt;bus
+op_plus
+id|bus-&gt;number
+suffix:semicolon
+r_else
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Walk the devices on this bus, working out what we can&n;&t; * and can&squot;t support.&n;&t; */
+r_for
+c_loop
+(paren
+id|walk
+op_assign
+id|walk-&gt;next
+suffix:semicolon
+id|walk
+op_ne
+op_amp
+id|bus-&gt;devices
+suffix:semicolon
+id|walk
+op_assign
+id|walk-&gt;next
+)paren
+(brace
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+id|pci_dev_b
+c_func
+(paren
+id|walk
+)paren
+suffix:semicolon
+id|u16
+id|status
+suffix:semicolon
+id|pci_read_config_word
+c_func
+(paren
+id|dev
+comma
+id|PCI_STATUS
+comma
+op_amp
+id|status
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If this device does not support fast back to back&n;&t;&t; * transfers, the bus as a whole cannot support them.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|status
+op_amp
+id|PCI_STATUS_FAST_BACK
+)paren
+)paren
+id|busdata-&gt;features
+op_and_assign
+op_complement
+id|PCI_COMMAND_FAST_BACK
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Calculate the maximum devsel latency.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|busdata-&gt;maxdevsel
+OL
+(paren
+id|status
+op_amp
+id|PCI_STATUS_DEVSEL_MASK
+)paren
+)paren
+id|busdata-&gt;maxdevsel
+op_assign
+(paren
+id|status
+op_amp
+id|PCI_STATUS_DEVSEL_MASK
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If this device is an ISA bridge, set the have_isa_bridge&n;&t;&t; * flag.  We will then go looking for things like keyboard,&n;&t;&t; * etc&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+op_eq
+id|PCI_CLASS_BRIDGE_ISA
+op_logical_or
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+op_eq
+id|PCI_CLASS_BRIDGE_EISA
+)paren
+id|have_isa_bridge
+op_assign
+op_logical_neg
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Now walk the devices again, this time setting them up.&n;&t; */
+id|walk
+op_assign
+op_amp
+id|bus-&gt;devices
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -694,32 +841,7 @@ comma
 l_int|0x80000000
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If this device is an ISA bridge, set the have_isa_bridge&n;&t;&t; * flag.  We will then go looking for things like keyboard,&n;&t;&t; * etc&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|dev
-op_member_access_from_pointer
-r_class
-op_rshift
-l_int|8
-op_eq
-id|PCI_CLASS_BRIDGE_ISA
-op_logical_or
-id|dev
-op_member_access_from_pointer
-r_class
-op_rshift
-l_int|8
-op_eq
-id|PCI_CLASS_BRIDGE_EISA
-)paren
-id|have_isa_bridge
-op_assign
-op_logical_neg
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Set latency timer to 32, and a cache line size to 32 bytes.&n;&t;&t; * Also, set system error enable, parity error enable, and&n;&t;&t; * fast back to back transaction enable.  Disable ROM.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Set latency timer to 32, and a cache line size to 32 bytes.&n;&t;&t; * Also, set system error enable, parity error enable.&n;&t;&t; * Disable ROM.&n;&t;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -753,11 +875,7 @@ id|cmd
 suffix:semicolon
 id|cmd
 op_or_assign
-id|PCI_COMMAND_FAST_BACK
-op_or
-id|PCI_COMMAND_SERR
-op_or
-id|PCI_COMMAND_PARITY
+id|busdata-&gt;features
 suffix:semicolon
 id|pci_write_config_word
 c_func
@@ -1004,7 +1122,7 @@ id|ebsa285_map_irq
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_CATS
+macro_line|#ifdef CONFIG_ARCH_CATS
 multiline_comment|/* cats host-specific stuff */
 DECL|variable|__initdata
 r_static
@@ -1282,7 +1400,7 @@ id|netwinder_map_irq
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PERSONAL_SERVER
+macro_line|#ifdef CONFIG_ARCH_PERSONAL_SERVER
 DECL|variable|__initdata
 r_static
 r_int
@@ -1533,7 +1651,7 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_CATS
+macro_line|#ifdef CONFIG_ARCH_CATS
 r_if
 c_cond
 (paren
@@ -1571,7 +1689,7 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_PERSONAL_SERVER
+macro_line|#ifdef CONFIG_ARCH_PERSONAL_SERVER
 r_if
 c_cond
 (paren

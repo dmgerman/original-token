@@ -41,21 +41,11 @@ comma
 id|IOMD_ROMCR0
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;mcr p15, 0, %0, c1, c0, 0&bslash;n&bslash;t&quot;
-l_string|&quot;mov pc, #0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
+multiline_comment|/*&n;&t; * Jump into the ROM&n;&t; */
 id|cpu_reset
 c_func
 (paren
-)paren
-)paren
+l_int|0
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*                                              -*- linux-c -*-&n; * dtlk.c - DoubleTalk PC driver for Linux kernel 2.0.29&n; * &n; * $Id: dtlk.c,v 1.19 1999/02/28 12:13:13 jrv Exp jrv $&n; *&n; * Original author: Chris Pallotta &lt;chris@allmedia.com&gt;&n; * Current maintainer: Jim Van Zandt &lt;jrv@vanzandt.mv.com&gt;&n; */
+multiline_comment|/*                                              -*- linux-c -*-&n; * dtlk.c - DoubleTalk PC driver for Linux&n; *&n; * Original author: Chris Pallotta &lt;chris@allmedia.com&gt;&n; * Current maintainer: Jim Van Zandt &lt;jrv@vanzandt.mv.com&gt;&n; * &n; * 2000-03-18 Jim Van Zandt: Fix polling.&n; *  Eliminate dtlk_timer_active flag and separate dtlk_stop_timer&n; *  function.  Don&squot;t restart timer in dtlk_timer_tick.  Restart timer&n; *  in dtlk_poll after every poll.  dtlk_poll returns mask (duh).&n; *  Eliminate unused function dtlk_write_byte.  Misc. code cleanups.&n; */
 multiline_comment|/* This driver is for the DoubleTalk PC, a speech synthesizer&n;   manufactured by RC Systems (http://www.rcsys.com/).  It was written&n;   based on documentation in their User&squot;s Manual file and Developer&squot;s&n;   Tools disk.&n;&n;   The DoubleTalk PC contains four voice synthesizers: text-to-speech&n;   (TTS), linear predictive coding (LPC), PCM/ADPCM, and CVSD.  It&n;   also has a tone generator.  Output data for LPC are written to the&n;   LPC port, and output data for the other modes are written to the&n;   TTS port.&n;&n;   Two kinds of data can be read from the DoubleTalk: status&n;   information (in response to the &quot;&bslash;001?&quot; interrogation command) is&n;   read from the TTS port, and index markers (which mark the progress&n;   of the speech) are read from the LPC port.  Not all models of the&n;   DoubleTalk PC implement index markers.  Both the TTS and LPC ports&n;   can also display status flags.&n;&n;   The DoubleTalk PC generates no interrupts.&n;&n;   These characteristics are mapped into the Unix stream I/O model as&n;   follows:&n;&n;   &quot;write&quot; sends bytes to the TTS port.  It is the responsibility of&n;   the user program to switch modes among TTS, PCM/ADPCM, and CVSD.&n;   This driver was written for use with the text-to-speech&n;   synthesizer.  If LPC output is needed some day, other minor device&n;   numbers can be used to select among output modes.&n;&n;   &quot;read&quot; gets index markers from the LPC port.  If the device does&n;   not implement index markers, the read will fail with error EINVAL.&n;&n;   Status information is available using the DTLK_INTERROGATE ioctl.&n;&n; */
 macro_line|#ifdef MODVERSIONS
 macro_line|#include &lt;linux/modversions.h&gt;
@@ -51,11 +51,6 @@ DECL|variable|dtlk_busy
 r_static
 r_int
 id|dtlk_busy
-suffix:semicolon
-DECL|variable|dtlk_timer_active
-r_static
-r_int
-id|dtlk_timer_active
 suffix:semicolon
 DECL|variable|dtlk_has_indexing
 r_static
@@ -291,14 +286,6 @@ r_void
 )paren
 suffix:semicolon
 r_static
-r_void
-id|dtlk_stop_timer
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
 r_int
 id|dtlk_writeable
 c_func
@@ -328,7 +315,7 @@ c_func
 r_char
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   static void dtlk_handle_error(char, char, unsigned int);&n;   static char dtlk_write_byte(unsigned int, const char*);&n; */
+multiline_comment|/*&n;   static void dtlk_handle_error(char, char, unsigned int);&n; */
 r_static
 r_void
 id|dtlk_timer_tick
@@ -893,9 +880,11 @@ c_func
 )paren
 )paren
 (brace
-id|dtlk_stop_timer
+id|del_timer
 c_func
 (paren
+op_amp
+id|dtlk_timer
 )paren
 suffix:semicolon
 id|mask
@@ -914,9 +903,11 @@ c_func
 )paren
 )paren
 (brace
-id|dtlk_stop_timer
+id|del_timer
 c_func
 (paren
+op_amp
+id|dtlk_timer
 )paren
 suffix:semicolon
 id|mask
@@ -927,26 +918,20 @@ id|POLLWRNORM
 suffix:semicolon
 )brace
 multiline_comment|/* there are no exception conditions */
-r_if
-c_cond
+multiline_comment|/* There won&squot;t be any interrupts, so we set a timer instead. */
+id|del_timer
+c_func
 (paren
-id|mask
-op_eq
-l_int|0
-op_logical_and
-op_logical_neg
-id|dtlk_timer_active
+op_amp
+id|dtlk_timer
 )paren
-(brace
-multiline_comment|/* not ready just yet.  There won&squot;t be any interrupts,&n;&t;&t;   so we set a timer instead. */
-id|dtlk_timer_active
-op_assign
-l_int|1
 suffix:semicolon
 id|dtlk_timer.expires
 op_assign
 id|jiffies
 op_plus
+l_int|3
+op_star
 id|HZ
 op_div
 l_int|100
@@ -958,37 +943,9 @@ op_amp
 id|dtlk_timer
 )paren
 suffix:semicolon
-)brace
 r_return
-l_int|0
+id|mask
 suffix:semicolon
-)brace
-DECL|function|dtlk_stop_timer
-r_static
-r_void
-id|dtlk_stop_timer
-c_func
-(paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|dtlk_timer_active
-)paren
-(brace
-id|dtlk_timer_active
-op_assign
-l_int|0
-suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|dtlk_timer
-)paren
-suffix:semicolon
-)brace
 )brace
 DECL|function|dtlk_timer_tick
 r_static
@@ -1001,6 +958,12 @@ r_int
 id|data
 )paren
 (brace
+id|TRACE_TEXT
+c_func
+(paren
+l_string|&quot; dtlk_timer_tick&quot;
+)paren
+suffix:semicolon
 id|wake_up_interruptible
 c_func
 (paren
@@ -1008,35 +971,6 @@ op_amp
 id|dtlk_process_list
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dtlk_timer_active
-)paren
-(brace
-id|del_timer
-c_func
-(paren
-op_amp
-id|dtlk_timer
-)paren
-suffix:semicolon
-id|dtlk_timer.expires
-op_assign
-id|jiffies
-op_plus
-id|HZ
-op_div
-l_int|100
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|dtlk_timer
-)paren
-suffix:semicolon
-)brace
 )brace
 DECL|function|dtlk_ioctl
 r_static
@@ -1269,9 +1203,11 @@ suffix:semicolon
 )brace
 id|TRACE_RET
 suffix:semicolon
-id|dtlk_stop_timer
+id|del_timer
 c_func
 (paren
+op_amp
+id|dtlk_timer
 )paren
 suffix:semicolon
 r_return
@@ -1302,10 +1238,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|dtlk_busy
-op_assign
-l_int|0
-suffix:semicolon
-id|dtlk_timer_active
 op_assign
 l_int|0
 suffix:semicolon
@@ -1534,12 +1466,24 @@ c_func
 r_void
 )paren
 (brace
-id|TRACE_TEXT
+macro_line|#ifdef TRACING
+id|printk
 c_func
 (paren
-l_string|&quot; dtlk_readable&quot;
+l_string|&quot; dtlk_readable=%u@%u&quot;
+comma
+id|inb_p
+c_func
+(paren
+id|dtlk_port_lpc
+)paren
+op_ne
+l_int|0x7f
+comma
+id|jiffies
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|inb_p
 c_func
@@ -1560,17 +1504,23 @@ r_void
 )paren
 (brace
 multiline_comment|/* TRACE_TEXT(&quot; dtlk_writeable&quot;); */
-macro_line|#ifdef TRACING
+macro_line|#ifdef TRACINGMORE
 id|printk
 c_func
 (paren
-l_string|&quot; dtlk_writeable(%02x)&quot;
+l_string|&quot; dtlk_writeable=%u&quot;
 comma
+(paren
 id|inb_p
 c_func
 (paren
 id|dtlk_port_tts
 )paren
+op_amp
+id|TTS_WRITABLE
+)paren
+op_ne
+l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1792,6 +1742,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef TRACING
+id|printk
+c_func
+(paren
+l_string|&quot;, indexing %d&bslash;n&quot;
+comma
+id|dtlk_has_indexing
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef INSCOPE
 (brace
 multiline_comment|/* This macro records ten samples read from the LPC port, for later display */
@@ -2538,55 +2498,6 @@ r_return
 id|ch
 suffix:semicolon
 )brace
-macro_line|#ifdef NEVER
-DECL|function|dtlk_write_byte
-r_static
-r_char
-id|dtlk_write_byte
-c_func
-(paren
-r_int
-r_int
-id|minor
-comma
-r_const
-r_char
-op_star
-id|buf
-)paren
-(brace
-r_char
-id|ch
-suffix:semicolon
-r_int
-id|err
-suffix:semicolon
-multiline_comment|/* TRACE_TEXT(&quot;(dtlk_write_byte&quot;); */
-id|err
-op_assign
-id|get_user
-c_func
-(paren
-id|ch
-comma
-id|buf
-)paren
-suffix:semicolon
-multiline_comment|/* printk(&quot;  dtlk_write_byte(%d, 0x%02x)&quot;, minor, (int)ch); */
-id|ch
-op_assign
-id|dtlk_write_tts
-c_func
-(paren
-id|ch
-)paren
-suffix:semicolon
-multiline_comment|/* &n;&t;   TRACE_RET; */
-r_return
-id|ch
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;&t;&t;/* NEVER */
 multiline_comment|/* write n bytes to tts port */
 DECL|function|dtlk_write_bytes
 r_static
@@ -2654,7 +2565,7 @@ id|retries
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef TRACING
+macro_line|#ifdef TRACINGMORE
 id|printk
 c_func
 (paren
@@ -2777,7 +2688,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-macro_line|#ifdef TRACING
+macro_line|#ifdef TRACINGMORE
 id|printk
 c_func
 (paren

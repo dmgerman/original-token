@@ -558,6 +558,28 @@ id|BLIST_NOLUN
 comma
 multiline_comment|/* Locks up if polled for lun != 0  &n;&t;&t;&t;&t;&t;&t;&t;&t; * extra reset */
 (brace
+l_string|&quot;YAMAHA&quot;
+comma
+l_string|&quot;CRW8424S&quot;
+comma
+l_string|&quot;1.0&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
+l_string|&quot;YAMAHA&quot;
+comma
+l_string|&quot;CRW6416S&quot;
+comma
+l_string|&quot;1.0c&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
 l_string|&quot;MITSUMI&quot;
 comma
 l_string|&quot;CD-R CR-2201CS&quot;
@@ -836,6 +858,16 @@ id|BLIST_GHOST
 )brace
 comma
 (brace
+l_string|&quot;AOpen&quot;
+comma
+l_string|&quot;PD-2 DVD-520S&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_GHOST
+)brace
+comma
+(brace
 l_string|&quot;HITACHI&quot;
 comma
 l_string|&quot;GF-1050&quot;
@@ -874,6 +906,16 @@ comma
 l_string|&quot;*&quot;
 comma
 id|BLIST_GHOST
+)brace
+comma
+(brace
+l_string|&quot;MegaRAID&quot;
+comma
+l_string|&quot;LD&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
 )brace
 comma
 multiline_comment|/*&n;&t; * Must be at end of list...&n;&t; */

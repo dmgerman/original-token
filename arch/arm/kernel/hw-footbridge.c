@@ -2276,7 +2276,7 @@ DECL|macro|DEFAULT_LEDS
 mdefine_line|#define DEFAULT_LEDS&t;GPIO_GREEN_LED
 macro_line|#endif
 multiline_comment|/*&n; * CATS stuff&n; */
-macro_line|#ifdef CONFIG_CATS
+macro_line|#ifdef CONFIG_ARCH_CATS
 DECL|macro|CONFIG_PORT
 mdefine_line|#define CONFIG_PORT&t;0x370
 DECL|macro|INDEX_PORT
@@ -2560,7 +2560,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_CATS
+macro_line|#ifdef CONFIG_ARCH_CATS
 r_if
 c_cond
 (paren

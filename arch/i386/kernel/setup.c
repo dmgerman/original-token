@@ -2812,7 +2812,7 @@ id|ecx
 comma
 id|edx
 suffix:semicolon
-multiline_comment|/* Actually we must have cpuid or we could never have&n;&t; * figured out that this was AMD from the vendor info :-).&n;&t; */
+multiline_comment|/* Actually we must have cpuid or we could never have&n;&t; * figured out that this was AMD/Cyrix from the vendor info :-).&n;&t; */
 id|cpuid
 c_func
 (paren
@@ -2971,6 +2971,14 @@ multiline_comment|/*  Set MTRR capability flag if appropriate  */
 r_if
 c_cond
 (paren
+id|c-&gt;x86_vendor
+op_eq
+id|X86_VENDOR_AMD
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|boot_cpu_data.x86
 op_eq
 l_int|5
@@ -3105,6 +3113,7 @@ op_rshift
 l_int|16
 )paren
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|1
@@ -3979,6 +3988,11 @@ op_assign
 l_int|2
 suffix:semicolon
 macro_line|#endif&t;&t;
+id|c-&gt;x86_cache_size
+op_assign
+l_int|16
+suffix:semicolon
+multiline_comment|/* Yep 16K integrated cache thats it */
 multiline_comment|/* GXm supports extended cpuid levels &squot;ala&squot; AMD */
 r_if
 c_cond

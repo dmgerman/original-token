@@ -509,6 +509,13 @@ c_func
 id|pci_unmap_sg
 )paren
 suffix:semicolon
+DECL|variable|pci_dma_supported
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dma_supported
+)paren
+suffix:semicolon
 DECL|variable|dump_thread
 id|EXPORT_SYMBOL
 c_func

@@ -1694,7 +1694,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Currently dropped down to debug level&n; */
 DECL|macro|BUG_PROC_MSG
 mdefine_line|#define BUG_PROC_MSG &bslash;&n;  KERN_DEBUG &quot;Weird data abort (%08X).&bslash;n&quot; &bslash;&n;  KERN_DEBUG &quot;Please see http:
-singleline_comment|//www.arm.linux.org.uk/state.html for more information&quot;
+singleline_comment|//www.arm.linux.org.uk/state.html for &quot; &bslash;
+l_string|&quot;more information&bslash;n&quot;
 id|asmlinkage
 r_void
 DECL|function|do_DataAbort

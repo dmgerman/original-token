@@ -5,7 +5,7 @@ DECL|macro|arch_reset
 mdefine_line|#define arch_reset( x ) {&t;&t;&t;&t;&t;&bslash;&n;&t;/* switch off power supply */&t;&t;&t;&t;&bslash;&n;&t;mdelay(2000); &t;&t;&t;&t;&t;&t;&bslash;&n;&t;GPCR = GPIO_GPIO23;&t;&t;&t;&t;&t;&bslash;&n;&t;while(1);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}
 macro_line|#else
 DECL|macro|arch_reset
-mdefine_line|#define arch_reset(x) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ volatile (&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;mcr&t;p15, 0, %0, c1, c0&t;@ MMU off&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;mov&t;pc, #0&bslash;n&quot; : : &quot;r&quot; (cpu_reset()) : &quot;cc&quot;);&t;&bslash;&n;&t;}
+mdefine_line|#define arch_reset(x)&t;cpu_reset(0)
 macro_line|#endif
 macro_line|#if 0
 mdefine_line|#define arch_do_idle()          cpu_do_idle()

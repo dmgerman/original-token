@@ -126,7 +126,7 @@ macro_line|#else
 DECL|macro|machine_is_netwinder
 macro_line|# define machine_is_netwinder()&t;(0)
 macro_line|#endif
-macro_line|#ifdef CONFIG_CATS
+macro_line|#ifdef CONFIG_ARCH_CATS
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
 macro_line|#  undef machine_arch_type
@@ -238,7 +238,7 @@ macro_line|#else
 DECL|macro|machine_is_sa1100
 macro_line|# define machine_is_sa1100()&t;(0)
 macro_line|#endif
-macro_line|#ifdef CONFIG_PERSONAL_SERVER
+macro_line|#ifdef CONFIG_ARCH_PERSONAL_SERVER
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
 macro_line|#  undef machine_arch_type

@@ -1361,6 +1361,15 @@ op_ge
 id|MAX_SERVICE
 )paren
 (brace
+multiline_comment|/* 0xFF is valid for a card removal */
+r_if
+c_cond
+(paren
+id|interrupts
+op_ne
+l_int|0xFF
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -1372,6 +1381,7 @@ comma
 id|interrupts
 )paren
 suffix:semicolon
+)brace
 id|outb_p
 c_func
 (paren
@@ -1842,18 +1852,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: unexpected TX-done interrupt, lasttx=%d.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|ei_local-&gt;lasttx
-)paren
-suffix:semicolon
+singleline_comment|//&t;else printk(KERN_WARNING &quot;%s: unexpected TX-done interrupt, lasttx=%d.&bslash;n&quot;,
+singleline_comment|//&t;&t;&t;dev-&gt;name, ei_local-&gt;lasttx);
 macro_line|#else&t;/* EI_PINGPONG */
 multiline_comment|/*&n;&t; *  Single Tx buffer: mark it free so another packet can be loaded.&n;&t; */
 id|ei_local-&gt;txing
@@ -2082,7 +2082,7 @@ id|this_frame
 op_assign
 id|ei_local-&gt;rx_start_page
 suffix:semicolon
-multiline_comment|/* Someday we&squot;ll omit the previous, iff we never get this message.&n;&t;&t;   (There is at least one clone claimed to have a problem.)  */
+multiline_comment|/* Someday we&squot;ll omit the previous, iff we never get this message.&n;&t;&t;   (There is at least one clone claimed to have a problem.)  &n;&t;&t;   &n;&t;&t;   Keep quiet if it looks like a card removal. One problem here&n;&t;&t;   is that some clones crash in roughly the same way.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2093,6 +2093,16 @@ op_logical_and
 id|this_frame
 op_ne
 id|ei_local-&gt;current_page
+op_logical_and
+(paren
+id|this_frame
+op_ne
+l_int|0x0
+op_logical_or
+id|rxing_page
+op_ne
+l_int|0xFF
+)paren
 )paren
 id|printk
 c_func

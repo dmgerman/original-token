@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-armo.c&n; *&n; * Page table sludge for older ARM processor architectures.&n; *&n; * Copyright (C) 1998-1999 Russell King&n; */
+multiline_comment|/*&n; * arch/arm/mm/mm-armo.c&n; *&n; * Page table sludge for older ARM processor architectures.&n; *&n; * Copyright (C) 1998-2000 Russell King&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -536,6 +536,17 @@ op_plus
 id|offset
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * No special code is required here.&n; */
+DECL|function|setup_mm_for_reboot
+r_void
+id|setup_mm_for_reboot
+c_func
+(paren
+r_char
+id|mode
+)paren
+(brace
+)brace
 multiline_comment|/*&n; * This contains the code to setup the memory map on an ARM2/ARM250/ARM3&n; * machine. This is both processor &amp; architecture specific, and requires&n; * some more work to get it to fit into our separate processor and&n; * architecture structure.&n; */
 DECL|function|pagetable_init
 r_void
@@ -629,6 +640,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * We never have holes in the memmap&n; */
 DECL|function|create_memmap_holes
 r_void
 id|__init

@@ -209,14 +209,16 @@ id|pte
 suffix:semicolon
 multiline_comment|/*&n;&t; * Special stuff for a reset&n;&t; */
 DECL|member|reset
-r_int
-r_int
+r_volatile
+r_void
 (paren
 op_star
 id|reset
 )paren
 (paren
-r_void
+r_int
+r_int
+id|addr
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * flush an icached page&n;&t; */
@@ -364,7 +366,7 @@ mdefine_line|#define cpu_set_pmd(pmdp, pmd)&t;&t;&t;processor._set_pmd(pmdp, pmd
 DECL|macro|cpu_set_pte
 mdefine_line|#define cpu_set_pte(ptep, pte)&t;&t;&t;processor._set_pte(ptep, pte)
 DECL|macro|cpu_reset
-mdefine_line|#define cpu_reset()&t;&t;&t;&t;processor.reset()
+mdefine_line|#define cpu_reset(addr)&t;&t;&t;&t;processor.reset(addr)
 DECL|macro|cpu_flush_icache_area
 mdefine_line|#define cpu_flush_icache_area(start,end)&t;processor._flush_icache_area(start,end)
 DECL|macro|cpu_cache_wback_area

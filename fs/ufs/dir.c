@@ -388,7 +388,7 @@ id|filp-&gt;f_pos
 op_assign
 (paren
 id|filp-&gt;f_pos
-op_amp
+op_or
 (paren
 id|sb-&gt;s_blocksize
 op_minus
@@ -396,7 +396,7 @@ l_int|1
 )paren
 )paren
 op_plus
-id|sb-&gt;s_blocksize
+l_int|1
 suffix:semicolon
 id|brelse
 (paren

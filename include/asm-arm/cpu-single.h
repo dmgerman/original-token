@@ -234,12 +234,14 @@ id|pte
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
+r_volatile
+r_void
 id|cpu_reset
 c_func
 (paren
-r_void
+r_int
+r_int
+id|addr
 )paren
 suffix:semicolon
 r_extern

@@ -2278,6 +2278,7 @@ id|hwif-&gt;noprobe
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_if
 c_cond
 (paren
@@ -2304,6 +2305,7 @@ id|hwif
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
