@@ -1129,6 +1129,7 @@ id|pgrp
 r_if
 c_cond
 (paren
+(paren
 id|err
 op_assign
 id|send_sig
@@ -1141,6 +1142,9 @@ id|p
 comma
 id|priv
 )paren
+)paren
+op_ne
+l_int|0
 )paren
 id|retval
 op_assign
@@ -1872,9 +1876,13 @@ multiline_comment|/*&n;&t; * This loop does two things:&n;&t; * &n;  &t; * A.  M
 r_while
 c_loop
 (paren
+(paren
 id|p
 op_assign
 id|current-&gt;p_cptr
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 id|current-&gt;p_cptr

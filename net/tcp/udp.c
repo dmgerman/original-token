@@ -1,7 +1,7 @@
 multiline_comment|/* udp.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: udp.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: udp.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
+multiline_comment|/* $Id: udp.c,v 0.8.4.5 1992/11/18 15:38:03 bir7 Exp $ */
+multiline_comment|/* $Log: udp.c,v $&n; * Revision 0.8.4.5  1992/11/18  15:38:03  bir7&n; * fixed minor problem in waiting for memory.&n; *&n; * Revision 0.8.4.4  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Fixed ctrl-h and added NULL checking to print_uh&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -871,13 +871,7 @@ op_star
 id|uh
 )paren
 suffix:semicolon
-id|verify_area
-(paren
-id|from
-comma
-id|len
-)paren
-suffix:semicolon
+multiline_comment|/*&t;verify_area (from , len); */
 id|memcpy_fromfs
 c_func
 (paren
@@ -1095,16 +1089,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-id|verify_area
-(paren
-id|usin
-comma
-r_sizeof
-(paren
-id|sin
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  verify_area (usin, sizeof (sin));*/
 id|memcpy_fromfs
 (paren
 op_amp
@@ -1299,6 +1284,10 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+id|tmp
+op_assign
+id|sk-&gt;wmem_alloc
+suffix:semicolon
 id|release_sock
 (paren
 id|sk
@@ -1308,9 +1297,59 @@ r_if
 c_cond
 (paren
 id|copied
-op_logical_or
-op_logical_neg
+)paren
+r_return
+(paren
+id|copied
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|noblock
+)paren
+r_return
+(paren
+op_minus
+id|EAGAIN
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_le
+id|sk-&gt;wmem_alloc
+)paren
+(brace
+id|interruptible_sleep_on
+(paren
+id|sk-&gt;sleep
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copied
 )paren
 r_return
 (paren
@@ -1320,8 +1359,21 @@ suffix:semicolon
 r_return
 (paren
 op_minus
-id|EAGAIN
+id|ERESTARTSYS
 )paren
+suffix:semicolon
+)brace
+)brace
+id|sk-&gt;inuse
+op_assign
+l_int|1
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
 id|skb-&gt;mem_addr
@@ -1496,13 +1548,7 @@ op_star
 id|uh
 )paren
 suffix:semicolon
-id|verify_area
-(paren
-id|from
-comma
-id|amt
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  verify_area (from, amt);*/
 id|memcpy_fromfs
 c_func
 (paren
@@ -2239,16 +2285,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-id|verify_area
-(paren
-id|usin
-comma
-r_sizeof
-(paren
-id|sin
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*&t;verify_area (usin, sizeof (sin)); */
 id|memcpy_fromfs
 (paren
 op_amp

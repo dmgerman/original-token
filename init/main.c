@@ -370,6 +370,8 @@ DECL|macro|DRIVE_INFO
 mdefine_line|#define DRIVE_INFO (*(struct drive_info *)0x90080)
 DECL|macro|SCREEN_INFO
 mdefine_line|#define SCREEN_INFO (*(struct screen_info *)0x90000)
+DECL|macro|RAMDISK_SIZE
+mdefine_line|#define RAMDISK_SIZE (*(unsigned short *)0x901F8)
 DECL|macro|ORIG_ROOT_DEV
 mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)
 DECL|macro|AUX_DEVICE_INFO
@@ -666,6 +668,10 @@ r_int
 r_char
 id|aux_device_present
 suffix:semicolon
+DECL|variable|ramdisk_size
+r_int
+id|ramdisk_size
+suffix:semicolon
 DECL|variable|command_line
 r_static
 r_char
@@ -725,13 +731,18 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 id|line
 op_assign
 id|next
 )paren
+op_ne
+l_int|NULL
+)paren
 (brace
 r_if
 c_cond
+(paren
 (paren
 id|next
 op_assign
@@ -742,6 +753,9 @@ id|line
 comma
 l_char|&squot; &squot;
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 op_star
 id|next
@@ -895,6 +909,10 @@ suffix:semicolon
 id|memory_end
 op_and_assign
 l_int|0xfffff000
+suffix:semicolon
+id|ramdisk_size
+op_assign
+id|RAMDISK_SIZE
 suffix:semicolon
 macro_line|#ifdef MAX_16M
 r_if

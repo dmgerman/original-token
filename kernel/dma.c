@@ -1,4 +1,4 @@
-multiline_comment|/* $Header: /sys/linux-0.97/kernel/RCS/dma.c,v 1.4 1992/09/18 02:54:14 root Exp $&n; * linux/kernel/dma.c: A DMA channel allocator. Inspired by linux/kernel/irq.c.&n; * Written by Hennus Bergman, 1992. &n; */
+multiline_comment|/* $Id: dma.c,v 1.5 1992/11/18 02:49:05 root Exp root $&n; * linux/kernel/dma.c: A DMA channel allocator. Inspired by linux/kernel/irq.c.&n; * Written by Hennus Bergman, 1992. &n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -35,9 +35,9 @@ suffix:semicolon
 multiline_comment|/* Atomically swap memory location [32 bits] with `newval&squot;.&n; * This avoid the cli()/sti() junk and related problems.&n; * [And it&squot;s faster too :-)]&n; * Maybe this should be in include/asm/mutex.h and be used for&n; * implementing kernel-semaphores as well.&n; */
 DECL|function|mutex_atomic_swap
 r_static
-r_int
-r_int
 id|__inline__
+r_int
+r_int
 id|mutex_atomic_swap
 c_func
 (paren

@@ -1,7 +1,7 @@
 multiline_comment|/* loopback.c contains the loopback device functions. */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: loopback.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: loopback.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
+multiline_comment|/* $Id: loopback.c,v 0.8.4.3 1992/11/18 15:38:03 bir7 Exp $ */
+multiline_comment|/* $Log: loopback.c,v $&n; * Revision 0.8.4.3  1992/11/18  15:38:03  bir7&n; * Fixed bug in start_xmit.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -23,7 +23,17 @@ macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
-macro_line|#include &quot;../kern_sock.h&quot; /* for PRINTK */
+macro_line|#ifdef PRINTK
+DECL|macro|PRINTK
+macro_line|#undef PRINTK
+macro_line|#endif
+macro_line|#ifdef LOOPBACK_DEBUG
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK printk
+macro_line|#else
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK dummy_routine
+macro_line|#endif
 r_static
 r_int
 DECL|function|loopback_xmit
@@ -109,10 +119,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|tmp
+id|done
 op_assign
-l_int|NULL
+op_minus
+l_int|1
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|done
+op_eq
+op_minus
+l_int|1
+)paren
 id|done
 op_assign
 id|dev_rint
@@ -147,6 +166,14 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
+id|tmp
+op_assign
+l_int|NULL
+suffix:semicolon
+id|i
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -180,7 +207,7 @@ l_int|0
 multiline_comment|/* print out the buffer. */
 id|PRINTK
 (paren
-l_string|&quot;ethernet xmit: &bslash;n&quot;
+l_string|&quot;loopback xmit: &bslash;n&quot;
 )paren
 suffix:semicolon
 id|eth
@@ -222,20 +249,37 @@ op_ne
 op_minus
 l_int|1
 )paren
+(brace
 id|tmp
 op_assign
 l_int|NULL
 suffix:semicolon
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|0
+)paren
+id|tmp
+op_assign
+l_int|NULL
+suffix:semicolon
 id|done
 op_assign
 id|dev_rint
 (paren
 id|tmp
 comma
-l_int|0
+id|i
 comma
 l_int|0
 comma

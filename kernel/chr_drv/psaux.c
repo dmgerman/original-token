@@ -166,8 +166,8 @@ id|AUX_OUTPUT_PORT
 suffix:semicolon
 multiline_comment|/* write data */
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * Write to device &amp; handle returned ack&n; */
-DECL|function|aux_write_ack
 r_static
 r_int
 id|aux_write_ack
@@ -231,6 +231,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Write aux device command&n; */
 DECL|function|aux_write_cmd
 r_static

@@ -1,21 +1,21 @@
 multiline_comment|/*&n; *&t;ultrastor.c&t;Copyright (C) 1992 David B. Gentzel&n; *&t;Low-level SCSI driver for UltraStor 14F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
 multiline_comment|/*&n; * NOTES:&n; *    The UltraStor 14F is an intelligent, high performance ISA SCSI-2 host&n; *    adapter.  It is essentially an ISA version of the UltraStor 24F EISA&n; *    adapter.  It supports first-party DMA, command queueing, and&n; *    scatter/gather I/O.  It can also emulate the standard AT MFM/RLL/IDE&n; *    interface for use with OS&squot;s which don&squot;t support SCSI.&n; *&n; *    This driver may also work (with some small changes) with the UltraStor&n; *    24F.  I have no way of confirming this...&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
 multiline_comment|/*&n; * CAVEATS: ???&n; *    This driver is VERY stupid.  It takes no advantage of much of the power&n; *    of the UltraStor controller.  I hope to go back and beat it into shape,&n; *    but PLEASE, anyone else who would like to, please make improvements!&n; *&n; *    By defining NO_QUEUEING in ultrastor.h, you disable the queueing feature&n; *    of the mid-level SCSI driver.  Once I&squot;m satisfied that the queueing&n; *    version is as stable as the non-queueing version, I&squot;ll eliminate this&n; *    option.&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 DECL|macro|ULTRASTOR_PRIVATE
 mdefine_line|#define ULTRASTOR_PRIVATE&t;/* Get the private stuff from ultrastor.h */
-macro_line|#include &quot;ultrastor.h&quot;
+macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &quot;ultrastor.h&quot;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;1.0 beta&quot;
+mdefine_line|#define VERSION &quot;1.1 alpha&quot;
 DECL|macro|ARRAY_SIZE
 mdefine_line|#define ARRAY_SIZE(arr) (sizeof (arr) / sizeof (arr)[0])
 DECL|macro|BIT
@@ -479,6 +479,7 @@ id|aborted
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* A probe of address 0x310 screws up NE2000 cards */
 macro_line|#ifndef PORT_OVERRIDE
 DECL|variable|ultrastor_ports
 r_static
@@ -494,8 +495,7 @@ l_int|0x330
 comma
 l_int|0x340
 comma
-l_int|0x310
-comma
+multiline_comment|/* 0x310,*/
 l_int|0x230
 comma
 l_int|0x240
@@ -526,12 +526,19 @@ op_star
 id|ultrastor_done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|SCint
+r_static
+id|Scsi_Cmnd
+op_star
+id|SCint
+op_assign
+l_int|NULL
 suffix:semicolon
 r_static
 r_const
@@ -1047,45 +1054,22 @@ op_assign
 id|config.ha_scsi_id
 suffix:semicolon
 macro_line|#ifndef NO_QUEUEING
-(brace
-r_struct
-id|sigaction
-id|sa
-suffix:semicolon
-id|sa.sa_handler
-op_assign
-id|ultrastor_interrupt
-suffix:semicolon
-id|sa.sa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|sa.sa_flags
-op_assign
-id|SA_INTERRUPT
-suffix:semicolon
-multiline_comment|/* ??? Do we really need this? */
-id|sa.sa_restorer
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|irqaction
+id|request_irq
 c_func
 (paren
 id|config.interrupt
 comma
-op_amp
-id|sa
+id|ultrastor_interrupt
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get IRQ%u for UltraStor controller&bslash;n&quot;
+l_string|&quot;Unable to allocate IRQ%u for UltraStor controller.&bslash;n&quot;
 comma
 id|config.interrupt
 )paren
@@ -1094,8 +1078,37 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-)brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|request_dma
+c_func
+(paren
+id|config.dma_channel
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to allocate DMA channel %u for UltraStor controller.&bslash;n&quot;
+comma
+id|config.dma_channel
+)paren
+suffix:semicolon
+macro_line|#ifndef NO_QUEUEING
+id|free_irq
+c_func
+(paren
+id|config.interrupt
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+id|FALSE
+suffix:semicolon
+)brace
 r_return
 id|TRUE
 suffix:semicolon
@@ -1113,7 +1126,6 @@ r_void
 r_return
 l_string|&quot;UltraStor 14F SCSI driver version &quot;
 id|VERSION
-l_string|&quot; by David B. Gentzel&bslash;n&quot;
 suffix:semicolon
 )brace
 DECL|variable|mscp
@@ -1140,21 +1152,9 @@ r_int
 id|ultrastor_14f_queuecommand
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
+id|SCpnt
 comma
 r_void
 (paren
@@ -1162,9 +1162,8 @@ op_star
 id|done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 )paren
 (brace
@@ -1206,9 +1205,12 @@ l_int|1
 suffix:semicolon
 id|mscp.target_id
 op_assign
-id|target
+id|SCpnt-&gt;target
 suffix:semicolon
-multiline_comment|/* mscp.lun = ???; */
+id|mscp.lun
+op_assign
+id|SCpnt-&gt;lun
+suffix:semicolon
 id|mscp.transfer_data
 op_assign
 op_star
@@ -1217,7 +1219,7 @@ id|Longword
 op_star
 )paren
 op_amp
-id|buff
+id|SCpnt-&gt;request_buffer
 suffix:semicolon
 id|mscp.transfer_data_length
 op_assign
@@ -1227,8 +1229,8 @@ id|Longword
 op_star
 )paren
 op_amp
-id|bufflen
-comma
+id|SCpnt-&gt;request_bufflen
+suffix:semicolon
 id|mscp.length_of_scsi_cdbs
 op_assign
 (paren
@@ -1239,7 +1241,7 @@ r_int
 r_char
 op_star
 )paren
-id|cmnd
+id|SCpnt-&gt;cmnd
 op_le
 l_int|0x1F
 )paren
@@ -1255,7 +1257,7 @@ c_func
 (paren
 id|mscp.scsi_cdbs
 comma
-id|cmnd
+id|SCpnt-&gt;cmnd
 comma
 id|mscp.length_of_scsi_cdbs
 )paren
@@ -1412,6 +1414,10 @@ id|ultrastor_done
 op_assign
 id|done
 suffix:semicolon
+id|SCint
+op_assign
+id|SCpnt
+suffix:semicolon
 macro_line|#if (ULTRASTOR_DEBUG &amp; UD_COMMAND)
 id|printk
 c_func
@@ -1430,21 +1436,8 @@ r_int
 id|ultrastor_14f_command
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
-op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
+id|Scsi_Cmnd
+id|SCpnt
 )paren
 (brace
 r_int
@@ -1465,15 +1458,9 @@ r_void
 id|ultrastor_14f_queuecommand
 c_func
 (paren
-id|target
+id|SCpnt
 comma
-id|cmnd
-comma
-id|buff
-comma
-id|bufflen
-comma
-l_int|0
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Wait for ICM interrupt */
@@ -1573,6 +1560,10 @@ r_int
 id|ultrastor_14f_abort
 c_func
 (paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+comma
 r_int
 id|code
 )paren
@@ -1727,9 +1718,8 @@ op_star
 id|done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Save ultrastor_done locally and zero before calling.  This is needed&n;&t;   as once we call done, we may get another command queued before this&n;&t;   interrupt service routine can return. */
@@ -1756,11 +1746,8 @@ id|PORT_ADDRESS
 suffix:semicolon
 multiline_comment|/* Let the higher levels know that we&squot;re done */
 multiline_comment|/* ??? status is wrong here... */
-id|done
-c_func
-(paren
-id|host_number
-comma
+id|SCint-&gt;result
+op_assign
 (paren
 id|mscp.adapter_status
 op_lshift
@@ -1768,6 +1755,11 @@ l_int|16
 )paren
 op_or
 id|mscp.target_status
+suffix:semicolon
+id|done
+c_func
+(paren
+id|SCint
 )paren
 suffix:semicolon
 )brace
@@ -1780,6 +1772,5 @@ l_string|&quot;US14F: interrupt: returning&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

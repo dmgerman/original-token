@@ -12,8 +12,8 @@ op_star
 id|addr
 )paren
 (brace
-r_int
 r_register
+r_int
 r_char
 id|_v
 suffix:semicolon

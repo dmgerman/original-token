@@ -190,6 +190,30 @@ r_int
 id|flag
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|rd_load
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|rd_init
+c_func
+(paren
+r_int
+id|mem_start
+comma
+r_int
+id|length
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ramdisk_size
+suffix:semicolon
 DECL|macro|RO_IOCTLS
 mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EPERM; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: verify_area((void *) (where), sizeof(long)); &bslash;&n;&t;&t; put_fs_long(is_read_only(dev),(long *) (where)); return 0;
 macro_line|#ifdef MAJOR_NR
@@ -312,7 +336,7 @@ mdefine_line|#define SET_TIMER &bslash;&n;((timer_table[DEVICE_TIMEOUT].expires 
 DECL|macro|CLEAR_TIMER
 mdefine_line|#define CLEAR_TIMER &bslash;&n;timer_active &amp;= ~(1&lt;&lt;DEVICE_TIMEOUT)
 DECL|macro|SET_INTR
-mdefine_line|#define SET_INTR(x) &bslash;&n;if (DEVICE_INTR = (x)) &bslash;&n;&t;SET_TIMER; &bslash;&n;else &bslash;&n;&t;CLEAR_TIMER;
+mdefine_line|#define SET_INTR(x) &bslash;&n;if ((DEVICE_INTR = (x)) != NULL) &bslash;&n;&t;SET_TIMER; &bslash;&n;else &bslash;&n;&t;CLEAR_TIMER;
 macro_line|#else
 DECL|macro|SET_INTR
 mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))
@@ -364,6 +388,8 @@ id|bh-&gt;b_wait
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* SCSI devices have their own version */
+macro_line|#if (MAJOR_NR != 8 &amp;&amp; MAJOR_NR != 9 &amp;&amp; MAJOR_NR != 11)
 DECL|function|end_request
 r_static
 r_void
@@ -446,9 +472,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|bh
 op_assign
 id|req-&gt;bh
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 id|req-&gt;bh
@@ -472,9 +502,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|bh
 op_assign
 id|req-&gt;bh
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 id|req-&gt;current_nr_sectors
@@ -523,9 +557,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|p
 op_assign
 id|req-&gt;waiting
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 id|req-&gt;waiting
@@ -561,6 +599,7 @@ id|wait_for_request
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef DEVICE_INTR
 DECL|macro|CLEAR_INTR
 mdefine_line|#define CLEAR_INTR SET_INTR(NULL)

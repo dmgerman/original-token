@@ -511,10 +511,6 @@ r_int
 id|regs
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* re-enable the irq when returning */
 )brace
 multiline_comment|/*&n; * do_fast_IRQ handles IRQ&squot;s that don&squot;t need the fancy interrupt return&n; * stuff - the handler is also running with interrupts disabled unless&n; * it explicitly enables them later.&n; */
 DECL|function|do_fast_IRQ
@@ -543,10 +539,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* re-enable the irq when returning */
 )brace
 DECL|function|irqaction
 r_int

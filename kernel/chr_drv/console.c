@@ -2,8 +2,6 @@ multiline_comment|/*&n; *  linux/kernel/console.c&n; *&n; *  Copyright (C) 1991,
 multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;void con_open(struct tty_queue * queue, struct )&squot;&n; * &t;&squot;void update_screen(int new_console)&squot;&n; * &t;&squot;void blank_screen(void)&squot;&n; * &t;&squot;void unblank_screen(void)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; */
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 multiline_comment|/*&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; */
-DECL|macro|KEYBOARD_IRQ
-mdefine_line|#define KEYBOARD_IRQ 1
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -12,6 +10,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
+macro_line|#include &lt;linux/keyboard.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -28,65 +27,11 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|keyboard_interrupt
-c_func
-(paren
-r_int
-id|pt_regs
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|set_leds
 c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|kapplic
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|ckmode
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|krepeat
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|default_kleds
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|kleds
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|kmode
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|kraw
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|ke0
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|lfnlmode
 suffix:semicolon
 DECL|variable|video_num_columns
 r_int
@@ -551,22 +496,16 @@ DECL|macro|video_mem_end
 mdefine_line|#define video_mem_end&t;(vc_cons[currcons].vc_video_mem_end)
 DECL|macro|video_erase_char
 mdefine_line|#define video_erase_char (vc_cons[currcons].vc_video_erase_char)&t;
-DECL|macro|decckm
-mdefine_line|#define decckm&t;&t;(vc_cons[currcons].vc_decckm)
 DECL|macro|decscnm
 mdefine_line|#define decscnm&t;&t;(vc_cons[currcons].vc_decscnm)
 DECL|macro|decom
 mdefine_line|#define decom&t;&t;(vc_cons[currcons].vc_decom)
 DECL|macro|decawm
 mdefine_line|#define decawm&t;&t;(vc_cons[currcons].vc_decawm)
-DECL|macro|decarm
-mdefine_line|#define decarm&t;&t;(vc_cons[currcons].vc_decarm)
 DECL|macro|deccm
 mdefine_line|#define deccm&t;&t;(vc_cons[currcons].vc_deccm)
 DECL|macro|decim
 mdefine_line|#define decim&t;&t;(vc_cons[currcons].vc_decim)
-DECL|macro|lnm
-mdefine_line|#define lnm&t;&t;(vc_cons[currcons].vc_lnm)
 DECL|macro|kbdapplic
 mdefine_line|#define kbdapplic&t;(vc_cons[currcons].vc_kbdapplic)
 DECL|macro|need_wrap
@@ -609,14 +548,22 @@ DECL|macro|kbdmode
 mdefine_line|#define kbdmode&t;&t;(vc_cons[currcons].vc_kbdmode)
 DECL|macro|tab_stop
 mdefine_line|#define tab_stop&t;(vc_cons[currcons].vc_tab_stop)
-DECL|macro|kbdraw
-mdefine_line|#define kbdraw&t;&t;(vt_cons[currcons].vc_kbdraw)
-DECL|macro|kbdleds
-mdefine_line|#define kbdleds&t;&t;(vt_cons[currcons].vc_kbdleds)
 DECL|macro|vtmode
 mdefine_line|#define vtmode&t;&t;(vt_cons[currcons].vt_mode)
-DECL|macro|SET
-mdefine_line|#define SET(mode,fg,v) &bslash;&n;&t;(mode) = (v); &bslash;&n;&t;if (currcons == fg_console) &bslash;&n;&t;&t;(fg) = (v)
+DECL|macro|set_kbd
+mdefine_line|#define set_kbd(x) set_vc_kbd_flag(kbd_table+currcons,x)
+DECL|macro|clr_kbd
+mdefine_line|#define clr_kbd(x) clr_vc_kbd_flag(kbd_table+currcons,x)
+DECL|macro|is_kbd
+mdefine_line|#define is_kbd(x) vc_kbd_flag(kbd_table+currcons,x)
+DECL|macro|decarm
+mdefine_line|#define decarm&t;&t;VC_REPEAT
+DECL|macro|decckm
+mdefine_line|#define decckm&t;&t;VC_APPLIC
+DECL|macro|kbdraw
+mdefine_line|#define kbdraw&t;&t;VC_RAW
+DECL|macro|lnm
+mdefine_line|#define lnm&t;&t;VC_CRLF
 DECL|variable|blankinterval
 r_int
 id|blankinterval
@@ -2841,14 +2788,22 @@ r_case
 l_int|1
 suffix:colon
 multiline_comment|/* Cursor keys send ^[Ox/^[[x */
-id|SET
+r_if
+c_cond
+(paren
+id|on_off
+)paren
+id|set_kbd
 c_func
 (paren
 id|decckm
-comma
-id|ckmode
-comma
-id|on_off
+)paren
+suffix:semicolon
+r_else
+id|clr_kbd
+c_func
+(paren
+id|decckm
 )paren
 suffix:semicolon
 r_break
@@ -2942,14 +2897,22 @@ r_case
 l_int|8
 suffix:colon
 multiline_comment|/* Autorepeat on/off */
-id|SET
+r_if
+c_cond
+(paren
+id|on_off
+)paren
+id|set_kbd
 c_func
 (paren
 id|decarm
-comma
-id|krepeat
-comma
-id|on_off
+)paren
+suffix:semicolon
+r_else
+id|clr_kbd
+c_func
+(paren
+id|decarm
 )paren
 suffix:semicolon
 r_break
@@ -2996,14 +2959,22 @@ r_case
 l_int|20
 suffix:colon
 multiline_comment|/* Lf, Enter == CrLf/Lf */
-id|SET
+r_if
+c_cond
+(paren
+id|on_off
+)paren
+id|set_kbd
 c_func
 (paren
 id|lnm
-comma
-id|lfnlmode
-comma
-id|on_off
+)paren
+suffix:semicolon
+r_else
+id|clr_kbd
+c_func
+(paren
+id|lnm
 )paren
 suffix:semicolon
 r_break
@@ -3768,35 +3739,63 @@ id|decim
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
+id|set_kbd
+c_func
 (paren
-id|currcons
-op_eq
-id|fg_console
+id|decarm
 )paren
-(brace
-id|krepeat
-op_assign
-l_int|1
 suffix:semicolon
-id|ckmode
-op_assign
-l_int|0
+id|clr_kbd
+c_func
+(paren
+id|decckm
+)paren
 suffix:semicolon
-id|kapplic
-op_assign
-l_int|0
+id|clr_kbd
+c_func
+(paren
+id|kbdapplic
+)paren
 suffix:semicolon
-id|lfnlmode
-op_assign
-l_int|0
+id|clr_kbd
+c_func
+(paren
+id|lnm
+)paren
 suffix:semicolon
-id|kleds
+DECL|macro|is_kbd
+mdefine_line|#define is_kbd(x) vc_kbd_flag(kbd_table+currcons,x)
+id|kbd_table
+(braket
+id|currcons
+)braket
+dot
+id|flags
 op_assign
-id|default_kleds
+(paren
+id|kbd_table
+(braket
+id|currcons
+)braket
+dot
+id|flags
+op_amp
+op_complement
+id|LED_MASK
+)paren
+op_or
+(paren
+id|kbd_table
+(braket
+id|currcons
+)braket
+dot
+id|default_flags
+op_amp
+id|LED_MASK
+)paren
 suffix:semicolon
-id|kmode
+id|kbdmode
 op_assign
 l_int|0
 suffix:semicolon
@@ -3805,34 +3804,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|decarm
-op_assign
-l_int|1
-suffix:semicolon
-id|decckm
-op_assign
-l_int|0
-suffix:semicolon
-id|kbdapplic
-op_assign
-l_int|0
-suffix:semicolon
-id|lnm
-op_assign
-l_int|0
-suffix:semicolon
-id|kbdleds
-op_assign
-id|default_kleds
-suffix:semicolon
-id|kbdmode
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 id|default_attr
 c_func
 (paren
@@ -4178,7 +4149,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|lfnlmode
+id|is_kbd
+c_func
+(paren
+id|lnm
+)paren
 )paren
 r_continue
 suffix:semicolon
@@ -4431,15 +4406,9 @@ r_case
 l_char|&squot;&gt;&squot;
 suffix:colon
 multiline_comment|/* Numeric keypad */
-id|SET
-c_func
-(paren
 id|kbdapplic
-comma
-id|kapplic
-comma
+op_assign
 l_int|0
-)paren
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -4447,15 +4416,9 @@ r_case
 l_char|&squot;=&squot;
 suffix:colon
 multiline_comment|/* Appl. keypad */
-id|SET
-c_func
-(paren
 id|kbdapplic
-comma
-id|kapplic
-comma
+op_assign
 l_int|1
-)paren
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -4512,9 +4475,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
 id|ques
 op_assign
 (paren
@@ -4522,6 +4482,11 @@ id|c
 op_eq
 l_char|&squot;?&squot;
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ques
 )paren
 r_continue
 suffix:semicolon
@@ -5688,11 +5653,6 @@ r_int
 id|kmem_start
 )paren
 (brace
-r_register
-r_int
-r_char
-id|a
-suffix:semicolon
 r_char
 op_star
 id|display_desc
@@ -6017,9 +5977,11 @@ id|vtmode
 op_assign
 id|KD_TEXT
 suffix:semicolon
+id|clr_kbd
+c_func
+(paren
 id|kbdraw
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 id|def_color
 op_assign
@@ -6103,55 +6065,11 @@ c_func
 id|fg_console
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|KEYBOARD_IRQ
-comma
-id|keyboard_interrupt
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Unable to get IRQ%d for keyboard driver&bslash;n&quot;
-comma
-id|KEYBOARD_IRQ
-)paren
-suffix:semicolon
-id|a
-op_assign
-id|inb_p
-c_func
-(paren
-l_int|0x61
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-id|a
-op_or
-l_int|0x80
-comma
-l_int|0x61
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-id|a
-comma
-l_int|0x61
-)paren
-suffix:semicolon
 r_return
 id|kmem_start
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * kbdsave doesn&squot;t need to do anything: it&squot;s all handled automatically&n; * with the new data structures..&n; */
 DECL|function|kbdsave
 r_void
 id|kbdsave
@@ -6161,86 +6079,6 @@ r_int
 id|new_console
 )paren
 (brace
-r_int
-id|currcons
-op_assign
-id|fg_console
-suffix:semicolon
-id|kbdmode
-op_assign
-id|kmode
-suffix:semicolon
-id|kbdraw
-op_assign
-id|kraw
-suffix:semicolon
-id|kbdleds
-op_assign
-id|kleds
-suffix:semicolon
-id|kbdapplic
-op_assign
-id|kapplic
-suffix:semicolon
-id|decckm
-op_assign
-id|ckmode
-suffix:semicolon
-id|decarm
-op_assign
-id|krepeat
-suffix:semicolon
-id|lnm
-op_assign
-id|lfnlmode
-suffix:semicolon
-id|currcons
-op_assign
-id|new_console
-suffix:semicolon
-id|kmode
-op_assign
-(paren
-id|kmode
-op_amp
-l_int|0x3F
-)paren
-op_or
-(paren
-id|kbdmode
-op_amp
-l_int|0xC0
-)paren
-suffix:semicolon
-id|kraw
-op_assign
-id|kbdraw
-suffix:semicolon
-id|kleds
-op_assign
-id|kbdleds
-suffix:semicolon
-id|kapplic
-op_assign
-id|kbdapplic
-suffix:semicolon
-id|ckmode
-op_assign
-id|decckm
-suffix:semicolon
-id|krepeat
-op_assign
-id|decarm
-suffix:semicolon
-id|lfnlmode
-op_assign
-id|lnm
-suffix:semicolon
-id|set_leds
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|get_scrmem
 r_static
@@ -6553,6 +6391,11 @@ c_func
 id|new_console
 )paren
 suffix:semicolon
+id|set_leds
+c_func
+(paren
+)paren
+suffix:semicolon
 id|lock
 op_assign
 l_int|0
@@ -6852,6 +6695,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 id|c
 op_assign
 op_star
@@ -6859,6 +6703,9 @@ op_star
 id|b
 op_increment
 )paren
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 r_if

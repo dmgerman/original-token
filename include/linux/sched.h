@@ -14,6 +14,14 @@ multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
+r_extern
+r_int
+r_int
+id|avenrun
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* Load averages */
 DECL|macro|FSHIFT
 mdefine_line|#define FSHIFT&t;&t;11&t;&t;/* nr of bits of precision */
 DECL|macro|FIXED_1
@@ -62,7 +70,7 @@ DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
 DECL|macro|MAX_SHARED_LIBS
-mdefine_line|#define MAX_SHARED_LIBS 6
+mdefine_line|#define MAX_SHARED_LIBS 16
 r_extern
 r_void
 id|sched_init
@@ -208,7 +216,7 @@ id|regs
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* 8*16 bytes for each FP-reg = 112 bytes */
+multiline_comment|/* 8*16 bytes for each FP-reg = 128 bytes */
 DECL|member|lookahead
 r_int
 r_char
@@ -746,7 +754,7 @@ DECL|macro|PF_TRACESYS
 mdefine_line|#define PF_TRACESYS&t;0x00000020&t;/* tracing system calls */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0,0,0, &bslash;&n;/* flags */&t;0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{0,}, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0c0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0c0f200}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t; 0x10,0,0,0,0,(long) &amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, } } &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{ 0, },},0,0,0, &bslash;&n;/* flags */&t;0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0c0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0c0f200}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t; 0x10,0,0,0,0,(long) &amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -1341,9 +1349,9 @@ suffix:semicolon
 )brace
 DECL|function|_get_base
 r_static
-r_int
-r_int
 r_inline
+r_int
+r_int
 id|_get_base
 c_func
 (paren
@@ -1414,9 +1422,9 @@ DECL|macro|get_base
 mdefine_line|#define get_base(ldt) _get_base( ((char *)&amp;(ldt)) )
 DECL|function|get_limit
 r_static
-r_int
-r_int
 r_inline
+r_int
+r_int
 id|get_limit
 c_func
 (paren
@@ -1454,6 +1462,6 @@ suffix:semicolon
 DECL|macro|REMOVE_LINKS
 mdefine_line|#define REMOVE_LINKS(p) &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr
 DECL|macro|SET_LINKS
-mdefine_line|#define SET_LINKS(p) &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if ((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p
+mdefine_line|#define SET_LINKS(p) &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p
 macro_line|#endif
 eof

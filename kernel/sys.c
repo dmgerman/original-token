@@ -599,9 +599,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|tmp
 op_assign
 id|tsk-&gt;tss.cr3
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|tmp

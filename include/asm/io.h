@@ -18,8 +18,8 @@ mdefine_line|#define SLOW_DOWN_IO __SLOW_DOWN_IO
 macro_line|#endif
 DECL|function|outb
 r_extern
-r_void
 r_inline
+r_void
 id|outb
 c_func
 (paren
@@ -57,9 +57,9 @@ suffix:semicolon
 )brace
 DECL|function|inb
 r_extern
-r_int
-r_int
 r_inline
+r_int
+r_int
 id|inb
 c_func
 (paren
@@ -103,8 +103,8 @@ suffix:semicolon
 )brace
 DECL|function|outb_p
 r_extern
-r_void
 r_inline
+r_void
 id|outb_p
 c_func
 (paren
@@ -144,9 +144,9 @@ suffix:semicolon
 )brace
 DECL|function|inb_p
 r_extern
-r_int
-r_int
 r_inline
+r_int
+r_int
 id|inb_p
 c_func
 (paren

@@ -454,6 +454,17 @@ op_star
 id|task
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|si_meminfo
+c_func
+(paren
+r_struct
+id|sysinfo
+op_star
+id|val
+)paren
+suffix:semicolon
 multiline_comment|/* swap.c */
 r_extern
 r_void
@@ -484,6 +495,17 @@ r_int
 r_int
 op_star
 id|table_ptr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|si_swapinfo
+c_func
+(paren
+r_struct
+id|sysinfo
+op_star
+id|val
 )paren
 suffix:semicolon
 DECL|macro|invalidate

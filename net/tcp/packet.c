@@ -1,7 +1,7 @@
 multiline_comment|/* packet.c - implements raw packet sockets. */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: packet.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: packet.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ &n; * */
+multiline_comment|/* $Id: packet.c,v 0.8.4.3 1992/11/17 14:19:47 bir7 Exp $ */
+multiline_comment|/* $Log: packet.c,v $&n; * Revision 0.8.4.3  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ &n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -327,16 +327,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-id|verify_area
-(paren
-id|usin
-comma
-r_sizeof
-(paren
-id|saddr
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*&t;verify_area (usin, sizeof (saddr));*/
 id|memcpy_fromfs
 (paren
 op_amp
@@ -467,13 +458,7 @@ id|ENXIO
 )paren
 suffix:semicolon
 )brace
-id|verify_area
-(paren
-id|from
-comma
-id|len
-)paren
-suffix:semicolon
+multiline_comment|/*   verify_area (from, len);*/
 id|memcpy_fromfs
 (paren
 id|skb

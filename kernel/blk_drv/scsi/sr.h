@@ -1,14 +1,8 @@
-multiline_comment|/*&n; *      sr.h by David Giller&n; *      CD-ROM disk driver header file&n; *      &n; *      adapted from:&n; *&t;sd.h Copyright (C) 1992 Drew Eckhardt &n; *&t;SCSI disk driver header file by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
+multiline_comment|/*&n; *      sr.h by David Giller&n; *      CD-ROM disk driver header file&n; *      &n; *      adapted from:&n; *&t;sd.h Copyright (C) 1992 Drew Eckhardt &n; *&t;SCSI disk driver header file by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale eric@tantalus.nrl.navy.mil to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
 macro_line|#ifndef _SR_H
 DECL|macro|_SR_H
 mdefine_line|#define _SR_H
 macro_line|#include &quot;scsi.h&quot;
-DECL|macro|MAX_SR
-mdefine_line|#define MAX_SR 2
-r_extern
-r_int
-id|NR_SR
-suffix:semicolon
 r_typedef
 r_struct
 (brace
@@ -66,28 +60,8 @@ id|Scsi_CD
 suffix:semicolon
 r_extern
 id|Scsi_CD
+op_star
 id|scsi_CDs
-(braket
-id|MAX_SR
-)braket
 suffix:semicolon
-r_int
-r_int
-id|sr_init
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-DECL|macro|SR_HOST
-mdefine_line|#define SR_HOST (scsi_CDs[DEVICE_NR(CURRENT-&gt;dev)].device-&gt;host_no)
-DECL|macro|SR_ID
-mdefine_line|#define SR_ID (scsi_CDs[DEVICE_NR(CURRENT-&gt;dev)].device-&gt;id)
-DECL|macro|SR_LUN
-mdefine_line|#define SR_LUN (scsi_CDs[DEVICE_NR(CURRENT-&gt;dev)].device-&gt;lun)
 macro_line|#endif
 eof

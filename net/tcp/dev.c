@@ -1,7 +1,7 @@
 multiline_comment|/* dev.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: dev.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: dev.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ &n; *&n; */
+multiline_comment|/* $Id: dev.c,v 0.8.4.4 1992/11/18 15:38:03 bir7 Exp $ */
+multiline_comment|/* $Log: dev.c,v $&n; * Revision 0.8.4.4  1992/11/18  15:38:03  bir7&n; * Fixed bug in copying packets and changed some printk&squot;s&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * More sanity checks.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ &n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -309,7 +309,7 @@ id|skb2
 suffix:semicolon
 id|PRINTK
 (paren
-l_string|&quot;eth_queue_xmit (skb=%X, dev=%X, pri = %d)&bslash;n&quot;
+l_string|&quot;dev_queue_xmit (skb=%X, dev=%X, pri = %d)&bslash;n&quot;
 comma
 id|skb
 comma
@@ -318,6 +318,22 @@ comma
 id|pri
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;dev.c: dev_queue_xmit: dev = NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -382,15 +398,10 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* used to say it is not currently on a send list. */
-id|skb-&gt;next
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* put skb into a bidirectional circular linked list. */
 id|PRINTK
 (paren
-l_string|&quot;eth_queue dev-&gt;buffs[%d]=%X&bslash;n&quot;
+l_string|&quot;dev_queue_xmit dev-&gt;buffs[%d]=%X&bslash;n&quot;
 comma
 id|pri
 comma
@@ -983,6 +994,32 @@ id|skb2-&gt;mem_addr
 op_assign
 id|skb2
 suffix:semicolon
+id|skb2-&gt;h.raw
+op_assign
+(paren
+r_void
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|skb2
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|skb-&gt;h.raw
+op_minus
+(paren
+r_int
+r_int
+)paren
+id|skb
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1157,11 +1194,6 @@ id|skb-&gt;prev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|tmp
 op_assign
 id|skb-&gt;len
@@ -1189,6 +1221,11 @@ id|dev
 id|skb-&gt;dev
 op_assign
 id|dev
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 id|arp_queue
 (paren
@@ -1272,6 +1309,11 @@ l_string|&quot;**** bug len bigger than mtu. &bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

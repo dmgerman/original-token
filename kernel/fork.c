@@ -929,12 +929,16 @@ op_increment
 r_if
 c_cond
 (paren
+(paren
 id|f
 op_assign
 id|p-&gt;filp
 (braket
 id|i
 )braket
+)paren
+op_ne
+l_int|NULL
 )paren
 id|f-&gt;f_count
 op_increment

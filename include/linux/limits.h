@@ -1,29 +1,8 @@
 macro_line|#ifndef _LINUX_LIMITS_H
 DECL|macro|_LINUX_LIMITS_H
 mdefine_line|#define _LINUX_LIMITS_H
-DECL|macro|NAME_MAX
-mdefine_line|#define NAME_MAX 255
-multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
 DECL|macro|NR_OPEN
-mdefine_line|#define NR_OPEN 256
-DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 128
-DECL|macro|NR_FILE
-mdefine_line|#define NR_FILE 128
-DECL|macro|NR_SUPER
-mdefine_line|#define NR_SUPER 16
-DECL|macro|NR_HASH
-mdefine_line|#define NR_HASH 997
-DECL|macro|NR_FILE_LOCKS
-mdefine_line|#define NR_FILE_LOCKS 32
-DECL|macro|BLOCK_SIZE
-mdefine_line|#define BLOCK_SIZE 1024
-DECL|macro|BLOCK_SIZE_BITS
-mdefine_line|#define BLOCK_SIZE_BITS 10
-DECL|macro|MAX_CHRDEV
-mdefine_line|#define MAX_CHRDEV 32
-DECL|macro|MAX_BLKDEV
-mdefine_line|#define MAX_BLKDEV 32
+mdefine_line|#define NR_OPEN&t;&t; 256
 DECL|macro|NGROUPS_MAX
 mdefine_line|#define NGROUPS_MAX       32&t;/* supplemental group IDs are available */
 DECL|macro|ARG_MAX

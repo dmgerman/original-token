@@ -104,6 +104,10 @@ op_star
 id|pop_ptr
 suffix:semicolon
 multiline_comment|/* We need a version of FPU_st0_ptr which won&squot;t change. */
+id|pop_ptr
+op_assign
+l_int|NULL
+suffix:semicolon
 r_switch
 c_cond
 (paren

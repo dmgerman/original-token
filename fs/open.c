@@ -1730,9 +1730,6 @@ id|f-&gt;f_flags
 op_assign
 id|flag
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|f-&gt;f_mode
 op_assign
 (paren
@@ -1742,6 +1739,11 @@ l_int|1
 )paren
 op_amp
 id|O_ACCMODE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|f-&gt;f_mode
 )paren
 id|flag
 op_increment
@@ -1912,9 +1914,7 @@ id|f-&gt;f_op
 op_logical_and
 id|f-&gt;f_op-&gt;open
 )paren
-r_if
-c_cond
-(paren
+(brace
 id|i
 op_assign
 id|f-&gt;f_op
@@ -1926,6 +1926,11 @@ id|inode
 comma
 id|f
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
 (brace
 id|iput
@@ -1947,6 +1952,7 @@ suffix:semicolon
 r_return
 id|i
 suffix:semicolon
+)brace
 )brace
 id|f-&gt;f_flags
 op_and_assign
@@ -2230,9 +2236,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|p
 op_assign
 id|tmp-&gt;task
+)paren
+op_ne
+l_int|NULL
 )paren
 id|send_sig
 (paren

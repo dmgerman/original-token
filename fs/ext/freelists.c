@@ -3,6 +3,7 @@ multiline_comment|/* freelists.c contains the code that handles the inode and bl
 multiline_comment|/*&n;&n;   The free blocks are managed by a linked list. The super block contains the&n;   number of the first free block. This block contains 254 numbers of other&n;   free blocks and the number of the next block in the list.&n;&n;   When an ext fs is mounted, the number of the first free block is stored&n;   in s-&gt;u.ext_sb.s_firstfreeblocknumber and the block header is stored in&n;   s-&gt;u.ext_sb.s_firstfreeblock. u.ext_sb.s_freeblockscount contains the count&n;   of free blocks.&n;&n;   The free inodes are also managed by a linked list in a similar way. The&n;   super block contains the number of the first free inode. This inode contains&n;   14 numbers of other free inodes and the number of the next inode in the list.&n;   &n;   The number of the first free inode is stored in&n;   s-&gt;u.ext_sb.s_firstfreeinodenumber and the header of the block containing&n;   the inode is stored in s-&gt;u.ext_sb.s_firstfreeinodeblock.&n;   u.ext_sb.s_freeinodescount contains the count of free inodes.&n;&n;*/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ext_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
@@ -909,12 +910,18 @@ op_star
 id|ext_new_inode
 c_func
 (paren
+r_const
+r_struct
+id|inode
+op_star
+id|dir
+)paren
+(brace
 r_struct
 id|super_block
 op_star
 id|sb
-)paren
-(brace
+suffix:semicolon
 r_struct
 id|inode
 op_star
@@ -936,7 +943,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sb
+id|dir
 op_logical_or
 op_logical_neg
 (paren
@@ -950,6 +957,10 @@ c_func
 )paren
 r_return
 l_int|NULL
+suffix:semicolon
+id|sb
+op_assign
+id|dir-&gt;i_sb
 suffix:semicolon
 id|inode-&gt;i_sb
 op_assign
@@ -1139,6 +1150,15 @@ id|current-&gt;euid
 suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
+(paren
+id|dir-&gt;i_mode
+op_amp
+id|S_ISGID
+)paren
+ques
+c_cond
+id|dir-&gt;i_gid
+suffix:colon
 id|current-&gt;egid
 suffix:semicolon
 id|inode-&gt;i_dirt

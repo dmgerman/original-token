@@ -1,7 +1,8 @@
+multiline_comment|/* $Id: mtio.h,v 1.4 1992/11/18 01:32:03 root Exp root $&n; *&n; * linux/mtio.h header file for Linux. Written by H. Bergman&n; */
 macro_line|#ifndef _LINUX_MTIO_H
 DECL|macro|_LINUX_MTIO_H
 mdefine_line|#define _LINUX_MTIO_H
-multiline_comment|/*&n; * linux/mtio.h header file for Linux. Written by H. Bergman&n; */
+macro_line|#include &lt;linux/ioctl.h&gt;
 multiline_comment|/*&n; * Structures and definitions for mag tape io control commands&n; */
 multiline_comment|/* structure for MTIOCTOP - mag tape op command */
 DECL|struct|mtop
@@ -57,7 +58,8 @@ DECL|macro|MTRAS3
 mdefine_line|#define MTRAS3  16&t;/* reserved for self test 3 */
 DECL|macro|MTSETBLK
 mdefine_line|#define MTSETBLK 20&t;/* set block length (SCSI) */
-multiline_comment|/* may need to add&n;#define MTFORMAT&n; * or something similar for QIC-40/80 type tapes.&n; */
+DECL|macro|MTSETDENSITY
+mdefine_line|#define MTSETDENSITY 21&t;/* set tape density (SCSI) */
 multiline_comment|/* structure for MTIOCGET - mag tape get status command */
 DECL|struct|mtget
 r_struct
@@ -186,5 +188,5 @@ DECL|macro|GMT_IM_REP_EN
 mdefine_line|#define GMT_IM_REP_EN(x)        ((x) &amp; 0x00010000)  /* immediate report mode */
 multiline_comment|/* 16 generic status bits unused */
 multiline_comment|/* DDS drives have &squot;setmarks&squot;, sort of like filemarks but used to group&n; * files, rather than blocks. Not used. Not supported.&n; * I think DDS drives are DAT drives.&n; */
-macro_line|#endif /* not _LINUX_MTIO_H */
+macro_line|#endif /* _LINUX_MTIO_H */
 eof

@@ -482,9 +482,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|s
 op_assign
 id|get_super
@@ -492,6 +489,11 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
 )paren
 r_return
 id|s
@@ -1346,10 +1348,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|sb-&gt;s_flags
-op_assign
-id|flags
-suffix:semicolon
 id|sb-&gt;s_covered
 op_assign
 id|dir_i
@@ -1526,9 +1524,6 @@ c_cond
 id|fstype-&gt;requires_dev
 )paren
 (brace
-r_if
-c_cond
-(paren
 id|retval
 op_assign
 id|namei
@@ -1539,6 +1534,11 @@ comma
 op_amp
 id|inode
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
 )paren
 r_return
 id|retval
@@ -1657,9 +1657,6 @@ op_logical_and
 id|fops-&gt;open
 )paren
 (brace
-r_if
-c_cond
-(paren
 id|retval
 op_assign
 id|fops
@@ -1671,6 +1668,11 @@ id|inode
 comma
 l_int|NULL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
 )paren
 (brace
 id|iput

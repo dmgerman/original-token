@@ -350,10 +350,11 @@ op_star
 id|minix_new_inode
 c_func
 (paren
+r_const
 r_struct
-id|super_block
+id|inode
 op_star
-id|sb
+id|dir
 )paren
 suffix:semicolon
 r_extern

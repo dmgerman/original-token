@@ -442,9 +442,13 @@ id|hard_math
 r_if
 c_cond
 (paren
+(paren
 id|dump.u_fpvalid
 op_assign
 id|current-&gt;used_math
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 r_if
@@ -1214,9 +1218,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|tmp
 op_assign
 id|argv
+)paren
+op_ne
+l_int|0
 )paren
 r_while
 c_loop
@@ -2454,6 +2462,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|cp
 op_assign
 id|strchr
@@ -2463,6 +2472,9 @@ id|buf
 comma
 l_char|&squot;&bslash;n&squot;
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 op_star

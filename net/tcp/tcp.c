@@ -1,7 +1,7 @@
 multiline_comment|/* tcp.c */
 multiline_comment|/*&n;     Copyright (C) 1992  Ross Biro&n;&n;     This program is free software; you can redistribute it and/or modify&n;     it under the terms of the GNU General Public License as published by&n;     the Free Software Foundation; either version 2, or (at your option)&n;     any later version.&n;&n;     This program is distributed in the hope that it will be useful,&n;     but WITHOUT ANY WARRANTY; without even the implied warranty of&n;     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;     GNU General Public License for more details.&n;&n;     You should have received a copy of the GNU General Public License&n;     along with this program; if not, write to the Free Software&n;     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;     The Author may be reached as bir7@leland.stanford.edu or&n;     C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n; */
-multiline_comment|/* $Id: tcp.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: tcp.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
+multiline_comment|/* $Id: tcp.c,v 0.8.4.6 1992/11/18 15:38:03 bir7 Exp $ */
+multiline_comment|/* $Log: tcp.c,v $&n; * Revision 0.8.4.6  1992/11/18  15:38:03  bir7&n; * fixed minor problem in waiting for memory.&n; *&n; * Revision 0.8.4.5  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.4  1992/11/16  16:13:40  bir7&n; * Fixed some error returns and undid one of the accept changes.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Fixed problem with accept.  It was charging the memory for the initial&n; * sock buff to one socket, but freeing it from another.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -22,6 +22,19 @@ macro_line|#include &lt;linux/mm.h&gt;
 multiline_comment|/* #include &lt;signal.h&gt;*/
 macro_line|#include &lt;linux/termios.h&gt; /* for ioctl&squot;s */
 macro_line|#include &quot;../kern_sock.h&quot; /* for PRINTK */
+macro_line|#ifdef PRINTK
+DECL|macro|PRINTK
+macro_line|#undef PRINTK
+macro_line|#endif
+DECL|macro|TCP_DEBUG
+macro_line|#undef TCP_DEBUG
+macro_line|#ifdef TCP_DEBUG
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK printk
+macro_line|#else
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK dummy_routine
+macro_line|#endif
 DECL|macro|tmax
 mdefine_line|#define tmax(a,b) (before ((a),(b)) ? (b) : (a))
 DECL|macro|swap
@@ -2070,7 +2083,7 @@ suffix:semicolon
 r_return
 (paren
 op_minus
-id|ENOTCONN
+id|EPIPE
 )paren
 suffix:semicolon
 )brace
@@ -2296,14 +2309,14 @@ id|ERESTARTSYS
 suffix:semicolon
 )brace
 )brace
+id|sk-&gt;inuse
+op_assign
+l_int|1
+suffix:semicolon
 id|sti
 c_func
 (paren
 )paren
-suffix:semicolon
-id|sk-&gt;inuse
-op_assign
-l_int|1
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -5065,7 +5078,7 @@ l_int|1
 suffix:semicolon
 id|newsk-&gt;window
 op_assign
-id|sk-&gt;prot
+id|newsk-&gt;prot
 op_member_access_from_pointer
 id|rspace
 c_func
@@ -6238,7 +6251,7 @@ id|oskb-&gt;dev-&gt;buffs
 (braket
 id|i
 )braket
-op_assign
+op_eq
 id|oskb
 )paren
 (brace
@@ -8009,13 +8022,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-id|verify_area
-(paren
-id|usin
-comma
-id|addr_len
-)paren
-suffix:semicolon
+multiline_comment|/*  verify_area (usin, addr_len);*/
 id|memcpy_fromfs
 (paren
 op_amp
@@ -8912,6 +8919,11 @@ id|skb-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
+id|PRINTK
+(paren
+l_string|&quot;packet dropped with bad checksum.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|kfree_skb
 (paren
 id|skb
@@ -9140,6 +9152,11 @@ id|SK_RMEM_MAX
 id|skb-&gt;sk
 op_assign
 l_int|NULL
+suffix:semicolon
+id|PRINTK
+(paren
+l_string|&quot;dropping packet due to lack of buffer space.&bslash;n&quot;
+)paren
 suffix:semicolon
 id|kfree_skb
 (paren

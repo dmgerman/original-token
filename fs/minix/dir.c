@@ -329,12 +329,16 @@ op_increment
 r_if
 c_cond
 (paren
+(paren
 id|c
 op_assign
 id|de-&gt;name
 (braket
 id|i
 )braket
+)paren
+op_ne
+l_int|0
 )paren
 id|put_fs_byte
 c_func

@@ -652,9 +652,13 @@ r_do
 r_if
 c_cond
 (paren
+(paren
 id|p
 op_assign
 id|tmp-&gt;task
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 r_if
@@ -802,9 +806,13 @@ r_do
 r_if
 c_cond
 (paren
+(paren
 id|p
 op_assign
 id|tmp-&gt;task
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 r_if

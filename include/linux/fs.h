@@ -7,6 +7,29 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#include &lt;linux/vfs.h&gt;
+multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
+DECL|macro|NR_OPEN
+macro_line|#undef NR_OPEN
+DECL|macro|NR_OPEN
+mdefine_line|#define NR_OPEN 256
+DECL|macro|NR_INODE
+mdefine_line|#define NR_INODE 128
+DECL|macro|NR_FILE
+mdefine_line|#define NR_FILE 128
+DECL|macro|NR_SUPER
+mdefine_line|#define NR_SUPER 16
+DECL|macro|NR_HASH
+mdefine_line|#define NR_HASH 997
+DECL|macro|NR_FILE_LOCKS
+mdefine_line|#define NR_FILE_LOCKS 32
+DECL|macro|BLOCK_SIZE
+mdefine_line|#define BLOCK_SIZE 1024
+DECL|macro|BLOCK_SIZE_BITS
+mdefine_line|#define BLOCK_SIZE_BITS 10
+DECL|macro|MAX_CHRDEV
+mdefine_line|#define MAX_CHRDEV 32
+DECL|macro|MAX_BLKDEV
+mdefine_line|#define MAX_BLKDEV 32
 multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; *  0 - unnamed (minor 0 = true nodev)&n; *  1 - /dev/mem&n; *  2 - /dev/fd&n; *  3 - /dev/hd&n; *  4 - /dev/ttyx&n; *  5 - /dev/tty&n; *  6 - /dev/lp&n; *  7 -&n; *  8 - /dev/sd&n; *  9 - /dev/st&n; * 10 - mice&n; * 11 - scsi cdrom&n; * 12 -&n; * 13 -&n; * 14 - sound card (?)&n; * 15 -&n; */
 DECL|macro|UNNAMED_MAJOR
 mdefine_line|#define UNNAMED_MAJOR 0
@@ -85,6 +108,8 @@ DECL|macro|BLKROGET
 mdefine_line|#define BLKROGET 4702 /* get read-only status (0 = read_write) */
 DECL|macro|BLKRRPART
 mdefine_line|#define BLKRRPART 4703 /* re-read partition table */
+DECL|macro|BLKGETSIZE
+mdefine_line|#define BLKGETSIZE 4704 /* return device size */
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP
@@ -201,6 +226,7 @@ macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext_fs_i.h&gt;
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
+macro_line|#include &lt;linux/iso_fs_i.h&gt;
 DECL|struct|inode
 r_struct
 id|inode
@@ -382,6 +408,11 @@ r_struct
 id|msdos_inode_info
 id|msdos_i
 suffix:semicolon
+DECL|member|isofs_i
+r_struct
+id|iso_inode_info
+id|isofs_i
+suffix:semicolon
 DECL|member|u
 )brace
 id|u
@@ -479,6 +510,7 @@ suffix:semicolon
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext_fs_sb.h&gt;
 macro_line|#include &lt;linux/msdos_fs_sb.h&gt;
+macro_line|#include &lt;linux/iso_fs_sb.h&gt;
 DECL|struct|super_block
 r_struct
 id|super_block
@@ -562,6 +594,11 @@ DECL|member|msdos_sb
 r_struct
 id|msdos_sb_info
 id|msdos_sb
+suffix:semicolon
+DECL|member|isofs_sb
+r_struct
+id|isofs_sb_info
+id|isofs_sb
 suffix:semicolon
 DECL|member|u
 )brace
@@ -1242,6 +1279,10 @@ id|nr_buffers
 suffix:semicolon
 r_extern
 r_int
+id|buffermem
+suffix:semicolon
+r_extern
+r_int
 id|nr_buffer_heads
 suffix:semicolon
 r_extern
@@ -1743,6 +1784,12 @@ op_star
 comma
 r_int
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|read_ahead
+(braket
+)braket
 suffix:semicolon
 r_extern
 r_int

@@ -51,7 +51,7 @@ id|bad_chars
 (braket
 )braket
 op_assign
-l_string|&quot;*?&lt;&gt;|&bslash;&quot; &quot;
+l_string|&quot;*?&lt;&gt;|&bslash;&quot;&quot;
 suffix:semicolon
 DECL|variable|bad_if_strict
 r_static
@@ -1276,6 +1276,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 op_star
 id|result
 op_assign
@@ -1286,6 +1287,9 @@ id|dir-&gt;i_sb
 comma
 id|ino
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 id|msdos_read_inode
 c_func
@@ -2811,6 +2815,7 @@ multiline_comment|/* update binary info */
 r_if
 c_cond
 (paren
+(paren
 id|old_inode
 op_assign
 id|iget
@@ -2820,6 +2825,9 @@ id|old_dir-&gt;i_sb
 comma
 id|old_ino
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 id|msdos_read_inode

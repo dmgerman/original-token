@@ -15,42 +15,16 @@ r_int
 id|seagate_st0x_command
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 )paren
 suffix:semicolon
 r_int
 id|seagate_st0x_queue_command
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 comma
 r_void
 (paren
@@ -58,9 +32,8 @@ op_star
 id|done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 )paren
 suffix:semicolon
@@ -68,9 +41,13 @@ r_int
 id|seagate_st0x_abort
 c_func
 (paren
+id|Scsi_Cmnd
+op_star
+comma
 r_int
 )paren
 suffix:semicolon
+r_const
 r_char
 op_star
 id|seagate_st0x_info
@@ -91,7 +68,7 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|SEAGATE_ST0X
-mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, 1, 7, 0, 0}
+mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, NULL,&t;&t;&bslash;&n;&t;&t;&t; 1, 7, SG_NONE, 1, 0, 0}
 macro_line|#endif
 multiline_comment|/*&n;&t;defining PARITY causes parity data to be checked&n;*/
 DECL|macro|PARITY

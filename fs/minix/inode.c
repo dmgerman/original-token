@@ -388,6 +388,7 @@ op_increment
 r_if
 c_cond
 (paren
+(paren
 id|s-&gt;u.minix_sb.s_imap
 (braket
 id|i
@@ -402,6 +403,9 @@ id|block
 comma
 id|BLOCK_SIZE
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 id|block
 op_increment
@@ -426,6 +430,7 @@ op_increment
 r_if
 c_cond
 (paren
+(paren
 id|s-&gt;u.minix_sb.s_zmap
 (braket
 id|i
@@ -440,6 +445,9 @@ id|block
 comma
 id|BLOCK_SIZE
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 id|block
 op_increment

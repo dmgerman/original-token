@@ -1,7 +1,7 @@
 multiline_comment|/* arp.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: arp.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: arp.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$&n; *&n; */
+multiline_comment|/* $Id: arp.c,v 0.8.4.3 1992/11/15 14:55:30 bir7 Exp $ */
+multiline_comment|/* $Log: arp.c,v $&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Put more cli/sti pairs in send_q and another sanity check&n; * in arp_queue.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -36,7 +36,6 @@ op_assign
 initialization_block
 suffix:semicolon
 DECL|variable|arp_q
-r_static
 r_struct
 id|sk_buff
 op_star
@@ -59,6 +58,11 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -74,6 +78,11 @@ id|arp_q
 suffix:semicolon
 r_do
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -88,6 +97,11 @@ id|skb-&gt;dev
 )paren
 )paren
 (brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -128,6 +142,11 @@ id|skb-&gt;arp
 op_assign
 l_int|1
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|skb-&gt;dev-&gt;queue_xmit
 (paren
 id|skb
@@ -135,6 +154,11 @@ comma
 id|skb-&gt;dev
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -164,6 +188,11 @@ c_loop
 id|skb
 op_ne
 id|arp_q
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -197,6 +226,22 @@ id|PRINTK
 l_string|&quot;arp: &bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|arp
+op_eq
+l_int|NULL
+)paren
+(brace
+id|PRINTK
+(paren
+l_string|&quot;(null)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|PRINTK
 (paren
 l_string|&quot;   hrd = %d&bslash;n&quot;
@@ -2056,34 +2101,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* if we didn&squot;t find an entry, we will try to &n;     send an arp packet. */
-r_if
-c_cond
-(paren
-id|apt
-op_eq
-l_int|NULL
-op_logical_or
-id|after
-(paren
-id|timer_seq
-comma
-id|apt-&gt;last_used
-op_plus
-id|ARP_RES_TIME
-)paren
-)paren
-id|arp_snd
-c_func
-(paren
-id|paddr
-comma
-id|dev
-comma
-id|saddr
-)paren
-suffix:semicolon
-multiline_comment|/* this assume haddr are atleast 4 bytes.&n;     If this isn&squot;t true we can use a lookup&n;     table, one for every dev. */
+multiline_comment|/* this assume haddr are at least 4 bytes.&n;     If this isn&squot;t true we can use a lookup&n;     table, one for every dev. */
 op_star
 (paren
 r_int
@@ -2093,6 +2111,17 @@ op_star
 id|haddr
 op_assign
 id|paddr
+suffix:semicolon
+multiline_comment|/* if we didn&squot;t find an entry, we will try to &n;     send an arp packet. */
+id|arp_snd
+c_func
+(paren
+id|paddr
+comma
+id|dev
+comma
+id|saddr
+)paren
 suffix:semicolon
 r_return
 (paren
@@ -2206,6 +2235,27 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;next
+op_ne
+l_int|NULL
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;arp.c: arp_queue skb already on queue. &bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -1,7 +1,7 @@
 multiline_comment|/* sock.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: sock.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: sock.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
+multiline_comment|/* $Id: sock.c,v 0.8.4.6 1992/11/18 15:38:03 bir7 Exp $ */
+multiline_comment|/* $Log: sock.c,v $&n; * Revision 0.8.4.6  1992/11/18  15:38:03  bir7&n; * Fixed minor problem in setsockopt.&n; *&n; * Revision 0.8.4.5  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.4  1992/11/16  16:13:40  bir7&n; * Fixed some error returns and undid one of the accept changes.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Added more checking for a packet being on a queue before it&squot;s&n; * dropped when a socket is closed.  Added check to see if it&squot;s&n; * on the arp_q also.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1779,7 +1779,7 @@ id|sk_buff
 op_star
 id|skb2
 suffix:semicolon
-multiline_comment|/* we need to remove skb from the transmit queue. */
+multiline_comment|/* we need to remove skb from the transmit queue, or&n;       maybe the arp queue */
 id|cli
 c_func
 (paren
@@ -1794,6 +1794,15 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_extern
+r_struct
+id|sk_buff
+op_star
+id|arp_q
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1810,12 +1819,79 @@ id|skb-&gt;prev-&gt;next
 op_assign
 id|skb-&gt;next
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+id|arp_q
+)paren
+(brace
+id|arp_q
+op_assign
+id|skb-&gt;next
+suffix:semicolon
 )brace
 r_else
 (brace
-r_int
+r_for
+c_loop
+(paren
 id|i
+op_assign
+l_int|0
 suffix:semicolon
+id|i
+OL
+id|DEV_NUMBUFFS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|skb-&gt;dev
+op_logical_and
+id|skb-&gt;dev-&gt;buffs
+(braket
+id|i
+)braket
+op_eq
+id|skb
+)paren
+(brace
+id|skb-&gt;dev-&gt;buffs
+(braket
+id|i
+)braket
+op_assign
+id|skb-&gt;next
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+id|arp_q
+)paren
+(brace
+id|arp_q
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_else
+(brace
 r_for
 c_loop
 (paren
@@ -1857,6 +1933,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+)brace
+id|skb-&gt;dev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -1962,7 +2043,7 @@ l_int|1
 suffix:semicolon
 id|sk-&gt;pair-&gt;prot-&gt;close
 (paren
-id|sk
+id|sk-&gt;pair
 comma
 l_int|0
 )paren
@@ -2209,16 +2290,20 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|verify_area
+r_if
+c_cond
 (paren
 id|optval
-comma
-r_sizeof
-(paren
-r_int
+op_eq
+l_int|NULL
 )paren
+r_return
+(paren
+op_minus
+id|EINVAL
 )paren
 suffix:semicolon
+multiline_comment|/*    verify_area (optval, sizeof (int));*/
 id|val
 op_assign
 id|get_fs_long
@@ -3865,13 +3950,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-id|verify_area
-(paren
-id|uaddr
-comma
-id|addr_len
-)paren
-suffix:semicolon
+multiline_comment|/*  verify_area (uaddr, addr_len);*/
 id|memcpy_fromfs
 (paren
 op_amp
@@ -4311,7 +4390,8 @@ id|O_NONBLOCK
 )paren
 r_return
 (paren
-l_int|0
+op_minus
+id|EINPROGRESS
 )paren
 suffix:semicolon
 id|cli
@@ -4717,17 +4797,6 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-id|verify_area
-c_func
-(paren
-id|uaddr_len
-comma
-r_sizeof
-(paren
-id|len
-)paren
-)paren
-suffix:semicolon
 id|len
 op_assign
 id|get_fs_long
@@ -4751,13 +4820,6 @@ r_return
 (paren
 op_minus
 id|EINVAL
-)paren
-suffix:semicolon
-id|verify_area
-(paren
-id|uaddr
-comma
-id|len
 )paren
 suffix:semicolon
 id|sin.sin_family
@@ -4835,6 +4897,13 @@ r_sizeof
 id|sin
 )paren
 suffix:semicolon
+id|verify_area
+(paren
+id|uaddr
+comma
+id|len
+)paren
+suffix:semicolon
 id|memcpy_tofs
 c_func
 (paren
@@ -4846,6 +4915,17 @@ comma
 r_sizeof
 (paren
 id|sin
+)paren
+)paren
+suffix:semicolon
+id|verify_area
+c_func
+(paren
+id|uaddr_len
+comma
+r_sizeof
+(paren
+id|len
 )paren
 )paren
 suffix:semicolon
@@ -4921,12 +5001,14 @@ id|sk-&gt;shutdown
 op_amp
 id|RCV_SHUTDOWN
 )paren
+(brace
 r_return
 (paren
-op_minus
-id|EIO
+l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* this seems to be what sunos does. */
+)brace
 multiline_comment|/* we may need to bind the socket. */
 r_if
 c_cond
@@ -5053,12 +5135,13 @@ id|sk-&gt;shutdown
 op_amp
 id|RCV_SHUTDOWN
 )paren
+(brace
 r_return
 (paren
-op_minus
-id|EIO
+l_int|0
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* we may need to bind the socket. */
 r_if
 c_cond
@@ -5182,12 +5265,23 @@ id|sk-&gt;shutdown
 op_amp
 id|SEND_SHUTDOWN
 )paren
+(brace
+id|send_sig
+(paren
+id|SIGPIPE
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus
-id|EIO
+id|EPIPE
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* we may need to bind the socket. */
 r_if
 c_cond
@@ -5314,12 +5408,23 @@ id|sk-&gt;shutdown
 op_amp
 id|SEND_SHUTDOWN
 )paren
+(brace
+id|send_sig
+(paren
+id|SIGPIPE
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus
-id|EIO
+id|EPIPE
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* we may need to bind the socket. */
 r_if
 c_cond
@@ -5454,12 +5559,23 @@ id|sk-&gt;shutdown
 op_amp
 id|SEND_SHUTDOWN
 )paren
+(brace
+id|send_sig
+(paren
+id|SIGPIPE
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus
-id|EIO
+id|EPIPE
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5617,12 +5733,13 @@ id|sk-&gt;shutdown
 op_amp
 id|RCV_SHUTDOWN
 )paren
+(brace
 r_return
 (paren
-op_minus
-id|EIO
+l_int|0
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -308,6 +308,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 id|left
 op_assign
 id|MIN
@@ -325,6 +326,9 @@ op_minus
 id|start
 )paren
 )paren
+)paren
+OG
+l_int|0
 )paren
 (brace
 r_if

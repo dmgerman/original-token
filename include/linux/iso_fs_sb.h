@@ -1,0 +1,64 @@
+macro_line|#ifndef _ISOFS_FS_SB
+DECL|macro|_ISOFS_FS_SB
+mdefine_line|#define _ISOFS_FS_SB
+multiline_comment|/*&n; * minix super-block data in memory&n; */
+DECL|struct|isofs_sb_info
+r_struct
+id|isofs_sb_info
+(brace
+DECL|member|s_ninodes
+r_int
+r_int
+id|s_ninodes
+suffix:semicolon
+DECL|member|s_nzones
+r_int
+r_int
+id|s_nzones
+suffix:semicolon
+DECL|member|s_firstdatazone
+r_int
+r_int
+id|s_firstdatazone
+suffix:semicolon
+DECL|member|s_log_zone_size
+r_int
+r_int
+id|s_log_zone_size
+suffix:semicolon
+DECL|member|s_max_size
+r_int
+r_int
+id|s_max_size
+suffix:semicolon
+DECL|member|s_high_sierra
+r_int
+r_char
+id|s_high_sierra
+suffix:semicolon
+multiline_comment|/* A simple flag */
+DECL|member|s_mapping
+r_int
+r_char
+id|s_mapping
+suffix:semicolon
+DECL|member|s_conversion
+r_int
+r_char
+id|s_conversion
+suffix:semicolon
+DECL|member|s_rock
+r_int
+r_char
+id|s_rock
+suffix:semicolon
+DECL|member|s_cruft
+r_int
+r_char
+id|s_cruft
+suffix:semicolon
+multiline_comment|/* Broken disks with high&n;&t;&t;&t;&t;&t;&t;  byte of length containing&n;&t;&t;&t;&t;&t;&t;  junk */
+)brace
+suffix:semicolon
+macro_line|#endif
+eof

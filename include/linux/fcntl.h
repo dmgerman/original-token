@@ -26,7 +26,6 @@ DECL|macro|O_NDELAY
 mdefine_line|#define O_NDELAY&t;O_NONBLOCK
 DECL|macro|O_SYNC
 mdefine_line|#define O_SYNC&t;&t;010000
-multiline_comment|/* Defines for fcntl-commands. Note that currently&n; * locking isn&squot;t supported, and other things aren&squot;t really&n; * tested.&n; */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD
@@ -50,7 +49,6 @@ mdefine_line|#define F_GETOWN&t;9&t;/*  for sockets. */
 multiline_comment|/* for F_[GET|SET]FL */
 DECL|macro|FD_CLOEXEC
 mdefine_line|#define FD_CLOEXEC&t;1&t;/* actually anything with low bit set goes */
-multiline_comment|/* Ok, these are locking features, and aren&squot;t implemented at any&n; * level. POSIX wants them.&n; */
 DECL|macro|F_RDLCK
 mdefine_line|#define F_RDLCK&t;&t;0
 DECL|macro|F_WRLCK

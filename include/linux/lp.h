@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * usr/include/linux/lp.h c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; */
-multiline_comment|/*&n; * caveat: my machine only has 1 printer @ lpt2 so lpt1 &amp; lpt3 are &n; * implemented but UNTESTED&n; *&n; * My machine (Michael K. Johnson) has only lpt1...  dupla caveat...&n; */
 multiline_comment|/*&n; * Per POSIX guidelines, this module reserves the LP and lp prefixes&n; * These are the lp_table[minor].flags flags...&n; */
 DECL|macro|LP_EXIST
 mdefine_line|#define LP_EXIST 0x0001
@@ -21,12 +20,29 @@ DECL|macro|LP_NOPA
 mdefine_line|#define LP_NOPA  0x0010
 DECL|macro|LP_ERR
 mdefine_line|#define LP_ERR   0x0020
-multiline_comment|/* timeout for each character  (This is a good case 50 Mhz computer&n;   at a poor case 10 KBS xfer rate to the printer, as best as I can&n;   tell.)  This is in instruction cycles, kinda -- it is the count&n;   in a busy loop.  THIS IS THE VALUE TO CHANGE if you have extremely&n;   slow printing, or if the machine seems to slow down a lot when you&n;   print.  If you have slow printing, increase this number and recompile,&n;   and if your system gets bogged down, decrease this number.*/
-DECL|macro|LP_TIME_CHAR
-mdefine_line|#define LP_TIME_CHAR 5000
-multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   If your printer isn&squot;t printing at least one character every five seconds,&n;   you have worse problems than a slow printer driver and lp_timeout printed&n;   every five seconds while trying to print. */
+DECL|macro|LP_ABORT
+mdefine_line|#define LP_ABORT 0x0040
+multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command.&n; */
+DECL|macro|LP_INIT_CHAR
+mdefine_line|#define LP_INIT_CHAR 250
+multiline_comment|/* The parallel port specs apparently say that there needs to be&n; * a .5usec wait before and after the strobe.  Since there are wildly&n; * different computers running linux, I can&squot;t come up with a perfect&n; * value, but since it worked well on most printers before without,&n; * and I have seen some improvement on my computer by making it a&n; * small number, I&squot;ll initialize it to 2.&n; */
+DECL|macro|LP_INIT_WAIT
+mdefine_line|#define LP_INIT_WAIT 2
+multiline_comment|/* This is the amount of time that the driver waits for the printer to&n; * catch up when the printer&squot;s buffer appears to be filled.  If you&n; * want to tune this and have a fast printer (i.e. HPIIIP), decrease&n; * this number, and if you have a slow printer, increase this number.&n; * This is in hundredths of a second, the default 10 being .1 second.&n; * Or use the tunelp(8) command, which is especially nice if you want&n; * change back and forth between character and graphics printing, which&n; * are wildly different...&n; */
+DECL|macro|LP_INIT_TIME
+mdefine_line|#define LP_INIT_TIME 10
+multiline_comment|/* IOCTL numbers */
+DECL|macro|LPCHAR
+mdefine_line|#define LPCHAR   0x0001  /* corresponds to LP_INIT_CHAR */
+DECL|macro|LPTIME
+mdefine_line|#define LPTIME   0x0002  /* corresponds to LP_INIT_TIME */
+DECL|macro|LPABORT
+mdefine_line|#define LPABORT  0x0004  /* call with TRUE arg to abort on error,&n;&t;&t;&t;    FALSE to retry.  Default is retry.  */
+DECL|macro|LPWAIT
+mdefine_line|#define LPWAIT   0x0008  /* corresponds to LP_INIT_WAIT */
+multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
 DECL|macro|LP_TIMEOUT
-mdefine_line|#define LP_TIMEOUT 5000
+mdefine_line|#define LP_TIMEOUT 1000
 DECL|macro|LP_B
 mdefine_line|#define LP_B(minor)&t;lp_table[(minor)].base&t;&t;/* IO address */
 DECL|macro|LP_F
@@ -35,10 +51,12 @@ DECL|macro|LP_S
 mdefine_line|#define LP_S(minor)&t;inb(LP_B((minor)) + 1)&t;&t;/* status port */
 DECL|macro|LP_C
 mdefine_line|#define LP_C(minor)&t;(lp_table[(minor)].base + 2)&t;/* control port */
-DECL|macro|LP_COUNT
-mdefine_line|#define LP_COUNT(minor)&t;lp_table[(minor)].count&t;&t;/* last count */
+DECL|macro|LP_CHAR
+mdefine_line|#define LP_CHAR(minor)&t;lp_table[(minor)].chars&t;&t;/* busy timeout */
 DECL|macro|LP_TIME
-mdefine_line|#define LP_TIME(minor)&t;lp_table[(minor)].time&t;&t;/* last time */
+mdefine_line|#define LP_TIME(minor)&t;lp_table[(minor)].time&t;&t;/* wait time */
+DECL|macro|LP_WAIT
+mdefine_line|#define LP_WAIT(minor)&t;lp_table[(minor)].wait&t;&t;/* strobe wait */
 multiline_comment|/* &n;since we are dealing with a horribly slow device&n;I don&squot;t see the need for a queue&n;*/
 DECL|struct|lp_struct
 r_struct
@@ -52,22 +70,23 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
-DECL|member|count
+DECL|member|chars
 r_int
-id|count
+r_int
+id|chars
 suffix:semicolon
 DECL|member|time
 r_int
+r_int
 id|time
+suffix:semicolon
+DECL|member|wait
+r_int
+r_int
+id|wait
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* This is the starting value for the heuristic algorithm.  If you&n; * want to tune this and have a fast printer (i.e. HPIIIP), decrease&n; * this number, and if you have a slow printer, increase this number.&n; * This is not stricly necessary, as the algorithm should be able to&n; * adapt to your printer relatively quickly.&n; * this is in hundredths of a second, the default 50 being .5 seconds.&n; */
-DECL|macro|LP_INIT_TIME
-mdefine_line|#define LP_INIT_TIME 50
-multiline_comment|/* This is our first guess at the size of the buffer on the printer,&n; * in characters.  I am assuming a 4K buffer because most newer printers&n; * have larger ones, which will be adapted to.  At this time, it really&n; * doesn&squot;t matter, as this value isn&squot;t used.&n; */
-DECL|macro|LP_INIT_COUNT
-mdefine_line|#define LP_INIT_COUNT 4096
 multiline_comment|/* the BIOS manuals say there can be up to 4 lpt devices&n; * but I have not seen a board where the 4th address is listed&n; * if you have different hardware change the table below &n; * please let me know if you have different equipment&n; * if you have more than 3 printers, remember to increase LP_NO&n; */
 DECL|variable|lp_table
 r_struct
@@ -82,9 +101,11 @@ l_int|0x3bc
 comma
 l_int|0
 comma
-id|LP_INIT_COUNT
+id|LP_INIT_CHAR
 comma
 id|LP_INIT_TIME
+comma
+id|LP_INIT_WAIT
 comma
 )brace
 comma
@@ -93,9 +114,11 @@ l_int|0x378
 comma
 l_int|0
 comma
-id|LP_INIT_COUNT
+id|LP_INIT_CHAR
 comma
 id|LP_INIT_TIME
+comma
+id|LP_INIT_WAIT
 comma
 )brace
 comma
@@ -104,11 +127,14 @@ l_int|0x278
 comma
 l_int|0
 comma
-id|LP_INIT_COUNT
+id|LP_INIT_CHAR
 comma
 id|LP_INIT_TIME
 comma
+id|LP_INIT_WAIT
+comma
 )brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|LP_NO

@@ -26,6 +26,18 @@ id|blk_size
 (braket
 )braket
 suffix:semicolon
+r_extern
+r_void
+id|rd_load
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ramdisk_size
+suffix:semicolon
 multiline_comment|/*&n; * Create devices for each logical partition in an extended partition.&n; * The logical partitions form a linked list, with each entry being&n; * a partition table with two entries.  The first entry&n; * is the real data partition (with a start relative to the partition&n; * table start).  The second is a pointer to the next logical partition&n; * (with a start relative to the entire extended partition).&n; * We do not create a Linux partition for the partition tables, but&n; * only for the actual data partitions.&n; */
 DECL|function|extended_partition
 r_static
@@ -1087,13 +1099,16 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef RAMDISK
+r_if
+c_cond
+(paren
+id|ramdisk_size
+)paren
 id|rd_load
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mount_root
 c_func
 (paren

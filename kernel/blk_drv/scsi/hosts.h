@@ -1,109 +1,14 @@
-multiline_comment|/*&n; *&t;hosts.h Copyright (C) 1992 Drew Eckhardt &n; *&t;mid to low-level SCSI driver interface header by&t;&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
+multiline_comment|/*&n; *&t;hosts.h Copyright (C) 1992 Drew Eckhardt &n; *&t;mid to low-level SCSI driver interface header by&t;&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale eric@tantalus.nrl.navy.mil to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
 macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
-macro_line|#ifndef MAX_SCSI_HOSTS
-macro_line|#include &quot;max_hosts.h&quot;
-macro_line|#endif
 multiline_comment|/*&n;&t;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.h,v 1.1 1992/07/24 06:27:38 root Exp root $&n;*/
-multiline_comment|/*&n;&t;The Scsi_Cmnd structure is used by scsi.c internally, and for communication with&n;&t;low level drivers that support multiple outstanding commands.&n;*/
-DECL|struct|scsi_cmnd
-r_typedef
-r_struct
-id|scsi_cmnd
-(brace
-DECL|member|host
-r_int
-id|host
-suffix:semicolon
-DECL|member|target
-DECL|member|lun
-r_int
-r_char
-id|target
-comma
-id|lun
-suffix:semicolon
-DECL|member|cmnd
-r_int
-r_char
-id|cmnd
-(braket
-l_int|10
-)braket
-suffix:semicolon
-DECL|member|bufflen
-r_int
-id|bufflen
-suffix:semicolon
-DECL|member|buffer
-r_void
-op_star
-id|buffer
-suffix:semicolon
-DECL|member|sense_cmnd
-r_int
-r_char
-id|sense_cmnd
-(braket
-l_int|6
-)braket
-suffix:semicolon
-DECL|member|sense_buffer
-r_int
-r_char
-op_star
-id|sense_buffer
-suffix:semicolon
-DECL|member|flags
-r_int
-id|flags
-suffix:semicolon
-DECL|member|retries
-r_int
-id|retries
-suffix:semicolon
-DECL|member|allowed
-r_int
-id|allowed
-suffix:semicolon
-DECL|member|timeout_per_command
-DECL|member|timeout_total
-DECL|member|timeout
-r_int
-id|timeout_per_command
-comma
-id|timeout_total
-comma
-id|timeout
-suffix:semicolon
-DECL|member|done
-r_void
-(paren
-op_star
-id|done
-)paren
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-DECL|member|next
-DECL|member|prev
-r_struct
-id|scsi_cmnd
-op_star
-id|next
-comma
-op_star
-id|prev
-suffix:semicolon
-DECL|typedef|Scsi_Cmnd
-)brace
-id|Scsi_Cmnd
-suffix:semicolon
 multiline_comment|/*&n;&t;The Scsi_Host type has all that is needed to interface with a SCSI&n;&t;host in a device independant matter.  &n;*/
+DECL|macro|SG_NONE
+mdefine_line|#define SG_NONE 0
+DECL|macro|SG_ALL
+mdefine_line|#define SG_ALL 0xff
+multiline_comment|/* The various choices mean:&n;   NONE: Self evident.  Host adapter is not capable of scatter-gather.&n;   ALL:  Means that the host adapter module can do scatter-gather,&n;         and that there is no limit to the size of the table to which&n;&t; we scatter/gather data.&n;  Anything else:  Indicates the maximum number of chains that can be&n;        used in one scatter-gather request.&n;*/
 r_typedef
 r_struct
 (brace
@@ -126,6 +31,7 @@ r_int
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;The info function will return whatever useful&n;&t;&t;information the developer sees fit.              &n;&t;*/
 DECL|member|info
+r_const
 r_char
 op_star
 (paren
@@ -144,21 +50,8 @@ op_star
 id|command
 )paren
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 )paren
 suffix:semicolon
 multiline_comment|/*&n;                The QueueCommand function works in a similar manner&n;                to the command function.  It takes an additional parameter,&n;                void (* done)(int host, int code) which is passed the host &n;&t;&t;# and exit result when the command is complete.  &n;&t;&t;Host number is the POSITION IN THE hosts array of THIS&n;&t;&t;host adapter.&n;        */
@@ -169,21 +62,8 @@ op_star
 id|queuecommand
 )paren
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 comma
 r_void
 (paren
@@ -191,9 +71,8 @@ op_star
 id|done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 )paren
 suffix:semicolon
@@ -205,6 +84,9 @@ op_star
 m_abort
 )paren
 (paren
+id|Scsi_Cmnd
+op_star
+comma
 r_int
 )paren
 suffix:semicolon
@@ -219,15 +101,57 @@ id|reset
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;This function is used to select synchronous communications,&n;&t;&t;which will result in a higher data throughput.  Not implemented&n;&t;&t;yet.&n;&t;*/
+DECL|member|slave_attach
+r_int
+(paren
+op_star
+id|slave_attach
+)paren
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;This function determines the bios parameters for a given&n;&t;&t;harddisk.  These tend to be numbers that are made up by&n;&t;&t;the host adapter.  Parameters:&n;&t;&t;size, device number, list (heads, sectors, cylinders)&n;&t;*/
+DECL|member|bios_param
+r_int
+(paren
+op_star
+id|bios_param
+)paren
+(paren
+r_int
+comma
+r_int
+comma
+r_int
+(braket
+)braket
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;This determines if we will use a non-interrupt driven&n;&t;&t;or an interrupt driven scheme,  It is set to the maximum number&n;&t;&t;of simulataneous commands a given host adapter will accept.&n;&t;*/
 DECL|member|can_queue
 r_int
 id|can_queue
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;In many instances, especially where disconnect / reconnect are &n;&t;&t;supported, our host also has an ID on the SCSI bus.  If this is &n;&t;&t;the case, then it must be reserved.  Please set this_id to -1 if &t;&t;your settup is in single initiator mode, and the host lacks an &n;&t;&t;ID.&n;&t;*/
+multiline_comment|/*&n;&t;&t;In many instances, especially where disconnect / reconnect are &n;&t;&t;supported, our host also has an ID on the SCSI bus.  If this is &n;&t;&t;the case, then it must be reserved.  Please set this_id to -1 if&n; &t;&t;your settup is in single initiator mode, and the host lacks an &n;&t;&t;ID.&n;&t;*/
 DECL|member|this_id
 r_int
 id|this_id
+suffix:semicolon
+multiline_comment|/*&n;&t;        This determines the degree to which the host adapter is capable&n;&t;&t;of scatter-gather.&n;&t;*/
+DECL|member|sg_tablesize
+r_int
+r_int
+r_int
+id|sg_tablesize
+suffix:semicolon
+multiline_comment|/*&n;&t;  True if this host adapter can make good use of linked commands.&n;&t;  This will allow more than one command to be queued to a given&n;&t;  unit on a given host.  Set this to the maximum number of command&n;&t;  blocks to be provided for each device.  Set this to 1 for one&n;&t;  command block per lun, 2 for two, etc.  Do not set this to 0.&n;&t;  You should make sure that the host adapter will do the right thing&n;&t;  before you try setting this above 1.&n;&t; */
+DECL|member|cmd_per_lun
+r_int
+id|cmd_per_lun
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;present contains a flag as to weather we are present -&n;&t;&t;so we don&squot;t have to call detect multiple times.&n;&t;*/
 DECL|member|present
@@ -263,22 +187,23 @@ id|host_busy
 (braket
 )braket
 suffix:semicolon
-r_extern
-r_volatile
-r_int
-id|host_timeout
-(braket
-)braket
-suffix:semicolon
 multiline_comment|/*&n;&t;This is the queue of currently pending commands for a given&n;&t;SCSI host.&n;*/
 r_extern
-r_volatile
 id|Scsi_Cmnd
 op_star
 id|host_queue
 (braket
 )braket
 suffix:semicolon
+r_extern
+r_struct
+id|wait_queue
+op_star
+id|host_wait
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* For waiting until host available*/
 multiline_comment|/*&n;&t;scsi_init initializes the scsi hosts.&n;*/
 r_void
 id|scsi_init
@@ -288,6 +213,6 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|BLANK_HOST
-mdefine_line|#define BLANK_HOST {&quot;&quot;, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+mdefine_line|#define BLANK_HOST {&quot;&quot;, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 macro_line|#endif
 eof

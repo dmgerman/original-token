@@ -1688,7 +1688,14 @@ id|free_clusters
 op_increment
 suffix:semicolon
 id|inode-&gt;i_blocks
-op_decrement
+op_sub_assign
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|cluster_size
 suffix:semicolon
 )brace
 id|unlock_fat

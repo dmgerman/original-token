@@ -3,8 +3,8 @@ multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program i
 multiline_comment|/* The bsd386 version was used as an example in order to write this&n;   code */
 multiline_comment|/*&n;&t;The driver was significantly modified by Bob Harris to allow the&n;&t;software to operate with either the wd8003 or wd8013 boards.  The&n;&t;wd8013 boards will operate using full memory on board (as specified&n;&t;by the user in Space.c) and the 16 bit wide interface.  The driver&n;&t;will autodetect which board it is using on boot (i.e. &quot;using 16 bit I/F&quot;).&n;&t;In addition, the interrupts structure was significantly modified to &n;&t;respond to all the chips interrupts and to keep track of statistics.&n;&t;The statistics are not currently used.  Debug messages can be toggled&n;&t;by setting the wd_debug variable to a non-zero number.   The driver &n;&t;can detect an open or shorted cable - the wd8013 board functions after&n;&t;the problem is corrected, but the wd8003 board does not always recover.&n;&t;The driver is gradually being migrated toward the National Semiconductor&n;&t;recommendations.  Constructive comments or suggestions can be sent to:&n;&n;&t;&t;Bob Harris, rth@sparta.com&n;&t;&t;7926 Jones Branch Drive, Suite 900&n;&t;&t;McLean, Va. 22102&n;*/
 multiline_comment|/* Note:  My driver was full of bugs.  Basically if it works, credit&n;   Bob Harris.  If it&squot;s broken blame me.  -RAB */
-multiline_comment|/* $Id: we.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: we.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and Log&n; * */
+multiline_comment|/* $Id: we.c,v 0.8.4.3 1992/11/15 14:55:30 bir7 Exp $ */
+multiline_comment|/* $Log: we.c,v $&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Put more checking in start_xmit to make sure packet doesn&squot;t disapear&n; * out from under us.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and Log&n; * */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -607,11 +607,13 @@ id|dev-&gt;trans_start
 OL
 l_int|30
 )paren
+(brace
 r_return
 (paren
 l_int|1
 )paren
 suffix:semicolon
+)brace
 id|printk
 (paren
 l_string|&quot;wd8003 transmit timed out. &bslash;n&quot;
@@ -622,11 +624,6 @@ id|status
 op_or_assign
 id|TRS_BUSY
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -635,10 +632,35 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|wd_trs
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* this should check to see if it&squot;s been killed. */
+r_if
+c_cond
+(paren
+id|skb-&gt;dev
+op_ne
+id|dev
+)paren
+(brace
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -667,19 +689,34 @@ id|dev
 )paren
 )paren
 (brace
-id|skb-&gt;dev
-op_assign
-id|dev
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;dev
+op_eq
+id|dev
+)paren
+(brace
 id|arp_queue
 (paren
 id|skb
 )paren
 suffix:semicolon
+)brace
 id|status
 op_and_assign
 op_complement
 id|TRS_BUSY
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 (paren
@@ -725,11 +762,6 @@ id|ETHER_MIN_LEN
 suffix:semicolon
 multiline_comment|/* actually we should zero out&n;&t;&t;&t;&t;  the extra memory. */
 multiline_comment|/*  printk (&quot;start_xmit len - %d&bslash;n&quot;, len);*/
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|cmd
 op_assign
 id|inb_p

@@ -16,6 +16,9 @@ macro_line|#endif
 macro_line|#ifdef NFS_FS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#endif
+macro_line|#ifdef ISO9660_FS
+macro_line|#include &lt;linux/iso_fs.h&gt;
+macro_line|#endif
 DECL|variable|file_systems
 r_struct
 id|file_system_type
@@ -71,6 +74,16 @@ comma
 l_string|&quot;nfs&quot;
 comma
 l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef ISO9660_FS
+(brace
+id|isofs_read_super
+comma
+l_string|&quot;iso9660&quot;
+comma
+l_int|1
 )brace
 comma
 macro_line|#endif

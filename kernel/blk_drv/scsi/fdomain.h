@@ -1,9 +1,7 @@
-multiline_comment|/* fdomain.h -- Header for Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:47:33 1992&n; * Revised: Sat May 23 22:42:55 1992 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992 Rickard E. Faith&n; * This program comes with ABSOLUTELY NO WARRANTY.&n; *&n; * $Log$&n; */
+multiline_comment|/* fdomain.h -- Header for Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:47:33 1992&n; * Revised: Fri Nov 27 22:12:55 1992 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992 Rickard E. Faith&n; * This program comes with ABSOLUTELY NO WARRANTY.&n; *&n; * $Log$&n; */
 macro_line|#ifndef _FDOMAIN_H
 DECL|macro|_FDOMAIN_H
 mdefine_line|#define _FDOMAIN_H
-DECL|macro|QUEUE
-mdefine_line|#define QUEUE         1&t;&t;/* Enable command queueing */
 r_int
 id|fdomain_16x0_detect
 c_func
@@ -15,30 +13,21 @@ r_int
 id|fdomain_16x0_command
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 )paren
 suffix:semicolon
 r_int
 id|fdomain_16x0_abort
 c_func
 (paren
+id|Scsi_Cmnd
+op_star
+comma
 r_int
 )paren
 suffix:semicolon
+r_const
 r_char
 op_star
 id|fdomain_16x0_info
@@ -54,26 +43,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#if QUEUE
 r_int
 id|fdomain_16x0_queue
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 comma
 r_void
 (paren
@@ -81,17 +56,24 @@ op_star
 id|done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 )paren
 suffix:semicolon
+r_int
+id|fdomain_16x0_biosparam
+c_func
+(paren
+r_int
+comma
+r_int
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
 DECL|macro|FDOMAIN_16X0
-mdefine_line|#define FDOMAIN_16X0  { &quot;Future Domain TMC-1660/TMC-1680&quot;, &bslash;&n;&t;&t;&t; fdomain_16x0_detect,              &bslash;&n;&t;&t;&t; fdomain_16x0_info,                &bslash;&n;&t;&t;&t; fdomain_16x0_command,             &bslash;&n;&t;&t;&t; fdomain_16x0_queue,               &bslash;&n;&t;&t;         fdomain_16x0_abort,               &bslash;&n;&t;&t;&t; fdomain_16x0_reset,               &bslash;&n;&t;&t;&t; 1, 6, 0 }
-macro_line|#else
-DECL|macro|FDOMAIN_16X0
-mdefine_line|#define FDOMAIN_16X0  { &quot;Future Domain TMC-1660/TMC-1680&quot;, &bslash;&n;&t;&t;&t; fdomain_16x0_detect,              &bslash;&n;&t;&t;&t; fdomain_16x0_info,                &bslash;&n;&t;&t;&t; fdomain_16x0_command,             &bslash;&n;&t;&t;&t; NULL,                             &bslash;&n;&t;&t;         fdomain_16x0_abort,               &bslash;&n;&t;&t;&t; fdomain_16x0_reset,               &bslash;&n;&t;&t;&t; 0, 6, 0 ,0}
-macro_line|#endif
+mdefine_line|#define FDOMAIN_16X0  { &quot;Future Domain TMC-1660/TMC-1680&quot;, &bslash;&n;&t;&t;&t; fdomain_16x0_detect,              &bslash;&n;&t;&t;&t; fdomain_16x0_info,                &bslash;&n;&t;&t;&t; fdomain_16x0_command,             &bslash;&n;&t;&t;&t; fdomain_16x0_queue,               &bslash;&n;&t;&t;         fdomain_16x0_abort,               &bslash;&n;&t;&t;&t; fdomain_16x0_reset,               &bslash;&n;&t;&t;&t; NULL,                             &bslash;&n;&t;&t;&t; fdomain_16x0_biosparam,           &bslash;&n;&t;&t;&t; 1, 6, 64 /* SG_NONE */, 1 ,0, 0}
 macro_line|#endif
 eof

@@ -48,6 +48,8 @@ macro_line|#undef CONFIG_BLK_DEV_SR
 multiline_comment|/*&n;&t;Choose supported SCSI adapters here.&n;*/
 DECL|macro|CONFIG_SCSI_AHA1542
 macro_line|#undef CONFIG_SCSI_AHA1542
+DECL|macro|CONFIG_SCSI_AHA1740
+macro_line|#undef CONFIG_SCSI_AHA1740
 DECL|macro|CONFIG_SCSI_ALWAYS
 macro_line|#undef CONFIG_SCSI_ALWAYS
 DECL|macro|CONFIG_SCSI_CSC
@@ -67,7 +69,7 @@ macro_line|#ifndef CONFIG_SCSI
 DECL|macro|CONFIG_SCSI
 mdefine_line|#define CONFIG_SCSI
 macro_line|#endif
-macro_line|#if !defined(CONFIG_SCSI_AHA1542) &amp;&amp; !defined(CONFIG_SCSI_CSC) &amp;&amp; !defined(CONFIG_SCSI_DTC) &amp;&amp; &bslash;&n;&t;&t;!defined(CONFIG_SCSI_FUTURE_DOMAIN) &amp;&amp;  !defined(CONFIG_SCSI_SEAGATE) &amp;&amp; !defined(CONFIG_SCSI_ULTRASTOR) &amp;&amp; &bslash;&n;&t;&t;!defined(CONFIG_SCSI_7000FASST)
+macro_line|#if !defined(CONFIG_SCSI_AHA1542) &amp;&amp; !defined(CONFIG_SCSI_AHA1740) &amp;&amp; !defined(CONFIG_SCSI_CSC) &amp;&amp; !defined(CONFIG_SCSI_DTC) &amp;&amp; &bslash;&n;&t;&t;!defined(CONFIG_SCSI_FUTURE_DOMAIN) &amp;&amp;  !defined(CONFIG_SCSI_SEAGATE) &amp;&amp; !defined(CONFIG_SCSI_ULTRASTOR) &amp;&amp; &bslash;&n;&t;&t;!defined(CONFIG_SCSI_7000FASST)
 macro_line|#error  Error : SCSI devices enabled, but no low level drivers have been enabled.
 macro_line|#endif
 macro_line|#endif
@@ -82,6 +84,8 @@ DECL|macro|PROC_FS
 mdefine_line|#define PROC_FS
 DECL|macro|NFS_FS
 macro_line|#undef  NFS_FS
+DECL|macro|ISO9660_FS
+macro_line|#undef ISO9660_FS
 macro_line|#ifdef CONFIG_DISTRIBUTION
 macro_line|#include &lt;linux/config.dist.h&gt;
 macro_line|#else

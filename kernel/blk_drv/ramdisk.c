@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/blk_drv/ramdisk.c&n; *&n; *  Written by Theodore Ts&squot;o, 12/2/91&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef RAMDISK
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -289,9 +288,9 @@ suffix:semicolon
 r_int
 id|block
 op_assign
-l_int|256
+l_int|512
 suffix:semicolon
-multiline_comment|/* Start at block 256 */
+multiline_comment|/* Start at block 512 */
 r_int
 id|i
 op_assign
@@ -583,5 +582,4 @@ op_assign
 l_int|0x0101
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

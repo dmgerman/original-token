@@ -1,7 +1,7 @@
+multiline_comment|/* $Id: ioctl.h,v 1.2 1992/11/18 01:31:16 root Exp root $&n; *&n; * linux/ioctl.h for Linux by H.H. Bergman.&n; */
 macro_line|#ifndef _LINUX_IOCTL_H
 DECL|macro|_LINUX_IOCTL_H
 mdefine_line|#define _LINUX_IOCTL_H
-multiline_comment|/*&n; * linux/ioctl.h for Linux by H.H. Bergman.&n; */
 multiline_comment|/* ioctl command encoding: 32 bits total, command in lower 16 bits,&n; * size of the parameter structure in the upper 14 bits.&n; * Encoding size in ioctl request is useful for catching old versions&n; * and to avoid overwriting user space outside the user buffer area.&n; * The highest 2 bits are reserved.&n; * NOTE: This limits the max blocksize to 16kB -1 !&n; */
 DECL|macro|IOC_VOID
 mdefine_line|#define IOC_VOID&t;0x00000000&t;/* param in size field */
@@ -29,5 +29,5 @@ mdefine_line|#define _IOR(c,d,t)&t;(IOC_OUT | ((sizeof(t)&lt;&lt;16) &amp; IOCSI
 multiline_comment|/* WR rather than RW to avoid conflict with stdio.h */
 DECL|macro|_IOWR
 mdefine_line|#define _IOWR(c,d,t)&t;(IOC_INOUT | (sizeof(t)&lt;&lt;16) &amp; IOCSIZE_MASK) | &bslash;&n;&t;&t;&t;&t;     (c&lt;&lt;8) | d)
-macro_line|#endif
+macro_line|#endif /* _LINUX_IOCTL_H */
 eof

@@ -234,6 +234,8 @@ DECL|macro|__NR_wait4
 mdefine_line|#define __NR_wait4&t;&t;114
 DECL|macro|__NR_swapoff
 mdefine_line|#define __NR_swapoff&t;&t;115
+DECL|macro|__NR_sysinfo
+mdefine_line|#define __NR_sysinfo&t;&t;116
 r_extern
 r_int
 id|errno

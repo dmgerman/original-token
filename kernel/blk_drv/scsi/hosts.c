@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;hosts.c Copyright (C) 1992 Drew Eckhardt &n; *&t;mid
 multiline_comment|/*&n; *&t;This file contains the medium level SCSI&n; *&t;host interface initialization, as well as the scsi_hosts array of SCSI&n; *&t;hosts currently present in the system. &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SCSI
+macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#ifndef NULL 
@@ -12,9 +13,15 @@ macro_line|#ifdef FIGURE_MAX_SCSI_HOSTS
 DECL|macro|MAX_SCSI_HOSTS
 mdefine_line|#define MAX_SCSI_HOSTS
 macro_line|#endif
+macro_line|#ifndef MAX_SCSI_HOSTS
+macro_line|#include &quot;max_hosts.h&quot;
+macro_line|#endif
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#ifdef CONFIG_SCSI_AHA1542
 macro_line|#include &quot;aha1542.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_AHA1740
+macro_line|#include &quot;aha1740.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
 macro_line|#include &quot;fdomain.h&quot;
@@ -26,7 +33,10 @@ macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
 macro_line|#include &quot;ultrastor.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST
-macro_line|#include &quot;7000fasst.h&quot;
+macro_line|#include &quot;wd7000.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DEBUG
+macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.c,v 1.1 1992/07/24 06:27:38 root Exp root $&quot;;&n;*/
 multiline_comment|/*&n; *&t;The scsi host entries should be in the order you wish the &n; *&t;cards to be detected.  A driver may appear more than once IFF&n; *&t;it can deal with being detected (and therefore initialized) &n; *&t;with more than one simulatenous host number, can handle being&n; *&t;rentrant, etc.&n; *&n; *&t;They may appear in any order, as each SCSI host  is told which host number it is&n; *&t;during detection.&n; */
@@ -50,6 +60,14 @@ id|BLANKIFY
 c_func
 (paren
 id|AHA1542
+)paren
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_AHA1740
+id|BLANKIFY
+c_func
+(paren
+id|AHA1740
 )paren
 comma
 macro_line|#endif
@@ -81,7 +99,15 @@ macro_line|#ifdef CONFIG_SCSI_7000FASST
 id|BLANKIFY
 c_func
 (paren
-id|WD7000FASST
+id|WD7000
+)paren
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DEBUG
+id|BLANKIFY
+c_func
+(paren
+id|SCSI_DEBUG
 )paren
 comma
 macro_line|#endif
@@ -130,8 +156,14 @@ id|host_timeout
 id|MAX_SCSI_HOSTS
 )braket
 suffix:semicolon
+DECL|variable|last_reset
+r_int
+id|last_reset
+(braket
+id|MAX_SCSI_HOSTS
+)braket
+suffix:semicolon
 DECL|variable|host_queue
-r_volatile
 id|Scsi_Cmnd
 op_star
 id|host_queue
@@ -139,6 +171,28 @@ id|host_queue
 id|MAX_SCSI_HOSTS
 )braket
 suffix:semicolon
+DECL|variable|host_wait
+r_struct
+id|wait_queue
+op_star
+id|host_wait
+(braket
+id|MAX_SCSI_HOSTS
+)braket
+op_assign
+(brace
+l_int|NULL
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* For waiting until host available*/
+DECL|variable|max_scsi_hosts
+r_int
+id|max_scsi_hosts
+op_assign
+id|MAX_SCSI_HOSTS
+suffix:semicolon
+multiline_comment|/* This is used by scsi.c */
 DECL|function|scsi_init
 r_void
 id|scsi_init
@@ -188,13 +242,6 @@ id|i
 (brace
 multiline_comment|/*&n; * Initialize our semaphores.  -1 is interpreted to mean &n; * &quot;inactive&quot; - where as 0 will indicate a time out condition.&n; */
 id|host_busy
-(braket
-id|i
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|host_timeout
 (braket
 id|i
 )braket
@@ -302,4 +349,223 @@ l_string|&quot;0&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif&t;
+macro_line|#ifndef CONFIG_BLK_DEV_SD
+DECL|function|sd_init
+r_int
+r_int
+(def_block
+id|sd_init
+c_func
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+(brace
+r_return
+id|memory_start
+suffix:semicolon
+)brace
+)def_block
+suffix:semicolon
+DECL|function|sd_init1
+r_int
+r_int
+(def_block
+id|sd_init1
+c_func
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+(brace
+r_return
+id|memory_start
+suffix:semicolon
+)brace
+)def_block
+suffix:semicolon
+DECL|function|sd_attach
+r_void
+(def_block
+id|sd_attach
+c_func
+(paren
+id|Scsi_Device
+op_star
+id|SDp
+)paren
+(brace
+)brace
+)def_block
+suffix:semicolon
+DECL|variable|NR_SD
+r_int
+id|NR_SD
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|MAX_SD
+r_int
+id|MAX_SD
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef CONFIG_BLK_DEV_SR
+DECL|function|sr_init
+r_int
+r_int
+(def_block
+id|sr_init
+c_func
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+(brace
+r_return
+id|memory_start
+suffix:semicolon
+)brace
+)def_block
+suffix:semicolon
+DECL|function|sr_init1
+r_int
+r_int
+(def_block
+id|sr_init1
+c_func
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+(brace
+r_return
+id|memory_start
+suffix:semicolon
+)brace
+)def_block
+suffix:semicolon
+DECL|function|sr_attach
+r_void
+(def_block
+id|sr_attach
+c_func
+(paren
+id|Scsi_Device
+op_star
+id|SDp
+)paren
+(brace
+)brace
+)def_block
+suffix:semicolon
+DECL|variable|NR_SR
+r_int
+id|NR_SR
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|MAX_SR
+r_int
+id|MAX_SR
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef CONFIG_BLK_DEV_ST
+DECL|function|st_init
+r_int
+r_int
+(def_block
+id|st_init
+c_func
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+(brace
+r_return
+id|memory_start
+suffix:semicolon
+)brace
+)def_block
+suffix:semicolon
+DECL|function|st_init1
+r_int
+r_int
+(def_block
+id|st_init1
+c_func
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+(brace
+r_return
+id|memory_start
+suffix:semicolon
+)brace
+)def_block
+suffix:semicolon
+DECL|function|st_attach
+r_void
+(def_block
+id|st_attach
+c_func
+(paren
+id|Scsi_Device
+op_star
+id|SDp
+)paren
+(brace
+)brace
+)def_block
+suffix:semicolon
+DECL|variable|NR_ST
+r_int
+id|NR_ST
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|MAX_ST
+r_int
+id|MAX_ST
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 eof

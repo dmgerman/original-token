@@ -5,9 +5,10 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &quot;seagate.h&quot;
+macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &quot;seagate.h&quot;
 r_static
 r_int
 id|internal_command
@@ -521,6 +522,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|seagate_st0x_info
+r_const
 r_char
 op_star
 id|seagate_st0x_info
@@ -573,10 +575,17 @@ op_star
 id|done_fn
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|SCint
+r_static
+id|Scsi_Cmnd
+op_star
+id|SCint
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -708,11 +717,13 @@ id|temp
 )paren
 suffix:semicolon
 macro_line|#endif
+id|SCint-&gt;result
+op_assign
+id|temp
+suffix:semicolon
 id|done_fn
 (paren
-id|hostno
-comma
-id|temp
+id|SCint
 )paren
 suffix:semicolon
 )brace
@@ -731,31 +742,18 @@ DECL|function|seagate_st0x_queue_command
 r_int
 id|seagate_st0x_queue_command
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
+id|SCpnt
 comma
 r_void
 (paren
 op_star
-id|fn
+id|done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 )paren
 (brace
@@ -764,11 +762,11 @@ id|result
 suffix:semicolon
 id|done_fn
 op_assign
-id|fn
+id|done
 suffix:semicolon
 id|current_target
 op_assign
-id|target
+id|SCpnt-&gt;target
 suffix:semicolon
 (paren
 r_const
@@ -777,27 +775,31 @@ op_star
 )paren
 id|current_cmnd
 op_assign
-id|cmnd
+id|SCpnt-&gt;cmnd
 suffix:semicolon
 id|current_data
 op_assign
-id|buff
+id|SCpnt-&gt;request_buffer
 suffix:semicolon
 id|current_bufflen
 op_assign
-id|bufflen
+id|SCpnt-&gt;request_bufflen
+suffix:semicolon
+id|SCint
+op_assign
+id|SCpnt
 suffix:semicolon
 id|result
 op_assign
 id|internal_command
 (paren
-id|target
+id|SCpnt-&gt;target
 comma
-id|cmnd
+id|SCpnt-&gt;cmnd
 comma
-id|buff
+id|SCpnt-&gt;request_buffer
 comma
-id|bufflen
+id|SCpnt-&gt;request_bufflen
 comma
 id|CAN_RECONNECT
 )paren
@@ -818,11 +820,13 @@ l_int|0
 suffix:semicolon
 r_else
 (brace
+id|SCpnt-&gt;result
+op_assign
+id|result
+suffix:semicolon
 id|done_fn
 (paren
-id|hostno
-comma
-id|result
+id|SCpnt
 )paren
 suffix:semicolon
 r_return
@@ -834,33 +838,21 @@ DECL|function|seagate_st0x_command
 r_int
 id|seagate_st0x_command
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
+id|SCpnt
 )paren
 (brace
 r_return
 id|internal_command
 (paren
-id|target
+id|SCpnt-&gt;target
 comma
-id|cmnd
+id|SCpnt-&gt;cmnd
 comma
-id|buff
+id|SCpnt-&gt;request_buffer
 comma
-id|bufflen
+id|SCpnt-&gt;request_bufflen
 comma
 (paren
 r_int
@@ -1841,25 +1833,13 @@ suffix:colon
 multiline_comment|/*&n; * &t;We loop as long as we are in a data out phase, there is data to send, &n; *&t;and BSY is still active.&n; */
 id|__asm__
 (paren
-"&quot;"
 multiline_comment|/*&n;&t;Local variables : &n;&t;len = ecx&n;&t;data = esi&n;&t;st0x_cr_sr = ebx&n;&t;st0x_dr =  edi&n;&n;&t;Test for any data here at all.&n;*/
-id|movl
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|esi
+l_string|&quot;movl %0, %%esi&bslash;n&quot;
 multiline_comment|/* local value of data */
-id|movl
-op_mod
-l_int|1
-comma
-op_mod
-op_mod
-id|ecx
+l_string|&quot;&bslash;tmovl %1, %%ecx&bslash;n&quot;
 multiline_comment|/* local value of len */
-id|orl
+"&quot;&bslash;"
+id|torl
 op_mod
 op_mod
 id|ecx
@@ -1894,8 +1874,12 @@ comma
 op_mod
 op_mod
 id|al
+"&bslash;"
+id|n
+"&quot;"
 multiline_comment|/*&n;&t;Test for BSY&n;*/
-id|test
+"&quot;&bslash;"
+id|ttest
 "$"
 l_int|1
 comma
@@ -1904,8 +1888,12 @@ op_mod
 id|al
 id|jz
 l_float|2f
+"&bslash;"
+id|n
+"&quot;"
 multiline_comment|/*&n;&t;Test for data out phase - STATUS &amp; REQ_MASK should be REQ_DATAOUT, which is 0.&n;*/
-id|test
+"&quot;&bslash;"
+id|ttest
 "$"
 l_int|0xe
 comma
@@ -1914,8 +1902,12 @@ op_mod
 id|al
 id|jnz
 l_float|2f
+"&bslash;"
+id|n
+"&quot;"
 multiline_comment|/*&n;&t;Test for REQ&n;*/
-id|test
+"&quot;&bslash;"
+id|ttest
 "$"
 l_int|0x10
 comma
@@ -1997,25 +1989,13 @@ suffix:colon
 multiline_comment|/*&n; * &t;We loop as long as we are in a data in phase, there is room to read, &n; * &t;and BSY is still active&n; */
 id|__asm__
 (paren
-"&quot;"
 multiline_comment|/*&n;&t;Local variables : &n;&t;ecx = len&n;&t;edi = data&n;&t;esi = st0x_cr_sr&n;&t;ebx = st0x_dr&n;&n;&t;Test for room to read&n;*/
-id|movl
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|edi
+l_string|&quot;movl %0, %%edi&bslash;n&quot;
 multiline_comment|/* data */
-id|movl
-op_mod
-l_int|1
-comma
-op_mod
-op_mod
-id|ecx
+l_string|&quot;&bslash;tmovl %1, %%ecx&bslash;n&quot;
 multiline_comment|/* len */
-id|orl
+"&quot;&bslash;"
+id|torl
 op_mod
 op_mod
 id|ecx
@@ -2050,8 +2030,12 @@ comma
 op_mod
 op_mod
 id|al
+"&bslash;"
+id|n
+"&quot;"
 multiline_comment|/*&n;&t;Test for BSY&n;*/
-id|test
+"&quot;&bslash;"
+id|ttest
 "$"
 l_int|1
 comma
@@ -2060,8 +2044,12 @@ op_mod
 id|al
 id|jz
 l_float|2f
+"&bslash;"
+id|n
+"&quot;"
 multiline_comment|/*&n;&t;Test for data in phase - STATUS &amp; REQ_MASK should be REQ_DATAIN, = STAT_IO, which is 4.&n;*/
-id|movb
+"&quot;&bslash;"
+id|tmovb
 "$"
 l_int|0xe
 comma
@@ -2085,8 +2073,12 @@ op_mod
 id|ah
 id|jne
 l_float|2f
+"&bslash;"
+id|n
+"&quot;"
 multiline_comment|/*&n;&t;Test for REQ&n;*/
-id|test
+"&quot;&bslash;"
+id|ttest
 "$"
 l_int|0x10
 comma
@@ -2119,16 +2111,12 @@ id|edi
 comma
 op_mod
 l_int|2
-multiline_comment|/* data */
-id|movl
-op_mod
-op_mod
-id|ecx
-comma
-op_mod
-l_int|3
-multiline_comment|/* len */
+"&bslash;"
+id|n
 "&quot;"
+multiline_comment|/* data */
+l_string|&quot;&bslash;tmovl %%ecx, %3&bslash;n&quot;
+multiline_comment|/* len */
 suffix:colon
 multiline_comment|/* output */
 l_string|&quot;=r&quot;
@@ -2616,6 +2604,10 @@ DECL|function|seagate_st0x_abort
 r_int
 id|seagate_st0x_abort
 (paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+comma
 r_int
 id|code
 )paren

@@ -1,7 +1,7 @@
 multiline_comment|/* Internet Control Message Protocol (ICMP) icmp.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Bob Harris&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author of tcpip package may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;&n;    The author of this file may be reached at rth@sparta.com or Sparta, Inc.&n;    7926 Jones Branch Dr. Suite 900, McLean Va 22102.&n;*/
-multiline_comment|/* $Id: icmp.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: icmp.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; *&n; */
+multiline_comment|/* $Id: icmp.c,v 0.8.4.3 1992/11/18 15:38:03 bir7 Exp $ */
+multiline_comment|/* $Log: icmp.c,v $&n; * Revision 0.8.4.3  1992/11/18  15:38:03  bir7&n; * Fixed some printk&squot;s.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; *&n; */
 multiline_comment|/* modified by Ross Biro bir7@leland.stanford.edu to do more than just&n;   echo responses. */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -17,8 +17,20 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &quot;../kern_sock.h&quot; /* for PRINTK */
 macro_line|#include &quot;icmp.h&quot;
+macro_line|#ifdef PRINTK
+DECL|macro|PRINTK
+macro_line|#undef PRINTK
+macro_line|#endif
+DECL|macro|ICMP_DEBUG
+macro_line|#undef ICMP_DEBUG
+macro_line|#ifdef ICMP_DEBUG
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK printk
+macro_line|#else
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK dummy_routine
+macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a,b) ((a)&lt;(b)?(a):(b))
 multiline_comment|/* an array of errno for error messages from dest unreach. */
@@ -538,7 +550,7 @@ multiline_comment|/* Failed checksum! */
 id|PRINTK
 c_func
 (paren
-l_string|&quot;&bslash;nICMP ECHO failed checksum!&quot;
+l_string|&quot;ICMP ECHO failed checksum!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|skb1-&gt;sk
@@ -889,7 +901,7 @@ multiline_comment|/* Problems building header */
 id|PRINTK
 c_func
 (paren
-l_string|&quot;&bslash;nCould not build IP Header for ICMP ECHO Response&quot;
+l_string|&quot;Could not build IP Header for ICMP ECHO Response&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree_s
@@ -1034,7 +1046,7 @@ suffix:colon
 id|PRINTK
 c_func
 (paren
-l_string|&quot;&bslash;nUnsupported ICMP type = x%x&quot;
+l_string|&quot;Unsupported ICMP type = x%x&bslash;n&quot;
 comma
 id|icmph-&gt;type
 )paren

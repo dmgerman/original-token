@@ -1,7 +1,7 @@
 multiline_comment|/* ip.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: ip.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: ip.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; *&n;*/
+multiline_comment|/* $Id: ip.c,v 0.8.4.4 1992/11/18 15:38:03 bir7 Exp $ */
+multiline_comment|/* $Log: ip.c,v $&n; * Revision 0.8.4.4  1992/11/18  15:38:03  bir7&n; * Fixed bug in copying packet and checking packet type.&n; *&n; * Revision 0.8.4.3  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; *&n;*/
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -619,11 +619,13 @@ id|ipprot
 (brace
 id|PRINTK
 (paren
-l_string|&quot;handler = %X, protocol = %d&bslash;n&quot;
+l_string|&quot;handler = %X, protocol = %d, copy=%d &bslash;n&quot;
 comma
 id|ipprot-&gt;handler
 comma
 id|ipprot-&gt;protocol
+comma
+id|ipprot-&gt;copy
 )paren
 suffix:semicolon
 )brace
@@ -1004,16 +1006,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-id|verify_area
-(paren
-id|u_ipc
-comma
-r_sizeof
-(paren
-id|ipc
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*  verify_area (u_ipc, sizeof (ipc));*/
 id|memcpy_fromfs
 c_func
 (paren
@@ -1296,10 +1289,10 @@ id|daddr
 )paren
 (brace
 )brace
+macro_line|#if 0
 multiline_comment|/* this routine puts the options at the end of an ip header. */
 r_static
 r_int
-DECL|function|build_options
 id|build_options
 (paren
 r_struct
@@ -1343,6 +1336,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* This routine builds the appropriate hardware/ip headers for&n;   the routine.  It assumes that if *prot != NULL then the&n;   protocol knows what it&squot;s doing, otherwise it uses the&n;   routing/arp tables to select a protocol struct. */
 r_int
 DECL|function|ip_build_header
@@ -3014,6 +3008,15 @@ id|sk_buff
 op_star
 id|skb2
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ipprot-&gt;protocol
+op_ne
+id|iph-&gt;protocol
+)paren
+r_continue
+suffix:semicolon
 id|PRINTK
 (paren
 l_string|&quot;Using protocol = %X:&bslash;n&quot;
@@ -3041,7 +3044,7 @@ id|kmalloc
 (paren
 id|skb-&gt;mem_len
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -3065,6 +3068,32 @@ suffix:semicolon
 id|skb2-&gt;mem_addr
 op_assign
 id|skb2
+suffix:semicolon
+id|skb2-&gt;h.raw
+op_assign
+(paren
+r_void
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|skb2
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|skb-&gt;h.raw
+op_minus
+(paren
+r_int
+r_int
+)paren
+id|skb
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -3350,7 +3379,10 @@ r_if
 c_cond
 (paren
 id|sk
+op_ne
+l_int|NULL
 )paren
+(brace
 id|dev
 op_member_access_from_pointer
 id|queue_xmit
@@ -3363,7 +3395,9 @@ comma
 id|sk-&gt;priority
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 id|dev-&gt;queue_xmit
 (paren
 id|skb
@@ -3373,6 +3407,7 @@ comma
 id|SOPRI_NORMAL
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace

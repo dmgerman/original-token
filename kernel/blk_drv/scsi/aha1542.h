@@ -91,6 +91,29 @@ suffix:semicolon
 multiline_comment|/* msb, .., lsb */
 )brace
 suffix:semicolon
+multiline_comment|/* This is used with scatter-gather */
+DECL|struct|chain
+r_struct
+id|chain
+(brace
+DECL|member|datalen
+id|unchar
+id|datalen
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* Size of this part of chain */
+DECL|member|dataptr
+id|unchar
+id|dataptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* Location of data */
+)brace
+suffix:semicolon
 multiline_comment|/* These belong in scsi.h also */
 DECL|macro|any2scsi
 mdefine_line|#define any2scsi(up, p)&t;&t;&t;&t;&bslash;&n;(up)[0] = (((unsigned long)(p)) &gt;&gt; 16)  ;&t;&bslash;&n;(up)[1] = (((unsigned long)(p)) &gt;&gt; 8);&t;&t;&bslash;&n;(up)[2] = ((unsigned long)(p));
@@ -202,41 +225,16 @@ r_int
 id|aha1542_command
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 )paren
 suffix:semicolon
 r_int
 id|aha1542_queuecommand
 c_func
 (paren
-id|unchar
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 comma
 r_void
 (paren
@@ -244,9 +242,8 @@ op_star
 id|done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 )paren
 suffix:semicolon
@@ -254,9 +251,13 @@ r_int
 id|aha1542_abort
 c_func
 (paren
+id|Scsi_Cmnd
+op_star
+comma
 r_int
 )paren
 suffix:semicolon
+r_const
 r_char
 op_star
 id|aha1542_info
@@ -272,11 +273,27 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+id|aha1542_biosparam
+c_func
+(paren
+r_int
+comma
+r_int
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+DECL|macro|AHA1542_MAILBOXES
+mdefine_line|#define AHA1542_MAILBOXES 8
+DECL|macro|AHA1542_SCATTER
+mdefine_line|#define AHA1542_SCATTER 16
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|AHA1542
-mdefine_line|#define AHA1542 {&quot;Adaptec 1542&quot;, aha1542_detect,&t;&bslash;&n;&t;&t;aha1542_info, aha1542_command,&t;&t;&bslash;&n;&t;&t;aha1542_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;aha1542_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;aha1542_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;1, 7, 0, 1}
+mdefine_line|#define AHA1542 {&quot;Adaptec 1542&quot;, aha1542_detect,&t;&bslash;&n;&t;&t;aha1542_info, aha1542_command,&t;&t;&bslash;&n;&t;&t;aha1542_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;aha1542_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;aha1542_reset,&t;&t;&t;&t;&bslash;&n;&t;        NULL,&t;&t;                        &bslash;&n;&t;&t;aha1542_biosparam,                      &bslash;&n;&t;&t;AHA1542_MAILBOXES, 7, AHA1542_SCATTER, 1, 0, 1}
 macro_line|#endif
 eof

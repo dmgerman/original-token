@@ -52,6 +52,24 @@ r_int
 )paren
 suffix:semicolon
 r_int
+id|sprintf
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_const
+r_char
+op_star
+id|fmt
+comma
+dot
+dot
+dot
+)paren
+suffix:semicolon
+r_int
 id|printk
 c_func
 (paren
@@ -95,5 +113,77 @@ mdefine_line|#define kfree(x) kfree_s((x), 0)
 multiline_comment|/*&n; * This is defined as a macro, but at some point this might become a&n; * real subroutine that sets a flag if it returns true (to do&n; * BSD-style accounting where the process is flagged if it uses root&n; * privs).  The implication of this is that you should do normal&n; * permissions checks first, and check suser() last.&n; */
 DECL|macro|suser
 mdefine_line|#define suser() (current-&gt;euid == 0)
+DECL|macro|SI_LOAD_SHIFT
+mdefine_line|#define SI_LOAD_SHIFT&t;16
+DECL|struct|sysinfo
+r_struct
+id|sysinfo
+(brace
+DECL|member|uptime
+r_int
+id|uptime
+suffix:semicolon
+multiline_comment|/* Seconds since boot */
+DECL|member|loads
+r_int
+r_int
+id|loads
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* 1, 5, and 15 minute load averages */
+DECL|member|totalram
+r_int
+r_int
+id|totalram
+suffix:semicolon
+multiline_comment|/* Total usable main memory size */
+DECL|member|freeram
+r_int
+r_int
+id|freeram
+suffix:semicolon
+multiline_comment|/* Available memory size */
+DECL|member|sharedram
+r_int
+r_int
+id|sharedram
+suffix:semicolon
+multiline_comment|/* Amount of shared memory */
+DECL|member|bufferram
+r_int
+r_int
+id|bufferram
+suffix:semicolon
+multiline_comment|/* Memory used by buffers */
+DECL|member|totalswap
+r_int
+r_int
+id|totalswap
+suffix:semicolon
+multiline_comment|/* Total swap space size */
+DECL|member|freeswap
+r_int
+r_int
+id|freeswap
+suffix:semicolon
+multiline_comment|/* swap space still available */
+DECL|member|procs
+r_int
+r_int
+id|procs
+suffix:semicolon
+multiline_comment|/* Number of current processes */
+DECL|member|_f
+r_char
+id|_f
+(braket
+l_int|22
+)braket
+suffix:semicolon
+multiline_comment|/* Pads structure to 64 bytes */
+)brace
+suffix:semicolon
 macro_line|#endif
 eof

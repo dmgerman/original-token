@@ -174,9 +174,13 @@ r_else
 r_if
 c_cond
 (paren
+(paren
 id|log_page
 op_assign
 id|i
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|log_start

@@ -33,21 +33,8 @@ r_int
 id|ultrastor_14f_queuecommand
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 comma
 r_void
 (paren
@@ -55,9 +42,8 @@ op_star
 id|done
 )paren
 (paren
-r_int
-comma
-r_int
+id|Scsi_Cmnd
+op_star
 )paren
 )paren
 suffix:semicolon
@@ -66,21 +52,8 @@ r_int
 id|ultrastor_14f_command
 c_func
 (paren
-r_int
-r_char
-id|target
-comma
-r_const
-r_void
+id|Scsi_Cmnd
 op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -88,6 +61,9 @@ r_int
 id|ultrastor_14f_abort
 c_func
 (paren
+id|Scsi_Cmnd
+op_star
+comma
 r_int
 )paren
 suffix:semicolon
@@ -100,11 +76,12 @@ r_void
 suffix:semicolon
 macro_line|#ifndef NO_QUEUEING
 DECL|macro|ULTRASTOR_14F
-mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, 0, &bslash;&n;      ultrastor_14f_queuecommand, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      1, 0, 0 }
+mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, 0, &bslash;&n;      ultrastor_14f_queuecommand, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      NULL, NULL, 1, 0, SG_NONE, 1, 0, 1}
 multiline_comment|/* ??? What should can_queue be set to?  Currently 1... */
+multiline_comment|/* Set it to the number of outstanding requests that the host adapter can keep&n;   track of at one time.  ERY */
 macro_line|#else
 DECL|macro|ULTRASTOR_14F
-mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, &bslash;&n;      ultrastor_14f_command, 0, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      0, 0, 0, 1 }
+mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, &bslash;&n;      ultrastor_14f_command, 0, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      NULL, NULL, 0, 0, SG_NONE, 1, 0, 1}
 macro_line|#endif
 DECL|macro|UD_ABORT
 mdefine_line|#define UD_ABORT 0x0001

@@ -568,6 +568,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|current
 op_assign
 id|MSDOS_I
@@ -577,6 +578,9 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|i_start
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|cache_lookup
@@ -882,7 +886,14 @@ suffix:semicolon
 )brace
 )brace
 id|inode-&gt;i_blocks
-op_increment
+op_add_assign
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|cluster_size
 suffix:semicolon
 r_if
 c_cond

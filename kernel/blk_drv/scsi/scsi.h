@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;scsi.h Copyright (C) 1992 Drew Eckhardt &n; *&t;generic SCSI package header file by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
+multiline_comment|/*&n; *&t;scsi.h Copyright (C) 1992 Drew Eckhardt &n; *&t;generic SCSI package header file by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale eric@tantalus.nrl.navy.mil to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
 macro_line|#ifndef _SCSI_H
 DECL|macro|_SCSI_H
 mdefine_line|#define _SCSI_H
@@ -12,6 +12,8 @@ DECL|macro|REQUEST_SENSE
 mdefine_line|#define REQUEST_SENSE&t;&t;0x03
 DECL|macro|FORMAT_UNIT
 mdefine_line|#define FORMAT_UNIT&t;&t;0x04
+DECL|macro|READ_BLOCK_LIMITS
+mdefine_line|#define READ_BLOCK_LIMITS&t;0x05
 DECL|macro|REASSIGN_BLOCKS
 mdefine_line|#define REASSIGN_BLOCKS&t;&t;0x07
 DECL|macro|READ_6
@@ -20,8 +22,16 @@ DECL|macro|WRITE_6
 mdefine_line|#define WRITE_6&t;&t;&t;0x0a
 DECL|macro|SEEK_6
 mdefine_line|#define SEEK_6&t;&t;&t;0x0b
+DECL|macro|READ_REVERSE
+mdefine_line|#define READ_REVERSE&t;&t;0x0f
+DECL|macro|WRITE_FILEMARKS
+mdefine_line|#define WRITE_FILEMARKS&t;&t;0x10
+DECL|macro|SPACE
+mdefine_line|#define SPACE&t;&t;&t;0x11
 DECL|macro|INQUIRY
 mdefine_line|#define INQUIRY&t;&t;&t;0x12
+DECL|macro|RECOVER_BUFFERED_DATA
+mdefine_line|#define RECOVER_BUFFERED_DATA&t;0x14
 DECL|macro|MODE_SELECT
 mdefine_line|#define MODE_SELECT&t;&t;0x15
 DECL|macro|RESERVE
@@ -30,12 +40,14 @@ DECL|macro|RELEASE
 mdefine_line|#define RELEASE&t;&t;&t;0x17
 DECL|macro|COPY
 mdefine_line|#define COPY&t;&t;&t;0x18
+DECL|macro|ERASE
+mdefine_line|#define ERASE&t;&t;&t;0x19
 DECL|macro|MODE_SENSE
 mdefine_line|#define MODE_SENSE&t;&t;0x1a
 DECL|macro|START_STOP
 mdefine_line|#define START_STOP&t;&t;0x1b
-DECL|macro|RECIEVE_DAIGNOSTIC
-mdefine_line|#define RECIEVE_DAIGNOSTIC&t;0x1c
+DECL|macro|RECEIVE_DIAGNOSTIC
+mdefine_line|#define RECEIVE_DIAGNOSTIC&t;0x1c
 DECL|macro|SEND_DIAGNOSTIC
 mdefine_line|#define SEND_DIAGNOSTIC&t;&t;0x1d
 DECL|macro|ALLOW_MEDIUM_REMOVAL
@@ -60,10 +72,34 @@ DECL|macro|SEARCH_LOW
 mdefine_line|#define SEARCH_LOW&t;&t;0x32
 DECL|macro|SET_LIMITS
 mdefine_line|#define SET_LIMITS&t;&t;0x33
+DECL|macro|PRE_FETCH
+mdefine_line|#define PRE_FETCH&t;&t;0x34
+DECL|macro|SYNCRONIZE_CACHE
+mdefine_line|#define SYNCRONIZE_CACHE&t;0x35
+DECL|macro|LOCK_UNLOCK_CACHE
+mdefine_line|#define LOCK_UNLOCK_CACHE&t;0x36
+DECL|macro|READ_DEFECT_DATA
+mdefine_line|#define READ_DEFECT_DATA&t;0x37
 DECL|macro|COMPARE
 mdefine_line|#define COMPARE&t;&t;&t;0x39
 DECL|macro|COPY_VERIFY
 mdefine_line|#define COPY_VERIFY&t;&t;0x3a
+DECL|macro|WRITE_BUFFER
+mdefine_line|#define WRITE_BUFFER&t;&t;0x3b
+DECL|macro|READ_BUFFER
+mdefine_line|#define READ_BUFFER&t;&t;0x3c
+DECL|macro|READ_LONG
+mdefine_line|#define READ_LONG&t;&t;0x3e
+DECL|macro|CHANGE_DEFINITION
+mdefine_line|#define CHANGE_DEFINITION&t;0x40
+DECL|macro|LOG_SELECT
+mdefine_line|#define LOG_SELECT&t;&t;0x4c
+DECL|macro|LOG_SENSE
+mdefine_line|#define LOG_SENSE&t;&t;0x4d
+DECL|macro|MODE_SELECT_10
+mdefine_line|#define MODE_SELECT_10&t;&t;0x55
+DECL|macro|MODE_SENSE_10
+mdefine_line|#define MODE_SENSE_10&t;&t;0x5a
 DECL|macro|COMMAND_SIZE
 mdefine_line|#define COMMAND_SIZE(opcode) ((opcode) ? ((opcode) &gt; 0x20 ? 10 : 6) : 0)
 multiline_comment|/*&n;&t;MESSAGE CODES&n;*/
@@ -225,6 +261,7 @@ id|scsi_device
 DECL|member|host_no
 DECL|member|id
 DECL|member|lun
+DECL|member|index
 r_int
 r_char
 id|host_no
@@ -232,12 +269,25 @@ comma
 id|id
 comma
 id|lun
+comma
+id|index
 suffix:semicolon
 DECL|member|access_count
 r_int
 id|access_count
 suffix:semicolon
 multiline_comment|/* Count of open channels/mounts */
+DECL|member|device_wait
+r_struct
+id|wait_queue
+op_star
+id|device_wait
+suffix:semicolon
+multiline_comment|/* Used to wait if device is busy */
+DECL|member|type
+r_char
+id|type
+suffix:semicolon
 DECL|member|writeable
 r_int
 id|writeable
@@ -292,30 +342,14 @@ mdefine_line|#define sense_error(sense) ((sense) &amp; 0xf)
 DECL|macro|sense_valid
 mdefine_line|#define sense_valid(sense) ((sense) &amp; 0x80);
 multiline_comment|/*&n;&t;These are the SCSI devices available on the system.&n;*/
-DECL|macro|MAX_SCSI_DEVICE
-mdefine_line|#define MAX_SCSI_DEVICE 4
 r_extern
 r_int
 id|NR_SCSI_DEVICES
 suffix:semicolon
 r_extern
 id|Scsi_Device
+op_star
 id|scsi_devices
-(braket
-id|MAX_SCSI_DEVICE
-)braket
-suffix:semicolon
-multiline_comment|/*&n;&t;scsi_abort aborts the current command that is executing on host host.&n;&t;The error code, if non zero is returned in the host byte, otherwise &n;&t;DID_ABORT is returned in the hostbyte.&n;*/
-r_extern
-r_int
-id|scsi_abort
-(paren
-r_int
-id|host
-comma
-r_int
-id|code
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;Initializes all SCSI devices.  This scans all scsi busses.&n;*/
 r_extern
@@ -330,17 +364,318 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;You guesed it.  This sends a command to the selected SCSI host &n;&n;extern void print_inquiry(unsigned char *data);&n;&n;*/
+DECL|struct|scatterlist
+r_struct
+id|scatterlist
+(brace
+DECL|member|address
+r_char
+op_star
+id|address
+suffix:semicolon
+multiline_comment|/* Location data is to be transferred to */
+DECL|member|alt_address
+r_char
+op_star
+id|alt_address
+suffix:semicolon
+multiline_comment|/* Location of actual if address is a &n;&t;&t;&t;    dma indirect buffer.  NULL otherwise */
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|ISA_DMA_THRESHOLD
+mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
+r_char
+op_star
+id|scsi_malloc
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_int
+id|scsi_free
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|dma_free_sectors
+suffix:semicolon
+multiline_comment|/* How much room do we have left */
+r_extern
+r_int
+r_int
+id|need_isa_buffer
+suffix:semicolon
+multiline_comment|/* True if some devices need indirection&n;&t;&t;&t;&t; buffers */
+multiline_comment|/*&n;&t;The Scsi_Cmnd structure is used by scsi.c internally, and for communication with&n;&t;low level drivers that support multiple outstanding commands.&n;*/
+DECL|struct|scsi_pointer
+r_typedef
+r_struct
+id|scsi_pointer
+(brace
+DECL|member|ptr
+r_char
+op_star
+id|ptr
+suffix:semicolon
+multiline_comment|/* data pointer */
+DECL|member|this_residual
+r_int
+id|this_residual
+suffix:semicolon
+multiline_comment|/* left in this buffer */
+DECL|member|buffer
+r_struct
+id|scatterlist
+op_star
+id|buffer
+suffix:semicolon
+multiline_comment|/* which buffer */
+DECL|member|buffers_residual
+r_int
+id|buffers_residual
+suffix:semicolon
+multiline_comment|/* how many buffers left */
+DECL|member|Status
+r_volatile
+r_int
+id|Status
+suffix:semicolon
+DECL|member|Message
+r_volatile
+r_int
+id|Message
+suffix:semicolon
+DECL|member|have_data_in
+r_volatile
+r_int
+id|have_data_in
+suffix:semicolon
+DECL|member|sent_command
+r_volatile
+r_int
+id|sent_command
+suffix:semicolon
+DECL|member|phase
+r_volatile
+r_int
+id|phase
+suffix:semicolon
+DECL|typedef|Scsi_Pointer
+)brace
+id|Scsi_Pointer
+suffix:semicolon
+DECL|struct|scsi_cmnd
+r_typedef
+r_struct
+id|scsi_cmnd
+(brace
+DECL|member|host
+r_int
+id|host
+suffix:semicolon
+DECL|member|target
+DECL|member|lun
+DECL|member|index
+r_int
+r_char
+id|target
+comma
+id|lun
+comma
+id|index
+suffix:semicolon
+DECL|member|next
+DECL|member|prev
+r_struct
+id|scsi_cmnd
+op_star
+id|next
+comma
+op_star
+id|prev
+suffix:semicolon
+multiline_comment|/* These elements define the operation we are about to perform */
+DECL|member|cmnd
+r_int
+r_char
+id|cmnd
+(braket
+l_int|10
+)braket
+suffix:semicolon
+DECL|member|request_bufflen
+r_int
+id|request_bufflen
+suffix:semicolon
+multiline_comment|/* Actual request size */
+DECL|member|request_buffer
+r_void
+op_star
+id|request_buffer
+suffix:semicolon
+multiline_comment|/* Actual requested buffer */
+multiline_comment|/* These elements define the operation we ultimately want to perform */
+DECL|member|data_cmnd
+r_int
+r_char
+id|data_cmnd
+(braket
+l_int|10
+)braket
+suffix:semicolon
+DECL|member|use_sg
+r_int
+r_int
+id|use_sg
+suffix:semicolon
+multiline_comment|/* Number of pieces of scatter-gather */
+DECL|member|sglist_len
+r_int
+r_int
+id|sglist_len
+suffix:semicolon
+multiline_comment|/* size of malloc&squot;d scatter-gather list */
+DECL|member|bufflen
+r_int
+id|bufflen
+suffix:semicolon
+multiline_comment|/* Size of data buffer */
+DECL|member|buffer
+r_void
+op_star
+id|buffer
+suffix:semicolon
+multiline_comment|/* Data buffer */
+DECL|member|request
+r_struct
+id|request
+id|request
+suffix:semicolon
+multiline_comment|/* A copy of the command we are working on*/
+DECL|member|sense_buffer
+r_int
+r_char
+id|sense_buffer
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* Sense for this command, if needed*/
+DECL|member|retries
+r_int
+id|retries
+suffix:semicolon
+DECL|member|allowed
+r_int
+id|allowed
+suffix:semicolon
+DECL|member|timeout_per_command
+DECL|member|timeout_total
+DECL|member|timeout
+r_int
+id|timeout_per_command
+comma
+id|timeout_total
+comma
+id|timeout
+suffix:semicolon
+multiline_comment|/*&n; *&t;We handle the timeout differently if it happens when a reset, &n; *&t;abort, etc are in process. &n; */
+DECL|member|internal_timeout
+r_int
+r_char
+id|internal_timeout
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* These variables are for the cdrom only.  Once we have variable size buffers&n;   in the buffer cache, they will go away. */
+DECL|member|this_count
+r_int
+id|this_count
+suffix:semicolon
+multiline_comment|/* End of special cdrom variables */
+multiline_comment|/* Low-level done function - can be used by low-level driver to point&n;&t; to completion function.  Not used by mid/upper level code. */
+DECL|member|scsi_done
+r_void
+(paren
+op_star
+id|scsi_done
+)paren
+(paren
+r_struct
+id|scsi_cmnd
+op_star
+)paren
+suffix:semicolon
+DECL|member|done
+r_void
+(paren
+op_star
+id|done
+)paren
+(paren
+r_struct
+id|scsi_cmnd
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Mid-level done function */
+multiline_comment|/* The following fields can be written to by the host specific code. &n;   Everything else should be left alone. */
+DECL|member|SCp
+id|Scsi_Pointer
+id|SCp
+suffix:semicolon
+multiline_comment|/* Scratchpad used by some host adapters */
+DECL|member|host_scribble
+r_int
+r_char
+op_star
+id|host_scribble
+suffix:semicolon
+multiline_comment|/* The host adapter is allowed to&n;&t;&t;&t;&t;&t;  call scsi_malloc and get some memory&n;&t;&t;&t;&t;&t;  and hang it here.  The host adapter&n;&t;&t;&t;&t;&t;  is also expected to call scsi_free&n;&t;&t;&t;&t;&t;  to release this memory.  (The memory&n;&t;&t;&t;&t;&t;  obtained by scsi_malloc is guaranteed&n;&t;&t;&t;&t;&t;  to be at an address &lt; 16Mb). */
+DECL|member|result
+r_int
+id|result
+suffix:semicolon
+multiline_comment|/* Status code from lower level driver */
+DECL|typedef|Scsi_Cmnd
+)brace
+id|Scsi_Cmnd
+suffix:semicolon
+multiline_comment|/*&n;&t;scsi_abort aborts the current command that is executing on host host.&n;&t;The error code, if non zero is returned in the host byte, otherwise &n;&t;DID_ABORT is returned in the hostbyte.&n;*/
+r_extern
+r_int
+id|scsi_abort
+(paren
+id|Scsi_Cmnd
+op_star
+comma
+r_int
+id|code
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|scsi_do_cmd
 (paren
-r_int
-id|host
-comma
-r_int
-r_char
-id|target
+id|Scsi_Cmnd
+op_star
 comma
 r_const
 r_void
@@ -360,30 +695,419 @@ op_star
 id|done
 )paren
 (paren
-r_int
-comma
-r_int
+r_struct
+id|scsi_cmnd
+op_star
 )paren
 comma
 r_int
 id|timeout
 comma
 r_int
-r_char
+id|retries
+)paren
+suffix:semicolon
+r_extern
+id|Scsi_Cmnd
 op_star
-id|sense_buffer
+id|allocate_device
+c_func
+(paren
+r_struct
+id|request
+op_star
+op_star
 comma
 r_int
-id|retries
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+id|Scsi_Cmnd
+op_star
+id|request_queueable
+c_func
+(paren
+r_struct
+id|request
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
 r_int
 id|scsi_reset
 (paren
-r_int
-id|host
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|max_scsi_hosts
+suffix:semicolon
+r_extern
+r_int
+id|MAX_SD
+comma
+id|NR_SD
+comma
+id|MAX_ST
+comma
+id|NR_ST
+comma
+id|MAX_SR
+comma
+id|NR_SR
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sd_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sd_init1
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sd_attach
+c_func
+(paren
+id|Scsi_Device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sr_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sr_init1
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sr_attach
+c_func
+(paren
+id|Scsi_Device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|st_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|st_init1
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|st_attach
+c_func
+(paren
+id|Scsi_Device
+op_star
+)paren
+suffix:semicolon
+macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != 9)
+DECL|function|end_scsi_request
+r_static
+r_void
+id|end_scsi_request
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+comma
+r_int
+id|uptodate
+comma
+r_int
+id|sectors
+)paren
+(brace
+r_struct
+id|request
+op_star
+id|req
+suffix:semicolon
+r_struct
+id|buffer_head
+op_star
+id|bh
+suffix:semicolon
+r_struct
+id|task_struct
+op_star
+id|p
+suffix:semicolon
+id|req
+op_assign
+op_amp
+id|SCpnt-&gt;request
+suffix:semicolon
+id|req-&gt;errors
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|uptodate
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|DEVICE_NAME
+l_string|&quot; I/O error&bslash;n&bslash;r&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;dev %04x, sector %d&bslash;n&bslash;r&quot;
+comma
+id|req-&gt;dev
+comma
+id|req-&gt;sector
+)paren
+suffix:semicolon
+)brace
+r_do
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|bh
+op_assign
+id|req-&gt;bh
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+id|req-&gt;bh
+op_assign
+id|bh-&gt;b_reqnext
+suffix:semicolon
+id|req-&gt;nr_sectors
+op_sub_assign
+id|bh-&gt;b_size
+op_rshift
+l_int|9
+suffix:semicolon
+id|req-&gt;sector
+op_add_assign
+id|bh-&gt;b_size
+op_rshift
+l_int|9
+suffix:semicolon
+id|bh-&gt;b_reqnext
+op_assign
+l_int|NULL
+suffix:semicolon
+id|bh-&gt;b_uptodate
+op_assign
+id|uptodate
+suffix:semicolon
+id|unlock_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+id|sectors
+op_sub_assign
+id|bh-&gt;b_size
+op_rshift
+l_int|9
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|bh
+op_assign
+id|req-&gt;bh
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+id|req-&gt;current_nr_sectors
+op_assign
+id|bh-&gt;b_size
+op_rshift
+l_int|9
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;nr_sectors
+OL
+id|req-&gt;current_nr_sectors
+)paren
+(brace
+id|req-&gt;nr_sectors
+op_assign
+id|req-&gt;current_nr_sectors
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;end_scsi_request: buffer-list destroyed&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+)brace
+r_while
+c_loop
+(paren
+id|sectors
+op_logical_and
+id|bh
+)paren
+(brace
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|req-&gt;bh
+)paren
+(brace
+id|req-&gt;buffer
+op_assign
+id|bh-&gt;b_data
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+suffix:semicolon
+id|DEVICE_OFF
+c_func
+(paren
+id|req-&gt;dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|p
+op_assign
+id|req-&gt;waiting
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+id|req-&gt;waiting
+op_assign
+l_int|NULL
+suffix:semicolon
+id|p-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;counter
+OG
+id|current-&gt;counter
+)paren
+id|need_resched
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|req-&gt;dev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|scsi_devices
+(braket
+id|SCpnt-&gt;index
+)braket
+dot
+id|device_wait
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
+DECL|macro|SCSI_SLEEP
+mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;if (CONDITION) {&t;&t;&t;&t;&t;&bslash;&n;                struct wait_queue wait = { current, NULL};      &bslash;&n;&t;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;&t;&bslash;&n;sleep_repeat:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;&t;&bslash;&n;&t;&t;if (CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;schedule();&t;&t;&t;&t;&bslash;&n;&t;&t;&t;goto sleep_repeat;&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;remove_wait_queue(QUEUE, &amp;wait);&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&bslash;&n;&t;}; }
 macro_line|#endif
 eof

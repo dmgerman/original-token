@@ -1666,8 +1666,8 @@ suffix:semicolon
 multiline_comment|/* Set perpendicular mode as required, based on data rate, if supported.&n; * 82077 Untested! 1Mbps data rate only possible with 82077-1.&n; * TODO: increase MAX_BUFFER_SECTORS, add floppy_type entries.&n; */
 DECL|function|perpendicular_mode
 r_static
-r_void
 r_inline
+r_void
 id|perpendicular_mode
 c_func
 (paren
@@ -3807,6 +3807,17 @@ id|buffer_area
 suffix:semicolon
 r_int
 id|device
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|CURRENT
+op_logical_and
+id|CURRENT-&gt;dev
+OL
+l_int|0
+)paren
+r_return
 suffix:semicolon
 id|repeat
 suffix:colon
