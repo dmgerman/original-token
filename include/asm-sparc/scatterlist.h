@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: scatterlist.h,v 1.3 1999/10/18 01:47:13 zaitcev Exp $ */
+multiline_comment|/* $Id: scatterlist.h,v 1.4 1999/12/27 06:37:20 anton Exp $ */
 macro_line|#ifndef _SPARC_SCATTERLIST_H
 DECL|macro|_SPARC_SCATTERLIST_H
 mdefine_line|#define _SPARC_SCATTERLIST_H
+macro_line|#include &lt;linux/types.h&gt;
 DECL|struct|scatterlist
 r_struct
 id|scatterlist

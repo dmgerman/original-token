@@ -219,16 +219,6 @@ id|c-&gt;dtree
 op_assign
 id|td
 suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:       codes new&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 )brace
 r_return
 id|c
@@ -451,29 +441,6 @@ id|c-&gt;sub.lit
 op_assign
 id|t-&gt;base
 suffix:semicolon
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-id|t-&gt;base
-op_ge
-l_int|0x20
-op_logical_and
-id|t-&gt;base
-OL
-l_int|0x7f
-ques
-c_cond
-l_string|&quot;inflate:         literal &squot;%c&squot;&bslash;n&quot;
-suffix:colon
-l_string|&quot;inflate:         literal 0x%02x&bslash;n&quot;
-comma
-id|t-&gt;base
-)paren
-)paren
-suffix:semicolon
 id|c-&gt;mode
 op_assign
 id|LIT
@@ -542,16 +509,6 @@ l_int|32
 )paren
 multiline_comment|/* end of block */
 (brace
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:         end of block&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 id|c-&gt;mode
 op_assign
 id|WASH
@@ -614,18 +571,6 @@ suffix:semicolon
 id|c-&gt;sub.code.tree
 op_assign
 id|c-&gt;dtree
-suffix:semicolon
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:         length %u&bslash;n&quot;
-comma
-id|c-&gt;len
-)paren
-)paren
 suffix:semicolon
 id|c-&gt;mode
 op_assign
@@ -774,18 +719,6 @@ c_func
 (paren
 id|j
 )paren
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:         distance %u&bslash;n&quot;
-comma
-id|c-&gt;sub.copy.dist
-)paren
-)paren
-suffix:semicolon
 id|c-&gt;mode
 op_assign
 id|COPY
@@ -928,15 +861,6 @@ l_int|7
 )paren
 multiline_comment|/* return unused byte, if any */
 (brace
-id|Assert
-c_func
-(paren
-id|k
-OL
-l_int|16
-comma
-l_string|&quot;inflate_codes grabbed too many bytes&quot;
-)paren
 id|k
 op_sub_assign
 l_int|8
@@ -1011,15 +935,5 @@ id|z_streamp
 id|z
 suffix:semicolon
 (brace
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:       codes free&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 )brace
 eof

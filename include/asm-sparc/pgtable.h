@@ -1,9 +1,8 @@
-multiline_comment|/* $Id: pgtable.h,v 1.86 1999/12/16 14:41:19 anton Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.87 1999/12/27 06:37:14 anton Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
 multiline_comment|/*  asm-sparc/pgtable.h:  Defines and functions used to work&n; *                        with Sparc page tables.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
@@ -17,36 +16,14 @@ macro_line|#include &lt;asm/vac-ops.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/btfixup.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_void
 id|load_mmu
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|io_remap_page_range
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|to
-comma
-r_int
-r_int
-id|size
-comma
-id|pgprot_t
-id|prot
-comma
-r_int
-id|space
 )paren
 suffix:semicolon
 id|BTFIXUPDEF_CALL
@@ -467,20 +444,6 @@ DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY  __pgprot(BTFIXUP_INT(page_readonly))
 DECL|macro|PAGE_KERNEL
 mdefine_line|#define PAGE_KERNEL    __pgprot(BTFIXUP_INT(page_kernel))
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|set_pgdir
-comma
-r_int
-r_int
-comma
-id|pgd_t
-)paren
-DECL|macro|set_pgdir
-mdefine_line|#define set_pgdir(address,entry) BTFIXUP_CALL(set_pgdir)(address,entry)
 multiline_comment|/* Top-level page directory */
 r_extern
 id|pgd_t
@@ -1138,7 +1101,7 @@ DECL|macro|page_pte
 mdefine_line|#define page_pte(page)&t;&t;&t;page_pte_prot(page, __pgprot(0))
 multiline_comment|/* Permanent address of a page. */
 DECL|macro|page_address
-mdefine_line|#define page_address(page) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
+mdefine_line|#define page_address(page) ({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
 DECL|macro|pte_page
 mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
@@ -1321,719 +1284,6 @@ mdefine_line|#define pmd_offset(dir,addr) BTFIXUP_CALL(pmd_offset)(dir,addr)
 multiline_comment|/* Find an entry in the third-level page table.. */
 DECL|macro|pte_offset
 mdefine_line|#define pte_offset(dir,addr) BTFIXUP_CALL(pte_offset)(dir,addr)
-DECL|struct|pgtable_cache_struct
-r_extern
-r_struct
-id|pgtable_cache_struct
-(brace
-DECL|member|pgd_cache
-r_int
-r_int
-op_star
-id|pgd_cache
-suffix:semicolon
-DECL|member|pte_cache
-r_int
-r_int
-op_star
-id|pte_cache
-suffix:semicolon
-DECL|member|pgtable_cache_sz
-r_int
-r_int
-id|pgtable_cache_sz
-suffix:semicolon
-DECL|member|pgd_cache_sz
-r_int
-r_int
-id|pgd_cache_sz
-suffix:semicolon
-DECL|member|pgd_spinlock
-id|spinlock_t
-id|pgd_spinlock
-suffix:semicolon
-DECL|member|pte_spinlock
-id|spinlock_t
-id|pte_spinlock
-suffix:semicolon
-)brace
-id|pgt_quicklists
-suffix:semicolon
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist           (pgt_quicklists.pgd_cache)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist           ((unsigned long *)0)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist           (pgt_quicklists.pte_cache)
-DECL|macro|pgd_spinlock
-mdefine_line|#define pgd_spinlock&t;&t;(pgt_quicklists.pgd_spinlock)
-DECL|macro|pte_spinlock
-mdefine_line|#define pte_spinlock&t;&t;(pgt_quicklists.pte_spinlock)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size      (pgt_quicklists.pgtable_cache_sz)
-DECL|macro|pgd_cache_size
-mdefine_line|#define pgd_cache_size&t;&t;(pgt_quicklists.pgd_cache_sz)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pte_t
-op_star
-comma
-id|get_pte_fast
-comma
-r_void
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pgd_t
-op_star
-comma
-id|get_pgd_fast
-comma
-r_void
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|free_pte_slow
-comma
-id|pte_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|free_pgd_slow
-comma
-id|pgd_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_int
-comma
-id|do_check_pgt_cache
-comma
-r_int
-comma
-r_int
-)paren
-DECL|macro|get_pte_fast
-mdefine_line|#define get_pte_fast() BTFIXUP_CALL(get_pte_fast)()
-DECL|function|get_pmd_fast
-r_extern
-id|__inline__
-id|pmd_t
-op_star
-id|get_pmd_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-l_int|0
-suffix:semicolon
-)brace
-DECL|macro|get_pgd_fast
-mdefine_line|#define get_pgd_fast() BTFIXUP_CALL(get_pgd_fast)()
-DECL|macro|free_pte_slow
-mdefine_line|#define free_pte_slow(pte) BTFIXUP_CALL(free_pte_slow)(pte)
-DECL|function|free_pmd_slow
-r_extern
-id|__inline__
-r_void
-id|free_pmd_slow
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
-DECL|macro|free_pgd_slow
-mdefine_line|#define free_pgd_slow(pgd) BTFIXUP_CALL(free_pgd_slow)(pgd)
-DECL|macro|do_check_pgt_cache
-mdefine_line|#define do_check_pgt_cache(low,high) BTFIXUP_CALL(do_check_pgt_cache)(low,high)
-multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any, and marks the page tables reserved.&n; */
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|pte_free_kernel
-comma
-id|pte_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pte_t
-op_star
-comma
-id|pte_alloc_kernel
-comma
-id|pmd_t
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|pte_free_kernel
-mdefine_line|#define pte_free_kernel(pte) BTFIXUP_CALL(pte_free_kernel)(pte)
-DECL|macro|pte_alloc_kernel
-mdefine_line|#define pte_alloc_kernel(pmd,addr) BTFIXUP_CALL(pte_alloc_kernel)(pmd,addr)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|pmd_free_kernel
-comma
-id|pmd_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pmd_t
-op_star
-comma
-id|pmd_alloc_kernel
-comma
-id|pgd_t
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|pmd_free_kernel
-mdefine_line|#define pmd_free_kernel(pmd) BTFIXUP_CALL(pmd_free_kernel)(pmd)
-DECL|macro|pmd_alloc_kernel
-mdefine_line|#define pmd_alloc_kernel(pgd,addr) BTFIXUP_CALL(pmd_alloc_kernel)(pgd,addr)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|pte_free
-comma
-id|pte_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pte_t
-op_star
-comma
-id|pte_alloc
-comma
-id|pmd_t
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|pte_free
-mdefine_line|#define pte_free(pte) BTFIXUP_CALL(pte_free)(pte)
-DECL|macro|pte_alloc
-mdefine_line|#define pte_alloc(pmd,addr) BTFIXUP_CALL(pte_alloc)(pmd,addr)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|pmd_free
-comma
-id|pmd_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pmd_t
-op_star
-comma
-id|pmd_alloc
-comma
-id|pgd_t
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|pmd_free
-mdefine_line|#define pmd_free(pmd) BTFIXUP_CALL(pmd_free)(pmd)
-DECL|macro|pmd_alloc
-mdefine_line|#define pmd_alloc(pgd,addr) BTFIXUP_CALL(pmd_alloc)(pgd,addr)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|pgd_free
-comma
-id|pgd_t
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pgd_t
-op_star
-comma
-id|pgd_alloc
-comma
-r_void
-)paren
-DECL|macro|pgd_free
-mdefine_line|#define pgd_free(pgd) BTFIXUP_CALL(pgd_free)(pgd)
-DECL|macro|pgd_alloc
-mdefine_line|#define pgd_alloc() BTFIXUP_CALL(pgd_alloc)()
-multiline_comment|/* Fine grained cache/tlb flushing. */
-macro_line|#ifdef __SMP__
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_cache_all
-comma
-r_void
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_cache_mm
-comma
-r_struct
-id|mm_struct
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_cache_range
-comma
-r_struct
-id|mm_struct
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_cache_page
-comma
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|local_flush_cache_all
-mdefine_line|#define local_flush_cache_all() BTFIXUP_CALL(local_flush_cache_all)()
-DECL|macro|local_flush_cache_mm
-mdefine_line|#define local_flush_cache_mm(mm) BTFIXUP_CALL(local_flush_cache_mm)(mm)
-DECL|macro|local_flush_cache_range
-mdefine_line|#define local_flush_cache_range(mm,start,end) BTFIXUP_CALL(local_flush_cache_range)(mm,start,end)
-DECL|macro|local_flush_cache_page
-mdefine_line|#define local_flush_cache_page(vma,addr) BTFIXUP_CALL(local_flush_cache_page)(vma,addr)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_tlb_all
-comma
-r_void
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_tlb_mm
-comma
-r_struct
-id|mm_struct
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_tlb_range
-comma
-r_struct
-id|mm_struct
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_tlb_page
-comma
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|local_flush_tlb_all
-mdefine_line|#define local_flush_tlb_all() BTFIXUP_CALL(local_flush_tlb_all)()
-DECL|macro|local_flush_tlb_mm
-mdefine_line|#define local_flush_tlb_mm(mm) BTFIXUP_CALL(local_flush_tlb_mm)(mm)
-DECL|macro|local_flush_tlb_range
-mdefine_line|#define local_flush_tlb_range(mm,start,end) BTFIXUP_CALL(local_flush_tlb_range)(mm,start,end)
-DECL|macro|local_flush_tlb_page
-mdefine_line|#define local_flush_tlb_page(vma,addr) BTFIXUP_CALL(local_flush_tlb_page)(vma,addr)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_page_to_ram
-comma
-r_struct
-id|page
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|local_flush_sig_insns
-comma
-r_struct
-id|mm_struct
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|local_flush_page_to_ram
-mdefine_line|#define local_flush_page_to_ram(page) BTFIXUP_CALL(local_flush_page_to_ram)(page)
-DECL|macro|local_flush_sig_insns
-mdefine_line|#define local_flush_sig_insns(mm,insn_addr) BTFIXUP_CALL(local_flush_sig_insns)(mm,insn_addr)
-r_extern
-r_void
-id|smp_flush_cache_all
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_cache_mm
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_cache_range
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_cache_page
-c_func
-(paren
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-comma
-r_int
-r_int
-id|page
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_tlb_all
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_tlb_mm
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_tlb_range
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_tlb_page
-c_func
-(paren
-r_struct
-id|vm_area_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|page
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_page_to_ram
-c_func
-(paren
-r_struct
-id|page
-op_star
-id|page
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_flush_sig_insns
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|insn_addr
-)paren
-suffix:semicolon
-macro_line|#endif
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_cache_all
-comma
-r_void
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_cache_mm
-comma
-r_struct
-id|mm_struct
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_cache_range
-comma
-r_struct
-id|mm_struct
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_cache_page
-comma
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|flush_cache_all
-mdefine_line|#define flush_cache_all() BTFIXUP_CALL(flush_cache_all)()
-DECL|macro|flush_cache_mm
-mdefine_line|#define flush_cache_mm(mm) BTFIXUP_CALL(flush_cache_mm)(mm)
-DECL|macro|flush_cache_range
-mdefine_line|#define flush_cache_range(mm,start,end) BTFIXUP_CALL(flush_cache_range)(mm,start,end)
-DECL|macro|flush_cache_page
-mdefine_line|#define flush_cache_page(vma,addr) BTFIXUP_CALL(flush_cache_page)(vma,addr)
-DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_tlb_all
-comma
-r_void
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_tlb_mm
-comma
-r_struct
-id|mm_struct
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_tlb_range
-comma
-r_struct
-id|mm_struct
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_tlb_page
-comma
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|flush_tlb_all
-mdefine_line|#define flush_tlb_all() BTFIXUP_CALL(flush_tlb_all)()
-DECL|macro|flush_tlb_mm
-mdefine_line|#define flush_tlb_mm(mm) BTFIXUP_CALL(flush_tlb_mm)(mm)
-DECL|macro|flush_tlb_range
-mdefine_line|#define flush_tlb_range(mm,start,end) BTFIXUP_CALL(flush_tlb_range)(mm,start,end)
-DECL|macro|flush_tlb_page
-mdefine_line|#define flush_tlb_page(vma,addr) BTFIXUP_CALL(flush_tlb_page)(vma,addr)
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_page_to_ram
-comma
-r_struct
-id|page
-op_star
-)paren
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|flush_sig_insns
-comma
-r_struct
-id|mm_struct
-op_star
-comma
-r_int
-r_int
-)paren
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page) BTFIXUP_CALL(flush_page_to_ram)(page)
-DECL|macro|flush_sig_insns
-mdefine_line|#define flush_sig_insns(mm,insn_addr) BTFIXUP_CALL(flush_sig_insns)(mm,insn_addr)
 multiline_comment|/* The permissions for pgprot_val to make a page mapped on the obio space */
 r_extern
 r_int
@@ -2096,12 +1346,17 @@ r_extern
 r_int
 id|invalid_segment
 suffix:semicolon
+multiline_comment|/* Encode and de-code a swap entry */
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 2) &amp; 0x7f)
+mdefine_line|#define SWP_TYPE(x)&t;&t;&t;(((x).val &gt;&gt; 2) &amp; 0x7f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) (((entry) &gt;&gt; 9) &amp; 0x3ffff)
+mdefine_line|#define SWP_OFFSET(x)&t;&t;&t;(((x).val &gt;&gt; 9) &amp; 0x3ffff)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) ((((type) &amp; 0x7f) &lt;&lt; 2) | (((offset) &amp; 0x3ffff) &lt;&lt; 9))
+mdefine_line|#define SWP_ENTRY(type,offset)&t;&t;((swp_entry_t) { (((type) &amp; 0x7f) &lt;&lt; 2) | (((offset) &amp; 0x3ffff) &lt;&lt; 9) })
+DECL|macro|pte_to_swp_entry
+mdefine_line|#define pte_to_swp_entry(pte)&t;&t;((swp_entry_t) { pte_val(pte) })
+DECL|macro|swp_entry_to_pte
+mdefine_line|#define swp_entry_to_pte(x)&t;&t;((pte_t) { (x).val })
 DECL|struct|ctx_list
 r_struct
 id|ctx_list
@@ -2338,6 +1593,31 @@ id|sparc_valid_addr_bitmap
 suffix:semicolon
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|kern_addr_valid
-mdefine_line|#define kern_addr_valid(addr)&t;(test_bit(__pa((unsigned long)(addr))&gt;&gt;20, sparc_valid_addr_bitmap))
+mdefine_line|#define kern_addr_valid(addr) &bslash;&n;&t;(test_bit(__pa((unsigned long)(addr))&gt;&gt;20, sparc_valid_addr_bitmap))
+r_extern
+r_int
+id|io_remap_page_range
+c_func
+(paren
+r_int
+r_int
+id|from
+comma
+r_int
+r_int
+id|to
+comma
+r_int
+r_int
+id|size
+comma
+id|pgprot_t
+id|prot
+comma
+r_int
+id|space
+)paren
+suffix:semicolon
+macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_SPARC_PGTABLE_H) */
 eof

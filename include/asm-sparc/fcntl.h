@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcntl.h,v 1.11 1998/10/26 20:03:10 davem Exp $ */
+multiline_comment|/* $Id: fcntl.h,v 1.12 1999/12/27 06:37:11 anton Exp $ */
 macro_line|#ifndef _SPARC_FCNTL_H
 DECL|macro|_SPARC_FCNTL_H
 mdefine_line|#define _SPARC_FCNTL_H
@@ -33,6 +33,8 @@ DECL|macro|O_DIRECTORY
 mdefine_line|#define O_DIRECTORY&t;0x10000&t;/* must be a directory */
 DECL|macro|O_NOFOLLOW
 mdefine_line|#define O_NOFOLLOW&t;0x20000&t;/* don&squot;t follow links */
+DECL|macro|O_LARGEFILE
+mdefine_line|#define O_LARGEFILE&t;0x40000
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

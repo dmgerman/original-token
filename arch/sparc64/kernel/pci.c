@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci.c,v 1.11 1999/12/20 05:02:07 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: pci.c,v 1.12 2000/01/01 03:32:50 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -831,6 +831,26 @@ r_int
 id|size
 )paren
 (brace
+)brace
+DECL|function|pci_assign_resource
+r_int
+id|pci_assign_resource
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_int
+id|i
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+multiline_comment|/* :-)... actually implement this soon */
 )brace
 DECL|function|pcibios_setup
 r_char

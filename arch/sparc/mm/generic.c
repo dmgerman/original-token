@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: generic.c,v 1.8 1999/12/20 05:01:49 davem Exp $&n; * generic.c: Generic Sparc mm routines that are not dependent upon&n; *            MMU type but are Sparc specific.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: generic.c,v 1.9 1999/12/27 06:30:03 anton Exp $&n; * generic.c: Generic Sparc mm routines that are not dependent upon&n; *            MMU type but are Sparc specific.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 DECL|function|forget_pte
@@ -78,7 +79,11 @@ suffix:semicolon
 id|swap_free
 c_func
 (paren
+id|pte_to_swp_entry
+c_func
+(paren
 id|page
+)paren
 )paren
 suffix:semicolon
 )brace

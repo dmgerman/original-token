@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.181 1999/12/16 14:34:21 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.182 1999/12/27 06:30:04 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
@@ -9275,20 +9276,6 @@ id|ctx_list_pool
 op_plus
 id|mm-&gt;context
 suffix:semicolon
-macro_line|#ifdef DEBUG_SUN4C_MM
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ctx-&gt;ctx_mm
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;context was not set up&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|remove_from_ctx_list
 c_func
 (paren
@@ -9557,20 +9544,6 @@ id|ctx_list_pool
 op_plus
 id|mm-&gt;context
 suffix:semicolon
-macro_line|#ifdef DEBUG_SUN4C_MM
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ctx-&gt;ctx_mm
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;context was not set up&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|remove_from_ctx_list
 c_func
 (paren
@@ -11676,12 +11649,8 @@ id|_SUN4C_PAGE_NOCACHE
 suffix:semicolon
 id|pte
 op_assign
-id|pte_val
-c_func
-(paren
 op_star
 id|ptep
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -12363,12 +12332,36 @@ c_func
 id|num_contexts
 )paren
 suffix:semicolon
+(brace
+r_int
+r_int
+id|zones_size
+(braket
+id|MAX_NR_ZONES
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
+id|zones_size
+(braket
+id|ZONE_DMA
+)braket
+op_assign
+id|end_pfn
+suffix:semicolon
 id|free_area_init
 c_func
 (paren
-id|end_pfn
+id|zones_size
 )paren
 suffix:semicolon
+)brace
 id|cnt
 op_assign
 l_int|0

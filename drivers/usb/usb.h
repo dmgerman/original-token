@@ -56,6 +56,8 @@ DECL|macro|USB_DT_ENDPOINT_AUDIO_SIZE
 mdefine_line|#define USB_DT_ENDPOINT_AUDIO_SIZE&t;9&t;/* Audio extension */
 DECL|macro|USB_DT_HUB_NONVAR_SIZE
 mdefine_line|#define USB_DT_HUB_NONVAR_SIZE&t;&t;7
+DECL|macro|USB_DT_HID_SIZE
+mdefine_line|#define USB_DT_HID_SIZE&t;&t;&t;9
 multiline_comment|/*&n; * USB Request Type and Endpoint Directions&n; */
 DECL|macro|USB_DIR_OUT
 mdefine_line|#define USB_DIR_OUT&t;&t;&t;0
@@ -2184,6 +2186,35 @@ id|size
 )paren
 suffix:semicolon
 r_int
+id|usb_get_class_descriptor
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+r_char
+id|desctype
+comma
+r_int
+r_char
+id|descindex
+comma
+r_int
+r_char
+id|ifnum
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|size
+)paren
+suffix:semicolon
+r_int
 id|usb_get_device_descriptor
 c_func
 (paren
@@ -2191,6 +2222,27 @@ r_struct
 id|usb_device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_int
+id|__usb_get_extra_descriptor
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_int
+id|size
+comma
+r_int
+r_char
+id|type
+comma
+r_void
+op_star
+op_star
+id|ptr
 )paren
 suffix:semicolon
 r_int
@@ -2309,6 +2361,35 @@ r_int
 id|size
 )paren
 suffix:semicolon
+r_int
+id|usb_set_report
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+r_char
+id|type
+comma
+r_int
+r_char
+id|id
+comma
+r_int
+r_char
+id|index
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|size
+)paren
+suffix:semicolon
 r_char
 op_star
 id|usb_string
@@ -2336,6 +2417,8 @@ r_int
 id|endp
 )paren
 suffix:semicolon
+DECL|macro|usb_get_extra_descriptor
+mdefine_line|#define usb_get_extra_descriptor(ifpoint,type,ptr)&bslash;&n;&t;__usb_get_extra_descriptor((ifpoint)-&gt;extra,(ifpoint)-&gt;extralen,type,(void**)ptr)
 multiline_comment|/*&n; * Some USB bandwidth allocation constants.&n; */
 DECL|macro|BW_HOST_DELAY
 mdefine_line|#define BW_HOST_DELAY&t;1000L&t;&t;/* nanoseconds */

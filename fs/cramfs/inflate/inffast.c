@@ -182,29 +182,6 @@ c_func
 (paren
 id|t-&gt;bits
 )paren
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-id|t-&gt;base
-op_ge
-l_int|0x20
-op_logical_and
-id|t-&gt;base
-OL
-l_int|0x7f
-ques
-c_cond
-l_string|&quot;inflate:         * literal &squot;%c&squot;&bslash;n&quot;
-suffix:colon
-l_string|&quot;inflate:         * literal 0x%02x&bslash;n&quot;
-comma
-id|t-&gt;base
-)paren
-)paren
-suffix:semicolon
 op_star
 id|q
 op_increment
@@ -261,18 +238,6 @@ c_func
 (paren
 id|e
 )paren
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:         * length %u&bslash;n&quot;
-comma
-id|c
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* decode distance base of block to copy */
 id|GRABBITS
 c_func
@@ -347,18 +312,6 @@ c_func
 (paren
 id|e
 )paren
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:         * distance %u&bslash;n&quot;
-comma
-id|d
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* do the copy */
 id|m
 op_sub_assign
@@ -610,29 +563,6 @@ c_func
 (paren
 id|t-&gt;bits
 )paren
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-id|t-&gt;base
-op_ge
-l_int|0x20
-op_logical_and
-id|t-&gt;base
-OL
-l_int|0x7f
-ques
-c_cond
-l_string|&quot;inflate:         * literal &squot;%c&squot;&bslash;n&quot;
-suffix:colon
-l_string|&quot;inflate:         * literal 0x%02x&bslash;n&quot;
-comma
-id|t-&gt;base
-)paren
-)paren
-suffix:semicolon
 op_star
 id|q
 op_increment
@@ -658,16 +588,6 @@ op_amp
 l_int|32
 )paren
 (brace
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:         * end of block&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 id|UNGRAB
 id|UPDATE
 r_return

@@ -64,13 +64,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_MOUSE
-id|usb_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
 macro_line|#       ifdef CONFIG_USB_SCANNER
 id|usb_scanner_init
 c_func
@@ -78,13 +71,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#       endif
-macro_line|#&t;ifdef CONFIG_USB_KBD
-id|usb_kbd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
 macro_line|#&t;ifdef CONFIG_USB_AUDIO
 id|usb_audio_init
 c_func
@@ -120,6 +106,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_OV511
+id|usb_ov511_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
 macro_line|#&t;ifdef CONFIG_USB_DC2XX
 id|usb_dc2xx_init
 c_func
@@ -136,6 +129,34 @@ suffix:semicolon
 macro_line|#&t;endif
 macro_line|#&t;ifdef CONFIG_USB_DABUSB
 id|dabusb_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+macro_line|#&t;if defined(CONFIG_USB_HID) || defined(CONFIG_USB_MOUSE) || defined(CONFIG_USB_KBD)
+id|input_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_HID
+id|hid_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_MOUSE
+id|usb_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_KBD
+id|usb_kbd_init
 c_func
 (paren
 )paren
@@ -209,6 +230,13 @@ suffix:semicolon
 macro_line|#&t;endif
 macro_line|#&t;ifdef CONFIG_USB_CPIA
 id|usb_cpia_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_OV511
+id|usb_ov511_cleanup
 c_func
 (paren
 )paren

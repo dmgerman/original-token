@@ -55,6 +55,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SUN_OPENPROMFS
+r_extern
+r_int
+id|init_openprom_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|filesystem_setup
 r_void
 id|__init

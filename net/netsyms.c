@@ -2690,6 +2690,13 @@ c_func
 id|nf_hook_slow
 )paren
 suffix:semicolon
+DECL|variable|nf_hooks
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nf_hooks
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|register_gifconf
 id|EXPORT_SYMBOL

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.27 1999/11/14 06:23:04 zaitcev Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; */
+multiline_comment|/* $Id: ioport.c,v 1.28 1999/12/27 06:08:28 anton Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 r_struct
 id|resource
@@ -996,6 +997,10 @@ comma
 id|sparc_iomap.end
 comma
 id|PAGE_SIZE
+comma
+l_int|NULL
+comma
+l_int|NULL
 )paren
 op_ne
 l_int|0
@@ -1369,6 +1374,10 @@ comma
 id|sparc_dvma.end
 comma
 id|PAGE_SIZE
+comma
+l_int|NULL
+comma
+l_int|NULL
 )paren
 op_ne
 l_int|0
@@ -2044,7 +2053,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|sbus_map_sg
-r_void
+r_int
 id|sbus_map_sg
 c_func
 (paren
@@ -2072,6 +2081,10 @@ id|n
 comma
 id|sdev-&gt;bus
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * XXX sparc64 can return a partial length here. sun4c should do this&n;&t; * but it currently panics if it can&squot;t fulfill the request - Anton&n;&t; */
+r_return
+id|n
 suffix:semicolon
 )brace
 DECL|function|sbus_unmap_sg

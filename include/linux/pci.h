@@ -1555,6 +1555,16 @@ id|val
 )paren
 suffix:semicolon
 r_int
+id|pci_setup_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_int
 id|pci_enable_device
 c_func
 (paren

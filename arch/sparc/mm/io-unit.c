@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: io-unit.c,v 1.17 1999/10/18 01:46:54 zaitcev Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: io-unit.c,v 1.18 1999/12/28 04:28:55 anton Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/scatterlist.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

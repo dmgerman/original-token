@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.19 1999/10/25 06:17:56 zaitcev Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.20 1999/12/27 06:37:17 anton Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SBUS_H
 DECL|macro|_SPARC_SBUS_H
 mdefine_line|#define _SPARC_SBUS_H
@@ -360,7 +360,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|sbus_map_sg
 c_func
 (paren

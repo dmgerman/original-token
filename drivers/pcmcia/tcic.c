@@ -5114,29 +5114,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* tcic_set_mem_map */
 multiline_comment|/*====================================================================*/
-DECL|function|tcic_get_bridge
-r_static
-r_int
-id|tcic_get_bridge
-c_func
-(paren
-r_int
-r_int
-id|sock
-comma
-r_struct
-id|cb_bridge_map
-op_star
-id|m
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-DECL|macro|tcic_set_bridge
-mdefine_line|#define tcic_set_bridge tcic_get_bridge
 DECL|function|tcic_proc_setup
 r_static
 r_void
@@ -5325,10 +5302,6 @@ comma
 id|tcic_get_mem_map
 comma
 id|tcic_set_mem_map
-comma
-id|tcic_get_bridge
-comma
-id|tcic_set_bridge
 comma
 id|tcic_proc_setup
 )brace

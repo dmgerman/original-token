@@ -370,18 +370,6 @@ op_star
 id|dev
 )paren
 (brace
-id|sprintf
-c_func
-(paren
-id|dev-&gt;name
-comma
-l_string|&quot;PCI device %04x:%04x&quot;
-comma
-id|dev-&gt;vendor
-comma
-id|dev-&gt;device
-)paren
-suffix:semicolon
 )brace
 r_char
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.113 1999/12/15 22:39:58 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.114 2000/01/03 17:19:17 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -1232,12 +1232,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk
+id|result
 )paren
 id|sock_hold
 c_func
 (paren
-id|sk
+id|result
 )paren
 suffix:semicolon
 id|read_unlock
@@ -3376,11 +3376,6 @@ l_int|NULL
 r_struct
 id|flowi
 id|fl
-suffix:semicolon
-r_struct
-id|dst_entry
-op_star
-id|dst
 suffix:semicolon
 multiline_comment|/* BUGGG_FUTURE: Again, it is not clear how&n;&t;&t;&t;   to handle rthdr case. Ignore this complexity&n;&t;&t;&t;   for now.&n;&t;&t;&t; */
 id|fl.proto

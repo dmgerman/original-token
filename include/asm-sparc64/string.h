@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.14 1998/10/20 03:09:18 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: string.h,v 1.15 1999/12/23 17:02:20 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997,1999 Jakub Jelinek (jakub@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_STRING_H__
 DECL|macro|__SPARC64_STRING_H__
 mdefine_line|#define __SPARC64_STRING_H__
@@ -112,8 +112,39 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-id|__kernel_size_t
+r_void
+op_star
 id|__memset
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
+r_extern
+r_void
+op_star
+id|__builtin_memcpy
+c_func
+(paren
+r_void
+op_star
+comma
+r_const
+r_void
+op_star
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
+r_extern
+r_void
+op_star
+id|__builtin_memset
 c_func
 (paren
 r_void
@@ -253,7 +284,7 @@ r_void
 op_star
 id|s
 comma
-r_char
+r_int
 id|c
 comma
 id|__kernel_size_t
@@ -286,8 +317,12 @@ comma
 id|count
 )paren
 suffix:semicolon
+r_return
+id|s
+suffix:semicolon
 )brace
 r_else
+r_return
 id|__memset
 c_func
 (paren
@@ -297,48 +332,12 @@ id|c
 comma
 id|count
 )paren
-suffix:semicolon
-r_return
-id|s
-suffix:semicolon
-)brace
-DECL|function|__nonconstant_memset
-r_extern
-r_inline
-r_void
-op_star
-id|__nonconstant_memset
-c_func
-(paren
-r_void
-op_star
-id|s
-comma
-r_char
-id|c
-comma
-id|__kernel_size_t
-id|count
-)paren
-(brace
-id|__memset
-c_func
-(paren
-id|s
-comma
-id|c
-comma
-id|count
-)paren
-suffix:semicolon
-r_return
-id|s
 suffix:semicolon
 )brace
 DECL|macro|memset
 macro_line|#undef memset
 DECL|macro|memset
-mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; __constant_memset((s), (c), (count)) : &bslash;&n; __nonconstant_memset((s), (c), (count)))
+mdefine_line|#define memset(s, c, count) &bslash;&n;((__builtin_constant_p(count) &amp;&amp; (count) &lt;= 32) ? &bslash;&n; __builtin_memset((s), (c), (count)) : &bslash;&n; (__builtin_constant_p(c) ? &bslash;&n;  __constant_memset((s), (c), (count)) : &bslash;&n;  __memset((s), (c), (count))))
 DECL|macro|__HAVE_ARCH_MEMSCAN
 mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|macro|memscan

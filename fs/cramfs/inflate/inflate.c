@@ -194,16 +194,6 @@ comma
 id|Z_NULL
 )paren
 suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate: reset&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_return
 id|Z_OK
 suffix:semicolon
@@ -252,16 +242,6 @@ suffix:semicolon
 id|z-&gt;state
 op_assign
 id|Z_NULL
-suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate: end&bslash;n&quot;
-)paren
-)paren
 suffix:semicolon
 r_return
 id|Z_OK
@@ -442,16 +422,6 @@ r_return
 id|Z_MEM_ERROR
 suffix:semicolon
 )brace
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate: allocated&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* reset state */
 id|inflateReset
 c_func
@@ -694,16 +664,6 @@ multiline_comment|/* can&squot;t try inflateSync */
 r_break
 suffix:semicolon
 )brace
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate: zlib header ok&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1000,16 +960,6 @@ multiline_comment|/* can&squot;t try inflateSync */
 r_break
 suffix:semicolon
 )brace
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate: zlib check ok&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 id|z-&gt;state-&gt;mode
 op_assign
 id|DONE

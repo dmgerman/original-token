@@ -428,13 +428,11 @@ op_star
 id|config
 suffix:semicolon
 macro_line|#ifdef CONFIG_CARDBUS
-DECL|member|cb_cis_space
-id|u_int
-id|cb_cis_space
-suffix:semicolon
-DECL|member|cb_cis_map
-id|cb_bridge_map
-id|cb_cis_map
+DECL|member|cb_cis_res
+r_struct
+id|resource
+op_star
+id|cb_cis_res
 suffix:semicolon
 DECL|member|cb_cis_virt
 id|u_char
@@ -660,18 +658,6 @@ comma
 r_void
 op_star
 id|ptr
-)paren
-suffix:semicolon
-r_int
-id|cb_setup_cis_mem
-c_func
-(paren
-id|socket_info_t
-op_star
-id|s
-comma
-r_int
-id|space
 )paren
 suffix:semicolon
 r_void

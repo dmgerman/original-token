@@ -759,6 +759,28 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
+r_int
+r_class
+op_assign
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+suffix:semicolon
+multiline_comment|/* Don&squot;t touch classless devices and host bridges */
+r_if
+c_cond
+(paren
+op_logical_neg
+r_class
+op_logical_or
+r_class
+op_eq
+id|PCI_CLASS_BRIDGE_HOST
+)paren
+r_continue
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -782,17 +804,12 @@ id|dev-&gt;resource
 id|idx
 )braket
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *  Don&squot;t touch IDE controllers and I/O ports of video cards!&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
-(paren
-id|dev
-op_member_access_from_pointer
 r_class
-op_rshift
-l_int|8
-)paren
 op_eq
 id|PCI_CLASS_STORAGE_IDE
 op_logical_and
@@ -802,13 +819,7 @@ l_int|4
 )paren
 op_logical_or
 (paren
-(paren
-id|dev
-op_member_access_from_pointer
 r_class
-op_rshift
-l_int|8
-)paren
 op_eq
 id|PCI_CLASS_DISPLAY_VGA
 op_logical_and
@@ -818,25 +829,10 @@ op_amp
 id|IORESOURCE_IO
 )paren
 )paren
-op_logical_or
-op_logical_neg
-id|dev
-op_member_access_from_pointer
-r_class
-op_logical_or
-(paren
-id|dev
-op_member_access_from_pointer
-r_class
-op_rshift
-l_int|8
 )paren
-op_eq
-id|PCI_CLASS_BRIDGE_HOST
-)paren
-multiline_comment|/*&n;&t;&t;&t;&t; *  Don&squot;t touch IDE controllers and I/O ports of video cards!&n;&t;&t;&t;&t; *  Also avoid classless devices and host bridges.&n;&t;&t;&t;&t; */
 r_continue
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *  We shall assign a new address to this resource, either because&n;&t;&t;&t; *  the BIOS forgot to do so or because we have decided the old&n;&t;&t;&t; *  address was unusable for some reason.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -845,8 +841,6 @@ id|r-&gt;start
 op_logical_and
 id|r-&gt;end
 )paren
-(brace
-multiline_comment|/*&n;&t;&t;&t;&t; *  We shall assign a new address to this resource, either because&n;&t;&t;&t;&t; *  the BIOS forgot to do so or because we have decided the old&n;&t;&t;&t;&t; *  address was unusable for some reason.&n;&t;&t;&t;&t; */
 id|pci_assign_resource
 c_func
 (paren
@@ -855,7 +849,6 @@ comma
 id|idx
 )paren
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond

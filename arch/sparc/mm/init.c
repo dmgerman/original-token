@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.71 1999/12/16 12:58:33 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.72 1999/12/27 06:30:06 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -214,6 +214,9 @@ c_func
 l_string|&quot;%d free pages&bslash;n&quot;
 comma
 id|nr_free_pages
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -1675,6 +1678,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|max_mapnr
+op_assign
+id|last_valid_pfn
+suffix:semicolon
+id|high_memory
+op_assign
+id|__va
+c_func
+(paren
+id|last_valid_pfn
+op_lshift
+id|PAGE_SHIFT
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUG_BOOTMEM
 id|prom_printf
 c_func
@@ -1692,25 +1709,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|free_unused_mem_map
 c_func
 (paren
 )paren
 suffix:semicolon
-id|max_mapnr
-op_assign
-id|last_valid_pfn
-suffix:semicolon
-id|high_memory
-op_assign
-id|__va
-c_func
-(paren
-id|last_valid_pfn
-op_lshift
-id|PAGE_SHIFT
-)paren
-suffix:semicolon
+macro_line|#endif
 id|codepages
 op_assign
 (paren
@@ -1813,6 +1818,9 @@ c_func
 l_string|&quot;Memory: %dk available (%dk kernel code, %dk data, %dk init) [%08lx,%08lx]&bslash;n&quot;
 comma
 id|nr_free_pages
+c_func
+(paren
+)paren
 op_lshift
 (paren
 id|PAGE_SHIFT
@@ -1861,6 +1869,9 @@ multiline_comment|/* NOTE NOTE NOTE NOTE&n;&t; * Please keep track of things and
 id|i
 op_assign
 id|nr_free_pages
+c_func
+(paren
+)paren
 op_rshift
 l_int|7
 suffix:semicolon
@@ -1945,36 +1956,63 @@ op_add_assign
 id|PAGE_SIZE
 )paren
 (brace
-id|ClearPageReserved
+r_int
+r_int
+id|page
+suffix:semicolon
+r_struct
+id|page
+op_star
+id|p
+suffix:semicolon
+id|page
+op_assign
+(paren
+id|addr
+op_plus
+(paren
+(paren
+r_int
+r_int
+)paren
+id|__va
 c_func
 (paren
+id|phys_base
+)paren
+)paren
+op_minus
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
+id|p
+op_assign
 id|mem_map
 op_plus
 id|MAP_NR
 c_func
 (paren
-id|addr
+id|page
 )paren
+suffix:semicolon
+id|ClearPageReserved
+c_func
+(paren
+id|p
 )paren
 suffix:semicolon
 id|set_page_count
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
+id|p
 comma
 l_int|1
 )paren
 suffix:semicolon
-id|free_page
+id|__free_page
 c_func
 (paren
-id|addr
+id|p
 )paren
 suffix:semicolon
 id|totalram_pages
@@ -2007,6 +2045,9 @@ suffix:semicolon
 id|val-&gt;freeram
 op_assign
 id|nr_free_pages
+c_func
+(paren
+)paren
 suffix:semicolon
 id|val-&gt;bufferram
 op_assign
@@ -2023,7 +2064,7 @@ l_int|0
 suffix:semicolon
 id|val-&gt;freehigh
 op_assign
-id|nr_free_highpages
+l_int|0
 suffix:semicolon
 id|val-&gt;mem_unit
 op_assign

@@ -167,16 +167,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:   blocks reset&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|inflate_blocks_new
 id|inflate_blocks_statef
@@ -252,16 +242,6 @@ suffix:semicolon
 id|s-&gt;mode
 op_assign
 id|TYPE
-suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:   blocks allocated&bslash;n&quot;
-)paren
-)paren
 suffix:semicolon
 id|inflate_blocks_reset
 c_func
@@ -378,23 +358,6 @@ r_case
 l_int|0
 suffix:colon
 multiline_comment|/* stored */
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:     stored block%s&bslash;n&quot;
-comma
-id|s-&gt;last
-ques
-c_cond
-l_string|&quot; (last)&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-)paren
-suffix:semicolon
 id|DUMPBITS
 c_func
 (paren
@@ -423,23 +386,6 @@ r_case
 l_int|1
 suffix:colon
 multiline_comment|/* fixed */
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:     fixed codes block%s&bslash;n&quot;
-comma
-id|s-&gt;last
-ques
-c_cond
-l_string|&quot; (last)&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-)paren
-suffix:semicolon
 (brace
 id|uInt
 id|bl
@@ -517,23 +463,6 @@ r_case
 l_int|2
 suffix:colon
 multiline_comment|/* dynamic */
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:     dynamic codes block%s&bslash;n&quot;
-comma
-id|s-&gt;last
-ques
-c_cond
-l_string|&quot; (last)&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-)paren
-suffix:semicolon
 id|DUMPBITS
 c_func
 (paren
@@ -639,18 +568,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* dump bits */
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:       stored length %u&bslash;n&quot;
-comma
-id|s-&gt;sub.left
-)paren
-)paren
-suffix:semicolon
 id|s-&gt;mode
 op_assign
 id|s-&gt;sub.left
@@ -745,41 +662,6 @@ op_ne
 l_int|0
 )paren
 r_break
-suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:       stored end, %lu total out&bslash;n&quot;
-comma
-id|z-&gt;total_out
-op_plus
-(paren
-id|q
-op_ge
-id|s-&gt;read
-ques
-c_cond
-id|q
-op_minus
-id|s-&gt;read
-suffix:colon
-(paren
-id|s-&gt;end
-op_minus
-id|s-&gt;read
-)paren
-op_plus
-(paren
-id|q
-op_minus
-id|s-&gt;window
-)paren
-)paren
-)paren
-)paren
 suffix:semicolon
 id|s-&gt;mode
 op_assign
@@ -881,16 +763,6 @@ l_int|14
 id|s-&gt;sub.trees.index
 op_assign
 l_int|0
-suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:       table sizes ok&bslash;n&quot;
-)paren
-)paren
 suffix:semicolon
 id|s-&gt;mode
 op_assign
@@ -1008,16 +880,6 @@ id|LEAVE
 id|s-&gt;sub.trees.index
 op_assign
 l_int|0
-suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:       bits tree ok&bslash;n&quot;
-)paren
-)paren
 suffix:semicolon
 id|s-&gt;mode
 op_assign
@@ -1385,16 +1247,6 @@ id|t
 suffix:semicolon
 id|LEAVE
 )brace
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:       trees ok&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1481,41 +1333,6 @@ id|z
 )paren
 suffix:semicolon
 id|LOAD
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:       codes end, %lu total out&bslash;n&quot;
-comma
-id|z-&gt;total_out
-op_plus
-(paren
-id|q
-op_ge
-id|s-&gt;read
-ques
-c_cond
-id|q
-op_minus
-id|s-&gt;read
-suffix:colon
-(paren
-id|s-&gt;end
-op_minus
-id|s-&gt;read
-)paren
-op_plus
-(paren
-id|q
-op_minus
-id|s-&gt;window
-)paren
-)paren
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1600,16 +1417,6 @@ comma
 id|z
 comma
 id|Z_NULL
-)paren
-suffix:semicolon
-id|Tracev
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;inflate:   blocks freed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
