@@ -422,7 +422,7 @@ id|fl2-&gt;fl_pid
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Insert waiter into blocker&squot;s block list.&n; * We use a circular list so that processes can be easily woken up in&n; * the order they blocked. The documentation doesn&squot;t require this but&n; * it seems seems like the reasonable thing to do.&n; */
+multiline_comment|/* Insert waiter into blocker&squot;s block list.&n; * We use a circular list so that processes can be easily woken up in&n; * the order they blocked. The documentation doesn&squot;t require this but&n; * it seems like the reasonable thing to do.&n; */
 DECL|function|locks_insert_block
 r_static
 r_void

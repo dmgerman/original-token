@@ -729,13 +729,6 @@ suffix:semicolon
 r_case
 id|_MACH_apus
 suffix:colon
-macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
-id|apm_set_power_state
-c_func
-(paren
-id|APM_STATE_OFF
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -743,7 +736,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_for
 c_loop

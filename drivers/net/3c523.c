@@ -5318,6 +5318,19 @@ suffix:semicolon
 )brace
 multiline_comment|/*************************************************************************/
 macro_line|#ifdef MODULE
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_elmc
 r_static
 r_struct
@@ -5325,7 +5338,7 @@ id|device
 id|dev_elmc
 op_assign
 (brace
-l_string|&quot;        &quot;
+id|devicename
 multiline_comment|/*&quot;3c523&quot;*/
 comma
 l_int|0

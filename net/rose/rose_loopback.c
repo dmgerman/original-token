@@ -298,11 +298,9 @@ l_int|4
 suffix:semicolon
 id|lci_o
 op_assign
-id|sysctl_rose_maximum_vcs
+l_int|0xFFF
 op_minus
 id|lci_i
-op_plus
-l_int|1
 suffix:semicolon
 id|skb-&gt;h.raw
 op_assign

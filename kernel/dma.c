@@ -4,6 +4,12 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* A note on resource allocation:&n; *&n; * All drivers needing DMA channels, should allocate and release them&n; * through the public routines `request_dma()&squot; and `free_dma()&squot;.&n; *&n; * In order to avoid problems, all processes should allocate resources in&n; * the same sequence and release them in the reverse order.&n; *&n; * So, when allocating DMAs and IRQs, first allocate the IRQ, then the DMA.&n; * When releasing them, first release the DMA, then release the IRQ.&n; * If you don&squot;t, you may cause allocation requests to fail unnecessarily.&n; * This doesn&squot;t really matter now, but it will once we get real semaphores&n; * in the kernel.&n; */
+DECL|variable|dma_spin_lock
+id|spinlock_t
+id|dma_spin_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* Channel n is busy iff dma_chan_busy[n].lock != 0.&n; * DMA0 used to be reserved for DRAM refresh, but apparently not any more...&n; * DMA4 is reserved for cascading.&n; */
 DECL|struct|dma_chan
 r_struct

@@ -1108,10 +1108,9 @@ r_void
 )paren
 (brace
 macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
-id|apm_set_power_state
+id|apm_power_off
 c_func
 (paren
-id|APM_STATE_OFF
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -243,10 +243,9 @@ c_func
 l_string|&quot;Power off&bslash;n&quot;
 )paren
 suffix:semicolon
-id|apm_set_power_state
+id|apm_power_off
 c_func
 (paren
-id|APM_STATE_OFF
 )paren
 suffix:semicolon
 r_break

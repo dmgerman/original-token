@@ -9710,8 +9710,8 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Console on virtual terminal&n; */
 macro_line|#ifdef CONFIG_VT_CONSOLE
+multiline_comment|/*&n; *&t;Console on virtual terminal&n; *&n; * NOTE NOTE NOTE! This code can do no global locking. In particular,&n; * we can&squot;t disable interrupts or bottom half handlers globally, because&n; * we can be called from contexts that hold critical spinlocks, and&n; * trying do get a global lock at this point will lead to deadlocks.&n; */
 DECL|function|vt_console_print
 r_void
 id|vt_console_print
@@ -9856,12 +9856,6 @@ op_star
 id|pos
 suffix:semicolon
 multiline_comment|/* Contrived structure to try to emulate original need_wrap behaviour&n;&t; * Problems caused when we have need_wrap set on &squot;&bslash;n&squot; character */
-id|disable_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -10121,12 +10115,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-id|enable_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
-suffix:semicolon
 id|set_cursor
 c_func
 (paren

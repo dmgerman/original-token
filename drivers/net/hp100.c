@@ -4449,7 +4449,7 @@ id|HP100_CHIPID_SHASTA
 r_int
 id|pdl_stop
 suffix:semicolon
-multiline_comment|/*&n;           * Each pdl is 508 bytes long. (63 frags * 4 bytes for address and&n;           * 4 bytes for for header). We will leave NUM_RXPDLS * 508 (rounded&n;           * to the next higher 1k boundary) bytes for the rx-pdl&squot;s&n;&t;   * Note: For non-etr chips the transmit stop register must be&n;&t;   * programmed on a 1k boundary, i.e. bits 9:0 must be zero. &n;&t;   */
+multiline_comment|/*&n;           * Each pdl is 508 bytes long. (63 frags * 4 bytes for address and&n;           * 4 bytes for header). We will leave NUM_RXPDLS * 508 (rounded&n;           * to the next higher 1k boundary) bytes for the rx-pdl&squot;s&n;&t;   * Note: For non-etr chips the transmit stop register must be&n;&t;   * programmed on a 1k boundary, i.e. bits 9:0 must be zero. &n;&t;   */
 id|pdl_stop
 op_assign
 id|lp-&gt;memory_size

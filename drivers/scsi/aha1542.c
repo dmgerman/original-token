@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; */
+multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -147,13 +147,6 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * LILO params:  aha1542=&lt;PORTBASE&gt;[,&lt;BUSON&gt;,&lt;BUSOFF&gt;[,&lt;DMASPEED&gt;]]&n; *&n; * Where:  &lt;PORTBASE&gt; is any of the valid AHA addresses:&n; *&t;&t;&t;0x130, 0x134, 0x230, 0x234, 0x330, 0x334&n; *&t;   &lt;BUSON&gt;  is the time (in microsecs) that AHA spends on the AT-bus&n; *&t;&t;    when transferring data.  1542A power-on default is 11us,&n; *&t;&t;    valid values are in range: 2..15 (decimal)&n; *&t;   &lt;BUSOFF&gt; is the time that AHA spends OFF THE BUS after while&n; *&t;&t;    it is transferring data (not to monopolize the bus).&n; *&t;&t;    Power-on default is 4us, valid range: 1..64 microseconds.&n; *&t;   &lt;DMASPEED&gt; Default is jumper selected (1542A: on the J1),&n; *&t;&t;    but experimenter can alter it with this.&n; *&t;&t;    Valid values: 5, 6, 7, 8, 10 (MB/s)&n; *&t;&t;    Factory default is 5 MB/s.&n; */
-multiline_comment|/* The DMA-Controller.  We need to fool with this because we want to &n;   be able to use the aha1542 without having to have the bios enabled */
-DECL|macro|DMA_MODE_REG
-mdefine_line|#define DMA_MODE_REG&t;0xd6
-DECL|macro|DMA_MASK_REG
-mdefine_line|#define DMA_MASK_REG&t;0xd4
-DECL|macro|CASCADE
-mdefine_line|#define&t;CASCADE&t;&t;0xc0
 DECL|macro|BIOS_TRANSLATION_1632
 mdefine_line|#define BIOS_TRANSLATION_1632 0  /* Used by some old 1542A boards */
 DECL|macro|BIOS_TRANSLATION_6432
@@ -3836,15 +3829,12 @@ suffix:semicolon
 r_case
 l_int|0x01
 suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;DMA priority 0 not available for Adaptec driver&bslash;n&quot;
-)paren
+op_star
+id|dma_chan
+op_assign
+l_int|0
 suffix:semicolon
-r_return
-op_minus
-l_int|1
+r_break
 suffix:semicolon
 r_case
 l_int|0
@@ -5234,32 +5224,26 @@ r_if
 c_cond
 (paren
 id|dma_chan
+op_eq
+l_int|0
+op_logical_or
+id|dma_chan
 op_ge
 l_int|5
 )paren
 (brace
-id|outb
+id|set_dma_mode
 c_func
 (paren
-(paren
 id|dma_chan
-op_minus
-l_int|4
-)paren
-op_or
-id|CASCADE
 comma
-id|DMA_MODE_REG
+id|DMA_MODE_CASCADE
 )paren
 suffix:semicolon
-id|outb
+id|enable_dma
 c_func
 (paren
 id|dma_chan
-op_minus
-l_int|4
-comma
-id|DMA_MASK_REG
 )paren
 suffix:semicolon
 )brace

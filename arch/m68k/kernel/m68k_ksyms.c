@@ -206,13 +206,6 @@ c_func
 id|disable_irq
 )paren
 suffix:semicolon
-DECL|variable|checksignals
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|checksignals
-)paren
-suffix:semicolon
 multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_partial_copy
 id|EXPORT_SYMBOL

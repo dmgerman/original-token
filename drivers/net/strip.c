@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright 1996 The Board of Trustees of The Leland Stanford&n; * Junior University. All Rights Reserved.&n; *&n; * Permission to use, copy, modify, and distribute this&n; * software and its documentation for any purpose and without&n; * fee is hereby granted, provided that the above copyright&n; * notice appear in all copies.  Stanford University&n; * makes no representations about the suitability of this&n; * software for any purpose.  It is provided &quot;as is&quot; without&n; * express or implied warranty.&n; *&n; * strip.c&t;This module implements Starmode Radio IP (STRIP)&n; *&t;&t;for kernel-based devices like TTY.  It interfaces between a&n; *&t;&t;raw TTY, and the kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)strip.c&t;1.2&t;February 1997&n; *&n; * Author:&t;Stuart Cheshire &lt;cheshire@cs.stanford.edu&gt;&n; *&n; * Fixes:&t;v0.9 12th Feb 1996 (SC)&n; *&t;&t;New byte stuffing (2+6 run-length encoding)&n; *&t;&t;New watchdog timer task&n; *&t;&t;New Protocol key (SIP0)&n; *&t;&t;&n; *&t;&t;v0.9.1 3rd March 1996 (SC)&n; *&t;&t;Changed to dynamic device allocation -- no more compile&n; *&t;&t;time (or boot time) limit on the number of STRIP devices.&n; *&t;&t;&n; *&t;&t;v0.9.2 13th March 1996 (SC)&n; *&t;&t;Uses arp cache lookups (but doesn&squot;t send arp packets yet)&n; *&t;&t;&n; *&t;&t;v0.9.3 17th April 1996 (SC)&n; *&t;&t;Fixed bug where STR_ERROR flag was getting set unneccessarily&n; *&t;&t;(causing otherwise good packets to be unneccessarily dropped)&n; *&t;&t;&n; *&t;&t;v0.9.4 27th April 1996 (SC)&n; *&t;&t;First attempt at using &quot;&amp;COMMAND&quot; Starmode AT commands&n; *&t;&t;&n; *&t;&t;v0.9.5 29th May 1996 (SC)&n; *&t;&t;First attempt at sending (unicast) ARP packets&n; *&t;&t;&n; *&t;&t;v0.9.6 5th June 1996 (Elliot)&n; *&t;&t;Put &quot;message level&quot; tags in every &quot;printk&quot; statement&n; *&t;&t;&n; *&t;&t;v0.9.7 13th June 1996 (laik)&n; *&t;&t;Added support for the /proc fs&n; *&n; *              v0.9.8 July 1996 (Mema)&n; *              Added packet logging&n; *&n; *              v1.0 November 1996 (SC)&n; *              Fixed (severe) memory leaks in the /proc fs code&n; *              Fixed race conditions in the logging code&n; *&n; *              v1.1 January 1997 (SC)&n; *              Deleted packet logging (use tcpdump instead)&n; *              Added support for Metricom Firmware v204 features&n; *              (like message checksums)&n; *&n; *              v1.2 January 1997 (SC)&n; *              Put portables list back in&n; */
+multiline_comment|/*&n; * Copyright 1996 The Board of Trustees of The Leland Stanford&n; * Junior University. All Rights Reserved.&n; *&n; * Permission to use, copy, modify, and distribute this&n; * software and its documentation for any purpose and without&n; * fee is hereby granted, provided that the above copyright&n; * notice appear in all copies.  Stanford University&n; * makes no representations about the suitability of this&n; * software for any purpose.  It is provided &quot;as is&quot; without&n; * express or implied warranty.&n; *&n; * strip.c&t;This module implements Starmode Radio IP (STRIP)&n; *&t;&t;for kernel-based devices like TTY.  It interfaces between a&n; *&t;&t;raw TTY, and the kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)strip.c&t;1.3&t;July 1997&n; *&n; * Author:&t;Stuart Cheshire &lt;cheshire@cs.stanford.edu&gt;&n; *&n; * Fixes:&t;v0.9 12th Feb 1996 (SC)&n; *&t;&t;New byte stuffing (2+6 run-length encoding)&n; *&t;&t;New watchdog timer task&n; *&t;&t;New Protocol key (SIP0)&n; *&t;&t;&n; *&t;&t;v0.9.1 3rd March 1996 (SC)&n; *&t;&t;Changed to dynamic device allocation -- no more compile&n; *&t;&t;time (or boot time) limit on the number of STRIP devices.&n; *&t;&t;&n; *&t;&t;v0.9.2 13th March 1996 (SC)&n; *&t;&t;Uses arp cache lookups (but doesn&squot;t send arp packets yet)&n; *&t;&t;&n; *&t;&t;v0.9.3 17th April 1996 (SC)&n; *&t;&t;Fixed bug where STR_ERROR flag was getting set unneccessarily&n; *&t;&t;(causing otherwise good packets to be unneccessarily dropped)&n; *&t;&t;&n; *&t;&t;v0.9.4 27th April 1996 (SC)&n; *&t;&t;First attempt at using &quot;&amp;COMMAND&quot; Starmode AT commands&n; *&t;&t;&n; *&t;&t;v0.9.5 29th May 1996 (SC)&n; *&t;&t;First attempt at sending (unicast) ARP packets&n; *&t;&t;&n; *&t;&t;v0.9.6 5th June 1996 (Elliot)&n; *&t;&t;Put &quot;message level&quot; tags in every &quot;printk&quot; statement&n; *&t;&t;&n; *&t;&t;v0.9.7 13th June 1996 (laik)&n; *&t;&t;Added support for the /proc fs&n; *&n; *              v0.9.8 July 1996 (Mema)&n; *              Added packet logging&n; *&n; *              v1.0 November 1996 (SC)&n; *              Fixed (severe) memory leaks in the /proc fs code&n; *              Fixed race conditions in the logging code&n; *&n; *              v1.1 January 1997 (SC)&n; *              Deleted packet logging (use tcpdump instead)&n; *              Added support for Metricom Firmware v204 features&n; *              (like message checksums)&n; *&n; *              v1.2 January 1997 (SC)&n; *              Put portables list back in&n; *&n; *              v1.3 July 1997 (SC)&n; *              Made STRIP driver set the radio&squot;s baud rate automatically.&n; *              It is no longer necessarily to manually set the radio&squot;s&n; *              rate permanently to 115200 -- the driver handles setting&n; *              the rate automatically.&n; */
 macro_line|#ifdef MODULE
 DECL|variable|StripVersion
 r_static
@@ -8,7 +8,7 @@ id|StripVersion
 (braket
 )braket
 op_assign
-l_string|&quot;1.2-STUART.CHESHIRE-MODULAR&quot;
+l_string|&quot;1.3-STUART.CHESHIRE-MODULAR&quot;
 suffix:semicolon
 macro_line|#else
 DECL|variable|StripVersion
@@ -19,7 +19,7 @@ id|StripVersion
 (braket
 )braket
 op_assign
-l_string|&quot;1.2-STUART.CHESHIRE&quot;
+l_string|&quot;1.3-STUART.CHESHIRE&quot;
 suffix:semicolon
 macro_line|#endif
 DECL|macro|TICKLE_TIMERS
@@ -35,6 +35,7 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/*&n; * isdigit() and isspace() use the ctype[] array, which is not available&n; * to kernel modules.  If compiling as a module,  use  a local definition&n; * of isdigit() and isspace() until  _ctype is added to ksyms.&n; */
 macro_line|#ifdef MODULE
@@ -58,12 +59,11 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/if_strip.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
-macro_line|#endif
 multiline_comment|/************************************************************************/
 multiline_comment|/* Useful structures and definitions&t;&t;&t;&t;&t;*/
 multiline_comment|/*&n; * A MetricomKey identifies the protocol being carried inside a Metricom&n; * Starmode packet.&n; */
@@ -508,6 +508,12 @@ r_int
 id|next_command
 suffix:semicolon
 multiline_comment|/* Next periodic command&t;*/
+DECL|member|user_baud
+r_int
+r_int
+id|user_baud
+suffix:semicolon
+multiline_comment|/* The user-selected baud rate  */
 DECL|member|mtu
 r_int
 id|mtu
@@ -957,7 +963,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/* Macros&t;&t;&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/* Returns TRUE if text T begins with prefix P */
 DECL|macro|has_prefix
-mdefine_line|#define has_prefix(T,P) (!strncmp((T), (P), sizeof(P)-1))
+mdefine_line|#define has_prefix(T,L,P) (((L) &gt;= sizeof(P)-1) &amp;&amp; !strncmp((T), (P), sizeof(P)-1))
 multiline_comment|/* Returns TRUE if text T of length L is equal to string S */
 DECL|macro|text_equal
 mdefine_line|#define text_equal(T,L,S) (((L) == sizeof(S)-1) &amp;&amp; !strncmp((T), (S), sizeof(S)-1))
@@ -1029,6 +1035,84 @@ c_func
 (paren
 id|x
 )paren
+suffix:semicolon
+)brace
+DECL|function|arp_query
+r_static
+r_int
+id|arp_query
+c_func
+(paren
+r_int
+r_char
+op_star
+id|haddr
+comma
+id|u32
+id|paddr
+comma
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|neighbour
+op_star
+id|neighbor_entry
+suffix:semicolon
+id|neighbor_entry
+op_assign
+id|neigh_lookup
+c_func
+(paren
+op_amp
+id|arp_tbl
+comma
+op_amp
+id|paddr
+comma
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|neighbor_entry
+op_ne
+l_int|NULL
+)paren
+(brace
+id|neighbor_entry-&gt;used
+op_assign
+id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|neighbor_entry-&gt;nud_state
+op_amp
+id|NUD_VALID
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|haddr
+comma
+id|neighbor_entry-&gt;ha
+comma
+id|dev-&gt;addr_len
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|DumpData
@@ -2215,6 +2299,142 @@ suffix:semicolon
 )brace
 multiline_comment|/************************************************************************/
 multiline_comment|/* General routines for STRIP&t;&t;&t;&t;&t;&t;*/
+multiline_comment|/*&n; * get_baud returns the current baud rate, as one of the constants defined in&n; * termbits.h&n; * If the user has issued a baud rate override using the &squot;setserial&squot; command&n; * and the logical current rate is set to 38.4, then the true baud rate&n; * currently in effect (57.6 or 115.2) is returned.&n; */
+DECL|function|get_baud
+r_static
+r_int
+r_int
+id|get_baud
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tty
+op_logical_or
+op_logical_neg
+id|tty-&gt;termios
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|tty-&gt;termios-&gt;c_cflag
+op_amp
+id|CBAUD
+)paren
+op_eq
+id|B38400
+op_logical_and
+id|tty-&gt;driver_data
+)paren
+(brace
+r_struct
+id|async_struct
+op_star
+id|info
+op_assign
+(paren
+r_struct
+id|async_struct
+op_star
+)paren
+id|tty-&gt;driver_data
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SPD_MASK
+)paren
+op_eq
+id|ASYNC_SPD_HI
+)paren
+r_return
+id|B57600
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SPD_MASK
+)paren
+op_eq
+id|ASYNC_SPD_VHI
+)paren
+r_return
+id|B115200
+suffix:semicolon
+)brace
+r_return
+id|tty-&gt;termios-&gt;c_cflag
+op_amp
+id|CBAUD
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * set_baud sets the baud rate to the rate defined by baudcode&n; * Note: The rate B38400 should be avoided, because the user may have&n; * issued a &squot;setserial&squot; speed override to map that to a different speed.&n; * We could achieve a true rate of 38400 if we needed to by cancelling&n; * any user speed override that is in place, but that might annoy the&n; * user, so it is simplest to just avoid using 38400.&n; */
+DECL|function|set_baud
+r_static
+r_void
+id|set_baud
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_int
+r_int
+id|baudcode
+)paren
+(brace
+r_struct
+id|termios
+id|old_termios
+op_assign
+op_star
+(paren
+id|tty-&gt;termios
+)paren
+suffix:semicolon
+id|tty-&gt;termios-&gt;c_cflag
+op_and_assign
+op_complement
+id|CBAUD
+suffix:semicolon
+multiline_comment|/* Clear the old baud setting */
+id|tty-&gt;termios-&gt;c_cflag
+op_or_assign
+id|baudcode
+suffix:semicolon
+multiline_comment|/* Set the new baud setting */
+id|tty-&gt;driver
+dot
+id|set_termios
+c_func
+(paren
+id|tty
+comma
+op_amp
+id|old_termios
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Convert a string to a Metricom Address.&n; */
 DECL|macro|IS_RADIO_ADDRESS
 mdefine_line|#define IS_RADIO_ADDRESS(p) (                                                 &bslash;&n;  isdigit((p)[0]) &amp;&amp; isdigit((p)[1]) &amp;&amp; isdigit((p)[2]) &amp;&amp; isdigit((p)[3]) &amp;&amp; &bslash;&n;  (p)[4] == &squot;-&squot; &amp;&amp;                                                            &bslash;&n;  isdigit((p)[5]) &amp;&amp; isdigit((p)[6]) &amp;&amp; isdigit((p)[7]) &amp;&amp; isdigit((p)[8])    )
@@ -2826,7 +3046,7 @@ op_star
 id|strip_info
 )paren
 (brace
-multiline_comment|/*&n;     * Set the time to go off in one second.&n;     */
+multiline_comment|/*&n;     * Set the timer to go off in one second.&n;     */
 id|strip_info-&gt;idle_timer.expires
 op_assign
 id|jiffies
@@ -4120,8 +4340,6 @@ multiline_comment|/* void *data; */
 suffix:semicolon
 multiline_comment|/************************************************************************/
 multiline_comment|/* Sending routines&t;&t;&t;&t;&t;&t;&t;*/
-DECL|macro|InitString
-mdefine_line|#define InitString &quot;ate0q1dt**starmode&quot;
 DECL|function|ResetRadio
 r_static
 r_void
@@ -4134,18 +4352,37 @@ op_star
 id|strip_info
 )paren
 (brace
+r_struct
+id|tty_struct
+op_star
+id|tty
+op_assign
+id|strip_info-&gt;tty
+suffix:semicolon
 r_static
 r_const
 r_char
-id|s
+id|init
 (braket
 )braket
 op_assign
-l_string|&quot;&bslash;r&quot;
-id|InitString
-l_string|&quot;&bslash;r**&quot;
+l_string|&quot;ate0q1dt**starmode&bslash;r**&quot;
 suffix:semicolon
-multiline_comment|/* If the radio isn&squot;t working anymore, we should clear the old status information. */
+id|StringDescriptor
+id|s
+op_assign
+(brace
+id|init
+comma
+r_sizeof
+(paren
+id|init
+)paren
+op_minus
+l_int|1
+)brace
+suffix:semicolon
+multiline_comment|/* &n;     * If the radio isn&squot;t working anymore,&n;     * we should clear the old status information.&n;     */
 r_if
 c_cond
 (paren
@@ -4287,38 +4524,153 @@ l_int|1
 op_star
 id|HZ
 suffix:semicolon
-id|strip_info-&gt;tty-&gt;driver
+multiline_comment|/* If the user has selected a baud rate above 38.4 see what magic we have to do */
+r_if
+c_cond
+(paren
+id|strip_info-&gt;user_baud
+OG
+id|B38400
+)paren
+(brace
+multiline_comment|/*&n;         * Subtle stuff: Pay attention :-)&n;         * If the serial port is currently at the user&squot;s selected (&gt;38.4) rate,&n;         * then we temporarily switch to 19.2 and issue the ATS304 command&n;         * to tell the radio to switch to the user&squot;s selected rate.&n;         * If the serial port is not currently at that rate, that means we just&n;         * issued the ATS304 command last time through, so this time we restore&n;         * the user&squot;s selected rate and issue the normal starmode reset string.&n;         */
+r_if
+c_cond
+(paren
+id|strip_info-&gt;user_baud
+op_eq
+id|get_baud
+c_func
+(paren
+id|tty
+)paren
+)paren
+(brace
+r_static
+r_const
+r_char
+id|b0
+(braket
+)braket
+op_assign
+l_string|&quot;ate0q1s304=57600&bslash;r&quot;
+suffix:semicolon
+r_static
+r_const
+r_char
+id|b1
+(braket
+)braket
+op_assign
+l_string|&quot;ate0q1s304=115200&bslash;r&quot;
+suffix:semicolon
+r_static
+r_const
+id|StringDescriptor
+id|baudstring
+(braket
+l_int|2
+)braket
+op_assign
+(brace
+(brace
+id|b0
+comma
+r_sizeof
+(paren
+id|b0
+)paren
+op_minus
+l_int|1
+)brace
+comma
+(brace
+id|b1
+comma
+r_sizeof
+(paren
+id|b1
+)paren
+op_minus
+l_int|1
+)brace
+)brace
+suffix:semicolon
+id|set_baud
+c_func
+(paren
+id|tty
+comma
+id|B19200
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strip_info-&gt;user_baud
+op_eq
+id|B57600
+)paren
+id|s
+op_assign
+id|baudstring
+(braket
+l_int|0
+)braket
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|strip_info-&gt;user_baud
+op_eq
+id|B115200
+)paren
+id|s
+op_assign
+id|baudstring
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_else
+id|s
+op_assign
+id|baudstring
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* For now */
+)brace
+r_else
+id|set_baud
+c_func
+(paren
+id|tty
+comma
+id|strip_info-&gt;user_baud
+)paren
+suffix:semicolon
+)brace
+id|tty-&gt;driver
 dot
 id|write
 c_func
 (paren
-id|strip_info-&gt;tty
+id|tty
 comma
 l_int|0
 comma
-(paren
-r_char
-op_star
-)paren
-id|s
+id|s.string
 comma
-r_sizeof
-(paren
-id|s
-)paren
-op_minus
-l_int|1
+id|s.length
 )paren
 suffix:semicolon
 macro_line|#ifdef EXT_COUNTERS
 id|strip_info-&gt;tx_ebytes
 op_add_assign
-r_sizeof
-(paren
-id|s
-)paren
-op_minus
-l_int|1
+id|s.length
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -4690,6 +5042,38 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * If we&squot;re sending to ourselves, discard the packet.&n;     * (Metricom radios choke if they try to send a packet to their own address.)&n;     */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|memcmp
+c_func
+(paren
+id|haddr.c
+comma
+id|strip_info-&gt;true_dev_addr.c
+comma
+r_sizeof
+(paren
+id|haddr
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Dropping packet addressed to self&bslash;n&quot;
+comma
+id|strip_info-&gt;dev.name
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/*&n;     * If this is a broadcast packet, send it to our designated Metricom&n;     * &squot;broadcast hub&squot; radio (First byte of address being 0xFF means broadcast)&n;     */
 r_if
 c_cond
@@ -4702,39 +5086,44 @@ op_eq
 l_int|0xFF
 )paren
 (brace
-id|memcpy
+r_struct
+id|in_device
+op_star
+id|in_dev
+op_assign
+id|strip_info-&gt;dev.ip_ptr
+suffix:semicolon
+multiline_comment|/* arp_query returns 1 if it succeeds in looking up the address, 0 if it fails */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|arp_query
 c_func
 (paren
 id|haddr.c
 comma
-id|strip_info-&gt;dev.broadcast
+id|in_dev-&gt;ifa_list-&gt;ifa_broadcast
 comma
-r_sizeof
-(paren
-id|haddr
+op_amp
+id|strip_info-&gt;dev
 )paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|haddr.c
-(braket
-l_int|0
-)braket
-op_eq
-l_int|0xFF
 )paren
 (brace
-id|strip_info-&gt;tx_dropped
-op_increment
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Unable to send packet (no broadcast hub configured)&bslash;n&quot;
+comma
+id|strip_info-&gt;dev.name
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n;     * If we&squot;re sending to ourselves, discard the packet.&n;     * (Metricom radios choke if they try to send a packet to their own address.)&n;     */
+multiline_comment|/*&n;&t; * If we are the broadcast hub, don&squot;t bother sending to ourselves.&n;&t; * (Metricom radios choke if they try to send a packet to their own address.)&n;&t; */
 r_if
 c_cond
 (paren
@@ -4754,6 +5143,13 @@ id|haddr
 )paren
 r_return
 l_int|NULL
+suffix:semicolon
+)brace
+op_star
+id|ptr
+op_increment
+op_assign
+l_int|0x0D
 suffix:semicolon
 op_star
 id|ptr
@@ -4987,6 +5383,9 @@ op_star
 id|skb
 )paren
 (brace
+id|MetricomAddress
+id|haddr
+suffix:semicolon
 r_int
 r_char
 op_star
@@ -5020,6 +5419,13 @@ l_int|0
 op_logical_and
 op_logical_neg
 id|doreset
+suffix:semicolon
+r_struct
+id|in_device
+op_star
+id|in_dev
+op_assign
+id|strip_info-&gt;dev.ip_ptr
 suffix:semicolon
 multiline_comment|/*&n;     * 1. If we have a packet, encapsulate it and put it in the buffer&n;     */
 r_if
@@ -5333,19 +5739,18 @@ id|zero_address
 )paren
 )paren
 op_logical_and
-op_star
-id|strip_info-&gt;dev.broadcast
-op_ne
-l_int|0xFF
+id|arp_query
+c_func
+(paren
+id|haddr.c
+comma
+id|in_dev-&gt;ifa_list-&gt;ifa_broadcast
+comma
+op_amp
+id|strip_info-&gt;dev
+)paren
 )paren
 (brace
-r_struct
-id|in_device
-op_star
-id|in_dev
-op_assign
-id|strip_info-&gt;dev.ip_ptr
-suffix:semicolon
 multiline_comment|/*printk(KERN_INFO &quot;%s: Sending gratuitous ARP with interval %ld&bslash;n&quot;,&n;            strip_info-&gt;dev.name, strip_info-&gt;arp_interval / HZ);*/
 id|strip_info-&gt;gratuitous_arp
 op_assign
@@ -6665,6 +7070,9 @@ r_const
 id|__u8
 op_star
 id|msg
+comma
+id|u_long
+id|len
 )paren
 (brace
 r_if
@@ -6674,6 +7082,8 @@ id|has_prefix
 c_func
 (paren
 id|msg
+comma
+id|len
 comma
 l_string|&quot;001&quot;
 )paren
@@ -6709,6 +7119,8 @@ c_func
 (paren
 id|msg
 comma
+id|len
+comma
 l_string|&quot;002&quot;
 )paren
 )paren
@@ -6724,6 +7136,8 @@ id|has_prefix
 c_func
 (paren
 id|msg
+comma
+id|len
 comma
 l_string|&quot;003&quot;
 )paren
@@ -6756,6 +7170,8 @@ id|has_prefix
 c_func
 (paren
 id|msg
+comma
+id|len
 comma
 l_string|&quot;004&quot;
 )paren
@@ -6859,13 +7275,14 @@ op_ge
 id|StructuredMessages
 )paren
 (brace
+multiline_comment|/*&n;             * If this message has a valid checksum on the end, then the call to verify_checksum&n;             * will elevate the firmware_level to ChecksummedMessages for us. (The actual return&n;             * code from verify_checksum is ignored here.)&n;             */
 id|verify_checksum
 c_func
 (paren
 id|strip_info
 )paren
 suffix:semicolon
-multiline_comment|/*&n;             * If the radio has structured messages but we don&squot;t yet have all our information about it, we should do&n;             * probes without delay, until we have gathered all the information&n;             */
+multiline_comment|/*&n;             * If the radio has structured messages but we don&squot;t yet have all our information about it,&n;             * we should do probes without delay, until we have gathered all the information&n;             */
 r_if
 c_cond
 (paren
@@ -6891,6 +7308,8 @@ c_func
 (paren
 id|msg
 comma
+id|len
+comma
 l_string|&quot;005&quot;
 )paren
 )paren
@@ -6912,6 +7331,8 @@ c_func
 (paren
 id|msg
 comma
+id|len
+comma
 l_string|&quot;006&quot;
 )paren
 )paren
@@ -6932,6 +7353,8 @@ id|has_prefix
 c_func
 (paren
 id|msg
+comma
+id|len
 comma
 l_string|&quot;007&quot;
 )paren
@@ -6965,6 +7388,8 @@ c_func
 (paren
 id|msg
 comma
+id|len
+comma
 l_string|&quot;008&quot;
 )paren
 )paren
@@ -6997,6 +7422,8 @@ c_func
 (paren
 id|msg
 comma
+id|len
+comma
 l_string|&quot;009&quot;
 )paren
 )paren
@@ -7017,6 +7444,8 @@ id|has_prefix
 c_func
 (paren
 id|msg
+comma
+id|len
 comma
 l_string|&quot;010&quot;
 )paren
@@ -7039,6 +7468,8 @@ c_func
 (paren
 id|msg
 comma
+id|len
+comma
 l_string|&quot;011&quot;
 )paren
 )paren
@@ -7059,6 +7490,8 @@ id|has_prefix
 c_func
 (paren
 id|msg
+comma
+id|len
 comma
 l_string|&quot;012&quot;
 )paren
@@ -7102,6 +7535,9 @@ op_star
 id|end
 )paren
 (brace
+id|u_long
+id|len
+suffix:semicolon
 id|__u8
 op_star
 id|p
@@ -7128,6 +7564,12 @@ op_increment
 suffix:semicolon
 multiline_comment|/* Skip past first newline character */
 multiline_comment|/* Now ptr points to the AT command, and p points to the text of the response. */
+id|len
+op_assign
+id|p
+op_minus
+id|ptr
+suffix:semicolon
 macro_line|#if TICKLE_TIMERS
 (brace
 r_struct
@@ -7166,6 +7608,8 @@ c_func
 (paren
 id|ptr
 comma
+id|len
+comma
 l_string|&quot;ATS300?&quot;
 )paren
 )paren
@@ -7188,6 +7632,8 @@ c_func
 (paren
 id|ptr
 comma
+id|len
+comma
 l_string|&quot;ATS305?&quot;
 )paren
 )paren
@@ -7207,6 +7653,8 @@ id|has_prefix
 c_func
 (paren
 id|ptr
+comma
+id|len
 comma
 l_string|&quot;ATS311?&quot;
 )paren
@@ -7231,6 +7679,8 @@ c_func
 (paren
 id|ptr
 comma
+id|len
+comma
 l_string|&quot;ATS319=7&quot;
 )paren
 )paren
@@ -7248,6 +7698,8 @@ id|has_prefix
 c_func
 (paren
 id|ptr
+comma
+id|len
 comma
 l_string|&quot;ATS325?&quot;
 )paren
@@ -7270,6 +7722,8 @@ id|has_prefix
 c_func
 (paren
 id|ptr
+comma
+id|len
 comma
 l_string|&quot;AT~LA&quot;
 )paren
@@ -8060,14 +8514,14 @@ multiline_comment|/* Ignore &squot;ERROR&squot; messages */
 r_if
 c_cond
 (paren
-id|text_equal
+id|has_prefix
 c_func
 (paren
 id|msg
 comma
 id|len
 comma
-id|InitString
+l_string|&quot;ate0q1&quot;
 )paren
 )paren
 r_return
@@ -8082,6 +8536,8 @@ id|has_prefix
 c_func
 (paren
 id|msg
+comma
+id|len
 comma
 l_string|&quot;ERR_&quot;
 )paren
@@ -8099,6 +8555,10 @@ id|msg
 (braket
 l_int|4
 )braket
+comma
+id|len
+op_minus
+l_int|4
 )paren
 suffix:semicolon
 r_return
@@ -8581,6 +9041,10 @@ comma
 id|sendername
 comma
 id|ptr
+comma
+id|end
+op_minus
+id|ptr
 )paren
 suffix:semicolon
 )brace
@@ -8699,6 +9163,10 @@ id|strip_info
 comma
 id|sendername
 comma
+id|ptr
+comma
+id|end
+op_minus
 id|ptr
 )paren
 suffix:semicolon
@@ -9153,7 +9621,7 @@ suffix:semicolon
 DECL|function|strip_get_stats
 r_static
 r_struct
-id|net_device_stats
+id|enet_statistics
 op_star
 id|strip_get_stats
 c_func
@@ -9166,7 +9634,7 @@ id|dev
 (brace
 r_static
 r_struct
-id|net_device_stats
+id|enet_statistics
 id|stats
 suffix:semicolon
 r_struct
@@ -9194,7 +9662,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|net_device_stats
+id|enet_statistics
 )paren
 )paren
 suffix:semicolon
@@ -9261,6 +9729,13 @@ op_star
 id|dev-&gt;priv
 )paren
 suffix:semicolon
+r_struct
+id|in_device
+op_star
+id|in_dev
+op_assign
+id|dev-&gt;ip_ptr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9286,6 +9761,14 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|strip_info-&gt;sx_count
+op_assign
+l_int|0
+suffix:semicolon
+id|strip_info-&gt;tx_left
+op_assign
+l_int|0
+suffix:semicolon
 id|strip_info-&gt;discard
 op_assign
 l_int|0
@@ -9302,13 +9785,29 @@ id|strip_info-&gt;next_command
 op_assign
 id|CompatibilityCommand
 suffix:semicolon
-id|strip_info-&gt;sx_count
+id|strip_info-&gt;user_baud
 op_assign
-l_int|0
+id|get_baud
+c_func
+(paren
+id|strip_info-&gt;tty
+)paren
 suffix:semicolon
-id|strip_info-&gt;tx_left
-op_assign
+multiline_comment|/*&n;     * Needed because address &squot;0&squot; is special&n;     */
+r_if
+c_cond
+(paren
+id|in_dev-&gt;ifa_list-&gt;ifa_address
+op_eq
 l_int|0
+)paren
+id|in_dev-&gt;ifa_list-&gt;ifa_address
+op_assign
+id|ntohl
+c_func
+(paren
+l_int|0xC0A80001
+)paren
 suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
@@ -9337,7 +9836,7 @@ id|strip_info-&gt;idle_timer.expires
 op_assign
 id|jiffies
 op_plus
-l_int|2
+l_int|1
 op_star
 id|HZ
 suffix:semicolon
@@ -9540,13 +10039,6 @@ op_assign
 r_sizeof
 (paren
 id|MetricomAddress
-)paren
-suffix:semicolon
-multiline_comment|/*&n;     * Pointer to the interface buffers.&n;     */
-id|dev_init_buffers
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Pointers to interface service routines.&n;     */
@@ -10042,6 +10534,13 @@ id|STRIP_MAGIC
 )paren
 r_return
 suffix:semicolon
+id|dev_close
+c_func
+(paren
+op_amp
+id|strip_info-&gt;dev
+)paren
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
@@ -10120,9 +10619,6 @@ op_star
 )paren
 id|tty-&gt;disc_data
 suffix:semicolon
-r_int
-id|err
-suffix:semicolon
 multiline_comment|/*&n;     * First make sure we&squot;re connected.&n;     */
 r_if
 c_cond
@@ -10147,31 +10643,6 @@ id|cmd
 r_case
 id|SIOCGIFNAME
 suffix:colon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-l_int|16
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-r_return
-op_minus
-id|err
-suffix:semicolon
 r_return
 id|copy_to_user
 c_func
@@ -10193,10 +10664,13 @@ op_plus
 l_int|1
 )paren
 ques
+c_cond
 op_minus
 id|EFAULT
 suffix:colon
 l_int|0
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 id|SIOCSIFHWADDR
@@ -10214,9 +10688,7 @@ comma
 id|strip_info-&gt;dev.name
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_from_user
 c_func
 (paren
@@ -10234,14 +10706,11 @@ r_sizeof
 id|MetricomAddress
 )paren
 )paren
-)paren
-(brace
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-)brace
-r_return
+suffix:colon
 id|set_mac_address
 c_func
 (paren
@@ -10250,6 +10719,8 @@ comma
 op_amp
 id|addr
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;         * Allow stty to read, but not set, the serial port&n;         */
@@ -10281,11 +10752,15 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 r_return
 op_minus
 id|ENOIOCTLCMD
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace

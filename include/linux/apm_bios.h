@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_APM_H
 DECL|macro|_LINUX_APM_H
 mdefine_line|#define _LINUX_APM_H
-multiline_comment|/*&n; * Include file for the interface to an APM BIOS&n; * Copyright 1994, 1995 Stephen Rothwell (Stephen.Rothwell@pd.necisa.oz.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.h,v 0.9 1995/03/09 13:50:05 sfr Exp $&n; */
+multiline_comment|/*&n; * Include file for the interface to an APM BIOS&n; * Copyright 1994-1998 Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
 DECL|typedef|apm_event_t
 r_typedef
 r_int
@@ -188,12 +188,11 @@ id|apm_event_t
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|apm_set_power_state
+r_void
+id|apm_power_off
 c_func
 (paren
-id|ushort
-id|state
+r_void
 )paren
 suffix:semicolon
 r_extern

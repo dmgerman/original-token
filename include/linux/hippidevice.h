@@ -132,6 +132,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_void
+id|hippi_setup
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 r_extern
 r_struct
 id|device

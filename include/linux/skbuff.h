@@ -348,6 +348,20 @@ id|shapepend
 suffix:semicolon
 multiline_comment|/* Pending */
 macro_line|#endif
+macro_line|#if defined(CONFIG_HIPPI)
+(def_block
+r_union
+(brace
+DECL|member|ifield
+id|__u32
+id|ifield
+suffix:semicolon
+DECL|member|private
+)brace
+)def_block
+r_private
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* These are just the default values. This is run time configurable.&n; * FIXME: Probably the config option should go away. -- erics&n; */

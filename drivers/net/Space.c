@@ -350,6 +350,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|ne3210_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|e2100_probe
 c_func
 (paren
@@ -781,6 +791,16 @@ id|device
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|rr_hippi_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
 DECL|struct|devprobe
 r_struct
 id|devprobe
@@ -1051,6 +1071,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_LNE390
 (brace
 id|lne390_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_NE3210
+(brace
+id|ne3210_probe
 comma
 l_int|0
 )brace
@@ -1990,6 +2018,14 @@ l_int|1
 macro_line|#ifdef CONFIG_CERN_HIPPI
 op_logical_and
 id|cern_hippi_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ROADRUNNER
+op_logical_and
+id|rr_hippi_probe
 c_func
 (paren
 id|dev
@@ -3559,8 +3595,7 @@ l_int|0
 comma
 l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
 l_int|0
 comma
@@ -3592,8 +3627,7 @@ l_int|0
 comma
 l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
 l_int|0
 comma
@@ -3626,8 +3660,7 @@ l_int|0
 comma
 l_int|0
 comma
-op_minus
-l_int|1
+l_int|0
 comma
 l_int|0
 comma

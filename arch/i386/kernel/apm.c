@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994-1998 Stephen Rothwell&n; *                     (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; * May 1996, Version 1.2&n; * Feb 1998, Version 1.3&n; * Feb 1998, Version 1.4&n; * Aug 1998, Version 1.5&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *    1.2: When resetting RTC after resume, take care so that the time&n; *         is only incorrect by 30-60mS (vs. 1S previously) (Gabor J. Toth&n; *         &lt;jtoth@princeton.edu&gt;); improve interaction between&n; *         screen-blanking and gpm (Stephen Rothwell); Linux 1.99.4&n; *    1.2a:Simple change to stop mysterious bug reports with SMP also added&n; *&t;   levels to the printk calls. APM is not defined for SMP machines.&n; *         The new replacment for it is, but Linux doesn&squot;t yet support this.&n; *         Alan Cox Linux 2.1.55&n; *    1.3: Set up a valid data descriptor 0x40 for buggy BIOS&squot;s&n; *    1.4: Upgraded to support APM 1.2. Integrated ThinkPad suspend patch by &n; *         Dean Gaudet &lt;dgaudet@arctic.org&gt;.&n; *         C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt; Linux 2.1.87&n; *    1.5: Fix segment register reloading (in case of bad segments saved&n; *         across BIOS call).&n; *         Stephen ROthwell&n; *&n; * APM 1.1 Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; * APM 1.2 Reference:&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.2, February 1996.&n; *&n; * [This document is available from Intel at:&n; *    http://www.intel.com/IAL/powermgm&n; *  or Microsoft at&n; *    http://www.microsoft.com/windows/thirdparty/hardware/pcfuture.htm&n; * ]&n; */
+multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994-1998 Stephen Rothwell&n; *                     (Stephen.Rothwell@canb.auug.org.au)&n; * Development of this driver was funded by NEC Australia P/L&n; *&t;and NEC Corporation&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; * May 1996, Version 1.2&n; * Feb 1998, Version 1.3&n; * Feb 1998, Version 1.4&n; * Aug 1998, Version 1.5&n; * Sep 1998, Version 1.6&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *    1.2: When resetting RTC after resume, take care so that the time&n; *         is only incorrect by 30-60mS (vs. 1S previously) (Gabor J. Toth&n; *         &lt;jtoth@princeton.edu&gt;); improve interaction between&n; *         screen-blanking and gpm (Stephen Rothwell); Linux 1.99.4&n; *    1.2a:Simple change to stop mysterious bug reports with SMP also added&n; *&t;   levels to the printk calls. APM is not defined for SMP machines.&n; *         The new replacment for it is, but Linux doesn&squot;t yet support this.&n; *         Alan Cox Linux 2.1.55&n; *    1.3: Set up a valid data descriptor 0x40 for buggy BIOS&squot;s&n; *    1.4: Upgraded to support APM 1.2. Integrated ThinkPad suspend patch by &n; *         Dean Gaudet &lt;dgaudet@arctic.org&gt;.&n; *         C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt; Linux 2.1.87&n; *    1.5: Fix segment register reloading (in case of bad segments saved&n; *         across BIOS call).&n; *         Stephen Rothwell&n; *    1.6: Cope with complier/assembler differences.&n; *         Only try to turn off the first display device.&n; *         Fix OOPS at power off with no APM BIOS by Jan Echternach&n; *                   &lt;echter@informatik.uni-rostock.de&gt;&n; *         Stephen Rothwell&n; *&n; * APM 1.1 Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; * APM 1.2 Reference:&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.2, February 1996.&n; *&n; * [This document is available from Intel at:&n; *    http://www.intel.com/IAL/powermgm&n; *  or Microsoft at&n; *    http://www.microsoft.com/windows/thirdparty/hardware/pcfuture.htm&n; * ]&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
@@ -66,7 +66,7 @@ DECL|macro|APM_CHECK_TIMEOUT
 mdefine_line|#define APM_CHECK_TIMEOUT&t;(HZ)
 multiline_comment|/*&n; * Save a segment register away&n; */
 DECL|macro|savesegment
-mdefine_line|#define savesegment(seg, where)&t;__asm__ __volatile__(&quot;movl %%&quot; #seg &quot;,%0&quot; : &quot;=m&quot; (where))
+mdefine_line|#define savesegment(seg, where) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %%&quot; #seg &quot;,%0&quot; : &quot;=m&quot; (where))
 multiline_comment|/*&n; * Forward declarations&n; */
 r_static
 r_void
@@ -337,7 +337,7 @@ id|driver_version
 (braket
 )braket
 op_assign
-l_string|&quot;1.5&quot;
+l_string|&quot;1.6&quot;
 suffix:semicolon
 multiline_comment|/* no spaces */
 macro_line|#ifdef APM_DEBUG
@@ -576,11 +576,37 @@ l_string|&quot;No APM present&quot;
 suffix:semicolon
 DECL|macro|ERROR_COUNT
 mdefine_line|#define ERROR_COUNT&t;(sizeof(error_table)/sizeof(lookup_t))
-multiline_comment|/*&n; * These are the actual BIOS calls.  Depending on APM_ZERO_SEGS&n; * and APM_NOINTS, we are being really paranoid here!  Not only are&n; * interrupts disabled, but all the segment registers (except SS) are&n; * saved and zeroed this means that if the BIOS tries to reference any&n; * data without explicitly loading the segment registers, the kernel will&n; * fault immediately rather than have some unforeseen circumstances for&n; * the rest of the kernel.  And it will be very obvious!  :-) Doing this&n; * depends on CS referring to the same physical memory as DS so that DS&n; * can be zeroed before the call. Unfortunately, we can&squot;t do anything&n; * about the stack segment/pointer.  Also, we tell the compiler that&n; * everything could change.&n; */
+multiline_comment|/*&n; * These are the actual BIOS calls.  Depending on APM_ZERO_SEGS&n; * and APM_NOINTS, we are being really paranoid here!  Not only are&n; * interrupts disabled, but all the segment registers (except SS) are&n; * saved and zeroed this means that if the BIOS tries to reference any&n; * data without explicitly loading the segment registers, the kernel will&n; * fault immediately rather than have some unforeseen circumstances for&n; * the rest of the kernel.  And it will be very obvious!  :-) Doing this&n; * depends on CS referring to the same physical memory as DS so that DS&n; * can be zeroed before the call. Unfortunately, we can&squot;t do anything&n; * about the stack segment/pointer.  Also, we tell the compiler that&n; * everything could change.&n; *&n; * Also, we KNOW that for the non error case of apm_bios_call, there&n; * is no useful data returned in the low order 8 bits of eax.&n; */
+macro_line|#ifdef APM_NOINTS
+DECL|macro|APM_DO_CLI
+macro_line|#&t;define APM_DO_CLI&t;__cli()
+macro_line|#else
+DECL|macro|APM_DO_CLI
+macro_line|#&t;define APM_DO_CLI
+macro_line|#endif
+macro_line|#ifdef APM_ZERO_SEGS
+DECL|macro|APM_DO_SAVE_SEGS
+macro_line|#&t;define APM_DO_SAVE_SEGS &bslash;&n;&t;&t;savesegment(fs, saved_fs); &bslash;&n;&t;&t;savesegment(gs, saved_gs)
+DECL|macro|APM_DO_ZERO_SEGS
+macro_line|#&t;define APM_DO_ZERO_SEGS &bslash;&n;&t;&t;&quot;pushl %%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;pushl %%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;xorl %%edx, %%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;mov %%dx, %%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;mov %%dx, %%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;mov %%dx, %%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;mov %%dx, %%gs&bslash;n&bslash;t&quot;
+DECL|macro|APM_DO_POP_SEGS
+macro_line|#&t;define APM_DO_POP_SEGS &bslash;&n;&t;&t;&quot;popl %%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;popl %%ds&bslash;n&bslash;t&quot;
+DECL|macro|APM_DO_RESTORE_SEGS
+macro_line|#&t;define APM_DO_RESTORE_SEGS &bslash;&n;&t;&t;loadsegment(fs, saved_fs); &bslash;&n;&t;&t;loadsegment(gs, saved_gs)
+macro_line|#else
+DECL|macro|APM_DO_SAVE_SEGS
+macro_line|#&t;define APM_DO_SAVE_SEGS
+DECL|macro|APM_DO_ZERO_SEGS
+macro_line|#&t;define APM_DO_ZERO_SEGS
+DECL|macro|APM_DO_POP_SEGS
+macro_line|#&t;define APM_DO_POP_SEGS
+DECL|macro|APM_DO_RESTORE_SEGS
+macro_line|#&t;define APM_DO_RESTORE_SEGS
+macro_line|#endif
 DECL|function|apm_bios_call
 r_static
 r_inline
-r_int
+id|u8
 id|apm_bios_call
 c_func
 (paren
@@ -616,47 +642,31 @@ id|esi
 (brace
 r_int
 r_int
-id|old_fs
-comma
-id|old_gs
+id|saved_fs
 suffix:semicolon
 r_int
-id|error
+r_int
+id|saved_gs
 suffix:semicolon
-macro_line|#ifdef APM_ZERO_SEGS
-id|savesegment
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__save_flags
 c_func
 (paren
-id|fs
-comma
-id|old_fs
+id|flags
 )paren
 suffix:semicolon
-id|savesegment
-c_func
-(paren
-id|gs
-comma
-id|old_gs
-)paren
+id|APM_DO_CLI
 suffix:semicolon
-macro_line|#endif
+id|APM_DO_SAVE_SEGS
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;pushfl&bslash;n&bslash;t&quot;
-macro_line|#ifdef APM_NOINTS
-l_string|&quot;cli&bslash;n&bslash;t&quot;
-macro_line|#endif
-macro_line|#ifdef APM_ZERO_SEGS
-l_string|&quot;pushl %%ds&bslash;n&bslash;t&quot;
-l_string|&quot;pushl %%es&bslash;n&bslash;t&quot;
-l_string|&quot;movl %w9,%%ds&bslash;n&bslash;t&quot;
-l_string|&quot;movl %w9,%%es&bslash;n&bslash;t&quot;
-l_string|&quot;movl %w9,%%fs&bslash;n&bslash;t&quot;
-l_string|&quot;movl %w9,%%gs&bslash;n&bslash;t&quot;
-macro_line|#endif
+id|APM_DO_ZERO_SEGS
 l_string|&quot;lcall %%cs:&quot;
 id|SYMBOL_NAME_STR
 c_func
@@ -664,12 +674,8 @@ c_func
 id|apm_bios_entry
 )paren
 l_string|&quot;&bslash;n&bslash;t&quot;
-l_string|&quot;movl $0, %%edi&bslash;n&bslash;t&quot;
-l_string|&quot;jnc 1f&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1, %%edi&bslash;n&quot;
-l_string|&quot;1:&bslash;tpopl %%es&bslash;n&bslash;t&quot;
-l_string|&quot;popl %%ds&bslash;n&bslash;t&quot;
-l_string|&quot;popfl&bslash;n&bslash;t&quot;
+l_string|&quot;setc %%al&bslash;n&bslash;t&quot;
+id|APM_DO_POP_SEGS
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -700,11 +706,6 @@ l_string|&quot;=S&quot;
 op_star
 id|esi
 )paren
-comma
-l_string|&quot;=D&quot;
-(paren
-id|error
-)paren
 suffix:colon
 l_string|&quot;a&quot;
 (paren
@@ -720,13 +721,6 @@ l_string|&quot;c&quot;
 (paren
 id|ecx_in
 )paren
-macro_line|#ifdef APM_ZERO_SEGS
-comma
-l_string|&quot;r&quot;
-(paren
-l_int|0
-)paren
-macro_line|#endif
 suffix:colon
 l_string|&quot;ax&quot;
 comma
@@ -743,35 +737,30 @@ comma
 l_string|&quot;bp&quot;
 comma
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef APM_ZERO_SEGS
-id|loadsegment
+id|APM_DO_RESTORE_SEGS
+suffix:semicolon
+id|__restore_flags
 c_func
 (paren
-id|fs
-comma
-id|old_fs
+id|flags
 )paren
 suffix:semicolon
-id|loadsegment
-c_func
-(paren
-id|gs
-comma
-id|old_gs
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
-id|error
+op_star
+id|eax
+op_amp
+l_int|0xff
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This version only returns one value (usually an error code)&n; */
 DECL|function|apm_bios_call_simple
 r_static
 r_inline
-r_int
+id|u8
 id|apm_bios_call_simple
 c_func
 (paren
@@ -789,49 +778,36 @@ op_star
 id|eax
 )paren
 (brace
-r_int
-r_int
-id|old_fs
-comma
-id|old_gs
-suffix:semicolon
-r_int
+id|u8
 id|error
 suffix:semicolon
-macro_line|#ifdef APM_ZERO_SEGS
-id|savesegment
+r_int
+r_int
+id|saved_fs
+suffix:semicolon
+r_int
+r_int
+id|saved_gs
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__save_flags
 c_func
 (paren
-id|fs
-comma
-id|old_fs
+id|flags
 )paren
 suffix:semicolon
-id|savesegment
-c_func
-(paren
-id|gs
-comma
-id|old_gs
-)paren
+id|APM_DO_CLI
 suffix:semicolon
-macro_line|#endif
+id|APM_DO_SAVE_SEGS
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;pushfl&bslash;n&bslash;t&quot;
-macro_line|#ifdef APM_NOINTS
-l_string|&quot;cli&bslash;n&bslash;t&quot;
-macro_line|#endif
-macro_line|#ifdef APM_ZERO_SEGS
-l_string|&quot;pushl %%ds&bslash;n&bslash;t&quot;
-l_string|&quot;pushl %%es&bslash;n&bslash;t&quot;
-l_string|&quot;movl %w5,%%ds&bslash;n&bslash;t&quot;
-l_string|&quot;movl %w5,%%es&bslash;n&bslash;t&quot;
-l_string|&quot;movl %w5,%%fs&bslash;n&bslash;t&quot;
-l_string|&quot;movl %w5,%%gs&bslash;n&bslash;t&quot;
-macro_line|#endif
+id|APM_DO_ZERO_SEGS
 l_string|&quot;lcall %%cs:&quot;
 id|SYMBOL_NAME_STR
 c_func
@@ -839,12 +815,8 @@ c_func
 id|apm_bios_entry
 )paren
 l_string|&quot;&bslash;n&bslash;t&quot;
-l_string|&quot;movl $0, %%edi&bslash;n&bslash;t&quot;
-l_string|&quot;jnc 1f&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1, %%edi&bslash;n&quot;
-l_string|&quot;1:&bslash;tpopl %%es&bslash;n&bslash;t&quot;
-l_string|&quot;popl %%ds&bslash;n&bslash;t&quot;
-l_string|&quot;popfl&bslash;n&bslash;t&quot;
+l_string|&quot;setc %%bl&bslash;n&bslash;t&quot;
+id|APM_DO_POP_SEGS
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -852,7 +824,7 @@ op_star
 id|eax
 )paren
 comma
-l_string|&quot;=D&quot;
+l_string|&quot;=b&quot;
 (paren
 id|error
 )paren
@@ -871,13 +843,6 @@ l_string|&quot;c&quot;
 (paren
 id|ecx_in
 )paren
-macro_line|#ifdef APM_ZERO_SEGS
-comma
-l_string|&quot;r&quot;
-(paren
-l_int|0
-)paren
-macro_line|#endif
 suffix:colon
 l_string|&quot;ax&quot;
 comma
@@ -894,26 +859,18 @@ comma
 l_string|&quot;bp&quot;
 comma
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef APM_ZERO_SEGS
-id|loadsegment
+id|APM_DO_RESTORE_SEGS
+suffix:semicolon
+id|__restore_flags
 c_func
 (paren
-id|fs
-comma
-id|old_fs
+id|flags
 )paren
 suffix:semicolon
-id|loadsegment
-c_func
-(paren
-id|gs
-comma
-id|old_gs
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|error
 suffix:semicolon
@@ -929,14 +886,12 @@ op_star
 id|val
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|u32
 id|eax
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|apm_bios_call_simple
 c_func
 (paren
@@ -950,11 +905,6 @@ comma
 op_amp
 id|eax
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_return
 (paren
@@ -989,9 +939,6 @@ op_star
 id|info
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|u32
 id|eax
 suffix:semicolon
@@ -1004,8 +951,9 @@ suffix:semicolon
 id|u32
 id|dummy
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|apm_bios_call
 c_func
 (paren
@@ -1030,11 +978,6 @@ comma
 op_amp
 id|dummy
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_return
 (paren
@@ -1076,6 +1019,7 @@ suffix:semicolon
 )brace
 DECL|function|set_power_state
 r_static
+r_inline
 r_int
 id|set_power_state
 c_func
@@ -1087,14 +1031,12 @@ id|u_short
 id|state
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|u32
 id|eax
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|apm_bios_call_simple
 c_func
 (paren
@@ -1107,11 +1049,6 @@ comma
 op_amp
 id|eax
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_return
 (paren
@@ -1127,6 +1064,7 @@ id|APM_SUCCESS
 suffix:semicolon
 )brace
 DECL|function|apm_set_power_state
+r_static
 r_int
 id|apm_set_power_state
 c_func
@@ -1142,6 +1080,29 @@ c_func
 l_int|0x0001
 comma
 id|state
+)paren
+suffix:semicolon
+)brace
+DECL|function|apm_power_off
+r_void
+id|apm_power_off
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|apm_enabled
+)paren
+(paren
+r_void
+)paren
+id|apm_set_power_state
+c_func
+(paren
+id|APM_STATE_OFF
 )paren
 suffix:semicolon
 )brace
@@ -1161,7 +1122,7 @@ r_return
 id|set_power_state
 c_func
 (paren
-l_int|0x01ff
+l_int|0x0100
 comma
 id|state
 )paren
@@ -1179,14 +1140,12 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|u32
 id|eax
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|apm_bios_call_simple
 c_func
 (paren
@@ -1208,11 +1167,6 @@ comma
 op_amp
 id|eax
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_return
 (paren
@@ -1247,9 +1201,6 @@ op_star
 id|life
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|u32
 id|eax
 suffix:semicolon
@@ -1265,8 +1216,9 @@ suffix:semicolon
 id|u32
 id|dummy
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|apm_bios_call
 c_func
 (paren
@@ -1291,11 +1243,6 @@ comma
 op_amp
 id|dummy
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_return
 (paren
@@ -1351,9 +1298,6 @@ id|nbat
 id|u_short
 id|status
 suffix:semicolon
-r_int
-id|error
-suffix:semicolon
 id|u32
 id|eax
 suffix:semicolon
@@ -1406,8 +1350,9 @@ id|life
 )paren
 suffix:semicolon
 )brace
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|apm_bios_call
 c_func
 (paren
@@ -1438,11 +1383,6 @@ comma
 op_amp
 id|esi
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_return
 (paren
@@ -1483,14 +1423,12 @@ id|u_short
 id|device
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|u32
 id|eax
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|apm_bios_call_simple
 c_func
 (paren
@@ -1503,11 +1441,6 @@ comma
 op_amp
 id|eax
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_return
 (paren
@@ -2805,9 +2738,6 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_APM_CPU_IDLE
-r_int
-id|error
-suffix:semicolon
 id|u32
 id|dummy
 suffix:semicolon
@@ -2820,8 +2750,9 @@ id|apm_enabled
 r_return
 l_int|0
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
 id|apm_bios_call_simple
 c_func
 (paren
@@ -2834,11 +2765,6 @@ comma
 op_amp
 id|dummy
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
 )paren
 r_return
 l_int|0

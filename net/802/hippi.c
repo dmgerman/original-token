@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -141,34 +142,6 @@ op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* 12 bit SC address */
-macro_line|#if 1
-r_if
-c_cond
-(paren
-id|saddr
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;existing saddr - this should not happen, configure ARP please!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|hip-&gt;le.src_switch_addr
-comma
-id|saddr
-op_plus
-l_int|3
-comma
-l_int|3
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|memcpy
 c_func
 (paren
@@ -181,7 +154,6 @@ comma
 l_int|3
 )paren
 suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -193,7 +165,6 @@ comma
 l_int|16
 )paren
 suffix:semicolon
-macro_line|#endif
 id|hip-&gt;snap.dsap
 op_assign
 id|HIPPI_EXTENDED_SAP

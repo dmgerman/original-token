@@ -3105,6 +3105,19 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|pam_dev
 r_static
 r_struct
@@ -3112,7 +3125,7 @@ id|device
 id|pam_dev
 op_assign
 (brace
-l_string|&quot;        &quot;
+id|devicename
 comma
 multiline_comment|/* filled in by register_netdev() */
 l_int|0

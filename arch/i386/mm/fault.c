@@ -333,6 +333,7 @@ id|mm
 op_assign
 id|tsk-&gt;mm
 suffix:semicolon
+multiline_comment|/*&n;&t; * If we&squot;re in an interrupt or have no user&n;&t; * context, we must not take the fault..&n;&t; */
 r_if
 c_cond
 (paren
@@ -346,15 +347,8 @@ op_eq
 op_amp
 id|init_mm
 )paren
-id|die
-c_func
-(paren
-l_string|&quot;page fault without a user context&quot;
-comma
-id|regs
-comma
-id|error_code
-)paren
+r_goto
+id|no_context
 suffix:semicolon
 id|down
 c_func
@@ -669,6 +663,8 @@ r_return
 suffix:semicolon
 )brace
 )brace
+id|no_context
+suffix:colon
 multiline_comment|/* Are we prepared to handle this kernel fault?  */
 r_if
 c_cond
@@ -875,11 +871,6 @@ id|page
 )paren
 suffix:semicolon
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|die
 c_func
 (paren
@@ -894,11 +885,6 @@ id|do_exit
 c_func
 (paren
 id|SIGKILL
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

@@ -11583,7 +11583,7 @@ id|m
 suffix:semicolon
 multiline_comment|/* The following code starts the modem of the 2.00 frequency&n;   * selectable cards at power on.  It&squot;s not strictly needed for the&n;   * following boots.&n;   * The original patch was by Joe Finney for the PCMCIA driver, but&n;   * I&squot;ve cleaned it up a bit and added documentation.&n;   * Thanks to Loeke Brederveld from Lucent for the info.&n;   */
 multiline_comment|/* Attempt to recognise 2.00 cards (2.4 GHz frequency selectable)&n;   * Does it work for everybody, especially old cards? */
-multiline_comment|/* Note: WFREQSEL verifies that it is able to read a sensible&n;   * frequency from from EEPROM (address 0x00) and that&n;   * MMR_FEE_STATUS_ID is 0xA (Xilinx version) or 0xB (Ariadne version).&n;   * My test is more crude but does work. */
+multiline_comment|/* Note: WFREQSEL verifies that it is able to read a sensible&n;   * frequency from EEPROM (address 0x00) and that MMR_FEE_STATUS_ID&n;   * is 0xA (Xilinx version) or 0xB (Ariadne version).&n;   * My test is more crude but does work. */
 r_if
 c_cond
 (paren

@@ -801,7 +801,7 @@ l_int|0
 comma
 l_string|&quot;lne390&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -924,11 +924,11 @@ c_cond
 (paren
 id|dev-&gt;mem_start
 OL
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|high_memory
+)paren
 )paren
 (brace
 id|printk
@@ -949,9 +949,13 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;lne390.c: or to an address above %p.&bslash;n&quot;
+l_string|&quot;lne390.c: or to an address above 0x%lx.&bslash;n&quot;
 comma
+id|virt_to_bus
+c_func
+(paren
 id|high_memory
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -1050,6 +1054,11 @@ r_return
 id|EAGAIN
 suffix:semicolon
 )brace
+id|ei_status.reg0
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Use as remap flag */
 id|printk
 c_func
 (paren
@@ -1904,6 +1913,21 @@ c_func
 id|dev-&gt;base_addr
 comma
 id|LNE390_IO_EXTENT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ei_status.reg0
+)paren
+id|iounmap
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|dev-&gt;mem_start
 )paren
 suffix:semicolon
 id|dev-&gt;priv

@@ -27,6 +27,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/hwtest.h&gt;
 macro_line|#include &quot;mac_SCC.h&quot;
 multiline_comment|/*&n; * It would be nice to dynamically allocate everything that&n; * depends on NUM_SERIAL, so we could support any number of&n; * Z8530s, but for now...&n; */
 DECL|macro|NUM_SERIAL
@@ -6187,6 +6188,31 @@ id|mac_bi_data.sccbase
 op_or_assign
 l_int|0x50000000
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hwreg_present
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|mac_bi_data.sccbase
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;z8530: Serial devices not accessible. Check serial switch.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -7039,26 +7065,8 @@ multiline_comment|/* SCC present at all? */
 r_if
 c_cond
 (paren
-id|MACH_IS_ATARI
-op_logical_or
-id|MACH_IS_AMIGA
-macro_line|#if 0
-op_logical_or
 op_logical_neg
-(paren
-id|MACHW_PRESENT
-c_func
-(paren
-id|SCC
-)paren
-op_logical_or
-id|MACHW_PRESENT
-c_func
-(paren
-id|ST_ESCC
-)paren
-)paren
-macro_line|#endif
+id|MACH_IS_MAC
 )paren
 r_return
 op_minus

@@ -1609,11 +1609,11 @@ multiline_comment|/* Custom Registers */
 DECL|macro|CyPLX_VER
 mdefine_line|#define&t;CyPLX_VER&t;(0x3400)
 DECL|macro|PLX_9050
-mdefine_line|#define&t;PLX_9050&t;0x11
+mdefine_line|#define&t;PLX_9050&t;0x0b
 DECL|macro|PLX_9060
-mdefine_line|#define&t;PLX_9060&t;0x12
+mdefine_line|#define&t;PLX_9060&t;0x0c
 DECL|macro|PLX_9080
-mdefine_line|#define&t;PLX_9080&t;0x13
+mdefine_line|#define&t;PLX_9080&t;0x0d
 multiline_comment|/***************************************************************************/
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_CYCLADES_H */

@@ -5040,7 +5040,8 @@ id|IP_FW_MASQ_TIMEOUTS
 suffix:colon
 (brace
 macro_line|#ifdef CONFIG_IP_MASQUERADE
-r_return
+id|ret
+op_assign
 id|ip_fw_masq_timeouts
 c_func
 (paren

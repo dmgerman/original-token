@@ -1219,7 +1219,11 @@ c_cond
 (paren
 id|dev-&gt;flags
 op_amp
+(paren
 id|IFF_NOARP
+op_or
+id|IFF_NODYNARP
+)paren
 )paren
 r_return
 suffix:semicolon
@@ -1687,7 +1691,11 @@ id|dev-&gt;addr_len
 op_logical_or
 id|dev-&gt;flags
 op_amp
+(paren
 id|IFF_NOARP
+op_or
+id|IFF_NODYNARP
+)paren
 op_logical_or
 id|skb-&gt;pkt_type
 op_eq
