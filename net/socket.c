@@ -530,16 +530,6 @@ id|file-&gt;f_flags
 op_assign
 id|O_RDWR
 suffix:semicolon
-id|file-&gt;f_dentry
-op_assign
-id|d_alloc_root
-c_func
-(paren
-id|inode
-comma
-l_int|NULL
-)paren
-suffix:semicolon
 id|file-&gt;f_pos
 op_assign
 l_int|0

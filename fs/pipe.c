@@ -1782,10 +1782,6 @@ op_assign
 op_amp
 id|pipe_inode_operations
 suffix:semicolon
-id|inode-&gt;i_count
-op_assign
-l_int|1
-suffix:semicolon
 id|PIPE_WAIT
 c_func
 (paren
@@ -1860,7 +1856,7 @@ op_lshift
 id|I_DIRTY
 suffix:semicolon
 id|inode-&gt;i_mode
-op_or_assign
+op_assign
 id|S_IFIFO
 op_or
 id|S_IRUSR

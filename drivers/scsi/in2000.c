@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *    in2000.c -  Linux device driver for the&n; *                Always IN2000 ISA SCSI card.&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; *&n; * Drew Eckhardt&squot;s excellent &squot;Generic NCR5380&squot; sources provided&n; * much of the inspiration and some of the code for this driver.&n; * The Linux IN2000 driver distributed in the Linux kernels through&n; * version 1.2.13 was an extremely valuable reference on the arcane&n; * (and still mysterious) workings of the IN2000&squot;s fifo. It also&n; * is where I lifted in2000_biosparam(), the gist of the card&n; * detection scheme, and other bits of code. Many thanks to the&n; * talented and courageous people who wrote, contributed to, and&n; * maintained that driver (including Brad McLean, Shaun Savage,&n; * Bill Earnest, Larry Doolittle, Roger Sunshine, John Luckey,&n; * Matt Postiff, Peter Lu, zerucha@shell.portal.com, and Eric&n; * Youngdale). I should also mention the driver written by&n; * Hamish Macdonald for the (GASP!) Amiga A2091 card, included&n; * in the Linux-m68k distribution; it gave me a good initial&n; * understanding of the proper way to run a WD33c93 chip, and I&n; * ended up stealing lots of code from it.&n; *&n; * _This_ driver is (I feel) an improvement over the old one in&n; * several respects:&n; *    -  All problems relating to the data size of a SCSI request are&n; *          gone (as far as I know). The old driver couldn&squot;t handle&n; *          swapping to partitions because that involved 4k blocks, nor&n; *          could it deal with the st.c tape driver unmodified, because&n; *          that usually involved 4k - 32k blocks. The old driver never&n; *          quite got away from a morbid dependence on 2k block sizes -&n; *          which of course is the size of the card&squot;s fifo.&n; *&n; *    -  Target Disconnection/Reconnection is now supported. Any&n; *          system with more than one device active on the SCSI bus&n; *          will benefit from this. The driver defaults to what I&squot;m&n; *          calling &squot;adaptive disconnect&squot; - meaning that each command&n; *          is evaluated individually as to whether or not it should&n; *          be run with the option to disconnect/reselect (if the&n; *          device chooses), or as a &quot;SCSI-bus-hog&quot;.&n; *&n; *    -  Synchronous data transfers are now supported. Because there&n; *          are a few devices (and many improperly terminated systems)&n; *          that choke when doing sync, the default is sync DISABLED&n; *          for all devices. This faster protocol can (and should!)&n; *          be enabled on selected devices via the command-line.&n; *&n; *    -  Runtime operating parameters can now be specified through&n; *       either the LILO or the &squot;insmod&squot; command line. For LILO do:&n; *          &quot;in2000=blah,blah,blah&quot;&n; *       and with insmod go like:&n; *          &quot;insmod /usr/src/linux/modules/in2000.o setup_strings=blah,blah&quot;&n; *       The defaults should be good for most people. See the comment&n; *       for &squot;setup_strings&squot; below for more details.&n; *&n; *    -  The old driver relied exclusively on what the Western Digital&n; *          docs call &quot;Combination Level 2 Commands&quot;, which are a great&n; *          idea in that the CPU is relieved of a lot of interrupt&n; *          overhead. However, by accepting a certain (user-settable)&n; *          amount of additional interrupts, this driver achieves&n; *          better control over the SCSI bus, and data transfers are&n; *          almost as fast while being much easier to define, track,&n; *          and debug.&n; *&n; *    -  You can force detection of a card whose BIOS has been disabled.&n; *&n; *    -  Multiple IN2000 cards might almost be supported. I&squot;ve tried to&n; *       keep it in mind, but have no way to test...&n; *&n; *&n; * TODO:&n; *       tagged queuing. multiple cards.&n; *&n; *&n; * NOTE:&n; *       When using this or any other SCSI driver as a module, you&squot;ll&n; *       find that with the stock kernel, at most _two_ SCSI hard&n; *       drives will be linked into the device list (ie, usable).&n; *       If your IN2000 card has more than 2 disks on its bus, you&n; *       might want to change the define of &squot;SD_EXTRA_DEVS&squot; in the&n; *       &squot;hosts.h&squot; file from 2 to whatever is appropriate. It took&n; *       me a while to track down this surprisingly obscure and&n; *       undocumented little &quot;feature&quot;.&n; *&n; *&n; * People with bug reports, wish-lists, complaints, comments,&n; * or improvements are asked to pah-leeez email me (John Shifflett)&n; * at john@geolog.com or jshiffle@netcom.com! I&squot;m anxious to get&n; * this thing into as good a shape as possible, and I&squot;m positive&n; * there are lots of lurking bugs and &quot;Stupid Places&quot;.&n; *&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -7,50 +8,24 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &quot;in2000.h&quot;
-macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
-DECL|macro|uchar
-mdefine_line|#define uchar unsigned char
 DECL|macro|IN2000_VERSION
-mdefine_line|#define IN2000_VERSION    &quot;1.30&quot;
+mdefine_line|#define IN2000_VERSION    &quot;1.31&quot;
 DECL|macro|IN2000_DATE
-mdefine_line|#define IN2000_DATE       &quot;14/Oct/1996&quot;
-DECL|macro|PROC_INTERFACE
-mdefine_line|#define PROC_INTERFACE     /* add code for /proc/scsi/in2000/xxx interface */
-DECL|macro|SYNC_DEBUG
-mdefine_line|#define SYNC_DEBUG         /* extra info on sync negotiation printed */
-DECL|macro|DEBUGGING_ON
-mdefine_line|#define DEBUGGING_ON       /* enable command-line debugging bitmask */
-DECL|macro|DEBUG_DEFAULTS
-mdefine_line|#define DEBUG_DEFAULTS 0   /* default bitmask - change from command-line */
-DECL|macro|FAST_READ_IO
-mdefine_line|#define FAST_READ_IO       /* No problems with these on my machine */
-DECL|macro|FAST_WRITE_IO
-mdefine_line|#define FAST_WRITE_IO
-macro_line|#ifdef DEBUGGING_ON
-DECL|macro|DB
-mdefine_line|#define DB(f,a) if (hostdata-&gt;args &amp; (f)) a;
-DECL|macro|CHECK_NULL
-mdefine_line|#define CHECK_NULL(p,s) /* if (!(p)) {printk(&quot;&bslash;n&quot;); while (1) printk(&quot;NP:%s&bslash;r&quot;,(s));} */
-macro_line|#else
-DECL|macro|DB
-mdefine_line|#define DB(f,a)
-DECL|macro|CHECK_NULL
-mdefine_line|#define CHECK_NULL(p,s)
-macro_line|#endif
-multiline_comment|/*&n; * setup_strings is an array of strings that define some of the operating&n; * parameters and settings for this driver. It is used unless a LILO&n; * or insmod command line has been specified, in which case those settings&n; * are combined with the ones here. The driver recognizes the following&n; * keywords (lower case required) and arguments:&n; *&n; * -  ioport:addr    -Where addr is IO address of a (usually ROM-less) card.&n; * -  noreset        -No optional args. Prevents SCSI bus reset at boot time.&n; * -  nosync:x       -x is a bitmask where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices (bit 0 for device #0, etc).&n; *                    Set a bit to PREVENT sync negotiation on that device.&n; *                    The driver default is sync DISABLED on all devices.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bitmask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in in2000.h&n; * -  proc:x         -If &squot;PROC_INTERFACE&squot; is defined, x is a bitmask that&n; *                    determines how the /proc interface works and what it&n; *                    does - see the PR_xxx defines in in2000.h&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner, except in the case of &squot;setup_strings[]&squot; (see&n; *    below), which is simply a C array of pointers to char. Each element&n; *    in the array is a string comprising one keyword &amp; argument.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_strings[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_strings[] element.&n; *&n; * A few LILO examples (for insmod, use &squot;setup_strings&squot; instead of &squot;in2000&squot;):&n; * -  in2000=ioport:0x220,noreset&n; * -  in2000=period:250,disconnect:2,nosync:0x03&n; * -  in2000=debug:0x1e&n; * -  in2000=proc:3&n; */
-DECL|variable|setup_strings
+mdefine_line|#define IN2000_DATE       &quot;06/July/1997&quot;
+multiline_comment|/*&n; * Note - the following defines have been moved to &squot;in2000.h&squot;:&n; *&n; *    PROC_INTERFACE&n; *    PROC_STATISTICS&n; *    SYNC_DEBUG&n; *    DEBUGGING_ON&n; *    DEBUG_DEFAULTS&n; *    FAST_READ_IO&n; *    FAST_WRITE_IO&n; *&n; */
+macro_line|#include &quot;in2000.h&quot;
+multiline_comment|/*&n; * &squot;setup_strings&squot; is a single string used to pass operating parameters and&n; * settings from the kernel/module command-line to the driver. &squot;setup_args[]&squot;&n; * is an array of strings that define the compile-time default values for&n; * these settings. If Linux boots with a LILO or insmod command-line, those&n; * settings are combined with &squot;setup_args[]&squot;. Note that LILO command-lines&n; * are prefixed with &quot;in2000=&quot; while insmod uses a &quot;setup_strings=&quot; prefix.&n; * The driver recognizes the following keywords (lower case required) and&n; * arguments:&n; *&n; * -  ioport:addr    -Where addr is IO address of a (usually ROM-less) card.&n; * -  noreset        -No optional args. Prevents SCSI bus reset at boot time.&n; * -  nosync:x       -x is a bitmask where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices (bit 0 for device #0, etc).&n; *                    Set a bit to PREVENT sync negotiation on that device.&n; *                    The driver default is sync DISABLED on all devices.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bitmask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in in2000.h&n; * -  proc:x         -If &squot;PROC_INTERFACE&squot; is defined, x is a bitmask that&n; *                    determines how the /proc interface works and what it&n; *                    does - see the PR_xxx defines in in2000.h&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_args[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_args[] element.&n; *&n; * A few LILO examples (for insmod, use &squot;setup_strings&squot; instead of &squot;in2000&squot;):&n; * -  in2000=ioport:0x220,noreset&n; * -  in2000=period:250,disconnect:2,nosync:0x03&n; * -  in2000=debug:0x1e&n; * -  in2000=proc:3&n; */
+multiline_comment|/* Normally, no defaults are specified... */
+DECL|variable|setup_args
 r_static
 r_char
 op_star
-id|setup_strings
+id|setup_args
 (braket
 )braket
 op_assign
@@ -72,14 +47,27 @@ comma
 l_string|&quot;&quot;
 comma
 l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
 )brace
 suffix:semicolon
+multiline_comment|/* filled in by &squot;insmod&squot; */
+DECL|variable|setup_strings
+r_static
+r_char
+op_star
+id|setup_strings
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef MODULE_PARM
+id|MODULE_PARM
+c_func
+(paren
+id|setup_strings
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|instance_list
 r_static
 r_struct
@@ -89,590 +77,6 @@ id|instance_list
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef PROC_INTERFACE
-DECL|variable|disc_allowed_total
-r_static
-r_int
-r_int
-id|disc_allowed_total
-suffix:semicolon
-DECL|variable|disc_taken_total
-r_static
-r_int
-r_int
-id|disc_taken_total
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* IN2000 io_port offsets */
-DECL|macro|IO_WD_ASR
-mdefine_line|#define IO_WD_ASR       0x00     /* R - 3393 auxstat reg */
-DECL|macro|ASR_INT
-mdefine_line|#define     ASR_INT        0x80
-DECL|macro|ASR_LCI
-mdefine_line|#define     ASR_LCI        0x40
-DECL|macro|ASR_BSY
-mdefine_line|#define     ASR_BSY        0x20
-DECL|macro|ASR_CIP
-mdefine_line|#define     ASR_CIP        0x10
-DECL|macro|ASR_PE
-mdefine_line|#define     ASR_PE         0x02
-DECL|macro|ASR_DBR
-mdefine_line|#define     ASR_DBR        0x01
-DECL|macro|IO_WD_ADDR
-mdefine_line|#define IO_WD_ADDR      0x00     /* W - 3393 address reg */
-DECL|macro|IO_WD_DATA
-mdefine_line|#define IO_WD_DATA      0x01     /* R/W - rest of 3393 regs */
-DECL|macro|IO_FIFO
-mdefine_line|#define IO_FIFO         0x02     /* R/W - in2000 dual-port fifo (16 bits) */
-DECL|macro|IN2000_FIFO_SIZE
-mdefine_line|#define IN2000_FIFO_SIZE   2048  /*    fifo capacity in bytes */
-DECL|macro|IO_CARD_RESET
-mdefine_line|#define IO_CARD_RESET   0x03     /* W - in2000 start master reset */
-DECL|macro|IO_FIFO_COUNT
-mdefine_line|#define IO_FIFO_COUNT   0x04     /* R - in2000 fifo counter */
-DECL|macro|IO_FIFO_WRITE
-mdefine_line|#define IO_FIFO_WRITE   0x05     /* W - clear fifo counter, start write */
-DECL|macro|IO_FIFO_READ
-mdefine_line|#define IO_FIFO_READ    0x07     /* W - start fifo read */
-DECL|macro|IO_LED_OFF
-mdefine_line|#define IO_LED_OFF      0x08     /* W - turn off in2000 activity LED */
-DECL|macro|IO_SWITCHES
-mdefine_line|#define IO_SWITCHES     0x08     /* R - read in2000 dip switch */
-DECL|macro|SW_ADDR0
-mdefine_line|#define     SW_ADDR0       0x01  /*    bit 0 = bit 0 of index to io addr */
-DECL|macro|SW_ADDR1
-mdefine_line|#define     SW_ADDR1       0x02  /*    bit 1 = bit 1 of index io addr */
-DECL|macro|SW_DISINT
-mdefine_line|#define     SW_DISINT      0x04  /*    bit 2 true if ints disabled */
-DECL|macro|SW_INT0
-mdefine_line|#define     SW_INT0        0x08  /*    bit 3 = bit 0 of index to interrupt */
-DECL|macro|SW_INT1
-mdefine_line|#define     SW_INT1        0x10  /*    bit 4 = bit 1 of index to interrupt */
-DECL|macro|SW_INT_SHIFT
-mdefine_line|#define     SW_INT_SHIFT   3     /*    shift right this amount to right justify int bits */
-DECL|macro|SW_SYNC_DOS5
-mdefine_line|#define     SW_SYNC_DOS5   0x20  /*    bit 5 used by Always BIOS */
-DECL|macro|SW_FLOPPY
-mdefine_line|#define     SW_FLOPPY      0x40  /*    bit 6 true if floppy enabled */
-DECL|macro|SW_BIT7
-mdefine_line|#define     SW_BIT7        0x80  /*    bit 7 hardwired true (ground) */
-DECL|macro|IO_LED_ON
-mdefine_line|#define IO_LED_ON       0x09     /* W - turn on in2000 activity LED */
-DECL|macro|IO_HARDWARE
-mdefine_line|#define IO_HARDWARE     0x0a     /* R - read in2000 hardware rev, stop reset */
-DECL|macro|IO_INTR_MASK
-mdefine_line|#define IO_INTR_MASK    0x0c     /* W - in2000 interrupt mask reg */
-DECL|macro|IMASK_WD
-mdefine_line|#define     IMASK_WD       0x01  /*    WD33c93 interrupt mask */
-DECL|macro|IMASK_FIFO
-mdefine_line|#define     IMASK_FIFO     0x02  /*    FIFO interrupt mask */
-multiline_comment|/* wd register names */
-DECL|macro|WD_OWN_ID
-mdefine_line|#define WD_OWN_ID    0x00
-DECL|macro|WD_CONTROL
-mdefine_line|#define WD_CONTROL   0x01
-DECL|macro|WD_TIMEOUT_PERIOD
-mdefine_line|#define WD_TIMEOUT_PERIOD  0x02
-DECL|macro|WD_CDB_1
-mdefine_line|#define WD_CDB_1     0x03
-DECL|macro|WD_CDB_2
-mdefine_line|#define WD_CDB_2     0x04
-DECL|macro|WD_CDB_3
-mdefine_line|#define WD_CDB_3     0x05
-DECL|macro|WD_CDB_4
-mdefine_line|#define WD_CDB_4     0x06
-DECL|macro|WD_CDB_5
-mdefine_line|#define WD_CDB_5     0x07
-DECL|macro|WD_CDB_6
-mdefine_line|#define WD_CDB_6     0x08
-DECL|macro|WD_CDB_7
-mdefine_line|#define WD_CDB_7     0x09
-DECL|macro|WD_CDB_8
-mdefine_line|#define WD_CDB_8     0x0a
-DECL|macro|WD_CDB_9
-mdefine_line|#define WD_CDB_9     0x0b
-DECL|macro|WD_CDB_10
-mdefine_line|#define WD_CDB_10    0x0c
-DECL|macro|WD_CDB_11
-mdefine_line|#define WD_CDB_11    0x0d
-DECL|macro|WD_CDB_12
-mdefine_line|#define WD_CDB_12    0x0e
-DECL|macro|WD_TARGET_LUN
-mdefine_line|#define WD_TARGET_LUN      0x0f
-DECL|macro|WD_COMMAND_PHASE
-mdefine_line|#define WD_COMMAND_PHASE   0x10
-DECL|macro|WD_SYNCHRONOUS_TRANSFER
-mdefine_line|#define WD_SYNCHRONOUS_TRANSFER  0x11
-DECL|macro|WD_TRANSFER_COUNT_MSB
-mdefine_line|#define WD_TRANSFER_COUNT_MSB 0x12
-DECL|macro|WD_TRANSFER_COUNT
-mdefine_line|#define WD_TRANSFER_COUNT  0x13
-DECL|macro|WD_TRANSFER_COUNT_LSB
-mdefine_line|#define WD_TRANSFER_COUNT_LSB 0x14
-DECL|macro|WD_DESTINATION_ID
-mdefine_line|#define WD_DESTINATION_ID  0x15
-DECL|macro|WD_SOURCE_ID
-mdefine_line|#define WD_SOURCE_ID    0x16
-DECL|macro|WD_SCSI_STATUS
-mdefine_line|#define WD_SCSI_STATUS     0x17
-DECL|macro|WD_COMMAND
-mdefine_line|#define WD_COMMAND      0x18
-DECL|macro|WD_DATA
-mdefine_line|#define WD_DATA      0x19
-DECL|macro|WD_QUEUE_TAG
-mdefine_line|#define WD_QUEUE_TAG    0x1a
-DECL|macro|WD_AUXILIARY_STATUS
-mdefine_line|#define WD_AUXILIARY_STATUS   0x1f
-multiline_comment|/* WD commands */
-DECL|macro|WD_CMD_RESET
-mdefine_line|#define WD_CMD_RESET    0x00
-DECL|macro|WD_CMD_ABORT
-mdefine_line|#define WD_CMD_ABORT    0x01
-DECL|macro|WD_CMD_ASSERT_ATN
-mdefine_line|#define WD_CMD_ASSERT_ATN  0x02
-DECL|macro|WD_CMD_NEGATE_ACK
-mdefine_line|#define WD_CMD_NEGATE_ACK  0x03
-DECL|macro|WD_CMD_DISCONNECT
-mdefine_line|#define WD_CMD_DISCONNECT  0x04
-DECL|macro|WD_CMD_RESELECT
-mdefine_line|#define WD_CMD_RESELECT    0x05
-DECL|macro|WD_CMD_SEL_ATN
-mdefine_line|#define WD_CMD_SEL_ATN     0x06
-DECL|macro|WD_CMD_SEL
-mdefine_line|#define WD_CMD_SEL      0x07
-DECL|macro|WD_CMD_SEL_ATN_XFER
-mdefine_line|#define WD_CMD_SEL_ATN_XFER   0x08
-DECL|macro|WD_CMD_SEL_XFER
-mdefine_line|#define WD_CMD_SEL_XFER    0x09
-DECL|macro|WD_CMD_RESEL_RECEIVE
-mdefine_line|#define WD_CMD_RESEL_RECEIVE  0x0a
-DECL|macro|WD_CMD_RESEL_SEND
-mdefine_line|#define WD_CMD_RESEL_SEND  0x0b
-DECL|macro|WD_CMD_WAIT_SEL_RECEIVE
-mdefine_line|#define WD_CMD_WAIT_SEL_RECEIVE 0x0c
-DECL|macro|WD_CMD_TRANS_ADDR
-mdefine_line|#define WD_CMD_TRANS_ADDR  0x18
-DECL|macro|WD_CMD_TRANS_INFO
-mdefine_line|#define WD_CMD_TRANS_INFO  0x20
-DECL|macro|WD_CMD_TRANSFER_PAD
-mdefine_line|#define WD_CMD_TRANSFER_PAD   0x21
-DECL|macro|WD_CMD_SBT_MODE
-mdefine_line|#define WD_CMD_SBT_MODE    0x80
-multiline_comment|/* SCSI Bus Phases */
-DECL|macro|PHS_DATA_OUT
-mdefine_line|#define PHS_DATA_OUT    0x00
-DECL|macro|PHS_DATA_IN
-mdefine_line|#define PHS_DATA_IN     0x01
-DECL|macro|PHS_COMMAND
-mdefine_line|#define PHS_COMMAND     0x02
-DECL|macro|PHS_STATUS
-mdefine_line|#define PHS_STATUS      0x03
-DECL|macro|PHS_MESS_OUT
-mdefine_line|#define PHS_MESS_OUT    0x06
-DECL|macro|PHS_MESS_IN
-mdefine_line|#define PHS_MESS_IN     0x07
-multiline_comment|/* Command Status Register definitions */
-multiline_comment|/* reset state interrupts */
-DECL|macro|CSR_RESET
-mdefine_line|#define CSR_RESET    0x00
-DECL|macro|CSR_RESET_AF
-mdefine_line|#define CSR_RESET_AF    0x01
-multiline_comment|/* successful completion interrupts */
-DECL|macro|CSR_RESELECT
-mdefine_line|#define CSR_RESELECT    0x10
-DECL|macro|CSR_SELECT
-mdefine_line|#define CSR_SELECT      0x11
-DECL|macro|CSR_SEL_XFER_DONE
-mdefine_line|#define CSR_SEL_XFER_DONE  0x16
-DECL|macro|CSR_XFER_DONE
-mdefine_line|#define CSR_XFER_DONE      0x18
-multiline_comment|/* paused or aborted interrupts */
-DECL|macro|CSR_MSGIN
-mdefine_line|#define CSR_MSGIN    0x20
-DECL|macro|CSR_SDP
-mdefine_line|#define CSR_SDP         0x21
-DECL|macro|CSR_SEL_ABORT
-mdefine_line|#define CSR_SEL_ABORT      0x22
-DECL|macro|CSR_RESEL_ABORT
-mdefine_line|#define CSR_RESEL_ABORT    0x25
-DECL|macro|CSR_RESEL_ABORT_AM
-mdefine_line|#define CSR_RESEL_ABORT_AM 0x27
-DECL|macro|CSR_ABORT
-mdefine_line|#define CSR_ABORT    0x28
-multiline_comment|/* terminated interrupts */
-DECL|macro|CSR_INVALID
-mdefine_line|#define CSR_INVALID     0x40
-DECL|macro|CSR_UNEXP_DISC
-mdefine_line|#define CSR_UNEXP_DISC     0x41
-DECL|macro|CSR_TIMEOUT
-mdefine_line|#define CSR_TIMEOUT     0x42
-DECL|macro|CSR_PARITY
-mdefine_line|#define CSR_PARITY      0x43
-DECL|macro|CSR_PARITY_ATN
-mdefine_line|#define CSR_PARITY_ATN     0x44
-DECL|macro|CSR_BAD_STATUS
-mdefine_line|#define CSR_BAD_STATUS     0x45
-DECL|macro|CSR_UNEXP
-mdefine_line|#define CSR_UNEXP    0x48
-multiline_comment|/* service required interrupts */
-DECL|macro|CSR_RESEL
-mdefine_line|#define CSR_RESEL    0x80
-DECL|macro|CSR_RESEL_AM
-mdefine_line|#define CSR_RESEL_AM    0x81
-DECL|macro|CSR_DISC
-mdefine_line|#define CSR_DISC     0x85
-DECL|macro|CSR_SRV_REQ
-mdefine_line|#define CSR_SRV_REQ     0x88
-multiline_comment|/* Own ID/CDB Size register */
-DECL|macro|OWNID_EAF
-mdefine_line|#define OWNID_EAF    0x08
-DECL|macro|OWNID_EHP
-mdefine_line|#define OWNID_EHP    0x10
-DECL|macro|OWNID_RAF
-mdefine_line|#define OWNID_RAF    0x20
-DECL|macro|OWNID_FS_8
-mdefine_line|#define OWNID_FS_8   0x00
-DECL|macro|OWNID_FS_12
-mdefine_line|#define OWNID_FS_12  0x40
-DECL|macro|OWNID_FS_16
-mdefine_line|#define OWNID_FS_16  0x80
-multiline_comment|/* Control register */
-DECL|macro|CTRL_HSP
-mdefine_line|#define CTRL_HSP     0x01
-DECL|macro|CTRL_HA
-mdefine_line|#define CTRL_HA      0x02
-DECL|macro|CTRL_IDI
-mdefine_line|#define CTRL_IDI     0x04
-DECL|macro|CTRL_EDI
-mdefine_line|#define CTRL_EDI     0x08
-DECL|macro|CTRL_HHP
-mdefine_line|#define CTRL_HHP     0x10
-DECL|macro|CTRL_POLLED
-mdefine_line|#define CTRL_POLLED  0x00
-DECL|macro|CTRL_BURST
-mdefine_line|#define CTRL_BURST   0x20
-DECL|macro|CTRL_BUS
-mdefine_line|#define CTRL_BUS     0x40
-DECL|macro|CTRL_DMA
-mdefine_line|#define CTRL_DMA     0x80
-multiline_comment|/* Timeout Period register */
-DECL|macro|TIMEOUT_PERIOD_VALUE
-mdefine_line|#define TIMEOUT_PERIOD_VALUE  20    /* results in 200 ms. */
-multiline_comment|/* Synchronous Transfer Register */
-DECL|macro|STR_FSS
-mdefine_line|#define STR_FSS      0x80
-multiline_comment|/* Destination ID register */
-DECL|macro|DSTID_DPD
-mdefine_line|#define DSTID_DPD    0x40
-DECL|macro|DATA_OUT_DIR
-mdefine_line|#define DATA_OUT_DIR 0
-DECL|macro|DATA_IN_DIR
-mdefine_line|#define DATA_IN_DIR  1
-DECL|macro|DSTID_SCC
-mdefine_line|#define DSTID_SCC    0x80
-multiline_comment|/* Source ID register */
-DECL|macro|SRCID_MASK
-mdefine_line|#define SRCID_MASK   0x07
-DECL|macro|SRCID_SIV
-mdefine_line|#define SRCID_SIV    0x08
-DECL|macro|SRCID_DSP
-mdefine_line|#define SRCID_DSP    0x20
-DECL|macro|SRCID_ES
-mdefine_line|#define SRCID_ES     0x40
-DECL|macro|SRCID_ER
-mdefine_line|#define SRCID_ER     0x80
-DECL|macro|DEFAULT_SX_PER
-mdefine_line|#define DEFAULT_SX_PER     500   /* (ns) fairly safe */
-DECL|macro|DEFAULT_SX_OFF
-mdefine_line|#define DEFAULT_SX_OFF     0     /* aka async */
-DECL|macro|OPTIMUM_SX_PER
-mdefine_line|#define OPTIMUM_SX_PER     252   /* (ns) best we can do (mult-of-4) */
-DECL|macro|OPTIMUM_SX_OFF
-mdefine_line|#define OPTIMUM_SX_OFF     12    /* size of in2000 fifo */
-multiline_comment|/* defines for hostdata-&gt;chip */
-DECL|macro|C_WD33C93
-mdefine_line|#define C_WD33C93       0
-DECL|macro|C_WD33C93A
-mdefine_line|#define C_WD33C93A      1
-DECL|macro|C_WD33C93B
-mdefine_line|#define C_WD33C93B      2
-DECL|macro|C_UNKNOWN_CHIP
-mdefine_line|#define C_UNKNOWN_CHIP  100
-multiline_comment|/* defines for hostdata-&gt;state */
-DECL|macro|S_UNCONNECTED
-mdefine_line|#define S_UNCONNECTED         0
-DECL|macro|S_SELECTING
-mdefine_line|#define S_SELECTING           1
-DECL|macro|S_RUNNING_LEVEL2
-mdefine_line|#define S_RUNNING_LEVEL2      2
-DECL|macro|S_CONNECTED
-mdefine_line|#define S_CONNECTED           3
-DECL|macro|S_PRE_TMP_DISC
-mdefine_line|#define S_PRE_TMP_DISC        4
-DECL|macro|S_PRE_CMP_DISC
-mdefine_line|#define S_PRE_CMP_DISC        5
-multiline_comment|/* defines for hostdata-&gt;fifo */
-DECL|macro|FI_FIFO_UNUSED
-mdefine_line|#define FI_FIFO_UNUSED        0
-DECL|macro|FI_FIFO_READING
-mdefine_line|#define FI_FIFO_READING       1
-DECL|macro|FI_FIFO_WRITING
-mdefine_line|#define FI_FIFO_WRITING       2
-multiline_comment|/* defines for hostdata-&gt;level2 */
-multiline_comment|/* NOTE: only the first 3 are trustworthy at this point -&n; * having trouble when more than 1 device is reading/writing&n; * at the same time...&n; */
-DECL|macro|L2_NONE
-mdefine_line|#define L2_NONE      0  /* no combination commands - we get lots of ints */
-DECL|macro|L2_SELECT
-mdefine_line|#define L2_SELECT    1  /* start with SEL_ATN_XFER, but never resume it */
-DECL|macro|L2_BASIC
-mdefine_line|#define L2_BASIC     2  /* resume after STATUS ints &amp; RDP messages */
-DECL|macro|L2_DATA
-mdefine_line|#define L2_DATA      3  /* resume after DATA_IN/OUT ints */
-DECL|macro|L2_MOST
-mdefine_line|#define L2_MOST      4  /* resume after anything except a RESELECT int */
-DECL|macro|L2_RESELECT
-mdefine_line|#define L2_RESELECT  5  /* resume after everything, including RESELECT ints */
-DECL|macro|L2_ALL
-mdefine_line|#define L2_ALL       6  /* always resume */
-multiline_comment|/* defines for hostdata-&gt;disconnect */
-DECL|macro|DIS_NEVER
-mdefine_line|#define DIS_NEVER    0
-DECL|macro|DIS_ADAPTIVE
-mdefine_line|#define DIS_ADAPTIVE 1
-DECL|macro|DIS_ALWAYS
-mdefine_line|#define DIS_ALWAYS   2
-multiline_comment|/* defines for hostdata-&gt;args */
-DECL|macro|DB_TEST
-mdefine_line|#define DB_TEST               1&lt;&lt;0
-DECL|macro|DB_FIFO
-mdefine_line|#define DB_FIFO               1&lt;&lt;1
-DECL|macro|DB_QUEUE_COMMAND
-mdefine_line|#define DB_QUEUE_COMMAND      1&lt;&lt;2
-DECL|macro|DB_EXECUTE
-mdefine_line|#define DB_EXECUTE            1&lt;&lt;3
-DECL|macro|DB_INTR
-mdefine_line|#define DB_INTR               1&lt;&lt;4
-DECL|macro|DB_TRANSFER
-mdefine_line|#define DB_TRANSFER           1&lt;&lt;5
-DECL|macro|DB_MASK
-mdefine_line|#define DB_MASK               0x3f
-DECL|macro|A_NO_SCSI_RESET
-mdefine_line|#define A_NO_SCSI_RESET       1&lt;&lt;15
-multiline_comment|/* defines for hostdata-&gt;sync_xfer[] */
-DECL|macro|SS_UNSET
-mdefine_line|#define SS_UNSET     0
-DECL|macro|SS_FIRST
-mdefine_line|#define SS_FIRST     1
-DECL|macro|SS_WAITING
-mdefine_line|#define SS_WAITING   2
-DECL|macro|SS_SET
-mdefine_line|#define SS_SET       3
-multiline_comment|/* defines for hostdata-&gt;proc */
-DECL|macro|PR_VERSION
-mdefine_line|#define PR_VERSION   1&lt;&lt;0
-DECL|macro|PR_INFO
-mdefine_line|#define PR_INFO      1&lt;&lt;1
-DECL|macro|PR_TOTALS
-mdefine_line|#define PR_TOTALS    1&lt;&lt;2
-DECL|macro|PR_CONNECTED
-mdefine_line|#define PR_CONNECTED 1&lt;&lt;3
-DECL|macro|PR_INPUTQ
-mdefine_line|#define PR_INPUTQ    1&lt;&lt;4
-DECL|macro|PR_DISCQ
-mdefine_line|#define PR_DISCQ     1&lt;&lt;5
-DECL|macro|PR_TEST
-mdefine_line|#define PR_TEST      1&lt;&lt;6
-DECL|macro|PR_STOP
-mdefine_line|#define PR_STOP      1&lt;&lt;7
-DECL|macro|read1_io
-mdefine_line|#define read1_io(a)     (inb(hostdata-&gt;io_base+(a)))
-DECL|macro|read2_io
-mdefine_line|#define read2_io(a)     (inw(hostdata-&gt;io_base+(a)))
-DECL|macro|write1_io
-mdefine_line|#define write1_io(b,a)  (outb((b),hostdata-&gt;io_base+(a)))
-DECL|macro|write2_io
-mdefine_line|#define write2_io(w,a)  (outw((w),hostdata-&gt;io_base+(a)))
-DECL|struct|sx_period
-r_struct
-id|sx_period
-(brace
-DECL|member|period_ns
-r_int
-r_int
-id|period_ns
-suffix:semicolon
-DECL|member|reg_value
-id|uchar
-id|reg_value
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|IN2000_hostdata
-r_struct
-id|IN2000_hostdata
-(brace
-DECL|member|next
-r_struct
-id|Scsi_Host
-op_star
-id|next
-suffix:semicolon
-DECL|member|chip
-id|uchar
-id|chip
-suffix:semicolon
-multiline_comment|/* what kind of wd33c93 chip? */
-DECL|member|microcode
-id|uchar
-id|microcode
-suffix:semicolon
-multiline_comment|/* microcode rev if &squot;B&squot; */
-DECL|member|io_base
-r_int
-r_int
-id|io_base
-suffix:semicolon
-multiline_comment|/* IO port base */
-DECL|member|dip_switch
-r_int
-r_int
-id|dip_switch
-suffix:semicolon
-multiline_comment|/* dip switch settings */
-DECL|member|hrev
-r_int
-r_int
-id|hrev
-suffix:semicolon
-multiline_comment|/* hardware revision of card */
-DECL|member|busy
-r_volatile
-id|uchar
-id|busy
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* index = target, bit = lun */
-DECL|member|input_Q
-r_volatile
-id|Scsi_Cmnd
-op_star
-id|input_Q
-suffix:semicolon
-multiline_comment|/* commands waiting to be started */
-DECL|member|selecting
-r_volatile
-id|Scsi_Cmnd
-op_star
-id|selecting
-suffix:semicolon
-multiline_comment|/* trying to select this command */
-DECL|member|connected
-r_volatile
-id|Scsi_Cmnd
-op_star
-id|connected
-suffix:semicolon
-multiline_comment|/* currently connected command */
-DECL|member|disconnected_Q
-r_volatile
-id|Scsi_Cmnd
-op_star
-id|disconnected_Q
-suffix:semicolon
-multiline_comment|/* commands waiting for reconnect */
-DECL|member|state
-id|uchar
-id|state
-suffix:semicolon
-multiline_comment|/* what we are currently doing */
-DECL|member|fifo
-id|uchar
-id|fifo
-suffix:semicolon
-multiline_comment|/* what the FIFO is up to */
-DECL|member|level2
-id|uchar
-id|level2
-suffix:semicolon
-multiline_comment|/* extent to which Level-2 commands are used */
-DECL|member|disconnect
-id|uchar
-id|disconnect
-suffix:semicolon
-multiline_comment|/* disconnect/reselect policy */
-DECL|member|args
-r_int
-r_int
-id|args
-suffix:semicolon
-multiline_comment|/* set from command-line argument */
-DECL|member|incoming_msg
-id|uchar
-id|incoming_msg
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* filled during message_in phase */
-DECL|member|incoming_ptr
-r_int
-id|incoming_ptr
-suffix:semicolon
-multiline_comment|/* mainly used with EXTENDED messages */
-DECL|member|outgoing_msg
-id|uchar
-id|outgoing_msg
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* send this during next message_out */
-DECL|member|outgoing_len
-r_int
-id|outgoing_len
-suffix:semicolon
-multiline_comment|/* length of outgoing message */
-DECL|member|default_sx_per
-r_int
-r_int
-id|default_sx_per
-suffix:semicolon
-multiline_comment|/* default transfer period for SCSI bus */
-DECL|member|sync_xfer
-id|uchar
-id|sync_xfer
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* sync_xfer reg settings per target */
-DECL|member|sync_stat
-id|uchar
-id|sync_stat
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* status of sync negotiation per target */
-DECL|member|sync_off
-id|uchar
-id|sync_off
-suffix:semicolon
-multiline_comment|/* bit mask: don&squot;t use sync with these targets */
-DECL|member|proc
-id|uchar
-id|proc
-suffix:semicolon
-multiline_comment|/* bit mask: what&squot;s in proc output */
-)brace
-suffix:semicolon
-multiline_comment|/* These inline assembly defines are derived from a patch&n; * sent to me by Bill Earnest. He&squot;s done a lot of very&n; * valuable thinking, testing, and coding during his effort&n; * to squeeze more speed out of this driver. I really think&n; * that we are doing IO at close to the maximum now with&n; * the fifo. (And yes, insw uses &squot;edi&squot; while outsw uses&n; * &squot;esi&squot;. Thanks Bill!)&n; */
-DECL|macro|FAST_READ2_IO
-mdefine_line|#define FAST_READ2_IO()    &bslash;&n;   __asm__ __volatile__ (&quot;&bslash;n &bslash;&n;   cld                    &bslash;n &bslash;&n;   orl %%ecx, %%ecx       &bslash;n &bslash;&n;   jz 1f                  &bslash;n &bslash;&n;   rep                    &bslash;n &bslash;&n;   insw %%dx              &bslash;n &bslash;&n;1: &quot;                       &bslash;&n;   : &quot;=D&quot; (sp)                   /* output */   &bslash;&n;   : &quot;d&quot; (f), &quot;D&quot; (sp), &quot;c&quot; (i)  /* input */    &bslash;&n;   : &quot;edx&quot;, &quot;ecx&quot;, &quot;edi&quot; )       /* trashed */
-DECL|macro|FAST_WRITE2_IO
-mdefine_line|#define FAST_WRITE2_IO()   &bslash;&n;   __asm__ __volatile__ (&quot;&bslash;n &bslash;&n;   cld                    &bslash;n &bslash;&n;   orl %%ecx, %%ecx       &bslash;n &bslash;&n;   jz 1f                  &bslash;n &bslash;&n;   rep                    &bslash;n &bslash;&n;   outsw %%dx             &bslash;n &bslash;&n;1: &quot;                       &bslash;&n;   : &quot;=S&quot; (sp)                   /* output */   &bslash;&n;   : &quot;d&quot; (f), &quot;S&quot; (sp), &quot;c&quot; (i)  /* input */    &bslash;&n;   : &quot;edx&quot;, &quot;ecx&quot;, &quot;esi&quot; )       /* trashed */
 DECL|function|read_3393
 r_static
 r_inline
@@ -1162,6 +566,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|round_period
+r_static
 r_int
 id|round_period
 c_func
@@ -1369,7 +774,7 @@ id|cmd-&gt;result
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* We use the Scsi_Pointer structure that&squot;s included with each command&n; * as a scratchpad (as it&squot;s intended to be used!). The handy thing about&n; * the SCp.xxx fields is that they&squot;re always associated with a given&n; * cmd, and are preserved across disconnect-reconnect. This means we&n; * can pretty much ignore SAVE_POINTERS and RESTORE_POINTERS messages&n; * if we keep all the critical pointers and counters in SCp:&n; *  - SCp.ptr is the pointer into the RAM buffer&n; *  - SCp.this_residual is the size of that buffer&n; *  - SCp.buffer points to the current scatter-gather buffer&n; *  - SCp.buffers_residual tells us how many S.G. buffers there are&n; *  - SCp.have_data_in helps keep track of &gt;2048 byte transfers&n; *  - SCp.sent_command is not used&n; *  - SCp.phase records this command&squot;s SRCID_ER bit setting&n; */
+multiline_comment|/* We use the Scsi_Pointer structure that&squot;s included with each command&n; * as a scratchpad (as it&squot;s intended to be used!). The handy thing about&n; * the SCp.xxx fields is that they&squot;re always associated with a given&n; * cmd, and are preserved across disconnect-reselect. This means we&n; * can pretty much ignore SAVE_POINTERS and RESTORE_POINTERS messages&n; * if we keep all the critical pointers and counters in SCp:&n; *  - SCp.ptr is the pointer into the RAM buffer&n; *  - SCp.this_residual is the size of that buffer&n; *  - SCp.buffer points to the current scatter-gather buffer&n; *  - SCp.buffers_residual tells us how many S.G. buffers there are&n; *  - SCp.have_data_in helps keep track of &gt;2048 byte transfers&n; *  - SCp.sent_command is not used&n; *  - SCp.phase records this command&squot;s SRCID_ER bit setting&n; */
 r_if
 c_cond
 (paren
@@ -1432,10 +837,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* We don&squot;t set SCp.phase here - that&squot;s done in in2000_execute() */
-multiline_comment|/* Preset the command status to GOOD, since that&squot;s the normal case */
+multiline_comment|/* WD docs state that at the conclusion of a &quot;LEVEL2&quot; command, the&n; * status byte can be retrieved from the LUN register. Apparently,&n; * this is the case only for *uninterrupted* LEVEL2 commands! If&n; * there are any unexpected phases entered, even if they are 100%&n; * legal (different devices may choose to do things differently),&n; * the LEVEL2 command sequence is exited. This often occurs prior&n; * to receiving the status byte, in which case the driver does a&n; * status phase interrupt and gets the status byte on its own.&n; * While such a command can then be &quot;resumed&quot; (ie restarted to&n; * finish up as a LEVEL2 command), the LUN register will NOT be&n; * a valid status byte at the command&squot;s conclusion, and we must&n; * use the byte obtained during the earlier interrupt. Here, we&n; * preset SCp.Status to an illegal value (0xff) so that when&n; * this command finally completes, we can tell where the actual&n; * status byte is stored.&n; */
 id|cmd-&gt;SCp.Status
 op_assign
-id|GOOD
+id|ILLEGAL_STATUS_BYTE
 suffix:semicolon
 id|save_flags
 c_func
@@ -1748,6 +1153,14 @@ op_star
 )paren
 id|cmd-&gt;host_scribble
 suffix:semicolon
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;cmd_cnt
+(braket
+id|cmd-&gt;target
+)braket
+op_increment
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Start the selection process&n; */
 r_if
 c_cond
@@ -1916,8 +1329,11 @@ id|cmd-&gt;SCp.phase
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef PROC_INTERFACE
-id|disc_allowed_total
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;disc_allowed_cnt
+(braket
+id|cmd-&gt;target
+)braket
 op_increment
 suffix:semicolon
 macro_line|#endif
@@ -2678,6 +2094,10 @@ id|L2_DATA
 )paren
 op_logical_or
 (paren
+id|hostdata-&gt;level2
+op_eq
+id|L2_BASIC
+op_logical_and
 id|cmd-&gt;SCp.phase
 op_eq
 l_int|0
@@ -2738,6 +2158,10 @@ id|L2_DATA
 )paren
 op_logical_or
 (paren
+id|hostdata-&gt;level2
+op_eq
+id|L2_BASIC
+op_logical_and
 id|cmd-&gt;SCp.phase
 op_eq
 l_int|0
@@ -2979,6 +2403,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;int_cnt
+op_increment
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* The IN2000 card has 2 interrupt sources OR&squot;ed onto its IRQ line - the&n; * WD3393 chip and the 2k fifo (which is actually a dual-port RAM combined&n; * with a big logic array, so it&squot;s a little different than what you might&n; * expect). As far as I know, there&squot;s no reason that BOTH can&squot;t be active&n; * at the same time, but there&squot;s a problem: while we can read the 3393&n; * to tell if _it_ wants an interrupt, I don&squot;t know of a way to ask the&n; * fifo the same question. The best we can do is check the 3393 and if&n; * it _isn&squot;t_ the source of the interrupt, then we can be pretty sure&n; * that the fifo is the culprit.&n; *  UPDATE: I have it on good authority (Bill Earnest) that bit 0 of the&n; *          IO_FIFO_COUNT register mirrors the fifo interrupt state. I&n; *          assume that bit clear means interrupt active. As it turns&n; *          out, the driver really doesn&squot;t need to check for this after&n; *          all, so my remarks above about a &squot;problem&squot; can safely be&n; *          ignored. The way the logic is set up, there&squot;s no advantage&n; *          (that I can see) to worrying about it.&n; *&n; * It seems that the fifo interrupt signal is negated when we extract&n; * bytes during read or write bytes during write.&n; *  - fifo will interrupt when data is moving from it to the 3393, and&n; *    there are 31 (or less?) bytes left to go. This is sort of short-&n; *    sighted: what if you don&squot;t WANT to do more? In any case, our&n; *    response is to push more into the fifo - either actual data or&n; *    dummy bytes if need be. Note that we apparently have to write at&n; *    least 32 additional bytes to the fifo after an interrupt in order&n; *    to get it to release the ones it was holding on to - writing fewer&n; *    than 32 will result in another fifo int.&n; *  UPDATE: Again, info from Bill Earnest makes this more understandable:&n; *          32 bytes = two counts of the fifo counter register. He tells&n; *          me that the fifo interrupt is a non-latching signal derived&n; *          from a straightforward boolean interpretation of the 7&n; *          highest bits of the fifo counter and the fifo-read/fifo-write&n; *          state. Who&squot;d a thought?&n; */
 id|write1_io
 c_func
@@ -3990,7 +3419,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;STATUS&quot;
+l_string|&quot;STATUS=&quot;
 )paren
 )paren
 id|cmd-&gt;SCp.Status
@@ -4001,6 +3430,19 @@ c_func
 id|hostdata
 )paren
 suffix:semicolon
+id|DB
+c_func
+(paren
+id|DB_INTR
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;%02x&quot;
+comma
+id|cmd-&gt;SCp.Status
+)paren
+)paren
 r_if
 c_cond
 (paren
@@ -4045,19 +3487,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DB
-c_func
-(paren
-id|DB_INTR
-comma
-id|printk
-c_func
-(paren
-l_string|&quot;=%02x&quot;
-comma
-id|cmd-&gt;SCp.Status
-)paren
-)paren
 id|hostdata-&gt;state
 op_assign
 id|S_CONNECTED
@@ -4801,20 +4230,51 @@ comma
 id|WD_TARGET_LUN
 )paren
 suffix:semicolon
+id|DB
+c_func
+(paren
+id|DB_INTR
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;:%d.%d&quot;
+comma
+id|cmd-&gt;SCp.Status
+comma
+id|lun
+)paren
+)paren
+id|hostdata-&gt;connected
+op_assign
+l_int|NULL
+suffix:semicolon
+id|hostdata-&gt;busy
+(braket
+id|cmd-&gt;target
+)braket
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|cmd-&gt;lun
+)paren
+suffix:semicolon
+id|hostdata-&gt;state
+op_assign
+id|S_UNCONNECTED
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|cmd-&gt;SCp.Status
 op_eq
-id|GOOD
+id|ILLEGAL_STATUS_BYTE
 )paren
 id|cmd-&gt;SCp.Status
 op_assign
 id|lun
-suffix:semicolon
-id|hostdata-&gt;connected
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -4823,23 +4283,9 @@ id|cmd-&gt;cmnd
 (braket
 l_int|0
 )braket
-op_ne
+op_eq
 id|REQUEST_SENSE
-)paren
-id|cmd-&gt;result
-op_assign
-id|cmd-&gt;SCp.Status
-op_or
-(paren
-id|cmd-&gt;SCp.Message
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
+op_logical_and
 id|cmd-&gt;SCp.Status
 op_ne
 id|GOOD
@@ -4858,21 +4304,16 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-id|hostdata-&gt;busy
-(braket
-id|cmd-&gt;target
-)braket
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|cmd-&gt;lun
-)paren
-suffix:semicolon
-id|hostdata-&gt;state
+r_else
+id|cmd-&gt;result
 op_assign
-id|S_UNCONNECTED
+id|cmd-&gt;SCp.Status
+op_or
+(paren
+id|cmd-&gt;SCp.Message
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
 id|cmd
 op_member_access_from_pointer
@@ -5119,23 +4560,9 @@ id|cmd-&gt;cmnd
 (braket
 l_int|0
 )braket
-op_ne
+op_eq
 id|REQUEST_SENSE
-)paren
-id|cmd-&gt;result
-op_assign
-id|cmd-&gt;SCp.Status
-op_or
-(paren
-id|cmd-&gt;SCp.Message
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
+op_logical_and
 id|cmd-&gt;SCp.Status
 op_ne
 id|GOOD
@@ -5152,6 +4579,17 @@ op_or
 id|DID_ERROR
 op_lshift
 l_int|16
+)paren
+suffix:semicolon
+r_else
+id|cmd-&gt;result
+op_assign
+id|cmd-&gt;SCp.Status
+op_or
+(paren
+id|cmd-&gt;SCp.Message
+op_lshift
+l_int|8
 )paren
 suffix:semicolon
 id|cmd
@@ -5256,6 +4694,19 @@ id|hostdata-&gt;state
 op_assign
 id|S_UNCONNECTED
 suffix:semicolon
+id|DB
+c_func
+(paren
+id|DB_INTR
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;:%d&quot;
+comma
+id|cmd-&gt;SCp.Status
+)paren
+)paren
 r_if
 c_cond
 (paren
@@ -5263,23 +4714,9 @@ id|cmd-&gt;cmnd
 (braket
 l_int|0
 )braket
-op_ne
+op_eq
 id|REQUEST_SENSE
-)paren
-id|cmd-&gt;result
-op_assign
-id|cmd-&gt;SCp.Status
-op_or
-(paren
-id|cmd-&gt;SCp.Message
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
+op_logical_and
 id|cmd-&gt;SCp.Status
 op_ne
 id|GOOD
@@ -5296,6 +4733,17 @@ op_or
 id|DID_ERROR
 op_lshift
 l_int|16
+)paren
+suffix:semicolon
+r_else
+id|cmd-&gt;result
+op_assign
+id|cmd-&gt;SCp.Status
+op_or
+(paren
+id|cmd-&gt;SCp.Message
+op_lshift
+l_int|8
 )paren
 suffix:semicolon
 id|cmd
@@ -5334,8 +4782,11 @@ id|hostdata-&gt;state
 op_assign
 id|S_UNCONNECTED
 suffix:semicolon
-macro_line|#ifdef PROC_INTERFACE
-id|disc_taken_total
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;disc_done_cnt
+(braket
+id|cmd-&gt;target
+)braket
 op_increment
 suffix:semicolon
 macro_line|#endif
@@ -6735,8 +6186,8 @@ suffix:semicolon
 )brace
 DECL|macro|MAX_IN2000_HOSTS
 mdefine_line|#define MAX_IN2000_HOSTS 3
-DECL|macro|MAX_SETUP_STRINGS
-mdefine_line|#define MAX_SETUP_STRINGS (sizeof(setup_strings) / sizeof(char *))
+DECL|macro|MAX_SETUP_ARGS
+mdefine_line|#define MAX_SETUP_ARGS (sizeof(setup_args) / sizeof(char *))
 DECL|macro|SETUP_BUFFER_SIZE
 mdefine_line|#define SETUP_BUFFER_SIZE 200
 DECL|variable|setup_buffer
@@ -6752,8 +6203,15 @@ r_static
 r_char
 id|setup_used
 (braket
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 )braket
+suffix:semicolon
+DECL|variable|done_setup
+r_static
+r_int
+id|done_setup
+op_assign
+l_int|0
 suffix:semicolon
 DECL|function|in2000_setup
 r_void
@@ -6814,7 +6272,7 @@ op_logical_and
 (paren
 id|i
 OL
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 )paren
 )paren
 (brace
@@ -6846,7 +6304,7 @@ id|p1
 op_ne
 id|p2
 )paren
-id|setup_strings
+id|setup_args
 (braket
 id|i
 )braket
@@ -6865,7 +6323,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|setup_strings
+id|setup_args
 (braket
 id|i
 )braket
@@ -6885,7 +6343,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 suffix:semicolon
 id|i
 op_increment
@@ -6897,12 +6355,16 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|done_setup
+op_assign
+l_int|1
+suffix:semicolon
 )brace
-multiline_comment|/* check_setup_strings() returns index if key found, 0 if not&n; */
-DECL|function|check_setup_strings
+multiline_comment|/* check_setup_args() returns index if key found, 0 if not&n; */
+DECL|function|check_setup_args
 r_static
 r_int
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 r_char
@@ -6938,7 +6400,7 @@ l_int|0
 suffix:semicolon
 id|x
 OL
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 suffix:semicolon
 id|x
 op_increment
@@ -6961,7 +6423,7 @@ op_logical_neg
 id|strncmp
 c_func
 (paren
-id|setup_strings
+id|setup_args
 (braket
 id|x
 )braket
@@ -6983,7 +6445,7 @@ c_cond
 (paren
 id|x
 op_eq
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 )paren
 r_return
 l_int|0
@@ -6997,7 +6459,7 @@ l_int|1
 suffix:semicolon
 id|cp
 op_assign
-id|setup_strings
+id|setup_args
 (braket
 id|x
 )braket
@@ -7066,28 +6528,7 @@ op_increment
 id|x
 suffix:semicolon
 )brace
-DECL|variable|proc_scsi_in2000
-r_struct
-id|proc_dir_entry
-id|proc_scsi_in2000
-op_assign
-(brace
-id|PROC_SCSI_IN2000
-comma
-l_int|6
-comma
-l_string|&quot;in2000&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
-multiline_comment|/* As of the 2.1.x kernel series, memory-mapped hardware such&n; * as the IN2000 EPROM and dip switch must be accessed through&n; * special macros declared in &squot;asm/io.h&squot;. We use readb() and&n; * readl() when reading from the card&squot;s BIOS area in in2000_detect().&n; */
+multiline_comment|/* The &quot;correct&quot; (ie portable) way to access memory-mapped hardware&n; * such as the IN2000 EPROM and dip switch is through the use of&n; * special macros declared in &squot;asm/io.h&squot;. We use readb() and readl()&n; * when reading from the card&squot;s BIOS area in in2000_detect().&n; */
 DECL|variable|bios_tab
 r_static
 r_const
@@ -7212,7 +6653,23 @@ id|buf
 l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* Thanks to help from Bill Earnest, probing for IN2000 cards is a&n; * pretty straightforward and fool-proof operation. We do require&n; * that cards have their BIOS enabled, although I hope to be able&n; * to detect and use BIOS-less cards in the future. There are 3&n; * possible locations for the IN2000 EPROM in memory space - if we&n; * find a BIOS signature, we can read the dip switch settings from&n; * the byte at BIOS+32 (shadowed in by logic on the card). From 2&n; * of the switch bits we get the card&squot;s address in IO space. There&squot;s&n; * an image of the dip switch there, also, so we have a way to back-&n; * check that this really is an IN2000 card. Very nifty.&n; *&n; * There have been a couple of BIOS versions with different layouts&n; * for the obvious ID strings. We look for the 2 most common ones and&n; * hope that they cover all the cases...&n; */
+multiline_comment|/* Thanks to help from Bill Earnest, probing for IN2000 cards is a&n; * pretty straightforward and fool-proof operation. There are 3&n; * possible locations for the IN2000 EPROM in memory space - if we&n; * find a BIOS signature, we can read the dip switch settings from&n; * the byte at BIOS+32 (shadowed in by logic on the card). From 2&n; * of the switch bits we get the card&squot;s address in IO space. There&squot;s&n; * an image of the dip switch there, also, so we have a way to back-&n; * check that this really is an IN2000 card. Very nifty. Use the&n; * &squot;ioport:xx&squot; command-line parameter if your BIOS EPROM is absent&n; * or disabled.&n; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|done_setup
+op_logical_and
+id|setup_strings
+)paren
+id|in2000_setup
+c_func
+(paren
+id|setup_strings
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|detect_count
 op_assign
 l_int|0
@@ -7236,7 +6693,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;ioport&quot;
@@ -7281,6 +6738,7 @@ op_assign
 l_int|2
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * There have been a couple of BIOS versions with different layouts&n; * for the obvious ID strings. We look for the 2 most common ones and&n; * hope that they cover all the cases...&n; */
 r_else
 r_if
 c_cond
@@ -7714,6 +7172,29 @@ op_assign
 id|SS_UNSET
 suffix:semicolon
 multiline_comment|/* using default sync values */
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;cmd_cnt
+(braket
+id|x
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|hostdata-&gt;disc_allowed_cnt
+(braket
+id|x
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|hostdata-&gt;disc_done_cnt
+(braket
+id|x
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 id|hostdata-&gt;input_Q
 op_assign
@@ -7797,13 +7278,14 @@ op_assign
 l_int|0xff
 suffix:semicolon
 multiline_comment|/* sync defaults to off */
+macro_line|#ifdef PROC_INTERFACE
 id|hostdata-&gt;proc
 op_assign
 id|PR_VERSION
 op_or
 id|PR_INFO
 op_or
-id|PR_TOTALS
+id|PR_STATISTICS
 op_or
 id|PR_CONNECTED
 op_or
@@ -7813,20 +7295,17 @@ id|PR_DISCQ
 op_or
 id|PR_STOP
 suffix:semicolon
-macro_line|#ifdef PROC_INTERFACE
-id|disc_allowed_total
-op_assign
-l_int|0
-suffix:semicolon
-id|disc_taken_total
+macro_line|#ifdef PROC_STATISTICS
+id|hostdata-&gt;int_cnt
 op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;nosync&quot;
@@ -7847,7 +7326,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;period&quot;
@@ -7881,7 +7360,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;disconnect&quot;
@@ -7924,7 +7403,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;noreset&quot;
@@ -7945,7 +7424,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
+c_func
+(paren
+l_string|&quot;level2&quot;
+comma
+op_amp
+id|flags
+comma
+op_amp
+id|val
+comma
+id|buf
+)paren
+)paren
+id|hostdata-&gt;level2
+op_assign
+id|val
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;debug&quot;
@@ -7967,10 +7467,11 @@ op_amp
 id|DB_MASK
 )paren
 suffix:semicolon
+macro_line|#ifdef PROC_INTERFACE
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;proc&quot;
@@ -7988,6 +7489,7 @@ id|hostdata-&gt;proc
 op_assign
 id|val
 suffix:semicolon
+macro_line|#endif
 id|x
 op_assign
 id|reset_hardware
@@ -8128,7 +7630,7 @@ macro_line|#ifdef DEBUGGING_ON
 id|printk
 c_func
 (paren
-l_string|&quot;setup_strings = &quot;
+l_string|&quot;setup_args = &quot;
 )paren
 suffix:semicolon
 r_for
@@ -8140,7 +7642,7 @@ l_int|0
 suffix:semicolon
 id|x
 OL
-l_int|8
+id|MAX_SETUP_ARGS
 suffix:semicolon
 id|x
 op_increment
@@ -8150,7 +7652,7 @@ c_func
 (paren
 l_string|&quot;%s,&quot;
 comma
-id|setup_strings
+id|setup_args
 (braket
 id|x
 )braket
@@ -8374,31 +7876,32 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* This next little bit of code was intended to prevent the number of&n; * tracks from exceeding 1023. As Andries Brouwer (aeb@cwi.nl) pointed&n; * out in his &quot;Large Disk HOWTO&quot; (June 1996), this kind of DOS&n; * compatibility is pointless. And wasteful on disks larger than 8 gigs.&n; */
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|iinfo
-(braket
-l_int|2
-)braket
-OG
-l_int|1023
-)paren
-id|iinfo
-(braket
-l_int|2
-)braket
-op_assign
-l_int|1023
-suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|proc_scsi_in2000
+r_struct
+id|proc_dir_entry
+id|proc_scsi_in2000
+op_assign
+(brace
+id|PROC_SCSI_IN2000
+comma
+l_int|6
+comma
+l_string|&quot;in2000&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 DECL|function|in2000_proc_info
 r_int
 id|in2000_proc_info
@@ -8769,6 +8272,39 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;level2:&quot;
+comma
+l_int|7
+)paren
+)paren
+(brace
+id|bp
+op_add_assign
+l_int|7
+suffix:semicolon
+id|hd-&gt;level2
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|bp
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_return
 id|len
 suffix:semicolon
@@ -8882,13 +8418,27 @@ comma
 id|tbuf
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
+id|strcat
+c_func
 (paren
-id|hd-&gt;proc
-op_amp
-id|PR_TOTALS
+id|bp
+comma
+l_string|&quot;&bslash;nsync_xfer[] =       &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|7
+suffix:semicolon
+id|x
+op_increment
 )paren
 (brace
 id|sprintf
@@ -8896,11 +8446,12 @@ c_func
 (paren
 id|tbuf
 comma
-l_string|&quot;&bslash;n%ld disc_allowed, %ld disc_taken&quot;
+l_string|&quot;&bslash;t%02x&quot;
 comma
-id|disc_allowed_total
-comma
-id|disc_taken_total
+id|hd-&gt;sync_xfer
+(braket
+id|x
+)braket
 )paren
 suffix:semicolon
 id|strcat
@@ -8912,6 +8463,216 @@ id|tbuf
 )paren
 suffix:semicolon
 )brace
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;nsync_stat[] =       &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|7
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot;&bslash;t%02x&quot;
+comma
+id|hd-&gt;sync_stat
+(braket
+id|x
+)braket
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#ifdef PROC_STATISTICS
+r_if
+c_cond
+(paren
+id|hd-&gt;proc
+op_amp
+id|PR_STATISTICS
+)paren
+(brace
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;ncommands issued:    &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|7
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot;&bslash;t%ld&quot;
+comma
+id|hd-&gt;cmd_cnt
+(braket
+id|x
+)braket
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;ndisconnects allowed:&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|7
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot;&bslash;t%ld&quot;
+comma
+id|hd-&gt;disc_allowed_cnt
+(braket
+id|x
+)braket
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+id|strcat
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;&bslash;ndisconnects done:   &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|7
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot;&bslash;t%ld&quot;
+comma
+id|hd-&gt;disc_done_cnt
+(braket
+id|x
+)braket
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+id|sprintf
+c_func
+(paren
+id|tbuf
+comma
+l_string|&quot;&bslash;ninterrupts:      &bslash;t%ld&quot;
+comma
+id|hd-&gt;int_cnt
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|bp
+comma
+id|tbuf
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
