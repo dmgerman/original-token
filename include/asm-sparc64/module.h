@@ -22,6 +22,6 @@ id|addr
 )paren
 suffix:semicolon
 DECL|macro|module_arch_init
-mdefine_line|#define module_arch_init (x)&t;(0)
+mdefine_line|#define module_arch_init(x)&t;(0)
 macro_line|#endif /* _ASM_SPARC64_MODULE_H */
 eof

@@ -971,10 +971,6 @@ suffix:semicolon
 )brace
 id|kaddr
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren

@@ -2924,15 +2924,8 @@ id|openprom_fops
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|openprom_init
+r_static
 r_int
 id|__init
 id|openprom_init
@@ -2940,7 +2933,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_int
 r_int
@@ -3041,10 +3033,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|openprom_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|openprom_cleanup
 c_func
 (paren
 r_void
@@ -3058,5 +3051,18 @@ id|openprom_dev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|openprom_init
+id|module_init
+c_func
+(paren
+id|openprom_init
+)paren
+suffix:semicolon
+DECL|variable|openprom_cleanup
+id|module_exit
+c_func
+(paren
+id|openprom_cleanup
+)paren
+suffix:semicolon
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id */
+multiline_comment|/* $Id: pgalloc.h,v 1.13 2000/11/06 06:59:04 davem Exp $ */
 macro_line|#ifndef _SPARC64_PGALLOC_H
 DECL|macro|_SPARC64_PGALLOC_H
 mdefine_line|#define _SPARC64_PGALLOC_H
@@ -27,10 +27,13 @@ c_func
 r_void
 op_star
 id|addr
+comma
+r_int
+id|flush_icache
 )paren
 suffix:semicolon
 DECL|macro|flush_dcache_page
-mdefine_line|#define flush_dcache_page(page)&t;__flush_dcache_page((page)-&gt;virtual)
+mdefine_line|#define flush_dcache_page(page) &bslash;&n;do {&t;if ((page)-&gt;mapping &amp;&amp; !(page)-&gt;mapping-&gt;i_mmap &amp;&amp; !(page)-&gt;mapping-&gt;i_mmap_shared) &bslash;&n;&t;&t;set_bit(PG_dcache_dirty, &amp;(page)-&gt;flags); &bslash;&n;&t;else &bslash;&n;&t;&t;__flush_dcache_page((page)-&gt;virtual, &bslash;&n;&t;&t;&t;&t;    (page)-&gt;mapping != NULL); &bslash;&n;} while(0)
 r_extern
 r_void
 id|__flush_dcache_range

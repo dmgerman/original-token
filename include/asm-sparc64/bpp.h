@@ -36,16 +36,5 @@ DECL|macro|BPP_GP_Select
 macro_line|# define BPP_GP_Select 0x0800
 DECL|macro|BPP_GP_nFault
 macro_line|# define BPP_GP_nFault 0x1000
-multiline_comment|/*&n; * Prototype for the initialization routine.&n; */
-macro_line|#ifdef __KERNEL__
-r_extern
-r_int
-id|bpp_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&t;$Id: aurora.c,v 1.7 1999/09/21 14:37:46 davem Exp $&n; *&t;linux/drivers/sbus/char/aurora.c -- Aurora multiport driver&n; *&n; *&t;Copyright (c) 1999 by Oliver Aldulea (oli@bv.ro)&n; *&n; *&t;This code is based on the RISCom/8 multiport serial driver written&n; *&t;by Dmitry Gorodchanin (pgmdsg@ibi.com), based on the Linux serial&n; *&t;driver, written by Linus Torvalds, Theodore T&squot;so and others.&n; *&t;The Aurora multiport programming info was obtained mainly from the&n; *&t;Cirrus Logic CD180 documentation (available on the web), and by&n; *&t;doing heavy tests on the board. Many thanks to Eddie C. Dost for the&n; *&t;help on the sbus interface.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&t;Revision 1.0&n; *&n; *&t;This is the first public release.&n; *&n; *&t;Most of the information you need is in the aurora.h file. Please&n; *&t;read that file before reading this one.&n; *&n; *&t;Several parts of the code do not have comments yet.&n; */
+multiline_comment|/*&t;$Id: aurora.c,v 1.9 2000/11/08 05:33:03 davem Exp $&n; *&t;linux/drivers/sbus/char/aurora.c -- Aurora multiport driver&n; *&n; *&t;Copyright (c) 1999 by Oliver Aldulea (oli@bv.ro)&n; *&n; *&t;This code is based on the RISCom/8 multiport serial driver written&n; *&t;by Dmitry Gorodchanin (pgmdsg@ibi.com), based on the Linux serial&n; *&t;driver, written by Linus Torvalds, Theodore T&squot;so and others.&n; *&t;The Aurora multiport programming info was obtained mainly from the&n; *&t;Cirrus Logic CD180 documentation (available on the web), and by&n; *&t;doing heavy tests on the board. Many thanks to Eddie C. Dost for the&n; *&t;help on the sbus interface.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&t;Revision 1.0&n; *&n; *&t;This is the first public release.&n; *&n; *&t;Most of the information you need is in the aurora.h file. Please&n; *&t;read that file before reading this one.&n; *&n; *&t;Several parts of the code do not have comments yet.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12197,7 +12197,6 @@ l_string|&quot;aurora_release_drivers: end&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Called at boot time.&n; *&n; * You can specify IO base for up to RC_NBOARD cards,&n; * using line &quot;riscom8=0xiobase1,0xiobase2,..&quot; at LILO prompt.&n; * Note that there will be no probing at default&n; * addresses in this case.&n; *&n; */
 DECL|function|aurora_setup
 r_void
@@ -12267,22 +12266,15 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-DECL|function|aurora_init
+DECL|function|aurora_real_init
+r_static
 r_int
 id|__init
-id|aurora_init
+id|aurora_real_init
 c_func
 (paren
 r_void
 )paren
-macro_line|#else
-r_int
-id|aurora_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
 (brace
 r_int
 id|found
@@ -12408,7 +12400,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|irq
 r_int
 id|irq
@@ -12465,9 +12456,11 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
+DECL|function|aurora_init
+r_static
 r_int
-id|init_module
+id|__init
+id|aurora_init
 c_func
 (paren
 r_void
@@ -12522,15 +12515,17 @@ op_assign
 id|irq3
 suffix:semicolon
 r_return
-id|aurora_init
+id|aurora_real_init
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|aurora_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|aurora_cleanup
 c_func
 (paren
 r_void
@@ -12601,5 +12596,18 @@ id|i
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|aurora_init
+id|module_init
+c_func
+(paren
+id|aurora_init
+)paren
+suffix:semicolon
+DECL|variable|aurora_cleanup
+id|module_exit
+c_func
+(paren
+id|aurora_cleanup
+)paren
+suffix:semicolon
 eof

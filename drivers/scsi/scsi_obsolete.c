@@ -844,7 +844,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;scsi%d: device driver called scsi_done() &quot;
-l_string|&quot;for a syncronous reset.&bslash;n&quot;
+l_string|&quot;for a synchronous reset.&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
 )paren

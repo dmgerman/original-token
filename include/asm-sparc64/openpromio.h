@@ -112,14 +112,5 @@ DECL|macro|OPIOCGETNEXT
 mdefine_line|#define&t;OPIOCGETNEXT&t;_IOWR(&squot;O&squot;, 5, int)
 DECL|macro|OPIOCGETCHILD
 mdefine_line|#define&t;OPIOCGETCHILD&t;_IOWR(&squot;O&squot;, 6, int)
-macro_line|#ifdef __KERNEL__
-r_int
-id|openprom_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif /* _SPARC64_OPENPROMIO_H */
 eof

@@ -47,8 +47,8 @@ id|size
 r_int
 id|written
 suffix:semicolon
-r_int
-r_int
+r_char
+op_star
 id|kaddr
 suffix:semicolon
 r_int
@@ -111,10 +111,6 @@ c_func
 (paren
 id|sock
 comma
-(paren
-r_char
-op_star
-)paren
 id|kaddr
 op_plus
 id|offset

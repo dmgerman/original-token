@@ -174,6 +174,12 @@ l_int|1
 op_lshift
 id|PG_referenced
 )paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|PG_arch_1
+)paren
 )paren
 suffix:semicolon
 id|page-&gt;flags

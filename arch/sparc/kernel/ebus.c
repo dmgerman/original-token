@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.11 2000/10/10 01:07:38 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
+multiline_comment|/* $Id: ebus.c,v 1.15 2000/11/08 05:06:21 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -20,40 +20,10 @@ id|ebus_chain
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_SUN_OPENPROMIO
-r_extern
-r_int
-id|openprom_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_AUXIO
 r_extern
 r_void
 id|auxio_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_OBP_FLASH
-r_extern
-r_int
-id|flash_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ENVCTRL
-r_extern
-r_int
-id|envctrl_init
 c_func
 (paren
 r_void
@@ -1754,36 +1724,8 @@ op_increment
 id|num_ebus
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SUN_OPENPROMIO
-id|openprom_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SUN_BPP
-id|bpp_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_AUXIO
 id|auxio_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ENVCTRL
-id|envctrl_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_OBP_FLASH
-id|flash_init
 c_func
 (paren
 )paren

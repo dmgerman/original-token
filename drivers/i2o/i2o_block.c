@@ -1993,12 +1993,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|exit_files
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
 id|daemonize
 c_func
 (paren
@@ -2027,6 +2021,7 @@ c_loop
 l_int|1
 )paren
 (brace
+macro_line|#warning &quot;RACE&quot;
 id|interruptible_sleep_on
 c_func
 (paren

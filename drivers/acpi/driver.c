@@ -1015,12 +1015,6 @@ id|context
 )paren
 (brace
 multiline_comment|/*&n;&t; * initialize&n;&t; */
-id|exit_files
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
 id|daemonize
 c_func
 (paren

@@ -294,10 +294,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * This works now because the socket layer never tries to DMA&n;&t; * into this buffer directly.&n;&t; */
 id|buffer
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -1030,11 +1026,6 @@ id|data-&gt;pages
 suffix:semicolon
 id|iov-&gt;iov_base
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
 id|kmap
 c_func
 (paren
@@ -1042,7 +1033,6 @@ id|req-&gt;wb_page
 )paren
 op_plus
 id|req-&gt;wb_offset
-)paren
 suffix:semicolon
 id|iov-&gt;iov_len
 op_assign

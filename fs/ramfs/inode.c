@@ -137,7 +137,7 @@ id|page
 id|memset
 c_func
 (paren
-id|page_address
+id|kmap
 c_func
 (paren
 id|page
@@ -146,6 +146,12 @@ comma
 l_int|0
 comma
 id|PAGE_CACHE_SIZE
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|flush_dcache_page
@@ -225,13 +231,7 @@ id|to
 r_void
 op_star
 id|addr
-suffix:semicolon
-id|addr
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|kmap
 c_func
 (paren

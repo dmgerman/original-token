@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uctrl.c,v 1.8 2000/06/19 06:24:47 davem Exp $&n; * uctrl.c: TS102 Microcontroller interface on Tadpole Sparcbook 3&n; *&n; * Copyright 1999 Derrick J Brashear (shadow@dementia.org)&n; */
+multiline_comment|/* $Id: uctrl.c,v 1.9 2000/11/08 05:04:06 davem Exp $&n; * uctrl.c: TS102 Microcontroller interface on Tadpole Sparcbook 3&n; *&n; * Copyright 1999 Derrick J Brashear (shadow@dementia.org)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1371,15 +1371,8 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|ts102_uctrl_init
+r_static
 r_int
 id|__init
 id|ts102_uctrl_init
@@ -1387,7 +1380,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|uctrl_driver
@@ -1649,10 +1641,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|ts102_uctrl_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|ts102_uctrl_cleanup
 c_func
 (paren
 r_void
@@ -1704,5 +1697,18 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|ts102_uctrl_init
+id|module_init
+c_func
+(paren
+id|ts102_uctrl_init
+)paren
+suffix:semicolon
+DECL|variable|ts102_uctrl_cleanup
+id|module_exit
+c_func
+(paren
+id|ts102_uctrl_cleanup
+)paren
+suffix:semicolon
 eof

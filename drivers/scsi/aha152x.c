@@ -11375,7 +11375,9 @@ id|the_time
 op_assign
 id|jiffies
 op_plus
-l_int|1000
+l_int|10
+op_star
+id|HZ
 suffix:semicolon
 r_while
 c_loop
@@ -12302,7 +12304,9 @@ id|the_time
 op_assign
 id|jiffies
 op_plus
-l_int|1000
+l_int|10
+op_star
+id|HZ
 suffix:semicolon
 r_while
 c_loop

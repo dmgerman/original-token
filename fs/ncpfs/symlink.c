@@ -83,10 +83,6 @@ r_char
 op_star
 id|buf
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren

@@ -16626,10 +16626,6 @@ suffix:semicolon
 )brace
 id|kaddr
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -16726,11 +16722,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-id|kaddr
+id|page
 )paren
 suffix:semicolon
 r_if

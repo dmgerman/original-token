@@ -41,6 +41,10 @@ DECL|macro|FBIOGET_GLYPH
 mdefine_line|#define FBIOGET_GLYPH           0x4615
 DECL|macro|FBIOGET_HWCINFO
 mdefine_line|#define FBIOGET_HWCINFO         0x4616
+DECL|macro|FBIOPUT_MODEINFO
+mdefine_line|#define FBIOPUT_MODEINFO        0x4617
+DECL|macro|FBIOGET_DISPINFO
+mdefine_line|#define FBIOGET_DISPINFO        0x4618
 DECL|macro|FB_TYPE_PACKED_PIXELS
 mdefine_line|#define FB_TYPE_PACKED_PIXELS&t;&t;0&t;/* Packed Pixels&t;*/
 DECL|macro|FB_TYPE_PLANES

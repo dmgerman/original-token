@@ -32,6 +32,14 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|bust_spinlocks
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Ugly, ugly, but the goto&squot;s result in better assembly..&n; */
 DECL|function|__verify_write
 r_int
@@ -774,6 +782,11 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n; * terminate things with extreme prejudice.&n; */
+id|bust_spinlocks
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

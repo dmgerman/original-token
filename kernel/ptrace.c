@@ -50,8 +50,8 @@ id|pte_t
 op_star
 id|pgtable
 suffix:semicolon
-r_int
-r_int
+r_char
+op_star
 id|maddr
 suffix:semicolon
 r_struct
@@ -254,10 +254,6 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|maddr
 op_plus
 (paren
@@ -308,10 +304,6 @@ c_func
 (paren
 id|buf
 comma
-(paren
-r_char
-op_star
-)paren
 id|maddr
 op_plus
 (paren

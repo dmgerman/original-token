@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: flash.c,v 1.19 2000/07/13 08:06:40 davem Exp $&n; * flash.c: Allow mmap access to the OBP Flash, for OBP updates.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: flash.c,v 1.20 2000/11/08 04:57:49 davem Exp $&n; * flash.c: Allow mmap access to the OBP Flash, for OBP updates.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -563,15 +563,8 @@ id|flash_fops
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|flash_init
+r_static
 r_int
 id|__init
 id|flash_init
@@ -579,7 +572,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|sbus_bus
@@ -1059,10 +1051,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|flash_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|flash_cleanup
 c_func
 (paren
 r_void
@@ -1076,5 +1069,18 @@ id|flash_dev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|flash_init
+id|module_init
+c_func
+(paren
+id|flash_init
+)paren
+suffix:semicolon
+DECL|variable|flash_cleanup
+id|module_exit
+c_func
+(paren
+id|flash_cleanup
+)paren
+suffix:semicolon
 eof

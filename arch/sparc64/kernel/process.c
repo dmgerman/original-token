@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.112 2000/09/06 00:45:01 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.113 2000/11/08 08:14:58 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -3182,11 +3182,17 @@ id|flags
 r_int
 id|retval
 suffix:semicolon
+multiline_comment|/* If the parent runs before fn(arg) is called by the child,&n;&t; * the input registers of this function can be clobbered.&n;&t; * So we stash &squot;fn&squot; and &squot;arg&squot; into global registers which&n;&t; * will not be modified by the parent.&n;&t; */
 id|__asm__
 id|__volatile
 c_func
 (paren
+l_string|&quot;mov %4, %%g2&bslash;n&bslash;t&quot;
+multiline_comment|/* Save FN into global */
+l_string|&quot;mov %5, %%g3&bslash;n&bslash;t&quot;
+multiline_comment|/* Save ARG into global */
 l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
+multiline_comment|/* Clone syscall nr. */
 l_string|&quot;mov %2, %%o0&bslash;n&bslash;t&quot;
 multiline_comment|/* Clone flags. */
 l_string|&quot;mov 0, %%o1&bslash;n&bslash;t&quot;
@@ -3196,9 +3202,9 @@ multiline_comment|/* Linux/Sparc clone(). */
 l_string|&quot;brz,a,pn %%o1, 1f&bslash;n&bslash;t&quot;
 multiline_comment|/* Parent, just return. */
 l_string|&quot; mov %%o0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;jmpl %4, %%o7&bslash;n&bslash;t&quot;
+l_string|&quot;jmpl %%g2, %%o7&bslash;n&bslash;t&quot;
 multiline_comment|/* Call the function. */
-l_string|&quot; mov %5, %%o0&bslash;n&bslash;t&quot;
+l_string|&quot; mov %%g3, %%o0&bslash;n&bslash;t&quot;
 multiline_comment|/* Set arg in delay. */
 l_string|&quot;mov %3, %%g1&bslash;n&bslash;t&quot;
 l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
@@ -3239,6 +3245,10 @@ id|arg
 )paren
 suffix:colon
 l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
 comma
 l_string|&quot;o0&quot;
 comma

@@ -447,8 +447,6 @@ macro_line|#elif (MAJOR_NR == RAMDISK_MAJOR)
 multiline_comment|/* ram disk */
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;ramdisk&quot;
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST rd_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_NO_RANDOM

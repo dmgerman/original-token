@@ -437,10 +437,6 @@ id|umsdos_dirent
 op_star
 )paren
 (paren
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -625,10 +621,6 @@ id|entry-&gt;spare
 op_plus
 id|part
 comma
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -1760,10 +1752,6 @@ id|async_fail
 suffix:semicolon
 id|p
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -2001,10 +1989,6 @@ suffix:semicolon
 )brace
 id|q
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren

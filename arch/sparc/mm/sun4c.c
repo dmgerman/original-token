@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.200 2000/10/16 14:32:49 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.201 2000/11/09 22:39:36 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -11976,8 +11976,7 @@ r_int
 id|end
 suffix:semicolon
 r_extern
-r_int
-r_int
+r_void
 id|bootmem_init
 c_func
 (paren
@@ -12051,14 +12050,14 @@ c_func
 id|kernel_end
 )paren
 suffix:semicolon
-id|last_valid_pfn
-op_assign
-id|end_pfn
-op_assign
 id|bootmem_init
 c_func
 (paren
 )paren
+suffix:semicolon
+id|end_pfn
+op_assign
+id|last_valid_pfn
 suffix:semicolon
 multiline_comment|/* This does not logically belong here, but we need to&n;&t; * call it at the moment we are able to use the bootmem&n;&t; * allocator.&n;&t; */
 id|sun_serial_setup

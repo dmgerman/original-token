@@ -110,11 +110,6 @@ id|out
 suffix:semicolon
 id|cachep
 op_assign
-(paren
-r_struct
-id|cache_head
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -141,11 +136,6 @@ suffix:semicolon
 )brace
 id|cachep
 op_assign
-(paren
-r_struct
-id|cache_head
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -229,11 +219,6 @@ suffix:semicolon
 )brace
 id|index-&gt;block
 op_assign
-(paren
-r_struct
-id|cache_block
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -716,11 +701,6 @@ id|page
 (brace
 id|block
 op_assign
-(paren
-r_struct
-id|cache_block
-op_star
-)paren
 id|kmap
 c_func
 (paren

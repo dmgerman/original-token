@@ -442,6 +442,26 @@ l_int|NULL
 r_if
 c_cond
 (paren
+id|dn-&gt;dn_magic
+op_ne
+id|DNOTIFY_MAGIC
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;__inode_dir_notify: bad magic &quot;
+l_string|&quot;number in dnotify_struct!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 (paren
 id|dn-&gt;dn_mask
 op_amp
@@ -457,25 +477,6 @@ op_amp
 id|dn-&gt;dn_next
 suffix:semicolon
 r_continue
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|dn-&gt;dn_magic
-op_ne
-id|DNOTIFY_MAGIC
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;__inode_dir_notify: bad magic &quot;
-l_string|&quot;number in dnotify_struct!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|fown
@@ -542,6 +543,8 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 id|write_unlock
 c_func
 (paren

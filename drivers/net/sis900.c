@@ -1,4 +1,4 @@
-multiline_comment|/* sis900.c: A SiS 900/7016 PCI Fast Ethernet driver for Linux.&n;   Copyright 1999 Silicon Integrated System Corporation &n;   Revision:&t;1.07.04&t;Sep. 6 2000&n;&n;   Modified from the driver which is originally written by Donald Becker.&n;   &n;   This software may be used and distributed according to the terms&n;   of the GNU Public License (GPL), incorporated herein by reference.&n;   Drivers based on this skeleton fall under the GPL and must retain&n;   the authorship (implicit copyright) notice.&n;   &n;   References:&n;   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n;   preliminary Rev. 1.0 Jan. 14, 1998&n;   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n;   preliminary Rev. 1.0 Nov. 10, 1998&n;   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n;   preliminary Rev. 1.0 Jan. 18, 1998&n;   http://www.sis.com.tw/support/databook.htm&n;&n;   Rev 1.07.04 Sep.  6 2000 Lei-Chun Chang added ICS1893 PHY support&n;   Rev 1.07.03 Aug. 24 2000 Lei-Chun Chang (lcchang@sis.com.tw) modified 630E eqaulizer workaroung rule&n;   Rev 1.07.01 Aug. 08 2000 Ollie Lho minor update for SiS 630E and SiS 630E A1&n;   Rev 1.07 Mar. 07 2000 Ollie Lho bug fix in Rx buffer ring&n;   Rev 1.06.04 Feb. 11 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt; softnet and init for kernel 2.4&n;   Rev 1.06.03 Dec. 23 1999 Ollie Lho Third release&n;   Rev 1.06.02 Nov. 23 1999 Ollie Lho bug in mac probing fixed&n;   Rev 1.06.01 Nov. 16 1999 Ollie Lho CRC calculation provide by Joseph Zbiciak (im14u2c@primenet.com)&n;   Rev 1.06 Nov. 4 1999 Ollie Lho (ollie@sis.com.tw) Second release&n;   Rev 1.05.05 Oct. 29 1999 Ollie Lho (ollie@sis.com.tw) Single buffer Tx/Rx&n;   Chin-Shan Li (lcs@sis.com.tw) Added AMD Am79c901 HomePNA PHY support&n;   Rev 1.05 Aug. 7 1999 Jim Huang (cmhuang@sis.com.tw) Initial release&n;*/
+multiline_comment|/* sis900.c: A SiS 900/7016 PCI Fast Ethernet driver for Linux.&n;   Copyright 1999 Silicon Integrated System Corporation &n;   Revision:&t;1.07.06&t;Nov. 7 2000&n;&n;   Modified from the driver which is originally written by Donald Becker.&n;   &n;   This software may be used and distributed according to the terms&n;   of the GNU Public License (GPL), incorporated herein by reference.&n;   Drivers based on this skeleton fall under the GPL and must retain&n;   the authorship (implicit copyright) notice.&n;   &n;   References:&n;   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n;   preliminary Rev. 1.0 Jan. 14, 1998&n;   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n;   preliminary Rev. 1.0 Nov. 10, 1998&n;   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n;   preliminary Rev. 1.0 Jan. 18, 1998&n;   http://www.sis.com.tw/support/databook.htm&n;&n;   Rev 1.07.06 Nov.  7 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt; some bug fix and cleaning&n;   Rev 1.07.05 Nov.  6 2000 metapirat&lt;metapirat@gmx.de&gt; contribute media type select by ifconfig&n;   Rev 1.07.04 Sep.  6 2000 Lei-Chun Chang added ICS1893 PHY support&n;   Rev 1.07.03 Aug. 24 2000 Lei-Chun Chang (lcchang@sis.com.tw) modified 630E eqaulizer workaroung rule&n;   Rev 1.07.01 Aug. 08 2000 Ollie Lho minor update for SiS 630E and SiS 630E A1&n;   Rev 1.07 Mar. 07 2000 Ollie Lho bug fix in Rx buffer ring&n;   Rev 1.06.04 Feb. 11 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt; softnet and init for kernel 2.4&n;   Rev 1.06.03 Dec. 23 1999 Ollie Lho Third release&n;   Rev 1.06.02 Nov. 23 1999 Ollie Lho bug in mac probing fixed&n;   Rev 1.06.01 Nov. 16 1999 Ollie Lho CRC calculation provide by Joseph Zbiciak (im14u2c@primenet.com)&n;   Rev 1.06 Nov. 4 1999 Ollie Lho (ollie@sis.com.tw) Second release&n;   Rev 1.05.05 Oct. 29 1999 Ollie Lho (ollie@sis.com.tw) Single buffer Tx/Rx&n;   Chin-Shan Li (lcs@sis.com.tw) Added AMD Am79c901 HomePNA PHY support&n;   Rev 1.05 Aug. 7 1999 Jim Huang (cmhuang@sis.com.tw) Initial release&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -26,7 +26,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;sis900.c: v1.07.04  09/06/2000&bslash;n&quot;
+l_string|&quot;sis900.c: v1.07.06  11/07/2000&bslash;n&quot;
 suffix:semicolon
 DECL|variable|max_interrupt_work
 r_static
@@ -768,6 +768,22 @@ op_star
 id|net_dev
 )paren
 suffix:semicolon
+r_static
+r_int
+id|sis900_set_config
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_struct
+id|ifmap
+op_star
+id|map
+)paren
+suffix:semicolon
 multiline_comment|/* older SiS900 and friends, use EEPROM to store MAC address */
 DECL|function|sis900_get_mac_addr
 r_static
@@ -1407,6 +1423,11 @@ id|net_dev-&gt;get_stats
 op_assign
 op_amp
 id|sis900_get_stats
+suffix:semicolon
+id|net_dev-&gt;set_config
+op_assign
+op_amp
+id|sis900_set_config
 suffix:semicolon
 id|net_dev-&gt;set_multicast_list
 op_assign
@@ -6472,6 +6493,267 @@ suffix:semicolon
 r_return
 op_amp
 id|sis_priv-&gt;stats
+suffix:semicolon
+)brace
+multiline_comment|/* Support for media type changes via net_device-&gt;set_config */
+DECL|function|sis900_set_config
+r_static
+r_int
+id|sis900_set_config
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_struct
+id|ifmap
+op_star
+id|map
+)paren
+(brace
+r_struct
+id|sis900_private
+op_star
+id|sis_priv
+op_assign
+(paren
+r_struct
+id|sis900_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_struct
+id|mii_phy
+op_star
+id|mii_phy
+op_assign
+id|sis_priv-&gt;mii
+suffix:semicolon
+id|u16
+id|status
+suffix:semicolon
+multiline_comment|/* we support only port changes. All other runtime configuration&n;&t;   changes will be ignored (io base and interrupt changes for example)*/
+r_if
+c_cond
+(paren
+(paren
+id|map-&gt;port
+op_ne
+(paren
+id|u_char
+)paren
+(paren
+op_minus
+l_int|1
+)paren
+)paren
+op_logical_and
+(paren
+id|map-&gt;port
+op_ne
+id|dev-&gt;if_port
+)paren
+)paren
+(brace
+multiline_comment|/* we switch on the ifmap-&gt;port field. I couldn&squot;t find anything&n;           like a definition or standard for the values of that field.&n;           I think the meaning of those values is device specific. But&n;           since I would like to change the media type via the ifconfig&n;           command I use the definition from linux/netdevice.h &n;           (which seems to be different from the ifport(pcmcia) definition) &n;        */
+r_switch
+c_cond
+(paren
+id|map-&gt;port
+)paren
+(brace
+r_case
+id|IF_PORT_UNKNOWN
+suffix:colon
+multiline_comment|/* use auto here */
+id|dev-&gt;if_port
+op_assign
+id|map-&gt;port
+suffix:semicolon
+multiline_comment|/* we are going to change the media type, so the Link will&n;                &t;&t;be temporary down and we need to reflect that here. When&n;                &t;&t;the Link comes up again, it will be sensed by the sis_timer&n;                &t;&t;procedure, which also does all the rest for us */
+id|sis_priv-&gt;LinkOn
+op_assign
+id|FALSE
+suffix:semicolon
+multiline_comment|/* read current state */
+id|status
+op_assign
+id|mdio_read
+c_func
+(paren
+id|dev
+comma
+id|mii_phy-&gt;phy_addr
+comma
+id|MII_CONTROL
+)paren
+suffix:semicolon
+multiline_comment|/* enable auto negotiation and reset the negotioation&n;                &t;&t;(I dont really know what the auto negatiotiation reset&n;                &t;&t;really means, but it sounds for me right to do one here)*/
+id|mdio_write
+c_func
+(paren
+id|dev
+comma
+id|mii_phy-&gt;phy_addr
+comma
+id|MII_CONTROL
+comma
+id|status
+op_or
+id|MII_CNTL_AUTO
+op_or
+id|MII_CNTL_RST_AUTO
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|IF_PORT_10BASET
+suffix:colon
+multiline_comment|/* 10BaseT */
+id|dev-&gt;if_port
+op_assign
+id|map-&gt;port
+suffix:semicolon
+multiline_comment|/* we are going to change the media type, so the Link will&n;                &t;&t;be temporary down and we need to reflect that here. When&n;                &t;&t;the Link comes up again, it will be sensed by the sis_timer&n;                &t;&t;procedure, which also does all the rest for us */
+id|sis_priv-&gt;LinkOn
+op_assign
+id|FALSE
+suffix:semicolon
+multiline_comment|/* set Speed to 10Mbps */
+multiline_comment|/* read current state */
+id|status
+op_assign
+id|mdio_read
+c_func
+(paren
+id|dev
+comma
+id|mii_phy-&gt;phy_addr
+comma
+id|MII_CONTROL
+)paren
+suffix:semicolon
+multiline_comment|/* disable auto negotiation and force 10MBit mode*/
+id|mdio_write
+c_func
+(paren
+id|dev
+comma
+id|mii_phy-&gt;phy_addr
+comma
+id|MII_CONTROL
+comma
+id|status
+op_amp
+op_complement
+(paren
+id|MII_CNTL_SPEED
+op_or
+id|MII_CNTL_AUTO
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|IF_PORT_100BASET
+suffix:colon
+multiline_comment|/* 100BaseT */
+r_case
+id|IF_PORT_100BASETX
+suffix:colon
+multiline_comment|/* 100BaseTx */
+id|dev-&gt;if_port
+op_assign
+id|map-&gt;port
+suffix:semicolon
+multiline_comment|/* we are going to change the media type, so the Link will&n;                &t;&t;be temporary down and we need to reflect that here. When&n;                &t;&t;the Link comes up again, it will be sensed by the sis_timer&n;                &t;&t;procedure, which also does all the rest for us */
+id|sis_priv-&gt;LinkOn
+op_assign
+id|FALSE
+suffix:semicolon
+multiline_comment|/* set Speed to 100Mbps */
+multiline_comment|/* disable auto negotiation and enable 100MBit Mode */
+id|status
+op_assign
+id|mdio_read
+c_func
+(paren
+id|dev
+comma
+id|mii_phy-&gt;phy_addr
+comma
+id|MII_CONTROL
+)paren
+suffix:semicolon
+id|mdio_write
+c_func
+(paren
+id|dev
+comma
+id|mii_phy-&gt;phy_addr
+comma
+id|MII_CONTROL
+comma
+(paren
+id|status
+op_amp
+op_complement
+id|MII_CNTL_SPEED
+)paren
+op_or
+id|MII_CNTL_SPEED
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|IF_PORT_10BASE2
+suffix:colon
+multiline_comment|/* 10Base2 */
+r_case
+id|IF_PORT_AUI
+suffix:colon
+multiline_comment|/* AUI */
+r_case
+id|IF_PORT_100BASEFX
+suffix:colon
+multiline_comment|/* 100BaseFx */
+multiline_comment|/* These Modes are not supported (are they?)*/
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Not supported&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EOPNOTSUPP
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Invalid&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* SiS 900 uses the most sigificant 7 bits to index a 128 bits multicast hash table, which makes&n;   this function a little bit different from other drivers */

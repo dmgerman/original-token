@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.48 2000/08/10 01:17:13 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.49 2000/11/03 01:11:58 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -8297,6 +8297,9 @@ l_int|NULL
 comma
 op_amp
 id|proc_dointvec_jiffies
+comma
+op_amp
+id|sysctl_jiffies
 )brace
 comma
 (brace
@@ -8318,6 +8321,9 @@ l_int|NULL
 comma
 op_amp
 id|proc_dointvec_jiffies
+comma
+op_amp
+id|sysctl_jiffies
 )brace
 comma
 (brace
@@ -8339,6 +8345,9 @@ l_int|NULL
 comma
 op_amp
 id|proc_dointvec_jiffies
+comma
+op_amp
+id|sysctl_jiffies
 )brace
 comma
 (brace
@@ -8360,6 +8369,9 @@ l_int|NULL
 comma
 op_amp
 id|proc_dointvec_jiffies
+comma
+op_amp
+id|sysctl_jiffies
 )brace
 comma
 (brace
@@ -8381,6 +8393,9 @@ l_int|NULL
 comma
 op_amp
 id|proc_dointvec_jiffies
+comma
+op_amp
+id|sysctl_jiffies
 )brace
 comma
 (brace
@@ -8402,6 +8417,9 @@ l_int|NULL
 comma
 op_amp
 id|proc_dointvec_jiffies
+comma
+op_amp
+id|sysctl_jiffies
 )brace
 comma
 (brace

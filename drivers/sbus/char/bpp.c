@@ -4451,15 +4451,8 @@ r_static
 id|devfs_handle_t
 id|devfs_handle
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|bpp_init
+r_static
 r_int
 id|__init
 id|bpp_init
@@ -4467,7 +4460,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_int
 id|rc
@@ -4589,10 +4581,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|bpp_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|bpp_cleanup
 c_func
 (paren
 r_void
@@ -4648,5 +4641,18 @@ id|idx
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+DECL|variable|bpp_init
+id|module_init
+c_func
+(paren
+id|bpp_init
+)paren
+suffix:semicolon
+DECL|variable|bpp_cleanup
+id|module_exit
+c_func
+(paren
+id|bpp_cleanup
+)paren
+suffix:semicolon
 eof

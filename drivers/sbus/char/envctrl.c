@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: envctrl.c,v 1.18 2000/10/17 16:20:35 davem Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 2000  Vinh Truong    (vinh.truong@eng.sun.com)&n; * VT - The implementation is to support Sun Microelectronics (SME) platform&n; *      environment monitoring.  SME platforms use pcf8584 as the i2c bus &n; *      controller to access pcf8591 (8-bit A/D and D/A converter) and &n; *      pcf8571 (256 x 8-bit static low-voltage RAM with I2C-bus interface).&n; *      At board level, it follows SME Firmware I2C Specification. Reference:&n; * &t;http://www-eu2.semiconductors.com/pip/PCF8584P&n; * &t;http://www-eu2.semiconductors.com/pip/PCF8574AP&n; * &t;http://www-eu2.semiconductors.com/pip/PCF8591P&n; * &n; */
+multiline_comment|/* $Id: envctrl.c,v 1.19 2000/11/03 00:37:40 davem Exp $&n; * envctrl.c: Temperature and Fan monitoring on Machines providing it.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 2000  Vinh Truong    (vinh.truong@eng.sun.com)&n; * VT - The implementation is to support Sun Microelectronics (SME) platform&n; *      environment monitoring.  SME platforms use pcf8584 as the i2c bus &n; *      controller to access pcf8591 (8-bit A/D and D/A converter) and &n; *      pcf8571 (256 x 8-bit static low-voltage RAM with I2C-bus interface).&n; *      At board level, it follows SME Firmware I2C Specification. Reference:&n; * &t;http://www-eu2.semiconductors.com/pip/PCF8584P&n; * &t;http://www-eu2.semiconductors.com/pip/PCF8574AP&n; * &t;http://www-eu2.semiconductors.com/pip/PCF8591P&n; *&n; * EB - Added support for CP1500 Global Address and PS/Voltage monitoring.&n; * &t;&t;Eric Brower &lt;ebrower@usa.net&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -74,17 +74,19 @@ mdefine_line|#define OBD_SEND_STOP &t;0xc3    /* value to generate I2c_bus STOP 
 multiline_comment|/* Monitor type of i2c child device.&n; * Firmware definitions.&n; */
 DECL|macro|PCF8584_MAX_CHANNELS
 mdefine_line|#define PCF8584_MAX_CHANNELS            8
+DECL|macro|PCF8584_GLOBALADDR_TYPE
+mdefine_line|#define PCF8584_GLOBALADDR_TYPE&t;&t;&t;6  /* global address monitor */
 DECL|macro|PCF8584_FANSTAT_TYPE
 mdefine_line|#define PCF8584_FANSTAT_TYPE            3  /* fan status monitor */
 DECL|macro|PCF8584_VOLTAGE_TYPE
 mdefine_line|#define PCF8584_VOLTAGE_TYPE            2  /* voltage monitor    */
 DECL|macro|PCF8584_TEMP_TYPE
-mdefine_line|#define PCF8584_TEMP_TYPE&t;        1  /* temperature monitor*/
+mdefine_line|#define PCF8584_TEMP_TYPE&t;        &t;1  /* temperature monitor*/
 multiline_comment|/* Monitor type of i2c child device.&n; * Driver definitions.&n; */
 DECL|macro|ENVCTRL_NOMON
-mdefine_line|#define ENVCTRL_NOMON&t;&t;&t;0
+mdefine_line|#define ENVCTRL_NOMON&t;&t;&t;&t;0
 DECL|macro|ENVCTRL_CPUTEMP_MON
-mdefine_line|#define ENVCTRL_CPUTEMP_MON&t;&t;1    /* cpu temperature monitor */
+mdefine_line|#define ENVCTRL_CPUTEMP_MON&t;&t;&t;1    /* cpu temperature monitor */
 DECL|macro|ENVCTRL_CPUVOLTAGE_MON
 mdefine_line|#define ENVCTRL_CPUVOLTAGE_MON&t;  &t;2    /* voltage monitor         */
 DECL|macro|ENVCTRL_FANSTAT_MON
@@ -98,6 +100,8 @@ DECL|macro|ENVCTRL_MTHRBDTEMP_MON
 mdefine_line|#define ENVCTRL_MTHRBDTEMP_MON&t;&t;6    /* motherboard temperature */
 DECL|macro|ENVCTRL_SCSITEMP_MON
 mdefine_line|#define ENVCTRL_SCSITEMP_MON&t;&t;7    /* scsi temperarture */
+DECL|macro|ENVCTRL_GLOBALADDR_MON
+mdefine_line|#define ENVCTRL_GLOBALADDR_MON&t;&t;8    /* global address */
 multiline_comment|/* Child device type.&n; * Driver definitions.&n; */
 DECL|macro|I2C_ADC
 mdefine_line|#define I2C_ADC&t;&t;&t;&t;0    /* pcf8591 */
@@ -119,6 +123,14 @@ DECL|macro|ENVCTRL_MAX_CPU
 mdefine_line|#define ENVCTRL_MAX_CPU&t;&t;&t;4
 DECL|macro|CHANNEL_DESC_SZ
 mdefine_line|#define CHANNEL_DESC_SZ&t;&t;&t;256
+multiline_comment|/* Mask values for combined GlobalAddress/PowerStatus node */
+DECL|macro|ENVCTRL_GLOBALADDR_ADDR_MASK
+mdefine_line|#define ENVCTRL_GLOBALADDR_ADDR_MASK &t;0x1F
+DECL|macro|ENVCTRL_GLOBALADDR_PSTAT_MASK
+mdefine_line|#define ENVCTRL_GLOBALADDR_PSTAT_MASK&t;0x60
+multiline_comment|/* Node 0x70 ignored on CompactPCI CP1400/1500 platforms &n; * (see envctrl_init_i2c_child)&n; */
+DECL|macro|ENVCTRL_CPCI_IGNORED_NODE
+mdefine_line|#define ENVCTRL_CPCI_IGNORED_NODE&t;&t;0x70
 DECL|struct|pcf8584_reg
 r_struct
 id|pcf8584_reg
@@ -1408,7 +1420,44 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Function Description: Read voltage and power supply status.&n; * Return : Always 1 byte. Status stored in bufdata.&n; */
+multiline_comment|/* Function Description: Read global addressing line.&n; * Return : Always 1 byte. Status stored in bufdata.&n; */
+DECL|function|envctrl_i2c_globaladdr
+r_static
+r_int
+id|envctrl_i2c_globaladdr
+c_func
+(paren
+r_struct
+id|i2c_child_t
+op_star
+id|pchild
+comma
+r_int
+r_char
+id|data
+comma
+r_char
+op_star
+id|bufdata
+)paren
+(brace
+multiline_comment|/* Translatation table is not necessary, as global&n;&t; * addr is the integer value of the GA# bits.&n;&t; *&n;&t; * NOTE: MSB is documented as zero, but I see it as &squot;1&squot; always....&n;&t; *&n;&t; * -----------------------------------------------&n;&t; * | 0 | FAL | DEG | GA4 | GA3 | GA2 | GA1 | GA0 |&n;&t; * -----------------------------------------------&n;&t; * GA0 - GA4&t;integer value of Global Address (backplane slot#)&n;&t; * DEG&t;&t;&t;0 = cPCI Power supply output is starting to degrade&n;&t; * &t;&t;&t;&t;1 = cPCI Power supply output is OK&n;&t; * FAL&t;&t;&t;0 = cPCI Power supply has failed&n;&t; * &t;&t;&t;&t;1 = cPCI Power supply output is OK&n;&t; */
+id|bufdata
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+id|data
+op_amp
+id|ENVCTRL_GLOBALADDR_ADDR_MASK
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Function Description: Read standard voltage and power supply status.&n; * Return : Always 1 byte. Status stored in bufdata.&n; */
 DECL|function|envctrl_i2c_voltage_status
 r_static
 r_int
@@ -2019,6 +2068,69 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|ENVCTRL_RD_GLOBALADDRESS
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|pchild
+op_assign
+id|envctrl_get_i2c_child
+c_func
+(paren
+id|ENVCTRL_GLOBALADDR_MON
+)paren
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|data
+(braket
+l_int|0
+)braket
+op_assign
+id|envctrl_i2c_read_8574
+c_func
+(paren
+id|pchild-&gt;addr
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|envctrl_i2c_globaladdr
+c_func
+(paren
+id|pchild
+comma
+id|data
+(braket
+l_int|0
+)braket
+comma
+id|data
+)paren
+suffix:semicolon
+id|copy_to_user
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|buf
+comma
+id|data
+comma
+id|ret
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|ENVCTRL_RD_VOLTAGE_STATUS
 suffix:colon
 r_if
@@ -2032,6 +2144,21 @@ id|envctrl_get_i2c_child
 c_func
 (paren
 id|ENVCTRL_VOLTAGESTAT_MON
+)paren
+)paren
+)paren
+multiline_comment|/* If voltage monitor not present, check for CPCI equivalent */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|pchild
+op_assign
+id|envctrl_get_i2c_child
+c_func
+(paren
+id|ENVCTRL_GLOBALADDR_MON
 )paren
 )paren
 )paren
@@ -2147,6 +2274,9 @@ id|ENVCTRL_RD_ETHERNET_TEMPERATURE
 suffix:colon
 r_case
 id|ENVCTRL_RD_SCSI_TEMPERATURE
+suffix:colon
+r_case
+id|ENVCTRL_RD_GLOBALADDRESS
 suffix:colon
 id|file-&gt;private_data
 op_assign
@@ -2525,27 +2655,6 @@ id|chnl_no
 op_assign
 id|ENVCTRL_ETHERTEMP_MON
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|strcmp
-c_func
-(paren
-id|chnl_desc
-comma
-l_string|&quot;temp,ethernet&quot;
-)paren
-)paren
-)paren
-id|pchild-&gt;mon_type
-(braket
-id|chnl_no
-)braket
-op_assign
-id|ENVCTRL_ETHERTEMP_MON
-suffix:semicolon
 )brace
 multiline_comment|/* Function Description: Initialize monitor channel with channel desc,&n; *                       decoding tables, monitor type, optional properties.&n; * Return: None.&n; */
 DECL|function|envctrl_init_adc
@@ -2770,6 +2879,69 @@ l_int|0
 )braket
 op_assign
 id|ENVCTRL_FANSTAT_MON
+suffix:semicolon
+)brace
+multiline_comment|/* Function Description: Initialize child device for global addressing line.&n; * Return: None.&n; */
+DECL|function|envctrl_init_globaladdr
+r_static
+r_void
+id|envctrl_init_globaladdr
+c_func
+(paren
+r_struct
+id|i2c_child_t
+op_star
+id|pchild
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* Voltage/PowerSupply monitoring is piggybacked &n;&t; * with Global Address on CompactPCI.  See comments&n;&t; * within envctrl_i2c_globaladdr for bit assignments.&n;&t; *&n;&t; * The mask is created here by assigning mask bits to each&n;&t; * bit position that represents PCF8584_VOLTAGE_TYPE data.&n;&t; * Channel numbers are not consecutive within the globaladdr&n;&t; * node (why?), so we use the actual counter value as chnls_mask&n;&t; * index instead of the chnl_array[x].chnl_no value.&n;&t; *&n;&t; * NOTE: This loop could be replaced with a constant representing&n;&t; * a mask of bits 5&amp;6 (ENVCTRL_GLOBALADDR_PSTAT_MASK).&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|pchild-&gt;total_chnls
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|PCF8584_VOLTAGE_TYPE
+op_eq
+id|pchild-&gt;chnl_array
+(braket
+id|i
+)braket
+dot
+id|type
+)paren
+(brace
+id|pchild-&gt;voltage_mask
+op_or_assign
+id|chnls_mask
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* We only need to know if this child has global addressing &n;&t; * line monitored.  We dont care which channels since we know &n;&t; * the mask already (ENVCTRL_GLOBALADDR_ADDR_MASK).&n;&t; */
+id|pchild-&gt;mon_type
+(braket
+l_int|0
+)braket
+op_assign
+id|ENVCTRL_GLOBALADDR_MON
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize child device monitoring voltage status. */
@@ -3030,6 +3202,90 @@ r_return
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* SPARCengine ASM Reference Manual (ref. SMI doc 805-7581-04)&n;&t; * sections 2.5, 3.5, 4.5 state node 0x70 for CP1400/1500 is&n;&t; * &quot;For Factory Use Only.&quot;&n;&t; *&n;&t; * We ignore the node on these platforms by assigning the&n;&t; * &squot;NULL&squot; monitor type.&n;&t; */
+r_if
+c_cond
+(paren
+id|ENVCTRL_CPCI_IGNORED_NODE
+op_eq
+id|pchild-&gt;addr
+)paren
+(brace
+r_int
+id|len
+suffix:semicolon
+r_char
+id|prop
+(braket
+l_int|56
+)braket
+suffix:semicolon
+id|len
+op_assign
+id|prom_getproperty
+c_func
+(paren
+id|prom_root_node
+comma
+l_string|&quot;name&quot;
+comma
+id|prop
+comma
+r_sizeof
+(paren
+id|prop
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|0
+OL
+id|len
+op_logical_and
+(paren
+l_int|0
+op_eq
+id|strncmp
+c_func
+(paren
+id|prop
+comma
+l_string|&quot;SUNW,UltraSPARC-IIi-cEngine&quot;
+comma
+id|len
+)paren
+)paren
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|len
+OL
+id|PCF8584_MAX_CHANNELS
+suffix:semicolon
+op_increment
+id|len
+)paren
+(brace
+id|pchild-&gt;mon_type
+(braket
+id|len
+)braket
+op_assign
+id|ENVCTRL_NOMON
+suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Get the monitor channels. */
 id|len
 op_assign
@@ -3103,6 +3359,21 @@ id|pchild
 comma
 id|node
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PCF8584_GLOBALADDR_TYPE
+suffix:colon
+id|envctrl_init_globaladdr
+c_func
+(paren
+id|pchild
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|pchild-&gt;total_chnls
 suffix:semicolon
 r_break
 suffix:semicolon

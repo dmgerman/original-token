@@ -8592,10 +8592,6 @@ op_assign
 id|page
 suffix:semicolon
 r_return
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren

@@ -752,64 +752,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|value
-op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_SPIV
-)paren
-suffix:semicolon
-id|value
-op_and_assign
-op_complement
-id|APIC_VECTOR_MASK
-suffix:semicolon
-multiline_comment|/*&n;&t; * Enable APIC&n;&t; */
-id|value
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Some unknown Intel IO/APIC (or APIC) errata is biting us with&n;&t; * certain networking cards. If high frequency interrupts are&n;&t; * happening on a particular IOAPIC pin, plus the IOAPIC routing&n;&t; * entry is masked/unmasked at a high rate as well then sooner or&n;&t; * later IOAPIC line gets &squot;stuck&squot;, no more interrupts are received&n;&t; * from the device. If focus CPU is disabled then the hang goes&n;&t; * away, oh well :-(&n;&t; *&n;&t; * [ This bug can be reproduced easily with a level-triggered&n;&t; *   PCI Ne2000 networking cards and PII/PIII processors, dual&n;&t; *   BX chipset. ]&n;&t; */
-macro_line|#if 0
-multiline_comment|/* Enable focus processor (bit==0) */
-id|value
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-l_int|9
-)paren
-suffix:semicolon
-macro_line|#else
-multiline_comment|/* Disable focus processor (bit==1) */
-id|value
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|9
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t; * Set spurious IRQ vector&n;&t; */
-id|value
-op_or_assign
-id|SPURIOUS_APIC_VECTOR
-suffix:semicolon
-id|apic_write_around
-c_func
-(paren
-id|APIC_SPIV
-comma
-id|value
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Set up LVT0, LVT1:&n;&t; *&n;&t; * set up through-local-APIC on the BP&squot;s LINT0. This is not&n;&t; * strictly necessery in pure symmetric-IO mode, but sometimes&n;&t; * we delegate interrupts to the 8259A.&n;&t; */
 multiline_comment|/*&n;&t; * TODO: set up through-local-APIC from through-I/O-APIC? --macro&n;&t; */
 id|value
@@ -1096,6 +1038,65 @@ c_func
 id|APIC_DFR
 comma
 l_int|0xffffffff
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Now that we are all set up, enable the APIC&n;&t; */
+id|value
+op_assign
+id|apic_read
+c_func
+(paren
+id|APIC_SPIV
+)paren
+suffix:semicolon
+id|value
+op_and_assign
+op_complement
+id|APIC_VECTOR_MASK
+suffix:semicolon
+multiline_comment|/*&n;&t; * Enable APIC&n;&t; */
+id|value
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Some unknown Intel IO/APIC (or APIC) errata is biting us with&n;&t; * certain networking cards. If high frequency interrupts are&n;&t; * happening on a particular IOAPIC pin, plus the IOAPIC routing&n;&t; * entry is masked/unmasked at a high rate as well then sooner or&n;&t; * later IOAPIC line gets &squot;stuck&squot;, no more interrupts are received&n;&t; * from the device. If focus CPU is disabled then the hang goes&n;&t; * away, oh well :-(&n;&t; *&n;&t; * [ This bug can be reproduced easily with a level-triggered&n;&t; *   PCI Ne2000 networking cards and PII/PIII processors, dual&n;&t; *   BX chipset. ]&n;&t; */
+macro_line|#if 0
+multiline_comment|/* Enable focus processor (bit==0) */
+id|value
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+l_int|9
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Disable focus processor (bit==1) */
+id|value
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|9
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * Set spurious IRQ vector&n;&t; */
+id|value
+op_or_assign
+id|SPURIOUS_APIC_VECTOR
+suffix:semicolon
+id|apic_write_around
+c_func
+(paren
+id|APIC_SPIV
+comma
+id|value
 )paren
 suffix:semicolon
 )brace

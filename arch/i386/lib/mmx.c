@@ -1,7 +1,7 @@
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-multiline_comment|/*&n; *&t;MMX 3DNow! library helper functions&n; *&n; *&t;To do:&n; *&t;We can use MMX just for prefetch in IRQ&squot;s. This may be a win. &n; *&t;&t;(reported so on K6-III)&n; *&t;We should use a better code neutral filler for the short jump&n; *&t;&t;leal ebx. [ebx] is apparently best for K6-2, but Cyrix ??&n; *&t;We also want to clobber the filler register so we dont get any&n; *&t;&t;register forwarding stalls on the filler. &n; *&n; *&t;Add *user handling. Checksums are not a win with MMX on any CPU&n; *&t;tested so far for any MMX solution figured.&n; *&n; */
+multiline_comment|/*&n; *&t;MMX 3DNow! library helper functions&n; *&n; *&t;To do:&n; *&t;We can use MMX just for prefetch in IRQ&squot;s. This may be a win. &n; *&t;&t;(reported so on K6-III)&n; *&t;We should use a better code neutral filler for the short jump&n; *&t;&t;leal ebx. [ebx] is apparently best for K6-2, but Cyrix ??&n; *&t;We also want to clobber the filler register so we dont get any&n; *&t;&t;register forwarding stalls on the filler. &n; *&n; *&t;Add *user handling. Checksums are not a win with MMX on any CPU&n; *&t;tested so far for any MMX solution figured.&n; *&n; *&t;22/09/2000 - Arjan van de Ven &n; *&t;&t;Improved for non-egineering-sample Athlons &n; *&n; */
 DECL|function|_mmx_memcpy
 r_void
 op_star
@@ -250,7 +250,7 @@ id|i
 OL
 l_int|4096
 op_div
-l_int|128
+l_int|64
 suffix:semicolon
 id|i
 op_increment
@@ -259,22 +259,14 @@ op_increment
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;  movq %%mm0, (%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 8(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 16(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 24(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 32(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 40(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 48(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 56(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 64(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 72(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 80(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 88(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 96(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 104(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 112(%0)&bslash;n&quot;
-l_string|&quot;  movq %%mm0, 120(%0)&bslash;n&quot;
+l_string|&quot;  movntq %%mm0, (%0)&bslash;n&quot;
+l_string|&quot;  movntq %%mm0, 8(%0)&bslash;n&quot;
+l_string|&quot;  movntq %%mm0, 16(%0)&bslash;n&quot;
+l_string|&quot;  movntq %%mm0, 24(%0)&bslash;n&quot;
+l_string|&quot;  movntq %%mm0, 32(%0)&bslash;n&quot;
+l_string|&quot;  movntq %%mm0, 40(%0)&bslash;n&quot;
+l_string|&quot;  movntq %%mm0, 48(%0)&bslash;n&quot;
+l_string|&quot;  movntq %%mm0, 56(%0)&bslash;n&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -287,9 +279,18 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 id|page
 op_add_assign
-l_int|128
+l_int|64
 suffix:semicolon
 )brace
+multiline_comment|/* since movntq is weakly-ordered, a &quot;sfence&quot; is needed to become&n;&t; * ordered again.&n;&t; */
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;  sfence &bslash;n&quot;
+suffix:colon
+suffix:colon
+)paren
+suffix:semicolon
 id|stts
 c_func
 (paren
@@ -348,6 +349,7 @@ op_complement
 id|PF_USEDFPU
 suffix:semicolon
 )brace
+multiline_comment|/* maybe the prefetch stuff can go before the expensive fnsave...&n;&t; * but that is for later. -AV&n;&t; */
 id|__asm__
 id|__volatile__
 (paren
@@ -396,21 +398,21 @@ id|__volatile__
 (paren
 l_string|&quot;1: prefetch 320(%0)&bslash;n&quot;
 l_string|&quot;2: movq (%0), %%mm0&bslash;n&quot;
+l_string|&quot;   movntq %%mm0, (%1)&bslash;n&quot;
 l_string|&quot;   movq 8(%0), %%mm1&bslash;n&quot;
+l_string|&quot;   movntq %%mm1, 8(%1)&bslash;n&quot;
 l_string|&quot;   movq 16(%0), %%mm2&bslash;n&quot;
+l_string|&quot;   movntq %%mm2, 16(%1)&bslash;n&quot;
 l_string|&quot;   movq 24(%0), %%mm3&bslash;n&quot;
-l_string|&quot;   movq %%mm0, (%1)&bslash;n&quot;
-l_string|&quot;   movq %%mm1, 8(%1)&bslash;n&quot;
-l_string|&quot;   movq %%mm2, 16(%1)&bslash;n&quot;
-l_string|&quot;   movq %%mm3, 24(%1)&bslash;n&quot;
-l_string|&quot;   movq 32(%0), %%mm0&bslash;n&quot;
-l_string|&quot;   movq 40(%0), %%mm1&bslash;n&quot;
-l_string|&quot;   movq 48(%0), %%mm2&bslash;n&quot;
-l_string|&quot;   movq 56(%0), %%mm3&bslash;n&quot;
-l_string|&quot;   movq %%mm0, 32(%1)&bslash;n&quot;
-l_string|&quot;   movq %%mm1, 40(%1)&bslash;n&quot;
-l_string|&quot;   movq %%mm2, 48(%1)&bslash;n&quot;
-l_string|&quot;   movq %%mm3, 56(%1)&bslash;n&quot;
+l_string|&quot;   movntq %%mm3, 24(%1)&bslash;n&quot;
+l_string|&quot;   movq 32(%0), %%mm4&bslash;n&quot;
+l_string|&quot;   movntq %%mm4, 32(%1)&bslash;n&quot;
+l_string|&quot;   movq 40(%0), %%mm5&bslash;n&quot;
+l_string|&quot;   movntq %%mm5, 40(%1)&bslash;n&quot;
+l_string|&quot;   movq 48(%0), %%mm6&bslash;n&quot;
+l_string|&quot;   movntq %%mm6, 48(%1)&bslash;n&quot;
+l_string|&quot;   movq 56(%0), %%mm7&bslash;n&quot;
+l_string|&quot;   movntq %%mm7, 56(%1)&bslash;n&quot;
 l_string|&quot;.section .fixup, &bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3: movw $0x05EB, 1b&bslash;n&quot;
 multiline_comment|/* jmp on 5 bytes */
@@ -444,6 +446,15 @@ op_add_assign
 l_int|64
 suffix:semicolon
 )brace
+multiline_comment|/* since movntq is weakly-ordered, a &quot;sfence&quot; is needed to become&n;&t; * ordered again.&n;&t; */
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;  sfence &bslash;n&quot;
+suffix:colon
+suffix:colon
+)paren
+suffix:semicolon
 id|stts
 c_func
 (paren

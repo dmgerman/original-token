@@ -3512,6 +3512,10 @@ id|length
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
+multiline_comment|/* usb_control_msg() -  builds control urb, and waits for completion */
+multiline_comment|/* Synchronous behavior - don&squot;t use this function  from within an    */
+multiline_comment|/* interrupt context, (like a bottom half handler.)  In this case,   */
+multiline_comment|/* use usb_submit_urb() directly instead.                            */
 DECL|function|usb_control_msg
 r_int
 id|usb_control_msg
@@ -3642,8 +3646,10 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
-multiline_comment|/* compatibility wrapper, builds bulk urb, and waits for completion */
-multiline_comment|/* synchronous behavior */
+multiline_comment|/* usb_bulk_msg() Builds a bulk urb, and waits for completion.       */
+multiline_comment|/* Synchronous behavior - don&squot;t use this function  from within an    */
+multiline_comment|/* interrupt context, (like a bottom half handler.)  In this case,   */
+multiline_comment|/* use usb_submit_urb() directly instead.                            */
 DECL|function|usb_bulk_msg
 r_int
 id|usb_bulk_msg

@@ -1863,10 +1863,6 @@ r_char
 op_star
 id|link
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren

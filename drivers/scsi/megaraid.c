@@ -5509,33 +5509,6 @@ comma
 id|pdev-&gt;slot_name
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     *&t;Dont crash on boot with AMI cards configured for I2O. &n;     *  (our I2O code will find them then they will fail oddly until&n;     *   we figure why they upset our I2O code). This driver will die&n;     *   if it tries to boot an I2O mode board and we dont stop it now.&n;     *     - Alan Cox , Red Hat Software, Jan 2000&n;     */
-r_if
-c_cond
-(paren
-(paren
-id|pdev
-op_member_access_from_pointer
-r_class
-op_rshift
-l_int|8
-)paren
-op_eq
-id|PCI_CLASS_INTELLIGENT_I2O
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;megaraid: Board configured for I2O, ignoring this card. Reconfigure the card&bslash;n&quot;
-id|KERN_INFO
-l_string|&quot;megaraid: in the BIOS for &bslash;&quot;mass storage&bslash;&quot; to use it with this driver.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
 multiline_comment|/* Read the base port and IRQ from PCI */
 id|megaBase
 op_assign
@@ -5587,6 +5560,17 @@ id|mega_host_config
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|host
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|megaCfg
 op_assign
 (paren
@@ -5713,11 +5697,13 @@ multiline_comment|/* Request our IO Range */
 r_if
 c_cond
 (paren
-id|check_region
+id|request_region
 (paren
 id|megaBase
 comma
 l_int|16
+comma
+l_string|&quot;megaraid&quot;
 )paren
 )paren
 (brace
@@ -5736,15 +5722,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|request_region
-(paren
-id|megaBase
-comma
-l_int|16
-comma
-l_string|&quot;megaraid&quot;
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* Request our IRQ */
 r_if

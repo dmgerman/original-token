@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.86 2000/03/16 09:23:57 jj Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.91 2000/11/08 05:04:06 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -749,50 +749,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SUN_OPENPROMIO
-r_extern
-r_int
-id|openprom_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_AUXIO
 r_extern
 r_void
 id|auxio_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_OBP_FLASH
-r_extern
-r_int
-id|flash_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SUN_AURORA
-r_extern
-r_int
-id|aurora_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_TADPOLE_TS102_UCTRL
-r_extern
-r_int
-id|ts102_uctrl_init
 c_func
 (paren
 r_void
@@ -2433,20 +2393,6 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_SUN_OPENPROMIO
-id|openprom_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SUN_BPP
-id|bpp_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_AUXIO
 r_if
 c_cond
@@ -2456,27 +2402,6 @@ op_eq
 id|sun4u
 )paren
 id|auxio_probe
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_OBP_FLASH
-id|flash_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SUN_AURORA
-id|aurora_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_TADPOLE_TS102_UCTRL
-id|ts102_uctrl_init
-c_func
 (paren
 )paren
 suffix:semicolon

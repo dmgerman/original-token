@@ -1392,7 +1392,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* ----------------------------------------------------------------------- */
 multiline_comment|/* this is called by the generic cdrom driver. arg is a _kernel_ pointer,  */
-multiline_comment|/* becauce the generic cdrom driver does the user access stuff for us.     */
+multiline_comment|/* because the generic cdrom driver does the user access stuff for us.     */
 multiline_comment|/* only cdromreadtochdr and cdromreadtocentry are left - for use with the  */
 multiline_comment|/* sr_disk_status interface for the generic cdrom driver.                  */
 DECL|function|sr_audio_ioctl

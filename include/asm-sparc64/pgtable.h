@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.132 2000/10/19 00:50:16 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.135 2000/11/08 04:49:24 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -8,6 +8,8 @@ macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifndef __ASSEMBLY__
+DECL|macro|PG_dcache_dirty
+mdefine_line|#define PG_dcache_dirty&t;&t;PG_arch_1
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
@@ -337,14 +339,11 @@ c_func
 r_struct
 id|vm_area_struct
 op_star
-id|vma
 comma
 r_int
 r_int
-id|address
 comma
 id|pte_t
-id|pte
 )paren
 suffix:semicolon
 DECL|macro|flush_icache_page

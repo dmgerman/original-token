@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: envctrl.h,v 1.2 2000/10/17 16:20:36 davem Exp $&n; *&n; * envctrl.h: Definitions for access to the i2c environment&n; *            monitoring on Ultrasparc systems.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 2000  Vinh Truong  (vinh.truong@eng.sun.com)&n; * VT - Add all ioctl commands and environment status definitions &n; * VT - Add application note &n; */
+multiline_comment|/* $Id: envctrl.h,v 1.3 2000/11/03 00:37:40 davem Exp $&n; *&n; * envctrl.h: Definitions for access to the i2c environment&n; *            monitoring on Ultrasparc systems.&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 2000  Vinh Truong  (vinh.truong@eng.sun.com)&n; * VT - Add all ioctl commands and environment status definitions &n; * VT - Add application note &n; */
 macro_line|#ifndef _SPARC64_ENVCTRL_H
 DECL|macro|_SPARC64_ENVCTRL_H
 mdefine_line|#define _SPARC64_ENVCTRL_H 1
@@ -24,6 +24,8 @@ DECL|macro|ENVCTRL_RD_ETHERNET_TEMPERATURE
 mdefine_line|#define ENVCTRL_RD_ETHERNET_TEMPERATURE&t;_IOR(&squot;p&squot;, 0x47, int)
 DECL|macro|ENVCTRL_RD_MTHRBD_TEMPERATURE
 mdefine_line|#define ENVCTRL_RD_MTHRBD_TEMPERATURE&t;_IOR(&squot;p&squot;, 0x48, int)
+DECL|macro|ENVCTRL_RD_GLOBALADDRESS
+mdefine_line|#define ENVCTRL_RD_GLOBALADDRESS&t;_IOR(&squot;p&squot;, 0x49, int)
 multiline_comment|/* Read return values for a voltage status request. */
 DECL|macro|ENVCTRL_VOLTAGE_POWERSUPPLY_GOOD
 mdefine_line|#define ENVCTRL_VOLTAGE_POWERSUPPLY_GOOD&t;0x01

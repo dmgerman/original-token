@@ -7695,6 +7695,8 @@ id|lv_tmp
 comma
 op_star
 id|lv_buf
+op_assign
+l_int|NULL
 suffix:semicolon
 id|lv_block_exception_t
 op_star

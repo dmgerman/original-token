@@ -1202,7 +1202,9 @@ id|dev
 comma
 id|PCI_CACHE_LINE_SIZE
 comma
-l_int|8
+id|L1_CACHE_BYTES
+op_div
+l_int|4
 )paren
 suffix:semicolon
 )brace

@@ -1,5 +1,5 @@
 multiline_comment|/* sis900.h Definitions for SiS ethernet controllers including 7014/7016 and 900 &n; * Copyright 1999 Silicon Integrated System Corporation&n; * References:&n; *   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n; *&t;preliminary Rev. 1.0 Jan. 14, 1998&n; *   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n; *&t;preliminary Rev. 1.0 Nov. 10, 1998&n; *   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n; *&t;preliminary Rev. 1.0 Jan. 18, 1998&n; *   http://www.sis.com.tw/support/databook.htm&n; */
-multiline_comment|/* MAC operation registers of SiS 7016 and SiS 900 ethernet controller */
+multiline_comment|/*&n; * SiS 7016 and SiS 900 ethernet controller registers&n; */
 multiline_comment|/* The I/O extent, SiS 900 needs 256 bytes of io address */
 DECL|macro|SIS900_TOTAL_SIZE
 mdefine_line|#define SIS900_TOTAL_SIZE 0x100
@@ -1191,7 +1191,7 @@ DECL|macro|PCI_DEVICE_ID_SI_900
 mdefine_line|#define PCI_DEVICE_ID_SI_900&t;0x900   
 DECL|macro|PCI_DEVICE_ID_SI_7016
 mdefine_line|#define PCI_DEVICE_ID_SI_7016&t;0x7016  
-multiline_comment|/* ioctl for accessing MII transveiver */
+multiline_comment|/* ioctl for accessing MII transceiver */
 DECL|macro|SIOCGMIIPHY
 mdefine_line|#define SIOCGMIIPHY (SIOCDEVPRIVATE)&t;&t;/* Get the PHY in use. */
 DECL|macro|SIOCGMIIREG

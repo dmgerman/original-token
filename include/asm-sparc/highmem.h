@@ -52,8 +52,8 @@ mdefine_line|#define PKMAP_NR(virt)  ((virt-PKMAP_BASE) &gt;&gt; PAGE_SHIFT)
 DECL|macro|PKMAP_ADDR
 mdefine_line|#define PKMAP_ADDR(nr)  (PKMAP_BASE + ((nr) &lt;&lt; PAGE_SHIFT))
 r_extern
-r_int
-r_int
+r_void
+op_star
 id|kmap_high
 c_func
 (paren
@@ -75,10 +75,10 @@ id|page
 )paren
 suffix:semicolon
 DECL|function|kmap
-r_extern
+r_static
 r_inline
-r_int
-r_int
+r_void
+op_star
 id|kmap
 c_func
 (paren
@@ -109,10 +109,6 @@ OL
 id|highmem_start_page
 )paren
 r_return
-(paren
-r_int
-r_int
-)paren
 id|page_address
 c_func
 (paren
@@ -128,7 +124,7 @@ id|page
 suffix:semicolon
 )brace
 DECL|function|kunmap
-r_extern
+r_static
 r_inline
 r_void
 id|kunmap
@@ -171,10 +167,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * The use of kmap_atomic/kunmap_atomic is discouraged - kmap/kunmap&n; * gives a more generic (and caching) interface. But kmap_atomic can&n; * be used in IRQ contexts, so in some (very limited) cases we need&n; * it.&n; */
 DECL|function|kmap_atomic
-r_extern
+r_static
 r_inline
-r_int
-r_int
+r_void
+op_star
 id|kmap_atomic
 c_func
 (paren
@@ -204,10 +200,6 @@ OL
 id|highmem_start_page
 )paren
 r_return
-(paren
-r_int
-r_int
-)paren
 id|page_address
 c_func
 (paren
@@ -302,19 +294,23 @@ c_func
 suffix:semicolon
 macro_line|#endif
 r_return
+(paren
+r_void
+op_star
+)paren
 id|vaddr
 suffix:semicolon
 )brace
 DECL|function|kunmap_atomic
-r_extern
+r_static
 r_inline
 r_void
 id|kunmap_atomic
 c_func
 (paren
-r_int
-r_int
-id|vaddr
+r_void
+op_star
+id|kvaddr
 comma
 r_enum
 id|km_type
@@ -322,6 +318,16 @@ id|type
 )paren
 (brace
 macro_line|#if HIGHMEM_DEBUG
+r_int
+r_int
+id|vaddr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|kvaddr
+suffix:semicolon
 r_int
 r_int
 id|idx

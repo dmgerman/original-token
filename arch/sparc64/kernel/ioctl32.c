@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.99 2000/10/17 16:20:33 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.102 2000/11/08 05:13:30 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -66,6 +66,7 @@ macro_line|#include &lt;asm/envctrl.h&gt;
 macro_line|#include &lt;asm/audioio.h&gt;
 macro_line|#include &lt;asm/ethtool.h&gt;
 macro_line|#include &lt;asm/display7seg.h&gt;
+macro_line|#include &lt;asm/module.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmarp.h&gt;
@@ -20390,6 +20391,11 @@ c_func
 (paren
 id|ENVCTRL_RD_CPU_VOLTAGE
 )paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|ENVCTRL_RD_GLOBALADDRESS
+)paren
 multiline_comment|/* COMPATIBLE_IOCTL(D7SIOCRD) same value as ENVCTRL_RD_VOLTAGE_STATUS */
 id|COMPATIBLE_IOCTL
 c_func
@@ -21491,6 +21497,78 @@ id|SOUND_MIXER_READ_LINE3
 id|COMPATIBLE_IOCTL
 c_func
 (paren
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MIXER_DIGITAL1
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MIXER_DIGITAL2
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MIXER_DIGITAL3
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MIXER_PHONEIN
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MIXER_PHONEOUT
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MIXER_VIDEO
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MIXER_RADIO
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MIXER_MONITOR
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
 id|SOUND_MIXER_READ_MUTE
 )paren
 multiline_comment|/* SOUND_MIXER_READ_ENHANCE,  same value as READ_MUTE */
@@ -21604,6 +21682,78 @@ id|COMPATIBLE_IOCTL
 c_func
 (paren
 id|SOUND_MIXER_WRITE_LINE3
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MIXER_DIGITAL1
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MIXER_DIGITAL2
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MIXER_DIGITAL3
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MIXER_PHONEIN
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MIXER_PHONEOUT
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MIXER_VIDEO
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MIXER_RADIO
+)paren
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MIXER_MONITOR
+)paren
 )paren
 id|COMPATIBLE_IOCTL
 c_func

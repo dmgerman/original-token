@@ -1378,7 +1378,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to free nonexistent resource &lt;%04lx-%04lx&gt;&bslash;n&quot;
+l_string|&quot;Trying to free nonexistent resource &lt;%08lx-%08lx&gt;&bslash;n&quot;
 comma
 id|start
 comma

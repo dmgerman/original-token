@@ -2482,6 +2482,10 @@ r_int
 r_int
 id|vaddr
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|kmap
 c_func
 (paren

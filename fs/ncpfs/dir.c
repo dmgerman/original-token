@@ -2112,11 +2112,6 @@ id|ctl.cache
 op_assign
 id|cache
 op_assign
-(paren
-r_union
-id|ncp_dir_cache
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -2266,11 +2261,6 @@ id|invalid_cache
 suffix:semicolon
 id|ctl.cache
 op_assign
-(paren
-r_union
-id|ncp_dir_cache
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -3011,11 +3001,6 @@ id|ctl.page
 )paren
 id|ctl.cache
 op_assign
-(paren
-r_union
-id|ncp_dir_cache
-op_star
-)paren
 id|kmap
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: esp.c,v 1.97 2000/09/19 01:29:27 davem Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: esp.c,v 1.98 2000/11/02 22:34:16 davem Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* TODO:&n; *&n; * 1) Maybe disable parity checking in config register one for SCSI1&n; *    targets.  (Gilmore says parity error on the SBus can lock up&n; *    old sun4c&squot;s)&n; * 2) Add support for DMA2 pipelining.&n; * 3) Add tagged queueing.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1300,7 +1300,7 @@ DECL|macro|ESP_INTSON
 mdefine_line|#define ESP_INTSON(__dregs)&t;&bslash;&n;&t;sbus_writel(sbus_readl((__dregs)+DMA_CSR)|DMA_INT_ENAB, (__dregs)+DMA_CSR)
 DECL|macro|ESP_IRQ_P
 mdefine_line|#define ESP_IRQ_P(__dregs)&t;&bslash;&n;&t;(sbus_readl((__dregs)+DMA_CSR) &amp; (DMA_HNDL_INTR|DMA_HNDL_ERROR))
-multiline_comment|/* How we use the various Linux SCSI data structures for operation.&n; *&n; * struct scsi_cmnd:&n; *&n; *   We keep track of the syncronous capabilities of a target&n; *   in the device member, using sync_min_period and&n; *   sync_max_offset.  These are the values we directly write&n; *   into the ESP registers while running a command.  If offset&n; *   is zero the ESP will use asynchronous transfers.&n; *   If the borken flag is set we assume we shouldn&squot;t even bother&n; *   trying to negotiate for synchronous transfer as this target&n; *   is really stupid.  If we notice the target is dropping the&n; *   bus, and we have been allowing it to disconnect, we clear&n; *   the disconnect flag.&n; */
+multiline_comment|/* How we use the various Linux SCSI data structures for operation.&n; *&n; * struct scsi_cmnd:&n; *&n; *   We keep track of the synchronous capabilities of a target&n; *   in the device member, using sync_min_period and&n; *   sync_max_offset.  These are the values we directly write&n; *   into the ESP registers while running a command.  If offset&n; *   is zero the ESP will use asynchronous transfers.&n; *   If the borken flag is set we assume we shouldn&squot;t even bother&n; *   trying to negotiate for synchronous transfer as this target&n; *   is really stupid.  If we notice the target is dropping the&n; *   bus, and we have been allowing it to disconnect, we clear&n; *   the disconnect flag.&n; */
 multiline_comment|/* Manipulation of the ESP command queues.  Thanks to the aha152x driver&n; * and its author, Juergen E. Fischer, for the methods used here.&n; * Note that these are per-ESP queues, not global queues like&n; * the aha152x driver uses.&n; */
 DECL|function|append_SC
 r_static
@@ -10944,7 +10944,7 @@ id|esp
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check for partial transfers and other horrible events.&n;&t; * Note, here we read the real fifo flags register even&n;&t; * on HME broken adapters because we skip the HME fifo&n;&t; * workaround code in esp_handle() if we are doing data&n;&t; * phase things.  We don&squot;t want to fuck directly with&n;&t; * the fifo like that, especially if doing syncronous&n;&t; * transfers!  Also, will need to double the count on&n;&t; * HME if we are doing wide transfers, as the HME fifo&n;&t; * will move and count 16-bit quantities during wide data.&n;&t; * SMCC _and_ Qlogic can both bite me.&n;&t; */
+multiline_comment|/* Check for partial transfers and other horrible events.&n;&t; * Note, here we read the real fifo flags register even&n;&t; * on HME broken adapters because we skip the HME fifo&n;&t; * workaround code in esp_handle() if we are doing data&n;&t; * phase things.  We don&squot;t want to fuck directly with&n;&t; * the fifo like that, especially if doing synchronous&n;&t; * transfers!  Also, will need to double the count on&n;&t; * HME if we are doing wide transfers, as the HME fifo&n;&t; * will move and count 16-bit quantities during wide data.&n;&t; * SMCC _and_ Qlogic can both bite me.&n;&t; */
 id|fifocnt
 op_assign
 (paren

@@ -362,10 +362,6 @@ r_void
 op_star
 id|buffer
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -568,10 +564,6 @@ r_char
 op_star
 id|start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -1032,10 +1024,6 @@ r_char
 op_star
 id|start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -1350,10 +1338,6 @@ suffix:semicolon
 )brace
 id|p
 op_assign
-(paren
-id|u32
-op_star
-)paren
 id|kmap
 c_func
 (paren

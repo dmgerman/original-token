@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: display7seg.c,v 1.3 2000/08/29 07:01:55 davem Exp $&n; *&n; * display7seg - Driver implementation for the 7-segment display&n; * present on Sun Microsystems CP1400 and CP1500&n; *&n; * Copyright (c) 2000 Eric Brower (ebrower@usa.net)&n; *&n; */
+multiline_comment|/* $Id: display7seg.c,v 1.4 2000/11/08 05:08:23 davem Exp $&n; *&n; * display7seg - Driver implementation for the 7-segment display&n; * present on Sun Microsystems CP1400 and CP1500&n; *&n; * Copyright (c) 2000 Eric Brower (ebrower@usa.net)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -503,15 +503,8 @@ op_amp
 id|d7s_fops
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|d7s_init
+r_static
 r_int
 id|__init
 id|d7s_init
@@ -519,7 +512,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|linux_ebus
@@ -739,10 +731,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|d7s_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|d7s_cleanup
 c_func
 (paren
 r_void
@@ -811,5 +804,18 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|d7s_init
+id|module_init
+c_func
+(paren
+id|d7s_init
+)paren
+suffix:semicolon
+DECL|variable|d7s_cleanup
+id|module_exit
+c_func
+(paren
+id|d7s_cleanup
+)paren
+suffix:semicolon
 eof

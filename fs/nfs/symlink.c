@@ -42,10 +42,6 @@ r_void
 op_star
 id|buffer
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|kmap
 c_func
 (paren
@@ -234,10 +230,6 @@ id|page
 suffix:semicolon
 id|p
 op_assign
-(paren
-id|u32
-op_star
-)paren
 id|kmap
 c_func
 (paren

@@ -11272,24 +11272,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|exit_mm
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|exit_files
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|exit_fs
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Detach thread&n;&t; */
 id|daemonize
 c_func

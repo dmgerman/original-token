@@ -492,6 +492,8 @@ id|error
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ATM_CLIP

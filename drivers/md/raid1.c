@@ -1573,13 +1573,7 @@ suffix:semicolon
 id|io_request_done
 c_func
 (paren
-id|bh-&gt;b_blocknr
-op_star
-(paren
-id|bh-&gt;b_size
-op_rshift
-l_int|9
-)paren
+id|bh-&gt;b_rsector
 comma
 id|mddev_to_conf
 c_func

@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/mm/vmalloc.c&n; *&n; *  Copyright (C) 1993  Lin
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 DECL|variable|vmlist_lock
@@ -717,6 +718,9 @@ id|address
 op_plus
 id|size
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 id|dir
 op_assign
 id|pgd_offset_k
@@ -726,6 +730,11 @@ id|address
 )paren
 suffix:semicolon
 id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
+id|lock_kernel
 c_func
 (paren
 )paren
@@ -746,13 +755,21 @@ comma
 id|address
 )paren
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|pmd
 )paren
-r_return
+r_break
+suffix:semicolon
+id|ret
+op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
@@ -775,9 +792,7 @@ comma
 id|prot
 )paren
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_break
 suffix:semicolon
 id|address
 op_assign
@@ -792,6 +807,10 @@ suffix:semicolon
 id|dir
 op_increment
 suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -805,13 +824,18 @@ id|end
 )paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|flush_tlb_all
 c_func
 (paren
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 DECL|function|get_vm_area
@@ -874,6 +898,10 @@ id|area
 r_return
 l_int|NULL
 suffix:semicolon
+id|size
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
 id|addr
 op_assign
 id|VMALLOC_START
@@ -906,6 +934,35 @@ op_amp
 id|tmp-&gt;next
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|size
+op_plus
+id|addr
+)paren
+OL
+id|addr
+)paren
+(brace
+id|write_unlock
+c_func
+(paren
+op_amp
+id|vmlist_lock
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|area
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -974,8 +1031,6 @@ suffix:semicolon
 id|area-&gt;size
 op_assign
 id|size
-op_plus
-id|PAGE_SIZE
 suffix:semicolon
 id|area-&gt;next
 op_assign
