@@ -846,6 +846,9 @@ comma
 multiline_comment|/* mouse_mmap */
 id|open_mouse
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|close_mouse
 comma
 l_int|NULL

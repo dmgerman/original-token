@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/*&n; * NOTE! We must NOT default to soft-mounting: that breaks too many&n; * programs that depend on POSIX behaviour of uninterruptible reads&n; * and writes.&n; *&n; * Until we have a per-mount soft/hard mount policy that we can honour&n; * we must default to hard mounting!&n; */
+multiline_comment|/*&n; * NOTE! We must NOT default to soft-mounting: that breaks too many&n; * programs that depend on POSIX behaviour of uninterruptible reads&n; * and writes.&n; *&n; * Until we have a per-mount soft/hard mount policy that we can honour&n; * we must default to hard mounting!&n; *&n; * And yes, this should be &quot;interruptible&quot;, not soft.&n; */
 DECL|macro|IS_SOFT
 mdefine_line|#define IS_SOFT 0
 DECL|macro|NFS_PARANOIA
@@ -1413,6 +1413,20 @@ c_cond
 id|sync
 )paren
 (brace
+id|sigset_t
+id|oldmask
+suffix:semicolon
+r_struct
+id|rpc_clnt
+op_star
+id|clnt
+op_assign
+id|NFS_CLIENT
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -1426,10 +1440,28 @@ id|req-&gt;wb_flags
 op_or_assign
 id|NFS_WRITE_LOCKED
 suffix:semicolon
+id|rpc_clnt_sigmask
+c_func
+(paren
+id|clnt
+comma
+op_amp
+id|oldmask
+)paren
+suffix:semicolon
 id|rpc_execute
 c_func
 (paren
 id|task
+)paren
+suffix:semicolon
+id|rpc_clnt_sigunmask
+c_func
+(paren
+id|clnt
+comma
+op_amp
+id|oldmask
 )paren
 suffix:semicolon
 )brace
@@ -1508,14 +1540,21 @@ suffix:semicolon
 id|sigset_t
 id|oldmask
 suffix:semicolon
-id|rpc_clnt_sigmask
-c_func
-(paren
+r_struct
+id|rpc_clnt
+op_star
+id|clnt
+op_assign
 id|NFS_CLIENT
 c_func
 (paren
 id|req-&gt;wb_inode
 )paren
+suffix:semicolon
+id|rpc_clnt_sigmask
+c_func
+(paren
+id|clnt
 comma
 op_amp
 id|oldmask
@@ -1547,12 +1586,7 @@ suffix:semicolon
 (brace
 id|current-&gt;state
 op_assign
-id|IS_SOFT
-ques
-c_cond
 id|TASK_INTERRUPTIBLE
-suffix:colon
-id|TASK_UNINTERRUPTIBLE
 suffix:semicolon
 id|retval
 op_assign
@@ -1575,7 +1609,6 @@ op_assign
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
-multiline_comment|/* IS_SOFT is a timeout item .. */
 r_if
 c_cond
 (paren
@@ -1620,11 +1653,7 @@ suffix:semicolon
 id|rpc_clnt_sigunmask
 c_func
 (paren
-id|NFS_CLIENT
-c_func
-(paren
-id|req-&gt;wb_inode
-)paren
+id|clnt
 comma
 op_amp
 id|oldmask

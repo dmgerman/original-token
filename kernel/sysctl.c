@@ -310,6 +310,9 @@ comma
 multiline_comment|/* no special open code&t;   */
 l_int|NULL
 comma
+multiline_comment|/* no special flush code */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 l_int|NULL
 multiline_comment|/* can&squot;t fsync */
@@ -1393,16 +1396,13 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sysctl_init
 r_void
+id|__init
 id|sysctl_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS

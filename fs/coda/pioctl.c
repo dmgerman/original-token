@@ -183,6 +183,9 @@ multiline_comment|/* mmap */
 id|coda_ioctl_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|coda_ioctl_release
 comma
 multiline_comment|/* release */

@@ -3000,6 +3000,9 @@ id|vfc_mmap
 comma
 id|vfc_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|vfc_release
 comma
 )brace

@@ -3621,6 +3621,9 @@ comma
 multiline_comment|/* bpp_mmap */
 id|bpp_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|bpp_release
 comma
 )brace

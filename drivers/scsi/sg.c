@@ -2210,6 +2210,9 @@ multiline_comment|/* mmap */
 id|sg_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sg_close
 comma
 multiline_comment|/* release */

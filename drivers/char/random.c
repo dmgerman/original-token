@@ -8379,6 +8379,9 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
+multiline_comment|/* flush */
+l_int|NULL
 multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
@@ -8409,6 +8412,9 @@ multiline_comment|/* urandom_mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 multiline_comment|/* no special release code */
 )brace

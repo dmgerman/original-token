@@ -209,6 +209,13 @@ l_int|0
 )braket
 op_eq
 id|block_group
+op_logical_and
+id|sb-&gt;u.ext2_sb.s_inode_bitmap
+(braket
+l_int|0
+)braket
+op_ne
+l_int|NULL
 )paren
 r_return
 l_int|0

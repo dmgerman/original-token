@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Audio Command Interface (ACI) driver (sound/aci.c)&n; *&n; * ACI is a protocol used to communicate with the microcontroller on&n; * some sound cards produced by miro, e.g. the miroSOUND PCM12 and&n; * PCM20. The ACI has been developed for miro by Norberto Pellicci&n; * &lt;pellicci@ix.netcom.com&gt;. Special thanks to both him and miro for&n; * providing the ACI specification.&n; *&n; * The main function of the ACI is to control the mixer and to get a&n; * product identification. On the PCM20, ACI also controls the radio&n; * tuner on this card, however this is not yet supported in this&n; * software.&n; * &n; * This Voxware ACI driver currently only supports the ACI functions&n; * on the miroSOUND PCM12 card. Support for miro sound cards with&n; * additional ACI functions can easily be added later.&n; *&n; * / NOTE / When compiling as a module, make sure to load the module &n; * after loading the mad16 module. The initialisation code expects the&n; * MAD16 default mixer to be already available.&n; *&n; * Revision history:&n; *&n; *   1995-11-10  Markus Kuhn &lt;mskuhn@cip.informatik.uni-erlangen.de&gt;&n; *        First version written.&n; *   1995-12-31  Markus Kuhn&n; *        Second revision, general code cleanup.&n; *   1996-05-16&t; Hannu Savolainen&n; *&t;  Integrated with other parts of the driver.&n; *   1996-05-28  Markus Kuhn&n; *        Initialize CS4231A mixer, make ACI first mixer,&n; *        use new private mixer API for solo mode.&n; *   1998-08-04  Ruurd Reitsma &lt;R.A.Reitsma@wbmt.tudelft.nl&gt;&n; *&t;  Small modification to complete modularisation.&n; */
+multiline_comment|/*&n; * Audio Command Interface (ACI) driver (sound/aci.c)&n; *&n; * ACI is a protocol used to communicate with the microcontroller on&n; * some sound cards produced by miro, e.g. the miroSOUND PCM12 and&n; * PCM20. The ACI has been developed for miro by Norberto Pellicci&n; * &lt;pellicci@home.com&gt;. Special thanks to both him and miro for&n; * providing the ACI specification.&n; *&n; * The main function of the ACI is to control the mixer and to get a&n; * product identification. On the PCM20, ACI also controls the radio&n; * tuner on this card, this is supported in the Video for Linux &n; * radio-miropcm20 driver.&n; * &n; * This Voxware ACI driver currently only supports the ACI functions&n; * on the miroSOUND PCM12 and PCM20 card. Support for miro sound cards &n; * with additional ACI functions can easily be added later.&n; *&n; * / NOTE / When compiling as a module, make sure to load the module &n; * after loading the mad16 module. The initialisation code expects the&n; * MAD16 default mixer to be already available.&n; *&n; * / NOTE / When compiling as a module, make sure to load the module &n; * after loading the mad16 module. The initialisation code expects the&n; * MAD16 default mixer to be already available.&n; *&n; * Revision history:&n; *&n; *   1995-11-10  Markus Kuhn &lt;mskuhn@cip.informatik.uni-erlangen.de&gt;&n; *        First version written.&n; *   1995-12-31  Markus Kuhn&n; *        Second revision, general code cleanup.&n; *   1996-05-16&t; Hannu Savolainen&n; *&t;  Integrated with other parts of the driver.&n; *   1996-05-28  Markus Kuhn&n; *        Initialize CS4231A mixer, make ACI first mixer,&n; *        use new private mixer API for solo mode.&n; *   1998-08-18  Ruurd Reitsma &lt;R.A.Reitsma@wbmt.tudelft.nl&gt;&n; *&t;  Small modification to export ACI functions and &n; *&t;  complete modularisation.&n; */
 multiline_comment|/*&n; * Some driver specific information and features:&n; *&n; * This mixer driver identifies itself to applications as &quot;ACI&quot; in&n; * mixer_info.id as retrieved by ioctl(fd, SOUND_MIXER_INFO, &amp;mixer_info).&n; *&n; * Proprietary mixer features that go beyond the standard OSS mixer&n; * interface are:&n; * &n; * Full duplex solo configuration:&n; *&n; *   int solo_mode;&n; *   ioctl(fd, SOUND_MIXER_PRIVATE1, &amp;solo_mode);&n; *&n; *   solo_mode = 0: deactivate solo mode (default)&n; *   solo_mode &gt; 0: activate solo mode&n; *                  With activated solo mode, the PCM input can not any&n; *                  longer hear the signals produced by the PCM output.&n; *                  Activating solo mode is important in duplex mode in order&n; *                  to avoid feedback distortions.&n; *   solo_mode &lt; 0: do not change solo mode (just retrieve the status)&n; *&n; *   When the ioctl() returns 0, solo_mode contains the previous&n; *   status (0 = deactivated, 1 = activated). If solo mode is not&n; *   implemented on this card, ioctl() returns -1 and sets errno to&n; *   EINVAL.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_ACI_MIXER */
 macro_line|#include &lt;linux/module.h&gt; 
@@ -65,7 +65,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#else                          /* module; use &quot;insmod sound.o aci_reset=1&quot; */
+macro_line|#else                          /* module; use &quot;insmod aci.o aci_reset=1&quot; */
 DECL|variable|aci_reset
 r_int
 id|aci_reset
@@ -208,10 +208,9 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The four ACI command types (implied, write, read and indexed) can&n; * be sent to the microcontroller using the following four functions.&n; * If a problem occurred, they return -1.&n; */
-DECL|function|implied_cmd
-r_static
+DECL|function|aci_implied_cmd
 r_int
-id|implied_cmd
+id|aci_implied_cmd
 c_func
 (paren
 r_int
@@ -227,7 +226,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;ACI: implied_cmd(0x%02x)&bslash;n&quot;
+l_string|&quot;ACI: aci_implied_cmd(0x%02x)&bslash;n&quot;
 comma
 id|opcode
 )paren
@@ -289,10 +288,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|write_cmd
-r_static
+DECL|function|aci_write_cmd
 r_int
-id|write_cmd
+id|aci_write_cmd
 c_func
 (paren
 r_int
@@ -315,7 +313,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;ACI: write_cmd(0x%02x, 0x%02x)&bslash;n&quot;
+l_string|&quot;ACI: aci_write_cmd(0x%02x, 0x%02x)&bslash;n&quot;
 comma
 id|opcode
 comma
@@ -487,10 +485,245 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|read_cmd
-r_static
+multiline_comment|/*&n; * This write command send 2 parameters instead of one.&n; * Only used in PCM20 radio frequency tuning control&n; */
+DECL|function|aci_write_cmd_d
 r_int
-id|read_cmd
+id|aci_write_cmd_d
+c_func
+(paren
+r_int
+r_char
+id|opcode
+comma
+r_int
+r_char
+id|parameter
+comma
+r_int
+r_char
+id|parameter2
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|status
+suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;ACI: aci_write_cmd_d(0x%02x, 0x%02x)&bslash;n&quot;
+comma
+id|opcode
+comma
+id|parameter
+comma
+id|parameter2
+)paren
+suffix:semicolon
+macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|read_general_status
+c_func
+(paren
+)paren
+OL
+l_int|0
+op_logical_or
+id|busy_wait
+c_func
+(paren
+)paren
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|outb_p
+c_func
+(paren
+id|opcode
+comma
+id|COMMAND_REGISTER
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|busy_wait
+c_func
+(paren
+)paren
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|outb_p
+c_func
+(paren
+id|parameter
+comma
+id|COMMAND_REGISTER
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|busy_wait
+c_func
+(paren
+)paren
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|outb_p
+c_func
+(paren
+id|parameter2
+comma
+id|COMMAND_REGISTER
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_assign
+id|read_general_status
+c_func
+(paren
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* polarity of the INVALID flag depends on ACI version */
+r_if
+c_cond
+(paren
+(paren
+id|aci_version
+OL
+l_int|0xb0
+op_logical_and
+(paren
+id|status
+op_amp
+l_int|0x40
+)paren
+op_ne
+l_int|0
+)paren
+op_logical_or
+(paren
+id|aci_version
+op_ge
+l_int|0xb0
+op_logical_and
+(paren
+id|status
+op_amp
+l_int|0x40
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#if 0&t;/* Frequency tuning works, but the INVALID flag is set ??? */
+id|printk
+c_func
+(paren
+l_string|&quot;ACI: invalid write (double) command 0x%02x, 0x%02x, 0x%02x.&bslash;n&quot;
+comma
+id|opcode
+comma
+id|parameter
+comma
+id|parameter2
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|aci_read_cmd
+r_int
+id|aci_read_cmd
 c_func
 (paren
 r_int
@@ -627,7 +860,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;ACI: read_cmd(0x%02x, %d) = 0x%02x&bslash;n&quot;
+l_string|&quot;ACI: aci_read_cmd(0x%02x, %d) = 0x%02x&bslash;n&quot;
 comma
 id|opcode
 comma
@@ -645,7 +878,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;ACI: read_cmd cont.: 0x%02x&bslash;n&quot;
+l_string|&quot;ACI: aci_read_cmd cont.: 0x%02x&bslash;n&quot;
 comma
 id|parameter
 (braket
@@ -667,10 +900,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|indexed_cmd
-r_static
+DECL|function|aci_indexed_cmd
 r_int
-id|indexed_cmd
+id|aci_indexed_cmd
 c_func
 (paren
 r_int
@@ -798,7 +1030,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;ACI: indexed_cmd(0x%02x, 0x%02x) = 0x%02x&bslash;n&quot;
+l_string|&quot;ACI: aci_indexed_cmd(0x%02x, 0x%02x) = 0x%02x&bslash;n&quot;
 comma
 id|opcode
 comma
@@ -851,7 +1083,7 @@ multiline_comment|/* left channel */
 r_if
 c_cond
 (paren
-id|indexed_cmd
+id|aci_indexed_cmd
 c_func
 (paren
 l_int|0xf0
@@ -891,7 +1123,7 @@ multiline_comment|/* right channel */
 r_if
 c_cond
 (paren
-id|indexed_cmd
+id|aci_indexed_cmd
 c_func
 (paren
 l_int|0xf0
@@ -1003,7 +1235,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|write_cmd
+id|aci_write_cmd
 c_func
 (paren
 id|left_index
@@ -1071,7 +1303,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|write_cmd
+id|aci_write_cmd
 c_func
 (paren
 id|right_index
@@ -1173,7 +1405,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|write_cmd
+id|aci_write_cmd
 c_func
 (paren
 l_int|0xd2
@@ -1432,7 +1664,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|write_cmd
+id|aci_write_cmd
 c_func
 (paren
 l_int|0x03
@@ -1746,7 +1978,7 @@ multiline_comment|/* MIC pre-amp */
 r_if
 c_cond
 (paren
-id|indexed_cmd
+id|aci_indexed_cmd
 c_func
 (paren
 l_int|0xf0
@@ -1923,7 +2155,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|read_cmd
+id|aci_read_cmd
 c_func
 (paren
 l_int|0xf2
@@ -1949,7 +2181,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|read_cmd
+id|aci_read_cmd
 c_func
 (paren
 l_int|0xf1
@@ -2064,7 +2296,7 @@ id|aci_reset
 )paren
 (brace
 multiline_comment|/* initialize ACI mixer */
-id|implied_cmd
+id|aci_implied_cmd
 c_func
 (paren
 l_int|0xff

@@ -2061,6 +2061,9 @@ comma
 multiline_comment|/* pad_mmap */
 id|open_pad
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|close_pad
 comma
 l_int|NULL

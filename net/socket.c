@@ -199,6 +199,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code... */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sock_close
 comma
 l_int|NULL
@@ -5675,16 +5678,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|proto_init
 r_void
+id|__init
 id|proto_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern
@@ -5745,16 +5745,13 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sock_init
 r_void
+id|__init
 id|sock_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

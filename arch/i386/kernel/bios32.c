@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * bios32.c - Low-Level PCI Access&n; *&n; * $Id: bios32.c,v 1.44 1998/08/04 14:54:56 mj Exp $&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing&n; *      (Unix and Linux consulting and custom programming)&n; *      Drew@Colorado.EDU&n; *      +1 (303) 786-7975&n; *&n; * Drew&squot;s work was sponsored by:&n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; * For more information, please consult the following manuals (look at&n; * http://www.pcisig.com/ for how to get them):&n; *&n; * PCI BIOS Specification&n; * PCI Local Bus Specification&n; * PCI to PCI Bridge Specification&n; * PCI System Design Guide&n; *&n; *&n; * CHANGELOG :&n; * Jun 17, 1994 : Modified to accommodate the broken pre-PCI BIOS SPECIFICATION&n; *&t;Revision 2.0 present on &lt;thys@dennis.ee.up.ac.za&gt;&squot;s ASUS mainboard.&n; *&n; * Jan 5,  1995 : Modified to probe PCI hardware at boot time by Frederic&n; *     Potter, potter@cao-vlsi.ibp.fr&n; *&n; * Jan 10, 1995 : Modified to store the information about configured pci&n; *      devices into a list, which can be accessed via /proc/pci by&n; *      Curtis Varner, cvarner@cs.ucr.edu&n; *&n; * Jan 12, 1995 : CPU-PCI bridge optimization support by Frederic Potter.&n; *&t;Alpha version. Intel &amp; UMC chipset support only.&n; *&n; * Apr 16, 1995 : Source merge with the DEC Alpha PCI support. Most of the code&n; *&t;moved to drivers/pci/pci.c.&n; *&n; * Dec 7, 1996  : Added support for direct configuration access of boards&n; *      with Intel compatible access schemes (tsbogend@alpha.franken.de)&n; *&n; * Feb 3, 1997  : Set internal functions to static, save/restore flags&n; *&t;avoid dead locks reading broken PCI BIOS, werner@suse.de &n; *&n; * Apr 26, 1997 : Fixed case when there is BIOS32, but not PCI BIOS&n; *&t;(mj@atrey.karlin.mff.cuni.cz)&n; *&n; * May 7,  1997 : Added some missing cli()&squot;s. [mj]&n; * &n; * Jun 20, 1997 : Corrected problems in &quot;conf1&quot; type accesses.&n; *      (paubert@iram.es)&n; *&n; * Aug 2,  1997 : Split to PCI BIOS handling and direct PCI access parts&n; *&t;and cleaned it up...     Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; * Feb 6,  1998 : No longer using BIOS to find devices and device classes. [mj]&n; *&n; * May 1,  1998 : Support for peer host bridges. [mj]&n; *&n; * Jun 19, 1998 : Changed to use spinlocks, so that PCI configuration space&n; *&t;can be accessed from interrupts even on SMP systems. [mj]&n; *&n; * August  1998 : Better support for peer host bridges and more paranoid&n; *&t;checks for direct hardware access. Ugh, this file starts to look as&n; *&t;a large gallery of common hardware bug workarounds (watch the comments)&n; *&t;-- the PCI specs themselves are sane, but most implementors should be&n; *&t;hit hard with &bslash;hammer scaled &bslash;magstep5. [mj]&n; */
+multiline_comment|/*&n; * bios32.c - Low-Level PCI Access&n; *&n; * $Id: bios32.c,v 1.45 1998/08/15 10:41:04 mj Exp $&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing&n; *      (Unix and Linux consulting and custom programming)&n; *      Drew@Colorado.EDU&n; *      +1 (303) 786-7975&n; *&n; * Drew&squot;s work was sponsored by:&n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; * For more information, please consult the following manuals (look at&n; * http://www.pcisig.com/ for how to get them):&n; *&n; * PCI BIOS Specification&n; * PCI Local Bus Specification&n; * PCI to PCI Bridge Specification&n; * PCI System Design Guide&n; *&n; *&n; * CHANGELOG :&n; * Jun 17, 1994 : Modified to accommodate the broken pre-PCI BIOS SPECIFICATION&n; *&t;Revision 2.0 present on &lt;thys@dennis.ee.up.ac.za&gt;&squot;s ASUS mainboard.&n; *&n; * Jan 5,  1995 : Modified to probe PCI hardware at boot time by Frederic&n; *     Potter, potter@cao-vlsi.ibp.fr&n; *&n; * Jan 10, 1995 : Modified to store the information about configured pci&n; *      devices into a list, which can be accessed via /proc/pci by&n; *      Curtis Varner, cvarner@cs.ucr.edu&n; *&n; * Jan 12, 1995 : CPU-PCI bridge optimization support by Frederic Potter.&n; *&t;Alpha version. Intel &amp; UMC chipset support only.&n; *&n; * Apr 16, 1995 : Source merge with the DEC Alpha PCI support. Most of the code&n; *&t;moved to drivers/pci/pci.c.&n; *&n; * Dec 7, 1996  : Added support for direct configuration access of boards&n; *      with Intel compatible access schemes (tsbogend@alpha.franken.de)&n; *&n; * Feb 3, 1997  : Set internal functions to static, save/restore flags&n; *&t;avoid dead locks reading broken PCI BIOS, werner@suse.de &n; *&n; * Apr 26, 1997 : Fixed case when there is BIOS32, but not PCI BIOS&n; *&t;(mj@atrey.karlin.mff.cuni.cz)&n; *&n; * May 7,  1997 : Added some missing cli()&squot;s. [mj]&n; * &n; * Jun 20, 1997 : Corrected problems in &quot;conf1&quot; type accesses.&n; *      (paubert@iram.es)&n; *&n; * Aug 2,  1997 : Split to PCI BIOS handling and direct PCI access parts&n; *&t;and cleaned it up...     Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; * Feb 6,  1998 : No longer using BIOS to find devices and device classes. [mj]&n; *&n; * May 1,  1998 : Support for peer host bridges. [mj]&n; *&n; * Jun 19, 1998 : Changed to use spinlocks, so that PCI configuration space&n; *&t;can be accessed from interrupts even on SMP systems. [mj]&n; *&n; * August  1998 : Better support for peer host bridges and more paranoid&n; *&t;checks for direct hardware access. Ugh, this file starts to look as&n; *&t;a large gallery of common hardware bug workarounds (watch the comments)&n; *&t;-- the PCI specs themselves are sane, but most implementors should be&n; *&t;hit hard with &bslash;hammer scaled &bslash;magstep5. [mj]&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3852,6 +3852,16 @@ id|pci_root
 suffix:semicolon
 r_int
 id|i
+comma
+id|cnt
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|d
 suffix:semicolon
 macro_line|#ifdef CONFIG_PCI_DIRECT
 multiline_comment|/*&n;&t; * Don&squot;t search for peer host bridges if we use config type 2&n;&t; * since it reads bogus values for non-existent busses and&n;&t; * chipsets supporting multiple primary busses use conf1 anyway.&n;&t; */
@@ -3866,6 +3876,35 @@ id|pci_direct_conf2
 r_return
 suffix:semicolon
 macro_line|#endif
+r_for
+c_loop
+(paren
+id|d
+op_assign
+id|b-&gt;devices
+suffix:semicolon
+id|d
+suffix:semicolon
+id|d
+op_assign
+id|d-&gt;sibling
+)paren
+r_if
+c_cond
+(paren
+(paren
+id|d
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+)paren
+op_eq
+id|PCI_CLASS_BRIDGE_HOST
+)paren
+id|cnt
+op_increment
+suffix:semicolon
 r_do
 (brace
 r_int
@@ -3874,6 +3913,11 @@ op_assign
 id|b-&gt;subordinate
 op_plus
 l_int|1
+suffix:semicolon
+r_int
+id|found
+op_assign
+l_int|0
 suffix:semicolon
 id|u16
 id|l
@@ -3928,6 +3972,47 @@ id|n
 comma
 id|i
 )paren
+suffix:semicolon
+id|found
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_read_config_word
+c_func
+(paren
+id|n
+comma
+id|i
+comma
+id|PCI_CLASS_DEVICE
+comma
+op_amp
+id|l
+)paren
+op_logical_and
+id|l
+op_eq
+id|PCI_CLASS_BRIDGE_HOST
+)paren
+id|cnt
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|found
+op_logical_and
+id|cnt
+OG
+l_int|0
+)paren
+(brace
+id|cnt
+op_decrement
 suffix:semicolon
 id|printk
 c_func
@@ -4244,7 +4329,16 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; *&n;&t;&t; * NOTE! If the &quot;original&quot; interrupt is marked as an old-fashioned&n;&t;&t; * irq, we have to keep it old-fashioned even if it&squot;s a PCI device&n;&t;&t; * and we could have found it in the MP-table transform.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|IO_APIC_IRQ
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+)paren
 (brace
 r_int
 id|irq

@@ -847,11 +847,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Called from init/main.c to reserve IO ports. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|reserve_setup
 r_void
+id|__init
 id|reserve_setup
 c_func
 (paren
@@ -862,7 +860,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int

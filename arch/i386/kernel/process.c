@@ -2316,6 +2316,41 @@ id|next-&gt;tss.tr
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Save away %fs and %gs. No need to save %es and %ds, as&n;&t; * those are always kernel segments while inside the kernel.&n;&t; */
+id|asm
+r_volatile
+(paren
+l_string|&quot;movl %%fs,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|prev-&gt;tss.fs
+)paren
+)paren
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;movl %%gs,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|prev-&gt;tss.gs
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Re-load LDT if necessary */
 r_if
 c_cond
@@ -2363,41 +2398,7 @@ id|next-&gt;tss.cr3
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Save away %fs and %gs. No need to save %es and %ds, as&n;&t; * those are always kernel segments while inside the kernel.&n;&t; * Restore the new values.&n;&t; */
-id|asm
-r_volatile
-(paren
-l_string|&quot;movl %%fs,%0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|prev-&gt;tss.fs
-)paren
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;movl %%gs,%0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|prev-&gt;tss.gs
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * Restore %fs and %gs.&n;&t; */
 id|loadsegment
 c_func
 (paren
@@ -2485,16 +2486,7 @@ id|pt_regs
 id|regs
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
+r_return
 id|do_fork
 c_func
 (paren
@@ -2505,14 +2497,6 @@ comma
 op_amp
 id|regs
 )paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 DECL|function|sys_clone
@@ -2534,14 +2518,6 @@ r_int
 r_int
 id|newsp
 suffix:semicolon
-r_int
-id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|clone_flags
 op_assign
 id|regs.ebx
@@ -2560,8 +2536,7 @@ id|newsp
 op_assign
 id|regs.esp
 suffix:semicolon
-id|ret
-op_assign
+r_return
 id|do_fork
 c_func
 (paren
@@ -2572,14 +2547,6 @@ comma
 op_amp
 id|regs
 )paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_execve() executes a new program.&n; */

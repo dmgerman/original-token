@@ -68,10 +68,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifndef NULL
-DECL|macro|NULL
-mdefine_line|#define NULL 0
-macro_line|#endif
 macro_line|#include &lt;linux/kdev_t.h&gt;
 r_int
 id|seagate_st0x_biosparam

@@ -483,6 +483,9 @@ comma
 multiline_comment|/* rtc_mmap */
 id|rtc_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|rtc_release
 )brace
 suffix:semicolon

@@ -72,6 +72,9 @@ comma
 multiline_comment|/* very special open code */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 l_int|NULL
 multiline_comment|/* can&squot;t fsync */

@@ -2114,6 +2114,9 @@ comma
 multiline_comment|/* mmap */
 id|open_aux
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|release_aux
 comma
 l_int|NULL

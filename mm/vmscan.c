@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* &n; * When are we next due for a page scan? &n; */
@@ -1659,6 +1660,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Before we start the kernel thread, print out the &n; * kswapd initialization message (otherwise the init message &n; * may be printed in the middle of another driver&squot;s init &n; * message).  It looks very bad when that happens.&n; */
 DECL|function|kswapd_setup
 r_void
+id|__init
 id|kswapd_setup
 c_func
 (paren

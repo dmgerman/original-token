@@ -3697,6 +3697,9 @@ comma
 multiline_comment|/* mmap */
 id|aux_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|aux_release
 comma
 l_int|NULL

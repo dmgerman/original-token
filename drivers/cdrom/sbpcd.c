@@ -26057,9 +26057,12 @@ id|audio_state
 op_ne
 id|audio_pausing
 )paren
-r_return
+id|RETURN_UP
+c_func
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -27047,11 +27050,13 @@ id|audio_state
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0
 id|cc_DriveReset
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|RETURN_UP
 c_func
 (paren
@@ -27195,7 +27200,8 @@ id|st
 OL
 l_int|0
 )paren
-r_return
+id|RETURN_UP
+c_func
 (paren
 id|st
 )paren

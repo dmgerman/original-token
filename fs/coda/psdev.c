@@ -1569,6 +1569,9 @@ multiline_comment|/* coda_psdev_mmap */
 id|coda_psdev_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|coda_psdev_release
 comma
 multiline_comment|/* release */

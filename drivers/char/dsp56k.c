@@ -2415,6 +2415,9 @@ comma
 multiline_comment|/* no special dsp56k_mmap */
 id|dsp56k_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|dsp56k_release
 comma
 l_int|NULL

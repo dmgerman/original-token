@@ -36,11 +36,9 @@ id|panic_timeout
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|panic_setup
 r_void
+id|__init
 id|panic_setup
 c_func
 (paren
@@ -51,7 +49,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if

@@ -348,14 +348,12 @@ id|tmpsig
 op_assign
 id|current-&gt;blocked
 suffix:semicolon
-id|siginitset
+id|siginitsetinv
 c_func
 (paren
 op_amp
 id|current-&gt;blocked
 comma
-op_complement
-(paren
 id|sigmask
 c_func
 (paren
@@ -366,7 +364,6 @@ id|sigmask
 c_func
 (paren
 id|SIGSTOP
-)paren
 )paren
 )paren
 suffix:semicolon

@@ -1505,7 +1505,7 @@ id|n
 suffix:semicolon
 )brace
 DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user(to, from, n)&t;&t;&bslash;&n;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n; __constant_copy_from_user(to, from, n) :&t;&bslash;&n; __generic_copy_from_user(to, from, n))
+mdefine_line|#define copy_from_user(to, from, n)&t;&t;&bslash;&n;{ void *__to = (to);&t;&t;&t;&t;&bslash;&n;  void *__from = (from);&t;&t;&t;&bslash;&n;  unsigned long __n = (n);&t;&t;&t;&bslash;&n;  char *__end = (char *)__to + __n;&t;&t;&bslash;&n;  unsigned long __res =&t;&t;&t;&t;&bslash;&n;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n; __constant_copy_from_user(to, from, n) :&t;&bslash;&n; __generic_copy_from_user(to, from, n));&t;&bslash;&n;  if (__res) memset(__end - __res, 0, __res);&t;&bslash;&n;  res; }
 DECL|macro|copy_to_user
 mdefine_line|#define copy_to_user(to, from, n)&t;&t;&bslash;&n;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n; __constant_copy_to_user(to, from, n) :&t;&t;&bslash;&n; __generic_copy_to_user(to, from, n))
 DECL|macro|__copy_from_user

@@ -990,6 +990,9 @@ multiline_comment|/* mmap */
 id|sgi_graphics_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sgi_graphics_close
 comma
 multiline_comment|/* release */

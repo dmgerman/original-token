@@ -6098,16 +6098,13 @@ id|tasklist_lock
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sched_init
 r_void
+id|__init
 id|sched_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;We have to do a little magic to get the first&n;&t; *&t;process right in SMP mode.&n;&t; */

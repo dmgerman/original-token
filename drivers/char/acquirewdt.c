@@ -444,6 +444,9 @@ comma
 multiline_comment|/* No mmap */
 id|acq_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|acq_close
 )brace
 suffix:semicolon

@@ -1232,6 +1232,9 @@ comma
 multiline_comment|/* No mmap */
 id|nvram_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|nvram_release
 )brace
 suffix:semicolon

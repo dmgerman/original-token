@@ -14,6 +14,14 @@ macro_line|#ifndef PCI_DEVICE_ID_BT849
 DECL|macro|PCI_DEVICE_ID_BT849
 mdefine_line|#define PCI_DEVICE_ID_BT849     0x351
 macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_BT878
+DECL|macro|PCI_DEVICE_ID_BT878
+mdefine_line|#define PCI_DEVICE_ID_BT878     0x36e
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_BT879
+DECL|macro|PCI_DEVICE_ID_BT879
+mdefine_line|#define PCI_DEVICE_ID_BT879     0x36f
+macro_line|#endif
 multiline_comment|/* Brooktree 848 registers */
 DECL|macro|BT848_DSTATUS
 mdefine_line|#define BT848_DSTATUS          0x000
@@ -445,11 +453,6 @@ DECL|macro|BT848_RISC_COUNT
 mdefine_line|#define BT848_RISC_COUNT       0x120
 DECL|macro|BT848_GPIO_DATA
 mdefine_line|#define BT848_GPIO_DATA        0x200
-multiline_comment|/* Bt878 register */
-DECL|macro|BT878_DEVCTRL
-mdefine_line|#define BT878_DEVCTRL 0x40
-DECL|macro|BT878_NTBF
-mdefine_line|#define BT878_NTBF 0x02
 multiline_comment|/* Bt848 RISC commands */
 multiline_comment|/* only for the SYNC RISC command */
 DECL|macro|BT848_FIFO_STATUS_FM1
@@ -526,5 +529,14 @@ DECL|macro|BT848_PLL_F_HI
 mdefine_line|#define BT848_PLL_F_HI         0x0F4
 DECL|macro|BT848_PLL_XCI
 mdefine_line|#define BT848_PLL_XCI          0x0F8
+DECL|macro|BT848_PLL_X
+mdefine_line|#define BT848_PLL_X            (1&lt;&lt;7)
+DECL|macro|BT848_PLL_C
+mdefine_line|#define BT848_PLL_C            (1&lt;&lt;6)
+multiline_comment|/* Bt878 register */
+DECL|macro|BT878_DEVCTRL
+mdefine_line|#define BT878_DEVCTRL 0x40
+DECL|macro|BT878_EN_TBFX
+mdefine_line|#define BT878_EN_TBFX 0x02
 macro_line|#endif
 eof

@@ -647,8 +647,7 @@ id|block_group
 )braket
 )paren
 (brace
-id|slot
-op_assign
+r_return
 l_int|0
 suffix:semicolon
 )brace

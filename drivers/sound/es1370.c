@@ -4915,6 +4915,9 @@ multiline_comment|/* mmap */
 op_amp
 id|es1370_open_mixdev
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 op_amp
 id|es1370_release_mixdev
 comma
@@ -8828,6 +8831,9 @@ comma
 op_amp
 id|es1370_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 op_amp
 id|es1370_release
 comma
@@ -10977,6 +10983,9 @@ comma
 op_amp
 id|es1370_open_dac
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 op_amp
 id|es1370_release_dac
 comma
@@ -12382,6 +12391,9 @@ multiline_comment|/* mmap */
 op_amp
 id|es1370_midi_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 op_amp
 id|es1370_midi_release
 comma

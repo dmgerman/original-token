@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.h,v 1.80 1998/07/21 10:06:40 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
+multiline_comment|/*&n; *&t;$Id: pci.h,v 1.84 1998/08/17 23:06:43 cort Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
 macro_line|#ifndef LINUX_PCI_H
 DECL|macro|LINUX_PCI_H
 mdefine_line|#define LINUX_PCI_H
@@ -618,8 +618,12 @@ DECL|macro|PCI_DEVICE_ID_IBM_SERVERAID
 mdefine_line|#define PCI_DEVICE_ID_IBM_SERVERAID&t;0x002e
 DECL|macro|PCI_DEVICE_ID_IBM_TR_WAKE
 mdefine_line|#define PCI_DEVICE_ID_IBM_TR_WAKE&t;0x003e
+DECL|macro|PCI_DEVICE_ID_IBM_MPIC
+mdefine_line|#define PCI_DEVICE_ID_IBM_MPIC&t;&t;0x0046
 DECL|macro|PCI_DEVICE_ID_IBM_3780IDSP
 mdefine_line|#define PCI_DEVICE_ID_IBM_3780IDSP&t;0x007d
+DECL|macro|PCI_DEVICE_ID_IBM_MPIC_2
+mdefine_line|#define PCI_DEVICE_ID_IBM_MPIC_2&t;0xffff
 DECL|macro|PCI_VENDOR_ID_WD
 mdefine_line|#define PCI_VENDOR_ID_WD&t;&t;0x101c
 DECL|macro|PCI_DEVICE_ID_WD_7197
@@ -969,6 +973,12 @@ DECL|macro|PCI_DEVICE_ID_DATABOOK_87144
 mdefine_line|#define PCI_DEVICE_ID_DATABOOK_87144&t;0xb106
 DECL|macro|PCI_VENDOR_ID_PLX
 mdefine_line|#define PCI_VENDOR_ID_PLX&t;&t;0x10b5
+DECL|macro|PCI_DEVICE_ID_PLX_9060
+mdefine_line|#define PCI_DEVICE_ID_PLX_9060&t;&t;0x9060
+DECL|macro|PCI_DEVICE_ID_PLX_9060ES
+mdefine_line|#define PCI_DEVICE_ID_PLX_9060ES&t;0x906E
+DECL|macro|PCI_DEVICE_ID_PLX_9060SD
+mdefine_line|#define PCI_DEVICE_ID_PLX_9060SD&t;0x906D
 DECL|macro|PCI_DEVICE_ID_PLX_9080
 mdefine_line|#define PCI_DEVICE_ID_PLX_9080&t;&t;0x9080
 DECL|macro|PCI_VENDOR_ID_MADGE

@@ -1789,6 +1789,9 @@ multiline_comment|/* MMAP */
 id|pcwd_open
 comma
 multiline_comment|/* Open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|pcwd_close
 comma
 multiline_comment|/* Release */

@@ -3877,6 +3877,9 @@ comma
 multiline_comment|/* sparcaudio_mmap */
 l_int|NULL
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sparcaudioctl_release
 )brace
 suffix:semicolon

@@ -3304,7 +3304,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Called when retiring the last use of a file pointer.&n; */
 DECL|function|__fput
-r_int
+r_void
 id|__fput
 c_func
 (paren
@@ -3328,11 +3328,6 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-r_int
-id|error
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3340,8 +3335,6 @@ id|filp-&gt;f_op
 op_logical_and
 id|filp-&gt;f_op-&gt;release
 )paren
-id|error
-op_assign
 id|filp-&gt;f_op
 op_member_access_from_pointer
 id|release
@@ -3375,9 +3368,6 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
-r_return
-id|error
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * &quot;id&quot; is the POSIX thread ID. We use the&n; * files pointer for this..&n; */
 DECL|function|close_fp
@@ -3394,6 +3384,9 @@ id|fl_owner_t
 id|id
 )paren
 (brace
+r_int
+id|retval
+suffix:semicolon
 r_struct
 id|dentry
 op_star
@@ -3432,12 +3425,35 @@ comma
 id|id
 )paren
 suffix:semicolon
-r_return
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|filp-&gt;f_op
+op_logical_and
+id|filp-&gt;f_op-&gt;flush
+)paren
+id|retval
+op_assign
+id|filp-&gt;f_op
+op_member_access_from_pointer
+id|flush
+c_func
+(paren
+id|filp
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren
 id|filp
 )paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Careful here! We test whether the file pointer is NULL before&n; * releasing the fd. This ensures that one clone task can&squot;t release&n; * an fd while another clone is opening it.&n; */

@@ -253,6 +253,9 @@ multiline_comment|/* mmap */
 id|sgi_gfx_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sgi_gfx_close
 comma
 multiline_comment|/* release */
@@ -706,6 +709,9 @@ multiline_comment|/* mmap */
 id|sgi_keyb_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 comma
 multiline_comment|/* release */
@@ -1219,6 +1225,9 @@ multiline_comment|/* mmap */
 id|sgi_mouse_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sgi_mouse_close
 comma
 multiline_comment|/* release */

@@ -718,6 +718,8 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|soundcore_open

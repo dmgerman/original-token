@@ -1383,6 +1383,9 @@ comma
 multiline_comment|/* mmap */
 id|omirr_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|omirr_release
 comma
 l_int|NULL

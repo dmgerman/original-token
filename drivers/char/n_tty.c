@@ -4178,7 +4178,7 @@ multiline_comment|/*&n; * Helper function to speed up read_chan.  It is only cal
 DECL|function|copy_from_read_buf
 r_static
 r_inline
-r_void
+r_int
 id|copy_from_read_buf
 c_func
 (paren
@@ -4198,8 +4198,15 @@ op_star
 id|nr
 )paren
 (brace
+r_int
+id|retval
+suffix:semicolon
 id|ssize_t
 id|n
+suffix:semicolon
+id|retval
+op_assign
+l_int|0
 suffix:semicolon
 id|n
 op_assign
@@ -4223,14 +4230,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|n
 )paren
-r_return
-suffix:semicolon
-multiline_comment|/* N.B. copy_to_user may work only partially */
-id|n
-op_sub_assign
+(brace
+id|retval
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -4245,6 +4249,10 @@ id|tty-&gt;read_tail
 comma
 id|n
 )paren
+suffix:semicolon
+id|n
+op_sub_assign
+id|retval
 suffix:semicolon
 id|tty-&gt;read_tail
 op_assign
@@ -4273,6 +4281,10 @@ op_star
 id|nr
 op_sub_assign
 id|n
+suffix:semicolon
+)brace
+r_return
+id|retval
 suffix:semicolon
 )brace
 DECL|function|read_chan
@@ -4891,7 +4903,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* N.B. check for errors writing to user space? */
+r_int
+id|uncopied
+suffix:semicolon
+id|uncopied
+op_assign
 id|copy_from_read_buf
 c_func
 (paren
@@ -4904,6 +4920,8 @@ op_amp
 id|nr
 )paren
 suffix:semicolon
+id|uncopied
+op_add_assign
 id|copy_from_read_buf
 c_func
 (paren
@@ -4916,6 +4934,20 @@ op_amp
 id|nr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|uncopied
+)paren
+(brace
+id|retval
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* If there is enough space in the read buffer now, let the&n;&t;&t; * low-level driver know. We use n_tty_chars_in_buffer() to&n;&t;&t; * check the buffer, as it now knows about canonical mode.&n;&t;&t; * Otherwise, if the driver is throttled and the line is&n;&t;&t; * longer than TTY_THRESHOLD_UNTHROTTLE in canonical mode,&n;&t;&t; * we won&squot;t get any more characters.&n;&t;&t; */
 r_if

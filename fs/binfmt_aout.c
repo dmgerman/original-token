@@ -1446,10 +1446,6 @@ op_minus
 id|ENOEXEC
 suffix:semicolon
 )brace
-id|current-&gt;personality
-op_assign
-id|PER_LINUX
-suffix:semicolon
 id|fd_offset
 op_assign
 id|N_TXTOFF
@@ -1573,6 +1569,10 @@ r_return
 id|retval
 suffix:semicolon
 multiline_comment|/* OK, This is the point of no return */
+id|current-&gt;personality
+op_assign
+id|PER_LINUX
+suffix:semicolon
 macro_line|#if defined(__sparc__) &amp;&amp; !defined(__sparc_v9__)
 id|memcpy
 c_func
@@ -2761,16 +2761,13 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_aout_binfmt
 r_int
+id|__init
 id|init_aout_binfmt
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return

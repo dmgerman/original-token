@@ -367,6 +367,7 @@ id|jiffies
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;RPC: bad timeout value %ld - setting to 10 sec!&bslash;n&quot;
 comma
 id|task-&gt;tk_timeout
@@ -486,6 +487,7 @@ id|task-&gt;tk_timeout
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;RPC: task w/ running timer in rpc_make_runnable!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -734,6 +736,7 @@ l_int|0xf00baa
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;RPC: attempt to wake up non-existing task!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1170,6 +1173,7 @@ id|task
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;RPC: rpc_execute called for sleeping task!!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1334,6 +1338,7 @@ id|rpciod_pid
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;RPC: rpciod waiting on sync task!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1348,7 +1353,7 @@ op_amp
 id|task-&gt;tk_wait
 )paren
 suffix:semicolon
-multiline_comment|/* When the task received a signal, remove from&n;&t;&t;&t; * any queues etc, and make runnable again.&n;&t;&t;&t; *&n;&t;&t;&t; * The &quot;intr&quot; property isnt handled here. rpc_do_call&n;&t;&t;&t; * has changed the signal mask of the process for&n;&t;&t;&t; * a synchronous rpc call. If a signal gets through&n;&t;&t;&t; * this then its real.&n;&t;&t;&t; */
+multiline_comment|/* When the task received a signal, remove from&n;&t;&t;&t; * any queues etc, and make runnable again. */
 r_if
 c_cond
 (paren
@@ -1494,6 +1499,7 @@ id|rpc_inhibit
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;RPC: execution inhibited!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1508,6 +1514,7 @@ id|executing
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;RPC: %d tasks executed&bslash;n&quot;
 comma
 id|executing
@@ -2582,6 +2589,14 @@ id|rpc_inhibit
 op_decrement
 suffix:semicolon
 )brace
+DECL|variable|rpciod_running
+r_static
+r_struct
+id|semaphore
+id|rpciod_running
+op_assign
+id|MUTEX_LOCKED
+suffix:semicolon
 multiline_comment|/*&n; * This is the rpciod kernel thread&n; */
 r_static
 r_int
@@ -2629,11 +2644,11 @@ id|rpciod_pid
 op_assign
 id|current-&gt;pid
 suffix:semicolon
-id|wake_up
+id|up
 c_func
 (paren
 op_amp
-id|rpciod_idle
+id|rpciod_running
 )paren
 suffix:semicolon
 id|exit_files
@@ -2648,6 +2663,13 @@ c_func
 id|current
 )paren
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 id|siginitsetinv
 c_func
 (paren
@@ -2659,6 +2681,19 @@ c_func
 (paren
 id|SIGKILL
 )paren
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 id|current-&gt;session
@@ -2700,36 +2735,11 @@ c_func
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sigismember
-c_func
-(paren
-op_amp
-id|current-&gt;signal
-comma
-id|SIGKILL
-)paren
-)paren
-(brace
 id|rpciod_killall
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;rpciod: ignoring signal (%d users)&bslash;n&quot;
-comma
-id|rpciod_users
-)paren
-suffix:semicolon
-)brace
 id|flush_signals
 c_func
 (paren
@@ -2831,6 +2841,7 @@ id|all_tasks
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;rpciod: active tasks at shutdown?!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2902,7 +2913,7 @@ c_cond
 id|all_tasks
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
 l_string|&quot;rpciod_killall: waiting for tasks to exit&bslash;n&quot;
@@ -3009,6 +3020,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;rpciod_up: no pid, %d users??&bslash;n&quot;
 comma
 id|rpciod_users
@@ -3039,20 +3051,24 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;rpciod_up: create thread failed, error=%d&bslash;n&quot;
 comma
 id|error
 )paren
 suffix:semicolon
+id|rpciod_users
+op_decrement
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
 )brace
-id|sleep_on
+id|down
 c_func
 (paren
 op_amp
-id|rpciod_idle
+id|rpciod_running
 )paren
 suffix:semicolon
 id|error
@@ -3125,6 +3141,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;rpciod_down: pid=%d, no users??&bslash;n&quot;
 comma
 id|rpciod_pid
@@ -3137,7 +3154,7 @@ op_logical_neg
 id|rpciod_pid
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
 l_string|&quot;rpciod_down: Nothing to do!&bslash;n&quot;
@@ -3188,7 +3205,7 @@ c_loop
 id|rpciod_pid
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
 l_string|&quot;rpciod_down: waiting for pid %d to exit&bslash;n&quot;
@@ -3205,7 +3222,7 @@ c_func
 )paren
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
 l_string|&quot;rpciod_down: caught signal&bslash;n&quot;

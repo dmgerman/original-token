@@ -67,7 +67,6 @@ id|request_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|function|ap_release
 r_static
 r_void
@@ -88,7 +87,6 @@ id|filp
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|ap_request
 r_static
 r_void
@@ -896,15 +894,12 @@ multiline_comment|/* mmap */
 id|ap_open
 comma
 multiline_comment|/* open */
-macro_line|#ifndef MODULE
 l_int|NULL
 comma
-multiline_comment|/* no special release code... */
-macro_line|#else
+multiline_comment|/* flush */
 id|ap_release
 comma
 multiline_comment|/* module needs to decrement use count */
-macro_line|#endif
 id|block_fsync
 comma
 multiline_comment|/* fsync */

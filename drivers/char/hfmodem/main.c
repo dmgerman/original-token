@@ -2565,6 +2565,9 @@ multiline_comment|/* hfmodem_mmap */
 id|hfmodem_open
 comma
 multiline_comment|/* hfmodem_open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|hfmodem_close
 comma
 multiline_comment|/* hfmodem_close */

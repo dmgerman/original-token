@@ -1189,6 +1189,9 @@ comma
 multiline_comment|/* mmap */
 id|envctrl_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|envctrl_release
 )brace
 suffix:semicolon

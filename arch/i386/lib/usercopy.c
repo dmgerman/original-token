@@ -1,6 +1,5 @@
 multiline_comment|/* &n; * User address space access functions.&n; * The non inlined parts of asm-i386/uaccess.h are here.&n; *&n; * Copyright 1997 Andi Kleen &lt;ak@muc.de&gt;&n; * Copyright 1997 Linus Torvalds&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
-r_inline
 r_int
 r_int
 DECL|function|__generic_copy_to_user
@@ -48,7 +47,6 @@ r_return
 id|n
 suffix:semicolon
 )brace
-r_inline
 r_int
 r_int
 DECL|function|__generic_copy_from_user
@@ -82,7 +80,7 @@ comma
 id|n
 )paren
 )paren
-id|__copy_user
+id|__copy_user_zeroing
 c_func
 (paren
 id|to

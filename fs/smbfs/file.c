@@ -1503,6 +1503,9 @@ multiline_comment|/* mmap(struct file*, struct vm_area_struct*) */
 id|smb_file_open
 comma
 multiline_comment|/* open(struct inode*, struct file*) */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|smb_file_release
 comma
 multiline_comment|/* release(struct inode*, struct file*) */

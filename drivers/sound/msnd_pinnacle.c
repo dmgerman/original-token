@@ -4021,6 +4021,9 @@ l_int|NULL
 comma
 id|dev_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|dev_close
 comma
 )brace

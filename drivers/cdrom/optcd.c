@@ -8139,6 +8139,9 @@ multiline_comment|/* mmap */
 id|opt_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|opt_release
 comma
 multiline_comment|/* release */

@@ -330,6 +330,9 @@ multiline_comment|/* mmap */
 id|cdrom_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|cdrom_release
 comma
 multiline_comment|/* release */
@@ -4742,6 +4745,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|cdrom_sysctl_unregister
 r_static
 r_void
@@ -4758,6 +4762,7 @@ id|cdrom_sysctl_header
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* endif MODULE */
 macro_line|#endif /* endif CONFIG_SYSCTL */
 macro_line|#ifdef MODULE
 DECL|function|init_module

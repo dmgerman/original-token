@@ -9200,6 +9200,9 @@ multiline_comment|/* mmap */
 id|floppy_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|floppy_release
 comma
 multiline_comment|/* release */

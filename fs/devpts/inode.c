@@ -252,7 +252,6 @@ id|uid
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* To shut up gcc */
 id|gid_t
 id|gid
 op_assign
@@ -270,18 +269,15 @@ comma
 op_star
 id|value
 suffix:semicolon
+id|this_char
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|options
 )paren
-r_return
-l_int|1
-suffix:semicolon
-r_for
-c_loop
-(paren
 id|this_char
 op_assign
 id|strtok
@@ -291,6 +287,10 @@ id|options
 comma
 l_string|&quot;,&quot;
 )paren
+suffix:semicolon
+r_for
+c_loop
+(paren
 suffix:semicolon
 id|this_char
 suffix:semicolon

@@ -363,6 +363,9 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 l_int|NULL
 comma
 multiline_comment|/* fsync */

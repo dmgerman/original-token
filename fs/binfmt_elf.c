@@ -5966,16 +5966,13 @@ id|has_dumped
 suffix:semicolon
 )brace
 macro_line|#endif&t;&t;/* USE_ELF_CORE_DUMP */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_elf_binfmt
 r_int
+id|__init
 id|init_elf_binfmt
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return

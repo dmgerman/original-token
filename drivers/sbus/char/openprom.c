@@ -2614,6 +2614,9 @@ comma
 multiline_comment|/* openprom_mmap */
 id|openprom_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|openprom_release
 )brace
 suffix:semicolon

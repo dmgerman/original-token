@@ -172,6 +172,9 @@ macro_line|#else
 id|ext2_open_file
 comma
 macro_line|#endif
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|ext2_release_file
 comma
 multiline_comment|/* release */

@@ -10301,6 +10301,9 @@ comma
 multiline_comment|/* no mmap */
 id|adb_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|adb_release
 )brace
 suffix:semicolon
@@ -11045,6 +11048,9 @@ comma
 multiline_comment|/* no mmap */
 id|adb_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|adb_release
 )brace
 suffix:semicolon

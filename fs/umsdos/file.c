@@ -188,6 +188,9 @@ comma
 multiline_comment|/* no special open is needed */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* release */
 id|file_fsync
 multiline_comment|/* fsync */
@@ -286,6 +289,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open is needed */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 comma
 multiline_comment|/* release */
@@ -387,6 +393,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open is needed */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 comma
 multiline_comment|/* release */

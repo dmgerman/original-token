@@ -6951,16 +6951,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* ===================== Init ======================= */
 multiline_comment|/*&n; * allocate the hash table and init the free list&n; * Use gfp() for the hash table to decrease TLB misses, use&n; * SLAB cache for buffer heads.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|buffer_init
 r_void
+id|__init
 id|buffer_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

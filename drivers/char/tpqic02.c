@@ -9277,6 +9277,9 @@ multiline_comment|/* mmap not allowed */
 id|qic02_tape_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|qic02_tape_release
 comma
 multiline_comment|/* release */

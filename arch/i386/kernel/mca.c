@@ -157,6 +157,8 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|proc_mca_inode_operations

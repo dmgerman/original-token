@@ -223,6 +223,20 @@ op_star
 id|buf
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|shm_unuse
+c_func
+(paren
+r_int
+r_int
+id|entry
+comma
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_SHM_H_ */
 eof

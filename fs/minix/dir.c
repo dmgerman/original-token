@@ -81,6 +81,9 @@ comma
 multiline_comment|/* no special open code */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 id|file_fsync
 multiline_comment|/* default fsync */

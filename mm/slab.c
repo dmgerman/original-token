@@ -720,11 +720,9 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Initialisation - setup the `cache&squot; cache. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|kmem_cache_init
 r_int
+id|__init
 id|kmem_cache_init
 c_func
 (paren
@@ -733,7 +731,6 @@ id|start
 comma
 r_int
 id|end
-)paren
 )paren
 (brace
 r_int
@@ -949,16 +946,13 @@ id|start
 suffix:semicolon
 )brace
 multiline_comment|/* Initialisation - setup remaining internal and general caches.&n; * Called after the gfp() functions have been enabled, and before smp_init().&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|kmem_cache_sizes_init
 r_void
+id|__init
 id|kmem_cache_sizes_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

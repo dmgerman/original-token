@@ -2591,6 +2591,9 @@ l_int|NULL
 comma
 id|stl_memopen
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|stl_memclose
 comma
 l_int|NULL

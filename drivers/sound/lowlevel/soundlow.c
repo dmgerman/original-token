@@ -2,6 +2,7 @@ multiline_comment|/*&n; * lowlevel/init.c - Calls initialization code for config
 macro_line|#include &quot;lowlevel.h&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;../soundvers.h&quot;
 macro_line|#ifdef LOWLEVEL_MODULE
 DECL|variable|lowlevel_version
@@ -51,6 +52,7 @@ c_func
 (paren
 r_void
 )paren
+id|__init
 suffix:semicolon
 r_extern
 r_void
@@ -59,6 +61,7 @@ c_func
 (paren
 r_void
 )paren
+id|__init
 suffix:semicolon
 multiline_comment|/*&n; * There are two places where you can insert initialization calls of&n; * low level drivers. sound_init_lowlevel_drivers() is called after&n; * the sound driver has been initialized (the normal case)&n; * while sound_preinit_lowlevel_drivers() is called before that.&n; */
 r_void

@@ -722,6 +722,9 @@ comma
 multiline_comment|/* netlink_mmap */
 id|netlink_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|netlink_release
 )brace
 suffix:semicolon

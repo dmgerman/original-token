@@ -202,6 +202,9 @@ comma
 multiline_comment|/* mmap */
 id|kmsg_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|kmsg_release
 comma
 l_int|NULL

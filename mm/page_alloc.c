@@ -976,12 +976,10 @@ macro_line|#endif&t;
 DECL|macro|LONG_ALIGN
 mdefine_line|#define LONG_ALIGN(x) (((x)+(sizeof(long))-1)&amp;~((sizeof(long))-1))
 multiline_comment|/*&n; * set up the free-area data structures:&n; *   - mark all pages reserved&n; *   - mark all memory queues empty&n; *   - clear the memory bitmaps&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|free_area_init
 r_int
 r_int
+id|__init
 id|free_area_init
 c_func
 (paren
@@ -992,7 +990,6 @@ comma
 r_int
 r_int
 id|end_mem
-)paren
 )paren
 (brace
 id|mem_map_t

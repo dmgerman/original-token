@@ -447,6 +447,9 @@ comma
 multiline_comment|/* MMap */
 id|softdog_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|softdog_release
 comma
 l_int|NULL

@@ -186,6 +186,9 @@ comma
 multiline_comment|/* open(struct inode *, struct file *) */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 l_int|NULL
 multiline_comment|/* fsync */

@@ -2534,6 +2534,7 @@ r_struct
 id|nfs_fattr
 id|fattr
 suffix:semicolon
+multiline_comment|/* Don&squot;t bother revalidating if we&squot;ve done it recently */
 r_if
 c_cond
 (paren
@@ -2998,6 +2999,40 @@ id|S_IFMT
 r_goto
 id|out_changed
 suffix:semicolon
+multiline_comment|/*&n;&t; * If we have pending write-back entries, we don&squot;t want&n;&t; * to look at the size the server sends us too closely..&n;&t; * In particular, ignore the server if it tells us that&n;&t; * the file is smaller or older than we locally think it&n;&t; * is.. &n;&t; */
+r_if
+c_cond
+(paren
+id|NFS_WRITEBACK
+c_func
+(paren
+id|inode
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inode-&gt;i_size
+OG
+id|fattr-&gt;size
+)paren
+id|fattr-&gt;size
+op_assign
+id|inode-&gt;i_size
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_mtime
+OG
+id|fattr-&gt;mtime.seconds
+)paren
+id|fattr-&gt;mtime.seconds
+op_assign
+id|inode-&gt;i_mtime
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * If the size or mtime changed from outside, we want&n;&t; * to invalidate the local caches immediately.&n;&t; */
 r_if
 c_cond

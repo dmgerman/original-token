@@ -5742,6 +5742,9 @@ multiline_comment|/* mmap */
 id|sjcd_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sjcd_release
 comma
 multiline_comment|/* release */

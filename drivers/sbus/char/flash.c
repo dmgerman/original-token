@@ -520,6 +520,9 @@ id|flash_mmap
 comma
 id|flash_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|flash_release
 )brace
 suffix:semicolon

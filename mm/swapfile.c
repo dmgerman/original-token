@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt; /* for blk_size */
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|variable|nr_swapfiles
@@ -1432,6 +1433,14 @@ c_func
 (paren
 op_amp
 id|tasklist_lock
+)paren
+suffix:semicolon
+id|shm_unuse
+c_func
+(paren
+id|entry
+comma
+id|page
 )paren
 suffix:semicolon
 multiline_comment|/* Now get rid of the extra reference to the temporary&n;                   page we&squot;ve been using. */

@@ -2703,7 +2703,6 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|sb_dsp_init
-r_static
 r_int
 id|sb_dsp_init
 c_func

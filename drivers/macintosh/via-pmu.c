@@ -5812,6 +5812,9 @@ multiline_comment|/* no mmap */
 id|pmu_open
 comma
 l_int|NULL
+comma
+multiline_comment|/* flush */
+l_int|NULL
 multiline_comment|/* no release */
 )brace
 suffix:semicolon

@@ -781,11 +781,11 @@ suffix:semicolon
 DECL|macro|COPY
 mdefine_line|#define COPY(x)&t;&t;err |= __get_user(regs-&gt;x, &amp;sc-&gt;x)
 DECL|macro|COPY_SEG
-mdefine_line|#define COPY_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;   err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc)&t;&t;/* not a NULL selectors */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 0x4) != 0x4&t;/* not a LDT selector */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 3) != 3)&t;/* not a RPL3 GDT selector */&t;&bslash;&n;&t;&t;  goto badframe;&t;&t;&t;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp; }
+mdefine_line|#define COPY_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp; }
 DECL|macro|COPY_SEG_STRICT
-mdefine_line|#define COPY_SEG_STRICT(seg)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc) &amp;&amp; (tmp &amp; 3) != 3) goto badframe;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp; }
+mdefine_line|#define COPY_SEG_STRICT(seg)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  regs-&gt;x##seg = tmp|3; }
 DECL|macro|GET_SEG
-mdefine_line|#define GET_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  if ((tmp &amp; 0xfffc)&t;&t;/* not a NULL selectors */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 0x4) != 0x4&t;/* not a LDT selector */&t;&bslash;&n;&t;      &amp;&amp; (tmp &amp; 3) != 3)&t;/* not a RPL3 GDT selector */&t;&bslash;&n;&t;&t;  goto badframe;&t;&t;&t;&t;&t;&bslash;&n;&t;  loadsegment(seg,tmp); }
+mdefine_line|#define GET_SEG(seg)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ unsigned short tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  err |= __get_user(tmp, &amp;sc-&gt;seg);&t;&t;&t;&t;&bslash;&n;&t;  loadsegment(seg,tmp); }
 id|GET_SEG
 c_func
 (paren
@@ -2226,29 +2226,6 @@ r_int
 )paren
 id|ka-&gt;sa.sa_handler
 suffix:semicolon
-(brace
-r_int
-r_int
-id|seg
-op_assign
-id|__USER_DS
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|seg
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|seg
-)paren
-)paren
-suffix:semicolon
 id|set_fs
 c_func
 (paren
@@ -2257,21 +2234,20 @@ id|USER_DS
 suffix:semicolon
 id|regs-&gt;xds
 op_assign
-id|seg
+id|__USER_DS
 suffix:semicolon
 id|regs-&gt;xes
 op_assign
-id|seg
+id|__USER_DS
 suffix:semicolon
 id|regs-&gt;xss
 op_assign
-id|seg
+id|__USER_DS
 suffix:semicolon
 id|regs-&gt;xcs
 op_assign
 id|__USER_CS
 suffix:semicolon
-)brace
 id|regs-&gt;eflags
 op_and_assign
 op_complement
@@ -2673,29 +2649,6 @@ r_int
 )paren
 id|ka-&gt;sa.sa_handler
 suffix:semicolon
-(brace
-r_int
-r_int
-id|seg
-op_assign
-id|__USER_DS
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|seg
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|seg
-)paren
-)paren
-suffix:semicolon
 id|set_fs
 c_func
 (paren
@@ -2704,21 +2657,20 @@ id|USER_DS
 suffix:semicolon
 id|regs-&gt;xds
 op_assign
-id|seg
+id|__USER_DS
 suffix:semicolon
 id|regs-&gt;xes
 op_assign
-id|seg
+id|__USER_DS
 suffix:semicolon
 id|regs-&gt;xss
 op_assign
-id|seg
+id|__USER_DS
 suffix:semicolon
 id|regs-&gt;xcs
 op_assign
 id|__USER_CS
 suffix:semicolon
-)brace
 id|regs-&gt;eflags
 op_and_assign
 op_complement

@@ -559,6 +559,9 @@ multiline_comment|/* mmap */
 id|sgi_usemaclone_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sgi_usemaclone_release
 comma
 multiline_comment|/* release */

@@ -66,6 +66,16 @@ op_star
 suffix:semicolon
 r_static
 r_int
+id|nfs_file_flush
+c_func
+(paren
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
+r_static
+r_int
 id|nfs_file_close
 c_func
 (paren
@@ -124,6 +134,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open is needed */
+id|nfs_file_flush
+comma
+multiline_comment|/* flush */
 id|nfs_file_close
 comma
 multiline_comment|/* release */
@@ -218,7 +231,7 @@ macro_line|#ifndef IS_SWAPFILE
 DECL|macro|IS_SWAPFILE
 macro_line|# define IS_SWAPFILE(inode)&t;(0)
 macro_line|#endif
-multiline_comment|/*&n; * Flush all dirty pages, and check for write errors.&n; *&n; * Note that since the file close operation is called only by the&n; * _last_ process to close the file, we need to flush _all_ dirty &n; * pages. This also means that there is little sense in checking&n; * for errors for this specific process -- we should probably just&n; * clear all errors.&n; */
+multiline_comment|/*&n; * Sync the file..&n; */
 r_static
 r_int
 DECL|function|nfs_file_close
@@ -287,6 +300,29 @@ id|error
 suffix:semicolon
 r_return
 id|status
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Flush all dirty pages, and check for write errors.&n; *&n; * We should probably do this better - this does get called at every&n; * close, so we should probably just flush the changes that &quot;this&quot;&n; * file has done and report on only those.&n; *&n; * Right now we use the &quot;flush everything&quot; approach. Overkill, but&n; * works.&n; */
+r_static
+r_int
+DECL|function|nfs_file_flush
+id|nfs_file_flush
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_return
+id|nfs_file_close
+c_func
+(paren
+id|file-&gt;f_dentry-&gt;d_inode
+comma
+id|file
+)paren
 suffix:semicolon
 )brace
 r_static

@@ -42,6 +42,16 @@ DECL|macro|FIXADDR_SIZE
 mdefine_line|#define FIXADDR_SIZE&t;(__end_of_fixed_addresses &lt;&lt; PAGE_SHIFT)
 DECL|macro|FIXADDR_START
 mdefine_line|#define FIXADDR_START&t;(FIXADDR_TOP - FIXADDR_SIZE)
+DECL|macro|__fix_to_virt
+mdefine_line|#define __fix_to_virt(x)&t;(FIXADDR_TOP - ((x) &lt;&lt; PAGE_SHIFT))
+r_extern
+r_void
+id|__this_fixmap_does_not_exist
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * &squot;index to address&squot; translation. If anyone tries to use the idx&n; * directly without tranlation, we catch the bug with a NULL-deference&n; * kernel oops. Illegal ranges of incoming indices are caught too.&n; */
 DECL|function|fix_to_virt
 r_extern
@@ -57,7 +67,7 @@ r_int
 id|idx
 )paren
 (brace
-multiline_comment|/*&n;&t; * this branch gets completely eliminated after inlining,&n;&t; * except when someone tries to use fixaddr indices in an&n;&t; * illegal way. (such as mixing up address types or using&n;&t; * out-of-range indices)&n;&t; */
+multiline_comment|/*&n;&t; * this branch gets completely eliminated after inlining,&n;&t; * except when someone tries to use fixaddr indices in an&n;&t; * illegal way. (such as mixing up address types or using&n;&t; * out-of-range indices).&n;&t; *&n;&t; * If it doesn&squot;t get removed, the linker will complain&n;&t; * loudly with a reasonably clear error message..&n;&t; */
 r_if
 c_cond
 (paren
@@ -65,19 +75,16 @@ id|idx
 op_ge
 id|__end_of_fixed_addresses
 )paren
-id|panic
+id|__this_fixmap_does_not_exist
 c_func
 (paren
-l_string|&quot;illegal fixaddr index!&quot;
 )paren
 suffix:semicolon
 r_return
-id|FIXADDR_TOP
-op_minus
+id|__fix_to_virt
+c_func
 (paren
 id|idx
-op_lshift
-id|PAGE_SHIFT
 )paren
 suffix:semicolon
 )brace

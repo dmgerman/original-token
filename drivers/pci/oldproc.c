@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.16 1998/07/19 17:50:18 davem Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.20 1998/08/23 12:12:01 mj Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -920,9 +920,29 @@ c_func
 (paren
 id|IBM
 comma
+id|IBM_MPIC
+comma
+l_string|&quot;MPIC-2 Interrupt Controller&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|IBM
+comma
 id|IBM_3780IDSP
 comma
 l_string|&quot;MWave DSP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|IBM
+comma
+id|IBM_MPIC_2
+comma
+l_string|&quot;MPIC-2 ASIC Interrupt Controller&quot;
 )paren
 comma
 id|DEVICE

@@ -1250,6 +1250,9 @@ comma
 multiline_comment|/* tty_mmap */
 id|tty_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|tty_release
 comma
 l_int|NULL
@@ -1284,6 +1287,9 @@ multiline_comment|/* hung_up_tty_mmap */
 l_int|NULL
 comma
 multiline_comment|/* hung_up_tty_open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|tty_release
 comma
 multiline_comment|/* hung_up_tty_release */
@@ -8196,6 +8202,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Initialize the console device. This is called *early*, so&n; * we can&squot;t necessarily depend on lots of kernel help here.&n; * Just do some early initializations, and do the complex setup&n; * later.&n; */
 DECL|function|console_init
 r_int
+id|__init
 id|console_init
 c_func
 (paren

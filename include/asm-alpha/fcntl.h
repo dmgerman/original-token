@@ -28,6 +28,8 @@ DECL|macro|O_SYNC
 mdefine_line|#define O_SYNC&t;&t;040000
 DECL|macro|FASYNC
 mdefine_line|#define FASYNC&t;&t;020000&t;/* fcntl, for BSD compatibility */
+DECL|macro|O_DIRECT
+mdefine_line|#define O_DIRECT&t;040000&t;/* direct disk access - should check with OSF/1 */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

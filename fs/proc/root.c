@@ -108,6 +108,9 @@ comma
 multiline_comment|/* no special open code */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 l_int|NULL
 multiline_comment|/* can&squot;t fsync */
@@ -299,6 +302,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 comma
 multiline_comment|/* no special release code */
@@ -967,6 +973,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 comma
 multiline_comment|/* no special release code */
@@ -3937,7 +3946,6 @@ id|get_pid_list
 c_func
 (paren
 r_int
-r_int
 id|index
 comma
 r_int
@@ -3952,14 +3960,13 @@ op_star
 id|p
 suffix:semicolon
 r_int
-id|nr
-op_assign
-id|FIRST_PROCESS_ENTRY
-suffix:semicolon
-r_int
 id|nr_pids
 op_assign
 l_int|0
+suffix:semicolon
+id|index
+op_sub_assign
+id|FIRST_PROCESS_ENTRY
 suffix:semicolon
 id|read_lock
 c_func
@@ -3976,18 +3983,6 @@ id|p
 (brace
 r_int
 id|pid
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|nr
-op_increment
-OL
-id|index
-)paren
-r_continue
-suffix:semicolon
-id|pid
 op_assign
 id|p-&gt;pid
 suffix:semicolon
@@ -3996,6 +3991,16 @@ c_cond
 (paren
 op_logical_neg
 id|pid
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|index
+op_ge
+l_int|0
 )paren
 r_continue
 suffix:semicolon

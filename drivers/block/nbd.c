@@ -1664,6 +1664,9 @@ multiline_comment|/* mmap */
 id|nbd_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|nbd_release
 multiline_comment|/* release */
 )brace

@@ -12,36 +12,13 @@ macro_line|#include &quot;bt848.h&quot;
 macro_line|#include &lt;linux/videodev.h&gt;
 DECL|macro|MAX_CLIPRECS
 mdefine_line|#define MAX_CLIPRECS&t;100
+DECL|macro|MAX_GBUFFERS
+mdefine_line|#define MAX_GBUFFERS&t;2
 DECL|macro|RISCMEM_LEN
 mdefine_line|#define RISCMEM_LEN&t;(32744*2)
+multiline_comment|/* maximum needed buffer size for extended VBI frame mode capturing */
 DECL|macro|BTTV_MAX_FBUF
-mdefine_line|#define BTTV_MAX_FBUF&t;0x144000
-multiline_comment|/* clipping rectangle */
-DECL|struct|cliprec
-r_struct
-id|cliprec
-(brace
-DECL|member|x
-DECL|member|y
-DECL|member|x2
-DECL|member|y2
-r_int
-id|x
-comma
-id|y
-comma
-id|x2
-comma
-id|y2
-suffix:semicolon
-DECL|member|next
-r_struct
-id|cliprec
-op_star
-id|next
-suffix:semicolon
-)brace
-suffix:semicolon
+mdefine_line|#define BTTV_MAX_FBUF&t;0x151000
 macro_line|#ifdef __KERNEL__
 DECL|struct|bttv_window
 r_struct
@@ -164,10 +141,30 @@ DECL|member|tuner_type
 r_int
 id|tuner_type
 suffix:semicolon
+DECL|member|channel
+r_int
+id|channel
+suffix:semicolon
+DECL|member|nr
+r_int
+r_int
+id|nr
+suffix:semicolon
 DECL|member|id
 r_int
 r_int
 id|id
+suffix:semicolon
+DECL|member|bus
+r_int
+r_char
+id|bus
+suffix:semicolon
+multiline_comment|/* PCI bus the Bt848 is on */
+DECL|member|devfn
+r_int
+r_char
+id|devfn
 suffix:semicolon
 DECL|member|dev
 r_struct
@@ -175,6 +172,12 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
+DECL|member|irq
+r_int
+r_char
+id|irq
+suffix:semicolon
+multiline_comment|/* IRQ used by Bt848 card */
 DECL|member|revision
 r_int
 r_char
@@ -303,15 +306,10 @@ id|cap
 suffix:semicolon
 DECL|member|cliprecs
 r_struct
-id|cliprec
+id|video_clip
 op_star
 id|cliprecs
 suffix:semicolon
-DECL|member|ncr
-r_int
-id|ncr
-suffix:semicolon
-multiline_comment|/* number of clipping rectangles */
 DECL|member|ogbuffers
 r_struct
 id|gbuffer
@@ -359,6 +357,27 @@ r_int
 r_int
 id|gre_next
 suffix:semicolon
+DECL|member|grf
+DECL|member|grf_next
+r_int
+id|grf
+comma
+id|grf_next
+suffix:semicolon
+multiline_comment|/* frame numbers in grab queue */
+DECL|member|frame_stat
+r_int
+id|frame_stat
+(braket
+id|MAX_GBUFFERS
+)braket
+suffix:semicolon
+DECL|macro|GBUFFER_UNUSED
+mdefine_line|#define GBUFFER_UNUSED       0
+DECL|macro|GBUFFER_GRABBING
+mdefine_line|#define GBUFFER_GRABBING     1
+DECL|macro|GBUFFER_DONE
+mdefine_line|#define GBUFFER_DONE         2
 DECL|member|fbuffer
 r_char
 op_star
@@ -388,6 +407,30 @@ DECL|member|pll
 r_int
 id|pll
 suffix:semicolon
+DECL|member|Fsc
+r_int
+r_int
+id|Fsc
+suffix:semicolon
+DECL|member|field
+r_int
+r_int
+id|field
+suffix:semicolon
+DECL|member|last_field
+r_int
+r_int
+id|last_field
+suffix:semicolon
+multiline_comment|/* number of last grabbed field */
+DECL|member|i2c_command
+r_int
+id|i2c_command
+suffix:semicolon
+DECL|member|triton1
+r_int
+id|triton1
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -416,6 +459,8 @@ DECL|macro|BTTV_WRITEE
 mdefine_line|#define BTTV_WRITEE&t;&t;_IOR(&squot;v&squot;,  BASE_VIDIOCPRIVATE+1, char [256])
 DECL|macro|BTTV_GRAB
 mdefine_line|#define BTTV_GRAB&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+2, struct gbuf)
+DECL|macro|BTTV_FIELDNR
+mdefine_line|#define BTTV_FIELDNR&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+2, unsigned int)
 DECL|macro|BTTV_UNKNOWN
 mdefine_line|#define BTTV_UNKNOWN       0x00
 DECL|macro|BTTV_MIRO

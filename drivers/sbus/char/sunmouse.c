@@ -1747,6 +1747,9 @@ l_int|NULL
 comma
 id|sun_mouse_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sun_mouse_close
 comma
 l_int|NULL

@@ -586,6 +586,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|initrd_release
 comma
 multiline_comment|/* release */
@@ -668,7 +671,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|rd_release
 r_static
 r_int
@@ -692,7 +694,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|variable|fd_fops
 r_static
 r_struct
@@ -724,15 +725,12 @@ multiline_comment|/* mmap */
 id|rd_open
 comma
 multiline_comment|/* open */
-macro_line|#ifndef MODULE
 l_int|NULL
 comma
-multiline_comment|/* no special release code... */
-macro_line|#else
+multiline_comment|/* flush */
 id|rd_release
 comma
 multiline_comment|/* module needs to decrement use count */
-macro_line|#endif
 id|block_fsync
 multiline_comment|/* fsync */
 )brace

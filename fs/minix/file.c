@@ -71,6 +71,9 @@ comma
 multiline_comment|/* no special open is needed */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* release */
 id|minix_sync_file
 multiline_comment|/* fsync */

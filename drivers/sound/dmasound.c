@@ -21195,6 +21195,9 @@ comma
 multiline_comment|/* mixer_mmap */
 id|mixer_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|mixer_release
 comma
 )brace
@@ -22799,6 +22802,9 @@ comma
 multiline_comment|/* sq_mmap */
 id|sq_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sq_release
 comma
 )brace
@@ -23566,6 +23572,9 @@ comma
 multiline_comment|/* state_mmap */
 id|state_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|state_release
 comma
 )brace

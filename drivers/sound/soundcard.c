@@ -3765,6 +3765,9 @@ id|sound_mmap
 comma
 id|sound_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sound_release
 )brace
 suffix:semicolon

@@ -4355,6 +4355,9 @@ multiline_comment|/*  MMAP              */
 id|mtrr_open
 comma
 multiline_comment|/*  Open              */
+l_int|NULL
+comma
+multiline_comment|/*  Flush             */
 id|mtrr_close
 comma
 multiline_comment|/*  Release           */

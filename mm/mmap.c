@@ -2574,16 +2574,13 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* Kill the cache. */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|vma_init
 r_void
+id|__init
 id|vma_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|vm_area_cachep

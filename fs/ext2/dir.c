@@ -80,6 +80,9 @@ comma
 multiline_comment|/* no special open code */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 id|ext2_sync_file
 comma

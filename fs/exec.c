@@ -62,16 +62,13 @@ op_star
 )paren
 l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|binfmt_setup
 r_void
+id|__init
 id|binfmt_setup
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_BINFMT_MISC

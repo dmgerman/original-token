@@ -1792,6 +1792,9 @@ comma
 multiline_comment|/* no special open code */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 l_int|NULL
 multiline_comment|/* fsync */
@@ -1824,6 +1827,9 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 comma
 multiline_comment|/* no special release code */
@@ -1861,6 +1867,9 @@ comma
 multiline_comment|/* no special open code */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 l_int|NULL
 multiline_comment|/* fsync */
@@ -1896,6 +1905,9 @@ comma
 multiline_comment|/* no special open code */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* no special release code */
 l_int|NULL
 multiline_comment|/* fsync */
@@ -1929,6 +1941,9 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
+multiline_comment|/* flush */
+l_int|NULL
 multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
@@ -1960,6 +1975,9 @@ multiline_comment|/* full_mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 multiline_comment|/* no special release code */
 )brace
@@ -2131,6 +2149,9 @@ multiline_comment|/* mmap */
 id|memory_open
 comma
 multiline_comment|/* just a selector for the real open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 l_int|NULL
 comma
 multiline_comment|/* release */

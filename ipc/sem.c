@@ -96,15 +96,12 @@ id|sem_seq
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sem_init
 r_void
+id|__init
 id|sem_init
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

@@ -1931,6 +1931,9 @@ comma
 multiline_comment|/* lp_mmap */
 id|lp_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|lp_release
 )brace
 suffix:semicolon

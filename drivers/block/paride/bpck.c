@@ -1,7 +1,7 @@
 multiline_comment|/* &n;&t;bpck.c&t;(c) 1996-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;&t;&t;            Under the terms of the GNU public license.&n;&n;&t;bpck.c is a low-level protocol driver for the MicroSolutions &n;&t;&quot;backpack&quot; parallel port IDE adapter.  &n;&n;*/
-multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.05 init_proto, release_proto, pi-&gt;delay &n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.05 init_proto, release_proto, pi-&gt;delay &n;&t;1.02    GRG 1998.08.15 default pi-&gt;delay returned to 4&n;&n;*/
 DECL|macro|BPCK_VERSION
-mdefine_line|#define&t;BPCK_VERSION&t;&quot;1.01&quot; 
+mdefine_line|#define&t;BPCK_VERSION&t;&quot;1.02&quot; 
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3214,7 +3214,7 @@ l_int|5
 comma
 l_int|2
 comma
-l_int|1
+l_int|4
 comma
 l_int|256
 comma

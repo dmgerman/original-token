@@ -487,7 +487,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* may want to set other processes at some point -- for now demand 0 */
 r_if
 c_cond
 (paren

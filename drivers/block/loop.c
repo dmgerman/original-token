@@ -2996,6 +2996,9 @@ multiline_comment|/* mmap */
 id|lo_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|lo_release
 multiline_comment|/* release */
 )brace

@@ -120,6 +120,18 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_RADIO_MIROPCM20
+r_extern
+r_int
+id|pcm20_init
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|video_init_list
 r_static
 r_struct
@@ -966,6 +978,9 @@ id|video_mmap
 comma
 id|video_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|video_release
 )brace
 suffix:semicolon

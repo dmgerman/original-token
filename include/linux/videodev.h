@@ -756,7 +756,7 @@ mdefine_line|#define VIDIOCGCAP&t;&t;_IOR(&squot;v&squot;,1,struct video_capabil
 DECL|macro|VIDIOCGCHAN
 mdefine_line|#define VIDIOCGCHAN&t;&t;_IOWR(&squot;v&squot;,2,struct video_channel)&t;/* Get channel info (sources) */
 DECL|macro|VIDIOCSCHAN
-mdefine_line|#define VIDIOCSCHAN&t;&t;_IOW(&squot;v&squot;,3,int)&t;&t;&t;&t;/* Set channel &t;*/
+mdefine_line|#define VIDIOCSCHAN&t;&t;_IOW(&squot;v&squot;,3,struct video_channel)&t;/* Set channel &t;*/
 DECL|macro|VIDIOCGTUNER
 mdefine_line|#define VIDIOCGTUNER&t;&t;_IOWR(&squot;v&squot;,4,struct video_tuner)&t;&t;/* Get tuner abilities */
 DECL|macro|VIDIOCSTUNER

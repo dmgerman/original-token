@@ -1566,6 +1566,9 @@ comma
 multiline_comment|/* no mmap on pipes.. surprise */
 id|pipe_read_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|pipe_read_release
 comma
 l_int|NULL
@@ -1595,6 +1598,9 @@ comma
 multiline_comment|/* no mmap on pipes.. surprise */
 id|pipe_read_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|pipe_read_release
 comma
 l_int|NULL
@@ -1624,6 +1630,9 @@ comma
 multiline_comment|/* mmap */
 id|pipe_write_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|pipe_write_release
 comma
 l_int|NULL
@@ -1653,6 +1662,9 @@ comma
 multiline_comment|/* mmap */
 id|pipe_rdwr_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|pipe_rdwr_release
 comma
 l_int|NULL
@@ -1682,6 +1694,9 @@ comma
 multiline_comment|/* no mmap on pipes.. surprise */
 id|pipe_read_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|pipe_read_release
 comma
 l_int|NULL
@@ -1711,6 +1726,9 @@ comma
 multiline_comment|/* mmap */
 id|pipe_write_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|pipe_write_release
 comma
 l_int|NULL
@@ -1740,6 +1758,9 @@ comma
 multiline_comment|/* mmap */
 id|pipe_rdwr_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|pipe_rdwr_release
 comma
 l_int|NULL

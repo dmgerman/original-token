@@ -97,6 +97,9 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open is needed */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|ufs_release_file
 comma
 multiline_comment|/* release */

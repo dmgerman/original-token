@@ -776,6 +776,9 @@ multiline_comment|/* mmap */
 id|aztcd_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|aztcd_release
 comma
 multiline_comment|/* release */

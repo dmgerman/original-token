@@ -1,7 +1,7 @@
 multiline_comment|/* &n;        paride.c  (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;&t;This is the base module for the family of device drivers&n;        that support parallel port IDE devices.  &n;&n;*/
-multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.03&t;Use spinlocks&n;&t;1.02&t;GRG 1998.05.05  init_proto, release_proto, ktti&n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.03&t;Use spinlocks&n;&t;1.02&t;GRG 1998.05.05  init_proto, release_proto, ktti&n;&t;1.03&t;GRG 1998.08.15  eliminate compiler warning&n;&n;*/
 DECL|macro|PI_VERSION
-mdefine_line|#define PI_VERSION      &quot;1.02&quot;
+mdefine_line|#define PI_VERSION      &quot;1.03&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1078,6 +1078,10 @@ id|pp-&gt;name
 suffix:semicolon
 id|pi-&gt;parname
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|pp-&gt;name
 suffix:semicolon
 macro_line|#endif

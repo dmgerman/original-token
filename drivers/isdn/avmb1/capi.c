@@ -1925,6 +1925,9 @@ comma
 multiline_comment|/* capi_mmap */
 id|capi_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|capi_release
 comma
 l_int|NULL

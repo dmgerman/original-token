@@ -1709,6 +1709,9 @@ multiline_comment|/* mmap */
 id|shmiq_qcntl_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|shmiq_qcntl_close
 comma
 multiline_comment|/* close */

@@ -16508,6 +16508,9 @@ multiline_comment|/* mmap */
 id|scsi_tape_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|scsi_tape_close
 comma
 multiline_comment|/* release */

@@ -2590,6 +2590,9 @@ multiline_comment|/* mmap&t;&t;*/
 id|fb_open
 comma
 multiline_comment|/* open &t;*/
+l_int|NULL
+comma
+multiline_comment|/* flush&t;*/
 id|fb_release
 comma
 multiline_comment|/* release &t;*/

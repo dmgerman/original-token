@@ -155,6 +155,9 @@ comma
 multiline_comment|/* open */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* release */
 )brace
 suffix:semicolon
@@ -730,6 +733,9 @@ multiline_comment|/* mmap */
 id|socksys_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|socksys_release
 comma
 multiline_comment|/* release */

@@ -5083,6 +5083,9 @@ multiline_comment|/* mmap */
 id|stram_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|stram_release
 comma
 multiline_comment|/* release */

@@ -39,6 +39,9 @@ comma
 multiline_comment|/* open - not special&t;*/
 l_int|NULL
 comma
+multiline_comment|/* flush&t;&t;*/
+l_int|NULL
+comma
 multiline_comment|/* release&t;&t;*/
 id|file_fsync
 comma

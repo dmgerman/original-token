@@ -3921,6 +3921,9 @@ multiline_comment|/* mmap */
 id|ddv_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|ddv_release
 comma
 id|block_fsync

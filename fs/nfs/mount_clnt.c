@@ -277,10 +277,6 @@ id|clnt-&gt;cl_oneshot
 op_assign
 l_int|1
 suffix:semicolon
-id|clnt-&gt;cl_intr
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 r_return
 id|clnt

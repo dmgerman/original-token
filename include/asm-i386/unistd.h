@@ -46,8 +46,8 @@ DECL|macro|__NR_getpid
 mdefine_line|#define __NR_getpid&t;&t; 20
 DECL|macro|__NR_mount
 mdefine_line|#define __NR_mount&t;&t; 21
-DECL|macro|__NR_oldumount
-mdefine_line|#define __NR_oldumount&t;&t; 22
+DECL|macro|__NR_umount
+mdefine_line|#define __NR_umount&t;&t; 22
 DECL|macro|__NR_setuid
 mdefine_line|#define __NR_setuid&t;&t; 23
 DECL|macro|__NR_getuid
@@ -106,8 +106,8 @@ DECL|macro|__NR_getegid
 mdefine_line|#define __NR_getegid&t;&t; 50
 DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct&t;&t; 51
-DECL|macro|__NR_umount
-mdefine_line|#define __NR_umount&t;&t; 52
+DECL|macro|__NR_umount2
+mdefine_line|#define __NR_umount2&t;&t; 52
 DECL|macro|__NR_lock
 mdefine_line|#define __NR_lock&t;&t; 53
 DECL|macro|__NR_ioctl

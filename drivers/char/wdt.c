@@ -1198,6 +1198,9 @@ comma
 multiline_comment|/* No mmap */
 id|wdt_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|wdt_release
 )brace
 suffix:semicolon

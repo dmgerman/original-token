@@ -3,6 +3,7 @@ multiline_comment|/*&n; * Include the main OSS Lite header file. It include all 
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;../sound_config.h&quot;
 macro_line|#include &quot;../soundmodule.h&quot;
 multiline_comment|/*&n; * Sanity checks&n; */
@@ -19,9 +20,9 @@ macro_line|#if defined(CONFIG_AEDSP16)
 macro_line|#if defined(CONFIG_AEDSP16_SBPRO) &amp;&amp; defined(CONFIG_AEDSP16_MSS)
 macro_line|#error You have to enable only one of the MSS and SBPRO emulations.
 macro_line|#endif
-multiline_comment|/*&n;&n;   READ THIS&n;&n;   This module started to configure the Audio Excel DSP 16 Sound Card.&n;   Now works with the SC-6000 (old aedsp16) and new SC-6600 based cards.&n;&n;   NOTE: I have NO idea about Audio Excel DSP 16 III. If someone owns this&n;   audio card and want to see the kernel support for it, please contact me.&n;&n;   Audio Excel DSP 16 is an SB pro II, Microsoft Sound System and MPU-401&n;   compatible card.&n;   It is software-only configurable (no jumpers to hard-set irq/dma/mpu-irq),&n;   so before this module, the only way to configure the DSP under linux was&n;   boot the MS-DOS loading the sound.sys device driver (this driver soft-&n;   configure the sound board hardware by massaging someone of its registers),&n;   and then ctrl-alt-del to boot linux with the DSP configured by the DOS&n;   driver.&n;&n;   This module works configuring your Audio Excel DSP 16&squot;s irq, dma and&n;   mpu-401-irq. The OSS Lite routines rely on the fact that if the&n;   hardware is there, they can detect it. The problem with AEDSP16 is&n;   that no hardware can be found by the probe routines if the sound card&n;   is not configured properly. Sometimes the kernel probe routines can find&n;   an SBPRO even when the card is not configured (this is the standard setup&n;   of the card), but the SBPRO emulation don&squot;t work well if the card is not&n;   properly initialized. For this reason&n;&n;   aedsp16_init_board()&n;&n;   routine is called before the OSS Lite probe routines try to detect the&n;   hardware.&n;&n;   NOTE (READ THE NOTE TOO, IT CONTAIN USEFUL INFORMATIONS)&n;&n;   NOTE: Now it works with SC-6000 and SC-6600 based audio cards. The new cards&n;   have no jumper switch at all. No more WSS or MPU-401 I/O port switches. They&n;   have to be configured by software.&n;&n;   NOTE: The driver is merged with the new OSS Lite sound driver. It works&n;   as a lowlevel driver.&n;&n;   The Audio Excel DSP 16 Sound Card emulates both SBPRO and MSS;&n;   the OSS Lite sound driver can be configured for SBPRO and MSS cards&n;   at the same time, but the aedsp16 can&squot;t be two cards!!&n;   When we configure it, we have to choose the SBPRO or the MSS emulation&n;   for AEDSP16. We also can install a *REAL* card of the other type (see [1]).&n;&n;   NOTE: If someone can test the combination AEDSP16+MSS or AEDSP16+SBPRO&n;   please let me know if it works.&n;&n;   The MPU-401 support can be compiled in together with one of the other&n;   two operating modes.&n;&n;   NOTE: This is something like plug-and-play: we have only to plug&n;   the AEDSP16 board in the socket, and then configure and compile&n;   a kernel that uses the AEDSP16 software configuration capability.&n;   No jumper setting is needed!&n;&n;   For example, if you want AEDSP16 to be an SBPro, on irq 10, dma 3&n;   you have just to make config the OSS Lite package, configuring&n;   the AEDSP16 sound card, then activating the SBPro emulation mode&n;   and at last configuring IRQ and DMA.&n;   Compile the kernel and run it.&n;&n;   NOTE: This means for SC-6000 cards that you can choose irq and dma,&n;   but not the I/O addresses. To change I/O addresses you have to set&n;   them with jumpers. For SC-6600 cards you have no jumpers so you have&n;   to set up your full card configuration in the make config.&n;&n;   You can change the irq/dma/mirq settings WITHOUT THE NEED to open&n;   your computer and massage the jumpers (there are no irq/dma/mirq&n;   jumpers to be configured anyway, only I/O BASE values have to be&n;   configured with jumpers)&n;&n;   For some ununderstandable reason, the card default of irq 7, dma 1,&n;   don&squot;t work for me. Seems to be an IRQ or DMA conflict. Under heavy&n;   HDD work, the kernel start to erupt out a lot of messages like:&n;&n;   &squot;Sound: DMA timed out - IRQ/DRQ config error?&squot;&n;&n;   For what I can say, I have NOT any conflict at irq 7 (under linux I&squot;m&n;   using the lp polling driver), and dma line 1 is unused as stated by&n;   /proc/dma. I can suppose this is a bug of AEDSP16. I know my hardware so&n;   I&squot;m pretty sure I have not any conflict, but may be I&squot;m wrong. Who knows!&n;   Anyway a setting of irq 10, dma 3 works really fine.&n;&n;   NOTE: if someone can use AEDSP16 with irq 7, dma 1, please let me know&n;   the emulation mode, all the installed hardware and the hardware&n;   configuration (irq and dma settings of all the hardware).&n;&n;   This init module should work with SBPRO+MSS, when one of the two is&n;   the AEDSP16 emulation and the other the real card. (see [1])&n;   For example:&n;&n;   AEDSP16 (0x220) in SBPRO emu (0x220) + real MSS + other&n;   AEDSP16 (0x220) in MSS emu + real SBPRO (0x240) + other&n;&n;   MPU401 should work. (see [2])&n;&n;   [1]&n;       ---&n;       Date: Mon, 29 Jul 1997 08:35:40 +0100&n;       From: Mr S J Greenaway &lt;sjg95@unixfe.rl.ac.uk&gt;&n;&n;       [...]&n;       Just to let you know got my Audio Excel (emulating a MSS) working&n;       with my original SB16, thanks for the driver!&n;       [...]&n;       ---&n;&n;   [2] Not tested by me for lack of hardware.&n;&n;   TODO, WISHES AND TECH&n;&n;   - About I/O ports allocation -&n;&n;   Request the 2x0h region (port base) in any case if we are using this card.&n;&n;   NOTE: the &quot;aedsp16 (base)&quot; string with which we are requesting the aedsp16&n;   port base region (see code) does not mean necessarily that we are emulating&n;   sbpro.  Even if this region is the sbpro I/O ports region, we use this&n;   region to access the control registers of the card, and if emulating&n;   sbpro, I/O sbpro registers too. If we are emulating MSS, the sbpro&n;   registers are not used, in no way, to emulate an sbpro: they are&n;   used only for configuration purposes.&n;&n;   Started Fri Mar 17 16:13:18 MET 1995&n;&n;   v0.1 (ALPHA, was an user-level program called AudioExcelDSP16.c)&n;   - Initial code.&n;   v0.2 (ALPHA)&n;   - Cleanups.&n;   - Integrated with Linux voxware v 2.90-2 kernel sound driver.&n;   - SoundBlaster Pro mode configuration.&n;   - Microsoft Sound System mode configuration.&n;   - MPU-401 mode configuration.&n;   v0.3 (ALPHA)&n;   - Cleanups.&n;   - Rearranged the code to let aedsp16_init_board be more general.&n;   - Erased the REALLY_SLOW_IO. We don&squot;t need it. Erased the linux/io.h&n;   inclusion too. We rely on os.h&n;   - Used the  to get a variable&n;   len string (we are not sure about the len of Copyright string).&n;   This works with any SB and compatible.&n;   - Added the code to request_region at device init (should go in&n;   the main body of voxware).&n;   v0.4 (BETA)&n;   - Better configure.c patch for aedsp16 configuration (better&n;   logic of inclusion of AEDSP16 support)&n;   - Modified the conditional compilation to better support more than&n;   one sound card of the emulated type (read the NOTES above)&n;   - Moved the sb init routine from the attach to the very first&n;   probe in sb_card.c&n;   - Rearrangements and cleanups&n;   - Wiped out some unnecessary code and variables: this is kernel&n;   code so it is better save some TEXT and DATA&n;   - Fixed the request_region code. We must allocate the aedsp16 (sbpro)&n;   I/O ports in any case because they are used to access the DSP&n;   configuration registers and we can not allow anyone to get them.&n;   v0.5&n;   - cleanups on comments&n;   - prep for diffs against v3.0-proto-950402&n;   v0.6&n;   - removed the request_region()s when compiling the MODULE sound.o&n;   because we are not allowed (by the actual voxware structure) to&n;   release_region()&n;   v0.7 (pre ALPHA, not distributed)&n;   - started porting this module to kernel 1.3.84. Dummy probe/attach&n;   routines.&n;   v0.8 (ALPHA)&n;   - attached all the init routines.&n;   v0.9 (BETA)&n;   - Integrated with linux-pre2.0.7&n;   - Integrated with configuration scripts.&n;   - Cleaned up and beautyfied the code.&n;   v0.9.9 (BETA)&n;   - Thanks to Piercarlo Grandi: corrected the conditonal compilation code.&n;     Now only the code configured is compiled in, with some memory saving.&n;   v0.9.10&n;   - Integration into the sound/lowlevel/ section of the sound driver.&n;   - Re-organized the code.&n;   v0.9.11 (not distributed)&n;   - Rewritten the init interface-routines to initialize the AEDSP16 in&n;     one shot.&n;   - More cosmetics.&n;   - SC-6600 support.&n;   - More soft/hard configuration.&n;   v0.9.12&n;   - Refined the v0.9.11 code with conditional compilation to distinguish&n;     between SC-6000 and SC-6600 code.&n;   v1.0.0&n;   - Prep for merging with OSS Lite and Linux kernel 2.1.13&n;   - Corrected a bug in request/check/release region calls (thanks to the&n;     new kernel exception handling).&n;   v1.1&n;   - Revamped for integration with new modularized sound drivers: to enhance&n;     the flexibility of modular version, I have removed all the conditional&n;     compilation for SBPRO, MPU and MSS code. Now it is all managed with&n;     the ae_config structure.&n;&n;   Known Problems:&n;   - Audio Excel DSP 16 III don&squot;t work with this driver.&n;&n;   Credits:&n;   Many thanks to Gerald Britton &lt;gbritton@CapAccess.org&gt;. He helped me a&n;   lot in testing the 0.9.11 and 0.9.12 versions of this driver.&n;&n; */
+multiline_comment|/*&n;&n;   READ THIS&n;&n;   This module started to configure the Audio Excel DSP 16 Sound Card.&n;   Now works with the SC-6000 (old aedsp16) and new SC-6600 based cards.&n;&n;   NOTE: I have NO idea about Audio Excel DSP 16 III. If someone owns this&n;   audio card and want to see the kernel support for it, please contact me.&n;&n;   Audio Excel DSP 16 is an SB pro II, Microsoft Sound System and MPU-401&n;   compatible card.&n;   It is software-only configurable (no jumpers to hard-set irq/dma/mpu-irq),&n;   so before this module, the only way to configure the DSP under linux was&n;   boot the MS-DOS loading the sound.sys device driver (this driver soft-&n;   configure the sound board hardware by massaging someone of its registers),&n;   and then ctrl-alt-del to boot linux with the DSP configured by the DOS&n;   driver.&n;&n;   This module works configuring your Audio Excel DSP 16&squot;s irq, dma and&n;   mpu-401-irq. The OSS Lite routines rely on the fact that if the&n;   hardware is there, they can detect it. The problem with AEDSP16 is&n;   that no hardware can be found by the probe routines if the sound card&n;   is not configured properly. Sometimes the kernel probe routines can find&n;   an SBPRO even when the card is not configured (this is the standard setup&n;   of the card), but the SBPRO emulation don&squot;t work well if the card is not&n;   properly initialized. For this reason&n;&n;   aedsp16_init_board()&n;&n;   routine is called before the OSS Lite probe routines try to detect the&n;   hardware.&n;&n;   NOTE (READ THE NOTE TOO, IT CONTAIN USEFUL INFORMATIONS)&n;&n;   NOTE: Now it works with SC-6000 and SC-6600 based audio cards. The new cards&n;   have no jumper switch at all. No more WSS or MPU-401 I/O port switches. They&n;   have to be configured by software.&n;&n;   NOTE: The driver is merged with the new OSS Lite sound driver. It works&n;   as a lowlevel driver.&n;&n;   The Audio Excel DSP 16 Sound Card emulates both SBPRO and MSS;&n;   the OSS Lite sound driver can be configured for SBPRO and MSS cards&n;   at the same time, but the aedsp16 can&squot;t be two cards!!&n;   When we configure it, we have to choose the SBPRO or the MSS emulation&n;   for AEDSP16. We also can install a *REAL* card of the other type (see [1]).&n;&n;   NOTE: If someone can test the combination AEDSP16+MSS or AEDSP16+SBPRO&n;   please let me know if it works.&n;&n;   The MPU-401 support can be compiled in together with one of the other&n;   two operating modes.&n;&n;   NOTE: This is something like plug-and-play: we have only to plug&n;   the AEDSP16 board in the socket, and then configure and compile&n;   a kernel that uses the AEDSP16 software configuration capability.&n;   No jumper setting is needed!&n;&n;   For example, if you want AEDSP16 to be an SBPro, on irq 10, dma 3&n;   you have just to make config the OSS Lite package, configuring&n;   the AEDSP16 sound card, then activating the SBPro emulation mode&n;   and at last configuring IRQ and DMA.&n;   Compile the kernel and run it.&n;&n;   NOTE: This means for SC-6000 cards that you can choose irq and dma,&n;   but not the I/O addresses. To change I/O addresses you have to set&n;   them with jumpers. For SC-6600 cards you have no jumpers so you have&n;   to set up your full card configuration in the make config.&n;&n;   You can change the irq/dma/mirq settings WITHOUT THE NEED to open&n;   your computer and massage the jumpers (there are no irq/dma/mirq&n;   jumpers to be configured anyway, only I/O BASE values have to be&n;   configured with jumpers)&n;&n;   For some ununderstandable reason, the card default of irq 7, dma 1,&n;   don&squot;t work for me. Seems to be an IRQ or DMA conflict. Under heavy&n;   HDD work, the kernel start to erupt out a lot of messages like:&n;&n;   &squot;Sound: DMA timed out - IRQ/DRQ config error?&squot;&n;&n;   For what I can say, I have NOT any conflict at irq 7 (under linux I&squot;m&n;   using the lp polling driver), and dma line 1 is unused as stated by&n;   /proc/dma. I can suppose this is a bug of AEDSP16. I know my hardware so&n;   I&squot;m pretty sure I have not any conflict, but may be I&squot;m wrong. Who knows!&n;   Anyway a setting of irq 10, dma 3 works really fine.&n;&n;   NOTE: if someone can use AEDSP16 with irq 7, dma 1, please let me know&n;   the emulation mode, all the installed hardware and the hardware&n;   configuration (irq and dma settings of all the hardware).&n;&n;   This init module should work with SBPRO+MSS, when one of the two is&n;   the AEDSP16 emulation and the other the real card. (see [1])&n;   For example:&n;&n;   AEDSP16 (0x220) in SBPRO emu (0x220) + real MSS + other&n;   AEDSP16 (0x220) in MSS emu + real SBPRO (0x240) + other&n;&n;   MPU401 should work. (see [2])&n;&n;   [1]&n;       ---&n;       Date: Mon, 29 Jul 1997 08:35:40 +0100&n;       From: Mr S J Greenaway &lt;sjg95@unixfe.rl.ac.uk&gt;&n;&n;       [...]&n;       Just to let you know got my Audio Excel (emulating a MSS) working&n;       with my original SB16, thanks for the driver!&n;       [...]&n;       ---&n;&n;   [2] Not tested by me for lack of hardware.&n;&n;   TODO, WISHES AND TECH&n;&n;   - About I/O ports allocation -&n;&n;   Request the 2x0h region (port base) in any case if we are using this card.&n;&n;   NOTE: the &quot;aedsp16 (base)&quot; string with which we are requesting the aedsp16&n;   port base region (see code) does not mean necessarily that we are emulating&n;   sbpro.  Even if this region is the sbpro I/O ports region, we use this&n;   region to access the control registers of the card, and if emulating&n;   sbpro, I/O sbpro registers too. If we are emulating MSS, the sbpro&n;   registers are not used, in no way, to emulate an sbpro: they are&n;   used only for configuration purposes.&n;&n;   Started Fri Mar 17 16:13:18 MET 1995&n;&n;   v0.1 (ALPHA, was an user-level program called AudioExcelDSP16.c)&n;   - Initial code.&n;   v0.2 (ALPHA)&n;   - Cleanups.&n;   - Integrated with Linux voxware v 2.90-2 kernel sound driver.&n;   - SoundBlaster Pro mode configuration.&n;   - Microsoft Sound System mode configuration.&n;   - MPU-401 mode configuration.&n;   v0.3 (ALPHA)&n;   - Cleanups.&n;   - Rearranged the code to let aedsp16_init_board be more general.&n;   - Erased the REALLY_SLOW_IO. We don&squot;t need it. Erased the linux/io.h&n;   inclusion too. We rely on os.h&n;   - Used the  to get a variable&n;   len string (we are not sure about the len of Copyright string).&n;   This works with any SB and compatible.&n;   - Added the code to request_region at device init (should go in&n;   the main body of voxware).&n;   v0.4 (BETA)&n;   - Better configure.c patch for aedsp16 configuration (better&n;   logic of inclusion of AEDSP16 support)&n;   - Modified the conditional compilation to better support more than&n;   one sound card of the emulated type (read the NOTES above)&n;   - Moved the sb init routine from the attach to the very first&n;   probe in sb_card.c&n;   - Rearrangements and cleanups&n;   - Wiped out some unnecessary code and variables: this is kernel&n;   code so it is better save some TEXT and DATA&n;   - Fixed the request_region code. We must allocate the aedsp16 (sbpro)&n;   I/O ports in any case because they are used to access the DSP&n;   configuration registers and we can not allow anyone to get them.&n;   v0.5&n;   - cleanups on comments&n;   - prep for diffs against v3.0-proto-950402&n;   v0.6&n;   - removed the request_region()s when compiling the MODULE sound.o&n;   because we are not allowed (by the actual voxware structure) to&n;   release_region()&n;   v0.7 (pre ALPHA, not distributed)&n;   - started porting this module to kernel 1.3.84. Dummy probe/attach&n;   routines.&n;   v0.8 (ALPHA)&n;   - attached all the init routines.&n;   v0.9 (BETA)&n;   - Integrated with linux-pre2.0.7&n;   - Integrated with configuration scripts.&n;   - Cleaned up and beautyfied the code.&n;   v0.9.9 (BETA)&n;   - Thanks to Piercarlo Grandi: corrected the conditonal compilation code.&n;     Now only the code configured is compiled in, with some memory saving.&n;   v0.9.10&n;   - Integration into the sound/lowlevel/ section of the sound driver.&n;   - Re-organized the code.&n;   v0.9.11 (not distributed)&n;   - Rewritten the init interface-routines to initialize the AEDSP16 in&n;     one shot.&n;   - More cosmetics.&n;   - SC-6600 support.&n;   - More soft/hard configuration.&n;   v0.9.12&n;   - Refined the v0.9.11 code with conditional compilation to distinguish&n;     between SC-6000 and SC-6600 code.&n;   v1.0.0&n;   - Prep for merging with OSS Lite and Linux kernel 2.1.13&n;   - Corrected a bug in request/check/release region calls (thanks to the&n;     new kernel exception handling).&n;   v1.1&n;   - Revamped for integration with new modularized sound drivers: to enhance&n;     the flexibility of modular version, I have removed all the conditional&n;     compilation for SBPRO, MPU and MSS code. Now it is all managed with&n;     the ae_config structure.&n;   v1.2&n;   - Module informations added.&n;   - Removed aedsp16_delay_10msec(), now using mdelay(10)&n;   - All data and funcs moved to .*.init section.&n;&n;   Known Problems:&n;   - Audio Excel DSP 16 III don&squot;t work with this driver.&n;&n;   Credits:&n;   Many thanks to Gerald Britton &lt;gbritton@CapAccess.org&gt;. He helped me a&n;   lot in testing the 0.9.11 and 0.9.12 versions of this driver.&n;&n; */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;1.1&quot;&t;&t;/* Version of Audio Excel DSP 16 driver */
+mdefine_line|#define VERSION &quot;1.2&quot;&t;&t;/* Version of Audio Excel DSP 16 driver */
 DECL|macro|AEDSP16_DEBUG
 macro_line|#undef&t;AEDSP16_DEBUG 1&t;&t;/* Define this to enable debug code     */
 DECL|macro|AEDSP16_DEBUG_MORE
@@ -150,41 +151,41 @@ DECL|macro|INIT_MSS
 mdefine_line|#define INIT_MSS    (1&lt;&lt;1)
 DECL|macro|INIT_MPU401
 mdefine_line|#define INIT_MPU401 (1&lt;&lt;2)
-DECL|variable|soft_cfg
+DECL|variable|__initdata
 r_static
 r_int
 id|soft_cfg
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Will contain or&squot;ed values of soft cf */
-DECL|variable|soft_cfg_1
+multiline_comment|/* bitmapped config */
+DECL|variable|__initdata
 r_static
 r_int
-id|soft_cfg_1
+id|soft_cfg_mss
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Will contain or&squot;ed values of some cf */
-DECL|variable|gc
-r_static
-r_int
-id|gc
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* generic counter (utility counter)    */
-DECL|variable|ver
+multiline_comment|/* bitmapped mss config */
+DECL|variable|__initdata
 r_static
 r_int
 id|ver
 (braket
-l_int|3
+id|CARDVERLEN
 )braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
-multiline_comment|/* DSP Version, hi&lt;-ver[0], lo&lt;-ver[1]  */
+multiline_comment|/* DSP Ver:&n;&t;&t;&t;&t;&t;&t;   hi-&gt;ver[0] lo-&gt;ver[1] */
 macro_line|#if defined(CONFIG_SC6600)
-DECL|variable|hard_cfg
 r_static
 r_int
 id|hard_cfg
@@ -192,6 +193,8 @@ id|hard_cfg
 l_int|2
 )braket
 multiline_comment|/* lo&lt;-hard_cfg[0] hi&lt;-hard_cfg[1]      */
+DECL|variable|__initdata
+id|__initdata
 op_assign
 (brace
 l_int|0
@@ -230,9 +233,18 @@ DECL|member|cdrombase
 r_int
 id|cdrombase
 suffix:semicolon
-DECL|variable|decoded_hcfg
 )brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|d_hcfg
 id|decoded_hcfg
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_SC6600 */
 multiline_comment|/* orVals contain the values to be or&squot;ed       &t;&t;&t;&t;*/
@@ -296,13 +308,14 @@ multiline_comment|/* Initialization status of the card    */
 suffix:semicolon
 multiline_comment|/*&n; * Magic values that the DSP will eat when configuring irq/mirq/dma&n; */
 multiline_comment|/* DSP IRQ conversion array             */
-DECL|variable|orIRQ
+DECL|variable|__initdata
 r_static
 r_struct
 id|orVals
 id|orIRQ
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -343,13 +356,14 @@ l_int|0x00
 )brace
 suffix:semicolon
 multiline_comment|/* MPU-401 IRQ conversion array         */
-DECL|variable|orMIRQ
+DECL|variable|__initdata
 r_static
 r_struct
 id|orVals
 id|orMIRQ
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -384,13 +398,14 @@ l_int|0x00
 )brace
 suffix:semicolon
 multiline_comment|/* DMA Channels conversion array        */
-DECL|variable|orDMA
+DECL|variable|__initdata
 r_static
 r_struct
 id|orVals
 id|orDMA
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -418,11 +433,12 @@ l_int|0x00
 )brace
 )brace
 suffix:semicolon
-DECL|variable|ae_config
+DECL|variable|__initdata
 r_static
 r_struct
 id|aedsp16_info
 id|ae_config
+id|__initdata
 op_assign
 (brace
 id|DEF_AEDSP16_IOB
@@ -443,7 +459,7 @@ id|INIT_NONE
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Buffers to store audio card informations&n; */
-DECL|variable|DSPCopyright
+DECL|variable|__initdata
 r_static
 r_char
 id|DSPCopyright
@@ -452,8 +468,14 @@ id|CARDNAMELEN
 op_plus
 l_int|1
 )braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
-DECL|variable|DSPVersion
+DECL|variable|__initdata
 r_static
 r_char
 id|DSPVersion
@@ -462,40 +484,17 @@ id|CARDVERLEN
 op_plus
 l_int|1
 )braket
-suffix:semicolon
-DECL|function|aedsp16_delay_10msec
-r_static
-r_void
-id|aedsp16_delay_10msec
-c_func
-(paren
-r_void
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|gc
+id|__initdata
 op_assign
+(brace
 l_int|0
-suffix:semicolon
-id|gc
-OL
-l_int|1000
-suffix:semicolon
-id|gc
-op_increment
-)paren
-id|udelay
-c_func
-(paren
-l_int|10
-)paren
-suffix:semicolon
+comma
 )brace
+suffix:semicolon
 DECL|function|aedsp16_wait_data
 r_static
 r_int
+id|__init
 id|aedsp16_wait_data
 c_func
 (paren
@@ -587,6 +586,7 @@ suffix:semicolon
 DECL|function|aedsp16_read
 r_static
 r_int
+id|__init
 id|aedsp16_read
 c_func
 (paren
@@ -661,6 +661,7 @@ suffix:semicolon
 DECL|function|aedsp16_test_dsp
 r_static
 r_int
+id|__init
 id|aedsp16_test_dsp
 c_func
 (paren
@@ -690,6 +691,7 @@ suffix:semicolon
 DECL|function|aedsp16_dsp_reset
 r_static
 r_int
+id|__init
 id|aedsp16_dsp_reset
 c_func
 (paren
@@ -788,6 +790,7 @@ suffix:semicolon
 DECL|function|aedsp16_write
 r_static
 r_int
+id|__init
 id|aedsp16_write
 c_func
 (paren
@@ -898,6 +901,7 @@ macro_line|#if defined(CONFIG_SC6600)
 macro_line|#if defined(AEDSP16_INFO) || defined(AEDSP16_DEBUG)
 DECL|function|aedsp16_pinfo
 r_void
+id|__init
 id|aedsp16_pinfo
 c_func
 (paren
@@ -982,6 +986,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|function|aedsp16_hard_decode
 r_void
+id|__init
 id|aedsp16_hard_decode
 c_func
 (paren
@@ -1146,6 +1151,7 @@ suffix:semicolon
 )brace
 DECL|function|aedsp16_hard_encode
 r_void
+id|__init
 id|aedsp16_hard_encode
 c_func
 (paren
@@ -1293,6 +1299,7 @@ suffix:semicolon
 DECL|function|aedsp16_hard_write
 r_static
 r_int
+id|__init
 id|aedsp16_hard_write
 c_func
 (paren
@@ -1495,6 +1502,7 @@ suffix:semicolon
 DECL|function|aedsp16_hard_read
 r_static
 r_int
+id|__init
 id|aedsp16_hard_read
 c_func
 (paren
@@ -1670,6 +1678,7 @@ suffix:semicolon
 DECL|function|aedsp16_ext_cfg_write
 r_static
 r_int
+id|__init
 id|aedsp16_ext_cfg_write
 c_func
 (paren
@@ -1929,6 +1938,7 @@ macro_line|#endif /* CONFIG_SC6600 */
 DECL|function|aedsp16_cfg_write
 r_static
 r_int
+id|__init
 id|aedsp16_cfg_write
 c_func
 (paren
@@ -1989,6 +1999,7 @@ suffix:semicolon
 DECL|function|aedsp16_init_mss
 r_static
 r_int
+id|__init
 id|aedsp16_init_mss
 c_func
 (paren
@@ -2004,9 +2015,10 @@ l_string|&quot;aedsp16_init_mss:&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|aedsp16_delay_10msec
+id|mdelay
 c_func
 (paren
+l_int|10
 )paren
 suffix:semicolon
 r_if
@@ -2041,9 +2053,10 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-id|aedsp16_delay_10msec
+id|mdelay
 c_func
 (paren
+l_int|10
 )paren
 suffix:semicolon
 r_if
@@ -2063,7 +2076,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|soft_cfg_1
+id|soft_cfg_mss
 comma
 id|ae_config.mss_base
 )paren
@@ -2083,6 +2096,7 @@ suffix:semicolon
 DECL|function|aedsp16_setup_board
 r_static
 r_int
+id|__init
 id|aedsp16_setup_board
 c_func
 (paren
@@ -2203,9 +2217,10 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-id|aedsp16_delay_10msec
+id|mdelay
 c_func
 (paren
+l_int|10
 )paren
 suffix:semicolon
 )brace
@@ -2494,6 +2509,7 @@ suffix:semicolon
 DECL|function|aedsp16_stdcfg
 r_static
 r_int
+id|__init
 id|aedsp16_stdcfg
 c_func
 (paren
@@ -2555,6 +2571,7 @@ suffix:semicolon
 DECL|function|aedsp16_dsp_version
 r_static
 r_int
+id|__init
 id|aedsp16_dsp_version
 c_func
 (paren
@@ -2692,6 +2709,7 @@ suffix:semicolon
 DECL|function|aedsp16_dsp_copyright
 r_static
 r_int
+id|__init
 id|aedsp16_dsp_copyright
 c_func
 (paren
@@ -2821,12 +2839,18 @@ suffix:semicolon
 DECL|function|aedsp16_init_tables
 r_static
 r_void
+id|__init
 id|aedsp16_init_tables
 c_func
 (paren
 r_void
 )paren
 (brace
+r_int
+id|i
+op_assign
+l_int|0
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -2854,18 +2878,18 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|gc
+id|i
 op_assign
 l_int|0
 suffix:semicolon
 id|orIRQ
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
 suffix:semicolon
-id|gc
+id|i
 op_increment
 )paren
 r_if
@@ -2873,7 +2897,7 @@ c_cond
 (paren
 id|orIRQ
 (braket
-id|gc
+id|i
 )braket
 dot
 id|val
@@ -2885,16 +2909,16 @@ id|soft_cfg
 op_or_assign
 id|orIRQ
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
 suffix:semicolon
-id|soft_cfg_1
+id|soft_cfg_mss
 op_or_assign
 id|orIRQ
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
@@ -2903,18 +2927,18 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|gc
+id|i
 op_assign
 l_int|0
 suffix:semicolon
 id|orMIRQ
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
 suffix:semicolon
-id|gc
+id|i
 op_increment
 )paren
 r_if
@@ -2922,7 +2946,7 @@ c_cond
 (paren
 id|orMIRQ
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
@@ -2933,7 +2957,7 @@ id|soft_cfg
 op_or_assign
 id|orMIRQ
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
@@ -2941,18 +2965,18 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|gc
+id|i
 op_assign
 l_int|0
 suffix:semicolon
 id|orDMA
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
 suffix:semicolon
-id|gc
+id|i
 op_increment
 )paren
 r_if
@@ -2960,7 +2984,7 @@ c_cond
 (paren
 id|orDMA
 (braket
-id|gc
+id|i
 )braket
 dot
 id|val
@@ -2972,16 +2996,16 @@ id|soft_cfg
 op_or_assign
 id|orDMA
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
 suffix:semicolon
-id|soft_cfg_1
+id|soft_cfg_mss
 op_or_assign
 id|orDMA
 (braket
-id|gc
+id|i
 )braket
 dot
 op_logical_or
@@ -2991,6 +3015,7 @@ suffix:semicolon
 DECL|function|aedsp16_init_board
 r_static
 r_int
+id|__init
 id|aedsp16_init_board
 c_func
 (paren
@@ -3375,9 +3400,10 @@ l_string|&quot;]&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* MODULE || AEDSP16_INFO || AEDSP16_DEBUG */
-id|aedsp16_delay_10msec
+id|mdelay
 c_func
 (paren
+l_int|10
 )paren
 suffix:semicolon
 r_return
@@ -3387,6 +3413,7 @@ suffix:semicolon
 DECL|function|init_aedsp16_sb
 r_static
 r_int
+id|__init
 id|init_aedsp16_sb
 c_func
 (paren
@@ -3441,6 +3468,7 @@ suffix:semicolon
 DECL|function|uninit_aedsp16_sb
 r_static
 r_void
+id|__init
 id|uninit_aedsp16_sb
 c_func
 (paren
@@ -3472,6 +3500,7 @@ suffix:semicolon
 DECL|function|init_aedsp16_mss
 r_static
 r_int
+id|__init
 id|init_aedsp16_mss
 c_func
 (paren
@@ -3582,6 +3611,7 @@ suffix:semicolon
 DECL|function|uninit_aedsp16_mss
 r_static
 r_void
+id|__init
 id|uninit_aedsp16_mss
 c_func
 (paren
@@ -3649,6 +3679,7 @@ suffix:semicolon
 DECL|function|init_aedsp16_mpu
 r_static
 r_int
+id|__init
 id|init_aedsp16_mpu
 c_func
 (paren
@@ -3755,6 +3786,7 @@ suffix:semicolon
 DECL|function|uninit_aedsp16_mpu
 r_static
 r_void
+id|__init
 id|uninit_aedsp16_mpu
 c_func
 (paren
@@ -3825,6 +3857,7 @@ suffix:semicolon
 )brace
 DECL|function|init_aedsp16
 r_int
+id|__init
 id|init_aedsp16
 c_func
 (paren
@@ -4013,6 +4046,7 @@ suffix:semicolon
 )brace
 DECL|function|uninit_aedsp16
 r_void
+id|__init
 id|uninit_aedsp16
 c_func
 (paren
@@ -4103,12 +4137,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|io
+comma
+l_string|&quot;I/O base address (0x220 0x240)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|irq
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;IRQ line (5 7 9 10 11)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -4119,12 +4169,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;dma line (0 1 3)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|mpu_irq
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|mpu_irq
+comma
+l_string|&quot;MPU-401 IRQ line (5 7 9 10 0)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -4135,12 +4201,41 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|mss_base
+comma
+l_string|&quot;MSS emulation I/O base address (0x530 0xE80)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|mpu_base
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|mpu_base
+comma
+l_string|&quot;MPU-401 I/O base address (0x300 0x310 0x320 0x330)&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Riccardo Facchetti &lt;fizban@tin.it&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Audio Excel DSP 16 Driver Version &quot;
+id|VERSION
 )paren
 suffix:semicolon
 DECL|function|init_module

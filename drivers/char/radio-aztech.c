@@ -552,6 +552,14 @@ id|v.minheight
 op_assign
 l_int|0
 suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|v.name
+comma
+l_string|&quot;Aztech Radio&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

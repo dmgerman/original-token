@@ -450,6 +450,9 @@ comma
 multiline_comment|/* mmap */
 id|do_open
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|do_release
 comma
 l_int|NULL

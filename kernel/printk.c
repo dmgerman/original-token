@@ -119,11 +119,9 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n; *&t;Setup a list of consoles. Called from init/main.c&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|console_setup
 r_void
+id|__init
 id|console_setup
 c_func
 (paren
@@ -134,7 +132,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_struct

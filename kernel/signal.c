@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * SLAB caches for signal bits.&n; */
 DECL|macro|DEBUG_SIG
@@ -40,8 +41,9 @@ id|max_queued_signals
 op_assign
 l_int|1024
 suffix:semicolon
-r_void
 DECL|function|signals_init
+r_void
+id|__init
 id|signals_init
 c_func
 (paren

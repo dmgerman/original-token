@@ -1066,6 +1066,9 @@ comma
 multiline_comment|/* open */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* release */
 id|ncp_fsync
 comma

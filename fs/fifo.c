@@ -661,6 +661,10 @@ multiline_comment|/* will set read or write pipe_fops */
 l_int|NULL
 comma
 l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|fifo_inode_operations

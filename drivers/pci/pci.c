@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.c,v 1.86 1998/07/15 20:34:47 mj Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/*&n; *&t;$Id: pci.c,v 1.88 1998/08/15 10:37:12 mj Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -761,6 +761,9 @@ multiline_comment|/* not a multi-function device */
 r_continue
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -773,6 +776,8 @@ comma
 op_amp
 id|hdr_type
 )paren
+)paren
+r_continue
 suffix:semicolon
 r_if
 c_cond
@@ -790,6 +795,9 @@ id|hdr_type
 op_amp
 l_int|0x80
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|pcibios_read_config_dword
 c_func
 (paren
@@ -802,11 +810,8 @@ comma
 op_amp
 id|l
 )paren
-suffix:semicolon
+op_logical_or
 multiline_comment|/* some broken boards return 0 if a slot is empty: */
-r_if
-c_cond
-(paren
 id|l
 op_eq
 l_int|0xffffffff

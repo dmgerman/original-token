@@ -720,6 +720,9 @@ multiline_comment|/* mmap */
 id|sd_open
 comma
 multiline_comment|/* open code */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|sd_release
 comma
 multiline_comment|/* release */

@@ -625,6 +625,9 @@ multiline_comment|/* mmap */
 id|ps2esdi_open
 comma
 multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|ps2esdi_release
 comma
 multiline_comment|/* release */

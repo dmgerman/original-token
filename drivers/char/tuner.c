@@ -513,14 +513,7 @@ id|div
 op_assign
 id|freq
 op_plus
-(paren
-r_int
-)paren
-(paren
-l_int|16
-op_star
-l_float|38.9
-)paren
+id|tun-&gt;IFPCoff
 suffix:semicolon
 id|div
 op_and_assign

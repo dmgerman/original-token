@@ -27,15 +27,12 @@ id|shm_init
 r_void
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ipc_init
 r_void
+id|__init
 id|ipc_init
 (paren
 r_void
-)paren
 )paren
 (brace
 id|sem_init

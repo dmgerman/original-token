@@ -512,6 +512,9 @@ multiline_comment|/* mmap */
 id|misc_open
 comma
 l_int|NULL
+comma
+multiline_comment|/* flush */
+l_int|NULL
 multiline_comment|/* release */
 )brace
 suffix:semicolon

@@ -85,6 +85,9 @@ comma
 multiline_comment|/* open */
 id|EIO_ERROR
 comma
+multiline_comment|/* flush */
+id|EIO_ERROR
+comma
 multiline_comment|/* release */
 id|EIO_ERROR
 comma

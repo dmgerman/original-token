@@ -147,6 +147,9 @@ comma
 multiline_comment|/* open */
 l_int|NULL
 comma
+multiline_comment|/* flush */
+l_int|NULL
+comma
 multiline_comment|/* release */
 l_int|NULL
 comma

@@ -3,7 +3,7 @@ macro_line|#ifndef __LINUX_FILE_H
 DECL|macro|__LINUX_FILE_H
 mdefine_line|#define __LINUX_FILE_H
 r_extern
-r_int
+r_void
 id|__fput
 c_func
 (paren
@@ -207,7 +207,7 @@ suffix:semicolon
 DECL|function|fput
 r_extern
 r_inline
-r_int
+r_void
 id|fput
 c_func
 (paren
@@ -224,11 +224,6 @@ id|file-&gt;f_count
 op_minus
 l_int|1
 suffix:semicolon
-r_int
-id|error
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -242,8 +237,6 @@ c_func
 id|file
 )paren
 suffix:semicolon
-id|error
-op_assign
 id|__fput
 c_func
 (paren
@@ -271,9 +264,6 @@ r_else
 id|file-&gt;f_count
 op_assign
 id|count
-suffix:semicolon
-r_return
-id|error
 suffix:semicolon
 )brace
 DECL|function|put_filp

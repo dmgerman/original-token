@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* SLAB cache for filp&squot;s. */
 DECL|variable|filp_cache
 r_static
@@ -137,9 +138,9 @@ op_amp
 id|inuse_filps
 suffix:semicolon
 )brace
-multiline_comment|/* N.B. This should be an __initfunc ... */
 DECL|function|file_table_init
 r_void
+id|__init
 id|file_table_init
 c_func
 (paren
