@@ -419,7 +419,7 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|minix_free_block
 c_func
 (paren
