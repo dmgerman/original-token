@@ -1891,6 +1891,10 @@ op_eq
 id|CMD_FINISHED
 )paren
 (brace
+id|Scsi_Request
+op_star
+id|SRpnt
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
