@@ -12597,7 +12597,7 @@ op_or
 id|_SUN4C_PAGE_NOCACHE
 suffix:semicolon
 multiline_comment|/* Functions */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|BTFIXUPSET_CALL
 c_func
 (paren

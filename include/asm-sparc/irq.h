@@ -2,6 +2,7 @@ multiline_comment|/* $Id: irq.h,v 1.28 2000/01/22 06:06:58 zaitcev Exp $&n; * ir
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;     /* For NR_CPUS */
 macro_line|#include &lt;asm/system.h&gt;     /* For SUN4M_NCPUS */
@@ -26,7 +27,7 @@ mdefine_line|#define __irq_itoa(irq) BTFIXUP_CALL(__irq_itoa)(irq)
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
 multiline_comment|/* IRQ handler dispatch entry and exit. */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_int
 r_int
@@ -188,7 +189,7 @@ r_int
 id|timeout
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|BTFIXUPDEF_CALL
 c_func
 (paren

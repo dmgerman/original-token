@@ -2,7 +2,8 @@ multiline_comment|/* atomic.h: These still suck, but the I-cache hit rate is hig
 macro_line|#ifndef __ARCH_SPARC_ATOMIC__
 DECL|macro|__ARCH_SPARC_ATOMIC__
 mdefine_line|#define __ARCH_SPARC_ATOMIC__
-macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* This is a temporary measure. -DaveM */
 DECL|member|counter
 DECL|typedef|atomic_t
@@ -36,7 +37,7 @@ macro_line|#endif
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)          ((v)-&gt;counter)
 DECL|macro|atomic_set

@@ -641,7 +641,7 @@ DECL|macro|local_irq_disable
 mdefine_line|#define local_irq_disable()&t;&t;__cli()
 DECL|macro|local_irq_enable
 mdefine_line|#define local_irq_enable()&t;&t;__sti()
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_int
 id|global_irq_holder
@@ -691,7 +691,7 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;((flags) = __global_save_flags())
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)    __global_restore_flags(flags)
-macro_line|#else /* __SMP__ */
+macro_line|#else /* CONFIG_SMP */
 DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;__cli()
 DECL|macro|sti
@@ -702,7 +702,7 @@ DECL|macro|save_and_cli
 mdefine_line|#define save_and_cli(flags)&t;__save_and_cli(flags)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;__restore_flags(flags)
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/*&n; * TB routines..&n; */
 DECL|macro|__tbi
 mdefine_line|#define __tbi(nr,arg,arg1...)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (nr);&t;&bslash;&n;&t;register unsigned long __r17 __asm__(&quot;$17&quot;); arg;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %3 #__tbi&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r16),&quot;=r&quot; (__r17)&t;&t;&t;&bslash;&n;&t;&t;:&quot;0&quot; (__r16),&quot;i&quot; (PAL_tbi) ,##arg1&t;&t;&bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&bslash;&n;})

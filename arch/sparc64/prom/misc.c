@@ -111,7 +111,7 @@ r_int
 id|serial_console
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|smp_capture
@@ -166,7 +166,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* We always arrive here via a serial interrupt.&n;&t; * So in order for everything to work reliably, even&n;&t; * on SMP, we need to drop the IRQ locks we hold.&n;&t; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|irq_exit
 c_func
 (paren
@@ -201,7 +201,7 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_release
 c_func
 (paren
@@ -259,7 +259,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|smp_promstop_others
@@ -278,7 +278,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_promstop_others
 c_func
 (paren
@@ -1231,7 +1231,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|prom_startcpu
 r_void
 id|prom_startcpu

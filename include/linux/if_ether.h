@@ -54,6 +54,10 @@ DECL|macro|ETH_P_IPX
 mdefine_line|#define ETH_P_IPX&t;0x8137&t;&t;/* IPX over DIX&t;&t;&t;*/
 DECL|macro|ETH_P_IPV6
 mdefine_line|#define ETH_P_IPV6&t;0x86DD&t;&t;/* IPv6 over bluebook&t;&t;*/
+DECL|macro|ETH_P_PPP_DISC
+mdefine_line|#define ETH_P_PPP_DISC&t;0x8863&t;&t;/* PPPoE discovery messages     */
+DECL|macro|ETH_P_PPP_SES
+mdefine_line|#define ETH_P_PPP_SES&t;0x8864&t;&t;/* PPPoE session messages&t;*/
 multiline_comment|/*&n; *&t;Non DIX types. Won&squot;t clash for 1500 types.&n; */
 DECL|macro|ETH_P_802_3
 mdefine_line|#define ETH_P_802_3&t;0x0001&t;&t;/* Dummy type for 802.3 frames  */

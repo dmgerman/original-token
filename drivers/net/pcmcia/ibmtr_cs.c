@@ -1,5 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA token-ring driver for IBM-based cards&n;&n;    This driver supports the IBM PCMCIA Token-Ring Card.&n;    Written by Steve Kipisz, kipisz@vnet.ibm.com or&n;                             bungy@ibm.net&n;&n;    Written 1995,1996.&n;&n;    This code is based on pcnet_cs.c from David Hinds.&n;    &n;    V2.2.0 February 1999 - Mike Phillips phillim@amtrak.com&n;&n;    Linux V2.2.x presented significant changes to the underlying&n;    ibmtr.c code.  Mainly the code became a lot more organized and&n;    modular.&n;&n;    This caused the old PCMCIA Token Ring driver to give up and go &n;    home early. Instead of just patching the old code to make it &n;    work, the PCMCIA code has been streamlined, updated and possibly&n;    improved.&n;&n;    This code now only contains code required for the Card Services.&n;    All we do here is set the card up enough so that the real ibmtr.c&n;    driver can find it and work with it properly.&n;&n;    i.e. We set up the io port, irq, mmio memory and shared ram memory.&n;    This enables ibmtr_probe in ibmtr.c to find the card and configure it&n;    as though it was a normal ISA and/or PnP card.&n;&n;    There is some confusion with the difference between available shared&n;    ram and the amount actually reserved from memory.  ibmtr.c sets up&n;    several offsets depending upon the actual on-board memory, not the&n;    reserved memory.  We need to get around this to allow the cards to &n;    work with other cards in restricted memory space.  Therefore the &n;    pcmcia_reality_check function.&n;&n;    TODO&n;&t;- Write the suspend / resume functions. &n;&t;- Fix Kernel Oops when removing card before ifconfig down&n;&n;    CHANGES&n;&n;    v2.2.5 April 1999 Mike Phillips (phillim@amtrak.com)&n;    Obscure bug fix, required changed to ibmtr.c not ibmtr_cs.c&n;    &n;    v2.2.7 May 1999 Mike Phillips (phillim@amtrak.com)&n;    Updated to version 2.2.7 to match the first version of the kernel&n;    that the modification to ibmtr.c were incorporated into.&n;    &n;&t;&n;======================================================================*/
-macro_line|#include &lt;linux/module.h&gt;
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA token-ring driver for IBM-based cards&n;&n;    This driver supports the IBM PCMCIA Token-Ring Card.&n;    Written by Steve Kipisz, kipisz@vnet.ibm.com or&n;                             bungy@ibm.net&n;&n;    Written 1995,1996.&n;&n;    This code is based on pcnet_cs.c from David Hinds.&n;    &n;    V2.2.0 February 1999 - Mike Phillips phillim@amtrak.com&n;&n;    Linux V2.2.x presented significant changes to the underlying&n;    ibmtr.c code.  Mainly the code became a lot more organized and&n;    modular.&n;&n;    This caused the old PCMCIA Token Ring driver to give up and go &n;    home early. Instead of just patching the old code to make it &n;    work, the PCMCIA code has been streamlined, updated and possibly&n;    improved.&n;&n;    This code now only contains code required for the Card Services.&n;    All we do here is set the card up enough so that the real ibmtr.c&n;    driver can find it and work with it properly.&n;&n;    i.e. We set up the io port, irq, mmio memory and shared ram memory.&n;    This enables ibmtr_probe in ibmtr.c to find the card and configure it&n;    as though it was a normal ISA and/or PnP card.&n;&n;    There is some confusion with the difference between available shared&n;    ram and the amount actually reserved from memory.  ibmtr.c sets up&n;    several offsets depending upon the actual on-board memory, not the&n;    reserved memory.  We need to get around this to allow the cards to &n;    work with other cards in restricted memory space.  Therefore the &n;    pcmcia_reality_check function.&n;&n;    TODO&n;&t;- Write the suspend / resume functions. &n;&t;- Fix Kernel Oops when removing card before ifconfig down&n;&n;    CHANGES&n;&n;    v2.2.5 April 1999 Mike Phillips (phillim@amtrak.com)&n;    Obscure bug fix, required changed to ibmtr.c not ibmtr_cs.c&n;    &n;    v2.2.7 May 1999 Mike Phillips (phillim@amtrak.com)&n;    Updated to version 2.2.7 to match the first version of the kernel&n;    that the modification to ibmtr.c were incorporated into.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -18,8 +17,6 @@ macro_line|#include &lt;pcmcia/cs_types.h&gt;
 macro_line|#include &lt;pcmcia/cs.h&gt;
 macro_line|#include &lt;pcmcia/cistpl.h&gt;
 macro_line|#include &lt;pcmcia/ds.h&gt;
-DECL|macro|PCMCIA_DEBUG
-mdefine_line|#define PCMCIA_DEBUG 10
 macro_line|#ifdef PCMCIA_DEBUG
 DECL|variable|pc_debug
 r_static
@@ -657,12 +654,6 @@ op_assign
 op_amp
 id|ibmtr_probe
 suffix:semicolon
-macro_line|#if 0
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Register with Card Services */
 id|link-&gt;next
 op_assign
@@ -786,9 +777,6 @@ id|net_device
 op_star
 id|dev
 suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -845,17 +833,6 @@ id|dev
 op_assign
 id|info-&gt;dev
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 (brace
 r_struct
 id|tok_info
@@ -869,49 +846,21 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|timer_pending
-c_func
-(paren
-op_amp
-id|ti-&gt;tr_timer
-)paren
-)paren
 id|del_timer
 c_func
 (paren
 op_amp
+(paren
 id|ti-&gt;tr_timer
+)paren
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|link-&gt;state
-op_amp
-id|DEV_RELEASE_PENDING
-)paren
-(brace
 id|del_timer
 c_func
 (paren
 op_amp
 id|link-&gt;release
-)paren
-suffix:semicolon
-id|link-&gt;state
-op_and_assign
-op_complement
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1416,12 +1365,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|i
 op_assign
 id|register_trdev
@@ -1593,18 +1536,6 @@ id|dev
 op_assign
 id|info-&gt;dev
 suffix:semicolon
-r_struct
-id|tok_info
-op_star
-id|ti
-op_assign
-(paren
-r_struct
-id|tok_info
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1639,10 +1570,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|ti-&gt;open_status
-op_assign
-id|CLOSED
-suffix:semicolon
 id|CardServices
 c_func
 (paren
@@ -1716,11 +1643,7 @@ suffix:semicolon
 id|link-&gt;state
 op_and_assign
 op_complement
-(paren
 id|DEV_CONFIG
-op_or
-id|DEV_RELEASE_PENDING
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* ibmtr_release */
@@ -1793,33 +1716,23 @@ op_amp
 id|DEV_CONFIG
 )paren
 (brace
-macro_line|#if 0
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_device_detach
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-id|link-&gt;release.expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|link-&gt;release
+comma
 id|jiffies
 op_plus
 id|HZ
 op_div
 l_int|20
-suffix:semicolon
-id|link-&gt;state
-op_or_assign
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|link-&gt;release
 )paren
 suffix:semicolon
 )brace
@@ -1859,23 +1772,17 @@ op_amp
 id|DEV_CONFIG
 )paren
 (brace
-macro_line|#if 0
 r_if
 c_cond
 (paren
 id|link-&gt;open
 )paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_device_detach
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 id|CardServices
 c_func
 (paren
@@ -1931,16 +1838,12 @@ id|dev-&gt;init
 id|dev
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_device_attach
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_break

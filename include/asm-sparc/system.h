@@ -155,7 +155,7 @@ op_star
 id|fpqdepth
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|SWITCH_ENTER
 mdefine_line|#define SWITCH_ENTER &bslash;&n;&t;if(prev-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;&t;&t;put_psr(get_psr() | PSR_EF); &bslash;&n;&t;&t;fpsave(&amp;prev-&gt;thread.float_regs[0], &amp;prev-&gt;thread.fsr, &bslash;&n;&t;&t;       &amp;prev-&gt;thread.fpqueue[0], &amp;prev-&gt;thread.fpqdepth); &bslash;&n;&t;&t;prev-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;&t;prev-&gt;thread.kregs-&gt;psr &amp;= ~PSR_EF; &bslash;&n;&t;}
 DECL|macro|SWITCH_DO_LAZY_FPU
@@ -611,7 +611,7 @@ DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
 DECL|macro|local_irq_restore
 mdefine_line|#define local_irq_restore(flags)&t;__restore_flags(flags)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_int
 r_char
@@ -690,7 +690,7 @@ mdefine_line|#define set_wmb(__var, __value) set_mb(__var, __value)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;);
 multiline_comment|/* This has special calling conventions */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|BTFIXUPDEF_CALL
 c_func
 (paren
@@ -720,7 +720,7 @@ r_int
 id|val
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|__asm__
 id|__volatile__
 c_func

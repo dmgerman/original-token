@@ -2,6 +2,7 @@ multiline_comment|/* $Id: winmacro.h,v 1.21 1999/08/14 03:52:13 anton Exp $&n; *
 macro_line|#ifndef _SPARC_WINMACRO_H
 DECL|macro|_SPARC_WINMACRO_H
 mdefine_line|#define _SPARC_WINMACRO_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 multiline_comment|/* These are just handy. */
@@ -40,7 +41,7 @@ DECL|macro|STORE_PT_ALL
 mdefine_line|#define STORE_PT_ALL(base_reg, reg_psr, reg_pc, reg_npc, g_scratch) &bslash;&n;        STORE_PT_PRIV(base_reg, reg_psr, reg_pc, reg_npc) &bslash;&n;        STORE_PT_GLOBALS(base_reg) &bslash;&n;        STORE_PT_YREG(base_reg, g_scratch) &bslash;&n;        STORE_PT_INS(base_reg)
 DECL|macro|SAVE_BOLIXED_USER_STACK
 mdefine_line|#define SAVE_BOLIXED_USER_STACK(cur_reg, scratch) &bslash;&n;        ld       [%cur_reg + AOFF_task_thread + AOFF_thread_w_saved], %scratch; &bslash;&n;        sll      %scratch, 2, %scratch; &bslash;&n;        add      %scratch, %cur_reg, %scratch; &bslash;&n;        st       %sp, [%scratch + AOFF_task_thread + AOFF_thread_rwbuf_stkptrs]; &bslash;&n;        sub      %scratch, %cur_reg, %scratch; &bslash;&n;        sll      %scratch, 4, %scratch; &bslash;&n;        add      %scratch, %cur_reg, %scratch; &bslash;&n;        STORE_WINDOW(scratch + AOFF_task_thread + AOFF_thread_reg_window); &bslash;&n;        sub      %scratch, %cur_reg, %scratch; &bslash;&n;        srl      %scratch, 6, %scratch; &bslash;&n;        add      %scratch, 1, %scratch; &bslash;&n;        st       %scratch, [%cur_reg + AOFF_task_thread + AOFF_thread_w_saved];
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|LOAD_CURRENT4M
 mdefine_line|#define LOAD_CURRENT4M(dest_reg, idreg) &bslash;&n;        rd       %tbr, %idreg; &bslash;&n;&t;sethi    %hi(C_LABEL(current_set)), %dest_reg; &bslash;&n;        srl      %idreg, 10, %idreg; &bslash;&n;&t;or       %dest_reg, %lo(C_LABEL(current_set)), %dest_reg; &bslash;&n;&t;and      %idreg, 0xc, %idreg; &bslash;&n;&t;ld       [%idreg + %dest_reg], %dest_reg;
 multiline_comment|/* Sliiick. We have a Linux current register :) -jj */

@@ -5,6 +5,7 @@ multiline_comment|/*&n; * Definitions for the interface between the generic PPP 
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 r_struct
 id|ppp_channel
 suffix:semicolon

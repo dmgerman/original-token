@@ -5,6 +5,7 @@ mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
 multiline_comment|/*&n; * Sparc64 implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
 DECL|macro|current_text_addr
 mdefine_line|#define current_text_addr() ({ void *pc; __asm__(&quot;rd %%pc, %0&quot; : &quot;=r&quot; (pc)); pc; })
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/a.out.h&gt;
 macro_line|#include &lt;asm/pstate.h&gt;
@@ -343,7 +344,7 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* On Uniprocessor, even in RMO processes see TSO semantics */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|TSTATE_INITIAL_MM
 mdefine_line|#define TSTATE_INITIAL_MM&t;TSTATE_TSO
 macro_line|#else

@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/compile.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -29,25 +29,6 @@ macro_line|#include &lt;pcmcia/cisreg.h&gt;
 macro_line|#include &lt;pcmcia/bus_ops.h&gt;
 macro_line|#include &quot;cs_internal.h&quot;
 macro_line|#include &quot;rsrc_mgr.h&quot;
-macro_line|#include &lt;linux/pm.h&gt;
-r_static
-r_int
-id|handle_pm_event
-c_func
-(paren
-r_struct
-id|pm_dev
-op_star
-id|dev
-comma
-id|pm_request_t
-id|rqst
-comma
-r_void
-op_star
-id|data
-)paren
-suffix:semicolon
 macro_line|#ifdef PCMCIA_DEBUG
 DECL|variable|pc_debug
 r_int
@@ -88,18 +69,18 @@ DECL|macro|CB_OPT
 mdefine_line|#define CB_OPT &quot;&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_PM
-DECL|macro|APM_OPT
-mdefine_line|#define APM_OPT &quot; [pm]&quot;
+DECL|macro|PM_OPT
+mdefine_line|#define PM_OPT &quot; [pm]&quot;
 macro_line|#else
-DECL|macro|APM_OPT
-mdefine_line|#define APM_OPT &quot;&quot;
+DECL|macro|PM_OPT
+mdefine_line|#define PM_OPT &quot;&quot;
 macro_line|#endif
 macro_line|#if !defined(CONFIG_CARDBUS) &amp;&amp; !defined(CONFIG_PCI) &amp;&amp; !defined(CONFIG_PM)
 DECL|macro|OPTIONS
 mdefine_line|#define OPTIONS &quot; none&quot;
 macro_line|#else
 DECL|macro|OPTIONS
-mdefine_line|#define OPTIONS PCI_OPT CB_OPT APM_OPT
+mdefine_line|#define OPTIONS PCI_OPT CB_OPT PM_OPT
 macro_line|#endif
 DECL|variable|release
 r_static
@@ -111,20 +92,6 @@ op_assign
 l_string|&quot;Linux PCMCIA Card Services &quot;
 id|CS_RELEASE
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|variable|kernel
-r_static
-r_const
-r_char
-op_star
-id|kernel
-op_assign
-l_string|&quot;kernel build: &quot;
-id|UTS_RELEASE
-l_string|&quot; &quot;
-id|UTS_VERSION
-suffix:semicolon
-macro_line|#endif
 DECL|variable|options
 r_static
 r_const
@@ -152,208 +119,134 @@ id|OPTIONS
 suffix:semicolon
 multiline_comment|/*====================================================================*/
 multiline_comment|/* Parameters that can be set with &squot;insmod&squot; */
-DECL|variable|setup_delay
-r_static
-r_int
+DECL|macro|INT_MODULE_PARM
+mdefine_line|#define INT_MODULE_PARM(n, v) static int n = v; MODULE_PARM(n, &quot;i&quot;)
+id|INT_MODULE_PARM
+c_func
+(paren
 id|setup_delay
-op_assign
+comma
 id|HZ
 op_div
 l_int|20
+)paren
 suffix:semicolon
 multiline_comment|/* ticks */
-DECL|variable|resume_delay
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|resume_delay
-op_assign
+comma
 id|HZ
 op_div
 l_int|5
+)paren
 suffix:semicolon
 multiline_comment|/* ticks */
-DECL|variable|shutdown_delay
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|shutdown_delay
-op_assign
+comma
 id|HZ
 op_div
 l_int|40
+)paren
 suffix:semicolon
 multiline_comment|/* ticks */
-DECL|variable|vcc_settle
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|vcc_settle
-op_assign
+comma
 id|HZ
 op_star
 l_int|4
 op_div
 l_int|10
+)paren
 suffix:semicolon
 multiline_comment|/* ticks */
-DECL|variable|reset_time
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|reset_time
-op_assign
+comma
 l_int|10
+)paren
 suffix:semicolon
 multiline_comment|/* usecs */
-DECL|variable|unreset_delay
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|unreset_delay
-op_assign
+comma
 id|HZ
 op_div
 l_int|10
+)paren
 suffix:semicolon
 multiline_comment|/* ticks */
-DECL|variable|unreset_check
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|unreset_check
-op_assign
+comma
 id|HZ
 op_div
 l_int|10
+)paren
 suffix:semicolon
 multiline_comment|/* ticks */
-DECL|variable|unreset_limit
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|unreset_limit
-op_assign
+comma
 l_int|30
+)paren
 suffix:semicolon
 multiline_comment|/* unreset_check&squot;s */
 multiline_comment|/* Access speed for attribute memory windows */
-DECL|variable|cis_speed
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|cis_speed
-op_assign
+comma
 l_int|300
+)paren
 suffix:semicolon
 multiline_comment|/* ns */
 multiline_comment|/* Access speed for IO windows */
-DECL|variable|io_speed
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|io_speed
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/* ns */
 multiline_comment|/* Optional features */
 macro_line|#ifdef CONFIG_PM
-DECL|variable|do_apm
-r_static
-r_int
-id|do_apm
-op_assign
-l_int|1
-suffix:semicolon
-id|MODULE_PARM
+id|INT_MODULE_PARM
 c_func
 (paren
 id|do_apm
 comma
-l_string|&quot;i&quot;
+l_int|1
 )paren
 suffix:semicolon
 macro_line|#else
-DECL|variable|do_apm
-r_static
-r_int
+id|INT_MODULE_PARM
+c_func
+(paren
 id|do_apm
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 macro_line|#endif
-id|MODULE_PARM
-c_func
-(paren
-id|setup_delay
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|resume_delay
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|shutdown_delay
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|vcc_settle
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|reset_time
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|unreset_delay
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|unreset_check
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|unreset_limit
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|cis_speed
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|io_speed
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 multiline_comment|/*====================================================================*/
 DECL|variable|dead_socket
 id|socket_state_t
@@ -1355,10 +1248,6 @@ op_assign
 op_amp
 id|setup_socket
 suffix:semicolon
-id|s-&gt;setup_timeout
-op_assign
-l_int|0
-suffix:semicolon
 id|s-&gt;shutdown.data
 op_assign
 id|sockets
@@ -1484,7 +1373,27 @@ comma
 id|proc_pccard
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|s-&gt;proc
+)paren
+id|ss_entry
+op_member_access_from_pointer
+id|proc_setup
+c_func
+(paren
+id|ns
+comma
+id|s-&gt;proc
+)paren
+suffix:semicolon
 macro_line|#ifdef PCMCIA_DEBUG
+r_if
+c_cond
+(paren
+id|s-&gt;proc
+)paren
 id|create_proc_read_entry
 c_func
 (paren
@@ -1500,16 +1409,6 @@ id|s
 )paren
 suffix:semicolon
 macro_line|#endif
-id|ss_entry
-op_member_access_from_pointer
-id|proc_setup
-c_func
-(paren
-id|ns
-comma
-id|s-&gt;proc
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 )brace
@@ -1609,6 +1508,14 @@ id|s-&gt;proc
 )paren
 suffix:semicolon
 macro_line|#endif
+id|remove_proc_entry
+c_func
+(paren
+id|name
+comma
+id|proc_pccard
+)paren
+suffix:semicolon
 )brace
 )brace
 macro_line|#endif
@@ -2889,6 +2796,10 @@ id|s-&gt;setup.function
 op_assign
 op_amp
 id|setup_socket
+suffix:semicolon
+id|s-&gt;setup_timeout
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -11199,17 +11110,6 @@ comma
 id|release
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;  %s&bslash;n&quot;
-comma
-id|kernel
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren

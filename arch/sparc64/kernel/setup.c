@@ -2455,7 +2455,7 @@ l_string|&quot;prom&bslash;t&bslash;t: %d.%d.%d&bslash;n&quot;
 l_string|&quot;type&bslash;t&bslash;t: sun4u&bslash;n&quot;
 l_string|&quot;ncpus probed&bslash;t: %d&bslash;n&quot;
 l_string|&quot;ncpus active&bslash;t: %d&bslash;n&quot;
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
 macro_line|#endif
 comma
@@ -2490,7 +2490,7 @@ comma
 id|linux_num_cpus
 comma
 id|smp_num_cpus
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 comma
 id|loops_per_sec
 op_div
@@ -2506,7 +2506,7 @@ l_int|100
 macro_line|#endif
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|len
 op_add_assign
 id|smp_bogo
@@ -2528,7 +2528,7 @@ op_plus
 id|len
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|len
 op_add_assign
 id|smp_info

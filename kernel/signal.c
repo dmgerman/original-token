@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-02  Modified for POSIX.1b signals by Richard Henderson&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -1465,7 +1466,7 @@ id|t-&gt;sigpending
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/*&n;&t;&t; * If the task is running on a different CPU &n;&t;&t; * force a reschedule on the other CPU - note that&n;&t;&t; * the code below is a tad loose and might occasionally&n;&t;&t; * kick the wrong CPU if we catch the process in the&n;&t;&t; * process of changing - but no harm is done by that&n;&t;&t; * other than doing an extra (lightweight) IPI interrupt.&n;&t;&t; *&n;&t;&t; * note that we rely on the previous spin_lock to&n;&t;&t; * lock interrupts for us! No need to set need_resched&n;&t;&t; * since signal event passing goes through -&gt;blocked.&n;&t;&t; */
 id|spin_lock
 c_func
@@ -1499,7 +1500,7 @@ op_amp
 id|runqueue_lock
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 )brace
 id|out
 suffix:colon

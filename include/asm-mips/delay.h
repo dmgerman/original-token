@@ -2,6 +2,7 @@ multiline_comment|/* $Id: delay.h,v 1.3 1999/08/18 23:37:49 ralf Exp $&n; *&n; *
 macro_line|#ifndef _ASM_DELAY_H
 DECL|macro|_ASM_DELAY_H
 mdefine_line|#define _ASM_DELAY_H
+macro_line|#include &lt;linux/config.h&gt;
 r_extern
 id|__inline__
 r_void
@@ -85,7 +86,7 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|__udelay_val
 mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
 macro_line|#else

@@ -2,6 +2,7 @@ multiline_comment|/* $Id: system.h,v 1.58 2000/05/05 18:47:41 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/asm_offsets.h&gt;
@@ -100,7 +101,7 @@ DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
 DECL|macro|local_irq_restore
 mdefine_line|#define local_irq_restore(flags)&t;__restore_flags(flags)
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|cli
 mdefine_line|#define cli() __cli()
 DECL|macro|sti

@@ -151,17 +151,6 @@ id|args
 )paren
 suffix:semicolon
 r_static
-r_int
-id|fmvj18x_init
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_static
 id|dev_link_t
 op_star
 id|fmvj18x_attach
@@ -301,6 +290,7 @@ suffix:semicolon
 r_static
 r_void
 id|fjn_tx_timeout
+c_func
 (paren
 r_struct
 id|net_device
@@ -401,10 +391,6 @@ id|mc_filter
 (braket
 l_int|8
 )braket
-suffix:semicolon
-DECL|member|lock
-id|spinlock_t
-id|lock
 suffix:semicolon
 DECL|typedef|local_info_t
 )brace
@@ -553,7 +539,7 @@ mdefine_line|#define INTR_OFF             0x0d /* LAN controler ignores interrup
 DECL|macro|INTR_ON
 mdefine_line|#define INTR_ON              0x1d /* LAN controler will catch interrupts */
 DECL|macro|TX_TIMEOUT
-mdefine_line|#define TX_TIMEOUT&t;     10
+mdefine_line|#define TX_TIMEOUT&t;&t;((400*HZ)/1000)
 multiline_comment|/*======================================================================&n;&n;    This bit of code is used to avoid unregistering network devices&n;    at inappropriate times.  2.2 and later kernels are fairly picky&n;    about when this can happen.&n;    &n;======================================================================*/
 DECL|function|flush_stale_links
 r_static
@@ -725,10 +711,6 @@ id|lp
 )paren
 )paren
 suffix:semicolon
-id|lp-&gt;lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
 id|link
 op_assign
 op_amp
@@ -863,24 +845,11 @@ op_assign
 op_amp
 id|set_rx_mode
 suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|dev-&gt;name
-comma
-id|lp-&gt;node.dev_name
-)paren
-suffix:semicolon
 id|ether_setup
 c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;init
-op_assign
-op_amp
-id|fmvj18x_init
 suffix:semicolon
 id|dev-&gt;open
 op_assign
@@ -899,11 +868,6 @@ suffix:semicolon
 id|dev-&gt;watchdog_timeo
 op_assign
 id|TX_TIMEOUT
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
 suffix:semicolon
 multiline_comment|/* Register with Card Services */
 id|link-&gt;next
@@ -1022,9 +986,6 @@ op_star
 op_star
 id|linkp
 suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1077,42 +1038,11 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|link-&gt;state
-op_amp
-id|DEV_RELEASE_PENDING
-)paren
-(brace
 id|del_timer
 c_func
 (paren
 op_amp
 id|link-&gt;release
-)paren
-suffix:semicolon
-id|link-&gt;state
-op_and_assign
-op_complement
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1574,11 +1504,6 @@ id|dev-&gt;base_addr
 op_assign
 id|link-&gt;io.BasePort1
 suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1877,6 +1802,14 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|strcpy
+c_func
+(paren
+id|lp-&gt;node.dev_name
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|link-&gt;dev
 op_assign
 op_amp
@@ -2080,11 +2013,7 @@ suffix:semicolon
 id|link-&gt;state
 op_and_assign
 op_complement
-(paren
 id|DEV_CONFIG
-op_or
-id|DEV_RELEASE_PENDING
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* fmvj18x_release */
@@ -2164,19 +2093,17 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|link-&gt;release.expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|link-&gt;release
+comma
 id|jiffies
 op_plus
 id|HZ
 op_div
 l_int|20
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|link-&gt;release
 )paren
 suffix:semicolon
 )brace
@@ -2299,23 +2226,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* fmvj18x_event */
-DECL|function|fmvj18x_init
-r_static
-r_int
-id|fmvj18x_init
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* fmvj18x_init */
 multiline_comment|/*====================================================================*/
 DECL|function|init_fmvj18x_cs
 r_static
@@ -2504,12 +2414,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|spin_lock
-(paren
-op_amp
-id|lp-&gt;lock
-)paren
-suffix:semicolon
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -2674,11 +2578,6 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|netif_wake_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -2686,12 +2585,13 @@ id|lp-&gt;tx_started
 op_assign
 l_int|0
 suffix:semicolon
-id|netif_stop_queue
+)brace
+id|netif_wake_queue
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 )brace
 id|DEBUG
 c_func
@@ -2735,12 +2635,6 @@ op_plus
 id|RX_INTR
 )paren
 suffix:semicolon
-id|spin_unlock
-(paren
-op_amp
-id|lp-&gt;lock
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* fjn_interrupt */
 multiline_comment|/*====================================================================*/
@@ -2748,6 +2642,7 @@ DECL|function|fjn_tx_timeout
 r_static
 r_void
 id|fjn_tx_timeout
+c_func
 (paren
 r_struct
 id|net_device
@@ -2772,11 +2667,8 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;%s: transmit timed out with status %04x, %s?&bslash;n&quot;
@@ -2784,8 +2676,10 @@ comma
 id|dev-&gt;name
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2794,6 +2688,7 @@ id|TX_STATUS
 )paren
 comma
 id|inb
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2809,6 +2704,7 @@ l_string|&quot;network cable problem&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;%s: timeout registers: %04x %04x %04x &quot;
@@ -2817,8 +2713,10 @@ comma
 id|dev-&gt;name
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2827,8 +2725,10 @@ l_int|0
 )paren
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2837,8 +2737,10 @@ l_int|2
 )paren
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2847,8 +2749,10 @@ l_int|4
 )paren
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2857,8 +2761,10 @@ l_int|6
 )paren
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2867,8 +2773,10 @@ l_int|8
 )paren
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2877,8 +2785,10 @@ l_int|10
 )paren
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2887,8 +2797,10 @@ l_int|12
 )paren
 comma
 id|htons
+c_func
 (paren
 id|inw
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -2901,15 +2813,13 @@ id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
 multiline_comment|/* ToDo: We should try to restart the adaptor... */
-id|spin_lock_irqsave
+id|cli
+c_func
 (paren
-op_amp
-id|lp-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|fjn_reset
+c_func
 (paren
 id|dev
 )paren
@@ -2934,17 +2844,15 @@ id|lp-&gt;open_time
 op_assign
 id|jiffies
 suffix:semicolon
-id|netif_start_queue
+id|sti
+c_func
 (paren
-id|dev
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|netif_start_queue
+c_func
 (paren
-op_amp
-id|lp-&gt;lock
-comma
-id|flags
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -2983,15 +2891,11 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 id|netif_stop_queue
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|1
-)paren
 (brace
 r_int
 id|length
@@ -3160,6 +3064,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -3192,6 +3097,7 @@ l_int|2
 )paren
 multiline_comment|/* Yes, there is room for one more packet. */
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -3220,6 +3126,7 @@ l_int|127
 )paren
 multiline_comment|/* Yes, there is room for one more packet. */
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -4049,7 +3956,7 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;&t;   has done a mark_bh(NET_BH) for us and will work on them&n;&t;   when we get to the bottom-half routine. */
+multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;&t;   has done a netif_wake_queue() for us and will work on them&n;&t;   when we get to the bottom-half routine. */
 multiline_comment|/*&n;    if( lp-&gt;cardtype != TDK ) {&n;&t;int i;&n;&t;for (i = 0; i &lt; 20; i++) {&n;&t;    if ((inb(ioaddr + RX_MODE) &amp; F_BUF_EMP) == F_BUF_EMP)&n;&t;&t;break;&n;&t;    (void)inw(ioaddr + DATAPORT);  /+ dummy status read +/&n;&t;    outb(F_SKP_PKT, ioaddr + RX_SKIP);&n;&t;}&n;&n;&t;if (i &gt; 0)&n;&t;    DEBUG(5, &quot;%s: Exint Rx packet with mode %02x after &quot;&n;&t;&t;  &quot;%d ticks.&bslash;n&quot;, dev-&gt;name, inb(ioaddr + RX_MODE), i);&n;    }&n;*/
 r_return
 suffix:semicolon
@@ -4160,6 +4067,7 @@ op_assign
 id|jiffies
 suffix:semicolon
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -4223,6 +4131,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|netif_stop_queue
+c_func
 (paren
 id|dev
 )paren
@@ -4300,27 +4209,19 @@ id|link-&gt;state
 op_amp
 id|DEV_STALE_CONFIG
 )paren
-(brace
-id|link-&gt;release.expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|link-&gt;release
+comma
 id|jiffies
 op_plus
 id|HZ
 op_div
 l_int|20
-suffix:semicolon
-id|link-&gt;state
-op_or_assign
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|link-&gt;release
 )paren
 suffix:semicolon
-)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return

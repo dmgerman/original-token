@@ -196,7 +196,6 @@ mdefine_line|#define FIBMAP&t;   _IO(0x00,1)&t;/* bmap access */
 DECL|macro|FIGETBSZ
 mdefine_line|#define FIGETBSZ   _IO(0x00,2)&t;/* get the block size used for bmap */
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 r_extern

@@ -1,6 +1,7 @@
 macro_line|#ifndef __ALPHA_DELAY_H
 DECL|macro|__ALPHA_DELAY_H
 mdefine_line|#define __ALPHA_DELAY_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 multiline_comment|/*&n; * Copyright (C) 1993, 2000 Linus Torvalds&n; *&n; * Delay routines, using a pre-computed &quot;loops_per_second&quot; value.&n; */
 multiline_comment|/*&n; * Use only for very small delays (&lt; 1 msec). &n; *&n; * The active part of our cycle counter is only 32-bits wide, and&n; * we&squot;re treating the difference between two marks as signed.  On&n; * a 1GHz box, that&squot;s about 2 seconds.&n; */
@@ -87,7 +88,7 @@ l_int|32
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|udelay
 mdefine_line|#define udelay(u)  __udelay((u), cpu_data[smp_processor_id()].loops_per_sec)
 macro_line|#else

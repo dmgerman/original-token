@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A driver for Adaptec AHA152X-compatible PCMCIA SCSI cards.&n;&n;    This driver supports the Adaptec AHA-1460, the New Media Bus&n;    Toaster, and the New Media Toast &amp; Jam.&n;    &n;    aha152x_cs.c 1.52 2000/01/11 01:04:31&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A driver for Adaptec AHA152X-compatible PCMCIA SCSI cards.&n;&n;    This driver supports the Adaptec AHA-1460, the New Media Bus&n;    Toaster, and the New Media Toast &amp; Jam.&n;    &n;    aha152x_cs.c 1.53 2000/05/04 01:30:00&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -43,7 +43,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;aha152x_cs.c 1.52 2000/01/11 01:04:31 (David Hinds)&quot;
+l_string|&quot;aha152x_cs.c 1.53 2000/05/04 01:30:00 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -660,6 +660,13 @@ op_eq
 l_int|NULL
 )paren
 r_return
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|link-&gt;release
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1610,23 +1617,19 @@ id|link-&gt;state
 op_amp
 id|DEV_CONFIG
 )paren
-(brace
-id|link-&gt;release.expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|link-&gt;release
+comma
 id|jiffies
 op_plus
 id|HZ
 op_div
 l_int|20
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|link-&gt;release
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case

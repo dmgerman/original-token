@@ -2,6 +2,7 @@ multiline_comment|/* $Id: irq.h,v 1.17 1999/09/21 14:39:41 davem Exp $&n; * irq.
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 DECL|struct|devid_cookie
@@ -273,7 +274,7 @@ r_int
 id|need_dma_sync
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|set_cpu_int

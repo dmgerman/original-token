@@ -66,7 +66,7 @@ r_int
 r_int
 id|last_valid_pfn
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|FLUSH_BEGIN
 mdefine_line|#define FLUSH_BEGIN(mm)
 DECL|macro|FLUSH_END
@@ -137,7 +137,7 @@ l_int|1
 suffix:semicolon
 DECL|macro|flush_chunk
 mdefine_line|#define flush_chunk(chunk) BTFIXUP_CALL(flush_chunk)(chunk)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|BTFIXUPDEF_CALL
 c_func
 (paren
@@ -3334,7 +3334,7 @@ r_int
 id|address
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|printk
 c_func
 (paren
@@ -8531,7 +8531,7 @@ id|node_str
 l_int|128
 )braket
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|cpu
 op_assign
@@ -8681,7 +8681,7 @@ l_int|1
 op_amp
 id|PAGE_MASK
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -8748,7 +8748,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|vac_cache_size
 op_assign
 id|max_size
@@ -10862,7 +10862,7 @@ c_func
 id|mreg
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Avoid unnecessary cross calls. */
 id|BTFIXUPCOPY_CALL
 c_func
@@ -11108,7 +11108,7 @@ comma
 id|BTFIXUPCALL_NORM
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -12077,7 +12077,7 @@ id|srmmu_fault
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Local cross-calls. */
 DECL|function|smp_flush_page_for_dma
 r_static
@@ -12283,7 +12283,7 @@ op_or
 id|SRMMU_REF
 suffix:semicolon
 multiline_comment|/* Functions */
-macro_line|#ifndef __SMP__&t;
+macro_line|#ifndef CONFIG_SMP&t;
 id|BTFIXUPSET_CALL
 c_func
 (paren
@@ -12894,7 +12894,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* El switcheroo... */
 id|BTFIXUPCOPY_CALL
 c_func
@@ -13122,7 +13122,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren

@@ -129,6 +129,9 @@ macro_line|#endif
 macro_line|#ifdef NEED_802
 macro_line|#include &lt;net/p8022call.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_PPPOE
+macro_line|#include &lt;linux/if_pppox.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; *&t;Protocol Table&n; */
 DECL|variable|protocols
 r_struct
@@ -320,6 +323,15 @@ id|irda_proto_init
 )brace
 comma
 multiline_comment|/* IrDA protocols */
+macro_line|#endif
+macro_line|#ifdef CONFIG_PPPOE
+(brace
+l_string|&quot;PPPoX&quot;
+comma
+id|pppox_proto_init
+)brace
+comma
+multiline_comment|/* PPP over Ethernet */
 macro_line|#endif
 (brace
 l_int|NULL

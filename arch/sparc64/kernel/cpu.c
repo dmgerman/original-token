@@ -1,4 +1,5 @@
 multiline_comment|/* cpu.c: Dinky routines to look for the kind of Sparc cpu&n; *        we are on.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -165,7 +166,7 @@ multiline_comment|/* A guess... */
 suffix:semicolon
 DECL|macro|NSPARCCHIPS
 mdefine_line|#define NSPARCCHIPS  (sizeof(linux_sparc_chips)/sizeof(struct cpu_iu_info))
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|sparc_cpu_type
 r_char
 op_star

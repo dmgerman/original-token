@@ -4204,7 +4204,7 @@ op_star
 id|regs-&gt;tpc
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_report_regs
 c_func
 (paren
@@ -4972,7 +4972,7 @@ op_star
 id|regs
 )paren
 (brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_int
 id|node
 op_assign

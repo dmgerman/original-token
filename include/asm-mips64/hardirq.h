@@ -2,6 +2,7 @@ multiline_comment|/* $Id: hardirq.h,v 1.4 2000/02/23 00:41:38 ralf Exp $&n; *&n;
 macro_line|#ifndef _ASM_HARDIRQ_H
 DECL|macro|_ASM_HARDIRQ_H
 mdefine_line|#define _ASM_HARDIRQ_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 r_extern
 r_int
@@ -16,7 +17,7 @@ DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
 DECL|macro|in_irq
 mdefine_line|#define in_irq() (local_irq_count[smp_processor_id()] != 0)
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
 DECL|macro|hardirq_endlock
@@ -29,6 +30,6 @@ DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier();
 macro_line|#else
 macro_line|#error No habla MIPS SMP
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#endif /* _ASM_HARDIRQ_H */
 eof

@@ -28,7 +28,7 @@ DECL|macro|SA_IMAP_MASKED
 mdefine_line|#define SA_IMAP_MASKED&t;&t;0x100
 DECL|macro|SA_DMA_SYNC
 mdefine_line|#define SA_DMA_SYNC&t;&t;0x200
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_static
 r_void
 id|distribute_irqs
@@ -56,7 +56,7 @@ l_int|64
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|__up_workvec
 r_int
 r_int
@@ -167,7 +167,7 @@ id|irqaction
 op_star
 id|action
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|j
 suffix:semicolon
@@ -224,7 +224,7 @@ comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|len
 op_add_assign
 id|sprintf
@@ -1729,7 +1729,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|distribute_irqs
 c_func
 (paren
@@ -2280,7 +2280,7 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/* Only uniprocessor needs this IRQ/BH locking depth, on SMP it&n; * lives in the brlock table for cache reasons.&n; */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|local_irq_count
 r_int
 r_int
@@ -2888,7 +2888,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 DECL|function|catch_disabled_ivec
 r_void
 id|catch_disabled_ivec
@@ -2994,7 +2994,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_int
 id|this_is_starfire
@@ -3094,7 +3094,7 @@ l_int|26
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 multiline_comment|/*&n;&t; * Check for TICK_INT on level 14 softint.&n;&t; */
 r_if
 c_cond
@@ -3149,7 +3149,7 @@ id|irq
 op_increment
 suffix:semicolon
 multiline_comment|/* Sliiiick... */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|bp
 op_assign
 (paren
@@ -3357,7 +3357,7 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Ok, here is what is going on:&n;&t;&t;&t;&t; * 1) Retargeting IRQs on Starfire is very&n;&t;&t;&t;&t; *    expensive so just forget about it on them.&n;&t;&t;&t;&t; * 2) Moving around very high priority interrupts&n;&t;&t;&t;&t; *    is a losing game.&n;&t;&t;&t;&t; * 3) If the current cpu is idle, interrupts are&n;&t;&t;&t;&t; *    useful work, so keep them here.  But do not&n;&t;&t;&t;&t; *    pass to our neighbour if he is not very idle.&n;&t;&t;&t;&t; */
 r_if
 c_cond
@@ -4045,7 +4045,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|distribute_irqs
 c_func
 (paren
@@ -4126,7 +4126,7 @@ id|node
 comma
 id|err
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|smp_tick_init
@@ -4163,7 +4163,7 @@ id|clock
 op_div
 id|HZ
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_tick_init
 c_func
 (paren
@@ -4427,7 +4427,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|retarget_one_irq
 r_static
 r_int
@@ -5002,7 +5002,7 @@ id|ivector_table
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|memset
 c_func
 (paren

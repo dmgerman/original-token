@@ -1,5 +1,6 @@
 multiline_comment|/* $Id: traps.c,v 1.61 2000/01/21 11:38:41 jj Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 2000 Jakub Jelinek (jakub@redhat.com)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1194,7 +1195,7 @@ id|regs-&gt;psr
 op_or_assign
 id|PSR_EF
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1336,7 +1337,7 @@ op_or_assign
 id|PF_USEDFPU
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|out
 suffix:colon
 macro_line|#endif
@@ -1449,7 +1450,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_struct
 id|task_struct
 op_star
@@ -1483,7 +1484,7 @@ id|PSR_EF
 )paren
 suffix:semicolon
 multiline_comment|/* If nobody owns the fpu right now, just clear the&n;&t; * error into our fake static buffer and hope it don&squot;t&n;&t; * happen again.  Thank you crashme...&n;&t; */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1695,7 +1696,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* nope, better SIGFPE the offending process... */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|fpt-&gt;flags
 op_and_assign
 op_complement
@@ -1866,7 +1867,7 @@ comma
 id|fpt
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|last_task_used_math
 op_assign
 l_int|NULL

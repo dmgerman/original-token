@@ -192,7 +192,7 @@ id|irqaction
 op_star
 id|action
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|j
 suffix:semicolon
@@ -272,7 +272,7 @@ comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|len
 op_add_assign
 id|sprintf
@@ -687,7 +687,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|local_bh_count
 r_int
 r_int
@@ -1496,7 +1496,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 DECL|function|unexpected_irq
 r_void
 id|unexpected_irq
@@ -1656,7 +1656,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|smp4m_irq_rotate
@@ -1681,7 +1681,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Only rotate on lower priority IRQ&squot;s (scsi, ethernet, etc.). */
 r_if
 c_cond
@@ -1919,7 +1919,7 @@ r_int
 r_int
 id|cpu_irq
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_struct
 id|tt_entry
 op_star
@@ -2118,7 +2118,7 @@ c_func
 (paren
 id|sparc_ttable
 )paren
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|trap_table
 op_assign
 op_amp

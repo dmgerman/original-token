@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.c,v 1.44 2000/04/26 09:36:32 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/* $Id: sab82532.c,v 1.45 2000/05/08 22:23:08 ecd Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1221,6 +1221,33 @@ id|free_fifo
 op_increment
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|stat-&gt;sreg.isr0
+op_amp
+id|SAB82532_ISR0_TCD
+)paren
+(brace
+id|count
+op_assign
+id|readb
+c_func
+(paren
+op_amp
+id|info-&gt;regs-&gt;r.rbcl
+)paren
+op_amp
+(paren
+id|info-&gt;recv_fifo_size
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|free_fifo
+op_increment
+suffix:semicolon
+)brace
 multiline_comment|/* Issue a FIFO read command in case we where idle. */
 r_if
 c_cond
@@ -1251,44 +1278,6 @@ c_func
 (paren
 id|info
 )paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|stat-&gt;sreg.isr0
-op_amp
-id|SAB82532_ISR0_TCD
-)paren
-(brace
-id|count
-op_assign
-id|readb
-c_func
-(paren
-op_amp
-id|info-&gt;regs-&gt;r.rbcl
-)paren
-op_amp
-(paren
-id|info-&gt;recv_fifo_size
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|count
-op_eq
-l_int|0
-)paren
-id|count
-op_assign
-id|info-&gt;recv_fifo_size
-suffix:semicolon
-id|free_fifo
-op_increment
 suffix:semicolon
 )brace
 r_if
@@ -3274,6 +3263,8 @@ id|SAB82532_IMR1_XOFF
 op_or
 id|SAB82532_IMR1_TIN
 op_or
+id|SAB82532_IMR1_CSC
+op_or
 id|SAB82532_IMR1_XON
 op_or
 id|SAB82532_IMR1_XPR
@@ -4258,6 +4249,22 @@ op_amp
 id|info-&gt;regs-&gt;rw.mode
 )paren
 suffix:semicolon
+id|info-&gt;interrupt_mask1
+op_and_assign
+op_complement
+(paren
+id|SAB82532_IMR1_CSC
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|info-&gt;interrupt_mask1
+comma
+op_amp
+id|info-&gt;regs-&gt;w.imr1
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -4310,6 +4317,19 @@ id|SAB82532_MODE_FCTS
 comma
 op_amp
 id|info-&gt;regs-&gt;rw.mode
+)paren
+suffix:semicolon
+id|info-&gt;interrupt_mask1
+op_or_assign
+id|SAB82532_IMR1_CSC
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|info-&gt;interrupt_mask1
+comma
+op_amp
+id|info-&gt;regs-&gt;w.imr1
 )paren
 suffix:semicolon
 )brace
@@ -9636,7 +9656,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.44 $&quot;
+l_string|&quot;$Revision: 1.45 $&quot;
 suffix:semicolon
 r_char
 op_star

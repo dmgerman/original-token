@@ -2,12 +2,13 @@ multiline_comment|/* $Id: pgalloc.h,v 1.3 2000/02/03 10:13:31 jj Exp $ */
 macro_line|#ifndef _SPARC_PGALLOC_H
 DECL|macro|_SPARC_PGALLOC_H
 mdefine_line|#define _SPARC_PGALLOC_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/btfixup.h&gt;
 multiline_comment|/* Fine grained cache/tlb flushing. */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|BTFIXUPDEF_CALL
 c_func
 (paren

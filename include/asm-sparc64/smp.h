@@ -2,6 +2,7 @@ multiline_comment|/* smp.h: Sparc64 specific SMP stuff.&n; *&n; * Copyright (C) 
 macro_line|#ifndef _SPARC64_SMP_H
 DECL|macro|_SPARC64_SMP_H
 mdefine_line|#define _SPARC64_SMP_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#ifndef __ASSEMBLY__
@@ -34,7 +35,7 @@ l_int|64
 )braket
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Per processor Sparc parameters we need. */
 multiline_comment|/* Keep this a multiple of 64-bytes for cache reasons. */
@@ -341,7 +342,7 @@ r_void
 macro_line|#endif /* !(__ASSEMBLY__) */
 DECL|macro|PROC_CHANGE_PENALTY
 mdefine_line|#define PROC_CHANGE_PENALTY&t;20
-macro_line|#endif /* !(__SMP__) */
+macro_line|#endif /* !(CONFIG_SMP) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;&t;0xFF
 macro_line|#endif /* !(_SPARC64_SMP_H) */

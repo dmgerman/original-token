@@ -287,7 +287,7 @@ id|user
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 id|spinlock_t
 id|kernel_flag
@@ -386,7 +386,7 @@ id|_rw_write_enter
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|__global_save_flags
 id|EXPORT_SYMBOL
 c_func
@@ -504,7 +504,7 @@ id|_clear_le_bit
 )paren
 suffix:semicolon
 multiline_comment|/* IRQ implementation. */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL
 c_func
@@ -603,7 +603,7 @@ multiline_comment|/* P3: iounit_xxx may be needed, sun4d users */
 multiline_comment|/* EXPORT_SYMBOL(iounit_map_dma_init); */
 multiline_comment|/* EXPORT_SYMBOL(iounit_map_dma_page); */
 multiline_comment|/* Btfixup stuff cannot have versions, it would be complicated too much */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren

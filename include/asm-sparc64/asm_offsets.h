@@ -365,12 +365,12 @@ DECL|macro|AOFF_task_self_exec_id
 mdefine_line|#define AOFF_task_self_exec_id&t;0x00000834
 DECL|macro|ASIZ_task_self_exec_id
 mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
-DECL|macro|AOFF_task_exit_sem
-mdefine_line|#define AOFF_task_exit_sem&t;0x00000838
-DECL|macro|ASIZ_task_exit_sem
-mdefine_line|#define ASIZ_task_exit_sem&t;0x00000038
+DECL|macro|AOFF_task_alloc_lock
+mdefine_line|#define AOFF_task_alloc_lock&t;0x00000838
+DECL|macro|ASIZ_task_alloc_lock
+mdefine_line|#define ASIZ_task_alloc_lock&t;0x00000004
 DECL|macro|ASIZ_task
-mdefine_line|#define ASIZ_task&t;0x00000870
+mdefine_line|#define ASIZ_task&t;0x00000840
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap
@@ -945,12 +945,12 @@ DECL|macro|AOFF_task_self_exec_id
 mdefine_line|#define AOFF_task_self_exec_id&t;0x00000a24
 DECL|macro|ASIZ_task_self_exec_id
 mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
-DECL|macro|AOFF_task_exit_sem
-mdefine_line|#define AOFF_task_exit_sem&t;0x00000a28
-DECL|macro|ASIZ_task_exit_sem
-mdefine_line|#define ASIZ_task_exit_sem&t;0x00000038
+DECL|macro|AOFF_task_alloc_lock
+mdefine_line|#define AOFF_task_alloc_lock&t;0x00000a28
+DECL|macro|ASIZ_task_alloc_lock
+mdefine_line|#define ASIZ_task_alloc_lock&t;0x00000001
 DECL|macro|ASIZ_task
-mdefine_line|#define ASIZ_task&t;0x00000a60
+mdefine_line|#define ASIZ_task&t;0x00000a30
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap
@@ -1524,12 +1524,12 @@ DECL|macro|AOFF_task_self_exec_id
 mdefine_line|#define AOFF_task_self_exec_id&t;0x00000a3c
 DECL|macro|ASIZ_task_self_exec_id
 mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
-DECL|macro|AOFF_task_exit_sem
-mdefine_line|#define AOFF_task_exit_sem&t;0x00000a40
-DECL|macro|ASIZ_task_exit_sem
-mdefine_line|#define ASIZ_task_exit_sem&t;0x00000040
+DECL|macro|AOFF_task_alloc_lock
+mdefine_line|#define AOFF_task_alloc_lock&t;0x00000a40
+DECL|macro|ASIZ_task_alloc_lock
+mdefine_line|#define ASIZ_task_alloc_lock&t;0x0000000c
 DECL|macro|ASIZ_task
-mdefine_line|#define ASIZ_task&t;0x00000a80
+mdefine_line|#define ASIZ_task&t;0x00000a50
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap

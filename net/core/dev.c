@@ -1943,7 +1943,7 @@ op_minus
 id|ENETDOWN
 suffix:semicolon
 )brace
-multiline_comment|/*=======================================================================&n;&t;&t;&t;Receiver rotutines&n;  =======================================================================*/
+multiline_comment|/*=======================================================================&n;&t;&t;&t;Receiver routines&n;  =======================================================================*/
 DECL|variable|netdev_max_backlog
 r_int
 id|netdev_max_backlog

@@ -2,8 +2,9 @@ multiline_comment|/* $Id: atomic.h,v 1.1 1999/08/18 23:37:50 ralf Exp $&n; *&n; 
 macro_line|#ifndef _ASM_ATOMIC_H
 DECL|macro|_ASM_ATOMIC_H
 mdefine_line|#define _ASM_ATOMIC_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sgidefs.h&gt;
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef

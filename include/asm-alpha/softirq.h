@@ -1,10 +1,11 @@
 macro_line|#ifndef _ALPHA_SOFTIRQ_H
 DECL|macro|_ALPHA_SOFTIRQ_H
 mdefine_line|#define _ALPHA_SOFTIRQ_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_extern
 r_int
 id|__local_bh_count

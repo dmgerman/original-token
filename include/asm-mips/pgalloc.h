@@ -2,6 +2,7 @@ multiline_comment|/* $Id: pgalloc.h,v 1.4 2000/02/24 00:13:19 ralf Exp $&n; *&n;
 macro_line|#ifndef _ASM_PGALLOC_H
 DECL|macro|_ASM_PGALLOC_H
 mdefine_line|#define _ASM_PGALLOC_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
 r_extern
 r_void
@@ -861,7 +862,7 @@ id|pgd_t
 op_star
 id|pgd
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|i
 suffix:semicolon
@@ -906,7 +907,7 @@ op_amp
 id|tasklist_lock
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_for
 c_loop
 (paren

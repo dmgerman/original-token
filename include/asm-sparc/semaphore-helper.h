@@ -1,6 +1,7 @@
 macro_line|#ifndef _SPARC_SEMAPHORE_HELPER_H
 DECL|macro|_SPARC_SEMAPHORE_HELPER_H
 mdefine_line|#define _SPARC_SEMAPHORE_HELPER_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * (barely) SMP- and interrupt-safe semaphore helper functions, sparc version.&n; *&n; * (C) Copyright 1999 David S. Miller (davem@redhat.com)&n; * (C) Copyright 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 DECL|macro|wake_one_more
 mdefine_line|#define wake_one_more(sem)&t;atomic_inc(&amp;(sem)-&gt;waking)
@@ -20,7 +21,7 @@ id|sem
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|tmp
 suffix:semicolon
@@ -328,7 +329,7 @@ id|tsk
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|tmp
 suffix:semicolon
@@ -658,7 +659,7 @@ id|sem
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|tmp
 suffix:semicolon

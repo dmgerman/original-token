@@ -1,4 +1,5 @@
 multiline_comment|/*  $Id: sun4d_irq.c,v 1.24 1999/12/27 06:08:34 anton Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -60,7 +61,7 @@ id|cpu_leds
 l_int|32
 )braket
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|sbus_tid
 r_int
 r_char
@@ -167,7 +168,7 @@ r_static
 r_int
 id|nsbi
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|sun4d_imsk_lock
 id|spinlock_t
 id|sun4d_imsk_lock
@@ -207,7 +208,7 @@ id|irqaction
 op_star
 id|action
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|x
 suffix:semicolon
@@ -339,7 +340,7 @@ comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|len
 op_add_assign
 id|sprintf
@@ -1566,7 +1567,7 @@ r_int
 id|irq
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|tid
 op_assign
@@ -1595,7 +1596,7 @@ id|NR_IRQS
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|spin_lock_irqsave
 c_func
 (paren
@@ -1679,7 +1680,7 @@ r_int
 id|irq
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|tid
 op_assign
@@ -1708,7 +1709,7 @@ id|NR_IRQS
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|spin_lock_irqsave
 c_func
 (paren
@@ -1783,7 +1784,7 @@ l_int|7
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|sun4d_set_cpu_int
 r_static
 r_void
@@ -2270,7 +2271,7 @@ id|r
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|r.start
 op_assign
 id|CSR_BASE
@@ -2418,7 +2419,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 (brace
 r_int
 r_int
@@ -2614,7 +2615,7 @@ c_func
 id|sbus
 )paren
 (brace
-macro_line|#ifdef __SMP__&t;
+macro_line|#ifdef CONFIG_SMP&t;
 r_extern
 r_int
 r_char
@@ -2819,7 +2820,7 @@ id|init_timers
 op_assign
 id|sun4d_init_timers
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|BTFIXUPSET_CALL
 c_func
 (paren

@@ -360,10 +360,10 @@ DECL|macro|AOFF_task_self_exec_id
 mdefine_line|#define AOFF_task_self_exec_id&t;0x000005fc
 DECL|macro|ASIZ_task_self_exec_id
 mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
-DECL|macro|AOFF_task_exit_sem
-mdefine_line|#define AOFF_task_exit_sem&t;0x00000600
-DECL|macro|ASIZ_task_exit_sem
-mdefine_line|#define ASIZ_task_exit_sem&t;0x00000020
+DECL|macro|AOFF_task_alloc_lock
+mdefine_line|#define AOFF_task_alloc_lock&t;0x00000600
+DECL|macro|ASIZ_task_alloc_lock
+mdefine_line|#define ASIZ_task_alloc_lock&t;0x00000004
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap
@@ -917,10 +917,10 @@ DECL|macro|AOFF_task_self_exec_id
 mdefine_line|#define AOFF_task_self_exec_id&t;0x00000700
 DECL|macro|ASIZ_task_self_exec_id
 mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
-DECL|macro|AOFF_task_exit_sem
-mdefine_line|#define AOFF_task_exit_sem&t;0x00000704
-DECL|macro|ASIZ_task_exit_sem
-mdefine_line|#define ASIZ_task_exit_sem&t;0x00000024
+DECL|macro|AOFF_task_alloc_lock
+mdefine_line|#define AOFF_task_alloc_lock&t;0x00000704
+DECL|macro|ASIZ_task_alloc_lock
+mdefine_line|#define ASIZ_task_alloc_lock&t;0x00000008
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap

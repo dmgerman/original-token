@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.88 2000/04/14 10:10:34 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.89 2000/05/06 10:38:42 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#include &lt;linux/if_ppp.h&gt;
+macro_line|#include &lt;linux/if_pppox.h&gt;
 macro_line|#include &lt;linux/mtio.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/loop.h&gt;
@@ -17562,6 +17563,20 @@ c_func
 (paren
 id|PPPIOCATTCHAN
 )paren
+multiline_comment|/* PPPOX */
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|PPPOEIOCSFWD
+)paren
+suffix:semicolon
+DECL|variable|COMPATIBLE_IOCTL
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|PPPOEIOCDFWD
+)paren
+suffix:semicolon
 multiline_comment|/* CDROM stuff */
 id|COMPATIBLE_IOCTL
 c_func

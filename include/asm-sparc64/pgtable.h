@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.125 2000/04/12 08:10:26 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.126 2000/05/05 21:57:03 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -278,6 +278,8 @@ mdefine_line|#define pgd_clear(pgdp)&t;&t;&t;(pgd_val(*(pgdp)) = 0UL)
 multiline_comment|/* The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|macro|pte_read
 mdefine_line|#define pte_read(pte)&t;&t;(pte_val(pte) &amp; _PAGE_READ)
+DECL|macro|pte_exec
+mdefine_line|#define pte_exec(pte)&t;&t;pte_read(pte)
 DECL|macro|pte_write
 mdefine_line|#define pte_write(pte)&t;&t;(pte_val(pte) &amp; _PAGE_WRITE)
 DECL|macro|pte_dirty

@@ -2,6 +2,7 @@ multiline_comment|/* $Id: oplib.h,v 1.12 1999/11/19 05:53:12 davem Exp $&n; * op
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 multiline_comment|/* Enumeration to describe the prom major version we have detected. */
 DECL|enum|prom_major_version
@@ -417,7 +418,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Multiprocessor operations... */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Start the CPU with the given device tree node, context table, and context&n; * at the passed program counter.&n; */
 r_extern
 r_void

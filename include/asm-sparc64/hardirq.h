@@ -2,10 +2,11 @@ multiline_comment|/* hardirq.h: 64-bit Sparc hard IRQ support.&n; *&n; * Copyrig
 macro_line|#ifndef __SPARC64_HARDIRQ_H
 DECL|macro|__SPARC64_HARDIRQ_H
 mdefine_line|#define __SPARC64_HARDIRQ_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/brlock.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_extern
 r_int
 r_int
@@ -29,7 +30,7 @@ mdefine_line|#define in_interrupt() ((local_irq_count + local_bh_count) != 0)
 multiline_comment|/* This tests only the local processors hw IRQ context disposition.  */
 DECL|macro|in_irq
 mdefine_line|#define in_irq() (local_irq_count != 0)
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;((void)(cpu), local_irq_count == 0)
 DECL|macro|hardirq_endlock
@@ -40,7 +41,7 @@ DECL|macro|hardirq_exit
 mdefine_line|#define hardirq_exit(cpu)&t;((void)(cpu), local_irq_count--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
-macro_line|#else /* (__SMP__) */
+macro_line|#else /* (CONFIG_SMP) */
 DECL|function|irqs_running
 r_static
 id|__inline__
@@ -191,6 +192,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#endif /* !(__SPARC64_HARDIRQ_H) */
 eof

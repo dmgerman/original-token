@@ -1,8 +1,9 @@
 macro_line|#ifndef _ALPHA_ATOMIC_H
 DECL|macro|_ALPHA_ATOMIC_H
 mdefine_line|#define _ALPHA_ATOMIC_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc...&n; *&n; * But use these as seldom as possible since they are much slower&n; * than regular operations.&n; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef

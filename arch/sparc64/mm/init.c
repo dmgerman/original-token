@@ -129,7 +129,7 @@ id|high
 (brace
 r_do
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -208,7 +208,7 @@ id|low
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifndef __SMP__ 
+macro_line|#ifndef CONFIG_SMP 
 r_if
 c_cond
 (paren
@@ -465,7 +465,7 @@ comma
 id|pgtable_cache_size
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|printk
 c_func
 (paren
@@ -3404,7 +3404,7 @@ op_assign
 id|new_ctx
 suffix:semicolon
 )brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|pgt_quicklists
 r_struct
 id|pgtable_cache_struct
@@ -6049,7 +6049,7 @@ id|initpages
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 (brace
 multiline_comment|/* Put empty_pg_dir on pgd_quicklist */
 r_extern

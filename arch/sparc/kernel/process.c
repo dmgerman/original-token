@@ -73,7 +73,7 @@ id|init_task
 comma
 )brace
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|SUN4C_FAULT_HIGH
 mdefine_line|#define SUN4C_FAULT_HIGH 100
 multiline_comment|/*&n; * the idle loop on a Sparc... ;)&n; */
@@ -869,7 +869,7 @@ id|fp
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|smp_show_backtrace_all_cpus
 r_void
 id|smp_show_backtrace_all_cpus
@@ -1444,7 +1444,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1497,7 +1497,7 @@ op_amp
 id|current-&gt;thread.fpqdepth
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|last_task_used_math
 op_assign
 l_int|NULL
@@ -1528,7 +1528,7 @@ id|current-&gt;thread.new_signal
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1581,7 +1581,7 @@ op_amp
 id|current-&gt;thread.fpqdepth
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|last_task_used_math
 op_assign
 l_int|NULL
@@ -1886,7 +1886,7 @@ id|sp
 suffix:semicolon
 )brace
 multiline_comment|/* Copy a Sparc thread.  The fork() return value conventions&n; * under SunOS are nothing short of bletcherous:&n; * Parent --&gt;  %o0 == childs  pid, %o1 == 0&n; * Child  --&gt;  %o0 == parents pid, %o1 == 1&n; *&n; * NOTE: We have a separate fork kpsr/kwim because&n; *       the parent could change these values between&n; *       sys_fork invocation and when we reach here&n; *       if the parent should sleep while trying to&n; *       allocate the task_struct and kernel stack in&n; *       do_fork().&n; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|ret_from_smpfork
@@ -1946,7 +1946,7 @@ r_int
 r_int
 id|stack_offset
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1998,7 +1998,7 @@ op_amp
 id|p-&gt;thread.fpqdepth
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|current-&gt;flags
 op_and_assign
 op_complement
@@ -2097,7 +2097,7 @@ r_int
 )paren
 id|new_stack
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|p-&gt;thread.kpc
 op_assign
 (paren
@@ -2700,7 +2700,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren

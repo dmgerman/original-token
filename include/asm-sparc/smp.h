@@ -2,6 +2,7 @@ multiline_comment|/* smp.h: Sparc specific SMP stuff.&n; *&n; * Copyright (C) 19
 macro_line|#ifndef _SPARC_SMP_H
 DECL|macro|_SPARC_SMP_H
 mdefine_line|#define _SPARC_SMP_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/btfixup.h&gt;
@@ -27,7 +28,7 @@ id|linux_num_cpus
 suffix:semicolon
 multiline_comment|/* number of CPUs probed  */
 macro_line|#endif /* !(__ASSEMBLY__) */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
@@ -700,7 +701,7 @@ DECL|macro|MBOX_STOPCPU2
 mdefine_line|#define MBOX_STOPCPU2         0xFE
 DECL|macro|PROC_CHANGE_PENALTY
 mdefine_line|#define PROC_CHANGE_PENALTY     15
-macro_line|#endif /* !(__SMP__) */
+macro_line|#endif /* !(CONFIG_SMP) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID            0xFF
 macro_line|#endif /* !(_SPARC_SMP_H) */

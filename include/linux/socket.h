@@ -359,6 +359,8 @@ DECL|macro|AF_SNA
 mdefine_line|#define AF_SNA&t;&t;22&t;/* Linux SNA Project (nutters!) */
 DECL|macro|AF_IRDA
 mdefine_line|#define AF_IRDA&t;&t;23&t;/* IRDA sockets&t;&t;&t;*/
+DECL|macro|AF_PPPOX
+mdefine_line|#define AF_PPPOX&t;24&t;/* PPPoX sockets&t;&t;*/
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -412,6 +414,8 @@ DECL|macro|PF_SNA
 mdefine_line|#define PF_SNA&t;&t;AF_SNA
 DECL|macro|PF_IRDA
 mdefine_line|#define PF_IRDA&t;&t;AF_IRDA
+DECL|macro|PF_PPPOX
+mdefine_line|#define PF_PPPOX&t;AF_PPPOX
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */

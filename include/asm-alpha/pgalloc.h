@@ -31,7 +31,7 @@ DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 multiline_comment|/* Note that the following two definitions are _highly_ dependent&n;   on the contexts in which they are used in the kernel.  I personally&n;   think it is criminal how loosely defined these macros are.  */
 multiline_comment|/* We need to flush the kernel&squot;s icache after loading modules.  The&n;   only other use of this macro is in load_aout_interp which is not&n;   used on Alpha. &n;&n;   Note that this definition should *not* be used for userspace&n;   icache flushing.  While functional, it is _way_ overkill.  The&n;   icache is tagged with ASNs and it suffices to allocate a new ASN&n;   for the process.  */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;imb()
 macro_line|#else
@@ -48,7 +48,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* We need to flush the userspace icache after setting breakpoints in&n;   ptrace.  I don&squot;t think it&squot;s needed in do_swap_page, or do_no_page,&n;   but I don&squot;t know how to get rid of it either.&n;&n;   Instead of indiscriminately using imb, take advantage of the fact&n;   that icache entries are tagged with the ASN and load a new mm context.  */
 multiline_comment|/* ??? Ought to use this in arch/alpha/kernel/signal.c too.  */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_static
 r_inline
 r_void
@@ -345,7 +345,7 @@ id|end
 )paren
 (brace
 )brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 multiline_comment|/*&n; * Flush everything (kernel mapping may also have&n; * changed due to vmalloc/vfree)&n; */
 DECL|function|flush_tlb_all
 r_static
@@ -477,7 +477,7 @@ id|mm
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* __SMP__ */
+macro_line|#else /* CONFIG_SMP */
 r_extern
 r_void
 id|flush_tlb_all
@@ -525,9 +525,9 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/*      &n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any.&n; */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|struct|pgtable_cache_struct
 r_extern
 r_struct

@@ -118,7 +118,7 @@ macro_line|#  define MAX_ASN&t;EV6_MAX_ASN
 macro_line|# endif
 macro_line|#endif
 multiline_comment|/*&n; * cpu_last_asn(processor):&n; * 63                                            0&n; * +-------------+----------------+--------------+&n; * | asn version | this processor | hardware asn |&n; * +-------------+----------------+--------------+&n; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/smp.h&gt;
 DECL|macro|cpu_last_asn
 mdefine_line|#define cpu_last_asn(cpuid)&t;(cpu_data[cpuid].last_asn)
@@ -130,10 +130,10 @@ id|last_asn
 suffix:semicolon
 DECL|macro|cpu_last_asn
 mdefine_line|#define cpu_last_asn(cpuid)&t;last_asn
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 DECL|macro|WIDTH_HARDWARE_ASN
 mdefine_line|#define WIDTH_HARDWARE_ASN&t;8
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|WIDTH_THIS_PROCESSOR
 mdefine_line|#define WIDTH_THIS_PROCESSOR&t;5
 macro_line|#else

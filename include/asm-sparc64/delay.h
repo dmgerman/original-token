@@ -2,7 +2,8 @@ multiline_comment|/* $Id: delay.h,v 1.8 2000/04/13 04:45:59 davem Exp $&n; * del
 macro_line|#ifndef __SPARC64_DELAY_H
 DECL|macro|__SPARC64_DELAY_H
 mdefine_line|#define __SPARC64_DELAY_H
-macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#endif 
@@ -145,7 +146,7 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|__udelay_val
 mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
 macro_line|#else

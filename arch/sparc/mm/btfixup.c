@@ -2233,7 +2233,7 @@ op_plus
 id|count
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|flush_cacheall
 op_assign
 (paren

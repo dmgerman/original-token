@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@pcmcia.sourceforge.org&n;&n;    3c589_cs.c 1.145 2000/02/11 03:11:51&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@pcmcia.sourceforge.org&n;&n;    3c589_cs.c 1.151 2000/05/08 22:03:18&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -377,7 +377,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c589_cs.c 1.145 2000/02/11 03:11:51 (David Hinds)&quot;
+l_string|&quot;3c589_cs.c 1.151 2000/05/08 22:03:18 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -756,23 +756,6 @@ id|err
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*======================================================================&n;&n;    We never need to do anything when a tc589 device is &quot;initialized&quot;&n;    by the net software, because we only register already-found cards.&n;    &n;======================================================================*/
-DECL|function|tc589_init
-r_static
-r_int
-id|tc589_init
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*======================================================================&n;&n;    tc589_attach() creates an &quot;instance&quot; of the driver, allocating&n;    local data structures for one device.  The device is registered&n;    with Card Services.&n;&n;======================================================================*/
 DECL|function|tc589_attach
 r_static
@@ -998,19 +981,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|dev-&gt;name
-comma
-id|lp-&gt;node.dev_name
-)paren
-suffix:semicolon
-id|dev-&gt;init
-op_assign
-op_amp
-id|tc589_init
-suffix:semicolon
 id|dev-&gt;open
 op_assign
 op_amp
@@ -1028,11 +998,6 @@ suffix:semicolon
 id|dev-&gt;watchdog_timeo
 op_assign
 id|TX_TIMEOUT
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
 suffix:semicolon
 multiline_comment|/* Register with Card Services */
 id|link-&gt;next
@@ -1152,9 +1117,6 @@ op_star
 op_star
 id|linkp
 suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1207,42 +1169,11 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|link-&gt;state
-op_amp
-id|DEV_RELEASE_PENDING
-)paren
-(brace
 id|del_timer
 c_func
 (paren
 op_amp
 id|link-&gt;release
-)paren
-suffix:semicolon
-id|link-&gt;state
-op_and_assign
-op_complement
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1693,11 +1624,6 @@ id|dev-&gt;base_addr
 op_assign
 id|link-&gt;io.BasePort1
 suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1721,11 +1647,6 @@ r_goto
 id|failed
 suffix:semicolon
 )brace
-id|link-&gt;state
-op_and_assign
-op_complement
-id|DEV_CONFIG_PENDING
-suffix:semicolon
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -1861,10 +1782,23 @@ id|failed
 suffix:semicolon
 )brace
 )brace
+id|strcpy
+c_func
+(paren
+id|lp-&gt;node.dev_name
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|link-&gt;dev
 op_assign
 op_amp
 id|lp-&gt;node
+suffix:semicolon
+id|link-&gt;state
+op_and_assign
+op_complement
+id|DEV_CONFIG_PENDING
 suffix:semicolon
 multiline_comment|/* The address and resource configuration register aren&squot;t loaded from&n;       the EEPROM and *must* be set to 0 and IRQ3 for the PCMCIA version. */
 id|outw
@@ -2123,11 +2057,7 @@ suffix:semicolon
 id|link-&gt;state
 op_and_assign
 op_complement
-(paren
 id|DEV_CONFIG
-op_or
-id|DEV_RELEASE_PENDING
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* tc589_release */
@@ -2208,19 +2138,17 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|link-&gt;release.expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|link-&gt;release
+comma
 id|jiffies
 op_plus
 id|HZ
 op_div
 l_int|20
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|link-&gt;release
 )paren
 suffix:semicolon
 )brace
@@ -3191,6 +3119,7 @@ suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -3319,6 +3248,7 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -3504,29 +3434,19 @@ id|EL3_STATUS
 )paren
 )paren
 suffix:semicolon
-id|netif_stop_queue
 (paren
-id|dev
-)paren
-suffix:semicolon
-(brace
-r_struct
-id|el3_private
-op_star
-id|lp
-op_assign
 (paren
 r_struct
 id|el3_private
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-id|lp-&gt;stats.tx_bytes
+)paren
+op_member_access_from_pointer
+id|stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-)brace
 multiline_comment|/* Put out the doubleword header... */
 id|outw
 c_func
@@ -3581,17 +3501,16 @@ id|ioaddr
 op_plus
 id|TX_FREE
 )paren
-OG
+op_le
 l_int|1536
 )paren
 (brace
-id|netif_start_queue
+id|netif_stop_queue
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
-r_else
 multiline_comment|/* Interrupt us when the FIFO has room for max-sized packet. */
 id|outw
 c_func
@@ -3605,6 +3524,7 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
+)brace
 id|dev_kfree_skb
 c_func
 (paren
@@ -3801,6 +3721,7 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 id|netif_wake_queue
+c_func
 (paren
 id|dev
 )paren
@@ -5305,11 +5226,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|netif_stop_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5443,6 +5359,12 @@ suffix:semicolon
 id|link-&gt;open
 op_decrement
 suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|del_timer
 c_func
 (paren
@@ -5457,27 +5379,19 @@ id|link-&gt;state
 op_amp
 id|DEV_STALE_CONFIG
 )paren
-(brace
-id|link-&gt;release.expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|link-&gt;release
+comma
 id|jiffies
 op_plus
 id|HZ
 op_div
 l_int|20
-suffix:semicolon
-id|link-&gt;state
-op_or_assign
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|link-&gt;release
 )paren
 suffix:semicolon
-)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return

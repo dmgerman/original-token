@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASM_SMP_H
 DECL|macro|__ASM_SMP_H
 mdefine_line|#define __ASM_SMP_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pal.h&gt;
 multiline_comment|/* HACK: Cabrio WHAMI return value is bogus if more than 8 bits used.. :-( */
 r_static
@@ -55,7 +56,7 @@ r_return
 id|__r0
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 DECL|struct|cpuinfo_alpha
@@ -186,7 +187,7 @@ r_int
 r_int
 id|cpu_present_mask
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;(-1)
 macro_line|#endif

@@ -19224,7 +19224,7 @@ op_assign
 l_string|&quot;serial&quot;
 suffix:semicolon
 macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &gt; 0x2032D &amp;&amp; defined(CONFIG_DEVFS_FS))
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|serial_driver.name
 op_assign
 l_string|&quot;tts/%d&quot;
@@ -19381,7 +19381,7 @@ id|callout_driver
 op_assign
 id|serial_driver
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt; 0x2032D &amp;&amp; defined(CONFIG_DEVFS_FS))
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|callout_driver.name
 op_assign
 l_string|&quot;cua/%d&quot;

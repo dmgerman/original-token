@@ -2,6 +2,7 @@ multiline_comment|/* $Id */
 macro_line|#ifndef _SPARC64_PGALLOC_H
 DECL|macro|_SPARC64_PGALLOC_H
 mdefine_line|#define _SPARC64_PGALLOC_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -110,7 +111,7 @@ r_int
 id|r
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;__flush_cache_all()
 DECL|macro|flush_tlb_all
@@ -121,7 +122,7 @@ DECL|macro|flush_tlb_range
 mdefine_line|#define flush_tlb_range(__mm, start, end) &bslash;&n;do { if(CTX_VALID((__mm)-&gt;context)) { &bslash;&n;&t;unsigned long __start = (start)&amp;PAGE_MASK; &bslash;&n;&t;unsigned long __end = (end)&amp;PAGE_MASK; &bslash;&n;&t;__flush_tlb_range(CTX_HWBITS((__mm)-&gt;context), __start, &bslash;&n;&t;&t;&t;  SECONDARY_CONTEXT, __end, PAGE_SIZE, &bslash;&n;&t;&t;&t;  (__end - __start)); &bslash;&n;     } &bslash;&n;} while(0)
 DECL|macro|flush_tlb_page
 mdefine_line|#define flush_tlb_page(vma, page) &bslash;&n;do { struct mm_struct *__mm = (vma)-&gt;vm_mm; &bslash;&n;     if(CTX_VALID(__mm-&gt;context)) &bslash;&n;&t;__flush_tlb_page(CTX_HWBITS(__mm-&gt;context), (page)&amp;PAGE_MASK, &bslash;&n;&t;&t;&t; SECONDARY_CONTEXT); &bslash;&n;} while(0)
-macro_line|#else /* __SMP__ */
+macro_line|#else /* CONFIG_SMP */
 r_extern
 r_void
 id|smp_flush_cache_all
@@ -193,7 +194,7 @@ DECL|macro|flush_tlb_range
 mdefine_line|#define flush_tlb_range(mm, start, end) &bslash;&n;&t;smp_flush_tlb_range(mm, start, end)
 DECL|macro|flush_tlb_page
 mdefine_line|#define flush_tlb_page(vma, page) &bslash;&n;&t;smp_flush_tlb_page((vma)-&gt;vm_mm, page)
-macro_line|#endif /* ! __SMP__ */
+macro_line|#endif /* ! CONFIG_SMP */
 multiline_comment|/* This will change for Cheetah and later chips. */
 DECL|macro|VPTE_BASE
 mdefine_line|#define VPTE_BASE&t;0xfffffffe00000000
@@ -292,7 +293,7 @@ l_int|3
 suffix:semicolon
 )brace
 multiline_comment|/* Page table allocation/freeing. */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Sliiiicck */
 DECL|macro|pgt_quicklists
 mdefine_line|#define pgt_quicklists&t;cpu_data[smp_processor_id()]
@@ -341,7 +342,7 @@ DECL|macro|pgtable_cache_size
 mdefine_line|#define pgtable_cache_size&t;(pgt_quicklists.pgcache_size)
 DECL|macro|pgd_cache_size
 mdefine_line|#define pgd_cache_size&t;&t;(pgt_quicklists.pgdcache_size)
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|function|free_pgd_fast
 r_extern
 id|__inline__
@@ -620,7 +621,7 @@ op_star
 id|ret
 suffix:semicolon
 )brace
-macro_line|#else /* __SMP__ */
+macro_line|#else /* CONFIG_SMP */
 DECL|function|free_pgd_fast
 r_extern
 id|__inline__
@@ -775,7 +776,7 @@ id|pgd
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 r_extern
 id|pmd_t
 op_star

@@ -2,6 +2,7 @@ multiline_comment|/* Machine-dependent software floating-point definitions.&n;  
 macro_line|#ifndef _SFP_MACHINE_H
 DECL|macro|_SFP_MACHINE_H
 mdefine_line|#define _SFP_MACHINE_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|_FP_W_TYPE_SIZE
 mdefine_line|#define _FP_W_TYPE_SIZE&t;&t;32
 DECL|macro|_FP_W_TYPE
@@ -411,7 +412,7 @@ l_string|&quot; ((USItype)(x0))&t;&t;&t;&t;&t;&bslash;&n;&t;   : &quot;
 id|cc
 "&quot;"
 )paren
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_extern
 r_struct
 id|task_struct
@@ -421,7 +422,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Obtain the current rounding mode. */
 macro_line|#ifndef FP_ROUNDMODE
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|FP_ROUNDMODE
 mdefine_line|#define FP_ROUNDMODE&t;((current-&gt;thread.fsr &gt;&gt; 30) &amp; 0x3)
 macro_line|#else
@@ -442,7 +443,7 @@ DECL|macro|FP_EX_INEXACT
 mdefine_line|#define FP_EX_INEXACT&t;&t;(1 &lt;&lt; 0)
 DECL|macro|FP_HANDLE_EXCEPTIONS
 mdefine_line|#define FP_HANDLE_EXCEPTIONS return _fex
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|FP_INHIBIT_RESULTS
 mdefine_line|#define FP_INHIBIT_RESULTS ((current-&gt;thread.fsr &gt;&gt; 23) &amp; _fex)
 macro_line|#else

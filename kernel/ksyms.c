@@ -555,6 +555,13 @@ c_func
 id|path_walk
 )paren
 suffix:semicolon
+DECL|variable|path_release
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|path_release
+)paren
+suffix:semicolon
 DECL|variable|__user_walk
 id|EXPORT_SYMBOL
 c_func
@@ -1135,6 +1142,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|vfs_rename
+)paren
+suffix:semicolon
+DECL|variable|vfs_statfs
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|vfs_statfs
 )paren
 suffix:semicolon
 DECL|variable|generic_read_dir
@@ -1830,7 +1844,7 @@ id|autoirq_report
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|del_timer_sync
 id|EXPORT_SYMBOL
 c_func
@@ -1881,7 +1895,7 @@ c_func
 id|timer_table
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Various random spinlocks we want to export */
 DECL|variable|tqueue_lock
 id|EXPORT_SYMBOL

@@ -2,6 +2,7 @@ multiline_comment|/* $Id: bitops.h,v 1.55 2000/02/09 03:28:32 davem Exp $&n; * b
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#ifndef __KERNEL__
@@ -368,7 +369,7 @@ suffix:semicolon
 )brace
 macro_line|#else /* __KERNEL__ */
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|__SMPVOL
 mdefine_line|#define __SMPVOL volatile
 macro_line|#else

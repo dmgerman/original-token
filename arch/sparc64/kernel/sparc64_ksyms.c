@@ -484,7 +484,7 @@ id|user
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 id|spinlock_t
 id|kernel_flag
@@ -588,7 +588,7 @@ multiline_comment|/* One thing to note is that the way the symbols of the mul/di
 DECL|macro|EXPORT_SYMBOL_PRIVATE
 mdefine_line|#define EXPORT_SYMBOL_PRIVATE(sym)&t;&t;&t;&t;&bslash;&n;extern int __sparc_priv_ ## sym (int) __asm__(&quot;__&quot; #sym);&t;&bslash;&n;const struct module_symbol __export_priv_##sym&t;&t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&t;&bslash;&n;{ (unsigned long) &amp;__sparc_priv_ ## sym, &quot;__&quot; #sym }
 multiline_comment|/* used by various drivers */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#ifndef SPIN_LOCK_DEBUG
 multiline_comment|/* Out of line rw-locking implementation. */
 DECL|variable|read_lock

@@ -375,7 +375,7 @@ id|xtime_lock
 suffix:semicolon
 r_do
 (brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -544,7 +544,7 @@ id|xtime_lock
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|timer_tick_interrupt
 r_void
 id|timer_tick_interrupt

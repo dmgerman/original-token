@@ -3,7 +3,7 @@ macro_line|#ifndef __ASM_MIPS_ATOMIC_H
 DECL|macro|__ASM_MIPS_ATOMIC_H
 mdefine_line|#define __ASM_MIPS_ATOMIC_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef

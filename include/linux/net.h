@@ -2,6 +2,7 @@ multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network acces
 macro_line|#ifndef _LINUX_NET_H
 DECL|macro|_LINUX_NET_H
 mdefine_line|#define _LINUX_NET_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 r_struct
@@ -726,7 +727,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|SOCKOPS_WRAPPED
 mdefine_line|#define SOCKOPS_WRAPPED(name) name
 DECL|macro|SOCKOPS_WRAP

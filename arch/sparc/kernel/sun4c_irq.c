@@ -555,7 +555,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|sun4c_nop
 r_static
 r_void
@@ -814,7 +814,7 @@ id|init_timers
 op_assign
 id|sun4c_init_timers
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|BTFIXUPSET_CALL
 c_func
 (paren

@@ -2,7 +2,8 @@ multiline_comment|/* atops.h: Atomic SPARC operations.&n; *&n; * Copyright (C) 1
 macro_line|#ifndef _SPARC_ATOPS_H
 DECL|macro|_SPARC_ATOPS_H
 mdefine_line|#define _SPARC_ATOPS_H
-macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
 DECL|function|ldstub
 r_extern
 id|__inline__

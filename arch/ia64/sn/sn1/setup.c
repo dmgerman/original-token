@@ -161,7 +161,7 @@ id|HZ
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|init_smp_config
 c_func
 (paren

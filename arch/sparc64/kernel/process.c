@@ -29,7 +29,7 @@ macro_line|#include &lt;asm/pstate.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;asm/fpumacro.h&gt;
 multiline_comment|/* #define VERBOSE_SHOWREGS */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 multiline_comment|/*&n; * the idle loop on a Sparc... ;)&n; */
 DECL|function|cpu_idle
 r_int
@@ -1238,7 +1238,7 @@ r_int
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|regdump_lock
 r_static
 id|spinlock_t
@@ -1258,7 +1258,7 @@ op_star
 id|regs
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 r_int
 id|flags
@@ -1415,7 +1415,7 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -1551,7 +1551,7 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 (brace
 r_extern
 r_void

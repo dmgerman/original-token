@@ -2,8 +2,9 @@ multiline_comment|/* hardirq.h: 32-bit Sparc hard IRQ support.&n; *&n; * Copyrig
 macro_line|#ifndef __SPARC_HARDIRQ_H
 DECL|macro|__SPARC_HARDIRQ_H
 mdefine_line|#define __SPARC_HARDIRQ_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_extern
 r_int
 r_int
@@ -182,6 +183,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#endif /* __SPARC_HARDIRQ_H */
 eof

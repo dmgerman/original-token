@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: misc.c,v 1.26 2000/04/14 09:59:02 davem Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -2203,7 +2204,7 @@ comma
 l_int|167000000
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__&t;
+macro_line|#ifdef CONFIG_SMP&t;
 r_case
 id|SOLARIS_CONFIG_NPROC_CONF
 suffix:colon

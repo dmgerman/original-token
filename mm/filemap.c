@@ -803,15 +803,11 @@ l_int|NULL
 suffix:semicolon
 id|count
 op_assign
-(paren
 id|nr_lru_pages
-op_lshift
-l_int|1
-)paren
-op_rshift
+op_div
 (paren
 id|priority
-op_rshift
+op_plus
 l_int|1
 )paren
 suffix:semicolon
@@ -859,15 +855,32 @@ c_func
 id|page_lru
 )paren
 suffix:semicolon
+id|dispose
+op_assign
+op_amp
+id|lru_cache
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PageTestandClearReferenced
+c_func
+(paren
+id|page
+)paren
+)paren
+r_goto
+id|dispose_continue
+suffix:semicolon
 id|count
 op_decrement
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Any page we can&squot;t touch (because it is&n;&t;&t; * locked or shared or something), gets&n;&t;&t; * put on the old list (maybe we can touch&n;&t;&t; * it next time).&n;&t;&t; *&n;&t;&t; * We leave the Reference bit untouched,&n;&t;&t; * so that it can stay &quot;young&quot; despite being&n;&t;&t; * moved to the back of the queue.&n;&t;&t; *&n;&t;&t; * Avoid unscalable SMP locking for pages we can&n;&t;&t; * immediate tell are untouchable..&n;&t;&t; */
 id|dispose
 op_assign
 op_amp
 id|old
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Avoid unscalable SMP locking for pages we can&n;&t;&t; * immediate tell are untouchable..&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -912,7 +925,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Is it a buffer page? Try to clean it up regardless&n;&t;&t; * of zone and Reference bits..&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Is it a buffer page? Try to clean it up regardless&n;&t;&t; * of zone - it&squot;s old.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -952,35 +965,6 @@ id|made_buffer_progress
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t; * Page is from a zone we don&squot;t care about.&n;&t;&t; * Put it on the old list, but leave the reference&n;&t;&t; * bit untouched - which may end up keeping&n;&t;&t; * it young (so that the LRU for that zone is&n;&t;&t; * not destroyed completely).&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|page-&gt;zone-&gt;free_pages
-OG
-id|page-&gt;zone-&gt;pages_high
-)paren
-r_goto
-id|unlock_continue
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The page is in use, or was used very recently, put it in&n;&t;&t; * back at the top (it&squot;s young).. We may touch it after a&n;&t;&t; * second pass if we haven&squot;t found anything else.&n;&t;&t; */
-id|dispose
-op_assign
-op_amp
-id|lru_cache
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|PageTestandClearReferenced
-c_func
-(paren
-id|page
-)paren
-)paren
-r_goto
-id|unlock_continue
-suffix:semicolon
 multiline_comment|/* Take the pagecache_lock spinlock held to avoid&n;&t;&t;   other tasks to notice the page while we are looking at its&n;&t;&t;   page count. If it&squot;s a pagecache-page we&squot;ll free it&n;&t;&t;   in one atomic transaction after checking its page count. */
 id|spin_lock
 c_func
@@ -988,11 +972,6 @@ c_func
 op_amp
 id|pagecache_lock
 )paren
-suffix:semicolon
-id|dispose
-op_assign
-op_amp
-id|old
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * We can&squot;t free pages unless there&squot;s just one user&n;&t;&t; * (count == 2 because we added one ourselves above).&n;&t;&t; */
 r_if
@@ -1037,6 +1016,17 @@ r_goto
 id|made_inode_progress
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * Page is from a zone we don&squot;t care about.&n;&t;&t; * Don&squot;t drop page cache entries in vain.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|page-&gt;zone-&gt;free_pages
+OG
+id|page-&gt;zone-&gt;pages_high
+)paren
+r_goto
+id|cache_unlock_continue
+suffix:semicolon
 multiline_comment|/* is it a page-cache page? */
 r_if
 c_cond
@@ -1134,17 +1124,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|list_add
-c_func
-(paren
-id|page_lru
-comma
-id|dispose
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-multiline_comment|/* we&squot;re holding pagemap_lru_lock, so we can just loop again */
 id|dispose_continue
 suffix:colon
 id|list_add

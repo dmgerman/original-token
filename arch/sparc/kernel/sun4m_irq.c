@@ -1,4 +1,5 @@
 multiline_comment|/*  sun4m_irq.c&n; *  arch/sparc/kernel/sun4m_irq.c:&n; *&n; *  djhr: Hacked out of irq.c into a CPU dependent version.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -610,7 +611,7 @@ id|pil
 )braket
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|sun4m_send_ipi
 r_static
 r_void
@@ -1306,7 +1307,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 (brace
 r_int
 r_int
@@ -1867,7 +1868,7 @@ id|init_timers
 op_assign
 id|sun4m_init_timers
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|BTFIXUPSET_CALL
 c_func
 (paren

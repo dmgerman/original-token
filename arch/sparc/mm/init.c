@@ -241,7 +241,7 @@ comma
 id|pgtable_cache_size
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren

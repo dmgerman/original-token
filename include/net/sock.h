@@ -31,6 +31,10 @@ macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;net/rose.h&gt;
 macro_line|#endif
 macro_line|#endif
+macro_line|#if defined(CONFIG_PPPOE) || defined(CONFIG_PPPOE_MODULE)
+macro_line|#include &lt;linux/if_pppox.h&gt;
+macro_line|#include &lt;linux/ppp_channel.h&gt;   /* struct ppp_channel */
+macro_line|#endif
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 macro_line|#if defined(CONFIG_SPX) || defined(CONFIG_SPX_MODULE)
 macro_line|#include &lt;net/spx.h&gt;
@@ -415,6 +419,74 @@ suffix:semicolon
 multiline_comment|/* Group array */
 )brace
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_PPPOE) || defined (CONFIG_PPPOE_MODULE)
+DECL|struct|pppoe_opt
+r_struct
+id|pppoe_opt
+(brace
+DECL|member|dev
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* device associated with socket*/
+DECL|member|pa
+r_struct
+id|pppoe_addr
+id|pa
+suffix:semicolon
+multiline_comment|/* what this socket is bound to*/
+DECL|member|relay
+r_struct
+id|sockaddr_pppox
+id|relay
+suffix:semicolon
+multiline_comment|/* what socket data will be&n;&t;&t;&t;&t;&t;     relayed to (PPPoE relaying) */
+)brace
+suffix:semicolon
+DECL|struct|pppox_opt
+r_struct
+id|pppox_opt
+(brace
+DECL|member|chan
+r_struct
+id|ppp_channel
+id|chan
+suffix:semicolon
+DECL|member|sk
+r_struct
+id|sock
+op_star
+id|sk
+suffix:semicolon
+DECL|member|next
+r_struct
+id|pppox_opt
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* for hash table */
+r_union
+(brace
+DECL|member|pppoe
+r_struct
+id|pppoe_opt
+id|pppoe
+suffix:semicolon
+DECL|member|proto
+)brace
+id|proto
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|pppoe_dev
+mdefine_line|#define pppoe_dev&t;proto.pppoe.dev
+DECL|macro|pppoe_pa
+mdefine_line|#define pppoe_pa&t;proto.pppoe.pa
+DECL|macro|pppoe_relay
+mdefine_line|#define pppoe_relay&t;proto.pppoe.relay
 macro_line|#endif
 multiline_comment|/* This defines a selective acknowledgement block. */
 DECL|struct|tcp_sack_block
@@ -1402,6 +1474,14 @@ DECL|member|rose
 id|rose_cb
 op_star
 id|rose
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_PPPOE) || defined(CONFIG_PPPOE_MODULE)
+DECL|member|pppox
+r_struct
+id|pppox_opt
+op_star
+id|pppox
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_NETLINK
