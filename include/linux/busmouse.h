@@ -111,6 +111,12 @@ id|wait_queue
 op_star
 id|wait
 suffix:semicolon
+DECL|member|fasyncptr
+r_struct
+id|fasync_struct
+op_star
+id|fasyncptr
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Function Prototypes */

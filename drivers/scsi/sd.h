@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;sd.h Copyright (C) 1992 Drew Eckhardt &n; *&t;SCSI disk driver header file by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@tantalus.nrl.navy.mil to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; */
+multiline_comment|/*&n; *&t;sd.h Copyright (C) 1992 Drew Eckhardt &n; *&t;SCSI disk driver header file by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; */
 macro_line|#ifndef _SD_H
 DECL|macro|_SD_H
 mdefine_line|#define _SD_H

@@ -1,4 +1,13 @@
 multiline_comment|/*&n; *  linux/fs/ext/inode.c&n; *&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -90,6 +99,8 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -154,6 +165,8 @@ id|s-&gt;s_dev
 comma
 id|block
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -202,6 +215,8 @@ c_func
 (paren
 l_string|&quot;EXT-fs: unable to read superblock&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -302,6 +317,8 @@ comma
 id|dev
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -351,6 +368,8 @@ c_func
 (paren
 id|s
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -420,6 +439,8 @@ id|unlock_super
 id|s
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -467,6 +488,8 @@ c_func
 (paren
 l_string|&quot;EXT-fs: get root inode failed&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2332,4 +2355,65 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|ext_fs_type
+r_static
+r_struct
+id|file_system_type
+id|ext_fs_type
+op_assign
+(brace
+id|ext_read_super
+comma
+l_string|&quot;ext&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|ext_fs_type
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|ext_fs_type
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

@@ -9086,7 +9086,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society IPX 0.31 for NET3.030&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society IPX 0.31 for NET3.031&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

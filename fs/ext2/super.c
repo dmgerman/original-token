@@ -1,4 +1,13 @@
 multiline_comment|/*&n; *  linux/fs/ext2/super.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -558,6 +567,8 @@ id|unlock_super
 (paren
 id|sb
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1874,6 +1885,8 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|lock_super
 (paren
 id|sb
@@ -1917,6 +1930,8 @@ id|printk
 (paren
 l_string|&quot;EXT2-fs: unable to read superblock&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2077,6 +2092,8 @@ op_logical_neg
 id|bh
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -2130,6 +2147,8 @@ id|printk
 (paren
 l_string|&quot;EXT2-fs: Magic mismatch, very weird !&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2322,6 +2341,8 @@ id|dev
 )paren
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -2361,6 +2382,8 @@ comma
 id|dev
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -2395,6 +2418,8 @@ id|sb-&gt;u.ext2_sb.s_frag_size
 comma
 id|sb-&gt;s_blocksize
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2431,6 +2456,8 @@ comma
 id|sb-&gt;u.ext2_sb.s_blocks_per_group
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -2466,6 +2493,8 @@ comma
 id|sb-&gt;u.ext2_sb.s_frags_per_group
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -2500,6 +2529,8 @@ l_string|&quot;EXT2-fs: #inodes per group too big: %lu&bslash;n&quot;
 comma
 id|sb-&gt;u.ext2_sb.s_inodes_per_group
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2589,6 +2620,8 @@ id|printk
 (paren
 l_string|&quot;EXT2-fs: not enough memory&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2692,6 +2725,8 @@ id|printk
 l_string|&quot;EXT2-fs: unable to read group descriptors&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -2761,6 +2796,8 @@ id|printk
 (paren
 l_string|&quot;EXT2-fs: group descriptors corrupted !&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2910,6 +2947,8 @@ id|printk
 (paren
 l_string|&quot;EXT2-fs: get root inode failed&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -3216,6 +3255,67 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|ext2_fs_type
+r_static
+r_struct
+id|file_system_type
+id|ext2_fs_type
+op_assign
+(brace
+id|ext2_read_super
+comma
+l_string|&quot;ext2&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|ext2_fs_type
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|ext2_fs_type
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|ext2_statfs
 r_void
 id|ext2_statfs

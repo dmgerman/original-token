@@ -488,9 +488,15 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Device is now down.&n;&t; */
 id|dev-&gt;flags
-op_assign
-l_int|0
+op_and_assign
+op_complement
+(paren
+id|IFF_UP
+op_or
+id|IFF_RUNNING
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Tell people we are going down&n;&t; */
 id|notifier_call_chain
@@ -2640,13 +2646,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Set the flags on our device.&n;&t;&t;&t;&t; */
 id|dev-&gt;flags
 op_assign
+(paren
 id|ifr.ifr_flags
 op_amp
 (paren
-id|IFF_UP
-op_or
 id|IFF_BROADCAST
 op_or
 id|IFF_DEBUG
@@ -2671,6 +2677,13 @@ id|IFF_MASTER
 op_or
 id|IFF_MULTICAST
 )paren
+)paren
+op_or
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; *&t;Load in the correct multicast list now the flags have changed.&n;&t;&t;&t;&t; */
 id|dev_mc_upload
@@ -2679,32 +2692,29 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;  &t; *&t;Have we downed the interface&n;&t;&t;&t;  &t; */
+multiline_comment|/*&n;&t;&t;&t;  &t; *&t;Have we downed the interface. We handle IFF_UP ourselves&n;&t;&t;&t;  &t; *&t;according to user attempts to set it, rather than blindly&n;&t;&t;&t;  &t; *&t;setting it.&n;&t;&t;&t;  &t; */
 r_if
 c_cond
 (paren
 (paren
 id|old_flags
+op_xor
+id|ifr.ifr_flags
+)paren
 op_amp
 id|IFF_UP
 )paren
-op_logical_and
+multiline_comment|/* Bit is different  ? */
+(brace
+r_if
+c_cond
 (paren
-(paren
-id|dev-&gt;flags
+id|old_flags
 op_amp
 id|IFF_UP
-)paren
-op_eq
-l_int|0
-)paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Restore IFF_UP so dev_close knows to shut&n;&t;&t;&t;&t;&t; *&t;it down. FIXME: Tidy me up sometime.&n;&t;&t;&t;&t;&t; */
-id|dev-&gt;flags
-op_or_assign
-id|IFF_UP
-suffix:semicolon
+multiline_comment|/* Gone down */
 id|ret
 op_assign
 id|dev_close
@@ -2715,35 +2725,16 @@ id|dev
 suffix:semicolon
 )brace
 r_else
+multiline_comment|/* Come up */
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Have we upped the interface &n;&t;&t;&t;&t;&t; */
 id|ret
 op_assign
-(paren
-op_logical_neg
-(paren
-id|old_flags
-op_amp
-id|IFF_UP
-)paren
-op_logical_and
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-)paren
-ques
-c_cond
 id|dev_open
 c_func
 (paren
 id|dev
 )paren
-suffix:colon
-l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;&t;&t;&t; *&t;Check the flags.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2758,8 +2749,21 @@ op_complement
 id|IFF_UP
 suffix:semicolon
 )brace
-multiline_comment|/* Didn&squot;t open so down the if */
+multiline_comment|/* Open failed */
 )brace
+)brace
+r_else
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Load in the correct multicast list now the flags have changed.&n;&t;&t;&t;&t; */
+id|dev_mc_upload
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon

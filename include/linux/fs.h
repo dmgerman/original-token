@@ -167,14 +167,6 @@ DECL|macro|BLKRASET
 mdefine_line|#define BLKRASET 4706 /* Set read ahead for block device */
 DECL|macro|BLKRAGET
 mdefine_line|#define BLKRAGET 4707 /* get current read ahead setting */
-multiline_comment|/* These are a few other constants  only used by scsi  devices */
-DECL|macro|SCSI_IOCTL_GET_IDLUN
-mdefine_line|#define SCSI_IOCTL_GET_IDLUN 0x5382
-multiline_comment|/* Used to turn on and off tagged queuing for scsi devices */
-DECL|macro|SCSI_IOCTL_TAGGED_ENABLE
-mdefine_line|#define SCSI_IOCTL_TAGGED_ENABLE 0x5383
-DECL|macro|SCSI_IOCTL_TAGGED_DISABLE
-mdefine_line|#define SCSI_IOCTL_TAGGED_DISABLE 0x5384
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP
@@ -799,6 +791,27 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|FASYNC_MAGIC
 mdefine_line|#define FASYNC_MAGIC 0x4601
+r_extern
+r_int
+id|fasync_helper
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_int
+comma
+r_struct
+id|fasync_struct
+op_star
+op_star
+)paren
+suffix:semicolon
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext2_fs_sb.h&gt;
@@ -2457,6 +2470,17 @@ id|get_empty_filp
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|close_fp
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|filp
 )paren
 suffix:semicolon
 r_extern

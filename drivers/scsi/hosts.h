@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  hosts.h Copyright (C) 1992 Drew Eckhardt &n; *  mid to low-level SCSI driver interface header by&t;&n; *&t;Drew Eckhardt &n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@tantalus.nrl.navy.mil to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; * &n; *  Further modified by Eric Youngdale to support multiple host adapters&n; *  of the same type.&n; */
+multiline_comment|/*&n; *  hosts.h Copyright (C) 1992 Drew Eckhardt &n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to low-level SCSI driver interface header&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; * &n; *  Further modified by Eric Youngdale to support multiple host adapters&n; *  of the same type.&n; */
 macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
@@ -361,6 +361,12 @@ r_int
 r_char
 id|dma_channel
 suffix:semicolon
+multiline_comment|/*&n;     * This is a unique identifier that must be assigned so that we&n;     * have some way of identifying each detected host adapter properly&n;     * and uniquely.  For hosts that do not support more than one card&n;     * in the system at one time, this does not need to be set.  It is&n;     * initialized to 0 in scsi_register.&n;     */
+DECL|member|unique_id
+r_int
+r_int
+id|unique_id
+suffix:semicolon
 multiline_comment|/*&n;     * Set these if there are conflicts between memory&n;     * in the &lt; 1mb region and regions at 16mb multiples.&n;     * The address must be on a page boundary.&n;     */
 DECL|member|forbidden_addr
 r_int
@@ -407,6 +413,13 @@ multiline_comment|/*&n;     * True if this host was loaded as a loadable module&
 DECL|member|loaded_as_module
 r_int
 id|loaded_as_module
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;     * True when we call the low-level reset function, and&n;     * the midlevel code suggests a full bus reset.&n;     */
+DECL|member|suggest_bus_reset
+r_int
+id|suggest_bus_reset
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -607,7 +620,7 @@ op_star
 suffix:semicolon
 multiline_comment|/* Returns 1 if we can attach this device */
 DECL|member|init
-r_void
+r_int
 (paren
 op_star
 id|init

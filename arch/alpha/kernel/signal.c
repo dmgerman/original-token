@@ -1303,7 +1303,7 @@ id|current-&gt;signal
 suffix:semicolon
 id|sa
 op_assign
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 op_plus
 id|signr
 suffix:semicolon
@@ -1401,7 +1401,7 @@ suffix:semicolon
 )brace
 id|sa
 op_assign
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 op_plus
 id|signr
 op_minus
@@ -1515,7 +1515,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;p_pptr-&gt;sigaction
+id|current-&gt;p_pptr-&gt;sig-&gt;action
 (braket
 id|SIGCHLD
 op_minus
@@ -1743,7 +1743,7 @@ l_int|1
 suffix:semicolon
 id|sa
 op_assign
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 suffix:semicolon
 r_for
 c_loop

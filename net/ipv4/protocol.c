@@ -34,9 +34,6 @@ comma
 multiline_comment|/* IPIP handler          */
 l_int|NULL
 comma
-multiline_comment|/* Will be UDP fraglist handler */
-l_int|NULL
-comma
 multiline_comment|/* TUNNEL error control    */
 l_int|0
 comma
@@ -66,9 +63,6 @@ op_assign
 id|tcp_rcv
 comma
 multiline_comment|/* TCP handler&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* No fragment handler (and won&squot;t be for a long time) */
 id|tcp_err
 comma
 multiline_comment|/* TCP error control&t;*/
@@ -104,9 +98,6 @@ op_assign
 id|udp_rcv
 comma
 multiline_comment|/* UDP handler&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* Will be UDP fraglist handler */
 id|udp_err
 comma
 multiline_comment|/* UDP error control&t;*/
@@ -137,9 +128,6 @@ op_assign
 id|icmp_rcv
 comma
 multiline_comment|/* ICMP handler&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* ICMP never fragments anyway */
 l_int|NULL
 comma
 multiline_comment|/* ICMP error control&t;*/
@@ -183,9 +171,6 @@ comma
 multiline_comment|/* IGMP handler&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* IGMP never fragments anyway */
-l_int|NULL
-comma
 multiline_comment|/* IGMP error control&t;*/
 op_amp
 id|icmp_protocol
@@ -227,10 +212,11 @@ op_assign
 l_int|NULL
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;Find a protocol in the protocol tables given its&n; *&t;IP type.&n; */
+DECL|function|inet_get_protocol
 r_struct
 id|inet_protocol
 op_star
-DECL|function|inet_get_protocol
 id|inet_get_protocol
 c_func
 (paren
@@ -297,8 +283,9 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-r_void
+multiline_comment|/*&n; *&t;Add a protocol handler to the hash tables&n; */
 DECL|function|inet_add_protocol
+r_void
 id|inet_add_protocol
 c_func
 (paren
@@ -347,7 +334,7 @@ id|prot-&gt;copy
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Set the copy bit if we need to. */
+multiline_comment|/*&n;&t; *&t;Set the copy bit if we need to. &n;&t; */
 id|p2
 op_assign
 (paren
@@ -391,8 +378,9 @@ id|p2-&gt;next
 suffix:semicolon
 )brace
 )brace
-r_int
+multiline_comment|/*&n; *&t;Remove a protocol from the hash tables.&n; */
 DECL|function|inet_del_protocol
+r_int
 id|inet_del_protocol
 c_func
 (paren
@@ -480,7 +468,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t; * We have to worry if the protocol being deleted is&n;&t; * the last one on the list, then we may need to reset&n;&t; * someone&squot;s copied bit.&n;&t; */
+multiline_comment|/*&n;&t;&t; * We have to worry if the protocol being deleted is&n;&t;&t; * the last one on the list, then we may need to reset&n;&t;&t; * someone&squot;s copied bit.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -493,7 +481,7 @@ op_eq
 id|prot
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * if we are the last one with this protocol and&n;&t;&t; * there is a previous one, reset its copy bit.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * if we are the last one with this protocol and&n;&t;&t;&t; * there is a previous one, reset its copy bit.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -528,12 +516,10 @@ id|p-&gt;next-&gt;protocol
 op_eq
 id|prot-&gt;protocol
 )paren
-(brace
 id|lp
 op_assign
 id|p
 suffix:semicolon
-)brace
 id|p
 op_assign
 (paren

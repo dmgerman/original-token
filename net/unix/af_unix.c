@@ -1033,6 +1033,10 @@ id|sk-&gt;sndbuf
 op_assign
 id|SK_WMEM_MAX
 suffix:semicolon
+id|sk-&gt;allocation
+op_assign
+id|GFP_KERNEL
+suffix:semicolon
 id|sk-&gt;inuse
 op_assign
 l_int|0
@@ -4585,7 +4589,7 @@ id|pro
 id|printk
 c_func
 (paren
-l_string|&quot;NET3: Unix domain sockets 0.09 BETA for Linux NET3.030.&bslash;n&quot;
+l_string|&quot;NET3: Unix domain sockets 0.10 BETA for Linux NET3.031.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sock_register

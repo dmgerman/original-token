@@ -91,7 +91,7 @@ r_int
 r_int
 id|mem_end
 suffix:semicolon
-multiline_comment|/* sahared mem end&t;*/
+multiline_comment|/* shared mem end&t;*/
 DECL|member|mem_start
 r_int
 r_int

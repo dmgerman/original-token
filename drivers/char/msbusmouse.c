@@ -1,4 +1,13 @@
-multiline_comment|/*&n; * Microsoft busmouse driver based on Logitech driver (see busmouse.c)&n; *&n; * Microsoft BusMouse support by Teemu Rantanen (tvr@cs.hut.fi) (02AUG92)&n; *&n; * Microsoft Bus Mouse support modified by Derrick Cole (cole@concert.net)&n; *    8/28/92&n; *&n; * Microsoft Bus Mouse support folded into 0.97pl4 code&n; *    by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; * Changes:  Logitech and Microsoft support in the same kernel.&n; *           Defined new constants in busmouse.h for MS mice.&n; *           Added int mse_busmouse_type to distinguish busmouse types&n; *           Added a couple of new functions to handle differences in using&n; *             MS vs. Logitech (where the int variable wasn&squot;t appropriate).&n; *&n; * Modified by Peter Cervasio (address above) (26SEP92)&n; * Changes:  Included code to (properly?) detect when a Microsoft mouse is&n; *           really attached to the machine.  Don&squot;t know what this does to&n; *           Logitech bus mice, but all it does is read ports.&n; *&n; * Modified by Christoph Niemann (niemann@rubdv15.etdv.ruhr-uni-bochum.de)&n; * Changes:  Better interrupt-handler (like in busmouse.c).&n; *&t;     Some changes to reduce code-size.&n; *&t;     Changed detection code to use inb_p() instead of doing empty&n; *&t;     loops to delay i/o.&n; *&n; * version 0.3a&n; */
+multiline_comment|/*&n; * Microsoft busmouse driver based on Logitech driver (see busmouse.c)&n; *&n; * Microsoft BusMouse support by Teemu Rantanen (tvr@cs.hut.fi) (02AUG92)&n; *&n; * Microsoft Bus Mouse support modified by Derrick Cole (cole@concert.net)&n; *    8/28/92&n; *&n; * Microsoft Bus Mouse support folded into 0.97pl4 code&n; *    by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; * Changes:  Logitech and Microsoft support in the same kernel.&n; *           Defined new constants in busmouse.h for MS mice.&n; *           Added int mse_busmouse_type to distinguish busmouse types&n; *           Added a couple of new functions to handle differences in using&n; *             MS vs. Logitech (where the int variable wasn&squot;t appropriate).&n; *&n; * Modified by Peter Cervasio (address above) (26SEP92)&n; * Changes:  Included code to (properly?) detect when a Microsoft mouse is&n; *           really attached to the machine.  Don&squot;t know what this does to&n; *           Logitech bus mice, but all it does is read ports.&n; *&n; * Modified by Christoph Niemann (niemann@rubdv15.etdv.ruhr-uni-bochum.de)&n; * Changes:  Better interrupt-handler (like in busmouse.c).&n; *&t;     Some changes to reduce code-size.&n; *&t;     Changed detection code to use inb_p() instead of doing empty&n; *&t;     loops to delay i/o.&n; *&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * version 0.3b&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/busmouse.h&gt;
@@ -187,7 +196,72 @@ op_amp
 id|mouse.wait
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mouse.fasyncptr
+)paren
+id|kill_fasync
+c_func
+(paren
+id|mouse.fasyncptr
+comma
+id|SIGIO
+)paren
+suffix:semicolon
 )brace
+)brace
+DECL|function|fasync_mouse
+r_static
+r_int
+id|fasync_mouse
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+id|on
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|retval
+op_assign
+id|fasync_helper
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+id|on
+comma
+op_amp
+id|mouse.fasyncptr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+OL
+l_int|0
+)paren
+r_return
+id|retval
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|release_mouse
 r_static
@@ -221,6 +295,16 @@ id|free_irq
 c_func
 (paren
 id|MOUSE_IRQ
+)paren
+suffix:semicolon
+id|fasync_mouse
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -584,9 +668,44 @@ id|open_mouse
 comma
 id|release_mouse
 comma
+l_int|NULL
+comma
+id|fasync_mouse
+comma
 )brace
 suffix:semicolon
-DECL|function|ms_bus_mouse_init
+DECL|variable|ms_bus_mouse
+r_static
+r_struct
+id|mouse
+id|ms_bus_mouse
+op_assign
+(brace
+id|MICROSOFT_BUSMOUSE
+comma
+l_string|&quot;msbusmouse&quot;
+comma
+op_amp
+id|ms_bus_mouse_fops
+)brace
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#else
 r_int
 r_int
 id|ms_bus_mouse_init
@@ -596,6 +715,7 @@ r_int
 r_int
 id|kmem_start
 )paren
+macro_line|#endif
 (brace
 r_int
 id|mse_byte
@@ -707,9 +827,16 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#ifdef MODULE
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
+macro_line|#endif
 )brace
 id|MS_MSE_INT_OFF
 c_func
@@ -722,8 +849,50 @@ c_func
 l_string|&quot;Microsoft BusMouse detected and installed.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|mouse_register
+c_func
+(paren
+op_amp
+id|ms_bus_mouse
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
+macro_line|#endif
 )brace
+macro_line|#ifdef MODULE
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;msbusmouse: in use, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|mouse_deregister
+c_func
+(paren
+op_amp
+id|ms_bus_mouse
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

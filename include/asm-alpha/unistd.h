@@ -229,6 +229,8 @@ DECL|macro|__NR_syslog
 mdefine_line|#define __NR_syslog&t;&t;310
 DECL|macro|__NR_reboot
 mdefine_line|#define __NR_reboot&t;&t;311
+DECL|macro|__NR_clone
+mdefine_line|#define __NR_clone&t;&t;312
 macro_line|#ifdef __LIBRARY__
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
@@ -246,19 +248,51 @@ mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,
 macro_line|#endif /* __LIBRARY__ */
 macro_line|#ifdef __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 r_extern
 r_int
 r_int
-id|kernel_fork
+id|kernel_clone
 c_func
 (paren
+r_int
+r_int
+id|clone_flags
+comma
 r_void
+op_star
+id|stack
 )paren
 suffix:semicolon
-DECL|function|fork
+DECL|function|clone
 r_static
 r_inline
 r_int
+id|clone
+c_func
+(paren
+r_int
+r_int
+id|clone_flags
+comma
+r_void
+op_star
+id|stack
+)paren
+(brace
+r_return
+id|kernel_clone
+c_func
+(paren
+id|clone_flags
+comma
+id|stack
+)paren
+suffix:semicolon
+)brace
+DECL|function|fork
+r_static
+r_inline
 r_int
 id|fork
 c_func
@@ -267,9 +301,12 @@ r_void
 )paren
 (brace
 r_return
-id|kernel_fork
+id|kernel_clone
 c_func
 (paren
+id|SIGCHLD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

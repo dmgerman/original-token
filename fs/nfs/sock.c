@@ -243,7 +243,7 @@ ques
 c_cond
 (paren
 (paren
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 (braket
 id|SIGINT
 op_minus
@@ -265,7 +265,7 @@ l_int|0
 )paren
 op_or
 (paren
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 (braket
 id|SIGQUIT
 op_minus

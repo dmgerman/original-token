@@ -4082,6 +4082,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Checksums on by default */
+id|sk-&gt;allocation
+op_assign
+id|GFP_KERNEL
+suffix:semicolon
 id|sk-&gt;rcvbuf
 op_assign
 id|SK_RMEM_MAX
@@ -7155,9 +7159,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_int
-id|v
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -7168,7 +7169,7 @@ multiline_comment|/*&n;&t;&t; *&t;Protocol layer&n;&t;&t; */
 r_case
 id|TIOCOUTQ
 suffix:colon
-id|v
+id|amount
 op_assign
 id|sk-&gt;sndbuf
 op_minus
@@ -7177,12 +7178,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|v
+id|amount
 OL
 l_int|0
 )paren
 (brace
-id|v
+id|amount
 op_assign
 l_int|0
 suffix:semicolon
@@ -7216,7 +7217,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|v
+id|amount
 op_assign
 id|skb-&gt;len
 op_minus
@@ -7729,7 +7730,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Appletalk BETA 0.12 for Linux NET3.030&bslash;n&quot;
+l_string|&quot;Appletalk BETA 0.13 for Linux NET3.031&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

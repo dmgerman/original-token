@@ -1,4 +1,13 @@
-multiline_comment|/*&n; * ATI XL Bus Mouse Driver for Linux&n; * by Bob Harris (rth@sparta.com)&n; *&n; * Uses VFS interface for linux 0.98 (01OCT92)&n; *&n; * Modified by Chris Colohan (colohan@eecg.toronto.edu)&n; *&n; * version 0.3&n; */
+multiline_comment|/*&n; * ATI XL Bus Mouse Driver for Linux&n; * by Bob Harris (rth@sparta.com)&n; *&n; * Uses VFS interface for linux 0.98 (01OCT92)&n; *&n; * Modified by Chris Colohan (colohan@eecg.toronto.edu)&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *&n; * version 0.3a&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -7,6 +16,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &quot;mouse.h&quot;
 DECL|macro|ATIXL_MOUSE_IRQ
 mdefine_line|#define ATIXL_MOUSE_IRQ&t;&t;5 /* H/W interrupt # set up on ATIXL board */
 DECL|macro|ATIXL_BUSMOUSE
@@ -76,6 +86,12 @@ r_struct
 id|wait_queue
 op_star
 id|wait
+suffix:semicolon
+DECL|member|fasync
+r_struct
+id|fasync_struct
+op_star
+id|fasync
 suffix:semicolon
 DECL|variable|mouse
 )brace
@@ -198,11 +214,76 @@ op_amp
 id|mouse.wait
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mouse.fasync
+)paren
+id|kill_fasync
+c_func
+(paren
+id|mouse.fasync
+comma
+id|SIGIO
+)paren
+suffix:semicolon
 )brace
 id|ATIXL_MSE_ENABLE_UPDATE
 c_func
 (paren
 )paren
+suffix:semicolon
+)brace
+DECL|function|fasync_mouse
+r_static
+r_int
+id|fasync_mouse
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+id|on
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|retval
+op_assign
+id|fasync_helper
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+id|on
+comma
+op_amp
+id|mouse.fasync
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+OL
+l_int|0
+)paren
+r_return
+id|retval
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|release_mouse
@@ -240,6 +321,16 @@ id|free_irq
 c_func
 (paren
 id|ATIXL_MOUSE_IRQ
+)paren
+suffix:semicolon
+id|fasync_mouse
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -649,9 +740,44 @@ id|open_mouse
 comma
 id|release_mouse
 comma
+l_int|NULL
+comma
+id|fasync_mouse
+comma
 )brace
 suffix:semicolon
-DECL|function|atixl_busmouse_init
+DECL|variable|atixl_mouse
+r_static
+r_struct
+id|mouse
+id|atixl_mouse
+op_assign
+(brace
+id|ATIXL_BUSMOUSE
+comma
+l_string|&quot;atixl&quot;
+comma
+op_amp
+id|atixl_busmouse_fops
+)brace
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#else
 r_int
 r_int
 id|atixl_busmouse_init
@@ -661,6 +787,7 @@ r_int
 r_int
 id|kmem_start
 )paren
+macro_line|#endif
 (brace
 r_int
 r_char
@@ -722,9 +849,16 @@ id|mouse.present
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
+macro_line|#endif
 )brace
 id|outb
 c_func
@@ -787,8 +921,50 @@ c_func
 l_string|&quot;Bus mouse detected and installed.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|mouse_register
+c_func
+(paren
+op_amp
+id|atixl_mouse
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
+macro_line|#endif
 )brace
+macro_line|#ifdef MODULE
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;atixlmouse: in use, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|mouse_deregister
+c_func
+(paren
+op_amp
+id|atixl_mouse
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

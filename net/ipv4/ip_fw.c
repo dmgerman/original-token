@@ -359,8 +359,6 @@ id|notcpack
 op_assign
 l_int|1
 comma
-id|frag1
-comma
 id|match
 suffix:semicolon
 r_int
@@ -391,14 +389,6 @@ id|ip-&gt;frag_off
 op_amp
 id|IP_OFFSET
 suffix:semicolon
-id|frag1
-op_assign
-(paren
-id|offset
-op_eq
-l_int|0
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Don&squot;t allow a fragment of TCP 8 bytes in. Nobody&n;&t; *&t;normal causes this. Its a cracker trying to break&n;&t; *&t;in by doing a flag overwrite to pass the direction&n;&t; *&t;checks.&n;&t; */
 r_if
 c_cond
@@ -412,13 +402,14 @@ op_eq
 id|IPPROTO_TCP
 )paren
 r_return
-l_int|0
+id|FW_BLOCK
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|frag1
+id|offset
+op_ne
+l_int|0
 op_logical_and
 (paren
 id|opt
@@ -437,7 +428,7 @@ id|IPPROTO_UDP
 )paren
 )paren
 r_return
-l_int|1
+id|FW_ACCEPT
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t; Header fragment for TCP is too small to check the bits.&n;&t; */
 r_if
@@ -463,7 +454,7 @@ id|ip-&gt;tot_len
 )paren
 (brace
 r_return
-l_int|0
+id|FW_BLOCK
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Too short.&n;&t; */
@@ -487,7 +478,7 @@ l_int|2
 )paren
 (brace
 r_return
-l_int|0
+id|FW_BLOCK
 suffix:semicolon
 )brace
 id|src
@@ -524,7 +515,9 @@ multiline_comment|/* ports stay 0 if it is not the first fragment */
 r_if
 c_cond
 (paren
-id|frag1
+id|offset
+op_ne
+l_int|0
 )paren
 (brace
 id|src_port
@@ -589,7 +582,9 @@ multiline_comment|/* ports stay 0 if it is not the first fragment */
 r_if
 c_cond
 (paren
-id|frag1
+id|offset
+op_ne
+l_int|0
 )paren
 (brace
 id|src_port
@@ -1286,9 +1281,9 @@ id|IP_FW_F_MASQ
 )paren
 ques
 c_cond
-l_int|2
+id|FW_MASQUERADE
 suffix:colon
-l_int|1
+id|FW_ACCEPT
 )paren
 suffix:semicolon
 )brace
@@ -1301,12 +1296,11 @@ id|IP_FW_F_ICMPRPL
 )paren
 (brace
 r_return
-op_minus
-l_int|1
+id|FW_REJECT
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|FW_BLOCK
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IP_MASQUERADE

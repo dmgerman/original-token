@@ -273,7 +273,7 @@ id|signum
 op_minus
 l_int|1
 op_plus
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 suffix:semicolon
 r_if
 c_cond
@@ -453,7 +453,7 @@ id|SA_NOMASK
 suffix:semicolon
 id|handler
 op_assign
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 (braket
 id|signum
 op_minus
@@ -462,7 +462,7 @@ l_int|1
 dot
 id|sa_handler
 suffix:semicolon
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 (braket
 id|signum
 op_minus
@@ -544,7 +544,7 @@ id|signum
 op_minus
 l_int|1
 op_plus
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 suffix:semicolon
 r_if
 c_cond

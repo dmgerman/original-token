@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&t;&t;Alan Cox&t;:&t;Use __u32 properly&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -54,20 +54,17 @@ r_void
 id|rt_del
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|dst
 comma
-r_int
-r_int
+id|__u32
 id|mask
 comma
 r_char
 op_star
 id|devname
 comma
-r_int
-r_int
+id|__u32
 id|gtw
 comma
 r_int
@@ -337,14 +334,13 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Used by &squot;rt_add()&squot; when we can&squot;t get the netmask any other way..&n; *&n; *&t;If the lower byte or two are zero, we guess the mask based on the&n; *&t;number of zero 8-bit net numbers, otherwise we use the &quot;default&quot;&n; *&t;masks judging by the destination address and our device netmask.&n; */
 DECL|function|default_mask
 r_static
-r_inline
+id|__u32
 r_int
 r_int
 id|default_mask
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|dst
 )paren
 (brace
@@ -399,13 +395,11 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;If no mask is specified then generate a default entry.&n; */
 DECL|function|guess_mask
 r_static
-r_int
-r_int
+id|__u32
 id|guess_mask
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|dst
 comma
 r_struct
@@ -414,8 +408,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-r_int
+id|__u32
 id|mask
 suffix:semicolon
 r_if
@@ -463,8 +456,7 @@ op_star
 id|get_gw_dev
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|gw
 )paren
 (brace
@@ -533,16 +525,13 @@ c_func
 r_int
 id|flags
 comma
-r_int
-r_int
+id|__u32
 id|dst
 comma
-r_int
-r_int
+id|__u32
 id|mask
 comma
-r_int
-r_int
+id|__u32
 id|gw
 comma
 r_struct
@@ -1044,12 +1033,10 @@ r_int
 id|bad_mask
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|mask
 comma
-r_int
-r_int
+id|__u32
 id|addr
 )paren
 (brace
@@ -1124,7 +1111,8 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-comma
+suffix:semicolon
+id|__u32
 id|daddr
 comma
 id|mask
@@ -1211,6 +1199,9 @@ suffix:semicolon
 id|daddr
 op_assign
 (paren
+id|__u32
+)paren
+(paren
 (paren
 r_struct
 id|sockaddr_in
@@ -1225,6 +1216,9 @@ suffix:semicolon
 id|mask
 op_assign
 (paren
+id|__u32
+)paren
+(paren
 (paren
 r_struct
 id|sockaddr_in
@@ -1238,6 +1232,9 @@ id|sin_addr.s_addr
 suffix:semicolon
 id|gw
 op_assign
+(paren
+id|__u32
+)paren
 (paren
 (paren
 r_struct
@@ -1558,12 +1555,21 @@ multiline_comment|/*&n;&t; * metric can become negative here if it wasn&squot;t 
 id|rt_del
 c_func
 (paren
+(paren
+id|__u32
+)paren
 id|trg-&gt;sin_addr.s_addr
 comma
+(paren
+id|__u32
+)paren
 id|msk-&gt;sin_addr.s_addr
 comma
 id|devname
 comma
+(paren
+id|__u32
+)paren
 id|gtw-&gt;sin_addr.s_addr
 comma
 id|r-&gt;rt_flags
@@ -1682,8 +1688,16 @@ l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%d&bslash;t%l
 comma
 id|r-&gt;rt_dev-&gt;name
 comma
+(paren
+r_int
+r_int
+)paren
 id|r-&gt;rt_dst
 comma
+(paren
+r_int
+r_int
+)paren
 id|r-&gt;rt_gateway
 comma
 id|r-&gt;rt_flags
@@ -1694,6 +1708,10 @@ id|r-&gt;rt_use
 comma
 id|r-&gt;rt_metric
 comma
+(paren
+r_int
+r_int
+)paren
 id|r-&gt;rt_mask
 comma
 (paren
@@ -1795,8 +1813,7 @@ op_star
 id|ip_rt_route
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|daddr
 comma
 r_struct
@@ -1804,8 +1821,7 @@ id|options
 op_star
 id|opt
 comma
-r_int
-r_int
+id|__u32
 op_star
 id|src_addr
 )paren
@@ -1945,8 +1961,7 @@ op_star
 id|ip_rt_local
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|daddr
 comma
 r_struct
@@ -1954,8 +1969,7 @@ id|options
 op_star
 id|opt
 comma
-r_int
-r_int
+id|__u32
 op_star
 id|src_addr
 )paren

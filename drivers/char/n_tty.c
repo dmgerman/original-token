@@ -2976,7 +2976,7 @@ l_int|1
 )paren
 op_logical_or
 (paren
-id|current-&gt;sigaction
+id|current-&gt;sig-&gt;action
 (braket
 id|sig
 op_minus

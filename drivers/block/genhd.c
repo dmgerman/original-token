@@ -953,6 +953,25 @@ c_func
 l_string|&quot; &lt;&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * If we are rereading the partition table, we need&n;&t;&t;&t; * to set the size of the partition so that we will&n;&t;&t;&t; * be able to bread the block containing the extended&n;&t;&t;&t; * partition info.&n;&t;&t;&t; */
+id|hd-&gt;sizes
+(braket
+id|minor
+)braket
+op_assign
+id|hd-&gt;part
+(braket
+id|minor
+)braket
+dot
+id|nr_sects
+op_rshift
+(paren
+id|BLOCK_SIZE_BITS
+op_minus
+l_int|9
+)paren
+suffix:semicolon
 id|extended_partition
 c_func
 (paren
@@ -1617,6 +1636,7 @@ op_plus
 id|first_minor
 )paren
 suffix:semicolon
+multiline_comment|/*&n; &t; * We need to set the sizes array before we will be able to access&n; &t; * any of the partitions on this device.&n; &t; */
 r_if
 c_cond
 (paren

@@ -25,7 +25,7 @@ mdefine_line|#define MAX_RETRIES 3
 DECL|macro|SR_TIMEOUT
 mdefine_line|#define SR_TIMEOUT (150 * HZ)
 r_static
-r_void
+r_int
 id|sr_init
 c_func
 (paren
@@ -2749,7 +2749,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * do_sr_request() is the request handler function for the sr driver.  Its function in life &n; * is to take block device requests, and translate them to SCSI commands.&n; */
+multiline_comment|/*&n; * do_sr_request() is the request handler function for the sr driver.&n; * Its function in life is to take block device requests, and&n; * translate them to SCSI commands.  &n; */
 DECL|function|do_sr_request
 r_static
 r_void
@@ -2770,6 +2770,10 @@ op_star
 id|req
 op_assign
 l_int|NULL
+suffix:semicolon
+id|Scsi_Device
+op_star
+id|SDev
 suffix:semicolon
 r_int
 r_int
@@ -2824,6 +2828,56 @@ suffix:semicolon
 suffix:semicolon
 id|INIT_SCSI_REQUEST
 suffix:semicolon
+id|SDev
+op_assign
+id|scsi_CDs
+(braket
+id|DEVICE_NR
+c_func
+(paren
+id|MINOR
+c_func
+(paren
+id|CURRENT-&gt;dev
+)paren
+)paren
+)braket
+dot
+id|device
+suffix:semicolon
+multiline_comment|/*&n;         * I am not sure where the best place to do this is.  We need&n;         * to hook in a place where we are likely to come if in user&n;         * space.&n;         */
+r_if
+c_cond
+(paren
+id|SDev-&gt;was_reset
+)paren
+(brace
+multiline_comment|/*&n; &t;     * We need to relock the door, but we might&n; &t;     * be in an interrupt handler.  Only do this&n; &t;     * from user space, since we do not want to&n; &t;     * sleep from an interrupt.&n; &t;     */
+r_if
+c_cond
+(paren
+id|SDev-&gt;removable
+op_logical_and
+op_logical_neg
+id|intr_count
+)paren
+(brace
+id|scsi_ioctl
+c_func
+(paren
+id|SDev
+comma
+id|SCSI_IOCTL_DOORLOCK
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+id|SDev-&gt;was_reset
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5328,9 +5382,16 @@ l_int|512
 suffix:semicolon
 )brace
 )def_block
+DECL|variable|sr_registered
+r_static
+r_int
+id|sr_registered
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|sr_init
 r_static
-r_void
+r_int
 id|sr_init
 c_func
 (paren
@@ -5338,12 +5399,6 @@ c_func
 (brace
 r_int
 id|i
-suffix:semicolon
-r_static
-r_int
-id|sr_registered
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -5354,6 +5409,7 @@ l_int|0
 )paren
 (brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -5387,6 +5443,7 @@ id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 id|sr_registered
@@ -5399,6 +5456,7 @@ c_cond
 id|scsi_CDs
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|sr_template.dev_max
 op_assign
@@ -5522,6 +5580,9 @@ id|MAJOR_NR
 )braket
 op_assign
 id|sr_blocksizes
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sr_finish
@@ -5893,10 +5954,13 @@ suffix:semicolon
 id|unregister_blkdev
 c_func
 (paren
-id|SCSI_GENERIC_MAJOR
+id|SCSI_CDROM_MAJOR
 comma
 l_string|&quot;sr&quot;
 )paren
+suffix:semicolon
+id|sr_registered
+op_decrement
 suffix:semicolon
 r_if
 c_cond

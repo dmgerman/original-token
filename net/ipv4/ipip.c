@@ -55,16 +55,14 @@ id|options
 op_star
 id|opt
 comma
-r_int
-r_int
+id|__u32
 id|daddr
 comma
 r_int
 r_int
 id|len
 comma
-r_int
-r_int
+id|__u32
 id|saddr
 comma
 r_int
@@ -154,7 +152,7 @@ l_int|0
 )paren
 )paren
 OL
-l_int|1
+id|FW_ACCEPT
 )paren
 (brace
 r_if
@@ -162,8 +160,7 @@ c_cond
 (paren
 id|err
 op_eq
-op_minus
-l_int|1
+id|FW_REJECT
 )paren
 (brace
 id|icmp_send

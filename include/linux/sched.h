@@ -19,6 +19,17 @@ macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+multiline_comment|/*&n; * cloning flags:&n; */
+DECL|macro|CSIGNAL
+mdefine_line|#define CSIGNAL&t;&t;0x000000ff&t;/* signal mask to be sent at exit */
+DECL|macro|CLONE_VM
+mdefine_line|#define CLONE_VM&t;0x00000100&t;/* set if VM shared between processes */
+DECL|macro|CLONE_FS
+mdefine_line|#define CLONE_FS&t;0x00000200&t;/* set if fs info shared between processes */
+DECL|macro|CLONE_FILES
+mdefine_line|#define CLONE_FILES&t;0x00000400&t;/* set if open files shared between processes */
+DECL|macro|CLONE_SIGHAND
+mdefine_line|#define CLONE_SIGHAND&t;0x00000800&t;/* set if signal handlers shared */
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -118,7 +129,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
 DECL|struct|files_struct
 r_struct
 id|files_struct
@@ -290,6 +300,26 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|INIT_MM
 mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
+DECL|struct|signal_struct
+r_struct
+id|signal_struct
+(brace
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+DECL|member|action
+r_struct
+id|sigaction
+id|action
+(braket
+l_int|32
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|INIT_SIGNALS
+mdefine_line|#define INIT_SIGNALS { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;{ {0,}, } }
 DECL|struct|task_struct
 r_struct
 id|task_struct
@@ -370,12 +400,6 @@ id|next_run
 comma
 op_star
 id|prev_run
-suffix:semicolon
-DECL|member|sigaction
-r_struct
-id|sigaction
-op_star
-id|sigaction
 suffix:semicolon
 DECL|member|saved_kernel_stack
 r_int
@@ -619,6 +643,13 @@ id|mm_struct
 op_star
 id|mm
 suffix:semicolon
+multiline_comment|/* signal handlers */
+DECL|member|sig
+r_struct
+id|signal_struct
+op_star
+id|sig
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Per process flags&n; */
@@ -633,24 +664,12 @@ DECL|macro|PF_STARTING
 mdefine_line|#define PF_STARTING&t;0x00000100&t;/* being created */
 DECL|macro|PF_EXITING
 mdefine_line|#define PF_EXITING&t;0x00000200&t;/* getting shut down */
-multiline_comment|/*&n; * cloning flags:&n; */
-DECL|macro|CSIGNAL
-mdefine_line|#define CSIGNAL&t;&t;0x000000ff&t;/* signal mask to be sent at exit */
-DECL|macro|CLONE_VM
-mdefine_line|#define CLONE_VM&t;0x00000100&t;/* set if VM shared between processes */
-DECL|macro|CLONE_FS
-mdefine_line|#define CLONE_FS&t;0x00000200&t;/* set if fs info shared between processes */
-DECL|macro|CLONE_FILES
-mdefine_line|#define CLONE_FILES&t;0x00000400&t;/* set if open files shared between processes */
-DECL|macro|CLONE_SIGHAND
-mdefine_line|#define CLONE_SIGHAND&t;0x00000800&t;/* set if signal handlers shared */
 multiline_comment|/*&n; * Limit the stack by to some sane default: root can always&n; * increase this limit if needed..  8MB seems reasonable.&n; */
 DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15*HZ/100,15*HZ/100,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* signals */&t;init_sigaction, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}, &bslash;&n;&t;&t;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm &bslash;&n;}
-macro_line|#ifdef __KERNEL__
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15*HZ/100,15*HZ/100,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}, &bslash;&n;&t;&t;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;&amp;init_signals, &bslash;&n;}
 r_extern
 r_struct
 id|mm_struct
@@ -900,6 +919,36 @@ id|exit_thread
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|exit_fs
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|exit_files
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|exit_sighand
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
 )paren
 suffix:semicolon
 r_extern

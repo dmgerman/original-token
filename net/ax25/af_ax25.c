@@ -3389,6 +3389,10 @@ id|sk-&gt;broadcast
 op_assign
 l_int|0
 suffix:semicolon
+id|sk-&gt;allocation
+op_assign
+id|GFP_KERNEL
+suffix:semicolon
 id|sk-&gt;rcvbuf
 op_assign
 id|SK_RMEM_MAX
@@ -9615,7 +9619,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.30 ALPHA for Linux NET3.030 (Linux 1.3.20)&bslash;n&quot;
+l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.30 ALPHA for Linux NET3.031 (Linux 1.3.25)&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

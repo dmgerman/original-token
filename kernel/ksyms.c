@@ -23,7 +23,11 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/sem.h&gt;
+macro_line|#include &lt;linux/minix_fs.h&gt;
+macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#ifdef CONFIG_NET
+macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#ifdef CONFIG_INET
@@ -31,6 +35,8 @@ macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
+macro_line|#include &lt;net/ip.h&gt;
+macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
@@ -217,17 +223,6 @@ r_int
 comma
 r_void
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|close_fp
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
 )paren
 suffix:semicolon
 r_extern
@@ -1215,6 +1210,14 @@ c_func
 id|arp_send
 )paren
 comma
+macro_line|#ifdef CONFIG_IP_FORWARD
+id|X
+c_func
+(paren
+id|ip_forward
+)paren
+comma
+macro_line|#endif
 macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
 multiline_comment|/* VJ header compression */
 id|X
@@ -1865,6 +1868,18 @@ id|X
 c_func
 (paren
 id|proc_unregister
+)paren
+comma
+id|X
+c_func
+(paren
+id|in_group_p
+)paren
+comma
+id|X
+c_func
+(paren
+id|generate_cluster
 )paren
 comma
 macro_line|#endif

@@ -2617,6 +2617,8 @@ c_cond
 (paren
 id|p
 op_logical_and
+id|p-&gt;mm
+op_logical_and
 id|p-&gt;mm-&gt;swappable
 op_logical_and
 id|p-&gt;mm-&gt;rss

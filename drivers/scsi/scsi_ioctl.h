@@ -1,8 +1,6 @@
 macro_line|#ifndef _SCSI_IOCTL_H
 DECL|macro|_SCSI_IOCTL_H
 mdefine_line|#define _SCSI_IOCTL_H 
-DECL|macro|SCSI_IOCTL_PROBE_HOST
-mdefine_line|#define SCSI_IOCTL_PROBE_HOST 0
 DECL|macro|SCSI_IOCTL_SEND_COMMAND
 mdefine_line|#define SCSI_IOCTL_SEND_COMMAND 1
 DECL|macro|SCSI_IOCTL_TEST_UNIT_READY

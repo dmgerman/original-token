@@ -137,6 +137,8 @@ suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs) ((VM_MASK &amp; (regs)-&gt;eflags) || (3 &amp; (regs)-&gt;cs))
+DECL|macro|instruction_pointer
+mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;eip)
 r_extern
 r_void
 id|show_regs

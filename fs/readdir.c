@@ -325,11 +325,11 @@ DECL|struct|getdents_callback
 r_struct
 id|getdents_callback
 (brace
-DECL|member|current
+DECL|member|current_dir
 r_struct
 id|linux_dirent
 op_star
-id|current
+id|current_dir
 suffix:semicolon
 DECL|member|previous
 r_struct
@@ -443,7 +443,7 @@ id|dirent-&gt;d_off
 suffix:semicolon
 id|dirent
 op_assign
-id|buf-&gt;current
+id|buf-&gt;current_dir
 suffix:semicolon
 id|buf-&gt;previous
 op_assign
@@ -497,7 +497,7 @@ id|dirent
 op_add_assign
 id|reclen
 suffix:semicolon
-id|buf-&gt;current
+id|buf-&gt;current_dir
 op_assign
 id|dirent
 suffix:semicolon
@@ -599,7 +599,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|buf.current
+id|buf.current_dir
 op_assign
 (paren
 r_struct

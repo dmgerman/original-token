@@ -5091,6 +5091,14 @@ l_int|9
 op_assign
 id|shpnt
 suffix:semicolon
+id|shpnt-&gt;this_id
+op_assign
+id|scsi_id
+suffix:semicolon
+id|shpnt-&gt;unique_id
+op_assign
+id|base_io
+suffix:semicolon
 id|shpnt-&gt;io_port
 op_assign
 id|base_io
@@ -5992,18 +6000,14 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|DEB
-c_func
+multiline_comment|/*&n;     * See if a bus reset was suggested.&n;     */
+r_if
+c_cond
 (paren
-id|printk
-c_func
-(paren
-l_string|&quot;aha1542_reset called&bslash;n&quot;
+id|SCpnt-&gt;host-&gt;suggest_bus_reset
 )paren
-)paren
-suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* This does a scsi reset for all devices on the bus */
+(brace
+multiline_comment|/* &n;&t; * This does a scsi reset for all devices on the bus.&n;&t; * In principle, we could also reset the 1542 - should&n;&t; * we do this?  Try this first, and we can add that later&n;&t; * if it turns out to be useful.&n;&t; */
 id|outb
 c_func
 (paren
@@ -6016,7 +6020,138 @@ id|SCpnt-&gt;host-&gt;io_port
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
+multiline_comment|/*&n;&t; * Now try and pick up the pieces.  Restart all commands&n;&t; * that are currently active on the bus, and reset all of&n;&t; * the datastructures.  We have some time to kill while&n;&t; * things settle down, so print a nice message.&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;Sent BUS RESET to scsi host %d&bslash;n&quot;
+comma
+id|SCpnt-&gt;host-&gt;host_no
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|AHA1542_MAILBOXES
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|HOSTDATA
+c_func
+(paren
+id|SCpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|SCint
+(braket
+id|i
+)braket
+op_ne
+l_int|NULL
+)paren
+(brace
+id|Scsi_Cmnd
+op_star
+id|SCtmp
+suffix:semicolon
+id|SCtmp
+op_assign
+id|HOSTDATA
+c_func
+(paren
+id|SCpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|SCint
+(braket
+id|i
+)braket
+suffix:semicolon
+id|SCtmp-&gt;result
+op_assign
+id|DID_RESET
+op_lshift
+l_int|16
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCtmp-&gt;host_scribble
+)paren
+id|scsi_free
+c_func
+(paren
+id|SCtmp-&gt;host_scribble
+comma
+l_int|512
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Sending DID_RESET for target %d&bslash;n&quot;
+comma
+id|SCpnt-&gt;target
+)paren
+suffix:semicolon
+id|SCtmp
+op_member_access_from_pointer
+id|scsi_done
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+id|HOSTDATA
+c_func
+(paren
+id|SCpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|SCint
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|HOSTDATA
+c_func
+(paren
+id|SCpnt-&gt;host
+)paren
+op_member_access_from_pointer
+id|mb
+(braket
+id|i
+)braket
+dot
+id|status
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Now tell the mid-level code what we did here.  Since&n;&t; * we have restarted all of the outstanding commands,&n;&t; * then report SUCCESS.&n;&t; */
+r_return
+(paren
+id|SCSI_RESET_SUCCESS
+op_or
+id|SCSI_RESET_BUS_RESET
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 multiline_comment|/* This does a selective reset of just the one device */
 multiline_comment|/* First locate the ccb for this command */
 r_for
@@ -6078,7 +6213,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Here is the tricky part.  What to do next.  Do we get an interrupt&n;&t;     for the commands that we aborted with the specified target, or&n;&t;     do we generate this on our own?  Try it without first and see&n;&t;     what happens */
+multiline_comment|/* Here is the tricky part.  What to do next.  Do we get an interrupt&n;&t;&t; for the commands that we aborted with the specified target, or&n;&t;&t; do we generate this on our own?  Try it without first and see&n;&t;&t; what happens */
 id|printk
 c_func
 (paren
@@ -6087,8 +6222,7 @@ comma
 id|SCpnt-&gt;target
 )paren
 suffix:semicolon
-multiline_comment|/* If the first does not work, then try the second.  I think the&n;&t;     first option is more likely to be correct. Free the command&n;&t;     block for all commands running on this target... */
-macro_line|#if 1
+multiline_comment|/* If the first does not work, then try the second.  I think the&n;&t;&t; first option is more likely to be correct. Free the command&n;&t;&t; block for all commands running on this target... */
 r_for
 c_loop
 (paren
@@ -6217,13 +6351,8 @@ suffix:semicolon
 r_return
 id|SCSI_RESET_SUCCESS
 suffix:semicolon
-macro_line|#else
-r_return
-id|SCSI_RESET_PENDING
-suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#endif
+)brace
 multiline_comment|/* No active command at this time, so this means that each time we got&n;       some kind of response the last time through.  Tell the mid-level code&n;       to request sense information in order to decide what to do next. */
 r_return
 id|SCSI_RESET_PUNT

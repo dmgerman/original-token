@@ -1,6 +1,15 @@
-multiline_comment|/*&n; * linux/drivers/char/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@pandora.pp.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@pandora.pp.fi&n; *&n; * Added support for SIGIO. 28Jul95 jem@pandora.pp.fi&n; */
+multiline_comment|/*&n; * linux/drivers/char/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@pandora.pp.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; *&n; * Changed references to &quot;QuickPort&quot; with &quot;82C710&quot; since &quot;QuickPort&quot;&n; * is not what this driver is all about -- QuickPort is just a&n; * connector type, and this driver is for the mouse port on the Chips&n; * &amp; Technologies 82C710 interface chip. 15Nov93 jem@pandora.pp.fi&n; *&n; * Added support for SIGIO. 28Jul95 jem@pandora.pp.fi&n; *&n; * Rearranged SIGIO support to use code from tty_io.  9Sept95 ctm@ardi.com&n; *&n; * Modularised 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
 multiline_comment|/* Uncomment the following line if your mouse needs initialization. */
 multiline_comment|/* #define INITIALIZE_DEVICE */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -11,6 +20,9 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &quot;mouse.h&quot;
+DECL|macro|PSMOUSE_MINOR
+mdefine_line|#define PSMOUSE_MINOR      1            /* minor device # for this mouse */
 multiline_comment|/* aux controller ports */
 DECL|macro|AUX_INPUT_PORT
 mdefine_line|#define AUX_INPUT_PORT&t;0x60&t;&t;/* Aux device output buffer */
@@ -868,182 +880,34 @@ r_int
 id|on
 )paren
 (brace
-r_struct
-id|fasync_struct
-op_star
-id|fa
-comma
-op_star
-id|prev
-suffix:semicolon
 r_int
-r_int
-id|flags
+id|retval
 suffix:semicolon
-r_for
-c_loop
+id|retval
+op_assign
+id|fasync_helper
+c_func
 (paren
-id|fa
-op_assign
-id|queue-&gt;fasync
+id|inode
 comma
-id|prev
-op_assign
-l_int|0
-suffix:semicolon
-id|fa
-suffix:semicolon
-id|prev
-op_assign
-id|fa
-comma
-id|fa
-op_assign
-id|fa-&gt;fa_next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|fa-&gt;fa_file
-op_eq
 id|filp
-)paren
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+comma
 id|on
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|fa
-)paren
-r_return
-l_int|0
-suffix:semicolon
-id|fa
-op_assign
-(paren
-r_struct
-id|fasync_struct
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|fasync_struct
-)paren
 comma
-id|GFP_KERNEL
+op_amp
+id|queue-&gt;fasync
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|fa
-)paren
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|fa-&gt;magic
-op_assign
-id|FASYNC_MAGIC
-suffix:semicolon
-id|fa-&gt;fa_file
-op_assign
-id|filp
-suffix:semicolon
-id|fa-&gt;fa_next
-op_assign
-id|queue-&gt;fasync
-suffix:semicolon
-id|queue-&gt;fasync
-op_assign
-id|fa
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fa
-)paren
-r_return
+id|retval
+OL
 l_int|0
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
 )paren
+r_return
+id|retval
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|prev
-)paren
-id|prev-&gt;fa_next
-op_assign
-id|fa-&gt;fa_next
-suffix:semicolon
-r_else
-id|queue-&gt;fasync
-op_assign
-id|fa-&gt;fa_next
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|kfree_s
-c_func
-(paren
-id|fa
-comma
-r_sizeof
-(paren
-r_struct
-id|fasync_struct
-)paren
-)paren
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1786,9 +1650,25 @@ comma
 l_int|NULL
 comma
 id|fasync_aux
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Initialize driver. First check for a 82C710 chip; if found&n; * forget about the Aux port and use the *_qp functions.&n; */
+DECL|variable|psaux_mouse
+r_static
+r_struct
+id|mouse
+id|psaux_mouse
+op_assign
+(brace
+id|PSMOUSE_MINOR
+comma
+l_string|&quot;ps2aux&quot;
+comma
+op_amp
+id|psaux_fops
+)brace
+suffix:semicolon
 DECL|function|psaux_init
 r_int
 r_int
@@ -1867,13 +1747,27 @@ id|kbd_read_mask
 op_assign
 id|AUX_OBUF_FULL
 suffix:semicolon
+id|mouse_register
+c_func
+(paren
+op_amp
+id|psaux_mouse
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef MODULE
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
 multiline_comment|/* No mouse at all */
+macro_line|#endif
 )brace
 id|queue
 op_assign
@@ -2010,10 +1904,45 @@ id|AUX_OUTPUT_PORT
 suffix:semicolon
 multiline_comment|/*  on the controller */
 )brace
+macro_line|#ifdef MODULE
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
+macro_line|#endif
 )brace
+macro_line|#ifdef MODULE
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;psaux: in use, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|mouse_deregister
+c_func
+(paren
+op_amp
+id|psaux_mouse
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|poll_aux_status
 r_static
 r_int

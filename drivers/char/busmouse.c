@@ -1,4 +1,13 @@
-multiline_comment|/*&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_select&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching select code.&n; *&n; * Modified the select() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; */
+multiline_comment|/*&n; * Logitech Bus Mouse Driver for Linux&n; * by James Banks&n; *&n; * Mods by Matthew Dillon&n; *   calls verify_area()&n; *   tracks better when X is busy or paging&n; *&n; * Heavily modified by David Giller&n; *   changed from queue- to counter- driven&n; *   hacked out a (probably incorrect) mouse_select&n; *&n; * Modified again by Nathan Laredo to interface with&n; *   0.96c-pl1 IRQ handling changes (13JUL92)&n; *   didn&squot;t bother touching select code.&n; *&n; * Modified the select() code blindly to conform to the VFS&n; *   requirements. 92.07.14 - Linus. Somebody should test it out.&n; *&n; * Modified by Johan Myreen to make room for other mice (9AUG92)&n; *   removed assignment chr_fops[10] = &amp;mouse_fops; see mouse.c&n; *   renamed mouse_fops =&gt; bus_mouse_fops, made bus_mouse_fops public.&n; *   renamed this file mouse.c =&gt; busmouse.c&n; *&n; * Minor addition by Cliff Matthews&n; *   added fasync support&n; *&n; * Modularised 6-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt; &n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/busmouse.h&gt;
@@ -271,11 +280,76 @@ id|mouse.dy
 op_assign
 l_int|2048
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mouse.fasyncptr
+)paren
+id|kill_fasync
+c_func
+(paren
+id|mouse.fasyncptr
+comma
+id|SIGIO
+)paren
+suffix:semicolon
 )brace
 id|MSE_INT_ON
 c_func
 (paren
 )paren
+suffix:semicolon
+)brace
+DECL|function|fasync_mouse
+r_static
+r_int
+id|fasync_mouse
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+id|on
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|retval
+op_assign
+id|fasync_helper
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+id|on
+comma
+op_amp
+id|mouse.fasyncptr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+OL
+l_int|0
+)paren
+r_return
+id|retval
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * close access to the mouse (can deal with multiple&n; * opens if allowed in the future)&n; */
@@ -317,6 +391,16 @@ id|mouse_irq
 )paren
 suffix:semicolon
 )brace
+id|fasync_mouse
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+l_int|0
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * open access to the mouse, currently only one open is&n; * allowed.&n; */
 DECL|function|open_mouse
@@ -765,9 +849,44 @@ id|open_mouse
 comma
 id|close_mouse
 comma
+l_int|NULL
+comma
+id|fasync_mouse
+comma
 )brace
 suffix:semicolon
-DECL|function|bus_mouse_init
+DECL|variable|bus_mous
+r_static
+r_struct
+id|mouse
+id|bus_mous
+op_assign
+(brace
+id|LOGITECH_BUSMOUSE
+comma
+l_string|&quot;busmouse&quot;
+comma
+op_amp
+id|bus_mouse_fops
+)brace
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#else
 r_int
 r_int
 id|bus_mouse_init
@@ -777,6 +896,7 @@ r_int
 r_int
 id|kmem_start
 )paren
+macro_line|#endif
 (brace
 r_int
 id|i
@@ -829,9 +949,16 @@ id|mouse.present
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
+macro_line|#endif
 )brace
 id|outb
 c_func
@@ -882,8 +1009,50 @@ comma
 id|mouse_irq
 )paren
 suffix:semicolon
+id|mouse_register
+c_func
+(paren
+op_amp
+id|bus_mouse
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
+macro_line|#endif
 )brace
+macro_line|#ifdef MODULE
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;busmouse: in use - remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|mouse_deregister
+c_func
+(paren
+op_amp
+id|bus_mouse
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

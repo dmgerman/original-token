@@ -132,7 +132,7 @@ id|SCpnt
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|sd_init
 c_func
 (paren
@@ -1273,6 +1273,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_else
+(brace
+multiline_comment|/*&n;                     * Must have been a power glitch, or a bus reset.&n;                     * Could not have been a media change, so we just retry&n;                     * the request and see what happens.&n;                     */
+id|requeue_sd_request
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* If we had an ILLEGAL REQUEST returned, then we may have&n;&t; * performed an unsupported command.  The only thing this should be &n;&t; * would be a ten byte read where only a six byte read was supported.&n;&t; * Also, on a system where READ CAPACITY failed, we have have read &n;&t; * past the end of the disk. &n;&t; */
@@ -1447,6 +1459,10 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
+id|Scsi_Device
+op_star
+id|SDev
+suffix:semicolon
 r_struct
 id|request
 op_star
@@ -1507,6 +1523,56 @@ suffix:semicolon
 suffix:semicolon
 id|INIT_SCSI_REQUEST
 suffix:semicolon
+id|SDev
+op_assign
+id|rscsi_disks
+(braket
+id|DEVICE_NR
+c_func
+(paren
+id|MINOR
+c_func
+(paren
+id|CURRENT-&gt;dev
+)paren
+)paren
+)braket
+dot
+id|device
+suffix:semicolon
+multiline_comment|/*&n;         * I am not sure where the best place to do this is.  We need&n;         * to hook in a place where we are likely to come if in user&n;         * space.&n;         */
+r_if
+c_cond
+(paren
+id|SDev-&gt;was_reset
+)paren
+(brace
+multiline_comment|/*&n;&t;     * We need to relock the door, but we might&n;&t;     * be in an interrupt handler.  Only do this&n;&t;     * from user space, since we do not want to&n;&t;     * sleep from an interrupt.&n;&t;     */
+r_if
+c_cond
+(paren
+id|SDev-&gt;removable
+op_logical_and
+op_logical_neg
+id|intr_count
+)paren
+(brace
+id|scsi_ioctl
+c_func
+(paren
+id|SDev
+comma
+id|SCSI_IOCTL_DOORLOCK
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+id|SDev-&gt;was_reset
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* We have to be careful here. allocate_device will get a free pointer,&n;&t; * but there is no guarantee that it is queueable.  In normal usage, &n;&t; * we want to call this, because other types of devices may have the &n;&t; * host all tied up, and we want to make sure that we have at least &n;&t; * one request pending for this type of device. We can also come &n;&t; * through here while servicing an interrupt, because of the need to &n;&t; * start another command. If we call allocate_device more than once, &n;&t; * then the system can wedge if the command is not queueable. The &n;&t; * request_queueable function is safe because it checks to make sure &n;&t; * that the host is able to take another command before it returns&n;&t; * a pointer.  &n;&t; */
 r_if
 c_cond
@@ -5071,9 +5137,16 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The sd_init() function looks at all SCSI drives present, determines&n; * their size, and reads partition table entries for them.&n; */
+DECL|variable|sd_registered
+r_static
+r_int
+id|sd_registered
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|sd_init
 r_static
-r_void
+r_int
 id|sd_init
 c_func
 (paren
@@ -5081,12 +5154,6 @@ c_func
 (brace
 r_int
 id|i
-suffix:semicolon
-r_static
-r_int
-id|sd_registered
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -5096,6 +5163,7 @@ op_eq
 l_int|0
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -5128,6 +5196,7 @@ id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 id|sd_registered
@@ -5142,6 +5211,7 @@ id|rscsi_disks
 )paren
 (brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|sd_template.dev_max
@@ -5364,6 +5434,9 @@ r_void
 op_star
 )paren
 id|rscsi_disks
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sd_finish
@@ -5907,6 +5980,17 @@ id|nr_sects
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;         * Reset the blocksize for everything so that we can read&n;         * the partition table.&n;         */
+id|blksize_size
+(braket
+id|MAJOR_NR
+)braket
+(braket
+id|i
+)braket
+op_assign
+l_int|1024
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef MAYBE_REINIT
@@ -6226,10 +6310,13 @@ suffix:semicolon
 id|unregister_blkdev
 c_func
 (paren
-id|SCSI_GENERIC_MAJOR
+id|SCSI_DISK_MAJOR
 comma
 l_string|&quot;sd&quot;
 )paren
+suffix:semicolon
+id|sd_registered
+op_decrement
 suffix:semicolon
 r_if
 c_cond

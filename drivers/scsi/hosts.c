@@ -447,6 +447,10 @@ id|retval-&gt;max_lun
 op_assign
 l_int|8
 suffix:semicolon
+id|retval-&gt;unique_id
+op_assign
+l_int|0
+suffix:semicolon
 id|retval-&gt;io_port
 op_assign
 l_int|0

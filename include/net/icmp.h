@@ -61,16 +61,14 @@ id|options
 op_star
 id|opt
 comma
-r_int
-r_int
+id|__u32
 id|daddr
 comma
 r_int
 r_int
 id|len
 comma
-r_int
-r_int
+id|__u32
 id|saddr
 comma
 r_int
@@ -98,6 +96,17 @@ comma
 r_int
 r_int
 id|arg
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|icmp_init
+c_func
+(paren
+r_struct
+id|proto_ops
+op_star
+id|ops
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _ICMP_H */

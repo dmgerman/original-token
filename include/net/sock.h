@@ -85,6 +85,12 @@ r_int
 r_int
 id|rmem_alloc
 suffix:semicolon
+DECL|member|allocation
+r_int
+r_int
+id|allocation
+suffix:semicolon
+multiline_comment|/* Allocation mode */
 DECL|member|write_seq
 id|__u32
 id|write_seq
@@ -257,13 +263,11 @@ op_star
 id|sleep
 suffix:semicolon
 DECL|member|daddr
-r_int
-r_int
+id|__u32
 id|daddr
 suffix:semicolon
 DECL|member|saddr
-r_int
-r_int
+id|__u32
 id|saddr
 suffix:semicolon
 DECL|member|max_unacked
@@ -1002,12 +1006,10 @@ id|sk_buff
 op_star
 id|skb
 comma
-r_int
-r_int
+id|__u32
 id|saddr
 comma
-r_int
-r_int
+id|__u32
 id|daddr
 comma
 r_struct
@@ -1163,16 +1165,14 @@ id|options
 op_star
 id|opt
 comma
-r_int
-r_int
+id|__u32
 id|daddr
 comma
 r_int
 r_int
 id|len
 comma
-r_int
-r_int
+id|__u32
 id|saddr
 comma
 r_int
@@ -1330,7 +1330,6 @@ id|inuse
 comma
 id|highestinuse
 suffix:semicolon
-macro_line|#ifndef PACKET_C&t;&t;/* Hack to save 1K for packet sockets */ 
 DECL|member|sock_array
 r_struct
 id|sock
@@ -1340,7 +1339,6 @@ id|sock_array
 id|SOCK_ARRAY_SIZE
 )braket
 suffix:semicolon
-macro_line|#endif PACKET_C  
 )brace
 suffix:semicolon
 DECL|macro|TIME_WRITE

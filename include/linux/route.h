@@ -102,10 +102,5 @@ DECL|macro|RTF_IRTT
 mdefine_line|#define RTF_IRTT&t;0x0100&t;&t;/* Initial round trip time&t;  */
 DECL|macro|RTF_REJECT
 mdefine_line|#define RTF_REJECT&t;0x0200&t;&t;/* Reject route&t;&t;&t;  */
-multiline_comment|/*&n; *&t;REMOVE THESE BY 1.2.0 !!!!!!!!!!!!!!!!!&n; */
-DECL|macro|RTF_MTU
-mdefine_line|#define&t;RTF_MTU&t;&t;RTF_MSS
-DECL|macro|rt_mtu
-mdefine_line|#define rt_mtu&t;&t;rt_mss&t;&t;
 macro_line|#endif&t;/* _LINUX_ROUTE_H */
 eof

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * drivers/pci/pci.c&n; *&n; * PCI services that are built on top of the BIOS32 service.&n; *&n; * Copyright 1993, 1994, 1995 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;

@@ -1980,11 +1980,6 @@ id|irq
 comma
 id|ack
 suffix:semicolon
-r_struct
-id|irqaction
-op_star
-id|action
-suffix:semicolon
 id|ack
 op_assign
 id|irq

@@ -69,13 +69,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-id|pmd_t
-op_star
-id|pmd
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -86,38 +79,6 @@ l_int|0
 r_return
 op_minus
 id|EPERM
-suffix:semicolon
-multiline_comment|/* Map out the low memory: it&squot;s no longer needed */
-id|pmd
-op_assign
-id|pmd_offset
-c_func
-(paren
-id|swapper_pg_dir
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|768
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|pmd_clear
-c_func
-(paren
-id|pmd
-op_increment
-)paren
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
@@ -437,6 +398,18 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* forget lazy i387 state */
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* forget local segments */
 id|__asm__
 id|__volatile__
@@ -1156,11 +1129,11 @@ r_int
 r_int
 id|newsp
 suffix:semicolon
-id|newsp
+id|clone_flags
 op_assign
 id|regs.ebx
 suffix:semicolon
-id|clone_flags
+id|newsp
 op_assign
 id|regs.ecx
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3:&t;Multicast List maintenance. &n; *&n; *&t;Authors:&n; *&t;&t;Tim Kordas &lt;tjk@nostromo.eeap.cwru.edu&gt; &n; *&t;&t;Richard Underwood &lt;richard@wuzz.demon.co.uk&gt;&n; *&n; *&t;Stir fried together from the IP multicast and CAP patches above&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Update the device on a real delete&n; *&t;&t;&t;&t;&t;rather than any time but...&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux NET3:&t;Multicast List maintenance. &n; *&n; *&t;Authors:&n; *&t;&t;Tim Kordas &lt;tjk@nostromo.eeap.cwru.edu&gt; &n; *&t;&t;Richard Underwood &lt;richard@wuzz.demon.co.uk&gt;&n; *&n; *&t;Stir fried together from the IP multicast and CAP patches above&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Update the device on a real delete&n; *&t;&t;&t;&t;&t;rather than any time but...&n; *&t;&t;Alan Cox&t;:&t;IFF_ALLMULTI support.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -61,7 +61,7 @@ id|IFF_UP
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Devices with no set multicast don&squot;t get set */
+multiline_comment|/*&n;&t; *&t;Devices with no set multicast don&squot;t get set &n;&t; */
 r_if
 c_cond
 (paren
@@ -73,7 +73,7 @@ l_int|NULL
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Promiscuous is promiscuous - so no filter needed */
+multiline_comment|/*&n;&t; *&t;Promiscuous is promiscuous - so no filter needed &n;&t; */
 r_if
 c_cond
 (paren
@@ -98,6 +98,32 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;All multicasts. Older cards will interpret this as&n;&t; * &t;promisc mode, which is the next best thing.&n;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
+)paren
+(brace
+id|dev
+op_member_access_from_pointer
+id|set_multicast_list
+c_func
+(paren
+id|dev
+comma
+op_minus
+l_int|2
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;No multicasts&n;&t; */
 r_if
 c_cond
 (paren
@@ -121,6 +147,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;The drivers need changing to process the list themselves... this is&n;&t; *&t;a mess.&n;&t; */
 id|data
 op_assign
 id|kmalloc

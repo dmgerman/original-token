@@ -1,31 +1,43 @@
-multiline_comment|/*&n; * linux/drivers/char/mouse.c&n; *&n; * Generic mouse open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; *&n; * Made things a lot mode modular - easy to compile in just one or two&n; * of the mouse drivers, as they are now completely independent. Linus.&n; */
+multiline_comment|/*&n; * linux/drivers/char/mouse.c&n; *&n; * Generic mouse open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; *&n; * Made things a lot mode modular - easy to compile in just one or two&n; * of the mouse drivers, as they are now completely independent. Linus.&n; *&n; * Support for loadable modules. 8-Sep-95 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-multiline_comment|/*&n; * note that you can remove any or all of the drivers by undefining&n; * the minor values in &lt;linux/mouse.h&gt;&n; */
-r_extern
+macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &quot;mouse.h&quot;
+multiline_comment|/*&n; * Head entry for the doubly linked mouse list&n; */
+DECL|variable|mouse_list
+r_static
 r_struct
-id|file_operations
-id|bus_mouse_fops
+id|mouse
+id|mouse_list
+op_assign
+(brace
+l_int|0
+comma
+l_string|&quot;head&quot;
+comma
+l_int|NULL
+comma
+op_amp
+id|mouse_list
+comma
+op_amp
+id|mouse_list
+)brace
 suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|psaux_fops
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|ms_bus_mouse_fops
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|atixl_busmouse_fops
-suffix:semicolon
+macro_line|#ifndef MODULE
 r_extern
 r_int
 r_int
@@ -66,6 +78,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|function|mouse_open
 r_static
 r_int
@@ -92,67 +105,57 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
-r_switch
+r_struct
+id|mouse
+op_star
+id|c
+op_assign
+id|mouse_list.next
+suffix:semicolon
+id|file-&gt;f_op
+op_assign
+l_int|NULL
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|c
+op_ne
+op_amp
+id|mouse_list
+)paren
+(brace
+r_if
 c_cond
 (paren
+id|c-&gt;minor
+op_eq
 id|minor
 )paren
 (brace
-macro_line|#ifdef CONFIG_BUSMOUSE
-r_case
-id|BUSMOUSE_MINOR
-suffix:colon
 id|file-&gt;f_op
 op_assign
-op_amp
-id|bus_mouse_fops
+id|c-&gt;fops
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
-macro_line|#if defined CONFIG_PSMOUSE || defined CONFIG_82C710_MOUSE
-r_case
-id|PSMOUSE_MINOR
-suffix:colon
-id|file-&gt;f_op
+)brace
+id|c
 op_assign
-op_amp
-id|psaux_fops
+id|c-&gt;next
 suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MS_BUSMOUSE
-r_case
-id|MS_BUSMOUSE_MINOR
-suffix:colon
+)brace
+r_if
+c_cond
+(paren
 id|file-&gt;f_op
-op_assign
-op_amp
-id|ms_bus_mouse_fops
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATIXL_BUSMOUSE
-r_case
-id|ATIXL_BUSMOUSE_MINOR
-suffix:colon
-id|file-&gt;f_op
-op_assign
-op_amp
-id|atixl_busmouse_fops
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-r_default
-suffix:colon
+op_eq
+l_int|NULL
+)paren
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 r_return
 id|file-&gt;f_op
 op_member_access_from_pointer
@@ -199,7 +202,110 @@ l_int|NULL
 multiline_comment|/* release */
 )brace
 suffix:semicolon
-DECL|function|mouse_init
+DECL|function|mouse_register
+r_int
+id|mouse_register
+c_func
+(paren
+r_struct
+id|mouse
+op_star
+id|mouse
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mouse-&gt;next
+op_logical_or
+id|mouse-&gt;prev
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|mouse-&gt;next
+op_assign
+op_amp
+id|mouse_list
+suffix:semicolon
+id|mouse-&gt;prev
+op_assign
+id|mouse_list.prev
+suffix:semicolon
+id|mouse-&gt;prev-&gt;next
+op_assign
+id|mouse
+suffix:semicolon
+id|mouse-&gt;next-&gt;prev
+op_assign
+id|mouse
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|mouse_deregister
+r_int
+id|mouse_deregister
+c_func
+(paren
+r_struct
+id|mouse
+op_star
+id|mouse
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mouse-&gt;next
+op_logical_or
+op_logical_neg
+id|mouse-&gt;prev
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|mouse-&gt;prev-&gt;next
+op_assign
+id|mouse-&gt;next
+suffix:semicolon
+id|mouse-&gt;next-&gt;prev
+op_assign
+id|mouse-&gt;prev
+suffix:semicolon
+id|mouse-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|mouse-&gt;prev
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#else
 r_int
 r_int
 id|mouse_init
@@ -209,7 +315,9 @@ r_int
 r_int
 id|kmem_start
 )paren
+macro_line|#endif
 (brace
+macro_line|#ifndef MODULE
 macro_line|#ifdef CONFIG_BUSMOUSE
 id|kmem_start
 op_assign
@@ -250,6 +358,7 @@ id|kmem_start
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif /* !MODULE */
 r_if
 c_cond
 (paren
@@ -264,6 +373,7 @@ op_amp
 id|mouse_fops
 )paren
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -272,8 +382,85 @@ comma
 id|MOUSE_MAJOR
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#ifdef MODULE
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_return
 id|kmem_start
 suffix:semicolon
+macro_line|#endif
 )brace
+macro_line|#ifdef MODULE
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|mouse_data
+op_star
+id|c
+op_assign
+id|mouse_list
+comma
+op_star
+id|n
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;mouse: in use, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|unregister_chrdev
+c_func
+(paren
+id|MOUSE_MAJOR
+comma
+l_string|&quot;mouse&quot;
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|c
+)paren
+(brace
+id|n
+op_assign
+id|c-&gt;next
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+id|c
+op_assign
+id|n
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 eof

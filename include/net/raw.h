@@ -13,19 +13,20 @@ id|raw_err
 c_func
 (paren
 r_int
-id|err
+id|type
+comma
+r_int
+id|code
 comma
 r_int
 r_char
 op_star
 id|header
 comma
-r_int
-r_int
+id|__u32
 id|daddr
 comma
-r_int
-r_int
+id|__u32
 id|saddr
 comma
 r_struct
@@ -110,9 +111,9 @@ r_struct
 id|device
 op_star
 comma
-r_int
+id|__u32
 comma
-r_int
+id|__u32
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _RAW_H */
