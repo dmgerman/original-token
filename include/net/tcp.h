@@ -2561,7 +2561,7 @@ id|nagle_check
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queue if&n;&t; *&n;&t; *&t;a) The right edge of this frame exceeds the window&n;&t; *&t;b) There are packets in flight and we have a small segment&n;&t; *&t;   [SWS avoidance and Nagle algorithm]&n;&t; *&t;   (part of SWS is done on packetization)&n;&t; *&t;c) We are retransmiting [Nagle]&n;&t; *&t;d) We have too many packets &squot;in flight&squot;&n;&t; *&n;&t; * &t;Don&squot;t use the nagle rule for urgent data.&n;&t; */
+multiline_comment|/*&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queue if&n;&t; *&n;&t; *&t;a) The right edge of this frame exceeds the window&n;&t; *&t;b) There are packets in flight and we have a small segment&n;&t; *&t;   [SWS avoidance and Nagle algorithm]&n;&t; *&t;   (part of SWS is done on packetization)&n;&t; *&t;c) We are retransmiting [Nagle]&n;&t; *&t;d) We have too many packets &squot;in flight&squot;&n;&t; *&n;&t; * &t;Don&squot;t use the nagle rule for urgent data (or&n;&t; *&t;for the final FIN -DaveM).&n;&t; */
 r_if
 c_cond
 (paren
@@ -2601,7 +2601,11 @@ id|skb
 op_member_access_from_pointer
 id|flags
 op_amp
+(paren
 id|TCPCB_FLAG_URG
+op_or
+id|TCPCB_FLAG_FIN
+)paren
 )paren
 )paren
 )paren
@@ -2609,10 +2613,12 @@ id|nagle_check
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Don&squot;t be strict about the congestion window for the&n;&t; * final FIN frame.  -DaveM&n;&t; */
 r_return
 (paren
 id|nagle_check
 op_logical_and
+(paren
 (paren
 id|tcp_packets_in_flight
 c_func
@@ -2621,6 +2627,19 @@ id|tp
 )paren
 OL
 id|tp-&gt;snd_cwnd
+)paren
+op_logical_or
+(paren
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|flags
+op_amp
+id|TCPCB_FLAG_FIN
+)paren
 )paren
 op_logical_and
 op_logical_neg
