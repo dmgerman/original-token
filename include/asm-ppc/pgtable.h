@@ -4,6 +4,7 @@ DECL|macro|_PPC_PGTABLE_H
 mdefine_line|#define _PPC_PGTABLE_H
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* For TASK_SIZE */
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -197,13 +198,16 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|flush_page_to_ram
+id|__flush_page_to_ram
 c_func
 (paren
 r_int
 r_int
+id|page_va
 )paren
 suffix:semicolon
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)&t;__flush_page_to_ram(page_address(page))
 r_extern
 r_int
 r_int
@@ -264,9 +268,19 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;1024
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE / PGDIR_SIZE)
+DECL|macro|USER_PGD_PTRS
+mdefine_line|#define USER_PGD_PTRS (PAGE_OFFSET &gt;&gt; PGDIR_SHIFT)
+DECL|macro|KERNEL_PGD_PTRS
+mdefine_line|#define KERNEL_PGD_PTRS (PTRS_PER_PGD-USER_PGD_PTRS)
+DECL|macro|pte_ERROR
+mdefine_line|#define pte_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pte %08lx.&bslash;n&quot;, __FILE__, __LINE__, pte_val(e))
+DECL|macro|pmd_ERROR
+mdefine_line|#define pmd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pmd %08lx.&bslash;n&quot;, __FILE__, __LINE__, pmd_val(e))
+DECL|macro|pgd_ERROR
+mdefine_line|#define pgd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pgd %08lx.&bslash;n&quot;, __FILE__, __LINE__, pgd_val(e))
 multiline_comment|/*&n; * Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 64MB value just means that there will be a 64MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; *&n; * We no longer map larger than phys RAM with the BATs so we don&squot;t have&n; * to worry about the VMALLOC_OFFSET causing problems.  We do have to worry&n; * about clashes between our early calls to ioremap() that start growing down&n; * from ioremap_base being run into the VM area allocations (growing upwards&n; * from VMALLOC_START).  For this reason we have ioremap_bot to check when&n; * we actually run into our mappings setup in the early boot with the VM&n; * system.  This really does become a problem for machines with good amounts&n; * of RAM.  -- Cort&n; */
 DECL|macro|VMALLOC_OFFSET
-mdefine_line|#define VMALLOC_OFFSET (0x4000000) /* 64M */
+mdefine_line|#define VMALLOC_OFFSET (0x1000000) /* 16M */
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1)))
 DECL|macro|VMALLOC_VMADDR
@@ -379,8 +393,19 @@ DECL|macro|__S110
 mdefine_line|#define __S110&t;PAGE_SHARED
 DECL|macro|__S111
 mdefine_line|#define __S111&t;PAGE_SHARED
-multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/*&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
+r_extern
+r_int
+r_int
+id|empty_zero_page
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+DECL|macro|ZERO_PAGE
+mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
+multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
 id|__bad_page
@@ -398,21 +423,11 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|empty_zero_page
-(braket
-l_int|1024
-)braket
-suffix:semicolon
-macro_line|#endif __ASSEMBLY__
 DECL|macro|BAD_PAGETABLE
 mdefine_line|#define BAD_PAGETABLE&t;__bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE&t;__bad_page()
-DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr)&t;((unsigned long) empty_zero_page)
+macro_line|#endif /* __ASSEMBLY__ */
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;(8*sizeof(unsigned long))
@@ -423,163 +438,30 @@ multiline_comment|/* sizeof(void*) == 1&lt;&lt;SIZEOF_PTR_LOG2 */
 multiline_comment|/* 64-bit machines, beware!  SRB. */
 DECL|macro|SIZEOF_PTR_LOG2
 mdefine_line|#define SIZEOF_PTR_LOG2&t;2
+DECL|macro|pte_none
+mdefine_line|#define pte_none(pte)&t;&t;(!pte_val(pte))
+DECL|macro|pte_present
+mdefine_line|#define pte_present(pte)&t;(pte_val(pte) &amp; _PAGE_PRESENT)
+DECL|macro|pte_clear
+mdefine_line|#define pte_clear(ptep)&t;&t;do { pte_val(*(ptep)) = 0; } while (0)
+DECL|macro|pte_pagenr
+mdefine_line|#define pte_pagenr(x)&t;&t;((unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
+DECL|macro|pmd_none
+mdefine_line|#define pmd_none(pmd)&t;&t;(!pmd_val(pmd))
+DECL|macro|pmd_bad
+mdefine_line|#define&t;pmd_bad(pmd)&t;&t;((pmd_val(pmd) &amp; ~PAGE_MASK) != 0)
+DECL|macro|pmd_present
+mdefine_line|#define&t;pmd_present(pmd)&t;((pmd_val(pmd) &amp; PAGE_MASK) != 0)
+DECL|macro|pmd_clear
+mdefine_line|#define&t;pmd_clear(pmdp)&t;&t;do { pmd_val(*(pmdp)) = 0; } while (0)
+multiline_comment|/*&n; * Permanent address of a page.&n; */
+DECL|macro|page_address
+mdefine_line|#define page_address(page) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
+DECL|macro|pages_to_mb
+mdefine_line|#define pages_to_mb(x)&t;&t;((x) &gt;&gt; (20-PAGE_SHIFT))
+DECL|macro|pte_page
+mdefine_line|#define pte_page(x)&t;&t;(mem_map+pte_pagenr(x))
 macro_line|#ifndef __ASSEMBLY__
-DECL|function|pte_none
-r_extern
-r_inline
-r_int
-id|pte_none
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-op_logical_neg
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-suffix:semicolon
-)brace
-DECL|function|pte_present
-r_extern
-r_inline
-r_int
-id|pte_present
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_PRESENT
-suffix:semicolon
-)brace
-DECL|function|pte_clear
-r_extern
-r_inline
-r_void
-id|pte_clear
-c_func
-(paren
-id|pte_t
-op_star
-id|ptep
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-op_star
-id|ptep
-)paren
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|pmd_none
-r_extern
-r_inline
-r_int
-id|pmd_none
-c_func
-(paren
-id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
-op_logical_neg
-id|pmd_val
-c_func
-(paren
-id|pmd
-)paren
-suffix:semicolon
-)brace
-DECL|function|pmd_bad
-r_extern
-r_inline
-r_int
-id|pmd_bad
-c_func
-(paren
-id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
-(paren
-id|pmd_val
-c_func
-(paren
-id|pmd
-)paren
-op_amp
-op_complement
-id|PAGE_MASK
-)paren
-op_ne
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|pmd_present
-r_extern
-r_inline
-r_int
-id|pmd_present
-c_func
-(paren
-id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
-(paren
-id|pmd_val
-c_func
-(paren
-id|pmd
-)paren
-op_amp
-id|PAGE_MASK
-)paren
-op_ne
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|pmd_clear
-r_extern
-r_inline
-r_void
-id|pmd_clear
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmdp
-)paren
-(brace
-id|pmd_val
-c_func
-(paren
-op_star
-id|pmdp
-)paren
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * The &quot;pgd_xxx()&quot; functions here are trivial for a folded two-level&n; * setup: the pgd is never bad, and a pmd always exists (as it&squot;s folded&n; * into the pgd entry)&n; */
 DECL|function|pgd_none
 r_extern
@@ -626,19 +508,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|pgd_clear
-r_extern
-r_inline
-r_void
-id|pgd_clear
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgdp
-)paren
-(brace
-)brace
+DECL|macro|pgd_clear
+mdefine_line|#define pgd_clear(xp)&t;do { pgd_val(*(xp)) = 0; } while (0)
+DECL|macro|pgd_page
+mdefine_line|#define pgd_page(pgd) &bslash;&n;&t;((unsigned long) __va(pgd_val(pgd) &amp; PAGE_MASK))
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|function|pte_read
 r_extern
@@ -1068,112 +941,11 @@ id|pte
 suffix:semicolon
 )brace
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
-macro_line|#if 1
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval)&t;((*(pteptr)) = (pteval))
-macro_line|#else
-DECL|function|set_pte
-r_extern
-r_inline
-r_void
-id|set_pte
-c_func
-(paren
-id|pte_t
-op_star
-id|pteptr
-comma
-id|pte_t
-id|pteval
-)paren
-(brace
-r_int
-r_int
-id|val
-op_assign
-id|pte_val
-c_func
-(paren
-id|pteval
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|xmon
-c_func
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|val
-op_amp
-id|_PAGE_PRESENT
-)paren
-op_logical_and
-(paren
-(paren
-id|val
-OL
-l_int|0x111000
-op_logical_or
-(paren
-id|val
-op_amp
-l_int|0x800
-)paren
-op_logical_or
-(paren
-(paren
-id|val
-op_amp
-id|_PAGE_HWWRITE
-)paren
-op_logical_and
-(paren
-op_complement
-id|val
-op_amp
-(paren
-id|_PAGE_RW
-op_or
-id|_PAGE_DIRTY
-)paren
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;bad pte val %lx ptr=%p&bslash;n&quot;
-comma
-id|val
-comma
-id|pteptr
-)paren
-suffix:semicolon
-id|xmon
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-op_star
-id|pteptr
-op_assign
-id|pteval
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 DECL|function|mk_pte_phys
-r_static
+r_extern
 r_inline
 id|pte_t
 id|mk_pte_phys
@@ -1181,7 +953,7 @@ c_func
 (paren
 r_int
 r_int
-id|page
+id|physpage
 comma
 id|pgprot_t
 id|pgprot
@@ -1196,9 +968,7 @@ c_func
 id|pte
 )paren
 op_assign
-(paren
-id|page
-)paren
+id|physpage
 op_or
 id|pgprot_val
 c_func
@@ -1217,8 +987,9 @@ id|pte_t
 id|mk_pte
 c_func
 (paren
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page
 comma
 id|pgprot_t
@@ -1234,10 +1005,14 @@ c_func
 id|pte
 )paren
 op_assign
-id|__pa
-c_func
+(paren
 (paren
 id|page
+op_minus
+id|mem_map
+)paren
+op_lshift
+id|PAGE_SHIFT
 )paren
 op_or
 id|pgprot_val
@@ -1290,56 +1065,12 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|function|pte_page
-r_extern
-r_inline
-r_int
-r_int
-id|pte_page
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-(paren
-r_int
-r_int
-)paren
-id|__va
-c_func
-(paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|PAGE_MASK
-)paren
-suffix:semicolon
-)brace
-DECL|function|pmd_page
-r_extern
-r_inline
-r_int
-r_int
-id|pmd_page
-c_func
-(paren
-id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
-id|pmd_val
-c_func
-(paren
-id|pmd
-)paren
-suffix:semicolon
-)brace
+DECL|macro|page_pte_prot
+mdefine_line|#define page_pte_prot(page,prot) mk_pte(page, prot)
+DECL|macro|page_pte
+mdefine_line|#define page_pte(page)&t;page_pte_prot(page, __pgprot(0))
+DECL|macro|pmd_page
+mdefine_line|#define pmd_page(pmd)&t;(pmd_val(pmd))
 multiline_comment|/* to find an entry in a kernel page-table-directory */
 DECL|macro|pgd_offset_k
 mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
@@ -1547,7 +1278,6 @@ r_void
 id|pgd_t
 op_star
 id|ret
-multiline_comment|/* = (pgd_t *)__get_free_page(GFP_KERNEL)*/
 comma
 op_star
 id|init
@@ -1622,7 +1352,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*memset (ret, 0, USER_PTRS_PER_PGD * sizeof(pgd_t));*/
 id|memcpy
 (paren
 id|ret
@@ -2503,11 +2232,11 @@ id|va
 )paren
 suffix:semicolon
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
+mdefine_line|#define SWP_TYPE(entry) (((pte_val(entry)) &gt;&gt; 1) &amp; 0x7f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
+mdefine_line|#define SWP_OFFSET(entry) ((pte_val(entry)) &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
+mdefine_line|#define SWP_ENTRY(type,offset) __pte(((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap

@@ -3209,11 +3209,7 @@ suffix:semicolon
 id|flush_page_to_ram
 c_func
 (paren
-id|pte_page
-c_func
-(paren
 id|page
-)paren
 )paren
 suffix:semicolon
 id|set_pte

@@ -9,9 +9,9 @@ DECL|macro|ACPI_MINOR_DEV
 mdefine_line|#define ACPI_MINOR_DEV 167
 multiline_comment|/* RSDP location */
 DECL|macro|ACPI_BIOS_ROM_BASE
-mdefine_line|#define ACPI_BIOS_ROM_BASE ((__u8*) 0xe0000)
+mdefine_line|#define ACPI_BIOS_ROM_BASE (0x0e0000)
 DECL|macro|ACPI_BIOS_ROM_END
-mdefine_line|#define ACPI_BIOS_ROM_END  ((__u8*) 0x100000)
+mdefine_line|#define ACPI_BIOS_ROM_END  (0x100000)
 multiline_comment|/* Table signatures */
 DECL|macro|ACPI_RSDP1_SIG
 mdefine_line|#define ACPI_RSDP1_SIG 0x20445352 /* &squot;RSD &squot; */

@@ -583,6 +583,17 @@ id|_CACHE_MASK
 op_or
 id|_CACHE_UNCACHED
 suffix:semicolon
+macro_line|#elif defined(__arm__) &amp;&amp; defined(CONFIG_CPU_32)
+multiline_comment|/* Turn off caching for all I/O areas */
+id|prot
+op_and_assign
+op_complement
+(paren
+id|L_PTE_CACHEABLE
+op_or
+id|L_PTE_BUFFERABLE
+)paren
+suffix:semicolon
 macro_line|#endif
 r_return
 id|prot

@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@hyper.stanford.edu&n;&n;    3c589_cs.c 1.134 1999/09/15 15:33:09&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@hyper.stanford.edu&n;&n;    3c589_cs.c 1.135 1999/10/07 20:14:54&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -368,7 +368,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c589_cs.c 1.134 1999/09/15 15:33:09 (David Hinds)&quot;
+l_string|&quot;3c589_cs.c 1.135 1999/10/07 20:14:54 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -466,11 +466,11 @@ id|args
 )paren
 suffix:semicolon
 r_static
-id|ushort
+id|u_short
 id|read_eeprom
 c_func
 (paren
-r_int
+id|ioaddr_t
 id|ioaddr
 comma
 r_int
@@ -563,7 +563,7 @@ r_void
 id|update_stats
 c_func
 (paren
-r_int
+id|ioaddr_t
 id|addr
 comma
 r_struct
@@ -1389,6 +1389,9 @@ id|buf
 (braket
 l_int|32
 )braket
+comma
+op_star
+id|phys_addr
 suffix:semicolon
 r_int
 id|last_fn
@@ -1403,11 +1406,8 @@ id|multi
 op_assign
 l_int|0
 suffix:semicolon
-r_int
+id|ioaddr_t
 id|ioaddr
-comma
-op_star
-id|phys_addr
 suffix:semicolon
 r_char
 op_star
@@ -1436,7 +1436,7 @@ suffix:semicolon
 id|phys_addr
 op_assign
 (paren
-r_int
+id|u_short
 op_star
 )paren
 id|dev-&gt;dev_addr
@@ -2462,11 +2462,11 @@ suffix:semicolon
 multiline_comment|/*&n;  Read a word from the EEPROM using the regular EEPROM access register.&n;  Assume that we are in register window zero.&n;*/
 DECL|function|read_eeprom
 r_static
-id|ushort
+id|u_short
 id|read_eeprom
 c_func
 (paren
-r_int
+id|ioaddr_t
 id|ioaddr
 comma
 r_int
@@ -2560,7 +2560,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|ushort
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -2737,7 +2737,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -2854,7 +2854,7 @@ op_star
 id|dev
 )paren
 (brace
-id|ushort
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -3338,7 +3338,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -3413,7 +3413,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -3552,7 +3552,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -3772,7 +3772,7 @@ id|el3_private
 op_star
 id|lp
 suffix:semicolon
-r_int
+id|ioaddr_t
 id|ioaddr
 comma
 id|status
@@ -4274,7 +4274,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -4798,7 +4798,7 @@ r_void
 id|update_stats
 c_func
 (paren
-r_int
+id|ioaddr_t
 id|ioaddr
 comma
 r_struct
@@ -4993,7 +4993,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -5302,7 +5302,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -5470,7 +5470,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
+id|ioaddr_t
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr

@@ -922,7 +922,7 @@ suffix:semicolon
 id|flush_page_to_ram
 c_func
 (paren
-id|kaddr
+id|page
 )paren
 suffix:semicolon
 id|kunmap

@@ -2,9 +2,7 @@ multiline_comment|/*&n; * cs_types.h 1.15 1999/08/28 04:12:32&n; *&n; * The cont
 macro_line|#ifndef _LINUX_CS_TYPES_H
 DECL|macro|_LINUX_CS_TYPES_H
 mdefine_line|#define _LINUX_CS_TYPES_H
-macro_line|#ifdef __linux__
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#endif
 DECL|typedef|socket_t
 r_typedef
 id|u_short

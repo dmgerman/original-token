@@ -2603,8 +2603,10 @@ macro_line|#ifdef BUILD_CRAMDISK
 multiline_comment|/*&n; * gzip declarations&n; */
 DECL|macro|OF
 mdefine_line|#define OF(args)  args
+macro_line|#ifndef memzero
 DECL|macro|memzero
 mdefine_line|#define memzero(s, n)     memset ((s), 0, (n))
+macro_line|#endif
 DECL|typedef|uch
 r_typedef
 r_int

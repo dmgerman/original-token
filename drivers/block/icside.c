@@ -894,16 +894,6 @@ r_int
 id|mode
 )paren
 (brace
-id|ide_hwif_t
-op_star
-id|hwif
-op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-suffix:semicolon
 r_int
 id|speed
 comma

@@ -1317,8 +1317,9 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* add_memory_region */
+multiline_comment|/*&n; * Do NOT EVER look at the BIOS memory size location.&n; * It does not work on many machines.&n; */
 DECL|macro|LOWMEMSIZE
-mdefine_line|#define LOWMEMSIZE()&t;((*(unsigned short *)__va(0x413)) * 1024)
+mdefine_line|#define LOWMEMSIZE()&t;(0x9f000)
 DECL|function|setup_memory_region
 r_void
 id|__init

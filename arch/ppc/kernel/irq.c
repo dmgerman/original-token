@@ -1219,6 +1219,16 @@ OL
 l_int|0
 )paren
 (brace
+multiline_comment|/* -2 means ignore, already handled */
+r_if
+c_cond
+(paren
+id|irq
+op_ne
+op_minus
+l_int|2
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -1233,7 +1243,9 @@ suffix:semicolon
 id|ppc_spurious_interrupts
 op_increment
 suffix:semicolon
-r_return
+)brace
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|ppc_irq_dispatch_handler
@@ -1257,6 +1269,8 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 id|hardirq_exit
 c_func
 (paren

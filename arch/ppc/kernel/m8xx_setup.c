@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
@@ -221,15 +222,7 @@ DECL|function|m8xx_setup_arch
 id|m8xx_setup_arch
 c_func
 (paren
-r_int
-r_int
-op_star
-id|memory_start_p
-comma
-r_int
-r_int
-op_star
-id|memory_end_p
+r_void
 )paren
 (brace
 r_int
@@ -243,13 +236,14 @@ id|cmd_line
 suffix:semicolon
 id|cpm_page
 op_assign
-op_star
-id|memory_start_p
-suffix:semicolon
-op_star
-id|memory_start_p
-op_add_assign
+(paren
+r_int
+)paren
+id|alloc_bootmem_pages
+c_func
+(paren
 id|PAGE_SIZE
+)paren
 suffix:semicolon
 id|printk
 c_func
@@ -301,6 +295,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+macro_line|#if 0&t;/* XXX this may need to be updated for the new bootmem stuff,&n;&t;   or possibly just deleted (see set_phys_avail() in init.c).&n;&t;   - paulus. */
 multiline_comment|/* initrd_start and size are setup by boot/head.S and kernel/head.S */
 r_if
 c_cond
@@ -335,6 +330,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 macro_line|#endif
 )brace
 r_void

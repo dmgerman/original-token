@@ -1,4 +1,4 @@
-singleline_comment|// def file for Rockwell RWA010 chip set, as installed in Corel NetWinder
+multiline_comment|/*&n; * linux/drivers/sound/waveartist.h&n; *&n; * def file for Rockwell RWA010 chip set, as installed in Rebel.com NetWinder&n; */
 singleline_comment|//registers
 DECL|macro|CMDR
 mdefine_line|#define CMDR&t;0
@@ -46,7 +46,9 @@ DECL|macro|IRQ_ACK
 mdefine_line|#define&t;IRQ_ACK&t;0x01
 singleline_comment|//commands
 DECL|macro|WACMD_SYSTEMID
-mdefine_line|#define&t;WACMD_SYSTEMID&t;0
+mdefine_line|#define&t;WACMD_SYSTEMID&t;&t;0x00
+DECL|macro|WACMD_GETREV
+mdefine_line|#define WACMD_GETREV&t;&t;0x00
 DECL|macro|WACMD_INPUTFORMAT
 mdefine_line|#define&t;WACMD_INPUTFORMAT&t;0x10&t;
 singleline_comment|//0-8S, 1-16S, 2-8U
@@ -107,6 +109,16 @@ singleline_comment|//resume ADC
 DECL|macro|WACMD_OUTPUTPIO
 mdefine_line|#define&t;WACMD_OUTPUTPIO&t;&t;0x29&t;
 singleline_comment|//PIO ADC
+DECL|macro|WACMD_GET_LEVEL
+mdefine_line|#define&t;WACMD_GET_LEVEL&t;&t;0x30
+DECL|macro|WACMD_SET_LEVEL
+mdefine_line|#define&t;WACMD_SET_LEVEL&t;&t;0x31
+DECL|macro|WACMD_SET_MIXER
+mdefine_line|#define&t;WACMD_SET_MIXER&t;&t;0x32
+DECL|macro|WACMD_RST_MIXER
+mdefine_line|#define&t;WACMD_RST_MIXER&t;&t;0x33
+DECL|macro|WACMD_SET_MONO
+mdefine_line|#define&t;WACMD_SET_MONO&t;&t;0x34
 r_int
 id|wa_sendcmd
 c_func

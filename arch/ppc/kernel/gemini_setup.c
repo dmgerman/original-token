@@ -588,15 +588,7 @@ id|__init
 id|gemini_setup_arch
 c_func
 (paren
-r_int
-r_int
-op_star
-id|memstart
-comma
-r_int
-r_int
-op_star
-id|memend
+r_void
 )paren
 (brace
 r_int

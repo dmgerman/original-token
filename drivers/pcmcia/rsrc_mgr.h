@@ -2,49 +2,5 @@ multiline_comment|/*&n; * rsrc_mgr.h 1.18 1999/08/28 04:01:47&n; *&n; * The cont
 macro_line|#ifndef _RSRC_MGR_H
 DECL|macro|_RSRC_MGR_H
 mdefine_line|#define _RSRC_MGR_H
-macro_line|#ifdef __BEOS__
-r_int
-id|check_resource
-c_func
-(paren
-r_int
-id|type
-comma
-id|u_long
-id|base
-comma
-id|u_long
-id|num
-)paren
-suffix:semicolon
-r_int
-id|register_resource
-c_func
-(paren
-r_int
-id|type
-comma
-id|u_long
-id|base
-comma
-id|u_long
-id|num
-)paren
-suffix:semicolon
-r_int
-id|release_resource
-c_func
-(paren
-r_int
-id|type
-comma
-id|u_long
-id|base
-comma
-id|u_long
-id|num
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif&t;/* _RSRC_MGR_H */
 eof

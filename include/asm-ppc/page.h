@@ -146,8 +146,8 @@ r_void
 id|clear_page
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|page
 )paren
 suffix:semicolon

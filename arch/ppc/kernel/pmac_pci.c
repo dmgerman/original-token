@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -36,11 +37,6 @@ r_struct
 id|device_node
 op_star
 id|dev
-comma
-r_int
-r_int
-op_star
-id|mem_ptr
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Magic constants for enabling cache coherency in the bandit/PSX bridge.&n; */
@@ -2108,19 +2104,12 @@ id|bp-&gt;io_base
 suffix:semicolon
 )brace
 DECL|function|pmac_find_bridges
-r_int
-r_int
+r_void
 id|__init
 id|pmac_find_bridges
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_int
@@ -2147,9 +2136,6 @@ c_func
 (paren
 l_string|&quot;bandit&quot;
 )paren
-comma
-op_amp
-id|mem_start
 )paren
 suffix:semicolon
 id|add_bridges
@@ -2160,9 +2146,6 @@ c_func
 (paren
 l_string|&quot;chaos&quot;
 )paren
-comma
-op_amp
-id|mem_start
 )paren
 suffix:semicolon
 id|add_bridges
@@ -2173,9 +2156,6 @@ c_func
 (paren
 l_string|&quot;pci&quot;
 )paren
-comma
-op_amp
-id|mem_start
 )paren
 suffix:semicolon
 id|bridges
@@ -2186,10 +2166,9 @@ id|bridge_data
 op_star
 op_star
 )paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
+id|alloc_bootmem
+c_func
+(paren
 (paren
 id|max_bus
 op_plus
@@ -2201,6 +2180,7 @@ r_sizeof
 r_struct
 id|bridge_data
 op_star
+)paren
 )paren
 suffix:semicolon
 id|memset
@@ -2260,9 +2240,6 @@ id|bus
 op_assign
 id|bridge
 suffix:semicolon
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * We assume that if we have a G3 powermac, we have one bridge called&n; * &quot;pci&quot; (a MPC106) and no bandit or chaos bridges, and contrariwise,&n; * if we have one or more bandit or chaos bridges, we don&squot;t have a MPC106.&n; */
 DECL|function|add_bridges
@@ -2276,11 +2253,6 @@ r_struct
 id|device_node
 op_star
 id|dev
-comma
-r_int
-r_int
-op_star
-id|mem_ptr
 )paren
 (brace
 r_int
@@ -2465,16 +2437,14 @@ r_struct
 id|bridge_data
 op_star
 )paren
-op_star
-id|mem_ptr
-suffix:semicolon
-op_star
-id|mem_ptr
-op_add_assign
+id|alloc_bootmem
+c_func
+(paren
 r_sizeof
 (paren
-r_struct
-id|bridge_data
+op_star
+id|bp
+)paren
 )paren
 suffix:semicolon
 r_if

@@ -259,7 +259,7 @@ suffix:semicolon
 id|flush_page_to_ram
 c_func
 (paren
-id|maddr
+id|page
 )paren
 suffix:semicolon
 id|kunmap
@@ -307,7 +307,7 @@ suffix:semicolon
 id|flush_page_to_ram
 c_func
 (paren
-id|maddr
+id|page
 )paren
 suffix:semicolon
 id|kunmap

@@ -2370,7 +2370,7 @@ id|index
 suffix:semicolon
 macro_line|#ifdef USB_DEBUG
 DECL|macro|PRINTD
-mdefine_line|#define PRINTD(format, args...) printk(&quot;usb: &quot; format &quot;&bslash;n&quot; , ## args);
+mdefine_line|#define PRINTD(format, args...) printk(KERN_DEBUG &quot;usb: &quot; format &quot;&bslash;n&quot; , ## args);
 macro_line|#else /* NOT DEBUGGING */
 DECL|macro|PRINTD
 mdefine_line|#define PRINTD(fmt, arg...) do {} while (0)

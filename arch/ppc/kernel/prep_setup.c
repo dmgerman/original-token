@@ -907,15 +907,6 @@ DECL|function|prep_setup_arch
 id|prep_setup_arch
 c_func
 (paren
-r_int
-r_int
-op_star
-id|memory_start_p
-comma
-r_int
-r_int
-op_star
-id|memory_end_p
 )paren
 (brace
 r_extern

@@ -1153,7 +1153,7 @@ suffix:semicolon
 id|puts
 c_func
 (paren
-l_string|&quot;done.&bslash;nNow booting the kernel&bslash;n&quot;
+l_string|&quot; done, booting the kernel.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

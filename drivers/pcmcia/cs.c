@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.228 1999/09/15 15:32:19&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.232 1999/10/20 22:17:24&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -62,7 +62,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cs.c 1.228 1999/09/15 15:32:19 (David Hinds)&quot;
+l_string|&quot;cs.c 1.232 1999/10/20 22:17:24 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#endif
 DECL|variable|release
@@ -1429,6 +1429,73 @@ id|client_t
 op_star
 id|client
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|sockets
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|s
+op_assign
+id|socket_table
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s-&gt;ss_entry
+op_ne
+id|ss_entry
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|proc_pccard
+)paren
+(brace
+r_char
+id|name
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;%02d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+macro_line|#ifdef PCMCIA_DEBUG
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;clients&quot;
+comma
+id|s-&gt;proc
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+)brace
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1475,55 +1542,20 @@ id|i
 op_eq
 id|sockets
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
-r_else
-(brace
-macro_line|#ifdef CONFIG_PROC_FS
-r_if
-c_cond
-(paren
-id|proc_pccard
-)paren
-(brace
-r_char
-id|name
-(braket
-l_int|3
-)braket
-suffix:semicolon
-id|sprintf
+id|shutdown_socket
 c_func
 (paren
-id|name
-comma
-l_string|&quot;%02d&quot;
-comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-id|remove_proc_entry
+id|release_cis_mem
 c_func
 (paren
-l_string|&quot;clients&quot;
-comma
-id|s-&gt;proc
+id|s
 )paren
 suffix:semicolon
-macro_line|#endif
-id|remove_proc_entry
-c_func
-(paren
-id|name
-comma
-id|proc_pccard
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -1545,26 +1577,6 @@ id|client
 )paren
 suffix:semicolon
 )brace
-id|init_socket
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-id|release_cis_mem
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_CARDBUS
-id|cb_release_cis_mem
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-macro_line|#endif
 id|s-&gt;ss_entry
 op_assign
 l_int|NULL
@@ -1613,7 +1625,6 @@ suffix:semicolon
 id|sockets
 op_decrement
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* unregister_ss_entry */
@@ -8483,6 +8494,8 @@ id|win
 suffix:semicolon
 r_int
 id|w
+comma
+id|align
 suffix:semicolon
 r_if
 c_cond
@@ -8619,6 +8632,22 @@ id|win-&gt;size
 op_assign
 id|req-&gt;Size
 suffix:semicolon
+id|align
+op_assign
+(paren
+(paren
+id|s-&gt;cap.features
+op_amp
+id|SS_CAP_MEM_ALIGN
+)paren
+op_logical_or
+(paren
+id|req-&gt;Attributes
+op_amp
+id|WIN_STRICT_ALIGN
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8638,11 +8667,7 @@ op_member_access_from_pointer
 id|dev_info
 comma
 (paren
-(paren
-id|s-&gt;cap.features
-op_amp
-id|SS_CAP_MEM_ALIGN
-)paren
+id|align
 ques
 c_cond
 id|req-&gt;Size

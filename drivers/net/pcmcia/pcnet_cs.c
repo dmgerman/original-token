@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for NS8390-based cards&n;&n;    This driver supports the D-Link DE-650 and Linksys EthernetCard&n;    cards, the newer D-Link and Linksys combo cards, Accton EN2212&n;    cards, the RPTI EP400, and the PreMax PE-200 in non-shared-memory&n;    mode, and the IBM Credit Card Adapter, the NE4100, the Thomas&n;    Conrad ethernet card, and the Kingston KNE-PCM/x in shared-memory&n;    mode.  It will also handle the Socket EA card in either mode.&n;&n;    Copyright (C) 1999 David A. Hinds -- dhinds@hyper.stanford.edu&n;&n;    pcnet_cs.c 1.99 1999/09/15 15:33:09&n;    &n;    The network driver code is based on Donald Becker&squot;s NE2000 code:&n;&n;    Written 1992,1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;    Based also on Keith Moore&squot;s changes to Don Becker&squot;s code, for IBM&n;    CCAE support.  Drivers merged back together, and shared-memory&n;    Socket EA support added, by Ken Raeburn, September 1995.&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for NS8390-based cards&n;&n;    This driver supports the D-Link DE-650 and Linksys EthernetCard&n;    cards, the newer D-Link and Linksys combo cards, Accton EN2212&n;    cards, the RPTI EP400, and the PreMax PE-200 in non-shared-memory&n;    mode, and the IBM Credit Card Adapter, the NE4100, the Thomas&n;    Conrad ethernet card, and the Kingston KNE-PCM/x in shared-memory&n;    mode.  It will also handle the Socket EA card in either mode.&n;&n;    Copyright (C) 1999 David A. Hinds -- dhinds@hyper.stanford.edu&n;&n;    pcnet_cs.c 1.101 1999/10/21 00:56:19&n;    &n;    The network driver code is based on Donald Becker&squot;s NE2000 code:&n;&n;    Written 1992,1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;    Based also on Keith Moore&squot;s changes to Don Becker&squot;s code, for IBM&n;    CCAE support.  Drivers merged back together, and shared-memory&n;    Socket EA support added, by Ken Raeburn, September 1995.&n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -78,7 +78,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;pcnet_cs.c 1.99 1999/09/15 15:33:09 (David Hinds)&quot;
+l_string|&quot;pcnet_cs.c 1.101 1999/10/21 00:56:19 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -2172,12 +2172,13 @@ id|prom
 l_int|32
 )braket
 suffix:semicolon
+id|ioaddr_t
+id|ioaddr
+suffix:semicolon
 r_int
 id|i
 comma
 id|j
-comma
-id|ioaddr
 suffix:semicolon
 multiline_comment|/* This is lifted straight from drivers/net/ne.c */
 r_struct
@@ -4077,7 +4078,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
+id|ioaddr_t
 id|nic_base
 op_assign
 id|dev-&gt;base_addr
@@ -4285,9 +4286,11 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
+id|__set_current_state
+c_func
+(paren
+id|TASK_UNINTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -4491,7 +4494,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
+id|ioaddr_t
 id|nic_base
 op_assign
 id|dev-&gt;base_addr
@@ -4795,7 +4798,7 @@ op_assign
 op_amp
 id|info-&gt;dev
 suffix:semicolon
-r_int
+id|ioaddr_t
 id|nic_base
 op_assign
 id|dev-&gt;base_addr
@@ -4930,7 +4933,7 @@ r_int
 id|ring_page
 )paren
 (brace
-r_int
+id|ioaddr_t
 id|nic_base
 op_assign
 id|dev-&gt;base_addr
@@ -5106,7 +5109,7 @@ r_int
 id|ring_offset
 )paren
 (brace
-r_int
+id|ioaddr_t
 id|nic_base
 op_assign
 id|dev-&gt;base_addr
@@ -5450,7 +5453,7 @@ r_int
 id|start_page
 )paren
 (brace
-r_int
+id|ioaddr_t
 id|nic_base
 op_assign
 id|dev-&gt;base_addr

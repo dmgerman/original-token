@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.67 1999/09/10 05:05:47 paulus Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: idle.c,v 1.68 1999/10/15 18:16:03 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -937,6 +937,12 @@ id|hid0
 )paren
 suffix:semicolon
 multiline_comment|/* set the POW bit in the MSR, and enable interrupts&n;&t;&t;&t; * so we wake up sometime! */
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* this keeps rtl from getting confused -- Cort */
 id|_nmask_and_or_msr
 c_func
 (paren
@@ -945,15 +951,6 @@ comma
 id|MSR_POW
 op_or
 id|MSR_EE
-)paren
-suffix:semicolon
-multiline_comment|/* Disable interrupts again so restore_flags will&n;&t;&t;&t; * work. */
-id|_nmask_and_or_msr
-c_func
-(paren
-id|MSR_EE
-comma
-l_int|0
 )paren
 suffix:semicolon
 )brace

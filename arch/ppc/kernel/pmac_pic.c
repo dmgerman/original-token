@@ -934,8 +934,9 @@ c_func
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+l_int|2
 suffix:semicolon
+multiline_comment|/* ignore, already handled */
 )brace
 (brace
 r_int
@@ -1691,14 +1692,7 @@ suffix:semicolon
 multiline_comment|/* get addresses of second controller */
 id|irqctrler
 op_assign
-(paren
 id|irqctrler-&gt;next
-)paren
-ques
-c_cond
-id|irqctrler-&gt;next
-suffix:colon
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -1767,6 +1761,41 @@ l_int|0x10
 )paren
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+multiline_comment|/* older powermacs have a GC (grand central) or ohare at&n;&t;&t;   f3000000, with interrupt control registers at f3000020. */
+id|addr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
+l_int|0xf3000000
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+id|pmac_irq_hw
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+r_volatile
+r_struct
+id|pmac_irq_hw
+op_star
+)paren
+(paren
+id|addr
+op_plus
+l_int|0x20
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* disable all interrupts in all controllers */
 r_for

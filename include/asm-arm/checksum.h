@@ -486,7 +486,7 @@ l_int|0
 comma
 macro_line|#0&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|sum
 )paren
@@ -520,8 +520,8 @@ comma
 l_string|&quot;Ir&quot;
 (paren
 id|proto
-op_star
-l_int|256
+op_lshift
+l_int|8
 )paren
 suffix:colon
 l_string|&quot;cc&quot;

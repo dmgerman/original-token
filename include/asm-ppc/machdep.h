@@ -22,15 +22,7 @@ op_star
 id|setup_arch
 )paren
 (paren
-r_int
-r_int
-op_star
-id|memory_start_p
-comma
-r_int
-r_int
-op_star
-id|memory_end_p
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Optional, may be NULL. */

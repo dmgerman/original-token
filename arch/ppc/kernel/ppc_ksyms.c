@@ -215,13 +215,6 @@ c_func
 id|do_IRQ
 )paren
 suffix:semicolon
-DECL|variable|init_task_union
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|init_task_union
-)paren
-suffix:semicolon
 DECL|variable|MachineCheckException
 id|EXPORT_SYMBOL
 c_func

@@ -86,6 +86,16 @@ id|i_op
 suffix:colon
 op_amp
 id|swapper_inode_operations
+comma
+id|i_pages
+suffix:colon
+(brace
+op_amp
+id|swapper_inode.i_pages
+comma
+op_amp
+id|swapper_inode.i_pages
+)brace
 )brace
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO

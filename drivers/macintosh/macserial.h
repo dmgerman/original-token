@@ -167,6 +167,36 @@ id|parent
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|mac_dma
+r_struct
+id|mac_dma
+(brace
+DECL|member|dma
+r_volatile
+r_struct
+id|dbdma_regs
+id|dma
+suffix:semicolon
+DECL|member|res_count
+r_volatile
+r_int
+r_int
+id|res_count
+suffix:semicolon
+DECL|member|command
+r_volatile
+r_int
+r_int
+id|command
+suffix:semicolon
+DECL|member|buf_addr
+r_volatile
+r_int
+r_int
+id|buf_addr
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|mac_serial
 r_struct
 id|mac_serial
@@ -429,6 +459,105 @@ DECL|member|close_wait
 id|wait_queue_head_t
 id|close_wait
 suffix:semicolon
+DECL|member|tx_dma
+r_volatile
+r_struct
+id|dbdma_regs
+op_star
+id|tx_dma
+suffix:semicolon
+DECL|member|tx_dma_irq
+r_int
+id|tx_dma_irq
+suffix:semicolon
+DECL|member|tx_cmds
+r_volatile
+r_struct
+id|dbdma_cmd
+op_star
+id|tx_cmds
+suffix:semicolon
+DECL|member|rx
+r_volatile
+r_struct
+id|mac_dma
+op_star
+id|rx
+suffix:semicolon
+DECL|member|rx_dma_irq
+r_int
+id|rx_dma_irq
+suffix:semicolon
+DECL|member|rx_cmds
+r_volatile
+r_struct
+id|dbdma_cmd
+op_star
+op_star
+id|rx_cmds
+suffix:semicolon
+DECL|member|rx_char_buf
+r_int
+r_char
+op_star
+op_star
+id|rx_char_buf
+suffix:semicolon
+DECL|member|rx_flag_buf
+r_int
+r_char
+op_star
+op_star
+id|rx_flag_buf
+suffix:semicolon
+DECL|macro|RX_BUF_SIZE
+mdefine_line|#define&t;RX_BUF_SIZE&t;256
+DECL|member|rx_nbuf
+r_int
+id|rx_nbuf
+suffix:semicolon
+DECL|member|rx_done_bytes
+r_int
+id|rx_done_bytes
+suffix:semicolon
+DECL|member|rx_ubuf
+r_int
+id|rx_ubuf
+suffix:semicolon
+DECL|member|rx_fbuf
+r_int
+id|rx_fbuf
+suffix:semicolon
+DECL|macro|RX_NO_FBUF
+mdefine_line|#define&t;RX_NO_FBUF&t;(-1)
+DECL|member|rx_cbuf
+r_int
+id|rx_cbuf
+suffix:semicolon
+DECL|member|rx_dma_lock
+id|spinlock_t
+id|rx_dma_lock
+suffix:semicolon
+DECL|member|has_dma
+r_int
+id|has_dma
+suffix:semicolon
+DECL|member|dma_initted
+r_int
+id|dma_initted
+suffix:semicolon
+DECL|member|dma_priv
+r_void
+op_star
+id|dma_priv
+suffix:semicolon
+DECL|member|poll_dma_timer
+r_struct
+id|timer_list
+id|poll_dma_timer
+suffix:semicolon
+DECL|macro|RX_DMA_TIMER
+mdefine_line|#define RX_DMA_TIMER&t;(jiffies + 10*HZ/1000)
 )brace
 suffix:semicolon
 DECL|macro|SERIAL_MAGIC
@@ -519,11 +648,11 @@ mdefine_line|#define&t;INT_ALL_Rx&t;0x10&t;/* Int on all Rx Characters or error 
 DECL|macro|INT_ERR_Rx
 mdefine_line|#define&t;INT_ERR_Rx&t;0x18&t;/* Int on error only */
 DECL|macro|WT_RDY_RT
-mdefine_line|#define&t;WT_RDY_RT&t;0x20&t;/* Wait/Ready on R/T */
+mdefine_line|#define&t;WT_RDY_RT&t;0x20&t;/* W/Req reflects recv if 1, xmit if 0 */
 DECL|macro|WT_FN_RDYFN
-mdefine_line|#define&t;WT_FN_RDYFN&t;0x40&t;/* Wait/FN/Ready FN */
+mdefine_line|#define&t;WT_FN_RDYFN&t;0x40&t;/* W/Req pin is DMA request if 1, wait if 0 */
 DECL|macro|WT_RDY_ENAB
-mdefine_line|#define&t;WT_RDY_ENAB&t;0x80&t;/* Wait/Ready Enable */
+mdefine_line|#define&t;WT_RDY_ENAB&t;0x80&t;/* Enable W/Req pin */
 multiline_comment|/* Write Register #2 (Interrupt Vector) */
 multiline_comment|/* Write Register 3 */
 DECL|macro|RxENABLE
@@ -606,6 +735,9 @@ DECL|macro|DTR
 mdefine_line|#define&t;DTR&t;&t;0x80&t;/* DTR */
 multiline_comment|/* Write Register 6 (Sync bits 0-7/SDLC Address Field) */
 multiline_comment|/* Write Register 7 (Sync bits 8-15/SDLC 01111110) */
+multiline_comment|/* Write Register 7&squot; (Some enhanced feature control) */
+DECL|macro|ENEXREAD
+mdefine_line|#define&t;ENEXREAD&t;0x40&t;/* Enable read of some write registers */
 multiline_comment|/* Write Register 8 (transmit buffer) */
 multiline_comment|/* Write Register 9 (Master interrupt control) */
 DECL|macro|VIS
@@ -704,8 +836,12 @@ mdefine_line|#define&t;SFMM&t;0xc0&t;/* Set FM mode */
 DECL|macro|SNRZI
 mdefine_line|#define&t;SNRZI&t;0xe0&t;/* Set NRZI mode */
 multiline_comment|/* Write Register 15 (external/status interrupt control) */
+DECL|macro|EN85C30
+mdefine_line|#define&t;EN85C30&t;1&t;/* Enable some 85c30-enhanced registers */
 DECL|macro|ZCIE
 mdefine_line|#define&t;ZCIE&t;2&t;/* Zero count IE */
+DECL|macro|ENSTFIFO
+mdefine_line|#define&t;ENSTFIFO 4&t;/* Enable status FIFO (SDLC) */
 DECL|macro|DCDIE
 mdefine_line|#define&t;DCDIE&t;8&t;/* DCD IE */
 DECL|macro|SYNCIE
@@ -763,6 +899,24 @@ mdefine_line|#define&t;FRM_ERR&t;&t;0x40&t;/* CRC/Framing Error */
 DECL|macro|END_FR
 mdefine_line|#define&t;END_FR&t;&t;0x80&t;/* End of Frame (SDLC) */
 multiline_comment|/* Read Register 2 (channel b only) - Interrupt vector */
+DECL|macro|CHB_Tx_EMPTY
+mdefine_line|#define&t;CHB_Tx_EMPTY&t;0x00
+DECL|macro|CHB_EXT_STAT
+mdefine_line|#define&t;CHB_EXT_STAT&t;0x02
+DECL|macro|CHB_Rx_AVAIL
+mdefine_line|#define&t;CHB_Rx_AVAIL&t;0x04
+DECL|macro|CHB_SPECIAL
+mdefine_line|#define&t;CHB_SPECIAL&t;0x06
+DECL|macro|CHA_Tx_EMPTY
+mdefine_line|#define&t;CHA_Tx_EMPTY&t;0x08
+DECL|macro|CHA_EXT_STAT
+mdefine_line|#define&t;CHA_EXT_STAT&t;0x0a
+DECL|macro|CHA_Rx_AVAIL
+mdefine_line|#define&t;CHA_Rx_AVAIL&t;0x0c
+DECL|macro|CHA_SPECIAL
+mdefine_line|#define&t;CHA_SPECIAL&t;0x0e
+DECL|macro|STATUS_MASK
+mdefine_line|#define&t;STATUS_MASK&t;0x06
 multiline_comment|/* Read Register 3 (interrupt pending register) ch a only */
 DECL|macro|CHBEXT
 mdefine_line|#define&t;CHBEXT&t;0x1&t;&t;/* Channel B Ext/Stat IP */

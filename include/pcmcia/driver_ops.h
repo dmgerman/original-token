@@ -183,49 +183,6 @@ op_star
 id|ops
 )paren
 suffix:semicolon
-macro_line|#ifdef __BEOS__
-DECL|macro|CB_ENABLER_MODULE_NAME
-mdefine_line|#define CB_ENABLER_MODULE_NAME&t;&quot;bus_managers/cb_enabler/v1&quot;
-DECL|struct|cb_enabler_module_info
-r_typedef
-r_struct
-id|cb_enabler_module_info
-(brace
-DECL|member|binfo
-id|bus_manager_info
-id|binfo
-suffix:semicolon
-DECL|member|register_driver
-r_int
-(paren
-op_star
-id|register_driver
-)paren
-(paren
-r_struct
-id|driver_operations
-op_star
-id|ops
-)paren
-suffix:semicolon
-DECL|member|unregister_driver
-r_void
-(paren
-op_star
-id|unregister_driver
-)paren
-(paren
-r_struct
-id|driver_operations
-op_star
-id|ops
-)paren
-suffix:semicolon
-DECL|typedef|cb_enabler_module_info
-)brace
-id|cb_enabler_module_info
-suffix:semicolon
-macro_line|#endif /* __BEOS__ */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_DRIVER_OPS_H */
 eof

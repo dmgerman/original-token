@@ -229,7 +229,7 @@ mdefine_line|#define TD_TOKEN_TOGGLE&t;&t;19
 DECL|macro|uhci_maxlen
 mdefine_line|#define uhci_maxlen(token)&t;((token) &gt;&gt; 21)
 DECL|macro|uhci_expected_length
-mdefine_line|#define uhci_expected_length(info) ((info &gt;&gt; 21) + 1)  /* 1-based */ 
+mdefine_line|#define uhci_expected_length(info) (((info &gt;&gt; 21) + 1) &amp; TD_CTRL_ACTLEN_MASK) /* 1-based */ 
 DECL|macro|uhci_toggle
 mdefine_line|#define uhci_toggle(token)&t;(((token) &gt;&gt; TD_TOKEN_TOGGLE) &amp; 1)
 DECL|macro|uhci_endpoint

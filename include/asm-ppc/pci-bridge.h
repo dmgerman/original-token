@@ -1,16 +1,11 @@
 macro_line|#ifndef _ASM_PCI_BRIDGE_H
 DECL|macro|_ASM_PCI_BRIDGE_H
 mdefine_line|#define _ASM_PCI_BRIDGE_H
-r_int
-r_int
+r_void
 id|pmac_find_bridges
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * pci_io_base returns the memory address at which you can access&n; * the I/O space for PCI bus number `bus&squot; (or NULL on error).&n; */
