@@ -205,7 +205,7 @@ DECL|macro|INADDR_BROADCAST
 mdefine_line|#define&t;INADDR_BROADCAST&t;((unsigned long int) 0xffffffff)
 multiline_comment|/* Address indicating an error return. */
 DECL|macro|INADDR_NONE
-mdefine_line|#define&t;INADDR_NONE&t;&t;0xffffffff
+mdefine_line|#define&t;INADDR_NONE&t;&t;((unsigned long int) 0xffffffff)
 multiline_comment|/* Network number for local host loopback. */
 DECL|macro|IN_LOOPBACKNET
 mdefine_line|#define&t;IN_LOOPBACKNET&t;&t;127

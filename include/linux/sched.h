@@ -146,22 +146,23 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* ??? */
+multiline_comment|/* Open file table structure */
 DECL|struct|files_struct
 r_struct
 id|files_struct
 (brace
-multiline_comment|/* ??? */
 DECL|member|count
 r_int
 id|count
 suffix:semicolon
-multiline_comment|/* bit mask to close fds on exec */
 DECL|member|close_on_exec
 id|fd_set
 id|close_on_exec
 suffix:semicolon
-multiline_comment|/* do we have at most NR_OPEN available fds? I assume fd i maps into&n; &t; * each open file */
+DECL|member|open_fds
+id|fd_set
+id|open_fds
+suffix:semicolon
 DECL|member|fd
 r_struct
 id|file
@@ -174,7 +175,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_FILES
-mdefine_line|#define INIT_FILES { &bslash;&n;&t;1, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ NULL, } &bslash;&n;}
+mdefine_line|#define INIT_FILES { &bslash;&n;&t;1, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ NULL, } &bslash;&n;}
 DECL|struct|fs_struct
 r_struct
 id|fs_struct

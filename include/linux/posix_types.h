@@ -11,15 +11,15 @@ multiline_comment|/*&n; * Those macros may have been defined in &lt;gnu/types.h&
 DECL|macro|__NFDBITS
 macro_line|#undef __NFDBITS
 DECL|macro|__NFDBITS
-mdefine_line|#define __NFDBITS&t;(8 * sizeof(unsigned int))
+mdefine_line|#define __NFDBITS&t;(8 * sizeof(unsigned long))
 DECL|macro|__FD_SETSIZE
 macro_line|#undef __FD_SETSIZE
 DECL|macro|__FD_SETSIZE
 mdefine_line|#define __FD_SETSIZE&t;1024
-DECL|macro|__FDSET_INTS
-macro_line|#undef __FDSET_INTS
-DECL|macro|__FDSET_INTS
-mdefine_line|#define __FDSET_INTS&t;(__FD_SETSIZE/__NFDBITS)
+DECL|macro|__FDSET_LONGS
+macro_line|#undef __FDSET_LONGS
+DECL|macro|__FDSET_LONGS
+mdefine_line|#define __FDSET_LONGS&t;(__FD_SETSIZE/__NFDBITS)
 DECL|macro|__FDELT
 macro_line|#undef __FDELT
 DECL|macro|__FDELT
@@ -27,7 +27,7 @@ mdefine_line|#define&t;__FDELT(d)&t;((d) / __NFDBITS)
 DECL|macro|__FDMASK
 macro_line|#undef __FDMASK
 DECL|macro|__FDMASK
-mdefine_line|#define&t;__FDMASK(d)&t;(1 &lt;&lt; ((d) % __NFDBITS))
+mdefine_line|#define&t;__FDMASK(d)&t;(1UL &lt;&lt; ((d) % __NFDBITS))
 r_typedef
 r_struct
 (brace
@@ -36,7 +36,7 @@ r_int
 r_int
 id|fds_bits
 (braket
-id|__FDSET_INTS
+id|__FDSET_LONGS
 )braket
 suffix:semicolon
 DECL|typedef|__kernel_fd_set

@@ -3578,6 +3578,7 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 r_int
+r_int
 id|saved_addr
 suffix:semicolon
 r_int

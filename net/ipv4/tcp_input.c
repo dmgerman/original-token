@@ -1,5 +1,7 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;Eric Schenk&t;: &t;Skip fast retransmit on small windows.&n; *&t;&t;Eric schenk&t;:&t;Fixes to retransmission code to&n; *&t;&t;&t;&t;:&t;avoid extra retransmission.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;Eric Schenk&t;: &t;Skip fast retransmit on small windows.&n; *&t;&t;Eric schenk&t;:&t;Fixes to retransmission code to&n; *&t;&t;&t;&t;:&t;avoid extra retransmission.&n; *&t;&t;Theodore Ts&squot;o&t;:&t;Do secure TCP sequence numbers.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 multiline_comment|/*&n; *&t;Policy code extracted so it&squot;s now separate&n; */
 multiline_comment|/*&n; *&t;Called each time to estimate the delayed ack timeout. This is&n; *&t;how it should be done so a fast link isn&squot;t impacted by ack delay.&n; */
@@ -503,6 +505,22 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * &t;This packet is old news. Usually this is just a resend&n;&t; * &t;from the far end, but sometimes it means the far end lost&n;&t; *&t;an ACK we sent, so we better send an ACK.&n;&t; */
+multiline_comment|/*&n;&t; *&t;BEWARE! Unconditional answering by ack to out-of-window ack&n;&t; *&t;can result in infinite exchange of empty acks.&n;&t; *&t;This check cures bug, found by Michiel Boland, but&n;&t; *&t;not another possible cases.&n;&t; *&t;If we are in TCP_TIME_WAIT, we have already received&n;&t; *&t;FIN, so that our peer need not window update. If our&n;&t; *&t;ACK were lost, peer would retransmit his FIN anyway. --ANK&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_ne
+id|TCP_TIME_WAIT
+op_logical_or
+id|ntohl
+c_func
+(paren
+id|th-&gt;seq
+)paren
+op_ne
+id|end_seq
+)paren
 id|tcp_send_ack
 c_func
 (paren
@@ -4670,6 +4688,9 @@ id|syn_ok
 op_assign
 l_int|0
 suffix:semicolon
+id|__u32
+id|seq
+suffix:semicolon
 macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
 r_int
 id|r
@@ -5032,7 +5053,21 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&t;&n;&t;&t;&t; *&t;Guess we need to make a new socket up &n;&t;&t;&t; */
+multiline_comment|/*&t;&n;&t;&t;&t; *&t;Guess we need to make a new socket up&n;&t;&t;&t; */
+id|seq
+op_assign
+id|secure_tcp_sequence_number
+c_func
+(paren
+id|saddr
+comma
+id|daddr
+comma
+id|skb-&gt;h.th-&gt;dest
+comma
+id|skb-&gt;h.th-&gt;source
+)paren
+suffix:semicolon
 id|tcp_conn_request
 c_func
 (paren
@@ -5048,10 +5083,7 @@ id|opt
 comma
 id|dev
 comma
-id|tcp_init_seq
-c_func
-(paren
-)paren
+id|seq
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Now we have several options: In theory there is nothing else&n;&t;&t;&t; *&t;in the frame. KA9Q has an option to send data with the syn,&n;&t;&t;&t; *&t;BSD accepts data with the syn up to the [to be] advertised window&n;&t;&t;&t; *&t;and Solaris 2.1 gives you a protocol error. For now we just ignore&n;&t;&t;&t; *&t;it, that fits the spec precisely and avoids incompatibilities. It&n;&t;&t;&t; *&t;would be nice in future to drop through and process the data.&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Now TTCP is starting to use we ought to queue this data.&n;&t;&t;&t; */

@@ -115,9 +115,8 @@ DECL|macro|EBADRQC
 mdefine_line|#define&t;EBADRQC&t;&t;56&t;/* Invalid request code */
 DECL|macro|EBADSLT
 mdefine_line|#define&t;EBADSLT&t;&t;57&t;/* Invalid slot */
-macro_line|#if 0
-mdefine_line|#define&t;EDEADLOCK&t;58&t;/* File locking deadlock error */
-macro_line|#endif
+DECL|macro|EDEADLOCK
+mdefine_line|#define&t;EDEADLOCK&t;EDEADLK
 DECL|macro|EBFONT
 mdefine_line|#define&t;EBFONT&t;&t;59&t;/* Bad font file format */
 DECL|macro|ENOSTR
