@@ -2475,18 +2475,16 @@ op_assign
 op_minus
 id|EBUSY
 suffix:semicolon
-id|shrink_dcache_parent
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_count
-OG
-l_int|1
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_hash
+)paren
 )paren
 (brace
 macro_line|#ifdef MSDOS_DEBUG

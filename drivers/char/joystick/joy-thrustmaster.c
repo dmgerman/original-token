@@ -11,15 +11,15 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|JS_TM_MAX_START
-mdefine_line|#define JS_TM_MAX_START&t;&t;200
+mdefine_line|#define JS_TM_MAX_START&t;&t;400
 DECL|macro|JS_TM_MAX_STROBE
-mdefine_line|#define JS_TM_MAX_STROBE&t;15
+mdefine_line|#define JS_TM_MAX_STROBE&t;25
 DECL|macro|JS_TM_MAX_LENGTH
 mdefine_line|#define JS_TM_MAX_LENGTH&t;13
 DECL|macro|JS_TM_MODE_M3DI
 mdefine_line|#define JS_TM_MODE_M3DI&t;&t;1
 DECL|macro|JS_TM_MODE_3DRP
-mdefine_line|#define JS_TM_MODE_3DRP&t;&t;2
+mdefine_line|#define JS_TM_MODE_3DRP&t;&t;3
 DECL|macro|JS_TM_MODE_WCS3
 mdefine_line|#define JS_TM_MODE_WCS3&t;&t;4
 DECL|macro|JS_TM_MODE_MAX
@@ -102,9 +102,9 @@ l_int|0x00
 comma
 l_int|0x42
 comma
-l_int|0x22
-comma
 l_int|0x00
+comma
+l_int|0x22
 comma
 l_int|0x00
 )brace
@@ -343,6 +343,13 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Start bit */
+id|data
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 id|error
 op_or_assign
 op_complement
@@ -1165,9 +1172,9 @@ l_int|NULL
 comma
 l_string|&quot;ThrustMaster Millenium 3D Inceptor&quot;
 comma
-l_string|&quot;ThrustMaster Rage 3D Gamepad&quot;
-comma
 l_int|NULL
+comma
+l_string|&quot;ThrustMaster Rage 3D Gamepad&quot;
 comma
 l_string|&quot;ThrustMaster WCS III&quot;
 )brace
@@ -1183,9 +1190,9 @@ l_int|0
 comma
 l_int|6
 comma
-l_int|2
-comma
 l_int|0
+comma
+l_int|2
 comma
 l_int|0
 )brace
@@ -1201,9 +1208,9 @@ l_int|0
 comma
 l_int|5
 comma
-l_int|10
-comma
 l_int|0
+comma
+l_int|10
 comma
 l_int|0
 )brace
@@ -1576,6 +1583,8 @@ r_while
 c_loop
 (paren
 id|js_tm_port
+op_ne
+l_int|NULL
 )paren
 (brace
 id|js_unregister_device

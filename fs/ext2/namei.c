@@ -3180,20 +3180,6 @@ id|inode-&gt;i_ino
 r_goto
 id|end_rmdir
 suffix:semicolon
-multiline_comment|/*&n;&t; * Prune any child dentries so that this dentry becomes negative.&n;&t; */
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_count
-OG
-l_int|1
-)paren
-id|shrink_dcache_parent
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3227,20 +3213,6 @@ id|ENOENT
 suffix:semicolon
 r_else
 (brace
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_count
-OG
-l_int|1
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * Are we deleting the last instance of a busy directory?&n;&t;&t; * Better clean up if so.&n;&t;&t; *&n;&t;&t; * Make directory empty (it will be truncated when finally&n;&t;&t; * dereferenced).  This also inhibits ext2_add_entry.&n;&t;&t; */
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 id|retval
 op_assign
 id|ext2_delete_entry
@@ -3322,6 +3294,10 @@ op_increment
 id|event
 suffix:semicolon
 id|inode-&gt;i_nlink
+op_assign
+l_int|0
+suffix:semicolon
+id|inode-&gt;i_size
 op_assign
 l_int|0
 suffix:semicolon

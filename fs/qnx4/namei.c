@@ -931,9 +931,13 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_count
-OG
-l_int|1
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_hash
+)paren
 )paren
 (brace
 id|retval

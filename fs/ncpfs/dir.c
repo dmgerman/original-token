@@ -13,10 +13,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
-macro_line|#ifndef shrink_dcache_parent
-DECL|macro|shrink_dcache_parent
-mdefine_line|#define shrink_dcache_parent(dentry) shrink_dcache_sb((dentry)-&gt;d_sb)
-macro_line|#endif
 DECL|struct|ncp_dirent
 r_struct
 id|ncp_dirent
@@ -4308,20 +4304,6 @@ id|dir
 r_goto
 id|out
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_count
-OG
-l_int|1
-)paren
-(brace
-id|shrink_dcache_parent
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -4330,14 +4312,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_count
-OG
-l_int|1
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_hash
+)paren
 )paren
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|strncpy
 c_func
 (paren
@@ -4405,12 +4390,6 @@ id|ncp_invalid_dir_cache
 c_func
 (paren
 id|dir
-)paren
-suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
 )paren
 suffix:semicolon
 id|error

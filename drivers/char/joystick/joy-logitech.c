@@ -1988,6 +1988,8 @@ r_while
 c_loop
 (paren
 id|js_lt_port
+op_ne
+l_int|NULL
 )paren
 (brace
 id|js_unregister_device

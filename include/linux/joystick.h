@@ -7,7 +7,7 @@ macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * Version&n; */
 DECL|macro|JS_VERSION
-mdefine_line|#define JS_VERSION&t;&t;0x01020c
+mdefine_line|#define JS_VERSION&t;&t;0x01020d
 multiline_comment|/*&n; * Types and constants for reading from /dev/js&n; */
 DECL|macro|JS_EVENT_BUTTON
 mdefine_line|#define JS_EVENT_BUTTON&t;&t;0x01&t;/* button pressed/released */
@@ -246,26 +246,36 @@ mdefine_line|#define USE_PARPORT
 macro_line|#endif
 macro_line|#ifdef USE_PARPORT
 macro_line|#include &lt;linux/parport.h&gt;
-DECL|macro|JS_PAR_STATUS
-mdefine_line|#define JS_PAR_STATUS(y)&t;parport_read_status(y-&gt;port)
 DECL|macro|JS_PAR_DATA_IN
 mdefine_line|#define JS_PAR_DATA_IN(y)&t;parport_read_data(y-&gt;port)
 DECL|macro|JS_PAR_DATA_OUT
 mdefine_line|#define JS_PAR_DATA_OUT(x,y)&t;parport_write_data(y-&gt;port, x)
+DECL|macro|JS_PAR_STATUS
+mdefine_line|#define JS_PAR_STATUS(y)&t;parport_read_status(y-&gt;port)
+DECL|macro|JS_PAR_CTRL_IN
+mdefine_line|#define JS_PAR_CTRL_IN(y)&t;parport_read_control(y-&gt;port)
 DECL|macro|JS_PAR_CTRL_OUT
 mdefine_line|#define JS_PAR_CTRL_OUT(x,y)&t;parport_write_control(y-&gt;port, x)
+DECL|macro|JS_PAR_ECTRL_OUT
+mdefine_line|#define JS_PAR_ECTRL_OUT(x,y)&t;parport_write_econtrol(y-&gt;port, x)
 macro_line|#else
-DECL|macro|JS_PAR_STATUS
-mdefine_line|#define JS_PAR_STATUS(y)&t;inb(y+1)
 DECL|macro|JS_PAR_DATA_IN
 mdefine_line|#define JS_PAR_DATA_IN(y)&t;inb(y)
 DECL|macro|JS_PAR_DATA_OUT
 mdefine_line|#define JS_PAR_DATA_OUT(x,y)&t;outb(x,y)
+DECL|macro|JS_PAR_STATUS
+mdefine_line|#define JS_PAR_STATUS(y)&t;inb(y+1)
+DECL|macro|JS_PAR_CTRL_IN
+mdefine_line|#define JS_PAR_CTRL_IN(y)&t;inb(y+2)
 DECL|macro|JS_PAR_CTRL_OUT
 mdefine_line|#define JS_PAR_CTRL_OUT(x,y)&t;outb(x,y+2)
+DECL|macro|JS_PAR_ECTRL_OUT
+mdefine_line|#define JS_PAR_ECTRL_OUT(x,y)&t;outb(x,y+0x402)
 macro_line|#endif
 DECL|macro|JS_PAR_STATUS_INVERT
 mdefine_line|#define JS_PAR_STATUS_INVERT&t;(0x80)
+DECL|macro|JS_PAR_CTRL_INVERT
+mdefine_line|#define JS_PAR_CTRL_INVERT&t;(0x04)
 multiline_comment|/*&n; * Internal types&n; */
 r_struct
 id|js_dev

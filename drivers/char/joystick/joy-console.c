@@ -1805,6 +1805,8 @@ r_while
 c_loop
 (paren
 id|js_console_port
+op_ne
+l_int|NULL
 )paren
 (brace
 r_for
@@ -1828,6 +1830,8 @@ id|js_console_port-&gt;devs
 (braket
 id|i
 )braket
+op_ne
+l_int|NULL
 )paren
 id|js_unregister_device
 c_func
@@ -2091,6 +2095,8 @@ c_func
 )paren
 suffix:semicolon
 id|pp
+op_ne
+l_int|NULL
 op_logical_and
 (paren
 id|pp-&gt;base
@@ -2118,6 +2124,8 @@ c_func
 )paren
 suffix:semicolon
 id|pp
+op_ne
+l_int|NULL
 op_logical_and
 (paren
 id|config
@@ -2141,8 +2149,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|pp
+op_eq
+l_int|NULL
 )paren
 (brace
 id|printk

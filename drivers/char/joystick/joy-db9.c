@@ -29,7 +29,7 @@ c_func
 (paren
 id|js_db9_2
 comma
-l_string|&quot;0-2i&quot;
+l_string|&quot;2i&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -37,7 +37,7 @@ c_func
 (paren
 id|js_db9_3
 comma
-l_string|&quot;0-2i&quot;
+l_string|&quot;2i&quot;
 )paren
 suffix:semicolon
 DECL|macro|JS_MULTI_STICK
@@ -1356,106 +1356,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * js_db9_enable_ps2() enables PS/2 capabilities on a parallel port and&n; * switches data lines to input mode. We should use parport_change_mode() for&n; * that if parport present - unfortunately that does nothing and only contains&n; * a FIXME comment.&n; */
-DECL|function|js_db9_enable_ps2
-r_static
-r_inline
-r_void
-id|js_db9_enable_ps2
-c_func
-(paren
-r_struct
-id|js_db9_info
-op_star
-id|info
-)paren
-(brace
-macro_line|#ifdef USE_PARPORT
-r_int
-id|io
-op_assign
-id|info-&gt;port-&gt;port-&gt;base
-suffix:semicolon
-macro_line|#else
-r_int
-id|io
-op_assign
-id|info-&gt;port
-suffix:semicolon
-macro_line|#endif
-id|outb
-c_func
-(paren
-l_int|0x35
-comma
-id|io
-op_plus
-l_int|0x402
-)paren
-suffix:semicolon
-multiline_comment|/* enable PS/2 mode: */
-id|outb
-c_func
-(paren
-id|JS_DB9_NORMAL
-comma
-id|io
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-multiline_comment|/* reverse direction, enable Select signal: */
-)brace
-multiline_comment|/*&n; * js_db9_disable_ps2() disables PS/2 capabilities on a parallel port&n; * and restores it to standard mode.&n; */
-DECL|function|js_db9_disable_ps2
-r_static
-r_inline
-r_void
-id|js_db9_disable_ps2
-c_func
-(paren
-r_struct
-id|js_db9_info
-op_star
-id|info
-)paren
-(brace
-macro_line|#ifdef USE_PARPORT
-r_int
-id|io
-op_assign
-id|info-&gt;port-&gt;port-&gt;base
-suffix:semicolon
-macro_line|#else
-r_int
-id|io
-op_assign
-id|info-&gt;port
-suffix:semicolon
-macro_line|#endif
-id|outb
-c_func
-(paren
-l_int|0
-comma
-id|io
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-multiline_comment|/* normal direction */
-id|outb
-c_func
-(paren
-l_int|0x15
-comma
-id|io
-op_plus
-l_int|0x402
-)paren
-suffix:semicolon
-multiline_comment|/* enable normal mode */
-)brace
 multiline_comment|/*&n; * open callback: claim parport.&n; */
 DECL|function|js_db9_open
 r_int
@@ -1497,12 +1397,24 @@ op_minus
 id|EBUSY
 suffix:semicolon
 macro_line|#endif
-id|js_db9_enable_ps2
+id|JS_PAR_ECTRL_OUT
 c_func
 (paren
-id|info
+l_int|0x35
+comma
+id|info-&gt;port
 )paren
 suffix:semicolon
+multiline_comment|/* enable PS/2 mode: */
+id|JS_PAR_CTRL_OUT
+c_func
+(paren
+id|JS_DB9_NORMAL
+comma
+id|info-&gt;port
+)paren
+suffix:semicolon
+multiline_comment|/* reverse direction, enable Select signal */
 )brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -1538,12 +1450,24 @@ op_logical_neg
 id|MOD_IN_USE
 )paren
 (brace
-id|js_db9_disable_ps2
+id|JS_PAR_CTRL_OUT
 c_func
 (paren
-id|info
+l_int|0x00
+comma
+id|info-&gt;port
 )paren
 suffix:semicolon
+multiline_comment|/* normal direction */
+id|JS_PAR_ECTRL_OUT
+c_func
+(paren
+l_int|0x15
+comma
+id|info-&gt;port
+)paren
+suffix:semicolon
+multiline_comment|/* enable normal mode */
 macro_line|#ifdef USE_PARPORT
 id|parport_release
 c_func
@@ -1575,6 +1499,8 @@ r_while
 c_loop
 (paren
 id|js_db9_port
+op_ne
+l_int|NULL
 )paren
 (brace
 id|js_unregister_device
@@ -1902,6 +1828,8 @@ c_func
 )paren
 suffix:semicolon
 id|pp
+op_ne
+l_int|NULL
 op_logical_and
 (paren
 id|pp-&gt;base
@@ -1929,6 +1857,8 @@ c_func
 )paren
 suffix:semicolon
 id|pp
+op_ne
+l_int|NULL
 op_logical_and
 (paren
 id|config
@@ -1952,8 +1882,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|pp
+op_eq
+l_int|NULL
 )paren
 (brace
 id|printk

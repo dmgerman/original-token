@@ -922,6 +922,8 @@ r_while
 c_loop
 (paren
 id|js_an_port
+op_ne
+l_int|NULL
 )paren
 (brace
 r_for
@@ -945,6 +947,8 @@ id|js_an_port-&gt;devs
 (braket
 id|i
 )braket
+op_ne
+l_int|NULL
 )paren
 id|js_unregister_device
 c_func
