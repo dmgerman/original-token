@@ -1028,7 +1028,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 id|mca_standard_resources
 op_plus

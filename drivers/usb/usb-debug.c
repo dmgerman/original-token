@@ -215,7 +215,32 @@ id|desc
 id|printk
 c_func
 (paren
-l_string|&quot;  USB version %x.%02x&bslash;n&quot;
+l_string|&quot;  Length              = %2d%s&bslash;n&quot;
+comma
+id|desc-&gt;bLength
+comma
+id|desc-&gt;bLength
+op_eq
+id|USB_DT_DEVICE_SIZE
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot; (!!!)&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  DescriptorType      = %02x&bslash;n&quot;
+comma
+id|desc-&gt;bDescriptorType
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  USB version         = %x.%02x&bslash;n&quot;
 comma
 id|desc-&gt;bcdUSB
 op_rshift
@@ -229,15 +254,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  Vendor:  %04x&bslash;n&quot;
+l_string|&quot;  Vendor:Product      = %04x:%04x&bslash;n&quot;
 comma
 id|desc-&gt;idVendor
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;  Product: %04x&bslash;n&quot;
 comma
 id|desc-&gt;idProduct
 )paren
@@ -245,7 +264,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  Configurations: %d&bslash;n&quot;
+l_string|&quot;  MaxPacketSize0      = %d&bslash;n&quot;
+comma
+id|desc-&gt;bMaxPacketSize0
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  NumConfigurations   = %d&bslash;n&quot;
 comma
 id|desc-&gt;bNumConfigurations
 )paren
@@ -253,9 +280,27 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  Device Class: %d&bslash;n&quot;
+l_string|&quot;  Device version      = %x.%02x&bslash;n&quot;
+comma
+id|desc-&gt;bcdDevice
+op_rshift
+l_int|8
+comma
+id|desc-&gt;bcdDevice
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  Device Class:SubClass:Protocol = %02x:%02x:%02x&bslash;n&quot;
 comma
 id|desc-&gt;bDeviceClass
+comma
+id|desc-&gt;bDeviceSubClass
+comma
+id|desc-&gt;bDeviceProtocol
 )paren
 suffix:semicolon
 r_switch
@@ -333,7 +378,7 @@ id|desc-&gt;bLength
 comma
 id|desc-&gt;bLength
 op_eq
-l_int|9
+id|USB_DT_CONFIG_SIZE
 ques
 c_cond
 l_string|&quot;&quot;
@@ -426,7 +471,7 @@ id|desc-&gt;bLength
 comma
 id|desc-&gt;bLength
 op_eq
-l_int|9
+id|USB_DT_INTERFACE_SIZE
 ques
 c_cond
 l_string|&quot;&quot;
@@ -469,23 +514,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;    bInterfaceClass     =   %02x&bslash;n&quot;
+l_string|&quot;    bInterface Class:SubClass:Protocol =   %02x:%02x:%02x&bslash;n&quot;
 comma
 id|desc-&gt;bInterfaceClass
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    bInterfaceSubClass  =   %02x&bslash;n&quot;
 comma
 id|desc-&gt;bInterfaceSubClass
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;    bInterfaceProtocol  =   %02x&bslash;n&quot;
 comma
 id|desc-&gt;bInterfaceProtocol
 )paren
@@ -542,7 +575,7 @@ id|desc-&gt;bLength
 comma
 id|desc-&gt;bLength
 op_eq
-l_int|7
+id|USB_DT_ENDPOINT_SIZE
 ques
 c_cond
 l_string|&quot;&quot;

@@ -257,7 +257,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;MaxLen=%x %sEndPt=%x Dev=%x, PID=%x(%s) &quot;
+l_string|&quot;MaxLen=%x DT%d EndPt=%x Dev=%x, PID=%x(%s) &quot;
 comma
 id|td-&gt;info
 op_rshift
@@ -272,11 +272,6 @@ l_int|19
 op_amp
 l_int|1
 )paren
-ques
-c_cond
-l_string|&quot;DT &quot;
-suffix:colon
-l_string|&quot;&quot;
 comma
 (paren
 id|td-&gt;info

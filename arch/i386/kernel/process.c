@@ -1483,7 +1483,8 @@ multiline_comment|/*&n;&t; * Load the LDT entry of init_task.&n;&t; */
 id|load_LDT
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 )paren
 suffix:semicolon
 )brace
@@ -1573,8 +1574,6 @@ l_string|&quot;b&quot;
 id|flags
 op_or
 id|CLONE_VM
-op_or
-id|CLONE_TLB
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -1649,6 +1648,12 @@ op_star
 id|dead_task
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|dead_task-&gt;mm
+)paren
+(brace
 r_void
 op_star
 id|ldt
@@ -1677,6 +1682,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; * If new_mm is NULL, we&squot;re being called to set up the LDT for&n; * a clone task: this is easy since the clone is not running yet.&n; * otherwise we copy the old segment into a new segment.&n; *&n; * we do not have to muck with descriptors here, that is&n; * done in __switch_to() and get_mmu_context().&n; */
@@ -2214,7 +2220,7 @@ id|next_p
 )paren
 (brace
 r_struct
-id|soft_thread_struct
+id|thread_struct
 op_star
 id|prev
 op_assign
@@ -2228,7 +2234,7 @@ op_amp
 id|next_p-&gt;thread
 suffix:semicolon
 r_struct
-id|hard_thread_struct
+id|tss_struct
 op_star
 id|tss
 op_assign
@@ -2285,13 +2291,13 @@ id|prev-&gt;gs
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Re-load LDT if necessary */
+multiline_comment|/*&n;&t; * Re-load LDT if necessary&n;&t; */
 r_if
 c_cond
 (paren
-id|prev_p-&gt;mm-&gt;segments
+id|prev_p-&gt;active_mm-&gt;segments
 op_ne
-id|next_p-&gt;mm-&gt;segments
+id|next_p-&gt;active_mm-&gt;segments
 )paren
 id|load_LDT
 c_func

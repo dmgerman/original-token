@@ -825,6 +825,9 @@ c_func
 l_string|&quot;USB ACM found&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|usb_set_configuration
 c_func
 (paren
@@ -837,7 +840,17 @@ id|cfgnum
 dot
 id|bConfigurationValue
 )paren
+)paren
+(brace
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot; Failed usb_set_configuration: ACM&bslash;n&quot;
+)paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|acm-&gt;dev
 op_assign
 id|dev

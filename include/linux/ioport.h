@@ -42,15 +42,16 @@ id|child
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* PC/ISA/whatever - the normal PC address spaces: IO and memory */
 r_extern
 r_struct
 id|resource
-id|pci_io_resource
+id|ioport_resource
 suffix:semicolon
 r_extern
 r_struct
 id|resource
-id|pci_mem_resource
+id|iomem_resource
 suffix:semicolon
 r_extern
 r_void
@@ -112,7 +113,7 @@ r_new
 suffix:semicolon
 multiline_comment|/* Convenience shorthand with allocation */
 DECL|macro|request_region
-mdefine_line|#define request_region(start,n,name)&t;__request_region(&amp;pci_io_resource, (start), (n), (name))
+mdefine_line|#define request_region(start,n,name)&t;__request_region(&amp;ioport_resource, (start), (n), (name))
 r_extern
 r_struct
 id|resource
@@ -140,9 +141,9 @@ id|name
 suffix:semicolon
 multiline_comment|/* Compatibility cruft */
 DECL|macro|check_region
-mdefine_line|#define check_region(start,n)&t;__check_region(&amp;pci_io_resource, (start), (n))
+mdefine_line|#define check_region(start,n)&t;__check_region(&amp;ioport_resource, (start), (n))
 DECL|macro|release_region
-mdefine_line|#define release_region(start,n)&t;__release_region(&amp;pci_io_resource, (start), (n))
+mdefine_line|#define release_region(start,n)&t;__release_region(&amp;ioport_resource, (start), (n))
 r_extern
 r_int
 id|__check_region
@@ -176,9 +177,9 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|get_ioport_list
-mdefine_line|#define get_ioport_list(buf)&t;get_resource_list(&amp;pci_io_resource, buf, PAGE_SIZE)
+mdefine_line|#define get_ioport_list(buf)&t;get_resource_list(&amp;ioport_resource, buf, PAGE_SIZE)
 DECL|macro|get_mem_list
-mdefine_line|#define get_mem_list(buf)&t;get_resource_list(&amp;pci_mem_resource, buf, PAGE_SIZE)
+mdefine_line|#define get_mem_list(buf)&t;get_resource_list(&amp;iomem_resource, buf, PAGE_SIZE)
 DECL|macro|HAVE_AUTOIRQ
 mdefine_line|#define HAVE_AUTOIRQ
 r_extern

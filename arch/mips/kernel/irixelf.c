@@ -3418,12 +3418,6 @@ c_func
 l_string|&quot;Unable to load IRIX ELF interpreter&bslash;n&quot;
 )paren
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|elf_phdata
-)paren
-suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -3434,8 +3428,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+id|retval
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out_file
 suffix:semicolon
 )brace
 )brace

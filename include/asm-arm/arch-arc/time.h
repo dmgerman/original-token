@@ -667,6 +667,26 @@ l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+id|do_profile
+c_func
+(paren
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
+)paren
+suffix:semicolon
 )brace
 DECL|variable|timerirq
 r_static

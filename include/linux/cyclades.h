@@ -1028,20 +1028,6 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/****************** ****************** *******************/
 macro_line|#endif
-macro_line|#ifdef __KERNEL__
-multiline_comment|/***************************************&n; * Memory access functions/macros      *&n; * (required to support Alpha systems) *&n; ***************************************/
-DECL|macro|cy_writeb
-mdefine_line|#define cy_writeb(port,val)     {writeb((ucchar)(val),(ulong)(port)); mb();}
-DECL|macro|cy_writew
-mdefine_line|#define cy_writew(port,val)     {writew((ushort)(val),(ulong)(port)); mb();}
-DECL|macro|cy_writel
-mdefine_line|#define cy_writel(port,val)     {writel((uclong)(val),(ulong)(port)); mb();}
-DECL|macro|cy_readb
-mdefine_line|#define cy_readb(port)  readb(port)
-DECL|macro|cy_readw
-mdefine_line|#define cy_readw(port)  readw(port)
-DECL|macro|cy_readl
-mdefine_line|#define cy_readl(port)  readl(port)
 multiline_comment|/* Per card data structure */
 DECL|struct|cyclades_card
 r_struct
@@ -1079,6 +1065,17 @@ r_int
 id|intr_enabled
 suffix:semicolon
 multiline_comment|/* FW Interrupt flag - 0 disabled, 1 enabled */
+macro_line|#ifdef __KERNEL__
+DECL|member|card_lock
+id|spinlock_t
+id|card_lock
+suffix:semicolon
+macro_line|#else
+DECL|member|filler
+id|uclong
+id|filler
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|cyclades_chip
@@ -1091,6 +1088,20 @@ id|filler
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+multiline_comment|/***************************************&n; * Memory access functions/macros      *&n; * (required to support Alpha systems) *&n; ***************************************/
+DECL|macro|cy_writeb
+mdefine_line|#define cy_writeb(port,val)     {writeb((ucchar)(val),(ulong)(port)); mb();}
+DECL|macro|cy_writew
+mdefine_line|#define cy_writew(port,val)     {writew((ushort)(val),(ulong)(port)); mb();}
+DECL|macro|cy_writel
+mdefine_line|#define cy_writel(port,val)     {writel((uclong)(val),(ulong)(port)); mb();}
+DECL|macro|cy_readb
+mdefine_line|#define cy_readb(port)  readb(port)
+DECL|macro|cy_readw
+mdefine_line|#define cy_readw(port)  readw(port)
+DECL|macro|cy_readl
+mdefine_line|#define cy_readl(port)  readl(port)
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
 DECL|struct|cyclades_port
 r_struct
@@ -1267,38 +1278,6 @@ DECL|member|default_timeout
 r_int
 id|default_timeout
 suffix:semicolon
-DECL|member|tqueue
-r_struct
-id|tq_struct
-id|tqueue
-suffix:semicolon
-DECL|member|normal_termios
-r_struct
-id|termios
-id|normal_termios
-suffix:semicolon
-DECL|member|callout_termios
-r_struct
-id|termios
-id|callout_termios
-suffix:semicolon
-DECL|member|open_wait
-id|wait_queue_head_t
-id|open_wait
-suffix:semicolon
-DECL|member|close_wait
-id|wait_queue_head_t
-id|close_wait
-suffix:semicolon
-DECL|member|shutdown_wait
-id|wait_queue_head_t
-id|shutdown_wait
-suffix:semicolon
-DECL|member|mon
-r_struct
-id|cyclades_monitor
-id|mon
-suffix:semicolon
 DECL|member|jiffies
 r_int
 r_int
@@ -1312,10 +1291,42 @@ r_int
 r_int
 id|rflush_count
 suffix:semicolon
+DECL|member|normal_termios
+r_struct
+id|termios
+id|normal_termios
+suffix:semicolon
+DECL|member|callout_termios
+r_struct
+id|termios
+id|callout_termios
+suffix:semicolon
+DECL|member|mon
+r_struct
+id|cyclades_monitor
+id|mon
+suffix:semicolon
 DECL|member|idle_stats
 r_struct
 id|cyclades_idle_stats
 id|idle_stats
+suffix:semicolon
+DECL|member|tqueue
+r_struct
+id|tq_struct
+id|tqueue
+suffix:semicolon
+DECL|member|open_wait
+id|wait_queue_head_t
+id|open_wait
+suffix:semicolon
+DECL|member|close_wait
+id|wait_queue_head_t
+id|close_wait
+suffix:semicolon
+DECL|member|shutdown_wait
+id|wait_queue_head_t
+id|shutdown_wait
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -15,9 +15,6 @@ macro_line|#ifndef min
 DECL|macro|min
 mdefine_line|#define min(a,b) ((a) &lt; (b) ? (a) : (b))
 macro_line|#endif
-multiline_comment|/* The device minor encodes the parport number and (arbitrary) &n; * pardevice number as (port &lt;&lt; 4) | dev. */
-DECL|macro|PP_PORT
-mdefine_line|#define PP_PORT(minor) ((minor &gt;&gt; 4) &amp; 0xf)
 DECL|struct|pp_struct
 r_struct
 id|pp_struct
@@ -449,7 +446,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|CHRDEV
-l_string|&quot;%02x: claim the port first&bslash;n&quot;
+l_string|&quot;%x: claim the port first&bslash;n&quot;
 comma
 id|minor
 )paren
@@ -677,7 +674,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|CHRDEV
-l_string|&quot;%02x: claim the port first&bslash;n&quot;
+l_string|&quot;%x: claim the port first&bslash;n&quot;
 comma
 id|minor
 )paren
@@ -893,15 +890,6 @@ op_star
 id|pp
 )paren
 (brace
-r_int
-r_int
-id|portnum
-op_assign
-id|PP_PORT
-(paren
-id|minor
-)paren
-suffix:semicolon
 r_struct
 id|parport
 op_star
@@ -951,7 +939,7 @@ id|sprintf
 id|name
 comma
 id|CHRDEV
-l_string|&quot;%02x&quot;
+l_string|&quot;%x&quot;
 comma
 id|minor
 )paren
@@ -970,7 +958,7 @@ id|port
 op_logical_and
 id|port-&gt;number
 op_ne
-id|portnum
+id|minor
 )paren
 id|port
 op_assign
@@ -1142,7 +1130,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|CHRDEV
-l_string|&quot;%02x: you&squot;ve already got it!&bslash;n&quot;
+l_string|&quot;%x: you&squot;ve already got it!&bslash;n&quot;
 comma
 id|minor
 )paren
@@ -1216,7 +1204,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|CHRDEV
-l_string|&quot;%02x: too late for PPEXCL; &quot;
+l_string|&quot;%x: too late for PPEXCL; &quot;
 l_string|&quot;already registered&bslash;n&quot;
 comma
 id|minor
@@ -1309,7 +1297,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|CHRDEV
-l_string|&quot;%02x: claim the port first&bslash;n&quot;
+l_string|&quot;%x: claim the port first&bslash;n&quot;
 comma
 id|minor
 )paren
@@ -1697,7 +1685,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|CHRDEV
-l_string|&quot;%02x: What? (cmd=0x%x)&bslash;n&quot;
+l_string|&quot;%x: What? (cmd=0x%x)&bslash;n&quot;
 comma
 id|minor
 comma
@@ -1739,15 +1727,6 @@ id|MINOR
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
-r_int
-r_int
-id|portnum
-op_assign
-id|PP_PORT
-(paren
-id|minor
-)paren
-suffix:semicolon
 r_struct
 id|pp_struct
 op_star
@@ -1756,7 +1735,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|portnum
+id|minor
 op_ge
 id|PARPORT_MAX
 )paren
@@ -1869,7 +1848,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|CHRDEV
-l_string|&quot;%02x: released pardevice because &quot;
+l_string|&quot;%x: released pardevice because &quot;
 l_string|&quot;user-space forgot&bslash;n&quot;
 comma
 id|minor
@@ -1900,7 +1879,7 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|CHRDEV
-l_string|&quot;%02x: unregistered pardevice&bslash;n&quot;
+l_string|&quot;%x: unregistered pardevice&bslash;n&quot;
 comma
 id|minor
 )paren

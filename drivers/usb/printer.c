@@ -1450,7 +1450,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  Failed to set configuration&bslash;n&quot;
+l_string|&quot;  Failed usb_set_configuration: printer&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

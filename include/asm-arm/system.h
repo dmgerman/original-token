@@ -47,6 +47,8 @@ DECL|macro|MACH_TYPE_ARCHIMEDES
 mdefine_line|#define MACH_TYPE_ARCHIMEDES&t;10
 DECL|macro|MACH_TYPE_A5K
 mdefine_line|#define MACH_TYPE_A5K&t;&t;11
+DECL|macro|MACH_TYPE_SA1100
+mdefine_line|#define MACH_TYPE_SA1100&t;12&t;/* not allocated!!! */
 multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; */
 macro_line|#ifdef CONFIG_ARCH_EBSA110
 macro_line|# ifdef machine_arch_type

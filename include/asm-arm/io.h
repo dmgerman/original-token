@@ -26,58 +26,6 @@ r_int
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * String version of IO memory access ops:&n; */
-r_extern
-r_void
-id|_memcpy_fromio
-c_func
-(paren
-r_void
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_memcpy_toio
-c_func
-(paren
-r_int
-r_int
-comma
-r_const
-r_void
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_memset_io
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(to,from,len)&t;_memcpy_fromio((to),(unsigned long)(from),(len))
-DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to),(from),(len))
-DECL|macro|memset_io
-mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
 macro_line|#endif
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
@@ -166,8 +114,12 @@ macro_line|#else
 mdefine_line|#define inl(port) __inl((port))
 macro_line|#endif
 multiline_comment|/*&n; * This macro will give you the translated IO address for this particular&n; * architecture, which can be used with the out_t... functions.&n; */
+macro_line|#ifdef __ioaddrc
 DECL|macro|ioaddr
 mdefine_line|#define ioaddr(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __ioaddrc((port)) : __ioaddr((port)))
+macro_line|#else
+mdefine_line|#define ioaddr(port) __ioaddr((port))
+macro_line|#endif
 macro_line|#ifndef ARCH_IO_DELAY
 multiline_comment|/*&n; * This architecture does not require any delayed IO.&n; * It is handled in the hardware.&n; */
 DECL|macro|outb_p
@@ -242,6 +194,60 @@ DECL|macro|writew
 mdefine_line|#define writew(v,p)&t;panic(&quot;writew called, but not implemented&quot;)
 DECL|macro|writel
 mdefine_line|#define writel(v,p)&t;panic(&quot;writel called, but not implemented&quot;)
+macro_line|#endif
+macro_line|#ifndef memcpy_fromio
+multiline_comment|/*&n; * String version of IO memory access ops:&n; */
+r_extern
+r_void
+id|_memcpy_fromio
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_memcpy_toio
+c_func
+(paren
+r_int
+r_int
+comma
+r_const
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_memset_io
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|memcpy_fromio
+mdefine_line|#define memcpy_fromio(to,from,len)&t;_memcpy_fromio((to),(unsigned long)(from),(len))
+DECL|macro|memcpy_toio
+mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to),(from),(len))
+DECL|macro|memset_io
+mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
 macro_line|#endif
 multiline_comment|/*&n; * This isn&squot;t especially architecture dependent so it seems like it&n; * might as well go here as anywhere.&n; */
 DECL|function|check_signature

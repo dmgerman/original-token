@@ -392,7 +392,7 @@ c_cond
 id|channel
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_FD
+macro_line|#ifdef CONFIG_BLK_DEV_FD1772
 r_case
 id|DMA_VIRTUAL_FLOPPY0
 suffix:colon

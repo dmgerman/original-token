@@ -546,7 +546,7 @@ DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 multiline_comment|/* to set the page-dir */
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;unsigned long __pgdir = __pa(pgdir); &bslash;&n;&t;(tsk)-&gt;thread.cr3 = __pgdir; &bslash;&n;&t;/* do not inherit lazy-TLB after exec() */ &bslash;&n;&t;if ((pgdir != swapper_pg_dir) &amp;&amp; ((tsk)-&gt;flags &amp; PF_LAZY_TLB)) &bslash;&n;&t;&t;(tsk)-&gt;flags &amp;= ~PF_LAZY_TLB; &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;r&quot; (__pgdir)); &bslash;&n;} while (0)
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;unsigned long __pgdir = __pa(pgdir); &bslash;&n;&t;(tsk)-&gt;thread.cr3 = __pgdir; &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;movl %0,%%cr3&quot;: :&quot;r&quot; (__pgdir)); &bslash;&n;} while (0)
 DECL|macro|pte_none
 mdefine_line|#define pte_none(x)&t;(!pte_val(x))
 DECL|macro|pte_present

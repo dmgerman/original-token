@@ -591,7 +591,7 @@ op_minus
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Setup, and then probe for an ISA PIC&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Setup, and then probe for an ISA PIC&n;&t;&t; * If the PIC is not there, then we&n;&t;&t; * ignore the PIC.&n;&t;&t; */
 id|outb
 c_func
 (paren

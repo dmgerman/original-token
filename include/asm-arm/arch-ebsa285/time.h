@@ -371,6 +371,26 @@ l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+id|do_profile
+c_func
+(paren
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
+)paren
+suffix:semicolon
 )brace
 DECL|variable|isa_timer_irq
 r_static
@@ -1030,6 +1050,26 @@ l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+id|do_profile
+c_func
+(paren
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
+)paren
+suffix:semicolon
 )brace
 DECL|variable|timer1_irq
 r_static
@@ -1078,31 +1118,23 @@ c_func
 r_void
 )paren
 (brace
-r_switch
+r_if
 c_cond
 (paren
 id|machine_arch_type
-)paren
-(brace
-r_case
+op_eq
 id|MACH_TYPE_CO285
-suffix:colon
+)paren
 multiline_comment|/*&n;&t;&t; * Add-in 21285s shouldn&squot;t access the RTC&n;&t;&t; */
 id|rtc_base
 op_assign
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
+r_else
 id|rtc_base
 op_assign
 l_int|0x70
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1114,6 +1146,7 @@ id|reg_d
 comma
 id|reg_b
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Probe for the RTC.&n;&t;&t; */
 id|reg_d
 op_assign
 id|CMOS_READ
@@ -1178,7 +1211,7 @@ op_eq
 id|reg_b
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Check the battery&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * We have a RTC.  Check the battery&n;&t;&t;&t; */
 r_if
 c_cond
 (paren

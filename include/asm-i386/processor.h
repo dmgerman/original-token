@@ -202,7 +202,7 @@ id|boot_cpu_data
 suffix:semicolon
 r_extern
 r_struct
-id|hard_thread_struct
+id|tss_struct
 id|init_tss
 (braket
 id|NR_CPUS
@@ -481,7 +481,7 @@ multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
 DECL|macro|IO_BITMAP_OFFSET
-mdefine_line|#define IO_BITMAP_OFFSET offsetof(struct hard_thread_struct,io_bitmap)
+mdefine_line|#define IO_BITMAP_OFFSET offsetof(struct tss_struct,io_bitmap)
 DECL|macro|INVALID_IO_BITMAP_OFFSET
 mdefine_line|#define INVALID_IO_BITMAP_OFFSET 0x8000
 DECL|struct|i387_hard_struct
@@ -632,9 +632,9 @@ DECL|typedef|mm_segment_t
 )brace
 id|mm_segment_t
 suffix:semicolon
-DECL|struct|hard_thread_struct
+DECL|struct|tss_struct
 r_struct
-id|hard_thread_struct
+id|tss_struct
 (brace
 DECL|member|back_link
 DECL|member|__blh
@@ -817,9 +817,9 @@ l_int|5
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|soft_thread_struct
+DECL|struct|thread_struct
 r_struct
-id|soft_thread_struct
+id|thread_struct
 (brace
 DECL|member|esp0
 r_int
@@ -1026,7 +1026,7 @@ id|thread_saved_pc
 c_func
 (paren
 r_struct
-id|soft_thread_struct
+id|thread_struct
 op_star
 id|t
 )paren

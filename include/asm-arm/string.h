@@ -42,6 +42,8 @@ DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
+DECL|macro|__HAVE_ARCH_MEMCHR
+mdefine_line|#define __HAVE_ARCH_MEMCHR
 DECL|macro|__HAVE_ARCH_MEMZERO
 mdefine_line|#define __HAVE_ARCH_MEMZERO
 r_extern

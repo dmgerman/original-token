@@ -73,7 +73,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|hard_thread_struct
+id|tss_struct
 op_star
 id|tss
 suffix:semicolon
@@ -812,7 +812,7 @@ id|tsk
 )paren
 (brace
 r_struct
-id|hard_thread_struct
+id|tss_struct
 op_star
 id|tss
 suffix:semicolon

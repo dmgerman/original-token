@@ -1298,7 +1298,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 id|standard_resources
 op_plus
@@ -4439,7 +4439,7 @@ c_func
 )paren
 suffix:semicolon
 r_struct
-id|hard_thread_struct
+id|tss_struct
 op_star
 id|t
 op_assign
@@ -4544,6 +4544,18 @@ l_string|&quot;pushfl ; andl $0xffffbfff,(%esp) ; popfl&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * set up and load the per-CPU TSS and LDT&n;&t; */
+id|mmget
+c_func
+(paren
+op_amp
+id|init_mm
+)paren
+suffix:semicolon
+id|current-&gt;active_mm
+op_assign
+op_amp
+id|init_mm
+suffix:semicolon
 id|t-&gt;esp0
 op_assign
 id|current-&gt;thread.esp0
@@ -4578,7 +4590,8 @@ suffix:semicolon
 id|load_LDT
 c_func
 (paren
-id|current-&gt;mm
+op_amp
+id|init_mm
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Clear all 6 debug registers:&n;&t; */

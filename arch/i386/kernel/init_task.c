@@ -90,7 +90,7 @@ suffix:semicolon
 multiline_comment|/*&n; * per-CPU TSS segments. Threads are completely &squot;soft&squot; on Linux,&n; * no more per-task TSS&squot;s. The TSS size is kept cacheline-aligned&n; * so they are allowed to end up in the .data.cacheline_aligned&n; * section. Since TSS&squot;s are completely CPU-local, we want them&n; * on exact cacheline boundaries, to eliminate cacheline ping-pong.&n; */
 DECL|variable|__cacheline_aligned
 r_struct
-id|hard_thread_struct
+id|tss_struct
 id|init_tss
 (braket
 id|NR_CPUS

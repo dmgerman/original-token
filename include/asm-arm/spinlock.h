@@ -65,7 +65,7 @@ mdefine_line|#define SPIN_LOCK_UNLOCKED EMPTY_STRUCT_INIT(spinlock_t)
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
-mdefine_line|#define spin_lock(lock)&t;&t;do { } while(0)
+mdefine_line|#define spin_lock(lock)&t;&t;(void)(lock) /* Not &quot;unused variable&quot;. */
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock)&t;(1)
 DECL|macro|spin_unlock_wait
@@ -147,11 +147,11 @@ suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED EMPTY_STRUCT_INIT(rwlock_t)
 DECL|macro|read_lock
-mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
+mdefine_line|#define read_lock(lock)&t;&t;(void)(lock) /* Not &quot;unused variable&quot;. */
 DECL|macro|read_unlock
 mdefine_line|#define read_unlock(lock)&t;do { } while(0)
 DECL|macro|write_lock
-mdefine_line|#define write_lock(lock)&t;do { } while(0)
+mdefine_line|#define write_lock(lock)&t;(void)(lock) /* Not &quot;unused variable&quot;. */
 DECL|macro|write_unlock
 mdefine_line|#define write_unlock(lock)&t;do { } while(0)
 macro_line|#else

@@ -350,10 +350,8 @@ c_func
 (paren
 )paren
 op_logical_or
+op_logical_neg
 id|mm
-op_eq
-op_amp
-id|init_mm
 )paren
 r_goto
 id|no_context

@@ -1102,6 +1102,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|params
+op_logical_and
+id|params-&gt;u1.s.page_size
+op_ne
+l_int|4096
+)paren
 id|params
 op_assign
 l_int|NULL

@@ -209,7 +209,7 @@ id|turn_on
 )paren
 (brace
 r_struct
-id|soft_thread_struct
+id|thread_struct
 op_star
 id|t
 op_assign
@@ -217,7 +217,7 @@ op_amp
 id|current-&gt;thread
 suffix:semicolon
 r_struct
-id|hard_thread_struct
+id|tss_struct
 op_star
 id|tss
 op_assign

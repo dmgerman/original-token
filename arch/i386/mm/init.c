@@ -1477,10 +1477,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;mm-&gt;mmap-&gt;vm_start
-op_add_assign
-id|PAGE_SIZE
-suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -1525,10 +1521,6 @@ id|local_flush_tlb
 c_func
 (paren
 )paren
-suffix:semicolon
-id|current-&gt;mm-&gt;mmap-&gt;vm_start
-op_sub_assign
-id|PAGE_SIZE
 suffix:semicolon
 r_if
 c_cond

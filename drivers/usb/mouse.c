@@ -991,6 +991,9 @@ c_func
 l_string|&quot;USB mouse found&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|usb_set_configuration
 c_func
 (paren
@@ -1003,7 +1006,19 @@ l_int|0
 dot
 id|bConfigurationValue
 )paren
+)paren
+(brace
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot; Failed usb_set_configuration: mouse&bslash;n&quot;
+)paren
 suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* these are used to request the irq when the mouse is opened */
 id|mouse-&gt;dev
 op_assign

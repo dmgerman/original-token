@@ -322,7 +322,10 @@ id|interface-&gt;endpoint
 l_int|0
 )braket
 suffix:semicolon
-singleline_comment|//        &t;usb_set_configuration(dev, dev-&gt;config[0].bConfigurationValue);
+singleline_comment|//        &t;if (usb_set_configuration(dev, dev-&gt;config[0].bConfigurationValue)) {
+singleline_comment|//&t;&t;&t;printk (KERN_INFO &quot; Failed usb_set_configuration: Audio&bslash;n&quot;);
+singleline_comment|//&t;&t;&t;break;
+singleline_comment|//&t;&t;}
 singleline_comment|//        &t;usb_set_protocol(dev, 0);
 singleline_comment|//        &t;usb_set_idle(dev, 0, 0);
 id|usb_request_irq
@@ -355,9 +358,23 @@ op_amp
 id|usb_audio_list
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|aud
+)paren
+id|kfree
+(paren
+id|aud
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|usb_audio_disconnect

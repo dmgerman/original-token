@@ -12,7 +12,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;usb.h&quot;
-macro_line|#include &quot;uhci.h&quot;
 macro_line|#include &quot;cpia.h&quot;
 DECL|macro|MAX_FRAME_SIZE
 mdefine_line|#define MAX_FRAME_SIZE (384 * 288 * 3)
@@ -2280,7 +2279,7 @@ id|cpia-&gt;sbuf
 id|cpia-&gt;receivesbuf
 )braket
 suffix:semicolon
-id|uhci_unsched_isochronous
+id|usb_unschedule_isochronous
 c_func
 (paren
 id|dev
@@ -2291,7 +2290,7 @@ suffix:semicolon
 multiline_comment|/* Do something to it now */
 id|sbuf-&gt;len
 op_assign
-id|uhci_compress_isochronous
+id|usb_compress_isochronous
 c_func
 (paren
 id|dev
@@ -2368,7 +2367,7 @@ id|cpia
 suffix:semicolon
 )brace
 multiline_comment|/* Reschedule this block of Isochronous desc */
-id|uhci_sched_isochronous
+id|usb_schedule_isochronous
 c_func
 (paren
 id|dev
@@ -2456,7 +2455,7 @@ l_int|0
 dot
 id|isodesc
 op_assign
-id|uhci_alloc_isochronous
+id|usb_allocate_isochronous
 c_func
 (paren
 id|dev
@@ -2492,7 +2491,7 @@ l_int|1
 dot
 id|isodesc
 op_assign
-id|uhci_alloc_isochronous
+id|usb_allocate_isochronous
 c_func
 (paren
 id|dev
@@ -2528,7 +2527,7 @@ l_int|2
 dot
 id|isodesc
 op_assign
-id|uhci_alloc_isochronous
+id|usb_allocate_isochronous
 c_func
 (paren
 id|dev
@@ -2597,7 +2596,7 @@ id|isodesc
 )paren
 suffix:semicolon
 multiline_comment|/* Schedule the queues */
-id|uhci_sched_isochronous
+id|usb_schedule_isochronous
 c_func
 (paren
 id|dev
@@ -2612,7 +2611,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|uhci_sched_isochronous
+id|usb_schedule_isochronous
 c_func
 (paren
 id|dev
@@ -2632,7 +2631,7 @@ dot
 id|isodesc
 )paren
 suffix:semicolon
-id|uhci_sched_isochronous
+id|usb_schedule_isochronous
 c_func
 (paren
 id|dev
@@ -2750,12 +2749,11 @@ l_string|&quot;cpia_set_interface error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EINVAL
+multiline_comment|/* -EINVAL */
 suffix:semicolon
 )brace
 multiline_comment|/* Unschedule all of the iso td&squot;s */
-id|uhci_unsched_isochronous
+id|usb_unschedule_isochronous
 c_func
 (paren
 id|dev
@@ -2768,7 +2766,7 @@ dot
 id|isodesc
 )paren
 suffix:semicolon
-id|uhci_unsched_isochronous
+id|usb_unschedule_isochronous
 c_func
 (paren
 id|dev
@@ -2781,7 +2779,7 @@ dot
 id|isodesc
 )paren
 suffix:semicolon
-id|uhci_unsched_isochronous
+id|usb_unschedule_isochronous
 c_func
 (paren
 id|dev
@@ -2795,7 +2793,7 @@ id|isodesc
 )paren
 suffix:semicolon
 multiline_comment|/* Delete them all */
-id|uhci_delete_isochronous
+id|usb_delete_isochronous
 c_func
 (paren
 id|dev
@@ -2808,7 +2806,7 @@ dot
 id|isodesc
 )paren
 suffix:semicolon
-id|uhci_delete_isochronous
+id|usb_delete_isochronous
 c_func
 (paren
 id|dev
@@ -2821,7 +2819,7 @@ dot
 id|isodesc
 )paren
 suffix:semicolon
-id|uhci_delete_isochronous
+id|usb_delete_isochronous
 c_func
 (paren
 id|dev
@@ -4944,7 +4942,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;cpia_read: %d bytes&bslash;n&quot;
+l_string|&quot;cpia_read: %ld bytes&bslash;n&quot;
 comma
 id|count
 )paren
@@ -5022,7 +5020,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;mmap: %d (%X) bytes&bslash;n&quot;
+l_string|&quot;mmap: %ld (%lX) bytes&bslash;n&quot;
 comma
 id|size
 comma
@@ -5243,6 +5241,9 @@ r_char
 op_star
 id|buf
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|usb_set_configuration
 c_func
 (paren
@@ -5255,7 +5256,17 @@ l_int|0
 dot
 id|bConfigurationValue
 )paren
+)paren
+(brace
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot; Failed usb_set_configuration: CPIA&bslash;n&quot;
+)paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

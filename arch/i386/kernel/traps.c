@@ -774,6 +774,13 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|die_lock
+)paren
+suffix:semicolon
 id|spin_unlock_irq
 c_func
 (paren

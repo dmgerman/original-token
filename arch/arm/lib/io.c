@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Copy data from IO memory space to &quot;real&quot; memory space.&n; * This needs to be optimized.&n; */
 DECL|function|_memcpy_fromio
@@ -150,4 +151,25 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+DECL|variable|_memcpy_fromio
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_memcpy_fromio
+)paren
+suffix:semicolon
+DECL|variable|_memcpy_toio
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_memcpy_toio
+)paren
+suffix:semicolon
+DECL|variable|_memset_io
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_memset_io
+)paren
+suffix:semicolon
 eof

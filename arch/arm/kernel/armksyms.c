@@ -583,27 +583,6 @@ c_func
 id|insl
 )paren
 suffix:semicolon
-DECL|variable|_memcpy_fromio
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|_memcpy_fromio
-)paren
-suffix:semicolon
-DECL|variable|_memcpy_toio
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|_memcpy_toio
-)paren
-suffix:semicolon
-DECL|variable|_memset_io
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|_memset_io
-)paren
-suffix:semicolon
 multiline_comment|/* address translation */
 macro_line|#ifndef __virt_to_phys__is_a_macro
 DECL|variable|__virt_to_phys

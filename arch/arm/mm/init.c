@@ -1092,6 +1092,12 @@ id|machine_is_cats
 c_func
 (paren
 )paren
+op_logical_and
+op_logical_neg
+id|machine_is_co285
+c_func
+(paren
+)paren
 )paren
 id|free_area
 c_func

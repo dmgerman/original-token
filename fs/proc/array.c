@@ -3107,11 +3107,6 @@ r_if
 c_cond
 (paren
 id|mm
-op_logical_and
-id|mm
-op_ne
-op_amp
-id|init_mm
 )paren
 (brace
 r_struct
@@ -3796,11 +3791,6 @@ r_if
 c_cond
 (paren
 id|tsk-&gt;mm
-op_logical_and
-id|tsk-&gt;mm
-op_ne
-op_amp
-id|init_mm
 )paren
 (brace
 r_struct
@@ -4637,11 +4627,6 @@ r_if
 c_cond
 (paren
 id|tsk-&gt;mm
-op_logical_and
-id|tsk-&gt;mm
-op_ne
-op_amp
-id|init_mm
 )paren
 (brace
 r_struct
@@ -4946,11 +4931,6 @@ c_cond
 (paren
 op_logical_neg
 id|p-&gt;mm
-op_logical_or
-id|p-&gt;mm
-op_eq
-op_amp
-id|init_mm
 op_logical_or
 id|count
 op_eq
@@ -6139,19 +6119,6 @@ id|current-&gt;cap_permitted
 id|ok
 op_assign
 l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|p-&gt;mm
-)paren
-(brace
-multiline_comment|/* Scooby scooby doo where are you ? */
-id|p
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 )brace

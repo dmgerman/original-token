@@ -661,7 +661,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 op_amp
 id|ega_console_resource
@@ -712,7 +712,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 op_amp
 id|mda1_console_resource
@@ -722,7 +722,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 op_amp
 id|mda2_console_resource
@@ -804,7 +804,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 op_amp
 id|ega_console_resource
@@ -838,7 +838,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 op_amp
 id|vga_console_resource
@@ -1002,7 +1002,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 op_amp
 id|cga_console_resource

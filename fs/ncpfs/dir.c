@@ -1454,6 +1454,15 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dir
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|server
 op_assign
 id|NCP_SERVER

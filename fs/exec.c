@@ -1397,6 +1397,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|current-&gt;mm
+op_logical_and
 id|atomic_read
 c_func
 (paren
@@ -1481,6 +1483,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Make sure we have a private LDT if needed ...&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;mm
+)paren
 id|copy_segments
 c_func
 (paren
@@ -1519,18 +1526,16 @@ c_func
 id|current
 )paren
 suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|mm-&gt;mmap_sem
-)paren
-suffix:semicolon
 id|mm_release
 c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|old_mm
+)paren
 id|mmput
 c_func
 (paren

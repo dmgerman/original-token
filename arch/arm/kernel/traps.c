@@ -1777,4 +1777,25 @@ id|regs-&gt;ARM_sp
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|function|__div0
+id|asmlinkage
+r_void
+id|__div0
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Awooga, division by zero in kernel.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|__backtrace
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 eof

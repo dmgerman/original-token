@@ -4,10 +4,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-DECL|variable|pci_io_resource
+DECL|variable|ioport_resource
 r_struct
 id|resource
-id|pci_io_resource
+id|ioport_resource
 op_assign
 (brace
 l_string|&quot;PCI IO&quot;
@@ -17,10 +17,10 @@ comma
 l_int|0xFFFF
 )brace
 suffix:semicolon
-DECL|variable|pci_mem_resource
+DECL|variable|iomem_resource
 r_struct
 id|resource
-id|pci_mem_resource
+id|iomem_resource
 op_assign
 (brace
 l_string|&quot;PCI mem&quot;
@@ -207,7 +207,7 @@ c_cond
 id|root
 op_eq
 op_amp
-id|pci_io_resource
+id|ioport_resource
 )paren
 id|fmt
 op_assign
@@ -834,7 +834,7 @@ id|request_resource
 c_func
 (paren
 op_amp
-id|pci_io_resource
+id|ioport_resource
 comma
 id|res
 )paren

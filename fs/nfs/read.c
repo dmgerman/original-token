@@ -558,9 +558,6 @@ suffix:semicolon
 )brace
 id|page-&gt;owner
 op_assign
-(paren
-r_int
-)paren
 id|current
 suffix:semicolon
 singleline_comment|// HACK, FIXME, will go away.

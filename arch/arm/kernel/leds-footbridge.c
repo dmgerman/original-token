@@ -28,7 +28,11 @@ id|leds_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCH_EBSA285
+r_extern
+id|spinlock_t
+id|gpio_lock
+suffix:semicolon
+macro_line|#ifdef CONFIG_FOOTBRIDGE
 DECL|function|ebsa285_leds_event
 r_static
 r_void
@@ -645,9 +649,12 @@ c_cond
 id|machine_arch_type
 )paren
 (brace
-macro_line|#ifdef CONFIG_ARCH_EBSA285
+macro_line|#ifdef CONFIG_FOOTBRIDGE
 r_case
 id|MACH_TYPE_EBSA285
+suffix:colon
+r_case
+id|MACH_TYPE_CO285
 suffix:colon
 id|leds_event
 op_assign

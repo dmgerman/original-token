@@ -71,12 +71,7 @@ id|p
 r_if
 c_cond
 (paren
-id|p-&gt;pid
-op_logical_and
 id|p-&gt;mm
-op_ne
-op_amp
-id|init_mm
 )paren
 (brace
 multiline_comment|/* Not swapper nor kernel thread */

@@ -30,5 +30,7 @@ DECL|macro|FLUSH_BASE
 mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xf0000000
+DECL|macro|PARAMS_BASE
+mdefine_line|#define PARAMS_BASE&t;&t;(PAGE_OFFSET + 0x400)
 macro_line|#endif
 eof

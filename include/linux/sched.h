@@ -40,8 +40,6 @@ DECL|macro|CLONE_PTRACE
 mdefine_line|#define CLONE_PTRACE&t;0x00002000&t;/* set if we want to let tracing continue on the child too */
 DECL|macro|CLONE_VFORK
 mdefine_line|#define CLONE_VFORK&t;0x00004000&t;/* set if the parent wants the child to wake it up on mm_release */
-DECL|macro|CLONE_TLB
-mdefine_line|#define CLONE_TLB&t;0x00008000&t;/* system thread does lazy TLB flushing (kernel-internal only!) */
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -400,7 +398,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(1), 1,&t;&t;&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
+mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(2), 1,&t;&t;&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
@@ -806,7 +804,7 @@ suffix:semicolon
 multiline_comment|/* CPU-specific state of this task */
 DECL|member|thread
 r_struct
-id|soft_thread_struct
+id|thread_struct
 id|thread
 suffix:semicolon
 multiline_comment|/* filesystem information */
@@ -825,10 +823,14 @@ id|files
 suffix:semicolon
 multiline_comment|/* memory management info */
 DECL|member|mm
+DECL|member|active_mm
 r_struct
 id|mm_struct
 op_star
 id|mm
+comma
+op_star
+id|active_mm
 suffix:semicolon
 multiline_comment|/* signal handlers */
 DECL|member|sigmask_lock
@@ -895,8 +897,6 @@ DECL|macro|PF_MEMALLOC
 mdefine_line|#define PF_MEMALLOC&t;0x00000800&t;/* Allocating memory */
 DECL|macro|PF_VFORK
 mdefine_line|#define PF_VFORK&t;0x00001000&t;/* Wake up parent in mm_release */
-DECL|macro|PF_LAZY_TLB
-mdefine_line|#define PF_LAZY_TLB&t;0x00002000&t;/* thread does lazy TLB switching */
 DECL|macro|PF_USEDFPU
 mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* task used FPU this quantum (SMP) */
 DECL|macro|PF_DTRACE
@@ -908,7 +908,7 @@ DECL|macro|DEF_PRIORITY
 mdefine_line|#define DEF_PRIORITY&t;(20*HZ/100)&t;/* 200 ms time slices */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, LIST_HEAD_INIT(init_task.run_list), &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* thread */&t;INIT_THREAD, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
+mdefine_line|#define INIT_TASK(name) &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, LIST_HEAD_INIT(init_task.run_list), &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* chld wait */&t;__WAIT_QUEUE_HEAD_INITIALIZER(name.wait_chldexit), NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* thread */&t;INIT_THREAD, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;NULL, &amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
 macro_line|#ifndef INIT_TASK_SIZE
 DECL|macro|INIT_TASK_SIZE
 macro_line|# define INIT_TASK_SIZE&t;2048*sizeof(long)

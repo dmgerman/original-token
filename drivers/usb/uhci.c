@@ -1317,7 +1317,7 @@ op_assign
 (paren
 id|pipe
 op_amp
-l_int|0x0007ff00
+id|PIPE_DEVEP_MASK
 )paren
 op_or
 l_int|0x69
@@ -1390,7 +1390,17 @@ op_assign
 id|destination
 op_or
 (paren
-l_int|7
+(paren
+id|usb_maxpacket
+c_func
+(paren
+id|usb_dev
+comma
+id|pipe
+)paren
+op_minus
+l_int|1
+)paren
 op_lshift
 l_int|21
 )paren
@@ -1417,7 +1427,6 @@ op_lshift
 l_int|19
 )paren
 suffix:semicolon
-multiline_comment|/* 8 bytes of data */
 id|td-&gt;buffer
 op_assign
 id|virt_to_bus
@@ -1845,6 +1854,7 @@ suffix:semicolon
 multiline_comment|/* uhci_release_irq() */
 multiline_comment|/*&n; * Isochronous thread operations&n; */
 DECL|function|uhci_compress_isochronous
+r_static
 r_int
 id|uhci_compress_isochronous
 c_func
@@ -2025,9 +2035,10 @@ r_return
 id|totlen
 suffix:semicolon
 )brace
-DECL|function|uhci_unsched_isochronous
+DECL|function|uhci_unschedule_isochronous
+r_static
 r_int
-id|uhci_unsched_isochronous
+id|uhci_unschedule_isochronous
 c_func
 (paren
 r_struct
@@ -2151,9 +2162,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* td points to the one td we allocated for isochronous transfers */
-DECL|function|uhci_sched_isochronous
+DECL|function|uhci_schedule_isochronous
+r_static
 r_int
-id|uhci_sched_isochronous
+id|uhci_schedule_isochronous
 c_func
 (paren
 r_struct
@@ -2232,7 +2244,7 @@ c_func
 l_string|&quot;isoc queue not removed&bslash;n&quot;
 )paren
 suffix:semicolon
-id|uhci_unsched_isochronous
+id|uhci_unschedule_isochronous
 c_func
 (paren
 id|usb_dev
@@ -2453,10 +2465,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize isochronous queue&n; */
-DECL|function|uhci_alloc_isochronous
+DECL|function|uhci_allocate_isochronous
+r_static
 r_void
 op_star
-id|uhci_alloc_isochronous
+id|uhci_allocate_isochronous
 c_func
 (paren
 r_struct
@@ -2659,7 +2672,7 @@ op_assign
 (paren
 id|pipe
 op_amp
-l_int|0x0007ff00
+id|PIPE_DEVEP_MASK
 )paren
 suffix:semicolon
 r_if
@@ -2828,6 +2841,7 @@ id|isodesc
 suffix:semicolon
 )brace
 DECL|function|uhci_delete_isochronous
+r_static
 r_void
 id|uhci_delete_isochronous
 c_func
@@ -2860,7 +2874,7 @@ c_cond
 (paren
 id|isodesc-&gt;frame
 )paren
-id|uhci_unsched_isochronous
+id|uhci_unschedule_isochronous
 c_func
 (paren
 id|usb_dev
@@ -3190,7 +3204,7 @@ r_int
 r_int
 id|pipe
 comma
-r_void
+id|devrequest
 op_star
 id|cmd
 comma
@@ -3275,7 +3289,7 @@ op_assign
 (paren
 id|pipe
 op_amp
-l_int|0x0007ff00
+id|PIPE_DEVEP_MASK
 )paren
 op_or
 l_int|0x2D
@@ -3533,7 +3547,7 @@ op_assign
 id|destination
 op_or
 (paren
-l_int|0x7ff
+id|UHCI_NULL_DATA_SIZE
 op_lshift
 l_int|21
 )paren
@@ -3658,6 +3672,10 @@ id|__u8
 op_star
 id|p
 op_assign
+(paren
+id|__u8
+op_star
+)paren
 id|cmd
 suffix:semicolon
 id|printk
@@ -4139,7 +4157,7 @@ op_assign
 (paren
 id|pipe
 op_amp
-l_int|0x0007ff00
+id|PIPE_DEVEP_MASK
 )paren
 op_or
 l_int|0xE1
@@ -4152,7 +4170,7 @@ op_assign
 (paren
 id|pipe
 op_amp
-l_int|0x0007ff00
+id|PIPE_DEVEP_MASK
 )paren
 op_or
 l_int|0x69
@@ -4872,6 +4890,15 @@ id|uhci_request_irq
 comma
 id|uhci_release_irq
 comma
+id|uhci_allocate_isochronous
+comma
+id|uhci_delete_isochronous
+comma
+id|uhci_schedule_isochronous
+comma
+id|uhci_unschedule_isochronous
+comma
+id|uhci_compress_isochronous
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is just incredibly fragile. The timings must be just&n; * right, and they aren&squot;t really documented very well.&n; *&n; * Note the short delay between disabling reset and enabling&n; * the port..&n; */
@@ -5110,6 +5137,14 @@ c_func
 (paren
 id|root_hub-&gt;usb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|usb_dev
+)paren
+r_return
 suffix:semicolon
 id|dev
 op_assign
@@ -6838,16 +6873,18 @@ op_eq
 id|SIGUSR2
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;UHCI debug toggle&bslash;n&quot;
-)paren
-suffix:semicolon
 id|uhci_debug
 op_assign
 op_logical_neg
 id|uhci_debug
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;UHCI debug toggle = %x&bslash;n&quot;
+comma
+id|uhci_debug
+)paren
 suffix:semicolon
 )brace
 r_else

@@ -67,6 +67,35 @@ mdefine_line|#define NR_DEBUGS&t;5
 macro_line|#include &lt;asm/proc/ptrace.h&gt;
 macro_line|#include &lt;asm/arch/processor.h&gt;
 macro_line|#include &lt;asm/proc/processor.h&gt;
+DECL|struct|debug_info
+r_struct
+id|debug_info
+(brace
+DECL|member|nsaved
+r_int
+id|nsaved
+suffix:semicolon
+r_struct
+(brace
+DECL|member|address
+r_int
+r_int
+id|address
+suffix:semicolon
+DECL|member|insn
+r_int
+r_int
+id|insn
+suffix:semicolon
+DECL|member|bp
+)brace
+id|bp
+(braket
+l_int|2
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
@@ -96,12 +125,9 @@ id|fpstate
 suffix:semicolon
 multiline_comment|/* FPE save state&t;*/
 DECL|member|debug
-r_int
-r_int
+r_struct
+id|debug_info
 id|debug
-(braket
-id|NR_DEBUGS
-)braket
 suffix:semicolon
 multiline_comment|/* Debug/ptrace&t;*/
 DECL|member|save

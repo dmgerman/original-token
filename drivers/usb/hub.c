@@ -37,7 +37,6 @@ r_struct
 id|list_head
 id|hub_event_list
 suffix:semicolon
-macro_line|#ifdef MODULE
 multiline_comment|/* List containing all of the hubs (for cleanup) */
 DECL|variable|all_hubs_list
 r_static
@@ -45,7 +44,6 @@ r_struct
 id|list_head
 id|all_hubs_list
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* PID of khubd */
 DECL|variable|khubd_pid
 r_static
