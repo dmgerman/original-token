@@ -524,9 +524,6 @@ comma
 id|RT_SCOPE_UNIVERSE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|fw_res
 op_assign
 id|ip_fw_masq_icmp
@@ -537,6 +534,11 @@ id|skb
 comma
 id|maddr
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fw_res
 OL
 l_int|0
 )paren

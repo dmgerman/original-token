@@ -835,11 +835,6 @@ op_assign
 id|rt-&gt;dev
 suffix:semicolon
 multiline_comment|/* set skb-&gt;dev to appropriate device */
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* so the actual device doesn&squot;t try to arp it... */
 id|skb-&gt;protocol
 op_assign
 id|htons

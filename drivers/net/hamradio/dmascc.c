@@ -20,7 +20,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
-macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &quot;z8530.h&quot;
 multiline_comment|/* Linux 2.0 compatibility */
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100

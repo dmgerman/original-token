@@ -441,6 +441,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|rarp_end_pkt
 r_static
 r_void
@@ -479,6 +480,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Receive an arp request by the device layer.  Maybe it should be &n; *&t;rewritten to use the incoming packet for the reply. The current &n; *&t;&quot;overhead&quot; time isn&squot;t that high...&n; */
 DECL|function|rarp_rcv
 r_static

@@ -5181,12 +5181,14 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#ifndef CONFIG_RTNETLINK
 id|proc_net_unregister
 c_func
 (paren
 id|ndisc_proc_entry.low_ino
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|neigh_table_clear
 c_func

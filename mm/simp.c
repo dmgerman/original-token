@@ -367,8 +367,6 @@ c_func
 id|GFP_KERNEL
 comma
 id|ORDER
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|memset
@@ -660,8 +658,6 @@ c_func
 id|GFP_KERNEL
 comma
 id|ORDER
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -13,21 +13,19 @@ macro_line|#include&t;&lt;linux/mm.h&gt;
 macro_line|#include&t;&lt;asm/cache.h&gt;
 multiline_comment|/* flags for kmem_cache_alloc() */
 DECL|macro|SLAB_BUFFER
-mdefine_line|#define&t;SLAB_BUFFER&t;&t;GFP_BUFFER&t;/* 0x00 */
+mdefine_line|#define&t;SLAB_BUFFER&t;&t;GFP_BUFFER
 DECL|macro|SLAB_ATOMIC
-mdefine_line|#define&t;SLAB_ATOMIC&t;&t;GFP_ATOMIC&t;/* 0x01 */
+mdefine_line|#define&t;SLAB_ATOMIC&t;&t;GFP_ATOMIC
 DECL|macro|SLAB_USER
-mdefine_line|#define&t;SLAB_USER&t;&t;GFP_USER&t;/* 0x02 */
+mdefine_line|#define&t;SLAB_USER&t;&t;GFP_USER
 DECL|macro|SLAB_KERNEL
-mdefine_line|#define&t;SLAB_KERNEL&t;&t;GFP_KERNEL&t;/* 0x03 */
-DECL|macro|SLAB_NOBUFFER
-mdefine_line|#define&t;SLAB_NOBUFFER&t;&t;GFP_NOBUFFER&t;/* 0x04 */
+mdefine_line|#define&t;SLAB_KERNEL&t;&t;GFP_KERNEL
 DECL|macro|SLAB_NFS
-mdefine_line|#define&t;SLAB_NFS&t;&t;GFP_NFS&t;&t;/* 0x05 */
+mdefine_line|#define&t;SLAB_NFS&t;&t;GFP_NFS
 DECL|macro|SLAB_DMA
-mdefine_line|#define&t;SLAB_DMA&t;&t;GFP_DMA&t;&t;/* 0x08 */
+mdefine_line|#define&t;SLAB_DMA&t;&t;GFP_DMA
 DECL|macro|SLAB_LEVEL_MASK
-mdefine_line|#define&t;SLAB_LEVEL_MASK&t;&t;GFP_LEVEL_MASK&t;/* 0x0f */
+mdefine_line|#define SLAB_LEVEL_MASK&t;&t;0x0000007fUL
 DECL|macro|SLAB_NO_GROW
 mdefine_line|#define&t;SLAB_NO_GROW&t;&t;0x00001000UL&t;/* don&squot;t grow a cache */
 multiline_comment|/* flags to pass to kmem_cache_create().&n; * The first 3 are only valid when the allocator as been build&n; * SLAB_DEBUG_SUPPORT.&n; */
@@ -196,14 +194,10 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|kmem_cache_reap
 c_func
 (paren
-r_int
-comma
-r_int
-comma
 r_int
 )paren
 suffix:semicolon

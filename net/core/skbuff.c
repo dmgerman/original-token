@@ -216,7 +216,7 @@ r_int
 id|size
 comma
 r_int
-id|priority
+id|gfp_mask
 )paren
 (brace
 r_struct
@@ -240,9 +240,11 @@ c_func
 (paren
 )paren
 op_logical_and
-id|priority
-op_ne
-id|GFP_ATOMIC
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_WAIT
+)paren
 )paren
 (brace
 r_static
@@ -274,9 +276,10 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|priority
-op_assign
-id|GFP_ATOMIC
+id|gfp_mask
+op_and_assign
+op_complement
+id|__GFP_WAIT
 suffix:semicolon
 )brace
 )brace
@@ -314,7 +317,7 @@ c_func
 (paren
 id|size
 comma
-id|priority
+id|gfp_mask
 )paren
 suffix:semicolon
 r_if
@@ -621,7 +624,7 @@ op_star
 id|skb
 comma
 r_int
-id|priority
+id|gfp_mask
 )paren
 (brace
 r_struct
@@ -696,7 +699,7 @@ op_star
 id|n
 )paren
 comma
-id|priority
+id|gfp_mask
 )paren
 suffix:semicolon
 r_if
@@ -820,7 +823,7 @@ op_star
 id|skb
 comma
 r_int
-id|priority
+id|gfp_mask
 )paren
 (brace
 r_struct
@@ -842,7 +845,7 @@ id|skb-&gt;end
 op_minus
 id|skb-&gt;head
 comma
-id|priority
+id|gfp_mask
 )paren
 suffix:semicolon
 r_if

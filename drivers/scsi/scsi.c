@@ -6955,7 +6955,7 @@ r_int
 id|size
 comma
 r_int
-id|priority
+id|gfp_mask
 )paren
 (brace
 r_void
@@ -7009,12 +7009,12 @@ op_assign
 r_void
 op_star
 )paren
-id|__get_dma_pages
+id|__get_free_pages
 c_func
 (paren
-id|priority
-op_amp
-id|GFP_LEVEL_MASK
+id|gfp_mask
+op_or
+id|GFP_DMA
 comma
 id|order
 )paren
@@ -7028,7 +7028,7 @@ c_func
 (paren
 id|size
 comma
-id|priority
+id|gfp_mask
 )paren
 suffix:semicolon
 r_if

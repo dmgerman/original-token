@@ -5052,11 +5052,7 @@ id|CSR0
 suffix:semicolon
 macro_line|#else
 macro_line|#ifndef ORIGINAL_TEXT
-macro_line|#ifndef __SMP__
-mdefine_line|#define x86 ((struct cpuinfo_x86*)cpu_data)-&gt;x86
-macro_line|#else
-macro_line|#error What should we make here?
-macro_line|#endif
+mdefine_line|#define x86 (boot_cpu_data.x86)
 macro_line|#endif
 id|outl
 c_func
@@ -9183,10 +9179,46 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|xchg
+c_func
+(paren
+op_amp
 id|dev-&gt;tx_semaphore
-op_assign
+comma
 l_int|0
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
+multiline_comment|/* With new queueing algorithm returning 1 when dev-&gt;tbusy == 0&n;&t;&t;   should not result in lockups, but I am still not sure. --ANK&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;Please check: are you still alive?&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
 r_if
@@ -9233,7 +9265,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
 id|dev-&gt;tx_semaphore
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 macro_line|#endif
 r_return
@@ -9405,7 +9437,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
 id|dev-&gt;tx_semaphore
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|sti
 c_func

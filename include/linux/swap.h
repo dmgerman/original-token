@@ -145,10 +145,6 @@ id|try_to_free_page
 c_func
 (paren
 r_int
-comma
-r_int
-comma
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/page_io.c */

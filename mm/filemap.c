@@ -351,7 +351,7 @@ r_int
 id|priority
 comma
 r_int
-id|dma
+id|gfp_mask
 )paren
 (brace
 r_static
@@ -447,7 +447,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dma
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_DMA
+)paren
 op_logical_and
 op_logical_neg
 id|PageDMA
@@ -595,6 +599,12 @@ multiline_comment|/* is it a buffer cache page? */
 r_if
 c_cond
 (paren
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_IO
+)paren
+op_logical_and
 id|bh
 op_logical_and
 id|try_to_free_buffer

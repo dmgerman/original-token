@@ -490,9 +490,9 @@ id|mem_map
 suffix:semicolon
 multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; */
 DECL|macro|__get_free_page
-mdefine_line|#define __get_free_page(priority) __get_free_pages((priority),0,0)
+mdefine_line|#define __get_free_page(gfp_mask) __get_free_pages((gfp_mask),0)
 DECL|macro|__get_dma_pages
-mdefine_line|#define __get_dma_pages(priority, order) __get_free_pages((priority),(order),1)
+mdefine_line|#define __get_dma_pages(gfp_mask, order) __get_free_pages((gfp_mask) | GFP_DMA,(order))
 r_extern
 r_int
 r_int
@@ -503,14 +503,11 @@ id|__get_free_pages
 c_func
 (paren
 r_int
-id|priority
+id|gfp_mask
 comma
 r_int
 r_int
-id|gfporder
-comma
-r_int
-id|dma
+id|gfp_order
 )paren
 )paren
 suffix:semicolon
@@ -523,7 +520,7 @@ id|get_free_page
 c_func
 (paren
 r_int
-id|priority
+id|gfp_mask
 )paren
 (brace
 r_int
@@ -535,7 +532,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|priority
+id|gfp_mask
 )paren
 suffix:semicolon
 r_if
@@ -999,23 +996,32 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * GFP bitmasks..&n; */
+DECL|macro|__GFP_WAIT
+mdefine_line|#define __GFP_WAIT&t;0x01
+DECL|macro|__GFP_IO
+mdefine_line|#define __GFP_IO&t;0x02
+DECL|macro|__GFP_LOW
+mdefine_line|#define __GFP_LOW&t;0x00
+DECL|macro|__GFP_MED
+mdefine_line|#define __GFP_MED&t;0x04
+DECL|macro|__GFP_HIGH
+mdefine_line|#define __GFP_HIGH&t;0x08
+DECL|macro|__GFP_DMA
+mdefine_line|#define __GFP_DMA&t;0x80
 DECL|macro|GFP_BUFFER
-mdefine_line|#define GFP_BUFFER&t;0x00
+mdefine_line|#define GFP_BUFFER&t;(__GFP_LOW | __GFP_WAIT)
 DECL|macro|GFP_ATOMIC
-mdefine_line|#define GFP_ATOMIC&t;0x01
+mdefine_line|#define GFP_ATOMIC&t;(__GFP_HIGH)
 DECL|macro|GFP_USER
-mdefine_line|#define GFP_USER&t;0x02
+mdefine_line|#define GFP_USER&t;(__GFP_LOW | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_KERNEL
-mdefine_line|#define GFP_KERNEL&t;0x03
-DECL|macro|GFP_NOBUFFER
-mdefine_line|#define GFP_NOBUFFER&t;0x04
+mdefine_line|#define GFP_KERNEL&t;(__GFP_LOW | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_NFS
-mdefine_line|#define GFP_NFS&t;&t;0x05
+mdefine_line|#define GFP_NFS&t;&t;(__GFP_MED | __GFP_WAIT | __GFP_IO)
 multiline_comment|/* Flag - indicates that the buffer will be suitable for DMA.  Ignored on some&n;   platforms, used as appropriate on others */
 DECL|macro|GFP_DMA
-mdefine_line|#define GFP_DMA&t;&t;0x80
-DECL|macro|GFP_LEVEL_MASK
-mdefine_line|#define GFP_LEVEL_MASK 0xf
+mdefine_line|#define GFP_DMA&t;&t;__GFP_DMA
 multiline_comment|/* vma is the first one with  address &lt; vma-&gt;vm_end,&n; * and even  address &lt; vma-&gt;vm_start. Have to extend vma. */
 DECL|function|expand_stack
 r_static

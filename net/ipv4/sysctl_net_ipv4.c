@@ -357,6 +357,7 @@ c_cond
 (paren
 id|write
 )paren
+(brace
 id|rt_cache_flush
 c_func
 (paren
@@ -365,6 +366,12 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+r_else
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 DECL|variable|ipv4_table

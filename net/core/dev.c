@@ -2051,7 +2051,7 @@ id|handle_bridge
 c_func
 (paren
 r_struct
-id|skbuff
+id|sk_buff
 op_star
 id|skb
 comma
@@ -2115,7 +2115,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_continue
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Pull the MAC header off for the copy going to&n;&t;&t; *&t;the upper layers.&n;&t;&t; */

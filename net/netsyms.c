@@ -1325,13 +1325,6 @@ c_func
 id|xrlim_allow
 )paren
 suffix:semicolon
-DECL|variable|dev_mc_delete
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dev_mc_delete
-)paren
-suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PACKET_MODULE
 DECL|variable|dev_set_allmulti
@@ -1346,13 +1339,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|dev_set_promiscuity
-)paren
-suffix:semicolon
-DECL|variable|dev_mc_delete
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dev_mc_delete
 )paren
 suffix:semicolon
 DECL|variable|sklist_remove_socket
@@ -1773,6 +1759,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|arp_rcv
+)paren
+suffix:semicolon
+DECL|variable|dev_mc_delete
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_mc_delete
 )paren
 suffix:semicolon
 DECL|variable|rtnl_lock

@@ -2065,7 +2065,7 @@ l_int|1
 multiline_comment|/*&n;&t;&t; * ioctl : one open channel&n;&t;&t; */
 id|printk
 (paren
-l_string|&quot;STOP_MD md%x failed : i_count=%d, busy=%d&bslash;n&quot;
+l_string|&quot;STOP_MD md%x failed : i_count=%ld, busy=%d&bslash;n&quot;
 comma
 id|minor
 comma
