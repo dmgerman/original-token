@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB hub driver.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Gregory P. Smith&n; */
+multiline_comment|/*&n; * USB hub driver.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Gregory P. Smith&n; *&n; * $Id: hub.c,v 1.15 1999/12/27 15:17:45 acher Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
@@ -168,6 +168,51 @@ comma
 id|data
 comma
 id|size
+comma
+id|HZ
+)paren
+suffix:semicolon
+)brace
+DECL|function|usb_clear_hub_feature
+r_static
+r_int
+id|usb_clear_hub_feature
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|feature
+)paren
+(brace
+r_return
+id|usb_control_msg
+c_func
+(paren
+id|dev
+comma
+id|usb_sndctrlpipe
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+comma
+id|USB_REQ_CLEAR_FEATURE
+comma
+id|USB_RT_HUB
+comma
+id|feature
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+l_int|0
 comma
 id|HZ
 )paren
@@ -1449,6 +1494,15 @@ id|portstatus
 comma
 id|portchange
 suffix:semicolon
+r_int
+id|tries
+suffix:semicolon
+id|wait_ms
+c_func
+(paren
+l_int|100
+)paren
+suffix:semicolon
 multiline_comment|/* Check status */
 r_if
 c_cond
@@ -1498,11 +1552,26 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;hub.c: portstatus %x, change %x&bslash;n&quot;
+l_string|&quot;hub.c: portstatus %x, change %x, %s&bslash;n&quot;
 comma
 id|portstatus
 comma
 id|portchange
+comma
+(paren
+id|portstatus
+op_amp
+(paren
+l_int|1
+op_lshift
+id|USB_PORT_FEAT_LOWSPEED
+)paren
+ques
+c_cond
+l_string|&quot;Low Speed&quot;
+suffix:colon
+l_string|&quot;High Speed&quot;
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* If it&squot;s not in CONNECT and ENABLE state, we&squot;re done */
@@ -1550,6 +1619,23 @@ l_int|400
 )paren
 suffix:semicolon
 multiline_comment|/* Reset the port */
+DECL|macro|MAX_TRIES
+mdefine_line|#define MAX_TRIES 5
+r_for
+c_loop
+(paren
+id|tries
+op_assign
+l_int|0
+suffix:semicolon
+id|tries
+OL
+id|MAX_TRIES
+suffix:semicolon
+id|tries
+op_increment
+)paren
+(brace
 id|usb_set_port_feature
 c_func
 (paren
@@ -1565,9 +1651,124 @@ suffix:semicolon
 id|wait_ms
 c_func
 (paren
-l_int|100
+l_int|200
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|usb_get_port_status
+c_func
+(paren
+id|hub
+comma
+id|port
+op_plus
+l_int|1
+comma
+op_amp
+id|portsts
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;get_port_status failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|portstatus
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|portsts.wPortStatus
+)paren
+suffix:semicolon
+id|portchange
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|portsts.wPortChange
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;hub.c: portstatus %x, change %x, %s&bslash;n&quot;
+comma
+id|portstatus
+comma
+id|portchange
+comma
+(paren
+id|portstatus
+op_amp
+(paren
+l_int|1
+op_lshift
+id|USB_PORT_FEAT_LOWSPEED
+)paren
+ques
+c_cond
+l_string|&quot;Low Speed&quot;
+suffix:colon
+l_string|&quot;High Speed&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|portstatus
+op_amp
+(paren
+l_int|1
+op_lshift
+id|USB_PORT_FEAT_ENABLE
+)paren
+)paren
+)paren
+r_break
+suffix:semicolon
+id|wait_ms
+c_func
+(paren
+l_int|200
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tries
+op_eq
+id|MAX_TRIES
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;hub.c: Can not enable port %i after %i retries, disabling port&bslash;n&quot;
+comma
+id|port
+op_plus
+l_int|1
+comma
+id|MAX_TRIES
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Allocate a new device struct for it */
 id|usb
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: uhci.c,v 1.139 1999/12/17 17:50:59 fliegl Exp $&n; */
+multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: uhci.c,v 1.149 1999/12/26 20:57:14 acher Exp $&n; */
 macro_line|#ifndef EXPORT_SYMTAB
 DECL|macro|EXPORT_SYMTAB
 mdefine_line|#define EXPORT_SYMTAB
@@ -2738,7 +2738,9 @@ id|dbg
 (paren
 id|KERN_DEBUG
 id|MODSTR
-l_string|&quot;uhci_submit_bulk_urb: len %d&bslash;n&quot;
+l_string|&quot;uhci_submit_bulk_urb: pipe %x, len %d&bslash;n&quot;
+comma
+id|pipe
 comma
 id|len
 )paren
@@ -2965,7 +2967,7 @@ c_cond
 op_logical_neg
 id|purb
 )paren
-singleline_comment|// you never know... 
+singleline_comment|// you never know...
 r_return
 op_minus
 l_int|1
@@ -3039,6 +3041,11 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|purb-&gt;status
+op_assign
+id|USB_ST_URB_KILLED
+suffix:semicolon
+singleline_comment|// mark urb as killed
 r_if
 c_cond
 (paren
@@ -3231,11 +3238,6 @@ id|qh
 suffix:semicolon
 singleline_comment|// remove it physically
 )brace
-id|purb-&gt;status
-op_assign
-id|USB_ST_URB_KILLED
-suffix:semicolon
-singleline_comment|// mark urb as killed
 macro_line|#ifdef _UHCI_SLAB
 id|kmem_cache_free
 c_func
@@ -3804,8 +3806,6 @@ r_struct
 id|list_head
 op_star
 id|p
-op_assign
-id|s-&gt;urb_list.next
 suffix:semicolon
 id|purb_t
 id|u
@@ -3832,6 +3832,10 @@ id|s-&gt;urb_list_lock
 comma
 id|flags
 )paren
+suffix:semicolon
+id|p
+op_assign
+id|s-&gt;urb_list.next
 suffix:semicolon
 r_for
 c_loop
@@ -5005,10 +5009,20 @@ op_eq
 id|tmp
 )paren
 )paren
+(brace
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|s-&gt;urb_list_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 singleline_comment|// found another urb already queued for processing
+)brace
 )brace
 id|spin_unlock_irqrestore
 (paren
@@ -5106,7 +5120,7 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-singleline_comment|// no such address
+singleline_comment|// urb already queued
 )brace
 macro_line|#ifdef _UHCI_SLAB
 id|purb_priv
@@ -6002,10 +6016,11 @@ op_assign
 l_int|0
 suffix:semicolon
 id|dbg
+c_func
 (paren
 id|KERN_DEBUG
 id|MODSTR
-l_string|&quot;Root-Hub: adr: %2x cmd(%1x): %04 %04 %04 %04&bslash;n&quot;
+l_string|&quot;Root-Hub: adr: %2x cmd(%1x): %04x %04x %04x %04x&bslash;n&quot;
 comma
 id|uhci-&gt;rh.devnum
 comma
@@ -6767,7 +6782,7 @@ op_minus
 id|EPIPE
 suffix:semicolon
 )brace
-id|dbg
+id|printk
 (paren
 id|KERN_DEBUG
 id|MODSTR
@@ -7342,16 +7357,10 @@ id|desc
 suffix:semicolon
 singleline_comment|// show first TD of each transfer
 macro_line|#endif
-singleline_comment|// go into error condition to keep data_toggle unchanged if short packet occurs
+singleline_comment|// got less data than requested
 r_if
 c_cond
 (paren
-(paren
-id|purb-&gt;transfer_flags
-op_amp
-id|USB_DISABLE_SPD
-)paren
-op_logical_and
 (paren
 id|actual_length
 OL
@@ -7359,10 +7368,19 @@ id|maxlength
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|purb-&gt;transfer_flags
+op_amp
+id|USB_DISABLE_SPD
+)paren
+(brace
 id|ret
 op_assign
 id|USB_ST_SHORT_PACKET
 suffix:semicolon
+singleline_comment|// treat as real error
 id|printk
 (paren
 id|KERN_DEBUG
@@ -7374,15 +7392,7 @@ r_break
 suffix:semicolon
 singleline_comment|// exit after this TD because SP was detected
 )brace
-id|data_toggle
-op_assign
-id|uhci_toggle
-(paren
-id|desc-&gt;hw.td.info
-)paren
-suffix:semicolon
-singleline_comment|//printk(KERN_DEBUG MODSTR&quot;process_transfer: len:%d status:%x mapped:%x toggle:%d&bslash;n&quot;, actual_length, desc-&gt;hw.td.status,status, data_toggle);      
-macro_line|#if 1
+singleline_comment|// short read during control-IN: re-start status stage
 r_if
 c_cond
 (paren
@@ -7393,12 +7403,6 @@ id|purb-&gt;pipe
 )paren
 op_eq
 id|PIPE_CONTROL
-)paren
-op_logical_and
-(paren
-id|actual_length
-OL
-id|maxlength
 )paren
 )paren
 (brace
@@ -7430,7 +7434,9 @@ singleline_comment|// re-trigger status stage
 id|printk
 c_func
 (paren
-l_string|&quot;uhci: short packet during control transfer, retrigger status stage&bslash;n&quot;
+l_string|&quot;uhci: short packet during control transfer, retrigger status stage @ %p&bslash;n&quot;
+comma
+id|last_desc
 )paren
 suffix:semicolon
 id|purb_priv-&gt;short_control_packet
@@ -7442,7 +7448,25 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+singleline_comment|// all other cases: short read is OK
+id|data_toggle
+op_assign
+id|uhci_toggle
+(paren
+id|desc-&gt;hw.td.info
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|data_toggle
+op_assign
+id|uhci_toggle
+(paren
+id|desc-&gt;hw.td.info
+)paren
+suffix:semicolon
+singleline_comment|//printk(KERN_DEBUG MODSTR&quot;process_transfer: len:%d status:%x mapped:%x toggle:%d&bslash;n&quot;, actual_length, desc-&gt;hw.td.status,status, data_toggle);      
 )brace
 id|usb_settoggle
 (paren
@@ -7487,7 +7511,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|purb-&gt;status
+id|status
 op_assign
 l_int|0
 suffix:semicolon
@@ -7642,27 +7666,12 @@ c_cond
 (paren
 id|desc-&gt;hw.td.status
 op_amp
-id|TD_CTRL_NAK
-)paren
-(brace
-singleline_comment|// NAKed transfer
-singleline_comment|//printk(&quot;TD NAK Status @%p %08x&bslash;n&quot;,desc,desc-&gt;hw.td.status);
-r_goto
-id|err
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|desc-&gt;hw.td.status
-op_amp
 id|TD_CTRL_ACTIVE
 )paren
 (brace
 singleline_comment|// do not process active TDs
 singleline_comment|//printk(&quot;TD ACT Status @%p %08x&bslash;n&quot;,desc,desc-&gt;hw.td.status);
-r_goto
-id|err
+r_break
 suffix:semicolon
 )brace
 r_if
@@ -7674,9 +7683,8 @@ op_amp
 id|TD_CTRL_IOC
 )paren
 (brace
-singleline_comment|// do not process one-shot TDs
-r_goto
-id|err
+singleline_comment|// do not process one-shot TDs, no recycling
+r_break
 suffix:semicolon
 )brace
 singleline_comment|// extract transfer parameters from TD
@@ -7745,7 +7753,7 @@ id|purb-&gt;error_count
 op_increment
 suffix:semicolon
 r_goto
-id|err
+id|recycle
 suffix:semicolon
 )brace
 r_else
@@ -7798,6 +7806,8 @@ op_assign
 id|USB_ST_URB_PENDING
 suffix:semicolon
 )brace
+id|recycle
+suffix:colon
 singleline_comment|// Recycle INT-TD if interval!=0, else mark TD as one-shot
 r_if
 c_cond
@@ -7862,6 +7872,7 @@ op_and_assign
 op_complement
 id|TD_CTRL_IOC
 suffix:semicolon
+singleline_comment|// inactivate TD
 )brace
 id|err
 suffix:colon
@@ -8249,6 +8260,15 @@ id|USB_ST_NOERROR
 suffix:semicolon
 id|purb_t
 id|purb
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|s-&gt;urb_list_lock
+)paren
+suffix:semicolon
+id|purb
 op_assign
 id|list_entry
 (paren
@@ -8257,13 +8277,6 @@ comma
 id|urb_t
 comma
 id|urb_list
-)paren
-suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|s-&gt;urb_list_lock
 )paren
 suffix:semicolon
 id|dbg
@@ -8502,6 +8515,12 @@ op_logical_neg
 id|proceed
 op_logical_and
 id|is_ring
+op_logical_and
+(paren
+id|purb-&gt;status
+op_ne
+id|USB_ST_URB_KILLED
+)paren
 )paren
 id|uhci_submit_urb
 (paren
@@ -8532,6 +8551,12 @@ c_cond
 id|tmp-&gt;status
 op_ne
 id|USB_ST_URB_PENDING
+)paren
+op_logical_and
+(paren
+id|tmp-&gt;status
+op_ne
+id|USB_ST_URB_KILLED
 )paren
 op_logical_and
 id|uhci_submit_urb
@@ -9392,6 +9417,16 @@ id|s
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|MODSTR
+id|KERN_ERR
+l_string|&quot;request_irq %d failed!&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
 id|usb_free_bus
 (paren
 id|bus
@@ -9588,13 +9623,6 @@ id|io_size
 )paren
 r_break
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,8)
-id|pci_enable_device
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* disable legacy emulation */
 id|pci_write_config_word
 (paren
@@ -9980,6 +10008,31 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,8)
+id|pci_enable_device
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;irq
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+id|MODSTR
+l_string|&quot;Found UHCI device with no IRQ assigned. Check BIOS settings!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/* Ok set it up */
 id|retval
 op_assign

@@ -382,6 +382,18 @@ DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;189
 DECL|macro|__NR_ugetrlimit
 mdefine_line|#define __NR_ugetrlimit&t;&t;191&t;/* SuS compliant getrlimit */
+DECL|macro|__NR_mmap2
+mdefine_line|#define __NR_mmap2&t;&t;192
+DECL|macro|__NR_truncate64
+mdefine_line|#define __NR_truncate64&t;&t;193
+DECL|macro|__NR_ftruncate64
+mdefine_line|#define __NR_ftruncate64&t;194
+DECL|macro|__NR_stat64
+mdefine_line|#define __NR_stat64&t;&t;195
+DECL|macro|__NR_lstat64
+mdefine_line|#define __NR_lstat64&t;&t;196
+DECL|macro|__NR_fstat64
+mdefine_line|#define __NR_fstat64&t;&t;197
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
 DECL|macro|__syscall_return

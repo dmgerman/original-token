@@ -107,7 +107,7 @@ l_int|0x1b
 comma
 l_int|0x2b
 comma
-l_int|0x00
+l_int|0x2b
 comma
 l_int|0x27
 comma
@@ -207,7 +207,7 @@ l_int|0x52
 comma
 l_int|0x53
 comma
-l_int|0x00
+l_int|0x56
 comma
 l_int|0x6d
 comma

@@ -1280,7 +1280,7 @@ id|irq_desc
 id|i
 )braket
 dot
-id|ctl
+id|handler
 op_assign
 op_amp
 id|open_pic
@@ -2038,7 +2038,7 @@ r_int
 id|irq
 )paren
 (brace
-multiline_comment|/*&n;&t; * If it&squot;s an i8259 irq then we&squot;ve already done the&n;&t; * openpic irq.  So we just check to make sure the controller&n;&t; * is an openpic and if it is then eoi&n;&t; *&n;&t; * We do it this way since our irq_desc[irq].ctl can change&n;&t; * with RTL and no longer be open_pic -- Cort&n;&t; */
+multiline_comment|/*&n;&t; * If it&squot;s an i8259 irq then we&squot;ve already done the&n;&t; * openpic irq.  So we just check to make sure the controller&n;&t; * is an openpic and if it is then eoi&n;&t; *&n;&t; * We do it this way since our irq_desc[irq].handler can change&n;&t; * with RTL and no longer be open_pic -- Cort&n;&t; */
 r_if
 c_cond
 (paren

@@ -5,7 +5,7 @@ mdefine_line|#define __PPC_SYSTEM_H
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#include &lt;asm/irq_control.h&gt;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 multiline_comment|/*&n; * Memory barrier.&n; * The sync instruction guarantees that all memory accesses initiated&n; * by this processor have been performed (with respect to all other&n; * mechanisms that access memory).  The eieio instruction is a barrier&n; * providing an ordering (separately) for (a) cacheable stores and (b)&n; * loads and stores to non-cacheable memory (e.g. I/O devices).&n; *&n; * mb() prevents loads and stores being reordered across this point.&n; * rmb() prevents loads being reordered across this point.&n; * wmb() prevents stores being reordered across this point.&n; *&n; * We can use the eieio instruction for wmb, but since it doesn&squot;t&n; * give any ordering guarantees about loads, we have to use the&n; * stronger but slower sync instruction for mb and rmb.&n; */
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)

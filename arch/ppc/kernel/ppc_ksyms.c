@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;

@@ -2140,10 +2140,10 @@ suffix:semicolon
 )brace
 DECL|function|pci_add_new_bus
 r_static
-id|__init
 r_struct
 id|pci_bus
 op_star
+id|__init
 id|pci_add_new_bus
 c_func
 (paren
@@ -2245,8 +2245,8 @@ suffix:semicolon
 multiline_comment|/*&n; * A CardBus bridge is basically the same as a regular PCI bridge,&n; * except we don&squot;t scan behind it because it will be changing.&n; */
 DECL|function|pci_scan_cardbus
 r_static
-id|__init
 r_int
+id|__init
 id|pci_scan_cardbus
 c_func
 (paren
@@ -2497,8 +2497,8 @@ suffix:semicolon
 multiline_comment|/*&n; * If it&squot;s a bridge, scan the bus behind it.&n; */
 DECL|function|pci_scan_bridge
 r_static
-id|__init
 r_int
+id|__init
 id|pci_scan_bridge
 c_func
 (paren
@@ -2788,8 +2788,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Read interrupt line and base address registers.&n; * The architecture-dependent code can tweak these, of course.&n; */
 DECL|function|pci_read_irq
 r_static
-id|__init
 r_void
+id|__init
 id|pci_read_irq
 c_func
 (paren

@@ -612,7 +612,7 @@ id|irq_desc
 id|irq
 )braket
 dot
-id|ctl
+id|handler
 op_ne
 op_amp
 id|gatwick_pic
@@ -1612,7 +1612,7 @@ id|irq_desc
 id|i
 )braket
 dot
-id|ctl
+id|handler
 op_assign
 op_amp
 id|pmac_pic
@@ -1894,7 +1894,7 @@ id|irq_desc
 id|i
 )braket
 dot
-id|ctl
+id|handler
 op_assign
 op_amp
 id|gatwick_pic

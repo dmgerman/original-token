@@ -71,8 +71,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
-macro_line|#       ifdef CONFIG_USB_HP_SCANNER
-id|usb_hp_scanner_init
+macro_line|#       ifdef CONFIG_USB_SCANNER
+id|usb_scanner_init
 c_func
 (paren
 )paren
@@ -179,8 +179,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
-macro_line|#       ifdef CONFIG_USB_HP_SCANNER
-id|usb_hp_scanner_cleanup
+macro_line|#       ifdef CONFIG_USB_SCANNER
+id|usb_scanner_cleanup
 c_func
 (paren
 )paren

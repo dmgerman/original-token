@@ -1529,7 +1529,7 @@ id|irq_desc
 id|irq
 )braket
 dot
-id|ctl-&gt;irq_offset
+id|handler-&gt;irq_offset
 )braket
 dot
 id|Vector_Priority
@@ -1566,7 +1566,7 @@ id|irq_desc
 id|irq
 )braket
 dot
-id|ctl-&gt;irq_offset
+id|handler-&gt;irq_offset
 )braket
 dot
 id|Vector_Priority

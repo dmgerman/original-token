@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -64,21 +65,11 @@ mdefine_line|#define MAXCOUNT 10000000
 DECL|macro|NR_MASK_WORDS
 mdefine_line|#define NR_MASK_WORDS&t;((NR_IRQS + 31) / 32)
 DECL|variable|irq_desc
-r_struct
-id|irqdesc
+id|irq_desc_t
 id|irq_desc
 (braket
 id|NR_IRQS
 )braket
-op_assign
-(brace
-(brace
-l_int|0
-comma
-l_int|0
-)brace
-comma
-)brace
 suffix:semicolon
 DECL|variable|ppc_spurious_interrupts
 r_int
@@ -973,7 +964,7 @@ id|irq_desc
 id|i
 )braket
 dot
-id|ctl
+id|handler
 )paren
 id|len
 op_add_assign
@@ -991,7 +982,7 @@ id|irq_desc
 id|i
 )braket
 dot
-id|ctl
+id|handler
 op_member_access_from_pointer
 r_typename
 )paren

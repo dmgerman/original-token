@@ -12,6 +12,9 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/lp.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
+multiline_comment|/* Define IEEE_DEVICE_ID if you want to see the IEEE-1284 Device ID string.&n; * This may include the printer&squot;s serial number.&n; * An example from an HP 970C DeskJet printer is (this is one long string,&n; * with the serial number changed):&n;MFG:HEWLETT-PACKARD;MDL:DESKJET 970C;CMD:MLC,PCL,PML;CLASS:PRINTER;DESCRIPTION:Hewlett-Packard DeskJet 970C;SERN:US970CSEPROF;VSTATUS:$HB0$NC0,ff,DN,IDLE,CUT,K1,C0,DP,NR,KP000,CP027;VP:0800,FL,B0;VJ:                    ;&n; */
+DECL|macro|IEEE_DEVICE_ID
+mdefine_line|#define IEEE_DEVICE_ID
 DECL|macro|NAK_TIMEOUT
 mdefine_line|#define NAK_TIMEOUT (HZ)&t;&t;&t;&t;/* stall wait for printer */
 DECL|macro|MAX_RETRY_COUNT
@@ -138,6 +141,9 @@ id|p
 id|__u8
 id|status
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_struct
 id|usb_device
 op_star
@@ -145,9 +151,8 @@ id|dev
 op_assign
 id|p-&gt;pusb_dev
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|usb_control_msg
 c_func
 (paren
@@ -183,8 +188,26 @@ id|status
 comma
 id|HZ
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+OL
+l_int|0
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usblp%d: read_status control_msg error = %d&bslash;n&quot;
+comma
+id|p-&gt;minor
+comma
+id|err
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -360,6 +383,11 @@ id|dev
 op_assign
 id|p-&gt;pusb_dev
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+id|err
+op_assign
 id|usb_control_msg
 c_func
 (paren
@@ -388,6 +416,24 @@ comma
 l_int|0
 comma
 id|HZ
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usblp%d: reset control_msg error = %d&bslash;n&quot;
+comma
+id|p-&gt;minor
+comma
+id|err
 )paren
 suffix:semicolon
 )brace
@@ -466,6 +512,15 @@ id|p-&gt;isopen
 op_increment
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usblp%d: printer is already open&bslash;n&quot;
+comma
+id|p-&gt;minor
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -493,6 +548,15 @@ id|GFP_KERNEL
 id|p-&gt;isopen
 op_assign
 l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usblp%d: cannot allocate memory&bslash;n&quot;
+comma
+id|p-&gt;minor
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -1028,6 +1092,24 @@ op_star
 l_int|20
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usblp%d read_printer bulk_msg error = %d&bslash;n&quot;
+comma
+id|p-&gt;minor
+comma
+id|result
+)paren
+suffix:semicolon
 multiline_comment|/* unlike writes, we don&squot;t retry a NAK, just stop now */
 r_if
 c_cond
@@ -1123,6 +1205,9 @@ id|pp
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|__u8
+id|status
 suffix:semicolon
 multiline_comment|/*&n;&t; * FIXME - this will not cope with combined printer/scanners&n;&t; */
 r_if
@@ -1326,7 +1411,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;No minor table space available for USB Printer&bslash;n&quot;
+l_string|&quot;No minor table space available for new USB printer&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1337,7 +1422,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;USB Printer found at address %d&bslash;n&quot;
+l_string|&quot;USB printer found at address %d&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 )paren
@@ -1367,7 +1452,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;usb_printer: no memory!&bslash;n&quot;
+l_string|&quot;USB printer: no memory!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1557,11 +1642,8 @@ comma
 id|pp-&gt;bulk_out_ep
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#ifdef IEEE_DEVICE_ID
 (brace
-id|__u8
-id|status
-suffix:semicolon
 id|__u8
 id|ieee_id
 (braket
@@ -1569,23 +1651,32 @@ l_int|64
 )braket
 suffix:semicolon
 multiline_comment|/* first 2 bytes are (big-endian) length */
+multiline_comment|/* This string space may be too short. */
 r_int
 id|length
 op_assign
-id|be16_to_cpup
-c_func
 (paren
-(paren
-id|__u16
-op_star
-)paren
 id|ieee_id
+(braket
+l_int|0
+)braket
+op_lshift
+l_int|8
 )paren
+op_plus
+id|ieee_id
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* high-low */
+multiline_comment|/* This calc. or be16_to_cpu() both get&n;&t;&t;&t;&t; * some weird results for &lt;length&gt;. */
+r_int
+id|err
 suffix:semicolon
 multiline_comment|/* Let&squot;s get the device id if possible. */
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|usb_control_msg
 c_func
 (paren
@@ -1622,7 +1713,12 @@ l_int|1
 comma
 id|HZ
 )paren
-op_eq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+op_ge
 l_int|0
 )paren
 (brace
@@ -1670,11 +1766,30 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  usblp%d Device ID length=%d, string=%s&bslash;n&quot;
+l_string|&quot;usblp%d Device ID length=%d [%x:%x]&bslash;n&quot;
 comma
 id|pp-&gt;minor
 comma
 id|length
+comma
+id|ieee_id
+(braket
+l_int|0
+)braket
+comma
+id|ieee_id
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;usblp%d Device ID=%s&bslash;n&quot;
+comma
+id|pp-&gt;minor
 comma
 op_amp
 id|ieee_id
@@ -1689,11 +1804,15 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  usblp%d: error reading IEEE-1284 Device ID&bslash;n&quot;
+l_string|&quot;usblp%d: error = %d reading IEEE-1284 Device ID&bslash;n&quot;
 comma
 id|pp-&gt;minor
+comma
+id|err
 )paren
 suffix:semicolon
+)brace
+macro_line|#endif
 id|status
 op_assign
 id|printer_read_status
@@ -1710,7 +1829,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  usblp%d Probe Status is %x: %s,%s,%s&bslash;n&quot;
+l_string|&quot;usblp%d probe status is %x: %s,%s,%s&bslash;n&quot;
 comma
 id|pp-&gt;minor
 comma
@@ -1750,8 +1869,6 @@ suffix:colon
 l_string|&quot;Error&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 id|pp
 suffix:semicolon
@@ -1896,7 +2013,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;USB Printer support registered.&bslash;n&quot;
+l_string|&quot;USB Printer driver registered.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

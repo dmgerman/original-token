@@ -1,21 +1,17 @@
 multiline_comment|/*&n; * $Id: irq_control.h,v 1.8 1999/09/15 23:58:48 cort Exp $&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; */
-macro_line|#ifndef _PPC_IRQ_CONTROL_H
-DECL|macro|_PPC_IRQ_CONTROL_H
-mdefine_line|#define _PPC_IRQ_CONTROL_H
-macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#ifndef _PPC_HW_IRQ_H
+DECL|macro|_PPC_HW_IRQ_H
+mdefine_line|#define _PPC_HW_IRQ_H
+macro_line|#if 0
 multiline_comment|/* Structure describing interrupts */
-DECL|struct|hw_interrupt_type
 r_struct
 id|hw_interrupt_type
 (brace
-DECL|member|typename
 r_const
 r_char
 op_star
 r_typename
 suffix:semicolon
-DECL|member|startup
 r_void
 (paren
 op_star
@@ -27,7 +23,6 @@ r_int
 id|irq
 )paren
 suffix:semicolon
-DECL|member|shutdown
 r_void
 (paren
 op_star
@@ -39,7 +34,6 @@ r_int
 id|irq
 )paren
 suffix:semicolon
-DECL|member|enable
 r_void
 (paren
 op_star
@@ -51,7 +45,6 @@ r_int
 id|irq
 )paren
 suffix:semicolon
-DECL|member|disable
 r_void
 (paren
 op_star
@@ -63,7 +56,6 @@ r_int
 id|irq
 )paren
 suffix:semicolon
-DECL|member|mask_and_ack
 r_void
 (paren
 op_star
@@ -75,23 +67,19 @@ r_int
 id|irq
 )paren
 suffix:semicolon
-DECL|member|irq_offset
 r_int
 id|irq_offset
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|irqdesc
 r_struct
 id|irqdesc
 (brace
-DECL|member|action
 r_struct
 id|irqaction
 op_star
 id|action
 suffix:semicolon
-DECL|member|ctl
 r_struct
 id|hw_interrupt_type
 op_star
@@ -99,14 +87,7 @@ id|ctl
 suffix:semicolon
 )brace
 suffix:semicolon
-r_extern
-r_struct
-id|irqdesc
-id|irq_desc
-(braket
-id|NR_IRQS
-)braket
-suffix:semicolon
+macro_line|#endif
 DECL|struct|int_control_struct
 r_struct
 id|int_control_struct
@@ -239,10 +220,10 @@ id|atomic_t
 id|ppc_n_lost_interrupts
 suffix:semicolon
 DECL|macro|mask_irq
-mdefine_line|#define mask_irq(irq) ({if (irq_desc[irq].ctl &amp;&amp; irq_desc[irq].ctl-&gt;disable) irq_desc[irq].ctl-&gt;disable(irq);})
+mdefine_line|#define mask_irq(irq) ({if (irq_desc[irq].handler &amp;&amp; irq_desc[irq].handler-&gt;disable) irq_desc[irq].handler-&gt;disable(irq);})
 DECL|macro|unmask_irq
-mdefine_line|#define unmask_irq(irq) ({if (irq_desc[irq].ctl &amp;&amp; irq_desc[irq].ctl-&gt;enable) irq_desc[irq].ctl-&gt;enable(irq);})
+mdefine_line|#define unmask_irq(irq) ({if (irq_desc[irq].handler &amp;&amp; irq_desc[irq].handler-&gt;enable) irq_desc[irq].handler-&gt;enable(irq);})
 DECL|macro|mask_and_ack_irq
-mdefine_line|#define mask_and_ack_irq(irq) ({if (irq_desc[irq].ctl &amp;&amp; irq_desc[irq].ctl-&gt;mask_and_ack) irq_desc[irq].ctl-&gt;mask_and_ack(irq);})
-macro_line|#endif /* _PPC_IRQ_CONTROL_H */
+mdefine_line|#define mask_and_ack_irq(irq) ({if (irq_desc[irq].handler &amp;&amp; irq_desc[irq].handler-&gt;ack) irq_desc[irq].handler-&gt;ack(irq);})
+macro_line|#endif /* _PPC_HW_IRQ_H */
 eof

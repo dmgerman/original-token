@@ -64,13 +64,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_EXT2_FS
-id|init_ext2_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_MINIX_FS
 id|init_minix_fs
 c_func

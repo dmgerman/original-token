@@ -898,7 +898,7 @@ id|irq_desc
 id|i
 )braket
 dot
-id|ctl
+id|handler
 op_assign
 op_amp
 id|ppc8xx_pic
@@ -939,7 +939,7 @@ id|irq_desc
 id|i
 )braket
 dot
-id|ctl
+id|handler
 op_assign
 op_amp
 id|i8259_pic

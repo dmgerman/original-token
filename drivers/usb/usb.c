@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/usb/usb.c&n; *&n; * (C) Copyright Linus Torvalds 1999&n; * (C) Copyright Johannes Erdfelt 1999&n; * (C) Copyright Andreas Gal 1999&n; * (C) Copyright Gregory P. Smith 1999&n; * (C) Copyright Deti Fliegl 1999 (new USB architecture)&n; *&n; * NOTE! This is not actually a driver at all, rather this is&n; * just a collection of helper routines that implement the&n; * generic USB things that the real drivers can use..&n; *&n; * Think of this as a &quot;USB library&quot; rather than anything else.&n; * It should be considered a slave, with no callbacks. Callbacks&n; * are evil.&n; *&n; * $Id: usb.c,v 1.37 1999/12/17 10:48:08 fliegl Exp $&n; */
+multiline_comment|/*&n; * drivers/usb/usb.c&n; *&n; * (C) Copyright Linus Torvalds 1999&n; * (C) Copyright Johannes Erdfelt 1999&n; * (C) Copyright Andreas Gal 1999&n; * (C) Copyright Gregory P. Smith 1999&n; * (C) Copyright Deti Fliegl 1999 (new USB architecture)&n; *&n; * NOTE! This is not actually a driver at all, rather this is&n; * just a collection of helper routines that implement the&n; * generic USB things that the real drivers can use..&n; *&n; * Think of this as a &quot;USB library&quot; rather than anything else.&n; * It should be considered a slave, with no callbacks. Callbacks&n; * are evil.&n; *&n; * $Id: usb.c,v 1.39 1999/12/27 15:17:47 acher Exp $&n; */
 macro_line|#ifndef EXPORT_SYMTAB
 DECL|macro|EXPORT_SYMTAB
 mdefine_line|#define EXPORT_SYMTAB
@@ -16,27 +16,10 @@ DECL|macro|MODSTR
 mdefine_line|#define MODSTR &quot;usbcore: &quot;
 macro_line|#ifdef USB_DEBUG
 DECL|macro|dbg
-mdefine_line|#define dbg printk
+mdefine_line|#define dbg(format, arg...) printk(format, ## arg)
 macro_line|#else
 DECL|macro|dbg
-mdefine_line|#define dbg nix
-DECL|function|nix
-r_static
-r_void
-id|nix
-c_func
-(paren
-r_const
-r_char
-op_star
-id|format
-comma
-dot
-dot
-dot
-)paren
-(brace
-)brace
+mdefine_line|#define dbg(format, arg...)
 macro_line|#endif
 multiline_comment|/*&n; * Prototypes for the device driver probing/loading functions&n; */
 r_static

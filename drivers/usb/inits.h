@@ -104,14 +104,14 @@ r_void
 )paren
 suffix:semicolon
 r_int
-id|usb_hp_scanner_init
+id|usb_scanner_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_void
-id|usb_hp_scanner_cleanup
+id|usb_scanner_cleanup
 c_func
 (paren
 r_void

@@ -308,6 +308,70 @@ macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|macro|USB_MAJOR
 mdefine_line|#define USB_MAJOR 180
+r_extern
+r_int
+id|usb_hub_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usb_kbd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usb_cpia_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usb_dc2xx_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usb_mouse_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usb_printer_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_hub_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_mouse_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* for 2.2-kernels */
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
 DECL|function|list_add_tail
@@ -1190,11 +1254,11 @@ op_star
 id|purb_t
 suffix:semicolon
 DECL|macro|FILL_CONTROL_URB
-mdefine_line|#define FILL_CONTROL_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;a-&gt;dev=aa;&bslash;&n;&t;a-&gt;pipe=b;&bslash;&n;&t;a-&gt;setup_packet=c;&bslash;&n;&t;a-&gt;transfer_buffer=d;&bslash;&n;&t;a-&gt;transfer_buffer_length=e;&bslash;&n;&t;a-&gt;complete=f;&bslash;&n;&t;a-&gt;context=g;&bslash;&n;    } while (0)
+mdefine_line|#define FILL_CONTROL_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;setup_packet=c;&bslash;&n;&t;(a)-&gt;transfer_buffer=d;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=e;&bslash;&n;&t;(a)-&gt;complete=f;&bslash;&n;&t;(a)-&gt;context=g;&bslash;&n;    } while (0)
 DECL|macro|FILL_BULK_URB
-mdefine_line|#define FILL_BULK_URB(a,aa,b,c,d,e,f) &bslash;&n;    do {&bslash;&n;&t;a-&gt;dev=aa;&bslash;&n;&t;a-&gt;pipe=b;&bslash;&n;&t;a-&gt;transfer_buffer=c;&bslash;&n;&t;a-&gt;transfer_buffer_length=d;&bslash;&n;&t;a-&gt;complete=e;&bslash;&n;&t;a-&gt;context=f;&bslash;&n;    } while (0)
+mdefine_line|#define FILL_BULK_URB(a,aa,b,c,d,e,f) &bslash;&n;    do {&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;transfer_buffer=c;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=d;&bslash;&n;&t;(a)-&gt;complete=e;&bslash;&n;&t;(a)-&gt;context=f;&bslash;&n;    } while (0)
 DECL|macro|FILL_INT_URB
-mdefine_line|#define FILL_INT_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;a-&gt;dev=aa;&bslash;&n;&t;a-&gt;pipe=b;&bslash;&n;&t;a-&gt;transfer_buffer=c;&bslash;&n;&t;a-&gt;transfer_buffer_length=d;&bslash;&n;&t;a-&gt;complete=e;&bslash;&n;&t;a-&gt;context=f;&bslash;&n;&t;a-&gt;interval=g;&bslash;&n;&t;a-&gt;start_frame=-1;&bslash;&n;    } while (0)
+mdefine_line|#define FILL_INT_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;transfer_buffer=c;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=d;&bslash;&n;&t;(a)-&gt;complete=e;&bslash;&n;&t;(a)-&gt;context=f;&bslash;&n;&t;(a)-&gt;interval=g;&bslash;&n;&t;(a)-&gt;start_frame=-1;&bslash;&n;    } while (0)
 id|purb_t
 id|usb_alloc_urb
 c_func
@@ -1453,10 +1517,6 @@ id|bandwidth_isoc_reqs
 suffix:semicolon
 multiline_comment|/* number of Isoc. requesters */
 multiline_comment|/* procfs entry */
-DECL|member|proc_busnum
-r_int
-id|proc_busnum
-suffix:semicolon
 DECL|member|proc_entry
 r_struct
 id|proc_dir_entry
