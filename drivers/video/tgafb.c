@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/tgafb.c -- DEC 21030 TGA frame buffer device&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This driver is partly based on the original TGA console driver&n; *&n; *&t;Copyright (C) 1995  Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
-multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- How to set a single color register on 24-plane cards?&n; *&n; *&t;- Hardware cursor (useful for other graphics boards too)&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
+multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- How to set a single color register on 24-plane cards?&n; *&n; *&t;- Hardware cursor (useful for other graphics boards too)&n; *&n; *&t;- Support for more resolutions&n; *&n; *&t;- Some redraws can stall kernel for several seconds&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4024,7 +4024,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Blank the display.&n;     */
+multiline_comment|/*&n;     *  Blank and unblank the display.&n;     */
 DECL|function|tgafbcon_blank
 r_static
 r_void
@@ -4040,27 +4040,89 @@ op_star
 id|info
 )paren
 (brace
-multiline_comment|/* Should also do stuff here for vesa blanking  -tor */
-r_if
+r_static
+r_int
+id|tga_vesa_blanked
+op_assign
+l_int|0
+suffix:semicolon
+id|u32
+id|vhcr
+comma
+id|vvcr
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|vhcr
+op_assign
+id|TGA_READ_REG
+c_func
+(paren
+id|TGA_HORIZ_REG
+)paren
+suffix:semicolon
+id|vvcr
+op_assign
+id|TGA_READ_REG
+c_func
+(paren
+id|TGA_VERT_REG
+)paren
+suffix:semicolon
+r_switch
 c_cond
 (paren
 id|blank
-OG
+)paren
+(brace
+r_case
 l_int|0
+suffix:colon
+multiline_comment|/* Unblanking */
+r_if
+c_cond
+(paren
+id|tga_vesa_blanked
 )paren
 (brace
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x03
+id|vhcr
+op_amp
+l_int|0xbfffffff
 comma
-id|TGA_VALID_REG
+id|TGA_HORIZ_REG
 )paren
 suffix:semicolon
-multiline_comment|/* SCANNING and BLANK */
+id|TGA_WRITE_REG
+c_func
+(paren
+id|vvcr
+op_amp
+l_int|0xbfffffff
+comma
+id|TGA_VERT_REG
+)paren
+suffix:semicolon
+id|tga_vesa_blanked
+op_assign
+l_int|0
+suffix:semicolon
 )brace
-r_else
-(brace
 id|TGA_WRITE_REG
 c_func
 (paren
@@ -4070,7 +4132,127 @@ id|TGA_VALID_REG
 )paren
 suffix:semicolon
 multiline_comment|/* SCANNING */
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+multiline_comment|/* Normal blanking */
+id|TGA_WRITE_REG
+c_func
+(paren
+l_int|0x03
+comma
+id|TGA_VALID_REG
+)paren
+suffix:semicolon
+multiline_comment|/* SCANNING and BLANK */
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+multiline_comment|/* VESA blank (vsync off) */
+id|TGA_WRITE_REG
+c_func
+(paren
+id|vvcr
+op_or
+l_int|0x40000000
+comma
+id|TGA_VERT_REG
+)paren
+suffix:semicolon
+id|TGA_WRITE_REG
+c_func
+(paren
+l_int|0x02
+comma
+id|TGA_VALID_REG
+)paren
+suffix:semicolon
+multiline_comment|/* BLANK */
+id|tga_vesa_blanked
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+multiline_comment|/* VESA blank (hsync off) */
+id|TGA_WRITE_REG
+c_func
+(paren
+id|vhcr
+op_or
+l_int|0x40000000
+comma
+id|TGA_HORIZ_REG
+)paren
+suffix:semicolon
+id|TGA_WRITE_REG
+c_func
+(paren
+l_int|0x02
+comma
+id|TGA_VALID_REG
+)paren
+suffix:semicolon
+multiline_comment|/* BLANK */
+id|tga_vesa_blanked
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+multiline_comment|/* Poweroff */
+id|TGA_WRITE_REG
+c_func
+(paren
+id|vhcr
+op_or
+l_int|0x40000000
+comma
+id|TGA_HORIZ_REG
+)paren
+suffix:semicolon
+id|TGA_WRITE_REG
+c_func
+(paren
+id|vvcr
+op_or
+l_int|0x40000000
+comma
+id|TGA_VERT_REG
+)paren
+suffix:semicolon
+id|TGA_WRITE_REG
+c_func
+(paren
+l_int|0x02
+comma
+id|TGA_VALID_REG
+)paren
+suffix:semicolon
+multiline_comment|/* BLANK */
+id|tga_vesa_blanked
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Read a single color register and split it into&n;     *  colors/transparent. Return != 0 for invalid regno.&n;     */
 DECL|function|tgafb_getcolreg

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.23 1998/10/21 10:52:24 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.24 1998/12/10 02:39:51 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -247,7 +247,7 @@ r_static
 r_char
 id|Blackhawk_pci_IRQ_map
 (braket
-l_int|16
+l_int|19
 )braket
 id|__prepdata
 op_assign
@@ -300,6 +300,15 @@ multiline_comment|/* Slot 14 - Ethernet */
 l_int|0
 comma
 multiline_comment|/* Slot 15 - unused */
+l_int|1
+comma
+multiline_comment|/* Slot P7 */
+l_int|2
+comma
+multiline_comment|/* Slot P6 */
+l_int|3
+comma
+multiline_comment|/* Slot P5 */
 )brace
 suffix:semicolon
 DECL|variable|__prepdata
@@ -320,7 +329,7 @@ multiline_comment|/* Line 1 */
 l_int|11
 comma
 multiline_comment|/* Line 2 */
-l_int|14
+l_int|15
 comma
 multiline_comment|/* Line 3 */
 l_int|15
@@ -1405,6 +1414,10 @@ op_eq
 id|_PREP_Motorola
 )paren
 (brace
+r_int
+r_int
+id|irq_mode
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1529,6 +1542,62 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* AJF adjust level/edge control according to routes */
+id|irq_mode
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+op_le
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|irq_mode
+op_or_assign
+(paren
+l_int|1
+op_lshift
+id|Motherboard_routes
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|outb
+c_func
+(paren
+id|irq_mode
+op_amp
+l_int|0xff
+comma
+l_int|0x4d0
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+(paren
+id|irq_mode
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+comma
+l_int|0x4d1
+)paren
+suffix:semicolon
 )brace
 r_else
 r_if

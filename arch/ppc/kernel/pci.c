@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: pci.c,v 1.39 1998/10/13 20:59:04 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
+multiline_comment|/*&n; * $Id: pci.c,v 1.42 1998/12/04 14:31:37 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -793,7 +793,7 @@ r_char
 op_star
 id|Motherboard_routes
 suffix:semicolon
-multiline_comment|/*&n;&t; * FIXME: This is broken: We should not assign IRQ&squot;s to IRQless&n;&t; *&t;  devices (look at PCI_INTERRUPT_PIN) and we also should&n;&t; *&t;  honor the existence of multi-function devices where&n;&t; *&t;  different functions have different interrupt pins. [mj]&n;&t; */
+macro_line|#ifndef CONFIG_MBX
 r_switch
 c_cond
 (paren
@@ -832,6 +832,8 @@ c_func
 (paren
 id|dev-&gt;devfn
 )paren
+comma
+id|i
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
@@ -843,6 +845,91 @@ id|d
 )braket
 )braket
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+l_int|5
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+OG
+l_int|0x10000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Relocating PCI address %x -&gt; %x&bslash;n&quot;
+comma
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+comma
+(paren
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+op_amp
+l_int|0x00FFFFFF
+)paren
+op_or
+l_int|0x01000000
+)paren
+suffix:semicolon
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+op_assign
+(paren
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+op_amp
+l_int|0x00FFFFFF
+)paren
+op_or
+l_int|0x01000000
+suffix:semicolon
+id|pci_write_config_dword
+c_func
+(paren
+id|dev
+comma
+id|PCI_BASE_ADDRESS_0
+op_plus
+(paren
+id|i
+op_star
+l_int|0x4
+)paren
+comma
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
 macro_line|#if 0&t;&t;&t;
 multiline_comment|/*&n;&t;&t;&t; * If we have residual data and if it knows about this&n;&t;&t;&t; * device ask it what the irq is.&n;&t;&t;&t; *  -- Cort&n;&t;&t;&t; */
 id|ppcd
@@ -1046,6 +1133,23 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#else /* CONFIG_MBX */
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|pci_devices
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;next
+)paren
+(brace
+)brace
+macro_line|#endif /* CONFIG_MBX */
 )brace
 DECL|function|__initfunc
 id|__initfunc

@@ -290,6 +290,18 @@ r_char
 op_star
 id|CyberRegs
 suffix:semicolon
+DECL|variable|CyberMem_phys
+r_static
+r_int
+r_int
+id|CyberMem_phys
+suffix:semicolon
+DECL|variable|CyberRegs_phys
+r_static
+r_int
+r_int
+id|CyberRegs_phys
+suffix:semicolon
 multiline_comment|/* From cvision.c  for cvision_core.c */
 DECL|variable|cv64_mem
 r_static
@@ -2101,14 +2113,7 @@ op_assign
 r_char
 op_star
 )paren
-id|virt_to_phys
-(paren
-(paren
-r_void
-op_star
-)paren
-id|CyberMem
-)paren
+id|CyberMem_phys
 suffix:semicolon
 id|fix-&gt;smem_len
 op_assign
@@ -2120,14 +2125,7 @@ op_assign
 r_char
 op_star
 )paren
-id|virt_to_phys
-(paren
-(paren
-r_void
-op_star
-)paren
-id|CyberRegs
-)paren
+id|CyberRegs_phys
 suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign
@@ -5465,6 +5463,18 @@ id|CyberRegs
 op_assign
 id|cv64_regs
 suffix:semicolon
+id|CyberMem_phys
+op_assign
+id|board_addr
+op_plus
+l_int|0x01400000
+suffix:semicolon
+id|CyberRegs_phys
+op_assign
+id|CyberMem_phys
+op_plus
+l_int|0x00c00000
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -6570,7 +6580,7 @@ macro_line|#if 0
 multiline_comment|/* ARB Generates 100 usec delay */
 r_inline
 r_void
-id|__delay
+id|__cv_delay
 (paren
 r_int
 r_int
@@ -6738,7 +6748,7 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* __delay (0); */
+multiline_comment|/* __cv_delay (0); */
 r_return
 (paren
 id|vgar
@@ -8650,7 +8660,7 @@ c_func
 l_int|200
 )paren
 suffix:semicolon
-multiline_comment|/* __delay (200000); */
+multiline_comment|/* __cv_delay (200000); */
 id|vgaw16
 (paren
 id|cv64_regs
@@ -8687,7 +8697,7 @@ c_func
 l_int|200
 )paren
 suffix:semicolon
-multiline_comment|/* __delay (200000); */
+multiline_comment|/* __cv_delay (200000); */
 id|vgaw16
 (paren
 id|cv64_regs
@@ -8984,9 +8994,11 @@ suffix:semicolon
 r_int
 id|bpp
 suffix:semicolon
+macro_line|#if 0
 r_float
 id|freq_f
 suffix:semicolon
+macro_line|#endif
 r_int
 id|freq
 suffix:semicolon
@@ -9568,6 +9580,7 @@ l_int|0x00
 suffix:semicolon
 multiline_comment|/* cv64_compute_clock accepts arguments in Hz */
 multiline_comment|/* pixclock is in ps ... convert to Hz */
+macro_line|#if 0
 id|freq_f
 op_assign
 (paren
@@ -9592,6 +9605,19 @@ id|freq_f
 op_star
 l_int|1000
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* freq = (long) ((long long)1000000000000 / (long long) video_mode-&gt;pixclock);&n; */
+id|freq
+op_assign
+(paren
+l_int|1000000000
+op_div
+id|video_mode-&gt;pixclock
+)paren
+op_star
+l_int|1000
+suffix:semicolon
+macro_line|#endif
 id|mnr
 op_assign
 id|cv64_compute_clock
@@ -10735,7 +10761,7 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* __delay (100000); */
+multiline_comment|/* __cv_delay (100000); */
 id|WAttr
 (paren
 id|cv64_regs
@@ -10758,7 +10784,7 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* __delay (100000); */
+multiline_comment|/* __cv_delay (100000); */
 id|WAttr
 (paren
 id|cv64_regs
@@ -10783,7 +10809,7 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* __delay (100000); */
+multiline_comment|/* __cv_delay (100000); */
 id|tfillm
 op_assign
 (paren
@@ -10974,7 +11000,7 @@ c_func
 l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* __delay (10000); */
+multiline_comment|/* __cv_delay (10000); */
 multiline_comment|/* Text initialization */
 r_if
 c_cond

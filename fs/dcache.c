@@ -431,7 +431,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Try to invalidate the dentry if it turns out to be&n; * possible. If there are other users of the dentry we&n; * can&squot;t invalidate it.&n; */
+multiline_comment|/*&n; * Try to invalidate the dentry if it turns out to be&n; * possible. If there are other dentries that can be&n; * reached through this one we can&squot;t delete it.&n; */
 DECL|function|d_invalidate
 r_int
 id|d_invalidate
@@ -455,6 +455,7 @@ op_amp
 id|dentry-&gt;d_subdirs
 )paren
 )paren
+(brace
 id|shrink_dcache_parent
 c_func
 (paren
@@ -464,14 +465,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_count
-op_ne
-l_int|1
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_subdirs
+)paren
 )paren
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
 id|d_drop
 c_func
 (paren

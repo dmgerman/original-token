@@ -300,12 +300,18 @@ DECL|macro|__SCROLL_YNOMOVE
 mdefine_line|#define __SCROLL_YNOMOVE&t;0x020
 DECL|macro|__SCROLL_YPANREDRAW
 mdefine_line|#define __SCROLL_YPANREDRAW&t;0x040
+DECL|macro|__SCROLL_YNOPARTIAL
+mdefine_line|#define __SCROLL_YNOPARTIAL&t;0x080
 multiline_comment|/* Only these should be used by the drivers */
 multiline_comment|/* Which one should you use? If you have a fast card and slow bus,&n;   then probably just 0 to indicate fbcon should choose between&n;   YWRAP/YPAN+MOVE/YMOVE. On the other side, if you have a fast bus&n;   and even better if your card can do fonting (1-&gt;8/32bit painting),&n;   you should consider either SCROLL_YREDRAW (if your card is&n;   able to do neither YPAN/YWRAP), or SCROLL_YNOMOVE.&n;   The best is to test it with some real life scrolling (usually, not&n;   all lines on the screen are filled completely with non-space characters,&n;   and REDRAW performs much better on such lines, so don&squot;t cat a file&n;   with every line covering all screen columns, it would not be the right&n;   benchmark).&n; */
 DECL|macro|SCROLL_YREDRAW
 mdefine_line|#define SCROLL_YREDRAW&t;&t;(__SCROLL_YFIXED|__SCROLL_YREDRAW)
 DECL|macro|SCROLL_YNOMOVE
 mdefine_line|#define SCROLL_YNOMOVE&t;&t;(__SCROLL_YNOMOVE|__SCROLL_YPANREDRAW)
+multiline_comment|/* SCROLL_YNOPARTIAL, used in combination with the above, is for video&n;   cards which can not handle using panning to scroll a portion of the&n;   screen without excessive flicker.  Panning will only be used for&n;   whole screens.&n; */
+multiline_comment|/* Namespace consistency */
+DECL|macro|SCROLL_YNOPARTIAL
+mdefine_line|#define SCROLL_YNOPARTIAL&t;__SCROLL_YNOPARTIAL
 r_extern
 r_void
 id|fbcon_redraw_bmove

@@ -1,12 +1,16 @@
 multiline_comment|/*&n; *&n; * Based on cfs.h from Mach, but revamped for increased simplicity.&n; * Linux modifications by Peter Braam, Aug 1996&n; */
-macro_line|#ifndef _CFS_HEADER_
-DECL|macro|_CFS_HEADER_
-mdefine_line|#define _CFS_HEADER_
+macro_line|#ifndef _CODA_HEADER_
+DECL|macro|_CODA_HEADER_
+mdefine_line|#define _CODA_HEADER_
 multiline_comment|/* Catch new _KERNEL defn for NetBSD */
 macro_line|#ifdef __NetBSD__
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#endif 
-macro_line|#ifdef DJGPP
+macro_line|#ifndef CODA_MAXSYMLINKS
+DECL|macro|CODA_MAXSYMLINKS
+mdefine_line|#define CODA_MAXSYMLINKS 10
+macro_line|#endif
+macro_line|#if defined(DJGPP) || defined(__CYGWIN32__)
 macro_line|#ifdef KERNEL
 DECL|typedef|u_long
 r_typedef
@@ -42,11 +46,22 @@ r_void
 op_star
 id|caddr_t
 suffix:semicolon
+macro_line|#ifdef DOS
 DECL|typedef|u_quad_t
 r_typedef
-id|u_long
+r_int
+id|__int64
 id|u_quad_t
 suffix:semicolon
+macro_line|#else 
+DECL|typedef|u_quad_t
+r_typedef
+r_int
+r_int
+r_int
+id|u_quad_t
+suffix:semicolon
+macro_line|#endif
 DECL|macro|inline
 mdefine_line|#define inline
 DECL|struct|timespec
@@ -68,12 +83,14 @@ macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;sys/time.h&gt;
 DECL|typedef|u_quad_t
 r_typedef
-id|u_long
+r_int
+r_int
+r_int
 id|u_quad_t
 suffix:semicolon
 macro_line|#endif /* !KERNEL */
 macro_line|#endif /* !DJGPP */
-macro_line|#if defined(__linux__) || defined(__CYGWIN32__)
+macro_line|#if defined(__linux__)
 DECL|macro|cdev_t
 mdefine_line|#define cdev_t u_quad_t
 macro_line|#if !defined(_UQUAD_T_) &amp;&amp; (!defined(__GLIBC__) || __GLIBC__ &lt; 2)
@@ -116,12 +133,12 @@ multiline_comment|/* nanoseconds */
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Cfs constants&n; */
-DECL|macro|CFS_MAXNAMLEN
-mdefine_line|#define CFS_MAXNAMLEN   255
-DECL|macro|CFS_MAXPATHLEN
-mdefine_line|#define CFS_MAXPATHLEN  1024
-DECL|macro|CFS_MAXSYMLINK
-mdefine_line|#define CFS_MAXSYMLINK  10
+DECL|macro|CODA_MAXNAMLEN
+mdefine_line|#define CODA_MAXNAMLEN   255
+DECL|macro|CODA_MAXPATHLEN
+mdefine_line|#define CODA_MAXPATHLEN  1024
+DECL|macro|CODA_MAXSYMLINK
+mdefine_line|#define CODA_MAXSYMLINK  10
 multiline_comment|/* these are Coda&squot;s version of O_RDONLY etc combinations&n; * to deal with VFS open modes&n; */
 DECL|macro|C_O_READ
 mdefine_line|#define&t;C_O_READ&t;0x001
@@ -139,12 +156,12 @@ mdefine_line|#define C_M_READ  00400
 DECL|macro|C_M_WRITE
 mdefine_line|#define C_M_WRITE 00200
 multiline_comment|/* for access Venus will use */
+DECL|macro|C_A_C_OK
+mdefine_line|#define C_A_C_OK    8               /* Test for writing upon create.  */
 DECL|macro|C_A_R_OK
 mdefine_line|#define C_A_R_OK    4               /* Test for read permission.  */
 DECL|macro|C_A_W_OK
 mdefine_line|#define C_A_W_OK    2               /* Test for write permission.  */
-DECL|macro|C_A_C_OK
-mdefine_line|#define C_A_C_OK    8               /* Test for writing upon create.  */
 DECL|macro|C_A_X_OK
 mdefine_line|#define C_A_X_OK    1               /* Test for execute permission.  */
 DECL|macro|C_A_F_OK
@@ -182,7 +199,7 @@ DECL|member|d_name
 r_char
 id|d_name
 (braket
-id|CFS_MAXNAMLEN
+id|CODA_MAXNAMLEN
 op_plus
 l_int|1
 )braket
@@ -193,12 +210,12 @@ suffix:semicolon
 DECL|macro|DIRSIZ
 macro_line|#undef DIRSIZ
 DECL|macro|DIRSIZ
-mdefine_line|#define DIRSIZ(dp)      ((sizeof (struct venus_dirent) - (CFS_MAXNAMLEN+1)) + &bslash;&n;                         (((dp)-&gt;d_namlen+1 + 3) &amp;~ 3))
+mdefine_line|#define DIRSIZ(dp)      ((sizeof (struct venus_dirent) - (CODA_MAXNAMLEN+1)) + &bslash;&n;                         (((dp)-&gt;d_namlen+1 + 3) &amp;~ 3))
 multiline_comment|/*&n; * File types&n; */
 DECL|macro|CDT_UNKNOWN
 mdefine_line|#define&t;CDT_UNKNOWN&t; 0
 DECL|macro|CDT_FIFO
-mdefine_line|#define&t;CDT_FIFO&t;&t; 1
+mdefine_line|#define&t;CDT_FIFO&t; 1
 DECL|macro|CDT_CHR
 mdefine_line|#define&t;CDT_CHR&t;&t; 2
 DECL|macro|CDT_DIR
@@ -210,7 +227,7 @@ mdefine_line|#define&t;CDT_REG&t;&t; 8
 DECL|macro|CDT_LNK
 mdefine_line|#define&t;CDT_LNK&t;&t;10
 DECL|macro|CDT_SOCK
-mdefine_line|#define&t;CDT_SOCK&t;&t;12
+mdefine_line|#define&t;CDT_SOCK&t;12
 DECL|macro|CDT_WHT
 mdefine_line|#define&t;CDT_WHT&t;&t;14
 multiline_comment|/*&n; * Convert between stat structure types and directory types.&n; */
@@ -268,9 +285,10 @@ DECL|typedef|ViceFid
 id|ViceFid
 suffix:semicolon
 macro_line|#endif&t;/* VICEFID */
+macro_line|#ifdef __linux__
 DECL|function|coda_f2i
 r_static
-r_inline
+id|__inline__
 id|ino_t
 id|coda_f2i
 c_func
@@ -284,9 +302,39 @@ id|fid
 r_if
 c_cond
 (paren
+op_logical_neg
 id|fid
 )paren
-(brace
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fid-&gt;Vnode
+op_eq
+l_int|0xfffffffe
+op_logical_or
+id|fid-&gt;Vnode
+op_eq
+l_int|0xffffffff
+)paren
+r_return
+(paren
+(paren
+id|fid-&gt;Volume
+op_lshift
+l_int|20
+)paren
+op_or
+(paren
+id|fid-&gt;Unique
+op_amp
+l_int|0xfffff
+)paren
+)paren
+suffix:semicolon
+r_else
 r_return
 (paren
 id|fid-&gt;Unique
@@ -305,13 +353,14 @@ l_int|20
 )paren
 suffix:semicolon
 )brace
-r_else
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-)brace
+macro_line|#else
+DECL|macro|coda_f2i
+mdefine_line|#define coda_f2i(fid)&bslash;&n;&t;((fid) ? ((fid)-&gt;Unique + ((fid)-&gt;Vnode&lt;&lt;10) + ((fid)-&gt;Volume&lt;&lt;20)) : 0)
+macro_line|#endif
+macro_line|#ifndef __BIT_TYPES_DEFINED__
+DECL|macro|u_int32_t
+mdefine_line|#define u_int32_t unsigned int
+macro_line|#endif
 macro_line|#ifndef _VUID_T_
 DECL|macro|_VUID_T_
 mdefine_line|#define _VUID_T_
@@ -347,7 +396,6 @@ comma
 id|cr_fsuid
 suffix:semicolon
 multiline_comment|/* Real, efftve, set, fs uid*/
-macro_line|#if&t;defined(__NetBSD__) || defined(__FreeBSD__)
 DECL|member|cr_groupid
 DECL|member|cr_egid
 DECL|member|cr_sgid
@@ -362,22 +410,6 @@ comma
 id|cr_fsgid
 suffix:semicolon
 multiline_comment|/* same for groups */
-macro_line|#else
-DECL|member|cr_gid
-DECL|member|cr_egid
-DECL|member|cr_sgid
-DECL|member|cr_fsgid
-id|vgid_t
-id|cr_gid
-comma
-id|cr_egid
-comma
-id|cr_sgid
-comma
-id|cr_fsgid
-suffix:semicolon
-multiline_comment|/* same for groups */
-macro_line|#endif
 )brace
 suffix:semicolon
 macro_line|#endif 
@@ -422,8 +454,7 @@ r_struct
 id|coda_vattr
 (brace
 DECL|member|va_type
-r_enum
-id|coda_vtype
+r_int
 id|va_type
 suffix:semicolon
 multiline_comment|/* vnode type (for create) */
@@ -509,77 +540,91 @@ multiline_comment|/* file modification number */
 suffix:semicolon
 macro_line|#endif 
 multiline_comment|/*&n; * Kernel &lt;--&gt; Venus communications.&n; */
-DECL|macro|CFS_ROOT
-mdefine_line|#define CFS_ROOT&t;((u_long) 2)
-DECL|macro|CFS_SYNC
-mdefine_line|#define CFS_SYNC&t;((u_long) 3)
-DECL|macro|CFS_OPEN
-mdefine_line|#define CFS_OPEN&t;((u_long) 4)
-DECL|macro|CFS_CLOSE
-mdefine_line|#define CFS_CLOSE&t;((u_long) 5)
-DECL|macro|CFS_IOCTL
-mdefine_line|#define CFS_IOCTL&t;((u_long) 6)
-DECL|macro|CFS_GETATTR
-mdefine_line|#define CFS_GETATTR&t;((u_long) 7)
-DECL|macro|CFS_SETATTR
-mdefine_line|#define CFS_SETATTR&t;((u_long) 8)
-DECL|macro|CFS_ACCESS
-mdefine_line|#define CFS_ACCESS&t;((u_long) 9)
-DECL|macro|CFS_LOOKUP
-mdefine_line|#define CFS_LOOKUP&t;((u_long) 10)
-DECL|macro|CFS_CREATE
-mdefine_line|#define CFS_CREATE&t;((u_long) 11)
-DECL|macro|CFS_REMOVE
-mdefine_line|#define CFS_REMOVE&t;((u_long) 12)
-DECL|macro|CFS_LINK
-mdefine_line|#define CFS_LINK&t;((u_long) 13)
-DECL|macro|CFS_RENAME
-mdefine_line|#define CFS_RENAME&t;((u_long) 14)
-DECL|macro|CFS_MKDIR
-mdefine_line|#define CFS_MKDIR&t;((u_long) 15)
-DECL|macro|CFS_RMDIR
-mdefine_line|#define CFS_RMDIR&t;((u_long) 16)
-DECL|macro|CFS_READDIR
-mdefine_line|#define CFS_READDIR&t;((u_long) 17)
-DECL|macro|CFS_SYMLINK
-mdefine_line|#define CFS_SYMLINK&t;((u_long) 18)
-DECL|macro|CFS_READLINK
-mdefine_line|#define CFS_READLINK&t;((u_long) 19)
-DECL|macro|CFS_FSYNC
-mdefine_line|#define CFS_FSYNC&t;((u_long) 20)
-DECL|macro|CFS_INACTIVE
-mdefine_line|#define CFS_INACTIVE&t;((u_long) 21)
-DECL|macro|CFS_VGET
-mdefine_line|#define CFS_VGET&t;((u_long) 22)
-DECL|macro|CFS_SIGNAL
-mdefine_line|#define CFS_SIGNAL&t;((u_long) 23)
-DECL|macro|CFS_REPLACE
-mdefine_line|#define CFS_REPLACE&t;((u_long) 24)
-DECL|macro|CFS_FLUSH
-mdefine_line|#define CFS_FLUSH       ((u_long) 25)
-DECL|macro|CFS_PURGEUSER
-mdefine_line|#define CFS_PURGEUSER   ((u_long) 26)
-DECL|macro|CFS_ZAPFILE
-mdefine_line|#define CFS_ZAPFILE     ((u_long) 27)
-DECL|macro|CFS_ZAPDIR
-mdefine_line|#define CFS_ZAPDIR      ((u_long) 28)
-multiline_comment|/* #define CFS_ZAPVNODE    ((u_long) 29)   obsolete */
-DECL|macro|CFS_PURGEFID
-mdefine_line|#define CFS_PURGEFID    ((u_long) 30)
-DECL|macro|CFS_OPEN_BY_PATH
-mdefine_line|#define CFS_OPEN_BY_PATH ((u_long) 31)
-DECL|macro|CFS_NCALLS
-mdefine_line|#define CFS_NCALLS 32
+DECL|macro|CODA_ROOT
+mdefine_line|#define CODA_ROOT&t;2
+DECL|macro|CODA_SYNC
+mdefine_line|#define CODA_SYNC&t;3
+DECL|macro|CODA_OPEN
+mdefine_line|#define CODA_OPEN&t;4
+DECL|macro|CODA_CLOSE
+mdefine_line|#define CODA_CLOSE&t;5
+DECL|macro|CODA_IOCTL
+mdefine_line|#define CODA_IOCTL&t;6
+DECL|macro|CODA_GETATTR
+mdefine_line|#define CODA_GETATTR&t;7
+DECL|macro|CODA_SETATTR
+mdefine_line|#define CODA_SETATTR&t;8
+DECL|macro|CODA_ACCESS
+mdefine_line|#define CODA_ACCESS&t;9
+DECL|macro|CODA_LOOKUP
+mdefine_line|#define CODA_LOOKUP&t;10
+DECL|macro|CODA_CREATE
+mdefine_line|#define CODA_CREATE&t;11
+DECL|macro|CODA_REMOVE
+mdefine_line|#define CODA_REMOVE&t;12
+DECL|macro|CODA_LINK
+mdefine_line|#define CODA_LINK&t;13
+DECL|macro|CODA_RENAME
+mdefine_line|#define CODA_RENAME&t;14
+DECL|macro|CODA_MKDIR
+mdefine_line|#define CODA_MKDIR&t;15
+DECL|macro|CODA_RMDIR
+mdefine_line|#define CODA_RMDIR&t;16
+DECL|macro|CODA_READDIR
+mdefine_line|#define CODA_READDIR&t;17
+DECL|macro|CODA_SYMLINK
+mdefine_line|#define CODA_SYMLINK&t;18
+DECL|macro|CODA_READLINK
+mdefine_line|#define CODA_READLINK&t;19
+DECL|macro|CODA_FSYNC
+mdefine_line|#define CODA_FSYNC&t;20
+DECL|macro|CODA_INACTIVE
+mdefine_line|#define CODA_INACTIVE&t;21
+DECL|macro|CODA_VGET
+mdefine_line|#define CODA_VGET&t;22
+DECL|macro|CODA_SIGNAL
+mdefine_line|#define CODA_SIGNAL&t;23
+DECL|macro|CODA_REPLACE
+mdefine_line|#define CODA_REPLACE&t;24
+DECL|macro|CODA_FLUSH
+mdefine_line|#define CODA_FLUSH       25
+DECL|macro|CODA_PURGEUSER
+mdefine_line|#define CODA_PURGEUSER   26
+DECL|macro|CODA_ZAPFILE
+mdefine_line|#define CODA_ZAPFILE     27
+DECL|macro|CODA_ZAPDIR
+mdefine_line|#define CODA_ZAPDIR      28
+DECL|macro|CODA_PURGEFID
+mdefine_line|#define CODA_PURGEFID    30
+DECL|macro|CODA_OPEN_BY_PATH
+mdefine_line|#define CODA_OPEN_BY_PATH 31
+DECL|macro|CODA_RESOLVE
+mdefine_line|#define CODA_RESOLVE     32
+DECL|macro|CODA_REINTEGRATE
+mdefine_line|#define CODA_REINTEGRATE 33
+DECL|macro|CODA_NCALLS
+mdefine_line|#define CODA_NCALLS 34
 DECL|macro|DOWNCALL
-mdefine_line|#define DOWNCALL(opcode) (opcode &gt;= CFS_REPLACE &amp;&amp; opcode &lt;= CFS_PURGEFID)
+mdefine_line|#define DOWNCALL(opcode) (opcode &gt;= CODA_REPLACE &amp;&amp; opcode &lt;= CODA_PURGEFID)
 DECL|macro|VC_MAXDATASIZE
 mdefine_line|#define VC_MAXDATASIZE&t;    8192
 DECL|macro|VC_MAXMSGSIZE
 mdefine_line|#define VC_MAXMSGSIZE      sizeof(union inputArgs)+sizeof(union outputArgs) +&bslash;&n;                            VC_MAXDATASIZE  
+DECL|macro|CIOC_KERNEL_VERSION
+mdefine_line|#define CIOC_KERNEL_VERSION _IOWR(&squot;c&squot;, 10, sizeof (int))
+macro_line|#if&t;0
+multiline_comment|/* don&squot;t care about kernel version number */
+mdefine_line|#define CODA_KERNEL_VERSION 0
+multiline_comment|/* The old venus 4.6 compatible interface */
+mdefine_line|#define CODA_KERNEL_VERSION 1
+macro_line|#endif
+multiline_comment|/* venus_lookup gets an extra parameter to aid windows.*/
+DECL|macro|CODA_KERNEL_VERSION
+mdefine_line|#define CODA_KERNEL_VERSION 2
 multiline_comment|/*&n; *        Venus &lt;-&gt; Coda  RPC arguments&n; */
-DECL|struct|cfs_in_hdr
+DECL|struct|coda_in_hdr
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 (brace
 DECL|member|opcode
 r_int
@@ -616,9 +661,9 @@ multiline_comment|/* Common to all */
 )brace
 suffix:semicolon
 multiline_comment|/* Really important that opcode and unique are 1st two fields! */
-DECL|struct|cfs_out_hdr
+DECL|struct|coda_out_hdr
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 (brace
 DECL|member|opcode
 r_int
@@ -637,14 +682,14 @@ id|result
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_root: NO_IN */
-DECL|struct|cfs_root_out
+multiline_comment|/* coda_root: NO_IN */
+DECL|struct|coda_root_out
 r_struct
-id|cfs_root_out
+id|coda_root_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|VFid
@@ -653,27 +698,27 @@ id|VFid
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_root_in
+DECL|struct|coda_root_in
 r_struct
-id|cfs_root_in
+id|coda_root_in
 (brace
 DECL|member|in
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|in
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_sync: */
-multiline_comment|/* Nothing needed for cfs_sync */
-multiline_comment|/* cfs_open: */
-DECL|struct|cfs_open_in
+multiline_comment|/* coda_sync: */
+multiline_comment|/* Nothing needed for coda_sync */
+multiline_comment|/* coda_open: */
+DECL|struct|coda_open_in
 r_struct
-id|cfs_open_in
+id|coda_open_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -686,13 +731,13 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_open_out
+DECL|struct|coda_open_out
 r_struct
-id|cfs_open_out
+id|coda_open_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|dev
@@ -705,14 +750,14 @@ id|inode
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_close: */
-DECL|struct|cfs_close_in
+multiline_comment|/* coda_close: */
+DECL|struct|coda_close_in
 r_struct
-id|cfs_close_in
+id|coda_close_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -725,25 +770,25 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_close_out
+DECL|struct|coda_close_out
 r_struct
-id|cfs_close_out
+id|coda_close_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_ioctl: */
-DECL|struct|cfs_ioctl_in
+multiline_comment|/* coda_ioctl: */
+DECL|struct|coda_ioctl_in
 r_struct
-id|cfs_ioctl_in
+id|coda_ioctl_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -770,13 +815,13 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-DECL|struct|cfs_ioctl_out
+DECL|struct|coda_ioctl_out
 r_struct
-id|cfs_ioctl_out
+id|coda_ioctl_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|len
@@ -790,14 +835,14 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_getattr: */
-DECL|struct|cfs_getattr_in
+multiline_comment|/* coda_getattr: */
+DECL|struct|coda_getattr_in
 r_struct
-id|cfs_getattr_in
+id|coda_getattr_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -806,13 +851,13 @@ id|VFid
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_getattr_out
+DECL|struct|coda_getattr_out
 r_struct
-id|cfs_getattr_out
+id|coda_getattr_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|attr
@@ -822,14 +867,14 @@ id|attr
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_setattr: NO_OUT */
-DECL|struct|cfs_setattr_in
+multiline_comment|/* coda_setattr: NO_OUT */
+DECL|struct|coda_setattr_in
 r_struct
-id|cfs_setattr_in
+id|coda_setattr_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -843,25 +888,25 @@ id|attr
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_setattr_out
+DECL|struct|coda_setattr_out
 r_struct
-id|cfs_setattr_out
+id|coda_setattr_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_access: NO_OUT */
-DECL|struct|cfs_access_in
+multiline_comment|/* coda_access: NO_OUT */
+DECL|struct|coda_access_in
 r_struct
-id|cfs_access_in
+id|coda_access_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -874,25 +919,30 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_access_out
+DECL|struct|coda_access_out
 r_struct
-id|cfs_access_out
+id|coda_access_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_lookup: */
-DECL|struct|cfs_lookup_in
+multiline_comment|/* lookup flags */
+DECL|macro|CLU_CASE_SENSITIVE
+mdefine_line|#define CLU_CASE_SENSITIVE     0x01
+DECL|macro|CLU_CASE_INSENSITIVE
+mdefine_line|#define CLU_CASE_INSENSITIVE   0x02
+multiline_comment|/* coda_lookup: */
+DECL|struct|coda_lookup_in
 r_struct
-id|cfs_lookup_in
+id|coda_lookup_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -904,15 +954,19 @@ r_int
 id|name
 suffix:semicolon
 multiline_comment|/* Place holder for data. */
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_lookup_out
+DECL|struct|coda_lookup_out
 r_struct
-id|cfs_lookup_out
+id|coda_lookup_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|VFid
@@ -925,14 +979,14 @@ id|vtype
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_create: */
-DECL|struct|cfs_create_in
+multiline_comment|/* coda_create: */
+DECL|struct|coda_create_in
 r_struct
-id|cfs_create_in
+id|coda_create_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -959,13 +1013,13 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-DECL|struct|cfs_create_out
+DECL|struct|coda_create_out
 r_struct
-id|cfs_create_out
+id|coda_create_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|VFid
@@ -979,14 +1033,14 @@ id|attr
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_remove: NO_OUT */
-DECL|struct|cfs_remove_in
+multiline_comment|/* coda_remove: NO_OUT */
+DECL|struct|coda_remove_in
 r_struct
-id|cfs_remove_in
+id|coda_remove_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1000,25 +1054,25 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-DECL|struct|cfs_remove_out
+DECL|struct|coda_remove_out
 r_struct
-id|cfs_remove_out
+id|coda_remove_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_link: NO_OUT */
-DECL|struct|cfs_link_in
+multiline_comment|/* coda_link: NO_OUT */
+DECL|struct|coda_link_in
 r_struct
-id|cfs_link_in
+id|coda_link_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|sourceFid
@@ -1038,25 +1092,25 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-DECL|struct|cfs_link_out
+DECL|struct|coda_link_out
 r_struct
-id|cfs_link_out
+id|coda_link_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_rename: NO_OUT */
-DECL|struct|cfs_rename_in
+multiline_comment|/* coda_rename: NO_OUT */
+DECL|struct|coda_rename_in
 r_struct
-id|cfs_rename_in
+id|coda_rename_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|sourceFid
@@ -1077,25 +1131,25 @@ id|destname
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_rename_out
+DECL|struct|coda_rename_out
 r_struct
-id|cfs_rename_out
+id|coda_rename_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_mkdir: */
-DECL|struct|cfs_mkdir_in
+multiline_comment|/* coda_mkdir: */
+DECL|struct|coda_mkdir_in
 r_struct
-id|cfs_mkdir_in
+id|coda_mkdir_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1114,13 +1168,13 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-DECL|struct|cfs_mkdir_out
+DECL|struct|coda_mkdir_out
 r_struct
-id|cfs_mkdir_out
+id|coda_mkdir_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|VFid
@@ -1134,14 +1188,14 @@ id|attr
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_rmdir: NO_OUT */
-DECL|struct|cfs_rmdir_in
+multiline_comment|/* coda_rmdir: NO_OUT */
+DECL|struct|coda_rmdir_in
 r_struct
-id|cfs_rmdir_in
+id|coda_rmdir_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1155,25 +1209,25 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-DECL|struct|cfs_rmdir_out
+DECL|struct|coda_rmdir_out
 r_struct
-id|cfs_rmdir_out
+id|coda_rmdir_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_readdir: */
-DECL|struct|cfs_readdir_in
+multiline_comment|/* coda_readdir: */
+DECL|struct|coda_readdir_in
 r_struct
-id|cfs_readdir_in
+id|coda_readdir_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1190,13 +1244,13 @@ id|offset
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_readdir_out
+DECL|struct|coda_readdir_out
 r_struct
-id|cfs_readdir_out
+id|coda_readdir_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|size
@@ -1210,14 +1264,14 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_symlink: NO_OUT */
-DECL|struct|cfs_symlink_in
+multiline_comment|/* coda_symlink: NO_OUT */
+DECL|struct|coda_symlink_in
 r_struct
-id|cfs_symlink_in
+id|coda_symlink_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1240,25 +1294,25 @@ id|tname
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_symlink_out
+DECL|struct|coda_symlink_out
 r_struct
-id|cfs_symlink_out
+id|coda_symlink_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_readlink: */
-DECL|struct|cfs_readlink_in
+multiline_comment|/* coda_readlink: */
+DECL|struct|coda_readlink_in
 r_struct
-id|cfs_readlink_in
+id|coda_readlink_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1267,13 +1321,13 @@ id|VFid
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_readlink_out
+DECL|struct|coda_readlink_out
 r_struct
-id|cfs_readlink_out
+id|coda_readlink_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|count
@@ -1287,14 +1341,14 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_fsync: NO_OUT */
-DECL|struct|cfs_fsync_in
+multiline_comment|/* coda_fsync: NO_OUT */
+DECL|struct|coda_fsync_in
 r_struct
-id|cfs_fsync_in
+id|coda_fsync_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1303,25 +1357,25 @@ id|VFid
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_fsync_out
+DECL|struct|coda_fsync_out
 r_struct
-id|cfs_fsync_out
+id|coda_fsync_out
 (brace
 DECL|member|out
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_inactive: NO_OUT */
-DECL|struct|cfs_inactive_in
+multiline_comment|/* coda_inactive: NO_OUT */
+DECL|struct|coda_inactive_in
 r_struct
-id|cfs_inactive_in
+id|coda_inactive_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1330,14 +1384,14 @@ id|VFid
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_vget: */
-DECL|struct|cfs_vget_in
+multiline_comment|/* coda_vget: */
+DECL|struct|coda_vget_in
 r_struct
-id|cfs_vget_in
+id|coda_vget_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1346,13 +1400,13 @@ id|VFid
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_vget_out
+DECL|struct|coda_vget_out
 r_struct
-id|cfs_vget_out
+id|coda_vget_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|VFid
@@ -1365,18 +1419,18 @@ id|vtype
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* CFS_SIGNAL is out-of-band, doesn&squot;t need data. */
-multiline_comment|/* CFS_INVALIDATE is a venus-&gt;kernel call */
-multiline_comment|/* CFS_FLUSH is a venus-&gt;kernel call */
-multiline_comment|/* cfs_purgeuser: */
-multiline_comment|/* CFS_PURGEUSER is a venus-&gt;kernel call */
-DECL|struct|cfs_purgeuser_out
+multiline_comment|/* CODA_SIGNAL is out-of-band, doesn&squot;t need data. */
+multiline_comment|/* CODA_INVALIDATE is a venus-&gt;kernel call */
+multiline_comment|/* CODA_FLUSH is a venus-&gt;kernel call */
+multiline_comment|/* coda_purgeuser: */
+multiline_comment|/* CODA_PURGEUSER is a venus-&gt;kernel call */
+DECL|struct|coda_purgeuser_out
 r_struct
-id|cfs_purgeuser_out
+id|coda_purgeuser_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|cred
@@ -1386,15 +1440,15 @@ id|cred
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_zapfile: */
-multiline_comment|/* CFS_ZAPFILE is a venus-&gt;kernel call */
-DECL|struct|cfs_zapfile_out
+multiline_comment|/* coda_zapfile: */
+multiline_comment|/* CODA_ZAPFILE is a venus-&gt;kernel call */
+DECL|struct|coda_zapfile_out
 r_struct
-id|cfs_zapfile_out
+id|coda_zapfile_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|CodaFid
@@ -1403,15 +1457,15 @@ id|CodaFid
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_zapdir: */
-multiline_comment|/* CFS_ZAPDIR is a venus-&gt;kernel call */
-DECL|struct|cfs_zapdir_out
+multiline_comment|/* coda_zapdir: */
+multiline_comment|/* CODA_ZAPDIR is a venus-&gt;kernel call */
+DECL|struct|coda_zapdir_out
 r_struct
-id|cfs_zapdir_out
+id|coda_zapdir_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|CodaFid
@@ -1420,15 +1474,15 @@ id|CodaFid
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_zapnode: */
-multiline_comment|/* CFS_ZAPVNODE is a venus-&gt;kernel call */
-DECL|struct|cfs_zapvnode_out
+multiline_comment|/* coda_zapnode: */
+multiline_comment|/* CODA_ZAPVNODE is a venus-&gt;kernel call */
+DECL|struct|coda_zapvnode_out
 r_struct
-id|cfs_zapvnode_out
+id|coda_zapvnode_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|cred
@@ -1442,15 +1496,15 @@ id|VFid
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_purgefid: */
-multiline_comment|/* CFS_PURGEFID is a venus-&gt;kernel call */
-DECL|struct|cfs_purgefid_out
+multiline_comment|/* coda_purgefid: */
+multiline_comment|/* CODA_PURGEFID is a venus-&gt;kernel call */
+DECL|struct|coda_purgefid_out
 r_struct
-id|cfs_purgefid_out
+id|coda_purgefid_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|CodaFid
@@ -1459,14 +1513,14 @@ id|CodaFid
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_rdwr: */
-DECL|struct|cfs_rdwr_in
+multiline_comment|/* coda_rdwr: */
+DECL|struct|coda_rdwr_in
 r_struct
-id|cfs_rdwr_in
+id|coda_rdwr_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1496,13 +1550,13 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-DECL|struct|cfs_rdwr_out
+DECL|struct|coda_rdwr_out
 r_struct
-id|cfs_rdwr_out
+id|coda_rdwr_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|rwflag
@@ -1520,16 +1574,16 @@ suffix:semicolon
 multiline_comment|/* Place holder for data. */
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_replace: */
-multiline_comment|/* CFS_REPLACE is a venus-&gt;kernel call */
-DECL|struct|cfs_replace_out
+multiline_comment|/* coda_replace: */
+multiline_comment|/* CODA_REPLACE is a venus-&gt;kernel call */
+DECL|struct|coda_replace_out
 r_struct
-id|cfs_replace_out
+id|coda_replace_out
 (brace
-multiline_comment|/* cfs_replace is a venus-&gt;kernel call */
+multiline_comment|/* coda_replace is a venus-&gt;kernel call */
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|NewFid
@@ -1542,14 +1596,14 @@ id|OldFid
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* cfs_open_by_path: */
-DECL|struct|cfs_open_by_path_in
+multiline_comment|/* coda_open_by_path: */
+DECL|struct|coda_open_by_path_in
 r_struct
-id|cfs_open_by_path_in
+id|coda_open_by_path_in
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 DECL|member|VFid
@@ -1562,13 +1616,13 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|cfs_open_by_path_out
+DECL|struct|coda_open_by_path_out
 r_struct
-id|cfs_open_by_path_out
+id|coda_open_by_path_out
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|path
@@ -1577,123 +1631,123 @@ id|path
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * Occasionally, we don&squot;t cache the fid returned by CFS_LOOKUP. &n; * For instance, if the fid is inconsistent. &n; * This case is handled by setting the top bit of the type result parameter.&n; */
-DECL|macro|CFS_NOCACHE
-mdefine_line|#define CFS_NOCACHE          0x80000000
+multiline_comment|/* &n; * Occasionally, we don&squot;t cache the fid returned by CODA_LOOKUP. &n; * For instance, if the fid is inconsistent. &n; * This case is handled by setting the top bit of the type result parameter.&n; */
+DECL|macro|CODA_NOCACHE
+mdefine_line|#define CODA_NOCACHE          0x80000000
 DECL|union|inputArgs
 r_union
 id|inputArgs
 (brace
 DECL|member|ih
 r_struct
-id|cfs_in_hdr
+id|coda_in_hdr
 id|ih
 suffix:semicolon
 multiline_comment|/* NB: every struct below begins with an ih */
-DECL|member|cfs_open
+DECL|member|coda_open
 r_struct
-id|cfs_open_in
-id|cfs_open
+id|coda_open_in
+id|coda_open
 suffix:semicolon
-DECL|member|cfs_close
+DECL|member|coda_close
 r_struct
-id|cfs_close_in
-id|cfs_close
+id|coda_close_in
+id|coda_close
 suffix:semicolon
-DECL|member|cfs_ioctl
+DECL|member|coda_ioctl
 r_struct
-id|cfs_ioctl_in
-id|cfs_ioctl
+id|coda_ioctl_in
+id|coda_ioctl
 suffix:semicolon
-DECL|member|cfs_getattr
+DECL|member|coda_getattr
 r_struct
-id|cfs_getattr_in
-id|cfs_getattr
+id|coda_getattr_in
+id|coda_getattr
 suffix:semicolon
-DECL|member|cfs_setattr
+DECL|member|coda_setattr
 r_struct
-id|cfs_setattr_in
-id|cfs_setattr
+id|coda_setattr_in
+id|coda_setattr
 suffix:semicolon
-DECL|member|cfs_access
+DECL|member|coda_access
 r_struct
-id|cfs_access_in
-id|cfs_access
+id|coda_access_in
+id|coda_access
 suffix:semicolon
-DECL|member|cfs_lookup
+DECL|member|coda_lookup
 r_struct
-id|cfs_lookup_in
-id|cfs_lookup
+id|coda_lookup_in
+id|coda_lookup
 suffix:semicolon
-DECL|member|cfs_create
+DECL|member|coda_create
 r_struct
-id|cfs_create_in
-id|cfs_create
+id|coda_create_in
+id|coda_create
 suffix:semicolon
-DECL|member|cfs_remove
+DECL|member|coda_remove
 r_struct
-id|cfs_remove_in
-id|cfs_remove
+id|coda_remove_in
+id|coda_remove
 suffix:semicolon
-DECL|member|cfs_link
+DECL|member|coda_link
 r_struct
-id|cfs_link_in
-id|cfs_link
+id|coda_link_in
+id|coda_link
 suffix:semicolon
-DECL|member|cfs_rename
+DECL|member|coda_rename
 r_struct
-id|cfs_rename_in
-id|cfs_rename
+id|coda_rename_in
+id|coda_rename
 suffix:semicolon
-DECL|member|cfs_mkdir
+DECL|member|coda_mkdir
 r_struct
-id|cfs_mkdir_in
-id|cfs_mkdir
+id|coda_mkdir_in
+id|coda_mkdir
 suffix:semicolon
-DECL|member|cfs_rmdir
+DECL|member|coda_rmdir
 r_struct
-id|cfs_rmdir_in
-id|cfs_rmdir
+id|coda_rmdir_in
+id|coda_rmdir
 suffix:semicolon
-DECL|member|cfs_readdir
+DECL|member|coda_readdir
 r_struct
-id|cfs_readdir_in
-id|cfs_readdir
+id|coda_readdir_in
+id|coda_readdir
 suffix:semicolon
-DECL|member|cfs_symlink
+DECL|member|coda_symlink
 r_struct
-id|cfs_symlink_in
-id|cfs_symlink
+id|coda_symlink_in
+id|coda_symlink
 suffix:semicolon
-DECL|member|cfs_readlink
+DECL|member|coda_readlink
 r_struct
-id|cfs_readlink_in
-id|cfs_readlink
+id|coda_readlink_in
+id|coda_readlink
 suffix:semicolon
-DECL|member|cfs_fsync
+DECL|member|coda_fsync
 r_struct
-id|cfs_fsync_in
-id|cfs_fsync
+id|coda_fsync_in
+id|coda_fsync
 suffix:semicolon
-DECL|member|cfs_inactive
+DECL|member|coda_inactive
 r_struct
-id|cfs_inactive_in
-id|cfs_inactive
+id|coda_inactive_in
+id|coda_inactive
 suffix:semicolon
-DECL|member|cfs_vget
+DECL|member|coda_vget
 r_struct
-id|cfs_vget_in
-id|cfs_vget
+id|coda_vget_in
+id|coda_vget
 suffix:semicolon
-DECL|member|cfs_rdwr
+DECL|member|coda_rdwr
 r_struct
-id|cfs_rdwr_in
-id|cfs_rdwr
+id|coda_rdwr_in
+id|coda_rdwr
 suffix:semicolon
-DECL|member|cfs_open_by_path
+DECL|member|coda_open_by_path
 r_struct
-id|cfs_open_by_path_in
-id|cfs_open_by_path
+id|coda_open_by_path_in
+id|coda_open_by_path
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1703,136 +1757,136 @@ id|outputArgs
 (brace
 DECL|member|oh
 r_struct
-id|cfs_out_hdr
+id|coda_out_hdr
 id|oh
 suffix:semicolon
 multiline_comment|/* NB: every struct below begins with an oh */
-DECL|member|cfs_root
+DECL|member|coda_root
 r_struct
-id|cfs_root_out
-id|cfs_root
+id|coda_root_out
+id|coda_root
 suffix:semicolon
-DECL|member|cfs_open
+DECL|member|coda_open
 r_struct
-id|cfs_open_out
-id|cfs_open
+id|coda_open_out
+id|coda_open
 suffix:semicolon
-DECL|member|cfs_ioctl
+DECL|member|coda_ioctl
 r_struct
-id|cfs_ioctl_out
-id|cfs_ioctl
+id|coda_ioctl_out
+id|coda_ioctl
 suffix:semicolon
-DECL|member|cfs_getattr
+DECL|member|coda_getattr
 r_struct
-id|cfs_getattr_out
-id|cfs_getattr
+id|coda_getattr_out
+id|coda_getattr
 suffix:semicolon
-DECL|member|cfs_lookup
+DECL|member|coda_lookup
 r_struct
-id|cfs_lookup_out
-id|cfs_lookup
+id|coda_lookup_out
+id|coda_lookup
 suffix:semicolon
-DECL|member|cfs_create
+DECL|member|coda_create
 r_struct
-id|cfs_create_out
-id|cfs_create
+id|coda_create_out
+id|coda_create
 suffix:semicolon
-DECL|member|cfs_mkdir
+DECL|member|coda_mkdir
 r_struct
-id|cfs_mkdir_out
-id|cfs_mkdir
+id|coda_mkdir_out
+id|coda_mkdir
 suffix:semicolon
-DECL|member|cfs_readdir
+DECL|member|coda_readdir
 r_struct
-id|cfs_readdir_out
-id|cfs_readdir
+id|coda_readdir_out
+id|coda_readdir
 suffix:semicolon
-DECL|member|cfs_readlink
+DECL|member|coda_readlink
 r_struct
-id|cfs_readlink_out
-id|cfs_readlink
+id|coda_readlink_out
+id|coda_readlink
 suffix:semicolon
-DECL|member|cfs_vget
+DECL|member|coda_vget
 r_struct
-id|cfs_vget_out
-id|cfs_vget
+id|coda_vget_out
+id|coda_vget
 suffix:semicolon
-DECL|member|cfs_purgeuser
+DECL|member|coda_purgeuser
 r_struct
-id|cfs_purgeuser_out
-id|cfs_purgeuser
+id|coda_purgeuser_out
+id|coda_purgeuser
 suffix:semicolon
-DECL|member|cfs_zapfile
+DECL|member|coda_zapfile
 r_struct
-id|cfs_zapfile_out
-id|cfs_zapfile
+id|coda_zapfile_out
+id|coda_zapfile
 suffix:semicolon
-DECL|member|cfs_zapdir
+DECL|member|coda_zapdir
 r_struct
-id|cfs_zapdir_out
-id|cfs_zapdir
+id|coda_zapdir_out
+id|coda_zapdir
 suffix:semicolon
-DECL|member|cfs_zapvnode
+DECL|member|coda_zapvnode
 r_struct
-id|cfs_zapvnode_out
-id|cfs_zapvnode
+id|coda_zapvnode_out
+id|coda_zapvnode
 suffix:semicolon
-DECL|member|cfs_purgefid
+DECL|member|coda_purgefid
 r_struct
-id|cfs_purgefid_out
-id|cfs_purgefid
+id|coda_purgefid_out
+id|coda_purgefid
 suffix:semicolon
-DECL|member|cfs_rdwr
+DECL|member|coda_rdwr
 r_struct
-id|cfs_rdwr_out
-id|cfs_rdwr
+id|coda_rdwr_out
+id|coda_rdwr
 suffix:semicolon
-DECL|member|cfs_replace
+DECL|member|coda_replace
 r_struct
-id|cfs_replace_out
-id|cfs_replace
+id|coda_replace_out
+id|coda_replace
 suffix:semicolon
-DECL|member|cfs_open_by_path
+DECL|member|coda_open_by_path
 r_struct
-id|cfs_open_by_path_out
-id|cfs_open_by_path
+id|coda_open_by_path_out
+id|coda_open_by_path
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|union|cfs_downcalls
+DECL|union|coda_downcalls
 r_union
-id|cfs_downcalls
+id|coda_downcalls
 (brace
-multiline_comment|/* CFS_INVALIDATE is a venus-&gt;kernel call */
-multiline_comment|/* CFS_FLUSH is a venus-&gt;kernel call */
+multiline_comment|/* CODA_INVALIDATE is a venus-&gt;kernel call */
+multiline_comment|/* CODA_FLUSH is a venus-&gt;kernel call */
 DECL|member|purgeuser
 r_struct
-id|cfs_purgeuser_out
+id|coda_purgeuser_out
 id|purgeuser
 suffix:semicolon
 DECL|member|zapfile
 r_struct
-id|cfs_zapfile_out
+id|coda_zapfile_out
 id|zapfile
 suffix:semicolon
 DECL|member|zapdir
 r_struct
-id|cfs_zapdir_out
+id|coda_zapdir_out
 id|zapdir
 suffix:semicolon
 DECL|member|zapvnode
 r_struct
-id|cfs_zapvnode_out
+id|coda_zapvnode_out
 id|zapvnode
 suffix:semicolon
 DECL|member|purgefid
 r_struct
-id|cfs_purgefid_out
+id|coda_purgefid_out
 id|purgefid
 suffix:semicolon
 DECL|member|replace
 r_struct
-id|cfs_replace_out
+id|coda_replace_out
 id|replace
 suffix:semicolon
 )brace
@@ -1864,6 +1918,34 @@ suffix:semicolon
 multiline_comment|/* Maximum size of output buffer, &lt;= 2K */
 )brace
 suffix:semicolon
+macro_line|#if defined(__CYGWIN32__) || defined(DJGPP)
+DECL|struct|PioctlData
+r_struct
+id|PioctlData
+(brace
+DECL|member|cmd
+r_int
+r_int
+id|cmd
+suffix:semicolon
+DECL|member|path
+r_const
+r_char
+op_star
+id|path
+suffix:semicolon
+DECL|member|follow
+r_int
+id|follow
+suffix:semicolon
+DECL|member|vi
+r_struct
+id|ViceIoctl
+id|vi
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#else
 DECL|struct|PioctlData
 r_struct
 id|PioctlData
@@ -1885,10 +1967,11 @@ id|vi
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|CFS_CONTROL
-mdefine_line|#define&t;CFS_CONTROL&t;&t;&quot;.CONTROL&quot;
-DECL|macro|CFS_CONTROLLEN
-mdefine_line|#define CFS_CONTROLLEN           8
+macro_line|#endif
+DECL|macro|CODA_CONTROL
+mdefine_line|#define&t;CODA_CONTROL&t;&t;&quot;.CONTROL&quot;
+DECL|macro|CODA_CONTROLLEN
+mdefine_line|#define CODA_CONTROLLEN           8
 DECL|macro|CTL_VOL
 mdefine_line|#define&t;CTL_VOL&t;&t;&t;-1
 DECL|macro|CTL_VNO

@@ -3221,7 +3221,7 @@ id|c
 op_or
 l_int|0x100
 suffix:semicolon
-id|iobarrier
+id|iobarrier_rw
 (paren
 )paren
 suffix:semicolon

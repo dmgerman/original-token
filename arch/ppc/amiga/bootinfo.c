@@ -18,7 +18,7 @@ id|num_memory
 op_assign
 l_int|0
 suffix:semicolon
-r_extern
+DECL|variable|memory
 r_struct
 id|mem_info
 id|memory
@@ -26,7 +26,7 @@ id|memory
 id|NUM_MEMINFO
 )braket
 suffix:semicolon
-r_extern
+DECL|variable|ramdisk
 r_struct
 id|mem_info
 id|ramdisk

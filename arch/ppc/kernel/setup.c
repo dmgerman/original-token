@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.117 1998/11/09 19:55:53 geert Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.120 1998/12/10 00:24:28 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -48,7 +48,7 @@ id|_end
 )braket
 suffix:semicolon
 macro_line|#ifdef CONFIG_APUS
-DECL|variable|ramdisk
+r_extern
 r_struct
 id|mem_info
 id|ramdisk
@@ -2509,7 +2509,6 @@ c_func
 r_void
 op_star
 )paren
-op_amp
 id|res
 comma
 (paren
@@ -2620,6 +2619,73 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
+multiline_comment|/* Checks &quot;l2cr=xxxx&quot; command-line option */
+DECL|function|ppc_setup_l2cr
+r_void
+id|ppc_setup_l2cr
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|_get_PVR
+c_func
+(paren
+)paren
+op_rshift
+l_int|16
+)paren
+op_eq
+l_int|8
+)paren
+(brace
+r_int
+r_int
+id|val
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|str
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;l2cr set to %lx&bslash;n&quot;
+comma
+id|val
+)paren
+suffix:semicolon
+id|_set_L2CR
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|_set_L2CR
+c_func
+(paren
+id|val
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|__initfunc
 id|__initfunc

@@ -654,10 +654,10 @@ r_int
 id|what
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_for
 c_loop
 (paren
@@ -751,10 +751,10 @@ r_int
 id|index
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_for
 c_loop
 (paren

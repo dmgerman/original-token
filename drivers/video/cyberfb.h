@@ -629,7 +629,7 @@ multiline_comment|/* --------------------------------- */
 multiline_comment|/* in cvision_core.c */
 r_inline
 r_void
-id|__delay
+id|__cv_delay
 c_func
 (paren
 r_int

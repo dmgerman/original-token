@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.36 1998/10/08 01:17:48 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.38 1998/12/02 21:23:49 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -549,7 +549,16 @@ id|_MACH_Pmac
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*printk(&quot;SMP %d: sending smp message&bslash;n&quot;, current-&gt;processor);*/
+id|printk
+c_func
+(paren
+l_string|&quot;SMP %d: sending smp message %x&bslash;n&quot;
+comma
+id|current-&gt;processor
+comma
+id|msg
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -665,16 +674,13 @@ id|mesg_pass_lock
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_boot_cpus
 r_void
+id|__init
 id|smp_boot_cpus
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern
@@ -999,16 +1005,13 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_commence
 r_void
+id|__init
 id|smp_commence
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk
@@ -1020,32 +1023,19 @@ id|current-&gt;processor
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Lets the callin&squot;s below out of their loop.&n;&t; */
-id|local_flush_tlb_all
-c_func
-(paren
-)paren
-suffix:semicolon
 id|smp_commenced
 op_assign
 l_int|1
 suffix:semicolon
-id|local_flush_tlb_all
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* intel needs this */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|initialize_secondary
 r_void
+id|__init
 id|initialize_secondary
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 )brace
@@ -1083,16 +1073,13 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_callin
 r_void
+id|__init
 id|smp_callin
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk
@@ -1115,6 +1102,7 @@ c_func
 id|decrementer_count
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|current-&gt;mm-&gt;mmap-&gt;vm_page_prot
 op_assign
 id|PAGE_SHARED
@@ -1127,12 +1115,13 @@ id|current-&gt;mm-&gt;mmap-&gt;vm_end
 op_assign
 id|init_task.mm-&gt;mmap-&gt;vm_end
 suffix:semicolon
+macro_line|#endif
 id|cpu_callin_map
 (braket
 id|current-&gt;processor
 )braket
 op_assign
-id|current-&gt;processor
+l_int|1
 suffix:semicolon
 r_while
 c_loop
@@ -1153,11 +1142,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_setup
 r_void
+id|__init
 id|smp_setup
 c_func
 (paren
@@ -1169,7 +1156,6 @@ r_int
 op_star
 id|ints
 )paren
-)paren
 (brace
 id|printk
 c_func
@@ -1180,11 +1166,9 @@ id|current-&gt;processor
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setup_profiling_timer
 r_int
+id|__init
 id|setup_profiling_timer
 c_func
 (paren
@@ -1192,23 +1176,19 @@ r_int
 r_int
 id|multiplier
 )paren
-)paren
 (brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_store_cpu_info
 r_void
+id|__init
 id|smp_store_cpu_info
 c_func
 (paren
 r_int
 id|id
-)paren
 )paren
 (brace
 r_struct

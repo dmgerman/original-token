@@ -946,6 +946,7 @@ c_func
 id|feature_test
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI
 DECL|variable|note_scsi_host
 id|EXPORT_SYMBOL
 c_func
@@ -953,6 +954,7 @@ c_func
 id|note_scsi_host
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|kd_mksound
 id|EXPORT_SYMBOL
 c_func

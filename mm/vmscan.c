@@ -1545,7 +1545,7 @@ r_do
 r_int
 id|priority
 op_assign
-l_int|7
+l_int|5
 suffix:semicolon
 r_int
 id|count
@@ -1843,7 +1843,7 @@ id|PF_MEMALLOC
 suffix:semicolon
 id|priority
 op_assign
-l_int|8
+l_int|5
 suffix:semicolon
 r_do
 (brace

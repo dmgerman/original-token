@@ -3,14 +3,14 @@ macro_line|#ifndef _M68K_AMIGAPPC_H
 DECL|macro|_M68K_AMIGAPPC_H
 mdefine_line|#define _M68K_AMIGAPPC_H
 macro_line|#ifndef __ASSEMBLY__
-macro_line|#ifndef iobarrier /* Don&squot;t include io.h - avoid circular dependency */
-DECL|macro|iobarrier
-mdefine_line|#define iobarrier() eieio()
+macro_line|#ifndef iobarrier_rw /* Don&squot;t include io.h - avoid circular dependency */
+DECL|macro|iobarrier_rw
+mdefine_line|#define iobarrier_rw() eieio()
 macro_line|#endif
 DECL|macro|APUS_WRITE
-mdefine_line|#define APUS_WRITE(_a_, _v_)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(*((volatile unsigned char *)(_a_)) = (_v_));&t;&bslash;&n;&t;iobarrier ();&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define APUS_WRITE(_a_, _v_)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(*((volatile unsigned char *)(_a_)) = (_v_));&t;&bslash;&n;&t;iobarrier_rw ();&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|APUS_READ
-mdefine_line|#define APUS_READ(_a_, _v_) &t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(_v_) = (*((volatile unsigned char *)(_a_)));&t;&bslash;&n;&t;iobarrier ();&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define APUS_READ(_a_, _v_) &t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(_v_) = (*((volatile unsigned char *)(_a_)));&t;&bslash;&n;&t;iobarrier_rw ();&t;&t;&t;&t;&bslash;&n;} while (0)
 macro_line|#endif /* ndef __ASSEMBLY__ */
 multiline_comment|/* Maybe add a [#ifdef WANT_ZTWOBASE] condition to amigahw.h? */
 DECL|macro|zTwoBase

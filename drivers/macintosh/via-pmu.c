@@ -3972,7 +3972,6 @@ c_loop
 (paren
 id|intr
 op_assign
-(paren
 id|in_8
 c_func
 (paren
@@ -3981,13 +3980,6 @@ id|via
 (braket
 id|IFR
 )braket
-)paren
-op_amp
-(paren
-id|SR_INT
-op_or
-id|CB1_INT
-)paren
 )paren
 )paren
 op_ne
@@ -4054,6 +4046,22 @@ id|IFR
 )braket
 comma
 id|CB1_INT
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* -- Disabled printk, will happen _really_ often on&n;&t;&t;&t;&t;  PowerBooks ((CB2 interrupts) --&n;&t;&t;&t;printk(KERN_DEBUG &quot;PMU: spurrious interrupt intr=%x&bslash;n&quot;, intr); */
+id|out_8
+c_func
+(paren
+op_amp
+id|via
+(braket
+id|IFR
+)braket
+comma
+id|intr
 )paren
 suffix:semicolon
 )brace
@@ -5084,7 +5092,9 @@ l_int|2
 comma
 id|PMU_SET_INTR_MASK
 comma
-id|CB1_INT
+id|PMU_INT_ADB
+op_or
+id|PMU_INT_TICK
 )paren
 suffix:semicolon
 r_while
@@ -5169,7 +5179,9 @@ l_int|2
 comma
 id|PMU_SET_INTR_MASK
 comma
-id|CB1_INT
+id|PMU_INT_ADB
+op_or
+id|PMU_INT_TICK
 )paren
 suffix:semicolon
 r_while

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: ppc_htab.c,v 1.25 1998/08/26 10:28:26 davem Exp $&n; *&n; * PowerPC hash table management proc entry.  Will show information&n; * about the current hash table and will allow changes to it.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: ppc_htab.c,v 1.26 1998/12/10 00:24:23 cort Exp $&n; *&n; * PowerPC hash table management proc entry.  Will show information&n; * about the current hash table and will allow changes to it.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2276,6 +2276,12 @@ suffix:semicolon
 id|left
 op_sub_assign
 id|len
+suffix:semicolon
+id|_set_L2CR
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 id|_set_L2CR
 c_func

@@ -1796,6 +1796,15 @@ singleline_comment|// 15 bit (TrueColor) color mode
 id|write_xr
 c_func
 (paren
+l_int|0x82
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+singleline_comment|// disable palettes
+id|write_xr
+c_func
+(paren
 l_int|0x20
 comma
 l_int|0x10
@@ -1886,6 +1895,15 @@ l_int|0x12
 )paren
 suffix:semicolon
 singleline_comment|// 8 bit color mode
+id|write_xr
+c_func
+(paren
+l_int|0x82
+comma
+l_int|0x08
+)paren
+suffix:semicolon
+singleline_comment|// Graphics gamma enable
 id|write_xr
 c_func
 (paren

@@ -385,11 +385,11 @@ mdefine_line|#define D_SUPER     1   /* print results returned by Venus */
 DECL|macro|D_INODE
 mdefine_line|#define D_INODE     2   /* print entry and exit into procedure */
 DECL|macro|D_FILE
-mdefine_line|#define D_FILE      4   /* print malloc, de-alloc information */
+mdefine_line|#define D_FILE      4   
 DECL|macro|D_CACHE
 mdefine_line|#define D_CACHE     8   /* cache debugging */
 DECL|macro|D_MALLOC
-mdefine_line|#define D_MALLOC    16
+mdefine_line|#define D_MALLOC    16  /* print malloc, de-alloc information */
 DECL|macro|D_CNODE
 mdefine_line|#define D_CNODE     32
 DECL|macro|D_UPCALL

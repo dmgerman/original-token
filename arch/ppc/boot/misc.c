@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.52 1998/09/19 01:21:24 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
+multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.53 1998/12/15 17:40:15 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;asm/residual.h&quot;
-macro_line|#include &lt;elf.h&gt;
+macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -13,6 +13,15 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_FADS
 macro_line|#include &lt;asm/fads.h&gt;
 macro_line|#endif
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) &amp;&amp; !defined(CONFIG_MBX)
+macro_line|#include &quot;ns16550.h&quot;
+DECL|variable|com_port
+r_struct
+id|NS16550
+op_star
+id|com_port
+suffix:semicolon
+macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
 multiline_comment|/*&n; * Please send me load/board info and such data for hardware not&n; * listed here so I can keep track since things are getting tricky&n; * with the different load addrs with different firmware.  This will&n; * help to avoid breaking the load/boot process.&n; * -- Cort&n; */
 DECL|variable|avail_ram
 r_char
@@ -25,6 +34,14 @@ op_star
 id|end_avail
 suffix:semicolon
 multiline_comment|/* Because of the limited amount of memory on the MBX, it presents&n; * loading problems.  The biggest is that we load this boot program&n; * into a relatively low memory address, and the Linux kernel Bss often&n; * extends into this space when it get loaded.  When the kernel starts&n; * and zeros the BSS space, it also writes over the information we&n; * save here and pass to the kernel (command line and board info).&n; * On the MBX we grab some known memory holes to hold this information.&n; */
+DECL|variable|cmd_preset
+r_char
+id|cmd_preset
+(braket
+)braket
+op_assign
+l_string|&quot;console=tty0 console=ttyS0,9600n8&quot;
+suffix:semicolon
 DECL|variable|cmd_buf
 r_char
 id|cmd_buf
@@ -456,6 +473,22 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) &amp;&amp; !defined(CONFIG_MBX)
+r_return
+(paren
+id|CRT_tstc
+c_func
+(paren
+)paren
+op_logical_or
+id|NS16550_tstc
+c_func
+(paren
+id|com_port
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 r_return
 (paren
 id|CRT_tstc
@@ -464,6 +497,7 @@ c_func
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
 )brace
 DECL|function|getc
 id|getc
@@ -478,6 +512,26 @@ c_loop
 l_int|1
 )paren
 (brace
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) &amp;&amp; !defined(CONFIG_MBX)
+r_if
+c_cond
+(paren
+id|NS16550_tstc
+c_func
+(paren
+id|com_port
+)paren
+)paren
+r_return
+(paren
+id|NS16550_getc
+c_func
+(paren
+id|com_port
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
 r_if
 c_cond
 (paren
@@ -511,6 +565,31 @@ id|x
 comma
 id|y
 suffix:semicolon
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) &amp;&amp; !defined(CONFIG_MBX)
+id|NS16550_putc
+c_func
+(paren
+id|com_port
+comma
+id|c
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_char|&squot;&bslash;n&squot;
+)paren
+id|NS16550_putc
+c_func
+(paren
+id|com_port
+comma
+l_char|&squot;&bslash;r&squot;
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
 id|x
 op_assign
 id|orig_x
@@ -680,6 +759,31 @@ op_ne
 l_char|&squot;&bslash;0&squot;
 )paren
 (brace
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) &amp;&amp; !defined(CONFIG_MBX)
+id|NS16550_putc
+c_func
+(paren
+id|com_port
+comma
+id|c
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_char|&squot;&bslash;n&squot;
+)paren
+id|NS16550_putc
+c_func
+(paren
+id|com_port
+comma
+l_char|&squot;&bslash;r&squot;
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
 r_if
 c_cond
 (paren
@@ -707,6 +811,28 @@ c_func
 )paren
 suffix:semicolon
 id|y
+op_decrement
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_char|&squot;&bslash;b&squot;
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|x
+OG
+l_int|0
+)paren
+(brace
+id|x
 op_decrement
 suffix:semicolon
 )brace
@@ -1589,6 +1715,21 @@ c_func
 l_int|0xC0000000
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) &amp;&amp; !defined(CONFIG_MBX)
+id|com_port
+op_assign
+(paren
+r_struct
+id|NS16550
+op_star
+)paren
+id|NS16550_init
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
 r_if
 c_cond
 (paren
@@ -2505,6 +2646,32 @@ suffix:semicolon
 id|cp
 op_assign
 id|cmd_line
+suffix:semicolon
+id|memcpy
+(paren
+id|cmd_line
+comma
+id|cmd_preset
+comma
+r_sizeof
+(paren
+id|cmd_preset
+)paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_star
+id|cp
+)paren
+id|putc
+c_func
+(paren
+op_star
+id|cp
+op_increment
+)paren
 suffix:semicolon
 r_while
 c_loop

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsixfb.c,v 1.11 1998/09/04 15:43:42 jj Exp $&n; * cgsixfb.c: CGsix (GX,GXplus) frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsixfb.c,v 1.12 1998/11/27 00:02:04 anton Exp $&n; * cgsixfb.c: CGsix (GX,GXplus) frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3208,6 +3208,9 @@ id|fbc
 op_assign
 id|fb-&gt;s.cg6.fbc
 suffix:semicolon
+id|u32
+id|mode
+suffix:semicolon
 multiline_comment|/* Turn off stuff in the Transform Engine. */
 id|tec-&gt;tec_matrix
 op_assign
@@ -3289,8 +3292,12 @@ op_assign
 id|conf
 suffix:semicolon
 )brace
-multiline_comment|/* Set things in the FBC. */
+multiline_comment|/* Set things in the FBC. Bad things appear to happen if we do&n;&t; * back to back store/loads on the mode register, so copy it&n;&t; * out instead. */
+id|mode
+op_assign
 id|fbc-&gt;mode
+suffix:semicolon
+id|mode
 op_and_assign
 op_complement
 (paren
@@ -3309,7 +3316,7 @@ op_or
 id|CG6_FBC_BDISP_MASK
 )paren
 suffix:semicolon
-id|fbc-&gt;mode
+id|mode
 op_or_assign
 (paren
 id|CG6_FBC_BLIT_SRC
@@ -3326,6 +3333,10 @@ id|CG6_FBC_BREAD_0
 op_or
 id|CG6_FBC_BDISP_0
 )paren
+suffix:semicolon
+id|fbc-&gt;mode
+op_assign
+id|mode
 suffix:semicolon
 id|fbc-&gt;clip
 op_assign

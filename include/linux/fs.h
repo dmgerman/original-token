@@ -246,10 +246,6 @@ DECL|macro|BH_Lock
 mdefine_line|#define BH_Lock&t;&t;2&t;/* 1 if the buffer is locked */
 DECL|macro|BH_Req
 mdefine_line|#define BH_Req&t;&t;3&t;/* 0 if the buffer has been invalidated */
-DECL|macro|BH_Touched
-mdefine_line|#define BH_Touched&t;4&t;/* 1 if the buffer has been touched (aging) */
-DECL|macro|BH_Has_aged
-mdefine_line|#define BH_Has_aged&t;5&t;/* 1 if the buffer has been aged (aging) */
 DECL|macro|BH_Protected
 mdefine_line|#define BH_Protected&t;6&t;/* 1 if the buffer is protected */
 multiline_comment|/*&n; * Try to keep the most commonly used fields in single cache lines (16&n; * bytes) to improve performance.  This ordering should be&n; * particularly beneficial on 32-bit processors.&n; * &n; * We use the first 16 bytes for the data which is used in searches&n; * over the block hash lists (ie. getblk(), find_buffer() and&n; * friends).&n; * &n; * The second 16 bytes we use for lru buffer scans, as used by&n; * sync_buffers() and refill_freelist().  -- sct&n; */
@@ -531,54 +527,6 @@ id|bh-&gt;b_state
 )paren
 suffix:semicolon
 )brace
-DECL|function|buffer_touched
-r_static
-r_inline
-r_int
-id|buffer_touched
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-)paren
-(brace
-r_return
-id|test_bit
-c_func
-(paren
-id|BH_Touched
-comma
-op_amp
-id|bh-&gt;b_state
-)paren
-suffix:semicolon
-)brace
-DECL|function|buffer_has_aged
-r_static
-r_inline
-r_int
-id|buffer_has_aged
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-)paren
-(brace
-r_return
-id|test_bit
-c_func
-(paren
-id|BH_Has_aged
-comma
-op_amp
-id|bh-&gt;b_state
-)paren
-suffix:semicolon
-)brace
 DECL|function|buffer_protected
 r_static
 r_inline
@@ -603,6 +551,13 @@ id|bh-&gt;b_state
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Deprecated - we don&squot;t keep per-buffer reference flags&n; * any more.&n; */
+DECL|macro|buffer_page
+mdefine_line|#define buffer_page(bh)&t;&t;(mem_map + MAP_NR((bh)-&gt;b_data))
+DECL|macro|buffer_touched
+mdefine_line|#define buffer_touched(bh)&t;(PageReferenced(buffer_page(bh)))
+DECL|macro|touch_buffer
+mdefine_line|#define touch_buffer(bh)&t;set_bit(PG_referenced, buffer_page(bh))
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext2_fs_i.h&gt;
@@ -3217,8 +3172,6 @@ r_struct
 id|buffer_head
 op_star
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern

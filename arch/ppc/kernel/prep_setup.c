@@ -820,20 +820,6 @@ l_int|0x8000081c
 op_or
 l_int|3
 suffix:semicolon
-multiline_comment|/* make the serial port the console */
-multiline_comment|/* strcat(cmd_line,&quot;console=ttyS0,9600n8&quot;); */
-multiline_comment|/* use the normal console but send output to the serial port, too */
-multiline_comment|/*strcat(cmd_line,&quot;console=tty0 console=ttyS0,9600n8&quot;);*/
-id|sprintf
-c_func
-(paren
-id|cmd_line
-comma
-l_string|&quot;%s console=tty0 console=ttyS0,9600n8&quot;
-comma
-id|cmd_line
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren

@@ -69,7 +69,7 @@ id|sbi_volroothead
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* communication pending/processing queues queues */
+multiline_comment|/* communication pending/processing queues */
 DECL|struct|venus_comm
 r_struct
 id|venus_comm
@@ -255,6 +255,10 @@ id|fid
 comma
 r_int
 id|flags
+comma
+r_struct
+id|coda_cred
+op_star
 )paren
 suffix:semicolon
 r_int
@@ -680,7 +684,7 @@ DECL|member|reqs
 r_int
 id|reqs
 (braket
-id|CFS_NCALLS
+id|CODA_NCALLS
 )braket
 suffix:semicolon
 multiline_comment|/* count of each request */
@@ -717,7 +721,7 @@ op_logical_and
 (paren
 id|opcode
 op_le
-id|CFS_NCALLS
+id|CODA_NCALLS
 )paren
 )paren
 id|coda_callstats.reqs

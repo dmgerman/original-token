@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Ethernet driver for Motorola MPC8xx.&n; * Copyright (c) 1997 Dan Malek (dmalek@jlc.net)&n; *&n; * I copied the basic skeleton from the lance driver, because I did not&n; * know how to write the Linux driver, but I did know how the LANCE worked.&n; * This version of the driver is specific to the MBX implementation,&n; * since the board contains control registers external to the processor&n; * for the control of the MC68160 SIA/transceiver.  The MPC860 manual&n; * describes connections using the internal parallel port I/O.&n; *&n; * The MBX860 uses the CPM SCC1 serial port for the Ethernet interface.&n; * Buffer descriptors are kept in the CPM dual port RAM, and the frame&n; * buffers are in the host memory.&n; *&n; * Right now, I am very watseful with the buffers.  I allocate memory&n; * pages and then divide them into 2K frame buffers.  This way I know I&n; * have buffers large enough to hold one frame within one buffer descriptor.&n; * Once I get this working, I will use 64 or 128 byte CPM buffers, which&n; * will be much more memory efficient and will easily handle lots of&n; * small packets.&n; *&n; */
+multiline_comment|/*&n; * $Id: enet.c,v 1.8 1998/11/15 19:58:07 cort Exp $&n; * Ethernet driver for Motorola MPC8xx.&n; * Copyright (c) 1997 Dan Malek (dmalek@jlc.net)&n; *&n; * I copied the basic skeleton from the lance driver, because I did not&n; * know how to write the Linux driver, but I did know how the LANCE worked.&n; * This version of the driver is specific to the MBX implementation,&n; * since the board contains control registers external to the processor&n; * for the control of the MC68160 SIA/transceiver.  The MPC860 manual&n; * describes connections using the internal parallel port I/O.&n; *&n; * The MBX860 uses the CPM SCC1 serial port for the Ethernet interface.&n; * Buffer descriptors are kept in the CPM dual port RAM, and the frame&n; * buffers are in the host memory.&n; *&n; * Right now, I am very watseful with the buffers.  I allocate memory&n; * pages and then divide them into 2K frame buffers.  This way I know I&n; * have buffers large enough to hold one frame within one buffer descriptor.&n; * Once I get this working, I will use 64 or 128 byte CPM buffers, which&n; * will be much more memory efficient and will easily handle lots of&n; * small packets.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -1675,7 +1675,7 @@ op_assign
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 suffix:semicolon
 multiline_comment|/* and to internal registers */
 multiline_comment|/* Allocate some private information.&n;&t;*/
@@ -1855,7 +1855,7 @@ multiline_comment|/* Manual says set SDDR, but I can&squot;t find anything with 
 multiline_comment|/* Allocate space for the buffer descriptors in the DP ram.&n;&t; * These are relative offsets in the DP ram address space.&n;&t; * Initialize base addresses for the buffer descriptors.&n;&t; */
 id|i
 op_assign
-id|mbx_cpm_dpalloc
+id|m8xx_cpm_dpalloc
 c_func
 (paren
 r_sizeof
@@ -1884,7 +1884,7 @@ id|i
 suffix:semicolon
 id|i
 op_assign
-id|mbx_cpm_dpalloc
+id|m8xx_cpm_dpalloc
 c_func
 (paren
 r_sizeof

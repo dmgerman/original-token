@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted from &squot;alpha&squot; version by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Modified for MBX using prep/chrp/pmac functions by Dan (dmalek@jlc.net)&n; */
+multiline_comment|/*&n; * $Id: mbx_setup.c,v 1.4 1998/11/15 19:58:55 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted from &squot;alpha&squot; version by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Modified for MBX using prep/chrp/pmac functions by Dan (dmalek@jlc.net)&n; */
 multiline_comment|/*&n; * bootup setup stuff..&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -73,14 +73,36 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|mbx_cpm_reset
+id|m8xx_cpm_reset
 c_func
 (paren
 id|uint
 )paren
 suffix:semicolon
+multiline_comment|/* this really does make things cleaner -- Cort */
+DECL|function|powermac_init
+r_void
+id|__init
+id|powermac_init
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+DECL|function|adbdev_init
+r_void
+id|__init
+id|adbdev_init
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 DECL|function|mbx_ide_init_hwif_ports
 r_void
+id|__init
 id|mbx_ide_init_hwif_ports
 c_func
 (paren
@@ -229,7 +251,7 @@ id|cmd_line
 )paren
 suffix:semicolon
 multiline_comment|/* Reset the Communication Processor Module.&n;&t;*/
-id|mbx_cpm_reset
+id|m8xx_cpm_reset
 c_func
 (paren
 id|cpm_page

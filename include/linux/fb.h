@@ -48,6 +48,10 @@ DECL|macro|FB_AUX_TEXT_CGA
 mdefine_line|#define FB_AUX_TEXT_CGA&t;&t;1&t;/* CGA/EGA/VGA Color text */
 DECL|macro|FB_AUX_TEXT_S3_MMIO
 mdefine_line|#define FB_AUX_TEXT_S3_MMIO&t;2&t;/* S3 MMIO fasttext */
+DECL|macro|FB_AUX_TEXT_MGA_STEP16
+mdefine_line|#define FB_AUX_TEXT_MGA_STEP16&t;3&t;/* MGA Millenium I: text, attr, 14 reserved bytes */
+DECL|macro|FB_AUX_TEXT_MGA_STEP8
+mdefine_line|#define FB_AUX_TEXT_MGA_STEP8&t;4&t;/* other MGAs:      text, attr,  6 reserved bytes */
 DECL|macro|FB_VISUAL_MONO01
 mdefine_line|#define FB_VISUAL_MONO01&t;&t;0&t;/* Monochr. 1=Black 0=White */
 DECL|macro|FB_VISUAL_MONO10

@@ -1313,7 +1313,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_FB_CT65550 */
 macro_line|#ifdef CONFIG_FB_MATROX
 r_extern
-r_void
+r_int
 id|matrox_of_init
 c_func
 (paren
@@ -1426,13 +1426,6 @@ r_int
 )paren
 id|boot_infos-&gt;dispDeviceBase
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ofonly
-)paren
-(brace
 multiline_comment|/* find the device node corresponding to the macos display */
 r_for
 c_loop
@@ -1453,7 +1446,7 @@ id|dp-&gt;next
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Grrr...  It looks like the MacOS ATI driver&n;&t;&t; * munges the assigned-addresses property (but&n;&t;&t; * the AAPL,address value is OK).&n;&t;&t; */
+multiline_comment|/*&n;&t;     * Grrr...  It looks like the MacOS ATI driver&n;&t;     * munges the assigned-addresses property (but&n;&t;     * the AAPL,address value is OK).&n;&t;     */
 r_if
 c_cond
 (paren
@@ -1523,7 +1516,7 @@ l_int|0x01000000
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t; * See if the display address is in one of the address&n;&t;&t; * ranges for this display.&n;&t;&t; */
+multiline_comment|/*&n;&t;     * See if the display address is in one of the address&n;&t;     * ranges for this display.&n;&t;     */
 r_for
 c_loop
 (paren
@@ -1595,11 +1588,12 @@ r_break
 suffix:semicolon
 )brace
 )brace
-)brace
 multiline_comment|/* initialize it */
 r_if
 c_cond
 (paren
+id|ofonly
+op_logical_or
 id|macos_display
 op_eq
 l_int|NULL
@@ -1615,8 +1609,18 @@ id|macos_display
 id|offb_init_fb
 c_func
 (paren
+id|macos_display
+ques
+c_cond
+id|macos_display-&gt;name
+suffix:colon
 l_string|&quot;MacOS display&quot;
 comma
+id|macos_display
+ques
+c_cond
+id|macos_display-&gt;full_name
+suffix:colon
 l_string|&quot;MacOS display&quot;
 comma
 id|boot_infos-&gt;dispDeviceRect
@@ -1834,9 +1838,9 @@ c_func
 (paren
 id|dp-&gt;name
 comma
-l_string|&quot;IMS,tt128mb&quot;
+l_string|&quot;IMS,tt&quot;
 comma
-l_int|11
+l_int|6
 )paren
 )paren
 (brace
@@ -2566,12 +2570,20 @@ op_eq
 l_int|0
 )paren
 (brace
+r_int
+r_int
+id|base
+op_assign
+id|address
+op_amp
+l_int|0xff000000UL
+suffix:semicolon
 id|info-&gt;cmap_adr
 op_assign
 id|ioremap
 c_func
 (paren
-id|address
+id|base
 op_plus
 l_int|0x7ff000
 comma
@@ -3302,21 +3314,29 @@ op_eq
 l_int|0
 )paren
 (brace
-id|display_info.disp_reg_address
+r_int
+r_int
+id|base
 op_assign
 id|address
+op_amp
+l_int|0xff000000UL
+suffix:semicolon
+id|display_info.disp_reg_address
+op_assign
+id|base
 op_plus
 l_int|0x7ffc00
 suffix:semicolon
 id|display_info.cmap_adr_address
 op_assign
-id|address
+id|base
 op_plus
 l_int|0x7ffcc0
 suffix:semicolon
 id|display_info.cmap_data_address
 op_assign
-id|address
+id|base
 op_plus
 l_int|0x7ffcc1
 suffix:semicolon

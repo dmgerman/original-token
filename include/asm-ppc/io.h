@@ -642,8 +642,13 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|macro|iobarrier
-mdefine_line|#define iobarrier() eieio()
+multiline_comment|/* Enforce in-order execution of data I/O. &n; * No distinction between read/write on PPC; use eieio for all three.&n; */
+DECL|macro|iobarrier_rw
+mdefine_line|#define iobarrier_rw() eieio()
+DECL|macro|iobarrier_r
+mdefine_line|#define iobarrier_r()  eieio()
+DECL|macro|iobarrier_w
+mdefine_line|#define iobarrier_w()  eieio()
 multiline_comment|/*&n; * 8, 16 and 32 bit, big and little endian I/O operations, with barrier.&n; */
 DECL|function|in_8
 r_extern

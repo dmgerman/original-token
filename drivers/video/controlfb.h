@@ -238,19 +238,96 @@ l_int|6
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Register initialization tables for the control display.&n; *&n; * Dot clock rate is&n; * 3.9064MHz * 2**clock_params[2] * clock_params[1] / clock_params[0].&n; *&n; * The values for vertical frequency (V) in the comments below&n; * are the values measured using the modes under MacOS.&n; */
+DECL|struct|control_regints
+r_struct
+id|control_regints
+(brace
+multiline_comment|/* Vertical parameters are in units of 1/2 scan line */
+DECL|member|vswin
+r_int
+id|vswin
+suffix:semicolon
+multiline_comment|/* between vsblank and vssync */
+DECL|member|vsblank
+r_int
+id|vsblank
+suffix:semicolon
+multiline_comment|/* vert start blank */
+DECL|member|veblank
+r_int
+id|veblank
+suffix:semicolon
+multiline_comment|/* vert end blank (display start) */
+DECL|member|vewin
+r_int
+id|vewin
+suffix:semicolon
+multiline_comment|/* between vesync and veblank */
+DECL|member|vesync
+r_int
+id|vesync
+suffix:semicolon
+multiline_comment|/* vert end sync */
+DECL|member|vssync
+r_int
+id|vssync
+suffix:semicolon
+multiline_comment|/* vert start sync */
+DECL|member|vperiod
+r_int
+id|vperiod
+suffix:semicolon
+multiline_comment|/* vert period */
+DECL|member|reg8
+r_int
+id|reg8
+suffix:semicolon
+multiline_comment|/* Horizontal params are in units of 2 pixels */
+multiline_comment|/* Except, apparently, for hres &gt; 1024 (or == 1280?) */
+DECL|member|hperiod
+r_int
+id|hperiod
+suffix:semicolon
+multiline_comment|/* horiz period - 2 */
+DECL|member|hsblank
+r_int
+id|hsblank
+suffix:semicolon
+multiline_comment|/* horiz start blank */
+DECL|member|heblank
+r_int
+id|heblank
+suffix:semicolon
+multiline_comment|/* horiz end blank */
+DECL|member|hesync
+r_int
+id|hesync
+suffix:semicolon
+multiline_comment|/* horiz end sync */
+DECL|member|hssync
+r_int
+id|hssync
+suffix:semicolon
+multiline_comment|/* horiz start sync */
+DECL|member|rege
+r_int
+id|rege
+suffix:semicolon
+DECL|member|regf
+r_int
+id|regf
+suffix:semicolon
+DECL|member|reg10
+r_int
+id|reg10
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Register initialization tables for the control display.&n; *&n; * Dot clock rate is&n; * 3.9064MHz * 2**clock_params[2] * clock_params[1] / clock_params[0].&n; *&n; * The values for vertical frequency (V) in the comments below&n; * are the values measured using the modes under MacOS.&n; *&n; * Pitch is always the same as bytes per line (for these video modes at least).&n; */
 DECL|struct|control_regvals
 r_struct
 id|control_regvals
 (brace
-DECL|member|pitch
-r_int
-id|pitch
-(braket
-l_int|3
-)braket
-suffix:semicolon
-multiline_comment|/* bytes/line, indexed by color_mode */
 DECL|member|offset
 r_int
 id|offset
@@ -310,14 +387,6 @@ id|control_regvals
 id|control_reg_init_20
 op_assign
 (brace
-(brace
-l_int|1280
-comma
-l_int|2560
-comma
-l_int|0
-)brace
-comma
 (brace
 l_int|0x10
 comma
@@ -400,14 +469,6 @@ id|control_reg_init_19
 op_assign
 (brace
 (brace
-l_int|1280
-comma
-l_int|2560
-comma
-l_int|0
-)brace
-comma
-(brace
 l_int|0x10
 comma
 l_int|0x20
@@ -489,14 +550,6 @@ id|control_reg_init_18
 op_assign
 (brace
 (brace
-l_int|1152
-comma
-l_int|2304
-comma
-l_int|4608
-)brace
-comma
-(brace
 l_int|0x10
 comma
 l_int|0x28
@@ -577,14 +630,6 @@ id|control_reg_init_17
 op_assign
 (brace
 (brace
-l_int|1024
-comma
-l_int|2048
-comma
-l_int|4096
-)brace
-comma
-(brace
 l_int|0x10
 comma
 l_int|0x28
@@ -656,22 +701,14 @@ comma
 l_int|768
 )brace
 suffix:semicolon
-multiline_comment|/* Register values for 1024x768, 72Hz mode (16 (15?)) */
-DECL|variable|control_reg_init_16
+multiline_comment|/* Register values for 1024x768, 72Hz mode 16 (15?) */
+DECL|variable|control_reg_init_15
 r_static
 r_struct
 id|control_regvals
-id|control_reg_init_16
+id|control_reg_init_15
 op_assign
 (brace
-(brace
-l_int|1024
-comma
-l_int|2048
-comma
-l_int|4096
-)brace
-comma
 (brace
 l_int|0x10
 comma
@@ -754,14 +791,6 @@ id|control_reg_init_14
 op_assign
 (brace
 (brace
-l_int|1024
-comma
-l_int|2048
-comma
-l_int|4096
-)brace
-comma
-(brace
 l_int|0x10
 comma
 l_int|0x28
@@ -843,14 +872,6 @@ id|control_reg_init_13
 op_assign
 (brace
 (brace
-l_int|832
-comma
-l_int|1664
-comma
-l_int|3328
-)brace
-comma
-(brace
 l_int|0x10
 comma
 l_int|0x28
@@ -930,14 +951,6 @@ id|control_regvals
 id|control_reg_init_12
 op_assign
 (brace
-(brace
-l_int|800
-comma
-l_int|1600
-comma
-l_int|3200
-)brace
-comma
 (brace
 l_int|0x10
 comma
@@ -1020,14 +1033,6 @@ id|control_reg_init_11
 op_assign
 (brace
 (brace
-l_int|800
-comma
-l_int|1600
-comma
-l_int|3200
-)brace
-comma
-(brace
 l_int|0x10
 comma
 l_int|0x28
@@ -1108,14 +1113,6 @@ id|control_regvals
 id|control_reg_init_10
 op_assign
 (brace
-(brace
-l_int|800
-comma
-l_int|1600
-comma
-l_int|3200
-)brace
-comma
 (brace
 l_int|0x10
 comma
@@ -1198,14 +1195,6 @@ id|control_reg_init_7
 op_assign
 (brace
 (brace
-l_int|640
-comma
-l_int|1280
-comma
-l_int|2560
-)brace
-comma
-(brace
 l_int|0x10
 comma
 l_int|0x30
@@ -1286,14 +1275,6 @@ id|control_reg_init_6
 op_assign
 (brace
 (brace
-l_int|640
-comma
-l_int|1280
-comma
-l_int|2560
-)brace
-comma
-(brace
 l_int|0
 comma
 l_int|8
@@ -1373,14 +1354,6 @@ id|control_regvals
 id|control_reg_init_5
 op_assign
 (brace
-(brace
-l_int|640
-comma
-l_int|1280
-comma
-l_int|2560
-)brace
-comma
 (brace
 l_int|0x10
 comma
@@ -1502,10 +1475,10 @@ op_amp
 id|control_reg_init_14
 comma
 op_amp
-id|control_reg_init_16
+id|control_reg_init_15
 comma
 op_amp
-id|control_reg_init_16
+id|control_reg_init_15
 comma
 op_amp
 id|control_reg_init_17

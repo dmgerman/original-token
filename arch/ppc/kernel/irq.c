@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/ppc/kernel/irq.c&n; *&n; *  Derived from arch/i386/kernel/irq.c&n; *    Copyright (C) 1992 Linus Torvalds&n; *  Adapted from arch/i386 by Gary Thomas&n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *  &n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * The MPC8xx has an interrupt mask in the SIU.  If a bit is set, the&n; * interrupt is _enabled_.  As expected, IRQ0 is bit 0 in the 32-bit&n; * mask register (of which only 16 are defined), hence the weird shifting&n; * and compliment of the cached_irq_mask.  I want to be able to stuff&n; * this right into the SIU SMASK register.&n; * Many of the prep/chrp functions are conditional compiled on CONFIG_8xx&n; * to reduce code space and undefined function references.&n; */
+multiline_comment|/*&n; * $Id: irq.c,v 1.90 1998/12/10 02:39:46 cort Exp $&n; *&n; *  arch/ppc/kernel/irq.c&n; *&n; *  Derived from arch/i386/kernel/irq.c&n; *    Copyright (C) 1992 Linus Torvalds&n; *  Adapted from arch/i386 by Gary Thomas&n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Cort Dougan&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *  &n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * The MPC8xx has an interrupt mask in the SIU.  If a bit is set, the&n; * interrupt is _enabled_.  As expected, IRQ0 is bit 0 in the 32-bit&n; * mask register (of which only 16 are defined), hence the weird shifting&n; * and compliment of the cached_irq_mask.  I want to be able to stuff&n; * this right into the SIU SMASK register.&n; * Many of the prep/chrp functions are conditional compiled on CONFIG_8xx&n; * to reduce code space and undefined function references.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -1190,7 +1190,7 @@ suffix:semicolon
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_siu_conf.sc_simask
@@ -1232,7 +1232,7 @@ suffix:semicolon
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_siu_conf.sc_simask
@@ -3195,6 +3195,15 @@ OL
 l_int|0
 )paren
 (brace
+multiline_comment|/* we get here with Gatwick but the &squot;bogus&squot; isn&squot;t correct in that case -- Cort */
+r_if
+c_cond
+(paren
+id|irq
+op_ne
+id|second_irq
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -3209,6 +3218,7 @@ suffix:semicolon
 id|spurious_interrupts
 op_increment
 suffix:semicolon
+)brace
 r_goto
 id|out
 suffix:semicolon
@@ -3222,7 +3232,7 @@ op_assign
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_siu_conf.sc_sivec
@@ -4493,41 +4503,6 @@ id|irq_mode2
 op_or_assign
 l_int|0xa0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Sound on the Powerstack reportedly needs to be edge triggered&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|_prep_type
-op_eq
-id|_PREP_Motorola
-)paren
-(brace
-id|irq_mode2
-op_and_assign
-op_complement
-l_int|0x04L
-suffix:semicolon
-id|irq_mode2
-op_assign
-l_int|0xca
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|irq_mode1
-comma
-l_int|0x4d0
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|irq_mode2
-comma
-l_int|0x4d1
-)paren
-suffix:semicolon
-)brace
 )brace
 r_break
 suffix:semicolon
@@ -4555,10 +4530,10 @@ macro_line|#endif&t;
 macro_line|#endif /* CONFIG_8xx */
 )brace
 multiline_comment|/* This routine will fix some missing interrupt values in the device tree&n; * on the gatwick mac-io controller used by some PowerBooks&n; */
-id|__pmac
 DECL|function|pmac_fix_gatwick_interrupts
 r_static
 r_void
+id|__init
 id|pmac_fix_gatwick_interrupts
 c_func
 (paren

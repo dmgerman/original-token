@@ -1574,7 +1574,7 @@ suffix:semicolon
 (brace
 r_int
 r_int
-id|virt
+id|phys
 op_assign
 id|kmap_chunks
 (braket
@@ -1594,7 +1594,7 @@ op_increment
 suffix:semicolon
 r_int
 r_int
-id|phys
+id|virt
 op_assign
 id|kmap_chunks
 (braket

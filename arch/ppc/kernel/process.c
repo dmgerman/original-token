@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * $Id: process.c,v 1.68 1998/11/15 19:59:02 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1987,8 +1987,8 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * Low level print for debugging - Cort&n; */
-DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -2055,8 +2055,6 @@ r_return
 id|i
 suffix:semicolon
 )brace
-DECL|variable|lines
-DECL|variable|cols
 r_int
 id|lines
 op_assign
@@ -2066,8 +2064,6 @@ id|cols
 op_assign
 l_int|80
 suffix:semicolon
-DECL|variable|orig_x
-DECL|variable|orig_y
 r_int
 id|orig_x
 op_assign
@@ -2077,7 +2073,6 @@ id|orig_y
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|puthex
 r_void
 id|puthex
 c_func
@@ -2143,7 +2138,6 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -2332,4 +2326,5 @@ op_assign
 id|y
 suffix:semicolon
 )brace
+macro_line|#endif
 eof
