@@ -960,7 +960,12 @@ id|err
 OL
 l_int|0
 op_logical_and
+op_logical_neg
+id|IS_ERR
+c_func
+(paren
 id|dentry
+)paren
 )paren
 id|dput
 c_func

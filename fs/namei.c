@@ -170,13 +170,6 @@ r_return
 id|res
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Kernel pointers have redundant information, so we can use a&n; * scheme where we can return either an error code or a dentry&n; * pointer with the same return value.&n; *&n; * This should be a per-architecture thing, to allow different&n; * error and pointer decisions.&n; */
-DECL|macro|ERR_PTR
-mdefine_line|#define ERR_PTR(err)&t;((void *)((long)(err)))
-DECL|macro|PTR_ERR
-mdefine_line|#define PTR_ERR(ptr)&t;((long)(ptr))
-DECL|macro|IS_ERR
-mdefine_line|#define IS_ERR(ptr)&t;((unsigned long)(ptr) &gt; (unsigned long)(-1000))
 DECL|function|putname
 r_inline
 r_void

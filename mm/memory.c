@@ -1274,10 +1274,11 @@ r_return
 id|error
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Return indicates whether a page was freed so caller can adjust rss&n; */
 DECL|function|free_pte
 r_static
 r_inline
-r_void
+r_int
 id|free_pte
 c_func
 (paren
@@ -1329,6 +1330,7 @@ id|addr
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|free_page
 c_func
@@ -1336,19 +1338,8 @@ c_func
 id|addr
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;mm-&gt;rss
-op_le
-l_int|0
-)paren
 r_return
-suffix:semicolon
-id|current-&gt;mm-&gt;rss
-op_decrement
-suffix:semicolon
-r_return
+l_int|1
 suffix:semicolon
 )brace
 id|swap_free
@@ -1360,6 +1351,9 @@ c_func
 id|page
 )paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|forget_pte
@@ -1401,7 +1395,7 @@ suffix:semicolon
 DECL|function|zap_pte_range
 r_static
 r_inline
-r_void
+r_int
 id|zap_pte_range
 c_func
 (paren
@@ -1422,6 +1416,9 @@ id|pte_t
 op_star
 id|pte
 suffix:semicolon
+r_int
+id|freed
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1433,6 +1430,7 @@ id|pmd
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1465,6 +1463,7 @@ id|pmd
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|pte
@@ -1500,6 +1499,10 @@ suffix:semicolon
 id|size
 op_rshift_assign
 id|PAGE_SHIFT
+suffix:semicolon
+id|freed
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -1549,6 +1552,8 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+id|freed
+op_add_assign
 id|free_pte
 c_func
 (paren
@@ -1556,11 +1561,14 @@ id|page
 )paren
 suffix:semicolon
 )brace
+r_return
+id|freed
+suffix:semicolon
 )brace
 DECL|function|zap_pmd_range
 r_static
 r_inline
-r_void
+r_int
 id|zap_pmd_range
 c_func
 (paren
@@ -1585,6 +1593,9 @@ r_int
 r_int
 id|end
 suffix:semicolon
+r_int
+id|freed
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1596,6 +1607,7 @@ id|dir
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1628,6 +1640,7 @@ id|dir
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|pmd
@@ -1662,8 +1675,14 @@ id|end
 op_assign
 id|PGDIR_SIZE
 suffix:semicolon
+id|freed
+op_assign
+l_int|0
+suffix:semicolon
 r_do
 (brace
+id|freed
+op_add_assign
 id|zap_pte_range
 c_func
 (paren
@@ -1698,6 +1717,9 @@ OL
 id|end
 )paren
 suffix:semicolon
+r_return
+id|freed
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * remove user pages in a given range.&n; */
 DECL|function|zap_page_range
@@ -1731,6 +1753,11 @@ id|address
 op_plus
 id|size
 suffix:semicolon
+r_int
+id|freed
+op_assign
+l_int|0
+suffix:semicolon
 id|dir
 op_assign
 id|pgd_offset
@@ -1749,6 +1776,8 @@ OL
 id|end
 )paren
 (brace
+id|freed
+op_add_assign
 id|zap_pmd_range
 c_func
 (paren
@@ -1773,6 +1802,31 @@ id|PGDIR_MASK
 suffix:semicolon
 id|dir
 op_increment
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Update rss for the mm_struct (not necessarily current-&gt;mm)&n;&t; */
+r_if
+c_cond
+(paren
+id|mm-&gt;rss
+OG
+l_int|0
+)paren
+(brace
+id|mm-&gt;rss
+op_sub_assign
+id|freed
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mm-&gt;rss
+OL
+l_int|0
+)paren
+id|mm-&gt;rss
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 )brace

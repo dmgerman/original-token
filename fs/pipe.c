@@ -1848,7 +1848,7 @@ id|inode
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Mark the inode dirty from the very beginning,&n;&t;&t;&t; * that way it will never be moved to the dirty&n;&t;&t;&t; * list because &quot;make_inode_dirty()&quot; will think&n;&t;&t;&t; * that it already _is_ on the dirty list.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Mark the inode dirty from the very beginning,&n;&t;&t;&t; * that way it will never be moved to the dirty&n;&t;&t;&t; * list because &quot;mark_inode_dirty()&quot; will think&n;&t;&t;&t; * that it already _is_ on the dirty list.&n;&t;&t;&t; */
 id|inode-&gt;i_state
 op_assign
 l_int|1
@@ -1977,6 +1977,7 @@ id|j
 suffix:semicolon
 id|error
 op_assign
+op_minus
 id|ENFILE
 suffix:semicolon
 id|f1
@@ -2069,6 +2070,11 @@ id|j
 op_assign
 id|error
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
 id|f1-&gt;f_dentry
 op_assign
 id|f2-&gt;f_dentry
@@ -2084,6 +2090,15 @@ comma
 l_int|NULL
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|f1-&gt;f_dentry
+)paren
+r_goto
+id|close_f12_inode_i_j
 suffix:semicolon
 multiline_comment|/* read file */
 id|f1-&gt;f_pos
@@ -2149,6 +2164,14 @@ id|j
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|close_f12_inode_i_j
+suffix:colon
+id|put_unused_fd
+c_func
+(paren
+id|j
+)paren
 suffix:semicolon
 id|close_f12_inode_i
 suffix:colon

@@ -106,7 +106,7 @@ DECL|macro|MS_NOATIME
 mdefine_line|#define MS_NOATIME&t;1024&t;/* Do not update access times. */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
-mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_MANDLOCK)
+mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_MANDLOCK|MS_NOATIME)
 multiline_comment|/*&n; * Magic mount flag number. Has to be or-ed to the flag values.&n; */
 DECL|macro|MS_MGC_VAL
 mdefine_line|#define MS_MGC_VAL 0xC0ED0000&t;/* magic flag number to indicate &quot;new&quot; flags */

@@ -369,6 +369,10 @@ c_func
 id|fhp-&gt;fh_handle.fh_dentry
 )paren
 suffix:semicolon
+id|fhp-&gt;fh_dverified
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 )brace
 macro_line|#else
@@ -447,6 +451,10 @@ c_func
 (paren
 id|dentry
 )paren
+suffix:semicolon
+id|fhp-&gt;fh_dverified
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 )brace

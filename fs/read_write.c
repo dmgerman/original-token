@@ -586,7 +586,7 @@ op_logical_neg
 id|dentry
 )paren
 r_goto
-id|bad_file
+id|out
 suffix:semicolon
 id|inode
 op_assign

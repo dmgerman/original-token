@@ -637,7 +637,7 @@ l_int|0
 op_logical_and
 id|address
 op_eq
-l_int|0xc0000000
+id|TASK_SIZE
 op_logical_and
 (paren
 id|error_code
@@ -661,7 +661,7 @@ c_func
 id|mk_pte
 c_func
 (paren
-l_int|0
+id|TASK_SIZE
 comma
 id|PAGE_SHARED
 )paren
@@ -683,7 +683,6 @@ id|address
 OL
 id|PAGE_SIZE
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -691,24 +690,6 @@ id|KERN_ALERT
 l_string|&quot;Unable to handle kernel NULL pointer dereference&quot;
 )paren
 suffix:semicolon
-id|pg0
-(braket
-l_int|0
-)braket
-op_assign
-id|pte_val
-c_func
-(paren
-id|mk_pte
-c_func
-(paren
-l_int|0
-comma
-id|PAGE_SHARED
-)paren
-)paren
-suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
