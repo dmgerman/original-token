@@ -264,41 +264,29 @@ r_int
 id|x
 )paren
 (brace
-r_register
-r_int
-r_int
-r_int
-id|tmp
 id|__asm__
+c_func
 (paren
-l_string|&quot;ax&quot;
-)paren
-op_assign
-id|x
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;xchgb %%al,%%ah&bslash;n&bslash;t&quot;
+l_string|&quot;xchgb %l0,%h0&bslash;n&bslash;t&quot;
 multiline_comment|/* swap lower bytes&t;*/
-l_string|&quot;rorl $16,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;rorl $16,%0&bslash;n&bslash;t&quot;
 multiline_comment|/* swap words&t;&t;*/
-l_string|&quot;xchgb %%al,%%ah&bslash;n&bslash;t&quot;
+l_string|&quot;xchgb %l0,%h0&quot;
 multiline_comment|/* swap higher bytes&t;*/
 suffix:colon
-l_string|&quot;=a&quot;
+l_string|&quot;=q&quot;
 (paren
-id|tmp
+id|x
 )paren
 suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;0&quot;
 (paren
-id|tmp
+id|x
 )paren
 )paren
 suffix:semicolon
 r_return
-id|tmp
+id|x
 suffix:semicolon
 )brace
 r_static
@@ -316,37 +304,25 @@ r_int
 id|x
 )paren
 (brace
-r_register
-r_int
-r_int
-r_int
-id|tmp
 id|__asm__
+c_func
 (paren
-l_string|&quot;ax&quot;
-)paren
-op_assign
-id|x
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;xchgb %%al,%%ah&bslash;n&bslash;t&quot;
+l_string|&quot;xchgb %b0,%h0&quot;
 multiline_comment|/* swap bytes&t;&t;*/
 suffix:colon
-l_string|&quot;=a&quot;
+l_string|&quot;=q&quot;
 (paren
-id|tmp
+id|x
 )paren
 suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;0&quot;
 (paren
-id|tmp
+id|x
 )paren
 )paren
 suffix:semicolon
 r_return
-id|tmp
+id|x
 suffix:semicolon
 )brace
 r_static
@@ -364,41 +340,29 @@ r_int
 id|x
 )paren
 (brace
-r_register
-r_int
-r_int
-r_int
-id|tmp
 id|__asm__
+c_func
 (paren
-l_string|&quot;ax&quot;
-)paren
-op_assign
-id|x
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;xchgb %%al,%%ah&bslash;n&bslash;t&quot;
+l_string|&quot;xchgb %l0,%h0&bslash;n&bslash;t&quot;
 multiline_comment|/* swap lower bytes&t;*/
-l_string|&quot;rorl $16,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;rorl $16,%0&bslash;n&bslash;t&quot;
 multiline_comment|/* swap words&t;&t;*/
-l_string|&quot;xchgb %%al,%%ah&bslash;n&bslash;t&quot;
+l_string|&quot;xchgb %l0,%h0&quot;
 multiline_comment|/* swap higher bytes&t;*/
 suffix:colon
-l_string|&quot;=a&quot;
+l_string|&quot;=q&quot;
 (paren
-id|tmp
+id|x
 )paren
 suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;0&quot;
 (paren
-id|tmp
+id|x
 )paren
 )paren
 suffix:semicolon
 r_return
-id|tmp
+id|x
 suffix:semicolon
 )brace
 r_static
@@ -416,37 +380,25 @@ r_int
 id|x
 )paren
 (brace
-r_register
-r_int
-r_int
-r_int
-id|tmp
 id|__asm__
+c_func
 (paren
-l_string|&quot;ax&quot;
-)paren
-op_assign
+l_string|&quot;xchgb %b0,%h0&quot;
+multiline_comment|/* swap bytes&t;&t;*/
+suffix:colon
+l_string|&quot;=q&quot;
+(paren
 id|x
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;xchgb %%al,%%ah&bslash;n&bslash;t&quot;
-multiline_comment|/* swap bytes */
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|tmp
 )paren
 suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;0&quot;
 (paren
-id|tmp
+id|x
 )paren
 )paren
 suffix:semicolon
 r_return
-id|tmp
+id|x
 suffix:semicolon
 )brace
 macro_line|#ifdef  __OPTIMIZE__

@@ -1218,10 +1218,6 @@ c_cond
 id|request
 op_ne
 id|PTRACE_KILL
-op_logical_and
-id|request
-op_ne
-id|PTRACE_DETACH
 )paren
 r_return
 op_minus

@@ -3,6 +3,7 @@ macro_line|#ifndef _LINUX_NET_H
 DECL|macro|_LINUX_NET_H
 mdefine_line|#define _LINUX_NET_H
 macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#include &lt;linux/socket.h&gt;
 DECL|macro|NSOCKETS
 mdefine_line|#define NSOCKETS&t;128&t;&t;/* should be dynamic, later...&t;*/
 DECL|macro|NPROTO
@@ -127,25 +128,16 @@ op_star
 id|wait
 suffix:semicolon
 multiline_comment|/* ptr to place to wait on&t;*/
-DECL|member|dummy
-r_void
+DECL|member|inode
+r_struct
+id|inode
 op_star
-id|dummy
+id|inode
 suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|SOCK_INODE
-mdefine_line|#define SOCK_INODE(S)&t;((struct inode *)(S)-&gt;dummy)
-r_extern
-r_struct
-id|socket
-id|sockets
-(braket
-id|NSOCKETS
-)braket
-suffix:semicolon
-DECL|macro|last_socket
-mdefine_line|#define last_socket&t;(sockets + NSOCKETS - 1)
+mdefine_line|#define SOCK_INODE(S)&t;((S)-&gt;inode)
 DECL|struct|proto_ops
 r_struct
 id|proto_ops

@@ -5,32 +5,31 @@ DECL|struct|pipe_inode_info
 r_struct
 id|pipe_inode_info
 (brace
-DECL|member|read_wait
+DECL|member|wait
 r_struct
 id|wait_queue
 op_star
-id|read_wait
-suffix:semicolon
-DECL|member|write_wait
-r_struct
-id|wait_queue
-op_star
-id|write_wait
+id|wait
 suffix:semicolon
 DECL|member|base
 r_char
 op_star
 id|base
 suffix:semicolon
-DECL|member|head
+DECL|member|start
 r_int
 r_int
-id|head
+id|start
 suffix:semicolon
-DECL|member|tail
+DECL|member|len
 r_int
 r_int
-id|tail
+id|len
+suffix:semicolon
+DECL|member|lock
+r_int
+r_int
+id|lock
 suffix:semicolon
 DECL|member|rd_openers
 r_int
@@ -54,16 +53,14 @@ id|writers
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|PIPE_READ_WAIT
-mdefine_line|#define PIPE_READ_WAIT(inode)&t;((inode).u.pipe_i.read_wait)
-DECL|macro|PIPE_WRITE_WAIT
-mdefine_line|#define PIPE_WRITE_WAIT(inode)&t;((inode).u.pipe_i.write_wait)
+DECL|macro|PIPE_WAIT
+mdefine_line|#define PIPE_WAIT(inode)&t;((inode).u.pipe_i.wait)
 DECL|macro|PIPE_BASE
 mdefine_line|#define PIPE_BASE(inode)&t;((inode).u.pipe_i.base)
-DECL|macro|PIPE_HEAD
-mdefine_line|#define PIPE_HEAD(inode)&t;((inode).u.pipe_i.head)
-DECL|macro|PIPE_TAIL
-mdefine_line|#define PIPE_TAIL(inode)&t;((inode).u.pipe_i.tail)
+DECL|macro|PIPE_START
+mdefine_line|#define PIPE_START(inode)&t;((inode).u.pipe_i.start)
+DECL|macro|PIPE_LEN
+mdefine_line|#define PIPE_LEN(inode)&t;&t;((inode).u.pipe_i.len)
 DECL|macro|PIPE_RD_OPENERS
 mdefine_line|#define PIPE_RD_OPENERS(inode)&t;((inode).u.pipe_i.rd_openers)
 DECL|macro|PIPE_WR_OPENERS
@@ -72,11 +69,21 @@ DECL|macro|PIPE_READERS
 mdefine_line|#define PIPE_READERS(inode)&t;((inode).u.pipe_i.readers)
 DECL|macro|PIPE_WRITERS
 mdefine_line|#define PIPE_WRITERS(inode)&t;((inode).u.pipe_i.writers)
+DECL|macro|PIPE_LOCK
+mdefine_line|#define PIPE_LOCK(inode)&t;((inode).u.pipe_i.lock)
 DECL|macro|PIPE_SIZE
-mdefine_line|#define PIPE_SIZE(inode)&t;((PIPE_HEAD(inode)-PIPE_TAIL(inode))&amp;(PAGE_SIZE-1))
+mdefine_line|#define PIPE_SIZE(inode)&t;PIPE_LEN(inode)
 DECL|macro|PIPE_EMPTY
-mdefine_line|#define PIPE_EMPTY(inode)&t;(PIPE_HEAD(inode)==PIPE_TAIL(inode))
+mdefine_line|#define PIPE_EMPTY(inode)&t;(PIPE_SIZE(inode)==0)
 DECL|macro|PIPE_FULL
-mdefine_line|#define PIPE_FULL(inode)&t;(PIPE_SIZE(inode)==(PAGE_SIZE-1))
+mdefine_line|#define PIPE_FULL(inode)&t;(PIPE_SIZE(inode)==PIPE_BUF)
+DECL|macro|PIPE_FREE
+mdefine_line|#define PIPE_FREE(inode)&t;(PIPE_BUF - PIPE_LEN(inode))
+DECL|macro|PIPE_END
+mdefine_line|#define PIPE_END(inode)&t;&t;((PIPE_START(inode)+PIPE_LEN(inode))&amp;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;   (PIPE_BUF-1))
+DECL|macro|PIPE_MAX_RCHUNK
+mdefine_line|#define PIPE_MAX_RCHUNK(inode)&t;(PIPE_BUF - PIPE_START(inode))
+DECL|macro|PIPE_MAX_WCHUNK
+mdefine_line|#define PIPE_MAX_WCHUNK(inode)&t;(PIPE_BUF - PIPE_END(inode))
 macro_line|#endif
 eof

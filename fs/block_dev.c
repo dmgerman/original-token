@@ -415,6 +415,7 @@ r_int
 id|left
 suffix:semicolon
 r_int
+r_int
 id|blocks
 suffix:semicolon
 r_int

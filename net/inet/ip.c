@@ -1840,21 +1840,27 @@ id|sum
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|wlen
+)paren
 id|__asm__
 c_func
 (paren
-l_string|&quot;&bslash;t clc&bslash;n&quot;
-l_string|&quot;1:&bslash;n&quot;
-l_string|&quot;&bslash;t lodsl&bslash;n&quot;
-l_string|&quot;&bslash;t adcl %%eax, %%ebx&bslash;n&quot;
-l_string|&quot;&bslash;t loop 1b&bslash;n&quot;
-l_string|&quot;&bslash;t adcl $0, %%ebx&bslash;n&quot;
-l_string|&quot;&bslash;t movl %%ebx, %%eax&bslash;n&quot;
-l_string|&quot;&bslash;t shrl $16, %%eax&bslash;n&quot;
-l_string|&quot;&bslash;t addw %%ax, %%bx&bslash;n&quot;
-l_string|&quot;&bslash;t adcw $0, %%bx&bslash;n&quot;
+l_string|&quot;clc&bslash;n&quot;
+l_string|&quot;1:&bslash;t&quot;
+l_string|&quot;lodsl&bslash;n&bslash;t&quot;
+l_string|&quot;adcl %%eax, %0&bslash;n&bslash;t&quot;
+l_string|&quot;decl %2&bslash;n&bslash;t&quot;
+l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
+l_string|&quot;adcl $0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;movl %0, %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;shrl $16, %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;addw %%ax, %w0&bslash;n&bslash;t&quot;
+l_string|&quot;adcw $0, %w0&quot;
 suffix:colon
-l_string|&quot;=b&quot;
+l_string|&quot;=r&quot;
 (paren
 id|sum
 )paren
@@ -1863,29 +1869,28 @@ l_string|&quot;=S&quot;
 (paren
 id|buff
 )paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|wlen
+)paren
 suffix:colon
 l_string|&quot;0&quot;
 (paren
 id|sum
 )paren
 comma
-l_string|&quot;c&quot;
-(paren
-id|wlen
-)paren
-comma
 l_string|&quot;1&quot;
 (paren
 id|buff
 )paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|wlen
+)paren
 suffix:colon
 l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;si&quot;
-comma
-l_string|&quot;bx&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1931,16 +1936,16 @@ l_int|3
 id|__asm__
 c_func
 (paren
-l_string|&quot;&bslash;t clc&bslash;n&quot;
-l_string|&quot;1:&bslash;n&quot;
-l_string|&quot;&bslash;t lodsl&bslash;n&quot;
-l_string|&quot;&bslash;t adcl %%eax, %%ebx&bslash;n&quot;
-l_string|&quot;&bslash;t loop 1b&bslash;n&quot;
-l_string|&quot;&bslash;t adcl $0, %%ebx&bslash;n&quot;
-l_string|&quot;&bslash;t movl %%ebx, %%eax&bslash;n&quot;
-l_string|&quot;&bslash;t shrl $16, %%eax&bslash;n&quot;
-l_string|&quot;&bslash;t addw %%ax, %%bx&bslash;n&quot;
-l_string|&quot;&bslash;t adcw $0, %%bx&bslash;n&quot;
+l_string|&quot;clc&bslash;n&quot;
+l_string|&quot;1:&bslash;t&quot;
+l_string|&quot;lodsl&bslash;n&bslash;t&quot;
+l_string|&quot;adcl %%eax, %%ebx&bslash;n&bslash;t&quot;
+l_string|&quot;loop 1b&bslash;n&bslash;t&quot;
+l_string|&quot;adcl $0, %%ebx&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%ebx, %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;shrl $16, %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;addw %%ax, %%bx&bslash;n&bslash;t&quot;
+l_string|&quot;adcw $0, %%bx&quot;
 suffix:colon
 l_string|&quot;=b&quot;
 (paren
@@ -1990,9 +1995,9 @@ l_int|2
 id|__asm__
 c_func
 (paren
-l_string|&quot;&bslash;t lodsw&bslash;n&quot;
-l_string|&quot;&bslash;t addw %%ax, %%bx&bslash;n&quot;
-l_string|&quot;&bslash;t adcw $0, %%bx&bslash;n&quot;
+l_string|&quot;lodsw&bslash;n&bslash;t&quot;
+l_string|&quot;addw %%ax, %%bx&bslash;n&bslash;t&quot;
+l_string|&quot;adcw $0, %%bx&quot;
 suffix:colon
 l_string|&quot;=b&quot;
 (paren
@@ -2033,10 +2038,10 @@ l_int|1
 id|__asm__
 c_func
 (paren
-l_string|&quot;&bslash;t lodsb&bslash;n&quot;
-l_string|&quot;&bslash;t movb $0, %%ah&bslash;n&quot;
-l_string|&quot;&bslash;t addw %%ax, %%bx&bslash;n&quot;
-l_string|&quot;&bslash;t adcw $0, %%bx&bslash;n&quot;
+l_string|&quot;lodsb&bslash;n&bslash;t&quot;
+l_string|&quot;movb $0, %%ah&bslash;n&bslash;t&quot;
+l_string|&quot;addw %%ax, %%bx&bslash;n&bslash;t&quot;
+l_string|&quot;adcw $0, %%bx&quot;
 suffix:colon
 l_string|&quot;=b&quot;
 (paren

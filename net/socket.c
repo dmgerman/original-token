@@ -207,6 +207,7 @@ id|sock_close
 )brace
 suffix:semicolon
 DECL|variable|sockets
+r_static
 r_struct
 id|socket
 id|sockets
@@ -240,6 +241,8 @@ id|net_debug
 op_assign
 l_int|0
 suffix:semicolon
+DECL|macro|last_socket
+mdefine_line|#define last_socket&t;(sockets + NSOCKETS - 1)
 macro_line|#ifdef SOCK_DEBUG
 multiline_comment|/* Module debugging. */
 r_static
@@ -500,6 +503,43 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|sock
+op_assign
+id|inode-&gt;i_socket
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sock-&gt;state
+op_ne
+id|SS_FREE
+op_logical_and
+id|SOCK_INODE
+c_func
+(paren
+id|sock
+)paren
+op_eq
+id|inode
+)paren
+r_return
+id|sock
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;socket.c: uhhuh. stale inode-&gt;i_socket pointer&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -529,9 +569,17 @@ id|sock
 op_eq
 id|inode
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;socket.c: uhhuh. Found socket despite no inode-&gt;i_socket pointer&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 id|sock
 suffix:semicolon
+)brace
 r_return
 l_int|NULL
 suffix:semicolon
@@ -744,6 +792,16 @@ op_member_access_from_pointer
 id|i_gid
 op_assign
 id|current-&gt;egid
+suffix:semicolon
+id|SOCK_INODE
+c_func
+(paren
+id|sock
+)paren
+op_member_access_from_pointer
+id|i_socket
+op_assign
+id|sock
 suffix:semicolon
 id|sock-&gt;wait
 op_assign

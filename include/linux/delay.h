@@ -21,7 +21,7 @@ id|loops
 id|__asm__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;tdecl %0&bslash;n&bslash;tjns 1b&bslash;n&quot;
+l_string|&quot;.align 2,0x90&bslash;n1:&bslash;tdecl %0&bslash;n&bslash;tjns 1b&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;a&quot;

@@ -22,6 +22,6 @@ mdefine_line|#define NAME_MAX         255&t;/* # chars in a file name */
 DECL|macro|PATH_MAX
 mdefine_line|#define PATH_MAX        1024&t;/* # chars in a path name */
 DECL|macro|PIPE_BUF
-mdefine_line|#define PIPE_BUF        4095&t;/* # bytes in atomic write to a pipe */
+mdefine_line|#define PIPE_BUF        4096&t;/* # bytes in atomic write to a pipe */
 macro_line|#endif
 eof

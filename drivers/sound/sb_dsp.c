@@ -1404,6 +1404,7 @@ id|dsp_speaker
 id|ON
 )paren
 suffix:semicolon
+macro_line|#ifndef EXCLUDE_SBPRO
 r_if
 c_cond
 (paren
@@ -1426,6 +1427,7 @@ id|dsp_current_speed
 suffix:semicolon
 multiline_comment|/* Speed must be recalculated if #channels&n;&t;&t;&t;&t;   * changes */
 )brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
