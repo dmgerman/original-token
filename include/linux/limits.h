@@ -13,6 +13,8 @@ DECL|macro|NR_SUPER
 mdefine_line|#define NR_SUPER 8
 DECL|macro|NR_HASH
 mdefine_line|#define NR_HASH 997
+DECL|macro|NR_FILE_LOCKS
+mdefine_line|#define NR_FILE_LOCKS 32
 DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE 1024
 DECL|macro|BLOCK_SIZE_BITS

@@ -615,26 +615,6 @@ r_int
 op_star
 id|tmp_esp
 suffix:semicolon
-macro_line|#ifdef notdef
-id|printk
-c_func
-(paren
-l_string|&quot;pid: %d, signr: %x, eax=%d, oeax = %d, int=%d&bslash;n&quot;
-comma
-id|current-&gt;pid
-comma
-id|signr
-comma
-id|regs-&gt;eax
-comma
-id|regs-&gt;orig_eax
-comma
-id|sa-&gt;sa_flags
-op_amp
-id|SA_INTERRUPT
-)paren
-suffix:semicolon
-macro_line|#endif
 id|sa_handler
 op_assign
 (paren

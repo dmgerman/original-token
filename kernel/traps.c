@@ -181,6 +181,16 @@ r_if
 c_cond
 (paren
 (paren
+id|esp
+(braket
+l_int|2
+)braket
+op_amp
+id|VM_MASK
+)paren
+op_logical_or
+(paren
+(paren
 l_int|0xffff
 op_amp
 id|esp
@@ -190,6 +200,7 @@ l_int|1
 )paren
 op_eq
 l_int|0xf
+)paren
 )paren
 r_return
 suffix:semicolon

@@ -2097,10 +2097,6 @@ id|bh-&gt;b_size
 op_assign
 id|size
 suffix:semicolon
-id|i
-op_add_assign
-id|size
-suffix:semicolon
 )brace
 id|tmp
 op_assign

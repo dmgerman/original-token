@@ -3,29 +3,15 @@ DECL|macro|_LINUX_SCHED_H
 mdefine_line|#define _LINUX_SCHED_H
 DECL|macro|HZ
 mdefine_line|#define HZ 100
+multiline_comment|/*&n; * This is the maximum nr of tasks - change it if you need to&n; */
 DECL|macro|NR_TASKS
 mdefine_line|#define NR_TASKS&t;64
+multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;0x04000000
-DECL|macro|LIBRARY_SIZE
-mdefine_line|#define LIBRARY_SIZE&t;0x00400000
+mdefine_line|#define TASK_SIZE&t;0xc0000000
 multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
-macro_line|#if (TASK_SIZE &amp; 0x3fffff)
-macro_line|#error &quot;TASK_SIZE must be multiple of 4M&quot;
-macro_line|#endif
-macro_line|#if (LIBRARY_SIZE &amp; 0x3fffff)
-macro_line|#error &quot;LIBRARY_SIZE must be a multiple of 4M&quot;
-macro_line|#endif
-macro_line|#if (LIBRARY_SIZE &gt;= (TASK_SIZE/2))
-macro_line|#error &quot;LIBRARY_SIZE too damn big!&quot;
-macro_line|#endif
-macro_line|#if (((TASK_SIZE&gt;&gt;16)*NR_TASKS) != 0x10000)
-macro_line|#error &quot;TASK_SIZE*NR_TASKS must be 4GB&quot;
-macro_line|#endif
-DECL|macro|LIBRARY_OFFSET
-mdefine_line|#define LIBRARY_OFFSET (TASK_SIZE - LIBRARY_SIZE)
 DECL|macro|CT_TO_SECS
 mdefine_line|#define CT_TO_SECS(x)&t;((x) / HZ)
 DECL|macro|CT_TO_USECS
@@ -41,6 +27,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/resource.h&gt;
+macro_line|#include &lt;linux/vm86.h&gt;
 macro_line|#if (NR_OPEN &gt; 32)
 macro_line|#error &quot;Currently the close-on-exec-flags and select masks are in one long, max 32 files/proc&quot;
 macro_line|#endif
@@ -345,6 +332,11 @@ r_int
 id|blocked
 suffix:semicolon
 multiline_comment|/* bitmap of masked signals */
+DECL|member|saved_kernel_stack
+r_int
+r_int
+id|saved_kernel_stack
+suffix:semicolon
 multiline_comment|/* various fields */
 DECL|member|exit_code
 r_int
@@ -541,6 +533,12 @@ id|comm
 l_int|8
 )braket
 suffix:semicolon
+DECL|member|vm86_info
+r_struct
+id|vm86_struct
+op_star
+id|vm86_info
+suffix:semicolon
 multiline_comment|/* file system info */
 DECL|member|link_count
 r_int
@@ -592,6 +590,11 @@ r_int
 r_int
 id|length
 suffix:semicolon
+DECL|member|bss
+r_int
+r_int
+id|bss
+suffix:semicolon
 DECL|member|libraries
 )brace
 id|libraries
@@ -640,13 +643,9 @@ mdefine_line|#define PF_ALIGNWARN&t;0x00000001&t;/* Print alignment warning msgs
 multiline_comment|/* Not implemented yet, only for 486*/
 DECL|macro|PF_PTRACED
 mdefine_line|#define PF_PTRACED&t;0x00000010&t;/* set if ptrace (0) has been called. */
-DECL|macro|PF_VM86
-mdefine_line|#define PF_VM86&t;&t;0x00000020&t;/* set if process can execute a vm86 */
-multiline_comment|/* task. */
-multiline_comment|/* not impelmented. */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,&amp;init_task.task,NULL,NULL,NULL, &bslash;&n;/* wait queue*/ {&amp;init_task.task,NULL}, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, 0, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0f200} &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,&amp;init_task.task,NULL,NULL,NULL, &bslash;&n;/* wait queue*/ {&amp;init_task.task,NULL}, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, 0, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0c0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0c0f200} &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
 r_extern
 r_struct
 id|task_struct

@@ -24,7 +24,7 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|pg_dir
+id|swapper_pg_dir
 (braket
 l_int|1024
 )braket

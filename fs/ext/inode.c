@@ -1650,6 +1650,12 @@ id|inode-&gt;i_ctime
 op_assign
 id|raw_inode-&gt;i_time
 suffix:semicolon
+id|inode-&gt;i_blocks
+op_assign
+id|inode-&gt;i_blksize
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -100,6 +100,22 @@ id|ORIG_EIP
 op_assign
 id|EIP
 suffix:semicolon
+multiline_comment|/* We cannot handle emulation in v86-mode */
+r_if
+c_cond
+(paren
+id|EFLAGS
+op_amp
+l_int|0x00020000
+)paren
+id|math_abort
+c_func
+(paren
+id|info
+comma
+id|SIGILL
+)paren
+suffix:semicolon
 multiline_comment|/* 0x0007 means user code space */
 r_if
 c_cond

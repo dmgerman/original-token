@@ -381,7 +381,7 @@ l_int|31
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts so that it can muck with the&n; * request-lists in peace.&n; *&n; * Note that swapping requests always go before other requests,&n; * and are done in the order they appear.&n; */
+multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts so that it can muck with the&n; * request-lists in peace.&n; */
 DECL|function|add_request
 r_static
 r_void
@@ -462,22 +462,6 @@ op_assign
 id|tmp-&gt;next
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|req-&gt;bh
-)paren
-r_if
-c_cond
-(paren
-id|tmp-&gt;next-&gt;bh
-)paren
-r_break
-suffix:semicolon
-r_else
-r_continue
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -882,15 +866,15 @@ id|repeat
 suffix:semicolon
 id|found
 suffix:colon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* fill up the request-info, and add it to the queue */
 id|req-&gt;dev
 op_assign
 id|bh-&gt;b_dev
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 id|req-&gt;cmd
 op_assign

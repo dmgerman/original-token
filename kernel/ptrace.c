@@ -207,10 +207,6 @@ r_int
 r_int
 id|page
 suffix:semicolon
-id|addr
-op_add_assign
-id|tsk-&gt;start_code
-suffix:semicolon
 id|repeat
 suffix:colon
 id|page
@@ -343,10 +339,6 @@ id|data
 r_int
 r_int
 id|page
-suffix:semicolon
-id|addr
-op_add_assign
-id|tsk-&gt;start_code
 suffix:semicolon
 id|repeat
 suffix:colon

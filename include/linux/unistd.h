@@ -228,6 +228,8 @@ DECL|macro|__NR_vhangup
 mdefine_line|#define __NR_vhangup&t;&t;111
 DECL|macro|__NR_idle
 mdefine_line|#define __NR_idle&t;&t;112
+DECL|macro|__NR_vm86
+mdefine_line|#define __NR_vm86&t;&t;113
 r_extern
 r_int
 id|errno

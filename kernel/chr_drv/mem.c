@@ -147,11 +147,7 @@ r_break
 suffix:semicolon
 id|pde
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|pg_dir
+id|current-&gt;tss.cr3
 op_plus
 (paren
 id|addr
@@ -369,11 +365,7 @@ r_break
 suffix:semicolon
 id|pde
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|pg_dir
+id|current-&gt;tss.cr3
 op_plus
 (paren
 id|addr

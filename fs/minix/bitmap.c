@@ -1103,6 +1103,12 @@ id|inode-&gt;i_op
 op_assign
 l_int|NULL
 suffix:semicolon
+id|inode-&gt;i_blocks
+op_assign
+id|inode-&gt;i_blksize
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|inode
 suffix:semicolon

@@ -1732,6 +1732,8 @@ id|S_IFSOCK
 comma
 op_amp
 id|upd-&gt;inode
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|set_fs
