@@ -52,6 +52,16 @@ r_int
 r_char
 id|s_rock
 suffix:semicolon
+DECL|member|s_joliet_level
+r_int
+r_char
+id|s_joliet_level
+suffix:semicolon
+DECL|member|s_utf8
+r_int
+r_char
+id|s_utf8
+suffix:semicolon
 DECL|member|s_name_check
 r_int
 r_char
@@ -63,7 +73,7 @@ r_int
 r_char
 id|s_cruft
 suffix:semicolon
-multiline_comment|/* Broken disks with high&n;&t;&t;&t;&t;&t;&t;  byte of length containing&n;&t;&t;&t;&t;&t;&t;  junk */
+multiline_comment|/* Broken disks with high&n;&t;&t;&t;&t;  byte of length containing&n;&t;&t;&t;&t;  junk */
 DECL|member|s_unhide
 r_int
 r_char
@@ -91,6 +101,13 @@ DECL|member|s_uid
 id|uid_t
 id|s_uid
 suffix:semicolon
+DECL|member|s_nls_iocharset
+r_struct
+id|nls_table
+op_star
+id|s_nls_iocharset
+suffix:semicolon
+multiline_comment|/* Native language support table */
 )brace
 suffix:semicolon
 macro_line|#endif

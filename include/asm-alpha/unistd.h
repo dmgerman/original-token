@@ -536,6 +536,10 @@ DECL|macro|__NR_query_module
 mdefine_line|#define __NR_query_module&t;&t;347
 DECL|macro|__NR_prctl
 mdefine_line|#define __NR_prctl&t;&t;&t;348
+DECL|macro|__NR_pread
+mdefine_line|#define __NR_pread&t;&t;&t;349
+DECL|macro|__NR_pwrite
+mdefine_line|#define __NR_pwrite&t;&t;&t;350
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

@@ -1,6 +1,10 @@
 multiline_comment|/*&n; *  linux/fs/fat/dir.c&n; *&n; *  directory handling functions for fat-based filesystems&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; *&n; *  VFAT extensions by Gordon Chaffee &lt;chaffee@plateau.cs.berkeley.edu&gt;&n; *  Merged with msdos fs by Henrik Storner &lt;storner@osiris.ping.dk&gt;&n; */
+DECL|macro|ASC_LINUX_VERSION
+mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -10,20 +14,14 @@ macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
-macro_line|#include &quot;tables.h&quot;
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(X)
 DECL|function|fat_dir_read
 r_static
-r_int
+id|ssize_t
 id|fat_dir_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -34,8 +32,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_return
@@ -63,7 +64,7 @@ comma
 multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* poll - default */
+multiline_comment|/* select v2.0.x/poll v2.1.x - default */
 id|fat_dir_ioctl
 comma
 multiline_comment|/* ioctl - default */
@@ -80,25 +81,30 @@ id|file_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-multiline_comment|/* Convert Unicode string to ASCII.  If uni_xlate is enabled and we&n; * can&squot;t get a 1:1 conversion, use a colon as an escape character since&n; * it is normally invalid on the vfat filesystem.  The following three&n; * characters are a sort of uuencoded 16 bit Unicode value.  This lets&n; * us do a full dump and restore of Unicode filenames.  We could get&n; * into some trouble with long Unicode names, but ignore that right now.&n; */
+multiline_comment|/*&n; * Convert Unicode 16 to UTF8, translated unicode, or ascii.&n; * If uni_xlate is enabled and we&n; * can&squot;t get a 1:1 conversion, use a colon as an escape character since&n; * it is normally invalid on the vfat filesystem.  The following three&n; * characters are a sort of uuencoded 16 bit Unicode value.  This lets&n; * us do a full dump and restore of Unicode filenames.  We could get&n; * into some trouble with long Unicode names, but ignore that right now.&n; */
 r_static
 r_int
-DECL|function|uni2ascii
-id|uni2ascii
+DECL|function|uni16_to_x8
+id|uni16_to_x8
 c_func
 (paren
-r_int
-r_char
-op_star
-id|uni
-comma
 r_int
 r_char
 op_star
 id|ascii
 comma
 r_int
+r_char
+op_star
+id|uni
+comma
+r_int
 id|uni_xlate
+comma
+r_struct
+id|nls_table
+op_star
+id|nls
 )paren
 (brace
 r_int
@@ -111,9 +117,9 @@ id|op
 suffix:semicolon
 r_int
 r_char
-id|page
+id|ch
 comma
-id|pg_off
+id|cl
 suffix:semicolon
 r_int
 r_char
@@ -144,13 +150,13 @@ l_int|1
 )braket
 )paren
 (brace
-id|pg_off
+id|cl
 op_assign
 op_star
 id|ip
 op_increment
 suffix:semicolon
-id|page
+id|ch
 op_assign
 op_star
 id|ip
@@ -158,9 +164,9 @@ op_increment
 suffix:semicolon
 id|uni_page
 op_assign
-id|fat_uni2asc_pg
+id|nls-&gt;page_uni2charset
 (braket
-id|page
+id|ch
 )braket
 suffix:semicolon
 r_if
@@ -170,7 +176,7 @@ id|uni_page
 op_logical_and
 id|uni_page
 (braket
-id|pg_off
+id|cl
 )braket
 )paren
 (brace
@@ -180,7 +186,7 @@ op_increment
 op_assign
 id|uni_page
 (braket
-id|pg_off
+id|cl
 )braket
 suffix:semicolon
 )brace
@@ -203,19 +209,19 @@ suffix:semicolon
 id|val
 op_assign
 (paren
-id|pg_off
+id|cl
 op_lshift
 l_int|8
 )paren
 op_plus
-id|page
+id|ch
 suffix:semicolon
 id|op
 (braket
 l_int|2
 )braket
 op_assign
-id|fat_uni2code
+id|fat_uni2esc
 (braket
 id|val
 op_amp
@@ -231,7 +237,7 @@ id|op
 l_int|1
 )braket
 op_assign
-id|fat_uni2code
+id|fat_uni2esc
 (braket
 id|val
 op_amp
@@ -245,7 +251,7 @@ suffix:semicolon
 op_star
 id|op
 op_assign
-id|fat_uni2code
+id|fat_uni2esc
 (braket
 id|val
 op_amp
@@ -278,6 +284,74 @@ r_return
 id|op
 op_minus
 id|ascii
+)paren
+suffix:semicolon
+)brace
+DECL|function|dump_de
+r_static
+r_void
+id|dump_de
+c_func
+(paren
+r_struct
+id|msdos_dir_entry
+op_star
+id|de
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_int
+r_char
+op_star
+id|p
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|de
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;[&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|32
+suffix:semicolon
+id|i
+op_increment
+comma
+id|p
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%02x &quot;
+comma
+op_star
+id|p
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;]&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -396,11 +470,35 @@ op_member_access_from_pointer
 id|options.unicode_xlate
 suffix:semicolon
 r_int
+id|utf8
+op_assign
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|options.utf8
+suffix:semicolon
+r_int
 r_char
 op_star
 id|unicode
 op_assign
 l_int|NULL
+suffix:semicolon
+r_struct
+id|nls_table
+op_star
+id|nls
+op_assign
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|nls_io
 suffix:semicolon
 r_if
 c_cond
@@ -552,6 +650,14 @@ op_minus
 l_int|1
 )paren
 (brace
+macro_line|#if 0
+id|dump_de
+c_func
+(paren
+id|de
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Check for long filename entry */
 r_if
 c_cond
@@ -1005,18 +1111,6 @@ r_int
 r_char
 id|sum
 suffix:semicolon
-id|long_len
-op_assign
-id|uni2ascii
-c_func
-(paren
-id|unicode
-comma
-id|longname
-comma
-id|uni_xlate
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1089,6 +1183,49 @@ suffix:semicolon
 id|is_long
 op_assign
 l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|utf8
+)paren
+(brace
+id|long_len
+op_assign
+id|utf8_wcstombs
+c_func
+(paren
+id|longname
+comma
+(paren
+id|__u16
+op_star
+)paren
+id|unicode
+comma
+r_sizeof
+(paren
+id|longname
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|long_len
+op_assign
+id|uni16_to_x8
+c_func
+(paren
+id|longname
+comma
+id|unicode
+comma
+id|uni_xlate
+comma
+id|nls
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2065,8 +2202,11 @@ id|d1
 comma
 r_sizeof
 (paren
-op_star
-id|d1
+r_struct
+id|dirent
+(braket
+l_int|2
+)braket
 )paren
 )paren
 suffix:semicolon
@@ -2149,8 +2289,11 @@ id|d1
 comma
 r_sizeof
 (paren
-op_star
-id|d1
+r_struct
+id|dirent
+(braket
+l_int|2
+)braket
 )paren
 )paren
 suffix:semicolon

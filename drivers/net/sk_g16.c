@@ -352,8 +352,6 @@ multiline_comment|/* Device driver statistics */
 suffix:semicolon
 multiline_comment|/* global variable declaration */
 multiline_comment|/* IRQ map used to reserve a IRQ (see SK_open()) */
-multiline_comment|/* extern void *irq2dev_map[16]; */
-multiline_comment|/* Declared in &lt;linux/ioport.h&gt; */
 multiline_comment|/* static variables */
 DECL|variable|board
 r_static
@@ -827,7 +825,7 @@ multiline_comment|/* Failed to find or init driver */
 )brace
 multiline_comment|/* End of SK_init */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_probe&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called by SK_init and &n; *                  does the main part of initialization.&n; *                  &n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; *                  I : short ioaddr       - I/O Port address where POS is.&n; * Return Value   : 0 = Initialization done             &n; * Errors         : ENODEV - No SK_G16 found&n; *                  -1     - Configuration problem&n; * Globals        : irq2dev_map - Which device uses which IRQ&n; *                : board       - pointer to SK_RAM&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     94/06/30  pwe  SK_ADDR now checked and at the correct place&n;-*/
+multiline_comment|/*-&n; * Function       : SK_probe&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called by SK_init and &n; *                  does the main part of initialization.&n; *                  &n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; *                  I : short ioaddr       - I/O Port address where POS is.&n; * Return Value   : 0 = Initialization done             &n; * Errors         : ENODEV - No SK_G16 found&n; *                  -1     - Configuration problem&n; * Globals        : board       - pointer to SK_RAM&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     94/06/30  pwe  SK_ADDR now checked and at the correct place&n;-*/
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1612,7 +1610,7 @@ multiline_comment|/* Initialization done */
 )brace
 multiline_comment|/* End of SK_probe() */
 "&f;"
-multiline_comment|/*- &n; * Function       : SK_open&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called sometimes after booting &n; *                  when ifconfig program is run.&n; *&n; *                  This function requests an IRQ, sets the correct&n; *                  IRQ in the card. Then calls SK_lance_init() to &n; *                  init and start the LANCE chip. Then if everything is &n; *                  ok returns with 0 (OK), which means SK_G16 is now&n; *                  opened and operational.&n; *&n; *                  (Called by dev_open() /net/inet/dev.c)&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : 0 - Device opened&n; * Errors         : -EAGAIN - Open failed&n; * Globals        : irq2dev_map - which device uses which irq&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*- &n; * Function       : SK_open&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called sometimes after booting &n; *                  when ifconfig program is run.&n; *&n; *                  This function requests an IRQ, sets the correct&n; *                  IRQ in the card. Then calls SK_lance_init() to &n; *                  init and start the LANCE chip. Then if everything is &n; *                  ok returns with 0 (OK), which means SK_G16 is now&n; *                  opened and operational.&n; *&n; *                  (Called by dev_open() /net/inet/dev.c)&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; * Return Value   : 0 - Device opened&n; * Errors         : -EAGAIN - Open failed&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_open
 r_static
 r_int
@@ -1708,7 +1706,7 @@ l_int|0
 comma
 l_string|&quot;sk_g16&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|i
@@ -1791,7 +1789,7 @@ l_int|0
 comma
 l_string|&quot;sk_g16&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -1847,7 +1845,7 @@ l_int|0
 comma
 l_string|&quot;sk_g16&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -1937,14 +1935,6 @@ id|SK_POS4
 suffix:semicolon
 multiline_comment|/* Set IRQ on card */
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
-multiline_comment|/* Set IRQ as used by us */
 id|printk
 c_func
 (paren
@@ -2984,15 +2974,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
+id|dev_id
 suffix:semicolon
 r_struct
 id|priv
@@ -3803,14 +3785,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Free IRQ */
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Mark IRQ as unused */
 r_return
 l_int|0
 suffix:semicolon

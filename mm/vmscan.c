@@ -6,12 +6,11 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* &n; * When are we next due for a page scan? &n; */
@@ -1390,6 +1389,12 @@ l_int|6
 suffix:semicolon
 r_int
 id|stop
+suffix:semicolon
+multiline_comment|/* Let the dcache know we&squot;re looking for memory ... */
+id|shrink_dcache_memory
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* Always trim SLAB caches when memory gets low. */
 (paren

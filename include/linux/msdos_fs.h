@@ -91,16 +91,18 @@ DECL|macro|EOF_FAT12
 mdefine_line|#define EOF_FAT12 0xFF8&t;&t;/* standard EOF */
 DECL|macro|EOF_FAT16
 mdefine_line|#define EOF_FAT16 0xFFF8
+DECL|macro|EOF_FAT32
+mdefine_line|#define EOF_FAT32 0xFFFFFF8
 DECL|macro|EOF_FAT
-mdefine_line|#define EOF_FAT(s) (MSDOS_SB(s)-&gt;fat_bits == 16 ? 0xFFF8 : 0xFF8)
+mdefine_line|#define EOF_FAT(s) (MSDOS_SB(s)-&gt;fat_bits == 32 ? EOF_FAT32 : &bslash;&n;&t;MSDOS_SB(s)-&gt;fat_bits == 16 ? EOF_FAT16 : EOF_FAT12)
 multiline_comment|/*&n; * Inode flags&n; */
 DECL|macro|FAT_BINARY_FL
 mdefine_line|#define FAT_BINARY_FL&t;&t;0x00000001 /* File contains binary data */
 multiline_comment|/*&n; * ioctl commands&n; */
 DECL|macro|VFAT_IOCTL_READDIR_BOTH
-mdefine_line|#define&t;VFAT_IOCTL_READDIR_BOTH&t;&t;_IOR(&squot;r&squot;, 1, long)
+mdefine_line|#define&t;VFAT_IOCTL_READDIR_BOTH&t;&t;_IOR(&squot;r&squot;, 1, struct dirent [2])
 DECL|macro|VFAT_IOCTL_READDIR_SHORT
-mdefine_line|#define&t;VFAT_IOCTL_READDIR_SHORT&t;_IOW(&squot;r&squot;, 2, long)
+mdefine_line|#define&t;VFAT_IOCTL_READDIR_SHORT&t;_IOR(&squot;r&squot;, 2, struct dirent [2])
 multiline_comment|/*&n; * Conversion from and to little-endian byte order. (no-op on i386/i486)&n; *&n; * Naming: Ca_b_c, where a: F = from, T = to, b: LE = little-endian,&n; * BE = big-endian, c: W = word (16 bits), L = longword (32 bits)&n; */
 DECL|macro|CF_LE_W
 mdefine_line|#define CF_LE_W(v) le16_to_cpu(v)
@@ -110,9 +112,9 @@ DECL|macro|CT_LE_W
 mdefine_line|#define CT_LE_W(v) cpu_to_le16(v)
 DECL|macro|CT_LE_L
 mdefine_line|#define CT_LE_L(v) cpu_to_le32(v)
-DECL|struct|msdos_boot_sector
+DECL|struct|fat_boot_sector
 r_struct
-id|msdos_boot_sector
+id|fat_boot_sector
 (brace
 DECL|member|ignored
 id|__s8
@@ -199,6 +201,81 @@ id|__u32
 id|total_sect
 suffix:semicolon
 multiline_comment|/* number of sectors (if sectors == 0) */
+multiline_comment|/* The following fields are only used by FAT32 */
+DECL|member|fat32_length
+id|__u32
+id|fat32_length
+suffix:semicolon
+multiline_comment|/* sectors/FAT */
+DECL|member|flags
+id|__u16
+id|flags
+suffix:semicolon
+multiline_comment|/* bit 8: fat mirroring, low 4: active fat */
+DECL|member|version
+id|__u8
+id|version
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* major, minor filesystem version */
+DECL|member|root_cluster
+id|__u32
+id|root_cluster
+suffix:semicolon
+multiline_comment|/* first cluster in root directory */
+DECL|member|info_sector
+id|__u16
+id|info_sector
+suffix:semicolon
+multiline_comment|/* filesystem info sector */
+DECL|member|backup_boot
+id|__u16
+id|backup_boot
+suffix:semicolon
+multiline_comment|/* backup boot sector */
+DECL|member|reserved2
+id|__u16
+id|reserved2
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* Unused */
+)brace
+suffix:semicolon
+DECL|struct|fat_boot_fsinfo
+r_struct
+id|fat_boot_fsinfo
+(brace
+DECL|member|reserved1
+id|__u32
+id|reserved1
+suffix:semicolon
+multiline_comment|/* Nothing as far as I can tell */
+DECL|member|signature
+id|__u32
+id|signature
+suffix:semicolon
+multiline_comment|/* 0x61417272L */
+DECL|member|free_clusters
+id|__u32
+id|free_clusters
+suffix:semicolon
+multiline_comment|/* Free cluster count.  -1 if unknown */
+DECL|member|next_cluster
+id|__u32
+id|next_cluster
+suffix:semicolon
+multiline_comment|/* Most recently allocated cluster.&n;&t;&t;&t;&t; * Unused under Linux. */
+DECL|member|reserved2
+id|__u32
+id|reserved2
+(braket
+l_int|4
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|msdos_dir_entry
@@ -249,13 +326,11 @@ id|__u16
 id|adate
 suffix:semicolon
 multiline_comment|/* Last access date */
-DECL|member|unused
-id|__u8
-id|unused
-(braket
-l_int|2
-)braket
+DECL|member|starthi
+id|__u16
+id|starthi
 suffix:semicolon
+multiline_comment|/* High 16 bits of cluster in FAT32 */
 DECL|member|time
 DECL|member|date
 DECL|member|start
@@ -316,13 +391,10 @@ l_int|12
 suffix:semicolon
 multiline_comment|/* 6 more characters in name */
 DECL|member|start
-id|__u8
+id|__u16
 id|start
-(braket
-l_int|2
-)braket
 suffix:semicolon
-multiline_comment|/* starting cluster number */
+multiline_comment|/* starting cluster number, 0 in long slots */
 DECL|member|name11_12
 id|__u8
 id|name11_12
@@ -636,6 +708,16 @@ r_struct
 id|inode
 op_star
 id|dir
+)paren
+suffix:semicolon
+r_void
+id|fat_clusters_flush
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
 )paren
 suffix:semicolon
 multiline_comment|/* fat.c */
@@ -992,14 +1074,10 @@ id|inode_operations
 id|fat_file_inode_operations_1024
 suffix:semicolon
 r_extern
-r_int
+id|ssize_t
 id|fat_file_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
@@ -1008,18 +1086,16 @@ r_char
 op_star
 comma
 r_int
-r_int
+comma
+id|loff_t
+op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
+id|ssize_t
 id|fat_file_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
@@ -1029,7 +1105,9 @@ r_char
 op_star
 comma
 r_int
-r_int
+comma
+id|loff_t
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -1241,10 +1319,115 @@ op_star
 id|new_dentry
 )paren
 suffix:semicolon
+multiline_comment|/* nls.c */
+r_extern
+r_int
+id|init_fat_nls
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|fat_nls_table
+op_star
+id|fat_load_nls
+c_func
+(paren
+r_int
+id|codepage
+)paren
+suffix:semicolon
+multiline_comment|/* tables.c */
+r_extern
+r_int
+r_char
+id|fat_uni2esc
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|fat_esc2uni
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/* fatfs_syms.c */
 r_extern
 r_int
 id|init_fat_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cleanup_fat_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* nls.c */
+r_extern
+r_int
+id|fat_register_nls
+c_func
+(paren
+r_struct
+id|fat_nls_table
+op_star
+id|fmt
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fat_unregister_nls
+c_func
+(paren
+r_struct
+id|fat_nls_table
+op_star
+id|fmt
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|fat_nls_table
+op_star
+id|fat_find_nls
+c_func
+(paren
+r_int
+id|codepage
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|fat_nls_table
+op_star
+id|fat_load_nls
+c_func
+(paren
+r_int
+id|codepage
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|fat_unload_nls
+c_func
+(paren
+r_int
+id|codepage
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|init_fat_nls
 c_func
 (paren
 r_void
@@ -1273,6 +1456,22 @@ suffix:semicolon
 r_extern
 r_int
 id|vfat_unlink
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|dir
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|vfat_unlink_uvfat
 c_func
 (paren
 r_struct
@@ -1403,6 +1602,12 @@ r_struct
 id|dentry
 op_star
 )paren
+suffix:semicolon
+multiline_comment|/* vfat/vfatfs_syms.c */
+r_extern
+r_struct
+id|file_system_type
+id|vfat_fs_type
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif

@@ -757,7 +757,7 @@ l_int|0
 comma
 l_string|&quot;ZNet&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 op_logical_or
 id|request_dma
@@ -790,13 +790,6 @@ r_return
 id|EBUSY
 suffix:semicolon
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Allocate buffer memory.&t;We can cross a 128K boundary, so we&n;&t;   must be careful about the allocation.  It&squot;s easiest to waste 8K. */
 r_if
 c_cond
@@ -1617,10 +1610,7 @@ id|device
 op_star
 id|dev
 op_assign
-id|irq2dev_map
-(braket
-id|irq
-)braket
+id|dev_id
 suffix:semicolon
 r_int
 id|ioaddr

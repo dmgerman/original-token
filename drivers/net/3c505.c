@@ -2238,10 +2238,7 @@ suffix:semicolon
 )brace
 id|dev
 op_assign
-id|irq2dev_map
-(braket
-id|irq
-)braket
+id|dev_id
 suffix:semicolon
 r_if
 c_cond
@@ -3176,14 +3173,6 @@ id|adapter-&gt;rx_backlog.out
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * make sure we can find the device header given the interrupt number&n;&t; */
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/*&n;&t; * install our interrupt service routine&n;&t; */
 r_if
 c_cond
@@ -3200,17 +3189,10 @@ l_int|0
 comma
 l_string|&quot;3c505&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
@@ -4295,14 +4277,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * and we no longer have to map irq to dev either&n;&t; */
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 id|free_dma
 c_func

@@ -2787,15 +2787,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
+id|dev_id
 suffix:semicolon
 r_if
 c_cond
@@ -3712,7 +3704,7 @@ l_int|0
 comma
 l_string|&quot;ltpc_probe&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|probe4
@@ -3729,7 +3721,7 @@ l_int|0
 comma
 l_string|&quot;ltpc_probe&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|probe9
@@ -3746,7 +3738,7 @@ l_int|0
 comma
 l_string|&quot;ltpc_probe&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|irqhitmask
@@ -4882,13 +4874,6 @@ c_cond
 id|irq
 )paren
 (brace
-id|irq2dev_map
-(braket
-id|irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 (paren
 r_void
 )paren
@@ -4904,7 +4889,7 @@ l_int|0
 comma
 l_string|&quot;ltpc&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 (paren

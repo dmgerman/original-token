@@ -1318,8 +1318,6 @@ op_member_access_from_pointer
 id|write
 c_func
 (paren
-id|acct_file.f_dentry-&gt;d_inode
-comma
 op_amp
 id|acct_file
 comma
@@ -1335,6 +1333,9 @@ r_sizeof
 r_struct
 id|acct
 )paren
+comma
+op_amp
+id|acct_file.f_pos
 )paren
 suffix:semicolon
 id|set_fs

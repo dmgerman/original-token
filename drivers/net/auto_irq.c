@@ -17,23 +17,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-DECL|variable|irq2dev_map
-r_struct
-id|device
-op_star
-id|irq2dev_map
-(braket
-id|NR_IRQS
-)braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* ... zeroed */
-)brace
-suffix:semicolon
 DECL|variable|irqs
 r_static
 r_int

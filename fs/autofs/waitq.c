@@ -175,13 +175,14 @@ op_member_access_from_pointer
 id|write
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode
-comma
 id|file
 comma
 id|data
 comma
 id|bytes
+comma
+op_amp
+id|file-&gt;f_pos
 )paren
 )paren
 OG

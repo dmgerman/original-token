@@ -1413,13 +1413,6 @@ c_func
 id|dev_tint
 )paren
 suffix:semicolon
-DECL|variable|irq2dev_map
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|irq2dev_map
-)paren
-suffix:semicolon
 DECL|variable|dev_add_pack
 id|EXPORT_SYMBOL
 c_func

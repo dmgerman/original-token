@@ -1447,7 +1447,7 @@ l_int|0
 comma
 l_string|&quot;bogus&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 op_ne
 op_minus
@@ -1519,7 +1519,7 @@ l_int|0
 comma
 id|ei_status.name
 comma
-l_int|NULL
+id|dev
 )paren
 op_eq
 l_int|0
@@ -1577,7 +1577,7 @@ l_int|0
 comma
 id|ei_status.name
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -1628,13 +1628,6 @@ suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|ei_status.saved_irq
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|outb
 c_func
@@ -3091,7 +3084,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* NB: el2_close() handles free_irq + irq2dev map */
+multiline_comment|/* NB: el2_close() handles free_irq */
 id|kfree
 c_func
 (paren

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/isofs/util.c&n; *&n; *  The special functions in the file are numbered according to the section&n; *  of the iso 9660 standard in which they are described.  isonum_733 will&n; *  convert numbers according to section 7.3.3, etc.&n; *&n; *  isofs special functions.  This file was lifted in its entirety from&n; *  the 386bsd iso9660 filesystem, by Pace Willisson &lt;pace@blitz.com&gt;.&n; */
+macro_line|#include &lt;linux/time.h&gt;
 r_int
 DECL|function|isonum_711
 id|isonum_711
@@ -515,6 +516,11 @@ comma
 l_int|31
 )brace
 suffix:semicolon
+r_extern
+r_struct
+id|timezone
+id|sys_tz
+suffix:semicolon
 id|days
 op_assign
 id|year
@@ -612,6 +618,15 @@ l_int|60
 )paren
 op_plus
 id|second
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sys_tz.tz_dsttime
+)paren
+id|crtime
+op_sub_assign
+l_int|3600
 suffix:semicolon
 multiline_comment|/* sign extend */
 r_if

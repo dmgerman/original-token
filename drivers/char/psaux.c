@@ -912,15 +912,10 @@ suffix:semicolon
 multiline_comment|/*&n; * Write to the aux device.&n; */
 DECL|function|write_aux
 r_static
-r_int
+id|ssize_t
 id|write_aux
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -932,11 +927,14 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
-r_int
+id|ssize_t
 id|retval
 op_assign
 l_int|0
@@ -947,7 +945,7 @@ c_cond
 id|count
 )paren
 (brace
-r_int
+id|ssize_t
 id|written
 op_assign
 l_int|0
@@ -1040,7 +1038,7 @@ id|retval
 op_assign
 id|written
 suffix:semicolon
-id|inode-&gt;i_mtime
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
@@ -1518,15 +1516,10 @@ suffix:semicolon
 multiline_comment|/*&n; * Write to the 82C710 mouse device.&n; */
 DECL|function|write_qp
 r_static
-r_int
+id|ssize_t
 id|write_qp
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1538,11 +1531,14 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
-r_int
+id|ssize_t
 id|i
 op_assign
 id|count
@@ -1588,7 +1584,7 @@ id|qp_data
 )paren
 suffix:semicolon
 )brace
-id|inode-&gt;i_mtime
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
@@ -1846,15 +1842,10 @@ multiline_comment|/*&n; *&t;Generic part continues...&n; */
 multiline_comment|/*&n; * Put bytes from input queue to buffer.&n; */
 DECL|function|read_aux
 r_static
-r_int
+id|ssize_t
 id|read_aux
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1865,8 +1856,11 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_struct
@@ -1879,7 +1873,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-r_int
+id|ssize_t
 id|i
 op_assign
 id|count
@@ -2014,7 +2008,7 @@ op_minus
 id|i
 )paren
 (brace
-id|inode-&gt;i_atime
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon

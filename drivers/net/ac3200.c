@@ -695,7 +695,7 @@ l_int|0
 comma
 l_string|&quot;ac3200&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -1004,7 +1004,7 @@ l_int|0
 comma
 l_string|&quot;ac3200&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 r_return
@@ -1354,13 +1354,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 id|ei_close
@@ -1712,7 +1705,7 @@ id|dev-&gt;priv
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Someday free_irq + irq2dev may be in ac_close_card() */
+multiline_comment|/* Someday free_irq may be in ac_close_card() */
 id|free_irq
 c_func
 (paren
@@ -1720,13 +1713,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|release_region
 c_func

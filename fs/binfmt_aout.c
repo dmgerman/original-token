@@ -170,7 +170,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * These are the only things you should do on a core-file: use only these&n; * macros to write out all the necessary info.&n; */
 DECL|macro|DUMP_WRITE
-mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file.f_op-&gt;write(inode,&amp;file,(char *)(addr),(nr)) != (nr)) goto close_coredump
+mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file.f_op-&gt;write(&amp;file,(char *)(addr),(nr),&amp;file.f_pos) != (nr)) goto close_coredump
 DECL|macro|DUMP_SEEK
 mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;llseek) { &bslash;&n;&t;if (file.f_op-&gt;llseek(&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)
 multiline_comment|/*&n; * Routine writes a core dump image in the current directory.&n; * Currently only a stub-function.&n; *&n; * Note that setuid/setgid files won&squot;t make a core-dump if the uid/gid&n; * changed due to the set[u|g]id. It&squot;s enforced by the &quot;current-&gt;dumpable&quot;&n; * field, which also makes sure the core-dumps won&squot;t be recursive if the&n; * dumping of the process results in another error..&n; */
@@ -1350,6 +1350,9 @@ r_int
 r_int
 id|rlim
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
 id|ex
 op_assign
 op_star
@@ -1545,13 +1548,24 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-multiline_comment|/* OK, This is the point of no return */
+multiline_comment|/* Flush all traces of the currently running executable */
+id|retval
+op_assign
 id|flush_old_exec
 c_func
 (paren
 id|bprm
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+id|retval
+suffix:semicolon
+multiline_comment|/* OK, This is the point of no return */
 macro_line|#ifdef __sparc__
 id|memcpy
 c_func
@@ -2443,8 +2457,6 @@ op_member_access_from_pointer
 id|read
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 (paren
@@ -2458,6 +2470,9 @@ r_sizeof
 (paren
 id|ex
 )paren
+comma
+op_amp
+id|file-&gt;f_pos
 )paren
 suffix:semicolon
 id|set_fs

@@ -19,6 +19,18 @@ r_int
 r_int
 id|fs_umask
 suffix:semicolon
+DECL|member|codepage
+r_int
+r_int
+id|codepage
+suffix:semicolon
+multiline_comment|/* Codepage for shortname conversions */
+DECL|member|iocharset
+r_char
+op_star
+id|iocharset
+suffix:semicolon
+multiline_comment|/* Charset used for filename input/display */
 DECL|member|name_check
 r_int
 r_char
@@ -62,6 +74,12 @@ suffix:colon
 l_int|1
 comma
 multiline_comment|/* 0=no vfat long filename support, 1=vfat support */
+DECL|member|utf8
+id|utf8
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Use of UTF8 character set (Default) */
 DECL|member|unicode_xlate
 id|unicode_xlate
 suffix:colon
@@ -84,8 +102,30 @@ DECL|member|atari
 id|atari
 suffix:colon
 l_int|1
-suffix:semicolon
+comma
 multiline_comment|/* Use Atari GEMDOS variation of MS-DOS fs */
+DECL|member|fat32
+id|fat32
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Is this a FAT32 partition? */
+)brace
+suffix:semicolon
+DECL|struct|vfat_unicode
+r_struct
+id|vfat_unicode
+(brace
+DECL|member|uni1
+r_int
+r_char
+id|uni1
+suffix:semicolon
+DECL|member|uni2
+r_int
+r_char
+id|uni2
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|msdos_sb_info
@@ -137,6 +177,18 @@ r_int
 id|clusters
 suffix:semicolon
 multiline_comment|/* number of clusters */
+DECL|member|root_cluster
+r_int
+r_int
+id|root_cluster
+suffix:semicolon
+multiline_comment|/* first cluster of the root directory */
+DECL|member|fsinfo_offset
+r_int
+r_int
+id|fsinfo_offset
+suffix:semicolon
+multiline_comment|/* FAT32 fsinfo offset from start of disk */
 DECL|member|fat_wait
 r_struct
 id|wait_queue
@@ -162,6 +214,20 @@ r_struct
 id|fat_mount_options
 id|options
 suffix:semicolon
+DECL|member|nls_disk
+r_struct
+id|nls_table
+op_star
+id|nls_disk
+suffix:semicolon
+multiline_comment|/* Codepage used on disk */
+DECL|member|nls_io
+r_struct
+id|nls_table
+op_star
+id|nls_io
+suffix:semicolon
+multiline_comment|/* Charset used for input and display */
 )brace
 suffix:semicolon
 macro_line|#endif

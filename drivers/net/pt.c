@@ -3790,7 +3790,7 @@ l_int|0
 comma
 l_string|&quot;pt&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -4014,13 +4014,6 @@ id|EAGAIN
 suffix:semicolon
 )brace
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Reset hardware */
 id|chipset_init
 c_func
@@ -7623,13 +7616,6 @@ l_int|0x3f0
 comma
 id|PT_TOTAL_SIZE
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|pt0a.irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|kfree
 c_func

@@ -687,7 +687,7 @@ l_int|0
 comma
 id|ei_status.name
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 r_return
@@ -1122,13 +1122,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
-suffix:semicolon
 id|NS8390_init
 c_func
 (paren
@@ -1451,7 +1444,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* NB: ultra_close_card() does free_irq + irq2dev */
+multiline_comment|/* NB: ultra_close_card() does free_irq */
 r_int
 id|ioaddr
 op_assign

@@ -2791,6 +2791,29 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
+multiline_comment|/*&n;&t; * Before checking whether the filesystem is still busy,&n;&t; * make sure the kernel doesn&squot;t hold any quotafiles open&n;&t; * on the device. If the umount fails, too bad -- there&n;&t; * are no quotas running anymore. Just turn them on again.&n;&t; */
+id|quota_off
+c_func
+(paren
+id|dev
+comma
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Shrink dcache, then fsync. This guarantees that if the&n;&t; * filesystem is quiescent at this point, then (a) only the&n;&t; * root entry should be in use and (b) that root entry is&n;&t; * clean.&n;&t; */
+id|shrink_dcache_sb
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|fsync_dev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2802,7 +2825,11 @@ op_logical_neg
 id|unmount_root
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Special case for &quot;unmounting&quot; root. We just try to remount&n;&t;&t; * it readonly, and sync() the device.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Special case for &quot;unmounting&quot; root ...&n;&t;&t; * we just try to remount it readonly.&n;&t;&t; */
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2813,23 +2840,6 @@ op_amp
 id|MS_RDONLY
 )paren
 )paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; * Make sure all quotas are turned off on this device we need to mount&n;&t;&t;&t; * it readonly so no more writes by the quotasystem.&n;&t;&t;&t; * If later on the remount fails too bad there are no quotas running&n;&t;&t;&t; * anymore. Turn them on again by hand.&n;&t;&t;&t; */
-id|quota_off
-c_func
-(paren
-id|dev
-comma
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-id|fsync_dev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|retval
 op_assign
 id|do_remount_sb
@@ -2846,32 +2856,6 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Before checking if the filesystem is still busy make sure the kernel&n;&t; * doesn&squot;t hold any quotafiles open on that device. If the umount fails&n;&t; * too bad there are no quotas running anymore. Turn them on again by hand.&n;&t; */
-id|quota_off
-c_func
-(paren
-id|dev
-comma
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Shrink dcache, then fsync. This guarantees that if the&n;&t; * filesystem is quiescent at this point, then (a) only the&n;&t; * root entry should be in use and (b) that root entry is&n;&t; * clean.&n;&t; */
-id|shrink_dcache
-c_func
-(paren
-)paren
-suffix:semicolon
-id|fsync_dev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|retval
 op_assign
 id|d_umount
@@ -2885,8 +2869,8 @@ c_cond
 (paren
 id|retval
 )paren
-r_return
-id|retval
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Forget any inodes */
 r_if
@@ -2948,8 +2932,14 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-r_return
+id|retval
+op_assign
 l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|retval
 suffix:semicolon
 )brace
 DECL|function|umount_dev

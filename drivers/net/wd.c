@@ -1289,7 +1289,7 @@ l_int|0
 comma
 id|model_name
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -2503,13 +2503,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|release_region
 c_func

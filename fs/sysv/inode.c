@@ -54,11 +54,14 @@ op_assign
 (brace
 id|sysv_read_inode
 comma
-id|sysv_notify_change
-comma
 id|sysv_write_inode
 comma
 id|sysv_put_inode
+comma
+l_int|NULL
+comma
+multiline_comment|/* delete_inode */
+id|sysv_notify_change
 comma
 id|sysv_put_super
 comma
@@ -67,6 +70,7 @@ comma
 id|sysv_statfs
 comma
 l_int|NULL
+multiline_comment|/* remount_fs */
 )brace
 suffix:semicolon
 multiline_comment|/* The following functions try to recognize specific filesystems.&n; * We recognize:&n; * - Xenix FS by its magic number.&n; * - SystemV FS by its magic number.&n; * - Coherent FS by its funny fname/fpack field.&n; * We discriminate among SystemV4 and SystemV2 FS by the assumption that&n; * the time stamp is not &lt; 01-01-1980.&n; */

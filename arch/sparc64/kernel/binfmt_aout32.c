@@ -1094,6 +1094,9 @@ r_int
 r_int
 id|rlim
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
 id|ex
 op_assign
 op_star
@@ -1227,13 +1230,24 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-multiline_comment|/* OK, This is the point of no return */
+multiline_comment|/* Flush all traces of the currently running executable */
+id|retval
+op_assign
 id|flush_old_exec
 c_func
 (paren
 id|bprm
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+id|retval
+suffix:semicolon
+multiline_comment|/* OK, This is the point of no return */
 id|memcpy
 c_func
 (paren

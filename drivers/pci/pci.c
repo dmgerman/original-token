@@ -50,7 +50,17 @@ c_func
 (paren
 id|COMPAQ
 comma
-id|COMPAQ_NETELL100
+id|COMPAQ_SMART2P
+comma
+l_string|&quot;Smart-2/P RAID Controller&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|COMPAQ
+comma
+id|COMPAQ_NETEL100
 comma
 l_string|&quot;Netelligent 10/100&quot;
 )paren
@@ -60,7 +70,7 @@ c_func
 (paren
 id|COMPAQ
 comma
-id|COMPAQ_NETELL10
+id|COMPAQ_NETEL10
 comma
 l_string|&quot;Netelligent 10&quot;
 )paren
@@ -70,9 +80,39 @@ c_func
 (paren
 id|COMPAQ
 comma
-id|COMPAQ_NETFLEX3
+id|COMPAQ_NETFLEX3I
 comma
 l_string|&quot;NetFlex 3&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|COMPAQ
+comma
+id|COMPAQ_NETEL100D
+comma
+l_string|&quot;Netelligent 10/100 Dual&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|COMPAQ
+comma
+id|COMPAQ_NETEL100PI
+comma
+l_string|&quot;Netelligent 10/100 ProLiant&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|COMPAQ
+comma
+id|COMPAQ_NETEL100I
+comma
+l_string|&quot;Netelligent 10/100 Integrated&quot;
 )paren
 comma
 id|DEVICE
@@ -83,6 +123,16 @@ comma
 id|COMPAQ_THUNDER
 comma
 l_string|&quot;ThunderLAN&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|COMPAQ
+comma
+id|COMPAQ_NETFLEX3B
+comma
+l_string|&quot;NetFlex 3 BNC&quot;
 )paren
 comma
 id|DEVICE
@@ -210,7 +260,27 @@ c_func
 (paren
 id|ATI
 comma
+id|ATI_215GP
+comma
+l_string|&quot;Mach64 GP (Rage Pro)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
 id|ATI_215GT
+comma
+l_string|&quot;Mach64 GT (Rage II)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
+id|ATI_215GTB
 comma
 l_string|&quot;Mach64 GT (Rage II)&quot;
 )paren
@@ -974,7 +1044,7 @@ id|HP
 comma
 id|HP_J2585B
 comma
-l_string|&quot;J2585B&quot;
+l_string|&quot;J2585B (Lassen)&quot;
 )paren
 comma
 id|DEVICE
@@ -1190,36 +1260,6 @@ comma
 id|DEVICE
 c_func
 (paren
-id|APPLE
-comma
-id|APPLE_BANDIT
-comma
-l_string|&quot;Bandit&quot;
-)paren
-comma
-id|DEVICE
-c_func
-(paren
-id|APPLE
-comma
-id|APPLE_GC
-comma
-l_string|&quot;Grand Central&quot;
-)paren
-comma
-id|DEVICE
-c_func
-(paren
-id|APPLE
-comma
-id|APPLE_HYDRA
-comma
-l_string|&quot;Hydra&quot;
-)paren
-comma
-id|DEVICE
-c_func
-(paren
 id|N9
 comma
 id|N9_I128
@@ -1339,6 +1379,46 @@ comma
 id|X_AGX016
 comma
 l_string|&quot;ITT AGX016&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|PICOP
+comma
+id|PICOP_PT86C52X
+comma
+l_string|&quot;PT86C52x Vesuvius&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|APPLE
+comma
+id|APPLE_BANDIT
+comma
+l_string|&quot;Bandit&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|APPLE
+comma
+id|APPLE_GC
+comma
+l_string|&quot;Grand Central&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|APPLE
+comma
+id|APPLE_HYDRA
+comma
+l_string|&quot;Hydra&quot;
 )paren
 comma
 id|DEVICE
@@ -1548,9 +1628,9 @@ c_func
 (paren
 id|BROOKTREE
 comma
-id|BT848
+id|BROOKTREE_848
 comma
-l_string|&quot;Brooktree 848&quot;
+l_string|&quot;Bt848&quot;
 )paren
 comma
 id|DEVICE
@@ -1700,6 +1780,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|SMC
+comma
+id|SMC_EPIC100
+comma
+l_string|&quot;9432 TX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|AL
 comma
 id|AL_M1445
@@ -1772,9 +1862,69 @@ c_func
 (paren
 id|AL
 comma
+id|AL_M1521
+comma
+l_string|&quot;M1521&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M1523
+comma
+l_string|&quot;M1523&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M1531
+comma
+l_string|&quot;M1531 Aladdin IV&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M1533
+comma
+l_string|&quot;M1533 Aladdin IV&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
 id|AL_M4803
 comma
 l_string|&quot;M4803&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M5219
+comma
+l_string|&quot;M5219&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M5229
+comma
+l_string|&quot;M5229 TXpro&quot;
 )paren
 comma
 id|DEVICE
@@ -1795,6 +1945,16 @@ comma
 id|NEOMAGIC_MAGICGRAPH_128V
 comma
 l_string|&quot;MagicGraph 128V&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|NEOMAGIC
+comma
+id|NEOMAGIC_MAGICGRAPH_128ZV
+comma
+l_string|&quot;MagicGraph 128ZV&quot;
 )paren
 comma
 id|DEVICE
@@ -1974,7 +2134,7 @@ id|VIA
 comma
 id|VIA_82C586_1
 comma
-l_string|&quot;VT 82C586 Apollo VP-1&quot;
+l_string|&quot;VT 82C586 Apollo IDE&quot;
 )paren
 comma
 id|DEVICE
@@ -1994,7 +2154,7 @@ id|VIA
 comma
 id|VIA_82C585
 comma
-l_string|&quot;VT 82C585VP Apollo VP-1&quot;
+l_string|&quot;VT 82C585 Apollo VP1/VPX&quot;
 )paren
 comma
 id|DEVICE
@@ -2002,9 +2162,19 @@ c_func
 (paren
 id|VIA
 comma
-id|VIA_82C586
+id|VIA_82C586_0
 comma
-l_string|&quot;VT 82C586 Apollo VP-1&quot;
+l_string|&quot;VT 82C586 Apollo ISA&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C595
+comma
+l_string|&quot;VT 82C595 Apollo VP2&quot;
 )paren
 comma
 id|DEVICE
@@ -2025,6 +2195,36 @@ comma
 id|VIA_82C926
 comma
 l_string|&quot;VT 82C926 Amazon&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C595_97
+comma
+l_string|&quot;VT 82C595 Apollo VP2/97&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C586_2
+comma
+l_string|&quot;VT 82C586 Apollo USB&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_82C586_3
+comma
+l_string|&quot;VT 82C586B Apollo ACPI&quot;
 )paren
 comma
 id|DEVICE
@@ -2170,6 +2370,186 @@ comma
 id|DEVICE
 c_func
 (paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x17RP
+comma
+l_string|&quot;GDT 6117RP/6517RP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x27RP
+comma
+l_string|&quot;GDT 6127RP/6527RP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6537RP
+comma
+l_string|&quot;GDT 6537RP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6557RP
+comma
+l_string|&quot;GDT 6557RP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x11RP
+comma
+l_string|&quot;GDT 6111RP/6511RP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x21RP
+comma
+l_string|&quot;GDT 6121RP/6521RP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x17RP1
+comma
+l_string|&quot;GDT 6117RP1/6517RP1&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x27RP1
+comma
+l_string|&quot;GDT 6127RP1/6527RP1&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6537RP1
+comma
+l_string|&quot;GDT 6537RP1&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6557RP1
+comma
+l_string|&quot;GDT 6557RP1&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x11RP1
+comma
+l_string|&quot;GDT 6111RP1/6511RP1&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x21RP1
+comma
+l_string|&quot;GDT 6121RP1/6521RP1&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x17RP2
+comma
+l_string|&quot;GDT 6117RP2/6517RP2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x27RP2
+comma
+l_string|&quot;GDT 6127RP2/6527RP2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6537RP2
+comma
+l_string|&quot;GDT 6537RP2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6557RP2
+comma
+l_string|&quot;GDT 6557RP2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x11RP2
+comma
+l_string|&quot;GDT 6111RP2/6511RP2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT6x21RP2
+comma
+l_string|&quot;GDT 6121RP2/6521RP2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|EF
 comma
 id|EF_ATM_FPGA
@@ -2255,6 +2635,16 @@ comma
 id|ALLIANCE_PROVIDEO
 comma
 l_string|&quot;Provideo&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ALLIANCE
+comma
+id|ALLIANCE_AT24
+comma
+l_string|&quot;AT24&quot;
 )paren
 comma
 id|DEVICE
@@ -2422,6 +2812,16 @@ c_func
 (paren
 id|COMPEX
 comma
+id|COMPEX_ENET100VG4
+comma
+l_string|&quot;Readylink ENET100-VG4&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|COMPEX
+comma
 id|COMPEX_RL2000
 comma
 l_string|&quot;ReadyLink 2000&quot;
@@ -2582,6 +2982,36 @@ comma
 id|DEVICE
 c_func
 (paren
+id|ENSONIQ
+comma
+id|ENSONIQ_AUDIOPCI
+comma
+l_string|&quot;AudioPCI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|PICTUREL
+comma
+id|PICTUREL_PCIVST
+comma
+l_string|&quot;PCIVST&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|NVIDIA
+comma
+id|NVIDIA_RIVA128
+comma
+l_string|&quot;Riva 128&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|SYMPHONY
 comma
 id|SYMPHONY_101
@@ -2665,6 +3095,26 @@ comma
 id|AVANCE_2302
 comma
 l_string|&quot;ALG-2302&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|NETVIN
+comma
+id|NETVIN_NV5000SC
+comma
+l_string|&quot;NV5000&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|S3
+comma
+id|S3_PLATO_PXS
+comma
+l_string|&quot;PLATO/PX (system)&quot;
 )paren
 comma
 id|DEVICE
@@ -2794,7 +3244,7 @@ id|S3
 comma
 id|S3_TRIO64V2
 comma
-l_string|&quot;Trio64V2&quot;
+l_string|&quot;Trio64V2/DX or /GX&quot;
 )paren
 comma
 id|DEVICE
@@ -2804,7 +3254,7 @@ id|S3
 comma
 id|S3_PLATO_PXG
 comma
-l_string|&quot;Plato&quot;
+l_string|&quot;PLATO/PX (graphics)&quot;
 )paren
 comma
 id|DEVICE
@@ -2814,7 +3264,17 @@ id|S3
 comma
 id|S3_ViRGE_DXGX
 comma
-l_string|&quot;ViRGE/DX&quot;
+l_string|&quot;ViRGE/DX or /GX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|S3
+comma
+id|S3_ViRGE_GX2
+comma
+l_string|&quot;ViRGE/GX2&quot;
 )paren
 comma
 id|DEVICE
@@ -3058,7 +3518,7 @@ id|INTEL
 comma
 id|INTEL_82371AB_0
 comma
-l_string|&quot;82371AB PIIX4&quot;
+l_string|&quot;82371AB PIIX4 ISA&quot;
 )paren
 comma
 id|DEVICE
@@ -3068,7 +3528,7 @@ id|INTEL
 comma
 id|INTEL_82371AB
 comma
-l_string|&quot;82371AB 430TX PIIX4&quot;
+l_string|&quot;82371AB PIIX4 IDE&quot;
 )paren
 comma
 id|DEVICE
@@ -3078,7 +3538,7 @@ id|INTEL
 comma
 id|INTEL_82371AB_2
 comma
-l_string|&quot;82371AB PIIX4&quot;
+l_string|&quot;82371AB PIIX4 USB&quot;
 )paren
 comma
 id|DEVICE
@@ -3088,7 +3548,7 @@ id|INTEL
 comma
 id|INTEL_82371AB_3
 comma
-l_string|&quot;82371AB PIIX4 Power Management&quot;
+l_string|&quot;82371AB PIIX4 ACPI&quot;
 )paren
 comma
 id|DEVICE
@@ -3106,7 +3566,7 @@ c_func
 (paren
 id|INTEL
 comma
-id|INTEL_P6_2
+id|INTEL_82450GX
 comma
 l_string|&quot;82450GX Orion P6&quot;
 )paren
@@ -4174,6 +4634,12 @@ r_return
 l_string|&quot;Miro&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_NEC
+suffix:colon
+r_return
+l_string|&quot;NEC&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_FD
 suffix:colon
 r_return
@@ -4252,12 +4718,6 @@ r_return
 l_string|&quot;Promise Technology&quot;
 suffix:semicolon
 r_case
-id|PCI_VENDOR_ID_APPLE
-suffix:colon
-r_return
-l_string|&quot;Apple&quot;
-suffix:semicolon
-r_case
 id|PCI_VENDOR_ID_N9
 suffix:colon
 r_return
@@ -4274,6 +4734,18 @@ id|PCI_VENDOR_ID_X
 suffix:colon
 r_return
 l_string|&quot;X TECHNOLOGY&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_PICOP
+suffix:colon
+r_return
+l_string|&quot;PicoPower&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_APPLE
+suffix:colon
+r_return
+l_string|&quot;Apple&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_NEXGEN
@@ -4606,6 +5078,24 @@ r_return
 l_string|&quot;Optibase&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_ENSONIQ
+suffix:colon
+r_return
+l_string|&quot;Ensoniq&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_PICTUREL
+suffix:colon
+r_return
+l_string|&quot;Picture Elements&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_NVIDIA
+suffix:colon
+r_return
+l_string|&quot;NVidia/SGS Thomson&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_SYMPHONY
 suffix:colon
 r_return
@@ -4628,6 +5118,12 @@ id|PCI_VENDOR_ID_AVANCE
 suffix:colon
 r_return
 l_string|&quot;Avance&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_NETVIN
+suffix:colon
+r_return
+l_string|&quot;NetVin&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_S3

@@ -109,15 +109,6 @@ DECL|macro|HAVE_AUTOIRQ
 mdefine_line|#define HAVE_AUTOIRQ
 r_extern
 r_void
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* Use only if you own the IRQ. */
-r_extern
-r_void
 id|autoirq_setup
 c_func
 (paren

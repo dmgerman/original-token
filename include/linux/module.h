@@ -286,6 +286,20 @@ DECL|macro|__MODULE_STRING_1
 mdefine_line|#define __MODULE_STRING_1(x)&t;#x
 DECL|macro|__MODULE_STRING
 mdefine_line|#define __MODULE_STRING(x)&t;__MODULE_STRING_1(x)
+multiline_comment|/* Find a symbol exported by the kernel or another module */
+r_extern
+r_int
+r_int
+id|get_module_symbol
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
 macro_line|#if defined(MODULE) &amp;&amp; !defined(__GENKSYMS__)
 multiline_comment|/* Embedded module documentation macros.  */
 multiline_comment|/* For documentation purposes only.  */

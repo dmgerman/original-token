@@ -188,6 +188,15 @@ l_string|&quot;Using_Versions&quot;
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_MODULES
+DECL|variable|get_module_symbol
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_module_symbol
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_KERNELD
 DECL|variable|kerneld_send
 id|EXPORT_SYMBOL

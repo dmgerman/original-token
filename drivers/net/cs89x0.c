@@ -2825,7 +2825,7 @@ l_int|0
 comma
 l_string|&quot;cs8920&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 op_ne
 op_minus
@@ -2868,7 +2868,7 @@ l_int|0
 comma
 l_string|&quot;cs89x0&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 op_eq
 l_int|0
@@ -2974,7 +2974,7 @@ l_int|0
 comma
 l_string|&quot;cs89x0&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -2984,13 +2984,6 @@ id|EAGAIN
 suffix:semicolon
 )brace
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* set the Ethernet address */
 r_for
 c_loop
@@ -3180,13 +3173,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 op_minus
@@ -3920,17 +3906,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|net_local
@@ -4565,13 +4541,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
 id|MOD_DEC_USE_COUNT

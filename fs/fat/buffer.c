@@ -4,6 +4,12 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#if 0
+macro_line|#  define PRINTK(x) printk x
+macro_line|#else
+DECL|macro|PRINTK
+macro_line|#  define PRINTK(x)
+macro_line|#endif
 DECL|function|fat_bread
 r_struct
 id|buffer_head
@@ -26,7 +32,17 @@ id|ret
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Note that the blocksize is 512, 1024 or 2048, but the first read&n;&t;   is always of size 1024 (or 2048). Doing readahead may be counterproductive&n;&t;   or just plain wrong. */
+id|PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;fat_bread: block=0x%x&bslash;n&quot;
+comma
+id|block
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Note that the blocksize is 512, 1024 or 2048, but the first read&n;&t; * is always of size 1024 (or 2048). Doing readahead may be&n;&t; * counterproductive or just plain wrong.&n;&t; */
 r_if
 c_cond
 (paren
@@ -225,6 +241,16 @@ op_star
 id|ret
 op_assign
 l_int|NULL
+suffix:semicolon
+id|PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;fat_getblk: block=0x%x&bslash;n&quot;
+comma
+id|block
+)paren
+)paren
 suffix:semicolon
 r_if
 c_cond

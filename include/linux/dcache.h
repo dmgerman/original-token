@@ -380,6 +380,42 @@ op_star
 suffix:semicolon
 DECL|macro|shrink_dcache
 mdefine_line|#define shrink_dcache() prune_dcache(0)
+multiline_comment|/* dcache memory management */
+r_extern
+r_int
+id|select_dcache
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|shrink_dcache_memory
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|check_dcache_memory
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_inode_memory
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* defined in fs/inode.c */
 multiline_comment|/* only used at mount-time */
 r_extern
 r_struct

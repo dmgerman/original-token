@@ -171,9 +171,9 @@ id|tty-&gt;link-&gt;read_wait
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Return number of characters buffered to be delivered to user&n; * &n; */
+multiline_comment|/*&n; * Return number of characters buffered to be delivered to user&n; */
 DECL|function|n_tty_chars_in_buffer
-r_int
+id|ssize_t
 id|n_tty_chars_in_buffer
 c_func
 (paren
@@ -4172,12 +4172,11 @@ op_star
 id|b
 comma
 r_int
-r_int
 op_star
 id|nr
 )paren
 (brace
-r_int
+id|ssize_t
 id|n
 suffix:semicolon
 id|n
@@ -4253,7 +4252,7 @@ suffix:semicolon
 )brace
 DECL|function|read_chan
 r_static
-r_int
+id|ssize_t
 id|read_chan
 c_func
 (paren
@@ -4272,7 +4271,6 @@ r_char
 op_star
 id|buf
 comma
-r_int
 r_int
 id|nr
 )paren
@@ -4302,12 +4300,12 @@ id|minimum
 comma
 id|time
 suffix:semicolon
-r_int
+id|ssize_t
 id|retval
 op_assign
 l_int|0
 suffix:semicolon
-r_int
+id|ssize_t
 id|size
 suffix:semicolon
 id|do_it_again
@@ -5094,7 +5092,7 @@ suffix:semicolon
 )brace
 DECL|function|write_chan
 r_static
-r_int
+id|ssize_t
 id|write_chan
 c_func
 (paren
@@ -5115,7 +5113,6 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|nr
 )paren
 (brace
@@ -5131,8 +5128,6 @@ l_int|NULL
 suffix:semicolon
 r_int
 id|c
-comma
-id|num
 suffix:semicolon
 r_const
 r_int
@@ -5142,10 +5137,12 @@ id|b
 op_assign
 id|buf
 suffix:semicolon
-r_int
+id|ssize_t
 id|retval
 op_assign
 l_int|0
+comma
+id|num
 suffix:semicolon
 multiline_comment|/* Job control check -- must be done at start (POSIX.1 7.1.1.4). */
 r_if

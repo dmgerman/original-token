@@ -176,13 +176,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 id|NS8390_init
 c_func
 (paren
@@ -816,17 +809,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_int
 id|e8390_base
@@ -882,6 +865,7 @@ op_logical_or
 id|ei_local-&gt;irqlock
 )paren
 (brace
+macro_line|#if 1 /* This might just be an interrupt for a PCI device sharing this line */
 multiline_comment|/* The &quot;irqlock&quot; check is only for testing. */
 id|printk
 c_func
@@ -912,6 +896,7 @@ id|EN0_IMR
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace

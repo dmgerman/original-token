@@ -295,7 +295,7 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|flush_old_exec
 c_func
 (paren

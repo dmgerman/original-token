@@ -1,4 +1,7 @@
 multiline_comment|/*&n; * linux/fs/fat/fatfs_syms.c&n; *&n; * Exported kernel symbols for the low-level FAT-based fs support.&n; *&n; */
+DECL|macro|ASC_LINUX_VERSION
+mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -9,20 +12,6 @@ r_extern
 r_struct
 id|file_operations
 id|fat_dir_operations
-suffix:semicolon
-DECL|variable|fat_a2alias
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|fat_a2alias
-)paren
-suffix:semicolon
-DECL|variable|fat_a2uni
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|fat_a2uni
-)paren
 suffix:semicolon
 DECL|variable|fat_add_cluster
 id|EXPORT_SYMBOL
@@ -52,13 +41,6 @@ c_func
 id|fat_cache_inval_inode
 )paren
 suffix:semicolon
-DECL|variable|fat_code2uni
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|fat_code2uni
-)paren
-suffix:semicolon
 DECL|variable|fat_date_unix2dos
 id|EXPORT_SYMBOL
 c_func
@@ -78,6 +60,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|fat_dir_operations
+)paren
+suffix:semicolon
+DECL|variable|fat_esc2uni
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fat_esc2uni
 )paren
 suffix:semicolon
 DECL|variable|fat_file_read
@@ -213,18 +202,11 @@ c_func
 id|fat_truncate
 )paren
 suffix:semicolon
-DECL|variable|fat_uni2asc_pg
+DECL|variable|fat_uni2esc
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|fat_uni2asc_pg
-)paren
-suffix:semicolon
-DECL|variable|fat_uni2code
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|fat_uni2code
+id|fat_uni2esc
 )paren
 suffix:semicolon
 DECL|variable|fat_unlock_creation

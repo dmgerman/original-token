@@ -5,9 +5,10 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* Joliet? */
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * ok, we cannot use strncmp, as the name is not in our data space.&n; * Thus we&squot;ll have to use isofs_match. No big problem. Match also makes&n; * some sanity tests.&n; *&n; * NOTE! unlike strncmp, isofs_match returns 1 for success, 0 for failure.&n; */
 DECL|function|isofs_match
 r_static
@@ -224,13 +225,18 @@ suffix:semicolon
 r_int
 id|dlen
 comma
-id|rrflag
-comma
 id|match
 suffix:semicolon
 r_char
 op_star
 id|dpnt
+suffix:semicolon
+r_int
+r_char
+op_star
+id|page
+op_assign
+l_int|NULL
 suffix:semicolon
 r_struct
 id|iso_directory_record
@@ -355,6 +361,7 @@ op_plus
 id|offset
 )paren
 suffix:semicolon
+)brace
 id|inode_number
 op_assign
 (paren
@@ -373,7 +380,6 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* If byte is zero, or we had to fetch this de past&n;&t;&t;   the end of the buffer, this is the end of file, or&n;&t;&t;   time to move to the next sector. Usually 2048 byte&n;&t;&t;   boundaries. */
 r_if
 c_cond
@@ -410,21 +416,16 @@ c_func
 id|de
 )paren
 suffix:semicolon
+id|f_pos
+op_add_assign
 id|offset
-op_sub_assign
-id|bufsize
 suffix:semicolon
 )brace
 r_else
+(brace
 id|offset
 op_assign
 l_int|0
-suffix:semicolon
-id|brelse
-c_func
-(paren
-id|bh
-)paren
 suffix:semicolon
 id|f_pos
 op_assign
@@ -442,8 +443,13 @@ l_int|1
 op_plus
 id|ISOFS_BLOCK_SIZE
 )paren
-op_plus
-id|offset
+suffix:semicolon
+)brace
+id|brelse
+c_func
+(paren
+id|bh
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -452,11 +458,9 @@ id|f_pos
 op_ge
 id|dir-&gt;i_size
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|block
 op_assign
 id|isofs_bmap
@@ -491,7 +495,7 @@ id|bufsize
 )paren
 )paren
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -641,6 +645,10 @@ id|de_not_in_buf
 op_assign
 l_int|1
 suffix:semicolon
+id|offset
+op_sub_assign
+id|bufsize
+suffix:semicolon
 )brace
 id|dlen
 op_assign
@@ -653,33 +661,63 @@ id|dpnt
 op_assign
 id|de-&gt;name
 suffix:semicolon
-multiline_comment|/* Now convert the filename in the buffer to lower case */
-id|rrflag
+r_if
+c_cond
+(paren
+id|dir-&gt;i_sb-&gt;u.isofs_sb.s_rock
+op_logical_or
+id|dir-&gt;i_sb-&gt;u.isofs_sb.s_joliet_level
+)paren
+(brace
+id|page
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|__get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|page
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dir-&gt;i_sb-&gt;u.isofs_sb.s_rock
+op_logical_and
+(paren
+(paren
+id|i
 op_assign
 id|get_rock_ridge_filename
 c_func
 (paren
 id|de
 comma
-op_amp
-id|dpnt
-comma
-op_amp
-id|dlen
+id|page
 comma
 id|dir
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rrflag
+)paren
+)paren
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|rrflag
+id|i
 op_eq
 op_minus
 l_int|1
@@ -688,9 +726,42 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* Relocated deep directory */
+id|dlen
+op_assign
+id|i
+suffix:semicolon
+id|dpnt
+op_assign
+id|page
+suffix:semicolon
+macro_line|#ifdef CONFIG_JOLIET
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|dir-&gt;i_sb-&gt;u.isofs_sb.s_joliet_level
+)paren
 (brace
+id|dlen
+op_assign
+id|get_joliet_filename
+c_func
+(paren
+id|de
+comma
+id|dir
+comma
+id|page
+)paren
+suffix:semicolon
+id|dpnt
+op_assign
+id|page
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -721,6 +792,7 @@ id|dpnt
 id|i
 )braket
 suffix:semicolon
+multiline_comment|/* lower case */
 r_if
 c_cond
 (paren
@@ -736,7 +808,6 @@ id|c
 op_or_assign
 l_int|0x20
 suffix:semicolon
-multiline_comment|/* lower case */
 r_if
 c_cond
 (paren
@@ -778,7 +849,7 @@ id|c
 op_assign
 l_char|&squot;.&squot;
 suffix:semicolon
-id|de-&gt;name
+id|dpnt
 (braket
 id|i
 )braket
@@ -786,7 +857,7 @@ op_assign
 id|c
 suffix:semicolon
 )brace
-multiline_comment|/* This allows us to match with and without a trailing&n;&t;&t;       period.  */
+multiline_comment|/* This allows us to match with and without&n;&t;&t;&t; * a trailing period. */
 r_if
 c_cond
 (paren
@@ -809,7 +880,6 @@ l_int|1
 id|dlen
 op_decrement
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n;&t;&t; * Skip hidden or associated files unless unhide is set &n;&t;&t; */
@@ -854,16 +924,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rrflag
+id|page
 )paren
-(brace
-id|kfree
+id|free_page
 c_func
 (paren
-id|dpnt
+(paren
+r_int
+r_int
+)paren
+id|page
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -2101,14 +2101,6 @@ op_logical_neg
 id|lp-&gt;hard_strapped
 )paren
 (brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
-multiline_comment|/* For latched interrupts */
 r_if
 c_cond
 (paren
@@ -2127,7 +2119,7 @@ l_int|0
 comma
 l_string|&quot;ewrk3&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -3387,17 +3379,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|ewrk3_private
@@ -4731,13 +4713,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -4810,17 +4785,6 @@ suffix:semicolon
 id|u_char
 id|csr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_ne
-l_int|NULL
-)paren
-(brace
 id|csr
 op_assign
 id|inb
@@ -4912,7 +4876,6 @@ comma
 id|EWRK3_CSR
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n;** Calculate the hash code and update the logical address filter&n;** from a list of ethernet multicast addresses.&n;** Little endian crc one liner from Matt Thomas, DEC.&n;**&n;** Note that when clearing the table, the broadcast bit must remain asserted&n;** to receive broadcast messages.&n;*/

@@ -20,6 +20,11 @@ r_int
 id|i_start
 suffix:semicolon
 multiline_comment|/* first cluster or 0 */
+DECL|member|i_logstart
+r_int
+id|i_logstart
+suffix:semicolon
+multiline_comment|/* logical first cluster */
 DECL|member|i_attrs
 r_int
 id|i_attrs

@@ -2571,7 +2571,7 @@ l_int|0
 comma
 id|lp-&gt;name
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -2581,13 +2581,6 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* We used to allocate DMA here, but that was silly.&n;&t;   DMA lines can&squot;t be shared!  We now permanently allocate them. */
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Reset the LANCE */
 id|inw
 c_func
@@ -3965,17 +3958,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|lance_private
@@ -5046,13 +5029,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0

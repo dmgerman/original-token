@@ -183,6 +183,10 @@ comma
 multiline_comment|/* Name translation */
 DECL|enumerator|KERN_STATINODE
 id|KERN_STATINODE
+comma
+DECL|enumerator|KERN_DENTRY
+id|KERN_DENTRY
+multiline_comment|/* dentry statistics */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */

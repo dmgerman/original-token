@@ -2787,7 +2787,7 @@ l_int|0
 comma
 id|CARDNAME
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -2812,13 +2812,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Grab the region so that no one else tries to probe our ioports. */
 id|request_region
 c_func
@@ -3413,17 +3406,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_int
 id|ioaddr
@@ -5219,13 +5202,6 @@ id|devSMC9194.irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|devSMC9194.irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|release_region
 c_func

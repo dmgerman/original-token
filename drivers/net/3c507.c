@@ -872,7 +872,7 @@ l_int|0
 comma
 l_string|&quot;3c507&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -1235,13 +1235,6 @@ op_star
 id|dev
 )paren
 (brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Initialize the 82586 memory and start it. */
 id|init_82586_mem
 c_func
@@ -1574,17 +1567,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|net_local
@@ -2108,14 +2091,7 @@ op_plus
 id|MISC_CTRL
 )paren
 suffix:semicolon
-multiline_comment|/* We always physically use the IRQ line, so we don&squot;t do free_irq().&n;&t;   We do remove ourselves from the map. */
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* We always physically use the IRQ line, so we don&squot;t do free_irq(). */
 multiline_comment|/* Update the statistics here. */
 id|MOD_DEC_USE_COUNT
 suffix:semicolon

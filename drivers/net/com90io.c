@@ -1048,7 +1048,7 @@ l_int|0
 comma
 l_string|&quot;arcnet (COM90xx-IO)&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -1067,13 +1067,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|irq2dev_map
-(braket
-id|airq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|airq
@@ -1129,13 +1122,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|irq2dev_map
-(braket
-id|airq
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|free_irq
 c_func
 (paren
@@ -3275,13 +3261,6 @@ c_cond
 id|dev-&gt;irq
 )paren
 (brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|free_irq
 c_func
 (paren

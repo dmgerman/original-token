@@ -3257,13 +3257,24 @@ id|E2BIG
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* OK, This is the point of no return. */
+multiline_comment|/* Flush all traces of the currently running executable */
+id|retval
+op_assign
 id|flush_old_exec
 c_func
 (paren
 id|bprm
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+id|retval
+suffix:semicolon
+multiline_comment|/* OK, This is the point of no return */
 id|current-&gt;mm-&gt;end_data
 op_assign
 l_int|0

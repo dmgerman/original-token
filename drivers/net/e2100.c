@@ -989,7 +989,7 @@ l_int|0
 comma
 l_string|&quot;e2100&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -997,13 +997,6 @@ r_return
 id|EBUSY
 suffix:semicolon
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Set the interrupt line and memory base on the hardware. */
 id|inb
 c_func
@@ -1496,13 +1489,6 @@ op_plus
 id|E21_ASIC
 )paren
 suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|ei_close
 c_func
 (paren
@@ -1915,7 +1901,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* NB: e21_close() handles free_irq + irq2dev map */
+multiline_comment|/* NB: e21_close() handles free_irq */
 id|kfree
 c_func
 (paren

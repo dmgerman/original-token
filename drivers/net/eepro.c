@@ -1116,7 +1116,7 @@ l_int|0
 comma
 l_string|&quot;eepro&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -1607,7 +1607,7 @@ l_int|0
 comma
 l_string|&quot;eepro&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 op_eq
 l_int|0
@@ -1826,31 +1826,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_ne
-l_int|0
-op_logical_or
-(paren
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
 multiline_comment|/* Initialize the 82595. */
 id|outb
 c_func
@@ -2751,17 +2726,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_int
 id|ioaddr
@@ -3086,13 +3051,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Update the statistics here. What statistics? */
 multiline_comment|/* We are supposed to wait for 200 us after a RESET */

@@ -1422,14 +1422,10 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_int
+id|ssize_t
 id|sysv_file_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
@@ -1438,7 +1434,9 @@ r_char
 op_star
 comma
 r_int
-r_int
+comma
+id|loff_t
+op_star
 )paren
 suffix:semicolon
 r_extern

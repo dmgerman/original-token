@@ -1162,7 +1162,7 @@ l_int|0
 comma
 l_string|&quot;eth16i&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -3135,13 +3135,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Powerup the chip */
 id|outb
 c_func
@@ -4509,17 +4502,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|eth16i_local
@@ -5058,13 +5041,6 @@ id|dev_eth16i.irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev_eth16i.irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|release_region
 c_func

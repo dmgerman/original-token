@@ -6388,7 +6388,7 @@ l_int|0
 comma
 l_string|&quot;pi2&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -6612,13 +6612,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 )brace
 multiline_comment|/* Reset the hardware here. */
 id|chipset_init
@@ -7605,13 +7598,6 @@ l_int|0x3f0
 comma
 id|PI_TOTAL_SIZE
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|pi0a.irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|kfree
 c_func

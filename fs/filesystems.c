@@ -198,6 +198,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_NLS
+id|init_nls
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mount_root
 c_func
 (paren

@@ -649,7 +649,7 @@ l_int|0
 comma
 id|cardname
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -1022,7 +1022,7 @@ l_int|0
 comma
 id|cardname
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -1057,13 +1057,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Reset the hardware here. Don&squot;t forget to set the station address. */
 multiline_comment|/*chipset_init(dev, 1);*/
 id|outb
@@ -1312,17 +1305,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|net_local
@@ -1755,13 +1738,6 @@ c_func
 (paren
 id|dev-&gt;dma
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
 id|MOD_DEC_USE_COUNT

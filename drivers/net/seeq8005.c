@@ -1394,7 +1394,7 @@ l_int|0
 comma
 l_string|&quot;seeq8005&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -1550,7 +1550,7 @@ l_int|0
 comma
 l_string|&quot;seeq8005&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -1575,13 +1575,6 @@ id|EAGAIN
 suffix:semicolon
 )brace
 )brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Reset the hardware here.  Don&squot;t forget to set the station address. */
 id|seeq8005_init
 c_func
@@ -1795,17 +1788,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|net_local
@@ -2633,13 +2616,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
 r_return

@@ -2151,13 +2151,6 @@ id|status
 op_assign
 l_int|0
 suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 id|STOP_DEPCA
 suffix:semicolon
 id|nicsr
@@ -2224,7 +2217,7 @@ l_int|0
 comma
 id|lp-&gt;adapter_name
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -2898,17 +2891,7 @@ id|device
 op_star
 id|dev
 op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-(paren
-id|irq2dev_map
-(braket
-id|irq
-)braket
-)paren
+id|dev_id
 suffix:semicolon
 r_struct
 id|depca_private
@@ -4099,13 +4082,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -4466,17 +4442,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_ne
-l_int|NULL
-)paren
-(brace
 r_while
 c_loop
 (paren
@@ -4568,7 +4533,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Unlock the TX ring */
-)brace
 )brace
 multiline_comment|/*&n;** Calculate the hash code and update the logical address filter&n;** from a list of ethernet multicast addresses.&n;** Big endian crc one liner is mine, all mine, ha ha ha ha!&n;** LANCE calculates its hash codes big endian.&n;*/
 DECL|function|SetMulticastFilter

@@ -2527,13 +2527,24 @@ id|E2BIG
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* OK, This is the point of no return */
+multiline_comment|/* Flush all traces of the currently running executable */
+id|retval
+op_assign
 id|flush_old_exec
 c_func
 (paren
 id|bprm
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+id|retval
+suffix:semicolon
+multiline_comment|/* OK, This is the point of no return */
 id|current-&gt;mm-&gt;end_data
 op_assign
 l_int|0
@@ -3555,8 +3566,6 @@ op_member_access_from_pointer
 id|read
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 (paren
@@ -3570,6 +3579,9 @@ r_sizeof
 (paren
 id|elf_ex
 )paren
+comma
+op_amp
+id|file-&gt;f_pos
 )paren
 suffix:semicolon
 id|set_fs
@@ -4007,13 +4019,14 @@ op_member_access_from_pointer
 id|write
 c_func
 (paren
-id|file-&gt;f_dentry-&gt;d_inode
-comma
 id|file
 comma
 id|addr
 comma
 id|nr
+comma
+op_amp
+id|file-&gt;f_pos
 )paren
 op_eq
 id|nr

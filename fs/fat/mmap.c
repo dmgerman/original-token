@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *&t;linux/fs/fat/mmap.c&n; *&n; *&t;Written by Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&t;Inspired by fs/nfs/mmap.c (Jon Tombs 15 Aug 1993)&n; *&n; *&t;mmap handling for fat-based filesystems&n; */
+DECL|macro|ASC_LINUX_VERSION
+mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,7 +12,11 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(2,1,0)
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#else
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Fill in the supplied page for mmap&n; */
 DECL|function|fat_file_mmap_nopage
@@ -167,8 +174,6 @@ id|cur_read
 op_assign
 id|fat_file_read
 (paren
-id|inode
-comma
 op_amp
 id|filp
 comma
@@ -179,6 +184,9 @@ op_star
 id|page
 comma
 id|need_read
+comma
+op_amp
+id|filp.f_pos
 )paren
 suffix:semicolon
 id|set_fs

@@ -1881,13 +1881,6 @@ id|dev
 )paren
 )paren
 (brace
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
@@ -4355,13 +4348,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|release_region
 c_func

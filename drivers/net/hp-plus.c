@@ -1057,7 +1057,7 @@ l_int|0
 comma
 l_string|&quot;hp-plus&quot;
 comma
-l_int|NULL
+id|dev
 )paren
 )paren
 (brace
@@ -1212,13 +1212,6 @@ id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|ei_close
 c_func
@@ -2205,7 +2198,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* NB: hpp_close() handles free_irq + irq2dev map */
+multiline_comment|/* NB: hpp_close() handles free_irq */
 r_int
 id|ioaddr
 op_assign

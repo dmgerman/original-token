@@ -955,16 +955,11 @@ id|out
 suffix:semicolon
 )brace
 r_static
-r_int
+id|ssize_t
 DECL|function|smb_file_read
 id|smb_file_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -975,11 +970,14 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
-r_int
+id|ssize_t
 id|status
 suffix:semicolon
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE
@@ -998,7 +996,8 @@ comma
 r_int
 r_int
 )paren
-id|file-&gt;f_pos
+op_star
+id|ppos
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1007,7 +1006,7 @@ op_assign
 id|smb_revalidate_inode
 c_func
 (paren
-id|inode
+id|file-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
 r_if
@@ -1023,13 +1022,13 @@ op_assign
 id|generic_file_read
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 id|buf
 comma
 id|count
+comma
+id|ppos
 )paren
 suffix:semicolon
 )brace
@@ -1120,16 +1119,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; * Write to a file (through the page cache).&n; */
 r_static
-r_int
+id|ssize_t
 DECL|function|smb_file_write
 id|smb_file_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1141,11 +1135,14 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
-r_int
+id|ssize_t
 id|result
 suffix:semicolon
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE
@@ -1164,7 +1161,8 @@ comma
 r_int
 r_int
 )paren
-id|file-&gt;f_pos
+op_star
+id|ppos
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1182,7 +1180,7 @@ op_logical_neg
 id|S_ISREG
 c_func
 (paren
-id|inode-&gt;i_mode
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 (brace
@@ -1191,7 +1189,7 @@ c_func
 (paren
 l_string|&quot;smb_file_write: write to non-file, mode %07o&bslash;n&quot;
 comma
-id|inode-&gt;i_mode
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_mode
 )paren
 suffix:semicolon
 r_goto
@@ -1204,7 +1202,7 @@ op_assign
 id|smb_revalidate_inode
 c_func
 (paren
-id|inode
+id|file-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
 r_if
@@ -1246,13 +1244,13 @@ op_assign
 id|generic_file_write
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 id|buf
 comma
 id|count
+comma
+id|ppos
 )paren
 suffix:semicolon
 r_if
@@ -1265,7 +1263,7 @@ l_int|0
 id|smb_refresh_inode
 c_func
 (paren
-id|inode
+id|file-&gt;f_dentry-&gt;d_inode
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/fat/file.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  regular file handling primitives for fat-based filesystems&n; */
+DECL|macro|ASC_LINUX_VERSION
+mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -40,7 +43,7 @@ comma
 multiline_comment|/* readdir - bad */
 l_int|NULL
 comma
-multiline_comment|/* poll - default */
+multiline_comment|/* select v2.0.x/poll v2.1.x - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
@@ -141,7 +144,7 @@ comma
 multiline_comment|/* readdir - bad */
 l_int|NULL
 comma
-multiline_comment|/* poll - default */
+multiline_comment|/* select v2.0.x/poll v2.1.x - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
@@ -453,15 +456,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;Read a file into user space&n;*/
 DECL|function|fat_file_read
-r_int
+id|ssize_t
 id|fat_file_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -472,10 +470,20 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_struct
 id|super_block
 op_star
@@ -560,7 +568,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_ge
 id|inode-&gt;i_size
 op_logical_or
@@ -579,7 +588,8 @@ l_string|&quot;#### ino %ld pos %ld size %ld count %d&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
-id|filp-&gt;f_pos
+op_star
+id|ppos
 comma
 id|inode-&gt;i_size
 comma
@@ -593,7 +603,8 @@ r_int
 id|count_max
 op_assign
 (paren
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_amp
 (paren
 id|SECTOR_SIZE
@@ -610,7 +621,8 @@ suffix:semicolon
 multiline_comment|/* How many block to read all at once */
 id|pre.file_sector
 op_assign
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_rshift
 id|SECTOR_BITS
 suffix:semicolon
@@ -749,7 +761,8 @@ id|left_in_file
 op_assign
 id|inode-&gt;i_size
 op_minus
-id|filp-&gt;f_pos
+op_star
+id|ppos
 )paren
 OG
 l_int|0
@@ -860,7 +873,8 @@ id|PRINTK
 (paren
 l_string|&quot;file_read pos %ld nblist %d %d %d&bslash;n&quot;
 comma
-id|filp-&gt;f_pos
+op_star
+id|ppos
 comma
 id|pre.nblist
 comma
@@ -902,7 +916,8 @@ suffix:semicolon
 )brace
 id|offset
 op_assign
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_amp
 (paren
 id|SECTOR_SIZE
@@ -966,7 +981,8 @@ id|buf
 op_add_assign
 id|size
 suffix:semicolon
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_add_assign
 id|size
 suffix:semicolon
@@ -994,8 +1010,9 @@ op_star
 id|data
 op_increment
 suffix:semicolon
-id|filp-&gt;f_pos
 op_increment
+op_star
+id|ppos
 suffix:semicolon
 r_if
 c_cond
@@ -1005,7 +1022,8 @@ op_eq
 l_int|26
 )paren
 (brace
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_assign
 id|inode-&gt;i_size
 suffix:semicolon
@@ -1122,15 +1140,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;Write to a file either from user space&n;*/
 DECL|function|fat_file_write
-r_int
+id|ssize_t
 id|fat_file_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1142,10 +1155,20 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_struct
 id|super_block
 op_star
@@ -1268,7 +1291,8 @@ id|filp-&gt;f_flags
 op_amp
 id|O_APPEND
 )paren
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_assign
 id|inode-&gt;i_size
 suffix:semicolon
@@ -1316,7 +1340,8 @@ c_func
 (paren
 id|inode
 comma
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_rshift
 id|SECTOR_BITS
 )paren
@@ -1356,7 +1381,8 @@ suffix:semicolon
 )brace
 id|offset
 op_assign
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_amp
 (paren
 id|SECTOR_SIZE
@@ -1396,7 +1422,8 @@ id|size
 op_eq
 id|SECTOR_SIZE
 op_logical_or
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_plus
 id|size
 op_ge
@@ -1503,7 +1530,8 @@ op_star
 id|bh-&gt;b_data
 op_plus
 (paren
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_amp
 (paren
 id|SECTOR_SIZE
@@ -1609,12 +1637,14 @@ c_func
 (paren
 id|inode
 comma
-id|filp-&gt;f_pos
+op_star
+id|ppos
 comma
 id|bh-&gt;b_data
 op_plus
 (paren
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_amp
 (paren
 id|SECTOR_SIZE
@@ -1626,21 +1656,24 @@ comma
 id|written
 )paren
 suffix:semicolon
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_add_assign
 id|written
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|filp-&gt;f_pos
+op_star
+id|ppos
 OG
 id|inode-&gt;i_size
 )paren
 (brace
 id|inode-&gt;i_size
 op_assign
-id|filp-&gt;f_pos
+op_star
+id|ppos
 suffix:semicolon
 id|mark_inode_dirty
 c_func

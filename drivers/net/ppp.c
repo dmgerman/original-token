@@ -481,7 +481,7 @@ op_star
 suffix:semicolon
 multiline_comment|/*&n; * TTY callbacks&n; */
 r_static
-r_int
+id|ssize_t
 id|ppp_tty_read
 (paren
 r_struct
@@ -496,11 +496,10 @@ id|__u8
 op_star
 comma
 r_int
-r_int
 )paren
 suffix:semicolon
 r_static
-r_int
+id|ssize_t
 id|ppp_tty_write
 (paren
 r_struct
@@ -515,7 +514,6 @@ r_const
 id|__u8
 op_star
 comma
-r_int
 r_int
 )paren
 suffix:semicolon
@@ -5616,7 +5614,7 @@ suffix:semicolon
 multiline_comment|/*************************************************************&n; * LINE DISCIPLINE SUPPORT&n; *    The following functions form support user programs&n; *    which read and write data on a TTY with the PPP line&n; *    discipline.  Reading is done from a circular queue,&n; *    filled by the lower TTY levels.&n; *************************************************************/
 multiline_comment|/* read a PPP frame from the us_rbuff circular buffer,&n;   waiting if necessary&n;*/
 r_static
-r_int
+id|ssize_t
 DECL|function|ppp_tty_read
 id|ppp_tty_read
 (paren
@@ -5635,7 +5633,6 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|nr
 )paren
 (brace
@@ -5652,7 +5649,7 @@ suffix:semicolon
 id|__u8
 id|c
 suffix:semicolon
-r_int
+id|ssize_t
 id|len
 comma
 id|indx
@@ -5697,10 +5694,14 @@ id|SC_DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;ppp_tty_read: called buf=%p nr=%u&bslash;n&quot;
+l_string|&quot;ppp_tty_read: called buf=%p nr=%lu&bslash;n&quot;
 comma
 id|buf
 comma
+(paren
+r_int
+r_int
+)paren
 id|nr
 )paren
 suffix:semicolon
@@ -5944,8 +5945,11 @@ id|SC_DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;ppp_tty_read: len = %d&bslash;n&quot;
+l_string|&quot;ppp_tty_read: len = %ld&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|len
 )paren
 suffix:semicolon
@@ -5971,11 +5975,18 @@ id|SC_DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;ppp: read of %u bytes too small for %d &quot;
+l_string|&quot;ppp: read of %lu bytes too small for %ld &quot;
 l_string|&quot;frame&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|nr
 comma
+(paren
+r_int
+)paren
 id|len
 op_plus
 l_int|2
@@ -6119,8 +6130,11 @@ id|SC_DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;ppp_tty_read: passing %d bytes up&bslash;n&quot;
+l_string|&quot;ppp_tty_read: passing %ld bytes up&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|len
 )paren
 suffix:semicolon
@@ -6915,7 +6929,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * write a frame with NR chars from BUF to TTY&n; * we have to put the FCS field on ourselves&n; */
 r_static
-r_int
+id|ssize_t
 DECL|function|ppp_tty_write
 id|ppp_tty_write
 (paren
@@ -6935,7 +6949,6 @@ op_star
 id|data
 comma
 r_int
-r_int
 id|count
 )paren
 (brace
@@ -6953,7 +6966,7 @@ id|__u8
 op_star
 id|new_data
 suffix:semicolon
-r_int
+id|ssize_t
 id|status
 suffix:semicolon
 multiline_comment|/*&n; * Verify the pointers.&n; */
@@ -7004,8 +7017,12 @@ id|printk
 (paren
 id|KERN_WARNING
 l_string|&quot;ppp_tty_write: truncating user packet &quot;
-l_string|&quot;from %u to mtu %d&bslash;n&quot;
+l_string|&quot;from %lu to mtu %d&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|count
 comma
 id|PPP_MTU
@@ -7209,9 +7226,6 @@ id|new_data
 )paren
 suffix:semicolon
 r_return
-(paren
-r_int
-)paren
 id|count
 suffix:semicolon
 )brace

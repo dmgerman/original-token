@@ -15,14 +15,10 @@ mdefine_line|#define SMBFS_PARANOIA 1
 multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
 multiline_comment|/* #define pr_debug printk */
 r_static
-r_int
+id|ssize_t
 id|smb_dir_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
@@ -31,7 +27,9 @@ r_char
 op_star
 comma
 r_int
-r_int
+comma
+id|loff_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -260,16 +258,11 @@ multiline_comment|/* smap */
 )brace
 suffix:semicolon
 r_static
-r_int
+id|ssize_t
 DECL|function|smb_dir_read
 id|smb_dir_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -280,8 +273,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_return

@@ -136,15 +136,6 @@ suffix:semicolon
 macro_line|#ifndef HAVE_AUTOIRQ
 multiline_comment|/* From auto_irq.c */
 r_extern
-r_struct
-id|device
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
-r_extern
 r_void
 id|autoirq_setup
 c_func

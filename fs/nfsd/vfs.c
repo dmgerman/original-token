@@ -1417,8 +1417,6 @@ op_member_access_from_pointer
 id|read
 c_func
 (paren
-id|inode
-comma
 op_amp
 id|file
 comma
@@ -1426,6 +1424,9 @@ id|buf
 comma
 op_star
 id|count
+comma
+op_amp
+id|file.f_pos
 )paren
 suffix:semicolon
 id|set_fs
@@ -1700,14 +1701,15 @@ op_member_access_from_pointer
 id|write
 c_func
 (paren
-id|inode
-comma
 op_amp
 id|file
 comma
 id|buf
 comma
 id|cnt
+comma
+op_amp
+id|file.f_pos
 )paren
 suffix:semicolon
 id|set_fs

@@ -19,14 +19,10 @@ mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 r_static
-r_int
+id|ssize_t
 id|minix_file_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
@@ -36,7 +32,9 @@ r_char
 op_star
 comma
 r_int
-r_int
+comma
+id|loff_t
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the minix filesystem.&n; */
@@ -139,15 +137,10 @@ multiline_comment|/* permission */
 suffix:semicolon
 DECL|function|minix_file_write
 r_static
-r_int
+id|ssize_t
 id|minix_file_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -159,14 +152,24 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 id|off_t
 id|pos
 suffix:semicolon
-r_int
+id|ssize_t
 id|written
 comma
 id|c
@@ -236,7 +239,8 @@ suffix:semicolon
 r_else
 id|pos
 op_assign
-id|filp-&gt;f_pos
+op_star
+id|ppos
 suffix:semicolon
 id|written
 op_assign
@@ -487,7 +491,8 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_assign
 id|pos
 suffix:semicolon

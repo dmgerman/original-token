@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;Types and definitions for AF_INET6 &n; *&t;Linux INE
 macro_line|#ifndef _LINUX_IN6_H
 DECL|macro|_LINUX_IN6_H
 mdefine_line|#define _LINUX_IN6_H
+macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/*&n; *&t;IPv6 address structure&n; */
 DECL|struct|in6_addr
 r_struct
