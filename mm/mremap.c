@@ -81,17 +81,11 @@ id|pgd
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;move_one_page: bad source pgd (%08lx)&bslash;n&quot;
-comma
-id|pgd_val
+id|pgd_ERROR
 c_func
 (paren
 op_star
 id|pgd
-)paren
 )paren
 suffix:semicolon
 id|pgd_clear
@@ -138,17 +132,11 @@ id|pmd
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;move_one_page: bad source pmd (%08lx)&bslash;n&quot;
-comma
-id|pmd_val
+id|pmd_ERROR
 c_func
 (paren
 op_star
 id|pmd
-)paren
 )paren
 suffix:semicolon
 id|pmd_clear

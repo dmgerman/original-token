@@ -128,10 +128,11 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+multiline_comment|/*&n; * Temporary debugging check to catch old code using&n; * unmapped ISA addresses. Will be removed in 2.4.&n; */
 DECL|macro|__io_virt
-mdefine_line|#define __io_virt(x)&t;&t;((void *)(PAGE_OFFSET | (unsigned long)(x)))
+mdefine_line|#define __io_virt(x) ((unsigned long)(x) &lt; PAGE_OFFSET ? &bslash;&n;&t;({ __label__ __l; __l: printk(&quot;io mapaddr %p not valid at %p!&bslash;n&quot;, (char *)(x), &amp;&amp;__l); __va(x); }) : (char *)(x))
 DECL|macro|__io_phys
-mdefine_line|#define __io_phys(x)&t;&t;((unsigned long)(x) &amp; ~PAGE_OFFSET)
+mdefine_line|#define __io_phys(x) ((unsigned long)(x) &lt; PAGE_OFFSET ? &bslash;&n;&t;({ __label__ __l; __l: printk(&quot;io mapaddr %p not valid at %p!&bslash;n&quot;, (char *)(x), &amp;&amp;__l); (unsigned long)(x); }) : __pa(x))
 multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are pretty trivial&n; */
 DECL|function|virt_to_phys
 r_extern
@@ -147,7 +148,6 @@ op_star
 id|address
 )paren
 (brace
-macro_line|#ifdef CONFIG_BIGMEM
 r_return
 id|__pa
 c_func
@@ -155,15 +155,6 @@ c_func
 id|address
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-id|__io_phys
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|phys_to_virt
 r_extern
@@ -178,7 +169,6 @@ r_int
 id|address
 )paren
 (brace
-macro_line|#ifdef CONFIG_BIGMEM
 r_return
 id|__va
 c_func
@@ -186,15 +176,6 @@ c_func
 id|address
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-id|__io_virt
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_extern
 r_void
@@ -318,6 +299,21 @@ DECL|macro|memcpy_fromio
 mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),__io_virt(b),(c))
 DECL|macro|memcpy_toio
 mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy(__io_virt(a),(b),(c))
+multiline_comment|/*&n; * ISA space is &squot;always mapped&squot; on a typical x86 system, no need to&n; * explicitly ioremap() it. The fact that the ISA IO space is mapped&n; * to PAGE_OFFSET is pure coincidence - it does not mean ISA values&n; * are physical addresses. The following constant pointer can be&n; * used as the IO-area pointer (it can be iounmapped as well, so the&n; * analogy with PCI is quite large):&n; */
+DECL|macro|__ISA_IO_base
+mdefine_line|#define __ISA_IO_base ((char *)(PAGE_OFFSET))
+DECL|macro|isa_readb
+mdefine_line|#define isa_readb(a) readb(__ISA_IO_base + (a))
+DECL|macro|isa_readw
+mdefine_line|#define isa_readw(a) readb(__ISA_IO_base + (a))
+DECL|macro|isa_readl
+mdefine_line|#define isa_readl(a) readb(__ISA_IO_base + (a))
+DECL|macro|isa_writeb
+mdefine_line|#define isa_writeb(b,a) writeb(b,__ISA_IO_base + (a))
+DECL|macro|isa_writew
+mdefine_line|#define isa_writew(w,a) writeb(w,__ISA_IO_base + (a))
+DECL|macro|isa_writel
+mdefine_line|#define isa_writel(l,a) writeb(l,__ISA_IO_base + (a))
 multiline_comment|/*&n; * Again, i386 does not require mem IO specific function.&n; */
 DECL|macro|eth_io_copy_and_sum
 mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),__io_virt(b),(c),(d))

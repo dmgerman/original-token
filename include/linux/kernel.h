@@ -318,18 +318,24 @@ r_int
 id|procs
 suffix:semicolon
 multiline_comment|/* Number of current processes */
-DECL|member|totalbig
+DECL|member|totalhigh
 r_int
 r_int
-id|totalbig
+id|totalhigh
 suffix:semicolon
-multiline_comment|/* Total big memory size */
-DECL|member|freebig
+multiline_comment|/* Total high memory size */
+DECL|member|freehigh
 r_int
 r_int
-id|freebig
+id|freehigh
 suffix:semicolon
-multiline_comment|/* Available big memory size */
+multiline_comment|/* Available high memory size */
+DECL|member|mem_unit
+r_int
+r_int
+id|mem_unit
+suffix:semicolon
+multiline_comment|/* Memory unit size in bytes */
 DECL|member|_f
 r_char
 id|_f
@@ -338,6 +344,11 @@ l_int|20
 op_minus
 l_int|2
 op_star
+r_sizeof
+(paren
+r_int
+)paren
+op_minus
 r_sizeof
 (paren
 r_int

@@ -433,13 +433,13 @@ id|SLAB_BREAK_GFP_ORDER_LO
 suffix:semicolon
 multiline_comment|/* Macros for storing/retrieving the cachep and or slab from the&n; * global &squot;mem_map&squot;.  With off-slab bufctls, these are used to find the&n; * slab an obj belongs to.  With kmalloc(), and kfree(), these are used&n; * to find the cache which an obj belongs to.&n; */
 DECL|macro|SLAB_SET_PAGE_CACHE
-mdefine_line|#define&t;SLAB_SET_PAGE_CACHE(pg, x)&t;((pg)-&gt;next = (struct page *)(x))
+mdefine_line|#define&t;SLAB_SET_PAGE_CACHE(pg,x)  ((pg)-&gt;list.next = (struct list_head *)(x))
 DECL|macro|SLAB_GET_PAGE_CACHE
-mdefine_line|#define&t;SLAB_GET_PAGE_CACHE(pg)&t;&t;((kmem_cache_t *)(pg)-&gt;next)
+mdefine_line|#define&t;SLAB_GET_PAGE_CACHE(pg)    ((kmem_cache_t *)(pg)-&gt;list.next)
 DECL|macro|SLAB_SET_PAGE_SLAB
-mdefine_line|#define&t;SLAB_SET_PAGE_SLAB(pg, x)&t;((pg)-&gt;prev = (struct page *)(x))
+mdefine_line|#define&t;SLAB_SET_PAGE_SLAB(pg,x)   ((pg)-&gt;list.prev = (struct list_head *)(x))
 DECL|macro|SLAB_GET_PAGE_SLAB
-mdefine_line|#define&t;SLAB_GET_PAGE_SLAB(pg)&t;&t;((kmem_slab_t *)(pg)-&gt;prev)
+mdefine_line|#define&t;SLAB_GET_PAGE_SLAB(pg)     ((kmem_slab_t *)(pg)-&gt;list.prev)
 multiline_comment|/* Size description struct for general caches. */
 DECL|struct|cache_sizes
 r_typedef
@@ -716,16 +716,12 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Initialisation - setup the `cache&squot; cache. */
 DECL|function|kmem_cache_init
-r_int
+r_void
 id|__init
 id|kmem_cache_init
 c_func
 (paren
-r_int
-id|start
-comma
-r_int
-id|end
+r_void
 )paren
 (brace
 r_int
@@ -938,9 +934,6 @@ id|PAGE_SHIFT
 id|slab_break_gfp_order
 op_assign
 id|SLAB_BREAK_GFP_ORDER_HI
-suffix:semicolon
-r_return
-id|start
 suffix:semicolon
 )brace
 multiline_comment|/* Initialisation - setup remaining internal and general caches.&n; * Called after the gfp() functions have been enabled, and before smp_init().&n; */

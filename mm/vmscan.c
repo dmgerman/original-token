@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/bigmem.h&gt;
+macro_line|#include &lt;linux/highmem.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * The swap-out functions return 1 if they successfully&n; * threw something out, and we got a free page. It returns&n; * zero if it couldn&squot;t do anything, and any other value&n; * indicates it decreased rss, but the page was shared.&n; *&n; * NOTE! If it sleeps, it *must* return 1 to make sure we&n; * don&squot;t continue with the swap-out. Otherwise we may be&n; * using a process that no longer actually exists (it might&n; * have died while we slept).&n; */
 DECL|function|try_to_swap_out
@@ -34,14 +34,8 @@ id|gfp_mask
 (brace
 id|pte_t
 id|pte
-suffix:semicolon
-r_int
-r_int
+comma
 id|entry
-suffix:semicolon
-r_int
-r_int
-id|page_addr
 suffix:semicolon
 r_struct
 id|page
@@ -66,7 +60,7 @@ id|pte
 r_goto
 id|out_failed
 suffix:semicolon
-id|page_addr
+id|page
 op_assign
 id|pte_page
 c_func
@@ -77,26 +71,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|MAP_NR
-c_func
-(paren
-id|page_addr
-)paren
+id|page
+op_minus
+id|mem_map
 op_ge
 id|max_mapnr
 )paren
 r_goto
 id|out_failed
-suffix:semicolon
-id|page
-op_assign
-id|mem_map
-op_plus
-id|MAP_NR
-c_func
-(paren
-id|page_addr
-)paren
 suffix:semicolon
 multiline_comment|/* Don&squot;t look at this pte if it&squot;s been accessed recently. */
 r_if
@@ -170,10 +152,10 @@ op_logical_neg
 (paren
 id|gfp_mask
 op_amp
-id|__GFP_BIGMEM
+id|__GFP_HIGHMEM
 )paren
 op_logical_and
-id|PageBIGMEM
+id|PageHighMem
 c_func
 (paren
 id|page
@@ -196,7 +178,11 @@ id|page
 (brace
 id|entry
 op_assign
-id|page-&gt;offset
+id|get_pagecache_pte
+c_func
+(paren
+id|page
+)paren
 suffix:semicolon
 id|swap_duplicate
 c_func
@@ -209,11 +195,7 @@ c_func
 (paren
 id|page_table
 comma
-id|__pte
-c_func
-(paren
 id|entry
-)paren
 )paren
 suffix:semicolon
 id|drop_pte
@@ -362,7 +344,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|pte_val
+c_func
+(paren
 id|entry
+)paren
 )paren
 r_goto
 id|out_failed
@@ -375,7 +361,7 @@ op_logical_neg
 (paren
 id|page
 op_assign
-id|prepare_bigmem_swapout
+id|prepare_highmem_swapout
 c_func
 (paren
 id|page
@@ -393,11 +379,7 @@ c_func
 (paren
 id|page_table
 comma
-id|__pte
-c_func
-(paren
 id|entry
-)paren
 )paren
 suffix:semicolon
 id|vmlist_access_unlock
@@ -527,17 +509,11 @@ id|dir
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;swap_out_pmd: bad pmd (%08lx)&bslash;n&quot;
-comma
-id|pmd_val
+id|pmd_ERROR
 c_func
 (paren
 op_star
 id|dir
-)paren
 )paren
 suffix:semicolon
 id|pmd_clear
@@ -626,8 +602,12 @@ r_while
 c_loop
 (paren
 id|address
+op_logical_and
+(paren
+id|address
 OL
 id|end
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -694,17 +674,11 @@ id|dir
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;swap_out_pgd: bad pgd (%08lx)&bslash;n&quot;
-comma
-id|pgd_val
+id|pgd_ERROR
 c_func
 (paren
 op_star
 id|dir
-)paren
 )paren
 suffix:semicolon
 id|pgd_clear
@@ -740,9 +714,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|pgd_end
+op_logical_and
+(paren
 id|end
 OG
 id|pgd_end
+)paren
 )paren
 id|end
 op_assign
@@ -793,8 +771,12 @@ r_while
 c_loop
 (paren
 id|address
+op_logical_and
+(paren
+id|address
 OL
 id|end
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -853,13 +835,19 @@ id|end
 op_assign
 id|vma-&gt;vm_end
 suffix:semicolon
-r_while
-c_loop
+r_if
+c_cond
 (paren
 id|address
-OL
+op_ge
 id|end
 )paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_do
 (brace
 r_int
 id|result
@@ -900,6 +888,18 @@ id|pgdir
 op_increment
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|address
+op_logical_and
+(paren
+id|address
+OL
+id|end
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1552,13 +1552,13 @@ l_int|1
 multiline_comment|/*&n;&t;&t; * Wake up once a second to see if we need to make&n;&t;&t; * more memory available.&n;&t;&t; *&n;&t;&t; * If we actually get into a low-memory situation,&n;&t;&t; * the processes needing more memory will wake us&n;&t;&t; * up on a more timely basis.&n;&t;&t; */
 r_do
 (brace
-multiline_comment|/* kswapd is critical to provide GFP_ATOMIC&n;&t;&t;&t;   allocations (not GFP_BIGMEM ones). */
+multiline_comment|/* kswapd is critical to provide GFP_ATOMIC&n;&t;&t;&t;   allocations (not GFP_HIGHMEM ones). */
 r_if
 c_cond
 (paren
 id|nr_free_pages
 op_minus
-id|nr_free_bigpages
+id|nr_free_highpages
 op_ge
 id|freepages.high
 )paren

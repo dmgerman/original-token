@@ -552,6 +552,10 @@ mdefine_line|#define ATTR_FLAG_NODIRATIME&t;16 &t;/* Don&squot;t update atime fo
 multiline_comment|/*&n; * Includes for diskquotas and mount structures.&n; */
 macro_line|#include &lt;linux/quota.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
+multiline_comment|/*&n; * oh the beauties of C type declarations.&n; */
+r_struct
+id|page
+suffix:semicolon
 DECL|struct|inode
 r_struct
 id|inode
@@ -676,8 +680,7 @@ id|i_mmap
 suffix:semicolon
 DECL|member|i_pages
 r_struct
-id|page
-op_star
+id|list_head
 id|i_pages
 suffix:semicolon
 DECL|member|i_shared_lock
@@ -3099,10 +3102,6 @@ op_star
 id|buf
 )paren
 suffix:semicolon
-r_extern
-id|atomic_t
-id|buffermem
-suffix:semicolon
 DECL|macro|BUF_CLEAN
 mdefine_line|#define BUF_CLEAN&t;0
 DECL|macro|BUF_LOCKED
@@ -3533,9 +3532,12 @@ id|read_actor_t
 id|read_descriptor_t
 op_star
 comma
-r_const
-r_char
+r_struct
+id|page
 op_star
+comma
+r_int
+r_int
 comma
 r_int
 r_int

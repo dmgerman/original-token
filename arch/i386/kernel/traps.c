@@ -2288,6 +2288,7 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_MATH_EMULATION */
+macro_line|#ifndef CONFIG_M686
 DECL|function|trap_init_f00f_bug
 r_void
 id|__init
@@ -2357,7 +2358,7 @@ comma
 id|page
 )paren
 suffix:semicolon
-id|free_page
+id|__free_page
 c_func
 (paren
 id|pte_page
@@ -2371,11 +2372,15 @@ suffix:semicolon
 op_star
 id|pte
 op_assign
-id|mk_pte
+id|mk_pte_phys
+c_func
+(paren
+id|__pa
 c_func
 (paren
 op_amp
 id|idt_table
+)paren
 comma
 id|PAGE_KERNEL_RO
 )paren
@@ -2408,6 +2413,7 @@ id|idt_descr
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|macro|_set_gate
 mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;do { &bslash;&n;  int __d0, __d1; &bslash;&n;  __asm__ __volatile__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %4,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%1&quot; &bslash;&n;&t;:&quot;=m&quot; (*((long *) (gate_addr))), &bslash;&n;&t; &quot;=m&quot; (*(1+(long *) (gate_addr))), &quot;=&amp;a&quot; (__d0), &quot;=&amp;d&quot; (__d1) &bslash;&n;&t;:&quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t; &quot;3&quot; ((char *) (addr)),&quot;2&quot; (__KERNEL_CS &lt;&lt; 16)); &bslash;&n;} while (0)
 multiline_comment|/*&n; * This needs to use &squot;idt_table&squot; rather than &squot;idt&squot;, and&n; * thus use the _nonmapped_ version of the IDT, as the&n; * Pentium F0 0F bugfix can have resulted in the mapped&n; * IDT being write-protected.&n; */
@@ -2978,7 +2984,7 @@ r_void
 r_if
 c_cond
 (paren
-id|readl
+id|isa_readl
 c_func
 (paren
 l_int|0x0FFFD9

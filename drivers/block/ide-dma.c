@@ -1572,8 +1572,8 @@ id|clear_page
 c_func
 (paren
 (paren
-r_int
-r_int
+r_void
+op_star
 )paren
 id|hwif-&gt;dmatable
 )paren

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|LOG_BUF_LEN
-mdefine_line|#define LOG_BUF_LEN&t;(16384)
+mdefine_line|#define LOG_BUF_LEN&t;(16384*16)
 DECL|macro|LOG_BUF_MASK
 mdefine_line|#define LOG_BUF_MASK&t;(LOG_BUF_LEN-1)
 DECL|variable|buf

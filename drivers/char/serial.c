@@ -3865,7 +3865,7 @@ suffix:semicolon
 macro_line|#endif
 id|page
 op_assign
-id|get_free_page
+id|get_zeroed_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -12445,7 +12445,7 @@ id|tmp_buf
 (brace
 id|page
 op_assign
-id|get_free_page
+id|get_zeroed_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -18450,16 +18450,12 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
 DECL|function|serial_console_init
-r_int
+r_void
 id|__init
 id|serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 (brace
 id|register_console
@@ -18468,9 +18464,6 @@ c_func
 op_amp
 id|sercons
 )paren
-suffix:semicolon
-r_return
-id|kmem_start
 suffix:semicolon
 )brace
 macro_line|#endif

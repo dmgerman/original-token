@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/mtrr.h&gt;
@@ -2058,28 +2059,34 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * We are called very early to get the low memory for the&n; * SMP bootup trampoline page.&n; */
 DECL|function|smp_alloc_memory
-r_int
-r_int
+r_void
 id|__init
 id|smp_alloc_memory
 c_func
 (paren
-r_int
-r_int
-id|mem_base
+r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|virt_to_phys
-c_func
-(paren
+id|trampoline_base
+op_assign
 (paren
 r_void
 op_star
 )paren
-id|mem_base
+id|alloc_bootmem_pages
+c_func
+(paren
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Has to be in very low memory so we can execute&n;&t; * real-mode AP code.&n;&t; */
+r_if
+c_cond
+(paren
+id|__pa
+c_func
+(paren
+id|trampoline_base
 )paren
 op_ge
 l_int|0x9F000
@@ -2088,19 +2095,6 @@ id|BUG
 c_func
 (paren
 )paren
-suffix:semicolon
-id|trampoline_base
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|mem_base
-suffix:semicolon
-r_return
-id|mem_base
-op_plus
-id|PAGE_SIZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The bootstrap kernel entry code has set these up. Save them for&n; * a given CPU&n; */
@@ -2685,28 +2679,17 @@ id|value
 suffix:semicolon
 )brace
 DECL|function|init_smp_mappings
-r_int
-r_int
+r_void
 id|__init
 id|init_smp_mappings
 c_func
 (paren
-r_int
-r_int
-id|memory_start
+r_void
 )paren
 (brace
 r_int
 r_int
 id|apic_phys
-suffix:semicolon
-id|memory_start
-op_assign
-id|PAGE_ALIGN
-c_func
-(paren
-id|memory_start
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2727,7 +2710,11 @@ op_assign
 id|__pa
 c_func
 (paren
-id|memory_start
+id|alloc_bootmem_pages
+c_func
+(paren
+id|PAGE_SIZE
+)paren
 )paren
 suffix:semicolon
 id|memset
@@ -2737,16 +2724,12 @@ c_func
 r_void
 op_star
 )paren
-id|memory_start
+id|apic_phys
 comma
 l_int|0
 comma
 id|PAGE_SIZE
 )paren
-suffix:semicolon
-id|memory_start
-op_add_assign
-id|PAGE_SIZE
 suffix:semicolon
 )brace
 id|set_fixmap
@@ -2818,7 +2801,11 @@ op_assign
 id|__pa
 c_func
 (paren
-id|memory_start
+id|alloc_bootmem_pages
+c_func
+(paren
+id|PAGE_SIZE
+)paren
 )paren
 suffix:semicolon
 id|memset
@@ -2828,16 +2815,12 @@ c_func
 r_void
 op_star
 )paren
-id|memory_start
+id|ioapic_phys
 comma
 l_int|0
 comma
 id|PAGE_SIZE
 )paren
-suffix:semicolon
-id|memory_start
-op_add_assign
-id|PAGE_SIZE
 suffix:semicolon
 )brace
 id|set_fixmap
@@ -2868,9 +2851,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-r_return
-id|memory_start
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * TSC synchronization.&n; *&n; * We first check wether all CPUs have their TSC&squot;s synchronized,&n; * then we print a warning if not, and always resync.&n; */
 DECL|variable|tsc_start_flag
@@ -3787,6 +3767,12 @@ id|smp_commenced
 )paren
 multiline_comment|/* nothing */
 suffix:semicolon
+multiline_comment|/*&n;&t; * low-memory mappings have been cleared, flush them from&n;&t; * the local TLBs too.&n;&t; */
+id|local_flush_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|cpu_idle
 c_func
@@ -3884,9 +3870,6 @@ id|i
 r_int
 r_int
 id|cfg
-suffix:semicolon
-id|pgd_t
-id|maincfg
 suffix:semicolon
 r_struct
 id|task_struct
@@ -4113,27 +4096,6 @@ c_func
 (paren
 l_string|&quot;3.&bslash;n&quot;
 )paren
-suffix:semicolon
-id|maincfg
-op_assign
-id|swapper_pg_dir
-(braket
-l_int|0
-)braket
-suffix:semicolon
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|swapper_pg_dir
-)paren
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0x102007
 suffix:semicolon
 multiline_comment|/*&n;&t; * Be paranoid about clearing APIC errors.&n;&t; */
 r_if
@@ -4748,18 +4710,6 @@ id|cpucount
 op_decrement
 suffix:semicolon
 )brace
-id|swapper_pg_dir
-(braket
-l_int|0
-)braket
-op_assign
-id|maincfg
-suffix:semicolon
-id|local_flush_tlb
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* mark &quot;stuck&quot; area as not stuck */
 op_star
 (paren
@@ -5300,30 +5250,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Cleanup possible dangling ends...&n;&t; */
 macro_line|#ifndef CONFIG_VISWS
 (brace
-r_int
-r_int
-id|cfg
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Install writable page 0 entry to set BIOS data area.&n;&t;&t; */
-id|cfg
-op_assign
-id|pg0
-(braket
-l_int|0
-)braket
-suffix:semicolon
-multiline_comment|/* writeable, present, addr 0 */
-id|pg0
-(braket
-l_int|0
-)braket
-op_assign
-id|_PAGE_RW
-op_or
-id|_PAGE_PRESENT
-op_or
-l_int|0
-suffix:semicolon
 id|local_flush_tlb
 c_func
 (paren
@@ -5353,19 +5280,6 @@ l_int|0x467
 )paren
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Restore old page 0 entry.&n;&t;&t; */
-id|pg0
-(braket
-l_int|0
-)braket
-op_assign
-id|cfg
-suffix:semicolon
-id|local_flush_tlb
-c_func
-(paren
-)paren
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -5552,6 +5466,11 @@ op_logical_and
 id|cpucount
 )paren
 id|synchronize_tsc_bp
+c_func
+(paren
+)paren
+suffix:semicolon
+id|zap_low_mappings
 c_func
 (paren
 )paren

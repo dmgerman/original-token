@@ -272,19 +272,11 @@ id|pgd
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;vm86: bad pgd entry [%p]:%08lx&bslash;n&quot;
-comma
-id|pgd
-comma
-id|pgd_val
+id|pgd_ERROR
 c_func
 (paren
 op_star
 id|pgd
-)paren
 )paren
 suffix:semicolon
 id|pgd_clear
@@ -329,19 +321,11 @@ id|pmd
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;vm86: bad pmd entry [%p]:%08lx&bslash;n&quot;
-comma
-id|pmd
-comma
-id|pmd_val
+id|pmd_ERROR
 c_func
 (paren
 op_star
 id|pmd
-)paren
 )paren
 suffix:semicolon
 id|pmd_clear

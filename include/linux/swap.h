@@ -89,8 +89,6 @@ DECL|macro|__swapoffset
 mdefine_line|#define __swapoffset(x) ((unsigned long)&amp;((union swap_header *)0)-&gt;x)
 DECL|macro|MAX_SWAP_BADPAGES
 mdefine_line|#define MAX_SWAP_BADPAGES &bslash;&n;&t;((__swapoffset(magic.magic) - __swapoffset(info.badpages)) / sizeof(int))
-DECL|macro|DEBUG_SWAP
-macro_line|#undef DEBUG_SWAP
 macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|SWP_USED
 mdefine_line|#define SWP_USED&t;1
@@ -200,7 +198,7 @@ id|page_cache_size
 suffix:semicolon
 r_extern
 id|atomic_t
-id|buffermem
+id|buffermem_pages
 suffix:semicolon
 multiline_comment|/* Incomplete types for prototype declarations: */
 r_struct
@@ -263,22 +261,12 @@ c_func
 (paren
 r_int
 comma
-r_int
-r_int
+id|pte_t
 comma
 r_char
 op_star
 comma
 r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|swap_after_unlock_page
-(paren
-r_int
-r_int
-id|entry
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/page_alloc.c */
@@ -300,8 +288,7 @@ r_struct
 id|page
 op_star
 comma
-r_int
-r_int
+id|pte_t
 )paren
 suffix:semicolon
 r_extern
@@ -309,8 +296,7 @@ r_int
 id|swap_duplicate
 c_func
 (paren
-r_int
-r_int
+id|pte_t
 )paren
 suffix:semicolon
 r_extern
@@ -328,8 +314,7 @@ op_star
 id|lookup_swap_cache
 c_func
 (paren
-r_int
-r_int
+id|pte_t
 )paren
 suffix:semicolon
 r_extern
@@ -339,8 +324,7 @@ op_star
 id|read_swap_cache_async
 c_func
 (paren
-r_int
-r_int
+id|pte_t
 comma
 r_int
 )paren
@@ -349,20 +333,16 @@ DECL|macro|read_swap_cache
 mdefine_line|#define read_swap_cache(entry) read_swap_cache_async(entry, 1);
 r_extern
 r_int
-id|FASTCALL
-c_func
-(paren
 id|swap_count
 c_func
 (paren
-r_int
-r_int
-)paren
+r_struct
+id|page
+op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
+id|pte_t
 id|acquire_swap_entry
 c_func
 (paren
@@ -400,9 +380,10 @@ r_void
 id|free_page_and_swap_cache
 c_func
 (paren
-r_int
-r_int
-id|addr
+r_struct
+id|page
+op_star
+id|page
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/swapfile.c */
@@ -435,8 +416,7 @@ id|sysinfo
 op_star
 )paren
 suffix:semicolon
-r_int
-r_int
+id|pte_t
 id|get_swap_page
 c_func
 (paren
@@ -445,15 +425,10 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|FASTCALL
-c_func
-(paren
 id|swap_free
 c_func
 (paren
-r_int
-r_int
-)paren
+id|pte_t
 )paren
 suffix:semicolon
 DECL|struct|swap_list_t
@@ -579,7 +554,7 @@ op_add_assign
 id|swap_count
 c_func
 (paren
-id|page-&gt;offset
+id|page
 )paren
 op_minus
 l_int|2

@@ -6984,7 +6984,7 @@ id|RxFD
 suffix:semicolon
 id|rxf-&gt;rx_buf_addr
 op_assign
-id|virt_to_le32bus
+id|virt_to_bus
 c_func
 (paren
 id|skb-&gt;tail

@@ -854,13 +854,19 @@ r_int
 id|kmsg_redirect
 suffix:semicolon
 r_extern
-r_int
-r_int
+r_void
 id|con_init
 c_func
 (paren
-r_int
-r_int
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|console_init
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -888,7 +894,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|tty_init
 c_func
 (paren
@@ -1294,15 +1300,11 @@ id|arg
 suffix:semicolon
 multiline_comment|/* serial.c */
 r_extern
-r_int
+r_void
 id|serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* pcxx.c */

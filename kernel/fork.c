@@ -538,7 +538,7 @@ c_func
 (paren
 r_int
 r_int
-id|memsize
+id|mempages
 )paren
 (brace
 r_int
@@ -606,9 +606,13 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * The default maximum number of threads is set to a safe&n;&t; * value: the thread structures can take up at most half&n;&t; * of memory.&n;&t; */
 id|max_threads
 op_assign
-id|memsize
+id|mempages
 op_div
+(paren
 id|THREAD_SIZE
+op_div
+id|PAGE_SIZE
+)paren
 op_div
 l_int|2
 suffix:semicolon

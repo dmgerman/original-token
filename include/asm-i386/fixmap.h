@@ -6,11 +6,11 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/apic.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#ifdef CONFIG_BIGMEM
+macro_line|#ifdef CONFIG_HIGHMEM
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/kmap_types.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; * Here we define all the compile-time &squot;special&squot; virtual&n; * addresses. The point is to have a constant address at&n; * compile time, but to set the physical address only&n; * in the boot process. We allocate these special  addresses&n; * from the end of virtual memory (0xfffff000) backwards.&n; * Also this lets us do fail-safe vmalloc(), we&n; * can guarantee that these special addresses and&n; * vmalloc()-ed addresses never overlap.&n; *&n; * these &squot;compile-time allocated&squot; memory buffers are&n; * fixed-size 4k pages. (or larger if used with an increment&n; * bigger than 1) use fixmap_set(idx,phys) to associate&n; * physical memory with fixmap indices.&n; *&n; * TLB entries of such buffers will not be flushed across&n; * task switches.&n; */
+multiline_comment|/*&n; * Here we define all the compile-time &squot;special&squot; virtual&n; * addresses. The point is to have a constant address at&n; * compile time, but to set the physical address only&n; * in the boot process. We allocate these special  addresses&n; * from the end of virtual memory (0xfffff000) backwards.&n; * Also this lets us do fail-safe vmalloc(), we&n; * can guarantee that these special addresses and&n; * vmalloc()-ed addresses never overlap.&n; *&n; * these &squot;compile-time allocated&squot; memory buffers are&n; * fixed-size 4k pages. (or larger if used with an increment&n; * highger than 1) use fixmap_set(idx,phys) to associate&n; * physical memory with fixmap indices.&n; *&n; * TLB entries of such buffers will not be flushed across&n; * task switches.&n; */
 multiline_comment|/*&n; * on UP currently we will have no trace of the fixmap mechanizm,&n; * no page table allocations, etc. This might change in the&n; * future, say framebuffers for the console driver(s) could be&n; * fix-mapped?&n; */
 DECL|enum|fixed_addresses
 r_enum
@@ -54,7 +54,7 @@ id|FIX_LI_PCIB
 comma
 multiline_comment|/* Lithium PCI Bridge B */
 macro_line|#endif
-macro_line|#ifdef CONFIG_BIGMEM
+macro_line|#ifdef CONFIG_HIGHMEM
 DECL|enumerator|FIX_KMAP_BEGIN
 id|FIX_KMAP_BEGIN
 comma

@@ -3543,6 +3543,10 @@ op_star
 id|handler
 )paren
 (brace
+id|drive-&gt;timeout
+op_assign
+id|WAIT_CMD
+suffix:semicolon
 id|ide_set_handler
 (paren
 id|drive

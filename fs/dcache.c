@@ -1236,7 +1236,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: kmem_cache_shrink here should tell us&n;&t;&t;   the number of pages freed, and it should&n;&t;&t;   work in a __GFP_DMA/__GFP_BIGMEM behaviour&n;&t;&t;   to free only the interesting pages in&n;&t;&t;   function of the needs of the current allocation. */
+multiline_comment|/* FIXME: kmem_cache_shrink here should tell us&n;&t;&t;   the number of pages freed, and it should&n;&t;&t;   work in a __GFP_DMA/__GFP_HIGHMEM behaviour&n;&t;&t;   to free only the interesting pages in&n;&t;&t;   function of the needs of the current allocation. */
 id|kmem_cache_shrink
 c_func
 (paren

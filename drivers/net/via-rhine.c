@@ -204,13 +204,6 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
-macro_line|#else
-macro_line|#ifndef __alpha__
-DECL|macro|ioremap
-mdefine_line|#define ioremap vremap
-DECL|macro|iounmap
-mdefine_line|#define iounmap vfree
-macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(MODULE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20115
 id|MODULE_AUTHOR

@@ -1,21 +1,18 @@
-multiline_comment|/*&n; * bigmem.h:&t;virtual kernel memory mappings for big memory&n; *&n; * Used in CONFIG_BIGMEM systems for memory pages which&t;are not&n; * addressable by direct kernel virtual adresses.&n; *&n; * Copyright (C) 1999 Gerhard Wichert, Siemens AG&n; *&t;&t;      Gerhard.Wichert@pdb.siemens.de&n; */
-macro_line|#ifndef _ASM_BIGMEM_H
-DECL|macro|_ASM_BIGMEM_H
-mdefine_line|#define _ASM_BIGMEM_H
+multiline_comment|/*&n; * highmem.h: virtual kernel memory mappings for high memory&n; *&n; * Used in CONFIG_HIGHMEM systems for memory pages which&n; * are not addressable by direct kernel virtual adresses.&n; *&n; * Copyright (C) 1999 Gerhard Wichert, Siemens AG&n; *&t;&t;      Gerhard.Wichert@pdb.siemens.de&n; *&n; *&n; * Redesigned the x86 32-bit VM architecture to deal with &n; * up to 16 Terrabyte physical memory. With current x86 CPUs&n; * we now support up to 64 Gigabytes physical RAM.&n; *&n; * Copyright (C) 1999 Ingo Molnar &lt;mingo@redhat.com&gt;&n; */
+macro_line|#ifndef _ASM_HIGHMEM_H
+DECL|macro|_ASM_HIGHMEM_H
+mdefine_line|#define _ASM_HIGHMEM_H
 macro_line|#include &lt;linux/init.h&gt;
-DECL|macro|BIGMEM_DEBUG
-mdefine_line|#define BIGMEM_DEBUG /* undef for production */
-multiline_comment|/* declarations for bigmem.c */
+multiline_comment|/* undef for production */
+DECL|macro|HIGHMEM_DEBUG
+mdefine_line|#define HIGHMEM_DEBUG 1
+multiline_comment|/* declarations for highmem.c */
 r_extern
 r_int
 r_int
-id|bigmem_start
+id|highstart_pfn
 comma
-id|bigmem_end
-suffix:semicolon
-r_extern
-r_int
-id|nr_free_bigpages
+id|highend_pfn
 suffix:semicolon
 r_extern
 id|pte_t
@@ -35,7 +32,7 @@ r_void
 )paren
 id|__init
 suffix:semicolon
-multiline_comment|/* kmap helper functions necessary to access the bigmem pages in kernel */
+multiline_comment|/* kmap helper functions necessary to access the highmem pages in kernel */
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/kmap_types.h&gt;
 DECL|function|kmap
@@ -46,9 +43,10 @@ r_int
 id|kmap
 c_func
 (paren
-r_int
-r_int
-id|kaddr
+r_struct
+id|page
+op_star
+id|page
 comma
 r_enum
 id|km_type
@@ -58,16 +56,16 @@ id|type
 r_if
 c_cond
 (paren
-id|__pa
-c_func
-(paren
-id|kaddr
-)paren
+id|page
 OL
-id|bigmem_start
+id|highmem_start_page
 )paren
 r_return
-id|kaddr
+id|page_address
+c_func
+(paren
+id|page
+)paren
 suffix:semicolon
 (brace
 r_enum
@@ -95,7 +93,7 @@ op_plus
 id|idx
 )paren
 suffix:semicolon
-macro_line|#ifdef BIGMEM_DEBUG
+macro_line|#if HIGHMEM_DEBUG
 r_if
 c_cond
 (paren
@@ -144,9 +142,7 @@ comma
 id|mk_pte
 c_func
 (paren
-id|kaddr
-op_amp
-id|PAGE_MASK
+id|page
 comma
 id|kmap_prot
 )paren
@@ -160,13 +156,6 @@ id|vaddr
 suffix:semicolon
 r_return
 id|vaddr
-op_or
-(paren
-id|kaddr
-op_amp
-op_complement
-id|PAGE_MASK
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -186,7 +175,7 @@ id|km_type
 id|type
 )paren
 (brace
-macro_line|#ifdef BIGMEM_DEBUG
+macro_line|#if HIGHMEM_DEBUG
 r_enum
 id|fixed_addresses
 id|idx
@@ -236,5 +225,66 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#endif /* _ASM_BIGMEM_H */
+DECL|function|kmap_check
+r_extern
+r_inline
+r_void
+id|kmap_check
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if HIGHMEM_DEBUG
+r_int
+id|idx_base
+op_assign
+id|KM_TYPE_NR
+op_star
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|idx_base
+suffix:semicolon
+id|i
+OL
+id|idx_base
+op_plus
+id|KM_TYPE_NR
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pte_none
+c_func
+(paren
+op_star
+(paren
+id|kmap_pte
+op_minus
+id|i
+)paren
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#endif /* _ASM_HIGHMEM_H */
 eof

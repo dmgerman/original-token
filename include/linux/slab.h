@@ -53,13 +53,11 @@ DECL|macro|SLAB_CTOR_VERIFY
 mdefine_line|#define&t;SLAB_CTOR_VERIFY&t;0x004UL&t;&t;/* tell constructor it&squot;s a verify call */
 multiline_comment|/* prototypes */
 r_extern
-r_int
+r_void
 id|kmem_cache_init
 c_func
 (paren
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern

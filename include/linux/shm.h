@@ -86,8 +86,7 @@ id|shm_npages
 suffix:semicolon
 multiline_comment|/* size of segment (pages) */
 DECL|member|shm_pages
-r_int
-r_int
+id|pte_t
 op_star
 id|shm_pages
 suffix:semicolon
@@ -257,12 +256,12 @@ r_void
 id|shm_unuse
 c_func
 (paren
-r_int
-r_int
+id|pte_t
 id|entry
 comma
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page
 )paren
 suffix:semicolon

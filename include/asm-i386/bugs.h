@@ -765,6 +765,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * All current models of Pentium and Pentium with MMX technology CPUs&n; * have the F0 0F bug, which lets nonpriviledged users lock up the system:&n; */
+macro_line|#ifndef CONFIG_M686
 r_extern
 r_void
 id|trap_init_f00f_bug
@@ -818,6 +819,7 @@ c_func
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Perform the Cyrix 5/2 test. A Cyrix won&squot;t change&n; * the flags, while other 486 chips will.&n; */
 DECL|function|test_cyrix_52div
 r_static
@@ -1361,11 +1363,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_M686
 id|check_pentium_f00f
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|check_cyrix_coma
 c_func
 (paren

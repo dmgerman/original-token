@@ -40,12 +40,6 @@ id|length
 suffix:semicolon
 multiline_comment|/* Number of valid bytes of data */
 multiline_comment|/* Keep separate track of the physical addresses and page&n;&t; * structs involved.  If we do IO to a memory-mapped device&n;&t; * region, there won&squot;t necessarily be page structs defined for&n;&t; * every address. */
-DECL|member|pagelist
-r_int
-r_int
-op_star
-id|pagelist
-suffix:semicolon
 DECL|member|maplist
 r_struct
 id|page

@@ -20,8 +20,9 @@ l_int|128
 )braket
 suffix:semicolon
 DECL|member|page
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page
 (braket
 id|MAX_ARG_PAGES

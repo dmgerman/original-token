@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/bigmem.h&gt;
+macro_line|#include &lt;linux/highmem.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -266,7 +266,8 @@ suffix:semicolon
 id|pte_t
 id|pte
 suffix:semicolon
-r_char
+r_struct
+id|page
 op_star
 id|page
 suffix:semicolon
@@ -279,6 +280,11 @@ r_int
 r_int
 id|addr
 suffix:semicolon
+r_int
+r_int
+id|maddr
+suffix:semicolon
+multiline_comment|/* temporary mapped address */
 r_char
 op_star
 id|tmp
@@ -406,17 +412,11 @@ id|page_dir
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Bad page dir entry %08lx&bslash;n&quot;
-comma
-id|pgd_val
+id|pgd_ERROR
 c_func
 (paren
 op_star
 id|page_dir
-)paren
 )paren
 suffix:semicolon
 id|pgd_clear
@@ -461,17 +461,11 @@ id|page_middle
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Bad page middle entry %08lx&bslash;n&quot;
-comma
-id|pmd_val
+id|pmd_ERROR
 c_func
 (paren
 op_star
 id|page_middle
-)paren
 )paren
 suffix:semicolon
 id|pmd_clear
@@ -508,21 +502,10 @@ r_break
 suffix:semicolon
 id|page
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|pte_page
 c_func
 (paren
 id|pte
-)paren
-op_plus
-(paren
-id|addr
-op_amp
-op_complement
-id|PAGE_MASK
 )paren
 suffix:semicolon
 id|i
@@ -547,19 +530,11 @@ id|i
 op_assign
 id|scount
 suffix:semicolon
-id|page
+id|maddr
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|kmap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|page
 comma
 id|KM_READ
@@ -570,7 +545,18 @@ c_func
 (paren
 id|tmp
 comma
-id|page
+(paren
+r_char
+op_star
+)paren
+id|maddr
+op_plus
+(paren
+id|addr
+op_amp
+op_complement
+id|PAGE_MASK
+)paren
 comma
 id|i
 )paren
@@ -578,11 +564,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-id|page
+id|maddr
 comma
 id|KM_READ
 )paren
@@ -653,7 +635,8 @@ suffix:semicolon
 id|pte_t
 id|pte
 suffix:semicolon
-r_char
+r_struct
+id|page
 op_star
 id|page
 suffix:semicolon
@@ -666,6 +649,11 @@ r_int
 r_int
 id|addr
 suffix:semicolon
+r_int
+r_int
+id|maddr
+suffix:semicolon
+multiline_comment|/* temporary mapped address */
 r_char
 op_star
 id|tmp
@@ -754,17 +742,11 @@ id|page_dir
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Bad page dir entry %08lx&bslash;n&quot;
-comma
-id|pgd_val
+id|pgd_ERROR
 c_func
 (paren
 op_star
 id|page_dir
-)paren
 )paren
 suffix:semicolon
 id|pgd_clear
@@ -809,17 +791,11 @@ id|page_middle
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Bad page middle entry %08lx&bslash;n&quot;
-comma
-id|pmd_val
+id|pmd_ERROR
 c_func
 (paren
 op_star
 id|page_middle
-)paren
 )paren
 suffix:semicolon
 id|pmd_clear
@@ -868,21 +844,10 @@ r_break
 suffix:semicolon
 id|page
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|pte_page
 c_func
 (paren
 id|pte
-)paren
-op_plus
-(paren
-id|addr
-op_amp
-op_complement
-id|PAGE_MASK
 )paren
 suffix:semicolon
 id|i
@@ -907,19 +872,11 @@ id|i
 op_assign
 id|count
 suffix:semicolon
-id|page
+id|maddr
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|kmap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|page
 comma
 id|KM_WRITE
@@ -928,7 +885,18 @@ suffix:semicolon
 id|copy_from_user
 c_func
 (paren
-id|page
+(paren
+r_char
+op_star
+)paren
+id|maddr
+op_plus
+(paren
+id|addr
+op_amp
+op_complement
+id|PAGE_MASK
+)paren
 comma
 id|tmp
 comma
@@ -938,11 +906,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-id|page
+id|maddr
 comma
 id|KM_WRITE
 )paren
@@ -1222,17 +1186,11 @@ id|src_dir
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Bad source page dir entry %08lx&bslash;n&quot;
-comma
-id|pgd_val
+id|pgd_ERROR
 c_func
 (paren
 op_star
 id|src_dir
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1275,17 +1233,11 @@ id|src_middle
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Bad source page middle entry %08lx&bslash;n&quot;
-comma
-id|pmd_val
+id|pmd_ERROR
 c_func
 (paren
 op_star
 id|src_middle
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1572,15 +1524,11 @@ id|src_table
 suffix:semicolon
 id|mapnr
 op_assign
-id|MAP_NR
-c_func
-(paren
-id|pte_page
+id|pte_pagenr
 c_func
 (paren
 op_star
 id|src_table
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1595,15 +1543,11 @@ c_func
 (paren
 id|mem_map
 op_plus
-id|MAP_NR
-c_func
-(paren
-id|pte_page
+id|pte_pagenr
 c_func
 (paren
 op_star
 id|src_table
-)paren
 )paren
 )paren
 suffix:semicolon

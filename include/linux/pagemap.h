@@ -5,12 +5,13 @@ macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Page-mapping primitive inline functions&n; *&n; * Copyright 1995 Linus Torvalds&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-DECL|function|page_address
-r_static
+macro_line|#include &lt;linux/highmem.h&gt;
+macro_line|#include &lt;linux/list.h&gt;
+DECL|function|get_pagecache_pte
+r_extern
 r_inline
-r_int
-r_int
-id|page_address
+id|pte_t
+id|get_pagecache_pte
 c_func
 (paren
 r_struct
@@ -19,17 +20,12 @@ op_star
 id|page
 )paren
 (brace
+multiline_comment|/*&n;&t; * the pagecache is still machineword sized. The rest of the VM&n;&t; * can deal with arbitrary sized ptes.&n;&t; */
 r_return
-id|PAGE_OFFSET
-op_plus
+id|__pte
+c_func
 (paren
-(paren
-id|page
-op_minus
-id|mem_map
-)paren
-op_lshift
-id|PAGE_SHIFT
+id|page-&gt;offset
 )paren
 suffix:semicolon
 )brace
@@ -43,9 +39,9 @@ mdefine_line|#define PAGE_CACHE_MASK&t;&t;PAGE_MASK
 DECL|macro|PAGE_CACHE_ALIGN
 mdefine_line|#define PAGE_CACHE_ALIGN(addr)&t;(((addr)+PAGE_CACHE_SIZE-1)&amp;PAGE_CACHE_MASK)
 DECL|macro|page_cache_alloc
-mdefine_line|#define page_cache_alloc()&t;__get_free_page(GFP_USER)
+mdefine_line|#define page_cache_alloc()&t;__get_pages(GFP_USER, 0)
 DECL|macro|page_cache_free
-mdefine_line|#define page_cache_free(x)&t;free_page(x)
+mdefine_line|#define page_cache_free(x)&t;__free_page(x)
 DECL|macro|page_cache_release
 mdefine_line|#define page_cache_release(x)&t;__free_page(x)
 multiline_comment|/*&n; * From a kernel address, get the &quot;struct page *&quot;&n; */
@@ -83,7 +79,7 @@ r_int
 suffix:semicolon
 multiline_comment|/*&n; * We use a power-of-two hash table to avoid a modulus,&n; * and get a reasonable hash by knowing roughly how the&n; * inode pointer and offsets are distributed (ie, we&n; * roughly know which bits are &quot;significant&quot;)&n; */
 DECL|function|_page_hashfn
-r_static
+r_extern
 r_inline
 r_int
 r_int
@@ -253,7 +249,7 @@ id|hash
 )paren
 suffix:semicolon
 DECL|function|add_page_to_hash_queue
-r_static
+r_extern
 r_inline
 r_void
 id|add_page_to_hash_queue
@@ -290,7 +286,7 @@ id|offset
 suffix:semicolon
 )brace
 DECL|function|add_page_to_inode_queue
-r_static
+r_extern
 r_inline
 r_void
 id|add_page_to_inode_queue
@@ -308,45 +304,97 @@ id|page
 )paren
 (brace
 r_struct
-id|page
+id|list_head
 op_star
-op_star
-id|p
+id|head
 op_assign
 op_amp
 id|inode-&gt;i_pages
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|inode-&gt;i_nrpages
 op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|list_empty
+c_func
+(paren
+id|head
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|list_empty
+c_func
+(paren
+id|head
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|list_add
+c_func
+(paren
+op_amp
+id|page-&gt;list
+comma
+id|head
+)paren
 suffix:semicolon
 id|page-&gt;inode
 op_assign
 id|inode
 suffix:semicolon
-id|page-&gt;prev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
+)brace
+DECL|function|remove_page_from_inode_queue
+r_extern
+r_inline
+r_void
+id|remove_page_from_inode_queue
+c_func
 (paren
-(paren
-id|page-&gt;next
-op_assign
-op_star
-id|p
-)paren
-op_ne
-l_int|NULL
-)paren
-id|page-&gt;next-&gt;prev
-op_assign
+r_struct
 id|page
+op_star
+id|page
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|page-&gt;inode
 suffix:semicolon
-op_star
-id|p
-op_assign
-id|page
+id|inode-&gt;i_nrpages
+op_decrement
+suffix:semicolon
+id|list_del
+c_func
+(paren
+op_amp
+id|page-&gt;list
+)paren
 suffix:semicolon
 )brace
 r_extern
@@ -360,7 +408,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|function|wait_on_page
-r_static
+r_extern
 r_inline
 r_void
 id|wait_on_page

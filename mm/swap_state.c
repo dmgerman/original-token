@@ -151,36 +151,13 @@ id|page
 op_star
 id|page
 comma
-r_int
-r_int
+id|pte_t
 id|entry
 )paren
 (brace
 macro_line|#ifdef SWAP_CACHE_INFO
 id|swap_cache_add_total
 op_increment
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef DEBUG_SWAP
-id|printk
-c_func
-(paren
-l_string|&quot;DebugVM: add_to_swap_cache(%08lx count %d, entry %08lx)&bslash;n&quot;
-comma
-id|page_address
-c_func
-(paren
-id|page
-)paren
-comma
-id|page_count
-c_func
-(paren
-id|page
-)paren
-comma
-id|entry
-)paren
 suffix:semicolon
 macro_line|#endif
 r_if
@@ -192,45 +169,21 @@ c_func
 id|page
 )paren
 )paren
-(brace
-id|printk
+id|BUG
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;swap_cache: replacing non-empty entry %08lx &quot;
-l_string|&quot;on page %08lx&bslash;n&quot;
-comma
-id|page-&gt;offset
-comma
-id|page_address
-c_func
-(paren
-id|page
-)paren
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|page-&gt;inode
 )paren
-(brace
-id|printk
+id|BUG
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;swap_cache: replacing page-cached entry &quot;
-l_string|&quot;on page %08lx&bslash;n&quot;
-comma
-id|page_address
-c_func
-(paren
-id|page
-)paren
 )paren
 suffix:semicolon
-)brace
 id|add_to_page_cache
 c_func
 (paren
@@ -239,7 +192,11 @@ comma
 op_amp
 id|swapper_inode
 comma
+id|pte_val
+c_func
+(paren
 id|entry
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -249,8 +206,7 @@ r_int
 id|swap_duplicate
 c_func
 (paren
-r_int
-r_int
+id|pte_t
 id|entry
 )paren
 (brace
@@ -274,7 +230,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|pte_val
+c_func
+(paren
 id|entry
+)paren
 )paren
 r_goto
 id|out
@@ -376,18 +336,10 @@ op_increment
 OL
 l_int|5
 )paren
-id|printk
+id|pte_ERROR
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;swap_duplicate: entry %08lx map count=%d&bslash;n&quot;
-comma
 id|entry
-comma
-id|p-&gt;swap_map
-(braket
-id|offset
-)braket
 )paren
 suffix:semicolon
 id|p-&gt;swap_map
@@ -402,21 +354,6 @@ id|result
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef DEBUG_SWAP
-id|printk
-c_func
-(paren
-l_string|&quot;DebugVM: swap_duplicate(entry %08lx, count now %d)&bslash;n&quot;
-comma
-id|entry
-comma
-id|p-&gt;swap_map
-(braket
-id|offset
-)braket
-)paren
-suffix:semicolon
-macro_line|#endif
 id|out
 suffix:colon
 r_return
@@ -424,12 +361,9 @@ id|result
 suffix:semicolon
 id|bad_file
 suffix:colon
-id|printk
+id|pte_ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;swap_duplicate: entry %08lx, nonexistent swap file&bslash;n&quot;
-comma
 id|entry
 )paren
 suffix:semicolon
@@ -438,12 +372,9 @@ id|out
 suffix:semicolon
 id|bad_offset
 suffix:colon
-id|printk
+id|pte_ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;swap_duplicate: entry %08lx, offset exceeds max&bslash;n&quot;
-comma
 id|entry
 )paren
 suffix:semicolon
@@ -452,18 +383,9 @@ id|out
 suffix:semicolon
 id|bad_unused
 suffix:colon
-id|printk
+id|pte_ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;swap_duplicate at %8p: entry %08lx, unused page&bslash;n&quot;
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-comma
 id|entry
 )paren
 suffix:semicolon
@@ -476,9 +398,10 @@ r_int
 id|swap_count
 c_func
 (paren
-r_int
-r_int
-id|entry
+r_struct
+id|page
+op_star
+id|page
 )paren
 (brace
 r_struct
@@ -492,6 +415,15 @@ id|offset
 comma
 id|type
 suffix:semicolon
+id|pte_t
+id|entry
+op_assign
+id|get_pagecache_pte
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_int
 id|retval
 op_assign
@@ -501,7 +433,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|pte_val
+c_func
+(paren
 id|entry
+)paren
 )paren
 r_goto
 id|bad_entry
@@ -577,18 +513,6 @@ id|p-&gt;swap_map
 id|offset
 )braket
 suffix:semicolon
-macro_line|#ifdef DEBUG_SWAP
-id|printk
-c_func
-(paren
-l_string|&quot;DebugVM: swap_count(entry %08lx, count %d)&bslash;n&quot;
-comma
-id|entry
-comma
-id|retval
-)paren
-suffix:semicolon
-macro_line|#endif
 id|out
 suffix:colon
 r_return
@@ -608,12 +532,9 @@ id|out
 suffix:semicolon
 id|bad_file
 suffix:colon
-id|printk
+id|pte_ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;swap_count: entry %08lx, nonexistent swap file!&bslash;n&quot;
-comma
 id|entry
 )paren
 suffix:semicolon
@@ -622,12 +543,9 @@ id|out
 suffix:semicolon
 id|bad_offset
 suffix:colon
-id|printk
+id|pte_ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;swap_count: entry %08lx, offset exceeds max!&bslash;n&quot;
-comma
 id|entry
 )paren
 suffix:semicolon
@@ -636,18 +554,9 @@ id|out
 suffix:semicolon
 id|bad_unused
 suffix:colon
-id|printk
+id|pte_ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;swap_count at %8p: entry %08lx, unused page!&bslash;n&quot;
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-comma
 id|entry
 )paren
 suffix:semicolon
@@ -681,22 +590,11 @@ c_cond
 op_logical_neg
 id|inode
 )paren
-(brace
-id|printk
-(paren
-l_string|&quot;VM: Removing swap cache page with zero inode hash &quot;
-l_string|&quot;on page %08lx&bslash;n&quot;
-comma
-id|page_address
+id|BUG
 c_func
 (paren
-id|page
-)paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -705,20 +603,11 @@ op_ne
 op_amp
 id|swapper_inode
 )paren
-(brace
-id|printk
-(paren
-l_string|&quot;VM: Removing swap cache page with wrong inode hash &quot;
-l_string|&quot;on page %08lx&bslash;n&quot;
-comma
-id|page_address
+id|BUG
 c_func
 (paren
-id|page
-)paren
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -735,26 +624,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_SWAP
-id|printk
-c_func
-(paren
-l_string|&quot;DebugVM: remove_from_swap_cache(%08lx count %d)&bslash;n&quot;
-comma
-id|page_address
-c_func
-(paren
-id|page
-)paren
-comma
-id|page_count
-c_func
-(paren
-id|page
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|PageClearSwapCache
 c_func
 (paren
@@ -780,40 +649,22 @@ op_star
 id|page
 )paren
 (brace
-r_int
+id|pte_t
 id|entry
 op_assign
-id|page-&gt;offset
+id|get_pagecache_pte
+c_func
+(paren
+id|page
+)paren
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
 id|swap_cache_del_total
 op_increment
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef DEBUG_SWAP
-id|printk
-c_func
-(paren
-l_string|&quot;DebugVM: delete_from_swap_cache(%08lx count %d, &quot;
-l_string|&quot;entry %08lx)&bslash;n&quot;
-comma
-id|page_address
-c_func
-(paren
-id|page
-)paren
-comma
-id|page_count
-c_func
-(paren
-id|page
-)paren
-comma
-id|entry
-)paren
-suffix:semicolon
-macro_line|#endif
 id|remove_from_swap_cache
+c_func
 (paren
 id|page
 )paren
@@ -824,6 +675,7 @@ c_func
 )paren
 suffix:semicolon
 id|swap_free
+c_func
 (paren
 id|entry
 )paren
@@ -921,24 +773,12 @@ r_void
 id|free_page_and_swap_cache
 c_func
 (paren
-r_int
-r_int
-id|addr
-)paren
-(brace
 r_struct
 id|page
 op_star
 id|page
-op_assign
-id|mem_map
-op_plus
-id|MAP_NR
-c_func
-(paren
-id|addr
 )paren
-suffix:semicolon
+(brace
 multiline_comment|/* &n;&t; * If we are the only user, then free up the swap cache. &n;&t; */
 id|lock_page
 c_func
@@ -1006,8 +846,7 @@ op_star
 id|lookup_swap_cache
 c_func
 (paren
-r_int
-r_int
+id|pte_t
 id|entry
 )paren
 (brace
@@ -1027,6 +866,7 @@ c_loop
 l_int|1
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * Right now the pagecache is 32-bit only.&n;&t;&t; */
 id|found
 op_assign
 id|find_lock_page
@@ -1035,7 +875,11 @@ c_func
 op_amp
 id|swapper_inode
 comma
+id|pte_val
+c_func
+(paren
 id|entry
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1112,8 +956,7 @@ op_star
 id|read_swap_cache_async
 c_func
 (paren
-r_int
-r_int
+id|pte_t
 id|entry
 comma
 r_int
@@ -1134,23 +977,6 @@ r_int
 r_int
 id|new_page_addr
 suffix:semicolon
-macro_line|#ifdef DEBUG_SWAP
-id|printk
-c_func
-(paren
-l_string|&quot;DebugVM: read_swap_cache_async entry %08lx%s&bslash;n&quot;
-comma
-id|entry
-comma
-id|wait
-ques
-c_cond
-l_string|&quot;, wait&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Make sure the swap entry is still in use.&n;&t; */
 r_if
 c_cond
@@ -1247,27 +1073,6 @@ comma
 id|wait
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_SWAP
-id|printk
-c_func
-(paren
-l_string|&quot;DebugVM: read_swap_cache_async created &quot;
-l_string|&quot;entry %08lx at %p&bslash;n&quot;
-comma
-id|entry
-comma
-(paren
-r_char
-op_star
-)paren
-id|page_address
-c_func
-(paren
-id|new_page
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|new_page
 suffix:semicolon

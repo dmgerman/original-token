@@ -382,9 +382,9 @@ id|size
 )paren
 suffix:semicolon
 multiline_comment|/* This is used by some architectures to estimate available memory. */
-DECL|variable|buffermem
+DECL|variable|buffermem_pages
 id|atomic_t
-id|buffermem
+id|buffermem_pages
 op_assign
 id|ATOMIC_INIT
 c_func
@@ -3446,8 +3446,8 @@ op_assign
 id|nr_lru_pages
 op_plus
 id|nr_free_pages
-op_minus
-id|nr_free_bigpages
+op_plus
+id|nr_free_highpages
 suffix:semicolon
 id|hard_dirty_limit
 op_assign
@@ -5140,13 +5140,11 @@ id|page
 )paren
 )paren
 (brace
-id|atomic_add
+id|atomic_inc
 c_func
 (paren
-id|PAGE_CACHE_SIZE
-comma
 op_amp
-id|buffermem
+id|buffermem_pages
 )paren
 suffix:semicolon
 r_return
@@ -7525,13 +7523,6 @@ id|pageind
 op_increment
 )paren
 (brace
-id|page
-op_assign
-id|iobuf-&gt;pagelist
-(braket
-id|pageind
-)braket
-suffix:semicolon
 id|map
 op_assign
 id|iobuf-&gt;maplist
@@ -7544,7 +7535,7 @@ c_cond
 (paren
 id|map
 op_logical_and
-id|PageBIGMEM
+id|PageHighMem
 c_func
 (paren
 id|map
@@ -7560,6 +7551,14 @@ r_goto
 id|error
 suffix:semicolon
 )brace
+id|page
+op_assign
+id|page_address
+c_func
+(paren
+id|map
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -8811,13 +8810,11 @@ c_func
 id|page_map
 )paren
 suffix:semicolon
-id|atomic_add
+id|atomic_inc
 c_func
 (paren
-id|PAGE_SIZE
-comma
 op_amp
-id|buffermem
+id|buffermem_pages
 )paren
 suffix:semicolon
 r_return
@@ -9163,10 +9160,14 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|buffermem
+id|buffermem_pages
 )paren
-op_rshift
+op_lshift
+(paren
+id|PAGE_SHIFT
+op_minus
 l_int|10
+)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__ /* trylock does nothing on UP and so we could deadlock */
@@ -9347,7 +9348,7 @@ c_func
 (paren
 r_int
 r_int
-id|memory_size
+id|mempages
 )paren
 (brace
 r_int
@@ -9360,11 +9361,11 @@ r_int
 id|nr_hash
 suffix:semicolon
 multiline_comment|/* The buffer cache hash table is less important these days,&n;&t; * trim it a bit.&n;&t; */
-id|memory_size
+id|mempages
 op_rshift_assign
 l_int|14
 suffix:semicolon
-id|memory_size
+id|mempages
 op_mul_assign
 r_sizeof
 (paren
@@ -9381,12 +9382,12 @@ op_assign
 l_int|0
 suffix:semicolon
 (paren
-id|PAGE_SIZE
+l_int|1
 op_lshift
 id|order
 )paren
 OL
-id|memory_size
+id|mempages
 suffix:semicolon
 id|order
 op_increment

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/iobuf.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bugs.h&gt;
 macro_line|#ifdef CONFIG_PCI
@@ -89,16 +90,6 @@ id|init_modules
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|console_init
-c_func
-(paren
-r_int
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -230,22 +221,6 @@ c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-DECL|variable|memory_start
-r_static
-r_int
-r_int
-id|memory_start
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|memory_end
-r_static
-r_int
-r_int
-id|memory_end
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|rows
 DECL|variable|cols
@@ -1679,14 +1654,6 @@ c_func
 r_char
 op_star
 op_star
-comma
-r_int
-r_int
-op_star
-comma
-r_int
-r_int
-op_star
 )paren
 suffix:semicolon
 r_extern
@@ -1744,6 +1711,10 @@ r_char
 op_star
 id|command_line
 suffix:semicolon
+r_int
+r_int
+id|mempages
+suffix:semicolon
 multiline_comment|/*&n; * Interrupts are still disabled. Do necessary setups, then&n; * enable them&n; */
 id|lock_kernel
 c_func
@@ -1761,22 +1732,11 @@ c_func
 (paren
 op_amp
 id|command_line
-comma
-op_amp
-id|memory_start
-comma
-op_amp
-id|memory_end
 )paren
 suffix:semicolon
-id|memory_start
-op_assign
 id|paging_init
 c_func
 (paren
-id|memory_start
-comma
-id|memory_end
 )paren
 suffix:semicolon
 id|trap_init
@@ -1806,14 +1766,9 @@ id|command_line
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * HACK ALERT! This is early. We&squot;re enabling the console before&n;&t; * we&squot;ve done PCI setups etc, and console_init() must be aware of&n;&t; * this. But we do want output early, in case something goes wrong.&n;&t; */
-id|memory_start
-op_assign
 id|console_init
 c_func
 (paren
-id|memory_start
-comma
-id|memory_end
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MODULES
@@ -1829,14 +1784,9 @@ c_cond
 id|prof_shift
 )paren
 (brace
-id|prof_buffer
-op_assign
-(paren
 r_int
 r_int
-op_star
-)paren
-id|memory_start
+id|size
 suffix:semicolon
 multiline_comment|/* only text is profiled */
 id|prof_len
@@ -1859,14 +1809,31 @@ id|prof_len
 op_rshift_assign
 id|prof_shift
 suffix:semicolon
-id|memory_start
-op_add_assign
+id|size
+op_assign
 id|prof_len
 op_star
 r_sizeof
 (paren
 r_int
 r_int
+)paren
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
+suffix:semicolon
+id|prof_buffer
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|alloc_bootmem
+c_func
+(paren
+id|size
 )paren
 suffix:semicolon
 id|memset
@@ -1876,24 +1843,13 @@ id|prof_buffer
 comma
 l_int|0
 comma
-id|prof_len
-op_star
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+id|size
 )paren
 suffix:semicolon
 )brace
-id|memory_start
-op_assign
 id|kmem_cache_init
 c_func
 (paren
-id|memory_start
-comma
-id|memory_end
 )paren
 suffix:semicolon
 id|sti
@@ -1907,6 +1863,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+singleline_comment|// FIXME, use the bootmem.h interface.
 r_if
 c_cond
 (paren
@@ -1941,9 +1898,6 @@ macro_line|#endif
 id|mem_init
 c_func
 (paren
-id|memory_start
-comma
-id|memory_end
 )paren
 suffix:semicolon
 id|kmem_cache_sizes_init
@@ -1958,12 +1912,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|mempages
+op_assign
+id|num_physpages
+suffix:semicolon
 id|fork_init
 c_func
 (paren
-id|memory_end
-op_minus
-id|memory_start
+id|mempages
 )paren
 suffix:semicolon
 id|filescache_init
@@ -1984,17 +1940,13 @@ suffix:semicolon
 id|buffer_init
 c_func
 (paren
-id|memory_end
-op_minus
-id|memory_start
+id|mempages
 )paren
 suffix:semicolon
 id|page_cache_init
 c_func
 (paren
-id|memory_end
-op_minus
-id|memory_start
+id|mempages
 )paren
 suffix:semicolon
 id|kiobuf_init

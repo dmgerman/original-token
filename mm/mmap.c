@@ -92,10 +92,8 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|buffermem
+id|buffermem_pages
 )paren
-op_rshift
-id|PAGE_SHIFT
 suffix:semicolon
 id|free
 op_add_assign

@@ -103,6 +103,12 @@ r_int
 op_star
 id|pgd_quick
 suffix:semicolon
+DECL|member|pmd_quick
+r_int
+r_int
+op_star
+id|pmd_quick
+suffix:semicolon
 DECL|member|pte_quick
 r_int
 r_int
@@ -224,6 +230,12 @@ mdefine_line|#define cpu_data &amp;boot_cpu_data
 DECL|macro|current_cpu_data
 mdefine_line|#define current_cpu_data boot_cpu_data
 macro_line|#endif
+DECL|macro|cpu_has_pge
+mdefine_line|#define cpu_has_pge &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_PGE)
+DECL|macro|cpu_has_pse
+mdefine_line|#define cpu_has_pse &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_PSE)
+DECL|macro|cpu_has_pae
+mdefine_line|#define cpu_has_pae &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_PAE)
 DECL|macro|cpu_has_tsc
 mdefine_line|#define cpu_has_tsc &bslash;&n;&t;&t;(cpu_data[smp_processor_id()].x86_capability &amp; X86_FEATURE_TSC)
 r_extern

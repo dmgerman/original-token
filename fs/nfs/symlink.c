@@ -146,9 +146,8 @@ comma
 op_star
 op_star
 id|hash
-suffix:semicolon
-r_int
-r_int
+comma
+op_star
 id|page_cache
 suffix:semicolon
 id|page
@@ -213,11 +212,7 @@ suffix:semicolon
 )brace
 id|page
 op_assign
-id|page_cache_entry
-c_func
-(paren
 id|page_cache
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -261,7 +256,11 @@ r_const
 r_void
 op_star
 )paren
+id|page_address
+c_func
+(paren
 id|page_cache
+)paren
 suffix:semicolon
 r_if
 c_cond

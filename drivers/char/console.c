@@ -26,6 +26,7 @@ macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -11188,15 +11189,12 @@ r_int
 id|console_refcount
 suffix:semicolon
 DECL|function|con_init
-r_int
-r_int
+r_void
 id|__init
 id|con_init
 c_func
 (paren
-r_int
-r_int
-id|kmem_start
+r_void
 )paren
 (brace
 r_const
@@ -11238,7 +11236,6 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
-id|kmem_start
 suffix:semicolon
 )brace
 id|memset
@@ -11417,8 +11414,7 @@ op_lshift
 id|BLANK_TIMER
 suffix:semicolon
 )brace
-multiline_comment|/* Unfortunately, kmalloc is not running yet */
-multiline_comment|/* Due to kmalloc roundup allocating statically is more efficient -&n;&t;   so provide MIN_NR_CONSOLES for people with very little memory */
+multiline_comment|/*&n;&t; * kmalloc is not running yet - we use the bootmem allocator.&n;&t; */
 r_for
 c_loop
 (paren
@@ -11451,14 +11447,14 @@ r_struct
 id|vc_data
 op_star
 )paren
-id|kmem_start
-suffix:semicolon
-id|kmem_start
-op_add_assign
+id|alloc_bootmem
+c_func
+(paren
 r_sizeof
 (paren
 r_struct
 id|vc_data
+)paren
 )paren
 suffix:semicolon
 id|vt_cons
@@ -11471,14 +11467,14 @@ r_struct
 id|vt_struct
 op_star
 )paren
-id|kmem_start
-suffix:semicolon
-id|kmem_start
-op_add_assign
+id|alloc_bootmem
+c_func
+(paren
 r_sizeof
 (paren
 r_struct
 id|vt_struct
+)paren
 )paren
 suffix:semicolon
 id|visual_init
@@ -11496,11 +11492,11 @@ r_int
 r_int
 op_star
 )paren
-id|kmem_start
-suffix:semicolon
-id|kmem_start
-op_add_assign
+id|alloc_bootmem
+c_func
+(paren
 id|screenbuf_size
+)paren
 suffix:semicolon
 id|kmalloced
 op_assign
@@ -11684,9 +11680,6 @@ id|CONSOLE_BH
 comma
 id|console_bh
 )paren
-suffix:semicolon
-r_return
-id|kmem_start
 suffix:semicolon
 )brace
 macro_line|#ifndef VT_SINGLE_DRIVER

@@ -229,13 +229,10 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_8xx
 r_extern
-r_int
 id|console_8xx_init
 c_func
 (paren
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -3194,7 +3191,7 @@ r_struct
 id|tty_struct
 op_star
 )paren
-id|get_free_page
+id|get_zeroed_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -3350,7 +3347,7 @@ r_struct
 id|tty_struct
 op_star
 )paren
-id|get_free_page
+id|get_zeroed_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -8628,16 +8625,12 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize the console device. This is called *early*, so&n; * we can&squot;t necessarily depend on lots of kernel help here.&n; * Just do some early initializations, and do the complex setup&n; * later.&n; */
 DECL|function|console_init
-r_int
+r_void
 id|__init
 id|console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 (brace
 multiline_comment|/* Setup the default TTY line discipline. */
@@ -8734,43 +8727,27 @@ id|IEXTEN
 suffix:semicolon
 multiline_comment|/*&n;&t; * set up the console device so that later boot sequences can &n;&t; * inform about problems etc..&n;&t; */
 macro_line|#ifdef CONFIG_VT
-id|kmem_start
-op_assign
 id|con_init
 c_func
 (paren
-id|kmem_start
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 macro_line|#ifdef CONFIG_8xx
-id|kmem_start
-op_assign
 id|console_8xx_init
 c_func
 (paren
-id|kmem_start
-comma
-id|kmem_end
 )paren
 suffix:semicolon
 macro_line|#else &t;
-id|kmem_start
-op_assign
 id|serial_console_init
 c_func
 (paren
-id|kmem_start
-comma
-id|kmem_end
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
 macro_line|#endif
-r_return
-id|kmem_start
-suffix:semicolon
 )brace
 DECL|variable|dev_tty_driver
 DECL|variable|dev_syscons_driver
@@ -8799,7 +8776,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Ok, now we can initialize the rest of the tty devices and can count&n; * on memory allocations, interrupts etc..&n; */
 DECL|function|tty_init
-r_int
+r_void
 id|__init
 id|tty_init
 c_func
@@ -9162,8 +9139,5 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
 )brace
 eof
