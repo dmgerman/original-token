@@ -4,13 +4,19 @@ mdefine_line|#define _LINUX_SOCKET_H
 macro_line|#include &lt;asm/socket.h&gt;&t;&t;&t;/* arch-dependent defines&t;*/
 macro_line|#include &lt;linux/sockios.h&gt;&t;&t;/* the SIOCxxx I/O controls&t;*/
 macro_line|#include &lt;linux/uio.h&gt;&t;&t;&t;/* iovec support&t;&t;*/
+DECL|typedef|sa_family_t
+r_typedef
+r_int
+r_int
+id|sa_family_t
+suffix:semicolon
+multiline_comment|/*&n; *&t;1003.1g requires sa_family_t and that sa_data is char.&n; */
 DECL|struct|sockaddr
 r_struct
 id|sockaddr
 (brace
 DECL|member|sa_family
-r_int
-r_int
+id|sa_family_t
 id|sa_family
 suffix:semicolon
 multiline_comment|/* address family, AF_xxx&t;*/
@@ -228,6 +234,8 @@ DECL|macro|AF_UNSPEC
 mdefine_line|#define AF_UNSPEC&t;0
 DECL|macro|AF_UNIX
 mdefine_line|#define AF_UNIX&t;&t;1&t;/* Unix domain sockets &t;&t;*/
+DECL|macro|AF_LOCAL
+mdefine_line|#define AF_LOCAL&t;1&t;/* POSIX name for AF_UNIX&t;*/
 DECL|macro|AF_INET
 mdefine_line|#define AF_INET&t;&t;2&t;/* Internet IP Protocol &t;*/
 DECL|macro|AF_AX25
@@ -248,13 +256,19 @@ DECL|macro|AF_INET6
 mdefine_line|#define AF_INET6&t;10&t;/* IP version 6&t;&t;&t;*/
 DECL|macro|AF_ROSE
 mdefine_line|#define AF_ROSE&t;&t;11&t;/* Amateur Radio X.25 PLP&t;*/
+DECL|macro|AF_DECNET
+mdefine_line|#define AF_DECNET&t;12&t;/* Reserved for DECnet project&t;*/
+DECL|macro|AF_NETBEUI
+mdefine_line|#define AF_NETBEUI&t;13&t;/* Reserved for 802.2LLC project*/
 DECL|macro|AF_MAX
-mdefine_line|#define AF_MAX&t;&t;13&t;/* For now.. */
+mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
 DECL|macro|PF_UNSPEC
 mdefine_line|#define PF_UNSPEC&t;AF_UNSPEC
 DECL|macro|PF_UNIX
 mdefine_line|#define PF_UNIX&t;&t;AF_UNIX
+DECL|macro|PF_LOCAL
+mdefine_line|#define PF_LOCAL&t;AF_LOCAL
 DECL|macro|PF_INET
 mdefine_line|#define PF_INET&t;&t;AF_INET
 DECL|macro|PF_AX25
@@ -275,21 +289,32 @@ DECL|macro|PF_INET6
 mdefine_line|#define PF_INET6&t;AF_INET6
 DECL|macro|PR_ROSE
 mdefine_line|#define PR_ROSE&t;&t;AF_ROSE
+DECL|macro|PF_DECNET
+mdefine_line|#define PF_DECNET&t;AF_DECNET
+DECL|macro|PF_NETBEUI
+mdefine_line|#define PF_NETBEUI&t;AF_NETBEUI
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */
 DECL|macro|SOMAXCONN
 mdefine_line|#define SOMAXCONN&t;128
-multiline_comment|/* Flags we can use with send/ and recv. */
+multiline_comment|/* Flags we can use with send/ and recv. &n;   Added those for 1003.1g not all are supported yet&n; */
 DECL|macro|MSG_OOB
 mdefine_line|#define MSG_OOB&t;&t;1
 DECL|macro|MSG_PEEK
 mdefine_line|#define MSG_PEEK&t;2
 DECL|macro|MSG_DONTROUTE
 mdefine_line|#define MSG_DONTROUTE&t;4
-multiline_comment|/*#define MSG_CTRUNC&t;8&t;- We need to support this for BSD oddments */
+DECL|macro|MSG_CTRUNC
+mdefine_line|#define MSG_CTRUNC&t;8&t;/*  We need to support this for BSD oddments */
 DECL|macro|MSG_PROXY
 mdefine_line|#define MSG_PROXY&t;16&t;/* Supply or ask second address. */
+DECL|macro|MSG_EOR
+mdefine_line|#define MSG_EOR&t;&t;32&t;/* End of record */
+DECL|macro|MSG_TRUNC
+mdefine_line|#define MSG_TRUNC&t;64&t;/* Data was discarded before delivery */
+DECL|macro|MSG_WAITALL
+mdefine_line|#define MSG_WAITALL&t;128&t;/* Wait for a full request */
 multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_IP
 mdefine_line|#define SOL_IP&t;&t;0
@@ -309,6 +334,8 @@ DECL|macro|SOL_NETROM
 mdefine_line|#define SOL_NETROM&t;259
 DECL|macro|SOL_ROSE
 mdefine_line|#define SOL_ROSE&t;260
+DECL|macro|SOL_DECNET
+mdefine_line|#define SOL_DECNET&t;261
 DECL|macro|SOL_TCP
 mdefine_line|#define SOL_TCP&t;&t;6
 DECL|macro|SOL_UDP

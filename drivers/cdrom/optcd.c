@@ -12,6 +12,7 @@ mdefine_line|#define MAJOR_NR OPTICS_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/optcd.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 "&f;"
 multiline_comment|/* Debug support */
 multiline_comment|/* Don&squot;t forget to add new debug flags here. */

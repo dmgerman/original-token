@@ -43,7 +43,7 @@ DECL|macro|PPA_SPIN_TMO
 mdefine_line|#define   PPA_SPIN_TMO          5000000 /* ppa_wait loop limiter */
 DECL|macro|PPA_SECTOR_SIZE
 mdefine_line|#define   PPA_SECTOR_SIZE       512     /* for a performance hack only */
-macro_line|#include  &lt;unistd.h&gt;
+macro_line|#include  &lt;linux/stddef.h&gt;
 macro_line|#include  &lt;linux/module.h&gt;
 macro_line|#include  &lt;linux/kernel.h&gt;
 macro_line|#include  &lt;linux/tqueue.h&gt;

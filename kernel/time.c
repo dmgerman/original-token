@@ -581,12 +581,14 @@ r_struct
 id|timex
 id|txc
 suffix:semicolon
+multiline_comment|/* Copy the user data space into the kernel copy&n;&t; * structure. But bear in mind that the structures&n;&t; * may change&n;&t; */
 id|error
 op_assign
-id|verify_area
+id|copy_from_user
 c_func
 (paren
-id|VERIFY_WRITE
+op_amp
+id|txc
 comma
 id|txc_p
 comma
@@ -603,23 +605,8 @@ c_cond
 id|error
 )paren
 r_return
-id|error
-suffix:semicolon
-multiline_comment|/* Copy the user data space into the kernel copy&n;&t; * structure. But bear in mind that the structures&n;&t; * may change&n;&t; */
-id|copy_from_user
-c_func
-(paren
-op_amp
-id|txc
-comma
-id|txc_p
-comma
-r_sizeof
-(paren
-r_struct
-id|timex
-)paren
-)paren
+op_minus
+id|EFAULT
 suffix:semicolon
 multiline_comment|/* In order to modify anything, you gotta be super-user! */
 r_if
@@ -1124,6 +1111,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -1138,8 +1126,11 @@ r_struct
 id|timex
 )paren
 )paren
-suffix:semicolon
-r_return
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
 id|time_state
 suffix:semicolon
 )brace

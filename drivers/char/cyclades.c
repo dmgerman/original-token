@@ -7408,7 +7408,7 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|result
@@ -7468,10 +7468,12 @@ suffix:semicolon
 r_int
 r_int
 id|arg
-op_assign
-id|get_fs_long
+suffix:semicolon
+id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int
@@ -8382,7 +8384,7 @@ id|index
 op_amp
 id|CyREC_FIFO
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|tmp
@@ -8437,7 +8439,7 @@ op_star
 id|value
 )paren
 (brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|info-&gt;default_threshold
@@ -8656,7 +8658,7 @@ op_lshift
 id|index
 )braket
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|tmp
@@ -8711,7 +8713,7 @@ op_star
 id|value
 )paren
 (brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|info-&gt;default_timeout
@@ -9294,7 +9296,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|C_CLOCAL
@@ -9355,11 +9357,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|arg
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int

@@ -44,9 +44,9 @@ l_int|1
 comma
 l_int|1
 comma
-l_int|0x00
-comma
 l_int|1
+comma
+l_int|0x00
 )brace
 suffix:semicolon
 DECL|variable|max_ax25
@@ -91,9 +91,9 @@ l_int|31
 comma
 l_int|512
 comma
-l_int|0x03
-comma
 l_int|20
+comma
+l_int|0x03
 )brace
 suffix:semicolon
 DECL|variable|ax25_table_header

@@ -328,11 +328,9 @@ c_cond
 (paren
 id|err
 )paren
-(brace
 r_return
 id|err
 suffix:semicolon
-)brace
 id|kdata
 op_add_assign
 id|copy

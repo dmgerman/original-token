@@ -56,6 +56,21 @@ r_extern
 id|atomic_t
 id|ip_frag_mem
 suffix:semicolon
+multiline_comment|/*&n; *&t;Strings we don&squot;t want inline&squot;s duplicating&n; */
+DECL|variable|skb_push_errstr
+r_char
+op_star
+id|skb_push_errstr
+op_assign
+l_string|&quot;skpush:under: %p:%d&quot;
+suffix:semicolon
+DECL|variable|skb_put_errstr
+r_char
+op_star
+id|skb_put_errstr
+op_assign
+l_string|&quot;skput:over: %p:%d&quot;
+suffix:semicolon
 DECL|function|show_net_buffers
 r_void
 id|show_net_buffers

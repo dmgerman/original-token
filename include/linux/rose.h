@@ -41,7 +41,7 @@ r_struct
 id|sockaddr_rose
 (brace
 DECL|member|srose_family
-r_int
+id|sa_family_t
 id|srose_family
 suffix:semicolon
 DECL|member|srose_addr

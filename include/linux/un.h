@@ -8,8 +8,7 @@ r_struct
 id|sockaddr_un
 (brace
 DECL|member|sun_family
-r_int
-r_int
+id|sa_family_t
 id|sun_family
 suffix:semicolon
 multiline_comment|/* AF_UNIX */

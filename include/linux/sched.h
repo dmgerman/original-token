@@ -800,7 +800,7 @@ id|NR_CPUS
 suffix:semicolon
 multiline_comment|/*&n; *&t;On a single processor system this comes out as current_set[0] when cpp&n; *&t;has finished with it, which gcc will optimise away.&n; */
 DECL|macro|current
-mdefine_line|#define current (0+current_set[smp_processor_id()])&t;/* Current on this processor */
+mdefine_line|#define current (current_set[smp_processor_id()])&t;/* Current on this processor */
 r_extern
 r_int
 r_int

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;riscom8.h&quot;
 macro_line|#include &quot;riscom8_reg.h&quot;
 multiline_comment|/* Am I paranoid or not ? ;-) */
@@ -6728,11 +6729,11 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|arg
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int
@@ -7726,11 +7727,11 @@ suffix:semicolon
 r_case
 id|TIOCSSOFTCAR
 suffix:colon
-id|arg
-op_assign
 id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int

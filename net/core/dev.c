@@ -1385,13 +1385,23 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BRIDGE
-multiline_comment|/*&n;&t;&t; *&t;If we are bridging then pass the frame up to the&n;&t;&t; *&t;bridging code. If it is bridged then move on&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;If we are bridging then pass the frame up to the&n;&t;&t; *&t;bridging code (if this protocol is to be bridged).&n;&t;&t; *      If it is bridged then move on&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|br_stats.flags
 op_amp
 id|BR_UP
+op_logical_and
+id|br_protocol_ok
+c_func
+(paren
+id|ntohs
+c_func
+(paren
+id|skb-&gt;protocol
+)paren
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; *&t;We pass the bridge a complete frame. This means&n;&t;&t;&t; *&t;recovering the MAC header first.&n;&t;&t;&t; */

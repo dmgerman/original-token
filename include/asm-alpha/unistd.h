@@ -322,6 +322,10 @@ DECL|macro|__NR_setresuid
 mdefine_line|#define __NR_setresuid&t;&t;&t;343
 DECL|macro|__NR_getresuid
 mdefine_line|#define __NR_getresuid&t;&t;&t;344
+DECL|macro|__NR_pciconfig_read
+mdefine_line|#define __NR_pciconfig_read&t;&t;345
+DECL|macro|__NR_pciconfig_write
+mdefine_line|#define __NR_pciconfig_write&t;&t;346
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

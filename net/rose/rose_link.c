@@ -1061,7 +1061,6 @@ op_ne
 id|FW_ACCEPT
 )paren
 r_return
-l_int|0
 suffix:semicolon
 macro_line|#endif
 r_if

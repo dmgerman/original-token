@@ -2090,8 +2090,6 @@ id|lo
 suffix:semicolon
 r_int
 id|dev
-comma
-id|err
 suffix:semicolon
 r_if
 c_cond

@@ -454,6 +454,10 @@ id|ax25-&gt;sk-&gt;err
 op_assign
 id|ETIMEDOUT
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -614,6 +618,10 @@ id|ax25-&gt;sk-&gt;err
 op_assign
 l_int|0
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -760,6 +768,10 @@ suffix:semicolon
 id|ax25-&gt;sk-&gt;err
 op_assign
 id|ETIMEDOUT
+suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
 suffix:semicolon
 r_if
 c_cond
@@ -944,6 +956,10 @@ id|ax25-&gt;sk-&gt;err
 op_assign
 id|ETIMEDOUT
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1088,6 +1104,10 @@ suffix:semicolon
 id|ax25-&gt;sk-&gt;err
 op_assign
 id|ETIMEDOUT
+suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
 suffix:semicolon
 r_if
 c_cond

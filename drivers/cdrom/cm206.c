@@ -2155,8 +2155,10 @@ r_int
 id|cm206_open
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 comma
 r_int
 id|purpose
@@ -2212,8 +2214,10 @@ r_void
 id|cm206_release
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 )paren
 (brace
 r_if
@@ -3983,8 +3987,10 @@ r_int
 id|cm206_audio_ioctl
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 comma
 r_int
 r_int
@@ -4215,8 +4221,10 @@ r_int
 id|cm206_ioctl
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 comma
 r_int
 r_int
@@ -4300,8 +4308,13 @@ r_int
 id|cm206_media_changed
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
+comma
+r_int
+id|n
 )paren
 (brace
 r_if
@@ -4347,8 +4360,10 @@ r_int
 id|cm206_open_files
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 )paren
 (brace
 r_if
@@ -4370,8 +4385,10 @@ r_int
 id|cm206_tray_move
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 comma
 r_int
 id|position
@@ -4418,8 +4435,13 @@ r_int
 id|cm206_drive_status
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
+comma
+r_int
+id|n
 )paren
 (brace
 id|get_drive_status
@@ -4470,8 +4492,10 @@ r_int
 id|cm206_disc_status
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 )paren
 (brace
 id|uch
@@ -4559,8 +4583,10 @@ r_int
 id|cm206_lock_door
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 comma
 r_int
 id|lock
@@ -4608,8 +4634,10 @@ r_int
 id|cm206_get_last_session
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 comma
 r_struct
 id|cdrom_multisession
@@ -4695,8 +4723,10 @@ r_int
 id|cm206_get_upc
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|info
 comma
 r_struct
 id|cdrom_mcn
@@ -4825,8 +4855,10 @@ r_int
 id|cm206_reset
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|cdrom_device_info
+op_star
+id|i
 )paren
 (brace
 id|stop_read
@@ -4901,9 +4933,6 @@ multiline_comment|/* open */
 id|cm206_release
 comma
 multiline_comment|/* release */
-id|cm206_open_files
-comma
-multiline_comment|/* number of open_files */
 id|cm206_drive_status
 comma
 multiline_comment|/* drive status */
@@ -4955,15 +4984,45 @@ op_or
 id|CDC_PLAY_AUDIO
 comma
 multiline_comment|/* capability */
-l_int|0
-comma
-multiline_comment|/* mask flags */
-l_int|2
-comma
-multiline_comment|/* maximum speed */
 l_int|1
 comma
 multiline_comment|/* number of minor devices */
+)brace
+suffix:semicolon
+DECL|variable|cm206_info
+r_static
+r_struct
+id|cdrom_device_info
+id|cm206_info
+op_assign
+(brace
+op_amp
+id|cm206_dops
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+id|CM206_CDROM_MAJOR
+comma
+id|CDC_CLOSE_TRAY
+op_or
+id|CDC_OPEN_TRAY
+op_or
+id|CDC_LOCK
+op_or
+id|CDC_MULTI_SESSION
+op_or
+id|CDC_MEDIA_CHANGED
+op_or
+id|CDC_MCN
+op_or
+id|CDC_PLAY_AUDIO
+comma
+multiline_comment|/* capability */
+l_int|2
+comma
+multiline_comment|/* maximum speed */
 l_int|1
 comma
 multiline_comment|/* number of discs */
@@ -4971,7 +5030,9 @@ l_int|0
 comma
 multiline_comment|/* options, ignored */
 l_int|0
+comma
 multiline_comment|/* mc_flags, ignored */
+l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* This routine gets called during init if thing go wrong, can be used&n; * in cleanup_module as well. */
@@ -4999,9 +5060,8 @@ c_cond
 id|unregister_cdrom
 c_func
 (paren
-id|MAJOR_NR
-comma
-l_string|&quot;cm206&quot;
+op_amp
+id|cm206_info
 )paren
 )paren
 (brace
@@ -5665,12 +5725,10 @@ c_cond
 id|register_cdrom
 c_func
 (paren
-id|MAJOR_NR
+op_amp
+id|cm206_info
 comma
 l_string|&quot;cm206&quot;
-comma
-op_amp
-id|cm206_dops
 )paren
 op_ne
 l_int|0

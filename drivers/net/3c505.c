@@ -6042,8 +6042,10 @@ id|NAMELEN
 )braket
 op_assign
 (brace
+(brace
 l_int|0
 comma
+)brace
 )brace
 suffix:semicolon
 DECL|variable|dev_3c505
@@ -6055,6 +6057,7 @@ id|dev_3c505
 id|ELP_MAX_CARDS
 )braket
 op_assign
+(brace
 (brace
 l_int|NULL
 comma
@@ -6080,6 +6083,8 @@ comma
 l_int|NULL
 comma
 id|elplus_probe
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|variable|io

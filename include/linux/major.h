@@ -4,9 +4,9 @@ mdefine_line|#define _LINUX_MAJOR_H
 multiline_comment|/*&n; * This file has definitions for major device numbers.&n; * For the device number assignments, see Documentation/devices.txt.&n; */
 multiline_comment|/* limits */
 DECL|macro|MAX_CHRDEV
-mdefine_line|#define MAX_CHRDEV 64
+mdefine_line|#define MAX_CHRDEV 128
 DECL|macro|MAX_BLKDEV
-mdefine_line|#define MAX_BLKDEV 64
+mdefine_line|#define MAX_BLKDEV 128
 DECL|macro|UNNAMED_MAJOR
 mdefine_line|#define UNNAMED_MAJOR&t;0
 DECL|macro|MEM_MAJOR

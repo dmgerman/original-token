@@ -2614,7 +2614,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Adding Swap: %dk swap-space&bslash;n&quot;
+l_string|&quot;Adding Swap: %dk swap-space (priority %d)&bslash;n&quot;
 comma
 id|j
 op_lshift
@@ -2623,6 +2623,8 @@ id|PAGE_SHIFT
 op_minus
 l_int|10
 )paren
+comma
+id|p-&gt;prio
 )paren
 suffix:semicolon
 multiline_comment|/* insert swap space into swap_list: */

@@ -653,7 +653,7 @@ id|sk
 suffix:semicolon
 r_return
 op_minus
-id|ENOMEM
+id|ENOBUFS
 suffix:semicolon
 )brace
 id|buff-&gt;sk
@@ -870,29 +870,6 @@ id|sk-&gt;mtu
 op_assign
 id|dev-&gt;mtu
 suffix:semicolon
-macro_line|#ifdef CONFIG_SKIP
-multiline_comment|/*&n;&t; *&t;SKIP devices set their MTU to 65535. This is so they can take packets&n;&t; *&t;unfragmented to security process then fragment. They could lie to the&n;&t; *&t;TCP layer about a suitable MTU, but its easier to let skip sort it out&n;&t; *&t;simply because the final package we want unfragmented is going to be&n;&t; *&n;&t; *&t;[IPHDR][IPSP][Security data][Modified TCP data][Security data]&n;&t; */
-r_if
-c_cond
-(paren
-id|skip_pick_mtu
-op_ne
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* If SKIP is loaded.. */
-id|sk-&gt;mtu
-op_assign
-id|skip_pick_mtu
-c_func
-(paren
-id|sk-&gt;mtu
-comma
-id|dev
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1329,6 +1306,9 @@ r_struct
 id|inet_protocol
 op_star
 id|protocol
+comma
+r_int
+id|len
 )paren
 (brace
 r_struct
@@ -1353,6 +1333,18 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|8
+)paren
+(brace
+multiline_comment|/* We use the first 8 bytes only */
+r_return
+suffix:semicolon
+)brace
 id|th
 op_assign
 (paren
@@ -1456,7 +1448,6 @@ id|rtable
 op_star
 id|rt
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Ugly trick to pass MTU to protocol layer.&n;&t;&t; * Really we should add argument &quot;info&quot; to error handler.&n;&t;&t; */
 r_int
 r_int
 id|new_mtu
@@ -3461,7 +3452,7 @@ ques
 c_cond
 id|newsk-&gt;opt-&gt;faddr
 suffix:colon
-id|newsk-&gt;saddr
+id|newsk-&gt;daddr
 comma
 l_int|0
 )paren
@@ -3533,7 +3524,7 @@ r_sizeof
 r_struct
 id|iphdr
 )paren
-op_minus
+op_plus
 r_sizeof
 (paren
 r_struct

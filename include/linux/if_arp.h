@@ -57,6 +57,8 @@ DECL|macro|ARPHRD_LOOPBACK
 mdefine_line|#define ARPHRD_LOOPBACK&t;772&t;&t;/* Loopback device&t;&t;*/
 DECL|macro|ARPHRD_LOCALTLK
 mdefine_line|#define ARPHRD_LOCALTLK 773&t;&t;/* Localtalk device&t;&t;*/
+DECL|macro|ARPHRD_FDDI
+mdefine_line|#define ARPHRD_FDDI&t;774&t;&t;/* FDDI interfaces&t;&t;*/
 DECL|macro|ARPHRD_SIT
 mdefine_line|#define ARPHRD_SIT&t;776&t;&t;/* sit0 device - IPv6-in-IPv4&t;*/
 multiline_comment|/* ARP protocol opcodes. */

@@ -34,5 +34,13 @@ mdefine_line|#define SO_LINGER&t;13
 DECL|macro|SO_BSDCOMPAT
 mdefine_line|#define SO_BSDCOMPAT&t;14
 multiline_comment|/* To add :#define SO_REUSEPORT 15 */
+DECL|macro|SO_RCVLOWAT
+mdefine_line|#define SO_RCVLOWAT&t;16
+DECL|macro|SO_SNDLOWAT
+mdefine_line|#define SO_SNDLOWAT&t;17
+DECL|macro|SO_RCVTIMEO
+mdefine_line|#define SO_RCVTIMEO&t;18
+DECL|macro|SO_SNDTIMEO
+mdefine_line|#define SO_SNDTIMEO&t;19
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

@@ -37,7 +37,7 @@ r_struct
 id|sockaddr_at
 (brace
 DECL|member|sat_family
-r_int
+id|sa_family_t
 id|sat_family
 suffix:semicolon
 DECL|member|sat_port

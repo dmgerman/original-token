@@ -404,11 +404,12 @@ id|EFAULT
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;&quot;fromlen shall refer to the value before truncation..&quot;&n;&t; *&t;&t;&t;1003.1g&n;&t; */
 r_return
 id|put_user
 c_func
 (paren
-id|len
+id|klen
 comma
 id|ulen
 )paren
@@ -2541,7 +2542,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;For accept, we attempt to create a new socket, set up the link&n; *&t;with the client, wake up the client, then return the new&n; *&t;connected fd. We collect the address of the connector in kernel&n; *&t;space and move it to user at the very end. This is buggy because&n; *&t;we open the socket then return an error.&n; */
+multiline_comment|/*&n; *&t;For accept, we attempt to create a new socket, set up the link&n; *&t;with the client, wake up the client, then return the new&n; *&t;connected fd. We collect the address of the connector in kernel&n; *&t;space and move it to user at the very end. This is unclean because&n; *&t;we open the socket then return an error.&n; *&n; *&t;1003.1g addcs the ability to recvmsg() to query connection pending&n; *&t;status to recvmsg. We need to add that support in a way thats&n; *&t;clean when we restucture accept also.&n; */
 DECL|function|sys_accept
 id|asmlinkage
 r_int
@@ -2842,7 +2843,7 @@ r_return
 id|fd
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Attempt to connect to a socket with the server address.  The address&n; *&t;is in user space so we verify it is OK and move it to kernel space.&n; */
+multiline_comment|/*&n; *&t;Attempt to connect to a socket with the server address.  The address&n; *&t;is in user space so we verify it is OK and move it to kernel space.&n; *&n; *&t;For 1003.1g we need to add clean support for a bind to AF_UNSPEC to&n; *&t;break bindings&n; *&n; *&t;NOTE: 1003.1g draft 6.3 is broken with respect to AX.25/NetROM and&n; *&t;other SEQPACKET protocols that take time to connect() as it doesn&squot;t&n; *&t;include the -EINPROGRESS status for such sockets.&n; */
 DECL|function|sys_connect
 id|asmlinkage
 r_int
@@ -4583,9 +4584,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|err
-op_assign
 id|copy_from_user
 c_func
 (paren
@@ -4598,7 +4596,6 @@ r_sizeof
 (paren
 r_struct
 id|msghdr
-)paren
 )paren
 )paren
 )paren
@@ -4865,9 +4862,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|err
-op_assign
 id|copy_from_user
 c_func
 (paren
@@ -4880,7 +4874,6 @@ r_sizeof
 (paren
 r_struct
 id|msghdr
-)paren
 )paren
 )paren
 )paren
@@ -5075,10 +5068,7 @@ op_logical_neg
 id|err
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
-id|ret
+id|err
 op_assign
 id|copy_to_user
 c_func
@@ -5090,6 +5080,11 @@ comma
 id|msg_sys.msg_controllen
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
 id|err
 op_assign
 op_minus
@@ -5952,7 +5947,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Swansea University Computer Society NET3.035 for Linux 2.0&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society NET3.037 for Linux 2.1&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */

@@ -25,6 +25,9 @@ id|MAX_LINKS
 )braket
 )paren
 (paren
+r_int
+id|minor
+comma
 r_struct
 id|sk_buff
 op_star
@@ -80,6 +83,9 @@ r_int
 id|netlink_err
 c_func
 (paren
+r_int
+id|minor
+comma
 r_struct
 id|sk_buff
 op_star
@@ -105,6 +111,9 @@ r_int
 id|netlink_donothing
 c_func
 (paren
+r_int
+id|minor
+comma
 r_struct
 id|sk_buff
 op_star
@@ -301,6 +310,8 @@ id|minor
 )braket
 )paren
 (paren
+id|minor
+comma
 id|skb
 )paren
 suffix:semicolon
@@ -744,6 +755,9 @@ op_star
 id|function
 )paren
 (paren
+r_int
+id|minor
+comma
 r_struct
 id|sk_buff
 op_star
@@ -1029,7 +1043,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Network Kernel/User communications module 0.03&bslash;n&quot;
+l_string|&quot;Network Kernel/User communications module 0.04&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

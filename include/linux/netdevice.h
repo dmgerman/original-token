@@ -1101,6 +1101,17 @@ id|dev
 suffix:semicolon
 r_extern
 r_void
+id|fddi_setup
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|tr_setup
 c_func
 (paren

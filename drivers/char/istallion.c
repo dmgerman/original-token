@@ -20,7 +20,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Define different board types. Not all of the following board types&n; *&t;are supported by this driver. But I will use the standard &quot;assigned&quot;&n; *&t;board numbers. Currently supported boards are abbreviated as:&n; *&t;ECP = EasyConnection 8/64, ONB = ONboard, BBY = Brumby and&n; *&t;STAL = Stallion.&n; */
 DECL|macro|BRD_UNKNOWN
@@ -170,7 +172,7 @@ r_char
 op_star
 id|stli_drvversion
 op_assign
-l_string|&quot;1.1.3&quot;
+l_string|&quot;1.1.4&quot;
 suffix:semicolon
 DECL|variable|stli_serialname
 r_static
@@ -7482,7 +7484,7 @@ r_int
 op_eq
 l_int|0
 )paren
-id|put_fs_long
+id|put_user
 c_func
 (paren
 (paren
@@ -7538,11 +7540,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|arg
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int
@@ -7643,7 +7645,7 @@ c_func
 id|portp-&gt;asig.sigvalue
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|val
@@ -7689,11 +7691,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|arg
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int
@@ -7792,11 +7794,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|arg
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int
@@ -7895,11 +7897,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|arg
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|arg
+comma
 (paren
 r_int
 r_int
@@ -8088,7 +8090,7 @@ r_int
 op_eq
 l_int|0
 )paren
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|portp-&gt;pflag
@@ -8134,11 +8136,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|portp-&gt;pflag
-op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
+id|portp-&gt;pflag
+comma
 (paren
 r_int
 r_int

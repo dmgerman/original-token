@@ -456,6 +456,15 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|IS_BRIDGED
 mdefine_line|#define IS_BRIDGED&t;0x2e
+DECL|macro|BR_MAX_PROTOCOLS
+mdefine_line|#define BR_MAX_PROTOCOLS 32
+DECL|macro|BR_MAX_PROT_STATS
+mdefine_line|#define BR_MAX_PROT_STATS BR_MAX_PROTOCOLS
+multiline_comment|/* policy values for policy field */
+DECL|macro|BR_ACCEPT
+mdefine_line|#define BR_ACCEPT 1
+DECL|macro|BR_REJECT
+mdefine_line|#define BR_REJECT 0
 DECL|struct|br_stat
 r_struct
 id|br_stat
@@ -476,6 +485,42 @@ id|port_data
 id|No_of_ports
 )braket
 suffix:semicolon
+DECL|member|policy
+r_int
+r_int
+id|policy
+suffix:semicolon
+DECL|member|exempt_protocols
+r_int
+r_int
+id|exempt_protocols
+suffix:semicolon
+DECL|member|protocols
+r_int
+r_int
+id|protocols
+(braket
+id|BR_MAX_PROTOCOLS
+)braket
+suffix:semicolon
+DECL|member|prot_id
+r_int
+r_int
+id|prot_id
+(braket
+id|BR_MAX_PROT_STATS
+)braket
+suffix:semicolon
+multiline_comment|/* Protocol encountered */
+DECL|member|prot_counter
+r_int
+r_int
+id|prot_counter
+(braket
+id|BR_MAX_PROT_STATS
+)braket
+suffix:semicolon
+multiline_comment|/* How many packets ? */
 )brace
 suffix:semicolon
 multiline_comment|/* defined flags for br_stat.flags */
@@ -483,6 +528,8 @@ DECL|macro|BR_UP
 mdefine_line|#define BR_UP&t;&t;0x0001&t;/* bridging enabled */
 DECL|macro|BR_DEBUG
 mdefine_line|#define BR_DEBUG&t;0x0002&t;/* debugging enabled */
+DECL|macro|BR_PROT_STATS
+mdefine_line|#define BR_PROT_STATS&t;0x0004&t;/* protocol statistics enabled */
 DECL|struct|br_cf
 r_struct
 id|br_cf
@@ -525,6 +572,16 @@ DECL|macro|BRCMD_ENABLE_DEBUG
 mdefine_line|#define&t;BRCMD_ENABLE_DEBUG&t;9
 DECL|macro|BRCMD_DISABLE_DEBUG
 mdefine_line|#define&t;BRCMD_DISABLE_DEBUG&t;10
+DECL|macro|BRCMD_SET_POLICY
+mdefine_line|#define BRCMD_SET_POLICY&t;11&t;/* arg1 = default policy (1==bridge all) */
+DECL|macro|BRCMD_EXEMPT_PROTOCOL
+mdefine_line|#define BRCMD_EXEMPT_PROTOCOL&t;12&t;/* arg1 = protocol (see net/if_ether.h) */
+DECL|macro|BRCMD_ENABLE_PROT_STATS
+mdefine_line|#define BRCMD_ENABLE_PROT_STATS&t;13
+DECL|macro|BRCMD_DISABLE_PROT_STATS
+mdefine_line|#define BRCMD_DISABLE_PROT_STATS 14
+DECL|macro|BRCMD_ZERO_PROT_STATS
+mdefine_line|#define BRCMD_ZERO_PROT_STATS&t;15
 multiline_comment|/* prototypes of all bridging functions... */
 r_void
 id|transmit_config
@@ -1103,6 +1160,15 @@ comma
 r_void
 op_star
 id|arg
+)paren
+suffix:semicolon
+r_int
+id|br_protocol_ok
+c_func
+(paren
+r_int
+r_int
+id|protocol
 )paren
 suffix:semicolon
 r_void

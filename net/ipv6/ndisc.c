@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;Neighbour Discovery for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Mike Shaver&t;&t;&lt;shaver@ingenia.com&gt;&n; *&n; *&t;$Id: ndisc.c,v 1.28 1996/10/11 16:03:06 roque Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Lars Fenneberg&t;&t;&t;:&t;fixed MTU setting on receipt&n; *&t;&t;&t;&t;&t;&t;of an RA. &n; *&n; */
 multiline_comment|/*&n; *&t;Interface:&n; *&n; *&t;ndisc_lookup will be called from eth.c on dev-&gt;(re)build_header&n; *&n; *&t;ndisc_rcv&n; *&t;ndisc_validate is called by higher layers when they know a neighbour&n; *&t;&t;       is reachable.&n; *&n; *&t;Manages neighbour cache&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -4869,9 +4870,11 @@ op_star
 id|__u32
 op_star
 )paren
+(paren
 id|opt
 op_plus
 l_int|4
+)paren
 )paren
 suffix:semicolon
 id|dev

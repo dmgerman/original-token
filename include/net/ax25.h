@@ -149,10 +149,10 @@ DECL|macro|AX25_VALUES_T2
 mdefine_line|#define&t;AX25_VALUES_T2&t;&t;8&t;/* Default T2 timeout value */
 DECL|macro|AX25_VALUES_T3
 mdefine_line|#define&t;AX25_VALUES_T3&t;&t;9&t;/* Default T3 timeout value */
-DECL|macro|AX25_VALUES_N2
-mdefine_line|#define&t;AX25_VALUES_N2&t;&t;10&t;/* Default N2 value */
 DECL|macro|AX25_VALUES_IDLE
-mdefine_line|#define AX25_VALUES_IDLE&t;11&t;/* mode vc idle timer */
+mdefine_line|#define AX25_VALUES_IDLE&t;10&t;/* mode vc idle timer */
+DECL|macro|AX25_VALUES_N2
+mdefine_line|#define&t;AX25_VALUES_N2&t;&t;11&t;/* Default N2 value */
 DECL|macro|AX25_VALUES_PACLEN
 mdefine_line|#define AX25_VALUES_PACLEN&t;12&t;/* AX.25 MTU */
 DECL|macro|AX25_VALUES_MAXQUEUE

@@ -948,16 +948,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;shutdown
-op_amp
-id|RCV_SHUTDOWN
-)paren
-r_return
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;If there is no protocol hook then the device is down.&n;&t; */
 r_if
 c_cond
@@ -1019,14 +1009,25 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;You lose any data beyond the buffer you gave. If it worries a&n;&t; *&t;user program they can ask the device for its MTU anyway.&n;&t; */
 id|copied
 op_assign
-id|min
-c_func
-(paren
-id|len
-comma
 id|skb-&gt;len
-)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|copied
+OG
+id|len
+)paren
+(brace
+id|copied
+op_assign
+id|len
+suffix:semicolon
+id|msg-&gt;msg_flags
+op_or_assign
+id|MSG_TRUNC
+suffix:semicolon
+)brace
 multiline_comment|/* We can&squot;t use skb_copy_datagram here */
 id|err
 op_assign

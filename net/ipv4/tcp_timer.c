@@ -585,6 +585,7 @@ id|sk-&gt;err
 op_assign
 id|ETIMEDOUT
 suffix:semicolon
+macro_line|#ifdef TCP_DEBUG
 id|printk
 c_func
 (paren
@@ -592,6 +593,7 @@ id|KERN_DEBUG
 l_string|&quot;syn timeout&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sk
 op_member_access_from_pointer
 id|error_report
@@ -1335,13 +1337,7 @@ id|req
 op_assign
 id|tp-&gt;syn_wait_queue
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|req
-op_logical_and
-id|tp-&gt;syn_wait_queue
-)paren
+r_do
 (brace
 r_struct
 id|open_request
@@ -1362,15 +1358,6 @@ c_cond
 id|conn-&gt;sk
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|req
-op_eq
-id|tp-&gt;syn_wait_queue
-)paren
-r_break
-suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -1406,6 +1393,7 @@ op_ge
 id|TCP_RETR1
 )paren
 (brace
+macro_line|#ifdef TCP_DEBUG
 id|printk
 c_func
 (paren
@@ -1414,6 +1402,7 @@ l_string|&quot;syn_recv: &quot;
 l_string|&quot;too many retransmits&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 (paren
 op_star
 id|conn
@@ -1438,6 +1427,14 @@ c_func
 id|conn
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tp-&gt;syn_wait_queue
+)paren
+r_break
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1461,6 +1458,7 @@ suffix:semicolon
 id|conn-&gt;retrans
 op_increment
 suffix:semicolon
+macro_line|#ifdef TCP_DEBUG
 id|printk
 c_func
 (paren
@@ -1470,6 +1468,7 @@ comma
 id|conn-&gt;retrans
 )paren
 suffix:semicolon
+macro_line|#endif
 id|timeo
 op_assign
 id|min
@@ -1502,6 +1501,14 @@ id|conn
 suffix:semicolon
 )brace
 )brace
+r_while
+c_loop
+(paren
+id|req
+op_ne
+id|tp-&gt;syn_wait_queue
+)paren
+suffix:semicolon
 )brace
 id|sk
 op_assign

@@ -155,10 +155,10 @@ DECL|macro|TBS1
 mdefine_line|#define TBS1                   BIT(3)       
 DECL|macro|TBS0
 mdefine_line|#define TBS0                   BIT(2)
-DECL|macro|BS1
-mdefine_line|#define BS1                    BIT(1)       /* 00=8kb,  01=16kb  */
-DECL|macro|BS0
-mdefine_line|#define BS0                    BIT(0)       /* 10=32kb, 11=64kb  */
+DECL|macro|MBS1
+mdefine_line|#define MBS1                   BIT(1)       /* 00=8kb,  01=16kb  */
+DECL|macro|MBS0
+mdefine_line|#define MBS0                   BIT(0)       /* 10=32kb, 11=64kb  */
 macro_line|#ifndef ETH16I_TX_BUF_SIZE                   /* 0 = 2kb, 1 = 4kb  */ 
 DECL|macro|ETH16I_TX_BUF_SIZE
 mdefine_line|#define ETH16I_TX_BUF_SIZE     2             /* 2 = 8kb, 3 = 16kb */
@@ -684,13 +684,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 r_static
@@ -1573,7 +1566,7 @@ suffix:semicolon
 )brace
 id|node_byte
 op_or_assign
-id|BS1
+id|MBS1
 suffix:semicolon
 r_if
 c_cond
@@ -1589,7 +1582,7 @@ l_int|64
 (brace
 id|node_byte
 op_or_assign
-id|BS0
+id|MBS0
 suffix:semicolon
 )brace
 id|node_byte
@@ -4781,13 +4774,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_int

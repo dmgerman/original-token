@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET, DDP, IPX, AX.25 and NetROM layer all have identical select code and mostly&n; *&t;identical recvmsg() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;alan@cymru.net&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_SEQPACKET.&n; *&t;&t;Linus Torvalds&t;:&t;BSD semantic fixes.&n; *&t;&t;Alan Cox&t;:&t;Datagram iovec handling&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_STREAM.&n; *&n; */
+multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET, DDP, IPX, AX.25 and NetROM layer all have identical select code and mostly&n; *&t;identical recvmsg() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;alan@cymru.net&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_SEQPACKET.&n; *&t;&t;Linus Torvalds&t;:&t;BSD semantic fixes.&n; *&t;&t;Alan Cox&t;:&t;Datagram iovec handling&n; *&t;&t;Darryl Miles&t;:&t;Fixed non-blocking SOCK_STREAM.&n; *&t;&t;Alan Cox&t;:&t;POSIXisms&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -109,7 +109,7 @@ id|SOCK_STREAM
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Get a datagram skbuff, understands the peeking, nonblocking wakeups and possible&n; *&t;races. This replaces identical code in packet,raw and udp, as well as the IPX&n; *&t;AX.25 and Appletalk. It also finally fixes the long standing peek and read&n; *&t;race for datagram sockets. If you alter this routine remember it must be&n; *&t;re-entrant.&n; *&n; *&t;This function will lock the socket if a skb is returned, so the caller&n; *&t;needs to unlock the socket in that case (usually by calling skb_free_datagram)&n; */
+multiline_comment|/*&n; *&t;Get a datagram skbuff, understands the peeking, nonblocking wakeups and possible&n; *&t;races. This replaces identical code in packet,raw and udp, as well as the IPX&n; *&t;AX.25 and Appletalk. It also finally fixes the long standing peek and read&n; *&t;race for datagram sockets. If you alter this routine remember it must be&n; *&t;re-entrant.&n; *&n; *&t;This function will lock the socket if a skb is returned, so the caller&n; *&t;needs to unlock the socket in that case (usually by calling skb_free_datagram)&n; *&n; *&t;The order of the tests when we find no data waiting are specified&n; *&t;quite explicitly by POSIX 1003.1g, don&squot;t change them without having&n; *&t;the standard around please.&n; */
 DECL|function|skb_recv_datagram
 r_struct
 id|sk_buff
@@ -213,20 +213,6 @@ r_goto
 id|no_packet
 suffix:semicolon
 )brace
-multiline_comment|/* User doesn&squot;t want to wait */
-id|error
-op_assign
-op_minus
-id|EAGAIN
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|noblock
-)paren
-r_goto
-id|no_packet
-suffix:semicolon
 multiline_comment|/* handle signals */
 id|error
 op_assign
@@ -240,6 +226,20 @@ id|current-&gt;signal
 op_amp
 op_complement
 id|current-&gt;blocked
+)paren
+r_goto
+id|no_packet
+suffix:semicolon
+multiline_comment|/* User doesn&squot;t want to wait */
+id|error
+op_assign
+op_minus
+id|EAGAIN
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|noblock
 )paren
 r_goto
 id|no_packet

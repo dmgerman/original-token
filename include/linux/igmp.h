@@ -35,6 +35,8 @@ DECL|macro|IGMP_DVMRP
 mdefine_line|#define IGMP_DVMRP&t;&t;&t;0x13&t;/* DVMRP routing */
 DECL|macro|IGMP_PIM
 mdefine_line|#define IGMP_PIM&t;&t;&t;0x14&t;/* PIM routing */
+DECL|macro|IGMP_TRACE
+mdefine_line|#define IGMP_TRACE&t;&t;&t;0x15&t;/* CISCO trace */
 DECL|macro|IGMP_HOST_NEW_MEMBERSHIP_REPORT
 mdefine_line|#define IGMP_HOST_NEW_MEMBERSHIP_REPORT 0x16&t;/* New version of 0x11 */
 DECL|macro|IGMP_HOST_LEAVE_MESSAGE
@@ -133,6 +135,10 @@ suffix:semicolon
 DECL|member|tm_running
 r_int
 id|tm_running
+suffix:semicolon
+DECL|member|reporter
+r_int
+id|reporter
 suffix:semicolon
 DECL|member|users
 r_int

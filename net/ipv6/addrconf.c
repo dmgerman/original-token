@@ -2868,7 +2868,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-id|ENOMEM
+id|ENODEV
 suffix:semicolon
 r_return
 l_int|0

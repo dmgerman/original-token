@@ -12,13 +12,15 @@ r_void
 op_star
 id|iov_base
 suffix:semicolon
-multiline_comment|/* BSD uses caddr_t (same thing in effect) */
+multiline_comment|/* BSD uses caddr_t (1003.1g requires void *) */
 DECL|member|iov_len
 r_int
 id|iov_len
 suffix:semicolon
+multiline_comment|/* Must be size_t (1003.1g) */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;UIO_MAXIOV shall be at least 16 1003.1g (5.4.1.1)&n; */
 DECL|macro|UIO_MAXIOV
 mdefine_line|#define UIO_MAXIOV&t;16&t;/* Maximum iovec&squot;s in one operation &n;&t;&t;&t;&t;   16 matches BSD */
 macro_line|#endif

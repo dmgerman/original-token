@@ -1286,7 +1286,7 @@ id|optlen
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Get a socket option on an AF_INET socket.&n; */
+multiline_comment|/*&n; *&t;Get a socket option on an AF_INET socket.&n; *&n; *&t;FIX: POSIX 1003.1g is very ambiguous here. It states that&n; *&t;asynchronous errors should be reported by getsockopt. We assume&n; *&t;this means if you specify SO_ERROR (otherwise whats the point of it).&n; */
 DECL|function|inet_getsockopt
 r_int
 id|inet_getsockopt
@@ -5618,7 +5618,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society TCP/IP for NET3.034&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society TCP/IP for NET3.037&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Tell SOCKET that we are alive... &n;&t; */

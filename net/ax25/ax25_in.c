@@ -914,6 +914,10 @@ id|ax25-&gt;sk-&gt;err
 op_assign
 id|ECONNREFUSED
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1100,6 +1104,10 @@ id|ax25-&gt;sk-&gt;err
 op_assign
 l_int|0
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1157,6 +1165,10 @@ id|ax25-&gt;sk-&gt;err
 op_assign
 l_int|0
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1213,6 +1225,10 @@ suffix:semicolon
 id|ax25-&gt;sk-&gt;err
 op_assign
 l_int|0
+suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
 suffix:semicolon
 r_if
 c_cond
@@ -1559,6 +1575,10 @@ id|ax25-&gt;sk-&gt;dead
 op_assign
 l_int|1
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -1598,6 +1618,10 @@ suffix:semicolon
 id|ax25-&gt;sk-&gt;err
 op_assign
 id|ECONNRESET
+suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
 suffix:semicolon
 r_if
 c_cond
@@ -2421,6 +2445,10 @@ id|ax25-&gt;sk-&gt;err
 op_assign
 l_int|0
 suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2480,6 +2508,10 @@ suffix:semicolon
 id|ax25-&gt;sk-&gt;err
 op_assign
 id|ECONNRESET
+suffix:semicolon
+id|ax25-&gt;sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
 suffix:semicolon
 r_if
 c_cond

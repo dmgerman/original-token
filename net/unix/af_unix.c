@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&t;&t;Alan Cox&t;:&t;Sorted out a proper draft version of&n; *&t;&t;&t;&t;&t;file descriptor passing hacked up from&n; *&t;&t;&t;&t;&t;Mike Shaver&squot;s work.&n; *&t;&t;Marty Leisner&t;:&t;Fixes to fd passing&n; *&t;&t;Nick Nevin&t;:&t;recvmsg bugfix.&n; *&t;&t;Alan Cox&t;:&t;Started proper garbage collector&n; *&t;&t;Heiko EiBfeldt&t;:&t;Missing verify_area check&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesn&squot;t panic the kernel.&n; *&t;BSD af_unix apparently has connect forgetting to block properly.&n; */
+multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&t;&t;Alan Cox&t;:&t;Sorted out a proper draft version of&n; *&t;&t;&t;&t;&t;file descriptor passing hacked up from&n; *&t;&t;&t;&t;&t;Mike Shaver&squot;s work.&n; *&t;&t;Marty Leisner&t;:&t;Fixes to fd passing&n; *&t;&t;Nick Nevin&t;:&t;recvmsg bugfix.&n; *&t;&t;Alan Cox&t;:&t;Started proper garbage collector&n; *&t;&t;Heiko EiBfeldt&t;:&t;Missing verify_area check&n; *&t;&t;Alan Cox&t;:&t;Started POSIXisms&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesn&squot;t panic the kernel.&n; *&t;BSD af_unix apparently has connect forgetting to block properly.&n; *&t;&t;(need to check this with the POSIX spec in detail)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -1457,7 +1457,7 @@ l_int|NULL
 (brace
 r_return
 op_minus
-id|ENOMEM
+id|ENOBUFS
 suffix:semicolon
 )brace
 id|memcpy
@@ -1632,6 +1632,37 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;1003.1g breaking connected state with AF_UNSPEC&n;&t; */
+r_if
+c_cond
+(paren
+id|sunaddr-&gt;sun_family
+op_eq
+id|AF_UNSPEC
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.af_unix.other
+)paren
+(brace
+id|sk-&gt;protinfo.af_unix.other-&gt;protinfo.af_unix.locks
+op_decrement
+suffix:semicolon
+id|sk-&gt;protinfo.af_unix.other
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sock-&gt;state
+op_assign
+id|SS_UNCONNECTED
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3812,11 +3843,7 @@ op_star
 id|sk
 )paren
 (brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; *&t;AF_UNIX sockets get no messages during interrupts, so this&n;&t; *&t;is safe without cli/sti.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3845,11 +3872,6 @@ op_complement
 id|SO_WAITDATA
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|unix_recvmsg
 r_static
@@ -3939,6 +3961,11 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|target
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3955,6 +3982,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|flags
+op_amp
+id|MSG_WAITALL
+)paren
+(brace
+id|target
+op_assign
+id|size
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|addr_len
 )paren
 (brace
@@ -3962,20 +4002,6 @@ op_star
 id|addr_len
 op_assign
 l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|sk-&gt;err
-)paren
-(brace
-r_return
-id|sock_error
-c_func
-(paren
-id|sk
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -3998,7 +4024,7 @@ r_sizeof
 r_struct
 id|cmsghdr
 )paren
-macro_line|#if 0 
+macro_line|#if 0
 multiline_comment|/*&t;&t;investigate this further -- Stevens example doesn&squot;t seem to care */
 op_logical_or
 id|cm-&gt;cmsg_type
@@ -4118,6 +4144,33 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|copied
+op_ge
+id|target
+)paren
+(brace
+r_return
+id|copied
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;POSIX checking order...&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;err
+)paren
+(brace
+r_return
+id|sock_error
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|sk-&gt;shutdown
 op_amp
 id|RCV_SHUTDOWN
@@ -4130,11 +4183,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|copied
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
 )paren
 (brace
 r_return
-id|copied
+op_minus
+id|ERESTARTSYS
 suffix:semicolon
 )brace
 r_if
@@ -4154,20 +4211,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
-)paren
-(brace
-r_return
-op_minus
-id|ERESTARTSYS
-suffix:semicolon
-)brace
 id|down
 c_func
 (paren
@@ -4247,16 +4290,29 @@ suffix:semicolon
 )brace
 id|num
 op_assign
-id|min
-c_func
-(paren
 id|skb-&gt;len
-comma
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+OG
 id|len
 op_minus
 id|done
 )paren
+(brace
+id|num
+op_assign
+id|len
+op_minus
+id|done
 suffix:semicolon
+id|msg-&gt;msg_flags
+op_or_assign
+id|MSG_TRUNC
+suffix:semicolon
+)brace
 id|err
 op_assign
 id|copy_to_user
@@ -4977,7 +5033,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;NET3: Unix domain sockets 0.13 for Linux NET3.035.&bslash;n&quot;
+l_string|&quot;NET3: Unix domain sockets 0.14 for Linux NET3.037.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sock_register

@@ -70,7 +70,7 @@ r_struct
 id|sockaddr_ax25
 (brace
 DECL|member|sax25_family
-r_int
+id|sa_family_t
 id|sax25_family
 suffix:semicolon
 DECL|member|sax25_call

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; *&t;&t;Alan Cox&t;: &t;Unshare buffer on forward.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -290,6 +290,32 @@ suffix:semicolon
 multiline_comment|/* So we can remember if the masquerader did some swaps */
 macro_line|#endif /* CONFIG_IP_MASQUERADE */
 macro_line|#endif /* CONFIG_FIREWALL */
+multiline_comment|/*&n;&t; *&t;We may be sharing the buffer with a snooper. That won&squot;t do&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|skb
+op_assign
+id|skb_unshare
+c_func
+(paren
+id|skb
+comma
+id|GFP_ATOMIC
+comma
+id|FREE_READ
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;According to the RFC, we must first decrease the TTL field. If&n;&t; *&t;that reaches zero, we must reply an ICMP control message telling&n;&t; *&t;that the packet&squot;s lifetime expired.&n;&t; *&n;&t; *&t;Exception:&n;&t; *&t;We may not generate an ICMP for an ICMP. icmp_send does the&n;&t; *&t;enforcement of this so we can forget it here. It is however&n;&t; *&t;sometimes VERY important.&n;&t; */
 id|iph
 op_assign

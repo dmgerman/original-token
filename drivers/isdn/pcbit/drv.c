@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/isdnif.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;pcbit.h&quot;
 macro_line|#include &quot;edss1.h&quot;
 macro_line|#include &quot;layer2.h&quot;
@@ -1528,7 +1529,10 @@ id|cbuf
 l_int|1024
 )braket
 suffix:semicolon
-id|memcpy_fromfs
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 id|cbuf
@@ -1537,6 +1541,10 @@ id|buf
 comma
 id|len
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_for
 c_loop
@@ -1626,7 +1634,10 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|memcpy_fromfs
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 id|ptr
@@ -1635,7 +1646,19 @@ id|buf
 comma
 id|len
 )paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|ptr
+)paren
 suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 id|loadbuf
 op_assign
 id|ptr
@@ -2901,8 +2924,58 @@ id|stat_end
 op_assign
 l_int|0
 suffix:semicolon
-DECL|macro|memcpy_to_COND
-mdefine_line|#define memcpy_to_COND(flag, d, s, len) &bslash;&n;(flag ? memcpy_tofs(d, s, len) : memcpy(d, s, len))
+DECL|function|memcpy_to_COND
+r_extern
+r_inline
+r_int
+id|memcpy_to_COND
+c_func
+(paren
+r_int
+id|flag
+comma
+r_void
+op_star
+id|d
+comma
+r_void
+op_star
+id|s
+comma
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|flag
+)paren
+r_return
+id|copy_to_user
+c_func
+(paren
+id|d
+comma
+id|s
+comma
+id|len
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|d
+comma
+id|s
+comma
+id|len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|pcbit_stat
 r_int
 id|pcbit_stat
@@ -2969,6 +3042,9 @@ OL
 id|stat_end
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|memcpy_to_COND
 c_func
 (paren
@@ -2982,6 +3058,10 @@ id|stat_st
 comma
 id|len
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|stat_st
 op_add_assign
@@ -3000,6 +3080,9 @@ op_minus
 id|stat_st
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|memcpy_to_COND
 c_func
 (paren
@@ -3015,7 +3098,14 @@ id|STATBUF_LEN
 op_minus
 id|stat_st
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|memcpy_to_COND
 c_func
 (paren
@@ -3033,6 +3123,10 @@ op_minus
 id|stat_st
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|stat_st
 op_assign
@@ -3047,6 +3141,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
 id|memcpy_to_COND
 c_func
 (paren
@@ -3060,6 +3157,10 @@ id|stat_st
 comma
 id|len
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|stat_st
 op_add_assign

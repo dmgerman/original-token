@@ -289,10 +289,11 @@ l_string|&quot;Reset in 5ms.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif&t;&t;
 )brace
-DECL|function|wdt_lseek
+DECL|function|wdt_llseek
 r_static
 r_int
-id|wdt_lseek
+r_int
+id|wdt_llseek
 c_func
 (paren
 r_struct
@@ -305,7 +306,8 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+r_int
+r_int
 id|offset
 comma
 r_int
@@ -338,6 +340,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -399,6 +402,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -717,7 +721,7 @@ id|file_operations
 id|wdt_fops
 op_assign
 (brace
-id|wdt_lseek
+id|wdt_llseek
 comma
 id|wdt_read
 comma

@@ -1249,6 +1249,12 @@ r_sizeof
 id|r
 )paren
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Handle a RARP layer I/O control request.&n; */

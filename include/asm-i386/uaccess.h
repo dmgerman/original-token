@@ -15,10 +15,13 @@ DECL|macro|set_fs
 mdefine_line|#define set_fs(x)&t;(current-&gt;tss.segment = (x))
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
+multiline_comment|/*&n; * Address Ok:&n; *&n; *&t;&t;&t;    low two bits of segment&n; *&t;&t;&t;00 (kernel)&t;&t;11 (user)&n; *&n; * high&t;&t;00&t;1&t;&t;&t;1&n; * two &t;&t;01&t;1&t;&t;&t;1&n; * bits of&t;10&t;1&t;&t;&t;1&n; * address&t;11&t;1&t;&t;&t;0&n; */
+DECL|macro|__addr_ok
+mdefine_line|#define __addr_ok(x) &bslash;&n;&t;((((unsigned long)(x)&gt;&gt;30)&amp;get_fs()) != 3)
 DECL|macro|__user_ok
 mdefine_line|#define __user_ok(addr,size) &bslash;&n;&t;((size &lt;= 0xC0000000UL) &amp;&amp; (addr &lt;= 0xC0000000UL - size))
 DECL|macro|__kernel_ok
-mdefine_line|#define __kernel_ok &bslash;&n;&t;(get_fs() == KERNEL_DS)
+mdefine_line|#define __kernel_ok &bslash;&n;&t;(!(get_fs() &amp; 3))
 r_extern
 r_int
 id|__verify_write
@@ -488,30 +491,35 @@ id|s
 )paren
 (brace
 r_int
+r_int
 id|res
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n&quot;
-l_string|&quot;0:&bslash;trepne ; scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %0&bslash;n&quot;
+l_string|&quot;0:&t;repne; scasb&bslash;n&quot;
+l_string|&quot;&t;notl %0&bslash;n&quot;
 l_string|&quot;1:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
-l_string|&quot;2:&bslash;txorl %0,%0&bslash;n&bslash;t&quot;
-l_string|&quot;jmp 1b&bslash;n&quot;
-l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;
-l_string|&quot;.align 4&bslash;n&bslash;t&quot;
-l_string|&quot;.long 0b,2b&bslash;n&quot;
+l_string|&quot;2:&t;xorl %0,%0&bslash;n&quot;
+l_string|&quot;&t;jmp 1b&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.align 4&bslash;n&quot;
+l_string|&quot;&t;.long 0b,2b&bslash;n&quot;
 l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=c&quot;
 (paren
 id|res
 )paren
+comma
+l_string|&quot;=D&quot;
+(paren
+id|s
+)paren
 suffix:colon
-l_string|&quot;D&quot;
+l_string|&quot;1&quot;
 (paren
 id|s
 )paren
@@ -523,32 +531,24 @@ l_int|0
 comma
 l_string|&quot;0&quot;
 (paren
-l_int|0xffffffff
-)paren
-suffix:colon
-l_string|&quot;di&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|access_ok
+op_minus
+id|__addr_ok
 c_func
 (paren
-id|VERIFY_READ
-comma
 id|s
-comma
-id|res
 )paren
 )paren
-id|res
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 r_return
 id|res
+op_amp
+op_minus
+id|__addr_ok
+c_func
+(paren
+id|s
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif /* __i386_UACCESS_H */

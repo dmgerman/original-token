@@ -819,7 +819,7 @@ id|TCP_CLOSE
 )paren
 r_return
 op_minus
-id|EIO
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -2596,7 +2596,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;IPv6 v0.1&bslash;n&quot;
+l_string|&quot;IPv6 v0.1 for NET3.037&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sock_register

@@ -120,9 +120,7 @@ r_struct
 id|sockaddr_in
 (brace
 DECL|member|sin_family
-r_int
-r_int
-r_int
+id|sa_family_t
 id|sin_family
 suffix:semicolon
 multiline_comment|/* Address family&t;&t;*/

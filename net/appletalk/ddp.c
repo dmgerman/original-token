@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Localtalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Localtalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -2451,15 +2451,6 @@ op_star
 id|atif
 suffix:semicolon
 r_int
-id|ro
-op_assign
-(paren
-id|cmd
-op_eq
-id|SIOCSIFADDR
-)paren
-suffix:semicolon
-r_int
 id|err
 suffix:semicolon
 r_int
@@ -4542,7 +4533,7 @@ l_int|0
 (brace
 r_return
 op_minus
-id|EIO
+id|EINVAL
 suffix:semicolon
 )brace
 r_if
@@ -4809,7 +4800,7 @@ op_minus
 id|EAFNOSUPPORT
 suffix:semicolon
 )brace
-macro_line|#if 0 &t;/* Netatalk doesn&squot;t check this */
+macro_line|#if 0 &t;/* Netatalk doesn&squot;t check this - fix netatalk first!*/
 r_if
 c_cond
 (paren
@@ -4823,7 +4814,7 @@ id|sk-&gt;broadcast
 (brace
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 )brace
 macro_line|#endif&t;&t;
@@ -5016,7 +5007,7 @@ l_int|0
 (brace
 r_return
 op_minus
-id|EBUSY
+id|ENOBUFS
 suffix:semicolon
 )brace
 )brace
@@ -5173,7 +5164,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Fix up the length field&t;[Ok this is horrible but otherwise&n;&t; *&t;I end up with unions of bit fields and messy bit field order&n;&t; *&t;compiler/endian dependencies..]&n;&t; */
+multiline_comment|/*&n;&t; *&t;Fix up the length field&t;[Ok this is horrible but otherwise&n;&t; *&t;I end up with unions of bit fields and messy bit field order&n;&t; *&t;compiler/endian dependencies..]&n;&t; *&n;&t; *&t;FIXME: This is a write to a shared object. Granted it&n;&t; *&t;happens to be safe BUT.. (Its safe as user space will not&n;&t; *&t;run until we put it back)&n;&t; */
 op_star
 (paren
 (paren
@@ -5516,6 +5507,24 @@ id|ddp
 suffix:semicolon
 multiline_comment|/* Mend the byte order */
 multiline_comment|/*&n;&t;&t; *&t;Send the buffer onwards&n;&t;&t; */
+id|skb
+op_assign
+id|skb_unshare
+c_func
+(paren
+id|skb
+comma
+id|GFP_ATOMIC
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+(brace
 id|skb-&gt;arp
 op_assign
 l_int|1
@@ -5549,6 +5558,7 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
@@ -5943,7 +5953,6 @@ c_cond
 (paren
 id|sk-&gt;zapped
 )paren
-multiline_comment|/* put the autobinding in */
 (brace
 r_if
 c_cond
@@ -6391,7 +6400,8 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
-id|err
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 r_if
@@ -6815,20 +6825,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;err
-)paren
-(brace
-r_return
-id|sock_error
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|addr_len
 )paren
 (brace
@@ -6904,6 +6900,10 @@ id|copied
 op_assign
 id|size
 suffix:semicolon
+id|msg-&gt;msg_flags
+op_or_assign
+id|MSG_TRUNC
+suffix:semicolon
 )brace
 id|er
 op_assign
@@ -6947,10 +6947,16 @@ id|copied
 OG
 id|size
 )paren
+(brace
 id|copied
 op_assign
 id|size
 suffix:semicolon
+id|msg-&gt;msg_flags
+op_or_assign
+id|MSG_TRUNC
+suffix:semicolon
+)brace
 id|er
 op_assign
 id|skb_copy_datagram_iovec
@@ -7105,9 +7111,6 @@ id|arg
 )paren
 (brace
 r_int
-id|err
-suffix:semicolon
-r_int
 id|amount
 op_assign
 l_int|0
@@ -7235,6 +7238,12 @@ r_struct
 id|timeval
 )paren
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 r_return
@@ -7696,7 +7705,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Appletalk 0.17 for Linux NET3.035&bslash;n&quot;
+l_string|&quot;Appletalk 0.18 for Linux NET3.037&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

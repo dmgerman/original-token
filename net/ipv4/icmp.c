@@ -1372,6 +1372,22 @@ id|info
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+)paren
+(brace
+r_goto
+id|flush_it
+suffix:semicolon
+)brace
 id|iph
 op_assign
 (paren
@@ -1385,6 +1401,24 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+id|len
+op_sub_assign
+id|iph-&gt;ihl
+op_lshift
+l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+(brace
+r_goto
+id|flush_it
+suffix:semicolon
+)brace
 id|dp
 op_assign
 (paren
@@ -1798,6 +1832,8 @@ comma
 id|iph-&gt;saddr
 comma
 id|ipprot
+comma
+id|len
 )paren
 suffix:semicolon
 )brace
@@ -1806,6 +1842,8 @@ op_assign
 id|nextip
 suffix:semicolon
 )brace
+id|flush_it
+suffix:colon
 id|kfree_skb
 c_func
 (paren
@@ -1857,6 +1895,22 @@ r_int
 id|ip
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Get the copied header of the packet that caused the redirect&n;&t; */
+r_if
+c_cond
+(paren
+id|len
+op_le
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+)paren
+(brace
+r_goto
+id|flush_it
+suffix:semicolon
+)brace
 id|iph
 op_assign
 (paren
@@ -2003,6 +2057,8 @@ suffix:semicolon
 )brace
 macro_line|#endif  &t;
 multiline_comment|/*&n;  &t; *&t;Discard the original packet&n;  &t; */
+id|flush_it
+suffix:colon
 id|kfree_skb
 c_func
 (paren
