@@ -1619,6 +1619,10 @@ id|group
 op_assign
 id|inode-&gt;i_gid
 suffix:semicolon
+id|newattrs.ia_mode
+op_assign
+id|inode-&gt;i_mode
+suffix:semicolon
 id|newattrs.ia_uid
 op_assign
 id|user
@@ -1653,9 +1657,7 @@ id|S_ISUID
 )paren
 (brace
 id|newattrs.ia_mode
-op_assign
-id|inode-&gt;i_mode
-op_amp
+op_and_assign
 op_complement
 id|S_ISUID
 suffix:semicolon
@@ -1678,9 +1680,7 @@ id|S_ISGID
 )paren
 (brace
 id|newattrs.ia_mode
-op_assign
-id|inode-&gt;i_mode
-op_amp
+op_and_assign
 op_complement
 id|S_ISGID
 suffix:semicolon

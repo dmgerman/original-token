@@ -6428,8 +6428,6 @@ id|p
 suffix:semicolon
 r_int
 id|session
-op_assign
-id|tty-&gt;session
 suffix:semicolon
 r_int
 id|i
@@ -6446,6 +6444,10 @@ op_logical_neg
 id|tty
 )paren
 r_return
+suffix:semicolon
+id|session
+op_assign
+id|tty-&gt;session
 suffix:semicolon
 r_if
 c_cond

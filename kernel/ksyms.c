@@ -283,6 +283,18 @@ c_func
 id|open_namei
 )paren
 comma
+id|X
+c_func
+(paren
+id|inode_setattr
+)paren
+comma
+id|X
+c_func
+(paren
+id|inode_change_ok
+)paren
+comma
 multiline_comment|/* device registration */
 id|X
 c_func

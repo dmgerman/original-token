@@ -870,7 +870,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Logitech Bus mouse detected and installed.&bslash;n&quot;
+l_string|&quot;Logitech Bus mouse detected and installed with IRQ %d.&bslash;n&quot;
+comma
+id|mouse_irq
 )paren
 suffix:semicolon
 r_return
