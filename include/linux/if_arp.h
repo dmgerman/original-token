@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the ARP (RFC 826) protocol.&n; *&n; * Version:&t;@(#)if_arp.h&t;1.0.1&t;04/16/93&n; *&n; * Authors:&t;Original taken from Berkeley UNIX 4.3, (c) UCB 1986-1988&n; *&t;&t;Portions taken from the KA9Q/NOS (v2.00m PA0GRI) source.&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche,&n; *&t;&t;Jonathan Layes &lt;layes@loran.com&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the ARP (RFC 826) protocol.&n; *&n; * Version:&t;@(#)if_arp.h&t;1.0.1&t;04/16/93&n; *&n; * Authors:&t;Original taken from Berkeley UNIX 4.3, (c) UCB 1986-1988&n; *&t;&t;Portions taken from the KA9Q/NOS (v2.00m PA0GRI) source.&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche,&n; *&t;&t;Jonathan Layes &lt;layes@loran.com&gt;&n; *&t;&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; ARPHRD_HWX25&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _LINUX_IF_ARP_H
 DECL|macro|_LINUX_IF_ARP_H
 mdefine_line|#define _LINUX_IF_ARP_H
@@ -45,6 +45,8 @@ DECL|macro|ARPHRD_ROSE
 mdefine_line|#define ARPHRD_ROSE&t;270
 DECL|macro|ARPHRD_X25
 mdefine_line|#define ARPHRD_X25&t;271&t;&t;/* CCITT X.25&t;&t;&t;*/
+DECL|macro|ARPHRD_HWX25
+mdefine_line|#define ARPHRD_HWX25&t;272&t;&t;/* Boards with X.25 in firmware&t;*/
 DECL|macro|ARPHRD_PPP
 mdefine_line|#define ARPHRD_PPP&t;512
 DECL|macro|ARPHRD_HDLC

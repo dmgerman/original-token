@@ -947,6 +947,10 @@ DECL|struct|ncp_cache_head
 r_struct
 id|ncp_cache_head
 (brace
+DECL|member|mtime
+id|time_t
+id|mtime
+suffix:semicolon
 DECL|member|time
 r_int
 r_int

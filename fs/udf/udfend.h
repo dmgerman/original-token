@@ -30,11 +30,10 @@ DECL|macro|cpu_to_le32
 mdefine_line|#define cpu_to_le32(x) (x)
 DECL|macro|cpu_to_le64
 mdefine_line|#define cpu_to_le64(x) (x)
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef __KERNEL__
+macro_line|#endif /* __BYTE_ORDER == 0 */
+macro_line|#else /* __KERNEL__ */
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#endif
+macro_line|#endif /* ! __KERNEL__ */
 DECL|function|lelb_to_cpu
 r_static
 r_inline

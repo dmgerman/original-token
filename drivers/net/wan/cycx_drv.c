@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_drv.c&t;cycx Support Module.&n;*&n;*&t;&t;This module is a library of common hardware-specific&n;*&t;&t;functions used by all Cyclades sync and some async (8x &amp; 16x)&n;*&t;&t;drivers.&n;*&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Based on sdladrv.c by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/05/28    acme&t;&t;cycx_intack &amp; cycx_intde gone for good&n;* 1999/05/18&t;acme&t;&t;lots of unlogged work, submitting to Linus...&n;* 1999/01/03&t;acme&t;&t;more judicious use of data types&n;* 1999/01/03&t;acme&t;&t;judicious use of data types :&gt;&n;*&t;&t;&t;&t;cycx_inten trying to reset pending interrupts&n;*&t;&t;&t;&t;from cyclom 2x - I think this isn&squot;t the way to&n;*&t;&t;&t;&t;go, but for now...&n;* 1999/01/02&t;acme&t;&t;cycx_intack ok, I think there&squot;s nothing to do&n;*&t;&t;&t;&t;to ack an int in cycx_drv.c, only handle it in&n;*&t;&t;&t;&t;cyx_isr (or in the other protocols: cyp_isr,&n;*&t;&t;&t;&t;cyf_isr, when they get implemented.&n;* Dec 31, 1998&t;Arnaldo         cycx_data_boot &amp; cycx_code_boot fixed, crossing&n;*&t;&t;&t;&t;fingers to see x25_configure in cycx_x25.c&n;*&t;&t;&t;&t;work... :)&n;* Dec 26, 1998&t;Arnaldo         load implementation fixed, seems to work! :)&n;*&t;&t;&t;&t;cycx_2x_dpmbase_options with all the possible&n;*&t;&t;&t;&t;DPM addresses (20).&n;*&t;&t;&t;&t;cycx_intr implemented (test this!)&n;*&t;&t;&t;&t;general code cleanup&n;* Dec  8, 1998&t;Ivan Passos&t;Cyclom-2X firmware load implementation.&n;* Aug  8, 1998&t;Arnaldo&t;&t;Initial version.&n;*/
+multiline_comment|/*&n;* cycx_drv.c&t;Cyclom 2X Support Module.&n;*&n;*&t;&t;This module is a library of common hardware-specific&n;*&t;&t;functions used by the Cyclades Cyclom 2X sync card.&n;*&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Based on sdladrv.c by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/10/26&t;acme&t;&t;use isa_read[bw], isa_write[bw] and isa_memcpy_to&n;*&t;&t;&t;&t;and fromio&n;* 1999/10/23&t;acme&t;&t;cleanup to only supports cyclom2x: all the other&n;*&t;&t;&t;&t;boards are no longer manufactured by cyclades, if&n;*&t;&t;&t;&t;someone wants to support them... be my guest!&n;* 1999/05/28    acme&t;&t;cycx_intack &amp; cycx_intde gone for good&n;* 1999/05/18&t;acme&t;&t;lots of unlogged work, submitting to Linus...&n;* 1999/01/03&t;acme&t;&t;more judicious use of data types&n;* 1999/01/03&t;acme&t;&t;judicious use of data types :&gt;&n;*&t;&t;&t;&t;cycx_inten trying to reset pending interrupts&n;*&t;&t;&t;&t;from cyclom 2x - I think this isn&squot;t the way to&n;*&t;&t;&t;&t;go, but for now...&n;* 1999/01/02&t;acme&t;&t;cycx_intack ok, I think there&squot;s nothing to do&n;*&t;&t;&t;&t;to ack an int in cycx_drv.c, only handle it in&n;*&t;&t;&t;&t;cyx_isr (or in the other protocols: cyp_isr,&n;*&t;&t;&t;&t;cyf_isr, when they get implemented.&n;* Dec 31, 1998&t;acme&t;&t;cycx_data_boot &amp; cycx_code_boot fixed, crossing&n;*&t;&t;&t;&t;fingers to see x25_configure in cycx_x25.c&n;*&t;&t;&t;&t;work... :)&n;* Dec 26, 1998&t;acme&t;&t;load implementation fixed, seems to work! :)&n;*&t;&t;&t;&t;cycx_2x_dpmbase_options with all the possible&n;*&t;&t;&t;&t;DPM addresses (20).&n;*&t;&t;&t;&t;cycx_intr implemented (test this!)&n;*&t;&t;&t;&t;general code cleanup&n;* Dec  8, 1998&t;Ivan Passos&t;Cyclom-2X firmware load implementation.&n;* Aug  8, 1998&t;acme&t;&t;Initial version.&n;*/
 macro_line|#ifdef MODULE
 macro_line|#ifdef MODVERSIONS
 macro_line|#include &lt;linux/modversions.h&gt;
@@ -19,7 +19,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* for inb(), outb(), etc. */
 DECL|macro|MOD_VERSION
 mdefine_line|#define&t;MOD_VERSION&t;0
 DECL|macro|MOD_RELEASE
-mdefine_line|#define&t;MOD_RELEASE&t;2
+mdefine_line|#define&t;MOD_RELEASE&t;3
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
@@ -30,7 +30,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;Cyclades Sync Cards Driver.&quot;
+l_string|&quot;Cyclom 2x Sync Card Driver&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -51,16 +51,7 @@ suffix:semicolon
 multiline_comment|/* Hardware-specific functions */
 r_static
 r_int
-id|cycx_detect
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-suffix:semicolon
-r_static
-r_int
-id|cycx_load
+id|load_cyc2x
 (paren
 id|cycxhw_t
 op_star
@@ -75,24 +66,6 @@ id|len
 )paren
 suffix:semicolon
 r_static
-r_int
-id|cycx_init
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-suffix:semicolon
-r_static
-r_int
-id|cycx_reset
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-suffix:semicolon
-r_static
 r_void
 id|cycx_bootcfg
 (paren
@@ -103,7 +76,7 @@ id|hw
 suffix:semicolon
 r_static
 r_int
-id|init_cycx_2x
+id|init_cyc2x
 (paren
 id|cycxhw_t
 op_star
@@ -112,7 +85,7 @@ id|hw
 suffix:semicolon
 r_static
 r_int
-id|reset_cycx_2x
+id|reset_cyc2x
 (paren
 id|u32
 id|addr
@@ -120,7 +93,7 @@ id|addr
 suffix:semicolon
 r_static
 r_int
-id|detect_cycx_2x
+id|detect_cyc2x
 (paren
 id|u32
 id|addr
@@ -161,7 +134,19 @@ id|len
 suffix:semicolon
 DECL|macro|wait_cyc
 mdefine_line|#define wait_cyc(addr) cycx_exec(addr + CMD_OFFSET)
-multiline_comment|/* Global Data&n; * Note: All data must be explicitly initialized!!! */
+DECL|macro|cyc2x_readb
+mdefine_line|#define cyc2x_readb(b) isa_readb(b)
+DECL|macro|cyc2x_readw
+mdefine_line|#define cyc2x_readw(b) isa_readw(b)
+DECL|macro|cyc2x_writeb
+mdefine_line|#define cyc2x_writeb(b, addr) isa_writeb(b, addr)
+DECL|macro|cyc2x_writew
+mdefine_line|#define cyc2x_writew(w, addr) isa_writew(w, addr)
+DECL|macro|cyc2x_memcpy_toio
+mdefine_line|#define cyc2x_memcpy_toio(addr, buf, len) isa_memcpy_toio((addr), buf, len)
+DECL|macro|cyc2x_memcpy_fromio
+mdefine_line|#define cyc2x_memcpy_fromio(buf, addr, len) isa_memcpy_fromio(buf, (addr), len)
+multiline_comment|/* Global Data */
 multiline_comment|/* private data */
 DECL|variable|modname
 r_static
@@ -179,7 +164,7 @@ id|fullname
 (braket
 )braket
 op_assign
-l_string|&quot;Cyclom X Support Module&quot;
+l_string|&quot;Cyclom 2X Support Module&quot;
 suffix:semicolon
 DECL|variable|copyright
 r_static
@@ -191,10 +176,10 @@ op_assign
 l_string|&quot;(c) 1998, 1999 Arnaldo Carvalho de Melo&quot;
 suffix:semicolon
 multiline_comment|/* Hardware configuration options.&n; * These are arrays of configuration options used by verification routines.&n; * The first element of each array is its size (i.e. number of options).&n; */
-DECL|variable|cycx_2x_dpmbase_options
+DECL|variable|cyc2x_dpmbase_options
 r_static
 id|u32
-id|cycx_2x_dpmbase_options
+id|cyc2x_dpmbase_options
 (braket
 )braket
 op_assign
@@ -331,32 +316,14 @@ id|u32
 id|len
 )paren
 (brace
-id|u32
-op_star
-id|irq_opt
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* IRQ options */
-id|u32
-op_star
-id|dpmbase_opt
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* DPM window base options */
-r_int
-id|err
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|cycx_detect
+op_logical_neg
+id|detect_cyc2x
 c_func
 (paren
-id|hw
+id|hw-&gt;dpmbase
 )paren
 )paren
 (brace
@@ -364,12 +331,10 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: adapter Cyclom %uX not found at &quot;
+l_string|&quot;%s: adapter Cyclom 2X not found at &quot;
 l_string|&quot;address 0x%lX!&bslash;n&quot;
 comma
 id|modname
-comma
-id|hw-&gt;type
 comma
 (paren
 r_int
@@ -387,11 +352,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: found Cyclom %uX card at address 0x%lx.&bslash;n&quot;
+l_string|&quot;%s: found Cyclom 2X card at address 0x%lx.&bslash;n&quot;
 comma
 id|modname
-comma
-id|hw-&gt;type
 comma
 (paren
 r_int
@@ -400,41 +363,6 @@ r_int
 id|hw-&gt;dpmbase
 )paren
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|hw-&gt;type
-)paren
-(brace
-r_case
-id|CYCX_2X
-suffix:colon
-id|irq_opt
-op_assign
-id|cycx_2x_irq_options
-suffix:semicolon
-id|dpmbase_opt
-op_assign
-id|cycx_2x_dpmbase_options
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: unknown card.&bslash;n&quot;
-comma
-id|modname
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 multiline_comment|/* Verify IRQ configuration options */
 r_if
 c_cond
@@ -443,7 +371,7 @@ op_logical_neg
 id|get_option_index
 c_func
 (paren
-id|irq_opt
+id|cycx_2x_irq_options
 comma
 id|hw-&gt;irq
 )paren
@@ -494,7 +422,7 @@ op_logical_neg
 id|get_option_index
 c_func
 (paren
-id|dpmbase_opt
+id|cyc2x_dpmbase_options
 comma
 id|hw-&gt;dpmbase
 )paren
@@ -524,12 +452,7 @@ id|hw-&gt;dpmsize
 op_assign
 id|CYCX_WINDOWSIZE
 suffix:semicolon
-multiline_comment|/* FIXME! Is this the only amount ever available? */
-id|hw-&gt;memory
-op_assign
-l_int|0x40000
-suffix:semicolon
-id|cycx_init
+id|init_cyc2x
 c_func
 (paren
 id|hw
@@ -550,27 +473,9 @@ r_int
 id|hw-&gt;dpmbase
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: found %luK bytes of on-board memory.&bslash;n&quot;
-comma
-id|modname
-comma
-(paren
-r_int
-r_int
-)paren
-id|hw-&gt;memory
-op_div
-l_int|1024
-)paren
-suffix:semicolon
 multiline_comment|/* Load firmware. If loader fails then shut down adapter */
-id|err
-op_assign
-id|cycx_load
+r_return
+id|load_cyc2x
 c_func
 (paren
 id|hw
@@ -580,43 +485,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-id|cycx_down
-c_func
-(paren
-id|hw
-)paren
-suffix:semicolon
-multiline_comment|/* shutdown adapter */
-r_return
-id|err
-suffix:semicolon
-)brace
-multiline_comment|/* Shut down CYCX: disable shared memory access and interrupts, stop CPU,etc.*/
-DECL|variable|cycx_down
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|cycx_down
-)paren
-suffix:semicolon
-DECL|function|cycx_down
-r_int
-id|cycx_down
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* FIXME: anything needed here? */
 )brace
 multiline_comment|/* Enable interrupt generation.  */
 DECL|variable|cycx_inten
@@ -627,7 +495,7 @@ id|cycx_inten
 )paren
 suffix:semicolon
 DECL|function|cycx_inten
-r_int
+r_void
 id|cycx_inten
 (paren
 id|cycxhw_t
@@ -635,33 +503,12 @@ op_star
 id|hw
 )paren
 (brace
-r_switch
-c_cond
-(paren
-id|hw-&gt;type
-)paren
-(brace
-r_case
-id|CYCX_2X
-suffix:colon
-id|writeb
+id|cyc2x_writeb
 (paren
 l_int|0
 comma
 id|hw-&gt;dpmbase
 )paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Generate an interrupt to adapter&squot;s CPU. */
@@ -673,7 +520,7 @@ id|cycx_intr
 )paren
 suffix:semicolon
 DECL|function|cycx_intr
-r_int
+r_void
 id|cycx_intr
 (paren
 id|cycxhw_t
@@ -681,16 +528,7 @@ op_star
 id|hw
 )paren
 (brace
-r_switch
-c_cond
-(paren
-id|hw-&gt;type
-)paren
-(brace
-r_case
-id|CYCX_2X
-suffix:colon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 l_int|0
@@ -699,19 +537,6 @@ id|hw-&gt;dpmbase
 op_plus
 id|GEN_CYCX_INTR
 )paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-r_default
-suffix:colon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Execute Adapter Command.&n; * o Set exec flag.&n; * o Busy-wait until flag is reset. */
@@ -739,13 +564,11 @@ multiline_comment|/* wait till addr content is zeroed */
 r_while
 c_loop
 (paren
-id|readw
+id|cyc2x_readw
 c_func
 (paren
 id|addr
 )paren
-op_ne
-l_int|0
 )paren
 (brace
 id|udelay
@@ -812,7 +635,7 @@ op_star
 )paren
 id|buf
 op_assign
-id|readb
+id|cyc2x_readb
 (paren
 id|hw-&gt;dpmbase
 op_plus
@@ -820,7 +643,7 @@ id|addr
 )paren
 suffix:semicolon
 r_else
-id|memcpy_fromio
+id|cyc2x_memcpy_fromio
 c_func
 (paren
 id|buf
@@ -870,7 +693,7 @@ id|len
 op_eq
 l_int|1
 )paren
-id|writeb
+id|cyc2x_writeb
 (paren
 op_star
 (paren
@@ -885,7 +708,7 @@ id|addr
 )paren
 suffix:semicolon
 r_else
-id|memcpy_toio
+id|cyc2x_memcpy_toio
 c_func
 (paren
 id|hw-&gt;dpmbase
@@ -902,86 +725,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Hardware-Specific Functions */
-multiline_comment|/* Detect adapter type.&n; * o if adapter type is specified then call detection routine for that adapter&n; *   type.  Otherwise call detection routines for every adapter types until&n; *   adapter is detected.&n; *&n; * Notes:&n; * 1) Detection tests are destructive! Adapter will be left in shutdown state&n; *    after the test. */
-DECL|function|cycx_detect
-r_static
-r_int
-id|cycx_detect
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-(brace
-r_int
-id|err
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|hw-&gt;dpmbase
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|hw-&gt;type
-)paren
-(brace
-r_case
-id|CYCX_2X
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|detect_cycx_2x
-c_func
-(paren
-id|hw-&gt;dpmbase
-)paren
-)paren
-id|err
-op_assign
-op_minus
-id|ENODEV
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-(brace
-)brace
-r_if
-c_cond
-(paren
-id|detect_cycx_2x
-c_func
-(paren
-id|hw-&gt;dpmbase
-)paren
-)paren
-id|hw-&gt;type
-op_assign
-id|CYCX_2X
-suffix:semicolon
-r_else
-id|err
-op_assign
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-r_return
-id|err
-suffix:semicolon
-)brace
 multiline_comment|/* Load Aux Routines */
 multiline_comment|/* Reset board hardware.&n;   return 1 if memory exists at addr and 0 if not. */
 DECL|function|memory_exists
@@ -1011,7 +754,7 @@ id|timeout
 op_increment
 )paren
 (brace
-id|writew
+id|cyc2x_writew
 (paren
 id|TEST_PATTERN
 comma
@@ -1023,7 +766,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|readw
+id|cyc2x_readw
 (paren
 id|addr
 op_plus
@@ -1035,7 +778,7 @@ id|TEST_PATTERN
 r_if
 c_cond
 (paren
-id|readw
+id|cyc2x_readw
 (paren
 id|addr
 op_plus
@@ -1056,41 +799,6 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Reset board hardware. */
-DECL|function|cycx_reset
-r_static
-r_int
-id|cycx_reset
-c_func
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-(brace
-multiline_comment|/* Reset board */
-r_switch
-c_cond
-(paren
-id|hw-&gt;type
-)paren
-(brace
-r_case
-id|CYCX_2X
-suffix:colon
-r_return
-id|reset_cycx_2x
-c_func
-(paren
-id|hw-&gt;dpmbase
-)paren
-suffix:semicolon
-)brace
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/* Load reset code. */
@@ -1154,7 +862,7 @@ op_increment
 )paren
 suffix:semicolon
 multiline_comment|/* Delay - FIXME busy waiting... */
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 op_star
@@ -1185,7 +893,7 @@ id|u32
 id|cnt
 )paren
 (brace
-id|memcpy_toio
+id|cyc2x_memcpy_toio
 c_func
 (paren
 id|addr
@@ -1197,7 +905,7 @@ comma
 id|cnt
 )paren
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|GEN_BOOT_DAT
@@ -1226,7 +934,7 @@ id|addr
 )paren
 (brace
 multiline_comment|/* put in 0x30 offset the jump instruction to the code entry point */
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0xea
@@ -1236,7 +944,7 @@ op_plus
 l_int|0x30
 )paren
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0x00
@@ -1246,7 +954,7 @@ op_plus
 l_int|0x31
 )paren
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0xc4
@@ -1256,7 +964,7 @@ op_plus
 l_int|0x32
 )paren
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0x00
@@ -1266,7 +974,7 @@ op_plus
 l_int|0x33
 )paren
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0x00
@@ -1277,7 +985,7 @@ l_int|0x34
 )paren
 suffix:semicolon
 multiline_comment|/* cmd to start executing code */
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|GEN_START
@@ -1313,7 +1021,7 @@ id|addr
 op_plus
 id|START_OFFSET
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0xea
@@ -1323,7 +1031,7 @@ op_increment
 )paren
 suffix:semicolon
 multiline_comment|/* jmp to f000:3f00 */
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0x00
@@ -1332,7 +1040,7 @@ id|pt_start
 op_increment
 )paren
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0xfc
@@ -1341,7 +1049,7 @@ id|pt_start
 op_increment
 )paren
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0x00
@@ -1350,7 +1058,7 @@ id|pt_start
 op_increment
 )paren
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0xf0
@@ -1369,7 +1077,7 @@ id|len
 )paren
 suffix:semicolon
 multiline_comment|/* 80186 was in hold, go */
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 l_int|0
@@ -1415,7 +1123,7 @@ id|u32
 id|i
 suffix:semicolon
 multiline_comment|/* boot buffer lenght */
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|CFM_LOAD_BUFSZ
@@ -1428,7 +1136,7 @@ id|u16
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|GEN_DEFPAR
@@ -1450,7 +1158,7 @@ l_int|0
 r_return
 l_int|2
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 l_int|0
@@ -1463,7 +1171,7 @@ id|u16
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 l_int|0x4000
@@ -1478,7 +1186,7 @@ id|u16
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|GEN_SET_SEG
@@ -1589,7 +1297,7 @@ id|u32
 id|i
 suffix:semicolon
 multiline_comment|/* boot buffer lenght */
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|CFM_LOAD_BUFSZ
@@ -1602,7 +1310,7 @@ id|u16
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|GEN_DEFPAR
@@ -1625,7 +1333,7 @@ l_int|1
 r_return
 l_int|2
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 l_int|0x0000
@@ -1638,7 +1346,7 @@ id|u16
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 l_int|0xc400
@@ -1653,7 +1361,7 @@ id|u16
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|GEN_SET_SEG
@@ -1734,44 +1442,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Initialize CYCX hardware: setup memory window, IRQ, etc. */
-DECL|function|cycx_init
-r_static
-r_int
-id|cycx_init
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-(brace
-r_switch
-c_cond
-(paren
-id|hw-&gt;type
-)paren
-(brace
-r_case
-id|CYCX_2X
-suffix:colon
-r_return
-id|init_cycx_2x
-c_func
-(paren
-id|hw
-)paren
-suffix:semicolon
-)brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 multiline_comment|/* Load adapter from the memory image of the CYCX firmware module. &n; * o verify firmware integrity and compatibility&n; * o start adapter up */
-DECL|function|cycx_load
+DECL|function|load_cyc2x
 r_static
 r_int
-id|cycx_load
+id|load_cyc2x
 (paren
 id|cycxhw_t
 op_star
@@ -1789,8 +1464,6 @@ r_int
 id|i
 comma
 id|j
-comma
-id|status
 suffix:semicolon
 id|cycx_header_t
 op_star
@@ -1845,7 +1518,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s:cycx_load: not Cyclom-2X firmware!&bslash;n&quot;
+l_string|&quot;%s:load_cyc2x: not Cyclom-2X firmware!&bslash;n&quot;
 comma
 id|modname
 )paren
@@ -1879,7 +1552,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s:cycx_load: firmware format %u rejected! &quot;
+l_string|&quot;%s:&quot;
+id|__FUNCTION__
+l_string|&quot;: firmware format %u rejected! &quot;
 l_string|&quot;Expecting %u.&bslash;n&quot;
 comma
 id|modname
@@ -1928,7 +1603,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s:cycx_load: firmware corrupted!&bslash;n&quot;
+l_string|&quot;%s:&quot;
+id|__FUNCTION__
+l_string|&quot;: firmware corrupted!&bslash;n&quot;
 comma
 id|modname
 )paren
@@ -1996,7 +1673,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s:cycx_load: image sizes&bslash;n&quot;
+l_string|&quot;%s:&quot;
+id|__FUNCTION__
+l_string|&quot;: image sizes&bslash;n&quot;
 comma
 id|modname
 )paren
@@ -2102,17 +1781,12 @@ multiline_comment|/* Reset Cyclom hardware */
 r_if
 c_cond
 (paren
-(paren
-id|status
-op_assign
-id|cycx_reset
+op_logical_neg
+id|reset_cyc2x
 c_func
 (paren
-id|hw
+id|hw-&gt;dpmbase
 )paren
-)paren
-op_ne
-l_int|0
 )paren
 (brace
 id|printk
@@ -2120,11 +1794,9 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;%s: dpm problem or board not &quot;
-l_string|&quot;found (%d).&bslash;n&quot;
+l_string|&quot;found.&bslash;n&quot;
 comma
 id|modname
-comma
-id|status
 )paren
 suffix:semicolon
 r_return
@@ -2144,7 +1816,7 @@ id|img_hdr-&gt;reset_size
 )paren
 suffix:semicolon
 multiline_comment|/* reset is waiting for boot */
-id|writew
+id|cyc2x_writew
 c_func
 (paren
 id|GEN_POWER_ON
@@ -2176,7 +1848,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|readw
+id|cyc2x_readw
 c_func
 (paren
 id|pt_cycld
@@ -2212,9 +1884,6 @@ multiline_comment|/* Load data.bin */
 r_if
 c_cond
 (paren
-(paren
-id|status
-op_assign
 id|cycx_data_boot
 c_func
 (paren
@@ -2225,19 +1894,14 @@ comma
 id|img_hdr-&gt;data_size
 )paren
 )paren
-op_ne
-l_int|0
-)paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: cannot load data file (%d).&bslash;n&quot;
+l_string|&quot;%s: cannot load data file.&bslash;n&quot;
 comma
 id|modname
-comma
-id|status
 )paren
 suffix:semicolon
 r_return
@@ -2249,9 +1913,6 @@ multiline_comment|/* Load code.bin */
 r_if
 c_cond
 (paren
-(paren
-id|status
-op_assign
 id|cycx_code_boot
 c_func
 (paren
@@ -2262,19 +1923,14 @@ comma
 id|img_hdr-&gt;code_size
 )paren
 )paren
-op_ne
-l_int|0
-)paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: cannot load code file (%d).&bslash;n&quot;
+l_string|&quot;%s: cannot load code file.&bslash;n&quot;
 comma
 id|modname
-comma
-id|status
 )paren
 suffix:semicolon
 r_return
@@ -2313,30 +1969,12 @@ id|modname
 )paren
 suffix:semicolon
 multiline_comment|/* enable interrupts */
-r_if
-c_cond
-(paren
 id|cycx_inten
 c_func
 (paren
 id|hw
 )paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: adapter hardware failure!&bslash;n&quot;
-comma
-id|modname
-)paren
 suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2353,7 +1991,7 @@ id|hw
 )paren
 (brace
 multiline_comment|/* use fixed buffers */
-id|writeb
+id|cyc2x_writeb
 c_func
 (paren
 id|FIXED_BUFFERS
@@ -2365,10 +2003,10 @@ id|CONF_OFFSET
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize CYCX_2X adapter. */
-DECL|function|init_cycx_2x
+DECL|function|init_cyc2x
 r_static
 r_int
-id|init_cycx_2x
+id|init_cyc2x
 (paren
 id|cycxhw_t
 op_star
@@ -2379,7 +2017,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|detect_cycx_2x
+id|detect_cyc2x
 c_func
 (paren
 id|hw-&gt;dpmbase
@@ -2394,10 +2032,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Detect Cyclom 2x adapter.&n; *&t;Following tests are used to detect Cyclom 2x adapter:&n; *       to be completed based on the tests done below&n; *&t;Return 1 if detected o.k. or 0 if failed.&n; *&t;Note:&t;This test is destructive! Adapter will be left in shutdown&n; *&t;&t;state after the test. */
-DECL|function|detect_cycx_2x
+DECL|function|detect_cyc2x
 r_static
 r_int
-id|detect_cycx_2x
+id|detect_cyc2x
 (paren
 id|u32
 id|addr
@@ -2418,7 +2056,7 @@ r_int
 id|addr
 )paren
 suffix:semicolon
-id|reset_cycx_2x
+id|reset_cyc2x
 c_func
 (paren
 id|addr
@@ -2484,16 +2122,16 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Reset adapter&squot;s CPU. */
-DECL|function|reset_cycx_2x
+DECL|function|reset_cyc2x
 r_static
 r_int
-id|reset_cycx_2x
+id|reset_cyc2x
 (paren
 id|u32
 id|addr
 )paren
 (brace
-id|writeb
+id|cyc2x_writeb
 (paren
 l_int|0
 comma
@@ -2507,7 +2145,7 @@ id|delay_cycx
 l_int|2
 )paren
 suffix:semicolon
-id|writeb
+id|cyc2x_writeb
 (paren
 l_int|0
 comma
@@ -2527,11 +2165,6 @@ c_func
 (paren
 id|addr
 )paren
-ques
-c_cond
-l_int|0
-suffix:colon
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Delay */

@@ -4356,9 +4356,6 @@ id|dev
 suffix:semicolon
 r_int
 id|retval
-op_assign
-op_minus
-id|EPERM
 suffix:semicolon
 r_int
 r_int
@@ -4377,11 +4374,6 @@ id|file
 id|dummy
 suffix:semicolon
 multiline_comment|/* allows read-write or read-only flag */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4392,8 +4384,14 @@ c_func
 id|CAP_SYS_ADMIN
 )paren
 )paren
-r_goto
-id|out
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond

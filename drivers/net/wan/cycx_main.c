@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_main.c&t;Cyclades Cyclom X Multiprotocol WAN Link Driver. Main module.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdlamain.c by Gene Kozin &lt;genek@compuserve.com&gt; &amp;&n;*&t;&t;&t; Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/08/09&t;acme&t;&t;removed references to enable_tx_int&n;*&t;&t;&t;&t;use spinlocks instead of cli/sti in&n;*&t;&t;&t;&t;cyclomx_set_state&n;* 1999/05/19&t;acme&t;&t;works directly linked into the kernel&n;*&t;&t;&t;&t;init_waitqueue_head for 2.3.* kernel&n;* 1999/05/18&t;acme&t;&t;major cleanup (polling not needed), etc&n;* 1998/08/28&t;acme&t;&t;minor cleanup (ioctls for firmware deleted)&n;*&t;&t;&t;&t;queue_task activated&n;* 1998/08/08&t;acme&t;&t;Initial version.&n;*/
+multiline_comment|/*&n;* cycx_main.c&t;Cyclades Cyclom 2X WAN Link Driver. Main module.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdlamain.c by Gene Kozin &lt;genek@compuserve.com&gt; &amp;&n;*&t;&t;&t; Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/08/09&t;acme&t;&t;removed references to enable_tx_int&n;*&t;&t;&t;&t;use spinlocks instead of cli/sti in&n;*&t;&t;&t;&t;cyclomx_set_state&n;* 1999/05/19&t;acme&t;&t;works directly linked into the kernel&n;*&t;&t;&t;&t;init_waitqueue_head for 2.3.* kernel&n;* 1999/05/18&t;acme&t;&t;major cleanup (polling not needed), etc&n;* 1998/08/28&t;acme&t;&t;minor cleanup (ioctls for firmware deleted)&n;*&t;&t;&t;&t;queue_task activated&n;* 1998/08/08&t;acme&t;&t;Initial version.&n;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* OS configuration options */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -22,7 +22,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;Cyclades Sync Cards Driver.&quot;
+l_string|&quot;Cyclom 2X Sync Card Driver.&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -126,7 +126,7 @@ id|fullname
 (braket
 )braket
 op_assign
-l_string|&quot;CYCLOM X(tm) Multiprotocol Driver&quot;
+l_string|&quot;CYCLOM 2X(tm) Sync Card Driver&quot;
 suffix:semicolon
 DECL|variable|copyright
 r_static
@@ -638,13 +638,6 @@ id|card-&gt;hw.dpmsize
 op_assign
 id|CYCX_WINDOWSIZE
 suffix:semicolon
-id|card-&gt;hw.type
-op_assign
-id|conf-&gt;hw_opt
-(braket
-l_int|0
-)braket
-suffix:semicolon
 id|card-&gt;hw.fwid
 op_assign
 id|CFID_X25_2X
@@ -724,24 +717,10 @@ id|card-&gt;hw.dpmsize
 suffix:semicolon
 id|wandev-&gt;hw_opt
 (braket
-l_int|0
-)braket
-op_assign
-id|card-&gt;hw.type
-suffix:semicolon
-id|wandev-&gt;hw_opt
-(braket
-l_int|1
-)braket
-op_assign
-id|card-&gt;hw.pclk
-suffix:semicolon
-id|wandev-&gt;hw_opt
-(braket
 l_int|2
 )braket
 op_assign
-id|card-&gt;hw.memory
+l_int|0
 suffix:semicolon
 id|wandev-&gt;hw_opt
 (braket
@@ -797,13 +776,6 @@ c_cond
 id|err
 )paren
 (brace
-id|cycx_down
-c_func
-(paren
-op_amp
-id|card-&gt;hw
-)paren
-suffix:semicolon
 id|free_irq
 c_func
 (paren
@@ -870,13 +842,6 @@ suffix:semicolon
 id|wandev-&gt;state
 op_assign
 id|WAN_UNCONFIGURED
-suffix:semicolon
-id|cycx_down
-c_func
-(paren
-op_amp
-id|card-&gt;hw
-)paren
 suffix:semicolon
 id|printk
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_drv.h&t;CYCX Support Module.  Kernel API Definitions.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdladrv.h by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/01/03&t;acme&t;&t;more judicious use of data types...&n;*&t;&t;&t;&t;uclong, ucchar, etc deleted, the u8, u16, u32&n;*&t;&t;&t;&t;types are the portable way to go.&n;* 1999/01/03&t;acme&t;&t;judicious use of data types... u16, u32, etc&n;* Dec 26, 1998&t;Arnaldo &t;FIXED_BUFFERS, CONF_OFFSET,&n;*                               removal of cy_read{bwl}&n;* Aug 08, 1998&t;Arnaldo &t;Initial version.&n;*/
+multiline_comment|/*&n;* cycx_drv.h&t;CYCX Support Module.  Kernel API Definitions.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;* Copyright:&t;(c) 1998, 1999 Arnaldo Carvalho de Melo&n;*&n;* Based on sdladrv.h by Gene Kozin &lt;genek@compuserve.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 1999/10/23&t;acme&t;&t;cycxhw_t cleanup&n;* 1999/01/03&t;acme&t;&t;more judicious use of data types...&n;*&t;&t;&t;&t;uclong, ucchar, etc deleted, the u8, u16, u32&n;*&t;&t;&t;&t;types are the portable way to go.&n;* 1999/01/03&t;acme&t;&t;judicious use of data types... u16, u32, etc&n;* 1998/12/26&t;acme&t; &t;FIXED_BUFFERS, CONF_OFFSET,&n;*                               removal of cy_read{bwl}&n;* 1998/08/08&t;acme&t; &t;Initial version.&n;*/
 macro_line|#ifndef&t;_CYCX_DRV_H
 DECL|macro|_CYCX_DRV_H
 mdefine_line|#define&t;_CYCX_DRV_H
@@ -37,11 +37,6 @@ r_typedef
 r_struct
 id|cycxhw
 (brace
-DECL|member|type
-id|u32
-id|type
-suffix:semicolon
-multiline_comment|/* adapter type */
 DECL|member|fwid
 id|u32
 id|fwid
@@ -62,16 +57,6 @@ id|u32
 id|dpmsize
 suffix:semicolon
 multiline_comment|/* dual-port memory size */
-DECL|member|pclk
-id|u32
-id|pclk
-suffix:semicolon
-multiline_comment|/* CPU clock rate, kHz */
-DECL|member|memory
-id|u32
-id|memory
-suffix:semicolon
-multiline_comment|/* memory size */
 DECL|member|reserved
 id|u32
 id|reserved
@@ -98,33 +83,6 @@ id|sfm
 comma
 id|u32
 id|len
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|cycx_down
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|cycx_inten
-(paren
-id|cycxhw_t
-op_star
-id|hw
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|cycx_intr
-(paren
-id|cycxhw_t
-op_star
-id|hw
 )paren
 suffix:semicolon
 r_extern
@@ -171,6 +129,24 @@ id|cycx_exec
 (paren
 id|u32
 id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cycx_inten
+(paren
+id|cycxhw_t
+op_star
+id|hw
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cycx_intr
+(paren
+id|cycxhw_t
+op_star
+id|hw
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _CYCX_DRV_H */

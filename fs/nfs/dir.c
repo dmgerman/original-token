@@ -4529,10 +4529,6 @@ comma
 id|rehash
 op_assign
 l_int|0
-comma
-id|update
-op_assign
-l_int|1
 suffix:semicolon
 id|dfprintk
 c_func
@@ -4656,18 +4652,7 @@ id|out
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Check for within-directory rename ... no complications.&n;&t; */
-r_if
-c_cond
-(paren
-id|new_dir
-op_eq
-id|old_dir
-)paren
-r_goto
-id|do_rename
-suffix:semicolon
-multiline_comment|/*&n;&t; * Cross-directory move ...&n;&t; *&n;&t; * ... prune child dentries and writebacks if needed.&n;&t; */
+multiline_comment|/*&n;&t; * ... prune child dentries and writebacks if needed.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4687,33 +4672,6 @@ c_func
 (paren
 id|old_dentry
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Now check the use counts ... we can&squot;t safely do the&n;&t; * rename unless we can drop the dentries first.&n;&t; */
-r_if
-c_cond
-(paren
-id|old_dentry-&gt;d_count
-OG
-l_int|1
-)paren
-(brace
-macro_line|#ifdef NFS_PARANOIA
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_rename: old dentry %s/%s busy, d_count=%d&bslash;n&quot;
-comma
-id|old_dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|old_dentry-&gt;d_name.name
-comma
-id|old_dentry-&gt;d_count
-)paren
-suffix:semicolon
-macro_line|#endif
-r_goto
-id|out
 suffix:semicolon
 )brace
 r_if
@@ -4744,18 +4702,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|d_drop
-c_func
-(paren
-id|old_dentry
-)paren
-suffix:semicolon
-id|update
-op_assign
-l_int|0
-suffix:semicolon
-id|do_rename
-suffix:colon
 multiline_comment|/*&n;&t; * To prevent any new references to the target during the rename,&n;&t; * we unhash the dentry and free the inode in advance.&n;&t; */
 r_if
 c_cond
@@ -4777,7 +4723,7 @@ id|new_dentry
 suffix:semicolon
 id|rehash
 op_assign
-id|update
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -4785,14 +4731,12 @@ c_cond
 (paren
 id|new_inode
 )paren
-(brace
 id|d_delete
 c_func
 (paren
 id|new_dentry
 )paren
 suffix:semicolon
-)brace
 id|invalidate_inode_pages
 c_func
 (paren
@@ -4845,20 +4789,18 @@ comma
 id|new_dentry-&gt;d_name.name
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-op_logical_and
-op_logical_neg
-id|S_ISDIR
+id|NFS_CACHEINV
 c_func
 (paren
-id|old_inode-&gt;i_mode
+id|old_dir
 )paren
+suffix:semicolon
+id|NFS_CACHEINV
+c_func
+(paren
+id|new_dir
 )paren
-(brace
+suffix:semicolon
 multiline_comment|/* Update the dcache if needed */
 r_if
 c_cond
@@ -4876,7 +4818,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|update
+op_logical_neg
+id|error
+op_logical_and
+op_logical_neg
+id|S_ISDIR
+c_func
+(paren
+id|old_inode-&gt;i_mode
+)paren
 )paren
 id|d_move
 c_func
@@ -4886,7 +4836,6 @@ comma
 id|new_dentry
 )paren
 suffix:semicolon
-)brace
 id|out
 suffix:colon
 multiline_comment|/* new dentry created? */

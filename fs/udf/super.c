@@ -3175,6 +3175,9 @@ suffix:semicolon
 id|time_t
 id|recording
 suffix:semicolon
+r_int
+id|recording_usec
+suffix:semicolon
 r_struct
 id|ustr
 id|instr
@@ -3201,6 +3204,9 @@ c_func
 op_amp
 id|recording
 comma
+op_amp
+id|recording_usec
+comma
 id|lets_to_cpu
 c_func
 (paren
@@ -3223,9 +3229,11 @@ suffix:semicolon
 id|udf_debug
 c_func
 (paren
-l_string|&quot;recording time %ld, %u/%u/%u %u:%u (%x)&bslash;n&quot;
+l_string|&quot;recording time %ld/%ld, %04u/%02u/%02u %02u:%02u (%x)&bslash;n&quot;
 comma
 id|recording
+comma
+id|recording_usec
 comma
 id|ts.year
 comma
@@ -6745,7 +6753,7 @@ suffix:semicolon
 id|udf_info
 c_func
 (paren
-l_string|&quot;Mounting volume &squot;%s&squot;, timestamp %u/%02u/%u %02u:%02u&bslash;n&quot;
+l_string|&quot;Mounting volume &squot;%s&squot;, timestamp %04u/%02u/%02u %02u:%02u (%x)&bslash;n&quot;
 comma
 id|UDF_SB_VOLIDENT
 c_func
@@ -6762,6 +6770,8 @@ comma
 id|ts.hour
 comma
 id|ts.minute
+comma
+id|ts.typeAndTimezone
 )paren
 suffix:semicolon
 )brace

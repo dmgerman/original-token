@@ -6,12 +6,20 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 DECL|macro|Uint8
 mdefine_line|#define Uint8&t;__u8
+DECL|macro|Sint8
+mdefine_line|#define Sint8&t;__s8
 DECL|macro|Uint16
 mdefine_line|#define Uint16&t;__u16
+DECL|macro|Sint16
+mdefine_line|#define Sint16&t;__s16
 DECL|macro|Uint32
 mdefine_line|#define Uint32&t;__u32
+DECL|macro|Sint32
+mdefine_line|#define Sint32&t;__s32
 DECL|macro|Uint64
 mdefine_line|#define Uint64&t;__u64
+DECL|macro|Sint64
+mdefine_line|#define Sint64&t;__s64
 DECL|typedef|dstring
 r_typedef
 id|Uint8
@@ -20,12 +28,20 @@ suffix:semicolon
 macro_line|#else
 DECL|macro|Uint8
 mdefine_line|#define Uint8&t;unsigned char
+DECL|macro|Sint8
+mdefine_line|#define Sint8&t;char
 DECL|macro|Uint16
 mdefine_line|#define Uint16&t;unsigned short
+DECL|macro|Sint16
+mdefine_line|#define Sint16&t;short
 DECL|macro|Uint32
 mdefine_line|#define Uint32&t;unsigned int
+DECL|macro|Sint32
+mdefine_line|#define Sint32&t;int
 DECL|macro|Uint64
 mdefine_line|#define Uint64&t;unsigned long long
+DECL|macro|Sint64
+mdefine_line|#define Sint64&t;long long
 DECL|typedef|dstring
 r_typedef
 id|Uint8

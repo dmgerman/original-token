@@ -2,7 +2,7 @@ macro_line|#ifndef __UDF_DECL_H
 DECL|macro|__UDF_DECL_H
 mdefine_line|#define __UDF_DECL_H
 DECL|macro|UDF_VERSION_NOTICE
-mdefine_line|#define UDF_VERSION_NOTICE &quot;v0.8.9&quot;
+mdefine_line|#define UDF_VERSION_NOTICE &quot;v0.8.9.3&quot;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/udf_udf.h&gt;
@@ -1596,6 +1596,9 @@ id|udf_stamp_to_time
 c_func
 (paren
 id|time_t
+op_star
+comma
+r_int
 op_star
 comma
 id|timestamp
