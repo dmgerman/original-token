@@ -10401,12 +10401,14 @@ c_cond
 id|drive_found
 )paren
 (brace
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|sony_cd_base_io
 comma
 l_int|4
+comma
+l_string|&quot;cdu31a&quot;
 )paren
 suffix:semicolon
 r_if

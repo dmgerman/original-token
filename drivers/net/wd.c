@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;wd.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1233,12 +1232,14 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|WD_IO_EXTENT
+comma
+l_string|&quot;wd&quot;
 )paren
 suffix:semicolon
 id|ethdev_init

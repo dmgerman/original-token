@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;e2100.c:v1.01 7/21/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -456,12 +455,14 @@ r_return
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Grab the region so we can find a different board if IRQ select fails. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|E21_IO_EXTENT
+comma
+l_string|&quot;e2100&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Read the station address PROM.  */

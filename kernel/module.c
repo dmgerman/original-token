@@ -244,6 +244,7 @@ multiline_comment|/*&n;&t; * This one will change the name of the first matching
 multiline_comment|/*&n; * Allocate space for a module.&n; */
 id|asmlinkage
 r_int
+r_int
 DECL|function|sys_create_module
 id|sys_create_module
 c_func
@@ -524,6 +525,7 @@ id|mp-&gt;addr
 suffix:semicolon
 r_return
 (paren
+r_int
 r_int
 )paren
 id|addr
@@ -1036,6 +1038,7 @@ c_cond
 (paren
 (paren
 r_int
+r_int
 )paren
 id|sym-&gt;name
 OL
@@ -1044,6 +1047,7 @@ op_logical_or
 id|size
 op_le
 (paren
+r_int
 r_int
 )paren
 id|sym-&gt;name

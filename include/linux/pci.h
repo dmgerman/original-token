@@ -133,6 +133,82 @@ DECL|macro|PCI_MIN_GNT
 mdefine_line|#define PCI_MIN_GNT&t;&t;0x3e&t;/* 8 bits */
 DECL|macro|PCI_MAX_LAT
 mdefine_line|#define PCI_MAX_LAT&t;&t;0x3f&t;/* 8 bits */
+DECL|macro|PCI_CLASS_NOT_DEFINED
+mdefine_line|#define PCI_CLASS_NOT_DEFINED&t;&t;0x0000
+DECL|macro|PCI_CLASS_NOT_DEFINED_VGA
+mdefine_line|#define PCI_CLASS_NOT_DEFINED_VGA&t;0x0001
+DECL|macro|PCI_CLASS_STORAGE_SCSI
+mdefine_line|#define PCI_CLASS_STORAGE_SCSI&t;&t;0x0100
+DECL|macro|PCI_CLASS_STORAGE_IDE
+mdefine_line|#define PCI_CLASS_STORAGE_IDE&t;&t;0x0101
+DECL|macro|PCI_CLASS_STORAGE_FLOPPY
+mdefine_line|#define PCI_CLASS_STORAGE_FLOPPY&t;0x0102
+DECL|macro|PCI_CLASS_STORAGE_IPI
+mdefine_line|#define PCI_CLASS_STORAGE_IPI&t;&t;0x0103
+DECL|macro|PCI_CLASS_STORAGE_OTHER
+mdefine_line|#define PCI_CLASS_STORAGE_OTHER&t;&t;0x0180
+DECL|macro|PCI_CLASS_NETWORK_ETHERNET
+mdefine_line|#define PCI_CLASS_NETWORK_ETHERNET&t;0x0200
+DECL|macro|PCI_CLASS_NETWORK_TOKEN_RING
+mdefine_line|#define PCI_CLASS_NETWORK_TOKEN_RING&t;0x0201
+DECL|macro|PCI_CLASS_NETWORK_FDDI
+mdefine_line|#define PCI_CLASS_NETWORK_FDDI&t;&t;0x0202
+DECL|macro|PCI_CLASS_NETWORK_OTHER
+mdefine_line|#define PCI_CLASS_NETWORK_OTHER&t;&t;0x0280
+DECL|macro|PCI_CLASS_DISPLAY_VGA
+mdefine_line|#define PCI_CLASS_DISPLAY_VGA&t;&t;0x0300
+DECL|macro|PCI_CLASS_DISPLAY_XGA
+mdefine_line|#define PCI_CLASS_DISPLAY_XGA&t;&t;0x0301
+DECL|macro|PCI_CLASS_DISPLAY_OTHER
+mdefine_line|#define PCI_CLASS_DISPLAY_OTHER&t;&t;0x0380
+DECL|macro|PCI_CLASS_MULTIMEDIA_VIDEO
+mdefine_line|#define PCI_CLASS_MULTIMEDIA_VIDEO&t;0x0400
+DECL|macro|PCI_CLASS_MULTIMEDIA_AUDIO
+mdefine_line|#define PCI_CLASS_MULTIMEDIA_AUDIO&t;0x0401
+DECL|macro|PCI_CLASS_MULTIMEDIA_OTHER
+mdefine_line|#define PCI_CLASS_MULTIMEDIA_OTHER&t;0x0480
+DECL|macro|PCI_CLASS_MEMORY_RAM
+mdefine_line|#define PCI_CLASS_MEMORY_RAM&t;&t;0x0500
+DECL|macro|PCI_CLASS_MEMORY_FLASH
+mdefine_line|#define PCI_CLASS_MEMORY_FLASH&t;&t;0x0501
+DECL|macro|PCI_CLASS_MEMORY_OTHER
+mdefine_line|#define PCI_CLASS_MEMORY_OTHER&t;&t;0x0580
+DECL|macro|PCI_CLASS_BRIDGE_HOST
+mdefine_line|#define PCI_CLASS_BRIDGE_HOST&t;&t;0x0600
+DECL|macro|PCI_CLASS_BRIDGE_ISA
+mdefine_line|#define PCI_CLASS_BRIDGE_ISA&t;&t;0x0601
+DECL|macro|PCI_CLASS_BRIDGE_EISA
+mdefine_line|#define PCI_CLASS_BRIDGE_EISA&t;&t;0x0602
+DECL|macro|PCI_CLASS_BRIDGE_MC
+mdefine_line|#define PCI_CLASS_BRIDGE_MC&t;&t;0x0603
+DECL|macro|PCI_CLASS_BRIDGE_PCI
+mdefine_line|#define PCI_CLASS_BRIDGE_PCI&t;&t;0x0604
+DECL|macro|PCI_CLASS_BRIDGE_PCMCIA
+mdefine_line|#define PCI_CLASS_BRIDGE_PCMCIA&t;&t;0x0605
+DECL|macro|PCI_CLASS_BRIDGE_OTHER
+mdefine_line|#define PCI_CLASS_BRIDGE_OTHER&t;&t;0x0680
+DECL|macro|PCI_CLASS_OTHERS
+mdefine_line|#define PCI_CLASS_OTHERS&t;&t;0xff
+DECL|struct|pci_class_type
+r_struct
+id|pci_class_type
+(brace
+DECL|member|class_id
+r_int
+r_int
+id|class_id
+suffix:semicolon
+DECL|member|class_name
+r_char
+op_star
+id|class_name
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|PCI_CLASS_NUM
+mdefine_line|#define PCI_CLASS_NUM 27
+DECL|macro|PCI_CLASS_TYPE
+mdefine_line|#define PCI_CLASS_TYPE    { &bslash;&n;&t;{PCI_CLASS_NOT_DEFINED,&t;&t;&quot;Old unidentified device&quot;}, &bslash;&n;&t;{PCI_CLASS_NOT_DEFINED_VGA,&t;&quot;Old VGA controller&quot;}, &bslash;&n;&t;{PCI_CLASS_STORAGE_SCSI,&t;&quot;SCSI bus controller&quot;}, &bslash;&n;&t;{PCI_CLASS_STORAGE_IDE,&t;&t;&quot;IDE controller&quot;}, &bslash;&n;&t;{PCI_CLASS_STORAGE_FLOPPY,&t;&quot;Floppy controller&quot;}, &bslash;&n;&t;{PCI_CLASS_STORAGE_IPI,&t;&t;&quot;IPI bus controller&quot;}, &bslash;&n;&t;{PCI_CLASS_STORAGE_OTHER,&t;&quot;Unknown mass storage controller&quot;}, &bslash;&n;&t;{PCI_CLASS_NETWORK_ETHERNET,&t;&quot;Ethernet controller&quot;}, &bslash;&n;&t;{PCI_CLASS_NETWORK_TOKEN_RING,&t;&quot;Token ring controller&quot;}, &bslash;&n;&t;{PCI_CLASS_NETWORK_FDDI,&t;&quot;FDDI controller&quot;}, &bslash;&n;&t;{PCI_CLASS_NETWORK_OTHER,&t;&quot;Unknown network controller&quot;}, &bslash;&n;&t;{PCI_CLASS_DISPLAY_VGA,&t;&t;&quot;VGA display controller&quot;}, &bslash;&n;&t;{PCI_CLASS_DISPLAY_XGA,&t;&t;&quot;XGA display controller&quot;}, &bslash;&n;&t;{PCI_CLASS_DISPLAY_OTHER,&t;&quot;Unknown display controller&quot;}, &bslash;&n;&t;{PCI_CLASS_MULTIMEDIA_VIDEO,&t;&quot;Video device&quot;}, &bslash;&n;&t;{PCI_CLASS_MULTIMEDIA_AUDIO,&t;&quot;Audio device&quot;}, &bslash;&n;&t;{PCI_CLASS_MULTIMEDIA_OTHER,&t;&quot;Unknown multimedia device&quot;}, &bslash;&n;&t;{PCI_CLASS_MEMORY_RAM,&t;&t;&quot;RAM controller&quot;}, &bslash;&n;&t;{PCI_CLASS_MEMORY_FLASH,&t;&quot;FLASH controller&quot;}, &bslash;&n;&t;{PCI_CLASS_MEMORY_OTHER,&t;&quot;Unknown memory controller&quot;}, &bslash;&n;&t;{PCI_CLASS_BRIDGE_HOST,&t;&t;&quot;Host bridge&quot;}, &bslash;&n;&t;{PCI_CLASS_BRIDGE_ISA,&t;&t;&quot;ISA bridge&quot;}, &bslash;&n;&t;{PCI_CLASS_BRIDGE_EISA,&t;&t;&quot;EISA bridge&quot;}, &bslash;&n;&t;{PCI_CLASS_BRIDGE_MC,&t;&t;&quot;MC bridge&quot;}, &bslash;&n;&t;{PCI_CLASS_BRIDGE_PCI,&t;&t;&quot;PCI to PCI bridge&quot;}, &bslash;&n;&t;{PCI_CLASS_BRIDGE_PCMCIA,&t;&quot;PCMCIA bridge&quot;}, &bslash;&n;&t;{PCI_CLASS_BRIDGE_OTHER,&t;&quot;Unknown bridge device&quot;}, &bslash;&n;&t;{0,&t;&t;&t;&t;&quot;Unknown type of PCI device&quot;} &bslash;&n;}
 DECL|macro|PCI_VENDOR_ID_NCR
 mdefine_line|#define PCI_VENDOR_ID_NCR&t;&t;0x1000
 DECL|macro|PCI_DEVICE_ID_NCR_53C810
@@ -147,6 +223,131 @@ DECL|macro|PCI_VENDOR_ID_ADAPTEC
 mdefine_line|#define PCI_VENDOR_ID_ADAPTEC&t;&t;0x9004
 DECL|macro|PCI_DEVICE_ID_ADAPTEC_2940
 mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_2940&t;0x7178
+DECL|macro|PCI_VENDOR_ID_S3
+mdefine_line|#define PCI_VENDOR_ID_S3&t;&t;0x5333
+DECL|macro|PCI_DEVICE_ID_S3_864_1
+mdefine_line|#define PCI_DEVICE_ID_S3_864_1&t;&t;0x88c0
+DECL|macro|PCI_DEVICE_ID_S3_864_2
+mdefine_line|#define PCI_DEVICE_ID_S3_864_2&t;&t;0x88c1
+DECL|macro|PCI_DEVICE_ID_S3_928
+mdefine_line|#define PCI_DEVICE_ID_S3_928&t;&t;0x88b0
+DECL|macro|PCI_DEVICE_ID_S3_964
+mdefine_line|#define PCI_DEVICE_ID_S3_964&t;&t;0x88d0
+DECL|macro|PCI_DEVICE_ID_S3_811
+mdefine_line|#define PCI_DEVICE_ID_S3_811&t;&t;0x8811
+DECL|macro|PCI_VENDOR_ID_OPTI
+mdefine_line|#define PCI_VENDOR_ID_OPTI&t;&t;0x1045
+DECL|macro|PCI_DEVICE_ID_OPTI_82C822
+mdefine_line|#define PCI_DEVICE_ID_OPTI_82C822&t;0xc822
+DECL|macro|PCI_DEVICE_ID_OPTI_82C621
+mdefine_line|#define PCI_DEVICE_ID_OPTI_82C621&t;0xc621
+DECL|macro|PCI_VENDOR_ID_UMC
+mdefine_line|#define PCI_VENDOR_ID_UMC&t;&t;0x1060
+DECL|macro|PCI_DEVICE_ID_UMC_UM8881F
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8881F&t;0x8881
+DECL|macro|PCI_DEVICE_ID_UMC_UM8886F
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8886F&t;0x8886
+DECL|macro|PCI_DEVICE_ID_UMC_UM8673F
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8673F&t;0x0101
+DECL|macro|PCI_VENDOR_ID_DEC
+mdefine_line|#define PCI_VENDOR_ID_DEC&t;&t;0x1011
+DECL|macro|PCI_DEVICE_ID_DEC_TULIP
+mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP&t;&t;0x0002
+DECL|macro|PCI_DEVICE_ID_DEC_TULIP_FAST
+mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP_FAST&t;0x0009
+DECL|macro|PCI_DEVICE_ID_DEC_FDDI
+mdefine_line|#define PCI_DEVICE_ID_DEC_FDDI&t;&t;0x000F
+DECL|macro|PCI_VENDOR_ID_MATROX
+mdefine_line|#define PCI_VENDOR_ID_MATROX&t;&t;0x102B
+DECL|macro|PCI_VENDOR_ID_INTEL
+mdefine_line|#define PCI_VENDOR_ID_INTEL&t;&t;0x8086
+DECL|macro|PCI_DEVICE_ID_INTEL_82378
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82378&t;0x0484
+DECL|macro|PCI_DEVICE_ID_INTEL_82424
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82424&t;0x0483
+DECL|macro|PCI_DEVICE_ID_INTEL_82375
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82375&t;0x0482
+DECL|macro|PCI_DEVICE_ID_INTEL_82434
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82434&t;0x04a3
+DECL|macro|PCI_VENDOR_ID_SMC
+mdefine_line|#define PCI_VENDOR_ID_SMC&t;&t;0x1042
+DECL|macro|PCI_DEVICE_ID_SMC_37C665
+mdefine_line|#define PCI_DEVICE_ID_SMC_37C665&t;0x1000
+DECL|macro|PCI_VENDOR_ID_ATI
+mdefine_line|#define PCI_VENDOR_ID_ATI&t;&t;0x1002
+DECL|macro|PCI_DEVICE_ID_ATI_M32
+mdefine_line|#define PCI_DEVICE_ID_ATI_M32&t;&t;0x4158
+DECL|macro|PCI_DEVICE_ID_ATI_M64
+mdefine_line|#define PCI_DEVICE_ID_ATI_M64&t;&t;0x4758
+DECL|macro|PCI_VENDOR_ID_DIAMOND
+mdefine_line|#define PCI_VENDOR_ID_DIAMOND&t;&t;0x100e
+DECL|macro|PCI_DEVICE_ID_DIAMOND_VIPER
+mdefine_line|#define PCI_DEVICE_ID_DIAMOND_VIPER&t;0x9001
+DECL|macro|PCI_VENDOR_ID_CIRRUS
+mdefine_line|#define PCI_VENDOR_ID_CIRRUS&t;&t;0x1013
+DECL|macro|PCI_DEVICE_ID_CIRRUS_5434
+mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5434&t;0x00A4
+DECL|macro|PCI_VENDOR_ID_BUSLOGIC
+mdefine_line|#define PCI_VENDOR_ID_BUSLOGIC&t;&t;0x104B
+DECL|macro|PCI_DEVICE_ID_BUSLOGIC_946C
+mdefine_line|#define PCI_DEVICE_ID_BUSLOGIC_946C&t;0x0140
+DECL|macro|PCI_VENDOR_ID_N9
+mdefine_line|#define PCI_VENDOR_ID_N9&t;&t;0x105D
+DECL|macro|PCI_DEVICE_ID_N9_I128
+mdefine_line|#define PCI_DEVICE_ID_N9_I128&t;&t;0x2309
+DECL|macro|PCI_VENDOR_ID_ALI
+mdefine_line|#define PCI_VENDOR_ID_ALI&t;&t;0x1025
+DECL|macro|PCI_DEVICE_ID_ALI_M1435
+mdefine_line|#define PCI_DEVICE_ID_ALI_M1435&t;&t;0x1435
+DECL|macro|PCI_VENDOR_ID_TSENG
+mdefine_line|#define PCI_VENDOR_ID_TSENG&t;&t;0x100c
+DECL|macro|PCI_DEVICE_ID_TSENG_W32P
+mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P&t;0x3205
+DECL|struct|pci_vendor_type
+r_struct
+id|pci_vendor_type
+(brace
+DECL|member|vendor_id
+r_int
+r_int
+id|vendor_id
+suffix:semicolon
+DECL|member|vendor_name
+r_char
+op_star
+id|vendor_name
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|PCI_VENDOR_NUM
+mdefine_line|#define PCI_VENDOR_NUM 16
+DECL|macro|PCI_VENDOR_TYPE
+mdefine_line|#define PCI_VENDOR_TYPE { &bslash;&n;&t;{PCI_VENDOR_ID_NCR,&t;&t;&quot;NCR&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ADAPTEC,&t;&t;&quot;Adaptec&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_S3,&t;&t;&quot;S3 Inc.&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_OPTI,&t;&t;&quot;OPTI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_UMC,&t;&t;&quot;UMC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DEC,&t;&t;&quot;DEC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_MATROX,&t;&t;&quot;Matrox&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_INTEL,&t;&t;&quot;Intel&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_SMC,&t;&t;&quot;SMC&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ATI,&t;&t;&quot;ATI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DIAMOND,&t;&t;&quot;Diamond&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_CIRRUS,&t;&t;&quot;Cirrus Logic&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_BUSLOGIC,&t;&quot;Bus Logic&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_N9,&t;&t;&quot;Number #9&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ALI,&t;&t;&quot;ALI&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_TSENG,&t;&t;&quot;Tseng&squot;Lab&quot;}, &bslash;&n;&t;{0,&t;&t;&t;&t;&quot;Unknown vendor&quot;} &bslash;&n;}
+DECL|struct|pci_device_type
+r_struct
+id|pci_device_type
+(brace
+DECL|member|vendor_id
+r_int
+r_int
+id|vendor_id
+suffix:semicolon
+DECL|member|device_id
+r_int
+r_int
+id|device_id
+suffix:semicolon
+DECL|member|device_name
+r_char
+op_star
+id|device_name
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|PCI_DEVICE_NUM
+mdefine_line|#define PCI_DEVICE_NUM 31
+DECL|macro|PCI_DEVICE_TYPE
+mdefine_line|#define PCI_DEVICE_TYPE { &bslash;&n;&t;{PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C810,&t;&quot;53c810&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C815,&t;&quot;53c815&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C820,&t;&quot;53c820&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_NCR,&t;PCI_DEVICE_ID_NCR_53C825,&t;&quot;53c825&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ADAPTEC,&t;PCI_DEVICE_ID_ADAPTEC_2940,&t;&quot;2940&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_864_1,&t;&t;&quot;Vision 864-P&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_864_2,&t;&t;&quot;Vision 864-P&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_928,&t;&t;&quot;Vision 928-P&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_964,&t;&t;&quot;Vision 964-P&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_S3,&t;PCI_DEVICE_ID_S3_811,&t;&t;&quot;Trio64&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_OPTI,&t;PCI_DEVICE_ID_OPTI_82C822,&t;&quot;82C822&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_OPTI,&t;PCI_DEVICE_ID_OPTI_82C621,&t;&quot;82C621&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8881F,&t;&quot;UM8881F&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8886F,&t;&quot;UM8886F&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_UMC,&t;PCI_DEVICE_ID_UMC_UM8673F,&t;&quot;UM8673F&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_TULIP,&t;&quot;DC21040&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_TULIP_FAST,&t;&quot;DC21040&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DEC,&t;PCI_DEVICE_ID_DEC_FDDI,&t;&t;&quot;DEFPA&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82378,&t;&quot;82378IB&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82424,&t;&quot;82424ZX&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82375,&t;&quot;82375EB&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_INTEL,&t;PCI_DEVICE_ID_INTEL_82434,&t;&quot;82434LX&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_SMC,&t;PCI_DEVICE_ID_SMC_37C665,&t;&quot;FDC 37C665&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ATI,&t;PCI_DEVICE_ID_ATI_M32,&t;&t;&quot;Mach 32&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ATI,&t;PCI_DEVICE_ID_ATI_M64,&t;&t;&quot;Mach 64&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_DIAMOND,&t;PCI_DEVICE_ID_DIAMOND_VIPER,&t;&quot;Viper&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_CIRRUS,&t;PCI_DEVICE_ID_CIRRUS_5434,&t;&quot;GD 5434&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_BUSLOGIC,PCI_DEVICE_ID_BUSLOGIC_946C,&t;&quot;946C&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_N9,&t;PCI_DEVICE_ID_N9_I128,&t;&t;&quot;Imagine 128&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ALI,&t;PCI_DEVICE_ID_ALI_M1435,&t;&quot;M1435&quot;}, &bslash;&n;&t;{PCI_VENDOR_ID_ALI,&t;PCI_DEVICE_ID_TSENG_W32P,&t;&quot;ET4000W32P&quot;}, &bslash;&n;&t;{0,0,&quot;UNKNOWN DEVICE.PLEASE FIND OUT AND MAIL POTTER@CAO-VLSI.IBP.FR&quot;} &bslash;&n;}
 multiline_comment|/* PCI BIOS */
 r_extern
 r_int

@@ -1,7 +1,19 @@
-multiline_comment|/*&n; * slip.h&t;Define the SLIP device driver interface and constants.&n; *&n; * NOTE:&t;THIS FILE WILL BE MOVED TO THE LINUX INCLUDE DIRECTORY&n; *&t;&t;AS SOON AS POSSIBLE!&n; *&n; * Version:&t;@(#)slip.h&t;1.2.0&t;03/28/93&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Added slip mtu field.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from net2e)&n; *&t;&t;Alan Cox&t;:&t;Added SL_SLIP_LOTS&n; * &t;Dmitry Gorodchanin      :       A lot of changes in the &squot;struct slip&squot;&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; */
+multiline_comment|/*&n; * slip.h&t;Define the SLIP device driver interface and constants.&n; *&n; * NOTE:&t;THIS FILE WILL BE MOVED TO THE LINUX INCLUDE DIRECTORY&n; *&t;&t;AS SOON AS POSSIBLE!&n; *&n; * Version:&t;@(#)slip.h&t;1.2.0&t;03/28/93&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Added slip mtu field.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from net2e)&n; *&t;&t;Alan Cox&t;:&t;Added SL_SLIP_LOTS&n; *&t;Dmitry Gorodchanin&t;:&t;A lot of changes in the &squot;struct slip&squot;&n; *&t;Dmitry Gorodchanin&t;:&t;Added CSLIP statistics.&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; */
 macro_line|#ifndef _LINUX_SLIP_H
 DECL|macro|_LINUX_SLIP_H
 mdefine_line|#define _LINUX_SLIP_H
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#if defined(CONFIG_INET) &amp;&amp; defined(CONFIG_SLIP_COMPRESSED)
+DECL|macro|SL_INCLUDE_CSLIP
+macro_line|# define SL_INCLUDE_CSLIP
+macro_line|#endif
+macro_line|#ifdef SL_INCLUDE_CSLIP
+DECL|macro|SL_MODE_DEFAULT
+macro_line|# define SL_MODE_DEFAULT SL_MODE_ADAPTIVE
+macro_line|#else
+DECL|macro|SL_MODE_DEFAULT
+macro_line|# define SL_MODE_DEFAULT SL_MODE_SLIP
+macro_line|#endif
 multiline_comment|/* SLIP configuration. */
 macro_line|#ifndef SL_SLIP_LOTS
 DECL|macro|SL_NRUNIT
@@ -44,7 +56,7 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* easy for intr handling&t;*/
-macro_line|#if defined(CONFIG_INET)
+macro_line|#ifdef SL_INCLUDE_CSLIP
 DECL|member|slcomp
 r_struct
 id|slcompress
@@ -188,23 +200,6 @@ DECL|macro|SL_MODE_ADAPTIVE
 mdefine_line|#define SL_MODE_ADAPTIVE 8
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
-macro_line|#ifdef CONFIG_SLIP_ADAPTIVE
-DECL|macro|SL_MODE_DEFAULT
-mdefine_line|#define SL_MODE_DEFAULT&t;SL_MODE_ADAPTIVE
-macro_line|#else  /* !CONFIG_SLIP_ADAPTIVE */
-macro_line|#ifdef CONFIG_SLIP_COMPRESSED
-DECL|macro|SL_MODE_DEFAULT
-mdefine_line|#define SL_MODE_DEFAULT (SL_MODE_CSLIP | SL_MODE_ADAPTIVE)
-macro_line|#else  /* !CONFIG_SLIP_COMPRESSED */
-DECL|macro|SL_MODE_DEFAULT
-mdefine_line|#define SL_MODE_DEFAULT SL_MODE_SLIP
-macro_line|#endif /* CONFIG_SLIP_COMPRESSED */
-macro_line|#endif /* CONFIG_SLIP_ADAPTIVE */
-macro_line|#else  /* !CONFIG_INET */
-DECL|macro|SL_MODE_DEFAULT
-mdefine_line|#define SL_MODE_DEFAULT SL_MODE_SLIP
-macro_line|#endif /* CONFIG_INET */
 DECL|macro|SLIP_MAGIC
 mdefine_line|#define SLIP_MAGIC 0x5302
 r_extern

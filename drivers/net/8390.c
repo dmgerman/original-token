@@ -8,9 +8,7 @@ id|version
 op_assign
 l_string|&quot;8390.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -310,6 +308,26 @@ op_plus
 id|EN0_ISR
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;start
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: xmit on stopped card&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -956,6 +974,29 @@ OL
 l_int|9
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|dev-&gt;start
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: interrupt from stopped card&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|interrupts
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -5,6 +5,7 @@ mdefine_line|#define _SOCK_H
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;&t;&t;/* struct options */
 macro_line|#include &lt;linux/tcp.h&gt;&t;&t;/* struct tcphdr */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;&t;/* struct sk_buff */
 macro_line|#include &quot;protocol.h&quot;&t;&t;/* struct inet_protocol */
 macro_line|#ifdef CONFIG_AX25
@@ -498,6 +499,29 @@ r_struct
 id|tcphdr
 id|dummy_th
 suffix:semicolon
+DECL|member|keepalive_timer
+r_struct
+id|timer_list
+id|keepalive_timer
+suffix:semicolon
+multiline_comment|/* TCP keepalive hack */
+DECL|member|retransmit_timer
+r_struct
+id|timer_list
+id|retransmit_timer
+suffix:semicolon
+multiline_comment|/* TCP retransmit timer */
+DECL|member|ack_timer
+r_struct
+id|timer_list
+id|ack_timer
+suffix:semicolon
+multiline_comment|/* TCP delayed ack timer */
+DECL|member|ip_xmit_timeout
+r_int
+id|ip_xmit_timeout
+suffix:semicolon
+multiline_comment|/* Why the timeout is running */
 macro_line|#ifdef CONFIG_IP_MULTICAST  
 DECL|member|ip_mc_ttl
 r_int
@@ -536,6 +560,7 @@ r_struct
 id|timer_list
 id|timer
 suffix:semicolon
+multiline_comment|/* This is the TIME_WAIT/receive timer when we are doing IP */
 DECL|member|stamp
 r_struct
 id|timeval

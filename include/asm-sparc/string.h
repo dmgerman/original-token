@@ -363,12 +363,565 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/* extern __inline__ char *strcat(char *dest, char *src); */
-multiline_comment|/* extern __inline__ char *strncat(char *dest, char *src, int len); */
-multiline_comment|/* extern __inline__ char *strchr(char *src, char c); */
-multiline_comment|/* extern __inline__ char *strpbrk(char *cs, char *ct); */
-multiline_comment|/* extern __inline__ char *strtok(char *s, char *ct); */
-multiline_comment|/* extern __inline__ int strspn(char *s, char *accept); */
+DECL|function|strcat
+r_extern
+id|__inline__
+r_char
+op_star
+id|strcat
+c_func
+(paren
+r_char
+op_star
+id|dest
+comma
+r_const
+r_char
+op_star
+id|src
+)paren
+(brace
+r_register
+r_char
+op_star
+id|retval
+suffix:semicolon
+r_register
+r_char
+id|temp
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;or %%g0, %1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;1: ldub [%1], %3&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
+l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
+l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
+l_string|&quot;2: ldub [%2], %3&bslash;n&bslash;t&quot;
+l_string|&quot;stb %3, [%1]&bslash;n&bslash;t&quot;
+l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
+l_string|&quot;bne 2b&bslash;n&bslash;t&quot;
+l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|dest
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|src
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|temp
+op_assign
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|function|strncat
+r_extern
+id|__inline__
+r_char
+op_star
+id|strncat
+c_func
+(paren
+r_char
+op_star
+id|dest
+comma
+r_const
+r_char
+op_star
+id|src
+comma
+r_int
+id|len
+)paren
+(brace
+r_register
+r_char
+op_star
+id|retval
+suffix:semicolon
+r_register
+r_char
+id|temp
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;or %%g0, %1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;1: ldub [%1], %3&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
+l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
+l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
+l_string|&quot;2: ldub [%2], %3&bslash;n&bslash;t&quot;
+l_string|&quot;stb %3, [%1]&bslash;n&bslash;t&quot;
+l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
+l_string|&quot;add %3, -1, %3&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
+l_string|&quot;bne 2b&bslash;n&bslash;t&quot;
+l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|dest
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|src
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|len
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|temp
+op_assign
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|function|strchr
+r_extern
+id|__inline__
+r_char
+op_star
+id|strchr
+c_func
+(paren
+r_const
+r_char
+op_star
+id|src
+comma
+r_char
+id|c
+)paren
+(brace
+r_register
+r_char
+id|temp
+suffix:semicolon
+r_register
+r_char
+op_star
+id|trick
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;1: ldub [%0], %2&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %2, %1&bslash;n&bslash;t&quot;
+l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
+l_string|&quot;add %0, 0x1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;or %%g0, %0, %3&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|src
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|c
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|temp
+op_assign
+l_int|0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|trick
+op_assign
+l_int|0
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|src
+)paren
+)paren
+suffix:semicolon
+r_return
+id|trick
+suffix:semicolon
+)brace
+DECL|function|strpbrk
+r_extern
+id|__inline__
+r_char
+op_star
+id|strpbrk
+c_func
+(paren
+r_const
+r_char
+op_star
+id|cs
+comma
+r_const
+r_char
+op_star
+id|ct
+)paren
+(brace
+r_register
+r_char
+id|temp1
+comma
+id|temp2
+suffix:semicolon
+r_register
+r_char
+op_star
+id|scratch
+suffix:semicolon
+r_register
+r_char
+op_star
+id|trick
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;or %%g0, %1, %4&bslash;n&bslash;t&quot;
+l_string|&quot;1: ldub [%0], %2&bslash;n&bslash;t&quot;
+l_string|&quot;2: ldub [%1], %3&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %3, %2&bslash;n&bslash;t&quot;
+l_string|&quot;be 3f&bslash;n&bslash;t&quot;
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
+l_string|&quot;bne 2b&bslash;n&bslash;t&quot;
+l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
+l_string|&quot;or %%g0, %4, %1&bslash;n&bslash;t&quot;
+l_string|&quot;b 1b&bslash;n&bslash;t&quot;
+l_string|&quot;add %0, 0x1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;or %%g0, %0, %5&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cs
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|ct
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|temp1
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|temp2
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|scratch
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|trick
+op_assign
+l_int|0
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|cs
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|ct
+)paren
+)paren
+suffix:semicolon
+r_return
+id|trick
+suffix:semicolon
+)brace
+DECL|function|strspn
+r_extern
+id|__inline__
+r_int
+id|strspn
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+comma
+r_const
+r_char
+op_star
+id|accept
+)paren
+(brace
+r_register
+r_char
+id|temp1
+comma
+id|temp2
+suffix:semicolon
+r_register
+r_char
+op_star
+id|scratch
+suffix:semicolon
+r_register
+r_int
+id|trick
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;or %%g0, %1, %4&bslash;n&bslash;t&quot;
+l_string|&quot;1: ldub [%0], %2&bslash;n&bslash;t&quot;
+l_string|&quot;2: ldub [%1], %3&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
+l_string|&quot;be 3f&bslash;n&bslash;t&quot;
+l_string|&quot;cmp %3, %2&quot;
+l_string|&quot;bne 2b&bslash;n&bslash;t&quot;
+l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
+l_string|&quot;add %0, 0x1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;b 1b&bslash;n&bslash;t&quot;
+l_string|&quot;add %5, 0x1, %5&bslash;n&bslash;t&quot;
+l_string|&quot;3: or %%g0, %0, %4&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|s
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|accept
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|temp1
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|temp2
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|scratch
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|trick
+op_assign
+l_int|0
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|s
+)paren
+)paren
+suffix:semicolon
+r_return
+id|trick
+suffix:semicolon
+)brace
+DECL|function|strtok
+r_extern
+id|__inline__
+r_char
+op_star
+id|strtok
+c_func
+(paren
+r_char
+op_star
+id|s
+comma
+r_const
+r_char
+op_star
+id|ct
+)paren
+(brace
+r_static
+r_char
+op_star
+id|old
+suffix:semicolon
+multiline_comment|/* frob this kludge for now */
+r_register
+r_char
+op_star
+id|tok
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
+op_eq
+(paren
+r_char
+op_star
+)paren
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|old
+op_eq
+(paren
+r_char
+op_star
+)paren
+l_int|0
+)paren
+(brace
+r_return
+(paren
+r_char
+op_star
+)paren
+l_int|0
+suffix:semicolon
+)brace
+r_else
+id|s
+op_assign
+id|old
+suffix:semicolon
+)brace
+id|s
+op_add_assign
+id|strspn
+c_func
+(paren
+id|s
+comma
+id|ct
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|s
+op_eq
+l_char|&squot;&bslash;0&squot;
+)paren
+(brace
+id|old
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0
+suffix:semicolon
+r_return
+(paren
+r_char
+op_star
+)paren
+l_int|0
+suffix:semicolon
+)brace
+id|tok
+op_assign
+id|s
+suffix:semicolon
+id|s
+op_assign
+id|strpbrk
+c_func
+(paren
+id|tok
+comma
+id|ct
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
+op_eq
+(paren
+r_char
+op_star
+)paren
+l_int|0
+)paren
+id|old
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0
+suffix:semicolon
+r_else
+(brace
+op_star
+id|s
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|old
+op_assign
+id|s
+op_plus
+l_int|1
+suffix:semicolon
+)brace
+r_return
+id|tok
+suffix:semicolon
+)brace
 DECL|function|memset
 r_extern
 id|__inline__

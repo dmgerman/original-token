@@ -2077,12 +2077,14 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Log I/O ports with kernel */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|port_base
 comma
 l_int|0x10
+comma
+l_string|&quot;fdomain&quot;
 )paren
 suffix:semicolon
 r_if

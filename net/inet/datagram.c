@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&n; *&t;Note:&n; *&t;&t;A lot of this will change when the protocol/socket separation&n; *&t;occurs. Using this will make things reasonably clean.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -47,7 +46,17 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+r_int
+r_int
+id|intflags
+suffix:semicolon
 multiline_comment|/* Socket is inuse - so the timer doesn&squot;t attack it */
+id|save_flags
+c_func
+(paren
+id|intflags
+)paren
+suffix:semicolon
 id|restart
 suffix:colon
 id|sk-&gt;inuse
@@ -211,10 +220,12 @@ op_complement
 id|current-&gt;blocked
 )paren
 (brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|intflags
 )paren
+suffix:semicolon
 suffix:semicolon
 op_star
 id|err
@@ -241,14 +252,15 @@ op_assign
 op_minus
 id|sk-&gt;err
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sk-&gt;err
 op_assign
 l_int|0
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|intflags
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
@@ -259,9 +271,10 @@ id|sk-&gt;inuse
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|intflags
 )paren
 suffix:semicolon
 )brace
@@ -332,9 +345,10 @@ id|skb-&gt;users
 op_increment
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|intflags
 )paren
 suffix:semicolon
 r_if

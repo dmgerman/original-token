@@ -1,7 +1,7 @@
 macro_line|#ifndef _SPARC_ASI_H
 DECL|macro|_SPARC_ASI_H
 mdefine_line|#define _SPARC_ASI_H
-multiline_comment|/* asi.h:  Address Space Indentifier values for the sparc.&n;&n;   Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n;*/
+multiline_comment|/* asi.h:  Address Space Identifier values for the sparc.&n;&n;   Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n;*/
 multiline_comment|/* These are sun4c, beware on other architectures. Although things should&n; * be similar under regular sun4&squot;s.&n; */
 DECL|macro|ASI_NULL1
 mdefine_line|#define ASI_NULL1        0x0

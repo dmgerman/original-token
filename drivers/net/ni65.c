@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * ni6510 (am7990 &squot;lance&squot; chip) driver for Linux-net-3 by MH&n; * Alphacode v0.33 (94/08/22) for 1.1.47 (or later)&n; *&n; * ----------------------------------------------------------&n; * WARNING: DOESN&squot;T WORK ON MACHINES WITH MORE THAN 16MB !!!!&n; * ----------------------------------------------------------&n; *&n; * copyright (c) 1994 M.Hipp&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers the Linux-kernel.&n; *&n; * comments/bugs/suggestions can be sent to:&n; *    Michael Hipp&n; *    email: mhipp@student.uni-tuebingen.de&n; *&n; * sources:&n; *  some things are from the &squot;ni6510-packet-driver for dos by Russ Nelson&squot;&n; *  and from the original drivers by D.Becker&n; */
 multiline_comment|/*&n; * Aug.22: changes in xmit_intr (ack more than one xmitted-packet), ni65_send_packet (p-&gt;lock) (MH)&n; *&n; * July.16: fixed bugs in recv_skb and skb-alloc stuff  (MH)&n; */
 multiline_comment|/*&n; * known BUGS: 16MB limit&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -21,8 +20,8 @@ multiline_comment|/************************************&n; * skeleton-stuff&n; *
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size)              0
-DECL|macro|snarf_region
-mdefine_line|#define snarf_region(ioaddr, size);             do ; while (0)
+DECL|macro|register_iomem
+mdefine_line|#define register_iomem(ioaddr, size,name);             do ; while (0)
 macro_line|#endif
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
@@ -818,12 +817,14 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* Grab the region so we can find another board if autoIRQ fails. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|NI65_TOTAL_SIZE
+comma
+l_string|&quot;ni65&quot;
 )paren
 suffix:semicolon
 id|p

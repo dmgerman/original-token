@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;hp-plus.c:v1.10 9/24/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;&t;&t;/* Important -- this inlines word moves. */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -670,12 +669,14 @@ l_int|12
 suffix:semicolon
 )brace
 multiline_comment|/* Grab the region so we can find another board if something fails. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|HP_IO_EXTENT
+comma
+l_string|&quot;hp-plus&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Read the IRQ line. */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;@(#)packet.c&t;1.0.6&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Added NULL&squot;s for socket options.&n; *&t;&t;Alan Cox&t;:&t;Re-commented the code.&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addressing&n; *&t;&t;Rob Janssen&t;:&t;Correct MTU usage.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;@(#)packet.c&t;1.0.6&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Added NULL&squot;s for socket options.&n; *&t;&t;Alan Cox&t;:&t;Re-commented the code.&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addressing&n; *&t;&t;Rob Janssen&t;:&t;Correct MTU usage.&n; *&t;&t;Dave Platt&t;:&t;Counter leaks caused by incorrect&n; *&t;&t;&t;&t;&t;interrupt locking and some slightly&n; *&t;&t;&t;&t;&t;dubious gcc output. Can you read&n; *&t;&t;&t;&t;&t;compiler: it said _VOLATILE_&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -72,6 +72,10 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;When we registered the protocol we saved the socket in the data&n;&t; *&t;field for just this event.&n;&t; */
 id|sk
 op_assign
@@ -91,11 +95,28 @@ id|skb-&gt;len
 op_add_assign
 id|dev-&gt;hard_header_len
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-id|sk
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Charge the memory to the socket. This is done specifically&n;&t; *&t;to prevent sockets using all the memory up.&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;rmem_alloc
+op_amp
+l_int|0xFF000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;packet_rcv: sk-&gt;rmem_alloc = %ld&bslash;n&quot;
+comma
+id|sk-&gt;rmem_alloc
+)paren
+suffix:semicolon
+id|sk-&gt;rmem_alloc
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -106,6 +127,7 @@ op_ge
 id|sk-&gt;rcvbuf
 )paren
 (brace
+multiline_comment|/*&t;        printk(&quot;packet_rcv: drop, %d+%d&gt;%d&bslash;n&quot;, sk-&gt;rmem_alloc, skb-&gt;mem_len, sk-&gt;rcvbuf); */
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -122,6 +144,21 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|skb-&gt;sk
+op_assign
+id|sk
+suffix:semicolon
 id|sk-&gt;rmem_alloc
 op_add_assign
 id|skb-&gt;mem_len
@@ -136,10 +173,28 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|wake_up_interruptible
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;dead
+)paren
+(brace
+id|sk
+op_member_access_from_pointer
+id|data_ready
 c_func
 (paren
-id|sk-&gt;sleep
+id|sk
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Processing complete.&n;&t; */
@@ -556,6 +611,10 @@ r_void
 op_star
 )paren
 id|sk
+suffix:semicolon
+id|p-&gt;dev
+op_assign
+l_int|NULL
 suffix:semicolon
 id|dev_add_pack
 c_func

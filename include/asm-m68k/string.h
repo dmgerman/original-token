@@ -63,7 +63,7 @@ suffix:semicolon
 DECL|function|strncpy
 r_extern
 r_inline
-r_void
+r_char
 op_star
 id|strncpy
 c_func
@@ -73,7 +73,7 @@ op_star
 id|dest
 comma
 r_const
-r_void
+r_char
 op_star
 id|src
 comma
@@ -98,10 +98,11 @@ r_return
 id|xdest
 suffix:semicolon
 id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;1:&bslash;tmoveb %1@+,%0@+&bslash;n&bslash;t&quot;
 l_string|&quot;beq 2f&bslash;n&bslash;t&quot;
-l_string|&quot;subql #1,%3&bslash;n&bslash;t&quot;
+l_string|&quot;subql #1,%2&bslash;n&bslash;t&quot;
 l_string|&quot;bne 1b&bslash;n&bslash;t&quot;
 l_string|&quot;2:&quot;
 suffix:colon
@@ -139,7 +140,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
-id|dest
+id|xdest
 suffix:semicolon
 )brace
 DECL|macro|__USE_PORTABLE_strcat

@@ -263,6 +263,13 @@ op_star
 id|s_sb_time
 suffix:semicolon
 multiline_comment|/* pointer to s_sbd-&gt;s_time */
+DECL|member|s_sb_state
+r_int
+r_int
+op_star
+id|s_sb_state
+suffix:semicolon
+multiline_comment|/* pointer to s_sbd-&gt;s_state */
 multiline_comment|/* We keep those superblock entities that don&squot;t change here;&n;&t;   this saves us an indirection and perhaps a conversion. */
 DECL|member|s_firstinodezone
 r_int
@@ -382,6 +389,8 @@ DECL|macro|sv_sb_total_free_blocks
 mdefine_line|#define sv_sb_total_free_blocks&t;&t;&t;u.sysv_sb.s_sb_total_free_blocks
 DECL|macro|sv_sb_time
 mdefine_line|#define sv_sb_time&t;&t;&t;&t;u.sysv_sb.s_sb_time
+DECL|macro|sv_sb_state
+mdefine_line|#define sv_sb_state&t;&t;&t;&t;u.sysv_sb.s_sb_state
 DECL|macro|sv_firstinodezone
 mdefine_line|#define sv_firstinodezone&t;&t;&t;u.sysv_sb.s_firstinodezone
 DECL|macro|sv_firstdatazone

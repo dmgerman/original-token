@@ -1,6 +1,15 @@
-multiline_comment|/*&n; *  linux/fs/nfs/inode.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  nfs inode and superblock handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/inode.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  nfs inode and superblock handling functions&n; *&n; *  Modularised by Alan Cox &lt;Alan.Cox@linux.org&gt;, while hacking some&n; *  experimental NFS changes. Modularisation taken straight from SYS5 fs.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -157,6 +166,8 @@ c_func
 (paren
 id|sb
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The way this works is that the mount process passes a structure&n; * in the data argument which contains an open socket to the NFS&n; * server and the root file handle obtained from the server&squot;s mount&n; * daemon.  We stash theses away in the private superblock fields.&n; * Later we can add other mount parameters like caching values.&n; */
@@ -511,6 +522,8 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 id|sb
 suffix:semicolon
@@ -1048,4 +1061,87 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Every kernel module contains stuff like this. */
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|nfs_fs_type
+r_static
+r_struct
+id|file_system_type
+id|nfs_fs_type
+op_assign
+(brace
+id|nfs_read_super
+comma
+l_string|&quot;nfs&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|nfs_fs_type
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;NFS cannot be removed, currently in use&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|nfs_fs_type
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

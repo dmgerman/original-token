@@ -2321,12 +2321,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|base
 comma
 l_int|0x5c
+comma
+l_string|&quot;aha1740&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Reserve the space that we need to use */

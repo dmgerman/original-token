@@ -68,6 +68,10 @@ id|socket_state
 suffix:semicolon
 DECL|macro|SO_ACCEPTCON
 mdefine_line|#define SO_ACCEPTCON&t;(1&lt;&lt;16)&t;&t;/* performed a listen&t;&t;*/
+DECL|macro|SO_WAITDATA
+mdefine_line|#define SO_WAITDATA&t;(1&lt;&lt;17)&t;&t;/* wait data to read&t;&t;*/
+DECL|macro|SO_NOSPACE
+mdefine_line|#define SO_NOSPACE&t;(1&lt;&lt;18)&t;&t;/* no space to write&t;&t;*/
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Internal representation of a socket. not all the fields are used by&n; * all configurations:&n; *&n; *&t;&t;server&t;&t;&t;client&n; * conn&t;&t;client connected to&t;server connected to&n; * iconn&t;list of clients&t;&t;-unused-&n; *&t;&t; awaiting connections&n; * wait&t;&t;sleep for clients,&t;sleep for connection,&n; *&t;&t;sleep for i/o&t;&t;sleep for i/o&n; */
 DECL|struct|socket
@@ -667,6 +671,9 @@ r_struct
 id|socket
 op_star
 id|servsock
+comma
+r_int
+id|flags
 )paren
 suffix:semicolon
 r_extern
@@ -678,6 +685,9 @@ r_struct
 id|socket
 op_star
 id|sock
+comma
+r_int
+id|how
 )paren
 suffix:semicolon
 r_extern

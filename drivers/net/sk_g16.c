@@ -8,7 +8,6 @@ op_assign
 l_string|&quot;$Id: sk_g16.c,v 1.1 1994/06/30 16:25:15 root Exp $&quot;
 suffix:semicolon
 multiline_comment|/*&n; * The Schneider &amp; Koch (SK) G16 Network device driver is based&n; * on the &squot;ni6510&squot; driver from Michael Hipp which can be found at&n; * ftp://sunsite.unc.edu/pub/Linux/system/Network/drivers/nidrivers.tar.gz&n; * &n; * Sources: 1) ni6510.c by M. Hipp&n; *          2) depca.c  by D.C. Davies&n; *          3) skeleton.c by D. Becker&n; *          4) Am7990 Local Area Network Controller for Ethernet (LANCE),&n; *             AMD, Pub. #05698, June 1989&n; *&n; * Many Thanks for helping me to get things working to: &n; *                 &n; *                 A. Cox (A.Cox@swansea.ac.uk)&n; *                 M. Hipp (mhipp@student.uni-tuebingen.de)&n; *                 R. Bolz (Schneider &amp; Koch, Germany)&n; *&n; * See README.sk_g16 for details about limitations and bugs for the&n; * current version.&n; *&n; * To Do: &n; *        - Support of SK_G8 and other SK Network Cards.&n; *        - Autoset memory mapped RAM. Check for free memory and then&n; *          configure RAM correctly. &n; *        - SK_close should really set card in to initial state.&n; *        - Test if IRQ 3 is not switched off. Use autoirq() functionality.&n; *          (as in /drivers/net/skeleton.c)&n; *        - Implement Multicast addressing. At minimum something like&n; *          in depca.c. &n; *        - Redo the statistics part.&n; *        - Try to find out if the board is in 8 Bit or 16 Bit slot.&n; *          If in 8 Bit mode don&squot;t use IRQ 11.&n; *        - (Try to make it slightly faster.) &n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -163,8 +162,8 @@ multiline_comment|/* &n; * Portreserve is there to mark the Card I/O Port region
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size)              0
-DECL|macro|snarf_region
-mdefine_line|#define snarf_region(ioaddr, size);             do ; while (0)
+DECL|macro|register_iomem
+mdefine_line|#define register_iomem(ioaddr, size,name);             do ; while (0)
 macro_line|#endif
 multiline_comment|/* &n; * SK_DEBUG&n; *&n; * Here you can choose what level of debugging wanted.&n; *&n; * If SK_DEBUG and SK_DEBUG2 are undefined, then only the&n; *  necessary messages will be printed.&n; *&n; * If SK_DEBUG is defined, there will be many debugging prints&n; *  which can help to find some mistakes in configuration or even&n; *  in the driver code.&n; *&n; * If SK_DEBUG2 is defined, many many messages will be printed &n; *  which normally you don&squot;t need. I used this to check the interrupt&n; *  routine. &n; *&n; * (If you define only SK_DEBUG2 then only the messages for &n; *  checking interrupts will be printed!)&n; *&n; * Normal way of live is: &n; *&n; * For the whole thing get going let both symbolic constants&n; * undefined. If you face any problems and you know what&squot;s going&n; * on (you know something about the card and you can interpret some&n; * hex LANCE register output) then define SK_DEBUG&n; * &n; */
 DECL|macro|SK_DEBUG
@@ -1390,12 +1389,14 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Grab the I/O Port region */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|ETHERCARD_TOTAL_SIZE
+comma
+l_string|&quot;sk_g16&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize device structure */

@@ -125,6 +125,7 @@ DECL|macro|IP_ACCT_ZERO
 mdefine_line|#define IP_ACCT_ZERO  (IP_FW_BASE_CTL+13)
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_IP_FIREWALL
 r_extern
 r_struct

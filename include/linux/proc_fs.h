@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_PROC_FS_H
 DECL|macro|_LINUX_PROC_FS_H
 mdefine_line|#define _LINUX_PROC_FS_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * The proc filesystem constants/structures&n; */
 DECL|enum|root_directory_inos
 r_enum

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify Area&n; *&t;&t;NET2E Team&t;:&t;Page fault locks&n; *&t;Dmitry Gorodchanin&t;:&t;/proc locking&n; *&n; * To Do:&n; *&t;Some nice person is looking into Unix sockets done properly. NET3&n; *&t;will replace all of this and include datagram sockets and socket&n; *&t;options - so please stop asking me for them 8-)&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1834,6 +1833,8 @@ c_func
 id|sock
 comma
 id|serv_upd-&gt;socket
+comma
+id|flags
 )paren
 )paren
 OL
@@ -1991,11 +1992,20 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+id|sock-&gt;flags
+op_or_assign
+id|SO_WAITDATA
+suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren
 id|sock-&gt;wait
 )paren
+suffix:semicolon
+id|sock-&gt;flags
+op_and_assign
+op_complement
+id|SO_WAITDATA
 suffix:semicolon
 r_if
 c_cond
@@ -2097,6 +2107,14 @@ id|wake_up_interruptible
 c_func
 (paren
 id|clientsock-&gt;wait
+)paren
+suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|clientsock
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -2298,11 +2316,20 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+id|sock-&gt;flags
+op_or_assign
+id|SO_WAITDATA
+suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren
 id|sock-&gt;wait
 )paren
+suffix:semicolon
+id|sock-&gt;flags
+op_and_assign
+op_complement
+id|SO_WAITDATA
 suffix:semicolon
 r_if
 c_cond
@@ -2435,12 +2462,22 @@ id|sock-&gt;state
 op_eq
 id|SS_CONNECTED
 )paren
+(brace
 id|wake_up_interruptible
 c_func
 (paren
 id|sock-&gt;conn-&gt;wait
 )paren
 suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|sock-&gt;conn
+comma
+l_int|2
+)paren
+suffix:semicolon
+)brace
 id|avail
 op_assign
 id|UN_BUF_AVAIL
@@ -2581,6 +2618,10 @@ id|pupd
 )paren
 )paren
 (brace
+id|sock-&gt;flags
+op_or_assign
+id|SO_NOSPACE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2589,6 +2630,11 @@ id|nonblock
 r_return
 op_minus
 id|EAGAIN
+suffix:semicolon
+id|sock-&gt;flags
+op_and_assign
+op_complement
+id|SO_NOSPACE
 suffix:semicolon
 id|interruptible_sleep_on
 c_func
@@ -2780,12 +2826,22 @@ id|sock-&gt;state
 op_eq
 id|SS_CONNECTED
 )paren
+(brace
 id|wake_up_interruptible
 c_func
 (paren
 id|sock-&gt;conn-&gt;wait
 )paren
 suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|sock-&gt;conn
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
 id|space
 op_assign
 id|UN_BUF_SPACE

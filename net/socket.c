@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
+multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support (cribbed from the&n; *&t;&t;&t;&t;&t;tty drivers).&n; *&t;&t;Niibe Yutaka&t;:&t;Asynchronous I/O for writes (4.4BSD style)&n; *&t;&t;Jeff Uphoff&t;:&t;Made max number of sockets command-line configurable.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -221,15 +221,15 @@ multiline_comment|/* no fsync */
 id|sock_fasync
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;The list of sockets - make this atomic.&n; */
+multiline_comment|/*&n; *&t;The list of sockets -- allocated in sock_init().&n; */
 DECL|variable|sockets
 r_static
 r_struct
 id|socket
+op_star
 id|sockets
-(braket
-id|NSOCKETS
-)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *&t;Used to wait for a socket.&n; */
 DECL|variable|socket_wait_free
@@ -252,8 +252,47 @@ id|pops
 id|NPROTO
 )braket
 suffix:semicolon
+multiline_comment|/*      &n; *&t;Maximum number of sockets -- override-able on command-line.&n; */
+DECL|variable|nsockets
+r_static
+r_int
+id|nsockets
+op_assign
+id|NSOCKETS
+suffix:semicolon
 DECL|macro|last_socket
-mdefine_line|#define last_socket&t;(sockets + NSOCKETS - 1)
+mdefine_line|#define last_socket&t;(sockets + nsockets - 1)
+multiline_comment|/*      &n; *&t;Overrides default max number of sockets if supplied on command-line.&n; */
+DECL|function|sock_setup
+r_void
+id|sock_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+id|nsockets
+op_assign
+id|ints
+(braket
+l_int|0
+)braket
+ques
+c_cond
+id|ints
+(braket
+l_int|1
+)braket
+suffix:colon
+id|NSOCKETS
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Support routines. Move socket addresses back and forth across the kernel/user&n; *&t;divide and look after the messy bits.&n; */
 DECL|macro|MAX_SOCK_ADDR
 mdefine_line|#define MAX_SOCK_ADDR&t;128&t;&t;/* 108 for Unix domain - 16 for IP, 16 for IPX, about 80 for AX.25 */
@@ -1019,6 +1058,14 @@ id|wake_up_interruptible
 c_func
 (paren
 id|peer-&gt;wait
+)paren
+suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|peer
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1957,6 +2004,9 @@ r_struct
 id|socket
 op_star
 id|sock
+comma
+r_int
+id|how
 )paren
 (brace
 r_if
@@ -1972,6 +2022,15 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|how
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
 id|kill_fasync
 c_func
 (paren
@@ -1980,6 +2039,59 @@ comma
 id|SIGIO
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sock-&gt;flags
+op_amp
+id|SO_WAITDATA
+)paren
+)paren
+id|kill_fasync
+c_func
+(paren
+id|sock-&gt;fasync_list
+comma
+id|SIGIO
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+r_if
+c_cond
+(paren
+id|sock-&gt;flags
+op_amp
+id|SO_NOSPACE
+)paren
+(brace
+id|kill_fasync
+c_func
+(paren
+id|sock-&gt;fasync_list
+comma
+id|SIGIO
+)paren
+suffix:semicolon
+id|sock-&gt;flags
+op_and_assign
+op_complement
+id|SO_NOSPACE
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1999,6 +2111,9 @@ r_struct
 id|socket
 op_star
 id|servsock
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -2083,6 +2198,14 @@ c_func
 id|servsock-&gt;wait
 )paren
 suffix:semicolon
+id|sock_wake_async
+c_func
+(paren
+id|servsock
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2091,6 +2214,17 @@ op_ne
 id|SS_CONNECTED
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|O_NONBLOCK
+)paren
+r_return
+op_minus
+id|EINPROGRESS
+suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren
@@ -3339,20 +3473,7 @@ id|SS_CONNECTING
 suffix:colon
 multiline_comment|/* Not yet connected... we will check this. */
 multiline_comment|/*&n;&t;&t;&t; *&t;FIXME:  for all protocols what happens if you start&n;&t;&t;&t; *&t;an async connect fork and both children connect. Clean&n;&t;&t;&t; *&t;this up in the protocols!&n;&t;&t;&t; */
-r_return
-id|sock-&gt;ops
-op_member_access_from_pointer
-id|connect
-c_func
-(paren
-id|sock
-comma
-id|uservaddr
-comma
-id|addrlen
-comma
-id|file-&gt;f_flags
-)paren
+r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -6077,7 +6198,37 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society NET3.017&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society NET3.019&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The list of sockets.&n;&t; */
+id|sockets
+op_assign
+(paren
+r_struct
+id|socket
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|socket
+)paren
+op_star
+id|nsockets
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Allocated %d sockets.&bslash;n&quot;
+comma
+id|nsockets
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Release all sockets. &n;&t; */

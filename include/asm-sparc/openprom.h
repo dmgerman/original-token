@@ -9,7 +9,7 @@ DECL|macro|LINUX_OPPROM_ENDVM
 mdefine_line|#define&t;LINUX_OPPROM_ENDVM&t;0xfff00000
 DECL|macro|LINUX_OPPROM_MAGIC
 mdefine_line|#define&t;LINUX_OPPROM_MAGIC      0x10010407
-multiline_comment|/* The device functions structure for the v0 prom. Nice and neat, open,&n;   close, read &amp; write divied up between net + block + char devices. We&n;   also have a seek routine only usable for block devices. The divide&n;   and conquer strategy of this struct becomes unnecessary for v2.&n;&n;   V0 device names are limited to two characters, &squot;sd&squot; for scsi-disk,&n;   &squot;le&squot; for local-ethernet, etc. Note that it is technically possible&n;   to boot a kernel off of a tape drive and use the tape as the root&n;   partition! In order to do this you have to have &squot;magic&squot; formatted&n;   tapes from Sun supposedly :-)&n;*/
+multiline_comment|/* The device functions structure for the v0 prom. Nice and neat, open,&n;   close, read &amp; write divvied up between net + block + char devices. We&n;   also have a seek routine only usable for block devices. The divide&n;   and conquer strategy of this struct becomes unnecessary for v2.&n;&n;   V0 device names are limited to two characters, &squot;sd&squot; for scsi-disk,&n;   &squot;le&squot; for local-ethernet, etc. Note that it is technically possible&n;   to boot a kernel off of a tape drive and use the tape as the root&n;   partition! In order to do this you have to have &squot;magic&squot; formatted&n;   tapes from Sun supposedly :-)&n;*/
 DECL|struct|linux_dev_v0_funcs
 r_struct
 id|linux_dev_v0_funcs
@@ -176,7 +176,7 @@ id|from
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* The OpenBoot Prom device operations for version-2 interfaces are both&n;   good and bad. They now allow you to address ANY device whatsoever&n;   that is in the machine via these funny &quot;device paths&quot;. They look like&n;   this:&n;&n;     &quot;/sbus/esp@0,0xf004002c/sd@3,1&quot;&n;&n;   You can basically reference any device on the machine this way, and&n;   you pass this string to the v2 dev_ops. Producing these strings all&n;   the time can be a pain in the rear after a while. Why v2 has memory&n;   allocations in here are beyond me. Perhaps they figure that if you&n;   are going to use only the prom&squot;s device drivers then your memory&n;   management is either non-existant or pretty sad. :-)&n;*/
+multiline_comment|/* The OpenBoot Prom device operations for version-2 interfaces are both&n;   good and bad. They now allow you to address ANY device whatsoever&n;   that is in the machine via these funny &quot;device paths&quot;. They look like&n;   this:&n;&n;     &quot;/sbus/esp@0,0xf004002c/sd@3,1&quot;&n;&n;   You can basically reference any device on the machine this way, and&n;   you pass this string to the v2 dev_ops. Producing these strings all&n;   the time can be a pain in the rear after a while. Why v2 has memory&n;   allocations in here are beyond me. Perhaps they figure that if you&n;   are going to use only the prom&squot;s device drivers then your memory&n;   management is either non-existent or pretty sad. :-)&n;*/
 DECL|struct|linux_dev_v2_funcs
 r_struct
 id|linux_dev_v2_funcs
@@ -225,7 +225,7 @@ r_int
 id|sz
 )paren
 suffix:semicolon
-multiline_comment|/* &quot;dumb&quot; mmap() munmap(), copy on write? whats that? */
+multiline_comment|/* &quot;dumb&quot; mmap() munmap(), copy on write? what&squot;s that? */
 DECL|member|v2_dumb_mmap
 r_char
 op_star
@@ -416,7 +416,7 @@ suffix:semicolon
 multiline_comment|/* what phys. is left over */
 )brace
 suffix:semicolon
-multiline_comment|/* Arguements sent to the kernel from the boot prompt. */
+multiline_comment|/* Arguments sent to the kernel from the boot prompt. */
 DECL|struct|linux_arguments_v0
 r_struct
 id|linux_arguments_v0
@@ -537,7 +537,7 @@ r_int
 r_int
 id|pv_printrev
 suffix:semicolon
-multiline_comment|/* printrevision */
+multiline_comment|/* print revision */
 multiline_comment|/* Version 0 memory descriptors (see below). */
 DECL|member|pv_v0mem
 r_struct
@@ -815,7 +815,7 @@ r_int
 id|pmeg
 )paren
 suffix:semicolon
-multiline_comment|/* Prov version 3 Multiprocessor routines. This stuff is crazy.&n;&t; * No joke. Calling these when there is only one cpu probably&n;&t; * crashes the machine, have to test this. :-)&n;         */
+multiline_comment|/* Prom version 3 Multiprocessor routines. This stuff is crazy.&n;&t; * No joke. Calling these when there is only one cpu probably&n;&t; * crashes the machine, have to test this. :-)&n;         */
 multiline_comment|/* v3_cpustart() will start the cpu &squot;whichcpu&squot; in mmu-context&n;&t; * &squot;thiscontext&squot; executing at address &squot;prog_counter&squot;&n;&t; *&n;&t; * XXX Have to figure out what &squot;cancontext&squot; means.&n;         */
 DECL|member|v3_cpustart
 r_int
@@ -839,7 +839,7 @@ op_star
 id|prog_counter
 )paren
 suffix:semicolon
-multiline_comment|/* v3_cpustop() will cause cpu &squot;whichcpu&squot; to stop executint&n;&t; * until a resume cpu call is made.&n;&t; */
+multiline_comment|/* v3_cpustop() will cause cpu &squot;whichcpu&squot; to stop executing&n;&t; * until a resume cpu call is made.&n;&t; */
 DECL|member|v3_cpustop
 r_int
 (paren

@@ -5,6 +5,7 @@ mdefine_line|#define _LINUX_SKBUFF_H
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|CONFIG_SKB_CHECK
 macro_line|#undef CONFIG_SKB_CHECK
 DECL|macro|HAVE_ALLOC_SKB

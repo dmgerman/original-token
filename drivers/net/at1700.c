@@ -671,12 +671,14 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Grab the region so that we can find another board if the IRQ request&n;&t;   fails. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|AT1700_IO_EXTENT
+comma
+l_string|&quot;at1700&quot;
 )paren
 suffix:semicolon
 id|printk

@@ -6,7 +6,7 @@ macro_line|#include &lt;asm/asi.h&gt;        /* for get/set segmap/pte routines 
 macro_line|#include &lt;asm/contregs.h&gt;   /* for switch_to_context */
 multiline_comment|/* The current va context is global and known, so all that is needed to&n; * do an invalidate is flush the VAC.&n; */
 DECL|macro|invalidate
-mdefine_line|#define invalidate() flush_vac_context()  /* how conveeeiiiiinnnent :&gt; */
+mdefine_line|#define invalidate() flush_vac_context()  /* how conveeeiiiiinnnient :&gt; */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT   12             /* This is the virtual page... */
 DECL|macro|PGDIR_SHIFT

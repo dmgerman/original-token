@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.8.2&t;11/29/94&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; *&t;&t;Alan Cox&t;:&t;Now uses hardware type as per FvK.&n; *&t;&t;Alan Cox&t;:&t;Default to 192.168.0.0 (RFC 1597)&n; *&t;&t;A.N.Kuznetsov&t;:&t;dev_tint() recursion fix.&n; *&t;Dmitry Gorodchanin&t;:&t;SLIP memory leaks&n; *      Dmitry Gorodchanin      :       Code cleanup. Reduce tty driver&n; *                                      buffering from 4096 to 256 bytes.&n; *                                      Improving SLIP response time.&n; *                                      CONFIG_SLIP_MODE_SLIP6.&n; *                                      ifconfig sl? up &amp; down now works correctly.&n; *&t;&t;&t;&t;&t;Modularization.&n; *              Alan Cox        :       Oops - fix AX.25 buffer lengths&n; *&n; *&n; *&n; *&t;FIXME:&t;This driver still makes some IP&squot;ish assumptions. It should build cleanly KISS TNC only without&n; *&t;CONFIG_INET defined.&n; *      I hope now it is fixed ;)&n; */
+multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.8.3&t;12/24/94&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; *&t;&t;Alan Cox&t;:&t;Now uses hardware type as per FvK.&n; *&t;&t;Alan Cox&t;:&t;Default to 192.168.0.0 (RFC 1597)&n; *&t;&t;A.N.Kuznetsov&t;:&t;dev_tint() recursion fix.&n; *&t;Dmitry Gorodchanin&t;:&t;SLIP memory leaks&n; *      Dmitry Gorodchanin      :       Code cleanup. Reduce tty driver&n; *                                      buffering from 4096 to 256 bytes.&n; *                                      Improving SLIP response time.&n; *                                      CONFIG_SLIP_MODE_SLIP6.&n; *                                      ifconfig sl? up &amp; down now works correctly.&n; *&t;&t;&t;&t;&t;Modularization.&n; *              Alan Cox        :       Oops - fix AX.25 buffer lengths&n; *      Dmitry Gorodchanin      :       Even more cleanups. Preserve CSLIP&n; *                                      statistics. Include CSLIP code only&n; *                                      if it really needed.&n; *&n; *&n; *&n; *&t;FIXME:&t;This driver still makes some IP&squot;ish assumptions. It should build cleanly KISS TNC only without&n; *&t;CONFIG_INET defined.&n; *      I hope now it is fixed ;)&n; */
 DECL|macro|SL_CHECK_TRANSMIT
 mdefine_line|#define SL_CHECK_TRANSMIT
 macro_line|#include &lt;linux/config.h&gt;
@@ -7,6 +7,7 @@ multiline_comment|/* I think following lines must be in the &lt;linux/config.h&g
 DECL|macro|CONFIG_SLIP_COMPRESSED
 mdefine_line|#define CONFIG_SLIP_COMPRESSED
 macro_line|#endif
+multiline_comment|/* Undef this, if you don&squot;t need 6bit encapsulation code in the driver */
 DECL|macro|CONFIG_SLIP_MODE_SLIP6
 mdefine_line|#define CONFIG_SLIP_MODE_SLIP6
 macro_line|#include &lt;asm/system.h&gt;
@@ -37,10 +38,10 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|macro|SLIP_VERSION
-mdefine_line|#define SLIP_VERSION    &quot;0.8.1-NET3.014-NEWTTY-MODULAR&quot;
+mdefine_line|#define SLIP_VERSION    &quot;0.8.3-NET3.019-NEWTTY-MODULAR&quot;
 macro_line|#else
 DECL|macro|SLIP_VERSION
-mdefine_line|#define&t;SLIP_VERSION&t;&quot;0.8.1-NET3.014-NEWTTY&quot;
+mdefine_line|#define&t;SLIP_VERSION&t;&quot;0.8.3-NET3.019-NEWTTY&quot;
 macro_line|#endif
 DECL|variable|sl_ctrl
 r_static
@@ -134,71 +135,6 @@ id|c
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Initialize a SLIP control block for use. */
-r_static
-r_void
-DECL|function|sl_initialize
-id|sl_initialize
-c_func
-(paren
-r_struct
-id|slip
-op_star
-id|sl
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-id|memset
-c_func
-(paren
-id|sl
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|slip
-)paren
-)paren
-suffix:semicolon
-id|sl-&gt;magic
-op_assign
-id|SLIP_MAGIC
-suffix:semicolon
-id|sl-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|sl-&gt;mode
-op_assign
-id|SL_MODE_DEFAULT
-suffix:semicolon
-id|dev-&gt;type
-op_assign
-id|ARPHRD_SLIP
-op_plus
-id|sl-&gt;mode
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;type
-op_eq
-l_int|260
-)paren
-(brace
-multiline_comment|/* KISS */
-id|dev-&gt;type
-op_assign
-id|ARPHRD_AX25
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/* Find a free SLIP channel, and link in this `tty&squot; line. */
 r_static
 r_inline
@@ -338,7 +274,7 @@ comma
 op_star
 id|orbuff
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 r_int
 r_char
 op_star
@@ -411,7 +347,7 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 id|cbuff
 op_assign
 (paren
@@ -429,7 +365,7 @@ id|GFP_ATOMIC
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 r_if
 c_cond
 (paren
@@ -502,7 +438,7 @@ id|rbuff
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 r_if
 c_cond
 (paren
@@ -549,7 +485,7 @@ id|sl-&gt;rbuff
 op_assign
 id|rbuff
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 id|ocbuff
 op_assign
 id|sl-&gt;cbuff
@@ -697,7 +633,7 @@ id|orbuff
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 r_if
 c_cond
 (paren
@@ -823,7 +759,7 @@ id|count
 op_assign
 id|sl-&gt;rcount
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 r_if
 c_cond
 (paren
@@ -944,6 +880,11 @@ id|sl-&gt;mode
 op_or_assign
 id|SL_MODE_CSLIP
 suffix:semicolon
+id|sl-&gt;mode
+op_and_assign
+op_complement
+id|SL_MODE_ADAPTIVE
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -981,7 +922,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif  /* CONFIG INET */
+macro_line|#endif  /* SL_INCLUDE_CSLIP */
 id|skb
 op_assign
 id|alloc_skb
@@ -1139,7 +1080,7 @@ id|p
 op_assign
 id|icp
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 r_if
 c_cond
 (paren
@@ -1783,7 +1724,7 @@ l_int|NULL
 (brace
 r_return
 op_minus
-id|ENXIO
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Allocate the SLIP frame buffers:&n;&t; *&n;&t; * rbuff&t;Receive buffer.&n;&t; * xbuff&t;Transmit buffer.&n;&t; * cbuff        Temporary compression buffer.&n;&t; */
@@ -1869,7 +1810,7 @@ r_goto
 id|noxbuff
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 id|sl-&gt;cbuff
 op_assign
 (paren
@@ -1966,10 +1907,6 @@ id|SLF_INUSE
 )paren
 suffix:semicolon
 multiline_comment|/* Clear ESCAPE &amp; ERROR flags */
-id|sl-&gt;mode
-op_assign
-id|SL_MODE_DEFAULT
-suffix:semicolon
 multiline_comment|/* Needed because address &squot;0&squot; is special */
 r_if
 c_cond
@@ -1992,10 +1929,7 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;flags
-op_or_assign
-id|IFF_UP
-suffix:semicolon
+multiline_comment|/*&t;dev-&gt;flags |= IFF_UP; */
 id|dev-&gt;start
 op_assign
 l_int|1
@@ -2004,7 +1938,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Cleanup */
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 id|noslcomp
 suffix:colon
 id|kfree
@@ -2087,39 +2021,84 @@ id|dev-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
-id|dev-&gt;flags
-op_and_assign
-op_complement
-id|IFF_UP
+id|dev-&gt;start
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/*&t;dev-&gt;flags &amp;= ~IFF_UP; */
 multiline_comment|/* Free all SLIP frame buffers. */
+r_if
+c_cond
+(paren
+id|sl-&gt;rbuff
+)paren
+(brace
 id|kfree
 c_func
 (paren
 id|sl-&gt;rbuff
 )paren
 suffix:semicolon
+)brace
 id|sl-&gt;rbuff
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sl-&gt;xbuff
+)paren
+(brace
 id|kfree
 c_func
 (paren
 id|sl-&gt;xbuff
 )paren
 suffix:semicolon
+)brace
 id|sl-&gt;xbuff
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
+multiline_comment|/* Save CSLIP statistics */
+r_if
+c_cond
+(paren
+id|sl-&gt;slcomp
+)paren
+(brace
+id|sl-&gt;rx_compressed
+op_add_assign
+id|sl-&gt;slcomp-&gt;sls_i_compressed
+suffix:semicolon
+id|sl-&gt;rx_dropped
+op_add_assign
+id|sl-&gt;slcomp-&gt;sls_i_tossed
+suffix:semicolon
+id|sl-&gt;tx_compressed
+op_add_assign
+id|sl-&gt;slcomp-&gt;sls_o_compressed
+suffix:semicolon
+id|sl-&gt;tx_misses
+op_add_assign
+id|sl-&gt;slcomp-&gt;sls_o_misses
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sl-&gt;cbuff
+)paren
+(brace
 id|kfree
 c_func
 (paren
 id|sl-&gt;cbuff
 )paren
 suffix:semicolon
+)brace
 id|sl-&gt;cbuff
 op_assign
 l_int|NULL
@@ -2135,10 +2114,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2340,6 +2315,9 @@ op_star
 )paren
 id|tty-&gt;disc_data
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 multiline_comment|/* First make sure we&squot;re not already connected. */
 r_if
 c_cond
@@ -2415,16 +2393,52 @@ id|tty
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Perform the low-level SLIP initialization. */
+multiline_comment|/* Restore default settings */
+id|sl-&gt;mode
+op_assign
+id|SL_MODE_DEFAULT
+suffix:semicolon
+id|sl-&gt;dev-&gt;type
+op_assign
+id|ARPHRD_SLIP
+op_plus
+id|sl-&gt;mode
+suffix:semicolon
+macro_line|#ifdef CONFIG_AX25&t;
+r_if
+c_cond
 (paren
-r_void
+id|sl-&gt;dev-&gt;type
+op_eq
+l_int|260
 )paren
+(brace
+multiline_comment|/* KISS */
+id|sl-&gt;dev-&gt;type
+op_assign
+id|ARPHRD_AX25
+suffix:semicolon
+)brace
+macro_line|#endif&t;
+multiline_comment|/* Perform the low-level SLIP initialization. */
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
 id|sl_open
 c_func
 (paren
 id|sl-&gt;dev
 )paren
+)paren
+)paren
+(brace
+r_return
+id|err
 suffix:semicolon
+)brace
 macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -2532,24 +2546,13 @@ id|sl_ctrl
 id|dev-&gt;base_addr
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
 r_struct
 id|slcompress
 op_star
 id|comp
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sl
-)paren
-(brace
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -2593,7 +2596,19 @@ id|stats.rx_over_errors
 op_assign
 id|sl-&gt;rx_over_errors
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef SL_INCLUDE_CSLIP
+id|stats.rx_fifo_errors
+op_assign
+id|sl-&gt;rx_compressed
+suffix:semicolon
+id|stats.tx_fifo_errors
+op_assign
+id|sl-&gt;tx_compressed
+suffix:semicolon
+id|stats.collisions
+op_assign
+id|sl-&gt;tx_misses
+suffix:semicolon
 id|comp
 op_assign
 id|sl-&gt;slcomp
@@ -2605,7 +2620,7 @@ id|comp
 )paren
 (brace
 id|stats.rx_fifo_errors
-op_assign
+op_add_assign
 id|comp-&gt;sls_i_compressed
 suffix:semicolon
 id|stats.rx_dropped
@@ -2613,11 +2628,11 @@ op_add_assign
 id|comp-&gt;sls_i_tossed
 suffix:semicolon
 id|stats.tx_fifo_errors
-op_assign
+op_add_assign
 id|comp-&gt;sls_o_compressed
 suffix:semicolon
 id|stats.collisions
-op_assign
+op_add_assign
 id|comp-&gt;sls_o_misses
 suffix:semicolon
 )brace
@@ -3544,18 +3559,50 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_INET
+macro_line|#ifndef SL_INCLUDE_CSLIP
 r_if
 c_cond
 (paren
 id|tmp
 op_amp
+(paren
 id|SL_MODE_CSLIP
+op_or
+id|SL_MODE_ADAPTIVE
+)paren
 )paren
 (brace
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+macro_line|#else
+r_if
+c_cond
+(paren
+(paren
+id|tmp
+op_amp
+(paren
+id|SL_MODE_ADAPTIVE
+op_or
+id|SL_MODE_CSLIP
+)paren
+)paren
+op_eq
+(paren
+id|SL_MODE_ADAPTIVE
+op_or
+id|SL_MODE_CSLIP
+)paren
+)paren
+(brace
+multiline_comment|/* return -EINVAL; */
+id|tmp
+op_and_assign
+op_complement
+id|SL_MODE_ADAPTIVE
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -3631,6 +3678,7 @@ id|ARPHRD_SLIP
 op_plus
 id|sl-&gt;mode
 suffix:semicolon
+macro_line|#ifdef CONFIG_AX25&t;&t;
 r_if
 c_cond
 (paren
@@ -3644,6 +3692,7 @@ op_assign
 id|ARPHRD_AX25
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;
 r_return
 l_int|0
 suffix:semicolon
@@ -3830,7 +3879,7 @@ l_string|&quot;&quot;
 macro_line|#endif
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_INET) &amp;&amp; !defined(MODULE)
+macro_line|#if defined(SL_INCLUDE_CSLIP) &amp;&amp; !defined(MODULE)
 id|printk
 c_func
 (paren
@@ -3956,13 +4005,27 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Set up the &quot;SLIP Control Block&quot;. (And clear statistics) */
-id|sl_initialize
+id|memset
 c_func
 (paren
 id|sl
 comma
-id|dev
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|slip
 )paren
+)paren
+suffix:semicolon
+id|sl-&gt;magic
+op_assign
+id|SLIP_MAGIC
+suffix:semicolon
+id|sl-&gt;dev
+op_assign
+id|dev
 suffix:semicolon
 multiline_comment|/* Finish setting up the DEVICE info. */
 id|dev-&gt;mtu
@@ -4011,9 +4074,24 @@ l_int|0
 suffix:semicolon
 id|dev-&gt;type
 op_assign
-l_int|0
+id|ARPHRD_SLIP
+op_plus
+id|SL_MODE_DEFAULT
 suffix:semicolon
 macro_line|#ifdef CONFIG_AX25
+r_if
+c_cond
+(paren
+id|sl-&gt;dev-&gt;type
+op_eq
+l_int|260
+)paren
+(brace
+id|sl-&gt;dev-&gt;type
+op_assign
+id|ARPHRD_AX25
+suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren

@@ -7,6 +7,6 @@ mdefine_line|#define SENABLE_DVMA   0x20   /* enable dvma transfers */
 DECL|macro|SENABLE_CACHE
 mdefine_line|#define SENABLE_CACHE  0x10   /* enable VAC cache */
 DECL|macro|SENABLE_RESET
-mdefine_line|#define SENABLE_RESET  0x04   /* reset the whole mache, danger Will Robinson */
+mdefine_line|#define SENABLE_RESET  0x04   /* reset the whole machine, danger Will Robinson */
 macro_line|#endif /* _SPARC_SYSEN_H */
 eof

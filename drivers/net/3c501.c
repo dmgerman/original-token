@@ -1,5 +1,5 @@
 multiline_comment|/* 3c501.c: A 3Com 3c501 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
+multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;       &n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Some notes on this thing if you have to hack it.  [Alan]&n;    &n;    1]&t;Some documentation is available from 3Com. Due to the boards age&n;    &t;standard responses when you ask for this will range from &squot;be serious&squot;&n;    &t;to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n;    &t;of historical interest anyway.&n;    &t;&n;    2]  The basic system is a single buffer which can be used to receive or&n;    &t;transmit a packet. A third command mode exists when you are setting&n;    &t;things up.&n;    &t;&n;    3]&t;If its transmitting its not receiving and vice versa. In fact the &n;    &t;time to get the board back into useful state after an operation is&n;    &t;quite large.&n;    &t;&n;    4]&t;The driver works by keeping the board in receive mode waiting for a&n;    &t;packet to arrive. When one arrives it is copied out of the buffer&n;    &t;and delivered to the kernel. The card is reloaded and off we go.&n;    &t;&n;    5]&t;When transmitting dev-&gt;tbusy is set and the card is reset (from&n;    &t;receive mode) [possibly losing a packet just received] to command&n;    &t;mode. A packet is loaded and transmit mode triggered. The interrupt&n;    &t;handler runs different code for transmit interrupts and can handle&n;    &t;returning to receive mode or retransmissions (yes you have to help&n;    &t;out with those too).&n;    &t;&n;    Problems:&n;    &t;There are a wide variety of undocumented error returns from the card&n;    and you basically have to kick the board and pray if they turn up. Most &n;    only occur under extreme load or if you do something the board doesn&squot;t&n;    like (eg touching a register at the wrong time).&n;    &n;    &t;The driver is less efficient than it could be. It switches through&n;    recieve mode even if more transmits are queued. If this worries you buy&n;    a real ethernet card.&n;    &n;    &t;The combination of slow receive restart and no real multicast&n;    filter makes the board unusable with a kernel compiled for IP&n;    multicasting in a real multicast environment. Thats down to the board, &n;    but even with no multicast programs running a multicast IP kernel is&n;    in group 224.0.0.1 and you will therefore be listening to all multicasts.&n;    One nv conference running over that ethernet and you can give up.&n;    &n;*/
 DECL|variable|version
 r_static
 r_char
@@ -9,7 +9,6 @@ op_assign
 l_string|&quot;3c501.c: 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov).&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Braindamage remaining:&n;  The 3c501 board.&n;  */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -574,12 +573,14 @@ r_return
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Grab the region so we can find the another board if autoIRQ fails. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|EL1_IO_EXTENT
+comma
+l_string|&quot;3c501&quot;
 )paren
 suffix:semicolon
 r_if
@@ -732,7 +733,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s EtherLink at %#x, using %sIRQ %d, melting ethernet.&bslash;n&quot;
+l_string|&quot;%s: %s EtherLink at %#x, using %sIRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -750,6 +751,14 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_MULTICAST
+id|printk
+c_func
+(paren
+l_string|&quot;WARNING: Use of the 3c501 in a multicast kernel is NOT recommended.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif    
 r_if
 c_cond
 (paren
@@ -959,6 +968,10 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1086,6 +1099,18 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Avoid incoming interrupts between us flipping tbusy and flipping&n;       mode as the driver assumes tbusy is a faithful indicator of card&n;       state */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Avoid timer-based retransmission conflicts. */
 r_if
 c_cond
@@ -1105,6 +1130,13 @@ id|dev-&gt;tbusy
 op_ne
 l_int|0
 )paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1113,6 +1145,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 r_int
@@ -1146,6 +1179,7 @@ id|lp-&gt;collisions
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Command mode with status cleared should [in theory]&n;&t; *&t;mean no more interrupts can be pending on the card.&n;&t; */
 id|outb
 c_func
 (paren
@@ -1166,6 +1200,13 @@ c_func
 id|TX_STATUS
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; *&t;Turn interrupts back on while we spend a pleasant afternoon&n;&t; *&t;loading bytes into the board &n;&t; */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -1183,6 +1224,7 @@ comma
 id|GP_LOW
 )paren
 suffix:semicolon
+multiline_comment|/* aim - packet will be loaded into buffer start */
 id|outsb
 c_func
 (paren
@@ -1193,6 +1235,7 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
+multiline_comment|/* load buffer (usual thing each byte increments the pointer) */
 id|outw
 c_func
 (paren
@@ -1201,6 +1244,7 @@ comma
 id|GP_LOW
 )paren
 suffix:semicolon
+multiline_comment|/* the board reuses the same register */
 id|outb
 c_func
 (paren
@@ -1209,7 +1253,7 @@ comma
 id|AX_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Trigger xmit.  */
+multiline_comment|/* fire ... Trigger xmit.  */
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -1382,6 +1426,7 @@ c_cond
 id|dev-&gt;tbusy
 )paren
 (brace
+multiline_comment|/*&n;    &t; *&t;Board in transmit mode.&n;    &t; */
 r_int
 id|txsr
 op_assign
@@ -1436,6 +1481,7 @@ op_eq
 l_int|0
 )paren
 (brace
+multiline_comment|/*&n;&t; *&t;FIXME: is there a logic to whether to keep on trying or&n;&t; *&t;reset immediately ?&n;&t; */
 id|printk
 c_func
 (paren
@@ -1485,6 +1531,7 @@ op_amp
 id|TX_16COLLISIONS
 )paren
 (brace
+multiline_comment|/*&n;&t; *&t;Timed out&n;&t; */
 r_if
 c_cond
 (paren
@@ -1533,6 +1580,7 @@ c_func
 l_string|&quot; retransmitting after a collision.&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Poor little chip can&squot;t reset its own start pointer&n;&t; */
 id|outb
 c_func
 (paren
@@ -1569,6 +1617,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t; *&t;It worked.. we will now fall through and receive&n;&t; */
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
@@ -1596,6 +1645,7 @@ suffix:colon
 l_string|&quot;but tx is busy!&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This is safe the interrupt is atomic WRT itself.&n;&t; */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -1606,10 +1656,12 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
+multiline_comment|/* In case more to transmit */
 )brace
 )brace
 r_else
 (brace
+multiline_comment|/*&n;    &t; *&t;In receive mode.&n;    &t; */
 r_int
 id|rxsr
 op_assign
@@ -1646,7 +1698,7 @@ id|RX_LOW
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Just reading rx_status fixes most errors. */
+multiline_comment|/*&n;&t; *&t;Just reading rx_status fixes most errors. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1692,6 +1744,7 @@ op_amp
 id|RX_GOOD
 )paren
 (brace
+multiline_comment|/*&n;&t; *&t;Receive worked.&n;&t; */
 id|el_receive
 c_func
 (paren
@@ -1740,6 +1793,7 @@ l_string|&quot;.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     *&t;Move into receive mode &n;     */
 id|outb
 c_func
 (paren
@@ -1874,6 +1928,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     *&t;Command mode so we can empty the buffer&n;     */
 id|outb
 c_func
 (paren
@@ -1892,6 +1947,7 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     *&t;Start of frame&n;     */
 id|outw
 c_func
 (paren
@@ -1932,6 +1988,7 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The read incrememts through the bytes. The interrupt&n;&t; *&t;handler will fix the pointer when it returns to &n;&t; *&t;receive mode.&n;&t; */
 id|insb
 c_func
 (paren
@@ -2333,6 +2390,18 @@ comma
 id|el1_probe
 )brace
 suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0x280
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|5
+suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module
@@ -2341,6 +2410,14 @@ c_func
 r_void
 )paren
 (brace
+id|dev_3c501.irq
+op_assign
+id|irq
+suffix:semicolon
+id|dev_3c501.base_addr
+op_assign
+id|io
+suffix:semicolon
 r_if
 c_cond
 (paren

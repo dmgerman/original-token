@@ -41,16 +41,14 @@ multiline_comment|/* produce the mask */
 l_string|&quot;sll %3, %4, %3&bslash;n&bslash;t&quot;
 l_string|&quot;rd %%psr, %5&bslash;n&bslash;t&quot;
 multiline_comment|/* read the psr */
-l_string|&quot;andn %5, 0x20, %5&bslash;n&bslash;t&quot;
-multiline_comment|/* clear ET bit */
-l_string|&quot;wr %5, 0x0, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;wr %5, 0x20, %%psr&bslash;n&bslash;t&quot;
 multiline_comment|/* traps disabled */
 l_string|&quot;ld [%1], %2&bslash;n&bslash;t&quot;
 multiline_comment|/* critical section */
 l_string|&quot;and %3, %2, %0&bslash;n&bslash;t&quot;
 l_string|&quot;or  %3, %2, %2&bslash;n&bslash;t&quot;
 l_string|&quot;st  %2, [%1]&bslash;n&bslash;t&quot;
-l_string|&quot;wr %5, 0x20, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;wr %5, 0x0, %%psr&bslash;n&bslash;t&quot;
 suffix:colon
 multiline_comment|/* re-enable traps */
 l_string|&quot;=r&quot;
@@ -130,9 +128,7 @@ c_func
 l_string|&quot;or %%g0, 0x1, %3&bslash;n&bslash;t&quot;
 l_string|&quot;sll %3, %4, %3&bslash;n&bslash;t&quot;
 l_string|&quot;rd %%psr, %5&bslash;n&bslash;t&quot;
-l_string|&quot;andn %5, 0x20, %5&bslash;n&bslash;t&quot;
-multiline_comment|/* clear ET bit */
-l_string|&quot;wr %5, 0x0, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;wr %5, 0x20, %%psr&bslash;n&bslash;t&quot;
 multiline_comment|/* disable traps */
 l_string|&quot;ld [%1], %2&bslash;n&bslash;t&quot;
 l_string|&quot;and %2, %3, %0&bslash;n&bslash;t&quot;
@@ -140,7 +136,7 @@ multiline_comment|/* get old bit */
 l_string|&quot;andn %2, %3, %2&bslash;n&bslash;t&quot;
 multiline_comment|/* set new val */
 l_string|&quot;st  %2, [%1]&bslash;n&bslash;t&quot;
-l_string|&quot;wr %5, 0x20, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;wr %5, 0x0, %%psr&bslash;n&bslash;t&quot;
 suffix:colon
 multiline_comment|/* enable traps */
 l_string|&quot;=r&quot;
@@ -220,9 +216,7 @@ c_func
 l_string|&quot;or %%g0, 0x1, %3&bslash;n&bslash;t&quot;
 l_string|&quot;sll %3, %4, %3&bslash;n&bslash;t&quot;
 l_string|&quot;rd %%psr, %5&bslash;n&bslash;t&quot;
-l_string|&quot;andn %5, 0x20, %5&bslash;n&bslash;t&quot;
-multiline_comment|/* clear ET bit */
-l_string|&quot;wr %5, 0x0, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;wr %5, 0x20, %%psr&bslash;n&bslash;t&quot;
 multiline_comment|/* disable traps */
 l_string|&quot;ld [%1], %2&bslash;n&bslash;t&quot;
 l_string|&quot;and %3, %2, %0&bslash;n&bslash;t&quot;
@@ -230,7 +224,7 @@ multiline_comment|/* get old bit val */
 l_string|&quot;xor %3, %2, %2&bslash;n&bslash;t&quot;
 multiline_comment|/* set new val */
 l_string|&quot;st  %2, [%1]&bslash;n&bslash;t&quot;
-l_string|&quot;wr %5, 0x20, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;wr %5, 0x0, %%psr&bslash;n&bslash;t&quot;
 suffix:colon
 multiline_comment|/* enable traps */
 l_string|&quot;=r&quot;

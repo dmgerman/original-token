@@ -5419,7 +5419,7 @@ l_int|512
 suffix:semicolon
 )brace
 macro_line|#endif    
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|bases
@@ -5428,6 +5428,8 @@ id|indx
 )braket
 comma
 l_int|4
+comma
+l_string|&quot;aha1542&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Register the IO ports that we use */

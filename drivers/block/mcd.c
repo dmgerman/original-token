@@ -4583,12 +4583,14 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|mcd_port
 comma
 l_int|4
+comma
+l_string|&quot;mcd&quot;
 )paren
 suffix:semicolon
 id|outb

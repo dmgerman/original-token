@@ -1224,12 +1224,14 @@ id|config.port_address
 )paren
 suffix:semicolon
 multiline_comment|/* All above tests passed, must be the right thing.  Get some useful&n;       info. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|config.port_address
 comma
 l_int|0x0c
+comma
+l_string|&quot;ultrastor&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Register the I/O space that we use */

@@ -7,7 +7,7 @@ mdefine_line|#define AC_CONTEXT    0x30000000    /* current mmu-context, handy f
 DECL|macro|AC_SENABLE
 mdefine_line|#define AC_SENABLE    0x40000000    /* system dvma/cache enable, plus special reset poking */
 DECL|macro|AC_CACHETAGS
-mdefine_line|#define AC_CACHETAGS  0x80000000    /* directo access to the VAC cache, unused...          */
+mdefine_line|#define AC_CACHETAGS  0x80000000    /* direct access to the VAC cache, unused...          */
 DECL|macro|AC_SYNC_ERR
 mdefine_line|#define AC_SYNC_ERR   0x60000000    /* what type of synchronous memory error happened      */
 DECL|macro|AC_SYNC_VA

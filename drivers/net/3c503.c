@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;3c503.c:v1.10 9/23/93  Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -723,12 +722,14 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|EL2_IO_EXTENT
+comma
+l_string|&quot;3c503&quot;
 )paren
 suffix:semicolon
 r_if

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -150,30 +151,35 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 1
-id|__asm__
+r_if
+c_cond
+(paren
+op_logical_neg
+id|intr_count
+op_logical_and
+(paren
+id|bh_active
+op_amp
+id|bh_mask
+)paren
+)paren
+(brace
+id|start_bh_atomic
 c_func
 (paren
-l_string|&quot;cmpl $0,_intr_count&bslash;n&bslash;t&quot;
-l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
-l_string|&quot;movl _bh_active,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;testl _bh_mask,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;je 1f&bslash;n&bslash;t&quot;
-l_string|&quot;incl _intr_count&bslash;n&bslash;t&quot;
-l_string|&quot;call _do_bottom_half&bslash;n&bslash;t&quot;
-l_string|&quot;decl _intr_count&bslash;n&quot;
-l_string|&quot;1:&quot;
-suffix:colon
-suffix:colon
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;cx&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+id|do_bottom_half
+c_func
+(paren
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

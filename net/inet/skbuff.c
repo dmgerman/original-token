@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Note: There are a load of cli()/sti() pairs protecting the net_memory type&n; *&t;variables. Without them for some reason the ++/-- operators do not come out&n; *&t;atomic. Also with gcc 2.4.5 these counts can come out wrong anyway - use 2.5.8!!&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1241,7 +1241,22 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* Non INET - default wmalloc/rmalloc handler */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1255,6 +1270,12 @@ r_else
 id|skb-&gt;sk-&gt;wmem_alloc
 op_sub_assign
 id|skb-&gt;mem_len
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_if
 c_cond

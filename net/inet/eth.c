@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;arp.h&quot;
 DECL|function|eth_setup
 r_void

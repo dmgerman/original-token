@@ -2084,7 +2084,7 @@ suffix:colon
 l_string|&quot;disabled&quot;
 )paren
 suffix:semicolon
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|port_base
@@ -2092,6 +2092,8 @@ comma
 id|TEST
 op_minus
 id|SCSISEQ
+comma
+l_string|&quot;aha152x&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Register */

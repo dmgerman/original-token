@@ -3,6 +3,33 @@ DECL|macro|__LIBRARY__
 mdefine_line|#define __LIBRARY__
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
+DECL|macro|open
+mdefine_line|#define open __sys_open
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|open
+comma
+r_const
+r_char
+op_star
+comma
+id|filename
+comma
+r_int
+comma
+id|flag
+comma
+r_int
+comma
+id|mode
+)paren
+DECL|macro|open
+macro_line|#undef open
 DECL|function|open
 r_int
 id|open
@@ -21,7 +48,6 @@ dot
 dot
 )paren
 (brace
-r_register
 r_int
 id|res
 suffix:semicolon
@@ -36,39 +62,15 @@ comma
 id|flag
 )paren
 suffix:semicolon
-id|__asm__
+id|res
+op_assign
+id|__sys_open
 c_func
 (paren
-l_string|&quot;movl %2,%%ebx&bslash;n&bslash;t&quot;
-l_string|&quot;int $0x80&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|res
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|__NR_open
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-(paren
-r_int
-)paren
-(paren
 id|filename
-)paren
-)paren
 comma
-l_string|&quot;c&quot;
-(paren
 id|flag
-)paren
 comma
-l_string|&quot;d&quot;
-(paren
 id|va_arg
 c_func
 (paren
@@ -77,26 +79,15 @@ comma
 r_int
 )paren
 )paren
-)paren
 suffix:semicolon
-r_if
-c_cond
+id|va_end
+c_func
 (paren
-id|res
-op_ge
-l_int|0
+id|arg
 )paren
-r_return
-id|res
-suffix:semicolon
-id|errno
-op_assign
-op_minus
-id|res
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+id|res
 suffix:semicolon
 )brace
 eof

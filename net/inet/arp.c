@@ -1,4 +1,4 @@
-multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *              Andrew Tridgell :       Added ARP netmask code and&n; *                                      re-arranged proxy handling&n; */
+multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *              Andrew Tridgell :       Added ARP netmask code and&n; *                                      re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -456,17 +456,27 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Purge a device from the ARP queue&n; */
-DECL|function|arp_device_down
-r_void
-id|arp_device_down
+DECL|function|arp_device_event
+r_int
+id|arp_device_event
 c_func
 (paren
+r_int
+r_int
+id|event
+comma
+r_void
+op_star
+id|ptr
+)paren
+(brace
 r_struct
 id|device
 op_star
 id|dev
-)paren
-(brace
+op_assign
+id|ptr
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -474,6 +484,18 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|event
+op_ne
+id|NETDEV_DOWN
+)paren
+(brace
+r_return
+id|NOTIFY_DONE
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;This is a bit OTT - maybe we need some arp semaphores instead.&n;&t; */
 id|save_flags
 c_func
@@ -580,6 +602,9 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+r_return
+id|NOTIFY_DONE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Create and send an arp packet. If (dest_hw == NULL), we create a broadcast&n; *&t;message.&n; */
@@ -1982,6 +2007,15 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n; * &t;To get here, it must be an arp request for us.  We need to reply.&n; */
+r_if
+c_cond
+(paren
+id|tip
+op_eq
+id|dev-&gt;pa_addr
+)paren
+(brace
+multiline_comment|/* Only reply for the real device address */
 id|arp_send
 c_func
 (paren
@@ -2000,6 +2034,7 @@ comma
 id|dev-&gt;dev_addr
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; * Now all replies are handled.  Next, anything that falls through to here&n; * needs to be added to the arp cache, or have its entry updated if it is &n; * there.&n; */
@@ -4001,15 +4036,23 @@ op_assign
 l_int|0
 comma
 multiline_comment|/* Should be: __constant_htons(ETH_P_ARP) - but this _doesn&squot;t_ come out constant! */
-l_int|0
+l_int|NULL
 comma
-multiline_comment|/* copy */
+multiline_comment|/* All devices */
 id|arp_rcv
 comma
 l_int|NULL
 comma
 l_int|NULL
 )brace
+suffix:semicolon
+DECL|variable|arp_dev_notifier
+r_static
+r_struct
+id|notifier_block
+id|arp_dev_notifier
+op_assign
+initialization_block
 suffix:semicolon
 DECL|function|arp_init
 r_void
@@ -4040,6 +4083,14 @@ c_func
 (paren
 op_amp
 id|arp_timer
+)paren
+suffix:semicolon
+multiline_comment|/* Register for device down reports */
+id|register_netdevice_notifier
+c_func
+(paren
+op_amp
+id|arp_dev_notifier
 )paren
 suffix:semicolon
 )brace

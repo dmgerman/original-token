@@ -1453,7 +1453,7 @@ op_assign
 id|MAX_CMD_PER_LUN
 suffix:semicolon
 multiline_comment|/* Register the I/O space that we use */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|sh
@@ -1464,6 +1464,8 @@ op_member_access_from_pointer
 id|io_port
 comma
 id|REG_REGION
+comma
+l_string|&quot;eata&quot;
 )paren
 suffix:semicolon
 id|memset

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; *&n; * FIXES&n; *&n; * 2/7/94 James Bottomley and Jon Peatfield DAMTP, Cambridge University&n; *&n; * An xid mismatch no longer causes the request to be trashed.&n; *&n; * Peter Eriksson - incorrect XID used to confuse Linux&n; * Florian La Roche - use the correct max size, if reading a packet and&n; *                    also verify, if the whole packet has been read...&n; *                    more checks should be done in proc.c...&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

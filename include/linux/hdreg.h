@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_HDREG_H
 DECL|macro|_LINUX_HDREG_H
 mdefine_line|#define _LINUX_HDREG_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * This file contains some defines for the AT-hd-controller.&n; * Various sources. Check out some definitions (see comments with&n; * a ques).&n; */
 multiline_comment|/* Hd controller regs. Ref: IBM AT Bios-listing */
 multiline_comment|/* For a second IDE interface, xor all addresses with 0x80 */

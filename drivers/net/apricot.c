@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;apricot.c:v0.2 05/12/94&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -30,8 +29,8 @@ macro_line|#endif
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(addr, size)&t;0
-DECL|macro|snarf_region
-mdefine_line|#define snarf_region(addr, size)&t;do ; while(0)
+DECL|macro|register_iomem
+mdefine_line|#define register_iomem(addr, size,name)&t;do ; while(0)
 macro_line|#endif
 macro_line|#ifndef HAVE_ALLOC_SKB
 DECL|macro|alloc_skb
@@ -2938,12 +2937,14 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|APRICOT_TOTAL_SIZE
+comma
+l_string|&quot;apricot&quot;
 )paren
 suffix:semicolon
 id|dev-&gt;base_addr

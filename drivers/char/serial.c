@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -1563,6 +1564,11 @@ r_int
 r_char
 id|ch
 suffix:semicolon
+r_int
+id|ignored
+op_assign
+l_int|0
+suffix:semicolon
 r_do
 (brace
 id|ch
@@ -1583,9 +1589,21 @@ id|status
 op_amp
 id|info-&gt;ignore_status_mask
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_increment
+id|ignored
+OG
+l_int|100
+)paren
+r_break
+suffix:semicolon
 r_goto
 id|ignore_char
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -6385,6 +6403,14 @@ id|info-&gt;close_delay
 op_assign
 id|new_serial.close_delay
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|info-&gt;port
+comma
+l_int|8
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6411,6 +6437,25 @@ suffix:semicolon
 id|info-&gt;hub6
 op_assign
 id|new_serial.hub6
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|info-&gt;type
+op_ne
+id|PORT_UNKNOWN
+)paren
+(brace
+id|register_iomem
+c_func
+(paren
+id|info-&gt;port
+comma
+l_int|8
+comma
+l_string|&quot;serial(set)&quot;
+)paren
 suffix:semicolon
 )brace
 id|check_and_exit
@@ -10212,6 +10257,16 @@ op_assign
 id|PORT_8250
 suffix:semicolon
 )brace
+id|register_iomem
+c_func
+(paren
+id|info-&gt;port
+comma
+l_int|8
+comma
+l_string|&quot;serial(auto)&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Reset the UART.&n;&t; */
 id|serial_outp
 c_func

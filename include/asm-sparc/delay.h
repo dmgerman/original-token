@@ -93,10 +93,10 @@ r_return
 (paren
 (paren
 id|a
-op_div
-id|c
-)paren
 op_star
+id|b
+)paren
+op_div
 id|c
 )paren
 suffix:semicolon

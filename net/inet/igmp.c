@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
@@ -698,6 +699,14 @@ comma
 id|im-&gt;multiaddr
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Left group %lX&bslash;n&quot;
+comma
+id|im-&gt;multiaddr
+)paren
+suffix:semicolon
 )brace
 DECL|function|igmp_group_added
 r_static
@@ -731,6 +740,14 @@ id|ip_mc_filter_add
 c_func
 (paren
 id|im-&gt;interface
+comma
+id|im-&gt;multiaddr
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Joined group %lX&bslash;n&quot;
 comma
 id|im-&gt;multiaddr
 )paren

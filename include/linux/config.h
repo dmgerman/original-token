@@ -36,15 +36,5 @@ DECL|macro|EXTENDED_VGA
 mdefine_line|#define EXTENDED_VGA&t;0xfffe&t;&t;/* 80x50 mode */
 DECL|macro|ASK_VGA
 mdefine_line|#define ASK_VGA&t;&t;0xfffd&t;&t;/* ask for it at bootup */
-multiline_comment|/*&n; * The root-device is no longer hard-coded. You can change the default&n; * root-device by changing the line ROOT_DEV = XXX in boot/bootsect.s&n; */
-multiline_comment|/*&n; * The keyboard is now defined in kernel/chr_dev/keyboard.S&n; */
-multiline_comment|/*&n; * HD_TYPE has been superceeded by kernel command line parameters.&n; */
-multiline_comment|/*&n; *&t;File type specific stuff goes into this.&n; */
-macro_line|#ifdef ASM_SRC
-macro_line|#endif
-macro_line|#ifdef C_SRC
-macro_line|#endif
-macro_line|#ifdef MAKE
-macro_line|#endif
 macro_line|#endif
 eof

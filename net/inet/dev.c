@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
 multiline_comment|/*&n; *&t;A lot of these includes will be going walkies very soon &n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -29,6 +30,15 @@ r_struct
 id|packet_type
 op_star
 id|ptype_base
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/*&n; *&t;Our notifier list&n; */
+DECL|variable|netdev_chain
+r_struct
+id|notifier_block
+op_star
+id|netdev_chain
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -69,14 +79,6 @@ id|backlog_size
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *&t;The number of sockets open for &squot;all&squot; protocol use. We have to&n; *&t;know this to copy a buffer the correct number of times.&n; */
-DECL|variable|dev_nit
-r_static
-r_int
-id|dev_nit
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n; *&t;Return the lesser of the two values. &n; */
 DECL|function|min
 r_static
@@ -109,7 +111,15 @@ id|b
 suffix:semicolon
 )brace
 multiline_comment|/******************************************************************************************&n;&n;&t;&t;Protocol management and registration routines&n;&n;*******************************************************************************************/
-multiline_comment|/*&n; *&t;Add a protocol ID to the list.&n; */
+multiline_comment|/*&n; *&t;For efficiency&n; */
+DECL|variable|dev_nit
+r_static
+r_int
+id|dev_nit
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n; *&t;Add a protocol ID to the list. Now that the input handler is&n; *&t;smarter we can dispense with all the messy stuff that used to be&n; *&t;here.&n; */
 DECL|function|dev_add_pack
 r_void
 id|dev_add_pack
@@ -121,21 +131,6 @@ op_star
 id|pt
 )paren
 (brace
-r_struct
-id|packet_type
-op_star
-id|p1
-suffix:semicolon
-id|pt-&gt;next
-op_assign
-id|ptype_base
-suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Don&squot;t use copy counts on ETH_P_ALL. Instead keep a global&n; &t; *&t;count of number of these and use it and pt-&gt;copy to decide&n;&t; *&t;copies &n;&t; */
-id|pt-&gt;copy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Assume we will not be copying the buffer before &n;&t;&t;&t; * this routine gets it&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -152,104 +147,10 @@ id|dev_nit
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* I&squot;d like a /dev/nit too one day 8) */
-r_else
-(brace
-multiline_comment|/*&n;  &t;&t; *&t;See if we need to copy it - that is another process also&n;  &t;&t; *&t;wishes to receive this type of packet.&n;  &t;&t; */
-r_for
-c_loop
-(paren
-id|p1
-op_assign
-id|ptype_base
-suffix:semicolon
-id|p1
-op_ne
-l_int|NULL
-suffix:semicolon
-id|p1
-op_assign
-id|p1-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|p1-&gt;type
-op_eq
-id|pt-&gt;type
-)paren
-(brace
-id|pt-&gt;copy
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* We will need to copy */
-r_break
-suffix:semicolon
-)brace
-)brace
-)brace
-multiline_comment|/*&n;   *&t;NIT taps must go at the end or net_bh will leak!&n;   */
-r_if
-c_cond
-(paren
-id|pt-&gt;type
-op_eq
-id|htons
-c_func
-(paren
-id|ETH_P_ALL
-)paren
-)paren
-(brace
 id|pt-&gt;next
 op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ptype_base
-op_eq
-l_int|NULL
-)paren
-(brace
-id|ptype_base
-op_assign
-id|pt
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* &n;&t;&t;&t; *&t;Move to the end of the list&n;&t;&t;&t; */
-r_for
-c_loop
-(paren
-id|p1
-op_assign
 id|ptype_base
 suffix:semicolon
-id|p1-&gt;next
-op_ne
-l_int|NULL
-suffix:semicolon
-id|p1
-op_assign
-id|p1-&gt;next
-)paren
-(brace
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Hook on the end&n;&t;&t;&t; */
-id|p1-&gt;next
-op_assign
-id|pt
-suffix:semicolon
-)brace
-)brace
-r_else
-multiline_comment|/*&n; *&t;It goes on the start &n; */
 id|ptype_base
 op_assign
 id|pt
@@ -270,12 +171,9 @@ id|pt
 r_struct
 id|packet_type
 op_star
-id|lpt
-comma
 op_star
 id|pt1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Keep the count of nit (Network Interface Tap) sockets correct.&n;&t; */
 r_if
 c_cond
 (paren
@@ -287,102 +185,58 @@ c_func
 id|ETH_P_ALL
 )paren
 )paren
+(brace
 id|dev_nit
 op_decrement
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;If we are first, just unhook us.&n;&t; */
-r_if
-c_cond
-(paren
-id|pt
-op_eq
-id|ptype_base
-)paren
-(brace
-id|ptype_base
-op_assign
-id|pt-&gt;next
-suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-id|lpt
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;This is harder. What we do is to walk the list of sockets &n;&t; *&t;for this type. We unhook the entry, and if there is a previous&n;&t; *&t;entry that is copying _and_ we are not copying, (ie we are the&n;&t; *&t;last entry for this type) then the previous one is set to&n;&t; *&t;non-copying as it is now the last.&n;&t; */
 r_for
 c_loop
 (paren
 id|pt1
 op_assign
+op_amp
 id|ptype_base
 suffix:semicolon
-id|pt1-&gt;next
+(paren
+op_star
+id|pt1
+)paren
 op_ne
 l_int|NULL
 suffix:semicolon
 id|pt1
 op_assign
-id|pt1-&gt;next
+op_amp
+(paren
+(paren
+op_star
+id|pt1
+)paren
+op_member_access_from_pointer
+id|next
+)paren
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|pt1-&gt;next
-op_eq
 id|pt
+op_eq
+(paren
+op_star
+id|pt1
+)paren
 )paren
 (brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pt-&gt;copy
-op_logical_and
-id|lpt
-)paren
-id|lpt-&gt;copy
-op_assign
-l_int|0
-suffix:semicolon
-id|pt1-&gt;next
+op_star
+id|pt1
 op_assign
 id|pt-&gt;next
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|pt1-&gt;next-&gt;type
-op_eq
-id|pt-&gt;type
-op_logical_and
-id|pt-&gt;type
-op_ne
-id|htons
-c_func
-(paren
-id|ETH_P_ALL
-)paren
-)paren
-id|lpt
-op_assign
-id|pt1-&gt;next
-suffix:semicolon
 )brace
 )brace
 multiline_comment|/*****************************************************************************************&n;&n;&t;&t;&t;    Device Interface Subroutines&n;&n;******************************************************************************************/
@@ -507,12 +361,23 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|netdev_chain
+comma
+id|NETDEV_UP
+comma
+id|dev
+)paren
+suffix:semicolon
 )brace
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Completely shutdown an interface.&n; *&n; *&t;WARNING: Both because of the way the upper layers work (that can be fixed)&n; *&t;and because of races during a close (that can&squot;t be fixed any other way)&n; *&t;a device may be given things to transmit EVEN WHEN IT IS DOWN. The driver&n; *&t;MUST cope with this (eg by freeing and dumping the frame).&n; */
+multiline_comment|/*&n; *&t;Completely shutdown an interface.&n; */
 DECL|function|dev_close
 r_int
 id|dev_close
@@ -556,6 +421,18 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|netdev_chain
+comma
+id|NETDEV_DOWN
+comma
+id|dev
+)paren
+suffix:semicolon
+macro_line|#if 0&t;&t;
 multiline_comment|/*&n;&t;&t; *&t;Delete the route to the device.&n;&t;&t; */
 macro_line|#ifdef CONFIG_INET&t;&t; 
 id|ip_rt_flush
@@ -579,6 +456,7 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; *&t;Flush the multicast chain&n;&t;&t; */
 id|dev_mc_discard
 c_func
@@ -658,6 +536,51 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Device change register/unregister. These are not inline or static&n; *&t;as we export them to the world.&n; */
+DECL|function|register_netdevice_notifier
+r_int
+id|register_netdevice_notifier
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+id|nb
+)paren
+(brace
+r_return
+id|notifier_chain_register
+c_func
+(paren
+op_amp
+id|netdev_chain
+comma
+id|nb
+)paren
+suffix:semicolon
+)brace
+DECL|function|unregister_netdevice_notifer
+r_int
+id|unregister_netdevice_notifer
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+id|nb
+)paren
+(brace
+r_return
+id|notifier_chain_unregister
+c_func
+(paren
+op_amp
+id|netdev_chain
+comma
+id|nb
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Send (or queue for sending) a packet. &n; *&n; *&t;IMPORTANT: When this is called to resend frames. The caller MUST&n; *&t;already have locked the sk_buff. Apart from that we do the&n; *&t;rest of the magic.&n; */
@@ -1000,6 +923,15 @@ id|htons
 c_func
 (paren
 id|ETH_P_ALL
+)paren
+op_logical_and
+(paren
+id|ptype-&gt;dev
+op_eq
+id|dev
+op_logical_or
+op_logical_neg
+id|ptype-&gt;dev
 )paren
 )paren
 (brace
@@ -1581,18 +1513,16 @@ id|packet_type
 op_star
 id|ptype
 suffix:semicolon
+r_struct
+id|packet_type
+op_star
+id|pt_prev
+op_assign
+l_int|NULL
+suffix:semicolon
 r_int
 r_int
 id|type
-suffix:semicolon
-r_int
-r_char
-id|flag
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|nitcount
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Atomically check and mark our BUSY state. &n;&t; */
 r_if
@@ -1647,14 +1577,6 @@ multiline_comment|/*&n;&t;&t; *&t;We have a packet. Therefore the queue has shru
 id|backlog_size
 op_decrement
 suffix:semicolon
-id|nitcount
-op_assign
-id|dev_nit
-suffix:semicolon
-id|flag
-op_assign
-l_int|0
-suffix:semicolon
 id|sti
 c_func
 (paren
@@ -1704,6 +1626,7 @@ id|ptype-&gt;next
 r_if
 c_cond
 (paren
+(paren
 id|ptype-&gt;type
 op_eq
 id|type
@@ -1716,101 +1639,29 @@ c_func
 id|ETH_P_ALL
 )paren
 )paren
+op_logical_and
+(paren
+op_logical_neg
+id|ptype-&gt;dev
+op_logical_or
+id|ptype-&gt;dev
+op_eq
+id|skb-&gt;dev
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;We already have a match queued. Deliver&n;&t;&t;&t;&t; *&t;to it and then remember the new match&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|pt_prev
+)paren
 (brace
 r_struct
 id|sk_buff
 op_star
 id|skb2
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ptype-&gt;type
-op_eq
-id|htons
-c_func
-(paren
-id|ETH_P_ALL
-)paren
-)paren
-id|nitcount
-op_decrement
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ptype-&gt;copy
-op_logical_or
-id|nitcount
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;copy if we need to&n;&t;&t;&t;&t;&t; */
-macro_line|#ifdef OLD
-id|skb2
-op_assign
-id|alloc_skb
-c_func
-(paren
-id|skb-&gt;len
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb2
-op_eq
-l_int|NULL
-)paren
-r_continue
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|skb2
-comma
-id|skb
-comma
-id|skb2-&gt;mem_len
-)paren
-suffix:semicolon
-id|skb2-&gt;mem_addr
-op_assign
-id|skb2
-suffix:semicolon
-id|skb2-&gt;h.raw
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|skb2
-op_plus
-(paren
-r_int
-r_int
-)paren
-id|skb-&gt;h.raw
-op_minus
-(paren
-r_int
-r_int
-)paren
-id|skb
-)paren
-suffix:semicolon
-id|skb2-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
 id|skb2
 op_assign
 id|skb_clone
@@ -1821,33 +1672,14 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Kick the protocol handler. This should be fast&n;&t;&t;&t;&t;&t; *&t;and efficient code.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
 id|skb2
-op_eq
-l_int|NULL
 )paren
 (brace
-r_continue
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;&t;&t;
-)brace
-r_else
-(brace
-id|skb2
-op_assign
-id|skb
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Protocol located. &n;&t;&t;&t;&t; */
-id|flag
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Kick the protocol handler. This should be fast&n;&t;&t;&t;&t; *&t;and efficient code.&n;&t;&t;&t;&t; */
-id|ptype
+id|pt_prev
 op_member_access_from_pointer
 id|func
 c_func
@@ -1856,20 +1688,41 @@ id|skb2
 comma
 id|skb-&gt;dev
 comma
-id|ptype
+id|pt_prev
 )paren
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Remember the current last to do */
+id|pt_prev
+op_assign
+id|ptype
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* End of protocol list loop */
-multiline_comment|/*&n;&t;&t; * &t;Has an unknown packet has been received ?&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Is there a last item to send to ?&n;&t;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|flag
+id|pt_prev
 )paren
 (brace
+id|pt_prev
+op_member_access_from_pointer
+id|func
+c_func
+(paren
+id|skb
+comma
+id|skb-&gt;dev
+comma
+id|pt_prev
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * &t;Has an unknown packet has been received ?&n;&t;&t; */
+r_else
 id|kfree_skb
 c_func
 (paren
@@ -1878,8 +1731,7 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; *&t;Again, see if we can transmit anything now. &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Again, see if we can transmit anything now. &n;&t;&t; *&t;[Ought to take this out judging by tests it slows&n;&t;&t; *&t; us down not speeds us up]&n;&t;&t; */
 id|dev_transmit
 c_func
 (paren
@@ -3465,11 +3317,8 @@ multiline_comment|/* Get the per device memory space. We can add this but curren
 id|printk
 c_func
 (paren
-l_string|&quot;NET: ioctl(SIOCGIFMEM, 0x%08X)&bslash;n&quot;
+l_string|&quot;NET: ioctl(SIOCGIFMEM, %p)&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|arg
 )paren
 suffix:semicolon
@@ -3487,11 +3336,8 @@ multiline_comment|/* Set the per device memory buffer space. Not applicable in o
 id|printk
 c_func
 (paren
-l_string|&quot;NET: ioctl(SIOCSIFMEM, 0x%08X)&bslash;n&quot;
+l_string|&quot;NET: ioctl(SIOCSIFMEM, %p)&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|arg
 )paren
 suffix:semicolon

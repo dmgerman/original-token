@@ -366,6 +366,7 @@ id|sk
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#if 0
 r_case
 id|TIME_PROBE0
 suffix:colon
@@ -764,11 +765,14 @@ id|sk
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;net_timer: timer expired - reason unknown&bslash;n&quot;
+l_string|&quot;net_timer: timer expired - reason %d is unknown&bslash;n&quot;
+comma
+id|why
 )paren
 suffix:semicolon
 id|release_sock

@@ -3274,7 +3274,7 @@ id|pc
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* modeflag: 0 = current, 1 = changable mask, 2 = default, 3 = saved */
+multiline_comment|/* modeflag: 0 = current, 1 = changeable mask, 2 = default, 3 = saved */
 r_static
 r_int
 DECL|function|cdrom_mode_sense

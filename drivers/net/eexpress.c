@@ -1,5 +1,5 @@
 multiline_comment|/* eexpress.c: Intel EtherExpress device driver for Linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Things remaining to do:&n;&t;Check that the 586 and ASIC are reset/unreset at the right times.&n;&t;Check tx and rx buffer setup.&n;&t;The current Tx is single-buffer-only.&n;&t;Move the theory of operation and memory map documentation.&n;&t;Rework the board error reset&n;&t;The statistics need to be updated correctly.&n;&n;        Modularized by Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Things remaining to do:&n;&t;Check that the 586 and ASIC are reset/unreset at the right times.&n;&t;Check tx and rx buffer setup.&n;&t;The current Tx is single-buffer-only.&n;&t;Move the theory of operation and memory map documentation.&n;&t;Rework the board error reset&n;&t;The statistics need to be updated correctly.&n;&n;        Modularized by Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n;        Changed to support io= irq= by Alan Cox &lt;Alan.Cox@linux.org&gt;&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -891,12 +891,14 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* We&squot;ve committed to using the board, and can start filling in *dev. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 l_int|16
+comma
+l_string|&quot;eexpress&quot;
 )paren
 suffix:semicolon
 id|dev-&gt;base_addr
@@ -4165,6 +4167,18 @@ comma
 id|express_probe
 )brace
 suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module
@@ -4173,6 +4187,14 @@ c_func
 r_void
 )paren
 (brace
+id|dev_eexpress.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|dev_eexpress.irq
+op_assign
+id|irq
+suffix:semicolon
 r_if
 c_cond
 (paren

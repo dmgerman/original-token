@@ -1230,12 +1230,14 @@ id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 suffix:semicolon
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|LANCE_TOTAL_SIZE
+comma
+l_string|&quot;lance&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Make certain the data structures used by the LANCE are aligned. */

@@ -26,7 +26,9 @@ id|MAX_AUDIO_DEV
 )braket
 op_assign
 (brace
+(brace
 l_int|0
+)brace
 )brace
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Primitive way to allocate&n;&t;&t; * such a large array.&n;&t;&t; * Needs dynamic run-time allocation.&n;&t;&t; */

@@ -565,7 +565,7 @@ suffix:semicolon
 multiline_comment|/* OS dependent 2 */
 )brace
 suffix:semicolon
-macro_line|#ifdef&t;__linux__
+macro_line|#if defined(__KERNEL__) || defined(__linux__)
 DECL|macro|i_reserved1
 mdefine_line|#define i_reserved1&t;osd1.linux1.l_i_reserved1
 DECL|macro|i_frag

@@ -8,7 +8,6 @@ macro_line|#include &lt;sys/sysmacros.h&gt;
 macro_line|#include &lt;unistd.h&gt;&t;/* contains read/write */
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;a.out.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|N_MAGIC_OFFSET
 mdefine_line|#define N_MAGIC_OFFSET 1024
 DECL|variable|GCC_HEADER

@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;hp.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -485,12 +484,14 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Grab the region so we can find another board if something fails. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|HP_IO_EXTENT
+comma
+l_string|&quot;hp&quot;
 )paren
 suffix:semicolon
 id|printk

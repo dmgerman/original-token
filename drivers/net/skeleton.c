@@ -864,12 +864,14 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;/* jumpered DMA */
 multiline_comment|/* Grab the region so we can find another board if autoIRQ fails. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|NETCARD_IO_EXTENT
+comma
+l_string|&quot;skeleton&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the device structure. */

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -5560,7 +5561,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|bases
@@ -5569,9 +5570,11 @@ id|indx
 )braket
 comma
 l_int|4
+comma
+l_string|&quot;buslogic&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Register the IO ports that&n;&t;&t;&t;&t;&t;&t;   we use */
+multiline_comment|/* Register the IO ports that we use */
 id|count
 op_increment
 suffix:semicolon

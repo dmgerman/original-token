@@ -2,7 +2,7 @@ macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
 multiline_comment|/*&n; * System defines.. Note that this is included both from .c and .S&n; * files, so it does only defines, not any C code.&n; */
-multiline_comment|/*&n; * I wish the boot time image was as beautiful as the Alpha&squot;s&n; * but no such luck. The icky PROM loads us at 0x0, and jumps&n; * to magic addess 0x4000 to start thing going. This means that&n; * I can stick the pcb and user/kernel stacks in the area from&n; * 0x0-0x4000 and be reasonably sure that this is sane.&n; *&n; * Sorry, I can&squot;t impress people with cool looking 64-bit values&n; * yet. ;-)&n; */
+multiline_comment|/*&n; * I wish the boot time image was as beautiful as the Alpha&squot;s&n; * but no such luck. The icky PROM loads us at 0x0, and jumps&n; * to magic address 0x4000 to start thing going. This means that&n; * I can stick the pcb and user/kernel stacks in the area from&n; * 0x0-0x4000 and be reasonably sure that this is sane.&n; *&n; * Sorry, I can&squot;t impress people with cool looking 64-bit values&n; * yet. ;-)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;
 DECL|macro|INIT_PCB
 mdefine_line|#define INIT_PCB&t;0x00011fe0
@@ -46,7 +46,7 @@ DECL|macro|move_to_user_mode
 mdefine_line|#define move_to_user_mode() halt()
 DECL|macro|switch_to
 mdefine_line|#define switch_to(x) halt()
-macro_line|#ifndef stbar  /* store barrier Sparc insn to snchronize stores in PSO */
+macro_line|#ifndef stbar  /* store barrier Sparc insn to synchronize stores in PSO */
 DECL|macro|stbar
 mdefine_line|#define stbar() __asm__ __volatile__(&quot;stbar&quot;: : :&quot;memory&quot;)
 macro_line|#endif
@@ -61,6 +61,18 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;do { flags = swpipl(15); } while (0)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;swpipl(flags)
+DECL|macro|iret
+mdefine_line|#define iret() __asm__ __volatile__ (&quot;jmp %%l1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&t;     &quot;rett %l2&bslash;n&bslash;t&quot;: : :&quot;memory&quot;)
+DECL|macro|_set_gate
+mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ __volatile__ (&quot;nop&bslash;n&bslash;t&quot;)
+DECL|macro|set_intr_gate
+mdefine_line|#define set_intr_gate(n,addr) &bslash;&n;&t;_set_gate(&amp;idt[n],14,0,addr)
+DECL|macro|set_trap_gate
+mdefine_line|#define set_trap_gate(n,addr) &bslash;&n;&t;_set_gate(&amp;idt[n],15,0,addr)
+DECL|macro|set_system_gate
+mdefine_line|#define set_system_gate(n,addr) &bslash;&n;&t;_set_gate(&amp;idt[n],15,3,addr)
+DECL|macro|set_call_gate
+mdefine_line|#define set_call_gate(a,addr) &bslash;&n;&t;_set_gate(a,12,3,addr)
 multiline_comment|/* Must this be atomic? */
 DECL|function|xchg_u32
 r_extern
@@ -87,8 +99,8 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;ld %1,%2&bslash;n&bslash;t&quot;
-l_string|&quot;st %0, %1&bslash;n&bslash;t&quot;
+l_string|&quot;ld [%1],%2&bslash;n&bslash;t&quot;
+l_string|&quot;st %0, [%1]&bslash;n&bslash;t&quot;
 l_string|&quot;or %%g0, %2, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -96,9 +108,8 @@ l_string|&quot;=r&quot;
 id|val
 )paren
 comma
-l_string|&quot;=m&quot;
+l_string|&quot;=r&quot;
 (paren
-op_star
 id|m
 )paren
 comma
@@ -107,13 +118,7 @@ l_string|&quot;=r&quot;
 id|dummy
 )paren
 suffix:colon
-l_string|&quot;1&quot;
-(paren
-op_star
-id|m
-)paren
-comma
-l_string|&quot;2&quot;
+l_string|&quot;0&quot;
 (paren
 id|val
 )paren

@@ -105,7 +105,7 @@ id|NR_MEM_LISTS
 )braket
 suffix:semicolon
 DECL|macro|copy_page
-mdefine_line|#define copy_page(from,to) &bslash;&n;__asm__(&quot;cld ; rep ; movsl&quot;: :&quot;S&quot; (from),&quot;D&quot; (to),&quot;c&quot; (1024):&quot;cx&quot;,&quot;di&quot;,&quot;si&quot;)
+mdefine_line|#define copy_page(from,to) memcpy((void *) to, (void *) from, PAGE_SIZE)
 DECL|variable|mem_map
 r_int
 r_int

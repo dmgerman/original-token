@@ -2,7 +2,6 @@ multiline_comment|/* dummy.c: a dummy net driver&n;&n;&t;The purpose of this dri
 multiline_comment|/* To have statistics (just packets sent) define this */
 DECL|macro|DUMMY_STATS
 macro_line|#undef DUMMY_STATS
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -21,6 +20,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 r_static
 r_int
 id|dummy_xmit
@@ -52,8 +55,46 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef MODULE
+DECL|function|dummy_open
+r_static
 r_int
+id|dummy_open
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|dummy_close
+r_static
+r_int
+id|dummy_close
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|dummy_init
+r_int
 id|dummy_init
 c_func
 (paren
@@ -102,6 +143,18 @@ suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
 id|dummy_get_stats
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef MODULE
+id|dev-&gt;open
+op_assign
+op_amp
+id|dummy_open
+suffix:semicolon
+id|dev-&gt;stop
+op_assign
+op_amp
+id|dummy_close
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values. */
@@ -215,4 +268,162 @@ id|stats
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|function|dummy_probe
+r_static
+r_int
+id|dummy_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|dummy_init
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|dev_dummy
+r_static
+r_struct
+id|device
+id|dev_dummy
+op_assign
+(brace
+l_string|&quot;dummy0&bslash;0   &quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|dummy_probe
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Find a name for this unit */
+r_int
+id|ct
+op_assign
+l_int|1
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|dev_get
+c_func
+(paren
+id|dev_dummy.name
+)paren
+op_ne
+l_int|NULL
+op_logical_and
+id|ct
+OL
+l_int|100
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|dev_dummy.name
+comma
+l_string|&quot;dummy%d&quot;
+comma
+id|ct
+)paren
+suffix:semicolon
+id|ct
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_dummy
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;dummy: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_dummy
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 eof

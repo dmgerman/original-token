@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;smc-ultra.c:v1.11 11/21/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -659,12 +658,14 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 l_int|32
+comma
+l_string|&quot;smc-ultra&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* The 8390 isn&squot;t at the base address, so fake the offset */

@@ -195,7 +195,7 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|change_ldt
+id|setup_arg_pages
 c_func
 (paren
 r_int
@@ -256,5 +256,8 @@ r_int
 id|from_kmem
 )paren
 suffix:semicolon
+multiline_comment|/* this eventually goes away */
+DECL|macro|change_ldt
+mdefine_line|#define change_ldt(a,b) setup_arg_pages(a,b)
 macro_line|#endif
 eof

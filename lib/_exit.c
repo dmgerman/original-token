@@ -2,6 +2,19 @@ multiline_comment|/*&n; *  linux/lib/_exit.c&n; *&n; *  Copyright (C) 1991, 1992
 DECL|macro|__LIBRARY__
 mdefine_line|#define __LIBRARY__
 macro_line|#include &lt;linux/unistd.h&gt;
+DECL|macro|exit
+mdefine_line|#define exit __sys_exit
+r_static
+r_inline
+id|_syscall0
+c_func
+(paren
+r_int
+comma
+m_exit
+)paren
+DECL|macro|exit
+macro_line|#undef exit
 DECL|function|_exit
 r_volatile
 r_void
@@ -14,23 +27,9 @@ id|exit_code
 (brace
 id|fake_volatile
 suffix:colon
-id|__asm__
+id|__sys_exit
 c_func
 (paren
-l_string|&quot;movl %1,%%ebx&bslash;n&bslash;t&quot;
-l_string|&quot;int $0x80&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-id|__NR_exit
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|exit_code
-)paren
 )paren
 suffix:semicolon
 r_goto

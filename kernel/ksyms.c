@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -105,46 +106,6 @@ id|dmanr
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|do_execve
-c_func
-(paren
-r_char
-op_star
-id|filename
-comma
-r_char
-op_star
-op_star
-id|argv
-comma
-r_char
-op_star
-op_star
-id|envp
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|do_signal
-c_func
-(paren
-r_int
-r_int
-id|oldmask
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_extern
 r_void
 (paren
 op_star
@@ -185,12 +146,14 @@ c_func
 id|EISA_bus
 )paren
 comma
+macro_line|#ifdef __i386__
 id|X
 c_func
 (paren
 id|wp_works_ok
 )paren
 comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 multiline_comment|/* PCI BIOS support */
 id|X
@@ -872,7 +835,7 @@ multiline_comment|/* Program loader interfaces */
 id|X
 c_func
 (paren
-id|change_ldt
+id|setup_arg_pages
 )paren
 comma
 id|X
@@ -994,6 +957,12 @@ id|X
 c_func
 (paren
 id|snarf_region
+)paren
+comma
+id|X
+c_func
+(paren
+id|register_iomem
 )paren
 comma
 id|X
@@ -1152,6 +1121,18 @@ id|X
 c_func
 (paren
 id|insert_inode_hash
+)paren
+comma
+id|X
+c_func
+(paren
+id|event
+)paren
+comma
+id|X
+c_func
+(paren
+id|__down
 )paren
 comma
 macro_line|#if defined(CONFIG_MSDOS_FS) &amp;&amp; !defined(CONFIG_UMSDOS_FS)

@@ -1460,6 +1460,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Yes this is really needed here */
 id|now
 op_assign
 id|jiffies
@@ -1505,6 +1506,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Yes this is really needed here */
 id|now
 op_assign
 id|jiffies
@@ -3814,12 +3816,14 @@ comma
 id|host-&gt;dma
 )paren
 suffix:semicolon
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|host-&gt;iobase
 comma
 l_int|4
+comma
+l_string|&quot;wd7000&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Register our ports */

@@ -2255,11 +2255,13 @@ id|entry-&gt;prev
 op_assign
 id|head
 suffix:semicolon
+(paren
 id|entry-&gt;next
 op_assign
 id|head-&gt;next
-suffix:semicolon
-id|entry-&gt;next-&gt;prev
+)paren
+op_member_access_from_pointer
+id|prev
 op_assign
 id|entry
 suffix:semicolon
@@ -4712,10 +4714,6 @@ id|NR_MEM_LISTS
 suffix:semicolon
 id|i
 op_increment
-comma
-id|mask
-op_lshift_assign
-l_int|1
 )paren
 (brace
 r_int
@@ -4741,6 +4739,10 @@ id|free_area_list
 (braket
 id|i
 )braket
+suffix:semicolon
+id|mask
+op_add_assign
+id|mask
 suffix:semicolon
 id|end_mem
 op_assign

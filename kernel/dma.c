@@ -2,8 +2,9 @@ multiline_comment|/* $Id: dma.c,v 1.7 1994/12/28 03:35:33 root Exp root $&n; * l
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* A note on resource allocation:&n; *&n; * All drivers needing DMA channels, should allocate and release them&n; * through the public routines `request_dma()&squot; and `free_dma()&squot;.&n; *&n; * In order to avoid problems, all processes should allocate resources in&n; * the same sequence and release them in the reverse order.&n; *&n; * So, when allocating DMAs and IRQs, first allocate the IRQ, then the DMA.&n; * When releasing them, first release the DMA, then release the IRQ.&n; * If you don&squot;t, you may cause allocation requests to fail unnecessarily.&n; * This doesn&squot;t really matter now, but it will once we get real semaphores&n; * in the kernel.&n; */
-multiline_comment|/* Channel n is busy iff dma_chan_busy[n] != 0.&n; * DMA0 used to be reserved for DRAM refresh, but apparently not any more...&n; * DMA4 is reserved for cascading.&n; */
+multiline_comment|/* Channel n is busy iff dma_chan_busy[n].lock != 0.&n; * DMA0 used to be reserved for DRAM refresh, but apparently not any more...&n; * DMA4 is reserved for cascading.&n; */
 DECL|struct|dma_chan
 r_struct
 id|dma_chan
@@ -21,7 +22,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|variable|dma_chan_busy
 r_static
-r_volatile
 r_struct
 id|dma_chan
 id|dma_chan_busy
@@ -79,63 +79,6 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* Atomically swap memory location [32 bits] with `newval&squot;.&n; * This avoid the cli()/sti() junk and related problems.&n; * [And it&squot;s faster too :-)]&n; * Maybe this should be in include/asm/mutex.h and be used for&n; * implementing kernel-semaphores as well.&n; */
-DECL|function|mutex_atomic_swap
-r_static
-id|__inline__
-r_int
-r_int
-id|mutex_atomic_swap
-c_func
-(paren
-r_volatile
-r_int
-r_int
-op_star
-id|p
-comma
-r_int
-r_int
-id|newval
-)paren
-(brace
-r_int
-r_int
-id|semval
-op_assign
-id|newval
-suffix:semicolon
-multiline_comment|/* If one of the operands for the XCHG instructions is a memory ref,&n;&t; * it makes the swap an uninterruptible RMW cycle.&n;&t; *&n;&t; * One operand must be in memory, the other in a register, otherwise&n;&t; * the swap may not be atomic.&n;&t; */
-id|asm
-id|__volatile__
-(paren
-l_string|&quot;xchgl %2, %0&bslash;n&quot;
-suffix:colon
-multiline_comment|/* outputs: semval   */
-l_string|&quot;=r&quot;
-(paren
-id|semval
-)paren
-suffix:colon
-multiline_comment|/* inputs: newval, p */
-l_string|&quot;0&quot;
-(paren
-id|semval
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-id|p
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* p is a var, containing an address */
-r_return
-id|semval
-suffix:semicolon
-)brace
-multiline_comment|/* mutex_atomic_swap */
 DECL|function|get_dma_list
 r_int
 id|get_dma_list
@@ -235,14 +178,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mutex_atomic_swap
+id|xchg_u32
 c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
 op_amp
 id|dma_chan_busy
 (braket
@@ -307,14 +245,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mutex_atomic_swap
+id|xchg_u32
 c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
 op_amp
 id|dma_chan_busy
 (braket

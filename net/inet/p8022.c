@@ -264,9 +264,9 @@ op_assign
 l_int|0
 comma
 multiline_comment|/* MUTTER ntohs(ETH_P_IPX),*/
-l_int|0
+l_int|NULL
 comma
-multiline_comment|/* copy */
+multiline_comment|/* All devices */
 id|p8022_rcv
 comma
 l_int|NULL

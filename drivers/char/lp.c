@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; */
+multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -84,6 +84,13 @@ macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
+multiline_comment|/* Test if printer is ready (and optionally has no error conditions) */
+DECL|macro|LP_READY
+mdefine_line|#define LP_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : (status &amp; LP_PBUSY))
+DECL|macro|LP_CAREFUL_READY
+mdefine_line|#define LP_CAREFUL_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : 1)
+DECL|macro|_LP_CAREFUL_READY
+mdefine_line|#define _LP_CAREFUL_READY(status) &bslash;&n;   (status &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP) 
 multiline_comment|/* &n; * All my debugging code assumes that you debug with only one printer at&n; * a time. RWWH&n; */
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
@@ -220,48 +227,17 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
-id|LP_F
-c_func
-(paren
-id|minor
-)paren
-op_amp
-id|LP_CAREFUL
-)paren
-op_logical_and
-(paren
-id|status
-op_amp
-(paren
-id|LP_POUTPA
-op_or
-id|LP_PSELECD
-op_or
-id|LP_PERRORP
-)paren
-)paren
-op_ne
-(paren
-id|LP_PSELECD
-op_or
-id|LP_PERRORP
-)paren
-)paren
-r_continue
-suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
 op_logical_neg
+id|LP_READY
+c_func
 (paren
+id|minor
+comma
 id|status
-op_amp
-id|LP_PBUSY
 )paren
 op_logical_and
 id|count
@@ -490,32 +466,13 @@ id|LP_PBUSY
 r_if
 c_cond
 (paren
-(paren
-id|LP_F
+op_logical_neg
+id|LP_CAREFUL_READY
 c_func
 (paren
 id|minor
-)paren
-op_amp
-id|LP_CAREFUL
-)paren
-op_logical_and
-(paren
+comma
 id|status
-op_amp
-(paren
-id|LP_POUTPA
-op_or
-id|LP_PSELECD
-op_or
-id|LP_PERRORP
-)paren
-)paren
-op_ne
-(paren
-id|LP_PSELECD
-op_or
-id|LP_PERRORP
 )paren
 )paren
 r_return
@@ -833,6 +790,7 @@ id|LP_POUTPA
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp%d out of paper&bslash;n&quot;
 comma
 id|minor
@@ -874,6 +832,7 @@ id|LP_PSELECD
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp%d off-line&bslash;n&quot;
 comma
 id|minor
@@ -915,6 +874,7 @@ id|LP_PERRORP
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;lp%d printer error&bslash;n&quot;
 comma
 id|minor
@@ -992,35 +952,12 @@ id|LP_PBUSY
 )paren
 )paren
 op_logical_and
-(paren
-op_logical_neg
-(paren
-id|LP_F
+id|LP_CAREFUL_READY
 c_func
 (paren
 id|minor
-)paren
-op_amp
-id|LP_CAREFUL
-)paren
-op_logical_or
-(paren
+comma
 id|status
-op_amp
-(paren
-id|LP_POUTPA
-op_or
-id|LP_PSELECD
-op_or
-id|LP_PERRORP
-)paren
-)paren
-op_eq
-(paren
-id|LP_PSELECD
-op_or
-id|LP_PERRORP
-)paren
 )paren
 )paren
 (brace
@@ -1291,6 +1228,7 @@ id|LP_POUTPA
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp%d out of paper&bslash;n&quot;
 comma
 id|minor
@@ -1353,6 +1291,7 @@ id|LP_PSELECD
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp%d off-line&bslash;n&quot;
 comma
 id|minor
@@ -1416,6 +1355,7 @@ id|LP_PERRORP
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;lp%d reported invalid error status (on fire, eh?)&bslash;n&quot;
 comma
 id|minor
@@ -1752,6 +1692,7 @@ id|LP_POUTPA
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp%d out of paper&bslash;n&quot;
 comma
 id|minor
@@ -1777,6 +1718,7 @@ id|LP_PSELECD
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp%d off-line&bslash;n&quot;
 comma
 id|minor
@@ -1802,6 +1744,7 @@ id|LP_PERRORP
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;lp%d printer error&bslash;n&quot;
 comma
 id|minor
@@ -2532,6 +2475,12 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|5
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2668,7 +2617,17 @@ id|offset
 )paren
 )paren
 suffix:semicolon
-id|snarf_region
+id|sprintf
+c_func
+(paren
+id|buf
+comma
+l_string|&quot;lp%d&quot;
+comma
+id|offset
+)paren
+suffix:semicolon
+id|register_iomem
 c_func
 (paren
 id|LP_B
@@ -2678,6 +2637,8 @@ id|offset
 )paren
 comma
 l_int|3
+comma
+id|buf
 )paren
 suffix:semicolon
 r_if
@@ -2762,6 +2723,12 @@ r_int
 id|count
 op_assign
 l_int|0
+suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|5
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -2883,7 +2850,17 @@ id|offset
 )paren
 )paren
 suffix:semicolon
-id|snarf_region
+id|sprintf
+c_func
+(paren
+id|buf
+comma
+l_string|&quot;lp%d&quot;
+comma
+id|offset
+)paren
+suffix:semicolon
+id|register_iomem
 c_func
 (paren
 id|LP_B
@@ -2893,6 +2870,8 @@ id|offset
 )paren
 comma
 l_int|3
+comma
+id|buf
 )paren
 suffix:semicolon
 r_if

@@ -5,7 +5,6 @@ mdefine_line|#define&t;ELP_KERNEL_TYPE&t;4
 multiline_comment|/*********************************************************&n; *&n; *  set ELP_NEED_HARD_RESET to 1, if having problems with&n; *  &quot;warm resets&quot; from DOS. Bootup will then take some more&n; *  time, as the adapter will perform self-test upon hard&n; *  reset. This misbehaviour is reported to happen at least&n; *  after use of Windows real-mode NDIS drivers.&n; *&n; *********************************************************/
 DECL|macro|ELP_NEED_HARD_RESET
 mdefine_line|#define ELP_NEED_HARD_RESET 0
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

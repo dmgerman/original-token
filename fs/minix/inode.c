@@ -1,4 +1,13 @@
 multiline_comment|/*&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -236,6 +245,8 @@ c_func
 (paren
 id|sb
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1018,6 +1029,8 @@ id|printk
 l_string|&quot;MINIX-fs: mounting file system with errors, &quot;
 l_string|&quot;running fsck is recommended.&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 id|s
@@ -2713,4 +2726,79 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|minix_fs_type
+r_static
+r_struct
+id|file_system_type
+id|minix_fs_type
+op_assign
+(brace
+id|minix_read_super
+comma
+l_string|&quot;minix&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|minix_fs_type
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ne: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|minix_fs_type
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 eof

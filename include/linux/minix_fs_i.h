@@ -7,8 +7,7 @@ r_struct
 id|minix_inode_info
 (brace
 DECL|member|i_data
-r_int
-r_int
+id|u16
 id|i_data
 (braket
 l_int|16

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -6453,6 +6454,23 @@ suffix:semicolon
 r_case
 id|TIOCLINUX
 suffix:colon
+r_if
+c_cond
+(paren
+id|current-&gt;tty
+op_ne
+id|tty
+op_logical_and
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|retval
 op_assign
 id|verify_area

@@ -233,14 +233,6 @@ DECL|macro|suser
 mdefine_line|#define suser() (current-&gt;euid == 0)
 DECL|macro|fsuser
 mdefine_line|#define fsuser() (current-&gt;fsuid == 0)
-r_extern
-r_int
-id|splx
-(paren
-r_int
-id|new_ipl
-)paren
-suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 DECL|macro|SI_LOAD_SHIFT
 mdefine_line|#define SI_LOAD_SHIFT&t;16

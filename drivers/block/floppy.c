@@ -9033,12 +9033,17 @@ c_func
 l_string|&quot;buffer overrun in copy buffer %d&bslash;n&quot;
 comma
 (paren
+r_int
+)paren
+(paren
+(paren
 id|floppy_track_buffer
 op_minus
 id|dma_buffer
 )paren
 op_rshift
 l_int|9
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -9101,6 +9106,7 @@ c_cond
 (paren
 (paren
 (paren
+r_int
 r_int
 )paren
 id|buffer
@@ -10296,12 +10302,17 @@ c_func
 l_string|&quot;addr=%d, length=%ld&bslash;n&quot;
 comma
 (paren
+r_int
+)paren
+(paren
+(paren
 id|current_addr
 op_minus
 id|floppy_track_buffer
 )paren
 op_rshift
 l_int|9
+)paren
 comma
 id|current_count_sectors
 )paren

@@ -25,7 +25,6 @@ macro_line|#ifdef LOWSPEED
 multiline_comment|/*&n; * Enable this #define if you want to see debugging output that show how long&n; * we have to wait before the DE-620 is ready for the next read/write/command.&n; *&n;#define COUNT_LOOPS&n; */
 macro_line|#endif
 "&f;"
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

@@ -541,12 +541,11 @@ r_int
 id|type
 suffix:semicolon
 multiline_comment|/* This is really htons(ether_type). */
-DECL|member|copy
-r_int
-r_int
-id|copy
-suffix:colon
-l_int|1
+DECL|member|dev
+r_struct
+id|device
+op_star
+id|dev
 suffix:semicolon
 DECL|member|func
 r_int
@@ -582,6 +581,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/notifier.h&gt;
 multiline_comment|/* Used by dev_rint */
 DECL|macro|IN_SKBUFF
 mdefine_line|#define IN_SKBUFF&t;1
@@ -904,6 +904,28 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|register_netdevice_notifier
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+id|nb
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|unregister_netdevice_notifier
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+id|nb
+)paren
+suffix:semicolon
 multiline_comment|/* Functions used for multicast support */
 r_extern
 r_void
@@ -961,6 +983,18 @@ suffix:semicolon
 r_extern
 r_void
 id|dev_mc_discard
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* This is the wrong place but it&squot;ll do for the moment */
+r_extern
+r_void
+id|ip_mc_allhost
 c_func
 (paren
 r_struct

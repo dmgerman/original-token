@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&n; *&t;&t;&t;&n; *&n; */
+multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1450,17 +1450,27 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-DECL|function|ipxrtr_device_down
-r_void
-id|ipxrtr_device_down
+DECL|function|ipxrtr_device_event
+r_int
+id|ipxrtr_device_event
 c_func
 (paren
+r_int
+r_int
+id|event
+comma
+r_void
+op_star
+id|ptr
+)paren
+(brace
 r_struct
 id|device
 op_star
 id|dev
-)paren
-(brace
+op_assign
+id|ptr
+suffix:semicolon
 id|ipx_route
 op_star
 op_star
@@ -1473,6 +1483,18 @@ id|ipx_route
 op_star
 id|tmp
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|event
+op_ne
+id|NETDEV_DOWN
+)paren
+(brace
+r_return
+id|NOTIFY_DONE
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -1532,6 +1554,9 @@ op_amp
 id|tmp-&gt;next
 suffix:semicolon
 )brace
+r_return
+id|NOTIFY_DONE
+suffix:semicolon
 )brace
 DECL|function|ipxrtr_ioctl
 r_static
@@ -2325,6 +2350,8 @@ id|sock_wake_async
 c_func
 (paren
 id|sk-&gt;socket
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -5776,9 +5803,9 @@ op_assign
 l_int|0
 comma
 multiline_comment|/* MUTTER ntohs(ETH_P_IPX),*/
-l_int|0
+l_int|NULL
 comma
-multiline_comment|/* copy */
+multiline_comment|/* Al devices */
 id|ipx_rcv
 comma
 l_int|NULL
@@ -5786,6 +5813,14 @@ comma
 l_int|NULL
 comma
 )brace
+suffix:semicolon
+DECL|variable|ipx_dev_notifier
+r_static
+r_struct
+id|notifier_block
+id|ipx_dev_notifier
+op_assign
+initialization_block
 suffix:semicolon
 r_extern
 r_struct
@@ -5903,10 +5938,17 @@ c_func
 l_string|&quot;IPX: Unable to register with 802.2&bslash;n&quot;
 )paren
 suffix:semicolon
+id|register_netdevice_notifier
+c_func
+(paren
+op_amp
+id|ipx_dev_notifier
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society IPX 0.29 BETA for NET3.017&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society IPX 0.29 BETA for NET3.019&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

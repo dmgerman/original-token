@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/kernel/sys.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -45,85 +44,6 @@ r_return
 op_minus
 id|ENOSYS
 suffix:semicolon
-)brace
-DECL|function|sys_idle
-id|asmlinkage
-r_int
-id|sys_idle
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;pid
-op_ne
-l_int|0
-)paren
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
-multiline_comment|/* Map out the low memory: it&squot;s no longer needed */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|768
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|swapper_pg_dir
-(braket
-id|i
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* endless idle loop with no priority at all */
-id|current-&gt;counter
-op_assign
-op_minus
-l_int|100
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|hlt_works_ok
-op_logical_and
-op_logical_neg
-id|need_resched
-)paren
-id|__asm__
-c_func
-(paren
-l_string|&quot;hlt&quot;
-)paren
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 )brace
 DECL|function|proc_sel
 r_static

@@ -10,15 +10,12 @@ op_assign
 l_string|&quot;auto_irq.c:v1.11 Donald Becker (becker@cesdis.gsfc.nasa.gov)&quot;
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*#include &lt;linux/config.h&gt;*/
-multiline_comment|/*#include &lt;linux/kernel.h&gt;*/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-multiline_comment|/*#include &lt;asm/system.h&gt;*/
 DECL|variable|irq2dev_map
 r_struct
 id|device

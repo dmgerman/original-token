@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/kernel/blk_drv/ramdisk.c&n; *&n; *  Written by Theodore Ts&squot;o, 12/2/91&n; *&n; * Modifications by Fred N. van Kempen to allow for bootable root&n; * disks (which are used in LINUX/Pro).  Also some cleanups.  03/03/93&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;

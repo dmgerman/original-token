@@ -2848,12 +2848,14 @@ id|shpnt-&gt;irq
 op_assign
 id|irq_level
 suffix:semicolon
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|base
 comma
 l_int|12
+comma
+l_string|&quot;in2000&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Prevent other drivers from using this space */

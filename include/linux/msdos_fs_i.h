@@ -1,9 +1,6 @@
 macro_line|#ifndef _MSDOS_FS_I
 DECL|macro|_MSDOS_FS_I
 mdefine_line|#define _MSDOS_FS_I
-macro_line|#ifndef _LINUX_CONFIG_H
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#endif
 macro_line|#ifndef _LINUX_PIPE_FS_I_H
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#endif

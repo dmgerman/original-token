@@ -3,6 +3,7 @@ macro_line|#ifndef _IP_H
 DECL|macro|_IP_H
 mdefine_line|#define _IP_H
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef _SNMP_H
 macro_line|#include &quot;snmp.h&quot;
 macro_line|#endif

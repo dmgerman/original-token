@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#ifdef MODULE
@@ -131,6 +132,10 @@ r_int
 r_int
 id|blocksize
 suffix:semicolon
+DECL|member|mode
+id|mode_t
+id|mode
+suffix:semicolon
 DECL|member|gid
 id|gid_t
 id|gid
@@ -183,6 +188,10 @@ suffix:semicolon
 id|popt-&gt;blocksize
 op_assign
 l_int|1024
+suffix:semicolon
+id|popt-&gt;mode
+op_assign
+id|S_IRUGO
 suffix:semicolon
 id|popt-&gt;gid
 op_assign
@@ -519,6 +528,15 @@ c_func
 (paren
 id|this_char
 comma
+l_string|&quot;mode&quot;
+)paren
+op_logical_or
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|this_char
+comma
 l_string|&quot;uid&quot;
 )paren
 op_logical_or
@@ -641,6 +659,15 @@ id|ivalue
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_char|&squot;m&squot;
+suffix:colon
+id|popt-&gt;mode
+op_assign
+id|ivalue
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 )brace
 r_else
@@ -676,6 +703,8 @@ r_struct
 id|buffer_head
 op_star
 id|bh
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|iso_blknum
@@ -691,6 +720,28 @@ r_int
 id|dev
 op_assign
 id|s-&gt;s_dev
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|vol_desc_start
+suffix:semicolon
+r_struct
+id|inode
+id|inode_fake
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+op_star
+id|get_blkfops
+c_func
+(paren
+r_int
+r_int
+)paren
 suffix:semicolon
 r_struct
 id|iso_volume_descriptor
@@ -859,21 +910,103 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* default is iso9660 */
+multiline_comment|/*&n;&t; * look if the driver can tell the multi session redirection value&n;&t; * &lt;emoenke@gwdg.de&gt;&n;&t; */
+id|vol_desc_start
+op_assign
+l_int|0
+suffix:semicolon
+id|inode_fake.i_rdev
+op_assign
+id|dev
+suffix:semicolon
+id|i
+op_assign
+id|get_blkfops
+c_func
+(paren
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+)paren
+op_member_access_from_pointer
+id|ioctl
+c_func
+(paren
+op_amp
+id|inode_fake
+comma
+l_int|NULL
+comma
+id|CDROMMULTISESSION_SYS
+comma
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|vol_desc_start
+)paren
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;isofs.inode: CDROMMULTISESSION_SYS rc=%d&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;isofs.inode: vol_desc_start = %d&bslash;n&quot;
+comma
+id|vol_desc_start
+)paren
+suffix:semicolon
+macro_line|#endif 0
+r_if
+c_cond
+(paren
+id|i
+op_ne
+l_int|0
+)paren
+id|vol_desc_start
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
 id|iso_blknum
 op_assign
+id|vol_desc_start
+op_plus
 l_int|16
 suffix:semicolon
 id|iso_blknum
 OL
+id|vol_desc_start
+op_plus
 l_int|100
 suffix:semicolon
 id|iso_blknum
 op_increment
 )paren
 (brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;isofs.inode: iso_blknum=%d&bslash;n&quot;
+comma
+id|iso_blknum
+)paren
+suffix:semicolon
+macro_line|#endif 0
 r_if
 c_cond
 (paren
@@ -1409,6 +1542,13 @@ suffix:semicolon
 id|s-&gt;u.isofs_sb.s_gid
 op_assign
 id|opt.gid
+suffix:semicolon
+multiline_comment|/*&n;&t; * It would be incredibly stupid to allow people to mark every file on the disk&n;&t; * as suid, so we merely allow them to set the default permissions.&n;&t; */
+id|s-&gt;u.isofs_sb.s_mode
+op_assign
+id|opt.mode
+op_amp
+l_int|0777
 suffix:semicolon
 id|s-&gt;s_blocksize
 op_assign
@@ -1951,15 +2091,6 @@ id|pnt
 )paren
 suffix:semicolon
 )brace
-id|inode-&gt;i_mode
-op_assign
-id|S_IRUGO
-suffix:semicolon
-multiline_comment|/* Everybody gets to read the file. */
-id|inode-&gt;i_nlink
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1990,7 +2121,7 @@ r_else
 (brace
 id|inode-&gt;i_mode
 op_assign
-id|S_IRUGO
+id|inode-&gt;i_sb-&gt;u.isofs_sb.s_mode
 suffix:semicolon
 multiline_comment|/* Everybody gets to read the file. */
 id|inode-&gt;i_nlink

@@ -895,12 +895,14 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* We&squot;ve committed to using the board, and can start filling in *dev. */
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|EL16_IO_EXTENT
+comma
+l_string|&quot;3c507&quot;
 )paren
 suffix:semicolon
 id|dev-&gt;base_addr

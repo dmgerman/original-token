@@ -1,6 +1,5 @@
 multiline_comment|/* &n; * net-3-driver for the NI5210 card (i82586 Ethernet chip)&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers that work.&n; * &n; * Alphacode 0.51 (94/08/19) for Linux 1.1.47 (or later)&n; * Copyrights (c) 1994 by Michael Hipp (mhipp@student.uni-tuebingen.de)&n; *    [feel free to mail ....]&n; *&n; * CAN YOU PLEASE REPORT ME YOUR PERFORMANCE EXPERIENCES !!.&n; *&n; * autoprobe for: base_addr: 0x300,0x280,0x360,0x320,0x340&n; *                mem_start: 0xd0000,0xd4000,0xd8000 (8K and 16K)&n; *&n; * sources:&n; *   skeleton.c from Donald Becker&n; *&n; * I have also done a look in the following sources: (mail me if you need them)&n; *   crynwr-packet-driver by Russ Nelson&n; *   Garret A. Wollman&squot;s (fourth) i82586-driver for BSD&n; *   (before getting an i82596 manual, the existing drivers helped&n; *    me a lot to understand this tricky chip.)&n; *&n; * Known Bugs:&n; *   The internal sysbus seems to be slow. So we often lose packets because of&n; *   overruns while receiving from a fast remote host. &n; *   This can slow down TCP connections. Maybe the newer ni5210 cards are better.&n; */
 multiline_comment|/*&n; * 19.Aug.94: changed request_irq() parameter (MH)&n; * &n; * 20.July.94: removed cleanup bugs, removed a 16K-mem-probe-bug (MH)&n; *&n; * 19.July.94: lotsa cleanups .. (MH)&n; *&n; * 17.July.94: some patches ... verified to run with 1.1.29 (MH)&n; *&n; * 4.July.94: patches for Linux 1.1.24  (MH)&n; *&n; * 26.March.94: patches for Linux 1.0 and iomem-auto-probe (MH)&n; *&n; * 30.Sep.93: Added nop-chain .. driver now runs with only one Xmit-Buff, too (MH)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -128,8 +127,8 @@ suffix:semicolon
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size) &t;&t;0
-DECL|macro|snarf_region
-mdefine_line|#define&t;snarf_region(ioaddr, size);&t;&t;do ; while (0)
+DECL|macro|register_iomem
+mdefine_line|#define&t;register_iomem(ioaddr, size,name);&t;&t;do ; while (0)
 macro_line|#endif
 DECL|macro|NI52_TOTAL_SIZE
 mdefine_line|#define NI52_TOTAL_SIZE 16
@@ -1289,12 +1288,14 @@ comma
 id|dev-&gt;base_addr
 )paren
 suffix:semicolon
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|ioaddr
 comma
 id|NI52_TOTAL_SIZE
+comma
+l_string|&quot;ni52&quot;
 )paren
 suffix:semicolon
 id|dev-&gt;priv

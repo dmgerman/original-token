@@ -949,12 +949,14 @@ id|dev-&gt;if_port
 op_assign
 id|if_port
 suffix:semicolon
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|dev-&gt;base_addr
 comma
 l_int|16
+comma
+l_string|&quot;3c509&quot;
 )paren
 suffix:semicolon
 (brace

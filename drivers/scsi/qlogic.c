@@ -31,7 +31,6 @@ DECL|macro|SYNCOFFST
 mdefine_line|#define SYNCOFFST 0
 multiline_comment|/* for the curious, bits 7&amp;6 control the deassertion delay in 1/2 cycles&n;&t;of the 40Mhz clock. If FASTCLK is 1, specifying 01 (1/2) will&n;&t;cause the deassertion to be early by 1/2 clock.  Bits 5&amp;4 control&n;&t;the assertion delay, also in 1/2 clocks (FASTCLK is ignored here). */
 multiline_comment|/*----------------------------------------------------------------*/
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;&t;/* to get disk capacity */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -2556,12 +2555,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|snarf_region
+id|register_iomem
 c_func
 (paren
 id|qbase
 comma
 l_int|0x10
+comma
+l_string|&quot;qlogic&quot;
 )paren
 suffix:semicolon
 id|hreg
