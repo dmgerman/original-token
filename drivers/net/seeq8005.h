@@ -178,7 +178,7 @@ mdefine_line|#define SEEQCFG2_NO_PREAM&t;(0x0080)&t;/* 1= user supplies Xmit pre
 DECL|macro|SEEQCFG2_ADDR_LEN
 mdefine_line|#define SEEQCFG2_ADDR_LEN&t;(0x0100)&t;/* 1= 2byte addresses */
 DECL|macro|SEEQCFG2_REC_CRC
-mdefine_line|#define SEEQCFG2_REC_CRC&t;(0x0200)&t;/* 0= recieved packets will have CRC stripped from them */
+mdefine_line|#define SEEQCFG2_REC_CRC&t;(0x0200)&t;/* 0= received packets will have CRC stripped from them */
 DECL|macro|SEEQCFG2_XMIT_NO_CRC
 mdefine_line|#define SEEQCFG2_XMIT_NO_CRC&t;(0x0400)&t;/* dont xmit CRC with each packet (user supplies it) */
 DECL|macro|SEEQCFG2_LOOPBACK
@@ -245,7 +245,7 @@ id|xmit_recv
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* if set, a xmit packet, else a recieve packet.*/
+multiline_comment|/* if set, a xmit packet, else a receive packet.*/
 DECL|member|status
 r_int
 r_char

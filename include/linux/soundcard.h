@@ -165,6 +165,14 @@ DECL|macro|SNDCTL_TMR_METRONOME
 mdefine_line|#define SNDCTL_TMR_METRONOME&t;&t;_IOW (&squot;T&squot;, 7, int)
 DECL|macro|SNDCTL_TMR_SELECT
 mdefine_line|#define SNDCTL_TMR_SELECT&t;&t;_IOW (&squot;T&squot;, 8, int)
+multiline_comment|/*&n; *&t;Endian aware patch key generation algorithm.&n; */
+macro_line|#if defined(_AIX) || defined(AIX)
+DECL|macro|_PATCHKEY
+macro_line|#  define _PATCHKEY(id) (0xfd00|id)
+macro_line|#else
+DECL|macro|_PATCHKEY
+macro_line|#  define _PATCHKEY(id) ((id&lt;&lt;8)|0xfd)
+macro_line|#endif
 multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is propably too limited.&n; */
 DECL|struct|patch_info
 r_struct
@@ -172,13 +180,14 @@ id|patch_info
 (brace
 DECL|member|key
 r_int
+r_int
 id|key
 suffix:semicolon
 multiline_comment|/* Use GUS_PATCH here */
 DECL|macro|GUS_PATCH
-mdefine_line|#define GUS_PATCH&t;0x04fd
+mdefine_line|#define GUS_PATCH&t;_PATCHKEY(0x04)
 DECL|macro|OBSOLETE_GUS_PATCH
-mdefine_line|#define OBSOLETE_GUS_PATCH&t;0x02fd
+mdefine_line|#define OBSOLETE_GUS_PATCH&t;_PATCHKEY(0x02)
 DECL|member|device_no
 r_int
 id|device_no
@@ -353,9 +362,9 @@ id|key
 suffix:semicolon
 multiline_comment|/* Use GUS_PATCH here */
 DECL|macro|SYSEX_PATCH
-mdefine_line|#define SYSEX_PATCH&t;0x05fd
+mdefine_line|#define SYSEX_PATCH&t;_PATCHKEY(0x05)
 DECL|macro|MAUI_PATCH
-mdefine_line|#define MAUI_PATCH&t;0x06fd&t;&t;/* For future use */
+mdefine_line|#define MAUI_PATCH&t;_PATCHKEY(0x06)
 DECL|member|device_no
 r_int
 id|device_no
@@ -669,11 +678,11 @@ r_int
 r_int
 id|key
 suffix:semicolon
-multiline_comment|/* &t;Initialize to FM_PATCH or OPL3_PATCH */
+multiline_comment|/* FM_PATCH or OPL3_PATCH */
 DECL|macro|FM_PATCH
-mdefine_line|#define FM_PATCH&t;0x01fd
+mdefine_line|#define FM_PATCH&t;_PATCHKEY(0x01)
 DECL|macro|OPL3_PATCH
-mdefine_line|#define OPL3_PATCH&t;0x03fd
+mdefine_line|#define OPL3_PATCH&t;_PATCHKEY(0x03)
 DECL|member|device
 r_int
 id|device
@@ -726,6 +735,8 @@ DECL|macro|FM_TYPE_ADLIB
 mdefine_line|#define FM_TYPE_ADLIB&t;&t;&t;0x00
 DECL|macro|FM_TYPE_OPL3
 mdefine_line|#define FM_TYPE_OPL3&t;&t;&t;0x01
+DECL|macro|MIDI_TYPE_MPU401
+mdefine_line|#define MIDI_TYPE_MPU401&t;&t;0x401
 DECL|macro|SAMPLE_TYPE_GUS
 mdefine_line|#define SAMPLE_TYPE_GUS&t;&t;&t;0x10
 DECL|member|perc_mode
@@ -1019,6 +1030,8 @@ DECL|macro|SNDCTL_DSP_MAPINBUF
 mdefine_line|#define SNDCTL_DSP_MAPINBUF&t;&t;_IOR (&squot;P&squot;, 19, buffmem_desc)
 DECL|macro|SNDCTL_DSP_MAPOUTBUF
 mdefine_line|#define SNDCTL_DSP_MAPOUTBUF&t;&t;_IOR (&squot;P&squot;, 20, buffmem_desc)
+DECL|macro|SNDCTL_DSP_SETSYNCRO
+mdefine_line|#define SNDCTL_DSP_SETSYNCRO&t;&t;_IO  (&squot;P&squot;, 21)
 DECL|macro|SOUND_PCM_READ_RATE
 mdefine_line|#define SOUND_PCM_READ_RATE&t;&t;_IOR (&squot;P&squot;, 2, int)
 DECL|macro|SOUND_PCM_READ_CHANNELS
@@ -1058,6 +1071,8 @@ DECL|macro|SOUND_PCM_GETTRIGGER
 mdefine_line|#define SOUND_PCM_GETTRIGGER&t;&t;SNDCTL_DSP_GETTRIGGER
 DECL|macro|SOUND_PCM_SETTRIGGER
 mdefine_line|#define SOUND_PCM_SETTRIGGER&t;&t;SNDCTL_DSP_SETTRIGGER
+DECL|macro|SOUND_PCM_SETSYNCRO
+mdefine_line|#define SOUND_PCM_SETSYNCRO&t;&t;SNDCTL_DSP_SETSYNCRO
 DECL|macro|SOUND_PCM_GETIPTR
 mdefine_line|#define SOUND_PCM_GETIPTR&t;&t;SNDCTL_DSP_GETIPTR
 DECL|macro|SOUND_PCM_GETOPTR
@@ -1228,11 +1243,12 @@ DECL|macro|SOUND_ONOFF_MAX
 mdefine_line|#define SOUND_ONOFF_MAX&t;&t;30
 DECL|macro|SOUND_MIXER_MUTE
 mdefine_line|#define SOUND_MIXER_MUTE&t;28&t;/* 0 or 1 */
-DECL|macro|SOUND_MIXER_ENHANCE
-mdefine_line|#define SOUND_MIXER_ENHANCE&t;29&t;/* Enhanced stereo (0, 40, 60 or 80) */
 DECL|macro|SOUND_MIXER_LOUD
 mdefine_line|#define SOUND_MIXER_LOUD&t;30&t;/* 0 or 1 */
 multiline_comment|/* Note!&t;Number 31 cannot be used since the sign bit is reserved */
+multiline_comment|/*&n; * SOUND_MIXER_ENHANCE is an unsupported and undocumented call which&n; * will be removed from the API in future.&n; */
+DECL|macro|SOUND_MIXER_ENHANCE
+mdefine_line|#define SOUND_MIXER_ENHANCE&t;29&t;/* Enhanced stereo (0, 40, 60 or 80) */
 DECL|macro|SOUND_DEVICE_LABELS
 mdefine_line|#define SOUND_DEVICE_LABELS&t;{&quot;Vol  &quot;, &quot;Bass &quot;, &quot;Trebl&quot;, &quot;Synth&quot;, &quot;Pcm  &quot;, &quot;Spkr &quot;, &quot;Line &quot;, &bslash;&n;&t;&t;&t;&t; &quot;Mic  &quot;, &quot;CD   &quot;, &quot;Mix  &quot;, &quot;Pcm2 &quot;, &quot;Rec  &quot;, &quot;IGain&quot;, &quot;OGain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;Line1&quot;, &quot;Line2&quot;, &quot;Line3&quot;}
 DECL|macro|SOUND_DEVICE_NAMES

@@ -2,8 +2,7 @@ multiline_comment|/*&n; * sound/sys_timer.c&n; *&n; * The default timer for the 
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIGURE_SOUNDCARD
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 DECL|variable|opened
 DECL|variable|tmr_running
 r_static
@@ -283,6 +282,7 @@ suffix:semicolon
 id|opened
 op_assign
 l_int|1
+suffix:semicolon
 suffix:semicolon
 (brace
 id|def_tmr.expires
@@ -906,6 +906,5 @@ comma
 id|def_tmr_arm
 )brace
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 eof

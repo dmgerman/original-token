@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c&n; *&n; *  Copyright (C) 1995  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works&n; *  is to first determine the local IP address via RARP. Then handle&n; *  the RPC negotiation with the system which replied to the RARP. The&n; *  actual mounting is done later, when init() is running. In addition&n; *  it&squot;s possible to avoid using RARP if the necessary addresses are&n; *  provided on the kernel command line. This is necessary to use boot-&n; *  roms which use bootp instead of RARP.&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c&n; *&n; *  Copyright (C) 1995  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works&n; *  is to first determine the local IP address via RARP. Then handle&n; *  the RPC negotiation with the system which replied to the RARP. The&n; *  actual mounting is done later, when init() is running. In addition&n; *  it&squot;s possible to avoid using RARP if the necessary addresses are&n; *  provided on the kernel command line. This is necessary to use boot-&n; *  roms which use bootp instead of RARP.&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&t;Michael Rausch  :&t;Fixed recognition of an incoming RARP answer.&n; *&n; */
 multiline_comment|/* Define this to allow debugging output */
 DECL|macro|NFSROOT_DEBUG
 macro_line|#undef NFSROOT_DEBUG 1
@@ -1028,6 +1028,23 @@ id|timeout
 op_assign
 l_int|0
 suffix:semicolon
+r_volatile
+r_struct
+id|device
+op_star
+op_star
+id|root_dev_ptr
+op_assign
+(paren
+r_volatile
+r_struct
+id|device
+op_star
+op_star
+)paren
+op_amp
+id|root_dev
+suffix:semicolon
 multiline_comment|/* Setup RARP protocol */
 id|root_rarp_open
 c_func
@@ -1046,7 +1063,8 @@ id|retries
 OL
 id|RARP_RETRIES
 op_logical_and
-id|root_dev
+op_star
+id|root_dev_ptr
 op_eq
 l_int|NULL
 suffix:semicolon
@@ -1083,11 +1101,11 @@ id|jiffies
 OL
 id|timeout
 op_logical_and
-id|root_dev
+op_star
+id|root_dev_ptr
 op_eq
 l_int|NULL
 )paren
-suffix:semicolon
 suffix:semicolon
 )brace
 id|root_rarp_close
@@ -1098,7 +1116,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|root_dev
+op_star
+id|root_dev_ptr
 op_eq
 l_int|NULL
 op_logical_and

@@ -1,5 +1,5 @@
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;&n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    Paul Gortmaker&t;: Support for PCI ne2k clones, similar to lance.c&n;&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
 DECL|variable|version
 r_static
@@ -11,9 +11,12 @@ op_assign
 l_string|&quot;ne.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -229,6 +232,15 @@ DECL|macro|NESM_START_PG
 mdefine_line|#define NESM_START_PG&t;0x40&t;/* First page of TX buffer */
 DECL|macro|NESM_STOP_PG
 mdefine_line|#define NESM_STOP_PG&t;0x80&t;/* Last page +1 of RX ring */
+multiline_comment|/* Non-zero only if the current card is a PCI with BIOS-set IRQ. */
+DECL|variable|pci_irq_line
+r_static
+r_int
+r_char
+id|pci_irq_line
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 id|ne_probe
 c_func
@@ -371,6 +383,7 @@ id|netcard_portlist
 )brace
 suffix:semicolon
 macro_line|#else
+multiline_comment|/*  Note that this probe only picks up one card at a time, even for multiple&n;    PCI ne2k cards. Use &quot;ether=0,0,eth1&quot; if you have a second PCI ne2k card.&n;    This keeps things consistent regardless of the bus type of the card. */
 DECL|function|ne_probe
 r_int
 id|ne_probe
@@ -395,6 +408,7 @@ id|dev-&gt;base_addr
 suffix:colon
 l_int|0
 suffix:semicolon
+multiline_comment|/* First check any supplied i/o locations. User knows best. &lt;cough&gt; */
 r_if
 c_cond
 (paren
@@ -424,6 +438,163 @@ multiline_comment|/* Don&squot;t probe at all. */
 r_return
 id|ENXIO
 suffix:semicolon
+multiline_comment|/* Then look for any installed PCI clones */
+macro_line|#if defined(CONFIG_PCI)
+r_if
+c_cond
+(paren
+id|pcibios_present
+c_func
+(paren
+)paren
+)paren
+(brace
+r_int
+id|pci_index
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|pci_index
+op_assign
+l_int|0
+suffix:semicolon
+id|pci_index
+OL
+l_int|8
+suffix:semicolon
+id|pci_index
+op_increment
+)paren
+(brace
+r_int
+r_char
+id|pci_bus
+comma
+id|pci_device_fn
+suffix:semicolon
+r_int
+r_int
+id|pci_ioaddr
+suffix:semicolon
+multiline_comment|/* Currently only Realtek are making PCI ne2k clones. */
+r_if
+c_cond
+(paren
+id|pcibios_find_device
+(paren
+id|PCI_VENDOR_ID_REALTEK
+comma
+id|PCI_DEVICE_ID_REALTEK_8029
+comma
+id|pci_index
+comma
+op_amp
+id|pci_bus
+comma
+op_amp
+id|pci_device_fn
+)paren
+op_ne
+l_int|0
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/* OK, now try to probe for std. ISA card */
+id|pcibios_read_config_byte
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_INTERRUPT_LINE
+comma
+op_amp
+id|pci_irq_line
+)paren
+suffix:semicolon
+id|pcibios_read_config_dword
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_BASE_ADDRESS_0
+comma
+op_amp
+id|pci_ioaddr
+)paren
+suffix:semicolon
+multiline_comment|/* Strip the I/O address out of the returned value */
+id|pci_ioaddr
+op_and_assign
+id|PCI_BASE_ADDRESS_IO_MASK
+suffix:semicolon
+multiline_comment|/* Avoid already found cards from previous ne_probe() calls */
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|pci_ioaddr
+comma
+id|NE_IO_EXTENT
+)paren
+)paren
+r_continue
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ne.c: PCI BIOS reports ne2000 clone at i/o %#x, irq %d.&bslash;n&quot;
+comma
+id|pci_ioaddr
+comma
+id|pci_irq_line
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ne_probe1
+c_func
+(paren
+id|dev
+comma
+id|pci_ioaddr
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* Shouldn&squot;t happen. */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ne.c: Probe of PCI card at %#x failed.&bslash;n&quot;
+comma
+id|pci_ioaddr
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* Hrmm, try to probe for ISA card... */
+)brace
+id|pci_irq_line
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif  /* defined(CONFIG_PCI) */
+multiline_comment|/* Last resort. The semi-risky ISA auto-probe. */
 r_for
 c_loop
 (paren
@@ -1318,6 +1489,17 @@ l_int|0
 comma
 l_int|0
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|pci_irq_line
+)paren
+(brace
+id|dev-&gt;irq
+op_assign
+id|pci_irq_line
 suffix:semicolon
 )brace
 r_if

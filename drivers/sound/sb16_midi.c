@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * sound/sb16_midi.c&n; *&n; * The low level driver for the MPU-401 UART emulation of the SB16.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIGURE_SOUNDCARD
-macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if defined(CONFIG_SB) &amp;&amp; defined(CONFIG_MIDI)
 macro_line|#include &quot;sb.h&quot;
 DECL|macro|DATAPORT
 mdefine_line|#define&t;DATAPORT   (sb16midi_base)
@@ -66,6 +65,14 @@ r_extern
 r_int
 id|sbc_base
 suffix:semicolon
+r_extern
+r_int
+id|Jazz16_detected
+suffix:semicolon
+r_extern
+r_int
+id|AudioDrive
+suffix:semicolon
 r_static
 r_int
 id|reset_sb16midi
@@ -88,6 +95,13 @@ r_int
 r_char
 id|data
 )paren
+suffix:semicolon
+DECL|variable|input_byte
+r_static
+r_volatile
+r_int
+r_char
+id|input_byte
 suffix:semicolon
 r_static
 r_void
@@ -116,9 +130,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|c
+op_eq
+id|MPU_ACK
+)paren
+id|input_byte
+op_assign
+id|c
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
 id|sb16midi_opened
 op_amp
 id|OPEN_READ
+op_logical_and
+id|midi_input_intr
 )paren
 id|midi_input_intr
 (paren
@@ -135,6 +163,31 @@ id|sb16midiintr
 (paren
 r_int
 id|unit
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|input_avail
+(paren
+)paren
+)paren
+id|sb16midi_input_loop
+(paren
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|sbmidiintr
+id|sbmidiintr
+(paren
+r_int
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|dummy
 )paren
 (brace
 r_if
@@ -392,7 +445,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * No data in buffers&n;&t;&t;&t;&t; */
 )brace
 DECL|macro|MIDI_SYNTH_NAME
-mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;SoundBlaster 16 Midi&quot;
+mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;SoundBlaster MPU&quot;
 DECL|macro|MIDI_SYNTH_CAPS
 mdefine_line|#define MIDI_SYNTH_CAPS&t;SYNTH_CAP_INPUT
 macro_line|#include &quot;midi_synth.h&quot;
@@ -404,7 +457,7 @@ id|sb16midi_operations
 op_assign
 (brace
 (brace
-l_string|&quot;SoundBlaster 16 Midi&quot;
+l_string|&quot;SoundBlaster MPU&quot;
 comma
 l_int|0
 comma
@@ -474,8 +527,16 @@ op_logical_neg
 id|sb16midi_detected
 )paren
 r_return
-op_minus
-id|EIO
+id|mem_start
+suffix:semicolon
+id|request_region
+(paren
+id|hw_config-&gt;io_base
+comma
+l_int|4
+comma
+l_string|&quot;SB MIDI&quot;
+)paren
 suffix:semicolon
 id|save_flags
 (paren
@@ -507,6 +568,10 @@ op_decrement
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+id|input_byte
+op_assign
+l_int|0
+suffix:semicolon
 id|sb16midi_cmd
 (paren
 id|UART_MODE_ON
@@ -533,6 +598,18 @@ suffix:semicolon
 id|timeout
 op_decrement
 )paren
+r_if
+c_cond
+(paren
+id|input_byte
+op_eq
+id|MPU_ACK
+)paren
+id|ok
+op_assign
+l_int|1
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -575,9 +652,11 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-id|printk
+id|conf_printf
 (paren
-l_string|&quot; &lt;SoundBlaster MPU-401&gt;&quot;
+l_string|&quot;SoundBlaster MPU-401&quot;
+comma
+id|hw_config
 )paren
 suffix:semicolon
 id|std_midi_synth.midi_dev
@@ -608,10 +687,6 @@ r_void
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|ok
 comma
 id|timeout
@@ -619,19 +694,24 @@ comma
 id|n
 suffix:semicolon
 multiline_comment|/*&n;   * Send the RESET command. Try again if no success at the first time.&n;   */
+r_if
+c_cond
+(paren
+id|inb
+(paren
+id|STATPORT
+)paren
+op_eq
+l_int|0xff
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|ok
 op_assign
 l_int|0
 suffix:semicolon
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*save_flags(flags);cli(); */
 r_for
 c_loop
 (paren
@@ -671,6 +751,10 @@ op_decrement
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+id|input_byte
+op_assign
+l_int|0
+suffix:semicolon
 id|sb16midi_cmd
 (paren
 id|MPU_RESET
@@ -695,6 +779,19 @@ suffix:semicolon
 id|timeout
 op_decrement
 )paren
+r_if
+c_cond
+(paren
+id|input_byte
+op_eq
+id|MPU_ACK
+)paren
+multiline_comment|/* Interrupt */
+id|ok
+op_assign
+l_int|1
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -730,11 +827,7 @@ id|sb16midi_input_loop
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Flush input before enabling interrupts&n;&t;&t;&t;&t; */
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/* restore_flags(flags); */
 r_return
 id|ok
 suffix:semicolon
@@ -758,6 +851,61 @@ r_extern
 r_int
 id|sbc_major
 suffix:semicolon
+r_extern
+r_void
+id|ess_midi_init
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|Jazz16_midi_init
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+(paren
+id|hw_config-&gt;io_base
+comma
+l_int|4
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|AudioDrive
+)paren
+id|ess_midi_init
+(paren
+id|hw_config
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|Jazz16_detected
+)paren
+id|Jazz16_midi_init
+(paren
+id|hw_config
+)paren
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -809,7 +957,13 @@ op_star
 id|hw_config
 )paren
 (brace
+id|release_region
+(paren
+id|hw_config-&gt;io_base
+comma
+l_int|4
+)paren
+suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

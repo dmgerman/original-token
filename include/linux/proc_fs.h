@@ -260,6 +260,9 @@ id|PROC_SCSI_SCSI
 op_assign
 l_int|256
 comma
+DECL|enumerator|PROC_SCSI_ADVANSYS
+id|PROC_SCSI_ADVANSYS
+comma
 DECL|enumerator|PROC_SCSI_EATA
 id|PROC_SCSI_EATA
 comma
@@ -793,6 +796,14 @@ r_void
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|init_proc_fs
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern

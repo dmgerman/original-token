@@ -2,8 +2,7 @@ multiline_comment|/*&n; * sound/sequencer.c&n; *&n; * The sequencer personality 
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIGURE_SOUNDCARD
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 macro_line|#include &quot;midi_ctrl.h&quot;
 DECL|variable|sequencer_ok
 r_static
@@ -66,8 +65,7 @@ id|SEQ_1
 suffix:semicolon
 DECL|variable|seq_sleeper
 r_static
-r_struct
-id|wait_queue
+id|wait_handle
 op_star
 id|seq_sleeper
 op_assign
@@ -86,8 +84,7 @@ l_int|0
 suffix:semicolon
 DECL|variable|midi_sleeper
 r_static
-r_struct
-id|wait_queue
+id|wait_handle
 op_star
 id|midi_sleeper
 op_assign
@@ -215,6 +212,7 @@ l_int|0
 suffix:semicolon
 DECL|variable|sequencer_busy
 r_static
+r_volatile
 r_int
 id|sequencer_busy
 op_assign
@@ -410,14 +408,15 @@ c_cond
 (paren
 id|pre_event_timeout
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 id|pre_event_timeout
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -429,7 +428,7 @@ id|midi_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|midi_sleeper
@@ -677,7 +676,7 @@ id|midi_sleep_flag.mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|midi_sleeper
@@ -1002,7 +1001,6 @@ c_cond
 (paren
 id|dev
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Patch manager device&n;&t;&t;&t;&t; */
 r_return
 id|pmgr_write
 (paren
@@ -1530,70 +1528,21 @@ id|WK_SLEEP
 )paren
 (brace
 multiline_comment|/*&n;       * Sleep until there is enough space on the queue&n;       */
-(brace
-r_int
-r_int
-id|tl
-suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|0
-)paren
-id|current-&gt;timeout
-op_assign
-id|tl
-op_assign
-id|jiffies
-op_plus
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_else
-id|tl
-op_assign
-l_int|0xffffffff
-suffix:semicolon
 id|seq_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|seq_sleeper
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|seq_sleep_flag.mode
-op_amp
-id|WK_WAKEUP
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_ge
-id|tl
-)paren
-id|seq_sleep_flag.mode
-op_or_assign
-id|WK_TIMEOUT
-suffix:semicolon
-)brace
 id|seq_sleep_flag.mode
 op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
-)brace
 suffix:semicolon
 )brace
 r_if
@@ -3170,7 +3119,7 @@ id|seq_sleep_flag.mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|seq_sleeper
@@ -3275,7 +3224,7 @@ id|seq_sleep_flag.mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|seq_sleeper
@@ -3428,7 +3377,7 @@ id|cmd
 r_case
 id|LOCL_STARTAUDIO
 suffix:colon
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 id|DMAbuf_start_devices
 (paren
 id|parm
@@ -3817,7 +3766,7 @@ id|seq_sleep_flag.mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|seq_sleeper
@@ -4244,7 +4193,7 @@ id|seq_sleep_flag.mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|seq_sleeper
@@ -4482,6 +4431,10 @@ id|level
 comma
 id|tmp
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|level
 op_assign
 (paren
@@ -4543,7 +4496,7 @@ c_cond
 (paren
 id|dev
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Patch manager device&n;&t;&t;&t;&t; */
+multiline_comment|/* Patch manager device */
 (brace
 r_int
 id|err
@@ -4600,7 +4553,6 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Failed&n;&t;&t;&t;&t; */
 id|pmgr_present
 (braket
 id|dev
@@ -4612,6 +4564,15 @@ r_return
 id|err
 suffix:semicolon
 )brace
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4623,11 +4584,25 @@ id|printk
 l_string|&quot;Sequencer busy&bslash;n&quot;
 )paren
 suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|sequencer_busy
+op_assign
+l_int|1
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|max_mididev
 op_assign
 id|num_midis
@@ -4766,6 +4741,10 @@ id|printk
 l_string|&quot;sequencer: No timer for level 2&bslash;n&quot;
 )paren
 suffix:semicolon
+id|sequencer_busy
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -4804,6 +4783,10 @@ id|printk
 (paren
 l_string|&quot;Sequencer: No Midi devices. Input not possible&bslash;n&quot;
 )paren
+suffix:semicolon
+id|sequencer_busy
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 op_minus
@@ -5066,10 +5049,6 @@ id|seq_mode
 )paren
 suffix:semicolon
 )brace
-id|sequencer_busy
-op_assign
-l_int|1
-suffix:semicolon
 id|seq_sleep_flag.mode
 op_assign
 id|WK_NONE
@@ -5146,11 +5125,8 @@ r_while
 c_loop
 (paren
 op_logical_neg
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 op_logical_and
 id|n
@@ -5234,8 +5210,8 @@ id|HZ
 op_div
 l_int|10
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
@@ -5244,6 +5220,7 @@ op_plus
 id|HZ
 op_div
 l_int|10
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -5255,7 +5232,7 @@ id|seq_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|seq_sleeper
@@ -5384,11 +5361,8 @@ r_while
 c_loop
 (paren
 op_logical_neg
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 op_logical_and
 id|qlen
@@ -5602,11 +5576,8 @@ op_logical_neg
 id|seq_playing
 op_logical_and
 op_logical_neg
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 )paren
 id|seq_startplay
@@ -5643,16 +5614,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-l_int|0
+id|HZ
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
-l_int|0
+id|HZ
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -5664,7 +5636,7 @@ id|seq_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|seq_sleeper
@@ -5777,14 +5749,15 @@ c_cond
 (paren
 l_int|4
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|4
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -5796,7 +5769,7 @@ id|seq_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|seq_sleeper
@@ -6187,7 +6160,7 @@ id|seq_sleep_flag.mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|seq_sleeper
@@ -6427,11 +6400,8 @@ c_loop
 id|qlen
 op_logical_and
 op_logical_neg
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 )paren
 id|seq_sync
@@ -7854,7 +7824,7 @@ comma
 r_int
 id|sel_type
 comma
-id|select_table
+id|select_table_handle
 op_star
 id|wait
 )paren
@@ -7898,7 +7868,7 @@ id|midi_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|select_wait
+id|module_select_wait
 (paren
 op_amp
 id|midi_sleeper
@@ -7945,16 +7915,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|qlen
-op_ge
+(paren
 id|SEQ_MAX_QUEUE
+op_minus
+id|qlen
+)paren
+OL
+id|output_treshold
 )paren
 (brace
 id|seq_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|select_wait
+id|module_select_wait
 (paren
 op_amp
 id|seq_sleeper
@@ -8397,6 +8371,5 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

@@ -8471,7 +8471,7 @@ l_int|0x82
 id|printk
 c_func
 (paren
-l_string|&quot;smb_proc_connect: Did not recieve positive response &quot;
+l_string|&quot;smb_proc_connect: Did not receive positive response &quot;
 l_string|&quot;(err = %x)&bslash;n&quot;
 comma
 id|server-&gt;packet

@@ -276,26 +276,6 @@ mdefine_line|#define QUOTA_OK          0
 DECL|macro|NO_QUOTA
 mdefine_line|#define NO_QUOTA          1
 multiline_comment|/*&n; * declaration of quota_function calls in kernel.&n; */
-r_int
-id|quota_off
-(paren
-id|kdev_t
-id|dev
-comma
-r_int
-id|type
-)paren
-suffix:semicolon
-r_int
-id|sync_dquots
-(paren
-id|kdev_t
-id|dev
-comma
-r_int
-id|type
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|dquot_initialize

@@ -22,10 +22,6 @@ macro_line|#ifndef SUPPORT_RZ1000&t;&t;&t;/* 1 to support RZ1000 chipset */
 DECL|macro|SUPPORT_RZ1000
 mdefine_line|#define SUPPORT_RZ1000&t;&t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
-macro_line|#ifndef SUPPORT_CMD640&t;&t;&t;/* 1 to support CMD640 chipset */
-DECL|macro|SUPPORT_CMD640
-mdefine_line|#define SUPPORT_CMD640&t;&t;1&t;/* 0 to reduce kernel size */
-macro_line|#endif
 macro_line|#ifndef SUPPORT_UMC8672&t;&t;&t;/* 1 to support UMC8672 chipset */
 DECL|macro|SUPPORT_UMC8672
 mdefine_line|#define SUPPORT_UMC8672&t;&t;1&t;/* 0 to reduce kernel size */
@@ -49,6 +45,10 @@ macro_line|#endif
 macro_line|#ifndef FANCY_STATUS_DUMPS&t;&t;/* 1 for human-readable drive errors */
 DECL|macro|FANCY_STATUS_DUMPS
 mdefine_line|#define FANCY_STATUS_DUMPS&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
+macro_line|#if defined(CONFIG_BLK_DEV_IDECD) || defined(CONFIG_BLK_DEV_IDETAPE)
+DECL|macro|CONFIG_BLK_DEV_IDEATAPI
+mdefine_line|#define CONFIG_BLK_DEV_IDEATAPI 1
 macro_line|#endif
 multiline_comment|/*&n; * IDE_DRIVE_CMD is used to implement many features of the hdparm utility&n; */
 DECL|macro|IDE_DRIVE_CMD
@@ -1031,6 +1031,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* this interface exists */
+DECL|member|serialized
+r_int
+id|serialized
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* valid only for ide_hwifs[0] */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 DECL|member|last_time
 r_int

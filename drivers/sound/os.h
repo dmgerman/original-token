@@ -1,11 +1,19 @@
 DECL|macro|ALLOW_SELECT
 mdefine_line|#define ALLOW_SELECT
-DECL|macro|ALLOW_BUFFER_MAPPING
-macro_line|#undef ALLOW_BUFFER_MAPPING
 DECL|macro|NO_INLINE_ASM
 macro_line|#undef NO_INLINE_ASM
 DECL|macro|SHORT_BANNERS
-macro_line|#undef SHORT_BANNERS
+mdefine_line|#define SHORT_BANNERS
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#ifdef MODVERSIONS
+macro_line|#include &lt;linux/modversions.h&gt;
+macro_line|#endif
+macro_line|#endif
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -24,6 +32,7 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 DECL|typedef|snd_rw_buf
 r_typedef
@@ -111,4 +120,6 @@ r_typedef
 r_int
 id|sound_os_info
 suffix:semicolon
+DECL|macro|PSEUDO_DMA_AUTOINIT
+macro_line|#undef PSEUDO_DMA_AUTOINIT
 eof

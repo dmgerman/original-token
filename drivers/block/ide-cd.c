@@ -14,8 +14,6 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-DECL|macro|_IDE_CD_C
-mdefine_line|#define _IDE_CD_C&t;/* used in blk.h */
 macro_line|#include &quot;ide.h&quot;
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
 macro_line|#ifndef VERBOSE_IDE_CD_ERRORS

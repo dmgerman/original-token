@@ -214,22 +214,14 @@ DECL|macro|BH_Has_aged
 mdefine_line|#define BH_Has_aged&t;5&t;/* 1 if the buffer has been aged (aging) */
 DECL|macro|BH_Protected
 mdefine_line|#define BH_Protected&t;6&t;/* 1 if the buffer is protected */
+DECL|macro|BH_FreeOnIO
+mdefine_line|#define BH_FreeOnIO&t;7&t;/* 1 to discard the buffer_head after IO */
+multiline_comment|/*&n; * Try to keep the most commonly used fields in single cache lines (16&n; * bytes) to improve performance.  This ordering should be&n; * particularly beneficial on 32-bit processors.&n; * &n; * We use the first 16 bytes for the data which is used in searches&n; * over the block hash lists (ie. getblk(), find_buffer() and&n; * friends).&n; * &n; * The second 16 bytes we use for lru buffer scans, as used by&n; * sync_buffers() and refill_freelist().  -- sct&n; */
 DECL|struct|buffer_head
 r_struct
 id|buffer_head
 (brace
-DECL|member|b_data
-r_char
-op_star
-id|b_data
-suffix:semicolon
-multiline_comment|/* pointer to data block (1024 bytes) */
-DECL|member|b_size
-r_int
-r_int
-id|b_size
-suffix:semicolon
-multiline_comment|/* block size */
+multiline_comment|/* First cache line: */
 DECL|member|b_blocknr
 r_int
 r_int
@@ -241,18 +233,52 @@ id|kdev_t
 id|b_dev
 suffix:semicolon
 multiline_comment|/* device (B_FREE = free) */
+DECL|member|b_next
+r_struct
+id|buffer_head
+op_star
+id|b_next
+suffix:semicolon
+multiline_comment|/* Hash queue list */
+DECL|member|b_this_page
+r_struct
+id|buffer_head
+op_star
+id|b_this_page
+suffix:semicolon
+multiline_comment|/* circular list of buffers in one page */
+multiline_comment|/* Second cache line: */
 DECL|member|b_state
 r_int
 r_int
 id|b_state
 suffix:semicolon
 multiline_comment|/* buffer state bitmap (see above) */
+DECL|member|b_next_free
+r_struct
+id|buffer_head
+op_star
+id|b_next_free
+suffix:semicolon
 DECL|member|b_count
 r_int
 r_int
 id|b_count
 suffix:semicolon
 multiline_comment|/* users using this block */
+DECL|member|b_size
+r_int
+r_int
+id|b_size
+suffix:semicolon
+multiline_comment|/* block size */
+multiline_comment|/* Non-performance-critical data follows. */
+DECL|member|b_data
+r_char
+op_star
+id|b_data
+suffix:semicolon
+multiline_comment|/* pointer to data block (1024 bytes) */
 DECL|member|b_list
 r_int
 r_int
@@ -284,12 +310,6 @@ op_star
 id|b_prev
 suffix:semicolon
 multiline_comment|/* doubly linked list of hash-queue */
-DECL|member|b_next
-r_struct
-id|buffer_head
-op_star
-id|b_next
-suffix:semicolon
 DECL|member|b_prev_free
 r_struct
 id|buffer_head
@@ -297,19 +317,6 @@ op_star
 id|b_prev_free
 suffix:semicolon
 multiline_comment|/* doubly linked list of buffers */
-DECL|member|b_next_free
-r_struct
-id|buffer_head
-op_star
-id|b_next_free
-suffix:semicolon
-DECL|member|b_this_page
-r_struct
-id|buffer_head
-op_star
-id|b_this_page
-suffix:semicolon
-multiline_comment|/* circular list of buffers in one page */
 DECL|member|b_reqnext
 r_struct
 id|buffer_head
@@ -2442,9 +2449,6 @@ DECL|macro|BUF_SHARED
 mdefine_line|#define BUF_SHARED 5   /* Buffers shared */
 DECL|macro|NR_LIST
 mdefine_line|#define NR_LIST 6
-DECL|function|mark_buffer_uptodate
-r_extern
-r_inline
 r_void
 id|mark_buffer_uptodate
 c_func
@@ -2457,32 +2461,7 @@ comma
 r_int
 id|on
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|on
-)paren
-id|set_bit
-c_func
-(paren
-id|BH_Uptodate
-comma
-op_amp
-id|bh-&gt;b_state
-)paren
 suffix:semicolon
-r_else
-id|clear_bit
-c_func
-(paren
-id|BH_Uptodate
-comma
-op_amp
-id|bh-&gt;b_state
-)paren
-suffix:semicolon
-)brace
 DECL|function|mark_buffer_clean
 r_extern
 r_inline

@@ -47,6 +47,9 @@ comma
 DECL|enumerator|tok_choice
 id|tok_choice
 comma
+DECL|enumerator|tok_endmenu
+id|tok_endmenu
+comma
 DECL|enumerator|tok_unknown
 id|tok_unknown
 )brace

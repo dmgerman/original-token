@@ -83,6 +83,14 @@ id|RCL_ROUND_ROBIN
 multiline_comment|/* Balancing policy */
 )brace
 suffix:semicolon
+DECL|variable|swapstats
+id|swapstat_t
+id|swapstats
+op_assign
+(brace
+l_int|0
+)brace
+suffix:semicolon
 multiline_comment|/* General swap control */
 multiline_comment|/* Parse the kernel command line &quot;swap=&quot; option at load time: */
 DECL|function|swap_setup

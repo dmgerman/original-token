@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|function|proc_put_inode
@@ -800,7 +799,6 @@ l_int|2
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_SCSI
 r_case
 id|PROC_SCSI
 suffix:colon
@@ -823,7 +821,6 @@ id|proc_scsi_inode_operations
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 r_case
 id|PROC_KCORE
 suffix:colon

@@ -4,8 +4,7 @@ mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIGURE_SOUNDCARD
-macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 macro_line|#include &quot;coproc.h&quot;
 DECL|variable|init_sequence
 r_static
@@ -16,7 +15,7 @@ l_int|20
 )braket
 suffix:semicolon
 multiline_comment|/* NOTE! pos 0 = len, start pos 1. */
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 DECL|variable|timer_mode
 DECL|variable|timer_caps
 r_static
@@ -342,7 +341,7 @@ l_int|0
 comma
 id|SYNTH_TYPE_MIDI
 comma
-l_int|0
+id|MIDI_TYPE_MPU401
 comma
 l_int|0
 comma
@@ -416,7 +415,7 @@ l_int|0
 multiline_comment|/* Fx */
 )brace
 suffix:semicolon
-macro_line|#ifdef EXCLUDE_SEQUENCER
+macro_line|#ifndef CONFIG_SEQUENCER
 DECL|macro|STORE
 mdefine_line|#define STORE(cmd)
 macro_line|#else
@@ -1748,13 +1747,13 @@ id|dev_conf
 id|dev
 )braket
 suffix:semicolon
-multiline_comment|/*&n;   * Sometimes it takes about 13000 loops before the output becomes ready&n;   * (After reset). Normally it takes just about 10 loops.&n;   */
+multiline_comment|/*&n;   * Sometimes it takes about 30000 loops before the output becomes ready&n;   * (After reset). Normally it takes just about 10 loops.&n;   */
 r_for
 c_loop
 (paren
 id|timeout
 op_assign
-l_int|3000
+l_int|30000
 suffix:semicolon
 id|timeout
 OG
@@ -3019,6 +3018,16 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Return timing bytes in stop mode */
+id|mpu_cmd
+(paren
+id|midi_dev
+comma
+l_int|0x87
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Enable pitch &amp; controller */
 )brace
 r_return
 l_int|0
@@ -3831,15 +3840,6 @@ l_char|&squot;M&squot;
 suffix:colon
 l_char|&squot; &squot;
 suffix:semicolon
-id|printk
-(paren
-l_string|&quot; &lt;MQX-%d%c MIDI Interface&gt;&quot;
-comma
-id|ports
-comma
-id|revision_char
-)paren
-suffix:semicolon
 id|sprintf
 (paren
 id|mpu_synth_info
@@ -3896,28 +3896,6 @@ id|MPU_CAP_SYNC
 op_or
 id|MPU_CAP_FSK
 suffix:semicolon
-id|printk
-(paren
-l_string|&quot; &lt;MPU-401 MIDI Interface %d.%d%c&gt;&quot;
-comma
-(paren
-r_int
-)paren
-(paren
-id|devc-&gt;version
-op_amp
-l_int|0xf0
-)paren
-op_rshift
-l_int|4
-comma
-id|devc-&gt;version
-op_amp
-l_int|0x0f
-comma
-id|revision_char
-)paren
-suffix:semicolon
 id|sprintf
 (paren
 id|mpu_synth_info
@@ -3965,6 +3943,18 @@ id|num_midis
 )braket
 dot
 id|name
+)paren
+suffix:semicolon
+id|conf_printf
+(paren
+id|mpu_synth_info
+(braket
+id|num_midis
+)braket
+dot
+id|name
+comma
+id|hw_config
 )paren
 suffix:semicolon
 id|mpu401_synth_operations
@@ -4364,7 +4354,7 @@ id|tmp_devc.osp
 op_assign
 id|hw_config-&gt;osp
 suffix:semicolon
-macro_line|#if !defined(EXCLUDE_AEDSP16) &amp;&amp; defined(AEDSP16_MPU401)
+macro_line|#if defined(CONFIG_AEDSP16) &amp;&amp; defined(AEDSP16_MPU401)
 multiline_comment|/*&n;     * Initialize Audio Excel DSP 16 to MPU-401, before any operation.&n;   */
 id|InitAEDSP16_MPU401
 (paren
@@ -4473,7 +4463,7 @@ id|hw_config-&gt;irq
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************&n; *      Timer stuff&n; ****************************************************/
-macro_line|#if !defined(EXCLUDE_SEQUENCER)
+macro_line|#if defined(CONFIG_SEQUENCER)
 DECL|variable|timer_initialized
 DECL|variable|timer_open
 DECL|variable|tmr_running
@@ -6427,7 +6417,6 @@ op_amp
 id|timer_caps
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

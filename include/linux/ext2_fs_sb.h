@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/include/linux/ext2_fs_sb.h&n; *&n; * Copyright 
 macro_line|#ifndef _LINUX_EXT2_FS_SB
 DECL|macro|_LINUX_EXT2_FS_SB
 mdefine_line|#define _LINUX_EXT2_FS_SB
+macro_line|#include &lt;linux/ext2_fs.h&gt;
 multiline_comment|/*&n; * The following is not needed anymore since the descriptors buffer&n; * heads are now dynamically allocated&n; */
 multiline_comment|/* #define EXT2_MAX_GROUP_DESC&t;8 */
 DECL|macro|EXT2_MAX_GROUP_LOADED

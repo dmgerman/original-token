@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;dev_table.h&n; *&n; *&t;Global definitions for device call tables&n; * &n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n;&n;*/
+multiline_comment|/*&n; *&t;dev_table.h&n; *&n; *&t;Global definitions for device call tables&n; * &n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n;*/
 macro_line|#ifndef _DEV_TABLE_H_
 DECL|macro|_DEV_TABLE_H_
 mdefine_line|#define _DEV_TABLE_H_
@@ -148,6 +148,10 @@ r_int
 id|dma_mode
 suffix:semicolon
 multiline_comment|/* DMODE_INPUT, DMODE_OUTPUT or DMODE_NONE */
+DECL|member|closing
+r_int
+id|closing
+suffix:semicolon
 multiline_comment|/*&n; &t; * Pointers to raw buffers&n; &t; */
 DECL|member|raw_buf
 r_char
@@ -192,6 +196,11 @@ DECL|member|qtail
 r_int
 id|qtail
 suffix:semicolon
+DECL|member|cfrag
+r_int
+id|cfrag
+suffix:semicolon
+multiline_comment|/* Current incomplete fragment (write) */
 DECL|member|nbufs
 r_int
 id|nbufs
@@ -237,6 +246,9 @@ DECL|member|neutral_byte
 r_char
 id|neutral_byte
 suffix:semicolon
+macro_line|#ifdef OS_DMA_PARMS
+id|OS_DMA_PARMS
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Structure for use with various microcontrollers and DSP processors &n; * in the recent soundcards.&n; */
@@ -1474,7 +1486,7 @@ id|num_midis
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 r_extern
 r_struct
 id|sound_timer_operations
@@ -1532,7 +1544,7 @@ id|sound_drivers
 )braket
 op_assign
 (brace
-macro_line|#ifndef EXCLUDE_PSS
+macro_line|#ifdef CONFIG_PSS
 (brace
 l_string|&quot;PSSECHO&quot;
 comma
@@ -1582,7 +1594,7 @@ id|unload_pss_mss
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MSS
+macro_line|#ifdef CONFIG_MSS
 (brace
 l_string|&quot;MSS&quot;
 comma
@@ -1607,7 +1619,7 @@ l_int|1
 comma
 id|SNDCARD_PSEUDO_MSS
 comma
-l_string|&quot;MS Sound System&quot;
+l_string|&quot;MS Sound System (AXP)&quot;
 comma
 id|attach_ms_sound
 comma
@@ -1617,7 +1629,7 @@ id|unload_ms_sound
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MAD16
+macro_line|#ifdef CONFIG_MAD16
 (brace
 l_string|&quot;MAD16&quot;
 comma
@@ -1651,7 +1663,7 @@ id|unload_mad16_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_CS4232
+macro_line|#ifdef CONFIG_CS4232
 (brace
 l_string|&quot;CS4232&quot;
 comma
@@ -1685,7 +1697,7 @@ id|unload_cs4232_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_YM3812
+macro_line|#ifdef CONFIG_YM3812
 (brace
 l_string|&quot;OPL3&quot;
 comma
@@ -1703,7 +1715,7 @@ id|unload_adlib
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_PAS
+macro_line|#ifdef CONFIG_PAS
 (brace
 l_string|&quot;PAS16&quot;
 comma
@@ -1721,7 +1733,7 @@ id|unload_pas
 )brace
 comma
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_MPU401) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if defined(CONFIG_MPU401) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 l_string|&quot;MPU401&quot;
 comma
@@ -1739,7 +1751,7 @@ id|unload_mpu401
 )brace
 comma
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_MAUI)
+macro_line|#if defined(CONFIG_MAUI)
 (brace
 l_string|&quot;MAUI&quot;
 comma
@@ -1757,7 +1769,7 @@ id|unload_maui
 )brace
 comma
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_UART6850) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 l_string|&quot;MIDI6850&quot;
 comma
@@ -1775,7 +1787,7 @@ id|unload_uart6850
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_SB
+macro_line|#ifdef CONFIG_SB
 (brace
 l_string|&quot;SBLAST&quot;
 comma
@@ -1792,17 +1804,15 @@ comma
 id|unload_sb
 )brace
 comma
-macro_line|#endif
-macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16)
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 (brace
-l_string|&quot;SB16&quot;
+l_string|&quot;SBX&quot;
 comma
 l_int|0
 comma
 id|SNDCARD_SB16
 comma
-l_string|&quot;SoundBlaster16&quot;
+l_string|&quot;SoundBlaster 16bit&quot;
 comma
 id|sb16_dsp_init
 comma
@@ -1812,15 +1822,15 @@ id|unload_sb16
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#ifdef CONFIG_MIDI
 (brace
-l_string|&quot;SB16MIDI&quot;
+l_string|&quot;SBMPU&quot;
 comma
 l_int|0
 comma
 id|SNDCARD_SB16MIDI
 comma
-l_string|&quot;SB16 MIDI&quot;
+l_string|&quot;SB MPU&quot;
 comma
 id|attach_sb16midi
 comma
@@ -1831,7 +1841,7 @@ id|unload_sb16midi
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_GUS16
+macro_line|#ifdef CONFIG_GUS16
 (brace
 l_string|&quot;GUS16&quot;
 comma
@@ -1849,7 +1859,7 @@ id|unload_gus_db16
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_GUS
+macro_line|#ifdef CONFIG_GUS
 (brace
 l_string|&quot;GUS&quot;
 comma
@@ -1867,7 +1877,7 @@ id|unload_gus
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_SSCAPE
+macro_line|#ifdef CONFIG_SSCAPE
 (brace
 l_string|&quot;SSCAPE&quot;
 comma
@@ -1901,7 +1911,7 @@ id|unload_ss_ms_sound
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_TRIX
+macro_line|#ifdef CONFIG_TRIX
 (brace
 l_string|&quot;TRXPRO&quot;
 comma
@@ -1951,7 +1961,7 @@ id|unload_trix_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_PNP
+macro_line|#ifdef CONFIG_PNP
 (brace
 l_string|&quot;AD1848&quot;
 comma
@@ -2026,7 +2036,7 @@ id|snd_installed_cards
 )braket
 op_assign
 (brace
-macro_line|#ifndef EXCLUDE_PSS
+macro_line|#ifdef CONFIG_PSS
 (brace
 id|SNDCARD_PSS
 comma
@@ -2084,7 +2094,11 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#&t;endif
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_TRIX
+macro_line|#ifdef CONFIG_TRIX
+macro_line|#ifndef TRIX_DMA2
+DECL|macro|TRIX_DMA2
+mdefine_line|#define TRIX_DMA2 TRIX_DMA
+macro_line|#endif
 (brace
 id|SNDCARD_TRXPRO
 comma
@@ -2140,7 +2154,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#&t;endif
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_SSCAPE
+macro_line|#ifdef CONFIG_SSCAPE
 (brace
 id|SNDCARD_SSCAPE
 comma
@@ -2176,7 +2190,11 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MAD16
+macro_line|#ifdef CONFIG_MAD16
+macro_line|#ifndef MAD16_DMA2
+DECL|macro|MAD16_DMA2
+mdefine_line|#define MAD16_DMA2 MAD16_DMA
+macro_line|#endif
 (brace
 id|SNDCARD_MAD16
 comma
@@ -2213,7 +2231,11 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#&t;endif
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_CS4232
+macro_line|#ifdef CONFIG_CS4232
+macro_line|#ifndef CS4232_DMA2
+DECL|macro|CS4232_DMA2
+mdefine_line|#define CS4232_DMA2 CS4232_DMA
+macro_line|#endif
 macro_line|#&t;ifdef CS4232_MPU_BASE
 (brace
 id|SNDCARD_CS4232_MPU
@@ -2250,8 +2272,8 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MSS
-macro_line|#&t;ifdef PSEUDO_MSS
+macro_line|#ifdef CONFIG_MSS
+macro_line|#&t;ifndef PSEUDO_MSS
 (brace
 id|SNDCARD_MSS
 comma
@@ -2308,7 +2330,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#&t;endif
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_PAS
+macro_line|#ifdef CONFIG_PAS
 (brace
 id|SNDCARD_PAS
 comma
@@ -2327,7 +2349,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_SB
+macro_line|#ifdef CONFIG_SB
 macro_line|#&t;ifndef SBC_DMA
 DECL|macro|SBC_DMA
 macro_line|#&t;&t;define SBC_DMA&t;&t;1
@@ -2350,7 +2372,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_MAUI) 
+macro_line|#if defined(CONFIG_MAUI) 
 (brace
 id|SNDCARD_MAUI
 comma
@@ -2369,7 +2391,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_MPU401) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if defined(CONFIG_MPU401) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 id|SNDCARD_MPU401
 comma
@@ -2426,7 +2448,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_UART6850) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 id|SNDCARD_UART6850
 comma
@@ -2445,8 +2467,8 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16)
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#if defined(CONFIG_SB) 
+macro_line|#if defined(CONFIG_AUDIO) &amp;&amp; defined(SB_DMA2)
 (brace
 id|SNDCARD_SB16
 comma
@@ -2455,7 +2477,7 @@ id|SBC_BASE
 comma
 id|SBC_IRQ
 comma
-id|SB16_DMA
+id|SB_DMA2
 comma
 op_minus
 l_int|1
@@ -2465,14 +2487,14 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(SB_MPU_BASE)
 (brace
 id|SNDCARD_SB16MIDI
 comma
 (brace
-id|SB16MIDI_BASE
+id|SB_MPU_BASE
 comma
-id|SBC_IRQ
+id|SB_MPU_IRQ
 comma
 l_int|0
 comma
@@ -2485,8 +2507,12 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_GUS
-macro_line|#ifndef EXCLUDE_GUS16
+macro_line|#ifdef CONFIG_GUS
+macro_line|#ifndef GUS_DMA2
+DECL|macro|GUS_DMA2
+mdefine_line|#define GUS_DMA2 GUS_DMA
+macro_line|#endif
+macro_line|#ifdef CONFIG_GUS16
 (brace
 id|SNDCARD_GUS16
 comma
@@ -2522,7 +2548,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_YM3812
+macro_line|#ifdef CONFIG_YM3812
 (brace
 id|SNDCARD_ADLIB
 comma
@@ -2651,8 +2677,22 @@ op_assign
 l_int|20
 suffix:semicolon
 macro_line|#endif
+macro_line|#   ifdef MODULE
+DECL|variable|trace_init
+r_int
+id|trace_init
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#   else
+DECL|variable|trace_init
+r_int
+id|trace_init
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#   endif
 macro_line|#else
-DECL|variable|num_audiodevs
 r_extern
 r_struct
 id|audio_operations
@@ -2662,6 +2702,7 @@ id|audio_devs
 id|MAX_AUDIO_DEV
 )braket
 suffix:semicolon
+r_extern
 r_int
 id|num_audiodevs
 suffix:semicolon
@@ -2748,6 +2789,10 @@ suffix:semicolon
 r_extern
 r_int
 id|max_sound_cards
+suffix:semicolon
+r_extern
+r_int
+id|trace_init
 suffix:semicolon
 r_int
 id|sndtable_init

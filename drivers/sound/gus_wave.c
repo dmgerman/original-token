@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis Ultra
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_GUS)
+macro_line|#if defined(CONFIG_GUS)
 DECL|macro|MAX_SAMPLE
 mdefine_line|#define MAX_SAMPLE&t;150
 DECL|macro|MAX_PATCH
@@ -321,8 +321,7 @@ id|gus_sampling_bits
 suffix:semicolon
 DECL|variable|dram_sleeper
 r_static
-r_struct
-id|wait_queue
+id|wait_handle
 op_star
 id|dram_sleeper
 op_assign
@@ -7235,14 +7234,15 @@ c_cond
 (paren
 id|HZ
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 id|HZ
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -7254,7 +7254,7 @@ id|dram_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|dram_sleeper
@@ -11572,9 +11572,12 @@ l_char|&squot;M&squot;
 r_if
 c_cond
 (paren
+id|_IOC_DIR
+(paren
 id|cmd
+)paren
 op_amp
-id|IOC_IN
+id|_IOC_WRITE
 )paren
 r_switch
 c_cond
@@ -12431,7 +12434,7 @@ id|mixer_type
 op_assign
 id|CS4231
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_GUSMAX
+macro_line|#ifdef CONFIG_GUSMAX
 (brace
 r_int
 r_char
@@ -12572,20 +12575,6 @@ r_else
 (brace
 multiline_comment|/*&n;         * ASIC not detected so the card must be 2.2 or 2.4.&n;         * There could still be the 16-bit/mixer daughter card.&n;       */
 )brace
-id|printk
-(paren
-l_string|&quot; &lt;Gravis UltraSound %s (%dk)&gt;&quot;
-comma
-id|model_num
-comma
-(paren
-r_int
-)paren
-id|gus_mem_size
-op_div
-l_int|1024
-)paren
-suffix:semicolon
 id|sprintf
 (paren
 id|gus_info.name
@@ -12600,6 +12589,13 @@ r_int
 id|gus_mem_size
 op_div
 l_int|1024
+)paren
+suffix:semicolon
+id|conf_printf
+(paren
+id|gus_info.name
+comma
+id|hw_config
 )paren
 suffix:semicolon
 r_if
@@ -12630,7 +12626,7 @@ op_assign
 op_amp
 id|guswave_operations
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 id|gus_tmr_install
 (paren
 id|gus_base
@@ -12822,7 +12818,7 @@ id|gus_wave_unload
 r_void
 )paren
 (brace
-macro_line|#ifndef EXCLUDE_GUSMAX
+macro_line|#ifdef CONFIG_GUSMAX
 r_if
 c_cond
 (paren
@@ -13619,7 +13615,7 @@ id|dram_sleep_flag.mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|dram_sleeper
@@ -13726,7 +13722,7 @@ id|gus_devnum
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 multiline_comment|/*&n; * Timer stuff&n; */
 DECL|variable|select_addr
 DECL|variable|data_addr
@@ -13913,7 +13909,7 @@ multiline_comment|/* Start timer 2 */
 )brace
 id|gus_timer_enabled
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 r_static
@@ -14054,6 +14050,10 @@ l_int|0x08
 )paren
 suffix:semicolon
 multiline_comment|/* Start timer 2 again */
+id|gus_timer_enabled
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 DECL|variable|gus_tmr
 r_static

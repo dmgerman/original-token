@@ -481,6 +481,16 @@ c_func
 (paren
 id|SI
 comma
+id|SI_6201
+comma
+l_string|&quot;6201&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
 id|SI_6202
 comma
 l_string|&quot;6202&quot;

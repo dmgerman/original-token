@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha Y
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
 multiline_comment|/*&n; * hooft@chem.ruu.nl&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_YM3812)
+macro_line|#if defined(CONFIG_YM3812)
 macro_line|#include &quot;opl3.h&quot;
 DECL|macro|MAX_VOICE
 mdefine_line|#define MAX_VOICE&t;18
@@ -779,6 +779,7 @@ op_increment
 )paren
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|stat2
@@ -938,6 +939,7 @@ suffix:semicolon
 multiline_comment|/* Select OPL4 ID register */
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tmp
@@ -952,6 +954,7 @@ suffix:semicolon
 multiline_comment|/* Read it */
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 r_if
@@ -979,6 +982,7 @@ suffix:semicolon
 multiline_comment|/* Select OPL4 FM mixer control */
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|outb
@@ -993,6 +997,7 @@ suffix:semicolon
 multiline_comment|/* Write value */
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 )brace
@@ -3275,6 +3280,7 @@ l_int|2
 )paren
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 r_else
@@ -3324,14 +3330,17 @@ l_int|2
 (brace
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
 (paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 )brace
@@ -5037,15 +5046,35 @@ c_cond
 (paren
 id|devc-&gt;is_opl4
 )paren
-id|printk
+id|conf_printf2
 (paren
-l_string|&quot; &lt;Yamaha OPL4/OPL3 FM&gt;&quot;
+l_string|&quot;Yamaha OPL4/OPL3 FM&quot;
+comma
+id|ioaddr
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 r_else
-id|printk
+id|conf_printf2
 (paren
-l_string|&quot; &lt;Yamaha OPL-3 FM&gt;&quot;
+l_string|&quot;Yamaha OPL3 FM&quot;
+comma
+id|ioaddr
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 id|devc-&gt;v_alloc-&gt;max_voice
@@ -5135,9 +5164,19 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|conf_printf2
 (paren
-l_string|&quot; &lt;Yamaha 2-OP FM&gt;&quot;
+l_string|&quot;Yamaha OPL2 FM&quot;
+comma
+id|ioaddr
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 id|devc-&gt;v_alloc-&gt;max_voice

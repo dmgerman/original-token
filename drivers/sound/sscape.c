@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq Soundscape&n; *&n; * Copyright by Hannu Savolainen 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SSCAPE)
+macro_line|#if defined(CONFIG_SSCAPE)
 macro_line|#include &quot;coproc.h&quot;
 multiline_comment|/*&n; *    I/O ports&n; */
 DECL|macro|MIDI_DATA
@@ -143,8 +143,7 @@ id|dev_info
 suffix:semicolon
 DECL|variable|sscape_sleeper
 r_static
-r_struct
-id|wait_queue
+id|wait_handle
 op_star
 id|sscape_sleeper
 op_assign
@@ -1021,7 +1020,7 @@ id|sscape_sleep_flag.mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|sscape_sleeper
@@ -1050,7 +1049,7 @@ id|devc
 )paren
 suffix:semicolon
 )brace
-macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -1117,139 +1116,6 @@ id|tmp
 op_amp
 l_int|0xf1
 )paren
-)paren
-suffix:semicolon
-)brace
-r_static
-r_void
-DECL|function|sscape_enable_intr
-id|sscape_enable_intr
-(paren
-r_struct
-id|sscape_info
-op_star
-id|devc
-comma
-r_int
-id|intr_bits
-)paren
-(brace
-r_int
-r_char
-id|temp
-comma
-id|orig
-suffix:semicolon
-id|temp
-op_assign
-id|orig
-op_assign
-id|sscape_read
-(paren
-id|devc
-comma
-id|GA_INTENA_REG
-)paren
-suffix:semicolon
-id|temp
-op_or_assign
-id|intr_bits
-suffix:semicolon
-id|temp
-op_or_assign
-l_int|0x80
-suffix:semicolon
-multiline_comment|/* Master IRQ enable */
-r_if
-c_cond
-(paren
-id|temp
-op_eq
-id|orig
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* No change */
-id|sscape_write
-(paren
-id|devc
-comma
-id|GA_INTENA_REG
-comma
-id|temp
-)paren
-suffix:semicolon
-)brace
-r_static
-r_void
-DECL|function|sscape_disable_intr
-id|sscape_disable_intr
-(paren
-r_struct
-id|sscape_info
-op_star
-id|devc
-comma
-r_int
-id|intr_bits
-)paren
-(brace
-r_int
-r_char
-id|temp
-comma
-id|orig
-suffix:semicolon
-id|temp
-op_assign
-id|orig
-op_assign
-id|sscape_read
-(paren
-id|devc
-comma
-id|GA_INTENA_REG
-)paren
-suffix:semicolon
-id|temp
-op_and_assign
-op_complement
-id|intr_bits
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|temp
-op_amp
-op_complement
-l_int|0x80
-)paren
-op_eq
-l_int|0x00
-)paren
-id|temp
-op_assign
-l_int|0x00
-suffix:semicolon
-multiline_comment|/* Master IRQ disable */
-r_if
-c_cond
-(paren
-id|temp
-op_eq
-id|orig
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* No change */
-id|sscape_write
-(paren
-id|devc
-comma
-id|GA_INTENA_REG
-comma
-id|temp
 )paren
 suffix:semicolon
 )brace
@@ -1466,6 +1332,10 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|sscape_sleep_flag.mode
+op_assign
+id|WK_NONE
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1519,7 +1389,7 @@ l_int|0x20
 )paren
 suffix:semicolon
 multiline_comment|/* DMA channel disabled */
-macro_line|#ifndef EXCLUDE_NATIVE_PCM
+macro_line|#ifdef CONFIG_NATIVE_PCM
 macro_line|#endif
 id|devc-&gt;dma_allocated
 op_assign
@@ -1610,7 +1480,7 @@ op_eq
 l_int|0
 )paren
 (brace
-macro_line|#ifndef EXCLUDE_NATIVE_PCM
+macro_line|#ifdef CONFIG_NATIVE_PCM
 macro_line|#endif
 id|devc-&gt;dma_allocated
 op_assign
@@ -1768,14 +1638,15 @@ c_cond
 (paren
 l_int|1
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|1
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -1787,7 +1658,7 @@ id|sscape_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|sscape_sleeper
@@ -1955,14 +1826,15 @@ c_cond
 (paren
 l_int|1
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|1
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -1974,7 +1846,7 @@ id|sscape_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|sscape_sleeper
@@ -2091,14 +1963,15 @@ c_cond
 (paren
 l_int|1
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|1
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -2110,7 +1983,7 @@ id|sscape_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|sscape_sleeper
@@ -3198,16 +3071,20 @@ id|valid_interrupts
 op_assign
 id|valid_interrupts_old
 suffix:semicolon
-id|printk
+id|conf_printf
 (paren
-l_string|&quot; &lt;Ensoniq Soundscape (old)&gt;&quot;
+l_string|&quot;Ensoniq Soundscape (old)&quot;
+comma
+id|hw_config
 )paren
 suffix:semicolon
 )brace
 r_else
-id|printk
+id|conf_printf
 (paren
-l_string|&quot; &lt;Ensoniq Soundscape&gt;&quot;
+l_string|&quot;Ensoniq Soundscape&quot;
+comma
+id|hw_config
 )paren
 suffix:semicolon
 r_for
@@ -3423,7 +3300,7 @@ op_amp
 l_int|0xf0
 )paren
 op_or
-l_int|0x00
+l_int|0x08
 )paren
 suffix:semicolon
 r_break
@@ -3484,7 +3361,7 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_MIDI) &amp;&amp; !defined(EXCLUDE_MPU_EMU)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MPU_EMU)
 r_if
 c_cond
 (paren
@@ -3540,7 +3417,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_NATIVE_PCM
 multiline_comment|/* Not supported yet */
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 r_if
 c_cond
 (paren
@@ -3878,11 +3755,6 @@ id|old_hardware
 multiline_comment|/* Check that it&squot;s really an old Spea/Reveal card. */
 (brace
 r_int
-id|status
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 r_char
 id|tmp
 suffix:semicolon
@@ -4108,7 +3980,7 @@ id|irq_bits
 op_assign
 l_int|0xff
 suffix:semicolon
-macro_line|#ifdef EXCLUDE_NATIVE_PCM
+macro_line|#ifndef CONFIG_NATIVE_PCM
 r_int
 id|prev_devs
 op_assign
@@ -4221,7 +4093,7 @@ comma
 id|devc-&gt;osp
 )paren
 suffix:semicolon
-macro_line|#ifdef EXCLUDE_NATIVE_PCM
+macro_line|#ifndef CONFIG_NATIVE_PCM
 r_if
 c_cond
 (paren

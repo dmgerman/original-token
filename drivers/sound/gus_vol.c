@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * gus_vol.c - Compute volume for GUS.&n; *&n; * Greg Lee 1993.&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifndef EXCLUDE_GUS
+macro_line|#ifdef CONFIG_GUS
 macro_line|#include &quot;gus_linearvol.h&quot;
 DECL|macro|GUS_VOLUME
 mdefine_line|#define GUS_VOLUME&t;gus_wave_volume

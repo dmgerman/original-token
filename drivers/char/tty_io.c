@@ -23,6 +23,9 @@ macro_line|#include &lt;linux/scc.h&gt;
 macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;vt_kern.h&quot;
 macro_line|#include &quot;selection.h&quot;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 DECL|macro|CONSOLE_DEV
 mdefine_line|#define CONSOLE_DEV MKDEV(TTY_MAJOR,0)
 DECL|macro|TTY_DEV
@@ -707,7 +710,55 @@ id|ldisc
 op_ge
 id|NR_LDISCS
 )paren
-op_logical_or
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#ifdef CONFIG_KERNELD
+multiline_comment|/* Eduardo Blanco &lt;ejbs@cs.cs.com.uy&gt; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ldiscs
+(braket
+id|ldisc
+)braket
+dot
+id|flags
+op_amp
+id|LDISC_FLAG_DEFINED
+)paren
+)paren
+(brace
+r_char
+id|modname
+(braket
+l_int|20
+)braket
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|modname
+comma
+l_string|&quot;tty-ldisc-%d&quot;
+comma
+id|ldisc
+)paren
+suffix:semicolon
+id|request_module
+(paren
+id|modname
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|ldiscs

@@ -2,7 +2,7 @@ DECL|macro|_PAS2_CARD_C_
 mdefine_line|#define _PAS2_CARD_C_
 multiline_comment|/*&n; * sound/pas2_card.c&n; *&n; * Detection routine for the Pro Audio Spectrum cards.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_PAS)
+macro_line|#if defined(CONFIG_PAS)
 DECL|macro|DEFINE_TRANSLATIONS
 mdefine_line|#define DEFINE_TRANSLATIONS
 macro_line|#include &quot;pas.h&quot;
@@ -166,7 +166,7 @@ op_amp
 id|I_S_PCM_SAMPLE_BUFFER_IRQ
 )paren
 (brace
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 id|pas_pcm_interrupt
 (paren
 id|status
@@ -189,7 +189,7 @@ op_amp
 id|I_S_MIDI_IRQ
 )paren
 (brace
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#ifdef CONFIG_MIDI
 id|pas_midi_interrupt
 (paren
 )paren
@@ -654,7 +654,7 @@ comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-macro_line|#if !defined(EXCLUDE_SB_EMULATION) &amp;&amp; !defined(EXCLUDE_SB)
+macro_line|#if defined(CONFIG_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
 (brace
 r_struct
 id|address_info
@@ -938,9 +938,17 @@ id|CHIP_REV
 )paren
 )paren
 (brace
-id|printk
+r_char
+id|temp
+(braket
+l_int|100
+)braket
+suffix:semicolon
+id|sprintf
 (paren
-l_string|&quot; &lt;%s rev %d&gt;&quot;
+id|temp
+comma
+l_string|&quot;%s rev %d&quot;
 comma
 id|pas_model_names
 (braket
@@ -956,6 +964,13 @@ id|BOARD_REV_ID
 )paren
 )paren
 suffix:semicolon
+id|conf_printf
+(paren
+id|temp
+comma
+id|hw_config
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -966,7 +981,7 @@ id|hw_config
 )paren
 )paren
 (brace
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 id|mem_start
 op_assign
 id|pas_pcm_init
@@ -977,14 +992,14 @@ id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_SB_EMULATION) &amp;&amp; !defined(EXCLUDE_SB)
+macro_line|#if defined(CONFIG_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
 id|sb_dsp_disable_midi
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; * The SB emulation don&squot;t support *&n;&t;&t;&t;&t;&t; * midi&n;&t;&t;&t;&t;&t; */
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#ifdef CONFIG_MIDI
 id|mem_start
 op_assign
 id|pas_midi_init

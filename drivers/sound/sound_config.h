@@ -1,18 +1,6 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; *&n; * &n; * Copyright by Hannu Savolainen 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
-DECL|macro|CONFIGURE_SOUNDCARD
-macro_line|#undef CONFIGURE_SOUNDCARD
-DECL|macro|DYNAMIC_BUFFER
-macro_line|#undef DYNAMIC_BUFFER
-macro_line|#include &quot;local.h&quot;
-macro_line|#ifdef KERNEL_SOUNDCARD
-DECL|macro|CONFIGURE_SOUNDCARD
-mdefine_line|#define CONFIGURE_SOUNDCARD
-DECL|macro|DYNAMIC_BUFFER
-mdefine_line|#define DYNAMIC_BUFFER
-DECL|macro|LOADABLE_SOUNDCARD
-macro_line|#undef LOADABLE_SOUNDCARD
-macro_line|#endif
 macro_line|#include &quot;os.h&quot;
+macro_line|#include &quot;local.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
 macro_line|#if defined(ISC) || defined(SCO) || defined(SVR42)
 DECL|macro|GENERIC_SYSV
@@ -22,7 +10,6 @@ macro_line|#ifndef SND_DEFAULT_ENABLE
 DECL|macro|SND_DEFAULT_ENABLE
 mdefine_line|#define SND_DEFAULT_ENABLE&t;1
 macro_line|#endif
-macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#ifndef MAX_REALTIME_FACTOR
 DECL|macro|MAX_REALTIME_FACTOR
 mdefine_line|#define MAX_REALTIME_FACTOR&t;4
@@ -45,11 +32,17 @@ macro_line|#ifndef PAS_BASE
 DECL|macro|PAS_BASE
 mdefine_line|#define PAS_BASE&t;0x388
 macro_line|#endif
-macro_line|#ifdef JAZZ16
-macro_line|#ifndef JAZZ_DMA16
-DECL|macro|JAZZ_DMA16
-mdefine_line|#define JAZZ_DMA16&t;5
+macro_line|#if defined(SB16_DMA) &amp;&amp; !defined(SB_DMA2)
+DECL|macro|SB_DMA2
+macro_line|#  define SB_DMA2 SB16_DMA
 macro_line|#endif
+macro_line|#if defined(SB16MIDI_BASE) &amp;&amp; !defined(SB_MPU_BASE)
+DECL|macro|SB_MPU_BASE
+macro_line|#   define SB_MPU_BASE SB16MIDI_BASE
+macro_line|#endif
+macro_line|#ifndef SB_MPU_IRQ
+DECL|macro|SB_MPU_IRQ
+macro_line|#  define SB_MPU_IRQ SBC_IRQ
 macro_line|#endif
 multiline_comment|/* SEQ_MAX_QUEUE is the maximum number of sequencer events buffered by the&n;   driver. (There is no need to alter this) */
 DECL|macro|SEQ_MAX_QUEUE
@@ -264,5 +257,4 @@ DECL|macro|TIMER_ARMED
 mdefine_line|#define TIMER_ARMED&t;121234
 DECL|macro|TIMER_NOT_ARMED
 mdefine_line|#define TIMER_NOT_ARMED&t;1
-macro_line|#endif
 eof

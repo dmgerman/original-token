@@ -17,10 +17,12 @@ id|loops
 )paren
 (brace
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;.align 2,0x90&bslash;n1:&bslash;tdecl %0&bslash;n&bslash;tjns 1b&quot;
 suffix:colon
+multiline_comment|/* no outputs */
 suffix:colon
 l_string|&quot;a&quot;
 (paren

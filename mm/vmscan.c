@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, &n; */
+multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Version: $Id: vmscan.c,v 1.3.2.3 1996/01/17 02:43:11 linux Exp $&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -1399,6 +1399,18 @@ id|unused
 r_int
 id|i
 suffix:semicolon
+r_char
+op_star
+id|revision
+op_assign
+l_string|&quot;$Revision: 1.3.2.3 $&quot;
+comma
+op_star
+id|s
+comma
+op_star
+id|e
+suffix:semicolon
 id|current-&gt;session
 op_assign
 l_int|1
@@ -1441,14 +1453,64 @@ op_assign
 l_int|32
 suffix:semicolon
 multiline_comment|/* Fixme --- we need to standardise our&n;&t;&t;&t;&t;    namings for POSIX.4 realtime scheduling&n;&t;&t;&t;&t;    priorities.  */
-id|printk
-(paren
-l_string|&quot;Started kswapd v$Revision: 1.1.2.3 $&bslash;n&quot;
-)paren
-suffix:semicolon
 id|init_swap_timer
 c_func
 (paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|s
+op_assign
+id|strchr
+c_func
+(paren
+id|revision
+comma
+l_char|&squot;:&squot;
+)paren
+)paren
+op_logical_and
+(paren
+id|e
+op_assign
+id|strchr
+c_func
+(paren
+id|s
+comma
+l_char|&squot;$&squot;
+)paren
+)paren
+)paren
+id|s
+op_increment
+comma
+id|i
+op_assign
+id|e
+op_minus
+id|s
+suffix:semicolon
+r_else
+id|s
+op_assign
+id|revision
+comma
+id|i
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;Started kswapd v%.*s&bslash;n&quot;
+comma
+id|i
+comma
+id|s
 )paren
 suffix:semicolon
 r_while
@@ -1475,6 +1537,9 @@ suffix:semicolon
 id|kswapd_awake
 op_assign
 l_int|1
+suffix:semicolon
+id|swapstats.wakeups
+op_increment
 suffix:semicolon
 multiline_comment|/* Do the background pageout: */
 r_for

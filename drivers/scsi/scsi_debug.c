@@ -1,8 +1,5 @@
 multiline_comment|/* $Id: scsi_debug.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/scsi_debug.c&n; *&n; *  Copyright (C) 1992  Eric Youngdale&n; *  Simulate a host adapter with 2 disks attached.  Do a lot of checking&n; *  to make sure that we are not getting blocks mixed up, and panic if&n; *  anything out of the ordinary is seen.&n; */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

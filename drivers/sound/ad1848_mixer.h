@@ -1,20 +1,13 @@
 multiline_comment|/*&n; * sound/ad1848_mixer.h&n; * &n; * Definitions for the mixer of AD1848 and compatible codecs.&n; * &n; * Copyright by Hannu Savolainen 1994&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 multiline_comment|/*&n; * The AD1848 codec has generic input lines called Line, Aux1 and Aux2.&n; * Soundcard manufacturers have connected actual inputs (CD, synth, line,&n; * etc) to these inputs in different order. Therefore it&squot;s difficult&n; * to assign mixer channels to to these inputs correctly. The following&n; * contains two alternative mappings. The first one is for GUS MAX and&n; * the second is just a generic one (line1, line2 and line3).&n; * (Actually this is not a mapping but rather some kind of interleaving&n; * solution).&n; */
-macro_line|#ifdef GUSMAX_MIXER
-DECL|macro|MODE1_REC_DEVICES
-mdefine_line|#define MODE1_REC_DEVICES&t;&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD|SOUND_MASK_IMIX)
-DECL|macro|MODE1_MIXER_DEVICES
-mdefine_line|#define MODE1_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_PCM|SOUND_MASK_IMIX)
-DECL|macro|MODE2_MIXER_DEVICES
-mdefine_line|#define MODE2_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | SOUND_MASK_SPEAKER | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_PCM | SOUND_MASK_IMIX)
-macro_line|#else&t;/* Generic mapping */
 DECL|macro|MODE1_REC_DEVICES
 mdefine_line|#define MODE1_REC_DEVICES&t;&t;(SOUND_MASK_LINE3 | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_LINE1|SOUND_MASK_IMIX)
 DECL|macro|MODE1_MIXER_DEVICES
 mdefine_line|#define MODE1_MIXER_DEVICES&t;&t;(SOUND_MASK_LINE1 | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_LINE2 | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_PCM | SOUND_MASK_IMIX)
 DECL|macro|MODE2_MIXER_DEVICES
 mdefine_line|#define MODE2_MIXER_DEVICES&t;&t;(SOUND_MASK_LINE1 | SOUND_MASK_LINE2 | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_LINE3 | SOUND_MASK_SPEAKER | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_PCM | SOUND_MASK_IMIX)
-macro_line|#endif
+DECL|macro|MODE3_MIXER_DEVICES
+mdefine_line|#define MODE3_MIXER_DEVICES&t;&t;(MODE2_MIXER_DEVICES | SOUND_MASK_VOLUME)
 DECL|struct|mixer_def
 r_struct
 id|mixer_def
@@ -282,27 +275,26 @@ l_int|2
 )braket
 op_assign
 (brace
-multiline_comment|/* As used in GUS MAX */
 id|MIX_ENT
 c_func
 (paren
 id|SOUND_MIXER_VOLUME
 comma
-l_int|0
+l_int|27
+comma
+l_int|1
 comma
 l_int|0
 comma
-l_int|0
+l_int|4
+comma
+l_int|29
+comma
+l_int|1
 comma
 l_int|0
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
+l_int|4
 )paren
 comma
 id|MIX_ENT
@@ -668,7 +660,7 @@ id|SOUND_MIXER_NRDEVICES
 )braket
 op_assign
 (brace
-l_int|0x5a5a
+l_int|0x3232
 comma
 multiline_comment|/* Master Volume */
 l_int|0x3232
@@ -680,7 +672,7 @@ multiline_comment|/* Treble */
 l_int|0x4b4b
 comma
 multiline_comment|/* FM */
-l_int|0x4040
+l_int|0x3232
 comma
 multiline_comment|/* PCM */
 l_int|0x4b4b

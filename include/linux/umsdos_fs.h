@@ -351,6 +351,14 @@ r_struct
 id|inode_operations
 id|umsdos_symlink_inode_operations
 suffix:semicolon
+r_extern
+r_int
+id|init_umsdos_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#include &lt;linux/umsdos_fs.p&gt;
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif

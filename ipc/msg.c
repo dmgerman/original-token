@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * linux/ipc/msg.c&n; * Copyright (C) 1992 Krishna Balasubramanian &n; *&n; * Kerneld extensions by Bjorn Ekwall &lt;bj0rn@blox.se&gt; in May 1995&n; *&n; */
-macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
@@ -866,7 +866,7 @@ id|IPC_KERNELD
 op_eq
 l_int|0
 )paren
-multiline_comment|/*&n;&t;&t;&t; * Non-root processes may recieve from kerneld! &n;&t;&t;&t; * i.e. no permission check if called from the kernel&n;&t;&t;&t; * otoh we don&squot;t want user level non-root snoopers...&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Non-root processes may receive from kerneld! &n;&t;&t;&t; * i.e. no permission check if called from the kernel&n;&t;&t;&t; * otoh we don&squot;t want user level non-root snoopers...&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2755,7 +2755,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * We do perhaps need a &quot;flush&quot; for waiting processes,&n; * so that if they are terminated, a call from do_exit&n; * will minimize the possibility of orphaned recieved&n; * messages in the queue.  For now we just make sure&n; * that the queue is shut down whenever kerneld dies.&n; */
+multiline_comment|/*&n; * We do perhaps need a &quot;flush&quot; for waiting processes,&n; * so that if they are terminated, a call from do_exit&n; * will minimize the possibility of orphaned received&n; * messages in the queue.  For now we just make sure&n; * that the queue is shut down whenever kerneld dies.&n; */
 DECL|function|kerneld_exit
 r_void
 id|kerneld_exit

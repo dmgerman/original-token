@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver for the SoundBlaster Pro and SB16 cards.&n; *&n; * Copyright by Hannu Savolainen 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *      Hunyue Yau      Jan 6 1994&n; *      Added code to support the Sound Galaxy NX Pro mixer.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SBPRO)
+macro_line|#if defined(CONFIG_SB)
 DECL|macro|__SB_MIXER_C__
 mdefine_line|#define __SB_MIXER_C__
 macro_line|#include &quot;sb.h&quot;
@@ -19,6 +19,10 @@ r_extern
 id|sound_os_info
 op_star
 id|sb_osp
+suffix:semicolon
+r_extern
+r_int
+id|AudioDrive
 suffix:semicolon
 DECL|variable|mixer_initialized
 r_static
@@ -104,6 +108,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Select register&n;&t;&t;&t;&t;&t;&t;&t; */
 id|tenmicrosec
 (paren
+id|sb_osp
 )paren
 suffix:semicolon
 id|outb
@@ -123,6 +128,7 @@ id|MIXER_DATA
 suffix:semicolon
 id|tenmicrosec
 (paren
+id|sb_osp
 )paren
 suffix:semicolon
 id|restore_flags
@@ -174,6 +180,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Select register&n;&t;&t;&t;&t;&t;&t;&t; */
 id|tenmicrosec
 (paren
+id|sb_osp
 )paren
 suffix:semicolon
 id|val
@@ -185,6 +192,7 @@ id|MIXER_DATA
 suffix:semicolon
 id|tenmicrosec
 (paren
+id|sb_osp
 )paren
 suffix:semicolon
 id|restore_flags
@@ -572,7 +580,6 @@ id|dev
 )braket
 suffix:semicolon
 )brace
-macro_line|#ifdef JAZZ16
 DECL|variable|smw_mix_regs
 r_static
 r_char
@@ -1051,7 +1058,6 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_static
 r_int
 DECL|function|sb_mixer_set
@@ -1089,7 +1095,6 @@ r_int
 r_char
 id|val
 suffix:semicolon
-macro_line|#ifdef JAZZ16
 r_if
 c_cond
 (paren
@@ -1105,7 +1110,6 @@ comma
 id|value
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1614,9 +1618,12 @@ l_char|&squot;M&squot;
 r_if
 c_cond
 (paren
+id|_IOC_DIR
+(paren
 id|cmd
+)paren
 op_amp
-id|IOC_IN
+id|_IOC_WRITE
 )paren
 r_switch
 c_cond
@@ -1941,7 +1948,27 @@ id|mixer_caps
 op_assign
 id|SOUND_CAP_EXCL_INPUT
 suffix:semicolon
-macro_line|#ifdef JAZZ16
+r_if
+c_cond
+(paren
+id|AudioDrive
+)paren
+(brace
+id|supported_devices
+op_assign
+id|ES688_MIXER_DEVICES
+suffix:semicolon
+id|supported_rec_devices
+op_assign
+id|ES688_RECORDING_DEVICES
+suffix:semicolon
+id|iomap
+op_assign
+op_amp
+id|es688_mix
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -1974,7 +2001,6 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif
 macro_line|#ifdef __SGNXPRO__
 r_if
 c_cond

@@ -362,6 +362,14 @@ r_int
 id|silent
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|init_ncp_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_void
 id|ncp_invalidate_connection
 c_func

@@ -1484,6 +1484,14 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|init_sysv_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|sysv_write_super
 c_func

@@ -266,6 +266,14 @@ r_int
 id|silent
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|init_smb_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_int
 id|smb_notify_change
 c_func

@@ -2846,7 +2846,6 @@ r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/* Every kernel module contains stuff like this. */
 DECL|variable|xiafs_fs_type
 r_static
@@ -2864,9 +2863,9 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_module
+DECL|function|init_xiafs_fs
 r_int
-id|init_module
+id|init_xiafs_fs
 c_func
 (paren
 r_void
@@ -2879,6 +2878,42 @@ c_func
 op_amp
 id|xiafs_fs_type
 )paren
+suffix:semicolon
+)brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|status
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_assign
+id|init_xiafs_fs
+c_func
+(paren
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+id|register_symtab
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_return
+id|status
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

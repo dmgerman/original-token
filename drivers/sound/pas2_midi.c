@@ -1,8 +1,7 @@
 multiline_comment|/*&n; * sound/pas2_midi.c&n; *&n; * The low level driver for the PAS Midi Interface.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &quot;pas.h&quot;
-macro_line|#if !defined(EXCLUDE_PAS) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if defined(CONFIG_PAS) &amp;&amp; defined(CONFIG_MIDI)
 DECL|variable|midi_busy
 DECL|variable|input_opened
 r_static
@@ -843,6 +842,5 @@ id|MIDI_STATUS
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Acknowledge interrupts&n;&t;&t;&t;&t;&t; */
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

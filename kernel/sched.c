@@ -22,6 +22,13 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 multiline_comment|/*&n; * kernel variables&n; */
+DECL|variable|securelevel
+r_int
+id|securelevel
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* system security level */
 DECL|variable|tick
 r_int
 id|tick

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.5&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.5a&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
 macro_line|#if RCS
 DECL|variable|mcdx_c_version
 r_static
@@ -7,7 +7,7 @@ r_char
 op_star
 id|mcdx_c_version
 op_assign
-l_string|&quot;mcdx.c,v 1.19 1995/11/20 17:06:25 heiko Exp&quot;
+l_string|&quot;mcdx.c,v 1.19.2.1 1996/01/13 21:25:55 heiko Exp&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
@@ -3704,6 +3704,7 @@ c_func
 id|ip-&gt;i_rdev
 )paren
 suffix:semicolon
+macro_line|#if !MCDX_QUIET
 r_if
 c_cond
 (paren
@@ -3728,6 +3729,7 @@ l_string|&quot;close() Cannot unlock the door&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* eject if wished */
 r_if
 c_cond
@@ -3790,22 +3792,52 @@ op_star
 id|pi
 )paren
 (brace
-macro_line|#if MCDX_DEBUG
-id|printk
-c_func
+r_if
+c_cond
 (paren
-id|MCDX
-l_string|&quot;:: setup(%s, %d) called&bslash;n&quot;
-comma
-id|str
-comma
 id|pi
 (braket
 l_int|0
 )braket
+OG
+l_int|0
 )paren
+id|mcdx_drive_map
+(braket
+l_int|0
+)braket
+(braket
+l_int|0
+)braket
+op_assign
+id|pi
+(braket
+l_int|1
+)braket
 suffix:semicolon
-macro_line|#endif
+r_if
+c_cond
+(paren
+id|pi
+(braket
+l_int|0
+)braket
+OG
+l_int|1
+)paren
+id|mcdx_drive_map
+(braket
+l_int|0
+)braket
+(braket
+l_int|1
+)braket
+op_assign
+id|pi
+(braket
+l_int|2
+)braket
+suffix:semicolon
 )brace
 multiline_comment|/* DIRTY PART ******************************************************/
 DECL|function|mcdx_delay
@@ -5035,8 +5067,8 @@ id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;Version 1.5 &quot;
-l_string|&quot;mcdx.c,v 1.19 1995/11/20 17:06:25 heiko Exp&bslash;n&quot;
+l_string|&quot;Version 1.5a &quot;
+l_string|&quot;mcdx.c,v 1.19.2.1 1996/01/13 21:25:55 heiko Exp&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -5044,8 +5076,8 @@ id|INFO
 c_func
 (paren
 (paren
-l_string|&quot;: Version 1.5 &quot;
-l_string|&quot;mcdx.c,v 1.19 1995/11/20 17:06:25 heiko Exp&bslash;n&quot;
+l_string|&quot;: Version 1.5a &quot;
+l_string|&quot;mcdx.c,v 1.19.2.1 1996/01/13 21:25:55 heiko Exp&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -5964,11 +5996,7 @@ id|current-&gt;pid
 suffix:semicolon
 r_do
 (brace
-r_int
-id|sig
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* int sig = 0; */
 r_int
 id|to
 op_assign

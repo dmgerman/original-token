@@ -1,11 +1,10 @@
 multiline_comment|/*&n; *  linux/fs/proc/scsi.c  &n; *  (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; *&n; *  The original version was derived from linux/fs/proc/net.c,&n; *  which is Copyright (C) 1991, 1992 Linus Torvalds. &n; *  Much has been rewritten, but some of the code still remains.&n; *&n; *  /proc/scsi directory handling functions&n; *&n; *  last change: 95/07/04    &n; *&n; *  Initial version: March &squot;95&n; *  95/05/15 Added subdirectories for each driver and show every&n; *&t;     registered HBA as a single file. &n; *  95/05/30 Added rudimentary write support for parameter passing&n; *  95/07/04 Fixed bugs in directory handling&n; *  95/09/13 Update to support the new proc-dir tree&n; *&n; *  TODO: Improve support to write to the driver files&n; *&t;  Add some more comments&n; */
-macro_line|#include &lt;linux/autoconf.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/* forward references */
 r_static
 r_int

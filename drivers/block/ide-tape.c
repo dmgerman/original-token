@@ -21,8 +21,6 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-DECL|macro|_IDE_TAPE_C
-mdefine_line|#define _IDE_TAPE_C&t;&t;&t;/* For ide_end_request in blk.h */
 multiline_comment|/*&n; *&t;Main Linux ide driver include file&n; *&n; *&t;Automatically includes our include file - ide-tape.h.&n; */
 macro_line|#include &quot;ide.h&quot;&t;&t;
 multiline_comment|/*&n; *&t;Supported ATAPI tape drives packet commands&n; */

@@ -297,6 +297,30 @@ l_string|&quot;mouse&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|variable|mouse_syms
+r_static
+r_struct
+id|symbol_table
+id|mouse_syms
+op_assign
+(brace
+multiline_comment|/* Should this be surrounded with &quot;#ifdef CONFIG_MODULES&quot; ? */
+macro_line|#include &lt;linux/symtab_begin.h&gt;
+id|X
+c_func
+(paren
+id|mouse_register
+)paren
+comma
+id|X
+c_func
+(paren
+id|mouse_deregister
+)paren
+comma
+macro_line|#include &lt;linux/symtab_end.h&gt;
+)brace
+suffix:semicolon
 DECL|function|mouse_init
 r_int
 id|mouse_init
@@ -371,7 +395,12 @@ id|EIO
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|register_symtab
+c_func
+(paren
+op_amp
+id|mouse_syms
+)paren
 suffix:semicolon
 )brace
 eof

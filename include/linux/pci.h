@@ -398,6 +398,8 @@ DECL|macro|PCI_DEVICE_ID_FD_36C70
 mdefine_line|#define PCI_DEVICE_ID_FD_36C70&t;&t;0x0000
 DECL|macro|PCI_VENDOR_ID_SI
 mdefine_line|#define PCI_VENDOR_ID_SI&t;&t;0x1039
+DECL|macro|PCI_DEVICE_ID_SI_6201
+mdefine_line|#define PCI_DEVICE_ID_SI_6201&t;&t;0x0001
 DECL|macro|PCI_DEVICE_ID_SI_6202
 mdefine_line|#define PCI_DEVICE_ID_SI_6202&t;&t;0x0002
 DECL|macro|PCI_DEVICE_ID_SI_503

@@ -4,7 +4,7 @@ mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_MAUI)
+macro_line|#if defined(CONFIG_MAUI)
 DECL|variable|maui_base
 r_static
 r_int
@@ -611,6 +611,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|trace_init
+)paren
 id|printk
 (paren
 l_string|&quot;WaveFront hardware version %d.%d&bslash;n&quot;
@@ -661,6 +666,11 @@ l_int|1
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|trace_init
+)paren
 id|printk
 (paren
 l_string|&quot;WaveFront firmware version %d.%d&bslash;n&quot;
@@ -715,6 +725,11 @@ id|i
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|trace_init
+)paren
 id|printk
 (paren
 l_string|&quot;Available DRAM %dk&bslash;n&quot;
@@ -784,9 +799,11 @@ id|this_dev
 op_assign
 id|num_midis
 suffix:semicolon
-id|printk
+id|conf_printf
 (paren
-l_string|&quot; &lt;Maui&gt;&quot;
+l_string|&quot;Maui&quot;
+comma
+id|hw_config
 )paren
 suffix:semicolon
 id|hw_config-&gt;irq

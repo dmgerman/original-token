@@ -4,7 +4,7 @@ mdefine_line|#define DEB(x)
 DECL|macro|DEB1
 mdefine_line|#define DEB1(x)
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_AD1848)
+macro_line|#if defined(CONFIG_AD1848)
 macro_line|#include &quot;ad1848_mixer.h&quot;
 r_typedef
 r_struct
@@ -90,6 +90,8 @@ DECL|macro|MD_4231A
 mdefine_line|#define MD_4231A&t;3
 DECL|macro|MD_1845
 mdefine_line|#define MD_1845&t;&t;4
+DECL|macro|MD_4232
+mdefine_line|#define MD_4232&t;&t;5
 multiline_comment|/* Mixer parameters */
 DECL|member|recmask
 r_int
@@ -1812,26 +1814,37 @@ id|devc
 r_int
 id|i
 suffix:semicolon
-id|devc-&gt;recmask
-op_assign
-l_int|0
-suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|devc-&gt;mode
-op_ne
-id|MD_1848
 )paren
+(brace
+r_case
+id|MD_4231
+suffix:colon
 id|devc-&gt;supported_devices
 op_assign
 id|MODE2_MIXER_DEVICES
 suffix:semicolon
-r_else
+r_break
+suffix:semicolon
+r_case
+id|MD_4232
+suffix:colon
+id|devc-&gt;supported_devices
+op_assign
+id|MODE3_MIXER_DEVICES
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|devc-&gt;supported_devices
 op_assign
 id|MODE1_MIXER_DEVICES
 suffix:semicolon
+)brace
 id|devc-&gt;supported_rec_devices
 op_assign
 id|MODE1_REC_DEVICES
@@ -1954,9 +1967,12 @@ l_char|&squot;M&squot;
 r_if
 c_cond
 (paren
+id|_IOC_DIR
+(paren
 id|cmd
+)paren
 op_amp
-id|IOC_IN
+id|_IOC_WRITE
 )paren
 r_switch
 c_cond
@@ -2332,6 +2348,13 @@ suffix:semicolon
 id|devc-&gt;irq_mode
 op_assign
 l_int|0
+suffix:semicolon
+id|ad1848_trigger
+(paren
+id|dev
+comma
+l_int|0
+)paren
 suffix:semicolon
 id|restore_flags
 (paren
@@ -4147,7 +4170,7 @@ id|devc-&gt;xfer_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 r_if
 c_cond
 (paren
@@ -4227,6 +4250,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|timeout
+suffix:semicolon
 id|save_flags
 (paren
 id|flags
@@ -4241,6 +4267,29 @@ id|ad_mute
 id|devc
 )paren
 suffix:semicolon
+id|ad_enter_MCE
+(paren
+id|devc
+)paren
+suffix:semicolon
+id|ad_write
+(paren
+id|devc
+comma
+l_int|9
+comma
+id|ad_read
+(paren
+id|devc
+comma
+l_int|9
+)paren
+op_amp
+op_complement
+l_int|0x03
+)paren
+suffix:semicolon
+multiline_comment|/* Stop DMA */
 id|ad_write
 (paren
 id|devc
@@ -4308,6 +4357,35 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Clear DMA counter */
 )brace
+r_for
+c_loop
+(paren
+id|timeout
+op_assign
+l_int|0
+suffix:semicolon
+id|timeout
+OL
+l_int|1000
+op_logical_and
+op_logical_neg
+(paren
+id|inb
+(paren
+id|io_Status
+(paren
+id|devc
+)paren
+)paren
+op_amp
+l_int|0x80
+)paren
+suffix:semicolon
+id|timeout
+op_increment
+)paren
+suffix:semicolon
+multiline_comment|/* Wait for interrupt */
 id|ad_write
 (paren
 id|devc
@@ -4351,6 +4429,11 @@ multiline_comment|/* Clear interrupt status */
 id|devc-&gt;irq_mode
 op_assign
 l_int|0
+suffix:semicolon
+id|ad_leave_MCE
+(paren
+id|devc
+)paren
 suffix:semicolon
 multiline_comment|/* DMAbuf_reset_dma (dev); */
 id|restore_flags
@@ -4673,6 +4756,16 @@ id|tmp2
 op_assign
 l_int|0xff
 suffix:semicolon
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect(%x)&bslash;n&quot;
+comma
+id|io_base
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4763,6 +4856,14 @@ op_assign
 id|osp
 suffix:semicolon
 multiline_comment|/*&n;     * Check that the I/O address is in use.&n;     *&n;     * The bit 0x80 of the base I/O port is known to be 0 after the&n;     * chip has performed it&squot;s power on initialization. Just assume&n;     * this has happened before the OS is starting.&n;     *&n;     * If the I/O address is unused, it typically returns 0xff.&n;   */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step A&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4797,6 +4898,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * Test if it&squot;s possible to change contents of the indirect registers.&n;     * Registers 0 and 1 are ADC volume registers. The bit 0x10 is read only&n;     * so try to avoid using it.&n;   */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step B&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|ad_write
 (paren
 id|devc
@@ -4862,6 +4971,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step C&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|ad_write
 (paren
 id|devc
@@ -4927,6 +5044,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * The indirect register I12 has some read only bits. Lets&n;     * try to change them.&n;   */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step D&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|tmp
 op_assign
 id|ad_read
@@ -4991,6 +5116,14 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;     * NOTE! Last 4 bits of the reg I12 tell the chip revision.&n;     *   0x01=RevB and 0x0A=RevC.&n;   */
 multiline_comment|/*&n;     * The original AD1848/CS4248 has just 15 indirect registers. This means&n;     * that I0 and I16 should return the same value (etc.).&n;     * Ensure that the Mode2 enable bit of I12 is 0. Otherwise this test fails&n;     * with CS4231.&n;   */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step F&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|ad_write
 (paren
 id|devc
@@ -5062,6 +5195,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * Try to switch the chip to mode2 (CS4231) by setting the MODE2 bit (0x40).&n;     * The bit 0x80 is always 1 in CS4248 and CS4231.&n;   */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step G&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|ad_write
 (paren
 id|devc
@@ -5122,6 +5263,14 @@ l_int|0x40
 )paren
 (brace
 multiline_comment|/*&n;         *      CS4231 detected - is it?&n;         *&n;         *      Verify that setting I0 doesn&squot;t change I16.&n;       */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step H&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|ad_write
 (paren
 id|devc
@@ -5201,6 +5350,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;     * Verify that some bits of I25 are read only.&n;&t;   */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step I&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|tmp1
 op_assign
 id|ad_read
@@ -5251,22 +5408,19 @@ id|devc-&gt;chip_name
 op_assign
 l_string|&quot;CS4231&quot;
 suffix:semicolon
-macro_line|#ifdef MOZART_PORT
-r_if
-c_cond
-(paren
-id|devc-&gt;base
-op_ne
-id|MOZART_PORT
-op_plus
-l_int|4
-)paren
-macro_line|#endif
 id|devc-&gt;mode
 op_assign
 id|MD_4231
 suffix:semicolon
 multiline_comment|/*&n;&t;       * It could be an AD1845 or CS4231A as well.&n;&t;       * CS4231 and AD1845 report the same revision info in I25&n;&t;       * while the CS4231A reports different.&n;&t;       */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step I&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|id
 op_assign
 id|ad_read
@@ -5306,7 +5460,7 @@ l_string|&quot;CS4232&quot;
 suffix:semicolon
 id|devc-&gt;mode
 op_assign
-id|MD_4231A
+id|MD_4232
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5319,7 +5473,7 @@ l_string|&quot;CS4232A&quot;
 suffix:semicolon
 id|devc-&gt;mode
 op_assign
-id|MD_4231A
+id|MD_4232
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5404,8 +5558,24 @@ id|tmp1
 )paren
 suffix:semicolon
 multiline_comment|/* Restore bits */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step K&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 )brace
 )brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - step L&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5425,6 +5595,14 @@ op_or_assign
 id|AD_F_CS4231
 suffix:semicolon
 )brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;ad1848_detect() - Detected OK&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -5805,6 +5983,10 @@ c_cond
 id|devc-&gt;mode
 op_eq
 id|MD_4231A
+op_logical_or
+id|devc-&gt;mode
+op_eq
+id|MD_4232
 )paren
 id|ad_write
 (paren
@@ -5845,6 +6027,17 @@ suffix:semicolon
 multiline_comment|/* Alternate freq select enabled */
 )brace
 r_else
+(brace
+id|ad1848_pcm_operations
+(braket
+id|nr_ad1848_devs
+)braket
+dot
+id|flags
+op_and_assign
+op_complement
+id|DMA_DUPLEX
+suffix:semicolon
 id|ad_write
 (paren
 id|devc
@@ -5862,6 +6055,7 @@ l_int|0x04
 )paren
 suffix:semicolon
 multiline_comment|/* Single DMA mode */
+)brace
 id|outb
 (paren
 l_int|0
@@ -5918,16 +6112,22 @@ comma
 id|devc-&gt;chip_name
 )paren
 suffix:semicolon
-id|printk
+id|conf_printf2
 (paren
-l_string|&quot; &lt;%s&gt;&quot;
-comma
 id|ad1848_pcm_operations
 (braket
 id|nr_ad1848_devs
 )braket
 dot
 id|name
+comma
+id|devc-&gt;base
+comma
+id|devc-&gt;irq
+comma
+id|dma_playback
+comma
+id|dma_capture
 )paren
 suffix:semicolon
 r_if
@@ -6195,7 +6395,7 @@ suffix:semicolon
 id|nr_ad1848_devs
 op_increment
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 r_if
 c_cond
 (paren
@@ -6502,6 +6702,11 @@ suffix:semicolon
 r_int
 id|dev
 suffix:semicolon
+r_int
+id|alt_stat
+op_assign
+l_int|0xff
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6646,9 +6851,6 @@ op_amp
 l_int|0x01
 )paren
 (brace
-r_int
-id|alt_stat
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6656,7 +6858,6 @@ id|devc-&gt;mode
 op_ne
 id|MD_1848
 )paren
-(brace
 id|alt_stat
 op_assign
 id|ad_read
@@ -6665,40 +6866,6 @@ id|devc
 comma
 l_int|24
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|alt_stat
-op_amp
-l_int|0x40
-)paren
-multiline_comment|/* Timer interrupt */
-(brace
-id|devc-&gt;timer_ticks
-op_increment
-suffix:semicolon
-macro_line|#ifndef EXCLUDE_SEQUENCER
-r_if
-c_cond
-(paren
-id|timer_installed
-op_eq
-id|dev
-op_logical_and
-id|devc-&gt;timer_running
-)paren
-id|sound_timer_interrupt
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-)brace
-r_else
-id|alt_stat
-op_assign
-l_int|0xff
 suffix:semicolon
 r_if
 c_cond
@@ -6742,7 +6909,65 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|devc-&gt;mode
+op_ne
+id|MD_1848
+op_logical_and
+id|alt_stat
+op_amp
+l_int|0x40
+)paren
+multiline_comment|/* Timer interrupt */
+(brace
+id|devc-&gt;timer_ticks
+op_increment
+suffix:semicolon
+macro_line|#ifdef CONFIG_SEQUENCER
+r_if
+c_cond
+(paren
+id|timer_installed
+op_eq
+id|dev
+op_logical_and
+id|devc-&gt;timer_running
+)paren
+id|sound_timer_interrupt
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
+)brace
+r_if
+c_cond
+(paren
+id|devc-&gt;mode
+op_ne
+id|MD_1848
+)paren
+id|ad_write
+(paren
+id|devc
+comma
+l_int|24
+comma
+id|ad_read
+(paren
+id|devc
+comma
+l_int|24
+)paren
+op_amp
+op_complement
+id|alt_stat
+)paren
+suffix:semicolon
+multiline_comment|/* Selective ack */
+r_else
 id|outb
 (paren
 l_int|0
@@ -6756,6 +6981,72 @@ suffix:semicolon
 multiline_comment|/* Clear interrupt status */
 )brace
 multiline_comment|/*&n; * Some extra code for the MS Sound System&n; */
+r_void
+DECL|function|check_opl3
+id|check_opl3
+(paren
+r_int
+id|base
+comma
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|check_region
+(paren
+id|base
+comma
+l_int|4
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;&bslash;n&bslash;nopl3.c: I/O port %x already in use&bslash;n&bslash;n&quot;
+comma
+id|base
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|opl3_detect
+(paren
+id|base
+comma
+id|hw_config-&gt;osp
+)paren
+)paren
+r_return
+suffix:semicolon
+id|opl3_init
+(paren
+l_int|0
+comma
+id|base
+comma
+id|hw_config-&gt;osp
+)paren
+suffix:semicolon
+id|request_region
+(paren
+id|base
+comma
+l_int|4
+comma
+l_string|&quot;OPL3/OPL2&quot;
+)paren
+suffix:semicolon
+)brace
 r_int
 DECL|function|probe_ms_sound
 id|probe_ms_sound
@@ -6769,6 +7060,18 @@ id|hw_config
 r_int
 r_char
 id|tmp
+suffix:semicolon
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Entered probe_ms_sound(%x, %d)&bslash;n&quot;
+comma
+id|hw_config-&gt;io_base
+comma
+id|hw_config-&gt;card_subtype
+)paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6790,14 +7093,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if !defined(EXCLUDE_AEDSP16) &amp;&amp; defined(AEDSP16_MSS)
-multiline_comment|/*&n;     * Initialize Audio Excel DSP 16 to MSS: before any operation&n;     * we must enable MSS I/O ports.&n;   */
-id|InitAEDSP16_MSS
-(paren
-id|hw_config
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6805,7 +7100,9 @@ id|hw_config-&gt;card_subtype
 op_eq
 l_int|1
 )paren
-multiline_comment|/* Has IRQ/DMA registers */
+multiline_comment|/* Has no IRQ/DMA registers */
+(brace
+multiline_comment|/* check_opl3(0x388, hw_config); */
 r_return
 id|ad1848_detect
 (paren
@@ -6818,6 +7115,15 @@ comma
 id|hw_config-&gt;osp
 )paren
 suffix:semicolon
+)brace
+macro_line|#if defined(CONFIG_AEDSP16) &amp;&amp; defined(AEDSP16_MSS)
+multiline_comment|/*&n;     * Initialize Audio Excel DSP 16 to MSS: before any operation&n;     * we must enable MSS I/O ports.&n;   */
+id|InitAEDSP16_MSS
+(paren
+id|hw_config
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTriX Pro for example)&n;     * return 0x00 or 0x0f.&n;   */
 r_if
 c_cond
@@ -6836,9 +7142,21 @@ op_eq
 l_int|0xff
 )paren
 multiline_comment|/* Bus float */
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;I/O address is inactive (%x)&bslash;n&quot;
+comma
+id|tmp
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -7086,7 +7404,8 @@ op_assign
 id|hw_config-&gt;io_base
 op_plus
 l_int|0
-comma
+suffix:semicolon
+r_int
 id|version_port
 op_assign
 id|hw_config-&gt;io_base
@@ -7111,6 +7430,47 @@ id|hw_config-&gt;osp
 r_return
 id|mem_start
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hw_config-&gt;card_subtype
+op_eq
+l_int|1
+)paren
+multiline_comment|/* Has no IRQ/DMA registers */
+(brace
+id|ad1848_init
+(paren
+l_string|&quot;MS Sound System&quot;
+comma
+id|hw_config-&gt;io_base
+op_plus
+l_int|4
+comma
+id|hw_config-&gt;irq
+comma
+id|hw_config-&gt;dma
+comma
+id|hw_config-&gt;dma2
+comma
+l_int|0
+comma
+id|hw_config-&gt;osp
+)paren
+suffix:semicolon
+id|request_region
+(paren
+id|hw_config-&gt;io_base
+comma
+l_int|4
+comma
+l_string|&quot;WSS config&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
 multiline_comment|/*&n;     * Set the IRQ and DMA addresses.&n;   */
 id|bits
 op_assign
@@ -7323,7 +7683,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 multiline_comment|/*&n; * Timer stuff (for /dev/music).&n; */
 DECL|variable|current_interval
 r_static

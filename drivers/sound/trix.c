@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTriX AudioTriX Pro&n; * (MT-0002-PC Control Chip)&n; *&n; * Copyright by Hannu Savolainen 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_TRIX)
+macro_line|#if defined(CONFIG_TRIX)
 macro_line|#ifdef INCLUDE_TRIX_BOOT
 macro_line|#include &quot;trix_boot.h&quot;
 macro_line|#endif
@@ -1139,7 +1139,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifndef EXCLUDE_SB
+macro_line|#ifdef CONFIG_SB
 r_extern
 r_int
 id|sb_no_recording
@@ -1153,9 +1153,11 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-id|printk
+id|conf_printf
 (paren
-l_string|&quot; &lt;AudioTriX (SB)&gt;&quot;
+l_string|&quot;AudioTriX (SB)&quot;
+comma
+id|hw_config
 )paren
 suffix:semicolon
 r_return
@@ -1175,7 +1177,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_return
 id|attach_mpu401
 (paren
@@ -1200,7 +1202,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 r_int
 r_char
 id|conf
@@ -1514,7 +1516,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if (!defined(EXCLUDE_MPU401) || !defined(EXCLUDE_MPU_EMU)) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_mpu401
 (paren
 id|hw_config

@@ -108,7 +108,7 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Only the super-user can change the IMMUTABLE flag&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The IMMUTABLE flag can only be changed by the super user&n;&t;&t; * when the security level is zero.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -134,6 +134,10 @@ id|fsuser
 c_func
 (paren
 )paren
+op_logical_or
+id|securelevel
+OG
+l_int|0
 )paren
 r_return
 op_minus

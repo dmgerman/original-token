@@ -160,6 +160,11 @@ op_star
 id|SDpnt
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|symbol_table
+id|scsi_symbol_table
+suffix:semicolon
 DECL|variable|dma_malloc_freelist
 r_static
 id|FreeSectorBitmap
@@ -1462,9 +1467,6 @@ op_assign
 (paren
 (paren
 op_logical_neg
-id|dma_malloc_freelist
-op_logical_or
-op_logical_neg
 id|shpnt-&gt;unchecked_isa_dma
 )paren
 ques
@@ -1475,9 +1477,11 @@ id|scsi_result0
 l_int|0
 )braket
 suffix:colon
-id|scsi_malloc
+id|scsi_init_malloc
 (paren
 l_int|512
+comma
+id|GFP_DMA
 )paren
 )paren
 suffix:semicolon
@@ -1972,7 +1976,7 @@ id|scsi_result
 op_ne
 l_int|NULL
 )paren
-id|scsi_free
+id|scsi_init_free
 (paren
 id|scsi_result
 comma
@@ -8664,6 +8668,13 @@ id|expires
 op_assign
 l_int|0
 suffix:semicolon
+id|register_symtab
+c_func
+(paren
+op_amp
+id|scsi_symbol_table
+)paren
+suffix:semicolon
 multiline_comment|/* Register the /proc/scsi/scsi entry */
 macro_line|#if CONFIG_PROC_FS 
 id|proc_scsi_register
@@ -12084,11 +12095,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef MODULE
-r_extern
-r_struct
-id|symbol_table
-id|scsi_symbol_table
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

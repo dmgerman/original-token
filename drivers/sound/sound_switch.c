@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * sound/sound_switch.c&n; *&n; * The system call switch&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIGURE_SOUNDCARD
 DECL|struct|sbc_device
 r_struct
 id|sbc_device
@@ -9,21 +8,6 @@ DECL|member|usecount
 r_int
 id|usecount
 suffix:semicolon
-)brace
-suffix:semicolon
-DECL|variable|sbc_devices
-r_static
-r_struct
-id|sbc_device
-id|sbc_devices
-(braket
-id|SND_NDEVS
-)braket
-op_assign
-(brace
-(brace
-l_int|0
-)brace
 )brace
 suffix:semicolon
 DECL|variable|in_use
@@ -731,7 +715,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef EXCLUDE_AUDIO
+macro_line|#ifndef CONFIG_AUDIO
 r_if
 c_cond
 (paren
@@ -846,7 +830,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef EXCLUDE_SEQUENCER
+macro_line|#ifndef CONFIG_SEQUENCER
 r_if
 c_cond
 (paren
@@ -938,7 +922,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef EXCLUDE_MIDI
+macro_line|#ifndef CONFIG_MIDI
 r_if
 c_cond
 (paren
@@ -1319,7 +1303,7 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1344,7 +1328,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1366,7 +1350,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -1439,7 +1423,7 @@ op_amp
 l_int|0x0f
 )paren
 (brace
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1461,7 +1445,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1486,7 +1470,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -1534,16 +1518,9 @@ id|DEB
 (paren
 id|printk
 (paren
-l_string|&quot;sound_open_sw(dev=%d) : usecount=%d&bslash;n&quot;
+l_string|&quot;sound_open_sw(dev=%d)&bslash;n&quot;
 comma
 id|dev
-comma
-id|sbc_devices
-(braket
-id|dev
-)braket
-dot
-id|usecount
 )paren
 )paren
 suffix:semicolon
@@ -1643,7 +1620,7 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1672,7 +1649,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -1698,7 +1675,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1744,14 +1721,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|sbc_devices
-(braket
-id|dev
-)braket
-dot
-id|usecount
-op_increment
-suffix:semicolon
 id|in_use
 op_increment
 suffix:semicolon
@@ -1818,7 +1787,7 @@ id|SND_DEV_CTL
 suffix:colon
 r_break
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1835,7 +1804,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -1849,7 +1818,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1879,14 +1848,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|sbc_devices
-(braket
-id|dev
-)braket
-dot
-id|usecount
-op_decrement
-suffix:semicolon
 id|in_use
 op_decrement
 suffix:semicolon
@@ -1973,7 +1934,7 @@ c_cond
 id|dtype
 )paren
 (brace
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -2101,7 +2062,7 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_SEQUENCER
+macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -2123,7 +2084,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_AUDIO
+macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -2148,7 +2109,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_MIDI
+macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -2181,5 +2142,4 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

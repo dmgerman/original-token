@@ -1,5 +1,5 @@
 DECL|macro|DISABLED_OPTIONS
-mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_PNP))
+mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_PNP)|B(OPT_AEDSP16))
 multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; *&n; * Copyright by Hannu Savolainen 1993-1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
@@ -63,6 +63,8 @@ DECL|macro|OPT_SEQUENCER
 mdefine_line|#define OPT_SEQUENCER&t;24
 DECL|macro|OPT_LAST
 mdefine_line|#define OPT_LAST&t;24&t;/* Last defined OPT number */
+DECL|macro|DUMMY_OPTS
+mdefine_line|#define DUMMY_OPTS (B(OPT_MIDI_AUTO)|B(OPT_YM3812_AUTO))
 DECL|macro|ANY_DEVS
 mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_SEQUENCER)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI))
 DECL|macro|AUDIO_CARDS
@@ -690,6 +692,15 @@ id|old_config_used
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|def_size
+DECL|variable|sb_base
+r_int
+id|def_size
+comma
+id|sb_base
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|selected_options
 r_int
 r_int
@@ -700,6 +711,12 @@ suffix:semicolon
 DECL|variable|sb_dma
 r_int
 id|sb_dma
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|dump_only
+r_int
+id|dump_only
 op_assign
 l_int|0
 suffix:semicolon
@@ -857,12 +874,7 @@ l_string|&quot;stdin&quot;
 suffix:semicolon
 id|printf
 (paren
-l_string|&quot;#undef CONFIGURE_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef KERNEL_SOUNDCARD&bslash;n&quot;
+l_string|&quot;invalid_configuration__run_make_config_again&bslash;n&quot;
 )paren
 suffix:semicolon
 m_exit
@@ -979,12 +991,7 @@ l_string|&quot;stdin&quot;
 suffix:semicolon
 id|printf
 (paren
-l_string|&quot;#undef CONFIGURE_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef KERNEL_SOUNDCARD&bslash;n&quot;
+l_string|&quot;invalid_configuration__run_make_config_again&bslash;n&quot;
 )paren
 suffix:semicolon
 m_exit
@@ -1044,6 +1051,346 @@ suffix:semicolon
 r_return
 id|num
 suffix:semicolon
+)brace
+DECL|macro|FMT_HEX
+mdefine_line|#define FMT_HEX 1
+DECL|macro|FMT_INT
+mdefine_line|#define FMT_INT 2
+r_void
+DECL|function|ask_int_choice
+id|ask_int_choice
+(paren
+r_int
+id|mask
+comma
+r_char
+op_star
+id|macro
+comma
+r_char
+op_star
+id|question
+comma
+r_int
+id|format
+comma
+r_int
+id|defa
+comma
+r_char
+op_star
+id|choices
+)paren
+(brace
+r_int
+id|num
+comma
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dump_only
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|OPT_LAST
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|mask
+op_eq
+id|B
+(paren
+id|i
+)paren
+)paren
+(brace
+r_int
+id|j
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|strlen
+(paren
+id|choices
+)paren
+suffix:semicolon
+id|j
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|choices
+(braket
+id|j
+)braket
+op_eq
+l_char|&squot;&bslash;&squot;&squot;
+)paren
+id|choices
+(braket
+id|j
+)braket
+op_assign
+l_char|&squot;_&squot;
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;&bslash;nif [ &bslash;&quot;$CONFIG_%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; ]; then&bslash;n&quot;
+comma
+id|hw_table
+(braket
+id|i
+)braket
+dot
+id|macro
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|format
+op_eq
+id|FMT_INT
+)paren
+id|printf
+(paren
+l_string|&quot;int &squot;%s %s&squot; %s %d&bslash;n&quot;
+comma
+id|question
+comma
+id|choices
+comma
+id|macro
+comma
+id|defa
+)paren
+suffix:semicolon
+r_else
+id|printf
+(paren
+l_string|&quot;hex &squot;%s %s&squot; %s %x&bslash;n&quot;
+comma
+id|question
+comma
+id|choices
+comma
+id|macro
+comma
+id|defa
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;fi&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|mask
+op_amp
+id|selected_options
+)paren
+)paren
+r_return
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;n%s&bslash;n&quot;
+comma
+id|question
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;Possible values are: %s&bslash;n&quot;
+comma
+id|choices
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|format
+op_eq
+id|FMT_INT
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|defa
+op_eq
+op_minus
+l_int|1
+)paren
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;t(-1 disables this feature)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;The default value is %d&bslash;n&quot;
+comma
+id|defa
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;Enter the value: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%d&quot;
+comma
+id|defa
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+op_eq
+op_minus
+l_int|1
+)paren
+r_return
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;%s set to %d.&bslash;n&quot;
+comma
+id|question
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define %s %d&bslash;n&quot;
+comma
+id|macro
+comma
+id|num
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|defa
+op_eq
+l_int|0
+)paren
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;t(0 disables this feature)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;The default value is %x&bslash;n&quot;
+comma
+id|defa
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;Enter the value: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%x&quot;
+comma
+id|defa
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+op_eq
+l_int|0
+)paren
+r_return
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;%s set to %x.&bslash;n&quot;
+comma
+id|question
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define %s 0x%x&bslash;n&quot;
+comma
+id|macro
+comma
+id|num
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 r_void
 DECL|function|rebuild_file
@@ -1537,6 +1884,20 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|tmp
+comma
+l_string|&quot;KERNEL_SOUNDCARD&quot;
+)paren
+op_eq
+l_int|0
+)paren
+r_continue
+suffix:semicolon
 id|tmp
 (braket
 l_int|8
@@ -1560,6 +1921,106 @@ l_int|0
 r_continue
 suffix:semicolon
 multiline_comment|/* Skip excludes */
+id|strncpy
+(paren
+id|tmp
+comma
+id|id
+comma
+id|i
+)paren
+suffix:semicolon
+id|tmp
+(braket
+l_int|7
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Truncate the string */
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|tmp
+comma
+l_string|&quot;CONFIG_&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|strncpy
+(paren
+id|tmp
+comma
+op_amp
+id|id
+(braket
+l_int|7
+)braket
+comma
+id|i
+op_minus
+l_int|7
+)paren
+suffix:semicolon
+id|tmp
+(braket
+id|i
+op_minus
+l_int|7
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|OPT_LAST
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|hw_table
+(braket
+id|i
+)braket
+dot
+id|macro
+comma
+id|tmp
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|selected_options
+op_or_assign
+(paren
+l_int|1
+op_lshift
+id|i
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_continue
+suffix:semicolon
+)brace
 id|printf
 (paren
 l_string|&quot;%s&quot;
@@ -1640,10 +2101,34 @@ id|i
 suffix:semicolon
 id|tmp
 (braket
-id|i
+l_int|7
 )braket
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* Truncate the string */
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|tmp
+comma
+l_string|&quot;CONFIG_&quot;
+)paren
+op_eq
+l_int|0
+)paren
+r_continue
+suffix:semicolon
+id|strncpy
+(paren
+id|tmp
+comma
+id|id
+comma
+id|i
+)paren
 suffix:semicolon
 id|tmp
 (braket
@@ -1788,7 +2273,7 @@ id|i
 )paren
 id|printf
 (paren
-l_string|&quot;#undef  EXCLUDE_%s&bslash;n&quot;
+l_string|&quot;#define CONFIG_%s&bslash;n&quot;
 comma
 id|hw_table
 (braket
@@ -1801,7 +2286,7 @@ suffix:semicolon
 r_else
 id|printf
 (paren
-l_string|&quot;#define EXCLUDE_%s&bslash;n&quot;
+l_string|&quot;#undef  CONFIG_%s&bslash;n&quot;
 comma
 id|hw_table
 (braket
@@ -1847,7 +2332,7 @@ id|mask
 )paren
 id|printf
 (paren
-l_string|&quot;#undef  EXCLUDE_%s&bslash;n&quot;
+l_string|&quot;#define CONFIG_%s&bslash;n&quot;
 comma
 id|extra_options
 (braket
@@ -1860,7 +2345,7 @@ suffix:semicolon
 r_else
 id|printf
 (paren
-l_string|&quot;#define EXCLUDE_%s&bslash;n&quot;
+l_string|&quot;#undef  CONFIG_%s&bslash;n&quot;
 comma
 id|extra_options
 (braket
@@ -2064,6 +2549,1548 @@ id|optf
 )paren
 suffix:semicolon
 )brace
+r_void
+DECL|function|ask_parameters
+id|ask_parameters
+(paren
+r_void
+)paren
+(brace
+r_int
+id|num
+suffix:semicolon
+id|build_defines
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * IRQ and DMA settings&n;   */
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_AEDSP16
+)paren
+comma
+l_string|&quot;AEDSP16_BASE&quot;
+comma
+l_string|&quot;I/O base for Audio Excel DSP 16&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x220
+comma
+l_string|&quot;220 or 240&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SB
+)paren
+comma
+l_string|&quot;SBC_BASE&quot;
+comma
+l_string|&quot;I/O base for SB&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x220
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SB
+)paren
+comma
+l_string|&quot;SBC_IRQ&quot;
+comma
+l_string|&quot;SoundBlaster IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|7
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SB
+)paren
+comma
+l_string|&quot;SBC_DMA&quot;
+comma
+l_string|&quot;SoundBlaster DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|1
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SB
+)paren
+comma
+l_string|&quot;SB_DMA2&quot;
+comma
+l_string|&quot;SoundBlaster 16 bit DMA (if required)&quot;
+comma
+id|FMT_INT
+comma
+op_minus
+l_int|1
+comma
+l_string|&quot;5, 6 or 7&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SB
+)paren
+comma
+l_string|&quot;SB_MPU_BASE&quot;
+comma
+l_string|&quot;MPU401 I/O base of SB16, Jazz16 and ES1688&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SB
+)paren
+comma
+l_string|&quot;SB_MPU_IRQ&quot;
+comma
+l_string|&quot;SB MPU401 IRQ (SB16, Jazz16 and ES1688)&quot;
+comma
+id|FMT_INT
+comma
+op_minus
+l_int|1
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_PAS
+)paren
+comma
+l_string|&quot;PAS_IRQ&quot;
+comma
+l_string|&quot;PAS16 IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|10
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_PAS
+)paren
+comma
+l_string|&quot;PAS_DMA&quot;
+comma
+l_string|&quot;PAS16 DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|selected_options
+op_amp
+id|B
+(paren
+id|OPT_PAS
+)paren
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nEnable Joystick port on ProAudioSpectrum (n/y) ? &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|think_positively
+(paren
+l_int|0
+)paren
+)paren
+id|printf
+(paren
+l_string|&quot;#define PAS_JOYSTICK_ENABLE&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;PAS16 could be noisy with some mother boards&bslash;n&quot;
+l_string|&quot;There is a command line switch (was it :T?)&bslash;n&quot;
+l_string|&quot;in the DOS driver for PAS16 which solves this.&bslash;n&quot;
+l_string|&quot;Don&squot;t enable this feature unless you have problems!&bslash;n&quot;
+l_string|&quot;Do you have to use this switch with DOS (y/n) ?&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|think_positively
+(paren
+l_int|0
+)paren
+)paren
+id|printf
+(paren
+l_string|&quot;#define BROKEN_BUS_CLOCK&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_GUS
+)paren
+comma
+l_string|&quot;GUS_BASE&quot;
+comma
+l_string|&quot;I/O base for Gravis UltraSound (GUS)&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x220
+comma
+l_string|&quot;210, 220, 230, 240, 250 or 260&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_GUS
+)paren
+comma
+l_string|&quot;GUS_IRQ&quot;
+comma
+l_string|&quot;GUS IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|15
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_GUS
+)paren
+comma
+l_string|&quot;GUS_DMA&quot;
+comma
+l_string|&quot;GUS DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|6
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_GUS
+)paren
+comma
+l_string|&quot;GUS_DMA2&quot;
+comma
+l_string|&quot;Second DMA channel for GUS&quot;
+comma
+id|FMT_INT
+comma
+op_minus
+l_int|1
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_GUS16
+)paren
+comma
+l_string|&quot;GUS16_BASE&quot;
+comma
+l_string|&quot;I/O base for the 16 bit daughtercard of GUS&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x530
+comma
+l_string|&quot;530, 604, E80 or F40&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_GUS16
+)paren
+comma
+l_string|&quot;GUS16_IRQ&quot;
+comma
+l_string|&quot;GUS 16 bit daughtercard IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|7
+comma
+l_string|&quot;3, 4, 5, 7, or 9&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_GUS16
+)paren
+comma
+l_string|&quot;GUS16_DMA&quot;
+comma
+l_string|&quot;GUS DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MPU401
+)paren
+comma
+l_string|&quot;MPU_BASE&quot;
+comma
+l_string|&quot;I/O base for MPU401&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x330
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MPU401
+)paren
+comma
+l_string|&quot;MPU_IRQ&quot;
+comma
+l_string|&quot;MPU401 IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|9
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MAUI
+)paren
+comma
+l_string|&quot;MAUI_BASE&quot;
+comma
+l_string|&quot;I/O base for Maui&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x330
+comma
+l_string|&quot;210, 230, 260, 290, 300, 320, 338 or 330&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MAUI
+)paren
+comma
+l_string|&quot;MAUI_IRQ&quot;
+comma
+l_string|&quot;Maui IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|9
+comma
+l_string|&quot;5, 9, 12 or 15&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_UART6850
+)paren
+comma
+l_string|&quot;U6850_BASE&quot;
+comma
+l_string|&quot;I/O base for UART 6850 MIDI port&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0
+comma
+l_string|&quot;(Unknown)&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_UART6850
+)paren
+comma
+l_string|&quot;U6850_IRQ&quot;
+comma
+l_string|&quot;UART6850 IRQ&quot;
+comma
+id|FMT_INT
+comma
+op_minus
+l_int|1
+comma
+l_string|&quot;(Unknown)&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_PSS
+)paren
+comma
+l_string|&quot;PSS_BASE&quot;
+comma
+l_string|&quot;PSS I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x220
+comma
+l_string|&quot;220 or 240&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_PSS
+)paren
+comma
+l_string|&quot;PSS_MSS_BASE&quot;
+comma
+l_string|&quot;PSS audio I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x530
+comma
+l_string|&quot;530, 604, E80 or F40&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_PSS
+)paren
+comma
+l_string|&quot;PSS_MSS_IRQ&quot;
+comma
+l_string|&quot;PSS audio IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|11
+comma
+l_string|&quot;7, 9, 10 or 11&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_PSS
+)paren
+comma
+l_string|&quot;PSS_MSS_DMA&quot;
+comma
+l_string|&quot;PSS audio DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_PSS
+)paren
+comma
+l_string|&quot;PSS_MPU_BASE&quot;
+comma
+l_string|&quot;PSS MIDI I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x330
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_PSS
+)paren
+comma
+l_string|&quot;PSS_MPU_IRQ&quot;
+comma
+l_string|&quot;PSS MIDI IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|9
+comma
+l_string|&quot;3, 4, 5, 7 or 9&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MSS
+)paren
+comma
+l_string|&quot;MSS_BASE&quot;
+comma
+l_string|&quot;MSS/WSS I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x530
+comma
+l_string|&quot;530, 604, E80 or F40&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MSS
+)paren
+comma
+l_string|&quot;MSS_IRQ&quot;
+comma
+l_string|&quot;MSS/WSS IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|11
+comma
+l_string|&quot;7, 9, 10 or 11&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MSS
+)paren
+comma
+l_string|&quot;MSS_DMA&quot;
+comma
+l_string|&quot;MSS/WSS DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SSCAPE
+)paren
+comma
+l_string|&quot;SSCAPE_BASE&quot;
+comma
+l_string|&quot;Soundscape MIDI I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x330
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SSCAPE
+)paren
+comma
+l_string|&quot;SSCAPE_IRQ&quot;
+comma
+l_string|&quot;Soundscape MIDI IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|9
+comma
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SSCAPE
+)paren
+comma
+l_string|&quot;SSCAPE_DMA&quot;
+comma
+l_string|&quot;Soundscape initialization DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SSCAPE
+)paren
+comma
+l_string|&quot;SSCAPE_MSS_BASE&quot;
+comma
+l_string|&quot;Soundscape audio I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x534
+comma
+l_string|&quot;534, 608, E84 or F44&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SSCAPE
+)paren
+comma
+l_string|&quot;SSCAPE_MSS_IRQ&quot;
+comma
+l_string|&quot;Soundscape audio IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|11
+comma
+l_string|&quot;7, 9, 10 or 11&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_SSCAPE
+)paren
+comma
+l_string|&quot;SSCAPE_MSS_DMA&quot;
+comma
+l_string|&quot;Soundscape audio DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|0
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|selected_options
+op_amp
+id|B
+(paren
+id|OPT_SSCAPE
+)paren
+)paren
+(brace
+r_int
+id|reveal_spea
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;Is your SoundScape card made/marketed by Reveal or Spea? &quot;
+)paren
+suffix:semicolon
+id|reveal_spea
+op_assign
+id|think_positively
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|reveal_spea
+)paren
+id|printf
+(paren
+l_string|&quot;#define REVEAL_SPEA&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_BASE&quot;
+comma
+l_string|&quot;AudioTriX audio I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x530
+comma
+l_string|&quot;530, 604, E80 or F40&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_IRQ&quot;
+comma
+l_string|&quot;AudioTriX audio IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|11
+comma
+l_string|&quot;7, 9, 10 or 11&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_DMA&quot;
+comma
+l_string|&quot;AudioTriX audio DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|0
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_DMA2&quot;
+comma
+l_string|&quot;AudioTriX second (duplex) DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_MPU_BASE&quot;
+comma
+l_string|&quot;AudioTriX MIDI I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x330
+comma
+l_string|&quot;330, 370, 3B0 or 3F0&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_MPU_IRQ&quot;
+comma
+l_string|&quot;AudioTriX MIDI IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|9
+comma
+l_string|&quot;3, 4, 5, 7 or 9&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_SB_BASE&quot;
+comma
+l_string|&quot;AudioTriX SB I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x220
+comma
+l_string|&quot;220, 210, 230, 240, 250, 260 or 270&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_SB_IRQ&quot;
+comma
+l_string|&quot;AudioTriX SB IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|7
+comma
+l_string|&quot;3, 4, 5 or 7&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_TRIX
+)paren
+comma
+l_string|&quot;TRIX_SB_DMA&quot;
+comma
+l_string|&quot;AudioTriX SB DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|1
+comma
+l_string|&quot;1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_CS4232
+)paren
+comma
+l_string|&quot;CS4232_BASE&quot;
+comma
+l_string|&quot;CS4232 audio I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x530
+comma
+l_string|&quot;530, 604, E80 or F40&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_CS4232
+)paren
+comma
+l_string|&quot;CS4232_IRQ&quot;
+comma
+l_string|&quot;CS4232 audio IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|11
+comma
+l_string|&quot;5, 7, 9, 11, 12 or 15&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_CS4232
+)paren
+comma
+l_string|&quot;CS4232_DMA&quot;
+comma
+l_string|&quot;CS4232 audio DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|0
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_CS4232
+)paren
+comma
+l_string|&quot;CS4232_DMA2&quot;
+comma
+l_string|&quot;CS4232 second (duplex) DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_CS4232
+)paren
+comma
+l_string|&quot;CS4232_MPU_BASE&quot;
+comma
+l_string|&quot;CS4232 MIDI I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x330
+comma
+l_string|&quot;330, 370, 3B0 or 3F0&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_CS4232
+)paren
+comma
+l_string|&quot;CS4232_MPU_IRQ&quot;
+comma
+l_string|&quot;CS4232 MIDI IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|9
+comma
+l_string|&quot;5, 7, 9, 11, 12 or 15&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MAD16
+)paren
+comma
+l_string|&quot;MAD16_BASE&quot;
+comma
+l_string|&quot;MAD16 audio I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x530
+comma
+l_string|&quot;530, 604, E80 or F40&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MAD16
+)paren
+comma
+l_string|&quot;MAD16_IRQ&quot;
+comma
+l_string|&quot;MAD16 audio IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|11
+comma
+l_string|&quot;7, 9, 10 or 11&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MAD16
+)paren
+comma
+l_string|&quot;MAD16_DMA&quot;
+comma
+l_string|&quot;MAD16 audio DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|3
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MAD16
+)paren
+comma
+l_string|&quot;MAD16_DMA2&quot;
+comma
+l_string|&quot;MAD16 second (duplex) DMA&quot;
+comma
+id|FMT_INT
+comma
+l_int|0
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MAD16
+)paren
+comma
+l_string|&quot;MAD16_MPU_BASE&quot;
+comma
+l_string|&quot;MAD16 MIDI I/O base&quot;
+comma
+id|FMT_HEX
+comma
+l_int|0x330
+comma
+l_string|&quot;300, 310, 320 or 330 (0 disables)&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_MAD16
+)paren
+comma
+l_string|&quot;MAD16_MPU_IRQ&quot;
+comma
+l_string|&quot;MAD16 MIDI IRQ&quot;
+comma
+id|FMT_INT
+comma
+l_int|9
+comma
+l_string|&quot;5, 7, 9 or 10&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
+id|OPT_AUDIO
+)paren
+comma
+l_string|&quot;DSP_BUFFSIZE&quot;
+comma
+l_string|&quot;Audio DMA buffer size&quot;
+comma
+id|FMT_INT
+comma
+l_int|65536
+comma
+l_string|&quot;4096, 16384, 32768 or 65536&quot;
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|dump_script
+id|dump_script
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|OPT_LAST
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|DUMMY_OPTS
+op_amp
+id|B
+(paren
+id|i
+)paren
+)paren
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|DISABLED_OPTIONS
+op_amp
+id|B
+(paren
+id|i
+)paren
+)paren
+)paren
+(brace
+id|printf
+(paren
+l_string|&quot;bool &squot;%s&squot; CONFIG_%s&bslash;n&quot;
+comma
+id|questions
+(braket
+id|i
+)braket
+comma
+id|hw_table
+(braket
+id|i
+)braket
+dot
+id|macro
+)paren
+suffix:semicolon
+)brace
+id|dump_only
+op_assign
+l_int|1
+suffix:semicolon
+id|selected_options
+op_assign
+l_int|0
+suffix:semicolon
+id|ask_parameters
+(paren
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#&bslash;n$MAKE -C drivers/sound kernelconfig || exit 1&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|dump_fixed_local
+id|dump_fixed_local
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;/* Computer generated file. Please don&squot;t edit! */&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define KERNEL_COMPATIBLE_CONFIG&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define SELECTED_SOUND_OPTIONS&bslash;t0x%08x&bslash;n&bslash;n&quot;
+comma
+id|selected_options
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|extra_options
+(braket
+id|i
+)braket
+dot
+id|name
+op_ne
+l_int|NULL
+)paren
+(brace
+r_int
+id|n
+op_assign
+l_int|0
+comma
+id|j
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#if &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|OPT_LAST
+suffix:semicolon
+id|j
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|DISABLED_OPTIONS
+op_amp
+id|B
+(paren
+id|j
+)paren
+)paren
+)paren
+r_if
+c_cond
+(paren
+id|extra_options
+(braket
+id|i
+)braket
+dot
+id|mask
+op_amp
+id|B
+(paren
+id|j
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|n
+)paren
+id|printf
+(paren
+l_string|&quot; || &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|n
+op_increment
+op_mod
+l_int|2
+)paren
+)paren
+id|printf
+(paren
+l_string|&quot;&bslash;&bslash;&bslash;n  &quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;defined(CONFIG_%s)&quot;
+comma
+id|hw_table
+(braket
+id|j
+)braket
+dot
+id|macro
+)paren
+suffix:semicolon
+)brace
+id|printf
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#&bslash;tdefine CONFIG_%s&bslash;n&quot;
+comma
+id|extra_options
+(braket
+id|i
+)braket
+dot
+id|name
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#endif&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|i
+op_increment
+suffix:semicolon
+)brace
+)brace
+r_void
+DECL|function|dump_fixed_defines
+id|dump_fixed_defines
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;# Computer generated file. Please don&squot;t edit&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|extra_options
+(braket
+id|i
+)braket
+dot
+id|name
+op_ne
+l_int|NULL
+)paren
+(brace
+r_int
+id|n
+op_assign
+l_int|0
+comma
+id|j
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|OPT_LAST
+suffix:semicolon
+id|j
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|DISABLED_OPTIONS
+op_amp
+id|B
+(paren
+id|j
+)paren
+)paren
+)paren
+r_if
+c_cond
+(paren
+id|extra_options
+(braket
+id|i
+)braket
+dot
+id|mask
+op_amp
+id|B
+(paren
+id|j
+)paren
+)paren
+(brace
+id|printf
+(paren
+l_string|&quot;ifdef CONFIG_%s&bslash;n&quot;
+comma
+id|hw_table
+(braket
+id|j
+)braket
+dot
+id|macro
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;CONFIG_%s=y&bslash;n&quot;
+comma
+id|extra_options
+(braket
+id|i
+)braket
+dot
+id|name
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;endif&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|i
+op_increment
+suffix:semicolon
+)brace
+)brace
 r_int
 DECL|function|main
 id|main
@@ -2083,8 +4110,6 @@ id|i
 comma
 id|num
 comma
-id|def_size
-comma
 id|full_driver
 op_assign
 l_int|1
@@ -2095,23 +4120,11 @@ id|answ
 l_int|10
 )braket
 suffix:semicolon
-r_int
-id|sb_base
-op_assign
-l_int|0
-suffix:semicolon
 r_char
 id|old_config_file
 (braket
 l_int|200
 )braket
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nConfiguring the sound support&bslash;n&bslash;n&quot;
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2191,7 +4204,95 @@ m_exit
 l_int|0
 )paren
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|argv
+(braket
+l_int|1
+)braket
+comma
+l_string|&quot;script&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|dump_script
+(paren
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|0
+)paren
+suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|argv
+(braket
+l_int|1
+)braket
+comma
+l_string|&quot;fixedlocal&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|dump_fixed_local
+(paren
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|argv
+(braket
+l_int|1
+)braket
+comma
+l_string|&quot;fixeddefines&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|dump_fixed_defines
+(paren
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nConfiguring the sound support&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2238,7 +4339,22 @@ suffix:semicolon
 )brace
 id|printf
 (paren
-l_string|&quot;/*&bslash;tGenerated by configure. Don&squot;t edit!!!!&bslash;t*/&bslash;n&bslash;n&quot;
+l_string|&quot;/*&bslash;tGenerated by configure. Don&squot;t edit!!!!&bslash;t*/&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;/*&bslash;tMaking changes to this file is not as simple as it may look.&bslash;t*/&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;/*&bslash;tIf you change the CONFIG_ settings in local.h you&bslash;t*/&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;/*&bslash;t_have_ to edit .defines too.&bslash;t*/&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 (brace
@@ -2456,80 +4572,6 @@ l_int|0
 )paren
 )paren
 (brace
-id|printf
-(paren
-l_string|&quot;#define JAZZ16&bslash;n&quot;
-)paren
-suffix:semicolon
-r_do
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;tValid 16 bit DMA channels for ProSonic/Jazz 16 are&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;t1, 3, 5 (default), 7&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;tEnter 16bit DMA channel for Prosonic : &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|5
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|num
-op_ne
-l_int|1
-op_logical_and
-id|num
-op_ne
-l_int|3
-op_logical_and
-id|num
-op_ne
-l_int|5
-op_logical_and
-id|num
-op_ne
-l_int|7
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;ProSonic 16 bit DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define JAZZ_DMA16 %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
 id|fprintf
 (paren
 id|stderr
@@ -2836,19 +4878,14 @@ l_int|0
 (brace
 id|printf
 (paren
-l_string|&quot;#undef CONFIGURE_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef KERNEL_SOUNDCARD&bslash;n&quot;
+l_string|&quot;invalid_configuration__run_make_config_again&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;ERROR!!!!!&bslash;nYou loose: you must select at least one mode when using Audio Excel!&bslash;n&quot;
+l_string|&quot;ERROR!!!!!&bslash;nYou must select at least one mode when using Audio Excel!&bslash;n&quot;
 )paren
 suffix:semicolon
 m_exit
@@ -3136,12 +5173,7 @@ id|ANY_DEVS
 (brace
 id|printf
 (paren
-l_string|&quot;#undef CONFIGURE_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef KERNEL_SOUNDCARD&bslash;n&quot;
+l_string|&quot;invalid_configuration__run_make_config_again&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
@@ -3157,12 +5189,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_else
-id|printf
-(paren
-l_string|&quot;#define KERNEL_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3200,7 +5226,7 @@ id|i
 )paren
 id|printf
 (paren
-l_string|&quot;#undef  EXCLUDE_%s&bslash;n&quot;
+l_string|&quot;#define CONFIG_%s&bslash;n&quot;
 comma
 id|hw_table
 (braket
@@ -3213,7 +5239,7 @@ suffix:semicolon
 r_else
 id|printf
 (paren
-l_string|&quot;#define EXCLUDE_%s&bslash;n&quot;
+l_string|&quot;#undef  CONFIG_%s&bslash;n&quot;
 comma
 id|hw_table
 (braket
@@ -3259,7 +5285,7 @@ id|mask
 )paren
 id|printf
 (paren
-l_string|&quot;#undef  EXCLUDE_%s&bslash;n&quot;
+l_string|&quot;#define CONFIG_%s&bslash;n&quot;
 comma
 id|extra_options
 (braket
@@ -3272,7 +5298,7 @@ suffix:semicolon
 r_else
 id|printf
 (paren
-l_string|&quot;#define EXCLUDE_%s&bslash;n&quot;
+l_string|&quot;#undef  CONFIG_%s&bslash;n&quot;
 comma
 id|extra_options
 (braket
@@ -3291,3782 +5317,10 @@ id|printf
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|build_defines
+id|ask_parameters
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * IRQ and DMA settings&n;   */
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_AEDSP16
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for Audio Excel DSP 16 ?&bslash;n&quot;
-l_string|&quot;Warning:&bslash;n&quot;
-l_string|&quot;If you are using Audio Excel SoundBlaster emulation,&bslash;n&quot;
-l_string|&quot;you must use the same I/O base for Audio Excel and SoundBlaster.&bslash;n&quot;
-l_string|&quot;The factory default is 220 (other possible value is 240)&bslash;n&quot;
-l_string|&quot;Enter the Audio Excel DSP 16 I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x220
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Audio Excel DSP 16 I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define AEDSP16_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_SB
-)paren
-)paren
-op_logical_and
-id|selected_options
-op_amp
-(paren
-id|B
-(paren
-id|OPT_AUDIO
-)paren
-op_or
-id|B
-(paren
-id|OPT_MIDI
-)paren
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for SB?&bslash;n&quot;
-l_string|&quot;The factory default is 220&bslash;n&quot;
-l_string|&quot;Enter the SB I/O base: &quot;
-)paren
-suffix:semicolon
-id|sb_base
-op_assign
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x220
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;SB I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SBC_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for SoundBlaster?&bslash;n&quot;
-l_string|&quot;The IRQ address is defined by the jumpers on your card.&bslash;n&quot;
-l_string|&quot;The factory default is either 5 or 7 (depending on the model).&bslash;n&quot;
-l_string|&quot;Valid values are 9(=2), 5, 7 and 10.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|7
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|9
-op_logical_and
-id|num
-op_ne
-l_int|5
-op_logical_and
-id|num
-op_ne
-l_int|7
-op_logical_and
-id|num
-op_ne
-l_int|10
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|7
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;SoundBlaster IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SBC_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-(paren
-id|B
-(paren
-id|OPT_SBPRO
-)paren
-op_or
-id|B
-(paren
-id|OPT_PAS
-)paren
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nDMA channel for SoundBlaster?&bslash;n&quot;
-l_string|&quot;For SB 1.0, 1.5 and 2.0 this MUST be 1&bslash;n&quot;
-l_string|&quot;SB Pro supports DMA channels 0, 1 and 3 (jumper)&bslash;n&quot;
-l_string|&quot;For SB16 give the 8 bit DMA# here&bslash;n&quot;
-l_string|&quot;The default value is 1&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-template_param
-l_int|3
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;SoundBlaster DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SBC_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|sb_dma
-op_assign
-id|num
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_SB16
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;n16 bit DMA channel for SoundBlaster 16?&bslash;n&quot;
-l_string|&quot;Possible values are 5, 6 or 7&bslash;n&quot;
-l_string|&quot;The default value is 6&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|6
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|num
-template_param
-l_int|7
-)paren
-op_logical_and
-(paren
-id|num
-op_ne
-id|sb_dma
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|6
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;SoundBlaster DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SB16_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for SB16 Midi?&bslash;n&quot;
-l_string|&quot;Possible values are 300 and 330&bslash;n&quot;
-l_string|&quot;The factory default is 330&bslash;n&quot;
-l_string|&quot;Enter the SB16 Midi I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x330
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;SB16 Midi I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SB16MIDI_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_PAS
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-(paren
-id|B
-(paren
-id|OPT_AUDIO
-)paren
-op_or
-id|B
-(paren
-id|OPT_MIDI
-)paren
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for ProAudioSpectrum?&bslash;n&quot;
-l_string|&quot;The recommended value is the IRQ used under DOS.&bslash;n&quot;
-l_string|&quot;Please refer to the ProAudioSpectrum User&squot;s Guide.&bslash;n&quot;
-l_string|&quot;The default value is 10.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|10
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-op_logical_or
-id|num
-op_eq
-l_int|2
-)paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Illegal&n;&t;&t;&t;&t;&t;&t;&t;&t; */
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|10
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;ProAudioSpectrum IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PAS_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_AUDIO
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nDMA number for ProAudioSpectrum?&bslash;n&quot;
-l_string|&quot;The recommended value is the DMA channel under DOS.&bslash;n&quot;
-l_string|&quot;Please refer to the ProAudioSpectrum User&squot;s Guide.&bslash;n&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|4
-op_logical_or
-id|num
-template_param
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nProAudioSpectrum DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PAS_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nEnable Joystick port on ProAudioSpectrum (n/y) ? &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|think_positively
-(paren
-l_int|0
-)paren
-)paren
-id|printf
-(paren
-l_string|&quot;#define PAS_JOYSTICK_ENABLE&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PAS16 could be noisy with some mother boards&bslash;n&quot;
-l_string|&quot;There is a command line switch (was it :T?)&bslash;n&quot;
-l_string|&quot;in the DOS driver for PAS16 which solves this.&bslash;n&quot;
-l_string|&quot;Don&squot;t enable this feature unless you have problems!&bslash;n&quot;
-l_string|&quot;Do you have to use this switch with DOS (y/n) ?&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|think_positively
-(paren
-l_int|0
-)paren
-)paren
-id|printf
-(paren
-l_string|&quot;#define BROKEN_BUS_CLOCK&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_GUS
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for Gravis Ultrasound?&bslash;n&quot;
-l_string|&quot;Valid choices are 210, 220, 230, 240, 250 or 260&bslash;n&quot;
-l_string|&quot;The factory default is 220&bslash;n&quot;
-l_string|&quot;Enter the GUS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x220
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|num
-OG
-l_int|0x260
-)paren
-op_logical_or
-(paren
-(paren
-id|num
-op_amp
-l_int|0xf0f
-)paren
-op_ne
-l_int|0x200
-)paren
-op_logical_or
-(paren
-(paren
-id|num
-op_amp
-l_int|0x0f0
-)paren
-OG
-l_int|0x060
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|0x220
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_SB
-)paren
-)paren
-op_logical_and
-(paren
-id|num
-op_eq
-id|sb_base
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;FATAL ERROR!!!!!!!!!!!!!!&bslash;n&quot;
-l_string|&quot;&bslash;t0x220 cannot be used if SoundBlaster is enabled.&bslash;n&quot;
-l_string|&quot;&bslash;tRun the config again.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef CONFIGURE_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef KERNEL_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-m_exit
-(paren
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;GUS I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define GUS_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for Gravis UltraSound?&bslash;n&quot;
-l_string|&quot;The recommended value is the IRQ used under DOS.&bslash;n&quot;
-l_string|&quot;Please refer to the Gravis Ultrasound User&squot;s Guide.&bslash;n&quot;
-l_string|&quot;The default value is 15.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|15
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-op_logical_or
-id|num
-op_eq
-l_int|2
-)paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Invalid&n;&t;&t;&t;&t;&t;&t;&t; */
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|15
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Gravis UltraSound IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define GUS_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nDMA number for Gravis UltraSound?&bslash;n&quot;
-l_string|&quot;The recommended value is the DMA channel under DOS.&bslash;n&quot;
-l_string|&quot;Please refer to the Gravis Ultrasound User&squot;s Guide.&bslash;n&quot;
-l_string|&quot;The default value is 6&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|6
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|4
-op_logical_or
-id|num
-template_param
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|6
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nGravis UltraSound DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define GUS_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSecond DMA channel for GUS (optional)?&bslash;n&quot;
-l_string|&quot;The default value is 7 (-1 disables)&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|7
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-OG
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|7
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nGUS DMA2 set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define GUS_DMA2 %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_GUS16
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for GUS16 (GUS 16 bit sampling option)?&bslash;n&quot;
-l_string|&quot;The factory default is 530&bslash;n&quot;
-l_string|&quot;Other possible values are  604, E80 or F40&bslash;n&quot;
-l_string|&quot;Enter the GUS16 I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x530
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;GUS16 I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define GUS16_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for GUS16?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 3, 4, 5, 7, or 9(=2).&bslash;n&quot;
-l_string|&quot;The default value is 7.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|7
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|7
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;GUS16 IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define GUS16_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nDMA number for GUS16?&bslash;n&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-template_param
-l_int|3
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nGUS16 DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define GUS16_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_MPU401
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for MPU-401?&bslash;n&quot;
-l_string|&quot;The factory default is 330&bslash;n&quot;
-l_string|&quot;Enter the MPU-401 I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x330
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;MPU-401 I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MPU_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for MPU-401?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 3, 4, 5, 7 and 9(=2).&bslash;n&quot;
-l_string|&quot;The default value is 9.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|9
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|5
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;MPU-401 IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MPU_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_MAUI
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for TB Maui (MIDI I/O of TB Tropez)?&bslash;n&quot;
-l_string|&quot;The factory default is 330&bslash;n&quot;
-l_string|&quot;Valid alternatives are 210, 230, 260, 290, 300, 320, 338 and 330&bslash;n&quot;
-l_string|&quot;Enter the Maui/Tropez MIDI I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x330
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Maui I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MAUI_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for TB Maui (TB Tropez MIDI)?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 5, 9, 12 and 15.&bslash;n&quot;
-l_string|&quot;The default value is 9.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|9
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|5
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Maui/Tropez MIDI IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MAUI_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_UART6850
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for 6850 UART Midi?&bslash;n&quot;
-l_string|&quot;Be carefull. No defaults.&bslash;n&quot;
-l_string|&quot;Enter the 6850 UART I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/*&n;&t;     * Invalid value entered&n;&t;   */
-id|printf
-(paren
-l_string|&quot;#define EXCLUDE_UART6850&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;6850 UART I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define U6850_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for 6850 UART?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 3, 4, 5, 7 and 9(=2).&bslash;n&quot;
-l_string|&quot;The default value is 5.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|5
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|5
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;6850 UART IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define U6850_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_PSS
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for PSS?&bslash;n&quot;
-l_string|&quot;The factory default is 220 (240 also possible)&bslash;n&quot;
-l_string|&quot;Enter the PSS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x220
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PSS I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PSS_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-macro_line|#if YOU_WANT_TO_WASTE_RESOURCES
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for PSS?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 3, 4, 5, 7, 9(=2) or 10.&bslash;n&quot;
-l_string|&quot;The default value is 10.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|10
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|7
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PSS IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PSS_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nDMA number for ECHO-PSS?&bslash;n&quot;
-l_string|&quot;The default value is 5&bslash;n&quot;
-l_string|&quot;Valid values are 5, 6 and 7&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|5
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-template_param
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|5
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nECHO-PSS DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PSS_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-macro_line|#endif
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMSS (MS Sound System) I/O base for the PSS card?&bslash;n&quot;
-l_string|&quot;The factory default is 530&bslash;n&quot;
-l_string|&quot;Other possible values are  604, E80 or F40&bslash;n&quot;
-l_string|&quot;Enter the MSS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x530
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PSS/MSS I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PSS_MSS_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for the MSS mode of PSS ?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 7, 9(=2), 10 and 11.&bslash;n&quot;
-l_string|&quot;The default value is 11.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|11
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|11
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PSS/MSS IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PSS_MSS_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMSS DMA number for PSS?&bslash;n&quot;
-l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|4
-op_logical_or
-id|num
-template_param
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nPSS/MSS DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PSS_MSS_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMIDI I/O base for PSS?&bslash;n&quot;
-l_string|&quot;The factory default is 330&bslash;n&quot;
-l_string|&quot;Enter the PSS MIDI I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x330
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PSS/MIDI I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PSS_MPU_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for PSS MIDI?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 3, 4, 5, 7 and 9(=2).&bslash;n&quot;
-l_string|&quot;The default value is 9.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|9
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|5
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PSS MIDI IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define PSS_MPU_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_MSS
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nI/O base for MSS (MS Sound System)?&bslash;n&quot;
-l_string|&quot;The factory default is 530&bslash;n&quot;
-l_string|&quot;Other possible values are  604, E80 or F40&bslash;n&quot;
-l_string|&quot;Enter the MSS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x530
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;MSS I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MSS_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for MSS?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 7, 9(=2), 10 and 11.&bslash;n&quot;
-l_string|&quot;The default value is 10.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|10
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|7
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;MSS IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MSS_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nDMA number for MSS?&bslash;n&quot;
-l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|4
-op_logical_or
-id|num
-template_param
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMSS DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MSS_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_SSCAPE
-)paren
-)paren
-(brace
-r_int
-id|reveal_spea
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;n(MIDI) I/O base for Ensoniq Soundscape?&bslash;n&quot;
-l_string|&quot;The factory default is 330&bslash;n&quot;
-l_string|&quot;Other possible values are 320, 340 or 350&bslash;n&quot;
-l_string|&quot;Enter the Soundscape I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x330
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Soundscape I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SSCAPE_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Is your SoundScape card made/marketed by Reveal or Spea? &quot;
-)paren
-suffix:semicolon
-id|reveal_spea
-op_assign
-id|think_positively
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reveal_spea
-)paren
-id|printf
-(paren
-l_string|&quot;#define REVEAL_SPEA&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for Soundscape?&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reveal_spea
-)paren
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Check valid interrupts from the manual of your card.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Valid numbers are: 5, 7, 9(=2) and 10.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;The default value is 9.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|9
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|9
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Soundscape IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SSCAPE_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nDMA number for Soundscape?&bslash;n&quot;
-l_string|&quot;Valid values are 1 and 3 (sometimes 0)&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|4
-op_logical_or
-id|num
-template_param
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSoundscape DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SSCAPE_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMSS (MS Sound System) I/O base for the SSCAPE card?&bslash;n&quot;
-l_string|&quot;The factory default is 534&bslash;n&quot;
-l_string|&quot;Other possible values are  608, E84 or F44&bslash;n&quot;
-l_string|&quot;Enter the MSS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x534
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;SSCAPE/MSS I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SSCAPE_MSS_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for the MSS mode of SSCAPE ?&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|reveal_spea
-)paren
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Valid numbers are: 5, 7, 9(=2) and 15.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Valid numbers are: 5, 7, 9(=2) and 10.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;The default value is 5.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|5
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|6
-op_logical_or
-id|num
-template_param
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|10
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;SSCAPE/MSS IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SSCAPE_MSS_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMSS DMA number for SSCAPE?&bslash;n&quot;
-l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|4
-op_logical_or
-id|num
-template_param
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSSCAPE/MSS DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define SSCAPE_MSS_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_TRIX
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nWindows Sound System I/O base for the AudioTriX card?&bslash;n&quot;
-l_string|&quot;The factory default is 530&bslash;n&quot;
-l_string|&quot;Other possible values are  604, E80 or F40&bslash;n&quot;
-l_string|&quot;Enter the MSS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x530
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;AudioTriX MSS I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for the WSS mode of AudioTriX ?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 5, 7, 9(=2), 10 and 11.&bslash;n&quot;
-l_string|&quot;The default value is 11.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|11
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|5
-op_logical_and
-id|num
-op_ne
-l_int|7
-op_logical_and
-id|num
-op_ne
-l_int|9
-op_logical_and
-id|num
-op_ne
-l_int|10
-op_logical_and
-id|num
-op_ne
-l_int|11
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|11
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot; AudioTriX WSS IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nWSS DMA number for AudioTriX?&bslash;n&quot;
-l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|0
-op_logical_and
-id|num
-op_ne
-l_int|1
-op_logical_and
-id|num
-op_ne
-l_int|3
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nAudioTriX/WSS DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSecond (capture) DMA number for AudioTriX?&bslash;n&quot;
-l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 0&bslash;n&quot;
-l_string|&quot;(-1 disables the second DMA)&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|0
-op_logical_and
-id|num
-op_ne
-l_int|1
-op_logical_and
-id|num
-op_ne
-l_int|3
-op_logical_or
-id|num
-op_ne
-op_minus
-l_int|1
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nAudioTriX/WSS DMA2 set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_DMA2 %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSoundBlaster I/O address for the AudioTriX card?&bslash;n&quot;
-l_string|&quot;The factory default is 220&bslash;n&quot;
-l_string|&quot;Other possible values are 200, 210, 230, 240, 250, 260 and 270&bslash;n&quot;
-l_string|&quot;Enter the MSS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x220
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;AudioTriX SB I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_SB_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for the SB mode of AudioTriX ?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 3, 4, 5 and 7.&bslash;n&quot;
-l_string|&quot;The default value is 7.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|7
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|3
-op_logical_and
-id|num
-op_ne
-l_int|4
-op_logical_and
-id|num
-op_ne
-l_int|5
-op_logical_and
-id|num
-op_ne
-l_int|7
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|7
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot; AudioTriX SB IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_SB_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSB DMA number for AudioTriX?&bslash;n&quot;
-l_string|&quot;Valid values are 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 1&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|1
-op_logical_and
-id|num
-op_ne
-l_int|3
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nAudioTriX/SB DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_SB_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMIDI (MPU-401) I/O address for the AudioTriX card?&bslash;n&quot;
-l_string|&quot;The factory default is 330&bslash;n&quot;
-l_string|&quot;Other possible values are 330, 370, 3B0 and 3F0&bslash;n&quot;
-l_string|&quot;Enter the MPU I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x330
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;AudioTriX MIDI I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_MPU_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMIDI IRQ number for the AudioTriX ?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 3, 4, 5, 7 and 9(=2).&bslash;n&quot;
-l_string|&quot;The default value is 5.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|5
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|3
-op_logical_and
-id|num
-op_ne
-l_int|4
-op_logical_and
-id|num
-op_ne
-l_int|5
-op_logical_and
-id|num
-op_ne
-l_int|7
-op_logical_and
-id|num
-op_ne
-l_int|9
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|5
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot; AudioTriX MIDI IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define TRIX_MPU_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_CS4232
-)paren
-)paren
-(brace
-r_int
-id|dma1
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nWindows Sound System I/O base for CS4232?&bslash;n&quot;
-l_string|&quot;The factory default is 534&bslash;n&quot;
-l_string|&quot;Other possible values are  608, E84 or F44&bslash;n&quot;
-l_string|&quot;Enter the MSS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x534
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;CS4232 MSS I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define CS4232_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for the WSS mode of CS4232 ?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 5, 7, 9(=2), 11, 12 or 15.&bslash;n&quot;
-l_string|&quot;The default value is 11.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|11
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|5
-op_logical_and
-id|num
-op_ne
-l_int|7
-op_logical_and
-id|num
-op_ne
-l_int|9
-op_logical_and
-id|num
-op_ne
-l_int|11
-op_logical_and
-id|num
-op_ne
-l_int|12
-op_logical_or
-id|num
-op_ne
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|11
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot; CS4232 WSS IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define CS4232_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nWSS DMA number for CS4232?&bslash;n&quot;
-l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 0&bslash;n&quot;
-l_string|&quot;(select the lowes possible one if you want to&bslash;n&quot;
-l_string|&quot;use full duplex mode)&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|0
-op_logical_and
-id|num
-op_ne
-l_int|1
-op_logical_and
-id|num
-op_ne
-l_int|3
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nCS4232/WSS DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define CS4232_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|dma1
-op_assign
-id|num
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;n Second WSS DMA number for CS4232?&bslash;n&quot;
-l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value (-1 disables duplex mode): &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-id|dma1
-op_logical_or
-(paren
-id|num
-op_ne
-op_minus
-l_int|1
-op_logical_and
-id|num
-op_ne
-l_int|0
-op_logical_and
-id|num
-op_ne
-l_int|1
-op_logical_and
-id|num
-op_ne
-l_int|3
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nCS4232/WSS DMA2 set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define CS4232_DMA2 %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMIDI (MPU-401) I/O address for the CS4232 card?&bslash;n&quot;
-l_string|&quot;The factory default is 330&bslash;n&quot;
-l_string|&quot;Other possible values are 330, 370, 3B0 and 3F0&bslash;n&quot;
-l_string|&quot;Enter the MPU I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x330
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;CS4232 MIDI I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define CS4232_MPU_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMIDI IRQ number for CS4232?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 5, 7, 9(=2), 11, 12 or 15.&bslash;n&quot;
-l_string|&quot;The default value is 5.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|5
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|5
-op_logical_and
-id|num
-op_ne
-l_int|7
-op_logical_and
-id|num
-op_ne
-l_int|9
-op_logical_and
-id|num
-op_ne
-l_int|11
-op_logical_and
-id|num
-op_ne
-l_int|12
-op_logical_or
-id|num
-op_ne
-l_int|15
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|5
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot; CS4232 MIDI IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define CS4232_MPU_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_MAD16
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;n*** Options for the MAD16 and Mozart based cards ***&bslash;n&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nWindows Sound System I/O base for the MAD16/Mozart card?&bslash;n&quot;
-l_string|&quot;The factory default is 530&bslash;n&quot;
-l_string|&quot;Other possible values are  604, E80 or F40&bslash;n&quot;
-l_string|&quot;(Check which ones are supported by your card!!!!!!)&bslash;n&quot;
-l_string|&quot;Enter the MSS I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x530
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;MAD16 MSS I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MAD16_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|sb_base
-op_eq
-l_int|0x220
-op_logical_and
-(paren
-id|num
-op_eq
-l_int|0x530
-op_logical_or
-id|num
-op_eq
-l_int|0x480
-)paren
-)paren
-op_logical_or
-(paren
-id|sb_base
-op_eq
-l_int|0x240
-op_logical_and
-(paren
-id|num
-op_eq
-l_int|0xf40
-op_logical_or
-id|num
-op_eq
-l_int|0x604
-)paren
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;FATAL ERROR!!!!!!!!!!!!!!&bslash;n&quot;
-l_string|&quot;&bslash;tThis I/O port selection makes MAD16/Mozart&bslash;n&quot;
-l_string|&quot;&bslash;tto use 0x%03x as the SB port.&bslash;n&quot;
-l_string|&quot;&bslash;tThis conflicts with the true SB card.&bslash;n&quot;
-l_string|&quot;&bslash;tRun the config again and select another I/O base.&bslash;n&quot;
-comma
-id|sb_base
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef CONFIGURE_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef KERNEL_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-m_exit
-(paren
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nIRQ number for the WSS mode of MAD16/Mozart ?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 7, 9(=2), 10 and 11.&bslash;n&quot;
-l_string|&quot;The default value is 11.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|11
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|7
-op_logical_and
-id|num
-op_ne
-l_int|9
-op_logical_and
-id|num
-op_ne
-l_int|10
-op_logical_and
-id|num
-op_ne
-l_int|11
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|11
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot; MAD16 WSS IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MAD16_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nWSS DMA (playback) number for MAD16/Mozart?&bslash;n&quot;
-l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
-l_string|&quot;The default value is 3&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|3
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|0
-op_logical_and
-id|num
-op_ne
-l_int|1
-op_logical_and
-id|num
-op_ne
-l_int|3
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|3
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMAD16/WSS DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MAD16_DMA %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|num
-op_assign
-(paren
-id|num
-op_eq
-l_int|0
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMAD16/Mozart supports full duplex mode if the&bslash;n&quot;
-l_string|&quot;card has a suitable codec chip (CS423x or AD1845).&bslash;n&quot;
-l_string|&quot;This mode requires another DMA channel (DMA%d)&bslash;n&quot;
-l_string|&quot;Do you want to enable this mode? (n/y)&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|think_positively
-(paren
-l_int|0
-)paren
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMAD16/WSS capture DMA set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MAD16_DMA2 %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-r_else
-id|printf
-(paren
-l_string|&quot;#define MAD16_DMA2 -1&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMIDI (MPU-401/SB) I/O address for the MAD16 card?&bslash;n&quot;
-l_string|&quot;(This is the second MIDI port in TB Tropez)&bslash;n&quot;
-l_string|&quot;Other possible values are 330, 320, 310 and 300&bslash;n&quot;
-l_string|&quot;For 82C928 and Mozart you may use any nonzero value&bslash;n&quot;
-l_string|&quot;since the driver ignores this setting.&bslash;n&quot;
-l_string|&quot;The factory default is 330 (use 0 to disable)&bslash;n&quot;
-l_string|&quot;Enter the MIDI I/O base: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%x&quot;
-comma
-l_int|0x330
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_eq
-l_int|0
-)paren
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;MAD16/Mozart MIDI port disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;MAD16 MIDI I/O base set to %03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MAD16_MPU_BASE 0x%03x&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nMIDI IRQ number for the MAD16 ?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 5, 7, 9(=2) and 10.&bslash;n&quot;
-l_string|&quot;The default value is 5.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-l_int|5
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|3
-op_logical_and
-id|num
-op_ne
-l_int|4
-op_logical_and
-id|num
-op_ne
-l_int|5
-op_logical_and
-id|num
-op_ne
-l_int|7
-op_logical_and
-id|num
-op_ne
-l_int|9
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-l_int|5
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot; MAD16 MIDI IRQ set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define MAD16_MPU_IRQ %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_AUDIO
-)paren
-)paren
-(brace
-id|def_size
-op_assign
-l_int|65536
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSelect the DMA buffer size (4096, 16384, 32768 or 65536 bytes)&bslash;n&quot;
-l_string|&quot;%d is recommended value for this configuration.&bslash;n&quot;
-l_string|&quot;Enter the value: &quot;
-comma
-id|def_size
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|ask_value
-(paren
-l_string|&quot;%d&quot;
-comma
-id|def_size
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-op_ne
-l_int|4096
-op_logical_and
-id|num
-op_ne
-l_int|16384
-op_logical_and
-id|num
-op_ne
-l_int|32768
-op_logical_and
-id|num
-op_ne
-l_int|65536
-)paren
-(brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;*** Illegal input! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|num
-op_assign
-id|def_size
-suffix:semicolon
-)brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;The DMA buffer size set to %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#define DSP_BUFFSIZE %d&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-)brace
 id|printf
 (paren
 l_string|&quot;#define SELECTED_SOUND_OPTIONS&bslash;t0x%08x&bslash;n&quot;

@@ -1350,6 +1350,15 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * dummy routines for the VESA blanking code, which is VGA only,&n; * so we don&squot;t have to carry that stuff around for the TGA...&n; */
+DECL|function|vesa_powerdown
+r_void
+id|vesa_powerdown
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 DECL|function|vesa_blank
 r_void
 id|vesa_blank

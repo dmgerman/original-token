@@ -21,5 +21,13 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|init_hpfs_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _ROUTE_H
 DECL|macro|_ROUTE_H
 mdefine_line|#define _ROUTE_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * 0 - no debugging messages&n; * 1 - rare events and bugs situations (default)&n; * 2 - trace mode.&n; */
 DECL|macro|RT_CACHE_DEBUG
 mdefine_line|#define RT_CACHE_DEBUG&t;&t;1

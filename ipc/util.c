@@ -424,5 +424,14 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+DECL|function|kerneld_exit
+r_void
+id|kerneld_exit
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 macro_line|#endif /* CONFIG_SYSVIPC */
 eof

@@ -107,13 +107,6 @@ c_func
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifdef __i386__
-DECL|macro|fake_keyboard_interrupt
-mdefine_line|#define fake_keyboard_interrupt() __asm__ __volatile__(&quot;int $0x21&quot;)
-macro_line|#else
-DECL|macro|fake_keyboard_interrupt
-mdefine_line|#define fake_keyboard_interrupt() do ; while (0)
-macro_line|#endif
 DECL|variable|kbd_read_mask
 r_int
 r_char
@@ -268,6 +261,16 @@ r_volatile
 r_int
 r_char
 id|resend
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* used by kbd_bh - set by keyboard_interrupt */
+DECL|variable|do_poke_blanked_console
+r_static
+r_volatile
+r_int
+r_char
+id|do_poke_blanked_console
 op_assign
 l_int|0
 suffix:semicolon
@@ -1551,6 +1554,10 @@ r_goto
 id|end_kbd_intr
 suffix:semicolon
 )brace
+id|do_poke_blanked_console
+op_assign
+l_int|1
+suffix:semicolon
 id|add_keyboard_randomness
 c_func
 (paren
@@ -4772,41 +4779,23 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|do_poke_blanked_console
+)paren
+(brace
+multiline_comment|/* do not unblank for a LED change */
+id|do_poke_blanked_console
+op_assign
+l_int|0
+suffix:semicolon
 id|poke_blanked_console
 c_func
 (paren
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|inb_p
-c_func
-(paren
-l_int|0x64
-)paren
-op_amp
-id|kbd_read_mask
-)paren
-op_eq
-l_int|0x01
-)paren
-id|fake_keyboard_interrupt
-c_func
-(paren
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
+)brace
 )brace
 DECL|function|kbd_init
 r_int

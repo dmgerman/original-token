@@ -628,6 +628,14 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|init_ext_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ext_read_inode
 c_func

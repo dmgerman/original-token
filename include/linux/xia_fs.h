@@ -566,6 +566,14 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|init_xiafs_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|xiafs_read_inode
 c_func

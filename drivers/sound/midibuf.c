@@ -1,13 +1,12 @@
 multiline_comment|/*&n; * sound/midibuf.c&n; *&n; * Device file manager for /dev/midi#&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if defined(CONFIG_MIDI)
 multiline_comment|/*&n; * Don&squot;t make MAX_QUEUE_SIZE larger than 4000&n; */
 DECL|macro|MAX_QUEUE_SIZE
 mdefine_line|#define MAX_QUEUE_SIZE&t;4000
 DECL|variable|midi_sleeper
 r_static
-r_struct
-id|wait_queue
+id|wait_handle
 op_star
 id|midi_sleeper
 (braket
@@ -36,8 +35,7 @@ l_int|0
 suffix:semicolon
 DECL|variable|input_sleeper
 r_static
-r_struct
-id|wait_queue
+id|wait_handle
 op_star
 id|input_sleeper
 (braket
@@ -204,11 +202,8 @@ r_while
 c_loop
 (paren
 op_logical_neg
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 op_logical_and
 id|midi_devs
@@ -233,8 +228,8 @@ id|HZ
 op_div
 l_int|10
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
@@ -243,6 +238,7 @@ op_plus
 id|HZ
 op_div
 l_int|10
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -259,7 +255,7 @@ id|mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|midi_sleeper
@@ -396,7 +392,7 @@ id|mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|input_sleeper
@@ -577,7 +573,7 @@ id|mode
 op_assign
 id|WK_WAKEUP
 suffix:semicolon
-id|wake_up
+id|module_wake_up
 (paren
 op_amp
 id|midi_sleeper
@@ -631,10 +627,6 @@ r_int
 id|mode
 comma
 id|err
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 id|dev
 op_assign
@@ -691,15 +683,6 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *    Interrupts disabled. Be careful&n;   */
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -726,11 +709,6 @@ OL
 l_int|0
 )paren
 (brace
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -743,24 +721,6 @@ dot
 id|prech_timeout
 op_assign
 l_int|0
-suffix:semicolon
-id|midi_sleep_flag
-(braket
-id|dev
-)braket
-dot
-id|mode
-op_assign
-id|WK_NONE
-suffix:semicolon
-id|input_sleep_flag
-(braket
-id|dev
-)braket
-dot
-id|mode
-op_assign
-id|WK_NONE
 suffix:semicolon
 id|midi_in_buf
 (braket
@@ -807,11 +767,6 @@ op_member_access_from_pointer
 id|close
 (paren
 id|dev
-)paren
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -904,11 +859,6 @@ id|dev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -937,12 +887,37 @@ id|tail
 op_assign
 l_int|0
 suffix:semicolon
+id|open_devs
+op_increment
+suffix:semicolon
+id|midi_sleep_flag
+(braket
+id|dev
+)braket
+dot
+id|mode
+op_assign
+id|WK_NONE
+suffix:semicolon
+id|input_sleep_flag
+(braket
+id|dev
+)braket
+dot
+id|mode
+op_assign
+id|WK_NONE
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|open_devs
+OL
+l_int|2
 )paren
+multiline_comment|/* This was first open */
+(brace
+suffix:semicolon
 (brace
 id|poll_timer.expires
 op_assign
@@ -960,15 +935,8 @@ id|poll_timer
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Come back later&n;&t;&t;&t;&t; */
-id|open_devs
-op_increment
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/* Start polling */
+)brace
 r_return
 id|err
 suffix:semicolon
@@ -1005,6 +973,19 @@ id|file-&gt;mode
 op_amp
 id|O_ACCMODE
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+OL
+l_int|0
+op_logical_or
+id|dev
+op_ge
+id|num_midis
+)paren
+r_return
+suffix:semicolon
 id|save_flags
 (paren
 id|flags
@@ -1040,11 +1021,8 @@ r_while
 c_loop
 (paren
 op_logical_neg
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 op_logical_and
 id|DATA_AVAIL
@@ -1065,14 +1043,15 @@ c_cond
 (paren
 l_int|0
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|0
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -1089,7 +1068,7 @@ id|mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|midi_sleeper
@@ -1151,6 +1130,11 @@ id|dev
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Ensure the output queues are empty&n;&t;&t;&t;&t; */
 )brace
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|midi_devs
 (braket
 id|dev
@@ -1191,9 +1175,13 @@ id|dev
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|open_devs
-op_decrement
-suffix:semicolon
+OL
+l_int|2
+)paren
 id|del_timer
 (paren
 op_amp
@@ -1201,10 +1189,8 @@ id|poll_timer
 )paren
 suffix:semicolon
 suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
+id|open_devs
+op_decrement
 suffix:semicolon
 )brace
 r_int
@@ -1308,14 +1294,15 @@ c_cond
 (paren
 l_int|0
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|0
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -1332,7 +1319,7 @@ id|mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|midi_sleeper
@@ -1389,11 +1376,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 )paren
 (brace
@@ -1575,8 +1559,8 @@ id|dev
 dot
 id|prech_timeout
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
@@ -1588,6 +1572,7 @@ id|dev
 )braket
 dot
 id|prech_timeout
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -1604,7 +1589,7 @@ id|mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|input_sleeper
@@ -1661,11 +1646,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 )paren
 id|c
@@ -1964,7 +1946,7 @@ comma
 r_int
 id|sel_type
 comma
-id|select_table
+id|select_table_handle
 op_star
 id|wait
 )paren
@@ -2006,7 +1988,7 @@ id|mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|select_wait
+id|module_select_wait
 (paren
 op_amp
 id|input_sleeper
@@ -2050,7 +2032,7 @@ id|mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|select_wait
+id|module_select_wait
 (paren
 op_amp
 id|midi_sleeper

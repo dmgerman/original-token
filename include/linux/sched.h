@@ -827,6 +827,11 @@ r_int
 r_int
 id|prof_shift
 suffix:semicolon
+r_extern
+r_int
+id|securelevel
+suffix:semicolon
+multiline_comment|/* system security level */
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (xtime.tv_sec)
 r_extern

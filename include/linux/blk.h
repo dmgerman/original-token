@@ -527,7 +527,7 @@ macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVE
 multiline_comment|/* end_request() - SCSI devices have their own version */
 multiline_comment|/*               - IDE drivers have their own copy too */
 macro_line|#if ! SCSI_MAJOR(MAJOR_NR)
-macro_line|#if defined(_IDE_CD_C) || defined(_TRITON_C) || defined(_IDE_TAPE_C) /* shares copy with ide.c */
+macro_line|#if defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) /* shared copy for IDE modules */
 r_void
 id|ide_end_request
 c_func
@@ -778,7 +778,7 @@ id|wait_for_request
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* ndef _IDE_CD_C */
+macro_line|#endif /* defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) */
 macro_line|#endif /* ! SCSI_MAJOR(MAJOR_NR) */
 macro_line|#endif /* defined(MAJOR_NR) || defined(IDE_DRIVER) */
 macro_line|#endif /* _BLK_H */

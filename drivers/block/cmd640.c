@@ -1,5 +1,32 @@
-multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.02  Nov 30, 1995&n; *&n; *  Copyright (C) 1995  Linus Torvalds &amp; author (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  abramov@cecmow.enet.dec.com (Igor)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; */
+multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.04  Jan 11, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  abramov@cecmow.enet.dec.com (Igor)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with read ahead mode. Separate function for setting&n; *&t;&t;&t;readahead is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *&n; *  Version 0.04&t;Now configs/compiles separate from ide.c  -ml&n; */
+multiline_comment|/*&n; *  There is a known problem with current version of this driver.&n; *  If the only device on secondary interface is CD-ROM, at some&n; *  computers it is not recognized. In all reported cases CD-ROM&n; *  was 2x or 4x speed Mitsumi drive.&n; *&n; *  The following workarounds could work:&n; * &n; *    1. put CD-ROM as slave on primary interface&n; *&n; *    2. or define symbol at next line as 0&n; * &n; */
+DECL|macro|CMD640_NORMAL_INIT
+mdefine_line|#define CMD640_NORMAL_INIT 1
+DECL|macro|REALLY_SLOW_IO
+macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &quot;ide.h&quot;
+r_extern
+id|ide_hwif_t
+id|ide_hwifs
+(braket
+)braket
+suffix:semicolon
+DECL|variable|cmd640_vlb
+r_int
+id|cmd640_vlb
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * CMD640 specific registers definition.&n; */
 DECL|macro|VID
 mdefine_line|#define VID&t;&t;0x00
@@ -151,7 +178,7 @@ r_int
 id|bus_speed
 suffix:semicolon
 multiline_comment|/* MHz */
-multiline_comment|/*&n; * For some unknown reasons pcibios functions which read and write registers&n; * do not work with cmd640. We use direct io instead.&n; */
+multiline_comment|/*&n; * For some unknown reasons pcibios functions which read and write registers&n; * do not always work with cmd640. We use direct io instead.&n; */
 multiline_comment|/* PCI method 1 access */
 DECL|function|put_cmd640_reg_pci1
 r_static
@@ -827,6 +854,118 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Low level reset for controller, actually it has nothing specific for&n; * CMD640, but I don&squot;t know how to use standard reset routine before&n; * we recognized any drives.&n; */
+DECL|function|cmd640_reset_controller
+r_static
+r_void
+id|cmd640_reset_controller
+c_func
+(paren
+r_int
+id|iface_no
+)paren
+(brace
+r_int
+id|retry_count
+op_assign
+l_int|600
+suffix:semicolon
+r_int
+id|base_port
+op_assign
+id|iface_no
+ques
+c_cond
+l_int|0x170
+suffix:colon
+l_int|0x1f0
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|4
+comma
+id|base_port
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0
+comma
+id|base_port
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+r_do
+(brace
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
+suffix:semicolon
+id|retry_count
+op_sub_assign
+l_int|1
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|inb_p
+c_func
+(paren
+id|base_port
+op_plus
+l_int|7
+)paren
+op_amp
+l_int|0x80
+)paren
+op_logical_and
+id|retry_count
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retry_count
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;cmd640: failed to reset controller %d&bslash;n&quot;
+comma
+id|iface_no
+)paren
+suffix:semicolon
+macro_line|#if 0&t;
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;cmd640: controller %d reset [%d]&bslash;n&quot;
+comma
+id|iface_no
+comma
+id|retry_count
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/*&n; * Probe for Cmd640x and initialize it if found&n; */
 DECL|function|ide_probe_for_cmd640x
 r_int
@@ -1006,7 +1145,7 @@ op_ne
 id|vlb
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set the maximum allowed bus speed (it is safest until we&n;&t; * &t;&t;&t;&t;      find how detect bus speed)&n;&t; * Normally PCI bus runs at 33MHz, but often works overclocked to 40&n;&t; */
+multiline_comment|/*&n;&t; * Set the maximum allowed bus speed (it is safest until we&n;&t; * &t;&t;&t;&t;      find how to detect bus speed)&n;&t; * Normally PCI bus runs at 33MHz, but often works overclocked to 40&n;&t; */
 id|bus_speed
 op_assign
 (paren
@@ -1020,7 +1159,6 @@ l_int|50
 suffix:colon
 l_int|40
 suffix:semicolon
-macro_line|#if 1&t;/* don&squot;t know if this is reliable yet */
 multiline_comment|/*&n;&t; * Enable readahead for versions above &squot;A&squot;&n;&t; */
 id|cmd_read_ahead
 op_assign
@@ -1030,12 +1168,6 @@ OG
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#else
-id|cmd_read_ahead
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Setup Control Register&n;&t; */
 id|b
 op_assign
@@ -1047,6 +1179,7 @@ comma
 id|CNTRL
 )paren
 suffix:semicolon
+macro_line|#if CMD640_NORMAL_INIT
 r_if
 c_cond
 (paren
@@ -1062,6 +1195,7 @@ op_and_assign
 op_complement
 id|CNTRL_ENA_2ND
 suffix:semicolon
+macro_line|#endif 
 r_if
 c_cond
 (paren
@@ -1136,7 +1270,18 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|cmd640_reset_controller
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 )brace
+id|ide_hwifs
+(braket
+l_int|0
+)braket
+dot
 id|serialized
 op_assign
 l_int|1
@@ -1295,6 +1440,211 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * Sets readahead mode for specific drive&n; *  in the future it could be called from ioctl&n; */
+DECL|function|set_readahead_mode
+r_static
+r_void
+id|set_readahead_mode
+c_func
+(paren
+r_int
+id|mode
+comma
+r_int
+id|if_num
+comma
+r_int
+id|dr_num
+)paren
+(brace
+r_static
+r_int
+id|masks
+(braket
+l_int|2
+)braket
+(braket
+l_int|2
+)braket
+op_assign
+(brace
+(brace
+id|CNTRL_DIS_RA0
+comma
+id|CNTRL_DIS_RA1
+)brace
+comma
+(brace
+id|DIS_RA2
+comma
+id|DIS_RA3
+)brace
+)brace
+suffix:semicolon
+r_int
+id|port
+op_assign
+(paren
+id|if_num
+op_eq
+l_int|0
+)paren
+ques
+c_cond
+id|CNTRL
+suffix:colon
+id|ARTTIM23
+suffix:semicolon
+r_int
+id|mask
+op_assign
+id|masks
+(braket
+id|if_num
+)braket
+(braket
+id|dr_num
+)braket
+suffix:semicolon
+id|byte
+id|b
+suffix:semicolon
+id|b
+op_assign
+id|get_cmd640_reg
+c_func
+(paren
+id|cmd640_key
+comma
+id|port
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mode
+)paren
+id|b
+op_and_assign
+id|mask
+suffix:semicolon
+multiline_comment|/* Enable readahead for specific drive */
+r_else
+id|b
+op_or_assign
+id|mask
+suffix:semicolon
+multiline_comment|/* Disable readahed for specific drive */
+id|put_cmd640_reg
+c_func
+(paren
+id|cmd640_key
+comma
+id|port
+comma
+id|b
+)paren
+suffix:semicolon
+)brace
+DECL|struct|readahead_black_list
+r_static
+r_struct
+id|readahead_black_list
+(brace
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|mode
+r_int
+id|mode
+suffix:semicolon
+DECL|variable|drives_ra
+)brace
+id|drives_ra
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;ST3655A&quot;
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|function|known_drive_readahead
+r_static
+r_int
+id|known_drive_readahead
+c_func
+(paren
+r_char
+op_star
+id|name
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|drives_ra
+(braket
+id|i
+)braket
+dot
+id|name
+op_ne
+l_int|NULL
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|name
+comma
+id|drives_ra
+(braket
+id|i
+)braket
+dot
+id|name
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+id|drives_ra
+(braket
+id|i
+)braket
+dot
+id|mode
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Tuning of drive parameters&n; */
 DECL|function|cmd640_set_timing
@@ -1628,6 +1978,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|struct|pio_timing
+r_static
 r_struct
 id|pio_timing
 (brace
@@ -1710,6 +2061,7 @@ multiline_comment|/* PIO Mode ? */
 )brace
 suffix:semicolon
 DECL|struct|drive_pio_info
+r_static
 r_struct
 id|drive_pio_info
 (brace
@@ -1780,6 +2132,12 @@ l_int|3
 comma
 (brace
 l_string|&quot;QUANTUM LPS540A&quot;
+comma
+l_int|3
+)brace
+comma
+(brace
+l_string|&quot;QUANTUM FIREBALL1080A&quot;
 comma
 l_int|3
 )brace
@@ -2150,9 +2508,10 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|delay_10ms
+id|udelay
 c_func
 (paren
+l_int|10000
 )paren
 suffix:semicolon
 )brace
@@ -2195,6 +2554,9 @@ r_int
 id|r1
 comma
 id|r2
+suffix:semicolon
+r_int
+id|mode
 suffix:semicolon
 multiline_comment|/*&n;&t; * Determine if drive is under cmd640 control&n;&t; */
 id|interface_number
@@ -2458,6 +2820,48 @@ comma
 id|r2
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Disable (or set) readahead mode for known drive&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|mode
+op_assign
+id|known_drive_readahead
+c_func
+(paren
+id|id-&gt;model
+)paren
+)paren
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|set_readahead_mode
+c_func
+(paren
+id|mode
+comma
+id|interface_number
+comma
+id|drive_number
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Readahead %s,&quot;
+comma
+id|mode
+ques
+c_cond
+l_string|&quot;enabled&quot;
+suffix:colon
+l_string|&quot;disabled&quot;
+)paren
+suffix:semicolon
+)brace
 id|printk
 (paren
 l_string|&quot;Mode and Timing set to PIO%d (0x%x 0x%x)&bslash;n&quot;

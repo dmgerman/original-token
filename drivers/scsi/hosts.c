@@ -20,6 +20,9 @@ macro_line|#endif
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#ifdef CONFIG_SCSI_ADVANSYS
+macro_line|#include &quot;advansys.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA152X
 macro_line|#include &quot;aha152x.h&quot;
 macro_line|#endif
@@ -104,6 +107,10 @@ id|builtin_scsi_hosts
 )braket
 op_assign
 (brace
+macro_line|#ifdef CONFIG_SCSI_ADVANSYS
+id|ADVANSYS
+comma
+macro_line|#endif
 multiline_comment|/* BusLogic must come before aha1542.c */
 macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 id|BUSLOGIC

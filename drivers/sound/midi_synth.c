@@ -4,13 +4,12 @@ mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#if defined(CONFIG_MIDI)
 DECL|macro|_MIDI_SYNTH_C_
 mdefine_line|#define _MIDI_SYNTH_C_
 DECL|variable|sysex_sleeper
 r_static
-r_struct
-id|wait_queue
+id|wait_handle
 op_star
 id|sysex_sleeper
 op_assign
@@ -57,7 +56,7 @@ id|prev_out_status
 id|MAX_MIDI_DEV
 )braket
 suffix:semicolon
-macro_line|#ifdef EXCLUDE_SEQUENCER
+macro_line|#ifndef CONFIG_SEQUENCER
 DECL|macro|STORE
 mdefine_line|#define STORE(cmd)
 macro_line|#else
@@ -1753,6 +1752,10 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
+id|sysex_sleep_flag.mode
+op_assign
+id|WK_NONE
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -2036,11 +2039,8 @@ OL
 id|left
 op_logical_and
 op_logical_neg
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 suffix:semicolon
 id|i
@@ -2146,11 +2146,8 @@ l_int|0xff
 )paren
 op_logical_and
 op_logical_neg
+id|current_got_fatal_signal
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
 )paren
 )paren
 (brace
@@ -2163,14 +2160,15 @@ c_cond
 (paren
 l_int|1
 )paren
-id|current-&gt;timeout
-op_assign
+id|current_set_timeout
+(paren
 id|tl
 op_assign
 id|jiffies
 op_plus
 (paren
 l_int|1
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -2182,7 +2180,7 @@ id|sysex_sleep_flag.mode
 op_assign
 id|WK_SLEEP
 suffix:semicolon
-id|interruptible_sleep_on
+id|module_interruptible_sleep_on
 (paren
 op_amp
 id|sysex_sleeper
@@ -2449,7 +2447,6 @@ l_int|127
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* NOTE! Controller # 0 ignored */
 r_if
 c_cond
 (paren

@@ -1,12 +1,11 @@
 multiline_comment|/*&n; *  linux/fs/proc/net.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  gjh 3/&squot;93 heim@peanuts.informatik.uni-tuebingen.de (Gerald J. Heim)&n; *            most of this file is stolen from base.c&n; *            it works, but you shouldn&squot;t use it as a guideline&n; *            for new proc-fs entries. once i&squot;ll make it better.&n; * fvk 3/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      cleaned up the whole thing, moved &quot;net&quot; specific code to&n; *&t;      the NET kernel layer (where it belonged in the first place).&n; * Michael K. Johnson (johnsonm@stolaf.edu) 3/93&n; *            Added support from my previous inet.c.  Cleaned things up&n; *            quite a bit, modularized the code.&n; * fvk 4/&squot;93  waltje@uwalt.nl.mugnet.org (Fred N. van Kempen)&n; *&t;      Renamed &quot;route_get_info()&quot; to &quot;rt_get_info()&quot; for consistency.&n; * Alan Cox (gw4pts@gw4pts.ampr.org) 4/94&n; *&t;      Dusted off the code and added IPX. Fixed the 4K limit.&n; * Erik Schoenfelder (schoenfr@ibr.cs.tu-bs.de)&n; *&t;      /proc/net/snmp.&n; * Alan Cox (gw4pts@gw4pts.ampr.org) 1/95&n; *&t;      Added Appletalk slots&n; *&n; *  proc net directory handling functions&n; */
-macro_line|#include &lt;linux/autoconf.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|PROC_BLOCK_SIZE
 mdefine_line|#define PROC_BLOCK_SIZE&t;(3*1024)&t;&t;/* 4K page size but our output routines use some slack for overruns */
 DECL|function|proc_readnet

@@ -2,8 +2,7 @@ multiline_comment|/*&n; * sound/sound_timer.c&n; *&n; * Copyright by Hannu Savol
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIGURE_SOUNDCARD
-macro_line|#if !defined(EXCLUDE_SEQUENCER)
+macro_line|#if defined(CONFIG_SEQUENCER)
 DECL|variable|initialized
 DECL|variable|opened
 DECL|variable|tmr_running
@@ -1059,6 +1058,5 @@ op_amp
 id|sound_timer
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 eof
