@@ -4,6 +4,16 @@ macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;status_w.h&quot;
 macro_line|#include &quot;control_w.h&quot;
+DECL|function|fnop
+r_static
+r_void
+id|fnop
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 DECL|function|fclex
 r_void
 id|fclex
@@ -114,6 +124,13 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * These are nops on the i387..&n; */
+DECL|macro|feni
+mdefine_line|#define feni fnop
+DECL|macro|fdisi
+mdefine_line|#define fdisi fnop
+DECL|macro|fsetpm
+mdefine_line|#define fsetpm fnop
 DECL|variable|finit_table
 r_static
 id|FUNC
@@ -123,15 +140,15 @@ id|finit_table
 )braket
 op_assign
 (brace
-id|Un_impl
+id|feni
 comma
-id|Un_impl
+id|fdisi
 comma
 id|fclex
 comma
 id|finit
 comma
-id|Un_impl
+id|fsetpm
 comma
 id|FPU_illegal
 comma
@@ -224,16 +241,6 @@ id|FPU_rm
 (paren
 )paren
 suffix:semicolon
-)brace
-DECL|function|fnop
-r_static
-r_void
-id|fnop
-c_func
-(paren
-r_void
-)paren
-(brace
 )brace
 DECL|variable|fp_nop_table
 r_static

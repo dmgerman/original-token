@@ -3127,10 +3127,6 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-id|skb-&gt;lock
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Copy the original MAC and IP headers into the new buffer. */
 id|ptr
 op_assign

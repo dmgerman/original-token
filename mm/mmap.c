@@ -364,12 +364,12 @@ id|MAP_PRIVATE
 )paren
 id|mask
 op_or_assign
-id|PAGE_COW
+id|PAGE_COPY
 suffix:semicolon
 r_else
 id|mask
 op_or_assign
-id|PAGE_RW
+id|PAGE_SHARED
 suffix:semicolon
 r_if
 c_cond

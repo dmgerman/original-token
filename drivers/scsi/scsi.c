@@ -317,6 +317,15 @@ l_string|&quot;U07&quot;
 comma
 multiline_comment|/* Locks up if polled for lun != 0 */
 (brace
+l_string|&quot;TEAC&quot;
+comma
+l_string|&quot;CD-ROM&quot;
+comma
+l_string|&quot;1.06&quot;
+)brace
+comma
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 for seagate&n;&t;&t;&t;&t; * controller, which causes SCSI code to reset bus.*/
+(brace
 l_string|&quot;TEXEL&quot;
 comma
 l_string|&quot;CD-ROM&quot;

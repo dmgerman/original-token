@@ -2839,6 +2839,17 @@ c_func
 id|tty
 )paren
 suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+id|unblank_screen
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 macro_line|#endif /* CONFIG_SELECTION */
 r_default
 suffix:colon

@@ -332,6 +332,11 @@ r_int
 suffix:semicolon
 id|skb-&gt;h.raw
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|skb-&gt;ip_hdr
 suffix:semicolon
 id|skb-&gt;dev

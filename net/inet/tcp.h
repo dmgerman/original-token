@@ -315,6 +315,17 @@ id|arg
 suffix:semicolon
 r_extern
 r_void
+id|tcp_send_probe0
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|tcp_enqueue_partial
 c_func
 (paren

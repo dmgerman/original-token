@@ -8476,13 +8476,13 @@ suffix:semicolon
 id|bp
 op_increment
 suffix:semicolon
-)brace
 id|TTY_READ_FLUSH
 c_func
 (paren
 id|tty
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

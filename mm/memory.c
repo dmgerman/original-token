@@ -4884,32 +4884,6 @@ l_int|10
 )paren
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Buffer memory:   %6dkB&bslash;n&quot;
-comma
-id|buffermem
-op_rshift
-l_int|10
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Buffer heads:    %6d&bslash;n&quot;
-comma
-id|nr_buffer_heads
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Buffer blocks:   %6d&bslash;n&quot;
-comma
-id|nr_buffers
-)paren
-suffix:semicolon
 id|i
 op_assign
 id|high_memory
@@ -4995,6 +4969,11 @@ c_func
 l_string|&quot;%d pages shared&bslash;n&quot;
 comma
 id|shared
+)paren
+suffix:semicolon
+id|show_buffers
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
