@@ -1262,8 +1262,6 @@ id|c
 comma
 id|kcmd.tid
 comma
-id|cfg_handler.context
-comma
 id|ops
 comma
 id|kcmd.oplen
@@ -1271,9 +1269,6 @@ comma
 id|res
 comma
 l_int|65536
-comma
-op_amp
-id|i2o_cfg_token
 )paren
 suffix:semicolon
 id|i2o_unlock_controller
@@ -1292,8 +1287,6 @@ r_if
 c_cond
 (paren
 id|len
-OL
-l_int|0
 )paren
 (brace
 id|kfree
@@ -1305,7 +1298,7 @@ suffix:semicolon
 r_return
 id|len
 suffix:semicolon
-multiline_comment|/* -DetailedStatus */
+multiline_comment|/* -DetailedStatus || -ETIMEDOUT */
 )brace
 id|put_user
 c_func
@@ -1749,16 +1742,11 @@ c_func
 (paren
 id|c
 comma
-id|cmd-&gt;tid
-comma
 id|msg
 comma
 l_int|9
 op_star
 l_int|4
-comma
-op_amp
-id|i2o_cfg_token
 comma
 l_int|10
 )paren
@@ -1767,8 +1755,6 @@ r_if
 c_cond
 (paren
 id|token
-op_ne
-id|I2O_POST_WAIT_OK
 )paren
 (brace
 id|i2o_unlock_controller
@@ -2422,17 +2408,12 @@ c_func
 (paren
 id|c
 comma
-id|ADAPTER_TID
-comma
 id|msg
 comma
 r_sizeof
 (paren
 id|msg
 )paren
-comma
-op_amp
-id|i2o_cfg_token
 comma
 l_int|60
 )paren
@@ -2441,8 +2422,6 @@ r_if
 c_cond
 (paren
 id|token
-op_ne
-id|I2O_POST_WAIT_OK
 )paren
 singleline_comment|// Something very wrong
 (brace
@@ -2517,17 +2496,12 @@ c_func
 (paren
 id|c
 comma
-id|ADAPTER_TID
-comma
 id|msg
 comma
 r_sizeof
 (paren
 id|msg
 )paren
-comma
-op_amp
-id|i2o_cfg_token
 comma
 l_int|60
 )paren
@@ -2536,8 +2510,6 @@ r_if
 c_cond
 (paren
 id|token
-op_ne
-id|I2O_POST_WAIT_OK
 )paren
 singleline_comment|// Something very wrong
 (brace
@@ -2706,17 +2678,12 @@ c_func
 (paren
 id|c
 comma
-id|ADAPTER_TID
-comma
 id|msg
 comma
 r_sizeof
 (paren
 id|msg
 )paren
-comma
-op_amp
-id|i2o_cfg_token
 comma
 l_int|10
 )paren
@@ -2731,8 +2698,6 @@ r_if
 c_cond
 (paren
 id|token
-op_ne
-id|I2O_POST_WAIT_OK
 )paren
 (brace
 id|printk

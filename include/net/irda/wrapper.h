@@ -1,9 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.h&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon May  3 09:02:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.h&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Thu Oct  7 11:40:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef WRAPPER_H
 DECL|macro|WRAPPER_H
 mdefine_line|#define WRAPPER_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 DECL|macro|BOF
 mdefine_line|#define BOF  0xc0 /* Beginning of frame */
@@ -53,15 +54,36 @@ r_int
 id|buffsize
 )paren
 suffix:semicolon
-r_inline
-r_void
+r_int
+id|async_bump
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+id|__u8
+op_star
+id|buf
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_int
 id|async_unwrap_char
 c_func
 (paren
 r_struct
-id|irda_device
+id|net_device
 op_star
-id|idev
+id|dev
+comma
+r_struct
+id|iobuff_t
+op_star
+id|buf
 comma
 id|__u8
 id|byte

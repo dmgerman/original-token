@@ -4,9 +4,6 @@ DECL|macro|_LINUX_ACPI_H
 mdefine_line|#define _LINUX_ACPI_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
-multiline_comment|/* /dev/acpi minor number */
-DECL|macro|ACPI_MINOR_DEV
-mdefine_line|#define ACPI_MINOR_DEV 167
 multiline_comment|/* RSDP location */
 DECL|macro|ACPI_BIOS_ROM_BASE
 mdefine_line|#define ACPI_BIOS_ROM_BASE (0x0e0000)
@@ -27,7 +24,7 @@ multiline_comment|/* PM1_STS/EN flags */
 DECL|macro|ACPI_TMR
 mdefine_line|#define ACPI_TMR    0x0001
 DECL|macro|ACPI_BM
-mdefine_line|#define ACPI_BM     0x0010
+mdefine_line|#define ACPI_BM&t;    0x0010
 DECL|macro|ACPI_GBL
 mdefine_line|#define ACPI_GBL    0x0020
 DECL|macro|ACPI_PWRBTN
@@ -55,36 +52,39 @@ DECL|macro|ACPI_SLP_EN
 mdefine_line|#define ACPI_SLP_EN   0x2000
 multiline_comment|/* PM_TMR masks */
 DECL|macro|ACPI_TMR_MASK
-mdefine_line|#define ACPI_TMR_MASK   0x00ffffff
+mdefine_line|#define ACPI_TMR_MASK&t;0x00ffffff
 DECL|macro|ACPI_TMR_HZ
 mdefine_line|#define ACPI_TMR_HZ&t;3580000 /* 3.58 MHz */
 multiline_comment|/* strangess to avoid integer overflow */
 DECL|macro|ACPI_uS_TO_TMR_TICKS
 mdefine_line|#define ACPI_uS_TO_TMR_TICKS(val) &bslash;&n;  (((val) * (ACPI_TMR_HZ / 10000)) / 100)
+multiline_comment|/* CPU cycles -&gt; PM timer cycles, looks somewhat heuristic but&n;   (ticks = 3/11 * CPU_MHz + 2) comes pretty close for my systems&n; */
+DECL|macro|ACPI_CPU_TO_TMR_TICKS
+mdefine_line|#define ACPI_CPU_TO_TMR_TICKS(cycles) &bslash;&n;  ((cycles) / (3 * (loops_per_sec + 2500) / 500000 / 11 + 2))
 multiline_comment|/* PM2_CNT flags */
 DECL|macro|ACPI_ARB_DIS
 mdefine_line|#define ACPI_ARB_DIS 0x01
 multiline_comment|/* FACP flags */
 DECL|macro|ACPI_WBINVD
-mdefine_line|#define ACPI_WBINVD       0x00000001
+mdefine_line|#define ACPI_WBINVD&t;  0x00000001
 DECL|macro|ACPI_WBINVD_FLUSH
 mdefine_line|#define ACPI_WBINVD_FLUSH 0x00000002
 DECL|macro|ACPI_PROC_C1
-mdefine_line|#define ACPI_PROC_C1      0x00000004
+mdefine_line|#define ACPI_PROC_C1&t;  0x00000004
 DECL|macro|ACPI_P_LVL2_UP
-mdefine_line|#define ACPI_P_LVL2_UP    0x00000008
+mdefine_line|#define ACPI_P_LVL2_UP&t;  0x00000008
 DECL|macro|ACPI_PWR_BUTTON
-mdefine_line|#define ACPI_PWR_BUTTON   0x00000010
+mdefine_line|#define ACPI_PWR_BUTTON&t;  0x00000010
 DECL|macro|ACPI_SLP_BUTTON
-mdefine_line|#define ACPI_SLP_BUTTON   0x00000020
+mdefine_line|#define ACPI_SLP_BUTTON&t;  0x00000020
 DECL|macro|ACPI_FIX_RTC
-mdefine_line|#define ACPI_FIX_RTC      0x00000040
+mdefine_line|#define ACPI_FIX_RTC&t;  0x00000040
 DECL|macro|ACPI_RTC_64
-mdefine_line|#define ACPI_RTC_64       0x00000080
+mdefine_line|#define ACPI_RTC_64&t;  0x00000080
 DECL|macro|ACPI_TMR_VAL_EXT
 mdefine_line|#define ACPI_TMR_VAL_EXT  0x00000100
 DECL|macro|ACPI_DCK_CAP
-mdefine_line|#define ACPI_DCK_CAP      0x00000200
+mdefine_line|#define ACPI_DCK_CAP&t;  0x00000200
 DECL|struct|acpi_rsdp
 r_struct
 id|acpi_rsdp
@@ -332,67 +332,106 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|ACPI_FIND_TABLES
-mdefine_line|#define ACPI_FIND_TABLES&t;_IOR(&squot;A&squot;, 1, struct acpi_find_tables)
-DECL|macro|ACPI_ENABLE_EVENT
-mdefine_line|#define ACPI_ENABLE_EVENT&t;_IOW(&squot;A&squot;, 2, struct acpi_enable_event)
-DECL|macro|ACPI_WAIT_EVENT
-mdefine_line|#define ACPI_WAIT_EVENT&t;&t;_IOR(&squot;A&squot;, 3, struct acpi_wait_event)
-DECL|struct|acpi_find_tables
-r_struct
-id|acpi_find_tables
+multiline_comment|/*&n; * Sysctl declarations&n; */
+r_enum
 (brace
-DECL|member|facp
-r_int
-r_int
-id|facp
-suffix:semicolon
-multiline_comment|/* FACP physical address */
-DECL|member|dsdt
-r_int
-r_int
-id|dsdt
-suffix:semicolon
-multiline_comment|/* DSDT physical address */
+DECL|enumerator|CTL_ACPI
+id|CTL_ACPI
+op_assign
+l_int|10
 )brace
 suffix:semicolon
-DECL|struct|acpi_enable_event
-r_struct
-id|acpi_enable_event
+r_enum
 (brace
-DECL|member|pm1_enable
-id|__u32
-id|pm1_enable
-suffix:semicolon
-multiline_comment|/* fixed events */
-DECL|member|gpe_enable
-id|__u32
-id|gpe_enable
-suffix:semicolon
-multiline_comment|/* general-purpose events (GPEs) */
-DECL|member|gpe_level
-id|__u32
-id|gpe_level
-suffix:semicolon
-multiline_comment|/* level-triggered GPEs */
+DECL|enumerator|ACPI_FACP
+id|ACPI_FACP
+op_assign
+l_int|1
+comma
+DECL|enumerator|ACPI_DSDT
+id|ACPI_DSDT
+comma
+DECL|enumerator|ACPI_PM1_ENABLE
+id|ACPI_PM1_ENABLE
+comma
+DECL|enumerator|ACPI_GPE_ENABLE
+id|ACPI_GPE_ENABLE
+comma
+DECL|enumerator|ACPI_GPE_LEVEL
+id|ACPI_GPE_LEVEL
+comma
+DECL|enumerator|ACPI_EVENT
+id|ACPI_EVENT
+comma
+DECL|enumerator|ACPI_P_LVL2
+id|ACPI_P_LVL2
+comma
+DECL|enumerator|ACPI_P_LVL3
+id|ACPI_P_LVL3
+comma
+DECL|enumerator|ACPI_P_LVL2_LAT
+id|ACPI_P_LVL2_LAT
+comma
+DECL|enumerator|ACPI_P_LVL3_LAT
+id|ACPI_P_LVL3_LAT
+comma
 )brace
 suffix:semicolon
-DECL|struct|acpi_wait_event
-r_struct
-id|acpi_wait_event
-(brace
-DECL|member|pm1_status
-id|__u32
-id|pm1_status
-suffix:semicolon
-multiline_comment|/* fixed events */
-DECL|member|gpe_status
-id|__u32
-id|gpe_status
-suffix:semicolon
-multiline_comment|/* general-purpose events */
-)brace
-suffix:semicolon
+multiline_comment|/*&n; * PIIX4-specific ACPI info (for systems with PIIX4 but no ACPI tables)&n; */
+DECL|macro|ACPI_PIIX4_INT_MODEL
+mdefine_line|#define ACPI_PIIX4_INT_MODEL&t;0x00
+DECL|macro|ACPI_PIIX4_SCI_INT
+mdefine_line|#define ACPI_PIIX4_SCI_INT&t;0x0009
+DECL|macro|ACPI_PIIX4_SMI_CMD
+mdefine_line|#define ACPI_PIIX4_SMI_CMD&t;0x00b2
+DECL|macro|ACPI_PIIX4_ACPI_ENABLE
+mdefine_line|#define ACPI_PIIX4_ACPI_ENABLE&t;0xf0
+DECL|macro|ACPI_PIIX4_ACPI_DISABLE
+mdefine_line|#define ACPI_PIIX4_ACPI_DISABLE 0xf1
+DECL|macro|ACPI_PIIX4_S4BIOS_REQ
+mdefine_line|#define ACPI_PIIX4_S4BIOS_REQ&t;0xf2
+DECL|macro|ACPI_PIIX4_PM1_EVT
+mdefine_line|#define ACPI_PIIX4_PM1_EVT&t;0x0000
+DECL|macro|ACPI_PIIX4_PM1_CNT
+mdefine_line|#define ACPI_PIIX4_PM1_CNT&t;0x0004
+DECL|macro|ACPI_PIIX4_S0_MASK
+mdefine_line|#define&t;  ACPI_PIIX4_S0_MASK&t;(0x0005 &lt;&lt; 10)
+DECL|macro|ACPI_PIIX4_S1_MASK
+mdefine_line|#define&t;  ACPI_PIIX4_S1_MASK&t;(0x0004 &lt;&lt; 10)
+DECL|macro|ACPI_PIIX4_S2_MASK
+mdefine_line|#define&t;  ACPI_PIIX4_S2_MASK&t;(0x0003 &lt;&lt; 10)
+DECL|macro|ACPI_PIIX4_S3_MASK
+mdefine_line|#define&t;  ACPI_PIIX4_S3_MASK&t;(0x0002 &lt;&lt; 10)
+DECL|macro|ACPI_PIIX4_S4_MASK
+mdefine_line|#define&t;  ACPI_PIIX4_S4_MASK&t;(0x0001 &lt;&lt; 10)
+DECL|macro|ACPI_PIIX4_S5_MASK
+mdefine_line|#define&t;  ACPI_PIIX4_S5_MASK&t;(0x0000 &lt;&lt; 10)
+DECL|macro|ACPI_PIIX4_PM_TMR
+mdefine_line|#define ACPI_PIIX4_PM_TMR&t;0x0008
+DECL|macro|ACPI_PIIX4_GPE0
+mdefine_line|#define ACPI_PIIX4_GPE0&t;&t;0x000c
+DECL|macro|ACPI_PIIX4_P_CNT
+mdefine_line|#define ACPI_PIIX4_P_CNT&t;0x0010
+DECL|macro|ACPI_PIIX4_P_LVL2
+mdefine_line|#define ACPI_PIIX4_P_LVL2&t;0x0014
+DECL|macro|ACPI_PIIX4_P_LVL3
+mdefine_line|#define ACPI_PIIX4_P_LVL3&t;0x0015
+DECL|macro|ACPI_PIIX4_PM1_EVT_LEN
+mdefine_line|#define ACPI_PIIX4_PM1_EVT_LEN&t;0x04
+DECL|macro|ACPI_PIIX4_PM1_CNT_LEN
+mdefine_line|#define ACPI_PIIX4_PM1_CNT_LEN&t;0x02
+DECL|macro|ACPI_PIIX4_PM_TM_LEN
+mdefine_line|#define ACPI_PIIX4_PM_TM_LEN&t;0x04
+DECL|macro|ACPI_PIIX4_GPE0_LEN
+mdefine_line|#define ACPI_PIIX4_GPE0_LEN&t;0x04
+DECL|macro|ACPI_PIIX4_PM2_CNT
+mdefine_line|#define ACPI_PIIX4_PM2_CNT&t;0x0022
+DECL|macro|ACPI_PIIX4_PM2_CNT_LEN
+mdefine_line|#define ACPI_PIIX4_PM2_CNT_LEN&t;0x01
+DECL|macro|ACPI_PIIX4_PMREGMISC
+mdefine_line|#define ACPI_PIIX4_PMREGMISC&t;0x80
+DECL|macro|ACPI_PIIX4_PMIOSE
+mdefine_line|#define&t;  ACPI_PIIX4_PMIOSE&t;0x01
 macro_line|#ifdef __KERNEL__
 r_extern
 r_void

@@ -1,7 +1,6 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      discovery.c&n; * Version:       0.1&n; * Description:   Routines for handling discoveries at the IrLMP layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr  6 15:33:50 1999&n; * Modified at:   Mon Aug 23 09:48:40 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      discovery.c&n; * Version:       0.1&n; * Description:   Routines for handling discoveries at the IrLMP layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr  6 15:33:50 1999&n; * Modified at:   Sat Oct  9 17:11:31 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
-macro_line|#include &lt;linux/irda.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/discovery.h&gt;
@@ -130,7 +129,7 @@ c_func
 id|cachelog
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 r_new
@@ -171,7 +170,7 @@ id|discovery_t
 op_star
 id|discovery
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -271,7 +270,7 @@ comma
 op_star
 id|curr
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -414,7 +413,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -422,7 +421,7 @@ comma
 l_string|&quot;Discovery:&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -432,7 +431,7 @@ comma
 id|discovery-&gt;daddr
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -442,7 +441,7 @@ comma
 id|discovery-&gt;saddr
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -523,7 +522,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -531,7 +530,7 @@ comma
 l_string|&quot;Discovery:&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -541,7 +540,7 @@ comma
 id|d-&gt;daddr
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1

@@ -1,10 +1,9 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Fri Aug 20 10:26:39 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sat Oct  9 17:00:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/irda.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -389,7 +388,7 @@ suffix:semicolon
 id|notify_t
 id|notify
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -559,7 +558,7 @@ c_func
 id|iriap
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|self
@@ -619,7 +618,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -788,7 +787,7 @@ id|iriap_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -859,7 +858,7 @@ op_eq
 id|IAS_CLIENT
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -908,7 +907,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -957,7 +956,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1004,7 +1003,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1044,7 +1043,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1062,7 +1061,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1080,7 +1079,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1098,7 +1097,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1116,7 +1115,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1480,7 +1479,7 @@ id|n
 op_add_assign
 l_int|2
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1524,7 +1523,7 @@ id|n
 op_increment
 )braket
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1577,7 +1576,7 @@ id|tmp_cpu32
 )paren
 suffix:semicolon
 multiline_comment|/*  Legal values restricted to 0x01-0x6f, page 15 irttp */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1624,7 +1623,7 @@ multiline_comment|/* &t;&t;case CS_ISO_8859_9: */
 multiline_comment|/* &t;&t;case CS_UNICODE: */
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1650,7 +1649,7 @@ id|n
 op_increment
 )braket
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1682,7 +1681,7 @@ id|value_len
 op_assign
 l_int|0x00
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1835,7 +1834,7 @@ id|__u8
 op_star
 id|fp
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2184,7 +2183,7 @@ suffix:semicolon
 r_case
 id|IAS_MISSING
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -2213,7 +2212,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2288,7 +2287,7 @@ suffix:semicolon
 r_int
 id|n
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2407,7 +2406,7 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Now, do some advanced parsing! :-) &n;&t; */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2435,7 +2434,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2459,7 +2458,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2489,7 +2488,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2515,7 +2514,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2562,7 +2561,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|6
@@ -2720,7 +2719,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2859,7 +2858,7 @@ suffix:semicolon
 id|__u8
 id|opcode
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2926,7 +2925,7 @@ id|IAS_SERVER
 )paren
 (brace
 multiline_comment|/* Call server */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2986,7 +2985,7 @@ op_amp
 id|IAP_ACK
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3014,7 +3013,7 @@ id|opcode
 r_case
 id|GET_INFO_BASE
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3147,7 +3146,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3189,7 +3188,7 @@ suffix:semicolon
 id|__u8
 id|opcode
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3667,7 +3666,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0

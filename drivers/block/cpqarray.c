@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkpg.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -4007,6 +4008,93 @@ l_int|0UL
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,13)
+multiline_comment|/*&n; * Config string is a comma seperated set of i/o addresses of EISA cards.&n; */
+DECL|function|cpqarray_setup
+r_static
+r_int
+id|cpqarray_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+r_int
+id|i
+comma
+id|ints
+(braket
+l_int|9
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ints
+(braket
+l_int|0
+)braket
+op_logical_and
+id|i
+OL
+l_int|8
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|eisa
+(braket
+id|i
+)braket
+op_assign
+id|ints
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;smart2=&quot;
+comma
+id|cpqarray_setup
+)paren
+suffix:semicolon
+macro_line|#else
 multiline_comment|/*&n; * Copy the contents of the ints[] array passed to us by init.&n; */
 DECL|function|cpqarray_setup
 r_void
@@ -4061,6 +4149,8 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
+macro_line|#endif
 multiline_comment|/*&n; * Find an EISA controller&squot;s signature.  Set up an hba if we find it.&n; */
 DECL|function|cpqarray_eisa_detect
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; * Greg Kroah-Hartman (greg@kroah.com)&n; *&n; * This was based on the ACM driver by Armin Fuerst (which was based&n; * on a driver by Brad Keryan)&n; *&n; * Currently only works for the Belkin and Peracom Serial converters.&n; * Should also work on the Etek serial converter, if anyone knows the&n; * vendor and device ids for that device.&n; *&n; * &n; * version 0.1.1 (10/05/99) gkh&n; *  Changed the major number to not conflict with anything else.&n; *&n; * version 0.1 (09/28/99) gkh&n; *  Can recognize the two different devices and start up a read from&n; * device when asked to. Writes also work. No control signals yet, this&n; * all is vendor specific data (i.e. no spec), also no control for&n; * different baud rates or other bit settings.&n; * Currently we are using the same devid as the acm driver. This needs&n; * to change.&n; * &n; * (C) Copyright 1999 Greg Kroah-Hartman (greg@kroah.com)&n; *&n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; * Greg Kroah-Hartman (greg@kroah.com)&n; *&n; * This was based on the ACM driver by Armin Fuerst (which was based&n; * on a driver by Brad Keryan)&n; *&n; * Currently only works for the Belkin and Peracom Serial converters.&n; * Should also work on the Etek serial converter, if anyone knows the&n; * vendor and device ids for that device.&n; *&n; * &n; * version 0.1.2 (10/25/99) gkh&n; *  Fixed bug in detecting device.&n; *&n; * version 0.1.1 (10/05/99) gkh&n; *  Changed the major number to not conflict with anything else.&n; *&n; * version 0.1 (09/28/99) gkh&n; *  Can recognize the two different devices and start up a read from&n; * device when asked to. Writes also work. No control signals yet, this&n; * all is vendor specific data (i.e. no spec), also no control for&n; * different baud rates or other bit settings.&n; * Currently we are using the same devid as the acm driver. This needs&n; * to change.&n; * &n; * (C) Copyright 1999 Greg Kroah-Hartman (greg@kroah.com)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1858,7 +1858,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|serial-&gt;bulk_in_buffer
+id|serial-&gt;interrupt_in_buffer
 )paren
 (brace
 id|printk

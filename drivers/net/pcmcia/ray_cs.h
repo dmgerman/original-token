@@ -248,11 +248,53 @@ DECL|member|tib_length
 id|UCHAR
 id|tib_length
 suffix:semicolon
+DECL|member|last_rsl
+id|UCHAR
+id|last_rsl
+suffix:semicolon
+DECL|member|beacon_rxed
+r_int
+id|beacon_rxed
+suffix:semicolon
 DECL|member|last_bcn
 r_struct
 id|beacon_rx
 id|last_bcn
 suffix:semicolon
+macro_line|#ifdef WIRELESS_EXT
+DECL|member|wstats
+id|iw_stats
+id|wstats
+suffix:semicolon
+multiline_comment|/* Wireless specific stats */
+macro_line|#endif
+macro_line|#ifdef WIRELESS_SPY
+DECL|member|spy_number
+r_int
+id|spy_number
+suffix:semicolon
+multiline_comment|/* Number of addresses to spy */
+DECL|member|spy_address
+id|mac_addr
+id|spy_address
+(braket
+id|IW_MAX_SPY
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* The addresses to spy */
+DECL|member|spy_stat
+id|iw_qual
+id|spy_stat
+(braket
+id|IW_MAX_SPY
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* Statistics gathered */
+macro_line|#endif&t;/* WIRELESS_SPY */
 DECL|typedef|ray_dev_t
 )brace
 id|ray_dev_t

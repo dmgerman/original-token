@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.c&n; * Version:       1.0&n; * Description:   IrCOMM serial TTY driver&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 21:00:56 1999&n; * Modified at:   Tue Sep 21 11:46:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       serial.c and previous IrCOMM work by Takahide Higuchi&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.c&n; * Version:       1.0&n; * Description:   IrCOMM serial TTY driver&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 21:00:56 1999&n; * Modified at:   Tue Oct 19 21:32:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       serial.c and previous IrCOMM work by Takahide Higuchi&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -1524,7 +1524,7 @@ c_func
 id|ircomm_tty
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|self
@@ -2807,7 +2807,7 @@ suffix:semicolon
 multiline_comment|/* Set poll time to 200 ms */
 id|poll_time
 op_assign
-id|MIN
+id|IRDA_MIN
 c_func
 (paren
 id|timeout
@@ -3330,18 +3330,6 @@ r_char
 id|ch
 )paren
 (brace
-r_struct
-id|ircomm_tty_cb
-op_star
-id|self
-op_assign
-(paren
-r_struct
-id|ircomm_tty_cb
-op_star
-)paren
-id|tty-&gt;driver_data
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -3896,7 +3884,7 @@ id|skb-&gt;data
 op_plus
 l_int|1
 comma
-id|MIN
+id|IRDA_MIN
 c_func
 (paren
 id|skb-&gt;len

@@ -3368,11 +3368,6 @@ op_amp
 id|shm_lock
 )paren
 suffix:semicolon
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
 id|page
 op_assign
 id|lookup_swap_cache

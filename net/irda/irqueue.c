@@ -1,19 +1,19 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.c&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:29:31 1998&n; * Modified at:   Thu Jun 10 11:00:12 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998-1999, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (C) 1998, Dag Brattli, &n; *     All Rights Reserved.&n; *&n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes. Aage has agreed that this code can use the GPL licence,&n; *     although he does not use that licence in his own code.&n; *     &n; *     This copyright does however _not_ include the ELF hash() function&n; *     which I currently don&squot;t know which licence or copyright it&n; *     has. Please inform me if you know.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.c&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:29:31 1998&n; * Modified at:   Tue Oct  5 09:02:15 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998-1999, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (C) 1998, Dag Brattli, &n; *     All Rights Reserved.&n; *&n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes. Aage has agreed that this code can use the GPL licence,&n; *     although he does not use that licence in his own code.&n; *     &n; *     This copyright does however _not_ include the ELF hash() function&n; *     which I currently don&squot;t know which licence or copyright it&n; *     has. Please inform me if you know.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 r_static
-id|QUEUE
+id|queue_t
 op_star
 id|dequeue_general
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|element
 )paren
@@ -131,7 +131,7 @@ id|FREE_FUNC
 id|free_func
 )paren
 (brace
-id|QUEUE
+id|queue_t
 op_star
 id|queue
 suffix:semicolon
@@ -186,7 +186,7 @@ id|dequeue_first
 c_func
 (paren
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 )paren
@@ -222,7 +222,7 @@ id|dequeue_first
 c_func
 (paren
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 )paren
@@ -257,7 +257,7 @@ id|FREE_FUNC
 id|free_func
 )paren
 (brace
-id|QUEUE
+id|queue_t
 op_star
 id|queue
 suffix:semicolon
@@ -312,7 +312,7 @@ id|dequeue_first
 c_func
 (paren
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 )paren
@@ -348,7 +348,7 @@ id|dequeue_first
 c_func
 (paren
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 )paren
@@ -402,7 +402,7 @@ id|flags
 r_int
 id|bin
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -514,7 +514,7 @@ id|flags
 r_int
 id|bin
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -611,7 +611,7 @@ id|hashbin_t
 op_star
 id|hashbin
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|entry
 comma
@@ -632,7 +632,7 @@ suffix:semicolon
 r_int
 id|bin
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -765,7 +765,7 @@ id|enqueue_first
 c_func
 (paren
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 )paren
@@ -851,11 +851,11 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
-id|QUEUE
+id|queue_t
 op_star
 id|entry
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1098,7 +1098,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|QUEUE
+id|queue_t
 op_star
 id|entry
 op_assign
@@ -1182,11 +1182,11 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
-id|QUEUE
+id|queue_t
 op_star
 id|entry
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1376,7 +1376,7 @@ id|dequeue_general
 c_func
 (paren
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 )paren
@@ -1387,7 +1387,7 @@ id|bin
 )braket
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|entry
@@ -1461,7 +1461,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function hashbin_get_first (hashbin)&n; *&n; *    Get a pointer to first element in hashbin, this function must be&n; *    called before any calls to hashbin_get_next()!&n; *&n; */
 DECL|function|hashbin_get_first
-id|QUEUE
+id|queue_t
 op_star
 id|hashbin_get_first
 c_func
@@ -1471,7 +1471,7 @@ op_star
 id|hashbin
 )paren
 (brace
-id|QUEUE
+id|queue_t
 op_star
 id|entry
 suffix:semicolon
@@ -1556,7 +1556,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function hashbin_get_next (hashbin)&n; *&n; *    Get next item in hashbin. A series of hashbin_get_next() calls must&n; *    be started by a call to hashbin_get_first(). The function returns&n; *    NULL when all items have been traversed&n; * &n; */
 DECL|function|hashbin_get_next
-id|QUEUE
+id|queue_t
 op_star
 id|hashbin_get_next
 c_func
@@ -1566,7 +1566,7 @@ op_star
 id|hashbin
 )paren
 (brace
-id|QUEUE
+id|queue_t
 op_star
 id|entry
 suffix:semicolon
@@ -1719,17 +1719,17 @@ r_void
 id|__enqueue_last
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|element
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1797,12 +1797,12 @@ r_void
 id|enqueue_last
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|element
 )paren
@@ -1843,17 +1843,17 @@ r_void
 id|enqueue_first
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|element
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1935,18 +1935,18 @@ r_void
 id|enqueue_queue
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|list
 )paren
 (brace
-id|QUEUE
+id|queue_t
 op_star
 id|tmp
 suffix:semicolon
@@ -2041,17 +2041,17 @@ r_void
 id|enqueue_second
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|element
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2122,22 +2122,22 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Function dequeue (queue)&n; *&n; *    Remove first entry in queue&n; *&n; */
 DECL|function|dequeue_first
-id|QUEUE
+id|queue_t
 op_star
 id|dequeue_first
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 )paren
 (brace
-id|QUEUE
+id|queue_t
 op_star
 id|ret
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2234,26 +2234,26 @@ suffix:semicolon
 multiline_comment|/*&n; * Function dequeue_general (queue, element)&n; *&n; *&n; */
 DECL|function|dequeue_general
 r_static
-id|QUEUE
+id|queue_t
 op_star
 id|dequeue_general
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|element
 )paren
 (brace
-id|QUEUE
+id|queue_t
 op_star
 id|ret
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4

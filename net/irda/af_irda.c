@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.7&n; * Description:   IrDA sockets implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Mon Sep 27 20:11:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.7&n; * Description:   IrDA sockets implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Fri Oct  1 19:11:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
@@ -181,7 +181,7 @@ c_cond
 id|err
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -237,7 +237,7 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -343,7 +343,7 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -392,7 +392,7 @@ id|self-&gt;max_data_size
 op_assign
 id|max_sdu_size
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -496,7 +496,7 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -545,7 +545,7 @@ id|self-&gt;max_data_size
 op_assign
 id|max_sdu_size
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -619,7 +619,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -655,7 +655,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -716,7 +716,7 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -769,7 +769,7 @@ id|flow
 r_case
 id|FLOW_STOP
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -791,7 +791,7 @@ id|self-&gt;tx_flow
 op_assign
 id|flow
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -810,7 +810,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -849,7 +849,7 @@ id|irda_sock
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -895,7 +895,7 @@ op_ne
 id|IAS_SUCCESS
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -928,7 +928,7 @@ id|value-&gt;type
 r_case
 id|IAS_INTEGER
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -962,7 +962,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -995,7 +995,7 @@ op_star
 id|log
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1103,7 +1103,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1143,7 +1143,7 @@ op_star
 id|name
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1285,7 +1285,7 @@ op_assign
 id|sk-&gt;protinfo.irda-&gt;saddr
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1296,7 +1296,7 @@ comma
 id|saddr.sir_lsap_sel
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1633,7 +1633,7 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1832,7 +1832,7 @@ op_member_access_from_pointer
 id|tsap
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2117,7 +2117,7 @@ id|self-&gt;daddr
 op_assign
 id|addr-&gt;sir_addr
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2145,7 +2145,7 @@ c_cond
 id|err
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2211,7 +2211,7 @@ c_cond
 id|err
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2349,7 +2349,7 @@ id|irda_sock
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2543,7 +2543,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2650,7 +2650,7 @@ id|sk
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2760,7 +2760,7 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2832,7 +2832,7 @@ op_eq
 id|FLOW_STOP
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2869,7 +2869,7 @@ OG
 id|self-&gt;max_data_size
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2927,7 +2927,7 @@ comma
 id|self-&gt;max_header_size
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2975,7 +2975,7 @@ c_cond
 id|err
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3045,7 +3045,7 @@ id|copied
 comma
 id|err
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3171,7 +3171,7 @@ op_le
 id|sk-&gt;rcvbuf
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3298,7 +3298,7 @@ id|target
 op_assign
 l_int|1
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -3552,7 +3552,7 @@ c_cond
 id|skb-&gt;len
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3584,7 +3584,7 @@ multiline_comment|/* &t;&t;&t;&t;break; */
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3642,7 +3642,7 @@ op_le
 id|sk-&gt;rcvbuf
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3686,7 +3686,7 @@ r_int
 id|how
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3735,7 +3735,7 @@ r_int
 r_int
 id|mask
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3871,7 +3871,7 @@ id|sk
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4092,7 +4092,7 @@ id|EINVAL
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4231,7 +4231,7 @@ id|optname
 r_case
 id|IRLMP_IAS_SET
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4246,7 +4246,7 @@ suffix:semicolon
 r_case
 id|IRTTP_MAX_SDU_SIZE
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -4481,7 +4481,7 @@ c_cond
 id|len
 op_minus
 id|total
-op_ge
+OL
 r_sizeof
 (paren
 r_struct
@@ -4543,7 +4543,6 @@ id|optval
 op_plus
 id|offset
 comma
-op_amp
 id|info
 comma
 r_sizeof
@@ -4640,7 +4639,7 @@ id|val
 op_assign
 id|self-&gt;max_data_size
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -4878,7 +4877,7 @@ id|event
 r_case
 id|NETDEV_UP
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -4893,7 +4892,7 @@ suffix:semicolon
 r_case
 id|NETDEV_DOWN
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3

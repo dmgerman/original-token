@@ -1,7 +1,6 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irias_object.c&n; * Version:       0.3&n; * Description:   IAS object database and functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct  1 22:50:04 1998&n; * Modified at:   Mon Jun 21 16:11:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irias_object.c&n; * Version:       0.3&n; * Description:   IAS object database and functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct  1 22:50:04 1998&n; * Modified at:   Sat Oct  9 17:11:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
-macro_line|#include &lt;linux/irda.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irias_object.h&gt;
@@ -131,7 +130,7 @@ id|ias_object
 op_star
 id|obj
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -167,7 +166,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -439,15 +438,6 @@ op_star
 id|obj
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -476,7 +466,7 @@ c_func
 id|objects
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|obj
@@ -546,15 +536,6 @@ r_struct
 id|ias_attrib
 op_star
 id|attrib
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -635,15 +616,6 @@ op_star
 id|attrib
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -694,7 +666,7 @@ c_func
 id|obj-&gt;attribs
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|attrib
@@ -756,11 +728,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to find object: %s&bslash;n&quot;
 comma
@@ -793,11 +763,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to find attribute: %s&bslash;n&quot;
 comma
@@ -817,7 +785,7 @@ op_ne
 id|new_value-&gt;type
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -932,11 +900,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to allocate attribute!&bslash;n&quot;
 )paren
@@ -970,7 +936,6 @@ c_func
 id|name
 )paren
 suffix:semicolon
-multiline_comment|/* &t;attrib-&gt;attr = NULL; */
 multiline_comment|/* Insert value */
 id|attrib-&gt;value
 op_assign
@@ -1061,18 +1026,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|len
-OL
-l_int|55
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME: must be 1024, but... */
 id|attrib
 op_assign
 (paren
@@ -1100,11 +1053,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to allocate attribute!&bslash;n&quot;
 )paren
@@ -1253,11 +1204,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to allocate attribute!&bslash;n&quot;
 )paren
@@ -1347,11 +1296,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to kmalloc!&bslash;n&quot;
 )paren
@@ -1430,11 +1377,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to kmalloc!&bslash;n&quot;
 )paren
@@ -1506,19 +1451,6 @@ id|ias_value
 op_star
 id|value
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|len
-op_le
-l_int|55
-comma
-r_return
-l_int|NULL
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/*FIXME: must be 1024, but.....*/
 id|value
 op_assign
 id|kmalloc
@@ -1541,11 +1473,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to kmalloc!&bslash;n&quot;
 )paren
@@ -1594,11 +1524,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), Unable to kmalloc!&bslash;n&quot;
 )paren
@@ -1633,7 +1561,7 @@ op_star
 id|value
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1709,7 +1637,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0

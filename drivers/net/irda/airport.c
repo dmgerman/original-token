@@ -107,7 +107,7 @@ r_void
 r_int
 id|ret
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -147,7 +147,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -179,7 +179,7 @@ r_int
 id|type
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -215,7 +215,7 @@ l_string|&quot; &lt;-&gt; airport&quot;
 )paren
 suffix:semicolon
 r_else
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -249,7 +249,7 @@ op_star
 id|idev
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -284,7 +284,7 @@ op_star
 id|idev
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -316,7 +316,7 @@ op_star
 id|idev
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -354,7 +354,7 @@ id|c
 r_int
 id|actual
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -422,7 +422,7 @@ suffix:semicolon
 r_int
 id|before
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -452,7 +452,7 @@ l_int|20
 )paren
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -487,7 +487,7 @@ id|i
 op_increment
 )paren
 (brace
-multiline_comment|/* DEBUG(6, __FUNCTION__ &quot; 0x02x&bslash;n&quot;, idev-&gt;rx_buff.data[i]); */
+multiline_comment|/* IRDA_DEBUG(6, __FUNCTION__ &quot; 0x02x&bslash;n&quot;, idev-&gt;rx_buff.data[i]); */
 id|found
 op_assign
 id|c
@@ -502,7 +502,7 @@ id|idev-&gt;rx_buff.len
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -544,7 +544,7 @@ id|found
 op_assign
 id|FALSE
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -623,7 +623,7 @@ c_cond
 id|found
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -637,7 +637,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -675,7 +675,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -776,7 +776,7 @@ c_cond
 id|ok
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -790,7 +790,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -828,7 +828,7 @@ suffix:semicolon
 r_int
 id|baudcode
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -933,7 +933,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -951,7 +951,7 @@ id|current_baudrate
 op_assign
 id|idev-&gt;qos.baud_rate.value
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -971,7 +971,7 @@ op_ne
 l_int|9600
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1050,7 +1050,7 @@ multiline_comment|/* ok */
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1063,7 +1063,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1089,7 +1089,7 @@ id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/* How do I signal an error in these functions? */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1115,7 +1115,7 @@ id|idev
 r_int
 id|ok
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1178,7 +1178,7 @@ id|idev
 )paren
 suffix:semicolon
 multiline_comment|/* Sleep 2000 ms */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1201,7 +1201,7 @@ l_int|2000
 )paren
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1363,7 +1363,7 @@ l_int|20
 )paren
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1389,7 +1389,7 @@ id|__FUNCTION__
 l_string|&quot;() failed.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2

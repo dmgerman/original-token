@@ -556,11 +556,6 @@ id|fail
 )paren
 suffix:semicolon
 )brace
-id|page-&gt;owner
-op_assign
-id|current
-suffix:semicolon
-singleline_comment|// HACK, FIXME, will go away.
 id|UnlockPage
 c_func
 (paren

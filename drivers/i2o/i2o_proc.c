@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   procfs handler for Linux I2O subsystem&n; *&n; *   Copyright (c) 1999 Deepak Saxena&n; *   &n; *   Originally written by Deepak Saxena(deepak@plexity.net)&n; *&n; *   This program is free software. You can redistribute it and/or&n; *   modify it under the terms of the GNU General Public License&n; *   as published by the Free Software Foundation; either version&n; *   2 of the License, or (at your option) any later version.&n; *&n; *   This is an initial test release. The code is based on the design&n; *   of the ide procfs system (drivers/block/ide-proc.c). Some code&n; *   taken from i2o-core module by Alan Cox.&n; *&n; *   DISCLAIMER: This code is still under development/test and may cause&n; *   your system to behave unpredictably.  Use at your own discretion.&n; *&n; *   LAN entries by Juha Siev&#xfffd;nen (Juha.Sievanen@cs.Helsinki.FI),&n; *&t;&t;    Auvo H&#xfffd;kkinen (Auvo.Hakkinen@cs.Helsinki.FI)&n; *   University of Helsinki, Department of Computer Science&n; */
+multiline_comment|/*&n; *   procfs handler for Linux I2O subsystem&n; *&n; *   (c) Copyright 1999 Deepak Saxena&n; *   &n; *   Originally written by Deepak Saxena(deepak@plexity.net)&n; *&n; *   This program is free software. You can redistribute it and/or&n; *   modify it under the terms of the GNU General Public License&n; *   as published by the Free Software Foundation; either version&n; *   2 of the License, or (at your option) any later version.&n; *&n; *   This is an initial test release. The code is based on the design&n; *   of the ide procfs system (drivers/block/ide-proc.c). Some code&n; *   taken from i2o-core module by Alan Cox.&n; *&n; *   DISCLAIMER: This code is still under development/test and may cause&n; *   your system to behave unpredictably.  Use at your own discretion.&n; *&n; *   LAN entries by Juha Siev&#xfffd;nen (Juha.Sievanen@cs.Helsinki.FI),&n; *&t;&t;    Auvo H&#xfffd;kkinen (Auvo.Hakkinen@cs.Helsinki.FI)&n; *   University of Helsinki, Department of Computer Science&n; */
 multiline_comment|/*&n; * set tabstop=3&n; */
 multiline_comment|/*&n; * TODO List&n; *&n; * - Add support for any version 2.0 spec changes once 2.0 IRTOS is&n; *   is available to test with&n; * - Clean up code to use official structure definitions &n; */
 singleline_comment|// FIXME!
@@ -4345,8 +4345,6 @@ id|c
 comma
 id|ADAPTER_TID
 comma
-id|proc_context
-comma
 l_int|0
 comma
 singleline_comment|// ParamGroup 0x0000h
@@ -4361,9 +4359,6 @@ r_sizeof
 (paren
 id|work32
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -4381,7 +4376,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;Timeout waiting for reply from IOP&bslash;n&quot;
+l_string|&quot;Error waiting for reply from IOP&bslash;n&quot;
 )paren
 suffix:semicolon
 id|spin_unlock
@@ -4818,8 +4813,6 @@ id|c
 comma
 id|ADAPTER_TID
 comma
-id|proc_context
-comma
 l_int|0x0003
 comma
 op_minus
@@ -4836,9 +4829,6 @@ r_sizeof
 (paren
 id|result
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -5209,9 +5199,6 @@ id|work32
 l_int|8
 )braket
 suffix:semicolon
-r_int
-id|token
-suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -5223,16 +5210,15 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
-id|token
-op_assign
+r_if
+c_cond
+(paren
 id|i2o_query_scalar
 c_func
 (paren
 id|c
 comma
 id|ADAPTER_TID
-comma
-id|proc_context
 comma
 l_int|0x0004
 comma
@@ -5246,15 +5232,7 @@ r_sizeof
 (paren
 id|work32
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|token
 OL
 l_int|0
 )paren
@@ -5478,8 +5456,6 @@ id|c
 comma
 id|ADAPTER_TID
 comma
-id|proc_context
-comma
 l_int|0x0005
 comma
 op_minus
@@ -5496,9 +5472,6 @@ r_sizeof
 (paren
 id|result
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -5972,8 +5945,6 @@ id|c
 comma
 id|ADAPTER_TID
 comma
-id|proc_context
-comma
 l_int|0xF000
 comma
 op_minus
@@ -5990,9 +5961,6 @@ r_sizeof
 (paren
 id|work16
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -6490,8 +6458,6 @@ id|c
 comma
 id|ADAPTER_TID
 comma
-id|proc_context
-comma
 l_int|0xF000
 comma
 op_minus
@@ -6508,9 +6474,6 @@ r_sizeof
 (paren
 id|work16
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -6828,9 +6791,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0xF100
 comma
@@ -6846,9 +6807,6 @@ r_sizeof
 (paren
 id|work32
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -7267,9 +7225,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0xF101
 comma
@@ -7285,9 +7241,6 @@ r_sizeof
 (paren
 id|work32
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -7533,9 +7486,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0xF102
 comma
@@ -7551,9 +7502,6 @@ r_sizeof
 (paren
 id|work32
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -7793,9 +7741,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0xF103
 comma
@@ -7811,9 +7757,6 @@ r_sizeof
 (paren
 id|work32
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -9283,9 +9226,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0000
 comma
@@ -9298,9 +9239,6 @@ comma
 l_int|56
 op_star
 l_int|4
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -10116,9 +10054,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0001
 comma
@@ -10131,9 +10067,6 @@ comma
 l_int|48
 op_star
 l_int|4
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -10958,9 +10891,7 @@ id|I2O_PARAMS_TABLE_GET
 comma
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0002
 comma
@@ -10978,9 +10909,6 @@ r_sizeof
 (paren
 id|field32
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -11264,9 +11192,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0003
 comma
@@ -11279,9 +11205,6 @@ comma
 l_int|9
 op_star
 l_int|4
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -11691,9 +11614,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0004
 comma
@@ -11704,9 +11625,6 @@ op_amp
 id|work32
 comma
 l_int|20
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -12248,9 +12166,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0005
 comma
@@ -12261,9 +12177,6 @@ op_amp
 id|work32
 comma
 l_int|36
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -12792,9 +12705,7 @@ id|I2O_PARAMS_TABLE_GET
 comma
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0006
 comma
@@ -12812,9 +12723,6 @@ r_sizeof
 (paren
 id|field32
 )paren
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -13098,9 +13006,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0007
 comma
@@ -13113,9 +13019,6 @@ comma
 l_int|8
 op_star
 l_int|4
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -13654,9 +13557,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0008
 comma
@@ -13669,9 +13570,6 @@ comma
 l_int|8
 op_star
 l_int|4
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -13894,9 +13792,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0100
 comma
@@ -13909,9 +13805,6 @@ comma
 l_int|9
 op_star
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -14238,9 +14131,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0180
 comma
@@ -14253,9 +14144,6 @@ comma
 l_int|4
 op_star
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -14466,9 +14354,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0182
 comma
@@ -14481,9 +14367,6 @@ comma
 l_int|9
 op_star
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -14810,9 +14693,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0183
 comma
@@ -14825,9 +14706,6 @@ comma
 l_int|11
 op_star
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -15202,9 +15080,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0200
 comma
@@ -15217,9 +15093,6 @@ comma
 l_int|8
 op_star
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -15522,9 +15395,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0280
 comma
@@ -15535,9 +15406,6 @@ op_amp
 id|work64
 comma
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -15672,9 +15540,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0281
 comma
@@ -15687,9 +15553,6 @@ comma
 l_int|3
 op_star
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -15909,9 +15772,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0300
 comma
@@ -15924,9 +15785,6 @@ comma
 l_int|13
 op_star
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -16435,9 +16293,7 @@ c_func
 (paren
 id|d-&gt;controller
 comma
-id|d-&gt;id
-comma
-id|proc_context
+id|d-&gt;lct_data-&gt;tid
 comma
 l_int|0x0400
 comma
@@ -16450,9 +16306,6 @@ comma
 l_int|11
 op_star
 l_int|8
-comma
-op_amp
-id|i2o_proc_token
 )paren
 suffix:semicolon
 r_if
@@ -16944,7 +16797,7 @@ id|buff
 comma
 l_string|&quot;%0#5x&quot;
 comma
-id|dev-&gt;id
+id|dev-&gt;lct_data-&gt;tid
 )paren
 suffix:semicolon
 id|dir1
@@ -16991,9 +16844,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|dev
-op_member_access_from_pointer
-r_class
+id|dev-&gt;lct_data-&gt;class_id
 )paren
 (brace
 r_case
@@ -17030,7 +16881,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|dev-&gt;subclass
+id|dev-&gt;lct_data-&gt;sub_class
 )paren
 (brace
 r_case
@@ -17160,7 +17011,7 @@ id|dev_id
 comma
 l_string|&quot;%0#5x&quot;
 comma
-id|dev-&gt;id
+id|dev-&gt;lct_data-&gt;tid
 )paren
 suffix:semicolon
 multiline_comment|/* Would it be safe to remove _files_ even if they are in use? */
@@ -17188,9 +17039,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|dev
-op_member_access_from_pointer
-r_class
+id|dev-&gt;lct_data-&gt;class_id
 )paren
 (brace
 r_case
@@ -17223,7 +17072,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|dev-&gt;subclass
+id|dev-&gt;lct_data-&gt;sub_class
 )paren
 (brace
 r_case

@@ -189,8 +189,8 @@ id|nr_async_pages
 suffix:semicolon
 r_extern
 r_struct
-id|inode
-id|swapper_inode
+id|address_space
+id|swapper_space
 suffix:semicolon
 r_extern
 id|atomic_t

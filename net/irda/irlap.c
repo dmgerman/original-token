@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       1.0&n; * Description:   IrLAP implementation for Linux&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon Sep 20 11:04:32 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       1.0&n; * Description:   IrLAP implementation for Linux&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri Oct  8 23:17:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -118,11 +118,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|ERROR
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;IrLAP: Can&squot;t allocate irlap hashbin!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), can&squot;t allocate irlap hashbin!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -147,11 +147,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;IrLAP: Can&squot;t allocate compressors hashbin!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), can&squot;t allocate compressors hashbin!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -220,6 +220,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|qos_info
+op_star
+id|qos
 )paren
 (brace
 r_struct
@@ -227,7 +232,7 @@ id|irlap_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -284,6 +289,15 @@ id|self-&gt;netdev
 op_assign
 id|dev
 suffix:semicolon
+id|self-&gt;qos_dev
+op_assign
+id|qos
+suffix:semicolon
+multiline_comment|/* FIXME: should we get our own field? */
+id|dev-&gt;atalk_ptr
+op_assign
+id|self
+suffix:semicolon
 id|irlap_next_state
 c_func
 (paren
@@ -318,6 +332,17 @@ r_sizeof
 (paren
 id|self-&gt;saddr
 )paren
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|dev-&gt;dev_addr
+comma
+op_amp
+id|self-&gt;saddr
+comma
+l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * Generate random connection address for this session, which must&n;&t; * be 7 bits wide and different from 0x00 and 0xfe &n;&t; */
@@ -403,6 +428,13 @@ op_amp
 id|self-&gt;backoff_timer
 )paren
 suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|self-&gt;media_busy_timer
+)paren
+suffix:semicolon
 id|irlap_apply_default_connection_parameters
 c_func
 (paren
@@ -423,7 +455,7 @@ c_func
 id|irlap
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|self
@@ -533,6 +565,13 @@ op_amp
 id|self-&gt;backoff_timer
 )paren
 suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|self-&gt;media_busy_timer
+)paren
+suffix:semicolon
 id|irlap_flush_all_queues
 c_func
 (paren
@@ -567,7 +606,7 @@ id|irlap_cb
 op_star
 id|lap
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -636,7 +675,7 @@ op_logical_neg
 id|lap
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -672,7 +711,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -745,7 +784,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -790,7 +829,7 @@ r_int
 id|sniff
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -846,11 +885,7 @@ id|LAP_NDM
 )paren
 op_logical_and
 op_logical_neg
-id|irda_device_is_media_busy
-c_func
-(paren
-id|self-&gt;netdev
-)paren
+id|self-&gt;media_busy
 )paren
 id|irlap_do_event
 c_func
@@ -887,7 +922,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -983,7 +1018,7 @@ op_logical_neg
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1025,7 +1060,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1102,7 +1137,7 @@ op_logical_neg
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1194,7 +1229,7 @@ op_logical_neg
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1252,7 +1287,7 @@ id|I_FRAME
 suffix:semicolon
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1365,7 +1400,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -1459,7 +1494,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1491,7 +1526,7 @@ id|LAP_REASON
 id|reason
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1551,7 +1586,7 @@ id|reason
 r_case
 id|LAP_RESET_INDICATION
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1605,7 +1640,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1671,7 +1706,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1839,7 +1874,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1913,7 +1948,7 @@ c_cond
 (paren
 id|discovery_log
 op_logical_and
-id|hashbin_get_size
+id|HASHBIN_GET_SIZE
 c_func
 (paren
 id|discovery_log
@@ -1955,7 +1990,7 @@ op_star
 id|discovery
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2036,10 +2071,9 @@ id|quality_of_link
 r_case
 id|STATUS_NO_ACTIVITY
 suffix:colon
-id|printk
+id|MESSAGE
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;IrLAP, no activity on link!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2048,10 +2082,9 @@ suffix:semicolon
 r_case
 id|STATUS_NOISY
 suffix:colon
-id|printk
+id|MESSAGE
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;IrLAP, noisy link!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2083,7 +2116,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2156,7 +2189,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2434,7 +2467,7 @@ op_eq
 id|self-&gt;vs
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2513,7 +2546,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2586,13 +2619,13 @@ op_star
 id|qos
 )paren
 (brace
-r_int
-id|usecs
-suffix:semicolon
-r_int
+id|__u32
 id|speed
 suffix:semicolon
-r_int
+id|__u32
+id|usecs
+suffix:semicolon
+id|__u32
 id|bytes
 suffix:semicolon
 multiline_comment|/* Get QoS values.  */
@@ -2754,11 +2787,7 @@ id|__u32
 id|speed
 )paren
 (brace
-r_struct
-id|ifreq
-id|req
-suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2791,43 +2820,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|self-&gt;netdev
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;(), driver missing!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* &n;&t; * Warning, ifr_bandwidth is only 16 bits on architectures where ints&n;         * are 16 bits wide.&n;&t; */
-id|req.ifr_bandwidth
-op_assign
-id|speed
-suffix:semicolon
-id|self-&gt;netdev
-op_member_access_from_pointer
-id|do_ioctl
-c_func
-(paren
-id|self-&gt;netdev
-comma
-op_amp
-id|req
-comma
-id|SIOCSBANDWIDTH
-)paren
-suffix:semicolon
+multiline_comment|/* Must use the same speed in both directions */
 id|self-&gt;qos_rx.baud_rate.value
 op_assign
 id|speed
@@ -2884,7 +2877,7 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Find out which compressors we support. We do this be checking that&n;&t; *  the corresponding compressor for each bit set in the QoS bits has &n;&t; *  actually been loaded. Ths is sort of hairy code but that is what &n;&t; *  you get when you do a little bit flicking :-)&n;&t; */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2915,7 +2908,7 @@ id|i
 op_increment
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2936,7 +2929,7 @@ op_amp
 id|mask
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2976,7 +2969,7 @@ id|comp
 )paren
 (brace
 multiline_comment|/* Protocol not supported, so clear the bit */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3000,7 +2993,7 @@ op_and_assign
 op_complement
 id|mask
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3094,11 +3087,7 @@ c_func
 op_amp
 id|self-&gt;qos_rx
 comma
-id|irda_device_get_qos
-c_func
-(paren
-id|self-&gt;netdev
-)paren
+id|self-&gt;qos_dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Check for user supplied QoS parameters. The service user is only &n;&t; *  allowed to supply these values. We check each parameter since the&n;&t; *  user may not have set all of them.&n;&t; */
@@ -3108,7 +3097,7 @@ c_cond
 id|qos_user
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3197,7 +3186,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3294,7 +3283,7 @@ op_star
 id|qos
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3354,7 +3343,7 @@ id|qos-&gt;max_turn_time.value
 op_div
 l_int|10000
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3383,7 +3372,7 @@ l_int|3000
 op_div
 id|qos-&gt;max_turn_time.value
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3401,7 +3390,7 @@ l_int|1000
 op_div
 id|qos-&gt;max_turn_time.value
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3441,7 +3430,7 @@ c_cond
 id|qos-&gt;compression.value
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3484,7 +3473,7 @@ r_int
 id|status
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3502,7 +3491,7 @@ c_cond
 (paren
 id|status
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3512,7 +3501,7 @@ l_string|&quot;(), local busy ON&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Mon Sep 20 12:30:31 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Sun Oct 10 11:14:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -713,7 +713,7 @@ id|self-&gt;fast_RR
 op_assign
 id|FALSE
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -799,7 +799,7 @@ id|LAP_MAGIC
 )paren
 r_return
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -958,11 +958,7 @@ id|self-&gt;connect_pending
 )paren
 op_logical_and
 op_logical_neg
-id|irda_device_is_media_busy
-c_func
-(paren
-id|self-&gt;netdev
-)paren
+id|self-&gt;media_busy
 )paren
 (brace
 id|self-&gt;connect_pending
@@ -1027,7 +1023,7 @@ id|LAP_MAGIC
 )paren
 r_return
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1151,14 +1147,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irda_device_is_media_busy
-c_func
-(paren
-id|self-&gt;netdev
-)paren
+id|self-&gt;media_busy
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1257,7 +1249,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1295,14 +1287,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irda_device_is_media_busy
-c_func
-(paren
-id|self-&gt;netdev
-)paren
+id|self-&gt;media_busy
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1413,7 +1401,7 @@ comma
 id|info-&gt;s
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1536,7 +1524,7 @@ suffix:semicolon
 r_case
 id|RECV_TEST_RSP
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1555,7 +1543,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1684,7 +1672,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1720,7 +1708,7 @@ c_func
 id|self-&gt;discovery_log
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|info-&gt;discovery
@@ -1838,7 +1826,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1912,7 +1900,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1956,7 +1944,7 @@ id|event
 r_case
 id|QUERY_TIMER_EXPIRED
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2092,7 +2080,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2162,7 +2150,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2301,7 +2289,7 @@ suffix:semicolon
 r_case
 id|RECV_DISCOVERY_XID_CMD
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -2341,7 +2329,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2411,7 +2399,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2533,7 +2521,7 @@ suffix:semicolon
 r_case
 id|RECV_SNRM_CMD
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2828,7 +2816,7 @@ suffix:semicolon
 multiline_comment|/* DM handled in irlap_frame.c, irlap_driver_rcv() */
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2893,7 +2881,7 @@ op_star
 id|info
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2976,7 +2964,7 @@ OG
 id|self-&gt;bytes_left
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3081,7 +3069,7 @@ macro_line|#endif
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3192,7 +3180,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3260,7 +3248,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3405,7 +3393,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3714,7 +3702,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3924,7 +3912,7 @@ id|NR_UNEXPECTED
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4054,7 +4042,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4063,7 +4051,7 @@ id|__FUNCTION__
 l_string|&quot;(), Not implemented!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4247,7 +4235,7 @@ comma
 id|info-&gt;nr
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4293,7 +4281,7 @@ op_eq
 id|NR_INVALID
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4347,7 +4335,7 @@ suffix:semicolon
 r_case
 id|RECV_RNR_FRAME
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4488,7 +4476,7 @@ op_logical_neg
 id|self-&gt;add_wait
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4565,7 +4553,7 @@ suffix:semicolon
 id|self-&gt;retry_count
 op_increment
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4621,7 +4609,7 @@ suffix:semicolon
 id|self-&gt;retry_count
 op_increment
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4672,7 +4660,7 @@ r_case
 id|RECV_DISC_FRAME
 suffix:colon
 multiline_comment|/* FIXME: Check how this is in the standard! */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4750,7 +4738,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4818,7 +4806,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -4976,7 +4964,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -5044,7 +5032,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -5207,11 +5195,7 @@ c_func
 (paren
 id|self
 comma
-id|irda_device_get_qos
-c_func
-(paren
-id|self-&gt;netdev
-)paren
+id|self-&gt;qos_dev
 )paren
 suffix:semicolon
 id|self-&gt;retry_count
@@ -5281,7 +5265,7 @@ op_logical_neg
 id|info
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -5338,7 +5322,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -5359,7 +5343,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -5427,7 +5411,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -5602,7 +5586,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -5630,7 +5614,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -5704,7 +5688,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -5755,7 +5739,7 @@ id|RECV_I_CMD
 suffix:colon
 multiline_comment|/* Optimize for the common case */
 multiline_comment|/* FIXME: must check for remote_busy below */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -6099,7 +6083,7 @@ c_cond
 id|info-&gt;pf
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -6225,7 +6209,7 @@ op_eq
 id|NR_INVALID
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -6242,7 +6226,7 @@ op_eq
 id|NS_INVALID
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -6569,7 +6553,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -6610,7 +6594,7 @@ op_amp
 id|self-&gt;wd_timer
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -6636,7 +6620,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -6659,7 +6643,7 @@ r_case
 id|WD_TIMER_EXPIRED
 suffix:colon
 multiline_comment|/*&n;&t;&t; *  Wait until retry_count * n matches negotiated threshold/&n;&t;&t; *  disconnect time (note 2 in IrLAP p. 82)&n;&t;&t; */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -6937,7 +6921,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -6991,7 +6975,7 @@ op_star
 id|info
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -7035,7 +7019,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -7148,7 +7132,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1

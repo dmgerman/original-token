@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;pcmcia/version.h&gt;
@@ -22,6 +23,37 @@ macro_line|#include &lt;pcmcia/cistpl.h&gt;
 macro_line|#include &lt;pcmcia/cisreg.h&gt;
 macro_line|#include &lt;pcmcia/ds.h&gt;
 macro_line|#include &lt;pcmcia/mem_op.h&gt;
+macro_line|#ifdef HAS_WIRELESS_EXTENSIONS
+macro_line|#include &lt;linux/wireless.h&gt;
+macro_line|#if WIRELESS_EXT &lt; 8
+macro_line|#warning &quot;Wireless extension v8 or newer required&quot;
+macro_line|#endif&t;/* WIRELESS_EXT &lt; 8 */
+multiline_comment|/* Warning : these stuff will slow down the driver... */
+DECL|macro|WIRELESS_SPY
+mdefine_line|#define WIRELESS_SPY&t;&t;/* Enable spying addresses */
+multiline_comment|/* Definitions we need for spy */
+DECL|typedef|iw_stats
+r_typedef
+r_struct
+id|iw_statistics
+id|iw_stats
+suffix:semicolon
+DECL|typedef|iw_qual
+r_typedef
+r_struct
+id|iw_quality
+id|iw_qual
+suffix:semicolon
+DECL|typedef|mac_addr
+r_typedef
+id|u_char
+id|mac_addr
+(braket
+id|ETH_ALEN
+)braket
+suffix:semicolon
+multiline_comment|/* Hardware address */
+macro_line|#endif&t;/* HAS_WIRELESS_EXTENSIONS */
 macro_line|#include &quot;rayctl.h&quot;
 macro_line|#include &quot;ray_cs.h&quot;
 multiline_comment|/* All the PCMCIA modules use PCMCIA_DEBUG to control debugging.  If&n;   you do not define PCMCIA_DEBUG at all, all the debug code will be&n;   left out.  If you compile with PCMCIA_DEBUG=0, the debug code will&n;   be present but disabled -- but it can then be enabled for specific&n;   modules at load time with a &squot;pc_debug=#&squot; option to insmod.&n;*/
@@ -60,6 +92,7 @@ DECL|macro|DEBUG
 mdefine_line|#define DEBUG(n, args...)
 macro_line|#endif
 multiline_comment|/** Prototypes based on PCMCIA skeleton driver *******************************/
+r_static
 r_void
 id|ray_config
 c_func
@@ -69,6 +102,7 @@ op_star
 id|link
 )paren
 suffix:semicolon
+r_static
 r_void
 id|ray_release
 c_func
@@ -77,6 +111,7 @@ id|u_long
 id|arg
 )paren
 suffix:semicolon
+r_static
 r_int
 id|ray_event
 c_func
@@ -92,6 +127,7 @@ op_star
 id|args
 )paren
 suffix:semicolon
+r_static
 id|dev_link_t
 op_star
 id|ray_attach
@@ -100,6 +136,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_static
 r_void
 id|ray_detach
 c_func
@@ -109,6 +146,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/***** Prototypes indicated by device structure ******************************/
+r_static
 r_int
 id|ray_dev_close
 c_func
@@ -119,6 +157,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_int
 id|ray_dev_config
 c_func
@@ -134,6 +173,7 @@ op_star
 id|map
 )paren
 suffix:semicolon
+r_static
 r_struct
 id|enet_statistics
 op_star
@@ -146,6 +186,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_int
 id|ray_dev_init
 c_func
@@ -156,6 +197,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_int
 id|ray_dev_ioctl
 c_func
@@ -174,6 +216,7 @@ r_int
 id|cmd
 )paren
 suffix:semicolon
+r_static
 r_int
 id|ray_open
 c_func
@@ -184,6 +227,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_int
 id|ray_dev_start_xmit
 c_func
@@ -224,31 +268,7 @@ r_int
 id|all
 )paren
 suffix:semicolon
-r_int
-id|encapsulate_frame
-c_func
-(paren
-id|ray_dev_t
-op_star
-id|local
-comma
-r_struct
-id|tx_msg
-op_star
-id|ptx
-comma
-id|UCHAR
-id|msg_type
-comma
-r_int
-r_char
-op_star
-id|data
-comma
-r_int
-id|len
-)paren
-suffix:semicolon
+r_static
 r_int
 id|translate_frame
 c_func
@@ -271,6 +291,7 @@ r_int
 id|len
 )paren
 suffix:semicolon
+r_static
 r_void
 id|ray_build_header
 c_func
@@ -293,6 +314,7 @@ op_star
 id|data
 )paren
 suffix:semicolon
+r_static
 r_void
 id|untranslate
 c_func
@@ -310,7 +332,22 @@ r_int
 id|len
 )paren
 suffix:semicolon
+macro_line|#if WIRELESS_EXT &gt; 7&t;/* If wireless extension exist in the kernel */
+r_static
+id|iw_stats
+op_star
+id|ray_get_wireless_stats
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* WIRELESS_EXT &gt; 7 */
 multiline_comment|/***** Prototypes for raylink functions **************************************/
+r_static
 r_int
 id|asc_to_int
 c_func
@@ -319,6 +356,7 @@ r_char
 id|a
 )paren
 suffix:semicolon
+r_static
 r_void
 id|authenticate
 c_func
@@ -328,6 +366,7 @@ op_star
 id|local
 )paren
 suffix:semicolon
+r_static
 r_int
 id|build_auth_frame
 c_func
@@ -344,6 +383,7 @@ r_int
 id|auth_type
 )paren
 suffix:semicolon
+r_static
 r_void
 id|authenticate_timeout
 c_func
@@ -351,6 +391,7 @@ c_func
 id|u_long
 )paren
 suffix:semicolon
+r_static
 r_int
 id|get_free_ccs
 c_func
@@ -360,6 +401,7 @@ op_star
 id|local
 )paren
 suffix:semicolon
+r_static
 r_int
 id|get_free_tx_ccs
 c_func
@@ -369,6 +411,7 @@ op_star
 id|local
 )paren
 suffix:semicolon
+r_static
 r_void
 id|init_startup_params
 c_func
@@ -378,6 +421,7 @@ op_star
 id|local
 )paren
 suffix:semicolon
+r_static
 r_int
 id|parse_addr
 c_func
@@ -391,6 +435,7 @@ op_star
 id|out
 )paren
 suffix:semicolon
+r_static
 r_int
 id|ray_hw_xmit
 c_func
@@ -412,6 +457,7 @@ id|UCHAR
 id|type
 )paren
 suffix:semicolon
+r_static
 r_int
 id|ray_init
 c_func
@@ -422,6 +468,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_int
 id|interrupt_ecf
 c_func
@@ -434,6 +481,7 @@ r_int
 id|ccs
 )paren
 suffix:semicolon
+r_static
 r_void
 id|ray_reset
 c_func
@@ -444,6 +492,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_void
 id|ray_update_parm
 c_func
@@ -464,6 +513,7 @@ r_int
 id|len
 )paren
 suffix:semicolon
+r_static
 r_void
 id|verify_dl_startup
 c_func
@@ -472,9 +522,9 @@ id|u_long
 )paren
 suffix:semicolon
 multiline_comment|/* Prototypes for interrpt time functions **********************************/
+r_static
 r_void
 id|ray_interrupt
-c_func
 (paren
 r_int
 id|reg
@@ -489,6 +539,7 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_static
 r_void
 id|clear_interrupt
 c_func
@@ -498,6 +549,7 @@ op_star
 id|local
 )paren
 suffix:semicolon
+r_static
 r_void
 id|rx_deauthenticate
 c_func
@@ -519,6 +571,7 @@ r_int
 id|rx_len
 )paren
 suffix:semicolon
+r_static
 r_int
 id|copy_from_rx_buff
 c_func
@@ -538,6 +591,7 @@ r_int
 id|len
 )paren
 suffix:semicolon
+r_static
 r_void
 id|ray_rx
 c_func
@@ -557,6 +611,7 @@ op_star
 id|prcs
 )paren
 suffix:semicolon
+r_static
 r_void
 id|release_frag_chain
 c_func
@@ -571,6 +626,7 @@ op_star
 id|prcs
 )paren
 suffix:semicolon
+r_static
 r_void
 id|rx_authenticate
 c_func
@@ -592,6 +648,7 @@ r_int
 id|rx_len
 )paren
 suffix:semicolon
+r_static
 r_void
 id|rx_data
 c_func
@@ -614,6 +671,7 @@ r_int
 id|rx_len
 )paren
 suffix:semicolon
+r_static
 r_void
 id|associate
 c_func
@@ -624,6 +682,7 @@ id|local
 )paren
 suffix:semicolon
 multiline_comment|/* Card command functions */
+r_static
 r_int
 id|dl_startup_params
 c_func
@@ -634,6 +693,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_void
 id|join_net
 c_func
@@ -642,6 +702,7 @@ id|u_long
 id|local
 )paren
 suffix:semicolon
+r_static
 r_void
 id|start_net
 c_func
@@ -651,6 +712,7 @@ id|local
 )paren
 suffix:semicolon
 multiline_comment|/* void start_net(ray_dev_t *local); */
+r_static
 r_int
 id|ray_cs_proc_read
 c_func
@@ -1374,6 +1436,35 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+DECL|variable|hop_pattern_length
+r_static
+r_char
+id|hop_pattern_length
+(braket
+)braket
+op_assign
+(brace
+l_int|1
+comma
+id|USA_HOP_MOD
+comma
+id|EUROPE_HOP_MOD
+comma
+id|JAPAN_HOP_MOD
+comma
+id|KOREA_HOP_MOD
+comma
+id|SPAIN_HOP_MOD
+comma
+id|FRANCE_HOP_MOD
+comma
+id|ISRAEL_HOP_MOD
+comma
+id|AUSTRALIA_HOP_MOD
+comma
+id|JAPAN_TEST_HOP_MOD
+)brace
+suffix:semicolon
 DECL|variable|rcsid
 r_static
 r_char
@@ -1426,6 +1517,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*===========================================================================*/
 DECL|function|cs_error
+r_static
 r_void
 id|cs_error
 c_func
@@ -1463,6 +1555,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*=============================================================================&n;    ray_attach() creates an &quot;instance&quot; of the driver, allocating&n;    local data structures for one device.  The device is registered&n;    with Card Services.&n;    The dev_link structure is initialized, but we don&squot;t actually&n;    configure the card at this point -- we wait until we receive a&n;    card insertion event.&n;=============================================================================*/
 DECL|function|ray_attach
+r_static
 id|dev_link_t
 op_star
 id|ray_attach
@@ -1721,6 +1814,12 @@ op_assign
 op_amp
 id|ray_dev_ioctl
 suffix:semicolon
+macro_line|#if WIRELESS_EXT &gt; 7&t;/* If wireless extension exist in the kernel */
+id|dev-&gt;get_wireless_stats
+op_assign
+id|ray_get_wireless_stats
+suffix:semicolon
+macro_line|#endif
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
@@ -1888,6 +1987,7 @@ suffix:semicolon
 multiline_comment|/* ray_attach */
 multiline_comment|/*=============================================================================&n;    This deletes a driver &quot;instance&quot;.  The device is de-registered&n;    with Card Services.  If it has been released, all local data&n;    structures are freed.  Otherwise, the structures will be freed&n;    when the device is released.&n;=============================================================================*/
 DECL|function|ray_detach
+r_static
 r_void
 id|ray_detach
 c_func
@@ -2121,6 +2221,7 @@ mdefine_line|#define CS_CHECK(fn, args...) &bslash;&n;while ((last_ret=CardServi
 DECL|macro|MAX_TUPLE_SIZE
 mdefine_line|#define MAX_TUPLE_SIZE 128
 DECL|function|ray_config
+r_static
 r_void
 id|ray_config
 c_func
@@ -2785,6 +2886,7 @@ suffix:semicolon
 multiline_comment|/* ray_config */
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_init
+r_static
 r_int
 id|ray_init
 c_func
@@ -3091,6 +3193,7 @@ multiline_comment|/* ray_init */
 multiline_comment|/*===========================================================================*/
 multiline_comment|/* Download startup parameters to the card and command it to read them       */
 DECL|function|dl_startup_params
+r_static
 r_int
 id|dl_startup_params
 c_func
@@ -3351,6 +3454,7 @@ suffix:semicolon
 multiline_comment|/* dl_startup_params */
 multiline_comment|/*===========================================================================*/
 DECL|function|init_startup_params
+r_static
 r_void
 id|init_startup_params
 c_func
@@ -3362,34 +3466,6 @@ id|local
 (brace
 r_int
 id|i
-suffix:semicolon
-r_static
-r_char
-id|hop_pattern_length
-(braket
-)braket
-op_assign
-(brace
-l_int|1
-comma
-id|USA_HOP_MOD
-comma
-id|EUROPE_HOP_MOD
-comma
-id|JAPAN_HOP_MOD
-comma
-id|KOREA_HOP_MOD
-comma
-id|SPAIN_HOP_MOD
-comma
-id|FRANCE_HOP_MOD
-comma
-id|ISRAEL_HOP_MOD
-comma
-id|AUSTRALIA_HOP_MOD
-comma
-id|JAPAN_TEST_HOP_MOD
-)brace
 suffix:semicolon
 r_if
 c_cond
@@ -3658,6 +3734,7 @@ suffix:semicolon
 multiline_comment|/* init_startup_params */
 multiline_comment|/*===========================================================================*/
 DECL|function|verify_dl_startup
+r_static
 r_void
 id|verify_dl_startup
 c_func
@@ -3772,6 +3849,10 @@ c_func
 (paren
 l_string|&quot; %2x&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|readb
 c_func
 (paren
@@ -3858,6 +3939,7 @@ multiline_comment|/* end verify_dl_startup */
 multiline_comment|/*===========================================================================*/
 multiline_comment|/* Command card to start a network */
 DECL|function|start_net
+r_static
 r_void
 id|start_net
 c_func
@@ -4014,6 +4096,7 @@ multiline_comment|/* end start_net */
 multiline_comment|/*===========================================================================*/
 multiline_comment|/* Command card to join a network */
 DECL|function|join_net
+r_static
 r_void
 id|join_net
 c_func
@@ -4177,6 +4260,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n;    After a card is removed, ray_release() will unregister the net&n;    device, and release the PCMCIA configuration.  If the device is&n;    still open, this will be postponed until it is closed.&n;=============================================================================*/
 DECL|function|ray_release
+r_static
 r_void
 id|ray_release
 c_func
@@ -4457,6 +4541,7 @@ suffix:semicolon
 multiline_comment|/* ray_release */
 multiline_comment|/*=============================================================================&n;    The card status event handler.  Mostly, this schedules other&n;    stuff to run after an event is received.  A CARD_REMOVAL event&n;    also sets some flags to discourage the net drivers from trying&n;    to talk to the card any more.&n;&n;    When a CARD_REMOVAL event is received, we immediately set a flag&n;    to block future accesses to this device.  All the functions that&n;    actually access the device should check this flag to make sure&n;    the card is still present.&n;=============================================================================*/
 DECL|function|ray_event
+r_static
 r_int
 id|ray_event
 c_func
@@ -4821,6 +4906,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_dev_config
+r_static
 r_int
 id|ray_dev_config
 c_func
@@ -4891,6 +4977,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_dev_start_xmit
+r_static
 r_int
 id|ray_dev_start_xmit
 c_func
@@ -5089,6 +5176,7 @@ suffix:semicolon
 multiline_comment|/* ray_dev_start_xmit */
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_hw_xmit
+r_static
 r_int
 id|ray_hw_xmit
 c_func
@@ -5304,13 +5392,9 @@ r_else
 (brace
 multiline_comment|/* Encapsulate frame */
 multiline_comment|/* TBD TIB length will move address of ptx-&gt;var */
-id|memcpy
+id|memcpy_toio
 c_func
 (paren
-(paren
-id|UCHAR
-op_star
-)paren
 op_amp
 id|ptx-&gt;var
 comma
@@ -5492,6 +5576,7 @@ suffix:semicolon
 multiline_comment|/* end ray_hw_xmit */
 multiline_comment|/*===========================================================================*/
 DECL|function|translate_frame
+r_static
 r_int
 id|translate_frame
 c_func
@@ -5668,6 +5753,9 @@ id|ETH_HLEN
 )paren
 suffix:semicolon
 r_return
+(paren
+r_int
+)paren
 r_sizeof
 (paren
 r_struct
@@ -5760,6 +5848,7 @@ multiline_comment|/* TBD do other frame types */
 multiline_comment|/* end translate_frame */
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_build_header
+r_static
 r_void
 id|ray_build_header
 c_func
@@ -5793,7 +5882,7 @@ op_amp
 id|ptx-&gt;mac.frame_ctl_1
 )paren
 suffix:semicolon
-multiline_comment|/*** IEEE 802.11 Address field assignments *************&n;                     addr_1       addr_2     addr_3&n;     AP              destination  AP(BSSID)  source&n;     Infra Terminal  AP           terminal   destination&n;     Adhoc           destination  terminal   BSSID&n;*******************************************************/
+multiline_comment|/*** IEEE 802.11 Address field assignments *************&n;                TODS FROMDS   addr_1     addr_2          addr_3   addr_4&n;Adhoc           0    0        dest       src (terminal)  BSSID    N/A&n;AP to Terminal  0    1        dest       AP(BSSID)       source   N/A&n;Terminal to AP  1    0        AP(BSSID)  src (terminal)  dest     N/A&n;AP to AP        1    1        dest AP    src AP          dest     source      &n;*******************************************************/
 r_if
 c_cond
 (paren
@@ -5977,6 +6066,7 @@ suffix:semicolon
 multiline_comment|/* end encapsulate_frame */
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_dev_ioctl
+r_static
 r_int
 id|ray_dev_ioctl
 c_func
@@ -6016,6 +6106,20 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if WIRELESS_EXT &gt; 7
+r_struct
+id|iwreq
+op_star
+id|wrq
+op_assign
+(paren
+r_struct
+id|iwreq
+op_star
+)paren
+id|ifr
+suffix:semicolon
+macro_line|#endif&t;/* WIRELESS_EXT &gt; 7 */
 r_if
 c_cond
 (paren
@@ -6061,6 +6165,1007 @@ c_cond
 id|cmd
 )paren
 (brace
+macro_line|#if WIRELESS_EXT &gt; 7
+multiline_comment|/* --------------- WIRELESS EXTENSIONS --------------- */
+multiline_comment|/* Get name */
+r_case
+id|SIOCGIWNAME
+suffix:colon
+id|strcpy
+c_func
+(paren
+id|wrq-&gt;u.name
+comma
+l_string|&quot;IEEE 802.11-FH&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* Get frequency/channel */
+r_case
+id|SIOCGIWFREQ
+suffix:colon
+id|wrq-&gt;u.freq.m
+op_assign
+id|local-&gt;sparm.b5.a_hop_pattern
+suffix:semicolon
+id|wrq-&gt;u.freq.e
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* Get current network name (ESSID) */
+r_case
+id|SIOCGIWESSID
+suffix:colon
+r_if
+c_cond
+(paren
+id|wrq-&gt;u.data.pointer
+)paren
+(brace
+r_char
+id|essid
+(braket
+id|IW_ESSID_MAX_SIZE
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* Get the essid that was set */
+id|memcpy
+c_func
+(paren
+id|essid
+comma
+id|local-&gt;sparm.b5.a_current_ess_id
+comma
+id|IW_ESSID_MAX_SIZE
+)paren
+suffix:semicolon
+id|essid
+(braket
+id|IW_ESSID_MAX_SIZE
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/* Push it out ! */
+id|wrq-&gt;u.data.length
+op_assign
+id|strlen
+c_func
+(paren
+id|essid
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+id|wrq-&gt;u.data.flags
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* active */
+id|copy_to_user
+c_func
+(paren
+id|wrq-&gt;u.data.pointer
+comma
+id|essid
+comma
+r_sizeof
+(paren
+id|essid
+)paren
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+multiline_comment|/* Get current Access Point (BSSID in our case) */
+r_case
+id|SIOCGIWAP
+suffix:colon
+id|memcpy
+c_func
+(paren
+id|wrq-&gt;u.ap_addr.sa_data
+comma
+id|local-&gt;bss_id
+comma
+id|ETH_ALEN
+)paren
+suffix:semicolon
+id|wrq-&gt;u.ap_addr.sa_family
+op_assign
+id|ARPHRD_ETHER
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* Get the current bit-rate */
+r_case
+id|SIOCGIWRATE
+suffix:colon
+r_if
+c_cond
+(paren
+id|local-&gt;net_default_tx_rate
+op_eq
+l_int|3
+)paren
+(brace
+id|wrq-&gt;u.bitrate.value
+op_assign
+l_int|2000000
+suffix:semicolon
+)brace
+multiline_comment|/* Hum... */
+r_else
+id|wrq-&gt;u.bitrate.value
+op_assign
+id|local-&gt;net_default_tx_rate
+op_star
+l_int|500000
+suffix:semicolon
+id|wrq-&gt;u.bitrate.fixed
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* We are in auto mode */
+r_break
+suffix:semicolon
+multiline_comment|/* Set the desired bit-rate */
+r_case
+id|SIOCSIWRATE
+suffix:colon
+multiline_comment|/* Check if rate is in range */
+r_if
+c_cond
+(paren
+(paren
+id|wrq-&gt;u.bitrate.value
+op_ne
+l_int|1000000
+)paren
+op_logical_and
+(paren
+id|wrq-&gt;u.bitrate.value
+op_ne
+l_int|2000000
+)paren
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Hack for 1.5 Mb/s instead of 2 Mb/s */
+r_if
+c_cond
+(paren
+(paren
+id|local-&gt;fw_ver
+op_eq
+l_int|0x55
+)paren
+op_logical_and
+multiline_comment|/* Please check */
+(paren
+id|wrq-&gt;u.bitrate.value
+op_eq
+l_int|2000000
+)paren
+)paren
+(brace
+id|local-&gt;net_default_tx_rate
+op_assign
+l_int|3
+suffix:semicolon
+)brace
+r_else
+id|local-&gt;net_default_tx_rate
+op_assign
+id|wrq-&gt;u.bitrate.value
+op_div
+l_int|500000
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* Get the current RTS threshold */
+r_case
+id|SIOCGIWRTS
+suffix:colon
+id|wrq-&gt;u.rts.value
+op_assign
+(paren
+id|local-&gt;sparm.b5.a_rts_threshold
+(braket
+l_int|0
+)braket
+op_lshift
+l_int|8
+)paren
+op_plus
+id|local-&gt;sparm.b5.a_rts_threshold
+(braket
+l_int|1
+)braket
+suffix:semicolon
+macro_line|#if WIRELESS_EXT &gt; 8
+id|wrq-&gt;u.rts.disabled
+op_assign
+(paren
+id|wrq-&gt;u.rts.value
+op_eq
+l_int|32767
+)paren
+suffix:semicolon
+macro_line|#endif /* WIRELESS_EXT &gt; 8 */
+id|wrq-&gt;u.rts.fixed
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* Get the current fragmentation threshold */
+r_case
+id|SIOCGIWFRAG
+suffix:colon
+id|wrq-&gt;u.frag.value
+op_assign
+(paren
+id|local-&gt;sparm.b5.a_frag_threshold
+(braket
+l_int|0
+)braket
+op_lshift
+l_int|8
+)paren
+op_plus
+id|local-&gt;sparm.b5.a_frag_threshold
+(braket
+l_int|1
+)braket
+suffix:semicolon
+macro_line|#if WIRELESS_EXT &gt; 8
+id|wrq-&gt;u.frag.disabled
+op_assign
+(paren
+id|wrq-&gt;u.frag.value
+op_eq
+l_int|32767
+)paren
+suffix:semicolon
+macro_line|#endif /* WIRELESS_EXT &gt; 8 */
+id|wrq-&gt;u.frag.fixed
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif&t;/* WIRELESS_EXT &gt; 7 */
+macro_line|#if WIRELESS_EXT &gt; 8
+multiline_comment|/* Get the current mode of operation */
+r_case
+id|SIOCGIWMODE
+suffix:colon
+r_if
+c_cond
+(paren
+id|local-&gt;sparm.b5.a_network_type
+)paren
+(brace
+id|wrq-&gt;u.mode
+op_assign
+id|IW_MODE_INFRA
+suffix:semicolon
+)brace
+r_else
+id|wrq-&gt;u.mode
+op_assign
+id|IW_MODE_ADHOC
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* WIRELESS_EXT &gt; 8 */
+macro_line|#if WIRELESS_EXT &gt; 7
+multiline_comment|/* ------------------ IWSPY SUPPORT ------------------ */
+multiline_comment|/* Define the range (variations) of above parameters */
+r_case
+id|SIOCGIWRANGE
+suffix:colon
+multiline_comment|/* Basic checking... */
+r_if
+c_cond
+(paren
+id|wrq-&gt;u.data.pointer
+op_ne
+(paren
+id|caddr_t
+)paren
+l_int|0
+)paren
+(brace
+r_struct
+id|iw_range
+id|range
+suffix:semicolon
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|range
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|iw_range
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Set the length (useless : its constant...) */
+id|wrq-&gt;u.data.length
+op_assign
+r_sizeof
+(paren
+r_struct
+id|iw_range
+)paren
+suffix:semicolon
+multiline_comment|/* Set information in the range struct */
+id|range.throughput
+op_assign
+l_float|1.1
+op_star
+l_int|1000
+op_star
+l_int|1000
+suffix:semicolon
+multiline_comment|/* Put the right number here */
+id|range.num_channels
+op_assign
+id|hop_pattern_length
+(braket
+(paren
+r_int
+)paren
+id|country
+)braket
+suffix:semicolon
+id|range.num_frequency
+op_assign
+l_int|0
+suffix:semicolon
+id|range.max_qual.qual
+op_assign
+l_int|0
+suffix:semicolon
+id|range.max_qual.level
+op_assign
+l_int|255
+suffix:semicolon
+multiline_comment|/* What&squot;s the correct value ? */
+id|range.max_qual.noise
+op_assign
+l_int|255
+suffix:semicolon
+multiline_comment|/* Idem */
+id|range.num_bitrates
+op_assign
+l_int|2
+suffix:semicolon
+id|range.bitrate
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1000000
+suffix:semicolon
+multiline_comment|/* 1 Mb/s */
+id|range.bitrate
+(braket
+l_int|1
+)braket
+op_assign
+l_int|2000000
+suffix:semicolon
+multiline_comment|/* 2 Mb/s */
+multiline_comment|/* Copy structure to the user buffer */
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+id|wrq-&gt;u.data.pointer
+comma
+op_amp
+id|range
+comma
+r_sizeof
+(paren
+r_struct
+id|iw_range
+)paren
+)paren
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+)brace
+r_break
+suffix:semicolon
+macro_line|#ifdef WIRELESS_SPY
+multiline_comment|/* Set addresses to spy */
+r_case
+id|SIOCSIWSPY
+suffix:colon
+multiline_comment|/* Check the number of addresses */
+r_if
+c_cond
+(paren
+id|wrq-&gt;u.data.length
+OG
+id|IW_MAX_SPY
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|E2BIG
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|local-&gt;spy_number
+op_assign
+id|wrq-&gt;u.data.length
+suffix:semicolon
+multiline_comment|/* If there is some addresses to copy */
+r_if
+c_cond
+(paren
+id|local-&gt;spy_number
+OG
+l_int|0
+)paren
+(brace
+r_struct
+id|sockaddr
+id|address
+(braket
+id|IW_MAX_SPY
+)braket
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* Copy addresses to the driver */
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
+(paren
+id|address
+comma
+id|wrq-&gt;u.data.pointer
+comma
+r_sizeof
+(paren
+r_struct
+id|sockaddr
+)paren
+op_star
+id|local-&gt;spy_number
+)paren
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Copy addresses to the lp structure */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|local-&gt;spy_number
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+comma
+id|address
+(braket
+id|i
+)braket
+dot
+id|sa_data
+comma
+id|ETH_ALEN
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Reset structure... */
+id|memset
+c_func
+(paren
+id|local-&gt;spy_stat
+comma
+l_int|0x00
+comma
+r_sizeof
+(paren
+id|iw_qual
+)paren
+op_star
+id|IW_MAX_SPY
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG_IOCTL_INFO
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;SetSpy - Set of new addresses is :&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|local-&gt;spy_number
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%02X:%02X:%02X:%02X:%02X:%02X&bslash;n&quot;
+comma
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+(braket
+l_int|0
+)braket
+comma
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+(braket
+l_int|1
+)braket
+comma
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+(braket
+l_int|2
+)braket
+comma
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+(braket
+l_int|3
+)braket
+comma
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+(braket
+l_int|4
+)braket
+comma
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+(braket
+l_int|5
+)braket
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif&t;/* DEBUG_IOCTL_INFO */
+)brace
+r_break
+suffix:semicolon
+multiline_comment|/* Get the spy list and spy stats */
+r_case
+id|SIOCGIWSPY
+suffix:colon
+multiline_comment|/* Set the number of addresses */
+id|wrq-&gt;u.data.length
+op_assign
+id|local-&gt;spy_number
+suffix:semicolon
+multiline_comment|/* If the user want to have the addresses back... */
+r_if
+c_cond
+(paren
+(paren
+id|local-&gt;spy_number
+OG
+l_int|0
+)paren
+op_logical_and
+(paren
+id|wrq-&gt;u.data.pointer
+op_ne
+(paren
+id|caddr_t
+)paren
+l_int|0
+)paren
+)paren
+(brace
+r_struct
+id|sockaddr
+id|address
+(braket
+id|IW_MAX_SPY
+)braket
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* Copy addresses from the lp structure */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|local-&gt;spy_number
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|address
+(braket
+id|i
+)braket
+dot
+id|sa_data
+comma
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+comma
+id|ETH_ALEN
+)paren
+suffix:semicolon
+id|address
+(braket
+id|i
+)braket
+dot
+id|sa_family
+op_assign
+id|ARPHRD_ETHER
+suffix:semicolon
+)brace
+multiline_comment|/* Copy addresses to the user buffer */
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+id|wrq-&gt;u.data.pointer
+comma
+id|address
+comma
+r_sizeof
+(paren
+r_struct
+id|sockaddr
+)paren
+op_star
+id|local-&gt;spy_number
+)paren
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Copy stats to the user buffer (just after) */
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+id|wrq-&gt;u.data.pointer
+op_plus
+(paren
+r_sizeof
+(paren
+r_struct
+id|sockaddr
+)paren
+op_star
+id|local-&gt;spy_number
+)paren
+comma
+id|local-&gt;spy_stat
+comma
+r_sizeof
+(paren
+id|iw_qual
+)paren
+op_star
+id|local-&gt;spy_number
+)paren
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Reset updated flags */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|local-&gt;spy_number
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|local-&gt;spy_stat
+(braket
+id|i
+)braket
+dot
+id|updated
+op_assign
+l_int|0x0
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* if(pointer != NULL) */
+r_break
+suffix:semicolon
+macro_line|#endif&t;/* WIRELESS_SPY */
+multiline_comment|/* ------------------ PRIVATE IOCTL ------------------ */
+DECL|macro|SIOCSIPFRAMING
+mdefine_line|#define SIOCSIPFRAMING&t;SIOCDEVPRIVATE&t;&t;/* Set framing mode */
+DECL|macro|SIOCGIPFRAMING
+mdefine_line|#define SIOCGIPFRAMING&t;SIOCDEVPRIVATE + 1&t;/* Get framing mode */
+DECL|macro|SIOCGIPCOUNTRY
+mdefine_line|#define SIOCGIPCOUNTRY&t;SIOCDEVPRIVATE + 3&t;/* Get country code */
+r_case
+id|SIOCSIPFRAMING
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+multiline_comment|/* For private IOCTLs, we need to check permissions */
+(brace
+id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|translate
+op_assign
+op_star
+(paren
+id|wrq-&gt;u.name
+)paren
+suffix:semicolon
+multiline_comment|/* Set framing mode */
+r_break
+suffix:semicolon
+r_case
+id|SIOCGIPFRAMING
+suffix:colon
+op_star
+(paren
+id|wrq-&gt;u.name
+)paren
+op_assign
+id|translate
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SIOCGIPCOUNTRY
+suffix:colon
+op_star
+(paren
+id|wrq-&gt;u.name
+)paren
+op_assign
+id|country
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SIOCGIWPRIV
+suffix:colon
+multiline_comment|/* Export our &quot;private&quot; intercace */
+r_if
+c_cond
+(paren
+id|wrq-&gt;u.data.pointer
+op_ne
+(paren
+id|caddr_t
+)paren
+l_int|0
+)paren
+(brace
+r_struct
+id|iw_priv_args
+id|priv
+(braket
+)braket
+op_assign
+(brace
+multiline_comment|/* cmd,&t;&t;set_args,&t;get_args,&t;name */
+(brace
+id|SIOCSIPFRAMING
+comma
+id|IW_PRIV_TYPE_BYTE
+op_or
+id|IW_PRIV_SIZE_FIXED
+op_or
+l_int|1
+comma
+l_int|0
+comma
+l_string|&quot;set_framing&quot;
+)brace
+comma
+(brace
+id|SIOCGIPFRAMING
+comma
+l_int|0
+comma
+id|IW_PRIV_TYPE_BYTE
+op_or
+id|IW_PRIV_SIZE_FIXED
+op_or
+l_int|1
+comma
+l_string|&quot;get_framing&quot;
+)brace
+comma
+(brace
+id|SIOCGIPCOUNTRY
+comma
+l_int|0
+comma
+id|IW_PRIV_TYPE_BYTE
+op_or
+id|IW_PRIV_SIZE_FIXED
+op_or
+l_int|1
+comma
+l_string|&quot;get_country&quot;
+)brace
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* Set the number of ioctl available */
+id|wrq-&gt;u.data.length
+op_assign
+l_int|3
+suffix:semicolon
+multiline_comment|/* Copy structure to the user buffer */
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+id|wrq-&gt;u.data.pointer
+comma
+(paren
+id|u_char
+op_star
+)paren
+id|priv
+comma
+r_sizeof
+(paren
+id|priv
+)paren
+)paren
+)paren
+(brace
+id|err
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+)brace
+r_break
+suffix:semicolon
+macro_line|#endif&t;/* WIRELESS_EXT &gt; 7 */
 r_default
 suffix:colon
 id|DEBUG
@@ -6085,7 +7190,166 @@ suffix:semicolon
 )brace
 multiline_comment|/* end ray_dev_ioctl */
 multiline_comment|/*===========================================================================*/
+macro_line|#if WIRELESS_EXT &gt; 7&t;/* If wireless extension exist in the kernel */
+DECL|function|ray_get_wireless_stats
+r_static
+id|iw_stats
+op_star
+id|ray_get_wireless_stats
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|ray_dev_t
+op_star
+id|local
+op_assign
+(paren
+id|ray_dev_t
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|dev_link_t
+op_star
+id|link
+op_assign
+id|local-&gt;finder
+suffix:semicolon
+r_struct
+id|status
+op_star
+id|p
+op_assign
+(paren
+r_struct
+id|status
+op_star
+)paren
+(paren
+id|local-&gt;sram
+op_plus
+id|STATUS_BASE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|local
+op_eq
+(paren
+id|ray_dev_t
+op_star
+)paren
+l_int|NULL
+)paren
+(brace
+r_return
+(paren
+id|iw_stats
+op_star
+)paren
+l_int|NULL
+suffix:semicolon
+)brace
+id|local-&gt;wstats.status
+op_assign
+id|local-&gt;card_status
+suffix:semicolon
+macro_line|#ifdef WIRELESS_SPY
+r_if
+c_cond
+(paren
+(paren
+id|local-&gt;spy_number
+OG
+l_int|0
+)paren
+op_logical_and
+(paren
+id|local-&gt;sparm.b5.a_network_type
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+multiline_comment|/* Get it from the first node in spy list */
+id|local-&gt;wstats.qual.qual
+op_assign
+id|local-&gt;spy_stat
+(braket
+l_int|0
+)braket
+dot
+id|qual
+suffix:semicolon
+id|local-&gt;wstats.qual.level
+op_assign
+id|local-&gt;spy_stat
+(braket
+l_int|0
+)braket
+dot
+id|level
+suffix:semicolon
+id|local-&gt;wstats.qual.noise
+op_assign
+id|local-&gt;spy_stat
+(braket
+l_int|0
+)braket
+dot
+id|noise
+suffix:semicolon
+id|local-&gt;wstats.qual.updated
+op_assign
+id|local-&gt;spy_stat
+(braket
+l_int|0
+)braket
+dot
+id|updated
+suffix:semicolon
+)brace
+macro_line|#endif /* WIRELESS_SPY */
+r_if
+c_cond
+(paren
+(paren
+id|link-&gt;state
+op_amp
+id|DEV_PRESENT
+)paren
+)paren
+(brace
+id|local-&gt;wstats.qual.noise
+op_assign
+id|readb
+c_func
+(paren
+op_amp
+id|p-&gt;rxnoise
+)paren
+suffix:semicolon
+id|local-&gt;wstats.qual.updated
+op_or_assign
+l_int|4
+suffix:semicolon
+)brace
+r_return
+op_amp
+id|local-&gt;wstats
+suffix:semicolon
+)brace
+multiline_comment|/* end ray_get_wireless_stats */
+macro_line|#endif&t;/* WIRELESS_EXT &gt; 7 */
+multiline_comment|/*===========================================================================*/
 DECL|function|ray_open
+r_static
 r_int
 id|ray_open
 c_func
@@ -6209,6 +7473,7 @@ suffix:semicolon
 multiline_comment|/* end ray_open */
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_dev_close
+r_static
 r_int
 id|ray_dev_close
 c_func
@@ -6310,6 +7575,7 @@ suffix:semicolon
 multiline_comment|/* end ray_dev_close */
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_reset
+r_static
 r_void
 id|ray_reset
 c_func
@@ -6335,6 +7601,7 @@ multiline_comment|/*============================================================
 multiline_comment|/* Cause a firmware interrupt if it is ready for one                         */
 multiline_comment|/* Return nonzero if not ready                                               */
 DECL|function|interrupt_ecf
+r_static
 r_int
 id|interrupt_ecf
 c_func
@@ -6469,6 +7736,7 @@ multiline_comment|/*============================================================
 multiline_comment|/* Get next free transmit CCS                                                */
 multiline_comment|/* Return - index of current tx ccs                                          */
 DECL|function|get_free_tx_ccs
+r_static
 r_int
 id|get_free_tx_ccs
 c_func
@@ -6645,6 +7913,7 @@ multiline_comment|/*============================================================
 multiline_comment|/* Get next free CCS                                                         */
 multiline_comment|/* Return - index of current ccs                                             */
 DECL|function|get_free_ccs
+r_static
 r_int
 id|get_free_ccs
 c_func
@@ -6819,6 +8088,7 @@ suffix:semicolon
 multiline_comment|/* get_free_ccs */
 multiline_comment|/*===========================================================================*/
 DECL|function|authenticate_timeout
+r_static
 r_void
 id|authenticate_timeout
 c_func
@@ -6864,6 +8134,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|asc_to_int
+r_static
 r_int
 id|asc_to_int
 c_func
@@ -6958,6 +8229,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|parse_addr
+r_static
 r_int
 id|parse_addr
 c_func
@@ -7144,6 +8416,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_get_stats
+r_static
 r_struct
 id|enet_statistics
 op_star
@@ -7348,6 +8621,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_update_parm
+r_static
 r_void
 id|ray_update_parm
 c_func
@@ -8062,6 +9336,7 @@ suffix:semicolon
 multiline_comment|/* end set_multicast_list */
 multiline_comment|/*=============================================================================&n; * All routines below here are run at interrupt time.&n;=============================================================================*/
 DECL|function|ray_interrupt
+r_static
 r_void
 id|ray_interrupt
 c_func
@@ -9014,6 +10289,10 @@ comma
 "&bslash;"
 id|rcsindex
 comma
+(paren
+r_int
+r_int
+)paren
 id|readb
 c_func
 (paren
@@ -9049,6 +10328,7 @@ suffix:semicolon
 multiline_comment|/* ray_interrupt */
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_rx
+r_static
 r_void
 id|ray_rx
 c_func
@@ -9143,6 +10423,15 @@ id|prcs-&gt;var.rx_packet.rx_data_length
 (braket
 l_int|1
 )braket
+)paren
+suffix:semicolon
+id|local-&gt;last_rsl
+op_assign
+id|readb
+c_func
+(paren
+op_amp
+id|prcs-&gt;var.rx_packet.rx_sig_lev
 )paren
 suffix:semicolon
 id|pmsg
@@ -9345,6 +10634,10 @@ id|beacon_rx
 )paren
 )paren
 suffix:semicolon
+id|local-&gt;beacon_rxed
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/* Get the statistics so the card counters never overflow */
 id|ray_get_stats
 c_func
@@ -9363,6 +10656,10 @@ l_int|0
 comma
 l_string|&quot;ray_cs unknown pkt type %2x&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|readb
 c_func
 (paren
@@ -9377,6 +10674,7 @@ suffix:semicolon
 multiline_comment|/* end ray_rx */
 multiline_comment|/*===========================================================================*/
 DECL|function|rx_data
+r_static
 r_void
 id|rx_data
 c_func
@@ -9429,6 +10727,20 @@ suffix:semicolon
 r_int
 id|tmp
 suffix:semicolon
+macro_line|#ifdef WIRELESS_SPY
+r_int
+id|siglev
+op_assign
+id|prcs-&gt;var.rx_packet.rx_sig_lev
+suffix:semicolon
+id|u_char
+id|linksrcaddr
+(braket
+id|ETH_ALEN
+)braket
+suffix:semicolon
+multiline_comment|/* Other end of the wireless link */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9519,7 +10831,12 @@ multiline_comment|/* If fragmented packet, verify sizes of fragments add up */
 r_if
 c_cond
 (paren
+id|readb
+c_func
+(paren
+op_amp
 id|prcs-&gt;var.rx_packet.next_frag_rcs_index
+)paren
 op_ne
 l_int|0xFF
 )paren
@@ -9786,6 +11103,28 @@ comma
 id|rx_len
 )paren
 suffix:semicolon
+multiline_comment|/* Get source address */
+macro_line|#ifdef WIRELESS_SPY
+id|memcpy
+c_func
+(paren
+id|linksrcaddr
+comma
+(paren
+(paren
+r_struct
+id|mac_header
+op_star
+)paren
+id|skb-&gt;data
+)paren
+op_member_access_from_pointer
+id|addr_2
+comma
+id|ETH_ALEN
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Now, deal with encapsulation/translation/sniffer */
 r_if
 c_cond
@@ -10010,10 +11349,104 @@ id|local-&gt;stats.rx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
+multiline_comment|/* Gather signal strength per address */
+macro_line|#ifdef WIRELESS_SPY
+multiline_comment|/* For the Access Point or the node having started the ad-hoc net&n;     * note : ad-hoc work only in some specific configurations, but we&n;     * kludge in ray_get_wireless_stats... */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|memcmp
+c_func
+(paren
+id|linksrcaddr
+comma
+id|local-&gt;bss_id
+comma
+id|ETH_ALEN
+)paren
+)paren
+(brace
+multiline_comment|/* Update statistics */
+multiline_comment|/*local-&gt;wstats.qual.qual = none ? */
+id|local-&gt;wstats.qual.level
+op_assign
+id|siglev
+suffix:semicolon
+multiline_comment|/*local-&gt;wstats.qual.noise = none ? */
+id|local-&gt;wstats.qual.updated
+op_assign
+l_int|0x2
+suffix:semicolon
+)brace
+multiline_comment|/* Now, for the addresses in the spy list */
+(brace
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* Look all addresses */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|local-&gt;spy_number
+suffix:semicolon
+id|i
+op_increment
+)paren
+multiline_comment|/* If match */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|memcmp
+c_func
+(paren
+id|linksrcaddr
+comma
+id|local-&gt;spy_address
+(braket
+id|i
+)braket
+comma
+id|ETH_ALEN
+)paren
+)paren
+(brace
+multiline_comment|/* Update statistics */
+multiline_comment|/*local-&gt;spy_stat[i].qual = none ? */
+id|local-&gt;spy_stat
+(braket
+id|i
+)braket
+dot
+id|level
+op_assign
+id|siglev
+suffix:semicolon
+multiline_comment|/*local-&gt;spy_stat[i].noise = none ? */
+id|local-&gt;spy_stat
+(braket
+id|i
+)braket
+dot
+id|updated
+op_assign
+l_int|0x2
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif&t;/* WIRELESS_SPY */
 )brace
 multiline_comment|/* end rx_data */
 multiline_comment|/*===========================================================================*/
 DECL|function|untranslate
+r_static
 r_void
 id|untranslate
 c_func
@@ -10122,10 +11555,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|local-&gt;sparm.b5.a_acting_as_ap_status
-op_ne
-id|TYPE_STA
+id|pmac-&gt;frame_ctl_2
+op_amp
+id|FC2_FROM_DS
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|pmac-&gt;frame_ctl_2
+op_amp
+id|FC2_TO_DS
+)paren
+(brace
+multiline_comment|/* AP to AP */
 id|memcpy
 c_func
 (paren
@@ -10136,7 +11579,86 @@ comma
 id|ADDRLEN
 )paren
 suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|srcaddr
+comma
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|pmac-&gt;addr_3
+)paren
+op_plus
+id|ADDRLEN
+comma
+id|ADDRLEN
+)paren
+suffix:semicolon
+)brace
 r_else
+(brace
+multiline_comment|/* AP to terminal */
+id|memcpy
+c_func
+(paren
+id|destaddr
+comma
+id|pmac-&gt;addr_1
+comma
+id|ADDRLEN
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|srcaddr
+comma
+id|pmac-&gt;addr_3
+comma
+id|ADDRLEN
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* Terminal to AP */
+r_if
+c_cond
+(paren
+id|pmac-&gt;frame_ctl_2
+op_amp
+id|FC2_TO_DS
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|destaddr
+comma
+id|pmac-&gt;addr_3
+comma
+id|ADDRLEN
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|srcaddr
+comma
+id|pmac-&gt;addr_2
+comma
+id|ADDRLEN
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Adhoc */
 id|memcpy
 c_func
 (paren
@@ -10157,6 +11679,8 @@ comma
 id|ADDRLEN
 )paren
 suffix:semicolon
+)brace
+)brace
 macro_line|#ifdef PCMCIA_DEBUG
 r_if
 c_cond
@@ -10569,6 +12093,7 @@ multiline_comment|/* end untranslate */
 multiline_comment|/*===========================================================================*/
 multiline_comment|/* Copy data from circular receive buffer to PC memory.&n; * dest     = destination address in PC memory&n; * pkt_addr = source address in receive buffer&n; * len      = length of packet to copy&n; */
 DECL|function|copy_from_rx_buff
+r_static
 r_int
 id|copy_from_rx_buff
 c_func
@@ -10662,6 +12187,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|release_frag_chain
+r_static
 r_void
 id|release_frag_chain
 c_func
@@ -10778,6 +12304,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|authenticate
+r_static
 r_void
 id|authenticate
 c_func
@@ -10888,6 +12415,7 @@ suffix:semicolon
 multiline_comment|/* end authenticate */
 multiline_comment|/*===========================================================================*/
 DECL|function|rx_authenticate
+r_static
 r_void
 id|rx_authenticate
 c_func
@@ -11144,6 +12672,7 @@ suffix:semicolon
 multiline_comment|/* end rx_authenticate */
 multiline_comment|/*===========================================================================*/
 DECL|function|associate
+r_static
 r_void
 id|associate
 c_func
@@ -11350,6 +12879,7 @@ suffix:semicolon
 multiline_comment|/* end associate */
 multiline_comment|/*===========================================================================*/
 DECL|function|rx_deauthenticate
+r_static
 r_void
 id|rx_deauthenticate
 c_func
@@ -11389,6 +12919,7 @@ multiline_comment|/*  copy_from_rx_buff(local, buff, pkt_addr, rx_len &amp; 0xff
 )brace
 multiline_comment|/*===========================================================================*/
 DECL|function|clear_interrupt
+r_static
 r_void
 id|clear_interrupt
 c_func
@@ -11503,6 +13034,7 @@ l_string|&quot;Translation&quot;
 suffix:semicolon
 multiline_comment|/*===========================================================================*/
 DECL|function|ray_cs_proc_read
+r_static
 r_int
 id|ray_cs_proc_read
 c_func
@@ -11824,6 +13356,26 @@ id|translate
 )braket
 )paren
 suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;Last pkt signal lvl  = %d&bslash;n&quot;
+comma
+id|local-&gt;last_rsl
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|local-&gt;beacon_rxed
+)paren
+(brace
 multiline_comment|/* Pull some fields out of last beacon received */
 id|len
 op_add_assign
@@ -12108,6 +13660,22 @@ r_return
 id|len
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;No beacons received&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 r_return
 id|len
 suffix:semicolon
@@ -12115,6 +13683,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*===========================================================================*/
 DECL|function|build_auth_frame
+r_static
 r_int
 id|build_auth_frame
 c_func

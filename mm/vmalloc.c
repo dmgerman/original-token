@@ -183,6 +183,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;Whee.. Swapped out page in kernel page table&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -484,6 +485,7 @@ id|pte
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;alloc_area_pte: page already exists&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1007,6 +1009,7 @@ id|addr
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Trying to vfree() bad address (%p)&bslash;n&quot;
 comma
 id|addr
@@ -1074,6 +1077,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Trying to vfree() nonexistent vm area (%p)&bslash;n&quot;
 comma
 id|addr

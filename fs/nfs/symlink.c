@@ -175,7 +175,8 @@ op_assign
 id|page_hash
 c_func
 (paren
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 l_int|0
 )paren
@@ -187,7 +188,8 @@ op_assign
 id|__find_lock_page
 c_func
 (paren
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 l_int|0
 comma
@@ -222,7 +224,8 @@ c_func
 (paren
 id|page
 comma
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 l_int|0
 comma
@@ -363,7 +366,8 @@ op_assign
 id|find_get_page
 c_func
 (paren
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 l_int|0
 )paren
@@ -538,7 +542,8 @@ op_assign
 id|find_get_page
 c_func
 (paren
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 l_int|0
 )paren

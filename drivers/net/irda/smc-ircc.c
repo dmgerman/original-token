@@ -399,7 +399,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -480,7 +480,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -509,7 +509,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -556,7 +556,7 @@ id|idev
 )paren
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -603,7 +603,7 @@ suffix:semicolon
 r_int
 id|config
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -631,7 +631,7 @@ op_minus
 l_int|1
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -814,7 +814,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -849,7 +849,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1025,7 +1025,7 @@ comma
 id|self
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1056,7 +1056,7 @@ id|idev
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1162,7 +1162,7 @@ id|UART_CFGB_IR
 )paren
 suffix:semicolon
 multiline_comment|/* Release the PORT that this driver is using */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1187,7 +1187,7 @@ c_cond
 id|idev-&gt;io.iobase2
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1213,7 +1213,7 @@ c_func
 id|idev
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1260,7 +1260,7 @@ id|dma
 comma
 id|irq
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1363,7 +1363,7 @@ l_int|0xf2
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1402,7 +1402,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1446,7 +1446,7 @@ id|select
 comma
 id|fast
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1513,7 +1513,7 @@ suffix:colon
 r_case
 l_int|115200
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1599,7 +1599,7 @@ id|fast
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1625,7 +1625,7 @@ id|fast
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1651,7 +1651,7 @@ id|fast
 op_assign
 id|UART_LCR_A_FAST
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1664,7 +1664,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1857,7 +1857,7 @@ comma
 id|fast
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1897,7 +1897,7 @@ suffix:semicolon
 r_int
 id|mtt
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1945,7 +1945,7 @@ id|iobase
 op_assign
 id|idev-&gt;io.iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1972,7 +1972,7 @@ op_le
 l_int|115200
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -1993,7 +1993,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2094,7 +2094,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2129,7 +2129,7 @@ id|ircc_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2357,7 +2357,7 @@ comma
 id|UART_MASTER_INT_EN
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2394,7 +2394,7 @@ id|iobase
 comma
 id|d
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2460,7 +2460,7 @@ c_func
 id|idev-&gt;io.dma
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2526,7 +2526,7 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2558,7 +2558,7 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2764,7 +2764,7 @@ op_or
 id|UART_CFGB_DMA_BURST
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2809,7 +2809,7 @@ id|len
 comma
 id|msgcnt
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2834,7 +2834,7 @@ id|UART_LCR_B
 op_amp
 l_int|0x08
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2861,7 +2861,7 @@ id|idev-&gt;io.dma
 op_minus
 l_int|4
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -2984,7 +2984,7 @@ op_complement
 id|UART_CFGB_DMA_ENABLE
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3035,7 +3035,7 @@ op_star
 )paren
 id|dev_id
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3076,7 +3076,7 @@ op_le
 l_int|115200
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3145,7 +3145,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3164,7 +3164,7 @@ op_amp
 id|UART_IIR_EOM
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3216,7 +3216,7 @@ op_amp
 id|UART_IIR_ACTIVE_FRAME
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3246,7 +3246,7 @@ op_amp
 id|UART_IIR_RAW_MODE
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3290,7 +3290,7 @@ comma
 id|UART_MASTER_INT_EN
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3314,7 +3314,7 @@ op_star
 id|idev
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3338,7 +3338,7 @@ l_int|60
 )paren
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3368,7 +3368,7 @@ op_assign
 id|FALSE
 suffix:semicolon
 multiline_comment|/* int iobase; */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3401,7 +3401,7 @@ id|FALSE
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3424,7 +3424,7 @@ op_ne
 id|OUTSIDE_FRAME
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3451,7 +3451,7 @@ op_star
 id|dev
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3468,7 +3468,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Insert overrides below this line! */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3503,7 +3503,7 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3625,7 +3625,7 @@ suffix:semicolon
 multiline_comment|/* turn on interrupts */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3660,7 +3660,7 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug
@@ -3748,7 +3748,7 @@ id|idev-&gt;io.dma
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 id|ircc_debug

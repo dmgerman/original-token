@@ -2,7 +2,7 @@ macro_line|#ifndef __LINUX_HUB_H
 DECL|macro|__LINUX_HUB_H
 mdefine_line|#define __LINUX_HUB_H
 macro_line|#include &lt;linux/list.h&gt;
-multiline_comment|/*&n; * Hub feature numbers&n; */
+multiline_comment|/*&n; * Hub Class feature numbers&n; */
 DECL|macro|C_HUB_LOCAL_POWER
 mdefine_line|#define C_HUB_LOCAL_POWER&t;0
 DECL|macro|C_HUB_OVER_CURRENT
@@ -32,7 +32,27 @@ DECL|macro|USB_PORT_FEAT_C_OVER_CURRENT
 mdefine_line|#define USB_PORT_FEAT_C_OVER_CURRENT&t;19
 DECL|macro|USB_PORT_FEAT_C_RESET
 mdefine_line|#define USB_PORT_FEAT_C_RESET&t;&t;20
-multiline_comment|/* wPortStatus */
+DECL|struct|usb_port_status
+r_struct
+id|usb_port_status
+(brace
+DECL|member|wPortStatus
+id|__u16
+id|wPortStatus
+suffix:semicolon
+DECL|member|wPortChange
+id|__u16
+id|wPortChange
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* wPortStatus bits */
 DECL|macro|USB_PORT_STAT_CONNECTION
 mdefine_line|#define USB_PORT_STAT_CONNECTION&t;0x0001
 DECL|macro|USB_PORT_STAT_ENABLE
@@ -47,7 +67,7 @@ DECL|macro|USB_PORT_STAT_POWER
 mdefine_line|#define USB_PORT_STAT_POWER&t;&t;0x0100
 DECL|macro|USB_PORT_STAT_LOW_SPEED
 mdefine_line|#define USB_PORT_STAT_LOW_SPEED&t;&t;0x0200
-multiline_comment|/* wPortChange */
+multiline_comment|/* wPortChange bits */
 DECL|macro|USB_PORT_STAT_C_CONNECTION
 mdefine_line|#define USB_PORT_STAT_C_CONNECTION&t;0x0001
 DECL|macro|USB_PORT_STAT_C_ENABLE
@@ -65,6 +85,35 @@ DECL|macro|HUB_CHAR_COMPOUND
 mdefine_line|#define HUB_CHAR_COMPOUND&t;0x0004
 DECL|macro|HUB_CHAR_OCPM
 mdefine_line|#define HUB_CHAR_OCPM&t;&t;0x0018
+DECL|struct|usb_hub_status
+r_struct
+id|usb_hub_status
+(brace
+DECL|member|wHubStatus
+id|__u16
+id|wHubStatus
+suffix:semicolon
+DECL|member|wHubChange
+id|__u16
+id|wHubChange
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *Hub Status &amp; Hub Change bit masks&n; */
+DECL|macro|HUB_STATUS_LOCAL_POWER
+mdefine_line|#define HUB_STATUS_LOCAL_POWER&t;0x0001
+DECL|macro|HUB_STATUS_OVERCURRENT
+mdefine_line|#define HUB_STATUS_OVERCURRENT&t;0x0002
+DECL|macro|HUB_CHANGE_LOCAL_POWER
+mdefine_line|#define HUB_CHANGE_LOCAL_POWER&t;0x0001
+DECL|macro|HUB_CHANGE_OVERCURRENT
+mdefine_line|#define HUB_CHANGE_OVERCURRENT&t;0x0002
 multiline_comment|/* Hub descriptor */
 DECL|struct|usb_hub_descriptor
 r_struct

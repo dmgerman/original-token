@@ -168,7 +168,7 @@ id|INIT_LIST_HEAD
 c_func
 (paren
 op_amp
-id|inode-&gt;i_pages
+id|inode-&gt;i_data.pages
 )paren
 suffix:semicolon
 id|INIT_LIST_HEAD
@@ -794,7 +794,7 @@ id|inode
 r_if
 c_cond
 (paren
-id|inode-&gt;i_nrpages
+id|inode-&gt;i_data.nrpages
 )paren
 id|BUG
 c_func
@@ -916,7 +916,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_nrpages
+id|inode-&gt;i_data.nrpages
 )paren
 id|truncate_inode_pages
 c_func
@@ -1186,7 +1186,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is called with the inode lock held. It searches&n; * the in-use for freeable inodes, which are moved to a&n; * temporary list and then placed on the unused list by&n; * dispose_list. &n; *&n; * We don&squot;t expect to have to call this very often.&n; *&n; * N.B. The spinlock is released during the call to&n; *      dispose_list.&n; */
 DECL|macro|CAN_UNUSE
-mdefine_line|#define CAN_UNUSE(inode) &bslash;&n;&t;(((inode)-&gt;i_state | (inode)-&gt;i_nrpages) == 0)
+mdefine_line|#define CAN_UNUSE(inode) &bslash;&n;&t;(((inode)-&gt;i_state | (inode)-&gt;i_data.nrpages) == 0)
 DECL|macro|INODE
 mdefine_line|#define INODE(entry)&t;(list_entry(entry, struct inode, i_list))
 DECL|function|prune_icache
@@ -2541,7 +2541,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_nrpages
+id|inode-&gt;i_data.nrpages
 )paren
 id|truncate_inode_pages
 c_func

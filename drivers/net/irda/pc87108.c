@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Wed Aug 11 09:26:26 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations is quite&n; *    similar.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Wed Oct 20 00:08:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb(iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb(bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations is quite&n; *    similar.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -206,9 +207,9 @@ id|pc87108_close
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 suffix:semicolon
 macro_line|#endif /* MODULE */
@@ -236,9 +237,9 @@ id|pc87108_pio_receive
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 suffix:semicolon
 r_static
@@ -247,9 +248,9 @@ id|pc87108_dma_receive
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 suffix:semicolon
 r_static
@@ -258,9 +259,9 @@ id|pc87108_dma_receive_complete
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 comma
 r_int
 id|iobase
@@ -307,9 +308,9 @@ id|pc87108_dma_write
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 comma
 r_int
 id|iobase
@@ -321,9 +322,9 @@ id|pc87108_change_speed
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 comma
 id|__u32
 id|baud
@@ -353,9 +354,9 @@ id|pc87108_wait_until_sent
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 suffix:semicolon
 r_static
@@ -364,9 +365,9 @@ id|pc87108_is_receiving
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 suffix:semicolon
 r_static
@@ -537,7 +538,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -572,15 +573,10 @@ id|i
 id|pc87108_close
 c_func
 (paren
-op_amp
-(paren
 id|dev_self
 (braket
 id|i
 )braket
-op_member_access_from_pointer
-id|idev
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -614,22 +610,25 @@ id|dma
 )paren
 (brace
 r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
+r_struct
 id|pc87108
 op_star
 id|self
 suffix:semicolon
-r_struct
-id|irda_device
-op_star
-id|idev
+r_int
+id|dongle_id
 suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
 r_int
-id|dongle_id
+id|err
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -722,29 +721,24 @@ id|i
 op_assign
 id|self
 suffix:semicolon
-id|idev
-op_assign
-op_amp
-id|self-&gt;idev
-suffix:semicolon
 multiline_comment|/* Initialize IO */
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 op_assign
 id|iobase
 suffix:semicolon
-id|idev-&gt;io.irq
+id|self-&gt;io.irq
 op_assign
 id|irq
 suffix:semicolon
-id|idev-&gt;io.io_ext
+id|self-&gt;io.io_ext
 op_assign
 id|CHIP_IO_EXTENT
 suffix:semicolon
-id|idev-&gt;io.dma
+id|self-&gt;io.dma
 op_assign
 id|dma
 suffix:semicolon
-id|idev-&gt;io.fifo_size
+id|self-&gt;io.fifo_size
 op_assign
 l_int|32
 suffix:semicolon
@@ -754,9 +748,9 @@ op_assign
 id|check_region
 c_func
 (paren
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 comma
-id|idev-&gt;io.io_ext
+id|self-&gt;io.io_ext
 )paren
 suffix:semicolon
 r_if
@@ -767,7 +761,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -775,10 +769,10 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), can&squot;t get iobase of 0x%03x&bslash;n&quot;
 comma
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 )paren
 suffix:semicolon
-multiline_comment|/* pc87108_cleanup( self-&gt;idev);  */
+multiline_comment|/* pc87108_cleanup(self-&gt;self);  */
 r_return
 op_minus
 id|ENODEV
@@ -787,11 +781,11 @@ suffix:semicolon
 id|request_region
 c_func
 (paren
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 comma
-id|idev-&gt;io.io_ext
+id|self-&gt;io.io_ext
 comma
-id|idev-&gt;name
+id|driver_name
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize QoS for this device */
@@ -799,11 +793,11 @@ id|irda_init_max_qos_capabilies
 c_func
 (paren
 op_amp
-id|idev-&gt;qos
+id|self-&gt;qos
 )paren
 suffix:semicolon
 multiline_comment|/* The only value we must override it the baudrate */
-id|idev-&gt;qos.baud_rate.bits
+id|self-&gt;qos.baud_rate.bits
 op_assign
 id|IR_9600
 op_or
@@ -825,7 +819,7 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-id|idev-&gt;qos.min_turn_time.bits
+id|self-&gt;qos.min_turn_time.bits
 op_assign
 id|qos_mtt_bits
 suffix:semicolon
@@ -833,10 +827,10 @@ id|irda_qos_bits_to_value
 c_func
 (paren
 op_amp
-id|idev-&gt;qos
+id|self-&gt;qos
 )paren
 suffix:semicolon
-id|idev-&gt;flags
+id|self-&gt;flags
 op_assign
 id|IFF_FIR
 op_or
@@ -850,59 +844,269 @@ id|IFF_PIO
 op_or
 id|IFF_DONGLE
 suffix:semicolon
-multiline_comment|/* Specify which buffer allocation policy we need */
-id|idev-&gt;rx_buff.flags
-op_assign
-id|GFP_KERNEL
-op_or
-id|GFP_DMA
-suffix:semicolon
-id|idev-&gt;tx_buff.flags
-op_assign
-id|GFP_KERNEL
-op_or
-id|GFP_DMA
-suffix:semicolon
 multiline_comment|/* Max DMA buffer size needed = (data_size + 6) * (window_size) + 6; */
-id|idev-&gt;rx_buff.truesize
+id|self-&gt;rx_buff.truesize
 op_assign
 l_int|14384
 suffix:semicolon
-id|idev-&gt;tx_buff.truesize
+id|self-&gt;tx_buff.truesize
 op_assign
 l_int|4000
 suffix:semicolon
-multiline_comment|/* Initialize callbacks */
-id|idev-&gt;change_speed
+multiline_comment|/* Allocate memory if needed */
+r_if
+c_cond
+(paren
+id|self-&gt;rx_buff.truesize
+OG
+l_int|0
+)paren
+(brace
+id|self-&gt;rx_buff.head
 op_assign
-id|pc87108_change_speed
+(paren
+id|__u8
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+id|self-&gt;rx_buff.truesize
+comma
+id|GFP_KERNEL
+op_or
+id|GFP_DMA
+)paren
 suffix:semicolon
-id|idev-&gt;wait_until_sent
-op_assign
-id|pc87108_wait_until_sent
+r_if
+c_cond
+(paren
+id|self-&gt;rx_buff.head
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
-id|idev-&gt;is_receiving
+id|memset
+c_func
+(paren
+id|self-&gt;rx_buff.head
+comma
+l_int|0
+comma
+id|self-&gt;rx_buff.truesize
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|self-&gt;tx_buff.truesize
+OG
+l_int|0
+)paren
+(brace
+id|self-&gt;tx_buff.head
 op_assign
-id|pc87108_is_receiving
+(paren
+id|__u8
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+id|self-&gt;tx_buff.truesize
+comma
+id|GFP_KERNEL
+op_or
+id|GFP_DMA
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;tx_buff.head
+op_eq
+l_int|NULL
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|self-&gt;rx_buff.head
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|memset
+c_func
+(paren
+id|self-&gt;tx_buff.head
+comma
+l_int|0
+comma
+id|self-&gt;tx_buff.truesize
+)paren
+suffix:semicolon
+)brace
+id|self-&gt;rx_buff.in_frame
+op_assign
+id|FALSE
+suffix:semicolon
+id|self-&gt;rx_buff.state
+op_assign
+id|OUTSIDE_FRAME
+suffix:semicolon
+id|self-&gt;tx_buff.data
+op_assign
+id|self-&gt;tx_buff.head
+suffix:semicolon
+id|self-&gt;rx_buff.data
+op_assign
+id|self-&gt;rx_buff.head
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|dev
+op_assign
+id|dev_alloc
+c_func
+(paren
+l_string|&quot;irda%d&quot;
+comma
+op_amp
+id|err
+)paren
+)paren
+)paren
+(brace
+id|ERROR
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), dev_alloc() failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+multiline_comment|/* dev_alloc doesn&squot;t clear the struct, so lets do a little hack */
+id|memset
+c_func
+(paren
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|dev
+)paren
+op_plus
+r_sizeof
+(paren
+r_char
+op_star
+)paren
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|net_device
+)paren
+op_minus
+r_sizeof
+(paren
+r_char
+op_star
+)paren
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|self
+suffix:semicolon
+id|self-&gt;netdev
+op_assign
+id|dev
 suffix:semicolon
 multiline_comment|/* Override the network functions we need to use */
-id|idev-&gt;netdev.init
+id|dev-&gt;init
 op_assign
 id|pc87108_net_init
 suffix:semicolon
-id|idev-&gt;netdev.hard_start_xmit
+id|dev-&gt;hard_start_xmit
 op_assign
 id|pc87108_hard_xmit
 suffix:semicolon
-id|idev-&gt;netdev.open
+id|dev-&gt;open
 op_assign
 id|pc87108_net_open
 suffix:semicolon
-id|idev-&gt;netdev.stop
+id|dev-&gt;stop
 op_assign
 id|pc87108_net_close
 suffix:semicolon
-id|idev-&gt;io.dongle_id
+id|rtnl_lock
+c_func
+(paren
+)paren
+suffix:semicolon
+id|err
+op_assign
+id|register_netdevice
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|rtnl_unlock
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+id|ERROR
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), register_netdev() failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|MESSAGE
+c_func
+(paren
+l_string|&quot;IrDA: Registered device %s&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|self-&gt;io.dongle_id
 op_assign
 id|dongle_id
 suffix:semicolon
@@ -914,23 +1118,12 @@ comma
 id|dongle_id
 )paren
 suffix:semicolon
-multiline_comment|/* Open the IrDA device */
-id|irda_device_open
-c_func
-(paren
-id|idev
-comma
-id|driver_name
-comma
-id|self
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; * Function pc87108_close (idev)&n; *&n; *    Close driver instance&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_close (self)&n; *&n; *    Close driver instance&n; *&n; */
 DECL|function|pc87108_close
 r_static
 r_int
@@ -938,20 +1131,15 @@ id|pc87108_close
 c_func
 (paren
 r_struct
-id|irda_device
-op_star
-id|idev
-)paren
-(brace
-r_struct
 id|pc87108
 op_star
 id|self
-suffix:semicolon
+)paren
+(brace
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -963,7 +1151,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
 comma
@@ -973,34 +1161,36 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
-id|self
-op_assign
+multiline_comment|/* Remove netdevice */
+r_if
+c_cond
 (paren
-r_struct
-id|pc87108
-op_star
+id|self-&gt;netdev
 )paren
-id|idev-&gt;priv
+(brace
+id|rtnl_lock
+c_func
+(paren
+)paren
 suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+id|self-&gt;netdev
+)paren
+suffix:semicolon
+id|rtnl_unlock
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Release the PORT that this driver is using */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1008,21 +1198,37 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), Releasing Region %03x&bslash;n&quot;
 comma
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 )paren
 suffix:semicolon
 id|release_region
 c_func
 (paren
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 comma
-id|idev-&gt;io.io_ext
+id|self-&gt;io.io_ext
 )paren
 suffix:semicolon
-id|irda_device_close
+r_if
+c_cond
+(paren
+id|self-&gt;tx_buff.head
+)paren
+id|kfree
 c_func
 (paren
-id|idev
+id|self-&gt;tx_buff.head
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;rx_buff.head
+)paren
+id|kfree
+c_func
+(paren
+id|self-&gt;rx_buff.head
 )paren
 suffix:semicolon
 id|kfree
@@ -1067,7 +1273,7 @@ suffix:semicolon
 r_int
 id|dongle_id
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1308,7 +1514,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1418,7 +1624,7 @@ c_func
 id|iobase
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1618,7 +1824,7 @@ op_plus
 l_int|5
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1667,7 +1873,7 @@ suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1748,7 +1954,7 @@ comma
 id|BANK0
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1824,7 +2030,7 @@ r_case
 l_int|0x01
 suffix:colon
 multiline_comment|/* Differential serial interface */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1848,7 +2054,7 @@ r_case
 l_int|0x03
 suffix:colon
 multiline_comment|/* Reserved */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1868,7 +2074,7 @@ r_case
 l_int|0x04
 suffix:colon
 multiline_comment|/* Sharp RY5HD01 */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1888,7 +2094,7 @@ r_case
 l_int|0x05
 suffix:colon
 multiline_comment|/* Reserved */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1908,7 +2114,7 @@ r_case
 l_int|0x06
 suffix:colon
 multiline_comment|/* Single-ended serial interface */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1928,7 +2134,7 @@ r_case
 l_int|0x07
 suffix:colon
 multiline_comment|/* Consumer-IR only */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1948,7 +2154,7 @@ r_case
 l_int|0x08
 suffix:colon
 multiline_comment|/* HP HSDL-2300, HP HSDL-3600/HSDL-3610 */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1989,7 +2195,7 @@ r_case
 l_int|0x0B
 suffix:colon
 multiline_comment|/* Reserved */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2047,7 +2253,7 @@ r_case
 l_int|0x0F
 suffix:colon
 multiline_comment|/* No dongle connected */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2061,7 +2267,7 @@ id|dongle_id
 )braket
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2091,7 +2297,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2151,7 +2357,7 @@ suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2195,7 +2401,7 @@ r_case
 l_int|0x01
 suffix:colon
 multiline_comment|/* Differential serial interface */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2219,7 +2425,7 @@ r_case
 l_int|0x03
 suffix:colon
 multiline_comment|/* Reserved */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2239,7 +2445,7 @@ r_case
 l_int|0x04
 suffix:colon
 multiline_comment|/* Sharp RY5HD01 */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2257,7 +2463,7 @@ r_case
 l_int|0x05
 suffix:colon
 multiline_comment|/* Reserved */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2277,7 +2483,7 @@ r_case
 l_int|0x06
 suffix:colon
 multiline_comment|/* Single-ended serial interface */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2297,7 +2503,7 @@ r_case
 l_int|0x07
 suffix:colon
 multiline_comment|/* Consumer-IR only */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2317,7 +2523,7 @@ r_case
 l_int|0x08
 suffix:colon
 multiline_comment|/* HP HSDL-2300, HP HSDL-3600/HSDL-3610 */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2420,7 +2626,7 @@ r_case
 l_int|0x0B
 suffix:colon
 multiline_comment|/* Reserved */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2456,7 +2662,7 @@ r_case
 l_int|0x0F
 suffix:colon
 multiline_comment|/* No dongle connected */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2492,7 +2698,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2514,7 +2720,7 @@ id|BSR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_change_speed (idev, baud)&n; *&n; *    Change the speed of the device&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_change_speed (self, baud)&n; *&n; *    Change the speed of the device&n; *&n; */
 DECL|function|pc87108_change_speed
 r_static
 r_void
@@ -2522,9 +2728,9 @@ id|pc87108_change_speed
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 comma
 id|__u32
 id|speed
@@ -2541,7 +2747,7 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2553,7 +2759,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
 comma
@@ -2561,23 +2767,12 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
 multiline_comment|/* Update accounting for new speed */
-id|idev-&gt;io.baudrate
+id|self-&gt;io.speed
 op_assign
 id|speed
 suffix:semicolon
@@ -2745,7 +2940,7 @@ id|mcr
 op_assign
 id|MCR_MIR
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2763,7 +2958,7 @@ id|mcr
 op_assign
 id|MCR_MIR
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2781,7 +2976,7 @@ id|mcr
 op_assign
 id|MCR_FIR
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2798,7 +2993,7 @@ id|mcr
 op_assign
 id|MCR_FIR
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2841,7 +3036,7 @@ id|iobase
 comma
 id|speed
 comma
-id|idev-&gt;io.dongle_id
+id|self-&gt;io.dongle_id
 )paren
 suffix:semicolon
 multiline_comment|/* Set FIFO threshold to TX17, RX16 */
@@ -2876,7 +3071,7 @@ op_plus
 id|FCR
 )paren
 suffix:semicolon
-multiline_comment|/* outb( 0xa7, iobase+FCR); */
+multiline_comment|/* outb(0xa7, iobase+FCR); */
 multiline_comment|/* Set FIFO size to 32 */
 id|switch_bank
 c_func
@@ -2898,7 +3093,7 @@ op_plus
 id|EXCR2
 )paren
 suffix:semicolon
-id|idev-&gt;netdev.tbusy
+id|self-&gt;netdev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
@@ -2932,7 +3127,7 @@ suffix:semicolon
 id|pc87108_dma_receive
 c_func
 (paren
-id|idev
+id|self
 )paren
 suffix:semicolon
 )brace
@@ -2978,9 +3173,9 @@ id|dev
 )paren
 (brace
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 suffix:semicolon
 r_int
 id|iobase
@@ -2991,11 +3186,11 @@ suffix:semicolon
 r_int
 id|mtt
 suffix:semicolon
-id|idev
+id|self
 op_assign
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
 )paren
 id|dev-&gt;priv
@@ -3003,7 +3198,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
 comma
@@ -3012,23 +3207,11 @@ l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3080,26 +3263,26 @@ multiline_comment|/* Decide if we should use PIO or DMA transfer */
 r_if
 c_cond
 (paren
-id|idev-&gt;io.baudrate
+id|self-&gt;io.speed
 OG
 l_int|115200
 )paren
 (brace
-id|idev-&gt;tx_buff.data
+id|self-&gt;tx_buff.data
 op_assign
-id|idev-&gt;tx_buff.head
+id|self-&gt;tx_buff.head
 suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|idev-&gt;tx_buff.data
+id|self-&gt;tx_buff.data
 comma
 id|skb-&gt;data
 comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|idev-&gt;tx_buff.len
+id|self-&gt;tx_buff.len
 op_assign
 id|skb-&gt;len
 suffix:semicolon
@@ -3176,7 +3359,7 @@ op_plus
 id|IRCR1
 )paren
 suffix:semicolon
-id|idev-&gt;io.direction
+id|self-&gt;io.direction
 op_assign
 id|IO_XMIT
 suffix:semicolon
@@ -3236,7 +3419,7 @@ suffix:semicolon
 id|pc87108_dma_write
 c_func
 (paren
-id|idev
+id|self
 comma
 id|iobase
 )paren
@@ -3245,21 +3428,21 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|idev-&gt;tx_buff.len
+id|self-&gt;tx_buff.len
 op_assign
 id|async_wrap_skb
 c_func
 (paren
 id|skb
 comma
-id|idev-&gt;tx_buff.data
+id|self-&gt;tx_buff.data
 comma
-id|idev-&gt;tx_buff.truesize
+id|self-&gt;tx_buff.truesize
 )paren
 suffix:semicolon
-id|idev-&gt;tx_buff.data
+id|self-&gt;tx_buff.data
 op_assign
-id|idev-&gt;tx_buff.head
+id|self-&gt;tx_buff.head
 suffix:semicolon
 multiline_comment|/* Add interrupt on tx low level (will fire immediately) */
 id|switch_bank
@@ -3302,7 +3485,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_dma_xmit (idev, iobase)&n; *&n; *    Transmit data using DMA&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_dma_xmit (self, iobase)&n; *&n; *    Transmit data using DMA&n; *&n; */
 DECL|function|pc87108_dma_write
 r_static
 r_void
@@ -3310,9 +3493,9 @@ id|pc87108_dma_write
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 comma
 r_int
 id|iobase
@@ -3321,7 +3504,7 @@ id|iobase
 r_int
 id|bsr
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3372,16 +3555,16 @@ suffix:semicolon
 id|setup_dma
 c_func
 (paren
-id|idev-&gt;io.dma
+id|self-&gt;io.dma
 comma
-id|idev-&gt;tx_buff.data
+id|self-&gt;tx_buff.data
 comma
-id|idev-&gt;tx_buff.len
+id|self-&gt;tx_buff.len
 comma
 id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
-id|idev-&gt;io.direction
+id|self-&gt;io.direction
 op_assign
 id|IO_XMIT
 suffix:semicolon
@@ -3455,7 +3638,7 @@ id|BSR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_pio_xmit (idev, iobase)&n; *&n; *    Transmit data using PIO. Returns the number of bytes that actually&n; *    got transfered&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_pio_xmit (self, iobase)&n; *&n; *    Transmit data using PIO. Returns the number of bytes that actually&n; *    got transfered&n; *&n; */
 DECL|function|pc87108_pio_write
 r_static
 r_int
@@ -3484,7 +3667,7 @@ suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3529,7 +3712,7 @@ id|LSR_TXEMP
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3542,7 +3725,7 @@ id|fifo_size
 op_sub_assign
 l_int|17
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3588,7 +3771,7 @@ id|TXD
 )paren
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3618,7 +3801,7 @@ r_return
 id|actual
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_dma_xmit_complete (idev)&n; *&n; *    The transfer of a frame in finished. This function will only be called &n; *    by the interrupt handler&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_dma_xmit_complete (self)&n; *&n; *    The transfer of a frame in finished. This function will only be called &n; *    by the interrupt handler&n; *&n; */
 DECL|function|pc87108_dma_xmit_complete
 r_static
 r_void
@@ -3626,9 +3809,9 @@ id|pc87108_dma_xmit_complete
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 (brace
 r_int
@@ -3637,7 +3820,7 @@ suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3649,7 +3832,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
 comma
@@ -3657,20 +3840,9 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
 multiline_comment|/* Save current bank */
 id|bank
@@ -3726,10 +3898,10 @@ op_amp
 id|ASCR_TXUR
 )paren
 (brace
-id|idev-&gt;stats.tx_errors
+id|self-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-id|idev-&gt;stats.tx_fifo_errors
+id|self-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
 multiline_comment|/* Clear bit, by writing 1 into it */
@@ -3746,24 +3918,20 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|idev-&gt;stats.tx_packets
+id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-id|idev-&gt;stats.tx_bytes
+id|self-&gt;stats.tx_bytes
 op_add_assign
-id|idev-&gt;tx_buff.len
+id|self-&gt;tx_buff.len
 suffix:semicolon
 )brace
 multiline_comment|/* Unlock tx_buff and request another frame */
-id|idev-&gt;netdev.tbusy
+id|self-&gt;netdev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Unlock */
-id|idev-&gt;media_busy
-op_assign
-id|FALSE
-suffix:semicolon
 multiline_comment|/* Tell the network layer, that we can accept more frames */
 id|mark_bh
 c_func
@@ -3783,7 +3951,7 @@ id|BSR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_dma_receive (idev)&n; *&n; *    Get ready for receiving a frame. The device will initiate a DMA&n; *    if it starts to receive a frame.&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_dma_receive (self)&n; *&n; *    Get ready for receiving a frame. The device will initiate a DMA&n; *    if it starts to receive a frame.&n; *&n; */
 DECL|function|pc87108_dma_receive
 r_static
 r_int
@@ -3791,16 +3959,11 @@ id|pc87108_dma_receive
 c_func
 (paren
 r_struct
-id|irda_device
-op_star
-id|idev
-)paren
-(brace
-r_struct
 id|pc87108
 op_star
 id|self
-suffix:semicolon
+)paren
+(brace
 r_int
 id|iobase
 suffix:semicolon
@@ -3810,7 +3973,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
 comma
@@ -3820,20 +3983,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3842,13 +3992,9 @@ id|__FUNCTION__
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|self
-op_assign
-id|idev-&gt;priv
-suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
 multiline_comment|/* Save current bank */
 id|bsr
@@ -3892,23 +4038,23 @@ suffix:semicolon
 id|setup_dma
 c_func
 (paren
-id|idev-&gt;io.dma
+id|self-&gt;io.dma
 comma
-id|idev-&gt;rx_buff.data
+id|self-&gt;rx_buff.data
 comma
-id|idev-&gt;rx_buff.truesize
+id|self-&gt;rx_buff.truesize
 comma
 id|DMA_MODE_READ
 )paren
 suffix:semicolon
 multiline_comment|/* driver-&gt;media_busy = FALSE; */
-id|idev-&gt;io.direction
+id|self-&gt;io.direction
 op_assign
 id|IO_RECV
 suffix:semicolon
-id|idev-&gt;rx_buff.data
+id|self-&gt;rx_buff.data
 op_assign
-id|idev-&gt;rx_buff.head
+id|self-&gt;rx_buff.head
 suffix:semicolon
 multiline_comment|/* Reset Rx FIFO. This will also flush the ST_FIFO */
 id|outb
@@ -4007,7 +4153,7 @@ op_plus
 id|BSR
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4020,7 +4166,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_dma_receive_complete (idev)&n; *&n; *    Finished with receiving frames&n; *&n; *    &n; */
+multiline_comment|/*&n; * Function pc87108_dma_receive_complete (self)&n; *&n; *    Finished with receiving frames&n; *&n; *    &n; */
 DECL|function|pc87108_dma_receive_complete
 r_static
 r_int
@@ -4028,9 +4174,9 @@ id|pc87108_dma_receive_complete
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 comma
 r_int
 id|iobase
@@ -4042,17 +4188,9 @@ op_star
 id|skb
 suffix:semicolon
 r_struct
-id|pc87108
-op_star
-id|self
-suffix:semicolon
-r_struct
 id|st_fifo
 op_star
 id|st_fifo
-suffix:semicolon
-r_int
-id|len
 suffix:semicolon
 id|__u8
 id|bank
@@ -4060,9 +4198,8 @@ suffix:semicolon
 id|__u8
 id|status
 suffix:semicolon
-id|self
-op_assign
-id|idev-&gt;priv
+r_int
+id|len
 suffix:semicolon
 id|st_fifo
 op_assign
@@ -4213,7 +4350,7 @@ id|FRM_ST_LOST_FR
 )paren
 (brace
 multiline_comment|/* Add number of lost frames to stats */
-id|idev-&gt;stats.rx_errors
+id|self-&gt;stats.rx_errors
 op_add_assign
 id|len
 suffix:semicolon
@@ -4221,10 +4358,10 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Skip frame */
-id|idev-&gt;stats.rx_errors
+id|self-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
-id|idev-&gt;rx_buff.data
+id|self-&gt;rx_buff.data
 op_add_assign
 id|len
 suffix:semicolon
@@ -4235,7 +4372,7 @@ id|status
 op_amp
 id|FRM_ST_MAX_LEN
 )paren
-id|idev-&gt;stats.rx_length_errors
+id|self-&gt;stats.rx_length_errors
 op_increment
 suffix:semicolon
 r_if
@@ -4245,7 +4382,7 @@ id|status
 op_amp
 id|FRM_ST_PHY_ERR
 )paren
-id|idev-&gt;stats.rx_frame_errors
+id|self-&gt;stats.rx_frame_errors
 op_increment
 suffix:semicolon
 r_if
@@ -4255,7 +4392,7 @@ id|status
 op_amp
 id|FRM_ST_BAD_CRC
 )paren
-id|idev-&gt;stats.rx_crc_errors
+id|self-&gt;stats.rx_crc_errors
 op_increment
 suffix:semicolon
 )brace
@@ -4267,7 +4404,7 @@ id|status
 op_amp
 id|FRM_ST_OVR1
 )paren
-id|idev-&gt;stats.rx_fifo_errors
+id|self-&gt;stats.rx_fifo_errors
 op_increment
 suffix:semicolon
 r_if
@@ -4277,7 +4414,7 @@ id|status
 op_amp
 id|FRM_ST_OVR2
 )paren
-id|idev-&gt;stats.rx_fifo_errors
+id|self-&gt;stats.rx_fifo_errors
 op_increment
 suffix:semicolon
 )brace
@@ -4394,7 +4531,7 @@ multiline_comment|/* Copy frame without CRC */
 r_if
 c_cond
 (paren
-id|idev-&gt;io.baudrate
+id|self-&gt;io.speed
 OL
 l_int|4000000
 )paren
@@ -4414,7 +4551,7 @@ c_func
 (paren
 id|skb-&gt;data
 comma
-id|idev-&gt;rx_buff.data
+id|self-&gt;rx_buff.data
 comma
 id|len
 op_minus
@@ -4439,7 +4576,7 @@ c_func
 (paren
 id|skb-&gt;data
 comma
-id|idev-&gt;rx_buff.data
+id|self-&gt;rx_buff.data
 comma
 id|len
 op_minus
@@ -4448,17 +4585,16 @@ l_int|4
 suffix:semicolon
 )brace
 multiline_comment|/* Move to next frame */
-id|idev-&gt;rx_buff.data
+id|self-&gt;rx_buff.data
 op_add_assign
 id|len
 suffix:semicolon
-id|idev-&gt;stats.rx_packets
+id|self-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
-op_amp
-id|idev-&gt;netdev
+id|self-&gt;netdev
 suffix:semicolon
 id|skb-&gt;mac.raw
 op_assign
@@ -4495,7 +4631,7 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_pio_receive (idev)&n; *&n; *    Receive all data in receiver FIFO&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_pio_receive (self)&n; *&n; *    Receive all data in receiver FIFO&n; *&n; */
 DECL|function|pc87108_pio_receive
 r_static
 r_void
@@ -4503,9 +4639,9 @@ id|pc87108_pio_receive
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 (brace
 id|__u8
@@ -4516,7 +4652,7 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4528,7 +4664,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
 comma
@@ -4536,20 +4672,9 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
 multiline_comment|/*  Receive all characters in Rx FIFO */
 r_do
@@ -4567,7 +4692,10 @@ suffix:semicolon
 id|async_unwrap_char
 c_func
 (paren
-id|idev
+id|self-&gt;netdev
+comma
+op_amp
+id|self-&gt;rx_buff
 comma
 id|byte
 )paren
@@ -4589,7 +4717,7 @@ id|LSR_RXDA
 suffix:semicolon
 multiline_comment|/* Data available */
 )brace
-multiline_comment|/*&n; * Function pc87108_sir_interrupt (idev, eir)&n; *&n; *    Handle SIR interrupt&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_sir_interrupt (self, eir)&n; *&n; *    Handle SIR interrupt&n; *&n; */
 DECL|function|pc87108_sir_interrupt
 r_static
 id|__u8
@@ -4597,9 +4725,9 @@ id|pc87108_sir_interrupt
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 comma
 r_int
 id|eir
@@ -4628,24 +4756,24 @@ op_assign
 id|pc87108_pio_write
 c_func
 (paren
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 comma
-id|idev-&gt;tx_buff.data
+id|self-&gt;tx_buff.data
 comma
-id|idev-&gt;tx_buff.len
+id|self-&gt;tx_buff.len
 comma
-id|idev-&gt;io.fifo_size
+id|self-&gt;io.fifo_size
 )paren
 suffix:semicolon
-id|idev-&gt;tx_buff.data
+id|self-&gt;tx_buff.data
 op_add_assign
 id|actual
 suffix:semicolon
-id|idev-&gt;tx_buff.len
+id|self-&gt;tx_buff.len
 op_sub_assign
 id|actual
 suffix:semicolon
-id|idev-&gt;io.direction
+id|self-&gt;io.direction
 op_assign
 id|IO_XMIT
 suffix:semicolon
@@ -4653,7 +4781,7 @@ multiline_comment|/* Check if finished */
 r_if
 c_cond
 (paren
-id|idev-&gt;tx_buff.len
+id|self-&gt;tx_buff.len
 OG
 l_int|0
 )paren
@@ -4663,12 +4791,12 @@ id|IER_TXLDL_IE
 suffix:semicolon
 r_else
 (brace
-id|idev-&gt;netdev.tbusy
+id|self-&gt;netdev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Unlock */
-id|idev-&gt;stats.tx_packets
+id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 id|mark_bh
@@ -4693,7 +4821,7 @@ id|EIR_TXEMP_EV
 )paren
 (brace
 multiline_comment|/* Turn around and get ready to receive some data */
-id|idev-&gt;io.direction
+id|self-&gt;io.direction
 op_assign
 id|IO_RECV
 suffix:semicolon
@@ -4714,7 +4842,7 @@ id|EIR_RXHDL_EV
 id|pc87108_pio_receive
 c_func
 (paren
-id|idev
+id|self
 )paren
 suffix:semicolon
 multiline_comment|/* Keep receiving */
@@ -4727,7 +4855,7 @@ r_return
 id|new_ier
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_fir_interrupt (idev, eir)&n; *&n; *    Handle MIR/FIR interrupt&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_fir_interrupt (self, eir)&n; *&n; *    Handle MIR/FIR interrupt&n; *&n; */
 DECL|function|pc87108_fir_interrupt
 r_static
 id|__u8
@@ -4735,9 +4863,9 @@ id|pc87108_fir_interrupt
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 comma
 r_int
 id|iobase
@@ -4783,7 +4911,7 @@ c_cond
 id|pc87108_dma_receive_complete
 c_func
 (paren
-id|idev
+id|self
 comma
 id|iobase
 )paren
@@ -4896,7 +5024,7 @@ multiline_comment|/* Check if this is a TX timer interrupt */
 r_if
 c_cond
 (paren
-id|idev-&gt;io.direction
+id|self-&gt;io.direction
 op_eq
 id|IO_XMIT
 )paren
@@ -4904,7 +5032,7 @@ id|IO_XMIT
 id|pc87108_dma_write
 c_func
 (paren
-id|idev
+id|self
 comma
 id|iobase
 )paren
@@ -4921,7 +5049,7 @@ multiline_comment|/* Check if DMA has now finished */
 id|pc87108_dma_receive_complete
 c_func
 (paren
-id|idev
+id|self
 comma
 id|iobase
 )paren
@@ -4944,7 +5072,7 @@ id|EIR_DMA_EV
 id|pc87108_dma_xmit_complete
 c_func
 (paren
-id|idev
+id|self
 )paren
 suffix:semicolon
 multiline_comment|/* Check if there are more frames to be transmitted */
@@ -4954,7 +5082,7 @@ c_cond
 id|irda_device_txqueue_empty
 c_func
 (paren
-id|idev
+id|self-&gt;netdev
 )paren
 )paren
 (brace
@@ -4962,7 +5090,7 @@ multiline_comment|/* Prepare for receive */
 id|pc87108_dma_receive
 c_func
 (paren
-id|idev
+id|self
 )paren
 suffix:semicolon
 id|new_ier
@@ -5007,6 +5135,23 @@ op_star
 id|regs
 )paren
 (brace
+r_struct
+id|net_device
+op_star
+id|dev
+op_assign
+(paren
+r_struct
+id|net_device
+op_star
+)paren
+id|dev_id
+suffix:semicolon
+r_struct
+id|pc87108
+op_star
+id|self
+suffix:semicolon
 id|__u8
 id|bsr
 comma
@@ -5017,24 +5162,11 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-r_struct
-id|irda_device
-op_star
-id|idev
-op_assign
-(paren
-r_struct
-id|irda_device
-op_star
-)paren
-id|dev_id
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|idev
-op_eq
-l_int|NULL
+op_logical_neg
+id|dev
 )paren
 (brace
 id|printk
@@ -5051,13 +5183,22 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|idev-&gt;netdev.interrupt
+id|self
+op_assign
+(paren
+r_struct
+id|pc87108
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
 multiline_comment|/* Save current bank */
 id|bsr
@@ -5122,7 +5263,7 @@ multiline_comment|/* Dispatch interrupt handler for the current speed */
 r_if
 c_cond
 (paren
-id|idev-&gt;io.baudrate
+id|self-&gt;io.speed
 OG
 l_int|115200
 )paren
@@ -5131,7 +5272,7 @@ op_assign
 id|pc87108_fir_interrupt
 c_func
 (paren
-id|idev
+id|self
 comma
 id|iobase
 comma
@@ -5144,7 +5285,7 @@ op_assign
 id|pc87108_sir_interrupt
 c_func
 (paren
-id|idev
+id|self
 comma
 id|eir
 )paren
@@ -5172,12 +5313,12 @@ id|BSR
 )paren
 suffix:semicolon
 multiline_comment|/* Restore bank register */
-id|idev-&gt;netdev.interrupt
+id|dev-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_wait_until_sent (idev)&n; *&n; *    This function should put the current thread to sleep until all data &n; *    have been sent, so it is safe to f.eks. change the speed.&n; */
+multiline_comment|/*&n; * Function pc87108_wait_until_sent (self)&n; *&n; *    This function should put the current thread to sleep until all data &n; *    have been sent, so it is safe to f.eks. change the speed.&n; */
 DECL|function|pc87108_wait_until_sent
 r_static
 r_void
@@ -5185,9 +5326,9 @@ id|pc87108_wait_until_sent
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 (brace
 multiline_comment|/* Just delay 60 ms */
@@ -5206,7 +5347,7 @@ l_int|60
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_is_receiving (idev)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */
+multiline_comment|/*&n; * Function pc87108_is_receiving (self)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */
 DECL|function|pc87108_is_receiving
 r_static
 r_int
@@ -5214,9 +5355,9 @@ id|pc87108_is_receiving
 c_func
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 )paren
 (brace
 r_int
@@ -5233,21 +5374,9 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
-comma
-r_return
-id|FALSE
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
 comma
 r_return
 id|FALSE
@@ -5257,14 +5386,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|idev-&gt;io.baudrate
+id|self-&gt;io.speed
 OG
 l_int|115200
 )paren
 (brace
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
 multiline_comment|/* Check if rx FIFO is not empty */
 id|bank
@@ -5324,7 +5453,7 @@ r_else
 id|status
 op_assign
 (paren
-id|idev-&gt;rx_buff.state
+id|self-&gt;rx_buff.state
 op_ne
 id|OUTSIDE_FRAME
 )paren
@@ -5346,7 +5475,7 @@ op_star
 id|dev
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -5381,9 +5510,9 @@ id|dev
 )paren
 (brace
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 suffix:semicolon
 r_int
 id|iobase
@@ -5391,7 +5520,7 @@ suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -5413,11 +5542,11 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|idev
+id|self
 op_assign
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
 )paren
 id|dev-&gt;priv
@@ -5425,7 +5554,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
 comma
@@ -5434,21 +5563,9 @@ l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
 r_if
 c_cond
@@ -5456,19 +5573,19 @@ c_cond
 id|request_irq
 c_func
 (paren
-id|idev-&gt;io.irq
+id|self-&gt;io.irq
 comma
 id|pc87108_interrupt
 comma
 l_int|0
 comma
-id|idev-&gt;name
+id|dev-&gt;name
 comma
 (paren
 r_void
 op_star
 )paren
-id|idev
+id|dev
 )paren
 )paren
 (brace
@@ -5484,18 +5601,18 @@ c_cond
 id|request_dma
 c_func
 (paren
-id|idev-&gt;io.dma
+id|self-&gt;io.dma
 comma
-id|idev-&gt;name
+id|dev-&gt;name
 )paren
 )paren
 (brace
 id|free_irq
 c_func
 (paren
-id|idev-&gt;io.irq
+id|self-&gt;io.irq
 comma
-id|idev
+id|self
 )paren
 suffix:semicolon
 r_return
@@ -5546,10 +5663,29 @@ op_plus
 id|BSR
 )paren
 suffix:semicolon
-id|irda_device_net_open
+multiline_comment|/* Ready to play! */
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;start
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* &n;&t; * Open new IrLAP layer instance, now that everything should be&n;&t; * initialized properly &n;&t; */
+id|self-&gt;irlap
+op_assign
+id|irlap_open
 c_func
 (paren
 id|dev
+comma
+op_amp
+id|self-&gt;qos
 )paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
@@ -5572,9 +5708,9 @@ id|dev
 )paren
 (brace
 r_struct
-id|irda_device
+id|pc87108
 op_star
-id|idev
+id|self
 suffix:semicolon
 r_int
 id|iobase
@@ -5582,19 +5718,13 @@ suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|irda_device_net_close
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 id|ASSERT
@@ -5610,11 +5740,11 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|idev
+id|self
 op_assign
 (paren
 r_struct
-id|irda_device
+id|pc87108
 op_star
 )paren
 id|dev-&gt;priv
@@ -5622,7 +5752,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|idev
+id|self
 op_ne
 l_int|NULL
 comma
@@ -5631,26 +5761,39 @@ l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|idev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
+multiline_comment|/* Stop device */
+id|dev-&gt;tbusy
+op_assign
+l_int|1
+suffix:semicolon
+id|dev-&gt;start
+op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Stop and remove instance of IrLAP */
+r_if
+c_cond
+(paren
+id|self-&gt;irlap
 )paren
+id|irlap_close
+c_func
+(paren
+id|self-&gt;irlap
+)paren
+suffix:semicolon
+id|self-&gt;irlap
+op_assign
+l_int|NULL
 suffix:semicolon
 id|iobase
 op_assign
-id|idev-&gt;io.iobase
+id|self-&gt;io.iobase
 suffix:semicolon
 id|disable_dma
 c_func
 (paren
-id|idev-&gt;io.dma
+id|self-&gt;io.dma
 )paren
 suffix:semicolon
 multiline_comment|/* Save current bank */
@@ -5686,15 +5829,15 @@ suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|idev-&gt;io.irq
+id|self-&gt;io.irq
 comma
-id|idev
+id|self
 )paren
 suffix:semicolon
 id|free_dma
 c_func
 (paren
-id|idev-&gt;io.dma
+id|self-&gt;io.dma
 )paren
 suffix:semicolon
 multiline_comment|/* Restore bank register */

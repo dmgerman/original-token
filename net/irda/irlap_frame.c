@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.9&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Tue Sep 28 08:49:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.9&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Sat Oct  9 09:42:11 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
@@ -14,12 +14,12 @@ macro_line|#include &lt;net/irda/wrapper.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
 macro_line|#include &lt;net/irda/irlap_frame.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
-multiline_comment|/*&n; * Function irlap_insert_mtt (self, skb)&n; *&n; *    Insert minimum turnaround time relevant information into the skb. We &n; *    need to do this since it&squot;s per packet relevant information.&n; *&n; */
-DECL|function|irlap_insert_mtt
+multiline_comment|/*&n; * Function irlap_insert_info (self, skb)&n; *&n; *    Insert minimum turnaround time and speed information into the skb. We &n; *    need to do this since it&squot;s per packet relevant information.&n; *&n; */
+DECL|function|irlap_insert_info
 r_static
 r_inline
 r_void
-id|irlap_insert_mtt
+id|irlap_insert_info
 c_func
 (paren
 r_struct
@@ -45,7 +45,7 @@ op_star
 )paren
 id|skb-&gt;cb
 suffix:semicolon
-multiline_comment|/* &n;&t; * Insert MTT (min. turn time) into skb, so that the device driver &n;&t; * knows which MTT to use &n;&t; */
+multiline_comment|/*  &n;&t; * Insert MTT (min. turn time) and speed into skb, so that the&n;&t; * device driver knows which settings to use &n;&t; */
 id|cb-&gt;magic
 op_assign
 id|LAP_MAGIC
@@ -53,6 +53,10 @@ suffix:semicolon
 id|cb-&gt;mtt
 op_assign
 id|self-&gt;mtt_required
+suffix:semicolon
+id|cb-&gt;speed
+op_assign
+id|self-&gt;qos_tx.baud_rate.value
 suffix:semicolon
 multiline_comment|/* Reset */
 id|self-&gt;mtt_required
@@ -138,7 +142,7 @@ id|skb-&gt;priority
 op_assign
 id|TC_PRIO_BESTEFFORT
 suffix:semicolon
-id|irlap_insert_mtt
+id|irlap_insert_info
 c_func
 (paren
 id|self
@@ -151,9 +155,6 @@ c_func
 (paren
 id|skb
 )paren
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_send_snrm_cmd (void)&n; *&n; *    Transmits a connect SNRM command frame&n; */
@@ -412,7 +413,7 @@ l_int|0xfe
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -456,7 +457,7 @@ op_ne
 id|self-&gt;saddr
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -532,7 +533,7 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -810,7 +811,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -942,7 +943,7 @@ id|__u8
 op_star
 id|info
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1322,7 +1323,7 @@ r_char
 op_star
 id|text
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1401,7 +1402,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1469,7 +1470,7 @@ id|discovery-&gt;timestamp
 op_assign
 id|jiffies
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1516,7 +1517,7 @@ op_amp
 id|HINT_EXTENSION
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1710,7 +1711,7 @@ id|BROADCAST
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2272,7 +2273,7 @@ l_int|2
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2356,7 +2357,7 @@ l_int|1
 op_rshift
 l_int|5
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2550,7 +2551,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2732,7 +2733,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3449,7 +3450,7 @@ OG
 l_int|0
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3566,7 +3567,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3827,7 +3828,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3899,7 +3900,7 @@ id|y
 comma
 id|z
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4032,7 +4033,7 @@ c_cond
 id|w
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4048,7 +4049,7 @@ c_cond
 id|x
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4064,7 +4065,7 @@ c_cond
 id|y
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4081,7 +4082,7 @@ c_cond
 id|z
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4284,7 +4285,7 @@ id|test_frame
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -4305,7 +4306,7 @@ id|test_frame
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4431,29 +4432,21 @@ id|irlap_cb
 op_star
 id|self
 suffix:semicolon
-r_struct
-id|irda_device
-op_star
-id|idev
-suffix:semicolon
 r_int
 id|command
 suffix:semicolon
 id|__u8
 id|control
 suffix:semicolon
-id|idev
+multiline_comment|/* FIXME: should we get our own field? */
+id|self
 op_assign
 (paren
 r_struct
-id|irda_device
+id|irlap_cb
 op_star
 )paren
-id|dev-&gt;priv
-suffix:semicolon
-id|self
-op_assign
-id|idev-&gt;irlap
+id|dev-&gt;atalk_ptr
 suffix:semicolon
 multiline_comment|/* If the net device is down, then IrLAP is gone! */
 r_if
@@ -4564,7 +4557,7 @@ id|CBROADCAST
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4606,9 +4599,6 @@ comma
 id|command
 )paren
 suffix:semicolon
-id|self-&gt;stats.rx_packets
-op_increment
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4648,9 +4638,6 @@ comma
 id|command
 )paren
 suffix:semicolon
-id|self-&gt;stats.rx_packets
-op_increment
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -4667,15 +4654,12 @@ op_amp
 id|info
 )paren
 suffix:semicolon
-id|self-&gt;stats.rx_packets
-op_increment
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|REJ
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4688,7 +4672,7 @@ suffix:semicolon
 r_case
 id|SREJ
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4774,7 +4758,7 @@ suffix:semicolon
 r_case
 id|DM_RSP
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4863,14 +4847,6 @@ suffix:semicolon
 r_case
 id|UI_FRAME
 suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;UI-frame received!&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlap_recv_ui_frame
 c_func
 (paren
@@ -4904,9 +4880,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|self-&gt;stats.rx_packets
-op_increment
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -72,6 +72,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * Get a page for this inode, if new is set then we want to allocate&n; * the page if it isn&squot;t in memory. As I understand it the rest of the&n; * smb-cache code assumes we return a locked page.&n; */
+r_static
 r_int
 r_int
 DECL|function|get_cached_page
@@ -79,9 +80,9 @@ id|get_cached_page
 c_func
 (paren
 r_struct
-id|inode
+id|address_space
 op_star
-id|inode
+id|owner
 comma
 r_int
 r_int
@@ -113,7 +114,7 @@ op_assign
 id|page_hash
 c_func
 (paren
-id|inode
+id|owner
 comma
 id|offset
 )paren
@@ -123,7 +124,7 @@ op_assign
 id|__find_lock_page
 c_func
 (paren
-id|inode
+id|owner
 comma
 id|offset
 comma
@@ -179,7 +180,7 @@ c_func
 (paren
 id|page
 comma
-id|inode
+id|owner
 comma
 id|offset
 comma
@@ -244,7 +245,7 @@ suffix:semicolon
 r_static
 r_inline
 r_struct
-id|inode
+id|address_space
 op_star
 DECL|function|get_cache_inode
 id|get_cache_inode
@@ -271,7 +272,7 @@ id|cachep
 )paren
 )paren
 op_member_access_from_pointer
-id|inode
+id|owner
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get a pointer to the cache_head structure,&n; * mapped as the page at offset 0. The page is&n; * kept locked while we&squot;re using the cache.&n; */
@@ -289,11 +290,12 @@ id|dentry
 )paren
 (brace
 r_struct
-id|inode
+id|address_space
 op_star
-id|inode
+id|owner
 op_assign
-id|dentry-&gt;d_inode
+op_amp
+id|dentry-&gt;d_inode-&gt;i_data
 suffix:semicolon
 r_struct
 id|cache_head
@@ -322,7 +324,7 @@ op_star
 id|get_cached_page
 c_func
 (paren
-id|inode
+id|owner
 comma
 l_int|0
 comma
@@ -423,7 +425,7 @@ op_star
 id|get_cached_page
 c_func
 (paren
-id|inode
+id|owner
 comma
 id|offset
 comma
@@ -630,9 +632,9 @@ id|fpos
 )paren
 (brace
 r_struct
-id|inode
+id|address_space
 op_star
-id|inode
+id|owner
 op_assign
 id|get_cache_inode
 c_func
@@ -680,9 +682,9 @@ macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;smb_add_to_cache: cache inode %p, status %d, adding &quot;
+l_string|&quot;smb_add_to_cache: cache %p, status %d, adding &quot;
 comma
-id|inode
+id|owner
 comma
 id|cachep-&gt;status
 )paren
@@ -900,7 +902,7 @@ op_star
 id|get_cached_page
 c_func
 (paren
-id|inode
+id|owner
 comma
 id|page_off
 comma
@@ -925,9 +927,9 @@ macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;smb_add_to_cache: inode=%p, pages=%d, block at %ld&bslash;n&quot;
+l_string|&quot;smb_add_to_cache: owner=%p, pages=%d, block at %ld&bslash;n&quot;
 comma
-id|inode
+id|owner
 comma
 id|cachep-&gt;pages
 comma

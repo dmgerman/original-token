@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Mon Sep 27 12:02:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Tue Oct 19 21:40:00 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -376,11 +376,11 @@ op_logical_neg
 id|irttp-&gt;tsaps
 )paren
 (brace
-id|printk
+id|ERROR
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;IrDA: Can&squot;t allocate IrTTP hashbin!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), can&squot;t allocate IrTTP hashbin!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -532,7 +532,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -657,11 +657,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;IrTTP, Unable to get LSAP!!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), unable to allocate LSAP!!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -673,7 +673,7 @@ id|self-&gt;stsap_sel
 op_assign
 id|lsap-&gt;slsap_sel
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -699,7 +699,7 @@ c_func
 id|irttp-&gt;tsaps
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|self
@@ -814,7 +814,7 @@ id|tsap_cb
 op_star
 id|tsap
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -864,7 +864,7 @@ op_logical_neg
 id|self-&gt;disconnect_pend
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1015,7 +1015,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1040,7 +1040,7 @@ id|self-&gt;connected
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1062,7 +1062,7 @@ OG
 id|self-&gt;max_seg_size
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1676,7 +1676,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1828,7 +1828,7 @@ id|tsap_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2078,7 +2078,7 @@ id|LOCAL_FLOW
 id|flow
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2118,7 +2118,7 @@ id|flow
 r_case
 id|FLOW_STOP
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2136,7 +2136,7 @@ suffix:semicolon
 r_case
 id|FLOW_START
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2159,7 +2159,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2216,7 +2216,7 @@ suffix:semicolon
 id|__u8
 id|n
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2577,7 +2577,7 @@ suffix:semicolon
 id|__u8
 id|n
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2647,7 +2647,7 @@ c_cond
 id|qos
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2657,7 +2657,7 @@ comma
 id|qos-&gt;baud_rate.bits
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2677,7 +2677,7 @@ l_int|0
 op_amp
 l_int|0x7f
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2752,7 +2752,7 @@ id|skb-&gt;data
 op_plus
 l_int|1
 comma
-id|MIN
+id|IRDA_MIN
 c_func
 (paren
 id|skb-&gt;len
@@ -2798,7 +2798,7 @@ c_func
 (paren
 id|skb
 comma
-id|MIN
+id|IRDA_MIN
 c_func
 (paren
 id|skb-&gt;len
@@ -2810,7 +2810,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2825,7 +2825,7 @@ comma
 id|self-&gt;remote_credit
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2976,7 +2976,7 @@ id|max_header_size
 op_plus
 id|TTP_HEADER
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3061,7 +3061,7 @@ id|skb-&gt;data
 op_plus
 l_int|1
 comma
-id|MIN
+id|IRDA_MIN
 c_func
 (paren
 id|skb-&gt;len
@@ -3107,7 +3107,7 @@ c_func
 (paren
 id|skb
 comma
-id|MIN
+id|IRDA_MIN
 c_func
 (paren
 id|skb-&gt;len
@@ -3206,7 +3206,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3493,7 +3493,7 @@ id|tsap_cb
 op_star
 r_new
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3520,7 +3520,7 @@ l_int|NULL
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3554,7 +3554,7 @@ op_logical_neg
 r_new
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3643,7 +3643,7 @@ c_func
 id|irttp-&gt;tsaps
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 r_new
@@ -3722,7 +3722,7 @@ op_logical_neg
 id|self-&gt;connected
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3743,7 +3743,7 @@ c_cond
 id|self-&gt;disconnect_pend
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3799,7 +3799,7 @@ op_eq
 id|P_HIGH
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3868,7 +3868,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3962,7 +3962,7 @@ id|tsap_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4073,7 +4073,7 @@ op_minus
 id|ENOMEM
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -4138,7 +4138,7 @@ id|more
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4252,7 +4252,7 @@ op_le
 id|self-&gt;rx_max_sdu_size
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4344,7 +4344,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4406,7 +4406,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4560,7 +4560,7 @@ l_int|NULL
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4646,7 +4646,7 @@ id|frag
 )paren
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4658,7 +4658,7 @@ id|n
 )paren
 suffix:semicolon
 multiline_comment|/* Set the new length */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4724,7 +4724,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4784,7 +4784,7 @@ OL
 id|self-&gt;max_seg_size
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4975,7 +4975,7 @@ id|self-&gt;tx_max_sdu_size
 op_assign
 id|param-&gt;pv.i
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; *                &n; * Filename:      qos.c&n; * Version:       1.0&n; * Description:   IrLAP QoS parameter negotiation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Sep  9 00:00:26 1997&n; * Modified at:   Wed Sep  1 09:14:55 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; *                &n; * Filename:      qos.c&n; * Version:       1.0&n; * Description:   IrLAP QoS parameter negotiation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Sep  9 00:00:26 1997&n; * Modified at:   Tue Oct  5 11:50:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -645,7 +645,7 @@ op_logical_neg
 id|comp_seen
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -679,7 +679,7 @@ op_amp
 id|self-&gt;qos_rx
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -689,7 +689,7 @@ comma
 id|self-&gt;qos_tx.baud_rate.value
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -699,7 +699,7 @@ comma
 id|self-&gt;qos_tx.data_size.value
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -709,7 +709,7 @@ comma
 id|self-&gt;qos_tx.window_size.value
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -719,7 +719,7 @@ comma
 id|self-&gt;qos_tx.additional_bofs.value
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -729,7 +729,7 @@ comma
 id|self-&gt;qos_tx.max_turn_time.value
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -739,7 +739,7 @@ comma
 id|self-&gt;qos_tx.min_turn_time.value
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -750,7 +750,7 @@ id|self-&gt;qos_tx.link_disc_time.value
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_IRDA_COMPRESSION
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1139,7 +1139,7 @@ id|param-&gt;pv.i
 op_assign
 id|self-&gt;qos_rx.baud_rate.bits
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1154,7 +1154,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* &n;&t;&t; *  Stations must agree on baud rate, so calculate&n;&t;&t; *  intersection &n;&t;&t; */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1170,7 +1170,7 @@ id|param-&gt;pv.s
 op_amp
 id|self-&gt;qos_rx.baud_rate.bits
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1265,7 +1265,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*  &n;&t;&t; *  Stations must agree on link disconnect/threshold &n;&t;&t; *  time.&n;&t;&t; */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1281,7 +1281,7 @@ id|param-&gt;pv.b
 op_amp
 id|self-&gt;qos_rx.link_disc_time.bits
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1687,7 +1687,7 @@ c_func
 id|__u8
 id|byte
 comma
-r_int
+id|__u32
 op_star
 id|array
 )paren
@@ -1783,7 +1783,7 @@ c_func
 id|__u32
 id|value
 comma
-r_int
+id|__u32
 op_star
 id|array
 )paren
@@ -1830,7 +1830,7 @@ c_func
 r_int
 id|index
 comma
-r_int
+id|__u32
 op_star
 id|array
 )paren

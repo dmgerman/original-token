@@ -59,6 +59,13 @@ c_func
 id|pci_root
 )paren
 suffix:semicolon
+DECL|variable|pci_enable_device
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_enable_device
+)paren
+suffix:semicolon
 DECL|variable|pci_find_class
 id|EXPORT_SYMBOL
 c_func

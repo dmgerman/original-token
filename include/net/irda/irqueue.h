@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.h&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:26:50 1998&n; * Modified at:   Thu Jul  1 10:18:21 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998-1999, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (c) 1998, Dag Brattli&n; *     All Rights Reserved.&n; *      &n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes and has been ported to Linux and Linux/IR by Dag Brattli&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.h&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:26:50 1998&n; * Modified at:   Thu Oct  7 13:25:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998-1999, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (c) 1998, Dag Brattli&n; *     All Rights Reserved.&n; *      &n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes and has been ported to Linux and Linux/IR by Dag Brattli&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifndef QUEUE_H
@@ -24,6 +24,8 @@ macro_line|#ifndef ALIGN
 DECL|macro|ALIGN
 mdefine_line|#define ALIGN __attribute__((aligned))
 macro_line|#endif
+DECL|macro|Q_NULL
+mdefine_line|#define Q_NULL { NULL, NULL, &quot;&quot;, 0 }
 DECL|typedef|FREE_FUNC
 r_typedef
 r_void
@@ -40,19 +42,19 @@ suffix:semicolon
 multiline_comment|/*&n; * Hashbin&n; */
 DECL|macro|GET_HASHBIN
 mdefine_line|#define GET_HASHBIN(x) ( x &amp; HASHBIN_MASK )
-DECL|macro|QUEUE
-mdefine_line|#define QUEUE struct queue_t
-DECL|struct|queue_t
+DECL|struct|irqueue
 r_struct
-id|queue_t
+id|irqueue
 (brace
 DECL|member|q_next
-id|QUEUE
+r_struct
+id|irqueue
 op_star
 id|q_next
 suffix:semicolon
 DECL|member|q_prev
-id|QUEUE
+r_struct
+id|irqueue
 op_star
 id|q_prev
 suffix:semicolon
@@ -68,6 +70,12 @@ id|__u32
 id|q_hash
 suffix:semicolon
 )brace
+suffix:semicolon
+DECL|typedef|queue_t
+r_typedef
+r_struct
+id|irqueue
+id|queue_t
 suffix:semicolon
 DECL|struct|hashbin_t
 r_typedef
@@ -95,7 +103,7 @@ id|HASHBIN_SIZE
 id|ALIGN
 suffix:semicolon
 DECL|member|ALIGN
-id|QUEUE
+id|queue_t
 op_star
 id|hb_queue
 (braket
@@ -104,7 +112,7 @@ id|HASHBIN_SIZE
 id|ALIGN
 suffix:semicolon
 DECL|member|hb_current
-id|QUEUE
+id|queue_t
 op_star
 id|hb_current
 suffix:semicolon
@@ -153,7 +161,7 @@ id|hashbin_t
 op_star
 id|hashbin
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|entry
 comma
@@ -209,7 +217,7 @@ op_star
 id|hashbin
 )paren
 suffix:semicolon
-id|QUEUE
+id|queue_t
 op_star
 id|hashbin_get_first
 c_func
@@ -219,7 +227,7 @@ op_star
 id|hashbin
 )paren
 suffix:semicolon
-id|QUEUE
+id|queue_t
 op_star
 id|hashbin_get_next
 c_func
@@ -233,12 +241,12 @@ r_void
 id|enqueue_last
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|element
 )paren
@@ -247,43 +255,28 @@ r_void
 id|enqueue_first
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 comma
-id|QUEUE
+id|queue_t
 op_star
 id|element
 )paren
 suffix:semicolon
-id|QUEUE
+id|queue_t
 op_star
 id|dequeue_first
 c_func
 (paren
-id|QUEUE
+id|queue_t
 op_star
 op_star
 id|queue
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function hashbin_get_size (hashbin)&n; *&n; *    Returns the number of elements in the hashbin&n; *&n; */
-DECL|function|hashbin_get_size
-r_extern
-id|__inline__
-r_int
-id|hashbin_get_size
-c_func
-(paren
-id|hashbin_t
-op_star
-id|hashbin
-)paren
-(brace
-r_return
-id|hashbin-&gt;hb_size
-suffix:semicolon
-)brace
+DECL|macro|HASHBIN_GET_SIZE
+mdefine_line|#define HASHBIN_GET_SIZE(hashbin) hashbin-&gt;hb_size
 macro_line|#endif
 eof

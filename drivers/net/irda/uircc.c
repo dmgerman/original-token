@@ -456,7 +456,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -545,7 +545,7 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -691,7 +691,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -726,7 +726,7 @@ OL
 l_int|0
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -906,7 +906,7 @@ suffix:semicolon
 r_int
 id|status
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -988,7 +988,7 @@ id|idev-&gt;io.iobase2
 )paren
 suffix:semicolon
 multiline_comment|/* Release the PORT that this driver is using */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1013,7 +1013,7 @@ c_cond
 id|idev-&gt;io.iobase2
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1073,7 +1073,7 @@ id|dma
 r_int
 id|version
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1101,7 +1101,7 @@ op_ne
 l_int|0x03
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1166,7 +1166,7 @@ op_plus
 id|UIRCC_CR9
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1246,7 +1246,7 @@ suffix:semicolon
 r_int
 id|status
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1363,7 +1363,7 @@ suffix:semicolon
 r_case
 l_int|576000
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1377,7 +1377,7 @@ suffix:semicolon
 r_case
 l_int|1152000
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1417,7 +1417,7 @@ id|modem
 op_assign
 id|UIRCC_CR10_FIR
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1433,7 +1433,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1571,7 +1571,7 @@ id|iobase
 op_assign
 id|idev-&gt;io.iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1608,7 +1608,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1785,7 +1785,7 @@ id|uircc_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1972,7 +1972,7 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2047,7 +2047,7 @@ op_lshift
 l_int|8
 suffix:semicolon
 multiline_comment|/* High byte */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2174,7 +2174,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2307,7 +2307,7 @@ id|UIRCC_CR3
 )paren
 suffix:semicolon
 macro_line|#endif
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2356,7 +2356,7 @@ id|self
 op_assign
 id|idev-&gt;priv
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2380,7 +2380,7 @@ op_amp
 id|UIRCC_SR0_RX_CRCFRM
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2430,7 +2430,7 @@ op_lshift
 l_int|8
 suffix:semicolon
 multiline_comment|/* High byte */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2653,7 +2653,7 @@ op_logical_neg
 id|sr3
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2668,7 +2668,7 @@ id|idev-&gt;netdev.interrupt
 op_assign
 l_int|1
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2808,7 +2808,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2934,7 +2934,7 @@ op_star
 id|dev
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2976,7 +2976,7 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3123,7 +3123,7 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4

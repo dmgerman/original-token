@@ -79,7 +79,7 @@ c_cond
 id|expedited
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -141,7 +141,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -370,7 +370,7 @@ id|CONNECT_CMD
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -448,7 +448,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -456,7 +456,7 @@ comma
 l_string|&quot;IrLMP, Sorry, no LSAP for received frame!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -480,7 +480,7 @@ op_amp
 id|CONTROL_BIT
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -497,7 +497,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -574,7 +574,7 @@ suffix:semicolon
 r_case
 id|DISCONNECT
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -598,7 +598,7 @@ suffix:semicolon
 r_case
 id|ACCESSMODE_CMD
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -611,7 +611,7 @@ suffix:semicolon
 r_case
 id|ACCESSMODE_CNF
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -623,7 +623,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -741,7 +741,7 @@ op_star
 id|userdata
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -821,7 +821,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -884,7 +884,7 @@ op_star
 id|userdata
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1018,7 +1018,7 @@ op_star
 id|log
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Thu Nov 19 13:55:34 1998&n; * Modified at:   Mon May  3 12:07:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Thu Nov 19 13:55:34 1998&n; * Modified at:   Fri Oct 15 16:06:46 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef W83977AF_IR_H
 DECL|macro|W83977AF_IR_H
 mdefine_line|#define W83977AF_IR_H
@@ -260,11 +260,54 @@ r_int
 id|tx_len
 suffix:semicolon
 multiline_comment|/* Number of frames in tx_buff */
-DECL|member|idev
+DECL|member|netdev
 r_struct
-id|irda_device
-id|idev
+id|net_device
+op_star
+id|netdev
 suffix:semicolon
+multiline_comment|/* Yes! we are some kind of netdevice */
+DECL|member|stats
+r_struct
+id|net_device_stats
+id|stats
+suffix:semicolon
+DECL|member|irlap
+r_struct
+id|irlap_cb
+op_star
+id|irlap
+suffix:semicolon
+multiline_comment|/* The link layer we are binded to */
+DECL|member|io
+r_struct
+id|chipio_t
+id|io
+suffix:semicolon
+multiline_comment|/* IrDA controller information */
+DECL|member|tx_buff
+r_struct
+id|iobuff_t
+id|tx_buff
+suffix:semicolon
+multiline_comment|/* Transmit buffer */
+DECL|member|rx_buff
+r_struct
+id|iobuff_t
+id|rx_buff
+suffix:semicolon
+multiline_comment|/* Receive buffer */
+DECL|member|qos
+r_struct
+id|qos_info
+id|qos
+suffix:semicolon
+multiline_comment|/* QoS capabilities for this device */
+DECL|member|flags
+id|__u32
+id|flags
+suffix:semicolon
+multiline_comment|/* Interface flags */
 )brace
 suffix:semicolon
 DECL|function|switch_bank

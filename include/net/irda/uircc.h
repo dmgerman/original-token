@@ -130,6 +130,7 @@ DECL|macro|UIRCC_SR13
 mdefine_line|#define UIRCC_SR13          0x0d /* Timer counter status (high byte) */
 DECL|macro|UIRCC_SR15
 mdefine_line|#define UIRCC_SR15          0x0f
+macro_line|#include &lt;net/irda/irda_device.h&gt;
 multiline_comment|/* Private data for each instance */
 DECL|struct|uircc_cb
 r_struct
@@ -137,7 +138,7 @@ id|uircc_cb
 (brace
 DECL|member|idev
 r_struct
-id|irda_device
+id|net_device
 id|idev
 suffix:semicolon
 DECL|member|cr3

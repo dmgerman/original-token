@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;hub.h&quot;
 multiline_comment|/* Wakes up khubd */
@@ -227,7 +228,6 @@ op_star
 id|data
 )paren
 (brace
-multiline_comment|/* FIXME: Don&squot;t hardcode 4 */
 r_return
 id|usb_control_msg
 c_func
@@ -254,7 +254,11 @@ l_int|0
 comma
 id|data
 comma
-l_int|4
+r_sizeof
+(paren
+r_struct
+id|usb_hub_status
+)paren
 comma
 id|HZ
 )paren
@@ -279,7 +283,6 @@ op_star
 id|data
 )paren
 (brace
-multiline_comment|/* FIXME: Don&squot;t hardcode 4 */
 r_return
 id|usb_control_msg
 c_func
@@ -306,7 +309,11 @@ id|port
 comma
 id|data
 comma
-l_int|4
+r_sizeof
+(paren
+r_struct
+id|usb_hub_status
+)paren
 comma
 id|HZ
 )paren
@@ -466,6 +473,11 @@ id|usb_descriptor_header
 op_star
 id|header
 suffix:semicolon
+r_struct
+id|usb_hub_status
+op_star
+id|hubsts
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -566,7 +578,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hub: %d-port%s detected&bslash;n&quot;
+l_string|&quot;hub: %d port%s detected&bslash;n&quot;
 comma
 id|hub-&gt;nports
 comma
@@ -667,7 +679,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hub: global over current protection&bslash;n&quot;
+l_string|&quot;hub: global over-current protection&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -679,7 +691,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hub: individual port over current protection&bslash;n&quot;
+l_string|&quot;hub: individual port over-current protection&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -694,7 +706,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hub: no over current protection&bslash;n&quot;
+l_string|&quot;hub: no over-current protection&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -800,6 +812,15 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+id|hubsts
+op_assign
+(paren
+r_struct
+id|usb_hub_status
+op_star
+)paren
+id|buffer
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -807,12 +828,13 @@ id|KERN_INFO
 l_string|&quot;hub: local power source is %s&bslash;n&quot;
 comma
 (paren
-id|buffer
-(braket
-l_int|0
-)braket
+id|le16_to_cpu
+c_func
+(paren
+id|hubsts-&gt;wHubStatus
+)paren
 op_amp
-l_int|1
+id|HUB_STATUS_LOCAL_POWER
 )paren
 ques
 c_cond
@@ -825,15 +847,16 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hub: %sover current condition exists&bslash;n&quot;
+l_string|&quot;hub: %sover-current condition exists&bslash;n&quot;
 comma
 (paren
-id|buffer
-(braket
-l_int|0
-)braket
+id|le16_to_cpu
+c_func
+(paren
+id|hubsts-&gt;wHubStatus
+)paren
 op_amp
-l_int|2
+id|HUB_STATUS_OVERCURRENT
 )paren
 ques
 c_cond
@@ -1345,12 +1368,9 @@ id|usb_device
 op_star
 id|usb
 suffix:semicolon
-r_int
-r_char
-id|buf
-(braket
-l_int|4
-)braket
+r_struct
+id|usb_port_status
+id|portsts
 suffix:semicolon
 r_int
 r_int
@@ -1402,7 +1422,8 @@ id|port
 op_plus
 l_int|1
 comma
-id|buf
+op_amp
+id|portsts
 )paren
 )paren
 (brace
@@ -1418,32 +1439,18 @@ suffix:semicolon
 )brace
 id|portstatus
 op_assign
-id|le16_to_cpup
+id|le16_to_cpu
 c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|buf
-op_plus
-l_int|0
+id|portsts.wPortStatus
 )paren
 suffix:semicolon
 id|portchange
 op_assign
-id|le16_to_cpup
+id|le16_to_cpu
 c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|buf
-op_plus
-l_int|1
+id|portsts.wPortChange
 )paren
 suffix:semicolon
 multiline_comment|/* If it&squot;s not in CONNECT and ENABLE state, we&squot;re done */
@@ -1681,12 +1688,9 @@ id|i
 op_increment
 )paren
 (brace
-r_int
-r_char
-id|buf
-(braket
-l_int|4
-)braket
+r_struct
+id|usb_port_status
+id|portsts
 suffix:semicolon
 r_int
 r_int
@@ -1706,7 +1710,8 @@ id|i
 op_plus
 l_int|1
 comma
-id|buf
+op_amp
+id|portsts
 )paren
 )paren
 (brace
@@ -1722,32 +1727,18 @@ suffix:semicolon
 )brace
 id|portstatus
 op_assign
-id|le16_to_cpup
+id|le16_to_cpu
 c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|buf
-op_plus
-l_int|0
+id|portsts.wPortStatus
 )paren
 suffix:semicolon
 id|portchange
 op_assign
-id|le16_to_cpup
+id|le16_to_cpu
 c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|buf
-op_plus
-l_int|1
+id|portsts.wPortChange
 )paren
 suffix:semicolon
 r_if
@@ -1891,7 +1882,9 @@ id|USB_PORT_FEAT_C_RESET
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* end for i */
 )brace
+multiline_comment|/* end while (1) */
 id|he_unlock
 suffix:colon
 id|spin_unlock_irqrestore

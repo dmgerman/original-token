@@ -524,11 +524,12 @@ r_int
 r_int
 id|pgpos
 suffix:semicolon
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page_cache
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_int
 id|status
@@ -590,7 +591,8 @@ op_assign
 id|page_hash
 c_func
 (paren
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 id|pgpos
 )paren
@@ -602,7 +604,8 @@ op_assign
 id|__find_lock_page
 c_func
 (paren
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 id|pgpos
 comma
@@ -649,11 +652,7 @@ suffix:semicolon
 )brace
 id|new_page
 op_assign
-id|page_cache_entry
-c_func
-(paren
 id|page_cache
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -663,7 +662,8 @@ c_func
 (paren
 id|new_page
 comma
-id|inode
+op_amp
+id|inode-&gt;i_data
 comma
 id|pgpos
 comma
@@ -675,7 +675,7 @@ id|repeat_find
 suffix:semicolon
 id|page_cache
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 id|printk

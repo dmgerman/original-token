@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.h&n; * Version:       0.8&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon Sep 20 10:14:47 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.h&n; * Version:       0.8&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Thu Oct  7 23:06:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLAP_H
 DECL|macro|IRLAP_H
 mdefine_line|#define IRLAP_H
@@ -69,9 +69,9 @@ DECL|struct|irda_compressor
 r_struct
 id|irda_compressor
 (brace
-DECL|member|queue
-id|QUEUE
-id|queue
+DECL|member|q
+id|queue_t
+id|q
 suffix:semicolon
 DECL|member|cp
 r_struct
@@ -94,7 +94,7 @@ r_struct
 id|irlap_cb
 (brace
 DECL|member|q
-id|QUEUE
+id|queue_t
 id|q
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -150,6 +150,16 @@ DECL|member|backoff_timer
 r_struct
 id|timer_list
 id|backoff_timer
+suffix:semicolon
+multiline_comment|/* Media busy stuff */
+DECL|member|media_busy_timer
+r_struct
+id|timer_list
+id|media_busy_timer
+suffix:semicolon
+DECL|member|media_busy
+r_int
+id|media_busy
 suffix:semicolon
 multiline_comment|/* Timeouts which will be different with different turn time */
 DECL|member|slot_timeout
@@ -332,6 +342,13 @@ id|qos_info
 id|qos_rx
 suffix:semicolon
 multiline_comment|/* QoS requested by self */
+DECL|member|qos_dev
+r_struct
+id|qos_info
+op_star
+id|qos_dev
+suffix:semicolon
+multiline_comment|/* QoS supported by device */
 DECL|member|notify
 id|notify_t
 id|notify
@@ -352,11 +369,6 @@ r_int
 id|bofs_count
 suffix:semicolon
 multiline_comment|/* Negotiated extra BOFs */
-DECL|member|stats
-r_struct
-id|irda_statistics
-id|stats
-suffix:semicolon
 macro_line|#ifdef CONFIG_IRDA_COMPRESSION
 DECL|member|compressor
 r_struct
@@ -401,6 +413,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|qos_info
+op_star
+id|qos
 )paren
 suffix:semicolon
 r_void
@@ -478,7 +495,6 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-r_inline
 r_void
 id|irlap_data_indication
 c_func
@@ -492,7 +508,6 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
-r_inline
 r_void
 id|irlap_unit_data_indication
 c_func
@@ -506,7 +521,6 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
-r_inline
 r_void
 id|irlap_data_request
 c_func
@@ -760,44 +774,9 @@ r_int
 id|status
 )paren
 suffix:semicolon
-DECL|function|irlap_get_header_size
-r_extern
-r_inline
-id|__u8
-id|irlap_get_header_size
-c_func
-(paren
-r_struct
-id|irlap_cb
-op_star
-id|self
-)paren
-(brace
-r_return
-l_int|2
-suffix:semicolon
-)brace
-DECL|function|irlap_get_tx_queue_len
-r_extern
-r_inline
-r_int
-id|irlap_get_tx_queue_len
-c_func
-(paren
-r_struct
-id|irlap_cb
-op_star
-id|self
-)paren
-(brace
-r_return
-id|skb_queue_len
-c_func
-(paren
-op_amp
-id|self-&gt;tx_list
-)paren
-suffix:semicolon
-)brace
+DECL|macro|IRLAP_GET_HEADER_SIZE
+mdefine_line|#define IRLAP_GET_HEADER_SIZE(self) 2 /* Will be different when we get VFIR */
+DECL|macro|IRLAP_GET_TX_QUEUE_LEN
+mdefine_line|#define IRLAP_GET_TX_QUEUE_LEN(self) skb_queue_len(&amp;self-&gt;tx_list)
 macro_line|#endif
 eof

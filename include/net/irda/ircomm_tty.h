@@ -1,8 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 23:24:22 1999&n; * Modified at:   Tue Aug 31 10:22:02 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 23:24:22 1999&n; * Modified at:   Tue Oct  5 12:01:07 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRCOMM_TTY_H
 DECL|macro|IRCOMM_TTY_H
 mdefine_line|#define IRCOMM_TTY_H
 macro_line|#include &lt;linux/serial.h&gt;
+macro_line|#include &lt;linux/termios.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;net/irda/irias_object.h&gt;
 macro_line|#include &lt;net/irda/ircomm_core.h&gt;
 macro_line|#include &lt;net/irda/ircomm_param.h&gt;
@@ -20,7 +22,7 @@ r_struct
 id|ircomm_tty_cb
 (brace
 DECL|member|queue
-id|QUEUE
+id|queue_t
 id|queue
 suffix:semicolon
 DECL|member|magic
@@ -43,12 +45,6 @@ id|ircomm_cb
 op_star
 id|ircomm
 suffix:semicolon
-DECL|member|tx_queue
-r_struct
-id|sk_buff_head
-id|tx_queue
-suffix:semicolon
-multiline_comment|/* Frames to be transmitted */
 DECL|member|tx_skb
 r_struct
 id|sk_buff
@@ -76,7 +72,7 @@ r_int
 id|line
 suffix:semicolon
 DECL|member|flags
-r_int
+id|__u32
 id|flags
 suffix:semicolon
 DECL|member|dlsap_sel

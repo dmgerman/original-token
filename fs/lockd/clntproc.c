@@ -263,6 +263,13 @@ id|call-&gt;a_args.lock.caller
 op_assign
 id|system_utsname.nodename
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|lock-&gt;fl.fl_wait
+)paren
+suffix:semicolon
 multiline_comment|/* set default data area */
 id|call-&gt;a_args.lock.oh.data
 op_assign

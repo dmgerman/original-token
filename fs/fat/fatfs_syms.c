@@ -125,13 +125,6 @@ c_func
 id|fat_mark_buffer_dirty
 )paren
 suffix:semicolon
-DECL|variable|fat_mmap
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|fat_mmap
-)paren
-suffix:semicolon
 DECL|variable|fat_notify_change
 id|EXPORT_SYMBOL
 c_func
@@ -270,13 +263,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|fat_dir_ioctl
-)paren
-suffix:semicolon
-DECL|variable|fat_readpage
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|fat_readpage
 )paren
 suffix:semicolon
 DECL|variable|fat_add_entries

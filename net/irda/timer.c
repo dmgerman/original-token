@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      timer.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Mon Sep 20 11:32:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      timer.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Thu Oct  7 12:30:19 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -58,7 +58,7 @@ id|data
 suffix:semicolon
 r_static
 r_void
-id|irda_device_media_busy_expired
+id|irlap_media_busy_expired
 c_func
 (paren
 r_void
@@ -131,7 +131,6 @@ id|ptimer
 suffix:semicolon
 )brace
 DECL|function|irlap_start_slot_timer
-r_inline
 r_void
 id|irlap_start_slot_timer
 c_func
@@ -164,7 +163,6 @@ id|irlap_slot_timer_expired
 suffix:semicolon
 )brace
 DECL|function|irlap_start_query_timer
-r_inline
 r_void
 id|irlap_start_query_timer
 c_func
@@ -197,7 +195,6 @@ id|irlap_query_timer_expired
 suffix:semicolon
 )brace
 DECL|function|irlap_start_final_timer
-r_inline
 r_void
 id|irlap_start_final_timer
 c_func
@@ -230,7 +227,6 @@ id|irlap_final_timer_expired
 suffix:semicolon
 )brace
 DECL|function|irlap_start_wd_timer
-r_inline
 r_void
 id|irlap_start_wd_timer
 c_func
@@ -263,7 +259,6 @@ id|irlap_wd_timer_expired
 suffix:semicolon
 )brace
 DECL|function|irlap_start_backoff_timer
-r_inline
 r_void
 id|irlap_start_backoff_timer
 c_func
@@ -295,14 +290,13 @@ id|irlap_backoff_timer_expired
 )paren
 suffix:semicolon
 )brace
-DECL|function|irda_device_start_mbusy_timer
-r_inline
+DECL|function|irlap_start_mbusy_timer
 r_void
-id|irda_device_start_mbusy_timer
+id|irlap_start_mbusy_timer
 c_func
 (paren
 r_struct
-id|irda_device
+id|irlap_cb
 op_star
 id|self
 )paren
@@ -321,12 +315,11 @@ op_star
 )paren
 id|self
 comma
-id|irda_device_media_busy_expired
+id|irlap_media_busy_expired
 )paren
 suffix:semicolon
 )brace
 DECL|function|irlmp_start_watchdog_timer
-r_inline
 r_void
 id|irlmp_start_watchdog_timer
 c_func
@@ -359,7 +352,6 @@ id|irlmp_watchdog_timer_expired
 suffix:semicolon
 )brace
 DECL|function|irlmp_start_discovery_timer
-r_inline
 r_void
 id|irlmp_start_discovery_timer
 c_func
@@ -392,7 +384,6 @@ id|irlmp_discovery_timer_expired
 suffix:semicolon
 )brace
 DECL|function|irlmp_start_idle_timer
-r_inline
 r_void
 id|irlmp_start_idle_timer
 c_func
@@ -720,9 +711,9 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irtty_media_busy_expired (data)&n; *&n; *    &n; */
-DECL|function|irda_device_media_busy_expired
+DECL|function|irlap_media_busy_expired
 r_void
-id|irda_device_media_busy_expired
+id|irlap_media_busy_expired
 c_func
 (paren
 r_void
@@ -731,13 +722,13 @@ id|data
 )paren
 (brace
 r_struct
-id|irda_device
+id|irlap_cb
 op_star
 id|self
 op_assign
 (paren
 r_struct
-id|irda_device
+id|irlap_cb
 op_star
 )paren
 id|data
@@ -753,21 +744,9 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|irda_device_set_media_busy
 c_func
 (paren
-op_amp
 id|self-&gt;netdev
 comma
 id|FALSE

@@ -2548,7 +2548,8 @@ op_assign
 id|page_hash
 c_func
 (paren
-id|dir
+op_amp
+id|dir-&gt;i_data
 comma
 l_int|0
 )paren
@@ -2558,7 +2559,8 @@ op_assign
 id|__find_lock_page
 c_func
 (paren
-id|dir
+op_amp
+id|dir-&gt;i_data
 comma
 l_int|0
 comma
@@ -2605,7 +2607,8 @@ c_func
 (paren
 id|page
 comma
-id|dir
+op_amp
+id|dir-&gt;i_data
 comma
 l_int|0
 comma

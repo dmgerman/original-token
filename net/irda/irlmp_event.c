@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.8&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Tue Sep 21 13:04:33 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.8&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Tue Oct  5 13:47:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -348,7 +348,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -426,7 +426,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -471,7 +471,7 @@ op_star
 id|data
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -525,7 +525,7 @@ op_star
 )paren
 id|data
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -589,7 +589,7 @@ op_star
 )paren
 id|data
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -653,7 +653,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -732,7 +732,7 @@ suffix:semicolon
 r_case
 id|LM_LAP_CONNECT_REQUEST
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -767,7 +767,7 @@ suffix:semicolon
 r_case
 id|LM_LAP_DISCONNECT_INDICATION
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -788,7 +788,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -832,7 +832,7 @@ id|lsap_cb
 op_star
 id|lsap_current
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -914,7 +914,7 @@ suffix:semicolon
 r_case
 id|LM_LAP_DISCONNECT_INDICATION
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -998,7 +998,7 @@ suffix:semicolon
 r_case
 id|LM_LAP_DISCONNECT_REQUEST
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1021,7 +1021,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1065,7 +1065,7 @@ id|lsap_cb
 op_star
 id|lsap_current
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1083,7 +1083,7 @@ id|event
 r_case
 id|LM_LAP_CONNECT_REQUEST
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1199,7 +1199,7 @@ multiline_comment|/*&n;&t;&t; *  Need to find out if we should close IrLAP or no
 r_if
 c_cond
 (paren
-id|hashbin_get_size
+id|HASHBIN_GET_SIZE
 c_func
 (paren
 id|self-&gt;lsaps
@@ -1241,7 +1241,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|hashbin_get_size
+id|HASHBIN_GET_SIZE
 c_func
 (paren
 id|self-&gt;lsaps
@@ -1344,7 +1344,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1386,7 +1386,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1430,7 +1430,7 @@ id|event
 r_case
 id|LM_CONNECT_REQUEST
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1495,7 +1495,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1544,7 +1544,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1649,7 +1649,7 @@ c_func
 id|self-&gt;lap-&gt;lsaps
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|self
@@ -1695,7 +1695,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1737,7 +1737,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1787,7 +1787,7 @@ suffix:semicolon
 r_case
 id|LM_CONNECT_RESPONSE
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1803,7 +1803,7 @@ suffix:semicolon
 r_case
 id|LM_DISCONNECT_REQUEST
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1819,7 +1819,7 @@ suffix:semicolon
 r_case
 id|LM_LAP_CONNECT_CONFIRM
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1848,7 +1848,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1895,7 +1895,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2034,7 +2034,7 @@ suffix:semicolon
 r_case
 id|LM_CONNECT_REQUEST
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2050,7 +2050,7 @@ suffix:semicolon
 r_case
 id|LM_CONNECT_RESPONSE
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2095,7 +2095,7 @@ c_cond
 id|self-&gt;lap
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2219,7 +2219,7 @@ l_int|3
 )braket
 suffix:semicolon
 multiline_comment|/* Try to close the LAP connection */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2252,7 +2252,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2325,7 +2325,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2439,7 +2439,7 @@ l_int|3
 )braket
 suffix:semicolon
 multiline_comment|/* Try to close the LAP connection */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2537,7 +2537,7 @@ suffix:semicolon
 r_case
 id|LM_WATCHDOG_TIMEOUT
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2591,7 +2591,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2638,7 +2638,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2709,7 +2709,7 @@ suffix:semicolon
 r_case
 id|LM_WATCHDOG_TIMEOUT
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2802,7 +2802,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2834,7 +2834,7 @@ id|IRLMP_STATE
 id|state
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2878,7 +2878,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4

@@ -1,10 +1,17 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Mon Sep 27 11:13:18 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   IrDA common include file for kernel internal use&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Tue Oct 19 21:12:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef NET_IRDA_H
 DECL|macro|NET_IRDA_H
 mdefine_line|#define NET_IRDA_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/if.h&gt;
+macro_line|#include &lt;linux/irda.h&gt;
+DECL|typedef|magic_t
+r_typedef
+id|__u32
+id|magic_t
+suffix:semicolon
 macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
 macro_line|#ifndef TRUE
@@ -15,14 +22,18 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
 macro_line|#endif
-macro_line|#ifndef MIN
-DECL|macro|MIN
-mdefine_line|#define MIN(a, b) (((a) &lt; (b)) ? (a) : (b))
+macro_line|#ifndef IRDA_MIN /* Lets not mix this MIN with other header files */
+DECL|macro|IRDA_MIN
+mdefine_line|#define IRDA_MIN(a, b) (((a) &lt; (b)) ? (a) : (b))
 macro_line|#endif
+macro_line|#ifndef ALIGN
 DECL|macro|ALIGN
-mdefine_line|#define ALIGN __attribute__((aligned))
+macro_line|#  define ALIGN __attribute__((aligned))
+macro_line|#endif
+macro_line|#ifndef PACK
 DECL|macro|PACK
-mdefine_line|#define PACK __attribute__((packed))
+macro_line|#  define PACK __attribute__((packed))
+macro_line|#endif
 macro_line|#ifdef CONFIG_IRDA_DEBUG
 r_extern
 id|__u32
@@ -31,13 +42,13 @@ suffix:semicolon
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 DECL|macro|IRDA_DEBUG_LEVEL
 mdefine_line|#define IRDA_DEBUG_LEVEL 0
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args...) (irda_debug &gt;= (n)) ? (printk(KERN_DEBUG args)) : 0
+DECL|macro|IRDA_DEBUG
+mdefine_line|#define IRDA_DEBUG(n, args...) (irda_debug &gt;= (n)) ? (printk(KERN_DEBUG args)) : 0
 DECL|macro|ASSERT
 mdefine_line|#define ASSERT(expr, func) &bslash;&n;if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__); &bslash;&n;        ##func}
 macro_line|#else
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args...)
+DECL|macro|IRDA_DEBUG
+mdefine_line|#define IRDA_DEBUG(n, args...)
 DECL|macro|ASSERT
 mdefine_line|#define ASSERT(expr, func)
 macro_line|#endif /* CONFIG_IRDA_DEBUG */
@@ -50,11 +61,6 @@ mdefine_line|#define ERROR(args...)   printk(KERN_ERR args)
 DECL|macro|MSECS_TO_JIFFIES
 mdefine_line|#define MSECS_TO_JIFFIES(ms) (((ms)*HZ+999)/1000)
 multiline_comment|/*&n; *  Magic numbers used by Linux-IrDA. Random numbers which must be unique to &n; *  give the best protection&n; */
-DECL|typedef|magic_t
-r_typedef
-id|__u32
-id|magic_t
-suffix:semicolon
 DECL|macro|IRTTY_MAGIC
 mdefine_line|#define IRTTY_MAGIC        0x2357
 DECL|macro|LAP_MAGIC
@@ -83,6 +89,8 @@ DECL|macro|IAS_OBJECT_MAGIC
 mdefine_line|#define IAS_OBJECT_MAGIC   0x34234
 DECL|macro|IAS_ATTRIB_MAGIC
 mdefine_line|#define IAS_ATTRIB_MAGIC   0x45232
+DECL|macro|IRDA_TASK_MAGIC
+mdefine_line|#define IRDA_TASK_MAGIC    0x38423
 DECL|macro|IAS_DEVICE_ID
 mdefine_line|#define IAS_DEVICE_ID 0x5342 
 DECL|macro|IAS_PNP_ID
@@ -238,7 +246,7 @@ DECL|typedef|__u16_host_order
 )brace
 id|__u16_host_order
 suffix:semicolon
-multiline_comment|/* Per-packet information we need to hide inside sk_buff */
+multiline_comment|/* &n; * Per-packet information we need to hide inside sk_buff &n; * (must not exceed 48 bytes, check with struct sk_buff) &n; */
 DECL|struct|irda_skb_cb
 r_struct
 id|irda_skb_cb
@@ -248,27 +256,26 @@ id|magic_t
 id|magic
 suffix:semicolon
 multiline_comment|/* Be sure that we can trust the information */
+DECL|member|speed
+id|__u32
+id|speed
+suffix:semicolon
+multiline_comment|/* The Speed this frame should be sent with */
 DECL|member|mtt
-r_int
+id|__u16
 id|mtt
 suffix:semicolon
-multiline_comment|/* minimum turn around time */
+multiline_comment|/* Minimum turn around time */
 DECL|member|xbofs
 r_int
 id|xbofs
 suffix:semicolon
-multiline_comment|/* number of xbofs required, used by SIR mode */
+multiline_comment|/* Number of xbofs required, used by SIR mode */
 DECL|member|line
-r_int
+id|__u8
 id|line
 suffix:semicolon
 multiline_comment|/* Used by IrCOMM in IrLPT mode */
-DECL|member|instance
-r_void
-op_star
-id|instance
-suffix:semicolon
-multiline_comment|/* Used by IrTTP */
 DECL|member|destructor
 r_void
 (paren
@@ -283,121 +290,6 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* Used for flow control */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; *  Information monitored by some layers&n; */
-DECL|struct|irda_statistics
-r_struct
-id|irda_statistics
-(brace
-DECL|member|rx_packets
-r_int
-id|rx_packets
-suffix:semicolon
-multiline_comment|/* total packets received       */
-DECL|member|tx_packets
-r_int
-id|tx_packets
-suffix:semicolon
-multiline_comment|/* total packets transmitted    */
-DECL|member|rx_errors
-r_int
-id|rx_errors
-suffix:semicolon
-multiline_comment|/* bad packets received         */
-DECL|member|tx_errors
-r_int
-id|tx_errors
-suffix:semicolon
-multiline_comment|/* packet transmit problems     */
-DECL|member|rx_dropped
-r_int
-id|rx_dropped
-suffix:semicolon
-multiline_comment|/* no space in linux buffers    */
-DECL|member|tx_dropped
-r_int
-id|tx_dropped
-suffix:semicolon
-multiline_comment|/* no space available in linux  */
-DECL|member|rx_compressed
-r_int
-id|rx_compressed
-suffix:semicolon
-DECL|member|tx_compressed
-r_int
-id|tx_compressed
-suffix:semicolon
-DECL|member|rx_bytes
-r_int
-id|rx_bytes
-suffix:semicolon
-multiline_comment|/* total bytes received         */
-DECL|member|tx_bytes
-r_int
-id|tx_bytes
-suffix:semicolon
-multiline_comment|/* total bytes transmitted      */
-DECL|member|multicast
-r_int
-id|multicast
-suffix:semicolon
-multiline_comment|/* multicast packets received   */
-DECL|member|collisions
-r_int
-id|collisions
-suffix:semicolon
-multiline_comment|/* detailed rx_errors: */
-DECL|member|rx_length_errors
-r_int
-id|rx_length_errors
-suffix:semicolon
-DECL|member|rx_over_errors
-r_int
-id|rx_over_errors
-suffix:semicolon
-multiline_comment|/* receiver ring buff overflow  */
-DECL|member|rx_crc_errors
-r_int
-id|rx_crc_errors
-suffix:semicolon
-multiline_comment|/* recved pkt with crc error    */
-DECL|member|rx_frame_errors
-r_int
-id|rx_frame_errors
-suffix:semicolon
-multiline_comment|/* recv&squot;d frame alignment error */
-DECL|member|rx_fifo_errors
-r_int
-id|rx_fifo_errors
-suffix:semicolon
-multiline_comment|/* recv&squot;r fifo overrun          */
-DECL|member|rx_missed_errors
-r_int
-id|rx_missed_errors
-suffix:semicolon
-multiline_comment|/* receiver missed packet       */
-multiline_comment|/* detailed tx_errors */
-DECL|member|tx_aborted_errors
-r_int
-id|tx_aborted_errors
-suffix:semicolon
-DECL|member|tx_carrier_errors
-r_int
-id|tx_carrier_errors
-suffix:semicolon
-DECL|member|tx_fifo_errors
-r_int
-id|tx_fifo_errors
-suffix:semicolon
-DECL|member|tx_heartbeat_errors
-r_int
-id|tx_heartbeat_errors
-suffix:semicolon
-DECL|member|tx_window_errors
-r_int
-id|tx_window_errors
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Misc status information */

@@ -397,9 +397,9 @@ c_cond
 id|state
 )paren
 (brace
-multiline_comment|/* &t;case S_DISCONNECT: DEBUG( 0, &quot;IAP Client = S_DISCONNECT&bslash;n&quot;); break;  */
-multiline_comment|/*  &t;case S_CONNECTING: DEBUG( 0, &quot;IAP Client = S_CONNECTING&bslash;n&quot;); break;  */
-multiline_comment|/*  &t;case S_CALL:       DEBUG( 0, &quot;IAP Client = S_CALL&bslash;n&quot;);       break;  */
+multiline_comment|/* &t;case S_DISCONNECT: IRDA_DEBUG( 0, &quot;IAP Client = S_DISCONNECT&bslash;n&quot;); break;  */
+multiline_comment|/*  &t;case S_CONNECTING: IRDA_DEBUG( 0, &quot;IAP Client = S_CONNECTING&bslash;n&quot;); break;  */
+multiline_comment|/*  &t;case S_CALL:       IRDA_DEBUG( 0, &quot;IAP Client = S_CALL&bslash;n&quot;);       break;  */
 r_default
 suffix:colon
 r_break
@@ -447,12 +447,12 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* &t;switch ( state) { */
-multiline_comment|/* &t;case S_MAKE_CALL:     DEBUG( 0, &quot;IAP Call = S_MAKE_CALL&bslash;n&quot;); break; */
-multiline_comment|/* &t;case S_CALLING:       DEBUG( 0, &quot;IAP Call = S_CALLING&bslash;n&quot;); break; */
-multiline_comment|/* &t;case S_OUTSTANDING:   DEBUG( 0, &quot;IAP Call = S_OUTSTANDING&bslash;n&quot;);break; */
-multiline_comment|/* &t;case S_REPLYING:      DEBUG( 0, &quot;IAP Call = S_REPLYING&bslash;n&quot;); break; */
-multiline_comment|/* &t;case S_WAIT_FOR_CALL: DEBUG( 0, &quot;IAP Call = S_WAIT_FOR_CALL&bslash;n&quot;); break; */
-multiline_comment|/* &t;case S_WAIT_ACTIVE:   DEBUG( 0, &quot;IAP Call = S_WAIT_ACTIVE&bslash;n&quot;); break; */
+multiline_comment|/* &t;case S_MAKE_CALL:     IRDA_DEBUG( 0, &quot;IAP Call = S_MAKE_CALL&bslash;n&quot;); break; */
+multiline_comment|/* &t;case S_CALLING:       IRDA_DEBUG( 0, &quot;IAP Call = S_CALLING&bslash;n&quot;); break; */
+multiline_comment|/* &t;case S_OUTSTANDING:   IRDA_DEBUG( 0, &quot;IAP Call = S_OUTSTANDING&bslash;n&quot;);break; */
+multiline_comment|/* &t;case S_REPLYING:      IRDA_DEBUG( 0, &quot;IAP Call = S_REPLYING&bslash;n&quot;); break; */
+multiline_comment|/* &t;case S_WAIT_FOR_CALL: IRDA_DEBUG( 0, &quot;IAP Call = S_WAIT_FOR_CALL&bslash;n&quot;); break; */
+multiline_comment|/* &t;case S_WAIT_ACTIVE:   IRDA_DEBUG( 0, &quot;IAP Call = S_WAIT_ACTIVE&bslash;n&quot;); break; */
 multiline_comment|/* &t;default: */
 multiline_comment|/* &t;&t;break; */
 multiline_comment|/* &t;} */
@@ -865,7 +865,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -978,7 +978,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1055,7 +1055,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1130,7 +1130,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1178,7 +1178,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1254,7 +1254,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1290,7 +1290,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1321,7 +1321,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1352,7 +1352,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1414,7 +1414,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1478,7 +1478,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1513,7 +1513,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1551,7 +1551,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1585,7 +1585,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1615,7 +1615,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1646,7 +1646,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1684,7 +1684,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1718,7 +1718,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1749,7 +1749,7 @@ op_ne
 id|IAS_MAGIC
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1790,7 +1790,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1823,7 +1823,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0

@@ -478,10 +478,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|page-&gt;inode
+id|page-&gt;mapping
 op_ne
 op_amp
-id|swapper_inode
+id|swapper_space
 )paren
 id|PAGE_BUG
 c_func

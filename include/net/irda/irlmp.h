@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Thu Jul  8 13:44:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Tue Oct  5 15:20:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLMP_H
 DECL|macro|IRLMP_H
 mdefine_line|#define IRLMP_H
@@ -110,7 +110,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|queue
-id|QUEUE
+id|queue_t
 id|queue
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -127,7 +127,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|queue
-id|QUEUE
+id|queue_t
 id|queue
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -157,7 +157,7 @@ r_struct
 id|lsap_cb
 (brace
 DECL|member|queue
-id|QUEUE
+id|queue_t
 id|queue
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -172,11 +172,6 @@ suffix:semicolon
 DECL|member|persistent
 r_int
 id|persistent
-suffix:semicolon
-DECL|member|stats
-r_struct
-id|irda_statistics
-id|stats
 suffix:semicolon
 DECL|member|slsap_sel
 id|__u8
@@ -231,7 +226,7 @@ r_struct
 id|lap_cb
 (brace
 DECL|member|queue
-id|QUEUE
+id|queue_t
 id|queue
 suffix:semicolon
 multiline_comment|/* Must be first */
@@ -872,7 +867,7 @@ suffix:semicolon
 )paren
 suffix:semicolon
 r_return
-id|irlap_get_tx_queue_len
+id|IRLAP_GET_TX_QUEUE_LEN
 c_func
 (paren
 id|self-&gt;lap-&gt;irlap

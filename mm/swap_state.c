@@ -7,95 +7,25 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-multiline_comment|/* &n; * Keep a reserved false inode which we will use to mark pages in the&n; * page cache are acting as swap cache instead of file cache. &n; *&n; * We only need a unique pointer to satisfy the page cache, but we&squot;ll&n; * reserve an entire zeroed inode structure for the purpose just to&n; * ensure that any mistaken dereferences of this structure cause a&n; * kernel oops.&n; */
-DECL|variable|swapper_inode_operations
-r_static
+DECL|variable|swapper_space
 r_struct
-id|inode_operations
-id|swapper_inode_operations
+id|address_space
+id|swapper_space
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* default file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-id|block_flushpage
-comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
-l_int|NULL
-multiline_comment|/* revalidate */
-)brace
-suffix:semicolon
-DECL|variable|swapper_inode
-r_struct
-id|inode
-id|swapper_inode
-op_assign
 (brace
-id|i_op
-suffix:colon
+multiline_comment|/* pages&t;*/
 op_amp
-id|swapper_inode_operations
+id|swapper_space.pages
 comma
-id|i_pages
-suffix:colon
-(brace
+multiline_comment|/*        .next */
 op_amp
-id|swapper_inode.i_pages
-comma
-op_amp
-id|swapper_inode.i_pages
+id|swapper_space.pages
+multiline_comment|/*&t;  .prev */
 )brace
+comma
+l_int|0
+multiline_comment|/* nrpages&t;*/
 )brace
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
@@ -187,7 +117,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|page-&gt;inode
+id|page-&gt;mapping
 )paren
 id|BUG
 c_func
@@ -200,7 +130,7 @@ c_func
 id|page
 comma
 op_amp
-id|swapper_inode
+id|swapper_space
 comma
 id|pte_val
 c_func
@@ -588,30 +518,19 @@ id|page
 )paren
 (brace
 r_struct
-id|inode
+id|address_space
 op_star
-id|inode
+id|mapping
 op_assign
-id|page-&gt;inode
+id|page-&gt;mapping
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|inode
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode
+id|mapping
 op_ne
 op_amp
-id|swapper_inode
+id|swapper_space
 )paren
 id|BUG
 c_func
@@ -711,16 +630,10 @@ id|page
 r_if
 c_cond
 (paren
-op_logical_neg
-id|swapper_inode.i_op-&gt;flushpage
-op_logical_or
-id|swapper_inode.i_op
-op_member_access_from_pointer
-id|flushpage
+id|block_flushpage
 c_func
 (paren
-op_amp
-id|swapper_inode
+l_int|NULL
 comma
 id|page
 comma
@@ -883,7 +796,7 @@ id|find_lock_page
 c_func
 (paren
 op_amp
-id|swapper_inode
+id|swapper_space
 comma
 id|pte_val
 c_func
@@ -904,10 +817,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|found-&gt;inode
+id|found-&gt;mapping
 op_ne
 op_amp
-id|swapper_inode
+id|swapper_space
 op_logical_or
 op_logical_neg
 id|PageSwapCache

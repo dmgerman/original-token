@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Mon Sep 27 11:15:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Sat Oct  9 17:00:49 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
-macro_line|#include &lt;linux/irda.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -570,7 +569,7 @@ c_func
 id|irlmp-&gt;unconnected_lsaps
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|self
@@ -600,7 +599,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -784,7 +783,7 @@ op_logical_neg
 id|lsap
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -953,7 +952,7 @@ c_func
 id|irlmp-&gt;links
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|lap
@@ -990,7 +989,7 @@ id|lap_cb
 op_star
 id|link
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1136,7 +1135,7 @@ id|EBADR
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1298,7 +1297,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1332,7 +1331,7 @@ op_ne
 id|daddr
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1424,7 +1423,7 @@ c_func
 id|self-&gt;lap-&gt;lsaps
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|self
@@ -1536,7 +1535,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1560,7 +1559,7 @@ id|self-&gt;lap-&gt;qos-&gt;data_size.value
 op_minus
 id|LMP_HEADER
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1573,7 +1572,7 @@ id|max_seg_size
 suffix:semicolon
 id|lap_header_size
 op_assign
-id|irlap_get_header_size
+id|IRLAP_GET_HEADER_SIZE
 c_func
 (paren
 id|self-&gt;lap-&gt;irlap
@@ -1585,7 +1584,7 @@ id|LMP_HEADER
 op_plus
 id|lap_header_size
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1690,7 +1689,7 @@ id|self-&gt;connected
 op_assign
 id|TRUE
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1769,7 +1768,7 @@ suffix:semicolon
 r_int
 id|max_seg_size
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -1835,7 +1834,7 @@ id|LMP_HEADER
 suffix:semicolon
 id|lap_header_size
 op_assign
-id|irlap_get_header_size
+id|IRLAP_GET_HEADER_SIZE
 c_func
 (paren
 id|self-&gt;lap-&gt;irlap
@@ -1847,7 +1846,7 @@ id|LMP_HEADER
 op_plus
 id|lap_header_size
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1917,7 +1916,7 @@ id|lsap_cb
 op_star
 r_new
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1945,7 +1944,7 @@ l_int|NULL
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1979,7 +1978,7 @@ op_logical_neg
 r_new
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2028,7 +2027,7 @@ c_func
 id|irlmp-&gt;unconnected_lsaps
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 r_new
@@ -2265,7 +2264,7 @@ c_func
 id|irlmp-&gt;unconnected_lsaps
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|self
@@ -2320,7 +2319,7 @@ id|lsap_cb
 op_star
 id|lsap
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2367,7 +2366,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -2460,7 +2459,7 @@ c_func
 id|irlmp-&gt;unconnected_lsaps
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|lsap
@@ -2544,10 +2543,9 @@ l_int|16
 )paren
 )paren
 (brace
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
 id|__FUNCTION__
 l_string|&quot;(), invalid value for number of slots!&bslash;n&quot;
 )paren
@@ -2745,7 +2743,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2755,7 +2753,7 @@ comma
 id|discovery-&gt;info
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -2796,7 +2794,7 @@ op_ne
 id|S_END
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2826,7 +2824,7 @@ op_logical_and
 id|entry-&gt;discovery_callback
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2914,7 +2912,7 @@ id|discovery_t
 op_star
 id|discovery
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -2958,7 +2956,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -3022,7 +3020,7 @@ id|irlmp_client_t
 op_star
 id|client
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -3046,10 +3044,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|hashbin_get_size
+(paren
+id|HASHBIN_GET_SIZE
 c_func
 (paren
 id|log
+)paren
 )paren
 )paren
 r_return
@@ -3106,7 +3106,7 @@ c_func
 (paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3303,7 +3303,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3375,7 +3375,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3456,7 +3456,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3478,7 +3478,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3496,7 +3496,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3518,7 +3518,7 @@ id|LOCK_STATUS
 id|lock
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3567,7 +3567,7 @@ op_logical_neg
 id|service
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3590,7 +3590,7 @@ l_int|0
 )braket
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3618,7 +3618,7 @@ l_int|0
 op_amp
 id|HINT_PNP
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3636,7 +3636,7 @@ l_int|0
 op_amp
 id|HINT_PDA
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3654,7 +3654,7 @@ l_int|0
 op_amp
 id|HINT_COMPUTER
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3673,7 +3673,7 @@ op_amp
 id|HINT_PRINTER
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3700,7 +3700,7 @@ l_int|0
 op_amp
 id|HINT_MODEM
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3718,7 +3718,7 @@ l_int|0
 op_amp
 id|HINT_FAX
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3737,7 +3737,7 @@ op_amp
 id|HINT_LAN
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3777,7 +3777,7 @@ op_amp
 id|HINT_TELEPHONY
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3804,7 +3804,7 @@ l_int|1
 op_amp
 id|HINT_FILE_SERVER
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3823,7 +3823,7 @@ op_amp
 id|HINT_COMM
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3851,7 +3851,7 @@ op_amp
 id|HINT_OBEX
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3869,7 +3869,7 @@ id|S_OBEX
 suffix:semicolon
 )brace
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4060,7 +4060,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4093,7 +4093,7 @@ suffix:semicolon
 id|__u32
 id|handle
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4170,7 +4170,7 @@ op_logical_neg
 id|service
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4193,7 +4193,7 @@ c_func
 id|irlmp-&gt;services
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|service
@@ -4221,7 +4221,7 @@ id|irlmp_service_t
 op_star
 id|service
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4259,7 +4259,7 @@ op_logical_neg
 id|service
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4426,7 +4426,7 @@ op_logical_neg
 id|client
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4458,7 +4458,7 @@ c_func
 id|irlmp-&gt;clients
 comma
 (paren
-id|QUEUE
+id|queue_t
 op_star
 )paren
 id|client
@@ -4524,7 +4524,7 @@ op_logical_neg
 id|client
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4569,7 +4569,7 @@ id|irlmp_client
 op_star
 id|client
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4607,7 +4607,7 @@ op_logical_neg
 id|client
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -4621,7 +4621,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4713,7 +4713,7 @@ id|TRUE
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4810,7 +4810,7 @@ id|slsap_sel
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4943,7 +4943,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4983,7 +4983,7 @@ r_case
 id|LAP_DISC_INDICATION
 suffix:colon
 multiline_comment|/* Received a disconnect request from peer */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -5002,7 +5002,7 @@ r_case
 id|LAP_NO_RESPONSE
 suffix:colon
 multiline_comment|/* To many retransmits without response */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -5020,7 +5020,7 @@ suffix:semicolon
 r_case
 id|LAP_RESET_INDICATION
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -5044,7 +5044,7 @@ suffix:colon
 r_case
 id|LAP_PRIMARY_CONFLICT
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -5061,7 +5061,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1

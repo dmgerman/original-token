@@ -3,7 +3,7 @@ DECL|macro|_ASM_IO_H
 mdefine_line|#define _ASM_IO_H
 multiline_comment|/*&n; * This file contains the definitions for the x86 IO instructions&n; * inb/inw/inl/outb/outw/outl and the &quot;string versions&quot; of the same&n; * (insb/insw/insl/outsb/outsw/outsl). You can also use &quot;pausing&quot;&n; * versions of the single-IO instructions (inb_p/inw_p/..).&n; *&n; * This file is not meant to be obfuscating: it&squot;s just complicated&n; * to (a) handle it all in a way that makes gcc able to optimize it&n; * as well as possible and (b) trying to avoid writing the same thing&n; * over and over again with slight variations and possibly making a&n; * mistake somewhere.&n; */
 multiline_comment|/*&n; * Thanks to James van Artsdalen for a better timing-fix than&n; * the two short jumps: using outb&squot;s to a nonexistent port seems&n; * to guarantee better timings even on fast machines.&n; *&n; * On the other hand, I&squot;d like to be sure of a non-existent port:&n; * I feel a bit unsafe about using 0x80 (should be safe, though)&n; *&n; *&t;&t;Linus&n; */
-multiline_comment|/*&n;  *  Bit simplified and optimized by Jan Hubicka&n;  *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999.&n;  */
+multiline_comment|/*&n;  *  Bit simplified and optimized by Jan Hubicka&n;  *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999.&n;  *&n;  *  isa_memset_io, isa_memcpy_fromio, isa_memcpy_toio added,&n;  *  isa_read[wl] and isa_write[wl] fixed&n;  *  - Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;  */
 macro_line|#ifdef SLOW_IO_BY_JUMPING
 DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO &quot;&bslash;njmp 1f&bslash;n1:&bslash;tjmp 1f&bslash;n1:&quot;
@@ -347,15 +347,21 @@ mdefine_line|#define __ISA_IO_base ((char *)(PAGE_OFFSET))
 DECL|macro|isa_readb
 mdefine_line|#define isa_readb(a) readb(__ISA_IO_base + (a))
 DECL|macro|isa_readw
-mdefine_line|#define isa_readw(a) readb(__ISA_IO_base + (a))
+mdefine_line|#define isa_readw(a) readw(__ISA_IO_base + (a))
 DECL|macro|isa_readl
-mdefine_line|#define isa_readl(a) readb(__ISA_IO_base + (a))
+mdefine_line|#define isa_readl(a) readl(__ISA_IO_base + (a))
 DECL|macro|isa_writeb
 mdefine_line|#define isa_writeb(b,a) writeb(b,__ISA_IO_base + (a))
 DECL|macro|isa_writew
-mdefine_line|#define isa_writew(w,a) writeb(w,__ISA_IO_base + (a))
+mdefine_line|#define isa_writew(w,a) writew(w,__ISA_IO_base + (a))
 DECL|macro|isa_writel
-mdefine_line|#define isa_writel(l,a) writeb(l,__ISA_IO_base + (a))
+mdefine_line|#define isa_writel(l,a) writel(l,__ISA_IO_base + (a))
+DECL|macro|isa_memset_io
+mdefine_line|#define isa_memset_io(a,b,c)&t;&t;memset_io(__ISA_IO_base + (a),(b),(c))
+DECL|macro|isa_memcpy_fromio
+mdefine_line|#define isa_memcpy_fromio(a,b,c)&t;memcpy_fromio((a),__ISA_IO_base + (b),(c))
+DECL|macro|isa_memcpy_toio
+mdefine_line|#define isa_memcpy_toio(a,b,c)&t;&t;memcpy_toio(__ISA_IO_base + (a),(b),(c))
 multiline_comment|/*&n; * Again, i386 does not require mem IO specific function.&n; */
 DECL|macro|eth_io_copy_and_sum
 mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),__io_virt(b),(c),(d))

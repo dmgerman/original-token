@@ -195,12 +195,42 @@ DECL|struct|toshoboe_cb
 r_struct
 id|toshoboe_cb
 (brace
-DECL|member|idev
+DECL|member|netdev
 r_struct
-id|irda_device
-id|idev
+id|net_device
+op_star
+id|netdev
 suffix:semicolon
-multiline_comment|/*IRDA device */
+multiline_comment|/* Yes! we are some kind of netdevice */
+DECL|member|stats
+r_struct
+id|net_device_stats
+id|stats
+suffix:semicolon
+DECL|member|irlap
+r_struct
+id|irlap_cb
+op_star
+id|irlap
+suffix:semicolon
+multiline_comment|/* The link layer we are binded to */
+DECL|member|io
+r_struct
+id|chipio_t
+id|io
+suffix:semicolon
+multiline_comment|/* IrDA controller information */
+DECL|member|qos
+r_struct
+id|qos_info
+id|qos
+suffix:semicolon
+multiline_comment|/* QoS capabilities for this device */
+DECL|member|flags
+id|__u32
+id|flags
+suffix:semicolon
+multiline_comment|/* Interface flags */
 DECL|member|pdev
 r_struct
 id|pci_dev

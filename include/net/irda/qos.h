@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      qos.h&n; * Version:       1.0&n; * Description:   Quality of Service definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Sep 19 23:21:09 1997&n; * Modified at:   Mon Aug 16 10:00:18 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      qos.h&n; * Version:       1.0&n; * Description:   Quality of Service definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Sep 19 23:21:09 1997&n; * Modified at:   Tue Oct  5 11:51:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_QOS_H
 DECL|macro|IRDA_QOS_H
 mdefine_line|#define IRDA_QOS_H
@@ -67,7 +67,7 @@ r_struct
 id|qos_info
 (brace
 DECL|member|magic
-r_int
+id|magic_t
 id|magic
 suffix:semicolon
 DECL|member|baud_rate
@@ -180,7 +180,7 @@ c_func
 id|__u8
 id|byte
 comma
-r_int
+id|__u32
 op_star
 id|array
 )paren
@@ -192,7 +192,7 @@ c_func
 id|__u32
 id|value
 comma
-r_int
+id|__u32
 op_star
 id|array
 )paren
@@ -204,7 +204,7 @@ c_func
 r_int
 id|index
 comma
-r_int
+id|__u32
 op_star
 id|array
 )paren

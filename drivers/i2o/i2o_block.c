@@ -2437,13 +2437,9 @@ c_func
 (paren
 id|dev-&gt;controller
 comma
-id|dev-&gt;tid
-comma
 id|msg
 comma
 l_int|20
-comma
-id|query_done
 comma
 l_int|2
 )paren
@@ -2505,13 +2501,9 @@ c_func
 (paren
 id|dev-&gt;controller
 comma
-id|dev-&gt;tid
-comma
 id|msg
 comma
 l_int|20
-comma
-id|query_done
 comma
 l_int|2
 )paren
@@ -2729,13 +2721,9 @@ c_func
 (paren
 id|dev-&gt;controller
 comma
-id|dev-&gt;tid
-comma
 id|msg
 comma
 l_int|24
-comma
-id|query_done
 comma
 l_int|2
 )paren
@@ -2797,13 +2785,9 @@ c_func
 (paren
 id|dev-&gt;controller
 comma
-id|dev-&gt;tid
-comma
 id|msg
 comma
 l_int|20
-comma
-id|query_done
 comma
 l_int|2
 )paren
@@ -2849,8 +2833,6 @@ id|dev-&gt;controller
 comma
 id|dev-&gt;tid
 comma
-id|i2ob_context
-comma
 id|table
 comma
 id|field
@@ -2858,9 +2840,6 @@ comma
 id|buf
 comma
 id|buflen
-comma
-op_amp
-id|dev-&gt;done_flag
 )paren
 suffix:semicolon
 )brace
@@ -3485,11 +3464,20 @@ id|d-&gt;next
 r_if
 c_cond
 (paren
-id|d
-op_member_access_from_pointer
-r_class
+id|d-&gt;lct_data-&gt;class_id
 op_ne
 id|I2O_CLASS_RANDOM_BLOCK_STORAGE
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|d-&gt;lct_data-&gt;user_tid
+op_ne
+l_int|0xFFF
 )paren
 (brace
 r_continue
@@ -3527,7 +3515,7 @@ id|c
 suffix:semicolon
 id|dev-&gt;tid
 op_assign
-id|d-&gt;id
+id|d-&gt;lct_data-&gt;tid
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Insure the device can be claimed&n;&t;&t;&t;&t; * before installing it.&n;&t;&t;&t;&t; */
 r_if
@@ -3627,7 +3615,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;i2o_block: too many controllers, registering only %d.&bslash;n&quot;
+l_string|&quot;i2o_block: too many device, registering only %d.&bslash;n&quot;
 comma
 id|unit
 op_rshift
@@ -3637,6 +3625,12 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|i2o_unlock_controller
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
 )brace
 id|i2ob_devices
 op_assign
@@ -3863,13 +3857,9 @@ c_func
 (paren
 id|dev-&gt;controller
 comma
-id|dev-&gt;tid
-comma
 id|msg
 comma
 l_int|20
-comma
-id|query_done
 comma
 l_int|2
 )paren
@@ -3931,13 +3921,9 @@ c_func
 (paren
 id|dev-&gt;controller
 comma
-id|dev-&gt;tid
-comma
 id|msg
 comma
 l_int|20
-comma
-id|query_done
 comma
 l_int|2
 )paren
@@ -4080,7 +4066,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;I2O block device OSM v0.07. (C) 1999 Red Hat Software.&bslash;n&quot;
+l_string|&quot;I2O Block Storage OSM v0.07. (C) 1999 Red Hat Software.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Register the block device interfaces&n;&t; */
