@@ -1,15 +1,5 @@
 multiline_comment|/* tulip_core.c: A DEC 21040-family ethernet driver for Linux. */
 multiline_comment|/*&n;&t;Maintained by Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;Copyright 2000  The Linux Kernel Team&n;&t;Written/copyright 1994-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&t;&n;&t;Please read Documentation/networking/tulip.txt for more&n;&t;information.&n;&n;&t;For this specific driver variant please use linux-kernel for &n;&t;bug reports.&n;&n;&t;Additional information available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/tulip.html&n;&n;*/
-DECL|variable|version
-r_static
-r_const
-r_char
-id|version
-(braket
-)braket
-op_assign
-l_string|&quot;Linux Tulip driver version 0.9.7 (June 17, 2000)&bslash;n&quot;
-suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tulip.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -17,6 +7,16 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
+DECL|variable|__devinitdata
+r_static
+r_char
+id|version
+(braket
+)braket
+id|__devinitdata
+op_assign
+l_string|&quot;Linux Tulip driver version 0.9.8 (July 13, 2000)&bslash;n&quot;
+suffix:semicolon
 multiline_comment|/* A few user-configurable values. */
 multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
 DECL|variable|max_interrupt_work
@@ -5651,7 +5651,8 @@ r_else
 r_int
 r_int
 id|entry
-comma
+suffix:semicolon
+r_int
 id|dummy
 op_assign
 op_minus

@@ -1058,7 +1058,7 @@ r_if
 c_cond
 (paren
 id|v-&gt;value
-template_param
+OG
 id|NF_MAX_VERDICT
 )paren
 r_return
@@ -1362,7 +1362,6 @@ id|e-&gt;info-&gt;outdev-&gt;ifindex
 op_eq
 id|ifindex
 )paren
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

@@ -250,6 +250,7 @@ op_eq
 id|IPPROTO_ICMP
 )paren
 (brace
+r_return
 id|icmp_reply_translation
 c_func
 (paren
@@ -266,9 +267,6 @@ c_func
 id|ctinfo
 )paren
 )paren
-suffix:semicolon
-r_return
-id|NF_ACCEPT
 suffix:semicolon
 )brace
 multiline_comment|/* Fall thru... (Only ICMPs can be IP_CT_IS_REPLY) */

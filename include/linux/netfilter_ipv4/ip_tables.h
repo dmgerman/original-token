@@ -615,10 +615,10 @@ r_int
 id|size
 suffix:semicolon
 multiline_comment|/* The entries. */
-DECL|member|entries
-r_int
-r_char
-id|entries
+DECL|member|entrytable
+r_struct
+id|ipt_entry
+id|entrytable
 (braket
 l_int|0
 )braket

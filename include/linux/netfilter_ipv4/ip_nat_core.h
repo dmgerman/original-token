@@ -57,7 +57,8 @@ id|list_head
 id|protos
 suffix:semicolon
 r_extern
-r_void
+r_int
+r_int
 id|icmp_reply_translation
 c_func
 (paren

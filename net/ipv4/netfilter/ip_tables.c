@@ -4510,7 +4510,7 @@ id|size
 comma
 id|t
 comma
-id|uptr-&gt;entries
+id|uptr-&gt;entrytable
 )paren
 suffix:semicolon
 r_else

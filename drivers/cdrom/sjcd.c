@@ -285,12 +285,6 @@ r_static
 r_struct
 id|timer_list
 id|sjcd_delay_timer
-op_assign
-(brace
-id|function
-suffix:colon
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|macro|SJCD_SET_TIMER
 mdefine_line|#define SJCD_SET_TIMER( func, tmout )           &bslash;&n;    ( sjcd_delay_timer.expires = jiffies+tmout,         &bslash;&n;      sjcd_delay_timer.function = ( void * )func, &bslash;&n;      add_timer( &amp;sjcd_delay_timer ) )

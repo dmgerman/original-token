@@ -657,14 +657,8 @@ id|timer_list
 id|sound_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|dn_nosound
 )brace
 suffix:semicolon

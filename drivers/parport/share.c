@@ -439,6 +439,7 @@ id|drv-&gt;next
 id|attach
 (braket
 id|i
+op_increment
 )braket
 op_assign
 id|drv-&gt;attach
@@ -574,6 +575,16 @@ l_int|0
 comma
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|portlist
+)paren
+id|get_lowlevel_driver
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* We have to take the portlist lock for this to be sure&n;&t; * that port is valid for the duration of the callback. */
 multiline_comment|/* This is complicated by the fact that attach must be allowed&n;&t; * to block, so we can&squot;t be holding any spinlocks when we call&n;&t; * it.  But we need to hold a spinlock to iterate over the&n;&t; * list of ports.. */
 id|spin_lock
@@ -664,6 +675,7 @@ id|port-&gt;next
 id|ports
 (braket
 id|i
+op_increment
 )braket
 op_assign
 id|port
@@ -702,16 +714,6 @@ id|ports
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|portlist
-)paren
-id|get_lowlevel_driver
-(paren
-)paren
-suffix:semicolon
 id|spin_lock
 (paren
 op_amp

@@ -376,13 +376,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CTINFO2DIR
-c_func
-(paren
 id|ctinfo
-)paren
 op_eq
-id|IP_CT_DIR_ORIGINAL
+id|IP_CT_RELATED
 )paren
 (brace
 id|icmp_reply_translation

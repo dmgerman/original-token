@@ -205,12 +205,6 @@ r_static
 r_struct
 id|timer_list
 id|dn_route_timer
-op_assign
-(brace
-id|function
-suffix:colon
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|variable|dn_rt_flush_timer
 r_static

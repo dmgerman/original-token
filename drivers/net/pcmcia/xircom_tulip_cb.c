@@ -18325,7 +18325,8 @@ suffix:semicolon
 r_int
 r_int
 id|entry
-comma
+suffix:semicolon
+r_int
 id|dummy
 op_assign
 op_minus

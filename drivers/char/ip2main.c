@@ -919,20 +919,11 @@ id|timer_list
 id|PollTimer
 op_assign
 (brace
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|ip2_poll
 )brace
 suffix:semicolon
-singleline_comment|//                                     next, prev, expires,data, func()
 DECL|variable|TimerOn
 r_static
 r_char

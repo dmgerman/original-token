@@ -981,6 +981,10 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|SK_dev-&gt;base_addr
+op_assign
+id|io
+suffix:semicolon
 id|rc
 op_assign
 id|SK_init

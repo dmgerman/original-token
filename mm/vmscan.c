@@ -1814,11 +1814,11 @@ r_goto
 id|done
 suffix:semicolon
 )brace
-multiline_comment|/* We return 1 if we are freed some page, or&n;&t; * there are no memory pressure remaining   */
+multiline_comment|/* Return 1 if any page is freed, or&n;&t; * there are no more memory pressure   */
 r_return
 (paren
 id|count
-op_ne
+OL
 id|FREE_COUNT
 op_logical_or
 op_logical_neg

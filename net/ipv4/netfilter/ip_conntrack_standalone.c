@@ -741,7 +741,7 @@ op_star
 )paren
 )paren
 (brace
-multiline_comment|/* We&squot;ve seen it coming out the other side: confirm */
+multiline_comment|/* We&squot;ve seen it coming out the other side: confirm (only if&n;           new packet: REJECT can generate TCP RESET response, or ICMP&n;           errors) */
 r_if
 c_cond
 (paren
@@ -770,9 +770,21 @@ id|pskb
 op_member_access_from_pointer
 id|nfct-&gt;master
 suffix:semicolon
+multiline_comment|/* ctinfo is the index of the nfct inside the conntrack */
 r_if
 c_cond
 (paren
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|nfct
+op_minus
+id|ct-&gt;infos
+op_eq
+id|IP_CT_NEW
+op_logical_and
 op_logical_neg
 (paren
 id|ct-&gt;status
@@ -881,6 +893,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|nfct
+op_minus
+id|ct-&gt;infos
+op_eq
+id|IP_CT_NEW
+op_logical_and
 op_logical_neg
 (paren
 id|ct-&gt;status

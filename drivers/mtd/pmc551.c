@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * $Id: pmc551.c,v 1.7 2000/07/03 10:01:38 dwmw2 Exp $&n; *&n; * PMC551 PCI Mezzanine Ram Device&n; *&n; * Author:&n; *       Mark Ferrell&n; *       Copyright 1999,2000 Nortel Networks&n; *&n; * License: &n; *&t; As part of this driver was derrived from the slram.c driver it falls&n; *&t; under the same license, which is GNU General Public License v2&n; *&n; * Description: &n; *&t; This driver is intended to support the PMC551 PCI Ram device from&n; *&t; Ramix Inc.  The PMC551 is a PMC Mezzanine module for cPCI embeded&n; *&t; systems.  The device contains a single SROM that initally programs the&n; *&t; V370PDC chipset onboard the device, and various banks of DRAM/SDRAM&n; *&t; onboard.  This driver implements this PCI Ram device as an MTD (Memory&n; *&t; Technologies Device) so that it can be used to hold a filesystem, or&n; *&t; for added swap space in embeded systems.  Since the memory on this&n; *&t; board isn&squot;t as fast as main memory we do not try to hook it into main&n; *&t; memeory as that would simply reduce performance on the system.  Using&n; *&t; it as a block device allows us to use it as high speed swap or for a&n; *&t; high speed disk device of some sort.  Which becomes very usefull on&n; *&t; diskless systems in the embeded market I might add.&n; *&n; * Credits:&n; *       Saeed Karamooz &lt;saeed@ramix.com&gt; of Ramix INC. for the initial&n; *       example code of how to initialize this device and for help with&n; *       questions I had concerning operation of the device.&n; *&n; *       Most of the MTD code for this driver was originally written for the&n; *       slram.o module in the MTD drivers package written by David Hinds &n; *       &lt;dhinds@allegro.stanford.edu&gt; which allows the mapping of system&n; *       memory into an mtd device.  Since the PMC551 memory module is&n; *       accessed in the same fashion as system memory, the slram.c code&n; *       became a very nice fit to the needs of this driver.  All we added was&n; *       PCI detection/initialization to the driver and automaticly figure out&n; *       the size via the PCI detection.o, later changes by Corey Minyard&n; *       settup the card to utilize a 1M sliding apature.&n; *&n; *&t; Corey Minyard &lt;minyard@nortelnetworks.com&gt;&n; *       * Modified driver to utilize a sliding apature instead of mapping all&n; *       memory into kernel space which turned out to be very wastefull.&n; *       * Located a bug in the SROM&squot;s initialization sequence that made the&n; *       memory unussable, added a fix to code to touch up the DRAM some.&n; *&n; * Bugs/FIXME&squot;s: &n; *       * MUST fix the init function to not spin on a register&n; *       waiting for it to set .. this does not safely handle busted devices&n; *       that never reset the register correctly which will cause the system to&n; *       hang w/ a reboot beeing the only chance at recover.&n; */
+multiline_comment|/*&n; * $Id: pmc551.c,v 1.8 2000/07/14 07:53:31 dwmw2 Exp $&n; *&n; * PMC551 PCI Mezzanine Ram Device&n; *&n; * Author:&n; *       Mark Ferrell&n; *       Copyright 1999,2000 Nortel Networks&n; *&n; * License: &n; *&t; As part of this driver was derrived from the slram.c driver it falls&n; *&t; under the same license, which is GNU General Public License v2&n; *&n; * Description: &n; *&t; This driver is intended to support the PMC551 PCI Ram device from&n; *&t; Ramix Inc.  The PMC551 is a PMC Mezzanine module for cPCI embeded&n; *&t; systems.  The device contains a single SROM that initally programs the&n; *&t; V370PDC chipset onboard the device, and various banks of DRAM/SDRAM&n; *&t; onboard.  This driver implements this PCI Ram device as an MTD (Memory&n; *&t; Technologies Device) so that it can be used to hold a filesystem, or&n; *&t; for added swap space in embeded systems.  Since the memory on this&n; *&t; board isn&squot;t as fast as main memory we do not try to hook it into main&n; *&t; memeory as that would simply reduce performance on the system.  Using&n; *&t; it as a block device allows us to use it as high speed swap or for a&n; *&t; high speed disk device of some sort.  Which becomes very usefull on&n; *&t; diskless systems in the embeded market I might add.&n; *&n; * Credits:&n; *       Saeed Karamooz &lt;saeed@ramix.com&gt; of Ramix INC. for the initial&n; *       example code of how to initialize this device and for help with&n; *       questions I had concerning operation of the device.&n; *&n; *       Most of the MTD code for this driver was originally written for the&n; *       slram.o module in the MTD drivers package written by David Hinds &n; *       &lt;dhinds@allegro.stanford.edu&gt; which allows the mapping of system&n; *       memory into an mtd device.  Since the PMC551 memory module is&n; *       accessed in the same fashion as system memory, the slram.c code&n; *       became a very nice fit to the needs of this driver.  All we added was&n; *       PCI detection/initialization to the driver and automaticly figure out&n; *       the size via the PCI detection.o, later changes by Corey Minyard&n; *       settup the card to utilize a 1M sliding apature.&n; *&n; *&t; Corey Minyard &lt;minyard@nortelnetworks.com&gt;&n; *       * Modified driver to utilize a sliding apature instead of mapping all&n; *       memory into kernel space which turned out to be very wastefull.&n; *       * Located a bug in the SROM&squot;s initialization sequence that made the&n; *       memory unussable, added a fix to code to touch up the DRAM some.&n; *&n; * Bugs/FIXME&squot;s: &n; *       * MUST fix the init function to not spin on a register&n; *       waiting for it to set .. this does not safely handle busted devices&n; *       that never reset the register correctly which will cause the system to&n; *       hang w/ a reboot beeing the only chance at recover.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -888,7 +889,7 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef PMC551_DRAM_BUG
+macro_line|#ifdef CONFIG_MTD_PMC551_BUGFIX
 id|u32
 id|dram_data
 suffix:semicolon
@@ -917,7 +918,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n;         * Get the size of the memory by reading all the DRAM size values&n;         * and adding them up.&n;         *&n;         * KLUDGE ALERT: the boards we are using have invalid column and&n;         * row mux values.  We fix them here, but this will break other&n;         * memory configurations.&n;         */
-macro_line|#ifdef PMC551_DRAM_BUG
+macro_line|#ifdef CONFIG_MTD_PMC551_BUGFIX
 id|pci_read_config_dword
 c_func
 (paren
@@ -1114,7 +1115,7 @@ comma
 id|dram_data
 )paren
 suffix:semicolon
-macro_line|#endif /* PMC551_DRAM_BUG */
+macro_line|#endif /* CONFIG_MTD_PMC551_BUGFIX */
 multiline_comment|/*&n;         * Oops .. something went wrong&n;         */
 r_if
 c_cond
@@ -1848,7 +1849,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;$Id: pmc551.c,v 1.7 2000/07/03 10:01:38 dwmw2 Exp $&bslash;n&quot;
+l_string|&quot;$Id: pmc551.c,v 1.8 2000/07/14 07:53:31 dwmw2 Exp $&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

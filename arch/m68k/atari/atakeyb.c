@@ -2324,14 +2324,8 @@ id|timer_list
 id|atakeyb_rep_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|atakeyb_rep
 )brace
 suffix:semicolon

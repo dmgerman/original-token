@@ -93,19 +93,6 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-DECL|variable|__initdata
-r_static
-r_struct
-id|timer_list
-id|fc_timer
-id|__initdata
-op_assign
-(brace
-id|function
-suffix:colon
-l_int|NULL
-)brace
-suffix:semicolon
 DECL|variable|fc_sem
 id|DECLARE_MUTEX_LOCKED
 c_func
@@ -307,6 +294,16 @@ suffix:semicolon
 id|Scsi_Device
 id|dev
 suffix:semicolon
+r_struct
+id|timer_list
+id|fc_timer
+op_assign
+(brace
+id|function
+suffix:colon
+id|pluto_detect_timeout
+)brace
+suffix:semicolon
 id|tpnt-&gt;proc_name
 op_assign
 l_string|&quot;pluto&quot;
@@ -452,10 +449,6 @@ id|fcss
 comma
 id|fcscount
 )paren
-suffix:semicolon
-id|fc_timer.function
-op_assign
-id|pluto_detect_timeout
 suffix:semicolon
 id|i
 op_assign
@@ -828,7 +821,7 @@ r_break
 suffix:semicolon
 multiline_comment|/* All fc channels have answered us */
 )brace
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp

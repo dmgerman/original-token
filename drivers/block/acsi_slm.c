@@ -772,14 +772,8 @@ id|timer_list
 id|slm_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|slm_test_ready
 )brace
 suffix:semicolon

@@ -242,6 +242,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|skb-&gt;nfct
+op_minus
+id|ct-&gt;infos
+op_eq
+id|IP_CT_NEW
+op_logical_and
 op_logical_neg
 (paren
 id|ct-&gt;status

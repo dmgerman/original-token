@@ -157,14 +157,8 @@ id|timer_list
 id|debug_keyb_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|debug_keyb_timer_handler
 )brace
 suffix:semicolon

@@ -208,14 +208,8 @@ id|timer_list
 id|mac_sound_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|mac_nosound
 )brace
 suffix:semicolon
