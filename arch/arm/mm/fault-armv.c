@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/mm/fault-armv.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Modifications for ARM processor (c) 1995-1999 Russell King&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/fault-armv.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Modifications for ARM processor (c) 1995-1999 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1804,14 +1804,35 @@ comma
 id|current
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;Unhandled fault: %s (%X) at 0x%08lx&bslash;n&quot;
+comma
+id|inf-&gt;name
+comma
+id|fsr
+comma
+id|addr
+)paren
+suffix:semicolon
+id|show_pte
+c_func
+(paren
+id|current-&gt;mm
+comma
+id|addr
+)paren
+suffix:semicolon
 id|die_if_kernel
 c_func
 (paren
-id|inf-&gt;name
+l_string|&quot;Oops&quot;
 comma
 id|regs
 comma
-id|fsr
+l_int|0
 )paren
 suffix:semicolon
 r_return

@@ -76,10 +76,8 @@ macro_line|#ifndef CAN_QUEUE
 DECL|macro|CAN_QUEUE
 mdefine_line|#define CAN_QUEUE 16
 macro_line|#endif
-macro_line|#ifdef HOSTS_C
 DECL|macro|A3000_SCSI
 mdefine_line|#define A3000_SCSI {  proc_name:&t;   &quot;A3000&quot;,&t;&t;&t;&bslash;&n;&t;&t;      proc_info:           NULL,&t;&t;&t;&bslash;&n;&t;&t;      name:                &quot;Amiga 3000 built-in SCSI&quot;,&t;&bslash;&n;&t;&t;      detect:              a3000_detect,&t;&t;&bslash;&n;&t;&t;      release:             a3000_release,&t;&t;&bslash;&n;&t;&t;      queuecommand:        wd33c93_queuecommand,&t;&bslash;&n;&t;&t;      abort:               wd33c93_abort,&t;&t;&bslash;&n;&t;&t;      reset:               wd33c93_reset,&t;&t;&bslash;&n;&t;&t;      can_queue:           CAN_QUEUE,&t;&t;&t;&bslash;&n;&t;&t;      this_id:             7,&t;&t;&t;&t;&bslash;&n;&t;&t;      sg_tablesize:        SG_ALL,&t;&t;&t;&bslash;&n;&t;&t;      cmd_per_lun:&t;   CMD_PER_LUN,&t;&t;&t;&bslash;&n;&t;&t;      use_clustering:      ENABLE_CLUSTERING }
-macro_line|#else
 multiline_comment|/*&n; * if the transfer address ANDed with this results in a non-zero&n; * result, then we can&squot;t use DMA.&n; */
 DECL|macro|A3000_XFER_MASK
 mdefine_line|#define A3000_XFER_MASK  (0x00000003)
@@ -256,6 +254,5 @@ DECL|macro|ISTR_FF_FLG
 mdefine_line|#define ISTR_FF_FLG&t;&t;(1&lt;&lt;1)
 DECL|macro|ISTR_FE_FLG
 mdefine_line|#define ISTR_FE_FLG&t;&t;(1&lt;&lt;0)
-macro_line|#endif /* else def HOSTS_C */
 macro_line|#endif /* A3000_H */
 eof

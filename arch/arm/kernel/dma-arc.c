@@ -1,13 +1,14 @@
-multiline_comment|/*&n; * arch/arm/kernel/dma-arc.c&n; *&n; * Copyright (C) 1998-1999 Dave Gilbert / Russell King&n; *&n; * DMA functions specific to Archimedes and A5000 architecture&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/dma-arc.c&n; *&n; *  Copyright (C) 1998-1999 Dave Gilbert / Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  DMA functions specific to Archimedes and A5000 architecture&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/fiq.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/mach-types.h&gt;
-macro_line|#include &quot;dma.h&quot;
+macro_line|#include &lt;asm/mach/dma.h&gt;
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(x...) printk(KERN_DEBUG x)
 macro_line|#if defined(CONFIG_BLK_DEV_FD1772) || defined(CONFIG_BLK_DEV_FD1772_MODULE)
@@ -79,7 +80,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|cliIF
+id|clf
 c_func
 (paren
 )paren
@@ -111,11 +112,7 @@ c_func
 (paren
 id|dma-&gt;buf.length
 comma
-id|__bus_to_virt
-c_func
-(paren
 id|dma-&gt;buf.address
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Sets data pointer up */
@@ -175,7 +172,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|cliIF
+id|clf
 c_func
 (paren
 )paren
@@ -207,11 +204,7 @@ c_func
 (paren
 id|dma-&gt;buf.length
 comma
-id|__bus_to_virt
-c_func
-(paren
 id|dma-&gt;buf.address
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Sets data pointer up */
@@ -304,7 +297,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|cliIF
+id|clf
 c_func
 (paren
 )paren
@@ -646,11 +639,7 @@ id|dma-&gt;buf.length
 suffix:semicolon
 id|regs.ARM_r10
 op_assign
-id|__bus_to_virt
-c_func
-(paren
 id|dma-&gt;buf.address
-)paren
 suffix:semicolon
 id|regs.ARM_fp
 op_assign
@@ -730,7 +719,7 @@ macro_line|#endif
 multiline_comment|/*&n; * This is virtual DMA - we don&squot;t need anything here&n; */
 DECL|function|sound_enable_disable_dma
 r_static
-r_int
+r_void
 id|sound_enable_disable_dma
 c_func
 (paren
@@ -837,7 +826,7 @@ c_func
 (brace
 id|dma
 (braket
-id|DMA_VIRTUAL_FLOPPY
+id|DMA_VIRTUAL_FLOPPY0
 )braket
 dot
 id|dma_irq
@@ -846,7 +835,7 @@ l_int|64
 suffix:semicolon
 id|dma
 (braket
-id|DMA_VIRTUAL_FLOPPY
+id|DMA_VIRTUAL_FLOPPY0
 )braket
 dot
 id|d_ops

@@ -30,23 +30,6 @@ DECL|macro|DMA_MODE_CASCADE
 mdefine_line|#define DMA_MODE_CASCADE 2
 DECL|macro|DMA_AUTOINIT
 mdefine_line|#define DMA_AUTOINIT&t; 4
-r_typedef
-r_struct
-(brace
-DECL|member|address
-r_int
-r_int
-id|address
-suffix:semicolon
-DECL|member|length
-r_int
-r_int
-id|length
-suffix:semicolon
-DECL|typedef|dmasg_t
-)brace
-id|dmasg_t
-suffix:semicolon
 r_extern
 id|spinlock_t
 id|dma_spin_lock
@@ -171,7 +154,8 @@ c_func
 id|dmach_t
 id|channel
 comma
-id|dmasg_t
+r_struct
+id|scatterlist
 op_star
 id|sg
 comma

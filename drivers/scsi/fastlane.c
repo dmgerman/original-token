@@ -1321,18 +1321,17 @@ id|count
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;fastlane.h&quot;
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|SCSI_FASTLANE
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 DECL|function|fastlane_esp_release
 r_int
 id|fastlane_esp_release

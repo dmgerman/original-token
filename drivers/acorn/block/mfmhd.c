@@ -26,7 +26,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
-macro_line|#include &lt;asm/ioc.h&gt;
+macro_line|#include &lt;asm/hardware/ioc.h&gt;
 multiline_comment|/*&n; * This sort of stuff should be in a header file shared with ide.c, hd.c, xd.c etc&n; */
 macro_line|#ifndef HDIO_GETGEO
 DECL|macro|HDIO_GETGEO

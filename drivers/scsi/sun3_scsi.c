@@ -1631,13 +1631,12 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#include &quot;sun3_NCR5380.c&quot;
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|SUN3_NCR5380
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 eof

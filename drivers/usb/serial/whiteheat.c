@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&t;Fixed bug with port-&gt;minor that was found by Al Borchers&n; *&n; * (07/04/2000) gkh&n; *&t;Added support for port settings. Baud rate can now be changed. Line signals&n; *&t;are not transferred to and from the tty layer yet, but things seem to be &n; *&t;working well now.&n; *&n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&t;Fixed bug with port-&gt;minor that was found by Al Borchers&n; *&n; * (07/04/2000) gkh&n; *&t;Added support for port settings. Baud rate can now be changed. Line signals&n; *&t;are not transferred to and from the tty layer yet, but things seem to be &n; *&t;working well now.&n; *&n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -379,18 +379,6 @@ op_star
 id|urb
 )paren
 (brace
-macro_line|#ifdef DEBUG
-r_int
-id|i
-suffix:semicolon
-r_int
-r_char
-op_star
-id|data
-op_assign
-id|urb-&gt;transfer_buffer
-suffix:semicolon
-macro_line|#endif
 id|dbg
 (paren
 id|__FUNCTION__
@@ -412,57 +400,17 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
-r_if
-c_cond
+id|usb_serial_debug_data
 (paren
-id|urb-&gt;actual_length
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
 id|__FILE__
-l_string|&quot;: &quot;
+comma
 id|__FUNCTION__
-l_string|&quot; - length = %d, data = &quot;
 comma
 id|urb-&gt;actual_length
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|urb-&gt;actual_length
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;%.2x &quot;
 comma
-id|data
-(braket
-id|i
-)braket
+id|urb-&gt;transfer_buffer
 )paren
 suffix:semicolon
-)brace
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -496,11 +444,6 @@ id|data
 op_assign
 id|urb-&gt;transfer_buffer
 suffix:semicolon
-macro_line|#ifdef DEBUG
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif
 id|dbg
 (paren
 id|__FUNCTION__
@@ -523,57 +466,17 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
-r_if
-c_cond
+id|usb_serial_debug_data
 (paren
-id|urb-&gt;actual_length
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
 id|__FILE__
-l_string|&quot;: &quot;
+comma
 id|__FUNCTION__
-l_string|&quot; - length = %d, data = &quot;
 comma
 id|urb-&gt;actual_length
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|urb-&gt;actual_length
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;%.2x &quot;
 comma
 id|data
-(braket
-id|i
-)braket
 )paren
 suffix:semicolon
-)brace
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* right now, if the command is COMMAND_COMPLETE, just flip the bit saying the command finished */
 multiline_comment|/* in the future we&squot;re going to have to pay attention to the actual command that completed */
 r_if

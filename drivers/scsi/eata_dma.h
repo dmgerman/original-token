@@ -2,7 +2,6 @@ multiline_comment|/********************************************************&n;* 
 macro_line|#ifndef _EATA_DMA_H
 DECL|macro|_EATA_DMA_H
 mdefine_line|#define _EATA_DMA_H
-macro_line|#ifndef HOSTS_C
 macro_line|#include &quot;eata_generic.h&quot;
 DECL|macro|VER_MAJOR
 mdefine_line|#define VER_MAJOR 2
@@ -69,7 +68,6 @@ macro_line|#else
 DECL|macro|DBG
 mdefine_line|#define DBG(x, y)
 macro_line|#endif
-macro_line|#endif /* !HOSTS_C */
 r_int
 id|eata_detect
 c_func

@@ -14404,9 +14404,13 @@ id|fs
 )paren
 suffix:semicolon
 multiline_comment|/* store it in the driver field */
-id|pcidev-&gt;driver_data
-op_assign
+id|pci_set_drvdata
+c_func
+(paren
+id|pcidev
+comma
 id|s
+)paren
 suffix:semicolon
 id|pcidev-&gt;dma_mask
 op_assign
@@ -14521,12 +14525,11 @@ id|es1370_state
 op_star
 id|s
 op_assign
+id|pci_get_drvdata
+c_func
 (paren
-r_struct
-id|es1370_state
-op_star
+id|dev
 )paren
-id|dev-&gt;driver_data
 suffix:semicolon
 r_if
 c_cond
@@ -14622,9 +14625,13 @@ c_func
 id|s
 )paren
 suffix:semicolon
-id|dev-&gt;driver_data
-op_assign
+id|pci_set_drvdata
+c_func
+(paren
+id|dev
+comma
 l_int|NULL
+)paren
 suffix:semicolon
 )brace
 DECL|variable|__devinitdata

@@ -512,14 +512,6 @@ DECL|macro|EXPORT_SYMBOL
 mdefine_line|#define EXPORT_SYMBOL(var)
 DECL|macro|EXPORT_SYMBOL_NOVERS
 mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)
-macro_line|#elif !defined(EXPORT_SYMTAB)
-multiline_comment|/* If things weren&squot;t set up in the Makefiles to get EXPORT_SYMTAB defined,&n;   then they weren&squot;t set up to run genksyms properly so MODVERSIONS breaks.  */
-DECL|macro|__EXPORT_SYMBOL
-mdefine_line|#define __EXPORT_SYMBOL(sym,str)   error EXPORT_SYMTAB_not_defined
-DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(var)&t;   error EXPORT_SYMTAB_not_defined
-DECL|macro|EXPORT_SYMBOL_NOVERS
-mdefine_line|#define EXPORT_SYMBOL_NOVERS(var)  error EXPORT_SYMTAB_not_defined
 macro_line|#else
 DECL|macro|__EXPORT_SYMBOL
 mdefine_line|#define __EXPORT_SYMBOL(sym, str)&t;&t;&t;&bslash;&n;const char __kstrtab_##sym[]&t;&t;&t;&t;&bslash;&n;__attribute__((section(&quot;.kstrtab&quot;))) = str;&t;&t;&bslash;&n;const struct module_symbol __ksymtab_##sym &t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&bslash;&n;{ (unsigned long)&amp;sym, __kstrtab_##sym }

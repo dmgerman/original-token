@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/proc-armo/segment.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/proc-armo/segment.h&n; *&n; *  Copyright (C) 1996 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 multiline_comment|/*&n; * The fs functions are implemented on the ARM2 and ARM3 architectures&n; * manually.&n; * Use *_user functions to access user memory with faulting behaving&n; *   as though the user is accessing the memory.&n; * Use set_fs(get_ds()) and then the *_user functions to allow them to&n; *   access kernel memory.&n; */
 multiline_comment|/*&n; * These are the values used to represent the user `fs&squot; and the kernel `ds&squot;&n; */
 DECL|macro|KERNEL_DS

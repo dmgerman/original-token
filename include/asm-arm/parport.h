@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * parport.h: ARM-specific parport initialisation&n; *&n; * Copyright (C) 1999, 2000  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/parport.h: ARM-specific parport initialisation&n; *&n; *  Copyright (C) 1999, 2000  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
 macro_line|#ifndef __ASMARM_PARPORT_H
 DECL|macro|__ASMARM_PARPORT_H
 mdefine_line|#define __ASMARM_PARPORT_H

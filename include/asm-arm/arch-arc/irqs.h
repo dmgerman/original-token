@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/irqs.h&n; *&n; * Copyright (C) 1996 Russell King, Dave Gilbert&n; *&n; * Modifications:&n; *  04-04-1998&t;PJB&t;Merged arc and a5k versions&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-arc/irqs.h&n; *&n; *  Copyright (C) 1996 Russell King, Dave Gilbert&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Modifications:&n; *   04-04-1998&t;PJB&t;Merged arc and a5k versions&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ARCH_A5K)
 DECL|macro|IRQ_PRINTER

@@ -29848,13 +29848,12 @@ id|SCSI_NCR_DRIVER_NAME
 suffix:semicolon
 )brace
 multiline_comment|/*&n;**&t;Module stuff&n;*/
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|NCR53C8XX
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 eof

@@ -1,12 +1,12 @@
-multiline_comment|/*&n; * linux/drivers/video/acornfb.h&n; *&n; * Copyright (C) 1998,1999 Russell King&n; *&n; * Frame buffer code for Acorn platforms&n; */
+multiline_comment|/*&n; *  linux/drivers/video/acornfb.h&n; *&n; *  Copyright (C) 1998,1999 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Frame buffer code for Acorn platforms&n; */
 macro_line|#if defined(HAS_VIDC20)
-macro_line|#include &lt;asm/iomd.h&gt;
+macro_line|#include &lt;asm/hardware/iomd.h&gt;
 DECL|macro|VIDC_PALETTE_SIZE
 mdefine_line|#define VIDC_PALETTE_SIZE&t;256
 DECL|macro|VIDC_NAME
 mdefine_line|#define VIDC_NAME&t;&t;&quot;VIDC20&quot;
 macro_line|#elif defined(HAS_VIDC)
-macro_line|#include &lt;asm/memc.h&gt;
+macro_line|#include &lt;asm/hardware/memc.h&gt;
 DECL|macro|VIDC_PALETTE_SIZE
 mdefine_line|#define VIDC_PALETTE_SIZE&t;16
 DECL|macro|VIDC_NAME

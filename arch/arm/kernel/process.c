@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/kernel/process.c&n; *&n; *  Copyright (C) 1996-2000 Russell King - Converted to ARM.&n; *  Origional Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/process.c&n; *&n; *  Copyright (C) 1996-2000 Russell King - Converted to ARM.&n; *  Origional Copyright (C) 1995  Linus Torvalds&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -495,7 +495,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  IRQs %s  FIQs %s  Mode %s  Segment %s&bslash;n&quot;
+l_string|&quot;  IRQs %s  FIQs %s  Mode %s%s  Segment %s&bslash;n&quot;
 comma
 id|interrupts_enabled
 c_func
@@ -527,6 +527,17 @@ c_func
 id|regs
 )paren
 )braket
+comma
+id|thumb_mode
+c_func
+(paren
+id|regs
+)paren
+ques
+c_cond
+l_string|&quot; (T)&quot;
+suffix:colon
+l_string|&quot;&quot;
 comma
 id|get_fs
 c_func

@@ -2924,15 +2924,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/* Eventually this will go into an include file, but this will be later */
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|AHA1740
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 multiline_comment|/* Okay, you made it all the way through.  As of this writing, 3/31/93, I&squot;m&n;brad@saturn.gaylord.com or brad@bradpc.gaylord.com.  I&squot;ll try to help as time&n;permits if you have any trouble with this driver.  Happy Linuxing! */
 eof

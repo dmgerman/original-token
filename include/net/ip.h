@@ -356,8 +356,8 @@ id|flags
 suffix:semicolon
 multiline_comment|/*&n; *&t;Map a multicast IP onto multicast MAC for type Token Ring.&n; *      This conforms to RFC1469 Option 2 Multicasting i.e.&n; *      using a functional address to transmit / receive &n; *      multicast packets.&n; */
 DECL|function|ip_tr_mc_map
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ip_tr_mc_map
 c_func
@@ -546,8 +546,8 @@ id|sysctl_ip_default_ttl
 suffix:semicolon
 macro_line|#ifdef CONFIG_INET
 DECL|function|ip_send
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|ip_send
 c_func
@@ -584,8 +584,8 @@ id|skb
 suffix:semicolon
 )brace
 multiline_comment|/* The function in 2.2 was invalid, producing wrong result for&n; * check=0xFEFF. It was noticed by Arthur Skawina _year_ ago. --ANK(000625) */
-r_extern
-id|__inline__
+r_static
+r_inline
 DECL|function|ip_decrease_ttl
 r_int
 id|ip_decrease_ttl
@@ -625,8 +625,8 @@ op_decrement
 id|iph-&gt;ttl
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 DECL|function|ip_dont_fragment
 r_int
 id|ip_dont_fragment
@@ -685,8 +685,8 @@ id|dst
 )paren
 suffix:semicolon
 DECL|function|ip_select_ident
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ip_select_ident
 c_func
@@ -729,8 +729,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Map a multicast IP onto multicast MAC for type ethernet.&n; */
 DECL|function|ip_eth_mc_map
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ip_eth_mc_map
 c_func

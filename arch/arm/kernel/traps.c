@@ -1,5 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/kernel/traps.c&n; *&n; *  Copyright (C) 1995, 1996 Russell King&n; *  Fragments that appear the same as linux/arch/i386/kernel/traps.c (C) Linus Torvalds&n; */
-multiline_comment|/*&n; * &squot;traps.c&squot; handles hardware exceptions after we have saved some state in&n; * &squot;linux/arch/arm/lib/traps.S&squot;.  Mostly a debugging aid, but will probably&n; * kill the offending process.&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/traps.c&n; *&n; *  Copyright (C) 1995, 1996 Russell King&n; *  Fragments that appear the same as linux/arch/i386/kernel/traps.c (C) Linus Torvalds&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  &squot;traps.c&squot; handles hardware exceptions after we have saved some state in&n; *  &squot;linux/arch/arm/lib/traps.S&squot;.  Mostly a debugging aid, but will probably&n; *  kill the offending process.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1368,7 +1367,7 @@ suffix:colon
 multiline_comment|/* sys_cacheflush */
 macro_line|#ifdef CONFIG_CPU_32
 multiline_comment|/* r0 = start, r1 = end, r2 = flags */
-id|cpu_flush_cache_area
+id|cpu_cache_clean_invalidate_range
 c_func
 (paren
 id|regs-&gt;ARM_r0

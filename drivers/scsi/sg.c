@@ -168,6 +168,7 @@ id|RW_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* Also used to lock&n;&t;&t;&t;file descriptor list for device */
 DECL|variable|sg_template
+r_static
 r_struct
 id|Scsi_Device_Template
 id|sg_template
@@ -7282,8 +7283,7 @@ id|def_reserved_size
 suffix:semicolon
 id|sg_template.module
 op_assign
-op_amp
-id|__this_module
+id|THIS_MODULE
 suffix:semicolon
 r_return
 id|scsi_register_module

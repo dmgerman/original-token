@@ -17662,15 +17662,14 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * --- Loadable Driver Support&n; */
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|ADVANSYS
 suffix:semicolon
 macro_line|# include &quot;scsi_module.c&quot;
-macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * --- Miscellaneous Driver Functions&n; */
 multiline_comment|/*&n; * First-level interrupt handler.&n; *&n; * For versions &gt; v1.3.70, &squot;dev_id&squot; is a pointer to the interrupting&n; * adapter&squot;s asc_board_t. Because all boards are currently checked&n; * for interrupts on each interrupt, &squot;dev_id&squot; is not referenced. &squot;dev_id&squot;&n; * could be used to identify an interrupt passed to the AdvanSys driver,&n; * which is for a device sharing an interrupt with an AdvanSys adapter.&n; */
 id|STATIC

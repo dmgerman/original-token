@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (08/28/2000) gkh&n; *&t;Added port_lock to port structure.&n; *&n; * (08/08/2000) gkh&n; *&t;Added open_count to port structure.&n; *&n; * (07/23/2000) gkh&n; *&t;Added bulk_out_endpointAddress to port structure.&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (09/11/2000) gkh&n; *&t;Added usb_serial_debug_data function to help get rid of #DEBUG in the&n; *&t;drivers.&n; *&n; * (08/28/2000) gkh&n; *&t;Added port_lock to port structure.&n; *&n; * (08/08/2000) gkh&n; *&t;Added open_count to port structure.&n; *&n; * (07/23/2000) gkh&n; *&t;Added bulk_out_endpointAddress to port structure.&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
 macro_line|#ifndef __LINUX_USB_SERIAL_H
 DECL|macro|__LINUX_USB_SERIAL_H
 mdefine_line|#define __LINUX_USB_SERIAL_H
@@ -808,6 +808,81 @@ suffix:semicolon
 r_return
 id|port-&gt;serial
 suffix:semicolon
+)brace
+DECL|function|usb_serial_debug_data
+r_static
+r_inline
+r_void
+id|usb_serial_debug_data
+(paren
+r_const
+r_char
+op_star
+id|file
+comma
+r_const
+r_char
+op_star
+id|function
+comma
+r_int
+id|size
+comma
+r_const
+r_int
+r_char
+op_star
+id|data
+)paren
+(brace
+macro_line|#ifdef CONFIG_USB_SERIAL_DEBUG
+r_int
+id|i
+suffix:semicolon
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: %s - length = %d, data = &quot;
+comma
+id|file
+comma
+id|function
+comma
+id|size
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|size
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;%.2x &quot;
+comma
+id|data
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif&t;/* ifdef __LINUX_USB_SERIAL_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/char1/keyb_arc.c&n; *&n; * Acorn keyboard driver for ARM Linux.&n; *&n; * The Acorn keyboard appears to have a ***very*** buggy reset protocol -&n; * every reset behaves differently.  We try to get round this by attempting&n; * a few things...&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/char/keyb_arc.c&n; *&n; *  Copyright (C) 2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Acorn keyboard driver for ARM Linux.&n; *&n; *  The Acorn keyboard appears to have a ***very*** buggy reset protocol -&n; *  every reset behaves differently.  We try to get round this by attempting&n; *  a few things...&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -18,8 +18,8 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/ioc.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/hardware/ioc.h&gt;
 macro_line|#include &quot;../../char/busmouse.h&quot;
 r_extern
 r_struct
@@ -1850,11 +1850,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags_cli
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1879,9 +1874,13 @@ c_func
 l_string|&quot;Could not allocate keyboard transmit IRQ!&quot;
 )paren
 suffix:semicolon
-id|disable_irq
 (paren
-id|IRQ_KEYBOARDTX
+r_void
+)paren
+id|inb
+c_func
+(paren
+id|IOC_KARTRX
 )paren
 suffix:semicolon
 r_if
@@ -1906,20 +1905,6 @@ id|panic
 c_func
 (paren
 l_string|&quot;Could not allocate keyboard receive IRQ!&quot;
-)paren
-suffix:semicolon
-(paren
-r_void
-)paren
-id|inb
-c_func
-(paren
-id|IOC_KARTRX
-)paren
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
 )paren
 suffix:semicolon
 id|a5kkbd_sendbyte

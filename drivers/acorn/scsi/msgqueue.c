@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/acorn/scsi/msgqueue.c: message queue handling&n; *&n; * Copyright (C) 1997-1998 Russell King&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/scsi/msgqueue.c&n; *&n; *  Copyright (C) 1997-1998 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  message queue handling&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;

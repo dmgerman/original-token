@@ -328,15 +328,14 @@ suffix:semicolon
 DECL|macro|imm_pb_release
 mdefine_line|#define imm_pb_release(x) parport_release(imm_hosts[(x)].dev)
 multiline_comment|/***************************************************************************&n; *                   Parallel port probing routines                        *&n; ***************************************************************************/
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|IMM
 suffix:semicolon
 macro_line|#include  &quot;scsi_module.c&quot;
-macro_line|#endif
 DECL|function|imm_detect
 r_int
 id|imm_detect

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/system.h&n; *&n; * C
 macro_line|#include &lt;linux/config.h&gt;
 DECL|function|arch_idle
 r_static
+r_inline
 r_void
 id|arch_idle
 c_func
@@ -18,26 +19,12 @@ op_logical_and
 op_logical_neg
 id|hlt_counter
 )paren
-(brace
 id|cpu_do_idle
 c_func
 (paren
-id|IDLE_CLOCK_SLOW
+l_int|0
 )paren
 suffix:semicolon
-id|cpu_do_idle
-c_func
-(paren
-id|IDLE_WAIT_FAST
-)paren
-suffix:semicolon
-id|cpu_do_idle
-c_func
-(paren
-id|IDLE_CLOCK_FAST
-)paren
-suffix:semicolon
-)brace
 )brace
 macro_line|#ifdef CONFIG_SA1100_VICTOR
 multiline_comment|/* power off unconditionally */

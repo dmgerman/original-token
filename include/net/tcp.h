@@ -386,8 +386,8 @@ op_star
 id|tcp_timewait_cachep
 suffix:semicolon
 DECL|function|tcp_tw_put
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_tw_put
 c_func
@@ -1131,8 +1131,8 @@ mdefine_line|#define tcp_openreq_alloc()&t;&t;kmem_cache_alloc(tcp_openreq_cache
 DECL|macro|tcp_openreq_fastfree
 mdefine_line|#define tcp_openreq_fastfree(req)&t;kmem_cache_free(tcp_openreq_cachep, req)
 DECL|function|tcp_openreq_free
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_openreq_free
 c_func
@@ -1799,46 +1799,6 @@ id|tp-&gt;ack
 )paren
 suffix:semicolon
 )brace
-DECL|enum|tcp_ca_state
-r_enum
-id|tcp_ca_state
-(brace
-DECL|enumerator|TCP_CA_Open
-id|TCP_CA_Open
-op_assign
-l_int|0
-comma
-DECL|macro|TCPF_CA_Open
-mdefine_line|#define TCPF_CA_Open&t;(1&lt;&lt;TCP_CA_Open)
-DECL|enumerator|TCP_CA_Disorder
-id|TCP_CA_Disorder
-op_assign
-l_int|1
-comma
-DECL|macro|TCPF_CA_Disorder
-mdefine_line|#define TCPF_CA_Disorder (1&lt;&lt;TCP_CA_Disorder)
-DECL|enumerator|TCP_CA_CWR
-id|TCP_CA_CWR
-op_assign
-l_int|2
-comma
-DECL|macro|TCPF_CA_CWR
-mdefine_line|#define TCPF_CA_CWR&t;(1&lt;&lt;TCP_CA_CWR)
-DECL|enumerator|TCP_CA_Recovery
-id|TCP_CA_Recovery
-op_assign
-l_int|3
-comma
-DECL|macro|TCPF_CA_Recovery
-mdefine_line|#define TCPF_CA_Recovery (1&lt;&lt;TCP_CA_Recovery)
-DECL|enumerator|TCP_CA_Loss
-id|TCP_CA_Loss
-op_assign
-l_int|4
-DECL|macro|TCPF_CA_Loss
-mdefine_line|#define TCPF_CA_Loss&t;(1&lt;&lt;TCP_CA_Loss)
-)brace
-suffix:semicolon
 DECL|enum|tcp_tw_status
 r_enum
 id|tcp_tw_status
@@ -3013,8 +2973,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Initialize RCV_MSS value.&n; * RCV_MSS is an our guess about MSS used by the peer.&n; * We haven&squot;t any direct information about the MSS.&n; * It&squot;s better to underestimate the RCV_MSS rather than overestimate.&n; * Overestimations make us ACKing less frequently than needed.&n; * Underestimations are more easy to detect and fix by tcp_measure_rcv_mss().&n; */
 DECL|function|tcp_initialize_rcv_mss
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_initialize_rcv_mss
 c_func
@@ -3325,8 +3285,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Recalculate snd_ssthresh, we want to set it to:&n; *&n; * &t;one half the current congestion window, but no&n; *&t;less than two segments&n; */
 DECL|function|tcp_recalc_ssthresh
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u32
 id|tcp_recalc_ssthresh
 c_func
@@ -3351,8 +3311,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* If cwnd &gt; ssthresh, we may raise ssthresh to be half-way to cwnd.&n; * The exception is rate halving phase, when cwnd is decreasing towards&n; * ssthresh.&n; */
 DECL|function|tcp_current_ssthresh
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u32
 id|tcp_current_ssthresh
 c_func
@@ -3488,8 +3448,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Set slow start threshould and cwnd not falling to slow start */
 DECL|function|__tcp_enter_cwr
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|__tcp_enter_cwr
 c_func
@@ -3548,8 +3508,8 @@ id|tp
 suffix:semicolon
 )brace
 DECL|function|tcp_enter_cwr
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_enter_cwr
 c_func
@@ -4481,6 +4441,24 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;prev
+op_logical_and
+op_logical_neg
+(paren
+id|sk-&gt;userlocks
+op_amp
+id|SOCK_BINDPORT_LOCK
+)paren
+)paren
+id|tcp_put_port
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/* fall through */
 r_default
 suffix:colon
@@ -4816,8 +4794,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Construct a tcp options header for a SYN or SYN_ACK packet.&n; * If this is every changed make sure to change the definition of&n; * MAX_SYN_SIZE to match the new maximum number of options that you&n; * can generate.&n; */
 DECL|function|tcp_syn_build_options
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_syn_build_options
 c_func
@@ -5038,8 +5016,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Determine a window scaling and initial window to offer.&n; * Based on the assumption that the given amount of space&n; * will be offered. Store the results in the tp structure.&n; * NOTE: for smooth operation initial space offering should&n; * be a multiple of mss if possible. We assume here that mss &gt;= 1.&n; * This MUST be enforced by all callers.&n; */
 DECL|function|tcp_select_initial_window
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_select_initial_window
 c_func
@@ -5329,8 +5307,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Note: caller must be prepared to deal with negative returns */
 DECL|function|tcp_space
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|tcp_space
 c_func
@@ -5357,8 +5335,8 @@ id|sk-&gt;rmem_alloc
 suffix:semicolon
 )brace
 DECL|function|tcp_full_space
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|tcp_full_space
 c_func
@@ -5378,8 +5356,8 @@ id|sk-&gt;rcvbuf
 suffix:semicolon
 )brace
 DECL|function|tcp_acceptq_removed
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_acceptq_removed
 c_func
@@ -5395,8 +5373,8 @@ op_decrement
 suffix:semicolon
 )brace
 DECL|function|tcp_acceptq_added
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_acceptq_added
 c_func
@@ -5412,8 +5390,8 @@ op_increment
 suffix:semicolon
 )brace
 DECL|function|tcp_acceptq_is_full
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|tcp_acceptq_is_full
 c_func
@@ -5431,8 +5409,8 @@ id|sk-&gt;max_ack_backlog
 suffix:semicolon
 )brace
 DECL|function|tcp_acceptq_queue
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_acceptq_queue
 c_func
@@ -5531,8 +5509,8 @@ id|TCP_SYNQ_HSIZE
 suffix:semicolon
 )brace
 suffix:semicolon
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|tcp_synq_removed
 id|tcp_synq_removed
@@ -5582,8 +5560,8 @@ op_decrement
 suffix:semicolon
 )brace
 DECL|function|tcp_synq_added
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_synq_added
 c_func
@@ -5622,8 +5600,8 @@ op_increment
 suffix:semicolon
 )brace
 DECL|function|tcp_synq_len
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|tcp_synq_len
 c_func
@@ -5639,8 +5617,8 @@ id|sk-&gt;tp_pinfo.af_tcp.listen_opt-&gt;qlen
 suffix:semicolon
 )brace
 DECL|function|tcp_synq_young
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|tcp_synq_young
 c_func
@@ -5656,8 +5634,8 @@ id|sk-&gt;tp_pinfo.af_tcp.listen_opt-&gt;qlen_young
 suffix:semicolon
 )brace
 DECL|function|tcp_synq_is_full
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|tcp_synq_is_full
 c_func
@@ -5679,8 +5657,8 @@ id|sk-&gt;tp_pinfo.af_tcp.listen_opt-&gt;max_qlen_log
 suffix:semicolon
 )brace
 DECL|function|tcp_synq_unlink
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_synq_unlink
 c_func
@@ -5723,8 +5701,8 @@ id|tp-&gt;syn_wait_lock
 suffix:semicolon
 )brace
 DECL|function|tcp_synq_drop
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_synq_drop
 c_func
@@ -6248,8 +6226,8 @@ r_void
 suffix:semicolon
 multiline_comment|/* - We may sleep inside this lock.&n; * - If sleeping is not required (or called from BH),&n; *   use plain read_(un)lock(&amp;tcp_lhash_lock).&n; */
 DECL|function|tcp_listen_lock
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_listen_lock
 c_func
@@ -6281,8 +6259,8 @@ id|tcp_lhash_lock
 suffix:semicolon
 )brace
 DECL|function|tcp_listen_unlock
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcp_listen_unlock
 c_func

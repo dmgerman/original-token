@@ -32,21 +32,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * HCI drivers&n; */
-r_int
-id|uhci_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|ohci_hcd_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Cleanup&n; */
 DECL|function|usb_exit
 r_static

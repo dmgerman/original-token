@@ -2,6 +2,8 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-shark/io.h&n; *&n; * by Ale
 macro_line|#ifndef __ASM_ARM_ARCH_IO_H
 DECL|macro|__ASM_ARM_ARCH_IO_H
 mdefine_line|#define __ASM_ARM_ARCH_IO_H
+DECL|macro|__arch_ioremap
+mdefine_line|#define __arch_ioremap(off,size,nocache) __ioremap(off,size,0)
 DECL|macro|IO_SPACE_LIMIT
 mdefine_line|#define IO_SPACE_LIMIT 0xffffffff
 multiline_comment|/*&n; * We use two different types of addressing - PC style addresses, and ARM&n; * addresses.  PC style accesses the PC hardware with the normal PC IO&n; * addresses, eg 0x3f8 for serial#1.  ARM addresses are 0x80000000+&n; * and are translated to the start of IO.&n; */

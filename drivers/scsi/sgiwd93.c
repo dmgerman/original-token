@@ -1369,18 +1369,17 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Found one. */
 )brace
-macro_line|#ifdef MODULE
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;sgiwd93.h&quot;
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|SGIWD93_SCSI
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 DECL|function|sgiwd93_release
 r_int
 id|sgiwd93_release

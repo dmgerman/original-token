@@ -2513,7 +2513,7 @@ mdefine_line|#define DDAR_Ser4SSPRc&t;        &t;/*  Ser. port 4 SSP Receive    
 DECL|macro|DDAR_DA
 mdefine_line|#define DDAR_DA &t;Fld (24, 8)&t;/* Device Address                  */
 DECL|macro|DDAR_DevAdd
-mdefine_line|#define DDAR_DevAdd(Add)        &t;/*  Device Address                 */ &bslash;&n;                &t;((Add) &amp; 0xF0000000 | &bslash;&n;                &t; ((Add) &amp; 0X003FFFFC) &lt;&lt; (FShft (DDAR_DA) - 2))
+mdefine_line|#define DDAR_DevAdd(Add)        &t;/*  Device Address                 */ &bslash;&n;                &t;(((Add) &amp; 0xF0000000) | &bslash;&n;                &t; (((Add) &amp; 0X003FFFFC) &lt;&lt; (FShft (DDAR_DA) - 2)))
 DECL|macro|DDAR_Ser0UDCWr
 mdefine_line|#define DDAR_Ser0UDCWr&t;        &t;/* Ser. port 0 UDC Write           */ &bslash;&n;                &t;(DDAR_DevWr + DDAR_Brst8 + DDAR_8BitDev + &bslash;&n;                &t; DDAR_Ser0UDCTr + DDAR_DevAdd (_Ser0UDCDR))
 DECL|macro|DDAR_Ser0UDCRd

@@ -1,16 +1,15 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-cl7500.c&n; *&n; * Extra MM routines for CL7500 architecture&n; *&n; * Copyright (C) 1998 Russell King&n; * Copyright (C) 1999 Nexus Electronics Ltd&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/mm-cl7500.c&n; *&n; *  Copyright (C) 1998 Russell King&n; *  Copyright (C) 1999 Nexus Electronics Ltd&n; *&n; * Extra MM routines for CL7500 architecture&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/proc/domain.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &quot;map.h&quot;
-DECL|macro|SIZE
-mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
+macro_line|#include &lt;asm/mach/map.h&gt;
 DECL|variable|__initdata
+r_static
 r_struct
 id|map_desc
-id|io_desc
+id|cl7500_io_desc
 (braket
 )braket
 id|__initdata
@@ -74,19 +73,25 @@ l_int|0
 comma
 l_int|1
 )brace
+comma
 multiline_comment|/* LED&t;&t;*/
+id|LAST_DESC
 )brace
 suffix:semicolon
-DECL|variable|io_desc_size
-r_int
-r_int
-id|__initdata
-id|io_desc_size
-op_assign
-id|SIZE
+DECL|function|clps7500_map_io
+r_void
+id|__init
+id|clps7500_map_io
 c_func
 (paren
-id|io_desc
+r_void
+)paren
+(brace
+id|iotable_init
+c_func
+(paren
+id|cl7500_io_desc
 )paren
 suffix:semicolon
+)brace
 eof

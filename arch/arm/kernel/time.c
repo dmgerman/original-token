@@ -1,5 +1,6 @@
-multiline_comment|/*&n; *  linux/arch/arm/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *  Modifications for ARM (C) 1994, 1995, 1996,1997 Russell King&n; *&n; * This file contains the ARM-specific time handling details:&n; * reading the RTC at bootup, etc...&n; *&n; * 1994-07-02  Alan Modra&n; *             fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1998-12-20  Updated NTP code according to technical memorandum Jan &squot;96&n; *             &quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *  Modifications for ARM (C) 1994, 1995, 1996,1997 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  This file contains the ARM-specific time handling details:&n; *  reading the RTC at bootup, etc...&n; *&n; *  1994-07-02  Alan Modra&n; *              fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; *  1998-12-20  Updated NTP code according to technical memorandum Jan &squot;96&n; *              &quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -277,6 +278,38 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_LEDS
 macro_line|#include &lt;asm/leds.h&gt;
+DECL|function|dummy_leds_event
+r_static
+r_void
+id|dummy_leds_event
+c_func
+(paren
+id|led_event_t
+id|evt
+)paren
+(brace
+)brace
+DECL|variable|leds_event
+r_void
+(paren
+op_star
+id|leds_event
+)paren
+(paren
+id|led_event_t
+)paren
+op_assign
+id|dummy_leds_event
+suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
+DECL|variable|leds_event
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|leds_event
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|do_leds
 r_static
 r_void
@@ -551,17 +584,10 @@ id|irqaction
 id|timer_irq
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|name
+suffix:colon
 l_string|&quot;timer&quot;
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Include architecture specific code&n; */

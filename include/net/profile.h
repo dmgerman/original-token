@@ -83,8 +83,8 @@ id|leaved
 suffix:semicolon
 macro_line|#ifdef CONFIG_X86_TSC
 DECL|function|net_profile_stamp
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_stamp
 c_func
@@ -105,8 +105,8 @@ id|pstamp-&gt;tv_sec
 suffix:semicolon
 )brace
 DECL|function|net_profile_accumulate
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_accumulate
 c_func
@@ -186,8 +186,8 @@ id|acc-&gt;tv_sec
 suffix:semicolon
 )brace
 DECL|function|net_profile_sub
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_sub
 c_func
@@ -242,8 +242,8 @@ id|acc-&gt;tv_sec
 suffix:semicolon
 )brace
 DECL|function|net_profile_add
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_add
 c_func
@@ -308,8 +308,8 @@ id|alpha_hi
 suffix:semicolon
 multiline_comment|/* On alpha cycle counter has only 32 bits :-( :-( */
 DECL|function|net_profile_stamp
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_stamp
 c_func
@@ -358,8 +358,8 @@ id|alpha_lo
 suffix:semicolon
 )brace
 DECL|function|net_profile_accumulate
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_accumulate
 c_func
@@ -462,8 +462,8 @@ id|usecs
 suffix:semicolon
 )brace
 DECL|function|net_profile_sub
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_sub
 c_func
@@ -519,8 +519,8 @@ id|usecs
 suffix:semicolon
 )brace
 DECL|function|net_profile_add
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_add
 c_func
@@ -577,8 +577,8 @@ suffix:semicolon
 )brace
 macro_line|#else
 DECL|function|net_profile_stamp
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_stamp
 c_func
@@ -598,8 +598,8 @@ id|pstamp
 suffix:semicolon
 )brace
 DECL|function|net_profile_accumulate
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_accumulate
 c_func
@@ -702,8 +702,8 @@ id|usecs
 suffix:semicolon
 )brace
 DECL|function|net_profile_sub
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_sub
 c_func
@@ -759,8 +759,8 @@ id|usecs
 suffix:semicolon
 )brace
 DECL|function|net_profile_add
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_add
 c_func
@@ -817,8 +817,8 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|net_profile_enter
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_enter
 c_func
@@ -876,8 +876,8 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|net_profile_leave_irq
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_leave_irq
 c_func
@@ -984,8 +984,8 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|net_profile_leave
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|net_profile_leave
 c_func

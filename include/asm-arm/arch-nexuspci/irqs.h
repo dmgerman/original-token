@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-nexuspci/irqs.h&n; *&n; * Copyright (C) 1997, 1998, 2000 Philip Blundell&n; */
-multiline_comment|/* The hardware is capable of routing any interrupt source (except the&n;   DUART) to either IRQ or FIQ.  We ignore FIQ and use IRQ exclusively&n;   for simplicity.  */
+multiline_comment|/*&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * The hardware is capable of routing any interrupt source (except the&n; * DUART) to either IRQ or FIQ.  We ignore FIQ and use IRQ exclusively&n; * for simplicity.  &n; */
 DECL|macro|IRQ_DUART
 mdefine_line|#define IRQ_DUART&t;&t;0
 DECL|macro|IRQ_PLX

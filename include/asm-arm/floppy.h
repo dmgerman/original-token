@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/floppy.h&n; *&n; * (C) 1996-2000 Russell King&n; *&n; * Note that we don&squot;t touch FLOPPY_DMA nor FLOPPY_IRQ here&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/floppy.h&n; *&n; *  Copyright (C) 1996-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Note that we don&squot;t touch FLOPPY_DMA nor FLOPPY_IRQ here&n; */
 macro_line|#ifndef __ASM_ARM_FLOPPY_H
 DECL|macro|__ASM_ARM_FLOPPY_H
 mdefine_line|#define __ASM_ARM_FLOPPY_H

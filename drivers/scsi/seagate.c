@@ -4693,14 +4693,13 @@ r_return
 id|SCSI_RESET_WAKEUP
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/* Eventually this will go into an include file, but this will be later */
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|SEAGATE_ST0X
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 eof

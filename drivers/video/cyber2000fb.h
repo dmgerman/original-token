@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/video/cyber2000fb.h&n; *&n; * Integraphics Cyber2000 frame buffer device&n; */
+multiline_comment|/*&n; *  linux/drivers/video/cyber2000fb.h&n; *&n; *  Copyright (C) 1998-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; * Integraphics Cyber2000 frame buffer device&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|cyber2000_outb
 mdefine_line|#define cyber2000_outb(dat,reg)&t;writeb(dat, CyberRegs + reg)

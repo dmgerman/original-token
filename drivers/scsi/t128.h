@@ -143,10 +143,8 @@ DECL|macro|CAN_QUEUE
 mdefine_line|#define CAN_QUEUE 32 
 macro_line|#endif
 multiline_comment|/* &n; * I hadn&squot;t thought of this with the earlier drivers - but to prevent&n; * macro definition conflicts, we shouldn&squot;t define all of the internal&n; * macros when this is being used solely for the host stub.&n; */
-macro_line|#if defined(HOSTS_C) || defined(MODULE)
 DECL|macro|TRANTOR_T128
 mdefine_line|#define TRANTOR_T128 {&t;&t;&t;&t;&t;&bslash;&n;&t;name:           &quot;Trantor T128/T128F/T228&quot;,&t;&bslash;&n;&t;detect:         t128_detect,&t;&t;&t;&bslash;&n;&t;queuecommand:   t128_queue_command,&t;&t;&bslash;&n;&t;abort:          t128_abort,&t;&t;&t;&bslash;&n;&t;reset:          t128_reset,&t;&t;&t;&bslash;&n;&t;bios_param:     t128_biosparam,&t;&t;&t;&bslash;&n;&t;can_queue:      CAN_QUEUE,&t;&t;&t;&bslash;&n;        this_id:        7,&t;&t;&t;&t;&bslash;&n;&t;sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;&t;cmd_per_lun:    CMD_PER_LUN,&t;&t;&t;&bslash;&n;&t;use_clustering: DISABLE_CLUSTERING}
-macro_line|#endif
 macro_line|#ifndef HOSTS_C
 DECL|macro|NCR5380_implementation_fields
 mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    unsigned long base

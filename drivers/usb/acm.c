@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG
+macro_line|#undef DEBUG
 macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/*&n; * CMSPAR, some architectures can&squot;t have space and mark parity.&n; */
 macro_line|#ifndef CMSPAR
@@ -2571,6 +2571,10 @@ comma
 id|acm
 )paren
 suffix:semicolon
+id|acm-&gt;readurb.transfer_flags
+op_or_assign
+id|USB_NO_FSBR
+suffix:semicolon
 id|FILL_BULK_URB
 c_func
 (paren
@@ -2597,6 +2601,10 @@ id|acm_write_bulk
 comma
 id|acm
 )paren
+suffix:semicolon
+id|acm-&gt;writeurb.transfer_flags
+op_or_assign
+id|USB_NO_FSBR
 suffix:semicolon
 id|printk
 c_func

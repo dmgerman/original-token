@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/mm/small_page.c&n; *&n; *  Copyright (C) 1996  Russell King&n; *&n; * Changelog:&n; *  26/01/1996&t;RMK&t;Cleaned up various areas to make little more generic&n; *  07/02/1999&t;RMK&t;Support added for 16K and 32K page sizes&n; *&t;&t;&t;containing 8K blocks&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/small_page.c&n; *&n; *  Copyright (C) 1996  Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Changelog:&n; *   26/01/1996&t;RMK&t;Cleaned up various areas to make little more generic&n; *   07/02/1999&t;RMK&t;Support added for 16K and 32K page sizes&n; *&t;&t;&t;containing 8K blocks&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -107,6 +107,13 @@ DECL|macro|TEST_AND_CLEAR_USED
 mdefine_line|#define TEST_AND_CLEAR_USED(pg,off)&t;(test_and_clear_bit(off, &amp;USED_MAP(pg)))
 DECL|macro|SET_USED
 mdefine_line|#define SET_USED(pg,off)&t;&t;(set_bit(off, &amp;USED_MAP(pg)))
+DECL|variable|small_page_lock
+r_static
+id|spinlock_t
+id|small_page_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|function|add_page_to_queue
 r_static
 r_void
@@ -235,12 +242,6 @@ suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -250,9 +251,13 @@ id|order-&gt;queue
 r_goto
 id|need_new_page
 suffix:semicolon
-id|cli
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|small_page_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|page
@@ -318,9 +323,12 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|small_page_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -349,6 +357,15 @@ id|alloc_page
 c_func
 (paren
 id|priority
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|small_page_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -419,9 +436,12 @@ id|again
 suffix:semicolon
 id|no_page
 suffix:colon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|small_page_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -521,9 +541,12 @@ op_and_assign
 id|order-&gt;block_mask
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * the following must be atomic wrt get_page&n;&t;&t; */
-id|save_flags_cli
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|small_page_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -576,9 +599,12 @@ l_int|0
 r_goto
 id|free_page
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|small_page_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -594,9 +620,12 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|small_page_lock
+comma
 id|flags
 )paren
 suffix:semicolon

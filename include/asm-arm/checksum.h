@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/checksum.h&n; *&n; * IP checksum routines&n; *&n; * Copyright (C) Original authors of ../asm-i386/checksum.h&n; * Copyright (C) 1996-1999 Russell King&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/checksum.h&n; *&n; * IP checksum routines&n; *&n; * Copyright (C) Original authors of ../asm-i386/checksum.h&n; * Copyright (C) 1996-1999 Russell King&n; */
 macro_line|#ifndef __ASM_ARM_CHECKSUM_H
 DECL|macro|__ASM_ARM_CHECKSUM_H
 mdefine_line|#define __ASM_ARM_CHECKSUM_H

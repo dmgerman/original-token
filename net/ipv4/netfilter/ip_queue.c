@@ -1830,7 +1830,7 @@ c_cond
 (paren
 id|skb
 )paren
-id|kfree
+id|kfree_skb
 c_func
 (paren
 id|skb

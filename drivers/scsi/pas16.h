@@ -164,10 +164,8 @@ DECL|macro|CAN_QUEUE
 mdefine_line|#define CAN_QUEUE 32 
 macro_line|#endif
 multiline_comment|/* &n; * I hadn&squot;t thought of this with the earlier drivers - but to prevent&n; * macro definition conflicts, we shouldn&squot;t define all of the internal&n; * macros when this is being used solely for the host stub.&n; */
-macro_line|#if defined(HOSTS_C) || defined(MODULE)
 DECL|macro|MV_PAS16
 mdefine_line|#define MV_PAS16 {&t;&t;&t;&t;&t;&bslash;&n;&t;name:           &quot;Pro Audio Spectrum-16 SCSI&quot;, &t;&bslash;&n;&t;detect:         pas16_detect, &t;&t;&t;&bslash;&n;&t;queuecommand:   pas16_queue_command,&t;&t;&bslash;&n;&t;abort:          pas16_abort,&t;&t;&t;&bslash;&n;&t;reset:          pas16_reset,&t;&t;&t;&bslash;&n;&t;bios_param:     pas16_biosparam, &t;&t;&bslash;&n;&t;can_queue:      CAN_QUEUE,&t;&t;&t;&bslash;&n;&t;this_id:        7,&t;&t;&t;&t;&bslash;&n;&t;sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;&t;cmd_per_lun:    CMD_PER_LUN ,&t;&t;&t;&bslash;&n;&t;use_clustering: DISABLE_CLUSTERING}
-macro_line|#endif
 macro_line|#ifndef HOSTS_C
 DECL|macro|NCR5380_implementation_fields
 mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    volatile unsigned short io_port

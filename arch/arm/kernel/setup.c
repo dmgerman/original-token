@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/kernel/setup.c&n; *&n; *  Copyright (C) 1995-2000 Russell King&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/setup.c&n; *&n; *  Copyright (C) 1995-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
@@ -15,7 +15,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/procinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/mach-types.h&gt;
-macro_line|#include &quot;arch.h&quot;
+macro_line|#include &lt;asm/mach/arch.h&gt;
 macro_line|#ifndef MEM_SIZE
 DECL|macro|MEM_SIZE
 mdefine_line|#define MEM_SIZE&t;(16*1024*1024)
@@ -32,6 +32,11 @@ c_func
 r_struct
 id|meminfo
 op_star
+comma
+r_struct
+id|machine_desc
+op_star
+id|desc
 )paren
 suffix:semicolon
 r_extern
@@ -614,7 +619,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Using compatability code &quot;
+l_string|&quot;Using compatibility code &quot;
 l_string|&quot;scheduled for removal in v%d.%d.%d&bslash;n&quot;
 comma
 id|compat
@@ -1607,6 +1612,8 @@ c_func
 (paren
 op_amp
 id|meminfo
+comma
+id|mdesc
 )paren
 suffix:semicolon
 id|request_standard_resources

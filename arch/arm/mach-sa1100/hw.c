@@ -121,7 +121,7 @@ id|scr
 comma
 id|i
 suffix:semicolon
-id|save_flags_cli
+id|local_irq_save
 c_func
 (paren
 id|flags
@@ -168,7 +168,7 @@ op_or_assign
 l_int|0x3fc
 suffix:semicolon
 multiline_comment|/*  restore correct pin direction */
-id|restore_flags
+id|local_irq_restore
 c_func
 (paren
 id|flags
@@ -185,8 +185,8 @@ id|scr
 suffix:semicolon
 )brace
 macro_line|#endif  /* CONFIG_SA1100_ASSABET */
-multiline_comment|/*&n; * Bitsy has extended, write-only memory-mapped GPIO&squot;s&n; */
 macro_line|#if defined(CONFIG_SA1100_BITSY)
+multiline_comment|/*&n; * Bitsy has extended, write-only memory-mapped GPIO&squot;s&n; */
 DECL|variable|bitsy_egpio
 r_static
 r_int
@@ -262,6 +262,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SA1111
 DECL|function|sa1111_init
+r_static
 r_void
 id|__init
 (def_block
@@ -485,6 +486,9 @@ suffix:semicolon
 )brace
 )brace
 )def_block
+macro_line|#else
+DECL|macro|sa1111_init
+mdefine_line|#define sa1111_init()  printk( &quot;Warning: missing SA1111 support&bslash;n&quot; )
 macro_line|#endif
 DECL|function|hw_sa1100_init
 r_static

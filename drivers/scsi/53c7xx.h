@@ -5,7 +5,6 @@ DECL|macro|NCR53c710_H
 mdefine_line|#define NCR53c710_H
 macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* &n; * Prevent name space pollution in hosts.c, and only provide the &n; * define we need to get the NCR53c7x0 driver into the host template&n; * array.&n; */
-macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;scsi/scsicam.h&gt;
 r_extern
 r_int
@@ -74,7 +73,6 @@ mdefine_line|#define NCR53c7xx_release NULL
 macro_line|#endif
 DECL|macro|NCR53c7xx
 mdefine_line|#define NCR53c7xx {NULL, NULL, NULL, NULL, &bslash;&n;        &quot;NCR53c{7,8}xx (rel 17)&quot;, NCR53c7xx_detect,&bslash;&n;        NULL, /* info */ NULL, /* command, deprecated */ NULL,&t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
-macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
 multiline_comment|/* SCSI control 0 rw, default = 0xc0 */
 DECL|macro|SCNTL0_REG

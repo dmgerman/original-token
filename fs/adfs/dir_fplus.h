@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/adfs/dir_fplus.h&n; *&n; * Copyright (C) 1999 Russell King&n; *&n; * Structures of directories on the F+ format disk&n; */
+multiline_comment|/*&n; *  linux/fs/adfs/dir_fplus.h&n; *&n; *  Copyright (C) 1999 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Structures of directories on the F+ format disk&n; */
 DECL|macro|ADFS_FPLUS_NAME_LEN
 mdefine_line|#define ADFS_FPLUS_NAME_LEN&t;255
 DECL|macro|BIGDIRSTARTNAME

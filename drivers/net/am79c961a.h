@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/net/am79c961.h&n; */
+multiline_comment|/*&n; * linux/drivers/net/am79c961.h&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#ifndef _LINUX_am79c961a_H
 DECL|macro|_LINUX_am79c961a_H
 mdefine_line|#define _LINUX_am79c961a_H
@@ -228,6 +228,10 @@ DECL|member|txhdr
 r_int
 r_int
 id|txhdr
+suffix:semicolon
+DECL|member|chip_lock
+id|spinlock_t
+id|chip_lock
 suffix:semicolon
 )brace
 suffix:semicolon

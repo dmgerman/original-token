@@ -11656,15 +11656,15 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-macro_line|#if defined(MODULE)
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|EATA
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#else
+macro_line|#ifndef MODULE
 macro_line|#if LINUX_VERSION_CODE &lt; LinuxVersionCode(2,3,18)
 DECL|function|eata2x_setup
 r_void

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Linux/drivers/video/cyber2000fb.c&n; *&n; * Copyright (C) 1998-2000 Russell King&n; *&n; * Integraphics CyberPro 2000, 2010 and 5000 frame buffer device&n; *&n; * Based on cyberfb.c.&n; *&n; * Note that we now use the new fbcon fix, var and cmap scheme.  We do still&n; * have to check which console is the currently displayed one however, since&n; * especially for the colourmap stuff.  Once fbcon has been fully migrated,&n; * we can kill the last 5 references to cfb-&gt;currcon.&n; *&n; * We also use the new hotplug PCI subsystem.  I&squot;m not sure if there are any&n; * such cards, but I&squot;m erring on the side of caution.  We don&squot;t want to go&n; * pop just because someone does have one.&n; *&n; * Note that this doesn&squot;t work fully in the case of multiple CyberPro cards&n; * with grabbers.  We currently can only attach to the first CyberPro card&n; * found.&n; */
+multiline_comment|/*&n; *  linux/drivers/video/cyber2000fb.c&n; *&n; *  Copyright (C) 1998-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; * Integraphics CyberPro 2000, 2010 and 5000 frame buffer device&n; *&n; * Based on cyberfb.c.&n; *&n; * Note that we now use the new fbcon fix, var and cmap scheme.  We do still&n; * have to check which console is the currently displayed one however, since&n; * especially for the colourmap stuff.  Once fbcon has been fully migrated,&n; * we can kill the last 5 references to cfb-&gt;currcon.&n; *&n; * We also use the new hotplug PCI subsystem.  I&squot;m not sure if there are any&n; * such cards, but I&squot;m erring on the side of caution.  We don&squot;t want to go&n; * pop just because someone does have one.&n; *&n; * Note that this doesn&squot;t work fully in the case of multiple CyberPro cards&n; * with grabbers.  We currently can only attach to the first CyberPro card&n; * found.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1039,15 +1039,15 @@ l_int|1
 suffix:semicolon
 id|red
 op_rshift_assign
-l_int|10
+l_int|8
 suffix:semicolon
 id|green
 op_rshift_assign
-l_int|10
+l_int|8
 suffix:semicolon
 id|blue
 op_rshift_assign
-l_int|10
+l_int|8
 suffix:semicolon
 id|cfb-&gt;palette
 (braket
@@ -3124,6 +3124,10 @@ id|hw-&gt;width
 op_assign
 id|var-&gt;xres_virtual
 suffix:semicolon
+id|hw-&gt;palette_ctrl
+op_assign
+l_int|0x06
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3149,10 +3153,6 @@ id|hw-&gt;width
 op_rshift
 l_int|3
 suffix:semicolon
-id|hw-&gt;palette_ctrl
-op_assign
-l_int|0x04
-suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
@@ -3177,8 +3177,8 @@ op_rshift
 l_int|2
 suffix:semicolon
 id|hw-&gt;palette_ctrl
-op_assign
-l_int|0x14
+op_or_assign
+l_int|0x10
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3202,8 +3202,8 @@ op_rshift
 l_int|2
 suffix:semicolon
 id|hw-&gt;palette_ctrl
-op_assign
-l_int|0x14
+op_or_assign
+l_int|0x10
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3232,8 +3232,8 @@ op_rshift
 l_int|3
 suffix:semicolon
 id|hw-&gt;palette_ctrl
-op_assign
-l_int|0x14
+op_or_assign
+l_int|0x10
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    ixjuser.h&n; *&n; *    User-space include file for the Internet PhoneJACK and&n; *    Internet LineJACK Telephony Cards.&n; *&n; *    (c) Copyright 1999 Quicknet Technologies, Inc.&n; *&n; *    This program is free software; you can redistribute it and/or&n; *    modify it under the terms of the GNU General Public License&n; *    as published by the Free Software Foundation; either version&n; *    2 of the License, or (at your option) any later version.&n; *&n; * Author:          Ed Okerson, &lt;eokerson@quicknet.net&gt;&n; *    &n; * Contributors:    Greg Herlein, &lt;gherlein@quicknet.net&gt;&n; *                  David W. Erhart, &lt;derhart@quicknet.net&gt;&n; *                  John Sellers, &lt;jsellers@quicknet.net&gt;&n; *                  Mike Preston, &lt;mpreston@quicknet.net&gt;&n; *&n; * More information about the hardware related to this driver can be found&n; * at our website:    http://www.quicknet.net&n; *&n; * Fixes:&n; */
+multiline_comment|/******************************************************************************&n; *&n; *    ixjuser.h&n; *&n; *    Device Driver for the Internet PhoneJACK and&n; *    Internet LineJACK Telephony Cards.&n; *&n; *    (c) Copyright 1999 Quicknet Technologies, Inc.&n; *&n; *    This program is free software; you can redistribute it and/or&n; *    modify it under the terms of the GNU General Public License&n; *    as published by the Free Software Foundation; either version&n; *    2 of the License, or (at your option) any later version.&n; *&n; * Author:          Ed Okerson, &lt;eokerson@quicknet.net&gt;&n; *    &n; * Contributors:    Greg Herlein, &lt;gherlein@quicknet.net&gt;&n; *                  David W. Erhart, &lt;derhart@quicknet.net&gt;&n; *                  John Sellers, &lt;jsellers@quicknet.net&gt;&n; *                  Mike Preston, &lt;mpreston@quicknet.net&gt;&n; *&n; * More information about the hardware related to this driver can be found&n; * at our website:    http://www.quicknet.net&n; *&n; * Fixes:&n; *&n; * IN NO EVENT SHALL QUICKNET TECHNOLOGIES, INC. BE LIABLE TO ANY PARTY FOR&n; * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT&n; * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF QUICKNET&n; * TECHNOLOGIES, INC.HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&n; *&n; * QUICKNET TECHNOLOGIES, INC. SPECIFICALLY DISCLAIMS ANY WARRANTIES,&n; * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY&n; * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS&n; * ON AN &quot;AS IS&quot; BASIS, AND QUICKNET TECHNOLOGIES, INC. HAS NO OBLIGATION &n; * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.&n; *&n; *****************************************************************************/
 DECL|variable|ixjuser_h_rcsid
 r_static
 r_char
@@ -6,20 +6,20 @@ id|ixjuser_h_rcsid
 (braket
 )braket
 op_assign
-l_string|&quot;$Id: ixjuser.h,v 3.4 1999/12/16 22:18:36 root Exp root $&quot;
+l_string|&quot;$Id: ixjuser.h,v 3.11 2000/03/30 22:06:48 eokerson Exp $&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/telephony.h&gt;
-multiline_comment|/***************************************************************************&n;&n;  If you use the IXJCTL_TESTRAM command, the card must be power&n;  cycled to reset the SRAM values before futher use.&n;&n;***************************************************************************/
+macro_line|#include &quot;telephony.h&quot;
+multiline_comment|/******************************************************************************&n;*&n;* IOCTL&squot;s used for the Quicknet Cards&n;*&n;* If you use the IXJCTL_TESTRAM command, the card must be power cycled to&n;* reset the SRAM values before futher use.&n;*&n;******************************************************************************/
 DECL|macro|IXJCTL_DSP_RESET
 mdefine_line|#define IXJCTL_DSP_RESET &t;&t;_IO  (&squot;q&squot;, 0xC0)
 DECL|macro|IXJCTL_RING
-mdefine_line|#define IXJCTL_RING         PHONE_RING
+mdefine_line|#define IXJCTL_RING                     PHONE_RING
 DECL|macro|IXJCTL_HOOKSTATE
-mdefine_line|#define IXJCTL_HOOKSTATE    PHONE_HOOKSTATE
+mdefine_line|#define IXJCTL_HOOKSTATE                PHONE_HOOKSTATE
 DECL|macro|IXJCTL_MAXRINGS
 mdefine_line|#define IXJCTL_MAXRINGS&t;&t;&t;PHONE_MAXRINGS
 DECL|macro|IXJCTL_RING_CADENCE
-mdefine_line|#define IXJCTL_RING_CADENCE&t;PHONE_RING_CADENCE
+mdefine_line|#define IXJCTL_RING_CADENCE&t;&t;PHONE_RING_CADENCE
 DECL|macro|IXJCTL_RING_START
 mdefine_line|#define IXJCTL_RING_START&t;&t;PHONE_RING_START
 DECL|macro|IXJCTL_RING_STOP
@@ -27,11 +27,13 @@ mdefine_line|#define IXJCTL_RING_STOP&t;&t;PHONE_RING_STOP
 DECL|macro|IXJCTL_CARDTYPE
 mdefine_line|#define IXJCTL_CARDTYPE&t;&t;&t;_IOR (&squot;q&squot;, 0xC1, int)
 DECL|macro|IXJCTL_SERIAL
-mdefine_line|#define IXJCTL_SERIAL&t;&t;&t;  _IOR (&squot;q&squot;, 0xC2, int)
+mdefine_line|#define IXJCTL_SERIAL&t;&t;&t;_IOR (&squot;q&squot;, 0xC2, int)
 DECL|macro|IXJCTL_DSP_TYPE
-mdefine_line|#define IXJCTL_DSP_TYPE     _IOR (&squot;q&squot;, 0xC3, int)
+mdefine_line|#define IXJCTL_DSP_TYPE                 _IOR (&squot;q&squot;, 0xC3, int)
 DECL|macro|IXJCTL_DSP_VERSION
-mdefine_line|#define IXJCTL_DSP_VERSION  _IOR (&squot;q&squot;, 0xC4, int)
+mdefine_line|#define IXJCTL_DSP_VERSION              _IOR (&squot;q&squot;, 0xC4, int)
+DECL|macro|IXJCTL_VERSION
+mdefine_line|#define IXJCTL_VERSION              &t;_IOR (&squot;q&squot;, 0xDA, char *)
 DECL|macro|IXJCTL_DSP_IDLE
 mdefine_line|#define IXJCTL_DSP_IDLE&t;&t;&t;_IO  (&squot;q&squot;, 0xC5)
 DECL|macro|IXJCTL_TESTRAM
@@ -322,10 +324,64 @@ DECL|typedef|IXJ_FILTER
 )brace
 id|IXJ_FILTER
 suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|enable
+r_char
+id|enable
+suffix:semicolon
+DECL|member|en_filter
+r_char
+id|en_filter
+suffix:semicolon
+DECL|member|filter
+r_int
+r_int
+id|filter
+suffix:semicolon
+DECL|member|on1
+r_int
+r_int
+id|on1
+suffix:semicolon
+DECL|member|off1
+r_int
+r_int
+id|off1
+suffix:semicolon
+DECL|member|on2
+r_int
+r_int
+id|on2
+suffix:semicolon
+DECL|member|off2
+r_int
+r_int
+id|off2
+suffix:semicolon
+DECL|member|on3
+r_int
+r_int
+id|on3
+suffix:semicolon
+DECL|member|off3
+r_int
+r_int
+id|off3
+suffix:semicolon
+DECL|typedef|IXJ_FILTER_CADENCE
+)brace
+id|IXJ_FILTER_CADENCE
+suffix:semicolon
 DECL|macro|IXJCTL_SET_FILTER
 mdefine_line|#define IXJCTL_SET_FILTER&t;&t;_IOW (&squot;q&squot;, 0xC7, IXJ_FILTER *)
 DECL|macro|IXJCTL_GET_FILTER_HIST
 mdefine_line|#define IXJCTL_GET_FILTER_HIST&t;&t;_IOW (&squot;q&squot;, 0xC8, int)
+DECL|macro|IXJCTL_FILTER_CADENCE
+mdefine_line|#define IXJCTL_FILTER_CADENCE&t;&t;_IOW (&squot;q&squot;, 0xD6, IXJ_FILTER_CADENCE *)
+DECL|macro|IXJCTL_PLAY_CID
+mdefine_line|#define IXJCTL_PLAY_CID&t;&t;&t;_IO  (&squot;q&squot;, 0xD7)
 multiline_comment|/******************************************************************************&n;*&n;* This IOCTL allows you to reassign values in the tone index table.  The&n;* tone table has 32 entries (0 - 31), but the driver only allows entries&n;* 13 - 27 to be modified, entry 0 is reserved for silence and 1 - 12 are&n;* the standard DTMF digits and 28 - 31 are the DTMF tones for A, B, C &amp; D.&n;* The positions used internally for Call Progress Tones are as follows:&n;*    Dial Tone   - 25&n;*    Ring Back   - 26&n;*    Busy Signal - 27&n;*&n;* The freq values are calculated as:&n;* freq = cos(2 * PI * frequency / 8000)&n;*&n;* The most commonly needed values are already calculated and listed in the&n;* enum IXJ_TONE_FREQ.  Each tone index can have two frequencies with&n;* different gains, if you are only using a single frequency set the unused&n;* one to 0.&n;*&n;* The gain values range from 0 to 15 indicating +6dB to -24dB in 2dB&n;* increments.&n;*&n;******************************************************************************/
 r_typedef
 r_enum
@@ -808,10 +864,20 @@ id|hz2100
 op_assign
 l_int|0xf5f6
 comma
+DECL|enumerator|hz2130
+id|hz2130
+op_assign
+l_int|0xf2f5
+comma
 DECL|enumerator|hz2450
 id|hz2450
 op_assign
 l_int|0xd3b3
+comma
+DECL|enumerator|hz2750
+id|hz2750
+op_assign
+l_int|0xb8e4
 DECL|typedef|IXJ_FREQ
 )brace
 id|IXJ_FREQ
@@ -1068,6 +1134,8 @@ DECL|macro|AEC_MED
 mdefine_line|#define AEC_MED   2
 DECL|macro|AEC_HIGH
 mdefine_line|#define AEC_HIGH  3
+DECL|macro|AEC_AUTO
+mdefine_line|#define AEC_AUTO  4
 multiline_comment|/******************************************************************************&n;*&n;* Call Progress Tones, DTMF, etc.&n;* IXJCTL_DTMF_OOB determines if dtmf signaling is sent as Out-Of-Band&n;* only.  If you pass a 1, dtmf is suppressed from the audio stream.&n;* Tone on and off times are in 250 microsecond intervals so&n;* ioctl(ixj1, IXJCTL_SET_TONE_ON_TIME, 360);&n;* will set the tone on time of board ixj1 to 360 * 250us = 90ms&n;* the default values of tone on and off times is 840 or 210ms&n;******************************************************************************/
 DECL|macro|IXJCTL_DTMF_READY
 mdefine_line|#define IXJCTL_DTMF_READY&t;&t;PHONE_DTMF_READY
@@ -1318,18 +1386,18 @@ DECL|macro|PSTN_OFF_HOOK
 mdefine_line|#define PSTN_OFF_HOOK&t;2
 DECL|macro|PSTN_PULSE_DIAL
 mdefine_line|#define PSTN_PULSE_DIAL&t;3
-multiline_comment|/******************************************************************************&n;* &n;* The DAA Analog GAIN sets 2 parameters at one time, the receive gain (AGRR), &n;* and the transmit gain (AGX).  OR together the components and pass them&n;* as the parameter to IXJCTL_DAA_AGAIN.  The default setting is both at 0dB.&n;* &n;******************************************************************************/
+multiline_comment|/******************************************************************************&n;* &n;* The DAA Analog GAIN sets 2 parameters at one time, the recieve gain (AGRR), &n;* and the transmit gain (AGX).  OR together the components and pass them&n;* as the parameter to IXJCTL_DAA_AGAIN.  The default setting is both at 0dB.&n;* &n;******************************************************************************/
 DECL|macro|IXJCTL_DAA_AGAIN
 mdefine_line|#define IXJCTL_DAA_AGAIN&t;&t;_IOW (&squot;q&squot;, 0xD2, int)
 DECL|macro|AGRR00DB
 mdefine_line|#define AGRR00DB&t;0x00&t;
-singleline_comment|// Analog gain in receive direction 0dB
+singleline_comment|// Analog gain in recieve direction 0dB
 DECL|macro|AGRR3_5DB
 mdefine_line|#define AGRR3_5DB&t;0x10&t;
-singleline_comment|// Analog gain in receive direction 3.5dB
+singleline_comment|// Analog gain in recieve direction 3.5dB
 DECL|macro|AGRR06DB
 mdefine_line|#define AGRR06DB&t;0x30&t;
-singleline_comment|// Analog gain in receive direction 6dB
+singleline_comment|// Analog gain in recieve direction 6dB
 DECL|macro|AGX00DB
 mdefine_line|#define AGX00DB&t;&t;0x00&t;
 singleline_comment|// Analog gain in transmit direction 0dB
@@ -1344,65 +1412,12 @@ mdefine_line|#define AGX_2_5B&t;0x0C&t;
 singleline_comment|// Analog gain in transmit direction -2.5dB
 DECL|macro|IXJCTL_PSTN_LINETEST
 mdefine_line|#define IXJCTL_PSTN_LINETEST&t;&t;_IO  (&squot;q&squot;, 0xD3)
-r_typedef
-r_struct
-(brace
-DECL|member|month
-r_char
-id|month
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|day
-r_char
-id|day
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|hour
-r_char
-id|hour
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|min
-r_char
-id|min
-(braket
-l_int|3
-)braket
-suffix:semicolon
-DECL|member|numlen
-r_int
-id|numlen
-suffix:semicolon
-DECL|member|number
-r_char
-id|number
-(braket
-l_int|11
-)braket
-suffix:semicolon
-DECL|member|namelen
-r_int
-id|namelen
-suffix:semicolon
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|80
-)braket
-suffix:semicolon
-DECL|typedef|IXJ_CID
-)brace
-id|IXJ_CID
-suffix:semicolon
 DECL|macro|IXJCTL_CID
-mdefine_line|#define IXJCTL_CID&t;&t;&t;_IOR (&squot;q&squot;, 0xD4, IXJ_CID *)
+mdefine_line|#define IXJCTL_CID&t;&t;&t;_IOR (&squot;q&squot;, 0xD4, PHONE_CID *)
+DECL|macro|IXJCTL_VMWI
+mdefine_line|#define IXJCTL_VMWI&t;&t;&t;_IOR (&squot;q&squot;, 0xD8, int)
+DECL|macro|IXJCTL_CIDCW
+mdefine_line|#define IXJCTL_CIDCW&t;&t;&t;_IOW (&squot;q&squot;, 0xD9, PHONE_CID *)
 multiline_comment|/******************************************************************************&n;* &n;* The wink duration is tunable with this ioctl.  The default wink duration  &n;* is 320ms.  You do not need to use this ioctl if you do not require a&n;* different wink duration.&n;* &n;******************************************************************************/
 DECL|macro|IXJCTL_WINK_DURATION
 mdefine_line|#define IXJCTL_WINK_DURATION&t;&t;PHONE_WINK_DURATION

@@ -2561,7 +2561,7 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|cpu_hz
+id|cpu_khz
 suffix:semicolon
 DECL|function|smp_tune_scheduling
 r_static
@@ -2588,7 +2588,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|cpu_hz
+id|cpu_khz
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * this basically disables processor-affinity&n;&t;&t; * scheduling on SMP without a TSC.&n;&t;&t; */
@@ -2627,9 +2627,9 @@ suffix:semicolon
 id|cacheflush_time
 op_assign
 (paren
-id|cpu_hz
+id|cpu_khz
 op_rshift
-l_int|20
+l_int|10
 )paren
 op_star
 (paren
@@ -2652,9 +2652,9 @@ r_int
 id|cacheflush_time
 op_div
 (paren
-id|cpu_hz
+id|cpu_khz
 op_div
-l_int|1000000
+l_int|1000
 )paren
 comma
 (paren
@@ -2666,9 +2666,9 @@ op_star
 l_int|100
 op_div
 (paren
-id|cpu_hz
+id|cpu_khz
 op_div
-l_int|1000000
+l_int|1000
 )paren
 )paren
 op_mod

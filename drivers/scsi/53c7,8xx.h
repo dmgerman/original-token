@@ -4,7 +4,6 @@ DECL|macro|NCR53c7x0_H
 mdefine_line|#define NCR53c7x0_H
 macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* &n; * Prevent name space pollution in hosts.c, and only provide the &n; * define we need to get the NCR53c7x0 driver into the host template&n; * array.&n; */
-macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;scsi/scsicam.h&gt;
 r_extern
 r_int
@@ -73,7 +72,6 @@ mdefine_line|#define NCR53c7xx_release NULL
 macro_line|#endif
 DECL|macro|NCR53c7xx
 mdefine_line|#define NCR53c7xx {&t;&t;&t;&t;&t;&bslash;&n;          name:           &quot;NCR53c{7,8}xx (rel 17)&quot;,&t;&bslash;&n;&t;  detect:         NCR53c7xx_detect,&t;&t;&bslash;&n;&t;  queuecommand:   NCR53c7xx_queue_command,&t;&bslash;&n;&t;  abort:          NCR53c7xx_abort,&t;&t;&bslash;&n;&t;  reset:          NCR53c7xx_reset,&t;&t;&bslash;&n;&t;  bios_param:     scsicam_bios_param,&t;&t;&bslash;&n;&t;  can_queue:      24,&t;&t;&t;&t;&bslash;&n;&t;  this_id:        7,&t;&t;&t;&t;&bslash;&n;&t;  sg_tablesize:   127,&t;&t;&t;&t;&bslash;&n;&t;  cmd_per_lun:    3,&t;&t;&t;&t;&bslash;&n;&t;  use_clustering: DISABLE_CLUSTERING} 
-macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
 multiline_comment|/* Register addresses, ordered numerically */
 multiline_comment|/* SCSI control 0 rw, default = 0xc0 */

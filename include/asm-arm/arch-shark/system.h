@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-shark/system.h&n; *&n; * Co
 macro_line|#ifndef __ASM_ARCH_SYSTEM_H
 DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
+macro_line|#include &lt;asm/io.h&gt;
 DECL|function|arch_reset
 r_static
 r_void
@@ -12,10 +13,61 @@ r_char
 id|mode
 )paren
 (brace
-multiline_comment|/*&n;&t; * loop endlessly&n;&t; */
+r_int
+id|temp
+suffix:semicolon
 id|cli
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* Reset the Machine via pc[3] of the sequoia chipset */
+id|outw
+c_func
+(paren
+l_int|0x09
+comma
+l_int|0x24
+)paren
+suffix:semicolon
+id|temp
+op_assign
+id|inw
+c_func
+(paren
+l_int|0x26
+)paren
+suffix:semicolon
+id|temp
+op_assign
+id|temp
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|3
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|10
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x09
+comma
+l_int|0x24
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|temp
+comma
+l_int|0x26
 )paren
 suffix:semicolon
 )brace

@@ -1127,15 +1127,41 @@ id|status
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Make sure we re-validate anything we&squot;ve got cached.&n;&t; * This makes locking act as a cache coherency point.&n;&t; */
+multiline_comment|/*&n;&t; * Make sure we clear the cache whenever we try to get the lock.&n;&t; * This makes locking act as a cache coherency point.&n;&t; */
 id|out_ok
 suffix:colon
-id|NFS_CACHEINV
+r_if
+c_cond
+(paren
+(paren
+id|cmd
+op_eq
+id|F_SETLK
+op_logical_or
+id|cmd
+op_eq
+id|F_SETLKW
+)paren
+op_logical_and
+id|fl-&gt;fl_type
+op_ne
+id|F_UNLCK
+)paren
+(brace
+id|nfs_wb_all
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
+multiline_comment|/* we may have slept */
+id|nfs_zap_caches
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 r_return
 id|status
 suffix:semicolon

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 DECL|macro|WATCHDOG_MINOR
 mdefine_line|#define WATCHDOG_MINOR&t;130
 DECL|variable|timeout

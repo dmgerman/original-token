@@ -41,14 +41,6 @@ suffix:semicolon
 macro_line|#endif
 r_extern
 r_int
-id|scsi_dev_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|net_dev_init
 c_func
 (paren
@@ -151,13 +143,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_FC4_SOC
 multiline_comment|/* This has to be done before scsi_dev_init */
 id|soc_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI
-id|scsi_dev_init
 c_func
 (paren
 )paren

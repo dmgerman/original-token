@@ -1,8 +1,16 @@
-multiline_comment|/*&n; * arch/arm/kernel/leds-ebsa110.c&n; *&n; * Copyright (C) 1998 Russell King&n; *&n; * EBSA-110 LED control routines.  We use the led as follows:&n; *&n; *  - Red - toggles state every 50 timer interrupts&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/leds-ebsa110.c&n; *&n; *  Copyright (C) 1998 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  EBSA-110 LED control routines.  We use the led as follows:&n; *&n; *   - Red - toggles state every 50 timer interrupts&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
+DECL|variable|leds_lock
+r_static
+id|spinlock_t
+id|leds_lock
+suffix:semicolon
 DECL|function|ebsa110_leds_event
 r_static
 r_void
@@ -17,9 +25,12 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags_cli
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|leds_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -50,30 +61,47 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|leds_lock
+comma
 id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|variable|leds_event
+DECL|function|leds_init
+r_static
+r_int
+id|__init
+id|leds_init
+c_func
+(paren
 r_void
+)paren
+(brace
+r_if
+c_cond
 (paren
-op_star
+id|machine_is_ebsa110
+c_func
+(paren
+)paren
+)paren
 id|leds_event
-)paren
-(paren
-id|led_event_t
-)paren
 op_assign
 id|ebsa110_leds_event
 suffix:semicolon
-DECL|variable|leds_event
-id|EXPORT_SYMBOL
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|leds_init
+id|__initcall
 c_func
 (paren
-id|leds_event
+id|leds_init
 )paren
 suffix:semicolon
 eof

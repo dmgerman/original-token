@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.57 2000/09/11 23:35:29 davem Exp $&n; *&n; * &t;Fixes:&n; * &t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; * &t;Arnaldo Melo&t;&t;: &t;check proc_net_create return, cleanups&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.58 2000/09/18 05:59:48 davem Exp $&n; *&n; * &t;Fixes:&n; * &t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; * &t;Arnaldo Melo&t;&t;: &t;check proc_net_create return, cleanups&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1032,6 +1032,26 @@ op_minus
 id|EADDRINUSE
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|addr_type
+op_ne
+id|IPV6_ADDR_ANY
+)paren
+id|sk-&gt;userlocks
+op_or_assign
+id|SOCK_BINDADDR_LOCK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|snum
+)paren
+id|sk-&gt;userlocks
+op_or_assign
+id|SOCK_BINDPORT_LOCK
+suffix:semicolon
 id|sk-&gt;sport
 op_assign
 id|ntohs
@@ -1047,14 +1067,6 @@ suffix:semicolon
 id|sk-&gt;daddr
 op_assign
 l_int|0
-suffix:semicolon
-id|sk-&gt;prot
-op_member_access_from_pointer
-id|hash
-c_func
-(paren
-id|sk
-)paren
 suffix:semicolon
 id|release_sock
 c_func

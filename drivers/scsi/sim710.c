@@ -6498,12 +6498,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|SIM710_SCSI
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 eof

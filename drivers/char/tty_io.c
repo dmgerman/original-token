@@ -9229,6 +9229,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL_AMBA_CONSOLE
+id|ambauart_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|variable|dev_tty_driver
 DECL|variable|dev_syscons_driver

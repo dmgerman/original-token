@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel 21285 watchdog driver&n; *&t;Copyright (c) Phil Blundell &lt;pb@nexus.co.uk&gt;, 1998&n; *&n; *&t;based on&n; *&n; *&t;SoftDog&t;0.05:&t;A Software Watchdog Device&n; *&n; *&t;(c) Copyright 1996 Alan Cox &lt;alan@cymru.net&gt;, All Rights Reserved.&n; *&t;&t;&t;&t;http://www.cymru.net&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;Intel 21285 watchdog driver&n; *&t;Copyright (c) Phil Blundell &lt;pb@nexus.co.uk&gt;, 1998&n; *&n; *&t;based on&n; *&n; *&t;SoftDog&t;0.05:&t;A Software Watchdog Device&n; *&n; *&t;(c) Copyright 1996 Alan Cox &lt;alan@redhat.com&gt;, All Rights Reserved.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -14,7 +14,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/mach-types.h&gt;
-macro_line|#include &lt;asm/dec21285.h&gt;
+macro_line|#include &lt;asm/hardware/dec21285.h&gt;
 multiline_comment|/*&n; * Define this to stop the watchdog actually rebooting the machine.&n; */
 DECL|macro|ONLY_TESTING
 macro_line|#undef ONLY_TESTING

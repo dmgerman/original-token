@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-armo.c&n; *&n; * Page table sludge for older ARM processor architectures.&n; *&n; * Copyright (C) 1998-2000 Russell King&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/mm-armo.c&n; *&n; *  Copyright (C) 1998-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Page table sludge for older ARM processor architectures.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -7,7 +7,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
-macro_line|#include &quot;map.h&quot;
+macro_line|#include &lt;asm/mach/map.h&gt;
 DECL|macro|MEMC_TABLE_SIZE
 mdefine_line|#define MEMC_TABLE_SIZE (256*sizeof(unsigned long))
 DECL|macro|PGD_TABLE_SIZE
@@ -548,10 +548,10 @@ id|mode
 (brace
 )brace
 multiline_comment|/*&n; * This contains the code to setup the memory map on an ARM2/ARM250/ARM3&n; * machine. This is both processor &amp; architecture specific, and requires&n; * some more work to get it to fit into our separate processor and&n; * architecture structure.&n; */
-DECL|function|pagetable_init
+DECL|function|memtable_init
 r_void
 id|__init
-id|pagetable_init
+id|memtable_init
 c_func
 (paren
 r_struct
@@ -642,6 +642,20 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+)brace
+DECL|function|iotable_init
+r_void
+id|__init
+id|iotable_init
+c_func
+(paren
+r_struct
+id|map_desc
+op_star
+id|io_desc
+)paren
+(brace
+multiline_comment|/* nothing to do */
 )brace
 multiline_comment|/*&n; * We never have holes in the memmap&n; */
 DECL|function|create_memmap_holes

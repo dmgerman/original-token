@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/pgalloc.h&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/pgalloc.h&n; *&n; *  Copyright (C) 2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#ifndef _ASMARM_PGALLOC_H
 DECL|macro|_ASMARM_PGALLOC_H
 mdefine_line|#define _ASMARM_PGALLOC_H
@@ -103,14 +103,12 @@ id|ret
 l_int|2
 )braket
 suffix:semicolon
-id|clean_cache_area
+id|clean_dcache_entry
 c_func
 (paren
 id|ret
 op_plus
 l_int|1
-comma
-l_int|4
 )paren
 suffix:semicolon
 id|pgtable_cache_size
@@ -229,12 +227,10 @@ id|ret
 l_int|1
 )braket
 suffix:semicolon
-id|clean_cache_area
+id|clean_dcache_entry
 c_func
 (paren
 id|ret
-comma
-l_int|4
 )paren
 suffix:semicolon
 id|pgtable_cache_size

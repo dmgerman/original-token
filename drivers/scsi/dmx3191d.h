@@ -100,11 +100,8 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#if defined(HOSTS_C) || defined(MODULE)
 DECL|macro|DMX3191D
 mdefine_line|#define DMX3191D {&t;&t;&t;&t;&bslash;&n;&t;proc_info:&t;dmx3191d_proc_info,&t;&t;&bslash;&n;&t;name:&t;&t;&quot;Domex DMX3191D&quot;,&t;&t;&bslash;&n;&t;detect:&t;&t;dmx3191d_detect,&t;&t;&bslash;&n;&t;release:&t;dmx3191d_release_resources,&t;&bslash;&n;&t;info:&t;&t;dmx3191d_info,&t;&t;&t;&bslash;&n;&t;queuecommand:&t;dmx3191d_queue_command,&t;&t;&bslash;&n;&t;abort:&t;&t;dmx3191d_abort,&t;&t;&t;&bslash;&n;&t;reset:&t;&t;dmx3191d_reset, &t;&t;&bslash;&n;&t;bios_param:&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;can_queue:&t;32,&t;&t;&t;&t;&bslash;&n;        this_id:&t;7,&t;&t;&t;&t;&bslash;&n;        sg_tablesize:&t;SG_ALL,&t;&t;&t;&t;&bslash;&n;&t;cmd_per_lun:&t;2,&t;&t;&t;&t;&bslash;&n;        use_clustering:&t;DISABLE_CLUSTERING&t;&t;&bslash;&n;}
-macro_line|#endif&t;/* HOSTS_C || MODULE */
-macro_line|#ifndef HOSTS_C
 DECL|macro|NCR5380_read
 mdefine_line|#define NCR5380_read(reg)&t;&t;&t;inb(port + reg)
 DECL|macro|NCR5380_write
@@ -127,7 +124,6 @@ DECL|macro|NCR5380_queue_command
 mdefine_line|#define NCR5380_queue_command&t;&t;&t;dmx3191d_queue_command
 DECL|macro|NCR5380_reset
 mdefine_line|#define NCR5380_reset&t;&t;&t;&t;dmx3191d_reset
-macro_line|#endif&t;/* HOSTS_C */
 macro_line|#endif&t;/* ASM */
 macro_line|#endif&t;/* __DMX3191D_H */
 eof

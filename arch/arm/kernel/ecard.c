@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/kernel/ecard.c&n; *&n; *  Find all installed expansion cards, and handle interrupts from them.&n; *&n; * Copyright 1995-1998 Russell King&n; *&n; * Created from information from Acorns RiscOS3 PRMs&n; *&n; * 08-Dec-1996&t;RMK&t;Added code for the 9&squot;th expansion card - the ether&n; *&t;&t;&t;podule slot.&n; * 06-May-1997  RMK&t;Added blacklist for cards whose loader doesn&squot;t work.&n; * 12-Sep-1997&t;RMK&t;Created new handling of interrupt enables/disables&n; *&t;&t;&t;- cards can now register their own routine to control&n; *&t;&t;&t;interrupts (recommended).&n; * 29-Sep-1997&t;RMK&t;Expansion card interrupt hardware not being re-enabled&n; *&t;&t;&t;on reset from Linux. (Caused cards not to respond&n; *&t;&t;&t;under RiscOS without hard reset).&n; * 15-Feb-1998&t;RMK&t;Added DMA support&n; * 12-Sep-1998&t;RMK&t;Added EASI support&n; * 10-Jan-1999&t;RMK&t;Run loaders in a simulated RISC OS environment.&n; * 17-Apr-1999&t;RMK&t;Support for EASI Type C cycles.&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/ecard.c&n; *&n; *  Copyright 1995-1998 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Find all installed expansion cards, and handle interrupts from them.&n; *&n; *  Created from information from Acorns RiscOS3 PRMs&n; *&n; *  08-Dec-1996&t;RMK&t;Added code for the 9&squot;th expansion card - the ether&n; *&t;&t;&t;podule slot.&n; *  06-May-1997&t;RMK&t;Added blacklist for cards whose loader doesn&squot;t work.&n; *  12-Sep-1997&t;RMK&t;Created new handling of interrupt enables/disables&n; *&t;&t;&t;- cards can now register their own routine to control&n; *&t;&t;&t;interrupts (recommended).&n; *  29-Sep-1997&t;RMK&t;Expansion card interrupt hardware not being re-enabled&n; *&t;&t;&t;on reset from Linux. (Caused cards not to respond&n; *&t;&t;&t;under RiscOS without hard reset).&n; *  15-Feb-1998&t;RMK&t;Added DMA support&n; *  12-Sep-1998&t;RMK&t;Added EASI support&n; *  10-Jan-1999&t;RMK&t;Run loaders in a simulated RISC OS environment.&n; *  17-Apr-1999&t;RMK&t;Support for EASI Type C cycles.&n; */
 DECL|macro|ECARD_C
 mdefine_line|#define ECARD_C
 DECL|macro|__KERNEL_SYSCALLS__
@@ -388,16 +388,6 @@ id|ec
 op_assign
 id|ec-&gt;next
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Resetting card %d&bslash;n&quot;
-comma
-id|ec-&gt;slot_no
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -413,14 +403,6 @@ id|ec-&gt;podaddr
 )paren
 comma
 id|ec-&gt;loader
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;All cards reset&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -53,6 +53,9 @@ r_int
 r_int
 id|otcplen
 suffix:semicolon
+id|u_int16_t
+id|tmp
+suffix:semicolon
 r_int
 id|needs_ack
 suffix:semicolon
@@ -208,6 +211,7 @@ op_plus
 id|nskb-&gt;nh.iph-&gt;ihl
 )paren
 suffix:semicolon
+multiline_comment|/* Swap source and dest */
 id|nskb-&gt;nh.iph-&gt;daddr
 op_assign
 id|xchg
@@ -219,16 +223,17 @@ comma
 id|nskb-&gt;nh.iph-&gt;daddr
 )paren
 suffix:semicolon
+id|tmp
+op_assign
+id|tcph-&gt;source
+suffix:semicolon
 id|tcph-&gt;source
 op_assign
-id|xchg
-c_func
-(paren
-op_amp
 id|tcph-&gt;dest
-comma
-id|tcph-&gt;source
-)paren
+suffix:semicolon
+id|tcph-&gt;dest
+op_assign
+id|tmp
 suffix:semicolon
 multiline_comment|/* Truncate to length (no data) */
 id|tcph-&gt;doff

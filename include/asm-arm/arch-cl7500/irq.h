@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * include/asm-arm/arch-cl7500/irq.h&n; *&n; * Copyright (C) 1996 Russell King&n; * Copyright (C) 1999 Nexus Electronics Ltd.&n; *&n; * Changelog:&n; *   10-10-1996&t;RMK&t;Brought up to date with arch-sa110eval&n; *   22-08-1998&t;RMK&t;Restructured IRQ routines&n; *   11-08-1999&t;PJB&t;Created ARM7500 version, derived from RiscPC code&n; */
-macro_line|#include &lt;asm/iomd.h&gt;
+macro_line|#include &lt;asm/hardware/iomd.h&gt;
 DECL|function|fixup_irq
 r_static
 r_inline

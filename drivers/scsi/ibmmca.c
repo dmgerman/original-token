@@ -16322,15 +16322,14 @@ id|option_setup
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
 multiline_comment|/* Eventually this will go into an include file, but this will be later */
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|IBMMCA
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 multiline_comment|/*--------------------------------------------------------------------*/
 eof

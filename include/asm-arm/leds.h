@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-arm/leds.h&n; *&n; * Copyright (C) 1998 Russell King&n; *&n; * Event-driven interface for LEDs on machines&n; *&n; * Added led_start and led_stop- Alex Holden, 28th Dec 1998.&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/leds.h&n; *&n; *  Copyright (C) 1998 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Event-driven interface for LEDs on machines&n; *  Added led_start and led_stop- Alex Holden, 28th Dec 1998.&n; */
 macro_line|#ifndef ASM_ARM_LEDS_H
 DECL|macro|ASM_ARM_LEDS_H
 mdefine_line|#define ASM_ARM_LEDS_H

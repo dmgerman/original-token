@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Dynamic DMA mapping support.&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/consistent.c&n; *&n; *  Copyright (C) 2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Dynamic DMA mapping support.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -118,6 +118,46 @@ multiline_comment|/* free wasted pages */
 r_int
 r_int
 id|end
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * we need to ensure that there are no&n;&t;&t; * cachelines in use, or worse dirty in&n;&t;&t; * this area.&n;&t;&t; */
+id|invalidate_dcache_range
+c_func
+(paren
+id|page
+comma
+id|page
+op_plus
+id|size
+)paren
+suffix:semicolon
+id|invalidate_dcache_range
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|ret
+comma
+(paren
+r_int
+r_int
+)paren
+id|ret
+op_plus
+id|size
+)paren
+suffix:semicolon
+op_star
+id|dma_handle
+op_assign
+id|__virt_to_bus
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|end
 op_assign
 id|page
 op_plus
@@ -125,36 +165,6 @@ op_plus
 id|PAGE_SIZE
 op_lshift
 id|order
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * we need to ensure that there are no&n;&t;&t; * cachelines in use, or worse dirty in&n;&t;&t; * this area.&n;&t;&t; */
-id|dma_cache_inv
-c_func
-(paren
-id|page
-comma
-id|size
-)paren
-suffix:semicolon
-id|dma_cache_inv
-c_func
-(paren
-id|ret
-comma
-id|size
-)paren
-suffix:semicolon
-op_star
-id|dma_handle
-op_assign
-id|virt_to_bus
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
 )paren
 suffix:semicolon
 id|page
@@ -322,6 +332,24 @@ r_int
 id|direction
 )paren
 (brace
+r_int
+r_int
+id|start
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|vaddr
+suffix:semicolon
+r_int
+r_int
+id|end
+op_assign
+id|start
+op_plus
+id|size
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -340,12 +368,12 @@ r_case
 id|PCI_DMA_FROMDEVICE
 suffix:colon
 multiline_comment|/* invalidate only */
-id|dma_cache_inv
+id|invalidate_dcache_range
 c_func
 (paren
-id|vaddr
+id|start
 comma
-id|size
+id|end
 )paren
 suffix:semicolon
 r_break
@@ -354,12 +382,12 @@ r_case
 id|PCI_DMA_TODEVICE
 suffix:colon
 multiline_comment|/* writeback only */
-id|dma_cache_wback
+id|clean_dcache_range
 c_func
 (paren
-id|vaddr
+id|start
 comma
-id|size
+id|end
 )paren
 suffix:semicolon
 r_break
@@ -368,12 +396,12 @@ r_case
 id|PCI_DMA_BIDIRECTIONAL
 suffix:colon
 multiline_comment|/* writeback and invalidate */
-id|dma_cache_wback_inv
+id|flush_dcache_range
 c_func
 (paren
-id|vaddr
+id|start
 comma
-id|size
+id|end
 )paren
 suffix:semicolon
 r_break

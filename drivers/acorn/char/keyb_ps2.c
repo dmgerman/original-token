@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/block/keyb_ps2.c&n; *&n; * Keyboard driver for RPC ARM Linux.&n; *&n; * Note!!! This driver talks directly to the keyboard.&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/char/keyb_ps2.c&n; *&n; *  Copyright (C) 2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Keyboard driver for RiscPC ARM Linux.&n; *&n; *  Note!!! This driver talks directly to the keyboard.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -17,7 +17,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/iomd.h&gt;
+macro_line|#include &lt;asm/hardware/iomd.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 r_extern
 r_struct
@@ -1673,10 +1673,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 multiline_comment|/* Reset the keyboard state machine. */
 id|outb
 c_func
@@ -1694,10 +1690,10 @@ comma
 id|IOMD_KCTRL
 )paren
 suffix:semicolon
-id|save_flags_cli
 (paren
-id|flags
+r_void
 )paren
+id|IOMD_KARTRX
 suffix:semicolon
 r_if
 c_cond
@@ -1745,21 +1741,6 @@ id|panic
 c_func
 (paren
 l_string|&quot;Could not allocate keyboard transmit IRQ!&quot;
-)paren
-suffix:semicolon
-id|disable_irq
-(paren
-id|IRQ_KEYBOARDTX
-)paren
-suffix:semicolon
-(paren
-r_void
-)paren
-id|IOMD_KARTRX
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return

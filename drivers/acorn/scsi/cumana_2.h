@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Cumana SCSI II driver&n; *&n; * Copyright (C) 1997-2000 Russell King&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/scsi/cumana_2.h&n; *&n; *  Copyright (C) 1997-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Cumana SCSI II driver&n; */
 macro_line|#ifndef CUMANA_2_H
 DECL|macro|CUMANA_2_H
 mdefine_line|#define CUMANA_2_H
@@ -115,9 +115,10 @@ r_int
 id|dmaarea
 suffix:semicolon
 multiline_comment|/* Pseudo DMA area&t;*/
-DECL|member|dmasg
-id|dmasg_t
-id|dmasg
+DECL|member|sg
+r_struct
+id|scatterlist
+id|sg
 (braket
 id|NR_SG
 )braket

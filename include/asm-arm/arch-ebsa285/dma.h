@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/dma.h&n; *&n; * Architecture DMA routines&n; *&n; * Copyright (C) 1998,1999 Russell King&n; * Copyright (C) 1998,1999 Philip Blundell&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-ebsa285/dma.h&n; *&n; *  Architecture DMA routines&n; *&n; *  Copyright (C) 1998,1999 Russell King&n; *  Copyright (C) 1998,1999 Philip Blundell&n; */
 macro_line|#ifndef __ASM_ARCH_DMA_H
 DECL|macro|__ASM_ARCH_DMA_H
 mdefine_line|#define __ASM_ARCH_DMA_H

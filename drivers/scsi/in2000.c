@@ -8800,13 +8800,12 @@ l_int|0
 suffix:semicolon
 macro_line|#endif   /* PROC_INTERFACE */
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|IN2000
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 eof

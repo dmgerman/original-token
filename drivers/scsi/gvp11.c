@@ -1570,18 +1570,17 @@ r_return
 id|num_gvp11
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;gvp11.h&quot;
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|GVP11_SCSI
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 DECL|function|gvp11_release
 r_int
 id|gvp11_release

@@ -211,7 +211,7 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|cpu_hz
+id|cpu_khz
 suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
 DECL|macro|PARAM
@@ -7109,14 +7109,14 @@ id|p
 comma
 l_string|&quot;cpu MHz&bslash;t&bslash;t: %lu.%06lu&bslash;n&quot;
 comma
-id|cpu_hz
+id|cpu_khz
 op_div
-l_int|1000000
+l_int|1000
 comma
 (paren
-id|cpu_hz
+id|cpu_khz
 op_mod
-l_int|1000000
+l_int|1000
 )paren
 )paren
 suffix:semicolon

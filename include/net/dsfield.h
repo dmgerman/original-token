@@ -8,8 +8,8 @@ macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/ipv6.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|function|ipv4_get_dsfield
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u8
 id|ipv4_get_dsfield
 c_func
@@ -25,8 +25,8 @@ id|iph-&gt;tos
 suffix:semicolon
 )brace
 DECL|function|ipv6_get_dsfield
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u8
 id|ipv6_get_dsfield
 c_func
@@ -53,8 +53,8 @@ l_int|4
 suffix:semicolon
 )brace
 DECL|function|ipv4_change_dsfield
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ipv4_change_dsfield
 c_func
@@ -143,8 +143,8 @@ id|dsfield
 suffix:semicolon
 )brace
 DECL|function|ipv6_change_dsfield
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ipv6_change_dsfield
 c_func
@@ -214,8 +214,8 @@ id|tmp
 suffix:semicolon
 )brace
 macro_line|#if 0 /* put this later into asm-i386 or such ... */
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ip_change_dsfield
 c_func

@@ -37,15 +37,14 @@ op_assign
 id|DEBUG_DEFAULT
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|INI9100U
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 DECL|variable|i91uCopyright
 r_char
 op_star

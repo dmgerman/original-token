@@ -18,5 +18,9 @@ DECL|macro|IRQ_GPIO_CF_BVD2
 mdefine_line|#define IRQ_GPIO_CF_BVD2&t;IRQ_GPIO19
 DECL|macro|IRQ_GPIO_CF_BVD1
 mdefine_line|#define IRQ_GPIO_CF_BVD1&t;IRQ_GPIO20
+DECL|macro|GPIO_UCB1200_IRQ
+mdefine_line|#define GPIO_UCB1200_IRQ&t;GPIO_GPIO (18)
+DECL|macro|IRQ_GPIO_UCB1200_IRQ
+mdefine_line|#define IRQ_GPIO_UCB1200_IRQ&t;IRQ_GPIO18
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/mm/mm-armv.c&n; *&n; *  Page table sludge for ARM v3 and v4 processor architectures.&n; *&n; *  Copyright (C) 1998-2000 Russell King&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/mm-armv.c&n; *&n; *  Copyright (C) 1998-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Page table sludge for ARM v3 and v4 processor architectures.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -8,7 +8,7 @@ macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &quot;map.h&quot;
+macro_line|#include &lt;asm/mach/map.h&gt;
 DECL|variable|valid_addr_bitmap
 r_int
 r_int
@@ -185,6 +185,8 @@ id|nowrite_setup
 suffix:semicolon
 DECL|macro|FIRST_KERNEL_PGD_NR
 mdefine_line|#define FIRST_KERNEL_PGD_NR&t;(FIRST_USER_PGD_NR + USER_PTRS_PER_PGD)
+DECL|macro|clean_cache_area
+mdefine_line|#define clean_cache_area(start,size) &bslash;&n;&t;cpu_cache_clean_invalidate_range((unsigned long)start, ((unsigned long)start) + size, 0);
 multiline_comment|/*&n; * need to get a 16k page for level 1&n; */
 DECL|function|get_pgd_slow
 id|pgd_t
@@ -267,6 +269,7 @@ id|pgd_t
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * FIXME: this should not be necessary&n;&t;&t; */
 id|clean_cache_area
 c_func
 (paren
@@ -1412,10 +1415,11 @@ id|pmd
 suffix:semicolon
 )brace
 )brace
-DECL|function|pagetable_init
+multiline_comment|/*&n; * Setup initial mappings.  We use the page we allocated for zero page to hold&n; * the mappings, which will get overwritten by the vectors in traps_init().&n; * The mappings must be in virtual address order.&n; */
+DECL|function|memtable_init
 r_void
 id|__init
-id|pagetable_init
+id|memtable_init
 c_func
 (paren
 r_struct
@@ -1444,7 +1448,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; * Setup initial mappings.  We use the page we allocated&n;&t; * for zero page to hold the mappings, which will get&n;&t; * overwritten by the vectors in traps_init().  The&n;&t; * mappings must be in virtual address order.&n;&t; */
 id|init_maps
 op_assign
 id|p
@@ -1739,7 +1742,28 @@ op_ne
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Create the architecture specific mappings&n;&t; */
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Create the architecture specific mappings&n; */
+DECL|function|iotable_init
+r_void
+id|__init
+id|iotable_init
+c_func
+(paren
+r_struct
+id|map_desc
+op_star
+id|io_desc
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1747,9 +1771,14 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|io_desc
+(braket
 id|i
-OL
-id|io_desc_size
+)braket
+dot
+id|last
+op_eq
+l_int|0
 suffix:semicolon
 id|i
 op_increment
@@ -1762,11 +1791,6 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|free_memmap
 r_static
@@ -1775,6 +1799,9 @@ r_void
 id|free_memmap
 c_func
 (paren
+r_int
+id|node
+comma
 r_int
 r_int
 id|start
@@ -1858,11 +1885,10 @@ c_func
 id|pgend
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * The mem_map is always stored in node 0&n;&t; */
 id|free_bootmem_node
 c_func
 (paren
-l_int|0
+id|node
 comma
 id|start
 comma
@@ -1963,6 +1989,8 @@ id|bank_start
 id|free_memmap
 c_func
 (paren
+id|node
+comma
 id|prev_bank_end
 comma
 id|bank_start

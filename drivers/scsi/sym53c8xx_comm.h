@@ -886,7 +886,7 @@ macro_line|#  define pcivtobus(p)&t;&t;&t;(p)
 DECL|macro|memcpy_to_pci
 macro_line|#  define memcpy_to_pci(a, b, c)&t;memcpy_toio((a), (b), (c))
 macro_line|#endif
-macro_line|#if defined(__i386__) &amp;&amp; !defined(SCSI_NCR_PCI_MEM_NOT_SUPPORTED)
+macro_line|#if (defined(SCSI_NCR_NVRAM_SUPPORT) &amp;&amp; !defined(NCR_IOMAPPED)) || &bslash;&n;&t;(defined(__i386__) &amp;&amp; !defined(SCSI_NCR_PCI_MEM_NOT_SUPPORTED))
 DECL|function|remap_pci_mem
 r_static
 id|u_long

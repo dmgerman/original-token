@@ -425,7 +425,7 @@ op_logical_or
 id|S_ISDIR
 c_func
 (paren
-id|mode
+id|inode-&gt;i_mode
 )paren
 op_logical_and
 op_logical_neg

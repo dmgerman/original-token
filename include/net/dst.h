@@ -287,8 +287,8 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|function|dst_hold
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dst_hold
 c_func
@@ -307,8 +307,8 @@ id|dst-&gt;__refcnt
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 DECL|function|dst_clone
 r_struct
 id|dst_entry
@@ -338,8 +338,8 @@ r_return
 id|dst
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 DECL|function|dst_release
 r_void
 id|dst_release
@@ -398,8 +398,8 @@ op_star
 id|dst
 )paren
 suffix:semicolon
-r_extern
-id|__inline__
+r_static
+r_inline
 DECL|function|dst_free
 r_void
 id|dst_free
@@ -449,8 +449,8 @@ id|dst
 suffix:semicolon
 )brace
 DECL|function|dst_confirm
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dst_confirm
 c_func
@@ -474,8 +474,8 @@ id|dst-&gt;neighbour
 suffix:semicolon
 )brace
 DECL|function|dst_negative_advice
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dst_negative_advice
 c_func
@@ -515,8 +515,8 @@ id|dst
 suffix:semicolon
 )brace
 DECL|function|dst_link_failure
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dst_link_failure
 c_func
@@ -553,8 +553,8 @@ id|skb
 suffix:semicolon
 )brace
 DECL|function|dst_set_expires
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dst_set_expires
 c_func

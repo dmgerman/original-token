@@ -3,7 +3,7 @@ macro_line|#ifndef __ASM_ARCH_HARDWARE_H
 DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H
 macro_line|#include &lt;asm/arch/memory.h&gt;
-macro_line|#include &lt;asm/iomd.h&gt;
+macro_line|#include &lt;asm/hardware/iomd.h&gt;
 multiline_comment|/*&n; * What hardware must be present&n; */
 DECL|macro|HAS_IOMD
 mdefine_line|#define HAS_IOMD

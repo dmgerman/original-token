@@ -464,6 +464,11 @@ id|adfs_dir_operations
 suffix:semicolon
 r_extern
 r_struct
+id|dentry_operations
+id|adfs_dentry_operations
+suffix:semicolon
+r_extern
+r_struct
 id|adfs_dir_ops
 id|adfs_f_dir_ops
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/memory.h&n; *&n; * Copyright (C) 2000 Russell King&n; *&n; * Note: this file should not be included by non-asm/.h files&n; *&n; * Modifications:&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/memory.h&n; *&n; *  Copyright (C) 2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Note: this file should not be included by non-asm/.h files&n; *&n; *  Modifications:&n; */
 macro_line|#ifndef __ASM_ARM_MEMORY_H
 DECL|macro|__ASM_ARM_MEMORY_H
 mdefine_line|#define __ASM_ARM_MEMORY_H

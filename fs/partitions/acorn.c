@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/block/adfspart.c&n; *&n; * Copyright (c) 1996-2000 Russell King.&n; *&n; * Scan ADFS partitions on hard disk drives.&n; */
+multiline_comment|/*&n; *  linux/fs/partitions/acorn.c&n; *&n; *  Copyright (c) 1996-2000 Russell King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Scan ADFS partitions on hard disk drives.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

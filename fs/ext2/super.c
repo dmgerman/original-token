@@ -835,7 +835,7 @@ id|value
 id|printk
 (paren
 l_string|&quot;EXT2-fs: the errors option requires &quot;
-l_string|&quot;an argument&quot;
+l_string|&quot;an argument&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

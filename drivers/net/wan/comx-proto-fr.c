@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * Frame-relay protocol module for the COMX driver &n; * for Linux 2.2.X&n; *&n; * Original author: Tivadar Szemethy &lt;tiv@itc.hu&gt;&n; * Maintainer: Gergely Madarasz &lt;gorgo@itc.hu&gt;&n; *&n; * Copyright (C) 1998-1999 ITConsult-Pro Co. &lt;info@itc.hu&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Version 0.70 (99/06/14):&n; *&t;&t;- cleaned up the source code a bit&n; *&t;&t;- ported back to kernel, now works as builtin code &n; *&n; * Version 0.71 (99/06/25):&n; *&t;&t;- use skb priorities and queues for sending keepalive&n; * &t;&t;- use device queues for slave-&gt;master data transmit&n; *&t;&t;- set IFF_RUNNING only line protocol up&n; *&t;&t;- fixes on slave device flags&n; * &n; * Version 0.72 (99/07/09):&n; *&t;&t;- handle slave tbusy with master tbusy (should be fixed)&n; *&t;&t;- fix the keepalive timer addition/deletion&n; */
+multiline_comment|/*&n; * Frame-relay protocol module for the COMX driver &n; * for Linux 2.2.X&n; *&n; * Original author: Tivadar Szemethy &lt;tiv@itc.hu&gt;&n; * Maintainer: Gergely Madarasz &lt;gorgo@itc.hu&gt;&n; *&n; * Copyright (C) 1998-1999 ITConsult-Pro Co. &lt;info@itc.hu&gt;&n; * &n; * Contributors:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; (0.73)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Version 0.70 (99/06/14):&n; *&t;&t;- cleaned up the source code a bit&n; *&t;&t;- ported back to kernel, now works as builtin code &n; *&n; * Version 0.71 (99/06/25):&n; *&t;&t;- use skb priorities and queues for sending keepalive&n; * &t;&t;- use device queues for slave-&gt;master data transmit&n; *&t;&t;- set IFF_RUNNING only line protocol up&n; *&t;&t;- fixes on slave device flags&n; * &n; * Version 0.72 (99/07/09):&n; *&t;&t;- handle slave tbusy with master tbusy (should be fixed)&n; *&t;&t;- fix the keepalive timer addition/deletion&n; *&n; * Version 0.73 (00/08/15)&n; * &t;&t;- resource release on failure at fr_master_init and&n; *&t;&t;  fr_slave_init &t;&t;  &n; */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;0.72&quot;
+mdefine_line|#define VERSION &quot;0.73&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3939,9 +3939,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|cleanup_LINE_privdata
 suffix:semicolon
 )brace
 id|new_file-&gt;data
@@ -3992,9 +3991,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|cleanup_filename_dlci
 suffix:semicolon
 )brace
 id|new_file-&gt;data
@@ -4035,6 +4033,28 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|cleanup_filename_dlci
+suffix:colon
+id|remove_proc_entry
+c_func
+(paren
+id|FILENAME_DLCI
+comma
+id|ch-&gt;procdir
+)paren
+suffix:semicolon
+id|cleanup_LINE_privdata
+suffix:colon
+id|kfree
+c_func
+(paren
+id|fr
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 DECL|function|fr_slave_init
@@ -4191,9 +4211,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|cleanup_LINE_privdata
 suffix:semicolon
 )brace
 id|new_file-&gt;data
@@ -4244,9 +4263,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_return
-op_minus
-id|EIO
+r_goto
+id|cleanup_filename_dlci
 suffix:semicolon
 )brace
 id|new_file-&gt;data
@@ -4279,6 +4297,28 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|cleanup_filename_dlci
+suffix:colon
+id|remove_proc_entry
+c_func
+(paren
+id|FILENAME_DLCI
+comma
+id|ch-&gt;procdir
+)paren
+suffix:semicolon
+id|cleanup_LINE_privdata
+suffix:colon
+id|kfree
+c_func
+(paren
+id|fr
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 DECL|function|dlci_open

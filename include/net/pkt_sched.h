@@ -587,8 +587,8 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|sch_tree_lock
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sch_tree_lock
 c_func
@@ -615,8 +615,8 @@ id|q-&gt;dev-&gt;queue_lock
 suffix:semicolon
 )brace
 DECL|function|sch_tree_unlock
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sch_tree_unlock
 c_func
@@ -643,8 +643,8 @@ id|qdisc_tree_lock
 suffix:semicolon
 )brace
 DECL|function|tcf_tree_lock
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcf_tree_lock
 c_func
@@ -671,8 +671,8 @@ id|tp-&gt;q-&gt;dev-&gt;queue_lock
 suffix:semicolon
 )brace
 DECL|function|tcf_tree_unlock
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcf_tree_unlock
 c_func
@@ -698,8 +698,8 @@ id|qdisc_tree_lock
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_int
 DECL|function|cls_set_class
@@ -751,8 +751,8 @@ r_return
 id|old_cl
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_int
 DECL|function|__cls_set_class
@@ -1089,8 +1089,8 @@ id|p
 )paren
 suffix:semicolon
 DECL|function|tcf_police_release
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tcf_police_release
 c_func
@@ -1350,8 +1350,8 @@ id|dev
 )paren
 suffix:semicolon
 DECL|function|qdisc_run
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|qdisc_run
 c_func
@@ -1385,8 +1385,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Calculate maximal size of packet seen by hard_start_xmit&n;   routine of this device.&n; */
 DECL|function|psched_mtu
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|psched_mtu
 c_func

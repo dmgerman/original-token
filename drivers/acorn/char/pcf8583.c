@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/i2c/pcf8583.c&n; *&n; * Copyright (C) 2000 Russell King&n; *&n; * Driver for PCF8583 RTC &amp; RAM chip&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/char/pcf8583.c&n; *&n; *  Copyright (C) 2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Driver for PCF8583 RTC &amp; RAM chip&n; */
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998-2000 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional credits:&n; *   Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt;: Initial Linux/Alpha and trace&n; *       dump support. The trace dump support has not been&n; *       integrated yet however.&n; *   Troy Benjegerdes: Big Endian (PPC) patches.&n; *   Nate Stahl: Better out of memory handling and stats support.&n; *   Aman Singla: Nasty race between interrupt handler and tx code dealing&n; *                with &squot;testing the tx_ret_csm and setting tx_full&squot;&n; *   David S. Miller &lt;davem@redhat.com&gt;: conversion to new PCI dma mapping&n; *                                       infrastructure and Sparc support&n; *   Pierrick Pinasseau (CERN): For lending me an Ultra 5 to test the&n; *                              driver under Linux/Sparc64&n; *   Matt Domsch &lt;Matt_Domsch@dell.com&gt;: Detect 1000baseT cards&n; */
+multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998-2000 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional credits:&n; *   Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt;: Initial Linux/Alpha and trace&n; *       dump support. The trace dump support has not been&n; *       integrated yet however.&n; *   Troy Benjegerdes: Big Endian (PPC) patches.&n; *   Nate Stahl: Better out of memory handling and stats support.&n; *   Aman Singla: Nasty race between interrupt handler and tx code dealing&n; *                with &squot;testing the tx_ret_csm and setting tx_full&squot;&n; *   David S. Miller &lt;davem@redhat.com&gt;: conversion to new PCI dma mapping&n; *                                       infrastructure and Sparc support&n; *   Pierrick Pinasseau (CERN): For lending me an Ultra 5 to test the&n; *                              driver under Linux/Sparc64&n; *   Matt Domsch &lt;Matt_Domsch@dell.com&gt;: Detect Alteon 1000baseT cards&n; *   Chip Salzenberg &lt;chip@valinux.com&gt;: Fix race condition between tx&n; *                                       handler and close() cleanup.&n; *   Ken Aaker &lt;kdaaker@rchland.vnet.ibm.com&gt;: Correct check for whether&n; *                                       memory mapped IO is enabled to&n; *                                       make the driver work on RS/6000.&n; *   Takayoshi Kouchi &lt;kouchi@hpc.bs1.fc.nec.co.jp&gt;: Identifying problem&n; *                                       where the driver would disable&n; *                                       bus master mode if it had to disable&n; *                                       write and invalidate.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -54,7 +54,11 @@ mdefine_line|#define PCI_VENDOR_ID_NETGEAR&t;&t;0x1385
 DECL|macro|PCI_DEVICE_ID_NETGEAR_GA620
 mdefine_line|#define PCI_DEVICE_ID_NETGEAR_GA620&t;0x620a
 macro_line|#endif
-multiline_comment|/*&n; * They used the DEC vendor ID by mistake&n; */
+macro_line|#ifndef PCI_DEVICE_ID_NETGEAR_GA620T
+DECL|macro|PCI_DEVICE_ID_NETGEAR_GA620T
+mdefine_line|#define PCI_DEVICE_ID_NETGEAR_GA620T&t;0x630a
+macro_line|#endif
+multiline_comment|/*&n; * Farallon used the DEC vendor ID by mistake and they seem not&n; * to care - stinky!&n; */
 macro_line|#ifndef PCI_DEVICE_ID_FARALLON_PN9000SX
 DECL|macro|PCI_DEVICE_ID_FARALLON_PN9000SX
 mdefine_line|#define PCI_DEVICE_ID_FARALLON_PN9000SX&t;0x1a
@@ -407,7 +411,7 @@ id|__initdata
 op_star
 id|version
 op_assign
-l_string|&quot;acenic.c: v0.44 05/11/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
+l_string|&quot;acenic.c: v0.47 09/18/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
 l_string|&quot;                            http://home.cern.ch/~jes/gige/acenic.html&bslash;n&quot;
 suffix:semicolon
 DECL|variable|root_dev
@@ -572,9 +576,17 @@ id|PCI_VENDOR_ID_NETGEAR
 )paren
 op_logical_and
 (paren
+(paren
 id|pdev-&gt;device
 op_eq
 id|PCI_DEVICE_ID_NETGEAR_GA620
+)paren
+op_logical_or
+(paren
+id|pdev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_NETGEAR_GA620T
+)paren
 )paren
 )paren
 op_logical_and
@@ -756,6 +768,13 @@ id|version
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * Enable master mode before we start playing with the&n;&t;&t; * pci_command word since pci_set_master() will modify&n;&t;&t; * it.&n;&t;&t; */
+id|pci_set_master
+c_func
+(paren
+id|pdev
+)paren
+suffix:semicolon
 id|pci_read_config_word
 c_func
 (paren
@@ -772,9 +791,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|ap-&gt;pci_command
 op_amp
 id|PCI_COMMAND_MEMORY
+)paren
 )paren
 (brace
 id|printk
@@ -843,12 +864,6 @@ id|ap-&gt;pci_latency
 )paren
 suffix:semicolon
 )brace
-id|pci_set_master
-c_func
-(paren
-id|pdev
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Remap the regs into kernel space - this is abuse of&n;&t;&t; * dev-&gt;base_addr since it was means for I/O port&n;&t;&t; * addresses but who gives a damn.&n;&t;&t; */
 id|dev-&gt;base_addr
 op_assign
@@ -7212,9 +7227,6 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|dma_addr_t
-id|mapping
-suffix:semicolon
 id|skb
 op_assign
 id|ap-&gt;skb-&gt;tx_skbuff
@@ -7223,6 +7235,16 @@ id|idx
 )braket
 dot
 id|skb
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Race condition between the code cleaning&n;&t;&t;&t; * the tx queue in the interrupt handler and the&n;&t;&t;&t; * interface close,&n;&t;&t;&t; *&n;&t;&t;&t; * This is a kludge that really should be fixed &n;&t;&t;&t; * by preventing the driver from generating a tx&n;&t;&t;&t; * interrupt when the packet has already been&n;&t;&t;&t; * removed from the tx queue.&n;&t;&t;&t; *&n;&t;&t;&t; * Nailed by Don Dugger and Chip Salzenberg of&n;&t;&t;&t; * VA Linux.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|skb
+)paren
+(brace
+id|dma_addr_t
+id|mapping
 suffix:semicolon
 id|mapping
 op_assign
@@ -7267,6 +7289,7 @@ id|skb
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t; * Question here is whether one should not skip&n;&t;&t;&t; * these writes - I have never seen any errors&n;&t;&t;&t; * caused by the NIC actually trying to access&n;&t;&t;&t; * these incorrectly.&n;&t;&t;&t; */
 macro_line|#if (BITS_PER_LONG == 64)
 id|writel
@@ -11559,5 +11582,5 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -pipe -fno-strength-reduce -DMODVERSIONS -include ../../include/linux/modversions.h   -c -o acenic.o acenic.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__SMP__ -D__KERNEL__ -DMODULE -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -pipe -fno-strength-reduce -DMODVERSIONS -include ../../include/linux/modversions.h   -c -o acenic.o acenic.c&quot;&n; * End:&n; */
 eof

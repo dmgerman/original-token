@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/kernel/dma.h&n; *&n; * Copyright (C) 1998-2000 Russell King&n; *&n; * This header file describes the interface between the generic DMA handler&n; * (dma.c) and the architecture-specific DMA backends (dma-*.c)&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/mach/dma.h&n; *&n; *  Copyright (C) 1998-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  This header file describes the interface between the generic DMA handler&n; *  (dma.c) and the architecture-specific DMA backends (dma-*.c)&n; */
 r_struct
 id|dma_struct
 suffix:semicolon
@@ -205,8 +205,19 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Prototype: void arch_dma_init(dma)&n; * Purpose  : Initialise architecture specific DMA&n; * Params   : dma - pointer to array of DMA structures&n; */
+r_extern
 r_void
 id|arch_dma_init
+c_func
+(paren
+id|dma_t
+op_star
+id|dma
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|isa_init_dma
 c_func
 (paren
 id|dma_t

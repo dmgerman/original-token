@@ -232,8 +232,8 @@ id|rwlock_t
 id|fib6_walker_lock
 suffix:semicolon
 DECL|function|fib6_walker_link
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|fib6_walker_link
 c_func
@@ -277,8 +277,8 @@ id|fib6_walker_lock
 suffix:semicolon
 )brace
 DECL|function|fib6_walker_unlink
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|fib6_walker_unlink
 c_func

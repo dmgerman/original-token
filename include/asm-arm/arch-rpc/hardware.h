@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-rpc/hardware.h&n; *&n; * Copyright (C) 1996-1999 Russell King.&n; *&n; * This file contains the hardware definitions of the RiscPC series machines.&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-rpc/hardware.h&n; *&n; *  Copyright (C) 1996-1999 Russell King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  This file contains the hardware definitions of the RiscPC series machines.&n; */
 macro_line|#ifndef __ASM_ARCH_HARDWARE_H
 DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H

@@ -2252,8 +2252,6 @@ id|cs_sleep
 c_func
 (paren
 id|unreset_delay
-op_div
-l_int|10
 )paren
 suffix:semicolon
 id|unreset_socket

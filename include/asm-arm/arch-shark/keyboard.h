@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/keyboard.h&n; *&n; * Keyboard driver definitions for EBSA285 architecture&n; *&n; * (C) 1998 Russell King&n; * (C) 1998 Phil Blundell&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-shark/keyboard.h&n; * by Alexander.Schulz@stud.uni-karlsruhe.de&n; * &n; * Derived from linux/include/asm-arm/arch-ebsa285/keyboard.h&n; * (C) 1998 Russell King&n; * (C) 1998 Phil Blundell&n; */
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -86,17 +86,17 @@ mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;IRQ_ISA_KEYBOARD
 DECL|macro|NR_SCANCODES
 mdefine_line|#define NR_SCANCODES 128
 DECL|macro|kbd_setkeycode
-mdefine_line|#define kbd_setkeycode(sc,kc)&t;&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;int __ret;&t;&t;&t;&t;&bslash;&n;&t;&t;if (have_isa_bridge)&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = pckbd_setkeycode(sc,kc);&bslash;&n;&t;&t;else&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = -EINVAL;&t;&t;&bslash;&n;&t;&t;__ret;&t;&t;&t;&t;&t;&bslash;&n;&t;})
+mdefine_line|#define kbd_setkeycode(sc,kc)&t;&t;pckbd_setkeycode(sc,kc)
 DECL|macro|kbd_getkeycode
-mdefine_line|#define kbd_getkeycode(sc)&t;&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;int __ret;&t;&t;&t;&t;&bslash;&n;&t;&t;if (have_isa_bridge)&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = pckbd_getkeycode(sc);&t;&bslash;&n;&t;&t;else&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;__ret = -EINVAL;&t;&t;&bslash;&n;&t;&t;__ret;&t;&t;&t;&t;&t;&bslash;&n;&t;})
+mdefine_line|#define kbd_getkeycode(sc)&t;&t;pckbd_getkeycode(sc)
 DECL|macro|kbd_translate
-mdefine_line|#define kbd_translate(sc, kcp, rm)&t;&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;pckbd_translate(sc, kcp, rm);&t;&t;&bslash;&n;&t;})
+mdefine_line|#define kbd_translate(sc, kcp, rm)&t;pckbd_translate(sc, kcp, rm)
 DECL|macro|kbd_unexpected_up
 mdefine_line|#define kbd_unexpected_up&t;&t;pckbd_unexpected_up
 DECL|macro|kbd_leds
-mdefine_line|#define kbd_leds(leds)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (have_isa_bridge)&t;&t;&t;&bslash;&n;&t;&t;&t;pckbd_leds(leds);&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define kbd_leds(leds)&t;&t;&t;pckbd_leds(leds)
 DECL|macro|kbd_init_hw
-mdefine_line|#define kbd_init_hw()&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (have_isa_bridge)&t;&t;&t;&bslash;&n;&t;&t;&t;pckbd_init_hw();&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define kbd_init_hw()&t;&t;&t;pckbd_init_hw()
 DECL|macro|kbd_sysrq_xlate
 mdefine_line|#define kbd_sysrq_xlate&t;&t;&t;pckbd_sysrq_xlate
 DECL|macro|kbd_disable_irq

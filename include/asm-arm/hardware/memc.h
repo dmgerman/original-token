@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/include/asm-arm/hardware/memc.h&n; *&n; *  Copyright (C) Russell King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 DECL|macro|VDMA_ALIGNMENT
 mdefine_line|#define VDMA_ALIGNMENT&t;PAGE_SIZE
 DECL|macro|VDMA_XFERSIZE

@@ -1,11 +1,11 @@
-multiline_comment|/*&n; * linux/drivers/acorn/char/i2c.c&n; *&n; * Copyright (C) 2000 Russell King&n; *&n; * ARM IOC/IOMD i2c driver.&n; *&n; * On Acorn machines, the following i2c devices are on the bus:&n; *&t;- PCF8583 real time clock &amp; static RAM&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/char/i2c.c&n; *&n; *  Copyright (C) 2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  ARM IOC/IOMD i2c driver.&n; *&n; *  On Acorn machines, the following i2c devices are on the bus:&n; *&t;- PCF8583 real time clock &amp; static RAM&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/ioc.h&gt;
+macro_line|#include &lt;asm/hardware/ioc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;pcf8583.h&quot;
 r_extern

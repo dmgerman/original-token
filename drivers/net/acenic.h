@@ -1401,7 +1401,7 @@ id|__attribute__
 (paren
 id|aligned
 (paren
-id|L1_CACHE_BYTES
+id|SMP_CACHE_BYTES
 )paren
 )paren
 )paren
@@ -1559,7 +1559,7 @@ id|__attribute__
 (paren
 id|aligned
 (paren
-id|L1_CACHE_BYTES
+id|SMP_CACHE_BYTES
 )paren
 )paren
 )paren

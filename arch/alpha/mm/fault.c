@@ -478,7 +478,7 @@ comma
 id|regs-&gt;pc
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 id|printk
 c_func
 (paren

@@ -1015,18 +1015,17 @@ r_return
 id|num_a2091
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;a2091.h&quot;
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|A2091_SCSI
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 DECL|function|a2091_release
 r_int
 id|a2091_release

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/hardware.h&n; *&n; * Copyright (C) 1996-1999 Russell King.&n; *&n; * This file contains the hardware definitions of the&n; * Acorn Archimedes/A5000 machines.&n; *&n; * Modifications:&n; *  04-04-1998&t;PJB/RMK&t;Merged arc and a5k versions&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-arc/hardware.h&n; *&n; *  Copyright (C) 1996-1999 Russell King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  This file contains the hardware definitions of the&n; *  Acorn Archimedes/A5000 machines.&n; *&n; *  Modifications:&n; *   04-04-1998&t;PJB/RMK&t;Merged arc and a5k versions&n; */
 macro_line|#ifndef __ASM_ARCH_HARDWARE_H
 DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H
@@ -9,7 +9,7 @@ DECL|macro|HAS_IOC
 mdefine_line|#define HAS_IOC
 DECL|macro|HAS_MEMC
 mdefine_line|#define HAS_MEMC
-macro_line|#include &lt;asm/memc.h&gt;
+macro_line|#include &lt;asm/hardware/memc.h&gt;
 DECL|macro|HAS_VIDC
 mdefine_line|#define HAS_VIDC
 multiline_comment|/* Hardware addresses of major areas.&n; *  *_START is the physical address&n; *  *_SIZE  is the size of the region&n; *  *_BASE  is the virtual address&n; */

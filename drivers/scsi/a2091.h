@@ -76,10 +76,8 @@ macro_line|#ifndef CAN_QUEUE
 DECL|macro|CAN_QUEUE
 mdefine_line|#define CAN_QUEUE 16
 macro_line|#endif
-macro_line|#ifdef HOSTS_C
 DECL|macro|A2091_SCSI
 mdefine_line|#define A2091_SCSI {  proc_name:&t;   &quot;A2901&quot;, &bslash;&n;&t;&t;      name:                &quot;Commodore A2091/A590 SCSI&quot;, &bslash;&n;&t;&t;      detect:              a2091_detect,    &bslash;&n;&t;&t;      release:             a2091_release,   &bslash;&n;&t;&t;      queuecommand:        wd33c93_queuecommand, &bslash;&n;&t;&t;      abort:               wd33c93_abort,   &bslash;&n;&t;&t;      reset:               wd33c93_reset,   &bslash;&n;&t;&t;      can_queue:           CAN_QUEUE,       &bslash;&n;&t;&t;      this_id:             7,               &bslash;&n;&t;&t;      sg_tablesize:        SG_ALL,          &bslash;&n;&t;&t;      cmd_per_lun:&t;   CMD_PER_LUN,     &bslash;&n;&t;&t;      use_clustering:      DISABLE_CLUSTERING }
-macro_line|#else
 multiline_comment|/*&n; * if the transfer address ANDed with this results in a non-zero&n; * result, then we can&squot;t use DMA.&n; */
 DECL|macro|A2091_XFER_MASK
 mdefine_line|#define A2091_XFER_MASK  (0xff000001)
@@ -238,6 +236,5 @@ DECL|macro|ISTR_FF_FLG
 mdefine_line|#define ISTR_FF_FLG&t;&t;(1&lt;&lt;1)
 DECL|macro|ISTR_FE_FLG
 mdefine_line|#define ISTR_FE_FLG&t;&t;(1&lt;&lt;0)
-macro_line|#endif /* else def HOSTS_C */
 macro_line|#endif /* A2091_H */
 eof

@@ -19,7 +19,7 @@ DECL|macro|SCR_INIT
 mdefine_line|#define SCR_INIT&t;-1
 multiline_comment|/* Board Control Register */
 DECL|macro|BCR_BASE
-mdefine_line|#define BCR_BASE  0xdc000000
+mdefine_line|#define BCR_BASE  0xf1000000
 DECL|macro|BCR
 mdefine_line|#define BCR (*(volatile unsigned int *)(BCR_BASE))
 DECL|macro|BCR_DB1110
@@ -149,9 +149,9 @@ mdefine_line|#define NEPONSET_USAR_IRQ&t;MISC_IRQ1
 DECL|macro|NEPONSET_CPLD_BASE
 mdefine_line|#define NEPONSET_CPLD_BASE      (0x10000000)
 DECL|macro|Nep_p2v
-mdefine_line|#define Nep_p2v( x )            ((x) - NEPONSET_CPLD_BASE + 0xd4000000)
+mdefine_line|#define Nep_p2v( x )            ((x) - NEPONSET_CPLD_BASE + 0xf0000000)
 DECL|macro|Nep_v2p
-mdefine_line|#define Nep_v2p( x )            ((x) - 0xd4000000 + NEPONSET_CPLD_BASE)
+mdefine_line|#define Nep_v2p( x )            ((x) - 0xf0000000 + NEPONSET_CPLD_BASE)
 DECL|macro|_IRR
 mdefine_line|#define _IRR                    0x10000024      /* Interrupt Reason Register */
 DECL|macro|_AUD_CTL

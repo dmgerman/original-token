@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/kernel/dma.c&n; *&n; * Copyright (C) 1995-2000 Russell King&n; *&n; * Front-end to the DMA handling.  This handles the allocation/freeing&n; * of DMA channels, and provides a unified interface to the machines&n; * DMA facilities.&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/dma.c&n; *&n; *  Copyright (C) 1995-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Front-end to the DMA handling.  This handles the allocation/freeing&n; *  of DMA channels, and provides a unified interface to the machines&n; *  DMA facilities.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &quot;dma.h&quot;
+macro_line|#include &lt;asm/mach/dma.h&gt;
 DECL|variable|dma_spin_lock
 id|spinlock_t
 id|dma_spin_lock
@@ -347,7 +347,8 @@ id|set_dma_sg
 id|dmach_t
 id|channel
 comma
-id|dmasg_t
+r_struct
+id|scatterlist
 op_star
 id|sg
 comma
@@ -370,6 +371,10 @@ suffix:semicolon
 id|dma-&gt;sgcount
 op_assign
 id|nr_sg
+suffix:semicolon
+id|dma-&gt;using_sg
+op_assign
+l_int|1
 suffix:semicolon
 id|dma-&gt;invalid
 op_assign
@@ -423,7 +428,15 @@ l_int|1
 suffix:semicolon
 id|dma-&gt;buf.address
 op_assign
+id|bus_to_virt
+c_func
+(paren
 id|physaddr
+)paren
+suffix:semicolon
+id|dma-&gt;using_sg
+op_assign
+l_int|0
 suffix:semicolon
 id|dma-&gt;invalid
 op_assign
@@ -478,6 +491,10 @@ suffix:semicolon
 id|dma-&gt;buf.length
 op_assign
 id|count
+suffix:semicolon
+id|dma-&gt;using_sg
+op_assign
+l_int|0
 suffix:semicolon
 id|dma-&gt;invalid
 op_assign

@@ -1100,7 +1100,7 @@ DECL|typedef|socket_lock_t
 id|socket_lock_t
 suffix:semicolon
 DECL|macro|sock_lock_init
-mdefine_line|#define sock_lock_init(__sk) &bslash;&n;do {&t;spin_lock_init(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;(__sk)-&gt;dst_lock = RW_LOCK_UNLOCKED; &bslash;&n;&t;(__sk)-&gt;lock.users = 0; &bslash;&n;&t;init_waitqueue_head(&amp;((__sk)-&gt;lock.wq)); &bslash;&n;} while(0);
+mdefine_line|#define sock_lock_init(__sk) &bslash;&n;do {&t;spin_lock_init(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;(__sk)-&gt;lock.users = 0; &bslash;&n;&t;init_waitqueue_head(&amp;((__sk)-&gt;lock.wq)); &bslash;&n;} while(0);
 DECL|struct|sock
 r_struct
 id|sock
@@ -2162,6 +2162,8 @@ DECL|macro|SOCK_RCVBUF_LOCK
 mdefine_line|#define SOCK_RCVBUF_LOCK&t;2
 DECL|macro|SOCK_BINDADDR_LOCK
 mdefine_line|#define SOCK_BINDADDR_LOCK&t;4
+DECL|macro|SOCK_BINDPORT_LOCK
+mdefine_line|#define SOCK_BINDPORT_LOCK&t;8
 multiline_comment|/* Used by processes to &quot;lock&quot; a socket state, so that&n; * interrupts and bottom half handlers won&squot;t change it&n; * from under us. It essentially blocks any incoming&n; * packets, so that we won&squot;t get any new data or any&n; * packets that change the state of the socket.&n; *&n; * While locked, BH processing will add new packets to&n; * the backlog queue.  This queue is processed by the&n; * owner of the socket lock right before it is released.&n; *&n; * Since ~2.3.5 it is also exclusive sleep lock serializing&n; * accesses from user process context.&n; */
 r_extern
 r_void
@@ -2351,18 +2353,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|sock_wspace
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
 )paren
 suffix:semicolon
 r_extern
@@ -2850,8 +2840,8 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_FILTER
 multiline_comment|/**&n; *&t;sk_filter - run a packet through a socket filter&n; *&t;@skb: buffer to filter&n; *&t;@filter: filter to apply&n; *&n; * Run the filter code and then cut skb-&gt;data to correct size returned by&n; * sk_run_filter. If pkt_len is 0 we toss packet. If skb-&gt;len is smaller&n; * than pkt_len we keep whole skb-&gt;data. This is the socket level&n; * wrapper to sk_run_filter. It returns 0 if the packet should&n; * be accepted or 1 if the packet should be tossed.&n; */
 DECL|function|sk_filter
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sk_filter
 c_func
@@ -2909,8 +2899,8 @@ suffix:semicolon
 )brace
 multiline_comment|/**&n; *&t;sk_filter_release: Release a socket filter&n; *&t;@sk: socket&n; *&t;@fp: filter to remove&n; *&n; *&t;Remove a filter from a socket and release its resources.&n; */
 DECL|function|sk_filter_release
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sk_filter_release
 c_func
@@ -2963,8 +2953,8 @@ id|fp
 suffix:semicolon
 )brace
 DECL|function|sk_filter_charge
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sk_filter_charge
 c_func
@@ -3005,8 +2995,8 @@ macro_line|#endif /* CONFIG_FILTER */
 multiline_comment|/*&n; * Socket reference counting postulates.&n; *&n; * * Each user of socket SHOULD hold a reference count.&n; * * Each access point to socket (an hash table bucket, reference from a list,&n; *   running timer, skb in flight MUST hold a reference count.&n; * * When reference count hits 0, it means it will never increase back.&n; * * When reference count hits 0, it means that no references from&n; *   outside exist to this socket and current process on current CPU&n; *   is last user and may/should destroy this socket.&n; * * sk_free is called from any context: process, BH, IRQ. When&n; *   it is called, socket has no references from outside -&gt; sk_free&n; *   may release descendant resources allocated by the socket, but&n; *   to the time when it is called, socket is NOT referenced by any&n; *   hash tables, lists etc.&n; * * Packets, delivered from outside (from network or from another process)&n; *   and enqueued on receive/error queues SHOULD NOT grab reference count,&n; *   when they sit in queue. Otherwise, packets will leak to hole, when&n; *   socket is looked up by one cpu and unhasing is made by another CPU.&n; *   It is true for udp/raw, netlink (leak to receive and error queues), tcp&n; *   (leak to backlog). Packet socket does all the processing inside&n; *   BR_NETPROTO_LOCK, so that it has not this race condition. UNIX sockets&n; *   use separate SMP lock, so that they are prone too.&n; */
 multiline_comment|/* Grab socket reference count. This operation is valid only&n;   when sk is ALREADY grabbed f.e. it is found in hash table&n;   or a list and the lookup is made under lock preventing hash table&n;   modifications.&n; */
 DECL|function|sock_hold
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sock_hold
 c_func
@@ -3027,8 +3017,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Ungrab socket in the context, which assumes that socket refcnt&n;   cannot hit zero, f.e. it is true in context of any socketcall.&n; */
 DECL|function|__sock_put
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|__sock_put
 c_func
@@ -3049,8 +3039,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Ungrab socket and destroy it, if it was the last reference. */
 DECL|function|sock_put
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sock_put
 c_func
@@ -3080,8 +3070,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Detach socket from process context.&n; * Announce socket dead, detach it from wait queue and inode.&n; * Note that parent inode held reference count on this struct sock,&n; * we do not release it in this function, because protocol&n; * probably wants some additional cleanups or even continuing&n; * to work with this socket (TCP).&n; */
 DECL|function|sock_orphan
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sock_orphan
 c_func
@@ -3120,8 +3110,8 @@ id|sk-&gt;callback_lock
 suffix:semicolon
 )brace
 DECL|function|sock_graft
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sock_graft
 c_func
@@ -3253,8 +3243,8 @@ r_return
 id|ino
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|dst_entry
 op_star
@@ -3272,8 +3262,8 @@ r_return
 id|sk-&gt;dst_cache
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|dst_entry
 op_star
@@ -3325,8 +3315,8 @@ r_return
 id|dst
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|__sk_dst_set
 id|__sk_dst_set
@@ -3363,8 +3353,8 @@ id|old_dst
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|sk_dst_set
 id|sk_dst_set
@@ -3404,8 +3394,8 @@ id|sk-&gt;dst_lock
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|__sk_dst_reset
 id|__sk_dst_reset
@@ -3437,8 +3427,8 @@ id|old_dst
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|sk_dst_reset
 id|sk_dst_reset
@@ -3471,8 +3461,8 @@ id|sk-&gt;dst_lock
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|dst_entry
 op_star
@@ -3528,8 +3518,8 @@ r_return
 id|dst
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|dst_entry
 op_star
@@ -3593,8 +3583,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * &t;Queue a received datagram if it will fit. Stream and sequenced&n; *&t;protocols can&squot;t normally use this as they need to fit buffers in&n; *&t;and play with them.&n; *&n; * &t;Inlined as it&squot;s very short and called for pretty much every&n; *&t;packet ever received.&n; */
 DECL|function|skb_set_owner_w
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|skb_set_owner_w
 c_func
@@ -3635,8 +3625,8 @@ id|sk-&gt;wmem_alloc
 suffix:semicolon
 )brace
 DECL|function|skb_set_owner_r
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|skb_set_owner_r
 c_func
@@ -3671,8 +3661,8 @@ id|sk-&gt;rmem_alloc
 suffix:semicolon
 )brace
 DECL|function|sock_queue_rcv_skb
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sock_queue_rcv_skb
 c_func
@@ -3813,8 +3803,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sock_queue_err_skb
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sock_queue_err_skb
 c_func
@@ -3891,8 +3881,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Recover an error report and clear atomically&n; */
 DECL|function|sock_error
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sock_error
 c_func
@@ -3921,8 +3911,8 @@ id|err
 suffix:semicolon
 )brace
 DECL|function|sock_wspace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_int
 id|sock_wspace
@@ -3978,8 +3968,8 @@ id|amt
 suffix:semicolon
 )brace
 DECL|function|sk_wake_async
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|sk_wake_async
 c_func
@@ -4023,8 +4013,8 @@ DECL|macro|SOCK_MIN_WRITE_SPACE
 mdefine_line|#define SOCK_MIN_WRITE_SPACE&t;SOCK_MIN_SNDBUF
 multiline_comment|/*&n; *&t;Default write policy as shown to user space via poll/select/SIGIO&n; *&t;Kernel internally doesn&squot;t use the MIN_WRITE_SPACE threshold.&n; */
 DECL|function|sock_writeable
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sock_writeable
 c_func
@@ -4046,8 +4036,8 @@ id|SOCK_MIN_WRITE_SPACE
 suffix:semicolon
 )brace
 DECL|function|gfp_any
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|gfp_any
 c_func
@@ -4068,8 +4058,8 @@ id|GFP_KERNEL
 suffix:semicolon
 )brace
 DECL|function|sock_rcvtimeo
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sock_rcvtimeo
 c_func
@@ -4093,8 +4083,8 @@ id|sk-&gt;rcvtimeo
 suffix:semicolon
 )brace
 DECL|function|sock_sndtimeo
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sock_sndtimeo
 c_func
@@ -4118,8 +4108,8 @@ id|sk-&gt;sndtimeo
 suffix:semicolon
 )brace
 DECL|function|sock_rcvlowat
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sock_rcvlowat
 c_func
@@ -4159,8 +4149,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Alas, with timeout socket operations are not restartable.&n; * Compare this to poll().&n; */
 DECL|function|sock_intr_errno
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|sock_intr_errno
 c_func

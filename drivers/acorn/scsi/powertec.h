@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * PowerTec SCSI driver&n; *&n; * Copyright (C) 1997-2000 Russell King&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/scsi/powertec.h&n; *&n; *  Copyright (C) 1997-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  PowerTec SCSI driver&n; */
 macro_line|#ifndef POWERTECSCSI_H
 DECL|macro|POWERTECSCSI_H
 mdefine_line|#define POWERTECSCSI_H
@@ -106,9 +106,10 @@ DECL|member|control
 id|control
 suffix:semicolon
 multiline_comment|/* other info... */
-DECL|member|dmasg
-id|dmasg_t
-id|dmasg
+DECL|member|sg
+r_struct
+id|scatterlist
+id|sg
 (braket
 id|NR_SG
 )braket

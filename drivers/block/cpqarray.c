@@ -212,6 +212,15 @@ id|smart4_access
 )brace
 comma
 (brace
+l_int|0x40480E11
+comma
+l_string|&quot;Compaq Raid LC2&quot;
+comma
+op_amp
+id|smart4_access
+)brace
+comma
+(brace
 l_int|0x40500E11
 comma
 l_string|&quot;Smart Array 4200&quot;

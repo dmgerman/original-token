@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/keyboard.h&n; *&n; * Keyboard driver definitions for Acorn Archimedes/A5000&n; * architecture&n; *&n; * Copyright (C) 1998 Russell King&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-arc/keyboard.h&n; *&n; *  Copyright (C) 1998 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Keyboard driver definitions for Acorn Archimedes/A5000&n; *  architecture&n; */
 macro_line|#include &lt;asm/irq.h&gt;
 DECL|macro|NR_SCANCODES
 mdefine_line|#define NR_SCANCODES 128

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/time.h&n; *&n; * Copyright (c) 1996-2000 Russell King.&n; *&n; * Changelog:&n; *  24-Sep-1996&t;RMK&t;Created&n; *  10-Oct-1996&t;RMK&t;Brought up to date with arch-sa110eval&n; *  04-Dec-1997&t;RMK&t;Updated for new arch/arm/time.c&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-arc/time.h&n; *&n; *  Copyright (C) 1996-2000 Russell King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Changelog:&n; *   24-Sep-1996 RMK&t;Created&n; *   10-Oct-1996 RMK&t;Brought up to date with arch-sa110eval&n; *   04-Dec-1997 RMK&t;Updated for new arch/arm/time.c&n; */
 r_extern
 r_void
 id|ioctime_init

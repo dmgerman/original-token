@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/mouse_rpc.c&n; *&n; * Copyright (C) 1996-1998 Russell King&n; *&n; * This handles the Acorn RiscPCs mouse.  We basically have a couple&n; * of hardware registers that track the sensor count for the X-Y movement&n; * and another register holding the button state.  On every VSYNC interrupt&n; * we read the complete state and then work out if something has changed.&n; */
+multiline_comment|/*&n; *  linux/drivers/char/mouse_rpc.c&n; *&n; *  Copyright (C) 1996-1998 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  This handles the Acorn RiscPCs mouse.  We basically have a couple&n; *  of hardware registers that track the sensor count for the X-Y movement&n; *  and another register holding the button state.  On every VSYNC interrupt&n; *  we read the complete state and then work out if something has changed.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/iomd.h&gt;
+macro_line|#include &lt;asm/hardware/iomd.h&gt;
 macro_line|#include &quot;../../char/busmouse.h&quot;
 DECL|variable|old_x
 DECL|variable|old_y

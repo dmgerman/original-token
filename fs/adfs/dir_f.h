@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/adfs/dir_f.h&n; *&n; * Copyright (C) 1999 Russell King&n; *&n; * Structures of directories on the F format disk&n; */
+multiline_comment|/*&n; *  linux/fs/adfs/dir_f.h&n; *&n; *  Copyright (C) 1999 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Structures of directories on the F format disk&n; */
 macro_line|#ifndef ADFS_DIR_F_H
 DECL|macro|ADFS_DIR_F_H
 mdefine_line|#define ADFS_DIR_F_H

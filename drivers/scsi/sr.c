@@ -88,6 +88,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|variable|sr_template
+r_static
 r_struct
 id|Scsi_Device_Template
 id|sr_template

@@ -277,8 +277,8 @@ id|ipv6_devconf
 id|ipv6_devconf
 suffix:semicolon
 DECL|function|ipv6_eth_mc_map
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ipv6_eth_mc_map
 c_func
@@ -329,8 +329,8 @@ id|__u32
 suffix:semicolon
 )brace
 DECL|function|ipv6_tr_mc_map
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ipv6_tr_mc_map
 c_func

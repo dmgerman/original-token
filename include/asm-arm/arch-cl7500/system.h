@@ -2,7 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-cl7500/system.h&n; *&n; * C
 macro_line|#ifndef __ASM_ARCH_SYSTEM_H
 DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
-macro_line|#include &lt;asm/iomd.h&gt;
+macro_line|#include &lt;asm/hardware/iomd.h&gt;
 DECL|function|arch_idle
 r_static
 r_void

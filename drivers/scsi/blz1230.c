@@ -1025,18 +1025,17 @@ id|count
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;blz1230.h&quot;
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|SCSI_BLZ1230
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 DECL|function|blz1230_esp_release
 r_int
 id|blz1230_esp_release

@@ -310,8 +310,8 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* Main classifier routine: scans classifier chain attached&n;   to this qdisc, (optionally) tests for protocol and asks&n;   specific classifiers.&n; */
 DECL|function|tc_classify
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|tc_classify
 c_func

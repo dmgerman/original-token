@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/adfs/super.c&n; *&n; * Copyright (C) 1997-1999 Russell King&n; */
+multiline_comment|/*&n; *  linux/fs/adfs/super.c&n; *&n; *  Copyright (C) 1997-1999 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2061,6 +2061,12 @@ r_goto
 id|error
 suffix:semicolon
 )brace
+r_else
+id|sb-&gt;s_root-&gt;d_op
+op_assign
+op_amp
+id|adfs_dentry_operations
+suffix:semicolon
 r_return
 id|sb
 suffix:semicolon

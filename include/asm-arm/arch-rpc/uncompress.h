@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-a5k/uncompress.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-rpc/uncompress.h&n; *&n; *  Copyright (C) 1996 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 DECL|macro|VIDMEM
 mdefine_line|#define VIDMEM ((char *)SCREEN_START)
 macro_line|#include &lt;asm/hardware.h&gt;

@@ -98,8 +98,6 @@ id|net_device
 op_star
 id|dev
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|S_NS8390_init
 r_static
@@ -117,8 +115,6 @@ comma
 r_int
 id|startp
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|S_ei_open
 r_static
@@ -133,8 +129,6 @@ id|net_device
 op_star
 id|dev
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|S_ei_close
 r_static
@@ -149,8 +143,6 @@ id|net_device
 op_star
 id|dev
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|S_ei_interrupt
 r_static
@@ -172,8 +164,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|unload_8390_module
 r_extern

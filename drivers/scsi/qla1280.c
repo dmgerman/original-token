@@ -23625,15 +23625,14 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Declarations for load module&n; */
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|QLA1280_LINUX_TEMPLATE
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 multiline_comment|/************************************************************************&n; * qla1280_check_for_dead_scsi_bus                                      *&n; *                                                                      *&n; *    This routine checks for a dead SCSI bus                           *&n; ************************************************************************/
 DECL|macro|SET_SXP_BANK
 mdefine_line|#define SET_SXP_BANK            0x0100

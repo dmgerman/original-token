@@ -16709,14 +16709,13 @@ comma
 id|BusLogic_Setup
 )paren
 suffix:semicolon
-multiline_comment|/*&n;  Include Module support if requested.&n;*/
-macro_line|#ifdef MODULE
+multiline_comment|/*&n;  Get it all started&n;*/
 DECL|variable|driver_template
+r_static
 id|SCSI_Host_Template_T
 id|driver_template
 op_assign
 id|BUSLOGIC
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 eof

@@ -21,10 +21,7 @@ macro_line|#include &lt;pcmcia/bulkmem.h&gt;
 macro_line|#include &lt;pcmcia/cistpl.h&gt;
 macro_line|#include &quot;cs_internal.h&quot;
 macro_line|#include &quot;rsrc_mgr.h&quot;
-macro_line|#ifndef PCMCIA_DEBUG
-DECL|macro|PCMCIA_DEBUG
-mdefine_line|#define PCMCIA_DEBUG 1
-macro_line|#endif
+macro_line|#ifdef PCMCIA_DEBUG
 DECL|variable|pc_debug
 r_static
 r_int
@@ -32,6 +29,7 @@ id|pc_debug
 op_assign
 id|PCMCIA_DEBUG
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*====================================================================*/
 DECL|macro|FIND_FIRST_BIT
 mdefine_line|#define FIND_FIRST_BIT(n)&t;((n) - ((n) &amp; ((n)-1)))
@@ -1139,10 +1137,6 @@ id|dev
 suffix:semicolon
 id|u_char
 id|i
-comma
-id|bus
-op_assign
-id|s-&gt;cap.cb_dev-&gt;subordinate-&gt;number
 suffix:semicolon
 id|DEBUG
 c_func
@@ -1151,7 +1145,7 @@ l_int|0
 comma
 l_string|&quot;cs: cb_enable(bus %d)&bslash;n&quot;
 comma
-id|bus
+id|s-&gt;cap.cb_dev-&gt;subordinate-&gt;number
 )paren
 suffix:semicolon
 multiline_comment|/* Configure bridge */

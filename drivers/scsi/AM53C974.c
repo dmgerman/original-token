@@ -10482,13 +10482,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|driver_template
-r_static
-id|Scsi_Host_Template
-id|driver_template
-op_assign
-id|AM53C974
-suffix:semicolon
 multiline_comment|/* You can specify overrides=a,b,c,d in the same format at AM53C974=a,b,c,d&n;   on boot up */
 id|MODULE_PARM
 c_func
@@ -10498,6 +10491,13 @@ comma
 l_string|&quot;1-32i&quot;
 )paren
 suffix:semicolon
-macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif
+DECL|variable|driver_template
+r_static
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|AM53C974
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
 eof

@@ -369,6 +369,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|variable|st_template
+r_static
 r_struct
 id|Scsi_Device_Template
 id|st_template
@@ -19655,11 +19656,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|init_st
+r_static
 r_int
 id|__init
-id|init_module
+id|init_st
 c_func
 (paren
 r_void
@@ -19672,8 +19673,7 @@ c_func
 suffix:semicolon
 id|st_template.module
 op_assign
-op_amp
-id|__this_module
+id|THIS_MODULE
 suffix:semicolon
 r_return
 id|scsi_register_module
@@ -19686,9 +19686,11 @@ id|st_template
 )paren
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|exit_st
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|exit_st
 c_func
 (paren
 r_void
@@ -19845,5 +19847,18 @@ l_string|&quot;st: Unloaded.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;&t;/* MODULE */
+DECL|variable|init_st
+id|module_init
+c_func
+(paren
+id|init_st
+)paren
+suffix:semicolon
+DECL|variable|exit_st
+id|module_exit
+c_func
+(paren
+id|exit_st
+)paren
+suffix:semicolon
 eof

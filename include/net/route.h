@@ -372,8 +372,8 @@ id|cb
 suffix:semicolon
 multiline_comment|/* Deprecated: use ip_route_output_key directly */
 DECL|function|ip_route_output
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|ip_route_output
 c_func
@@ -431,8 +431,8 @@ id|key
 suffix:semicolon
 )brace
 DECL|function|ip_rt_put
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|ip_rt_put
 c_func
@@ -471,8 +471,8 @@ l_int|16
 )braket
 suffix:semicolon
 DECL|function|rt_tos2priority
-r_extern
-id|__inline__
+r_static
+r_inline
 r_char
 id|rt_tos2priority
 c_func
@@ -495,8 +495,8 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|ip_route_connect
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|ip_route_connect
 c_func
@@ -614,8 +614,8 @@ id|create
 )paren
 suffix:semicolon
 DECL|function|rt_get_peer
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|inet_peer
 op_star

@@ -1,15 +1,16 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-nexuspci.c&n; *  from arch/arm/mm/mm-ebsa110.c&n; *&n; * Extra MM routines for the FTV/PCI architecture&n; *&n; * Copyright (C) 1998-1999 Phil Blundell&n; * Copyright (C) 1998-1999 Russell King&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/mm-nexuspci.c&n; *   from linux/arch/arm/mm/mm-ebsa110.c&n; *&n; *  Copyright (C) 1998-1999 Phil Blundell&n; *  Copyright (C) 1998-1999 Russell King&n; *&n; *  Extra MM routines for the FTV/PCI architecture&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;map.h&quot;
+macro_line|#include &lt;asm/mach/map.h&gt;
 DECL|variable|__initdata
+r_static
 r_struct
 id|map_desc
-id|io_desc
+id|nexuspci_io_desc
 (braket
 )braket
 id|__initdata
@@ -104,20 +105,24 @@ l_int|0
 comma
 l_int|0
 )brace
+comma
+id|LAST_DESC
 )brace
 suffix:semicolon
-DECL|macro|SIZE
-mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
-DECL|variable|io_desc_size
-r_int
-r_int
-id|__initdata
-id|io_desc_size
-op_assign
-id|SIZE
+DECL|function|nexuspci_map_io
+r_void
+id|__init
+id|nexuspci_map_io
 c_func
 (paren
-id|io_desc
+r_void
+)paren
+(brace
+id|iotable_init
+c_func
+(paren
+id|nexuspci_io_desc
 )paren
 suffix:semicolon
+)brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/mm/fault-common.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Modifications for ARM processor (c) 1995-1999 Russell King&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/fault-common.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Modifications for ARM processor (c) 1995-1999 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_void
@@ -21,7 +21,6 @@ id|err
 suffix:semicolon
 multiline_comment|/*&n; * This is useful to dump out the page tables associated with&n; * &squot;addr&squot; in mm &squot;mm&squot;.&n; */
 DECL|function|show_pte
-r_static
 r_void
 id|show_pte
 c_func
@@ -120,7 +119,7 @@ id|pgd
 id|printk
 c_func
 (paren
-l_string|&quot;(bad)&bslash;n&quot;
+l_string|&quot;(bad)&quot;
 )paren
 suffix:semicolon
 r_break
@@ -175,7 +174,7 @@ id|pmd
 id|printk
 c_func
 (paren
-l_string|&quot;(bad)&bslash;n&quot;
+l_string|&quot;(bad)&quot;
 )paren
 suffix:semicolon
 r_break

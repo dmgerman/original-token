@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/acornscsi.c&n; *&n; *  Acorn SCSI 3 driver&n; *  By R.M.King.&n; *&n; * Abandoned using the Select and Transfer command since there were&n; * some nasty races between our software and the target devices that&n; * were not easy to solve, and the device errata had a lot of entries&n; * for this command, some of them quite nasty...&n; *&n; * Changelog:&n; *  26-Sep-1997&t;RMK&t;Re-jigged to use the queue module.&n; *&t;&t;&t;Re-coded state machine to be based on driver&n; *&t;&t;&t;state not scsi state.  Should be easier to debug.&n; *&t;&t;&t;Added acornscsi_release to clean up properly.&n; *&t;&t;&t;Updated proc/scsi reporting.&n; *  05-Oct-1997&t;RMK&t;Implemented writing to SCSI devices.&n; *  06-Oct-1997&t;RMK&t;Corrected small (non-serious) bug with the connect/&n; *&t;&t;&t;reconnect race condition causing a warning message.&n; *  12-Oct-1997&t;RMK&t;Added catch for re-entering interrupt routine.&n; *  15-Oct-1997&t;RMK&t;Improved handling of commands.&n; *  27-Jun-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h.&n; *  13-Dec-1998&t;RMK&t;Better abort code and command handling.  Extra state&n; *&t;&t;&t;transitions added to allow dodgy devices to work.&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/scsi/acornscsi.c&n; *&n; *  Acorn SCSI 3 driver&n; *  By R.M.King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; * Abandoned using the Select and Transfer command since there were&n; * some nasty races between our software and the target devices that&n; * were not easy to solve, and the device errata had a lot of entries&n; * for this command, some of them quite nasty...&n; *&n; * Changelog:&n; *  26-Sep-1997&t;RMK&t;Re-jigged to use the queue module.&n; *&t;&t;&t;Re-coded state machine to be based on driver&n; *&t;&t;&t;state not scsi state.  Should be easier to debug.&n; *&t;&t;&t;Added acornscsi_release to clean up properly.&n; *&t;&t;&t;Updated proc/scsi reporting.&n; *  05-Oct-1997&t;RMK&t;Implemented writing to SCSI devices.&n; *  06-Oct-1997&t;RMK&t;Corrected small (non-serious) bug with the connect/&n; *&t;&t;&t;reconnect race condition causing a warning message.&n; *  12-Oct-1997&t;RMK&t;Added catch for re-entering interrupt routine.&n; *  15-Oct-1997&t;RMK&t;Improved handling of commands.&n; *  27-Jun-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h.&n; *  13-Dec-1998&t;RMK&t;Better abort code and command handling.  Extra state&n; *&t;&t;&t;transitions added to allow dodgy devices to work.&n; */
 DECL|macro|DEBUG_NO_WRITE
 mdefine_line|#define DEBUG_NO_WRITE&t;1
 DECL|macro|DEBUG_QUEUES
@@ -9968,7 +9968,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|queue_removecmd
+id|queue_remove_cmd
 c_func
 (paren
 op_amp
@@ -9996,7 +9996,7 @@ r_else
 r_if
 c_cond
 (paren
-id|queue_removecmd
+id|queue_remove_cmd
 c_func
 (paren
 op_amp

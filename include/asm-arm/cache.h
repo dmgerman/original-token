@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/cache.h&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/cache.h&n; */
 macro_line|#ifndef __ASMARM_CACHE_H
 DECL|macro|__ASMARM_CACHE_H
 mdefine_line|#define __ASMARM_CACHE_H

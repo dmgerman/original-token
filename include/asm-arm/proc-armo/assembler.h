@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/asm-arm/proc-armo/assembler.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * This file contains arm architecture specific defines&n; * for the different processors&n; */
+multiline_comment|/*&n; *  linux/asm-arm/proc-armo/assembler.h&n; *&n; *  Copyright (C) 1996 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  This file contains arm architecture specific defines&n; *  for the different processors&n; */
 DECL|macro|MODE_USR
 mdefine_line|#define MODE_USR&t;USR26_MODE
 DECL|macro|MODE_FIQ

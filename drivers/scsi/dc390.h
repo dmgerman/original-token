@@ -9,7 +9,6 @@ DECL|macro|DC390_BANNER
 mdefine_line|#define DC390_BANNER &quot;Tekram DC390/AM53C974&quot;
 DECL|macro|DC390_VERSION
 mdefine_line|#define DC390_VERSION &quot;2.0d 1998/12/25&quot;
-macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;scsi/scsicam.h&gt;
 r_extern
 r_int
@@ -127,6 +126,5 @@ id|inout
 suffix:semicolon
 DECL|macro|DC390_T
 mdefine_line|#define DC390_T    {&t;&t;&t;&t;&t;&bslash;&n;   proc_name:      &quot;tmscsim&quot;,&t;&t;&t;&t;&bslash;&n;   proc_info:      DC390_proc_info,&t;&t;&t;&bslash;&n;   name:           DC390_BANNER &quot; V&quot; DC390_VERSION,&t;&bslash;&n;   detect:         DC390_detect,&t;&t;&t;&bslash;&n;   release:        DC390_release,&t;&t;&t;&bslash;&n;   queuecommand:   DC390_queue_command,&t;&t;&t;&bslash;&n;   abort:          DC390_abort,&t;&t;&t;&t;&bslash;&n;   reset:          DC390_reset,&t;&t;&t;&t;&bslash;&n;   bios_param:     DC390_bios_param,&t;&t;&t;&bslash;&n;   can_queue:      17,&t;&t;&t;&t;&t;&bslash;&n;   this_id:        7,&t;&t;&t;&t;&t;&bslash;&n;   sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;   cmd_per_lun:    8,&t;&t;&t;&t;&t;&bslash;&n;   use_clustering: DISABLE_CLUSTERING&t;&t;&t;&bslash;&n;   }
-macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */
 macro_line|#endif /* DC390_H */
 eof

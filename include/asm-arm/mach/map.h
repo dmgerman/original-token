@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/asm-arm/map.h&n; *&n; *  Copyright (C) 1999-2000 Russell King&n; *&n; *  Page table mapping constructs and function prototypes&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/map.h&n; *&n; *  Copyright (C) 1999-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Page table mapping constructs and function prototypes&n; */
 DECL|struct|map_desc
 r_struct
 id|map_desc

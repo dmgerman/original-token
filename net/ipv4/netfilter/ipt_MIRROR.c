@@ -241,7 +241,7 @@ id|KERN_DEBUG
 l_string|&quot;khm in MIRROR&bslash;n&quot;
 )paren
 suffix:semicolon
-id|kfree
+id|kfree_skb
 c_func
 (paren
 id|skb

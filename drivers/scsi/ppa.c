@@ -283,15 +283,14 @@ suffix:semicolon
 DECL|macro|ppa_pb_release
 mdefine_line|#define ppa_pb_release(x) parport_release(ppa_hosts[(x)].dev)
 multiline_comment|/***************************************************************************&n; *                   Parallel port probing routines                        *&n; ***************************************************************************/
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|PPA
 suffix:semicolon
 macro_line|#include  &quot;scsi_module.c&quot;
-macro_line|#endif
 multiline_comment|/*&n; * Start of Chipset kludges&n; */
 DECL|function|ppa_detect
 r_int

@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/system.h&n; *&n; * Copyright (c) 1996-1999 Russell King.&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-ebsa110/system.h&n; *&n; *  Copyright (C) 1996-2000 Russell King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#ifndef __ASM_ARCH_SYSTEM_H
 DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
-multiline_comment|/*&n; * This machine must never stop it MCLK.  However, if we are&n; * idle for a long time, slow the processor clock to MCLK.&n; */
+multiline_comment|/*&n; * EBSA110 idling methodology:&n; *&n; * We can not execute the &quot;wait for interrupt&quot; instruction since that&n; * will stop our MCLK signal (which provides the clock for the glue&n; * logic, and therefore the timer interrupt).&n; *&n; * Instead, we spin, waiting for either hlt_counter or need_resched&n; * to be set.  If we have been spinning for 2cs, then we drop the&n; * core clock down to the memory clock.&n; */
 DECL|function|arch_idle
 r_static
 r_void
@@ -39,13 +39,13 @@ c_loop
 id|time_before
 c_func
 (paren
-id|start_idle
-comma
 id|jiffies
+comma
+id|start_idle
 op_plus
 id|HZ
 op_div
-l_int|3
+l_int|50
 )paren
 )paren
 suffix:semicolon

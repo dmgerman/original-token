@@ -5,9 +5,9 @@ macro_line|#endif
 DECL|macro|ADS_CPLD_BASE
 mdefine_line|#define ADS_CPLD_BASE&t;&t;(0x10000000)
 DECL|macro|ADS_p2v
-mdefine_line|#define ADS_p2v( x )&t;&t;((x) - ADS_CPLD_BASE + 0xdc000000)
+mdefine_line|#define ADS_p2v( x )&t;&t;((x) - ADS_CPLD_BASE + 0xf0000000)
 DECL|macro|ADS_v2p
-mdefine_line|#define ADS_v2p( x )&t;&t;((x) - 0xdc000000 + ADS_CPLD_BASE)
+mdefine_line|#define ADS_v2p( x )&t;&t;((x) - 0xf0000000 + ADS_CPLD_BASE)
 multiline_comment|/* Parallel Port */
 DECL|macro|_ADS_PPDR
 mdefine_line|#define _ADS_PPDR&t;&t;0x10020000&t;/* parallel port data reg */

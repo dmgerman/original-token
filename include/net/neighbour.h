@@ -1050,8 +1050,8 @@ id|p
 suffix:semicolon
 multiline_comment|/*&n; *&t;Neighbour references&n; */
 DECL|function|neigh_release
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|neigh_release
 c_func
@@ -1080,8 +1080,8 @@ id|neigh
 suffix:semicolon
 )brace
 DECL|function|neigh_clone
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|neighbour
 op_star
@@ -1113,8 +1113,8 @@ suffix:semicolon
 DECL|macro|neigh_hold
 mdefine_line|#define neigh_hold(n)&t;atomic_inc(&amp;(n)-&gt;refcnt)
 DECL|function|neigh_confirm
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|neigh_confirm
 c_func
@@ -1136,8 +1136,8 @@ id|jiffies
 suffix:semicolon
 )brace
 DECL|function|neigh_is_connected
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|neigh_is_connected
 c_func
@@ -1155,8 +1155,8 @@ id|NUD_CONNECTED
 suffix:semicolon
 )brace
 DECL|function|neigh_is_valid
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|neigh_is_valid
 c_func
@@ -1174,8 +1174,8 @@ id|NUD_VALID
 suffix:semicolon
 )brace
 DECL|function|neigh_event_send
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|neigh_event_send
 c_func
@@ -1224,8 +1224,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|neighbour
 op_star
@@ -1303,8 +1303,8 @@ suffix:colon
 id|n
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|neighbour
 op_star

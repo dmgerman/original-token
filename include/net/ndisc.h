@@ -322,8 +322,8 @@ r_void
 )paren
 suffix:semicolon
 DECL|function|ndisc_get_neigh
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|neighbour
 op_star

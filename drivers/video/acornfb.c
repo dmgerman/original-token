@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/video/acornfb.c&n; *&n; * Copyright (C) 1998-2000 Russell King&n; *&n; * Frame buffer code for Acorn platforms&n; *&n; * NOTE: Most of the modes with X!=640 will disappear shortly.&n; * NOTE: Startup setting of HS &amp; VS polarity not supported.&n; *       (do we need to support it if we&squot;re coming up in 640x480?)&n; */
+multiline_comment|/*&n; *  linux/drivers/video/acornfb.c&n; *&n; *  Copyright (C) 1998-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; * Frame buffer code for Acorn platforms&n; *&n; * NOTE: Most of the modes with X!=640 will disappear shortly.&n; * NOTE: Startup setting of HS &amp; VS polarity not supported.&n; *       (do we need to support it if we&squot;re coming up in 640x480?)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -188,6 +188,8 @@ id|vram_size
 suffix:semicolon
 multiline_comment|/* set by setup.c */
 macro_line|#ifdef HAS_VIDC
+DECL|macro|MAX_SIZE
+mdefine_line|#define MAX_SIZE&t;480*1024
 multiline_comment|/* CTL     VIDC&t;Actual&n; * 24.000  0&t; 8.000&n; * 25.175  0&t; 8.392&n; * 36.000  0&t;12.000&n; * 24.000  1&t;12.000&n; * 25.175  1&t;12.588&n; * 24.000  2&t;16.000&n; * 25.175  2&t;16.783&n; * 36.000  1&t;18.000&n; * 24.000  3&t;24.000&n; * 36.000  2&t;24.000&n; * 25.175  3&t;25.175&n; * 36.000  3&t;36.000&n; */
 DECL|struct|pixclock
 r_static
@@ -1387,6 +1389,8 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef HAS_VIDC20
 macro_line|#include &lt;asm/arch/acornfb.h&gt;
+DECL|macro|MAX_SIZE
+mdefine_line|#define MAX_SIZE&t;2*1024*1024
 multiline_comment|/* VIDC20 has a different set of rules from the VIDC:&n; *  hcr  : must be multiple of 4&n; *  hswr : must be even&n; *  hdsr : must be even&n; *  hder : must be even&n; *  vcr  : &gt;= 2, (interlace, must be odd)&n; *  vswr : &gt;= 1&n; *  vdsr : &gt;= 1&n; *  vder : &gt;= vdsr&n; */
 r_static
 r_void
@@ -6472,7 +6476,7 @@ r_if
 c_cond
 (paren
 id|current_par.montype
-OG
+op_ge
 l_int|0
 )paren
 (brace
@@ -6670,15 +6674,19 @@ suffix:semicolon
 r_else
 id|size
 op_assign
+id|MAX_SIZE
+suffix:semicolon
+multiline_comment|/*&n;&t; * Limit maximum screen size.&n;&t; */
+r_if
+c_cond
 (paren
-id|init_var.xres
-op_star
-id|init_var.yres
-op_star
-id|init_var.bits_per_pixel
+id|size
+OG
+id|MAX_SIZE
 )paren
-op_div
-l_int|8
+id|size
+op_assign
+id|MAX_SIZE
 suffix:semicolon
 id|size
 op_assign
@@ -6842,20 +6850,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#if defined(HAS_VIDC)
-DECL|macro|MAX_SIZE
-mdefine_line|#define MAX_SIZE&t;480*1024
-multiline_comment|/*&n;&t; * Limit maximum screen size.&n;&t; */
-r_if
-c_cond
-(paren
-id|size
-OG
-id|MAX_SIZE
-)paren
-id|size
-op_assign
-id|MAX_SIZE
-suffix:semicolon
 multiline_comment|/*&n;&t; * Free unused pages&n;&t; */
 id|free_unused_pages
 c_func
@@ -6879,6 +6873,8 @@ op_assign
 id|VIDC_PALETTE_SIZE
 suffix:semicolon
 multiline_comment|/*&n;&t; * Lookup the timing for this resolution.  If we can&squot;t&n;&t; * find it, then we can&squot;t restore it if we change&n;&t; * the resolution, so we disable this feature.&n;&t; */
+r_do
+(brace
 id|rc
 op_assign
 id|fb_find_mode
@@ -6911,14 +6907,18 @@ comma
 id|DEFAULT_BPP
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we didn&squot;t find an exact match, try the&n;&t; * generic database.&n;&t; */
+multiline_comment|/*&n;&t;&t; * If we found an exact match, all ok.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|rc
-op_ne
+op_eq
 l_int|1
-op_logical_and
+)paren
+r_break
+suffix:semicolon
+id|rc
+op_assign
 id|fb_find_mode
 c_func
 (paren
@@ -6939,6 +6939,93 @@ id|acornfb_default_mode
 comma
 id|DEFAULT_BPP
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If we found an exact match, all ok.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|rc
+op_eq
+l_int|1
+)paren
+r_break
+suffix:semicolon
+id|rc
+op_assign
+id|fb_find_mode
+c_func
+(paren
+op_amp
+id|init_var
+comma
+op_amp
+id|fb_info
+comma
+l_int|NULL
+comma
+id|modedb
+comma
+r_sizeof
+(paren
+id|modedb
+)paren
+op_div
+r_sizeof
+(paren
+op_star
+id|modedb
+)paren
+comma
+op_amp
+id|acornfb_default_mode
+comma
+id|DEFAULT_BPP
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rc
+)paren
+r_break
+suffix:semicolon
+id|rc
+op_assign
+id|fb_find_mode
+c_func
+(paren
+op_amp
+id|init_var
+comma
+op_amp
+id|fb_info
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+op_amp
+id|acornfb_default_mode
+comma
+id|DEFAULT_BPP
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * If we didn&squot;t find an exact match, try the&n;&t; * generic database.&n;&t; */
+r_if
+c_cond
+(paren
+id|rc
+op_eq
+l_int|0
 )paren
 (brace
 id|printk
@@ -6946,6 +7033,10 @@ c_func
 (paren
 l_string|&quot;Acornfb: no valid mode found&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|h_sync

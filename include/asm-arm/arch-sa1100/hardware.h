@@ -3,19 +3,25 @@ macro_line|#ifndef __ASM_ARCH_HARDWARE_H
 DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 multiline_comment|/* Flushing areas */
 DECL|macro|FLUSH_BASE_PHYS
 mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0xe0000000&t;/* SA1100 zero bank */
 DECL|macro|FLUSH_BASE
-mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
+mdefine_line|#define FLUSH_BASE&t;&t;0xf5000000
 DECL|macro|FLUSH_BASE_MINICACHE
-mdefine_line|#define FLUSH_BASE_MINICACHE&t;0xdf800000
+mdefine_line|#define FLUSH_BASE_MINICACHE&t;0xf5800000
 DECL|macro|UNCACHEABLE_ADDR
 mdefine_line|#define UNCACHEABLE_ADDR&t;0xfa050000
-multiline_comment|/*&n; * We requires absolute addresses i.e. (0xe00000 + 0x3f8) for in*()/out*()&n; * macros to be useful for all cases.&n; */
+multiline_comment|/*&n; * Those are statically mapped PCMCIA IO space for designs using it as a&n; * generic IO bus, typically with ISA parts, hardwired IDE interfaces, etc.&n; * The actual PCMCIA code is mapping required IO region at run time.&n; */
+DECL|macro|PCMCIA_IO_0_BASE
+mdefine_line|#define PCMCIA_IO_0_BASE&t;0xf6000000
+DECL|macro|PCMCIA_IO_1_BASE
+mdefine_line|#define PCMCIA_IO_1_BASE&t;0xf7000000
+multiline_comment|/*&n; * We requires absolute addresses i.e. (PCMCIA_IO_0_BASE + 0x3f8) for &n; * in*()/out*() macros to be usable for all cases.&n; */
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0
-multiline_comment|/*&n; * SA1100 internal I/O mappings&n; *&n; * We have the following mapping:&n; *      phys            virt&n; *      80000000        f8000000&n; *      90000000        fa000000&n; *      a0000000        fc000000&n; *      b0000000        fe000000&n; *&n; * Nb: PCMCIA is mapped from 0xe0000000 to f7ffffff in mm-sa1100.c&n; */
+multiline_comment|/*&n; * SA1100 internal I/O mappings&n; *&n; * We have the following mapping:&n; *      phys            virt&n; *      80000000        f8000000&n; *      90000000        fa000000&n; *      a0000000        fc000000&n; *      b0000000        fe000000&n; */
 DECL|macro|VIO_BASE
 mdefine_line|#define VIO_BASE        0xf8000000&t;/* virtual start of IO space */
 DECL|macro|VIO_SHIFT
@@ -64,22 +70,25 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SA1100_BITSY
 macro_line|#include &quot;bitsy.h&quot;
 macro_line|#endif
-macro_line|#if defined(CONFIG_SA1100_GRAPHICSCLIENT) || defined(CONFIG_SA1100_THINCLIENT)
+macro_line|#if defined(CONFIG_SA1100_THINCLIENT)
 macro_line|#include &quot;thinclient.h&quot;
 macro_line|#endif
+macro_line|#if defined(CONFIG_SA1100_GRAPHICSCLIENT)
+macro_line|#include &quot;graphicsclient.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SA1101
-multiline_comment|/*&n; * We have mapped the sa1101 depending on the value of SA1101_BASE.&n; * It then appears from 0xdc000000.&n; */
+multiline_comment|/*&n; * We have mapped the sa1101 depending on the value of SA1101_BASE.&n; * It then appears from 0xf4000000.&n; */
 DECL|macro|SA1101_p2v
-mdefine_line|#define SA1101_p2v( x )         ((x) - SA1101_BASE + 0xdc000000)
+mdefine_line|#define SA1101_p2v( x )         ((x) - SA1101_BASE + 0xf4000000)
 DECL|macro|SA1101_v2p
-mdefine_line|#define SA1101_v2p( x )         ((x) - 0xdc000000  + SA1101_BASE)
+mdefine_line|#define SA1101_v2p( x )         ((x) - 0xf4000000  + SA1101_BASE)
 macro_line|#include &quot;SA-1101.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SA1111
 DECL|macro|SA1111_p2v
-mdefine_line|#define SA1111_p2v( x )         ((x) - SA1111_BASE + 0xd8000000)
+mdefine_line|#define SA1111_p2v( x )         ((x) - SA1111_BASE + 0xf4000000)
 DECL|macro|SA1111_v2p
-mdefine_line|#define SA1111_v2p( x )         ((x) - 0xd8000000 + SA1111_BASE)
+mdefine_line|#define SA1111_v2p( x )         ((x) - 0xf4000000 + SA1111_BASE)
 macro_line|#include &quot;SA-1111.h&quot;
 macro_line|#endif
 macro_line|#endif  /* _ASM_ARCH_HARDWARE_H */

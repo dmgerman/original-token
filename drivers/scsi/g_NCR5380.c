@@ -3632,8 +3632,8 @@ DECL|macro|PRINTP
 macro_line|#undef PRINTP
 DECL|macro|ANDP
 macro_line|#undef ANDP
-macro_line|#ifdef MODULE
 multiline_comment|/* Eventually this will go into an include file, but this will be later */
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
@@ -3641,6 +3641,7 @@ id|GENERIC_NCR5380
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#ifdef MODULE 
 id|MODULE_PARM
 c_func
 (paren

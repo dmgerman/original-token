@@ -11543,9 +11543,13 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* edited by HMSEO for GT sound*/
 )brace
-id|pci_dev-&gt;driver_data
-op_assign
+id|pci_set_drvdata
+c_func
+(paren
+id|pci_dev
+comma
 id|card
+)paren
 suffix:semicolon
 id|pci_dev-&gt;dma_mask
 op_assign
@@ -11583,7 +11587,11 @@ id|trident_card
 op_star
 id|card
 op_assign
-id|pci_dev-&gt;driver_data
+id|pci_get_drvdata
+c_func
+(paren
+id|pci_dev
+)paren
 suffix:semicolon
 multiline_comment|/* Kill interrupts, and SP/DIF */
 id|trident_disable_loop_interrupts
@@ -11665,6 +11673,14 @@ id|kfree
 c_func
 (paren
 id|card
+)paren
+suffix:semicolon
+id|pci_set_drvdata
+c_func
+(paren
+id|pci_dev
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

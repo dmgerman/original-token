@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/include/asm-arm/cpu-multi32.h&n; *&n; *  Copyright (C) 2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/* forward-declare task_struct */
@@ -56,157 +57,6 @@ id|_proc_fin
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Processor architecture specific&n;&t; */
-multiline_comment|/* CACHE&n;&t; *&n;&t; * flush all caches&n;&t; */
-DECL|member|_flush_cache_all
-r_void
-(paren
-op_star
-id|_flush_cache_all
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * flush a specific page or pages&n;&t; */
-DECL|member|_flush_cache_area
-r_void
-(paren
-op_star
-id|_flush_cache_area
-)paren
-(paren
-r_int
-r_int
-id|address
-comma
-r_int
-r_int
-id|end
-comma
-r_int
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * flush cache entry for an address&n;&t; */
-DECL|member|_flush_cache_entry
-r_void
-(paren
-op_star
-id|_flush_cache_entry
-)paren
-(paren
-r_int
-r_int
-id|address
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * clean a virtual address range from the&n;&t; * D-cache without flushing the cache.&n;&t; */
-DECL|member|_clean_cache_area
-r_void
-(paren
-op_star
-id|_clean_cache_area
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * flush a page to RAM&n;&t; */
-DECL|member|_flush_ram_page
-r_void
-(paren
-op_star
-id|_flush_ram_page
-)paren
-(paren
-r_int
-r_int
-id|page
-)paren
-suffix:semicolon
-multiline_comment|/* TLB&n;&t; *&n;&t; * flush all TLBs&n;&t; */
-DECL|member|_flush_tlb_all
-r_void
-(paren
-op_star
-id|_flush_tlb_all
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * flush a specific TLB&n;&t; */
-DECL|member|_flush_tlb_area
-r_void
-(paren
-op_star
-id|_flush_tlb_area
-)paren
-(paren
-r_int
-r_int
-id|address
-comma
-r_int
-r_int
-id|end
-comma
-r_int
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Set the page table&n;&t; */
-DECL|member|_set_pgd
-r_void
-(paren
-op_star
-id|_set_pgd
-)paren
-(paren
-r_int
-r_int
-id|pgd_phys
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Set a PMD (handling IMP bit 4)&n;&t; */
-DECL|member|_set_pmd
-r_void
-(paren
-op_star
-id|_set_pmd
-)paren
-(paren
-id|pmd_t
-op_star
-id|pmdp
-comma
-id|pmd_t
-id|pmd
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Set a PTE&n;&t; */
-DECL|member|_set_pte
-r_void
-(paren
-op_star
-id|_set_pte
-)paren
-(paren
-id|pte_t
-op_star
-id|ptep
-comma
-id|pte_t
-id|pte
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Special stuff for a reset&n;&t; */
 DECL|member|reset
 r_volatile
@@ -221,73 +71,6 @@ r_int
 id|addr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * flush an icached page&n;&t; */
-DECL|member|_flush_icache_area
-r_void
-(paren
-op_star
-id|_flush_icache_area
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * write back dirty cached data&n;&t; */
-DECL|member|_cache_wback_area
-r_void
-(paren
-op_star
-id|_cache_wback_area
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * purge cached data without (necessarily) writing it back&n;&t; */
-DECL|member|_cache_purge_area
-r_void
-(paren
-op_star
-id|_cache_purge_area
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * flush a specific TLB&n;&t; */
-DECL|member|_flush_tlb_page
-r_void
-(paren
-op_star
-id|_flush_tlb_page
-)paren
-(paren
-r_int
-r_int
-id|address
-comma
-r_int
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Idle the processor&n;&t; */
 DECL|member|_do_idle
 r_int
@@ -300,18 +83,264 @@ r_int
 id|mode
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * flush I cache for a page&n;&t; */
-DECL|member|_flush_icache_page
+multiline_comment|/*&n;&t; * Processor architecture specific&n;&t; */
+r_struct
+(brace
+multiline_comment|/* CACHE */
+multiline_comment|/*&n;&t;&t; * flush all caches&n;&t;&t; */
+DECL|member|clean_invalidate_all
 r_void
 (paren
 op_star
-id|_flush_icache_page
+id|clean_invalidate_all
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * flush a specific page or pages&n;&t;&t; */
+DECL|member|clean_invalidate_range
+r_void
+(paren
+op_star
+id|clean_invalidate_range
 )paren
 (paren
 r_int
 r_int
 id|address
+comma
+r_int
+r_int
+id|end
+comma
+r_int
+id|flags
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * flush a page to RAM&n;&t;&t; */
+DECL|member|_flush_ram_page
+r_void
+(paren
+op_star
+id|_flush_ram_page
+)paren
+(paren
+r_void
+op_star
+id|virt_page
+)paren
+suffix:semicolon
+DECL|member|cache
+)brace
+id|cache
+suffix:semicolon
+r_struct
+(brace
+multiline_comment|/* D-cache */
+multiline_comment|/*&n;&t;&t; * invalidate the specified data range&n;&t;&t; */
+DECL|member|invalidate_range
+r_void
+(paren
+op_star
+id|invalidate_range
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * clean specified data range&n;&t;&t; */
+DECL|member|clean_range
+r_void
+(paren
+op_star
+id|clean_range
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * obsolete flush cache entry&n;&t;&t; */
+DECL|member|clean_page
+r_void
+(paren
+op_star
+id|clean_page
+)paren
+(paren
+r_void
+op_star
+id|virt_page
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * clean a virtual address range from the&n;&t;&t; * D-cache without flushing the cache.&n;&t;&t; */
+DECL|member|clean_entry
+r_void
+(paren
+op_star
+id|clean_entry
+)paren
+(paren
+r_int
+r_int
+id|start
+)paren
+suffix:semicolon
+DECL|member|dcache
+)brace
+id|dcache
+suffix:semicolon
+r_struct
+(brace
+multiline_comment|/* I-cache */
+multiline_comment|/*&n;&t;&t; * invalidate the I-cache for the specified range&n;&t;&t; */
+DECL|member|invalidate_range
+r_void
+(paren
+op_star
+id|invalidate_range
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * invalidate the I-cache for the specified virtual page&n;&t;&t; */
+DECL|member|invalidate_page
+r_void
+(paren
+op_star
+id|invalidate_page
+)paren
+(paren
+r_void
+op_star
+id|virt_page
+)paren
+suffix:semicolon
+DECL|member|icache
+)brace
+id|icache
+suffix:semicolon
+r_struct
+(brace
+multiline_comment|/* TLB */
+multiline_comment|/*&n;&t;&t; * flush all TLBs&n;&t;&t; */
+DECL|member|invalidate_all
+r_void
+(paren
+op_star
+id|invalidate_all
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * flush a specific TLB&n;&t;&t; */
+DECL|member|invalidate_range
+r_void
+(paren
+op_star
+id|invalidate_range
+)paren
+(paren
+r_int
+r_int
+id|address
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * flush a specific TLB&n;&t;&t; */
+DECL|member|invalidate_page
+r_void
+(paren
+op_star
+id|invalidate_page
+)paren
+(paren
+r_int
+r_int
+id|address
+comma
+r_int
+id|flags
+)paren
+suffix:semicolon
+DECL|member|tlb
+)brace
+id|tlb
+suffix:semicolon
+r_struct
+(brace
+multiline_comment|/* PageTable */
+multiline_comment|/*&n;&t;&t; * Set the page table&n;&t;&t; */
+DECL|member|set_pgd
+r_void
+(paren
+op_star
+id|set_pgd
+)paren
+(paren
+r_int
+r_int
+id|pgd_phys
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Set a PMD (handling IMP bit 4)&n;&t;&t; */
+DECL|member|set_pmd
+r_void
+(paren
+op_star
+id|set_pmd
+)paren
+(paren
+id|pmd_t
+op_star
+id|pmdp
+comma
+id|pmd_t
+id|pmd
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Set a PTE&n;&t;&t; */
+DECL|member|set_pte
+r_void
+(paren
+op_star
+id|set_pte
+)paren
+(paren
+id|pte_t
+op_star
+id|ptep
+comma
+id|pte_t
+id|pte
+)paren
+suffix:semicolon
+DECL|member|pgtable
+)brace
+id|pgtable
 suffix:semicolon
 )brace
 id|processor
@@ -342,40 +371,40 @@ DECL|macro|cpu_proc_init
 mdefine_line|#define cpu_proc_init()&t;&t;&t;&t;processor._proc_init()
 DECL|macro|cpu_proc_fin
 mdefine_line|#define cpu_proc_fin()&t;&t;&t;&t;processor._proc_fin()
-DECL|macro|cpu_do_idle
-mdefine_line|#define cpu_do_idle(mode)&t;&t;&t;processor._do_idle(mode)
-DECL|macro|cpu_flush_cache_all
-mdefine_line|#define cpu_flush_cache_all()&t;&t;&t;processor._flush_cache_all()
-DECL|macro|cpu_flush_cache_area
-mdefine_line|#define cpu_flush_cache_area(start,end,flags)&t;processor._flush_cache_area(start,end,flags)
-DECL|macro|cpu_flush_cache_entry
-mdefine_line|#define cpu_flush_cache_entry(addr)&t;&t;processor._flush_cache_entry(addr)
-DECL|macro|cpu_clean_cache_area
-mdefine_line|#define cpu_clean_cache_area(start,size)&t;processor._clean_cache_area(start,size)
-DECL|macro|cpu_flush_ram_page
-mdefine_line|#define cpu_flush_ram_page(page)&t;&t;processor._flush_ram_page(page)
-DECL|macro|cpu_flush_tlb_all
-mdefine_line|#define cpu_flush_tlb_all()&t;&t;&t;processor._flush_tlb_all()
-DECL|macro|cpu_flush_tlb_area
-mdefine_line|#define cpu_flush_tlb_area(start,end,flags)&t;processor._flush_tlb_area(start,end,flags)
-DECL|macro|cpu_flush_tlb_page
-mdefine_line|#define cpu_flush_tlb_page(addr,flags)&t;&t;processor._flush_tlb_page(addr,flags)
-DECL|macro|cpu_set_pgd
-mdefine_line|#define cpu_set_pgd(pgd)&t;&t;&t;processor._set_pgd(pgd)
-DECL|macro|cpu_set_pmd
-mdefine_line|#define cpu_set_pmd(pmdp, pmd)&t;&t;&t;processor._set_pmd(pmdp, pmd)
-DECL|macro|cpu_set_pte
-mdefine_line|#define cpu_set_pte(ptep, pte)&t;&t;&t;processor._set_pte(ptep, pte)
 DECL|macro|cpu_reset
 mdefine_line|#define cpu_reset(addr)&t;&t;&t;&t;processor.reset(addr)
-DECL|macro|cpu_flush_icache_area
-mdefine_line|#define cpu_flush_icache_area(start,end)&t;processor._flush_icache_area(start,end)
-DECL|macro|cpu_cache_wback_area
-mdefine_line|#define cpu_cache_wback_area(start,end)&t;&t;processor._cache_wback_area(start,end)
-DECL|macro|cpu_cache_purge_area
-mdefine_line|#define cpu_cache_purge_area(start,end)&t;&t;processor._cache_purge_area(start,end)
-DECL|macro|cpu_flush_icache_page
-mdefine_line|#define cpu_flush_icache_page(virt)&t;&t;processor._flush_icache_page(virt)
+DECL|macro|cpu_do_idle
+mdefine_line|#define cpu_do_idle(mode)&t;&t;&t;processor._do_idle(mode)
+DECL|macro|cpu_cache_clean_invalidate_all
+mdefine_line|#define cpu_cache_clean_invalidate_all()&t;processor.cache.clean_invalidate_all()
+DECL|macro|cpu_cache_clean_invalidate_range
+mdefine_line|#define cpu_cache_clean_invalidate_range(s,e,f)&t;processor.cache.clean_invalidate_range(s,e,f)
+DECL|macro|cpu_flush_ram_page
+mdefine_line|#define cpu_flush_ram_page(vp)&t;&t;&t;processor.cache._flush_ram_page(vp)
+DECL|macro|cpu_dcache_clean_page
+mdefine_line|#define cpu_dcache_clean_page(vp)&t;&t;processor.dcache.clean_page(vp)
+DECL|macro|cpu_dcache_clean_entry
+mdefine_line|#define cpu_dcache_clean_entry(addr)&t;&t;processor.dcache.clean_entry(addr)
+DECL|macro|cpu_dcache_clean_range
+mdefine_line|#define cpu_dcache_clean_range(s,e)&t;&t;processor.dcache.clean_range(s,e)
+DECL|macro|cpu_dcache_invalidate_range
+mdefine_line|#define cpu_dcache_invalidate_range(s,e)&t;processor.dcache.invalidate_range(s,e)
+DECL|macro|cpu_icache_invalidate_range
+mdefine_line|#define cpu_icache_invalidate_range(s,e)&t;processor.icache.invalidate_range(s,e)
+DECL|macro|cpu_icache_invalidate_page
+mdefine_line|#define cpu_icache_invalidate_page(vp)&t;&t;processor.icache.invalidate_page(vp)
+DECL|macro|cpu_tlb_invalidate_all
+mdefine_line|#define cpu_tlb_invalidate_all()&t;&t;processor.tlb.invalidate_all()
+DECL|macro|cpu_tlb_invalidate_range
+mdefine_line|#define cpu_tlb_invalidate_range(s,e)&t;&t;processor.tlb.invalidate_range(s,e)
+DECL|macro|cpu_tlb_invalidate_page
+mdefine_line|#define cpu_tlb_invalidate_page(vp,f)&t;&t;processor.tlb.invalidate_page(vp,f)
+DECL|macro|cpu_set_pgd
+mdefine_line|#define cpu_set_pgd(pgd)&t;&t;&t;processor.pgtable.set_pgd(pgd)
+DECL|macro|cpu_set_pmd
+mdefine_line|#define cpu_set_pmd(pmdp, pmd)&t;&t;&t;processor.pgtable.set_pmd(pmdp, pmd)
+DECL|macro|cpu_set_pte
+mdefine_line|#define cpu_set_pte(ptep, pte)&t;&t;&t;processor.pgtable.set_pte(ptep, pte)
 DECL|macro|cpu_switch_mm
 mdefine_line|#define cpu_switch_mm(pgd,tsk)&t;&t;&t;cpu_set_pgd(__virt_to_phys((unsigned long)(pgd)))
 macro_line|#endif

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; * Copyright (c) 1996-1999 Russell King.&n; */
-macro_line|#include &lt;asm/dec21285.h&gt;
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; *  Copyright (C) 1996-1999 Russell King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
+macro_line|#include &lt;asm/hardware/dec21285.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
@@ -46,13 +46,13 @@ c_loop
 id|time_before
 c_func
 (paren
-id|start_idle
-comma
 id|jiffies
+comma
+id|start_idle
 op_plus
 id|HZ
 op_div
-l_int|3
+l_int|50
 )paren
 )paren
 suffix:semicolon

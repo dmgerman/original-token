@@ -7541,8 +7541,8 @@ r_return
 id|return_status
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
@@ -7551,5 +7551,4 @@ suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|#endif /* MODULE */
 eof

@@ -2411,13 +2411,14 @@ suffix:semicolon
 id|__u32
 id|ApplId
 comma
-id|MsgLen
-comma
 id|DataB3Len
 comma
 id|NCCI
 comma
 id|WindowSize
+suffix:semicolon
+id|__s32
+id|MsgLen
 suffix:semicolon
 id|__u8
 id|b1cmd

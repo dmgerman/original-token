@@ -25,10 +25,10 @@ macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;asm/cobalt.h&gt;
 multiline_comment|/*&n; * for x86_do_profile()&n; */
 macro_line|#include &lt;linux/irq.h&gt;
-DECL|variable|cpu_hz
+DECL|variable|cpu_khz
 r_int
 r_int
-id|cpu_hz
+id|cpu_khz
 suffix:semicolon
 multiline_comment|/* Detected as we calibrate the TSC */
 multiline_comment|/* Number of usecs that the last interrupt was delayed */
@@ -1767,7 +1767,7 @@ l_int|0
 comma
 id|edx
 op_assign
-l_int|1000000
+l_int|1000
 suffix:semicolon
 id|__asm__
 c_func
@@ -1776,7 +1776,7 @@ l_string|&quot;divl %2&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
-id|cpu_hz
+id|cpu_khz
 )paren
 comma
 l_string|&quot;=d&quot;
@@ -1803,9 +1803,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Detected %ld Hz processor.&bslash;n&quot;
+l_string|&quot;Detected %lu.%03lu MHz processor.&bslash;n&quot;
 comma
-id|cpu_hz
+id|cpu_khz
+op_div
+l_int|1000
+comma
+id|cpu_khz
+op_mod
+l_int|1000
 )paren
 suffix:semicolon
 )brace

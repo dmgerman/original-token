@@ -62,6 +62,8 @@ mdefine_line|#define EGPIO_BITSY_LCD_5V_ON    (1 &lt;&lt; 14)  /* enable 5V to L
 DECL|macro|EGPIO_BITSY_LVDD_ON
 mdefine_line|#define EGPIO_BITSY_LVDD_ON      (1 &lt;&lt; 15)  /* enable 9V and -6.5V to LCD. */
 macro_line|#ifndef __ASSEMBLY__
+DECL|macro|BITSY_EGPIO
+mdefine_line|#define BITSY_EGPIO  (*(volatile int *)0xf0000000)
 r_extern
 r_void
 id|clr_bitsy_egpio

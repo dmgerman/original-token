@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
+multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
 multiline_comment|/* Bill Ryder - bryder@sgi.com - wrote the FTDI_SIO implementation */
 multiline_comment|/* Thanx to FTDI for so kindly providing details of the protocol required */
 multiline_comment|/*   to talk to the device */
@@ -1043,7 +1043,6 @@ op_lshift
 l_int|2
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_USB_SERIAL_DEBUG
 id|dbg
 c_func
 (paren
@@ -1057,96 +1056,17 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|usb_serial_debug_data
 (paren
-id|count
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-(paren
-id|KERN_DEBUG
 id|__FILE__
-l_string|&quot;: data written - length = %d, data = &quot;
+comma
+id|__FUNCTION__
 comma
 id|count
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|count
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;0x%02x &quot;
 comma
 id|first_byte
-(braket
-id|i
-)braket
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|first_byte
-(braket
-id|i
-)braket
-OG
-l_char|&squot; &squot;
-op_logical_and
-id|first_byte
-(braket
-id|i
-)braket
-OL
-l_char|&squot;~&squot;
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%c &quot;
-comma
-id|first_byte
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;  &quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* send the data out the bulk port */
 id|port-&gt;write_urb-&gt;transfer_buffer_length
 op_assign
@@ -1437,7 +1357,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_USB_SERIAL_DEBUG
 r_if
 c_cond
 (paren
@@ -1446,83 +1365,15 @@ OG
 l_int|2
 )paren
 (brace
-id|printk
+id|usb_serial_debug_data
 (paren
-id|KERN_DEBUG
 id|__FILE__
-l_string|&quot;: data read - length = %d, data = &quot;
+comma
+id|__FUNCTION__
 comma
 id|urb-&gt;actual_length
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|urb-&gt;actual_length
-suffix:semicolon
-op_increment
-id|i
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;0x%.2x &quot;
 comma
 id|data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|data
-(braket
-id|i
-)braket
-OG
-l_char|&squot; &squot;
-op_logical_and
-id|data
-(braket
-id|i
-)braket
-OL
-l_char|&squot;~&squot;
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%c &quot;
-comma
-id|data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;  &quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1535,7 +1386,6 @@ l_string|&quot;Just status&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

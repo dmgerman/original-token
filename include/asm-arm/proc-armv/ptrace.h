@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/ptrace.h&n; *&n; * Copyright (C) 1996-1999 Russell King&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/proc-armv/ptrace.h&n; *&n; *  Copyright (C) 1996-1999 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#ifndef __ASM_PROC_PTRACE_H
 DECL|macro|__ASM_PROC_PTRACE_H
 mdefine_line|#define __ASM_PROC_PTRACE_H
@@ -26,6 +26,8 @@ DECL|macro|SYSTEM_MODE
 mdefine_line|#define SYSTEM_MODE&t;0x1f
 DECL|macro|MODE_MASK
 mdefine_line|#define MODE_MASK&t;0x1f
+DECL|macro|T_BIT
+mdefine_line|#define T_BIT&t;&t;0x20
 DECL|macro|F_BIT
 mdefine_line|#define F_BIT&t;&t;0x40
 DECL|macro|I_BIT
@@ -94,6 +96,8 @@ mdefine_line|#define ARM_ORIG_r0&t;uregs[17]
 macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs)&t;&bslash;&n;&t;(((regs)-&gt;ARM_cpsr &amp; 0xf) == 0)
+DECL|macro|thumb_mode
+mdefine_line|#define thumb_mode(regs) &bslash;&n;&t;(((regs)-&gt;ARM_cpsr &amp; T_BIT))
 DECL|macro|processor_mode
 mdefine_line|#define processor_mode(regs) &bslash;&n;&t;((regs)-&gt;ARM_cpsr &amp; MODE_MASK)
 DECL|macro|interrupts_enabled

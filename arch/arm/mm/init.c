@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/mm/init.c&n; *&n; *  Copyright (C) 1995-2000 Russell King&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/init.c&n; *&n; *  Copyright (C) 1995-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,7 +21,8 @@ macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &quot;map.h&quot;
+macro_line|#include &lt;asm/mach/arch.h&gt;
+macro_line|#include &lt;asm/mach/map.h&gt;
 macro_line|#ifndef CONFIG_DISCONTIGMEM
 DECL|macro|NR_NODES
 mdefine_line|#define NR_NODES&t;1
@@ -1329,6 +1330,18 @@ op_star
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/*&n;&t; * Stop this memory from being grabbed - its special DMA&n;&t; * memory that is required for the screen.&n;&t; */
+id|reserve_bootmem_node
+c_func
+(paren
+l_int|0
+comma
+l_int|0x02000000
+comma
+l_int|0x00080000
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * And don&squot;t forget to reserve the allocator bitmap,&n;&t; * which will be freed later.&n;&t; */
 id|reserve_bootmem_node
@@ -1620,6 +1633,11 @@ r_struct
 id|meminfo
 op_star
 id|mi
+comma
+r_struct
+id|machine_desc
+op_star
+id|mdesc
 )paren
 (brace
 r_void
@@ -1649,7 +1667,7 @@ id|meminfo
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * allocate what we need for the bad pages&n;&t; */
+multiline_comment|/*&n;&t; * allocate what we need for the bad pages.&n;&t; * note that we count on this going ok.&n;&t; */
 id|zero_page
 op_assign
 id|alloc_bootmem_low_pages
@@ -1674,11 +1692,23 @@ c_func
 id|TABLE_SIZE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * initialise the page tables&n;&t; */
-id|pagetable_init
+multiline_comment|/*&n;&t; * initialise the page tables.&n;&t; */
+id|memtable_init
 c_func
 (paren
 id|mi
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mdesc-&gt;map_io
+)paren
+id|mdesc
+op_member_access_from_pointer
+id|map_io
+c_func
+(paren
 )paren
 suffix:semicolon
 id|flush_tlb_all

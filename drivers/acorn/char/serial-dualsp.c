@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/char/serial-dualsp.c&n; *&n; * Copyright (c) 1996 Russell King.&n; *&n; * Changelog:&n; *  30-07-1996&t;RMK&t;Created&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/char/serial-dualsp.c&n; *&n; *  Copyright (C) 1996 Russell King.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  Changelog:&n; *   30-07-1996&t;RMK&t;Created&n; */
 DECL|macro|MY_CARD_LIST
 mdefine_line|#define MY_CARD_LIST { MANU_SERPORT, PROD_SERPORT_DSPORT }
 DECL|macro|MY_NUMPORTS

@@ -1,10 +1,10 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/time.h&n; *&n; * Copyright (c) 1998 Russell King.&n; * Copyright (c) 1998 Phil Blundell&n; *&n; * CATS has a real-time clock, though the evaluation board doesn&squot;t.&n; *&n; * Changelog:&n; *  21-Mar-1998&t;RMK&t;Created&n; *  27-Aug-1998&t;PJB&t;CATS support&n; *  28-Dec-1998&t;APH&t;Made leds optional&n; *  20-Jan-1999&t;RMK&t;Started merge of EBSA285, CATS and NetWinder&n; *  16-Mar-1999&t;RMK&t;More support for EBSA285-like machines with RTCs in&n; */
+multiline_comment|/*&n; *  linux/include/asm-arm/arch-ebsa285/time.h&n; *&n; *  Copyright (C) 1998 Russell King.&n; *  Copyright (C) 1998 Phil Blundell&n; *&n; * CATS has a real-time clock, though the evaluation board doesn&squot;t.&n; *&n; * Changelog:&n; *  21-Mar-1998&t;RMK&t;Created&n; *  27-Aug-1998&t;PJB&t;CATS support&n; *  28-Dec-1998&t;APH&t;Made leds optional&n; *  20-Jan-1999&t;RMK&t;Started merge of EBSA285, CATS and NetWinder&n; *  16-Mar-1999&t;RMK&t;More support for EBSA285-like machines with RTCs in&n; */
 DECL|macro|RTC_PORT
 mdefine_line|#define RTC_PORT(x)&t;&t;(rtc_base+(x))
 DECL|macro|RTC_ALWAYS_BCD
 mdefine_line|#define RTC_ALWAYS_BCD&t;&t;0
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
-macro_line|#include &lt;asm/dec21285.h&gt;
+macro_line|#include &lt;asm/hardware/dec21285.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/mach-types.h&gt;
 DECL|variable|rtc_base

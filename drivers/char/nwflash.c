@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Flash memory interface rev.5 driver for the Intel&n; * Flash chips used on the NetWinder.&n; */
+multiline_comment|/*&n; * Flash memory interface rev.5 driver for the Intel&n; * Flash chips used on the NetWinder.&n; *&n; * 20/08/2000&t;RMK&t;use __ioremap to map flash into virtual memory&n; *&t;&t;&t;make a few more places use &quot;volatile&quot;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/dec21285.h&gt;
+macro_line|#include &lt;asm/hardware/dec21285.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/mach-types.h&gt;
@@ -27,7 +27,7 @@ DECL|macro|MSTATIC
 mdefine_line|#define MSTATIC
 macro_line|#endif
 DECL|macro|NWFLASH_VERSION
-mdefine_line|#define&t;NWFLASH_VERSION &quot;6.2&quot;
+mdefine_line|#define&t;NWFLASH_VERSION &quot;6.3&quot;
 id|MSTATIC
 r_void
 id|kick_open
@@ -203,6 +203,14 @@ r_static
 r_int
 id|gbWriteBase64Enable
 suffix:semicolon
+DECL|variable|FLASH_BASE
+r_static
+r_volatile
+r_int
+r_char
+op_star
+id|FLASH_BASE
+suffix:semicolon
 DECL|variable|gbFlashSize
 id|MSTATIC
 r_int
@@ -315,6 +323,7 @@ l_int|0x80
 suffix:semicolon
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -337,6 +346,7 @@ id|c1
 op_assign
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -363,6 +373,7 @@ id|c2
 op_assign
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -378,6 +389,7 @@ id|c2
 op_assign
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -399,6 +411,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * set it back to read mode&n;&t; */
 op_star
 (paren
+r_volatile
 r_int
 r_char
 op_star
@@ -651,11 +664,6 @@ id|gbFlashSize
 op_minus
 id|p
 suffix:semicolon
-multiline_comment|/*&n;&t; * flash virtual address&n;&t; */
-id|p
-op_add_assign
-id|FLASH_BASE
-suffix:semicolon
 id|read
 op_assign
 l_int|0
@@ -672,7 +680,11 @@ comma
 r_void
 op_star
 )paren
+(paren
+id|FLASH_BASE
+op_plus
 id|p
+)paren
 comma
 id|count
 )paren
@@ -717,6 +729,13 @@ op_star
 id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_int
 r_int
 id|p
@@ -746,18 +765,10 @@ id|flashdebug
 id|printk
 c_func
 (paren
-l_string|&quot;Flash_dev: flash_write: offset=0x%X, buffer=0x%X, count=0x%X.&bslash;n&quot;
+l_string|&quot;flash_write: offset=0x%lX, buffer=0x%p, count=0x%X.&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
 id|p
 comma
-(paren
-r_int
-r_int
-)paren
 id|buf
 comma
 id|count
@@ -791,23 +802,12 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/*&n;&t; * if byte count is -ve or to big - error!&n;&t; */
 r_if
 c_cond
 (paren
 id|count
-OL
-l_int|0
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-multiline_comment|/*&n;&t; * if write size to big - error!&n;&t; */
-r_if
-c_cond
-(paren
-id|count
-OG
+template_param
 id|gbFlashSize
 op_minus
 id|p
@@ -832,6 +832,21 @@ id|count
 r_return
 op_minus
 id|EFAULT
+suffix:semicolon
+multiline_comment|/*&n;&t; * We now should lock around writes.  Really, we shouldn&squot;t&n;&t; * allow the flash to be opened more than once in write&n;&t; * mode though (note that you can&squot;t stop two processes having&n;&t; * it open even then). --rmk&n;&t; */
+r_if
+c_cond
+(paren
+id|down_interruptible
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+)paren
+r_return
+op_minus
+id|ERESTARTSYS
 suffix:semicolon
 id|written
 op_assign
@@ -1131,6 +1146,13 @@ id|leds_event
 c_func
 (paren
 id|led_release
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 r_return
@@ -2046,10 +2068,6 @@ c_func
 (paren
 l_string|&quot;FlashWrite: Retrying write (addr=0x%X)...&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
 id|pWritePtr
 op_minus
 id|FLASH_BASE
@@ -2089,10 +2107,6 @@ c_func
 (paren
 l_string|&quot;Timeout in flash write! (addr=0x%X) Aborting...&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
 id|pWritePtr
 op_minus
 id|FLASH_BASE
@@ -2304,6 +2318,27 @@ c_func
 r_int
 id|id
 suffix:semicolon
+id|FLASH_BASE
+op_assign
+id|__ioremap
+c_func
+(paren
+id|DC21285_FLASH
+comma
+id|KFLASH_SIZE4
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|FLASH_BASE
+)paren
+r_goto
+id|out
+suffix:semicolon
 id|id
 op_assign
 id|get_flash_id
@@ -2341,6 +2376,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|out
+suffix:colon
 r_return
 id|ret
 suffix:semicolon
@@ -2360,6 +2397,16 @@ c_func
 (paren
 op_amp
 id|flash_miscdev
+)paren
+suffix:semicolon
+id|iounmap
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|FLASH_BASE
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/mm/extable.c&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/extable.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/* &n;   3w-xxxx.c -- 3ware Storage Controller device driver for Linux.&n;&n;   Written By: Adam Radford &lt;linux@3ware.com&gt;&n;   Modifications By: Joel Jacobson &lt;linux@3ware.com&gt;&n;&n;   Copyright (C) 1999-2000 3ware Inc.&n;&n;   Kernel compatablity By: &t;Andre Hedrick &lt;andre@suse.com&gt;&n;   Non-Copyright (C) 2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n;   &n;   Further tiny build fixes and trivial hoovering    Alan Cox&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; version 2 of the License.&n;&n;   This program is distributed in the hope that it will be useful,           &n;   but WITHOUT ANY WARRANTY; without even the implied warranty of            &n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             &n;   GNU General Public License for more details.                              &n;&n;   NO WARRANTY                                                               &n;   THE PROGRAM IS PROVIDED ON AN &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR        &n;   CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT      &n;   LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT,      &n;   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is    &n;   solely responsible for determining the appropriateness of using and       &n;   distributing the Program and assumes all risks associated with its        &n;   exercise of rights under this Agreement, including but not limited to     &n;   the risks and costs of program errors, damage to or loss of data,         &n;   programs or equipment, and unavailability or interruption of operations.  &n;&n;   DISCLAIMER OF LIABILITY                                                   &n;   NEITHER RECIPIENT NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY   &n;   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL        &n;   DAMAGES (INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND   &n;   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR     &n;   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE    &n;   USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS GRANTED  &n;   HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES             &n;&n;   You should have received a copy of the GNU General Public License         &n;   along with this program; if not, write to the Free Software               &n;   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA &n;&n;   Bugs/Comments/Suggestions should be mailed to:                            &n;   linux@3ware.com&n;&n;   For more information, goto:&n;   http://www.3ware.com&n;&n;   History&n;   -------&n;   0.1.000 -     Initial release.&n;   0.4.000 -     Added support for Asynchronous Event Notification through&n;                 ioctls for 3DM.&n;   1.0.000 -     Added DPO &amp; FUA bit support for WRITE_10 &amp; WRITE_6 cdb&n;                 to disable drive write-cache before writes.&n;   1.1.000 -     Fixed performance bug with DPO &amp; FUA not existing for WRITE_6.&n;   1.2.000 -     Added support for clean shutdown notification/feature table.&n;   1.02.00.001 - Added support for full command packet posts through ioctls&n;                 for 3DM.&n;                 Bug fix so hot spare drives don&squot;t show up.&n;   1.02.00.002 - Fix bug with tw_setfeature() call that caused oops on some&n;                 systems.&n;*/
+multiline_comment|/* &n;   3w-xxxx.c -- 3ware Storage Controller device driver for Linux.&n;&n;   Written By: Adam Radford &lt;linux@3ware.com&gt;&n;   Modifications By: Joel Jacobson &lt;linux@3ware.com&gt;&n;   &t;&t;     Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;&n;   Copyright (C) 1999-2000 3ware Inc.&n;&n;   Kernel compatablity By: &t;Andre Hedrick &lt;andre@suse.com&gt;&n;   Non-Copyright (C) 2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n;   &n;   Further tiny build fixes and trivial hoovering    Alan Cox&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; version 2 of the License.&n;&n;   This program is distributed in the hope that it will be useful,           &n;   but WITHOUT ANY WARRANTY; without even the implied warranty of            &n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             &n;   GNU General Public License for more details.                              &n;&n;   NO WARRANTY                                                               &n;   THE PROGRAM IS PROVIDED ON AN &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR        &n;   CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT      &n;   LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT,      &n;   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is    &n;   solely responsible for determining the appropriateness of using and       &n;   distributing the Program and assumes all risks associated with its        &n;   exercise of rights under this Agreement, including but not limited to     &n;   the risks and costs of program errors, damage to or loss of data,         &n;   programs or equipment, and unavailability or interruption of operations.  &n;&n;   DISCLAIMER OF LIABILITY                                                   &n;   NEITHER RECIPIENT NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY   &n;   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL        &n;   DAMAGES (INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND   &n;   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR     &n;   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE    &n;   USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS GRANTED  &n;   HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES             &n;&n;   You should have received a copy of the GNU General Public License         &n;   along with this program; if not, write to the Free Software               &n;   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA &n;&n;   Bugs/Comments/Suggestions should be mailed to:                            &n;   linux@3ware.com&n;&n;   For more information, goto:&n;   http://www.3ware.com&n;&n;   History&n;   -------&n;   0.1.000 -     Initial release.&n;   0.4.000 -     Added support for Asynchronous Event Notification through&n;                 ioctls for 3DM.&n;   1.0.000 -     Added DPO &amp; FUA bit support for WRITE_10 &amp; WRITE_6 cdb&n;                 to disable drive write-cache before writes.&n;   1.1.000 -     Fixed performance bug with DPO &amp; FUA not existing for WRITE_6.&n;   1.2.000 -     Added support for clean shutdown notification/feature table.&n;   1.02.00.001 - Added support for full command packet posts through ioctls&n;                 for 3DM.&n;                 Bug fix so hot spare drives don&squot;t show up.&n;   1.02.00.002 - Fix bug with tw_setfeature() call that caused oops on some&n;                 systems.&n;   08/21/00    - release previously allocated resources on failure at&n;                 tw_allocate_memory (acme)&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 id|MODULE_AUTHOR
 (paren
@@ -1536,6 +1536,14 @@ id|which
 id|u32
 op_star
 id|virt_addr
+op_assign
+id|kmalloc
+c_func
+(paren
+id|size
+comma
+id|GFP_ATOMIC
+)paren
 suffix:semicolon
 id|dprintk
 c_func
@@ -1547,28 +1555,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|which
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* Allocate command packet memory */
+op_logical_neg
 id|virt_addr
-op_assign
-id|kmalloc
-c_func
-(paren
-id|size
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|virt_addr
-op_eq
-l_int|NULL
 )paren
 (brace
 id|printk
@@ -1593,6 +1581,12 @@ op_mod
 id|TW_ALIGNMENT
 )paren
 (brace
+id|kfree
+c_func
+(paren
+id|virt_addr
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1604,6 +1598,14 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|which
+op_eq
+l_int|0
+)paren
+(brace
 id|tw_dev-&gt;command_packet_virtual_address
 (braket
 id|request_id
@@ -1625,58 +1627,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Allocate generic buffer */
-id|virt_addr
-op_assign
-id|kmalloc
-c_func
-(paren
-id|size
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|virt_addr
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;3w-xxxx: tw_allocate_memory(): kmalloc() failed.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|u32
-)paren
-id|virt_addr
-op_mod
-id|TW_ALIGNMENT
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;3w-xxxx: tw_allocate_memory(): Found unaligned address.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|tw_dev-&gt;alignment_virtual_address
 (braket
 id|request_id
@@ -11374,13 +11324,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* End tw_unmask_command_interrupt() */
 multiline_comment|/* Now get things going */
-macro_line|#ifdef MODULE
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|TWXXXX
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/sound/vidc.h&n; *&n; * VIDC sound function prototypes&n; *&n; * Copyright (C) 1997 Russell King &lt;rmk@arm.uk.linux.org&gt;&n; */
+multiline_comment|/*&n; *  linux/drivers/sound/vidc.h&n; *&n; *  Copyright (C) 1997 Russell King &lt;rmk@arm.linux.org.uk&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  VIDC sound function prototypes&n; */
 multiline_comment|/* vidc.c */
 r_extern
 r_int

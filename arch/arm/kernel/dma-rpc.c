@@ -1,17 +1,18 @@
-multiline_comment|/*&n; * arch/arm/kernel/dma-rpc.c&n; *&n; * Copyright (C) 1998 Russell King&n; *&n; * DMA functions specific to RiscPC architecture&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/dma-rpc.c&n; *&n; *  Copyright (C) 1998 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  DMA functions specific to RiscPC architecture&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/fiq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/iomd.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;dma.h&quot;
+macro_line|#include &lt;asm/mach/dma.h&gt;
+macro_line|#include &lt;asm/hardware/iomd.h&gt;
 macro_line|#if 0
 r_typedef
 r_enum
@@ -70,7 +71,8 @@ r_void
 id|iomd_get_next_sg
 c_func
 (paren
-id|dmasg_t
+r_struct
+id|scatterlist
 op_star
 id|sg
 comma
@@ -95,13 +97,13 @@ c_cond
 id|dma-&gt;sg
 )paren
 (brace
-id|sg-&gt;address
+id|sg-&gt;dma_address
 op_assign
-id|dma-&gt;sg-&gt;address
+id|dma-&gt;sg-&gt;dma_address
 suffix:semicolon
 id|offset
 op_assign
-id|sg-&gt;address
+id|sg-&gt;dma_address
 op_amp
 op_complement
 id|PAGE_MASK
@@ -151,7 +153,7 @@ id|end
 op_minus
 id|offset
 suffix:semicolon
-id|dma-&gt;sg-&gt;address
+id|dma-&gt;sg-&gt;dma_address
 op_add_assign
 id|end
 op_minus
@@ -201,7 +203,7 @@ id|DMA_END_S
 op_or
 id|DMA_END_L
 suffix:semicolon
-id|sg-&gt;address
+id|sg-&gt;dma_address
 op_assign
 l_int|0
 suffix:semicolon
@@ -222,7 +224,8 @@ r_void
 id|iomd_setup_dma_a
 c_func
 (paren
-id|dmasg_t
+r_struct
+id|scatterlist
 op_star
 id|sg
 comma
@@ -234,7 +237,7 @@ id|dma
 id|outl_t
 c_func
 (paren
-id|sg-&gt;address
+id|sg-&gt;dma_address
 comma
 id|dma-&gt;dma_base
 op_plus
@@ -259,7 +262,8 @@ r_void
 id|iomd_setup_dma_b
 c_func
 (paren
-id|dmasg_t
+r_struct
+id|scatterlist
 op_star
 id|sg
 comma
@@ -271,7 +275,7 @@ id|dma
 id|outl_t
 c_func
 (paren
-id|sg-&gt;address
+id|sg-&gt;dma_address
 comma
 id|dma-&gt;dma_base
 op_plus
@@ -613,21 +617,7 @@ op_star
 id|dma
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
-id|ret
-suffix:semicolon
-id|save_flags_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|ret
-op_assign
+r_return
 id|request_irq
 c_func
 (paren
@@ -641,27 +631,6 @@ id|dma-&gt;device_id
 comma
 id|dma
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ret
-)paren
-id|disable_irq
-c_func
-(paren
-id|dma-&gt;dma_irq
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 DECL|function|iomd_free_dma
@@ -725,6 +694,36 @@ id|dma-&gt;invalid
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Cope with ISA-style drivers which expect cache&n;&t;&t; * coherence.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dma-&gt;using_sg
+)paren
+(brace
+id|dma-&gt;buf.dma_address
+op_assign
+id|pci_map_single
+c_func
+(paren
+l_int|NULL
+comma
+id|dma-&gt;buf.address
+comma
+id|dma-&gt;buf.length
+comma
+id|dma-&gt;dma_mode
+op_eq
+id|DMA_MODE_READ
+ques
+c_cond
+id|PCI_DMA_FROMDEVICE
+suffix:colon
+id|PCI_DMA_TODEVICE
+)paren
+suffix:semicolon
+)brace
 id|outb_t
 c_func
 (paren
@@ -1124,15 +1123,16 @@ id|dma-&gt;buf.length
 suffix:semicolon
 id|regs.ARM_r10
 op_assign
-id|__bus_to_virt
-c_func
 (paren
-id|dma-&gt;buf.address
+r_int
+r_int
 )paren
+id|dma-&gt;buf.address
 suffix:semicolon
 id|regs.ARM_fp
 op_assign
 (paren
+r_int
 r_int
 )paren
 id|PCIO_FLOPPYDMABASE

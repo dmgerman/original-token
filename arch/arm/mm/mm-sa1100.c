@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-sa1100.c&n; *&n; * Extra MM routines for the SA1100 architecture&n; *&n; * Copyright (C) 1998-1999 Russell King&n; * Copyright (C) 1999 Hugo Fiennes&n; *&n; * 1999/12/04 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Converted memory definition for struct meminfo initialisations.&n; *&t;Memory is listed physically now.&n; *&n; * 2000/04/07 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Reworked for run-time selection of memory definitions&n; *&n; */
+multiline_comment|/*&n; *  linux/arch/arm/mm/mm-sa1100.c&n; *&n; *  Copyright (C) 1998-1999 Russell King&n; *  Copyright (C) 1999 Hugo Fiennes&n; *&n; *  Extra MM routines for the SA1100 architecture&n; *&n; *  1999/12/04 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Converted memory definition for struct meminfo initialisations.&n; *&t;Memory is listed physically now.&n; *&n; *  2000/04/07 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&t;Reworked for run-time selection of memory definitions&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -7,11 +7,137 @@ macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/mach-types.h&gt;
-macro_line|#include &quot;map.h&quot;
-DECL|macro|SIZE
-mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
-DECL|macro|SA1100_STD_IO_MAPPING
-mdefine_line|#define SA1100_STD_IO_MAPPING &bslash;&n; /* virtual     physical    length      domain     r  w  c  b */ &bslash;&n;  { 0xe0000000, 0x20000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA0 IO */ &bslash;&n;  { 0xe4000000, 0x30000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA1 IO */ &bslash;&n;  { 0xe8000000, 0x28000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA0 attr */ &bslash;&n;  { 0xec000000, 0x38000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA1 attr */ &bslash;&n;  { 0xf0000000, 0x2c000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA0 mem */ &bslash;&n;  { 0xf4000000, 0x3c000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA1 mem */ &bslash;&n;  { 0xf8000000, 0x80000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCM */ &bslash;&n;  { 0xfa000000, 0x90000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* SCM */ &bslash;&n;  { 0xfc000000, 0xa0000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* MER */ &bslash;&n;  { 0xfe000000, 0xb0000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }  /* LCD + DMA */
+macro_line|#include &lt;asm/mach/map.h&gt;
+DECL|variable|__initdata
+r_static
+r_struct
+id|map_desc
+id|standard_io_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+multiline_comment|/* virtual     physical    length      domain     r  w  c  b */
+"&bslash;"
+(brace
+l_int|0xf6000000
+comma
+l_int|0x20000000
+comma
+l_int|0x01000000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* PCMCIA0 IO */
+(brace
+l_int|0xf7000000
+comma
+l_int|0x30000000
+comma
+l_int|0x01000000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* PCMCIA1 IO */
+(brace
+l_int|0xf8000000
+comma
+l_int|0x80000000
+comma
+l_int|0x02000000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* PCM */
+(brace
+l_int|0xfa000000
+comma
+l_int|0x90000000
+comma
+l_int|0x02000000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* SCM */
+(brace
+l_int|0xfc000000
+comma
+l_int|0xa0000000
+comma
+l_int|0x02000000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* MER */
+(brace
+l_int|0xfe000000
+comma
+l_int|0xb0000000
+comma
+l_int|0x02000000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* LCD + DMA */
+id|LAST_DESC
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Typically, static virtual address mappings are as follow:&n; * &n; * 0xe8000000-0xefffffff:&t;flash memory (especially when multiple flash&n; * &t;&t;&t;&t;banks need to be mapped contigously)&n; * 0xf0000000-0xf3ffffff:&t;miscellaneous stuff (CPLDs, etc.)&n; * 0xf4000000-0xf4ffffff:&t;SA-1111&n; * 0xf5000000-0xf5ffffff:&t;reserved (used by cache flushing area)&n; * 0xf6000000-0xffffffff:&t;reserved (internal SA1100 IO defined above)&n; * &n; * Below 0xe8000000 is reserved for vm allocation.&n; */
 DECL|variable|__initdata
 r_static
 r_struct
@@ -24,7 +150,7 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_SA1100_ASSABET
 (brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x00000000
 comma
@@ -43,7 +169,7 @@ l_int|0
 comma
 multiline_comment|/* Flash bank 0 */
 (brace
-l_int|0xd4000000
+l_int|0xf0000000
 comma
 l_int|0x10000000
 comma
@@ -62,7 +188,7 @@ l_int|0
 comma
 multiline_comment|/* System Registers */
 (brace
-l_int|0xdc000000
+l_int|0xf1000000
 comma
 l_int|0x12000000
 comma
@@ -81,9 +207,9 @@ l_int|0
 comma
 multiline_comment|/* Board Control Register */
 (brace
-l_int|0xd8000000
+l_int|0xf2800000
 comma
-l_int|0x40000000
+l_int|0x4b800000
 comma
 l_int|0x00800000
 comma
@@ -98,81 +224,28 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* MQ200 */
+(brace
+l_int|0xf4000000
+comma
+l_int|0x40000000
+comma
+l_int|0x00100000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
 multiline_comment|/* SA-1111 */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
-)brace
-suffix:semicolon
-DECL|variable|__initdata
-r_static
-r_struct
-id|map_desc
-id|nanoengine_io_desc
-(braket
-)braket
-id|__initdata
-op_assign
-(brace
-macro_line|#ifdef CONFIG_SA1100_NANOENGINE
-(brace
-l_int|0xd0000000
-comma
-l_int|0x00000000
-comma
-l_int|0x02000000
-comma
-id|DOMAIN_IO
-comma
-l_int|1
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-multiline_comment|/* Flash bank 0 */
-(brace
-l_int|0xd4000000
-comma
-l_int|0x10000000
-comma
-l_int|0x00100000
-comma
-id|DOMAIN_IO
-comma
-l_int|1
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-multiline_comment|/* System Registers */
-(brace
-l_int|0xdc000000
-comma
-l_int|0x18A00000
-comma
-l_int|0x00100000
-comma
-id|DOMAIN_IO
-comma
-l_int|1
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-multiline_comment|/* Internal PCI Config Space */
-id|SA1100_STD_IO_MAPPING
-macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -187,7 +260,7 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_SA1100_BITSY
 (brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x00000000
 comma
@@ -206,7 +279,7 @@ l_int|0
 comma
 multiline_comment|/* Flash bank 0 */
 (brace
-l_int|0xdc000000
+l_int|0xf0000000
 comma
 l_int|0x49000000
 comma
@@ -224,8 +297,8 @@ l_int|0
 )brace
 comma
 multiline_comment|/* EGPIO 0 */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -240,26 +313,7 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_SA1100_CERF
 (brace
-l_int|0xd8000000
-comma
-l_int|0x08000000
-comma
-l_int|0x00100000
-comma
-id|DOMAIN_IO
-comma
-l_int|1
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-multiline_comment|/* Crystal Chip */
-(brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x00000000
 comma
@@ -277,8 +331,27 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Flash bank 0 */
-id|SA1100_STD_IO_MAPPING
+(brace
+l_int|0xf0000000
+comma
+l_int|0x08000000
+comma
+l_int|0x00100000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Crystal Chip */
 macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -311,8 +384,8 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Flash */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -327,11 +400,11 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_SA1100_GRAPHICSCLIENT
 (brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x08000000
 comma
-l_int|0x00800000
+l_int|0x01000000
 comma
 id|DOMAIN_IO
 comma
@@ -346,26 +419,7 @@ l_int|0
 comma
 multiline_comment|/* Flash bank 1 */
 (brace
-l_int|0xd0800000
-comma
-l_int|0x18000000
-comma
-l_int|0x00800000
-comma
-id|DOMAIN_IO
-comma
-l_int|1
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-multiline_comment|/* Flash bank 3 */
-(brace
-l_int|0xdc000000
+l_int|0xf0000000
 comma
 l_int|0x10000000
 comma
@@ -383,8 +437,8 @@ l_int|0
 )brace
 comma
 multiline_comment|/* CPLD */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -399,7 +453,7 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_SA1100_LART
 (brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x00000000
 comma
@@ -418,7 +472,7 @@ l_int|0
 comma
 multiline_comment|/* main flash memory */
 (brace
-l_int|0xd8000000
+l_int|0xec000000
 comma
 l_int|0x08000000
 comma
@@ -436,8 +490,80 @@ l_int|0
 )brace
 comma
 multiline_comment|/* main flash, alternative location */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
+id|LAST_DESC
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_struct
+id|map_desc
+id|nanoengine_io_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_SA1100_NANOENGINE
+(brace
+l_int|0xe8000000
+comma
+l_int|0x00000000
+comma
+l_int|0x02000000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Flash bank 0 */
+(brace
+l_int|0xf0000000
+comma
+l_int|0x10000000
+comma
+l_int|0x00100000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* System Registers */
+(brace
+l_int|0xf1000000
+comma
+l_int|0x18A00000
+comma
+l_int|0x00100000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Internal PCI Config Space */
+macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -453,7 +579,7 @@ op_assign
 macro_line|#ifdef CONFIG_SA1100_THINCLIENT
 macro_line|#if 0
 (brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x00000000
 comma
@@ -473,7 +599,7 @@ comma
 multiline_comment|/* Flash bank 0 when JP1 2-4 */
 macro_line|#else
 (brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x08000000
 comma
@@ -493,7 +619,7 @@ comma
 multiline_comment|/* Flash bank 1 when JP1 3-4 */
 macro_line|#endif
 (brace
-l_int|0xdc000000
+l_int|0xf0000000
 comma
 l_int|0x10000000
 comma
@@ -511,8 +637,8 @@ l_int|0
 )brace
 comma
 multiline_comment|/* CPLD */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -527,7 +653,7 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_SA1100_TIFON
 (brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x00000000
 comma
@@ -546,7 +672,7 @@ l_int|0
 comma
 multiline_comment|/* Flash bank 1 */
 (brace
-l_int|0xd0800000
+l_int|0xe8800000
 comma
 l_int|0x08000000
 comma
@@ -564,8 +690,8 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Flash bank 2 */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -580,7 +706,7 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_SA1100_VICTOR
 (brace
-l_int|0xd0000000
+l_int|0xe8000000
 comma
 l_int|0x00000000
 comma
@@ -598,8 +724,8 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Flash */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
 DECL|variable|__initdata
@@ -614,7 +740,7 @@ op_assign
 (brace
 macro_line|#ifdef CONFIG_SA1100_XP860
 (brace
-l_int|0xd8000000
+l_int|0xf4000000
 comma
 l_int|0x40000000
 comma
@@ -633,7 +759,7 @@ l_int|0
 comma
 multiline_comment|/* SA-1111 */
 (brace
-l_int|0xda000000
+l_int|0xf0000000
 comma
 l_int|0x10000000
 comma
@@ -652,7 +778,7 @@ l_int|0
 comma
 multiline_comment|/* SCSI */
 (brace
-l_int|0xdc000000
+l_int|0xf1000000
 comma
 l_int|0x18000000
 comma
@@ -670,50 +796,32 @@ l_int|0
 )brace
 comma
 multiline_comment|/* LAN */
-id|SA1100_STD_IO_MAPPING
 macro_line|#endif
+id|LAST_DESC
 )brace
 suffix:semicolon
-DECL|variable|__initdata
-r_static
-r_struct
-id|map_desc
-id|default_io_desc
-(braket
-)braket
-id|__initdata
-op_assign
-(brace
-id|SA1100_STD_IO_MAPPING
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * Here it would be wiser to simply assign a pointer to the appropriate &n; * list, but io_desc is already declared as an array in &quot;map.h&quot;.&n; */
-DECL|variable|__initdata
-r_struct
-id|map_desc
-id|io_desc
-(braket
-l_int|20
-)braket
-id|__initdata
-op_assign
-(brace
-)brace
-suffix:semicolon
-DECL|variable|io_desc_size
-r_int
-r_int
-id|io_desc_size
-suffix:semicolon
-DECL|function|select_sa1100_io_desc
+DECL|function|sa1100_map_io
 r_void
 id|__init
-id|select_sa1100_io_desc
+id|sa1100_map_io
 c_func
 (paren
 r_void
 )paren
 (brace
+r_struct
+id|map_desc
+op_star
+id|desc
+op_assign
+l_int|NULL
+suffix:semicolon
+id|iotable_init
+c_func
+(paren
+id|standard_io_desc
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -722,29 +830,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|assabet_io_desc
-comma
-r_sizeof
-(paren
-id|assabet_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|assabet_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -754,29 +843,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|nanoengine_io_desc
-comma
-r_sizeof
-(paren
-id|nanoengine_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|nanoengine_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -786,29 +856,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|bitsy_io_desc
-comma
-r_sizeof
-(paren
-id|bitsy_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|bitsy_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -818,29 +869,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|cerf_io_desc
-comma
-r_sizeof
-(paren
-id|cerf_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|cerf_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -850,29 +882,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|empeg_io_desc
-comma
-r_sizeof
-(paren
-id|empeg_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|empeg_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -882,29 +895,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|graphicsclient_io_desc
-comma
-r_sizeof
-(paren
-id|graphicsclient_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|graphicsclient_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -914,29 +908,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|lart_io_desc
-comma
-r_sizeof
-(paren
-id|lart_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|lart_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -946,29 +921,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|thinclient_io_desc
-comma
-r_sizeof
-(paren
-id|thinclient_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|thinclient_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -978,29 +934,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|tifon_io_desc
-comma
-r_sizeof
-(paren
-id|tifon_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|tifon_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -1010,29 +947,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|victor_io_desc
-comma
-r_sizeof
-(paren
-id|victor_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|victor_io_desc
-)paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -1042,53 +960,21 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|memcpy
-c_func
-(paren
-id|io_desc
-comma
-id|xp860_io_desc
-comma
-r_sizeof
-(paren
-id|xp860_io_desc
-)paren
-)paren
-suffix:semicolon
-id|io_desc_size
+id|desc
 op_assign
-id|SIZE
-c_func
-(paren
 id|xp860_io_desc
-)paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|memcpy
+r_if
+c_cond
+(paren
+id|desc
+)paren
+id|iotable_init
 c_func
 (paren
-id|io_desc
-comma
-id|default_io_desc
-comma
-r_sizeof
-(paren
-id|default_io_desc
-)paren
+id|desc
 )paren
 suffix:semicolon
-id|io_desc_size
-op_assign
-id|SIZE
-c_func
-(paren
-id|default_io_desc
-)paren
-suffix:semicolon
-)brace
 )brace
 macro_line|#ifdef CONFIG_DISCONTIGMEM
 multiline_comment|/*&n; * Our node_data structure for discontigous memory.&n; * There is 4 possible nodes i.e. the 4 SA1100 RAM banks.&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/asm-arm/proc-armv/assembler.h&n; *&n; * Copyright (C) 1996-2000 Russell King&n; *&n; * This file contains ARM processor specifics for&n; * the ARM6 and better processors.&n; */
+multiline_comment|/*&n; *  linux/asm-arm/proc-armv/assembler.h&n; *&n; *  Copyright (C) 1996-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  This file contains ARM processor specifics for&n; *  the ARM6 and better processors.&n; */
 DECL|macro|MODE_USR
 mdefine_line|#define MODE_USR&t;USR_MODE
 DECL|macro|MODE_FIQ

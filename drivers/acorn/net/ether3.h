@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/net/ether3.h&n; *&n; * network driver for Acorn/ANT Ether3 cards&n; */
+multiline_comment|/*&n; *  linux/drivers/acorn/net/ether3.h&n; *&n; *  Copyright (C) 1995-2000 Russell King&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2 as&n; * published by the Free Software Foundation.&n; *&n; *  network driver for Acorn/ANT Ether3 cards&n; */
 macro_line|#ifndef _LINUX_ether3_H
 DECL|macro|_LINUX_ether3_H
 mdefine_line|#define _LINUX_ether3_H

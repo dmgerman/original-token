@@ -1,6 +1,8 @@
+multiline_comment|/*&n; *  linux/arch/arm/kernel/init_task.c&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|variable|init_mmap

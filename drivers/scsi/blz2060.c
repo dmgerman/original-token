@@ -954,18 +954,17 @@ id|count
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;blz2060.h&quot;
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|SCSI_BLZ2060
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-macro_line|#endif
 DECL|function|blz2060_esp_release
 r_int
 id|blz2060_esp_release
