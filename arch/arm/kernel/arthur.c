@@ -242,15 +242,8 @@ id|arthur_to_linux_signals
 comma
 id|linux_to_arthur_signals
 comma
-macro_line|#ifdef MODULE
-op_amp
-id|__this_module
+id|THIS_MODULE
 comma
-multiline_comment|/* No usage counter. */
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
 l_int|NULL
 multiline_comment|/* Nothing after this in the list. */
 )brace

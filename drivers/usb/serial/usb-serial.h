@@ -53,27 +53,17 @@ r_char
 id|active
 suffix:semicolon
 multiline_comment|/* someone has this device open */
-DECL|member|interrupt_in_endpoint
-r_struct
-id|usb_endpoint_descriptor
-op_star
-id|interrupt_in_endpoint
-suffix:semicolon
-DECL|member|interrupt_in_interval
-id|__u8
-id|interrupt_in_interval
-suffix:semicolon
 DECL|member|interrupt_in_buffer
 r_int
 r_char
 op_star
 id|interrupt_in_buffer
 suffix:semicolon
-DECL|member|control_urb
+DECL|member|interrupt_in_urb
 r_struct
 id|urb
 op_star
-id|control_urb
+id|interrupt_in_urb
 suffix:semicolon
 DECL|member|bulk_in_buffer
 r_int
@@ -103,12 +93,16 @@ id|urb
 op_star
 id|write_urb
 suffix:semicolon
+DECL|member|write_wait
+id|wait_queue_head_t
+id|write_wait
+suffix:semicolon
 DECL|member|private
 r_void
 op_star
 r_private
 suffix:semicolon
-multiline_comment|/* data private to the specific driver */
+multiline_comment|/* data private to the specific port */
 )brace
 suffix:semicolon
 DECL|struct|usb_serial
@@ -173,19 +167,6 @@ id|port
 (braket
 id|MAX_NUM_PORTS
 )braket
-suffix:semicolon
-multiline_comment|/* FIXME! These should move to the private area of the keyspan driver */
-DECL|member|tx_room
-r_int
-id|tx_room
-suffix:semicolon
-DECL|member|tx_throttled
-r_int
-id|tx_throttled
-suffix:semicolon
-DECL|member|write_wait
-id|wait_queue_head_t
-id|write_wait
 suffix:semicolon
 DECL|member|private
 r_void
@@ -271,6 +252,19 @@ id|serial
 )paren
 suffix:semicolon
 multiline_comment|/* return 0 to continue initialization, anything else to abort */
+DECL|member|shutdown
+r_void
+(paren
+op_star
+id|shutdown
+)paren
+(paren
+r_struct
+id|usb_serial
+op_star
+id|serial
+)paren
+suffix:semicolon
 multiline_comment|/* serial function calls */
 DECL|member|open
 r_int
@@ -443,6 +437,19 @@ r_struct
 id|usb_serial_port
 op_star
 id|port
+)paren
+suffix:semicolon
+DECL|member|read_int_callback
+r_void
+(paren
+op_star
+id|read_int_callback
+)paren
+(paren
+r_struct
+id|urb
+op_star
+id|urb
 )paren
 suffix:semicolon
 DECL|member|read_bulk_callback

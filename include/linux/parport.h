@@ -1401,7 +1401,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * parport_yield - relinquish a parallel port temporarily&n; * @dev: a device on the parallel port&n; *&n; * This function relinquishes the port if it would be helpful to other&n; * drivers to do so.  Afterwards it tries to reclaim the port using&n; * parport_claim_or_block(), and the return value is the same as for&n; * parport_claim_or_block().&n; **/
+multiline_comment|/**&n; * parport_yield_blocking - relinquish a parallel port temporarily&n; * @dev: a device on the parallel port&n; *&n; * This function relinquishes the port if it would be helpful to other&n; * drivers to do so.  Afterwards it tries to reclaim the port using&n; * parport_claim_or_block(), and the return value is the same as for&n; * parport_claim_or_block().&n; **/
 DECL|function|parport_yield_blocking
 r_extern
 id|__inline__

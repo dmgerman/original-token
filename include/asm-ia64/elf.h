@@ -93,7 +93,7 @@ DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM&t;0
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-macro_line|# define SET_PERSONALITY(EX,IBCS2)&t;&t;&t;&t;&bslash;&n;&t;(current-&gt;personality = (IBCS2) ? PER_SVR4 : PER_LINUX)
+mdefine_line|#define SET_PERSONALITY(ex, ibcs2) set_personality((ibcs2)?PER_SVR4:PER_LINUX)
 macro_line|#endif
 macro_line|#endif /* _ASM_IA64_ELF_H */
 eof

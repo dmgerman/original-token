@@ -1628,14 +1628,14 @@ c_func
 id|remove_arg_zero
 )paren
 suffix:semicolon
-multiline_comment|/* execution environment registration */
-DECL|variable|lookup_exec_domain
+DECL|variable|set_binfmt
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|lookup_exec_domain
+id|set_binfmt
 )paren
 suffix:semicolon
+multiline_comment|/* execution environment registration */
 DECL|variable|register_exec_domain
 id|EXPORT_SYMBOL
 c_func
@@ -1648,6 +1648,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_exec_domain
+)paren
+suffix:semicolon
+DECL|variable|__set_personality
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__set_personality
 )paren
 suffix:semicolon
 multiline_comment|/* sysctl table registration */

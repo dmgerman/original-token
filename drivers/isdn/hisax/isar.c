@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isar.c,v 1.10 2000/02/26 00:35:13 keil Exp $&n;&n; * isar.c   ISAR (Siemens PSB 7110) specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.c,v $&n; * Revision 1.10  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.9  2000/01/20 19:47:45  keil&n; * Add Fax Class 1 support&n; *&n; * Revision 1.8  1999/12/19 13:00:56  keil&n; * Fix races in setting a new mode&n; *&n; * Revision 1.7  1999/10/14 20:25:29  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.6  1999/08/31 11:20:20  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.5  1999/08/25 16:59:55  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:18  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:45  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:53  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:47  keil&n; * First version, only init&n; *&n; *&n; */
+multiline_comment|/* $Id: isar.c,v 1.11 2000/04/09 19:02:44 keil Exp $&n;&n; * isar.c   ISAR (Siemens PSB 7110) specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.c,v $&n; * Revision 1.11  2000/04/09 19:02:44  keil&n; * retry pump modulation settings if it fails&n; *&n; * Revision 1.10  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.9  2000/01/20 19:47:45  keil&n; * Add Fax Class 1 support&n; *&n; * Revision 1.8  1999/12/19 13:00:56  keil&n; * Fix races in setting a new mode&n; *&n; * Revision 1.7  1999/10/14 20:25:29  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.6  1999/08/31 11:20:20  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.5  1999/08/25 16:59:55  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:18  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:45  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:53  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:47  keil&n; * First version, only init&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -6134,6 +6134,8 @@ id|PCTRL_CMD_FRM
 suffix:colon
 id|p1
 op_assign
+id|bcs-&gt;hw.isar.mod
+op_assign
 id|bcs-&gt;hw.isar.newmod
 suffix:semicolon
 id|bcs-&gt;hw.isar.newmod
@@ -6168,6 +6170,10 @@ suffix:semicolon
 id|bcs-&gt;hw.isar.state
 op_assign
 id|STFAX_LINE
+suffix:semicolon
+id|bcs-&gt;hw.isar.try_mod
+op_assign
+l_int|3
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -6312,6 +6318,8 @@ id|STFAX_SILDET
 (brace
 id|p1
 op_assign
+id|bcs-&gt;hw.isar.mod
+op_assign
 id|bcs-&gt;hw.isar.newmod
 suffix:semicolon
 id|bcs-&gt;hw.isar.newmod
@@ -6347,6 +6355,10 @@ id|bcs-&gt;hw.isar.state
 op_assign
 id|STFAX_LINE
 suffix:semicolon
+id|bcs-&gt;hw.isar.try_mod
+op_assign
+l_int|3
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -6373,6 +6385,59 @@ suffix:semicolon
 r_case
 id|PSEV_RSP_FCERR
 suffix:colon
+r_if
+c_cond
+(paren
+id|bcs-&gt;hw.isar.state
+op_eq
+id|STFAX_LINE
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cs-&gt;debug
+op_amp
+id|L1_DEB_HSCX
+)paren
+id|debugl1
+c_func
+(paren
+id|cs
+comma
+l_string|&quot;pump stev RSP_FCERR try %d&quot;
+comma
+id|bcs-&gt;hw.isar.try_mod
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bcs-&gt;hw.isar.try_mod
+op_decrement
+)paren
+(brace
+id|sendmsg
+c_func
+(paren
+id|cs
+comma
+id|dps
+op_or
+id|ISAR_HIS_PUMPCTRL
+comma
+id|bcs-&gt;hw.isar.cmd
+comma
+l_int|1
+comma
+op_amp
+id|bcs-&gt;hw.isar.mod
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -8093,6 +8158,10 @@ id|bcs-&gt;hw.isar.newcmd
 op_assign
 l_int|0
 suffix:semicolon
+id|bcs-&gt;hw.isar.try_mod
+op_assign
+l_int|3
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -8193,6 +8262,10 @@ suffix:semicolon
 id|bcs-&gt;hw.isar.newcmd
 op_assign
 l_int|0
+suffix:semicolon
+id|bcs-&gt;hw.isar.try_mod
+op_assign
+l_int|3
 suffix:semicolon
 )brace
 r_else
@@ -8295,6 +8368,10 @@ id|bcs-&gt;hw.isar.newcmd
 op_assign
 l_int|0
 suffix:semicolon
+id|bcs-&gt;hw.isar.try_mod
+op_assign
+l_int|3
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -8395,6 +8472,10 @@ suffix:semicolon
 id|bcs-&gt;hw.isar.newcmd
 op_assign
 l_int|0
+suffix:semicolon
+id|bcs-&gt;hw.isar.try_mod
+op_assign
+l_int|3
 suffix:semicolon
 )brace
 r_else

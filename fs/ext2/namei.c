@@ -1323,6 +1323,10 @@ op_assign
 id|de1
 suffix:semicolon
 )brace
+id|de-&gt;file_type
+op_assign
+id|EXT2_FT_UNKNOWN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1356,10 +1360,6 @@ suffix:semicolon
 id|de-&gt;name_len
 op_assign
 id|namelen
-suffix:semicolon
-id|de-&gt;file_type
-op_assign
-l_int|0
 suffix:semicolon
 id|memcpy
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: capifs.c,v 1.5 2000/03/13 17:49:52 calle Exp $&n; * &n; * (c) Copyright 2000 by Carsten Paeth (calle@calle.de)&n; *&n; * Heavily based on devpts filesystem from H. Peter Anvin&n; * &n; * $Log: capifs.c,v $&n; * Revision 1.5  2000/03/13 17:49:52  calle&n; * make it running with 2.3.51.&n; *&n; * Revision 1.4  2000/03/08 17:06:33  calle&n; * - changes for devfs and 2.3.49&n; * - capifs now configurable (no need with devfs)&n; * - New Middleware ioctl CAPI_NCCI_GETUNIT&n; * - Middleware again tested with 2.2.14 and 2.3.49 (with and without devfs)&n; *&n; * Revision 1.3  2000/03/06 18:00:23  calle&n; * - Middleware extention now working with 2.3.49 (capifs).&n; * - Fixed typos in debug section of capi.c&n; * - Bugfix: Makefile corrected for b1pcmcia.c&n; *&n; * Revision 1.2  2000/03/06 09:17:07  calle&n; * - capifs: fileoperations now in inode (change for 2.3.49)&n; * - Config.in: Middleware extention not a tristate, uups.&n; *&n; * Revision 1.1  2000/03/03 16:48:38  calle&n; * - Added CAPI2.0 Middleware support (CONFIG_ISDN_CAPI)&n; *   It is now possible to create a connection with a CAPI2.0 applikation&n; *   and than to handle the data connection from /dev/capi/ (capifs) and also&n; *   using async or sync PPP on this connection.&n; *   The two major device number 190 and 191 are not confirmed yet,&n; *   but I want to save the code in cvs, before I go on.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: capifs.c,v 1.6 2000/04/03 13:29:25 calle Exp $&n; * &n; * (c) Copyright 2000 by Carsten Paeth (calle@calle.de)&n; *&n; * Heavily based on devpts filesystem from H. Peter Anvin&n; * &n; * $Log: capifs.c,v $&n; * Revision 1.6  2000/04/03 13:29:25  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.5  2000/03/13 17:49:52  calle&n; * make it running with 2.3.51.&n; *&n; * Revision 1.4  2000/03/08 17:06:33  calle&n; * - changes for devfs and 2.3.49&n; * - capifs now configurable (no need with devfs)&n; * - New Middleware ioctl CAPI_NCCI_GETUNIT&n; * - Middleware again tested with 2.2.14 and 2.3.49 (with and without devfs)&n; *&n; * Revision 1.3  2000/03/06 18:00:23  calle&n; * - Middleware extention now working with 2.3.49 (capifs).&n; * - Fixed typos in debug section of capi.c&n; * - Bugfix: Makefile corrected for b1pcmcia.c&n; *&n; * Revision 1.2  2000/03/06 09:17:07  calle&n; * - capifs: fileoperations now in inode (change for 2.3.49)&n; * - Config.in: Middleware extention not a tristate, uups.&n; *&n; * Revision 1.1  2000/03/03 16:48:38  calle&n; * - Added CAPI2.0 Middleware support (CONFIG_ISDN_CAPI)&n; *   It is now possible to create a connection with a CAPI2.0 applikation&n; *   and than to handle the data connection from /dev/capi/ (capifs) and also&n; *   using async or sync PPP on this connection.&n; *   The two major device number 190 and 191 are not confirmed yet,&n; *   but I want to save the code in cvs, before I go on.&n; *&n; *&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -8,12 +8,15 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -29,7 +32,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.5 $&quot;
+l_string|&quot;$Revision: 1.6 $&quot;
 suffix:semicolon
 DECL|struct|capifs_ncci
 r_struct
@@ -2299,6 +2302,8 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2364,9 +2369,13 @@ c_cond
 (paren
 id|err
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon
+)brace
 macro_line|#ifdef MODULE
 id|printk
 c_func
@@ -2388,6 +2397,8 @@ id|rev
 )paren
 suffix:semicolon
 macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

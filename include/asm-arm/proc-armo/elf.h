@@ -6,6 +6,6 @@ multiline_comment|/* We can only execute 26-bit code. */
 DECL|macro|ELF_PROC_OK
 mdefine_line|#define ELF_PROC_OK(x)&t;&t;&bslash;&n;&t;((x)-&gt;e_flags &amp; EF_ARM_APCS26)
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ex,ibcs2) &bslash;&n;&t;current-&gt;personality = PER_LINUX
+mdefine_line|#define SET_PERSONALITY(ex,ibcs2) set_personality(PER_LINUX)
 macro_line|#endif
 eof

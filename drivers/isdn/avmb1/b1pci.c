@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: b1pci.c,v 1.20 2000/02/02 18:36:03 calle Exp $&n; * &n; * Module for AVM B1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1pci.c,v $&n; * Revision 1.20  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.19  2000/01/25 14:33:38  calle&n; * - Added Support AVM B1 PCI V4.0 (tested with prototype)&n; *   - splitted up t1pci.c into b1dma.c for common function with b1pciv4&n; *   - support for revision register&n; *&n; * Revision 1.18  1999/11/05 16:38:01  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.17  1999/10/05 06:50:07  calle&n; * Forgot SA_SHIRQ as argument to request_irq.&n; *&n; * Revision 1.16  1999/08/11 21:01:07  keil&n; * new PCI codefix&n; *&n; * Revision 1.15  1999/08/10 16:02:27  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.14  1999/07/09 15:05:41  keil&n; * compat.h is now isdn_compat.h&n; *&n; * Revision 1.13  1999/07/05 15:09:50  calle&n; * - renamed &quot;appl_release&quot; to &quot;appl_released&quot;.&n; * - version und profile data now cleared on controller reset&n; * - extended /proc interface, to allow driver and controller specific&n; *   informations to include by driver hackers.&n; *&n; * Revision 1.12  1999/07/01 15:26:29  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: b1pci.c,v 1.21 2000/04/03 13:29:24 calle Exp $&n; * &n; * Module for AVM B1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1pci.c,v $&n; * Revision 1.21  2000/04/03 13:29:24  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.20  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.19  2000/01/25 14:33:38  calle&n; * - Added Support AVM B1 PCI V4.0 (tested with prototype)&n; *   - splitted up t1pci.c into b1dma.c for common function with b1pciv4&n; *   - support for revision register&n; *&n; * Revision 1.18  1999/11/05 16:38:01  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.17  1999/10/05 06:50:07  calle&n; * Forgot SA_SHIRQ as argument to request_irq.&n; *&n; * Revision 1.16  1999/08/11 21:01:07  keil&n; * new PCI codefix&n; *&n; * Revision 1.15  1999/08/10 16:02:27  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.14  1999/07/09 15:05:41  keil&n; * compat.h is now isdn_compat.h&n; *&n; * Revision 1.13  1999/07/05 15:09:50  calle&n; * - renamed &quot;appl_release&quot; to &quot;appl_released&quot;.&n; * - version und profile data now cleared on controller reset&n; * - extended /proc interface, to allow driver and controller specific&n; *   informations to include by driver hackers.&n; *&n; * Revision 1.12  1999/07/01 15:26:29  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,7 +20,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.20 $&quot;
+l_string|&quot;$Revision: 1.21 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 macro_line|#ifndef PCI_VENDOR_ID_AVM
@@ -2001,6 +2001,8 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2083,6 +2085,8 @@ comma
 id|driver-&gt;name
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -2130,6 +2134,8 @@ comma
 id|driverv4-&gt;name
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -2170,6 +2176,8 @@ id|driverv4
 )paren
 suffix:semicolon
 macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -2216,6 +2224,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -2241,6 +2251,8 @@ comma
 id|ncards
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2253,6 +2265,8 @@ l_string|&quot;%s: NO B1-PCI card detected&bslash;n&quot;
 comma
 id|driver-&gt;name
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -2267,6 +2281,8 @@ l_string|&quot;%s: kernel not compiled with PCI.&bslash;n&quot;
 comma
 id|driver-&gt;name
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus

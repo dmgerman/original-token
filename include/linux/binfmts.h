@@ -298,6 +298,17 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|set_binfmt
+c_func
+(paren
+r_struct
+id|linux_binfmt
+op_star
+r_new
+)paren
+suffix:semicolon
 macro_line|#if 0
 multiline_comment|/* this went away now */
 mdefine_line|#define change_ldt(a,b) setup_arg_pages(a,b)

@@ -7501,10 +7501,10 @@ id|str
 comma
 id|ARRAY_SIZE
 (paren
-id|ints
+id|integers
 )paren
 comma
-id|ints
+id|integers
 )paren
 suffix:semicolon
 r_if

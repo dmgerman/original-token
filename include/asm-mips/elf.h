@@ -69,7 +69,7 @@ DECL|macro|ELF_ET_DYN_BASE
 mdefine_line|#define ELF_ET_DYN_BASE         (2 * TASK_SIZE / 3)
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ex,ibcs2) &bslash;&n;&t;current-&gt;personality = (ibcs2 ? PER_SVR4 : PER_LINUX)
+mdefine_line|#define SET_PERSONALITY(ex, ibcs2) set_personality((ibcs2)?PER_SVR4:PER_LINUX)
 macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_ELF_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: t1pci.c,v 1.5 2000/02/02 18:36:04 calle Exp $&n; * &n; * Module for AVM T1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: t1pci.c,v $&n; * Revision 1.5  2000/02/02 18:36:04  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.4  2000/01/25 14:33:38  calle&n; * - Added Support AVM B1 PCI V4.0 (tested with prototype)&n; *   - splitted up t1pci.c into b1dma.c for common function with b1pciv4&n; *   - support for revision register&n; *&n; * Revision 1.3  1999/11/13 21:27:16  keil&n; * remove KERNELVERSION&n; *&n; * Revision 1.2  1999/11/05 16:38:02  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.1  1999/10/26 15:31:42  calle&n; * Added driver for T1-PCI card.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: t1pci.c,v 1.7 2000/04/07 15:26:55 calle Exp $&n; * &n; * Module for AVM T1 PCI-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: t1pci.c,v $&n; * Revision 1.7  2000/04/07 15:26:55  calle&n; * better error message if cabel not connected or T1 has no power.&n; *&n; * Revision 1.6  2000/04/03 13:29:25  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.5  2000/02/02 18:36:04  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.4  2000/01/25 14:33:38  calle&n; * - Added Support AVM B1 PCI V4.0 (tested with prototype)&n; *   - splitted up t1pci.c into b1dma.c for common function with b1pciv4&n; *   - support for revision register&n; *&n; * Revision 1.3  1999/11/13 21:27:16  keil&n; * remove KERNELVERSION&n; *&n; * Revision 1.2  1999/11/05 16:38:02  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.1  1999/10/26 15:31:42  calle&n; * Added driver for T1-PCI card.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,7 +20,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.5 $&quot;
+l_string|&quot;$Revision: 1.7 $&quot;
 suffix:semicolon
 DECL|macro|CONFIG_T1PCI_DEBUG
 macro_line|#undef CONFIG_T1PCI_DEBUG
@@ -551,11 +551,32 @@ op_ne
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|retval
+OL
+l_int|6
+)paren
 id|printk
 c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;%s: NO card at 0x%x (%d)&bslash;n&quot;
+comma
+id|driver-&gt;name
+comma
+id|card-&gt;port
+comma
+id|retval
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;%s: card at 0x%x, but cabel not connected or T1 has no power (%d)&bslash;n&quot;
 comma
 id|driver-&gt;name
 comma
@@ -1007,6 +1028,8 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1089,6 +1112,8 @@ comma
 id|driver-&gt;name
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -1119,6 +1144,8 @@ c_func
 (paren
 id|driver
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -1229,6 +1256,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -1254,6 +1283,8 @@ comma
 id|ncards
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1266,6 +1297,8 @@ l_string|&quot;%s: NO T1-PCI card detected&bslash;n&quot;
 comma
 id|driver-&gt;name
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -1280,6 +1313,8 @@ l_string|&quot;%s: kernel not compiled with PCI.&bslash;n&quot;
 comma
 id|driver-&gt;name
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus

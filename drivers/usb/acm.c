@@ -15,34 +15,6 @@ macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 macro_line|#include &lt;linux/usb.h&gt;
-r_void
-id|tty_register_devfs
-(paren
-r_struct
-id|tty_driver
-op_star
-id|driver
-comma
-r_int
-r_int
-id|flags
-comma
-r_int
-id|minor
-)paren
-suffix:semicolon
-r_void
-id|tty_unregister_devfs
-(paren
-r_struct
-id|tty_driver
-op_star
-id|driver
-comma
-r_int
-id|minor
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * CMSPAR, some architectures can&squot;t have space and mark parity.&n; */
 macro_line|#ifndef CMSPAR
 DECL|macro|CMSPAR

@@ -3,6 +3,7 @@ DECL|macro|_PERSONALITY_H
 mdefine_line|#define _PERSONALITY_H
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;asm/current.h&gt;
 multiline_comment|/* Flags for bug emulation. These occupy the top three bytes. */
 DECL|macro|STICKY_TIMEOUTS
 mdefine_line|#define STICKY_TIMEOUTS&t;&t;0x4000000
@@ -116,18 +117,6 @@ id|exec_domain
 id|default_exec_domain
 suffix:semicolon
 r_extern
-r_struct
-id|exec_domain
-op_star
-id|lookup_exec_domain
-c_func
-(paren
-r_int
-r_int
-id|personality
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|register_exec_domain
 c_func
@@ -151,6 +140,18 @@ id|it
 suffix:semicolon
 DECL|macro|put_exec_domain
 mdefine_line|#define put_exec_domain(it) &bslash;&n;&t;if (it &amp;&amp; it-&gt;module) __MOD_DEC_USE_COUNT(it-&gt;module);
+r_extern
+r_void
+id|__set_personality
+c_func
+(paren
+r_int
+r_int
+id|personality
+)paren
+suffix:semicolon
+DECL|macro|set_personality
+mdefine_line|#define set_personality(pers) do {&t;&bslash;&n;&t;if (current-&gt;personality != pers) &bslash;&n;&t;&t;__set_personality(pers); &bslash;&n;} while (0)
 id|asmlinkage
 r_int
 id|sys_personality

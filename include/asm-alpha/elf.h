@@ -65,7 +65,7 @@ DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* Or &quot;implver v0&quot; ... */&t;&t;&bslash;&n;&t;register long _v0 __asm(&quot;$0&quot;);&t;&t;&bslash;&n;&t;__asm(&quot;.long 0x47e03d80&quot; : &quot;=r&quot;(_v0));&t;&bslash;&n;&t;_v0 == 0 ? &quot;ev4&quot; : &quot;ev5&quot;;&t;&t;&bslash;&n;})
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(EX, IBCS2)&t;&t;&t;&t;&bslash;&n;&t;current-&gt;personality =&t;&t;&t;&t;&t;&bslash;&n;&t;  ((EX).e_flags &amp; EF_ALPHA_32BIT&t;&t;&t;&bslash;&n;&t;   ? PER_LINUX_32BIT : (IBCS2) ? PER_SVR4 : PER_LINUX)
+mdefine_line|#define SET_PERSONALITY(EX, IBCS2)&t;&t;&t;&t;&bslash;&n;&t;set_personality((EX).e_flags &amp; EF_ALPHA_32BIT&t;&t;&bslash;&n;&t;   ? PER_LINUX_32BIT : (IBCS2) ? PER_SVR4 : PER_LINUX)
 macro_line|#endif
 macro_line|#endif
 eof

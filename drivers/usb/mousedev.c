@@ -12,13 +12,13 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/input.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifndef CONFIG_MOUSEDEV_SCREEN_X
-DECL|macro|CONFIG_MOUSEDEV_SCREEN_X
-mdefine_line|#define CONFIG_MOUSEDEV_SCREEN_X&t;1024
+macro_line|#ifndef CONFIG_INPUT_MOUSEDEV_SCREEN_X
+DECL|macro|CONFIG_INPUT_MOUSEDEV_SCREEN_X
+mdefine_line|#define CONFIG_INPUT_MOUSEDEV_SCREEN_X&t;1024
 macro_line|#endif
-macro_line|#ifndef CONFIG_MOUSEDEV_SCREEN_Y
-DECL|macro|CONFIG_MOUSEDEV_SCREEN_Y
-mdefine_line|#define CONFIG_MOUSEDEV_SCREEN_Y&t;768
+macro_line|#ifndef CONFIG_INPUT_MOUSEDEV_SCREEN_Y
+DECL|macro|CONFIG_INPUT_MOUSEDEV_SCREEN_Y
+mdefine_line|#define CONFIG_INPUT_MOUSEDEV_SCREEN_Y&t;768
 macro_line|#endif
 DECL|struct|mousedev
 r_struct
@@ -316,7 +316,7 @@ op_add_assign
 (paren
 id|value
 op_star
-id|CONFIG_MOUSEDEV_SCREEN_X
+id|CONFIG_INPUT_MOUSEDEV_SCREEN_X
 op_minus
 id|list-&gt;oldx
 )paren
@@ -351,7 +351,7 @@ op_sub_assign
 (paren
 id|value
 op_star
-id|CONFIG_MOUSEDEV_SCREEN_Y
+id|CONFIG_INPUT_MOUSEDEV_SCREEN_Y
 op_minus
 id|list-&gt;oldy
 )paren

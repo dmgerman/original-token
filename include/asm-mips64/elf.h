@@ -75,7 +75,7 @@ mdefine_line|#define ELF_ET_DYN_BASE         (2 * TASK_SIZE / 3)
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ex, ibcs2)&t;&t;&t;&bslash;&n;do {&t;if ((ex).e_ident[EI_CLASS] == ELFCLASS32)&t;&bslash;&n;&t;&t;current-&gt;thread.mflags |= MF_32BIT;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;thread.mflags &amp;= ~MF_32BIT;&t;&bslash;&n;&t;if (ibcs2)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_SVR4;&t;&bslash;&n;&t;else if (current-&gt;personality != PER_LINUX32)&t;&bslash;&n;&t;&t;current-&gt;personality = PER_LINUX;&t;&bslash;&n;} while (0)
+mdefine_line|#define SET_PERSONALITY(ex, ibcs2)&t;&t;&t;&bslash;&n;do {&t;if ((ex).e_ident[EI_CLASS] == ELFCLASS32)&t;&bslash;&n;&t;&t;current-&gt;thread.mflags |= MF_32BIT;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;thread.mflags &amp;= ~MF_32BIT;&t;&bslash;&n;&t;if (ibcs2)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;set_personality(PER_SVR4);&t;&t;&bslash;&n;&t;else if (current-&gt;personality != PER_LINUX32)&t;&bslash;&n;&t;&t;set_personality(PER_LINUX);&t;&t;&bslash;&n;} while (0)
 macro_line|#endif
 macro_line|#endif /* _ASM_ELF_H */
 eof

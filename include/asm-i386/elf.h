@@ -58,7 +58,7 @@ DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM  (&quot;i386&bslash;0i486&bslash;0i586&bslash;0i686&quot;+((boot_cpu_data.x86-3)*5))
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ex, ibcs2) &bslash;&n;&t;current-&gt;personality = (ibcs2 ? PER_SVR4 : PER_LINUX)
+mdefine_line|#define SET_PERSONALITY(ex, ibcs2) set_personality((ibcs2)?PER_SVR4:PER_LINUX)
 macro_line|#endif
 macro_line|#endif
 eof

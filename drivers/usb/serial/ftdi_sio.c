@@ -273,7 +273,12 @@ id|init_waitqueue_head
 c_func
 (paren
 op_amp
-id|serial-&gt;write_wait
+id|serial-&gt;port
+(braket
+l_int|0
+)braket
+dot
+id|write_wait
 )paren
 suffix:semicolon
 r_return
@@ -854,7 +859,7 @@ id|add_wait_queue
 c_func
 (paren
 op_amp
-id|serial-&gt;write_wait
+id|port-&gt;write_wait
 comma
 op_amp
 id|wait
@@ -914,7 +919,7 @@ id|remove_wait_queue
 c_func
 (paren
 op_amp
-id|serial-&gt;write_wait
+id|port-&gt;write_wait
 comma
 op_amp
 id|wait
@@ -939,7 +944,7 @@ id|remove_wait_queue
 c_func
 (paren
 op_amp
-id|serial-&gt;write_wait
+id|port-&gt;write_wait
 comma
 op_amp
 id|wait
@@ -1287,7 +1292,7 @@ id|wake_up_interruptible
 c_func
 (paren
 op_amp
-id|serial-&gt;write_wait
+id|port-&gt;write_wait
 )paren
 suffix:semicolon
 r_if

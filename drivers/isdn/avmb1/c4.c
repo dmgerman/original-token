@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: c4.c,v 1.6 2000/03/17 12:21:08 calle Exp $&n; * &n; * Module for AVM C4 card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: c4.c,v $&n; * Revision 1.6  2000/03/17 12:21:08  calle&n; * send patchvalues now working.&n; *&n; * Revision 1.5  2000/03/16 15:21:03  calle&n; * Bugfix in c4_remove: loop 5 times instead of 4 :-(&n; *&n; * Revision 1.4  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.3  2000/01/25 14:37:39  calle&n; * new message after successfull detection including card revision and&n; * used resources.&n; *&n; * Revision 1.2  2000/01/21 20:52:58  keil&n; * pci_find_subsys as local function for 2.2.X kernel&n; *&n; * Revision 1.1  2000/01/20 10:51:37  calle&n; * Added driver for C4.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: c4.c,v 1.8 2000/04/03 16:38:05 calle Exp $&n; * &n; * Module for AVM C4 card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: c4.c,v $&n; * Revision 1.8  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.7  2000/04/03 13:29:24  calle&n; * make Tim Waugh happy (module unload races in 2.3.99-pre3).&n; * no real problem there, but now it is much cleaner ...&n; *&n; * Revision 1.6  2000/03/17 12:21:08  calle&n; * send patchvalues now working.&n; *&n; * Revision 1.5  2000/03/16 15:21:03  calle&n; * Bugfix in c4_remove: loop 5 times instead of 4 :-(&n; *&n; * Revision 1.4  2000/02/02 18:36:03  calle&n; * - Modules are now locked while init_module is running&n; * - fixed problem with memory mapping if address is not aligned&n; *&n; * Revision 1.3  2000/01/25 14:37:39  calle&n; * new message after successfull detection including card revision and&n; * used resources.&n; *&n; * Revision 1.2  2000/01/21 20:52:58  keil&n; * pci_find_subsys as local function for 2.2.X kernel&n; *&n; * Revision 1.1  2000/01/20 10:51:37  calle&n; * Added driver for C4.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -21,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.6 $&quot;
+l_string|&quot;$Revision: 1.8 $&quot;
 suffix:semicolon
 DECL|macro|CONFIG_C4_DEBUG
 macro_line|#undef CONFIG_C4_DEBUG
@@ -6811,6 +6811,8 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6893,6 +6895,8 @@ comma
 id|driver-&gt;name
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -6923,6 +6927,8 @@ c_func
 (paren
 id|driver
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -7037,6 +7043,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -7062,6 +7070,8 @@ comma
 id|ncards
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7074,6 +7084,8 @@ l_string|&quot;%s: NO C4 card detected&bslash;n&quot;
 comma
 id|driver-&gt;name
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -7088,6 +7100,8 @@ l_string|&quot;%s: kernel not compiled with PCI.&bslash;n&quot;
 comma
 id|driver-&gt;name
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus

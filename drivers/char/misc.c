@@ -678,7 +678,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;misc_deregister - unregister a miscellaneous device&n; *&t;@misc: device to unregister&n; *&n; *&t;Unregister a miscellaneous device that was previously&n; *&t;successfully registered with misc_register()F. Success&n; *&t;is indicated by a zero return, a negative errno code&n; *&t;indicates an error.&n; */
+multiline_comment|/**&n; *&t;misc_deregister - unregister a miscellaneous device&n; *&t;@misc: device to unregister&n; *&n; *&t;Unregister a miscellaneous device that was previously&n; *&t;successfully registered with misc_register(). Success&n; *&t;is indicated by a zero return, a negative errno code&n; *&t;indicates an error.&n; */
 DECL|function|misc_deregister
 r_int
 id|misc_deregister

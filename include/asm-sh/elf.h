@@ -61,7 +61,7 @@ DECL|macro|ELF_PLAT_INIT
 mdefine_line|#define ELF_PLAT_INIT(_r) &bslash;&n;  do { _r-&gt;regs[0]=0; _r-&gt;regs[1]=0; _r-&gt;regs[2]=0; _r-&gt;regs[3]=0; &bslash;&n;       _r-&gt;regs[4]=0; _r-&gt;regs[5]=0; _r-&gt;regs[6]=0; _r-&gt;regs[7]=0; &bslash;&n;       _r-&gt;regs[8]=0; _r-&gt;regs[9]=0; _r-&gt;regs[10]=0; _r-&gt;regs[11]=0; &bslash;&n;       _r-&gt;regs[12]=0; _r-&gt;regs[13]=0; _r-&gt;regs[14]=0; } while (0)
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ex, ibcs2) &bslash;&n;&t;current-&gt;personality = PER_LINUX_32BIT
+mdefine_line|#define SET_PERSONALITY(ex, ibcs2) set_personality(PER_LINUX_32BIT)
 macro_line|#endif
 macro_line|#endif /* __ASM_SH_ELF_H */
 eof

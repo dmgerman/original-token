@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: niccy.c,v 1.8 1999/08/11 21:01:33 keil Exp $&n;&n; * niccy.c  low level stuff for Dr. Neuhaus NICCY PnP and NICCY PCI and&n; *          compatible (SAGEM cybermodem)&n; *&n; * Author   Karsten Keil&n; * &n; * Thanks to Dr. Neuhaus and SAGEM for informations&n; *&n; * $Log: niccy.c,v $&n; * Revision 1.8  1999/08/11 21:01:33  keil&n; * new PCI codefix&n; *&n; * Revision 1.7  1999/08/10 16:02:04  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.6  1999/07/12 21:05:23  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.5  1999/07/01 08:12:07  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.4  1998/04/16 19:16:48  keil&n; * need config.h&n; *&n; * Revision 1.3  1998/04/15 16:42:59  keil&n; * new init code&n; *&n; * Revision 1.2  1998/02/11 17:31:04  keil&n; * new file&n; *&n; */
+multiline_comment|/* $Id: niccy.c,v 1.10 2000/04/11 11:12:39 keil Exp $&n;&n; * niccy.c  low level stuff for Dr. Neuhaus NICCY PnP and NICCY PCI and&n; *          compatible (SAGEM cybermodem)&n; *&n; * Author   Karsten Keil&n; * &n; * Thanks to Dr. Neuhaus and SAGEM for informations&n; *&n; * $Log: niccy.c,v $&n; * Revision 1.10  2000/04/11 11:12:39  keil&n; * cleanup&n; *&n; * Revision 1.9  2000/04/09 19:09:19  keil&n; * Bugfix: reset IRQ enable only valid for PCI version&n; *&n; * Revision 1.8  1999/08/11 21:01:33  keil&n; * new PCI codefix&n; *&n; * Revision 1.7  1999/08/10 16:02:04  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.6  1999/07/12 21:05:23  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.5  1999/07/01 08:12:07  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.4  1998/04/16 19:16:48  keil&n; * need config.h&n; *&n; * Revision 1.3  1998/04/15 16:42:59  keil&n; * new init code&n; *&n; * Revision 1.2  1998/02/11 17:31:04  keil&n; * new file&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -21,7 +21,7 @@ r_char
 op_star
 id|niccy_revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.10 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -890,10 +890,16 @@ op_star
 id|cs
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|cs-&gt;subtyp
+op_eq
+id|NICCY_PCI
+)paren
+(brace
 r_int
 id|val
-comma
-id|nval
 suffix:semicolon
 id|val
 op_assign
@@ -905,22 +911,21 @@ op_plus
 id|PCI_IRQ_CTRL_REG
 )paren
 suffix:semicolon
-id|nval
-op_assign
 id|val
-op_or
+op_or_assign
 id|PCI_IRQ_ENABLE
 suffix:semicolon
 id|outl
 c_func
 (paren
-id|nval
+id|val
 comma
 id|cs-&gt;hw.niccy.cfg_reg
 op_plus
 id|PCI_IRQ_CTRL_REG
 )paren
 suffix:semicolon
+)brace
 id|inithscxisac
 c_func
 (paren
