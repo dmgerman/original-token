@@ -5,6 +5,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * Rewritten by Richard Henderson &lt;rth@tamu.edu&gt; Dec 1996&n; *&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; */
 macro_line|#ifdef CONFIG_MODULES&t;&t;/* a *big* #ifdef block... */
 r_extern
@@ -60,7 +61,13 @@ multiline_comment|/* name */
 l_int|0
 comma
 multiline_comment|/* size */
+(brace
+id|ATOMIC_INIT
+c_func
+(paren
 l_int|1
+)paren
+)brace
 comma
 multiline_comment|/* usecount */
 id|MOD_RUNNING
@@ -158,12 +165,16 @@ id|tag_freed
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Called at boot time&n; */
-DECL|function|init_modules
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|init_modules
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|kernel_module.nsyms
@@ -1427,9 +1438,14 @@ id|name
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the module.  */
-id|mod-&gt;usecount
-op_assign
+id|atomic_set
+c_func
+(paren
+op_amp
+id|mod-&gt;uc.usecount
+comma
 l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1446,9 +1462,14 @@ op_ne
 l_int|0
 )paren
 (brace
-id|mod-&gt;usecount
-op_assign
+id|atomic_set
+c_func
+(paren
+op_amp
+id|mod-&gt;uc.usecount
+comma
 l_int|0
+)paren
 suffix:semicolon
 id|error
 op_assign
@@ -1459,8 +1480,12 @@ r_goto
 id|err0
 suffix:semicolon
 )brace
-id|mod-&gt;usecount
-op_decrement
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|mod-&gt;uc.usecount
+)paren
 suffix:semicolon
 multiline_comment|/* And set it running.  */
 id|mod-&gt;flags
@@ -2857,7 +2882,12 @@ c_cond
 op_minus
 l_int|1
 suffix:colon
-id|mod-&gt;usecount
+id|atomic_read
+c_func
+(paren
+op_amp
+id|mod-&gt;uc.usecount
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -3890,9 +3920,17 @@ id|mod-&gt;can_unload
 ques
 c_cond
 op_minus
-l_int|1
+l_int|1L
 suffix:colon
-id|mod-&gt;usecount
+(paren
+r_int
+)paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|mod-&gt;uc.usecount
+)paren
 )paren
 )paren
 suffix:semicolon

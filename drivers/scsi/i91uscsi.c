@@ -765,9 +765,13 @@ macro_line|#else
 r_while
 c_loop
 (paren
+id|time_before
+c_func
+(paren
 id|jiffies
-OL
+comma
 id|the_time
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif

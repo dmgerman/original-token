@@ -82,6 +82,13 @@ DECL|variable|ps_spinlock
 r_static
 id|spinlock_t
 id|ps_spinlock
+id|__attribute__
+c_func
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon

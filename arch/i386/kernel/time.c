@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1996-05-03    Ingo Molnar&n; *      fixed time warps in do_[slow|fast]_gettimeoffset()&n; * 1998-09-05    (Various)&n; *&t;More robust do_fast_gettimeoffset() algorithm implemented&n; *&t;(works with APM, Cyrix 6x86MX and Centaur C6),&n; *&t;monotonic gettimeofday() with fast_get_timeoffset(),&n; *&t;drift-proof precision TSC calibration on boot&n; *&t;(C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, Andrew D.&n; *&t;Balsa &lt;andrebalsa@altern.org&gt;, Philip Gladstone &lt;philip@raptor.com&gt;;&n; *&t;ported from 2.0.35 Jumbo-9 by Michael Krause &lt;m.krause@tu-harburg.de&gt;).&n; * 1998-12-16    Andrea Arcangeli&n; *&t;Fixed Jumbo-9 code in 2.1.131: do_gettimeofday was missing 1 jiffy&n; *&t;because was not accounting lost_ticks. I also removed some ugly&n; *&t;not needed global cli() and where needed I used a disable_irq(0).&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1996-05-03    Ingo Molnar&n; *      fixed time warps in do_[slow|fast]_gettimeoffset()&n; * 1998-09-05    (Various)&n; *&t;More robust do_fast_gettimeoffset() algorithm implemented&n; *&t;(works with APM, Cyrix 6x86MX and Centaur C6),&n; *&t;monotonic gettimeofday() with fast_get_timeoffset(),&n; *&t;drift-proof precision TSC calibration on boot&n; *&t;(C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, Andrew D.&n; *&t;Balsa &lt;andrebalsa@altern.org&gt;, Philip Gladstone &lt;philip@raptor.com&gt;;&n; *&t;ported from 2.0.35 Jumbo-9 by Michael Krause &lt;m.krause@tu-harburg.de&gt;).&n; * 1998-12-16    Andrea Arcangeli&n; *&t;Fixed Jumbo-9 code in 2.1.131: do_gettimeofday was missing 1 jiffy&n; *&t;because was not accounting lost_ticks.&n; * 1998-12-24 Copyright (C) 1998  Andrea Arcangeli&n; *&t;Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *&t;serialize accesses to xtime/lost_ticks).&n; */
 multiline_comment|/* What about the &quot;updated NTP code&quot; stuff in 2.0 time.c? It&squot;s not in&n; * 2.1, perhaps it should be ported, too.&n; *&n; * What about the BUGGY_NEPTUN_TIMER stuff in do_slow_gettimeoffset()?&n; * Whatever it fixes, is it also fixed in the new code from the Jumbo&n; * patch, so that that code can be used instead?&n; *&n; * The CPU Hz should probably be displayed in check_bugs() together&n; * with the CPU vendor and type. Perhaps even only in MHz, though that&n; * takes away some of the fun of the new code :)&n; *&n; * - Michael Krause */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -60,6 +60,10 @@ r_int
 id|fast_gettimeoffset_quotient
 op_assign
 l_int|0
+suffix:semicolon
+r_extern
+id|rwlock_t
+id|xtime_lock
 suffix:semicolon
 DECL|function|do_fast_gettimeoffset
 r_static
@@ -368,15 +372,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|read_lock_irqsave
 c_func
 (paren
+op_amp
+id|xtime_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -406,9 +408,12 @@ op_div
 id|HZ
 )paren
 suffix:semicolon
-id|restore_flags
+id|read_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|xtime_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -440,9 +445,11 @@ op_star
 id|tv
 )paren
 (brace
-id|cli
+id|write_lock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 multiline_comment|/* This is revolting. We need to set the xtime.tv_usec&n;&t; * correctly. However, the value in this location is&n;&t; * is value at the last tick.&n;&t; * Discover what correction gettimeofday&n;&t; * would have done, and then undo it!&n;&t; */
@@ -486,9 +493,11 @@ id|time_esterror
 op_assign
 id|MAXPHASE
 suffix:semicolon
-id|sti
+id|write_unlock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace
@@ -739,11 +748,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * timer_interrupt() needs to keep up the real-time clock,&n; * as well as call the &quot;do_timer()&quot; routine every clocktick&n; */
-DECL|function|timer_interrupt
+DECL|function|do_timer_interrupt
 r_static
 r_inline
 r_void
-id|timer_interrupt
+id|do_timer_interrupt
 c_func
 (paren
 r_int
@@ -902,11 +911,18 @@ multiline_comment|/* reset the IRQ */
 )brace
 macro_line|#endif
 )brace
+DECL|variable|use_tsc
+r_static
+r_int
+id|use_tsc
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * This is the same as the above, except we _also_ save the current&n; * Time Stamp Counter value at the time of the timer interrupt, so that&n; * we later on can estimate the time of day more exactly.&n; */
-DECL|function|pentium_timer_interrupt
+DECL|function|timer_interrupt
 r_static
 r_void
-id|pentium_timer_interrupt
+id|timer_interrupt
 c_func
 (paren
 r_int
@@ -925,8 +941,22 @@ id|regs
 r_int
 id|count
 suffix:semicolon
-multiline_comment|/* It is important that these two operations happen almost at the&n;&t; * same time. We do the RDTSC stuff first, since it&squot;s faster. To&n;         * avoid any inconsistencies, we need interrupts disabled locally.&n;         */
-multiline_comment|/*&n;&t; * Interrupts are just disabled locally since the timer irq has the&n;&t; * SA_INTERRUPT flag set. -arca&n;&t; */
+multiline_comment|/*&n;&t; * Here we are in the timer irq handler. We just have irqs locally&n;&t; * disabled but we don&squot;t know if the timer_bh is running on the other&n;&t; * CPU. We need to avoid to SMP race with it. NOTE: we don&squot; t need&n;&t; * the irq version of write_lock because as just said we have irq&n;&t; * locally disabled. -arca&n;&t; */
+id|write_lock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|use_tsc
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * It is important that these two operations happen almost at&n;&t;&t; * the same time. We do the RDTSC stuff first, since it&squot;s&n;&t;&t; * faster. To avoid any inconsistencies, we need interrupts&n;&t;&t; * disabled locally.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Interrupts are just disabled locally since the timer irq&n;&t;&t; * has the SA_INTERRUPT flag set. -arca&n;&t;&t; */
 multiline_comment|/* read Pentium cycle counter */
 id|__asm__
 c_func
@@ -996,7 +1026,8 @@ l_int|2
 op_div
 id|LATCH
 suffix:semicolon
-id|timer_interrupt
+)brace
+id|do_timer_interrupt
 c_func
 (paren
 id|irq
@@ -1004,6 +1035,13 @@ comma
 l_int|NULL
 comma
 id|regs
+)paren
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace
@@ -1533,9 +1571,9 @@ id|do_get_fast_time
 op_assign
 id|do_gettimeofday
 suffix:semicolon
-id|irq0.handler
+id|use_tsc
 op_assign
-id|pentium_timer_interrupt
+l_int|1
 suffix:semicolon
 id|fast_gettimeoffset_quotient
 op_assign

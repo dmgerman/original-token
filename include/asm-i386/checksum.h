@@ -2,6 +2,7 @@ macro_line|#ifndef _I386_CHECKSUM_H
 DECL|macro|_I386_CHECKSUM_H
 mdefine_line|#define _I386_CHECKSUM_H
 multiline_comment|/*&n; * computes the checksum of a memory block at buff, length len,&n; * and adds in &quot;sum&quot; (32-bit)&n; *&n; * returns a 32-bit number suitable for feeding into itself&n; * or csum_tcpudp_magic&n; *&n; * this function must be called with even lengths, except&n; * for the last fragment, which may be odd&n; *&n; * it&squot;s best to have buff aligned on a 32-bit boundary&n; */
+id|asmlinkage
 r_int
 r_int
 id|csum_partial
@@ -22,6 +23,7 @@ id|sum
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * the same as csum_partial, but copies from src while it&n; * checksums, and handles user-space pointer exceptions correctly, when needed.&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
+id|asmlinkage
 r_int
 r_int
 id|csum_partial_copy_generic

@@ -1033,6 +1033,7 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
+multiline_comment|/* VERIFY_WRITE actually means a read, as we write to user space */
 id|ret
 op_assign
 id|locks_verify_area
@@ -1041,7 +1042,7 @@ c_func
 (paren
 id|type
 op_eq
-id|VERIFY_READ
+id|VERIFY_WRITE
 ques
 c_cond
 id|FLOCK_VERIFY_READ

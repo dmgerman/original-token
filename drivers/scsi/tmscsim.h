@@ -1,5 +1,5 @@
 multiline_comment|/***********************************************************************&n;;*&t;File Name : TMSCSIM.H&t;&t;&t;&t;&t;       *&n;;*&t;&t;    TEKRAM DC-390(T) PCI SCSI Bus Master Host Adapter  *&n;;*&t;&t;    Device Driver&t;&t;&t;&t;       *&n;;***********************************************************************/
-multiline_comment|/* $Id: tmscsim.h,v 2.1 1998/10/14 10:31:48 garloff Exp $ */
+multiline_comment|/* $Id: tmscsim.h,v 2.4 1998/12/25 17:33:27 garloff Exp $ */
 macro_line|#ifndef _TMSCSIM_H
 DECL|macro|_TMSCSIM_H
 mdefine_line|#define _TMSCSIM_H
@@ -277,10 +277,6 @@ id|SGL
 id|Segmentx
 suffix:semicolon
 multiline_comment|/* make a one entry of S/G list table */
-DECL|member|pMsgPtr
-id|PUCHAR
-id|pMsgPtr
-suffix:semicolon
 DECL|member|ScsiCmdLen
 id|UCHAR
 id|ScsiCmdLen
@@ -297,7 +293,7 @@ DECL|member|TargetStatus
 id|UCHAR
 id|TargetStatus
 suffix:semicolon
-multiline_comment|/* 0x5c: */
+multiline_comment|/* 0x58: */
 DECL|member|MsgCnt
 id|UCHAR
 id|MsgCnt
@@ -333,7 +329,7 @@ id|UCHAR
 id|SRBStatus
 suffix:semicolon
 singleline_comment|//UCHAR&t;&t;IORBFlag;&t;/*;81h-Reset, 2-retry */
-multiline_comment|/* 0x64: */
+multiline_comment|/* 0x60: */
 )brace
 suffix:semicolon
 DECL|typedef|DC390_SRB
@@ -615,19 +611,20 @@ DECL|member|glitch_cfg
 id|UCHAR
 id|glitch_cfg
 suffix:semicolon
-DECL|member|reserved
+DECL|member|MsgLen
 id|UCHAR
-id|reserved
-(braket
-l_int|2
-)braket
+id|MsgLen
 suffix:semicolon
-multiline_comment|/* alignment */
+DECL|member|Ignore_IRQ
+id|UCHAR
+id|Ignore_IRQ
+suffix:semicolon
+multiline_comment|/* Not used */
 DECL|member|PDEVDECL1
 id|PDEVDECL1
 suffix:semicolon
 multiline_comment|/* Pointer to PCI cfg. space */
-multiline_comment|/* 0x44/0x40: */
+multiline_comment|/* 0x40/0x3c: */
 DECL|member|Cmds
 id|ULONG
 id|Cmds

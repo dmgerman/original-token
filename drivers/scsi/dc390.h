@@ -1,5 +1,5 @@
 multiline_comment|/***********************************************************************&n; *&t;FILE NAME : DC390.H&t;&t;&t;&t;&t;       *&n; *&t;     BY   : C.L. Huang&t;&t;&t;&t;&t;       *&n; *&t;Description: Device Driver for Tekram DC-390(T) PCI SCSI       *&n; *&t;&t;     Bus Master Host Adapter&t;&t;&t;       *&n; ***********************************************************************/
-multiline_comment|/* $Id: dc390.h,v 2.3 1998/10/24 08:45:02 garloff Exp $ */
+multiline_comment|/* $Id: dc390.h,v 2.12 1998/12/25 17:33:27 garloff Exp $ */
 macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/*&n; * DC390/AMD 53C974 driver, header file&n; */
 macro_line|#ifndef DC390_H
@@ -8,7 +8,7 @@ mdefine_line|#define DC390_H
 DECL|macro|DC390_BANNER
 mdefine_line|#define DC390_BANNER &quot;Tekram DC390/AM53C974&quot;
 DECL|macro|DC390_VERSION
-mdefine_line|#define DC390_VERSION &quot;2.0b 1998/10/24&quot;
+mdefine_line|#define DC390_VERSION &quot;2.0d 1998/12/25&quot;
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;scsi/scsicam.h&gt;
 r_extern

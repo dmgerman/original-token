@@ -6622,13 +6622,15 @@ c_cond
 (paren
 id|timeout
 op_logical_and
+id|time_after
+c_func
 (paren
+id|jiffies
+comma
 id|orig_jiffies
 op_plus
 id|timeout
 )paren
-OL
-id|jiffies
 )paren
 r_break
 suffix:semicolon

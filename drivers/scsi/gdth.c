@@ -924,7 +924,7 @@ macro_line|#endif
 DECL|macro|PTR2USHORT
 mdefine_line|#define PTR2USHORT(a)   (ushort)(ulong)(a)
 DECL|macro|JIFFYWAIT
-mdefine_line|#define JIFFYWAIT(a)    {ulong gdtjf;gdtjf=jiffies+(a);while(gdtjf&gt;jiffies);}
+mdefine_line|#define JIFFYWAIT(a)    {ulong gdtjf;gdtjf=jiffies+(a);while(time_before(jiffies,gdtjf));}
 DECL|macro|GDTOFFSOF
 mdefine_line|#define GDTOFFSOF(a,b)  (size_t)&amp;(((a*)0)-&gt;b)   
 DECL|macro|INDEX_OK

@@ -7,6 +7,7 @@ macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
 macro_line|#ifdef CONFIG_TRIX
 macro_line|#ifdef INCLUDE_TRIX_BOOT
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;trix_boot.h&quot;
 macro_line|#else
 DECL|variable|trix_boot

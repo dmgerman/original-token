@@ -1880,7 +1880,14 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* We keep internally 3 raw sockets */
 r_return
-id|__this_module.usecount
+id|atomic_read
+c_func
+(paren
+op_amp
+(paren
+id|__this_module.uc.usecount
+)paren
+)paren
 op_minus
 l_int|3
 suffix:semicolon

@@ -6586,9 +6586,11 @@ id|max_mcast_per_period
 r_if
 c_cond
 (paren
-id|jiffies
-OG
+id|time_after
+c_func
 (paren
+id|jiffies
+comma
 id|f-&gt;mcast_timer
 op_plus
 id|mcast_hold_time

@@ -653,9 +653,13 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|time_before
+c_func
+(paren
 id|jiffies
-OL
+comma
 id|target_jiffies
+)paren
 )paren
 id|barrier
 c_func

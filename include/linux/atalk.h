@@ -7,7 +7,7 @@ mdefine_line|#define ATPORT_FIRST&t;1
 DECL|macro|ATPORT_RESERVED
 mdefine_line|#define ATPORT_RESERVED&t;128
 DECL|macro|ATPORT_LAST
-mdefine_line|#define ATPORT_LAST&t;255
+mdefine_line|#define ATPORT_LAST&t;254 /* 254 is only legal on localtalk */ 
 DECL|macro|ATADDR_ANYNET
 mdefine_line|#define ATADDR_ANYNET&t;(__u16)0
 DECL|macro|ATADDR_ANYNODE

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  binfmt_misc.c&n; *&n; *  Copyright (C) 1997 Richard G&#xfffd;nther&n; *&n; *  binfmt_misc detects binaries via a magic or filename extension and invokes&n; *  a specified wrapper. This should obsolete binfmt_java, binfmt_em86 and&n; *  binfmt_mz.&n; *&n; *  1997-04-25 first version&n; *  [...]&n; *  1997-05-19 cleanup&n; *  1997-06-26 hpa: pass the real filename rather than argv[0]&n; *  1997-06-30 minor cleanup&n; *  1997-08-09 removed extension stripping, locking cleanup&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2275,6 +2276,7 @@ op_star
 id|e
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 id|remove_proc_entry
 c_func
 (paren
@@ -2283,6 +2285,7 @@ comma
 id|bm_dir
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Create the /proc-dir entry for binfmt&n; */
 DECL|function|entry_proc_setup
@@ -2297,6 +2300,7 @@ op_star
 id|e
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 r_if
 c_cond
 (paren
@@ -2341,6 +2345,7 @@ id|e-&gt;proc_dir-&gt;write_proc
 op_assign
 id|proc_write_status
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2383,6 +2388,13 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|error
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 r_struct
 id|proc_dir_entry
 op_star
@@ -2392,12 +2404,6 @@ l_int|NULL
 comma
 op_star
 id|reg
-suffix:semicolon
-r_int
-id|error
-op_assign
-op_minus
-id|ENOMEM
 suffix:semicolon
 id|bm_dir
 op_assign
@@ -2486,6 +2492,7 @@ id|reg-&gt;write_proc
 op_assign
 id|proc_write_register
 suffix:semicolon
+macro_line|#endif /* CONFIG_PROC_FS */
 id|error
 op_assign
 id|register_binfmt

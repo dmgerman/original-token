@@ -364,9 +364,13 @@ r_else
 r_if
 c_cond
 (paren
-id|nlmsvc_grace_period
-OL
+id|time_after
+c_func
+(paren
 id|jiffies
+comma
+id|nlmsvc_grace_period
+)paren
 )paren
 id|nlmsvc_grace_period
 op_assign

@@ -4,7 +4,7 @@ mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#ifdef MODULE
 DECL|macro|MOD_USE_COUNT
-mdefine_line|#define MOD_USE_COUNT ((&amp;__this_module)-&gt;usecount)
+mdefine_line|#define MOD_USE_COUNT ( GET_USE_COUNT (&amp;__this_module))
 macro_line|#endif&t;&t;&t;&t;/* MODULE */
 DECL|variable|lli_revision
 r_const
@@ -10715,7 +10715,7 @@ id|tmp
 op_plus
 id|i
 comma
-l_string|&quot;   LOCK modcnt %lx&bslash;n&quot;
+l_string|&quot;   LOCK modcnt %d&bslash;n&quot;
 comma
 id|MOD_USE_COUNT
 )paren
@@ -10779,7 +10779,7 @@ id|tmp
 op_plus
 id|i
 comma
-l_string|&quot; UNLOCK modcnt %lx&bslash;n&quot;
+l_string|&quot; UNLOCK modcnt %d&bslash;n&quot;
 comma
 id|MOD_USE_COUNT
 )paren
@@ -11201,9 +11201,14 @@ r_case
 l_int|55
 )paren
 suffix:colon
+r_while
+c_loop
+(paren
 id|MOD_USE_COUNT
-op_assign
+OG
 l_int|0
+)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|HiSax_mod_inc_use_count
 c_func

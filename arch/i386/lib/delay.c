@@ -14,6 +14,9 @@ r_int
 id|loops
 )paren
 (brace
+r_int
+id|d0
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -24,14 +27,15 @@ l_string|&quot;1:&bslash;tjmp 2f&bslash;n&quot;
 l_string|&quot;.align 16&bslash;n&quot;
 l_string|&quot;2:&bslash;tdecl %0&bslash;n&bslash;tjns 2b&quot;
 suffix:colon
-multiline_comment|/* no outputs */
+l_string|&quot;=&amp;a&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;0&quot;
 (paren
 id|loops
 )paren
-suffix:colon
-l_string|&quot;ax&quot;
 )paren
 suffix:semicolon
 )brace
@@ -46,6 +50,9 @@ r_int
 id|xloops
 )paren
 (brace
+r_int
+id|d0
+suffix:semicolon
 id|__asm__
 c_func
 (paren
@@ -55,8 +62,13 @@ l_string|&quot;=d&quot;
 (paren
 id|xloops
 )paren
+comma
+l_string|&quot;=&amp;a&quot;
+(paren
+id|d0
+)paren
 suffix:colon
-l_string|&quot;a&quot;
+l_string|&quot;1&quot;
 (paren
 id|xloops
 )paren
@@ -65,8 +77,6 @@ l_string|&quot;0&quot;
 (paren
 id|current_cpu_data.loops_per_sec
 )paren
-suffix:colon
-l_string|&quot;ax&quot;
 )paren
 suffix:semicolon
 id|__delay

@@ -313,13 +313,22 @@ multiline_comment|/* for compatibility */
 suffix:semicolon
 macro_line|#endif /* CONFIG_SOLARIS_X86_PARTITION */
 macro_line|#ifdef CONFIG_BSD_DISKLABEL
-multiline_comment|/*&n; * BSD disklabel support by Yossi Gottlieb &lt;yogo@math.tau.ac.il&gt;&n; */
-DECL|macro|BSD_PARTITION
-mdefine_line|#define BSD_PARTITION&t;&t;0xa5&t;/* Partition ID */
+multiline_comment|/*&n; * BSD disklabel support by Yossi Gottlieb &lt;yogo@math.tau.ac.il&gt;&n; * updated by Marc Espie &lt;Marc.Espie@openbsd.org&gt;&n; */
+DECL|macro|FREEBSD_PARTITION
+mdefine_line|#define FREEBSD_PARTITION&t;0xa5    /* FreeBSD Partition ID */
+DECL|macro|OPENBSD_PARTITION
+mdefine_line|#define OPENBSD_PARTITION&t;0xa6    /* OpenBSD Partition ID */
+DECL|macro|NETBSD_PARTITION
+mdefine_line|#define NETBSD_PARTITION&t;0xa9    /* NetBSD Partition ID */
+DECL|macro|BSDI_PARTITION
+mdefine_line|#define BSDI_PARTITION&t;&t;0xb7    /* BSDI Partition ID */
+multiline_comment|/* check against BSD src/sys/sys/disklabel.h for consistency */
 DECL|macro|BSD_DISKMAGIC
 mdefine_line|#define BSD_DISKMAGIC&t;(0x82564557UL)&t;/* The disk magic number */
 DECL|macro|BSD_MAXPARTITIONS
 mdefine_line|#define BSD_MAXPARTITIONS&t;8
+DECL|macro|OPENBSD_MAXPARTITIONS
+mdefine_line|#define OPENBSD_MAXPARTITIONS&t;16
 DECL|macro|BSD_FS_UNUSED
 mdefine_line|#define BSD_FS_UNUSED&t;&t;0&t;/* disklabel unused partition entry ID */
 DECL|struct|bsd_disklabel
@@ -529,6 +538,210 @@ multiline_comment|/* actually may be more */
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_BSD_DISKLABEL */
+macro_line|#ifdef CONFIG_UNIXWARE_DISKLABEL
+multiline_comment|/*&n; * Unixware slices support by Andrzej Krzysztofowicz &lt;ankry@mif.pg.gda.pl&gt;&n; * and Krzysztof G. Baranowski &lt;kgb@knm.org.pl&gt;&n; */
+DECL|macro|UNIXWARE_PARTITION
+mdefine_line|#define UNIXWARE_PARTITION     0x63&t;&t;/* Partition ID, same as */
+multiline_comment|/* GNU_HURD and SCO Unix */
+DECL|macro|UNIXWARE_DISKMAGIC
+mdefine_line|#define UNIXWARE_DISKMAGIC     (0xCA5E600DUL)&t;/* The disk magic number */
+DECL|macro|UNIXWARE_DISKMAGIC2
+mdefine_line|#define UNIXWARE_DISKMAGIC2    (0x600DDEEEUL)&t;/* The slice table magic nr */
+DECL|macro|UNIXWARE_NUMSLICE
+mdefine_line|#define UNIXWARE_NUMSLICE      16
+DECL|macro|UNIXWARE_FS_UNUSED
+mdefine_line|#define UNIXWARE_FS_UNUSED     0&t;&t;/* Unused slice entry ID */
+DECL|struct|unixware_slice
+r_struct
+id|unixware_slice
+(brace
+DECL|member|s_label
+id|__u16
+id|s_label
+suffix:semicolon
+multiline_comment|/* label */
+DECL|member|s_flags
+id|__u16
+id|s_flags
+suffix:semicolon
+multiline_comment|/* permission flags */
+DECL|member|start_sect
+id|__u32
+id|start_sect
+suffix:semicolon
+multiline_comment|/* starting sector */
+DECL|member|nr_sects
+id|__u32
+id|nr_sects
+suffix:semicolon
+multiline_comment|/* number of sectors in slice */
+)brace
+suffix:semicolon
+DECL|struct|unixware_disklabel
+r_struct
+id|unixware_disklabel
+(brace
+DECL|member|d_type
+id|__u32
+id|d_type
+suffix:semicolon
+multiline_comment|/* drive type */
+DECL|member|d_magic
+id|__u32
+id|d_magic
+suffix:semicolon
+multiline_comment|/* the magic number */
+DECL|member|d_version
+id|__u32
+id|d_version
+suffix:semicolon
+multiline_comment|/* version number */
+DECL|member|d_serial
+r_char
+id|d_serial
+(braket
+l_int|12
+)braket
+suffix:semicolon
+multiline_comment|/* serial number of the device */
+DECL|member|d_ncylinders
+id|__u32
+id|d_ncylinders
+suffix:semicolon
+multiline_comment|/* # of data cylinders per device */
+DECL|member|d_ntracks
+id|__u32
+id|d_ntracks
+suffix:semicolon
+multiline_comment|/* # of tracks per cylinder */
+DECL|member|d_nsectors
+id|__u32
+id|d_nsectors
+suffix:semicolon
+multiline_comment|/* # of data sectors per track */
+DECL|member|d_secsize
+id|__u32
+id|d_secsize
+suffix:semicolon
+multiline_comment|/* # of bytes per sector */
+DECL|member|d_part_start
+id|__u32
+id|d_part_start
+suffix:semicolon
+multiline_comment|/* # of first sector of this partition */
+DECL|member|d_unknown1
+id|__u32
+id|d_unknown1
+(braket
+l_int|12
+)braket
+suffix:semicolon
+multiline_comment|/* ? */
+DECL|member|d_alt_tbl
+id|__u32
+id|d_alt_tbl
+suffix:semicolon
+multiline_comment|/* byte offset of alternate table */
+DECL|member|d_alt_len
+id|__u32
+id|d_alt_len
+suffix:semicolon
+multiline_comment|/* byte length of alternate table */
+DECL|member|d_phys_cyl
+id|__u32
+id|d_phys_cyl
+suffix:semicolon
+multiline_comment|/* # of physical cylinders per device */
+DECL|member|d_phys_trk
+id|__u32
+id|d_phys_trk
+suffix:semicolon
+multiline_comment|/* # of physical tracks per cylinder */
+DECL|member|d_phys_sec
+id|__u32
+id|d_phys_sec
+suffix:semicolon
+multiline_comment|/* # of physical sectors per track */
+DECL|member|d_phys_bytes
+id|__u32
+id|d_phys_bytes
+suffix:semicolon
+multiline_comment|/* # of physical bytes per sector */
+DECL|member|d_unknown2
+id|__u32
+id|d_unknown2
+suffix:semicolon
+multiline_comment|/* ? */
+DECL|member|d_unknown3
+id|__u32
+id|d_unknown3
+suffix:semicolon
+multiline_comment|/* ? */
+DECL|member|d_pad
+id|__u32
+id|d_pad
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* pad */
+DECL|struct|unixware_vtoc
+r_struct
+id|unixware_vtoc
+(brace
+DECL|member|v_magic
+id|__u32
+id|v_magic
+suffix:semicolon
+multiline_comment|/* the magic number */
+DECL|member|v_version
+id|__u32
+id|v_version
+suffix:semicolon
+multiline_comment|/* version number */
+DECL|member|v_name
+r_char
+id|v_name
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* volume name */
+DECL|member|v_nslices
+id|__u16
+id|v_nslices
+suffix:semicolon
+multiline_comment|/* # of slices */
+DECL|member|v_unknown1
+id|__u16
+id|v_unknown1
+suffix:semicolon
+multiline_comment|/* ? */
+DECL|member|v_reserved
+id|__u32
+id|v_reserved
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* reserved */
+r_struct
+id|unixware_slice
+DECL|member|v_slice
+id|v_slice
+(braket
+id|UNIXWARE_NUMSLICE
+)braket
+suffix:semicolon
+multiline_comment|/* slice headers */
+DECL|member|vtoc
+)brace
+id|vtoc
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* 408 */
+macro_line|#endif /* CONFIG_UNIXWARE_DISKLABEL */
 r_extern
 r_struct
 id|gendisk

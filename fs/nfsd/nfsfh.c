@@ -3732,9 +3732,13 @@ multiline_comment|/*&n;&t; * Perform any needed housekeeping ...&n;&t; * N.B. mo
 r_if
 c_cond
 (paren
+id|time_after_eq
+c_func
+(paren
 id|jiffies
-op_ge
+comma
 id|nfsd_next_expire
+)paren
 )paren
 (brace
 id|expire_old

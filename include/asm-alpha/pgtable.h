@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;/* For TASK_SIZE */
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;&t;/* For the task lock */
 multiline_comment|/* Caches aren&squot;t brain-dead on the Alpha. */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)

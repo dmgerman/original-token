@@ -5704,9 +5704,13 @@ op_div
 l_int|4
 )paren
 suffix:semicolon
+id|time_before
+c_func
+(paren
 id|jiffies
-OL
+comma
 id|wait
+)paren
 suffix:semicolon
 )paren
 id|mb

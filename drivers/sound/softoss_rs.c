@@ -135,7 +135,7 @@ id|fract
 op_assign
 id|v-&gt;ptr
 op_amp
-l_int|0x1f
+l_int|0x1ff
 suffix:semicolon
 multiline_comment|/* 9 bits */
 multiline_comment|/* This method works with less arithmetic operations */

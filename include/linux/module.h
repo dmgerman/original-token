@@ -17,6 +17,7 @@ macro_line|#   define _set_ver(sym) sym
 macro_line|#   include &lt;linux/modversions.h&gt;
 macro_line|# endif
 macro_line|#endif /* __GENKSYMS__ */
+macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/* Don&squot;t need to bring in all of uaccess.h just for this decl.  */
 r_struct
 id|exception_table_entry
@@ -115,10 +116,21 @@ r_int
 r_int
 id|size
 suffix:semicolon
+r_union
+(brace
 DECL|member|usecount
-r_int
+id|atomic_t
 id|usecount
 suffix:semicolon
+DECL|member|pad
+r_int
+id|pad
+suffix:semicolon
+DECL|member|uc
+)brace
+id|uc
+suffix:semicolon
+multiline_comment|/* Needs to keep its size - so says rth */
 DECL|member|flags
 r_int
 r_int
@@ -275,14 +287,14 @@ DECL|macro|mod_member_present
 mdefine_line|#define mod_member_present(mod,member) &t;&t;&t;&t;&t;&bslash;&n;&t;((unsigned long)(&amp;((struct module *)0L)-&gt;member + 1)&t;&t;&bslash;&n;&t; &lt;= (mod)-&gt;size_of_struct)
 multiline_comment|/* Backwards compatibility definition.  */
 DECL|macro|GET_USE_COUNT
-mdefine_line|#define GET_USE_COUNT(module)&t;((module)-&gt;usecount)
+mdefine_line|#define GET_USE_COUNT(module)&t;(atomic_read(&amp;(module)-&gt;uc.usecount))
 multiline_comment|/* Poke the use count of a module.  */
 DECL|macro|__MOD_INC_USE_COUNT
-mdefine_line|#define __MOD_INC_USE_COUNT(mod)&t;&t;&t;&t;&t;&bslash;&n;&t;((mod)-&gt;usecount++, (mod)-&gt;flags |= MOD_VISITED|MOD_USED_ONCE)
+mdefine_line|#define __MOD_INC_USE_COUNT(mod)&t;&t;&t;&t;&t;&bslash;&n;&t;(atomic_inc(&amp;(mod)-&gt;uc.usecount), (mod)-&gt;flags |= MOD_VISITED|MOD_USED_ONCE)
 DECL|macro|__MOD_DEC_USE_COUNT
-mdefine_line|#define __MOD_DEC_USE_COUNT(mod)&t;&t;&t;&t;&t;&bslash;&n;&t;((mod)-&gt;usecount--, (mod)-&gt;flags |= MOD_VISITED)
+mdefine_line|#define __MOD_DEC_USE_COUNT(mod)&t;&t;&t;&t;&t;&bslash;&n;&t;(atomic_dec(&amp;(mod)-&gt;uc.usecount), (mod)-&gt;flags |= MOD_VISITED)
 DECL|macro|__MOD_IN_USE
-mdefine_line|#define __MOD_IN_USE(mod)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(mod_member_present((mod), can_unload) &amp;&amp; (mod)-&gt;can_unload&t;&bslash;&n;&t; ? (mod)-&gt;can_unload() : (mod)-&gt;usecount)
+mdefine_line|#define __MOD_IN_USE(mod)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(mod_member_present((mod), can_unload) &amp;&amp; (mod)-&gt;can_unload&t;&bslash;&n;&t; ? (mod)-&gt;can_unload() : atomic_read(&amp;(mod)-&gt;uc.usecount))
 multiline_comment|/* Indirect stringification.  */
 DECL|macro|__MODULE_STRING_1
 mdefine_line|#define __MODULE_STRING_1(x)&t;#x

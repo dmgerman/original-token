@@ -7394,9 +7394,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|bh-&gt;b_flushtime
-OG
+id|time_before
+c_func
+(paren
 id|jiffies
+comma
+id|bh-&gt;b_flushtime
+)paren
 )paren
 (brace
 r_continue

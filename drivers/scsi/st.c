@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1998 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sun Sep  6 09:34:49 1998 by root@home&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1998 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Thu Dec  3 20:27:46 1998 by makisara@home&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3375,7 +3375,10 @@ l_int|0
 dot
 id|drv_block
 op_assign
-l_int|0
+(paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|STp-&gt;partition
 op_assign
@@ -3891,6 +3894,12 @@ comma
 id|dev
 comma
 id|STp-&gt;block_size
+)paren
+suffix:semicolon
+id|scsi_release_command
+c_func
+(paren
+id|SCpnt
 )paren
 suffix:semicolon
 (paren
@@ -18025,11 +18034,17 @@ id|FALSE
 suffix:semicolon
 id|STps-&gt;drv_block
 op_assign
-l_int|0
+(paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|STps-&gt;drv_file
 op_assign
-l_int|0
+(paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 )brace
 id|tpnt-&gt;current_mode

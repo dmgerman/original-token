@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in sv_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.98   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *&n; */
+multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in sv_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.98   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -3463,12 +3463,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s-&gt;dma_adc.mapped
-)paren
-(brace
-r_if
-c_cond
-(paren
 id|s-&gt;dma_adc.count
 op_ge
 (paren
@@ -3483,8 +3477,12 @@ op_amp
 id|s-&gt;dma_adc.wait
 )paren
 suffix:semicolon
-)brace
-r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;dma_adc.mapped
+)paren
 (brace
 r_if
 c_cond
@@ -3528,20 +3526,6 @@ id|s-&gt;dma_adc.error
 op_increment
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|s-&gt;dma_adc.count
-OG
-l_int|0
-)paren
-id|wake_up
-c_func
-(paren
-op_amp
-id|s-&gt;dma_adc.wait
-)paren
-suffix:semicolon
 )brace
 )brace
 multiline_comment|/* update DAC pointer */
@@ -3676,7 +3660,12 @@ r_if
 c_cond
 (paren
 id|s-&gt;dma_dac.count
-OL
+op_plus
+(paren
+r_int
+)paren
+id|s-&gt;dma_dac.fragsize
+op_le
 (paren
 r_int
 )paren
@@ -7300,7 +7289,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -7318,7 +7307,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
@@ -7351,15 +7340,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|s-&gt;dma_adc.mapped
 )paren
 (brace
 r_if
@@ -7379,27 +7362,10 @@ op_or
 id|POLLRDNORM
 suffix:semicolon
 )brace
-r_else
-(brace
 r_if
 c_cond
 (paren
-id|s-&gt;dma_adc.count
-OG
-l_int|0
-)paren
-id|mask
-op_or_assign
-id|POLLIN
-op_or
-id|POLLRDNORM
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -7436,8 +7402,13 @@ c_cond
 r_int
 )paren
 id|s-&gt;dma_dac.dmasize
-OG
+op_ge
 id|s-&gt;dma_dac.count
+op_plus
+(paren
+r_int
+)paren
+id|s-&gt;dma_dac.fragsize
 )paren
 id|mask
 op_or_assign
@@ -9797,7 +9768,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -9819,7 +9790,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
@@ -10568,7 +10539,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -10586,7 +10557,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
@@ -10613,7 +10584,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
@@ -10635,7 +10606,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -12848,7 +12819,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;sv: version v0.8 time &quot;
+l_string|&quot;sv: version v0.9 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__

@@ -1319,11 +1319,15 @@ op_amp
 id|BUSY_STAT
 )paren
 op_logical_and
+id|time_before
+c_func
+(paren
 id|jiffies
-OL
+comma
 id|timeout
 op_plus
 id|WAIT_WORSTCASE
+)paren
 )paren
 id|delay_50ms
 c_func

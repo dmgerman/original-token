@@ -1295,7 +1295,7 @@ id|ext
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * new_extent()&n; *&n; * Description:&n; *   Adds a new extent record to a fork, extending its physical length.&n; * Input Variable(s):&n; *   struct hfs_fork *fork: the fork to extend&n; *   struct hfs_extent *ext: the current last extent for &squot;fork&squot;&n; *   hfs_u16 ablock: the number of allocation blocks in &squot;fork&squot;.&n; *   hfs_u16 start: first allocation block to add to &squot;fork&squot;.&n; *   hfs_u16 len: the number of allocation blocks to add to &squot;fork&squot;.&n; *   hfs_u16 ablksz: number of sectors in an allocation block.&n; * Output Variable(s):&n; *   NONE&n; * Returns:&n; *   (struct hfs_extent *) the new extent or NULL&n; * Preconditions:&n; *   &squot;fork&squot; points to a valid (struct hfs_fork)&n; *   &squot;ext&squot; point to a valid (struct hfs_extent) which is the last in &squot;fork&squot;&n; *   &squot;ablock&squot;, &squot;start&squot;, &squot;len&squot; and &squot;ablksz&squot; are what they claim to be.&n; * Postconditions:&n; *   If NULL is returned then no changes have been made to &squot;fork&squot;.&n; *   If the return value is non-NULL that it is the extent that has been&n; *   added to &squot;fork&squot; both in memory and on disk.  The &squot;psize&squot; field of&n; *   &squot;fork&squot; has been updated to reflect the new physical size.&n; */
+multiline_comment|/*&n; * new_extent()&n; *&n; * Description:&n; *   Adds a new extent record to a fork, extending its physical length.&n; * Input Variable(s):&n; *   struct hfs_fork *fork: the fork to extend&n; *   struct hfs_extent *ext: the current last extent for &squot;fork&squot;&n; *   hfs_u16 ablock: the number of allocation blocks in &squot;fork&squot;.&n; *   hfs_u16 start: first allocation block to add to &squot;fork&squot;.&n; *   hfs_u16 len: the number of allocation blocks to add to &squot;fork&squot;.&n; *   hfs_u32 ablksz: number of sectors in an allocation block.&n; * Output Variable(s):&n; *   NONE&n; * Returns:&n; *   (struct hfs_extent *) the new extent or NULL&n; * Preconditions:&n; *   &squot;fork&squot; points to a valid (struct hfs_fork)&n; *   &squot;ext&squot; point to a valid (struct hfs_extent) which is the last in &squot;fork&squot;&n; *   &squot;ablock&squot;, &squot;start&squot;, &squot;len&squot; and &squot;ablksz&squot; are what they claim to be.&n; * Postconditions:&n; *   If NULL is returned then no changes have been made to &squot;fork&squot;.&n; *   If the return value is non-NULL that it is the extent that has been&n; *   added to &squot;fork&squot; both in memory and on disk.  The &squot;psize&squot; field of&n; *   &squot;fork&squot; has been updated to reflect the new physical size.&n; */
 DECL|function|new_extent
 r_static
 r_struct
@@ -1755,7 +1755,7 @@ id|next
 comma
 id|count
 suffix:semicolon
-id|hfs_u16
+id|hfs_u32
 id|ablksz
 op_assign
 id|mdb-&gt;alloc_blksz
@@ -2090,7 +2090,7 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
-id|hfs_u16
+id|hfs_u32
 id|ablksz
 op_assign
 id|mdb-&gt;alloc_blksz
@@ -2737,8 +2737,7 @@ id|hfs_u32
 id|blks
 comma
 id|ablocks
-suffix:semicolon
-id|hfs_u16
+comma
 id|ablksz
 suffix:semicolon
 r_if

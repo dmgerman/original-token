@@ -839,6 +839,10 @@ DECL|macro|VID_HARDWARE_RIVA128
 mdefine_line|#define VID_HARDWARE_RIVA128&t;15&t;/* Reserved for RIVA 128 */
 DECL|macro|VID_HARDWARE_PLANB
 mdefine_line|#define VID_HARDWARE_PLANB&t;16&t;/* PowerMac motherboard video-in */
+DECL|macro|VID_HARDWARE_BROADWAY
+mdefine_line|#define VID_HARDWARE_BROADWAY&t;17&t;/* Broadway project */
+DECL|macro|VID_HARDWARE_GEMTEK
+mdefine_line|#define VID_HARDWARE_GEMTEK&t;18
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

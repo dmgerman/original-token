@@ -149,20 +149,24 @@ id|fat_bits
 suffix:semicolon
 multiline_comment|/* number of FATs, FAT bits (12 or 16) */
 DECL|member|fat_start
-DECL|member|fat_length
 r_int
 r_int
 id|fat_start
-comma
+suffix:semicolon
+DECL|member|fat_length
+r_int
+r_int
 id|fat_length
 suffix:semicolon
 multiline_comment|/* FAT start &amp; length (sec.) */
 DECL|member|dir_start
-DECL|member|dir_entries
 r_int
 r_int
 id|dir_start
-comma
+suffix:semicolon
+DECL|member|dir_entries
+r_int
+r_int
 id|dir_entries
 suffix:semicolon
 multiline_comment|/* root dir start &amp; entries */

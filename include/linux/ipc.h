@@ -46,6 +46,11 @@ DECL|macro|IPC_EXCL
 mdefine_line|#define IPC_EXCL   00002000   /* fail if key exists */
 DECL|macro|IPC_NOWAIT
 mdefine_line|#define IPC_NOWAIT 00004000   /* return error on wait */
+multiline_comment|/* these fields are used by the DIPC package so the kernel as standard&n;   should avoid using them if possible */
+DECL|macro|IPC_DIPC
+mdefine_line|#define IPC_DIPC 00010000  /* make it distributed */
+DECL|macro|IPC_OWN
+mdefine_line|#define IPC_OWN  00020000  /* this machine is the DIPC owner */
 multiline_comment|/* &n; * Control commands used with semctl, msgctl and shmctl &n; * see also specific commands in sem.h, msg.h and shm.h&n; */
 DECL|macro|IPC_RMID
 mdefine_line|#define IPC_RMID 0     /* remove resource */

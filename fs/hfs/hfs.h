@@ -540,7 +540,7 @@ id|free_ablocks
 suffix:semicolon
 multiline_comment|/* The number of unused&n;&t;&t;&t;&t;&t;&t;   allocation blocks&n;&t;&t;&t;&t;&t;&t;   in the filesystem */
 DECL|member|alloc_blksz
-id|hfs_u16
+id|hfs_u32
 id|alloc_blksz
 suffix:semicolon
 multiline_comment|/* The number of&n;&t;&t;&t;&t;&t;&t;   512-byte blocks per&n;&t;&t;&t;&t;&t;&t;   &quot;allocation block&quot; */

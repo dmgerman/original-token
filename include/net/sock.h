@@ -197,6 +197,12 @@ r_int
 r_int
 id|type
 suffix:semicolon
+multiline_comment|/* &n; * To handle special ncp connection-handling sockets for mars_nwe,&n; * the connection number must be stored in the socket.&n; */
+DECL|member|ipx_ncp_conn
+r_int
+r_int
+id|ipx_ncp_conn
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

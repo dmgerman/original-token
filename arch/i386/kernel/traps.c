@@ -2059,7 +2059,7 @@ id|idt_descr
 suffix:semicolon
 )brace
 DECL|macro|_set_gate
-mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ __volatile__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %2,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%1&quot; &bslash;&n;&t;:&quot;=m&quot; (*((long *) (gate_addr))), &bslash;&n;&t; &quot;=m&quot; (*(1+(long *) (gate_addr))) &bslash;&n;&t;:&quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t; &quot;d&quot; ((char *) (addr)),&quot;a&quot; (__KERNEL_CS &lt;&lt; 16) &bslash;&n;&t;:&quot;ax&quot;,&quot;dx&quot;)
+mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;do { &bslash;&n;  int __d0, __d1; &bslash;&n;  __asm__ __volatile__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %4,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%1&quot; &bslash;&n;&t;:&quot;=m&quot; (*((long *) (gate_addr))), &bslash;&n;&t; &quot;=m&quot; (*(1+(long *) (gate_addr))), &quot;=&amp;a&quot; (__d0), &quot;=&amp;d&quot; (__d1) &bslash;&n;&t;:&quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t; &quot;3&quot; ((char *) (addr)),&quot;2&quot; (__KERNEL_CS &lt;&lt; 16)); &bslash;&n;} while (0)
 multiline_comment|/*&n; * This needs to use &squot;idt_table&squot; rather than &squot;idt&squot;, and&n; * thus use the _nonmapped_ version of the IDT, as the&n; * Pentium F0 0F bugfix can have resulted in the mapped&n; * IDT being write-protected.&n; */
 DECL|function|set_intr_gate
 r_void

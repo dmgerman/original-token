@@ -2264,25 +2264,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef NFS_PARANOIA
-r_if
-c_cond
-(paren
-id|error
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_lookup: %s/%s failed, error=%d&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-comma
-id|error
-)paren
-suffix:semicolon
-macro_line|#endif
 id|out
 suffix:colon
 r_return

@@ -883,11 +883,15 @@ c_cond
 op_logical_neg
 id|last
 op_logical_or
+id|time_after
+c_func
+(paren
+id|jiffies
+comma
 id|last
 op_plus
 l_int|500
-OL
-id|jiffies
+)paren
 )paren
 (brace
 id|last

@@ -146,12 +146,12 @@ id|spinlock_t
 suffix:semicolon
 macro_line|#if DEBUG_SPINLOCK
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED {0, 1, 0, 0, 0, 0}
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) {0, 1, 0, 0, 0, 0}
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;((x)-&gt;lock = 0, (x)-&gt;target_ipl = 0, (x)-&gt;debug_state = 1,&t;&bslash;&n;&t; (x)-&gt;previous = 0, (x)-&gt;task = 0)
 macro_line|#else
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED&t;{ 0 }
+mdefine_line|#define SPIN_LOCK_UNLOCKED&t;(spinlock_t) { 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;((x)-&gt;lock = 0)
 macro_line|#endif
@@ -321,7 +321,7 @@ suffix:semicolon
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { 0, 0 }
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0, 0 }
 macro_line|#if DEBUG_RWLOCK
 r_extern
 r_void

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-04-21&t;Modified by Ulrich Windl to make NTP work&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; */
+multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-04-21&t;Modified by Ulrich Windl to make NTP work&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; *  1998-11-19&t;Implemented schedule_timeout() and related stuff&n; *&t;&t;by Andrea Arcangeli&n; *  1998-12-24&t;Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *&t;&t;serialize accesses to xtime/lost_ticks).&n; *&t;&t;&t;&t;Copyright (C) 1998  Andrea Arcangeli&n; */
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid()), which just extract a field from&n; * current-task&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -448,6 +448,9 @@ id|next-&gt;prev_run
 op_assign
 id|p
 suffix:semicolon
+id|nr_running
+op_increment
+suffix:semicolon
 )brace
 DECL|function|del_from_runqueue
 r_static
@@ -683,9 +686,6 @@ c_func
 (paren
 id|p
 )paren
-suffix:semicolon
-id|nr_running
-op_increment
 suffix:semicolon
 )brace
 id|spin_unlock_irqrestore
@@ -1534,36 +1534,6 @@ r_int
 r_int
 id|expire
 suffix:semicolon
-multiline_comment|/*&n;&t; * PARANOID.&n;&t; */
-r_if
-c_cond
-(paren
-id|current-&gt;state
-op_eq
-id|TASK_UNINTERRUPTIBLE
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;schedule_timeout: task not interrutible &quot;
-l_string|&quot;from %p&bslash;n&quot;
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * We don&squot; t want to interrupt a not interruptible task&n;&t;&t; * risking to cause corruption. Better a a deadlock ;-).&n;&t;&t; */
-id|timeout
-op_assign
-id|MAX_SCHEDULE_TIMEOUT
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Here we start for real.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -1968,10 +1938,6 @@ id|next-&gt;has_cpu
 op_assign
 l_int|1
 suffix:semicolon
-id|next-&gt;processor
-op_assign
-id|this_cpu
-suffix:semicolon
 macro_line|#endif
 r_if
 c_cond
@@ -1981,6 +1947,12 @@ op_ne
 id|next
 )paren
 (brace
+macro_line|#ifdef __SMP__
+id|next-&gt;processor
+op_assign
+id|this_cpu
+suffix:semicolon
+macro_line|#endif
 id|kstat.context_swtch
 op_increment
 suffix:semicolon
@@ -3969,6 +3941,13 @@ id|lost_ticks_system
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n; * This spinlock protect us from races in SMP while playing with xtime. -arca&n; */
+DECL|variable|xtime_lock
+id|rwlock_t
+id|xtime_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 DECL|function|update_times
 r_static
 r_inline
@@ -3983,19 +3962,12 @@ r_int
 r_int
 id|ticks
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
+multiline_comment|/*&n;&t; * update_times() is run from the raw timer_bh handler so we&n;&t; * just know that the irqs are locally enabled and so we don&squot;t&n;&t; * need to save/restore the flags of the local CPU here. -arca&n;&t; */
+id|write_lock_irq
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 id|ticks
@@ -4039,10 +4011,11 @@ c_func
 id|ticks
 )paren
 suffix:semicolon
-id|restore_flags
+id|write_unlock_irq
 c_func
 (paren
-id|flags
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 id|update_process_times
@@ -4055,10 +4028,11 @@ id|system
 suffix:semicolon
 )brace
 r_else
-id|restore_flags
+id|write_unlock_irq
 c_func
 (paren
-id|flags
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace

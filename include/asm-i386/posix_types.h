@@ -143,7 +143,7 @@ mdefine_line|#define __FD_ISSET(fd,fdsetp) (__extension__ ({ &bslash;&n;&t;&t;un
 DECL|macro|__FD_ZERO
 macro_line|#undef&t;__FD_ZERO
 DECL|macro|__FD_ZERO
-mdefine_line|#define __FD_ZERO(fdsetp) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;cld ; rep ; stosl&quot; &bslash;&n;&t;&t;&t;:&quot;=m&quot; (*(__kernel_fd_set *) (fdsetp)) &bslash;&n;&t;&t;&t;:&quot;a&quot; (0), &quot;c&quot; (__FDSET_LONGS), &bslash;&n;&t;&t;&t;&quot;D&quot; ((__kernel_fd_set *) (fdsetp)) :&quot;cx&quot;,&quot;di&quot;)
+mdefine_line|#define __FD_ZERO(fdsetp) &bslash;&n;do { &bslash;&n;&t;int __d0, __d1; &bslash;&n;&t;__asm__ __volatile__(&quot;cld ; rep ; stosl&quot; &bslash;&n;&t;&t;&t;:&quot;=m&quot; (*(__kernel_fd_set *) (fdsetp)), &bslash;&n;&t;&t;&t;  &quot;=&amp;c&quot; (__d0), &quot;=&amp;D&quot; (__d1) &bslash;&n;&t;&t;&t;:&quot;a&quot; (0), &quot;1&quot; (__FDSET_LONGS), &bslash;&n;&t;&t;&t;&quot;2&quot; ((__kernel_fd_set *) (fdsetp)) : &quot;memory&quot;); &bslash;&n;} while (0)
 macro_line|#endif /* defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2) */
 macro_line|#endif
 eof

@@ -319,7 +319,7 @@ id|fl-&gt;fl_wait
 id|panic
 c_func
 (paren
-l_string|&quot;Aarggh: attempting to free lock with active wait queue - shoot Andy&quot;
+l_string|&quot;Attempting to free lock with active wait queue&quot;
 )paren
 suffix:semicolon
 r_if
@@ -336,7 +336,7 @@ l_int|NULL
 id|panic
 c_func
 (paren
-l_string|&quot;Aarggh: attempting to free lock with active block list - shoot Andy&quot;
+l_string|&quot;Attempting to free lock with active block list&quot;
 )paren
 suffix:semicolon
 id|kfree

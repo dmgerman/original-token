@@ -1851,6 +1851,10 @@ id|dev-&gt;priv
 op_member_access_from_pointer
 id|base
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|phys_to_virt
 c_func
 (paren

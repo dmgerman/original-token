@@ -52,6 +52,11 @@ id|hfs_hdr_layout
 op_star
 id|layout
 suffix:semicolon
+multiline_comment|/* to deal with localtime ugliness */
+DECL|member|tz_secondswest
+r_int
+id|tz_secondswest
+suffix:semicolon
 multiline_comment|/* for dentry cleanup */
 DECL|member|d_drop_op
 r_void

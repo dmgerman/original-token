@@ -63,7 +63,7 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;decl %1&bslash;n&bslash;t&quot;
-l_string|&quot;jns 9f&bslash;n&quot;
+l_string|&quot;jns 9f&bslash;n&bslash;t&quot;
 id|spin_unlock_string
 l_string|&quot;&bslash;n9:&quot;
 suffix:colon

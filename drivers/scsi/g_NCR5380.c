@@ -1639,7 +1639,7 @@ id|C400_HOST_BUFFER
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* implies CONFIG_SCSI_G_NCR5380_MEM */
-id|memmove
+id|memcpy
 c_func
 (paren
 id|dst
@@ -1726,7 +1726,7 @@ id|C400_HOST_BUFFER
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* implies CONFIG_SCSI_G_NCR5380_MEM */
-id|memmove
+id|memcpy
 c_func
 (paren
 id|dst
@@ -2065,7 +2065,7 @@ id|i
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* implies CONFIG_SCSI_G_NCR5380_MEM */
-id|memmove
+id|memcpy
 c_func
 (paren
 id|NCR53C400_host_buffer
@@ -2152,7 +2152,7 @@ id|i
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* implies CONFIG_SCSI_G_NCR5380_MEM */
-id|memmove
+id|memcpy
 c_func
 (paren
 id|NCR53C400_host_buffer

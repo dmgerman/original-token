@@ -205,6 +205,8 @@ DECL|macro|SIOCAIPXPRISLT
 mdefine_line|#define SIOCAIPXPRISLT&t;&t;(SIOCPROTOPRIVATE+1)
 DECL|macro|SIOCIPXCFGDATA
 mdefine_line|#define SIOCIPXCFGDATA&t;&t;(SIOCPROTOPRIVATE+2)
+DECL|macro|SIOCIPXNCPCONN
+mdefine_line|#define SIOCIPXNCPCONN&t;&t;(SIOCPROTOPRIVATE+3)
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/skbuff.h&gt;
 r_extern

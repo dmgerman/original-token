@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      es1371.c  --  Creative Ensoniq ES1371.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to Ensoniq&n; *&n; *&n; * Module command line parameters:&n; *   joystick must be set to the base I/O-Port to be used for&n; *   the gameport. Legal values are 0x200, 0x208, 0x210 and 0x218.         &n; *   The gameport is mirrored eight times.&n; *        &n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    04.06.98   0.1   Initial release&n; *                     Mixer stuff should be overhauled; especially optional AC97 mixer bits&n; *                     should be detected. This results in strange behaviour of some mixer&n; *                     settings, like master volume and mic.&n; *    08.06.98   0.2   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.3   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.4   Fix realplayer problems - dac.count issues&n; *    27.10.98   0.5   Fix joystick support&n; *                     -- Oliver Neukum (c188@org.chemie.uni-muenchen.de)&n; *    10.12.98   0.6   Fix drain_dac trying to wait on not yet initialized DMA&n; *&n; */
+multiline_comment|/*&n; *      es1371.c  --  Creative Ensoniq ES1371.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to Ensoniq&n; *&n; *&n; * Module command line parameters:&n; *   joystick must be set to the base I/O-Port to be used for&n; *   the gameport. Legal values are 0x200, 0x208, 0x210 and 0x218.         &n; *   The gameport is mirrored eight times.&n; *        &n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    04.06.98   0.1   Initial release&n; *                     Mixer stuff should be overhauled; especially optional AC97 mixer bits&n; *                     should be detected. This results in strange behaviour of some mixer&n; *                     settings, like master volume and mic.&n; *    08.06.98   0.2   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.3   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.4   Fix realplayer problems - dac.count issues&n; *    27.10.98   0.5   Fix joystick support&n; *                     -- Oliver Neukum (c188@org.chemie.uni-muenchen.de)&n; *    10.12.98   0.6   Fix drain_dac trying to wait on not yet initialized DMA&n; *    23.12.98   0.7   Fix a few f_file &amp; FMODE_ bugs&n; *                     Don&squot;t wake up app until there are fragsize bytes to read/write&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -3847,14 +3847,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s-&gt;dma_adc.mapped
-)paren
-(brace
-r_if
-c_cond
-(paren
 id|s-&gt;dma_adc.count
 op_ge
+(paren
+r_int
+)paren
 id|s-&gt;dma_adc.fragsize
 )paren
 id|wake_up
@@ -3864,8 +3861,12 @@ op_amp
 id|s-&gt;dma_adc.wait
 )paren
 suffix:semicolon
-)brace
-r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;dma_adc.mapped
+)paren
 (brace
 r_if
 c_cond
@@ -3909,20 +3910,6 @@ id|s-&gt;dma_adc.error
 op_increment
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|s-&gt;dma_adc.count
-OG
-l_int|0
-)paren
-id|wake_up
-c_func
-(paren
-op_amp
-id|s-&gt;dma_adc.wait
-)paren
-suffix:semicolon
 )brace
 )brace
 multiline_comment|/* update DAC1 pointer */
@@ -4059,7 +4046,12 @@ r_if
 c_cond
 (paren
 id|s-&gt;dma_dac1.count
-OL
+op_plus
+(paren
+r_int
+)paren
+id|s-&gt;dma_dac1.fragsize
+op_le
 (paren
 r_int
 )paren
@@ -4208,7 +4200,12 @@ r_if
 c_cond
 (paren
 id|s-&gt;dma_dac2.count
-OL
+op_plus
+(paren
+r_int
+)paren
+id|s-&gt;dma_dac2.fragsize
+op_le
 (paren
 r_int
 )paren
@@ -8621,7 +8618,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -8639,7 +8636,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
@@ -8672,15 +8669,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|s-&gt;dma_adc.mapped
 )paren
 (brace
 r_if
@@ -8700,27 +8691,10 @@ op_or
 id|POLLRDNORM
 suffix:semicolon
 )brace
-r_else
-(brace
 r_if
 c_cond
 (paren
-id|s-&gt;dma_adc.count
-OG
-l_int|0
-)paren
-id|mask
-op_or_assign
-id|POLLIN
-op_or
-id|POLLRDNORM
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -8757,8 +8731,13 @@ c_cond
 r_int
 )paren
 id|s-&gt;dma_dac2.dmasize
-OG
+op_ge
 id|s-&gt;dma_dac2.count
+op_plus
+(paren
+r_int
+)paren
+id|s-&gt;dma_dac2.fragsize
 )paren
 id|mask
 op_or_assign
@@ -11182,7 +11161,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -11204,7 +11183,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
@@ -11755,8 +11734,13 @@ c_cond
 r_int
 )paren
 id|s-&gt;dma_dac1.dmasize
-OG
+op_ge
 id|s-&gt;dma_dac1.count
+op_plus
+(paren
+r_int
+)paren
+id|s-&gt;dma_dac1.fragsize
 )paren
 id|mask
 op_or_assign
@@ -14001,7 +13985,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -14019,7 +14003,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
@@ -14046,7 +14030,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
@@ -14068,7 +14052,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_flags
+id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
@@ -14973,7 +14957,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;es1371: version v0.6 time &quot;
+l_string|&quot;es1371: version v0.7 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__

@@ -367,10 +367,6 @@ c_cond
 op_logical_neg
 id|bs
 op_logical_or
-id|bs
-OG
-id|HFS_USHRT_MAX
-op_logical_or
 (paren
 id|bs
 op_amp

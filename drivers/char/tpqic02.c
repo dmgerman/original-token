@@ -1715,9 +1715,11 @@ op_eq
 id|QIC02_STAT_MASK
 )paren
 op_logical_and
+id|time_before
+c_func
 (paren
 id|jiffies
-OL
+comma
 id|spin_t
 )paren
 )paren
@@ -1780,9 +1782,11 @@ op_eq
 id|QIC02_STAT_MASK
 )paren
 op_logical_and
+id|time_before
+c_func
 (paren
 id|jiffies
-OL
+comma
 id|spin_t
 )paren
 )paren

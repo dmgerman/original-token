@@ -404,9 +404,11 @@ id|jiffies
 op_plus
 l_int|10
 suffix:semicolon
+id|time_before
+c_func
 (paren
 id|jiffies
-OL
+comma
 id|timeout
 )paren
 op_logical_or

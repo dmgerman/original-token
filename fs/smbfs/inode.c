@@ -781,13 +781,17 @@ multiline_comment|/*&n;&t; * Check whether we&squot;ve recently refreshed the in
 r_if
 c_cond
 (paren
+id|time_before
+c_func
+(paren
 id|jiffies
-OL
+comma
 id|inode-&gt;u.smbfs_i.oldmtime
 op_plus
 id|HZ
 op_div
 l_int|10
+)paren
 )paren
 (brace
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE

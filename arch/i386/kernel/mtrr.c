@@ -1822,9 +1822,11 @@ OG
 l_int|0
 )paren
 op_logical_and
+id|time_before
+c_func
 (paren
 id|jiffies
-OL
+comma
 id|timeout
 )paren
 )paren

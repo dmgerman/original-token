@@ -7023,7 +7023,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;IRQ %x.  &quot;
+l_string|&quot;IRQ %d.  &quot;
 comma
 id|dev-&gt;irq
 )paren

@@ -1937,6 +1937,15 @@ id|floppy-&gt;failed_pc
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Why does this happen? */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rq
+)paren
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren

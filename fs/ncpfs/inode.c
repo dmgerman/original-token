@@ -1760,7 +1760,8 @@ l_string|&quot;ncp_read_super: could not alloc ncp_server&bslash;n&quot;
 suffix:semicolon
 id|out_unlock
 suffix:colon
-id|put_filp
+multiline_comment|/* 23/12/1998 Marcin Dalecki &lt;dalecki@cs.net.pl&gt;:&n;&t; * &n;&t; * The previously used put_filp(ncp_filp); was bogous, since&n;&t; * it doesn&squot;t proper unlocking.&n;&t; */
+id|fput
 c_func
 (paren
 id|ncp_filp

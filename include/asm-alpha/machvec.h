@@ -3,6 +3,8 @@ DECL|macro|__ALPHA_MACHVEC_H
 mdefine_line|#define __ALPHA_MACHVEC_H 1
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/*&n; *&t;This file gets pulled in by asm/io.h from user space. We don&squot;t&n; *&t;want most of this escaping.&n; */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* The following structure vectors all of the I/O and IRQ manipulation&n;   from the generic kernel to the hardware specific backend.  */
 r_struct
 id|task_struct
@@ -683,5 +685,6 @@ DECL|macro|alpha_use_srm_setup
 mdefine_line|#define alpha_use_srm_setup 0
 macro_line|#endif
 macro_line|#endif /* GENERIC */
+macro_line|#endif
 macro_line|#endif /* __ALPHA_MACHVEC_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the AppleTalk DDP protocol for&n; *&t;&t;Ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;&t;With more than a little assistance from&n; *&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;LocalTalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;LocalTalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&t;&t;Alan Cox/Mike Freeman&t;:&t;Possible fix to NBP problems&n; *&t;&t;Bradford Johnson&t;:&t;IP-over-DDP (experimental)&n; *&t;&t;Jay Schulist&t;&t;:&t;Moved IP-over-DDP to its own&n; *&t;&t;&t;&t;&t;&t;driver file. (ipddp.c &amp; ipddp.h)&n; *&t;&t;Jay Schulist&t;&t;:&t;Made work as module with &n; *&t;&t;&t;&t;&t;&t;AppleTalk drivers, cleaned it.&n; *&t;&t;Rob Newberry&t;&t;:&t;Added proxy AARP and AARP proc fs, &n; *&t;&t;&t;&t;&t;&t;moved probing to AARP module.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the AppleTalk DDP protocol for&n; *&t;&t;Ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;&t;With more than a little assistance from&n; *&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;LocalTalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;LocalTalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&t;&t;Alan Cox/Mike Freeman&t;:&t;Possible fix to NBP problems&n; *&t;&t;Bradford Johnson&t;:&t;IP-over-DDP (experimental)&n; *&t;&t;Jay Schulist&t;&t;:&t;Moved IP-over-DDP to its own&n; *&t;&t;&t;&t;&t;&t;driver file. (ipddp.c &amp; ipddp.h)&n; *&t;&t;Jay Schulist&t;&t;:&t;Made work as module with &n; *&t;&t;&t;&t;&t;&t;AppleTalk drivers, cleaned it.&n; *&t;&t;Rob Newberry&t;&t;:&t;Added proxy AARP and AARP proc fs, &n; *&t;&t;&t;&t;&t;&t;moved probing to AARP module.&n; *              Adrian Sun/ &n; *              Michael Zuelsdorff      :       fix for net.0 packets. don&squot;t &n; *                                              allow illegal ether/tokentalk&n; *                                              port assignment. we lose a &n; *                                              valid localtalk port as a &n; *                                              result.&n; *              &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -257,7 +257,7 @@ c_cond
 (paren
 id|to-&gt;sat_addr.s_net
 op_eq
-l_int|0
+id|ATADDR_ANYNET
 op_logical_and
 id|to-&gt;sat_addr.s_node
 op_eq
@@ -296,7 +296,30 @@ id|ATADDR_ANYNODE
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* XXXX.0 */
+multiline_comment|/* XXXX.0 -- we got a request for this router. make sure&n;&t;&t; * that the node is appropriately set. */
+r_if
+c_cond
+(paren
+id|to-&gt;sat_addr.s_node
+op_eq
+id|ATADDR_ANYNODE
+op_logical_and
+id|to-&gt;sat_addr.s_net
+op_ne
+id|ATADDR_ANYNET
+op_logical_and
+id|atif-&gt;address.s_node
+op_eq
+id|s-&gt;protinfo.af_at.src_node
+)paren
+(brace
+id|to-&gt;sat_addr.s_node
+op_assign
+id|atif-&gt;address.s_node
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 r_return
 (paren
@@ -1665,6 +1688,55 @@ id|iface
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* XXXX.0 -- net.0 returns the iface associated with net */
+r_if
+c_cond
+(paren
+(paren
+id|node
+op_eq
+id|ATADDR_ANYNODE
+)paren
+op_logical_and
+(paren
+id|net
+op_ne
+id|ATADDR_ANYNET
+)paren
+op_logical_and
+(paren
+id|ntohs
+c_func
+(paren
+id|iface-&gt;nets.nr_firstnet
+)paren
+op_le
+id|ntohs
+c_func
+(paren
+id|net
+)paren
+)paren
+op_logical_and
+(paren
+id|ntohs
+c_func
+(paren
+id|net
+)paren
+op_le
+id|ntohs
+c_func
+(paren
+id|iface-&gt;nets.nr_lastnet
+)paren
+)paren
+)paren
+r_return
+(paren
+id|iface
+)paren
+suffix:semicolon
 )brace
 r_return
 (paren

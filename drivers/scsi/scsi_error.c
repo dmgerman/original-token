@@ -2734,7 +2734,7 @@ op_amp
 l_int|0xe0
 )paren
 r_return
-id|FAILED
+id|SUCCESS
 suffix:semicolon
 r_switch
 c_cond
@@ -2757,7 +2757,8 @@ r_case
 id|RECOVERED_ERROR
 suffix:colon
 r_return
-id|SOFT_ERROR
+multiline_comment|/* SOFT_ERROR */
+id|SUCCESS
 suffix:semicolon
 r_case
 id|ABORTED_COMMAND
@@ -2799,18 +2800,18 @@ suffix:colon
 r_case
 id|MISCOMPARE
 suffix:colon
+r_return
+id|SUCCESS
+suffix:semicolon
 r_case
 id|MEDIUM_ERROR
 suffix:colon
 r_return
-id|FAILED
+id|NEEDS_RETRY
 suffix:semicolon
 r_case
 id|ILLEGAL_REQUEST
 suffix:colon
-r_return
-id|SUCCESS
-suffix:semicolon
 r_case
 id|BLANK_CHECK
 suffix:colon
@@ -2823,7 +2824,7 @@ suffix:colon
 r_default
 suffix:colon
 r_return
-id|FAILED
+id|SUCCESS
 suffix:semicolon
 )brace
 )brace
