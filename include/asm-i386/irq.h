@@ -6,7 +6,7 @@ DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 0
 multiline_comment|/*&n; * 16 XT IRQ&squot;s, 8 potential APIC interrupt sources.&n; * Right now the APIC is only used for SMP, but this&n; * may change.&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS 24
+mdefine_line|#define NR_IRQS 64
 DECL|function|irq_cannonicalize
 r_static
 id|__inline__

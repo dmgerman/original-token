@@ -245,7 +245,7 @@ c_cond
 id|do_insert
 )paren
 (brace
-id|ntfs_memcpy
+id|ntfs_memmove
 c_func
 (paren
 id|ino-&gt;attrs
@@ -449,7 +449,7 @@ OG
 id|cnum
 )paren
 (brace
-id|ntfs_memcpy
+id|ntfs_memmove
 c_func
 (paren
 id|attr-&gt;d.r.runlist

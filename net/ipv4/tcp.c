@@ -594,6 +594,8 @@ r_if
 c_cond
 (paren
 id|tp-&gt;urg_data
+op_amp
+id|URG_VALID
 )paren
 id|mask
 op_or_assign

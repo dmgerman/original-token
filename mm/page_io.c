@@ -194,7 +194,9 @@ id|offset
 id|printk
 c_func
 (paren
-l_string|&quot;Hmm.. Trying to %s unallocated swap (%08lx)&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;rw_swap_page: &quot;
+l_string|&quot;Trying to %s unallocated swap (%08lx)&bslash;n&quot;
 comma
 (paren
 id|rw
@@ -227,6 +229,8 @@ id|SWP_USED
 id|printk
 c_func
 (paren
+id|KERN_ERR
+l_string|&quot;rw_swap_page: &quot;
 l_string|&quot;Trying to swap to unused swap-device&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -247,6 +251,7 @@ id|page
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;VM: swap page is unlocked&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -328,6 +333,7 @@ id|page
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;VM: swap page is not in swap cache&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -344,7 +350,8 @@ id|entry
 (brace
 id|printk
 (paren
-l_string|&quot;swap entry mismatch&quot;
+id|KERN_ERR
+l_string|&quot;VM: swap entry mismatch&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -639,7 +646,28 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;rw_swap_page: no swap file or device&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* This shouldn&squot;t happen, but check to be sure. */
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|page-&gt;count
+)paren
+op_eq
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;rw_swap_page: page unused while waiting!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|atomic_dec
@@ -666,6 +694,7 @@ id|p-&gt;swap_lockmap
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;rw_swap_page: lock already cleared&bslash;n&quot;
 )paren
 suffix:semicolon

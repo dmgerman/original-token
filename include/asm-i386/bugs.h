@@ -789,7 +789,7 @@ c_func
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * perform the Cyrix 5/2 test (!0 means it&squot;s a Cyrix)&n; */
+multiline_comment|/*&n; * Perform the Cyrix 5/2 test. A Cyrix won&squot;t change&n; * the flags, while other 486 chips will.&n; */
 DECL|function|test_cyrix_52div
 r_static
 r_inline
@@ -801,33 +801,51 @@ r_void
 )paren
 (brace
 r_int
+r_int
 id|test
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;xor %%eax,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;sahf&bslash;n&bslash;t&quot;
-l_string|&quot;movb $5,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;movb $2,%%bl&bslash;n&bslash;t&quot;
-l_string|&quot;div %%bl&bslash;n&bslash;t&quot;
-l_string|&quot;lahf&bslash;n&bslash;t&quot;
-l_string|&quot;andl $0x200,%%eax&quot;
+multiline_comment|/* clear flags (%eax = 0x0005) */
+l_string|&quot;div %b2&bslash;n&bslash;t&quot;
+multiline_comment|/* divide 5 by 2 */
+l_string|&quot;lahf&quot;
+multiline_comment|/* store flags into %ah */
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
 id|test
 )paren
 suffix:colon
-suffix:colon
-l_string|&quot;bx&quot;
+l_string|&quot;0&quot;
+(paren
+l_int|5
+)paren
 comma
+l_string|&quot;q&quot;
+(paren
+l_int|2
+)paren
+suffix:colon
 l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* AH is 0x02 on Cyrix after the divide.. */
 r_return
+(paren
+r_int
+r_char
+)paren
+(paren
 id|test
+op_rshift
+l_int|8
+)paren
+op_eq
+l_int|0x02
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Cyrix CPUs without cpuid or with cpuid not yet enabled can be detected&n; * by the fact that they preserve the flags across the division of 5/2.&n; * PII and PPro exhibit this behavior too, but they have cpuid available.&n; */
@@ -847,14 +865,18 @@ r_void
 r_if
 c_cond
 (paren
+(paren
 id|boot_cpu_data.cpuid_level
 op_eq
 op_minus
 l_int|1
+)paren
 op_logical_and
+(paren
 id|boot_cpu_data.x86
 op_eq
 l_int|4
+)paren
 op_logical_and
 id|test_cyrix_52div
 c_func
@@ -862,7 +884,7 @@ c_func
 )paren
 )paren
 (brace
-multiline_comment|/* default to an unknown Cx486, (we will diferentiate later) */
+multiline_comment|/* default to an unknown Cx486, (we will differentiate later) */
 multiline_comment|/* NOTE:  using 0xff since 0x00 is a valid DIR0 value */
 id|strcpy
 c_func
@@ -882,7 +904,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Fix two problems with the Cyrix 686 and 686L:&n; *   -- the cpuid is disabled on power up, enable it, use it.&n; *   -- the SLOP bit needs resetting on some motherboards due to old BIOS,&n; *      so that the udelay loop calibration works well.  Recalibrate.&n; */
+multiline_comment|/*&n; * Fix two problems with the Cyrix 6x86 and 6x86L:&n; *   -- the cpuid is disabled on power up, enable it, use it.&n; *   -- the SLOP bit needs resetting on some motherboards due to old BIOS,&n; *      so that the udelay loop calibration works well.  Recalibrate.&n; */
 r_extern
 r_void
 id|calibrate_delay
@@ -921,7 +943,7 @@ op_eq
 l_int|0x30
 )paren
 (brace
-multiline_comment|/* 686(L) */
+multiline_comment|/* 6x86(L) */
 r_int
 id|dummy
 suffix:semicolon

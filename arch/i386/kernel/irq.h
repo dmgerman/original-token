@@ -112,12 +112,29 @@ DECL|typedef|irq_desc_t
 )brace
 id|irq_desc_t
 suffix:semicolon
+DECL|macro|IRQ0_TRAP_VECTOR
+mdefine_line|#define IRQ0_TRAP_VECTOR 0x51
 r_extern
 id|irq_desc_t
 id|irq_desc
 (braket
 id|NR_IRQS
 )braket
+suffix:semicolon
+r_extern
+r_int
+id|irq_vector
+(braket
+id|NR_IRQS
+)braket
+suffix:semicolon
+r_extern
+r_void
+id|init_IRQ_SMP
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_extern
 r_int
@@ -271,15 +288,17 @@ suffix:semicolon
 r_extern
 r_int
 r_int
+r_int
 id|io_apic_irqs
 suffix:semicolon
 r_extern
 r_int
 r_int
+r_int
 id|cached_irq_mask
 suffix:semicolon
 DECL|macro|IO_APIC_VECTOR
-mdefine_line|#define IO_APIC_VECTOR(irq)&t;(0x51+((irq)&lt;&lt;3))
+mdefine_line|#define IO_APIC_VECTOR(irq)&t;irq_vector[irq]
 DECL|macro|MAX_IRQ_SOURCES
 mdefine_line|#define MAX_IRQ_SOURCES 128
 DECL|macro|MAX_MP_BUSSES

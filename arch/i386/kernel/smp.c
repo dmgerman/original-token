@@ -201,11 +201,10 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Internal processor count&t;&t;&t;&t;*/
-DECL|variable|io_apic_addr
-r_static
+DECL|variable|mp_ioapic_addr
 r_int
 r_int
-id|io_apic_addr
+id|mp_ioapic_addr
 op_assign
 l_int|0xFEC00000
 suffix:semicolon
@@ -1269,7 +1268,7 @@ comma
 id|m-&gt;mpc_apicaddr
 )paren
 suffix:semicolon
-id|io_apic_addr
+id|mp_ioapic_addr
 op_assign
 id|m-&gt;mpc_apicaddr
 suffix:semicolon

@@ -1827,11 +1827,6 @@ l_int|1
 r_int
 id|tries
 suffix:semicolon
-r_int
-id|tried
-op_assign
-l_int|0
-suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE

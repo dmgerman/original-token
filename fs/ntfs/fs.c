@@ -3881,6 +3881,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
+op_ne
+l_int|1
 suffix:semicolon
 id|i
 op_rshift_assign

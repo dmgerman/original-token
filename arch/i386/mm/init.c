@@ -1164,6 +1164,11 @@ r_int
 r_int
 id|mp_lapic_addr
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|mp_ioapic_addr
+suffix:semicolon
 id|pte_t
 id|pte
 suffix:semicolon
@@ -1286,7 +1291,7 @@ op_assign
 id|mk_pte_phys
 c_func
 (paren
-id|apic_area
+id|mp_ioapic_addr
 comma
 id|PAGE_KERNEL
 )paren

@@ -436,6 +436,33 @@ id|memory_alt_end
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|memory_end
+OG
+(paren
+l_int|1024
+op_minus
+l_int|64
+)paren
+op_star
+l_int|1024
+op_star
+l_int|1024
+)paren
+id|memory_end
+op_assign
+(paren
+l_int|1024
+op_minus
+l_int|64
+)paren
+op_star
+l_int|1024
+op_star
+l_int|1024
+suffix:semicolon
 id|memory_end
 op_and_assign
 id|PAGE_MASK
@@ -2093,7 +2120,7 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-l_string|&quot;DX/2&quot;
+l_string|&quot;486 DX/2&quot;
 comma
 l_int|NULL
 comma
@@ -2101,11 +2128,11 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-l_string|&quot;DX/2-WB&quot;
+l_string|&quot;486 DX/2-WB&quot;
 comma
-l_string|&quot;DX/4&quot;
+l_string|&quot;486 DX/4&quot;
 comma
-l_string|&quot;DX/4-WB&quot;
+l_string|&quot;486 DX/4-WB&quot;
 comma
 l_int|NULL
 comma

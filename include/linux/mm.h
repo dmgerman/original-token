@@ -953,6 +953,16 @@ r_int
 suffix:semicolon
 multiline_comment|/* filemap.c */
 r_extern
+r_void
+id|remove_inode_page
+c_func
+(paren
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_int
 r_int
 id|page_unuse
