@@ -1323,11 +1323,6 @@ id|atomic_t
 id|refcnt
 suffix:semicolon
 multiline_comment|/* Reference count */
-DECL|member|maxpacketsize
-r_int
-id|maxpacketsize
-suffix:semicolon
-multiline_comment|/* Maximum packet size; encoded as 0,1,2,3 = 8,16,32,64 */
 DECL|member|toggle
 r_int
 r_int
@@ -1893,8 +1888,6 @@ id|dev-&gt;slow
 op_lshift
 l_int|26
 )paren
-op_or
-id|dev-&gt;maxpacketsize
 suffix:semicolon
 )brace
 DECL|function|__default_pipe

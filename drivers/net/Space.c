@@ -993,7 +993,7 @@ id|dfx_probe
 comma
 l_int|0
 )brace
-dot
+comma
 macro_line|#endif
 (brace
 l_int|NULL

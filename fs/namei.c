@@ -2006,7 +2006,6 @@ comma
 id|nd
 )paren
 )paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

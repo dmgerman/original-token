@@ -7476,11 +7476,10 @@ comma
 id|dev-&gt;devnum
 )paren
 suffix:semicolon
-id|dev-&gt;maxpacketsize
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Default to 8 byte max packet size */
+multiline_comment|/* USB v1.1 5.5.3 */
+multiline_comment|/* We read the first 8 bytes from the device descriptor to get to */
+multiline_comment|/*  the bMaxPacketSize0 field. Then we set the maximum packet size */
+multiline_comment|/*  for the control pipe, and retrieve the rest */
 id|dev-&gt;epmaxpacketin
 (braket
 l_int|0
@@ -7495,7 +7494,8 @@ l_int|0
 op_assign
 l_int|8
 suffix:semicolon
-multiline_comment|/* We still haven&squot;t set the Address yet */
+multiline_comment|/* Even though we have assigned an address for the device, we */
+multiline_comment|/*  haven&squot;t told it what it&squot;s address is yet */
 id|addr
 op_assign
 id|dev-&gt;devnum
@@ -7587,49 +7587,6 @@ l_int|0
 op_assign
 id|dev-&gt;descriptor.bMaxPacketSize0
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|dev-&gt;descriptor.bMaxPacketSize0
-)paren
-(brace
-r_case
-l_int|8
-suffix:colon
-id|dev-&gt;maxpacketsize
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|16
-suffix:colon
-id|dev-&gt;maxpacketsize
-op_assign
-l_int|1
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|32
-suffix:colon
-id|dev-&gt;maxpacketsize
-op_assign
-l_int|2
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|64
-suffix:colon
-id|dev-&gt;maxpacketsize
-op_assign
-l_int|3
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|dev-&gt;devnum
 op_assign
 id|addr

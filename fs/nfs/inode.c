@@ -660,8 +660,8 @@ id|tsize
 op_plus
 l_int|511
 )paren
-op_div
-l_int|512
+op_rshift
+l_int|9
 suffix:semicolon
 r_return
 (paren
