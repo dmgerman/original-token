@@ -2442,7 +2442,7 @@ r_int
 r_char
 id|uc
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|uc
@@ -2548,7 +2548,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -2645,7 +2645,7 @@ r_int
 r_int
 id|us
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|us
@@ -2740,7 +2740,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_user
+id|__put_user
 c_func
 (paren
 id|p
@@ -3168,7 +3168,7 @@ id|unicode
 comma
 id|fontpos
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|unicode
@@ -3177,7 +3177,7 @@ op_amp
 id|list-&gt;unicode
 )paren
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|fontpos
@@ -3460,7 +3460,7 @@ OL
 id|ct
 )paren
 (brace
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -3486,7 +3486,7 @@ op_amp
 id|list-&gt;unicode
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -3508,7 +3508,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-id|put_user
+id|__put_user
 c_func
 (paren
 id|ect

@@ -1266,7 +1266,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;lockd: failed to monitor %s&quot;
+l_string|&quot;lockd: failed to monitor %s&bslash;n&quot;
 comma
 id|host-&gt;h_name
 )paren
@@ -1868,7 +1868,7 @@ suffix:colon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: CANCEL failed (server has no locks)&quot;
+l_string|&quot;lockd: CANCEL failed (server has no locks)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1880,7 +1880,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;lockd: weird return %d for CANCEL call&quot;
+l_string|&quot;lockd: weird return %d for CANCEL call&bslash;n&quot;
 comma
 id|req-&gt;a_res.status
 )paren

@@ -464,6 +464,7 @@ l_int|0
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Map whole memory from 0xC0000000 */
 r_while
 c_loop
 (paren
@@ -472,8 +473,6 @@ OL
 id|end_mem
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * The following code enabled 4MB page tables for the&n;&t;&t; * Intel Pentium cpu, unfortunately the SMP kernel can&squot;t&n;&t;&t; * handle the 4MB page table optimizations yet&n;&t;&t; */
-multiline_comment|/*&n;&t;&t; * This will create page tables that&n;&t;&t; * span up to the next 4MB virtual&n;&t;&t; * memory boundary, but that&squot;s ok,&n;&t;&t; * we won&squot;t use that memory anyway.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -482,6 +481,7 @@ op_amp
 l_int|8
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * If we&squot;re running on a Pentium CPU, we can use the 4MB&n;&t;&t;&t; * page tables. &n;&t;&t;&t; *&n;&t;&t;&t; * The page tables we create span up to the next 4MB&n;&t;&t;&t; * virtual memory boundary, but that&squot;s OK as we won&squot;t&n;&t;&t;&t; * use that memory anyway.&n;&t;&t;&t; */
 macro_line|#ifdef GAS_KNOWS_CR4
 id|__asm__
 c_func
@@ -546,8 +546,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* map the memory at virtual addr 0xC0000000 */
-multiline_comment|/* pg_table is physical at this point */
+multiline_comment|/*&n;&t;&t; * We&squot;re on a [34]86, use normal page tables.&n;&t;&t; * pg_table is physical at this point&n;&t;&t; */
 id|pg_table
 op_assign
 (paren
@@ -1073,6 +1072,21 @@ r_int
 r_char
 id|tmp_reg
 suffix:semicolon
+r_int
+r_int
+id|old
+op_assign
+id|pg0
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Checking if this processor honours the WP bit even in supervisor mode... &quot;
+)paren
+suffix:semicolon
 id|pg0
 (braket
 l_int|0
@@ -1094,6 +1108,10 @@ id|local_flush_tlb
 c_func
 (paren
 )paren
+suffix:semicolon
+id|current-&gt;mm-&gt;mmap-&gt;vm_start
+op_add_assign
+id|PAGE_SIZE
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -1130,22 +1148,16 @@ id|pg0
 l_int|0
 )braket
 op_assign
-id|pte_val
-c_func
-(paren
-id|mk_pte
-c_func
-(paren
-id|PAGE_OFFSET
-comma
-id|PAGE_KERNEL
-)paren
-)paren
+id|old
 suffix:semicolon
 id|local_flush_tlb
 c_func
 (paren
 )paren
+suffix:semicolon
+id|current-&gt;mm-&gt;mmap-&gt;vm_start
+op_sub_assign
+id|PAGE_SIZE
 suffix:semicolon
 r_if
 c_cond
@@ -1154,9 +1166,24 @@ id|wp_works_ok
 OL
 l_int|0
 )paren
+(brace
 id|wp_works_ok
 op_assign
 l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;No.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Ok.&bslash;n&quot;
+)paren
 suffix:semicolon
 )brace
 r_return

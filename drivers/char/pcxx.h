@@ -109,6 +109,10 @@ DECL|member|membase
 id|ulong
 id|membase
 suffix:semicolon
+DECL|member|memsize
+id|ulong
+id|memsize
+suffix:semicolon
 DECL|member|first_minor
 id|ushort
 id|first_minor

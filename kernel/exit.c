@@ -2622,20 +2622,28 @@ id|code
 r_if
 c_cond
 (paren
-l_int|0
-op_logical_and
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 (brace
+id|local_irq_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Not really correct */
 id|printk
 c_func
 (paren
 l_string|&quot;Aiee, killing interrupt handler&bslash;n&quot;
 )paren
-suffix:semicolon
-id|intr_count
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 id|fake_volatile

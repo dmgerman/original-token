@@ -2253,13 +2253,13 @@ op_assign
 id|tcp_v6_lookup
 c_func
 (paren
-id|saddr
-comma
-id|th-&gt;source
-comma
 id|daddr
 comma
 id|th-&gt;dest
+comma
+id|saddr
+comma
+id|th-&gt;source
 )paren
 suffix:semicolon
 r_if

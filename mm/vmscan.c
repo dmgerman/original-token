@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Version: $Id: vmscan.c,v 1.21 1997/01/06 06:54:03 davem Exp $&n; */
+multiline_comment|/*&n; *  linux/mm/vmscan.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Swap reorganised 29.12.95, Stephen Tweedie.&n; *  kswapd added: 7.1.96  sct&n; *  Removed kswapd_ctl limits, and swap out as many pages as needed&n; *  to bring the system back to free_pages_high: 2.4.97, Rik van Riel.&n; *  Version: $Id: vmscan.c,v 1.21 1997/01/06 06:54:03 davem Exp $&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -51,27 +51,6 @@ r_int
 id|kswapd_awake
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/*&n; * sysctl-modifiable parameters to control the aggressiveness of the&n; * page-searching within the kswapd page recovery daemon.&n; */
-DECL|variable|kswapd_ctl
-id|kswapd_control_t
-id|kswapd_ctl
-op_assign
-(brace
-l_int|4
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-)brace
 suffix:semicolon
 r_static
 r_void
@@ -1659,21 +1638,61 @@ suffix:semicolon
 id|swapstats.wakeups
 op_increment
 suffix:semicolon
-multiline_comment|/* Do the background pageout: */
-r_for
+multiline_comment|/* Do the background pageout: &n;&t;&t; * We now only swap out as many pages as needed.&n;&t;&t; * When we are truly low on memory, we swap out&n;&t;&t; * synchronously (WAIT == 1).  -- Rik.&n;&t;&t; */
+r_while
 c_loop
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
+id|nr_free_pages
 OL
-id|kswapd_ctl.maxpages
-suffix:semicolon
-id|i
-op_increment
+id|min_free_pages
 )paren
+(brace
+id|try_to_free_page
+c_func
+(paren
+id|GFP_KERNEL
+comma
+l_int|0
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|nr_free_pages
+op_plus
+id|nr_async_pages
+)paren
+OL
+id|free_pages_low
+)paren
+(brace
+id|try_to_free_page
+c_func
+(paren
+id|GFP_KERNEL
+comma
+l_int|0
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|nr_free_pages
+op_plus
+id|nr_async_pages
+)paren
+OL
+id|free_pages_high
+)paren
+(brace
 id|try_to_free_page
 c_func
 (paren
@@ -1684,6 +1703,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* &n; * The swap_tick function gets called on every clock tick.&n; */
@@ -1776,10 +1796,6 @@ c_cond
 (paren
 op_logical_neg
 id|kswapd_awake
-op_logical_and
-id|kswapd_ctl.maxpages
-OG
-l_int|0
 )paren
 (brace
 id|wake_up
@@ -1794,6 +1810,19 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* low on memory, we need to start swapping soon */
+r_if
+c_cond
+(paren
+id|last_wakeup_low
+)paren
+(brace
+id|next_swap_jiffies
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
+r_else
 id|next_swap_jiffies
 op_assign
 id|jiffies

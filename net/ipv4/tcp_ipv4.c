@@ -2649,13 +2649,13 @@ op_assign
 id|tcp_v4_lookup
 c_func
 (paren
-id|iph-&gt;saddr
-comma
-id|th-&gt;source
-comma
 id|iph-&gt;daddr
 comma
 id|th-&gt;dest
+comma
+id|iph-&gt;saddr
+comma
+id|th-&gt;source
 )paren
 suffix:semicolon
 r_if

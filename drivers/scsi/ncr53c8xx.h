@@ -4,7 +4,7 @@ DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
 multiline_comment|/*&n;**&t;Name and revision of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 1.18b&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 1.18d&quot;
 multiline_comment|/*&n;**&t;If SCSI_NCR_SETUP_SPECIAL_FEATURES is defined,&n;**&t;the driver enables or not the following features according to chip id &n;**&t;revision id:&n;**&t;DMODE   0xce&n;**&t;&t;0x02&t;burst op-code fetch&n;**&t;&t;0x04&t;enable read multiple&n;**&t;&t;0x08&t;enable read line&n;**&t;&t;0xc0&t;burst length 16/8/2&n;**&t;DCNTL   0xa0&n;**&t;&t;0x20&t;enable pre-fetch&n;**&t;&t;0x80&t;enable cache line size&n;**&t;CTEST3  0x01&n;**&t;&t;0x01&t;set write and invalidate&n;**&t;CTEST4  0x80&n;**&t;&t;0x80&t;burst disabled&n;**&t;CTEST5  0x24&t;(825a and 875 only)&n;**&t;&t;0x04&t;burst 128&n;**&t;&t;0x80&t;large dma fifo&n;**&n;**&t;If SCSI_NCR_TRUST_BIOS_SETTING is defined, the driver will use the &n;**&t;initial value of corresponding bit fields, assuming they have been &n;**&t;set by the SDMS BIOS.&n;**&t;When Linux is booted from another O/S, these assertion is false and &n;**&t;the driver will not be able to guess it. &n;*/
 multiline_comment|/*********** LINUX SPECIFIC SECTION ******************/
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
@@ -172,7 +172,7 @@ multiline_comment|/*&n;**&t;Other parameters not configurable with &quot;make co
 DECL|macro|SCSI_NCR_ALWAYS_SIMPLE_TAG
 mdefine_line|#define SCSI_NCR_ALWAYS_SIMPLE_TAG
 DECL|macro|SCSI_NCR_MAX_SCATTER
-mdefine_line|#define SCSI_NCR_MAX_SCATTER&t;(128)
+mdefine_line|#define SCSI_NCR_MAX_SCATTER&t;(127)
 DECL|macro|SCSI_NCR_MAX_TARGET
 mdefine_line|#define SCSI_NCR_MAX_TARGET&t;(16)
 DECL|macro|SCSI_NCR_MAX_HOST
@@ -184,7 +184,7 @@ mdefine_line|#define SCSI_NCR_CAN_QUEUE&t;(7*SCSI_NCR_MAX_TAGS)
 DECL|macro|SCSI_NCR_CMD_PER_LUN
 mdefine_line|#define SCSI_NCR_CMD_PER_LUN&t;(SCSI_NCR_MAX_TAGS)
 DECL|macro|SCSI_NCR_SG_TABLESIZE
-mdefine_line|#define SCSI_NCR_SG_TABLESIZE&t;(SCSI_NCR_MAX_SCATTER-1)
+mdefine_line|#define SCSI_NCR_SG_TABLESIZE&t;(SCSI_NCR_MAX_SCATTER)
 DECL|macro|SCSI_NCR_TIMER_INTERVAL
 mdefine_line|#define SCSI_NCR_TIMER_INTERVAL&t;((HZ+5-1)/5)
 macro_line|#if 1 /* defined CONFIG_SCSI_MULTI_LUN */
@@ -196,10 +196,10 @@ mdefine_line|#define SCSI_NCR_MAX_LUN&t;(1)
 macro_line|#endif
 multiline_comment|/*&n;**&t;Initial setup.&n;**&t;Can be overriden at startup by a command line.&n;*/
 DECL|macro|SCSI_NCR_DRIVER_SETUP
-mdefine_line|#define SCSI_NCR_DRIVER_SETUP&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_MASTER_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SCSI_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DISCONNECTION,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SPECIAL_FEATURES,&t;&bslash;&n;&t;SCSI_NCR_SETUP_ULTRA_SCSI,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_FORCE_SYNC_NEGO,&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_TAGS,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_SYNC,&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;7,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_LED_PIN,&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SETTLE_TIME,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DIFF_SUPPORT,&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define SCSI_NCR_DRIVER_SETUP&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_MASTER_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SCSI_PARITY,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DISCONNECTION,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SPECIAL_FEATURES,&t;&bslash;&n;&t;SCSI_NCR_SETUP_ULTRA_SCSI,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_FORCE_SYNC_NEGO,&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_TAGS,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DEFAULT_SYNC,&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;7,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_LED_PIN,&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_SETTLE_TIME,&t;&t;&bslash;&n;&t;SCSI_NCR_SETUP_DIFF_SUPPORT,&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n;**&t;Boot fail safe setup.&n;**&t;Override initial setup from boot command line:&n;**&t;ncr53c8xx=safe:y&n;*/
 DECL|macro|SCSI_NCR_DRIVER_SAFE_SETUP
-mdefine_line|#define SCSI_NCR_DRIVER_SAFE_SETUP&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;2,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;10,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;1&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define SCSI_NCR_DRIVER_SAFE_SETUP&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;2,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;10,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;1&t;&t;&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n;**&t;Define Scsi_Host_Template parameters&n;**&n;**&t;Used by hosts.c and ncr53c8xx.c with module configuration.&n;*/
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,98)
@@ -410,6 +410,8 @@ suffix:semicolon
 multiline_comment|/* cnf system clock dependent       */
 DECL|macro|EWS
 mdefine_line|#define   EWS     0x08  /* cmd: enable wide scsi         [W]*/
+DECL|macro|ULTRA
+mdefine_line|#define   ULTRA   0x80  /* cmd: ULTRA enable                */
 DECL|member|nc_scid
 multiline_comment|/*04*/
 id|u_char
@@ -633,6 +635,8 @@ multiline_comment|/*22*/
 id|u_char
 id|nc_ctest5
 suffix:semicolon
+DECL|macro|DFS
+mdefine_line|#define   DFS     0x20  /* mod: dma fifo size               */
 DECL|member|nc_ctest6
 multiline_comment|/*23*/
 id|u_char

@@ -2957,7 +2957,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|rpcstat_init
+id|rpc_proc_init
 c_func
 (paren
 )paren
@@ -2981,7 +2981,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|rpcstat_exit
+id|rpc_proc_exit
 c_func
 (paren
 )paren

@@ -234,6 +234,11 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
+id|current-&gt;priority
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
 id|current-&gt;counter
 op_assign
 op_minus
@@ -342,6 +347,11 @@ op_star
 id|unused
 )paren
 (brace
+id|current-&gt;priority
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -400,6 +410,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* endless idle loop with no priority at all */
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
 id|schedule
 c_func
 (paren
@@ -1484,7 +1500,7 @@ id|USER_DS
 suffix:semicolon
 id|p-&gt;tss.gs
 op_assign
-id|KERNEL_DS
+id|USER_DS
 suffix:semicolon
 id|p-&gt;tss.ss0
 op_assign

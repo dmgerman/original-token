@@ -658,8 +658,9 @@ id|wp_works_ok
 OL
 l_int|0
 op_logical_and
-op_logical_neg
 id|address
+op_eq
+l_int|0xc0000000
 op_logical_and
 (paren
 id|error_code
@@ -692,12 +693,6 @@ suffix:semicolon
 id|flush_tlb
 c_func
 (paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;This processor honours the WP bit even when in supervisor mode. Good.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto

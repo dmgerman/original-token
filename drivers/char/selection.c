@@ -376,6 +376,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|poke_blanked_console
+c_func
+(paren
+)paren
+suffix:semicolon
 (brace
 r_int
 r_int
@@ -1363,7 +1368,7 @@ id|c
 r_return
 l_int|0
 suffix:semicolon
-id|do_unblank_screen
+id|poke_blanked_console
 c_func
 (paren
 )paren

@@ -60,14 +60,8 @@ DECL|macro|LP_TIMEOUT_INTERRUPT
 mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)
 DECL|macro|LP_TIMEOUT_POLLED
 mdefine_line|#define LP_TIMEOUT_POLLED&t;(10 * HZ)
-DECL|macro|LP_B
-mdefine_line|#define LP_B(minor)&t;lp_table[(minor)].base&t;&t;/* IO address */
 DECL|macro|LP_F
 mdefine_line|#define LP_F(minor)&t;lp_table[(minor)].flags&t;&t;/* flags for busy, etc. */
-DECL|macro|LP_S
-mdefine_line|#define LP_S(minor)&t;inb_p(LP_B((minor)) + 1)&t;/* status port */
-DECL|macro|LP_C
-mdefine_line|#define LP_C(minor)&t;(lp_table[(minor)].base + 2)&t;/* control port */
 DECL|macro|LP_CHAR
 mdefine_line|#define LP_CHAR(minor)&t;lp_table[(minor)].chars&t;&t;/* busy timeout */
 DECL|macro|LP_TIME
@@ -75,12 +69,38 @@ mdefine_line|#define LP_TIME(minor)&t;lp_table[(minor)].time&t;&t;/* wait time *
 DECL|macro|LP_WAIT
 mdefine_line|#define LP_WAIT(minor)&t;lp_table[(minor)].wait&t;&t;/* strobe wait */
 DECL|macro|LP_IRQ
-mdefine_line|#define LP_IRQ(minor)&t;lp_table[(minor)].irq&t;&t;/* interrupt # */
+mdefine_line|#define LP_IRQ(minor)&t;lp_table[(minor)].dev-&gt;port-&gt;irq /* interrupt # */
 multiline_comment|/* 0 means polled */
 DECL|macro|LP_STAT
 mdefine_line|#define LP_STAT(minor)&t;lp_table[(minor)].stats&t;&t;/* statistics area */
 DECL|macro|LP_BUFFER_SIZE
 mdefine_line|#define LP_BUFFER_SIZE 256
+DECL|macro|LP_BASE
+mdefine_line|#define LP_BASE(x)&t;lp_table[(x)].dev-&gt;port-&gt;base
+DECL|macro|r_dtr
+mdefine_line|#define r_dtr(x)&t;inb(LP_BASE(x))
+DECL|macro|r_str
+mdefine_line|#define r_str(x)&t;inb(LP_BASE(x)+1)
+DECL|macro|r_ctr
+mdefine_line|#define r_ctr(x)&t;inb(LP_BASE(x)+2)
+DECL|macro|r_epp
+mdefine_line|#define r_epp(x)&t;inb(LP_BASE(x)+4)
+DECL|macro|r_fifo
+mdefine_line|#define r_fifo(x)&t;inb(LP_BASE(x)+0x400)
+DECL|macro|r_ecr
+mdefine_line|#define r_ecr(x)&t;inb(LP_BASE(x)+0x402)
+DECL|macro|w_dtr
+mdefine_line|#define w_dtr(x,y)&t;outb((y), LP_BASE(x))
+DECL|macro|w_str
+mdefine_line|#define w_str(x,y)&t;outb((y), LP_BASE(x)+1)
+DECL|macro|w_ctr
+mdefine_line|#define w_ctr(x,y)&t;outb((y), LP_BASE(x)+2)
+DECL|macro|w_epp
+mdefine_line|#define w_epp(x,y)&t;outb((y), LP_BASE(x)+4)
+DECL|macro|w_fifo
+mdefine_line|#define w_fifo(x,y)&t;outb((y), LP_BASE(x)+0x400)
+DECL|macro|w_ecr
+mdefine_line|#define w_ecr(x,y)&t;outb((y), LP_BASE(x)+0x402)
 DECL|struct|lp_stats
 r_struct
 id|lp_stats
@@ -121,14 +141,11 @@ DECL|struct|lp_struct
 r_struct
 id|lp_struct
 (brace
-DECL|member|base
-r_int
-id|base
-suffix:semicolon
-DECL|member|irq
-r_int
-r_int
-id|irq
+DECL|member|dev
+r_struct
+id|ppd
+op_star
+id|dev
 suffix:semicolon
 DECL|member|flags
 r_int

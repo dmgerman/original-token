@@ -547,9 +547,8 @@ c_func
 id|tsk
 )paren
 )paren
-r_return
-op_minus
-l_int|1
+r_goto
+id|free_mm
 suffix:semicolon
 r_if
 c_cond
@@ -562,6 +561,14 @@ id|mm
 )paren
 (brace
 id|free_page_tables
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
+id|free_mm
+suffix:colon
+id|kfree
 c_func
 (paren
 id|mm

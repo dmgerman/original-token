@@ -1130,8 +1130,6 @@ r_if
 c_cond
 (paren
 id|dev
-op_logical_and
-id|dev-&gt;init
 )paren
 (brace
 r_if
@@ -1214,6 +1212,12 @@ r_break
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|dev-&gt;init
+)paren
+(brace
 id|sti
 c_func
 (paren
@@ -1264,6 +1268,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Add device to end of chain */
 r_if
 c_cond

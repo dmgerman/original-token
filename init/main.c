@@ -258,6 +258,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PRINTER
 r_extern
 r_void
 id|lp_setup
@@ -272,6 +273,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|eth_setup
@@ -624,6 +626,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef NOTDEF
 r_extern
 r_void
 id|ppa_setup
@@ -638,6 +641,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|scsi_luns_setup
@@ -1193,6 +1197,38 @@ macro_line|#ifdef CONFIG_WDT
 r_extern
 r_void
 id|wdt_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PNP_PARPORT
+r_extern
+r_void
+id|parport_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PLIP
+r_extern
+r_void
+id|plip_setup
 c_func
 (paren
 r_char
@@ -1863,7 +1899,7 @@ id|wd7000_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_PPA
+macro_line|#ifdef NOTDEF /* CONFIG_SCSI_PPA */
 (brace
 l_string|&quot;ppa=&quot;
 comma
@@ -2136,6 +2172,22 @@ macro_line|#ifdef CONFIG_WDT
 l_string|&quot;wdt=&quot;
 comma
 id|wdt_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PNP_PARPORT
+(brace
+l_string|&quot;parport=&quot;
+comma
+id|parport_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PLIP
+(brace
+l_string|&quot;plip=&quot;
+comma
+id|plip_setup
 )brace
 comma
 macro_line|#endif

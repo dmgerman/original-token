@@ -3488,6 +3488,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PNP_PARPORT
+r_extern
+r_int
+id|pnp_parport_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_struct
 id|gendisk
 op_star
@@ -3498,6 +3508,13 @@ id|nr
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_PNP_PARPORT
+id|pnp_parport_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|chr_dev_init
 c_func
 (paren

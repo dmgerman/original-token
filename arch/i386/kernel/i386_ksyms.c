@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -97,6 +98,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|iounmap
+)paren
+suffix:semicolon
+DECL|variable|local_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_irq_count
 )paren
 suffix:semicolon
 DECL|variable|__down_failed

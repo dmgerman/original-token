@@ -1515,13 +1515,13 @@ op_assign
 id|udp_v6_lookup
 c_func
 (paren
-id|saddr
-comma
-id|uh-&gt;source
-comma
 id|daddr
 comma
 id|uh-&gt;dest
+comma
+id|saddr
+comma
+id|uh-&gt;source
 )paren
 suffix:semicolon
 r_if

@@ -2238,7 +2238,7 @@ id|max_legal_read_offset
 id|printk
 c_func
 (paren
-l_string|&quot;_isofs_bmap: block&gt;= EOF(%d, %d)&quot;
+l_string|&quot;_isofs_bmap: block&gt;= EOF(%d, %d)&bslash;n&quot;
 comma
 id|block
 comma

@@ -3,7 +3,6 @@ DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#ifdef CONFIG_MODULES
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -294,46 +293,46 @@ id|svc_wake_up
 suffix:semicolon
 multiline_comment|/* RPC statistics */
 macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|rpcstat_register
+DECL|variable|rpc_proc_register
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|rpcstat_register
+id|rpc_proc_register
 )paren
 suffix:semicolon
-DECL|variable|rpcstat_unregister
+DECL|variable|rpc_proc_unregister
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|rpcstat_unregister
+id|rpc_proc_unregister
 )paren
 suffix:semicolon
-DECL|variable|rpcstat_get_info
+DECL|variable|rpc_proc_read
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|rpcstat_get_info
+id|rpc_proc_read
 )paren
 suffix:semicolon
-DECL|variable|svcstat_register
+DECL|variable|svc_proc_register
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|svcstat_register
+id|svc_proc_register
 )paren
 suffix:semicolon
-DECL|variable|svcstat_unregister
+DECL|variable|svc_proc_unregister
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|svcstat_unregister
+id|svc_proc_unregister
 )paren
 suffix:semicolon
-DECL|variable|svcstat_get_info
+DECL|variable|svc_proc_read
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|svcstat_get_info
+id|svc_proc_read
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -431,5 +430,4 @@ c_func
 id|nlm_debug
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_MODULES */
 eof

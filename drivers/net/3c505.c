@@ -2048,6 +2048,10 @@ comma
 id|adapter-&gt;current_dma.direction
 )paren
 suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
 id|adapter-&gt;current_dma.direction
 op_assign
 l_int|0
@@ -2390,10 +2394,6 @@ c_cond
 id|skb
 )paren
 (brace
-id|skb-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2421,6 +2421,10 @@ id|skb
 comma
 id|dev
 )paren
+suffix:semicolon
+id|adapter-&gt;stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 id|netif_rx
 c_func
@@ -3614,10 +3618,6 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-id|adapter
-op_assign
-id|dev-&gt;priv
-suffix:semicolon
 id|adapter-&gt;stats.tx_bytes
 op_add_assign
 id|nlen

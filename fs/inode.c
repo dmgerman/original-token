@@ -600,6 +600,9 @@ id|wait_queue
 op_star
 id|wait
 suffix:semicolon
+id|inode-&gt;i_count
+op_increment
+suffix:semicolon
 id|truncate_inode_pages
 c_func
 (paren
@@ -665,6 +668,9 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|i_wait
+suffix:semicolon
+id|inode-&gt;i_count
+op_decrement
 suffix:semicolon
 r_if
 c_cond

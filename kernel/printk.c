@@ -641,6 +641,9 @@ comma
 op_star
 id|buf_end
 suffix:semicolon
+r_int
+id|line_feed
+suffix:semicolon
 r_static
 r_int
 r_char
@@ -797,6 +800,10 @@ op_minus
 l_char|&squot;0&squot;
 suffix:semicolon
 )brace
+id|line_feed
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -860,8 +867,14 @@ id|p
 op_eq
 l_char|&squot;&bslash;n&squot;
 )paren
+(brace
+id|line_feed
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -902,7 +915,7 @@ id|p
 op_minus
 id|msg
 op_plus
-l_int|1
+id|line_feed
 )paren
 suffix:semicolon
 id|c
@@ -914,10 +927,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|p
-op_eq
-l_char|&squot;&bslash;n&squot;
+id|line_feed
 )paren
 id|msg_level
 op_assign

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994&n; * puts by Nick Holloway 1993, better puts by Martin Mares 1995&n; * High loaded stuff by Hans Lermen &amp; Werner Almesberger, Feb. 1996&n; */
-macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * gzip declarations&n; */
@@ -259,7 +258,6 @@ op_star
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifndef STANDALONE_DEBUG
 r_static
 r_void
 id|puts
@@ -744,11 +742,13 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|memset
-id|__ptr_t
+r_void
+op_star
 id|memset
 c_func
 (paren
-id|__ptr_t
+r_void
+op_star
 id|s
 comma
 r_int
@@ -794,15 +794,18 @@ id|c
 suffix:semicolon
 )brace
 DECL|function|memcpy
-id|__ptr_t
+r_void
+op_star
 id|memcpy
 c_func
 (paren
-id|__ptr_t
+r_void
+op_star
 id|__dest
 comma
 id|__const
-id|__ptr_t
+r_void
+op_star
 id|__src
 comma
 r_int
@@ -856,7 +859,6 @@ id|i
 )braket
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* ===========================================================================&n; * Fill the input buffer. This is called only when the buffer is empty&n; * and at least one byte is really needed.&n; */
 DECL|function|fill_inbuf
 r_static
@@ -1213,91 +1215,6 @@ comma
 id|KERNEL_DS
 )brace
 suffix:semicolon
-macro_line|#ifdef STANDALONE_DEBUG
-DECL|function|gzip_mark
-r_static
-r_void
-id|gzip_mark
-c_func
-(paren
-r_void
-op_star
-op_star
-id|ptr
-)paren
-(brace
-)brace
-DECL|function|gzip_release
-r_static
-r_void
-id|gzip_release
-c_func
-(paren
-r_void
-op_star
-op_star
-id|ptr
-)paren
-(brace
-)brace
-DECL|variable|output_buffer
-r_char
-id|output_buffer
-(braket
-l_int|1024
-op_star
-l_int|800
-)braket
-suffix:semicolon
-r_int
-DECL|function|main
-id|main
-c_func
-(paren
-id|argc
-comma
-id|argv
-)paren
-r_int
-id|argc
-suffix:semicolon
-r_char
-op_star
-op_star
-id|argv
-suffix:semicolon
-(brace
-id|output_data
-op_assign
-id|output_buffer
-suffix:semicolon
-id|makecrc
-c_func
-(paren
-)paren
-suffix:semicolon
-id|puts
-c_func
-(paren
-l_string|&quot;Uncompressing Linux...&quot;
-)paren
-suffix:semicolon
-id|gunzip
-c_func
-(paren
-)paren
-suffix:semicolon
-id|puts
-c_func
-(paren
-l_string|&quot;done.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#else
 DECL|function|setup_normal_output_buffer
 r_void
 id|setup_normal_output_buffer
@@ -1661,5 +1578,4 @@ r_return
 id|high_loaded
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

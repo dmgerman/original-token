@@ -298,7 +298,7 @@ id|arg
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|xd_release
 (paren
 r_struct

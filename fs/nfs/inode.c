@@ -10,10 +10,11 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
+macro_line|#include &lt;linux/sunrpc/stats.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/lockd/bind.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|# include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|NFSDBG_FACILITY
 mdefine_line|#define NFSDBG_FACILITY&t;&t;NFSDBG_VFS
 r_static
@@ -106,6 +107,16 @@ id|nfs_statfs
 comma
 multiline_comment|/* stat filesystem */
 l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|nfs_rpcstat
+r_struct
+id|rpc_stat
+id|nfs_rpcstat
+op_assign
+(brace
+op_amp
+id|nfs_program
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The &quot;read_inode&quot; function doesn&squot;t actually do anything:&n; * the real data is filled in later in nfs_fhget. Here we&n; * just mark the cache times invalid, and zero out i_mode&n; * (the latter makes &quot;nfs_refresh_inode&quot; do the right thing&n; * wrt pipe inodes)&n; */
@@ -1713,7 +1724,7 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS
-id|rpcstat_register
+id|rpc_proc_register
 c_func
 (paren
 op_amp
@@ -1765,11 +1776,10 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS
-id|rpcstat_unregister
+id|rpc_proc_unregister
 c_func
 (paren
-op_amp
-id|nfs_rpcstat
+l_string|&quot;nfs&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

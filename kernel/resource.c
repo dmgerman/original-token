@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 DECL|macro|IOTABLE_SIZE
-mdefine_line|#define IOTABLE_SIZE 64
+mdefine_line|#define IOTABLE_SIZE 128
 DECL|struct|resource_entry_t
 r_typedef
 r_struct

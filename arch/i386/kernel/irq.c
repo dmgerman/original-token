@@ -18,6 +18,19 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#ifdef __SMP_PROF__
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_apic_timer_ticks
+(braket
+l_int|1
+op_plus
+id|NR_CPUS
+)braket
+suffix:semicolon
+macro_line|#endif
 DECL|macro|CR0_NE
 mdefine_line|#define CR0_NE 32
 DECL|variable|cache_21
@@ -431,6 +444,13 @@ c_func
 (paren
 id|stop_cpu_interrupt
 )paren
+macro_line|#ifdef __SMP_PROF__
+id|BUILD_SMP_TIMER_INTERRUPT
+c_func
+(paren
+id|apic_timer_interrupt
+)paren
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; * Pointers to the low-level handlers: first the general ones, then the&n; * fast ones, then the bad ones.&n; */
 DECL|variable|interrupt
@@ -934,6 +954,12 @@ id|sum_smp_idle_count
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|sum_apic_timer_ticks
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -981,6 +1007,13 @@ suffix:semicolon
 id|sum_smp_idle_count
 op_add_assign
 id|smp_idle_count
+(braket
+id|cpunum
+)braket
+suffix:semicolon
+id|sum_apic_timer_ticks
+op_add_assign
+id|smp_apic_timer_ticks
 (braket
 id|cpunum
 )braket
@@ -1462,6 +1495,66 @@ op_plus
 id|len
 comma
 l_string|&quot;   idle ticks&bslash;n&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;TICK %10lu&quot;
+comma
+id|sum_apic_timer_ticks
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot; %10lu&quot;
+comma
+id|smp_apic_timer_ticks
+(braket
+id|cpu_logical_map
+(braket
+id|i
+)braket
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;   local APIC timer ticks&bslash;n&quot;
 )paren
 suffix:semicolon
 id|len
@@ -3113,9 +3206,9 @@ id|i
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* This bit is a hack because we don&squot;t send timer messages to all processors yet */
-multiline_comment|/* It has to be here .. it doesn&squot;t work if you put it down the bottom - assembler explodes 8) */
+multiline_comment|/*&n;&t; * This bit is a hack because we don&squot;t send timer messages to all&n;&t; * processors yet. It has to be here .. it doesn&squot;t work if you put&n;&t; * it down the bottom - assembler explodes 8)&n;&t; */
 macro_line|#ifdef __SMP__&t;
+multiline_comment|/* IRQ &squot;16&squot; - IPI for rescheduling */
 id|set_intr_gate
 c_func
 (paren
@@ -3126,7 +3219,7 @@ comma
 id|reschedule_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* IRQ &squot;16&squot; - IPI for rescheduling */
+multiline_comment|/* IRQ &squot;17&squot; - IPI for invalidation */
 id|set_intr_gate
 c_func
 (paren
@@ -3137,7 +3230,7 @@ comma
 id|invalidate_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* IRQ &squot;17&squot; - IPI for invalidation */
+multiline_comment|/* IRQ &squot;18&squot; - IPI for CPU halt */
 id|set_intr_gate
 c_func
 (paren
@@ -3148,7 +3241,19 @@ comma
 id|stop_cpu_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* IRQ &squot;18&squot; - IPI for CPU halt */
+macro_line|#ifdef __SMP_PROF__
+multiline_comment|/* IRQ &squot;19&squot; - self generated IPI for local APIC timer */
+id|set_intr_gate
+c_func
+(paren
+l_int|0x23
+op_plus
+id|i
+comma
+id|apic_timer_interrupt
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif&t;
 id|request_region
 c_func

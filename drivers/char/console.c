@@ -3934,7 +3934,7 @@ op_assign
 id|shift_state
 suffix:semicolon
 r_return
-id|put_user
+id|__put_user
 c_func
 (paren
 id|data
@@ -3957,7 +3957,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
-id|put_user
+id|__put_user
 c_func
 (paren
 id|data
@@ -6178,6 +6178,31 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|from_user
+)paren
+(brace
+multiline_comment|/* just to make sure that noone lurks at places he shouldn&squot;t see. */
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|buf
+comma
+id|count
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* ?? are error codes legal here ?? */
+)brace
 id|disable_bh
 c_func
 (paren
@@ -6204,7 +6229,7 @@ c_cond
 (paren
 id|from_user
 )paren
-id|get_user
+id|__get_user
 c_func
 (paren
 id|c

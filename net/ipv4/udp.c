@@ -1552,13 +1552,13 @@ op_assign
 id|udp_v4_lookup
 c_func
 (paren
-id|iph-&gt;saddr
-comma
-id|uh-&gt;source
-comma
 id|iph-&gt;daddr
 comma
 id|uh-&gt;dest
+comma
+id|iph-&gt;saddr
+comma
+id|uh-&gt;source
 )paren
 suffix:semicolon
 r_if

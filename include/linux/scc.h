@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: scc.h,v 1.28 1996/10/30 20:01:15 jreuter Exp jreuter $ */
+multiline_comment|/* $Id: scc.h,v 1.29 1997/04/02 14:56:45 jreuter Exp jreuter $ */
 macro_line|#ifndef&t;_SCC_H
 DECL|macro|_SCC_H
 mdefine_line|#define&t;_SCC_H
@@ -16,124 +16,225 @@ mdefine_line|#define DRSI&t;&t;0x08&t;/* hardware type for DRSI PC*Packet card *
 DECL|macro|BAYCOM
 mdefine_line|#define BAYCOM&t;&t;0x10&t;/* hardware type for BayCom (U)SCC */
 multiline_comment|/* DEV ioctl() commands */
-DECL|macro|SIOCSCCRESERVED
-mdefine_line|#define SIOCSCCRESERVED (SIOCDEVPRIVATE+0)
-DECL|macro|SIOCSCCCFG
-mdefine_line|#define SIOCSCCCFG&t;(SIOCDEVPRIVATE+1)
-DECL|macro|SIOCSCCINI
-mdefine_line|#define SIOCSCCINI&t;(SIOCDEVPRIVATE+2)
-DECL|macro|SIOCSCCCHANINI
-mdefine_line|#define SIOCSCCCHANINI&t;(SIOCDEVPRIVATE+3)
-DECL|macro|SIOCSCCSMEM
-mdefine_line|#define SIOCSCCSMEM&t;(SIOCDEVPRIVATE+4)
-DECL|macro|SIOCSCCGKISS
-mdefine_line|#define SIOCSCCGKISS&t;(SIOCDEVPRIVATE+5)
-DECL|macro|SIOCSCCSKISS
-mdefine_line|#define SIOCSCCSKISS&t;(SIOCDEVPRIVATE+6)
-DECL|macro|SIOCSCCGSTAT
-mdefine_line|#define SIOCSCCGSTAT&t;(SIOCDEVPRIVATE+7)
+DECL|enum|SCC_ioctl_cmds
+r_enum
+id|SCC_ioctl_cmds
+(brace
+DECL|enumerator|SIOCSCCRESERVED
+id|SIOCSCCRESERVED
+op_assign
+id|SIOCDEVPRIVATE
+comma
+DECL|enumerator|SIOCSCCCFG
+id|SIOCSCCCFG
+comma
+DECL|enumerator|SIOCSCCINI
+id|SIOCSCCINI
+comma
+DECL|enumerator|SIOCSCCCHANINI
+id|SIOCSCCCHANINI
+comma
+DECL|enumerator|SIOCSCCSMEM
+id|SIOCSCCSMEM
+comma
+DECL|enumerator|SIOCSCCGKISS
+id|SIOCSCCGKISS
+comma
+DECL|enumerator|SIOCSCCSKISS
+id|SIOCSCCSKISS
+comma
+DECL|enumerator|SIOCSCCGSTAT
+id|SIOCSCCGSTAT
+comma
+DECL|enumerator|SIOCSCCCAL
+id|SIOCSCCCAL
+)brace
+suffix:semicolon
 multiline_comment|/* magic number */
 DECL|macro|SCC_MAGIC
 mdefine_line|#define SCC_MAGIC&t;0x8530&t;&t;/* ;-) */
-multiline_comment|/* KISS state machine */
-DECL|macro|KISS_IDLE
-mdefine_line|#define&t;KISS_IDLE&t;0
-DECL|macro|KISS_DATA
-mdefine_line|#define KISS_DATA&t;1
-DECL|macro|KISS_ESCAPE
-mdefine_line|#define KISS_ESCAPE&t;2
-DECL|macro|KISS_RXFRAME
-mdefine_line|#define KISS_RXFRAME&t;3
 multiline_comment|/* Device parameter control (from WAMPES) */
-DECL|macro|PARAM_TXDELAY
-mdefine_line|#define&t;PARAM_TXDELAY&t;1
-DECL|macro|PARAM_PERSIST
-mdefine_line|#define&t;PARAM_PERSIST&t;2
-DECL|macro|PARAM_SLOTTIME
-mdefine_line|#define&t;PARAM_SLOTTIME&t;3
-DECL|macro|PARAM_TXTAIL
-mdefine_line|#define&t;PARAM_TXTAIL&t;4
-DECL|macro|PARAM_FULLDUP
-mdefine_line|#define&t;PARAM_FULLDUP&t;5
-DECL|macro|PARAM_SOFTDCD
-mdefine_line|#define PARAM_SOFTDCD&t;6&t;/* was: PARAM_HW */
-DECL|macro|PARAM_MUTE
-mdefine_line|#define PARAM_MUTE&t;7&t;/* ??? */
-DECL|macro|PARAM_DTR
-mdefine_line|#define PARAM_DTR       8
-DECL|macro|PARAM_RTS
-mdefine_line|#define PARAM_RTS&t;9
-DECL|macro|PARAM_SPEED
-mdefine_line|#define PARAM_SPEED     10
-DECL|macro|PARAM_ENDDELAY
-mdefine_line|#define PARAM_ENDDELAY&t;11&t;/* ??? */
-DECL|macro|PARAM_GROUP
-mdefine_line|#define PARAM_GROUP     12
-DECL|macro|PARAM_IDLE
-mdefine_line|#define PARAM_IDLE      13
-DECL|macro|PARAM_MIN
-mdefine_line|#define PARAM_MIN       14
-DECL|macro|PARAM_MAXKEY
-mdefine_line|#define&t;PARAM_MAXKEY&t;15
-DECL|macro|PARAM_WAIT
-mdefine_line|#define PARAM_WAIT      16
-DECL|macro|PARAM_MAXDEFER
-mdefine_line|#define PARAM_MAXDEFER&t;17
-DECL|macro|PARAM_TX
-mdefine_line|#define PARAM_TX        18
-DECL|macro|PARAM_HWEVENT
-mdefine_line|#define PARAM_HWEVENT&t;31
-DECL|macro|PARAM_RETURN
-mdefine_line|#define PARAM_RETURN&t;255&t;/* reset kiss mode */
+DECL|enum|L1_params
+r_enum
+id|L1_params
+(brace
+DECL|enumerator|PARAM_DATA
+id|PARAM_DATA
+comma
+DECL|enumerator|PARAM_TXDELAY
+id|PARAM_TXDELAY
+comma
+DECL|enumerator|PARAM_PERSIST
+id|PARAM_PERSIST
+comma
+DECL|enumerator|PARAM_SLOTTIME
+id|PARAM_SLOTTIME
+comma
+DECL|enumerator|PARAM_TXTAIL
+id|PARAM_TXTAIL
+comma
+DECL|enumerator|PARAM_FULLDUP
+id|PARAM_FULLDUP
+comma
+DECL|enumerator|PARAM_SOFTDCD
+id|PARAM_SOFTDCD
+comma
+multiline_comment|/* was: PARAM_HW */
+DECL|enumerator|PARAM_MUTE
+id|PARAM_MUTE
+comma
+multiline_comment|/* ??? */
+DECL|enumerator|PARAM_DTR
+id|PARAM_DTR
+comma
+DECL|enumerator|PARAM_RTS
+id|PARAM_RTS
+comma
+DECL|enumerator|PARAM_SPEED
+id|PARAM_SPEED
+comma
+DECL|enumerator|PARAM_ENDDELAY
+id|PARAM_ENDDELAY
+comma
+multiline_comment|/* ??? */
+DECL|enumerator|PARAM_GROUP
+id|PARAM_GROUP
+comma
+DECL|enumerator|PARAM_IDLE
+id|PARAM_IDLE
+comma
+DECL|enumerator|PARAM_MIN
+id|PARAM_MIN
+comma
+DECL|enumerator|PARAM_MAXKEY
+id|PARAM_MAXKEY
+comma
+DECL|enumerator|PARAM_WAIT
+id|PARAM_WAIT
+comma
+DECL|enumerator|PARAM_MAXDEFER
+id|PARAM_MAXDEFER
+comma
+DECL|enumerator|PARAM_TX
+id|PARAM_TX
+comma
+DECL|enumerator|PARAM_HWEVENT
+id|PARAM_HWEVENT
+op_assign
+l_int|31
+comma
+DECL|enumerator|PARAM_RETURN
+id|PARAM_RETURN
+op_assign
+l_int|255
+multiline_comment|/* reset kiss mode */
+)brace
+suffix:semicolon
 multiline_comment|/* fulldup parameter */
-DECL|macro|KISS_DUPLEX_HALF
-mdefine_line|#define KISS_DUPLEX_HALF&t;0&t;/* normal CSMA operation */
-DECL|macro|KISS_DUPLEX_FULL
-mdefine_line|#define KISS_DUPLEX_FULL&t;1&t;/* fullduplex, key down trx after transmission */
-DECL|macro|KISS_DUPLEX_LINK
-mdefine_line|#define KISS_DUPLEX_LINK&t;2&t;/* fullduplex, key down trx after &squot;idletime&squot; sec */
-DECL|macro|KISS_DUPLEX_OPTIMA
-mdefine_line|#define KISS_DUPLEX_OPTIMA&t;3&t;/* fullduplex, let the protocol layer control the hw */
+DECL|enum|FULLDUP_modes
+r_enum
+id|FULLDUP_modes
+(brace
+DECL|enumerator|KISS_DUPLEX_HALF
+id|KISS_DUPLEX_HALF
+comma
+multiline_comment|/* normal CSMA operation */
+DECL|enumerator|KISS_DUPLEX_FULL
+id|KISS_DUPLEX_FULL
+comma
+multiline_comment|/* fullduplex, key down trx after transmission */
+DECL|enumerator|KISS_DUPLEX_LINK
+id|KISS_DUPLEX_LINK
+comma
+multiline_comment|/* fullduplex, key down trx after &squot;idletime&squot; sec */
+DECL|enumerator|KISS_DUPLEX_OPTIMA
+id|KISS_DUPLEX_OPTIMA
+multiline_comment|/* fullduplex, let the protocol layer control the hw */
+)brace
+suffix:semicolon
 multiline_comment|/* misc. parameters */
 DECL|macro|TIMER_OFF
 mdefine_line|#define TIMER_OFF&t;65535U&t;/* to switch off timers */
 DECL|macro|NO_SUCH_PARAM
 mdefine_line|#define NO_SUCH_PARAM&t;65534U&t;/* param not implemented */
 multiline_comment|/* HWEVENT parameter */
-DECL|macro|HWEV_DCD_ON
-mdefine_line|#define HWEV_DCD_ON&t;0
-DECL|macro|HWEV_DCD_OFF
-mdefine_line|#define HWEV_DCD_OFF&t;1
-DECL|macro|HWEV_ALL_SENT
-mdefine_line|#define HWEV_ALL_SENT&t;2
+DECL|enum|HWEVENT_opts
+r_enum
+id|HWEVENT_opts
+(brace
+DECL|enumerator|HWEV_DCD_ON
+id|HWEV_DCD_ON
+comma
+DECL|enumerator|HWEV_DCD_OFF
+id|HWEV_DCD_OFF
+comma
+DECL|enumerator|HWEV_ALL_SENT
+id|HWEV_ALL_SENT
+)brace
+suffix:semicolon
 multiline_comment|/* channel grouping */
 DECL|macro|RXGROUP
 mdefine_line|#define RXGROUP&t;&t;0x100&t;/* if set, only tx when all channels clear */
 DECL|macro|TXGROUP
 mdefine_line|#define TXGROUP&t;&t;0x200&t;/* if set, don&squot;t transmit simultaneously */
 multiline_comment|/* Tx/Rx clock sources */
-DECL|macro|CLK_DPLL
-mdefine_line|#define CLK_DPLL&t;0&t;/* normal halfduplex operation */
-DECL|macro|CLK_EXTERNAL
-mdefine_line|#define CLK_EXTERNAL&t;1&t;/* external clocking (G3RUH/DF9IC modems) */
-DECL|macro|CLK_DIVIDER
-mdefine_line|#define CLK_DIVIDER&t;2&t;/* Rx = DPLL, Tx = divider (fullduplex with */
+DECL|enum|CLOCK_sources
+r_enum
+id|CLOCK_sources
+(brace
+DECL|enumerator|CLK_DPLL
+id|CLK_DPLL
+comma
+multiline_comment|/* normal halfduplex operation */
+DECL|enumerator|CLK_EXTERNAL
+id|CLK_EXTERNAL
+comma
+multiline_comment|/* external clocking (G3RUH/DF9IC modems) */
+DECL|enumerator|CLK_DIVIDER
+id|CLK_DIVIDER
+comma
+multiline_comment|/* Rx = DPLL, Tx = divider (fullduplex with */
 multiline_comment|/* modems without clock regeneration */
+DECL|enumerator|CLK_BRG
+id|CLK_BRG
+multiline_comment|/* experimental fullduplex mode with DPLL/BRG for */
+multiline_comment|/* MODEMs without clock recovery */
+)brace
+suffix:semicolon
 multiline_comment|/* Tx state */
-DECL|macro|TXS_IDLE
-mdefine_line|#define TXS_IDLE&t;0&t;/* Transmitter off, no data pending */
-DECL|macro|TXS_BUSY
-mdefine_line|#define TXS_BUSY&t;1&t;/* waiting for permission to send / tailtime */
-DECL|macro|TXS_ACTIVE
-mdefine_line|#define TXS_ACTIVE&t;2&t;/* Transmitter on, sending data */
-DECL|macro|TXS_NEWFRAME
-mdefine_line|#define TXS_NEWFRAME&t;3&t;/* reset CRC and send (next) frame */
-DECL|macro|TXS_IDLE2
-mdefine_line|#define TXS_IDLE2&t;4&t;/* Transmitter on, no data pending */
-DECL|macro|TXS_WAIT
-mdefine_line|#define TXS_WAIT&t;5&t;/* Waiting for Mintime to expire */
-DECL|macro|TXS_TIMEOUT
-mdefine_line|#define TXS_TIMEOUT&t;6&t;/* We had a transmission timeout */
+DECL|enum|TX_state
+r_enum
+id|TX_state
+(brace
+DECL|enumerator|TXS_IDLE
+id|TXS_IDLE
+comma
+multiline_comment|/* Transmitter off, no data pending */
+DECL|enumerator|TXS_BUSY
+id|TXS_BUSY
+comma
+multiline_comment|/* waiting for permission to send / tailtime */
+DECL|enumerator|TXS_ACTIVE
+id|TXS_ACTIVE
+comma
+multiline_comment|/* Transmitter on, sending data */
+DECL|enumerator|TXS_NEWFRAME
+id|TXS_NEWFRAME
+comma
+multiline_comment|/* reset CRC and send (next) frame */
+DECL|enumerator|TXS_IDLE2
+id|TXS_IDLE2
+comma
+multiline_comment|/* Transmitter on, no data pending */
+DECL|enumerator|TXS_WAIT
+id|TXS_WAIT
+comma
+multiline_comment|/* Waiting for Mintime to expire */
+DECL|enumerator|TXS_TIMEOUT
+id|TXS_TIMEOUT
+multiline_comment|/* We had a transmission timeout */
+)brace
+suffix:semicolon
 DECL|typedef|io_port
 r_typedef
 r_int
@@ -344,11 +445,33 @@ id|bufsize
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|scc_calibrate
+r_struct
+id|scc_calibrate
+(brace
+DECL|member|time
+r_int
+r_int
+id|time
+suffix:semicolon
+DECL|member|pattern
+r_int
+r_char
+id|pattern
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
-DECL|macro|TX_ON
-mdefine_line|#define TX_ON&t;&t;1&t;/* command for scc_key_trx() */
-DECL|macro|TX_OFF
-mdefine_line|#define TX_OFF&t;&t;0&t;/* dto */
+DECL|enumerator|TX_OFF
+DECL|enumerator|TX_ON
+r_enum
+(brace
+id|TX_OFF
+comma
+id|TX_ON
+)brace
+suffix:semicolon
+multiline_comment|/* command for scc_key_trx() */
 multiline_comment|/* Vector masks in RR2B */
 DECL|macro|VECTOR_MASK
 mdefine_line|#define VECTOR_MASK&t;0x06
@@ -486,7 +609,7 @@ suffix:semicolon
 multiline_comment|/* link to device control structure */
 DECL|member|dev_stat
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|dev_stat
 suffix:semicolon
 multiline_comment|/* device statistics */

@@ -34,6 +34,16 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_NET_RADIO
 macro_line|#include &lt;linux/wireless.h&gt;
 macro_line|#endif&t;/* CONFIG_NET_RADIO */
+macro_line|#ifdef CONFIG_PLIP
+r_extern
+r_int
+id|plip_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;The list of devices, that are able to output.&n; */
 DECL|variable|dev_up_base
 r_static
@@ -4616,6 +4626,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_LAPBETHER)
 id|lapbeth_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_PLIP)
+id|plip_init
 c_func
 (paren
 )paren
