@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/ppdev.h&n; *&n; * User-space parallel port device driver (header file).&n; *&n; * Copyright (C) 1998-9 Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * linux/drivers/char/ppdev.h&n; *&n; * User-space parallel port device driver (header file).&n; *&n; * Copyright (C) 1998-9 Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Added PPGETTIME/PPSETTIME, Fred Barnes, 1999&n; */
 DECL|macro|PP_MAJOR
 mdefine_line|#define PP_MAJOR&t;99
 DECL|macro|PP_IOCTL
@@ -76,4 +76,9 @@ mdefine_line|#define PPCLRIRQ&t;_IOR(PP_IOCTL, 0x93, int)
 multiline_comment|/* Set the IEEE 1284 phase that we&squot;re in (e.g. IEEE1284_PH_FWD_IDLE) */
 DECL|macro|PPSETPHASE
 mdefine_line|#define PPSETPHASE&t;_IOW(PP_IOCTL, 0x94, int)
+multiline_comment|/* Set and get port timeout (struct timeval&squot;s) */
+DECL|macro|PPGETTIME
+mdefine_line|#define PPGETTIME&t;_IOW(PP_IOCTL, 0x95, struct timeval)
+DECL|macro|PPSETTIME
+mdefine_line|#define PPSETTIME&t;_IOR(PP_IOCTL, 0x96, struct timeval)
 eof

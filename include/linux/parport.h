@@ -15,6 +15,8 @@ DECL|macro|PARPORT_IRQ_AUTO
 mdefine_line|#define PARPORT_IRQ_AUTO  -2
 DECL|macro|PARPORT_DMA_AUTO
 mdefine_line|#define PARPORT_DMA_AUTO  -2
+DECL|macro|PARPORT_DMA_NOFIFO
+mdefine_line|#define PARPORT_DMA_NOFIFO -3
 DECL|macro|PARPORT_DISABLE
 mdefine_line|#define PARPORT_DISABLE   -2
 DECL|macro|PARPORT_IRQ_PROBEONLY

@@ -4272,6 +4272,8 @@ id|PCI_CLASS_STORAGE_IDE
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/* This just can&squot;t be right even with the fixes */
+macro_line|#if 0
 id|DBG
 c_func
 (paren
@@ -4292,8 +4294,7 @@ OL
 l_int|4
 suffix:semicolon
 id|i
-op_add_assign
-l_int|2
+op_increment
 )paren
 (brace
 r_struct
@@ -4310,7 +4311,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|r-&gt;start
+op_amp
+op_complement
+l_int|0x80
+)paren
+op_eq
+l_int|0x374
 )paren
 (brace
 id|r-&gt;start
@@ -4323,6 +4331,7 @@ id|r-&gt;start
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 )brace
 DECL|variable|pcibios_fixups
 r_struct

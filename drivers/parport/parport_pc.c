@@ -6374,6 +6374,10 @@ macro_line|#ifdef CONFIG_PARPORT_PC_FIFO
 r_if
 c_cond
 (paren
+id|p-&gt;dma
+op_ne
+id|PARPORT_DMA_NOFIFO
+op_logical_and
 id|priv-&gt;fifo_depth
 OG
 l_int|0
