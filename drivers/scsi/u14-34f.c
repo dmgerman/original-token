@@ -1,7 +1,10 @@
-multiline_comment|/*&n; *      u14-34f.c - Low-level driver for UltraStor 14F/34F SCSI host adapters.&n; *&n; *      16 Jan 1995 rev. 1.13 for linux 1.1.81&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      15 Dec 1994 rev. 1.12 for linux 1.1.74&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *&n; *      30 Nov 1994 rev. 1.11 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14F board has an old firmware revision (see below)&n; *               you must change &quot;#undef&quot; into &quot;#define&quot; in the following&n; *               statement.&n; */
+multiline_comment|/*&n; *      u14-34f.c - Low-level driver for UltraStor 14F/34F SCSI host adapters.&n; *&n; *      28 Jan 1995 rev. 1.14 for linux 1.1.86&n; *          Added module support.&n; *          Log and do a retry when a disk drive returns a target status&n; *          different from zero on a recovered error.&n; *          Auto detects if U14F boards have an old firmware revision.&n; *          Max number of scatter/gather lists set to 16 for all boards&n; *          (most installation run fine using 33 sglists, while other&n; *          has problems when using more then 16).&n; *&n; *      16 Jan 1995 rev. 1.13 for linux 1.1.81&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      15 Dec 1994 rev. 1.12 for linux 1.1.74&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *&n; *      30 Nov 1994 rev. 1.11 for linux 1.1.68&n; *          Redo i/o on target status CHECK_CONDITION for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14F board has an old firmware revision (see below)&n; *               you must change &quot;#undef&quot; into &quot;#define&quot; in the following&n; *               statement.&n; */
 DECL|macro|HAVE_OLD_U14F_FIRMWARE
 macro_line|#undef HAVE_OLD_U14F_FIRMWARE
-multiline_comment|/*&n; *  The UltraStor 14F, 24F, and 34F are a family of intelligent, high&n; *  performance SCSI-2 host adapters.&n; *  Here is the scoop on the various models:&n; *&n; *  14F - ISA first-party DMA HA with floppy support and WD1003 emulation.&n; *  24F - EISA Bus Master HA with floppy support and WD1003 emulation.&n; *  34F - VESA Local-Bus Bus Master HA (no WD1003 emulation).&n; *&n; *  This code has been tested with up to two U14F boards, using both &n; *  firmware 28004-005/38004-004 (BIOS rev. 2.00) and the latest firmware&n; *  28004-006/38004-005 (BIOS rev. 2.01). &n; *&n; *  The latest firmware is required in order to get reliable operations when &n; *  clustering is enabled. ENABLE_CLUSTERING provides a performance increase&n; *  up to 50% on sequential access.&n; *&n; *  Since the Scsi_Host_Template structure is shared among all 14F and 34F,&n; *  the last setting of use_clustering is in effect for all of these boards.&n; *&n; *  Here a sample configuration using two U14F boards:&n; *&n; U14F0: PORT 0x330, BIOS 0xc8000, IRQ 11, DMA 5, SG 33, Mbox 16, CmdLun 2, C1.&n; U14F1: PORT 0x340, BIOS 0x00000, IRQ 10, DMA 6, SG 33, Mbox 16, CmdLun 2, C1.&n; *&n; *  The boot controller must have its BIOS enabled, while other boards can&n; *  have their BIOS disabled, or enabled to an higher address.&n; *  Boards are named Ux4F0, Ux4F1..., according to the port address order in&n; *  the io_port[] array.&n; *  &n; *  The following facts are based on real testing results (not on&n; *  documentation) on the above U14F board.&n; *  &n; *  - The U14F board should be jumpered for bus on time less or equal to 7 &n; *    microseconds, while the default is 11 microseconds. This is order to &n; *    get acceptable performance while using floppy drive and hard disk &n; *    together. The jumpering for 7 microseconds is: JP13 pin 15-16, &n; *    JP14 pin 7-8 and pin 9-10.&n; *    The reduction has a little impact on scsi performance.&n; *  &n; *  - If scsi bus length exceeds 3m., the scsi bus speed needs to be reduced&n; *    from 10Mhz to 5Mhz (do this by inserting a jumper on JP13 pin 7-8).&n; *&n; *  - If U14F on board firmware is older than 28004-006/38004-005,&n; *    the U14F board is unable to provide reliable operations if the scsi &n; *    request length exceeds 16Kbyte. When this length is exceeded the&n; *    behavior is: &n; *    - adapter_status equal 0x96 or 0xa3 or 0x93 or 0x94;&n; *    - adapter_status equal 0 and target_status equal 2 on for all targets&n; *      in the next operation following the reset.&n; *    This sequence takes a long time (&gt;3 seconds), so in the meantime&n; *    the SD_TIMEOUT in sd.c could expire giving rise to scsi aborts&n; *    (SD_TIMEOUT has been increased from 3 to 6 seconds in 1.1.31).&n; *    Because of this I had to DISABLE_CLUSTERING and to work around the&n; *    bus reset in the interrupt service routine, returning DID_BUS_BUSY&n; *    so that the operations are retried without complains from the scsi.c&n; *    code.&n; *    Any reset of the scsi bus is going to kill tape operations, since&n; *    no retry is allowed for tapes. Bus resets are more likely when the&n; *    scsi bus is under heavy load.&n; *    Requests using scatter/gather have a maximum length of 16 x 1024 bytes &n; *    when DISABLE_CLUSTERING is in effect, but unscattered requests could be&n; *    larger than 16Kbyte.&n; *&n; *    The new firmware has fixed all the above problems and has been tested &n; *    with up to 33 scatter/gather lists.&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;block = TRUE for all ISA boards.&n; */
+multiline_comment|/*&n; *  The UltraStor 14F, 24F, and 34F are a family of intelligent, high&n; *  performance SCSI-2 host adapters.&n; *  Here is the scoop on the various models:&n; *&n; *  14F - ISA first-party DMA HA with floppy support and WD1003 emulation.&n; *  24F - EISA Bus Master HA with floppy support and WD1003 emulation.&n; *  34F - VESA Local-Bus Bus Master HA (no WD1003 emulation).&n; *&n; *  This code has been tested with up to two U14F boards, using both &n; *  firmware 28004-005/38004-004 (BIOS rev. 2.00) and the latest firmware&n; *  28004-006/38004-005 (BIOS rev. 2.01). &n; *&n; *  The latest firmware is required in order to get reliable operations when &n; *  clustering is enabled. ENABLE_CLUSTERING provides a performance increase&n; *  up to 50% on sequential access.&n; *&n; *  Since the Scsi_Host_Template structure is shared among all 14F and 34F,&n; *  the last setting of use_clustering is in effect for all of these boards.&n; *&n; *  Here a sample configuration using two U14F boards:&n; *&n; U14F0: PORT 0x330, BIOS 0xc8000, IRQ 11, DMA 5, SG 16, Mbox 16, CmdLun 2, C1.&n; U14F1: PORT 0x340, BIOS 0x00000, IRQ 10, DMA 6, SG 16, Mbox 16, CmdLun 2, C1.&n; *&n; *  The boot controller must have its BIOS enabled, while other boards can&n; *  have their BIOS disabled, or enabled to an higher address.&n; *  Boards are named Ux4F0, Ux4F1..., according to the port address order in&n; *  the io_port[] array.&n; *  &n; *  The following facts are based on real testing results (not on&n; *  documentation) on the above U14F board.&n; *  &n; *  - The U14F board should be jumpered for bus on time less or equal to 7 &n; *    microseconds, while the default is 11 microseconds. This is order to &n; *    get acceptable performance while using floppy drive and hard disk &n; *    together. The jumpering for 7 microseconds is: JP13 pin 15-16, &n; *    JP14 pin 7-8 and pin 9-10.&n; *    The reduction has a little impact on scsi performance.&n; *  &n; *  - If scsi bus length exceeds 3m., the scsi bus speed needs to be reduced&n; *    from 10Mhz to 5Mhz (do this by inserting a jumper on JP13 pin 7-8).&n; *&n; *  - If U14F on board firmware is older than 28004-006/38004-005,&n; *    the U14F board is unable to provide reliable operations if the scsi &n; *    request length exceeds 16Kbyte. When this length is exceeded the&n; *    behavior is: &n; *    - adapter_status equal 0x96 or 0xa3 or 0x93 or 0x94;&n; *    - adapter_status equal 0 and target_status equal 2 on for all targets&n; *      in the next operation following the reset.&n; *    This sequence takes a long time (&gt;3 seconds), so in the meantime&n; *    the SD_TIMEOUT in sd.c could expire giving rise to scsi aborts&n; *    (SD_TIMEOUT has been increased from 3 to 6 seconds in 1.1.31).&n; *    Because of this I had to DISABLE_CLUSTERING and to work around the&n; *    bus reset in the interrupt service routine, returning DID_BUS_BUSY&n; *    so that the operations are retried without complains from the scsi.c&n; *    code.&n; *    Any reset of the scsi bus is going to kill tape operations, since&n; *    no retry is allowed for tapes. Bus resets are more likely when the&n; *    scsi bus is under heavy load.&n; *    Requests using scatter/gather have a maximum length of 16 x 1024 bytes &n; *    when DISABLE_CLUSTERING is in effect, but unscattered requests could be&n; *    larger than 16Kbyte.&n; *&n; *    The new firmware has fixed all the above problems.&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;block = TRUE for all ISA boards.&n; */
+macro_line|#if defined(MODULE)
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -47,21 +50,6 @@ DECL|macro|HA_CMD_READ_BUFF
 mdefine_line|#define HA_CMD_READ_BUFF  0x3
 DECL|macro|HA_CMD_WRITE_BUFF
 mdefine_line|#define HA_CMD_WRITE_BUFF 0x4
-macro_line|#if defined (HAVE_OLD_U14F_FIRMWARE)
-DECL|macro|U14F_MAX_SGLIST
-mdefine_line|#define U14F_MAX_SGLIST 16
-DECL|macro|U14F_CLUSTERING
-mdefine_line|#define U14F_CLUSTERING DISABLE_CLUSTERING
-macro_line|#else
-DECL|macro|U14F_MAX_SGLIST
-mdefine_line|#define U14F_MAX_SGLIST 33
-DECL|macro|U14F_CLUSTERING
-mdefine_line|#define U14F_CLUSTERING ENABLE_CLUSTERING
-macro_line|#endif
-DECL|macro|U34F_MAX_SGLIST
-mdefine_line|#define U34F_MAX_SGLIST 33
-DECL|macro|U34F_CLUSTERING
-mdefine_line|#define U34F_CLUSTERING ENABLE_CLUSTERING
 DECL|macro|DEBUG_DETECT
 macro_line|#undef  DEBUG_DETECT
 DECL|macro|DEBUG_INTERRUPT
@@ -77,7 +65,7 @@ mdefine_line|#define MAX_BOARDS 4
 DECL|macro|MAX_MAILBOXES
 mdefine_line|#define MAX_MAILBOXES 16
 DECL|macro|MAX_SGLIST
-mdefine_line|#define MAX_SGLIST 33
+mdefine_line|#define MAX_SGLIST 16
 DECL|macro|MAX_CMD_PER_LUN
 mdefine_line|#define MAX_CMD_PER_LUN 2
 DECL|macro|FALSE
@@ -92,10 +80,14 @@ DECL|macro|LOCKED
 mdefine_line|#define LOCKED   2
 DECL|macro|IN_RESET
 mdefine_line|#define IN_RESET 3
+DECL|macro|IGNORE
+mdefine_line|#define IGNORE   4
 DECL|macro|NO_IRQ
 mdefine_line|#define NO_IRQ  0xff
+DECL|macro|NO_DMA
+mdefine_line|#define NO_DMA  0xff
 DECL|macro|MAXLOOP
-mdefine_line|#define MAXLOOP 20000
+mdefine_line|#define MAXLOOP 200000
 DECL|macro|REG_LCL_MASK
 mdefine_line|#define REG_LCL_MASK      0
 DECL|macro|REG_LCL_INTR
@@ -116,12 +108,12 @@ DECL|macro|REG_OGM
 mdefine_line|#define REG_OGM           8
 DECL|macro|REG_ICM
 mdefine_line|#define REG_ICM           12
-DECL|macro|REG_REGION
-mdefine_line|#define REG_REGION        0x0c
+DECL|macro|REGION_SIZE
+mdefine_line|#define REGION_SIZE       13
 DECL|macro|BSY_ASSERTED
 mdefine_line|#define BSY_ASSERTED      0x01
-DECL|macro|INTR_ASSERTED
-mdefine_line|#define INTR_ASSERTED     0x01
+DECL|macro|IRQ_ASSERTED
+mdefine_line|#define IRQ_ASSERTED      0x01
 DECL|macro|CMD_RESET
 mdefine_line|#define CMD_RESET         0xc0
 DECL|macro|CMD_OGM_INTR
@@ -365,6 +357,14 @@ l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* Name of this board */
+DECL|member|board_id
+r_char
+id|board_id
+(braket
+l_int|256
+)braket
+suffix:semicolon
+multiline_comment|/* data from INQUIRY on this board */
 DECL|member|in_reset
 r_int
 id|in_reset
@@ -386,13 +386,12 @@ id|MAX_TARGET
 )braket
 suffix:semicolon
 multiline_comment|/* If TRUE redo operation on target */
-DECL|member|bios_drive_number
+DECL|member|subversion
 r_int
 r_char
-id|bios_drive_number
-suffix:colon
-l_int|1
+id|subversion
 suffix:semicolon
+multiline_comment|/* Bus type, either ISA or ESA */
 DECL|member|heads
 r_int
 r_char
@@ -403,14 +402,6 @@ r_int
 r_char
 id|sectors
 suffix:semicolon
-DECL|member|subversion
-r_int
-r_char
-id|subversion
-suffix:colon
-l_int|4
-suffix:semicolon
-multiline_comment|/* Bus type, either ISA or ESA */
 multiline_comment|/* slot != 0 for the U24F, slot == 0 for both the U14F and U34F */
 DECL|member|slot
 r_int
@@ -518,6 +509,289 @@ l_int|0
 r_return
 id|TRUE
 suffix:semicolon
+r_return
+id|FALSE
+suffix:semicolon
+)brace
+DECL|function|board_inquiry
+r_static
+r_int
+id|board_inquiry
+c_func
+(paren
+r_int
+r_int
+id|j
+)paren
+(brace
+r_struct
+id|mscp
+op_star
+id|cpp
+suffix:semicolon
+r_int
+r_int
+id|time
+comma
+id|limit
+op_assign
+l_int|0
+suffix:semicolon
+id|cpp
+op_assign
+op_amp
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|cp
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|cpp
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|mscp
+)paren
+)paren
+suffix:semicolon
+id|cpp-&gt;opcode
+op_assign
+id|OP_HOST_ADAPTER
+suffix:semicolon
+id|cpp-&gt;xdir
+op_assign
+id|DTD_IN
+suffix:semicolon
+id|cpp-&gt;data_address
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|board_id
+suffix:semicolon
+id|cpp-&gt;data_len
+op_assign
+r_sizeof
+(paren
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|board_id
+)paren
+suffix:semicolon
+id|cpp-&gt;scsi_cdbs_len
+op_assign
+l_int|6
+suffix:semicolon
+id|cpp-&gt;scsi_cdbs
+(braket
+l_int|0
+)braket
+op_assign
+id|HA_CMD_INQUIRY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|wait_on_busy
+c_func
+(paren
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|io_port
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: board_inquiry, adapter busy.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+)paren
+suffix:semicolon
+r_return
+id|TRUE
+suffix:semicolon
+)brace
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|cp_stat
+(braket
+l_int|0
+)braket
+op_assign
+id|IGNORE
+suffix:semicolon
+multiline_comment|/* Clear the interrupt indication */
+id|outb
+c_func
+(paren
+id|CMD_CLR_INTR
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|io_port
+op_plus
+id|REG_SYS_INTR
+)paren
+suffix:semicolon
+multiline_comment|/* Store pointer in OGM address bytes */
+id|outl
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|cpp
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|io_port
+op_plus
+id|REG_OGM
+)paren
+suffix:semicolon
+multiline_comment|/* Issue OGM interrupt */
+id|outb
+c_func
+(paren
+id|CMD_OGM_INTR
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|io_port
+op_plus
+id|REG_LCL_INTR
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|time
+op_assign
+id|jiffies
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|jiffies
+OL
+(paren
+id|time
+op_plus
+l_int|100
+)paren
+op_logical_and
+id|limit
+op_increment
+OL
+l_int|100000000
+)paren
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cpp-&gt;adapter_status
+op_logical_or
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|cp_stat
+(braket
+l_int|0
+)braket
+op_ne
+id|FREE
+)paren
+(brace
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|cp_stat
+(braket
+l_int|0
+)braket
+op_assign
+id|FREE
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: board_inquiry, err 0x%x.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+comma
+id|cpp-&gt;adapter_status
+)paren
+suffix:semicolon
+r_return
+id|TRUE
+suffix:semicolon
+)brace
 r_return
 id|FALSE
 suffix:semicolon
@@ -774,14 +1048,14 @@ c_func
 op_star
 id|port_base
 comma
-id|REG_REGION
+id|REGION_SIZE
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: address 0x%03x already in use, detaching.&bslash;n&quot;
+l_string|&quot;%s: address 0x%03x in use, skipping probe.&bslash;n&quot;
 comma
 id|name
 comma
@@ -1006,6 +1280,15 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
+id|n_io_port
+op_assign
+id|REGION_SIZE
+suffix:semicolon
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
 id|base
 op_assign
 id|bios_segment_table
@@ -1021,6 +1304,15 @@ op_member_access_from_pointer
 id|irq
 op_assign
 id|irq
+suffix:semicolon
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|sg_tablesize
+op_assign
+id|MAX_SGLIST
 suffix:semicolon
 id|sh
 (braket
@@ -1138,7 +1430,7 @@ id|j
 op_member_access_from_pointer
 id|io_port
 comma
-id|REG_REGION
+id|REGION_SIZE
 comma
 id|driver_name
 )paren
@@ -1197,16 +1489,6 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
-id|bios_drive_number
-op_assign
-id|config_2.bios_drive_number
-suffix:semicolon
-id|HD
-c_func
-(paren
-id|j
-)paren
-op_member_access_from_pointer
 id|subversion
 op_assign
 id|subversion
@@ -1249,7 +1531,7 @@ id|j
 op_member_access_from_pointer
 id|dma_channel
 op_assign
-l_int|0
+id|NO_DMA
 suffix:semicolon
 id|sh
 (braket
@@ -1265,18 +1547,9 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
-id|sg_tablesize
-op_assign
-id|U34F_MAX_SGLIST
-suffix:semicolon
-id|sh
-(braket
-id|j
-)braket
-op_member_access_from_pointer
 id|hostt-&gt;use_clustering
 op_assign
-id|U34F_CLUSTERING
+id|ENABLE_CLUSTERING
 suffix:semicolon
 id|sprintf
 c_func
@@ -1295,15 +1568,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|sh
-(braket
-id|j
-)braket
-op_member_access_from_pointer
-id|dma_channel
-op_assign
-id|dma_channel
-suffix:semicolon
+macro_line|#if !defined(MODULE)
+multiline_comment|/* The module code does not checkin/checkout in the blocking list yet */
 id|sh
 (braket
 id|j
@@ -1316,6 +1582,37 @@ id|sh
 id|j
 )braket
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined (HAVE_OLD_U14F_FIRMWARE)
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|hostt-&gt;use_clustering
+op_assign
+id|DISABLE_CLUSTERING
+suffix:semicolon
+macro_line|#else
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|hostt-&gt;use_clustering
+op_assign
+id|ENABLE_CLUSTERING
+suffix:semicolon
+macro_line|#endif
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|dma_channel
+op_assign
+id|dma_channel
+suffix:semicolon
 id|sh
 (braket
 id|j
@@ -1324,24 +1621,6 @@ op_member_access_from_pointer
 id|unchecked_isa_dma
 op_assign
 id|TRUE
-suffix:semicolon
-id|sh
-(braket
-id|j
-)braket
-op_member_access_from_pointer
-id|sg_tablesize
-op_assign
-id|U14F_MAX_SGLIST
-suffix:semicolon
-id|sh
-(braket
-id|j
-)braket
-op_member_access_from_pointer
-id|hostt-&gt;use_clustering
-op_assign
-id|U14F_CLUSTERING
 suffix:semicolon
 id|sprintf
 c_func
@@ -1383,6 +1662,121 @@ c_func
 id|dma_channel
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|subversion
+op_eq
+id|ISA
+op_logical_and
+op_logical_neg
+id|board_inquiry
+c_func
+(paren
+id|j
+)paren
+)paren
+(brace
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|board_id
+(braket
+l_int|40
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+op_amp
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|board_id
+(braket
+l_int|32
+)braket
+comma
+l_string|&quot;06000600&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: %s.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+comma
+op_amp
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|board_id
+(braket
+l_int|8
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: firmware %s is outdated, BIOS rev. should be 2.01.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+comma
+op_amp
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|board_id
+(braket
+l_int|32
+)braket
+)paren
+suffix:semicolon
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|hostt-&gt;use_clustering
+op_assign
+id|DISABLE_CLUSTERING
+suffix:semicolon
+)brace
 )brace
 id|printk
 c_func
@@ -3496,6 +3890,8 @@ id|flags
 comma
 id|status
 comma
+id|tstatus
+comma
 id|loops
 comma
 id|total_loops
@@ -3622,7 +4018,7 @@ op_plus
 id|REG_SYS_INTR
 )paren
 op_amp
-id|INTR_ASSERTED
+id|IRQ_ASSERTED
 )paren
 (brace
 id|total_loops
@@ -3728,6 +4124,40 @@ id|j
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|cp_stat
+(braket
+id|i
+)braket
+op_eq
+id|IGNORE
+)paren
+(brace
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|cp_stat
+(braket
+id|i
+)braket
+op_assign
+id|FREE
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -3992,6 +4422,14 @@ comma
 id|irq
 )paren
 suffix:semicolon
+id|tstatus
+op_assign
+id|status_byte
+c_func
+(paren
+id|spp-&gt;target_status
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -4002,13 +4440,13 @@ r_case
 id|ASOK
 suffix:colon
 multiline_comment|/* status OK */
-multiline_comment|/* Fix a &quot;READ CAPACITY failed&quot; error on some disk drives */
+multiline_comment|/* Forces a reset if a disk drive keeps returning BUSY */
 r_if
 c_cond
 (paren
-id|spp-&gt;target_status
+id|tstatus
 op_eq
-id|INTERMEDIATE_GOOD
+id|BUSY
 op_logical_and
 id|SCpnt-&gt;device-&gt;type
 op_ne
@@ -4025,9 +4463,9 @@ r_else
 r_if
 c_cond
 (paren
-id|spp-&gt;target_status
-op_eq
-id|CONDITION_GOOD
+id|tstatus
+op_ne
+id|GOOD
 op_logical_and
 id|SCpnt-&gt;device-&gt;type
 op_eq
@@ -4050,6 +4488,71 @@ id|DID_BUS_BUSY
 op_lshift
 l_int|16
 suffix:semicolon
+multiline_comment|/* Works around a flaw in scsi.c */
+r_else
+r_if
+c_cond
+(paren
+id|tstatus
+op_eq
+id|CHECK_CONDITION
+op_logical_and
+id|SCpnt-&gt;device-&gt;type
+op_eq
+id|TYPE_DISK
+op_logical_and
+(paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0xf
+)paren
+op_eq
+id|RECOVERED_ERROR
+)paren
+id|status
+op_assign
+id|DID_BUS_BUSY
+op_lshift
+l_int|16
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|tstatus
+op_eq
+id|CHECK_CONDITION
+op_logical_and
+(paren
+id|SCpnt-&gt;device-&gt;type
+op_eq
+id|TYPE_DISK
+op_logical_or
+id|SCpnt-&gt;device-&gt;type
+op_eq
+id|TYPE_ROM
+)paren
+op_logical_and
+(paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0xf
+)paren
+op_eq
+id|UNIT_ATTENTION
+)paren
+id|status
+op_assign
+id|DID_ERROR
+op_lshift
+l_int|16
+suffix:semicolon
 r_else
 id|status
 op_assign
@@ -4060,9 +4563,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|spp-&gt;target_status
+id|tstatus
 op_eq
-l_int|0
+id|GOOD
 )paren
 id|HD
 c_func
@@ -4076,6 +4579,48 @@ id|SCpnt-&gt;target
 )braket
 op_assign
 id|FALSE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|spp-&gt;target_status
+op_logical_and
+(paren
+id|SCpnt-&gt;device-&gt;type
+op_eq
+id|TYPE_DISK
+op_logical_or
+id|SCpnt-&gt;device-&gt;type
+op_eq
+id|TYPE_ROM
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: ihdlr, target %d:%d, pid %ld, target_status &quot;
+"&bslash;"
+l_string|&quot;0x%x, sense key 0x%x.&bslash;n&quot;
+comma
+id|BN
+c_func
+(paren
+id|j
+)paren
+comma
+id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;lun
+comma
+id|SCpnt-&gt;pid
+comma
+id|spp-&gt;target_status
+comma
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+)paren
 suffix:semicolon
 id|HD
 c_func
@@ -4095,7 +4640,7 @@ suffix:semicolon
 r_case
 id|ASST
 suffix:colon
-multiline_comment|/* SCSI bus selection time out */
+multiline_comment|/* Selection Time Out */
 r_if
 c_cond
 (paren
@@ -4523,4 +5068,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if defined(MODULE)
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|ULTRASTOR_14_34F
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

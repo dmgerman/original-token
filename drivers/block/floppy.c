@@ -88,6 +88,21 @@ id|initialising
 op_assign
 l_int|1
 suffix:semicolon
+DECL|macro|FLOPPY0_TYPE
+mdefine_line|#define FLOPPY0_TYPE&t;((CMOS_READ(0x10) &gt;&gt; 4) &amp; 15)
+DECL|macro|FLOPPY1_TYPE
+mdefine_line|#define FLOPPY1_TYPE&t;(CMOS_READ(0x10) &amp; 15)
+multiline_comment|/*&n; * Again, the CMOS information doesn&squot;t work on the alpha..&n; */
+macro_line|#ifdef __alpha__
+DECL|macro|FLOPPY0_TYPE
+macro_line|#undef FLOPPY0_TYPE
+DECL|macro|FLOPPY1_TYPE
+macro_line|#undef FLOPPY1_TYPE
+DECL|macro|FLOPPY0_TYPE
+mdefine_line|#define FLOPPY0_TYPE 6
+DECL|macro|FLOPPY1_TYPE
+mdefine_line|#define FLOPPY1_TYPE 0
+macro_line|#endif
 macro_line|#ifdef CONFIG_FLOPPY_2_FDC
 DECL|macro|N_FDC
 mdefine_line|#define N_FDC 2
@@ -2247,15 +2262,6 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
-r_if
-c_cond
-(paren
-id|jiffies
-op_ge
-id|DRS-&gt;select_date
-op_plus
-id|DP-&gt;select_delay
-)paren
 (brace
 id|UDRS-&gt;last_checked
 op_assign
@@ -3509,6 +3515,112 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|hlt_disabled
+r_static
+r_int
+id|hlt_disabled
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|floppy_disable_hlt
+r_static
+r_void
+id|floppy_disable_hlt
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hlt_disabled
+)paren
+(brace
+id|hlt_disabled
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#ifdef HAVE_DISABLE_HLT
+id|disable_hlt
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+DECL|function|floppy_enable_hlt
+r_static
+r_void
+id|floppy_enable_hlt
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hlt_disabled
+)paren
+(brace
+id|hlt_disabled
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef HAVE_DISABLE_HLT
+id|enable_hlt
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|setup_DMA
 r_static
 r_void
@@ -3758,6 +3870,11 @@ id|FLOPPY_DMA
 )paren
 suffix:semicolon
 id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|floppy_disable_hlt
 c_func
 (paren
 )paren
@@ -6055,6 +6172,11 @@ r_void
 op_assign
 id|DEVICE_INTR
 suffix:semicolon
+id|floppy_enable_hlt
+c_func
+(paren
+)paren
+suffix:semicolon
 id|CLEAR_INTR
 suffix:semicolon
 r_if
@@ -6622,6 +6744,11 @@ c_func
 (paren
 op_amp
 id|fd_timer
+)paren
+suffix:semicolon
+id|floppy_enable_hlt
+c_func
+(paren
 )paren
 suffix:semicolon
 id|disable_dma
@@ -12936,29 +13063,13 @@ c_func
 (paren
 l_int|0
 comma
-(paren
-id|CMOS_READ
-c_func
-(paren
-l_int|0x10
-)paren
-op_rshift
-l_int|4
-)paren
-op_amp
-l_int|15
+id|FLOPPY0_TYPE
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|CMOS_READ
-c_func
-(paren
-l_int|0x10
-)paren
-op_amp
-l_int|15
+id|FLOPPY1_TYPE
 )paren
 (brace
 id|printk
@@ -12972,13 +13083,7 @@ c_func
 (paren
 l_int|1
 comma
-id|CMOS_READ
-c_func
-(paren
-l_int|0x10
-)paren
-op_amp
-l_int|15
+id|FLOPPY1_TYPE
 )paren
 suffix:semicolon
 )brace
@@ -14337,7 +14442,6 @@ suffix:semicolon
 multiline_comment|/* Revised 82077AA passes all the tests */
 )brace
 multiline_comment|/* get_fdc_version */
-macro_line|#ifndef FD_MODULE
 multiline_comment|/* lilo configuration */
 DECL|function|invert_dcl
 r_static
@@ -14507,6 +14611,16 @@ id|ints
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|str
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -14569,7 +14683,8 @@ id|str
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|macro|FLOPPY_SETUP
+mdefine_line|#define FLOPPY_SETUP
 macro_line|#ifdef FD_MODULE
 r_static
 macro_line|#endif
@@ -15319,6 +15434,11 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
+id|floppy_enable_hlt
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_FLOPPY_SANITY
 r_for
 c_loop

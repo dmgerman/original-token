@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Thu Jan 19 23:28:05 1995 by makisara@kai.home&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Mon Jan 30 23:20:07 1995 by root@kai.home&n;*/
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4588,7 +4588,20 @@ id|STp-&gt;block_size
 suffix:semicolon
 id|STp-&gt;dirty
 op_assign
-l_int|0
+op_logical_neg
+(paren
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|writing
+op_eq
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|buffer_bytes
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8624,6 +8637,32 @@ id|MTFSR
 r_if
 c_cond
 (paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x80
+)paren
+(brace
+multiline_comment|/* Hit filemark */
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_increment
+suffix:semicolon
+id|STp-&gt;drv_block
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
 id|blkno
 op_ge
 id|undone
@@ -8643,6 +8682,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+)brace
 r_else
 r_if
 c_cond
@@ -8651,6 +8691,35 @@ id|cmd_in
 op_eq
 id|MTBSR
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x80
+)paren
+(brace
+multiline_comment|/* Hit filemark */
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_decrement
+suffix:semicolon
+id|STp-&gt;drv_block
+op_assign
+(paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 r_if
 c_cond
@@ -8674,6 +8743,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+)brace
 r_else
 r_if
 c_cond
@@ -8681,6 +8751,10 @@ c_cond
 id|cmd_in
 op_eq
 id|MTEOM
+op_logical_or
+id|cmd_in
+op_eq
+id|MTSEEK
 )paren
 (brace
 (paren

@@ -1103,6 +1103,12 @@ id|cli
 )paren
 suffix:semicolon
 multiline_comment|/* &n;     * sizes[order].firstfree used to be NULL, otherwise we wouldn&squot;t be&n;     * here, but you never know.... &n;     */
+r_if
+c_cond
+(paren
+id|dma_flag
+)paren
+(brace
 id|page-&gt;next
 op_assign
 id|sizes
@@ -1110,13 +1116,8 @@ id|sizes
 id|order
 )braket
 dot
-id|firstfree
+id|dmafree
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dma_flag
-)paren
 id|sizes
 (braket
 id|order
@@ -1126,7 +1127,18 @@ id|dmafree
 op_assign
 id|page
 suffix:semicolon
+)brace
 r_else
+(brace
+id|page-&gt;next
+op_assign
+id|sizes
+(braket
+id|order
+)braket
+dot
+id|firstfree
+suffix:semicolon
 id|sizes
 (braket
 id|order
@@ -1136,6 +1148,7 @@ id|firstfree
 op_assign
 id|page
 suffix:semicolon
+)brace
 id|restore_flags
 c_func
 (paren

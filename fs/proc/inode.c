@@ -666,7 +666,65 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* files within /proc/net */
+macro_line|#ifdef CONFIG_IP_ACCT
+multiline_comment|/* be careful: /proc/net/ip_acct_0 resets IP accounting */
+r_if
+c_cond
+(paren
+id|ino
+op_eq
+id|PROC_NET_IPACCT0
+)paren
+(brace
+id|inode-&gt;i_mode
+op_assign
+id|S_IFREG
+op_or
+id|S_IRUSR
+suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|proc_net_inode_operations
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_FIREWALL
+multiline_comment|/* /proc/net/ip_forward_0 and /proc/net/ip_block_0 reset counters */
+r_if
+c_cond
+(paren
+(paren
+id|ino
+op_eq
+id|PROC_NET_IPFWFWD0
+)paren
+op_logical_or
+(paren
+id|ino
+op_eq
+id|PROC_NET_IPFWBLK0
+)paren
+)paren
+(brace
+id|inode-&gt;i_mode
+op_assign
+id|S_IFREG
+op_or
+id|S_IRUSR
+suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|proc_net_inode_operations
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* other files within /proc/net */
 r_if
 c_cond
 (paren

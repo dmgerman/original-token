@@ -473,7 +473,7 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Process entry&n; */
+multiline_comment|/*&n; *&t;Process entry. Use tha for table lookup according to RFC903.&n; */
 id|cli
 c_func
 (paren
@@ -503,7 +503,7 @@ c_func
 (paren
 id|entry-&gt;ha
 comma
-id|sha
+id|tha
 comma
 id|rarp-&gt;ar_hln
 )paren

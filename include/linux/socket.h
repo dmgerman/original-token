@@ -101,6 +101,8 @@ DECL|macro|SOL_IPX
 mdefine_line|#define SOL_IPX&t;&t;256
 DECL|macro|SOL_AX25
 mdefine_line|#define SOL_AX25&t;257
+DECL|macro|SOL_ATALK
+mdefine_line|#define SOL_ATALK&t;258
 DECL|macro|SOL_TCP
 mdefine_line|#define SOL_TCP&t;&t;6
 DECL|macro|SOL_UDP

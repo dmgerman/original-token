@@ -21,15 +21,6 @@ r_int
 r_char
 id|aux_device_present
 suffix:semicolon
-multiline_comment|/*&n; * XXXXX!! Warning Will Robinson.&n; * Danger! Danger! This is bogus, I&squot;ll get it to link if it kills me&n; */
-DECL|variable|floppy_track_buffer
-r_int
-r_char
-id|floppy_track_buffer
-(braket
-l_int|256
-)braket
-suffix:semicolon
 multiline_comment|/*&n; * The format of &quot;screen_info&quot; is strange, and due to early&n; * i386-setup code. This is just enough to make the console&n; * code think we&squot;re on a EGA+ colour display.&n; */
 DECL|variable|screen_info
 r_struct

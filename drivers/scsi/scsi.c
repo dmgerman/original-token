@@ -315,6 +315,15 @@ l_string|&quot;V&quot;
 comma
 multiline_comment|/* A cdrom that locks up when probed at lun != 0 */
 (brace
+l_string|&quot;HITACHI&quot;
+comma
+l_string|&quot;DK314C&quot;
+comma
+l_string|&quot;CR21&quot;
+)brace
+comma
+multiline_comment|/* responds to all lun */
+(brace
 l_string|&quot;IMS&quot;
 comma
 l_string|&quot;CDD521/10&quot;
@@ -795,13 +804,13 @@ id|SCpnt-&gt;request.sem
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef NO_MULTI_LUN
+macro_line|#ifdef CONFIG_SCSI_MULTI_LUN
 DECL|variable|max_scsi_luns
 r_static
 r_int
 id|max_scsi_luns
 op_assign
-l_int|1
+l_int|8
 suffix:semicolon
 macro_line|#else
 DECL|variable|max_scsi_luns
@@ -809,7 +818,7 @@ r_static
 r_int
 id|max_scsi_luns
 op_assign
-l_int|8
+l_int|1
 suffix:semicolon
 macro_line|#endif
 DECL|function|scsi_luns_setup

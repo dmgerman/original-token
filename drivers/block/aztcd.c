@@ -1,6 +1,6 @@
 DECL|macro|AZT_VERSION
-mdefine_line|#define AZT_VERSION &quot;V0.8&quot;
-multiline_comment|/*      $Id: aztcd.c,v 0.80 1995/01/21 19:54:53 root Exp $&n;&t;linux/drivers/block/aztcd.c - AztechCD268 CDROM driver&n;&n;&t;Copyright (C) 1994,1995 Werner Zimmermann (zimmerma@rz.fht-esslingen.de)&n;&n;&t;based on Mitsumi CDROM driver by  Martin Hariss and preworks by&n;&t;Eberhard Moenkeberg.&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&t;V0.0    Adaption to Adaptec CD268-01A Version 1.3&n;&t;&t;Version is PRE_ALPHA, unresolved points:&n;&t;&t;1. I use busy wait instead of timer wait in STEN_LOW,DTEN_LOW&n;&t;&t;   thus driver causes CPU overhead and is very slow &n;&t;&t;2. could not find a way to stop the drive, when it is&n;&t;&t;   in data read mode, therefore I had to set&n;&t;&t;   msf.end.min/sec/frame to 0:0:1 (in azt_poll); so only one&n;&t;&t;   frame can be read in sequence, this is also the reason for&n;&t;&t;3. getting &squot;timeout in state 4&squot; messages, but nevertheless&n;&t;&t;   it works&n;&t;&t;W.Zimmermann, Oct. 31, 1994&n;&t;V0.1    Version is ALPHA, problems #2 and #3 resolved.  &n;&t;&t;W.Zimmermann, Nov. 3, 1994&n;&t;V0.2    Modification to some comments, debugging aids for partial test&n;&t;&t;with Borland C under DOS eliminated. Timer interrupt wait &n;&t;&t;STEN_LOW_WAIT additionally to busy wait for STEN_LOW implemented; &n;&t;&t;use it only for the &squot;slow&squot; commands (ACMD_GET_Q_CHANNEL, ACMD_&n;&t;&t;SEEK_TO_LEAD_IN), all other commands are so &squot;fast&squot;, that busy &n;&t;&t;waiting seems better to me than interrupt rescheduling.&n;&t;&t;Besides that, when used in the wrong place, STEN_LOW_WAIT causes&n;&t;&t;kernel panic.&n;&t;&t;In function aztPlay command ACMD_PLAY_AUDIO added, should make&n;&t;&t;audio functions work. The Aztech drive needs different commands&n;&t;&t;to read data tracks and play audio tracks.&n;&t;&t;W.Zimmermann, Nov. 8, 1994&n;&t;V0.3    Recognition of missing drive during boot up improved (speeded up).&n;&t;&t;W.Zimmermann, Nov. 13, 1994&n;&t;V0.35   Rewrote the control mechanism in azt_poll (formerly mcd_poll) &n;&t;&t;including removal of all &squot;goto&squot; commands. :-); &n;&t;&t;J. Nardone, Nov. 14, 1994&n;&t;V0.4    Renamed variables and constants to &squot;azt&squot; instead of &squot;mcd&squot;; had&n;&t;&t;to make some &quot;compatibility&quot; defines in azt.h; please note,&n;&t;&t;that the source file was renamed to azt.c, the include file to&n;&t;&t;azt.h                &n;&t;&t;Speeded up drive recognition during init (will be a little bit &n;&t;&t;slower than before if no drive is installed!); suggested by&n;&t;&t;Robby Schirmer.&n;&t;&t;read_count declared volatile and set to AZT_BUF_SIZ to make&n;&t;&t;drive faster (now 300kB/sec, was 60kB/sec before, measured&n;&t;&t;by &squot;time dd if=/dev/cdrom of=/dev/null bs=2048 count=4096&squot;;&n;&t;&t;different AZT_BUF_SIZes were test, above 16 no further im-&n;&t;&t;provement seems to be possible; suggested by E.Moenkeberg.&n;&t;&t;W.Zimmermann, Nov. 18, 1994&n;&t;V0.42   Included getAztStatus command in GetQChannelInfo() to allow&n;&t;&t;reading Q-channel info on audio disks, if drive is stopped, &n;&t;&t;and some other bug fixes in the audio stuff, suggested by &n;&t;&t;Robby Schirmer.&n;&t;&t;Added more ioctls (reading data in mode 1 and mode 2).&n;&t;&t;Completely removed the old azt_poll() routine.&n;&t;&t;Detection of ORCHID CDS-3110 in aztcd_init implemented.&n;&t;&t;Additional debugging aids (see the readme file).&n;&t;&t;W.Zimmermann, Dec. 9, 1994  &n;&t;V0.50   Autodetection of drives implemented.&n;&t;&t;W.Zimmermann, Dec. 12, 1994&n;&t;V0.52   Prepared for including in the standard kernel, renamed most&n;&t;&t;variables to contain &squot;azt&squot;, included autoconf.h&n;&t;&t;W.Zimmermann, Dec. 16, 1994        &n;&t;V0.6    Version for being included in the standard Linux kernel.&n;&t;&t;Renamed source and header file to aztcd.c and aztcd.h&n;&t;&t;W.Zimmermann, Dec. 24, 1994&n;&t;V0.7    Changed VERIFY_READ to VERIFY_WRITE in aztcd_ioctl, case&n;&t;&t;CDROMREADMODE1 and CDROMREADMODE2; bug fix in the ioctl,&n;&t;&t;which causes kernel crashes when playing audio, changed &n;&t;&t;include-files (config.h instead of autoconf.h, removed&n;&t;&t;delay.h)&n;&t;&t;W.Zimmermann, Jan. 8, 1995&n;&t;V0.72   Some more modifications for adaption to the standard kernel.&n;&t;&t;W.Zimmermann, Jan. 16, 1995&n;        V0.80   aztcd is now part of the standard kernel since version 1.1.83.&n;                Modified the SET_TIMER and CLEAR_TIMER macros to comply with&n;                the new timer scheme.&n;                W.Zimmermann, Jan. 21, 1995&n;&t;NOTE: &n;&t;Points marked with ??? are questionable !&n;*/
+mdefine_line|#define AZT_VERSION &quot;V0.9&quot;
+multiline_comment|/*      $Id: aztcd.c,v 0.90 1995/02/02 18:14:17 root Exp $&n;&t;linux/drivers/block/aztcd.c - AztechCD268 CDROM driver&n;&n;&t;Copyright (C) 1994,1995 Werner Zimmermann (zimmerma@rz.fht-esslingen.de)&n;&n;&t;based on Mitsumi CDROM driver by  Martin Hariss and preworks by&n;&t;Eberhard Moenkeberg; contains contributions by Joe Nardone and Robby &n;&t;Schirmer.&n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;&t;HISTORY&n;&t;V0.0    Adaption to Adaptec CD268-01A Version 1.3&n;&t;&t;Version is PRE_ALPHA, unresolved points:&n;&t;&t;1. I use busy wait instead of timer wait in STEN_LOW,DTEN_LOW&n;&t;&t;   thus driver causes CPU overhead and is very slow &n;&t;&t;2. could not find a way to stop the drive, when it is&n;&t;&t;   in data read mode, therefore I had to set&n;&t;&t;   msf.end.min/sec/frame to 0:0:1 (in azt_poll); so only one&n;&t;&t;   frame can be read in sequence, this is also the reason for&n;&t;&t;3. getting &squot;timeout in state 4&squot; messages, but nevertheless&n;&t;&t;   it works&n;&t;&t;W.Zimmermann, Oct. 31, 1994&n;&t;V0.1    Version is ALPHA, problems #2 and #3 resolved.  &n;&t;&t;W.Zimmermann, Nov. 3, 1994&n;&t;V0.2    Modification to some comments, debugging aids for partial test&n;&t;&t;with Borland C under DOS eliminated. Timer interrupt wait &n;&t;&t;STEN_LOW_WAIT additionally to busy wait for STEN_LOW implemented; &n;&t;&t;use it only for the &squot;slow&squot; commands (ACMD_GET_Q_CHANNEL, ACMD_&n;&t;&t;SEEK_TO_LEAD_IN), all other commands are so &squot;fast&squot;, that busy &n;&t;&t;waiting seems better to me than interrupt rescheduling.&n;&t;&t;Besides that, when used in the wrong place, STEN_LOW_WAIT causes&n;&t;&t;kernel panic.&n;&t;&t;In function aztPlay command ACMD_PLAY_AUDIO added, should make&n;&t;&t;audio functions work. The Aztech drive needs different commands&n;&t;&t;to read data tracks and play audio tracks.&n;&t;&t;W.Zimmermann, Nov. 8, 1994&n;&t;V0.3    Recognition of missing drive during boot up improved (speeded up).&n;&t;&t;W.Zimmermann, Nov. 13, 1994&n;&t;V0.35   Rewrote the control mechanism in azt_poll (formerly mcd_poll) &n;&t;&t;including removal of all &squot;goto&squot; commands. :-); &n;&t;&t;J. Nardone, Nov. 14, 1994&n;&t;V0.4    Renamed variables and constants to &squot;azt&squot; instead of &squot;mcd&squot;; had&n;&t;&t;to make some &quot;compatibility&quot; defines in azt.h; please note,&n;&t;&t;that the source file was renamed to azt.c, the include file to&n;&t;&t;azt.h                &n;&t;&t;Speeded up drive recognition during init (will be a little bit &n;&t;&t;slower than before if no drive is installed!); suggested by&n;&t;&t;Robby Schirmer.&n;&t;&t;read_count declared volatile and set to AZT_BUF_SIZ to make&n;&t;&t;drive faster (now 300kB/sec, was 60kB/sec before, measured&n;&t;&t;by &squot;time dd if=/dev/cdrom of=/dev/null bs=2048 count=4096&squot;;&n;&t;&t;different AZT_BUF_SIZes were test, above 16 no further im-&n;&t;&t;provement seems to be possible; suggested by E.Moenkeberg.&n;&t;&t;W.Zimmermann, Nov. 18, 1994&n;&t;V0.42   Included getAztStatus command in GetQChannelInfo() to allow&n;&t;&t;reading Q-channel info on audio disks, if drive is stopped, &n;&t;&t;and some other bug fixes in the audio stuff, suggested by &n;&t;&t;Robby Schirmer.&n;&t;&t;Added more ioctls (reading data in mode 1 and mode 2).&n;&t;&t;Completely removed the old azt_poll() routine.&n;&t;&t;Detection of ORCHID CDS-3110 in aztcd_init implemented.&n;&t;&t;Additional debugging aids (see the readme file).&n;&t;&t;W.Zimmermann, Dec. 9, 1994  &n;&t;V0.50   Autodetection of drives implemented.&n;&t;&t;W.Zimmermann, Dec. 12, 1994&n;&t;V0.52   Prepared for including in the standard kernel, renamed most&n;&t;&t;variables to contain &squot;azt&squot;, included autoconf.h&n;&t;&t;W.Zimmermann, Dec. 16, 1994        &n;&t;V0.6    Version for being included in the standard Linux kernel.&n;&t;&t;Renamed source and header file to aztcd.c and aztcd.h&n;&t;&t;W.Zimmermann, Dec. 24, 1994&n;&t;V0.7    Changed VERIFY_READ to VERIFY_WRITE in aztcd_ioctl, case&n;&t;&t;CDROMREADMODE1 and CDROMREADMODE2; bug fix in the ioctl,&n;&t;&t;which causes kernel crashes when playing audio, changed &n;&t;&t;include-files (config.h instead of autoconf.h, removed&n;&t;&t;delay.h)&n;&t;&t;W.Zimmermann, Jan. 8, 1995&n;&t;V0.72   Some more modifications for adaption to the standard kernel.&n;&t;&t;W.Zimmermann, Jan. 16, 1995&n;        V0.80   aztcd is now part of the standard kernel since version 1.1.83.&n;                Modified the SET_TIMER and CLEAR_TIMER macros to comply with&n;                the new timer scheme.&n;                W.Zimmermann, Jan. 21, 1995&n;        V0.90   Included CDROMVOLCTRL, but with my Aztech drive I can only turn&n;                the channels on and off. If it works better with your drive, &n;                please mail me. Also implemented ACMD_CLOSE for CDROMSTART.&n;                W.Zimmermann, Jan. 24, 1995&n;&t;NOTE: &n;&t;Points marked with ??? are questionable !&n;*/
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1627,6 +1627,10 @@ r_struct
 id|cdrom_subchnl
 id|subchnl
 suffix:semicolon
+r_struct
+id|cdrom_volctrl
+id|volctrl
+suffix:semicolon
 macro_line|#ifdef AZT_DEBUG
 id|printk
 c_func
@@ -1696,8 +1700,24 @@ id|cmd
 r_case
 id|CDROMSTART
 suffix:colon
-multiline_comment|/* Spin up the drive */
-multiline_comment|/* Don&squot;t think we can do this.  Even if we could,&n;&t;&t; * I think the drive times out and stops after a while&n;&t;&t; * anyway.  For now, ignore it.&n;&t;&t; */
+multiline_comment|/* Spin up the drive. Don&squot;t know, what to do,&n;&t;                        at least close the tray */
+macro_line|#ifdef AZT_PRIVATE_IOCTLS 
+r_if
+c_cond
+(paren
+id|aztSendCmd
+c_func
+(paren
+id|ACMD_CLOSE
+)paren
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|STEN_LOW_WAIT
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -1730,7 +1750,17 @@ r_case
 id|CDROMPAUSE
 suffix:colon
 multiline_comment|/* Pause the drive */
-multiline_comment|/*              if (aztAudioStatus != CDROM_AUDIO_PLAY) return -EINVAL; &n;*/
+r_if
+c_cond
+(paren
+id|aztAudioStatus
+op_ne
+id|CDROM_AUDIO_PLAY
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2644,8 +2674,89 @@ suffix:semicolon
 r_case
 id|CDROMVOLCTRL
 suffix:colon
-multiline_comment|/* Volume control */
-multiline_comment|/*&n;&t; * This is not working yet.  Setting the volume by itself does&n;&t; * nothing.  Following the &squot;set&squot; by a &squot;play&squot; results in zero&n;&t; * volume.  Something to work on for the next release.&n;&t; */
+multiline_comment|/* Volume control &n;&t; * With my Aztech CD268-01A volume control does not work, I can only&n;&t;   turn the cannels on (any value !=0) or off (value==0). Maybe it&n;           works better with your drive */
+id|st
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+id|volctrl
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|st
+)paren
+r_return
+(paren
+id|st
+)paren
+suffix:semicolon
+id|memcpy_fromfs
+c_func
+(paren
+op_amp
+id|volctrl
+comma
+(paren
+r_char
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+id|volctrl
+)paren
+)paren
+suffix:semicolon
+id|azt_Play.start.min
+op_assign
+l_int|0x21
+suffix:semicolon
+id|azt_Play.start.sec
+op_assign
+l_int|0x84
+suffix:semicolon
+id|azt_Play.start.frame
+op_assign
+id|volctrl.channel0
+suffix:semicolon
+id|azt_Play.end.min
+op_assign
+id|volctrl.channel1
+suffix:semicolon
+id|azt_Play.end.sec
+op_assign
+id|volctrl.channel2
+suffix:semicolon
+id|azt_Play.end.frame
+op_assign
+id|volctrl.channel3
+suffix:semicolon
+id|sendAztCmd
+c_func
+(paren
+id|ACMD_SET_VOLUME
+comma
+op_amp
+id|azt_Play
+)paren
+suffix:semicolon
+id|STEN_LOW_WAIT
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case

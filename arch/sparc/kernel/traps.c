@@ -59,6 +59,7 @@ r_void
 )paren
 (brace
 multiline_comment|/* load up the trap table */
+macro_line|#if 0 /* not yet */
 id|__asm__
 c_func
 (paren
@@ -72,6 +73,7 @@ id|trapbase
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace

@@ -69,7 +69,19 @@ suffix:semicolon
 multiline_comment|/* yuck yuck yuck */
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
-mdefine_line|#define user_mode(regs) (~((regs)-&gt;ps&amp;0x1))  /* if previous supervisor is 0, came from user */
+mdefine_line|#define user_mode(regs) (0x0)  /* if previous supervisor is 0, came from user */
+r_extern
+r_void
+id|show_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

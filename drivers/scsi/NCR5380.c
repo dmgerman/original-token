@@ -2493,6 +2493,11 @@ id|NCR5380_intr
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|NCR5380_local_declare
@@ -5355,9 +5360,12 @@ l_int|0
 suffix:semicolon
 r_int
 id|len
-comma
+suffix:semicolon
+macro_line|#if defined(PSEUDO_DMA) || defined(REAL_DMA_POLL)
+r_int
 id|transfersize
 suffix:semicolon
+macro_line|#endif
 r_int
 r_char
 op_star
@@ -5730,7 +5738,7 @@ id|len
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif /* defined(REAL_DMA) || defined(REAL_DMA_POLL) */
+macro_line|#endif /* defined(PSEUDO_DMA) || defined(REAL_DMA_POLL) */
 id|NCR5380_transfer_pio
 c_func
 (paren

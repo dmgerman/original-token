@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/01/16                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/01/30                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_DMA_H
 DECL|macro|_EATA_DMA_H
 mdefine_line|#define _EATA_DMA_H
@@ -9,9 +9,9 @@ macro_line|#include &lt;linux/scsicam.h&gt;
 DECL|macro|VER_MAJOR
 mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
-mdefine_line|#define VER_MINOR 1
+mdefine_line|#define VER_MINOR 3
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;0i&quot;
+mdefine_line|#define VER_SUB   &quot;0a&quot;
 multiline_comment|/************************************************************************&n; * Here you can configure your drives that are using a non-standard     *&n; * geometry.                                                            *&n; * To enable this set HARDCODED to 1                                    *&n; * If you have only one drive that need reconfiguration, set ID1 to -1  *&n; ************************************************************************/
 DECL|macro|HARDCODED
 mdefine_line|#define HARDCODED     0          /* Here are drives running in emu. mode   */
@@ -61,6 +61,8 @@ DECL|macro|DBG_INTR
 mdefine_line|#define DBG_INTR&t;0       /* Trace interrupt service routine. &t;*/
 DECL|macro|DBG_INTR2
 mdefine_line|#define DBG_INTR2&t;0       /* Trace interrupt service routine. &t;*/
+DECL|macro|DBG_PROC
+mdefine_line|#define DBG_PROC        0       /* Debug proc-fs related statistics     */
 DECL|macro|DBG_REGISTER
 mdefine_line|#define DBG_REGISTER    0       /* */
 DECL|macro|DBG_ABNORM
@@ -73,7 +75,7 @@ DECL|macro|DBG
 mdefine_line|#define DBG(x, y)
 macro_line|#endif
 DECL|macro|EATA_DMA
-mdefine_line|#define EATA_DMA {                   &bslash;&n;&t;NULL, NULL,                  &bslash;&n;        &quot;EATA (Extended Attachment) driver&quot;, &bslash;&n;        eata_detect,                 &bslash;&n;        NULL,                        &bslash;&n;        eata_info,                   &bslash;&n;        eata_command,                &bslash;&n;        eata_queue,                  &bslash;&n;        eata_abort,                  &bslash;&n;        eata_reset,                  &bslash;&n;        NULL, /* Slave attach */     &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;        0,      /* Canqueue     */   &bslash;&n;        0,      /* this_id      */   &bslash;&n;        0,      /* sg_tablesize */   &bslash;&n;        0,      /* cmd_per_lun  */   &bslash;&n;        0,      /* present      */   &bslash;&n;        1,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
+mdefine_line|#define EATA_DMA {                   &bslash;&n;&t;NULL, NULL,                  &bslash;&n;        &quot;EATA (Extended Attachment) driver&quot;, &bslash;&n;        eata_detect,                 &bslash;&n;        eata_release,                &bslash;&n;        eata_info,                   &bslash;&n;        eata_command,                &bslash;&n;        eata_queue,                  &bslash;&n;        eata_abort,                  &bslash;&n;        eata_reset,                  &bslash;&n;        NULL, /* Slave attach */     &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;        0,      /* Canqueue     */   &bslash;&n;        0,      /* this_id      */   &bslash;&n;        0,      /* sg_tablesize */   &bslash;&n;        0,      /* cmd_per_lun  */   &bslash;&n;        0,      /* present      */   &bslash;&n;        1,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
 r_int
 id|eata_detect
 c_func
@@ -135,6 +137,15 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+r_int
+id|eata_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*********************************************&n; * Misc. definitions                         *&n; *********************************************/
 macro_line|#ifndef TRUE
 DECL|macro|TRUE
@@ -164,10 +175,10 @@ DECL|macro|MAX_PCI_BUS
 mdefine_line|#define MAX_PCI_BUS       16             /* Maximum # Of Busses Allowed    */
 DECL|macro|SG_SIZE
 mdefine_line|#define SG_SIZE           64 
-DECL|macro|C_P_L_DIV
-mdefine_line|#define C_P_L_DIV          8             /* 1 &lt;= C_P_L_DIV &lt;= 8            */
 DECL|macro|C_P_L_CURRENT_MAX
-mdefine_line|#define C_P_L_CURRENT_MAX  2             /* Until this limit is removed    */
+mdefine_line|#define C_P_L_CURRENT_MAX 10  /* Until this limit in the mm is removed    &n;&t;&t;&t;       * Kernels &lt; 1.1.86 died horrible deaths&n;&t;&t;&t;       * if you used values &gt;2. The memory management&n;&t;&t;&t;       * of pl.86 seems to cope with 10. &n;&t;&t;&t;       */
+DECL|macro|C_P_L_DIV
+mdefine_line|#define C_P_L_DIV          4  /* 1 &lt;= C_P_L_DIV &lt;= 8            &n;&t;&t;&t;       * You can use this parameter to fine-tune&n;&t;&t;&t;       * the driver. Depending on the number of &n;&t;&t;&t;       * devices and their ablilty to queue commands&n;&t;&t;&t;       * you will get the best results with a value&n;&t;&t;&t;       * ~= numdevices-(devices_unable_to_queue_commands/2)&n;&t;&t;&t;       * The reason for this is that the disk driver tents &n;&t;&t;&t;       * to flood the queue, so that other drivers have &n;&t;&t;&t;       * problems to queue commands themselves. This can &n;&t;&t;&t;       * for example result in the effect that the tape&n;&t;&t;&t;       * stops during disk accesses. &n;&t;&t;&t;       */
 DECL|macro|FREE
 mdefine_line|#define FREE       0
 DECL|macro|USED
@@ -934,6 +945,25 @@ id|unchar
 id|state
 suffix:semicolon
 multiline_comment|/* state of HBA               */
+DECL|member|primary
+id|unchar
+id|primary
+suffix:semicolon
+multiline_comment|/* true if primary            */
+DECL|member|reads
+id|ulong
+id|reads
+(braket
+l_int|13
+)braket
+suffix:semicolon
+DECL|member|writes
+id|ulong
+id|writes
+(braket
+l_int|13
+)braket
+suffix:semicolon
 DECL|member|t_state
 id|unchar
 id|t_state
@@ -950,11 +980,6 @@ id|MAXTARGET
 )braket
 suffix:semicolon
 multiline_comment|/* timeouts on target         */
-DECL|member|primary
-id|unchar
-id|primary
-suffix:semicolon
-multiline_comment|/* true if primary            */
 DECL|member|last_ccb
 id|uint
 id|last_ccb
@@ -1057,96 +1082,6 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* drive structures          */
 )brace
-suffix:semicolon
-DECL|struct|lun_map
-r_struct
-id|lun_map
-(brace
-DECL|member|id
-id|unchar
-id|id
-suffix:colon
-l_int|5
-comma
-DECL|member|chan
-id|chan
-suffix:colon
-l_int|3
-suffix:semicolon
-DECL|member|lun
-id|unchar
-id|lun
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|emul_pp
-r_typedef
-r_struct
-id|emul_pp
-(brace
-DECL|member|p_code
-id|unchar
-id|p_code
-suffix:colon
-l_int|6
-comma
-DECL|member|null
-id|null
-suffix:colon
-l_int|1
-comma
-DECL|member|p_save
-id|p_save
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|p_length
-id|unchar
-id|p_length
-suffix:semicolon
-DECL|member|cylinder
-id|ushort
-id|cylinder
-suffix:semicolon
-DECL|member|heads
-id|unchar
-id|heads
-suffix:semicolon
-DECL|member|sectors
-id|unchar
-id|sectors
-suffix:semicolon
-DECL|member|null2
-id|unchar
-id|null2
-suffix:semicolon
-DECL|member|s_lunmap
-id|unchar
-id|s_lunmap
-suffix:colon
-l_int|4
-comma
-DECL|member|ems
-id|ems
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|drive_type
-id|ushort
-id|drive_type
-suffix:semicolon
-multiline_comment|/* In Little Endian ! */
-DECL|member|lunmap
-r_struct
-id|lun_map
-id|lunmap
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|typedef|emulpp
-)brace
-id|emulpp
 suffix:semicolon
 macro_line|#endif /* _EATA_H */
 eof

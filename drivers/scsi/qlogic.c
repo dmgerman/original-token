@@ -1,23 +1,20 @@
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.&n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.38b&n;&n;   This also works with loadable SCSI as a module.  Check configuration&n;   options QL_INT_ACTIVE_HIGH and QL_TURBO_PDMA for PCMCIA usage (which&n;   also requires an enabler).&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
+multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.39a&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* Configuration */
-multiline_comment|/* Set this if you are using the PCMCIA adapter - it will automatically&n;   take care of several settings */
-DECL|macro|QL_PCMCIA
-mdefine_line|#define QL_PCMCIA 0
-multiline_comment|/* Set the following to 2 to use normal interrupt (active high/totempole-&n;   tristate), otherwise use 0 (REQUIRED FOR PCMCIA) for active low, open&n;   drain */
+multiline_comment|/* The following option is normally left alone.  PCMCIA support needs to&n;   change this to adapt to the different way the interrupt pin works.&n;   &n;   Set the following to 2 to use normal interrupt (active high/totempole-&n;   tristate), otherwise use 0 (REQUIRED FOR PCMCIA) for active low, open&n;   drain */
 DECL|macro|QL_INT_ACTIVE_HIGH
 mdefine_line|#define QL_INT_ACTIVE_HIGH 2
 multiline_comment|/* Set the following to 1 to enable the use of interrupts.  Note that 0 tends&n;   to be more stable, but slower (or ties up the system more) */
 DECL|macro|QL_USE_IRQ
 mdefine_line|#define QL_USE_IRQ 1
-multiline_comment|/* Set the following to max out the speed of the PIO PseudoDMA transfers,&n;   again, 0 tends to be slower, but more stable.  THIS SHOULD BE ZERO FOR&n;   PCMCIA */
+multiline_comment|/* Set the following to max out the speed of the PIO PseudoDMA transfers,&n;   again, 0 tends to be slower, but more stable.  */
 DECL|macro|QL_TURBO_PDMA
 mdefine_line|#define QL_TURBO_PDMA 1
-multiline_comment|/* This will reset all devices when the driver is initialized (during bootup).&n;   The other linux drivers don&squot;t do this, but the DOS drivers do, and after&n;   using DOS or some kind of crash or lockup this will bring things back */
+multiline_comment|/* This will reset all devices when the driver is initialized (during bootup).&n;   The other linux drivers don&squot;t do this, but the DOS drivers do, and after&n;   using DOS or some kind of crash or lockup this will bring things back&n;   without requiring a cold boot.  It does take some time to recover from a&n;   reset, so it is slower, and I have seen timeouts so that devices weren&squot;t&n;   recognized when this was set. */
 DECL|macro|QL_RESET_AT_START
 mdefine_line|#define QL_RESET_AT_START 1
-multiline_comment|/* This will set fast (10Mhz) synchronous timing, FASTCLK must also be 1*/
+multiline_comment|/* This will set fast (10Mhz) synchronous timing, FASTCLK must also be 1 */
 DECL|macro|FASTSCSI
 mdefine_line|#define FASTSCSI  0
 multiline_comment|/* This will set a faster sync transfer rate */
@@ -33,16 +30,12 @@ multiline_comment|/* This is the count of how many synchronous transfers can tak
 DECL|macro|SYNCOFFST
 mdefine_line|#define SYNCOFFST 0
 multiline_comment|/* for the curious, bits 7&amp;6 control the deassertion delay in 1/2 cycles&n;&t;of the 40Mhz clock. If FASTCLK is 1, specifying 01 (1/2) will&n;&t;cause the deassertion to be early by 1/2 clock.  Bits 5&amp;4 control&n;&t;the assertion delay, also in 1/2 clocks (FASTCLK is ignored here). */
-multiline_comment|/* Option Synchronization */
-macro_line|#if QL_PCMCIA
+multiline_comment|/* PCMCIA option adjustment */
+macro_line|#ifdef PCMCIA
 DECL|macro|QL_INT_ACTIVE_HIGH
 macro_line|#undef QL_INT_ACTIVE_HIGH
-DECL|macro|QL_TURBO_PDMA
-macro_line|#undef QL_TURBO_PDMA
 DECL|macro|QL_INT_ACTIVE_HIGH
 mdefine_line|#define QL_INT_ACTIVE_HIGH 0
-DECL|macro|QL_TURBO_PDMA
-mdefine_line|#define QL_TURBO_PDMA 0
 macro_line|#endif
 multiline_comment|/*----------------------------------------------------------------*/
 macro_line|#ifdef MODULE
@@ -102,11 +95,12 @@ id|qlcmd
 suffix:semicolon
 multiline_comment|/* current command being processed */
 multiline_comment|/*----------------------------------------------------------------*/
+multiline_comment|/* The qlogic card uses two register maps - These macros select which one */
 DECL|macro|REG0
 mdefine_line|#define REG0 ( outb( inb( qbase + 0xd ) &amp; 0x7f , qbase + 0xd ), outb( 4 , qbase + 0xd ))
 DECL|macro|REG1
 mdefine_line|#define REG1 ( outb( inb( qbase + 0xd ) | 0x80 , qbase + 0xd ), outb( 0xb4 | QL_INT_ACTIVE_HIGH , qbase + 0xd ))
-multiline_comment|/* following is watchdog timeout */
+multiline_comment|/* following is watchdog timeout in microseconds */
 DECL|macro|WATCHDOG
 mdefine_line|#define WATCHDOG 5000000
 multiline_comment|/*----------------------------------------------------------------*/
@@ -1946,9 +1940,19 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* no command to process? */
+r_int
+id|i
+suffix:semicolon
+id|i
+op_assign
+l_int|16
+suffix:semicolon
 r_while
 c_loop
 (paren
+id|i
+op_decrement
+op_logical_and
 id|inb
 c_func
 (paren
@@ -2228,7 +2232,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* Qlogic Cards only exist at 0x230 or 0x330 (the chip itself decodes the&n;   address - I check 230 first since MIDI cards are typically at 330&n;   Note that this will not work for 2 Qlogic cards in 1 system.  The&n;   easiest way to do that is to create 2 versions of this file, one for&n;   230 and one for 330.&n;&n;   Alternately, the Scsi_Host structure now stores the i/o port and can&n;   be used to set the port (go through and replace qbase with&n;   (struct Scsi_Cmnd *) cmd-&gt;host-&gt;io_port, or for efficiency, set a local&n;   copy of qbase.  There will also need to be something similar within the&n;   IRQ handlers to sort out which board it came from and thus which port.&n;*/
+multiline_comment|/* Qlogic Cards only exist at 0x230 or 0x330 (the chip itself decodes the&n;   address - I check 230 first since MIDI cards are typically at 330&n;&n;   Theoretically, two Qlogic cards can coexist in the same system.  This&n;   should work by simply using this as a loadable module for the second&n;   card, but I haven&squot;t tested this.&n;*/
 r_for
 c_loop
 (paren
@@ -2245,7 +2249,6 @@ op_add_assign
 l_int|0x100
 )paren
 (brace
-macro_line|#ifndef PCMCIA
 r_if
 c_cond
 (paren
@@ -2261,7 +2264,6 @@ l_int|0x10
 r_continue
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;
 id|REG1
 suffix:semicolon
 r_if
@@ -2596,7 +2598,7 @@ id|qlirq
 comma
 id|ql_ihandl
 comma
-id|SA_INTERRUPT
+l_int|0
 comma
 l_string|&quot;qlogic&quot;
 )paren
@@ -2612,7 +2614,6 @@ id|flags
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef PCMCIA
 id|request_region
 c_func
 (paren
@@ -2623,7 +2624,6 @@ comma
 l_string|&quot;qlogic&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|hreg
 op_assign
 id|scsi_register
@@ -2642,6 +2642,11 @@ suffix:semicolon
 id|hreg-&gt;n_io_port
 op_assign
 l_int|16
+suffix:semicolon
+id|hreg-&gt;dma_channel
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -2662,7 +2667,7 @@ c_func
 (paren
 id|qinfo
 comma
-l_string|&quot;Qlogic Driver version 0.38b, chip %02X at %03X, IRQ %d, Opts:%d%d&quot;
+l_string|&quot;Qlogic Driver version 0.39a, chip %02X at %03X, IRQ %d, Opts:%d%d&quot;
 comma
 id|qltyp
 comma

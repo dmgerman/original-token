@@ -116,7 +116,7 @@ r_int
 r_char
 id|psa_comp_number
 suffix:semicolon
-multiline_comment|/* Compatability Number: */
+multiline_comment|/* Compatibility Number: */
 DECL|macro|PSA_COMP_PC_AT_915
 mdefine_line|#define&t;&t;PSA_COMP_PC_AT_915&t;0 &t;/* PC-AT 915 MHz&t;*/
 DECL|macro|PSA_COMP_PC_MC_915
@@ -383,7 +383,7 @@ r_int
 r_char
 id|mmw_freeze
 suffix:semicolon
-multiline_comment|/* freeze / unfreeeze signal level */
+multiline_comment|/* freeze / unfreeze signal level */
 DECL|member|mmw_anten_sel
 r_int
 r_char
@@ -438,7 +438,7 @@ r_int
 r_char
 id|mmw_decay_updat_prm
 suffix:semicolon
-multiline_comment|/* decay update parameterz */
+multiline_comment|/* decay update parameters */
 DECL|member|mmw_quality_thr
 r_int
 r_char

@@ -761,12 +761,10 @@ r_struct
 id|cdrom_subchnl
 id|subchnl
 suffix:semicolon
-macro_line|#if 0
 r_struct
 id|cdrom_volctrl
 id|volctrl
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1775,8 +1773,6 @@ r_case
 id|CDROMVOLCTRL
 suffix:colon
 multiline_comment|/* Volume control */
-multiline_comment|/*&n;&t; * This is not working yet.  Setting the volume by itself does&n;&t; * nothing.  Following the &squot;set&squot; by a &squot;play&squot; results in zero&n;&t; * volume.  Something to work on for the next release.&n;&t; */
-macro_line|#if 0
 id|st
 op_assign
 id|verify_area
@@ -1822,20 +1818,6 @@ id|volctrl
 )paren
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;VOL %d %d&bslash;n&quot;
-comma
-id|volctrl.channel0
-op_amp
-l_int|0xFF
-comma
-id|volctrl.channel1
-op_amp
-l_int|0xFF
-)paren
-suffix:semicolon
 id|outb
 c_func
 (paren
@@ -1863,7 +1845,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0
+l_int|255
 comma
 id|MCDPORT
 c_func
@@ -1887,7 +1869,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|1
+l_int|255
 comma
 id|MCDPORT
 c_func
@@ -1916,7 +1898,7 @@ op_minus
 id|EIO
 suffix:semicolon
 (brace
-r_int
+r_char
 id|a
 comma
 id|b
@@ -1950,55 +1932,10 @@ id|getValue
 c_func
 (paren
 op_amp
-id|d
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%02X %02X %02X %02X&bslash;n&quot;
-comma
-id|a
-comma
-id|b
-comma
-id|c
-comma
 id|d
 )paren
 suffix:semicolon
 )brace
-id|outb
-c_func
-(paren
-l_int|0xF8
-comma
-id|MCDPORT
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|i
-op_assign
-id|getMcdStatus
-c_func
-(paren
-id|MCD_STATUS_DELAY
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;F8 -&gt; %02X&bslash;n&quot;
-comma
-id|i
-op_amp
-l_int|0xFF
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

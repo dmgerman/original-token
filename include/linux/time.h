@@ -36,6 +36,16 @@ suffix:semicolon
 DECL|macro|NFDBITS
 mdefine_line|#define NFDBITS&t;&t;&t;__NFDBITS
 macro_line|#ifdef __KERNEL__
+r_void
+id|do_gettimeofday
+c_func
+(paren
+r_struct
+id|timeval
+op_star
+id|tv
+)paren
+suffix:semicolon
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|FD_SETSIZE

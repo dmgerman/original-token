@@ -13,6 +13,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
 r_void
 id|scsi_mem_init
@@ -71,8 +73,8 @@ id|num_contexts
 suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving a inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
 DECL|function|__bad_pagetable
-r_int
-r_int
+id|pte_t
+op_star
 id|__bad_pagetable
 c_func
 (paren
@@ -94,12 +96,15 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 r_return
+(paren
+id|pte_t
+op_star
+)paren
 id|EMPTY_PGT
 suffix:semicolon
 )brace
 DECL|function|__bad_page
-r_int
-r_int
+id|pte_t
 id|__bad_page
 c_func
 (paren
@@ -121,7 +126,21 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 r_return
+id|pte_mkdirty
+c_func
+(paren
+id|mk_pte
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 id|EMPTY_PGE
+comma
+id|PAGE_SHARED
+)paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|__zero_page
@@ -317,7 +336,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * paging_init() sets up the page tables: in the alpha version this actually&n; * unmaps the bootup page table (as we&squot;re now in KSEG, so we don&squot;t need it).&n; *&n; * The bootup sequence put the virtual page table into high memory: that&n; * means that we can change the L1 page table by just using VL1p below.&n; */
+multiline_comment|/*&n; * paging_init() sets up the page tables: in the alpha version this actually&n; * unmaps the bootup page table (as we&squot;re now in KSEG, so we don&squot;t need it).&n; *&n; * The bootup sequence put the virtual page table into high memory: that&n; * means that we cah change the L1 page table by just using VL1p below.&n; */
 DECL|function|paging_init
 r_int
 r_int
@@ -445,7 +464,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|i
 OL
@@ -474,11 +493,11 @@ comma
 id|a
 )paren
 suffix:semicolon
+)brace
 id|c
 op_add_assign
-l_int|4096
+l_int|0x40000
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Ok, since now mapped in all contexts, we can free up&n;&t; * context zero to be used amongst user processes.&n;&t; */
 multiline_comment|/* free context 0 here TODO */
@@ -573,14 +592,12 @@ id|mask
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0 /* bogosity */
 id|invalidate
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* flush the virtual address cache */
-macro_line|#endif /* bletcherous */
 id|printk
 c_func
 (paren

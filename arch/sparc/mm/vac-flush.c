@@ -1,5 +1,6 @@
 multiline_comment|/* vac.c:   Routines for flushing various amount of the Sparc VAC&n;            (virtual address cache).&n;&n;   Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n;*/
 macro_line|#include &lt;asm/vac-ops.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/* Flush all VAC entries for the current context */
 r_extern
 r_int
@@ -72,7 +73,7 @@ id|address
 suffix:semicolon
 id|address
 op_add_assign
-l_int|4096
+id|PAGE_SIZE
 suffix:semicolon
 )brace
 )brace
@@ -177,7 +178,7 @@ id|address
 suffix:semicolon
 id|address
 op_add_assign
-l_int|4096
+id|PAGE_SIZE
 suffix:semicolon
 )brace
 )brace

@@ -1,6 +1,7 @@
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
+macro_line|#include &lt;asm/page.h&gt;      /* IO address mapping routines need this */
 multiline_comment|/*&n; * Defines for io operations on the Sparc. Whether a memory access is going&n; * to i/o sparc is encoded in the pte. The type bits determine whether this&n; * is i/o sparc, on board memory, or VME space for VME cards. I think VME&n; * space only works on sun4&squot;s&n; */
 DECL|function|inb_local
 r_extern
@@ -259,5 +260,57 @@ DECL|macro|inb_p
 mdefine_line|#define inb_p inb
 DECL|macro|outb_p
 mdefine_line|#define outb_p outb
+DECL|function|mapioaddr
+r_extern
+r_inline
+r_void
+id|mapioaddr
+c_func
+(paren
+r_int
+r_int
+id|physaddr
+comma
+r_int
+r_int
+id|virt_addr
+)paren
+(brace
+r_int
+r_int
+id|page_entry
+suffix:semicolon
+id|page_entry
+op_assign
+id|physaddr
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+id|page_entry
+op_or_assign
+(paren
+id|PTE_V
+op_or
+id|PTE_ACC
+op_or
+id|PTE_W
+op_or
+id|PTE_P
+op_or
+id|PTE_IO
+)paren
+suffix:semicolon
+multiline_comment|/* kernel io addr */
+id|put_pte
+c_func
+(paren
+id|page_entry
+comma
+id|virt_addr
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 macro_line|#endif /* !(__SPARC_IO_H) */
 eof

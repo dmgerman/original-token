@@ -252,27 +252,6 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* No such device */
-multiline_comment|/*&n;&t; * See if we are requesting a non-existent partition.&n;&t; */
-r_if
-c_cond
-(paren
-id|sd_sizes
-(braket
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-)braket
-op_eq
-l_int|0
-)paren
-(brace
-r_return
-op_minus
-id|ENXIO
-suffix:semicolon
-)brace
 multiline_comment|/* Make sure that only one process can do a check_change_disk at one time.&n; This is also used to lock out further access when the partition table is being re-read. */
 r_while
 c_loop
@@ -329,6 +308,27 @@ suffix:semicolon
 )brace
 )brace
 suffix:semicolon
+multiline_comment|/*&n;&t; * See if we are requesting a non-existent partition.  Do this&n;&t; * after checking for disk change.&n;&t; */
+r_if
+c_cond
+(paren
+id|sd_sizes
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
 id|rscsi_disks
 (braket
 id|target

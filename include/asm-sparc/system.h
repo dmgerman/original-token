@@ -4,6 +4,7 @@ mdefine_line|#define __SPARC_SYSTEM_H
 multiline_comment|/*&n; * System defines.. Note that this is included both from .c and .S&n; * files, so it does only defines, not any C code.&n; */
 multiline_comment|/*&n; * I wish the boot time image was as beautiful as the Alpha&squot;s&n; * but no such luck. The icky PROM loads us at 0x0, and jumps&n; * to magic address 0x4000 to start thing going. This means that&n; * I can stick the pcb and user/kernel stacks in the area from&n; * 0x0-0x4000 and be reasonably sure that this is sane.&n; *&n; * Sorry, I can&squot;t impress people with cool looking 64-bit values&n; * yet. ;-)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;
+macro_line|#include &lt;asm/psr.h&gt;
 DECL|macro|INIT_PCB
 mdefine_line|#define INIT_PCB&t;0x00011fe0
 DECL|macro|INIT_STACK
@@ -18,6 +19,8 @@ DECL|macro|EMPTY_PGE
 mdefine_line|#define EMPTY_PGE&t;0x00001000
 DECL|macro|ZERO_PGE
 mdefine_line|#define ZERO_PGE&t;0x00001000
+DECL|macro|IRQ_ENA_ADR
+mdefine_line|#define IRQ_ENA_ADR     0x2000        /* This is a bitmap of all activated IRQ&squot;s&n;&t;&t;&t;&t;       * which is mapped in head.S during boot.&n;&t;&t;&t;&t;       */
 macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_void
@@ -58,7 +61,7 @@ mdefine_line|#define stbar() __asm__ __volatile__(&quot;stbar&quot;: : :&quot;me
 macro_line|#endif
 multiline_comment|/* Changing the PIL on the sparc is a bit hairy. I&squot;ll figure out some&n; * more optimized way of doing this soon. This is bletcherous code.&n; */
 DECL|macro|swpipl
-mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long __old_ipl, psr; &bslash;&n;__asm__ __volatile__( &bslash;&n;        &quot;rd %%psr, %0&bslash;n&bslash;t&quot; : &quot;=&amp;r&quot; (__old_ipl)); &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;and %1, 15, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sll %0, 8, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;or  %0, %2, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;wr  %0, 0x0, %%psr&bslash;n&bslash;t&quot; &bslash;&n;&t;: &quot;=&amp;r&quot; (psr) &bslash;&n;&t;: &quot;r&quot; (__new_ipl), &quot;r&quot; (__old_ipl)); &bslash;&n;__old_ipl = ((__old_ipl&gt;&gt;8)&amp;15); &bslash;&n;__old_ipl; })
+mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long psr, retval; &bslash;&n;__asm__ __volatile__( &bslash;&n;        &quot;rd %%psr, %0&bslash;n&bslash;t&quot; : &quot;=&amp;r&quot; (psr)); &bslash;&n;retval = psr; &bslash;&n;psr = (psr &amp; ~(PSR_PIL)); &bslash;&n;psr |= ((__new_ipl &lt;&lt; 8) &amp; PSR_PIL); &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;wr  %0, 0x0, %%psr&bslash;n&bslash;t&quot; &bslash;&n;&t;: : &quot;r&quot; (psr)); &bslash;&n;retval = ((retval&gt;&gt;8)&amp;15); &bslash;&n;retval; })
 DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;swpipl(15)  /* 15 = no int&squot;s except nmi&squot;s */
 DECL|macro|sti
@@ -79,6 +82,61 @@ DECL|macro|set_system_gate
 mdefine_line|#define set_system_gate(n,addr) &bslash;&n;&t;_set_gate(&amp;idt[n],15,3,addr)
 DECL|macro|set_call_gate
 mdefine_line|#define set_call_gate(a,addr) &bslash;&n;&t;_set_gate(a,12,3,addr)
+DECL|function|get_psr
+r_extern
+r_inline
+r_int
+r_int
+id|get_psr
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|ret_val
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;rd %%psr, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret_val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret_val
+suffix:semicolon
+)brace
+DECL|function|put_psr
+r_extern
+r_inline
+r_void
+id|put_psr
+c_func
+(paren
+r_int
+r_int
+id|new_psr
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;wr %0, 0x0, %%psr&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|new_psr
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Must this be atomic? */
 DECL|function|xchg_u32
 r_extern

@@ -4,26 +4,13 @@ macro_line|#ifndef _MC146818RTC_H
 DECL|macro|_MC146818RTC_H
 mdefine_line|#define _MC146818RTC_H
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifndef RTC_PORT
 DECL|macro|RTC_PORT
 mdefine_line|#define RTC_PORT(x)&t;(0x70 + (x))
 DECL|macro|RTC_ADDR
 mdefine_line|#define RTC_ADDR(x)&t;(0x80 | (x))
 DECL|macro|RTC_ALWAYS_BCD
 mdefine_line|#define RTC_ALWAYS_BCD&t;1
-multiline_comment|/*&n; * The Alpha Jensen hardware for some rather strange reason puts&n; * the RTC clock at 0x170 instead of 0x70. Probably due to some&n; * misguided idea about using 0x70 for NMI stuff.&n; */
-macro_line|#ifdef __alpha__
-DECL|macro|RTC_PORT
-macro_line|#undef RTC_PORT
-DECL|macro|RTC_ADDR
-macro_line|#undef RTC_ADDR
-DECL|macro|RTC_ALWAYS_BCD
-macro_line|#undef RTC_ALWAYS_BCD
-DECL|macro|RTC_PORT
-mdefine_line|#define RTC_PORT(x)&t;(0x170+(x))
-DECL|macro|RTC_ADDR
-mdefine_line|#define RTC_ADDR(x)&t;(x)
-DECL|macro|RTC_ALWAYS_BCD
-mdefine_line|#define RTC_ALWAYS_BCD&t;0
 macro_line|#endif
 DECL|macro|CMOS_READ
 mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p(RTC_ADDR(addr),RTC_PORT(0)); &bslash;&n;inb_p(RTC_PORT(1)); &bslash;&n;})

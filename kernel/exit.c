@@ -1841,11 +1841,6 @@ suffix:semicolon
 )brace
 id|fake_volatile
 suffix:colon
-r_if
-c_cond
-(paren
-id|current-&gt;semundo
-)paren
 id|sem_exit
 c_func
 (paren

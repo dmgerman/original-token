@@ -19,10 +19,12 @@ DECL|macro|USRSTACK
 mdefine_line|#define USRSTACK        0x0         /* no joke, this is temporary, trust me */
 DECL|macro|INT_ENABLE_REG_PHYSADR
 mdefine_line|#define INT_ENABLE_REG_PHYSADR      0xf5000000
-DECL|macro|INTS_ALL_ENAB
-mdefine_line|#define INTS_ALL_ENAB   0x01
+DECL|macro|INTS_ENAB
+mdefine_line|#define INTS_ENAB   0x01
 DECL|macro|WRITE_PAUSE
 mdefine_line|#define WRITE_PAUSE     nop; nop; nop;
+DECL|macro|PAGE_SIZE
+mdefine_line|#define PAGE_SIZE       4096
 multiline_comment|/* Here are some trap goodies */
 multiline_comment|/* Generic trap entry. */
 DECL|macro|TRAP_ENTRY

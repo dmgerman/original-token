@@ -26,6 +26,8 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &quot;../net/inet/protocol.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
@@ -727,6 +729,20 @@ c_func
 id|free_dma
 )paren
 comma
+macro_line|#ifdef HAVE_DISABLE_HLT
+id|X
+c_func
+(paren
+id|disable_hlt
+)paren
+comma
+id|X
+c_func
+(paren
+id|enable_hlt
+)paren
+comma
+macro_line|#endif
 multiline_comment|/* IO port handling */
 id|X
 c_func
@@ -931,6 +947,7 @@ c_func
 id|si_meminfo
 )paren
 comma
+macro_line|#ifdef CONFIG_NET
 multiline_comment|/* socket layer registration */
 id|X
 c_func
@@ -944,6 +961,35 @@ c_func
 id|sock_unregister
 )paren
 comma
+multiline_comment|/* Internet layer registration */
+macro_line|#ifdef CONFIG_INET&t;
+id|X
+c_func
+(paren
+id|inet_add_protocol
+)paren
+comma
+id|X
+c_func
+(paren
+id|inet_del_protocol
+)paren
+comma
+macro_line|#endif
+multiline_comment|/* Device callback registration */
+id|X
+c_func
+(paren
+id|register_netdevice_notifier
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_netdevice_notifier
+)paren
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FTAPE
 multiline_comment|/* The next labels are needed for ftape driver.  */
 id|X
@@ -1057,6 +1103,36 @@ c_func
 id|dev_base
 )paren
 comma
+id|X
+c_func
+(paren
+id|dev_close
+)paren
+comma
+id|X
+c_func
+(paren
+id|n_tty_ioctl
+)paren
+comma
+id|X
+c_func
+(paren
+id|tty_register_ldisc
+)paren
+comma
+id|X
+c_func
+(paren
+id|kill_fasync
+)paren
+comma
+id|X
+c_func
+(paren
+id|tty_hung_up_p
+)paren
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 multiline_comment|/* Supports loadable scsi drivers */
@@ -1094,6 +1170,12 @@ id|X
 c_func
 (paren
 id|scsi_unregister
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsicam_bios_param
 )paren
 comma
 macro_line|#endif

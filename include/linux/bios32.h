@@ -2,6 +2,13 @@ multiline_comment|/*&n; * BIOS32, PCI BIOS functions and defines&n; * Copyright 
 macro_line|#ifndef BIOS32_H
 DECL|macro|BIOS32_H
 mdefine_line|#define BIOS32_H
+r_extern
+r_int
+id|pcibios_present
+(paren
+r_void
+)paren
+suffix:semicolon
 r_int
 r_int
 id|bios32_init
@@ -16,6 +23,16 @@ r_int
 id|memory_end
 )paren
 suffix:semicolon
+DECL|macro|PCIBIOS_SUCCESSFUL
+mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00
+DECL|macro|PCIBIOS_FUNC_NOT_SUPPORTED
+mdefine_line|#define PCIBIOS_FUNC_NOT_SUPPORTED&t;0x81
+DECL|macro|PCIBIOS_BAD_VENDOR_ID
+mdefine_line|#define PCIBIOS_BAD_VENDOR_ID&t;&t;0x83
+DECL|macro|PCIBIOS_DEVICE_NOT_FOUND
+mdefine_line|#define PCIBIOS_DEVICE_NOT_FOUND&t;0x86
+DECL|macro|PCIBIOS_BAD_REGISTER_NUMBER
+mdefine_line|#define PCIBIOS_BAD_REGISTER_NUMBER&t;0x87
 r_extern
 r_int
 id|pcibios_find_class

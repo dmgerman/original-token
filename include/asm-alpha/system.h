@@ -137,9 +137,9 @@ suffix:semicolon
 DECL|macro|halt
 mdefine_line|#define halt() __asm__ __volatile__(&quot;.long 0&quot;);
 DECL|macro|move_to_user_mode
-mdefine_line|#define move_to_user_mode() halt()
+mdefine_line|#define move_to_user_mode()&t;printk(&quot;Null move_to_user_mode&bslash;n&quot;)
 DECL|macro|switch_to
-mdefine_line|#define switch_to(x) halt()
+mdefine_line|#define switch_to(x)&t;&t;panic(&quot;switch_to() not yet done&quot;)
 macro_line|#ifndef mb
 DECL|macro|mb
 mdefine_line|#define mb() __asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)

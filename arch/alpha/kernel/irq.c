@@ -789,7 +789,11 @@ c_cond
 id|irq
 OL
 l_int|8
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|irq
 )paren
 (brace
@@ -810,6 +814,7 @@ comma
 l_int|0x21
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -1388,16 +1393,6 @@ op_assign
 l_int|7
 suffix:semicolon
 macro_line|#endif
-id|printk
-c_func
-(paren
-l_string|&quot;%d%d&quot;
-comma
-id|irq
-comma
-id|ack
-)paren
-suffix:semicolon
 id|kstat.interrupts
 (braket
 id|irq

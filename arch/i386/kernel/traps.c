@@ -1009,6 +1009,7 @@ r_int
 id|error_code
 )paren
 (brace
+macro_line|#ifndef CONFIG_IGNORE_NMI
 id|printk
 c_func
 (paren
@@ -1018,9 +1019,16 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;You probably have a hardware problem with your RAM chips&bslash;n&quot;
+l_string|&quot;You probably have a hardware problem with your RAM chips or a&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;power saving mode enabled.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 DECL|function|do_debug
 id|asmlinkage

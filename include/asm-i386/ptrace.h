@@ -137,6 +137,16 @@ suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs) ((VM_MASK &amp; (regs)-&gt;eflags) || (3 &amp; (regs)-&gt;cs))
+r_extern
+r_void
+id|show_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 eof

@@ -182,6 +182,8 @@ DECL|macro|INTERMEDIATE_C_GOOD
 mdefine_line|#define INTERMEDIATE_C_GOOD&t;0x0a
 DECL|macro|RESERVATION_CONFLICT
 mdefine_line|#define RESERVATION_CONFLICT&t;0x0c
+DECL|macro|QUEUE_FULL
+mdefine_line|#define QUEUE_FULL              0x1a
 DECL|macro|STATUS_MASK
 mdefine_line|#define STATUS_MASK&t;&t;0x1e
 multiline_comment|/*&n;&t;the return of the status word will be in the following format :&n;&t;The low byte is the status returned by the SCSI command, &n;&t;with vendor specific bits masked.&n;&n;&t;The next byte is the message which followed the SCSI status.&n;&t;This allows a stos to be used, since the Intel is a little&n;&t;endian machine.&n;&n;&t;The final byte is a host return code, which is one of the following.&n;&n;&t;IE &n;&t;lsb&t;&t;msb&n;&t;status&t;msg&t;host code&t;&n;&n;        Our errors returned by OUR driver, NOT SCSI message.  Or&squot;d with&n;        SCSI message passed back to driver &lt;IF any&gt;.&n;*/

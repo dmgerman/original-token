@@ -7923,10 +7923,11 @@ id|IN_CLASSC_NET
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Default sequence number picking algorithm.&n; */
+multiline_comment|/*&n; *&t;Default sequence number picking algorithm.&n; *&t;As close as possible to RFC 793, which&n; *&t;suggests using a 250kHz clock.&n; *&t;Further reading shows this assumes 2MB/s networks.&n; *&t;For 10MB/s ethernet, a 1MHz clock is appropriate.&n; *&t;That&squot;s funny, Linux has one built in!  Use it!&n; */
 DECL|function|tcp_init_seq
 r_extern
 r_inline
+r_int
 r_int
 id|tcp_init_seq
 c_func
@@ -7934,12 +7935,23 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|timeval
+id|tv
+suffix:semicolon
+id|do_gettimeofday
+c_func
+(paren
+op_amp
+id|tv
+)paren
+suffix:semicolon
 r_return
-id|jiffies
+id|tv.tv_usec
+op_plus
+id|tv.tv_sec
 op_star
-id|SEQ_TICK
-op_minus
-id|seq_offset
+l_int|1000000
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This routine handles a connection request.&n; *&t;It should make sure we haven&squot;t already responded.&n; *&t;Because of the way BSD works, we have to send a syn/ack now.&n; *&t;This also means it will be harder to close a socket which is&n; *&t;listening.&n; */
@@ -12648,11 +12660,10 @@ id|usin-&gt;sin_addr.s_addr
 suffix:semicolon
 id|sk-&gt;write_seq
 op_assign
-id|jiffies
-op_star
-id|SEQ_TICK
-op_minus
-id|seq_offset
+id|tcp_init_seq
+c_func
+(paren
+)paren
 suffix:semicolon
 id|sk-&gt;window_seq
 op_assign

@@ -393,6 +393,14 @@ id|retval-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
+id|retval-&gt;dma_channel
+op_assign
+l_int|0xff
+suffix:semicolon
+id|retval-&gt;io_port
+op_assign
+l_int|0
+suffix:semicolon
 id|retval-&gt;forbidden_addr
 op_assign
 l_int|0

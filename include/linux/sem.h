@@ -4,7 +4,7 @@ mdefine_line|#define _LINUX_SEM_H
 macro_line|#include &lt;linux/ipc.h&gt;
 multiline_comment|/* semop flags */
 DECL|macro|SEM_UNDO
-mdefine_line|#define SEM_UNDO        010000  /* undo the operation on exit */
+mdefine_line|#define SEM_UNDO        0x1000  /* undo the operation on exit */
 multiline_comment|/* semctl Command Definitions. */
 DECL|macro|GETPID
 mdefine_line|#define GETPID  11       /* get sempid */
@@ -48,18 +48,21 @@ op_star
 id|sem_base
 suffix:semicolon
 multiline_comment|/* ptr to first semaphore in array */
-DECL|member|eventn
+DECL|member|sem_pending
 r_struct
-id|wait_queue
+id|sem_queue
 op_star
-id|eventn
+id|sem_pending
 suffix:semicolon
-DECL|member|eventz
+multiline_comment|/* pending operations to be processed */
+DECL|member|sem_pending_last
 r_struct
-id|wait_queue
+id|sem_queue
 op_star
-id|eventz
+op_star
+id|sem_pending_last
 suffix:semicolon
+multiline_comment|/* last pending operation */
 DECL|member|undo
 r_struct
 id|sem_undo
@@ -199,42 +202,96 @@ mdefine_line|#define SEMAEM  (SEMVMX &gt;&gt; 1)   /* adjust on exit max value *
 DECL|macro|SEMMAP
 mdefine_line|#define SEMMAP  SEMMNS          /* # of entries in semaphore map */
 DECL|macro|SEMUSZ
-mdefine_line|#define SEMUSZ  20&t;&t;/* sizeof struct sem_undo */ 
+mdefine_line|#define SEMUSZ  20&t;&t;/* sizeof struct sem_undo */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* One semaphore structure for each semaphore in the system. */
 DECL|struct|sem
 r_struct
 id|sem
 (brace
+DECL|member|semval
+r_int
+id|semval
+suffix:semicolon
+multiline_comment|/* current value */
 DECL|member|sempid
 r_int
 id|sempid
 suffix:semicolon
 multiline_comment|/* pid of last operation */
-DECL|member|semval
-id|ushort
-id|semval
-suffix:semicolon
-multiline_comment|/* current value */
-DECL|member|semncnt
-id|ushort
-id|semncnt
-suffix:semicolon
-multiline_comment|/* num procs awaiting increase in semval */
-DECL|member|semzcnt
-id|ushort
-id|semzcnt
-suffix:semicolon
-multiline_comment|/* num procs awaiting semval = 0 */
 )brace
 suffix:semicolon
 multiline_comment|/* ipcs ctl cmds */
 DECL|macro|SEM_STAT
-mdefine_line|#define SEM_STAT 18&t;
+mdefine_line|#define SEM_STAT 18
 DECL|macro|SEM_INFO
 mdefine_line|#define SEM_INFO 19
-multiline_comment|/* per process undo requests */
-multiline_comment|/* this gets linked into the task_struct */
+multiline_comment|/* One queue for each semaphore set in the system. */
+DECL|struct|sem_queue
+r_struct
+id|sem_queue
+(brace
+DECL|member|next
+r_struct
+id|sem_queue
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* next entry in the queue */
+DECL|member|prev
+r_struct
+id|sem_queue
+op_star
+op_star
+id|prev
+suffix:semicolon
+multiline_comment|/* previous entry in the queue, *(q-&gt;prev) == q */
+DECL|member|sleeper
+r_struct
+id|wait_queue
+op_star
+id|sleeper
+suffix:semicolon
+multiline_comment|/* sleeping process */
+DECL|member|undo
+r_struct
+id|sem_undo
+op_star
+id|undo
+suffix:semicolon
+multiline_comment|/* undo structure */
+DECL|member|pid
+r_int
+id|pid
+suffix:semicolon
+multiline_comment|/* process id of requesting process */
+DECL|member|status
+r_int
+id|status
+suffix:semicolon
+multiline_comment|/* completion status of operation */
+DECL|member|sma
+r_struct
+id|semid_ds
+op_star
+id|sma
+suffix:semicolon
+multiline_comment|/* semaphore array for operations */
+DECL|member|sops
+r_struct
+id|sembuf
+op_star
+id|sops
+suffix:semicolon
+multiline_comment|/* array of pending operations */
+DECL|member|nsops
+r_int
+id|nsops
+suffix:semicolon
+multiline_comment|/* number of operations */
+)brace
+suffix:semicolon
+multiline_comment|/* Each task has a list of undo requests. They are executed automatically&n; * when the process exits.&n; */
 DECL|struct|sem_undo
 r_struct
 id|sem_undo
@@ -245,26 +302,25 @@ id|sem_undo
 op_star
 id|proc_next
 suffix:semicolon
+multiline_comment|/* next entry on this process */
 DECL|member|id_next
 r_struct
 id|sem_undo
 op_star
 id|id_next
 suffix:semicolon
+multiline_comment|/* next entry on this semaphore set */
 DECL|member|semid
 r_int
 id|semid
 suffix:semicolon
+multiline_comment|/* semaphore set identifier */
 DECL|member|semadj
 r_int
+op_star
 id|semadj
 suffix:semicolon
-multiline_comment|/* semval adjusted by exit */
-DECL|member|sem_num
-id|ushort
-id|sem_num
-suffix:semicolon
-multiline_comment|/* semaphore index in array semid */
+multiline_comment|/* array of adjustments, one per semaphore */
 )brace
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

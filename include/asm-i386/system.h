@@ -378,5 +378,22 @@ r_struct
 id|desc_struct
 id|default_ldt
 suffix:semicolon
+multiline_comment|/*&n; * disable hlt during certain critical i/o operations&n; */
+DECL|macro|HAVE_DISABLE_HLT
+mdefine_line|#define HAVE_DISABLE_HLT
+r_void
+id|disable_hlt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|enable_hlt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

@@ -1,8 +1,7 @@
 multiline_comment|/* promops.c:  Prom node tree operations and Prom Vector initialization&n; *             initialization routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
-DECL|macro|DEBUG_PROMOPS
-mdefine_line|#define DEBUG_PROMOPS
+multiline_comment|/* #define DEBUG_PROMOPS */
 DECL|macro|MAX_PR_LEN
 mdefine_line|#define MAX_PR_LEN   16           /* exotic hardware probably overshoots this */
 DECL|variable|prom_node_root

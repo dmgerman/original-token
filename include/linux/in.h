@@ -23,6 +23,12 @@ op_assign
 l_int|2
 comma
 multiline_comment|/* Internet Gateway Management Protocol */
+DECL|enumerator|IPPROTO_IPIP
+id|IPPROTO_IPIP
+op_assign
+l_int|4
+comma
+multiline_comment|/* IPIP tunnels (older KA9Q tunnels use 94) */
 DECL|enumerator|IPPROTO_TCP
 id|IPPROTO_TCP
 op_assign

@@ -232,6 +232,12 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* cpu/fpu, mmu probes */
+id|swpipl
+c_func
+(paren
+l_int|13
+)paren
+suffix:semicolon
 op_star
 id|memory_start_p
 op_assign

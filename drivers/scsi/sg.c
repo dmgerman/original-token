@@ -1664,15 +1664,7 @@ op_star
 )paren
 id|device-&gt;buff
 comma
-id|device-&gt;header.pack_len
-op_minus
-id|size
-op_minus
-r_sizeof
-(paren
-r_struct
-id|sg_header
-)paren
+id|amt
 comma
 id|sg_command_done
 comma

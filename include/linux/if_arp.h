@@ -36,6 +36,8 @@ DECL|macro|ARPHRD_ADAPT
 mdefine_line|#define ARPHRD_ADAPT&t;264
 DECL|macro|ARPHRD_PPP
 mdefine_line|#define ARPHRD_PPP&t;512
+DECL|macro|ARPHRD_TUNNEL
+mdefine_line|#define ARPHRD_TUNNEL&t;768&t;&t;/* IPIP tunnel&t;&t;&t;*/
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

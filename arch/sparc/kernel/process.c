@@ -85,6 +85,30 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|show_regs
+r_void
+id|show_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;nSP: %08lx PC: %08lx NPC: %08lx&bslash;n&quot;
+comma
+id|regs-&gt;sp
+comma
+id|regs-&gt;pc
+comma
+id|regs-&gt;npc
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|function|start_thread
 r_void

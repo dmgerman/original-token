@@ -176,17 +176,6 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* con_init calls (indirectly) set_leds before kbd_init&n;          has been called; ignore these early calls */
-r_if
-c_cond
-(paren
-id|bh_base
-(braket
-id|KEYBOARD_BH
-)braket
-dot
-id|routine
-)paren
 id|mark_bh
 c_func
 (paren

@@ -1,9 +1,8 @@
-multiline_comment|/* &n; * net-3-driver for the NI5210 card (i82586 Ethernet chip)&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers that work.&n; * &n; * Alphacode 0.51 (94/08/19) for Linux 1.1.47 (or later)&n; * Copyrights (c) 1994 by Michael Hipp (mhipp@student.uni-tuebingen.de)&n; *    [feel free to mail ....]&n; *&n; * CAN YOU PLEASE REPORT ME YOUR PERFORMANCE EXPERIENCES !!.&n; *&n; * autoprobe for: base_addr: 0x300,0x280,0x360,0x320,0x340&n; *                mem_start: 0xd0000,0xd4000,0xd8000 (8K and 16K)&n; *&n; * sources:&n; *   skeleton.c from Donald Becker&n; *&n; * I have also done a look in the following sources: (mail me if you need them)&n; *   crynwr-packet-driver by Russ Nelson&n; *   Garret A. Wollman&squot;s (fourth) i82586-driver for BSD&n; *   (before getting an i82596 manual, the existing drivers helped&n; *    me a lot to understand this tricky chip.)&n; *&n; * Known Bugs:&n; *   The internal sysbus seems to be slow. So we often lose packets because of&n; *   overruns while receiving from a fast remote host. &n; *   This can slow down TCP connections. Maybe the newer ni5210 cards are better.&n; */
-multiline_comment|/*&n; * 19.Aug.94: changed request_irq() parameter (MH)&n; * &n; * 20.July.94: removed cleanup bugs, removed a 16K-mem-probe-bug (MH)&n; *&n; * 19.July.94: lotsa cleanups .. (MH)&n; *&n; * 17.July.94: some patches ... verified to run with 1.1.29 (MH)&n; *&n; * 4.July.94: patches for Linux 1.1.24  (MH)&n; *&n; * 26.March.94: patches for Linux 1.0 and iomem-auto-probe (MH)&n; *&n; * 30.Sep.93: Added nop-chain .. driver now runs with only one Xmit-Buff, too (MH)&n; */
+multiline_comment|/* &n; * net-3-driver for the NI5210 card (i82586 Ethernet chip)&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers that work.&n; * &n; * Alphacode 0.62 (95/01/19) for Linux 1.1.82 (or later)&n; * Copyrights (c) 1994,1995 by M.Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *    [feel free to mail ....]&n; *&n; * CAN YOU PLEASE REPORT ME YOUR PERFORMANCE EXPERIENCES !!.&n; * &n; * If you find a bug, please report me:&n; *   The kernelpanic output and any kmsg from the ni52 driver&n; *   the ni5210-driver-version and the linux-kernel version &n; *   how many shared memory (memsize) on the netcard, &n; *   bootprom: yes/no, base_addr, mem_start&n; *   maybe the ni5210-card revision and the i82586 version&n; *&n; * autoprobe for: base_addr: 0x300,0x280,0x360,0x320,0x340&n; *                mem_start: 0xc8000,0xd0000,0xd4000,0xd8000 (8K and 16K)&n; *&n; * sources:&n; *   skeleton.c from Donald Becker&n; *&n; * I have also done a look in the following sources: (mail me if you need them)&n; *   crynwr-packet-driver by Russ Nelson&n; *   Garret A. Wollman&squot;s (fourth) i82586-driver for BSD&n; *   (before getting an i82596 (yes 596 not 586) manual, the existing drivers helped&n; *    me a lot to understand this tricky chip.)&n; *&n; * Known Problems:&n; *   The internal sysbus seems to be slow. So we often lose packets because of&n; *   overruns while receiving from a fast remote host. &n; *   This can slow down TCP connections. Maybe the newer ni5210 cards are better.&n; * &n; * IMPORTANT NOTE:&n; *   On fast networks, it&squot;s a (very) good idea to have 16K shared memory. With&n; *   8K, we can store only 4 receive frames, so it can (easily) happen that a remote &n; *   machine &squot;overruns&squot; our system.&n; *&n; * Known i82586 bugs (I&squot;m sure, there are many more!):&n; *   Running the NOP-mode, the i82586 sometimes seems to forget to report&n; *   every xmit-interrupt until we restart the CU.&n; *   Another MAJOR bug is, that the RU sometimes seems to ignore the EL-Bit &n; *   in the RBD-Struct which indicates an end of the RBD queue. &n; *   Instead, the RU fetches another (randomly selected and &n; *   usually used) RBD and begins to fill it. (Maybe, this happens only if &n; *   the last buffer from the previous RFD fits exact into the queue and&n; *   the next RFD can&squot;t fetch an initial RBD. Anyone knows more? )&n; */
+multiline_comment|/*&n; * 19.Jan.95: verified (MH)&n; *&n; * 19.Sep.94: Added Multicast support (not tested yet) (MH)&n; * &n; * 18.Sep.94: Workarround for &squot;EL-Bug&squot;. Removed flexible RBD-handling. &n; *            Now, every RFD has exact one RBD. (MH)&n; *&n; * 14.Sep.94: added promiscous mode, a few cleanups (MH)&n; *&n; * 19.Aug.94: changed request_irq() parameter (MH)&n; * &n; * 20.July.94: removed cleanup bugs, removed a 16K-mem-probe-bug (MH)&n; *&n; * 19.July.94: lotsa cleanups .. (MH)&n; *&n; * 17.July.94: some patches ... verified to run with 1.1.29 (MH)&n; *&n; * 4.July.94: patches for Linux 1.1.24  (MH)&n; *&n; * 26.March.94: patches for Linux 1.0 and iomem-auto-probe (MH)&n; *&n; * 30.Sep.93: Added nop-chain .. driver now runs with only one Xmit-Buff, too (MH)&n; *&n; * &lt; 30.Sep.93: first versions &n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -16,10 +15,9 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;ni52.h&quot;
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG   /* debug on */
-multiline_comment|/*&n;#define DEBUG1&n;#define DEBUG2&n;#define DEBUG3&n;*/
+mdefine_line|#define DEBUG       /* debug on */
 DECL|macro|SYSBUSVAL
-mdefine_line|#define SYSBUSVAL 1
+mdefine_line|#define SYSBUSVAL 1 /* 8 Bit */
 DECL|macro|ni_attn586
 mdefine_line|#define ni_attn586()  {outb(0,dev-&gt;base_addr+NI52_ATTENTION);}
 DECL|macro|ni_reset586
@@ -30,74 +28,28 @@ DECL|macro|make24
 mdefine_line|#define make24(ptr32) ((char *) (ptr32) - p-&gt;base)
 DECL|macro|make16
 mdefine_line|#define make16(ptr32) ((unsigned short) ((unsigned long) (ptr32) - (unsigned long) p-&gt;memtop ))
-multiline_comment|/******************* how to calc the buffers *****************************&n;&n;IMPORTANT NOTE: if you configure only one NUM_XMIT_BUFFS, do also a &n;---------------   #define ONLY_ONE_XMIT_BUF&n;                btw: it seems, that only the ONLY_ONE_XMIT_BUF Mode is stable&n;&n;&n;sizeof(scp)=12; sizeof(scb)=16; sizeof(iscp)=8;&n;sizeof(scp)+sizeof(iscp)+sizeof(scb) = 36 = INIT&n;sizeof(rfd) = 24; sizeof(rbd) = 12; &n;sizeof(tbd) = 8; sizeof(transmit_cmd) = 16;&n;sizeof(nop_cmd) = 8; &n;&n;examples:&n;---------&n;&n;-&gt;cfg1: NUM_RECV_FRAMES=16, NUM_RECV_BUFFS=48, RECV_BUFF_SIZE=256, &n;        NUM_XMIT_BUFFS=2 ,XMIT_BUFF_SIZE=1514&n;&n;NUM_RECV_FRAMES * sizeof(rfd) = 384;&n;NUM_RECV_BUFFS * ( sizeof(rbd) + RECV_BUFF_SIZE) = 12864&n;NUM_XMIT_BUFFS * ( sizeof(tbd+transmit_cmd+nop_cmd) + XMIT_BUFF_SIZE) = 3092&n;INIT = 36&n;--------------------&n;16358   (36 bytes left!)&n;&n;************************&n;&n;-&gt;cfg2: NUM_RECV_FRAMES=9, NUM_RECV_BUFFS=18, RECV_BUFF_SIZE=256, &n;        NUM_XMIT_BUFFS=2 ,XMIT_BUFF_SIZE=1514&n;&n;NUM_RECV_FRAMES * sizeof(rfd) = 216&n;NUM_RECV_BUFFS * ( sizeof(rbd) + RECV_BUFF_SIZE) = 4824&n;NUM_XMIT_BUFFS * ( sizeof(tbd+transmit_cmd+nop_cmd) + XMIT_BUFF_SIZE) = 3092&n;INIT = 36&n;------------------&n;8180    (24 bytes left!)&n;&n;-&gt;cfg3: NUM_RECV_FRAMES=7, NUM_RECV_BUFFS=24, RECV_BUFF_SIZE=256, &n;        NUM_XMIT_BUFFS=1, XMIT_BUFF_SIZE=1514&n;        168  +  6432  +  1538  +  36  +  16 = 8190 &n;&n;***************************************************************************/
-macro_line|#if 0
-multiline_comment|/* config-1 for 16Kram card */
-macro_line|#  define NUM_RECV_FRAMES 16&t;/* number of frames to allow for receive */
-macro_line|#  define NUM_RECV_BUFFS 48&t;/* number of buffers to allocate */
-macro_line|#  define RECV_BUFF_SIZE 256&t;/* size of each buffer, POWER OF 2 &amp; EVEN*/
-macro_line|#  define XMIT_BUFF_SIZE 1514&t;/* length of transmit buffer (EVEN) */
-macro_line|#  define NUM_XMIT_BUFFS 2&t;/* number of Xmit-Buffs */
-macro_line|#elif 0
-multiline_comment|/* config-2 for 8Kram card */
-DECL|macro|NUM_RECV_FRAMES
-macro_line|#  define NUM_RECV_FRAMES 9
-DECL|macro|NUM_RECV_BUFFS
-macro_line|#  define NUM_RECV_BUFFS 18
+multiline_comment|/******************* how to calculate the buffers *****************************&n;&n;  * IMPORTANT NOTE: if you configure only one NUM_XMIT_BUFFS, the driver works&n;  * --------------- in a different (more stable?) mode. Only in this mode it&squot;s&n;  *                 possbile to configure the driver with &squot;NO_NOPCOMMANDS&squot;&n;&n;sizeof(scp)=12; sizeof(scb)=16; sizeof(iscp)=8;&n;sizeof(scp)+sizeof(iscp)+sizeof(scb) = 36 = INIT&n;sizeof(rfd) = 24; sizeof(rbd) = 12; &n;sizeof(tbd) = 8; sizeof(transmit_cmd) = 16;&n;sizeof(nop_cmd) = 8; &n;&n;  * if you don&squot;t know the driver, better do not change this values: */
 DECL|macro|RECV_BUFF_SIZE
-macro_line|#  define RECV_BUFF_SIZE 256
+mdefine_line|#define RECV_BUFF_SIZE 1524 /* slightly oversized */
 DECL|macro|XMIT_BUFF_SIZE
-macro_line|#  define XMIT_BUFF_SIZE 1514
+mdefine_line|#define XMIT_BUFF_SIZE 1524 /* slightly oversized */
 DECL|macro|NUM_XMIT_BUFFS
-macro_line|#  define NUM_XMIT_BUFFS 2
-macro_line|#elif 1
-multiline_comment|/*&n; * config-3 for 8Kram card  ___use_this_config____ seems to be stable&n; */
-DECL|macro|NUM_RECV_FRAMES
-macro_line|#  define NUM_RECV_FRAMES 7
-DECL|macro|NUM_RECV_BUFFS
-macro_line|#  define NUM_RECV_BUFFS 24
-DECL|macro|RECV_BUFF_SIZE
-macro_line|#  define RECV_BUFF_SIZE 256
-DECL|macro|XMIT_BUFF_SIZE
-macro_line|#  define XMIT_BUFF_SIZE 1514
-DECL|macro|NUM_XMIT_BUFFS
-macro_line|#  define NUM_XMIT_BUFFS 1
-DECL|macro|ONLY_ONE_XMIT_BUF
-macro_line|#  define ONLY_ONE_XMIT_BUF 
+mdefine_line|#define NUM_XMIT_BUFFS 1    /* config for both, 8K and 16K shmem */
+DECL|macro|NUM_RECV_BUFFS_8
+mdefine_line|#define NUM_RECV_BUFFS_8  4 /* config for 8K shared mem */
+DECL|macro|NUM_RECV_BUFFS_16
+mdefine_line|#define NUM_RECV_BUFFS_16 9 /* config for 16K shared mem */
 DECL|macro|NO_NOPCOMMANDS
-macro_line|#  define NO_NOPCOMMANDS
-macro_line|#elif 0
-multiline_comment|/*&n; * cfg-4 for 16K, ONLY_ONE_XMIT_BUF&n; */
-DECL|macro|NUM_RECV_FRAMES
-macro_line|#  define NUM_RECV_FRAMES 20
-DECL|macro|NUM_RECV_BUFFS
-macro_line|#  define NUM_RECV_BUFFS 27
-DECL|macro|RECV_BUFF_SIZE
-macro_line|#  define RECV_BUFF_SIZE 512
-DECL|macro|XMIT_BUFF_SIZE
-macro_line|#  define XMIT_BUFF_SIZE 1514
-DECL|macro|NUM_XMIT_BUFFS
-macro_line|#  define NUM_XMIT_BUFFS 1
-DECL|macro|ONLY_ONE_XMIT_BUF
-macro_line|#  define ONLY_ONE_XMIT_BUF
-macro_line|#else
-DECL|macro|NUM_RECV_FRAMES
-macro_line|#  define NUM_RECV_FRAMES 4
-DECL|macro|NUM_RECV_BUFFS
-macro_line|#  define NUM_RECV_BUFFS 4
-DECL|macro|RECV_BUFF_SIZE
-macro_line|#  define RECV_BUFF_SIZE 1536
-DECL|macro|XMIT_BUFF_SIZE
-macro_line|#  define XMIT_BUFF_SIZE 1536
-DECL|macro|NUM_XMIT_BUFFS
-macro_line|#  define NUM_XMIT_BUFFS 1
-DECL|macro|ONLY_ONE_XMIT_BUF
-macro_line|#  define ONLY_ONE_XMIT_BUF
-DECL|macro|NO_NOPCOMMANDS
-macro_line|#  define NO_NOPCOMMANDS
-macro_line|#endif
+mdefine_line|#define NO_NOPCOMMANDS      /* only possible with NUM_XMIT_BUFFS=1 */
+multiline_comment|/**************************************************************************/
 DECL|macro|DELAY
 mdefine_line|#define DELAY(x) {int i=jiffies; &bslash;&n;                  if(loops_per_sec == 1) &bslash;&n;                     while(i+(x)&gt;jiffies); &bslash;&n;                  else &bslash;&n;                     __delay((loops_per_sec&gt;&gt;5)*x); &bslash;&n;                 }
+multiline_comment|/* a much shorter delay: */
+DECL|macro|DELAY_16
+mdefine_line|#define DELAY_16(); { __delay( (loops_per_sec&gt;&gt;16)+1 ); }
+multiline_comment|/* wait for command with timeout: */
+DECL|macro|WAIT_4_SCB_CMD
+mdefine_line|#define WAIT_4_SCB_CMD() { int i; &bslash;&n;  for(i=0;i&lt;1024;i++) { &bslash;&n;    if(!p-&gt;scb-&gt;cmd) break; &bslash;&n;    DELAY_16(); &bslash;&n;    if(i == 1023) { &bslash;&n;      printk(&quot;%s: scb_cmd timed out .. resetting i82586&bslash;n&quot;,dev-&gt;name); &bslash;&n;      ni_reset586(); } } }
 r_extern
 r_void
 id|autoirq_setup
@@ -124,12 +76,6 @@ id|irq2dev_map
 l_int|16
 )braket
 suffix:semicolon
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size) &t;&t;0
-DECL|macro|request_region
-mdefine_line|#define&t;request_region(ioaddr, size,name)&t;do ; while (0)
-macro_line|#endif
 DECL|macro|NI52_TOTAL_SIZE
 mdefine_line|#define NI52_TOTAL_SIZE 16
 DECL|macro|NI52_ADDR0
@@ -138,6 +84,12 @@ DECL|macro|NI52_ADDR1
 mdefine_line|#define NI52_ADDR1 0x07
 DECL|macro|NI52_ADDR2
 mdefine_line|#define NI52_ADDR2 0x01
+macro_line|#ifndef HAVE_PORTRESERVE
+DECL|macro|check_region
+mdefine_line|#define check_region(ioaddr, size)              0
+DECL|macro|request_region
+mdefine_line|#define request_region(ioaddr, size,name)    do ; while (0)
+macro_line|#endif
 r_static
 r_int
 id|ni52_probe1
@@ -163,7 +115,7 @@ comma
 r_struct
 id|pt_regs
 op_star
-id|regs
+id|reg_ptr
 )paren
 suffix:semicolon
 r_static
@@ -243,6 +195,13 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+id|num_addrs
+comma
+r_void
+op_star
+id|addrs
 )paren
 suffix:semicolon
 r_static
@@ -349,28 +308,9 @@ r_int
 id|base
 suffix:semicolon
 DECL|member|memtop
-DECL|member|max_cbuff32
-DECL|member|min_cbuff32
-DECL|member|max_cbuff24
 r_char
 op_star
 id|memtop
-comma
-op_star
-id|max_cbuff32
-comma
-op_star
-id|min_cbuff32
-comma
-op_star
-id|max_cbuff24
-suffix:semicolon
-DECL|member|rbd_last
-r_volatile
-r_struct
-id|rbd_struct
-op_star
-id|rbd_last
 suffix:semicolon
 DECL|member|rfd_last
 DECL|member|rfd_top
@@ -431,7 +371,7 @@ id|xmit_cmds
 id|NUM_XMIT_BUFFS
 )braket
 suffix:semicolon
-macro_line|#ifdef ONLY_ONE_XMIT_BUF
+macro_line|#if (NUM_XMIT_BUFFS == 1)
 DECL|member|nop_cmds
 r_volatile
 r_struct
@@ -455,9 +395,12 @@ id|NUM_XMIT_BUFFS
 suffix:semicolon
 macro_line|#endif
 DECL|member|nop_point
+DECL|member|num_recv_buffs
 r_volatile
 r_int
 id|nop_point
+comma
+id|num_recv_buffs
 suffix:semicolon
 DECL|member|xmit_cbuffs
 r_volatile
@@ -545,6 +488,10 @@ id|init586
 c_func
 (paren
 id|dev
+comma
+l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|startrecv586
@@ -699,7 +646,7 @@ id|p-&gt;scp-&gt;sysbus
 op_assign
 id|SYSBUSVAL
 suffix:semicolon
-multiline_comment|/* 1 = 8Bit-Bus */
+multiline_comment|/* 1 = 8Bit-Bus, 0 = 16 Bit */
 id|iscp_addrs
 (braket
 l_int|0
@@ -804,6 +751,7 @@ c_cond
 id|p-&gt;iscp-&gt;busy
 )paren
 (brace
+multiline_comment|/* i82586 clears &squot;busy&squot; after succesful init */
 r_return
 l_int|0
 suffix:semicolon
@@ -836,6 +784,17 @@ id|priv
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|ni_reset586
+c_func
+(paren
+)paren
+suffix:semicolon
+id|DELAY
+c_func
+(paren
+l_int|2
+)paren
 suffix:semicolon
 id|p-&gt;scp
 op_assign
@@ -952,7 +911,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
 id|DELAY
 c_func
 (paren
@@ -974,7 +932,6 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|memset
 c_func
 (paren
@@ -1211,6 +1168,10 @@ l_int|0xd0000
 comma
 l_int|0xd2000
 comma
+l_int|0xc8000
+comma
+l_int|0xca000
+comma
 l_int|0xd4000
 comma
 l_int|0xd6000
@@ -1354,6 +1315,7 @@ id|size
 op_assign
 l_int|0x4000
 suffix:semicolon
+multiline_comment|/* check for 16K mem */
 r_if
 c_cond
 (paren
@@ -1377,6 +1339,7 @@ id|size
 op_assign
 l_int|0x2000
 suffix:semicolon
+multiline_comment|/* check for 8K mem */
 r_if
 c_cond
 (paren
@@ -1455,6 +1418,7 @@ id|size
 op_assign
 l_int|0x2000
 suffix:semicolon
+multiline_comment|/* check for 8K mem */
 r_if
 c_cond
 (paren
@@ -1481,6 +1445,7 @@ id|size
 op_assign
 l_int|0x4000
 suffix:semicolon
+multiline_comment|/* check for 16K mem */
 r_if
 c_cond
 (paren
@@ -1505,6 +1470,13 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|dev-&gt;mem_end
+op_assign
+id|dev-&gt;mem_start
+op_plus
+id|size
+suffix:semicolon
+multiline_comment|/* set mem_end showed by &squot;ifconfig&squot; */
 (paren
 (paren
 r_struct
@@ -1529,6 +1501,43 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+multiline_comment|/* set number of receive-buffs according to memsize */
+r_if
+c_cond
+(paren
+id|size
+op_eq
+l_int|0x2000
+)paren
+(brace
+(paren
+(paren
+r_struct
+id|priv
+op_star
+)paren
+id|dev-&gt;priv
+)paren
+op_member_access_from_pointer
+id|num_recv_buffs
+op_assign
+id|NUM_RECV_BUFFS_8
+suffix:semicolon
+)brace
+r_else
+(paren
+(paren
+r_struct
+id|priv
+op_star
+)paren
+id|dev-&gt;priv
+)paren
+op_member_access_from_pointer
+id|num_recv_buffs
+op_assign
+id|NUM_RECV_BUFFS_16
 suffix:semicolon
 id|printk
 c_func
@@ -1674,6 +1683,13 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+id|num_addrs
+comma
+r_void
+op_star
+id|addrs
 )paren
 (brace
 r_void
@@ -1721,6 +1737,12 @@ id|tdr_cmd_struct
 op_star
 id|tdr_cmd
 suffix:semicolon
+r_volatile
+r_struct
+id|mcsetup_cmd_struct
+op_star
+id|mc_cmd
+suffix:semicolon
 id|ptr
 op_assign
 (paren
@@ -1751,26 +1773,6 @@ op_star
 id|ptr
 suffix:semicolon
 multiline_comment|/* configure-command */
-id|cfg_cmd-&gt;byte_cnt
-op_assign
-l_int|0x04
-suffix:semicolon
-multiline_comment|/* number of cfg bytes */
-id|cfg_cmd-&gt;fifo
-op_assign
-l_int|0xc8
-suffix:semicolon
-multiline_comment|/* fifo-limit (8=tx:32/rx:64) | monitor */
-id|cfg_cmd-&gt;sav_bf
-op_assign
-l_int|0x40
-suffix:semicolon
-multiline_comment|/* hold or discard bad recv frames (bit 7) */
-id|cfg_cmd-&gt;adr_len
-op_assign
-l_int|0x2e
-suffix:semicolon
-multiline_comment|/* addr_len |!src_insert |pre-len |loopback */
 id|cfg_cmd-&gt;cmd_status
 op_assign
 l_int|0
@@ -1784,6 +1786,60 @@ suffix:semicolon
 id|cfg_cmd-&gt;cmd_link
 op_assign
 l_int|0xffff
+suffix:semicolon
+id|cfg_cmd-&gt;byte_cnt
+op_assign
+l_int|0x0a
+suffix:semicolon
+multiline_comment|/* number of cfg bytes */
+id|cfg_cmd-&gt;fifo
+op_assign
+l_int|0x08
+suffix:semicolon
+multiline_comment|/* fifo-limit (8=tx:32/rx:64) */
+id|cfg_cmd-&gt;sav_bf
+op_assign
+l_int|0x40
+suffix:semicolon
+multiline_comment|/* hold or discard bad recv frames (bit 7) */
+id|cfg_cmd-&gt;adr_len
+op_assign
+l_int|0x2e
+suffix:semicolon
+multiline_comment|/* addr_len |!src_insert |pre-len |loopback */
+id|cfg_cmd-&gt;priority
+op_assign
+l_int|0x00
+suffix:semicolon
+id|cfg_cmd-&gt;ifs
+op_assign
+l_int|0x60
+suffix:semicolon
+id|cfg_cmd-&gt;time_low
+op_assign
+l_int|0x00
+suffix:semicolon
+id|cfg_cmd-&gt;time_high
+op_assign
+l_int|0xf2
+suffix:semicolon
+id|cfg_cmd-&gt;promisc
+op_assign
+(paren
+id|num_addrs
+OL
+l_int|0
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* promisc on/off */
+id|cfg_cmd-&gt;carr_coll
+op_assign
+l_int|0x00
 suffix:semicolon
 id|p-&gt;scb-&gt;cbl_offset
 op_assign
@@ -2205,7 +2261,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    * alloc nop/xmit-cmds&n;    */
-macro_line|#ifdef ONLY_ONE_XMIT_BUF
+macro_line|#if (NUM_XMIT_BUFFS == 1)
 r_for
 c_loop
 (paren
@@ -2240,7 +2296,7 @@ id|i
 op_member_access_from_pointer
 id|cmd_cmd
 op_assign
-l_int|0
+id|CMD_NOP
 suffix:semicolon
 id|p-&gt;nop_cmds
 (braket
@@ -2270,7 +2326,13 @@ id|i
 )paren
 suffix:semicolon
 id|ptr
-op_add_assign
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_plus
 r_sizeof
 (paren
 r_struct
@@ -2292,7 +2354,13 @@ id|ptr
 suffix:semicolon
 multiline_comment|/* transmit cmd/buff 0 */
 id|ptr
-op_add_assign
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_plus
 r_sizeof
 (paren
 r_struct
@@ -2334,7 +2402,7 @@ id|i
 op_member_access_from_pointer
 id|cmd_cmd
 op_assign
-l_int|0
+id|CMD_NOP
 suffix:semicolon
 id|p-&gt;nop_cmds
 (braket
@@ -2364,7 +2432,13 @@ id|i
 )paren
 suffix:semicolon
 id|ptr
-op_add_assign
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_plus
 r_sizeof
 (paren
 r_struct
@@ -2383,9 +2457,15 @@ op_star
 )paren
 id|ptr
 suffix:semicolon
-multiline_comment|/* transmit cmd/buff 0 */
+multiline_comment|/*transmit cmd/buff 0*/
 id|ptr
-op_add_assign
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_plus
 r_sizeof
 (paren
 r_struct
@@ -2409,7 +2489,222 @@ id|ptr
 )paren
 suffix:semicolon
 multiline_comment|/* init receive-frame-area */
-multiline_comment|/*&n;    * alloc xmit-buffs &n;    */
+multiline_comment|/* &n;   * Multicast setup&n;   */
+r_if
+c_cond
+(paren
+id|num_addrs
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/* I don&squot;t understand this: do we really need memory after the init? */
+r_int
+id|len
+op_assign
+(paren
+(paren
+r_char
+op_star
+)paren
+id|p-&gt;iscp
+op_minus
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_minus
+l_int|8
+)paren
+op_div
+l_int|6
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_le
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Ooooops, no memory for MC-Setup!&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|len
+OL
+id|num_addrs
+)paren
+(brace
+id|num_addrs
+op_assign
+id|len
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Sorry, can only apply %d MC-Addresse(s).&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|num_addrs
+)paren
+suffix:semicolon
+)brace
+id|mc_cmd
+op_assign
+(paren
+r_struct
+id|mcsetup_cmd_struct
+op_star
+)paren
+id|ptr
+suffix:semicolon
+id|mc_cmd-&gt;cmd_status
+op_assign
+l_int|0
+suffix:semicolon
+id|mc_cmd-&gt;cmd_cmd
+op_assign
+id|CMD_MCSETUP
+op_or
+id|CMD_LAST
+suffix:semicolon
+id|mc_cmd-&gt;cmd_link
+op_assign
+l_int|0xffff
+suffix:semicolon
+id|mc_cmd-&gt;mc_cnt
+op_assign
+id|num_addrs
+op_star
+l_int|6
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|num_addrs
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|mc_cmd-&gt;mc_list
+(braket
+id|i
+)braket
+comma
+(paren
+(paren
+r_char
+(paren
+op_star
+)paren
+(braket
+l_int|6
+)braket
+)paren
+id|addrs
+)paren
+(braket
+id|i
+)braket
+comma
+l_int|6
+)paren
+suffix:semicolon
+)brace
+id|p-&gt;scb-&gt;cbl_offset
+op_assign
+id|make16
+c_func
+(paren
+id|mc_cmd
+)paren
+suffix:semicolon
+id|p-&gt;scb-&gt;cmd
+op_assign
+id|CUC_START
+suffix:semicolon
+id|ni_attn586
+c_func
+(paren
+)paren
+suffix:semicolon
+id|s
+op_assign
+id|jiffies
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|mc_cmd-&gt;cmd_status
+op_amp
+id|STAT_COMPL
+)paren
+)paren
+r_if
+c_cond
+(paren
+id|jiffies
+op_minus
+id|s
+OG
+l_int|30
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|mc_cmd-&gt;cmd_status
+op_amp
+id|STAT_COMPL
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Can&squot;t apply multicast-address-list.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+multiline_comment|/*&n;   * alloc xmit-buffs / init xmit_cmds&n;   */
 r_for
 c_loop
 (paren
@@ -2438,7 +2733,13 @@ id|ptr
 suffix:semicolon
 multiline_comment|/* char-buffs */
 id|ptr
-op_add_assign
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_plus
 id|XMIT_BUFF_SIZE
 suffix:semicolon
 id|p-&gt;xmit_buffs
@@ -2455,7 +2756,13 @@ id|ptr
 suffix:semicolon
 multiline_comment|/* TBD */
 id|ptr
-op_add_assign
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_plus
 r_sizeof
 (paren
 r_struct
@@ -2550,6 +2857,17 @@ id|p-&gt;xmit_cmds
 id|i
 )braket
 op_member_access_from_pointer
+id|cmd_cmd
+op_assign
+id|CMD_XMIT
+op_or
+id|CMD_INT
+suffix:semicolon
+id|p-&gt;xmit_cmds
+(braket
+id|i
+)braket
+op_member_access_from_pointer
 id|tbd_offset
 op_assign
 id|make16
@@ -2627,16 +2945,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|WAIT_4_SCB_CMD
+c_func
 (paren
-id|p-&gt;scb-&gt;cmd
 )paren
-(brace
 suffix:semicolon
-)brace
 macro_line|#else
-multiline_comment|/*&n;  p-&gt;nop_cmds[0]-&gt;cmd_link = make16(p-&gt;nop_cmds[1]);&n;  p-&gt;nop_cmds[1]-&gt;cmd_link = make16(p-&gt;xmit_cmds[0]);&n;*/
 id|p-&gt;xmit_cmds
 (braket
 l_int|0
@@ -2664,7 +2978,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************&n; * This is a helper routine for ni52_nr_int() and init586(). &n; * It sets up the Receive Frame Area (RFA).&n; */
+multiline_comment|/******************************************************&n; * This is a helper routine for ni52_rnr_int() and init586(). &n; * It sets up the Receive Frame Area (RFA).&n; */
 DECL|function|alloc_rfa
 r_static
 r_void
@@ -2733,7 +3047,7 @@ r_struct
 id|rfd_struct
 )paren
 op_star
-id|NUM_RECV_FRAMES
+id|p-&gt;num_recv_buffs
 )paren
 suffix:semicolon
 id|p-&gt;rfd_first
@@ -2749,7 +3063,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NUM_RECV_FRAMES
+id|p-&gt;num_recv_buffs
 suffix:semicolon
 id|i
 op_increment
@@ -2773,32 +3087,32 @@ op_plus
 l_int|1
 )paren
 op_mod
-id|NUM_RECV_FRAMES
+id|p-&gt;num_recv_buffs
 )paren
 suffix:semicolon
 )brace
 id|rfd
 (braket
-id|NUM_RECV_FRAMES
+id|p-&gt;num_recv_buffs
 op_minus
 l_int|1
 )braket
 dot
 id|last
 op_assign
-id|RFD_LAST
+id|RFD_SUSP
 suffix:semicolon
-multiline_comment|/* set EOL (no RU suspend) */
+multiline_comment|/* RU suspend */
 id|ptr
 op_assign
 (paren
-r_char
+r_void
 op_star
 )paren
 (paren
 id|rfd
 op_plus
-id|NUM_RECV_FRAMES
+id|p-&gt;num_recv_buffs
 )paren
 suffix:semicolon
 id|rbd
@@ -2811,14 +3125,16 @@ op_star
 id|ptr
 suffix:semicolon
 id|ptr
-op_add_assign
-r_sizeof
+op_assign
 (paren
-r_struct
-id|rbd_struct
-)paren
+r_void
 op_star
-id|NUM_RECV_BUFFS
+)paren
+(paren
+id|rbd
+op_plus
+id|p-&gt;num_recv_buffs
+)paren
 suffix:semicolon
 multiline_comment|/* clr descriptors */
 id|memset
@@ -2838,12 +3154,8 @@ r_struct
 id|rbd_struct
 )paren
 op_star
-id|NUM_RECV_BUFFS
+id|p-&gt;num_recv_buffs
 )paren
-suffix:semicolon
-id|p-&gt;min_cbuff32
-op_assign
-id|ptr
 suffix:semicolon
 r_for
 c_loop
@@ -2854,7 +3166,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NUM_RECV_BUFFS
+id|p-&gt;num_recv_buffs
 suffix:semicolon
 id|i
 op_increment
@@ -2879,7 +3191,7 @@ op_plus
 l_int|1
 )paren
 op_mod
-id|NUM_RECV_BUFFS
+id|p-&gt;num_recv_buffs
 )paren
 )paren
 suffix:semicolon
@@ -2906,34 +3218,16 @@ id|ptr
 )paren
 suffix:semicolon
 id|ptr
-op_add_assign
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_plus
 id|RECV_BUFF_SIZE
 suffix:semicolon
 )brace
-id|rbd
-(braket
-id|NUM_RECV_BUFFS
-op_minus
-l_int|1
-)braket
-dot
-id|size
-op_or_assign
-id|RBD_LAST
-suffix:semicolon
-multiline_comment|/* set eol */
-id|p-&gt;max_cbuff32
-op_assign
-id|ptr
-suffix:semicolon
-id|p-&gt;max_cbuff24
-op_assign
-id|make24
-c_func
-(paren
-id|p-&gt;max_cbuff32
-)paren
-suffix:semicolon
 id|p-&gt;rfd_top
 op_assign
 id|p-&gt;rfd_first
@@ -2942,15 +3236,7 @@ id|p-&gt;rfd_last
 op_assign
 id|p-&gt;rfd_first
 op_plus
-id|NUM_RECV_FRAMES
-op_minus
-l_int|1
-suffix:semicolon
-id|p-&gt;rbd_last
-op_assign
-id|rbd
-op_plus
-id|NUM_RECV_BUFFS
+id|p-&gt;num_recv_buffs
 op_minus
 l_int|1
 suffix:semicolon
@@ -2987,7 +3273,7 @@ comma
 r_struct
 id|pt_regs
 op_star
-id|regs
+id|reg_ptr
 )paren
 (brace
 r_struct
@@ -3009,24 +3295,11 @@ r_int
 r_int
 id|stat
 suffix:semicolon
-r_int
-id|pd
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|priv
 op_star
 id|p
 suffix:semicolon
-macro_line|#ifdef DEBUG2
-id|printk
-c_func
-(paren
-l_string|&quot;(1)&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3039,7 +3312,24 @@ id|printk
 (paren
 l_string|&quot;ni52-interrupt: irq %d for unknown device.&bslash;n&quot;
 comma
-id|irq
+(paren
+r_int
+)paren
+op_minus
+(paren
+(paren
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+id|reg_ptr
+)paren
+op_member_access_from_pointer
+id|orig_eax
+op_plus
+l_int|2
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3054,21 +3344,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;(ni52-I)&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|dev-&gt;interrupt
 op_assign
 l_int|1
@@ -3098,40 +3373,13 @@ multiline_comment|/* ack inter. */
 r_if
 c_cond
 (paren
-id|pd
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ni52-%04x/%04x-&quot;
-comma
-(paren
-r_int
-)paren
-id|stat
-comma
-(paren
-r_int
-)paren
-id|p-&gt;scb-&gt;status
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* debug */
-r_if
-c_cond
-(paren
 id|stat
 op_amp
-(paren
-id|STAT_FR
-op_or
-id|STAT_RNR
-)paren
+id|STAT_CX
 )paren
 (brace
-id|ni52_rcv_int
+multiline_comment|/* command with I-bit set complete */
+id|ni52_xmt_int
 c_func
 (paren
 id|dev
@@ -3143,10 +3391,11 @@ c_cond
 (paren
 id|stat
 op_amp
-id|STAT_CX
+id|STAT_FR
 )paren
 (brace
-id|ni52_xmt_int
+multiline_comment|/* received a frame */
+id|ni52_rcv_int
 c_func
 (paren
 id|dev
@@ -3161,25 +3410,14 @@ id|stat
 op_amp
 id|STAT_CNA
 )paren
-macro_line|#else
+multiline_comment|/* CU went &squot;not ready&squot; */
+(brace
 r_if
 c_cond
 (paren
-(paren
-id|stat
-op_amp
-id|STAT_CNA
-)paren
-op_logical_and
-op_logical_neg
-(paren
-id|stat
-op_amp
-id|STAT_CX
-)paren
+id|dev-&gt;start
 )paren
 (brace
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -3199,6 +3437,8 @@ id|p-&gt;scb-&gt;status
 )paren
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3206,11 +3446,38 @@ id|stat
 op_amp
 id|STAT_RNR
 )paren
+multiline_comment|/* RU went &squot;not ready&squot; */
+(brace
+r_if
+c_cond
+(paren
+id|p-&gt;scb-&gt;status
+op_amp
+id|RU_SUSPEND
+)paren
+multiline_comment|/* special case: RU_SUSPEND */
+(brace
+id|WAIT_4_SCB_CMD
+c_func
+(paren
+)paren
+suffix:semicolon
+id|p-&gt;scb-&gt;cmd
+op_assign
+id|RUC_RESUME
+suffix:semicolon
+id|ni_attn586
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: rnr: %04x/%04x.&bslash;n&quot;
+l_string|&quot;%s: Receiver-Unit went &squot;NOT READY&squot;: %04x/%04x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3231,98 +3498,25 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|pd
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* local debug on */
 )brace
-macro_line|#ifdef DEBUG2
-id|pd
-op_increment
+)brace
+id|WAIT_4_SCB_CMD
+c_func
+(paren
+)paren
 suffix:semicolon
-macro_line|#endif
-r_while
-c_loop
+multiline_comment|/* wait for ack. (ni52_xmt_int can be faster than ack!!) */
+r_if
+c_cond
 (paren
 id|p-&gt;scb-&gt;cmd
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-multiline_comment|/* wait for ack. (ni52_xmt_int can be faster than ack!!) */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|200
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
+multiline_comment|/* timed out? */
+r_break
 suffix:semicolon
 )brace
 )brace
-)brace
-macro_line|#ifdef DEBUG
-(brace
-r_static
-r_int
-id|old_ovr
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|l
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|l
-op_assign
-id|p-&gt;scb-&gt;ovrn_errs
-op_minus
-id|old_ovr
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|l
-OG
-l_int|0
-)paren
-(brace
-id|p-&gt;stats.rx_over_errors
-op_add_assign
-id|l
-suffix:semicolon
-)brace
-r_else
-id|old_ovr
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-macro_line|#ifdef DEBUG2
-id|printk
-c_func
-(paren
-l_string|&quot;(2)&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dev-&gt;interrupt
 op_assign
 l_int|0
@@ -3347,8 +3541,6 @@ suffix:semicolon
 r_int
 r_int
 id|totlen
-comma
-id|pnt
 suffix:semicolon
 r_struct
 id|sk_buff
@@ -3359,9 +3551,6 @@ r_struct
 id|rbd_struct
 op_star
 id|rbd
-comma
-op_star
-id|rbd_first
 suffix:semicolon
 r_struct
 id|priv
@@ -3391,8 +3580,6 @@ suffix:semicolon
 (brace
 id|rbd
 op_assign
-id|rbd_first
-op_assign
 (paren
 r_struct
 id|rbd_struct
@@ -3404,321 +3591,6 @@ c_func
 id|p-&gt;rfd_top-&gt;rbd_offset
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG1
-(brace
-r_struct
-id|rbd_struct
-op_star
-id|rbd1
-op_assign
-id|rbd
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rbd1
-op_eq
-id|p-&gt;rbd_last
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;L&quot;
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;S:%04x/%x/%02x &gt;&quot;
-comma
-(paren
-r_int
-)paren
-id|rbd1-&gt;status
-comma
-(paren
-r_int
-)paren
-id|rbd1-&gt;size
-op_rshift
-l_int|12
-comma
-(paren
-r_int
-)paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|rbd1
-op_amp
-l_int|0xff
-)paren
-)paren
-suffix:semicolon
-id|rbd1
-op_assign
-(paren
-r_struct
-id|rbd_struct
-op_star
-)paren
-id|make32
-c_func
-(paren
-id|rbd1-&gt;next
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|rbd1
-op_ne
-id|rbd_first
-suffix:semicolon
-id|rbd1
-op_assign
-(paren
-r_struct
-id|rbd_struct
-op_star
-)paren
-id|make32
-c_func
-(paren
-id|rbd1-&gt;next
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|rbd1
-op_eq
-id|p-&gt;rbd_last
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;L:&quot;
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;%04x/%x-&quot;
-comma
-(paren
-r_int
-)paren
-id|rbd1-&gt;status
-op_rshift
-l_int|12
-comma
-(paren
-r_int
-)paren
-id|rbd1-&gt;size
-op_rshift
-l_int|12
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;&lt; &quot;
-)paren
-suffix:semicolon
-)brace
-(brace
-r_struct
-id|rfd_struct
-op_star
-id|rfd1
-op_assign
-id|p-&gt;rfd_top
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rfd1
-op_eq
-id|p-&gt;rfd_last
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;L&quot;
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;S:%04x/%x/%02x &gt;&quot;
-comma
-(paren
-r_int
-)paren
-id|rfd1-&gt;status
-comma
-(paren
-r_int
-)paren
-id|rfd1-&gt;last
-op_rshift
-l_int|12
-comma
-(paren
-r_int
-)paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|rfd1
-op_amp
-l_int|0xff
-)paren
-)paren
-suffix:semicolon
-id|rfd1
-op_assign
-(paren
-r_struct
-id|rfd_struct
-op_star
-)paren
-id|make32
-c_func
-(paren
-id|rfd1-&gt;next
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|rfd1
-op_ne
-id|p-&gt;rfd_top
-suffix:semicolon
-id|rfd1
-op_assign
-(paren
-r_struct
-id|rfd_struct
-op_star
-)paren
-id|make32
-c_func
-(paren
-id|rfd1-&gt;next
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|rfd1
-op_eq
-id|p-&gt;rfd_last
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;L:&quot;
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;%x/%x-&quot;
-comma
-(paren
-r_int
-)paren
-id|rfd1-&gt;status
-op_rshift
-l_int|12
-comma
-(paren
-r_int
-)paren
-id|rfd1-&gt;last
-op_rshift
-l_int|12
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;&lt;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-id|p-&gt;rfd_top-&gt;status
-op_assign
-l_int|0
-suffix:semicolon
-id|p-&gt;rfd_top-&gt;last
-op_assign
-id|RFD_LAST
-suffix:semicolon
-id|p-&gt;rfd_last-&gt;last
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* delete RFD_LAST, no RU suspend */
-id|p-&gt;rfd_last
-op_assign
-id|p-&gt;rfd_top
-suffix:semicolon
-id|p-&gt;rfd_top
-op_assign
-(paren
-r_struct
-id|rfd_struct
-op_star
-)paren
-id|make32
-c_func
-(paren
-id|p-&gt;rfd_top-&gt;next
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-op_amp
-id|RFD_ERRMASK
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: RFD-Error ... status: %04x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|status
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3726,50 +3598,26 @@ id|status
 op_amp
 id|STAT_OK
 )paren
+multiline_comment|/* frame received without error? */
 (brace
-r_for
-c_loop
+r_if
+c_cond
+(paren
 (paren
 id|totlen
 op_assign
-l_int|0
-suffix:semicolon
-op_logical_neg
-(paren
 id|rbd-&gt;status
+)paren
 op_amp
 id|RBD_LAST
 )paren
-suffix:semicolon
-id|rbd
-op_assign
-(paren
-r_struct
-id|rbd_struct
-op_star
-)paren
-id|make32
-c_func
-(paren
-id|rbd-&gt;next
-)paren
-)paren
+multiline_comment|/* the first and the last buffer? */
 (brace
 id|totlen
-op_add_assign
-id|RECV_BUFF_SIZE
-suffix:semicolon
-id|rbd-&gt;status
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|totlen
-op_add_assign
-id|rbd-&gt;status
-op_amp
+op_and_assign
 id|RBD_MASK
 suffix:semicolon
+multiline_comment|/* length of this frame */
 id|rbd-&gt;status
 op_assign
 l_int|0
@@ -3796,7 +3644,6 @@ id|skb
 op_ne
 l_int|NULL
 )paren
-multiline_comment|/* copy header */
 (brace
 id|skb-&gt;len
 op_assign
@@ -3806,56 +3653,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|rbd-&gt;buffer
-OL
-id|rbd_first-&gt;buffer
-)paren
-(brace
-id|pnt
-op_assign
-id|p-&gt;max_cbuff24
-op_minus
-id|rbd_first-&gt;buffer
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-id|skb-&gt;data
-comma
-id|p-&gt;max_cbuff32
-op_minus
-id|pnt
-comma
-id|pnt
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-id|skb-&gt;data
-op_plus
-id|pnt
-comma
-id|p-&gt;min_cbuff32
-comma
-id|totlen
-op_minus
-id|pnt
-)paren
-suffix:semicolon
-)brace
-r_else
 id|memcpy
 c_func
 (paren
@@ -3875,23 +3672,10 @@ op_plus
 r_int
 r_int
 )paren
-id|rbd_first-&gt;buffer
+id|rbd-&gt;buffer
 comma
 id|totlen
 )paren
-suffix:semicolon
-id|rbd-&gt;size
-op_or_assign
-id|RBD_LAST
-suffix:semicolon
-id|p-&gt;rbd_last-&gt;size
-op_and_assign
-op_complement
-id|RBD_LAST
-suffix:semicolon
-id|p-&gt;rbd_last
-op_assign
-id|rbd
 suffix:semicolon
 id|netif_rx
 c_func
@@ -3904,19 +3688,22 @@ op_increment
 suffix:semicolon
 )brace
 r_else
+id|p-&gt;stats.rx_dropped
+op_increment
+suffix:semicolon
+)brace
+r_else
 (brace
-id|rbd-&gt;size
-op_or_assign
-id|RBD_LAST
+id|printk
+c_func
+(paren
+l_string|&quot;%s: received oversized frame.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
 suffix:semicolon
-id|p-&gt;rbd_last-&gt;size
-op_and_assign
-op_complement
-id|RBD_LAST
-suffix:semicolon
-id|p-&gt;rbd_last
-op_assign
-id|rbd
+id|p-&gt;stats.rx_dropped
+op_increment
 suffix:semicolon
 )brace
 )brace
@@ -3937,9 +3724,40 @@ id|p-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
 )brace
+id|p-&gt;rfd_top-&gt;status
+op_assign
+l_int|0
+suffix:semicolon
+id|p-&gt;rfd_top-&gt;last
+op_assign
+id|RFD_SUSP
+suffix:semicolon
+id|p-&gt;rfd_last-&gt;last
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* delete RU_SUSP  */
+id|p-&gt;rfd_last
+op_assign
+id|p-&gt;rfd_top
+suffix:semicolon
+id|p-&gt;rfd_top
+op_assign
+(paren
+r_struct
+id|rfd_struct
+op_star
+)paren
+id|make32
+c_func
+(paren
+id|p-&gt;rfd_top-&gt;next
+)paren
+suffix:semicolon
+multiline_comment|/* step to next RFD */
 )brace
 )brace
-multiline_comment|/**********************************************************&n; * I never got this error , (which should occur if someone &n; * wants to blast your machine) so I couldn&squot;t debug it for now.&n; * but we _try_ to fix the receiver not ready int.&n; */
+multiline_comment|/**********************************************************&n; * handle &squot;Receiver went not ready&squot;. &n; */
 DECL|function|ni52_rnr_int
 r_static
 r_void
@@ -3967,32 +3785,27 @@ suffix:semicolon
 id|p-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
-r_while
-c_loop
+id|WAIT_4_SCB_CMD
+c_func
 (paren
-id|p-&gt;scb-&gt;cmd
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* wait for the last cmd */
 id|p-&gt;scb-&gt;cmd
 op_assign
 id|RUC_ABORT
 suffix:semicolon
+multiline_comment|/* usually the RU is in the &squot;no ressource&squot;-state .. abort it now. */
 id|ni_attn586
 c_func
 (paren
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|WAIT_4_SCB_CMD
+c_func
 (paren
-id|p-&gt;scb-&gt;cmd
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* wait for accept cmd. */
 id|alloc_rfa
 c_func
@@ -4012,7 +3825,17 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* restart */
+multiline_comment|/* restart RU */
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Receive-Unit restarted. Status: %04x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|p-&gt;scb-&gt;status
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/**********************************************************&n; * handle xmit - interrupt&n; */
 DECL|function|ni52_xmt_int
@@ -4042,11 +3865,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-multiline_comment|/*&n;  if(!(p-&gt;xmit_cmds[0]-&gt;cmd_status &amp; STAT_COMPL))&n;    return;&n;*/
-r_if
-c_cond
-(paren
-(paren
 id|status
 op_assign
 id|p-&gt;xmit_cmds
@@ -4055,7 +3873,31 @@ id|p-&gt;xmit_last
 )braket
 op_member_access_from_pointer
 id|cmd_status
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|status
+op_amp
+id|STAT_COMPL
 )paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: strange .. xmit-int without a &squot;COMPLETE&squot;&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
 op_amp
 id|STAT_OK
 )paren
@@ -4069,16 +3911,6 @@ op_add_assign
 id|status
 op_amp
 id|TCMD_MAXCOLLMASK
-)paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
 )paren
 suffix:semicolon
 )brace
@@ -4155,6 +3987,9 @@ op_amp
 id|TCMD_UNDERRUN
 )paren
 (brace
+id|p-&gt;stats.tx_fifo_errors
+op_increment
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4187,7 +4022,7 @@ l_int|16
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifndef ONLY_ONE_XMIT_BUF
+macro_line|#if (NUM_XMIT_BUFFS != 1)
 r_if
 c_cond
 (paren
@@ -4205,6 +4040,16 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/***********************************************************&n; * (re)start the receiver&n; */
 DECL|function|startrecv586
@@ -4249,34 +4094,12 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* start cmd. */
-r_while
-c_loop
+id|WAIT_4_SCB_CMD
+c_func
 (paren
-id|p-&gt;scb-&gt;cmd
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* wait for accept cmd. (no timeout!!) */
-id|DELAY
-c_func
-(paren
-l_int|2
-)paren
-suffix:semicolon
-multiline_comment|/* isn&squot;t necess. */
-id|p-&gt;scb-&gt;cmd
-op_assign
-id|p-&gt;scb-&gt;status
-op_amp
-id|STAT_MASK
-suffix:semicolon
-id|ni_attn586
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* ack interr */
 )brace
 multiline_comment|/******************************************************&n; * send frame &n; */
 DECL|function|ni52_send_packet
@@ -4298,6 +4121,8 @@ id|dev
 (brace
 r_int
 id|len
+comma
+id|i
 suffix:semicolon
 macro_line|#ifndef NO_NOPCOMMANDS
 r_int
@@ -4334,11 +4159,126 @@ c_cond
 (paren
 id|tickssofar
 OL
-l_int|30
+l_int|5
 )paren
 r_return
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;scb-&gt;status
+op_amp
+id|CU_ACTIVE
+)paren
+multiline_comment|/* COMMAND-UNIT active? */
+(brace
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;%s: strange ... timeout with CU active?!?&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: X0: %04x N0: %04x N1: %04x %d&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+(paren
+r_int
+)paren
+id|p-&gt;xmit_cmds
+(braket
+l_int|0
+)braket
+op_member_access_from_pointer
+id|cmd_status
+comma
+(paren
+r_int
+)paren
+id|p-&gt;nop_cmds
+(braket
+l_int|0
+)braket
+op_member_access_from_pointer
+id|cmd_status
+comma
+(paren
+r_int
+)paren
+id|p-&gt;nop_cmds
+(braket
+l_int|1
+)braket
+op_member_access_from_pointer
+id|cmd_status
+comma
+(paren
+r_int
+)paren
+id|p-&gt;nop_point
+)paren
+suffix:semicolon
+macro_line|#endif
+id|p-&gt;scb-&gt;cmd
+op_assign
+id|CUC_ABORT
+suffix:semicolon
+id|ni_attn586
+c_func
+(paren
+)paren
+suffix:semicolon
+id|WAIT_4_SCB_CMD
+c_func
+(paren
+)paren
+suffix:semicolon
+id|p-&gt;scb-&gt;cbl_offset
+op_assign
+id|make16
+c_func
+(paren
+id|p-&gt;nop_cmds
+(braket
+id|p-&gt;nop_point
+)braket
+)paren
+suffix:semicolon
+id|p-&gt;scb-&gt;cmd
+op_assign
+id|CUC_START
+suffix:semicolon
+id|ni_attn586
+c_func
+(paren
+)paren
+suffix:semicolon
+id|WAIT_4_SCB_CMD
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -4385,9 +4325,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+)brace
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -4418,6 +4362,30 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;len
+OG
+id|XMIT_BUFF_SIZE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Sorry, max. framelength is %d bytes. The length of your frame is %ld bytes.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|XMIT_BUFF_SIZE
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4482,7 +4450,7 @@ id|skb-&gt;len
 suffix:colon
 id|ETH_ZLEN
 suffix:semicolon
-macro_line|#ifdef ONLY_ONE_XMIT_BUF  
+macro_line|#if (NUM_XMIT_BUFFS == 1)
 macro_line|#  ifdef NO_NOPCOMMANDS
 id|p-&gt;xmit_buffs
 (braket
@@ -4495,15 +4463,21 @@ id|TBD_LAST
 op_or
 id|len
 suffix:semicolon
-id|p-&gt;xmit_cmds
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
-id|cmd_status
+r_for
+c_loop
+(paren
+id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|p-&gt;scb-&gt;cbl_offset
 op_assign
 id|make16
@@ -4519,39 +4493,91 @@ id|p-&gt;scb-&gt;cmd
 op_assign
 id|CUC_START
 suffix:semicolon
-id|dev-&gt;trans_start
+id|p-&gt;xmit_cmds
+(braket
+l_int|0
+)braket
+op_member_access_from_pointer
+id|cmd_status
 op_assign
-id|jiffies
+l_int|0
 suffix:semicolon
 id|ni_attn586
 c_func
 (paren
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|p-&gt;scb-&gt;cmd
-)paren
-r_for
-c_loop
-(paren
-id|len
+id|dev-&gt;trans_start
 op_assign
-l_int|0
+id|jiffies
 suffix:semicolon
-id|len
-OL
-l_int|256
-suffix:semicolon
-id|len
-op_increment
+r_if
+c_cond
+(paren
+op_logical_neg
+id|i
 )paren
 (brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*  DELAY(1); */
-multiline_comment|/* TEST;TEST;TEST */
+id|WAIT_4_SCB_CMD
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|p-&gt;scb-&gt;status
+op_amp
+id|CU_ACTIVE
+)paren
+)paren
+(brace
+multiline_comment|/* test it, because CU sometimes doesn&squot;t start immediately */
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|p-&gt;xmit_cmds
+(braket
+l_int|0
+)braket
+op_member_access_from_pointer
+id|cmd_status
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|15
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Can&squot;t start transmit-command.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+)brace
 macro_line|#  else
 id|next_nop
 op_assign
@@ -4579,26 +4605,6 @@ id|p-&gt;xmit_cmds
 l_int|0
 )braket
 op_member_access_from_pointer
-id|cmd_cmd
-op_assign
-id|CMD_XMIT
-op_or
-id|CMD_INT
-suffix:semicolon
-id|p-&gt;xmit_cmds
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
-id|cmd_status
-op_assign
-l_int|0
-suffix:semicolon
-id|p-&gt;xmit_cmds
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
 id|cmd_link
 op_assign
 id|p-&gt;nop_cmds
@@ -4619,6 +4625,13 @@ id|next_nop
 )paren
 )paren
 suffix:semicolon
+id|p-&gt;xmit_cmds
+(braket
+l_int|0
+)braket
+op_member_access_from_pointer
+id|cmd_status
+op_assign
 id|p-&gt;nop_cmds
 (braket
 id|next_nop
@@ -4653,6 +4666,14 @@ suffix:semicolon
 id|p-&gt;nop_point
 op_assign
 id|next_nop
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
 suffix:semicolon
 macro_line|#  endif
 macro_line|#else
@@ -4686,17 +4707,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|p-&gt;xmit_cmds
-(braket
-id|p-&gt;xmit_count
-)braket
-op_member_access_from_pointer
-id|cmd_cmd
-op_assign
-id|CMD_XMIT
-op_or
-id|CMD_INT
-suffix:semicolon
 id|p-&gt;xmit_cmds
 (braket
 id|p-&gt;xmit_count
@@ -4789,8 +4799,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
-)brace
 id|dev_kfree_skb
 c_func
 (paren
@@ -4799,10 +4807,13 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
+macro_line|#endif
+)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*******************************************&n; * Someone wanna have the statistics &n; */
 DECL|function|ni52_get_stats
 r_static
 r_struct
@@ -4829,39 +4840,71 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#ifdef DEBUG3
-id|printk
-c_func
-(paren
-l_string|&quot;ni52: errs, crc %d, align %d, resource %d, ovrn %d.&bslash;n&quot;
-comma
-(paren
 r_int
-)paren
-id|p-&gt;scb-&gt;crc_errs
-comma
-(paren
 r_int
-)paren
-id|p-&gt;scb-&gt;aln_errs
+id|crc
 comma
-(paren
-r_int
-)paren
-id|p-&gt;scb-&gt;rsc_errs
+id|aln
 comma
-(paren
-r_int
-)paren
-id|p-&gt;scb-&gt;ovrn_errs
-)paren
+id|rsc
+comma
+id|ovrn
 suffix:semicolon
-macro_line|#endif
+id|crc
+op_assign
+id|p-&gt;scb-&gt;crc_errs
+suffix:semicolon
+multiline_comment|/* get error-statistic from the ni82586 */
+id|p-&gt;scb-&gt;crc_errs
+op_sub_assign
+id|crc
+suffix:semicolon
+id|aln
+op_assign
+id|p-&gt;scb-&gt;aln_errs
+suffix:semicolon
+id|p-&gt;scb-&gt;aln_errs
+op_sub_assign
+id|aln
+suffix:semicolon
+id|rsc
+op_assign
+id|p-&gt;scb-&gt;rsc_errs
+suffix:semicolon
+id|p-&gt;scb-&gt;rsc_errs
+op_sub_assign
+id|rsc
+suffix:semicolon
+id|ovrn
+op_assign
+id|p-&gt;scb-&gt;ovrn_errs
+suffix:semicolon
+id|p-&gt;scb-&gt;ovrn_errs
+op_sub_assign
+id|ovrn
+suffix:semicolon
+id|p-&gt;stats.rx_crc_errors
+op_add_assign
+id|crc
+suffix:semicolon
+id|p-&gt;stats.rx_fifo_errors
+op_add_assign
+id|ovrn
+suffix:semicolon
+id|p-&gt;stats.rx_frame_errors
+op_add_assign
+id|aln
+suffix:semicolon
+id|p-&gt;stats.rx_dropped
+op_add_assign
+id|rsc
+suffix:semicolon
 r_return
 op_amp
 id|p-&gt;stats
 suffix:semicolon
 )brace
+multiline_comment|/********************************************************&n; * Set MC list ..  &n; */
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -4881,10 +4924,12 @@ op_star
 id|addrs
 )paren
 (brace
-multiline_comment|/*&n;  struct priv *p = (struct priv *) dev-&gt;priv;&n;  volatile struct configure_cmd_struct  *cfg_cmd;&n;*/
 r_if
 c_cond
 (paren
+op_logical_neg
+id|dev-&gt;start
+op_logical_and
 op_logical_neg
 id|num_addrs
 )paren
@@ -4892,197 +4937,44 @@ id|num_addrs
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Currently, the Ni52 driver doesn&squot;t support promiscuous or multicast mode.&bslash;n&quot;
+l_string|&quot;%s: Can&squot;t apply promiscous/multicastmode to a not running interface.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
-macro_line|#if 0
-id|p-&gt;scb-&gt;cmd
-op_assign
-id|CUC_SUSPEND
-suffix:semicolon
-id|ni_attn586
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|p-&gt;scb-&gt;cmd
-)paren
-(brace
+r_return
 suffix:semicolon
 )brace
-id|p-&gt;scb-&gt;cmd
-op_assign
-id|RUC_SUSPEND
-suffix:semicolon
-id|ni_attn586
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|p-&gt;scb-&gt;cmd
-)paren
-(brace
-suffix:semicolon
-)brace
-id|cfg_cmd
-op_assign
-(paren
-r_struct
-id|configure_cmd_struct
-op_star
-)paren
-id|p-&gt;xmit_cbuffs
-(braket
-l_int|0
-)braket
-suffix:semicolon
-multiline_comment|/* we&squot;re using a transmitcommand */
-id|cfg_cmd-&gt;cmd_status
+id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-id|cfg_cmd-&gt;cmd_cmd
-op_assign
-id|CMD_CONFIGURE
-op_or
-id|CMD_LAST
-suffix:semicolon
-id|cfg_cmd-&gt;cmd_link
-op_assign
-l_int|0xffff
-suffix:semicolon
-id|cfg_cmd-&gt;byte_cnt
-op_assign
-l_int|0x0a
-suffix:semicolon
-multiline_comment|/* number of cfg bytes */
-id|cfg_cmd-&gt;fifo
-op_assign
-l_int|0x08
-suffix:semicolon
-multiline_comment|/* fifo-limit (8=tx:32/rx:64) */
-id|cfg_cmd-&gt;sav_bf
-op_assign
-l_int|0x40
-suffix:semicolon
-multiline_comment|/* hold or discard bad recv frames (bit 7) */
-id|cfg_cmd-&gt;adr_len
-op_assign
-l_int|0x2e
-suffix:semicolon
-multiline_comment|/* addr_len |!src_insert |pre-len |loopback */
-id|cfg_cmd-&gt;priority
-op_assign
-l_int|0x00
-suffix:semicolon
-id|cfg_cmd-&gt;ifd
-op_assign
-l_int|0x60
-suffix:semicolon
-id|cfg_cmd-&gt;time_low
-op_assign
-l_int|0x00
-suffix:semicolon
-id|cfg_cmd-&gt;time_high
-op_assign
-l_int|0xf2
-suffix:semicolon
-id|cfg_cmd-&gt;promisc
-op_assign
-l_int|0x01
-suffix:semicolon
-multiline_comment|/* promisc on */
-id|cfg_cmd-&gt;carr_coll
-op_assign
-l_int|0x00
-suffix:semicolon
-id|p-&gt;scb-&gt;cbl_offset
-op_assign
-id|make16
+id|alloc586
 c_func
 (paren
-id|cfg_cmd
+id|dev
 )paren
 suffix:semicolon
-id|p-&gt;scb-&gt;cmd
-op_assign
-id|CUC_START
-suffix:semicolon
-multiline_comment|/* cmd.-unit start */
-id|ni_attn586
+id|init586
 c_func
 (paren
+id|dev
+comma
+id|num_addrs
+comma
+id|addrs
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|startrecv586
+c_func
 (paren
-id|p-&gt;scb-&gt;cmd
+id|dev
 )paren
-(brace
+suffix:semicolon
+id|dev-&gt;start
+op_assign
+l_int|1
 suffix:semicolon
 )brace
-id|p-&gt;scb-&gt;cbl_offset
-op_assign
-id|p-&gt;nop_cmds
-(braket
-l_int|0
-)braket
-op_member_access_from_pointer
-id|cmd_link
-op_assign
-id|make16
-c_func
-(paren
-id|p-&gt;nop_cmds
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-id|p-&gt;scb-&gt;cmd
-op_assign
-id|CUC_START
-suffix:semicolon
-id|ni_atthn586
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|p-&gt;scb-&gt;cmd
-)paren
-(brace
-suffix:semicolon
-)brace
-id|p-&gt;scb-&gt;cmd
-op_assign
-id|RUC_RESUME
-suffix:semicolon
-id|ni_atthn586
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|p-&gt;scb-&gt;cmd
-)paren
-(brace
-suffix:semicolon
-)brace
-macro_line|#endif
-)brace
+multiline_comment|/*&n; * END: linux/drivers/net/ni52.c &n; */
 eof

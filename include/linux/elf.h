@@ -511,6 +511,42 @@ DECL|typedef|Elf32_Shdr
 )brace
 id|Elf32_Shdr
 suffix:semicolon
+DECL|macro|EI_MAG0
+mdefine_line|#define&t;EI_MAG0&t;&t;0&t;&t;/* e_ident[] indexes */
+DECL|macro|EI_MAG1
+mdefine_line|#define&t;EI_MAG1&t;&t;1
+DECL|macro|EI_MAG2
+mdefine_line|#define&t;EI_MAG2&t;&t;2
+DECL|macro|EI_MAG3
+mdefine_line|#define&t;EI_MAG3&t;&t;3
+DECL|macro|EI_CLASS
+mdefine_line|#define&t;EI_CLASS&t;4
+DECL|macro|EI_DATA
+mdefine_line|#define&t;EI_DATA&t;&t;5
+DECL|macro|EI_VERSION
+mdefine_line|#define&t;EI_VERSION&t;6
+DECL|macro|EI_PAD
+mdefine_line|#define&t;EI_PAD&t;&t;7
+DECL|macro|ELFMAG0
+mdefine_line|#define&t;ELFMAG0&t;&t;0x7f&t;&t;/* EI_MAG */
+DECL|macro|ELFMAG1
+mdefine_line|#define&t;ELFMAG1&t;&t;&squot;E&squot;
+DECL|macro|ELFMAG2
+mdefine_line|#define&t;ELFMAG2&t;&t;&squot;L&squot;
+DECL|macro|ELFMAG3
+mdefine_line|#define&t;ELFMAG3&t;&t;&squot;F&squot;
+DECL|macro|ELFMAG
+mdefine_line|#define&t;ELFMAG&t;&t;&quot;&bslash;177ELF&quot;
+DECL|macro|SELFMAG
+mdefine_line|#define&t;SELFMAG&t;&t;4
+DECL|macro|ELFCLASSNONE
+mdefine_line|#define&t;ELFCLASSNONE&t;0&t;&t;/* EI_CLASS */
+DECL|macro|ELFCLASS32
+mdefine_line|#define&t;ELFCLASS32&t;1
+DECL|macro|ELFCLASS64
+mdefine_line|#define&t;ELFCLASS64&t;2
+DECL|macro|ELFCLASSNUM
+mdefine_line|#define&t;ELFCLASSNUM&t;3
 DECL|macro|ELF_START_MMAP
 mdefine_line|#define ELF_START_MMAP 0x80000000
 macro_line|#endif /* _LINUX_ELF_H */

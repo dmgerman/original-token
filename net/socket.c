@@ -6005,6 +6005,12 @@ id|routine
 op_assign
 id|net_bh
 suffix:semicolon
+id|enable_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
 macro_line|#endif  
 )brace
 DECL|function|socket_get_info

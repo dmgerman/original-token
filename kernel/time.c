@@ -692,12 +692,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if defined (__i386__) || defined (__mips__)
 op_star
 id|tv
 op_assign
 id|xtime
 suffix:semicolon
+macro_line|#if defined (__i386__) || defined (__mips__)
 id|tv-&gt;tv_usec
 op_add_assign
 id|do_gettimeoffset
@@ -721,27 +721,6 @@ id|tv-&gt;tv_sec
 op_increment
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* !defined (__i386__) &amp;&amp; !defined (__mips__) */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-op_star
-id|tv
-op_assign
-id|xtime
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#endif /* !defined (__i386__) &amp;&amp; !defined (__mips__) */
 id|restore_flags
 c_func

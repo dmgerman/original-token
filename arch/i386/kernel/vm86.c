@@ -1333,31 +1333,6 @@ id|regs
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/* int 3 */
-r_case
-l_int|0xcc
-suffix:colon
-id|IP
-c_func
-(paren
-id|regs
-)paren
-op_increment
-suffix:semicolon
-id|do_int
-c_func
-(paren
-id|regs
-comma
-l_int|3
-comma
-id|ssp
-comma
-id|sp
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
 multiline_comment|/* int xx */
 r_case
 l_int|0xcd

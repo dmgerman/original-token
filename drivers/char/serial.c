@@ -10572,6 +10572,12 @@ id|routine
 op_assign
 id|do_serial_bh
 suffix:semicolon
+id|enable_bh
+c_func
+(paren
+id|SERIAL_BH
+)paren
+suffix:semicolon
 id|timer_table
 (braket
 id|RS_TIMER

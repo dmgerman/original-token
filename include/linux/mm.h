@@ -11,6 +11,7 @@ r_int
 id|high_memory
 suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#ifdef __KERNEL__
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
@@ -436,7 +437,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* end of planning stage */
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Free area management&n; */
 r_extern
 r_int

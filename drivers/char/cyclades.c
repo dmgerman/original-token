@@ -9975,6 +9975,12 @@ id|routine
 op_assign
 id|do_cyclades_bh
 suffix:semicolon
+id|enable_bh
+c_func
+(paren
+id|CYCLADES_BH
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren

@@ -534,13 +534,13 @@ r_int
 r_char
 id|mc_list
 (braket
-l_int|16
+l_int|0
 )braket
 (braket
 l_int|6
 )braket
 suffix:semicolon
-multiline_comment|/* the list for 16 entries */
+multiline_comment|/* pointer to 6 bytes entries */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * transmit command &n; */

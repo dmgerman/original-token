@@ -3370,5 +3370,23 @@ c_func
 l_string|&quot;Could not allocate timer IRQ!&quot;
 )paren
 suffix:semicolon
+id|enable_bh
+c_func
+(paren
+id|TIMER_BH
+)paren
+suffix:semicolon
+id|enable_bh
+c_func
+(paren
+id|TQUEUE_BH
+)paren
+suffix:semicolon
+id|enable_bh
+c_func
+(paren
+id|IMMEDIATE_BH
+)paren
+suffix:semicolon
 )brace
 eof

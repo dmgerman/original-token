@@ -32,8 +32,7 @@ r_int
 r_int
 id|bh_mask
 op_assign
-op_complement
-l_int|0UL
+l_int|0
 suffix:semicolon
 DECL|variable|bh_base
 r_struct

@@ -27,8 +27,8 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &quot;slip.h&quot;
 macro_line|#ifdef CONFIG_INET
-macro_line|#include &quot;ip.h&quot;
-macro_line|#include &quot;tcp.h&quot;
+macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &quot;slhc.h&quot;
 macro_line|#endif
 macro_line|#ifdef MODULE

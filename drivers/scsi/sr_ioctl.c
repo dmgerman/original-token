@@ -14,7 +14,7 @@ DECL|macro|IOCTL_RETRIES
 mdefine_line|#define IOCTL_RETRIES 3
 multiline_comment|/* The CDROM is fairly slow, so we need a little extra time */
 DECL|macro|IOCTL_TIMEOUT
-mdefine_line|#define IOCTL_TIMEOUT 200
+mdefine_line|#define IOCTL_TIMEOUT 2000
 r_extern
 r_int
 id|scsi_ioctl

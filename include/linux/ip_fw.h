@@ -98,31 +98,39 @@ DECL|macro|IP_FW_F_MASK
 mdefine_line|#define IP_FW_F_MASK&t;0x7F&t;/* All possible flag bits mask        */
 multiline_comment|/*    &n; *&t;New IP firewall options for [gs]etsockopt at the RAW IP level.&n; *&t;Unlike BSD Linux inherits IP options so you don&squot;t have to use&n; *&t;a raw socket for this. Instead we check rights in the calls.&n; */
 DECL|macro|IP_FW_BASE_CTL
-mdefine_line|#define IP_FW_BASE_CTL&t;64
+mdefine_line|#define IP_FW_BASE_CTL   64
 DECL|macro|IP_FW_ADD_BLK
-mdefine_line|#define IP_FW_ADD_BLK (IP_FW_BASE_CTL)
+mdefine_line|#define IP_FW_ADD_BLK    (IP_FW_BASE_CTL)
 DECL|macro|IP_FW_ADD_FWD
-mdefine_line|#define IP_FW_ADD_FWD (IP_FW_BASE_CTL+1)   
+mdefine_line|#define IP_FW_ADD_FWD    (IP_FW_BASE_CTL+1)   
 DECL|macro|IP_FW_CHK_BLK
-mdefine_line|#define IP_FW_CHK_BLK (IP_FW_BASE_CTL+2)
+mdefine_line|#define IP_FW_CHK_BLK    (IP_FW_BASE_CTL+2)
 DECL|macro|IP_FW_CHK_FWD
-mdefine_line|#define IP_FW_CHK_FWD (IP_FW_BASE_CTL+3)
+mdefine_line|#define IP_FW_CHK_FWD    (IP_FW_BASE_CTL+3)
 DECL|macro|IP_FW_DEL_BLK
-mdefine_line|#define IP_FW_DEL_BLK (IP_FW_BASE_CTL+4)
+mdefine_line|#define IP_FW_DEL_BLK    (IP_FW_BASE_CTL+4)
 DECL|macro|IP_FW_DEL_FWD
-mdefine_line|#define IP_FW_DEL_FWD (IP_FW_BASE_CTL+5)
-DECL|macro|IP_FW_FLUSH
-mdefine_line|#define IP_FW_FLUSH   (IP_FW_BASE_CTL+6)
-DECL|macro|IP_FW_POLICY
-mdefine_line|#define IP_FW_POLICY  (IP_FW_BASE_CTL+7) 
+mdefine_line|#define IP_FW_DEL_FWD    (IP_FW_BASE_CTL+5)
+DECL|macro|IP_FW_FLUSH_BLK
+mdefine_line|#define IP_FW_FLUSH_BLK  (IP_FW_BASE_CTL+6)
+DECL|macro|IP_FW_FLUSH_FWD
+mdefine_line|#define IP_FW_FLUSH_FWD  (IP_FW_BASE_CTL+7)
+DECL|macro|IP_FW_ZERO_BLK
+mdefine_line|#define IP_FW_ZERO_BLK   (IP_FW_BASE_CTL+8)
+DECL|macro|IP_FW_ZERO_FWD
+mdefine_line|#define IP_FW_ZERO_FWD   (IP_FW_BASE_CTL+9)
+DECL|macro|IP_FW_POLICY_BLK
+mdefine_line|#define IP_FW_POLICY_BLK (IP_FW_BASE_CTL+10)
+DECL|macro|IP_FW_POLICY_FWD
+mdefine_line|#define IP_FW_POLICY_FWD (IP_FW_BASE_CTL+11)
 DECL|macro|IP_ACCT_ADD
-mdefine_line|#define IP_ACCT_ADD   (IP_FW_BASE_CTL+10)
+mdefine_line|#define IP_ACCT_ADD      (IP_FW_BASE_CTL+16)
 DECL|macro|IP_ACCT_DEL
-mdefine_line|#define IP_ACCT_DEL   (IP_FW_BASE_CTL+11)
+mdefine_line|#define IP_ACCT_DEL      (IP_FW_BASE_CTL+17)
 DECL|macro|IP_ACCT_FLUSH
-mdefine_line|#define IP_ACCT_FLUSH (IP_FW_BASE_CTL+12)
+mdefine_line|#define IP_ACCT_FLUSH    (IP_FW_BASE_CTL+18)
 DECL|macro|IP_ACCT_ZERO
-mdefine_line|#define IP_ACCT_ZERO  (IP_FW_BASE_CTL+13)
+mdefine_line|#define IP_ACCT_ZERO     (IP_FW_BASE_CTL+19)
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
@@ -141,7 +149,11 @@ id|ip_fw_fwd_chain
 suffix:semicolon
 r_extern
 r_int
-id|ip_fw_policy
+id|ip_fw_blk_policy
+suffix:semicolon
+r_extern
+r_int
+id|ip_fw_fwd_policy
 suffix:semicolon
 r_extern
 r_int
@@ -155,6 +167,8 @@ comma
 r_struct
 id|ip_fw
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -190,8 +204,6 @@ comma
 r_struct
 id|ip_fw
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern
