@@ -9,6 +9,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
+macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &quot;ide.h&quot;
 DECL|variable|pmac_ide_regbase
 id|ide_ioreg_t
@@ -20,6 +21,19 @@ suffix:semicolon
 DECL|variable|pmac_ide_irq
 r_int
 id|pmac_ide_irq
+(braket
+id|MAX_HWIFS
+)braket
+suffix:semicolon
+DECL|variable|pmac_ide_count
+r_int
+id|pmac_ide_count
+suffix:semicolon
+DECL|variable|pmac_ide_node
+r_struct
+id|device_node
+op_star
+id|pmac_ide_node
 (braket
 id|MAX_HWIFS
 )braket
@@ -89,6 +103,8 @@ id|irq
 (brace
 r_int
 id|i
+comma
+id|r
 suffix:semicolon
 op_star
 id|p
@@ -104,29 +120,27 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/* we check only for -EINVAL meaning that we have found a matching&n;&t;   bay but with the wrong device type */
+id|r
+op_assign
+id|check_media_bay_by_base
+c_func
+(paren
+id|base
+comma
+id|MB_CD
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|base
+id|r
 op_eq
-id|mb_cd_base
-op_logical_and
-op_logical_neg
-id|check_media_bay
-c_func
-(paren
-id|MB_CD
-)paren
-)paren
-(brace
-id|mb_cd_index
-op_assign
 op_minus
-l_int|1
-suffix:semicolon
+id|EINVAL
+)paren
 r_return
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -354,12 +368,12 @@ c_cond
 (paren
 id|p-&gt;parent
 op_logical_and
-id|p-&gt;parent-&gt;name
+id|p-&gt;parent-&gt;type
 op_logical_and
 id|strcasecmp
 c_func
 (paren
-id|p-&gt;parent-&gt;name
+id|p-&gt;parent-&gt;type
 comma
 l_string|&quot;media-bay&quot;
 )paren
@@ -465,6 +479,7 @@ comma
 l_int|0x200
 )paren
 suffix:semicolon
+multiline_comment|/* XXX This is bogus. Should be fixed in the registry by checking&n;&t;&t;   the kind of host interrupt controller, a bit like gatwick&n;&t;&t;   fixes in irq.c&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -512,6 +527,13 @@ id|i
 op_assign
 id|irq
 suffix:semicolon
+id|pmac_ide_node
+(braket
+id|i
+)braket
+op_assign
+id|np
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -530,19 +552,28 @@ op_eq
 l_int|0
 )paren
 (brace
-id|mb_cd_index
-op_assign
-id|i
-suffix:semicolon
-id|mb_cd_base
-op_assign
+id|media_bay_set_ide_infos
+c_func
+(paren
+id|np-&gt;parent
+comma
 id|base
-suffix:semicolon
-id|mb_cd_irq
-op_assign
+comma
 id|irq
+comma
+id|i
+)paren
 suffix:semicolon
 )brace
+r_else
+id|feature_set
+c_func
+(paren
+id|np
+comma
+id|FEATURE_IDE_enable
+)paren
+suffix:semicolon
 id|hwif
 op_assign
 op_amp
@@ -602,6 +633,10 @@ op_increment
 id|i
 suffix:semicolon
 )brace
+id|pmac_ide_count
+op_assign
+id|i
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
 DECL|function|__initfunc

@@ -1,6 +1,8 @@
 multiline_comment|/* $Id: dma.h,v 1.3 1997/03/16 06:20:39 cort Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; * Changes for ppc sound by Christoph Nadig&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Note: Adapted for PowerPC by Gary Thomas&n; * Modified by Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; *&n; * None of this really applies for Power Macintoshes.  There is&n; * basically just enough here to get kernel/dma.c to compile.&n; *&n; * There may be some comments or restrictions made here which are&n; * not valid for the PReP platform.  Take what you read&n; * with a grain of salt.&n; */
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
@@ -205,6 +207,60 @@ DECL|macro|DMA2_EXT_REG
 mdefine_line|#define DMA2_EXT_REG               0x4D6
 DECL|macro|DMA_MODE_CASCADE
 mdefine_line|#define DMA_MODE_CASCADE 0xC0   /* pass thru DREQ-&gt;HRQ, DACK&lt;-HLDA only */
+r_extern
+id|spinlock_t
+id|dma_spin_lock
+suffix:semicolon
+DECL|function|claim_dma_lock
+r_static
+id|__inline__
+r_int
+r_int
+id|claim_dma_lock
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|dma_spin_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|flags
+suffix:semicolon
+)brace
+DECL|function|release_dma_lock
+r_static
+id|__inline__
+r_void
+id|release_dma_lock
+c_func
+(paren
+r_int
+r_int
+id|flags
+)paren
+(brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|dma_spin_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* enable/disable a specific DMA channel */
 DECL|function|enable_dma
 r_static

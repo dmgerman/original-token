@@ -149,6 +149,10 @@ r_char
 op_star
 id|data
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|mac_serial
@@ -181,6 +185,12 @@ r_int
 r_char
 id|read_reg_zero
 suffix:semicolon
+DECL|member|dev_node
+r_struct
+id|device_node
+op_star
+id|dev_node
+suffix:semicolon
 DECL|member|soft_carrier
 r_char
 id|soft_carrier
@@ -201,6 +211,11 @@ r_char
 id|is_cons
 suffix:semicolon
 multiline_comment|/* Is this our console. */
+DECL|member|is_cobalt_modem
+r_char
+id|is_cobalt_modem
+suffix:semicolon
+multiline_comment|/* is a gatwick-based cobalt modem */
 DECL|member|tx_active
 r_int
 r_char

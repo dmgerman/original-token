@@ -380,6 +380,11 @@ c_cond
 id|inode
 )paren
 (brace
+id|dentry-&gt;d_op
+op_assign
+op_amp
+id|proc_dentry_operations
+suffix:semicolon
 id|d_add
 c_func
 (paren

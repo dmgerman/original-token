@@ -121,6 +121,20 @@ r_int
 id|on
 )paren
 suffix:semicolon
+r_void
+id|pmu_restart
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|pmu_shutdown
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Stuff for putting the powerbook to sleep and waking it again.&n; */
 macro_line|#include &lt;linux/notifier.h&gt;
 r_extern

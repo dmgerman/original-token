@@ -2,8 +2,6 @@ macro_line|#ifndef _ASM_PPC_UNISTD_H_
 DECL|macro|_ASM_PPC_UNISTD_H_
 mdefine_line|#define _ASM_PPC_UNISTD_H_
 multiline_comment|/*&n; * This file contains the system call numbers.&n; */
-DECL|macro|__NR_setup
-mdefine_line|#define __NR_setup&t;&t;  0&t;/* used only by init, to get system going */
 DECL|macro|__NR_exit
 mdefine_line|#define __NR_exit&t;&t;  1
 DECL|macro|__NR_fork
@@ -106,8 +104,8 @@ DECL|macro|__NR_getegid
 mdefine_line|#define __NR_getegid&t;&t; 50
 DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct&t;&t; 51
-DECL|macro|__NR_phys
-mdefine_line|#define __NR_phys&t;&t; 52
+DECL|macro|__NR_umount2
+mdefine_line|#define __NR_umount2&t;&t; 52
 DECL|macro|__NR_lock
 mdefine_line|#define __NR_lock&t;&t; 53
 DECL|macro|__NR_ioctl
@@ -482,19 +480,6 @@ c_func
 r_int
 comma
 id|pause
-)paren
-r_static
-r_inline
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|setup
-comma
-r_int
-comma
-id|magic
 )paren
 r_static
 r_inline

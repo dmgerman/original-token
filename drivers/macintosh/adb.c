@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,6 +14,13 @@ macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
+DECL|variable|adb_hardware
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|adb_hardware
+)paren
+suffix:semicolon
 DECL|variable|adb_hardware
 r_enum
 id|adb_hw
@@ -44,11 +52,21 @@ id|adb_autopoll
 )paren
 (paren
 r_int
-id|on
+id|devs
+)paren
+suffix:semicolon
+DECL|variable|adb_reset_bus
+r_int
+(paren
+op_star
+id|adb_reset_bus
+)paren
+(paren
+r_void
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|adb_scan_bus
 c_func
 (paren
@@ -170,7 +188,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|function|adb_scan_bus
 r_static
-r_void
+r_int
 id|adb_scan_bus
 c_func
 (paren
@@ -186,12 +204,21 @@ l_int|0
 comma
 id|noMovement
 suffix:semicolon
+r_int
+id|devmask
+op_assign
+l_int|0
+suffix:semicolon
 r_struct
 id|adb_request
 id|req
 suffix:semicolon
+id|adb_reset_bus
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* reset ADB bus */
-multiline_comment|/*adb_request(&amp;req, NULL, ADBREQ_SYNC, 1, 0);*/
 multiline_comment|/* assumes adb_handler[] is all zeroes at this point */
 r_for
 c_loop
@@ -568,12 +595,21 @@ dot
 id|handler_id
 )paren
 suffix:semicolon
+id|devmask
+op_or_assign
+l_int|1
+op_lshift
+id|i
+suffix:semicolon
 )brace
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+id|devmask
 suffix:semicolon
 )brace
 DECL|function|adb_init
@@ -598,6 +634,10 @@ op_assign
 r_void
 op_star
 )paren
+id|adb_nodev
+suffix:semicolon
+id|adb_reset_bus
+op_assign
 id|adb_nodev
 suffix:semicolon
 r_if
@@ -648,6 +688,9 @@ l_string|&quot;Warning: no ADB interface detected&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
+r_int
+id|devs
+op_assign
 id|adb_scan_bus
 c_func
 (paren
@@ -656,7 +699,7 @@ suffix:semicolon
 id|adb_autopoll
 c_func
 (paren
-l_int|1
+id|devs
 )paren
 suffix:semicolon
 )brace
@@ -850,7 +893,6 @@ op_increment
 r_if
 c_cond
 (paren
-(paren
 id|adb_handler
 (braket
 id|i
@@ -859,18 +901,6 @@ dot
 id|original_address
 op_eq
 id|default_id
-)paren
-op_logical_or
-(paren
-id|adb_handler
-(braket
-id|i
-)braket
-dot
-id|handler_id
-op_eq
-id|handler_id
-)paren
 )paren
 (brace
 r_if

@@ -27,18 +27,17 @@ macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
-macro_line|#ifdef CONFIG_PMAC_PBOOK
 macro_line|#include &lt;asm/adb.h&gt;
+macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/pmu.h&gt;
-macro_line|#endif /* CONFIG_PMAC_PBOOK */
 macro_line|#include &quot;awacs_defs.h&quot;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 macro_line|#include &quot;dmasound.h&quot;
 macro_line|#include &lt;linux/soundcard.h&gt;
 DECL|macro|HAS_8BIT_TABLES
@@ -116,7 +115,7 @@ mdefine_line|#define AMI_AUDIO_8&t;(DMAF_SETCLR | DMAF_MASTER | DMAF_AUD0 | DMAF
 DECL|macro|AMI_AUDIO_14
 mdefine_line|#define AMI_AUDIO_14&t;(AMI_AUDIO_8 | DMAF_AUD2 | DMAF_AUD3)
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 multiline_comment|/*&n; * Interrupt numbers and addresses, obtained from the device tree.&n; */
 DECL|variable|awacs_irq
 DECL|variable|awacs_tx_irq
@@ -158,6 +157,16 @@ DECL|variable|awacs_subframe
 r_static
 r_int
 id|awacs_subframe
+suffix:semicolon
+DECL|variable|awacs_revision
+r_static
+r_int
+id|awacs_revision
+suffix:semicolon
+DECL|variable|awacs_spkr_vol
+r_static
+r_int
+id|awacs_spkr_vol
 suffix:semicolon
 multiline_comment|/*&n; * Space for the DBDMA command blocks.&n; */
 DECL|variable|awacs_tx_cmd_space
@@ -914,7 +923,7 @@ id|awacs_sleep_notify
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 multiline_comment|/*** Some declarations *******************************************************/
 DECL|macro|DMASND_TT
 mdefine_line|#define DMASND_TT&t;&t;1
@@ -5187,7 +5196,7 @@ id|frameLeft
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_static
 id|ssize_t
 id|pmac_ct_law
@@ -5448,7 +5457,7 @@ id|ssize_t
 id|frameLeft
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 multiline_comment|/*** Machine definitions *****************************************************/
 r_typedef
 r_struct
@@ -5859,7 +5868,7 @@ r_int
 id|minDev
 suffix:semicolon
 multiline_comment|/* minor device number currently open */
-macro_line|#if defined(CONFIG_ATARI) || defined(CONFIG_PMAC)
+macro_line|#if defined(CONFIG_ATARI) || defined(CONFIG_PPC)
 DECL|member|bal
 r_int
 id|bal
@@ -6186,7 +6195,7 @@ id|fp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_static
 r_void
 op_star
@@ -6377,7 +6386,7 @@ r_int
 id|xx
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 multiline_comment|/*** Mid level stuff *********************************************************/
 r_static
 r_void
@@ -11960,7 +11969,7 @@ id|used
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 DECL|function|pmac_ct_law
 r_static
 id|ssize_t
@@ -14184,7 +14193,7 @@ op_star
 l_int|2
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 macro_line|#ifdef CONFIG_ATARI
 DECL|variable|transTTNormal
 r_static
@@ -14304,7 +14313,7 @@ id|ami_ct_u16le
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 DECL|variable|transAwacsNormal
 r_static
 id|TRANS
@@ -14351,7 +14360,7 @@ comma
 id|pmac_ctx_u16
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 multiline_comment|/*** Low level stuff *********************************************************/
 macro_line|#ifdef CONFIG_ATARI
 multiline_comment|/*&n; * Atari (TT/Falcon)&n; */
@@ -17058,7 +17067,7 @@ id|sq.sync_queue
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 multiline_comment|/*&n; * PCI PowerMac, with AWACS and DBDMA.&n; */
 DECL|function|PMacAlloc
 r_static
@@ -18338,6 +18347,12 @@ op_amp
 id|awacs-&gt;codec_ctrl
 comma
 id|val
+op_or
+(paren
+id|awacs_subframe
+op_lshift
+l_int|22
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -18987,7 +19002,226 @@ id|NOTIFY_DONE
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
-macro_line|#endif /* CONFIG_PMAC */
+multiline_comment|/* Turn on sound output, needed on G3 desktop powermacs */
+r_static
+r_void
+DECL|function|awacs_enable_amp
+id|awacs_enable_amp
+c_func
+(paren
+r_int
+id|spkr_vol
+)paren
+(brace
+r_struct
+id|adb_request
+id|req
+suffix:semicolon
+id|awacs_spkr_vol
+op_assign
+id|spkr_vol
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|adb_hardware
+op_ne
+id|ADB_VIACUDA
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* turn on headphones */
+id|cuda_request
+c_func
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+l_int|5
+comma
+id|CUDA_PACKET
+comma
+id|CUDA_GET_SET_IIC
+comma
+l_int|0x8a
+comma
+l_int|4
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|req.complete
+)paren
+id|cuda_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cuda_request
+c_func
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+l_int|5
+comma
+id|CUDA_PACKET
+comma
+id|CUDA_GET_SET_IIC
+comma
+l_int|0x8a
+comma
+l_int|6
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|req.complete
+)paren
+id|cuda_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* turn on speaker */
+id|cuda_request
+c_func
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+l_int|5
+comma
+id|CUDA_PACKET
+comma
+id|CUDA_GET_SET_IIC
+comma
+l_int|0x8a
+comma
+l_int|3
+comma
+(paren
+l_int|100
+op_minus
+(paren
+id|spkr_vol
+op_amp
+l_int|0xff
+)paren
+)paren
+op_star
+l_int|32
+op_div
+l_int|100
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|req.complete
+)paren
+id|cuda_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cuda_request
+c_func
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+l_int|5
+comma
+id|CUDA_PACKET
+comma
+id|CUDA_GET_SET_IIC
+comma
+l_int|0x8a
+comma
+l_int|5
+comma
+(paren
+l_int|100
+op_minus
+(paren
+(paren
+id|spkr_vol
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+)paren
+)paren
+op_star
+l_int|32
+op_div
+l_int|100
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|req.complete
+)paren
+id|cuda_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cuda_request
+c_func
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+l_int|5
+comma
+id|CUDA_PACKET
+comma
+id|CUDA_GET_SET_IIC
+comma
+l_int|0x8a
+comma
+l_int|1
+comma
+l_int|0x29
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|req.complete
+)paren
+id|cuda_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_PPC */
 multiline_comment|/*** Machine definitions *****************************************************/
 macro_line|#ifdef CONFIG_ATARI
 DECL|variable|machTT
@@ -19098,7 +19332,7 @@ id|AmiPlay
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 DECL|variable|machPMac
 r_static
 id|MACHINE
@@ -20427,7 +20661,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_case
 id|DMASND_AWACS
 suffix:colon
@@ -20736,6 +20970,22 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_SPEAKER
 suffix:colon
+r_if
+c_cond
+(paren
+id|awacs_revision
+op_ge
+l_int|3
+op_logical_and
+id|adb_hardware
+op_eq
+id|ADB_VIACUDA
+)paren
+id|data
+op_assign
+id|awacs_spkr_vol
+suffix:semicolon
+r_else
 id|data
 op_assign
 (paren
@@ -20781,6 +21031,24 @@ comma
 id|data
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|awacs_revision
+op_ge
+l_int|3
+op_logical_and
+id|adb_hardware
+op_eq
+id|ADB_VIACUDA
+)paren
+id|awacs_enable_amp
+c_func
+(paren
+id|data
+)paren
+suffix:semicolon
+r_else
 id|data
 op_assign
 id|awacs_volume_setter
@@ -21424,7 +21692,7 @@ op_star
 id|buffers
 )paren
 (brace
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_int
 id|i
 suffix:semicolon
@@ -21434,7 +21702,7 @@ id|dbdma_cmd
 op_star
 id|cp
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 id|sq.max_count
 op_assign
 id|numBufs
@@ -21502,7 +21770,7 @@ op_rshift
 l_int|1
 suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 id|cp
 op_assign
 id|awacs_tx_cmds
@@ -21622,7 +21890,7 @@ id|awacs_tx_cmds
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 )brace
 DECL|function|sq_play
 r_static
@@ -22896,7 +23164,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_case
 id|DMASND_AWACS
 suffix:colon
@@ -22906,7 +23174,7 @@ l_int|8000
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 )brace
 multiline_comment|/* before the first open to /dev/dsp this wouldn&squot;t be set */
 id|sound.soft
@@ -23008,7 +23276,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_case
 id|DMASND_AWACS
 suffix:colon
@@ -23018,7 +23286,7 @@ l_string|&quot;PowerMac &quot;
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 )brace
 id|len
 op_add_assign
@@ -23669,7 +23937,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 r_struct
 id|device_node
 op_star
@@ -23783,7 +24051,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_AMIGA */
 )brace
 macro_line|#endif /* __mc68000__ */
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_PPC
 id|awacs_subframe
 op_assign
 l_int|0
@@ -24154,6 +24422,45 @@ op_plus
 id|MASK_ADDR4
 )paren
 suffix:semicolon
+multiline_comment|/* Initialize recent versions of the awacs */
+id|awacs_revision
+op_assign
+(paren
+id|in_le32
+c_func
+(paren
+op_amp
+id|awacs-&gt;codec_stat
+)paren
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|0xf
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|awacs_revision
+op_ge
+l_int|3
+)paren
+(brace
+id|awacs_write
+c_func
+(paren
+l_int|0x6000
+)paren
+suffix:semicolon
+id|awacs_enable_amp
+c_func
+(paren
+l_int|100
+op_star
+l_int|0x101
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Initialize beep stuff */
 id|beep_dbdma_cmd
 op_assign
@@ -24217,7 +24524,7 @@ id|awacs_sleep_notifier
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
 )brace
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_PPC */
 r_if
 c_cond
 (paren

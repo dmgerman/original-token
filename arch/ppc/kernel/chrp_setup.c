@@ -28,6 +28,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/gg2.h&gt;
+macro_line|#include &lt;asm/pci-bridge.h&gt;
 r_extern
 r_void
 id|hydra_init
@@ -787,6 +788,29 @@ id|aux_device_present
 op_assign
 l_int|0xaa
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+multiline_comment|/* this is fine for chrp */
+id|initrd_below_start_ok
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initrd_start
+)paren
+id|ROOT_DEV
+op_assign
+id|MKDEV
+c_func
+(paren
+id|RAMDISK_MAJOR
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif
 id|ROOT_DEV
 op_assign
 id|to_kdev_t
@@ -899,6 +923,46 @@ op_amp
 id|dummy_con
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* my starmax 6000 needs this but the longtrail shouldn&squot;t do it -- Cort */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+l_string|&quot;MOT&quot;
+comma
+id|get_property
+c_func
+(paren
+id|find_path_device
+c_func
+(paren
+l_string|&quot;/&quot;
+)paren
+comma
+l_string|&quot;model&quot;
+comma
+l_int|NULL
+)paren
+comma
+l_int|3
+)paren
+)paren
+op_star
+id|memory_start_p
+op_assign
+id|pmac_find_bridges
+c_func
+(paren
+op_star
+id|memory_start_p
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
 )brace
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 DECL|variable|chrp_ide_irq

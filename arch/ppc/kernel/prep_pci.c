@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.22 1998/08/05 20:11:15 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.23 1998/10/21 10:52:24 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1486,6 +1486,24 @@ suffix:semicolon
 id|Motherboard_routes
 op_assign
 id|Utah_pci_IRQ_routes
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0xE0
+suffix:colon
+multiline_comment|/* MTX -- close enough?? to Genesis, so reuse it */
+id|Motherboard_map_name
+op_assign
+l_string|&quot;Motorola MTX&quot;
+suffix:semicolon
+id|Motherboard_map
+op_assign
+id|Genesis_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|Genesis_pci_IRQ_routes
 suffix:semicolon
 r_break
 suffix:semicolon

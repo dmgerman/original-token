@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * CybervisionPPC (TVP4020) low level driver for the frame buffer device&n; *                          ^^^^^^^^^&n; *                          literally ;)&n; *&n; * Copyright (c) 1998 Ilario Nardinocchi (nardinoc@CS.UniBO.IT) (v124)&n; * --------------------------------------------------------------------------&n; * based on linux/drivers/video/skeletonfb.c by Geert Uytterhoeven&n; * --------------------------------------------------------------------------&n; * TODO h/w parameters detect/modify, 8-bit CLUT, acceleration&n; * --------------------------------------------------------------------------&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -20,36 +20,53 @@ r_int
 id|check_media_bay
 c_func
 (paren
+r_struct
+id|device_node
+op_star
+id|which_bay
+comma
 r_int
 id|what
 )paren
 suffix:semicolon
 r_int
-id|media_bay_task
+id|check_media_bay_by_base
 c_func
 (paren
-r_void
-op_star
+r_int
+r_int
+id|base
+comma
+r_int
+id|what
 )paren
 suffix:semicolon
+multiline_comment|/* Number of bays in the machine or 0 */
 r_extern
 r_int
-id|media_bay_present
+id|media_bay_count
 suffix:semicolon
-multiline_comment|/* 1 if this machine has a media bay */
-multiline_comment|/*&n; * The following give information about the IDE interface&n; * of the media bay: the base virtual address and IRQ number,&n; * and the index that the IDE driver has assigned to it&n; * (or -1 if it is not currently registered with the driver).&n; */
+multiline_comment|/* called by pmac-ide.c to register IDE controller for media bay */
 r_extern
 r_int
+id|media_bay_set_ide_infos
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|which_bay
+comma
 r_int
-id|mb_cd_base
-suffix:semicolon
-r_extern
 r_int
-id|mb_cd_irq
-suffix:semicolon
-r_extern
+id|base
+comma
 r_int
-id|mb_cd_index
+id|irq
+comma
+r_int
+id|index
+)paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _PPC_MEDIABAY_H */

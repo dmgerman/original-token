@@ -1,6 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.50 1998/08/18 16:19:25 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
-DECL|macro|__KERNEL_SYSCALLS__
-mdefine_line|#define __KERNEL_SYSCALLS__
+multiline_comment|/*&n; * $Id: idle.c,v 1.56 1998/10/13 19:14:36 paulus Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,9 +17,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/cache.h&gt;
-macro_line|#ifdef CONFIG_PMAC
-macro_line|#include &lt;asm/mediabay.h&gt;
-macro_line|#endif
 r_void
 id|zero_paged
 c_func
@@ -133,8 +128,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Only processor 1 may sleep now since processor 2 would&n;&t;&t; * never wake up.  Need to add timer code for processor 2&n;&t;&t; * then it can sleep. -- Cort&n;&t;&t; */
-macro_line|#ifndef __SMP__
 r_if
 c_cond
 (paren
@@ -146,7 +139,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
 id|run_task_queue
 c_func
 (paren
@@ -201,15 +193,6 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_int
-id|media_bay_task
-c_func
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -223,23 +206,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PMAC
-r_if
-c_cond
-(paren
-id|media_bay_present
-)paren
-id|kernel_thread
-c_func
-(paren
-id|media_bay_task
-comma
-l_int|NULL
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 id|idled
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.103 1998/09/18 09:14:56 paulus Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.117 1998/11/09 19:55:53 geert Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigappc.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#ifdef CONFIG_MBX
 macro_line|#include &lt;asm/mbx.h&gt;
 macro_line|#endif
@@ -349,26 +350,7 @@ suffix:semicolon
 r_case
 id|ADB_VIAPMU
 suffix:colon
-id|pmu_request
-c_func
-(paren
-op_amp
-id|req
-comma
-l_int|NULL
-comma
-l_int|1
-comma
-id|PMU_RESET
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-id|pmu_poll
+id|pmu_restart
 c_func
 (paren
 )paren
@@ -638,34 +620,7 @@ suffix:semicolon
 r_case
 id|ADB_VIAPMU
 suffix:colon
-id|pmu_request
-c_func
-(paren
-op_amp
-id|req
-comma
-l_int|NULL
-comma
-l_int|5
-comma
-id|PMU_SHUTDOWN
-comma
-l_char|&squot;M&squot;
-comma
-l_char|&squot;A&squot;
-comma
-l_char|&squot;T&squot;
-comma
-l_char|&squot;T&squot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-id|pmu_poll
+id|pmu_shutdown
 c_func
 (paren
 )paren
@@ -808,6 +763,7 @@ c_cond
 id|_machine
 )paren
 (brace
+macro_line|#if defined(CONFIG_BLK_DEV_IDE_PMAC)
 r_case
 id|_MACH_Pmac
 suffix:colon
@@ -823,6 +779,7 @@ id|irq
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif&t;&t;
 r_case
 id|_MACH_chrp
 suffix:colon
@@ -873,321 +830,107 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0&t;
 r_int
-r_int
-id|i
-comma
-id|temp
-comma
-id|thrm1
-comma
-id|dir
+r_char
+id|thres
+op_assign
+l_int|0
 suffix:semicolon
-r_int
-id|sanity
-suffix:semicolon
-multiline_comment|/*&n;&t; * setup thrm3 - need to give TAU at least 20us&n;&t; * to do the compare so assume a 300MHz clock.&n;&t; * We need 300*20 ticks then.&n;&t; * -- Cort&n;&t; */
-id|asm
+macro_line|#if 0
+multiline_comment|/* disable thrm2 */
+id|_set_THRM2
 c_func
 (paren
-l_string|&quot;mtspr 1020, %1&bslash;n&bslash;t&quot;
-l_string|&quot;mtspr 1021, %1&bslash;n&bslash;t&quot;
-l_string|&quot;mtspr 1022, %0&bslash;n&bslash;t&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* threshold 0 C, tid: exceeding threshold, tie: don&squot;t generate interrupt */
+id|_set_THRM1
+c_func
 (paren
+id|THRM1_V
+)paren
+suffix:semicolon
+multiline_comment|/* we need 20us to do the compare - assume 300MHz processor clock */
+id|_set_THRM3
+c_func
 (paren
+l_int|0
+)paren
+suffix:semicolon
+id|_set_THRM3
+c_func
+(paren
+id|THRM3_E
+op_or
 (paren
 l_int|300
 op_star
-l_int|20
+l_int|30
 )paren
 op_lshift
 l_int|18
 )paren
-op_or
-id|THRM3_E
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-l_int|0
-)paren
-)paren
 suffix:semicolon
-macro_line|#if 0
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|127
-suffix:semicolon
-id|i
-op_ge
-l_int|0
-suffix:semicolon
-id|i
-op_decrement
-)paren
-(brace
-id|asm
+id|udelay
 c_func
 (paren
-l_string|&quot;mtspr 1020, %0&bslash;n&bslash;t&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|THRM1_TID
-op_or
-id|THRM1_V
-op_or
-(paren
-id|i
-op_lshift
-l_int|2
-)paren
-)paren
+l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* check value */
-r_while
-c_loop
+multiline_comment|/* wait for the compare to complete */
+multiline_comment|/*while ( !(_get_THRM1() &amp; THRM1_TIV) ) ;*/
+r_if
+c_cond
 (paren
 op_logical_neg
 (paren
-id|thrm1
+id|_get_THRM1
+c_func
+(paren
+)paren
 op_amp
 id|THRM1_TIV
 )paren
 )paren
-id|asm
+id|printk
 c_func
 (paren
-l_string|&quot;mfspr %0, 1020 &bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|thrm1
-)paren
+l_string|&quot;no tiv&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|thrm1
+id|_get_THRM1
+c_func
+(paren
+)paren
 op_amp
 id|THRM1_TIN
 )paren
-(brace
 id|printk
 c_func
 (paren
-l_string|&quot;tin set: %x tiv %x&bslash;n&quot;
-comma
-id|thrm1
-comma
-id|thrm1
-op_amp
-id|THRM1_TIV
+l_string|&quot;crossed&bslash;n&quot;
 )paren
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-macro_line|#if 0
-id|i
-op_assign
-l_int|32
-suffix:semicolon
-multiline_comment|/* increment */
-id|dir
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* direction we&squot;re checking 0=up 1=down */
-id|temp
-op_assign
-l_int|64
-suffix:semicolon
-multiline_comment|/* threshold checking against */
-r_while
-c_loop
+multiline_comment|/* turn everything off */
+id|_set_THRM3
+c_func
 (paren
-id|i
+l_int|0
 )paren
-(brace
+suffix:semicolon
 id|_set_THRM1
 c_func
 (paren
-(paren
-l_int|1
-op_lshift
-l_int|29
-)paren
-op_or
-id|THRM1_V
-op_or
-(paren
-id|temp
-op_lshift
-l_int|2
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;checking %d in dir %d thrm set to %x/%x&bslash;n&quot;
-comma
-id|temp
-comma
-id|dir
-comma
-(paren
-(paren
-l_int|1
-op_lshift
-l_int|29
-)paren
-op_or
-id|THRM1_V
-op_or
-(paren
-id|temp
-op_lshift
-l_int|2
-)paren
-)paren
-comma
-id|_get_THRM1
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* check value */
-id|sanity
-op_assign
-l_int|0x0fffffff
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-op_logical_neg
-(paren
-id|thrm1
-op_amp
-id|THRM1_TIV
-)paren
-)paren
-op_logical_and
-(paren
-id|sanity
-op_decrement
-)paren
-)paren
-id|thrm1
-op_assign
-id|_get_THRM1
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*asm(&quot;mfspr %0, 1020 &bslash;n&bslash;t&quot;: &quot;=r&quot; (thrm1) );*/
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sanity
-op_logical_or
-id|sanity
-op_eq
-l_int|0xffffffff
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;no sanity&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* temp is not in that direction */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|thrm1
-op_amp
-id|THRM1_TIN
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;not in that dir thrm1 %x&bslash;n&quot;
-comma
-id|thrm1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dir
-op_eq
 l_int|0
-)paren
-id|dir
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-id|dir
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|dir
-)paren
-id|temp
-op_sub_assign
-id|i
-suffix:semicolon
-r_else
-id|temp
-op_add_assign
-id|i
-suffix:semicolon
-id|i
-op_div_assign
-l_int|2
-suffix:semicolon
-)brace
-id|asm
-c_func
-(paren
-l_string|&quot;mtspr 1020, %0&bslash;n&bslash;t&quot;
-l_string|&quot;mtspr 1022, %0&bslash;n&bslash;t&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-l_int|0
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif&t;
 r_return
-l_int|0
+id|thres
 suffix:semicolon
 )brace
 DECL|function|get_cpuinfo
@@ -1253,25 +996,14 @@ r_int
 id|i
 suffix:semicolon
 macro_line|#ifdef __SMP__
-r_extern
-r_int
-r_int
-id|cpu_present_map
-suffix:semicolon
-r_extern
-r_struct
-id|cpuinfo_PPC
-id|cpu_data
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
+DECL|macro|CPU_PRESENT
+mdefine_line|#define CPU_PRESENT(x) (cpu_callin_map[(x)])
 DECL|macro|GET_PVR
 mdefine_line|#define GET_PVR ((long int)(cpu_data[i].pvr))
 DECL|macro|CD
 mdefine_line|#define CD(x) (cpu_data[i].x)
 macro_line|#else
-mdefine_line|#define cpu_present_map 1L
+mdefine_line|#define CPU_PRESENT(x) ((x)==0)
 mdefine_line|#define smp_num_cpus 1
 mdefine_line|#define GET_PVR ((long int)_get_PVR())
 mdefine_line|#define CD(x) (x)
@@ -1295,14 +1027,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|CPU_PRESENT
+c_func
 (paren
-id|cpu_present_map
-op_amp
-(paren
-l_int|1
-op_lshift
 id|i
-)paren
 )paren
 )paren
 r_continue
@@ -2024,12 +1752,18 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|first_cpu_booted
+)paren
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
 macro_line|#ifndef CONFIG_MBX
 macro_line|#ifndef CONFIG_MACH_SPECIFIC
-r_char
-op_star
-id|model
-suffix:semicolon
 multiline_comment|/* boot loader will tell us if we&squot;re APUS */
 r_if
 c_cond
@@ -2083,6 +1817,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_char
+op_star
+id|model
+suffix:semicolon
 id|have_of
 op_assign
 l_int|1
@@ -2099,7 +1837,7 @@ c_func
 l_string|&quot;/&quot;
 )paren
 comma
-l_string|&quot;type&quot;
+l_string|&quot;device_type&quot;
 comma
 l_int|NULL
 )paren
@@ -2107,6 +1845,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|model
+op_logical_and
 op_logical_neg
 id|strncmp
 c_func
@@ -2123,10 +1863,49 @@ op_assign
 id|_MACH_chrp
 suffix:semicolon
 r_else
+(brace
+id|model
+op_assign
+id|get_property
+c_func
+(paren
+id|find_path_device
+c_func
+(paren
+l_string|&quot;/&quot;
+)paren
+comma
+l_string|&quot;model&quot;
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|model
+op_logical_and
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|model
+comma
+l_string|&quot;IBM&quot;
+comma
+l_int|3
+)paren
+)paren
+id|_machine
+op_assign
+id|_MACH_chrp
+suffix:semicolon
+r_else
 id|_machine
 op_assign
 id|_MACH_Pmac
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* CONFIG_MACH_SPECIFIC */&t;&t;
 r_if
@@ -2816,6 +2595,28 @@ id|KERNELBASE
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_MBX */
+multiline_comment|/* Check for nobats option (used in mapin_ram). */
+r_if
+c_cond
+(paren
+id|strstr
+c_func
+(paren
+id|cmd_line
+comma
+l_string|&quot;nobats&quot;
+)paren
+)paren
+(brace
+r_extern
+r_int
+id|__map_without_bats
+suffix:semicolon
+id|__map_without_bats
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -3045,42 +2846,6 @@ r_int
 )paren
 id|end_of_DRAM
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-multiline_comment|/* initrd_start and size are setup by boot/head.S and kernel/head.S */
-r_if
-c_cond
-(paren
-id|initrd_start
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|initrd_end
-OG
-op_star
-id|memory_end_p
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;initrd extends beyond end of memory &quot;
-l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
-comma
-id|initrd_end
-comma
-op_star
-id|memory_end_p
-)paren
-suffix:semicolon
-id|initrd_start
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 macro_line|#ifdef CONFIG_MBX
 id|mbx_setup_arch
 c_func

@@ -28,9 +28,9 @@ macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/pmu.h&gt;
-macro_line|#include &lt;asm/mediabay.h&gt;
 macro_line|#include &lt;asm/ohare.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
+macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &quot;time.h&quot;
 DECL|variable|drive_info
 r_int
@@ -566,6 +566,7 @@ DECL|macro|MKDEV_SD_PARTITION
 mdefine_line|#define MKDEV_SD_PARTITION(i)&t;MKDEV(SD_MAJOR_NUMBER(i), SD_MINOR_NUMBER(i))
 DECL|macro|MKDEV_SD
 mdefine_line|#define MKDEV_SD(index)&t;&t;MKDEV_SD_PARTITION((index) &lt;&lt; 4)
+id|__init
 DECL|function|sd_find_target
 id|kdev_t
 id|sd_find_target
@@ -635,6 +636,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * Dummy mksound function that does nothing.&n; * The real one is in the dmasound driver.&n; */
+id|__pmac
 r_static
 r_void
 DECL|function|pmac_mksound
@@ -657,13 +659,6 @@ r_volatile
 id|u32
 op_star
 id|sysctrl_regs
-suffix:semicolon
-DECL|variable|feature_addr
-r_static
-r_volatile
-id|u32
-op_star
-id|feature_addr
 suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
@@ -817,6 +812,11 @@ id|PAGE_READONLY
 )paren
 )paren
 suffix:semicolon
+id|ohare_init
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|memory_start_p
 op_assign
@@ -830,7 +830,7 @@ op_star
 id|memory_end_p
 )paren
 suffix:semicolon
-id|ohare_init
+id|feature_init
 c_func
 (paren
 )paren
@@ -904,143 +904,19 @@ r_void
 )paren
 )paren
 (brace
-r_struct
-id|device_node
-op_star
-id|np
-suffix:semicolon
-id|np
-op_assign
+multiline_comment|/*&n;&t; * Turn on the L2 cache.&n;&t; * We assume that we have a PSX memory controller iff&n;&t; * we have an ohare I/O controller.&n;&t; */
+r_if
+c_cond
+(paren
 id|find_devices
 c_func
 (paren
 l_string|&quot;ohare&quot;
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|np
-op_eq
-l_int|0
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|np-&gt;next
 op_ne
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;only using the first ohare&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|np-&gt;n_addrs
-op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;No addresses for %s&bslash;n&quot;
-comma
-id|np-&gt;full_name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|feature_addr
-op_assign
-(paren
-r_volatile
-id|u32
-op_star
-)paren
-id|ioremap
-c_func
-(paren
-id|np-&gt;addrs
-(braket
-l_int|0
-)braket
-dot
-id|address
-op_plus
-id|OHARE_FEATURE_REG
-comma
-l_int|4
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|find_devices
-c_func
-(paren
-l_string|&quot;via-pmu&quot;
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Twiddling the magic ohare bits&bslash;n&quot;
-)paren
-suffix:semicolon
-id|out_le32
-c_func
-(paren
-id|feature_addr
-comma
-id|STARMAX_FEATURES
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|out_le32
-c_func
-(paren
-id|feature_addr
-comma
-id|in_le32
-c_func
-(paren
-id|feature_addr
-)paren
-op_or
-id|PBOOK_FEATURES
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;feature reg = %x&bslash;n&quot;
-comma
-id|in_le32
-c_func
-(paren
-id|feature_addr
-)paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Turn on the L2 cache.&n;&t; * We assume that we have a PSX memory controller iff&n;&t; * we have an ohare I/O controller.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1094,6 +970,7 @@ l_string|&quot;Level 2 cache enabled&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+)brace
 r_extern
 r_char
 op_star
@@ -1121,18 +998,32 @@ DECL|variable|boot_dev
 id|kdev_t
 id|boot_dev
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|powermac_init
 r_void
+id|__init
 id|powermac_init
 c_func
 (paren
 r_void
 )paren
-)paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|_machine
+op_ne
+id|_MACH_chrp
+)paren
+op_logical_and
+(paren
+id|_machine
+op_ne
+id|_MACH_Pmac
+)paren
+)paren
+r_return
+suffix:semicolon
 id|adb_init
 c_func
 (paren
@@ -1520,10 +1411,9 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/* can&squot;t be initfunc - can be called whenever a disk is first accessed */
+id|__pmac
+DECL|function|note_bootable_part
 r_void
 id|note_bootable_part
 c_func
@@ -1533,7 +1423,6 @@ id|dev
 comma
 r_int
 id|part
-)paren
 )paren
 (brace
 r_static

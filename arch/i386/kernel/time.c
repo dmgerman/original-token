@@ -1416,10 +1416,10 @@ l_string|&quot;movb $0xb0, %%al&bslash;n&bslash;t&quot;
 multiline_comment|/* binary, mode 0, LSB/MSB, ch 2*/
 l_string|&quot;outb %%al, $0x43&bslash;n&bslash;t&quot;
 multiline_comment|/* Write to CTC command port */
-l_string|&quot;movb $0x0c, %%al&bslash;n&bslash;t&quot;
+l_string|&quot;movl %1, %%eax&bslash;n&bslash;t&quot;
 l_string|&quot;outb %%al, $0x42&bslash;n&bslash;t&quot;
 multiline_comment|/* LSB of count */
-l_string|&quot;movb $0xe9, %%al&bslash;n&bslash;t&quot;
+l_string|&quot;shrl $8, %%eax&bslash;n&bslash;t&quot;
 l_string|&quot;outb %%al, $0x42&bslash;n&bslash;t&quot;
 multiline_comment|/* MSB of count */
 multiline_comment|/* Read the TSC; counting has just started */
@@ -1446,7 +1446,7 @@ multiline_comment|/* Now we have 5 * (TSC counts per jiffy) in eax.  We want&n; 
 multiline_comment|/* Note that edx (high 32-bits of difference) will now be &n;                * zero iff CPU clock speed is less than 85 GHz.  Moore&squot;s&n;                * law says that this is likely to be true for the next&n;                * 12 years or so.  You will have to change this code to&n;                * do a real 64-by-64 divide before that time&squot;s up. */
 l_string|&quot;movl %%eax, %%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;xorl %%eax, %%eax&bslash;n&bslash;t&quot;
-l_string|&quot;movl %1, %%edx&bslash;n&bslash;t&quot;
+l_string|&quot;movl %2, %%edx&bslash;n&bslash;t&quot;
 l_string|&quot;divl %%ecx&bslash;n&bslash;t&quot;
 multiline_comment|/* eax= 2^32 / (1 * TSC counts per microsecond) */
 multiline_comment|/* Return eax for the use of fast_gettimeoffset */
@@ -1457,6 +1457,13 @@ l_string|&quot;=r&quot;
 id|retval
 )paren
 suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|5
+op_star
+id|LATCH
+)paren
+comma
 l_string|&quot;r&quot;
 (paren
 l_int|5

@@ -2467,10 +2467,6 @@ r_const
 )paren
 )paren
 suffix:semicolon
-DECL|macro|VTOP
-mdefine_line|#define VTOP(addr)  (iopa((unsigned long)(addr)))
-DECL|macro|PTOV
-mdefine_line|#define PTOV(addr)  (mm_ptov((unsigned long)(addr)))
 multiline_comment|/* Values for nocacheflag and cmode */
 multiline_comment|/* These are not used by the APUS kernel_map, but prevents&n;   compilation errors. */
 DECL|macro|KERNELMAP_FULL_CACHING

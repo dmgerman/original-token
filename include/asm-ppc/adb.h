@@ -158,7 +158,7 @@ id|adb_autopoll
 )paren
 (paren
 r_int
-id|on
+id|devs
 )paren
 suffix:semicolon
 r_extern

@@ -57,7 +57,7 @@ DECL|variable|debugger_kernel_faults
 r_int
 id|debugger_kernel_faults
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 macro_line|#endif
 DECL|variable|htab_reloads

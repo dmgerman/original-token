@@ -165,7 +165,6 @@ comma
 id|dev_queue_xmit
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE) || &bslash;&n;    defined(CONFIG_SHAPER) || defined(CONFIG_SHAPER_MODULE)
 DECL|variable|arp_broken_ops
 r_struct
 id|neigh_ops
@@ -190,7 +189,6 @@ id|dev_queue_xmit
 comma
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|variable|arp_tbl
 r_struct
 id|neigh_table

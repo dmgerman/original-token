@@ -97,6 +97,7 @@ r_return
 id|bp-&gt;io_base
 suffix:semicolon
 )brace
+id|__pmac
 DECL|function|pci_device_loc
 r_int
 id|pci_device_loc
@@ -202,6 +203,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|__pmac
 DECL|function|pmac_pcibios_read_config_byte
 r_int
 id|pmac_pcibios_read_config_byte
@@ -361,6 +363,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__pmac
 DECL|function|pmac_pcibios_read_config_word
 r_int
 id|pmac_pcibios_read_config_word
@@ -542,6 +545,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__pmac
 DECL|function|pmac_pcibios_read_config_dword
 r_int
 id|pmac_pcibios_read_config_dword
@@ -705,6 +709,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__pmac
 DECL|function|pmac_pcibios_write_config_byte
 r_int
 id|pmac_pcibios_write_config_byte
@@ -857,6 +862,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__pmac
 DECL|function|pmac_pcibios_write_config_word
 r_int
 id|pmac_pcibios_write_config_word
@@ -1031,6 +1037,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__pmac
 DECL|function|pmac_pcibios_write_config_dword
 r_int
 id|pmac_pcibios_write_config_dword
@@ -2540,7 +2547,7 @@ c_func
 (paren
 l_int|0xfe000000
 comma
-l_int|0x10000
+l_int|0x20000
 )paren
 suffix:semicolon
 )brace

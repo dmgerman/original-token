@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.123 1998/09/19 19:03:55 geert Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.130 1998/11/10 10:09:20 paulus Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -361,8 +361,12 @@ l_int|4
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
 multiline_comment|/*&n; * this tells the system to map all of ram with the segregs&n; * (i.e. page tables) instead of the bats.&n; * -- Cort&n; */
-DECL|macro|MAP_RAM_WITH_SEGREGS
-macro_line|#undef MAP_RAM_WITH_SEGREGS 1
+DECL|variable|__map_without_bats
+r_int
+id|__map_without_bats
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* optimization for 603 to load the tlb directly from the linux table -- Cort */
 DECL|macro|NO_RELOAD_HTAB
 mdefine_line|#define NO_RELOAD_HTAB 1 /* change in kernel/head.S too! */
@@ -1060,6 +1064,18 @@ id|p-&gt;processor
 )braket
 )paren
 )paren
+(brace
+id|iscur
+op_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;current&quot;
+)paren
+suffix:semicolon
+)brace
 macro_line|#else&t;&t;
 r_if
 c_cond
@@ -1068,7 +1084,6 @@ id|p
 op_eq
 id|current
 )paren
-macro_line|#endif /* __SMP__ */
 (brace
 id|iscur
 op_assign
@@ -1107,6 +1122,7 @@ l_string|&quot;last math&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* __SMP__ */
 id|printk
 c_func
 (paren
@@ -2938,7 +2954,9 @@ r_int
 r_int
 id|a
 comma
-id|e
+id|s
+comma
+id|ns
 suffix:semicolon
 r_int
 id|i
@@ -2976,10 +2994,8 @@ id|i
 dot
 id|address
 suffix:semicolon
-id|e
+id|s
 op_assign
-id|a
-op_plus
 id|mp-&gt;regions
 (braket
 id|i
@@ -3006,13 +3022,16 @@ id|j
 )braket
 dot
 id|address
+op_minus
+id|a
 op_le
-id|e
+id|s
 suffix:semicolon
 op_increment
 id|j
 )paren
-id|e
+(brace
+id|ns
 op_assign
 id|mp-&gt;regions
 (braket
@@ -3027,7 +3046,21 @@ id|j
 )braket
 dot
 id|size
+op_minus
+id|a
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ns
+OG
+id|s
+)paren
+id|s
+op_assign
+id|ns
+suffix:semicolon
+)brace
 id|mp-&gt;regions
 (braket
 id|d
@@ -3044,9 +3077,7 @@ id|d
 dot
 id|size
 op_assign
-id|e
-op_minus
-id|a
+id|s
 suffix:semicolon
 op_increment
 id|d
@@ -3572,6 +3603,13 @@ comma
 id|f
 suffix:semicolon
 macro_line|#ifndef CONFIG_8xx
+r_if
+c_cond
+(paren
+op_logical_neg
+id|__map_without_bats
+)paren
+(brace
 r_int
 r_int
 id|tot
@@ -3582,7 +3620,20 @@ id|bl
 comma
 id|done
 suffix:semicolon
-macro_line|#ifndef MAP_RAM_WITH_SEGREGS
+r_int
+r_int
+id|max_size
+op_assign
+(paren
+l_int|256
+op_lshift
+l_int|20
+)paren
+suffix:semicolon
+r_int
+r_int
+id|align
+suffix:semicolon
 multiline_comment|/* Set up BAT2 and if necessary BAT3 to cover RAM. */
 id|mem_base
 op_assign
@@ -3591,6 +3642,33 @@ c_func
 (paren
 id|KERNELBASE
 )paren
+suffix:semicolon
+multiline_comment|/* Make sure we don&squot;t map a block larger than the&n;&t;&t;   smallest alignment of the physical address. */
+multiline_comment|/* alignment of mem_base */
+id|align
+op_assign
+op_complement
+(paren
+id|mem_base
+op_minus
+l_int|1
+)paren
+op_amp
+id|mem_base
+suffix:semicolon
+multiline_comment|/* set BAT block size to MIN(max_size, align) */
+r_if
+c_cond
+(paren
+id|align
+op_logical_and
+id|align
+OL
+id|max_size
+)paren
+id|max_size
+op_assign
+id|align
 suffix:semicolon
 id|tot
 op_assign
@@ -3613,9 +3691,7 @@ l_int|10
 suffix:semicolon
 id|bl
 OL
-l_int|256
-op_lshift
-l_int|20
+id|max_size
 suffix:semicolon
 id|bl
 op_lshift_assign
@@ -3689,9 +3765,7 @@ l_int|10
 suffix:semicolon
 id|bl
 OL
-l_int|256
-op_lshift
-l_int|20
+id|max_size
 suffix:semicolon
 id|bl
 op_lshift_assign
@@ -3727,7 +3801,7 @@ id|RAM_PAGE
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+)brace
 id|v
 op_assign
 id|KERNELBASE
@@ -4071,9 +4145,31 @@ id|_machine
 r_case
 id|_MACH_Pmac
 suffix:colon
+id|FREESEC
+c_func
+(paren
+id|__prep_begin
+comma
+id|__prep_end
+comma
+id|num_prep_pages
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|_MACH_chrp
 suffix:colon
+id|FREESEC
+c_func
+(paren
+id|__pmac_begin
+comma
+id|__pmac_end
+comma
+id|num_pmac_pages
+)paren
+suffix:semicolon
 id|FREESEC
 c_func
 (paren
@@ -4374,14 +4470,48 @@ suffix:semicolon
 r_case
 id|_MACH_Pmac
 suffix:colon
+(brace
+r_int
+r_int
+id|base
+op_assign
+l_int|0xf3000000
+suffix:semicolon
+r_struct
+id|device_node
+op_star
+id|macio
+op_assign
+id|find_devices
+c_func
+(paren
+l_string|&quot;mac-io&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|macio
+op_logical_and
+id|macio-&gt;n_addrs
+)paren
+id|base
+op_assign
+id|macio-&gt;addrs
+(braket
+l_int|0
+)braket
+dot
+id|address
+suffix:semicolon
 id|setbat
 c_func
 (paren
 l_int|0
 comma
-l_int|0xf3000000
+id|base
 comma
-l_int|0xf3000000
+id|base
 comma
 l_int|0x100000
 comma
@@ -4392,6 +4522,7 @@ id|ioremap_base
 op_assign
 l_int|0xf0000000
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case

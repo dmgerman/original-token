@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: residual.c,v 1.12 1998/08/27 23:15:56 paulus Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;IBM Power Personal Systems Architecture&n; *&t;Residual Data&n; * &t;Document Number: PPS-AR-FW0001&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; */
+multiline_comment|/*&n; * $Id: residual.c,v 1.14 1998/10/11 17:38:10 cort Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;IBM Power Personal Systems Architecture&n; *&t;Residual Data&n; * &t;Document Number: PPS-AR-FW0001&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/pnp.h&gt;
@@ -26,13 +26,14 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
-DECL|variable|PnP_BASE_TYPES
+DECL|variable|__initdata
 r_const
 r_char
 op_star
 id|PnP_BASE_TYPES
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_string|&quot;Reserved&quot;
@@ -59,7 +60,7 @@ l_string|&quot;ServiceProcessor&quot;
 )brace
 suffix:semicolon
 multiline_comment|/* Device Sub Type Codes */
-DECL|variable|PnP_SUB_TYPES
+DECL|variable|__initdata
 r_const
 r_int
 r_char
@@ -67,6 +68,7 @@ op_star
 id|PnP_SUB_TYPES
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_string|&quot;&bslash;001&bslash;000SCSIController&quot;
@@ -175,7 +177,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* Device Interface Type Codes */
-DECL|variable|PnP_INTERFACES
+DECL|variable|__initdata
 r_const
 r_int
 r_char
@@ -183,6 +185,7 @@ op_star
 id|PnP_INTERFACES
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_string|&quot;&bslash;000&bslash;000&bslash;000General&quot;
@@ -391,6 +394,7 @@ r_static
 r_const
 r_int
 r_char
+id|__init
 op_star
 id|PnP_SUB_TYPE_STR
 c_func
@@ -468,6 +472,7 @@ r_static
 r_const
 r_int
 r_char
+id|__init
 op_star
 id|PnP_INTERFACE_STR
 c_func
@@ -557,6 +562,7 @@ suffix:semicolon
 DECL|function|printsmallvendor
 r_static
 r_void
+id|__init
 id|printsmallvendor
 c_func
 (paren
@@ -740,6 +746,7 @@ macro_line|#undef p
 DECL|function|printsmallpacket
 r_static
 r_void
+id|__init
 id|printsmallpacket
 c_func
 (paren
@@ -1079,6 +1086,7 @@ suffix:semicolon
 DECL|function|printlargevendor
 r_static
 r_void
+id|__init
 id|printlargevendor
 c_func
 (paren
@@ -1979,6 +1987,7 @@ macro_line|#undef p
 DECL|function|printlargepacket
 r_static
 r_void
+id|__init
 id|printlargepacket
 c_func
 (paren
@@ -2032,6 +2041,7 @@ suffix:semicolon
 DECL|function|printpackets
 r_static
 r_void
+id|__init
 id|printpackets
 c_func
 (paren
@@ -2148,6 +2158,7 @@ suffix:semicolon
 )brace
 DECL|function|print_residual_device_info
 r_void
+id|__init
 id|print_residual_device_info
 c_func
 (paren
@@ -2543,16 +2554,16 @@ l_string|&quot;compatible&quot;
 suffix:semicolon
 )brace
 )brace
-DECL|function|printVPD
+macro_line|#if 0
 r_static
 r_void
+id|__init
 id|printVPD
 c_func
 (paren
 r_void
 )paren
 (brace
-DECL|macro|vpd
 mdefine_line|#define vpd res-&gt;VitalProductData
 r_int
 id|ps
@@ -2927,7 +2938,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Spit out some info about residual data&n; */
-macro_line|#if 0
 r_void
 id|print_residual_device_info
 c_func
@@ -3276,6 +3286,7 @@ multiline_comment|/* in residual data number is big endian in the device table a
 DECL|function|same_DevID
 r_static
 r_int
+id|__init
 id|same_DevID
 c_func
 (paren
@@ -3455,6 +3466,7 @@ suffix:semicolon
 )brace
 DECL|function|residual_find_device
 id|PPC_DEVICE
+id|__init
 op_star
 id|residual_find_device
 c_func
@@ -3596,6 +3608,7 @@ suffix:semicolon
 )brace
 DECL|function|residual_find_device_id
 id|PPC_DEVICE
+id|__init
 op_star
 id|residual_find_device_id
 c_func
@@ -3872,6 +3885,7 @@ multiline_comment|/* not found */
 )brace
 DECL|function|PnP_find_small_vendor_packet
 id|PnP_TAG_PACKET
+id|__init
 op_star
 id|PnP_find_small_vendor_packet
 c_func
@@ -3954,6 +3968,7 @@ multiline_comment|/* not found */
 )brace
 DECL|function|PnP_find_large_vendor_packet
 id|PnP_TAG_PACKET
+id|__init
 op_star
 id|PnP_find_large_vendor_packet
 c_func

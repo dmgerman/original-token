@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: locks.c,v 1.18 1998/07/28 03:50:27 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
+multiline_comment|/*&n; * $Id: locks.c,v 1.20 1998/10/08 01:17:32 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -11,7 +11,7 @@ mdefine_line|#define DEBUG_LOCKS 1
 DECL|macro|INIT_STUCK
 macro_line|#undef INIT_STUCK
 DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 10000
+mdefine_line|#define INIT_STUCK 0xffffffff
 DECL|function|_spin_lock
 r_void
 id|_spin_lock
@@ -31,6 +31,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_LOCKS
+r_int
 r_int
 id|stuck
 op_assign
@@ -213,7 +214,7 @@ c_cond
 op_logical_neg
 id|lp-&gt;lock
 )paren
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;_spin_unlock(%p): no lock cpu %d %s/%d&bslash;n&quot;
@@ -240,7 +241,7 @@ c_func
 (paren
 )paren
 )paren
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;_spin_unlock(%p): cpu %d trying clear of cpu %d pc %lx val %lx&bslash;n&quot;

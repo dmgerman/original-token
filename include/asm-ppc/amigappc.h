@@ -2,16 +2,22 @@ multiline_comment|/*&n;** asm-m68k/amigappc.h -- This header defines some values
 macro_line|#ifndef _M68K_AMIGAPPC_H
 DECL|macro|_M68K_AMIGAPPC_H
 mdefine_line|#define _M68K_AMIGAPPC_H
+macro_line|#ifndef __ASSEMBLY__
+macro_line|#ifndef iobarrier /* Don&squot;t include io.h - avoid circular dependency */
+DECL|macro|iobarrier
+mdefine_line|#define iobarrier() eieio()
+macro_line|#endif
+DECL|macro|APUS_WRITE
+mdefine_line|#define APUS_WRITE(_a_, _v_)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(*((volatile unsigned char *)(_a_)) = (_v_));&t;&bslash;&n;&t;iobarrier ();&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+DECL|macro|APUS_READ
+mdefine_line|#define APUS_READ(_a_, _v_) &t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(_v_) = (*((volatile unsigned char *)(_a_)));&t;&bslash;&n;&t;iobarrier ();&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+macro_line|#endif /* ndef __ASSEMBLY__ */
 multiline_comment|/* Maybe add a [#ifdef WANT_ZTWOBASE] condition to amigahw.h? */
 DECL|macro|zTwoBase
 mdefine_line|#define zTwoBase (0x80000000)
-multiline_comment|/* At CYBERBASEp we&squot;ll find the following sum:&n; * -KERNELBASE+CyberStormMemoryBase&n; */
+multiline_comment|/* At CYBERBASEp we find the following sum:&n; * -KERNELBASE+CyberStormMemoryBase&n; */
 DECL|macro|CYBERBASEp
 mdefine_line|#define CYBERBASEp (0xfff00000)
-DECL|macro|APUS_WRITE
-mdefine_line|#define APUS_WRITE(a,v) (*((volatile unsigned char *)a) = v)
-DECL|macro|APUS_READ
-mdefine_line|#define APUS_READ(a) (*((volatile unsigned char *)a))
 DECL|macro|APUS_IPL_BASE
 mdefine_line|#define APUS_IPL_BASE   &t;(zTwoBase + 0x00f60000)
 DECL|macro|APUS_REG_RESET
@@ -26,6 +32,8 @@ DECL|macro|APUS_REG_INT
 mdefine_line|#define APUS_REG_INT    &t;(APUS_IPL_BASE + 0x28)
 DECL|macro|APUS_IPL_EMU
 mdefine_line|#define APUS_IPL_EMU&t;&t;(APUS_IPL_BASE + 0x30)
+DECL|macro|APUS_INT_LVL
+mdefine_line|#define APUS_INT_LVL&t;&t;(APUS_IPL_BASE + 0x38)
 DECL|macro|REGSHADOW_SETRESET
 mdefine_line|#define REGSHADOW_SETRESET&t;(0x80)
 DECL|macro|REGSHADOW_SELFRESET
@@ -80,5 +88,9 @@ DECL|macro|IPLEMU_PPCIPL0
 mdefine_line|#define IPLEMU_PPCIPL0&t;&t;(0x01)
 DECL|macro|IPLEMU_IPLMASK
 mdefine_line|#define IPLEMU_IPLMASK&t;&t;(IPLEMU_PPCIPL2|IPLEMU_PPCIPL1|IPLEMU_PPCIPL0)
+DECL|macro|INTLVL_SETRESET
+mdefine_line|#define INTLVL_SETRESET         (0x80)
+DECL|macro|INTLVL_MASK
+mdefine_line|#define INTLVL_MASK             (0x7f)
 macro_line|#endif /* _M68k_AMIGAPPC_H */
 eof

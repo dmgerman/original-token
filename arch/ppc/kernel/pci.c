@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: pci.c,v 1.38 1998/08/31 06:28:02 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
+multiline_comment|/*&n; * $Id: pci.c,v 1.39 1998/10/13 20:59:04 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -709,7 +709,7 @@ suffix:semicolon
 id|set_config_access_method
 c_func
 (paren
-id|raven
+id|grackle
 )paren
 suffix:semicolon
 )brace

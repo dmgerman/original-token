@@ -4322,12 +4322,6 @@ suffix:semicolon
 id|hfs_cat_mark_dirty
 c_func
 (paren
-id|HFS_I
-c_func
-(paren
-id|inode
-)paren
-op_member_access_from_pointer
 id|entry
 )paren
 suffix:semicolon

@@ -82,9 +82,9 @@ mdefine_line|#define PCI_DRAM_OFFSET&t;pci_dram_offset
 macro_line|#endif /* CONFIG_APUS */
 macro_line|#endif /* CONFIG_MBX8xx */
 DECL|macro|readb
-mdefine_line|#define readb(addr) (*(volatile unsigned char *) (addr))
+mdefine_line|#define readb(addr) in_8((volatile unsigned char *)(addr))
 DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
+mdefine_line|#define writeb(b,addr) out_8((volatile unsigned char *)(addr), (b))
 macro_line|#if defined(CONFIG_APUS)
 DECL|macro|readw
 mdefine_line|#define readw(addr) (*(volatile unsigned short *) (addr))
@@ -96,13 +96,13 @@ DECL|macro|writel
 mdefine_line|#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
 macro_line|#else
 DECL|macro|readw
-mdefine_line|#define readw(addr) ld_le16((volatile unsigned short *)(addr))
+mdefine_line|#define readw(addr) in_le16((volatile unsigned short *)(addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr) ld_le32((volatile unsigned *)addr)
+mdefine_line|#define readl(addr) in_le32((volatile unsigned *)addr)
 DECL|macro|writew
-mdefine_line|#define writew(b,addr) st_le16((volatile unsigned short *)(addr),(b))
+mdefine_line|#define writew(b,addr) out_le16((volatile unsigned short *)(addr),(b))
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) st_le32((volatile unsigned *)(addr),(b))
+mdefine_line|#define writel(b,addr) out_le32((volatile unsigned *)(addr),(b))
 macro_line|#endif
 DECL|macro|insb
 mdefine_line|#define insb(port, buf, ns)&t;_insb((unsigned char *)((port)+_IO_BASE), (buf), (ns))
@@ -397,6 +397,8 @@ r_int
 id|size
 )paren
 suffix:semicolon
+DECL|macro|ioremap_nocache
+mdefine_line|#define ioremap_nocache(addr, size)&t;ioremap((addr), (size))
 r_extern
 r_void
 id|iounmap
@@ -617,75 +619,6 @@ id|address
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|check_signature
-r_static
-r_inline
-r_int
-id|check_signature
-c_func
-(paren
-r_int
-r_int
-id|io_addr
-comma
-r_const
-r_int
-r_char
-op_star
-id|signature
-comma
-r_int
-id|length
-)paren
-(brace
-r_int
-id|retval
-op_assign
-l_int|0
-suffix:semicolon
-r_do
-(brace
-r_if
-c_cond
-(paren
-id|readb
-c_func
-(paren
-id|io_addr
-)paren
-op_ne
-op_star
-id|signature
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|io_addr
-op_increment
-suffix:semicolon
-id|signature
-op_increment
-suffix:semicolon
-id|length
-op_decrement
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|length
-)paren
-suffix:semicolon
-id|retval
-op_assign
-l_int|1
-suffix:semicolon
-id|out
-suffix:colon
-r_return
-id|retval
-suffix:semicolon
-)brace
 macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * Enforce In-order Execution of I/O:&n; * Acts as a barrier to ensure all previous I/O accesses have&n; * completed before any further ones are issued.&n; */
 DECL|function|eieio
@@ -709,6 +642,8 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|macro|iobarrier
+mdefine_line|#define iobarrier() eieio()
 multiline_comment|/*&n; * 8, 16 and 32 bit, big and little endian I/O operations, with barrier.&n; */
 DECL|function|in_8
 r_extern
@@ -1101,5 +1036,76 @@ id|val
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
+DECL|function|check_signature
+r_static
+r_inline
+r_int
+id|check_signature
+c_func
+(paren
+r_int
+r_int
+id|io_addr
+comma
+r_const
+r_int
+r_char
+op_star
+id|signature
+comma
+r_int
+id|length
+)paren
+(brace
+r_int
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|readb
+c_func
+(paren
+id|io_addr
+)paren
+op_ne
+op_star
+id|signature
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|io_addr
+op_increment
+suffix:semicolon
+id|signature
+op_increment
+suffix:semicolon
+id|length
+op_decrement
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|length
+)paren
+suffix:semicolon
+id|retval
+op_assign
+l_int|1
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|retval
+suffix:semicolon
+)brace
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

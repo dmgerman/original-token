@@ -1758,13 +1758,6 @@ l_int|0xde0002
 op_or_assign
 l_int|0x80
 suffix:semicolon
-macro_line|#ifdef CONFIG_ZORRO
-id|zorro_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|variable|jiffy_ticks
 r_static
@@ -3197,7 +3190,7 @@ id|SAVEKMSG_MAGIC2
 suffix:semicolon
 id|savekmsg-&gt;magicptr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|savekmsg
@@ -3228,13 +3221,10 @@ id|c
 op_or
 l_int|0x100
 suffix:semicolon
-macro_line|#ifdef CONFIG_APUS
-multiline_comment|/* I&squot;m sure this should not be necessary since the address is&n;&t;   marked non-cachable and coherent. Still, without it the&n;&t;   serial output is not usable. -jskov */
-id|eieio
+id|iobarrier
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -3267,6 +3257,16 @@ r_int
 id|count
 )paren
 (brace
+macro_line|#if 0 /* def CONFIG_KGDB */
+multiline_comment|/* FIXME:APUS GDB doesn&squot;t seem to like O-packages before it is&n;           properly connected with the target. */
+id|__gdb_output_string
+(paren
+id|s
+comma
+id|count
+)paren
+suffix:semicolon
+macro_line|#else
 r_while
 c_loop
 (paren
@@ -3297,6 +3297,7 @@ op_increment
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 DECL|function|amiga_serial_puts

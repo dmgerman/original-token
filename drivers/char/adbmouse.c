@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Macintosh ADB Mouse driver for Linux&n; *&n; * 27 Oct 1997 Michael Schmitz&n; * logitech fixes by anthony tong&n; *&n; * Apple mouse protocol according to:&n; *&n; * Device code shamelessly stolen from:&n; */
+multiline_comment|/*&n; * Macintosh ADB Mouse driver for Linux&n; *&n; * 27 Oct 1997 Michael Schmitz&n; * logitech fixes by anthony tong&n; * further hacking by Paul Mackerras&n; *&n; * Apple mouse protocol according to:&n; *&n; * Device code shamelessly stolen from:&n; */
 multiline_comment|/*&n; * Atari Mouse Driver for Linux&n; * by Robert de Vries (robert@and.nl) 19Jul93&n; *&n; * 16 Nov 1994 Andreas Schwab&n; * Compatibility with busmouse&n; * Support for three button mouse (shamelessly stolen from MiNT)&n; * third button wired to one of the joystick directions on joystick 1&n; *&n; * 1996/02/11 Andreas Schwab&n; * Module support&n; * Allow multiple open&squot;s&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,32 +9,27 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/adb_mouse.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef __powerpc__
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#endif
+macro_line|#ifdef __mc68000__
+macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#endif
 DECL|variable|mouse
 r_static
 r_struct
 id|mouse_status
 id|mouse
 suffix:semicolon
-DECL|variable|adb_mouse_x_threshold
-DECL|variable|adb_mouse_y_threshold
-r_static
-r_int
-id|adb_mouse_x_threshold
-op_assign
-l_int|2
-comma
-id|adb_mouse_y_threshold
-op_assign
-l_int|2
-suffix:semicolon
 DECL|variable|adb_mouse_buttons
 r_static
 r_int
+r_char
 id|adb_mouse_buttons
-op_assign
-l_int|0
+(braket
+l_int|16
+)braket
 suffix:semicolon
 r_extern
 r_void
@@ -43,11 +38,24 @@ op_star
 id|adb_mouse_interrupt_hook
 )paren
 (paren
+r_int
 r_char
 op_star
 comma
 r_int
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|adb_emulate_buttons
+suffix:semicolon
+r_extern
+r_int
+id|adb_button2_keycode
+suffix:semicolon
+r_extern
+r_int
+id|adb_button3_keycode
 suffix:semicolon
 r_extern
 r_int
@@ -60,6 +68,7 @@ r_void
 id|adb_mouse_interrupt
 c_func
 (paren
+r_int
 r_char
 op_star
 id|buf
@@ -68,25 +77,13 @@ r_int
 id|nb
 )paren
 (brace
-r_static
 r_int
 id|buttons
-op_assign
-l_int|7
+comma
+id|id
 suffix:semicolon
-multiline_comment|/*&n;    Handler 1 -- 100cpi original Apple mouse protocol.&n;    Handler 2 -- 200cpi original Apple mouse protocol.&n;&n;    For Apple&squot;s standard one-button mouse protocol the data array will&n;    contain the following values:&n;&n;                BITS    COMMENTS&n;    data[0] = 0000 0000 ADB packet identifer.&n;    data[1] = ???? ???? (?)&n;    data[2] = ???? ??00 Bits 0-1 should be zero for a mouse device.&n;    data[3] = bxxx xxxx First button and x-axis motion.&n;    data[4] = byyy yyyy Second button and y-axis motion.&n;&n;    NOTE: data[0] is confirmed by the parent function and need not be&n;    checked here.&n;  */
-multiline_comment|/*&n;    Handler 4 -- Apple Extended mouse protocol.&n;&n;    For Apple&squot;s 3-button mouse protocol the data array will contain the&n;    following values:&n;&n;&t;&t;BITS    COMMENTS&n;    data[0] = 0000 0000 ADB packet identifer.&n;    data[1] = 0100 0000 Extended protocol register.&n;&t;      Bits 6-7 are the device id, which should be 1.&n;&t;      Bits 4-5 are resolution which is in &quot;units/inch&quot;.&n;&t;      The Logitech MouseMan returns these bits clear but it has&n;&t;      200/300cpi resolution.&n;&t;      Bits 0-3 are unique vendor id.&n;    data[2] = 0011 1100 Bits 0-1 should be zero for a mouse device.&n;&t;      Bits 2-3 should be 8 + 4.&n;&t;&t;      Bits 4-7 should be 3 for a mouse device.&n;    data[3] = bxxx xxxx Left button and x-axis motion.&n;    data[4] = byyy yyyy Second button and y-axis motion.&n;    data[5] = byyy bxxx Third button and fourth button.  &n;    &t;      Y is additiona. high bits of y-axis motion.  &n;    &t;      X is additional high bits of x-axis motion.&n;&n;    NOTE: data[0] and data[2] are confirmed by the parent function and&n;    need not be checked here.&n;  */
-multiline_comment|/*&n;     * &squot;buttons&squot; here means &squot;button down&squot; states!&n;     * Button 1 (left)  : bit 2, busmouse button 3&n;     * Button 2 (right) : bit 0, busmouse button 1&n;     * Button 3 (middle): bit 1, busmouse button 2&n;     */
+multiline_comment|/*&n;    Handler 1 -- 100cpi original Apple mouse protocol.&n;    Handler 2 -- 200cpi original Apple mouse protocol.&n;&n;    For Apple&squot;s standard one-button mouse protocol the data array will&n;    contain the following values:&n;&n;                BITS    COMMENTS&n;    data[0] = dddd 1100 ADB command: Talk, register 0, for device dddd.&n;    data[1] = bxxx xxxx First button and x-axis motion.&n;    data[2] = byyy yyyy Second button and y-axis motion.&n;&n;    Handler 4 -- Apple Extended mouse protocol.&n;&n;    For Apple&squot;s 3-button mouse protocol the data array will contain the&n;    following values:&n;&n;&t;&t;BITS    COMMENTS&n;    data[0] = dddd 1100 ADB command: Talk, register 0, for device dddd.&n;    data[1] = bxxx xxxx Left button and x-axis motion.&n;    data[2] = byyy yyyy Second button and y-axis motion.&n;    data[3] = byyy bxxx Third button and fourth button.  &n;    &t;      Y is additional high bits of y-axis motion.  &n;    &t;      X is additional high bits of x-axis motion.&n;&n;    This procedure also gets called from the keyboard code if we&n;    are emulating mouse buttons with keys.  In this case data[0] == 0&n;    (data[0] cannot be 0 for a real ADB packet).&n;&n;    &squot;buttons&squot; here means &squot;button down&squot; states!&n;    Button 1 (left)  : bit 2, busmouse button 3&n;    Button 2 (middle): bit 1, busmouse button 2&n;    Button 3 (right) : bit 0, busmouse button 1&n;*/
 multiline_comment|/* x/y and buttons swapped */
-r_if
-c_cond
-(paren
-id|nb
-OG
-l_int|0
-)paren
-(brace
-multiline_comment|/* real packet : use buttons? */
 r_if
 c_cond
 (paren
@@ -97,10 +94,40 @@ l_int|8
 id|printk
 c_func
 (paren
-l_string|&quot;adb_mouse: real data; &quot;
+l_string|&quot;KERN_DEBUG adb_mouse: %s data; &quot;
+comma
+id|buf
+(braket
+l_int|0
+)braket
+ques
+c_cond
+l_string|&quot;real&quot;
+suffix:colon
+l_string|&quot;fake&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* button 1 (left, bit 2) : always significant ! */
+id|id
+op_assign
+(paren
+id|buf
+(braket
+l_int|0
+)braket
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0xf
+suffix:semicolon
+id|buttons
+op_assign
+id|adb_mouse_buttons
+(braket
+id|id
+)braket
+suffix:semicolon
+multiline_comment|/* button 1 (left, bit 2) */
 id|buttons
 op_assign
 (paren
@@ -148,14 +175,14 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* 2+3 unchanged */
-multiline_comment|/* button 3 (right) present?&n;&t; *  on a logitech mouseman, the right and mid buttons sometimes behave&n;&t; *  strangely until they both have been pressed after booting. */
-multiline_comment|/* data valid only if extended mouse format ! (buf[3] = 0 else) */
+multiline_comment|/* button 3 (right) present?&n;     *  on a logitech mouseman, the right and mid buttons sometimes behave&n;     *  strangely until they both have been pressed after booting. */
+multiline_comment|/* data valid only if extended mouse format ! */
 r_if
 c_cond
 (paren
 id|nb
 op_eq
-l_int|6
+l_int|4
 )paren
 id|buttons
 op_assign
@@ -180,63 +207,6 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* 1+3 unchanged */
-)brace
-r_else
-(brace
-multiline_comment|/* fake packet : use 2+3 */
-r_if
-c_cond
-(paren
-id|console_loglevel
-op_ge
-l_int|8
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;adb_mouse: fake data; &quot;
-)paren
-suffix:semicolon
-multiline_comment|/* we only see state changes here, but the fake driver takes care&n;&t; * to preserve state... button 1 state must stay unchanged! */
-id|buttons
-op_assign
-(paren
-id|buttons
-op_amp
-l_int|4
-)paren
-op_or
-(paren
-(paren
-id|buf
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0x80
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
-)paren
-op_or
-(paren
-id|buf
-(braket
-l_int|3
-)braket
-op_amp
-l_int|0x80
-ques
-c_cond
-l_int|2
-suffix:colon
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
 id|add_mouse_randomness
 c_func
 (paren
@@ -274,11 +244,38 @@ l_int|0x7f
 )paren
 )paren
 suffix:semicolon
+id|adb_mouse_buttons
+(braket
+id|id
+)braket
+op_assign
+id|buttons
+suffix:semicolon
+multiline_comment|/* a button is down if it is down on any mouse */
+r_for
+c_loop
+(paren
+id|id
+op_assign
+l_int|0
+suffix:semicolon
+id|id
+OL
+l_int|16
+suffix:semicolon
+op_increment
+id|id
+)paren
+id|buttons
+op_and_assign
+id|adb_mouse_buttons
+(braket
+id|id
+)braket
+suffix:semicolon
 id|mouse.buttons
 op_assign
 id|buttons
-op_amp
-l_int|7
 suffix:semicolon
 id|mouse.dx
 op_add_assign
@@ -525,6 +522,9 @@ op_star
 id|file
 )paren
 (brace
+r_int
+id|id
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -544,10 +544,28 @@ id|mouse.dy
 op_assign
 l_int|0
 suffix:semicolon
-id|adb_mouse_buttons
+r_for
+c_loop
+(paren
+id|id
 op_assign
 l_int|0
 suffix:semicolon
+id|id
+OL
+l_int|16
+suffix:semicolon
+op_increment
+id|id
+)paren
+id|adb_mouse_buttons
+(braket
+id|id
+)braket
+op_assign
+l_int|7
+suffix:semicolon
+multiline_comment|/* all buttons up */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|adb_mouse_interrupt_hook
@@ -913,6 +931,7 @@ id|mouse.wait
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef __powerpc__
 r_if
 c_cond
 (paren
@@ -932,11 +951,24 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef __mc68000__
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MAC
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Macintosh ADB mouse installed.&bslash;n&quot;
+l_string|&quot;Macintosh ADB mouse driver installed.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|misc_register
@@ -950,10 +982,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|macro|MIN_THRESHOLD
-mdefine_line|#define&t;MIN_THRESHOLD 1
-DECL|macro|MAX_THRESHOLD
-mdefine_line|#define&t;MAX_THRESHOLD 20&t;/* more seems not reasonable... */
+multiline_comment|/*&n; * XXX this function is misnamed.&n; * It is called if the kernel is booted with the adb_buttons=xxx&n; * option, which is about using ADB keyboard buttons to emulate&n; * mouse buttons. -- paulus&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -979,64 +1008,30 @@ id|ints
 (braket
 l_int|0
 )braket
-OL
+op_ge
 l_int|1
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;adb_mouse_setup: no arguments!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|0
-)braket
-OG
-l_int|2
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;adb_mouse_setup: too many arguments&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|1
-)braket
-template_param
-id|MAX_THRESHOLD
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;adb_mouse_setup: bad threshold value (ignored)&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
-id|adb_mouse_x_threshold
+id|adb_emulate_buttons
 op_assign
 id|ints
 (braket
 l_int|1
 )braket
+OG
+l_int|0
 suffix:semicolon
-id|adb_mouse_y_threshold
+r_if
+c_cond
+(paren
+id|ints
+(braket
+l_int|1
+)braket
+OG
+l_int|1
+)paren
+id|adb_button2_keycode
 op_assign
 id|ints
 (braket
@@ -1050,35 +1045,16 @@ id|ints
 (braket
 l_int|0
 )braket
-OG
-l_int|1
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ints
-(braket
+op_ge
 l_int|2
-)braket
-template_param
-id|MAX_THRESHOLD
 )paren
-id|printk
-c_func
-(paren
-l_string|&quot;adb_mouse_setup: bad threshold value (ignored)&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|adb_mouse_y_threshold
+id|adb_button3_keycode
 op_assign
 id|ints
 (braket
 l_int|2
 )braket
 suffix:semicolon
-)brace
 )brace
 )brace
 macro_line|#ifdef MODULE

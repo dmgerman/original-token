@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/exec.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * #!-checking implemented by tytso.&n; */
 multiline_comment|/*&n; * Demand-loading implemented 01.12.91 - no need to read anything but&n; * the header into memory. The inode of the executable is put into&n; * &quot;current-&gt;executable&quot;, and page faults do the actual loading. Clean.&n; *&n; * Once more I can proudly say that linux stood up to being changed: it&n; * was less than 2 hours work to get demand-loading completely implemented.&n; *&n; * Demand loading changed July 1993 by Eric Youngdale.   Use mmap instead,&n; * current-&gt;executable is only used by the procfs.  This allows a dispatch&n; * table to check for several different types  of binary formats.  We keep&n; * trying until we recognize the file or we run out of supported binary&n; * formats. &n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;

@@ -602,7 +602,7 @@ macro_line|#ifdef SHOW_TASK_SWITCHES
 id|printk
 c_func
 (paren
-l_string|&quot;%s/%d -&gt; %s/%d NIP %08lx cpu %d sfr %d lock %x&bslash;n&quot;
+l_string|&quot;%s/%d -&gt; %s/%d NIP %08lx cpu %d lock %x root %x/%x&bslash;n&quot;
 comma
 id|prev-&gt;comm
 comma
@@ -624,16 +624,18 @@ r_new
 op_member_access_from_pointer
 id|processor
 comma
+id|scheduler_lock.lock
+comma
 r_new
 op_member_access_from_pointer
-id|tss.smp_fork_ret
+id|fs-&gt;root
 comma
-id|scheduler_lock.lock
+id|prev-&gt;fs-&gt;root
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef __SMP__
-multiline_comment|/* avoid complexity of lazy save/restore of fpu&n;&t; * by just saving it every time we switch out -- Cort&n;&t; */
+multiline_comment|/* avoid complexity of lazy save/restore of fpu&n;&t; * by just saving it every time we switch out if&n;&t; * this task used the fpu during the last quantum.&n;&t; * &n;&t; * If it tries to use the fpu again, it&squot;ll trap and&n;&t; * reload its fp regs.&n;&t; *  -- Cort&n;&t; */
 r_if
 c_cond
 (paren
@@ -1807,6 +1809,21 @@ id|filename
 r_goto
 id|out
 suffix:semicolon
+macro_line|#ifdef __SMP__&t;  
+r_if
+c_cond
+(paren
+id|regs-&gt;msr
+op_amp
+id|MSR_FP
+)paren
+id|smp_giveup_fpu
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+macro_line|#else&t;  
 r_if
 c_cond
 (paren
@@ -1814,10 +1831,12 @@ id|last_task_used_math
 op_eq
 id|current
 )paren
-id|last_task_used_math
-op_assign
-l_int|NULL
+id|giveup_fpu
+c_func
+(paren
+)paren
 suffix:semicolon
+macro_line|#endif&t;
 id|error
 op_assign
 id|do_execve

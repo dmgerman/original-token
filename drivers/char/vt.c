@@ -47,6 +47,14 @@ id|vt_cons
 id|MAX_NR_CONSOLES
 )braket
 suffix:semicolon
+multiline_comment|/* Keyboard type: Default is KB_101, but can be set by machine&n; * specific code.&n; */
+DECL|variable|keyboard_type
+r_int
+r_char
+id|keyboard_type
+op_assign
+id|KB_101
+suffix:semicolon
 macro_line|#ifndef __alpha__
 id|asmlinkage
 r_int
@@ -2081,7 +2089,7 @@ suffix:colon
 multiline_comment|/*&n;&t;&t; * this is naive.&n;&t;&t; */
 id|ucval
 op_assign
-id|KB_101
+id|keyboard_type
 suffix:semicolon
 r_goto
 id|setchar

@@ -381,6 +381,18 @@ op_assign
 l_int|0x7fff
 suffix:semicolon
 macro_line|#ifdef CONFIG_APUS
+multiline_comment|/* Clear any inter-CPU interupt requests. Circumvents bug in&n;           Blizzard IPL emulation HW (or so it appears). */
+id|APUS_WRITE
+c_func
+(paren
+id|APUS_INT_LVL
+comma
+id|INTLVL_SETRESET
+op_or
+id|INTLVL_MASK
+)paren
+suffix:semicolon
+multiline_comment|/* Init IPL emulation. */
 id|APUS_WRITE
 c_func
 (paren
@@ -1341,6 +1353,23 @@ op_ge
 id|IRQ_AMIGA_CIAB
 )paren
 (brace
+id|cia_set_irq
+c_func
+(paren
+op_amp
+id|ciab_base
+comma
+(paren
+l_int|1
+op_lshift
+(paren
+id|irq
+op_minus
+id|IRQ_AMIGA_CIAB
+)paren
+)paren
+)paren
+suffix:semicolon
 id|cia_able_irq
 c_func
 (paren
@@ -1371,6 +1400,23 @@ op_ge
 id|IRQ_AMIGA_CIAA
 )paren
 (brace
+id|cia_set_irq
+c_func
+(paren
+op_amp
+id|ciaa_base
+comma
+(paren
+l_int|1
+op_lshift
+(paren
+id|irq
+op_minus
+id|IRQ_AMIGA_CIAA
+)paren
+)paren
+)paren
+suffix:semicolon
 id|cia_able_irq
 c_func
 (paren

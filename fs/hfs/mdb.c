@@ -1027,6 +1027,13 @@ comma
 id|raw-&gt;drDirCnt
 )paren
 suffix:semicolon
+multiline_comment|/* write MDB to disk */
+id|hfs_buffer_dirty
+c_func
+(paren
+id|mdb-&gt;buf
+)paren
+suffix:semicolon
 multiline_comment|/* write the backup MDB, not returning until it is written. &n;         * we only do this when either the catalog or extents overflow&n;         * files grow. */
 r_if
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.33 1998/09/25 04:32:30 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.36 1998/10/08 01:17:48 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -40,51 +40,6 @@ r_int
 id|smp_num_cpus
 op_assign
 l_int|1
-suffix:semicolon
-DECL|variable|cpu_present_map
-r_int
-r_int
-id|cpu_present_map
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|cpu_number_map
-r_volatile
-r_int
-id|cpu_number_map
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-DECL|variable|cpu_callin_map
-r_volatile
-r_int
-r_int
-id|cpu_callin_map
-(braket
-id|NR_CPUS
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
-DECL|variable|__cpu_logical_map
-r_volatile
-r_int
-id|__cpu_logical_map
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-DECL|variable|boot_cpu_id
-r_static
-r_int
-r_char
-id|boot_cpu_id
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|cpu_data
 r_struct
@@ -147,6 +102,63 @@ r_int
 id|first_cpu_booted
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* all cpu mappings are 1-1 -- Cort */
+DECL|variable|cpu_number_map
+r_int
+id|cpu_number_map
+(braket
+id|NR_CPUS
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|1
+comma
+l_int|2
+comma
+l_int|3
+comma
+l_int|4
+comma
+l_int|5
+comma
+l_int|6
+comma
+l_int|7
+comma
+l_int|8
+comma
+l_int|9
+comma
+l_int|10
+comma
+l_int|11
+comma
+l_int|12
+comma
+l_int|13
+comma
+l_int|14
+comma
+l_int|15
+comma
+)brace
+suffix:semicolon
+DECL|variable|cpu_callin_map
+r_volatile
+r_int
+r_int
+id|cpu_callin_map
+(braket
+id|NR_CPUS
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 r_int
 id|start_secondary
@@ -351,7 +363,7 @@ id|cpu
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Dirty hack to get smp message passing working.&n; * Right now it only works for stop cpu&squot;s but will be setup&n; * later for more general message passing.&n; *&n; * As it is now, if we&squot;re sending two message as the same time&n; * we have race conditions.  I avoided doing locks here since&n; * all that works right now is the stop cpu message.&n; *&n; *  -- Cort&n; */
+multiline_comment|/*&n; * Dirty hack to get smp message passing working.&n; * Right now it only works for stop cpu&squot;s but will be setup&n; * later for more general message passing.&n; *&n; * As it is now, if we&squot;re sending two message at the same time&n; * we have race conditions.  I avoided doing locks here since&n; * all that works right now is the stop cpu message.&n; *&n; *  -- Cort&n; */
 DECL|variable|smp_message
 r_int
 id|smp_message
@@ -378,17 +390,24 @@ c_func
 )paren
 )braket
 suffix:semicolon
-id|printk
-c_func
+multiline_comment|/* clear interrupt */
+op_star
 (paren
-l_string|&quot;SMP %d: smp_message_recv() msg %x&bslash;n&quot;
-comma
-id|smp_processor_id
-c_func
-(paren
+r_volatile
+r_int
+r_int
+op_star
 )paren
-comma
-id|msg
+(paren
+l_int|0xf80000c0
+)paren
+op_assign
+op_complement
+l_int|0L
+suffix:semicolon
+id|eieio
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/* make sure msg is for us */
@@ -402,6 +421,10 @@ l_int|1
 )paren
 r_return
 suffix:semicolon
+id|ipi_count
+op_increment
+suffix:semicolon
+multiline_comment|/*printk(&quot;SMP %d: smp_message_recv() msg %x&bslash;n&quot;, smp_processor_id(),msg);*/
 r_switch
 c_cond
 (paren
@@ -421,6 +444,15 @@ c_loop
 (paren
 l_int|1
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MSG_RESCHEDULE
+suffix:colon
+id|current-&gt;need_resched
+op_assign
+l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -470,7 +502,18 @@ r_int
 id|cpu
 )paren
 (brace
-multiline_comment|/* for now, nothing */
+id|smp_message_pass
+c_func
+(paren
+id|cpu
+comma
+id|MSG_RESCHEDULE
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
 )brace
 DECL|variable|mesg_pass_lock
 id|spinlock_t
@@ -497,21 +540,6 @@ r_int
 id|wait
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d: sending smp message&bslash;n&quot;
-comma
-id|current-&gt;processor
-)paren
-suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|mesg_pass_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -520,6 +548,28 @@ op_ne
 id|_MACH_Pmac
 )paren
 r_return
+suffix:semicolon
+multiline_comment|/*printk(&quot;SMP %d: sending smp message&bslash;n&quot;, current-&gt;processor);*/
+r_if
+c_cond
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;pass from cpu 1&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|mesg_pass_lock
+)paren
 suffix:semicolon
 DECL|macro|OTHER
 mdefine_line|#define OTHER (~smp_processor_id() &amp; 1)
@@ -568,7 +618,6 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* interrupt secondary processor */
-multiline_comment|/**(volatile unsigned long *)(0xf80000c0) = 0xffffffff;&n;&t;eieio();*/
 op_star
 (paren
 r_volatile
@@ -580,7 +629,31 @@ op_star
 l_int|0xf80000c0
 )paren
 op_assign
-l_int|0
+op_complement
+l_int|0L
+suffix:semicolon
+id|eieio
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+l_int|0xf80000c0
+)paren
+op_assign
+l_int|0L
+suffix:semicolon
+id|eieio
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* interrupt primary */
 multiline_comment|/**(volatile unsigned long *)(0xf3019000);*/
@@ -612,6 +685,14 @@ id|current_set
 (braket
 id|NR_CPUS
 )braket
+suffix:semicolon
+r_extern
+r_void
+id|__secondary_start
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_int
 id|i
@@ -653,14 +734,6 @@ id|i
 op_increment
 )paren
 (brace
-id|cpu_number_map
-(braket
-id|i
-)braket
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 id|prof_counter
 (braket
 id|i
@@ -676,65 +749,26 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|cpu_present_map
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NR_CPUS
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|__cpu_logical_map
+id|cpu_callin_map
 (braket
-id|i
+l_int|0
 )braket
 op_assign
-op_minus
 l_int|1
 suffix:semicolon
-)brace
 id|smp_store_cpu_info
 c_func
 (paren
-id|boot_cpu_id
+l_int|0
 )paren
 suffix:semicolon
 id|active_kernel_processor
 op_assign
-id|boot_cpu_id
+l_int|0
 suffix:semicolon
 id|current-&gt;processor
 op_assign
-id|boot_cpu_id
-suffix:semicolon
-id|cpu_present_map
-op_or_assign
-l_int|1
-suffix:semicolon
-id|cpu_number_map
-(braket
-id|boot_cpu_id
-)braket
-op_assign
 l_int|0
-suffix:semicolon
-id|__cpu_logical_map
-(braket
-l_int|0
-)braket
-op_assign
-id|boot_cpu_id
 suffix:semicolon
 r_if
 c_cond
@@ -753,19 +787,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* assume a 2nd processor for now */
-id|cpu_present_map
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|1
-)paren
-suffix:semicolon
-id|smp_num_cpus
-op_assign
-l_int|2
-suffix:semicolon
 multiline_comment|/* create a process for second processor */
 id|kernel_thread
 c_func
@@ -823,7 +844,6 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* setup entry point of secondary processor */
-multiline_comment|/*&t;*(volatile unsigned long *)(0xf2800000)&n;&t;&t;= (unsigned long)secondary_entry-KERNELBASE;*/
 op_star
 (paren
 r_volatile
@@ -835,7 +855,13 @@ op_star
 l_int|0xf2800000
 )paren
 op_assign
-l_int|0x100
+(paren
+r_int
+r_int
+)paren
+id|__secondary_start
+op_minus
+id|KERNELBASE
 suffix:semicolon
 id|eieio
 c_func
@@ -843,6 +869,25 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* interrupt secondary to begin executing code */
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+l_int|0xf80000c0
+)paren
+op_assign
+op_complement
+l_int|0L
+suffix:semicolon
+id|eieio
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 (paren
 r_volatile
@@ -895,25 +940,16 @@ l_int|1
 )braket
 )paren
 (brace
-id|cpu_number_map
-(braket
-l_int|1
-)braket
-op_assign
-l_int|1
-suffix:semicolon
-id|__cpu_logical_map
-(braket
-id|i
-)braket
-op_assign
-l_int|1
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Processor 1 found.&bslash;n&quot;
+l_string|&quot;Processor %d found.&bslash;n&quot;
+comma
+id|smp_num_cpus
 )paren
+suffix:semicolon
+id|smp_num_cpus
+op_increment
 suffix:semicolon
 macro_line|#if 0 /* this sync&squot;s the decr&squot;s, but we don&squot;t want this now -- Cort */
 id|set_dec
@@ -923,7 +959,33 @@ id|decrementer_count
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* interrupt secondary to start decr&squot;s on both cpus */
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Processor %d is stuck. &bslash;n&quot;
+comma
+id|smp_num_cpus
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* reset the entry point so if we get another intr we won&squot;t&n;&t; * try to startup again */
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+l_int|0xf2800000
+)paren
+op_assign
+l_int|0x100
+suffix:semicolon
+multiline_comment|/* send interrupt to other processors to start decr&squot;s on all cpus */
 id|smp_message_pass
 c_func
 (paren
@@ -936,23 +998,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* interrupt secondary to begin executing code */
-multiline_comment|/**(volatile unsigned long *)(0xf80000c0) = 0L;&n;&t;&t;eieio();*/
-)brace
-r_else
-(brace
-id|smp_num_cpus
-op_decrement
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Processor %d is stuck.&bslash;n&quot;
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -1005,18 +1050,16 @@ r_void
 (brace
 )brace
 multiline_comment|/* Activate a secondary processor. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|start_secondary
+id|asmlinkage
 r_int
+id|__init
 id|start_secondary
 c_func
 (paren
 r_void
 op_star
 id|unused
-)paren
 )paren
 (brace
 id|printk
@@ -1063,7 +1106,7 @@ suffix:semicolon
 id|smp_store_cpu_info
 c_func
 (paren
-l_int|1
+id|current-&gt;processor
 )paren
 suffix:semicolon
 id|set_dec
@@ -1084,13 +1127,12 @@ id|current-&gt;mm-&gt;mmap-&gt;vm_end
 op_assign
 id|init_task.mm-&gt;mmap-&gt;vm_end
 suffix:semicolon
-multiline_comment|/* assume we&squot;re just the secondary processor for now */
 id|cpu_callin_map
 (braket
-l_int|1
+id|current-&gt;processor
 )braket
 op_assign
-l_int|1
+id|current-&gt;processor
 suffix:semicolon
 r_while
 c_loop
@@ -1180,6 +1222,7 @@ id|cpu_data
 id|id
 )braket
 suffix:semicolon
+multiline_comment|/* assume bogomips are same for everything */
 id|c-&gt;loops_per_sec
 op_assign
 id|loops_per_sec

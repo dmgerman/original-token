@@ -49,6 +49,12 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+DECL|macro|VT_BUF_HAVE_MEMCPYF
+mdefine_line|#define VT_BUF_HAVE_MEMCPYF
+DECL|macro|scr_memcpyw_from
+mdefine_line|#define scr_memcpyw_from memcpy
+DECL|macro|scr_memcpyw_to
+mdefine_line|#define scr_memcpyw_to memcpy
 DECL|macro|VGA_MAP_MEM
 mdefine_line|#define VGA_MAP_MEM(x) (x + _ISA_MEM_BASE)
 DECL|macro|vga_readb

@@ -94,6 +94,12 @@ op_star
 id|rx_cmds
 suffix:semicolon
 multiline_comment|/* recv dma command list */
+DECL|member|node
+r_struct
+id|device_node
+op_star
+id|node
+suffix:semicolon
 DECL|member|rx_bufs
 r_struct
 id|sk_buff
@@ -1178,6 +1184,8 @@ suffix:semicolon
 id|feature_set
 c_func
 (paren
+id|bp-&gt;node
+comma
 id|FEATURE_BMac_IO_enable
 )paren
 suffix:semicolon
@@ -1190,6 +1198,8 @@ suffix:semicolon
 id|feature_set
 c_func
 (paren
+id|bp-&gt;node
+comma
 id|FEATURE_BMac_reset
 )paren
 suffix:semicolon
@@ -1202,6 +1212,8 @@ suffix:semicolon
 id|feature_clear
 c_func
 (paren
+id|bp-&gt;node
+comma
 id|FEATURE_BMac_reset
 )paren
 suffix:semicolon
@@ -1956,16 +1968,6 @@ id|STATUS
 )paren
 suffix:semicolon
 multiline_comment|/* read it just to clear it */
-id|bmwrite
-c_func
-(paren
-id|dev
-comma
-id|INTDISABLE
-comma
-id|EnableNormal
-)paren
-suffix:semicolon
 multiline_comment|/* zero out the chip Hash Filter registers */
 r_for
 c_loop
@@ -2100,6 +2102,16 @@ op_or
 id|RxHashFilterEnable
 op_or
 id|RxRejectOwnPackets
+)paren
+suffix:semicolon
+id|bmwrite
+c_func
+(paren
+id|dev
+comma
+id|INTDISABLE
+comma
+id|EnableNormal
 )paren
 suffix:semicolon
 r_return
@@ -3354,6 +3366,10 @@ id|bp-&gt;tx_fill
 op_assign
 id|i
 suffix:semicolon
+id|bp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|dbdma_continue
 c_func
 (paren
@@ -3656,6 +3672,10 @@ id|i
 suffix:semicolon
 op_increment
 id|bp-&gt;stats.rx_packets
+suffix:semicolon
+id|bp-&gt;stats.rx_bytes
+op_add_assign
+id|nb
 suffix:semicolon
 )brace
 r_else
@@ -7061,6 +7081,10 @@ c_func
 (paren
 id|bp-&gt;queue
 )paren
+suffix:semicolon
+id|bp-&gt;node
+op_assign
+id|bmacs
 suffix:semicolon
 id|memset
 c_func

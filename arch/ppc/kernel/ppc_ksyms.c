@@ -23,6 +23,7 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/feature.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -511,13 +512,6 @@ c_func
 id|strncmp
 )paren
 suffix:semicolon
-DECL|variable|strnicmp
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|strnicmp
-)paren
-suffix:semicolon
 DECL|variable|memset
 id|EXPORT_SYMBOL
 c_func
@@ -794,6 +788,15 @@ c_func
 id|xchg_u32
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_MACH_SPECIFIC
+DECL|variable|_machine
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_machine
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|adb_request
 id|EXPORT_SYMBOL
 c_func
@@ -887,11 +890,25 @@ c_func
 id|find_type_devices
 )paren
 suffix:semicolon
+DECL|variable|find_compatible_devices
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|find_compatible_devices
+)paren
+suffix:semicolon
 DECL|variable|find_path_device
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|find_path_device
+)paren
+suffix:semicolon
+DECL|variable|find_phandle
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|find_phandle
 )paren
 suffix:semicolon
 DECL|variable|get_property
@@ -913,6 +930,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_device_loc
+)paren
+suffix:semicolon
+DECL|variable|feature_set
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|feature_set
+)paren
+suffix:semicolon
+DECL|variable|feature_clear
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|feature_clear
+)paren
+suffix:semicolon
+DECL|variable|feature_test
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|feature_test
 )paren
 suffix:semicolon
 DECL|variable|note_scsi_host
