@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
+macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &quot;8390.h&quot;
 DECL|macro|ARIADNE2_BASE
 mdefine_line|#define ARIADNE2_BASE&t;&t;0x0300
@@ -1969,7 +1970,7 @@ op_amp
 id|ariadne2_dev
 )paren
 suffix:semicolon
-id|zorro_config_board
+id|zorro_unconfig_board
 c_func
 (paren
 id|key

@@ -2,6 +2,24 @@ multiline_comment|/*&n; * linux/include/asm-arm/atomic.h&n; *&n; * Copyright (c)
 macro_line|#ifndef __ASM_ARM_ATOMIC_H
 DECL|macro|__ASM_ARM_ATOMIC_H
 mdefine_line|#define __ASM_ARM_ATOMIC_H
+macro_line|#ifdef __SMP__
+macro_line|#error SMP not supported
+macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_ARCH_CO285
+DECL|member|counter
+DECL|typedef|atomic_t
+r_typedef
+r_struct
+(brace
+r_volatile
+r_int
+id|counter
+suffix:semicolon
+)brace
+id|atomic_t
+suffix:semicolon
+macro_line|#else
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
@@ -13,13 +31,11 @@ suffix:semicolon
 )brace
 id|atomic_t
 suffix:semicolon
+macro_line|#endif
 DECL|macro|ATOMIC_INIT
 mdefine_line|#define ATOMIC_INIT(i)&t;{ (i) }
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef __SMP__
-macro_line|#error SMP not supported
-macro_line|#endif
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)&t;((v)-&gt;counter)
 DECL|macro|atomic_set

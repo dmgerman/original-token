@@ -4916,9 +4916,6 @@ suffix:semicolon
 id|sb-&gt;s_flags
 op_assign
 id|root_mountflags
-op_amp
-op_complement
-id|MS_RDONLY
 suffix:semicolon
 id|vfsmnt
 op_assign
@@ -4950,10 +4947,6 @@ op_ge
 l_int|0
 )paren
 (brace
-id|sb-&gt;s_rd_only
-op_assign
-l_int|0
-suffix:semicolon
 id|sb-&gt;s_dirt
 op_assign
 l_int|0
@@ -4985,7 +4978,18 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_NOTICE
-l_string|&quot;VFS: Mounted root (nfs filesystem).&bslash;n&quot;
+l_string|&quot;VFS: Mounted root (NFS filesystem)%s.&bslash;n&quot;
+comma
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+ques
+c_cond
+l_string|&quot; readonly&quot;
+suffix:colon
+l_string|&quot;&quot;
 )paren
 suffix:semicolon
 r_return

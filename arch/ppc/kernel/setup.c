@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.120 1998/12/10 00:24:28 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.122 1998/12/31 20:51:19 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -812,6 +812,18 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if defined(CONFIG_MBX)
+id|mbx_ide_init_hwif_ports
+c_func
+(paren
+id|p
+comma
+id|base
+comma
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 DECL|variable|ide_init_hwif_ports
 id|EXPORT_SYMBOL
@@ -1713,12 +1725,10 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find out what kind of machine we&squot;re on and save any data we need&n; * from the early boot process (devtree is copied on pmac by prom_init() )&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
 r_int
+id|__init
+DECL|function|identify_machine
 id|identify_machine
 c_func
 (paren
@@ -1741,7 +1751,6 @@ comma
 r_int
 r_int
 id|r7
-)paren
 )paren
 (brace
 r_extern
@@ -1824,6 +1833,12 @@ suffix:semicolon
 id|have_of
 op_assign
 l_int|1
+suffix:semicolon
+multiline_comment|/* prom_init has already been called from __start */
+id|finish_device_tree
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* ask the OF info if we&squot;re a chrp or pmac */
 id|model
@@ -1914,12 +1929,14 @@ c_cond
 id|have_of
 )paren
 (brace
+macro_line|#ifdef CONFIG_MACH_SPECIFIC
 multiline_comment|/* prom_init has already been called from __start */
 id|finish_device_tree
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_MACH_SPECIFIC&t;*/
 multiline_comment|/*&n;&t;&t; * If we were booted via quik, r3 points to the physical&n;&t;&t; * address of the command-line parameters.&n;&t;&t; * If we were booted from an xcoff image (i.e. netbooted or&n;&t;&t; * booted from floppy), we get the command line from the&n;&t;&t; * bootargs property of the /chosen node.&n;&t;&t; * If an initial ramdisk is present, r3 and r4&n;&t;&t; * are used for initrd_start and initrd_size,&n;&t;&t; * otherwise they contain 0xdeadbeef.  &n;&t;&t; */
 id|cmd_line
 (braket

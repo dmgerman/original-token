@@ -37,7 +37,7 @@ mdefine_line|#define DAYNA_RX_REQUEST        3
 multiline_comment|/* Same on both card types */
 DECL|macro|COPS_CLEAR_INT
 mdefine_line|#define COPS_CLEAR_INT  1
-multiline_comment|/* LAP response codes recieved from the cards. */
+multiline_comment|/* LAP response codes received from the cards. */
 DECL|macro|LAP_INIT
 mdefine_line|#define LAP_INIT        1       /* Init cmd */
 DECL|macro|LAP_INIT_RSP

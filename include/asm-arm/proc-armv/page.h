@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/page.h&n; *&n; * Copyr
 macro_line|#ifndef __ASM_PROC_PAGE_H
 DECL|macro|__ASM_PROC_PAGE_H
 mdefine_line|#define __ASM_PROC_PAGE_H
+macro_line|#include &lt;asm/hardware.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT&t;12
@@ -125,8 +126,10 @@ multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 multiline_comment|/* This handles the memory map.. */
+macro_line|#ifndef PAGE_OFFSET
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0xc0000000
+macro_line|#endif
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(((unsigned long)(addr) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* __KERNEL__ */

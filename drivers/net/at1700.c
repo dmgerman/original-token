@@ -3817,6 +3817,7 @@ op_amp
 id|dev_at1700
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MCA&t;
 r_if
 c_cond
 (paren
@@ -3830,6 +3831,7 @@ id|lp-&gt;mca_slot
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 id|kfree
 c_func
 (paren

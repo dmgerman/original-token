@@ -1332,7 +1332,7 @@ c_func
 (paren
 id|CD_OPEN
 comma
-l_string|&quot;device opened sucessfully.&bslash;n&quot;
+l_string|&quot;device opened successfully.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2565,7 +2565,7 @@ c_func
 (paren
 id|CD_DO_IOCTL
 comma
-l_string|&quot;CDROMMULTISESSION sucessful&bslash;n&quot;
+l_string|&quot;CDROMMULTISESSION successful&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3079,7 +3079,7 @@ c_func
 (paren
 id|CD_DO_IOCTL
 comma
-l_string|&quot;CDROM_GET_MCN sucessful&bslash;n&quot;
+l_string|&quot;CDROM_GET_MCN successful&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3520,7 +3520,7 @@ comma
 id|q
 )paren
 suffix:semicolon
-multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMSUBCHNL sucessful&bslash;n&quot;); */
+multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMSUBCHNL successful&bslash;n&quot;); */
 r_return
 l_int|0
 suffix:semicolon
@@ -3583,7 +3583,7 @@ comma
 id|header
 )paren
 suffix:semicolon
-multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMREADTOCHDR sucessful&bslash;n&quot;); */
+multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMREADTOCHDR successful&bslash;n&quot;); */
 r_return
 l_int|0
 suffix:semicolon
@@ -3692,7 +3692,7 @@ comma
 id|entry
 )paren
 suffix:semicolon
-multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMREADTOCENTRY sucessful&bslash;n&quot;); */
+multiline_comment|/* cdinfo(CD_DO_IOCTL, &quot;CDROMREADTOCENTRY successful&bslash;n&quot;); */
 r_return
 l_int|0
 suffix:semicolon

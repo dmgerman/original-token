@@ -2848,6 +2848,18 @@ op_logical_neg
 id|schedq.task
 )paren
 (brace
+multiline_comment|/* following two lines added by airlied@linux.ie&n;&t;&t;&t;&t;to make NFS over TCP work 5/1/99 */
+id|dprintk
+c_func
+(paren
+l_string|&quot;RPC: rpciod running checking dispatch&bslash;n&quot;
+)paren
+suffix:semicolon
+id|rpciod_tcp_dispatcher
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dprintk
 c_func
 (paren

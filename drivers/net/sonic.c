@@ -1642,7 +1642,7 @@ id|tx_frag_size
 op_assign
 id|length
 suffix:semicolon
-multiline_comment|/* if there are already packets queued, allow sending serveral packets at once */
+multiline_comment|/* if there are already packets queued, allow sending several packets at once */
 r_if
 c_cond
 (paren

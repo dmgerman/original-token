@@ -9802,7 +9802,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* TLan_EeReceiveByte */
-multiline_comment|/***************************************************************&n;&t; *&t;TLan_EeReadByte&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;No error = 0, else, the stage at which the error&n;&t; *&t;&t;occured.&n;&t; *&t;Parms:&n;&t; *&t;&t;io_base&t;&t;The IO port base address for the&n;&t; *&t;&t;&t;&t;TLAN device with the EEPROM to&n;&t; *&t;&t;&t;&t;use.&n;&t; *&t;&t;ee_addr&t;&t;The address of the byte in the&n;&t; *&t;&t;&t;&t;EEPROM whose contents are to be&n;&t; *&t;&t;&t;&t;retrieved.&n;&t; *&t;&t;data&t;&t;An address to a char to hold the&n;&t; *&t;&t;&t;&t;data obtained from the EEPROM.&n;&t; *&n;&t; *&t;This function reads a byte of information from an byte&n;&t; *&t;cell in the EEPROM.&n;&t; *&n;&t; **************************************************************/
+multiline_comment|/***************************************************************&n;&t; *&t;TLan_EeReadByte&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;No error = 0, else, the stage at which the error&n;&t; *&t;&t;occurred.&n;&t; *&t;Parms:&n;&t; *&t;&t;io_base&t;&t;The IO port base address for the&n;&t; *&t;&t;&t;&t;TLAN device with the EEPROM to&n;&t; *&t;&t;&t;&t;use.&n;&t; *&t;&t;ee_addr&t;&t;The address of the byte in the&n;&t; *&t;&t;&t;&t;EEPROM whose contents are to be&n;&t; *&t;&t;&t;&t;retrieved.&n;&t; *&t;&t;data&t;&t;An address to a char to hold the&n;&t; *&t;&t;&t;&t;data obtained from the EEPROM.&n;&t; *&n;&t; *&t;This function reads a byte of information from an byte&n;&t; *&t;cell in the EEPROM.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_EeReadByte
 r_int
 id|TLan_EeReadByte

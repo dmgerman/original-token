@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: mbx_setup.c,v 1.4 1998/11/15 19:58:55 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted from &squot;alpha&squot; version by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Modified for MBX using prep/chrp/pmac functions by Dan (dmalek@jlc.net)&n; */
+multiline_comment|/*&n; * $Id: mbx_setup.c,v 1.5 1998/12/29 18:55:07 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted from &squot;alpha&squot; version by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Modified for MBX using prep/chrp/pmac functions by Dan (dmalek@jlc.net)&n; */
 multiline_comment|/*&n; * bootup setup stuff..&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -118,25 +118,48 @@ op_star
 id|irq
 )paren
 (brace
+id|ide_ioreg_t
+id|port
+op_assign
+id|base
+suffix:semicolon
+r_int
+id|i
+op_assign
+l_int|8
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+op_decrement
+)paren
 op_star
 id|p
+op_increment
 op_assign
-l_int|0
+id|port
+op_increment
 suffix:semicolon
 op_star
-id|irq
+id|p
+op_increment
 op_assign
-l_int|0
+id|base
+op_plus
+l_int|0x206
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|base
+id|irq
 op_ne
-l_int|0
+l_int|NULL
 )paren
-multiline_comment|/* Only map the first ATA flash drive */
-r_return
+op_star
+id|irq
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#ifdef ATA_FLASH
 id|base

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/time.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; *&n; * No real time clock on the evalulation board!&n; *&n; * Changelog:&n; *  10-Oct-1996&t;RMK&t;Created&n; *  04-Dec-1997&t;RMK&t;Updated for new arch/arm/kernel/time.c&n; *  07-Aug-1998&t;RMK&t;Updated for arch/arm/kernel/leds.c&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/time.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; *&n; * No real time clock on the evalulation board!&n; *&n; * Changelog:&n; *  10-Oct-1996&t;RMK&t;Created&n; *  04-Dec-1997&t;RMK&t;Updated for new arch/arm/kernel/time.c&n; *  07-Aug-1998&t;RMK&t;Updated for arch/arm/kernel/leds.c&n; *  28-Dec-1998&t;APH&t;Made leds code optional&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 DECL|macro|IRQ_TIMER
 mdefine_line|#define IRQ_TIMER IRQ_EBSA110_TIMER0
@@ -75,12 +76,14 @@ r_int
 r_int
 id|divisor
 suffix:semicolon
+macro_line|#ifdef CONFIG_LEDS&t;
 r_static
 r_int
 id|count
 op_assign
 l_int|50
 suffix:semicolon
+macro_line|#endif
 op_star
 id|PIT_T1
 op_assign
@@ -99,6 +102,7 @@ id|PIT1_COUNT
 op_rshift
 l_int|8
 suffix:semicolon
+macro_line|#ifdef CONFIG_LEDS
 r_if
 c_cond
 (paren
@@ -119,6 +123,7 @@ id|led_timer
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

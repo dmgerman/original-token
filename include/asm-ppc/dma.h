@@ -207,6 +207,8 @@ DECL|macro|DMA2_EXT_REG
 mdefine_line|#define DMA2_EXT_REG               0x4D6
 DECL|macro|DMA_MODE_CASCADE
 mdefine_line|#define DMA_MODE_CASCADE 0xC0   /* pass thru DREQ-&gt;HRQ, DACK&lt;-HLDA only */
+DECL|macro|DMA_AUTOINIT
+mdefine_line|#define DMA_AUTOINIT&t;0x10
 r_extern
 id|spinlock_t
 id|dma_spin_lock
@@ -1255,5 +1257,14 @@ id|dmanr
 )paren
 suffix:semicolon
 multiline_comment|/* release it again */
+macro_line|#ifdef CONFIG_PCI_QUIRKS
+r_extern
+r_int
+id|isa_dma_bridge_buggy
+suffix:semicolon
+macro_line|#else
+DECL|macro|isa_dma_bridge_buggy
+mdefine_line|#define isa_dma_bridge_buggy    (0)
+macro_line|#endif
 macro_line|#endif /* _ASM_DMA_H */
 eof

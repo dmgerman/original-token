@@ -3127,10 +3127,17 @@ op_logical_neg
 id|xprt-&gt;rx_pending_flag
 )paren
 (brace
+r_int
+id|start_queue
+op_assign
+l_int|0
+suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;RPC:     xprt queue&bslash;n&quot;
+l_string|&quot;RPC:     xprt queue %p&bslash;n&quot;
+comma
+id|rpc_xprt_pending
 )paren
 suffix:semicolon
 r_if
@@ -3141,10 +3148,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|tcp_rpciod_queue
-c_func
-(paren
-)paren
+id|start_queue
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|xprt-&gt;rx_pending_flag
@@ -3159,6 +3165,22 @@ id|rpc_xprt_pending
 op_assign
 id|xprt
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|start_queue
+)paren
+(brace
+id|tcp_rpciod_queue
+c_func
+(paren
+)paren
+suffix:semicolon
+id|start_queue
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 r_else
 id|dprintk

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/opl3sa2.c&n; *&n; * A low level driver for Yamaha OPL3-SA2 and SA3 cards.&n; * SAx cards should work, as they are just variants of the SA3.&n; *&n; * Copyright 1998 Scott Murray &lt;scottm@interlog.com&gt;&n; *&n; * Originally based on the CS4232 driver (in cs4232.c) by Hannu Savolainen&n; * and others.  Now incorporates code/ideas from pss.c, also by Hannu&n; * Savolainen.  Both of those files are distributed with the following&n; * license:&n; *&n; * &quot;Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; *  OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; *  Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; *  for more info.&quot;&n; *&n; * As such, in accordance with the above license, this file, opl3sa2.c, is&n; * distributed under the GNU GENERAL PUBLIC LICENSE (GPL) Version 2 (June 1991).&n; * See the &quot;COPYING&quot; file distributed with this software for more information.&n; *&n; * Change History&n; * --------------&n; * Scott Murray            Original driver (Jun 14, 1998)&n; * Paul J.Y. Lahaie        Changed probing / attach code order&n; * Scott Murray            Added mixer support (Dec 03, 1998)&n; * Scott Murray            Changed detection code to be more forgiving,&n; *                         added force option as last resort,&n; *                         fixed ioctl return values. (Dec 30, 1998)&n; *&n; */
+multiline_comment|/*&n; * sound/opl3sa2.c&n; *&n; * A low level driver for Yamaha OPL3-SA2 and SA3 cards.&n; * SAx cards should work, as they are just variants of the SA3.&n; *&n; * Copyright 1998, 1999 Scott Murray &lt;scottm@interlog.com&gt;&n; *&n; * Originally based on the CS4232 driver (in cs4232.c) by Hannu Savolainen&n; * and others.  Now incorporates code/ideas from pss.c, also by Hannu&n; * Savolainen.  Both of those files are distributed with the following&n; * license:&n; *&n; * &quot;Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; *  OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; *  Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; *  for more info.&quot;&n; *&n; * As such, in accordance with the above license, this file, opl3sa2.c, is&n; * distributed under the GNU GENERAL PUBLIC LICENSE (GPL) Version 2 (June 1991).&n; * See the &quot;COPYING&quot; file distributed with this software for more information.&n; *&n; * Change History&n; * --------------&n; * Scott Murray            Original driver (Jun 14, 1998)&n; * Paul J.Y. Lahaie        Changed probing / attach code order&n; * Scott Murray            Added mixer support (Dec 03, 1998)&n; * Scott Murray            Changed detection code to be more forgiving,&n; *                         added force option as last resort,&n; *                         fixed ioctl return values. (Dec 30, 1998)&n; * Scott Murray            Simpler detection code should work all the time now&n; *                         (with thanks to Ben Hutchings for the heuristic),&n; *                         removed now unnecessary force option. (Jan 5, 1999)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -25,9 +25,9 @@ DECL|macro|DEFAULT_MIC
 mdefine_line|#define DEFAULT_MIC    50
 DECL|macro|DEFAULT_TIMBRE
 mdefine_line|#define DEFAULT_TIMBRE 0
-multiline_comment|/*&n; * NOTE: CHIPSET_UNKNOWN should match the default value of&n; *       CONFIG_OPL3SA2_CHIPSET in Config.in to make everything&n; *       work right in all situations.&n; */
 DECL|macro|CHIPSET_UNKNOWN
 mdefine_line|#define CHIPSET_UNKNOWN -1
+multiline_comment|/*&n; * These are used both as masks against what the card returns,&n; * and as constants.&n; */
 DECL|macro|CHIPSET_OPL3SA2
 mdefine_line|#define CHIPSET_OPL3SA2  1
 DECL|macro|CHIPSET_OPL3SA3
@@ -36,16 +36,6 @@ DECL|macro|CHIPSET_OPL3SAX
 mdefine_line|#define CHIPSET_OPL3SAX  4
 macro_line|#ifdef CONFIG_OPL3SA2
 multiline_comment|/* What&squot;s my version? */
-macro_line|#ifdef CONFIG_OPL3SA2_CHIPSET
-multiline_comment|/* Set chipset if compiled into the kernel */
-DECL|variable|chipset
-r_static
-r_int
-id|chipset
-op_assign
-id|CONFIG_OPL3SA2_CHIPSET
-suffix:semicolon
-macro_line|#else
 DECL|variable|chipset
 r_static
 r_int
@@ -53,7 +43,6 @@ id|chipset
 op_assign
 id|CHIPSET_UNKNOWN
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Oh well, let&squot;s just cache the name */
 DECL|variable|chipset_name
 r_static
@@ -2021,40 +2010,6 @@ id|hw_config
 (brace
 r_int
 r_char
-id|chipsets
-(braket
-l_int|8
-)braket
-op_assign
-(brace
-id|CHIPSET_UNKNOWN
-comma
-multiline_comment|/* 0 */
-id|CHIPSET_OPL3SA2
-comma
-multiline_comment|/* 1 */
-id|CHIPSET_OPL3SA3
-comma
-multiline_comment|/* 2 */
-id|CHIPSET_UNKNOWN
-comma
-multiline_comment|/* 3 */
-id|CHIPSET_OPL3SAX
-comma
-multiline_comment|/* 4 */
-id|CHIPSET_OPL3SAX
-comma
-multiline_comment|/* 5 */
-id|CHIPSET_UNKNOWN
-comma
-multiline_comment|/* 6 */
-id|CHIPSET_OPL3SA3
-comma
-multiline_comment|/* 7 */
-)brace
-suffix:semicolon
-r_int
-r_char
 id|version
 op_assign
 l_int|0
@@ -2090,24 +2045,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Determine chipset type (SA2, SA3, or SAx)&n;&t; *&n;&t; * Have to handle two possible override situations:&n;&t; * 1) User compiled driver into the kernel and forced chipset type&n;&t; * 2) User built a module, but wants to override the chipset type&n;&t; */
-r_if
-c_cond
-(paren
-id|chipset
-op_eq
-id|CHIPSET_UNKNOWN
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|hw_config-&gt;card_subtype
-op_eq
-id|CHIPSET_UNKNOWN
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; * Look at chipset version in lower 3 bits of index 0x0A, miscellaneous&n;&t;&t;&t; */
+multiline_comment|/*&n;&t; * Determine chipset type (SA2, SA3, or SAx)&n;&t; */
+multiline_comment|/*&n;&t; * Look at chipset version in lower 3 bits of index 0x0A, miscellaneous&n;&t; */
 id|opl3sa2_read
 c_func
 (paren
@@ -2129,153 +2068,22 @@ op_and_assign
 l_int|0x07
 suffix:semicolon
 multiline_comment|/* Match version number to appropiate chipset */
-id|chipset
-op_assign
-id|chipsets
-(braket
+r_if
+c_cond
+(paren
 id|version
-)braket
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Use user specified chipset */
-r_switch
-c_cond
-(paren
-id|hw_config-&gt;card_subtype
-)paren
-(brace
-r_case
-l_int|2
-suffix:colon
-id|chipset
-op_assign
-id|CHIPSET_OPL3SA2
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-id|chipset
-op_assign
-id|CHIPSET_OPL3SA3
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Unknown chipset %d&bslash;n&quot;
-comma
-id|__FILE__
-comma
-id|hw_config-&gt;card_subtype
-)paren
-suffix:semicolon
-id|chipset
-op_assign
-id|CHIPSET_UNKNOWN
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-)brace
-r_else
-(brace
-multiline_comment|/* Use user compiled in chipset */
-r_switch
-c_cond
-(paren
-id|chipset
-)paren
-(brace
-r_case
-l_int|2
-suffix:colon
-id|chipset
-op_assign
-id|CHIPSET_OPL3SA2
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-id|chipset
-op_assign
-id|CHIPSET_OPL3SA3
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Unknown chipset %d&bslash;n&quot;
-comma
-id|__FILE__
-comma
-id|chipset
-)paren
-suffix:semicolon
-id|chipset
-op_assign
-id|CHIPSET_UNKNOWN
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* Do chipset specific stuff: */
-r_switch
-c_cond
-(paren
-id|chipset
-)paren
-(brace
-r_case
-id|CHIPSET_OPL3SA2
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Found OPL3-SA2 (YMF711)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|tag
-op_assign
-l_char|&squot;2&squot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|CHIPSET_OPL3SA3
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Found OPL3-SA3 (YMF715)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|tag
-op_assign
-l_char|&squot;3&squot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
+op_amp
 id|CHIPSET_OPL3SAX
-suffix:colon
+)paren
+(brace
+id|chipset
+op_assign
+id|CHIPSET_OPL3SAX
+suffix:semicolon
+id|tag
+op_assign
+l_char|&squot;x&squot;
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2283,28 +2091,76 @@ id|KERN_INFO
 l_string|&quot;Found OPL3-SAx (YMF719)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|tag
-op_assign
-l_char|&squot;x&squot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;No Yamaha audio controller found&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* If we&squot;ve actually checked the version, print it out */
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
 id|version
+op_amp
+id|CHIPSET_OPL3SA3
 )paren
 (brace
+id|chipset
+op_assign
+id|CHIPSET_OPL3SA3
+suffix:semicolon
+id|tag
+op_assign
+l_char|&squot;3&squot;
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Found OPL3-SA3 (YMF715)&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|version
+op_amp
+id|CHIPSET_OPL3SA2
+)paren
+(brace
+id|chipset
+op_assign
+id|CHIPSET_OPL3SA2
+suffix:semicolon
+id|tag
+op_assign
+l_char|&squot;2&squot;
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Found OPL3-SA2 (YMF711)&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|chipset
+op_assign
+id|CHIPSET_UNKNOWN
+suffix:semicolon
+id|tag
+op_assign
+l_char|&squot;?&squot;
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Unknown Yamaha audio controller version&bslash;n&quot;
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2317,17 +2173,7 @@ id|version
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set some sane values */
-id|chipset
-op_assign
-id|CHIPSET_UNKNOWN
-suffix:semicolon
-id|tag
-op_assign
-l_char|&squot;?&squot;
-suffix:semicolon
-r_break
-suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2462,13 +2308,6 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-DECL|variable|force
-r_int
-id|force
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -2563,22 +2402,6 @@ c_func
 id|dma2
 comma
 l_string|&quot;Set MSS (audio) second DMA channel (0, 1, 3)&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|force
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|force
-comma
-l_string|&quot;Force audio controller chipset (2, 3)&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -2681,26 +2504,6 @@ suffix:semicolon
 id|cfg.dma2
 op_assign
 id|dma2
-suffix:semicolon
-multiline_comment|/* Does the user want to override the chipset type? */
-r_if
-c_cond
-(paren
-id|force
-op_ne
-op_minus
-l_int|1
-)paren
-(brace
-id|cfg.card_subtype
-op_assign
-id|force
-suffix:semicolon
-)brace
-r_else
-id|cfg.card_subtype
-op_assign
-id|CHIPSET_UNKNOWN
 suffix:semicolon
 multiline_comment|/* The MSS config: */
 id|mss_cfg.io_base

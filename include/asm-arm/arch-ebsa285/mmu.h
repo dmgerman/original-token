@@ -6,18 +6,18 @@ multiline_comment|/*&n; * On ebsa285, the dram is contiguous&n; */
 DECL|macro|__virt_to_phys__is_a_macro
 mdefine_line|#define __virt_to_phys__is_a_macro
 DECL|macro|__virt_to_phys
-mdefine_line|#define __virt_to_phys(vpage) ((vpage) - PAGE_OFFSET)
+mdefine_line|#define __virt_to_phys(vpage) ((unsigned long)(vpage) - PAGE_OFFSET)
 DECL|macro|__phys_to_virt__is_a_macro
 mdefine_line|#define __phys_to_virt__is_a_macro
 DECL|macro|__phys_to_virt
-mdefine_line|#define __phys_to_virt(ppage) ((ppage) + PAGE_OFFSET)
+mdefine_line|#define __phys_to_virt(ppage) ((unsigned long)(ppage) + PAGE_OFFSET)
 DECL|macro|__virt_to_bus__is_a_macro
 mdefine_line|#define __virt_to_bus__is_a_macro
 DECL|macro|__virt_to_bus
-mdefine_line|#define __virt_to_bus(x)&t;(x - 0xe0000000)
+mdefine_line|#define __virt_to_bus(x)&t;((x) - 0xe0000000)
 DECL|macro|__bus_to_virt__is_a_macro
 mdefine_line|#define __bus_to_virt__is_a_macro
 DECL|macro|__bus_to_virt
-mdefine_line|#define __bus_to_virt(x)&t;(x + 0xe0000000)
+mdefine_line|#define __bus_to_virt(x)&t;((x) + 0xe0000000)
 macro_line|#endif
 eof

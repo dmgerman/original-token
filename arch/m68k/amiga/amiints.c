@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/m68k/amiga/amiints.c -- Amiga Linux interrupt handling code&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * 11/07/96: rewritten interrupt handling, irq lists are exists now only for&n; *           this sources where it makes sense (VERTB/PORTS/EXTER) and you must&n; *           be careful that dev_id for this sources is unique since this the&n; *           only possibility to distinguish between different handlers for&n; *           free_irq. irq lists also have different irq flags:&n; *           - IRQ_FLG_FAST: handler is inserted at top of list (after other&n; *                           fast handlers)&n; *           - IRQ_FLG_SLOW: handler is inserted at bottom of list and before&n; *                           they&squot;re executed irq level is set to the previous&n; *                           one, but handlers don&squot;t need to be reentrant, if&n; *                           reentrance occured, slow handlers will be just&n; *                           called again.&n; *           The whole interrupt handling for CIAs is moved to cia.c&n; *           /Roman Zippel&n; */
+multiline_comment|/*&n; * linux/arch/m68k/amiga/amiints.c -- Amiga Linux interrupt handling code&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * 11/07/96: rewritten interrupt handling, irq lists are exists now only for&n; *           this sources where it makes sense (VERTB/PORTS/EXTER) and you must&n; *           be careful that dev_id for this sources is unique since this the&n; *           only possibility to distinguish between different handlers for&n; *           free_irq. irq lists also have different irq flags:&n; *           - IRQ_FLG_FAST: handler is inserted at top of list (after other&n; *                           fast handlers)&n; *           - IRQ_FLG_SLOW: handler is inserted at bottom of list and before&n; *                           they&squot;re executed irq level is set to the previous&n; *                           one, but handlers don&squot;t need to be reentrant, if&n; *                           reentrance occurred, slow handlers will be just&n; *                           called again.&n; *           The whole interrupt handling for CIAs is moved to cia.c&n; *           /Roman Zippel&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1738,7 +1738,7 @@ comma
 id|fp
 )paren
 suffix:semicolon
-multiline_comment|/* if reentrance occured, serve slow handlers again */
+multiline_comment|/* if reentrance occurred, serve slow handlers again */
 id|custom.intena
 op_assign
 id|ami_intena_vals

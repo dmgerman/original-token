@@ -470,7 +470,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*  The VIA VP2/VP3/MVP3 seem to have some &squot;features&squot;. There may be a workaround&n;    but VIA don&squot;t answer queries. If you happen to have good contacts at VIA&n;    ask them for me please -- Alan &n;    &n;    This appears to be BIOS not version dependant. So presumably there is a &n;    chipset level fix */
+multiline_comment|/*  The VIA VP2/VP3/MVP3 seem to have some &squot;features&squot;. There may be a workaround&n;    but VIA don&squot;t answer queries. If you happen to have good contacts at VIA&n;    ask them for me please -- Alan &n;    &n;    This appears to be BIOS not version dependent. So presumably there is a &n;    chipset level fix */
 DECL|variable|isa_dma_bridge_buggy
 r_int
 id|isa_dma_bridge_buggy

@@ -54,7 +54,7 @@ DECL|macro|IRQ_SOUND
 mdefine_line|#define IRQ_SOUND&t;&t;28&t;/* from 553.12 */
 DECL|macro|IRQ_HARDDISK
 mdefine_line|#define IRQ_HARDDISK&t;&t;30&t;/* from 553.14 */
-multiline_comment|/* These defines handle the translation from the above FB #defines&n; * into physical buts for the FootBridge IRQ registers&n; */
+multiline_comment|/* These defines handle the translation from the above FB #defines&n; * into physical bits for the FootBridge IRQ registers&n; */
 DECL|macro|IRQ_MASK_SOFTIRQ
 mdefine_line|#define IRQ_MASK_SOFTIRQ&t;0x00000002
 DECL|macro|IRQ_MASK_UART_DEBUG
@@ -78,10 +78,20 @@ mdefine_line|#define IRQ_MASK_EXTERN_IRQ&t;0x00000800
 DECL|macro|IRQ_MASK_DMA1
 mdefine_line|#define IRQ_MASK_DMA1&t;&t;0x00030000
 DECL|macro|IRQ_MASK_PCI_ERR
-mdefine_line|#define IRQ_MASK_PCI_ERR&t;0xf0000000
+mdefine_line|#define IRQ_MASK_PCI_ERR&t;0xf8800000
 multiline_comment|/*&n; * Now map them to the Linux interrupts&n; */
 DECL|macro|IRQ_TIMER
+macro_line|#undef IRQ_TIMER
+DECL|macro|IRQ_TIMER
 mdefine_line|#define IRQ_TIMER&t;&t;IRQ_TIMER0
+DECL|macro|RTC_IRQ
+macro_line|#undef RTC_IRQ
+DECL|macro|RTC_IRQ
+mdefine_line|#define RTC_IRQ&t;&t;&t;IRQ_RTC_ALARM
+DECL|macro|AUX_IRQ
+macro_line|#undef AUX_IRQ
+DECL|macro|AUX_IRQ
+mdefine_line|#define AUX_IRQ&t;&t;&t;IRQ_MOUSE
 DECL|macro|irq_cannonicalize
 mdefine_line|#define irq_cannonicalize(i)&t;(i)
 eof

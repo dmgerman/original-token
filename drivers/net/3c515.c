@@ -3819,7 +3819,7 @@ id|DownListPtr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set reciever mode: presumably accept b-case and phys addr only. */
+multiline_comment|/* Set receiver mode: presumably accept b-case and phys addr only. */
 id|set_rx_mode
 c_func
 (paren

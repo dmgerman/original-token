@@ -209,9 +209,6 @@ suffix:colon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
-id|tsk-&gt;nswap
-op_increment
-suffix:semicolon
 id|flush_tlb_page
 c_func
 (paren
@@ -252,6 +249,20 @@ r_goto
 id|drop_pte
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Don&squot;t go down into the swap-out stuff if&n;&t; * we cannot do I/O! Avoid recursing on FS&n;&t; * locks etc.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_IO
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, it&squot;s really dirty. That means that&n;&t; * we should either create a new swap cache&n;&t; * entry for it, or we should write it back&n;&t; * to its own backing store.&n;&t; *&n;&t; * Note that in neither case do we actually&n;&t; * know that we make a page available, but&n;&t; * as we potentially sleep we can no longer&n;&t; * continue scanning, so we migth as well&n;&t; * assume we free&squot;d something.&n;&t; *&n;&t; * NOTE NOTE NOTE! This should just set a&n;&t; * dirty bit in page_map, and just drop the&n;&t; * pte. All the hard work would be done by&n;&t; * shrink_mmap().&n;&t; *&n;&t; * That would get rid of a lot of problems.&n;&t; */
 r_if
 c_cond

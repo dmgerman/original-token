@@ -1,9 +1,14 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-vnc/time.h&n; *&n; * Copyright (c) 1997 Corel Computer Corp.&n; * Slight modifications to bring in line with ebsa285 port.&n; *  -- Russell King.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-vnc/time.h&n; *&n; * Copyright (c) 1997 Corel Computer Corp.&n; * Slight modifications to bring in line with ebsa285 port.&n; *  -- Russell King.&n; *  Added LED driver (based on the ebsa285 code) - Alex Holden 28/12/98.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#include &lt;asm/leds.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|IRQ_TIMER
 macro_line|#undef IRQ_TIMER
 DECL|macro|IRQ_TIMER
 mdefine_line|#define IRQ_TIMER&t;&t;IRQ_TIMER4
+DECL|macro|mSEC_10_from_14
+mdefine_line|#define mSEC_10_from_14 ((14318180 + 100) / 200)
 DECL|function|gettimeoffset
 r_extern
 id|__inline__
@@ -14,8 +19,139 @@ id|gettimeoffset
 r_void
 )paren
 (brace
-r_return
+r_int
+id|count
+suffix:semicolon
+r_static
+r_int
+id|count_p
+op_assign
+(paren
+id|mSEC_10_from_14
+op_div
+l_int|6
+)paren
+suffix:semicolon
+multiline_comment|/* for the first call after boot */
+r_static
+r_int
+r_int
+id|jiffies_p
+op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * cache volatile jiffies temporarily; we have IRQs turned off. &n;&t; */
+r_int
+r_int
+id|jiffies_t
+suffix:semicolon
+multiline_comment|/* timer count may underflow right here */
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* latch the count ASAP */
+id|count
+op_assign
+id|inb_p
+c_func
+(paren
+l_int|0x40
+)paren
+suffix:semicolon
+multiline_comment|/* read the latched count */
+multiline_comment|/*&n;&t; * We do this guaranteed double memory access instead of a _p &n;&t; * postfix in the previous port access. Wheee, hackady hack&n;&t; */
+id|jiffies_t
+op_assign
+id|jiffies
+suffix:semicolon
+id|count
+op_or_assign
+id|inb_p
+c_func
+(paren
+l_int|0x40
+)paren
+op_lshift
+l_int|8
+suffix:semicolon
+multiline_comment|/* Detect timer underflows.  If we haven&squot;t had a timer tick since &n;&t;   the last time we were called, and time is apparently going&n;&t;   backwards, the counter must have wrapped during this routine. */
+r_if
+c_cond
+(paren
+(paren
+id|jiffies_t
+op_eq
+id|jiffies_p
+)paren
+op_logical_and
+(paren
+id|count
+OG
+id|count_p
+)paren
+)paren
+id|count
+op_sub_assign
+(paren
+id|mSEC_10_from_14
+op_div
+l_int|6
+)paren
+suffix:semicolon
+r_else
+id|jiffies_p
+op_assign
+id|jiffies_t
+suffix:semicolon
+id|count_p
+op_assign
+id|count
+suffix:semicolon
+id|count
+op_assign
+(paren
+(paren
+(paren
+id|mSEC_10_from_14
+op_div
+l_int|6
+)paren
+op_minus
+l_int|1
+)paren
+op_minus
+id|count
+)paren
+op_star
+id|tick
+suffix:semicolon
+id|count
+op_assign
+(paren
+id|count
+op_plus
+(paren
+id|mSEC_10_from_14
+op_div
+l_int|6
+)paren
+op_div
+l_int|2
+)paren
+op_div
+(paren
+id|mSEC_10_from_14
+op_div
+l_int|6
+)paren
+suffix:semicolon
+r_return
+id|count
 suffix:semicolon
 )brace
 DECL|function|reset_timer
@@ -27,6 +163,70 @@ id|reset_timer
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_LEDS
+r_static
+r_int
+r_int
+id|count
+op_assign
+l_int|50
+suffix:semicolon
+r_static
+r_int
+id|last_pid
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+id|last_pid
+)paren
+(brace
+id|last_pid
+op_assign
+id|current-&gt;pid
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|last_pid
+)paren
+id|leds_event
+c_func
+(paren
+id|led_idle_end
+)paren
+suffix:semicolon
+r_else
+id|leds_event
+c_func
+(paren
+id|led_idle_start
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_decrement
+id|count
+op_eq
+l_int|0
+)paren
+(brace
+id|count
+op_assign
+l_int|50
+suffix:semicolon
+id|leds_event
+c_func
+(paren
+id|led_timer
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -606,8 +806,6 @@ id|sec
 )paren
 suffix:semicolon
 )brace
-DECL|macro|mSEC_10_from_14
-mdefine_line|#define mSEC_10_from_14 ((14318180 + 100) / 200)
 multiline_comment|/*&n; * Set up timer interrupt, and return the current time in seconds.&n; */
 DECL|function|setup_timer
 r_extern

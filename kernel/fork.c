@@ -1138,6 +1138,14 @@ op_star
 id|mm
 )paren
 (brace
+multiline_comment|/* notify parent sleeping on vfork() */
+id|wake_up
+c_func
+(paren
+op_amp
+id|current-&gt;p_opptr-&gt;vfork_sleep
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2230,6 +2238,13 @@ c_func
 (paren
 op_amp
 id|p-&gt;wait_chldexit
+)paren
+suffix:semicolon
+id|init_waitqueue
+c_func
+(paren
+op_amp
+id|p-&gt;vfork_sleep
 )paren
 suffix:semicolon
 id|p-&gt;sigpending

@@ -2718,6 +2718,12 @@ c_func
 id|menu_num
 )paren
 suffix:semicolon
+id|clear_globalflags
+c_func
+(paren
+id|config
+)paren
+suffix:semicolon
 multiline_comment|/*&n;   * The top level menu also needs an update function.  When we exit a&n;   * submenu, we may need to disable one or more of the submenus on&n;   * the top level menu, and this procedure will ensure that things are&n;   * correct.&n;   */
 id|printf
 c_func

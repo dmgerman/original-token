@@ -2317,7 +2317,7 @@ suffix:colon
 r_case
 id|DID_ABORT
 suffix:colon
-multiline_comment|/*&n;       * Note - this means that we just report the status back to the&n;       * top level driver, not that we actually think that it indicates&n;       * sucess.&n;       */
+multiline_comment|/*&n;       * Note - this means that we just report the status back to the&n;       * top level driver, not that we actually think that it indicates&n;       * success.&n;       */
 r_return
 id|SUCCESS
 suffix:semicolon

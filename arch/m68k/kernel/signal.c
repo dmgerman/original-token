@@ -1576,7 +1576,7 @@ l_string|&quot;a0&quot;
 suffix:semicolon
 DECL|macro|frame_offset
 macro_line|#undef frame_offset
-multiline_comment|/*&n;&t;&t; * If we ever get here an exception occured while&n;&t;&t; * building the above stack-frame.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If we ever get here an exception occurred while&n;&t;&t; * building the above stack-frame.&n;&t;&t; */
 r_goto
 id|badframe
 suffix:semicolon
@@ -2097,7 +2097,7 @@ l_string|&quot;a0&quot;
 suffix:semicolon
 DECL|macro|frame_offset
 macro_line|#undef frame_offset
-multiline_comment|/*&n;&t;&t; * If we ever get here an exception occured while&n;&t;&t; * building the above stack-frame.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If we ever get here an exception occurred while&n;&t;&t; * building the above stack-frame.&n;&t;&t; */
 r_goto
 id|badframe
 suffix:semicolon

@@ -58,7 +58,7 @@ DECL|macro|IDETAPE_FIFO_THRESHOLD
 mdefine_line|#define IDETAPE_FIFO_THRESHOLD &t;&t;2
 multiline_comment|/*&n; *&t;Some tape drives require a long irq timeout&n; */
 DECL|macro|IDETAPE_WAIT_CMD
-mdefine_line|#define IDETAPE_WAIT_CMD&t;&t;60
+mdefine_line|#define IDETAPE_WAIT_CMD&t;&t;(60*HZ)
 multiline_comment|/*&n; *&t;DSC timings.&n; */
 DECL|macro|IDETAPE_DSC_RW_MIN
 mdefine_line|#define IDETAPE_DSC_RW_MIN&t;&t;5*HZ/100&t;/* 50 msec */

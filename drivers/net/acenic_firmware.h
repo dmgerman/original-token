@@ -33509,7 +33509,7 @@ comma
 l_int|0x0
 )brace
 suffix:semicolon
-DECL|variable|__init
+DECL|variable|__initdata
 id|u32
 id|tigonFwData
 (braket
@@ -33521,7 +33521,7 @@ l_int|4
 op_plus
 l_int|1
 )braket
-id|__init
+id|__initdata
 op_assign
 (brace
 l_int|0x416c7465
@@ -33687,7 +33687,7 @@ comma
 l_int|0x0
 )brace
 suffix:semicolon
-DECL|variable|__init
+DECL|variable|__initdata
 id|u32
 id|tigonFwRodata
 (braket
@@ -33699,7 +33699,7 @@ l_int|4
 op_plus
 l_int|1
 )braket
-id|__init
+id|__initdata
 op_assign
 (brace
 l_int|0x24486561
@@ -35094,7 +35094,7 @@ id|tigon2FwSbssLen
 op_assign
 l_int|0xa8
 suffix:semicolon
-DECL|variable|__init
+DECL|variable|__initdata
 id|u32
 id|tigon2FwText
 (braket
@@ -35106,7 +35106,7 @@ l_int|4
 op_plus
 l_int|1
 )braket
-id|__init
+id|__initdata
 op_assign
 (brace
 l_int|0x0
@@ -64512,7 +64512,7 @@ comma
 l_int|0x0
 )brace
 suffix:semicolon
-DECL|variable|__init
+DECL|variable|__initdata
 id|u32
 id|tigon2FwData
 (braket
@@ -64524,7 +64524,7 @@ l_int|4
 op_plus
 l_int|1
 )braket
-id|__init
+id|__initdata
 op_assign
 (brace
 l_int|0x1
@@ -64714,7 +64714,7 @@ comma
 l_int|0x0
 )brace
 suffix:semicolon
-DECL|variable|__init
+DECL|variable|__initdata
 id|u32
 id|tigon2FwRodata
 (braket
@@ -64726,7 +64726,7 @@ l_int|4
 op_plus
 l_int|1
 )braket
-id|__init
+id|__initdata
 op_assign
 (brace
 l_int|0x24486561

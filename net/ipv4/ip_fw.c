@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This code is heavily based on the code on the old ip_fw.c code; see below for&n; * copyrights and attributions of the old code.  This code is basically GPL.&n; *&n; * 15-Aug-1997: Major changes to allow graphs for firewall rules.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt; and&n; *&t;&t;Michael Neuling &lt;Michael.Neuling@rustcorp.com.au&gt; &n; * 24-Aug-1997: Generalised protocol handling (not just TCP/UDP/ICMP).&n; *              Added explicit RETURN from chains.&n; *              Removed TOS mangling (done in ipchains 1.0.1).&n; *              Fixed read &amp; reset bug by reworking proc handling.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt;&n; * 28-Sep-1997: Added packet marking for net sched code.&n; *              Removed fw_via comparisons: all done on device name now,&n; *              similar to changes in ip_fw.c in DaveM&squot;s CVS970924 tree.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt;&n; * 2-Nov-1997:  Moved types across to __u16, etc.&n; *              Added inverse flags.&n; *              Fixed fragment bug (in args to port_match).&n; *              Changed mark to only one flag (MARKABS).&n; * 21-Nov-1997: Added ability to test ICMP code.&n; * 19-Jan-1998: Added wildcard interfaces.&n; * 6-Feb-1998:  Merged 2.0 and 2.1 versions.&n; *              Initialised ip_masq for 2.0.x version.&n; *              Added explicit NETLINK option for 2.1.x version.&n; *              Added packet and byte counters for policy matches.&n; * 26-Feb-1998: Fixed race conditions, added SMP support.&n; * 18-Mar-1998: Fix SMP, fix race condition fix.&n; * 1-May-1998:  Remove caching of device pointer.&n; * 12-May-1998: Allow tiny fragment case for TCP/UDP.&n; * 15-May-1998: Treat short packets as fragments, don&squot;t just block.&n; */
+multiline_comment|/*&n; * This code is heavily based on the code on the old ip_fw.c code; see below for&n; * copyrights and attributions of the old code.  This code is basically GPL.&n; *&n; * 15-Aug-1997: Major changes to allow graphs for firewall rules.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt; and&n; *&t;&t;Michael Neuling &lt;Michael.Neuling@rustcorp.com.au&gt; &n; * 24-Aug-1997: Generalised protocol handling (not just TCP/UDP/ICMP).&n; *              Added explicit RETURN from chains.&n; *              Removed TOS mangling (done in ipchains 1.0.1).&n; *              Fixed read &amp; reset bug by reworking proc handling.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt;&n; * 28-Sep-1997: Added packet marking for net sched code.&n; *              Removed fw_via comparisons: all done on device name now,&n; *              similar to changes in ip_fw.c in DaveM&squot;s CVS970924 tree.&n; *              Paul Russell &lt;Paul.Russell@rustcorp.com.au&gt;&n; * 2-Nov-1997:  Moved types across to __u16, etc.&n; *              Added inverse flags.&n; *              Fixed fragment bug (in args to port_match).&n; *              Changed mark to only one flag (MARKABS).&n; * 21-Nov-1997: Added ability to test ICMP code.&n; * 19-Jan-1998: Added wildcard interfaces.&n; * 6-Feb-1998:  Merged 2.0 and 2.1 versions.&n; *              Initialised ip_masq for 2.0.x version.&n; *              Added explicit NETLINK option for 2.1.x version.&n; *              Added packet and byte counters for policy matches.&n; * 26-Feb-1998: Fixed race conditions, added SMP support.&n; * 18-Mar-1998: Fix SMP, fix race condition fix.&n; * 1-May-1998:  Remove caching of device pointer.&n; * 12-May-1998: Allow tiny fragment case for TCP/UDP.&n; * 15-May-1998: Treat short packets as fragments, don&squot;t just block.&n; * 3-Jan-1999:  Fixed serious procfs security hole -- users should never&n; *              be allowed to view the chains!&n; *              Marc Santoro &lt;ultima@snicker.emoti.com&gt;&n; */
 multiline_comment|/*&n; *&n; * The origina Linux port was done Alan Cox, with changes/fixes from&n; * Pauline Middlelink, Jos Vos, Thomas Quinot, Wouter Gadeyne, Juan&n; * Jose Ciarlante, Bernd Eckenfels, Keith Owens and others.&n; * &n; * Copyright from the original FreeBSD version follows:&n; *&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.  */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1505,7 +1505,7 @@ suffix:semicolon
 )brace
 r_static
 r_inline
-r_void
+r_int
 DECL|function|ip_fw_domatch
 id|ip_fw_domatch
 c_func
@@ -1788,14 +1788,32 @@ id|GFP_KERNEL
 suffix:semicolon
 )brace
 r_else
-id|duprintf
+(brace
+r_if
+c_cond
+(paren
+id|net_ratelimit
 c_func
 (paren
-l_string|&quot;netlink post failed - alloc_skb failed!&bslash;n&quot;
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;ip_fw: packet drop due to &quot;
+l_string|&quot;netlink failure&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif
+r_return
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Returns one of the generic firewall policies, like FW_ACCEPT.&n; *&n; *&t;The testing is either false for normal firewall mode or true for&n; *&t;user checking mode (counters are not updated, TOS &amp; mark not done).&n; */
 r_static
@@ -2348,7 +2366,8 @@ c_cond
 (paren
 op_logical_neg
 id|testing
-)paren
+op_logical_and
+op_logical_neg
 id|ip_fw_domatch
 c_func
 (paren
@@ -2368,7 +2387,16 @@ id|src_port
 comma
 id|dst_port
 )paren
+)paren
+(brace
+id|ret
+op_assign
+id|FW_BLOCK
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -2625,6 +2653,8 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_if
 c_cond
 (paren
@@ -6869,7 +6899,7 @@ id|IP_FW_PROC_CHAINS
 comma
 id|S_IFREG
 op_or
-id|S_IRUGO
+id|S_IRUSR
 op_or
 id|S_IWUSR
 comma
@@ -6907,7 +6937,7 @@ id|IP_FW_PROC_CHAIN_NAMES
 comma
 id|S_IFREG
 op_or
-id|S_IRUGO
+id|S_IRUSR
 op_or
 id|S_IWUSR
 comma

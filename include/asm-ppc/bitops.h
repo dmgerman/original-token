@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: bitops.h,v 1.10 1998/08/16 21:56:53 geert Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
+multiline_comment|/*&n; * $Id: bitops.h,v 1.11 1999/01/03 20:16:48 cort Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
 macro_line|#ifndef _PPC_BITOPS_H
 DECL|macro|_PPC_BITOPS_H
 mdefine_line|#define _PPC_BITOPS_H
@@ -88,6 +88,40 @@ op_star
 id|addr
 )paren
 suffix:semicolon
+multiline_comment|/* Returns the number of 0&squot;s to the left of the most significant 1 bit */
+DECL|function|cntlzw
+r_extern
+id|__inline__
+r_int
+id|cntlzw
+c_func
+(paren
+r_int
+id|bits
+)paren
+(brace
+r_int
+id|lz
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;cntlzw %0,%1&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|lz
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|bits
+)paren
+)paren
+suffix:semicolon
+r_return
+id|lz
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * These are if&squot;d out here because using : &quot;cc&quot; as a constraint&n; * results in errors from gcc. -- Cort&n; * Besides, they need to be changed so we have both set_bit&n; * and test_and_set_bit, etc.&n; */
 macro_line|#if 0
 r_extern

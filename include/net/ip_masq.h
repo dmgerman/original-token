@@ -41,8 +41,10 @@ DECL|macro|IP_MASQ_F_NO_SADDR
 mdefine_line|#define IP_MASQ_F_NO_SADDR&t;      0x0004&t;/* no sport set yet */
 DECL|macro|IP_MASQ_F_NO_SPORT
 mdefine_line|#define IP_MASQ_F_NO_SPORT&t;      0x0008&t;/* no sport set yet */
+DECL|macro|IP_MASQ_F_DLOOSE
+mdefine_line|#define IP_MASQ_F_DLOOSE&t;      0x0010&t;/* loose dest binding */
 DECL|macro|IP_MASQ_F_NO_REPLY
-mdefine_line|#define IP_MASQ_F_NO_REPLY&t;      0x0010&t;/* no reply yet from outside */
+mdefine_line|#define IP_MASQ_F_NO_REPLY&t;      0x0080&t;/* no reply yet from outside */
 DECL|macro|IP_MASQ_F_HASHED
 mdefine_line|#define IP_MASQ_F_HASHED&t;      0x0100 &t;/* hashed entry */
 DECL|macro|IP_MASQ_F_OUT_SEQ

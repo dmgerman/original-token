@@ -747,7 +747,7 @@ id|tty-&gt;driver_data
 )paren
 )paren
 (brace
-multiline_comment|/* This is to workaround ugly bug in tty_io.c, which&n;                   does not do locking when it should */
+multiline_comment|/*&n;&t;&t; * We touch the tty structure via the the ttytab array&n;&t;&t; * without knowing whether or not tty is open, which&n;&t;&t; * is inherently dangerous.  We currently rely on that&n;&t;&t; * fact that console_open sets tty-&gt;driver_data when&n;&t;&t; * it opens it, and clears it when it closes it.&n;&t;&t; */
 id|tty
 op_assign
 l_int|NULL

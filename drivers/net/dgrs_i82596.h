@@ -848,7 +848,7 @@ mdefine_line|#define&t;I596_SCB_ACK&t;&t;0xF000&t;/* ACKNOWLEDGMENTS */
 DECL|macro|I596_SCB_ACK_CX
 mdefine_line|#define&t;I596_SCB_ACK_CX&t;&t;0x8000&t;/* Ack command completion */
 DECL|macro|I596_SCB_ACK_FR
-mdefine_line|#define&t;I596_SCB_ACK_FR&t;&t;0x4000&t;/* Ack recieved frame */
+mdefine_line|#define&t;I596_SCB_ACK_FR&t;&t;0x4000&t;/* Ack received frame */
 DECL|macro|I596_SCB_ACK_CNA
 mdefine_line|#define&t;I596_SCB_ACK_CNA&t;0x2000&t;/* Ack command unit not active */
 DECL|macro|I596_SCB_ACK_RNR
@@ -891,7 +891,7 @@ mdefine_line|#define&t;I596_SCB_STAT&t;&t;0xF000&t;/* STATUS */
 DECL|macro|I596_SCB_CX
 mdefine_line|#define&t;I596_SCB_CX&t;&t;0x8000&t;/* command completion */
 DECL|macro|I596_SCB_FR
-mdefine_line|#define&t;I596_SCB_FR&t;&t;0x4000&t;/* recieved frame */
+mdefine_line|#define&t;I596_SCB_FR&t;&t;0x4000&t;/* received frame */
 DECL|macro|I596_SCB_CNA
 mdefine_line|#define&t;I596_SCB_CNA&t;&t;0x2000&t;/* command unit not active */
 DECL|macro|I596_SCB_RNR

@@ -2096,7 +2096,7 @@ id|shpnt-&gt;reverse_ordering
 multiline_comment|/* Shift to scanning 15,14,13... or 7,6,5,4, */
 id|order_dev
 op_assign
-id|shpnt-&gt;max_channel
+id|shpnt-&gt;max_id
 op_minus
 id|dev
 op_minus

@@ -743,7 +743,7 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Receive handler. This is much like the async one but not quite the&n; *&t;same or as complex&n; *&n; *&t;Note: Its intended that this handler can easily be seperated from&n; *&t;the main code to run realtime. That&squot;ll be needed for some machines&n; *&t;(eg to ever clock 64kbits on a sparc ;)).&n; *&n; *&t;The RT_LOCK macros don&squot;t do anything now. Keep the code covered&n; *&t;by them as short as possible in all circumstances - clocks cost&n; *&t;baud. The interrupt handler is assumed to be atomic w.r.t. to&n; *&t;other code - this is true in the RT case too.&n; *&n; *&t;We only cover the sync cases for this. If you want 2Mbit async&n; *&t;do it yourself but consider medical assistance first.&n; *&n; *&t;This non DMA synchronous mode is portable code.&n; */
+multiline_comment|/*&n; *&t;Receive handler. This is much like the async one but not quite the&n; *&t;same or as complex&n; *&n; *&t;Note: Its intended that this handler can easily be separated from&n; *&t;the main code to run realtime. That&squot;ll be needed for some machines&n; *&t;(eg to ever clock 64kbits on a sparc ;)).&n; *&n; *&t;The RT_LOCK macros don&squot;t do anything now. Keep the code covered&n; *&t;by them as short as possible in all circumstances - clocks cost&n; *&t;baud. The interrupt handler is assumed to be atomic w.r.t. to&n; *&t;other code - this is true in the RT case too.&n; *&n; *&t;We only cover the sync cases for this. If you want 2Mbit async&n; *&t;do it yourself but consider medical assistance first.&n; *&n; *&t;This non DMA synchronous mode is portable code.&n; */
 DECL|function|z8530_rx
 r_static
 r_void

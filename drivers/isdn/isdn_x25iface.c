@@ -143,7 +143,7 @@ op_amp
 id|isdn_x25iface_disconn_ind
 )brace
 suffix:semicolon
-multiline_comment|/* error message helper fuction */
+multiline_comment|/* error message helper function */
 DECL|function|illegal_state_warn
 r_static
 r_void

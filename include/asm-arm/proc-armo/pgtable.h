@@ -263,7 +263,6 @@ suffix:semicolon
 )brace
 DECL|macro|__flush_entry_to_ram
 mdefine_line|#define __flush_entry_to_ram(entry)
-multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT       20
@@ -924,6 +923,7 @@ r_return
 id|pte
 suffix:semicolon
 )brace
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
 DECL|function|pte_page

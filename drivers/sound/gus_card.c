@@ -523,13 +523,6 @@ r_extern
 r_int
 id|gus_timer_enabled
 suffix:semicolon
-r_struct
-id|address_info
-op_star
-id|hw_config
-op_assign
-id|dev_id
-suffix:semicolon
 id|sti
 c_func
 (paren
@@ -541,6 +534,14 @@ c_cond
 (paren
 id|have_gus_max
 )paren
+(brace
+r_struct
+id|address_info
+op_star
+id|hw_config
+op_assign
+id|dev_id
+suffix:semicolon
 id|adintr
 c_func
 (paren
@@ -558,6 +559,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_GUS16
 r_if
@@ -565,6 +567,14 @@ c_cond
 (paren
 id|db16
 )paren
+(brace
+r_struct
+id|address_info
+op_star
+id|hw_config
+op_assign
+id|dev_id
+suffix:semicolon
 id|adintr
 c_func
 (paren
@@ -582,6 +592,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 r_while
 c_loop

@@ -3,7 +3,7 @@ DECL|macro|_ASMARM_INIT_H
 mdefine_line|#define _ASMARM_INIT_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* C routines */
-macro_line|#ifdef CONFIG_BINUTILS_NEW
+macro_line|#ifdef CONFIG_TEXT_INIT_SECTION
 DECL|macro|__init
 mdefine_line|#define __init __attribute__ ((__section__ (&quot;.text.init&quot;)))
 DECL|macro|__initfunc
@@ -23,5 +23,7 @@ DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA&t;.section&t;&quot;.data.init&quot;,@alloc,@write
 DECL|macro|__FINIT
 mdefine_line|#define __FINIT&t;.previous
+DECL|macro|__cacheline_aligned
+mdefine_line|#define __cacheline_aligned __attribute__ &bslash;&n;&t;&t;&t; ((__aligned__ (L1_CACHE_BYTES)))
 macro_line|#endif
 eof

@@ -26,6 +26,8 @@ DECL|macro|SNDCARD_OPL3SA2
 mdefine_line|#define SNDCARD_OPL3SA2                 42
 DECL|macro|SNDCARD_OPL3SA2_MPU
 mdefine_line|#define SNDCARD_OPL3SA2_MPU             43
+DECL|macro|SNDCARD_WAVEARTIST
+mdefine_line|#define SNDCARD_WAVEARTIST&t;&t;44
 DECL|macro|SNDCARD_AD1816
 mdefine_line|#define SNDCARD_AD1816                  88
 r_void
@@ -2558,6 +2560,24 @@ id|unload_vidc
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_WAVEARTIST
+(brace
+l_string|&quot;WaveArtist&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_WAVEARTIST
+comma
+l_string|&quot;NetWinder WaveArtist&quot;
+comma
+id|attach_waveartist
+comma
+id|probe_waveartist
+comma
+id|unload_waveartist
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|NULL
 comma
@@ -3310,6 +3330,24 @@ comma
 l_int|0
 comma
 l_int|0
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_WAVEARTIST
+(brace
+id|SNDCARD_WAVEARTIST
+comma
+(brace
+id|CONFIG_WAVEARTIST_BASE
+comma
+id|CONFIG_WAVEARTIST_IRQ
+comma
+id|CONFIG_WAVEARTIST_DMA
+comma
+id|CONFIG_WAVEARTIST_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE

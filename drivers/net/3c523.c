@@ -1760,7 +1760,7 @@ op_amp
 id|ELMC_STATUS_DISABLE_THIN
 )paren
 suffix:semicolon
-multiline_comment|/* The 3c523 has a 24K chunk of memory.  The first 16K is the&n;&t;   shared memory, while the last 8K is for the EtherStart BIOS ROM.&n;&t;   Which we don&squot;t care much about here.  We&squot;ll just tell Linux that&n;&t;   we&squot;re using 16K.  MCA won&squot;t permit adress space conflicts caused&n;&t;   by not mapping the other 8K. */
+multiline_comment|/* The 3c523 has a 24K chunk of memory.  The first 16K is the&n;&t;   shared memory, while the last 8K is for the EtherStart BIOS ROM.&n;&t;   Which we don&squot;t care much about here.  We&squot;ll just tell Linux that&n;&t;   we&squot;re using 16K.  MCA won&squot;t permit address space conflicts caused&n;&t;   by not mapping the other 8K. */
 id|dev-&gt;mem_start
 op_assign
 id|shm_table

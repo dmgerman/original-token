@@ -1401,7 +1401,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Coda Kernel/Venus communications (module), v4.7.5, braam@cs.cmu.edu.&bslash;n&quot;
+l_string|&quot;Coda Kernel/Venus communications (module), v5.0-pre1, braam@cs.cmu.edu.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|status

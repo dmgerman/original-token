@@ -41,6 +41,8 @@ macro_line|#ifndef CDU535_MESSAGE_NAME
 DECL|macro|CDU535_MESSAGE_NAME
 macro_line|# define CDU535_MESSAGE_NAME&t;&quot;Sony CDU-535&quot;
 macro_line|#endif
+DECL|macro|CDU535_BLOCK_SIZE
+mdefine_line|#define CDU535_BLOCK_SIZE&t;2048 
 macro_line|#ifndef MAX_SPINUP_RETRY
 DECL|macro|MAX_SPINUP_RETRY
 macro_line|# define MAX_SPINUP_RETRY&t;&t;3&t;/* 1 is sufficient for most drives... */
@@ -1464,12 +1466,6 @@ r_int
 id|buf_size
 )paren
 (brace
-r_const
-r_int
-id|block_size
-op_assign
-l_int|2048
-suffix:semicolon
 id|Byte
 id|cmd_buff
 (braket
@@ -1500,12 +1496,7 @@ c_cond
 (paren
 id|buf_size
 OL
-(paren
-(paren
-r_int
-)paren
-id|block_size
-)paren
+id|CDU535_BLOCK_SIZE
 op_star
 id|n_blocks
 )paren
@@ -1669,7 +1660,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|block_size
+id|CDU535_BLOCK_SIZE
 suffix:semicolon
 id|i
 op_increment
@@ -1731,7 +1722,7 @@ r_return
 id|i
 suffix:semicolon
 r_return
-id|block_size
+id|CDU535_BLOCK_SIZE
 op_star
 id|sector_count
 suffix:semicolon
@@ -2276,7 +2267,7 @@ op_mod
 l_int|256
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The OS calls this to perform a read or write operation to the drive.&n; * Write obviously fail.  Reads to a read ahead of sony_buffer_size&n; * bytes to help speed operations.  This especially helps since the OS&n; * uses 1024 byte blocks and the drive uses 2048 byte blocks.  Since most&n; * data access on a CD is done sequentially, this saves a lot of operations.&n; */
+multiline_comment|/*&n; * The OS calls this to perform a read or write operation to the drive.&n; * Write obviously fail.  Reads to a read ahead of sony_buffer_size&n; * bytes to help speed operations.  This especially helps since the OS&n; * may use 1024 byte blocks and the drive uses 2048 byte blocks.  Since most&n; * data access on a CD is done sequentially, this saves a lot of operations.&n; */
 r_static
 r_void
 DECL|function|do_cdu535_request
@@ -2601,7 +2592,7 @@ comma
 (paren
 id|read_size
 op_star
-l_int|2048
+id|CDU535_BLOCK_SIZE
 )paren
 )paren
 suffix:semicolon
@@ -5580,6 +5571,13 @@ l_int|NULL
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
+DECL|variable|sonycd535_block_size
+r_static
+r_int
+id|sonycd535_block_size
+op_assign
+id|CDU535_BLOCK_SIZE
+suffix:semicolon
 multiline_comment|/*&n; * Initialize the driver.&n; */
 DECL|function|__initfunc
 id|__initfunc
@@ -6040,7 +6038,7 @@ id|sony_buffer_sectors
 op_assign
 id|sony_buffer_size
 op_div
-l_int|2048
+id|CDU535_BLOCK_SIZE
 suffix:semicolon
 id|printk
 c_func
@@ -6125,6 +6123,14 @@ dot
 id|request_fn
 op_assign
 id|DEVICE_REQUEST
+suffix:semicolon
+id|blksize_size
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+op_amp
+id|sonycd535_block_size
 suffix:semicolon
 id|read_ahead
 (braket
@@ -6267,7 +6273,7 @@ op_star
 id|kmalloc
 c_func
 (paren
-l_int|2048
+id|CDU535_BLOCK_SIZE
 comma
 id|GFP_KERNEL
 )paren
@@ -6513,7 +6519,7 @@ id|sony_buffer
 id|i
 )braket
 comma
-l_int|2048
+id|CDU535_BLOCK_SIZE
 )paren
 suffix:semicolon
 id|kfree_s

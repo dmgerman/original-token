@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-arm/dec21285.h&n; *&n; * Copyright (C) 1998 Russell King&n; */
+multiline_comment|/*&n; * include/asm-arm/dec21285.h&n; *&n; * Copyright (C) 1998 Russell King&n; *&n; * DC21285 registers&n; */
 DECL|macro|DC21285_PCI_IACK
 mdefine_line|#define DC21285_PCI_IACK&t;&t;0x79000000
 DECL|macro|DC21285_ARMCSR_BASE
@@ -16,169 +16,138 @@ mdefine_line|#define DC21285_PCI_IO&t;&t;&t;0x7c000000
 DECL|macro|DC21285_PCI_MEM
 mdefine_line|#define DC21285_PCI_MEM&t;&t;&t;0x80000000
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/*&n; * DEC21285&n; */
-DECL|macro|CSR_SA110_CNTL
-mdefine_line|#define CSR_SA110_CNTL&t;&t;((volatile unsigned long *)0xfe00013c)
-DECL|macro|CSR_PCIADDR_EXTN
-mdefine_line|#define CSR_PCIADDR_EXTN&t;((volatile unsigned long *)0xfe000140)
-DECL|macro|CSR_PREFETCHMEMRANGE
-mdefine_line|#define CSR_PREFETCHMEMRANGE&t;((volatile unsigned long *)0xfe000144)
-DECL|macro|CSR_XBUS_CYCLE
-mdefine_line|#define CSR_XBUS_CYCLE&t;&t;((volatile unsigned long *)0xfe000148)
-DECL|macro|CSR_XBUS_IOSTROBE
-mdefine_line|#define CSR_XBUS_IOSTROBE&t;((volatile unsigned long *)0xfe00014c)
-DECL|macro|CSR_DOORBELL_PCI
-mdefine_line|#define CSR_DOORBELL_PCI&t;((volatile unsigned long *)0xfe000150)
-DECL|macro|CSR_DOORBELL_SA110
-mdefine_line|#define CSR_DOORBELL_SA110&t;((volatile unsigned long *)0xfe000154)
-DECL|macro|CSR_UARTDR
-mdefine_line|#define CSR_UARTDR&t;&t;((volatile unsigned long *)0xfe000160)
-DECL|macro|CSR_RXSTAT
-mdefine_line|#define CSR_RXSTAT&t;&t;((volatile unsigned long *)0xfe000164)
-DECL|macro|CSR_H_UBRLCR
-mdefine_line|#define CSR_H_UBRLCR&t;&t;((volatile unsigned long *)0xfe000168)
-DECL|macro|CSR_M_UBRLCR
-mdefine_line|#define CSR_M_UBRLCR&t;&t;((volatile unsigned long *)0xfe00016c)
-DECL|macro|CSR_L_UBRLCR
-mdefine_line|#define CSR_L_UBRLCR&t;&t;((volatile unsigned long *)0xfe000170)
-DECL|macro|CSR_UARTCON
-mdefine_line|#define CSR_UARTCON&t;&t;((volatile unsigned long *)0xfe000174)
-DECL|macro|CSR_UARTFLG
-mdefine_line|#define CSR_UARTFLG&t;&t;((volatile unsigned long *)0xfe000178)
-DECL|macro|CSR_IRQ_STATUS
-mdefine_line|#define CSR_IRQ_STATUS&t;&t;((volatile unsigned long *)0xfe000180)
-DECL|macro|CSR_IRQ_RAWSTATUS
-mdefine_line|#define CSR_IRQ_RAWSTATUS&t;((volatile unsigned long *)0xfe000184)
-DECL|macro|CSR_IRQ_ENABLE
-mdefine_line|#define CSR_IRQ_ENABLE&t;&t;((volatile unsigned long *)0xfe000188)
-DECL|macro|CSR_IRQ_DISABLE
-mdefine_line|#define CSR_IRQ_DISABLE&t;&t;((volatile unsigned long *)0xfe00018c)
-DECL|macro|CSR_IRQ_SOFT
-mdefine_line|#define CSR_IRQ_SOFT&t;&t;((volatile unsigned long *)0xfe000190)
-DECL|macro|CSR_FIQ_STATUS
-mdefine_line|#define CSR_FIQ_STATUS&t;&t;((volatile unsigned long *)0xfe000280)
-DECL|macro|CSR_FIQ_RAWSTATUS
-mdefine_line|#define CSR_FIQ_RAWSTATUS&t;((volatile unsigned long *)0xfe000284)
-DECL|macro|CSR_FIQ_ENABLE
-mdefine_line|#define CSR_FIQ_ENABLE&t;&t;((volatile unsigned long *)0xfe000288)
-DECL|macro|CSR_FIQ_DISABLE
-mdefine_line|#define CSR_FIQ_DISABLE&t;&t;((volatile unsigned long *)0xfe00028c)
-DECL|macro|CSR_FIQ_SOFT
-mdefine_line|#define CSR_FIQ_SOFT&t;&t;((volatile unsigned long *)0xfe000290)
-DECL|macro|CSR_TIMER1_LOAD
-mdefine_line|#define CSR_TIMER1_LOAD&t;&t;((volatile unsigned long *)0xfe000300)
-DECL|macro|CSR_TIMER1_VALUE
-mdefine_line|#define CSR_TIMER1_VALUE&t;((volatile unsigned long *)0xfe000304)
-DECL|macro|CSR_TIMER1_CNTL
-mdefine_line|#define CSR_TIMER1_CNTL&t;&t;((volatile unsigned long *)0xfe000308)
-DECL|macro|CSR_TIMER1_CLR
-mdefine_line|#define CSR_TIMER1_CLR&t;&t;((volatile unsigned long *)0xfe00030c)
-DECL|macro|CSR_TIMER2_LOAD
-mdefine_line|#define CSR_TIMER2_LOAD&t;&t;((volatile unsigned long *)0xfe000320)
-DECL|macro|CSR_TIMER2_VALUE
-mdefine_line|#define CSR_TIMER2_VALUE&t;((volatile unsigned long *)0xfe000324)
-DECL|macro|CSR_TIMER2_CNTL
-mdefine_line|#define CSR_TIMER2_CNTL&t;&t;((volatile unsigned long *)0xfe000328)
-DECL|macro|CSR_TIMER2_CLR
-mdefine_line|#define CSR_TIMER2_CLR&t;&t;((volatile unsigned long *)0xfe00032c)
-DECL|macro|CSR_TIMER3_LOAD
-mdefine_line|#define CSR_TIMER3_LOAD&t;&t;((volatile unsigned long *)0xfe000340)
-DECL|macro|CSR_TIMER3_VALUE
-mdefine_line|#define CSR_TIMER3_VALUE&t;((volatile unsigned long *)0xfe000344)
-DECL|macro|CSR_TIMER3_CNTL
-mdefine_line|#define CSR_TIMER3_CNTL&t;&t;((volatile unsigned long *)0xfe000348)
-DECL|macro|CSR_TIMER3_CLR
-mdefine_line|#define CSR_TIMER3_CLR&t;&t;((volatile unsigned long *)0xfe00034c)
-DECL|macro|CSR_TIMER4_LOAD
-mdefine_line|#define CSR_TIMER4_LOAD&t;&t;((volatile unsigned long *)0xfe000360)
-DECL|macro|CSR_TIMER4_VALUE
-mdefine_line|#define CSR_TIMER4_VALUE&t;((volatile unsigned long *)0xfe000364)
-DECL|macro|CSR_TIMER4_CNTL
-mdefine_line|#define CSR_TIMER4_CNTL&t;&t;((volatile unsigned long *)0xfe000368)
-DECL|macro|CSR_TIMER4_CLR
-mdefine_line|#define CSR_TIMER4_CLR&t;&t;((volatile unsigned long *)0xfe00036c)
+DECL|macro|DC21285_IO
+mdefine_line|#define DC21285_IO(x)&t;&t;((volatile unsigned long *)(0xfe000000+(x)))
 macro_line|#else
-DECL|macro|CSR_SA110_CNTL
-mdefine_line|#define CSR_SA110_CNTL&t;&t;0x13c
-DECL|macro|CSR_PCIADDR_EXTN
-mdefine_line|#define CSR_PCIADDR_EXTN&t;0x140
-DECL|macro|CSR_PREFETCHMEMRANGE
-mdefine_line|#define CSR_PREFETCHMEMRANGE&t;0x144
-DECL|macro|CSR_XBUS_CYCLE
-mdefine_line|#define CSR_XBUS_CYCLE&t;&t;0x148
-DECL|macro|CSR_XBUS_IOSTROBE
-mdefine_line|#define CSR_XBUS_IOSTROBE&t;0x14c
-DECL|macro|CSR_DOORBELL_PCI
-mdefine_line|#define CSR_DOORBELL_PCI&t;0x150
-DECL|macro|CSR_DOORBELL_SA110
-mdefine_line|#define CSR_DOORBELL_SA110&t;0x154
-DECL|macro|CSR_UARTDR
-mdefine_line|#define CSR_UARTDR&t;&t;0x160
-DECL|macro|CSR_RXSTAT
-mdefine_line|#define CSR_RXSTAT&t;&t;0x164
-DECL|macro|CSR_H_UBRLCR
-mdefine_line|#define CSR_H_UBRLCR&t;&t;0x168
-DECL|macro|CSR_M_UBRLCR
-mdefine_line|#define CSR_M_UBRLCR&t;&t;0x16c
-DECL|macro|CSR_L_UBRLCR
-mdefine_line|#define CSR_L_UBRLCR&t;&t;0x170
-DECL|macro|CSR_UARTCON
-mdefine_line|#define CSR_UARTCON&t;&t;0x174
-DECL|macro|CSR_UARTFLG
-mdefine_line|#define CSR_UARTFLG&t;&t;0x178
-DECL|macro|CSR_IRQ_STATUS
-mdefine_line|#define CSR_IRQ_STATUS&t;&t;0x180
-DECL|macro|CSR_IRQ_RAWSTATUS
-mdefine_line|#define CSR_IRQ_RAWSTATUS&t;0x184
-DECL|macro|CSR_IRQ_ENABLE
-mdefine_line|#define CSR_IRQ_ENABLE&t;&t;0x188
-DECL|macro|CSR_IRQ_DISABLE
-mdefine_line|#define CSR_IRQ_DISABLE&t;&t;0x18c
-DECL|macro|CSR_IRQ_SOFT
-mdefine_line|#define CSR_IRQ_SOFT&t;&t;0x190
-DECL|macro|CSR_FIQ_STATUS
-mdefine_line|#define CSR_FIQ_STATUS&t;&t;0x280
-DECL|macro|CSR_FIQ_RAWSTATUS
-mdefine_line|#define CSR_FIQ_RAWSTATUS&t;0x284
-DECL|macro|CSR_FIQ_ENABLE
-mdefine_line|#define CSR_FIQ_ENABLE&t;&t;0x288
-DECL|macro|CSR_FIQ_DISABLE
-mdefine_line|#define CSR_FIQ_DISABLE&t;&t;0x28c
-DECL|macro|CSR_FIQ_SOFT
-mdefine_line|#define CSR_FIQ_SOFT&t;&t;0x290
-DECL|macro|CSR_TIMER1_LOAD
-mdefine_line|#define CSR_TIMER1_LOAD&t;&t;0x300
-DECL|macro|CSR_TIMER1_VALUE
-mdefine_line|#define CSR_TIMER1_VALUE&t;0x304
-DECL|macro|CSR_TIMER1_CNTL
-mdefine_line|#define CSR_TIMER1_CNTL&t;&t;0x308
-DECL|macro|CSR_TIMER1_CLR
-mdefine_line|#define CSR_TIMER1_CLR&t;&t;0x30c
-DECL|macro|CSR_TIMER2_LOAD
-mdefine_line|#define CSR_TIMER2_LOAD&t;&t;0x320
-DECL|macro|CSR_TIMER2_VALUE
-mdefine_line|#define CSR_TIMER2_VALUE&t;0x324
-DECL|macro|CSR_TIMER2_CNTL
-mdefine_line|#define CSR_TIMER2_CNTL&t;&t;0x328
-DECL|macro|CSR_TIMER2_CLR
-mdefine_line|#define CSR_TIMER2_CLR&t;&t;0x32c
-DECL|macro|CSR_TIMER3_LOAD
-mdefine_line|#define CSR_TIMER3_LOAD&t;&t;0x340
-DECL|macro|CSR_TIMER3_VALUE
-mdefine_line|#define CSR_TIMER3_VALUE&t;0x344
-DECL|macro|CSR_TIMER3_CNTL
-mdefine_line|#define CSR_TIMER3_CNTL&t;&t;0x348
-DECL|macro|CSR_TIMER3_CLR
-mdefine_line|#define CSR_TIMER3_CLR&t;&t;0x34c
-DECL|macro|CSR_TIMER4_LOAD
-mdefine_line|#define CSR_TIMER4_LOAD&t;&t;0x360
-DECL|macro|CSR_TIMER4_VALUE
-mdefine_line|#define CSR_TIMER4_VALUE&t;0x364
-DECL|macro|CSR_TIMER4_CNTL
-mdefine_line|#define CSR_TIMER4_CNTL&t;&t;0x368
-DECL|macro|CSR_TIMER4_CLR
-mdefine_line|#define CSR_TIMER4_CLR&t;&t;0x36c
+DECL|macro|DC21285_IO
+mdefine_line|#define DC21285_IO(x)&t;&t;(x)
 macro_line|#endif
+DECL|macro|CSR_PCICMD
+mdefine_line|#define CSR_PCICMD&t;&t;DC21285_IO(0x0004)
+DECL|macro|CSR_PCICACHELINESIZE
+mdefine_line|#define CSR_PCICACHELINESIZE&t;DC21285_IO(0x000c)
+DECL|macro|CSR_PCICSRBASE
+mdefine_line|#define CSR_PCICSRBASE&t;&t;DC21285_IO(0x0010)
+DECL|macro|CSR_PCICSRIOBASE
+mdefine_line|#define CSR_PCICSRIOBASE&t;DC21285_IO(0x0014)
+DECL|macro|CSR_PCISDRAMBASE
+mdefine_line|#define CSR_PCISDRAMBASE&t;DC21285_IO(0x0018)
+DECL|macro|CSR_PCIROMBASE
+mdefine_line|#define CSR_PCIROMBASE&t;&t;DC21285_IO(0x0030)
+DECL|macro|CSR_CSRBASEMASK
+mdefine_line|#define CSR_CSRBASEMASK&t;&t;DC21285_IO(0x00f8)
+DECL|macro|CSR_CSRBASEOFFSET
+mdefine_line|#define CSR_CSRBASEOFFSET&t;DC21285_IO(0x00fc)
+DECL|macro|CSR_SDRAMBASEMASK
+mdefine_line|#define CSR_SDRAMBASEMASK&t;DC21285_IO(0x0100)
+DECL|macro|CSR_SDRAMBASEOFFSET
+mdefine_line|#define CSR_SDRAMBASEOFFSET&t;DC21285_IO(0x0104)
+DECL|macro|CSR_ROMBASEMASK
+mdefine_line|#define CSR_ROMBASEMASK&t;&t;DC21285_IO(0x0108)
+DECL|macro|CSR_SDRAMTIMING
+mdefine_line|#define CSR_SDRAMTIMING&t;&t;DC21285_IO(0x010c)
+DECL|macro|CSR_SDRAMADDRSIZE0
+mdefine_line|#define CSR_SDRAMADDRSIZE0&t;DC21285_IO(0x0110)
+DECL|macro|CSR_SDRAMADDRSIZE1
+mdefine_line|#define CSR_SDRAMADDRSIZE1&t;DC21285_IO(0x0114)
+DECL|macro|CSR_SDRAMADDRSIZE2
+mdefine_line|#define CSR_SDRAMADDRSIZE2&t;DC21285_IO(0x0118)
+DECL|macro|CSR_SDRAMADDRSIZE3
+mdefine_line|#define CSR_SDRAMADDRSIZE3&t;DC21285_IO(0x011c)
+DECL|macro|CSR_I2O_INFREEHEAD
+mdefine_line|#define CSR_I2O_INFREEHEAD&t;DC21285_IO(0x0120)
+DECL|macro|CSR_I2O_INPOSTTAIL
+mdefine_line|#define CSR_I2O_INPOSTTAIL&t;DC21285_IO(0x0124)
+DECL|macro|CSR_I2O_OUTPOSTHEAD
+mdefine_line|#define CSR_I2O_OUTPOSTHEAD&t;DC21285_IO(0x0128)
+DECL|macro|CSR_I2O_OUTFREETAIL
+mdefine_line|#define CSR_I2O_OUTFREETAIL&t;DC21285_IO(0x012c)
+DECL|macro|CSR_I2O_INFREECOUNT
+mdefine_line|#define CSR_I2O_INFREECOUNT&t;DC21285_IO(0x0130)
+DECL|macro|CSR_I2O_OUTPOSTCOUNT
+mdefine_line|#define CSR_I2O_OUTPOSTCOUNT&t;DC21285_IO(0x0134)
+DECL|macro|CSR_I2O_INPOSTCOUNT
+mdefine_line|#define CSR_I2O_INPOSTCOUNT&t;DC21285_IO(0x0138)
+DECL|macro|CSR_SA110_CNTL
+mdefine_line|#define CSR_SA110_CNTL&t;&t;DC21285_IO(0x013c)
+DECL|macro|CSR_PCIADDR_EXTN
+mdefine_line|#define CSR_PCIADDR_EXTN&t;DC21285_IO(0x0140)
+DECL|macro|CSR_PREFETCHMEMRANGE
+mdefine_line|#define CSR_PREFETCHMEMRANGE&t;DC21285_IO(0x0144)
+DECL|macro|CSR_XBUS_CYCLE
+mdefine_line|#define CSR_XBUS_CYCLE&t;&t;DC21285_IO(0x0148)
+DECL|macro|CSR_XBUS_IOSTROBE
+mdefine_line|#define CSR_XBUS_IOSTROBE&t;DC21285_IO(0x014c)
+DECL|macro|CSR_DOORBELL_PCI
+mdefine_line|#define CSR_DOORBELL_PCI&t;DC21285_IO(0x0150)
+DECL|macro|CSR_DOORBELL_SA110
+mdefine_line|#define CSR_DOORBELL_SA110&t;DC21285_IO(0x0154)
+DECL|macro|CSR_UARTDR
+mdefine_line|#define CSR_UARTDR&t;&t;DC21285_IO(0x0160)
+DECL|macro|CSR_RXSTAT
+mdefine_line|#define CSR_RXSTAT&t;&t;DC21285_IO(0x0164)
+DECL|macro|CSR_H_UBRLCR
+mdefine_line|#define CSR_H_UBRLCR&t;&t;DC21285_IO(0x0168)
+DECL|macro|CSR_M_UBRLCR
+mdefine_line|#define CSR_M_UBRLCR&t;&t;DC21285_IO(0x016c)
+DECL|macro|CSR_L_UBRLCR
+mdefine_line|#define CSR_L_UBRLCR&t;&t;DC21285_IO(0x0170)
+DECL|macro|CSR_UARTCON
+mdefine_line|#define CSR_UARTCON&t;&t;DC21285_IO(0x0174)
+DECL|macro|CSR_UARTFLG
+mdefine_line|#define CSR_UARTFLG&t;&t;DC21285_IO(0x0178)
+DECL|macro|CSR_IRQ_STATUS
+mdefine_line|#define CSR_IRQ_STATUS&t;&t;DC21285_IO(0x0180)
+DECL|macro|CSR_IRQ_RAWSTATUS
+mdefine_line|#define CSR_IRQ_RAWSTATUS&t;DC21285_IO(0x0184)
+DECL|macro|CSR_IRQ_ENABLE
+mdefine_line|#define CSR_IRQ_ENABLE&t;&t;DC21285_IO(0x0188)
+DECL|macro|CSR_IRQ_DISABLE
+mdefine_line|#define CSR_IRQ_DISABLE&t;&t;DC21285_IO(0x018c)
+DECL|macro|CSR_IRQ_SOFT
+mdefine_line|#define CSR_IRQ_SOFT&t;&t;DC21285_IO(0x0190)
+DECL|macro|CSR_FIQ_STATUS
+mdefine_line|#define CSR_FIQ_STATUS&t;&t;DC21285_IO(0x0280)
+DECL|macro|CSR_FIQ_RAWSTATUS
+mdefine_line|#define CSR_FIQ_RAWSTATUS&t;DC21285_IO(0x0284)
+DECL|macro|CSR_FIQ_ENABLE
+mdefine_line|#define CSR_FIQ_ENABLE&t;&t;DC21285_IO(0x0288)
+DECL|macro|CSR_FIQ_DISABLE
+mdefine_line|#define CSR_FIQ_DISABLE&t;&t;DC21285_IO(0x028c)
+DECL|macro|CSR_FIQ_SOFT
+mdefine_line|#define CSR_FIQ_SOFT&t;&t;DC21285_IO(0x0290)
+DECL|macro|CSR_TIMER1_LOAD
+mdefine_line|#define CSR_TIMER1_LOAD&t;&t;DC21285_IO(0x0300)
+DECL|macro|CSR_TIMER1_VALUE
+mdefine_line|#define CSR_TIMER1_VALUE&t;DC21285_IO(0x0304)
+DECL|macro|CSR_TIMER1_CNTL
+mdefine_line|#define CSR_TIMER1_CNTL&t;&t;DC21285_IO(0x0308)
+DECL|macro|CSR_TIMER1_CLR
+mdefine_line|#define CSR_TIMER1_CLR&t;&t;DC21285_IO(0x030c)
+DECL|macro|CSR_TIMER2_LOAD
+mdefine_line|#define CSR_TIMER2_LOAD&t;&t;DC21285_IO(0x0320)
+DECL|macro|CSR_TIMER2_VALUE
+mdefine_line|#define CSR_TIMER2_VALUE&t;DC21285_IO(0x0324)
+DECL|macro|CSR_TIMER2_CNTL
+mdefine_line|#define CSR_TIMER2_CNTL&t;&t;DC21285_IO(0x0328)
+DECL|macro|CSR_TIMER2_CLR
+mdefine_line|#define CSR_TIMER2_CLR&t;&t;DC21285_IO(0x032c)
+DECL|macro|CSR_TIMER3_LOAD
+mdefine_line|#define CSR_TIMER3_LOAD&t;&t;DC21285_IO(0x0340)
+DECL|macro|CSR_TIMER3_VALUE
+mdefine_line|#define CSR_TIMER3_VALUE&t;DC21285_IO(0x0344)
+DECL|macro|CSR_TIMER3_CNTL
+mdefine_line|#define CSR_TIMER3_CNTL&t;&t;DC21285_IO(0x0348)
+DECL|macro|CSR_TIMER3_CLR
+mdefine_line|#define CSR_TIMER3_CLR&t;&t;DC21285_IO(0x034c)
+DECL|macro|CSR_TIMER4_LOAD
+mdefine_line|#define CSR_TIMER4_LOAD&t;&t;DC21285_IO(0x0360)
+DECL|macro|CSR_TIMER4_VALUE
+mdefine_line|#define CSR_TIMER4_VALUE&t;DC21285_IO(0x0364)
+DECL|macro|CSR_TIMER4_CNTL
+mdefine_line|#define CSR_TIMER4_CNTL&t;&t;DC21285_IO(0x0368)
+DECL|macro|CSR_TIMER4_CLR
+mdefine_line|#define CSR_TIMER4_CLR&t;&t;DC21285_IO(0x036c)
 DECL|macro|TIMER_CNTL_ENABLE
 mdefine_line|#define TIMER_CNTL_ENABLE&t;(1 &lt;&lt; 7)
 DECL|macro|TIMER_CNTL_AUTORELOAD

@@ -754,7 +754,7 @@ DECL|macro|current
 mdefine_line|#define current (__buf &gt;&gt; 8*(sizeof(unsigned long)-1))
 macro_line|#endif
 DECL|macro|GETNEXT
-mdefine_line|#define GETNEXT { &bslash;&n;&t;next_byte(__buf); &bslash;&n;&t;if ((unsigned long) next % sizeof(unsigned long) == 0) { &bslash;&n;&t;&t;__buf = * (unsigned long *) next; &bslash;&n;&t;&t;if (!__buf) &bslash;&n;&t;&t;&t;break; &bslash;&n;&t;} &bslash;&n;&t;next++; &bslash;&n;}
+mdefine_line|#define GETNEXT { &bslash;&n;&t;next_byte(__buf); &bslash;&n;&t;if ((unsigned long) next % sizeof(unsigned long) == 0) { &bslash;&n;&t;&t;if (next &gt;= end) &bslash;&n;&t;&t;&t;break; &bslash;&n;&t;&t;__buf = * (unsigned long *) next; &bslash;&n;&t;} &bslash;&n;&t;next++; &bslash;&n;}
 multiline_comment|/*&n; * State machine macros.&n; */
 DECL|macro|CASE
 mdefine_line|#define CASE(c,label) if (current == c) goto label
@@ -779,6 +779,11 @@ r_const
 r_char
 op_star
 id|map
+comma
+r_const
+r_char
+op_star
+id|end
 )paren
 (brace
 r_const
@@ -1738,14 +1743,6 @@ suffix:semicolon
 id|mapsize
 op_assign
 id|st.st_size
-op_plus
-l_int|2
-op_star
-r_sizeof
-(paren
-r_int
-r_int
-)paren
 suffix:semicolon
 id|mapsize
 op_assign
@@ -1848,6 +1845,10 @@ id|state_machine
 c_func
 (paren
 id|map
+comma
+id|map
+op_plus
+id|st.st_size
 )paren
 suffix:semicolon
 r_if

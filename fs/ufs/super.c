@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1998&n; * Daniel Pirkl &lt;daniel.pirkl@email.cz&gt;&n; * Charles University, Faculty of Mathematics and Physics&n; */
 multiline_comment|/* Derivated from&n; *&n; *  linux/fs/ext2/super.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; */
 multiline_comment|/*&n; * Inspirated by&n; *&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;fare@tunes.org&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * write support Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; * &n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -1381,6 +1382,26 @@ id|UFSTYPE_NEXT
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+(paren
+id|value
+comma
+l_string|&quot;openstep&quot;
+)paren
+)paren
+id|ufs_set_opt
+(paren
+op_star
+id|mount_options
+comma
+id|UFSTYPE_OPENSTEP
+)paren
+suffix:semicolon
+r_else
 (brace
 id|printk
 (paren
@@ -2448,7 +2469,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;You didn&squot;t specify type of your ufs file system&bslash;n&bslash;n&quot;
-l_string|&quot;       mount -t ufs -o ufstype=sun|44bsd|old|next ....&bslash;n&bslash;n&quot;
+l_string|&quot;       mount -t ufs -o ufstype=sun|44bsd|old|next|openstep ....&bslash;n&bslash;n&quot;
 l_string|&quot;!!! WARNING !!! wrong value may corrupt you file system&bslash;n&quot;
 l_string|&quot;default value is ufstype=old&bslash;n&quot;
 )paren
@@ -2661,8 +2682,9 @@ c_func
 l_string|&quot;old type of ufs is supported read-only&bslash;n&quot;
 )paren
 suffix:semicolon
-r_goto
-id|failed
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_RDONLY
 suffix:semicolon
 )brace
 r_break
@@ -2733,8 +2755,82 @@ c_func
 l_string|&quot;nextstep type of ufs is supported read-only&bslash;n&quot;
 )paren
 suffix:semicolon
-r_goto
-id|failed
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|UFS_MOUNT_UFSTYPE_OPENSTEP
+suffix:colon
+id|UFSD
+c_func
+(paren
+(paren
+l_string|&quot;openstep ufstype&bslash;n&quot;
+)paren
+)paren
+id|uspi-&gt;s_fsize
+op_assign
+id|block_size
+op_assign
+l_int|1024
+suffix:semicolon
+id|uspi-&gt;s_fmask
+op_assign
+op_complement
+(paren
+l_int|1024
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|uspi-&gt;s_fshift
+op_assign
+l_int|10
+suffix:semicolon
+id|uspi-&gt;s_sbsize
+op_assign
+id|super_block_size
+op_assign
+l_int|2048
+suffix:semicolon
+id|uspi-&gt;s_sbbase
+op_assign
+l_int|0
+suffix:semicolon
+id|flags
+op_or_assign
+id|UFS_DE_44BSD
+op_or
+id|UFS_UID_44BSD
+op_or
+id|UFS_ST_44BSD
+op_or
+id|UFS_CG_44BSD
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;openstep type of ufs is supported read-only&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_RDONLY
 suffix:semicolon
 )brace
 r_break
@@ -2878,12 +2974,26 @@ r_if
 c_cond
 (paren
 (paren
+(paren
+(paren
 id|sb-&gt;u.ufs_sb.s_mount_opt
 op_amp
 id|UFS_MOUNT_UFSTYPE
 )paren
 op_eq
 id|UFS_MOUNT_UFSTYPE_NEXT
+)paren
+op_logical_or
+(paren
+(paren
+id|sb-&gt;u.ufs_sb.s_mount_opt
+op_amp
+id|UFS_MOUNT_UFSTYPE
+)paren
+op_eq
+id|UFS_MOUNT_UFSTYPE_OPENSTEP
+)paren
+)paren
 op_logical_and
 id|uspi-&gt;s_sbbase
 OL

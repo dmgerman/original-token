@@ -16,7 +16,7 @@ multiline_comment|/*&n; * Virtual view &lt;-&gt; DMA view memory address transla
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus(x)&t;(__virt_to_bus((unsigned long)(x)))
 DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt(x)&t;((void *)(__bus_to_virt(x)))
+mdefine_line|#define bus_to_virt(x)&t;((void *)(__bus_to_virt((unsigned long)(x))))
 multiline_comment|/*&n; * These macros actually build the multi-value IO function prototypes&n; */
 DECL|macro|__OUTS
 mdefine_line|#define __OUTS(s,i,x)&t;extern void outs##s(unsigned int port, const void *from, int len);
@@ -155,6 +155,25 @@ macro_line|#undef ARCH_IO_DELAY
 DECL|macro|ARCH_IO_CONSTANT
 macro_line|#undef ARCH_IO_CONSTANT
 macro_line|#ifdef __KERNEL__
+r_extern
+r_void
+op_star
+id|__ioremap
+c_func
+(paren
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */
 r_extern
 r_void

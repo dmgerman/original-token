@@ -719,7 +719,7 @@ id|PF_MEMALLOC
 r_goto
 id|ok_to_allocate
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Avoid going back-and-forth between allocating&n;&t;&t; * memory and trying to free it. If we get into&n;&t;&t; * a bad memory situation, we&squot;re better off trying&n;&t;&t; * to free things up until things are better.&n;&t;&t; *&n;&t;&t; * Normally we shouldn&squot;t ever have to do this, with&n;&t;&t; * kswapd doing this in the background.&n;&t;&t; *&n;&t;&t; * Most notably, this puts most of the onus of&n;&t;&t; * freeing up memory on the processes that _use_&n;&t;&t; * the most memory, rather than on everybody.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Avoid going back-and-forth between allocating&n;&t;&t; * memory and trying to free it. If we get into&n;&t;&t; * a bad memory situation, we&squot;re better off trying&n;&t;&t; * to free things up until things are better.&n;&t;&t; *&n;&t;&t; * Most notably, this puts most of the onus of&n;&t;&t; * freeing up memory on the processes that _use_&n;&t;&t; * the most memory, rather than on everybody.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -774,7 +774,9 @@ c_func
 (paren
 id|gfp_mask
 comma
-id|SWAP_CLUSTER_MAX
+id|freepages.high
+op_minus
+id|nr_free_pages
 )paren
 suffix:semicolon
 id|current-&gt;flags

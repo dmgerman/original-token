@@ -31,6 +31,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#ifdef CONFIG_MTRR
 macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#endif
@@ -40,7 +41,7 @@ macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 macro_line|#include &lt;video/fbcon-cfb16.h&gt;
 macro_line|#include &lt;video/fbcon-cfb24.h&gt;
 macro_line|#include &lt;video/fbcon-cfb32.h&gt;
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#if defined(CONFIG_FB_OF)
 macro_line|#if defined(CONFIG_FB_COMPAT_XPMAC)
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
@@ -104,7 +105,7 @@ multiline_comment|/* recheck __ppc__, maybe that __ppc__ needs MEMCPYTOIO_WRITEL
 multiline_comment|/* I benchmarked PII/350MHz with G200... MEMCPY, MEMCPYTOIO and WRITEL are on same speed ( &lt;2% diff) */
 multiline_comment|/* so that means that G200 speed (or AGP speed?) is our limit... I do not have benchmark to test, how */
 multiline_comment|/* much of PCI bandwidth is used during transfers... */
-macro_line|#if defined(__i386__) || defined(__ppc__)
+macro_line|#if defined(__i386__)
 DECL|macro|MEMCPYTOIO_MEMCPY
 mdefine_line|#define MEMCPYTOIO_MEMCPY
 macro_line|#else
@@ -115,12 +116,18 @@ macro_line|#endif
 macro_line|#ifdef __sparc__
 macro_line|#error &quot;Sorry, I have no idea how to do this on sparc... There is mapioaddr... With bus_type parameter...&quot;
 macro_line|#endif
-macro_line|#ifdef __m68k__
+macro_line|#if defined(__m68k__)
 DECL|macro|MAP_BUSTOVIRT
 mdefine_line|#define MAP_BUSTOVIRT
 macro_line|#else
+macro_line|#if defined(CONFIG_PPC) &amp;&amp; defined(CONFIG_PREP) &amp;&amp; defined(_ISA_MEM_BASE)
+multiline_comment|/* do not tell me that PPC is not broken... if ioremap() oops with&n;   invalid value written to msr... */
+DECL|macro|MAP_ISAMEMBASE
+mdefine_line|#define MAP_ISAMEMBASE
+macro_line|#else
 DECL|macro|MAP_IOREMAP
 mdefine_line|#define MAP_IOREMAP
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|macro|dprintk
@@ -823,7 +830,22 @@ id|phys
 )paren
 suffix:semicolon
 macro_line|#else
+macro_line|#ifdef MAP_ISAMEMBASE
+id|virt-&gt;vaddr
+op_assign
+(paren
+r_void
+op_star
+)paren
+(paren
+id|phys
+op_plus
+id|_ISA_MEM_BASE
+)paren
+suffix:semicolon
+macro_line|#else
 macro_line|#error &quot;Your architecture does not have neither ioremap nor bus_to_virt... Giving up&quot;
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 r_return
@@ -1608,6 +1630,10 @@ DECL|member|blink
 r_int
 id|blink
 suffix:semicolon
+DECL|member|sgram
+r_int
+id|sgram
+suffix:semicolon
 DECL|member|accelerator
 r_int
 id|accelerator
@@ -1766,7 +1792,7 @@ id|palette
 l_int|256
 )braket
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC) &amp;&amp; defined(CONFIG_FB_COMPAT_XPMAC)
+macro_line|#if defined(CONFIG_FB_OF) &amp;&amp; defined(CONFIG_FB_COMPAT_XPMAC)
 DECL|member|matrox_name
 r_char
 id|matrox_name
@@ -1777,7 +1803,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#if defined(CONFIG_FB_OF)
 r_int
 r_char
 id|nvram_read_byte
@@ -1786,8 +1812,6 @@ c_func
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_FB_OF)
 r_int
 id|matrox_of_init
 c_func
@@ -15824,7 +15848,7 @@ id|M1064_XGENCTRL_NO_SYNC_ON_GREEN
 comma
 id|M1064_XMISCCTRL_DAC_EN
 op_or
-id|M1064_XMISCCTRL_MFC_VGA
+id|M1064_XMISCCTRL_MFC_DIS
 op_or
 id|M1064_XMISCCTRL_DAC_8BIT
 op_or
@@ -16348,7 +16372,7 @@ id|POS1064_XMISCCTRL
 op_assign
 id|M1064_XMISCCTRL_DAC_EN
 op_or
-id|M1064_XMISCCTRL_MFC_VGA
+id|M1064_XMISCCTRL_MFC_DIS
 op_or
 id|M1064_XMISCCTRL_DAC_6BIT
 op_or
@@ -20742,20 +20766,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|x7AF4
-op_amp
-l_int|0x10
-)paren
-)paren
-id|hw-&gt;MXoptionReg
-op_or_assign
-l_int|0x4000
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|ACCESS_FBINFO
 c_func
 (paren
@@ -20767,7 +20777,7 @@ id|FB_ACCEL_MATROX_MGAG100
 (brace
 id|hw-&gt;MXoptionReg
 op_or_assign
-l_int|0x1080
+l_int|0x5080
 suffix:semicolon
 id|pci_write_config_dword
 c_func
@@ -20984,6 +20994,19 @@ r_else
 id|hw-&gt;MXoptionReg
 op_or_assign
 l_int|0x00000C00
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.sgram
+)paren
+)paren
+id|hw-&gt;MXoptionReg
+op_or_assign
+l_int|0x4000
 suffix:semicolon
 id|mga_outl
 c_func
@@ -24301,7 +24324,7 @@ id|PMINFO
 id|display
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC) &amp;&amp; defined(CONFIG_FB_COMPAT_XPMAC)
+macro_line|#if defined(CONFIG_FB_OF) &amp;&amp; defined(CONFIG_FB_COMPAT_XPMAC)
 r_if
 c_cond
 (paren
@@ -24405,7 +24428,7 @@ id|mmio.base
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PPC &amp;&amp; CONFIG_FB_COMPAT_XPMAC */
+macro_line|#endif /* CONFIG_FB_OF &amp;&amp; CONFIG_FB_COMPAT_XPMAC */
 )brace
 )brace
 r_return
@@ -26905,6 +26928,22 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* &quot;matrox:noblink&quot; */
+DECL|variable|sgram
+r_static
+r_int
+id|sgram
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* &quot;matrox:sgram&quot; */
+DECL|variable|mtrr
+r_static
+r_int
+id|mtrr
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* &quot;matrox:nomtrr&quot; */
 DECL|variable|grayscale
 r_static
 r_int
@@ -27843,6 +27882,41 @@ op_assign
 l_int|0
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|this_opt
+comma
+l_string|&quot;sgram&quot;
+)paren
+)paren
+multiline_comment|/* nosgram == sdram */
+id|sgram
+op_assign
+l_int|1
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|this_opt
+comma
+l_string|&quot;sdram&quot;
+)paren
+)paren
+id|sgram
+op_assign
+l_int|0
+suffix:semicolon
+r_else
 (brace
 r_int
 id|value
@@ -27995,6 +28069,23 @@ l_string|&quot;init&quot;
 id|noinit
 op_assign
 op_logical_neg
+id|value
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|this_opt
+comma
+l_string|&quot;mtrr&quot;
+)paren
+)paren
+id|mtrr
+op_assign
 id|value
 suffix:semicolon
 r_else
@@ -30735,6 +30826,12 @@ op_assign
 l_int|0x08000000
 suffix:semicolon
 macro_line|#ifdef CONFIG_MTRR
+r_if
+c_cond
+(paren
+id|mtrr
+)paren
+(brace
 id|ACCESS_FBINFO
 c_func
 (paren
@@ -30772,6 +30869,7 @@ id|KERN_INFO
 l_string|&quot;matroxfb: MTRR&squot;s turned on&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif&t;/* CONFIG_MTRR */
 multiline_comment|/* validate params, autodetect k, M */
 r_if
@@ -31568,7 +31666,7 @@ id|video.len_usable
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#if defined(CONFIG_FB_OF)
 macro_line|#if defined(CONFIG_FB_COMPAT_XPMAC)
 id|strcpy
 c_func
@@ -32342,6 +32440,14 @@ suffix:semicolon
 id|ACCESS_FBINFO
 c_func
 (paren
+id|devflags.sgram
+)paren
+op_assign
+id|sgram
+suffix:semicolon
+id|ACCESS_FBINFO
+c_func
+(paren
 id|capable.cross4MB
 )paren
 op_assign
@@ -32699,6 +32805,38 @@ c_func
 id|noinit
 comma
 l_string|&quot;Disables W/SG/SD-RAM and bus interface initialization (0 or 1=do not initialize) (default=0)&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mtrr
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|mtrr
+comma
+l_string|&quot;This speeds up video memory accesses (0=disabled or 1) (default=1)&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sgram
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|sgram
+comma
+l_string|&quot;Indicates that G200 has SGRAM memory (0=SDRAM, 1=SGRAM) (default=0)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM

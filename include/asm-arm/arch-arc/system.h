@@ -7,25 +7,37 @@ macro_line|#ifdef CONFIG_ARCH_ARC
 DECL|macro|cliIF
 mdefine_line|#define cliIF()&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&bslash;&n;&quot;&t;mov&t;%0, pc&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;orr %0, %0, #0x0c000000&bslash;n&quot;&t;&bslash;&n;&quot;&t;teqp&t;%0, #0&bslash;n&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&bslash;&n;    : );&t;&bslash;&n;  } while(0)
 macro_line|#endif
-DECL|function|arch_hard_reset
+DECL|function|arch_reset
 r_extern
 id|__inline__
 r_void
-id|arch_hard_reset
+id|arch_reset
+c_func
 (paren
-r_void
+r_char
+id|mode
 )paren
 (brace
 r_extern
 r_void
 id|ecard_reset
+c_func
 (paren
 r_int
 id|card
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Do any cleanups that the processor may require&n;&t; */
+id|processor
+dot
+id|_proc_fin
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Reset all expansion cards.&n;&t; */
 id|ecard_reset
+c_func
 (paren
 op_minus
 l_int|1
@@ -61,13 +73,6 @@ r_void
 l_int|0
 )paren
 (paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * If that didn&squot;t work, loop endlessly&n;&t; */
-r_while
-c_loop
-(paren
-l_int|1
 )paren
 suffix:semicolon
 )brace

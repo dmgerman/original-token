@@ -16,7 +16,7 @@ DECL|macro|RAM_BASE
 mdefine_line|#define RAM_BASE&t;&t;0x40000000
 DECL|macro|KERNTOPHYS
 mdefine_line|#define KERNTOPHYS(a)&t;&t;((unsigned long)(&amp;a))
-DECL|macro|SAFE_ADDR
-mdefine_line|#define SAFE_ADDR&t;&t;0x40000000
+DECL|macro|FLUSH_BASE_PHYS
+mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0x40000000
 macro_line|#endif
 eof

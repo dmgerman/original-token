@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver for the Sound Blaster compatible cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;&t;: ioctl code reworked (vmalloc/vfree removed)&n; * Rolf Fokkens (Dec 20 1998)&t;: ES188x recording level support on a per&n; *&t;&t;&t;&t;  input basis&n; *              (Dec 24 1998)&t;: Recognition of ES188x (?), ES1868, ES1869&n; *&t;&t;&t;&t;  and ES1878. Could be used for specific&n; *&t;&t;&t;&t;  handling in the future. All except ES188x&n; *&t;&t;&t;&t;  and ES688 are handled like ES1688&n; *              (Dec 27 1998)&t;: RECLEV for all (?) ES1688+ chips, see &n; *&t;&t;&t;&t;  ess_mixer_reload for more info. ES188x now&n; *&t;&t;&t;&t;  has the &quot;Dec 20&quot; support + RECLEV&n; */
-multiline_comment|/*&n; * About ES188x support:&n; *&n; * The standard ES1688 support doesn&squot;t take care of the ES188x recording&n; * levels very well. Whenever a device is selected (recmask) for recording&n; * it&squot;s recording level is loud, and it cannot be changed.&n; *&n; * The ES188x has separate registers to control the recording levels. The&n; * ES188x specific software makes these level the same as their corresponding&n; * playback levels, unless recmask says they aren&squot;t recorded. In the latter&n; * case the recording volumes are 0.&n; *&n; * Now recording levels of inputs can be controlled, by changing the playback&n; * levels. Futhermore several devices can be recorded together (which is not&n; * possible with the ES1688.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;&t;: ioctl code reworked (vmalloc/vfree removed)&n; * Rolf Fokkens (Dec 20 1998)&t;: ES188x recording level support on a per&n; *&t;&t;&t;&t;  input basis.&n; *              (Dec 24 1998)&t;: Recognition of ES1788, ES1887, ES1888,&n; *&t;&t;&t;&t;  ES1868, ES1869 and ES1878. Could be used for&n; *&t;&t;&t;&t;  specific handling in the future. All except&n; *&t;&t;&t;&t;  ES1887 and ES1888 and ES688 are handled like&n; *&t;&t;&t;&t;  ES1688.&n; *              (Dec 27 1998)&t;: RECLEV for all (?) ES1688+ chips. ES188x now&n; *&t;&t;&t;&t;  have the &quot;Dec 20&quot; support + RECLEV&n; */
+multiline_comment|/*&n; * About the documentation&n; *&n; * I don&squot;t know if the chips all are OK, but the documentation is buggy. &squot;cause&n; * I don&squot;t have all the cips myself, there&squot;s a lot I cannot verify. I&squot;ll try to&n; * keep track of my latest insights about his here. If you have additional info,&n; * please enlighten me (fokkensr@vertis.nl)!&n; *&n; * I had the impression that ES1688 also has 6 bit master volume control. The&n; * documentation about ES1888 (rev C, october &squot;95) claims that ES1888 has&n; * the following features ES1688 doesn&squot;t have:&n; * - 6 bit master volume&n; * - Full Duplex&n; * So ES1688 apparently doesn&squot;t have 6 bit master volume control, but the&n; * ES1688 does have RECLEV control. Makes me wonder: does ES688 have it too?&n; * Without RECLEV ES688 won&squot;t be much fun I guess.&n; *&n; * From the ES1888 (rev C, october &squot;95) documentation I got the impression&n; * that registers 0x68 to 0x6e don&squot;t exist which means: no recording volume&n; * controls. To my surprise the ES888 documentation (1/14/96) claims that&n; * ES888 does have these record mixer registers, but that ES1888 doesn&squot;t have&n; * 0x69 and 0x6b. So the rest should be there.&n; * &n; */
+multiline_comment|/*&n; * About recognition of ESS chips&n; *&n; * The distinction of ES688, ES1688, ES1788, ES1887 and ES1888 is described in&n; * a (preliminary ??) datasheet on ES1887. It&squot;s aim is to identify ES1887, but&n; * during detection the text claims that &quot;this chip may be ...&quot; when a step&n; * fails. This scheme is used to distinct between the above chips.&n; * It appears however that some PnP chips like ES1868 are recognized as ES1788&n; * by the ES1887 detection scheme. These PnP chips can be detected in another&n; * way however: ES1868, ES1869 and ES1878 can be recognized (full proof I think)&n; * by repeatedly reading mixer register 0x40. This is done by ess_identify in&n; * sb_common.c.&n; * This results in the following detection steps:&n; * - distinct between ES688 and ES1688+ (as always done in this driver)&n; *   if ES688 we&squot;re ready&n; * - try to detect ES1868, ES1869 or ES1878&n; *   if successful we&squot;re ready&n; * - try to detect ES1888, ES1887 or ES1788&n; *   if successful we&squot;re ready&n; * - Dunno. Must be 1688. Will do in general&n; *&n; * About RECLEV support:&n; *&n; * The existing ES1688 support didn&squot;t take care of the ES1688+ recording&n; * levels very well. Whenever a device was selected (recmask) for recording&n; * it&squot;s recording level was loud, and it couldn&squot;t be changed. The fact that&n; * internal register 0xb4 could take care of RECLEV, didn&squot;t work meaning until&n; * it&squot;s value was restored every time the chip was reset; this reset the&n; * value of 0xb4 too. I guess that&squot;s what 4front also had (have?) trouble with.&n; *&n; * About ES188x support:&n; *&n; * The ES188x has separate registers to control the recording levels, for all&n; * inputs. The ES188x specific software makes these levels the same as their&n; * corresponding playback levels, unless recmask says they aren&squot;t recorded. In&n; * the latter case the recording volumes are 0.&n; * Now recording levels of inputs can be controlled, by changing the playback&n; * levels. Futhermore several devices can be recorded together (which is not&n; * possible with the ES1688.&n; * Besides the separate recording level control for each input, the common&n; * recordig level can also be controlled by RECLEV as described above.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_SBDSP
@@ -8,6 +9,70 @@ DECL|macro|__SB_MIXER_C__
 mdefine_line|#define __SB_MIXER_C__
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sb_mixer.h&quot;
+DECL|macro|SBPRO_RECORDING_DEVICES
+mdefine_line|#define SBPRO_RECORDING_DEVICES&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | SOUND_MASK_CD)
+multiline_comment|/* Same as SB Pro, unless I find otherwise */
+DECL|macro|SGNXPRO_RECORDING_DEVICES
+mdefine_line|#define SGNXPRO_RECORDING_DEVICES SBPRO_RECORDING_DEVICES
+DECL|macro|SBPRO_MIXER_DEVICES
+mdefine_line|#define SBPRO_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | SOUND_MASK_VOLUME)
+multiline_comment|/* SG NX Pro has treble and bass settings on the mixer. The &squot;speaker&squot;&n; * channel is the COVOX/DisneySoundSource emulation volume control&n; * on the mixer. It does NOT control speaker volume. Should have own&n; * mask eventually?&n; */
+DECL|macro|SGNXPRO_MIXER_DEVICES
+mdefine_line|#define SGNXPRO_MIXER_DEVICES&t;(SBPRO_MIXER_DEVICES|SOUND_MASK_BASS| &bslash;&n;&t;&t;&t;&t; SOUND_MASK_TREBLE|SOUND_MASK_SPEAKER )
+DECL|macro|SB16_RECORDING_DEVICES
+mdefine_line|#define SB16_RECORDING_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
+DECL|macro|SB16_OUTFILTER_DEVICES
+mdefine_line|#define SB16_OUTFILTER_DEVICES&t;&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
+DECL|macro|ES688_RECORDING_DEVICES
+mdefine_line|#define ES688_RECORDING_DEVICES SBPRO_RECORDING_DEVICES
+DECL|macro|ES688_MIXER_DEVICES
+mdefine_line|#define ES688_MIXER_DEVICES (SBPRO_MIXER_DEVICES|SOUND_MASK_LINE2|SOUND_MASK_SPEAKER)
+DECL|macro|ES1688_RECORDING_DEVICES
+mdefine_line|#define ES1688_RECORDING_DEVICES ES688_RECORDING_DEVICES
+DECL|macro|ES1688_MIXER_DEVICES
+mdefine_line|#define ES1688_MIXER_DEVICES (ES688_MIXER_DEVICES|SOUND_MASK_RECLEV)
+DECL|macro|ES188X_RECORDING_DEVICES
+mdefine_line|#define ES188X_RECORDING_DEVICES&t;(ES1688_RECORDING_DEVICES | SOUND_MASK_LINE2 &bslash;&n;&t;&t;&t;&t;&t; |SOUND_MASK_SYNTH)
+DECL|macro|ES188X_MIXER_DEVICES
+mdefine_line|#define ES188X_MIXER_DEVICES (ES1688_MIXER_DEVICES)
+DECL|macro|SB16_MIXER_DEVICES
+mdefine_line|#define SB16_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | SOUND_MASK_OGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_VOLUME | SOUND_MASK_BASS | SOUND_MASK_TREBLE | &bslash;&n;&t;&t;&t;&t;&t;SOUND_MASK_IMIX)
+multiline_comment|/* These are the only devices that are working at the moment.  Others could&n; * be added once they are identified and a method is found to control them.&n; */
+DECL|macro|ALS007_MIXER_DEVICES
+mdefine_line|#define ALS007_MIXER_DEVICES&t;(SOUND_MASK_SYNTH | SOUND_MASK_LINE | &bslash;&n;&t;&t;&t;&t; SOUND_MASK_PCM | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t; SOUND_MASK_VOLUME)
+multiline_comment|/*&n; * Mixer registers of ES188x&n; *&n; * These registers specifically take care of recording levels. To make the&n; * mapping from playback devices to recording devices every recording&n; * devices = playback device + ES188X_MIXER_RECDIFF&n; */
+DECL|macro|ES188X_MIXER_RECBASE
+mdefine_line|#define ES188X_MIXER_RECBASE&t;(SOUND_MIXER_LINE3 + 1)
+DECL|macro|ES188X_MIXER_RECDIFF
+mdefine_line|#define ES188X_MIXER_RECDIFF&t;(ES188X_MIXER_RECBASE - SOUND_MIXER_SYNTH)
+DECL|macro|ES188X_MIXER_RECSYNTH
+mdefine_line|#define ES188X_MIXER_RECSYNTH&t;(SOUND_MIXER_SYNTH&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECPCM
+mdefine_line|#define ES188X_MIXER_RECPCM&t;(SOUND_MIXER_PCM&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECSPEAKER
+mdefine_line|#define ES188X_MIXER_RECSPEAKER&t;(SOUND_MIXER_SPEAKER&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECLINE
+mdefine_line|#define ES188X_MIXER_RECLINE&t;(SOUND_MIXER_LINE&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECMIC
+mdefine_line|#define ES188X_MIXER_RECMIC&t;(SOUND_MIXER_MIC&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECCD
+mdefine_line|#define ES188X_MIXER_RECCD&t;(SOUND_MIXER_CD&t;&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECIMIX
+mdefine_line|#define ES188X_MIXER_RECIMIX&t;(SOUND_MIXER_IMIX&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECALTPCM
+mdefine_line|#define ES188X_MIXER_RECALTPCM&t;(SOUND_MIXER_ALTPCM&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECRECLEV
+mdefine_line|#define ES188X_MIXER_RECRECLEV&t;(SOUND_MIXER_RECLEV&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECIGAIN
+mdefine_line|#define ES188X_MIXER_RECIGAIN&t;(SOUND_MIXER_IGAIN&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECOGAIN
+mdefine_line|#define ES188X_MIXER_RECOGAIN&t;(SOUND_MIXER_OGAIN&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECLINE1
+mdefine_line|#define ES188X_MIXER_RECLINE1&t;(SOUND_MIXER_LINE1&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECLINE2
+mdefine_line|#define ES188X_MIXER_RECLINE2&t;(SOUND_MIXER_LINE2&t;+ ES188X_MIXER_RECDIFF)
+DECL|macro|ES188X_MIXER_RECLINE3
+mdefine_line|#define ES188X_MIXER_RECLINE3&t;(SOUND_MIXER_LINE3&t;+ ES188X_MIXER_RECDIFF)
 DECL|variable|sbpro_mix
 r_static
 id|mixer_tab
@@ -544,11 +609,324 @@ l_int|0
 )paren
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The ES1688 specifics... hopefully correct...&n; * - 6 bit master volume&n; * - RECLEV control&n; * These may apply to ES688 too. I have no idea.&n; */
+multiline_comment|/*&n; * The ES1688 specifics... hopefully correct...&n; * - 6 bit master volume&n; *   I was wrong, ES1888 docs say ES1688 didn&squot;t have it.&n; * - RECLEV control&n; * These may apply to ES688 too. I have no idea.&n; */
 DECL|variable|es1688_mix
 r_static
 id|mixer_tab
 id|es1688_mix
+op_assign
+(brace
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_VOLUME
+comma
+l_int|0x32
+comma
+l_int|7
+comma
+l_int|4
+comma
+l_int|0x32
+comma
+l_int|3
+comma
+l_int|4
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_BASS
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_TREBLE
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_SYNTH
+comma
+l_int|0x36
+comma
+l_int|7
+comma
+l_int|4
+comma
+l_int|0x36
+comma
+l_int|3
+comma
+l_int|4
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_PCM
+comma
+l_int|0x14
+comma
+l_int|7
+comma
+l_int|4
+comma
+l_int|0x14
+comma
+l_int|3
+comma
+l_int|4
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_SPEAKER
+comma
+l_int|0x3c
+comma
+l_int|2
+comma
+l_int|3
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_LINE
+comma
+l_int|0x3e
+comma
+l_int|7
+comma
+l_int|4
+comma
+l_int|0x3e
+comma
+l_int|3
+comma
+l_int|4
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_MIC
+comma
+l_int|0x1a
+comma
+l_int|7
+comma
+l_int|4
+comma
+l_int|0x1a
+comma
+l_int|3
+comma
+l_int|4
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_CD
+comma
+l_int|0x38
+comma
+l_int|7
+comma
+l_int|4
+comma
+l_int|0x38
+comma
+l_int|3
+comma
+l_int|4
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_IMIX
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_ALTPCM
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_RECLEV
+comma
+l_int|0xb4
+comma
+l_int|7
+comma
+l_int|4
+comma
+l_int|0xb4
+comma
+l_int|3
+comma
+l_int|4
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_IGAIN
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_OGAIN
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_LINE1
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_LINE2
+comma
+l_int|0x3a
+comma
+l_int|7
+comma
+l_int|4
+comma
+l_int|0x3a
+comma
+l_int|3
+comma
+l_int|4
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_LINE3
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+)brace
+suffix:semicolon
+DECL|variable|es1688later_mix
+r_static
+id|mixer_tab
+id|es1688later_mix
 op_assign
 (brace
 id|MIX_ENT
@@ -858,7 +1236,7 @@ l_int|0
 )paren
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The ES188x specifics.&n; * Note that de master volume unlike ES688 is now controlled by two 6 bit&n; * registers. These seem to work OK on 1868 too, but I have no idea if it&squot;s&n; * compatible to 688 or 1688....&n; * Also Note that the recording levels (ES188X_MIXER_REC...) have own &n; * entries as if they were playback devices. They are used internally in the&n; * driver only!&n; */
+multiline_comment|/*&n; * The ES188x specifics.&n; * Note that de master volume unlike ES688 is now controlled by two 6 bit&n; * registers. These seem to work OK on 1868 too.&n; * Also Note that the recording levels (ES188X_MIXER_REC...) have own &n; * entries as if they were playback devices. They are used internally in the&n; * driver only!&n; */
 DECL|variable|es188x_mix
 r_static
 id|mixer_tab
@@ -2497,70 +2875,6 @@ l_int|0x00
 multiline_comment|/* SOUND_MIXER_LINE3 */
 )brace
 suffix:semicolon
-DECL|macro|SBPRO_RECORDING_DEVICES
-mdefine_line|#define SBPRO_RECORDING_DEVICES&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | SOUND_MASK_CD)
-multiline_comment|/* Same as SB Pro, unless I find otherwise */
-DECL|macro|SGNXPRO_RECORDING_DEVICES
-mdefine_line|#define SGNXPRO_RECORDING_DEVICES SBPRO_RECORDING_DEVICES
-DECL|macro|SBPRO_MIXER_DEVICES
-mdefine_line|#define SBPRO_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | SOUND_MASK_VOLUME)
-multiline_comment|/* SG NX Pro has treble and bass settings on the mixer. The &squot;speaker&squot;&n; * channel is the COVOX/DisneySoundSource emulation volume control&n; * on the mixer. It does NOT control speaker volume. Should have own&n; * mask eventually?&n; */
-DECL|macro|SGNXPRO_MIXER_DEVICES
-mdefine_line|#define SGNXPRO_MIXER_DEVICES&t;(SBPRO_MIXER_DEVICES|SOUND_MASK_BASS| &bslash;&n;&t;&t;&t;&t; SOUND_MASK_TREBLE|SOUND_MASK_SPEAKER )
-DECL|macro|SB16_RECORDING_DEVICES
-mdefine_line|#define SB16_RECORDING_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
-DECL|macro|SB16_OUTFILTER_DEVICES
-mdefine_line|#define SB16_OUTFILTER_DEVICES&t;&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
-DECL|macro|ES688_RECORDING_DEVICES
-mdefine_line|#define ES688_RECORDING_DEVICES SBPRO_RECORDING_DEVICES
-DECL|macro|ES688_MIXER_DEVICES
-mdefine_line|#define ES688_MIXER_DEVICES (SBPRO_MIXER_DEVICES|SOUND_MASK_LINE2|SOUND_MASK_SPEAKER)
-DECL|macro|ES1688_RECORDING_DEVICES
-mdefine_line|#define ES1688_RECORDING_DEVICES ES688_RECORDING_DEVICES
-DECL|macro|ES1688_MIXER_DEVICES
-mdefine_line|#define ES1688_MIXER_DEVICES (ES688_MIXER_DEVICES|SOUND_MASK_RECLEV)
-DECL|macro|ES188X_RECORDING_DEVICES
-mdefine_line|#define ES188X_RECORDING_DEVICES&t;(ES1688_RECORDING_DEVICES | SOUND_MASK_LINE2 &bslash;&n;&t;&t;&t;&t;&t; |SOUND_MASK_SYNTH)
-DECL|macro|ES188X_MIXER_DEVICES
-mdefine_line|#define ES188X_MIXER_DEVICES (ES1688_MIXER_DEVICES)
-DECL|macro|SB16_MIXER_DEVICES
-mdefine_line|#define SB16_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | SOUND_MASK_OGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_VOLUME | SOUND_MASK_BASS | SOUND_MASK_TREBLE | &bslash;&n;&t;&t;&t;&t;&t;SOUND_MASK_IMIX)
-multiline_comment|/* These are the only devices that are working at the moment.  Others could&n; * be added once they are identified and a method is found to control them.&n; */
-DECL|macro|ALS007_MIXER_DEVICES
-mdefine_line|#define ALS007_MIXER_DEVICES&t;(SOUND_MASK_SYNTH | SOUND_MASK_LINE | &bslash;&n;&t;&t;&t;&t; SOUND_MASK_PCM | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t; SOUND_MASK_VOLUME)
-multiline_comment|/*&n; * Mixer registers of ES188x&n; *&n; * These registers specifically take care of recording levels. To make the&n; * mapping from playback devices to recording devices every recording&n; * devices = playback device + ES188X_MIXER_RECDIFF&n; */
-DECL|macro|ES188X_MIXER_RECBASE
-mdefine_line|#define ES188X_MIXER_RECBASE&t;(SOUND_MIXER_LINE3 + 1)
-DECL|macro|ES188X_MIXER_RECDIFF
-mdefine_line|#define ES188X_MIXER_RECDIFF&t;(ES188X_MIXER_RECBASE - SOUND_MIXER_SYNTH)
-DECL|macro|ES188X_MIXER_RECSYNTH
-mdefine_line|#define ES188X_MIXER_RECSYNTH&t;(SOUND_MIXER_SYNTH&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECPCM
-mdefine_line|#define ES188X_MIXER_RECPCM&t;(SOUND_MIXER_PCM&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECSPEAKER
-mdefine_line|#define ES188X_MIXER_RECSPEAKER&t;(SOUND_MIXER_SPEAKER&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECLINE
-mdefine_line|#define ES188X_MIXER_RECLINE&t;(SOUND_MIXER_LINE&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECMIC
-mdefine_line|#define ES188X_MIXER_RECMIC&t;(SOUND_MIXER_MIC&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECCD
-mdefine_line|#define ES188X_MIXER_RECCD&t;(SOUND_MIXER_CD&t;&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECIMIX
-mdefine_line|#define ES188X_MIXER_RECIMIX&t;(SOUND_MIXER_IMIX&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECALTPCM
-mdefine_line|#define ES188X_MIXER_RECALTPCM&t;(SOUND_MIXER_ALTPCM&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECRECLEV
-mdefine_line|#define ES188X_MIXER_RECRECLEV&t;(SOUND_MIXER_RECLEV&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECIGAIN
-mdefine_line|#define ES188X_MIXER_RECIGAIN&t;(SOUND_MIXER_IGAIN&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECOGAIN
-mdefine_line|#define ES188X_MIXER_RECOGAIN&t;(SOUND_MIXER_OGAIN&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECLINE1
-mdefine_line|#define ES188X_MIXER_RECLINE1&t;(SOUND_MIXER_LINE1&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECLINE2
-mdefine_line|#define ES188X_MIXER_RECLINE2&t;(SOUND_MIXER_LINE2&t;+ ES188X_MIXER_RECDIFF)
-DECL|macro|ES188X_MIXER_RECLINE3
-mdefine_line|#define ES188X_MIXER_RECLINE3&t;(SOUND_MIXER_LINE3&t;+ ES188X_MIXER_RECDIFF)
 DECL|variable|sbmixnum
 r_static
 r_int
@@ -5084,6 +5398,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * es1688 has 4 bits master vol.&n;&t;&t;&t;&t;&t; * later chips have 6 bits (?)&n;&t;&t;&t;&t;&t; */
 id|devc-&gt;supported_devices
 op_assign
 id|ES1688_MIXER_DEVICES
@@ -5092,11 +5407,28 @@ id|devc-&gt;supported_rec_devices
 op_assign
 id|ES1688_RECORDING_DEVICES
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|devc-&gt;submodel
+OL
+l_int|0x10
+)paren
+(brace
 id|devc-&gt;iomap
 op_assign
 op_amp
 id|es1688_mix
 suffix:semicolon
+)brace
+r_else
+(brace
+id|devc-&gt;iomap
+op_assign
+op_amp
+id|es1688later_mix
+suffix:semicolon
+)brace
 )brace
 )brace
 r_break

@@ -1489,7 +1489,7 @@ id|err
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * FIXME: the *_user functions should&n;&t;&t;&t;&t;&t; *&t;  return how much data was&n;&t;&t;&t;&t;&t; *&t;  copied before the fault&n;&t;&t;&t;&t;&t; *&t;  occured and then a partial&n;&t;&t;&t;&t;&t; *&t;  packet with this data should&n;&t;&t;&t;&t;&t; *&t;  be sent.  Unfortunately&n;&t;&t;&t;&t;&t; *&t;  csum_and_copy_from_user doesn&squot;t&n;&t;&t;&t;&t;&t; *&t;  return this information.&n;&t;&t;&t;&t;&t; *&t;  ATM it might send partly zeroed&n;&t;&t;&t;&t;&t; *&t;  data in this case.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * FIXME: the *_user functions should&n;&t;&t;&t;&t;&t; *&t;  return how much data was&n;&t;&t;&t;&t;&t; *&t;  copied before the fault&n;&t;&t;&t;&t;&t; *&t;  occurred and then a partial&n;&t;&t;&t;&t;&t; *&t;  packet with this data should&n;&t;&t;&t;&t;&t; *&t;  be sent.  Unfortunately&n;&t;&t;&t;&t;&t; *&t;  csum_and_copy_from_user doesn&squot;t&n;&t;&t;&t;&t;&t; *&t;  return this information.&n;&t;&t;&t;&t;&t; *&t;  ATM it might send partly zeroed&n;&t;&t;&t;&t;&t; *&t;  data in this case.&n;&t;&t;&t;&t;&t; */
 id|tp-&gt;write_seq
 op_add_assign
 id|copy

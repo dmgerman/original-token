@@ -33,7 +33,7 @@ multiline_comment|/* for Sun Ultra */
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * bad_dma_drives() lists the model names (from &quot;hdparm -i&quot;)&n; * of drives which supposedly support (U)DMA but which are&n; * known to corrupt data with this interface under Linux.&n; */
+multiline_comment|/*&n; * bad_dma_drives() lists the model names (from &quot;hdparm -i&quot;)&n; * of drives which supposedly support (U)DMA but which are&n; * known to corrupt data with this interface under Linux.&n; *&n; * This is an empirical list. Its generated from bug reports. That means&n; * while it reflects actual problem distributions it doesn&squot;t answer whether&n; * the drive or the controller, or cabling, or software, or some combination&n; * thereof is the fault. If you don&squot;t happen to agree with the kernel&squot;s &n; * opinion of your drive - use hdparm to turn DMA on.&n; */
 DECL|variable|bad_dma_drives
 r_const
 r_char
@@ -50,6 +50,8 @@ comma
 l_string|&quot;WDC AC32500H&quot;
 comma
 l_string|&quot;WDC AC33100H&quot;
+comma
+l_string|&quot;WDC AC31600H&quot;
 comma
 l_int|NULL
 )brace
@@ -636,7 +638,7 @@ id|id-&gt;model
 id|printk
 c_func
 (paren
-l_string|&quot;%s: (U)DMA capability is broken for %s&bslash;n&quot;
+l_string|&quot;%s: Disabling (U)DMA for %s&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma

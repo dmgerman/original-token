@@ -5,8 +5,6 @@ mdefine_line|#define __ASM_ARCH_A_OUT_H
 macro_line|#ifdef __KERNEL__
 DECL|macro|STACK_TOP
 mdefine_line|#define STACK_TOP&t;&t;(0x01a00000)
-DECL|macro|LIBRARY_START_TEXT
-mdefine_line|#define LIBRARY_START_TEXT&t;(0x00c00000)
 macro_line|#endif
 macro_line|#endif
 eof

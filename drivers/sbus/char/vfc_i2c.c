@@ -534,7 +534,7 @@ id|VFC_I2C_DEBUG_PRINTK
 c_func
 (paren
 (paren
-l_string|&quot;vfc%d: recieving from i2c addr 0x%x&bslash;n&quot;
+l_string|&quot;vfc%d: receiving from i2c addr 0x%x&bslash;n&quot;
 comma
 id|dev-&gt;instance
 comma
@@ -997,7 +997,7 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;vfc%d: &quot;
-l_string|&quot;VFC error while recieving byte&bslash;n&quot;
+l_string|&quot;VFC error while receiving byte&bslash;n&quot;
 comma
 id|dev-&gt;instance
 )paren

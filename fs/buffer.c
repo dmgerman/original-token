@@ -242,9 +242,6 @@ id|grow_buffers
 c_func
 (paren
 r_int
-id|pri
-comma
-r_int
 id|size
 )paren
 suffix:semicolon
@@ -2926,8 +2923,6 @@ op_logical_neg
 id|grow_buffers
 c_func
 (paren
-id|GFP_KERNEL
-comma
 id|size
 )paren
 )paren
@@ -5619,9 +5614,6 @@ id|grow_buffers
 c_func
 (paren
 r_int
-id|pri
-comma
-r_int
 id|size
 )paren
 (brace
@@ -5683,7 +5675,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|pri
+id|GFP_BUFFER
 )paren
 )paren
 )paren
@@ -6376,8 +6368,6 @@ suffix:semicolon
 id|grow_buffers
 c_func
 (paren
-id|GFP_KERNEL
-comma
 id|BLOCK_SIZE
 )paren
 suffix:semicolon

@@ -2482,7 +2482,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Timeout occured waiting transmit packet received&bslash;n&quot;
+l_string|&quot;Timeout occurred waiting transmit packet received&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2532,7 +2532,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Timeout occured waiting receive packet&bslash;n&quot;
+l_string|&quot;Timeout occurred waiting receive packet&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -7,9 +7,27 @@ r_int
 r_int
 id|dmach_t
 suffix:semicolon
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/arch/dma.h&gt;
+multiline_comment|/*&n; * DMA modes - we have two, IN and OUT&n; */
+DECL|typedef|dmamode_t
+r_typedef
+r_int
+r_int
+id|dmamode_t
+suffix:semicolon
+DECL|macro|DMA_MODE_MASK
+mdefine_line|#define DMA_MODE_MASK&t;1
+DECL|macro|DMA_MODE_READ
+mdefine_line|#define DMA_MODE_READ&t;0
+DECL|macro|DMA_MODE_WRITE
+mdefine_line|#define DMA_MODE_WRITE&t;1
+DECL|macro|DMA_AUTOINIT
+mdefine_line|#define DMA_AUTOINIT&t;2
 r_typedef
 r_struct
 (brace
@@ -233,6 +251,15 @@ suffix:semicolon
 macro_line|#ifndef NO_DMA
 DECL|macro|NO_DMA
 mdefine_line|#define NO_DMA&t;255
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCI_QUIRKS
+r_extern
+r_int
+id|isa_dma_bridge_buggy
+suffix:semicolon
+macro_line|#else
+DECL|macro|isa_dma_bridge_buggy
+mdefine_line|#define isa_dma_bridge_buggy    (0)
 macro_line|#endif
 macro_line|#endif /* _ARM_DMA_H */
 eof

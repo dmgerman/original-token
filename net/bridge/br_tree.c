@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/br.h&gt;
 DECL|macro|_DEBUG_AVL
 mdefine_line|#define _DEBUG_AVL
@@ -42,6 +43,18 @@ id|fdb_inited
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef DEBUG_AVL
+r_static
+r_void
+id|printk_avl
+(paren
+r_struct
+id|fdb
+op_star
+id|tree
+)paren
+suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|addr_cmp
@@ -189,8 +202,7 @@ c_loop
 (paren
 id|tree
 op_assign
-op_amp
-id|fdb_head
+id|fhp
 suffix:semicolon
 suffix:semicolon
 )paren
@@ -1865,7 +1877,7 @@ c_func
 op_star
 id|pbuffer
 comma
-l_string|&quot;%02x:%02x:%02x:%02x:%02x:%02x     eth%d       %d         %d&bslash;n&quot;
+l_string|&quot;%02x:%02x:%02x:%02x:%02x:%02x     %s       %d         %ld&bslash;n&quot;
 comma
 id|tree-&gt;ula
 (braket
@@ -1897,9 +1909,12 @@ id|tree-&gt;ula
 l_int|5
 )braket
 comma
+id|port_info
+(braket
 id|tree-&gt;port
-op_minus
-l_int|1
+)braket
+dot
+id|dev-&gt;name
 comma
 id|tree-&gt;flags
 comma

@@ -252,13 +252,35 @@ mdefine_line|#define CLOCAL&t;0004000
 DECL|macro|CBAUDEX
 mdefine_line|#define CBAUDEX 0010000
 DECL|macro|B57600
-mdefine_line|#define  B57600  0010001
+mdefine_line|#define    B57600 0010001
 DECL|macro|B115200
-mdefine_line|#define  B115200 0010002
+mdefine_line|#define   B115200 0010002
 DECL|macro|B230400
-mdefine_line|#define  B230400 0010003
+mdefine_line|#define   B230400 0010003
 DECL|macro|B460800
-mdefine_line|#define  B460800 0010004
+mdefine_line|#define   B460800 0010004
+DECL|macro|B500000
+mdefine_line|#define   B500000 0010005
+DECL|macro|B576000
+mdefine_line|#define   B576000 0010006
+DECL|macro|B921600
+mdefine_line|#define   B921600 0010007
+DECL|macro|B1000000
+mdefine_line|#define  B1000000 0010010
+DECL|macro|B1152000
+mdefine_line|#define  B1152000 0010011
+DECL|macro|B1500000
+mdefine_line|#define  B1500000 0010012
+DECL|macro|B2000000
+mdefine_line|#define  B2000000 0010013
+DECL|macro|B2500000
+mdefine_line|#define  B2500000 0010014
+DECL|macro|B3000000
+mdefine_line|#define  B3000000 0010015
+DECL|macro|B3500000
+mdefine_line|#define  B3500000 0010016
+DECL|macro|B4000000
+mdefine_line|#define  B4000000 0010017
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;  002003600000&t;/* input baud rate (not used) */
 DECL|macro|CMSPAR

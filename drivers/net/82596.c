@@ -34,7 +34,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BVME6000_NET
 macro_line|#include &lt;asm/bvme6000hw.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; * Define various macros for Channel Attention, word swapping etc., dependant&n; * on architecture.  MVME and BVME are 680x0 based, otherwise it is Intel.&n; */
+multiline_comment|/*&n; * Define various macros for Channel Attention, word swapping etc., dependent&n; * on architecture.  MVME and BVME are 680x0 based, otherwise it is Intel.&n; */
 macro_line|#ifdef __mc68000__
 DECL|macro|WSWAPrfd
 mdefine_line|#define WSWAPrfd(x)  ((struct i596_rfd *) (((u32)(x)&lt;&lt;16) | ((((u32)(x)))&gt;&gt;16)))

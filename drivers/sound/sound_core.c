@@ -1164,19 +1164,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;Core sound module&quot;
-)paren
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Alan Cox&quot;
-)paren
-suffix:semicolon
 r_extern
 r_int
 id|mod_firmware_load
@@ -1196,6 +1183,19 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|mod_firmware_load
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Core sound module&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Alan Cox&quot;
 )paren
 suffix:semicolon
 DECL|function|cleanup_module

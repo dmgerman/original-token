@@ -908,4 +908,10 @@ r_struct
 id|br_stat
 id|br_stats
 suffix:semicolon
+r_extern
+id|Port_data
+id|port_info
+(braket
+)braket
+suffix:semicolon
 eof

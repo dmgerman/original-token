@@ -114,37 +114,39 @@ r_return
 id|x
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This processor does not need anything special before reset,&n; * but RPC may do...&n; */
-DECL|function|proc_hard_reset
+DECL|macro|set_cr
+mdefine_line|#define set_cr(x)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&t;&quot;mcr&t;p15, 0, %0, c1, c0&t;@ set CR&quot;&t;&bslash;&n;&t;  : : &quot;r&quot; (x));&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 r_extern
-id|__inline__
-r_void
-id|proc_hard_reset
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
+r_int
+r_int
+id|cr_no_alignment
+suffix:semicolon
+multiline_comment|/* defined in entry-armv.S */
+r_extern
+r_int
+r_int
+id|cr_alignment
+suffix:semicolon
+multiline_comment|/* defined in entry-armv.S */
 multiline_comment|/*&n; * We can wait for an interrupt...&n; */
 DECL|macro|proc_idle
-mdefine_line|#define proc_idle()&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&bslash;&n;&quot;&t;mcr&t;p15, 0, %0, c15, c8, 2&quot;&t;&bslash;&n;&t;  : : &quot;r&quot; (0));&t;&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define proc_idle()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;mcr&t;p15, 0, %0, c15, c8, 2&t;@ proc_idle&quot;&t;&t;&bslash;&n;&t;  : : &quot;r&quot; (0));&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * A couple of speedups for the ARM&n; */
 multiline_comment|/*&n; * Save the current interrupt enable state &amp; disable IRQs&n; */
 DECL|macro|__save_flags_cli
-mdefine_line|#define __save_flags_cli(x)&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&bslash;&n;&t;&quot;mrs&t;%1, cpsr&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;and&t;%0, %1, #192&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;orr&t;%1, %1, #128&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;msr&t;cpsr, %1&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (x), &quot;=r&quot; (temp)&t;&bslash;&n;&t;  :&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define __save_flags_cli(x)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mrs&t;%1, cpsr&t;&t;@ save_flags_cli&bslash;n&quot;&t;&bslash;&n;&quot;&t;and&t;%0, %1, #192&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;orr&t;%1, %1, #128&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;msr&t;cpsr, %1&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (x), &quot;=r&quot; (temp)&t;&t;&t;&t;&bslash;&n;&t;  :&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * Enable IRQs&n; */
 DECL|macro|__sti
-mdefine_line|#define __sti()&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&bslash;&n;&t;&quot;mrs&t;%0, cpsr&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;bic&t;%0, %0, #128&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;msr&t;cpsr, %0&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&t;&t;&bslash;&n;&t;  :&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define __sti()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mrs&t;%0, cpsr&t;&t;@ sti&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;bic&t;%0, %0, #128&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;msr&t;cpsr, %0&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  :&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} while(0)
 multiline_comment|/*&n; * Disable IRQs&n; */
 DECL|macro|__cli
-mdefine_line|#define __cli()&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&bslash;&n;&t;&quot;mrs&t;%0, cpsr&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;orr&t;%0, %0, #128&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;msr&t;cpsr, %0&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&t;&t;&bslash;&n;&t;  :&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define __cli()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mrs&t;%0, cpsr&t;&t;@ cli&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;orr&t;%0, %0, #128&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;msr&t;cpsr, %0&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  :&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} while(0)
 multiline_comment|/*&n; * save current IRQ &amp; FIQ state&n; */
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(x)&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&bslash;&n;&t;&quot;mrs&t;%0, cpsr&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;and&t;%0, %0, #192&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (x)&t;&t;&t;&bslash;&n;&t;  :&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define __save_flags(x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mrs&t;%0, cpsr&t;&t;@ save_flags&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;and&t;%0, %0, #192&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  :&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * restore saved IRQ &amp; FIQ state&n; */
 DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(x)&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&bslash;&n;&t;&quot;mrs&t;%0, cpsr&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;bic&t;%0, %0, #192&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;orr&t;%0, %0, %1&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;msr&t;cpsr, %0&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&t;&t;&bslash;&n;&t;  : &quot;r&quot; (x)&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define __restore_flags(x)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mrs&t;%0, cpsr&t;&t;@ restore_flags&bslash;n&quot;&t;&bslash;&n;&quot;&t;bic&t;%0, %0, #192&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;orr&t;%0, %0, %1&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&quot;&t;msr&t;cpsr, %0&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;r&quot; (x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&bslash;&n;&t;} while (0)
 macro_line|#ifdef __SMP__
 macro_line|#error SMP not supported
 macro_line|#else

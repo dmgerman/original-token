@@ -5,6 +5,7 @@ mdefine_line|#define __ASM_ARCH_HARDWARE_H
 multiline_comment|/*&n; * What hardware must be present&n; */
 DECL|macro|HAS_IOMD
 mdefine_line|#define HAS_IOMD
+macro_line|#include &lt;asm/iomd.h&gt;
 DECL|macro|HAS_VIDC20
 mdefine_line|#define HAS_VIDC20
 multiline_comment|/* Hardware addresses of major areas.&n; *  *_START is the physical address&n; *  *_SIZE  is the size of the region&n; *  *_BASE  is the virtual address&n; */

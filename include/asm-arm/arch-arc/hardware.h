@@ -6,8 +6,10 @@ macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * What hardware must be present - these can be tested by the kernel&n; * source.&n; */
 DECL|macro|HAS_IOC
 mdefine_line|#define HAS_IOC
+macro_line|#include &lt;asm/ioc.h&gt;
 DECL|macro|HAS_MEMC
 mdefine_line|#define HAS_MEMC
+macro_line|#include &lt;asm/memc.h&gt;
 DECL|macro|HAS_MEMC1A
 mdefine_line|#define HAS_MEMC1A
 DECL|macro|HAS_VIDC

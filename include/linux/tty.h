@@ -773,6 +773,11 @@ r_int
 r_int
 id|canon_column
 suffix:semicolon
+DECL|member|atomic_read
+r_struct
+id|semaphore
+id|atomic_read
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* tty magic number */
@@ -795,6 +800,8 @@ DECL|macro|TTY_PUSH
 mdefine_line|#define TTY_PUSH 6
 DECL|macro|TTY_CLOSING
 mdefine_line|#define TTY_CLOSING 7
+DECL|macro|TTY_DONT_FLIP
+mdefine_line|#define TTY_DONT_FLIP 8
 DECL|macro|TTY_HW_COOK_OUT
 mdefine_line|#define TTY_HW_COOK_OUT 14
 DECL|macro|TTY_HW_COOK_IN

@@ -1487,14 +1487,20 @@ DECL|member|pci_command
 id|u16
 id|pci_command
 suffix:semicolon
-DECL|member|pci_bus
+DECL|member|pdev
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+macro_line|#if 0
 id|u8
 id|pci_bus
 suffix:semicolon
-DECL|member|pci_dev_fun
 id|u8
 id|pci_dev_fun
 suffix:semicolon
+macro_line|#endif
 DECL|member|name
 r_char
 id|name

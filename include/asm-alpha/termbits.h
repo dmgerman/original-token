@@ -255,6 +255,28 @@ DECL|macro|B230400
 mdefine_line|#define  B230400  00022
 DECL|macro|B460800
 mdefine_line|#define  B460800  00023
+DECL|macro|B500000
+mdefine_line|#define  B500000  00024
+DECL|macro|B576000
+mdefine_line|#define  B576000  00025
+DECL|macro|B921600
+mdefine_line|#define  B921600  00026
+DECL|macro|B1000000
+mdefine_line|#define B1000000  00027
+DECL|macro|B1152000
+mdefine_line|#define B1152000  00030
+DECL|macro|B1500000
+mdefine_line|#define B1500000  00031
+DECL|macro|B2000000
+mdefine_line|#define B2000000  00032
+DECL|macro|B2500000
+mdefine_line|#define B2500000  00033
+DECL|macro|B3000000
+mdefine_line|#define B3000000  00034
+DECL|macro|B3500000
+mdefine_line|#define B3500000  00035
+DECL|macro|B4000000
+mdefine_line|#define B4000000  00036
 DECL|macro|CSIZE
 mdefine_line|#define CSIZE&t;00001400
 DECL|macro|CS5

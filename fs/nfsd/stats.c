@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/fs/nfsd/stats.c&n; *&n; * procfs-based user access to knfsd statistics&n; *&n; * /proc/net/rpc/nfsd&n; *&n; * Format:&n; *&t;rc &lt;hits&gt; &lt;misses&gt; &lt;nocache&gt;&n; *&t;&t;&t;Statistsics for the reply cache&n; *&t;plus generic RPC stats (see net/sunrpc/stats.c)&n; *&n; * Copyright (C) 1995, 1996, 1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;

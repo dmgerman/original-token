@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/linux/sunrpc/stats.h&n; *&n; * Client st
 macro_line|#ifndef _LINUX_SUNRPC_STATS_H
 DECL|macro|_LINUX_SUNRPC_STATS_H
 mdefine_line|#define _LINUX_SUNRPC_STATS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 DECL|struct|rpc_stat
 r_struct

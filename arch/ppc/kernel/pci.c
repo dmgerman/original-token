@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: pci.c,v 1.42 1998/12/04 14:31:37 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
+multiline_comment|/*&n; * $Id: pci.c,v 1.43 1998/12/29 18:55:11 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -492,11 +492,11 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifndef CONFIG_MBX  
 id|PPC_DEVICE
 op_star
 id|hostbridge
 suffix:semicolon
-macro_line|#ifndef CONFIG_MBX  
 r_switch
 c_cond
 (paren
@@ -793,6 +793,10 @@ r_char
 op_star
 id|Motherboard_routes
 suffix:semicolon
+r_int
+r_char
+id|i
+suffix:semicolon
 macro_line|#ifndef CONFIG_MBX
 r_switch
 c_cond
@@ -832,8 +836,6 @@ c_func
 (paren
 id|dev-&gt;devfn
 )paren
-comma
-id|i
 suffix:semicolon
 id|dev-&gt;irq
 op_assign

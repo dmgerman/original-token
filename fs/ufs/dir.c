@@ -380,20 +380,18 @@ r_return
 id|stored
 suffix:semicolon
 )brace
-macro_line|#if 0 /* XXX */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|ext2_check_dir_entry
+id|ufs_check_dir_entry
 (paren
-l_string|&quot;ext2_readdir&quot;
+l_string|&quot;ufs_readdir&quot;
 comma
 id|inode
 comma
 id|de
 comma
-multiline_comment|/* XXX - beware about de having to be swabped somehow */
 id|bh
 comma
 id|offset
@@ -424,7 +422,6 @@ r_return
 id|stored
 suffix:semicolon
 )brace
-macro_line|#endif /* XXX */
 id|offset
 op_add_assign
 id|SWAB16

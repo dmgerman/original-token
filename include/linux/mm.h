@@ -1041,6 +1041,8 @@ DECL|macro|__GFP_MED
 mdefine_line|#define __GFP_MED&t;0x04
 DECL|macro|__GFP_HIGH
 mdefine_line|#define __GFP_HIGH&t;0x08
+DECL|macro|__GFP_IO
+mdefine_line|#define __GFP_IO&t;0x10
 DECL|macro|__GFP_DMA
 mdefine_line|#define __GFP_DMA&t;0x80
 DECL|macro|GFP_BUFFER
@@ -1048,11 +1050,11 @@ mdefine_line|#define GFP_BUFFER&t;(__GFP_LOW | __GFP_WAIT)
 DECL|macro|GFP_ATOMIC
 mdefine_line|#define GFP_ATOMIC&t;(__GFP_HIGH)
 DECL|macro|GFP_USER
-mdefine_line|#define GFP_USER&t;(__GFP_LOW | __GFP_WAIT)
+mdefine_line|#define GFP_USER&t;(__GFP_LOW | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_KERNEL
-mdefine_line|#define GFP_KERNEL&t;(__GFP_MED | __GFP_WAIT)
+mdefine_line|#define GFP_KERNEL&t;(__GFP_MED | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_NFS
-mdefine_line|#define GFP_NFS&t;&t;(__GFP_HIGH | __GFP_WAIT)
+mdefine_line|#define GFP_NFS&t;&t;(__GFP_HIGH | __GFP_WAIT | __GFP_IO)
 multiline_comment|/* Flag - indicates that the buffer will be suitable for DMA.  Ignored on some&n;   platforms, used as appropriate on others */
 DECL|macro|GFP_DMA
 mdefine_line|#define GFP_DMA&t;&t;__GFP_DMA

@@ -314,7 +314,7 @@ DECL|macro|SET_PAGE_DIR
 mdefine_line|#define SET_PAGE_DIR(tsk,pgdir)  &bslash;&n;&t;((tsk)-&gt;tss.pg_tables = (unsigned long *)(pgdir))
 macro_line|#else /* CONFIG_8xx */     
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir)  &bslash;&n; do { &bslash;&n;&t;unsigned long __pgdir = (unsigned long)pgdir; &bslash;&n;&t;((tsk)-&gt;tss.pg_tables = (unsigned long *)(__pgdir)); &bslash;&n;&t;asm(&quot;mtspr %0,%1 &bslash;n&bslash;t&quot; :: &quot;i&quot;(M_TWB), &quot;r&quot;(__pa(__pgdir))); &bslash;&n; } while (0)
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir)  &bslash;&n; do { &bslash;&n;&t;unsigned long __pgdir = (unsigned long)pgdir; &bslash;&n;&t;((tsk)-&gt;tss.pg_tables = (unsigned long *)(__pgdir)); &bslash;&n;&t;asm(&quot;mtspr %0,%1 &bslash;n&bslash;t&quot; : : &quot;i&quot;(M_TWB), &quot;r&quot;(__pa(__pgdir))); &bslash;&n; } while (0)
 macro_line|#endif /* CONFIG_8xx */
 macro_line|#ifndef __ASSEMBLY__
 DECL|function|pte_none
@@ -2520,6 +2520,8 @@ suffix:semicolon
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(0)
+DECL|macro|kern_addr_valid
+mdefine_line|#define kern_addr_valid(addr)&t;(1)
 macro_line|#endif __ASSEMBLY__
 macro_line|#endif /* _PPC_PGTABLE_H */
 eof

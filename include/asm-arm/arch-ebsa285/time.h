@@ -1,8 +1,9 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/time.h&n; *&n; * Copyright (c) 1998 Russell King.&n; * Copyright (c) 1998 Phil Blundell&n; *&n; * CATS has a real-time clock, though the evaluation board doesn&squot;t.&n; *&n; * Changelog:&n; *  21-Mar-1998&t;RMK&t;Created&n; *  27-Aug-1998&t;PJB&t;CATS support&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/time.h&n; *&n; * Copyright (c) 1998 Russell King.&n; * Copyright (c) 1998 Phil Blundell&n; *&n; * CATS has a real-time clock, though the evaluation board doesn&squot;t.&n; *&n; * Changelog:&n; *  21-Mar-1998&t;RMK&t;Created&n; *  27-Aug-1998&t;PJB&t;CATS support&n; *  28-Dec-1998&t;APH&t;Made leds optional&n; */
 DECL|macro|RTC_PORT
 mdefine_line|#define RTC_PORT(x)&t;&t;(0x72+(x))
 DECL|macro|RTC_ALWAYS_BCD
 mdefine_line|#define RTC_ALWAYS_BCD&t;&t;1
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
@@ -16,8 +17,23 @@ id|gettimeoffset
 r_void
 )paren
 (brace
+r_int
+r_int
+id|value
+op_assign
+id|LATCH
+op_minus
+op_star
+id|CSR_TIMER1_VALUE
+suffix:semicolon
 r_return
-l_int|0
+(paren
+id|tick
+op_star
+id|value
+)paren
+op_div
+id|LATCH
 suffix:semicolon
 )brace
 DECL|function|reset_timer
@@ -34,6 +50,7 @@ id|CSR_TIMER1_CLR
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_LEDS
 multiline_comment|/*&n;&t; * Do the LEDs thing on EBSA-285 hardware.&n;&t; */
 r_if
 c_cond
@@ -108,6 +125,7 @@ id|led_timer
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon

@@ -5274,7 +5274,7 @@ id|dev
 suffix:semicolon
 id|skb-&gt;mac.raw
 op_assign
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_assign
 id|skb_put
 c_func
@@ -5287,7 +5287,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_plus
 l_int|60
 op_minus
@@ -5390,13 +5390,13 @@ op_plus
 id|BRIDGE_LLC1_HS
 )paren
 suffix:semicolon
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_add_assign
 id|skb-&gt;dev-&gt;hard_header_len
 suffix:semicolon
 id|llc_buffer
 op_assign
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 suffix:semicolon
 op_star
 id|llc_buffer
@@ -5416,8 +5416,8 @@ op_increment
 op_assign
 id|BRIDGE_LLC1_CTRL
 suffix:semicolon
-multiline_comment|/* set h.raw to where the bpdu starts */
-id|skb-&gt;h.raw
+multiline_comment|/* set nh.raw to where the bpdu starts */
+id|skb-&gt;nh.raw
 op_add_assign
 id|BRIDGE_LLC1_HS
 suffix:semicolon
@@ -5477,7 +5477,7 @@ multiline_comment|/* copy fields before &quot;flags&quot; */
 id|memcpy
 c_func
 (paren
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 comma
 id|config_bpdu
 comma
@@ -5487,7 +5487,7 @@ suffix:semicolon
 multiline_comment|/* build the &quot;flags&quot; field */
 op_star
 (paren
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_plus
 id|BRIDGE_BPDU_8021_CONFIG_FLAG_OFFSET
 )paren
@@ -5501,7 +5501,7 @@ id|config_bpdu-&gt;top_change_ack
 )paren
 op_star
 (paren
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_plus
 id|BRIDGE_BPDU_8021_CONFIG_FLAG_OFFSET
 )paren
@@ -5515,7 +5515,7 @@ id|config_bpdu-&gt;top_change
 )paren
 op_star
 (paren
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_plus
 id|BRIDGE_BPDU_8021_CONFIG_FLAG_OFFSET
 )paren
@@ -5532,7 +5532,7 @@ multiline_comment|/* copy the rest */
 id|memcpy
 c_func
 (paren
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_plus
 id|BRIDGE_BPDU_8021_CONFIG_FLAG_OFFSET
 op_plus
@@ -5612,7 +5612,7 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 comma
 id|bpdu
 comma
@@ -6045,7 +6045,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_assign
 id|skb-&gt;mac.raw
 suffix:semicolon
@@ -6345,7 +6345,7 @@ id|br_stats_cnt.port_not_disable
 suffix:semicolon
 id|skb-&gt;mac.raw
 op_assign
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
@@ -7206,7 +7206,7 @@ op_assign
 id|IS_BRIDGED
 suffix:semicolon
 multiline_comment|/* reset the skb-&gt;ip pointer */
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_assign
 id|skb-&gt;data
 op_plus
@@ -7389,7 +7389,7 @@ id|dev
 suffix:semicolon
 multiline_comment|/* To get here we must have done ARP already,&n;&t;&t;&t;   or have a received valid MAC header */
 multiline_comment|/*&t;&t;&t;printk(&quot;Flood to port %d&bslash;n&quot;,i);*/
-id|nskb-&gt;h.raw
+id|nskb-&gt;nh.raw
 op_assign
 id|nskb-&gt;data
 op_plus

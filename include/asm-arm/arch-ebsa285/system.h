@@ -1,14 +1,15 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; */
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
-multiline_comment|/* To reboot, we set up the 21285 watchdog and enable it.&n; * We then wait for it to timeout.&n; */
-DECL|function|arch_hard_reset
+DECL|function|arch_reset
 r_extern
 id|__inline__
 r_void
-id|arch_hard_reset
+id|arch_reset
+c_func
 (paren
-r_void
+r_char
+id|mode
 )paren
 (brace
 id|cli
@@ -16,6 +17,63 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mode
+op_eq
+l_char|&squot;s&squot;
+)paren
+(brace
+id|__asm__
+r_volatile
+(paren
+"&quot;"
+id|mov
+id|lr
+comma
+macro_line|#0x41000000&t;&t;@ prepare to jump to ROM
+id|mov
+id|r0
+comma
+macro_line|#0x130
+id|mcr
+id|p15
+comma
+l_int|0
+comma
+id|r0
+comma
+id|c1
+comma
+id|c0
+"@"
+id|MMU
+id|off
+id|mcr
+id|p15
+comma
+l_int|0
+comma
+id|ip
+comma
+id|c7
+comma
+id|c7
+"@"
+id|flush
+id|caches
+id|mov
+id|pc
+comma
+id|lr
+"&quot;"
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* To reboot, we set up the 21285 watchdog and enable it.&n;&t;&t; * We then wait for it to timeout.&n;&t;&t; */
 op_star
 id|CSR_TIMER4_LOAD
 op_assign
@@ -37,17 +95,8 @@ l_int|1
 op_lshift
 l_int|13
 suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-suffix:semicolon
 )brace
 )brace
-DECL|macro|ARCH_IDLE_OK
-mdefine_line|#define ARCH_IDLE_OK
 DECL|macro|arch_start_idle
 mdefine_line|#define arch_start_idle()&t;leds_event(led_idle_start)
 DECL|macro|arch_end_idle

@@ -3,7 +3,7 @@ DECL|macro|__ALPHA_PCI_H
 mdefine_line|#define __ALPHA_PCI_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-multiline_comment|/*&n; * The following structure is used to manage multiple PCI busses.&n; *&n; * XXX: We should solve thos problem in an architecture independant&n; * way, rather than hacking something up here.&n; */
+multiline_comment|/*&n; * The following structure is used to manage multiple PCI busses.&n; *&n; * XXX: We should solve this problem in an architecture independent&n; * way, rather than hacking something up here.&n; */
 DECL|struct|linux_hose_info
 r_struct
 id|linux_hose_info

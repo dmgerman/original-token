@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Daniel J. Rodriksson: Modified sbintr to handle 8 and 16 bit interrupts&n; *                       for full duplex support ( only sb16 by now )&n; * Rolf Fokkens:&t; Added (BETA?) support for ES188x chips.&n; * (fokkensr@vertis.nl)&t; Which means: You can adjust the recording levels.&n; */
+multiline_comment|/*&n; * Daniel J. Rodriksson: Modified sbintr to handle 8 and 16 bit interrupts&n; *                       for full duplex support ( only sb16 by now )&n; * Rolf Fokkens:&t; Added (BETA?) support for ES1887 chips.&n; * (fokkensr@vertis.nl)&t; Which means: You can adjust the recording levels.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
@@ -2037,7 +2037,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * This the detection heuristic of ESS technology, though somewhat&n;&t; * changed to actually make it work.&n;&t; * This is the most BETA part of the software: Will the detection&n;         * always work?&n;&t; */
+multiline_comment|/*&n;&t; * This the detection heuristic of ESS technology, though somewhat&n;&t; * changed to actually make it work.&n;&t; * This results in the following detection steps:&n;&t; * - distinct between ES688 and ES1688+ (as always done in this driver)&n;&t; *   if ES688 we&squot;re ready&n;&t; * - try to detect ES1868, ES1869 or ES1878 (ess_identify)&n;&t; *   if successful we&squot;re ready&n;&t; * - try to detect ES1888, ES1887 or ES1788 (aim: detect ES1887)&n;&t; *   if successful we&squot;re ready&n;&t; * - Dunno. Must be 1688. Will do in general&n;&t; *&n;&t; * This is the most BETA part of the software: Will the detection&n;         * always work?&n;&t; */
 id|devc-&gt;model
 op_assign
 id|MDL_ESS
@@ -2098,8 +2098,6 @@ l_int|NULL
 (brace
 r_int
 id|type
-comma
-id|dummy
 suffix:semicolon
 id|type
 op_assign
@@ -2163,13 +2161,10 @@ c_cond
 id|chip
 op_eq
 l_int|NULL
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 op_logical_neg
 id|ess_probe
+c_func
 (paren
 id|devc
 comma
@@ -2181,7 +2176,11 @@ op_lshift
 l_int|3
 )paren
 )paren
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|ess_probe
 (paren
 id|devc
@@ -2192,16 +2191,51 @@ l_int|0x7f
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ess_probe
+(paren
+id|devc
+comma
+l_int|0x64
+comma
+(paren
+l_int|1
+op_lshift
+l_int|5
+)paren
+)paren
+)paren
+(brace
 id|chip
 op_assign
-l_string|&quot;ES188x&quot;
+l_string|&quot;ES1887&quot;
 suffix:semicolon
+)brace
+r_else
+(brace
+id|chip
+op_assign
+l_string|&quot;ES1888&quot;
+suffix:semicolon
+)brace
 id|devc-&gt;submodel
 op_assign
 id|SUBMDL_ES188X
 suffix:semicolon
 )brace
+r_else
+(brace
+id|chip
+op_assign
+l_string|&quot;ES1788&quot;
 suffix:semicolon
+id|devc-&gt;submodel
+op_assign
+id|SUBMDL_ES1788
+suffix:semicolon
+)brace
 )brace
 suffix:semicolon
 r_if
@@ -4238,7 +4272,7 @@ id|detected_devc
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Mixer access routines&n; *&n; *&t;ES188x modifications: some mixer registers reside in the&n; *&t;range above 0xa0. These must be accessed in another way.&n; */
+multiline_comment|/*&n; *&t;Mixer access routines&n; *&n; *&t;ES1887 modifications: some mixer registers reside in the&n; *&t;range above 0xa0. These must be accessed in another way.&n; */
 DECL|function|sb_setmixer
 r_void
 id|sb_setmixer
@@ -4437,6 +4471,7 @@ r_return
 id|val
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Some PnP chips can be identified by repeatedly reading mixer register 0x40.&n; * This is done by ess_identify&n; */
 DECL|function|ess_identify
 r_static
 r_int

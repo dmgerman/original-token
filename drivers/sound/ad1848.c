@@ -43,7 +43,7 @@ r_int
 r_char
 id|saved_regs
 (braket
-l_int|16
+l_int|32
 )braket
 suffix:semicolon
 DECL|member|debug_flag
@@ -7419,6 +7419,14 @@ r_int
 id|id
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; *      It&squot;s at least CS4231&n;&t;&t;&t;&t; */
+id|devc-&gt;chip_name
+op_assign
+l_string|&quot;CS4231&quot;
+suffix:semicolon
+id|devc-&gt;model
+op_assign
+id|MD_4231
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * It could be an AD1845 or CS4231A as well.&n;&t;&t;&t;&t; * CS4231 and AD1845 report the same revision info in I25&n;&t;&t;&t;&t; * while the CS4231A reports different.&n;&t;&t;&t;&t; */
 id|id
 op_assign

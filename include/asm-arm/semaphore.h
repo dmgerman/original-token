@@ -39,7 +39,7 @@ multiline_comment|/* special register calling convention */
 suffix:semicolon
 id|asmlinkage
 r_int
-id|__down_failed_interruptible
+id|__down_interruptible_failed
 (paren
 r_void
 multiline_comment|/* special register calling convention */
@@ -56,6 +56,17 @@ suffix:semicolon
 r_extern
 r_void
 id|__down
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|__down_interruptible
 c_func
 (paren
 r_struct

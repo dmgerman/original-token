@@ -3342,6 +3342,8 @@ op_ne
 id|NR_CONNREQ
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * Here it would be nice to be able to send a reset but&n;&t;&t; * NET/ROM doesn&squot;t have one. The following hack would&n;&t;&t; * have been a way to extend the protocol but apparently&n;&t;&t; * it kills BPQ boxes... :-(&n;&t;&t; */
+macro_line|#if 0
 multiline_comment|/*&n;&t;&t; * Never reply to a CONNACK/CHOKE.&n;&t;&t; */
 r_if
 c_cond
@@ -3362,6 +3364,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

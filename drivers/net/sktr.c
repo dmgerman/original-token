@@ -4568,7 +4568,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: DATA LATE occured&bslash;n&quot;
+l_string|&quot;%s: DATA LATE occurred&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -6339,7 +6339,7 @@ id|ACL_SPEED16
 suffix:semicolon
 multiline_comment|/* Set 16Mbps */
 )brace
-multiline_comment|/* In case a comand is pending - forget it */
+multiline_comment|/* In case a command is pending - forget it */
 id|tp-&gt;ScbInUse
 op_assign
 l_int|0
@@ -6740,7 +6740,7 @@ id|Status
 op_and_assign
 id|STS_ERROR_MASK
 suffix:semicolon
-multiline_comment|/* Hardware error occured! */
+multiline_comment|/* Hardware error occurred! */
 id|printk
 c_func
 (paren
@@ -7198,7 +7198,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* Initialization error occured */
+multiline_comment|/* Initialization error occurred */
 id|Status
 op_assign
 id|inw

@@ -267,6 +267,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|init_nls_iso8859_15
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|init_nls_cp437
 c_func
 (paren

@@ -5408,7 +5408,7 @@ op_star
 id|pdlptr
 )paren
 (brace
-multiline_comment|/* pdlptr is starting adress for this pdl */
+multiline_comment|/* pdlptr is starting address for this pdl */
 r_if
 c_cond
 (paren

@@ -659,7 +659,7 @@ mdefine_line|#define DBRI_RD_BCNT(v)&t;v&t;/* Buffer size */
 DECL|macro|DBRI_RD_CRC
 mdefine_line|#define DBRI_RD_CRC&t;(1&lt;&lt;7)&t;/* 0: CRC is correct */
 DECL|macro|DBRI_RD_BBC
-mdefine_line|#define DBRI_RD_BBC&t;(1&lt;&lt;6)&t;/* 1: Bad Byte recieved */
+mdefine_line|#define DBRI_RD_BBC&t;(1&lt;&lt;6)&t;/* 1: Bad Byte received */
 DECL|macro|DBRI_RD_ABT
 mdefine_line|#define DBRI_RD_ABT&t;(1&lt;&lt;5)&t;/* Abort: frame aborted */
 DECL|macro|DBRI_RD_OVRN

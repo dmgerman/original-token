@@ -1,15 +1,16 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/io.h&n; *&n; * Copyright (C) 1997,1998 Russell King&n; *&n; * Modifications:&n; *  06-Dec-1997&t;RMK&t;Created.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/io.h&n; *&n; * Copyright (C) 1997,1998 Russell King&n; *&n; * Modifications:&n; *  06-Dec-1997&t;RMK&t;Created.&n; */
 macro_line|#ifndef __ASM_ARM_ARCH_IO_H
 DECL|macro|__ASM_ARM_ARCH_IO_H
 mdefine_line|#define __ASM_ARM_ARCH_IO_H
+macro_line|#include &lt;asm/dec21285.h&gt;
 multiline_comment|/*&n; * This architecture does not require any delayed IO, and&n; * has the constant-optimised IO&n; */
 DECL|macro|ARCH_IO_DELAY
 macro_line|#undef&t;ARCH_IO_DELAY
 multiline_comment|/*&n; * Dynamic IO functions - let the compiler&n; * optimize the expressions&n; */
 DECL|macro|DECLARE_DYN_OUT
-mdefine_line|#define DECLARE_DYN_OUT(fnsuffix,instr,typ)&t;&t;&t;&t;&t;&bslash;&n;extern __inline__ void __out##fnsuffix (unsigned int value, unsigned int port)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;str&quot; ##instr## &quot;&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), typ (port));&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define DECLARE_DYN_OUT(fnsuffix,instr,typ)&t;&t;&t;&t;&t;&bslash;&n;extern __inline__ void __out##fnsuffix (unsigned int value, unsigned int port)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;str%?&quot; ##instr## &quot;&t;%0, [%1, %2]&t;&t;@ out&quot;###fnsuffix&t;&bslash;&n;&t;: &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), typ (port));&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|DECLARE_DYN_IN
-mdefine_line|#define DECLARE_DYN_IN(sz,fnsuffix,instr,typ)&t;&t;&t;&t;&t;&bslash;&n;extern __inline__ unsigned sz __in##fnsuffix (unsigned int port)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long value;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldr&quot; ##instr## &quot;&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=&amp;r&quot; (value)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), typ (port));&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return (unsigned sz)value;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define DECLARE_DYN_IN(sz,fnsuffix,instr,typ)&t;&t;&t;&t;&t;&bslash;&n;extern __inline__ unsigned sz __in##fnsuffix (unsigned int port)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long value;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldr%?&quot; ##instr## &quot;&t;%0, [%1, %2]&t;&t;@ in&quot;###fnsuffix&t;&bslash;&n;&t;: &quot;=&amp;r&quot; (value)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), typ (port));&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return (unsigned sz)value;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|function|__ioaddr
 r_extern
 id|__inline__
@@ -80,17 +81,17 @@ DECL|macro|DECLARE_DYN_IN
 macro_line|#undef DECLARE_DYN_IN
 multiline_comment|/*&n; * Constant address IO functions&n; *&n; * These have to be macros for the &squot;J&squot; constraint to work -&n; * +/-4096 immediate operand.&n; */
 DECL|macro|__outbc
-mdefine_line|#define __outbc(value,port)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;strb&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __outbc(value,port)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;str%?b&t;%0, [%1, %2]&t;&t;&t;&t;@ outbc&quot;&t;&t;&bslash;&n;&t;:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__inbc
-mdefine_line|#define __inbc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned char result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldrb&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (result)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&t;&bslash;&n;&t;result;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __inbc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned char result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldr%?b&t;%0, [%1, %2]&t;&t;&t;&t;@ inbc&quot;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (result)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&t;&bslash;&n;&t;result;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__outwc
-mdefine_line|#define __outwc(value,port)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;strh&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), &quot;r&quot; (port));&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __outwc(value,port)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;str%?h&t;%0, [%1, %2]&t;&t;&t;&t;@ outwc&quot;&t;&t;&bslash;&n;&t;:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), &quot;r&quot; (port));&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__inwc
-mdefine_line|#define __inwc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned short result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldrh&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (result)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), &quot;r&quot; (port));&t;&t;&t;&t;&t;&t;&bslash;&n;&t;result &amp; 0xffff;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __inwc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned short result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldr%?h&t;%0, [%1, %2]&t;&t;&t;&t;@ inwc&quot;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (result)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), &quot;r&quot; (port));&t;&t;&t;&t;&t;&t;&bslash;&n;&t;result &amp; 0xffff;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__outlc
-mdefine_line|#define __outlc(value,port)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;str&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __outlc(value,port)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;str%?&t;%0, [%1, %2]&t;&t;&t;&t;@ outlc&quot;&t;&t;&bslash;&n;&t;:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__inlc
-mdefine_line|#define __inlc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldr&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (result)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&t;&bslash;&n;&t;result;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __inlc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldr%?&t;%0, [%1, %2]&t;&t;&t;&t;@ inlc&quot;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (result)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&t;&bslash;&n;&t;result;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__ioaddrc
 mdefine_line|#define __ioaddrc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = PCIO_BASE + port;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/*&n; * Translated address IO functions&n; *&n; * IO address has already been translated to a virtual address&n; */
@@ -102,7 +103,97 @@ DECL|macro|outl_t
 mdefine_line|#define outl_t(v,p)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(*(volatile unsigned long *)(p) = (v))
 DECL|macro|inl_t
 mdefine_line|#define inl_t(p)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(*(volatile unsigned long *)(p))
-multiline_comment|/*&n; * This is not sufficient... (and it&squot;s a hack anyway)&n; */
+multiline_comment|/*&n; * ioremap support&n; */
+DECL|macro|valid_ioaddr
+mdefine_line|#define valid_ioaddr(iomem,size) ((iomem) &lt; 0x80000000 &amp;&amp; (iomem) + (size) &lt;= 0x80000000)
+DECL|macro|io_to_phys
+mdefine_line|#define io_to_phys(iomem)&t;((iomem) + DC21285_PCI_MEM)
+multiline_comment|/*&n; * Fudge up IO addresses by this much.  Once we&squot;re confident that nobody&n; * is using read*() and so on with addresses they didn&squot;t get from ioremap&n; * this can go away.&n; */
+DECL|macro|IO_FUDGE_FACTOR
+mdefine_line|#define IO_FUDGE_FACTOR&t;&t;0xe0000000
+DECL|function|ioremap
+r_extern
+r_inline
+r_void
+op_star
+id|ioremap
+c_func
+(paren
+r_int
+r_int
+id|iomem_addr
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+r_int
+id|phys_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|valid_ioaddr
+c_func
+(paren
+id|iomem_addr
+comma
+id|size
+)paren
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+id|phys_addr
+op_assign
+id|io_to_phys
+c_func
+(paren
+id|iomem_addr
+op_amp
+id|PAGE_MASK
+)paren
+suffix:semicolon
+r_return
+(paren
+r_void
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|__ioremap
+c_func
+(paren
+id|phys_addr
+comma
+id|size
+comma
+l_int|0
+)paren
+op_minus
+id|IO_FUDGE_FACTOR
+)paren
+suffix:semicolon
+)brace
+DECL|macro|ioremap_nocache
+mdefine_line|#define ioremap_nocache(iomem_addr,size) ioremap((iomem_addr),(size))
+r_extern
+r_void
+id|iounmap
+c_func
+(paren
+r_void
+op_star
+id|addr
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * We&squot;d probably be better off with these as macros rather than functions.&n; * Firstly that would be more efficient and secondly we could do with the&n; * ability to stop GCC whinging about type conversions.  --philb&n; */
 DECL|function|writeb
 r_static
 r_inline
@@ -127,7 +218,7 @@ r_char
 op_star
 )paren
 (paren
-l_int|0xe0000000
+id|IO_FUDGE_FACTOR
 op_plus
 (paren
 id|addr
@@ -159,7 +250,7 @@ r_char
 op_star
 )paren
 (paren
-l_int|0xe0000000
+id|IO_FUDGE_FACTOR
 op_plus
 (paren
 id|addr
@@ -191,7 +282,7 @@ r_int
 op_star
 )paren
 (paren
-l_int|0xe0000000
+id|IO_FUDGE_FACTOR
 op_plus
 (paren
 id|addr
@@ -223,7 +314,71 @@ r_int
 op_star
 )paren
 (paren
-l_int|0xe0000000
+id|IO_FUDGE_FACTOR
+op_plus
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|writel
+r_static
+r_inline
+r_void
+id|writel
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+id|IO_FUDGE_FACTOR
+op_plus
+(paren
+id|addr
+)paren
+)paren
+op_assign
+id|b
+suffix:semicolon
+)brace
+DECL|function|readl
+r_static
+r_inline
+r_int
+r_int
+id|readl
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+id|IO_FUDGE_FACTOR
 op_plus
 (paren
 id|addr

@@ -1791,7 +1791,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef CSZ_PLUS_TBF
-multiline_comment|/* We are about to return no skb.&n;&t;   Schedule watchdog timer, if it occured because of shaping.&n;&t; */
+multiline_comment|/* We are about to return no skb.&n;&t;   Schedule watchdog timer, if it occurred because of shaping.&n;&t; */
 r_if
 c_cond
 (paren

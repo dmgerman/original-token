@@ -2,8 +2,8 @@ macro_line|#ifndef __ASM_ARM_BYTEORDER_H
 DECL|macro|__ASM_ARM_BYTEORDER_H
 mdefine_line|#define __ASM_ARM_BYTEORDER_H
 macro_line|#include &lt;asm/types.h&gt;
-macro_line|#if defined(__GNUC__) &amp;&amp; __GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 80
-multiline_comment|/* Recent versions of GCC can do as well or better than this&n;   on their own - we shouldn&squot;t interfere.  */
+macro_line|#if defined(__GNUC__) &amp;&amp; __GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 8
+multiline_comment|/* Recent versions of GCC can open code the swaps at least as well&n;   as we can write them by hand, so the &quot;optimisations&quot; here only &n;   make sense for older compilers.  Worse, some versions of GCC&n;   actually go wrong in the presence of the assembler versions.&n;   We play it safe and only turn them on for compilers older than&n;   GCC 2.8.0.  */
 DECL|function|___arch__swab32
 r_static
 id|__inline__
@@ -88,6 +88,12 @@ mdefine_line|#define __arch__swab32(x) ___arch__swab32(x)
 DECL|macro|__arch__swab16
 mdefine_line|#define __arch__swab16(x) ___arch__swab16(x)
 macro_line|#endif /* __GNUC__ */
+macro_line|#if !defined(__STRICT_ANSI__) || defined(__KERNEL__)
+DECL|macro|__BYTEORDER_HAS_U64__
+macro_line|#  define __BYTEORDER_HAS_U64__
+DECL|macro|__SWAB_64_THRU_32__
+macro_line|#  define __SWAB_64_THRU_32__
+macro_line|#endif
 macro_line|#include &lt;linux/byteorder/little_endian.h&gt;
 macro_line|#endif
 eof

@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 DECL|function|swap_statistics
 r_void
 id|swap_statistics

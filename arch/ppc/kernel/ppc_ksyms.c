@@ -994,6 +994,13 @@ c_func
 id|get_property
 )paren
 suffix:semicolon
+DECL|variable|device_is_compatible
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|device_is_compatible
+)paren
+suffix:semicolon
 DECL|variable|pci_io_base
 id|EXPORT_SYMBOL
 c_func

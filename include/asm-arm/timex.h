@@ -3,5 +3,28 @@ macro_line|#ifndef _ASMARM_TIMEX_H
 DECL|macro|_ASMARM_TIMEX_H
 mdefine_line|#define _ASMARM_TIMEX_H
 macro_line|#include &lt;asm/arch/timex.h&gt;
+DECL|typedef|cycles_t
+r_typedef
+r_int
+r_int
+id|cycles_t
+suffix:semicolon
+r_extern
+id|cycles_t
+id|cacheflush_time
+suffix:semicolon
+DECL|function|get_cycles
+r_static
+r_inline
+id|cycles_t
+id|get_cycles
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

@@ -114,8 +114,6 @@ DECL|macro|my_malloc_memptr
 mdefine_line|#define my_malloc_memptr()&t;_mem_start
 DECL|macro|my_free
 mdefine_line|#define my_free(ptr)&t;/* do nothing */
-DECL|macro|my_realloc
-mdefine_line|#define my_realloc(buf,oldsize,size)&t;NULL&t;/* no realloc */
 DECL|function|my_malloc
 r_static
 r_void
@@ -174,77 +172,6 @@ DECL|macro|my_kmalloc
 mdefine_line|#define my_kmalloc(size)&t;kmalloc(size,GFP_KERNEL)
 DECL|macro|my_kfree
 mdefine_line|#define my_kfree(ptr)&t;&t;kfree(ptr)
-DECL|function|my_realloc
-r_static
-r_void
-op_star
-id|my_realloc
-c_func
-(paren
-r_void
-op_star
-id|buf
-comma
-r_int
-id|oldsize
-comma
-r_int
-id|size
-)paren
-(brace
-r_void
-op_star
-id|ptr
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ptr
-op_assign
-id|vmalloc
-c_func
-(paren
-id|size
-)paren
-)paren
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|ptr
-comma
-id|buf
-comma
-(paren
-(paren
-id|oldsize
-OL
-id|size
-)paren
-ques
-c_cond
-id|oldsize
-suffix:colon
-id|size
-)paren
-)paren
-suffix:semicolon
-id|vfree
-c_func
-(paren
-id|buf
-)paren
-suffix:semicolon
-r_return
-id|ptr
-suffix:semicolon
-)brace
 multiline_comment|/* do not allocate buffer at beginning */
 DECL|macro|INIT_TABLE
 mdefine_line|#define INIT_TABLE(buffer,index,nums,type) {buffer=NULL; index=0;}

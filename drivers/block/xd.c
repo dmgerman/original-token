@@ -5564,7 +5564,7 @@ l_int|0x1B4
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* 1002 based RLL controler requests converted adressing, but reports physical &n;&t;   (physical 26 sec., logical 17 sec.) &n;&t;   1004 based ???? */
+multiline_comment|/* 1002 based RLL controler requests converted addressing, but reports physical &n;&t;   (physical 26 sec., logical 17 sec.) &n;&t;   1004 based ???? */
 r_if
 c_cond
 (paren

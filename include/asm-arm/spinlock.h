@@ -2,8 +2,13 @@ macro_line|#ifndef __ASM_SPINLOCK_H
 DECL|macro|__ASM_SPINLOCK_H
 mdefine_line|#define __ASM_SPINLOCK_H
 macro_line|#ifndef __SMP__
+multiline_comment|/*&n; * To be safe, we assume the only compiler that can cope with&n; * empty initialisers is EGCS.&n; */
+macro_line|#if (__GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 90))
+DECL|macro|EMPTY_INIT_OK
+mdefine_line|#define EMPTY_INIT_OK
+macro_line|#endif
 multiline_comment|/*&n; * Your basic spinlocks, allowing only a single CPU anywhere&n; */
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC_MINOR__ &gt;= 8)
+macro_line|#ifdef EMPTY_INIT_OK
 DECL|typedef|spinlock_t
 r_typedef
 r_struct
@@ -12,7 +17,7 @@ r_struct
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-macro_line|# define SPIN_LOCK_UNLOCKED { }
+macro_line|# define SPIN_LOCK_UNLOCKED (spinlock_t) { }
 macro_line|#else
 DECL|typedef|spinlock_t
 r_typedef
@@ -42,7 +47,7 @@ mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { __save_fl
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(lock, flags) &bslash;&n;&t;restore_flags(flags)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC_MINOR__ &gt;= 8)
+macro_line|#ifdef EMPTY_INIT_OK
 DECL|typedef|rwlock_t
 r_typedef
 r_struct
@@ -51,7 +56,7 @@ r_struct
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-macro_line|# define RW_LOCK_UNLOCKED { }
+macro_line|# define RW_LOCK_UNLOCKED (rwlock_t) { }
 macro_line|#else
 DECL|typedef|rwlock_t
 r_typedef

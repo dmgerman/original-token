@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * eata_set_info&n; * buffer : pointer to the data that has been written to the hostfile&n; * length : number of bytes written to the hostfile&n; * HBA_ptr: pointer to the Scsi_Host struct&n; */
 DECL|function|eata_pio_set_info
 r_int

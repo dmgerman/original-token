@@ -3767,6 +3767,12 @@ c_cond
 (paren
 op_logical_neg
 id|sb
+op_logical_or
+op_logical_neg
+id|sb-&gt;s_root
+op_logical_or
+op_logical_neg
+id|sb-&gt;s_root-&gt;d_inode
 )paren
 (brace
 id|printk

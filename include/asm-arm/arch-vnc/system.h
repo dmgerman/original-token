@@ -1,15 +1,17 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; * Copyright (c) 1998 Corel Computer Corp.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-vnc/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; * Copyright (c) 1998 Corel Computer Corp.&n; */
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-DECL|function|arch_hard_reset
+DECL|function|arch_reset
 r_extern
 id|__inline__
 r_void
-id|arch_hard_reset
+id|arch_reset
+c_func
 (paren
-r_void
+r_char
+id|mode
 )paren
 (brace
 id|cli
@@ -77,17 +79,7 @@ comma
 l_int|0x338
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-suffix:semicolon
 )brace
-)brace
-DECL|macro|ARCH_IDLE_OK
-mdefine_line|#define ARCH_IDLE_OK
 DECL|macro|arch_start_idle
 mdefine_line|#define arch_start_idle()&t;leds_event(led_idle_start)
 DECL|macro|arch_end_idle

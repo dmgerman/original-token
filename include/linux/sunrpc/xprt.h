@@ -370,7 +370,6 @@ l_int|2
 suffix:semicolon
 DECL|member|data
 id|u8
-op_star
 id|data
 (braket
 l_int|8

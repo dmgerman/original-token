@@ -316,7 +316,7 @@ id|U16
 id|AdapterID
 )paren
 suffix:semicolon
-multiline_comment|/*&n; ** Disable and Enable Adapter interrupts.  Adapter interrupts are enabled at &n; ** Init time but can be disabled and re-enabled through these two function calls.&n; ** Packets will still be put into any posted recieved buffers and packets will&n; ** be sent through RCSendPacket() functions.  Disabling Adapter interrupts&n; ** will prevent hardware interrupt to host even though the outbound msg&n; ** queue is not emtpy.&n; */
+multiline_comment|/*&n; ** Disable and Enable Adapter interrupts.  Adapter interrupts are enabled at &n; ** Init time but can be disabled and re-enabled through these two function calls.&n; ** Packets will still be put into any posted received buffers and packets will&n; ** be sent through RCSendPacket() functions.  Disabling Adapter interrupts&n; ** will prevent hardware interrupt to host even though the outbound msg&n; ** queue is not emtpy.&n; */
 id|RC_RETURN
 id|RCEnableAdapterInterrupts
 c_func

@@ -1,5 +1,5 @@
 multiline_comment|/* ne2.c: A NE/2 Ethernet Driver for Linux. */
-multiline_comment|/*&n;   Based on the NE2000 driver written by Donald Becker (1992-94).&n;   modified by Wim Dumon (Apr 1996)&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public License, incorporated herein by reference.&n;&n;   The author may be reached as wimpie@linux.cc.kuleuven.ac.be&n;&n;   Currently supported: NE/2&n;   This patch was never tested on other MCA-ethernet adapters, but it&n;   might work. Just give it a try and let me know if you have problems.&n;   Also mail me if it really works, please!&n;&n;   Changelog:&n;   Mon Feb  3 16:26:02 MET 1997&n;   - adapted the driver to work with the 2.1.25 kernel&n;   - multiple ne2 support (untested)&n;   - module support (untested)&n;&n;   Fri Aug 28 00:18:36 CET 1998 (David Weinehall)&n;   - fixed a few minor typos&n;   - made the MODULE_PARM conditional (it only works with the v2.1.x kernels)&n;   - fixed the module support (Now it&squot;s working...)&n;&n;   Mon Sep  7 19:01:44 CET 1998 (David Weinehall)&n;   - added support for Arco Electronics AE/2-card (experimental)&n;&n;   Mon Sep 14 09:53:42 CET 1998 (David Weinehall)&n;   - added support for Compex ENET-16MC/P (experimental) &n;&n;   Tue Sep 15 16:21:12 CET 1998 (David Weinehall, Magnus Jonsson, Tomas Ogren)&n;   - Miscellaneous bugfixes&n;&n;   Tue Sep 19 16:21:12 CET 1998 (Magnus Jonsson)&n;   - Cleanup&n;&n;   Wed Sep 23 14:33:34 CET 1998 (David Weinehall)&n;   - Restructuring and rewriting for v2.1.x compliance&n;&n;   Wed Oct 14 17:19:21 CET 1998 (David Weinehall)&n;   - Added code that unregisters irq and proc-info&n;   - Version# bump&n;&n;   *    WARNING&n;&t;-------&n;&t;This is alpha-test software.  It is not guaranteed to work. As a&n;&t;matter of fact, I&squot;m quite sure there are *LOTS* of bugs in here. I&n;&t;would like to hear from you if you use this driver, even if it works.&n;&t;If it doesn&squot;t work, be sure to send me a mail with the problems !&n;*/
+multiline_comment|/*&n;   Based on the NE2000 driver written by Donald Becker (1992-94).&n;   modified by Wim Dumon (Apr 1996)&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public License, incorporated herein by reference.&n;&n;   The author may be reached as wimpie@linux.cc.kuleuven.ac.be&n;&n;   Currently supported: NE/2&n;   This patch was never tested on other MCA-ethernet adapters, but it&n;   might work. Just give it a try and let me know if you have problems.&n;   Also mail me if it really works, please!&n;&n;   Changelog:&n;   Mon Feb  3 16:26:02 MET 1997&n;   - adapted the driver to work with the 2.1.25 kernel&n;   - multiple ne2 support (untested)&n;   - module support (untested)&n;&n;   Fri Aug 28 00:18:36 CET 1998 (David Weinehall)&n;   - fixed a few minor typos&n;   - made the MODULE_PARM conditional (it only works with the v2.1.x kernels)&n;   - fixed the module support (Now it&squot;s working...)&n;&n;   Mon Sep  7 19:01:44 CET 1998 (David Weinehall)&n;   - added support for Arco Electronics AE/2-card (experimental)&n;&n;   Mon Sep 14 09:53:42 CET 1998 (David Weinehall)&n;   - added support for Compex ENET-16MC/P (experimental) &n;&n;   Tue Sep 15 16:21:12 CET 1998 (David Weinehall, Magnus Jonsson, Tomas Ogren)&n;   - Miscellaneous bugfixes&n;&n;   Tue Sep 19 16:21:12 CET 1998 (Magnus Jonsson)&n;   - Cleanup&n;&n;   Wed Sep 23 14:33:34 CET 1998 (David Weinehall)&n;   - Restructuring and rewriting for v2.1.x compliance&n;&n;   Wed Oct 14 17:19:21 CET 1998 (David Weinehall)&n;   - Added code that unregisters irq and proc-info&n;   - Version# bump&n;&n;   Mon Nov 16 15:28:23 CET 1998 (Wim Dumon)&n;   - pass &squot;dev&squot; as last parameter of request_irq in stead of &squot;NULL&squot;   &n;   &n;   *    WARNING&n;&t;-------&n;&t;This is alpha-test software.  It is not guaranteed to work. As a&n;&t;matter of fact, I&squot;m quite sure there are *LOTS* of bugs in here. I&n;&t;would like to hear from you if you use this driver, even if it works.&n;&t;If it doesn&squot;t work, be sure to send me a mail with the problems !&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne2.c:v0.90 Oct 14 1998 David Weinehall &lt;tao@acc.umu.se&gt;&bslash;n&quot;
+l_string|&quot;ne2.c:v0.91 Nov 16 1998 Wim Dumon &lt;wimpie@kotnet.org&gt;&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -1139,7 +1139,7 @@ l_int|0
 comma
 id|name
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -1188,7 +1188,7 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_return

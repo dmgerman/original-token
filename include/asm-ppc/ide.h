@@ -269,20 +269,26 @@ id|base
 r_if
 c_cond
 (paren
-(paren
 id|_machine
 op_eq
 id|_MACH_Pmac
 )paren
-op_logical_or
+r_return
+l_int|0
+suffix:semicolon
+r_else
+r_if
+c_cond
 (paren
 id|_machine
 op_eq
 id|_MACH_mbx
 )paren
-)paren
+multiline_comment|/* hardcode IRQ 14 on the MBX */
 r_return
-l_int|0
+l_int|14
+op_plus
+l_int|16
 suffix:semicolon
 r_else
 r_if
@@ -577,7 +583,7 @@ id|extent
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Convert the shorts/longs in hd_driveid from little to big endian;&n;   chars are endian independant, of course, but strings need to be flipped.&n;   (Despite what it says in drivers/block/ide.h, they come up as little endian...)&n;   Changes to linux/hdreg.h may require changes here. */
+multiline_comment|/* Convert the shorts/longs in hd_driveid from little to big endian;&n;   chars are endian independent, of course, but strings need to be flipped.&n;   (Despite what it says in drivers/block/ide.h, they come up as little endian...)&n;   Changes to linux/hdreg.h may require changes here. */
 DECL|function|ide_fix_driveid
 r_static
 id|__inline__
@@ -1500,16 +1506,16 @@ suffix:semicolon
 DECL|macro|insw
 macro_line|#undef insw
 DECL|macro|insw
-mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine == _MACH_chrp)  {&bslash;&n;&t;&t; ide_insw((port)+_IO_BASE, (buf), (ns));  &bslash;&n;&t;}&bslash;&n;&t;else if ( (_machine == _MACH_Pmac) || (_machine == _MACH_mbx) )&t;&t;&t;&bslash;&n;&t;&t;ide_insw((port), (buf), (ns));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as insw in io.h!! */&t;&bslash;&n;&t;&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;} while (0)
+mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine == _MACH_chrp)  {&bslash;&n;&t;&t; ide_insw((port)+_IO_BASE, (buf), (ns));  &bslash;&n;&t;}&bslash;&n;&t;else if ( (_machine == _MACH_Pmac) || (_machine == _MACH_mbx) )&t;&t;&t;&bslash;&n;&t;&t;ide_insw((port)+((_machine==_MACH_mbx)? 0x80000000: 0), &bslash;&n;&t;&t;&t; (buf), (ns));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as insw in io.h!! */&t;&bslash;&n;&t;&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;} while (0)
 DECL|macro|outsw
 macro_line|#undef outsw
 multiline_comment|/*&t;printk(&quot;port: %x buf: %p ns: %d&bslash;n&quot;,port,buf,ns); &bslash; */
 DECL|macro|outsw
-mdefine_line|#define outsw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine == _MACH_chrp) {&bslash;&n;&t;&t;ide_outsw((port)+_IO_BASE, (buf), (ns)); &bslash;&n;&t;}&bslash;&n;&t;else if ( (_machine == _MACH_Pmac) || (_machine == _MACH_mbx) )&t;&t;&t;&bslash;&n;&t;&t;ide_outsw((port), (buf), (ns));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as outsw in io.h!! */&t;&bslash;&n;&t;&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;} while (0)
+mdefine_line|#define outsw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine == _MACH_chrp) {&bslash;&n;&t;&t;ide_outsw((port)+_IO_BASE, (buf), (ns)); &bslash;&n;&t;}&bslash;&n;&t;else if ( (_machine == _MACH_Pmac) || (_machine == _MACH_mbx) )&t; &bslash;&n;&t;&t;ide_outsw((port)+((_machine==_MACH_mbx)? 0x80000000: 0), &bslash;&n;&t;&t;&t;   (buf), (ns));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as outsw in io.h!! */&t;&bslash;&n;&t;&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;} while (0)
 DECL|macro|inb
 macro_line|#undef inb
 DECL|macro|inb
-mdefine_line|#define inb(port)&t;&bslash;&n;&t;in_8((unsigned char *)((port) + ((_machine==_MACH_Pmac)? 0: _IO_BASE)))
+mdefine_line|#define inb(port)&t;&bslash;&n;&t;in_8((unsigned char *)((port) + &bslash;&n;&t;&t;&t;       ((_machine==_MACH_Pmac)? 0: _IO_BASE) + &bslash;&n;&t;&t;&t;       ((_machine==_MACH_mbx)? 0x80000000: 0)) )
 DECL|macro|inb_p
 macro_line|#undef inb_p
 DECL|macro|inb_p
@@ -1517,7 +1523,7 @@ mdefine_line|#define inb_p(port)&t;inb(port)
 DECL|macro|outb
 macro_line|#undef outb
 DECL|macro|outb
-mdefine_line|#define outb(val, port)&t;&bslash;&n;&t;out_8((unsigned char *)((port) + ((_machine==_MACH_Pmac)? 0: _IO_BASE)), (val))
+mdefine_line|#define outb(val, port)&t;&bslash;&n;&t;out_8((unsigned char *)((port) + &bslash;&n;&t;&t;&t;&t;((_machine==_MACH_Pmac)? 0: _IO_BASE) + &bslash;&n;&t;&t;&t;&t;((_machine==_MACH_mbx)? 0x80000000: 0)), (val) )
 DECL|macro|outb_p
 macro_line|#undef outb_p
 DECL|macro|outb_p

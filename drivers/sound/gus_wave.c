@@ -13468,9 +13468,6 @@ op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
 r_int
-id|dev
-suffix:semicolon
-r_int
 id|sdev
 suffix:semicolon
 id|hw_config-&gt;slots

@@ -60,5 +60,9 @@ mdefine_line|#define N_SYMSIZE(a)&t;((a).a_syms)
 DECL|macro|M_ARM
 mdefine_line|#define M_ARM 103
 macro_line|#include &lt;asm/arch/a.out.h&gt;
+macro_line|#ifndef LIBRARY_START_TEXT
+DECL|macro|LIBRARY_START_TEXT
+mdefine_line|#define LIBRARY_START_TEXT&t;(0x00c00000)
+macro_line|#endif
 macro_line|#endif /* __A_OUT_GNU_H__ */
 eof

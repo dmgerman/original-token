@@ -443,9 +443,9 @@ c_func
 op_amp
 id|start_mem
 comma
-l_int|0xdf000000
+id|FLUSH_BASE
 comma
-id|SAFE_ADDR
+id|FLUSH_BASE_PHYS
 comma
 id|DOMAIN_KERNEL
 comma

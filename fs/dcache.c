@@ -443,7 +443,7 @@ op_star
 id|dentry
 )paren
 (brace
-multiline_comment|/* Check whether to do a partial shrink_dcache */
+multiline_comment|/*&n;&t; * Check whether to do a partial shrink_dcache&n;&t; * to get rid of unused child entries.&n;&t; */
 r_if
 c_cond
 (paren
@@ -462,15 +462,23 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Somebody still using it?&n;&t; *&n;&t; * If it&squot;s a directory, we can&squot;t drop it&n;&t; * for fear of somebody re-populating it&n;&t; * with children (even though dropping it&n;&t; * would make it unreachable from the root,&n;&t; * we might still populate it if it was a&n;&t; * working directory or similar).&n;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|list_empty
+id|dentry-&gt;d_count
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_inode
+op_logical_and
+id|S_ISDIR
 c_func
 (paren
-op_amp
-id|dentry-&gt;d_subdirs
+id|dentry-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 r_return

@@ -3339,7 +3339,7 @@ c_func
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* If the timeout occured while the readtrack_check timer was&n;&t; * active, we need to cancel it, else bad things will happen */
+multiline_comment|/* If the timeout occurred while the readtrack_check timer was&n;&t; * active, we need to cancel it, else bad things will happen */
 id|del_timer
 c_func
 (paren
