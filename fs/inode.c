@@ -63,7 +63,7 @@ r_const
 id|hashfn
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -73,7 +73,11 @@ id|i
 (brace
 r_return
 (paren
+id|HASHDEV
+c_func
+(paren
 id|dev
+)paren
 op_xor
 id|i
 )paren
@@ -91,7 +95,7 @@ r_const
 id|hash
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -644,7 +648,7 @@ r_int
 id|fs_may_mount
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -724,7 +728,7 @@ r_int
 id|fs_may_umount
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_struct
@@ -802,7 +806,7 @@ r_int
 id|fs_may_remount_ro
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1426,7 +1430,7 @@ r_void
 id|invalidate_inodes
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1491,15 +1495,9 @@ id|inode-&gt;i_lock
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: inode busy on removed device %d/%d&bslash;n&quot;
+l_string|&quot;VFS: inode busy on removed device %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -1522,7 +1520,7 @@ r_void
 id|sync_inodes
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1630,15 +1628,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: device %d/%d, inode %lu, mode=0%07o&bslash;n&quot;
+l_string|&quot;VFS: device %s, inode %lu, mode=0%07o&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|inode-&gt;i_rdev
@@ -1791,17 +1783,11 @@ id|inode-&gt;i_mmap
 id|printk
 c_func
 (paren
-l_string|&quot;iput: inode %lu on device %d/%d still has mappings.&bslash;n&quot;
+l_string|&quot;iput: inode %lu on device %s still has mappings.&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
-id|MAJOR
-c_func
-(paren
-id|inode-&gt;i_dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|inode-&gt;i_dev
@@ -2056,8 +2042,7 @@ id|ino
 suffix:semicolon
 id|inode-&gt;i_dev
 op_assign
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 id|nr_free_inodes
 op_decrement

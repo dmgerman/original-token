@@ -1,6 +1,7 @@
 macro_line|#ifndef _AHA1740_H
 multiline_comment|/* $Id$&n; *&n; * Header file for the adaptec 1740 driver for Linux&n; *&n; * With minor revisions 3/31/93&n; * Written and (C) 1992,1993 Brad McLean.  See aha1740.c&n; * for more info&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
 multiline_comment|/* Eisa Enhanced mode operation - slot locating and addressing */
 DECL|macro|MINEISA
 mdefine_line|#define MINEISA 1   /* I don&squot;t have an EISA Spec to know these ranges, so I */
@@ -437,7 +438,7 @@ c_func
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 op_star
@@ -452,6 +453,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|AHA1740
-mdefine_line|#define AHA1740 {NULL,&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;                &bslash;&n;&t;&t;   &quot;aha1740&quot;,                           &bslash;&n;&t;&t;   PROC_SCSI_AHA1740,                   &bslash;&n;&t;&t;   &quot;Adaptec 174x (EISA)&quot;,&t;&t;&bslash;&n;&t;&t;   aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   NULL, &t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_biosparam,                   &bslash;&n;&t;&t;   AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING}
+mdefine_line|#define AHA1740 {NULL,&t;NULL,&t;&t;&t;&t;&bslash;&n;                   NULL,                                &bslash;&n;&t;&t;   NULL,&t;&t;                &bslash;&n;&t;&t;   &quot;Adaptec 174x (EISA)&quot;,&t;&t;&bslash;&n;&t;&t;   aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   NULL, &t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_biosparam,                   &bslash;&n;&t;&t;   AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING}
 macro_line|#endif
 eof

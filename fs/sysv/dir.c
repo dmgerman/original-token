@@ -345,9 +345,14 @@ id|inode-&gt;i_sb-&gt;sv_ninodes
 id|printk
 c_func
 (paren
-l_string|&quot;sysv_readdir: Bad inode number on dev 0x%04x, ino %ld, offset 0x%04lx: %d is out of range&bslash;n&quot;
+l_string|&quot;sysv_readdir: Bad inode number on dev &quot;
+l_string|&quot;%s, ino %ld, offset 0x%04lx: %d is out of range&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 comma

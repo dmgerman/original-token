@@ -52,8 +52,6 @@ id|cache_806
 op_assign
 l_int|0xff
 suffix:semicolon
-DECL|macro|NUM_IRQS
-macro_line|# define NUM_IRQS&t;33
 macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
 DECL|variable|cache_26
 r_static
@@ -71,11 +69,6 @@ id|cache_27
 op_assign
 l_int|0xff
 suffix:semicolon
-DECL|macro|NUM_IRQS
-macro_line|# define NUM_IRQS&t;32
-macro_line|#else
-DECL|macro|NUM_IRQS
-macro_line|# define NUM_IRQS&t;16
 macro_line|#endif
 DECL|function|disable_irq
 r_void
@@ -414,8 +407,6 @@ macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
 r_else
 r_if
 c_cond
-r_if
-c_cond
 (paren
 id|irq_nr
 OL
@@ -501,7 +492,7 @@ r_struct
 id|irqaction
 id|irq_action
 (braket
-id|NUM_IRQS
+id|NR_IRQS
 )braket
 suffix:semicolon
 DECL|function|get_irq_list
@@ -537,7 +528,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NUM_IRQS
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -1036,7 +1027,7 @@ c_cond
 (paren
 id|irq
 op_ge
-id|NUM_IRQS
+id|NR_IRQS
 )paren
 r_return
 op_minus
@@ -1158,7 +1149,7 @@ c_cond
 (paren
 id|irq
 op_ge
-id|NUM_IRQS
+id|NR_IRQS
 )paren
 (brace
 id|printk
@@ -1510,7 +1501,7 @@ r_int
 )paren
 id|irq
 OG
-id|NUM_IRQS
+id|NR_IRQS
 )paren
 (brace
 id|printk
@@ -2113,7 +2104,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-macro_line|#if NUM_IRQS &gt; 64
+macro_line|#if NR_IRQS &gt; 64
 macro_line|#  error Number of irqs limited to 64 due to interrupt-probing.
 macro_line|#endif
 multiline_comment|/*&n; * Start listening for interrupts..&n; */
@@ -2147,7 +2138,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|NUM_IRQS
+id|NR_IRQS
 op_minus
 l_int|1
 suffix:semicolon
@@ -2295,6 +2286,7 @@ id|cache_27
 op_lshift
 l_int|24
 )paren
+)paren
 suffix:semicolon
 macro_line|#endif
 id|irqs
@@ -2411,6 +2403,7 @@ id|cache_27
 )paren
 op_lshift
 l_int|24
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -21,6 +21,28 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;in2000.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_in2000
+r_struct
+id|proc_dir_entry
+id|proc_scsi_in2000
+op_assign
+(brace
+id|PROC_SCSI_IN2000
+comma
+l_int|6
+comma
+l_string|&quot;in2000&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/*#define FAST_FIFO_IO*/
 multiline_comment|/*#define DEBUG*/
 macro_line|#ifdef DEBUG
@@ -2575,6 +2597,11 @@ l_string|&quot;in2000_detect: &bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_in2000
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3065,7 +3092,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

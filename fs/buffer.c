@@ -525,7 +525,7 @@ r_int
 id|sync_buffers
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -726,11 +726,16 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Weird - unlocked, clean and not uptodate buffer on list %d %x %lu&bslash;n&quot;
+l_string|&quot;Weird - unlocked, clean and not &quot;
+l_string|&quot;uptodate buffer on list %d %s %lu&bslash;n&quot;
 comma
 id|nlist
 comma
+id|kdevname
+c_func
+(paren
 id|bh-&gt;b_dev
+)paren
 comma
 id|bh-&gt;b_blocknr
 )paren
@@ -788,11 +793,15 @@ id|BUF_DIRTY
 id|printk
 c_func
 (paren
-l_string|&quot;[%d %x %ld] &quot;
+l_string|&quot;[%d %s %ld] &quot;
 comma
 id|nlist
 comma
+id|kdevname
+c_func
+(paren
 id|bh-&gt;b_dev
+)paren
 comma
 id|bh-&gt;b_blocknr
 )paren
@@ -849,7 +858,7 @@ r_void
 id|sync_dev
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -887,7 +896,7 @@ r_int
 id|fsync_dev
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1051,7 +1060,7 @@ r_void
 id|invalidate_buffers
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1155,7 +1164,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|macro|_hashfn
-mdefine_line|#define _hashfn(dev,block) (((unsigned)(dev^block))%nr_hash)
+mdefine_line|#define _hashfn(dev,block) (((unsigned)(HASHDEV(dev)^block))%nr_hash)
 DECL|macro|hash
 mdefine_line|#define hash(dev,block) hash_table[_hashfn(dev,block)]
 DECL|function|remove_from_hash_queue
@@ -1256,7 +1265,7 @@ c_cond
 (paren
 id|bh-&gt;b_dev
 op_eq
-l_int|0xffff
+id|B_FREE
 )paren
 id|panic
 c_func
@@ -1361,7 +1370,7 @@ c_cond
 (paren
 id|bh-&gt;b_dev
 op_ne
-l_int|0xffff
+id|B_FREE
 )paren
 (brace
 id|panic
@@ -1464,7 +1473,7 @@ c_cond
 (paren
 id|bh-&gt;b_dev
 op_eq
-l_int|0xffff
+id|B_FREE
 )paren
 (brace
 id|remove_from_free_list
@@ -1557,7 +1566,7 @@ c_cond
 (paren
 id|bh-&gt;b_dev
 op_eq
-l_int|0xffff
+id|B_FREE
 )paren
 (brace
 id|panic
@@ -1671,7 +1680,7 @@ id|bh-&gt;b_size
 suffix:semicolon
 id|bh-&gt;b_dev
 op_assign
-l_int|0xffff
+id|B_FREE
 suffix:semicolon
 multiline_comment|/* So it is obvious we are on the free list */
 multiline_comment|/* add to back of free list */
@@ -1758,7 +1767,7 @@ c_cond
 (paren
 id|bh-&gt;b_dev
 op_eq
-l_int|0xffff
+id|B_FREE
 )paren
 (brace
 id|put_last_free
@@ -1871,7 +1880,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|bh-&gt;b_dev
+)paren
 )paren
 r_return
 suffix:semicolon
@@ -1913,7 +1924,7 @@ op_star
 id|find_buffer
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -1975,15 +1986,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: Wrong blocksize on device %d/%d&bslash;n&quot;
+l_string|&quot;VFS: Wrong blocksize on device %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -2006,7 +2011,7 @@ op_star
 id|get_hash_table
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2090,7 +2095,7 @@ r_void
 id|set_blocksize
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2962,7 +2967,7 @@ c_cond
 (paren
 id|bh-&gt;b_dev
 op_eq
-l_int|0xffff
+id|B_FREE
 )paren
 (brace
 id|panic
@@ -2980,7 +2985,7 @@ id|bh
 suffix:semicolon
 id|bh-&gt;b_dev
 op_assign
-l_int|0xffff
+id|B_FREE
 suffix:semicolon
 id|put_last_free
 c_func
@@ -3344,7 +3349,7 @@ op_star
 id|getblk
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -3602,7 +3607,7 @@ c_cond
 (paren
 id|buf-&gt;b_dev
 op_eq
-l_int|0xffff
+id|B_FREE
 )paren
 (brace
 id|panic
@@ -3872,7 +3877,7 @@ c_cond
 (paren
 id|buf-&gt;b_dev
 op_eq
-l_int|0xffff
+id|B_FREE
 )paren
 (brace
 id|panic
@@ -3890,7 +3895,7 @@ id|buf
 suffix:semicolon
 id|buf-&gt;b_dev
 op_assign
-l_int|0xffff
+id|B_FREE
 suffix:semicolon
 id|put_last_free
 c_func
@@ -3919,7 +3924,7 @@ op_star
 id|bread
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -3956,15 +3961,9 @@ id|size
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: bread: READ error on device %d/%d&bslash;n&quot;
+l_string|&quot;VFS: bread: READ error on device %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -4028,7 +4027,7 @@ op_star
 id|breada
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -4623,7 +4622,7 @@ id|size
 suffix:semicolon
 id|bh-&gt;b_dev
 op_assign
-l_int|0xffff
+id|B_FREE
 suffix:semicolon
 multiline_comment|/* Flag as unused */
 )brace
@@ -4847,7 +4846,7 @@ r_int
 r_int
 id|address
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -5093,7 +5092,7 @@ r_int
 r_int
 id|address
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -5409,7 +5408,7 @@ r_int
 r_int
 id|address
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -5501,7 +5500,7 @@ r_int
 r_int
 id|address
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -5740,7 +5739,7 @@ r_int
 r_int
 id|address
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -7302,7 +7301,7 @@ op_star
 op_star
 id|bhp
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -7487,7 +7486,7 @@ r_int
 id|reassign_cluster
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -7611,7 +7610,7 @@ r_int
 id|try_to_generate_cluster
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -7908,7 +7907,7 @@ r_int
 id|generate_cluster
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int

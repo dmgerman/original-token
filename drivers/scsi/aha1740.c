@@ -17,6 +17,28 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;aha1740.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_aha1740
+r_struct
+id|proc_dir_entry
+id|proc_scsi_aha1740
+op_assign
+(brace
+id|PROC_SCSI_AHA1740
+comma
+l_int|7
+comma
+l_string|&quot;aha1740&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/* IF YOU ARE HAVING PROBLEMS WITH THIS DRIVER, AND WANT TO WATCH&n;   IT WORK, THEN:&n;#define DEBUG&n;*/
 macro_line|#ifdef DEBUG
 DECL|macro|DEB
@@ -2051,6 +2073,11 @@ op_star
 id|tpnt
 )paren
 (brace
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_aha1740
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -2302,7 +2329,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; *&n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot;&n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;long con_init(long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *&n; *     &squot;unsigned short *screen_pos(int currcons, int w_offset, int viewed)&squot;&n; *     &squot;void complement_pos(int currcons, int offset)&squot;&n; *     &squot;void invert_screen(int currcons, int offset, int count, int shift)&squot;&n; *&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *&n; *     &squot;int con_get_font(char *data)&squot;&n; *     &squot;int con_set_font(char *data, int ch512)&squot;&n; *     &squot;int con_adjust_height(int fontheight)&squot;&n; *&n; *     &squot;int con_get_cmap(char *)&squot;&n; *     &squot;int con_set_cmap(char *)&squot;&n; *&n; *     &squot;int reset_palette(int currcons)&squot;&n; *     &squot;void set_palette(void)&squot;&n; *&n; *     &squot;void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; *&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; *&n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; * Improved loadable font/UTF-8 support by H. Peter Anvin, Feb 1995&n; *&n; * improved scrollback, plus colour palette handling, by Simon Tatham&n; * 17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; *&n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot;&n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;long con_init(long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *&n; *     &squot;unsigned short *screen_pos(int currcons, int w_offset, int viewed)&squot;&n; *     &squot;void complement_pos(int currcons, int offset)&squot;&n; *     &squot;void invert_screen(int currcons, int offset, int count, int shift)&squot;&n; *&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *&n; *     &squot;int con_get_font(char *data)&squot;&n; *     &squot;int con_set_font(char *data, int ch512)&squot;&n; *     &squot;int con_adjust_height(int fontheight)&squot;&n; *&n; *     &squot;int con_get_cmap(char *)&squot;&n; *     &squot;int con_set_cmap(char *)&squot;&n; *&n; *     &squot;int reset_palette(int currcons)&squot;&n; *     &squot;void set_palette(void)&squot;&n; *&n; *     &squot;void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; *&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; *&n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; * Improved loadable font/UTF-8 support by H. Peter Anvin &n; * Feb-Sep 1995 &lt;peter.anvin@linux.org&gt;&n; *&n; * improved scrollback, plus colour palette handling, by Simon Tatham&n; * 17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; */
 DECL|macro|BLANK
 mdefine_line|#define BLANK 0x0020
 DECL|macro|CAN_LOAD_EGA_FONTS
@@ -276,6 +276,7 @@ suffix:semicolon
 r_extern
 r_void
 id|reset_palette
+c_func
 (paren
 r_int
 id|currcons
@@ -284,6 +285,7 @@ suffix:semicolon
 r_extern
 r_void
 id|set_palette
+c_func
 (paren
 r_void
 )paren
@@ -369,7 +371,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Is console ready for printing? */
-multiline_comment|/* these two also used in in vt.c */
+multiline_comment|/* these also used in in vt.c */
 DECL|variable|video_mode_512ch
 r_int
 id|video_mode_512ch
@@ -389,6 +391,19 @@ r_int
 id|video_scan_lines
 suffix:semicolon
 multiline_comment|/* Number of scan lines on screen */
+DECL|variable|default_font_height
+r_int
+r_int
+id|default_font_height
+suffix:semicolon
+multiline_comment|/* Height of default screen font */
+DECL|variable|video_font_is_default
+r_static
+r_int
+id|video_font_is_default
+op_assign
+l_int|1
+suffix:semicolon
 DECL|variable|console_charmask
 r_static
 r_int
@@ -4870,6 +4885,44 @@ comma
 id|viewed
 )paren
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* used by selection - convert a screen word to a glyph number */
+DECL|function|scrw2glyph
+r_int
+id|scrw2glyph
+c_func
+(paren
+r_int
+r_int
+id|scr_word
+)paren
+(brace
+r_return
+(paren
+id|video_mode_512ch
+)paren
+ques
+c_cond
+(paren
+(paren
+id|scr_word
+op_amp
+l_int|0x0800
+)paren
+op_rshift
+l_int|3
+)paren
+op_plus
+(paren
+id|scr_word
+op_amp
+l_int|0x00ff
+)paren
+suffix:colon
+id|scr_word
+op_amp
+l_int|0x00ff
 suffix:semicolon
 )brace
 multiline_comment|/* used by vcs - note the word offset */
@@ -10159,6 +10212,8 @@ op_eq
 id|VIDEO_TYPE_EGAM
 )paren
 (brace
+id|default_font_height
+op_assign
 id|video_font_height
 op_assign
 id|ORIG_VIDEO_POINTS
@@ -11094,6 +11149,11 @@ id|video_port_reg
 op_plus
 l_int|6
 suffix:semicolon
+r_int
+id|font_select
+op_assign
+l_int|0x00
+suffix:semicolon
 multiline_comment|/* no use to &quot;load&quot; CGA... */
 r_if
 c_cond
@@ -11152,6 +11212,12 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|arg
+)paren
+(brace
 id|i
 op_assign
 id|verify_area
@@ -11187,6 +11253,54 @@ id|i
 )paren
 r_return
 id|i
+suffix:semicolon
+)brace
+r_else
+id|ch512
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Default font is always 256 */
+multiline_comment|/*&n;&t; * The default font is kept in slot 0 and is never touched.&n;&t; * A custom font is loaded in slot 2 (256 ch) or 2:3 (512 ch)&n;&t; */
+r_if
+c_cond
+(paren
+id|set
+)paren
+(brace
+id|video_font_is_default
+op_assign
+op_logical_neg
+id|arg
+suffix:semicolon
+id|font_select
+op_assign
+id|arg
+ques
+c_cond
+(paren
+id|ch512
+ques
+c_cond
+l_int|0x0e
+suffix:colon
+l_int|0x0a
+)paren
+suffix:colon
+l_int|0x00
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|video_font_is_default
+)paren
+id|charmap
+op_add_assign
+l_int|4
+op_star
+id|cmapsz
 suffix:semicolon
 id|cli
 c_func
@@ -11319,6 +11433,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|arg
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -11467,7 +11587,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
+)brace
 id|cli
 c_func
 (paren
@@ -11543,12 +11663,7 @@ multiline_comment|/* Character Map Select */
 id|outb_p
 c_func
 (paren
-id|ch512
-ques
-c_cond
-l_int|0x04
-suffix:colon
-l_int|0x00
+id|font_select
 comma
 id|seq_port_val
 )paren

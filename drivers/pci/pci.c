@@ -700,7 +700,7 @@ id|CMD
 comma
 id|CMD_640
 comma
-l_string|&quot;640A&quot;
+l_string|&quot;640 (buggy)&quot;
 )paren
 comma
 id|DEVICE
@@ -1122,7 +1122,7 @@ id|INTEL
 comma
 id|INTEL_82437
 comma
-l_string|&quot;82437 Triton&quot;
+l_string|&quot;82437&quot;
 )paren
 comma
 id|DEVICE
@@ -1130,9 +1130,9 @@ c_func
 (paren
 id|INTEL
 comma
-id|INTEL_82371
+id|INTEL_82371_0
 comma
-l_string|&quot;82371 Triton&quot;
+l_string|&quot;82371 Triton PIIX&quot;
 )paren
 comma
 id|DEVICE
@@ -1140,9 +1140,9 @@ c_func
 (paren
 id|INTEL
 comma
-id|INTEL_82438
+id|INTEL_82371_1
 comma
-l_string|&quot;82438&quot;
+l_string|&quot;82371 Triton PIIX&quot;
 )paren
 comma
 id|DEVICE

@@ -520,7 +520,7 @@ DECL|function|scd_disk_change
 id|scd_disk_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 (brace
@@ -4375,11 +4375,9 @@ c_cond
 (paren
 id|CURRENT
 op_logical_and
-(paren
-id|CURRENT-&gt;dev
-OG
-l_int|0
-)paren
+id|CURRENT-&gt;rq_status
+op_ne
+id|RQ_INACTIVE
 )paren
 (brace
 id|end_request
@@ -4456,9 +4454,9 @@ op_logical_neg
 id|CURRENT
 )paren
 op_logical_or
-id|CURRENT-&gt;dev
-OL
-l_int|0
+id|CURRENT-&gt;rq_status
+op_eq
+id|RQ_INACTIVE
 )paren
 (brace
 r_goto
@@ -4479,7 +4477,7 @@ suffix:semicolon
 multiline_comment|/* This is a kludge to get a valid dev in an inode that&n;            scd_open can take.  That&squot;s the only thing scd_open()&n;            uses the inode for. */
 id|in.i_rdev
 op_assign
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_dev
 suffix:semicolon
 id|scd_open
 c_func
@@ -4498,7 +4496,7 @@ c_cond
 id|MAJOR
 c_func
 (paren
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_dev
 )paren
 op_ne
 id|MAJOR_NR

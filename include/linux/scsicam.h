@@ -2,6 +2,7 @@ multiline_comment|/*&n; * scsicam.h - SCSI CAM support functions, use for HDIO_G
 macro_line|#ifndef SCSICAM_H
 DECL|macro|SCSICAM_H
 mdefine_line|#define SCSICAM_H
+macro_line|#include &lt;linux/kdev_t.h&gt;
 r_extern
 r_int
 id|scsicam_bios_param
@@ -10,7 +11,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

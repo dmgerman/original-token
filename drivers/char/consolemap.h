@@ -18,8 +18,7 @@ id|inverse_translate
 c_func
 (paren
 r_int
-r_char
-id|c
+id|glyph
 )paren
 suffix:semicolon
 r_extern

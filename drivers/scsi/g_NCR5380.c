@@ -16,6 +16,28 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;g_NCR5380.h&quot;
 macro_line|#include &quot;NCR5380.h&quot;
 macro_line|#include &quot;constants.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_g_ncr5380
+r_struct
+id|proc_dir_entry
+id|proc_scsi_g_ncr5380
+op_assign
+(brace
+id|PROC_SCSI_GENERIC_NCR5380
+comma
+l_int|9
+comma
+l_string|&quot;g_NCR5380&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 DECL|struct|override
 r_static
 r_struct
@@ -165,6 +187,11 @@ r_struct
 id|Scsi_Host
 op_star
 id|instance
+suffix:semicolon
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_g_ncr5380
 suffix:semicolon
 r_for
 c_loop

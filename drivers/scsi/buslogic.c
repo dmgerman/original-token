@@ -27,6 +27,28 @@ macro_line|#ifndef BUSLOGIC_DEBUG
 DECL|macro|BUSLOGIC_DEBUG
 macro_line|# define BUSLOGIC_DEBUG 0
 macro_line|#endif
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_buslogic
+r_struct
+id|proc_dir_entry
+id|proc_scsi_buslogic
+op_assign
+(brace
+id|PROC_SCSI_BUSLOGIC
+comma
+l_int|8
+comma
+l_string|&quot;buslogic&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/* ??? Until kmalloc actually implements GFP_DMA, we can&squot;t depend on it... */
 DECL|macro|GFP_DMA
 macro_line|#undef GFP_DMA
@@ -4053,6 +4075,11 @@ l_string|&quot;called&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_buslogic
+suffix:semicolon
 id|tpnt-&gt;can_queue
 op_assign
 id|BUSLOGIC_MAILBOXES
@@ -5476,9 +5503,13 @@ id|scpnt
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;timed out command pending for %4.4X.&bslash;n&quot;
+l_string|&quot;timed out command pending for %s.&bslash;n&quot;
 comma
-id|scpnt-&gt;request.dev
+id|kdevname
+c_func
+(paren
+id|scpnt-&gt;request.rq_dev
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -5523,9 +5554,13 @@ r_else
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;other pending command: %4.4X&bslash;n&quot;
+l_string|&quot;other pending command: %s&bslash;n&quot;
 comma
-id|scpnt-&gt;request.dev
+id|kdevname
+c_func
+(paren
+id|scpnt-&gt;request.rq_dev
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -5885,7 +5920,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

@@ -746,7 +746,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -827,7 +827,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -2073,7 +2073,11 @@ comma
 id|tsk-&gt;tty
 ques
 c_cond
+id|kdev_t_to_nr
+c_func
+(paren
 id|tsk-&gt;tty-&gt;device
+)paren
 suffix:colon
 l_int|0
 comma
@@ -3052,7 +3056,7 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 r_int

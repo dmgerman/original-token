@@ -216,9 +216,9 @@ op_assign
 op_amp
 id|SCpnt-&gt;request
 suffix:semicolon
-id|req-&gt;dev
+id|req-&gt;rq_status
 op_assign
-l_int|0xfffe
+id|RQ_SCSI_DONE
 suffix:semicolon
 multiline_comment|/* Busy, but indicate request done */
 r_if
@@ -292,9 +292,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 (brace
 r_struct
@@ -319,9 +319,9 @@ multiline_comment|/* Hmm.. Have to ask about this one */
 r_while
 c_loop
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 id|schedule
 c_func
@@ -482,10 +482,9 @@ id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_assign
-op_minus
-l_int|1
+id|RQ_INACTIVE
 suffix:semicolon
 id|wake_up
 c_func
@@ -882,9 +881,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 (brace
 r_struct
@@ -909,9 +908,9 @@ multiline_comment|/* Hmm.. Have to ask about this one */
 r_while
 c_loop
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 id|schedule
 c_func
@@ -1007,12 +1006,10 @@ id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_assign
-op_minus
-l_int|1
+id|RQ_INACTIVE
 suffix:semicolon
-multiline_comment|/* Mark as not busy */
 r_if
 c_cond
 (paren
@@ -1247,7 +1244,7 @@ l_int|16
 op_plus
 (paren
 (paren
-id|dev-&gt;host-&gt;hostt-&gt;low_ino
+id|dev-&gt;host-&gt;hostt-&gt;proc_dir-&gt;low_ino
 op_amp
 l_int|0xff
 )paren

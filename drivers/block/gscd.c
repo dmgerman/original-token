@@ -174,7 +174,7 @@ r_static
 r_int
 id|check_gscd_med_chg
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 multiline_comment|/*      GoldStar Funktionen    */
@@ -520,7 +520,7 @@ r_static
 r_int
 id|check_gscd_med_chg
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 (brace
@@ -802,9 +802,9 @@ op_logical_neg
 id|CURRENT
 )paren
 op_logical_or
-id|CURRENT-&gt;dev
-OL
-l_int|0
+id|CURRENT-&gt;rq_status
+op_eq
+id|RQ_INACTIVE
 )paren
 r_return
 suffix:semicolon
@@ -815,7 +815,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_dev
 )paren
 suffix:semicolon
 id|block
@@ -880,7 +880,7 @@ c_func
 (paren
 id|CURRENT
 op_member_access_from_pointer
-id|dev
+id|rq_dev
 )paren
 op_ne
 l_int|0

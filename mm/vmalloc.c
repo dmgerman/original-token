@@ -71,6 +71,15 @@ c_func
 (paren
 id|p
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p-&gt;mm
+)paren
+r_continue
+suffix:semicolon
 op_star
 id|pgd_offset
 c_func
@@ -82,6 +91,7 @@ id|address
 op_assign
 id|entry
 suffix:semicolon
+)brace
 )brace
 DECL|function|free_area_pte
 r_static

@@ -69,6 +69,7 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
+macro_line|#include &lt;linux/kdev_t.h&gt;
 r_int
 id|seagate_st0x_biosparam
 c_func
@@ -76,14 +77,14 @@ c_func
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 op_star
 )paren
 suffix:semicolon
 DECL|macro|SEAGATE_ST0X
-mdefine_line|#define SEAGATE_ST0X  {  NULL, NULL, NULL, &quot;seagate&quot;, &bslash;&n;&t;&t;&t; PROC_SCSI_SEAGATE, NULL, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; NULL, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define SEAGATE_ST0X  {  NULL, NULL, NULL, NULL, &bslash;&n;&t;&t;&t; NULL, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; NULL, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0, DISABLE_CLUSTERING}
 macro_line|#endif
 multiline_comment|/*&n;&t;defining PARITY causes parity data to be checked&n;*/
 DECL|macro|PARITY

@@ -2936,10 +2936,14 @@ id|inode-&gt;i_mode
 )paren
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|raw_inode-&gt;i_block
 (braket
 l_int|0
 )braket
+)paren
 suffix:semicolon
 r_else
 r_for
@@ -3448,7 +3452,11 @@ id|raw_inode-&gt;i_block
 l_int|0
 )braket
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 r_else
 r_for
@@ -3580,9 +3588,14 @@ id|bh-&gt;b_uptodate
 (brace
 id|printk
 (paren
-l_string|&quot;IO error syncing ext2 inode [%04x:%08lx]&bslash;n&quot;
+l_string|&quot;IO error syncing ext2 inode [&quot;
+l_string|&quot;%s:%08lx]&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 )paren

@@ -285,10 +285,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|plug-&gt;dev
+id|plug-&gt;rq_status
 op_assign
-op_minus
-l_int|1
+id|RQ_INACTIVE
 suffix:semicolon
 id|plug-&gt;cmd
 op_assign
@@ -369,10 +368,9 @@ c_cond
 (paren
 id|req
 op_logical_and
-id|req-&gt;dev
+id|req-&gt;rq_status
 op_eq
-op_minus
-l_int|1
+id|RQ_INACTIVE
 op_logical_and
 id|req-&gt;cmd
 op_eq
@@ -411,7 +409,7 @@ c_func
 r_int
 id|n
 comma
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -506,9 +504,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|req-&gt;dev
-OL
-l_int|0
+id|req-&gt;rq_status
+op_eq
+id|RQ_INACTIVE
 )paren
 r_break
 suffix:semicolon
@@ -527,7 +525,11 @@ id|prev_found
 op_assign
 id|req
 suffix:semicolon
-id|req-&gt;dev
+id|req-&gt;rq_status
+op_assign
+id|RQ_ACTIVE
+suffix:semicolon
+id|req-&gt;rq_dev
 op_assign
 id|dev
 suffix:semicolon
@@ -547,7 +549,7 @@ c_func
 r_int
 id|n
 comma
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -663,7 +665,7 @@ c_func
 r_int
 id|n
 comma
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -728,7 +730,7 @@ r_int
 id|is_read_only
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -794,7 +796,7 @@ r_void
 id|set_device_ro
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -913,7 +915,7 @@ c_cond
 id|MAJOR
 c_func
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 )paren
 )paren
 (brace
@@ -926,7 +928,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 )paren
 op_amp
 l_int|0x0070
@@ -962,7 +964,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 )paren
 op_amp
 l_int|0x0040
@@ -988,7 +990,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 )paren
 op_amp
 l_int|0x0040
@@ -1121,7 +1123,7 @@ c_func
 id|MAJOR
 c_func
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 )paren
 )paren
 )paren
@@ -1453,7 +1455,7 @@ id|req
 r_if
 c_cond
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 op_eq
 id|bh-&gt;b_dev
 op_logical_and
@@ -1504,7 +1506,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 op_eq
 id|bh-&gt;b_dev
 op_logical_and
@@ -1680,7 +1682,7 @@ c_func
 r_int
 id|rw
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -1746,9 +1748,13 @@ id|request_fn
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to read nonexistent block-device %04x (%ld)&bslash;n&quot;
+l_string|&quot;Trying to read nonexistent block-device %s (%ld)&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 comma
 id|sector
 )paren
@@ -1790,9 +1796,13 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;Can&squot;t page to read-only device 0x%X&bslash;n&quot;
+l_string|&quot;Can&squot;t page to read-only device %s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1974,18 +1984,18 @@ id|dev-&gt;request_fn
 id|printk
 c_func
 (paren
-l_string|&quot;ll_rw_block: Trying to read nonexistent block-device %04lX (%ld)&bslash;n&quot;
+l_string|&quot;ll_rw_block: Trying to read nonexistent block-device %s (%ld)&bslash;n&quot;
 comma
+id|kdevname
+c_func
 (paren
-r_int
-r_int
-)paren
 id|bh
 (braket
 l_int|0
 )braket
 op_member_access_from_pointer
 id|b_dev
+)paren
 comma
 id|bh
 (braket
@@ -2124,14 +2134,18 @@ id|b_dev
 id|printk
 c_func
 (paren
-l_string|&quot;Can&squot;t write to read-only device 0x%X&bslash;n&quot;
+l_string|&quot;Can&squot;t write to read-only device %s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|bh
 (braket
 l_int|0
 )braket
 op_member_access_from_pointer
 id|b_dev
+)paren
 )paren
 suffix:semicolon
 r_goto
@@ -2282,7 +2296,7 @@ c_func
 r_int
 id|rw
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2395,9 +2409,13 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;Can&squot;t swap to read-only device 0x%X&bslash;n&quot;
+l_string|&quot;Can&squot;t swap to read-only device %s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2671,10 +2689,9 @@ op_ge
 id|all_requests
 )paren
 (brace
-id|req-&gt;dev
+id|req-&gt;rq_status
 op_assign
-op_minus
-l_int|1
+id|RQ_INACTIVE
 suffix:semicolon
 id|req-&gt;next
 op_assign

@@ -1064,11 +1064,10 @@ id|scmd.request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
-id|scmd.request.dev
+id|scmd.request.rq_status
 op_assign
-l_int|0xffff
+id|RQ_SCSI_BUSY
 suffix:semicolon
-multiline_comment|/* Mark busy */
 id|scsi_do_cmd
 (paren
 op_amp
@@ -1103,9 +1102,9 @@ l_int|0
 r_while
 c_loop
 (paren
-id|scmd.request.dev
+id|scmd.request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 id|barrier
 c_func
@@ -1117,9 +1116,9 @@ r_else
 r_if
 c_cond
 (paren
-id|scmd.request.dev
+id|scmd.request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 (brace
 r_struct
@@ -1144,9 +1143,9 @@ multiline_comment|/* Hmm.. Have to ask about this one */
 r_while
 c_loop
 (paren
-id|scmd.request.dev
+id|scmd.request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 id|schedule
 c_func
@@ -2063,9 +2062,9 @@ id|scmd.request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
-id|scmd.request.dev
+id|scmd.request.rq_status
 op_assign
-l_int|0xffff
+id|RQ_SCSI_BUSY
 suffix:semicolon
 multiline_comment|/* Mark busy */
 id|scsi_do_cmd
@@ -2099,9 +2098,9 @@ l_int|0
 r_while
 c_loop
 (paren
-id|scmd.request.dev
+id|scmd.request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 id|barrier
 c_func
@@ -2112,9 +2111,9 @@ r_else
 r_if
 c_cond
 (paren
-id|scmd.request.dev
+id|scmd.request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 (brace
 r_struct
@@ -2139,9 +2138,9 @@ multiline_comment|/* Hmm.. Have to ask about this one */
 r_while
 c_loop
 (paren
-id|scmd.request.dev
+id|scmd.request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 id|schedule
 c_func

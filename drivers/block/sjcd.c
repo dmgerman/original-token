@@ -1626,7 +1626,7 @@ r_int
 id|sjcd_disk_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 (brace
@@ -3923,7 +3923,7 @@ suffix:semicolon
 )def_block
 multiline_comment|/*&n; * Take care of the different block sizes between cdrom and Linux.&n; * When Linux gets variable block sizes this will probably go away.&n; */
 DECL|macro|CURRENT_IS_VALID
-mdefine_line|#define CURRENT_IS_VALID                                      &bslash;&n;    ( CURRENT != NULL &amp;&amp; MAJOR( CURRENT-&gt;dev ) == MAJOR_NR &amp;&amp; &bslash;&n;      CURRENT-&gt;cmd == READ &amp;&amp; CURRENT-&gt;sector != -1 )
+mdefine_line|#define CURRENT_IS_VALID                                      &bslash;&n;    ( CURRENT != NULL &amp;&amp; MAJOR( CURRENT-&gt;rq_dev ) == MAJOR_NR &amp;&amp; &bslash;&n;      CURRENT-&gt;cmd == READ &amp;&amp; CURRENT-&gt;sector != -1 )
 DECL|function|sjcd_transfer
 r_static
 r_void

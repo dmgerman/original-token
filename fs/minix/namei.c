@@ -1331,7 +1331,11 @@ id|mode
 )paren
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|rdev
+)paren
 suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
@@ -2097,9 +2101,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Bad directory on device %04x&bslash;n&quot;
+l_string|&quot;Bad directory on device %s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2598,9 +2606,13 @@ id|inode-&gt;i_nlink
 id|printk
 c_func
 (paren
-l_string|&quot;Deleting nonexistent file (%04x:%lu), %d&bslash;n&quot;
+l_string|&quot;Deleting nonexistent file (%s:%lu), %d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 comma

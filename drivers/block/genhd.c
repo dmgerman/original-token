@@ -225,7 +225,7 @@ id|gendisk
 op_star
 id|hd
 comma
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -525,15 +525,13 @@ id|p-&gt;start_sect
 suffix:semicolon
 id|dev
 op_assign
-(paren
+id|MKDEV
+c_func
 (paren
 id|hd-&gt;major
-)paren
-op_lshift
-l_int|8
-)paren
-op_or
+comma
 id|current_minor
+)paren
 suffix:semicolon
 id|brelse
 c_func
@@ -562,8 +560,7 @@ id|gendisk
 op_star
 id|hd
 comma
-r_int
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -587,6 +584,11 @@ r_struct
 id|partition
 op_star
 id|p
+suffix:semicolon
+r_int
+r_char
+op_star
+id|data
 suffix:semicolon
 r_int
 id|mask
@@ -638,6 +640,29 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|data
+op_assign
+id|bh-&gt;b_data
+suffix:semicolon
+id|bh-&gt;b_dirt
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* In some cases we modify the geometry    */
+id|bh-&gt;b_uptodate
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*  of the drive (below), so ensure that   */
+id|bh-&gt;b_req
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*  nobody else tries to re-use this data. */
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+id|check_table
+suffix:colon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -650,7 +675,7 @@ op_star
 (paren
 l_int|0x1fe
 op_plus
-id|bh-&gt;b_data
+id|data
 )paren
 op_ne
 l_int|0xAA55
@@ -676,7 +701,7 @@ op_star
 (paren
 l_int|0x1be
 op_plus
-id|bh-&gt;b_data
+id|data
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
@@ -695,7 +720,7 @@ r_int
 id|ide_xlate_1024
 c_func
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 comma
@@ -704,35 +729,49 @@ r_char
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* check for DM6 with Dynamic Drive Overlay (DDO) */
+multiline_comment|/* check for various &quot;disk managers&quot; which do strange things */
+r_if
+c_cond
+(paren
+id|p-&gt;sys_ind
+op_eq
+id|EZD_PARTITION
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * The remainder of the disk must be accessed using&n;&t;&t;&t; * a translated geometry that reduces the number of &n;&t;&t;&t; * apparent cylinders to less than 1024 if possible.&n;&t;&t;&t; *&n;&t;&t;&t; * ide_xlate_1024() will take care of the necessary&n;&t;&t;&t; * adjustments to fool fdisk/LILO and partition check.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|ide_xlate_1024
+c_func
+(paren
+id|dev
+comma
+op_minus
+l_int|1
+comma
+l_string|&quot; [EZD]&quot;
+)paren
+)paren
+(brace
+id|data
+op_add_assign
+l_int|512
+suffix:semicolon
+r_goto
+id|check_table
+suffix:semicolon
+)brace
+)brace
+r_else
 r_if
 c_cond
 (paren
 id|p-&gt;sys_ind
 op_eq
 id|DM6_PARTITION
-op_logical_or
-id|p-&gt;sys_ind
-op_eq
-id|EZD_PARTITION
 )paren
 (brace
-r_const
-r_char
-op_star
-id|label
-op_assign
-(paren
-id|p-&gt;sys_ind
-op_eq
-id|DM6_PARTITION
-)paren
-ques
-c_cond
-l_string|&quot; [DM6:DDO]&quot;
-suffix:colon
-l_string|&quot; [EZDRIVE]&quot;
-suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Everything on the disk is offset by 63 sectors,&n;&t;&t;&t; * including a &quot;new&quot; MBR with its own partition table,&n;&t;&t;&t; * and the remainder of the disk must be accessed using&n;&t;&t;&t; * a translated geometry that reduces the number of &n;&t;&t;&t; * apparent cylinders to less than 1024 if possible.&n;&t;&t;&t; *&n;&t;&t;&t; * ide_xlate_1024() will take care of the necessary&n;&t;&t;&t; * adjustments to fool fdisk/LILO and partition check.&n;&t;&t;&t; */
 r_if
 c_cond
@@ -744,23 +783,10 @@ id|dev
 comma
 l_int|1
 comma
-id|label
+l_string|&quot; [DM6:DDO]&quot;
 )paren
 )paren
 (brace
-id|bh-&gt;b_dirt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* force re-read of MBR block */
-id|bh-&gt;b_uptodate
-op_assign
-l_int|0
-suffix:semicolon
-id|bh-&gt;b_req
-op_assign
-l_int|0
-suffix:semicolon
 id|brelse
 c_func
 (paren
@@ -787,7 +813,7 @@ r_int
 op_star
 )paren
 (paren
-id|bh-&gt;b_data
+id|data
 op_plus
 l_int|2
 )paren
@@ -806,7 +832,7 @@ r_int
 op_star
 )paren
 (paren
-id|bh-&gt;b_data
+id|data
 op_plus
 id|sig
 )paren
@@ -823,7 +849,7 @@ r_char
 op_star
 )paren
 (paren
-id|bh-&gt;b_data
+id|data
 op_plus
 id|sig
 op_plus
@@ -977,13 +1003,13 @@ c_func
 (paren
 id|hd
 comma
+id|MKDEV
+c_func
 (paren
 id|hd-&gt;major
-op_lshift
-l_int|8
-)paren
-op_or
+comma
 id|minor
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -1015,7 +1041,7 @@ r_int
 op_star
 )paren
 (paren
-id|bh-&gt;b_data
+id|data
 op_plus
 l_int|0xfc
 )paren
@@ -1033,7 +1059,7 @@ op_star
 (paren
 l_int|0x1be
 op_plus
-id|bh-&gt;b_data
+id|data
 )paren
 suffix:semicolon
 r_for
@@ -1442,8 +1468,7 @@ id|gendisk
 op_star
 id|hd
 comma
-r_int
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1485,7 +1510,7 @@ id|dev
 dot
 id|start_sect
 suffix:semicolon
-multiline_comment|/*&n;&t; * This is a kludge to allow the partition check to be&n;&t; * skipped for specific drives (ie. IDE cd-rom drives)&n;&t; */
+multiline_comment|/*&n;&t; * This is a kludge to allow the partition check to be&n;&t; * skipped for specific drives (e.g. IDE cd-rom drives)&n;&t; */
 r_if
 c_cond
 (paren
@@ -1593,13 +1618,6 @@ r_int
 id|i
 suffix:semicolon
 r_int
-id|major
-op_assign
-id|dev-&gt;major
-op_lshift
-l_int|8
-suffix:semicolon
-r_int
 id|first_minor
 op_assign
 id|drive
@@ -1631,9 +1649,13 @@ c_func
 (paren
 id|dev
 comma
-id|major
-op_plus
+id|MKDEV
+c_func
+(paren
+id|dev-&gt;major
+comma
 id|first_minor
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n; &t; * We need to set the sizes array before we will be able to access&n; &t; * any of the partitions on this device.&n; &t; */
@@ -1703,13 +1725,6 @@ r_int
 id|i
 comma
 id|drive
-suffix:semicolon
-r_int
-id|major
-op_assign
-id|dev-&gt;major
-op_lshift
-l_int|8
 suffix:semicolon
 r_int
 id|end_minor
@@ -1800,9 +1815,13 @@ c_func
 (paren
 id|dev
 comma
-id|major
-op_plus
+id|MKDEV
+c_func
+(paren
+id|dev-&gt;major
+comma
 id|first_minor
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1864,6 +1883,14 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+r_void
+id|console_map_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_struct
 id|gendisk
 op_star
@@ -1873,6 +1900,11 @@ r_int
 id|nr
 op_assign
 l_int|0
+suffix:semicolon
+id|console_map_init
+c_func
+(paren
+)paren
 suffix:semicolon
 r_for
 c_loop

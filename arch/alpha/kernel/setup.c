@@ -76,7 +76,7 @@ op_assign
 (brace
 l_int|0
 comma
-l_int|0
+l_int|25
 comma
 multiline_comment|/* orig-x, orig-y */
 (brace
@@ -281,7 +281,11 @@ suffix:semicolon
 multiline_comment|/* reset enable correctable error reports */
 id|ROOT_DEV
 op_assign
+id|to_kdev_t
+c_func
+(paren
 l_int|0x0802
+)paren
 suffix:semicolon
 multiline_comment|/* sda2 */
 id|command_line

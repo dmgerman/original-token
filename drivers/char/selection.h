@@ -134,6 +134,16 @@ id|viewed
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|scrw2glyph
+c_func
+(paren
+r_int
+r_int
+id|scr_word
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|complement_pos
 c_func

@@ -17,6 +17,28 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &quot;aha152x.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_aha152x
+r_struct
+id|proc_dir_entry
+id|proc_scsi_aha152x
+op_assign
+(brace
+id|PROC_SCSI_AHA152X
+comma
+l_int|7
+comma
+l_string|&quot;aha152x&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/* DEFINES */
 multiline_comment|/* For PCMCIA cards, always use AUTOCONF */
 macro_line|#if defined(PCMCIA) || defined(MODULE)
@@ -1341,6 +1363,11 @@ r_struct
 id|Scsi_Host
 op_star
 id|hreg
+suffix:semicolon
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_aha152x
 suffix:semicolon
 r_if
 c_cond
@@ -3392,7 +3419,7 @@ id|Scsi_Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -3417,9 +3444,13 @@ id|debug_biosparam
 id|printk
 c_func
 (paren
-l_string|&quot;aha152x_biosparam: dev=%x, size=%d, &quot;
+l_string|&quot;aha152x_biosparam: dev=%s, size=%d, &quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 comma
 id|size
 )paren

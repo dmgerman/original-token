@@ -9,14 +9,14 @@ DECL|macro|NR_REQUEST
 mdefine_line|#define NR_REQUEST&t;64
 multiline_comment|/*&n; * This is used in the elevator algorithm: Note that&n; * reads always go before writes. This is natural: reads&n; * are much more time-critical than writes.&n; */
 DECL|macro|IN_ORDER
-mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd &lt; (s2)-&gt;cmd || ((s1)-&gt;cmd == (s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || (((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))))
+mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd &lt; (s2)-&gt;cmd || ((s1)-&gt;cmd == (s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;rq_dev &lt; (s2)-&gt;rq_dev || (((s1)-&gt;rq_dev == (s2)-&gt;rq_dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))))
 multiline_comment|/*&n; * These will have to be changed to be aware of different buffer&n; * sizes etc.. It actually needs a major cleanup.&n; */
 macro_line|#ifdef IDE_DRIVER
 DECL|macro|SECTOR_MASK
 mdefine_line|#define SECTOR_MASK ((BLOCK_SIZE &gt;&gt; 9) - 1)
 macro_line|#else
 DECL|macro|SECTOR_MASK
-mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;&n;&t;blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;dev)] ? &bslash;&n;&t;((blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;dev)] &gt;&gt; 9) - 1) :  &bslash;&n;&t;((BLOCK_SIZE &gt;&gt; 9)  -  1))
+mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;&n;&t;blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;rq_dev)] ? &bslash;&n;&t;((blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;rq_dev)] &gt;&gt; 9) - 1) :  &bslash;&n;&t;((BLOCK_SIZE &gt;&gt; 9)  -  1))
 macro_line|#endif /* IDE_DRIVER */
 DECL|macro|SUBSECTOR
 mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
@@ -209,7 +209,7 @@ r_void
 id|set_device_ro
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -283,7 +283,7 @@ mdefine_line|#define DEVICE_NAME &quot;ramdisk&quot;
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_rd_request
 DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) ((device) &amp; 7)
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &amp; 7)
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device) 
 DECL|macro|DEVICE_OFF
@@ -306,7 +306,7 @@ mdefine_line|#define DEVICE_INTR do_floppy
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_fd_request
 DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) ( ((device) &amp; 3) | (((device) &amp; 0x80 ) &gt;&gt; 5 ))
+mdefine_line|#define DEVICE_NR(device) ( (MINOR(device) &amp; 3) | ((MINOR(device) &amp; 0x80 ) &gt;&gt; 5 ))
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
@@ -533,7 +533,7 @@ DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
 macro_line|#endif
 DECL|macro|CURRENT_DEV
-mdefine_line|#define CURRENT_DEV DEVICE_NR(CURRENT-&gt;dev)
+mdefine_line|#define CURRENT_DEV DEVICE_NR(CURRENT-&gt;rq_dev)
 macro_line|#ifdef DEVICE_INTR
 DECL|variable|DEVICE_INTR
 r_void
@@ -576,7 +576,7 @@ DECL|macro|CLEAR_INTR
 mdefine_line|#define CLEAR_INTR
 macro_line|#endif
 DECL|macro|INIT_REQUEST
-mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
+mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER) */
 multiline_comment|/* end_request() - SCSI devices have their own version */
 multiline_comment|/*               - IDE drivers have their own copy too */
@@ -653,13 +653,13 @@ id|uptodate
 id|printk
 c_func
 (paren
-l_string|&quot;end_request: I/O error, dev %04lX, sector %lu&bslash;n&quot;
+l_string|&quot;end_request: I/O error, dev %s, sector %lu&bslash;n&quot;
 comma
+id|kdevname
+c_func
 (paren
-r_int
-r_int
+id|req-&gt;rq_dev
 )paren
-id|req-&gt;dev
 comma
 id|req-&gt;sector
 )paren
@@ -781,7 +781,7 @@ macro_line|#else
 id|DEVICE_OFF
 c_func
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 )paren
 suffix:semicolon
 id|CURRENT
@@ -802,10 +802,9 @@ c_func
 id|req-&gt;sem
 )paren
 suffix:semicolon
-id|req-&gt;dev
+id|req-&gt;rq_status
 op_assign
-op_minus
-l_int|1
+id|RQ_INACTIVE
 suffix:semicolon
 id|wake_up
 c_func

@@ -89,7 +89,7 @@ c_cond
 id|MINOR
 c_func
 (paren
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_dev
 )paren
 op_ne
 id|RAMDISK_MINOR
@@ -749,13 +749,11 @@ suffix:semicolon
 multiline_comment|/* We loaded the file system image.  Prepare for mounting it. */
 id|ROOT_DEV
 op_assign
-(paren
+id|MKDEV
+c_func
 (paren
 id|MEM_MAJOR
-op_lshift
-l_int|8
-)paren
-op_or
+comma
 id|RAMDISK_MINOR
 )paren
 suffix:semicolon

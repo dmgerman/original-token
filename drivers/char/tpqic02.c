@@ -262,16 +262,8 @@ id|YES
 suffix:semicolon
 DECL|variable|current_tape_dev
 r_static
-id|dev_t
+id|kdev_t
 id|current_tape_dev
-op_assign
-id|MKDEV
-c_func
-(paren
-id|QIC02_TAPE_MAJOR
-comma
-l_int|0
-)paren
 suffix:semicolon
 DECL|variable|extra_blocks_left
 r_static
@@ -6329,7 +6321,7 @@ id|count
 r_int
 id|error
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 op_assign
 id|inode-&gt;i_rdev
@@ -6882,7 +6874,7 @@ id|count
 r_int
 id|error
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 op_assign
 id|inode-&gt;i_rdev
@@ -7415,7 +7407,7 @@ op_star
 id|filp
 )paren
 (brace
-id|dev_t
+id|kdev_t
 id|dev
 op_assign
 id|inode-&gt;i_rdev
@@ -7448,9 +7440,13 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;qic02_tape_open: dev=%x, flags=%x     &quot;
+l_string|&quot;qic02_tape_open: dev=%s, flags=%x     &quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 comma
 id|flags
 )paren
@@ -8117,8 +8113,9 @@ suffix:semicolon
 multiline_comment|/* force reset */
 id|current_tape_dev
 op_assign
-l_int|0xff80
+l_int|0
 suffix:semicolon
+multiline_comment|/* earlier 0xff80 */
 r_return
 op_minus
 id|EIO
@@ -8146,7 +8143,7 @@ op_star
 id|filp
 )paren
 (brace
-id|dev_t
+id|kdev_t
 id|dev
 op_assign
 id|inode-&gt;i_rdev
@@ -8163,9 +8160,13 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;qic02_tape_release: dev=%x&bslash;n&quot;
+l_string|&quot;qic02_tape_release: dev=%s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -10243,6 +10244,16 @@ suffix:semicolon
 id|QIC02_TAPE_DEBUG
 op_assign
 id|TPQD_DEFAULT_FLAGS
+suffix:semicolon
+id|current_tape_dev
+op_assign
+id|MKDEV
+c_func
+(paren
+id|QIC02_TAPE_MAJOR
+comma
+l_int|0
+)paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_QIC02_DYNCONF
 id|printk

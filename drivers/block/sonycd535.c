@@ -380,7 +380,7 @@ DECL|function|cdu535_check_media_change
 id|cdu535_check_media_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 (brace
@@ -2414,9 +2414,9 @@ op_logical_neg
 id|CURRENT
 )paren
 op_logical_or
-id|CURRENT-&gt;dev
-OL
-l_int|0
+id|CURRENT-&gt;rq_status
+op_eq
+id|RQ_INACTIVE
 )paren
 (brace
 r_return
@@ -2429,7 +2429,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_dev
 )paren
 suffix:semicolon
 id|block

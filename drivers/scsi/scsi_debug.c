@@ -22,6 +22,28 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_scsi_debug
+r_struct
+id|proc_dir_entry
+id|proc_scsi_scsi_debug
+op_assign
+(brace
+id|PROC_SCSI_SCSI_DEBUG
+comma
+l_int|10
+comma
+l_string|&quot;scsi_debug&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/* A few options that we want selected */
 multiline_comment|/* Do not attempt to use a timer to simulate a real disk with latency */
 multiline_comment|/* Only use this in the actual kernel, not in the simulator. */
@@ -95,59 +117,9 @@ DECL|macro|VERIFY_DEBUG
 mdefine_line|#define VERIFY_DEBUG(RW) 1
 macro_line|#else
 DECL|macro|VERIFY1_DEBUG
-mdefine_line|#define VERIFY1_DEBUG(RW)                           &bslash;&n;    if (bufflen != 1024) {printk(&quot;%d&quot;, bufflen); panic(&quot;(1)Bad bufflen&quot;);};         &bslash;&n;    start = 0;                          &bslash;&n;    if ((SCpnt-&gt;request.dev &amp; 0xf) != 0) start = starts[(SCpnt-&gt;request.dev &amp; 0xf) - 1];        &bslash;&n;    if (bh){                            &bslash;&n;&t;if (bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;);    &bslash;&n;&t;if ((bh-&gt;b_blocknr &lt;&lt; 1) + start != block)          &bslash;&n;&t;{   printk(&quot;Wrong bh block# %d %d &quot;,bh-&gt;b_blocknr, block);  &bslash;&n;&t;    panic (&quot;Wrong bh block#&quot;); &bslash;&n;&t;};  &bslash;&n;&t;if (bh-&gt;b_dev != SCpnt-&gt;request.dev) panic (&quot;Bad bh target&quot;);&bslash;&n;    };
-macro_line|#if 0
-multiline_comment|/* This had been in the VERIFY_DEBUG macro, but it fails if there is already&n; * a disk on the system */
-r_if
-c_cond
-(paren
-(paren
-id|SCpnt-&gt;request.dev
-op_amp
-l_int|0xfff0
-)paren
-op_ne
-(paren
-(paren
-id|target
-op_plus
-id|NR_REAL
-)paren
-op_lshift
-l_int|4
-)paren
-op_plus
-(paren
-id|MAJOR_NR
-op_lshift
-l_int|8
-)paren
-)paren
-(brace
-"&bslash;"
-id|printk
-c_func
-(paren
-l_string|&quot;Dev #s %x %x &quot;
-comma
-id|SCpnt-&gt;request.dev
-comma
-id|target
-)paren
-suffix:semicolon
-"&bslash;"
-id|panic
-(paren
-l_string|&quot;Bad target&quot;
-)paren
-suffix:semicolon
-"&bslash;"
-)brace
-suffix:semicolon
-"&bslash;"
-macro_line|#endif
+mdefine_line|#define VERIFY1_DEBUG(RW)                           &bslash;&n;    if (bufflen != 1024) {printk(&quot;%d&quot;, bufflen); panic(&quot;(1)Bad bufflen&quot;);};         &bslash;&n;    start = 0;                          &bslash;&n;    if ((MINOR(SCpnt-&gt;request.rq_dev) &amp; 0xf) != 0) start = starts[(MINOR(SCpnt-&gt;request.rq_dev) &amp; 0xf) - 1];        &bslash;&n;    if (bh){                            &bslash;&n;&t;if (bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;);    &bslash;&n;&t;if ((bh-&gt;b_blocknr &lt;&lt; 1) + start != block)          &bslash;&n;&t;{   printk(&quot;Wrong bh block# %d %d &quot;,bh-&gt;b_blocknr, block);  &bslash;&n;&t;    panic (&quot;Wrong bh block#&quot;); &bslash;&n;&t;};  &bslash;&n;&t;if (bh-&gt;b_dev != SCpnt-&gt;request.rq_dev)  &bslash;&n;&t;    panic (&quot;Bad bh target&quot;); &bslash;&n;    };
 DECL|macro|VERIFY_DEBUG
-mdefine_line|#define VERIFY_DEBUG(RW)                            &bslash;&n;    if (bufflen != 1024 &amp;&amp; (!SCpnt-&gt;use_sg)) {printk(&quot;%x %d&bslash;n &quot;,bufflen, SCpnt-&gt;use_sg); panic(&quot;Bad bufflen&quot;);};    &bslash;&n;    start = 0;                          &bslash;&n;    if ((SCpnt-&gt;request.dev &amp; 0xf) &gt; npart) panic (&quot;Bad partition&quot;);    &bslash;&n;    if ((SCpnt-&gt;request.dev &amp; 0xf) != 0) start = starts[(SCpnt-&gt;request.dev &amp; 0xf) - 1];        &bslash;&n;    if (SCpnt-&gt;request.cmd != RW) panic (&quot;Wrong  operation&quot;);       &bslash;&n;    if (SCpnt-&gt;request.sector + start != block) panic(&quot;Wrong block.&quot;);  &bslash;&n;    if (SCpnt-&gt;request.current_nr_sectors != 2 &amp;&amp; (!SCpnt-&gt;use_sg)) panic (&quot;Wrong # blocks&quot;);   &bslash;&n;    if (SCpnt-&gt;request.bh){                         &bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;); &bslash;&n;&t;if ((SCpnt-&gt;request.bh-&gt;b_blocknr &lt;&lt; 1) + start != block)           &bslash;&n;&t;{   printk(&quot;Wrong bh block# %d %d &quot;,SCpnt-&gt;request.bh-&gt;b_blocknr, block);  &bslash;&n;&t;    panic (&quot;Wrong bh block#&quot;); &bslash;&n;&t;};  &bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_dev != SCpnt-&gt;request.dev) panic (&quot;Bad bh target&quot;);&bslash;&n;    };
+mdefine_line|#define VERIFY_DEBUG(RW)                            &bslash;&n;    if (bufflen != 1024 &amp;&amp; (!SCpnt-&gt;use_sg)) {printk(&quot;%x %d&bslash;n &quot;,bufflen, SCpnt-&gt;use_sg); panic(&quot;Bad bufflen&quot;);};    &bslash;&n;    start = 0;                          &bslash;&n;    if ((MINOR(SCpnt-&gt;request.rq_dev) &amp; 0xf) &gt; npart) panic (&quot;Bad partition&quot;);    &bslash;&n;    if ((MINOR(SCpnt-&gt;request.rq_dev) &amp; 0xf) != 0) start = starts[(MINOR(SCpnt-&gt;request.rq_dev) &amp; 0xf) - 1];        &bslash;&n;    if (SCpnt-&gt;request.cmd != RW) panic (&quot;Wrong  operation&quot;);       &bslash;&n;    if (SCpnt-&gt;request.sector + start != block) panic(&quot;Wrong block.&quot;);  &bslash;&n;    if (SCpnt-&gt;request.current_nr_sectors != 2 &amp;&amp; (!SCpnt-&gt;use_sg)) panic (&quot;Wrong # blocks&quot;);   &bslash;&n;    if (SCpnt-&gt;request.bh){                         &bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;); &bslash;&n;&t;if ((SCpnt-&gt;request.bh-&gt;b_blocknr &lt;&lt; 1) + start != block)           &bslash;&n;&t;{   printk(&quot;Wrong bh block# %d %d &quot;,SCpnt-&gt;request.bh-&gt;b_blocknr, block);  &bslash;&n;&t;    panic (&quot;Wrong bh block#&quot;); &bslash;&n;&t;};  &bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_dev != SCpnt-&gt;request.rq_dev) &bslash;&n;&t;    panic (&quot;Bad bh target&quot;);&bslash;&n;    };
 macro_line|#endif
 DECL|variable|do_done
 r_static
@@ -1164,7 +1136,11 @@ l_int|0
 id|NR_REAL
 op_assign
 (paren
-id|SCpnt-&gt;request.dev
+id|MINOR
+c_func
+(paren
+id|SCpnt-&gt;request.rq_dev
+)paren
 op_rshift
 l_int|4
 )paren
@@ -2854,6 +2830,11 @@ op_star
 id|tpnt
 )paren
 (brace
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_scsi_debug
+suffix:semicolon
 macro_line|#ifndef IMMEDIATE
 id|timer_table
 (braket
@@ -3018,7 +2999,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

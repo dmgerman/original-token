@@ -4110,11 +4110,6 @@ id|error
 op_assign
 l_int|NULL
 suffix:semicolon
-r_int
-id|dev
-op_assign
-id|SCpnt-&gt;request.dev
-suffix:semicolon
 id|sense_class
 op_assign
 (paren
@@ -4285,11 +4280,15 @@ macro_line|#if (CONSTANTS &amp; CONST_SENSE)
 id|printk
 c_func
 (paren
-l_string|&quot;%s%x: sense key %s&bslash;n&quot;
+l_string|&quot;%s%s: sense key %s&bslash;n&quot;
 comma
 id|devclass
 comma
-id|dev
+id|kdevname
+c_func
+(paren
+id|SCpnt-&gt;request.rq_dev
+)paren
 comma
 id|snstext
 (braket
@@ -4306,11 +4305,15 @@ macro_line|#else
 id|printk
 c_func
 (paren
-l_string|&quot;%s%x: sns = %2x %2x&bslash;n&quot;
+l_string|&quot;%s%s: sns = %2x %2x&bslash;n&quot;
 comma
 id|devclass
 comma
-id|dev
+id|kdevname
+c_func
+(paren
+id|SCpnt-&gt;request.rq_dev
+)paren
 comma
 id|sense_buffer
 (braket
@@ -4540,11 +4543,15 @@ l_int|15
 id|printk
 c_func
 (paren
-l_string|&quot;%s%x: old sense key %s&bslash;n&quot;
+l_string|&quot;%s%s: old sense key %s&bslash;n&quot;
 comma
 id|devclass
 comma
-id|dev
+id|kdevname
+c_func
+(paren
+id|SCpnt-&gt;request.rq_dev
+)paren
 comma
 id|snstext
 (braket
@@ -4562,11 +4569,15 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;%s%x: sns = %2x %2x&bslash;n&quot;
+l_string|&quot;%s%s: sns = %2x %2x&bslash;n&quot;
 comma
 id|devclass
 comma
-id|dev
+id|kdevname
+c_func
+(paren
+id|SCpnt-&gt;request.rq_dev
+)paren
 comma
 id|sense_buffer
 (braket

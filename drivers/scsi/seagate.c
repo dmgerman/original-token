@@ -15,6 +15,28 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;seagate.h&quot;
 macro_line|#include &quot;constants.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_seagate
+r_struct
+id|proc_dir_entry
+id|proc_scsi_seagate
+op_assign
+(brace
+id|PROC_SCSI_SEAGATE
+comma
+l_int|7
+comma
+l_string|&quot;seagate&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 macro_line|#ifndef IRQ
 DECL|macro|IRQ
 mdefine_line|#define IRQ 5
@@ -621,6 +643,11 @@ comma
 id|j
 suffix:semicolon
 macro_line|#endif 
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_seagate
+suffix:semicolon
 multiline_comment|/*&n; *&t;First, we try for the manual override.&n; */
 macro_line|#ifdef DEBUG 
 id|printk
@@ -4538,7 +4565,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_drive_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; * 2.05x Aug 11, 1995 -- lots of data structure renaming/restructuring in ide.c&n; *                       (my apologies to Scott, but now ide-cd.c is independent)&n; * 3.00  Aug 22, 1995 -- Implement CDROMMULTISESSION ioctl (UNTESTED).&n; *                       Implement CDROMREADAUDIO ioctl (UNTESTED).&n; *                       Use input_ide_data() and output_ide_data().&n; *                       Add door locking.&n; *                       Fix usage count leak in cdrom_open, which happened&n; *                        when a read-write mount was attempted.&n; *                       Try to load the disk on open.&n; *                       Implement CDROMEJECT_SW ioctl (off by default).&n; *                       Read total cdrom capacity during open.&n; *                       Rearrange logic in cdrom_decode_status.  Issue&n; *                        request sense commands for failed packet commands&n; *                        from here instead of from cdrom_queue_packet_command.&n; *                        Fix a race condition in retrieving error information.&n; *                       Suppress printing normal unit attention errors and&n; *                        some drive not ready errors.&n; *                       Implement CDROMVOLREAD ioctl.&n; *                       Implement CDROMREADMODE1/2 ioctls.&n; *                       Fix race condition in setting up interrupt handlers&n; *                        when the `serialize&squot; option is used.&n; * 3.01  Sep  2, 1995 -- Fix ordering of reenabling interrupts in&n; *                        cdrom_queue_request.&n; *                       Another try at using ide_[input,output]_data.&n; *&n; * NOTE: I&squot;ve tried to implement support for multisession CDs and&n; * direct audio reads in this version, but i haven&squot;t been able to fully&n; * test them due to a lack of the proper hardware.  I&squot;d appreciate hearing&n; * if the multisession stuff works; i&squot;d also be interested in hearing&n; * if you get anything other than a `Parameter not supported&squot;&n; * (asc=0x26, ascq=1) error when trying to do a direct audio read.&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_drive_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; * 2.05x Aug 11, 1995 -- lots of data structure renaming/restructuring in ide.c&n; *                       (my apologies to Scott, but now ide-cd.c is independent)&n; * 3.00  Aug 22, 1995 -- Implement CDROMMULTISESSION ioctl.&n; *                       Implement CDROMREADAUDIO ioctl (UNTESTED).&n; *                       Use input_ide_data() and output_ide_data().&n; *                       Add door locking.&n; *                       Fix usage count leak in cdrom_open, which happened&n; *                        when a read-write mount was attempted.&n; *                       Try to load the disk on open.&n; *                       Implement CDROMEJECT_SW ioctl (off by default).&n; *                       Read total cdrom capacity during open.&n; *                       Rearrange logic in cdrom_decode_status.  Issue&n; *                        request sense commands for failed packet commands&n; *                        from here instead of from cdrom_queue_packet_command.&n; *                        Fix a race condition in retrieving error information.&n; *                       Suppress printing normal unit attention errors and&n; *                        some drive not ready errors.&n; *                       Implement CDROMVOLREAD ioctl.&n; *                       Implement CDROMREADMODE1/2 ioctls.&n; *                       Fix race condition in setting up interrupt handlers&n; *                        when the `serialize&squot; option is used.&n; * 3.01  Sep  2, 1995 -- Fix ordering of reenabling interrupts in&n; *                        cdrom_queue_request.&n; *                       Another try at using ide_[input,output]_data.&n; * 3.02  Sep 16, 1995 -- Stick total disk capacity in partition table as well.&n; *                       Make VERBOSE_IDE_CD_ERRORS dump failed command again.&n; *                       Dump out more information for ILLEGAL REQUEST errs.&n; *                       Fix handling of errors occuring before the&n; *                        packet command is transferred.&n; *                       Fix transfers with odd bytelengths.&n; *&n; * NOTE: I&squot;ve tried to implement support for direct audio reads&n; * in this version, but i haven&squot;t been able to fully test it&n; * due to a lack of the proper hardware.  I&squot;d  be interested in hearing&n; * if you get anything other than a `Parameter not supported&squot;&n; * (asc=0x26, ascq=1) error when trying to do a direct audio read.&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
 multiline_comment|/***************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -181,7 +181,7 @@ mdefine_line|#define CDROM_STATE_FLAGS(drive)  ((struct ide_cd_state_flags *)&am
 DECL|macro|SECTOR_BUFFER_SIZE
 mdefine_line|#define SECTOR_BUFFER_SIZE CD_FRAMESIZE
 "&f;"
-multiline_comment|/****************************************************************************&n; * Routines to read and write data from/to the drive, using&n; * the routines input_ide_data() and output_ide_data() from ide.c.&n; *&n; * All transfer lengths should be multiples of 16-bit shorts.&n; */
+multiline_comment|/****************************************************************************&n; * Routines to read and write data from/to the drive, using&n; * the routines input_ide_data() and output_ide_data() from ide.c.&n; *&n; * These routines will round up any request for an odd number of bytes,&n; * so if an odd bytecount is specified, be sure that there&squot;s at least one&n; * extra byte allocated for the buffer.&n; */
 r_static
 r_inline
 DECL|function|cdrom_in_bytes
@@ -200,6 +200,9 @@ id|uint
 id|bytecount
 )paren
 (brace
+op_increment
+id|bytecount
+suffix:semicolon
 id|ide_input_data
 (paren
 id|drive
@@ -218,9 +221,9 @@ c_cond
 id|bytecount
 op_amp
 l_int|0x03
+)paren
 op_ge
 l_int|2
-)paren
 )paren
 (brace
 id|insw
@@ -259,6 +262,9 @@ id|uint
 id|bytecount
 )paren
 (brace
+op_increment
+id|bytecount
+suffix:semicolon
 id|ide_output_data
 (paren
 id|drive
@@ -277,9 +283,9 @@ c_cond
 id|bytecount
 op_amp
 l_int|0x03
+)paren
 op_ge
 l_int|2
-)paren
 )paren
 (brace
 id|outsw
@@ -856,7 +862,7 @@ id|drive-&gt;name
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;  Error code: %x&bslash;n&quot;
+l_string|&quot;  Error code: 0x%02x&bslash;n&quot;
 comma
 id|reqbuf-&gt;error_code
 )paren
@@ -889,7 +895,7 @@ l_string|&quot;(bad sense key)&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;  Sense key: %x - %s&bslash;n&quot;
+l_string|&quot;  Sense key: 0x%02x - %s&bslash;n&quot;
 comma
 id|reqbuf-&gt;sense_key
 comma
@@ -908,7 +914,7 @@ id|sprintf
 (paren
 id|buf
 comma
-l_string|&quot;Diagnostic failure on component %x&quot;
+l_string|&quot;Diagnostic failure on component 0x%02x&quot;
 comma
 id|reqbuf-&gt;ascq
 )paren
@@ -1064,7 +1070,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;  Additional sense data: %x, %x  - %s&bslash;n&quot;
+l_string|&quot;  Additional sense data: 0x%02x, 0x%02x  - %s&bslash;n&quot;
 comma
 id|reqbuf-&gt;asc
 comma
@@ -1119,6 +1125,94 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|reqbuf-&gt;sense_key
+op_eq
+id|ILLEGAL_REQUEST
+op_logical_and
+(paren
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x80
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;  Error in %s byte %d&quot;
+comma
+(paren
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x40
+)paren
+op_ne
+l_int|0
+ques
+c_cond
+l_string|&quot;command packet&quot;
+suffix:colon
+l_string|&quot;command data&quot;
+comma
+(paren
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|1
+)braket
+op_lshift
+l_int|8
+)paren
+op_plus
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x40
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot; bit %d&quot;
+comma
+id|reqbuf-&gt;sense_key_specific
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x07
+)paren
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#else
 multiline_comment|/* Suppress printing unit attention and `in progress of becoming ready&squot;&n;     errors when we&squot;re not being verbose. */
@@ -1149,7 +1243,7 @@ r_return
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;%s: code: %x  key: %x  asc: %x  ascq: %x&bslash;n&quot;
+l_string|&quot;%s: code: 0x%02x  key: 0x%02x  asc: 0x%02x  ascq: 0x%02x&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma
@@ -1233,6 +1327,11 @@ r_struct
 id|atapi_request_sense
 op_star
 id|reqbuf
+comma
+r_struct
+id|packet_command
+op_star
+id|failed_command
 )paren
 (brace
 r_struct
@@ -1412,9 +1511,13 @@ id|len
 suffix:semicolon
 id|pc-&gt;sense_data
 op_assign
-id|reqbuf
+(paren
+r_struct
+id|atapi_request_sense
+op_star
+)paren
+id|failed_command
 suffix:semicolon
-multiline_comment|/* The only reason to set this here is so&n;&t;&t;&t;&t;   that cdrom_end_request can find the correct&n;&t;&t;&t;&t;   buffer for dumps to the syslog. */
 id|rq
 op_assign
 op_amp
@@ -1426,7 +1529,11 @@ id|drive
 op_member_access_from_pointer
 id|request_sense_request
 suffix:semicolon
-id|rq-&gt;dev
+id|rq-&gt;rq_status
+op_assign
+id|RQ_ACTIVE
+suffix:semicolon
+id|rq-&gt;rq_dev
 op_assign
 id|MKDEV
 (paren
@@ -1598,9 +1705,26 @@ id|cdrom_analyze_sense_data
 (paren
 id|drive
 comma
-id|pc-&gt;sense_data
+(paren
+r_struct
+id|atapi_request_sense
+op_star
+)paren
+(paren
+id|pc-&gt;buffer
+op_minus
+id|pc-&gt;c
+(braket
+l_int|4
+)braket
+)paren
 comma
-l_int|NULL
+(paren
+r_struct
+id|packet_command
+op_star
+)paren
+id|pc-&gt;sense_data
 )paren
 suffix:semicolon
 )brace
@@ -1949,6 +2073,8 @@ comma
 id|sem
 comma
 id|pc-&gt;sense_data
+comma
+id|pc
 )paren
 suffix:semicolon
 )brace
@@ -2121,6 +2247,8 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -2265,7 +2393,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Send a packet command to DRIVE described by CMD_BUF and CMD_LEN.&n;   The device registers must have already been prepared&n;   by cdrom_start_packet_command. */
+multiline_comment|/* Send a packet command to DRIVE described by CMD_BUF and CMD_LEN.&n;   The device registers must have already been prepared&n;   by cdrom_start_packet_command.&n;   HANDLER is the interrupt handler to call when the command completes&n;   or there&squot;s data ready. */
 DECL|function|cdrom_transfer_packet_command
 r_static
 r_int
@@ -2281,6 +2409,10 @@ id|cmd_buf
 comma
 r_int
 id|cmd_len
+comma
+id|ide_handler_t
+op_star
+id|handler
 )paren
 (brace
 r_if
@@ -2337,6 +2469,14 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Arm the interrupt handler. */
+id|ide_set_handler
+(paren
+id|drive
+comma
+id|handler
+)paren
+suffix:semicolon
 multiline_comment|/* Send the command to the device. */
 id|cdrom_out_bytes
 (paren
@@ -3430,15 +3570,6 @@ op_assign
 id|conv.b.b0
 suffix:semicolon
 )brace
-multiline_comment|/* Set up to receive the data-ready interrupt from the drive. */
-id|ide_set_handler
-(paren
-id|drive
-comma
-op_amp
-id|cdrom_read_intr
-)paren
-suffix:semicolon
 multiline_comment|/* Send the command to the drive and return. */
 (paren
 r_void
@@ -3453,6 +3584,9 @@ r_sizeof
 (paren
 id|pc.c
 )paren
+comma
+op_amp
+id|cdrom_read_intr
 )paren
 suffix:semicolon
 )brace
@@ -3990,15 +4124,6 @@ op_star
 )paren
 id|rq-&gt;buffer
 suffix:semicolon
-multiline_comment|/* Set up a handler for the data-ready interrupt. */
-id|ide_set_handler
-(paren
-id|drive
-comma
-op_amp
-id|cdrom_pc_intr
-)paren
-suffix:semicolon
 multiline_comment|/* Send the command to the drive and return. */
 id|cdrom_transfer_packet_command
 (paren
@@ -4010,6 +4135,9 @@ r_sizeof
 (paren
 id|pc-&gt;c
 )paren
+comma
+op_amp
+id|cdrom_pc_intr
 )paren
 suffix:semicolon
 )brace
@@ -4153,7 +4281,7 @@ id|sem
 op_assign
 id|MUTEX_LOCKED
 suffix:semicolon
-id|req-&gt;dev
+id|req-&gt;rq_dev
 op_assign
 id|MKDEV
 (paren
@@ -4165,6 +4293,10 @@ id|drive-&gt;select.b.unit
 op_lshift
 id|PARTN_BITS
 )paren
+suffix:semicolon
+id|req-&gt;rq_status
+op_assign
+id|RQ_ACTIVE
 suffix:semicolon
 id|req-&gt;sem
 op_assign
@@ -5996,6 +6128,17 @@ id|drive-&gt;select.b.unit
 op_lshift
 id|PARTN_BITS
 )braket
+op_assign
+id|toc-&gt;capacity
+op_star
+id|SECTORS_PER_FRAME
+suffix:semicolon
+id|drive-&gt;part
+(braket
+l_int|0
+)braket
+dot
+id|nr_sects
 op_assign
 id|toc-&gt;capacity
 op_star

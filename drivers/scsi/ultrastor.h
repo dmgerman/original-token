@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;ultrastor.c&t;(C) 1991 David B. Gentzel&n; *&t;Low-l
 macro_line|#ifndef _ULTRASTOR_H
 DECL|macro|_ULTRASTOR_H
 mdefine_line|#define _ULTRASTOR_H
+macro_line|#include &lt;linux/kdev_t.h&gt;
 r_int
 id|ultrastor_detect
 c_func
@@ -63,7 +64,7 @@ c_func
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 op_star
@@ -80,7 +81,7 @@ mdefine_line|#define ULTRASTOR_MAX_CMDS 16
 DECL|macro|ULTRASTOR_24F_PORT
 mdefine_line|#define ULTRASTOR_24F_PORT 0xC80
 DECL|macro|ULTRASTOR_14F
-mdefine_line|#define ULTRASTOR_14F { NULL, NULL, /* Ptr for modules*/ &bslash;&n;&t;&t;&t;  NULL,                         &bslash;&n;&t;&t;&t;  &quot;ultrastor&quot;,                  &bslash;&n;&t;&t;&t;  PROC_SCSI_ULTRASTOR,          &bslash;&n;&t;&t;&t;  &quot;UltraStor 14F/24F/34F&quot;, &t;&bslash;&n;&t;&t;&t;  ultrastor_detect, &t;&t;&bslash;&n;&t;&t;&t;  NULL,&t;/* Release */&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_info, &t;&t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_queuecommand,&t;&bslash;&n;&t;&t;&t;  ultrastor_abort, &t;&t;&bslash;&n;&t;&t;&t;  ultrastor_reset,&t;&t;&bslash;&n;&t;&t;&t;  0,&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_biosparam, &t;&t;&bslash;&n;&t;&t;&t;  ULTRASTOR_MAX_CMDS,&t;&t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ULTRASTOR_14F_MAX_SG, &t;&bslash;&n;&t;&t;&t;  ULTRASTOR_MAX_CMDS_PER_LUN, &t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  1, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ENABLE_CLUSTERING }
+mdefine_line|#define ULTRASTOR_14F { NULL, NULL, /* Ptr for modules*/ &bslash;&n;&t;&t;&t;  NULL,                         &bslash;&n;&t;&t;&t;  NULL,                         &bslash;&n;&t;&t;&t;  &quot;UltraStor 14F/24F/34F&quot;, &t;&bslash;&n;&t;&t;&t;  ultrastor_detect, &t;&t;&bslash;&n;&t;&t;&t;  NULL,&t;/* Release */&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_info, &t;&t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_queuecommand,&t;&bslash;&n;&t;&t;&t;  ultrastor_abort, &t;&t;&bslash;&n;&t;&t;&t;  ultrastor_reset,&t;&t;&bslash;&n;&t;&t;&t;  0,&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ultrastor_biosparam, &t;&t;&bslash;&n;&t;&t;&t;  ULTRASTOR_MAX_CMDS,&t;&t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ULTRASTOR_14F_MAX_SG, &t;&bslash;&n;&t;&t;&t;  ULTRASTOR_MAX_CMDS_PER_LUN, &t;&bslash;&n;&t;&t;&t;  0, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  1, &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ENABLE_CLUSTERING }
 macro_line|#ifdef ULTRASTOR_PRIVATE
 DECL|macro|UD_ABORT
 mdefine_line|#define UD_ABORT&t;0x0001

@@ -731,16 +731,17 @@ id|scsi_hosts
 op_assign
 id|tpnt
 suffix:semicolon
-)brace
-)brace
-multiline_comment|/* Add the drivers to /proc/scsi */
+multiline_comment|/* Add the driver to /proc/scsi */
 macro_line|#if CONFIG_PROC_FS 
 id|build_proc_dir_entries
 c_func
 (paren
+id|tpnt
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
+)brace
 r_for
 c_loop
 (paren

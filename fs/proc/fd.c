@@ -751,6 +751,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|p-&gt;files
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|p-&gt;files-&gt;fd
 (braket
 id|fd

@@ -997,7 +997,7 @@ id|super_block
 op_star
 id|sb
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -1032,7 +1032,7 @@ id|super_block
 op_star
 id|sb
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -1067,7 +1067,7 @@ id|super_block
 op_star
 id|sb
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

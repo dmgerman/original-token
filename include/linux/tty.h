@@ -380,7 +380,7 @@ r_int
 id|session
 suffix:semicolon
 DECL|member|device
-id|dev_t
+id|kdev_t
 id|device
 suffix:semicolon
 DECL|member|flags
@@ -734,7 +734,7 @@ id|tty_struct
 op_star
 id|tty
 comma
-id|dev_t
+id|kdev_t
 id|device
 comma
 r_const

@@ -719,7 +719,7 @@ r_int
 id|check_disk_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -791,15 +791,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;VFS: Disk change detected on device %d/%d&bslash;n&quot;
+l_string|&quot;VFS: Disk change detected on device %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -1202,4 +1196,46 @@ l_int|NULL
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Print device name (in decimal, hexadecimal or symbolic) -&n; * at present hexadecimal only.&n; * Note: returns pointer to static data!&n; */
+DECL|function|kdevname
+r_char
+op_star
+id|kdevname
+c_func
+(paren
+id|kdev_t
+id|dev
+)paren
+(brace
+r_static
+r_char
+id|buffer
+(braket
+l_int|32
+)braket
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;%02x:%02x&quot;
+comma
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
+)paren
+suffix:semicolon
+r_return
+id|buffer
+suffix:semicolon
+)brace
 eof

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/vfs.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
 DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
@@ -39,67 +40,6 @@ DECL|macro|READA
 mdefine_line|#define READA 2&t;&t;/* read-ahead - don&squot;t pause */
 DECL|macro|WRITEA
 mdefine_line|#define WRITEA 3&t;/* &quot;write-ahead&quot; - silly, but somewhat useful */
-r_extern
-r_void
-id|buffer_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|inode_init
-c_func
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|file_table_init
-c_func
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|name_cache_init
-c_func
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-DECL|macro|MAJOR
-mdefine_line|#define MAJOR(a) (int)((unsigned short)(a) &gt;&gt; 8)
-DECL|macro|MINOR
-mdefine_line|#define MINOR(a) (int)((unsigned short)(a) &amp; 0xFF)
-DECL|macro|MKDEV
-mdefine_line|#define MKDEV(a,b) ((int)((((a) &amp; 0xff) &lt;&lt; 8) | ((b) &amp; 0xff)))
-DECL|macro|NODEV
-mdefine_line|#define NODEV MKDEV(0,0)
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -173,6 +113,60 @@ DECL|macro|FIBMAP
 mdefine_line|#define FIBMAP&t;   1&t;/* bmap access */
 DECL|macro|FIGETBSZ
 mdefine_line|#define FIGETBSZ   2&t;/* get the block size used for bmap */
+macro_line|#ifdef __KERNEL__
+r_extern
+r_void
+id|buffer_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|inode_init
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|file_table_init
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|name_cache_init
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
 DECL|typedef|buffer_block
 r_typedef
 r_char
@@ -204,10 +198,10 @@ id|b_blocknr
 suffix:semicolon
 multiline_comment|/* block number */
 DECL|member|b_dev
-id|dev_t
+id|kdev_t
 id|b_dev
 suffix:semicolon
-multiline_comment|/* device (0 = free) */
+multiline_comment|/* device (B_FREE = free) */
 DECL|member|b_count
 r_int
 r_int
@@ -320,7 +314,6 @@ macro_line|#include &lt;linux/iso_fs_i.h&gt;
 macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 macro_line|#include &lt;linux/xia_fs_i.h&gt;
 macro_line|#include &lt;linux/sysv_fs_i.h&gt;
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
 DECL|macro|ATTR_MODE
 mdefine_line|#define ATTR_MODE&t;1
@@ -385,7 +378,7 @@ r_struct
 id|inode
 (brace
 DECL|member|i_dev
-id|dev_t
+id|kdev_t
 id|i_dev
 suffix:semicolon
 DECL|member|i_ino
@@ -410,7 +403,7 @@ id|gid_t
 id|i_gid
 suffix:semicolon
 DECL|member|i_rdev
-id|dev_t
+id|kdev_t
 id|i_rdev
 suffix:semicolon
 DECL|member|i_size
@@ -826,7 +819,7 @@ r_struct
 id|super_block
 (brace
 DECL|member|s_dev
-id|dev_t
+id|kdev_t
 id|s_dev
 suffix:semicolon
 DECL|member|s_blocksize
@@ -1204,7 +1197,7 @@ op_star
 id|check_media_change
 )paren
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -1215,7 +1208,7 @@ op_star
 id|revalidate
 )paren
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -1950,7 +1943,7 @@ r_int
 id|fs_may_mount
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -1959,7 +1952,7 @@ r_int
 id|fs_may_umount
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_struct
@@ -1973,7 +1966,7 @@ r_int
 id|fs_may_remount_ro
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2173,7 +2166,7 @@ r_int
 id|check_disk_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2182,7 +2175,7 @@ r_void
 id|invalidate_inodes
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2191,7 +2184,7 @@ r_void
 id|invalidate_buffers
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2209,7 +2202,7 @@ r_void
 id|sync_inodes
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2218,7 +2211,7 @@ r_void
 id|sync_dev
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2227,7 +2220,7 @@ r_int
 id|fsync_dev
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2236,7 +2229,7 @@ r_void
 id|sync_supers
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2490,7 +2483,7 @@ op_star
 id|get_hash_table
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2507,7 +2500,7 @@ op_star
 id|getblk
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2544,7 +2537,7 @@ c_func
 r_int
 id|rw
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2564,7 +2557,7 @@ c_func
 r_int
 id|rw
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2585,7 +2578,7 @@ r_int
 id|is_read_only
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2605,7 +2598,7 @@ r_void
 id|set_blocksize
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2619,7 +2612,7 @@ op_star
 id|bread
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2639,7 +2632,7 @@ r_int
 r_int
 id|addr
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2663,7 +2656,7 @@ r_int
 r_int
 id|addr
 comma
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2682,7 +2675,7 @@ op_star
 id|breada
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2705,7 +2698,7 @@ r_void
 id|put_super
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -2714,7 +2707,7 @@ r_int
 id|generate_cluster
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2727,7 +2720,7 @@ id|size
 )paren
 suffix:semicolon
 r_extern
-id|dev_t
+id|kdev_t
 id|ROOT_DEV
 suffix:semicolon
 r_extern

@@ -78,8 +78,7 @@ r_int
 id|flags
 suffix:semicolon
 DECL|member|swap_device
-r_int
-r_int
+id|kdev_t
 id|swap_device
 suffix:semicolon
 DECL|member|swap_file
@@ -3115,7 +3114,7 @@ id|BUF_SHARED
 op_logical_and
 id|tmp-&gt;b_dev
 op_ne
-l_int|0xffff
+id|B_FREE
 )paren
 id|refile_buffer
 c_func

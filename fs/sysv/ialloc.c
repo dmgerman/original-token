@@ -261,15 +261,10 @@ id|sb-&gt;sv_inodes_per_block_bits
 id|printk
 c_func
 (paren
-l_string|&quot;sysv_free_inode: unable to read inode block on device %d/%d&bslash;n&quot;
+l_string|&quot;sysv_free_inode: unable to read inode block on device &quot;
+l_string|&quot;%s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|inode-&gt;i_dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|inode-&gt;i_dev

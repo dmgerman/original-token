@@ -99,8 +99,7 @@ r_int
 r_int
 id|size
 suffix:semicolon
-r_int
-r_int
+id|kdev_t
 id|dev
 suffix:semicolon
 r_struct
@@ -1073,8 +1072,7 @@ suffix:semicolon
 id|loff_t
 id|size
 suffix:semicolon
-r_int
-r_int
+id|kdev_t
 id|dev
 suffix:semicolon
 r_int

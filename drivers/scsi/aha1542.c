@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; */
+multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -18,6 +18,28 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;aha1542.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_aha1542
+r_struct
+id|proc_dir_entry
+id|proc_scsi_aha1542
+op_assign
+(brace
+id|PROC_SCSI_AHA1542
+comma
+l_int|7
+comma
+l_string|&quot;aha1542&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 macro_line|#ifdef DEBUG
 DECL|macro|DEB
 mdefine_line|#define DEB(x) x
@@ -4546,6 +4568,11 @@ l_string|&quot;aha1542_detect: &bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_aha1542
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -5838,9 +5865,13 @@ id|SCpnt
 id|printk
 c_func
 (paren
-l_string|&quot;Timed out command pending for %4.4x&bslash;n&quot;
+l_string|&quot;Timed out command pending for %s&bslash;n&quot;
 comma
-id|SCpnt-&gt;request.dev
+id|kdevname
+c_func
+(paren
+id|SCpnt-&gt;request.rq_dev
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -5884,9 +5915,13 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Other pending command %4.4x&bslash;n&quot;
+l_string|&quot;Other pending command %s&bslash;n&quot;
 comma
-id|SCpnt-&gt;request.dev
+id|kdevname
+c_func
+(paren
+id|SCpnt-&gt;request.rq_dev
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -6368,7 +6403,7 @@ id|Scsi_Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

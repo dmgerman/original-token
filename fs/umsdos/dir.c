@@ -963,7 +963,11 @@ id|entry-&gt;mode
 suffix:semicolon
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|entry-&gt;rdev
+)paren
 suffix:semicolon
 id|inode-&gt;i_atime
 op_assign

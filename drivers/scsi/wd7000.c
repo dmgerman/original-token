@@ -23,6 +23,28 @@ mdefine_line|#define ANY2SCSI_INLINE    /* undef this to use old macros */
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 macro_line|#include &quot;wd7000.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_wd7000
+r_struct
+id|proc_dir_entry
+id|proc_scsi_wd7000
+op_assign
+(brace
+id|PROC_SCSI_7000FASST
+comma
+l_int|6
+comma
+l_string|&quot;wd7000&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *  Mailbox structure sizes.&n; *  I prefer to keep the number of ICMBs much larger than the number of&n; *  OGMBs.  OGMBs are used very quickly by the driver to start one or&n; *  more commands, while ICMBs are used by the host adapter per command.&n; */
 DECL|macro|OGMB_CNT
 mdefine_line|#define OGMB_CNT&t;16
@@ -3124,11 +3146,13 @@ id|BUS_OFF
 comma
 l_int|0
 comma
+(brace
 l_int|0
 comma
 l_int|0
 comma
 l_int|0
+)brace
 comma
 id|OGMB_CNT
 comma
@@ -3597,6 +3621,11 @@ id|Scsi_Host
 op_star
 id|sh
 suffix:semicolon
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_wd7000
+suffix:semicolon
 multiline_comment|/* Set up SCB free list, which is shared by all adapters */
 id|init_scbs
 c_func
@@ -3945,7 +3974,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

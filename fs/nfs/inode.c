@@ -213,7 +213,7 @@ id|file
 op_star
 id|filp
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 op_assign
 id|sb-&gt;s_dev

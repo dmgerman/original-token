@@ -841,9 +841,13 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;cache lookup: &lt;%d,%d&gt; %d (%d,%d) -&gt; &quot;
+l_string|&quot;cache lookup: &lt;%s,%d&gt; %d (%d,%d) -&gt; &quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 comma
@@ -970,9 +974,13 @@ id|walk-&gt;device
 id|printk
 c_func
 (paren
-l_string|&quot;&lt;%d,%d&gt;(%d,%d) &quot;
+l_string|&quot;&lt;%s,%d&gt;(%d,%d) &quot;
 comma
+id|kdevname
+c_func
+(paren
 id|walk-&gt;device
+)paren
 comma
 id|walk-&gt;ino
 comma
@@ -1026,9 +1034,13 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;cache add: &lt;%d,%d&gt; %d (%d)&bslash;n&quot;
+l_string|&quot;cache add: &lt;%s,%d&gt; %d (%d)&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 comma
@@ -1219,7 +1231,7 @@ r_void
 id|cache_inval_dev
 c_func
 (paren
-r_int
+id|kdev_t
 id|device
 )paren
 (brace

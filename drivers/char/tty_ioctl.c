@@ -980,7 +980,7 @@ id|nr
 suffix:semicolon
 )brace
 macro_line|#ifdef TIOCGETP
-multiline_comment|/*&n; * These are depracated, but there is limited support..&n; *&n; * The &quot;sg_flags&quot; translation is a joke..&n; */
+multiline_comment|/*&n; * These are deprecated, but there is limited support..&n; *&n; * The &quot;sg_flags&quot; translation is a joke..&n; */
 DECL|function|get_sgflags
 r_static
 r_int

@@ -106,7 +106,7 @@ mdefine_line|#define QUICK_LOOP_COUNT 140 /* better wait constant time */
 macro_line|#endif
 multiline_comment|/* #define DOUBLE_QUICK_ONLY */
 DECL|macro|CURRENT_VALID
-mdefine_line|#define CURRENT_VALID &bslash;&n;  (CURRENT &amp;&amp; MAJOR(CURRENT -&gt; dev) == MAJOR_NR &amp;&amp; CURRENT -&gt; cmd == READ &bslash;&n;   &amp;&amp; CURRENT -&gt; sector != -1)
+mdefine_line|#define CURRENT_VALID &bslash;&n;  (CURRENT &amp;&amp; MAJOR(CURRENT -&gt; rq_dev) == MAJOR_NR &amp;&amp; CURRENT -&gt; cmd == READ &bslash;&n;   &amp;&amp; CURRENT -&gt; sector != -1)
 DECL|macro|MFL_STATUSorDATA
 mdefine_line|#define MFL_STATUSorDATA (MFL_STATUS | MFL_DATA)
 DECL|macro|MCD_BUF_SIZ
@@ -518,7 +518,7 @@ DECL|function|check_mcd_change
 id|check_mcd_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 (brace

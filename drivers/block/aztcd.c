@@ -66,7 +66,7 @@ mdefine_line|#define AZT_DEBUG
 mdefine_line|#define AZT_DEBUG_MULTISESSION
 macro_line|#endif
 DECL|macro|CURRENT_VALID
-mdefine_line|#define CURRENT_VALID &bslash;&n;  (CURRENT &amp;&amp; MAJOR(CURRENT -&gt; dev) == MAJOR_NR &amp;&amp; CURRENT -&gt; cmd == READ &bslash;&n;   &amp;&amp; CURRENT -&gt; sector != -1)
+mdefine_line|#define CURRENT_VALID &bslash;&n;  (CURRENT &amp;&amp; MAJOR(CURRENT -&gt; rq_dev) == MAJOR_NR &amp;&amp; CURRENT -&gt; cmd == READ &bslash;&n;   &amp;&amp; CURRENT -&gt; sector != -1)
 DECL|macro|AFL_STATUSorDATA
 mdefine_line|#define AFL_STATUSorDATA (AFL_STATUS | AFL_DATA)
 DECL|macro|AZT_BUF_SIZ
@@ -1767,7 +1767,7 @@ r_int
 id|check_aztcd_media_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 (brace

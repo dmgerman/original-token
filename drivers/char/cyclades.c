@@ -618,7 +618,7 @@ id|cyclades_port
 op_star
 id|info
 comma
-id|dev_t
+id|kdev_t
 id|device
 comma
 r_const
@@ -634,7 +634,7 @@ r_char
 op_star
 id|badmagic
 op_assign
-l_string|&quot;Warning: bad magic number for serial struct (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: bad magic number for serial struct (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_static
 r_const
@@ -642,7 +642,7 @@ r_char
 op_star
 id|badinfo
 op_assign
-l_string|&quot;Warning: null cyclades_port for (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: null cyclades_port for (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_static
 r_const
@@ -650,7 +650,7 @@ r_char
 op_star
 id|badrange
 op_assign
-l_string|&quot;Warning: cyclades_port out of range for (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: cyclades_port out of range for (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -664,13 +664,7 @@ c_func
 (paren
 id|badinfo
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
@@ -724,13 +718,7 @@ c_func
 (paren
 id|badrange
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
@@ -756,13 +744,7 @@ c_func
 (paren
 id|badmagic
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
@@ -5871,6 +5853,7 @@ comma
 r_int
 id|from_user
 comma
+r_const
 r_int
 r_char
 op_star

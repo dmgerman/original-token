@@ -152,7 +152,11 @@ suffix:semicolon
 macro_line|#if 0
 id|ROOT_DEV
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|ORIG_ROOT_DEV
+)paren
 suffix:semicolon
 macro_line|#endif
 id|drive_info

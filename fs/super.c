@@ -75,10 +75,8 @@ id|data
 suffix:semicolon
 multiline_comment|/* this is initialized in init/main.c */
 DECL|variable|ROOT_DEV
-id|dev_t
+id|kdev_t
 id|ROOT_DEV
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|file_systems
 r_static
@@ -805,7 +803,7 @@ r_void
 id|sync_supers
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -907,7 +905,7 @@ op_star
 id|get_super
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -984,7 +982,7 @@ r_void
 id|put_super
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1004,15 +1002,9 @@ id|ROOT_DEV
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: Root device %d/%d: prepare for armageddon&bslash;n&quot;
+l_string|&quot;VFS: Root device %s: prepare for armageddon&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -1047,15 +1039,9 @@ id|sb-&gt;s_covered
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: Mounted device %d/%d - tssk, tssk&bslash;n&quot;
+l_string|&quot;VFS: Mounted device %s - tssk, tssk&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -1121,7 +1107,11 @@ op_assign
 id|get_super
 c_func
 (paren
+id|to_kdev_t
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1260,7 +1250,7 @@ op_star
 id|read_super
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_const
@@ -1338,15 +1328,9 @@ id|name
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: on device %d/%d: get_fs_type(%s) failed&bslash;n&quot;
+l_string|&quot;VFS: on device %s: get_fs_type(%s) failed&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -1389,7 +1373,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|s-&gt;s_dev
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -1468,7 +1454,7 @@ comma
 )brace
 suffix:semicolon
 DECL|function|get_unnamed_dev
-id|dev_t
+id|kdev_t
 id|get_unnamed_dev
 c_func
 (paren
@@ -1506,13 +1492,13 @@ id|unnamed_dev_in_use
 )paren
 )paren
 r_return
+id|MKDEV
+c_func
 (paren
 id|UNNAMED_MAJOR
-op_lshift
-l_int|8
-)paren
-op_or
+comma
 id|i
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -1524,7 +1510,7 @@ r_void
 id|put_unnamed_dev
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1564,15 +1550,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: put_unnamed_dev: freeing unused device %d/%d&bslash;n&quot;
+l_string|&quot;VFS: put_unnamed_dev: freeing unused device %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -1586,7 +1566,7 @@ r_int
 id|do_umount
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -1699,15 +1679,9 @@ id|sb-&gt;s_covered-&gt;i_mount
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: umount(%d/%d): mounted inode has i_mount=NULL&bslash;n&quot;
+l_string|&quot;VFS: umount(%s): mounted inode has i_mount=NULL&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -1798,7 +1772,7 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 r_int
@@ -2084,7 +2058,7 @@ r_int
 id|do_mount
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_const
@@ -2668,7 +2642,7 @@ id|file_operations
 op_star
 id|fops
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 r_int
@@ -3434,15 +3408,9 @@ suffix:semicolon
 id|panic
 c_func
 (paren
-l_string|&quot;VFS: Unable to mount root fs on %02x:%02x&quot;
+l_string|&quot;VFS: Unable to mount root fs on %s&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|ROOT_DEV
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|ROOT_DEV

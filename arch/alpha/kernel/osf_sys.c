@@ -25,7 +25,7 @@ r_int
 id|do_mount
 c_func
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_const
 r_char
@@ -72,7 +72,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-id|dev_t
+id|kdev_t
 id|get_unnamed_dev
 c_func
 (paren
@@ -84,7 +84,7 @@ r_void
 id|put_unnamed_dev
 c_func
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 r_extern
@@ -1113,7 +1113,7 @@ op_star
 id|ino
 )paren
 (brace
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 r_struct
@@ -1643,7 +1643,7 @@ r_int
 id|flags
 )paren
 (brace
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 r_int

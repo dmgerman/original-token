@@ -411,6 +411,7 @@ DECL|member|fd_device
 r_int
 id|fd_device
 suffix:semicolon
+multiline_comment|/* should be a kdev_t but is externally visible */
 DECL|member|last_checked
 r_int
 id|last_checked

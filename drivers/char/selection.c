@@ -55,7 +55,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 DECL|macro|sel_pos
-mdefine_line|#define sel_pos(n)&t;inverse_translate(screen_word(sel_cons, n, 1) &amp; 0xff)
+mdefine_line|#define sel_pos(n)   inverse_translate(scrw2glyph(screen_word(sel_cons, n, 1)))
 multiline_comment|/* clear_selection, highlight and highlight_pointer can be called&n;   from interrupt (via scrollback/front) */
 multiline_comment|/* set reverse video on characters s-e of console with selection. */
 r_inline

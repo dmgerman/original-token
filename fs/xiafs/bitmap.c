@@ -1140,10 +1140,14 @@ id|bh-&gt;b_data
 id|printk
 c_func
 (paren
-l_string|&quot;XIA-FS: dev %04x&quot;
+l_string|&quot;XIA-FS: dev %s&quot;
 l_string|&quot; block bit %u (0x%x) already cleared (%s %d)&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|sb-&gt;s_dev
+)paren
 comma
 id|bit
 comma
@@ -1464,10 +1468,14 @@ id|bh-&gt;b_data
 id|printk
 c_func
 (paren
-l_string|&quot;XIA-FS: dev %04x&quot;
+l_string|&quot;XIA-FS: dev %s&quot;
 l_string|&quot;inode bit %ld (0x%lx) already cleared (%s %d)&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|ino
 comma

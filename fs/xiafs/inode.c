@@ -199,7 +199,8 @@ r_int
 id|i
 comma
 id|z
-comma
+suffix:semicolon
+id|kdev_t
 id|dev
 suffix:semicolon
 id|MOD_INC_USE_COUNT
@@ -311,9 +312,14 @@ id|silent
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: Can&squot;t find a xiafs filesystem on dev 0x%04x.&bslash;n&quot;
+l_string|&quot;VFS: Can&squot;t find a xiafs filesystem on dev &quot;
+l_string|&quot;%s.&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -2207,10 +2213,14 @@ l_int|0
 suffix:semicolon
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|raw_inode-&gt;i_zone
 (braket
 l_int|0
 )braket
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -2585,7 +2595,11 @@ id|raw_inode-&gt;i_zone
 l_int|0
 )braket
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 r_else
 (brace
@@ -2773,9 +2787,13 @@ id|bh-&gt;b_uptodate
 (brace
 id|printk
 (paren
-l_string|&quot;IO error syncing xiafs inode [%04X:%lu]&bslash;n&quot;
+l_string|&quot;IO error syncing xiafs inode [%s:%lu]&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 )paren

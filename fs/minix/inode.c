@@ -466,11 +466,12 @@ suffix:semicolon
 r_int
 id|i
 comma
+id|block
+suffix:semicolon
+id|kdev_t
 id|dev
 op_assign
 id|s-&gt;s_dev
-comma
-id|block
 suffix:semicolon
 r_if
 c_cond
@@ -669,9 +670,14 @@ id|silent
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: Can&squot;t find a minix filesystem on dev 0x%04x.&bslash;n&quot;
+l_string|&quot;VFS: Can&squot;t find a minix filesystem on dev &quot;
+l_string|&quot;%s.&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -2099,9 +2105,14 @@ id|inode-&gt;i_sb-&gt;u.minix_sb.s_ninodes
 id|printk
 c_func
 (paren
-l_string|&quot;Bad inode number on dev 0x%04x: %d is out of range&bslash;n&quot;
+l_string|&quot;Bad inode number on dev %s&quot;
+l_string|&quot;: %d is out of range&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|ino
 )paren
@@ -2147,9 +2158,14 @@ id|BLOCK_SIZE
 id|printk
 c_func
 (paren
-l_string|&quot;Major problem: unable to read inode from dev 0x%04x&bslash;n&quot;
+l_string|&quot;Major problem: unable to read inode from dev &quot;
+l_string|&quot;%s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2225,10 +2241,14 @@ id|inode-&gt;i_mode
 )paren
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|raw_inode-&gt;i_zone
 (braket
 l_int|0
 )braket
+)paren
 suffix:semicolon
 r_else
 r_for
@@ -2399,9 +2419,14 @@ id|inode-&gt;i_sb-&gt;u.minix_sb.s_ninodes
 id|printk
 c_func
 (paren
-l_string|&quot;Bad inode number on dev 0x%04x: %d is out of range&bslash;n&quot;
+l_string|&quot;Bad inode number on dev %s&quot;
+l_string|&quot;: %d is out of range&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|ino
 )paren
@@ -2526,7 +2551,11 @@ id|raw_inode-&gt;i_zone
 l_int|0
 )braket
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 r_else
 r_for
@@ -2665,9 +2694,14 @@ id|bh-&gt;b_uptodate
 (brace
 id|printk
 (paren
-l_string|&quot;IO error syncing minix inode [%04x:%08lx]&bslash;n&quot;
+l_string|&quot;IO error syncing minix inode [&quot;
+l_string|&quot;%s:%08lx]&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 )paren

@@ -2043,7 +2043,11 @@ id|mode
 )paren
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|rdev
+)paren
 suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign

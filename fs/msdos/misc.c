@@ -14,7 +14,7 @@ DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 DECL|macro|Printk
 mdefine_line|#define Printk(x)&t;printk x
-multiline_comment|/* Well-known binary file extensions */
+multiline_comment|/* Well-known binary file extensions - of course there are many more */
 DECL|variable|bin_extensions
 r_static
 r_char
@@ -22,17 +22,50 @@ id|bin_extensions
 (braket
 )braket
 op_assign
-l_string|&quot;EXECOMBINAPPSYSDRVOVLOVROBJLIBDLLPIF&quot;
+l_string|&quot;EXE&quot;
+l_string|&quot;COM&quot;
+l_string|&quot;BIN&quot;
+l_string|&quot;APP&quot;
+l_string|&quot;SYS&quot;
+l_string|&quot;DRV&quot;
+l_string|&quot;OVL&quot;
+l_string|&quot;OVR&quot;
+l_string|&quot;OBJ&quot;
+l_string|&quot;LIB&quot;
+l_string|&quot;DLL&quot;
+l_string|&quot;PIF&quot;
 multiline_comment|/* program code */
-l_string|&quot;ARCZIPLHALZHZOOTARZ  ARJ&quot;
+l_string|&quot;ARC&quot;
+l_string|&quot;ZIP&quot;
+l_string|&quot;LHA&quot;
+l_string|&quot;LZH&quot;
+l_string|&quot;ZOO&quot;
+l_string|&quot;TAR&quot;
+l_string|&quot;Z  &quot;
+l_string|&quot;ARJ&quot;
 multiline_comment|/* common archivers */
-l_string|&quot;TZ TAZTZPTPZ&quot;
+l_string|&quot;TZ &quot;
+l_string|&quot;TAZ&quot;
+l_string|&quot;TZP&quot;
+l_string|&quot;TPZ&quot;
 multiline_comment|/* abbreviations of tar.Z and tar.zip */
-l_string|&quot;GZ TGZDEB&quot;
+l_string|&quot;GZ &quot;
+l_string|&quot;TGZ&quot;
+l_string|&quot;DEB&quot;
 multiline_comment|/* .gz, .tar.gz and Debian packages   */
-l_string|&quot;GIFBMPTIFGL JPGPCX&quot;
+l_string|&quot;GIF&quot;
+l_string|&quot;BMP&quot;
+l_string|&quot;TIF&quot;
+l_string|&quot;GL &quot;
+l_string|&quot;JPG&quot;
+l_string|&quot;PCX&quot;
 multiline_comment|/* graphics */
-l_string|&quot;TFMVF GF PK PXLDVI&quot;
+l_string|&quot;TFM&quot;
+l_string|&quot;VF &quot;
+l_string|&quot;GF &quot;
+l_string|&quot;PK &quot;
+l_string|&quot;PXL&quot;
+l_string|&quot;DVI&quot;
 suffix:semicolon
 multiline_comment|/* TeX */
 multiline_comment|/*&n; * fs_panic reports a severe file system problem and sets the file system&n; * read-only. The file system can be made writable again by remounting it.&n; */
@@ -76,11 +109,26 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Filesystem panic (dev 0x%04X, mounted on 0x%04X:%ld)&bslash;n  %s&bslash;n&quot;
+l_string|&quot;Filesystem panic (dev %s, &quot;
 comma
+id|kdevname
+c_func
+(paren
 id|s-&gt;s_dev
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;mounted on %s:%ld)&bslash;n  %s&bslash;n&quot;
 comma
+multiline_comment|/* note: kdevname returns &amp; static char[] */
+id|kdevname
+c_func
+(paren
 id|s-&gt;s_covered-&gt;i_dev
+)paren
 comma
 id|s-&gt;s_covered-&gt;i_ino
 comma

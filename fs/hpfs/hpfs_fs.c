@@ -559,7 +559,7 @@ r_int
 id|count_one_bitmap
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|secno
@@ -664,7 +664,7 @@ op_star
 id|map_nth_dirent
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|dnode_secno
@@ -717,7 +717,7 @@ id|dnode_secno
 id|fnode_dno
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -731,7 +731,7 @@ op_star
 id|map_fnode
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -751,7 +751,7 @@ op_star
 id|map_anode
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -771,7 +771,7 @@ op_star
 id|map_dnode
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -789,7 +789,7 @@ op_star
 id|map_sector
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -808,7 +808,7 @@ op_star
 id|map_4sectors
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -1002,7 +1002,7 @@ suffix:semicolon
 id|dnode_secno
 id|root_dno
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 id|uid_t
@@ -2909,7 +2909,7 @@ r_int
 id|count_one_bitmap
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|secno
@@ -5180,7 +5180,7 @@ op_star
 id|map_nth_dirent
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|dnode_secno
@@ -5329,7 +5329,7 @@ id|dnode_secno
 id|fnode_dno
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -5399,7 +5399,7 @@ op_star
 id|map_fnode
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 id|ino_t
@@ -5494,7 +5494,7 @@ op_star
 id|map_anode
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -5589,7 +5589,7 @@ op_star
 id|map_dnode
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -5681,7 +5681,7 @@ op_star
 id|map_sector
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int
@@ -5745,7 +5745,7 @@ op_star
 id|map_4sectors
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|dev
 comma
 r_int

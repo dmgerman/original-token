@@ -1,6 +1,7 @@
 macro_line|#ifndef _WD7000_H
 multiline_comment|/* $Id: $&n; *&n; * Header file for the WD-7000 driver for Linux&n; *&n; * John Boyd &lt;boyd@cis.ohio-state.edu&gt;  Jan 1994:&n; * This file has been reduced to only the definitions needed for the&n; * WD7000 host structure.&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
 r_int
 id|wd7000_detect
 c_func
@@ -58,7 +59,7 @@ c_func
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 op_star
@@ -74,6 +75,6 @@ mdefine_line|#define WD7000_Q    16
 DECL|macro|WD7000_SG
 mdefine_line|#define WD7000_SG   16
 DECL|macro|WD7000
-mdefine_line|#define WD7000 { NULL, NULL,            &bslash;&n;&t;NULL,&t;&t;                &bslash;&n;&t;&quot;wd7000&quot;,                       &bslash;&n;&t;PROC_SCSI_7000FASST,            &bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;wd7000_command,&t;&t;&t;&bslash;&n;&t;wd7000_queuecommand,&t;&t;&bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, WD7000_SG, 1, 0, 1, ENABLE_CLUSTERING}
+mdefine_line|#define WD7000 { NULL, NULL,            &bslash;&n;&t;NULL,&t;&t;                &bslash;&n;&t;NULL,&t;&t;                &bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;wd7000_command,&t;&t;&t;&bslash;&n;&t;wd7000_queuecommand,&t;&t;&bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, WD7000_SG, 1, 0, 1, ENABLE_CLUSTERING}
 macro_line|#endif
 eof

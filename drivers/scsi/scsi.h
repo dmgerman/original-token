@@ -349,6 +349,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* There was a bus reset on the bus for this&n;                                   device */
+DECL|member|expecting_cc_ua
+r_int
+id|expecting_cc_ua
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Expecting a CHECK_CONDITION/UNIT_ATTN&n;                                      because we did a bus reset. */
 DECL|typedef|Scsi_Device
 )brace
 id|Scsi_Device
@@ -884,14 +891,6 @@ id|max_scsi_hosts
 suffix:semicolon
 r_extern
 r_void
-id|build_proc_dir_entries
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|proc_print_scsidevice
 c_func
 (paren
@@ -980,9 +979,13 @@ id|printk
 c_func
 (paren
 id|DEVICE_NAME
-l_string|&quot; I/O error: dev %04x, sector %lu&bslash;n&quot;
+l_string|&quot; I/O error: dev %s, sector %lu&bslash;n&quot;
 comma
-id|req-&gt;dev
+id|kdevname
+c_func
+(paren
+id|req-&gt;rq_dev
+)paren
 comma
 id|req-&gt;sector
 )paren
@@ -1106,7 +1109,7 @@ suffix:semicolon
 id|DEVICE_OFF
 c_func
 (paren
-id|req-&gt;dev
+id|req-&gt;rq_dev
 )paren
 suffix:semicolon
 r_if
@@ -1158,10 +1161,9 @@ id|next-&gt;host_wait
 )paren
 suffix:semicolon
 )brace
-id|req-&gt;dev
+id|req-&gt;rq_status
 op_assign
-op_minus
-l_int|1
+id|RQ_INACTIVE
 suffix:semicolon
 id|wake_up
 c_func
@@ -1183,7 +1185,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* This is just like INIT_REQUEST, but we need to be aware of the fact&n; * that an interrupt may start another request, so we run this with interrupts&n; * turned off &n; */
 DECL|macro|INIT_SCSI_REQUEST
-mdefine_line|#define INIT_SCSI_REQUEST &bslash;&n;    if (!CURRENT) {&bslash;&n;&t;CLEAR_INTR; &bslash;&n;&t;restore_flags(flags);&t;&bslash;&n;&t;return; &bslash;&n;    } &bslash;&n;    if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;    if (CURRENT-&gt;bh) { &bslash;&n;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;    panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;    }
+mdefine_line|#define INIT_SCSI_REQUEST &bslash;&n;    if (!CURRENT) {&bslash;&n;&t;CLEAR_INTR; &bslash;&n;&t;restore_flags(flags);&t;&bslash;&n;&t;return; &bslash;&n;    } &bslash;&n;    if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;    if (CURRENT-&gt;bh) { &bslash;&n;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;    panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;    }
 macro_line|#endif
 DECL|macro|SCSI_SLEEP
 mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;    &bslash;&n;    if (CONDITION) {&t;&t;&t;&bslash;&n;&t;struct wait_queue wait = { current, NULL};  &bslash;&n;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;&bslash;&n;&t;for(;;) {&t;&t;&t;    &bslash;&n;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;    &bslash;&n;&t;if (CONDITION) {&t;&t;&bslash;&n;&t;&t;   if (intr_count)&t;&t;&t;&t;&bslash;&n;&t;&t;      panic(&quot;scsi: trying to call schedule() in interrupt&quot; &bslash;&n;&t;&t;&t;    &quot;, file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;&t;   schedule();&t;&t;&t;&bslash;&n;&t;   }&t;&t;&t;&t;&bslash;&n;&t;    else&t;&t;&t;&bslash;&n;&t;&t;   break;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&bslash;&n;&t;remove_wait_queue(QUEUE, &amp;wait);&t;&bslash;&n;&t;current-&gt;state = TASK_RUNNING;&t;&t;&bslash;&n;    }; }

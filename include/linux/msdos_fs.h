@@ -25,6 +25,8 @@ DECL|macro|MSDOS_SUPER_MAGIC
 mdefine_line|#define MSDOS_SUPER_MAGIC 0x4d44 /* MD */
 DECL|macro|FAT_CACHE
 mdefine_line|#define FAT_CACHE    8 /* FAT cache size */
+DECL|macro|MSDOS_MAX_EXTRA
+mdefine_line|#define MSDOS_MAX_EXTRA&t;3 /* tolerate up to that number of clusters which are&n;&t;&t;&t;     inaccessible because the FAT is too short */
 DECL|macro|ATTR_RO
 mdefine_line|#define ATTR_RO      1  /* read-only */
 DECL|macro|ATTR_HIDDEN
@@ -214,7 +216,7 @@ r_struct
 id|fat_cache
 (brace
 DECL|member|device
-r_int
+id|kdev_t
 id|device
 suffix:semicolon
 multiline_comment|/* device number. 0 means unused. */
@@ -549,7 +551,7 @@ r_void
 id|cache_inval_dev
 c_func
 (paren
-r_int
+id|kdev_t
 id|device
 )paren
 suffix:semicolon

@@ -2572,7 +2572,7 @@ op_minus
 l_int|2
 suffix:semicolon
 )brace
-multiline_comment|/* This is not a very smart implementation. We could optimize for &n;   consecutive block numbers. I&squot;m not conviced this would really&n;   bring down the processor load. */
+multiline_comment|/* This is not a very smart implementation. We could optimize for &n;   consecutive block numbers. I&squot;m not convinced this would really&n;   bring down the processor load. */
 DECL|function|do_cm206_request
 r_static
 r_void
@@ -2616,10 +2616,9 @@ id|CURRENT
 op_eq
 l_int|NULL
 op_logical_or
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_status
 op_eq
-op_minus
-l_int|1
+id|RQ_INACTIVE
 )paren
 r_return
 suffix:semicolon

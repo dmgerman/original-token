@@ -42,9 +42,9 @@ op_assign
 op_amp
 id|SCpnt-&gt;request
 suffix:semicolon
-id|req-&gt;dev
+id|req-&gt;rq_status
 op_assign
-l_int|0xfffe
+id|RQ_SCSI_DONE
 suffix:semicolon
 multiline_comment|/* Busy, but indicate request done */
 r_if
@@ -135,9 +135,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 (brace
 r_struct
@@ -162,9 +162,9 @@ multiline_comment|/* Hmm.. Have to ask about this */
 r_while
 c_loop
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 id|schedule
 c_func
@@ -311,10 +311,9 @@ id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_assign
-op_minus
-l_int|1
+id|RQ_INACTIVE
 suffix:semicolon
 multiline_comment|/* Deallocate */
 id|wake_up
@@ -359,7 +358,7 @@ id|sr_cmd
 l_int|10
 )braket
 suffix:semicolon
-r_int
+id|kdev_t
 id|dev
 op_assign
 id|inode-&gt;i_rdev
@@ -2600,7 +2599,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|inode-&gt;i_rdev
+)paren
 )paren
 (brace
 r_return

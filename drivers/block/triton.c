@@ -896,10 +896,6 @@ id|ide_hwifs
 (braket
 )braket
 suffix:semicolon
-op_increment
-id|fn
-suffix:semicolon
-multiline_comment|/* IDE interface is 2nd function on this device */
 multiline_comment|/*&n;&t; * See if IDE and BM-DMA features are enabled:&n;&t; */
 r_if
 c_cond

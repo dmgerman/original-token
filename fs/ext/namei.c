@@ -368,9 +368,14 @@ l_string|&quot;ext_find_entry: bad dir entry&bslash;n&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dev=%d, dir=%ld, offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
+l_string|&quot;dev=%s, dir=%ld, offset=%ld, &quot;
+l_string|&quot;rec_len=%d, name_len=%d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dir-&gt;i_dev
+)paren
 comma
 id|dir-&gt;i_ino
 comma
@@ -1127,9 +1132,14 @@ l_string|&quot;ext_addr_entry: bad dir entry&bslash;n&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dev=%d, dir=%ld, offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
+l_string|&quot;dev=%s, dir=%ld, offset=%ld, &quot;
+l_string|&quot;rec_len=%d, name_len=%d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dir-&gt;i_dev
+)paren
 comma
 id|dir-&gt;i_ino
 comma
@@ -1724,7 +1734,11 @@ id|mode
 )paren
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|rdev
+)paren
 suffix:semicolon
 macro_line|#if 0
 id|inode-&gt;i_mtime
@@ -2243,9 +2257,13 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;warning - bad directory on dev %04x&bslash;n&quot;
+l_string|&quot;warning - bad directory on dev %s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2308,9 +2326,13 @@ id|de1-&gt;name
 id|printk
 c_func
 (paren
-l_string|&quot;warning - bad directory on dev %04x&bslash;n&quot;
+l_string|&quot;warning - bad directory on dev %s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2439,9 +2461,14 @@ l_string|&quot;empty_dir: bad dir entry&bslash;n&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dev=%d, dir=%ld, offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
+l_string|&quot;dev=%s, dir=%ld, offset=%ld, &quot;
+l_string|&quot;rec_len=%d, name_len=%d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 comma
@@ -3011,9 +3038,13 @@ id|inode-&gt;i_nlink
 id|printk
 c_func
 (paren
-l_string|&quot;Deleting nonexistent file (%04x:%ld), %d&bslash;n&quot;
+l_string|&quot;Deleting nonexistent file (%s:%ld), %d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 comma

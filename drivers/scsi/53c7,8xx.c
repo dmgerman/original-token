@@ -27,6 +27,28 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;53c7,8xx.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_ncr53c7xx
+r_struct
+id|proc_dir_entry
+id|proc_scsi_ncr53c7xx
+op_assign
+(brace
+id|PROC_SCSI_NCR53C7xx
+comma
+l_int|9
+comma
+l_string|&quot;ncr53c7xx&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 r_static
 r_void
 id|abnormal_finished
@@ -3339,6 +3361,11 @@ id|TEMP_REG
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * I needed some variables in the script to be accessible to &n;     * both the NCR chip and the host processor. For these variables,&n;     * I made the arbitrary decision to store them directly in the &n;     * hostdata structure rather than in the RELATIVE area of the &n;     * SCRIPTS.&n;     */
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_ncr53c7xx
+suffix:semicolon
 id|patch_abs_rwri_data
 (paren
 id|hostdata-&gt;script

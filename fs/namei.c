@@ -436,7 +436,6 @@ id|inode
 r_struct
 id|task_struct
 op_star
-op_star
 id|p
 suffix:semicolon
 r_if
@@ -455,20 +454,9 @@ id|inode-&gt;i_mode
 )paren
 )paren
 multiline_comment|/* shortcut */
-r_for
-c_loop
+id|for_each_task
+c_func
 (paren
-id|p
-op_assign
-op_amp
-id|LAST_TASK
-suffix:semicolon
-id|p
-OG
-op_amp
-id|FIRST_TASK
-suffix:semicolon
-op_decrement
 id|p
 )paren
 (brace
@@ -481,8 +469,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-op_star
-id|p
+id|p-&gt;mm
 )paren
 r_continue
 suffix:semicolon
@@ -491,12 +478,7 @@ c_loop
 (paren
 id|mpnt
 op_assign
-(paren
-op_star
-id|p
-)paren
-op_member_access_from_pointer
-id|mm-&gt;mmap
+id|p-&gt;mm-&gt;mmap
 suffix:semicolon
 id|mpnt
 suffix:semicolon

@@ -511,7 +511,7 @@ r_int
 id|check_mcdx_media_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 multiline_comment|/* already declared in init/main */
@@ -2666,9 +2666,9 @@ l_int|NULL
 )paren
 op_logical_or
 (paren
-id|CURRENT-&gt;dev
-OL
-l_int|0
+id|CURRENT-&gt;rq_status
+op_eq
+id|RQ_INACTIVE
 )paren
 )paren
 (brace
@@ -2692,7 +2692,7 @@ id|mcdx_stuffp
 id|MINOR
 c_func
 (paren
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_dev
 )paren
 )braket
 suffix:semicolon
@@ -2715,7 +2715,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_dev
 )paren
 suffix:semicolon
 r_if
@@ -2743,9 +2743,13 @@ id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;do_request(): bad device: 0x%04x&bslash;n&quot;
+l_string|&quot;do_request(): bad device: %s&bslash;n&quot;
 comma
-id|CURRENT-&gt;dev
+id|kdevname
+c_func
+(paren
+id|CURRENT-&gt;rq_dev
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -3622,7 +3626,7 @@ r_int
 id|check_mcdx_media_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 multiline_comment|/*&t;Return: 1 if media changed since last call to &n;&t;&t;&t;  this function&n;&t;&t;&t;0 else&n;&t;Setting flag to 0 resets the changed state. */
@@ -3631,7 +3635,13 @@ id|INFO
 c_func
 (paren
 (paren
-l_string|&quot;check_mcdx_media_change(0x%x) called&bslash;n&quot;
+l_string|&quot;check_mcdx_media_change called for device %s&bslash;n&quot;
+comma
+id|kdevname
+c_func
+(paren
+id|full_dev
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -4986,6 +4996,11 @@ l_string|&quot;adjust mem_start&bslash;n&quot;
 suffix:semicolon
 id|stuffp
 op_assign
+(paren
+r_struct
+id|s_drive_stuff
+op_star
+)paren
 id|mem_start
 suffix:semicolon
 id|mem_start

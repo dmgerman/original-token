@@ -18,6 +18,28 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;aic7xxx.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_aic7xxx
+r_struct
+id|proc_dir_entry
+id|proc_scsi_aic7xxx
+op_assign
+(brace
+id|PROC_SCSI_AIC7XXX
+comma
+l_int|7
+comma
+l_string|&quot;aic7xxx&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
 mdefine_line|#define AIC7XXX_C_VERSION  &quot;$Revision: 2.0 $&quot;
 DECL|macro|NUMBER
@@ -9679,6 +9701,13 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_template
+op_member_access_from_pointer
+id|proc_dir
+op_assign
+op_amp
+id|proc_scsi_aic7xxx
+suffix:semicolon
 multiline_comment|/*&n;   * Since we may allow sharing of IRQs, it is imperative&n;   * that we &quot;null-out&quot; the aic7xxx_boards array. It is&n;   * not guaranteed to be initialized to 0 (NULL). We use&n;   * a NULL entry to indicate that no prior hosts have&n;   * been found/registered for that IRQ.&n;   */
 r_for
 c_loop
@@ -12202,8 +12231,8 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
-id|devno
+id|kdev_t
+id|dev
 comma
 r_int
 id|geom

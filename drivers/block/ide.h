@@ -13,6 +13,10 @@ macro_line|#ifndef OK_TO_RESET_CONTROLLER&t;&t;/* 1 needed for good error recove
 DECL|macro|OK_TO_RESET_CONTROLLER
 mdefine_line|#define OK_TO_RESET_CONTROLLER&t;1&t;/* 0 for use with AH2372A/B interface */
 macro_line|#endif
+macro_line|#ifndef FAKE_FDISK_FOR_EZDRIVE&t;&t;/* 1 to help linux fdisk with EZDRIVE */
+DECL|macro|FAKE_FDISK_FOR_EZDRIVE
+mdefine_line|#define FAKE_FDISK_FOR_EZDRIVE &t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
 macro_line|#ifndef SUPPORT_RZ1000&t;&t;&t;/* 1 to support RZ1000 chipset */
 DECL|macro|SUPPORT_RZ1000
 mdefine_line|#define SUPPORT_RZ1000&t;&t;1&t;/* 0 to reduce kernel size */
@@ -536,6 +540,15 @@ id|special_t
 id|special
 suffix:semicolon
 multiline_comment|/* special action flags */
+macro_line|#if FAKE_FDISK_FOR_EZDRIVE
+DECL|member|ezdrive
+r_int
+id|ezdrive
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: partitioned with ezdrive */
+macro_line|#endif /* FAKE_FDISK_FOR_EZDRIVE */
 DECL|member|present
 r_int
 id|present
@@ -1098,7 +1111,7 @@ r_int
 id|ide_xlate_1024
 c_func
 (paren
-id|dev_t
+id|kdev_t
 comma
 r_int
 comma
@@ -1134,7 +1147,7 @@ r_int
 id|ide_do_drive_cmd
 c_func
 (paren
-r_int
+id|kdev_t
 id|rdev
 comma
 r_char

@@ -126,7 +126,7 @@ suffix:semicolon
 multiline_comment|/* number of pages in the area required */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * For now it is unsafe to allocate bucket sizes between n &amp; n=16 where n is&n; * 4096 * any power of two&n; */
+multiline_comment|/*&n; * For now it is unsafe to allocate bucket sizes between n and n-16 where n is&n; * 4096 * any power of two&n; */
 macro_line|#if PAGE_SIZE == 4096
 DECL|variable|sizes
 r_struct
@@ -1511,7 +1511,7 @@ l_int|0
 op_logical_or
 (paren
 id|order
-OG
+op_ge
 r_sizeof
 (paren
 id|sizes

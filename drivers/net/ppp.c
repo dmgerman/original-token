@@ -7,6 +7,7 @@ DECL|macro|OPTIMIZE_FLAG_TIME
 mdefine_line|#define OPTIMIZE_FLAG_TIME  ((HZ * 3)/2)&t;/* */
 DECL|macro|CHECK_CHARACTERS
 mdefine_line|#define CHECK_CHARACTERS
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;

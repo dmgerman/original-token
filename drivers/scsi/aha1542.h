@@ -1,6 +1,7 @@
 macro_line|#ifndef _AHA1542_H
 multiline_comment|/* $Id: aha1542.h,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *&n; * Header file for the adaptec 1542 driver for Linux&n; *&n; * $Log: aha1542.h,v $&n; * Revision 1.1  1992/07/24  06:27:38  root&n; * Initial revision&n; *&n; * Revision 1.2  1992/07/04  18:41:49  root&n; * Replaced distribution with current drivers&n; *&n; * Revision 1.3  1992/06/23  23:58:20  root&n; * Fixes.&n; *&n; * Revision 1.2  1992/05/26  22:13:23  root&n; * Changed bug that prevented DMA above first 2 mbytes.&n; *&n; * Revision 1.1  1992/05/22  21:00:29  root&n; * Initial revision&n; *&n; * Revision 1.1  1992/04/24  18:01:50  root&n; * Initial revision&n; *&n; * Revision 1.1  1992/04/02  03:23:13  drew&n; * Initial revision&n; *&n; * Revision 1.3  1992/01/27  14:46:29  tthorn&n; * *** empty log message ***&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
 multiline_comment|/* I/O Port interface 4.2 */
 multiline_comment|/* READ */
 DECL|macro|STATUS
@@ -277,7 +278,7 @@ c_func
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 op_star
@@ -293,7 +294,12 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_scsi_aha1542
+suffix:semicolon
 DECL|macro|AHA1542
-mdefine_line|#define AHA1542 {  NULL, NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;                &bslash;&n;&t;&t;     &quot;aha1542&quot;,                         &bslash;&n;&t;&t;     PROC_SCSI_AHA1542,                 &bslash;&n;&t;&t;     &quot;Adaptec 1542&quot;, &t;&t;&t;&bslash;&n;&t;&t;     aha1542_detect,&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t; &t;&t;&t;&bslash;&n;&t;&t;     aha1542_command,&t;&t;&t;&bslash;&n;&t;&t;     aha1542_queuecommand,&t;&t;&bslash;&n;&t;&t;     aha1542_abort,&t;&t;&t;&bslash;&n;&t;&t;     aha1542_reset,&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     aha1542_biosparam,                 &bslash;&n;&t;&t;     AHA1542_MAILBOXES, &t;&t;&bslash;&n;&t;&t;     7, &t;&t;&t;&t;&bslash;&n;&t;&t;     AHA1542_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;     AHA1542_CMDLUN, &t;&t;&t;&bslash;&n;&t;&t;     0, &t;&t;&t;&t;&bslash;&n;&t;&t;     1, &t;&t;&t;&t;&bslash;&n;&t;&t;     ENABLE_CLUSTERING}
+mdefine_line|#define AHA1542 {  NULL, NULL,&t;&t;&t;&t;&bslash;&n;                     &amp;proc_scsi_aha1542,/* proc_dir_entry */ &bslash;&n;&t;&t;     NULL,&t;&t;                &bslash;&n;&t;&t;     &quot;Adaptec 1542&quot;, &t;&t;&t;&bslash;&n;&t;&t;     aha1542_detect,&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t; &t;&t;&t;&bslash;&n;&t;&t;     aha1542_command,&t;&t;&t;&bslash;&n;&t;&t;     aha1542_queuecommand,&t;&t;&bslash;&n;&t;&t;     aha1542_abort,&t;&t;&t;&bslash;&n;&t;&t;     aha1542_reset,&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     aha1542_biosparam,                 &bslash;&n;&t;&t;     AHA1542_MAILBOXES, &t;&t;&bslash;&n;&t;&t;     7, &t;&t;&t;&t;&bslash;&n;&t;&t;     AHA1542_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;     AHA1542_CMDLUN, &t;&t;&t;&bslash;&n;&t;&t;     0, &t;&t;&t;&t;&bslash;&n;&t;&t;     1, &t;&t;&t;&t;&bslash;&n;&t;&t;     ENABLE_CLUSTERING}
 macro_line|#endif
 eof

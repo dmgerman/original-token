@@ -1,5 +1,6 @@
 macro_line|#ifndef _SCSI_DEBUG_H
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
 r_int
 id|scsi_debug_detect
 c_func
@@ -49,7 +50,7 @@ c_func
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 (braket
@@ -91,6 +92,6 @@ macro_line|#endif
 DECL|macro|SCSI_DEBUG_MAILBOXES
 mdefine_line|#define SCSI_DEBUG_MAILBOXES 8
 DECL|macro|SCSI_DEBUG
-mdefine_line|#define SCSI_DEBUG {NULL, NULL, scsi_debug_proc_info, &quot;scsi_debug&quot;, &bslash;&n;&t;&t;PROC_SCSI_SCSI_DEBUG, &quot;SCSI DEBUG&quot;, scsi_debug_detect, NULL, &bslash;&n;&t;&t;NULL, scsi_debug_command,&t;&t;&bslash;&n;&t;&t;scsi_debug_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_biosparam,&t;&t;&t;&t;&bslash;&n;&t;&t;SCSI_DEBUG_MAILBOXES, 7, SG_ALL, 1, 0, 1, ENABLE_CLUSTERING}
+mdefine_line|#define SCSI_DEBUG {NULL, NULL, NULL, scsi_debug_proc_info, &bslash;&n;&t;&t;&quot;SCSI DEBUG&quot;, scsi_debug_detect, NULL, &bslash;&n;&t;&t;NULL, scsi_debug_command,&t;&t;&bslash;&n;&t;&t;scsi_debug_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_biosparam,&t;&t;&t;&t;&bslash;&n;&t;&t;SCSI_DEBUG_MAILBOXES, 7, SG_ALL, 1, 0, 1, ENABLE_CLUSTERING}
 macro_line|#endif
 eof

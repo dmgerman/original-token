@@ -315,7 +315,7 @@ r_static
 r_int
 id|xd_reread_partitions
 (paren
-r_int
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon

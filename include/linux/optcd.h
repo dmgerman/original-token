@@ -319,7 +319,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|CURRENT_VALID
-mdefine_line|#define CURRENT_VALID &bslash;&n;&t;(CURRENT &amp;&amp; MAJOR(CURRENT -&gt; dev) == MAJOR_NR &bslash;&n;&t; &amp;&amp; CURRENT -&gt; cmd == READ &amp;&amp; CURRENT -&gt; sector != -1)
+mdefine_line|#define CURRENT_VALID &bslash;&n;&t;(CURRENT &amp;&amp; MAJOR(CURRENT -&gt; rq_dev) == MAJOR_NR &bslash;&n;&t; &amp;&amp; CURRENT -&gt; cmd == READ &amp;&amp; CURRENT -&gt; sector != -1)
 DECL|macro|DEBUG_DRIVE_IF
 macro_line|#undef&t;DEBUG_DRIVE_IF&t;&t;/* Low level drive interface */
 DECL|macro|DEBUG_COMMANDS

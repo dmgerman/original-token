@@ -392,9 +392,13 @@ id|bh-&gt;b_data
 id|printk
 c_func
 (paren
-l_string|&quot;free_block (%04x:%d): bit already cleared&bslash;n&quot;
+l_string|&quot;free_block (%s:%d): bit already cleared&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|sb-&gt;s_dev
+)paren
 comma
 id|block
 )paren

@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_KERNEL_STAT_H
 DECL|macro|_LINUX_KERNEL_STAT_H
 mdefine_line|#define _LINUX_KERNEL_STAT_H
+macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/*&n; * &squot;kernel_stat.h&squot; contains the definitions needed for doing&n; * some kernel statistics (cpu usage, context switches ...),&n; * used by rstatd/perfmeter&n; */
 DECL|macro|DK_NDRIVE
 mdefine_line|#define DK_NDRIVE 4
@@ -48,7 +49,7 @@ r_int
 r_int
 id|interrupts
 (braket
-l_int|16
+id|NR_IRQS
 )braket
 suffix:semicolon
 DECL|member|ipackets

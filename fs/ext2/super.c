@@ -142,15 +142,9 @@ id|ERRORS_RO
 )paren
 id|panic
 (paren
-l_string|&quot;EXT2-fs panic (device %d/%d): %s: %s&bslash;n&quot;
+l_string|&quot;EXT2-fs panic (device %s): %s: %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|sb-&gt;s_dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -164,15 +158,9 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_CRIT
-l_string|&quot;EXT2-fs error (device %d/%d): %s: %s&bslash;n&quot;
+l_string|&quot;EXT2-fs error (device %s): %s: %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|sb-&gt;s_dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -310,15 +298,9 @@ id|args
 suffix:semicolon
 id|panic
 (paren
-l_string|&quot;EXT2-fs panic (device %d/%d): %s: %s&bslash;n&quot;
+l_string|&quot;EXT2-fs panic (device %s): %s: %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|sb-&gt;s_dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -381,15 +363,9 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;EXT2-fs warning (device %d/%d): %s: %s&bslash;n&quot;
+l_string|&quot;EXT2-fs warning (device %s): %s: %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|sb-&gt;s_dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -1831,7 +1807,7 @@ id|logic_sb_block
 op_assign
 l_int|1
 suffix:semicolon
-r_int
+id|kdev_t
 id|dev
 op_assign
 id|sb-&gt;s_dev
@@ -1985,15 +1961,10 @@ id|silent
 )paren
 id|printk
 (paren
-l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev %d/%d.&bslash;n&quot;
+l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev &quot;
+l_string|&quot;%s.&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -2326,15 +2297,10 @@ id|silent
 )paren
 id|printk
 (paren
-l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev %d/%d.&bslash;n&quot;
+l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev &quot;
+l_string|&quot;%s.&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -2377,9 +2343,14 @@ id|silent
 )paren
 id|printk
 (paren
-l_string|&quot;VFS: Unsupported blocksize on dev 0x%04x.&bslash;n&quot;
+l_string|&quot;VFS: Unsupported blocksize on dev &quot;
+l_string|&quot;%s.&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT

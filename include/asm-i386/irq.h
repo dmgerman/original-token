@@ -4,6 +4,8 @@ mdefine_line|#define _ASM_IRQ_H
 multiline_comment|/*&n; *&t;linux/include/asm/irq.h&n; *&n; *&t;(C) 1992, 1993 Linus Torvalds&n; */
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+DECL|macro|NR_IRQS
+mdefine_line|#define NR_IRQS 16
 r_extern
 r_void
 id|disable_irq

@@ -69,7 +69,7 @@ c_func
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 (braket
@@ -81,6 +81,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL (0)
 macro_line|#endif
 DECL|macro|QLOGIC
-mdefine_line|#define QLOGIC {&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;        &bslash;&n;&t;&quot;qlogic&quot;,               &bslash;&n;&t;PROC_SCSI_QLOGIC,       &bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;qlogic_detect,&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;qlogic_info,&t;&t;&bslash;&n;&t;qlogic_command, &t;&bslash;&n;&t;qlogic_queuecommand,&t;&bslash;&n;&t;qlogic_abort,&t;&t;&bslash;&n;&t;qlogic_reset,&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;qlogic_biosparam,&t;&bslash;&n;&t;0,&t;&t;&t;&bslash;&n;&t;-1,&t;&t;&t;&bslash;&n;&t;SG_ALL,&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&bslash;&n;&t;DISABLE_CLUSTERING&t;&bslash;&n;}
+mdefine_line|#define QLOGIC {&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;        &bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;qlogic_detect,&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;qlogic_info,&t;&t;&bslash;&n;&t;qlogic_command, &t;&bslash;&n;&t;qlogic_queuecommand,&t;&bslash;&n;&t;qlogic_abort,&t;&t;&bslash;&n;&t;qlogic_reset,&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&bslash;&n;&t;qlogic_biosparam,&t;&bslash;&n;&t;0,&t;&t;&t;&bslash;&n;&t;-1,&t;&t;&t;&bslash;&n;&t;SG_ALL,&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&bslash;&n;&t;DISABLE_CLUSTERING&t;&bslash;&n;}
 macro_line|#endif /* _QLOGIC_H */
 eof

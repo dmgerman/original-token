@@ -14,7 +14,7 @@ multiline_comment|/*************************************************************
 DECL|macro|CHECKPAL
 mdefine_line|#define CHECKPAL        0        /* EISA pal checking on/off            */
 DECL|macro|NEWSTUFF
-mdefine_line|#define NEWSTUFF        1        /* Some changes for ISA/EISA boards    */
+mdefine_line|#define NEWSTUFF        0        /* Some changes for ISA/EISA boards    */
 multiline_comment|/************************************************************************&n; * Debug options.                                                       * &n; * Enable DEBUG and whichever options you require.                      *&n; ************************************************************************/
 DECL|macro|DEBUG_EATA
 mdefine_line|#define DEBUG_EATA      1       /* Enable debug code.                   */
@@ -158,7 +158,7 @@ DECL|macro|eata_release
 mdefine_line|#define eata_release NULL  
 macro_line|#endif
 DECL|macro|EATA_DMA
-mdefine_line|#define EATA_DMA {                   &bslash;&n;&t;NULL, NULL,                  &bslash;&n;&t;eata_proc_info,/* procinfo       */      &bslash;&n;&t;&quot;eata_dma&quot;,    /* proc dir entry */      &bslash;&n;&t;PROC_SCSI_EATA,/* proc dir inode */      &bslash;&n;&t;&quot;EATA (Extended Attachment) HBA driver&quot;, &bslash;&n;&t;eata_detect,                 &bslash;&n;&t;eata_release,                &bslash;&n;&t;NULL, NULL,                  &bslash;&n;&t;eata_queue,                  &bslash;&n;&t;eata_abort,                  &bslash;&n;&t;eata_reset,                  &bslash;&n;&t;NULL,   /* Slave attach */   &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;&t;0,      /* Canqueue     */   &bslash;&n;&t;0,      /* this_id      */   &bslash;&n;&t;0,      /* sg_tablesize */   &bslash;&n;&t;0,      /* cmd_per_lun  */   &bslash;&n;&t;0,      /* present      */   &bslash;&n;&t;1,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
+mdefine_line|#define EATA_DMA {                   &bslash;&n;        NULL, NULL,                  &bslash;&n;        NULL,               /* proc_dir_entry */ &bslash;&n;        eata_proc_info,     /* procinfo       */ &bslash;&n;        &quot;EATA (Extended Attachment) HBA driver&quot;, &bslash;&n;        eata_detect,                 &bslash;&n;        eata_release,                &bslash;&n;&t;NULL, NULL,                  &bslash;&n;&t;eata_queue,                  &bslash;&n;&t;eata_abort,                  &bslash;&n;&t;eata_reset,                  &bslash;&n;&t;NULL,   /* Slave attach */   &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;&t;0,      /* Canqueue     */   &bslash;&n;&t;0,      /* this_id      */   &bslash;&n;&t;0,      /* sg_tablesize */   &bslash;&n;&t;0,      /* cmd_per_lun  */   &bslash;&n;&t;0,      /* present      */   &bslash;&n;&t;1,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
 macro_line|#endif /* _EATA_DMA_H */
 multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

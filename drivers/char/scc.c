@@ -6444,7 +6444,7 @@ id|scc_channel
 op_star
 id|scc
 comma
-id|dev_t
+id|kdev_t
 id|device
 comma
 r_const
@@ -6460,7 +6460,7 @@ r_char
 op_star
 id|badmagic
 op_assign
-l_string|&quot;Warning: bad magic number for Z8530 SCC struct (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: bad magic number for Z8530 SCC struct (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_static
 r_const
@@ -6468,7 +6468,7 @@ r_char
 op_star
 id|badinfo
 op_assign
-l_string|&quot;Warning: Z8530 not found for (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: Z8530 not found for (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -6482,13 +6482,7 @@ c_func
 (paren
 id|badinfo
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
@@ -6514,13 +6508,7 @@ c_func
 (paren
 id|badmagic
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
@@ -6633,15 +6621,10 @@ id|SCC_MAGIC
 id|printk
 c_func
 (paren
-l_string|&quot;ERROR: scc_open(): bad magic number for device (%d, %d)&quot;
+l_string|&quot;ERROR: scc_open(): bad magic number for device (&quot;
+l_string|&quot;%s)&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -6962,15 +6945,9 @@ id|SCC_MAGIC
 id|printk
 c_func
 (paren
-l_string|&quot;ERROR: scc_ioctl(): bad magic number for device %d,%d&quot;
+l_string|&quot;ERROR: scc_ioctl(): bad magic number for device %s&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device

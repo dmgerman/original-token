@@ -7,15 +7,13 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifndef RTC_PORT
 DECL|macro|RTC_PORT
 mdefine_line|#define RTC_PORT(x)&t;(0x70 + (x))
-DECL|macro|RTC_ADDR
-mdefine_line|#define RTC_ADDR(x)&t;(0x80 | (x))
 DECL|macro|RTC_ALWAYS_BCD
 mdefine_line|#define RTC_ALWAYS_BCD&t;1
 macro_line|#endif
 DECL|macro|CMOS_READ
-mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p(RTC_ADDR(addr),RTC_PORT(0)); &bslash;&n;inb_p(RTC_PORT(1)); &bslash;&n;})
+mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p((addr),RTC_PORT(0)); &bslash;&n;inb_p(RTC_PORT(1)); &bslash;&n;})
 DECL|macro|CMOS_WRITE
-mdefine_line|#define CMOS_WRITE(val, addr) ({ &bslash;&n;outb_p(RTC_ADDR(addr),RTC_PORT(0)); &bslash;&n;outb_p(val,RTC_PORT(1)); &bslash;&n;})
+mdefine_line|#define CMOS_WRITE(val, addr) ({ &bslash;&n;outb_p((addr),RTC_PORT(0)); &bslash;&n;outb_p((val),RTC_PORT(1)); &bslash;&n;})
 multiline_comment|/**********************************************************************&n; * register summary&n; **********************************************************************/
 DECL|macro|RTC_SECONDS
 mdefine_line|#define RTC_SECONDS&t;&t;0

@@ -1784,7 +1784,7 @@ r_char
 op_star
 id|found
 suffix:semicolon
-r_int
+id|kdev_t
 id|dev
 op_assign
 id|sb-&gt;s_dev
@@ -2181,15 +2181,10 @@ id|silent
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: unable to read Xenix/SystemV/Coherent superblock on device %d/%d&bslash;n&quot;
+l_string|&quot;VFS: unable to read Xenix/SystemV/Coherent superblock on device &quot;
+l_string|&quot;%s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -2623,19 +2618,13 @@ id|silent
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: Found a %s FS (block size = %d) on device %d/%d&bslash;n&quot;
+l_string|&quot;VFS: Found a %s FS (block size = %d) on device %s&bslash;n&quot;
 comma
 id|found
 comma
 id|sb-&gt;sv_block_size
 comma
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|dev
@@ -4537,9 +4526,14 @@ id|sb-&gt;sv_ninodes
 id|printk
 c_func
 (paren
-l_string|&quot;Bad inode number on dev 0x%04x: %d is out of range&bslash;n&quot;
+l_string|&quot;Bad inode number on dev %s&quot;
+l_string|&quot;: %d is out of range&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|ino
 )paren
@@ -4583,9 +4577,14 @@ id|block
 id|printk
 c_func
 (paren
-l_string|&quot;Major problem: unable to read inode from dev 0x%04x&bslash;n&quot;
+l_string|&quot;Major problem: unable to read inode from dev &quot;
+l_string|&quot;%s&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -4725,7 +4724,11 @@ id|inode-&gt;i_mode
 )paren
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|raw_inode-&gt;i_a.i_rdev
+)paren
 suffix:semicolon
 r_else
 r_if
@@ -5039,9 +5042,14 @@ id|sb-&gt;sv_ninodes
 id|printk
 c_func
 (paren
-l_string|&quot;Bad inode number on dev 0x%04x: %d is out of range&bslash;n&quot;
+l_string|&quot;Bad inode number on dev %s&quot;
+l_string|&quot;: %d is out of range&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|ino
 )paren
@@ -5228,7 +5236,11 @@ id|inode-&gt;i_mode
 )paren
 id|raw_inode-&gt;i_a.i_rdev
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 multiline_comment|/* write 2 or 3 bytes ?? */
 r_else
@@ -5424,9 +5436,14 @@ id|bh-&gt;b_uptodate
 (brace
 id|printk
 (paren
-l_string|&quot;IO error syncing sysv inode [%04x:%08lx]&bslash;n&quot;
+l_string|&quot;IO error syncing sysv inode [&quot;
+l_string|&quot;%s:%08lx]&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 )paren

@@ -3,6 +3,7 @@ macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
 multiline_comment|/*&n;    $Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.h,v 1.3 1993/09/24 12:21:00 drew Exp drew $&n;*/
+macro_line|#include &lt;linux/proc_fs.h&gt;
 multiline_comment|/* It is senseless to set SG_ALL any higher than this - the performance&n; *  does not get any better, and it wastes memory &n; */
 DECL|macro|SG_NONE
 mdefine_line|#define SG_NONE 0
@@ -38,7 +39,14 @@ r_int
 op_star
 id|usage_count
 suffix:semicolon
-multiline_comment|/* proc-fs info function.&n;     * Can be used to export driver statistics and other infos to the world &n;     * outside the kernel ie. userspace and it also provides an interface&n;     * to feed the driver with information. Check eata_dma_proc.c for reference.&n;     */
+multiline_comment|/* The pointer to the /proc/scsi directory entry */
+DECL|member|proc_dir
+r_struct
+id|proc_dir_entry
+op_star
+id|proc_dir
+suffix:semicolon
+multiline_comment|/* proc-fs info function.&n;     * Can be used to export driver statistics and other infos to the world &n;     * outside the kernel ie. userspace and it also provides an interface&n;     * to feed the driver with information. Check eata_dma_proc.c for reference&n;     */
 DECL|member|proc_info
 r_int
 (paren
@@ -61,19 +69,6 @@ r_int
 comma
 r_int
 )paren
-suffix:semicolon
-multiline_comment|/* driver name that will appear in the /proc/scsi directory */
-DECL|member|procname
-r_const
-r_char
-op_star
-id|procname
-suffix:semicolon
-multiline_comment|/* low_ino of the drivers /proc/scsi entry. Defined in proc_fs.h */
-DECL|member|low_ino
-r_int
-r_int
-id|low_ino
 suffix:semicolon
 multiline_comment|/*&n;     * The name pointer is a pointer to the name of the SCSI&n;     * device detected.&n;     */
 DECL|member|name
@@ -205,7 +200,7 @@ id|bios_param
 id|Disk
 op_star
 comma
-r_int
+id|kdev_t
 comma
 r_int
 (braket
@@ -450,6 +445,15 @@ id|Scsi_Host_Template
 op_star
 id|scsi_hosts
 suffix:semicolon
+r_extern
+r_void
+id|build_proc_dir_entries
+c_func
+(paren
+id|Scsi_Host_Template
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *  scsi_init initializes the scsi hosts.&n; */
 multiline_comment|/* &n; * We use these goofy things because the MM is not set up when we init&n; * the scsi subsystem.&t;By using these functions we can write code that&n; * looks normal.  Also, it makes it possible to use the same code for a&n; * loadable module. &n; */
 r_extern
@@ -478,27 +482,6 @@ comma
 r_int
 r_int
 id|size
-)paren
-suffix:semicolon
-r_void
-id|scan_scsis
-(paren
-r_struct
-id|Scsi_Host
-op_star
-id|shpnt
-comma
-id|unchar
-id|hardcoded
-comma
-id|unchar
-id|hchannel
-comma
-id|unchar
-id|hid
-comma
-id|unchar
-id|hlun
 )paren
 suffix:semicolon
 r_extern

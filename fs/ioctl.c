@@ -344,7 +344,7 @@ id|FIONBIO
 suffix:colon
 id|on
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren
@@ -379,7 +379,7 @@ suffix:colon
 multiline_comment|/* O_SYNC is not yet implemented,&n;&t;&t;&t;&t;  but it&squot;s here for completeness. */
 id|on
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

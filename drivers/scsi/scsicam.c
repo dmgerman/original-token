@@ -84,7 +84,7 @@ op_star
 id|disk
 comma
 multiline_comment|/* SCSI disk */
-r_int
+id|kdev_t
 id|dev
 comma
 multiline_comment|/* Device major, minor */
@@ -117,10 +117,24 @@ op_assign
 id|bread
 c_func
 (paren
+id|MKDEV
+c_func
+(paren
+id|MAJOR
+c_func
+(paren
 id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 op_amp
 op_complement
 l_int|0xf
+)paren
 comma
 l_int|0
 comma

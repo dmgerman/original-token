@@ -229,7 +229,11 @@ l_int|0
 suffix:semicolon
 id|ROOT_DEV
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|ORIG_ROOT_DEV
+)paren
 suffix:semicolon
 id|drive_info
 op_assign

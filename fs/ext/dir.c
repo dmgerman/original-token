@@ -378,9 +378,14 @@ l_string|&quot;ext_readdir: bad dir entry, skipping&bslash;n&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dev=%d, dir=%ld, offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
+l_string|&quot;dev=%s, dir=%ld, &quot;
+l_string|&quot;offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 comma

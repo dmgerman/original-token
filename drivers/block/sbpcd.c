@@ -387,7 +387,7 @@ r_int
 id|sbpcd_chk_disk_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 multiline_comment|/*==========================================================================*/
@@ -25862,7 +25862,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|inode-&gt;i_rdev
+)paren
 )paren
 (brace
 r_return
@@ -26058,11 +26060,9 @@ op_eq
 l_int|NULL
 )paren
 op_logical_or
-(paren
-id|CURRENT-&gt;dev
-OL
-l_int|0
-)paren
+id|CURRENT-&gt;rq_status
+op_eq
+id|RQ_INACTIVE
 )paren
 r_goto
 id|err_done
@@ -26107,7 +26107,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_dev
 )paren
 suffix:semicolon
 r_if
@@ -26143,9 +26143,13 @@ c_func
 (paren
 id|DBG_INF
 comma
-l_string|&quot;do_request: bad device: %04X&bslash;n&quot;
+l_string|&quot;do_request: bad device: %s&bslash;n&quot;
 comma
-id|CURRENT-&gt;dev
+id|kdevname
+c_func
+(paren
+id|CURRENT-&gt;rq_dev
+)paren
 )paren
 suffix:semicolon
 r_goto
@@ -31380,7 +31384,7 @@ r_int
 id|sbpcd_chk_disk_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 (brace

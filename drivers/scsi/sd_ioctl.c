@@ -15,16 +15,6 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
-r_extern
-r_int
-id|revalidate_scsidisk
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|function|sd_ioctl
 r_int
 id|sd_ioctl
@@ -49,7 +39,7 @@ r_int
 id|arg
 )paren
 (brace
-r_int
+id|kdev_t
 id|dev
 op_assign
 id|inode-&gt;i_rdev
@@ -339,7 +329,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|inode-&gt;i_rdev
+)paren
 )paren
 (brace
 r_return
@@ -396,7 +388,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
 id|inode-&gt;i_rdev
+)paren
 )paren
 (brace
 r_return

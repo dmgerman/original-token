@@ -36,10 +36,9 @@ r_struct
 id|hash_list
 id|h
 suffix:semicolon
-DECL|member|dev
-r_int
-r_int
-id|dev
+DECL|member|dc_dev
+id|kdev_t
+id|dc_dev
 suffix:semicolon
 DECL|member|dir
 r_int
@@ -88,7 +87,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|COPYDATA
-mdefine_line|#define COPYDATA(de, newde) &bslash;&n;memcpy((void *) &amp;newde-&gt;dev, (void *) &amp;de-&gt;dev, &bslash;&n;4*sizeof(unsigned long) + 1 + DCACHE_NAME_LEN)
+mdefine_line|#define COPYDATA(de, newde) &bslash;&n;memcpy((void *) &amp;newde-&gt;dc_dev, (void *) &amp;de-&gt;dc_dev, &bslash;&n;sizeof(kdev_t) + 3*sizeof(unsigned long) + 1 + DCACHE_NAME_LEN)
 DECL|variable|level1_cache
 r_static
 r_struct
@@ -126,7 +125,7 @@ multiline_comment|/*&n; * The hash-queues are also doubly-linked circular lists,
 DECL|macro|DCACHE_HASH_QUEUES
 mdefine_line|#define DCACHE_HASH_QUEUES 19
 DECL|macro|hash_fn
-mdefine_line|#define hash_fn(dev,dir,namehash) (((dev) ^ (dir) ^ (namehash)) % DCACHE_HASH_QUEUES)
+mdefine_line|#define hash_fn(dev,dir,namehash) ((HASHDEV(dev) ^ (dir) ^ (namehash)) % DCACHE_HASH_QUEUES)
 DECL|variable|hash_table
 r_static
 r_struct
@@ -402,7 +401,7 @@ id|de-&gt;h.next
 r_if
 c_cond
 (paren
-id|de-&gt;dev
+id|de-&gt;dc_dev
 op_ne
 id|dir-&gt;i_dev
 )paren
@@ -746,7 +745,7 @@ c_func
 id|de
 )paren
 suffix:semicolon
-id|de-&gt;dev
+id|de-&gt;dc_dev
 op_assign
 id|dir-&gt;i_dev
 suffix:semicolon

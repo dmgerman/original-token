@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/drivers/char/tty_io.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was a array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -15,7 +16,6 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -362,7 +362,7 @@ id|tty_struct
 op_star
 id|tty
 comma
-id|dev_t
+id|kdev_t
 id|device
 comma
 r_const
@@ -378,7 +378,7 @@ r_char
 op_star
 id|badmagic
 op_assign
-l_string|&quot;Warning: bad magic number for tty struct (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: bad magic number for tty struct (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_static
 r_const
@@ -386,7 +386,7 @@ r_char
 op_star
 id|badtty
 op_assign
-l_string|&quot;Warning: null TTY for (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: null TTY for (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -400,13 +400,7 @@ c_func
 (paren
 id|badtty
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
@@ -432,13 +426,7 @@ c_func
 (paren
 id|badmagic
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
@@ -559,15 +547,9 @@ id|count
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: dev (%d, %d) tty-&gt;count(%d) != #fd&squot;s(%d) in %s&bslash;n&quot;
+l_string|&quot;Warning: dev (%s) tty-&gt;count(%d) != #fd&squot;s(%d) in %s&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -908,7 +890,7 @@ op_star
 id|get_tty_driver
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|device
 )paren
 (brace
@@ -2901,7 +2883,7 @@ r_int
 id|init_dev
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|device
 comma
 r_struct
@@ -3286,7 +3268,7 @@ op_logical_neg
 id|o_tty
 )paren
 (brace
-id|dev_t
+id|kdev_t
 id|o_device
 suffix:semicolon
 id|o_tty
@@ -4017,15 +3999,9 @@ id|tty-&gt;driver.num
 id|printk
 c_func
 (paren
-l_string|&quot;release_dev: bad idx when trying to free (%d, %d)&bslash;n&quot;
+l_string|&quot;release_dev: bad idx when trying to free (%s)&bslash;n&quot;
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -4049,17 +4025,11 @@ id|idx
 id|printk
 c_func
 (paren
-l_string|&quot;release_dev: driver.table[%d] not tty for (%d, %d)&bslash;n&quot;
+l_string|&quot;release_dev: driver.table[%d] not tty for (%s)&bslash;n&quot;
 comma
 id|idx
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -4083,17 +4053,12 @@ id|idx
 id|printk
 c_func
 (paren
-l_string|&quot;release_dev: driver.termios[%d] not termios for (%d, %d)&bslash;n&quot;
+l_string|&quot;release_dev: driver.termios[%d] not termios for (&quot;
+l_string|&quot;%s)&bslash;n&quot;
 comma
 id|idx
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -4117,17 +4082,12 @@ id|idx
 id|printk
 c_func
 (paren
-l_string|&quot;release_dev: driver.termios_locked[%d] not termios_locked for (%d, %d)&bslash;n&quot;
+l_string|&quot;release_dev: driver.termios_locked[%d] not termios_locked for (&quot;
+l_string|&quot;%s)&bslash;n&quot;
 comma
 id|idx
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -4201,17 +4161,12 @@ id|idx
 id|printk
 c_func
 (paren
-l_string|&quot;release_dev: other-&gt;table[%d] not o_tty for (%d, %d)&bslash;n&quot;
+l_string|&quot;release_dev: other-&gt;table[%d] not o_tty for (&quot;
+l_string|&quot;%s)&bslash;n&quot;
 comma
 id|idx
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -4235,17 +4190,12 @@ id|idx
 id|printk
 c_func
 (paren
-l_string|&quot;release_dev: other-&gt;termios[%d] not o_termios for (%d, %d)&bslash;n&quot;
+l_string|&quot;release_dev: other-&gt;termios[%d] not o_termios for (&quot;
+l_string|&quot;%s)&bslash;n&quot;
 comma
 id|idx
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -4269,17 +4219,12 @@ id|idx
 id|printk
 c_func
 (paren
-l_string|&quot;release_dev: other-&gt;termios_locked[%d] not o_termios_locked for (%d, %d)&bslash;n&quot;
+l_string|&quot;release_dev: other-&gt;termios_locked[%d] not o_termios_locked for (&quot;
+l_string|&quot;%s)&bslash;n&quot;
 comma
 id|idx
 comma
-id|MAJOR
-c_func
-(paren
-id|tty-&gt;device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|tty-&gt;device
@@ -4787,7 +4732,7 @@ id|noctty
 comma
 id|retval
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|device
 suffix:semicolon
 id|retry_open

@@ -426,7 +426,7 @@ id|filldir
 )paren
 (brace
 r_static
-r_int
+id|kdev_t
 id|c_dev
 op_assign
 l_int|0
@@ -945,7 +945,7 @@ r_struct
 id|nfs_lookup_cache_entry
 (brace
 DECL|member|dev
-r_int
+id|kdev_t
 id|dev
 suffix:semicolon
 DECL|member|inode
@@ -1361,7 +1361,7 @@ id|nfs_lookup_cache_entry
 op_star
 id|entry
 suffix:semicolon
-r_int
+id|kdev_t
 id|dev
 suffix:semicolon
 r_int
@@ -1474,7 +1474,7 @@ id|nfs_lookup_cache_entry
 op_star
 id|entry
 suffix:semicolon
-r_int
+id|kdev_t
 id|dev
 op_assign
 id|file-&gt;i_dev
@@ -3308,7 +3308,11 @@ id|inode-&gt;i_mode
 )paren
 id|inode-&gt;i_rdev
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|fattr-&gt;rdev
+)paren
 suffix:semicolon
 r_else
 id|inode-&gt;i_rdev

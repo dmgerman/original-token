@@ -3,6 +3,14 @@ macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &quot;sound_calls.h&quot;
 macro_line|#if !defined(EXCLUDE_AUDIO) || !defined(EXCLUDE_GUS)
+r_static
+r_int
+id|space_in_queue
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
 id|DEFINE_WAIT_QUEUES
 (paren
 id|dev_sleeper

@@ -20,6 +20,28 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;u14-34f.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_u14_34f
+r_struct
+id|proc_dir_entry
+id|proc_scsi_u14_34f
+op_assign
+(brace
+id|PROC_SCSI_U14_34F
+comma
+l_int|6
+comma
+l_string|&quot;u14_34f&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/* Values for the PRODUCT_ID ports for the 14/34F */
 DECL|macro|PRODUCT_ID1
 mdefine_line|#define PRODUCT_ID1  0x56
@@ -1962,6 +1984,11 @@ id|port_base
 op_assign
 id|io_port
 suffix:semicolon
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_u14_34f
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -3893,7 +3920,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

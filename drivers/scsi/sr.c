@@ -178,7 +178,7 @@ r_int
 id|check_cdrom_media_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 )paren
 suffix:semicolon
 DECL|function|sr_release
@@ -357,7 +357,7 @@ r_int
 id|check_cdrom_media_change
 c_func
 (paren
-id|dev_t
+id|kdev_t
 id|full_dev
 )paren
 (brace
@@ -1012,7 +1012,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_dev
 )paren
 )braket
 dot
@@ -1087,7 +1087,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_dev
 )paren
 )braket
 dot
@@ -1099,7 +1099,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_dev
 )paren
 )braket
 dot
@@ -1203,7 +1203,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_dev
 )paren
 )braket
 dot
@@ -1214,7 +1214,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_dev
 )paren
 )braket
 dot
@@ -1225,7 +1225,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_dev
 )paren
 )braket
 dot
@@ -2718,7 +2718,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-multiline_comment|/* If this device did not have media in the drive at boot time, then&n;&t; * we would have been unable to get the sector size.  Check to see if&n;&t; * this is the case, and try again.&n;     */
+multiline_comment|/* If this device did not have media in the drive at boot time, then&n;&t; * we would have been unable to get the sector size.  Check to see if&n;&t; * this is the case, and try again.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2810,10 +2810,9 @@ id|CURRENT
 op_ne
 l_int|NULL
 op_logical_and
-id|CURRENT-&gt;dev
+id|CURRENT-&gt;rq_status
 op_eq
-op_minus
-l_int|1
+id|RQ_INACTIVE
 )paren
 (brace
 id|restore_flags
@@ -2835,11 +2834,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|MINOR
-c_func
-(paren
-id|CURRENT-&gt;dev
-)paren
+id|CURRENT-&gt;rq_dev
 )paren
 )braket
 dot
@@ -2899,11 +2894,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|MINOR
-c_func
-(paren
-id|CURRENT-&gt;dev
-)paren
+id|CURRENT-&gt;rq_dev
 )paren
 )braket
 dot
@@ -2977,11 +2968,7 @@ id|scsi_CDs
 id|DEVICE_NR
 c_func
 (paren
-id|MINOR
-c_func
-(paren
-id|req-&gt;dev
-)paren
+id|req-&gt;rq_dev
 )paren
 )braket
 dot
@@ -3012,10 +2999,9 @@ c_cond
 (paren
 id|SCpnt
 op_logical_and
-id|req-&gt;dev
+id|req-&gt;rq_status
 op_eq
-op_minus
-l_int|1
+id|RQ_INACTIVE
 )paren
 (brace
 r_if
@@ -3119,9 +3105,9 @@ c_cond
 op_logical_neg
 id|SCpnt
 op_logical_or
-id|SCpnt-&gt;request.dev
-op_le
-l_int|0
+id|SCpnt-&gt;request.rq_status
+op_eq
+id|RQ_INACTIVE
 )paren
 (brace
 id|do_sr_request
@@ -3137,7 +3123,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_dev
 )paren
 suffix:semicolon
 id|block
@@ -3308,7 +3294,7 @@ l_int|5
 op_amp
 l_int|0xe0
 suffix:semicolon
-multiline_comment|/*&n;     * Now do the grungy work of figuring out which sectors we need, and&n;&t; * where in memory we are going to put them.&n;     * &n;&t; * The variables we need are:&n;     * &n;&t; * this_count= number of 512 byte sectors being read &n;&t; * block     = starting cdrom sector to read.&n;&t; * realcount = # of cdrom sectors to read&n;     * &n;&t; * The major difference between a scsi disk and a scsi cdrom&n;     * is that we will always use scatter-gather if we can, because we can&n;     * work around the fact that the buffer cache has a block size of 1024,&n;     * and we have 2048 byte sectors.  This code should work for buffers that&n;     * are any multiple of 512 bytes long.  */
+multiline_comment|/*&n;     * Now do the grungy work of figuring out which sectors we need, and&n;     * where in memory we are going to put them.&n;     * &n;     * The variables we need are:&n;     * &n;     * this_count= number of 512 byte sectors being read &n;     * block     = starting cdrom sector to read.&n;     * realcount = # of cdrom sectors to read&n;     * &n;     * The major difference between a scsi disk and a scsi cdrom&n;     * is that we will always use scatter-gather if we can, because we can&n;     * work around the fact that the buffer cache has a block size of 1024,&n;     * and we have 2048 byte sectors.  This code should work for buffers that&n;     * are any multiple of 512 bytes long.&n;     */
 id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
@@ -4863,9 +4849,9 @@ op_assign
 op_amp
 id|SCpnt-&gt;request
 suffix:semicolon
-id|req-&gt;dev
+id|req-&gt;rq_status
 op_assign
-l_int|0xfffe
+id|RQ_SCSI_DONE
 suffix:semicolon
 multiline_comment|/* Busy, but indicate request done */
 r_if
@@ -4994,9 +4980,9 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_assign
-l_int|0xffff
+id|RQ_SCSI_BUSY
 suffix:semicolon
 multiline_comment|/* Mark as really busy */
 id|SCpnt-&gt;cmd_len
@@ -5048,9 +5034,9 @@ l_int|0
 r_while
 c_loop
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 (brace
 id|barrier
@@ -5063,9 +5049,9 @@ r_else
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 (brace
 r_struct
@@ -5090,9 +5076,9 @@ multiline_comment|/* Hmm.. Have to ask about this */
 r_while
 c_loop
 (paren
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_ne
-l_int|0xfffe
+id|RQ_SCSI_DONE
 )paren
 id|schedule
 c_func
@@ -5119,10 +5105,9 @@ id|retries
 (brace
 suffix:semicolon
 )brace
-id|SCpnt-&gt;request.dev
+id|SCpnt-&gt;request.rq_status
 op_assign
-op_minus
-l_int|1
+id|RQ_INACTIVE
 suffix:semicolon
 multiline_comment|/* Mark as not busy */
 id|wake_up
@@ -5796,14 +5781,6 @@ id|cpnt
 suffix:semicolon
 r_int
 id|i
-comma
-id|major
-suffix:semicolon
-id|major
-op_assign
-id|MAJOR_NR
-op_lshift
-l_int|8
 suffix:semicolon
 r_for
 c_loop
@@ -5834,21 +5811,28 @@ op_eq
 id|SDp
 )paren
 (brace
+id|kdev_t
+id|devi
+op_assign
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+id|i
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;     * Since the cdrom is read-only, no need to sync the device.&n;&t;     * We should be kind to our buffer cache, however.&n;&t;     */
 id|invalidate_inodes
 c_func
 (paren
-id|major
-op_or
-id|i
+id|devi
 )paren
 suffix:semicolon
 id|invalidate_buffers
 c_func
 (paren
-id|major
-op_or
-id|i
+id|devi
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;     * Reset things back to a sane state so that one can re-load a new&n;&t;     * driver (perhaps the same one).&n;&t;     */

@@ -9,7 +9,6 @@ macro_line|#endif
 macro_line|#ifndef _GENDISK_H
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; *  This is an arbitrary constant, and may be changed to whatever&n; *  suits your purposes.  Note that smaller will get you a few bytes&n; *  more in kernel space if that is your thing.&n; */
 r_extern
 r_struct
 id|hd_struct
@@ -77,6 +76,18 @@ r_extern
 id|Scsi_Disk
 op_star
 id|rscsi_disks
+suffix:semicolon
+r_extern
+r_int
+id|revalidate_scsidisk
+c_func
+(paren
+id|kdev_t
+id|dev
+comma
+r_int
+id|maxusage
+)paren
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */

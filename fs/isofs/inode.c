@@ -723,7 +723,7 @@ r_int
 id|isofs_get_last_session
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace
@@ -924,7 +924,7 @@ suffix:semicolon
 r_int
 id|high_sierra
 suffix:semicolon
-r_int
+id|kdev_t
 id|dev
 op_assign
 id|s-&gt;s_dev
@@ -1181,9 +1181,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;isofs_read_super: bread failed, dev 0x%x iso_blknum %d&bslash;n&quot;
+l_string|&quot;isofs_read_super: bread failed, dev &quot;
+l_string|&quot;%s iso_blknum %d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 comma
 id|iso_blknum
 )paren

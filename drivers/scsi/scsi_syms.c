@@ -19,10 +19,27 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
+macro_line|#include &quot;scsi_ioctl.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
 multiline_comment|/*&n; * This source file contains the symbol table used by scsi loadable&n; * modules.&n; */
+r_extern
+r_int
+id|scsicam_bios_param
+(paren
+id|Disk
+op_star
+id|disk
+comma
+r_int
+id|dev
+comma
+r_int
+op_star
+id|ip
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|print_command
@@ -38,6 +55,7 @@ r_void
 id|print_sense
 c_func
 (paren
+r_const
 r_char
 op_star
 id|devclass
@@ -66,7 +84,7 @@ comma
 id|SYMBOL_NAME_STR
 c_func
 (paren
-l_string|&quot;Using_Versions&quot;
+id|Using_Versions
 )paren
 )brace
 comma

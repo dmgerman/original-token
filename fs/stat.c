@@ -38,7 +38,11 @@ id|current-&gt;comm
 suffix:semicolon
 id|tmp.st_dev
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 suffix:semicolon
 id|tmp.st_ino
 op_assign
@@ -62,7 +66,11 @@ id|inode-&gt;i_gid
 suffix:semicolon
 id|tmp.st_rdev
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 id|tmp.st_size
 op_assign
@@ -152,7 +160,11 @@ id|tmp
 suffix:semicolon
 id|tmp.st_dev
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 suffix:semicolon
 id|tmp.st_ino
 op_assign
@@ -176,7 +188,11 @@ id|inode-&gt;i_gid
 suffix:semicolon
 id|tmp.st_rdev
 op_assign
+id|kdev_t_to_nr
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 id|tmp.st_size
 op_assign

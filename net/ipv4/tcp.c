@@ -14846,9 +14846,13 @@ suffix:semicolon
 r_int
 r_int
 id|win_size
-comma
+suffix:semicolon
+macro_line|#if 0
+r_int
+r_int
 id|ow_size
 suffix:semicolon
+macro_line|#endif
 r_void
 op_star
 id|tcp_data_start

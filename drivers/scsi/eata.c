@@ -19,6 +19,28 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;linux/in.h&quot;
 macro_line|#include &quot;eata.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_eata2x
+r_struct
+id|proc_dir_entry
+id|proc_scsi_eata2x
+op_assign
+(brace
+id|PROC_SCSI_EATA2X
+comma
+l_int|6
+comma
+l_string|&quot;eata2x&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/* Subversion values */
 DECL|macro|ISA
 mdefine_line|#define ISA  0
@@ -2167,6 +2189,11 @@ op_star
 id|port_base
 op_assign
 id|io_port
+suffix:semicolon
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_eata2x
 suffix:semicolon
 id|save_flags
 c_func

@@ -29,6 +29,28 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;ultrastor.h&quot;
 macro_line|#include &quot;sd.h&quot;
+macro_line|#include&lt;linux/stat.h&gt;
+DECL|variable|proc_scsi_ultrastor
+r_struct
+id|proc_dir_entry
+id|proc_scsi_ultrastor
+op_assign
+(brace
+id|PROC_SCSI_ULTRASTOR
+comma
+l_int|9
+comma
+l_string|&quot;ultrastor&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
+suffix:semicolon
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
 DECL|macro|TRUE
@@ -2011,6 +2033,11 @@ op_star
 id|tpnt
 )paren
 (brace
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_ultrastor
+suffix:semicolon
 r_return
 id|ultrastor_14f_detect
 c_func
@@ -3649,7 +3676,7 @@ id|Disk
 op_star
 id|disk
 comma
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

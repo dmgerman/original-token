@@ -1148,17 +1148,16 @@ c_func
 id|rr-&gt;u.PN.dev_low
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * The Rock Ridge standard specifies that if sizeof(dev_t) &lt;=4,&n;&t;   * then the high field is unused, and the device number is completely&n;&t;   * stored in the low field.  Some writers may ignore this subtlety,&n;&t;   * and as a result we test to see if the entire device number is&n;&t;   * stored in the low field, and use that.&n;&t;   */
+multiline_comment|/*&n;&t;   * The Rock Ridge standard specifies that if sizeof(dev_t) &lt;= 4,&n;&t;   * then the high field is unused, and the device number is completely&n;&t;   * stored in the low field.  Some writers may ignore this subtlety,&n;&t;   * and as a result we test to see if the entire device number is&n;&t;   * stored in the low field, and use that.&n;&t;   */
 r_if
 c_cond
 (paren
-id|MINOR
-c_func
 (paren
 id|low
+op_amp
+op_complement
+l_int|0xff
 )paren
-op_ne
-id|low
 op_logical_and
 id|high
 op_eq
@@ -1167,7 +1166,17 @@ l_int|0
 (brace
 id|inode-&gt;i_rdev
 op_assign
+id|MKDEV
+c_func
+(paren
 id|low
+op_rshift
+l_int|8
+comma
+id|low
+op_amp
+l_int|0xff
+)paren
 suffix:semicolon
 )brace
 r_else

@@ -667,7 +667,7 @@ r_int
 r_int
 id|ino
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 r_if

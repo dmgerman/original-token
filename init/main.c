@@ -348,6 +348,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|fdomain_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|scsi_luns_setup
 c_func
 (paren
@@ -1029,6 +1043,14 @@ id|buslogic_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
+(brace
+l_string|&quot;fdomain=&quot;
+comma
+id|fdomain_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_XD
 (brace
 l_string|&quot;xd=&quot;
@@ -1697,6 +1719,9 @@ l_int|5
 (brace
 id|ROOT_DEV
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|simple_strtoul
 c_func
 (paren
@@ -1705,6 +1730,7 @@ comma
 l_int|NULL
 comma
 l_int|16
+)paren
 )paren
 suffix:semicolon
 r_continue
@@ -1762,6 +1788,9 @@ id|len
 (brace
 id|ROOT_DEV
 op_assign
+id|to_kdev_t
+c_func
+(paren
 id|devnums
 (braket
 id|n
@@ -1777,6 +1806,7 @@ comma
 l_int|NULL
 comma
 l_int|0
+)paren
 )paren
 suffix:semicolon
 r_break

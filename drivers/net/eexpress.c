@@ -774,7 +774,6 @@ suffix:semicolon
 r_return
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* ENODEV would be more accurate. */
 )brace
 DECL|function|eexp_probe1
 r_int

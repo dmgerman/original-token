@@ -9,11 +9,26 @@ DECL|struct|request
 r_struct
 id|request
 (brace
-DECL|member|dev
+DECL|member|rq_status
+r_volatile
 r_int
-id|dev
+id|rq_status
 suffix:semicolon
-multiline_comment|/* -1 if no request */
+multiline_comment|/* should split this into a few status bits */
+DECL|macro|RQ_INACTIVE
+mdefine_line|#define RQ_INACTIVE&t;&t;(-1)
+DECL|macro|RQ_ACTIVE
+mdefine_line|#define RQ_ACTIVE&t;&t;1
+DECL|macro|RQ_SCSI_BUSY
+mdefine_line|#define RQ_SCSI_BUSY&t;&t;0xffff
+DECL|macro|RQ_SCSI_DONE
+mdefine_line|#define RQ_SCSI_DONE&t;&t;0xfffe
+DECL|macro|RQ_SCSI_DISCONNECTING
+mdefine_line|#define RQ_SCSI_DISCONNECTING&t;0xffe0
+DECL|member|rq_dev
+id|kdev_t
+id|rq_dev
+suffix:semicolon
 DECL|member|cmd
 r_int
 id|cmd

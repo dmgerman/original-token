@@ -898,7 +898,7 @@ id|async_struct
 op_star
 id|info
 comma
-id|dev_t
+id|kdev_t
 id|device
 comma
 r_const
@@ -914,7 +914,7 @@ r_char
 op_star
 id|badmagic
 op_assign
-l_string|&quot;Warning: bad magic number for serial struct (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: bad magic number for serial struct (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_static
 r_const
@@ -922,7 +922,7 @@ r_char
 op_star
 id|badinfo
 op_assign
-l_string|&quot;Warning: null async_struct for (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;Warning: null async_struct for (%s) in %s&bslash;n&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -936,13 +936,7 @@ c_func
 (paren
 id|badinfo
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
@@ -968,13 +962,7 @@ c_func
 (paren
 id|badmagic
 comma
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-comma
-id|MINOR
+id|kdevname
 c_func
 (paren
 id|device
