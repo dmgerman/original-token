@@ -193,6 +193,34 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_KBD
+id|usb_kbd_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_ACM
+id|usb_acm_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_CPIA
+id|usb_cpia_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_DC2XX
+id|usb_dc2xx_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
 macro_line|#endif
 )brace
 macro_line|#ifdef MODULE

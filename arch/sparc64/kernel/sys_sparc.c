@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.30 1999/10/13 11:48:07 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.31 1999/12/21 14:09:25 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -634,18 +634,6 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|current-&gt;mm-&gt;mmap_sem
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -675,6 +663,15 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
+suffix:semicolon
 id|retval
 op_assign
 op_minus
@@ -686,6 +683,18 @@ id|PAGE_ALIGN
 c_func
 (paren
 id|len
+)paren
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -796,15 +805,6 @@ id|out_putf
 suffix:semicolon
 )brace
 )brace
-id|flags
-op_and_assign
-op_complement
-(paren
-id|MAP_EXECUTABLE
-op_or
-id|MAP_DENYWRITE
-)paren
-suffix:semicolon
 id|retval
 op_assign
 id|do_mmap
@@ -825,6 +825,18 @@ id|off
 suffix:semicolon
 id|out_putf
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -838,18 +850,6 @@ id|file
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|current-&gt;mm-&gt;mmap_sem
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon

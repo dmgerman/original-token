@@ -1,213 +1,188 @@
-multiline_comment|/*&n; * yenta.h 1.16 1999/10/25 20:03:34&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
-macro_line|#ifndef _LINUX_YENTA_H
-DECL|macro|_LINUX_YENTA_H
-mdefine_line|#define _LINUX_YENTA_H
-multiline_comment|/* PCI Configuration Registers */
-DECL|macro|PCI_STATUS_CAPLIST
-mdefine_line|#define PCI_STATUS_CAPLIST&t;&t;0x10
-DECL|macro|PCI_CB_CAPABILITY_POINTER
-mdefine_line|#define PCI_CB_CAPABILITY_POINTER&t;0x14&t;/* 8 bit */
-DECL|macro|PCI_CAPABILITY_ID
-mdefine_line|#define PCI_CAPABILITY_ID&t;&t;0x00&t;/* 8 bit */
-DECL|macro|PCI_CAPABILITY_PM
-mdefine_line|#define  PCI_CAPABILITY_PM&t;&t;0x01
-DECL|macro|PCI_NEXT_CAPABILITY
-mdefine_line|#define PCI_NEXT_CAPABILITY&t;&t;0x01&t;/* 8 bit */
-DECL|macro|PCI_PM_CAPABILITIES
-mdefine_line|#define PCI_PM_CAPABILITIES&t;&t;0x02&t;/* 16 bit */
-DECL|macro|PCI_PMCAP_PME_D3COLD
-mdefine_line|#define  PCI_PMCAP_PME_D3COLD&t;&t;0x8000
-DECL|macro|PCI_PMCAP_PME_D3HOT
-mdefine_line|#define  PCI_PMCAP_PME_D3HOT&t;&t;0x4000
-DECL|macro|PCI_PMCAP_PME_D2
-mdefine_line|#define  PCI_PMCAP_PME_D2&t;&t;0x2000
-DECL|macro|PCI_PMCAP_PME_D1
-mdefine_line|#define  PCI_PMCAP_PME_D1&t;&t;0x1000
-DECL|macro|PCI_PMCAP_PME_D0
-mdefine_line|#define  PCI_PMCAP_PME_D0&t;&t;0x0800
-DECL|macro|PCI_PMCAP_D2_CAP
-mdefine_line|#define  PCI_PMCAP_D2_CAP&t;&t;0x0400
-DECL|macro|PCI_PMCAP_D1_CAP
-mdefine_line|#define  PCI_PMCAP_D1_CAP&t;&t;0x0200
-DECL|macro|PCI_PMCAP_DYN_DATA
-mdefine_line|#define  PCI_PMCAP_DYN_DATA&t;&t;0x0100
-DECL|macro|PCI_PMCAP_DSI
-mdefine_line|#define  PCI_PMCAP_DSI&t;&t;&t;0x0020
-DECL|macro|PCI_PMCAP_AUX_PWR
-mdefine_line|#define  PCI_PMCAP_AUX_PWR&t;&t;0x0010
-DECL|macro|PCI_PMCAP_PMECLK
-mdefine_line|#define  PCI_PMCAP_PMECLK&t;&t;0x0008
-DECL|macro|PCI_PMCAP_VERSION_MASK
-mdefine_line|#define  PCI_PMCAP_VERSION_MASK&t;&t;0x0007
-DECL|macro|PCI_PM_CONTROL_STATUS
-mdefine_line|#define PCI_PM_CONTROL_STATUS&t;&t;0x04&t;/* 16 bit */
-DECL|macro|PCI_PMCS_PME_STATUS
-mdefine_line|#define  PCI_PMCS_PME_STATUS&t;&t;0x8000
-DECL|macro|PCI_PMCS_DATASCALE_MASK
-mdefine_line|#define  PCI_PMCS_DATASCALE_MASK&t;0x6000
-DECL|macro|PCI_PMCS_DATASCALE_SHIFT
-mdefine_line|#define  PCI_PMCS_DATASCALE_SHIFT&t;13
-DECL|macro|PCI_PMCS_DATASEL_MASK
-mdefine_line|#define  PCI_PMCS_DATASEL_MASK&t;&t;0x1e00
-DECL|macro|PCI_PMCS_DATASEL_SHIFT
-mdefine_line|#define  PCI_PMCS_DATASEL_SHIFT&t;&t;9
-DECL|macro|PCI_PMCS_PME_ENABLE
-mdefine_line|#define  PCI_PMCS_PME_ENABLE&t;&t;0x0100
-DECL|macro|PCI_PMCS_PWR_STATE_MASK
-mdefine_line|#define  PCI_PMCS_PWR_STATE_MASK&t;0x0003
-DECL|macro|PCI_PMCS_PWR_STATE_D0
-mdefine_line|#define  PCI_PMCS_PWR_STATE_D0&t;&t;0x0000
-DECL|macro|PCI_PMCS_PWR_STATE_D1
-mdefine_line|#define  PCI_PMCS_PWR_STATE_D1&t;&t;0x0001
-DECL|macro|PCI_PMCS_PWR_STATE_D2
-mdefine_line|#define  PCI_PMCS_PWR_STATE_D2&t;&t;0x0002
-DECL|macro|PCI_PMCS_PWR_STATE_D3
-mdefine_line|#define  PCI_PMCS_PWR_STATE_D3&t;&t;0x0003
-DECL|macro|PCI_PM_BRIDGE_EXT
-mdefine_line|#define PCI_PM_BRIDGE_EXT&t;&t;0x06&t;/* 8 bit */
-DECL|macro|PCI_PM_DATA
-mdefine_line|#define PCI_PM_DATA&t;&t;&t;0x07&t;/* 8 bit */
-DECL|macro|CB_PRIMARY_BUS
-mdefine_line|#define CB_PRIMARY_BUS&t;&t;&t;0x18&t;/* 8 bit */
-DECL|macro|CB_CARDBUS_BUS
-mdefine_line|#define CB_CARDBUS_BUS&t;&t;&t;0x19&t;/* 8 bit */
-DECL|macro|CB_SUBORD_BUS
-mdefine_line|#define CB_SUBORD_BUS&t;&t;&t;0x1a&t;/* 8 bit */
-DECL|macro|CB_LATENCY_TIMER
-mdefine_line|#define CB_LATENCY_TIMER&t;&t;0x1b&t;/* 8 bit */
-DECL|macro|CB_MEM_BASE
-mdefine_line|#define CB_MEM_BASE(m)&t;&t;&t;(0x1c + 8*(m))
-DECL|macro|CB_MEM_LIMIT
-mdefine_line|#define CB_MEM_LIMIT(m)&t;&t;&t;(0x20 + 8*(m))
-DECL|macro|CB_IO_BASE
-mdefine_line|#define CB_IO_BASE(m)&t;&t;&t;(0x2c + 8*(m))
-DECL|macro|CB_IO_LIMIT
-mdefine_line|#define CB_IO_LIMIT(m)&t;&t;&t;(0x30 + 8*(m))
-DECL|macro|CB_BRIDGE_CONTROL
-mdefine_line|#define CB_BRIDGE_CONTROL&t;&t;0x3e&t;/* 16 bit */
-DECL|macro|CB_BCR_PARITY_ENA
-mdefine_line|#define  CB_BCR_PARITY_ENA&t;&t;0x0001
-DECL|macro|CB_BCR_SERR_ENA
-mdefine_line|#define  CB_BCR_SERR_ENA&t;&t;0x0002
-DECL|macro|CB_BCR_ISA_ENA
-mdefine_line|#define  CB_BCR_ISA_ENA&t;&t;&t;0x0004
-DECL|macro|CB_BCR_VGA_ENA
-mdefine_line|#define  CB_BCR_VGA_ENA&t;&t;&t;0x0008
-DECL|macro|CB_BCR_MABORT
-mdefine_line|#define  CB_BCR_MABORT&t;&t;&t;0x0020
-DECL|macro|CB_BCR_CB_RESET
-mdefine_line|#define  CB_BCR_CB_RESET&t;&t;0x0040
-DECL|macro|CB_BCR_ISA_IRQ
-mdefine_line|#define  CB_BCR_ISA_IRQ&t;&t;&t;0x0080
-DECL|macro|CB_BCR_PREFETCH
-mdefine_line|#define  CB_BCR_PREFETCH(m)&t;&t;(0x0100 &lt;&lt; (m))
-DECL|macro|CB_BCR_WRITE_POST
-mdefine_line|#define  CB_BCR_WRITE_POST&t;&t;0x0400
-DECL|macro|CB_LEGACY_MODE_BASE
-mdefine_line|#define CB_LEGACY_MODE_BASE&t;&t;0x44
-multiline_comment|/* Memory mapped registers */
+macro_line|#ifndef __YENTA_H
+DECL|macro|__YENTA_H
+mdefine_line|#define __YENTA_H
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &quot;pci_socket.h&quot;
+multiline_comment|/*&n; * Generate easy-to-use ways of reading a cardbus sockets&n; * regular memory space (&quot;cb_xxx&quot;), configuration space&n; * (&quot;config_xxx&quot;) and compatibility space (&quot;exca_xxxx&quot;)&n; */
+DECL|macro|cb_readb
+mdefine_line|#define cb_readb(sock,reg)&t;&t;readb((sock)-&gt;base + (reg))
+DECL|macro|cb_readw
+mdefine_line|#define cb_readw(sock,reg)&t;&t;readw((sock)-&gt;base + (reg))
+DECL|macro|cb_readl
+mdefine_line|#define cb_readl(sock,reg)&t;&t;readl((sock)-&gt;base + (reg))
+DECL|macro|cb_writeb
+mdefine_line|#define cb_writeb(sock,reg,val)&t;&t;writeb((val), (sock)-&gt;base + (reg))
+DECL|macro|cb_writew
+mdefine_line|#define cb_writew(sock,reg,val)&t;&t;writew((val), (sock)-&gt;base + (reg))
+DECL|macro|cb_writel
+mdefine_line|#define cb_writel(sock,reg,val)&t;&t;writel((val), (sock)-&gt;base + (reg))
+DECL|macro|config_readb
+mdefine_line|#define config_readb(sock,offset)&t;({ __u8 __val; pci_read_config_byte((sock)-&gt;dev, (offset), &amp;__val); __val; })
+DECL|macro|config_readw
+mdefine_line|#define config_readw(sock,offset)&t;({ __u16 __val; pci_read_config_word((sock)-&gt;dev, (offset), &amp;__val); __val; })
+DECL|macro|config_readl
+mdefine_line|#define config_readl(sock,offset)&t;({ __u32 __val; pci_read_config_dword((sock)-&gt;dev, (offset), &amp;__val); __val; })
+DECL|macro|config_writeb
+mdefine_line|#define config_writeb(sock,offset,val)&t;pci_write_config_byte((sock)-&gt;dev, (offset), (val))
+DECL|macro|config_writew
+mdefine_line|#define config_writew(sock,offset,val)&t;pci_write_config_word((sock)-&gt;dev, (offset), (val))
+DECL|macro|config_writel
+mdefine_line|#define config_writel(sock,offset,val)&t;pci_write_config_dword((sock)-&gt;dev, (offset), (val))
+DECL|macro|exca_readb
+mdefine_line|#define exca_readb(sock,reg)&t;&t;cb_readb((sock),(reg)+0x0800)
+DECL|macro|exca_readw
+mdefine_line|#define exca_readw(sock,reg)&t;&t;cb_readw((sock),(reg)+0x0800)
+DECL|macro|exca_readl
+mdefine_line|#define exca_readl(sock,reg)&t;&t;cb_readl((sock),(reg)+0x0800)
+DECL|macro|exca_writeb
+mdefine_line|#define exca_writeb(sock,reg,val)&t;cb_writeb((sock),(reg)+0x0800,(val))
+DECL|macro|exca_writew
+mdefine_line|#define exca_writew(sock,reg,val)&t;cb_writew((sock),(reg)+0x0800,(val))
+DECL|macro|exca_writel
+mdefine_line|#define exca_writel(sock,reg,val)&t;cb_writel((sock),(reg)+0x0800,(val))
 DECL|macro|CB_SOCKET_EVENT
-mdefine_line|#define CB_SOCKET_EVENT&t;&t;&t;0x0000
-DECL|macro|CB_SE_CSTSCHG
-mdefine_line|#define  CB_SE_CSTSCHG&t;&t;&t;0x00000001
-DECL|macro|CB_SE_CCD1
-mdefine_line|#define  CB_SE_CCD1&t;&t;&t;0x00000002
-DECL|macro|CB_SE_CCD2
-mdefine_line|#define  CB_SE_CCD2&t;&t;&t;0x00000004
-DECL|macro|CB_SE_PWRCYCLE
-mdefine_line|#define  CB_SE_PWRCYCLE&t;&t;&t;0x00000008
+mdefine_line|#define CB_SOCKET_EVENT&t;&t;0x00
+DECL|macro|CB_CSTSEVENT
+mdefine_line|#define    CB_CSTSEVENT&t;&t;0x00000001&t;/* Card status event */
+DECL|macro|CB_CD1EVENT
+mdefine_line|#define    CB_CD1EVENT&t;&t;0x00000002&t;/* Card detect 1 change event */
+DECL|macro|CB_CD2EVENT
+mdefine_line|#define    CB_CD2EVENT&t;&t;0x00000004&t;/* Card detect 2 change event */
+DECL|macro|CB_PWREVENT
+mdefine_line|#define    CB_PWREVENT&t;&t;0x00000008&t;/* PWRCYCLE change event */
 DECL|macro|CB_SOCKET_MASK
-mdefine_line|#define CB_SOCKET_MASK&t;&t;&t;0x0004
-DECL|macro|CB_SM_CSTSCHG
-mdefine_line|#define  CB_SM_CSTSCHG&t;&t;&t;0x00000001
-DECL|macro|CB_SM_CCD
-mdefine_line|#define  CB_SM_CCD&t;&t;&t;0x00000006
-DECL|macro|CB_SM_PWRCYCLE
-mdefine_line|#define  CB_SM_PWRCYCLE&t;&t;&t;0x00000008
+mdefine_line|#define CB_SOCKET_MASK&t;&t;0x04
+DECL|macro|CB_CSTSMASK
+mdefine_line|#define    CB_CSTSMASK&t;&t;0x00000001&t;/* Card status mask */
+DECL|macro|CB_CDMASK
+mdefine_line|#define    CB_CDMASK&t;&t;0x00000006&t;/* Card detect 1&amp;2 mask */
+DECL|macro|CB_PWRMASK
+mdefine_line|#define    CB_PWRMASK&t;&t;0x00000008&t;/* PWRCYCLE change mask */
 DECL|macro|CB_SOCKET_STATE
-mdefine_line|#define CB_SOCKET_STATE&t;&t;&t;0x0008
-DECL|macro|CB_SS_CSTSCHG
-mdefine_line|#define  CB_SS_CSTSCHG&t;&t;&t;0x00000001
-DECL|macro|CB_SS_CCD1
-mdefine_line|#define  CB_SS_CCD1&t;&t;&t;0x00000002
-DECL|macro|CB_SS_CCD2
-mdefine_line|#define  CB_SS_CCD2&t;&t;&t;0x00000004
-DECL|macro|CB_SS_PWRCYCLE
-mdefine_line|#define  CB_SS_PWRCYCLE&t;&t;&t;0x00000008
-DECL|macro|CB_SS_16BIT
-mdefine_line|#define  CB_SS_16BIT&t;&t;&t;0x00000010
-DECL|macro|CB_SS_32BIT
-mdefine_line|#define  CB_SS_32BIT&t;&t;&t;0x00000020
-DECL|macro|CB_SS_CINT
-mdefine_line|#define  CB_SS_CINT&t;&t;&t;0x00000040
-DECL|macro|CB_SS_BADCARD
-mdefine_line|#define  CB_SS_BADCARD&t;&t;&t;0x00000080
-DECL|macro|CB_SS_DATALOST
-mdefine_line|#define  CB_SS_DATALOST&t;&t;&t;0x00000100
-DECL|macro|CB_SS_BADVCC
-mdefine_line|#define  CB_SS_BADVCC&t;&t;&t;0x00000200
-DECL|macro|CB_SS_5VCARD
-mdefine_line|#define  CB_SS_5VCARD&t;&t;&t;0x00000400
-DECL|macro|CB_SS_3VCARD
-mdefine_line|#define  CB_SS_3VCARD&t;&t;&t;0x00000800
-DECL|macro|CB_SS_XVCARD
-mdefine_line|#define  CB_SS_XVCARD&t;&t;&t;0x00001000
-DECL|macro|CB_SS_YVCARD
-mdefine_line|#define  CB_SS_YVCARD&t;&t;&t;0x00002000
-DECL|macro|CB_SS_5VSOCKET
-mdefine_line|#define  CB_SS_5VSOCKET&t;&t;&t;0x10000000
-DECL|macro|CB_SS_3VSOCKET
-mdefine_line|#define  CB_SS_3VSOCKET&t;&t;&t;0x20000000
-DECL|macro|CB_SS_XVSOCKET
-mdefine_line|#define  CB_SS_XVSOCKET&t;&t;&t;0x40000000
-DECL|macro|CB_SS_YVSOCKET
-mdefine_line|#define  CB_SS_YVSOCKET&t;&t;&t;0x80000000
+mdefine_line|#define CB_SOCKET_STATE&t;&t;0x08
+DECL|macro|CB_CARDSTS
+mdefine_line|#define    CB_CARDSTS&t;&t;0x00000001&t;/* CSTSCHG status */
+DECL|macro|CB_CDETECT1
+mdefine_line|#define    CB_CDETECT1&t;&t;0x00000002&t;/* Card detect status 1 */
+DECL|macro|CB_CDETECT2
+mdefine_line|#define    CB_CDETECT2&t;&t;0x00000004&t;/* Card detect status 2 */
+DECL|macro|CB_PWRCYCLE
+mdefine_line|#define    CB_PWRCYCLE&t;&t;0x00000008&t;/* Socket powered */
+DECL|macro|CB_16BITCARD
+mdefine_line|#define    CB_16BITCARD&t;&t;0x00000010&t;/* 16-bit card detected */
+DECL|macro|CB_CBCARD
+mdefine_line|#define    CB_CBCARD&t;&t;0x00000020&t;/* CardBus card detected */
+DECL|macro|CB_IREQCINT
+mdefine_line|#define    CB_IREQCINT&t;&t;0x00000040&t;/* READY(xIRQ)/xCINT high */
+DECL|macro|CB_NOTACARD
+mdefine_line|#define    CB_NOTACARD&t;&t;0x00000080&t;/* Unrecognizable PC card detected */
+DECL|macro|CB_DATALOST
+mdefine_line|#define    CB_DATALOST&t;&t;0x00000100&t;/* Potential data loss due to card removal */
+DECL|macro|CB_BADVCCREQ
+mdefine_line|#define    CB_BADVCCREQ&t;&t;0x00000200&t;/* Invalid Vcc request by host software */
+DECL|macro|CB_5VCARD
+mdefine_line|#define    CB_5VCARD&t;&t;0x00000400&t;/* Card Vcc at 5.0 volts? */
+DECL|macro|CB_3VCARD
+mdefine_line|#define    CB_3VCARD&t;&t;0x00000800&t;/* Card Vcc at 3.3 volts? */
+DECL|macro|CB_XVCARD
+mdefine_line|#define    CB_XVCARD&t;&t;0x00001000&t;/* Card Vcc at X.X volts? */
+DECL|macro|CB_YVCARD
+mdefine_line|#define    CB_YVCARD&t;&t;0x00002000&t;/* Card Vcc at Y.Y volts? */
+DECL|macro|CB_5VSOCKET
+mdefine_line|#define    CB_5VSOCKET&t;&t;0x10000000&t;/* Socket Vcc at 5.0 volts? */
+DECL|macro|CB_3VSOCKET
+mdefine_line|#define    CB_3VSOCKET&t;&t;0x20000000&t;/* Socket Vcc at 3.3 volts? */
+DECL|macro|CB_XVSOCKET
+mdefine_line|#define    CB_XVSOCKET&t;&t;0x40000000&t;/* Socket Vcc at X.X volts? */
+DECL|macro|CB_YVSOCKET
+mdefine_line|#define    CB_YVSOCKET&t;&t;0x80000000&t;/* Socket Vcc at Y.Y volts? */
 DECL|macro|CB_SOCKET_FORCE
-mdefine_line|#define CB_SOCKET_FORCE&t;&t;&t;0x000c
-DECL|macro|CB_SF_CVSTEST
-mdefine_line|#define  CB_SF_CVSTEST&t;&t;&t;0x00004000
+mdefine_line|#define CB_SOCKET_FORCE&t;&t;0x0C
+DECL|macro|CB_FCARDSTS
+mdefine_line|#define    CB_FCARDSTS&t;&t;0x00000001&t;/* Force CSTSCHG */
+DECL|macro|CB_FCDETECT1
+mdefine_line|#define    CB_FCDETECT1&t;&t;0x00000002&t;/* Force CD1EVENT */
+DECL|macro|CB_FCDETECT2
+mdefine_line|#define    CB_FCDETECT2&t;&t;0x00000004&t;/* Force CD2EVENT */
+DECL|macro|CB_FPWRCYCLE
+mdefine_line|#define    CB_FPWRCYCLE&t;&t;0x00000008&t;/* Force PWREVENT */
+DECL|macro|CB_F16BITCARD
+mdefine_line|#define    CB_F16BITCARD&t;0x00000010&t;/* Force 16-bit PCMCIA card */
+DECL|macro|CB_FCBCARD
+mdefine_line|#define    CB_FCBCARD&t;&t;0x00000020&t;/* Force CardBus line */
+DECL|macro|CB_FNOTACARD
+mdefine_line|#define    CB_FNOTACARD&t;&t;0x00000080&t;/* Force NOTACARD */
+DECL|macro|CB_FDATALOST
+mdefine_line|#define    CB_FDATALOST&t;&t;0x00000100&t;/* Force data lost */
+DECL|macro|CB_FBADVCCREQ
+mdefine_line|#define    CB_FBADVCCREQ&t;0x00000200&t;/* Force bad Vcc request */
+DECL|macro|CB_F5VCARD
+mdefine_line|#define    CB_F5VCARD&t;&t;0x00000400&t;/* Force 5.0 volt card */
+DECL|macro|CB_F3VCARD
+mdefine_line|#define    CB_F3VCARD&t;&t;0x00000800&t;/* Force 3.3 volt card */
+DECL|macro|CB_FXVCARD
+mdefine_line|#define    CB_FXVCARD&t;&t;0x00001000&t;/* Force X.X volt card */
+DECL|macro|CB_FYVCARD
+mdefine_line|#define    CB_FYVCARD&t;&t;0x00002000&t;/* Force Y.Y volt card */
+DECL|macro|CB_CVSTEST
+mdefine_line|#define    CB_CVSTEST&t;&t;0x00004000&t;/* Card VS test */
 DECL|macro|CB_SOCKET_CONTROL
-mdefine_line|#define CB_SOCKET_CONTROL&t;&t;0x0010
-DECL|macro|CB_SC_VPP_MASK
-mdefine_line|#define  CB_SC_VPP_MASK&t;&t;&t;0x00000007
-DECL|macro|CB_SC_VPP_OFF
-mdefine_line|#define   CB_SC_VPP_OFF&t;&t;&t;0x00000000
-DECL|macro|CB_SC_VPP_12V
-mdefine_line|#define   CB_SC_VPP_12V&t;&t;&t;0x00000001
-DECL|macro|CB_SC_VPP_5V
-mdefine_line|#define   CB_SC_VPP_5V&t;&t;&t;0x00000002
-DECL|macro|CB_SC_VPP_3V
-mdefine_line|#define   CB_SC_VPP_3V&t;&t;&t;0x00000003
-DECL|macro|CB_SC_VPP_XV
-mdefine_line|#define   CB_SC_VPP_XV&t;&t;&t;0x00000004
-DECL|macro|CB_SC_VPP_YV
-mdefine_line|#define   CB_SC_VPP_YV&t;&t;&t;0x00000005
-DECL|macro|CB_SC_VCC_MASK
-mdefine_line|#define  CB_SC_VCC_MASK&t;&t;&t;0x00000070
-DECL|macro|CB_SC_VCC_OFF
-mdefine_line|#define   CB_SC_VCC_OFF&t;&t;&t;0x00000000
-DECL|macro|CB_SC_VCC_5V
-mdefine_line|#define   CB_SC_VCC_5V&t;&t;&t;0x00000020
-DECL|macro|CB_SC_VCC_3V
-mdefine_line|#define   CB_SC_VCC_3V&t;&t;&t;0x00000030
-DECL|macro|CB_SC_VCC_XV
-mdefine_line|#define   CB_SC_VCC_XV&t;&t;&t;0x00000040
-DECL|macro|CB_SC_VCC_YV
-mdefine_line|#define   CB_SC_VCC_YV&t;&t;&t;0x00000050
-DECL|macro|CB_SC_CCLK_STOP
-mdefine_line|#define  CB_SC_CCLK_STOP&t;&t;0x00000080
+mdefine_line|#define CB_SOCKET_CONTROL&t;0x10
+DECL|macro|CB_VPPCTRL
+mdefine_line|#define    CB_VPPCTRL&t;&t;0&t;&t;/* Shift for Vpp */
+DECL|macro|CB_VCCCTRL
+mdefine_line|#define    CB_VCCCTRL&t;&t;4&t;&t;/* Shift for Vcc */
+DECL|macro|CB_STOPCLK
+mdefine_line|#define    CB_STOPCLK&t;&t;0x00000080&t;/* CLKRUN can slow CB clock when idle */
+DECL|macro|CB_PWRBITS
+mdefine_line|#define    CB_PWRBITS&t;&t;0x7
+DECL|macro|CB_PWROFF
+mdefine_line|#define    CB_PWROFF&t;&t;0x0
+DECL|macro|CB_PWR12V
+mdefine_line|#define    CB_PWR12V&t;&t;0x1&t;/* Only valid for Vpp */
+DECL|macro|CB_PWR5V
+mdefine_line|#define    CB_PWR5V&t;&t;0x2
+DECL|macro|CB_PWR3V
+mdefine_line|#define    CB_PWR3V&t;&t;0x3
+DECL|macro|CB_PWRXV
+mdefine_line|#define    CB_PWRXV&t;&t;0x4
+DECL|macro|CB_PWRYV
+mdefine_line|#define    CB_PWRYV&t;&t;0x5
 DECL|macro|CB_SOCKET_POWER
-mdefine_line|#define CB_SOCKET_POWER&t;&t;&t;0x0020
-DECL|macro|CB_SP_CLK_CTRL
-mdefine_line|#define  CB_SP_CLK_CTRL&t;&t;&t;0x00000001
-DECL|macro|CB_SP_CLK_CTRL_ENA
-mdefine_line|#define  CB_SP_CLK_CTRL_ENA&t;&t;0x00010000
-DECL|macro|CB_SP_CLK_MODE
-mdefine_line|#define  CB_SP_CLK_MODE&t;&t;&t;0x01000000
-DECL|macro|CB_SP_ACCESS
-mdefine_line|#define  CB_SP_ACCESS&t;&t;&t;0x02000000
-multiline_comment|/* Address bits 31..24 for memory windows for 16-bit cards,&n;   accessable only by memory mapping the 16-bit register set */
+mdefine_line|#define CB_SOCKET_POWER&t;&t;0x20
+DECL|macro|CB_SKTACCES
+mdefine_line|#define    CB_SKTACCES&t;&t;0x02000000&t;/* A PC card access has occurred (clear on read) */
+DECL|macro|CB_SKTMODE
+mdefine_line|#define    CB_SKTMODE&t;&t;0x01000000&t;/* Clock frequency has changed (clear on read) */
+DECL|macro|CB_CLKCTRLEN
+mdefine_line|#define    CB_CLKCTRLEN&t;&t;0x00010000&t;/* Clock control enabled (RW) */
+DECL|macro|CB_CLKCTRL
+mdefine_line|#define    CB_CLKCTRL&t;&t;0x00000001&t;/* Stop(0) or slow(1) CB clock (RW) */
+multiline_comment|/*&n; * Cardbus configuration space&n; */
+DECL|macro|CB_BRIDGE_CONTROL
+mdefine_line|#define CB_BRIDGE_CONTROL&t;0x3e
+DECL|macro|CB_BRIDGE_CPERREN
+mdefine_line|#define   CB_BRIDGE_CPERREN&t;0x00000001
+DECL|macro|CB_BRIDGE_CSERREN
+mdefine_line|#define   CB_BRIDGE_CSERREN&t;0x00000002
+DECL|macro|CB_BRIDGE_ISAEN
+mdefine_line|#define   CB_BRIDGE_ISAEN&t;0x00000004
+DECL|macro|CB_BRIDGE_VGAEN
+mdefine_line|#define   CB_BRIDGE_VGAEN&t;0x00000008
+DECL|macro|CB_BRIDGE_MABTMODE
+mdefine_line|#define   CB_BRIDGE_MABTMODE&t;0x00000020
+DECL|macro|CB_BRIDGE_CRST
+mdefine_line|#define   CB_BRIDGE_CRST&t;0x00000040
+DECL|macro|CB_BRIDGE_INTR
+mdefine_line|#define   CB_BRIDGE_INTR&t;0x00000080
+DECL|macro|CB_BRIDGE_PREFETCH0
+mdefine_line|#define   CB_BRIDGE_PREFETCH0&t;0x00000100
+DECL|macro|CB_BRIDGE_PREFETCH1
+mdefine_line|#define   CB_BRIDGE_PREFETCH1&t;0x00000200
+DECL|macro|CB_BRIDGE_POSTEN
+mdefine_line|#define   CB_BRIDGE_POSTEN&t;0x00000400
+multiline_comment|/*&n; * ExCA area extensions in Yenta&n; */
 DECL|macro|CB_MEM_PAGE
-mdefine_line|#define CB_MEM_PAGE(map)&t;&t;(0x40 + (map))
-macro_line|#endif /* _LINUX_YENTA_H */
+mdefine_line|#define CB_MEM_PAGE(map)&t;(0x40 + (map))
+macro_line|#endif
 eof

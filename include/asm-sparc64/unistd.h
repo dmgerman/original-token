@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.35 1999/12/15 17:52:09 jj Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.36 1999/12/21 14:09:51 jj Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -107,7 +107,7 @@ DECL|macro|__NR_ioctl
 mdefine_line|#define __NR_ioctl               54 /* Common                                      */
 DECL|macro|__NR_reboot
 mdefine_line|#define __NR_reboot              55 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       56    ENOSYS under SunOS                          */
+multiline_comment|/* #define __NR_mmap2&t;&t; 56    Linux sparc32 Specific                      */
 DECL|macro|__NR_symlink
 mdefine_line|#define __NR_symlink             57 /* Common                                      */
 DECL|macro|__NR_readlink
@@ -120,7 +120,7 @@ DECL|macro|__NR_chroot
 mdefine_line|#define __NR_chroot              61 /* Common                                      */
 DECL|macro|__NR_fstat
 mdefine_line|#define __NR_fstat               62 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       63    ENOSYS under SunOS                          */
+multiline_comment|/* #define __NR_fstat64          63    Linux sparc32 Specific                      */
 DECL|macro|__NR_getpagesize
 mdefine_line|#define __NR_getpagesize         64 /* Common                                      */
 DECL|macro|__NR_msync
@@ -143,7 +143,7 @@ mdefine_line|#define __NR_mprotect            74 /* Common                      
 multiline_comment|/* #define __NR_madvise          75    SunOS Specific                              */
 DECL|macro|__NR_vhangup
 mdefine_line|#define __NR_vhangup             76 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       77    ENOSYS under SunOS                          */
+multiline_comment|/* #define __NR_truncate64       77    Linux sparc32 Specific&t;&t;&t;   */
 multiline_comment|/* #define __NR_mincore          78    SunOS Specific                              */
 DECL|macro|__NR_getgroups
 mdefine_line|#define __NR_getgroups           79 /* Common                                      */
@@ -154,7 +154,7 @@ mdefine_line|#define __NR_getpgrp             81 /* Common                      
 multiline_comment|/* #define __NR_setpgrp          82    setpgid, same difference...                 */
 DECL|macro|__NR_setitimer
 mdefine_line|#define __NR_setitimer           83 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       84    ENOSYS under SunOS                          */
+multiline_comment|/* #define __NR_ftruncate64      84    Linux sparc32 Specific&t;&t;&t;   */
 DECL|macro|__NR_swapon
 mdefine_line|#define __NR_swapon              85 /* Common                                      */
 DECL|macro|__NR_getitimer
@@ -239,7 +239,7 @@ DECL|macro|__NR_ftruncate
 mdefine_line|#define __NR_ftruncate          130 /* Common                                      */
 DECL|macro|__NR_flock
 mdefine_line|#define __NR_flock              131 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall      132    ENOSYS under SunOS                          */
+multiline_comment|/* #define __NR_lstat64&t;&t;132    Linux sparc32 Specific                      */
 DECL|macro|__NR_sendto
 mdefine_line|#define __NR_sendto             133 /* Common                                      */
 DECL|macro|__NR_shutdown
@@ -252,7 +252,7 @@ DECL|macro|__NR_rmdir
 mdefine_line|#define __NR_rmdir              137 /* Common                                      */
 DECL|macro|__NR_utimes
 mdefine_line|#define __NR_utimes             138 /* SunOS Specific                              */
-multiline_comment|/* #define __NR_ni_syscall      139    ENOSYS under SunOS                          */
+multiline_comment|/* #define __NR_stat64&t;&t;139    Linux sparc32 Specific&t;&t;&t;   */
 multiline_comment|/* #define __NR_adjtime         140    SunOS Specific                              */
 DECL|macro|__NR_getpeername
 mdefine_line|#define __NR_getpeername        141 /* Common                                      */

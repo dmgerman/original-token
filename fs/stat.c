@@ -1115,7 +1115,7 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/* ---------- LFS-64 ----------- */
-macro_line|#if BITS_PER_LONG == 32
+macro_line|#if !defined(__alpha__)
 DECL|function|cp_new_stat64
 r_static
 r_int
@@ -1640,5 +1640,5 @@ r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#endif /* BITS_PER_LONG == 32 */
+macro_line|#endif /* LFS-64 */
 eof

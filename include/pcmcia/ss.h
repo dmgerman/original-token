@@ -2,36 +2,6 @@ multiline_comment|/*&n; * ss.h 1.25 1999/10/25 20:23:17&n; *&n; * The contents o
 macro_line|#ifndef _LINUX_SS_H
 DECL|macro|_LINUX_SS_H
 mdefine_line|#define _LINUX_SS_H
-multiline_comment|/* For RegisterCallback */
-DECL|struct|ss_callback_t
-r_typedef
-r_struct
-id|ss_callback_t
-(brace
-DECL|member|handler
-r_void
-(paren
-op_star
-id|handler
-)paren
-(paren
-r_void
-op_star
-id|info
-comma
-id|u_int
-id|events
-)paren
-suffix:semicolon
-DECL|member|info
-r_void
-op_star
-id|info
-suffix:semicolon
-DECL|typedef|ss_callback_t
-)brace
-id|ss_callback_t
-suffix:semicolon
 multiline_comment|/* Definitions for card status flags for GetStatus */
 DECL|macro|SS_WRPROT
 mdefine_line|#define SS_WRPROT&t;0x0001
@@ -272,12 +242,26 @@ op_star
 id|register_callback
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
-id|ss_callback_t
+r_void
+(paren
 op_star
-id|call
+id|handler
+)paren
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+comma
+r_void
+op_star
+id|info
 )paren
 suffix:semicolon
 DECL|member|inquire_socket
@@ -287,7 +271,8 @@ op_star
 id|inquire_socket
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 id|socket_cap_t
@@ -302,7 +287,8 @@ op_star
 id|get_status
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 id|u_int
@@ -317,7 +303,8 @@ op_star
 id|get_socket
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 id|socket_state_t
@@ -332,7 +319,8 @@ op_star
 id|set_socket
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 id|socket_state_t
@@ -347,7 +335,8 @@ op_star
 id|get_io_map
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 r_struct
@@ -363,7 +352,8 @@ op_star
 id|set_io_map
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 r_struct
@@ -379,7 +369,8 @@ op_star
 id|get_mem_map
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 r_struct
@@ -395,7 +386,8 @@ op_star
 id|set_mem_map
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 r_struct
@@ -411,7 +403,8 @@ op_star
 id|get_bridge
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 r_struct
@@ -427,7 +420,8 @@ op_star
 id|set_bridge
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 r_struct
@@ -443,7 +437,8 @@ op_star
 id|proc_setup
 )paren
 (paren
-id|u_short
+r_int
+r_int
 id|sock
 comma
 r_struct

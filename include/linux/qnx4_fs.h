@@ -1,12 +1,12 @@
-multiline_comment|/*&n; *  Name                         : qnx4_fs.h&n; *  Author                       : Richard Frowijn&n; *  Function                     : qnx4 global filesystem definitions&n; *  Version                      : 1.0&n; *  Last modified                : 23-03-1998&n; *&n; *  History                      : 23-03-1998 created&n; */
+multiline_comment|/*&n; *  Name                         : qnx4_fs.h&n; *  Author                       : Richard Frowijn&n; *  Function                     : qnx4 global filesystem definitions&n; *  Version                      : 1.0.1&n; *  Last modified                : 1999-12-13&n; *&n; *  History                      : 23-03-1998 created&n; */
 macro_line|#ifndef _LINUX_QNX4_FS_H
 DECL|macro|_LINUX_QNX4_FS_H
 mdefine_line|#define _LINUX_QNX4_FS_H
 macro_line|#include &lt;linux/qnxtypes.h&gt;
 DECL|macro|QNX4_ROOT_INO
 mdefine_line|#define QNX4_ROOT_INO 1
-DECL|macro|_MAX_XTNTS_PER_XBLK
-mdefine_line|#define _MAX_XTNTS_PER_XBLK&t;60
+DECL|macro|QNX4_MAX_XTNTS_PER_XBLK
+mdefine_line|#define QNX4_MAX_XTNTS_PER_XBLK&t;60
 multiline_comment|/* for di_status */
 DECL|macro|QNX4_FILE_USED
 mdefine_line|#define QNX4_FILE_USED          0x01
@@ -39,10 +39,10 @@ mdefine_line|#define QNX4_XBLK_ENTRY_SIZE    0x200&t;/* xblk entry size */
 DECL|macro|QNX4_INODES_PER_BLOCK
 mdefine_line|#define QNX4_INODES_PER_BLOCK   0x08&t;/* 512 / 64 */
 multiline_comment|/* for filenames */
-DECL|macro|_SHORT_NAME_MAX
-mdefine_line|#define _SHORT_NAME_MAX        16
+DECL|macro|QNX4_SHORT_NAME_MAX
+mdefine_line|#define QNX4_SHORT_NAME_MAX&t;16
 DECL|macro|QNX4_NAME_MAX
-mdefine_line|#define QNX4_NAME_MAX          48
+mdefine_line|#define QNX4_NAME_MAX&t;&t;48
 multiline_comment|/*&n; * This is the original qnx4 inode layout on disk.&n; */
 DECL|struct|qnx4_inode_entry
 r_struct
@@ -52,18 +52,19 @@ DECL|member|di_fname
 r_char
 id|di_fname
 (braket
-l_int|16
+id|QNX4_SHORT_NAME_MAX
 )braket
 suffix:semicolon
 DECL|member|di_size
-id|off_t
+id|qnx4_off_t
 id|di_size
 suffix:semicolon
 DECL|member|di_first_xtnt
-id|_xtnt_t
+id|qnx4_xtnt_t
 id|di_first_xtnt
 suffix:semicolon
 DECL|member|di_xblk
+r_int
 r_int
 id|di_xblk
 suffix:semicolon
@@ -84,7 +85,7 @@ id|time_t
 id|di_ctime
 suffix:semicolon
 DECL|member|di_num_xtnts
-id|_nxtnt_t
+id|qnx4_nxtnt_t
 id|di_num_xtnts
 suffix:semicolon
 DECL|member|di_mode
@@ -92,15 +93,15 @@ id|mode_t
 id|di_mode
 suffix:semicolon
 DECL|member|di_uid
-id|muid_t
+id|qnx4_muid_t
 id|di_uid
 suffix:semicolon
 DECL|member|di_gid
-id|mgid_t
+id|qnx4_mgid_t
 id|di_gid
 suffix:semicolon
 DECL|member|di_nlink
-id|nlink_t
+id|qnx4_nlink_t
 id|di_nlink
 suffix:semicolon
 DECL|member|di_zero
@@ -111,7 +112,7 @@ l_int|4
 )braket
 suffix:semicolon
 DECL|member|di_type
-id|_ftype_t
+id|qnx4_ftype_t
 id|di_type
 suffix:semicolon
 DECL|member|di_status
@@ -133,6 +134,7 @@ id|QNX4_NAME_MAX
 )braket
 suffix:semicolon
 DECL|member|dl_inode_blk
+r_int
 r_int
 id|dl_inode_blk
 suffix:semicolon
@@ -162,9 +164,11 @@ id|qnx4_xblk
 (brace
 DECL|member|xblk_next_xblk
 r_int
+r_int
 id|xblk_next_xblk
 suffix:semicolon
 DECL|member|xblk_prev_xblk
+r_int
 r_int
 id|xblk_prev_xblk
 suffix:semicolon
@@ -184,11 +188,11 @@ DECL|member|xblk_num_blocks
 r_int
 id|xblk_num_blocks
 suffix:semicolon
-DECL|member|xblk_xnts
-id|_xtnt_t
-id|xblk_xnts
+DECL|member|xblk_xtnts
+id|qnx4_xtnt_t
+id|xblk_xtnts
 (braket
-id|_MAX_XTNTS_PER_XBLK
+id|QNX4_MAX_XTNTS_PER_XBLK
 )braket
 suffix:semicolon
 DECL|member|xblk_signature
@@ -199,7 +203,7 @@ l_int|8
 )braket
 suffix:semicolon
 DECL|member|xblk_first_xtnt
-id|_xtnt_t
+id|qnx4_xtnt_t
 id|xblk_first_xtnt
 suffix:semicolon
 )brace
@@ -280,6 +284,21 @@ r_struct
 id|super_block
 op_star
 id|sb
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|qnx4_block_map
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|iblock
 )paren
 suffix:semicolon
 r_extern
@@ -489,7 +508,7 @@ id|inode
 suffix:semicolon
 r_extern
 r_int
-id|qnx4_bmap
+id|qnx4_get_block
 c_func
 (paren
 r_struct
@@ -498,7 +517,15 @@ op_star
 id|inode
 comma
 r_int
-id|block
+id|iblock
+comma
+r_struct
+id|buffer_head
+op_star
+id|bh
+comma
+r_int
+id|create
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */

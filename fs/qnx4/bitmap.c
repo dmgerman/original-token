@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * QNX4 file system, Linux implementation.&n; * &n; * Version : 0.1&n; * &n; * Using parts of the xiafs filesystem.&n; * &n; * History :&n; * &n; * 28-05-1998 by Richard Frowijn : first release.&n; * 20-06-1998 by Frank Denis : basic optimisations.&n; * 25-06-1998 by Frank Denis : qnx4_is_free, qnx4_set_bitmap, qnx4_bmap .&n; * 28-06-1998 by Frank Denis : qnx4_free_inode (to be fixed) .&n; */
+multiline_comment|/*&n; * QNX4 file system, Linux implementation.&n; *&n; * Version : 0.2.1&n; *&n; * Using parts of the xiafs filesystem.&n; *&n; * History :&n; *&n; * 28-05-1998 by Richard Frowijn : first release.&n; * 20-06-1998 by Frank Denis : basic optimisations.&n; * 25-06-1998 by Frank Denis : qnx4_is_free, qnx4_set_bitmap, qnx4_bmap .&n; * 28-06-1998 by Frank Denis : qnx4_free_inode (to be fixed) .&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/qnx4_fs.h&gt;
@@ -508,53 +508,6 @@ id|bh
 suffix:semicolon
 r_return
 id|ret
-suffix:semicolon
-)brace
-DECL|function|qnx4_bmap
-r_int
-id|qnx4_bmap
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|block
-)paren
-(brace
-id|QNX4DEBUG
-c_func
-(paren
-(paren
-l_string|&quot;qnx4: bmap on block [%d]&bslash;n&quot;
-comma
-id|block
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|block
-OL
-l_int|0
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_return
-op_logical_neg
-id|qnx4_is_free
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-id|block
-)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_QNX4FS_RW

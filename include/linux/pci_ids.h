@@ -621,16 +621,32 @@ DECL|macro|PCI_DEVICE_ID_TI_TVP4010
 mdefine_line|#define PCI_DEVICE_ID_TI_TVP4010&t;0x3d04
 DECL|macro|PCI_DEVICE_ID_TI_TVP4020
 mdefine_line|#define PCI_DEVICE_ID_TI_TVP4020&t;0x3d07
-DECL|macro|PCI_DEVICE_ID_TI_PCI1130
-mdefine_line|#define PCI_DEVICE_ID_TI_PCI1130&t;0xac12
-DECL|macro|PCI_DEVICE_ID_TI_PCI1031
-mdefine_line|#define PCI_DEVICE_ID_TI_PCI1031&t;0xac13
-DECL|macro|PCI_DEVICE_ID_TI_PCI1131
-mdefine_line|#define PCI_DEVICE_ID_TI_PCI1131&t;0xac15
-DECL|macro|PCI_DEVICE_ID_TI_PCI1250
-mdefine_line|#define PCI_DEVICE_ID_TI_PCI1250&t;0xac16
-DECL|macro|PCI_DEVICE_ID_TI_PCI1220
-mdefine_line|#define PCI_DEVICE_ID_TI_PCI1220&t;0xac17
+DECL|macro|PCI_DEVICE_ID_TI_1130
+mdefine_line|#define PCI_DEVICE_ID_TI_1130&t;&t;0xac12
+DECL|macro|PCI_DEVICE_ID_TI_1031
+mdefine_line|#define PCI_DEVICE_ID_TI_1031&t;&t;0xac13
+DECL|macro|PCI_DEVICE_ID_TI_1131
+mdefine_line|#define PCI_DEVICE_ID_TI_1131&t;&t;0xac15
+DECL|macro|PCI_DEVICE_ID_TI_1250
+mdefine_line|#define PCI_DEVICE_ID_TI_1250&t;&t;0xac16
+DECL|macro|PCI_DEVICE_ID_TI_1220
+mdefine_line|#define PCI_DEVICE_ID_TI_1220&t;&t;0xac17
+DECL|macro|PCI_DEVICE_ID_TI_1221
+mdefine_line|#define PCI_DEVICE_ID_TI_1221&t;&t;0xac19
+DECL|macro|PCI_DEVICE_ID_TI_1210
+mdefine_line|#define PCI_DEVICE_ID_TI_1210&t;&t;0xac1a
+DECL|macro|PCI_DEVICE_ID_TI_1450
+mdefine_line|#define PCI_DEVICE_ID_TI_1450&t;&t;0xac1b
+DECL|macro|PCI_DEVICE_ID_TI_1225
+mdefine_line|#define PCI_DEVICE_ID_TI_1225&t;&t;0xac1c
+DECL|macro|PCI_DEVICE_ID_TI_1251A
+mdefine_line|#define PCI_DEVICE_ID_TI_1251A&t;&t;0xac1d
+DECL|macro|PCI_DEVICE_ID_TI_1211
+mdefine_line|#define PCI_DEVICE_ID_TI_1211&t;&t;0xac1e
+DECL|macro|PCI_DEVICE_ID_TI_1251B
+mdefine_line|#define PCI_DEVICE_ID_TI_1251B&t;&t;0xac1f
+DECL|macro|PCI_DEVICE_ID_TI_1420
+mdefine_line|#define PCI_DEVICE_ID_TI_1420&t;&t;0xac51
 DECL|macro|PCI_VENDOR_ID_OAK
 mdefine_line|#define PCI_VENDOR_ID_OAK&t;&t;0x104e
 DECL|macro|PCI_DEVICE_ID_OAK_OTI107

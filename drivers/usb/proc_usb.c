@@ -1501,13 +1501,13 @@ id|usbdev-&gt;maxchild
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * level = topology-tier level;&n;&t; * parent_devnum = parent device number;&n;&t; * index = parent&squot;s connector number;&n;&t; * count = device count at this level&n;&t; */
-multiline_comment|/* do not dump descriptors for root hub, but we do want to see the bandwidth */
+multiline_comment|/* If this is the root hub, display the bandwidth information */
 r_if
 c_cond
 (paren
-id|usbdev-&gt;devnum
+id|level
 op_eq
-l_int|1
+l_int|0
 )paren
 id|start
 op_add_assign
@@ -1539,7 +1539,7 @@ comma
 id|bus-&gt;bandwidth_isoc_reqs
 )paren
 suffix:semicolon
-r_else
+multiline_comment|/* show the descriptor information for this device */
 id|start
 op_assign
 id|usb_dump_desc

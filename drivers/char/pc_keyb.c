@@ -2391,6 +2391,17 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Check if the BIOS detected a device on the auxiliary port. */
+r_if
+c_cond
+(paren
+id|aux_device_present
+op_eq
+l_int|0xaa
+)paren
+r_return
+l_int|1
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren

@@ -1804,6 +1804,10 @@ comma
 l_int|1
 )paren
 comma
+(paren
+r_void
+op_star
+)paren
 id|buf
 comma
 id|length
@@ -2188,6 +2192,10 @@ comma
 l_int|1
 )paren
 comma
+(paren
+r_void
+op_star
+)paren
 id|buffer
 comma
 id|len
@@ -2531,6 +2539,10 @@ comma
 l_int|1
 )paren
 comma
+(paren
+r_void
+op_star
+)paren
 id|buffer
 comma
 id|len

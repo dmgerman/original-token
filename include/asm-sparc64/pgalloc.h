@@ -539,7 +539,7 @@ id|page
 op_star
 )paren
 (paren
-id|page_address
+id|__page_address
 c_func
 (paren
 id|ret

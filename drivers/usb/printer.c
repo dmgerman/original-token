@@ -18,6 +18,12 @@ DECL|macro|MAX_RETRY_COUNT
 mdefine_line|#define MAX_RETRY_COUNT ((60*60*HZ)/NAK_TIMEOUT)&t;/* should not take 1 minute a page! */
 DECL|macro|BIG_BUF_SIZE
 mdefine_line|#define BIG_BUF_SIZE&t;&t;&t;8192
+DECL|macro|SUBCLASS_PRINTERS
+mdefine_line|#define SUBCLASS_PRINTERS&t;&t;1
+DECL|macro|PROTOCOL_UNIDIRECTIONAL
+mdefine_line|#define PROTOCOL_UNIDIRECTIONAL&t;&t;1
+DECL|macro|PROTOCOL_BIDIRECTIONAL
+mdefine_line|#define PROTOCOL_BIDIRECTIONAL&t;&t;2
 multiline_comment|/*&n; * USB Printer Requests&n; */
 DECL|macro|USB_PRINTER_REQ_GET_DEVICE_ID
 mdefine_line|#define USB_PRINTER_REQ_GET_DEVICE_ID&t;0
@@ -170,7 +176,10 @@ comma
 op_amp
 id|status
 comma
-l_int|1
+r_sizeof
+(paren
+id|status
+)paren
 comma
 id|HZ
 )paren
@@ -251,9 +260,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usblp%d out of paper&bslash;n&quot;
+l_string|&quot;usblp%d out of paper (%x)&bslash;n&quot;
 comma
 id|p-&gt;minor
+comma
+id|status
 )paren
 suffix:semicolon
 )brace
@@ -286,9 +297,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usblp%d off-line&bslash;n&quot;
+l_string|&quot;usblp%d off-line (%x)&bslash;n&quot;
 comma
 id|p-&gt;minor
+comma
+id|status
 )paren
 suffix:semicolon
 )brace
@@ -311,9 +324,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usblp%d on fire&bslash;n&quot;
+l_string|&quot;usblp%d on fire (%x)&bslash;n&quot;
 comma
 id|p-&gt;minor
+comma
+id|status
 )paren
 suffix:semicolon
 )brace
@@ -1159,16 +1174,16 @@ id|USB_CLASS_PRINTER
 op_logical_or
 id|interface-&gt;bInterfaceSubClass
 op_ne
-l_int|1
+id|SUBCLASS_PRINTERS
 op_logical_or
 (paren
 id|interface-&gt;bInterfaceProtocol
 op_ne
-l_int|2
+id|PROTOCOL_BIDIRECTIONAL
 op_logical_and
 id|interface-&gt;bInterfaceProtocol
 op_ne
-l_int|1
+id|PROTOCOL_UNIDIRECTIONAL
 )paren
 op_logical_or
 id|interface-&gt;bNumEndpoints
@@ -1310,6 +1325,7 @@ id|MAX_PRINTERS
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;No minor table space available for USB Printer&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1383,30 +1399,15 @@ c_func
 id|pp
 )paren
 suffix:semicolon
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|minor
+id|pp-&gt;minor
 op_assign
 id|i
 suffix:semicolon
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|pusb_dev
+id|pp-&gt;pusb_dev
 op_assign
 id|dev
 suffix:semicolon
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|maxout
+id|pp-&gt;maxout
 op_assign
 (paren
 id|BIG_BUF_SIZE
@@ -1424,24 +1425,13 @@ c_cond
 (paren
 id|interface-&gt;bInterfaceProtocol
 op_ne
-l_int|2
+id|PROTOCOL_BIDIRECTIONAL
 )paren
-multiline_comment|/* if not bidirectional */
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|noinput
+id|pp-&gt;noinput
 op_assign
 l_int|1
 suffix:semicolon
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_out_index
+id|pp-&gt;bulk_out_index
 op_assign
 (paren
 (paren
@@ -1463,31 +1453,16 @@ l_int|0
 suffix:colon
 l_int|1
 suffix:semicolon
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_in_index
+id|pp-&gt;bulk_in_index
 op_assign
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|noinput
+id|pp-&gt;noinput
 ques
 c_cond
 op_minus
 l_int|1
 suffix:colon
 (paren
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_out_index
+id|pp-&gt;bulk_out_index
 op_eq
 l_int|0
 )paren
@@ -1497,19 +1472,9 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_in_ep
+id|pp-&gt;bulk_in_ep
 op_assign
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|noinput
+id|pp-&gt;noinput
 ques
 c_cond
 op_minus
@@ -1517,33 +1482,18 @@ l_int|1
 suffix:colon
 id|interface-&gt;endpoint
 (braket
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_in_index
+id|pp-&gt;bulk_in_index
 )braket
 dot
 id|bEndpointAddress
 op_amp
 id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_out_ep
+id|pp-&gt;bulk_out_ep
 op_assign
 id|interface-&gt;endpoint
 (braket
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_out_index
+id|pp-&gt;bulk_out_index
 )braket
 dot
 id|bEndpointAddress
@@ -1555,25 +1505,14 @@ c_cond
 (paren
 id|interface-&gt;bInterfaceProtocol
 op_eq
-l_int|2
+id|PROTOCOL_BIDIRECTIONAL
 )paren
 (brace
-multiline_comment|/* if bidirectional */
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|maxin
+id|pp-&gt;maxin
 op_assign
 id|interface-&gt;endpoint
 (braket
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_in_index
+id|pp-&gt;bulk_in_index
 )braket
 dot
 id|wMaxPacketSize
@@ -1583,30 +1522,24 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;USB Printer Summary:&bslash;n&quot;
+l_string|&quot;usblp%d Summary:&bslash;n&quot;
+comma
+id|pp-&gt;minor
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;index=%d, maxout=%d, noinput=%d&bslash;n&quot;
+l_string|&quot;index=%d, maxout=%d, noinput=%d, maxin=%d&bslash;n&quot;
 comma
 id|i
 comma
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|maxout
+id|pp-&gt;maxout
 comma
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|noinput
+id|pp-&gt;noinput
+comma
+id|pp-&gt;maxin
 )paren
 suffix:semicolon
 id|printk
@@ -1615,36 +1548,16 @@ c_func
 id|KERN_INFO
 l_string|&quot;bulk_in_ix=%d, bulk_in_ep=%d, bulk_out_ix=%d, bulk_out_ep=%d&bslash;n&quot;
 comma
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_in_index
+id|pp-&gt;bulk_in_index
 comma
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_in_ep
+id|pp-&gt;bulk_in_ep
 comma
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_out_index
+id|pp-&gt;bulk_out_index
 comma
-id|minor_data
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|bulk_out_ep
+id|pp-&gt;bulk_out_ep
 )paren
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if 1
 (brace
 id|__u8
 id|status
@@ -1654,6 +1567,20 @@ id|ieee_id
 (braket
 l_int|64
 )braket
+suffix:semicolon
+multiline_comment|/* first 2 bytes are (big-endian) length */
+r_int
+id|length
+op_assign
+id|be16_to_cpup
+c_func
+(paren
+(paren
+id|__u16
+op_star
+)paren
+id|ieee_id
+)paren
 suffix:semicolon
 multiline_comment|/* Let&squot;s get the device id if possible. */
 r_if
@@ -1743,7 +1670,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  USB Printer ID is %s&bslash;n&quot;
+l_string|&quot;  usblp%d Device ID length=%d, string=%s&bslash;n&quot;
+comma
+id|pp-&gt;minor
+comma
+id|length
 comma
 op_amp
 id|ieee_id
@@ -1753,6 +1684,16 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+r_else
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;  usblp%d: error reading IEEE-1284 Device ID&bslash;n&quot;
+comma
+id|pp-&gt;minor
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|printer_read_status
@@ -1769,7 +1710,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  Status is %s,%s,%s&bslash;n&quot;
+l_string|&quot;  usblp%d Probe Status is %x: %s,%s,%s&bslash;n&quot;
+comma
+id|pp-&gt;minor
+comma
+id|status
 comma
 (paren
 id|status

@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * QNX4 file system, Linux implementation.&n; * &n; * Version : 0.1&n; * &n; * Using parts of the xiafs filesystem.&n; * &n; * History :&n; * &n; * 28-05-1998 by Richard Frowijn : first release.&n; * 20-06-1998 by Frank Denis : Linux 2.1.99+ &amp; dcache support.&n; */
+multiline_comment|/*&n; * QNX4 file system, Linux implementation.&n; *&n; * Version : 0.2.1&n; *&n; * Using parts of the xiafs filesystem.&n; *&n; * History :&n; *&n; * 28-05-1998 by Richard Frowijn : first release.&n; * 20-06-1998 by Frank Denis : Linux 2.1.99+ &amp; dcache support.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -6,24 +6,6 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/qnx4_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-r_static
-r_int
-id|qnx4_readdir
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_void
-op_star
-id|dirent
-comma
-id|filldir_t
-id|filldir
-)paren
-suffix:semicolon
 DECL|function|qnx4_readdir
 r_static
 r_int
@@ -64,30 +46,22 @@ id|qnx4_inode_entry
 op_star
 id|de
 suffix:semicolon
+r_struct
+id|qnx4_link_info
+op_star
+id|le
+suffix:semicolon
+r_int
 r_int
 id|blknum
 suffix:semicolon
 r_int
-id|i
+id|ix
+comma
+id|ino
 suffix:semicolon
 r_int
 id|size
-suffix:semicolon
-id|blknum
-op_assign
-id|inode-&gt;u.qnx4_i.i_first_xtnt.xtnt_blk
-op_minus
-l_int|1
-op_plus
-(paren
-(paren
-id|filp-&gt;f_pos
-op_rshift
-l_int|6
-)paren
-op_rshift
-l_int|3
-)paren
 suffix:semicolon
 id|QNX4DEBUG
 c_func
@@ -115,19 +89,6 @@ id|filp-&gt;f_pos
 )paren
 )paren
 suffix:semicolon
-id|QNX4DEBUG
-c_func
-(paren
-(paren
-l_string|&quot;BlkNum              = %ld&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|blknum
-)paren
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -136,6 +97,18 @@ OL
 id|inode-&gt;i_size
 )paren
 (brace
+id|blknum
+op_assign
+id|qnx4_block_map
+c_func
+(paren
+id|inode
+comma
+id|filp-&gt;f_pos
+op_div
+id|QNX4_BLOCK_SIZE
+)paren
+suffix:semicolon
 id|bh
 op_assign
 id|bread
@@ -168,39 +141,35 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|i
+id|ix
 op_assign
 (paren
 id|filp-&gt;f_pos
+op_div
+id|QNX4_DIR_ENTRY_SIZE
 op_minus
 (paren
-(paren
-(paren
 id|filp-&gt;f_pos
-op_rshift
-l_int|6
+op_div
+id|QNX4_BLOCK_SIZE
 )paren
-op_rshift
-l_int|3
+op_star
+id|QNX4_INODES_PER_BLOCK
 )paren
-op_lshift
-l_int|9
-)paren
-)paren
-op_amp
-l_int|0x3f
+op_mod
+id|QNX4_INODES_PER_BLOCK
 suffix:semicolon
 r_while
 c_loop
 (paren
-id|i
+id|ix
 OL
 id|QNX4_INODES_PER_BLOCK
 )paren
 (brace
 id|offset
 op_assign
-id|i
+id|ix
 op_star
 id|QNX4_DIR_ENTRY_SIZE
 suffix:semicolon
@@ -231,11 +200,59 @@ c_cond
 id|size
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|de-&gt;di_status
+op_amp
+id|QNX4_FILE_LINK
+)paren
+op_logical_and
+id|size
+OG
+id|QNX4_SHORT_NAME_MAX
+)paren
+id|size
+op_assign
+id|QNX4_SHORT_NAME_MAX
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|size
+OG
+id|QNX4_NAME_MAX
+)paren
+id|size
+op_assign
+id|QNX4_NAME_MAX
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|de-&gt;di_status
+op_amp
+(paren
+id|QNX4_FILE_USED
+op_or
+id|QNX4_FILE_LINK
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+(brace
 id|QNX4DEBUG
 c_func
 (paren
 (paren
-l_string|&quot;qnx4_readdir:%s&bslash;n&quot;
+l_string|&quot;qnx4_readdir:%.*s&bslash;n&quot;
+comma
+id|size
 comma
 id|de-&gt;di_fname
 )paren
@@ -245,22 +262,47 @@ r_if
 c_cond
 (paren
 (paren
-id|de-&gt;di_mode
-)paren
-op_logical_or
-(paren
 id|de-&gt;di_status
-op_eq
+op_amp
 id|QNX4_FILE_LINK
 )paren
+op_eq
+l_int|0
 )paren
+id|ino
+op_assign
+id|blknum
+op_star
+id|QNX4_INODES_PER_BLOCK
+op_plus
+id|ix
+op_minus
+l_int|1
+suffix:semicolon
+r_else
 (brace
-r_if
-c_cond
+id|le
+op_assign
 (paren
-id|de-&gt;di_status
+r_struct
+id|qnx4_link_info
+op_star
 )paren
-(brace
+id|de
+suffix:semicolon
+id|ino
+op_assign
+(paren
+id|le-&gt;dl_inode_blk
+op_minus
+l_int|1
+)paren
+op_star
+id|QNX4_INODES_PER_BLOCK
+op_plus
+id|le-&gt;dl_inode_ndx
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -275,7 +317,7 @@ id|size
 comma
 id|filp-&gt;f_pos
 comma
-id|de-&gt;di_first_xtnt.xtnt_blk
+id|ino
 )paren
 OL
 l_int|0
@@ -293,8 +335,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-)brace
-id|i
+id|ix
 op_increment
 suffix:semicolon
 id|filp-&gt;f_pos
@@ -307,9 +348,6 @@ c_func
 (paren
 id|bh
 )paren
-suffix:semicolon
-id|blknum
-op_increment
 suffix:semicolon
 )brace
 id|UPDATE_ATIME
@@ -329,48 +367,14 @@ id|file_operations
 id|qnx4_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|qnx4_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* no special flush code */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
+id|fsync
+suffix:colon
 id|file_fsync
 comma
-multiline_comment|/* default fsync */
-l_int|NULL
-comma
-multiline_comment|/* default fasync */
-l_int|NULL
-comma
-multiline_comment|/* default check_media_change */
-l_int|NULL
-comma
-multiline_comment|/* default revalidate */
 )brace
 suffix:semicolon
 DECL|variable|qnx4_dir_inode_operations
@@ -379,73 +383,31 @@ id|inode_operations
 id|qnx4_dir_inode_operations
 op_assign
 (brace
+id|default_file_ops
+suffix:colon
 op_amp
 id|qnx4_dir_operations
 comma
 macro_line|#ifdef CONFIG_QNX4FS_RW
+id|create
+suffix:colon
 id|qnx4_create
 comma
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* create */
 macro_line|#endif
+id|lookup
+suffix:colon
 id|qnx4_lookup
 comma
-l_int|NULL
-comma
-multiline_comment|/* link */
 macro_line|#ifdef CONFIG_QNX4FS_RW
+id|unlink
+suffix:colon
 id|qnx4_unlink
 comma
-multiline_comment|/* unlink */
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-macro_line|#ifdef CONFIG_QNX4FS_RW
+id|rmdir
+suffix:colon
 id|qnx4_rmdir
 comma
-multiline_comment|/* rmdir */
-macro_line|#else
-l_int|NULL
-comma
 macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 eof

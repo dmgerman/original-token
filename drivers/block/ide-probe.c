@@ -2861,7 +2861,7 @@ macro_line|#elif defined(__sparc__)
 id|printk
 c_func
 (paren
-l_string|&quot;%s at 0x%03x-0x%03x,0x%03x on irq %s&quot;
+l_string|&quot;%s at 0x%03lx-0x%03lx,0x%03lx on irq %s&quot;
 comma
 id|hwif-&gt;name
 comma

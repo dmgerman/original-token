@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.116 1999/12/15 22:18:55 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.118 1999/12/21 21:24:35 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -292,10 +292,10 @@ mdefine_line|#define pte_mkclean(pte)&t;(__pte(pte_val(pte) &amp; ~(_PAGE_MODIFI
 DECL|macro|pte_mkold
 mdefine_line|#define pte_mkold(pte)&t;&t;(__pte(((pte_val(pte)&lt;&lt;1UL)&gt;&gt;1UL) &amp; ~_PAGE_ACCESSED))
 multiline_comment|/* Permanent address of a page. */
-DECL|macro|page_address
-mdefine_line|#define page_address(page)   (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
 DECL|macro|__page_address
-mdefine_line|#define __page_address(page) ({ page_address(page); })
+mdefine_line|#define __page_address(page)&t;((page)-&gt;virtual)
+DECL|macro|page_address
+mdefine_line|#define page_address(page)&t;({ __page_address(page); })
 DECL|macro|pte_page
 mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
 multiline_comment|/* Be very careful when you change these three, they are delicate. */

@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * QNX4 file system, Linux implementation.&n; * &n; * Version : 0.1&n; * &n; * Using parts of the xiafs filesystem.&n; * &n; * History :&n; * &n; * 25-05-1998 by Richard Frowijn : first release.&n; * 21-06-1998 by Frank Denis : wrote qnx4_readpage to use generic_file_read.&n; * 27-06-1998 by Frank Denis : file overwriting.&n; */
+multiline_comment|/*&n; * QNX4 file system, Linux implementation.&n; *&n; * Version : 0.2.1&n; *&n; * Using parts of the xiafs filesystem.&n; *&n; * History :&n; *&n; * 25-05-1998 by Richard Frowijn : first release.&n; * 21-06-1998 by Frank Denis : wrote qnx4_readpage to use generic_file_read.&n; * 27-06-1998 by Frank Denis : file overwriting.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -19,22 +19,6 @@ DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a)&lt;(b))?(a):(b))
 DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
-r_static
-r_int
-id|qnx4_readpage
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-comma
-r_struct
-id|page
-op_star
-id|page
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_QNX4FS_RW
 DECL|function|qnx4_file_write
 r_static
@@ -546,18 +530,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|update_vm_cache
-c_func
-(paren
-id|inode
-comma
-id|pos
-comma
-id|p
-comma
-id|c
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;update_vm_cache(inode, pos, p, c);
 id|mark_buffer_uptodate
 c_func
 (paren
@@ -630,7 +603,7 @@ id|result
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * We have moostly NULL&squot;s here: the current defaults are ok for&n; * the qnx4 filesystem.&n; */
+multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the qnx4 filesystem.&n; */
 DECL|variable|qnx4_file_operations
 r_static
 r_struct
@@ -638,60 +611,26 @@ id|file_operations
 id|qnx4_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|generic_file_read
 comma
-multiline_comment|/* read */
 macro_line|#ifdef CONFIG_QNX4FS_RW
+id|write
+suffix:colon
 id|qnx4_file_write
 comma
-multiline_comment|/* write */
-macro_line|#else
-l_int|NULL
-comma
 macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open is needed */
-l_int|NULL
-comma
-multiline_comment|/* no special flush code */
-l_int|NULL
-comma
-multiline_comment|/* release */
-macro_line|#ifdef CONFIG_QNX4FS_RW   
+macro_line|#ifdef CONFIG_QNX4FS_RW
+id|fsync
+suffix:colon
 id|qnx4_sync_file
 comma
-multiline_comment|/* fsync */
-macro_line|#else
-l_int|NULL
-comma
 macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|qnx4_file_inode_operations
@@ -700,384 +639,29 @@ id|inode_operations
 id|qnx4_file_inode_operations
 op_assign
 (brace
+id|default_file_ops
+suffix:colon
 op_amp
 id|qnx4_file_operations
 comma
-multiline_comment|/* default file operations */
-l_int|NULL
+id|get_block
+suffix:colon
+id|qnx4_get_block
 comma
-multiline_comment|/* create? It&squot;s not a directory */
-l_int|NULL
+id|readpage
+suffix:colon
+id|block_read_full_page
 comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-id|qnx4_bmap
-comma
-multiline_comment|/* get_block */
-id|qnx4_readpage
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
 macro_line|#ifdef CONFIG_QNX4FS_RW
+id|writepage
+suffix:colon
+id|block_write_full_page
+comma
+id|truncate
+suffix:colon
 id|qnx4_truncate
 comma
-multiline_comment|/* truncate */
-macro_line|#else
-l_int|NULL
-comma
 macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-DECL|function|qnx4_readpage
-r_static
-r_int
-id|qnx4_readpage
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-comma
-r_struct
-id|page
-op_star
-id|page
-)paren
-(brace
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|dentry-&gt;d_inode
-suffix:semicolon
-r_struct
-id|qnx4_inode_info
-op_star
-id|qnx4_ino
-op_assign
-op_amp
-id|inode-&gt;u.qnx4_i
-suffix:semicolon
-r_int
-r_int
-id|buf
-suffix:semicolon
-r_int
-r_int
-id|offset
-comma
-id|avail
-comma
-id|readlen
-suffix:semicolon
-r_int
-r_int
-id|start
-suffix:semicolon
-r_int
-r_int
-id|count
-suffix:semicolon
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
-r_int
-id|res
-op_assign
-op_minus
-id|EIO
-suffix:semicolon
-id|QNX4DEBUG
-c_func
-(paren
-(paren
-l_string|&quot;qnx4: readpage index=[%ld]&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|page-&gt;index
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|qnx4_ino-&gt;i_xblk
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;qnx4: sorry, this file is extended, don&squot;t know how to handle it (yet) !&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|page-&gt;count
-)paren
-suffix:semicolon
-id|buf
-op_assign
-id|page_address
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-id|clear_bit
-c_func
-(paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
-id|clear_bit
-c_func
-(paren
-id|PG_error
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
-id|offset
-op_assign
-id|page-&gt;index
-op_lshift
-id|PAGE_SHIFT
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|offset
-OL
-id|inode-&gt;i_size
-)paren
-(brace
-id|res
-op_assign
-l_int|0
-suffix:semicolon
-id|avail
-op_assign
-id|inode-&gt;i_size
-op_minus
-id|offset
-suffix:semicolon
-id|readlen
-op_assign
-id|MIN
-c_func
-(paren
-id|avail
-comma
-id|PAGE_SIZE
-)paren
-suffix:semicolon
-id|start
-op_assign
-id|qnx4_ino-&gt;i_first_xtnt.xtnt_blk
-op_plus
-(paren
-id|offset
-op_rshift
-l_int|9
-)paren
-op_minus
-l_int|1
-suffix:semicolon
-id|count
-op_assign
-id|PAGE_SIZE
-op_div
-id|QNX4_BLOCK_SIZE
-suffix:semicolon
-r_do
-(brace
-id|QNX4DEBUG
-c_func
-(paren
-(paren
-l_string|&quot;qnx4: reading page starting at [%ld]&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|start
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|bh
-op_assign
-id|bread
-c_func
-(paren
-id|inode-&gt;i_dev
-comma
-id|start
-comma
-id|QNX4_BLOCK_SIZE
-)paren
-)paren
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;qnx4: data corrupted or I/O error.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|res
-op_assign
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-r_else
-(brace
-id|memcpy
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|buf
-comma
-id|bh-&gt;b_data
-comma
-id|QNX4_BLOCK_SIZE
-)paren
-suffix:semicolon
-)brace
-id|buf
-op_add_assign
-id|QNX4_BLOCK_SIZE
-suffix:semicolon
-id|start
-op_increment
-suffix:semicolon
-id|count
-op_decrement
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|count
-op_ne
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|res
-op_ne
-l_int|0
-)paren
-(brace
-id|set_bit
-c_func
-(paren
-id|PG_error
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|buf
-comma
-l_int|0
-comma
-id|PAGE_SIZE
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|set_bit
-c_func
-(paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
-)brace
-id|UnlockPage
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-multiline_comment|/*  free_page(buf); */
-r_return
-id|res
-suffix:semicolon
-)brace
 eof
