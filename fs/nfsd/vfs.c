@@ -3837,7 +3837,7 @@ r_int
 r_int
 )paren
 id|s1
-OL
+OG
 (paren
 r_int
 r_int

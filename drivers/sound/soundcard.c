@@ -4244,6 +4244,7 @@ id|MOD_IN_USE
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS&t;
 r_if
 c_cond
 (paren
@@ -4263,6 +4264,7 @@ id|KERN_ERR
 l_string|&quot;sound: unregistering /proc/sound failed&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren

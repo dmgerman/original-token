@@ -223,5 +223,18 @@ id|ntfs_time_t
 id|t
 )paren
 suffix:semicolon
+multiline_comment|/* Attribute names */
+r_void
+id|ntfs_indexname
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_int
+id|type
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; * c-file-style: &quot;linux&quot;&n; * End:&n; */
 eof

@@ -87,7 +87,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.6&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.7&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -305,6 +305,9 @@ l_string|&quot;Adaptec AIC-7896/7 Ultra2 SCSI host adapter&quot;
 comma
 multiline_comment|/* AIC_7896 */
 l_string|&quot;Adaptec AHA-394X Ultra2 SCSI host adapter&quot;
+comma
+multiline_comment|/* AIC_7897 */
+l_string|&quot;Adaptec AHA-395X Ultra2 SCSI host adapter&quot;
 comma
 multiline_comment|/* AIC_7897 */
 l_string|&quot;Adaptec PCMCIA SCSI controller&quot;
@@ -20111,7 +20114,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * XXX - If we queued an abort tag, go clean up the disconnected list.&n;       * We know that this particular SCB had to be the queued abort since&n;       * the disconnected SCB would have gotten a reconnect instead.&n;       * However, if this is an abort command, then DID_TIMEOUT isn&squot;t&n;       * appropriate, neither is returning the command for that matter.&n;       * What we need to do then is to let the command timeout again so&n;       * we get a reset since this abort just failed.&n;       */
 macro_line|#ifdef AIC7XXX_VERBOSE_DEBUGGING
 r_if
 c_cond
@@ -20139,19 +20141,15 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|p-&gt;flags
+id|scb-&gt;flags
 op_amp
 id|SCB_QUEUED_ABORT
 )paren
 (brace
+multiline_comment|/*&n;         * We know that this particular SCB had to be the queued abort since&n;         * the disconnected SCB would have gotten a reconnect instead.&n;         * What we need to do then is to let the command timeout again so&n;         * we get a reset since this abort just failed.&n;         */
 id|cmd-&gt;result
 op_assign
 l_int|0
-suffix:semicolon
-id|scb-&gt;flags
-op_and_assign
-op_complement
-id|SCB_QUEUED_ABORT
 suffix:semicolon
 id|scb
 op_assign
@@ -27168,6 +27166,8 @@ op_amp
 id|ENSPCHK
 )paren
 op_or
+id|STIMESEL
+op_or
 id|term
 op_or
 id|ENSTIMER
@@ -27309,6 +27309,8 @@ id|scsi_conf
 op_amp
 id|ENSPCHK
 )paren
+op_or
+id|STIMESEL
 op_or
 id|term
 op_or
@@ -32198,6 +32200,30 @@ id|C56_66
 )brace
 comma
 (brace
+id|PCI_VENDOR_ID_ADAPTEC2
+comma
+id|PCI_DEVICE_ID_ADAPTEC2_3950U2D
+comma
+id|AHC_AIC7896
+comma
+id|AHC_PAGESCBS
+op_or
+id|AHC_NEWEEPROM_FMT
+op_or
+id|AHC_BIOS_ENABLED
+op_or
+id|AHC_MULTI_CHANNEL
+comma
+id|AHC_AIC7896_FE
+comma
+l_int|24
+comma
+l_int|32
+comma
+id|C56_66
+)brace
+comma
+(brace
 id|PCI_VENDOR_ID_ADAPTEC
 comma
 id|PCI_DEVICE_ID_ADAPTEC_1480A
@@ -32212,7 +32238,7 @@ id|AHC_BIOS_ENABLED
 comma
 id|AHC_AIC7860_FE
 comma
-l_int|24
+l_int|25
 comma
 l_int|32
 comma
@@ -33242,6 +33268,9 @@ suffix:colon
 r_case
 l_int|19
 suffix:colon
+r_case
+l_int|20
+suffix:colon
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,92)
 r_if
 c_cond
@@ -33701,7 +33730,7 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;           * We do another switch based on i so that we can exclude all&n;           * 3895 devices from the next option since the 3895 cards use&n;           * shared external SCB RAM while all other cards have dedicated&n;           * external SCB RAM per channel.  Also exclude the 7850 and&n;           * 7860 based stuff since they can have garbage in the bit&n;           * that indicates external RAM and get some of this stuff&n;           * wrong as a result.&n;           */
+multiline_comment|/*&n;           * We only support external SCB RAM on the 7895/6/7 chipsets.&n;           * We could support it on the 7890/1 easy enough, but I don&squot;t&n;           * know of any 7890/1 based cards that have it.  I do know&n;           * of 7895/6/7 cards that have it and they work properly.&n;           */
 r_switch
 c_cond
 (paren

@@ -4,6 +4,26 @@ DECL|macro|DEBUG_OTHER
 mdefine_line|#define DEBUG_OTHER&t;1
 DECL|macro|DEBUG_MALLOC
 mdefine_line|#define DEBUG_MALLOC&t;2
+DECL|macro|DEBUG_BSD
+mdefine_line|#define DEBUG_BSD       4
+DECL|macro|DEBUG_LINUX
+mdefine_line|#define DEBUG_LINUX     8
+DECL|macro|DEBUG_DIR1
+mdefine_line|#define DEBUG_DIR1     16
+DECL|macro|DEBUG_DIR2
+mdefine_line|#define DEBUG_DIR2     32
+DECL|macro|DEBUG_DIR3
+mdefine_line|#define DEBUG_DIR3     64
+DECL|macro|DEBUG_FILE1
+mdefine_line|#define DEBUG_FILE1   128
+DECL|macro|DEBUG_FILE2
+mdefine_line|#define DEBUG_FILE2   256
+DECL|macro|DEBUG_FILE3
+mdefine_line|#define DEBUG_FILE3   512
+DECL|macro|DEBUG_NAME1
+mdefine_line|#define DEBUG_NAME1  1024
+DECL|macro|DEBUG_NAME2
+mdefine_line|#define DEBUG_NAME2  2048
 r_void
 id|ntfs_debug
 c_func
@@ -60,7 +80,6 @@ id|n
 )paren
 suffix:semicolon
 r_void
-op_star
 id|ntfs_memcpy
 c_func
 (paren
@@ -78,7 +97,6 @@ id|n
 )paren
 suffix:semicolon
 r_void
-op_star
 id|ntfs_memmove
 c_func
 (paren

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  super.c&n; *&n; *  Copyright (C) 1995-1997 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; */
-macro_line|#include &quot;types.h&quot;
+macro_line|#include &quot;ntfstypes.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;super.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -36,8 +36,7 @@ id|count
 comma
 id|offset
 suffix:semicolon
-r_int
-r_int
+id|ntfs_u16
 id|fixup
 suffix:semicolon
 r_if
@@ -452,6 +451,10 @@ l_int|0
 suffix:semicolon
 id|io.param
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|upcase-&gt;vol-&gt;upcase
 suffix:semicolon
 id|io.size
@@ -739,6 +742,8 @@ l_string|&quot;$SYMBOLIC_LINK&quot;
 comma
 l_int|64
 )paren
+op_eq
+l_int|0
 op_logical_or
 id|ntfs_ua_strncmp
 c_func
@@ -749,6 +754,8 @@ l_string|&quot;$REPARSE_POINT&quot;
 comma
 l_int|64
 )paren
+op_eq
+l_int|0
 )paren
 (brace
 id|vol-&gt;at_symlink
@@ -817,9 +824,10 @@ op_assign
 id|ntfs_malloc
 c_func
 (paren
-l_int|4096
+l_int|4050
 )paren
 suffix:semicolon
+multiline_comment|/* 90*45 */
 r_if
 c_cond
 (paren
@@ -884,7 +892,7 @@ id|buf
 suffix:semicolon
 id|io.size
 op_assign
-l_int|4096
+l_int|4050
 suffix:semicolon
 id|error
 op_assign
@@ -914,6 +922,8 @@ op_logical_and
 id|i
 OL
 id|io.size
+op_minus
+l_int|0xA0
 suffix:semicolon
 id|i
 op_add_assign
@@ -994,6 +1004,14 @@ id|error
 op_assign
 id|ENOMEM
 suffix:semicolon
+id|ntfs_debug
+c_func
+(paren
+id|DEBUG_BSD
+comma
+l_string|&quot;Going to load MFT&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1025,6 +1043,14 @@ r_return
 id|error
 suffix:semicolon
 )brace
+id|ntfs_debug
+c_func
+(paren
+id|DEBUG_BSD
+comma
+l_string|&quot;Going to load MIRR&bslash;n&quot;
+)paren
+suffix:semicolon
 id|vol-&gt;mftmirr
 op_assign
 id|vol-&gt;mft_ino
@@ -1061,6 +1087,14 @@ r_return
 id|error
 suffix:semicolon
 )brace
+id|ntfs_debug
+c_func
+(paren
+id|DEBUG_BSD
+comma
+l_string|&quot;Going to load BITMAP&bslash;n&quot;
+)paren
+suffix:semicolon
 id|vol-&gt;bitmap
 op_assign
 id|vol-&gt;mft_ino
@@ -1095,6 +1129,14 @@ r_return
 id|error
 suffix:semicolon
 )brace
+id|ntfs_debug
+c_func
+(paren
+id|DEBUG_BSD
+comma
+l_string|&quot;Going to load UPCASE&bslash;n&quot;
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|ntfs_init_inode
@@ -1130,6 +1172,14 @@ c_func
 (paren
 op_amp
 id|upcase
+)paren
+suffix:semicolon
+id|ntfs_debug
+c_func
+(paren
+id|DEBUG_BSD
+comma
+l_string|&quot;Going to load ATTRDEF&bslash;n&quot;
 )paren
 suffix:semicolon
 id|error
@@ -1269,7 +1319,7 @@ c_func
 id|vol-&gt;clustersize
 )paren
 suffix:semicolon
-r_int
+id|ntfs_u64
 id|size
 suffix:semicolon
 id|io.fn_put
@@ -1321,12 +1371,18 @@ c_func
 id|cluster0
 )paren
 suffix:semicolon
-id|size
-op_div_assign
-id|vol-&gt;clusterfactor
-suffix:semicolon
+multiline_comment|/* FIXME: more than 2**32 cluster */
+multiline_comment|/* FIXME: gcc will emit udivdi3 if we don&squot;t truncate it */
 r_return
+(paren
+(paren
+r_int
+r_int
+)paren
 id|size
+)paren
+op_div
+id|vol-&gt;clusterfactor
 suffix:semicolon
 )brace
 DECL|variable|nc
@@ -1820,7 +1876,7 @@ r_char
 op_star
 id|bits
 comma
-r_int
+id|ntfs_cluster_t
 op_star
 id|loc
 comma
@@ -2179,7 +2235,7 @@ id|ntfs_inode
 op_star
 id|bitmap
 comma
-r_int
+id|ntfs_cluster_t
 id|loc
 comma
 r_int
@@ -2220,16 +2276,19 @@ op_assign
 (paren
 id|cnt
 op_plus
+(paren
 id|loc
-op_mod
-l_int|8
+op_amp
+l_int|7
+)paren
 op_plus
 l_int|7
 )paren
-op_div
-l_int|8
+op_amp
+op_complement
+l_int|7
 suffix:semicolon
-multiline_comment|/* round up */
+multiline_comment|/* round up to multiple of 8*/
 id|bits
 op_assign
 id|ntfs_malloc
@@ -2269,8 +2328,8 @@ comma
 l_int|0
 comma
 id|loc
-op_div
-l_int|8
+op_rshift
+l_int|3
 comma
 op_amp
 id|io
@@ -2474,8 +2533,8 @@ comma
 l_int|0
 comma
 id|loc
-op_div
-l_int|8
+op_rshift
+l_int|3
 comma
 op_amp
 id|io
@@ -2523,7 +2582,7 @@ id|ntfs_inode
 op_star
 id|bitmap
 comma
-r_int
+id|ntfs_cluster_t
 op_star
 id|location
 comma
@@ -2594,8 +2653,8 @@ id|start
 op_assign
 op_star
 id|location
-op_div
-l_int|8
+op_rshift
+l_int|3
 suffix:semicolon
 id|start
 op_assign
@@ -2959,7 +3018,7 @@ id|ntfs_volume
 op_star
 id|vol
 comma
-r_int
+id|ntfs_cluster_t
 op_star
 id|location
 comma
@@ -3001,7 +3060,7 @@ id|ntfs_volume
 op_star
 id|vol
 comma
-r_int
+id|ntfs_cluster_t
 id|location
 comma
 r_int

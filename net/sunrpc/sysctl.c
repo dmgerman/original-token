@@ -81,6 +81,7 @@ l_int|1
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
+macro_line|#ifdef CONFIG_PROC_FS
 r_if
 c_cond
 (paren
@@ -100,6 +101,7 @@ id|de-&gt;fill_inode
 op_assign
 id|rpc_modcount
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 )brace
 )brace

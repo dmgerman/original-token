@@ -138,7 +138,6 @@ id|initialized
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 r_int
 id|exp_procfs_exports
 c_func
@@ -227,7 +226,6 @@ op_assign
 id|exp_procfs_exports
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * Initialize nfsd&n; */
 r_static
 r_void
@@ -244,14 +242,12 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* XDR */
-macro_line|#ifdef CONFIG_PROC_FS
 id|nfsd_stat_init
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Statistics */
-macro_line|#endif
 id|nfsd_cache_init
 c_func
 (paren
@@ -276,13 +272,11 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* FH table */
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_export_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|initialized
 op_assign
 l_int|1
@@ -1185,7 +1179,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 id|remove_proc_entry
 c_func
 (paren
@@ -1207,7 +1200,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|nfsd_lockd_shutdown
 c_func
 (paren

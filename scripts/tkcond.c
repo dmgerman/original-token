@@ -276,12 +276,12 @@ c_func
 (paren
 id|stderr
 comma
-l_string|&quot;Ooops&bslash;n&quot;
+l_string|&quot;tkparse can&squot;t handle this conditional&bslash;n&quot;
 )paren
 suffix:semicolon
 m_exit
 (paren
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 )brace

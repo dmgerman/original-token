@@ -93,7 +93,7 @@ id|ntfs_volume
 op_star
 id|vol
 comma
-r_int
+id|ntfs_cluster_t
 op_star
 id|location
 comma
@@ -113,7 +113,7 @@ id|ntfs_volume
 op_star
 id|vol
 comma
-r_int
+id|ntfs_cluster_t
 id|location
 comma
 r_int

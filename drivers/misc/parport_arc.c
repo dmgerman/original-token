@@ -318,14 +318,12 @@ comma
 id|p-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;CONFIG_PROC_FS
 id|parport_proc_register
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
-macro_line|#endif
 id|p-&gt;flags
 op_or_assign
 id|PARPORT_FLAG_COMA

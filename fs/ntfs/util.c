@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  util.c&n; *  Miscellaneous support&n; *&n; *  Copyright (C) 1997 Martin von L&#xfffd;wis&n; *  Copyright (C) 1997 R&#xfffd;gis Duchesne&n; *&n; *  The utf8 routines are copied from Python wstrop module,&n; */
-macro_line|#include &quot;types.h&quot;
+multiline_comment|/*&n; *  util.c&n; *  Miscellaneous support&n; *&n; *  Copyright (C) 1997,1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1997 R&#xfffd;gis Duchesne&n; *&n; *  The utf8 routines are copied from Python wstrop module.&n; */
+macro_line|#include &quot;ntfstypes.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;util.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -9,7 +9,7 @@ DECL|macro|EILSEQ
 macro_line|# define EILSEQ&t;EINVAL
 macro_line|#endif
 macro_line|#include &quot;support.h&quot;
-multiline_comment|/* Converts a single wide character to a sequence of utf8 bytes.&n; * Returns the number of bytes, or 0 on error.&n; */
+multiline_comment|/* Converts a single wide character to a sequence of utf8 bytes.&n; * The character is represented in host byte order.&n; * Returns the number of bytes, or 0 on error.&n; */
 r_static
 r_int
 DECL|function|to_utf8
@@ -57,6 +57,10 @@ id|buf
 l_int|0
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
 id|c
 suffix:semicolon
 )brace
@@ -176,7 +180,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Decodes a sequence of utf8 bytes into a single wide character.&n; * Returns the number of bytes consumed, or 0 on error&n; */
+multiline_comment|/* Decodes a sequence of utf8 bytes into a single wide character.&n; * The character is returned in host byte order.&n; * Returns the number of bytes consumed, or 0 on error.&n; */
 r_static
 r_int
 DECL|function|from_utf8
@@ -408,7 +412,7 @@ suffix:semicolon
 id|ntfs_debug
 c_func
 (paren
-id|DEBUG_OTHER
+id|DEBUG_NAME1
 comma
 l_string|&quot;converting l=%d&bslash;n&quot;
 comma
@@ -438,10 +442,13 @@ op_assign
 id|to_utf8
 c_func
 (paren
+id|NTFS_GETU16
+c_func
+(paren
 id|in
-(braket
+op_plus
 id|i
-)braket
+)paren
 comma
 l_int|0
 )paren
@@ -522,10 +529,13 @@ op_add_assign
 id|to_utf8
 c_func
 (paren
+id|NTFS_GETU16
+c_func
+(paren
 id|in
-(braket
+op_plus
 id|i
-)braket
+)paren
 comma
 id|result
 op_plus
@@ -533,6 +543,18 @@ id|len8
 )paren
 suffix:semicolon
 )brace
+id|ntfs_debug
+c_func
+(paren
+id|DEBUG_NAME1
+comma
+l_string|&quot;result %p:%s&bslash;n&quot;
+comma
+id|result
+comma
+id|result
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -693,9 +715,18 @@ id|in
 op_plus
 id|i
 comma
+op_amp
+id|wtmp
+)paren
+suffix:semicolon
+id|NTFS_PUTU16
+c_func
+(paren
 id|result
 op_plus
 id|len16
+comma
+id|wtmp
 )paren
 suffix:semicolon
 )brace
@@ -752,10 +783,13 @@ op_increment
 r_if
 c_cond
 (paren
+id|NTFS_GETU16
+c_func
+(paren
 id|in
-(braket
+op_plus
 id|i
-)braket
+)paren
 op_ge
 l_int|256
 )paren
@@ -820,10 +854,17 @@ id|result
 id|i
 )braket
 op_assign
+(paren
+r_int
+r_char
+)paren
+id|NTFS_GETU16
+c_func
+(paren
 id|in
-(braket
+op_plus
 id|i
-)braket
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -906,15 +947,18 @@ id|i
 op_increment
 )paren
 (brace
+id|NTFS_PUTU16
+c_func
+(paren
 id|result
-(braket
+op_plus
 id|i
-)braket
-op_assign
+comma
 id|in
 (braket
 id|i
 )braket
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -1162,7 +1206,13 @@ comma
 id|n
 )paren
 suffix:semicolon
+(paren
+(paren
+r_char
+op_star
+)paren
 id|dest-&gt;param
+)paren
 op_add_assign
 id|n
 suffix:semicolon
@@ -1194,7 +1244,13 @@ comma
 id|n
 )paren
 suffix:semicolon
+(paren
+(paren
+r_char
+op_star
+)paren
 id|src-&gt;param
+)paren
 op_add_assign
 id|n
 suffix:semicolon
@@ -1472,10 +1528,13 @@ op_increment
 r_if
 c_cond
 (paren
+id|NTFS_GETU16
+c_func
+(paren
 id|a
-(braket
+op_plus
 id|i
-)braket
+)paren
 OL
 id|b
 (braket
@@ -1496,10 +1555,13 @@ id|b
 id|i
 )braket
 OL
+id|NTFS_GETU16
+c_func
+(paren
 id|a
-(braket
+op_plus
 id|i
-)braket
+)paren
 )paren
 (brace
 r_return
@@ -1533,6 +1595,10 @@ r_int
 r_int
 id|H
 op_assign
+(paren
+r_int
+r_int
+)paren
 (paren
 id|ntutc
 op_rshift
@@ -1770,6 +1836,106 @@ l_int|3600
 op_star
 l_int|10000000
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* Fill index name. */
+r_void
+DECL|function|ntfs_indexname
+id|ntfs_indexname
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_int
+id|type
+)paren
+(brace
+r_char
+id|hex
+(braket
+)braket
+op_assign
+l_string|&quot;0123456789ABCDEF&quot;
+suffix:semicolon
+r_int
+id|index
+suffix:semicolon
+op_star
+id|buf
+op_increment
+op_assign
+l_char|&squot;$&squot;
+suffix:semicolon
+op_star
+id|buf
+op_increment
+op_assign
+l_char|&squot;I&squot;
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|index
+op_assign
+l_int|24
+suffix:semicolon
+id|index
+OG
+l_int|0
+suffix:semicolon
+id|index
+op_sub_assign
+l_int|4
+)paren
+r_if
+c_cond
+(paren
+(paren
+l_int|0xF
+op_lshift
+id|index
+)paren
+op_amp
+id|type
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|index
+op_ge
+l_int|0
+)paren
+(brace
+op_star
+id|buf
+op_increment
+op_assign
+id|hex
+(braket
+(paren
+id|type
+op_rshift
+id|index
+)paren
+op_amp
+l_int|0xF
+)braket
+suffix:semicolon
+id|index
+op_sub_assign
+l_int|4
+suffix:semicolon
+)brace
+op_star
+id|buf
+op_assign
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Local variables:&n; * c-file-style: &quot;linux&quot;&n; * End:&n; */

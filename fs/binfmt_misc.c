@@ -12,6 +12,10 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+multiline_comment|/*&n; * We should make this work with a &quot;stub-only&quot; /proc,&n; * which would just not be able to be configured.&n; * Right now the /proc-fs support is too black and white,&n; * though, so just remind people that this should be&n; * fixed..&n; */
+macro_line|#ifndef CONFIG_PROC_FS
+macro_line|#error You really need /proc support for binfmt_misc. Please reconfigure!
+macro_line|#endif
 DECL|macro|VERBOSE_STATUS
 mdefine_line|#define VERBOSE_STATUS /* undef this to save 400 bytes kernel memory */
 DECL|struct|binfmt_entry
@@ -179,15 +183,20 @@ id|enabled
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
 DECL|variable|entries_lock
 r_static
 id|rwlock_t
 id|entries_lock
+id|__attribute__
+c_func
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 id|RW_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Unregister one entry&n; */
 DECL|function|clear_entry
 r_static
@@ -2301,10 +2310,19 @@ id|bm_dir
 )paren
 )paren
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Unable to create /proc entry.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
-id|ENOMEM
+id|ENOENT
 suffix:semicolon
+)brace
 id|e-&gt;proc_dir-&gt;data
 op_assign
 (paren
@@ -2369,7 +2387,7 @@ r_int
 id|error
 op_assign
 op_minus
-id|ENOMEM
+id|ENOENT
 suffix:semicolon
 r_struct
 id|proc_dir_entry

@@ -221,7 +221,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|misc_read_proc
 r_static
 r_int
@@ -321,7 +320,6 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* PROC_FS */
 DECL|function|misc_open
 r_static
 r_int
@@ -735,7 +733,6 @@ c_func
 id|misc_deregister
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PROC_FS)
 DECL|variable|proc_misc
 r_static
 r_struct
@@ -743,7 +740,6 @@ id|proc_dir_entry
 op_star
 id|proc_misc
 suffix:semicolon
-macro_line|#endif
 DECL|function|misc_init
 r_int
 id|__init
@@ -753,7 +749,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_misc
 op_assign
 id|create_proc_entry
@@ -775,7 +770,6 @@ id|proc_misc-&gt;read_proc
 op_assign
 id|misc_read_proc
 suffix:semicolon
-macro_line|#endif /* PROC_FS */
 macro_line|#ifdef CONFIG_BUSMOUSE
 id|bus_mouse_init
 c_func

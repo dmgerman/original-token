@@ -511,7 +511,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef&t;CONFIG_PROC_FS
 (paren
 r_void
 )paren
@@ -521,7 +520,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* We can go on without it. */
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -534,13 +532,11 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef&t;CONFIG_PROC_FS
 id|parport_proc_cleanup
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#else
 DECL|function|__initfunc
@@ -684,7 +680,6 @@ c_func
 id|parport_wait_peripheral
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;CONFIG_PROC_FS
 DECL|variable|parport_proc_register
 id|EXPORT_SYMBOL
 c_func
@@ -699,7 +694,6 @@ c_func
 id|parport_proc_unregister
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|variable|parport_probe_hook
 id|EXPORT_SYMBOL
 c_func

@@ -24,7 +24,6 @@ id|nfsd_program
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 r_static
 r_int
 DECL|function|nfsd_proc_read
@@ -253,5 +252,4 @@ l_string|&quot;nfsd&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PROC_FS */
 eof

@@ -3778,6 +3778,10 @@ id|io_apic_irqs
 op_assign
 l_int|0
 suffix:semicolon
+id|cpu_online_map
+op_assign
+id|cpu_present_map
+suffix:semicolon
 r_goto
 id|smp_done
 suffix:semicolon

@@ -1,5 +1,8 @@
 multiline_comment|/*&n; *  support.c&n; *  Specific support functions&n; *&n; *  Copyright (C) 1997 Martin von L&#xfffd;wis&n; *  Copyright (C) 1997 R&#xfffd;gis Duchesne&n; *&n; */
-macro_line|#include &quot;types.h&quot;
+macro_line|#ifdef HAVE_CONFIG_H
+macro_line|#include &quot;config.h&quot;
+macro_line|#endif
+macro_line|#include &quot;ntfstypes.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;support.h&quot;
 macro_line|#include &lt;stdarg.h&gt;
@@ -252,9 +255,9 @@ id|n
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* These functions deliberately return no value. It is dest, anyway,&n;   and not used anywhere in the NTFS code.  */
 DECL|function|ntfs_memcpy
 r_void
-op_star
 id|ntfs_memcpy
 c_func
 (paren
@@ -271,7 +274,6 @@ id|ntfs_size_t
 id|n
 )paren
 (brace
-r_return
 id|memcpy
 c_func
 (paren
@@ -285,7 +287,6 @@ suffix:semicolon
 )brace
 DECL|function|ntfs_memmove
 r_void
-op_star
 id|ntfs_memmove
 c_func
 (paren
@@ -302,7 +303,6 @@ id|ntfs_size_t
 id|n
 )paren
 (brace
-r_return
 id|memmove
 c_func
 (paren
@@ -314,7 +314,7 @@ id|n
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Warn that an error occurred. */
+multiline_comment|/* Warn that an error occured. */
 DECL|function|ntfs_error
 r_void
 id|ntfs_error

@@ -2561,9 +2561,6 @@ id|Scsi_Cmnd
 op_star
 id|SCtmp
 suffix:semicolon
-r_int
-id|pending
-suffix:semicolon
 r_void
 (paren
 op_star
@@ -2574,13 +2571,11 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
+macro_line|#ifdef DEBUG
 r_int
 id|to
 suffix:semicolon
+macro_line|#endif
 macro_line|#if 0
 id|del_timer
 c_func
@@ -2755,6 +2750,7 @@ op_star
 id|SCpnt
 )paren
 (brace
+macro_line|#if 0
 r_int
 id|j
 suffix:semicolon
@@ -2772,6 +2768,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#endif
 id|DEB
 c_func
 (paren

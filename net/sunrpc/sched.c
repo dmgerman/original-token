@@ -1,6 +1,4 @@
 multiline_comment|/*&n; * linux/net/sunrpc/sched.c&n; *&n; * Scheduling for synchronous and asynchronous RPC requests.&n; *&n; * Copyright (C) 1996 Olaf Kirch, &lt;okir@monad.swb.de&gt;&n; */
-DECL|macro|__NO_VERSION__
-mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__

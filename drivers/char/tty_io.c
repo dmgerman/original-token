@@ -21,9 +21,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
-macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -8144,14 +8142,12 @@ id|tty_drivers
 op_assign
 id|driver
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_tty_register_driver
 c_func
 (paren
 id|driver
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 r_return
 id|error
 suffix:semicolon
@@ -8307,14 +8303,12 @@ id|driver-&gt;next-&gt;prev
 op_assign
 id|driver-&gt;prev
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_tty_unregister_driver
 c_func
 (paren
 id|driver
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

@@ -1999,18 +1999,22 @@ id|sb
 op_member_access_from_pointer
 id|fsinfo_offset
 )paren
-op_ge
-r_sizeof
-(paren
-r_struct
-id|fat_boot_sector
-)paren
+OG
+id|sb-&gt;s_blocksize
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;fat_read_super: Bad fsinfo_offset&bslash;n&quot;
+l_string|&quot;fat_read_super: Bad fsinfo_offset 0x%x&bslash;n&quot;
+comma
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|fsinfo_offset
 )paren
 suffix:semicolon
 id|fat_brelse

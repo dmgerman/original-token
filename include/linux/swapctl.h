@@ -275,45 +275,6 @@ DECL|macro|PAGE_DECLINE
 mdefine_line|#define PAGE_DECLINE&t;&t;(swap_control.sc_page_decline)
 DECL|macro|PAGE_INITIAL_AGE
 mdefine_line|#define PAGE_INITIAL_AGE&t;(swap_control.sc_page_initial_age)
-multiline_comment|/* Given a resource of N units (pages or buffers etc), we only try to&n; * age and reclaim AGE_CLUSTER_FRACT per 1024 resources each time we&n; * scan the resource list. */
-DECL|function|AGE_CLUSTER_SIZE
-r_static
-r_inline
-r_int
-id|AGE_CLUSTER_SIZE
-c_func
-(paren
-r_int
-id|resources
-)paren
-(brace
-r_int
-r_int
-id|n
-op_assign
-(paren
-id|resources
-op_star
-id|AGE_CLUSTER_FRACT
-)paren
-op_rshift
-l_int|10
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|n
-OL
-id|AGE_CLUSTER_MIN
-)paren
-r_return
-id|AGE_CLUSTER_MIN
-suffix:semicolon
-r_else
-r_return
-id|n
-suffix:semicolon
-)brace
 macro_line|#endif /* __KERNEL */
 macro_line|#endif /* _LINUX_SWAPCTL_H */
 eof

@@ -100,13 +100,6 @@ c_func
 id|proc_get_inode
 )paren
 suffix:semicolon
-DECL|variable|in_group_p
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|in_group_p
-)paren
-suffix:semicolon
 DECL|variable|proc_dir_inode_operations
 id|EXPORT_SYMBOL
 c_func

@@ -3137,7 +3137,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;cpu MHz&bslash;t&bslash;t: %lu.%02lu&bslash;n&quot;
+l_string|&quot;cpu MHz&bslash;t&bslash;t: %lu.%06lu&bslash;n&quot;
 comma
 id|cpu_hz
 op_div
@@ -3210,6 +3210,24 @@ l_int|31
 )braket
 op_assign
 l_string|&quot;3dnow&quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c-&gt;x86
+op_eq
+l_int|5
+op_logical_and
+id|c-&gt;x86_model
+op_eq
+l_int|6
+)paren
+id|x86_cap_flags
+(braket
+l_int|10
+)braket
+op_assign
+l_string|&quot;sep&quot;
 suffix:semicolon
 )brace
 r_else

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  inode.h&n; *  Header file for inode.c&n; *&n; *  Copyright (C) 1997 R&#xfffd;gis Duchesne&n; */
+multiline_comment|/*&n; *  inode.h&n; *  Header file for inode.c&n; *&n; *  Copyright (C) 1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 1998 Martin von L&#xfffd;wis&n; */
 id|ntfs_attribute
 op_star
 id|ntfs_find_attr
@@ -111,6 +111,28 @@ id|ntfs_inode
 op_star
 id|result
 comma
+r_const
+r_char
+op_star
+id|filename
+comma
+r_int
+id|namelen
+comma
+id|ntfs_u32
+)paren
+suffix:semicolon
+r_int
+id|ntfs_alloc_file
+(paren
+id|ntfs_inode
+op_star
+id|dir
+comma
+id|ntfs_inode
+op_star
+id|result
+comma
 r_char
 op_star
 id|filename
@@ -187,7 +209,7 @@ r_int
 op_star
 id|length
 comma
-r_int
+id|ntfs_cluster_t
 op_star
 id|cluster
 comma

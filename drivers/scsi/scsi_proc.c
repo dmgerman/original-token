@@ -1435,6 +1435,29 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|proc_print_scsidevice
+r_void
+id|proc_print_scsidevice
+c_func
+(paren
+id|Scsi_Device
+op_star
+id|scd
+comma
+r_char
+op_star
+id|buffer
+comma
+r_int
+op_star
+id|size
+comma
+r_int
+id|len
+)paren
+(brace
+)brace
 macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/*&n; * Overrides for Emacs so that we get a uniform tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

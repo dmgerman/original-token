@@ -269,7 +269,6 @@ c_func
 id|scsi_sleep
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PROC_FS)
 DECL|variable|proc_print_scsidevice
 id|EXPORT_SYMBOL
 c_func
@@ -277,7 +276,6 @@ c_func
 id|proc_print_scsidevice
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * These are here only while I debug the rest of the scsi stuff.&n; */
 DECL|variable|scsi_hostlist
 id|EXPORT_SYMBOL
