@@ -103,6 +103,12 @@ DECL|macro|KERN_SECURELVL
 mdefine_line|#define KERN_SECURELVL&t;14&t;/* int: system security level */
 DECL|macro|KERN_PANIC
 mdefine_line|#define KERN_PANIC&t;15&t;/* int: panic timeout */
+DECL|macro|KERN_REALROOTDEV
+mdefine_line|#define KERN_REALROOTDEV 16&t;/* real root device to mount after initrd */
+DECL|macro|KERN_NFSRNAME
+mdefine_line|#define KERN_NFSRNAME&t;17&t;/* NFS root name */
+DECL|macro|KERN_NFSRADDRS
+mdefine_line|#define KERN_NFSRADDRS&t;18&t;/* NFS root addresses */
 multiline_comment|/* CTL_VM names: */
 DECL|macro|VM_SWAPCTL
 mdefine_line|#define VM_SWAPCTL&t;1&t;/* struct: Set vm swapping control */

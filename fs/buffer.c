@@ -455,7 +455,7 @@ l_int|10
 comma
 l_int|5
 comma
-l_int|60
+l_int|25
 comma
 l_int|0
 comma
@@ -4872,7 +4872,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * We can&squot;t put completed temporary IO buffer_heads directly onto the&n; * unused_list when they become unlocked, since the device driver&n; * end_request routines still expect access to the buffer_head&squot;s&n; * fields after the final unlock.  So, the device driver puts them on&n; * the reuse_list instead once IO completes, and we recover these to&n; * the unused_list here.&n; *&n; * The reuse_list receives buffers from interrupt routines, so we need&n; * to be IRQ-safe here.&n; */
+multiline_comment|/* &n; * We can&squot;t put completed temporary IO buffer_heads directly onto the&n; * unused_list when they become unlocked, since the device driver&n; * end_request routines still expect access to the buffer_head&squot;s&n; * fields after the final unlock.  So, the device driver puts them on&n; * the reuse_list instead once IO completes, and we recover these to&n; * the unused_list here.&n; *&n; * The reuse_list receives buffers from interrupt routines, so we need&n; * to be IRQ-safe here (but note that interrupts only _add_ to the&n; * reuse_list, never take away. So we don&squot;t need to worry about the&n; * reuse_list magically emptying).&n; */
 DECL|function|recover_reusable_buffer_heads
 r_static
 r_inline
@@ -4881,6 +4881,12 @@ id|recover_reusable_buffer_heads
 c_func
 (paren
 r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|reuse_list
 )paren
 (brace
 r_struct
@@ -4898,11 +4904,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|reuse_list
-)paren
+r_do
 (brace
 id|cli
 c_func
@@ -4927,6 +4929,13 @@ id|put_unused_buffer_head
 c_func
 (paren
 id|bh
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|reuse_list
 )paren
 suffix:semicolon
 )brace
@@ -5476,6 +5485,10 @@ id|arr
 suffix:semicolon
 r_else
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|page-&gt;locked
 op_assign
 l_int|0
@@ -5494,6 +5507,17 @@ suffix:semicolon
 id|next
 op_assign
 id|bh
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -5516,6 +5540,12 @@ c_loop
 id|next
 op_ne
 id|bh
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace

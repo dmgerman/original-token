@@ -392,7 +392,7 @@ c_func
 id|sb
 )paren
 op_member_access_from_pointer
-id|unicode_xlate
+id|options.unicode_xlate
 suffix:semicolon
 r_int
 r_char
@@ -561,7 +561,7 @@ c_func
 id|sb
 )paren
 op_member_access_from_pointer
-id|vfat
+id|options.isvfat
 op_logical_and
 (paren
 id|de-&gt;name
@@ -595,7 +595,7 @@ c_func
 id|sb
 )paren
 op_member_access_from_pointer
-id|vfat
+id|options.isvfat
 op_logical_and
 id|de-&gt;attr
 op_eq
@@ -1106,7 +1106,7 @@ c_func
 id|sb
 )paren
 op_member_access_from_pointer
-id|dotsOK
+id|options.dotsOK
 )paren
 (brace
 id|bufname

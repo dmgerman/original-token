@@ -444,6 +444,10 @@ id|has_dumped
 op_assign
 l_int|1
 suffix:semicolon
+id|current-&gt;flags
+op_or_assign
+id|PF_DUMPCORE
+suffix:semicolon
 id|strncpy
 c_func
 (paren
@@ -1425,6 +1429,11 @@ op_assign
 id|current-&gt;fsgid
 op_assign
 id|bprm-&gt;e_gid
+suffix:semicolon
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_FORKNOEXEC
 suffix:semicolon
 r_if
 c_cond

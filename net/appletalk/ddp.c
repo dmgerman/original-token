@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Locatalk.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -1005,6 +1005,107 @@ suffix:semicolon
 r_int
 id|nodect
 suffix:semicolon
+r_struct
+id|ifreq
+id|atreq
+suffix:semicolon
+r_struct
+id|sockaddr_at
+op_star
+id|sa
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+multiline_comment|/*&n; *&t;THIS IS A HACK: Farallon cards want to do their own picking of&n; *&t;addresses. This needs tidying up post 1.4, but we need it in &n; *&t;now for the 1.4 release as is.&n; *&n; */
+r_if
+c_cond
+(paren
+id|atif-&gt;dev-&gt;type
+op_eq
+id|ARPHRD_LOCALTLK
+op_logical_and
+id|atif-&gt;dev-&gt;do_ioctl
+)paren
+(brace
+multiline_comment|/* fake up the request and pass it down */
+id|sa
+op_assign
+(paren
+r_struct
+id|sockaddr_at
+op_star
+)paren
+op_amp
+id|atreq.ifr_addr
+suffix:semicolon
+id|sa-&gt;sat_addr.s_node
+op_assign
+id|probe_node
+suffix:semicolon
+id|sa-&gt;sat_addr.s_net
+op_assign
+id|probe_net
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|err
+op_assign
+id|atif-&gt;dev
+op_member_access_from_pointer
+id|do_ioctl
+c_func
+(paren
+id|atif-&gt;dev
+comma
+op_amp
+id|atreq
+comma
+id|SIOCSIFADDR
+)paren
+)paren
+)paren
+(brace
+(paren
+r_void
+)paren
+id|atif-&gt;dev
+op_member_access_from_pointer
+id|do_ioctl
+c_func
+(paren
+id|atif-&gt;dev
+comma
+op_amp
+id|atreq
+comma
+id|SIOCGIFADDR
+)paren
+suffix:semicolon
+id|atif-&gt;address.s_net
+op_assign
+id|htons
+c_func
+(paren
+id|sa-&gt;sat_addr.s_net
+)paren
+suffix:semicolon
+id|atif-&gt;address.s_node
+op_assign
+id|sa-&gt;sat_addr.s_node
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *&t;If it didnt like our faked request then fail:&n;&t;&t; *&t;This should check against -ENOIOCTLCMD and fall&n;&t;&t; *&t;through. That needs us to fix all the devices up&n;&t;&t; *&t;properly. We can then also dump the localtalk test.&n;&t;&t; */
+r_return
+id|err
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Offset the network we start probing with.&n;&t; */
 r_if
 c_cond
@@ -5848,6 +5949,10 @@ id|ddp
 suffix:semicolon
 multiline_comment|/* Mend the byte order */
 )brace
+id|skb-&gt;h.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 r_return
 id|atalk_rcv
 c_func

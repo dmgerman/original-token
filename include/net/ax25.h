@@ -145,6 +145,10 @@ DECL|macro|AX25_DEF_T3
 mdefine_line|#define&t;AX25_DEF_T3&t;&t;300
 DECL|macro|AX25_DEF_N2
 mdefine_line|#define&t;AX25_DEF_N2&t;&t;10
+DECL|macro|AX25_DEF_IDLE
+mdefine_line|#define AX25_DEF_IDLE&t;&t;20
+DECL|macro|AX25_DEF_PACLEN
+mdefine_line|#define AX25_DEF_PACLEN&t;&t;256
 DECL|macro|AX25_DEF_DIGI
 mdefine_line|#define&t;AX25_DEF_DIGI&t;&t;(AX25_DIGI_INBAND|AX25_DIGI_XBAND)
 DECL|struct|ax25_uid_assoc
@@ -272,6 +276,7 @@ suffix:semicolon
 DECL|member|t1
 DECL|member|t2
 DECL|member|t3
+DECL|member|idle
 DECL|member|rtt
 r_int
 r_int
@@ -281,11 +286,14 @@ id|t2
 comma
 id|t3
 comma
+id|idle
+comma
 id|rtt
 suffix:semicolon
 DECL|member|t1timer
 DECL|member|t2timer
 DECL|member|t3timer
+DECL|member|idletimer
 r_int
 r_int
 id|t1timer
@@ -293,6 +301,13 @@ comma
 id|t2timer
 comma
 id|t3timer
+comma
+id|idletimer
+suffix:semicolon
+DECL|member|paclen
+r_int
+r_int
+id|paclen
 suffix:semicolon
 DECL|member|fragno
 DECL|member|fraglen

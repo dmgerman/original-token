@@ -1599,6 +1599,10 @@ op_amp
 l_int|0x7f
 )paren
 suffix:semicolon
+id|current-&gt;flags
+op_or_assign
+id|PF_SIGNALED
+suffix:semicolon
 id|do_exit
 c_func
 (paren

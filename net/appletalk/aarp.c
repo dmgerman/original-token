@@ -1487,18 +1487,34 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_struct
+id|ddpehdr
+op_star
+id|ddp
+op_assign
+(paren
+r_struct
+id|ddpehdr
+op_star
+)paren
+id|skb-&gt;data
+suffix:semicolon
 r_int
 id|ft
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Compressable ?&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Compressible ?&n;&t;&t; * &n;&t;&t; *&t;IFF: src_net==dest_net==device_net&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|at-&gt;s_net
 op_eq
 id|sa-&gt;s_net
+op_logical_and
+id|sa-&gt;s_net
+op_eq
+id|ddp-&gt;deh_snet
 )paren
 (brace
 id|skb_pull

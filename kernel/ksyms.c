@@ -1668,6 +1668,12 @@ comma
 id|X
 c_func
 (paren
+id|fifo_inode_operations
+)paren
+comma
+id|X
+c_func
+(paren
 id|chrdev_inode_operations
 )paren
 comma

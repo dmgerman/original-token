@@ -75,35 +75,8 @@ DECL|macro|TX_BUF_START
 mdefine_line|#define TX_BUF_START 0x0100
 DECL|macro|TX_BUF_SIZE
 mdefine_line|#define TX_BUF_SIZE ((24+ETH_FRAME_LEN+31)&amp;~0x1f)
-DECL|variable|NUM_TX_BUFS
-r_int
-r_int
-id|NUM_TX_BUFS
-op_assign
-l_int|4
-suffix:semicolon
-DECL|variable|RX_BUF_START
-r_int
-r_int
-id|RX_BUF_START
-suffix:semicolon
 DECL|macro|RX_BUF_SIZE
 mdefine_line|#define RX_BUF_SIZE ((32+ETH_FRAME_LEN+31)&amp;~0x1f)
-DECL|variable|RX_BUF_END
-r_int
-r_int
-id|RX_BUF_END
-op_assign
-l_int|0x7ff6
-suffix:semicolon
-multiline_comment|/* updated automatically to 0xfff6 on 64k cards */
-DECL|variable|NUM_RX_BUFS
-r_int
-r_int
-id|NUM_RX_BUFS
-op_assign
-l_int|4
-suffix:semicolon
 multiline_comment|/*&n; * SCB defines&n; */
 multiline_comment|/* these functions take the SCB status word and test the relavent status bit */
 DECL|macro|SCB_complete

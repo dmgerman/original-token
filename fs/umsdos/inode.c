@@ -1204,22 +1204,11 @@ c_func
 id|sb
 )paren
 op_member_access_from_pointer
-id|dotsOK
+id|options.dotsOK
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* disable hidden==dotfile */
-id|MSDOS_SB
-c_func
-(paren
-id|sb
-)paren
-op_member_access_from_pointer
-id|umsdos
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Tell fat-support we&squot;re umsdos */
 id|sb-&gt;s_op
 op_assign
 op_amp

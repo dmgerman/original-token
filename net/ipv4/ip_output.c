@@ -1163,7 +1163,7 @@ id|skb-&gt;ip_hdr
 suffix:semicolon
 id|iph-&gt;tot_len
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|skb-&gt;len

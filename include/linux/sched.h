@@ -736,6 +736,14 @@ DECL|macro|PF_PTRACED
 mdefine_line|#define PF_PTRACED&t;0x00000010&t;/* set if ptrace (0) has been called. */
 DECL|macro|PF_TRACESYS
 mdefine_line|#define PF_TRACESYS&t;0x00000020&t;/* tracing system calls */
+DECL|macro|PF_FORKNOEXEC
+mdefine_line|#define PF_FORKNOEXEC&t;0x00000040&t;/* forked but didn&squot;t exec */
+DECL|macro|PF_SUPERPREV
+mdefine_line|#define PF_SUPERPREV&t;0x00000100&t;/* used super-user privileges */
+DECL|macro|PF_DUMPCORE
+mdefine_line|#define PF_DUMPCORE&t;0x00000200&t;/* dumped core */
+DECL|macro|PF_SIGNALED
+mdefine_line|#define PF_SIGNALED&t;0x00000400&t;/* killed by a signal */
 DECL|macro|PF_STARTING
 mdefine_line|#define PF_STARTING&t;0x00000100&t;/* being created */
 DECL|macro|PF_EXITING
@@ -995,6 +1003,36 @@ op_star
 id|dev_id
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * This has now become a routine instead of a macro, it sets a flag if&n; * it returns true (to do BSD-style accounting where the process is flagged&n; * if it uses root privs). The implication of this is that you should do&n; * normal permissions checks first, and check suser() last.&n; */
+DECL|function|suser
+r_extern
+r_inline
+r_int
+id|suser
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current-&gt;euid
+op_eq
+l_int|0
+)paren
+id|current-&gt;flags
+op_or_assign
+id|PF_SUPERPREV
+suffix:semicolon
+r_return
+(paren
+id|current-&gt;euid
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_extern
 r_void
 id|copy_thread

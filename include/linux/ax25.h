@@ -117,6 +117,10 @@ DECL|macro|AX25_EXTSEQ
 mdefine_line|#define&t;AX25_EXTSEQ&t;7
 DECL|macro|AX25_HDRINCL
 mdefine_line|#define&t;AX25_HDRINCL&t;8
+DECL|macro|AX25_IDLE
+mdefine_line|#define AX25_IDLE&t;9
+DECL|macro|AX25_PACLEN
+mdefine_line|#define AX25_PACLEN&t;10
 DECL|macro|SIOCAX25GETUID
 mdefine_line|#define SIOCAX25GETUID&t;&t;(SIOCPROTOPRIVATE)
 DECL|macro|SIOCAX25ADDUID
@@ -165,6 +169,10 @@ DECL|macro|AX25_VALUES_N2
 mdefine_line|#define&t;AX25_VALUES_N2&t;&t;11&t;/* Default N2 value */
 DECL|macro|AX25_VALUES_DIGI
 mdefine_line|#define&t;AX25_VALUES_DIGI&t;12&t;/* Digipeat mode */
+DECL|macro|AX25_VALUES_IDLE
+mdefine_line|#define AX25_VALUES_IDLE&t;13&t;/* mode vc idle timer */
+DECL|macro|AX25_VALUES_PACLEN
+mdefine_line|#define AX25_VALUES_PACLEN&t;14&t;/* AX.25 MTU */
 DECL|macro|AX25_MAX_VALUES
 mdefine_line|#define&t;AX25_MAX_VALUES&t;&t;20
 DECL|struct|ax25_parms_struct

@@ -1066,6 +1066,9 @@ id|kcfg-&gt;choice_value
 suffix:semicolon
 )brace
 )brace
+r_return
+id|pnt
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function grabs one text token from the input buffer&n; * and returns a pointer to a copy of just the identifier.&n; * This can be either a variable name (i.e. CONFIG_NET),&n; * or it could be the default value for the option.&n; */
 DECL|function|get_string
@@ -1085,9 +1088,6 @@ op_star
 id|labl
 )paren
 (brace
-r_char
-id|quotechar
-suffix:semicolon
 r_char
 id|newlabel
 (braket
@@ -1197,7 +1197,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Top level parse function.  Input pointer is one complete line from config.in&n; * and the result is that we create a token that describes this line&n; * and insert it into our linked list.&n; */
 DECL|function|parse
-r_int
+r_void
 id|parse
 c_func
 (paren
@@ -1219,6 +1219,11 @@ r_char
 id|tmpbuf
 (braket
 l_int|24
+)braket
+comma
+id|fake_if
+(braket
+l_int|1024
 )braket
 suffix:semicolon
 multiline_comment|/*&n;   * Ignore comments and leading whitespace.&n;   */
@@ -1590,6 +1595,32 @@ c_func
 (paren
 id|pnt
 comma
+l_string|&quot;hex&quot;
+comma
+l_int|3
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|tok
+op_assign
+id|tok_hex
+suffix:semicolon
+id|pnt
+op_add_assign
+l_int|3
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|pnt
+comma
 l_string|&quot;if&quot;
 comma
 l_int|2
@@ -1716,7 +1747,6 @@ l_int|0
 )paren
 (brace
 r_return
-l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -1756,7 +1786,6 @@ id|lineno
 )paren
 suffix:semicolon
 r_return
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Allocate memory for this item, and attach it to the end of the linked&n;   * list.&n;   */
@@ -2003,8 +2032,35 @@ suffix:colon
 r_case
 id|tok_tristate
 suffix:colon
+id|pnt
+op_assign
+id|get_qstring
+c_func
+(paren
+id|pnt
+comma
+op_amp
+id|kcfg-&gt;label
+)paren
+suffix:semicolon
+id|pnt
+op_assign
+id|get_string
+c_func
+(paren
+id|pnt
+comma
+op_amp
+id|kcfg-&gt;optionname
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|tok_int
+suffix:colon
+r_case
+id|tok_hex
 suffix:colon
 id|pnt
 op_assign
@@ -2026,6 +2082,17 @@ id|pnt
 comma
 op_amp
 id|kcfg-&gt;optionname
+)paren
+suffix:semicolon
+id|pnt
+op_assign
+id|get_string
+c_func
+(paren
+id|pnt
+comma
+op_amp
+id|kcfg-&gt;value
 )paren
 suffix:semicolon
 r_break
@@ -2087,6 +2154,41 @@ op_amp
 id|kcfg-&gt;depend.str
 )paren
 suffix:semicolon
+multiline_comment|/*&n;       * Create a conditional for this object&squot;s dependency.&n;       *&n;       * We can&squot;t use &quot;!= n&quot; because this is internally converted to &quot;!= 0&quot;&n;       * and if UMSDOS depends on MSDOS which depends on FAT, then when FAT&n;       * is disabled MSDOS has 16 added to its value, making UMSDOS fully&n;       * available.  Whew.&n;       *&n;       * This is more of a hack than a fix.  Nested &quot;if&quot; conditionals are&n;       * probably affected too - that +/- 16 affects things in too many&n;       * places.  But this should do for now.&n;       */
+id|sprintf
+c_func
+(paren
+id|fake_if
+comma
+l_string|&quot;[ &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; -o &bslash;&quot;$%s&bslash;&quot; = &bslash;&quot;m&bslash;&quot; ]; then&quot;
+comma
+id|kcfg-&gt;depend.str
+comma
+id|kcfg-&gt;depend.str
+)paren
+suffix:semicolon
+id|kcfg-&gt;cond
+op_assign
+id|parse_if
+c_func
+(paren
+id|fake_if
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kcfg-&gt;cond
+op_eq
+l_int|NULL
+)paren
+(brace
+m_exit
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -2190,7 +2292,7 @@ suffix:semicolon
 r_case
 id|tok_if
 suffix:colon
-multiline_comment|/*&n;       * Conditionals are different.  For the first level parse, only&n;       * tok_if items have a -&gt;cond chain attached.&n;       */
+multiline_comment|/*&n;       * Conditionals are different.  For the first level parse, only&n;       * tok_if and tok_dep_tristate items have a -&gt;cond chain attached.&n;       */
 id|kcfg-&gt;cond
 op_assign
 id|parse_if
@@ -2223,9 +2325,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Simple function to dump to the screen what the condition chain looks like.&n; */
 DECL|function|dump_if
+r_void
 id|dump_if
 c_func
 (paren
@@ -2329,7 +2434,7 @@ c_func
 (paren
 l_string|&quot;$%s&quot;
 comma
-id|cond-&gt;variable
+id|cond-&gt;variable.str
 )paren
 suffix:semicolon
 r_break
@@ -2342,9 +2447,13 @@ c_func
 (paren
 l_string|&quot;&squot;%s&squot;&quot;
 comma
-id|cond-&gt;variable
+id|cond-&gt;variable.str
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_break
 suffix:semicolon
 )brace
@@ -2636,6 +2745,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|main
+r_int
 id|main
 c_func
 (paren
@@ -2649,6 +2759,7 @@ id|argv
 )braket
 )paren
 (brace
+macro_line|#if 0
 r_char
 id|buffer
 (braket
@@ -2667,6 +2778,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;   * Read stdin to get the top level script.&n;   */
 id|do_source
 c_func
@@ -2815,6 +2927,17 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|tok_hex
+suffix:colon
+id|printf
+c_func
+(paren
+l_string|&quot;hex &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|tok_comment
 suffix:colon
 id|printf
@@ -2910,6 +3033,9 @@ id|tok_dep_tristate
 suffix:colon
 r_case
 id|tok_int
+suffix:colon
+r_case
+id|tok_hex
 suffix:colon
 id|printf
 c_func

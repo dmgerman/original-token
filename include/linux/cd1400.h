@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;cd1400.h  -- cd1400 UART hardware info.&n; *&n; *&t;Copyright (C) 1994,1995  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; *&t;cd1400.h  -- cd1400 UART hardware info.&n; *&n; *&t;Copyright (C) 1994-1996  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#ifndef&t;_CD1400_H
 DECL|macro|_CD1400_H
@@ -8,8 +8,6 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;Define the number of async ports per cd1400 uart chip.&n; */
 DECL|macro|CD1400_PORTS
 mdefine_line|#define&t;CD1400_PORTS&t;&t;4
-DECL|macro|CD1400_CLKHZ
-mdefine_line|#define&t;CD1400_CLKHZ&t;&t;25000000
 multiline_comment|/*&n; *&t;Define the cd1400 uarts internal FIFO sizes.&n; */
 DECL|macro|CD1400_TXFIFOSIZE
 mdefine_line|#define&t;CD1400_TXFIFOSIZE&t;12
@@ -307,6 +305,8 @@ DECL|macro|ST_SCHAR4
 mdefine_line|#define&t;ST_SCHAR4&t;0x40
 DECL|macro|ST_RANGE
 mdefine_line|#define&t;ST_RANGE&t;0x70
+DECL|macro|ST_SCHARMASK
+mdefine_line|#define&t;ST_SCHARMASK&t;0x70
 DECL|macro|ST_TIMEOUT
 mdefine_line|#define&t;ST_TIMEOUT&t;0x80
 DECL|macro|MISR_DCD

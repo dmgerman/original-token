@@ -643,7 +643,7 @@ id|PCTECH
 comma
 id|PCTECH_RZ1001
 comma
-l_string|&quot;RZ1000&quot;
+l_string|&quot;RZ1001 (buggy?)&quot;
 )paren
 comma
 id|DEVICE

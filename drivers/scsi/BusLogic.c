@@ -5561,6 +5561,10 @@ c_func
 r_int
 id|IRQ_Channel
 comma
+r_void
+op_star
+id|DeviceIdentifier
+comma
 id|Registers_T
 op_star
 id|InterruptRegisters
@@ -6928,6 +6932,8 @@ id|BusLogic_InterruptHandler
 c_func
 (paren
 id|HostAdapter-&gt;IRQ_Channel
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  GK 2/5/95  -  Changed to support mounting root fs via NFS&n; */
+multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  GK 2/5/95  -  Changed to support mounting root fs via NFS&n; *  Added initrd &amp; change_root: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;stdarg.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -21,8 +22,12 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_ROOT_NFS
+macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/bugs.h&gt;
 r_extern
@@ -692,6 +697,22 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_static
+r_void
+id|no_initrd
+c_func
+(paren
+r_char
+op_star
+id|s
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif CONFIG_BLK_DEV_RAM
 macro_line|#ifdef CONFIG_ISDN_DRV_ICN
 r_extern
@@ -787,6 +808,12 @@ r_int
 id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+DECL|variable|real_root_dev
+id|kdev_t
+id|real_root_dev
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|variable|root_mountflags
 r_int
@@ -806,7 +833,7 @@ DECL|variable|nfs_root_name
 r_char
 id|nfs_root_name
 (braket
-l_int|256
+id|NFS_ROOT_NAME_LEN
 )braket
 op_assign
 (brace
@@ -817,7 +844,7 @@ DECL|variable|nfs_root_addrs
 r_char
 id|nfs_root_addrs
 (braket
-l_int|128
+id|NFS_ROOT_ADDRS_LEN
 )braket
 op_assign
 (brace
@@ -1133,6 +1160,14 @@ comma
 id|prompt_ramdisk
 )brace
 comma
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+(brace
+l_string|&quot;noinitrd&quot;
+comma
+id|no_initrd
+)brace
+comma
+macro_line|#endif
 macro_line|#endif
 (brace
 l_string|&quot;swap=&quot;
@@ -1962,6 +1997,8 @@ l_string|&quot;xda&quot;
 comma
 l_string|&quot;xdb&quot;
 comma
+l_string|&quot;ram&quot;
+comma
 l_int|NULL
 )brace
 suffix:semicolon
@@ -1996,6 +2033,8 @@ comma
 l_int|0xD00
 comma
 l_int|0xD40
+comma
+l_int|0x100
 comma
 l_int|0
 )brace
@@ -2995,6 +3034,35 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|initrd_start
+op_logical_and
+id|initrd_start
+OL
+id|memory_start
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;initrd overwritten (0x%08lx &lt; 0x%08lx) - &quot;
+l_string|&quot;disabling it.&bslash;n&quot;
+comma
+id|initrd_start
+comma
+id|memory_start
+)paren
+suffix:semicolon
+id|initrd_start
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 id|mem_init
 c_func
 (paren
@@ -3267,6 +3335,119 @@ id|envp
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+DECL|function|do_linuxrc
+r_static
+r_int
+id|do_linuxrc
+c_func
+(paren
+r_void
+op_star
+id|shell
+)paren
+(brace
+r_static
+r_char
+op_star
+id|argv
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;linuxrc&quot;
+comma
+l_int|NULL
+comma
+)brace
+suffix:semicolon
+id|close
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|close
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|close
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+id|setsid
+c_func
+(paren
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|open
+c_func
+(paren
+l_string|&quot;/dev/tty1&quot;
+comma
+id|O_RDWR
+comma
+l_int|0
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|dup
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|dup
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_return
+id|execve
+c_func
+(paren
+id|shell
+comma
+id|argv
+comma
+id|envp_init
+)paren
+suffix:semicolon
+)brace
+DECL|function|no_initrd
+r_static
+r_void
+id|no_initrd
+c_func
+(paren
+r_char
+op_star
+id|s
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+id|mount_initrd
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|init
 r_static
 r_int
@@ -3283,6 +3464,11 @@ id|pid
 comma
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_int
+id|real_root_mountflags
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Launch bdflush from here, instead of the old syscall way. */
 id|kernel_thread
 c_func
@@ -3305,6 +3491,28 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+id|real_root_dev
+op_assign
+id|ROOT_DEV
+suffix:semicolon
+id|real_root_mountflags
+op_assign
+id|root_mountflags
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initrd_start
+op_logical_and
+id|mount_initrd
+)paren
+id|root_mountflags
+op_and_assign
+op_complement
+id|MS_RDONLY
+suffix:semicolon
+macro_line|#endif
 id|setup
 c_func
 (paren
@@ -3342,6 +3550,106 @@ suffix:semicolon
 id|current-&gt;fs-&gt;pwd
 op_assign
 id|pseudo_root
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+id|root_mountflags
+op_assign
+id|real_root_mountflags
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ROOT_DEV
+op_ne
+id|real_root_dev
+op_logical_and
+id|ROOT_DEV
+op_eq
+id|MKDEV
+c_func
+(paren
+id|RAMDISK_MAJOR
+comma
+l_int|0
+)paren
+)paren
+(brace
+r_int
+id|error
+suffix:semicolon
+id|pid
+op_assign
+id|kernel_thread
+c_func
+(paren
+id|do_linuxrc
+comma
+l_string|&quot;/linuxrc&quot;
+comma
+id|SIGCHLD
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pid
+OG
+l_int|0
+)paren
+r_while
+c_loop
+(paren
+id|pid
+op_ne
+id|wait
+c_func
+(paren
+op_amp
+id|i
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|real_root_dev
+op_ne
+id|MKDEV
+c_func
+(paren
+id|RAMDISK_MAJOR
+comma
+l_int|0
+)paren
+)paren
+(brace
+id|error
+op_assign
+id|change_root
+c_func
+(paren
+id|real_root_dev
+comma
+l_string|&quot;/initrd&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Change root to /initrd: &quot;
+l_string|&quot;error %d&bslash;n&quot;
+comma
+id|error
+)paren
 suffix:semicolon
 )brace
 )brace

@@ -1006,7 +1006,13 @@ op_complement
 id|PF_PTRACED
 op_or
 id|PF_TRACESYS
+op_or
+id|PF_SUPERPREV
 )paren
+suffix:semicolon
+id|p-&gt;flags
+op_or_assign
+id|PF_FORKNOEXEC
 suffix:semicolon
 id|p-&gt;pid
 op_assign

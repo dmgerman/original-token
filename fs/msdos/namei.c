@@ -837,7 +837,7 @@ c_func
 id|dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|dotsOK
+id|options.dotsOK
 suffix:semicolon
 id|res
 op_assign
@@ -850,7 +850,7 @@ c_func
 id|dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|name_check
+id|options.name_check
 comma
 id|name
 comma
@@ -1925,7 +1925,7 @@ c_func
 id|dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|name_check
+id|options.name_check
 comma
 id|name
 comma
@@ -1941,7 +1941,7 @@ c_func
 id|dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|dotsOK
+id|options.dotsOK
 )paren
 )paren
 OL
@@ -2695,7 +2695,7 @@ c_func
 id|dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|name_check
+id|options.name_check
 comma
 id|name
 comma
@@ -2711,7 +2711,7 @@ c_func
 id|dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|dotsOK
+id|options.dotsOK
 )paren
 )paren
 OL
@@ -4822,7 +4822,7 @@ c_func
 id|old_dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|name_check
+id|options.name_check
 comma
 id|old_name
 comma
@@ -4838,7 +4838,7 @@ c_func
 id|old_dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|dotsOK
+id|options.dotsOK
 )paren
 )paren
 OL
@@ -4862,7 +4862,7 @@ c_func
 id|new_dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|name_check
+id|options.name_check
 comma
 id|new_name
 comma
@@ -4878,7 +4878,7 @@ c_func
 id|new_dir-&gt;i_sb
 )paren
 op_member_access_from_pointer
-id|dotsOK
+id|options.dotsOK
 )paren
 )paren
 OL

@@ -1284,6 +1284,11 @@ r_struct
 id|sk_buff
 op_star
 id|newsk
+comma
+r_struct
+id|sk_buff_head
+op_star
+id|list
 )paren
 (brace
 r_struct
@@ -1311,9 +1316,9 @@ id|newsk
 suffix:semicolon
 id|newsk-&gt;list
 op_assign
-id|next-&gt;list
+id|list
 suffix:semicolon
-id|newsk-&gt;list-&gt;qlen
+id|list-&gt;qlen
 op_increment
 suffix:semicolon
 )brace
@@ -1356,6 +1361,8 @@ c_func
 id|old
 comma
 id|newsk
+comma
+id|old-&gt;list
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1382,6 +1389,11 @@ r_struct
 id|sk_buff
 op_star
 id|newsk
+comma
+r_struct
+id|sk_buff_head
+op_star
+id|list
 )paren
 (brace
 r_struct
@@ -1409,9 +1421,9 @@ id|newsk
 suffix:semicolon
 id|newsk-&gt;list
 op_assign
-id|prev-&gt;list
+id|list
 suffix:semicolon
-id|newsk-&gt;list-&gt;qlen
+id|list-&gt;qlen
 op_increment
 suffix:semicolon
 )brace
@@ -1454,6 +1466,8 @@ c_func
 id|old
 comma
 id|newsk
+comma
+id|old-&gt;list
 )paren
 suffix:semicolon
 id|restore_flags

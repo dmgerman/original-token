@@ -18,6 +18,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
@@ -192,6 +195,14 @@ DECL|macro|ORIG_ROOT_DEV
 mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *) (PARAM+0x1FC))
 DECL|macro|AUX_DEVICE_INFO
 mdefine_line|#define AUX_DEVICE_INFO (*(unsigned char *) (PARAM+0x1FF))
+DECL|macro|LOADER_TYPE
+mdefine_line|#define LOADER_TYPE (*(unsigned char *) (PARAM+0x210))
+DECL|macro|KERNEL_START
+mdefine_line|#define KERNEL_START (*(unsigned long *) (PARAM+0x214))
+DECL|macro|INITRD_START
+mdefine_line|#define INITRD_START (*(unsigned long *) (PARAM+0x218))
+DECL|macro|INITRD_SIZE
+mdefine_line|#define INITRD_SIZE (*(unsigned long *) (PARAM+0x21c))
 DECL|macro|COMMAND_LINE
 mdefine_line|#define COMMAND_LINE ((char *) (PARAM+2048))
 DECL|macro|COMMAND_LINE_SIZE
@@ -502,6 +513,16 @@ l_string|&quot;mem=&quot;
 r_if
 c_cond
 (paren
+id|to
+op_ne
+id|command_line
+)paren
+id|to
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|memcmp
 c_func
@@ -651,6 +672,49 @@ id|memory_end_p
 op_assign
 id|memory_end
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|LOADER_TYPE
+)paren
+(brace
+id|initrd_start
+op_assign
+id|INITRD_START
+suffix:semicolon
+id|initrd_end
+op_assign
+id|INITRD_START
+op_plus
+id|INITRD_SIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initrd_end
+OG
+id|memory_end
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;initrd extends beyond end of memory &quot;
+l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
+comma
+id|initrd_end
+comma
+id|memory_end
+)paren
+suffix:semicolon
+id|initrd_start
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 multiline_comment|/* request io space for devices used on all i[345]86 PC&squot;S */
 id|request_region
 c_func

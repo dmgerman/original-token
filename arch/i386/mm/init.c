@@ -12,6 +12,9 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -924,6 +927,24 @@ id|count
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+op_logical_neg
+id|initrd_start
+op_logical_or
+(paren
+id|tmp
+OL
+id|initrd_start
+op_logical_or
+id|tmp
+op_ge
+id|initrd_end
+)paren
+)paren
+macro_line|#endif
 id|free_page
 c_func
 (paren

@@ -2719,7 +2719,7 @@ id|cm
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Copy file descriptors into system space.&n; */
+multiline_comment|/*&n; *&t;Copy file descriptors into system space.&n; *&t;Return number copied or negative error code&n; */
 DECL|function|unix_fd_copy
 r_static
 r_int
@@ -2794,34 +2794,48 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
-op_le
+OL
 id|num
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
+r_int
+id|fd
+suffix:semicolon
+id|fd
+op_assign
+id|fdp
+(braket
+id|i
+)braket
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;testing  fd %d&bslash;n&quot;
+comma
+id|fd
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
-id|fdp
-(braket
-id|i
-)braket
+id|fd
 OL
 l_int|0
 op_logical_or
-id|fdp
-(braket
-id|i
-)braket
+id|fd
 op_ge
 id|NR_OPEN
 )paren
 (brace
 r_return
 op_minus
-id|EINVAL
+id|EBADF
 suffix:semicolon
 )brace
 r_if
@@ -2829,10 +2843,7 @@ c_cond
 (paren
 id|current-&gt;files-&gt;fd
 (braket
-id|fdp
-(braket
-id|i
-)braket
+id|fd
 )braket
 op_eq
 l_int|NULL
@@ -2858,6 +2869,7 @@ op_minus
 id|ENOBUFS
 suffix:semicolon
 )brace
+multiline_comment|/* add another reference to these files */
 r_for
 c_loop
 (paren
@@ -2866,7 +2878,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
-op_le
+OL
 id|num
 suffix:semicolon
 id|i
@@ -3559,8 +3571,8 @@ c_cond
 (paren
 id|flags
 )paren
-(brace
 multiline_comment|/* For now */
+(brace
 r_return
 op_minus
 id|EINVAL
@@ -3672,6 +3684,14 @@ op_ne
 id|cm-&gt;cmsg_len
 )paren
 (brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;Sendmsg: bad access rights&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|kfree
 c_func
 (paren
@@ -3709,6 +3729,16 @@ OL
 l_int|0
 )paren
 (brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;Sendmsg error = %d&bslash;n&quot;
+comma
+id|fpnum
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|fpnum
 suffix:semicolon
@@ -4272,6 +4302,12 @@ c_cond
 id|msg-&gt;msg_accrights
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;recvmsg with accrights&bslash;n&quot;
+)paren
+suffix:semicolon
 id|cm
 op_assign
 id|unix_copyrights
@@ -4292,6 +4328,8 @@ r_sizeof
 r_struct
 id|cmsghdr
 )paren
+macro_line|#if 0 
+multiline_comment|/*&t;&t;investigate this furthur -- Stevens example doen&squot;t seem to care */
 op_logical_or
 id|cm-&gt;cmsg_type
 op_ne
@@ -4304,12 +4342,19 @@ op_logical_or
 id|msg-&gt;msg_accrightslen
 op_ne
 id|cm-&gt;cmsg_len
+macro_line|#endif
 )paren
 (brace
 id|kfree
 c_func
 (paren
 id|cm
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;recvmsg: Bad msg_accrights&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -306,7 +306,7 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|smc9_init
+id|smc_init
 c_func
 (paren
 r_struct
@@ -419,7 +419,7 @@ id|dev
 macro_line|#endif
 macro_line|#if defined(CONFIG_SMC9194)
 op_logical_and
-id|smc9_init
+id|smc_init
 c_func
 (paren
 id|dev

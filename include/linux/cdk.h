@@ -403,6 +403,8 @@ DECL|macro|A_RQSTATE
 mdefine_line|#define&t;A_RQSTATE&t;(ASYCMD | 18)
 DECL|macro|A_FLOWSTATE
 mdefine_line|#define&t;A_FLOWSTATE&t;(ASYCMD | 19)
+DECL|macro|A_CLEARSTATS
+mdefine_line|#define&t;A_CLEARSTATS&t;(ASYCMD | 20)
 multiline_comment|/*&n; *&t;Define those arguments used for simple commands.&n; */
 DECL|macro|FLUSHRX
 mdefine_line|#define&t;FLUSHRX&t;&t;0x1
@@ -865,6 +867,16 @@ r_int
 r_int
 id|rxmsgs
 suffix:semicolon
+DECL|member|txflushes
+r_int
+r_int
+id|txflushes
+suffix:semicolon
+DECL|member|rxflushes
+r_int
+r_int
+id|rxflushes
+suffix:semicolon
 DECL|member|overruns
 r_int
 r_int
@@ -959,6 +971,11 @@ DECL|member|state
 r_int
 r_int
 id|state
+suffix:semicolon
+DECL|member|hwid
+r_int
+r_int
+id|hwid
 suffix:semicolon
 DECL|typedef|asystats_t
 )brace

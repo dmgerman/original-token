@@ -446,6 +446,10 @@ r_union
 (brace
 r_struct
 (brace
+DECL|member|reserved
+id|u_char
+id|reserved
+suffix:semicolon
 DECL|member|minute
 id|u_char
 id|minute
@@ -474,6 +478,10 @@ r_union
 (brace
 r_struct
 (brace
+DECL|member|reserved
+id|u_char
+id|reserved
+suffix:semicolon
 DECL|member|minute
 id|u_char
 id|minute

@@ -2352,6 +2352,9 @@ c_func
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 id|Registers_T
 op_star
 )paren

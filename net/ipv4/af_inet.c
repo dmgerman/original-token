@@ -2128,6 +2128,12 @@ id|sk-&gt;rcvbuf
 op_assign
 id|SK_RMEM_MAX
 suffix:semicolon
+id|sk-&gt;ato
+op_assign
+id|HZ
+op_div
+l_int|3
+suffix:semicolon
 id|sk-&gt;rto
 op_assign
 id|TCP_TIMEOUT_INIT

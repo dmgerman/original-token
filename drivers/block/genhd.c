@@ -5,6 +5,9 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifdef __alpha__
 multiline_comment|/*&n; * On the Alpha, we get unaligned access exceptions on&n; *  p-&gt;nr_sects and p-&gt;start_sect, when the partition table&n; *  is not on a 4-byte boundary, which is frequently the case.&n; * This code uses unaligned load instructions to prevent&n; *  such exceptions.&n; */
@@ -44,6 +47,14 @@ suffix:semicolon
 r_extern
 r_void
 id|rd_load
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|initrd_load
 c_func
 (paren
 r_void
@@ -2636,6 +2647,21 @@ id|p-&gt;nr_real
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|initrd_start
+op_logical_and
+id|mount_initrd
+)paren
+id|initrd_load
+c_func
+(paren
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif
 id|rd_load
 c_func
 (paren

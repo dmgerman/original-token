@@ -1973,7 +1973,7 @@ id|format_descr
 id|format_req
 suffix:semicolon
 multiline_comment|/*&n; * Rate is 0 for 500kb/s, 1 for 300kbps, 2 for 250kbps&n; * Spec1 is 0xSH, where S is stepping rate (F=1ms, E=2ms, D=3ms etc),&n; * H is head unload time (1=16ms, 2=32ms, etc)&n; */
-multiline_comment|/*&n; * Track buffer&n; * Because these are written to by the DMA controller, they must&n; * not contain a 64k byte boundary crossing, or data will be&n; * corrupted/lost. Alignment of these is enforced in boot/head.S.&n; * Note that you must not change the sizes below without updating head.S.&n; */
+multiline_comment|/*&n; * Track buffer&n; * Because these are written to by the DMA controller, they must&n; * not contain a 64k byte boundary crossing, or data will be&n; * corrupted/lost.&n; */
 DECL|variable|floppy_track_buffer
 r_static
 r_char
@@ -16029,7 +16029,7 @@ id|MAJOR_NR
 id|DPRINT
 c_func
 (paren
-l_string|&quot;floppy_changed: not a floppy&bslash;n&quot;
+l_string|&quot;check_floppy_change: not a floppy&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

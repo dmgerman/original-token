@@ -448,7 +448,7 @@ mdefine_line|#define VMIN     VEOF
 DECL|macro|VTIME
 mdefine_line|#define VTIME    VEOL
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&t;intr=^C&t;&t;quit=^|&t;&t;erase=del&t;kill=^U&n;&t;eof/vmin=&bslash;1&t;eol/vtime=&bslash;0&t;eol2=&bslash;0&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;dsusp=^Y&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;*/
+multiline_comment|/*&t;intr=^C&t;&t;quit=^&bslash;&t;&t;erase=del&t;kill=^U&n;&t;eof/vmin=&bslash;1&t;eol/vtime=&bslash;0&t;eol2=&bslash;0&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;dsusp=^Y&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;*/
 DECL|macro|INIT_C_CC
 mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;001&bslash;000&bslash;000&bslash;000&bslash;021&bslash;023&bslash;032&bslash;031&bslash;022&bslash;025&bslash;027&bslash;026&quot;
 macro_line|#endif

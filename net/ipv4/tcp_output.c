@@ -1313,6 +1313,9 @@ multiline_comment|/*&n;&t;&t; *&t;Count retransmissions&n;&t;&t; */
 id|ct
 op_increment
 suffix:semicolon
+id|sk-&gt;retransmits
+op_increment
+suffix:semicolon
 id|sk-&gt;prot-&gt;retransmits
 op_increment
 suffix:semicolon

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/tools/build.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file builds a disk-image from three different files:&n; *&n; * - bootsect: exactly 512 bytes of 8086 machine code, loads the rest&n; * - setup: 8086 machine code, sets up system parm&n; * - system: 80386 code for actual system&n; *&n; * It does some checking that all files are of the correct type, and&n; * just writes the result to stdout, removing headers and padding to&n; * the right amount. It also writes some system data to stderr.&n; */
-multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; */
+multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; * High loaded stuff by Hans Lermen &amp; Werner Almesberger, Feb. 1996&n; */
 macro_line|#include &lt;stdio.h&gt;&t;/* fprintf */
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;stdlib.h&gt;&t;/* contains exit */
@@ -29,8 +29,13 @@ id|exec
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef __BIG_KERNEL__
+DECL|macro|SYS_SIZE
+mdefine_line|#define SYS_SIZE 0xffff
+macro_line|#else
 DECL|macro|SYS_SIZE
 mdefine_line|#define SYS_SIZE DEF_SYSSIZE
+macro_line|#endif
 DECL|macro|DEFAULT_MAJOR_ROOT
 mdefine_line|#define DEFAULT_MAJOR_ROOT 0
 DECL|macro|DEFAULT_MINOR_ROOT
@@ -1014,6 +1019,95 @@ id|i
 op_add_assign
 id|c
 )paren
+macro_line|#ifdef __BIG_KERNEL__
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|i
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+op_amp
+id|buf
+(braket
+l_int|2
+)braket
+)paren
+)paren
+op_ne
+l_int|0x53726448
+)paren
+id|die
+c_func
+(paren
+l_string|&quot;Wrong magic in loader header of &squot;setup&squot;&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+op_amp
+id|buf
+(braket
+l_int|6
+)braket
+)paren
+)paren
+OL
+l_int|0x200
+)paren
+id|die
+c_func
+(paren
+l_string|&quot;Wrong version of loader header of &squot;setup&squot;&quot;
+)paren
+suffix:semicolon
+id|buf
+(braket
+l_int|0x11
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* LOADED_HIGH */
+op_star
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+op_amp
+id|buf
+(braket
+l_int|0x14
+)braket
+)paren
+)paren
+op_assign
+l_int|0x100000
+suffix:semicolon
+multiline_comment|/* code32_start */
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1035,6 +1129,9 @@ c_func
 l_string|&quot;Write call failed&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef __BIG_KERNEL__
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

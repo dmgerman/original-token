@@ -1,4 +1,4 @@
-multiline_comment|/* tunnel.c: an IP tunnel driver&n;&n;&t;The purpose of this driver is to provide an IP tunnel through&n;&t;which you can tunnel network traffic transparently across subnets.&n;&n;&t;This was written by looking at Nick Holloway&squot;s dummy driver&n;&t;Thanks for the great code!&n;&n;&t;&t;-Sam Lantinga&t;(slouken@cs.ucdavis.edu)  02/01/95&n;&t;&t;&n;&t;Minor tweaks:&n;&t;&t;Cleaned up the code a little and added some pre-1.3.0 tweaks.&n;&t;&t;dev-&gt;hard_header/hard_header_len changed to use no headers.&n;&t;&t;Comments/bracketing tweaked.&n;&t;&t;Made the tunnels use dev-&gt;name not tunnel: when error reporting.&n;&t;&t;Added tx_dropped stat&n;&t;&t;&n;&t;&t;-Alan Cox&t;(Alan.Cox@linux.org) 21 March 95&n;&n;&t;Reworked:&n;&t;&t;Changed to tunnel to destination gateway instead of pointopoint&n;&t;&t;Almost completely rewritten&n;&t;&t;Note:  There is currently no firewall or ICMP handling done.&n;&n;&t;&t;-Sam Lantinga&t;(slouken@cs.ucdavis.edu) 02/13/96&n;&t;&t;&n;&t;Note:&n;&t;&t;The old driver is in tunnel.c if you have funnies with the&n;&t;&t;new one.&n;*/
+multiline_comment|/* tunnel.c: an IP tunnel driver&n;&n;&t;The purpose of this driver is to provide an IP tunnel through&n;&t;which you can tunnel network traffic transparently across subnets.&n;&n;&t;This was written by looking at Nick Holloway&squot;s dummy driver&n;&t;Thanks for the great code!&n;&n;&t;&t;-Sam Lantinga&t;(slouken@cs.ucdavis.edu)  02/01/95&n;&t;&t;&n;&t;Minor tweaks:&n;&t;&t;Cleaned up the code a little and added some pre-1.3.0 tweaks.&n;&t;&t;dev-&gt;hard_header/hard_header_len changed to use no headers.&n;&t;&t;Comments/bracketing tweaked.&n;&t;&t;Made the tunnels use dev-&gt;name not tunnel: when error reporting.&n;&t;&t;Added tx_dropped stat&n;&t;&t;&n;&t;&t;-Alan Cox&t;(Alan.Cox@linux.org) 21 March 95&n;&n;&t;Reworked:&n;&t;&t;Changed to tunnel to destination gateway in addition to the&n;&t;&t;&t;tunnel&squot;s pointopoint address&n;&t;&t;Almost completely rewritten&n;&t;&t;Note:  There is currently no firewall or ICMP handling done.&n;&n;&t;&t;-Sam Lantinga&t;(slouken@cs.ucdavis.edu) 02/13/96&n;&t;&t;&n;&t;Note:&n;&t;&t;The old driver is in tunnel.c if you have funnies with the&n;&t;&t;new one.&n;*/
 multiline_comment|/* Things I wish I had known when writing the tunnel driver:&n;&n;&t;When the tunnel_xmit() function is called, the skb contains the&n;&t;packet to be sent (plus a great deal of extra info), and dev&n;&t;contains the tunnel device that _we_ are.&n;&n;&t;When we are passed a packet, we are expected to fill in the&n;&t;source address with our source IP address.&n;&n;&t;What is the proper way to allocate, copy and free a buffer?&n;&t;After you allocate it, it is a &quot;0 length&quot; chunk of memory&n;&t;starting at zero.  If you want to add headers to the buffer&n;&t;later, you&squot;ll have to call &quot;skb_reserve(skb, amount)&quot; with&n;&t;the amount of memory you want reserved.  Then, you call&n;&t;&quot;skb_put(skb, amount)&quot; with the amount of space you want in&n;&t;the buffer.  skb_put() returns a pointer to the top (#0) of&n;&t;that buffer.  skb-&gt;len is set to the amount of space you have&n;&t;&quot;allocated&quot; with skb_put().  You can then write up to skb-&gt;len&n;&t;bytes to that buffer.  If you need more, you can call skb_put()&n;&t;again with the additional amount of space you need.  You can&n;&t;find out how much more space you can allocate by calling &n;&t;&quot;skb_tailroom(skb)&quot;.&n;&t;Now, to add header space, call &quot;skb_push(skb, header_len)&quot;.&n;&t;This creates space at the beginning of the buffer and returns&n;&t;a pointer to this new space.  If later you need to strip a&n;&t;header from a buffer, call &quot;skb_pull(skb, header_len)&quot;.&n;&t;skb_headroom() will return how much space is left at the top&n;&t;of the buffer (before the main data).  Remember, this headroom&n;&t;space must be reserved before the skb_put() function is called.&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/* Only two headers!! :-) */
@@ -10,7 +10,7 @@ DECL|macro|tunnel_hlen
 mdefine_line|#define tunnel_hlen&t;sizeof(struct iphdr)
 multiline_comment|/*&n; *&t;Okay, this needs to be high enough that we can fit a &quot;standard&quot;&n; *&t;ethernet header and an IP tunnel header into the outgoing packet.&n; *&t;[36 bytes]&n; */
 DECL|macro|TUNL_HLEN
-mdefine_line|#define TUNL_HLEN&t;(((ETH_HLEN+15)&amp;~15)+tunl_hlen)
+mdefine_line|#define TUNL_HLEN&t;(((ETH_HLEN+15)&amp;~15)+tunnel_hlen)
 macro_line|#ifdef MODULE
 DECL|function|tunnel_open
 r_static
@@ -362,15 +362,28 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Get the target address (other end of IP tunnel)&n;&t; */
 r_if
 c_cond
-(paren
-op_logical_neg
 (paren
 id|rt-&gt;rt_flags
 op_amp
 id|RTF_GATEWAY
 )paren
+id|target
+op_assign
+id|rt-&gt;rt_gateway
+suffix:semicolon
+r_else
+id|target
+op_assign
+id|dev-&gt;pa_dstaddr
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|target
 )paren
 (brace
 multiline_comment|/* No gateway to tunnel through? */
@@ -401,10 +414,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|target
-op_assign
-id|rt-&gt;rt_gateway
-suffix:semicolon
 id|ip_rt_put
 c_func
 (paren
@@ -508,8 +517,7 @@ id|max_headroom
 op_assign
 (paren
 (paren
-id|tunnel_hlen
-op_plus
+(paren
 id|tdev-&gt;hard_header_len
 op_plus
 l_int|15
@@ -517,6 +525,9 @@ l_int|15
 op_amp
 op_complement
 l_int|15
+)paren
+op_plus
+id|tunnel_hlen
 )paren
 suffix:semicolon
 macro_line|#ifdef TUNNEL_DEBUG
@@ -637,31 +648,16 @@ id|new_skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Reserve space for our header&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Reserve space for our header and the lower device header&n;&t;&t; */
 id|skb_reserve
 c_func
 (paren
 id|new_skb
 comma
-id|tunnel_hlen
+id|max_headroom
 )paren
 suffix:semicolon
-id|new_skb-&gt;h.iph
-op_assign
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-id|skb_push
-c_func
-(paren
-id|new_skb
-comma
-id|tunnel_hlen
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Copy the old packet to the new buffer.&n;&t;&t; * Note that new_skb-&gt;h.iph is our (tunnel driver&squot;s) header&n;&t;&t; * and new_skb-&gt;ip_hdr is the IP header of the old packet.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Copy the old packet to the new buffer.&n;&t;&t; * Note that new_skb-&gt;h.iph will be our (tunnel driver&squot;s) header&n;&t;&t; * and new_skb-&gt;ip_hdr is the IP header of the old packet.&n;&t;&t; */
 id|new_skb-&gt;ip_hdr
 op_assign
 (paren
@@ -699,6 +695,22 @@ r_sizeof
 (paren
 id|skb-&gt;proto_priv
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* Tack on our header */
+id|new_skb-&gt;h.iph
+op_assign
+(paren
+r_struct
+id|iphdr
+op_star
+)paren
+id|skb_push
+c_func
+(paren
+id|new_skb
+comma
+id|tunnel_hlen
 )paren
 suffix:semicolon
 multiline_comment|/* Free the old packet, we no longer need it */
@@ -1020,11 +1032,7 @@ id|ARPHRD_TUNNEL
 suffix:semicolon
 id|dev-&gt;hard_header_len
 op_assign
-(paren
-id|tunnel_hlen
-op_plus
-id|ETH_HLEN
-)paren
+id|TUNL_HLEN
 suffix:semicolon
 id|dev-&gt;mtu
 op_assign
@@ -1043,7 +1051,6 @@ op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* Small queue */
-multiline_comment|/* it should all run through */
 id|memset
 c_func
 (paren

@@ -1430,6 +1430,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 multiline_comment|/* pushf */
 r_case
 l_int|0x9c
@@ -1623,8 +1625,8 @@ id|regs
 suffix:semicolon
 r_return
 suffix:semicolon
-r_default
-suffix:colon
+)brace
+multiline_comment|/*&n;&t; * We didn&squot;t recognize it, let the emulator take care of it..&n;&t; */
 id|return_to_32bit
 c_func
 (paren
@@ -1633,6 +1635,5 @@ comma
 id|VM86_UNKNOWN
 )paren
 suffix:semicolon
-)brace
 )brace
 eof

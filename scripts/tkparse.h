@@ -35,6 +35,9 @@ comma
 DECL|enumerator|tok_int
 id|tok_int
 comma
+DECL|enumerator|tok_hex
+id|tok_hex
+comma
 DECL|enumerator|tok_sound
 id|tok_sound
 comma
@@ -234,4 +237,27 @@ id|kconfig
 op_star
 id|koption
 suffix:semicolon
+multiline_comment|/*&n; * Prototypes&n; */
+r_void
+id|fix_conditionals
+c_func
+(paren
+r_struct
+id|kconfig
+op_star
+id|scfg
+)paren
+suffix:semicolon
+multiline_comment|/* tkcond.c */
+r_void
+id|dump_tk_script
+c_func
+(paren
+r_struct
+id|kconfig
+op_star
+id|scfg
+)paren
+suffix:semicolon
+multiline_comment|/* tkgen.c  */
 eof

@@ -228,9 +228,13 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;memory violation at pc=%08lx (%08lx)&bslash;n&quot;
+l_string|&quot;%s: memory violation at pc=%08lx rp=%08lx (bad address = %08lx)&bslash;n&quot;
+comma
+id|current-&gt;comm
 comma
 id|regs.pc
+comma
+id|regs.r26
 comma
 id|address
 )paren

@@ -632,6 +632,48 @@ op_star
 id|vma
 )paren
 suffix:semicolon
+multiline_comment|/* NFS root */
+DECL|macro|NFS_ROOT_NAME_LEN
+mdefine_line|#define NFS_ROOT_NAME_LEN&t;256
+DECL|macro|NFS_ROOT_ADDRS_LEN
+mdefine_line|#define NFS_ROOT_ADDRS_LEN&t;128
+r_extern
+r_int
+id|nfs_root_mount
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_root_init
+c_func
+(paren
+r_char
+op_star
+id|nfsname
+comma
+r_char
+op_star
+id|nfsaddrs
+)paren
+suffix:semicolon
+r_extern
+r_char
+id|nfs_root_name
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_char
+id|nfs_root_addrs
+(braket
+)braket
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

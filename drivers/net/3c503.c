@@ -2014,15 +2014,11 @@ suffix:semicolon
 multiline_comment|/*&n; *  No shared memory, put the packet out the other way.&n; *  Set up then start the internal memory transfer to Tx Start Page&n; */
 id|tmp_rev
 op_assign
-id|htons
-c_func
-(paren
 (paren
 r_int
 r_int
 )paren
 id|start_page
-)paren
 suffix:semicolon
 id|outb
 c_func
@@ -2031,7 +2027,7 @@ id|tmp_rev
 op_amp
 l_int|0xFF
 comma
-id|E33G_DMAAH
+id|E33G_DMAAL
 )paren
 suffix:semicolon
 id|outb
@@ -2041,7 +2037,7 @@ id|tmp_rev
 op_rshift
 l_int|8
 comma
-id|E33G_DMAAL
+id|E33G_DMAAH
 )paren
 suffix:semicolon
 id|outb_p
@@ -2273,15 +2269,11 @@ suffix:semicolon
 multiline_comment|/*&n; *  No shared memory, use programmed I/O.&n; */
 id|tmp_rev
 op_assign
-id|htons
-c_func
-(paren
 (paren
 r_int
 r_int
 )paren
 id|ring_page
-)paren
 suffix:semicolon
 id|outb
 c_func
@@ -2290,7 +2282,7 @@ id|tmp_rev
 op_amp
 l_int|0xFF
 comma
-id|E33G_DMAAH
+id|E33G_DMAAL
 )paren
 suffix:semicolon
 id|outb
@@ -2300,7 +2292,7 @@ id|tmp_rev
 op_rshift
 l_int|8
 comma
-id|E33G_DMAAL
+id|E33G_DMAAH
 )paren
 suffix:semicolon
 id|outb_p
@@ -2558,15 +2550,11 @@ suffix:semicolon
 multiline_comment|/*&n; *  No shared memory, use programmed I/O.&n; */
 id|tmp_rev
 op_assign
-id|htons
-c_func
-(paren
 (paren
 r_int
 r_int
 )paren
 id|ring_offset
-)paren
 suffix:semicolon
 id|outb
 c_func

@@ -317,7 +317,9 @@ multiline_comment|/* emulation was successful */
 id|printk
 c_func
 (paren
-l_string|&quot;Arithmetic trap at %016lx: %02lx %016lx&bslash;n&quot;
+l_string|&quot;%s: arithmetic trap at %016lx: %02lx %016lx&bslash;n&quot;
+comma
+id|current-&gt;comm
 comma
 id|regs.pc
 comma

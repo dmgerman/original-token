@@ -239,6 +239,29 @@ r_int
 id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+DECL|macro|INITRD_MINOR
+mdefine_line|#define INITRD_MINOR 250 /* shouldn&squot;t collide with /dev/ram* too soon ... */
+r_extern
+r_int
+r_int
+id|initrd_start
+comma
+id|initrd_end
+suffix:semicolon
+r_extern
+r_int
+id|mount_initrd
+suffix:semicolon
+multiline_comment|/* zero if initrd should not be mounted */
+r_void
+id|initrd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|RO_IOCTLS
 mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EACCES; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: { int __err = verify_area(VERIFY_WRITE, (void *) (where), sizeof(long)); &bslash;&n;&t;&t;   if (!__err) put_fs_long(0!=is_read_only(dev),(long *) (where)); return __err; }
 macro_line|#if defined(MAJOR_NR) || defined(IDE_DRIVER)

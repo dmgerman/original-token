@@ -838,7 +838,16 @@ id|mount_root
 op_logical_and
 id|inode-&gt;i_count
 op_eq
+(paren
+id|inode-&gt;i_mount
+op_ne
+id|inode
+ques
+c_cond
 l_int|1
+suffix:colon
+l_int|2
+)paren
 )paren
 r_continue
 suffix:semicolon

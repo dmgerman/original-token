@@ -91,12 +91,6 @@ id|all
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Increase the timeout each time we retransmit.  Note that&n;&t; * we do not increase the rtt estimate.  rto is initialized&n;&t; * from rtt, but increases here.  Jacobson (SIGCOMM 88) suggests&n;&t; * that doubling rto each time is the least we can get away with.&n;&t; * In KA9Q, Karn uses this for the first few times, and then&n;&t; * goes to quadratic.  netBSD doubles, but only goes up to *64,&n;&t; * and clamps at 1 to 64 sec afterwards.  Note that 120 sec is&n;&t; * defined in the protocol as the maximum possible RTT.  I guess&n;&t; * we&squot;ll have to use something other than TCP to talk to the&n;&t; * University of Mars.&n;&t; *&n;&t; * PAWS allows us longer timeouts and large windows, so once&n;&t; * implemented ftp to mars will work nicely. We will have to fix&n;&t; * the 120 second clamps though!&n;&t; */
-id|sk-&gt;retransmits
-op_increment
-suffix:semicolon
-id|sk-&gt;prot-&gt;retransmits
-op_increment
-suffix:semicolon
 id|sk-&gt;backoff
 op_increment
 suffix:semicolon
@@ -508,12 +502,6 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Retransmission&n;&t; */
-id|sk-&gt;retransmits
-op_increment
-suffix:semicolon
-id|sk-&gt;prot-&gt;retransmits
-op_increment
-suffix:semicolon
 id|sk-&gt;prot-&gt;retransmit
 (paren
 id|sk

@@ -841,15 +841,15 @@ id|UMSDOS_DOS_SETUP
 )paren
 (brace
 multiline_comment|/* #Specification: ioctl / UMSDOS_DOS_SETUP&n;&t;&t;&t;&t;&t;The UMSDOS_DOS_SETUP ioctl allow changing the&n;&t;&t;&t;&t;&t;default permission of the MsDOS file system driver&n;&t;&t;&t;&t;&t;on the fly. The MsDOS driver apply global permission&n;&t;&t;&t;&t;&t;to every file and directory. Normally these permissions&n;&t;&t;&t;&t;&t;are controlled by a mount option. This is not&n;&t;&t;&t;&t;&t;available for root partition, so a special utility&n;&t;&t;&t;&t;&t;(umssetup) is provided to do this, normally in&n;&t;&t;&t;&t;&t;/etc/rc.local.&n;&n;&t;&t;&t;&t;&t;Be aware that this apply ONLY to MsDOS directory&n;&t;&t;&t;&t;&t;(those without EMD --linux-.---). Umsdos directory&n;&t;&t;&t;&t;&t;have independent (standard) permission for each&n;&t;&t;&t;&t;&t;and every file.&n;&n;&t;&t;&t;&t;&t;The field umsdos_dirent provide the information needed.&n;&t;&t;&t;&t;&t;umsdos_dirent.uid and gid sets the owner and group.&n;&t;&t;&t;&t;&t;umsdos_dirent.mode set the permissions flags.&n;&t;&t;&t;&t;*/
-id|dir-&gt;i_sb-&gt;u.msdos_sb.fs_uid
+id|dir-&gt;i_sb-&gt;u.msdos_sb.options.fs_uid
 op_assign
 id|data.umsdos_dirent.uid
 suffix:semicolon
-id|dir-&gt;i_sb-&gt;u.msdos_sb.fs_gid
+id|dir-&gt;i_sb-&gt;u.msdos_sb.options.fs_gid
 op_assign
 id|data.umsdos_dirent.gid
 suffix:semicolon
-id|dir-&gt;i_sb-&gt;u.msdos_sb.fs_umask
+id|dir-&gt;i_sb-&gt;u.msdos_sb.options.fs_umask
 op_assign
 id|data.umsdos_dirent.mode
 suffix:semicolon

@@ -1612,7 +1612,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
+id|DPRINTK
 c_func
 (paren
 l_string|&quot;ncpfs: could not lookup vol &quot;
@@ -2703,6 +2703,16 @@ id|name
 )paren
 op_eq
 l_int|0
+)paren
+multiline_comment|/* The root dir is never looked up using this&n;&t;&t;     * routine.  Without the following test a root&n;&t;&t;     * directory &squot;sys&squot; in a volume named &squot;sys&squot; could&n;&t;&t;     * never be looked up, because&n;&t;&t;     * server-&gt;root-&gt;dir==server-&gt;root. */
+op_logical_and
+(paren
+id|result
+op_ne
+op_amp
+(paren
+id|server-&gt;root
+)paren
 )paren
 )paren
 (brace

@@ -1,5 +1,5 @@
 multiline_comment|/* lance.c: An AMD LANCE ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&n;&t;Fixing alignment problem with 1.3.* kernel and some minor changes&n;&t;by Andrey V. Savochkin, 1996.&n;&n;&t;Problems or questions may be send to Donald Becker (see above) or to&n;&t;Andrey Savochkin -- saw@shade.msu.ru or&n;&t;&t;Laboratory of Computation Methods, &n;&t;&t;Department of Mathematics and Mechanics,&n;&t;&t;Moscow State University,&n;&t;&t;Leninskye Gory, Moscow 119899&n;&n;&t;But I should to inform you that I&squot;m not an expert in the LANCE card&n;&t;and it may occurs that you will receive no answer on your mail&n;&t;to Donald Becker. I didn&squot;t receive any answer on all my letters&n;&t;to him. Who knows why... But may be you are more lucky?  ;-)&n;                                                          SAW&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lance.c:v1.08 4/10/95 dplatt@3do.com&bslash;n&quot;
+l_string|&quot;lance.c:v1.08.01 Mar 6 1996 saw@shade.msu.ru&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -87,7 +87,10 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the AMD 79C960, the &quot;PCnet-ISA&n;single-chip ethernet controller for ISA&quot;.  This chip is used in a wide&n;variety of boards from vendors such as Allied Telesis, HP, Kingston,&n;and Boca.  This driver is also intended to work with older AMD 7990&n;designs, such as the NE1500 and NE2100, and newer 79C961.  For convenience,&n;I use the name LANCE to refer to all of the AMD chips, even though it properly&n;refers only to the original 7990.&n;&n;II. Board-specific settings&n;&n;The driver is designed to work the boards that use the faster&n;bus-master mode, rather than in shared memory mode.&t; (Only older designs&n;have on-board buffer memory needed to support the slower shared memory mode.)&n;&n;Most ISA boards have jumpered settings for the I/O base, IRQ line, and DMA&n;channel.  This driver probes the likely base addresses:&n;{0x300, 0x320, 0x340, 0x360}.&n;After the board is found it generates a DMA-timeout interrupt and uses&n;autoIRQ to find the IRQ line.  The DMA channel can be set with the low bits&n;of the otherwise-unused dev-&gt;mem_start value (aka PARAM1).  If unset it is&n;probed for by enabling each free DMA channel in turn and checking if&n;initialization succeeds.&n;&n;The HP-J2405A board is an exception: with this board it&squot;s easy to read the&n;EEPROM-set values for the base, IRQ, and DMA.  (Of course you must already&n;_know_ the base address -- that field is for writing the EEPROM.)&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;The LANCE uses ring buffers of Tx and Rx descriptors.  Each entry describes&n;the base and length of the data buffer, along with status bits.&t; The length&n;of these buffers is set by LANCE_LOG_{RX,TX}_BUFFERS, which is log_2() of&n;the buffer length (rather than being directly the buffer length) for&n;implementation ease.  The current values are 2 (Tx) and 4 (Rx), which leads to&n;ring sizes of 4 (Tx) and 16 (Rx).  Increasing the number of ring entries&n;needlessly uses extra space and reduces the chance that an upper layer will&n;be able to reorder queued Tx packets based on priority.&t; Decreasing the number&n;of entries makes it more difficult to achieve back-to-back packet transmission&n;and increases the chance that Rx ring will overflow.  (Consider the worst case&n;of receiving back-to-back minimum-sized packets.)&n;&n;The LANCE has the capability to &quot;chain&quot; both Rx and Tx buffers, but this driver&n;statically allocates full-sized (slightly oversized -- PKT_BUF_SZ) buffers to&n;avoid the administrative overhead. For the Rx side this avoids dynamically&n;allocating full-sized buffers &quot;just in case&quot;, at the expense of a&n;memory-to-memory data copy for each packet received.  For most systems this&n;is a good tradeoff: the Rx buffer will always be in low memory, the copy&n;is inexpensive, and it primes the cache for later packet processing.  For Tx&n;the buffers are only used when needed as low-memory bounce buffers.&n;&n;IIIB. 16M memory limitations.&n;For the ISA bus master mode all structures used directly by the LANCE,&n;the initialization block, Rx and Tx rings, and data buffers, must be&n;accessible from the ISA bus, i.e. in the lower 16M of real memory.&n;This is a problem for current Linux kernels on &gt;16M machines. The network&n;devices are initialized after memory initialization, and the kernel doles out&n;memory from the top of memory downward.&t; The current solution is to have a&n;special network initialization routine that&squot;s called before memory&n;initialization; this will eventually be generalized for all network devices.&n;As mentioned before, low-memory &quot;bounce-buffers&quot; are used when needed.&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  (The Tx-done interrupt can&squot;t be selectively turned off, so&n;we can&squot;t avoid the interrupt overhead by having the Tx routine reap the Tx&n;stats.)&t; After reaping the stats, it marks the queue entry as empty by setting&n;the &squot;base&squot; to zero.&t; Iff the &squot;lp-&gt;tx_full&squot; flag is set, it clears both the&n;tx_full and tbusy flags.&n;&n;*/
-multiline_comment|/* Set the number of Tx and Rx buffers, using Log_2(# buffers).&n;   Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n;   That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4). */
+multiline_comment|/* Memory accessed from LANCE card must be aligned on 8-byte boundaries.&n;   But we can&squot;t believe that kmalloc()&squot;ed memory satisfyes it. -- SAW */
+DECL|macro|LANCE_KMALLOC
+mdefine_line|#define LANCE_KMALLOC(x) &bslash;&n;&t;((void *) (((unsigned long)kmalloc((x)+7, GFP_DMA | GFP_KERNEL)+7) &amp; ~7))
+multiline_comment|/* Set the number of Tx and Rx buffers, using Log_2(# buffers).&n;   Reasonable default values are 16 Tx buffers, and 16 Rx buffers.&n;   That translates to 4 and 4 (16 == 2^^4). */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS
 DECL|macro|LANCE_LOG_TX_BUFFERS
 mdefine_line|#define LANCE_LOG_TX_BUFFERS 4
@@ -203,7 +206,7 @@ DECL|struct|lance_private
 r_struct
 id|lance_private
 (brace
-multiline_comment|/* The Tx and Rx ring entries must be aligned on 8-byte boundaries.&n;&t;   This is always true for kmalloc&squot;ed memory */
+multiline_comment|/* The Tx and Rx ring entries must be aligned on 8-byte boundaries. */
 DECL|member|rx_ring
 r_struct
 id|lance_rx_head
@@ -242,6 +245,7 @@ id|TX_RING_SIZE
 )braket
 suffix:semicolon
 DECL|member|rx_buffs
+r_int
 r_int
 id|rx_buffs
 suffix:semicolon
@@ -1325,7 +1329,7 @@ r_struct
 id|lance_private
 op_star
 )paren
-id|kmalloc
+id|LANCE_KMALLOC
 c_func
 (paren
 r_sizeof
@@ -1333,10 +1337,25 @@ r_sizeof
 op_star
 id|lp
 )paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lance_debug
+OG
+l_int|6
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; (#0x%05lx)&quot;
 comma
-id|GFP_DMA
-op_or
-id|GFP_KERNEL
+(paren
+r_int
+r_int
+)paren
+id|lp
 )paren
 suffix:semicolon
 id|memset
@@ -1361,22 +1380,19 @@ id|lp-&gt;name
 op_assign
 id|chipname
 suffix:semicolon
+multiline_comment|/* I&squot;m not sure that buffs also must be aligned but it&squot;s safer to do it -- SAW */
 id|lp-&gt;rx_buffs
 op_assign
 (paren
 r_int
 r_int
 )paren
-id|kmalloc
+id|LANCE_KMALLOC
 c_func
 (paren
 id|PKT_BUF_SZ
 op_star
 id|RX_RING_SIZE
-comma
-id|GFP_DMA
-op_or
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|lp-&gt;tx_bounce_buffs
@@ -1390,16 +1406,12 @@ id|lance_need_isa_bounce_buffers
 )paren
 id|lp-&gt;tx_bounce_buffs
 op_assign
-id|kmalloc
+id|LANCE_KMALLOC
 c_func
 (paren
 id|PKT_BUF_SZ
 op_star
 id|TX_RING_SIZE
-comma
-id|GFP_DMA
-op_or
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|lp-&gt;chip_version

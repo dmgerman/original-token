@@ -1,5 +1,6 @@
-multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04 - Avery Pennarun - Aesthetic improvements&n; *              &lt;apenwarr@foxnet.net&gt;&n; *&n; * 1996 01 24 - Avery Pennarun - Bugfixes and more aesthetics&n; */
+multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04&n; * Avery Pennarun - Aesthetic improvements.&n; *&n; * 1996 01 24&n; * Avery Pennarun - Bugfixes and more aesthetics.&n; *&n; * 1996 03 08&n; * Avery Pennarun - The int and hex config.in commands work right.&n; *                - Choice buttons are more user-friendly.&n; *                - Disabling a text entry line greys it out properly.&n; *&t;&t;  - dep_tristate now works like in Configure. (not pretty)&n; *                - No warnings in gcc -Wall. (Fixed some &quot;interesting&quot; bugs.)&n; *                - Faster/prettier &quot;Help&quot; lookups.&n; *&n; * TO DO:&n; *   - clean up - there are useless ifdef&squot;s everywhere.&n; *   - do more sensible things with the &squot;config -resizable&quot; business.&n; *   - better comments throughout - C code generating tcl is really cryptic.&n; *   - eliminate silly &quot;update idletasks&quot; hack to improve display speed.&n; *   - make tabstops work left-&gt;right instead of right-&gt;left.&n; *   - make canvas contents resize with the window (good luck).&n; *   - make next/prev buttons go to next/previous menu.&n; *   - some way to make submenus inside of submenus (ie. Main-&gt;Networking-&gt;IP)&n; *           (perhaps a button where the description would be)&n; *   - make the main menu use the same tcl code as the submenus.&n; *   - make choice and int/hex input types line up vertically with&n; *           bool/tristate.&n; *   - general speedups - how?  The canvas seems to slow it down a lot.&n; *   - choice buttons should default to the first menu option, rather than a&n; *           blank.  Also look up the right variable when the help button&n; *           is pressed.&n; *   &n; */
 macro_line|#include &lt;stdio.h&gt;
+macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &quot;tkparse.h&quot;
 macro_line|#ifndef TRUE
 DECL|macro|TRUE
@@ -23,6 +24,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Generate portion of wish script for the beginning of a submenu.&n; * The guts get filled in with the various options.&n; */
 DECL|function|start_proc
 r_static
+r_void
 id|start_proc
 c_func
 (paren
@@ -79,13 +81,13 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tmessage $w.m -width 400 -aspect 300 -background grey -text &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;tmessage $w.m -width 400 -aspect 300 -text &bslash;&bslash;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;t&bslash;t&bslash;&quot;%s&bslash;&quot;  -relief raised -bg grey&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t&bslash;&quot;%s&bslash;&quot;  -relief raised&bslash;n&quot;
 comma
 id|label
 )paren
@@ -181,6 +183,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Each proc we create needs a global declaration for any global variables we&n; * use.  To minimize the size of the file, we set a flag each time we output&n; * a global declaration so we know whether we need to insert one for a&n; * given function or not.&n; */
 DECL|function|clear_globalflags
+r_void
 id|clear_globalflags
 c_func
 (paren
@@ -212,6 +215,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function walks the chain of conditions that we got from cond.c,&n; * and creates a wish conditional to enable/disable a given widget.&n; */
 DECL|function|generate_if
+r_void
 id|generate_if
 c_func
 (paren
@@ -232,9 +236,6 @@ r_int
 id|line_num
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_struct
 id|condition
 op_star
@@ -560,9 +561,13 @@ c_func
 (paren
 l_string|&quot;&bslash;&quot;%s&bslash;&quot;&quot;
 comma
-id|cond-&gt;variable
+id|cond-&gt;variable.str
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_break
 suffix:semicolon
 )brace
@@ -611,6 +616,9 @@ suffix:semicolon
 r_case
 id|tok_int
 suffix:colon
+r_case
+id|tok_hex
+suffix:colon
 id|printf
 c_func
 (paren
@@ -620,7 +628,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.config.f.x%d.x configure -state normal; &quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state normal -fore [ .ref cget -foreground ]; &quot;
 comma
 id|menu_num
 comma
@@ -646,7 +654,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.config.f.x%d.x configure -state disabled -fore gray60;&quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state disabled -fore [ .ref cget -disabledforeground ];&quot;
 comma
 id|menu_num
 comma
@@ -824,7 +832,9 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;if { $%s == 2 } then {&quot;
+l_string|&quot;if { $%s != 1 &amp;&amp; $%s != 0 } then {&quot;
+comma
+id|item-&gt;depend.str
 comma
 id|item-&gt;depend.str
 )paren
@@ -1008,6 +1018,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Similar to generate_if, except we come here when generating an&n; * output file.  Thus instead of enabling/disabling a widget, we&n; * need to decide whether to write out a given configuration variable&n; * to the output file.&n; */
 DECL|function|generate_if_for_outfile
+r_void
 id|generate_if_for_outfile
 c_func
 (paren
@@ -1316,9 +1327,13 @@ c_func
 (paren
 l_string|&quot;&bslash;&quot;%s&bslash;&quot;&quot;
 comma
-id|cond-&gt;variable
+id|cond-&gt;variable.str
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_break
 suffix:semicolon
 )brace
@@ -1340,7 +1355,7 @@ suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;} then {write_variable $cfg $autocfg %s %s $notmod }&bslash;n&quot;
+l_string|&quot;} then {write_tristate $cfg $autocfg %s %s $notmod }&bslash;n&quot;
 comma
 id|item-&gt;optionname
 comma
@@ -1368,7 +1383,7 @@ suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;} then { write_variable $cfg $autocfg %s $%s $%s } &bslash;n&quot;
+l_string|&quot;} then { write_tristate $cfg $autocfg %s $%s $%s } &bslash;n&quot;
 comma
 id|item-&gt;optionname
 comma
@@ -1385,13 +1400,40 @@ suffix:colon
 r_case
 id|tok_bool
 suffix:colon
+id|printf
+c_func
+(paren
+l_string|&quot;} then { write_tristate $cfg $autocfg %s $%s $notmod }&bslash;n&quot;
+comma
+id|item-&gt;optionname
+comma
+id|item-&gt;optionname
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|tok_int
 suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;} then { write_variable $cfg $autocfg %s $%s $notmod }&bslash;n&quot;
+l_string|&quot;} then { write_int $cfg $autocfg %s $%s $notmod }&bslash;n&quot;
+comma
+id|item-&gt;optionname
+comma
+id|item-&gt;optionname
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|tok_hex
+suffix:colon
+id|printf
+c_func
+(paren
+l_string|&quot;} then { write_hex $cfg $autocfg %s $%s $notmod }&bslash;n&quot;
 comma
 id|item-&gt;optionname
 comma
@@ -1428,6 +1470,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Generates a fragment of wish script that closes out a submenu procedure.&n; */
 DECL|function|end_proc
 r_static
+r_void
 id|end_proc
 c_func
 (paren
@@ -1885,7 +1928,9 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tif {$%s == 2 } then { .menu%d.config.f.x%d.y configure -state disabled } else { .menu%d.config.f.x%d.y configure -state normal}&bslash;n&quot;
+l_string|&quot;&bslash;tif {$%s != 1 &amp;&amp; $%s != 0 } then { .menu%d.config.f.x%d.y configure -state disabled } else { .menu%d.config.f.x%d.y configure -state normal}&bslash;n&quot;
+comma
+id|cfg-&gt;depend.str
 comma
 id|cfg-&gt;depend.str
 comma
@@ -1911,7 +1956,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This function goes through and counts up the number of items in&n; * each submenu. If there are too many options, we need to split it&n; * into submenus.  This function just calculates how many submenus,&n; * and how many items go in each submenu.&n; */
 DECL|function|find_menu_size
 r_static
-r_int
+r_void
 id|find_menu_size
 c_func
 (paren
@@ -1936,9 +1981,6 @@ id|pnt
 suffix:semicolon
 r_int
 id|tot
-suffix:semicolon
-r_int
-id|div
 suffix:semicolon
 multiline_comment|/*&n;   * First count up the number of options in this menu.&n;   */
 id|tot
@@ -1989,6 +2031,9 @@ r_case
 id|tok_int
 suffix:colon
 r_case
+id|tok_hex
+suffix:colon
+r_case
 id|tok_choose
 suffix:colon
 r_case
@@ -2008,49 +2053,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef OLD_SPLIT_MENUS
-multiline_comment|/*&n;   * Now figure out how many items go on each page.&n;   */
-id|div
-op_assign
-l_int|1
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|tot
-op_div
-id|div
-OG
-l_int|15
-)paren
-(brace
-id|div
-op_increment
-suffix:semicolon
-)brace
-op_star
-id|menu_max
-op_assign
-id|cfg-&gt;menu_number
-op_plus
-id|div
-op_minus
-l_int|1
-suffix:semicolon
-op_star
-id|menu_maxlines
-op_assign
-(paren
-id|tot
-op_plus
-id|div
-op_minus
-l_int|1
-)paren
-op_div
-id|div
-suffix:semicolon
-macro_line|#else
 op_star
 id|menu_max
 op_assign
@@ -2061,10 +2063,10 @@ id|menu_maxlines
 op_assign
 id|tot
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * This is the top level function for generating the tk script.&n; */
 DECL|function|dump_tk_script
+r_void
 id|dump_tk_script
 c_func
 (paren
@@ -2074,9 +2076,6 @@ op_star
 id|scfg
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_int
 id|menu_num
 op_assign
@@ -2192,6 +2191,9 @@ id|tok_dep_tristate
 suffix:colon
 r_case
 id|tok_int
+suffix:colon
+r_case
+id|tok_hex
 suffix:colon
 r_case
 id|tok_choose
@@ -2404,7 +2406,7 @@ suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;t$w.config.f.x%d.x.menu add radiobutton -label &bslash;&quot;%s&bslash;&quot; -variable %s -value %d -command &bslash;&quot;update_menu%d .menu%d.config.f&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&bslash;t$w.config.f.x%d.x.menu add radiobutton -label &bslash;&quot;%s&bslash;&quot; -variable %s -value &bslash;&quot;%s&bslash;&quot; -command &bslash;&quot;update_menu%d .menu%d.config.f&bslash;&quot;&bslash;n&quot;
 comma
 id|cfg1-&gt;menu_line
 comma
@@ -2412,7 +2414,7 @@ id|cfg-&gt;label
 comma
 id|cfg1-&gt;optionname
 comma
-id|cfg-&gt;choice_value
+id|cfg-&gt;label
 comma
 id|cfg1-&gt;menu_number
 comma
@@ -2457,42 +2459,14 @@ op_assign
 id|cfg-&gt;menu_number
 suffix:semicolon
 )brace
-macro_line|#if 0
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tmenubutton $w.config.f.line%d -text &bslash;&quot;%s&bslash;&quot; -menu $w.config.f.line%d.menu &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;tglobal %s&bslash;n&quot;
 comma
-id|cfg-&gt;menu_line
-comma
-id|cfg-&gt;label
-comma
-id|cfg-&gt;menu_line
+id|cfg-&gt;optionname
 )paren
 suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t&t;-relief raised -width 35&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tpack $w.config.f.line%d -anchor w&bslash;n&quot;
-comma
-id|cfg-&gt;menu_line
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tmenu $w.config.f.line%d.menu&bslash;n&quot;
-comma
-id|cfg-&gt;menu_line
-)paren
-suffix:semicolon
-macro_line|#else
 id|printf
 c_func
 (paren
@@ -2515,7 +2489,6 @@ comma
 id|cfg-&gt;menu_line
 )paren
 suffix:semicolon
-macro_line|#endif
 id|cfg1
 op_assign
 id|cfg
@@ -2613,7 +2586,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tdep_tristate $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+l_string|&quot;&bslash;tdep_tristate $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s %s&bslash;n&quot;
 comma
 id|cfg-&gt;menu_number
 comma
@@ -2623,7 +2596,7 @@ id|cfg-&gt;label
 comma
 id|cfg-&gt;optionname
 comma
-id|cfg-&gt;depend
+id|cfg-&gt;depend.str
 )paren
 suffix:semicolon
 r_break
@@ -2681,6 +2654,59 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|tok_hex
+suffix:colon
+r_if
+c_cond
+(paren
+id|cfg-&gt;menu_number
+op_ne
+id|menu_num
+)paren
+(brace
+id|end_proc
+c_func
+(paren
+id|menu_num
+comma
+id|menu_min
+comma
+id|menu_max
+)paren
+suffix:semicolon
+id|start_proc
+c_func
+(paren
+id|menulabel
+comma
+id|cfg-&gt;menu_number
+comma
+id|FALSE
+)paren
+suffix:semicolon
+id|menu_num
+op_assign
+id|cfg-&gt;menu_number
+suffix:semicolon
+)brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;thex $w.config.f %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+comma
+id|cfg-&gt;menu_number
+comma
+id|cfg-&gt;menu_line
+comma
+id|cfg-&gt;label
+comma
+id|cfg-&gt;optionname
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#ifdef INCOMPAT_SOUND_CONFIG
+r_case
 id|tok_sound
 suffix:colon
 r_if
@@ -2728,6 +2754,7 @@ id|cfg-&gt;menu_line
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 r_break
@@ -2957,9 +2984,6 @@ id|cfg-&gt;tok
 )paren
 (brace
 r_case
-id|tok_int
-suffix:colon
-r_case
 id|tok_bool
 suffix:colon
 r_case
@@ -2982,16 +3006,32 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|tok_int
+suffix:colon
+r_case
+id|tok_hex
+suffix:colon
+id|printf
+c_func
+(paren
+l_string|&quot;set %s %s&bslash;n&quot;
+comma
+id|cfg-&gt;optionname
+comma
+id|cfg-&gt;value
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|tok_choose
 suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;set %s %d&bslash;n&quot;
+l_string|&quot;set %s &bslash;&quot;(not set)&bslash;&quot;&bslash;n&quot;
 comma
 id|cfg-&gt;optionname
-comma
-id|cfg-&gt;choice_value
 )paren
 suffix:semicolon
 r_default
@@ -3099,6 +3139,9 @@ r_case
 id|tok_int
 suffix:colon
 r_case
+id|tok_hex
+suffix:colon
+r_case
 id|tok_bool
 suffix:colon
 r_case
@@ -3168,9 +3211,9 @@ id|printf
 c_func
 (paren
 l_string|&quot;&bslash;tif {$%s == 0 } then {&bslash;n&quot;
-l_string|&quot;&bslash;t&bslash;twrite_variable $cfg $autocfg %s $notset $notmod&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;twrite_tristate $cfg $autocfg %s $notset $notmod&bslash;n&quot;
 l_string|&quot;&bslash;t} else {&bslash;n&quot;
-l_string|&quot;&bslash;t&bslash;twrite_variable $cfg $autocfg %s $%s $%s&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;twrite_tristate $cfg $autocfg %s $%s $%s&bslash;n&quot;
 l_string|&quot;&bslash;t}&bslash;n&quot;
 comma
 id|cfg-&gt;depend.str
@@ -3257,11 +3300,11 @@ id|cfg1-&gt;next
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tif { $%s == %d } then { write_variable $cfg $autocfg %s 1 $notmod }&bslash;n&quot;
+l_string|&quot;&bslash;tif { $%s == &bslash;&quot;%s&bslash;&quot; } then { write_tristate $cfg $autocfg %s 1 $notmod }&bslash;n&quot;
 comma
 id|cfg-&gt;optionname
 comma
-id|cfg1-&gt;choice_value
+id|cfg1-&gt;label
 comma
 id|cfg1-&gt;optionname
 )paren
@@ -3269,11 +3312,51 @@ suffix:semicolon
 )brace
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|cfg-&gt;tok
+op_eq
+id|tok_int
+)paren
 (brace
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;twrite_variable $cfg $autocfg %s $%s $notmod&bslash;n&quot;
+l_string|&quot;&bslash;twrite_int $cfg $autocfg %s $%s $notmod&bslash;n&quot;
+comma
+id|cfg-&gt;optionname
+comma
+id|cfg-&gt;optionname
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|cfg-&gt;tok
+op_eq
+id|tok_hex
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;twrite_hex $cfg $autocfg %s $%s $notmod&bslash;n&quot;
+comma
+id|cfg-&gt;optionname
+comma
+id|cfg-&gt;optionname
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;twrite_tristate $cfg $autocfg %s $%s $notmod&bslash;n&quot;
 comma
 id|cfg-&gt;optionname
 comma
@@ -3452,13 +3535,13 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tif { $%s == 1 } then { set %s %d }&bslash;n&quot;
+l_string|&quot;&bslash;tif { $%s == 1 } then { set %s &bslash;&quot;%s&bslash;&quot; }&bslash;n&quot;
 comma
 id|cfg1-&gt;optionname
 comma
 id|cfg-&gt;optionname
 comma
-id|cfg1-&gt;choice_value
+id|cfg1-&gt;label
 )paren
 suffix:semicolon
 )brace

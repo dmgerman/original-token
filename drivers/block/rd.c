@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * ramdisk.c - Multiple ramdisk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This ramdisk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * ramdisk data.  This makes it possible to dynamically allocate the ramdisk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the ramdisk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new ramdisk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed ramdisk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The ramdisk&n; * loader now also loads into a dynamic (buffer cache based) ramdisk,&n; * not the old static ramdisk.  Support for the old static ramdisk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc...&n; * &t;When the ramdisk is rmmod&squot;ed, free the protected buffers&n; * &t;Default ramdisk size changed to 2.88MB&n; */
+multiline_comment|/*&n; * ramdisk.c - Multiple ramdisk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This ramdisk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * ramdisk data.  This makes it possible to dynamically allocate the ramdisk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the ramdisk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new ramdisk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed ramdisk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The ramdisk&n; * loader now also loads into a dynamic (buffer cache based) ramdisk,&n; * not the old static ramdisk.  Support for the old static ramdisk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc...&n; * &t;When the ramdisk is rmmod&squot;ed, free the protected buffers&n; * &t;Default ramdisk size changed to 2.88MB&n; *&n; *  Added initrd: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
@@ -58,6 +59,15 @@ op_star
 id|outfp
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+DECL|variable|initrd_users
+r_static
+r_int
+id|initrd_users
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* Various static variables go here... mostly used within the ramdisk code only. */
 DECL|variable|rd_length
@@ -99,6 +109,23 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* starting block # of image */
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+DECL|variable|initrd_start
+DECL|variable|initrd_end
+r_int
+r_int
+id|initrd_start
+comma
+id|initrd_end
+suffix:semicolon
+DECL|variable|mount_initrd
+r_int
+id|mount_initrd
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* zero if initrd should not be mounted */
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; *  Basically, my strategy here is to set up a buffer-head which can&squot;t be&n; *  deleted, and make that my Ramdisk.  If the request is outside of the&n; *  allocated size, we must get rid of it...&n; *&n; */
 DECL|function|rd_request
@@ -370,6 +397,181 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+DECL|function|initrd_read
+r_static
+r_int
+id|initrd_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+id|left
+suffix:semicolon
+id|left
+op_assign
+id|initrd_end
+op_minus
+id|initrd_start
+op_minus
+id|file-&gt;f_pos
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+OG
+id|left
+)paren
+id|count
+op_assign
+id|left
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+op_le
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|buf
+comma
+(paren
+r_char
+op_star
+)paren
+id|initrd_start
+op_plus
+id|file-&gt;f_pos
+comma
+id|count
+)paren
+suffix:semicolon
+id|file-&gt;f_pos
+op_add_assign
+id|count
+suffix:semicolon
+r_return
+id|count
+suffix:semicolon
+)brace
+DECL|function|initrd_release
+r_static
+r_void
+id|initrd_release
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_int
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|initrd_users
+)paren
+r_return
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|initrd_start
+suffix:semicolon
+id|i
+OL
+id|initrd_end
+suffix:semicolon
+id|i
+op_add_assign
+id|PAGE_SIZE
+)paren
+id|free_page
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
+id|initrd_start
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|initrd_fops
+r_static
+r_struct
+id|file_operations
+id|initrd_fops
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek */
+id|initrd_read
+comma
+multiline_comment|/* read */
+l_int|NULL
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* select */
+l_int|NULL
+comma
+multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* open */
+id|initrd_release
+comma
+multiline_comment|/* release */
+l_int|NULL
+multiline_comment|/* fsync */
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|rd_open
 r_static
 r_int
@@ -387,6 +589,42 @@ op_star
 id|filp
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|DEVICE_NR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+op_eq
+id|INITRD_MINOR
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|initrd_start
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|initrd_users
+op_increment
+suffix:semicolon
+id|filp-&gt;f_op
+op_assign
+op_amp
+id|initrd_fops
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -442,7 +680,7 @@ comma
 multiline_comment|/* lseek - default */
 id|block_read
 comma
-multiline_comment|/* read - block dev write */
+multiline_comment|/* read - block dev read */
 id|block_write
 comma
 multiline_comment|/* write - block dev write */
@@ -1075,11 +1313,17 @@ id|nblocks
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine loads in the ramdisk image.&n; */
-DECL|function|rd_load
+DECL|function|rd_load_image
+r_static
 r_void
-id|rd_load
+id|rd_load_image
 c_func
 (paren
+id|kdev_t
+id|device
+comma
+r_int
+id|offset
 )paren
 (brace
 r_struct
@@ -1099,8 +1343,6 @@ r_int
 id|fs
 suffix:semicolon
 id|kdev_t
-id|device
-comma
 id|ram_device
 suffix:semicolon
 r_int
@@ -1134,19 +1376,6 @@ comma
 l_char|&squot;&bslash;&bslash;&squot;
 )brace
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|rd_doload
-op_eq
-l_int|0
-)paren
-r_return
-suffix:semicolon
-id|device
-op_assign
-id|ROOT_DEV
-suffix:semicolon
 id|ram_device
 op_assign
 id|MKDEV
@@ -1157,38 +1386,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|MAJOR
-c_func
-(paren
-id|device
-)paren
-op_ne
-id|FLOPPY_MAJOR
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rd_prompt
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;VFS: Insert root floppy disk to be loaded into ramdisk and press ENTER&bslash;n&quot;
-)paren
-suffix:semicolon
-id|wait_for_keypress
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -1330,7 +1527,7 @@ comma
 op_amp
 id|infile
 comma
-id|rd_image_start
+id|offset
 )paren
 suffix:semicolon
 r_if
@@ -1549,7 +1746,7 @@ suffix:colon
 id|invalidate_buffers
 c_func
 (paren
-id|ROOT_DEV
+id|device
 )paren
 suffix:semicolon
 id|ROOT_DEV
@@ -1588,6 +1785,88 @@ id|fs
 )paren
 suffix:semicolon
 )brace
+DECL|function|rd_load
+r_void
+id|rd_load
+c_func
+(paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rd_doload
+op_eq
+l_int|0
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|MAJOR
+c_func
+(paren
+id|ROOT_DEV
+)paren
+op_ne
+id|FLOPPY_MAJOR
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rd_prompt
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;VFS: Insert root floppy disk to be loaded into ramdisk and press ENTER&bslash;n&quot;
+)paren
+suffix:semicolon
+id|wait_for_keypress
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|rd_load_image
+c_func
+(paren
+id|ROOT_DEV
+comma
+id|rd_image_start
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+DECL|function|initrd_load
+r_void
+id|initrd_load
+c_func
+(paren
+r_void
+)paren
+(brace
+id|rd_load_image
+c_func
+(paren
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+id|INITRD_MINOR
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif /* RD_LOADER */
 macro_line|#ifdef BUILD_CRAMDISK
 multiline_comment|/*&n; * gzip declarations&n; */

@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_FS_H
 DECL|macro|_LINUX_FS_H
 mdefine_line|#define _LINUX_FS_H
 multiline_comment|/*&n; * This file has definitions for some important file table&n; * structures etc.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
@@ -2274,6 +2275,11 @@ op_star
 id|inode
 )paren
 suffix:semicolon
+DECL|variable|fifo_inode_operations
+r_struct
+id|inode_operations
+id|fifo_inode_operations
+suffix:semicolon
 r_extern
 r_struct
 id|file_operations
@@ -3234,6 +3240,26 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_extern
+id|kdev_t
+id|real_root_dev
+suffix:semicolon
+r_extern
+r_int
+id|change_root
+c_func
+(paren
+id|kdev_t
+id|new_root_dev
+comma
+r_const
+r_char
+op_star
+id|put_old
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|char_read

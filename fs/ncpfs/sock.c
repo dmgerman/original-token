@@ -2162,14 +2162,12 @@ op_amp
 id|addrlen
 )paren
 suffix:semicolon
-macro_line|#if 1
-id|printk
+id|DPRINTK
 c_func
 (paren
 l_string|&quot;ncp_rpc_call: reply mismatch&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|re_select
 suffix:semicolon

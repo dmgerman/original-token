@@ -12678,6 +12678,18 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|ide_probe_pci
+(paren
+id|PCI_VENDOR_ID_PCTECH
+comma
+id|PCI_DEVICE_ID_PCTECH_RZ1001
+comma
+op_amp
+id|init_rz1000
+comma
+l_int|0
+)paren
+suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_RZ1000 */
 macro_line|#ifdef CONFIG_BLK_DEV_TRITON
 multiline_comment|/*&n;&t;&t; * Apparently the BIOS32 services on Intel motherboards are&n;&t;&t; * buggy and won&squot;t find the PCI_DEVICE_ID_INTEL_82371_1 for us.&n;&t;&t; * So instead, we search for PCI_DEVICE_ID_INTEL_82371_0,&n;&t;&t; * and then add 1.&n;&t;&t; */

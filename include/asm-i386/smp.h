@@ -629,6 +629,22 @@ id|id
 )paren
 suffix:semicolon
 multiline_comment|/* Store per cpu info (like the initial udelay numbers */
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_proc_in_lock
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+multiline_comment|/* for computing process time */
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_process_available
+suffix:semicolon
 multiline_comment|/*&n; *&t;APIC handlers: Note according to the Intel specification update&n; *&t;you should put reads between APIC writes.&n; *&t;Intel Pentium processor specification update [11AP, pg 64]&n; *&t;&t;&quot;Back to Back Assertions of HOLD May Cause Lost APIC Write Cycle&quot;&n; */
 DECL|function|apic_write
 r_extern
@@ -723,6 +739,10 @@ mdefine_line|#define NO_PROC_ID&t;&t;0xFF&t;&t;/* No processor magic marker */
 multiline_comment|/*&n; *&t;This magic constant controls our willingness to transfer&n; *&t;a process across CPUs. Such a transfer incurs misses on the L1&n; *&t;cache, and on a P6 or P5 with multiple L2 caches L2 hits. My&n; *&t;gut feeling is this will vary by board in value. For a board&n; *&t;with seperate L2 cache it probably depends also on the RSS, and&n; *&t;for a board with shared L2 cache it ought to decay fast as other&n; *&t;processes are run.&n; */
 DECL|macro|PROC_CHANGE_PENALTY
 mdefine_line|#define PROC_CHANGE_PENALTY&t;20&t;&t;/* Schedule penalty */
+DECL|macro|SMP_FROM_INT
+mdefine_line|#define SMP_FROM_INT&t;&t;1
+DECL|macro|SMP_FROM_SYSCALL
+mdefine_line|#define SMP_FROM_SYSCALL&t;2
 macro_line|#endif
 macro_line|#endif
 eof

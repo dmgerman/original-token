@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -825,18 +826,7 @@ l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically its a hack, so don&squot;t look&n;&t;   closely for now.. */
-id|smp_message_pass
-c_func
-(paren
-id|MSG_ALL_BUT_SELF
-comma
-id|MSG_RESCHEDULE
-comma
-l_int|0L
-comma
-l_int|0
-)paren
-suffix:semicolon
+multiline_comment|/*smp_message_pass(MSG_ALL_BUT_SELF, MSG_RESCHEDULE, 0L, 0); */
 )brace
 multiline_comment|/*&n; * This is the same as the above, except we _also_ save the current&n; * cycle counter value at the time of the timer interrupt, so that&n; * we later on can estimate the time of day more exactly.&n; */
 DECL|function|pentium_timer_interrupt
@@ -1261,6 +1251,25 @@ id|sec
 )paren
 suffix:semicolon
 )brace
+DECL|variable|irq0
+r_struct
+id|irqaction
+id|irq0
+op_assign
+(brace
+id|timer_interrupt
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;timer&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 DECL|function|time_init
 r_void
 id|time_init
@@ -1269,22 +1278,6 @@ c_func
 r_void
 )paren
 (brace
-r_void
-(paren
-op_star
-id|irq_handler
-)paren
-(paren
-r_int
-comma
-r_void
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|get_cmos_time
@@ -1297,10 +1290,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* If we have the CPU hardware time counters, use them */
-id|irq_handler
-op_assign
-id|timer_interrupt
-suffix:semicolon
 macro_line|#ifndef CONFIG_APM
 multiline_comment|/* Don&squot;t use them if a suspend/resume could&n;                                   corrupt the timer value.  This problem&n;                                   needs more debugging. */
 r_if
@@ -1311,10 +1300,6 @@ op_amp
 l_int|16
 )paren
 (brace
-id|irq_handler
-op_assign
-id|pentium_timer_interrupt
-suffix:semicolon
 id|do_gettimeoffset
 op_assign
 id|do_fast_gettimeoffset
@@ -1358,31 +1343,16 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+id|irq0.handler
+op_assign
+id|pentium_timer_interrupt
+suffix:semicolon
 )brace
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|request_irq
+id|enable_irq
 c_func
 (paren
-id|TIMER_IRQ
-comma
-id|irq_handler
-comma
 l_int|0
-comma
-l_string|&quot;timer&quot;
-comma
-l_int|NULL
-)paren
-op_ne
-l_int|0
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;Could not allocate timer IRQ!&quot;
 )paren
 suffix:semicolon
 )brace
