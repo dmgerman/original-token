@@ -6511,6 +6511,7 @@ r_return
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#error Floating point in kernel - shoot programmer
 r_return
 (paren
 r_int

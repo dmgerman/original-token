@@ -119,6 +119,10 @@ DECL|macro|TIOCMIWAIT
 mdefine_line|#define TIOCMIWAIT&t;0x545C&t;/* wait for a change on serial input line(s) */
 DECL|macro|TIOCGICOUNT
 mdefine_line|#define TIOCGICOUNT&t;0x545D&t;/* read serial port inline interrupt counts */
+DECL|macro|TIOCGHAYESESP
+mdefine_line|#define TIOCGHAYESESP   0x545E  /* Get Hayes ESP configuration */
+DECL|macro|TIOCSHAYESESP
+mdefine_line|#define TIOCSHAYESESP   0x545F  /* Set Hayes ESP configuration */
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_DATA
 mdefine_line|#define TIOCPKT_DATA&t;&t; 0

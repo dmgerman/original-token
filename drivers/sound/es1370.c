@@ -12872,6 +12872,19 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* recording source is mixer */
+id|wrcodec
+c_func
+(paren
+id|s
+comma
+l_int|0x19
+comma
+id|s-&gt;mix.micpreamp
+op_assign
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* turn on MIC preamp */
 id|fs
 op_assign
 id|get_fs

@@ -1,14 +1,28 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd.c - Driver Base&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.c,v 1.2 1998/06/09 20:37:39 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd.c - Driver Base&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.c,v 1.5 1998/07/18 00:12:15 andrewtv Exp $&n; *&n; ********************************************************************/
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020101
+DECL|macro|LINUX20
+macro_line|#  define LINUX20
+macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#ifdef LINUX20
+macro_line|#  include &lt;linux/major.h&gt;
+macro_line|#  include &lt;linux/fs.h&gt;
+macro_line|#  include &lt;linux/sound.h&gt;
+macro_line|#  include &lt;asm/segment.h&gt;
+macro_line|#  include &quot;sound_config.h&quot;
+macro_line|#else
+macro_line|#  include &lt;linux/init.h&gt;
+macro_line|#  include &lt;asm/io.h&gt;
+macro_line|#  include &lt;asm/uaccess.h&gt;
+macro_line|#  include &lt;asm/spinlock.h&gt;
+macro_line|#endif
 macro_line|#include &quot;msnd.h&quot;
 DECL|macro|LOGNAME
 mdefine_line|#define LOGNAME&t;&t;&t;&quot;msnd&quot;
@@ -478,6 +492,36 @@ c_cond
 id|user
 )paren
 (brace
+macro_line|#ifdef LINUX20
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|buf
+comma
+id|nwritten
+)paren
+)paren
+r_return
+id|nwritten
+suffix:semicolon
+id|memcpy_fromfs
+c_func
+(paren
+id|f-&gt;data
+op_plus
+id|f-&gt;tail
+comma
+id|buf
+comma
+id|nwritten
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -497,6 +541,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 id|memcpy
@@ -650,6 +695,36 @@ c_cond
 id|user
 )paren
 (brace
+macro_line|#ifdef LINUX20
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|buf
+comma
+id|nread
+)paren
+)paren
+r_return
+id|nread
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|buf
+comma
+id|f-&gt;data
+op_plus
+id|f-&gt;head
+comma
+id|nread
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -669,6 +744,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 id|memcpy
@@ -1370,6 +1446,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef LINUX20
 DECL|variable|msnd_register
 id|EXPORT_SYMBOL
 c_func
@@ -1489,6 +1566,7 @@ c_func
 id|msnd_disable_irq
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 (paren

@@ -116,11 +116,6 @@ id|f
 )paren
 (brace
 r_struct
-id|nlm_file
-op_star
-id|file
-suffix:semicolon
-r_struct
 id|knfs_fh
 op_star
 id|fh
@@ -132,17 +127,14 @@ op_star
 )paren
 id|f
 suffix:semicolon
+r_struct
+id|nlm_file
+op_star
+id|file
+suffix:semicolon
 r_int
 r_int
 id|hash
-op_assign
-id|file_hash
-c_func
-(paren
-id|fh-&gt;fh_dev
-comma
-id|fh-&gt;fh_ino
-)paren
 suffix:semicolon
 id|u32
 id|nfserr
@@ -150,15 +142,37 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlm_file_lookup(%s/%ld)&bslash;n&quot;
+l_string|&quot;lockd: nlm_file_lookup(%s/%u)&bslash;n&quot;
 comma
 id|kdevname
+c_func
+(paren
+id|u32_to_kdev_t
+c_func
+(paren
+id|fh-&gt;fh_dev
+)paren
+)paren
+comma
+id|fh-&gt;fh_ino
+)paren
+suffix:semicolon
+id|hash
+op_assign
+id|file_hash
+c_func
+(paren
+id|u32_to_kdev_t
 c_func
 (paren
 id|fh-&gt;fh_dev
 )paren
 comma
+id|u32_to_ino_t
+c_func
+(paren
 id|fh-&gt;fh_ino
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Lock file table */
@@ -216,12 +230,16 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: creating file for %s/%ld&bslash;n&quot;
+l_string|&quot;lockd: creating file for %s/%u&bslash;n&quot;
 comma
 id|kdevname
 c_func
 (paren
+id|u32_to_kdev_t
+c_func
+(paren
 id|fh-&gt;fh_dev
+)paren
 )paren
 comma
 id|fh-&gt;fh_ino

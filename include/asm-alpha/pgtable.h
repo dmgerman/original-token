@@ -441,6 +441,8 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;&t;0xFFFFFE0000000000
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x)&t;((unsigned long)(x))
+DECL|macro|VMALLOC_END
+mdefine_line|#define VMALLOC_END&t;&t;(~0UL)
 multiline_comment|/*&n; * OSF/1 PAL-code-imposed page table bits&n; */
 DECL|macro|_PAGE_VALID
 mdefine_line|#define _PAGE_VALID&t;0x0001

@@ -148,6 +148,17 @@ DECL|member|mode
 r_int
 id|mode
 suffix:semicolon
+DECL|member|crcmode
+r_int
+id|crcmode
+suffix:semicolon
+multiline_comment|/* MW: for FlexNet, SMACK etc.  */
+DECL|macro|CRC_MODE_NONE
+mdefine_line|#define CRC_MODE_NONE   0
+DECL|macro|CRC_MODE_FLEX
+mdefine_line|#define CRC_MODE_FLEX   1
+DECL|macro|CRC_MODE_SMACK
+mdefine_line|#define CRC_MODE_SMACK  2
 )brace
 suffix:semicolon
 DECL|macro|AX25_MAGIC

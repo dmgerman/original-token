@@ -759,6 +759,10 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+id|skb-&gt;nh.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 r_if
 c_cond
 (paren

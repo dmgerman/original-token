@@ -4131,44 +4131,6 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * A non wait message cannot pass data or CPU source info. This current setup&n; * is only safe because the kernel lock owner is the only person who can send&n; * a message.&n; *&n; * Wrapping this whole block in a spinlock is not the safe answer either. A&n; * processor may get stuck with IRQs off waiting to send a message and thus&n; * not replying to the person spinning for a reply.&n; *&n; * In the end flush tlb ought to be the NMI and a very short function&n; * (to avoid the old IDE disk problems), and other messages sent with IRQs&n; * enabled in a civilised fashion. That will also boost performance.&n; */
-DECL|function|TIME64
-r_int
-r_int
-id|TIME64
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|dummy
-comma
-id|low
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|low
-)paren
-comma
-l_string|&quot;=d&quot;
-(paren
-id|dummy
-)paren
-)paren
-suffix:semicolon
-r_return
-id|low
-suffix:semicolon
-)brace
-DECL|variable|ipi_timestamp
-r_int
-id|ipi_timestamp
-suffix:semicolon
 DECL|function|smp_message_pass
 r_void
 id|smp_message_pass
@@ -4698,7 +4660,7 @@ suffix:semicolon
 id|smp_message_pass
 c_func
 (paren
-id|MSG_ALL_BUT_SELF
+id|cpu
 comma
 id|MSG_RESCHEDULE
 comma
@@ -4925,22 +4887,9 @@ id|regs
 )paren
 (brace
 multiline_comment|/*&n;&t; * NOTE! We&squot;d better ACK the irq immediately,&n;&t; * because timer handling can be slow, and we&n;&t; * want to be able to accept NMI tlb invalidates&n;&t; * during this time.&n;&t; */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-)paren
-suffix:semicolon
 id|ack_APIC_irq
-(paren
-)paren
-suffix:semicolon
-id|spin_unlock
 c_func
 (paren
-op_amp
-id|irq_controller_lock
 )paren
 suffix:semicolon
 id|smp_local_timer_interrupt
@@ -4950,7 +4899,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Reschedule call back&n; */
+multiline_comment|/*&n; * Reschedule call back. Nothing to do,&n; * all the work is done automatically when&n; * we return from the interrupt.&n; */
 DECL|function|smp_reschedule_interrupt
 id|asmlinkage
 r_void

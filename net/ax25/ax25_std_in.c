@@ -1206,6 +1206,10 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
+id|ax25-&gt;n2count
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1239,10 +1243,6 @@ c_func
 (paren
 id|ax25
 )paren
-suffix:semicolon
-id|ax25-&gt;n2count
-op_assign
-l_int|0
 suffix:semicolon
 id|ax25-&gt;state
 op_assign
@@ -1350,6 +1350,10 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
+id|ax25-&gt;n2count
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1383,10 +1387,6 @@ c_func
 (paren
 id|ax25
 )paren
-suffix:semicolon
-id|ax25-&gt;n2count
-op_assign
-l_int|0
 suffix:semicolon
 id|ax25-&gt;state
 op_assign

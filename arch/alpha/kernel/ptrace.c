@@ -1286,7 +1286,7 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-multiline_comment|/* this is a hack for non-kernel-mapped video buffers and similar */
+multiline_comment|/* This is a hack for non-kernel-mapped video buffers and similar.  */
 r_if
 c_cond
 (paren
@@ -1317,8 +1317,7 @@ id|PAGE_MASK
 op_assign
 id|data
 suffix:semicolon
-multiline_comment|/* we&squot;re bypassing pagetables, so we have to set the dirty bit ourselves */
-multiline_comment|/* this should also re-instate whatever read-only mode there was before */
+multiline_comment|/* We&squot;re bypassing pagetables, so we have to set the dirty bit&n;&t;   ourselves.  This should also re-instate whatever read-only&n;&t;   mode there was before.  */
 id|set_pte
 c_func
 (paren
@@ -2253,7 +2252,7 @@ l_int|11
 op_rshift
 l_int|9
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|nsaved
 op_increment
@@ -2269,7 +2268,7 @@ c_cond
 id|displ
 )paren
 multiline_comment|/* guard against unoptimized code */
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|nsaved
 op_increment
@@ -2311,7 +2310,7 @@ l_int|16
 op_amp
 l_int|0x1f
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|nsaved
 op_increment
@@ -2338,7 +2337,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|nsaved
 op_increment
@@ -2382,7 +2381,7 @@ c_func
 (paren
 id|child
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|i
 )braket
@@ -2401,7 +2400,7 @@ l_int|0
 r_return
 id|res
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|i
 op_plus
@@ -2418,7 +2417,7 @@ comma
 (paren
 l_string|&quot;    -&gt; next_pc=%lx&bslash;n&quot;
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|i
 )braket
@@ -2432,7 +2431,7 @@ c_func
 (paren
 id|child
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|i
 )braket
@@ -2451,7 +2450,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 l_int|4
 )braket
@@ -2479,12 +2478,12 @@ id|i
 comma
 id|nsaved
 op_assign
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 l_int|4
 )braket
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 l_int|4
 )braket
@@ -2532,12 +2531,12 @@ c_func
 (paren
 id|child
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|i
 )braket
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|i
 op_plus
@@ -2906,7 +2905,7 @@ c_cond
 id|request
 )paren
 (brace
-multiline_comment|/* when I and D space are separate, these will need to be fixed. */
+multiline_comment|/* When I and D space are separate, these will need to be fixed.  */
 r_case
 id|PTRACE_PEEKTEXT
 suffix:colon
@@ -3005,7 +3004,7 @@ suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/* when I and D space are separate, this will have to be fixed. */
+multiline_comment|/* When I and D space are separate, this will have to be fixed.  */
 r_case
 id|PTRACE_POKETEXT
 suffix:colon
@@ -3078,7 +3077,7 @@ suffix:semicolon
 r_case
 id|PTRACE_SYSCALL
 suffix:colon
-multiline_comment|/* continue and stop at next&n;&t;&t;&t;&t;&t;(return from) syscall */
+multiline_comment|/* continue and stop at next&n;&t;&t;&t;&t;(return from) syscall */
 r_case
 id|PTRACE_CONT
 suffix:colon
@@ -3145,7 +3144,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * make the child exit.  Best I can do is send it a sigkill.&n; * perhaps it should be put in the status that it wants to&n; * exit.&n; */
+multiline_comment|/*&n;&t; * Make the child exit.  Best I can do is send it a sigkill.&n;&t; * perhaps it should be put in the status that it wants to&n;&t; * exit.&n;&t; */
 r_case
 id|PTRACE_KILL
 suffix:colon
@@ -3208,7 +3207,7 @@ id|_NSIG
 r_goto
 id|out
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 l_int|4
 )braket

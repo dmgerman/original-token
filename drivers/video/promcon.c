@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: promcon.c,v 1.6 1998/07/19 12:49:26 mj Exp $&n; * Console driver utilizing PROM sun terminal emulation&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek  (jj@ultra.linux.cz)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

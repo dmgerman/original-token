@@ -6,7 +6,7 @@ DECL|macro|TEST_VBI
 mdefine_line|#define TEST_VBI
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-macro_line|#include &quot;i2c.h&quot;
+macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &quot;msp3400.h&quot;
 macro_line|#include &quot;bt848.h&quot;
 macro_line|#include &lt;linux/videodev.h&gt;

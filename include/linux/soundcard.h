@@ -278,7 +278,7 @@ macro_line|#  define _PATCHKEY(id) ((id&lt;&lt;8)|0xfd)
 DECL|macro|AFMT_S16_NE
 macro_line|#  define AFMT_S16_NE AFMT_S16_LE
 macro_line|#endif
-multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is probably too limited.&n; */
+multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is probably too limited.&n; *&n; *      (PBD) As Hannu guessed, the GUS structure is too limited for &n; *      the WaveFront, but this is the right place for a constant definition.&n; */
 DECL|struct|patch_info
 r_struct
 id|patch_info
@@ -290,9 +290,11 @@ id|key
 suffix:semicolon
 multiline_comment|/* Use WAVE_PATCH here */
 DECL|macro|WAVE_PATCH
-mdefine_line|#define WAVE_PATCH&t;_PATCHKEY(0x04)
+mdefine_line|#define WAVE_PATCH&t;   _PATCHKEY(0x04)
 DECL|macro|GUS_PATCH
-mdefine_line|#define GUS_PATCH&t;WAVE_PATCH
+mdefine_line|#define GUS_PATCH&t;   WAVE_PATCH
+DECL|macro|WAVEFRONT_PATCH
+mdefine_line|#define WAVEFRONT_PATCH    _PATCHKEY(0x06)
 DECL|member|device_no
 r_int
 id|device_no
@@ -739,6 +741,8 @@ DECL|macro|SAMPLE_TYPE_BASIC
 mdefine_line|#define SAMPLE_TYPE_BASIC&t;&t;0x10
 DECL|macro|SAMPLE_TYPE_GUS
 mdefine_line|#define SAMPLE_TYPE_GUS&t;&t;&t;SAMPLE_TYPE_BASIC
+DECL|macro|SAMPLE_TYPE_WAVEFRONT
+mdefine_line|#define SAMPLE_TYPE_WAVEFRONT           0x11
 DECL|member|perc_mode
 r_int
 id|perc_mode

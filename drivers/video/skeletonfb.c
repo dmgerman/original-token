@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/drivers/video/skeletonfb.c -- Skeleton for a frame buffer device&n; *&n; *  Created 28 Dec 1997 by Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

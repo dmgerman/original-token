@@ -78,20 +78,24 @@ id|res1
 comma
 id|res2
 suffix:semicolon
-multiline_comment|/* the fields below are Linux-specific: */
-multiline_comment|/* bit 1..5: IEEE_TRAP_ENABLE bits (see fpu.h) */
-multiline_comment|/* bit 6..8: UAC bits (see sysinfo.h) */
-multiline_comment|/* bit 17..21: IEEE_STATUS_MASK bits (see fpu.h) */
-multiline_comment|/* bit 63: die_if_kernel recursion lock */
+multiline_comment|/*&n;&t; * The fields below are Linux-specific:&n;&t; *&n;&t; * bit 1..5: IEEE_TRAP_ENABLE bits (see fpu.h)&n;&t; * bit 6..8: UAC bits (see sysinfo.h)&n;&t; * bit 17..21: IEEE_STATUS_MASK bits (see fpu.h)&n;&t; * bit 63: die_if_kernel recursion lock&n;&t; */
 DECL|member|flags
 r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* perform syscall argument validation (get/set_fs) */
+multiline_comment|/* Perform syscall argument validation (get/set_fs). */
 DECL|member|fs
 id|mm_segment_t
 id|fs
+suffix:semicolon
+multiline_comment|/* Breakpoint handling for ptrace.  */
+DECL|member|debugreg
+r_int
+id|debugreg
+(braket
+l_int|8
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon

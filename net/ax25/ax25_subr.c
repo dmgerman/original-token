@@ -801,6 +801,10 @@ id|ax25-&gt;digipeat
 )paren
 )paren
 suffix:semicolon
+id|skb-&gt;nh.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 multiline_comment|/* Assume a response - address structure for DTE */
 r_if
 c_cond

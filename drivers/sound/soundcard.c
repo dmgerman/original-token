@@ -3982,6 +3982,26 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+id|proc_root_sound
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;sound: registering /proc/sound failed&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|variable|sound
 r_static
@@ -4111,26 +4131,6 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;Sound warning: Deallocation table was too small.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-op_amp
-id|proc_root_sound
-)paren
-)paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;sound: registering /proc/sound failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -171,6 +171,16 @@ id|i
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* kernel_thread() -&gt; ... -&gt; charge_uid(current, 1) workaround */
+id|charge_uid
+c_func
+(paren
+id|current
+comma
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 multiline_comment|/* Give kmod all privileges.. */
 id|current-&gt;uid
 op_assign

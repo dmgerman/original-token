@@ -1,4 +1,5 @@
 multiline_comment|/*&n;     *  32 bpp packed pixel (cfb32)&n;     */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_CFB32) || defined(CONFIG_FBCON_CFB32_MODULE)
 DECL|macro|FBCON_HAS_CFB32

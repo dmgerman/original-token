@@ -1526,7 +1526,6 @@ id|ip_fwkernel
 op_star
 id|f
 comma
-r_const
 r_struct
 id|iphdr
 op_star
@@ -1603,6 +1602,16 @@ id|dst_port
 )paren
 suffix:semicolon
 )brace
+id|ip-&gt;tos
+op_assign
+(paren
+id|ip-&gt;tos
+op_amp
+id|f-&gt;ipfw.fw_tosand
+)paren
+op_xor
+id|f-&gt;ipfw.fw_tosxor
+suffix:semicolon
 multiline_comment|/* This functionality is useless in stock 2.0.x series, but we don&squot;t&n; * discard the mark thing altogether, to avoid breaking ipchains (and,&n; * more importantly, the ipfwadm wrapper) --PR */
 r_if
 c_cond

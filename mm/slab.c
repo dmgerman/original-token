@@ -426,8 +426,17 @@ multiline_comment|/* the &squot;preferred&squot; minimum num of objs per slab - 
 DECL|macro|SLAB_MIN_OBJS_PER_SLAB
 mdefine_line|#define&t;SLAB_MIN_OBJS_PER_SLAB&t;4
 multiline_comment|/* If the num of objs per slab is &lt;= SLAB_MIN_OBJS_PER_SLAB,&n; * then the page order must be less than this before trying the next order.&n; */
-DECL|macro|SLAB_BREAK_GFP_ORDER
-mdefine_line|#define&t;SLAB_BREAK_GFP_ORDER&t;2
+DECL|macro|SLAB_BREAK_GFP_ORDER_HI
+mdefine_line|#define&t;SLAB_BREAK_GFP_ORDER_HI&t;2
+DECL|macro|SLAB_BREAK_GFP_ORDER_LO
+mdefine_line|#define&t;SLAB_BREAK_GFP_ORDER_LO&t;1
+DECL|variable|slab_break_gfp_order
+r_static
+r_int
+id|slab_break_gfp_order
+op_assign
+id|SLAB_BREAK_GFP_ORDER_LO
+suffix:semicolon
 multiline_comment|/* Macros for storing/retrieving the cachep and or slab from the&n; * global &squot;mem_map&squot;.  With off-slab bufctls, these are used to find the&n; * slab an obj belongs to.  With kmalloc(), and kfree(), these are used&n; * to find the cache which an obj belongs to.&n; */
 DECL|macro|SLAB_SET_PAGE_CACHE
 mdefine_line|#define&t;SLAB_SET_PAGE_CACHE(pg, x)&t;((pg)-&gt;next = (struct page *)(x))
@@ -917,6 +926,24 @@ suffix:semicolon
 id|cache_cache.c_colour_next
 op_assign
 id|cache_cache.c_colour
+suffix:semicolon
+multiline_comment|/*&n;&t; * Fragmentation resistance on low memory - only use bigger&n;&t; * page orders on machines with more than 32MB of memory.&n;&t; */
+r_if
+c_cond
+(paren
+id|num_physpages
+OG
+(paren
+l_int|32
+op_lshift
+l_int|20
+)paren
+op_rshift
+id|PAGE_SHIFT
+)paren
+id|slab_break_gfp_order
+op_assign
+id|SLAB_BREAK_GFP_ORDER_HI
 suffix:semicolon
 r_return
 id|start
@@ -1516,7 +1543,7 @@ id|cachep-&gt;c_flags
 op_amp
 (paren
 id|SLAB_POISON
-op_logical_or
+op_or
 id|SLAB_RED_ZONE
 )paren
 macro_line|#endif&t;/*SLAB_DEBUG_SUPPORT*/
@@ -2702,7 +2729,7 @@ c_cond
 (paren
 id|cachep-&gt;c_gfporder
 OL
-id|SLAB_BREAK_GFP_ORDER
+id|slab_break_gfp_order
 )paren
 r_goto
 id|next

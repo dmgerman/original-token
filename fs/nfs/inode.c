@@ -1859,6 +1859,10 @@ id|inode-&gt;i_dev
 op_assign
 id|sb-&gt;s_dev
 suffix:semicolon
+id|inode-&gt;i_flags
+op_assign
+id|sb-&gt;s_flags
+suffix:semicolon
 id|inode-&gt;i_ino
 op_assign
 id|fattr-&gt;fileid

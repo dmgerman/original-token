@@ -563,6 +563,17 @@ op_star
 id|old_root
 )paren
 suffix:semicolon
+multiline_comment|/* test whether root is busy without destroying dcache */
+r_extern
+r_int
+id|is_root_busy
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
 r_extern
 r_void

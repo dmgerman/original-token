@@ -45,8 +45,6 @@ id|nr_files
 comma
 id|nr_free_files
 suffix:semicolon
-DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 4096&t;/* This should no longer be bigger than NR_FILE */
 DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE  4096&t;/* this can well be larger on a larger system */
 DECL|macro|NR_RESERVED_FILES

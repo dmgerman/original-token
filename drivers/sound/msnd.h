@@ -1,9 +1,9 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.4 1998/07/14 22:59:25 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.6 1998/07/18 00:12:15 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#ifndef __MSND_H
 DECL|macro|__MSND_H
 mdefine_line|#define __MSND_H
 DECL|macro|VERSION
-mdefine_line|#define VERSION&t;&t;&t;&quot;0.6.2&quot;
+mdefine_line|#define VERSION&t;&t;&t;&quot;0.7.0&quot;
 DECL|macro|DEFSAMPLERATE
 mdefine_line|#define DEFSAMPLERATE&t;&t;DSP_DEFAULT_SPEED
 DECL|macro|DEFSAMPLESIZE
@@ -214,6 +214,16 @@ macro_line|#  define outb&t;&t;&t;outb_p
 DECL|macro|inb
 macro_line|#  define inb&t;&t;&t;inb_p
 macro_line|#endif
+macro_line|#ifdef LINUX20
+DECL|macro|__initfunc
+macro_line|#  define __initfunc(f)&t;&t;&t;&t;f
+DECL|macro|__initdata
+macro_line|#  define __initdata&t;&t;&t;&t;/* nothing */
+DECL|macro|spin_lock_irqsave
+macro_line|#  define spin_lock_irqsave(junk,flags)&t;&t;do { save_flags(flags); cli(); } while (0)
+DECL|macro|spin_unlock_irqrestore
+macro_line|#  define spin_unlock_irqrestore(junk,flags)&t;do { restore_flags(flags); } while (0)
+macro_line|#endif
 DECL|typedef|BYTE
 r_typedef
 r_int
@@ -387,10 +397,12 @@ r_char
 op_star
 id|base
 suffix:semicolon
+macro_line|#ifndef LINUX20
 DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* MultiSound DDK variables */
 DECL|enumerator|msndClassic
 DECL|enumerator|msndPinnacle

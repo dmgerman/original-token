@@ -1,16 +1,33 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd_pinnacle.c - Support for Turtle Beach Pinnacle and Fiji&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.2 1998/06/09 20:37:39 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; * Linux 2.0/2.2 Version&n; *&n; * msnd_pinnacle.c / msnd_classic.c&n; *&n; * -- If MSND_CLASSIC is defined:&n; *&n; *     -&gt; driver for Turtle Beach Classic/Monterey/Tahiti&n; *&n; * -- Else&n; *&n; *     -&gt; driver for Turtle Beach Pinnacle/Fiji&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.5 1998/07/18 00:12:16 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020101
+DECL|macro|LINUX20
+macro_line|#  define LINUX20
+macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
+macro_line|#ifndef LINUX20
+macro_line|#  include &lt;linux/init.h&gt;
+macro_line|#endif
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
+macro_line|#ifdef MSND_CLASSIC
+DECL|macro|SLOWIO
+macro_line|#  define SLOWIO
+macro_line|#endif
 macro_line|#include &quot;msnd.h&quot;
-macro_line|#include &quot;msnd_pinnacle.h&quot;
+macro_line|#ifdef MSND_CLASSIC
+macro_line|#  include &quot;msnd_classic.h&quot;
 DECL|macro|LOGNAME
-mdefine_line|#define LOGNAME&t;&t;&t;&t;&quot;msnd_pinnacle&quot;
+macro_line|#  define LOGNAME&t;&t;&t;&quot;msnd_classic&quot;
+macro_line|#else
+macro_line|#  include &quot;msnd_pinnacle.h&quot;
+DECL|macro|LOGNAME
+macro_line|#  define LOGNAME&t;&t;&t;&quot;msnd_pinnacle&quot;
+macro_line|#endif
 DECL|macro|DEVNAME
 mdefine_line|#define DEVNAME&t;&t;&t;&t;dev.name
 DECL|macro|MIXERMINOR
@@ -473,6 +490,8 @@ comma
 id|i
 comma
 id|data
+comma
+id|tmp
 suffix:semicolon
 id|LPDAQD
 id|lpDAQ
@@ -557,15 +576,19 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETBLKSIZE
 suffix:colon
+id|tmp
+op_assign
+id|dev.fifosize
+op_div
+l_int|4
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|put_user
 c_func
 (paren
-id|dev.fifosize
-op_div
-l_int|4
+id|tmp
 comma
 (paren
 r_int
@@ -1092,9 +1115,11 @@ suffix:colon
 r_case
 id|SOUND_MIXER_LINE
 suffix:colon
+macro_line|#ifndef MSND_CLASSIC
 r_case
 id|SOUND_MIXER_MIC
 suffix:colon
+macro_line|#endif
 r_case
 id|SOUND_MIXER_IMIX
 suffix:colon
@@ -1327,6 +1352,7 @@ id|HDEX_AUX_REQ
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifndef MSND_CLASSIC
 r_case
 id|SOUND_MIXER_MIC
 suffix:colon
@@ -1378,6 +1404,7 @@ id|HDEX_AUX_REQ
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 id|SOUND_MIXER_LINE1
 suffix:colon
@@ -1471,6 +1498,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifndef MSND_CLASSIC
 id|update_vol
 c_func
 (paren
@@ -1481,6 +1509,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|mixer_get
 c_func
@@ -1519,6 +1548,7 @@ id|dev.recsrc
 op_xor_assign
 id|recsrc
 suffix:semicolon
+macro_line|#ifndef MSND_CLASSIC
 r_if
 c_cond
 (paren
@@ -1634,6 +1664,7 @@ id|HDEX_AUX_REQ
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif /* MSND_CLASSIC */
 r_return
 id|dev.recsrc
 suffix:semicolon
@@ -1807,27 +1838,36 @@ id|val
 op_assign
 id|SOUND_MASK_VOLUME
 op_or
+macro_line|#ifndef MSND_CLASSIC
 id|SOUND_MASK_SYNTH
 op_or
+id|SOUND_MASK_MIC
+op_or
+macro_line|#endif
 id|SOUND_MASK_PCM
 op_or
 id|SOUND_MASK_LINE
 op_or
 id|SOUND_MASK_IMIX
-op_or
-id|SOUND_MASK_MIC
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_RECMASK
 suffix:colon
+macro_line|#ifdef MSND_CLASSIC
+id|val
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 id|val
 op_assign
 id|SOUND_MASK_LINE
 op_or
 id|SOUND_MASK_SYNTH
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -1974,6 +2014,30 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef LINUX20
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|F_READING
+comma
+op_amp
+id|dev.flags
+)paren
+)paren
+(brace
+id|clear_bit
+c_func
+(paren
+id|F_READING
+comma
+op_amp
+id|dev.flags
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1987,6 +2051,7 @@ id|dev.flags
 )paren
 )paren
 (brace
+macro_line|#endif
 id|msnd_send_dsp_cmd
 c_func
 (paren
@@ -2010,6 +2075,30 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef LINUX20
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|F_WRITING
+comma
+op_amp
+id|dev.flags
+)paren
+)paren
+(brace
+id|clear_bit
+c_func
+(paren
+id|F_WRITING
+comma
+op_amp
+id|dev.flags
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2023,6 +2112,7 @@ id|dev.flags
 )paren
 )paren
 (brace
+macro_line|#endif
 id|set_bit
 c_func
 (paren
@@ -2262,7 +2352,24 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef LINUX20
 DECL|function|dev_close
+r_static
+r_void
+id|dev_close
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+macro_line|#else
 r_static
 r_int
 id|dev_close
@@ -2278,6 +2385,7 @@ id|file
 op_star
 id|file
 )paren
+macro_line|#endif
 (brace
 r_int
 id|minor
@@ -2288,11 +2396,13 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+macro_line|#ifndef LINUX20
 r_int
 id|err
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2301,8 +2411,10 @@ op_eq
 id|DSPMINOR
 )paren
 (brace
+macro_line|#ifndef LINUX20
 id|err
 op_assign
+macro_line|#endif
 id|dsp_close
 c_func
 (paren
@@ -2320,6 +2432,7 @@ id|MIXERMINOR
 (brace
 multiline_comment|/* nothing */
 )brace
+macro_line|#ifndef LINUX20
 r_else
 id|err
 op_assign
@@ -2333,11 +2446,14 @@ id|err
 op_ge
 l_int|0
 )paren
+macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
+macro_line|#ifndef LINUX20&t;
 r_return
 id|err
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|DAPF_to_bank
 r_static
@@ -2475,6 +2591,37 @@ id|count
 op_sub_assign
 id|n
 suffix:semicolon
+macro_line|#ifdef LINUX20&t;&t;
+r_if
+c_cond
+(paren
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|F_READING
+comma
+op_amp
+id|dev.flags
+)paren
+op_logical_and
+(paren
+id|dev.mode
+op_amp
+id|FMODE_READ
+)paren
+)paren
+(brace
+id|set_bit
+c_func
+(paren
+id|F_READING
+comma
+op_amp
+id|dev.flags
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2495,6 +2642,7 @@ id|FMODE_READ
 )paren
 )paren
 (brace
+macro_line|#endif
 id|reset_record_queue
 c_func
 (paren
@@ -2681,6 +2829,37 @@ id|count
 op_sub_assign
 id|n
 suffix:semicolon
+macro_line|#ifdef LINUX20
+r_if
+c_cond
+(paren
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|F_WRITING
+comma
+op_amp
+id|dev.flags
+)paren
+op_logical_and
+(paren
+id|dev.mode
+op_amp
+id|FMODE_WRITE
+)paren
+)paren
+(brace
+id|set_bit
+c_func
+(paren
+id|F_WRITING
+comma
+op_amp
+id|dev.flags
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2701,6 +2880,7 @@ id|FMODE_WRITE
 )paren
 )paren
 (brace
+macro_line|#endif
 id|reset_play_queue
 c_func
 (paren
@@ -2808,7 +2988,41 @@ op_minus
 id|count
 suffix:semicolon
 )brace
+macro_line|#ifdef LINUX20
 DECL|function|dev_read
+r_static
+r_int
+id|dev_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+id|minor
+op_assign
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+suffix:semicolon
+macro_line|#else
 r_static
 id|ssize_t
 id|dev_read
@@ -2840,6 +3054,7 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2864,7 +3079,42 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#ifdef LINUX20
 DECL|function|dev_write
+r_static
+r_int
+id|dev_write
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_const
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+id|minor
+op_assign
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+suffix:semicolon
+macro_line|#else
 r_static
 id|ssize_t
 id|dev_write
@@ -2897,6 +3147,7 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3078,6 +3329,38 @@ op_amp
 id|dev.flags
 )paren
 suffix:semicolon
+macro_line|#ifdef LINUX20
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|F_WRITEFLUSH
+comma
+op_amp
+id|dev.flags
+)paren
+)paren
+(brace
+id|clear_bit
+c_func
+(paren
+id|F_WRITEFLUSH
+comma
+op_amp
+id|dev.flags
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|dev.writeflush
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -3097,6 +3380,7 @@ op_amp
 id|dev.writeflush
 )paren
 suffix:semicolon
+macro_line|#endif
 id|msnd_disable_irq
 c_func
 (paren
@@ -3277,9 +3561,11 @@ id|wMessage
 )paren
 )paren
 (brace
+macro_line|#ifndef MSND_CLASSIC
 r_case
 id|HIDSP_PLAY_UNDER
 suffix:colon
+macro_line|#endif
 r_case
 id|HIDSP_INT_PLAY_UNDER
 suffix:colon
@@ -3670,6 +3956,7 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifndef MSND_CLASSIC
 r_char
 op_star
 id|xv
@@ -3696,6 +3983,7 @@ id|pinfiji
 op_assign
 l_string|&quot;Pinnacle/Fiji&quot;
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3763,6 +4051,17 @@ id|LOGNAME
 l_string|&quot;: DSP reset successful&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MSND_CLASSIC
+id|dev.name
+op_assign
+l_string|&quot;Classic/Tahiti/Monterey&quot;
+suffix:semicolon
+id|printk
+(paren
+id|KERN_INFO
+id|LOGNAME
+l_string|&quot;: Turtle Beach %s, &quot;
+macro_line|#else
 r_switch
 c_cond
 (paren
@@ -3935,14 +4234,17 @@ c_func
 id|KERN_INFO
 id|LOGNAME
 l_string|&quot;: Turtle Beach %s revision %s, Xilinx version %s, &quot;
+macro_line|#endif /* MSND_CLASSIC */
 l_string|&quot;I/O 0x%x-0x%x, IRQ %d, memory mapped to 0x%p-0x%p&bslash;n&quot;
 comma
 id|dev.name
 comma
+macro_line|#ifndef MSND_CLASSIC
 id|rev
 comma
 id|xv
 comma
+macro_line|#endif
 id|dev.io
 comma
 id|dev.io
@@ -3991,6 +4293,18 @@ suffix:semicolon
 id|LPDAQD
 id|lpDAQ
 suffix:semicolon
+macro_line|#ifdef MSND_CLASSIC
+id|outb
+c_func
+(paren
+id|dev.memid
+comma
+id|dev.io
+op_plus
+id|HP_MEMM
+)paren
+suffix:semicolon
+macro_line|#endif
 id|outb
 c_func
 (paren
@@ -4717,6 +5031,7 @@ op_amp
 id|dev.SMA-&gt;wCurrMastVolRight
 )paren
 suffix:semicolon
+macro_line|#ifndef MSND_CLASSIC
 id|writel
 c_func
 (paren
@@ -4735,6 +5050,7 @@ op_amp
 id|dev.SMA-&gt;dwCurrPlayRate
 )paren
 suffix:semicolon
+macro_line|#endif
 id|writew
 c_func
 (paren
@@ -4816,6 +5132,7 @@ op_amp
 id|dev.SMA-&gt;bAuxPotPosLeft
 )paren
 suffix:semicolon
+macro_line|#ifndef MSND_CLASSIC
 id|writew
 c_func
 (paren
@@ -4852,6 +5169,7 @@ op_amp
 id|dev.SMA-&gt;wCurrPlaySampleRate
 )paren
 suffix:semicolon
+macro_line|#endif
 id|writew
 c_func
 (paren
@@ -5188,6 +5506,54 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MSND_CLASSIC
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|reset_proteus
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|HPPRORESET_ON
+comma
+id|dev.io
+op_plus
+id|HP_PROR
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+id|TIME_PRO_RESET
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|HPPRORESET_OFF
+comma
+id|dev.io
+op_plus
+id|HP_PROR
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+id|TIME_PRO_RESET_DONE
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -5206,6 +5572,33 @@ id|err
 comma
 id|timeout
 suffix:semicolon
+macro_line|#ifdef MSND_CLASSIC
+id|outb
+c_func
+(paren
+id|HPWAITSTATE_0
+comma
+id|dev.io
+op_plus
+id|HP_WAIT
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|HPBITMODE_16
+comma
+id|dev.io
+op_plus
+id|HP_BITM
+)paren
+suffix:semicolon
+id|reset_proteus
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5799,6 +6192,29 @@ c_func
 (paren
 r_void
 )paren
+macro_line|#else /* not a module */
+macro_line|#ifdef MSND_CLASSIC
+r_static
+r_int
+id|io
+id|__initdata
+op_assign
+id|CONFIG_MSNDCLAS_IO
+suffix:semicolon
+r_static
+r_int
+id|irq
+id|__initdata
+op_assign
+id|CONFIG_MSNDCLAS_IRQ
+suffix:semicolon
+r_static
+r_int
+id|mem
+id|__initdata
+op_assign
+id|CONFIG_MSNDCLAS_MEM
+suffix:semicolon
 macro_line|#else
 r_static
 r_int
@@ -5821,6 +6237,7 @@ id|__initdata
 op_assign
 id|CONFIG_MSNDPIN_MEM
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|fifosize
@@ -5833,6 +6250,18 @@ r_int
 id|calibrate_signal
 id|__initdata
 suffix:semicolon
+macro_line|#ifdef MSND_CLASSIC
+id|__initfunc
+c_func
+(paren
+r_int
+id|msnd_classic_init
+c_func
+(paren
+r_void
+)paren
+)paren
+macro_line|#else
 id|__initfunc
 c_func
 (paren
@@ -5843,6 +6272,7 @@ c_func
 r_void
 )paren
 )paren
+macro_line|#endif /* MSND_CLASSIC */
 macro_line|#endif
 (brace
 r_int
@@ -6044,6 +6474,130 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#ifdef MSND_CLASSIC
+r_switch
+c_cond
+(paren
+id|irq
+)paren
+(brace
+r_case
+l_int|5
+suffix:colon
+id|dev.irqid
+op_assign
+id|HPIRQ_5
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+id|dev.irqid
+op_assign
+id|HPIRQ_7
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|9
+suffix:colon
+id|dev.irqid
+op_assign
+id|HPIRQ_9
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|10
+suffix:colon
+id|dev.irqid
+op_assign
+id|HPIRQ_10
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|11
+suffix:colon
+id|dev.irqid
+op_assign
+id|HPIRQ_11
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|12
+suffix:colon
+id|dev.irqid
+op_assign
+id|HPIRQ_12
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|mem
+)paren
+(brace
+r_case
+l_int|0xb0000
+suffix:colon
+id|dev.memid
+op_assign
+id|HPMEM_B000
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0xc8000
+suffix:colon
+id|dev.memid
+op_assign
+id|HPMEM_C800
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0xd0000
+suffix:colon
+id|dev.memid
+op_assign
+id|HPMEM_D000
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0xd8000
+suffix:colon
+id|dev.memid
+op_assign
+id|HPMEM_D800
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0xe0000
+suffix:colon
+id|dev.memid
+op_assign
+id|HPMEM_E000
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0xe8000
+suffix:colon
+id|dev.memid
+op_assign
+id|HPMEM_E800
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+macro_line|#endif /* MSND_CLASSIC */
 r_if
 c_cond
 (paren
@@ -6066,10 +6620,17 @@ id|fifosize
 op_assign
 l_int|768
 suffix:semicolon
+macro_line|#ifdef MSND_CLASSIC
+id|dev.type
+op_assign
+id|msndClassic
+suffix:semicolon
+macro_line|#else
 id|dev.type
 op_assign
 id|msndPinnacle
 suffix:semicolon
+macro_line|#endif
 id|dev.io
 op_assign
 id|io
@@ -6152,6 +6713,7 @@ op_amp
 id|dev.DARF
 )paren
 suffix:semicolon
+macro_line|#ifndef LINUX20
 id|spin_lock_init
 c_func
 (paren
@@ -6159,6 +6721,7 @@ op_amp
 id|dev.lock
 )paren
 suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren

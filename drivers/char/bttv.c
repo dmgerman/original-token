@@ -20,7 +20,7 @@ macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;i2c.h&quot;
+macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &quot;bttv.h&quot;
 macro_line|#include &quot;tuner.h&quot;
 DECL|macro|DEBUG

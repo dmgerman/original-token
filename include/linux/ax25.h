@@ -5,7 +5,7 @@ mdefine_line|#define&t;AX25_KERNEL_H
 DECL|macro|AX25_MTU
 mdefine_line|#define AX25_MTU&t;256
 DECL|macro|AX25_MAX_DIGIS
-mdefine_line|#define AX25_MAX_DIGIS&t;6&t;/* This is wrong, should be 8 */
+mdefine_line|#define AX25_MAX_DIGIS  8
 DECL|macro|AX25_WINDOW
 mdefine_line|#define AX25_WINDOW&t;1
 DECL|macro|AX25_T1
@@ -181,6 +181,18 @@ DECL|member|arg
 r_int
 r_int
 id|arg
+suffix:semicolon
+DECL|member|digi_count
+r_int
+r_char
+id|digi_count
+suffix:semicolon
+DECL|member|digi_addr
+id|ax25_address
+id|digi_addr
+(braket
+id|AX25_MAX_DIGIS
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon

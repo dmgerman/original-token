@@ -320,8 +320,25 @@ op_star
 id|p
 )paren
 (brace
-multiline_comment|/*&n;&t; * For SMP, we try to find another CPU to put the&n;&t; * new task on, and fall back on the local CPU only&n;&t; * if no other CPU is idle.&n;&t; *&n;&t; * FIXME: try to select the idle CPU to be the old&n;&t; * CPU of the task &squot;p&squot; if possible.&n;&t; */
+multiline_comment|/*&n;&t; * For SMP, we try to see if the CPU the task used&n;&t; * to run on is idle..&n;&t; */
 macro_line|#ifdef __SMP__
+r_int
+id|want_cpu
+op_assign
+id|p-&gt;processor
+suffix:semicolon
+multiline_comment|/*&n;&t; * Don&squot;t even try to find another CPU for us if the task&n;&t; * ran on this one before..&n;&t; */
+r_if
+c_cond
+(paren
+id|want_cpu
+op_ne
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+(brace
 r_struct
 id|task_struct
 op_star
@@ -329,14 +346,6 @@ op_star
 id|idle
 op_assign
 id|task
-suffix:semicolon
-r_int
-id|current_cpu
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
 suffix:semicolon
 r_int
 id|i
@@ -362,12 +371,9 @@ c_cond
 (paren
 id|tsk-&gt;has_cpu
 op_logical_and
-op_logical_neg
-id|tsk-&gt;need_resched
-op_logical_and
 id|tsk-&gt;processor
-op_ne
-id|current_cpu
+op_eq
+id|want_cpu
 )paren
 (brace
 id|tsk-&gt;need_resched
@@ -377,7 +383,7 @@ suffix:semicolon
 id|smp_send_reschedule
 c_func
 (paren
-id|tsk-&gt;processor
+id|want_cpu
 )paren
 suffix:semicolon
 r_return
@@ -393,6 +399,7 @@ OG
 l_int|0
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 r_if
 c_cond

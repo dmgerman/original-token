@@ -1,6 +1,56 @@
-macro_line|#ifndef ESP_H
-DECL|macro|ESP_H
-mdefine_line|#define ESP_H
+macro_line|#ifndef HAYESESP_H
+DECL|macro|HAYESESP_H
+mdefine_line|#define HAYESESP_H
+DECL|struct|hayes_esp_config
+r_struct
+id|hayes_esp_config
+(brace
+DECL|member|flow_on
+r_int
+id|flow_on
+suffix:semicolon
+DECL|member|flow_off
+r_int
+id|flow_off
+suffix:semicolon
+DECL|member|rx_trigger
+r_int
+id|rx_trigger
+suffix:semicolon
+DECL|member|tx_trigger
+r_int
+id|tx_trigger
+suffix:semicolon
+DECL|member|pio_threshold
+r_int
+id|pio_threshold
+suffix:semicolon
+DECL|member|rx_timeout
+r_int
+r_char
+id|rx_timeout
+suffix:semicolon
+DECL|member|dma_channel
+r_char
+id|dma_channel
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|ESP_DMA_CHANNEL
+mdefine_line|#define ESP_DMA_CHANNEL   0
+DECL|macro|ESP_RX_TRIGGER
+mdefine_line|#define ESP_RX_TRIGGER    768
+DECL|macro|ESP_TX_TRIGGER
+mdefine_line|#define ESP_TX_TRIGGER    768
+DECL|macro|ESP_FLOW_OFF
+mdefine_line|#define ESP_FLOW_OFF      1016
+DECL|macro|ESP_FLOW_ON
+mdefine_line|#define ESP_FLOW_ON       944
+DECL|macro|ESP_RX_TMOUT
+mdefine_line|#define ESP_RX_TMOUT      128
+DECL|macro|ESP_PIO_THRESHOLD
+mdefine_line|#define ESP_PIO_THRESHOLD 32
 DECL|macro|ESP_IN_MAJOR
 mdefine_line|#define ESP_IN_MAJOR&t;57&t;/* major dev # for dial in */
 DECL|macro|ESP_OUT_MAJOR
@@ -93,9 +143,6 @@ DECL|macro|ESP_STAT_NEVER_DMA
 mdefine_line|#define ESP_STAT_NEVER_DMA      0x08
 DECL|macro|ESP_STAT_USE_PIO
 mdefine_line|#define ESP_STAT_USE_PIO        0x10
-multiline_comment|/* Always use PIO for this number (or less) of bytes */
-DECL|macro|ESP_PIO_THRESHOLD
-mdefine_line|#define ESP_PIO_THRESHOLD       32
 DECL|macro|ESP_EVENT_WRITE_WAKEUP
 mdefine_line|#define ESP_EVENT_WRITE_WAKEUP&t;0
 DECL|macro|ESP_MAGIC
@@ -275,6 +322,12 @@ id|async_icount
 id|icount
 suffix:semicolon
 multiline_comment|/* kernel counters for the 4 input interrupts */
+DECL|member|config
+r_struct
+id|hayes_esp_config
+id|config
+suffix:semicolon
+multiline_comment|/* port configuration */
 DECL|member|next_port
 r_struct
 id|esp_struct
@@ -304,5 +357,6 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* ESP_H */
 eof

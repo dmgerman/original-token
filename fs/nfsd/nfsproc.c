@@ -125,7 +125,7 @@ id|resp
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: GETATTR  %d/%ld&bslash;n&quot;
+l_string|&quot;nfsd: GETATTR  %d/%d&bslash;n&quot;
 comma
 id|SVCFH_DEV
 c_func
@@ -196,7 +196,7 @@ id|resp
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: SETATTR  %d/%ld, valid=%x, size=%ld&bslash;n&quot;
+l_string|&quot;nfsd: SETATTR  %d/%d, valid=%x, size=%ld&bslash;n&quot;
 comma
 id|SVCFH_DEV
 c_func
@@ -276,7 +276,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: LOOKUP   %d/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: LOOKUP   %d/%d %s&bslash;n&quot;
 comma
 id|SVCFH_DEV
 c_func
@@ -462,7 +462,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READ    %d/%ld %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: READ    %d/%d %d bytes at %d&bslash;n&quot;
 comma
 id|SVCFH_DEV
 c_func
@@ -606,7 +606,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: WRITE    %d/%ld %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: WRITE    %d/%d %d bytes at %d&bslash;n&quot;
 comma
 id|SVCFH_DEV
 c_func
@@ -729,7 +729,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: CREATE   %d/%ld %s&bslash;n&quot;
+l_string|&quot;nfsd: CREATE   %d/%d %s&bslash;n&quot;
 comma
 id|SVCFH_DEV
 c_func
@@ -1794,7 +1794,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READDIR  %d/%ld %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: READDIR  %d/%d %d bytes at %d&bslash;n&quot;
 comma
 id|SVCFH_DEV
 c_func

@@ -578,6 +578,14 @@ l_int|14
 r_return
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_ne
+l_int|NULL
+)paren
+(brace
 op_star
 id|flags
 op_assign
@@ -613,6 +621,7 @@ id|flags
 op_assign
 id|AX25_RESPONSE
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -632,6 +641,13 @@ op_amp
 id|AX25_DAMA_FLAG
 suffix:semicolon
 multiline_comment|/* Copy to, from */
+r_if
+c_cond
+(paren
+id|dest
+op_ne
+l_int|NULL
+)paren
 id|memcpy
 c_func
 (paren
@@ -644,6 +660,13 @@ comma
 id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|src
+op_ne
+l_int|NULL
+)paren
 id|memcpy
 c_func
 (paren

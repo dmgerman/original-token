@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/dummycon.c -- A dummy console driver&n; *&n; *  To be used if there&squot;s no other console driver (e.g. for plain VGA text)&n; *  available, usually until fbcon takes console over.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;

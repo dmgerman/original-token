@@ -561,6 +561,7 @@ id|nm
 op_assign
 id|num_mixers
 suffix:semicolon
+multiline_comment|/* FIXME */
 id|attach_ms_sound
 c_func
 (paren

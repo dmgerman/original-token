@@ -248,13 +248,11 @@ suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;priority
 op_assign
-op_minus
-l_int|100
+l_int|0
 suffix:semicolon
 id|current-&gt;counter
 op_assign
-op_minus
-l_int|100
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -366,8 +364,7 @@ id|unused
 (brace
 id|current-&gt;priority
 op_assign
-op_minus
-l_int|100
+l_int|0
 suffix:semicolon
 r_while
 c_loop
@@ -427,8 +424,7 @@ suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
 op_assign
-op_minus
-l_int|100
+l_int|0
 suffix:semicolon
 id|schedule
 c_func

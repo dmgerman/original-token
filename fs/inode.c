@@ -85,8 +85,6 @@ suffix:semicolon
 DECL|variable|max_inodes
 r_int
 id|max_inodes
-op_assign
-id|NR_INODE
 suffix:semicolon
 multiline_comment|/*&n; * Put the inode on the super block&squot;s dirty list.&n; *&n; * CAREFUL! We mark it dirty unconditionally, but&n; * move it onto the dirty list only if it is hashed.&n; * If it was not hashed, it will never be added to&n; * the dirty list even if it is later hashed, as it&n; * will have been marked dirty already.&n; *&n; * In short, make sure you hash any inodes _before_&n; * you start marking them dirty..&n; */
 DECL|function|__mark_inode_dirty
@@ -1908,6 +1906,10 @@ op_assign
 op_increment
 id|last_ino
 suffix:semicolon
+id|inode-&gt;i_flags
+op_assign
+l_int|0
+suffix:semicolon
 id|inode-&gt;i_count
 op_assign
 l_int|1
@@ -2841,7 +2843,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Initialize the hash tables&n; */
+multiline_comment|/*&n; * Initialize the hash tables and default&n; * value for max inodes..&n; */
+DECL|macro|MAX_INODE
+mdefine_line|#define MAX_INODE (8192)
 DECL|function|inode_init
 r_void
 id|inode_init
@@ -2852,6 +2856,8 @@ r_void
 (brace
 r_int
 id|i
+comma
+id|max
 suffix:semicolon
 r_struct
 id|list_head
@@ -2884,6 +2890,28 @@ c_loop
 (paren
 id|i
 )paren
+suffix:semicolon
+multiline_comment|/* Initial guess at reasonable inode number */
+id|max
+op_assign
+id|num_physpages
+op_rshift
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|max
+OG
+id|MAX_INODE
+)paren
+id|max
+op_assign
+id|MAX_INODE
+suffix:semicolon
+id|max_inodes
+op_assign
+id|max
 suffix:semicolon
 )brace
 multiline_comment|/* This belongs in file_table.c, not here... */

@@ -3220,7 +3220,7 @@ op_eq
 id|SIGCHLD
 op_logical_or
 id|sig
-op_ne
+op_eq
 id|SIGWINCH
 )paren
 )paren

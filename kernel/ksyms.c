@@ -534,6 +534,13 @@ c_func
 id|__mark_inode_dirty
 )paren
 suffix:semicolon
+DECL|variable|get_empty_filp
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_empty_filp
+)paren
+suffix:semicolon
 DECL|variable|init_private_file
 id|EXPORT_SYMBOL
 c_func
@@ -791,6 +798,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|put_cached_page
+)paren
+suffix:semicolon
+DECL|variable|is_root_busy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|is_root_busy
 )paren
 suffix:semicolon
 DECL|variable|prune_dcache

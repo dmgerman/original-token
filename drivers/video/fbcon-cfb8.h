@@ -1,4 +1,5 @@
 multiline_comment|/*&n;     *  8 bpp packed pixel (cfb8)&n;     */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_CFB8) || defined(CONFIG_FBCON_CFB8_MODULE)
 DECL|macro|FBCON_HAS_CFB8

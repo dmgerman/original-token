@@ -1,4 +1,5 @@
 multiline_comment|/*&n;     *  4 bpp packed pixel (cfb4)&n;     */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_CFB4) || defined(CONFIG_FBCON_CFB4_MODULE)
 DECL|macro|FBCON_HAS_CFB4
