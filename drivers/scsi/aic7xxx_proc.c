@@ -504,18 +504,6 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  AIC7XXX_RESET_DELAY    : %d&bslash;n&quot;
-comma
-id|AIC7XXX_RESET_DELAY
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
