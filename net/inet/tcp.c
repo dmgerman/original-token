@@ -15121,6 +15121,16 @@ op_logical_and
 id|sk-&gt;state
 op_ne
 id|TCP_CLOSE_WAIT
+op_logical_and
+id|sk
+op_member_access_from_pointer
+id|state
+op_ne
+id|TCP_FIN_WAIT1
+op_logical_and
+id|sk-&gt;state
+op_ne
+id|TCP_FIN_WAIT2
 )paren
 r_return
 suffix:semicolon

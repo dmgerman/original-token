@@ -1885,7 +1885,11 @@ r_void
 r_int
 id|timeout
 op_assign
-l_int|6000
+id|jiffies
+op_plus
+l_int|60
+op_star
+id|HZ
 suffix:semicolon
 multiline_comment|/* 60 seconds; really big :-) */
 r_int
@@ -1961,8 +1965,6 @@ id|RS_TIMER
 dot
 id|expires
 op_assign
-id|jiffies
-op_plus
 id|timeout
 suffix:semicolon
 id|timer_active

@@ -1722,7 +1722,6 @@ r_goto
 id|fail
 suffix:semicolon
 )brace
-suffix:semicolon
 id|pnt
 op_assign
 (paren
@@ -1790,6 +1789,33 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cpnt
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;NoMem ISO inode %d&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+id|brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_goto
+id|fail
+suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren
@@ -1827,6 +1853,7 @@ id|bufsize
 )paren
 (brace
 id|kfree_s
+c_func
 (paren
 id|cpnt
 comma
@@ -1845,7 +1872,6 @@ r_goto
 id|fail
 suffix:semicolon
 )brace
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1895,7 +1921,6 @@ id|pnt
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|S_IRUGO
@@ -2010,7 +2035,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* execute permission */
 )brace
-suffix:semicolon
 id|inode-&gt;i_uid
 op_assign
 l_int|0
@@ -2052,7 +2076,6 @@ op_assign
 l_char|&squot;y&squot;
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* Some dipshit decided to store some other bit of information in the high&n;   byte of the file length.  Catch this and holler.  WARNING: this will make&n;   it impossible for a file to be &gt; 16Mb on the CDROM!!!*/
 r_if
 c_cond
@@ -2072,7 +2095,6 @@ op_and_assign
 l_int|0x00ffffff
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2093,7 +2115,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#ifdef DEBUG
 multiline_comment|/* I have no idea what extended attributes are used for, so&n;&t;   we will flag it for now */
 r_if
@@ -2277,7 +2298,6 @@ multiline_comment|/* File type */
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* Now test for possible Rock Ridge extensions which will override some of&n;   these numbers in the inode structure. */
 r_if
 c_cond
@@ -2310,27 +2330,6 @@ c_func
 (paren
 id|bh
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cpnt
-)paren
-(brace
-id|kfree_s
-(paren
-id|cpnt
-comma
-l_int|1
-op_lshift
-id|ISOFS_BLOCK_BITS
-)paren
-suffix:semicolon
-id|cpnt
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -2449,6 +2448,26 @@ c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cpnt
+)paren
+(brace
+id|kfree_s
+(paren
+id|cpnt
+comma
+l_int|1
+op_lshift
+id|ISOFS_BLOCK_BITS
+)paren
+suffix:semicolon
+id|cpnt
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 r_return

@@ -859,7 +859,7 @@ id|l
 op_plus
 l_int|4
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|rb
@@ -876,7 +876,7 @@ id|l
 op_plus
 l_int|4
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|cb
@@ -893,7 +893,7 @@ id|l
 op_plus
 l_int|4
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
