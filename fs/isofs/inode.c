@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; * &n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *      1995  Mark Dobie - patch to allow VideoCD and PhotoCD mounting.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; * &n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *      1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *      1994  Eberhard Moenkeberg - multi session handling.&n; *      1995  Mark Dobie - allow mounting of some weird VideoCDs and PhotoCDs.&n; *&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -715,6 +715,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * look if the driver can tell the multi session redirection value&n; */
 DECL|function|isofs_get_last_session
 r_static
 r_int
@@ -752,7 +753,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;   * look if the driver can tell the multi session redirection value&n;   * &lt;emoenke@gwdg.de&gt;&n;   */
 id|vol_desc_start
 op_assign
 l_int|0
@@ -2610,7 +2610,7 @@ id|inode-&gt;i_op
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* get the volume sequence numner */
+multiline_comment|/* get the volume sequence number */
 id|volume_seq_no
 op_assign
 id|isonum_723

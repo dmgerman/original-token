@@ -445,15 +445,15 @@ id|tsk-&gt;mm-&gt;count
 op_assign
 l_int|1
 suffix:semicolon
-id|tsk-&gt;mm-&gt;min_flt
+id|tsk-&gt;min_flt
 op_assign
-id|tsk-&gt;mm-&gt;maj_flt
+id|tsk-&gt;maj_flt
 op_assign
 l_int|0
 suffix:semicolon
-id|tsk-&gt;mm-&gt;cmin_flt
+id|tsk-&gt;cmin_flt
 op_assign
-id|tsk-&gt;mm-&gt;cmaj_flt
+id|tsk-&gt;cmaj_flt
 op_assign
 l_int|0
 suffix:semicolon
@@ -925,6 +925,10 @@ id|p-&gt;did_exec
 op_assign
 l_int|0
 suffix:semicolon
+id|p-&gt;swappable
+op_assign
+l_int|0
+suffix:semicolon
 id|p-&gt;kernel_stack_page
 op_assign
 id|new_stack
@@ -1131,7 +1135,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* ok, now we should be set up.. */
-id|p-&gt;mm-&gt;swappable
+id|p-&gt;swappable
 op_assign
 l_int|1
 suffix:semicolon

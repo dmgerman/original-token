@@ -16,11 +16,11 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &quot;mouse.h&quot;
 DECL|macro|PSMOUSE_MINOR
 mdefine_line|#define PSMOUSE_MINOR      1            /* minor device # for this mouse */
 multiline_comment|/* aux controller ports */

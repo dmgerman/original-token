@@ -15,7 +15,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &quot;mouse.h&quot;
 multiline_comment|/*&n; * Head entry for the doubly linked mouse list&n; */
 DECL|variable|mouse_list
 r_static

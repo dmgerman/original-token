@@ -704,6 +704,26 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_STALLION
+r_extern
+r_int
+id|stl_init
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISTALLION
+r_extern
+r_int
+id|stli_init
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|tty_paranoia_check

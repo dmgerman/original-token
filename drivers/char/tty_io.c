@@ -7823,6 +7823,26 @@ id|kmem_start
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_STALLION
+id|kmem_start
+op_assign
+id|stl_init
+c_func
+(paren
+id|kmem_start
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISTALLION
+id|kmem_start
+op_assign
+id|stli_init
+c_func
+(paren
+id|kmem_start
+)paren
+suffix:semicolon
+macro_line|#endif
 id|kmem_start
 op_assign
 id|pty_init

@@ -5054,7 +5054,7 @@ id|address
 )paren
 suffix:semicolon
 op_increment
-id|current-&gt;mm-&gt;min_flt
+id|current-&gt;min_flt
 suffix:semicolon
 r_return
 id|page
@@ -5362,7 +5362,7 @@ id|block
 )paren
 suffix:semicolon
 op_increment
-id|current-&gt;mm-&gt;maj_flt
+id|current-&gt;maj_flt
 suffix:semicolon
 r_return
 id|address
@@ -5564,7 +5564,7 @@ id|where
 suffix:semicolon
 )brace
 op_increment
-id|current-&gt;mm-&gt;maj_flt
+id|current-&gt;maj_flt
 suffix:semicolon
 r_for
 c_loop

@@ -12,11 +12,11 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &quot;mouse.h&quot;
 DECL|macro|ATIXL_MOUSE_IRQ
 mdefine_line|#define ATIXL_MOUSE_IRQ&t;&t;5 /* H/W interrupt # set up on ATIXL board */
 DECL|macro|ATIXL_BUSMOUSE

@@ -120,13 +120,5 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Function Prototypes */
-r_extern
-r_int
-id|mouse_init
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
 macro_line|#endif
 eof

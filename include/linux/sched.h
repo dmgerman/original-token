@@ -241,49 +241,6 @@ r_int
 r_int
 id|rss
 suffix:semicolon
-DECL|member|min_flt
-DECL|member|maj_flt
-DECL|member|cmin_flt
-DECL|member|cmaj_flt
-r_int
-r_int
-id|min_flt
-comma
-id|maj_flt
-comma
-id|cmin_flt
-comma
-id|cmaj_flt
-suffix:semicolon
-DECL|member|swappable
-r_int
-id|swappable
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|swap_address
-r_int
-r_int
-id|swap_address
-suffix:semicolon
-DECL|member|old_maj_flt
-r_int
-r_int
-id|old_maj_flt
-suffix:semicolon
-multiline_comment|/* old value of maj_flt */
-DECL|member|dec_flt
-r_int
-r_int
-id|dec_flt
-suffix:semicolon
-multiline_comment|/* page fault count of the last time */
-DECL|member|swap_cnt
-r_int
-r_int
-id|swap_cnt
-suffix:semicolon
-multiline_comment|/* number of pages to swap on next pass */
 DECL|member|mmap
 r_struct
 id|vm_area_struct
@@ -299,7 +256,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
+mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
@@ -564,6 +521,51 @@ id|cstime
 comma
 id|start_time
 suffix:semicolon
+multiline_comment|/* mm fault and swap info: this can arguably be seen as either mm-specific or thread-specific */
+DECL|member|min_flt
+DECL|member|maj_flt
+DECL|member|cmin_flt
+DECL|member|cmaj_flt
+r_int
+r_int
+id|min_flt
+comma
+id|maj_flt
+comma
+id|cmin_flt
+comma
+id|cmaj_flt
+suffix:semicolon
+DECL|member|swappable
+r_int
+id|swappable
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|swap_address
+r_int
+r_int
+id|swap_address
+suffix:semicolon
+DECL|member|old_maj_flt
+r_int
+r_int
+id|old_maj_flt
+suffix:semicolon
+multiline_comment|/* old value of maj_flt */
+DECL|member|dec_flt
+r_int
+r_int
+id|dec_flt
+suffix:semicolon
+multiline_comment|/* page fault count of the last time */
+DECL|member|swap_cnt
+r_int
+r_int
+id|swap_cnt
+suffix:semicolon
+multiline_comment|/* number of pages to swap on next pass */
+multiline_comment|/* limits */
 DECL|member|rlim
 r_struct
 id|rlimit
@@ -669,7 +671,7 @@ DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15*HZ/100,15*HZ/100,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}, &bslash;&n;&t;&t;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;&amp;init_signals, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15*HZ/100,15*HZ/100,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;0,0,0,0,0, &bslash;&n;/* flt */&t;0,0,0,0, &bslash;&n;/* swp */&t;0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}, &bslash;&n;&t;&t;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;&amp;init_signals, &bslash;&n;}
 r_extern
 r_struct
 id|mm_struct

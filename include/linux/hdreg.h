@@ -137,38 +137,38 @@ id|start
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* hd/ide ctl&squot;s that pass (arg) ptrs to user space are numbered 0x30n/0x31n */
+multiline_comment|/* hd/ide ctl&squot;s that pass (arg) ptrs to user space are numbered 0x030n/0x031n */
 DECL|macro|HDIO_GETGEO
-mdefine_line|#define HDIO_GETGEO&t;&t;0x301&t;/* get device geometry */
+mdefine_line|#define HDIO_GETGEO&t;&t;0x0301&t;/* get device geometry */
 DECL|macro|HDIO_GET_UNMASKINTR
-mdefine_line|#define HDIO_GET_UNMASKINTR&t;0x302&t;/* get current unmask setting */
+mdefine_line|#define HDIO_GET_UNMASKINTR&t;0x0302&t;/* get current unmask setting */
 DECL|macro|HDIO_GET_MULTCOUNT
-mdefine_line|#define HDIO_GET_MULTCOUNT&t;0x304&t;/* get current IDE blockmode setting */
+mdefine_line|#define HDIO_GET_MULTCOUNT&t;0x0304&t;/* get current IDE blockmode setting */
 DECL|macro|HDIO_GET_IDENTITY
-mdefine_line|#define HDIO_GET_IDENTITY &t;0x307&t;/* get IDE identification info */
+mdefine_line|#define HDIO_GET_IDENTITY &t;0x0307&t;/* get IDE identification info */
 DECL|macro|HDIO_GET_KEEPSETTINGS
-mdefine_line|#define HDIO_GET_KEEPSETTINGS &t;0x308&t;/* get keep-settings-on-reset flag */
+mdefine_line|#define HDIO_GET_KEEPSETTINGS &t;0x0308&t;/* get keep-settings-on-reset flag */
 DECL|macro|HDIO_GET_CHIPSET
-mdefine_line|#define HDIO_GET_CHIPSET&t;0x309&t;/* get current interface type setting */
+mdefine_line|#define HDIO_GET_CHIPSET&t;0x0309&t;/* get current interface type setting */
 DECL|macro|HDIO_GET_NOWERR
-mdefine_line|#define HDIO_GET_NOWERR&t;&t;0x30a&t;/* get ignore-write-error flag */
+mdefine_line|#define HDIO_GET_NOWERR&t;&t;0x030a&t;/* get ignore-write-error flag */
 DECL|macro|HDIO_GET_DMA
-mdefine_line|#define HDIO_GET_DMA&t;&t;0x30b&t;/* get use-dma flag */
+mdefine_line|#define HDIO_GET_DMA&t;&t;0x030b&t;/* get use-dma flag */
 DECL|macro|HDIO_DRIVE_CMD
-mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x31f&t;/* execute a special drive command */
-multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x32n/0x33n */
+mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x031f&t;/* execute a special drive command */
+multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x032n/0x033n */
 DECL|macro|HDIO_SET_MULTCOUNT
-mdefine_line|#define HDIO_SET_MULTCOUNT&t;0x321&t;/* set IDE blockmode */
+mdefine_line|#define HDIO_SET_MULTCOUNT&t;0x0321&t;/* set IDE blockmode */
 DECL|macro|HDIO_SET_UNMASKINTR
-mdefine_line|#define HDIO_SET_UNMASKINTR&t;0x322&t;/* permit other irqs during I/O */
+mdefine_line|#define HDIO_SET_UNMASKINTR&t;0x0322&t;/* permit other irqs during I/O */
 DECL|macro|HDIO_SET_KEEPSETTINGS
-mdefine_line|#define HDIO_SET_KEEPSETTINGS&t;0x323&t;/* keep ioctl settings on reset */
+mdefine_line|#define HDIO_SET_KEEPSETTINGS&t;0x0323&t;/* keep ioctl settings on reset */
 DECL|macro|HDIO_SET_CHIPSET
-mdefine_line|#define HDIO_SET_CHIPSET&t;0x324&t;/* optimise driver for interface type */
+mdefine_line|#define HDIO_SET_CHIPSET&t;0x0324&t;/* optimise driver for interface type */
 DECL|macro|HDIO_SET_NOWERR
-mdefine_line|#define HDIO_SET_NOWERR&t;&t;0x325&t;/* set ignore-write-error flag */
+mdefine_line|#define HDIO_SET_NOWERR&t;&t;0x0325&t;/* set ignore-write-error flag */
 DECL|macro|HDIO_SET_DMA
-mdefine_line|#define HDIO_SET_DMA&t;&t;0x326&t;/* set use-dma flag */
+mdefine_line|#define HDIO_SET_DMA&t;&t;0x0326&t;/* set use-dma flag */
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct

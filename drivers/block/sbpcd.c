@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sbpcd.c   CD-ROM device driver for the whole family of IDE-style&n; *            Kotobuki/Matsushita/Panasonic CR-5xx drives for&n; *            SoundBlaster (&quot;Pro&quot; or &quot;16 ASP&quot; or compatible) cards&n; *            and for &quot;no-sound&quot; interfaces like Lasermate and the&n; *            Panasonic CI-101P.&n; *            Also for the Longshine LCS-7260 drive.&n; *            Also for the IBM &quot;External ISA CD-Rom&quot; drive.&n; *            Also for the CreativeLabs CD200 drive (but I still need some&n; *            detailed bug reports).&n; *            Also for the TEAC CD-55A drive.&n; *            Not for Sanyo drives (but sjcd is there...).&n; *            Not for Funai drives.&n; *&n; *  NOTE:     This is release 3.8.&n; *&n; *  VERSION HISTORY&n; *&n; *  0.1  initial release, April/May 93, after mcd.c (Martin Harriss)&n; *&n; *  0.2  the &quot;repeat:&quot;-loop in do_sbpcd_request did not check for&n; *       end-of-request_queue (resulting in kernel panic).&n; *       Flow control seems stable, but throughput is not better.  &n; *&n; *  0.3  interrupt locking totally eliminated (maybe &quot;inb&quot; and &quot;outb&quot;&n; *       are still locking) - 0.2 made keyboard-type-ahead losses.&n; *       check_sbpcd_media_change added (to use by isofs/inode.c)&n; *       - but it detects almost nothing.&n; *&n; *  0.4  use MAJOR 25 definitely.&n; *       Almost total re-design to support double-speed drives and&n; *       &quot;naked&quot; (no sound) interface cards (&quot;LaserMate&quot; interface type).&n; *       Flow control should be exact now.&n; *       Don&squot;t occupy the SbPro IRQ line (not needed either); will&n; *       live together with Hannu Savolainen&squot;s sndkit now.&n; *&t; Speeded up data transfer to 150 kB/sec, with help from Kai&n; *       Makisara, the &quot;provider&quot; of the &quot;mt&quot; tape utility.&n; *       Give &quot;SpinUp&quot; command if necessary.&n; *       First steps to support up to 4 drives (but currently only one).&n; *       Implemented audio capabilities - workman should work, xcdplayer&n; *       gives some problems.&n; *       This version is still consuming too much CPU time, and&n; *       sleeping still has to be worked on.&n; *       During &quot;long&quot; implied seeks, it seems possible that a &n; *       ReadStatus command gets ignored. That gives the message&n; *       &quot;ResponseStatus timed out&quot; (happens about 6 times here during&n; *       a &quot;ls -alR&quot; of the YGGDRASIL LGX-Beta CD). Such a case is&n; *       handled without data error, but it should get done better.&n; *&n; *  0.5  Free CPU during waits (again with help from Kai Makisara).&n; *       Made it work together with the LILO/kernel setup standard.&n; *       Included auto-probing code, as suggested by YGGDRASIL.&n; *       Formal redesign to add DDI debugging.&n; *       There are still flaws in IOCTL (workman with double speed drive).&n; *&n; *  1.0  Added support for all drive IDs (0...3, no longer only 0)&n; *       and up to 4 drives on one controller.&n; *       Added &quot;#define MANY_SESSION&quot; for &quot;old&quot; multi session CDs.&n; *&n; *  1.1  Do SpinUp for new drives, too.&n; *       Revised for clean compile under &quot;old&quot; kernels (0.99pl9).&n; *&n; *  1.2  Found the &quot;workman with double-speed drive&quot; bug: use the driver&squot;s&n; *       audio_state, not what the drive is reporting with ReadSubQ.&n; *&n; *  1.3  Minor cleanups.&n; *       Refinements regarding Workman.&n; *&n; *  1.4  Read XA disks (PhotoCDs) with &quot;old&quot; drives, too (but only the first&n; *       session - no chance to fully access a &quot;multi-session&quot; CD).&n; *       This currently still is too slow (50 kB/sec) - but possibly&n; *       the old drives won&squot;t do it faster.&n; *       Implemented &quot;door (un)lock&quot; for new drives (still does not work&n; *       as wanted - no lock possible after an unlock).&n; *       Added some debugging printout for the UPC/EAN code - but my drives &n; *       return only zeroes. Is there no UPC/EAN code written?&n; *&n; *  1.5  Laborate with UPC/EAN code (not better yet).&n; *       Adapt to kernel 1.1.8 change (have to explicitly include&n; *       &lt;linux/string.h&gt; now).&n; *&n; *  1.6  Trying to read audio frames as data. Impossible with the current&n; *       drive firmware levels, as it seems. Awaiting any hint. ;-)&n; *       Changed &quot;door unlock&quot;: repeat it until success.&n; *       Changed CDROMSTOP routine (stop somewhat &quot;softer&quot; so that Workman&n; *       won&squot;t get confused).&n; *       Added a third interface type: Sequoia S-1000, as used with the SPEA&n; *       Media FX sound card. This interface (usable for Sony and Mitsumi &n; *       drives, too) needs a special configuration setup and behaves like a &n; *       LaserMate type after that. Still experimental - I do not have such&n; *       an interface.&n; *       Use the &quot;variable BLOCK_SIZE&quot; feature (2048). But it does only work&n; *       if you give the mount option &quot;block=2048&quot;.&n; *       The media_check routine is currently disabled; now that it gets&n; *       called as it should I fear it must get synchronized for not to&n; *       disturb the normal driver&squot;s activity.&n; *&n; *  2.0  Version number bumped - two reasons:&n; *       - reading audio tracks as data works now with CR-562 and CR-563. We&n; *       currently do it by an IOCTL (yet has to get standardized), one frame&n; *       at a time; that is pretty slow. But it works.&n; *       - we are maintaining now up to 4 interfaces (each up to 4 drives):&n; *       did it the easy way - a different MAJOR (25, 26, ...) and a different&n; *       copy of the driver (sbpcd.c, sbpcd2.c, sbpcd3.c, sbpcd4.c - only&n; *       distinguished by the value of SBPCD_ISSUE and the driver&squot;s name),&n; *       and a common sbpcd.h file.&n; *       Bettered the &quot;ReadCapacity error&quot; problem with old CR-52x drives (the&n; *       drives sometimes need a manual &quot;eject/insert&quot; before work): just&n; *       reset the drive and do again. Needs lots of resets here and sometimes&n; *       that does not cure, so this can&squot;t be the solution.&n; *&n; *  2.1  Found bug with multisession CDs (accessing frame 16).&n; *       &quot;read audio&quot; works now with address type CDROM_MSF, too.&n; *       Bigger audio frame buffer: allows reading max. 4 frames at time; this&n; *       gives a significant speedup, but reading more than one frame at once&n; *       gives missing chunks at each single frame boundary.&n; *&n; *  2.2  Kernel interface cleanups: timers, init, setup, media check.&n; *&n; *  2.3  Let &quot;door lock&quot; and &quot;eject&quot; live together.&n; *       Implemented &quot;close tray&quot; (done automatically during open).&n; *&n; *  2.4  Use different names for device registering.&n; *&n; *  2.5  Added &quot;#if EJECT&quot; code (default: enabled) to automatically eject&n; *       the tray during last call to &quot;sbpcd_release&quot;.&n; *       Added &quot;#if JUKEBOX&quot; code (default: disabled) to automatically eject&n; *       the tray during call to &quot;sbpcd_open&quot; if no disk is in.&n; *       Turn on the CD volume of &quot;compatible&quot; sound cards, too; just define&n; *       SOUND_BASE (in sbpcd.h) accordingly (default: disabled).&n; *&n; *  2.6  Nothing new.  &n; *&n; *  2.7  Added CDROMEJECT_SW ioctl to set the &quot;EJECT&quot; behavior on the fly:&n; *       0 disables, 1 enables auto-ejecting. Useful to keep the tray in&n; *       during shutdown.&n; *&n; *  2.8  Added first support (still BETA, I need feedback or a drive) for&n; *       the Longshine LCS-7260 drives. They appear as double-speed drives&n; *       using the &quot;old&quot; command scheme, extended by tray control and door&n; *       lock functions.&n; *       Found (and fixed preliminary) a flaw with some multisession CDs: we&n; *       have to re-direct not only the accesses to frame 16 (the isofs&n; *       routines drive it up to max. 100), but also those to the continuation&n; *       (repetition) frames (as far as they exist - currently set fix as&n; *       16..20).&n; *       Changed default of the &quot;JUKEBOX&quot; define. If you use this default,&n; *       your tray will eject if you try to mount without a disk in. Next&n; *       mount command will insert the tray - so, just fill in a disk. ;-)&n; *&n; *  2.9  Fulfilled the Longshine LCS-7260 support; with great help and&n; *       experiments by Serge Robyns.&n; *       First attempts to support the TEAC CD-55A drives; but still not&n; *       usable yet.&n; *       Implemented the CDROMMULTISESSION ioctl; this is an attempt to handle&n; *       multi session CDs more &quot;transparent&quot; (redirection handling has to be&n; *       done within the isofs routines, and only for the special purpose of&n; *       obtaining the &quot;right&quot; volume descriptor; accesses to the raw device&n; *       should not get redirected).&n; *&n; *  3.0  Just a &quot;normal&quot; increment, with some provisions to do it better. ;-)&n; *       Introduced &quot;#define READ_AUDIO&quot; to specify the maximum number of &n; *       audio frames to grab with one request. This defines a buffer size&n; *       within kernel space; a value of 0 will reserve no such space and&n; *       disable the CDROMREADAUDIO ioctl. A value of 75 enables the reading&n; *       of a whole second with one command, but will use a buffer of more&n; *       than 172 kB.&n; *       Started CD200 support. Drive detection should work, but nothing&n; *       more.&n; *&n; *  3.1  Working to support the CD200 and the Teac CD-55A drives.&n; *       AT-BUS style device numbering no longer used: use SCSI style now.&n; *       So, the first &quot;found&quot; device has MINOR 0, regardless of the&n; *       jumpered drive ID. This implies modifications to the /dev/sbpcd*&n; *       entries for some people, but will help the DAU (german TLA, english:&n; *       &quot;newbie&quot;, maybe ;-) to install his &quot;first&quot; system from a CD.&n; *&n; *  3.2  Still testing with CD200 and CD-55A drives.&n; *&n; *  3.3  Working with CD200 support.&n; *&n; *  3.4  Auto-probing stops if an address of 0 is seen (to be entered with&n; *       the kernel command line).&n; *       Made the driver &quot;loadable&quot;. If used as a module, &quot;audio copy&quot; is&n; *       disabled, and the internal read ahead data buffer has a reduced size&n; *       of 4 kB; so, throughput may be reduced a little bit with slow CPUs.&n; *&n; *  3.5  Provisions to handle weird photoCDs which have an interrupted&n; *       &quot;formatting&quot; immediately after the last frames of some files: simply&n; *       never &quot;read ahead&quot; with MultiSession CDs. By this, CPU usage may be&n; *       increased with those CDs, and there may be a loss in speed.&n; *       Re-structured the messaging system.&n; *       The &quot;loadable&quot; version no longer has a limited READ_AUDIO buffer&n; *       size.&n; *       Removed &quot;MANY_SESSION&quot; handling for &quot;old&quot; multi session CDs.&n; *       Added &quot;private&quot; IOCTLs CDROMRESET and CDROMVOLREAD.&n; *       Started again to support the TEAC CD-55A drives, now that I found&n; *       the money for &quot;my own&quot; drive. ;-)&n; *       The TEAC CD-55A support is fairly working now.&n; *       I have measured that the drive &quot;delivers&quot; at 600 kB/sec (even with&n; *       bigger requests than the drive&squot;s 64 kB buffer can satisfy), but&n; *       the &quot;real&quot; rate does not exceed 520 kB/sec at the moment. &n; *       Caused by the various changes to build in TEAC support, the timed&n; *       loops are de-optimized at the moment (less throughput with CR-52x&n; *       drives, and the TEAC will give speed only with SBP_BUFFER_FRAMES 64).&n; *&n; *  3.6  Fixed TEAC data read problems with SbPro interfaces.&n; *       Initial size of the READ_AUDIO buffer is 0. Can get set to any size&n; *       during runtime.&n; *&n; *  3.7  Introduced MAX_DRIVES for some poor interface cards (seen with TEAC&n; *       drives) which allow only one drive (ID 0); this avoids repetitive&n; *       detection under IDs 1..3. &n; *       Elongated cmd_out_T response waiting; necessary for photo CDs with&n; *       a lot of sessions.&n; *       Bettered the sbpcd_open() behavior with TEAC drives.&n; *&n; *  3.8  Elongated max_latency for CR-56x drives.&n; *&n; *  TODO&n; *&n; *     disk change detection&n; *     allow &amp; synchronize multi-activity&n; *        (data + audio + ioctl + disk change, multiple drives)&n; *     implement &quot;read all subchannel data&quot; (96 bytes per frame)&n; *&n; *     special thanks to Kai Makisara (kai.makisara@vtt.fi) for his fine&n; *     elaborated speed-up experiments (and the fabulous results!), for&n; *     the &quot;push&quot; towards load-free wait loops, and for the extensive mail&n; *     thread which brought additional hints and bug fixes.&n; *&n; *   Copyright (C) 1993, 1994, 1995  Eberhard Moenkeberg &lt;emoenke@gwdg.de&gt;&n; *&n; *                  If you change this software, you should mail a .diff&n; *                  file with some description lines to emoenke@gwdg.de.&n; *                  I want to know about it.&n; *&n; *                  If you are the editor of a Linux CD, you should&n; *                  enable sbpcd.c within your boot floppy kernel and&n; *                  send me one of your CDs for free.&n; *&n; *   This program is free software; you can redistribute it and/or modify&n; *   it under the terms of the GNU General Public License as published by&n; *   the Free Software Foundation; either version 2, or (at your option)&n; *   any later version.&n; *&n; *   You should have received a copy of the GNU General Public License&n; *   (for example /usr/src/linux/COPYING); if not, write to the Free&n; *   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/*&n; *  sbpcd.c   CD-ROM device driver for the whole family of IDE-style&n; *            Kotobuki/Matsushita/Panasonic CR-5xx drives for&n; *            SoundBlaster (&quot;Pro&quot; or &quot;16 ASP&quot; or compatible) cards&n; *            and for &quot;no-sound&quot; interfaces like Lasermate and the&n; *            Panasonic CI-101P.&n; *            Also for the Longshine LCS-7260 drive.&n; *            Also for the IBM &quot;External ISA CD-Rom&quot; drive.&n; *            Also for the CreativeLabs CD200 drive (but I still need some&n; *            detailed bug reports).&n; *            Also for the TEAC CD-55A drive.&n; *            Not for Sanyo drives (but sjcd is there...).&n; *            Not for any other Funai drives than E2550UA (=&quot;CD200&quot; with &quot;F&quot;).&n; *&n; *  NOTE:     This is release 3.9.&n; *&n; *  VERSION HISTORY&n; *&n; *  0.1  initial release, April/May 93, after mcd.c (Martin Harriss)&n; *&n; *  0.2  the &quot;repeat:&quot;-loop in do_sbpcd_request did not check for&n; *       end-of-request_queue (resulting in kernel panic).&n; *       Flow control seems stable, but throughput is not better.  &n; *&n; *  0.3  interrupt locking totally eliminated (maybe &quot;inb&quot; and &quot;outb&quot;&n; *       are still locking) - 0.2 made keyboard-type-ahead losses.&n; *       check_sbpcd_media_change added (to use by isofs/inode.c)&n; *       - but it detects almost nothing.&n; *&n; *  0.4  use MAJOR 25 definitely.&n; *       Almost total re-design to support double-speed drives and&n; *       &quot;naked&quot; (no sound) interface cards (&quot;LaserMate&quot; interface type).&n; *       Flow control should be exact now.&n; *       Don&squot;t occupy the SbPro IRQ line (not needed either); will&n; *       live together with Hannu Savolainen&squot;s sndkit now.&n; *&t; Speeded up data transfer to 150 kB/sec, with help from Kai&n; *       Makisara, the &quot;provider&quot; of the &quot;mt&quot; tape utility.&n; *       Give &quot;SpinUp&quot; command if necessary.&n; *       First steps to support up to 4 drives (but currently only one).&n; *       Implemented audio capabilities - workman should work, xcdplayer&n; *       gives some problems.&n; *       This version is still consuming too much CPU time, and&n; *       sleeping still has to be worked on.&n; *       During &quot;long&quot; implied seeks, it seems possible that a &n; *       ReadStatus command gets ignored. That gives the message&n; *       &quot;ResponseStatus timed out&quot; (happens about 6 times here during&n; *       a &quot;ls -alR&quot; of the YGGDRASIL LGX-Beta CD). Such a case is&n; *       handled without data error, but it should get done better.&n; *&n; *  0.5  Free CPU during waits (again with help from Kai Makisara).&n; *       Made it work together with the LILO/kernel setup standard.&n; *       Included auto-probing code, as suggested by YGGDRASIL.&n; *       Formal redesign to add DDI debugging.&n; *       There are still flaws in IOCTL (workman with double speed drive).&n; *&n; *  1.0  Added support for all drive IDs (0...3, no longer only 0)&n; *       and up to 4 drives on one controller.&n; *       Added &quot;#define MANY_SESSION&quot; for &quot;old&quot; multi session CDs.&n; *&n; *  1.1  Do SpinUp for new drives, too.&n; *       Revised for clean compile under &quot;old&quot; kernels (0.99pl9).&n; *&n; *  1.2  Found the &quot;workman with double-speed drive&quot; bug: use the driver&squot;s&n; *       audio_state, not what the drive is reporting with ReadSubQ.&n; *&n; *  1.3  Minor cleanups.&n; *       Refinements regarding Workman.&n; *&n; *  1.4  Read XA disks (PhotoCDs) with &quot;old&quot; drives, too (but only the first&n; *       session - no chance to fully access a &quot;multi-session&quot; CD).&n; *       This currently still is too slow (50 kB/sec) - but possibly&n; *       the old drives won&squot;t do it faster.&n; *       Implemented &quot;door (un)lock&quot; for new drives (still does not work&n; *       as wanted - no lock possible after an unlock).&n; *       Added some debugging printout for the UPC/EAN code - but my drives &n; *       return only zeroes. Is there no UPC/EAN code written?&n; *&n; *  1.5  Laborate with UPC/EAN code (not better yet).&n; *       Adapt to kernel 1.1.8 change (have to explicitly include&n; *       &lt;linux/string.h&gt; now).&n; *&n; *  1.6  Trying to read audio frames as data. Impossible with the current&n; *       drive firmware levels, as it seems. Awaiting any hint. ;-)&n; *       Changed &quot;door unlock&quot;: repeat it until success.&n; *       Changed CDROMSTOP routine (stop somewhat &quot;softer&quot; so that Workman&n; *       won&squot;t get confused).&n; *       Added a third interface type: Sequoia S-1000, as used with the SPEA&n; *       Media FX sound card. This interface (usable for Sony and Mitsumi &n; *       drives, too) needs a special configuration setup and behaves like a &n; *       LaserMate type after that. Still experimental - I do not have such&n; *       an interface.&n; *       Use the &quot;variable BLOCK_SIZE&quot; feature (2048). But it does only work&n; *       if you give the mount option &quot;block=2048&quot;.&n; *       The media_check routine is currently disabled; now that it gets&n; *       called as it should I fear it must get synchronized for not to&n; *       disturb the normal driver&squot;s activity.&n; *&n; *  2.0  Version number bumped - two reasons:&n; *       - reading audio tracks as data works now with CR-562 and CR-563. We&n; *       currently do it by an IOCTL (yet has to get standardized), one frame&n; *       at a time; that is pretty slow. But it works.&n; *       - we are maintaining now up to 4 interfaces (each up to 4 drives):&n; *       did it the easy way - a different MAJOR (25, 26, ...) and a different&n; *       copy of the driver (sbpcd.c, sbpcd2.c, sbpcd3.c, sbpcd4.c - only&n; *       distinguished by the value of SBPCD_ISSUE and the driver&squot;s name),&n; *       and a common sbpcd.h file.&n; *       Bettered the &quot;ReadCapacity error&quot; problem with old CR-52x drives (the&n; *       drives sometimes need a manual &quot;eject/insert&quot; before work): just&n; *       reset the drive and do again. Needs lots of resets here and sometimes&n; *       that does not cure, so this can&squot;t be the solution.&n; *&n; *  2.1  Found bug with multisession CDs (accessing frame 16).&n; *       &quot;read audio&quot; works now with address type CDROM_MSF, too.&n; *       Bigger audio frame buffer: allows reading max. 4 frames at time; this&n; *       gives a significant speedup, but reading more than one frame at once&n; *       gives missing chunks at each single frame boundary.&n; *&n; *  2.2  Kernel interface cleanups: timers, init, setup, media check.&n; *&n; *  2.3  Let &quot;door lock&quot; and &quot;eject&quot; live together.&n; *       Implemented &quot;close tray&quot; (done automatically during open).&n; *&n; *  2.4  Use different names for device registering.&n; *&n; *  2.5  Added &quot;#if EJECT&quot; code (default: enabled) to automatically eject&n; *       the tray during last call to &quot;sbpcd_release&quot;.&n; *       Added &quot;#if JUKEBOX&quot; code (default: disabled) to automatically eject&n; *       the tray during call to &quot;sbpcd_open&quot; if no disk is in.&n; *       Turn on the CD volume of &quot;compatible&quot; sound cards, too; just define&n; *       SOUND_BASE (in sbpcd.h) accordingly (default: disabled).&n; *&n; *  2.6  Nothing new.  &n; *&n; *  2.7  Added CDROMEJECT_SW ioctl to set the &quot;EJECT&quot; behavior on the fly:&n; *       0 disables, 1 enables auto-ejecting. Useful to keep the tray in&n; *       during shutdown.&n; *&n; *  2.8  Added first support (still BETA, I need feedback or a drive) for&n; *       the Longshine LCS-7260 drives. They appear as double-speed drives&n; *       using the &quot;old&quot; command scheme, extended by tray control and door&n; *       lock functions.&n; *       Found (and fixed preliminary) a flaw with some multisession CDs: we&n; *       have to re-direct not only the accesses to frame 16 (the isofs&n; *       routines drive it up to max. 100), but also those to the continuation&n; *       (repetition) frames (as far as they exist - currently set fix as&n; *       16..20).&n; *       Changed default of the &quot;JUKEBOX&quot; define. If you use this default,&n; *       your tray will eject if you try to mount without a disk in. Next&n; *       mount command will insert the tray - so, just fill in a disk. ;-)&n; *&n; *  2.9  Fulfilled the Longshine LCS-7260 support; with great help and&n; *       experiments by Serge Robyns.&n; *       First attempts to support the TEAC CD-55A drives; but still not&n; *       usable yet.&n; *       Implemented the CDROMMULTISESSION ioctl; this is an attempt to handle&n; *       multi session CDs more &quot;transparent&quot; (redirection handling has to be&n; *       done within the isofs routines, and only for the special purpose of&n; *       obtaining the &quot;right&quot; volume descriptor; accesses to the raw device&n; *       should not get redirected).&n; *&n; *  3.0  Just a &quot;normal&quot; increment, with some provisions to do it better. ;-)&n; *       Introduced &quot;#define READ_AUDIO&quot; to specify the maximum number of &n; *       audio frames to grab with one request. This defines a buffer size&n; *       within kernel space; a value of 0 will reserve no such space and&n; *       disable the CDROMREADAUDIO ioctl. A value of 75 enables the reading&n; *       of a whole second with one command, but will use a buffer of more&n; *       than 172 kB.&n; *       Started CD200 support. Drive detection should work, but nothing&n; *       more.&n; *&n; *  3.1  Working to support the CD200 and the Teac CD-55A drives.&n; *       AT-BUS style device numbering no longer used: use SCSI style now.&n; *       So, the first &quot;found&quot; device has MINOR 0, regardless of the&n; *       jumpered drive ID. This implies modifications to the /dev/sbpcd*&n; *       entries for some people, but will help the DAU (german TLA, english:&n; *       &quot;newbie&quot;, maybe ;-) to install his &quot;first&quot; system from a CD.&n; *&n; *  3.2  Still testing with CD200 and CD-55A drives.&n; *&n; *  3.3  Working with CD200 support.&n; *&n; *  3.4  Auto-probing stops if an address of 0 is seen (to be entered with&n; *       the kernel command line).&n; *       Made the driver &quot;loadable&quot;. If used as a module, &quot;audio copy&quot; is&n; *       disabled, and the internal read ahead data buffer has a reduced size&n; *       of 4 kB; so, throughput may be reduced a little bit with slow CPUs.&n; *&n; *  3.5  Provisions to handle weird photoCDs which have an interrupted&n; *       &quot;formatting&quot; immediately after the last frames of some files: simply&n; *       never &quot;read ahead&quot; with MultiSession CDs. By this, CPU usage may be&n; *       increased with those CDs, and there may be a loss in speed.&n; *       Re-structured the messaging system.&n; *       The &quot;loadable&quot; version no longer has a limited READ_AUDIO buffer&n; *       size.&n; *       Removed &quot;MANY_SESSION&quot; handling for &quot;old&quot; multi session CDs.&n; *       Added &quot;private&quot; IOCTLs CDROMRESET and CDROMVOLREAD.&n; *       Started again to support the TEAC CD-55A drives, now that I found&n; *       the money for &quot;my own&quot; drive. ;-)&n; *       The TEAC CD-55A support is fairly working now.&n; *       I have measured that the drive &quot;delivers&quot; at 600 kB/sec (even with&n; *       bigger requests than the drive&squot;s 64 kB buffer can satisfy), but&n; *       the &quot;real&quot; rate does not exceed 520 kB/sec at the moment. &n; *       Caused by the various changes to build in TEAC support, the timed&n; *       loops are de-optimized at the moment (less throughput with CR-52x&n; *       drives, and the TEAC will give speed only with SBP_BUFFER_FRAMES 64).&n; *&n; *  3.6  Fixed TEAC data read problems with SbPro interfaces.&n; *       Initial size of the READ_AUDIO buffer is 0. Can get set to any size&n; *       during runtime.&n; *&n; *  3.7  Introduced MAX_DRIVES for some poor interface cards (seen with TEAC&n; *       drives) which allow only one drive (ID 0); this avoids repetitive&n; *       detection under IDs 1..3. &n; *       Elongated cmd_out_T response waiting; necessary for photo CDs with&n; *       a lot of sessions.&n; *       Bettered the sbpcd_open() behavior with TEAC drives.&n; *&n; *  3.8  Elongated max_latency for CR-56x drives.&n; *&n; *  3.9  Finally fixed the long-known SoundScape/SPEA/Sequoia S-1000 interface&n; *       configuration bug.&n; *       Now Corey, Heiko, Ken, Leo, Vadim/Eric &amp; Werner are invited to copy&n; *       the config_spea() routine into their drivers. ;-)&n; *&n; *&n; *  TODO&n; *&n; *     disk change detection&n; *     synchronize multi-activity&n; *        (data + audio + ioctl + disk change, multiple drives)&n; *     implement &quot;read all subchannel data&quot; (96 bytes per frame)&n; *     check if CDROMPLAYMSF can cause a hang&n; *&n; *     special thanks to Kai Makisara (kai.makisara@vtt.fi) for his fine&n; *     elaborated speed-up experiments (and the fabulous results!), for&n; *     the &quot;push&quot; towards load-free wait loops, and for the extensive mail&n; *     thread which brought additional hints and bug fixes.&n; *&n; *   Copyright (C) 1993, 1994, 1995  Eberhard Moenkeberg &lt;emoenke@gwdg.de&gt;&n; *&n; *                  If you change this software, you should mail a .diff&n; *                  file with some description lines to emoenke@gwdg.de.&n; *                  I want to know about it.&n; *&n; *                  If you are the editor of a Linux CD, you should&n; *                  enable sbpcd.c within your boot floppy kernel and&n; *                  send me one of your CDs for free.&n; *&n; *   This program is free software; you can redistribute it and/or modify&n; *   it under the terms of the GNU General Public License as published by&n; *   the Free Software Foundation; either version 2, or (at your option)&n; *   any later version.&n; *&n; *   You should have received a copy of the GNU General Public License&n; *   (for example /usr/src/linux/COPYING); if not, write to the Free&n; *   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#ifndef SBPCD_ISSUE
 DECL|macro|SBPCD_ISSUE
 mdefine_line|#define SBPCD_ISSUE 1
@@ -56,7 +56,7 @@ mdefine_line|#define MAJOR_NR MATSUSHITA_CDROM4_MAJOR /* fourth driver issue */
 macro_line|#endif
 macro_line|#include &quot;blk.h&quot;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;v3.8 Eberhard Moenkeberg &lt;emoenke@gwdg.de&gt;&quot;
+mdefine_line|#define VERSION &quot;v3.9 Eberhard Moenkeberg &lt;emoenke@gwdg.de&gt;&quot;
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * provisions for more than 1 driver issues&n; * currently up to 4 drivers, expandable&n; */
 macro_line|#if !(SBPCD_ISSUE-1)
@@ -167,17 +167,17 @@ comma
 l_int|0
 comma
 multiline_comment|/* &quot;sound card #9&quot; */
-l_int|0x330
+l_int|0x338
 comma
 l_int|2
 comma
-multiline_comment|/* SPEA Media FX (default) */
-l_int|0x320
+multiline_comment|/* SPEA Media FX, Ensonic SoundScape (default) */
+l_int|0x328
 comma
 l_int|2
 comma
 multiline_comment|/* SPEA Media FX */
-l_int|0x340
+l_int|0x348
 comma
 l_int|2
 comma
@@ -220,7 +220,7 @@ comma
 l_int|0
 comma
 multiline_comment|/* Lasermate, CI-101P */
-l_int|0x350
+l_int|0x358
 comma
 l_int|2
 comma
@@ -603,6 +603,24 @@ op_star
 id|str_sp_l
 op_assign
 l_string|&quot;spea&quot;
+suffix:semicolon
+DECL|variable|str_ss
+r_static
+r_const
+r_char
+op_star
+id|str_ss
+op_assign
+l_string|&quot;SoundScape&quot;
+suffix:semicolon
+DECL|variable|str_ss_l
+r_static
+r_const
+r_char
+op_star
+id|str_ss_l
+op_assign
+l_string|&quot;soundscape&quot;
 suffix:semicolon
 DECL|variable|type
 r_const
@@ -1071,6 +1089,10 @@ DECL|member|last_session
 r_int
 id|last_session
 suffix:semicolon
+DECL|member|track_of_last_session
+r_int
+id|track_of_last_session
+suffix:semicolon
 DECL|member|audio_state
 id|u_char
 id|audio_state
@@ -1152,10 +1174,6 @@ id|UPC_buf
 (braket
 l_int|7
 )braket
-suffix:semicolon
-DECL|member|CDsize_blk
-r_int
-id|CDsize_blk
 suffix:semicolon
 DECL|member|frame_size
 r_int
@@ -1589,6 +1607,7 @@ id|timed_out_delay
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#if 0
 id|msg
 c_func
 (paren
@@ -1597,6 +1616,7 @@ comma
 l_string|&quot;delay timer expired.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*==========================================================================*/
 DECL|function|mark_timeout_data
@@ -1613,6 +1633,7 @@ id|timed_out_data
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#if 0
 id|msg
 c_func
 (paren
@@ -1621,6 +1642,7 @@ comma
 l_string|&quot;data timer expired.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*==========================================================================*/
 macro_line|#if 0
@@ -1637,6 +1659,7 @@ id|timed_out_audio
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#if 0
 id|msg
 c_func
 (paren
@@ -1645,6 +1668,7 @@ comma
 l_string|&quot;audio timer expired.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/*==========================================================================*/
@@ -1751,7 +1775,7 @@ id|msf
 (brace
 id|lba
 op_add_assign
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 id|msf
 (braket
@@ -1862,7 +1886,7 @@ op_assign
 (paren
 id|blk
 op_plus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 )paren
 op_div
 (paren
@@ -1876,7 +1900,7 @@ op_assign
 (paren
 id|blk
 op_plus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 )paren
 op_mod
 (paren
@@ -2096,7 +2120,7 @@ id|msf.c
 l_int|0
 )braket
 op_minus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 r_if
 c_cond
@@ -2156,7 +2180,7 @@ id|msf
 l_int|2
 )braket
 op_minus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 r_if
 c_cond
@@ -2771,9 +2795,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 id|i
@@ -2956,9 +2978,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 id|i
@@ -3312,9 +3332,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 id|j
@@ -4526,9 +4544,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 id|j
@@ -5670,9 +5686,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -9241,9 +9255,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -10164,9 +10176,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -10243,9 +10253,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -10296,9 +10304,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -11264,6 +11270,15 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|sense_byte
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11286,33 +11301,9 @@ r_else
 r_if
 c_cond
 (paren
-id|fam0L_drive
-)paren
-id|D_S
-(braket
-id|d
-)braket
-dot
-id|sense_byte
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
 id|famT_drive
 )paren
 (brace
-id|D_S
-(braket
-id|d
-)braket
-dot
-id|sense_byte
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11332,7 +11323,16 @@ id|xa_byte
 op_assign
 l_int|0x20
 suffix:semicolon
-multiline_comment|/* wrong!!!! */
+r_else
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|xa_byte
+op_assign
+l_int|0
+suffix:semicolon
 id|i
 op_assign
 l_int|2
@@ -12525,6 +12525,18 @@ r_return
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* some firmware lacks this command */
+r_if
+c_cond
+(paren
+id|famT_drive
+)paren
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* done with cc_ReadTocDescr() */
 id|D_S
 (braket
 id|d
@@ -12633,53 +12645,6 @@ op_or
 id|f_obey_p_check
 suffix:semicolon
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|famT_drive
-)paren
-(brace
-id|response_count
-op_assign
-l_int|12
-suffix:semicolon
-id|drvcmd
-(braket
-l_int|0
-)braket
-op_assign
-id|CMDT_DISKINFO
-suffix:semicolon
-id|drvcmd
-(braket
-l_int|1
-)braket
-op_assign
-l_int|0x02
-suffix:semicolon
-id|drvcmd
-(braket
-l_int|6
-)braket
-op_assign
-id|CDROM_LEADOUT
-suffix:semicolon
-id|drvcmd
-(braket
-l_int|8
-)braket
-op_assign
-id|response_count
-suffix:semicolon
-id|drvcmd
-(braket
-l_int|9
-)braket
-op_assign
-l_int|0x00
-suffix:semicolon
-)brace
 id|i
 op_assign
 id|cmd_out
@@ -12769,7 +12734,7 @@ l_int|2
 )paren
 )paren
 op_plus
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 suffix:semicolon
 r_else
 r_if
@@ -12858,77 +12823,6 @@ l_int|3
 )paren
 )paren
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|famT_drive
-)paren
-(brace
-id|D_S
-(braket
-id|d
-)braket
-dot
-id|CDsize_frm
-op_assign
-id|make32
-c_func
-(paren
-id|make16
-c_func
-(paren
-id|infobuf
-(braket
-l_int|8
-)braket
-comma
-id|infobuf
-(braket
-l_int|9
-)braket
-)paren
-comma
-id|make16
-c_func
-(paren
-id|infobuf
-(braket
-l_int|10
-)braket
-comma
-id|infobuf
-(braket
-l_int|11
-)braket
-)paren
-)paren
-suffix:semicolon
-id|D_S
-(braket
-id|d
-)braket
-dot
-id|n_first_track
-op_assign
-id|infobuf
-(braket
-l_int|2
-)braket
-suffix:semicolon
-id|D_S
-(braket
-id|d
-)braket
-dot
-id|n_last_track
-op_assign
-id|infobuf
-(braket
-l_int|3
-)braket
-suffix:semicolon
-)brace
 id|D_S
 (braket
 id|d
@@ -13683,6 +13577,22 @@ id|d
 dot
 id|size_msf
 )paren
+suffix:semicolon
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|CDsize_frm
+op_assign
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|size_blk
+op_plus
+l_int|1
 suffix:semicolon
 id|D_S
 (braket
@@ -14650,13 +14560,13 @@ c_loop
 (paren
 id|block
 op_assign
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 op_plus
 l_int|1
 suffix:semicolon
 id|block
 OL
-id|CD_BLOCK_OFFSET
+id|CD_MSF_OFFSET
 op_plus
 l_int|200
 suffix:semicolon
@@ -15501,6 +15411,69 @@ id|D_S
 id|d
 )braket
 dot
+id|first_session
+op_assign
+id|infobuf
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|last_session
+op_assign
+id|infobuf
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|track_of_last_session
+op_assign
+id|infobuf
+(braket
+l_int|6
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|first_session
+op_ne
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|last_session
+)paren
+(brace
+id|D_S
+(braket
+id|d
+)braket
+dot
+id|f_multisession
+op_assign
+l_int|1
+suffix:semicolon
+id|D_S
+(braket
+id|d
+)braket
+dot
 id|lba_multi
 op_assign
 id|msf2blk
@@ -15536,6 +15509,7 @@ l_int|11
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 r_for
 c_loop
@@ -15895,6 +15869,7 @@ op_amp
 id|delay_timer
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|msg
 c_func
 (paren
@@ -15903,6 +15878,7 @@ comma
 l_string|&quot;delay timer started (11*HZ/10).&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_do
 (brace
 id|i
@@ -15942,6 +15918,7 @@ op_amp
 id|delay_timer
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|msg
 c_func
 (paren
@@ -15952,6 +15929,7 @@ comma
 id|datarate
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -16002,6 +15980,7 @@ op_div
 l_int|300
 suffix:semicolon
 macro_line|#endif LONG_TIMING
+macro_line|#if 0
 id|msg
 c_func
 (paren
@@ -16014,6 +15993,7 @@ comma
 id|maxtim_data
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*==========================================================================*/
 macro_line|#if 0
@@ -18538,7 +18518,7 @@ id|j
 op_ne
 l_int|500
 )paren
-op_logical_or
+op_logical_and
 (paren
 id|j
 op_ne
@@ -18579,12 +18559,18 @@ c_func
 (paren
 id|DBG_INF
 comma
-l_string|&quot;support is not fulfilled yet - audio should work.&bslash;n&quot;
+l_string|&quot;CD200 is not fully supported yet - CD200F should work.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|j
+op_ne
+l_int|1
+)paren
+op_logical_and
 (paren
 id|j
 op_ne
@@ -18602,7 +18588,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* only 1.01 and 0.35 known at time */
+multiline_comment|/* unknown version at time */
 )brace
 )brace
 id|msg
@@ -21270,7 +21256,7 @@ multiline_comment|/* XA disk with old drive */
 id|cc_ModeSelect
 c_func
 (paren
-id|CD_FRAMESIZE_XA
+id|CD_FRAMESIZE_RAW1
 )paren
 suffix:semicolon
 id|cc_ModeSense
@@ -24188,7 +24174,7 @@ suffix:semicolon
 id|cc_ModeSelect
 c_func
 (paren
-id|CD_FRAMESIZE_XA
+id|CD_FRAMESIZE_RAW1
 )paren
 suffix:semicolon
 id|cc_ModeSense
@@ -24773,9 +24759,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* wait a bit, try again */
@@ -25142,9 +25126,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 r_try
@@ -29442,7 +29424,7 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*==========================================================================*/
-multiline_comment|/*&n; * accept &quot;kernel command line&quot; parameters &n; * (suggested by Peter MacDonald with SLS 1.03)&n; *&n; * This is only implemented for the first controller. Should be enough to&n; * allow installing with a &quot;strange&quot; distribution kernel.&n; *&n; * use: tell LILO:&n; *                 sbpcd=0x230,SoundBlaster&n; *             or&n; *                 sbpcd=0x300,LaserMate&n; *             or&n; *                 sbpcd=0x330,SPEA&n; *&n; * (upper/lower case sensitive here!!!).&n; *&n; * the address value has to be the TRUE CDROM PORT ADDRESS -&n; * not the soundcard base address.&n; *&n; */
+multiline_comment|/*&n; * accept &quot;kernel command line&quot; parameters &n; * (suggested by Peter MacDonald with SLS 1.03)&n; *&n; * This is only implemented for the first controller. Should be enough to&n; * allow installing with a &quot;strange&quot; distribution kernel.&n; *&n; * use: tell LILO:&n; *                 sbpcd=0x230,SoundBlaster&n; *             or&n; *                 sbpcd=0x300,LaserMate&n; *             or&n; *                 sbpcd=0x330,SoundScape&n; *&n; * (upper/lower case sensitive here - but all-lowercase is ok!!!).&n; *&n; * the address value has to be the CDROM PORT ADDRESS -&n; * not the soundcard base address.&n; * For the SPEA/SoundScape setup, DO NOT specify the &quot;configuration port&quot;&n; * address, but the address which is really used for the CDROM (usually 8&n; * bytes above).&n; *&n; */
 macro_line|#if (SBPCD_ISSUE-1)
 r_static
 macro_line|#endif
@@ -29482,6 +29464,24 @@ suffix:semicolon
 id|sbpro_type
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* default: &quot;LaserMate&quot; */
+r_if
+c_cond
+(paren
+id|p
+(braket
+l_int|0
+)braket
+OG
+l_int|1
+)paren
+id|sbpro_type
+op_assign
+id|p
+(braket
+l_int|2
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -29544,6 +29544,40 @@ c_func
 id|s
 comma
 id|str_sp_l
+)paren
+)paren
+id|sbpro_type
+op_assign
+l_int|2
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|s
+comma
+id|str_ss
+)paren
+)paren
+id|sbpro_type
+op_assign
+l_int|2
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|s
+comma
+id|str_ss_l
 )paren
 )paren
 id|sbpro_type
@@ -29637,7 +29671,7 @@ l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/*==========================================================================*/
-multiline_comment|/*&n; * Sequoia S-1000 CD-ROM Interface Configuration&n; * as used within SPEA Media FX card&n; * The SPEA soundcard has to get configured for &n; *     -&gt; interface type &quot;Matsushita/Panasonic&quot; (not Sony or Mitsumi)&n; *     -&gt; I/O base address (0x320, 0x330, 0x340, 0x350)&n; */
+multiline_comment|/*&n; * Sequoia S-1000 CD-ROM Interface Configuration&n; * as used within SPEA Media FX, Ensonic SoundScape and some Reveal cards&n; * The soundcard has to get jumpered for the interface type &quot;Panasonic&quot;&n; * (not Sony or Mitsumi) and to get soft-configured for&n; *     -&gt; configuration port address&n; *     -&gt; CDROM port offset (num_ports): has to be 8 here. Possibly this&n; *        offset value determines the interface type (none, Panasonic,&n; *        Mitsumi, Sony).&n; *        The interface uses a configuration port (0x320, 0x330, 0x340, 0x350)&n; *        some bytes below the real CDROM address.&n; *         &n; *        For the Panasonic style (LaserMate) interface and the configuration&n; *        port 0x330, we have to use an offset of 8; so, the real CDROM port&n; *        address is 0x338.&n; */
 DECL|function|config_spea
 r_static
 r_int
@@ -29653,19 +29687,19 @@ op_assign
 l_int|0x10
 suffix:semicolon
 multiline_comment|/* 2:0x00, 8:0x10, 16:0x20, 32:0x30 */
-multiline_comment|/* What is n_ports? Number of addresses or base address offset? */
+multiline_comment|/* base address offset between configuration port and CDROM port */
 r_int
 id|irq_number
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* 2:0x01, 7:0x03, 12:0x05, 15:0x07, OFF:0x00 */
+multiline_comment|/* off:0x00, 2:0x01, 7:0x03, 12:0x05, 15:0x07 */
 r_int
 id|dma_channel
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* 0:0x08, 1:0x18, 3:0x38, 5:0x58, 6:0x68, 7:0x78, OFF: 0x00 */
+multiline_comment|/* off: 0x00, 0:0x08, 1:0x18, 3:0x38, 5:0x58, 6:0x68 */
 r_int
 id|dack_polarity
 op_assign
@@ -29682,9 +29716,9 @@ r_int
 id|i
 suffix:semicolon
 DECL|macro|SPEA_REG_1
-mdefine_line|#define SPEA_REG_1 sbpcd_ioaddr+4
+mdefine_line|#define SPEA_REG_1 sbpcd_ioaddr-0x08+4
 DECL|macro|SPEA_REG_2
-mdefine_line|#define SPEA_REG_2 sbpcd_ioaddr+5
+mdefine_line|#define SPEA_REG_2 sbpcd_ioaddr-0x08+5
 id|OUT
 c_func
 (paren
@@ -29841,7 +29875,7 @@ c_func
 (paren
 id|DBG_SEQ
 comma
-l_string|&quot;found SPEA interface at %04X.&bslash;n&quot;
+l_string|&quot;found SoundScape interface at %04X.&bslash;n&quot;
 comma
 id|sbpcd_ioaddr
 )paren
@@ -29925,7 +29959,7 @@ c_func
 (paren
 id|DBG_INF
 comma
-l_string|&quot;Looking for Matsushita/Panasonic, CreativeLabs, IBM, Longshine, TEAC CD-ROM drives&bslash;n&quot;
+l_string|&quot;Looking for Matsushita/Panasonic, CreativeLabs, Longshine, TEAC CD-ROM drives&bslash;n&quot;
 )paren
 suffix:semicolon
 id|msg
@@ -29933,7 +29967,7 @@ c_func
 (paren
 id|DBG_INF
 comma
-l_string|&quot;&bslash;n= = = = = = = = = = W A R N I N G = = = = = = = = = =&bslash;n&quot;
+l_string|&quot;= = = = = = = = = = W A R N I N G = = = = = = = = = =&bslash;n&quot;
 )paren
 suffix:semicolon
 id|msg
@@ -29941,7 +29975,7 @@ c_func
 (paren
 id|DBG_INF
 comma
-l_string|&quot;Auto-Probing can cause a hang (f.e. touching an ethernet card).&bslash;n&quot;
+l_string|&quot;Auto-Probing can cause a hang (f.e. touching an NE2000 card).&bslash;n&quot;
 )paren
 suffix:semicolon
 id|msg
@@ -29997,7 +30031,7 @@ c_func
 (paren
 id|DBG_INF
 comma
-l_string|&quot;   LILO boot: ... sbpcd=0x330,SPEA&bslash;n&quot;
+l_string|&quot;   LILO boot: ... sbpcd=0x338,SoundScape&bslash;n&quot;
 )paren
 suffix:semicolon
 id|msg
@@ -30013,7 +30047,7 @@ c_func
 (paren
 id|DBG_INF
 comma
-l_string|&quot;= = = = = = = = = = END of WARNING = = = = = = = = = =&bslash;n&bslash;n&quot;
+l_string|&quot;= = = = = = = = = = END of WARNING = = = = = == = = =&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

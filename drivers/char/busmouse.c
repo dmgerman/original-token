@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/busmouse.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -855,11 +856,11 @@ id|fasync_mouse
 comma
 )brace
 suffix:semicolon
-DECL|variable|bus_mous
+DECL|variable|bus_mouse
 r_static
 r_struct
 id|mouse
-id|bus_mous
+id|bus_mouse
 op_assign
 (brace
 id|LOGITECH_BUSMOUSE

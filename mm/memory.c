@@ -3029,7 +3029,7 @@ id|high_memory
 r_goto
 id|bad_wp_page
 suffix:semicolon
-id|vma-&gt;vm_mm-&gt;min_flt
+id|tsk-&gt;min_flt
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; * Do we need to copy?&n;&t; */
@@ -4785,7 +4785,7 @@ op_increment
 id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_mm-&gt;maj_flt
+id|tsk-&gt;maj_flt
 suffix:semicolon
 id|set_pte
 c_func
@@ -4915,7 +4915,7 @@ op_increment
 id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_mm-&gt;min_flt
+id|tsk-&gt;min_flt
 suffix:semicolon
 id|get_empty_page
 c_func
@@ -4955,10 +4955,10 @@ id|page
 )paren
 (brace
 op_increment
-id|vma-&gt;vm_mm-&gt;min_flt
+id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_mm-&gt;rss
+id|tsk-&gt;min_flt
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -4988,7 +4988,7 @@ r_return
 suffix:semicolon
 )brace
 op_increment
-id|vma-&gt;vm_mm-&gt;maj_flt
+id|tsk-&gt;maj_flt
 suffix:semicolon
 op_increment
 id|vma-&gt;vm_mm-&gt;rss
