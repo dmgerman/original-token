@@ -579,6 +579,7 @@ suffix:semicolon
 id|spin_lock_init
 c_func
 (paren
+op_amp
 id|acq_lock
 )paren
 suffix:semicolon

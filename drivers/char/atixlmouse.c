@@ -290,6 +290,8 @@ c_func
 id|ATIXL_MSE_DATA_PORT
 comma
 l_int|3
+comma
+l_string|&quot;atixlmouse&quot;
 )paren
 )paren
 r_return

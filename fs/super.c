@@ -466,9 +466,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|index
-op_increment
-suffix:semicolon
 )brace
 id|spin_unlock
 c_func
