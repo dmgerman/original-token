@@ -11,7 +11,9 @@ DECL|macro|MAX_NR_USER_CONSOLES
 mdefine_line|#define MAX_NR_USER_CONSOLES 63&t;/* must be root to allocate above this */
 multiline_comment|/* Note: the ioctl VT_GETSTATE does not work for&n;&t;&t;   consoles 16 and higher (since it returns a short) */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/tty_driver.h&gt;
@@ -20,9 +22,24 @@ macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Note: don&squot;t mess with NR_PTYS until you understand the tty minor &n; * number allocation game...&n; * (Note: the *_driver.minor_start values 1, 64, 128, 192 are&n; * hardcoded at present.)&n; */
 DECL|macro|NR_PTYS
-mdefine_line|#define NR_PTYS&t;&t;256
+mdefine_line|#define NR_PTYS&t;&t;256&t;/* ptys/major */
 DECL|macro|NR_LDISCS
 mdefine_line|#define NR_LDISCS&t;16
+multiline_comment|/*&n; * Unix98 PTY&squot;s can be defined as any multiple of NR_PTYS up to&n; * UNIX98_PTY_MAJOR_COUNT; this section defines what we need from the&n; * config options&n; */
+macro_line|#ifdef CONFIG_UNIX98_PTYS
+DECL|macro|UNIX98_NR_MAJORS
+macro_line|# define UNIX98_NR_MAJORS ((CONFIG_UNIX98_PTY_COUNT+NR_PTYS-1)/NR_PTYS)
+macro_line|# if UNIX98_NR_MAJORS &lt;= 0
+DECL|macro|CONFIG_UNIX98_PTYS
+macro_line|#  undef CONFIG_UNIX98_PTYS
+macro_line|# elif UNIX98_NR_MAJORS &gt; UNIX98_PTY_MAJOR_COUNT
+macro_line|#  error  Too many Unix98 ptys defined
+DECL|macro|UNIX98_NR_MAJORS
+macro_line|#  undef  UNIX98_NR_MAJORS
+DECL|macro|UNIX98_NR_MAJORS
+macro_line|#  define UNIX98_NR_MAJORS UNIX98_PTY_MAJOR_COUNT
+macro_line|# endif
+macro_line|#endif
 multiline_comment|/*&n; * These are set up by the setup-routine at boot-time:&n; */
 DECL|struct|screen_info
 r_struct

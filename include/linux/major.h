@@ -3,10 +3,11 @@ DECL|macro|_LINUX_MAJOR_H
 mdefine_line|#define _LINUX_MAJOR_H
 multiline_comment|/*&n; * This file has definitions for major device numbers.&n; * For the device number assignments, see Documentation/devices.txt.&n; */
 multiline_comment|/* limits */
+multiline_comment|/*&n; * Important: Don&squot;t change this to 256.  Major number 255 is and must be&n; * reserved for future expansion into a larger dev_t space.&n; */
 DECL|macro|MAX_CHRDEV
-mdefine_line|#define MAX_CHRDEV 128
+mdefine_line|#define MAX_CHRDEV&t;255
 DECL|macro|MAX_BLKDEV
-mdefine_line|#define MAX_BLKDEV 128
+mdefine_line|#define MAX_BLKDEV&t;255
 DECL|macro|UNNAMED_MAJOR
 mdefine_line|#define UNNAMED_MAJOR&t;0
 DECL|macro|MEM_MAJOR
@@ -139,6 +140,12 @@ DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR
 mdefine_line|#define SPECIALIX_CALLOUT_MAJOR 76
+DECL|macro|UNIX98_PTY_MASTER_MAJOR
+mdefine_line|#define UNIX98_PTY_MASTER_MAJOR&t;128
+DECL|macro|UNIX98_PTY_MAJOR_COUNT
+mdefine_line|#define UNIX98_PTY_MAJOR_COUNT&t;8
+DECL|macro|UNIX98_PTY_SLAVE_MAJOR
+mdefine_line|#define UNIX98_PTY_SLAVE_MAJOR&t;(UNIX98_PTY_MASTER_MAJOR+UNIX98_PTY_MAJOR_COUNT)
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
 DECL|macro|SCSI_BLK_MAJOR
 mdefine_line|#define SCSI_BLK_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR)

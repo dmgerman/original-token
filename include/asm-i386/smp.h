@@ -731,24 +731,6 @@ DECL|macro|SMP_FROM_INT
 mdefine_line|#define SMP_FROM_INT&t;&t;1
 DECL|macro|SMP_FROM_SYSCALL
 mdefine_line|#define SMP_FROM_SYSCALL&t;2
-macro_line|#else
-macro_line|#ifndef ASSEMBLY
-DECL|function|cpu_logical_map
-r_extern
-r_inline
-r_int
-id|cpu_logical_map
-c_func
-(paren
-r_int
-id|cpu
-)paren
-(brace
-r_return
-id|cpu
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

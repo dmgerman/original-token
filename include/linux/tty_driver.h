@@ -107,6 +107,12 @@ op_star
 op_star
 id|termios_locked
 suffix:semicolon
+DECL|member|driver_state
+r_void
+op_star
+id|driver_state
+suffix:semicolon
+multiline_comment|/* only used for the PTY driver */
 multiline_comment|/*&n;&t; * Interface routines from the upper tty layer to the tty&n;&t; * driver.&n;&t; */
 DECL|member|open
 r_int

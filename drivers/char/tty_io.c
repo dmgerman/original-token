@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/devpts_fs.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
@@ -72,6 +73,16 @@ id|NR_LDISCS
 )braket
 suffix:semicolon
 multiline_comment|/* line disc dispatch table&t;*/
+macro_line|#ifdef CONFIG_UNIX98_PTYS
+r_extern
+r_struct
+id|tty_driver
+id|ptm_driver
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* Unix98 pty masters; for /dev/ptmx */
+macro_line|#endif
 multiline_comment|/*&n; * redirect is the pseudo-tty that console output&n; * is redirected to if asked by TIOCCONS.&n; */
 DECL|variable|redirect
 r_struct
@@ -4812,6 +4823,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_UNIX98_PTYS
 r_if
 c_cond
 (paren
@@ -4821,52 +4833,47 @@ id|PTMX_DEV
 )paren
 (brace
 multiline_comment|/* find a free pty. */
-r_struct
-id|tty_driver
-op_star
-id|driver
-op_assign
-id|tty_drivers
-suffix:semicolon
 r_int
+id|major
+comma
 id|minor
 comma
 id|line
 suffix:semicolon
-multiline_comment|/* find the pty driver */
+r_struct
+id|tty_driver
+op_star
+id|driver
+suffix:semicolon
+multiline_comment|/* find a device that is not in use. */
+id|retval
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_for
 c_loop
 (paren
+id|major
+op_assign
+l_int|0
+suffix:semicolon
+id|major
+OL
+id|UNIX98_NR_MAJORS
+suffix:semicolon
+id|major
+op_increment
+)paren
+(brace
 id|driver
 op_assign
-id|tty_drivers
+op_amp
+id|ptm_driver
+(braket
+id|major
+)braket
 suffix:semicolon
-id|driver
-suffix:semicolon
-id|driver
-op_assign
-id|driver-&gt;next
-)paren
-r_if
-c_cond
-(paren
-id|driver-&gt;major
-op_eq
-id|PTY_MASTER_MAJOR
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|driver
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-multiline_comment|/* find a minor device that is not in use. */
 r_for
 c_loop
 (paren
@@ -4894,8 +4901,10 @@ comma
 id|minor
 )paren
 suffix:semicolon
-id|retval
-op_assign
+r_if
+c_cond
+(paren
+op_logical_neg
 id|init_dev
 c_func
 (paren
@@ -4904,33 +4913,20 @@ comma
 op_amp
 id|tty
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-op_eq
-l_int|0
 )paren
-r_break
+r_goto
+id|ptmx_found
 suffix:semicolon
-multiline_comment|/* success! */
+multiline_comment|/* ok! */
 )brace
-r_if
-c_cond
-(paren
-id|minor
-op_eq
-id|driver-&gt;minor_start
-op_plus
-id|driver-&gt;num
-)paren
-multiline_comment|/* no success */
+)brace
 r_return
 op_minus
 id|EIO
 suffix:semicolon
 multiline_comment|/* no free ptys */
+id|ptmx_found
+suffix:colon
 id|set_bit
 c_func
 (paren
@@ -4951,6 +4947,10 @@ id|devpts_pty_new
 c_func
 (paren
 id|line
+op_plus
+id|major
+op_star
+id|NR_PTYS
 comma
 id|MKDEV
 c_func
@@ -4971,6 +4971,7 @@ r_goto
 id|init_dev_done
 suffix:semicolon
 )brace
+macro_line|#endif
 id|retval
 op_assign
 id|init_dev

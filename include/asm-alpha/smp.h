@@ -1,8 +1,6 @@
 macro_line|#ifndef __ASM_SMP_H
 DECL|macro|__ASM_SMP_H
 mdefine_line|#define __ASM_SMP_H
-DECL|macro|cpu_logical_map
-mdefine_line|#define cpu_logical_map(cpu)&t;(cpu)
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;linux/tasks.h&gt;
 DECL|struct|cpuinfo_alpha
@@ -102,7 +100,9 @@ multiline_comment|/* HACK: Cabrio WHAMI return value is bogus if more than 8 bit
 DECL|macro|hard_smp_processor_id
 mdefine_line|#define hard_smp_processor_id() &bslash;&n;({ &bslash;&n;&t;register unsigned char __r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %0&quot; &bslash;&n;&t;&t;: /* no output (bound to the template) */ &bslash;&n;&t;&t;:&quot;i&quot; (PAL_whami) &bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;__r0; &bslash;&n;})
 DECL|macro|smp_processor_id
-mdefine_line|#define smp_processor_id() hard_smp_processor_id()
+mdefine_line|#define smp_processor_id()&t;hard_smp_processor_id()
+DECL|macro|cpu_logical_map
+mdefine_line|#define cpu_logical_map(cpu)&t;(cpu)
 macro_line|#endif /* __SMP__ */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;(-1)

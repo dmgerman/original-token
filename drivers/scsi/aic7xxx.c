@@ -74,7 +74,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.0.18&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.0.20&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -1903,6 +1903,15 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* extended translation on? */
+DECL|variable|aic7xxx_no_reset
+r_static
+r_int
+r_int
+id|aic7xxx_no_reset
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* no resetting of SCSI bus */
 DECL|variable|aic7xxx_irq_trigger
 r_static
 r_int
@@ -2328,6 +2337,13 @@ l_string|&quot;extended&quot;
 comma
 op_amp
 id|aic7xxx_extended
+)brace
+comma
+(brace
+l_string|&quot;no_reset&quot;
+comma
+op_amp
+id|aic7xxx_no_reset
 )brace
 comma
 (brace
@@ -6278,12 +6294,30 @@ mdefine_line|#define SYNC_INQUIRY_BITS 0x10
 r_if
 c_cond
 (paren
+(paren
 id|buffer
 (braket
 l_int|7
 )braket
 op_amp
 id|WIDE_INQUIRY_BITS
+)paren
+op_logical_and
+(paren
+id|p-&gt;needwdtr_copy
+op_amp
+(paren
+l_int|1
+op_lshift
+id|tindex
+)paren
+)paren
+op_logical_and
+(paren
+id|p-&gt;type
+op_amp
+id|AHC_WIDE
+)paren
 )paren
 (brace
 id|p-&gt;needwdtr
@@ -10002,7 +10036,7 @@ suffix:semicolon
 id|mdelay
 c_func
 (paren
-l_int|1
+l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Turn off the bus reset. */
@@ -10017,6 +10051,12 @@ op_complement
 id|SCSIRSTO
 comma
 id|SCSISEQ
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|2
 )paren
 suffix:semicolon
 id|aic7xxx_clear_intstat
@@ -10042,12 +10082,6 @@ op_or
 id|ENSCSIRST
 comma
 id|SIMODE1
-)paren
-suffix:semicolon
-id|mdelay
-c_func
-(paren
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -16686,41 +16720,6 @@ comma
 id|WAITING_SCBH
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|scbptr
-op_ge
-id|p-&gt;scb_data-&gt;maxhscbs
-)paren
-(brace
-id|scb_index
-op_assign
-id|SCB_LIST_NULL
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|WARN_LEAD
-l_string|&quot;Bad scbptr %d during SELTO.&bslash;n&quot;
-comma
-id|p-&gt;host_no
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-comma
-id|scbptr
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|aic_outb
 c_func
 (paren
@@ -16741,7 +16740,6 @@ comma
 id|SCB_TAG
 )paren
 suffix:semicolon
-)brace
 id|scb
 op_assign
 l_int|NULL
@@ -16949,6 +16947,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;     * Restarting the sequencer will stop the selection and make sure devices&n;     * are allowed to reselect in.&n;     */
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+l_int|0
+comma
+id|SCSISEQ
+)paren
+suffix:semicolon
 id|aic_outb
 c_func
 (paren
@@ -22712,9 +22720,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|scsi_conf
 op_amp
 id|RESET_SCSI
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|aic7xxx_no_reset
+)paren
 )paren
 (brace
 multiline_comment|/* Reset SCSI bus B. */
@@ -22920,9 +22935,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|scsi_conf
 op_amp
 id|RESET_SCSI
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|aic7xxx_no_reset
+)paren
 )paren
 (brace
 multiline_comment|/* Reset SCSI bus A. */
@@ -23284,6 +23306,21 @@ l_int|0x7F
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;     * If we reset the bus, then clear the transfer ssettings, else leave&n;     * them be&n;     */
+r_if
+c_cond
+(paren
+(paren
+id|scsi_conf
+op_amp
+id|RESET_SCSI
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|aic7xxx_no_reset
+)paren
+)paren
 id|aic_outb
 c_func
 (paren
@@ -23455,6 +23492,22 @@ id|p-&gt;needwdtr
 op_assign
 id|p-&gt;needwdtr_copy
 suffix:semicolon
+multiline_comment|/*&n;   * If we reset the bus, then clear the transfer ssettings, else leave&n;   * them be&n;   */
+r_if
+c_cond
+(paren
+(paren
+id|scsi_conf
+op_amp
+id|RESET_SCSI
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|aic7xxx_no_reset
+)paren
+)paren
+(brace
 id|aic_outb
 c_func
 (paren
@@ -23477,6 +23530,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;   * Allocate enough hardware scbs to handle the maximum number of&n;   * concurrent transactions we can have.  We have to make sure that&n;   * the allocated memory is contiguous memory.  The Linux kmalloc&n;   * routine should only allocate contiguous memory, but note that&n;   * this could be a problem if kmalloc() is changed.&n;   */
 r_if
 c_cond
@@ -25081,6 +25135,15 @@ id|i
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;       * Don&squot;t output these settings if we aren&squot;t resetting the bus, instead,&n;       * leave the devices current settings in place&n;       */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|aic7xxx_no_reset
+)paren
+)paren
 id|aic_outb
 c_func
 (paren
@@ -34285,6 +34348,7 @@ op_minus
 id|MINREG
 )paren
 suffix:semicolon
+macro_line|#ifdef MMAPIO
 r_if
 c_cond
 (paren
@@ -34335,6 +34399,7 @@ id|PAGE_MASK
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif /* MMAPIO */
 id|prev
 op_assign
 l_int|NULL

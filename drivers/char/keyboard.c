@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; * &n; * Modified to provide &squot;generic&squot; keyboard support by Hamish Macdonald&n; * Merge with the m68k keyboard driver and split-off of the PC low-level&n; * parts by Geert Uytterhoeven, May 1997&n; *&n; * 27-05-97: Added support for the Magic SysRq Key (Martin Mares)&n; * 16-01-97: Dead-key-twice behavior now configurable (Jiri Hanika)&n; */
+multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; *&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; * &n; * Modified to provide &squot;generic&squot; keyboard support by Hamish Macdonald&n; * Merge with the m68k keyboard driver and split-off of the PC low-level&n; * parts by Geert Uytterhoeven, May 1997&n; *&n; * 27-05-97: Added support for the Magic SysRq Key (Martin Mares)&n; * 30-07-98: Dead keys redone, aeb@cwi.nl.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -245,7 +245,7 @@ DECL|variable|do_ascii
 DECL|variable|do_lock
 DECL|variable|do_lowercase
 DECL|variable|do_slock
-DECL|variable|do_ignore
+DECL|variable|do_dead2
 id|do_meta
 comma
 id|do_ascii
@@ -256,6 +256,9 @@ id|do_lowercase
 comma
 id|do_slock
 comma
+id|do_dead2
+comma
+DECL|variable|do_ignore
 id|do_ignore
 suffix:semicolon
 DECL|variable|key_handler
@@ -293,7 +296,7 @@ id|do_lowercase
 comma
 id|do_slock
 comma
-id|do_ignore
+id|do_dead2
 comma
 id|do_ignore
 comma
@@ -489,6 +492,8 @@ comma
 id|NR_LOCK
 op_minus
 l_int|1
+comma
+l_int|255
 )brace
 suffix:semicolon
 DECL|variable|NR_TYPES
@@ -1354,6 +1359,23 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|diacr
+)paren
+(brace
+id|put_queue
+c_func
+(paren
+id|diacr
+)paren
+suffix:semicolon
+id|diacr
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|put_queue
 c_func
 (paren
@@ -2066,12 +2088,42 @@ comma
 id|A_CEDIL
 )brace
 suffix:semicolon
-multiline_comment|/* If a dead key pressed twice, output a character corresponding to it,    */
-multiline_comment|/* unless overriden in accent_table; otherwise just remember the dead key. */
+multiline_comment|/* Obsolete - for backwards compatibility only */
 DECL|function|do_dead
 r_static
 r_void
 id|do_dead
+c_func
+(paren
+r_int
+r_char
+id|value
+comma
+r_char
+id|up_flag
+)paren
+(brace
+id|value
+op_assign
+id|ret_diacr
+(braket
+id|value
+)braket
+suffix:semicolon
+id|do_dead2
+c_func
+(paren
+id|value
+comma
+id|up_flag
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Handle dead key. Note that we now may have several&n; * dead keys modifying the same character. Very useful&n; * for Vietnamese.&n; */
+DECL|function|do_dead2
+r_static
+r_void
+id|do_dead2
 c_func
 (paren
 r_int
@@ -2089,42 +2141,23 @@ id|up_flag
 )paren
 r_return
 suffix:semicolon
-id|value
+id|diacr
 op_assign
-id|ret_diacr
-(braket
-id|value
-)braket
-suffix:semicolon
-r_if
-c_cond
 (paren
 id|diacr
-op_eq
-id|value
-)paren
-(brace
-multiline_comment|/* pressed twice */
-id|put_queue
-c_func
-(paren
+ques
+c_cond
 id|handle_diacr
 c_func
 (paren
 id|value
 )paren
+suffix:colon
+id|value
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-id|diacr
-op_assign
-id|value
-suffix:semicolon
-)brace
-multiline_comment|/* If space is pressed, return the character corresponding the pending&t;*/
-multiline_comment|/* dead key, otherwise try to combine the two.&t;&t;&t;&t;*/
+multiline_comment|/*&n; * We have a combining character DIACR here, followed by the character CH.&n; * If the combination occurs in the table, return the corresponding value.&n; * Otherwise, if CH is a space or equals DIACR, return DIACR.&n; * Otherwise, conclude that DIACR was not combining after all,&n; * queue it and return CH.&n; */
 DECL|function|handle_diacr
 r_int
 r_char
@@ -2147,16 +2180,6 @@ suffix:semicolon
 id|diacr
 op_assign
 l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ch
-op_eq
-l_char|&squot; &squot;
-)paren
-r_return
-id|d
 suffix:semicolon
 r_for
 c_loop
@@ -2207,15 +2230,15 @@ r_if
 c_cond
 (paren
 id|ch
-op_ne
+op_eq
+l_char|&squot; &squot;
+op_logical_or
+id|ch
+op_eq
 id|d
 )paren
-multiline_comment|/* dead key pressed twice, put once */
-id|put_queue
-c_func
-(paren
+r_return
 id|d
-)paren
 suffix:semicolon
 r_return
 id|ch

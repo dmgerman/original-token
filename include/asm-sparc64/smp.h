@@ -243,24 +243,6 @@ macro_line|#endif /* !(__ASSEMBLY__) */
 DECL|macro|PROC_CHANGE_PENALTY
 mdefine_line|#define PROC_CHANGE_PENALTY&t;20
 macro_line|#else /* !(__SMP__) */
-macro_line|#ifndef __ASSEMBLY__ 
-DECL|function|cpu_logical_map
-r_extern
-id|__inline__
-r_int
-id|cpu_logical_map
-c_func
-(paren
-r_int
-id|cpu
-)paren
-(brace
-r_return
-id|cpu
-suffix:semicolon
-)brace
-macro_line|#endif 
-macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;&t;0xFF
 macro_line|#endif /* !(_SPARC64_SMP_H) */

@@ -326,9 +326,7 @@ c_loop
 (paren
 id|nr
 OL
-id|NR_PTYS
-op_plus
-l_int|2
+id|sbi-&gt;max_ptys
 )paren
 (brace
 r_int

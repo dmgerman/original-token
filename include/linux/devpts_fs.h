@@ -5,6 +5,7 @@ DECL|macro|_LINUX_DEVPTS_FS_H
 mdefine_line|#define _LINUX_DEVPTS_FS_H 1
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#ifdef CONFIG_DEVPTS_FS
 r_void
 id|devpts_pty_new
@@ -22,6 +23,8 @@ c_func
 r_int
 )paren
 suffix:semicolon
+DECL|macro|unix98_max_ptys
+mdefine_line|#define unix98_max_ptys               NR_PTYS * UNIX98_NR_MAJORS;
 macro_line|#elif defined(CONFIG_DEVPTS_FS_MODULE)
 macro_line|#ifdef BUILDING_PTY_C
 DECL|variable|devpts_upcall_new
@@ -50,6 +53,15 @@ r_int
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|unix98_max_ptys
+r_int
+r_int
+id|unix98_max_ptys
+op_assign
+id|NR_PTYS
+op_star
+id|UNIX98_NR_MAJORS
+suffix:semicolon
 DECL|variable|devpts_upcall_new
 id|EXPORT_SYMBOL
 c_func
@@ -62,6 +74,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|devpts_upcall_kill
+)paren
+suffix:semicolon
+DECL|variable|unix98_max_ptys
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unix98_max_ptys
 )paren
 suffix:semicolon
 macro_line|#else
@@ -86,6 +105,11 @@ id|devpts_upcall_kill
 (paren
 r_int
 )paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|unix98_max_ptys
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef BUILDING_DEVPTS

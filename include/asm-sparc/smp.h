@@ -673,24 +673,6 @@ mdefine_line|#define SMP_FROM_INT&t;&t;1
 DECL|macro|SMP_FROM_SYSCALL
 mdefine_line|#define SMP_FROM_SYSCALL&t;2
 macro_line|#else /* !(__SMP__) */
-macro_line|#ifndef __ASSEMBLY__ 
-DECL|function|cpu_logical_map
-r_extern
-id|__inline__
-r_int
-id|cpu_logical_map
-c_func
-(paren
-r_int
-id|cpu
-)paren
-(brace
-r_return
-id|cpu
-suffix:semicolon
-)brace
-macro_line|#endif 
-macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID            0xFF
 macro_line|#endif /* !(_SPARC_SMP_H) */
