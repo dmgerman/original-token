@@ -945,6 +945,8 @@ comma
 id|i
 comma
 id|sz
+comma
+id|dma
 suffix:semicolon
 r_struct
 id|block_header
@@ -993,6 +995,10 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+id|dma
+op_assign
+l_int|0
+suffix:semicolon
 id|type
 op_assign
 id|MF_USED
@@ -1015,6 +1021,10 @@ op_amp
 id|GFP_DMA
 )paren
 (brace
+id|dma
+op_assign
+l_int|1
+suffix:semicolon
 id|type
 op_assign
 id|MF_DMA
@@ -1173,9 +1183,7 @@ id|order
 dot
 id|gfporder
 comma
-id|priority
-op_amp
-id|GFP_DMA
+id|dma
 )paren
 suffix:semicolon
 r_if

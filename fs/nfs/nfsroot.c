@@ -1,14 +1,9 @@
-multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c -- version 2.0&n; *&n; *  Copyright (C) 1995  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *  Copyright (C) 1996  Martin Mares &lt;mj@k332.feld.cvut.cz&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works is:&n; *     (1) Determine the local IP address via RARP or BOOTP or from the&n; *         kernel command line.&n; *     (2) Handle RPC negotiation with the system which replied to RARP or&n; *         was reported as a boot server by BOOTP or manually.&n; *     (3) The actual mounting is done later, when init() is running.&n; *&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&t;Michael Rausch  :&t;Fixed recognition of an incoming RARP answer.&n; *&t;Martin Mares&t;: (2.0)&t;Auto-configuration via BOOTP supported.&n; *&t;Martin Mares&t;:&t;Manual selection of interface &amp; BOOTP/RARP.&n; *&t;Martin Mares&t;:&t;Using network routes instead of host routes,&n; *&t;&t;&t;&t;allowing the default configuration to be used&n; *&t;&t;&t;&t;for normal operation of the host.&n; *&t;Martin Mares&t;:&t;Randomized timer with exponential backoff&n; *&t;&t;&t;&t;installed to minimize network congestion.&n; *&t;Martin Mares&t;:&t;Code cleanup.&n; *&n; *&n; *&t;Known bugs and caveats:&n; *&n; *&t;- BOOTP code doesn&squot;t handle multiple network interfaces properly.&n; *&t;  For now, it uses the first one, trying to prefer ethernet-like&n; *&t;  devices. Not critical as diskless stations are usually single-homed.&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c -- version 2.1&n; *&n; *  Copyright (C) 1995  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *  Copyright (C) 1996  Martin Mares &lt;mj@k332.feld.cvut.cz&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works is:&n; *     (1) Determine the local IP address via RARP or BOOTP or from the&n; *         kernel command line.&n; *     (2) Handle RPC negotiation with the system which replied to RARP or&n; *         was reported as a boot server by BOOTP or manually.&n; *     (3) The actual mounting is done later, when init() is running.&n; *&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&t;Michael Rausch  :&t;Fixed recognition of an incoming RARP answer.&n; *&t;Martin Mares&t;: (2.0)&t;Auto-configuration via BOOTP supported.&n; *&t;Martin Mares&t;:&t;Manual selection of interface &amp; BOOTP/RARP.&n; *&t;Martin Mares&t;:&t;Using network routes instead of host routes,&n; *&t;&t;&t;&t;allowing the default configuration to be used&n; *&t;&t;&t;&t;for normal operation of the host.&n; *&t;Martin Mares&t;:&t;Randomized timer with exponential backoff&n; *&t;&t;&t;&t;installed to minimize network congestion.&n; *&t;Martin Mares&t;:&t;Code cleanup.&n; *&t;Martin Mares&t;: (2.1)&t;BOOTP and RARP made configuration options.&n; *&t;Martin Mares&t;:&t;Server hostname generation fixed.&n; *&n; *&n; *&t;Known bugs and caveats:&n; *&n; *&t;- BOOTP code doesn&squot;t handle multiple network interfaces properly.&n; *&t;  For now, it uses the first one, trying to prefer ethernet-like&n; *&t;  devices. Not critical as diskless stations are usually single-homed.&n; *&n; */
 multiline_comment|/* Define this to allow debugging output */
 DECL|macro|NFSROOT_DEBUG
 macro_line|#undef NFSROOT_DEBUG
 DECL|macro|NFSROOT_MORE_DEBUG
 macro_line|#undef NFSROOT_MORE_DEBUG
-multiline_comment|/* Choose default protocol(s) */
-DECL|macro|CONFIG_USE_BOOTP
-mdefine_line|#define CONFIG_USE_BOOTP
-DECL|macro|CONFIG_USE_RARP
-mdefine_line|#define CONFIG_USE_RARP
 multiline_comment|/* Define the timeout for waiting for a RARP/BOOTP reply */
 DECL|macro|CONF_BASE_TIMEOUT
 mdefine_line|#define CONF_BASE_TIMEOUT&t;(HZ*5)&t;/* Initial timeout: 5 seconds */
@@ -165,6 +160,9 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Number of devices allowing RARP */
+macro_line|#if defined(CONFIG_RNFS_BOOTP) || defined(CONFIG_RNFS_RARP)
+DECL|macro|CONFIG_RNFS_DYNAMIC
+mdefine_line|#define CONFIG_RNFS_DYNAMIC&t;&t;/* Enable dynamic IP config */
 DECL|variable|pkt_arrived
 r_volatile
 r_static
@@ -176,6 +174,7 @@ DECL|macro|ARRIVED_BOOTP
 mdefine_line|#define ARRIVED_BOOTP 1
 DECL|macro|ARRIVED_RARP
 mdefine_line|#define ARRIVED_RARP 2
+macro_line|#endif
 multiline_comment|/* NFS-related data */
 DECL|variable|nfs_data
 r_static
@@ -540,6 +539,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;      RARP Subroutines&n;&n; ***************************************************************************/
+macro_line|#ifdef CONFIG_RNFS_RARP
 r_extern
 r_void
 id|arp_send
@@ -1109,7 +1109,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;     BOOTP Subroutines&n;&n; ***************************************************************************/
+macro_line|#ifdef CONFIG_RNFS_BOOTP
 DECL|variable|bootp_dev
 r_static
 r_struct
@@ -3266,7 +3268,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;Dynamic configuration of IP.&n;&n; ***************************************************************************/
+macro_line|#ifdef CONFIG_RNFS_DYNAMIC
 multiline_comment|/*&n; *  Determine client and server IP numbers and appropriate device by using&n; *  the RARP and BOOTP protocols.&n; */
 DECL|function|root_auto_config
 r_static
@@ -3288,15 +3292,29 @@ suffix:semicolon
 id|u32
 id|start_jiffies
 suffix:semicolon
+r_int
+id|selected
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Check devices */
+macro_line|#ifdef CONFIG_RNFS_BOOTP
 r_if
 c_cond
 (paren
 id|bootp_flag
-op_logical_and
-op_logical_neg
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|bootp_dev_count
 )paren
+id|selected
+op_assign
+l_int|1
+suffix:semicolon
+r_else
 (brace
 id|printk
 c_func
@@ -3310,14 +3328,30 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
+macro_line|#else
+id|bootp_flag
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_RNFS_RARP
 r_if
 c_cond
 (paren
 id|rarp_flag
-op_logical_and
-op_logical_neg
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|rarp_dev_count
 )paren
+id|selected
+op_assign
+l_int|1
+suffix:semicolon
+r_else
 (brace
 id|printk
 c_func
@@ -3331,18 +3365,22 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
+macro_line|#else
+id|rarp_flag
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* If neither BOOTP nor RARP was selected manually, use both of them */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|bootp_flag
-op_logical_and
-op_logical_neg
-id|rarp_flag
+id|selected
 )paren
 (brace
-macro_line|#ifdef CONFIG_USE_BOOTP
+macro_line|#ifdef CONFIG_RNFS_BOOTP
 r_if
 c_cond
 (paren
@@ -3353,7 +3391,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_USE_RARP
+macro_line|#ifdef CONFIG_RNFS_RARP
 r_if
 c_cond
 (paren
@@ -3379,6 +3417,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Setup RARP and BOOTP protocols */
+macro_line|#ifdef CONFIG_RNFS_RARP
 r_if
 c_cond
 (paren
@@ -3389,6 +3428,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_RNFS_BOOTP
 r_if
 c_cond
 (paren
@@ -3410,6 +3451,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * Send requests and wait, until we get an answer. This loop&n;&t; * seems to be a terrible waste of CPU time, but actually there is&n;&t; * only one process running at all, so we don&squot;t need to use any&n;&t; * scheduler functions.&n;&t; * [Actually we could now, but the nothing else running note still &n;&t; *  applies.. - AC]&n;&t; */
 id|printk
 c_func
@@ -3481,6 +3523,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+macro_line|#ifdef CONFIG_RNFS_BOOTP
 r_if
 c_cond
 (paren
@@ -3519,6 +3562,8 @@ id|rarp_flag
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_RNFS_RARP
 r_if
 c_cond
 (paren
@@ -3529,6 +3574,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -3551,11 +3597,15 @@ op_logical_and
 op_logical_neg
 id|pkt_arrived
 )paren
+macro_line|#ifdef CONFIG_RNFS_BOOTP
 id|root_bootp_recv
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#else
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3597,6 +3647,7 @@ op_assign
 id|CONF_TIMEOUT_MAX
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_RNFS_RARP
 r_if
 c_cond
 (paren
@@ -3607,6 +3658,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_RNFS_BOOTP
 r_if
 c_cond
 (paren
@@ -3617,6 +3670,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3673,6 +3727,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;     Parsing of options&n;&n; ***************************************************************************/
 multiline_comment|/*&n; *  The following integer options are recognized&n; */
 DECL|struct|nfs_int_opts
@@ -3968,25 +4023,6 @@ op_assign
 id|cp
 suffix:semicolon
 )brace
-multiline_comment|/* Setup the server hostname */
-id|cp
-op_assign
-id|in_ntoa
-c_func
-(paren
-id|server.sin_addr.s_addr
-)paren
-suffix:semicolon
-id|strncpy
-c_func
-(paren
-id|nfs_data.hostname
-comma
-id|cp
-comma
-l_int|255
-)paren
-suffix:semicolon
 multiline_comment|/* Set the name of the directory to mount */
 id|cp
 op_assign
@@ -4931,6 +4967,21 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 )brace
+multiline_comment|/* Setup the server hostname */
+id|strncpy
+c_func
+(paren
+id|nfs_data.hostname
+comma
+id|in_ntoa
+c_func
+(paren
+id|server.sin_addr.s_addr
+)paren
+comma
+l_int|255
+)paren
+suffix:semicolon
 multiline_comment|/* Set the correct netmask */
 r_if
 c_cond
@@ -5285,6 +5336,7 @@ op_ne
 l_int|NULL
 )paren
 )paren
+macro_line|#ifdef CONFIG_RNFS_DYNAMIC
 op_logical_and
 id|root_auto_config
 c_func
@@ -5292,6 +5344,7 @@ c_func
 )paren
 OL
 l_int|0
+macro_line|#endif
 )paren
 (brace
 id|root_dev_close

@@ -1125,7 +1125,7 @@ id|IP_FW_F_MASQ
 id|printk
 c_func
 (paren
-l_string|&quot;Masquerade &quot;
+l_string|&quot;masq &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1133,7 +1133,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Accept &quot;
+l_string|&quot;acc  &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1149,7 +1149,7 @@ id|IP_FW_F_ICMPRPL
 id|printk
 c_func
 (paren
-l_string|&quot;Reject &quot;
+l_string|&quot;rej  &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1157,10 +1157,23 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Deny &quot;
+l_string|&quot;deny &quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|rif
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s &quot;
+comma
+id|rif-&gt;name
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1186,6 +1199,8 @@ c_func
 (paren
 l_string|&quot;UDP &quot;
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 id|IPPROTO_ICMP

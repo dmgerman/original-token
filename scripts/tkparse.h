@@ -38,8 +38,8 @@ comma
 DECL|enumerator|tok_hex
 id|tok_hex
 comma
-DECL|enumerator|tok_sound
-id|tok_sound
+DECL|enumerator|tok_make
+id|tok_make
 comma
 DECL|enumerator|tok_define
 id|tok_define

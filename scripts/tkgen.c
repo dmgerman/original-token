@@ -1,4 +1,4 @@
-multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04&n; * Avery Pennarun - Aesthetic improvements.&n; *&n; * 1996 01 24&n; * Avery Pennarun - Bugfixes and more aesthetics.&n; *&n; * 1996 03 08&n; * Avery Pennarun - The int and hex config.in commands work right.&n; *                - Choice buttons are more user-friendly.&n; *                - Disabling a text entry line greys it out properly.&n; *                - dep_tristate now works like in Configure. (not pretty)&n; *                - No warnings in gcc -Wall. (Fixed some &quot;interesting&quot; bugs.)&n; *                - Faster/prettier &quot;Help&quot; lookups.&n; *&n; * 1996 03 15&n; * Avery Pennarun - Added new sed script from Axel Boldt to make help even&n; *                  faster. (Actually awk is downright slow on some machines.)&n; *                - Fixed a bug I introduced into Choice dependencies.  Thanks&n; *                  to Robert Krawitz for pointing this out.&n; *&n; * TO DO:&n; *   - clean up - there are useless ifdef&squot;s everywhere.&n; *   - do more sensible things with the &squot;config -resizable&quot; business.&n; *   - better comments throughout - C code generating tcl is really cryptic.&n; *   - eliminate silly &quot;update idletasks&quot; hack to improve display speed.&n; *   - make tabstops work left-&gt;right instead of right-&gt;left.&n; *   - make canvas contents resize with the window (good luck).&n; *   - make next/prev buttons go to next/previous menu.&n; *   - some way to make submenus inside of submenus (ie. Main-&gt;Networking-&gt;IP)&n; *           (perhaps a button where the description would be)&n; *   - make the main menu use the same tcl code as the submenus.&n; *   - make choice and int/hex input types line up vertically with&n; *           bool/tristate.&n; *   - general speedups - how?  The canvas seems to slow it down a lot.&n; *   - choice buttons should default to the first menu option, rather than a&n; *           blank.  Also look up the right variable when the help button&n; *           is pressed.&n; *   &n; */
+multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1996 01 04&n; * Avery Pennarun - Aesthetic improvements.&n; *&n; * 1996 01 24&n; * Avery Pennarun - Bugfixes and more aesthetics.&n; *&n; * 1996 03 08&n; * Avery Pennarun - The int and hex config.in commands work right.&n; *                - Choice buttons are more user-friendly.&n; *                - Disabling a text entry line greys it out properly.&n; *                - dep_tristate now works like in Configure. (not pretty)&n; *                - No warnings in gcc -Wall. (Fixed some &quot;interesting&quot; bugs.)&n; *                - Faster/prettier &quot;Help&quot; lookups.&n; *&n; * 1996 03 15&n; * Avery Pennarun - Added new sed script from Axel Boldt to make help even&n; *                  faster. (Actually awk is downright slow on some machines.)&n; *                - Fixed a bug I introduced into Choice dependencies.  Thanks&n; *                  to Robert Krawitz for pointing this out.&n; *&n; * 1996 03 16&n; * Avery Pennarun - basic &quot;do_make&quot; support added to let sound config work.&n; *&n; * TO DO:&n; *   - clean up - there are useless ifdef&squot;s everywhere.&n; *   - do more sensible things with the &squot;config -resizable&quot; business.&n; *   - better comments throughout - C code generating tcl is really cryptic.&n; *   - eliminate silly &quot;update idletasks&quot; hack to improve display speed.&n; *   - make tabstops work left-&gt;right instead of right-&gt;left.&n; *   - make canvas contents resize with the window (good luck).&n; *   - make next/prev buttons go to next/previous menu.&n; *   - some way to make submenus inside of submenus (ie. Main-&gt;Networking-&gt;IP)&n; *           (perhaps a button where the description would be)&n; *   - make the main menu use the same tcl code as the submenus.&n; *   - make choice and int/hex input types line up vertically with&n; *           bool/tristate.&n; *   - general speedups - how?  The canvas seems to slow it down a lot.&n; *   - choice buttons should default to the first menu option, rather than a&n; *           blank.  Also look up the right variable when the help button&n; *           is pressed.&n; *   - remove the remaining bits of the now-unnecessary &quot;next/prev&quot; submenu&n; *           code.&n; *   - clean up +/- 16 confusion for enabling/disabling variables; causes&n; *           problems with dependencies.&n; *   &n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &quot;tkparse.h&quot;
@@ -1443,6 +1443,19 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|tok_make
+suffix:colon
+id|printf
+c_func
+(paren
+l_string|&quot;} then { do_make {%s} }&bslash;n&quot;
+comma
+id|item-&gt;value
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|tok_choose
 suffix:colon
 r_case
@@ -2036,9 +2049,6 @@ suffix:colon
 r_case
 id|tok_choose
 suffix:colon
-r_case
-id|tok_sound
-suffix:colon
 id|tot
 op_increment
 suffix:semicolon
@@ -2197,9 +2207,6 @@ id|tok_hex
 suffix:colon
 r_case
 id|tok_choose
-suffix:colon
-r_case
-id|tok_sound
 suffix:colon
 multiline_comment|/*&n;&t;   * If we have overfilled the menu, then go to the next one.&n;&t;   */
 r_if
@@ -2705,56 +2712,6 @@ id|cfg-&gt;optionname
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef INCOMPAT_SOUND_CONFIG
-r_case
-id|tok_sound
-suffix:colon
-r_if
-c_cond
-(paren
-id|cfg-&gt;menu_number
-op_ne
-id|menu_num
-)paren
-(brace
-id|end_proc
-c_func
-(paren
-id|menu_num
-comma
-id|menu_min
-comma
-id|menu_max
-)paren
-suffix:semicolon
-id|start_proc
-c_func
-(paren
-id|menulabel
-comma
-id|cfg-&gt;menu_number
-comma
-id|FALSE
-)paren
-suffix:semicolon
-id|menu_num
-op_assign
-id|cfg-&gt;menu_number
-suffix:semicolon
-)brace
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tdo_sound $w.config.f %d %d&bslash;n&quot;
-comma
-id|cfg-&gt;menu_number
-comma
-id|cfg-&gt;menu_line
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 r_break
@@ -3179,6 +3136,10 @@ comma
 id|cfg-&gt;optionname
 )paren
 suffix:semicolon
+multiline_comment|/* fall through */
+r_case
+id|tok_make
+suffix:colon
 r_case
 id|tok_comment
 suffix:colon
@@ -3348,6 +3309,24 @@ comma
 id|cfg-&gt;optionname
 comma
 id|cfg-&gt;optionname
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|cfg-&gt;tok
+op_eq
+id|tok_make
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tdo_make {%s}&bslash;n&quot;
+comma
+id|cfg-&gt;value
 )paren
 suffix:semicolon
 )brace

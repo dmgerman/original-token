@@ -12,6 +12,18 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+r_extern
+r_int
+id|setup_x86_irq
+c_func
+(paren
+r_int
+comma
+r_struct
+id|irqaction
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* Cycle counter value at the previous timer interrupt.. */
 DECL|variable|last_timer_cc
 r_static
@@ -1252,6 +1264,7 @@ id|sec
 suffix:semicolon
 )brace
 DECL|variable|irq0
+r_static
 r_struct
 id|irqaction
 id|irq0
@@ -1349,10 +1362,13 @@ id|pentium_timer_interrupt
 suffix:semicolon
 )brace
 macro_line|#endif
-id|enable_irq
+id|setup_x86_irq
 c_func
 (paren
 l_int|0
+comma
+op_amp
+id|irq0
 )paren
 suffix:semicolon
 )brace

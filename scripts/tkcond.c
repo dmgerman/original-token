@@ -1110,6 +1110,9 @@ suffix:colon
 r_case
 id|tok_choice
 suffix:colon
+r_case
+id|tok_make
+suffix:colon
 multiline_comment|/*&n;&t;   * We need to duplicate the chain of conditions and attach them to&n;&t;   * this token.&n;&t;   */
 id|cfg-&gt;cond
 op_assign

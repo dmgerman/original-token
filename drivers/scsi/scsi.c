@@ -925,6 +925,18 @@ op_or
 id|BLIST_SINGLELUN
 )brace
 comma
+(brace
+l_string|&quot;EMULEX&quot;
+comma
+l_string|&quot;MD21/S2     ESDI&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+op_or
+id|BLIST_SINGLELUN
+)brace
+comma
 multiline_comment|/*&n; * Must be at end of list...&n; */
 (brace
 l_int|NULL
@@ -3215,11 +3227,16 @@ id|bflags
 op_amp
 id|BLIST_FORCELUN
 )paren
+(brace
 op_star
 id|max_dev_lun
 op_assign
 l_int|8
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;   * We assume the device can&squot;t handle lun!=0 if: - it reports scsi-0 (ANSI&n;   * SCSI Revision 0) (old drives like MAXTOR XT-3280) or - it reports scsi-1&n;   * (ANSI SCSI Revision 1) and Response Data Format 0&n;   */
 r_if
 c_cond
@@ -4140,6 +4157,76 @@ id|RQ_INACTIVE
 )paren
 multiline_comment|/* Might have changed */
 (brace
+macro_line|#if 1&t;/* NEW CODE */
+r_if
+c_cond
+(paren
+id|wait
+op_logical_and
+id|SCwait
+op_logical_and
+id|SCwait-&gt;request.rq_status
+op_ne
+id|RQ_INACTIVE
+)paren
+(brace
+id|sleep_on
+c_func
+(paren
+op_amp
+id|device-&gt;device_wait
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|wait
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|SCwait
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Attempt to allocate device target %d, lun %d&bslash;n&quot;
+comma
+id|device-&gt;id
+comma
+id|device-&gt;lun
+)paren
+suffix:semicolon
+id|panic
+c_func
+(paren
+l_string|&quot;No device found in allocate_device&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#else&t;/* ORIGINAL CODE */
 id|restore_flags
 c_func
 (paren
@@ -4197,6 +4284,7 @@ id|RQ_INACTIVE
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace

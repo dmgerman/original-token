@@ -1,8 +1,8 @@
 macro_line|#ifndef _I386_STRING_H_
 DECL|macro|_I386_STRING_H_
 mdefine_line|#define _I386_STRING_H_
-multiline_comment|/*&n; * On a 486 or Pentium, we are better off not using the&n; * byte string operations. But on a 386 or a PPro the&n; * byte string ops are faster than doing it by hand&n; * (MUCH faster on a Pentium).&n; */
-macro_line|#if CPU == 486 || CPU == 586
+multiline_comment|/*&n; * On a 486 or Pentium, we are better off not using the&n; * byte string operations. But on a 386 or a PPro the&n; * byte string ops are faster than doing it by hand&n; * (MUCH faster on a Pentium).&n; *&n; * Also, the byte strings actually work correctly. Forget&n; * the i486 routines for now as they may be broken..&n; */
+macro_line|#if FIXED_486_STRING &amp;&amp; (CPU == 486 || CPU == 586)
 macro_line|#include &lt;asm/string-486.h&gt;
 macro_line|#else
 multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. String instructions have been&n; * used through-out, making for &quot;slightly&quot; unclear code :-)&n; *&n; *&t;&t;Copyright (C) 1991, 1992 Linus Torvalds&n; */

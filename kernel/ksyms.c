@@ -206,12 +206,6 @@ multiline_comment|/* stackable module support */
 id|X
 c_func
 (paren
-id|rename_module_symbol
-)paren
-comma
-id|X
-c_func
-(paren
 id|register_symtab
 )paren
 comma

@@ -432,6 +432,10 @@ DECL|member|fdiv_bug
 r_int
 id|fdiv_bug
 suffix:semicolon
+DECL|member|have_cpuid
+r_int
+id|have_cpuid
+suffix:semicolon
 DECL|member|wp_works_ok
 r_char
 id|wp_works_ok

@@ -157,7 +157,13 @@ r_int
 id|order
 suffix:semicolon
 id|size
-op_rshift_assign
+op_assign
+(paren
+id|size
+op_minus
+l_int|1
+)paren
+op_rshift
 (paren
 id|PAGE_SHIFT
 op_minus

@@ -602,7 +602,6 @@ r_char
 id|state
 suffix:semicolon
 DECL|member|ack_backlog
-r_volatile
 r_int
 r_char
 id|ack_backlog

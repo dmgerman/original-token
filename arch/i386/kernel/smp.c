@@ -1850,6 +1850,10 @@ id|c-&gt;hlt_works_ok
 op_assign
 id|hlt_works_ok
 suffix:semicolon
+id|c-&gt;have_cpuid
+op_assign
+id|have_cpuid
+suffix:semicolon
 id|c-&gt;udelay_val
 op_assign
 id|loops_per_sec

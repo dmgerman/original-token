@@ -2992,7 +2992,7 @@ id|OPT_SB
 comma
 l_string|&quot;SB_MPU_IRQ&quot;
 comma
-l_string|&quot;SB MPU401 IRQ (SB16, Jazz16 and ES1688)&quot;
+l_string|&quot;SB MPU401 IRQ (Jazz16 and ES1688)&quot;
 comma
 id|FMT_INT
 comma

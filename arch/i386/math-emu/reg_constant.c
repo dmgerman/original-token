@@ -1,8 +1,9 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_constant.c                                                           |&n; |                                                                           |&n; | All of the constant FPU_REGs                                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_constant.c                                                           |&n; |                                                                           |&n; | All of the constant FPU_REGs                                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1996                                         |&n; |                     W. Metzenthen, 22 Parker St, Ormond, Vic 3163,        |&n; |                     Australia.  E-mail   billm@jacobi.maths.monash.edu.au |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
 macro_line|#include &quot;status_w.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
+macro_line|#include &quot;control_w.h&quot;
 DECL|variable|CONST_1
 id|FPU_REG
 r_const
@@ -273,6 +274,9 @@ id|FPU_REG
 r_const
 op_star
 id|c
+comma
+r_int
+id|adj
 )paren
 (brace
 id|FPU_REG
@@ -306,19 +310,28 @@ comma
 id|st_new_ptr
 )paren
 suffix:semicolon
+id|st_new_ptr-&gt;sigl
+op_add_assign
+id|adj
+suffix:semicolon
+multiline_comment|/* For all our fldxxx constants, we don&squot;t need to&n;&t;&t;&t;       borrow or carry. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* A fast way to find out whether x is one of RC_DOWN or RC_CHOP&n;   (and not one of RC_RND or RC_UP).&n;   */
+DECL|macro|DOWN_OR_CHOP
+mdefine_line|#define DOWN_OR_CHOP(x)  (x &amp; RC_DOWN)
 DECL|function|fld1
 r_static
 r_void
 id|fld1
 c_func
 (paren
-r_void
+r_int
+id|rc
 )paren
 (brace
 id|fld_const
@@ -326,6 +339,8 @@ c_func
 (paren
 op_amp
 id|CONST_1
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -335,7 +350,8 @@ r_void
 id|fldl2t
 c_func
 (paren
-r_void
+r_int
+id|rc
 )paren
 (brace
 id|fld_const
@@ -343,6 +359,17 @@ c_func
 (paren
 op_amp
 id|CONST_L2T
+comma
+(paren
+id|rc
+op_eq
+id|RC_UP
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -352,7 +379,8 @@ r_void
 id|fldl2e
 c_func
 (paren
-r_void
+r_int
+id|rc
 )paren
 (brace
 id|fld_const
@@ -360,6 +388,18 @@ c_func
 (paren
 op_amp
 id|CONST_L2E
+comma
+id|DOWN_OR_CHOP
+c_func
+(paren
+id|rc
+)paren
+ques
+c_cond
+op_minus
+l_int|1
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -369,7 +409,8 @@ r_void
 id|fldpi
 c_func
 (paren
-r_void
+r_int
+id|rc
 )paren
 (brace
 id|fld_const
@@ -377,6 +418,18 @@ c_func
 (paren
 op_amp
 id|CONST_PI
+comma
+id|DOWN_OR_CHOP
+c_func
+(paren
+id|rc
+)paren
+ques
+c_cond
+op_minus
+l_int|1
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -386,7 +439,8 @@ r_void
 id|fldlg2
 c_func
 (paren
-r_void
+r_int
+id|rc
 )paren
 (brace
 id|fld_const
@@ -394,6 +448,18 @@ c_func
 (paren
 op_amp
 id|CONST_LG2
+comma
+id|DOWN_OR_CHOP
+c_func
+(paren
+id|rc
+)paren
+ques
+c_cond
+op_minus
+l_int|1
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -403,7 +469,8 @@ r_void
 id|fldln2
 c_func
 (paren
-r_void
+r_int
+id|rc
 )paren
 (brace
 id|fld_const
@@ -411,6 +478,18 @@ c_func
 (paren
 op_amp
 id|CONST_LN2
+comma
+id|DOWN_OR_CHOP
+c_func
+(paren
+id|rc
+)paren
+ques
+c_cond
+op_minus
+l_int|1
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -420,7 +499,8 @@ r_void
 id|fldz
 c_func
 (paren
-r_void
+r_int
+id|rc
 )paren
 (brace
 id|fld_const
@@ -428,12 +508,25 @@ c_func
 (paren
 op_amp
 id|CONST_Z
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|typedef|FUNC_RC
+r_typedef
+r_void
+(paren
+op_star
+id|FUNC_RC
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
 DECL|variable|constants_table
 r_static
-id|FUNC
+id|FUNC_RC
 id|constants_table
 (braket
 )braket
@@ -453,6 +546,9 @@ id|fldln2
 comma
 id|fldz
 comma
+(paren
+id|FUNC_RC
+)paren
 id|FPU_illegal
 )brace
 suffix:semicolon
@@ -471,6 +567,9 @@ id|FPU_rm
 )braket
 )paren
 (paren
+id|control_word
+op_amp
+id|CW_RC
 )paren
 suffix:semicolon
 )brace

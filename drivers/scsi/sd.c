@@ -4823,6 +4823,9 @@ id|i
 dot
 id|capacity
 op_assign
+l_int|1
+op_plus
+(paren
 (paren
 id|buffer
 (braket
@@ -4854,6 +4857,7 @@ id|buffer
 (braket
 l_int|3
 )braket
+)paren
 suffix:semicolon
 id|rscsi_disks
 (braket

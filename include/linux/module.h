@@ -212,19 +212,6 @@ suffix:semicolon
 multiline_comment|/* cleanup routine */
 )brace
 suffix:semicolon
-multiline_comment|/* rename_module_symbol(old_name, new_name)  WOW! */
-r_extern
-r_int
-id|rename_module_symbol
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/* insert new symbol table */
 r_extern
 r_int

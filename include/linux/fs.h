@@ -19,8 +19,6 @@ DECL|macro|NR_OPEN
 mdefine_line|#define NR_OPEN 256
 DECL|macro|NR_SUPER
 mdefine_line|#define NR_SUPER 64
-DECL|macro|NR_IHASH
-mdefine_line|#define NR_IHASH 131
 DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE 1024
 DECL|macro|BLOCK_SIZE_BITS

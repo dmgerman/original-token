@@ -5,6 +5,9 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+DECL|macro|NR_IHASH
+mdefine_line|#define NR_IHASH 512
+multiline_comment|/*&n; * Be VERY careful when you access the inode hash table. There&n; * are some rather scary race conditions you need to take care of:&n; *  - P1 tries to open file &quot;xx&quot;, calls &quot;iget()&quot; with the proper&n; *    inode number, but blocks because it&squot;s not on the list.&n; *  - P2 deletes file &quot;xx&quot;, gets the inode (which P1 has just read,&n; *    but P1 hasn&squot;t woken up to the fact yet)&n; *  - P2 iput()&squot;s the inode, which now has i_nlink = 0&n; *  - P1 wakes up and has the inode, but now P2 has made that&n; *    inode invalid (but P1 has no way of knowing that).&n; *&n; * The &quot;updating&quot; counter makes sure that when P1 blocks on the&n; * iget(), P2 can&squot;t delete the inode from under it because P2&n; * will wait until P1 has been able to update the inode usage&n; * count so that the inode will stay in use until everybody has&n; * closed it..&n; */
 DECL|struct|inode_hash_entry
 r_static
 r_struct
@@ -2559,6 +2562,7 @@ op_logical_neg
 id|empty
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * If we sleep here before we have found an inode&n;&t;&t; * we need to make sure nobody does anything bad&n;&t;&t; * to the inode while we sleep, because otherwise&n;&t;&t; * we may return an inode that is not valid any&n;&t;&t; * more when we wake up..&n;&t;&t; */
 id|h-&gt;updating
 op_increment
 suffix:semicolon
