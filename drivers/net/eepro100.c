@@ -1959,19 +1959,22 @@ suffix:semicolon
 macro_line|#ifdef USE_IO
 id|pciaddr
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|1
 )braket
+dot
+id|start
 suffix:semicolon
-multiline_comment|/* Use [0] to mem-map */
 macro_line|#else
 id|pciaddr
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 macro_line|#endif
 id|irq

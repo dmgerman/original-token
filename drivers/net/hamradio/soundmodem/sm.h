@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;sm.h  --  soundcard radio modem driver internal header.&n; *&n; *&t;Copyright (C) 1996-1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; */
+multiline_comment|/*&n; *&t;sm.h  --  soundcard radio modem driver internal header.&n; *&n; *&t;Copyright (C) 1996-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; */
 macro_line|#ifndef _SM_H
 DECL|macro|_SM_H
 mdefine_line|#define _SM_H
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/soundmodem.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
+macro_line|#include &lt;linux/parport.h&gt;
 DECL|macro|SM_DEBUG
 mdefine_line|#define SM_DEBUG
 multiline_comment|/* ---------------------------------------------------------------------- */
@@ -41,6 +42,12 @@ r_struct
 id|hardware_info
 op_star
 id|hwdrv
+suffix:semicolon
+DECL|member|pardev
+r_struct
+id|pardevice
+op_star
+id|pardev
 suffix:semicolon
 multiline_comment|/*&n;&t; * Hardware (soundcard) access routines state&n;&t; */
 r_struct

@@ -55,14 +55,6 @@ c_func
 l_string|&quot;ret_from_fork&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * We&squot;ll get there..&n; */
-macro_line|#ifdef CONFIG_APM
-DECL|macro|powermanagement_idle
-mdefine_line|#define powermanagement_idle()  do { } while (0)
-macro_line|#else
-DECL|macro|powermanagement_idle
-mdefine_line|#define powermanagement_idle()&t;do { } while (0)
-macro_line|#endif
 DECL|variable|hlt_counter
 r_static
 r_int

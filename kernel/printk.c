@@ -149,23 +149,7 @@ id|i
 comma
 id|idx
 suffix:semicolon
-r_int
-id|ints
-(braket
-l_int|11
-)braket
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Decode str into name, index, options.&n;&t; */
-id|str
-op_assign
-id|get_options
-c_func
-(paren
-id|str
-comma
-id|ints
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

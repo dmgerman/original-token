@@ -4730,6 +4730,13 @@ c_cond
 id|head
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|unused_list_lock
+)paren
+suffix:semicolon
 r_do
 (brace
 id|bh
@@ -4740,7 +4747,7 @@ id|head
 op_assign
 id|head-&gt;b_this_page
 suffix:semicolon
-id|put_unused_buffer_head
+id|__put_unused_buffer_head
 c_func
 (paren
 id|bh
@@ -4751,6 +4758,13 @@ r_while
 c_loop
 (paren
 id|head
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|unused_list_lock
 )paren
 suffix:semicolon
 multiline_comment|/* Wake up any waiters ... */
@@ -4902,7 +4916,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Allocate async buffer heads pointing to this page, just for I/O.&n;&t; * They show up in the buffer hash table and are registered in&n;&t; * page-&gt;buffers.&n;&t; */
+multiline_comment|/*&n;&t; * Allocate async buffer heads pointing to this page, just for I/O.&n;&t; * They don&squot;t show up in the buffer hash table, but they *are*&n;&t; * registered in page-&gt;buffers.&n;&t; */
 id|head
 op_assign
 id|create_buffers
@@ -7670,10 +7684,6 @@ op_star
 )paren
 op_minus
 l_int|1
-suffix:semicolon
-id|head
-op_assign
-id|page-&gt;buffers
 suffix:semicolon
 id|bh
 op_assign

@@ -22,6 +22,8 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
+DECL|macro|ARRAY_SIZE
+mdefine_line|#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 DECL|function|eth_setup
 r_static
 r_int
@@ -37,7 +39,7 @@ id|str
 r_int
 id|ints
 (braket
-l_int|11
+l_int|5
 )braket
 suffix:semicolon
 r_struct
@@ -51,6 +53,12 @@ id|get_options
 c_func
 (paren
 id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
 comma
 id|ints
 )paren

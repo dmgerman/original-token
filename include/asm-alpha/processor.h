@@ -216,7 +216,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
+multiline_comment|/* Do necessary setup to start up a newly executed thread.  */
 r_extern
 r_void
 id|start_thread
@@ -242,6 +242,31 @@ c_func
 r_struct
 id|task_struct
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Create a kernel thread without removing it from tasklists.  */
+r_extern
+r_int
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
 )paren
 suffix:semicolon
 DECL|macro|copy_segments

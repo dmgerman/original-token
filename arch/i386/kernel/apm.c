@@ -1102,6 +1102,13 @@ suffix:semicolon
 multiline_comment|/*&n; * If no process has been interested in this&n; * CPU for some time, we want to wake up the&n; * power management thread - we probably want&n; * to conserve power.&n; */
 DECL|macro|HARD_IDLE_TIMEOUT
 mdefine_line|#define HARD_IDLE_TIMEOUT (HZ/3)
+multiline_comment|/* This should wake up kapmd and ask it to slow the CPU */
+DECL|macro|powermanagement_idle
+mdefine_line|#define powermanagement_idle()  do { } while (0)
+r_extern
+r_int
+id|hlt_counter
+suffix:semicolon
 multiline_comment|/*&n; * This is the idle thing.&n; */
 DECL|function|apm_cpu_idle
 r_void

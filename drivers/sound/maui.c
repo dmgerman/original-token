@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;&t;General clean up, use kernel IRQ &n; *&t;&t;&t;&t;&t;system&n; *&n; *&t;Status:&n; *&t;&t;Andrew J. Kroll&t;&t;Tested 06/01/1999 with:&n; *&t;&t;&t;&t;&t;* OSWF.MOT File Version: 1.15&n; *&t;&t;&t;&t;&t;* OSWF.MOT File Dated: 09/12/94&n; *&t;&t;&t;&t;&t;* Older versions will cause problems.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS

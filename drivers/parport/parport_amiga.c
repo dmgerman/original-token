@@ -106,24 +106,6 @@ c_cond
 (paren
 id|control
 op_amp
-id|PARPORT_CONTROL_DIRECTION
-)paren
-multiline_comment|/* XXX: What is this? */
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|control
-op_amp
-id|PARPORT_CONTROL_INTEN
-)paren
-multiline_comment|/* XXX: What is INTEN? */
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|control
-op_amp
 id|PARPORT_CONTROL_SELECT
 )paren
 multiline_comment|/* XXX: What is SELECP? */
@@ -176,15 +158,13 @@ id|control
 )paren
 (brace
 r_return
-id|PARPORT_CONTROL_INTEN
-op_or
 id|PARPORT_CONTROL_SELECT
 op_or
 id|PARPORT_CONTROL_AUTOFD
 op_or
 id|PARPORT_CONTROL_STROBE
 suffix:semicolon
-multiline_comment|/* fake value: interrupt enable, select in, no reset,&n;&t;no autolf, no strobe - seems to be closest the wiring diagram */
+multiline_comment|/* fake value: select in, no reset,&n;&t;no autolf, no strobe - seems to be closest the wiring diagram */
 )brace
 DECL|function|amiga_write_control
 r_static
@@ -444,45 +424,6 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|amiga_write_status
-r_static
-r_void
-id|amiga_write_status
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|p
-comma
-r_int
-r_char
-id|status
-)paren
-(brace
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;write_status %02x&bslash;n&quot;
-comma
-id|status
-)paren
-suffix:semicolon
-id|ciab.pra
-op_or_assign
-(paren
-id|ciab.pra
-op_amp
-l_int|0xf8
-)paren
-op_or
-id|status_pc_to_amiga
-c_func
-(paren
-id|status
-)paren
-suffix:semicolon
-)brace
 DECL|function|amiga_read_status
 r_static
 r_int
@@ -521,23 +462,6 @@ suffix:semicolon
 r_return
 id|status
 suffix:semicolon
-)brace
-DECL|function|amiga_change_mode
-r_static
-r_void
-id|amiga_change_mode
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|p
-comma
-r_int
-id|m
-)paren
-(brace
-multiline_comment|/* XXX: This port only has one mode, and I am&n;&t;not sure about the corresponding PC-style mode*/
 )brace
 multiline_comment|/* as this ports irq handling is already done, we use a generic funktion */
 DECL|function|amiga_interrupt
@@ -581,6 +505,11 @@ r_void
 id|amiga_init_state
 c_func
 (paren
+r_struct
+id|pardevice
+op_star
+id|dev
+comma
 r_struct
 id|parport_state
 op_star
@@ -932,19 +861,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|parport_probe_hook
-)paren
-(paren
-op_star
-id|parport_probe_hook
-)paren
-(paren
-id|p
-)paren
-suffix:semicolon
 id|parport_announce_port
 (paren
 id|p

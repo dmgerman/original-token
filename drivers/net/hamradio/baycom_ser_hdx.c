@@ -1,26 +1,16 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;baycom_ser_hdx.c  -- baycom ser12 halfduplex radio modem driver.&n; *&n; *&t;Copyright (C) 1997  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  ser12:  This is a very simple 1200 baud AFSK modem. The modem consists only&n; *          of a modulator/demodulator chip, usually a TI TCM3105. The computer&n; *          is responsible for regenerating the receiver bit clock, as well as&n; *          for handling the HDLC protocol. The modem connects to a serial port,&n; *          hence the name. Since the serial port is not used as an async serial&n; *          port, the kernel driver for serial ports cannot be used, and this&n; *          driver only supports standard serial hardware (8250, 16450, 16550A)&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     * enables software DCD.&n; *  iobase   base address of the port; common values are 0x3f8, 0x2f8, 0x3e8, 0x2e8&n; *  irq      interrupt line of the port; common values are 4,3&n; *&n; *&n; *  History:&n; *   0.1  26.06.96  Adapted from baycom.c and made network driver interface&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.97  init code/data tagged&n; *   0.4  08.07.97  alternative ser12 decoding algorithm (uses delta CTS ints)&n; *   0.5  11.11.97  ser12/par96 split into separate files&n; *   0.6  14.04.98  cleanups&n; */
+multiline_comment|/*&n; *&t;baycom_ser_hdx.c  -- baycom ser12 halfduplex radio modem driver.&n; *&n; *&t;Copyright (C) 1996-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  ser12:  This is a very simple 1200 baud AFSK modem. The modem consists only&n; *          of a modulator/demodulator chip, usually a TI TCM3105. The computer&n; *          is responsible for regenerating the receiver bit clock, as well as&n; *          for handling the HDLC protocol. The modem connects to a serial port,&n; *          hence the name. Since the serial port is not used as an async serial&n; *          port, the kernel driver for serial ports cannot be used, and this&n; *          driver only supports standard serial hardware (8250, 16450, 16550A)&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     * enables software DCD.&n; *  iobase   base address of the port; common values are 0x3f8, 0x2f8, 0x3e8, 0x2e8&n; *  irq      interrupt line of the port; common values are 4,3&n; *&n; *&n; *  History:&n; *   0.1  26.06.96  Adapted from baycom.c and made network driver interface&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.97  init code/data tagged&n; *   0.4  08.07.97  alternative ser12 decoding algorithm (uses delta CTS ints)&n; *   0.5  11.11.97  ser12/par96 split into separate files&n; *   0.6  14.04.98  cleanups&n; *   0.7  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; */
 multiline_comment|/*****************************************************************************/
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/baycom.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|BAYCOM_DEBUG
 mdefine_line|#define BAYCOM_DEBUG
@@ -47,9 +37,9 @@ id|bc_drvinfo
 )braket
 op_assign
 id|KERN_INFO
-l_string|&quot;baycom_ser_hdx: (C) 1997-1998 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
+l_string|&quot;baycom_ser_hdx: (C) 1996-1999 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;baycom_ser_hdx: version 0.6 compiled &quot;
+l_string|&quot;baycom_ser_hdx: version 0.7 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -66,39 +56,6 @@ id|baycom_device
 (braket
 id|NR_PORTS
 )braket
-suffix:semicolon
-r_static
-r_struct
-(brace
-DECL|member|mode
-r_char
-op_star
-id|mode
-suffix:semicolon
-DECL|member|iobase
-DECL|member|irq
-r_int
-id|iobase
-comma
-id|irq
-suffix:semicolon
-DECL|variable|baycom_ports
-)brace
-id|baycom_ports
-(braket
-id|NR_PORTS
-)braket
-op_assign
-(brace
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|RBR
@@ -2471,10 +2428,55 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|baycom_ser_hdx_init
+multiline_comment|/*&n; * command line settable parameters&n; */
+DECL|variable|mode
+r_static
+r_char
+op_star
+id|mode
+(braket
+id|NR_PORTS
+)braket
+op_assign
+(brace
+l_string|&quot;ser12*&quot;
+comma
+)brace
+suffix:semicolon
+DECL|variable|iobase
+r_static
+r_int
+id|iobase
+(braket
+id|NR_PORTS
+)braket
+op_assign
+(brace
+l_int|0x3f8
+comma
+)brace
+suffix:semicolon
+DECL|variable|irq
+r_static
+r_int
+id|irq
+(braket
+id|NR_PORTS
+)braket
+op_assign
+(brace
+l_int|4
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifndef MODULE
+r_static
+macro_line|#endif
+DECL|function|init_module
 r_int
 id|__init
-id|baycom_ser_hdx_init
+id|init_module
 c_func
 (paren
 r_void
@@ -2550,12 +2552,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|baycom_ports
+id|mode
 (braket
 id|i
 )braket
-dot
-id|mode
 )paren
 id|set_hw
 op_assign
@@ -2567,19 +2567,15 @@ c_cond
 op_logical_neg
 id|set_hw
 )paren
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
 id|iobase
-op_assign
-id|baycom_ports
 (braket
 id|i
 )braket
-dot
+op_assign
 id|irq
+(braket
+id|i
+)braket
 op_assign
 l_int|0
 suffix:semicolon
@@ -2601,19 +2597,15 @@ id|baycom_state
 comma
 id|ifname
 comma
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
 id|iobase
-comma
-id|baycom_ports
 (braket
 id|i
 )braket
-dot
+comma
 id|irq
+(braket
+id|i
+)braket
 comma
 l_int|0
 )paren
@@ -2644,12 +2636,10 @@ c_func
 (paren
 id|bc
 comma
-id|baycom_ports
+id|mode
 (braket
 id|i
 )braket
-dot
-id|mode
 )paren
 )paren
 id|set_hw
@@ -2689,48 +2679,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; * command line settable parameters&n; */
-DECL|variable|mode
-r_static
-r_char
-op_star
-id|mode
-(braket
-id|NR_PORTS
-)braket
-op_assign
-(brace
-l_string|&quot;ser12*&quot;
-comma
-)brace
-suffix:semicolon
-DECL|variable|iobase
-r_static
-r_int
-id|iobase
-(braket
-id|NR_PORTS
-)braket
-op_assign
-(brace
-l_int|0x3f8
-comma
-)brace
-suffix:semicolon
-DECL|variable|irq
-r_static
-r_int
-id|irq
-(braket
-id|NR_PORTS
-)braket
-op_assign
-(brace
-l_int|4
-comma
-)brace
-suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20115
 id|MODULE_PARM
 c_func
 (paren
@@ -2809,108 +2757,6 @@ c_func
 l_string|&quot;Baycom ser12 half duplex amateur radio modem driver&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-DECL|function|init_module
-r_int
-id|__init
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-(paren
-id|i
-OL
-id|NR_PORTS
-)paren
-op_logical_and
-(paren
-id|mode
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
-id|mode
-op_assign
-id|mode
-(braket
-id|i
-)braket
-suffix:semicolon
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
-id|iobase
-op_assign
-id|iobase
-(braket
-id|i
-)braket
-suffix:semicolon
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
-id|irq
-op_assign
-id|irq
-(braket
-id|i
-)braket
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-OL
-id|NR_PORTS
-op_minus
-l_int|1
-)paren
-id|baycom_ports
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-dot
-id|mode
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-id|baycom_ser_hdx_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -2990,10 +2836,10 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else /* MODULE */
-multiline_comment|/* --------------------------------------------------------------------- */
-multiline_comment|/*&n; * format: baycom_ser_=io,irq,mode&n; * mode: [*]&n; * * indicates sofware DCD&n; */
+multiline_comment|/*&n; * format: baycom_ser_hdx=io,irq,mode&n; * mode: [*]&n; * * indicates sofware DCD&n; */
 DECL|function|baycom_ser_hdx_setup
-r_void
+r_static
+r_int
 id|__init
 id|baycom_ser_hdx_setup
 c_func
@@ -3001,50 +2847,43 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_static
 r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
+id|__initdata
+id|nr_dev
 op_assign
 l_int|0
 suffix:semicolon
-(paren
-id|i
-OL
-id|NR_PORTS
-)paren
-op_logical_and
-(paren
-id|baycom_ports
+r_int
+id|ints
 (braket
-id|i
+l_int|11
 )braket
-dot
-id|mode
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|i
+id|nr_dev
 op_ge
 id|NR_PORTS
 )paren
-op_logical_or
+r_return
+l_int|0
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ints
+)paren
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|ints
 (braket
@@ -3053,75 +2892,58 @@ l_int|0
 OL
 l_int|2
 )paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: too many or invalid interface &quot;
-l_string|&quot;specifications&bslash;n&quot;
-comma
-id|bc_drvname
-)paren
-suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
-)brace
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
 id|mode
+(braket
+id|nr_dev
+)braket
 op_assign
 id|str
 suffix:semicolon
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
 id|iobase
+(braket
+id|nr_dev
+)braket
 op_assign
 id|ints
 (braket
 l_int|1
 )braket
 suffix:semicolon
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
 id|irq
+(braket
+id|nr_dev
+)braket
 op_assign
 id|ints
 (braket
 l_int|2
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-OL
-id|NR_PORTS
-op_minus
+id|nr_dev
+op_increment
+suffix:semicolon
+r_return
 l_int|1
-)paren
-id|baycom_ports
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-dot
-id|mode
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;baycom_ser_hdx=&quot;
+comma
+id|baycom_ser_hdx_setup
+)paren
+suffix:semicolon
+DECL|variable|init_module
+id|__initcall
+c_func
+(paren
+id|init_module
+)paren
+suffix:semicolon
 macro_line|#endif /* MODULE */
 multiline_comment|/* --------------------------------------------------------------------- */
 eof

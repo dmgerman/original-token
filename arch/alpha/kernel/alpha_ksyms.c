@@ -488,11 +488,11 @@ id|alpha_write_fp_reg
 )paren
 suffix:semicolon
 multiline_comment|/* In-kernel system calls.  */
-DECL|variable|__kernel_thread
+DECL|variable|kernel_thread
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__kernel_thread
+id|kernel_thread
 )paren
 suffix:semicolon
 DECL|variable|sys_open

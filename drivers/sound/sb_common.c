@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound 
 multiline_comment|/*&n; * Daniel J. Rodriksson: Modified sbintr to handle 8 and 16 bit interrupts&n; *                       for full duplex support ( only sb16 by now )&n; * Rolf Fokkens:&t; Added (BETA?) support for ES1887 chips.&n; * (fokkensr@vertis.nl)&t; Which means: You can adjust the recording levels.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
 macro_line|#ifdef CONFIG_SBDSP

@@ -30,36 +30,6 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_SONICVIBES
-r_extern
-r_int
-id|init_sonicvibes
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_ES1370
-r_extern
-r_int
-id|init_es1370
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_ES1371
-r_extern
-r_int
-id|init_es1371
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_MSNDCLAS
 r_extern
 r_int
@@ -1336,29 +1306,8 @@ id|EBUSY
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Now init non OSS drivers&n;&t; */
-macro_line|#ifdef CONFIG_SOUND_SONICVIBES
-id|init_sonicvibes
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_CMPCI
 id|init_cmpci
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_ES1370
-id|init_es1370
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_ES1371
-id|init_es1371
 c_func
 (paren
 )paren

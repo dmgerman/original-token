@@ -12,7 +12,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|struct|preg
 r_struct
 id|preg

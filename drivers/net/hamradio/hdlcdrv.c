@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *&n; *&t;Copyright (C) 1996-1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *  The driver was derived from Donald Beckers skeleton.c&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines &n; *                  (copy_{to,from}_user)&n; *   0.2  21.11.96  various small changes&n; *   0.3  03.03.97  fixed (hopefully) IP not working with ax.25 as a module&n; *   0.4  16.04.97  init code/data tagged&n; *   0.5  30.07.97  made HDLC buffers bigger (solves a problem with the&n; *                  soundmodem driver)&n; *   0.6  05.04.98  add spinlocks&n; */
+multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *&n; *&t;Copyright (C) 1996-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *  The driver was derived from Donald Beckers skeleton.c&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines &n; *                  (copy_{to,from}_user)&n; *   0.2  21.11.96  various small changes&n; *   0.3  03.03.97  fixed (hopefully) IP not working with ax.25 as a module&n; *   0.4  16.04.97  init code/data tagged&n; *   0.5  30.07.97  made HDLC buffers bigger (solves a problem with the&n; *                  soundmodem driver)&n; *   0.6  05.04.98  add spinlocks&n; *   0.7  03.08.99  removed some old compatibility cruft&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -2456,7 +2456,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20119
 DECL|function|hdlcdrv_get_stats
 r_static
 r_struct
@@ -2470,20 +2469,6 @@ id|device
 op_star
 id|dev
 )paren
-macro_line|#else
-r_static
-r_struct
-id|enet_statistics
-op_star
-id|hdlcdrv_get_stats
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-macro_line|#endif
 (brace
 r_struct
 id|hdlcdrv_state
@@ -3147,12 +3132,6 @@ id|bi.data.ocs.ptt_keyed
 op_assign
 id|s-&gt;ptt_keyed
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|bi.data.ocs.stats
-op_assign
-id|s-&gt;stats
-suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -3882,7 +3861,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20115
 DECL|variable|hdlcdrv_receiver
 id|EXPORT_SYMBOL
 c_func
@@ -3918,52 +3896,8 @@ c_func
 id|hdlcdrv_unregister_hdlcdrv
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|variable|hdlcdrv_syms
-r_static
-r_struct
-id|symbol_table
-id|hdlcdrv_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
-c_func
-(paren
-id|hdlcdrv_receiver
-)paren
-comma
-id|X
-c_func
-(paren
-id|hdlcdrv_transmitter
-)paren
-comma
-id|X
-c_func
-(paren
-id|hdlcdrv_arbitrate
-)paren
-comma
-id|X
-c_func
-(paren
-id|hdlcdrv_register_hdlcdrv
-)paren
-comma
-id|X
-c_func
-(paren
-id|hdlcdrv_unregister_hdlcdrv
-)paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20115
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -3976,7 +3910,6 @@ c_func
 l_string|&quot;Packet Radio network interface HDLC encoder/decoder&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|init_module
 r_int
@@ -3998,22 +3931,13 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hdlcdrv: version 0.6 compiled &quot;
+l_string|&quot;hdlcdrv: version 0.7 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20115
-id|register_symtab
-c_func
-(paren
-op_amp
-id|hdlcdrv_syms
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

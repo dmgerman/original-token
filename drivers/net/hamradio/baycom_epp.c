@@ -1,28 +1,16 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;baycom_epp.c  -- baycom epp radio modem driver.&n; *&n; *&t;Copyright (C) 1998-1999&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  History:&n; *   0.1  xx.xx.98  Initial version by Matthias Welwarsky (dg2fef)&n; *   0.2  21.04.98  Massive rework by Thomas Sailer&n; *                  Integrated FPGA EPP modem configuration routines&n; *   0.3  11.05.98  Took FPGA config out and moved it into a separate program&n; *   0.4  26.07.99  Adapted to new lowlevel parport driver interface&n; *&n; */
+multiline_comment|/*&n; *&t;baycom_epp.c  -- baycom epp radio modem driver.&n; *&n; *&t;Copyright (C) 1998-1999&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  History:&n; *   0.1  xx.xx.98  Initial version by Matthias Welwarsky (dg2fef)&n; *   0.2  21.04.98  Massive rework by Thomas Sailer&n; *                  Integrated FPGA EPP modem configuration routines&n; *   0.3  11.05.98  Took FPGA config out and moved it into a separate program&n; *   0.4  26.07.99  Adapted to new lowlevel parport driver interface&n; *   0.5  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; *                  removed some pre-2.2 kernel compatibility cruft&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/socket.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
-macro_line|#include &lt;linux/bitops.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
-singleline_comment|//#include &lt;net/ax25dev.h&gt;
-macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/baycom.h&gt;
 macro_line|#include &lt;linux/soundmodem.h&gt;
@@ -33,145 +21,6 @@ macro_line|#endif /* CONFIG_AX25 || CONFIG_AX25_MODULE */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
-multiline_comment|/* --------------------------------------------------------------------- */
-multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#else
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-DECL|macro|put_user
-macro_line|#undef put_user
-DECL|macro|get_user
-macro_line|#undef get_user
-DECL|macro|put_user
-mdefine_line|#define put_user(x,ptr) ({ __put_user((unsigned long)(x),(ptr),sizeof(*(ptr))); 0; })
-DECL|macro|get_user
-mdefine_line|#define get_user(x,ptr) ({ x = ((__typeof__(*(ptr)))__get_user((ptr),sizeof(*(ptr)))); 0; })
-DECL|function|copy_from_user
-r_extern
-r_inline
-r_int
-id|copy_from_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
-r_int
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-id|memcpy_fromfs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|copy_to_user
-r_extern
-r_inline
-r_int
-id|copy_to_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
-r_int
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|to
-comma
-id|n
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-id|memcpy_tofs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20123
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__init
-mdefine_line|#define __init
-DECL|macro|__initdata
-mdefine_line|#define __initdata
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(x) x
-macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|BAYCOM_DEBUG
 mdefine_line|#define BAYCOM_DEBUG
@@ -213,9 +62,9 @@ id|bc_drvinfo
 )braket
 op_assign
 id|KERN_INFO
-l_string|&quot;baycom_epp: (C) 1998 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
+l_string|&quot;baycom_epp: (C) 1998-1999 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;baycom_epp: version 0.4 compiled &quot;
+l_string|&quot;baycom_epp: version 0.5 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -232,35 +81,6 @@ id|baycom_device
 (braket
 id|NR_PORTS
 )braket
-suffix:semicolon
-r_static
-r_struct
-(brace
-DECL|member|mode
-r_const
-r_char
-op_star
-id|mode
-suffix:semicolon
-DECL|member|iobase
-r_int
-id|iobase
-suffix:semicolon
-DECL|variable|baycom_ports
-)brace
-id|baycom_ports
-(braket
-id|NR_PORTS
-)braket
-op_assign
-(brace
-(brace
-l_int|NULL
-comma
-l_int|0
-)brace
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/* EPP status register */
@@ -6571,16 +6391,46 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/*&n; * command line settable parameters&n; */
+DECL|variable|mode
+r_static
+r_const
+r_char
+op_star
+id|mode
+(braket
+id|NR_PORTS
+)braket
+op_assign
+(brace
+l_string|&quot;&quot;
+comma
+)brace
+suffix:semicolon
+DECL|variable|iobase
+r_static
 r_int
-id|baycom_epp_init
+id|iobase
+(braket
+id|NR_PORTS
+)braket
+op_assign
+(brace
+l_int|0x378
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifndef MODULE
+r_static
+macro_line|#endif
+DECL|function|init_module
+r_int
+id|__init
+id|init_module
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -6637,12 +6487,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|baycom_ports
+id|mode
 (braket
 id|i
 )braket
-dot
-id|mode
 )paren
 id|set_hw
 op_assign
@@ -6654,12 +6502,10 @@ c_cond
 op_logical_neg
 id|set_hw
 )paren
-id|baycom_ports
+id|iobase
 (braket
 id|i
 )braket
-dot
-id|iobase
 op_assign
 l_int|0
 suffix:semicolon
@@ -6763,12 +6609,10 @@ l_int|1
 suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
-id|baycom_ports
+id|iobase
 (braket
 id|i
 )braket
-dot
-id|iobase
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
@@ -6820,12 +6664,10 @@ c_func
 (paren
 id|bc
 comma
-id|baycom_ports
+id|mode
 (braket
 id|i
 )braket
-dot
-id|mode
 )paren
 )paren
 id|set_hw
@@ -6852,41 +6694,17 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; * command line settable parameters&n; */
-DECL|variable|mode
-r_static
-r_const
-r_char
-op_star
-id|mode
-(braket
-id|NR_PORTS
-)braket
-op_assign
-(brace
-l_string|&quot;epp&quot;
-comma
-)brace
-suffix:semicolon
-DECL|variable|iobase
-r_static
-r_int
-id|iobase
-(braket
-id|NR_PORTS
-)braket
-op_assign
-(brace
-l_int|0x378
-comma
-)brace
-suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20115
 id|MODULE_PARM
 c_func
 (paren
 id|mode
 comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_PORTS
+)paren
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
@@ -6895,7 +6713,7 @@ c_func
 (paren
 id|mode
 comma
-l_string|&quot;baycom operating mode; epp&quot;
+l_string|&quot;baycom operating mode&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -6903,6 +6721,12 @@ c_func
 (paren
 id|iobase
 comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_PORTS
+)paren
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
@@ -6926,99 +6750,6 @@ c_func
 l_string|&quot;Baycom epp amateur radio modem driver&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-(paren
-id|i
-OL
-id|NR_PORTS
-)paren
-op_logical_and
-(paren
-id|mode
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
-id|mode
-op_assign
-id|mode
-(braket
-id|i
-)braket
-suffix:semicolon
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
-id|iobase
-op_assign
-id|iobase
-(braket
-id|i
-)braket
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-OL
-id|NR_PORTS
-op_minus
-l_int|1
-)paren
-id|baycom_ports
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-dot
-id|mode
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-id|baycom_epp_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -7110,64 +6841,54 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else /* MODULE */
-multiline_comment|/* --------------------------------------------------------------------- */
-multiline_comment|/*&n; * format: baycom=io,mode&n; * mode: epp&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
+multiline_comment|/*&n; * format: baycom_epp=io,mode&n; * mode: fpga config options&n; */
+DECL|function|baycom_epp_setup
+r_static
+r_int
+id|__init
 id|baycom_epp_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
-)paren
 )paren
 (brace
+r_static
 r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
+id|__initdata
+id|nr_dev
 op_assign
 l_int|0
 suffix:semicolon
-(paren
-id|i
-OL
-id|NR_PORTS
-)paren
-op_logical_and
-(paren
-id|baycom_ports
+r_int
+id|ints
 (braket
-id|i
+l_int|11
 )braket
-dot
-id|mode
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|i
+id|nr_dev
 op_ge
 id|NR_PORTS
 )paren
-op_logical_or
+r_return
+l_int|0
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ints
+)paren
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|ints
 (braket
@@ -7176,63 +6897,48 @@ l_int|0
 OL
 l_int|1
 )paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: too many or invalid interface &quot;
-l_string|&quot;specifications&bslash;n&quot;
-comma
-id|bc_drvname
-)paren
-suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
-)brace
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
 id|mode
+(braket
+id|nr_dev
+)braket
 op_assign
 id|str
 suffix:semicolon
-id|baycom_ports
-(braket
-id|i
-)braket
-dot
 id|iobase
+(braket
+id|nr_dev
+)braket
 op_assign
 id|ints
 (braket
 l_int|1
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-OL
-id|NR_PORTS
-op_minus
+id|nr_dev
+op_increment
+suffix:semicolon
+r_return
 l_int|1
-)paren
-id|baycom_ports
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-dot
-id|mode
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;baycom_epp=&quot;
+comma
+id|baycom_epp_setup
+)paren
+suffix:semicolon
+DECL|variable|init_module
+id|__initcall
+c_func
+(paren
+id|init_module
+)paren
+suffix:semicolon
 macro_line|#endif /* MODULE */
 multiline_comment|/* --------------------------------------------------------------------- */
 eof

@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|MB_USE_INTERRUPTS
 macro_line|#undef MB_USE_INTERRUPTS
 DECL|struct|media_bay_hw

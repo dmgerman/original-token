@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sercons.c&n; *      choose the right serial device at boot time&n; *&n; * triemer 6-SEP-1998&n; *      sercons.c is designed to allow the three different kinds &n; *      of serial devices under the decstation world to co-exist&n; *      in the same kernel.  The idea here is to abstract &n; *      the pieces of the drivers that are common to this file&n; *      so that they do not clash at compile time and runtime.&n; *&n; * HK 16-SEP-1998 v0.002&n; *      removed the PROM console as this is not a real serial&n; *      device. Added support for PROM console in drivers/char/tty_io.c&n; *      instead. Although it may work to enable more than one &n; *      console device I strongly recommend to use only one.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dec/machtype.h&gt;
 macro_line|#ifdef CONFIG_ZS
 r_extern

@@ -5099,6 +5099,14 @@ r_extern
 r_int
 id|rd_doload
 suffix:semicolon
+r_extern
+r_void
+id|rd_load_secondary
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 id|floppy_eject
 c_func

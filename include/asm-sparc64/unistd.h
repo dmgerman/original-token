@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.30 1999/07/31 04:05:24 ecd Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.31 1999/08/04 03:20:06 davem Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -705,30 +705,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|pid_t
-id|kernel_thread
-c_func
-(paren
-r_int
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-id|arg
-comma
-r_int
-r_int
-id|flags
-)paren
-suffix:semicolon
 macro_line|#endif /* __KERNEL_SYSCALLS__ */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* sysconf options, for SunOS compatibility */

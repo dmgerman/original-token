@@ -30,7 +30,7 @@ macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#ifdef CONFIG_KGDB
 macro_line|#include &lt;asm/kgdb.h&gt;
 macro_line|#endif
-macro_line|#include &lt;asm/init.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;macserial.h&quot;
 multiline_comment|/*&n; * It would be nice to dynamically allocate everything that&n; * depends on NUM_SERIAL, so we could support any number of&n; * Z8530s, but for now...&n; */
 DECL|macro|NUM_SERIAL

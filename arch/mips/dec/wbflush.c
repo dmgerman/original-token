@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Setup the right wbflush routine for the different DECstations.&n; *&n; * Created with information from:&n; *      DECstation 3100 Desktop Workstation Functional Specification&n; *      DECstation 5000/200 KN02 System Module Functional Specification&n; *      mipsel-linux-objdump --disassemble vmunix | grep &quot;wbflush&quot; :-)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 Harald Koerfgen&n; */
 macro_line|#include &lt;asm/bootinfo.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 r_static
 r_void
 id|wbflush_kn01

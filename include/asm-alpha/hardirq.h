@@ -2,7 +2,7 @@ macro_line|#ifndef _ALPHA_HARDIRQ_H
 DECL|macro|_ALPHA_HARDIRQ_H
 mdefine_line|#define _ALPHA_HARDIRQ_H
 multiline_comment|/* Initially just a straight copy of the i386 code.  */
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#ifndef __SMP__
 r_extern
 r_int

@@ -168,6 +168,13 @@ id|get_module_symbol
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|get_option
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_option
+)paren
+suffix:semicolon
 DECL|variable|get_options
 id|EXPORT_SYMBOL
 c_func
@@ -364,6 +371,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_unmapped_area
+)paren
+suffix:semicolon
+DECL|variable|init_mm
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|init_mm
 )paren
 suffix:semicolon
 multiline_comment|/* filesystem internal functions */

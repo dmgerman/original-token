@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.18 1999/03/21 10:51:38 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: floppy.h,v 1.19 1999/08/03 08:01:15 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef __ASM_SPARC64_FLOPPY_H
 DECL|macro|__ASM_SPARC64_FLOPPY_H
 mdefine_line|#define __ASM_SPARC64_FLOPPY_H
@@ -2097,6 +2097,10 @@ id|edev
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|auxio_reg
+suffix:semicolon
 id|for_each_ebus
 c_func
 (paren
@@ -2242,6 +2246,28 @@ id|edev-&gt;irqs
 (braket
 l_int|0
 )braket
+suffix:semicolon
+multiline_comment|/* Make sure the high density bit is set, some systems&n;&t;&t; * (most notably Ultra5/Ultra10) come up with it clear.&n;&t;&t; */
+id|auxio_reg
+op_assign
+id|edev-&gt;base_address
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|writel
+c_func
+(paren
+id|readl
+c_func
+(paren
+id|auxio_reg
+)paren
+op_or
+l_int|0x2
+comma
+id|auxio_reg
+)paren
 suffix:semicolon
 id|sun_pci_fd_ebus_dma
 op_assign

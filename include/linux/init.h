@@ -75,8 +75,6 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT&t;&t;.previous
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA&t;.section&t;&quot;.data.init&quot;,&quot;aw&quot;
-DECL|macro|__cacheline_aligned
-mdefine_line|#define __cacheline_aligned __attribute__ &bslash;&n;&t;&t;&t; ((__section__ (&quot;.data.cacheline_aligned&quot;)))
 DECL|macro|module_init
 mdefine_line|#define module_init(x)&t;__initcall(x);
 DECL|macro|module_exit
@@ -92,7 +90,8 @@ DECL|macro|__exitdata
 mdefine_line|#define __exitdata
 DECL|macro|__initfunc
 mdefine_line|#define __initfunc(__arginit) __arginit
-macro_line|#defint __initcall
+DECL|macro|__initcall
+mdefine_line|#define __initcall
 multiline_comment|/* For assembly routines */
 DECL|macro|__INIT
 mdefine_line|#define __INIT
@@ -100,12 +99,20 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA
+multiline_comment|/* Not sure what version aliases were introduced in, but certainly in 2.95.  */
+macro_line|#if __GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 95)
+DECL|macro|module_init
+mdefine_line|#define module_init(x)&t;int init_module(void) __attribute__((alias(#x)));
+DECL|macro|module_exit
+mdefine_line|#define module_exit(x)&t;void cleanup_module(void) __attribute__((alias(#x)));
+macro_line|#else
 DECL|macro|module_init
 mdefine_line|#define module_init(x)&t;int init_module(void) { return x(); }
 DECL|macro|module_exit
 mdefine_line|#define module_exit(x)&t;void cleanup_module(void) { x(); }
 macro_line|#endif
-macro_line|#if __GNUC__ &gt;= 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8
+macro_line|#endif
+macro_line|#if __GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
 DECL|macro|__initlocaldata
 mdefine_line|#define __initlocaldata  __initdata
 macro_line|#else
