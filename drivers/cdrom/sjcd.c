@@ -1,4 +1,4 @@
-multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.6&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.ru&n; *   vadim@ipsun.ras.ru&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (H.T.M.v.d.Maarel@marin.nl).&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *  1.4 MSS Sound support!! Listen to a CD through the speakers.&n; *  1.5 Module support and bugfixes.&n; *      Tray locking.&n; *  1.6 Removed ISP16 code from this driver.&n; *      Allow only to set io base address on command line: sjcd=&lt;io_base&gt;&n; *      Changes to Documentation/cdrom/sjcd&n; *      Added cleanup after any error in the initialisation.&n; *  1.7 Added code to set the sector size tables to prevent the bug present in &n; *      the previous version of this driver.  Coded added by Anthony Barbachan &n; *      from bugfix tip originally suggested by Alan Cox.&n; *&n; */
+multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.6&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.ru&n; *   vadim@ipsun.ras.ru&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (H.T.M.v.d.Maarel@marin.nl).&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *  1.4 MSS Sound support!! Listen to a CD through the speakers.&n; *  1.5 Module support and bugfixes.&n; *      Tray locking.&n; *  1.6 Removed ISP16 code from this driver.&n; *      Allow only to set io base address on command line: sjcd=&lt;io_base&gt;&n; *      Changes to Documentation/cdrom/sjcd&n; *      Added cleanup after any error in the initialisation.&n; *  1.7 Added code to set the sector size tables to prevent the bug present in &n; *      the previous version of this driver.  Coded added by Anthony Barbachan &n; *      from bugfix tip originally suggested by Alan Cox.&n; *&n; *  November 1999 -- Make kernel-parameter implementation work with 2.3.x &n; *&t;             Removed init_module &amp; cleanup_module in favor of &n; *&t;             module_init &amp; module_exit.&n; *&t;             Torben Mathiasen &lt;tmm@image.dk&gt;&n; */
 DECL|macro|SJCD_VERSION_MAJOR
 mdefine_line|#define SJCD_VERSION_MAJOR 1
 DECL|macro|SJCD_VERSION_MINOR
@@ -312,8 +312,10 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Set up device, i.e., use command line data to set&n; * base address.&n; */
+macro_line|#ifndef MODULE
 DECL|function|sjcd_setup
-r_void
+r_static
+r_int
 id|__init
 id|sjcd_setup
 c_func
@@ -321,12 +323,31 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -344,7 +365,19 @@ id|ints
 l_int|1
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;sjcd=&quot;
+comma
+id|sjcd_setup
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Special converters.&n; */
 DECL|function|bin2bcd
 r_static
@@ -6380,25 +6413,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|sjcd_exit
 r_void
-)paren
-(brace
-r_return
-id|sjcd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|sjcd_exit
 c_func
 (paren
 r_void
@@ -6427,5 +6445,20 @@ l_string|&quot;SJCD: module: removed.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|sjcd_init
+id|module_init
+c_func
+(paren
+id|sjcd_init
+)paren
+suffix:semicolon
 macro_line|#endif
+DECL|variable|sjcd_exit
+id|module_exit
+c_func
+(paren
+id|sjcd_exit
+)paren
+suffix:semicolon
 eof

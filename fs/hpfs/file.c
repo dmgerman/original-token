@@ -552,7 +552,7 @@ id|ENOMEM
 suffix:semicolon
 id|new_page
 op_assign
-id|grab_page_cache
+id|grab_cache_page
 c_func
 (paren
 op_amp

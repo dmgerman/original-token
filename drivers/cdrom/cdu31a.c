@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* Sony CDU-31A CDROM interface device driver.&n;*&n;* Corey Minyard (minyard@wf-rch.cirr.com)&n;*&n;* Colossians 3:17&n;*&n;*  See Documentation/cdrom/cdu31a for additional details about this driver.&n;* &n;* The Sony interface device driver handles Sony interface CDROM&n;* drives and provides a complete block-level interface as well as an&n;* ioctl() interface compatible with the Sun (as specified in&n;* include/linux/cdrom.h).  With this interface, CDROMs can be&n;* accessed and standard audio CDs can be played back normally.&n;*&n;* WARNING - &t;All autoprobes have been removed from the driver.&n;*&t;&t;You MUST configure the CDU31A via a LILO config&n;*&t;&t;at boot time or in lilo.conf.  I have the&n;*&t;&t;following in my lilo.conf:&n;*&n;*                append=&quot;cdu31a=0x1f88,0,PAS&quot;&n;*&n;*&t;&t;The first number is the I/O base address of the&n;*&t;&t;card.  The second is the interrupt (0 means none).&n; *&t;&t;The third should be &quot;PAS&quot; if on a Pro-Audio&n; *&t;&t;spectrum, or nothing if on something else.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while (time_before(jiffies, retry_count) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * NEWS FLASH - The driver now supports interrupts but they are&n; * turned off by default.  Use of interrupts is highly encouraged, it&n; * cuts CPU usage down to a reasonable level.  I had DMA in for a while&n; * but PC DMA is just too slow.  Better to just insb() it.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; * DRIVER SPECIAL FEATURES&n; * -----------------------&n; *&n; * This section describes features beyond the normal audio and CD-ROM&n; * functions of the drive.&n; *&n; * 2048 byte buffer mode&n; *&n; * If a disk is mounted with -o block=2048, data is copied straight&n; * from the drive data port to the buffer.  Otherwise, the readahead&n; * buffer must be involved to hold the other 1K of data when a 1K&n; * block operation is done.  Note that with 2048 byte blocks you&n; * cannot execute files from the CD.&n; *&n; * XA compatibility&n; *&n; * The driver should support XA disks for both the CDU31A and CDU33A.&n; * It does this transparently, the using program doesn&squot;t need to set it.&n; *&n; * Multi-Session&n; *&n; * A multi-session disk looks just like a normal disk to the user.&n; * Just mount one normally, and all the data should be there.&n; * A special thanks to Koen for help with this!&n; * &n; * Raw sector I/O&n; *&n; * Using the CDROMREADAUDIO it is possible to read raw audio and data&n; * tracks.  Both operations return 2352 bytes per sector.  On the data&n; * tracks, the first 12 bytes is not returned by the drive and the value&n; * of that data is indeterminate.&n; *&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * TODO: &n; *       CDs with form1 and form2 sectors cause problems&n; *       with current read-ahead strategy.&n; *&n; * Credits:&n; *    Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;&n; *         For finding abug in the return of the track numbers.&n; *         TOC processing redone for proper multisession support.&n; *&n; *&n; *  It probably a little late to be adding a history, but I guess I&n; *  will start.&n; *&n; *  10/24/95 - Added support for disabling the eject button when the&n; *             drive is open.  Note that there is a small problem&n; *             still here, if the eject button is pushed while the&n; *             drive light is flashing, the drive will return a bad&n; *             status and be reset.  It recovers, though.&n; *&n; *  03/07/97 - Fixed a problem with timers.&n; *&n; *&n; *  18 Spetember 1997 -- Ported to Uniform CD-ROM driver by &n; *                 Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt; with additional&n; *                 changes by Erik Andersen &lt;andersee@debian.org&gt;&n; *&n; *  24 January 1998 -- Removed the scd_disc_status() function, which was now&n; *                     just dead code left over from the port.&n; *                          Erik Andersen &lt;andersee@debian.org&gt;&n; *&n; *  16 July 1998 -- Drive donated to Erik Andersen by John Kodis&n; *                   &lt;kodis@jagunet.com&gt;.  Work begun on fixing driver to&n; *                   work under 2.1.X.  Added temporary extra printks&n; *                   which seem to slow it down enough to work.&n;*/
+multiline_comment|/*&n;* Sony CDU-31A CDROM interface device driver.&n;*&n;* Corey Minyard (minyard@wf-rch.cirr.com)&n;*&n;* Colossians 3:17&n;*&n;*  See Documentation/cdrom/cdu31a for additional details about this driver.&n;* &n;* The Sony interface device driver handles Sony interface CDROM&n;* drives and provides a complete block-level interface as well as an&n;* ioctl() interface compatible with the Sun (as specified in&n;* include/linux/cdrom.h).  With this interface, CDROMs can be&n;* accessed and standard audio CDs can be played back normally.&n;*&n;* WARNING - &t;All autoprobes have been removed from the driver.&n;*&t;&t;You MUST configure the CDU31A via a LILO config&n;*&t;&t;at boot time or in lilo.conf.  I have the&n;*&t;&t;following in my lilo.conf:&n;*&n;*                append=&quot;cdu31a=0x1f88,0,PAS&quot;&n;*&n;*&t;&t;The first number is the I/O base address of the&n;*&t;&t;card.  The second is the interrupt (0 means none).&n; *&t;&t;The third should be &quot;PAS&quot; if on a Pro-Audio&n; *&t;&t;spectrum, or nothing if on something else.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while (time_before(jiffies, retry_count) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * NEWS FLASH - The driver now supports interrupts but they are&n; * turned off by default.  Use of interrupts is highly encouraged, it&n; * cuts CPU usage down to a reasonable level.  I had DMA in for a while&n; * but PC DMA is just too slow.  Better to just insb() it.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; * DRIVER SPECIAL FEATURES&n; * -----------------------&n; *&n; * This section describes features beyond the normal audio and CD-ROM&n; * functions of the drive.&n; *&n; * 2048 byte buffer mode&n; *&n; * If a disk is mounted with -o block=2048, data is copied straight&n; * from the drive data port to the buffer.  Otherwise, the readahead&n; * buffer must be involved to hold the other 1K of data when a 1K&n; * block operation is done.  Note that with 2048 byte blocks you&n; * cannot execute files from the CD.&n; *&n; * XA compatibility&n; *&n; * The driver should support XA disks for both the CDU31A and CDU33A.&n; * It does this transparently, the using program doesn&squot;t need to set it.&n; *&n; * Multi-Session&n; *&n; * A multi-session disk looks just like a normal disk to the user.&n; * Just mount one normally, and all the data should be there.&n; * A special thanks to Koen for help with this!&n; * &n; * Raw sector I/O&n; *&n; * Using the CDROMREADAUDIO it is possible to read raw audio and data&n; * tracks.  Both operations return 2352 bytes per sector.  On the data&n; * tracks, the first 12 bytes is not returned by the drive and the value&n; * of that data is indeterminate.&n; *&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * TODO: &n; *       CDs with form1 and form2 sectors cause problems&n; *       with current read-ahead strategy.&n; *&n; * Credits:&n; *    Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;&n; *         For finding abug in the return of the track numbers.&n; *         TOC processing redone for proper multisession support.&n; *&n; *&n; *  It probably a little late to be adding a history, but I guess I&n; *  will start.&n; *&n; *  10/24/95 - Added support for disabling the eject button when the&n; *             drive is open.  Note that there is a small problem&n; *             still here, if the eject button is pushed while the&n; *             drive light is flashing, the drive will return a bad&n; *             status and be reset.  It recovers, though.&n; *&n; *  03/07/97 - Fixed a problem with timers.&n; *&n; *&n; *  18 Spetember 1997 -- Ported to Uniform CD-ROM driver by &n; *                 Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt; with additional&n; *                 changes by Erik Andersen &lt;andersee@debian.org&gt;&n; *&n; *  24 January 1998 -- Removed the scd_disc_status() function, which was now&n; *                     just dead code left over from the port.&n; *                          Erik Andersen &lt;andersee@debian.org&gt;&n; *&n; *  16 July 1998 -- Drive donated to Erik Andersen by John Kodis&n; *                   &lt;kodis@jagunet.com&gt;.  Work begun on fixing driver to&n; *                   work under 2.1.X.  Added temporary extra printks&n; *                   which seem to slow it down enough to work.&n; *&n; *  9 November 1999 -- Make kernel-parameter implementation work with 2.3.x &n; *&t;               Removed init_module &amp; cleanup_module in favor of &n; *&t;&t;       module_init &amp; module_exit.&n; *&t;&t;       Torben Mathiasen &lt;tmm@image.dk&gt;&n;*/
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12268,22 +12268,42 @@ l_int|0x20
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-multiline_comment|/*&n; * Set up base I/O and interrupts, called from main.c.&n; */
-r_void
-id|__init
+multiline_comment|/*&n; * Set up base I/O and interrupts, called from main.c.&n; &n; */
 DECL|function|cdu31a_setup
+r_static
+r_int
+id|__init
 id|cdu31a_setup
 c_func
 (paren
 r_char
 op_star
 id|strings
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|strings
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -12370,7 +12390,18 @@ id|strings
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;cdu31a=&quot;
+comma
+id|cdu31a_setup
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|cdu31a_block_size
 r_static
@@ -13114,25 +13145,10 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
 r_void
-)paren
-(brace
-r_return
-id|cdu31a_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
+id|__exit
+DECL|function|cdu31a_exit
+id|cdu31a_exit
 c_func
 (paren
 r_void
@@ -13215,5 +13231,20 @@ l_string|&quot;cdu31a module released.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif MODULE
+macro_line|#ifdef MODULE
+DECL|variable|cdu31a_init
+id|module_init
+c_func
+(paren
+id|cdu31a_init
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|cdu31a_exit
+id|module_exit
+c_func
+(paren
+id|cdu31a_exit
+)paren
+suffix:semicolon
 eof

@@ -1146,6 +1146,26 @@ comma
 id|BLIST_ISROM
 )brace
 comma
+(brace
+l_string|&quot;Toshiba&quot;
+comma
+l_string|&quot;DVD-RAM SD-W1101&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_GHOST
+)brace
+comma
+(brace
+l_string|&quot;Toshiba&quot;
+comma
+l_string|&quot;DVD-RAM SD-W1111&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_GHOST
+)brace
+comma
 multiline_comment|/*&n;&t; * Must be at end of list...&n;&t; */
 (brace
 l_int|NULL

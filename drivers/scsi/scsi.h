@@ -1348,7 +1348,7 @@ id|sense_buffer
 l_int|64
 )braket
 suffix:semicolon
-multiline_comment|/* obtained by REQUEST SENSE when&n;&t;&t;&t;&t;&t;&t;   CHECK CONDITION is received on&n;&t;&t;&t;&t;&t;&t;   original command (auto-sense) */
+multiline_comment|/* obtained by REQUEST SENSE&n;&t;&t;&t;&t;&t;&t; * when CHECK CONDITION is&n;&t;&t;&t;&t;&t;&t; * received on original command &n;&t;&t;&t;&t;&t;&t; * (auto-sense) */
 DECL|member|flags
 r_int
 id|flags

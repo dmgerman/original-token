@@ -87,19 +87,6 @@ DECL|macro|ISP16_IO_BASE
 mdefine_line|#define ISP16_IO_BASE 0xF8D
 DECL|macro|ISP16_IO_SIZE
 mdefine_line|#define ISP16_IO_SIZE 5  /* ports used from 0xF8D up to 0xF91 */
-r_void
-id|isp16_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
 r_int
 id|isp16_init
 c_func

@@ -1300,11 +1300,6 @@ r_return
 id|mm
 suffix:semicolon
 )brace
-id|mmlist_modify_unlock
-c_func
-(paren
-)paren
-suffix:semicolon
 id|kmem_cache_free
 c_func
 (paren

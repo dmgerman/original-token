@@ -645,8 +645,7 @@ id|mmlist_modify_lock
 c_func
 (paren
 )paren
-comma
-"&bslash;"
+suffix:semicolon
 id|free_pgd_slow
 c_func
 (paren
@@ -655,14 +654,12 @@ c_func
 (paren
 )paren
 )paren
-comma
-"&bslash;"
+suffix:semicolon
 id|mmlist_modify_unlock
 c_func
 (paren
 )paren
-comma
-"&bslash;"
+suffix:semicolon
 id|freed
 op_increment
 suffix:semicolon

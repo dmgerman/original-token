@@ -69,7 +69,7 @@ op_star
 id|drive
 comma
 r_struct
-id|atapi_request_sense
+id|request_sense
 op_star
 id|reqbuf
 comma
@@ -584,7 +584,7 @@ op_eq
 id|NOT_READY
 op_logical_and
 (paren
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|0
 )braket
@@ -597,14 +597,14 @@ r_int
 id|progress
 op_assign
 (paren
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|1
 )braket
 op_lshift
 l_int|8
 op_or
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|2
 )braket
@@ -631,7 +631,7 @@ op_eq
 id|ILLEGAL_REQUEST
 op_logical_and
 (paren
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|0
 )braket
@@ -647,7 +647,7 @@ id|printk
 l_string|&quot;  Error in %s byte %d&quot;
 comma
 (paren
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|0
 )braket
@@ -663,7 +663,7 @@ suffix:colon
 l_string|&quot;command data&quot;
 comma
 (paren
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|1
 )braket
@@ -671,7 +671,7 @@ op_lshift
 l_int|8
 )paren
 op_plus
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|2
 )braket
@@ -681,7 +681,7 @@ r_if
 c_cond
 (paren
 (paren
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|0
 )braket
@@ -691,12 +691,11 @@ l_int|0x40
 op_ne
 l_int|0
 )paren
-(brace
 id|printk
 (paren
 l_string|&quot; bit %d&quot;
 comma
-id|reqbuf-&gt;sense_key_specific
+id|reqbuf-&gt;sks
 (braket
 l_int|0
 )braket
@@ -704,7 +703,6 @@ op_amp
 l_int|0x07
 )paren
 suffix:semicolon
-)brace
 id|printk
 (paren
 l_string|&quot;&bslash;n&quot;
@@ -771,11 +769,6 @@ op_star
 id|sem
 comma
 r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
-comma
-r_struct
 id|packet_command
 op_star
 id|failed_command
@@ -798,22 +791,6 @@ id|packet_command
 op_star
 id|pc
 suffix:semicolon
-r_int
-id|len
-suffix:semicolon
-multiline_comment|/* If the request didn&squot;t explicitly specify where&n;&t;   to put the sense data, use the statically allocated structure. */
-r_if
-c_cond
-(paren
-id|reqbuf
-op_eq
-l_int|NULL
-)paren
-id|reqbuf
-op_assign
-op_amp
-id|info-&gt;sense_data
-suffix:semicolon
 multiline_comment|/* Make up a new request to retrieve sense information. */
 id|pc
 op_assign
@@ -821,6 +798,7 @@ op_amp
 id|info-&gt;request_sense_pc
 suffix:semicolon
 id|memset
+c_func
 (paren
 id|pc
 comma
@@ -832,21 +810,6 @@ op_star
 id|pc
 )paren
 )paren
-suffix:semicolon
-multiline_comment|/* The request_sense structure has an odd number of (16-bit) words,&n;&t;   which won&squot;t work well with 32-bit transfers.  However, we don&squot;t care&n;&t;   about the last two bytes, so just truncate the structure down&n;&t;   to an even length. */
-id|len
-op_assign
-r_sizeof
-(paren
-op_star
-id|reqbuf
-)paren
-op_div
-l_int|4
-suffix:semicolon
-id|len
-op_mul_assign
-l_int|4
 suffix:semicolon
 id|pc-&gt;c
 (braket
@@ -855,16 +818,15 @@ l_int|0
 op_assign
 id|GPCMD_REQUEST_SENSE
 suffix:semicolon
+multiline_comment|/* just get the first 18 bytes of the sense info, there might not&n;&t; * be more available */
 id|pc-&gt;c
 (braket
 l_int|4
 )braket
 op_assign
-(paren
-r_int
-r_char
-)paren
-id|len
+id|pc-&gt;buflen
+op_assign
+l_int|18
 suffix:semicolon
 id|pc-&gt;buffer
 op_assign
@@ -872,17 +834,14 @@ op_assign
 r_char
 op_star
 )paren
-id|reqbuf
-suffix:semicolon
-id|pc-&gt;buflen
-op_assign
-id|len
+op_amp
+id|info-&gt;sense_data
 suffix:semicolon
 id|pc-&gt;sense_data
 op_assign
 (paren
 r_struct
-id|atapi_request_sense
+id|request_sense
 op_star
 )paren
 id|failed_command
@@ -981,7 +940,7 @@ id|drive
 comma
 (paren
 r_struct
-id|atapi_request_sense
+id|request_sense
 op_star
 )paren
 (paren
@@ -1292,12 +1251,11 @@ op_ne
 l_int|0
 )paren
 id|cdrom_queue_request_sense
+c_func
 (paren
 id|drive
 comma
 id|sem
-comma
-id|pc-&gt;sense_data
 comma
 id|pc
 )paren
@@ -1464,10 +1422,9 @@ op_ne
 l_int|0
 )paren
 id|cdrom_queue_request_sense
+c_func
 (paren
 id|drive
-comma
-l_int|NULL
 comma
 l_int|NULL
 comma
@@ -3576,6 +3533,7 @@ multiline_comment|/* Forward declarations. */
 r_static
 r_int
 id|cdrom_lockdoor
+c_func
 (paren
 id|ide_drive_t
 op_star
@@ -3583,11 +3541,6 @@ id|drive
 comma
 r_int
 id|lockflag
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupt routine for packet command completion. */
@@ -3635,8 +3588,20 @@ op_star
 )paren
 id|rq-&gt;buffer
 suffix:semicolon
+r_struct
+id|cdrom_info
+op_star
+id|info
+op_assign
+id|drive-&gt;driver_data
+suffix:semicolon
 id|ide_startstop_t
 id|startstop
+suffix:semicolon
+id|pc-&gt;sense_data
+op_assign
+op_amp
+id|info-&gt;sense_data
 suffix:semicolon
 multiline_comment|/* Check for errors. */
 r_if
@@ -4100,6 +4065,7 @@ r_static
 DECL|function|cdrom_queue_packet_command
 r_int
 id|cdrom_queue_packet_command
+c_func
 (paren
 id|ide_drive_t
 op_star
@@ -4111,10 +4077,6 @@ op_star
 id|pc
 )paren
 (brace
-r_struct
-id|atapi_request_sense
-id|my_reqbuf
-suffix:semicolon
 r_int
 id|retries
 op_assign
@@ -4123,23 +4085,6 @@ suffix:semicolon
 r_struct
 id|request
 id|req
-suffix:semicolon
-multiline_comment|/* If our caller has not provided a place to stick any sense data,&n;&t;   use our own area. */
-r_if
-c_cond
-(paren
-id|pc-&gt;sense_data
-op_eq
-l_int|NULL
-)paren
-id|pc-&gt;sense_data
-op_assign
-op_amp
-id|my_reqbuf
-suffix:semicolon
-id|pc-&gt;sense_data-&gt;sense_key
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Start of retry loop. */
 r_do
@@ -4206,7 +4151,7 @@ l_int|0
 (brace
 multiline_comment|/* The request failed.  Retry if it was due to a unit&n;&t;&t;&t;   attention status&n;&t;&t;&t;   (usually means media was changed). */
 r_struct
-id|atapi_request_sense
+id|request_sense
 op_star
 id|reqbuf
 op_assign
@@ -4279,16 +4224,12 @@ r_if
 c_cond
 (paren
 id|pc-&gt;stat
-op_ne
-l_int|0
 )paren
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-r_else
-(brace
-multiline_comment|/* The command succeeded.  If it was anything other than&n;&t;&t;   a request sense, eject, or door lock command,&n;&t;&t;   and we think that the door is presently unlocked, lock it&n;&t;&t;   again. (The door was probably unlocked via an explicit&n;&t;&t;   CDROMEJECT ioctl.) */
+multiline_comment|/* The command succeeded.  If it was anything other than&n;&t;   a request sense, eject, or door lock command,&n;&t;   and we think that the door is presently unlocked, lock it&n;&t;   again. (The door was probably unlocked via an explicit&n;&t;   CDROMEJECT ioctl.) */
 r_if
 c_cond
 (paren
@@ -4354,15 +4295,12 @@ id|cdrom_lockdoor
 id|drive
 comma
 l_int|1
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/****************************************************************************&n; * cdrom driver request routine.&n; */
 r_static
@@ -4589,7 +4527,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/****************************************************************************&n; * Ioctl handling.&n; *&n; * Routines which queue packet commands take as a final argument a pointer&n; * to an atapi_request_sense struct.  If execution of the command results&n; * in an error with a CHECK CONDITION status, this structure will be filled&n; * with the results of the subsequent request sense command.  The pointer&n; * can also be NULL, in which case no sense information is returned.&n; */
+multiline_comment|/****************************************************************************&n; * Ioctl handling.&n; *&n; * Routines which queue packet commands take as a final argument a pointer&n; * to a request_sense struct.  If execution of the command results&n; * in an error with a CHECK CONDITION status, this structure will be filled&n; * with the results of the subsequent request sense command.  The pointer&n; * can also be NULL, in which case no sense information is returned.&n; */
 macro_line|#if ! STANDARD_ATAPI
 r_static
 r_inline
@@ -4780,19 +4718,14 @@ op_minus
 id|CD_MSF_OFFSET
 suffix:semicolon
 )brace
+DECL|function|cdrom_check_status
 r_static
 r_int
-DECL|function|cdrom_check_status
 id|cdrom_check_status
 (paren
 id|ide_drive_t
 op_star
 id|drive
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_struct
@@ -4815,6 +4748,7 @@ op_amp
 id|info-&gt;devinfo
 suffix:semicolon
 id|memset
+c_func
 (paren
 op_amp
 id|pc
@@ -4826,10 +4760,6 @@ r_sizeof
 id|pc
 )paren
 )paren
-suffix:semicolon
-id|pc.sense_data
-op_assign
-id|reqbuf
 suffix:semicolon
 id|pc.c
 (braket
@@ -4852,6 +4782,7 @@ suffix:semicolon
 macro_line|#endif /* not STANDARD_ATAPI */
 r_return
 id|cdrom_queue_packet_command
+c_func
 (paren
 id|drive
 comma
@@ -4865,6 +4796,7 @@ r_static
 r_int
 DECL|function|cdrom_lockdoor
 id|cdrom_lockdoor
+c_func
 (paren
 id|ide_drive_t
 op_star
@@ -4872,35 +4804,19 @@ id|drive
 comma
 r_int
 id|lockflag
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_struct
-id|atapi_request_sense
-id|my_reqbuf
-suffix:semicolon
-r_int
-id|stat
+id|request_sense
+op_star
+id|sense
 suffix:semicolon
 r_struct
 id|packet_command
 id|pc
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|reqbuf
-op_eq
-l_int|NULL
-)paren
-id|reqbuf
-op_assign
-op_amp
-id|my_reqbuf
+r_int
+id|stat
 suffix:semicolon
 multiline_comment|/* If the drive cannot lock the door, just pretend. */
 r_if
@@ -4920,6 +4836,7 @@ suffix:semicolon
 r_else
 (brace
 id|memset
+c_func
 (paren
 op_amp
 id|pc
@@ -4931,10 +4848,6 @@ r_sizeof
 id|pc
 )paren
 )paren
-suffix:semicolon
-id|pc.sense_data
-op_assign
-id|reqbuf
 suffix:semicolon
 id|pc.c
 (braket
@@ -4965,6 +4878,10 @@ id|pc
 )paren
 suffix:semicolon
 )brace
+id|sense
+op_assign
+id|pc.sense_data
+suffix:semicolon
 multiline_comment|/* If we got an illegal field error, the drive&n;&t;   probably cannot lock the door. */
 r_if
 c_cond
@@ -4973,16 +4890,16 @@ id|stat
 op_ne
 l_int|0
 op_logical_and
-id|reqbuf-&gt;sense_key
+id|sense-&gt;sense_key
 op_eq
 id|ILLEGAL_REQUEST
 op_logical_and
 (paren
-id|reqbuf-&gt;asc
+id|sense-&gt;asc
 op_eq
 l_int|0x24
 op_logical_or
-id|reqbuf-&gt;asc
+id|sense-&gt;asc
 op_eq
 l_int|0x20
 )paren
@@ -5017,11 +4934,11 @@ id|stat
 op_ne
 l_int|0
 op_logical_and
-id|reqbuf-&gt;sense_key
+id|sense-&gt;sense_key
 op_eq
 id|NOT_READY
 op_logical_and
-id|reqbuf-&gt;asc
+id|sense-&gt;asc
 op_eq
 l_int|0x3a
 )paren
@@ -5050,10 +4967,11 @@ id|stat
 suffix:semicolon
 )brace
 multiline_comment|/* Eject the disk if EJECTFLAG is 0.&n;   If EJECTFLAG is 1, try to reload the disk. */
+DECL|function|cdrom_eject
 r_static
 r_int
-DECL|function|cdrom_eject
 id|cdrom_eject
+c_func
 (paren
 id|ide_drive_t
 op_star
@@ -5061,11 +4979,6 @@ id|drive
 comma
 r_int
 id|ejectflag
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_struct
@@ -5076,6 +4989,7 @@ r_if
 c_cond
 (paren
 id|CDROM_CONFIG_FLAGS
+c_func
 (paren
 id|drive
 )paren
@@ -5094,6 +5008,7 @@ r_if
 c_cond
 (paren
 id|CDROM_STATE_FLAGS
+c_func
 (paren
 id|drive
 )paren
@@ -5106,6 +5021,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|memset
+c_func
 (paren
 op_amp
 id|pc
@@ -5117,10 +5033,6 @@ r_sizeof
 id|pc
 )paren
 )paren
-suffix:semicolon
-id|pc.sense_data
-op_assign
-id|reqbuf
 suffix:semicolon
 id|pc.c
 (braket
@@ -5152,10 +5064,11 @@ id|pc
 )paren
 suffix:semicolon
 )brace
+DECL|function|cdrom_read_capacity
 r_static
 r_int
-DECL|function|cdrom_read_capacity
 id|cdrom_read_capacity
+c_func
 (paren
 id|ide_drive_t
 op_star
@@ -5164,11 +5077,6 @@ comma
 r_int
 op_star
 id|capacity
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_struct
@@ -5190,6 +5098,7 @@ id|packet_command
 id|pc
 suffix:semicolon
 id|memset
+c_func
 (paren
 op_amp
 id|pc
@@ -5201,10 +5110,6 @@ r_sizeof
 id|pc
 )paren
 )paren
-suffix:semicolon
-id|pc.sense_data
-op_assign
-id|reqbuf
 suffix:semicolon
 id|pc.c
 (braket
@@ -5232,6 +5137,7 @@ suffix:semicolon
 id|stat
 op_assign
 id|cdrom_queue_packet_command
+c_func
 (paren
 id|drive
 comma
@@ -5259,10 +5165,11 @@ r_return
 id|stat
 suffix:semicolon
 )brace
+DECL|function|cdrom_read_tocentry
 r_static
 r_int
-DECL|function|cdrom_read_tocentry
 id|cdrom_read_tocentry
+c_func
 (paren
 id|ide_drive_t
 op_star
@@ -5283,11 +5190,6 @@ id|buf
 comma
 r_int
 id|buflen
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_struct
@@ -5295,6 +5197,7 @@ id|packet_command
 id|pc
 suffix:semicolon
 id|memset
+c_func
 (paren
 op_amp
 id|pc
@@ -5306,10 +5209,6 @@ r_sizeof
 id|pc
 )paren
 )paren
-suffix:semicolon
-id|pc.sense_data
-op_assign
-id|reqbuf
 suffix:semicolon
 id|pc.buffer
 op_assign
@@ -5389,19 +5288,14 @@ id|pc
 suffix:semicolon
 )brace
 multiline_comment|/* Try to read the entire TOC for the disk into our internal buffer. */
+DECL|function|cdrom_read_toc
 r_static
 r_int
-DECL|function|cdrom_read_toc
 id|cdrom_read_toc
 (paren
 id|ide_drive_t
 op_star
 id|drive
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_int
@@ -5512,10 +5406,9 @@ id|toc_valid
 r_void
 )paren
 id|cdrom_check_status
+c_func
 (paren
 id|drive
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -5556,8 +5449,6 @@ r_sizeof
 r_struct
 id|atapi_toc_header
 )paren
-comma
-id|reqbuf
 )paren
 suffix:semicolon
 r_if
@@ -5663,8 +5554,6 @@ r_sizeof
 r_struct
 id|atapi_toc_entry
 )paren
-comma
-id|reqbuf
 )paren
 suffix:semicolon
 r_if
@@ -5718,8 +5607,6 @@ r_sizeof
 r_struct
 id|atapi_toc_entry
 )paren
-comma
-id|reqbuf
 )paren
 suffix:semicolon
 r_if
@@ -5960,8 +5847,6 @@ r_sizeof
 (paren
 id|ms_tmp
 )paren
-comma
-id|reqbuf
 )paren
 suffix:semicolon
 r_if
@@ -6074,8 +5959,6 @@ id|drive
 comma
 op_amp
 id|toc-&gt;capacity
-comma
-id|reqbuf
 )paren
 suffix:semicolon
 r_if
@@ -6247,10 +6130,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|cdrom_read_subchannel
 r_static
 r_int
-DECL|function|cdrom_read_subchannel
 id|cdrom_read_subchannel
+c_func
 (paren
 id|ide_drive_t
 op_star
@@ -6265,11 +6149,6 @@ id|buf
 comma
 r_int
 id|buflen
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_struct
@@ -6277,6 +6156,7 @@ id|packet_command
 id|pc
 suffix:semicolon
 id|memset
+c_func
 (paren
 op_amp
 id|pc
@@ -6288,10 +6168,6 @@ r_sizeof
 id|pc
 )paren
 )paren
-suffix:semicolon
-id|pc.sense_data
-op_assign
-id|reqbuf
 suffix:semicolon
 id|pc.buffer
 op_assign
@@ -6355,6 +6231,7 @@ l_int|0xff
 suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
+c_func
 (paren
 id|drive
 comma
@@ -6364,9 +6241,9 @@ id|pc
 suffix:semicolon
 )brace
 multiline_comment|/* ATAPI cdrom drives are free to select the speed you request or any slower&n;   rate :-( Requesting too fast a speed will _not_ produce an error. */
+DECL|function|cdrom_select_speed
 r_static
 r_int
-DECL|function|cdrom_select_speed
 id|cdrom_select_speed
 (paren
 id|ide_drive_t
@@ -6375,11 +6252,6 @@ id|drive
 comma
 r_int
 id|speed
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_struct
@@ -6387,6 +6259,7 @@ id|packet_command
 id|pc
 suffix:semicolon
 id|memset
+c_func
 (paren
 op_amp
 id|pc
@@ -6398,10 +6271,6 @@ r_sizeof
 id|pc
 )paren
 )paren
-suffix:semicolon
-id|pc.sense_data
-op_assign
-id|reqbuf
 suffix:semicolon
 r_if
 c_cond
@@ -6507,10 +6376,11 @@ id|pc
 )paren
 suffix:semicolon
 )brace
-r_static
 DECL|function|cdrom_get_toc_entry
+r_static
 r_int
 id|cdrom_get_toc_entry
+c_func
 (paren
 id|ide_drive_t
 op_star
@@ -6524,11 +6394,6 @@ id|atapi_toc_entry
 op_star
 op_star
 id|ent
-comma
-r_struct
-id|atapi_request_sense
-op_star
-id|reqbuf
 )paren
 (brace
 r_struct
@@ -6677,7 +6542,6 @@ id|pc.buflen
 op_assign
 id|cgc-&gt;buflen
 suffix:semicolon
-r_return
 id|cgc-&gt;stat
 op_assign
 id|cdrom_queue_packet_command
@@ -6688,6 +6552,19 @@ comma
 op_amp
 id|pc
 )paren
+suffix:semicolon
+multiline_comment|/* There was an error, assign sense. */
+r_if
+c_cond
+(paren
+id|cgc-&gt;stat
+)paren
+id|cgc-&gt;sense
+op_assign
+id|pc.sense_data
+suffix:semicolon
+r_return
+id|cgc-&gt;stat
 suffix:semicolon
 )brace
 r_static
@@ -6975,10 +6852,9 @@ multiline_comment|/* Make sure our saved TOC is valid. */
 id|stat
 op_assign
 id|cdrom_read_toc
+c_func
 (paren
 id|drive
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -7039,8 +6915,6 @@ id|tocentry-&gt;cdte_track
 comma
 op_amp
 id|toce
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -7170,10 +7044,6 @@ op_star
 )paren
 id|cdi-&gt;handle
 suffix:semicolon
-r_struct
-id|atapi_request_sense
-id|rq
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7188,9 +7058,6 @@ id|cdrom_lockdoor
 id|drive
 comma
 l_int|0
-comma
-op_amp
-id|rq
 )paren
 suffix:semicolon
 r_if
@@ -7204,13 +7071,12 @@ suffix:semicolon
 )brace
 r_return
 id|cdrom_eject
+c_func
 (paren
 id|drive
 comma
 op_logical_neg
 id|position
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -7244,8 +7110,6 @@ id|cdrom_lockdoor
 id|drive
 comma
 id|lock
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -7281,10 +7145,6 @@ op_star
 id|cdi-&gt;handle
 suffix:semicolon
 r_struct
-id|atapi_request_sense
-id|reqbuf
-suffix:semicolon
-r_struct
 id|cdrom_generic_command
 id|cgc
 suffix:semicolon
@@ -7303,6 +7163,10 @@ suffix:semicolon
 )brace
 id|buf
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|stat
 op_assign
 id|cdrom_select_speed
@@ -7310,15 +7174,8 @@ id|cdrom_select_speed
 id|drive
 comma
 id|speed
-comma
-op_amp
-id|reqbuf
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|stat
+)paren
 OL
 l_int|0
 )paren
@@ -7538,6 +7395,13 @@ op_star
 )paren
 id|cdi-&gt;handle
 suffix:semicolon
+r_struct
+id|cdrom_info
+op_star
+id|info
+op_assign
+id|drive-&gt;driver_data
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7547,18 +7411,20 @@ id|CDSL_CURRENT
 )paren
 (brace
 r_struct
-id|atapi_request_sense
+id|request_sense
+op_star
 id|sense
+op_assign
+op_amp
+id|info-&gt;sense_data
 suffix:semicolon
 r_int
 id|stat
 op_assign
 id|cdrom_check_status
+c_func
 (paren
 id|drive
-comma
-op_amp
-id|sense
 )paren
 suffix:semicolon
 r_if
@@ -7568,7 +7434,7 @@ id|stat
 op_eq
 l_int|0
 op_logical_or
-id|sense.sense_key
+id|sense-&gt;sense_key
 op_eq
 id|UNIT_ATTENTION
 )paren
@@ -7578,15 +7444,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sense.sense_key
+id|sense-&gt;sense_key
 op_eq
 id|NOT_READY
 op_logical_and
-id|sense.asc
+id|sense-&gt;asc
 op_eq
 l_int|0x04
 op_logical_and
-id|sense.ascq
+id|sense-&gt;ascq
 op_eq
 l_int|0x04
 )paren
@@ -7596,7 +7462,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sense.sense_key
+id|sense-&gt;sense_key
 op_eq
 id|NOT_READY
 )paren
@@ -7707,29 +7573,28 @@ op_star
 )paren
 id|cdi-&gt;handle
 suffix:semicolon
+multiline_comment|/* get MCN */
+r_if
+c_cond
+(paren
+(paren
 id|stat
 op_assign
 id|cdrom_read_subchannel
+c_func
 (paren
 id|drive
 comma
 l_int|2
 comma
-multiline_comment|/* get MCN */
 id|mcnbuf
 comma
 r_sizeof
 (paren
 id|mcnbuf
 )paren
-comma
-l_int|NULL
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|stat
+)paren
 )paren
 r_return
 id|stat
@@ -7803,10 +7668,9 @@ id|CDSL_CURRENT
 r_void
 )paren
 id|cdrom_check_status
+c_func
 (paren
 id|drive
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|CDROM_STATE_FLAGS

@@ -1,6 +1,6 @@
 multiline_comment|/*&t;linux/drivers/cdrom/optcd.c - Optics Storage 8000 AT CDROM driver&n;&t;$Id: optcd.c,v 1.11 1997/01/26 07:13:00 davem Exp $&n;&n;&t;Copyright (C) 1995 Leo Spiekman (spiekman@dutette.et.tudelft.nl)&n;&n;&n;&t;Based on Aztech CD268 CDROM driver by Werner Zimmermann and preworks&n;&t;by Eberhard Moenkeberg (emoenke@gwdg.de). &n;&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
 "&f;"
-multiline_comment|/*&t;Revision history&n;&n;&n;&t;14-5-95&t;&t;v0.0&t;Plays sound tracks. No reading of data CDs yet.&n;&t;&t;&t;&t;Detection of disk change doesn&squot;t work.&n;&t;21-5-95&t;&t;v0.1&t;First ALPHA version. CD can be mounted. The&n;&t;&t;&t;&t;device major nr is borrowed from the Aztech&n;&t;&t;&t;&t;driver. Speed is around 240 kb/s, as measured&n;&t;&t;&t;&t;with &quot;time dd if=/dev/cdrom of=/dev/null &bslash;&n;&t;&t;&t;&t;bs=2048 count=4096&quot;.&n;&t;24-6-95&t;&t;v0.2&t;Reworked the #defines for the command codes&n;&t;&t;&t;&t;and the like, as well as the structure of&n;&t;&t;&t;&t;the hardware communication protocol, to&n;&t;&t;&t;&t;reflect the &quot;official&quot; documentation, kindly&n;&t;&t;&t;&t;supplied by C.K. Tan, Optics Storage Pte. Ltd.&n;&t;&t;&t;&t;Also tidied up the state machine somewhat.&n;&t;28-6-95&t;&t;v0.3&t;Removed the ISP-16 interface code, as this&n;&t;&t;&t;&t;should go into its own driver. The driver now&n;&t;&t;&t;&t;has its own major nr.&n;&t;&t;&t;&t;Disk change detection now seems to work, too.&n;&t;&t;&t;&t;This version became part of the standard&n;&t;&t;&t;&t;kernel as of version 1.3.7&n;&t;24-9-95&t;&t;v0.4&t;Re-inserted ISP-16 interface code which I&n;&t;&t;&t;&t;copied from sjcd.c, with a few changes.&n;&t;&t;&t;&t;Updated README.optcd. Submitted for&n;&t;&t;&t;&t;inclusion in 1.3.21&n;&t;29-9-95&t;&t;v0.4a&t;Fixed bug that prevented compilation as module&n;&t;25-10-95&t;v0.5&t;Started multisession code. Implementation&n;&t;&t;&t;&t;copied from Werner Zimmermann, who copied it&n;&t;&t;&t;&t;from Heiko Schlittermann&squot;s mcdx.&n;&t;17-1-96&t;&t;v0.6&t;Multisession works; some cleanup too.&n;&t;18-4-96&t;&t;v0.7&t;Increased some timing constants;&n;&t;&t;&t;&t;thanks to Luke McFarlane. Also tidied up some&n;&t;&t;&t;&t;printk behaviour. ISP16 initialization&n;&t;&t;&t;&t;is now handled by a separate driver.&n;*/
+multiline_comment|/*&t;Revision history&n;&n;&n;&t;14-5-95&t;&t;v0.0&t;Plays sound tracks. No reading of data CDs yet.&n;&t;&t;&t;&t;Detection of disk change doesn&squot;t work.&n;&t;21-5-95&t;&t;v0.1&t;First ALPHA version. CD can be mounted. The&n;&t;&t;&t;&t;device major nr is borrowed from the Aztech&n;&t;&t;&t;&t;driver. Speed is around 240 kb/s, as measured&n;&t;&t;&t;&t;with &quot;time dd if=/dev/cdrom of=/dev/null &bslash;&n;&t;&t;&t;&t;bs=2048 count=4096&quot;.&n;&t;24-6-95&t;&t;v0.2&t;Reworked the #defines for the command codes&n;&t;&t;&t;&t;and the like, as well as the structure of&n;&t;&t;&t;&t;the hardware communication protocol, to&n;&t;&t;&t;&t;reflect the &quot;official&quot; documentation, kindly&n;&t;&t;&t;&t;supplied by C.K. Tan, Optics Storage Pte. Ltd.&n;&t;&t;&t;&t;Also tidied up the state machine somewhat.&n;&t;28-6-95&t;&t;v0.3&t;Removed the ISP-16 interface code, as this&n;&t;&t;&t;&t;should go into its own driver. The driver now&n;&t;&t;&t;&t;has its own major nr.&n;&t;&t;&t;&t;Disk change detection now seems to work, too.&n;&t;&t;&t;&t;This version became part of the standard&n;&t;&t;&t;&t;kernel as of version 1.3.7&n;&t;24-9-95&t;&t;v0.4&t;Re-inserted ISP-16 interface code which I&n;&t;&t;&t;&t;copied from sjcd.c, with a few changes.&n;&t;&t;&t;&t;Updated README.optcd. Submitted for&n;&t;&t;&t;&t;inclusion in 1.3.21&n;&t;29-9-95&t;&t;v0.4a&t;Fixed bug that prevented compilation as module&n;&t;25-10-95&t;v0.5&t;Started multisession code. Implementation&n;&t;&t;&t;&t;copied from Werner Zimmermann, who copied it&n;&t;&t;&t;&t;from Heiko Schlittermann&squot;s mcdx.&n;&t;17-1-96&t;&t;v0.6&t;Multisession works; some cleanup too.&n;&t;18-4-96&t;&t;v0.7&t;Increased some timing constants;&n;&t;&t;&t;&t;thanks to Luke McFarlane. Also tidied up some&n;&t;&t;&t;&t;printk behaviour. ISP16 initialization&n;&t;&t;&t;&t;is now handled by a separate driver.&n;&t;&t;&t;&t;&n;&t;09-11-99 &t;  &t;Make kernel-parameter implementation work with 2.3.x &n;&t;                 &t;Removed init_module &amp; cleanup_module in favor of &n;&t;&t;&t; &t;module_init &amp; module_exit.&n;&t;&t;&t; &t;Torben Mathiasen &lt;tmm@image.dk&gt;&n;*/
 "&f;"
 multiline_comment|/* Includes */
 macro_line|#include &lt;linux/module.h&gt;
@@ -8169,22 +8169,42 @@ l_int|NULL
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
+macro_line|#ifndef MODULE
 multiline_comment|/* Get kernel parameter when used as a kernel driver */
 DECL|function|optcd_setup
-r_void
-id|__init
+r_static
+r_int
 id|optcd_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8202,7 +8222,19 @@ id|ints
 l_int|1
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;optcd=&quot;
+comma
+id|optcd_setup
+)paren
+suffix:semicolon
+macro_line|#endif MODULE
 multiline_comment|/* Test for presence of drive and initialize it. Called at boot time&n;   or during module initialisation. */
 DECL|function|optcd_init
 r_int
@@ -8438,25 +8470,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|optcd_exit
 r_void
-)paren
-(brace
-r_return
-id|optcd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|optcd_exit
 c_func
 (paren
 r_void
@@ -8503,5 +8520,20 @@ l_string|&quot;optcd: module released.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif MODULE
+macro_line|#ifdef MODULE
+DECL|variable|optcd_init
+id|module_init
+c_func
+(paren
+id|optcd_init
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|optcd_exit
+id|module_exit
+c_func
+(paren
+id|optcd_exit
+)paren
+suffix:semicolon
 eof

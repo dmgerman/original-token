@@ -1,4 +1,4 @@
-multiline_comment|/* -- ISP16 cdrom detection and configuration&n; *&n; *    Copyright (c) 1995,1996 Eric van der Maarel &lt;H.T.M.v.d.Maarel@marin.nl&gt;&n; *&n; *    Version 0.6&n; *&n; *    History:&n; *    0.5 First release.&n; *        Was included in the sjcd and optcd cdrom drivers.&n; *    0.6 First &quot;stand-alone&quot; version.&n; *        Removed sound configuration.&n; *        Added &quot;module&quot; support.&n; *&n; *    Detect cdrom interface on ISP16 sound card.&n; *    Configure cdrom interface.&n; *&n; *    Algorithm for the card with OPTi 82C928 taken&n; *    from the CDSETUP.SYS driver for MSDOS,&n; *    by OPTi Computers, version 2.03.&n; *    Algorithm for the card with OPTi 82C929 as communicated&n; *    to me by Vadim Model and Leo Spiekman.&n; *&n; *    This program is free software; you can redistribute it and/or modify&n; *    it under the terms of the GNU General Public License as published by&n; *    the Free Software Foundation; either version 2 of the License, or&n; *    (at your option) any later version.&n; *&n; *    This program is distributed in the hope that it will be useful,&n; *    but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *    GNU General Public License for more details.&n; *&n; *    You should have received a copy of the GNU General Public License&n; *    along with this program; if not, write to the Free Software&n; *    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* -- ISP16 cdrom detection and configuration&n; *&n; *    Copyright (c) 1995,1996 Eric van der Maarel &lt;H.T.M.v.d.Maarel@marin.nl&gt;&n; *&n; *    Version 0.6&n; *&n; *    History:&n; *    0.5 First release.&n; *        Was included in the sjcd and optcd cdrom drivers.&n; *    0.6 First &quot;stand-alone&quot; version.&n; *        Removed sound configuration.&n; *        Added &quot;module&quot; support.&n; *&n; *      9 November 1999 -- Make kernel-parameter implementation work with 2.3.x &n; *&t;                   Removed init_module &amp; cleanup_module in favor of &n; *&t;&t;&t;   module_init &amp; module_exit.&n; *&t;&t;&t;   Torben Mathiasen &lt;tmm@image.dk&gt;&n; *&n; *    Detect cdrom interface on ISP16 sound card.&n; *    Configure cdrom interface.&n; *&n; *    Algorithm for the card with OPTi 82C928 taken&n; *    from the CDSETUP.SYS driver for MSDOS,&n; *    by OPTi Computers, version 2.03.&n; *    Algorithm for the card with OPTi 82C929 as communicated&n; *    to me by Vadim Model and Leo Spiekman.&n; *&n; *    This program is free software; you can redistribute it and/or modify&n; *    it under the terms of the GNU General Public License as published by&n; *    the Free Software Foundation; either version 2 of the License, or&n; *    (at your option) any later version.&n; *&n; *    This program is distributed in the hope that it will be useful,&n; *    but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *    GNU General Public License for more details.&n; *&n; *    You should have received a copy of the GNU General Public License&n; *    along with this program; if not, write to the Free Software&n; *    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 DECL|macro|ISP16_VERSION_MAJOR
 mdefine_line|#define ISP16_VERSION_MAJOR 0
 DECL|macro|ISP16_VERSION_MINOR
@@ -133,15 +133,8 @@ comma
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-r_int
-id|init_module
-c_func
-(paren
 r_void
-)paren
-suffix:semicolon
-r_void
-id|cleanup_module
+id|isp16_exit
 c_func
 (paren
 r_void
@@ -152,21 +145,42 @@ DECL|macro|ISP16_IN
 mdefine_line|#define ISP16_IN(p) (outb(isp16_ctrl,ISP16_CTRL_PORT), inb(p))
 DECL|macro|ISP16_OUT
 mdefine_line|#define ISP16_OUT(p,b) (outb(isp16_ctrl,ISP16_CTRL_PORT), outb(b,p))
-r_void
-id|__init
+macro_line|#ifndef MODULE
+r_static
+r_int
 DECL|function|isp16_setup
+id|__init
 id|isp16_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -227,7 +241,19 @@ id|isp16_cdrom_type
 op_assign
 id|str
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;isp16=&quot;
+comma
+id|isp16_setup
+)paren
+suffix:semicolon
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; *  ISP16 initialisation.&n; *&n; */
 r_int
 id|__init
@@ -1202,25 +1228,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|isp16_exit
 r_void
-)paren
-(brace
-r_return
-id|isp16_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|isp16_exit
 c_func
 (paren
 r_void
@@ -1242,5 +1253,20 @@ l_string|&quot;ISP16: module released.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#ifdef MODULE
+DECL|variable|isp16_init
+id|module_init
+c_func
+(paren
+id|isp16_init
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|isp16_exit
+id|module_exit
+c_func
+(paren
+id|isp16_exit
+)paren
+suffix:semicolon
 eof

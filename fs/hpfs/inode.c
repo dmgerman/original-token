@@ -27,7 +27,6 @@ l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
 id|generic_file_mmap
-multiline_comment|/*hpfs_mmap*/
 comma
 multiline_comment|/* mmap */
 id|hpfs_open
@@ -256,59 +255,17 @@ id|inode_operations
 id|hpfs_symlink_iops
 op_assign
 (brace
-l_int|NULL
+id|readlink
+suffix:colon
+id|page_readlink
 comma
-multiline_comment|/* default file operations */
-l_int|NULL
+id|follow_link
+suffix:colon
+id|page_follow_link
 comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-id|hpfs_readlink
-comma
-multiline_comment|/* readlink */
-id|hpfs_follow_link
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
+id|readpage
+suffix:colon
+id|hpfs_symlink_readpage
 )brace
 suffix:semicolon
 DECL|function|hpfs_read_inode

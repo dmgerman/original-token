@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 1996 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 2.14(hs)&n; *&n; * ... anyway, I&squot;m back again, thanks to Marcin, he adopted&n; * large portions of my code (at least the parts containing&n; * my main thoughts ...)&n; *&n; ****************** H E L P *********************************&n; * If you ever plan to update your CD ROM drive and perhaps&n; * want to sell or simply give away your Mitsumi FX-001[DS]&n; * -- Please --&n; * mail me (heiko@lotte.sax.de).  When my last drive goes&n; * ballistic no more driver support will be available from me!&n; *************************************************************&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang-ups)&n; *  Heiko Eissfeldt (VERIFY_READ/WRITE)&n; *  Marcin Dalecki (improved performance, shortened code)&n; *  ... somebody forgotten?&n; *&n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 1996 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 2.14(hs)&n; *&n; * ... anyway, I&squot;m back again, thanks to Marcin, he adopted&n; * large portions of my code (at least the parts containing&n; * my main thoughts ...)&n; *&n; ****************** H E L P *********************************&n; * If you ever plan to update your CD ROM drive and perhaps&n; * want to sell or simply give away your Mitsumi FX-001[DS]&n; * -- Please --&n; * mail me (heiko@lotte.sax.de).  When my last drive goes&n; * ballistic no more driver support will be available from me!&n; *************************************************************&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang-ups)&n; *  Heiko Eissfeldt (VERIFY_READ/WRITE)&n; *  Marcin Dalecki (improved performance, shortened code)&n; *  ... somebody forgotten?&n; *&n; *  9 November 1999 -- Make kernel-parameter implementation work with 2.3.x &n; *&t;               Removed init_module &amp; cleanup_module in favor of &n; *&t;&t;       module_init &amp; module_exit.&n; *&t;&t;       Torben Mathiasen &lt;tmm@image.dk&gt;&n; */
 macro_line|#if RCS
 DECL|variable|mcdx_c_version
 r_static
@@ -478,18 +478,6 @@ c_func
 id|request_queue_t
 op_star
 id|q
-)paren
-suffix:semicolon
-multiline_comment|/* already declared in init/main */
-r_void
-id|mcdx_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&t;Indirect exported functions. These functions are exported by their&n;&t;addresses, such as mcdx_open and mcdx_close in the&n;&t;structure mcdx_dops. */
@@ -3216,8 +3204,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
 DECL|function|mcdx_setup
-r_void
+r_static
+r_int
 id|__init
 id|mcdx_setup
 c_func
@@ -3225,12 +3215,31 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|pi
 )paren
 (brace
+r_int
+id|pi
+(braket
+l_int|4
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|pi
+)paren
+comma
+id|pi
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3277,7 +3286,19 @@ id|pi
 l_int|2
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;mcdx=&quot;
+comma
+id|mcdx_setup
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* DIRTY PART ******************************************************/
 DECL|function|mcdx_delay
 r_static
@@ -4058,12 +4079,11 @@ id|st
 suffix:semicolon
 )brace
 multiline_comment|/* MODULE STUFF ***********************************************************/
-macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-DECL|function|init_module
+DECL|function|__mcdx_init
 r_int
-id|init_module
+id|__mcdx_init
 c_func
 (paren
 r_void
@@ -4140,9 +4160,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|mcdx_exit
 r_void
-id|cleanup_module
+id|__exit
+id|mcdx_exit
 c_func
 (paren
 r_void
@@ -4311,7 +4332,22 @@ l_string|&quot;cleanup() succeeded&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif MODULE
+macro_line|#ifdef MODULE
+DECL|variable|__mcdx_init
+id|module_init
+c_func
+(paren
+id|__mcdx_init
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|mcdx_exit
+id|module_exit
+c_func
+(paren
+id|mcdx_exit
+)paren
+suffix:semicolon
 multiline_comment|/* Support functions ************************************************/
 DECL|function|mcdx_init_drive
 r_int

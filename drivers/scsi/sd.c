@@ -1217,7 +1217,7 @@ OG
 l_int|0x1fffff
 )paren
 )paren
-op_logical_and
+op_logical_or
 id|SCpnt-&gt;device-&gt;ten
 )paren
 (brace
@@ -1628,7 +1628,7 @@ op_minus
 id|EROFS
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * It is possible that the disk changing stuff resulted in the device being taken&n;&t; * offline.  If this is the case, report this to the user, and don&squot;t pretend that&n;&t; * the open actually succeeded.&n;&t; */
+multiline_comment|/*&n;&t; * It is possible that the disk changing stuff resulted in the device&n;&t; * being taken offline.  If this is the case, report this to the user,&n;&t; * and don&squot;t pretend that&n;&t; * the open actually succeeded.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2124,7 +2124,8 @@ l_int|2
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   Handle MEDIUM ERRORs that indicate partial success.  Since this is a&n;&t;   relatively rare error condition, no care is taken to avoid unnecessary&n;&t;   additional work such as memcpy&squot;s that could be avoided.&n;&t; */
+multiline_comment|/*&n;&t;   Handle MEDIUM ERRORs that indicate partial success.  Since this is a&n;&t;   relatively rare error condition, no care is taken to avoid&n;&t;   unnecessary additional work such as memcpy&squot;s that could be avoided.&n;&t; */
+multiline_comment|/* An error occurred */
 r_if
 c_cond
 (paren
@@ -2135,8 +2136,12 @@ id|result
 )paren
 op_ne
 l_int|0
-op_logical_and
-multiline_comment|/* An error occurred */
+)paren
+(brace
+multiline_comment|/* Sense data is valid */
+r_if
+c_cond
+(paren
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|0
@@ -2144,7 +2149,6 @@ l_int|0
 op_eq
 l_int|0xF0
 op_logical_and
-multiline_comment|/* Sense data is valid */
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|2
@@ -2305,6 +2309,49 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_eq
+id|ILLEGAL_REQUEST
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;device-&gt;ten
+op_eq
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|READ_10
+op_logical_or
+id|SCpnt-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|WRITE_10
+)paren
+id|SCpnt-&gt;device-&gt;ten
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+)brace
 multiline_comment|/*&n;&t; * This calls the generic completion function, now that we know&n;&t; * how many actual sectors finished, and how many sectors we need&n;&t; * to say have failed.&n;&t; */
 id|scsi_io_completion
 c_func
@@ -2391,7 +2438,7 @@ id|device-&gt;removable
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the device is offline, don&squot;t send any commands - just pretend as if&n;&t; * the command failed.  If the device ever comes back online, we can deal with&n;&t; * it then.  It is only because of unrecoverable errors that we would ever&n;&t; * take a device offline in the first place.&n;&t; */
+multiline_comment|/*&n;&t; * If the device is offline, don&squot;t send any commands - just pretend as&n;&t; * if the command failed.  If the device ever comes back online, we&n;&t; * can deal with it then.  It is only because of unrecoverable errors&n;&t; * that we would ever take a device offline in the first place.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2455,7 +2502,7 @@ c_cond
 id|retval
 )paren
 (brace
-multiline_comment|/* Unable to test, unit probably not ready.  This usually&n;&t;&t;&t;&t; * means there is no disc in the drive.  Mark as changed,&n;&t;&t;&t;&t; * and we will figure it out later once the drive is&n;&t;&t;&t;&t; * available again.  */
+multiline_comment|/* Unable to test, unit probably not ready.&n;&t;&t;&t;&t; * This usually means there is no disc in the&n;&t;&t;&t;&t; * drive.  Mark as changed, and we will figure&n;&t;&t;&t;&t; * it out later once the drive is available&n;&t;&t;&t;&t; * again.  */
 id|rscsi_disks
 (braket
 id|target
@@ -3038,23 +3085,32 @@ id|jiffies
 suffix:semicolon
 id|time1
 op_assign
-id|jiffies
-op_plus
 id|HZ
 suffix:semicolon
+multiline_comment|/* Wait 1 second for next try */
+r_do
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_UNINTERRUPTIBLE
+suffix:semicolon
+id|time1
+op_assign
+id|schedule_timeout
+c_func
+(paren
+id|time1
+)paren
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
-id|time_before
-c_func
-(paren
-id|jiffies
-comma
 id|time1
 )paren
-)paren
+(brace
 suffix:semicolon
-multiline_comment|/* Wait 1 second for next try */
+)brace
 id|printk
 c_func
 (paren

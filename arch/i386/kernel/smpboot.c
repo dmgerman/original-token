@@ -2131,10 +2131,6 @@ id|c-&gt;pmd_quick
 op_assign
 l_int|0
 suffix:semicolon
-id|c-&gt;pgd_quick
-op_assign
-l_int|0
-suffix:semicolon
 id|c-&gt;pgtable_cache_sz
 op_assign
 l_int|0

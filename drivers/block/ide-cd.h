@@ -2,6 +2,7 @@ macro_line|#ifndef _IDE_CD_H
 DECL|macro|_IDE_CD_H
 mdefine_line|#define _IDE_CD_H
 multiline_comment|/*&n; *  linux/drivers/block/ide_cd.h&n; *&n; *  Copyright (C) 1996, 1997, 1998  Erik Andersen&n; *  Copyright (C) 1998, 1999 Jens Axboe&n; */
+macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
 macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
@@ -253,145 +254,6 @@ multiline_comment|/* Current speed of the drive */
 suffix:semicolon
 DECL|macro|CDROM_STATE_FLAGS
 mdefine_line|#define CDROM_STATE_FLAGS(drive) (&amp;(((struct cdrom_info *)(drive-&gt;driver_data))-&gt;state_flags))
-DECL|struct|atapi_request_sense
-r_struct
-id|atapi_request_sense
-(brace
-macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
-DECL|member|valid
-r_int
-r_char
-id|valid
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|error_code
-r_int
-r_char
-id|error_code
-suffix:colon
-l_int|7
-suffix:semicolon
-macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
-r_int
-r_char
-id|error_code
-suffix:colon
-l_int|7
-suffix:semicolon
-r_int
-r_char
-id|valid
-suffix:colon
-l_int|1
-suffix:semicolon
-macro_line|#else
-macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
-macro_line|#endif
-DECL|member|reserved1
-id|byte
-id|reserved1
-suffix:semicolon
-macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
-DECL|member|reserved3
-r_int
-r_char
-id|reserved3
-suffix:colon
-l_int|2
-suffix:semicolon
-DECL|member|ili
-r_int
-r_char
-id|ili
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|reserved2
-r_int
-r_char
-id|reserved2
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|sense_key
-r_int
-r_char
-id|sense_key
-suffix:colon
-l_int|4
-suffix:semicolon
-macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
-DECL|member|sense_key
-r_int
-r_char
-id|sense_key
-suffix:colon
-l_int|4
-suffix:semicolon
-DECL|member|reserved2
-r_int
-r_char
-id|reserved2
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|ili
-r_int
-r_char
-id|ili
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|reserved3
-r_int
-r_char
-id|reserved3
-suffix:colon
-l_int|2
-suffix:semicolon
-macro_line|#else
-macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
-macro_line|#endif
-DECL|member|info
-id|byte
-id|info
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|member|sense_len
-id|byte
-id|sense_len
-suffix:semicolon
-DECL|member|command_info
-id|byte
-id|command_info
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|member|asc
-id|byte
-id|asc
-suffix:semicolon
-DECL|member|ascq
-id|byte
-id|ascq
-suffix:semicolon
-DECL|member|fru
-id|byte
-id|fru
-suffix:semicolon
-DECL|member|sense_key_specific
-id|byte
-id|sense_key_specific
-(braket
-l_int|3
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|packet_command
 r_struct
 id|packet_command
@@ -411,7 +273,7 @@ id|stat
 suffix:semicolon
 DECL|member|sense_data
 r_struct
-id|atapi_request_sense
+id|request_sense
 op_star
 id|sense_data
 suffix:semicolon
@@ -1536,7 +1398,7 @@ suffix:semicolon
 multiline_comment|/* The result of the last successful request sense command&n;&t;   on this device. */
 DECL|member|sense_data
 r_struct
-id|atapi_request_sense
+id|request_sense
 id|sense_data
 suffix:semicolon
 DECL|member|request_sense_request

@@ -1,6 +1,6 @@
 DECL|macro|GSCD_VERSION
 mdefine_line|#define GSCD_VERSION &quot;0.4a Oliver Raupach &lt;raupach@nwfs1.rz.fh-hannover.de&gt;&quot;
-multiline_comment|/*&n;&t;linux/drivers/block/gscd.c - GoldStar R420 CDROM driver&n;&n;        Copyright (C) 1995  Oliver Raupach &lt;raupach@nwfs1.rz.fh-hannover.de&gt;&n;        based upon pre-works by   Eberhard Moenkeberg &lt;emoenke@gwdg.de&gt;&n;        &n;&n;        For all kind of other information about the GoldStar CDROM&n;        and this Linux device driver I installed a WWW-URL:&n;        http://linux.rz.fh-hannover.de/~raupach        &n;&n;&n;             If you are the editor of a Linux CD, you should&n;             enable gscd.c within your boot floppy kernel and&n;             send me one of your CDs for free.&n;&n;&n;        --------------------------------------------------------------------&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;*/
+multiline_comment|/*&n;&t;linux/drivers/block/gscd.c - GoldStar R420 CDROM driver&n;&n;        Copyright (C) 1995  Oliver Raupach &lt;raupach@nwfs1.rz.fh-hannover.de&gt;&n;        based upon pre-works by   Eberhard Moenkeberg &lt;emoenke@gwdg.de&gt;&n;        &n;&n;        For all kind of other information about the GoldStar CDROM&n;        and this Linux device driver I installed a WWW-URL:&n;        http://linux.rz.fh-hannover.de/~raupach        &n;&n;&n;             If you are the editor of a Linux CD, you should&n;             enable gscd.c within your boot floppy kernel and&n;             send me one of your CDs for free.&n;&n;&n;        --------------------------------------------------------------------&n;&t;This program is free software; you can redistribute it and/or modify&n;&t;it under the terms of the GNU General Public License as published by&n;&t;the Free Software Foundation; either version 2, or (at your option)&n;&t;any later version.&n;&n;&t;This program is distributed in the hope that it will be useful,&n;&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n;&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;&t;GNU General Public License for more details.&n;&n;&t;You should have received a copy of the GNU General Public License&n;&t;along with this program; if not, write to the Free Software&n;&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&t;&n;&t;--------------------------------------------------------------------&n;&t;&n;&t;9 November 1999 -- Make kernel-parameter implementation work with 2.3.x &n;&t;                   Removed init_module &amp; cleanup_module in favor of &n;&t;&t;   &t;   module_init &amp; module_exit.&n;&t;&t;&t;   Torben Mathiasen &lt;tmm@image.dk&gt;&n;&n;*/
 multiline_comment|/* These settings are for various debug-level. Leave they untouched ... */
 DECL|macro|NO_GSCD_DEBUG
 mdefine_line|#define  NO_GSCD_DEBUG 
@@ -578,20 +578,42 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
+multiline_comment|/* Using new interface for kernel-parameters */
 DECL|function|gscd_setup
-r_void
+r_static
+r_int
 id|__init
 id|gscd_setup
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -611,7 +633,19 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;gscd=&quot;
+comma
+id|gscd_setup
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|gscd_ioctl
 r_static
 r_int
@@ -2988,11 +3022,11 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef MODULE
 multiline_comment|/* Init for the Module-Version */
-DECL|function|init_module
+DECL|function|init_gscd
 r_int
-id|init_module
+id|init_gscd
+c_func
 (paren
 r_void
 )paren
@@ -3032,9 +3066,11 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|function|cleanup_module
+DECL|function|exit_gscd
 r_void
-id|cleanup_module
+id|__exit
+id|exit_gscd
+c_func
 (paren
 r_void
 )paren
@@ -3080,7 +3116,22 @@ l_string|&quot;GoldStar-module released.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#ifdef MODULE
+DECL|variable|init_gscd
+id|module_init
+c_func
+(paren
+id|init_gscd
+)paren
+suffix:semicolon
+macro_line|#endif 
+DECL|variable|exit_gscd
+id|module_exit
+c_func
+(paren
+id|exit_gscd
+)paren
+suffix:semicolon
 multiline_comment|/* Test for presence of drive and initialize it.  Called only at boot time. */
 DECL|function|gscd_init
 r_int

@@ -160,6 +160,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lock-&gt;lock
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
 id|__asm__
 id|__volatile__

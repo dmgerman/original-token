@@ -2,6 +2,7 @@ multiline_comment|/*&n; * AGPGART module version 0.99&n; * Copyright (C) 1999 Je
 macro_line|#ifndef _AGP_BACKEND_PRIV_H
 DECL|macro|_AGP_BACKEND_PRIV_H
 mdefine_line|#define _AGP_BACKEND_PRIV_H 1
+macro_line|#include &lt;linux/config.h&gt;
 DECL|enum|aper_size_type
 r_enum
 id|aper_size_type

@@ -165,10 +165,6 @@ id|retries
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_char
 op_star
 id|bounce_buffer
