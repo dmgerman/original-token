@@ -281,7 +281,13 @@ id|KERN_WARNING
 l_string|&quot;LDT allocated for cloned task!&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Possibly do an SMP cross-call to other CPUs to reload&n;&t;&t; * their LDTs&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Possibly do an SMP cross-call to other CPUs to reload&n;&t;&t; * their LDTs?&n;&t;&t; */
+id|load_LDT
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 )brace
 id|lp
 op_assign

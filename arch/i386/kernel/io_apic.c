@@ -774,7 +774,7 @@ id|pirqs_enabled
 suffix:semicolon
 DECL|function|ioapic_setup
 r_static
-r_void
+r_int
 id|__init
 id|ioapic_setup
 c_func
@@ -782,10 +782,6 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_extern
@@ -811,7 +807,7 @@ id|ioapic_setup
 suffix:semicolon
 DECL|function|ioapic_pirq_setup
 r_static
-r_void
+r_int
 id|__init
 id|ioapic_pirq_setup
 c_func
@@ -941,6 +937,9 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 id|__setup
 c_func

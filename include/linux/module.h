@@ -342,12 +342,14 @@ r_struct
 id|module
 id|__this_module
 suffix:semicolon
+DECL|macro|THIS_MODULE
+mdefine_line|#define THIS_MODULE&t;&t;(&amp;__this_module)
 DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT&t;__MOD_INC_USE_COUNT(&amp;__this_module)
+mdefine_line|#define MOD_INC_USE_COUNT&t;__MOD_INC_USE_COUNT(THIS_MODULE)
 DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT&t;__MOD_DEC_USE_COUNT(&amp;__this_module)
+mdefine_line|#define MOD_DEC_USE_COUNT&t;__MOD_DEC_USE_COUNT(THIS_MODULE)
 DECL|macro|MOD_IN_USE
-mdefine_line|#define MOD_IN_USE&t;&t;__MOD_IN_USE(&amp;__this_module)
+mdefine_line|#define MOD_IN_USE&t;&t;__MOD_IN_USE(THIS_MODULE)
 macro_line|#ifndef __NO_VERSION__
 macro_line|#include &lt;linux/version.h&gt;
 DECL|variable|__module_kernel_version
@@ -406,6 +408,8 @@ mdefine_line|#define MODULE_PARM(var,type)
 DECL|macro|MODULE_PARM_DESC
 mdefine_line|#define MODULE_PARM_DESC(var,desc)
 macro_line|#ifndef __GENKSYMS__
+DECL|macro|THIS_MODULE
+mdefine_line|#define THIS_MODULE&t;&t;NULL
 DECL|macro|MOD_INC_USE_COUNT
 mdefine_line|#define MOD_INC_USE_COUNT&t;do { } while (0)
 DECL|macro|MOD_DEC_USE_COUNT

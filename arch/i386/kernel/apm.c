@@ -4810,7 +4810,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Just start the APM thread. We do NOT want to do APM BIOS&n; * calls from anything but the APM thread, if for no other reason&n; * than the fact that we don&squot;t trust the APM BIOS. This way,&n; * most common APM BIOS problems that lead to protection errors&n; * etc will have at least some level of being contained...&n; *&n; * In short, if something bad happens, at least we have a choice&n; * of just killing the apm thread..&n; */
 DECL|function|apm_init
-r_void
+r_static
+r_int
 id|__init
 id|apm_init
 c_func
@@ -5352,4 +5353,9 @@ id|SIGCHLD
 )paren
 suffix:semicolon
 )brace
+id|module_init
+c_func
+(paren
+id|apm_init
+)paren
 eof
