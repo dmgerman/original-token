@@ -1612,10 +1612,6 @@ l_string|&quot;Rainbow II&quot;
 suffix:semicolon
 id|fb_fix.smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|fm2fb_mem_phys
 suffix:semicolon
 id|fb_fix.smem_len
@@ -1642,10 +1638,6 @@ l_int|2
 suffix:semicolon
 id|fb_fix.mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|fm2fb_reg_phys
 suffix:semicolon
 id|fb_fix.mmio_len

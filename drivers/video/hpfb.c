@@ -770,10 +770,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * X works, but screen wraps ... &n;&t; */
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|fb_start
 suffix:semicolon
 id|fix-&gt;smem_len

@@ -4760,11 +4760,11 @@ id|dev-&gt;descriptor.bDeviceClass
 op_ne
 l_int|0
 op_logical_or
-id|dev-&gt;config-&gt;altsetting-&gt;interface-&gt;bInterfaceClass
+id|dev-&gt;config-&gt;interface-&gt;altsetting-&gt;bInterfaceClass
 op_ne
 l_int|8
 op_logical_or
-id|dev-&gt;config-&gt;altsetting-&gt;interface-&gt;bInterfaceSubClass
+id|dev-&gt;config-&gt;interface-&gt;altsetting-&gt;bInterfaceSubClass
 template_param
 id|US_SC_MAX
 )paren
@@ -4952,7 +4952,7 @@ suffix:semicolon
 )brace
 id|interface
 op_assign
-id|dev-&gt;config-&gt;altsetting-&gt;interface
+id|dev-&gt;config-&gt;interface-&gt;altsetting
 suffix:semicolon
 id|ss-&gt;filter
 op_assign

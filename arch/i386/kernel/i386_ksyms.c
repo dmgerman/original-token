@@ -344,13 +344,6 @@ c_func
 id|kernel_flag
 )paren
 suffix:semicolon
-DECL|variable|smp_invalidate_needed
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|smp_invalidate_needed
-)paren
-suffix:semicolon
 DECL|variable|cpu_number_map
 id|EXPORT_SYMBOL
 c_func

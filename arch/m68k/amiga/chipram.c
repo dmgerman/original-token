@@ -1,4 +1,4 @@
-multiline_comment|/*&n;**  linux/amiga/chipram.c&n;**&n;**      Modified 03-May-94 by Geert Uytterhoeven&n;**                           (Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**          - 64-bit aligned allocations for full AGA compatibility&n;*/
+multiline_comment|/*&n;**  linux/amiga/chipram.c&n;**&n;**      Modified 03-May-94 by Geert Uytterhoeven &lt;geert@linux-m68k.org&gt;&n;**          - 64-bit aligned allocations for full AGA compatibility&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

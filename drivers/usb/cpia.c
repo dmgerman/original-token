@@ -5029,12 +5029,12 @@ id|dev-&gt;config
 l_int|0
 )braket
 dot
-id|altsetting
+id|interface
 (braket
 l_int|0
 )braket
 dot
-id|interface
+id|altsetting
 (braket
 l_int|0
 )braket

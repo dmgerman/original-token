@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Originally by Linus Torvalds.&n; * Smart CONFIG_* processing by Werner Almesberger, Michael Chastain.&n; *&n; * Usage: mkdep file ...&n; * &n; * Read source files and output makefile dependency lines for them.&n; * I make simple dependency lines for #include &lt;*.h&gt; and #include &quot;*.h&quot;.&n; * I also find instances of CONFIG_FOO and generate dependencies&n; *    like include/config/foo.h.&n; */
+multiline_comment|/*&n; * Originally by Linus Torvalds.&n; * Smart CONFIG_* processing by Werner Almesberger, Michael Chastain.&n; *&n; * Usage: mkdep file ...&n; * &n; * Read source files and output makefile dependency lines for them.&n; * I make simple dependency lines for #include &lt;*.h&gt; and #include &quot;*.h&quot;.&n; * I also find instances of CONFIG_FOO and generate dependencies&n; *    like include/config/foo.h.&n; *&n; * 1 August 1999, Michael Elizabeth Chastain, &lt;mec@shout.net&gt;&n; * - Keith Owens reported a bug in smart config processing.  There used&n; *   to be an optimization for &quot;#define CONFIG_FOO ... #ifdef CONFIG_FOO&quot;,&n; *   so that the file would not depend on CONFIG_FOO because the file defines&n; *   this symbol itself.  But this optimization is bogus!  Consider this code:&n; *   &quot;#if 0 &bslash;n #define CONFIG_FOO &bslash;n #endif ... #ifdef CONFIG_FOO&quot;.  Here&n; *   the definition is inactivated, but I still used it.  It turns out this&n; *   actually happens a few times in the kernel source.  The simple way to&n; *   fix this problem is to remove this particular optimization.&n; */
 macro_line|#include &lt;ctype.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
@@ -274,9 +274,6 @@ r_void
 id|define_config
 c_func
 (paren
-r_int
-id|convert
-comma
 r_const
 r_char
 op_star
@@ -306,79 +303,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|convert
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|len
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_char
-id|c
-op_assign
-id|str_config
-(braket
-id|len_config
-op_plus
-id|i
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|isupper
-c_func
-(paren
-id|c
-)paren
-)paren
-id|c
-op_assign
-id|tolower
-c_func
-(paren
-id|c
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|c
-op_eq
-l_char|&squot;_&squot;
-)paren
-id|c
-op_assign
-l_char|&squot;/&squot;
-suffix:semicolon
-id|str_config
-(braket
-id|len_config
-op_plus
-id|i
-)braket
-op_assign
-id|c
-suffix:semicolon
-)brace
-)brace
 id|len_config
 op_add_assign
 id|len
@@ -408,8 +332,6 @@ suffix:semicolon
 id|define_config
 c_func
 (paren
-l_int|0
-comma
 l_string|&quot;&quot;
 comma
 l_int|0
@@ -675,8 +597,6 @@ l_int|7
 id|define_config
 c_func
 (paren
-l_int|0
-comma
 id|name
 op_plus
 l_int|7
@@ -887,8 +807,6 @@ suffix:semicolon
 id|define_config
 c_func
 (paren
-l_int|0
-comma
 id|pc
 comma
 id|len
@@ -1508,7 +1426,7 @@ suffix:semicolon
 r_goto
 id|pound_define_undef
 suffix:semicolon
-multiline_comment|/* #&bslash;s*(define|undef)&bslash;s*CONFIG_(&bslash;w*) */
+multiline_comment|/*&n; * #&bslash;s*(define|undef)&bslash;s*CONFIG_(&bslash;w*)&n; *&n; * this does not define the word, because it could be inside another&n; * conditional (#if 0).  But I do parse the word so that this instance&n; * does not count as a use.  -- mec&n; */
 id|pound_define_undef
 suffix:colon
 id|GETNEXT
@@ -1612,20 +1530,6 @@ l_char|&squot;_&squot;
 )paren
 r_goto
 id|pound_define_undef_CONFIG_word
-suffix:semicolon
-id|define_config
-c_func
-(paren
-l_int|1
-comma
-id|map_dot
-comma
-id|next
-op_minus
-id|map_dot
-op_minus
-l_int|1
-)paren
 suffix:semicolon
 r_goto
 id|__start

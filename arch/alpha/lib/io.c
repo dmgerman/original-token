@@ -347,9 +347,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|function|___raw_writeb
+DECL|function|___raw_writew
 r_void
-id|___raw_writeb
+id|___raw_writew
 c_func
 (paren
 r_int
@@ -2378,7 +2378,7 @@ l_int|2
 suffix:semicolon
 r_do
 (brace
-id|__raw_writeb
+id|__raw_writew
 c_func
 (paren
 op_star
@@ -2519,7 +2519,7 @@ l_int|2
 )paren
 )paren
 (brace
-id|__raw_writeb
+id|__raw_writew
 c_func
 (paren
 id|c
@@ -2648,7 +2648,7 @@ op_ge
 l_int|2
 )paren
 (brace
-id|__raw_writeb
+id|__raw_writew
 c_func
 (paren
 id|c

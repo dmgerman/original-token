@@ -295,7 +295,7 @@ mdefine_line|#define LOW_BUFFER_END       0x90000
 DECL|macro|LOW_BUFFER_SIZE
 mdefine_line|#define LOW_BUFFER_SIZE      ( LOW_BUFFER_END - LOW_BUFFER_START )
 DECL|macro|HEAP_SIZE
-mdefine_line|#define HEAP_SIZE             0x2000
+mdefine_line|#define HEAP_SIZE             0x3000
 DECL|variable|high_loaded
 r_static
 r_int

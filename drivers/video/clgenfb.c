@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@pobox.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
 DECL|macro|CLGEN_VERSION
-mdefine_line|#define CLGEN_VERSION &quot;1.9.4.1&quot;
+mdefine_line|#define CLGEN_VERSION &quot;1.9.4.2&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -56,7 +56,7 @@ macro_line|#endif
 multiline_comment|/* debugging assertions */
 macro_line|#ifndef CLGEN_NDEBUG
 DECL|macro|assert
-mdefine_line|#define assert(expr) &bslash;&n;        if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__); &bslash;&n;        *(int*)0 = 0;&bslash;&n;        }
+mdefine_line|#define assert(expr) &bslash;&n;        if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__); &bslash;&n;        }
 macro_line|#else
 DECL|macro|assert
 mdefine_line|#define assert(expr)
@@ -2175,10 +2175,6 @@ l_int|8
 suffix:colon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|_info-&gt;fbmem_phys
 suffix:semicolon
 r_break
@@ -2188,10 +2184,6 @@ l_int|16
 suffix:colon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|_info-&gt;fbmem_phys
 op_plus
 l_int|1
@@ -2208,10 +2200,6 @@ l_int|32
 suffix:colon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|_info-&gt;fbmem_phys
 op_plus
 l_int|2
@@ -2226,10 +2214,6 @@ r_else
 (brace
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|_info-&gt;fbmem_phys
 suffix:semicolon
 )brace
@@ -2279,11 +2263,7 @@ suffix:semicolon
 multiline_comment|/* FIXME: map region at 0xB8000 if available, fill in here */
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|NULL
+l_int|0
 suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign
@@ -3050,7 +3030,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|var-&gt;bits_per_pixel
+id|_par-&gt;var.bits_per_pixel
 )paren
 (brace
 r_case
@@ -3270,9 +3250,17 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;Unsupported bpp size: %d&bslash;n&quot;
+comma
+id|_par-&gt;var.bits_per_pixel
+)paren
+suffix:semicolon
 m_assert
 (paren
-l_int|0
+id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/* should never occur */
@@ -3427,7 +3415,7 @@ id|clgen_get_mclk
 (paren
 id|freq
 comma
-id|var-&gt;bits_per_pixel
+id|_par-&gt;var.bits_per_pixel
 comma
 op_amp
 id|_par-&gt;divMCLK
@@ -10247,6 +10235,8 @@ op_assign
 id|clgen_pci_probe_list
 (braket
 id|i
+op_minus
+l_int|1
 )braket
 dot
 id|btype
@@ -10911,6 +10901,8 @@ op_assign
 id|clgen_zorro_probe_list
 (braket
 id|i
+op_minus
+l_int|1
 )braket
 dot
 id|btype
@@ -14178,7 +14170,7 @@ suffix:colon
 multiline_comment|/* should never occur */
 m_assert
 (paren
-l_int|0
+id|FALSE
 )paren
 suffix:semicolon
 r_break

@@ -896,10 +896,6 @@ id|igafb_name
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|fb-&gt;frame_buffer
 suffix:semicolon
 id|fix-&gt;smem_len

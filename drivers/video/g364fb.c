@@ -1566,10 +1566,6 @@ id|fb_var.bits_per_pixel
 suffix:semicolon
 id|fb_fix.smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 l_int|0x40000000
 suffix:semicolon
 multiline_comment|/* physical address */
@@ -1630,7 +1626,7 @@ l_int|0
 suffix:semicolon
 id|fb_fix.mmio_start
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 id|fb_fix.mmio_len
 op_assign

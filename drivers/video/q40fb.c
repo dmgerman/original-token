@@ -416,10 +416,6 @@ l_string|&quot;Q40&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|q40_screen_addr
 suffix:semicolon
 id|fix-&gt;smem_len

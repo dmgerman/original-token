@@ -1953,10 +1953,6 @@ id|cyberfb_name
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|CyberMem_phys
 suffix:semicolon
 id|fix-&gt;smem_len
@@ -1965,10 +1961,6 @@ id|CyberSize
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|CyberRegs_phys
 suffix:semicolon
 id|fix-&gt;mmio_len

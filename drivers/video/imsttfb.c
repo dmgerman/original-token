@@ -10418,10 +10418,6 @@ l_string|&quot;TVP&quot;
 suffix:semicolon
 id|p-&gt;fix.smem_start
 op_assign
-(paren
-id|__u8
-op_star
-)paren
 id|p-&gt;frame_buffer_phys
 suffix:semicolon
 id|p-&gt;fix.smem_len
@@ -10430,10 +10426,6 @@ id|p-&gt;total_vram
 suffix:semicolon
 id|p-&gt;fix.mmio_start
 op_assign
-(paren
-id|__u8
-op_star
-)paren
 id|p-&gt;dc_regs_phys
 suffix:semicolon
 id|p-&gt;fix.mmio_len

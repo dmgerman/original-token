@@ -5194,10 +5194,6 @@ l_string|&quot;control&quot;
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|p-&gt;control_regs_phys
 suffix:semicolon
 id|fix-&gt;mmio_len
@@ -5219,10 +5215,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;fix-&gt;type_aux = 0;&n;&t;&t;fix-&gt;ywrapstep = 0;&n;&t;&t;fix-&gt;ypanstep = 0;&n;&t;&t;fix-&gt;xpanstep = 0;&n;&t;*/
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_void
-op_star
-)paren
 (paren
 id|p-&gt;frame_buffer_phys
 op_plus

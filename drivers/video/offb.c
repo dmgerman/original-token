@@ -2608,10 +2608,6 @@ id|pitch
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|address
 suffix:semicolon
 id|fix-&gt;smem_len

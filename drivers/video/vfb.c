@@ -2113,10 +2113,6 @@ id|vfb_name
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|videomemory
 suffix:semicolon
 id|fix-&gt;smem_len

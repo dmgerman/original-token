@@ -2,7 +2,7 @@ multiline_comment|/* Linux/68k Hydra Amiganet board driver v2.1 BETA            
 multiline_comment|/* copyleft by Topi Kanerva (topi@susanna.oulu.fi)                          */
 multiline_comment|/* also some code &amp; lots of fixes by Timo Rossi (trossi@cc.jyu.fi)          */
 multiline_comment|/* The code is mostly based on the linux/68k Ariadne driver                 */
-multiline_comment|/* copyrighted by Geert Uytterhoeven (Geert.Uytterhoeven@cs.kuleuven.ac.be) */
+multiline_comment|/* copyrighted by Geert Uytterhoeven (geert@linux-m68k.org)                 */
 multiline_comment|/* and Peter De Schrijver (Peter.DeSchrijver@linux.cc.kuleuven.ac.be)       */
 multiline_comment|/* This file is subject to the terms and conditions of the GNU General      */
 multiline_comment|/* Public License.  See the file COPYING in the main directory of the       */

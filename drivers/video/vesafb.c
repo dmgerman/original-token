@@ -603,10 +603,6 @@ l_string|&quot;VESA VGA&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|video_base
 suffix:semicolon
 id|fix-&gt;smem_len

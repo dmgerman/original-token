@@ -430,10 +430,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * fbmem.c accepts non page aligned mappings now!&n;&t; */
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|mac_videobase
 suffix:semicolon
 id|fix-&gt;smem_len

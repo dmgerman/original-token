@@ -2188,9 +2188,17 @@ id|repeat
 OL
 l_int|16
 )paren
+(brace
+id|ptr
+op_assign
+id|va
+op_amp
+id|PAGE_MASK
+suffix:semicolon
 r_goto
 id|repeat
 suffix:semicolon
+)brace
 r_return
 op_minus
 id|EAGAIN

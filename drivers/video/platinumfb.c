@@ -4302,10 +4302,6 @@ suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
 (paren
-r_void
-op_star
-)paren
-(paren
 id|info-&gt;frame_buffer_phys
 op_plus
 l_int|0x1000
@@ -4322,10 +4318,6 @@ l_int|0x1000
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 (paren
 id|info-&gt;platinum_regs_phys
 )paren

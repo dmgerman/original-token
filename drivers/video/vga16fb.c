@@ -582,10 +582,6 @@ l_string|&quot;VGA16 VGA&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 l_int|0xa0000
 suffix:semicolon
 id|fix-&gt;smem_len

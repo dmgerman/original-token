@@ -3731,15 +3731,9 @@ id|p
 (brace
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
 id|p-&gt;frame_buffer_phys
 op_plus
 l_int|0x1000
-)paren
 suffix:semicolon
 macro_line|#if 1
 id|fix-&gt;smem_len

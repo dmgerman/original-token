@@ -6289,10 +6289,6 @@ id|amifb_name
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|videomemory_phys
 suffix:semicolon
 id|fix-&gt;smem_len

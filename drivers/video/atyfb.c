@@ -9993,10 +9993,6 @@ id|atyfb_name
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|info-&gt;frame_buffer_phys
 suffix:semicolon
 id|fix-&gt;smem_len
@@ -10039,10 +10035,6 @@ id|CX_CHIP_ID
 (brace
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|info-&gt;ati_regbase_phys
 suffix:semicolon
 id|fix-&gt;mmio_len
@@ -10069,10 +10061,6 @@ id|ET_CHIP_ID
 (brace
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|info-&gt;ati_regbase_phys
 suffix:semicolon
 id|fix-&gt;mmio_len
@@ -10103,11 +10091,6 @@ id|VV_CHIP_ID
 (brace
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
 id|info-&gt;ati_regbase_phys
 op_minus
 l_int|0x400
@@ -10126,11 +10109,6 @@ r_else
 (brace
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
 id|info-&gt;ati_regbase_phys
 op_minus
 l_int|0x400

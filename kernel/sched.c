@@ -569,14 +569,10 @@ id|prev-&gt;mm
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * If there is a dependency between p1 and p2,&n; * don&squot;t be too eager to go into the slow schedule.&n; * In particular, if p1 and p2 both want the kernel&n; * lock, there is no point in trying to make them&n; * extremely parallel..&n; *&n; * (No lock - lock_depth &lt; 0)&n; *&n; * There are two additional metrics here:&n; *&n; * first, a &squot;cutoff&squot; interval, currently 0-200 usecs on&n; * x86 CPUs, depending on the size of the &squot;SMP-local cache&squot;.&n; * If the current process has longer average timeslices than&n; * this, then we utilize the idle CPU.&n; *&n; * second, if the wakeup comes from a process context,&n; * then the two processes are &squot;related&squot;. (they form a&n; * &squot;gang&squot;)&n; *&n; * An idle CPU is almost always a bad thing, thus we skip&n; * the idle-CPU utilization only if both these conditions&n; * are true. (ie. a &squot;process-gang&squot; rescheduling with rather&n; * high frequency should stay on the same CPU).&n; *&n; * [We can switch to something more finegrained in 2.3.]&n; *&n; * do not &squot;guess&squot; if the to-be-scheduled task is RT.&n; */
-DECL|macro|related
-mdefine_line|#define related(p1,p2) (((p1)-&gt;lock_depth &gt;= 0) &amp;&amp; (p2)-&gt;lock_depth &gt;= 0) &amp;&amp; &bslash;&n;&t;(((p2)-&gt;policy == SCHED_OTHER) &amp;&amp; ((p1)-&gt;avg_slice &lt; cacheflush_time))
-DECL|function|reschedule_idle_slow
+DECL|function|reschedule_idle
 r_static
-r_inline
 r_void
-id|reschedule_idle_slow
+id|reschedule_idle
 c_func
 (paren
 r_struct
@@ -586,7 +582,6 @@ id|p
 )paren
 (brace
 macro_line|#ifdef __SMP__
-multiline_comment|/*&n; * (see reschedule_idle() for an explanation first ...)&n; *&n; * Pass #2&n; *&n; * We try to find another (idle) CPU for this woken-up process.&n; *&n; * On SMP, we mostly try to see if the CPU the task used&n; * to run on is idle.. but we will use another idle CPU too,&n; * at this point we already know that this CPU is not&n; * willing to reschedule in the near future.&n; *&n; * An idle CPU is definitely wasted, especially if this CPU is&n; * running long-timeslice processes. The following algorithm is&n; * pretty good at finding the best idle CPU to send this process&n; * to.&n; *&n; * [We can try to preempt low-priority processes on other CPUs in&n; * 2.3. Also we can try to use the avg_slice value to predict&n; * &squot;likely reschedule&squot; events even on other CPUs.]&n; */
 r_int
 id|this_cpu
 op_assign
@@ -610,21 +605,12 @@ id|cpu
 comma
 id|best_cpu
 comma
-id|weight
-comma
-id|best_weight
-comma
 id|i
 suffix:semicolon
 r_int
 r_int
 id|flags
 suffix:semicolon
-id|best_weight
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* prevents negative weight */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -699,19 +685,42 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|related
+id|tsk
+op_eq
+id|idle_task
 c_func
 (paren
-id|tsk
-comma
-id|p
+id|cpu
 )paren
+)paren
+id|target_tsk
+op_assign
+id|tsk
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|target_tsk
+op_logical_and
+id|p-&gt;avg_slice
+OG
+id|cacheflush_time
 )paren
 r_goto
-id|out_no_target
+id|send_now
 suffix:semicolon
-id|weight
+id|tsk
 op_assign
+id|cpu_curr
+c_func
+(paren
+id|best_cpu
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|preemption_goodness
 c_func
 (paren
@@ -719,27 +728,15 @@ id|tsk
 comma
 id|p
 comma
-id|cpu
+id|best_cpu
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|weight
 OG
-id|best_weight
+l_int|0
 )paren
-(brace
-id|best_weight
-op_assign
-id|weight
-suffix:semicolon
 id|target_tsk
 op_assign
 id|tsk
 suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n;&t; * found any suitable CPU?&n;&t; */
 r_if
 c_cond
@@ -840,61 +837,6 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-)brace
-DECL|function|reschedule_idle
-r_static
-r_void
-id|reschedule_idle
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|p
-)paren
-(brace
-macro_line|#ifdef __SMP__
-r_int
-id|cpu
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * (&quot;wakeup()&quot; should not be called before we&squot;ve initialized&n;&t; * SMP completely.&n;&t; * Basically a not-yet initialized SMP subsystem can be&n;&t; * considered as a not-yet working scheduler, simply dont use&n;&t; * it before it&squot;s up and running ...)&n;&t; *&n;&t; * SMP rescheduling is done in 2 passes:&n;&t; *  - pass #1: faster: &squot;quick decisions&squot;&n;&t; *  - pass #2: slower: &squot;lets try and find a suitable CPU&squot;&n;&t; */
-multiline_comment|/*&n;&t; * Pass #1. (subtle. We might be in the middle of __switch_to, so&n;&t; * to preserve scheduling atomicity we have to use cpu_curr)&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|p-&gt;processor
-op_eq
-id|cpu
-)paren
-op_logical_and
-id|related
-c_func
-(paren
-id|cpu_curr
-c_func
-(paren
-id|cpu
-)paren
-comma
-id|p
-)paren
-)paren
-r_return
-suffix:semicolon
-macro_line|#endif /* __SMP__ */
-multiline_comment|/*&n;&t; * Pass #2&n;&t; */
-id|reschedule_idle_slow
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Careful!&n; *&n; * This has to add the process to the _beginning_ of the&n; * run-queue, not the end. See the comment about &quot;This is&n; * subtle&quot; in the scheduler proper..&n; */
 DECL|function|add_to_runqueue

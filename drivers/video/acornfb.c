@@ -4165,10 +4165,6 @@ id|global_disp
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|current_par.screen_base_p
 suffix:semicolon
 id|fix-&gt;smem_len

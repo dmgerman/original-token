@@ -143,12 +143,10 @@ id|cpu
 (brace
 r_return
 op_logical_neg
-id|atomic_read
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
+id|local_irq_count
+(braket
+id|cpu
+)braket
 op_logical_and
 op_logical_neg
 id|test_bit

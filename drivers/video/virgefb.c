@@ -2208,10 +2208,6 @@ id|cv3d_on_zorro2
 (brace
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|CyberMem_phys
 suffix:semicolon
 )brace
@@ -2229,10 +2225,6 @@ suffix:colon
 id|fix-&gt;smem_start
 op_assign
 (paren
-r_char
-op_star
-)paren
-(paren
 id|CyberMem_phys
 op_plus
 id|CYBMEM_OFFSET_8
@@ -2245,10 +2237,6 @@ l_int|16
 suffix:colon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 (paren
 id|CyberMem_phys
 op_plus
@@ -2265,10 +2253,6 @@ id|CyberSize
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|CyberRegs_phys
 suffix:semicolon
 id|fix-&gt;mmio_len

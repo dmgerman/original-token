@@ -4250,13 +4250,7 @@ id|retz3fb_name
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
 id|zinfo-&gt;physfbmem
-)paren
 suffix:semicolon
 id|fix-&gt;smem_len
 op_assign
@@ -4264,13 +4258,7 @@ id|zinfo-&gt;fbsize
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
 id|zinfo-&gt;physregs
-)paren
 suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign

@@ -2926,10 +2926,6 @@ l_string|&quot;C&amp;T 65550&quot;
 suffix:semicolon
 id|p-&gt;fix.smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|p-&gt;frame_buffer_phys
 suffix:semicolon
 singleline_comment|// FIXME: Assumes 1MB frame buffer, but 65550 supports 1MB or 2MB.

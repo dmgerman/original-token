@@ -2,7 +2,7 @@ macro_line|#ifndef _I386_SEMAPHORE_HELPER_H
 DECL|macro|_I386_SEMAPHORE_HELPER_H
 mdefine_line|#define _I386_SEMAPHORE_HELPER_H
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores helper functions.&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; * (C) Copyright 1999 Andrea Arcangeli&n; */
-multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * but on the x86 we need an external synchronizer.&n; */
+multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * but on the x86 we need an external synchronizer.&n; *&n; * NOTE: we can&squot;t look at the semaphore count here since it can be&n; * unreliable. Even if the count is minor than 1, the semaphore&n; * could be just owned by another process (this because not only up() increases&n; * the semaphore count, also the interruptible/trylock call can increment&n; * the semaphore count when they fails).&n; */
 DECL|function|wake_one_more
 r_static
 r_inline
@@ -29,18 +29,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sem-&gt;count
-)paren
-op_le
-l_int|0
-)paren
 id|sem-&gt;waking
 op_increment
 suffix:semicolon
@@ -114,7 +102,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * waking_non_zero_interruptible:&n; *&t;1&t;got the lock&n; *&t;0&t;go to sleep&n; *&t;-EINTR&t;interrupted&n; *&n; * We must undo the sem-&gt;count down_interruptible() increment while we are&n; * protected by the spinlock in order to make atomic this atomic_inc() with the&n; * atomic_read() in wake_one_more(), otherwise we can race. -arca&n; */
+multiline_comment|/*&n; * waking_non_zero_interruptible:&n; *&t;1&t;got the lock&n; *&t;0&t;go to sleep&n; *&t;-EINTR&t;interrupted&n; *&n; * If we give up we must undo our count-decrease we previously did in down().&n; * Subtle: up() can continue to happens and increase the semaphore count&n; * even during our critical section protected by the spinlock. So&n; * we must remeber to undo the sem-&gt;waking that will be run from&n; * wake_one_more() some time soon, if the semaphore count become &gt; 0.&n; */
 DECL|function|waking_non_zero_interruptible
 r_static
 r_inline
@@ -178,12 +166,18 @@ id|tsk
 )paren
 )paren
 (brace
-id|atomic_inc
+r_if
+c_cond
+(paren
+id|atomic_inc_and_test_greater_zero
 c_func
 (paren
 op_amp
 id|sem-&gt;count
 )paren
+)paren
+id|sem-&gt;waking
+op_decrement
 suffix:semicolon
 id|ret
 op_assign
@@ -204,7 +198,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * waking_non_zero_trylock:&n; *&t;1&t;failed to lock&n; *&t;0&t;got the lock&n; *&n; * We must undo the sem-&gt;count down_trylock() increment while we are&n; * protected by the spinlock in order to make atomic this atomic_inc() with the&n; * atomic_read() in wake_one_more(), otherwise we can race. -arca&n; */
+multiline_comment|/*&n; * waking_non_zero_trylock:&n; *&t;1&t;failed to lock&n; *&t;0&t;got the lock&n; *&n; * Implementation details are the same of the interruptible case.&n; */
 DECL|function|waking_non_zero_trylock
 r_static
 r_inline
@@ -243,13 +237,21 @@ id|sem-&gt;waking
 op_le
 l_int|0
 )paren
-id|atomic_inc
+(brace
+r_if
+c_cond
+(paren
+id|atomic_inc_and_test_greater_zero
 c_func
 (paren
 op_amp
 id|sem-&gt;count
 )paren
+)paren
+id|sem-&gt;waking
+op_decrement
 suffix:semicolon
+)brace
 r_else
 (brace
 id|sem-&gt;waking

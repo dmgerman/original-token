@@ -233,8 +233,8 @@ DECL|macro|__raw_readq
 macro_line|# define __raw_readq&t;__readq
 DECL|macro|__raw_writeb
 macro_line|# define __raw_writeb&t;__writeb
-DECL|macro|__raw_writeb
-macro_line|# define __raw_writeb&t;__writew
+DECL|macro|__raw_writew
+macro_line|# define __raw_writew&t;__writew
 DECL|macro|__raw_writel
 macro_line|# define __raw_writel&t;__writel
 DECL|macro|__raw_writeq
@@ -740,7 +740,7 @@ id|addr
 suffix:semicolon
 r_extern
 r_void
-id|___raw_writeb
+id|___raw_writew
 c_func
 (paren
 r_int
@@ -800,9 +800,9 @@ macro_line|#ifdef __raw_writeb
 DECL|macro|writeb
 macro_line|# define writeb(v,a)&t;({ __raw_writeb((v),(a)); mb(); })
 macro_line|#endif
-macro_line|#ifdef __raw_writeb
+macro_line|#ifdef __raw_writew
 DECL|macro|writew
-macro_line|# define writew(v,a)&t;({ __raw_writeb((v),(a)); mb(); })
+macro_line|# define writew(v,a)&t;({ __raw_writew((v),(a)); mb(); })
 macro_line|#endif
 macro_line|#ifdef __raw_writel
 DECL|macro|writel
@@ -832,9 +832,9 @@ macro_line|#ifndef __raw_writeb
 DECL|macro|__raw_writeb
 macro_line|# define __raw_writeb(v,a)  ___raw_writeb((v),(unsigned long)(a))
 macro_line|#endif
-macro_line|#ifndef __raw_writeb
-DECL|macro|__raw_writeb
-macro_line|# define __raw_writeb(v,a)  ___raw_writeb((v),(unsigned long)(a))
+macro_line|#ifndef __raw_writew
+DECL|macro|__raw_writew
+macro_line|# define __raw_writew(v,a)  ___raw_writew((v),(unsigned long)(a))
 macro_line|#endif
 macro_line|#ifndef __raw_writel
 DECL|macro|__raw_writel

@@ -145,8 +145,8 @@ l_int|16
 suffix:semicolon
 multiline_comment|/* identification string eg &quot;TT Builtin&quot; */
 DECL|member|smem_start
-r_char
-op_star
+r_int
+r_int
 id|smem_start
 suffix:semicolon
 multiline_comment|/* Start of frame buffer mem */
@@ -192,8 +192,8 @@ id|line_length
 suffix:semicolon
 multiline_comment|/* length of a line in bytes    */
 DECL|member|mmio_start
-r_char
-op_star
+r_int
+r_int
 id|mmio_start
 suffix:semicolon
 multiline_comment|/* Start of Memory Mapped I/O   */

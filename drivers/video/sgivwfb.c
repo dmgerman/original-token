@@ -2529,10 +2529,6 @@ id|sgivwfb_name
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|sgivwfb_mem_phys
 suffix:semicolon
 id|fix-&gt;smem_len
@@ -2595,10 +2591,6 @@ id|var-&gt;bits_per_pixel
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|DBE_REG_PHYS
 suffix:semicolon
 id|fix-&gt;mmio_len

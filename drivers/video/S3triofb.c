@@ -2086,10 +2086,6 @@ l_int|1024
 suffix:semicolon
 id|fb_fix.smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|address
 suffix:semicolon
 id|fb_fix.type
@@ -2106,10 +2102,6 @@ id|FB_ACCEL_S3_TRIO64
 suffix:semicolon
 id|fb_fix.mmio_start
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|address
 op_plus
 l_int|0x1000000

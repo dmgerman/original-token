@@ -272,9 +272,9 @@ c_cond
 id|strstr
 c_func
 (paren
-id|List-&gt;value
-comma
 id|Filename
+comma
+id|List-&gt;value
 )paren
 op_ne
 l_int|NULL

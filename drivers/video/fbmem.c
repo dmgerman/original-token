@@ -2636,10 +2636,6 @@ suffix:semicolon
 multiline_comment|/* frame buffer memory */
 id|start
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|fix.smem_start
 suffix:semicolon
 id|len
@@ -2709,10 +2705,6 @@ id|EINVAL
 suffix:semicolon
 id|start
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|fix.mmio_start
 suffix:semicolon
 id|len
@@ -2885,7 +2877,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|remap_page_range
+id|io_remap_page_range
 c_func
 (paren
 id|vma-&gt;vm_start

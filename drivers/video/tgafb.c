@@ -2174,11 +2174,7 @@ l_int|3
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-id|ioremap
-c_func
-(paren
 id|fb_info.tga_fb_base
-)paren
 suffix:semicolon
 id|fix-&gt;smem_len
 op_assign
@@ -2188,11 +2184,7 @@ id|par-&gt;yres
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
-id|ioremap
-c_func
-(paren
 id|fb_info.tga_regs_base
-)paren
 suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign

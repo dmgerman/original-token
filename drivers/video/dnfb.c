@@ -509,15 +509,9 @@ l_string|&quot;Apollo Mono&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
 id|FRAME_BUFFER_START
 op_plus
 id|IO_BASE
-)paren
 suffix:semicolon
 id|fix-&gt;smem_len
 op_assign
