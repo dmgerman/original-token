@@ -178,7 +178,7 @@ l_int|10
 id|printk
 c_func
 (paren
-l_string|&quot;COMPATIBILITY WARNING: reading a directory&bslash;r&bslash;n&quot;
+l_string|&quot;COMPATIBILITY WARNING: reading a directory&bslash;n&quot;
 )paren
 suffix:semicolon
 id|last_warning

@@ -87,5 +87,10 @@ l_int|65
 suffix:semicolon
 )brace
 suffix:semicolon
+r_extern
+r_struct
+id|new_utsname
+id|system_utsname
+suffix:semicolon
 macro_line|#endif
 eof

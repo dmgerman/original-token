@@ -70,7 +70,7 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * for character devices, only /dev/mem may be mapped. when the&n;&t; * swapping code is modified to allow arbitrary sources of pages,&n;&t; * then we can open it up to regular files.&n;&t; */
+multiline_comment|/*&n;&t; * for character devices, only /dev/[k]mem may be mapped. when the&n;&t; * swapping code is modified to allow arbitrary sources of pages,&n;&t; * then we can open it up to regular files.&n;&t; */
 r_if
 c_cond
 (paren
@@ -78,9 +78,15 @@ id|major
 op_ne
 l_int|1
 op_logical_or
+(paren
 id|minor
 op_ne
 l_int|1
+op_logical_and
+id|minor
+op_ne
+l_int|2
+)paren
 )paren
 r_return
 (paren

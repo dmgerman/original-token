@@ -230,6 +230,10 @@ DECL|macro|__NR_idle
 mdefine_line|#define __NR_idle&t;&t;112
 DECL|macro|__NR_vm86
 mdefine_line|#define __NR_vm86&t;&t;113
+DECL|macro|__NR_wait4
+mdefine_line|#define __NR_wait4&t;&t;114
+DECL|macro|__NR_swapoff
+mdefine_line|#define __NR_swapoff&t;&t;115
 r_extern
 r_int
 id|errno

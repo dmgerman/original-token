@@ -32,6 +32,8 @@ DECL|macro|SOCK_RDM
 mdefine_line|#define SOCK_RDM&t;4&t;&t;/* reliably-delivered message */
 DECL|macro|SOCK_SEQPACKET
 mdefine_line|#define SOCK_SEQPACKET&t;5&t;&t;/* sequential packet socket */
+DECL|macro|SOCK_PACKET
+mdefine_line|#define SOCK_PACKET    10&t;&t;/* linux specific way of getting&n;&t;&t;&t;&t;&t;   packets at the dev level.  For&n;&t;&t;&t;&t;&t;   writing rarp and other similiar&n;&t;&t;&t;&t;&t;   things on the user level. */
 multiline_comment|/*&n; * supported address families&n; */
 DECL|macro|AF_UNSPEC
 mdefine_line|#define AF_UNSPEC&t;0
@@ -68,6 +70,10 @@ DECL|macro|SO_RCVBUF
 mdefine_line|#define SO_RCVBUF&t;8
 DECL|macro|SO_KEEPALIVE
 mdefine_line|#define SO_KEEPALIVE&t;9
+DECL|macro|SO_OOBINLINE
+mdefine_line|#define SO_OOBINLINE   10
+DECL|macro|SO_NO_CHECK
+mdefine_line|#define SO_NO_CHECK    11
 multiline_comment|/* setsockoptions level */
 DECL|macro|SOL_SOCKET
 mdefine_line|#define SOL_SOCKET&t;1

@@ -25,6 +25,11 @@ r_extern
 r_int
 id|end
 suffix:semicolon
+r_extern
+r_char
+op_star
+id|linux_banner
+suffix:semicolon
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 r_static
 r_inline
@@ -321,6 +326,14 @@ op_star
 id|tm
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|malloc_grab_pages
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_SCSI
 r_extern
 r_void
@@ -396,6 +409,8 @@ DECL|macro|SCREEN_INFO
 mdefine_line|#define SCREEN_INFO (*(struct screen_info *)0x90000)
 DECL|macro|ORIG_ROOT_DEV
 mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)
+DECL|macro|AUX_DEVICE_INFO
+mdefine_line|#define AUX_DEVICE_INFO (*(unsigned char *)0x901FF)
 multiline_comment|/*&n; * Yeah, yeah, it&squot;s ugly, but I cannot find how to do this correctly&n; * and this seems to work. I anybody has more info on the real-time&n; * clock I&squot;d be interested. Most of this was trial and error, and some&n; * bios-listing reading. Urghh.&n; */
 DECL|macro|CMOS_READ
 mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p(0x80|addr,0x70); &bslash;&n;inb_p(0x71); &bslash;&n;})
@@ -534,11 +549,21 @@ id|memory_start
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* After mem_init, stores the */
+multiline_comment|/* amount of free user memory */
 DECL|variable|memory_end
 r_static
 r_int
 r_int
 id|memory_end
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|low_memory_start
+r_static
+r_int
+r_int
+id|low_memory_start
 op_assign
 l_int|0
 suffix:semicolon
@@ -660,6 +685,11 @@ r_struct
 id|screen_info
 id|screen_info
 suffix:semicolon
+DECL|variable|aux_device_present
+r_int
+r_char
+id|aux_device_present
+suffix:semicolon
 DECL|function|start_kernel
 r_void
 id|start_kernel
@@ -680,6 +710,10 @@ suffix:semicolon
 id|screen_info
 op_assign
 id|SCREEN_INFO
+suffix:semicolon
+id|aux_device_present
+op_assign
+id|AUX_DEVICE_INFO
 suffix:semicolon
 id|sprintf
 c_func
@@ -757,6 +791,23 @@ l_int|1024
 op_star
 l_int|1024
 suffix:semicolon
+id|low_memory_start
+op_assign
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|end
+suffix:semicolon
+id|low_memory_start
+op_add_assign
+l_int|0xfff
+suffix:semicolon
+id|low_memory_start
+op_and_assign
+l_int|0xfffff000
+suffix:semicolon
 id|trap_init
 c_func
 (paren
@@ -826,11 +877,11 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
-id|memory_start
-op_assign
 id|mem_init
 c_func
 (paren
+id|low_memory_start
+comma
 id|memory_start
 comma
 id|memory_end
@@ -846,19 +897,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
+id|floppy_init
 c_func
 (paren
-l_string|&quot;Linux version &quot;
-id|UTS_RELEASE
-l_string|&quot; &quot;
-id|__DATE__
-l_string|&quot; &quot;
-id|__TIME__
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|floppy_init
+id|malloc_grab_pages
 c_func
 (paren
 )paren
@@ -1038,23 +1082,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;%d buffers = %d bytes buffer space&bslash;n&bslash;r&quot;
-comma
-id|nr_buffers
-comma
-id|nr_buffers
-op_star
-id|BLOCK_SIZE
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;Free mem: %d bytes&bslash;n&bslash;r&quot;
-comma
-id|memory_end
-op_minus
-id|memory_start
+id|linux_banner
 )paren
 suffix:semicolon
 id|execve

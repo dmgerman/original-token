@@ -42,20 +42,10 @@ mdefine_line|#define ATTR_UNUSED  (ATTR_VOLUME | ATTR_ARCH | ATTR_SYS | ATTR_HID
 multiline_comment|/* attribute bits that are copied &quot;as is&quot; */
 DECL|macro|DELETED_FLAG
 mdefine_line|#define DELETED_FLAG 0xe5 /* marks file as deleted when in name[0] */
-DECL|macro|D_START
-mdefine_line|#define D_START    0 /* i_data[0]: first cluster or 0 */
-DECL|macro|D_ATTRS
-mdefine_line|#define D_ATTRS    1 /* i_data[1]: unused attribute bits */
-DECL|macro|D_BUSY
-mdefine_line|#define D_BUSY     2 /* i_data[2]: file is either deleted but still open, or&n;&t;&t;&t;&t;   inconsistent (mkdir) */
-DECL|macro|D_DEPEND
-mdefine_line|#define D_DEPEND   3 /* i_data[3]: pointer to inode that depends on the current&n;&t;&t;&t;&t;   inode */
-DECL|macro|D_OLD
-mdefine_line|#define D_OLD&t;   4 /* i_data[4]: pointer to the old inode this inode depends&n;&t;&t;&t;&t;   on */
-DECL|macro|D_BINARY
-mdefine_line|#define D_BINARY   5 /* i_data[5]: file contains non-text data */
 DECL|macro|MSDOS_SB
 mdefine_line|#define MSDOS_SB(s) (&amp;((s)-&gt;u.msdos_sb))
+DECL|macro|MSDOS_I
+mdefine_line|#define MSDOS_I(i) (&amp;((i)-&gt;u.msdos_i))
 DECL|macro|MSDOS_NAME
 mdefine_line|#define MSDOS_NAME 11 /* maximum name length */
 DECL|macro|MSDOS_DOT
@@ -341,6 +331,28 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|lock_fat
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|unlock_fat
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|msdos_add_cluster
 c_func
@@ -454,6 +466,17 @@ id|dir
 comma
 r_int
 id|locked
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|msdos_subdirs
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|dir
 )paren
 suffix:semicolon
 multiline_comment|/* fat.c */

@@ -12,18 +12,9 @@ macro_line|#ifndef UTS_NODENAME
 DECL|macro|UTS_NODENAME
 mdefine_line|#define UTS_NODENAME &quot;(none)&quot;&t;/* set by sethostname() */
 macro_line|#endif
-macro_line|#include &lt;linux/config_rel.h&gt;
-macro_line|#ifndef UTS_RELEASE
-DECL|macro|UTS_RELEASE
-mdefine_line|#define UTS_RELEASE &quot;0.95c-0&quot; 
-macro_line|#endif
-macro_line|#include &lt;linux/config_ver.h&gt;
-macro_line|#ifndef UTS_VERSION
-DECL|macro|UTS_VERSION
-mdefine_line|#define UTS_VERSION &quot;mm/dd/yy&quot;
-macro_line|#endif
 DECL|macro|UTS_MACHINE
 mdefine_line|#define UTS_MACHINE &quot;i386&quot;&t;/* hardware type */
+multiline_comment|/*&n; * The definitions for UTS_RELEASE and UTS_VERSION are now defined&n; * in linux/version.h, and should only be used by linux/version.c&n; */
 multiline_comment|/* Don&squot;t touch these, unless you really know what your doing. */
 DECL|macro|DEF_INITSEG
 mdefine_line|#define DEF_INITSEG&t;0x9000

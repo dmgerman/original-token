@@ -3874,7 +3874,7 @@ comma
 l_int|0
 comma
 (brace
-l_int|25
+l_int|24
 comma
 l_int|80
 comma
@@ -3977,7 +3977,7 @@ comma
 l_int|0
 comma
 (brace
-l_int|25
+l_int|24
 comma
 l_int|80
 comma
@@ -4069,7 +4069,7 @@ comma
 l_int|0
 comma
 (brace
-l_int|25
+l_int|24
 comma
 l_int|80
 comma

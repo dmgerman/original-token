@@ -3,6 +3,8 @@ DECL|macro|_LINUX_MM_H
 mdefine_line|#define _LINUX_MM_H
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE 4096
+DECL|macro|PAGE_SHIFT
+mdefine_line|#define PAGE_SHIFT 12
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving a inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; */
@@ -123,20 +125,31 @@ suffix:semicolon
 DECL|macro|BAD_PAGETABLE
 mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 r_extern
+r_volatile
 r_int
-r_int
-id|swap_device
+id|free_page_ptr
 suffix:semicolon
-r_extern
-r_struct
-id|inode
-op_star
-id|swap_file
-suffix:semicolon
+multiline_comment|/* used by malloc and tcp/ip. */
 r_extern
 r_int
 id|nr_free_pages
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|free_page_list
+suffix:semicolon
+r_extern
+r_int
+id|nr_secondary_pages
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|secondary_page_list
+suffix:semicolon
+DECL|macro|MAX_SECONDARY_PAGES
+mdefine_line|#define MAX_SECONDARY_PAGES 10
 r_extern
 r_void
 id|rw_swap_page
@@ -324,11 +337,14 @@ id|user_esp
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
+r_void
 id|mem_init
 c_func
 (paren
+r_int
+r_int
+id|low_start_mem
+comma
 r_int
 r_int
 id|start_mem
@@ -372,10 +388,28 @@ op_star
 id|task
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|malloc_grab_pages
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* swap.c */
 r_extern
 r_void
 id|swap_free
+c_func
+(paren
+r_int
+r_int
+id|page_nr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|swap_duplicate
 c_func
 (paren
 r_int
@@ -399,25 +433,17 @@ mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%c
 r_extern
 r_int
 r_int
-id|low_memory
-suffix:semicolon
-r_extern
-r_int
-r_int
 id|high_memory
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|paging_pages
-suffix:semicolon
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr) (((addr)-low_memory)&gt;&gt;12)
+mdefine_line|#define MAP_NR(addr) ((addr) &gt;&gt; PAGE_SHIFT)
+DECL|macro|MAP_PAGE_RESERVED
+mdefine_line|#define MAP_PAGE_RESERVED (1&lt;&lt;15)
 DECL|macro|USED
 mdefine_line|#define USED 100
 r_extern
 r_int
-r_char
+r_int
 op_star
 id|mem_map
 suffix:semicolon
@@ -433,9 +459,11 @@ DECL|macro|PAGE_PRESENT
 mdefine_line|#define PAGE_PRESENT&t;0x01
 DECL|macro|GFP_BUFFER
 mdefine_line|#define GFP_BUFFER&t;0x00
+DECL|macro|GFP_ATOMIC
+mdefine_line|#define GFP_ATOMIC&t;0x01
 DECL|macro|GFP_USER
-mdefine_line|#define GFP_USER&t;0x01
+mdefine_line|#define GFP_USER&t;0x02
 DECL|macro|GFP_KERNEL
-mdefine_line|#define GFP_KERNEL&t;0x02
+mdefine_line|#define GFP_KERNEL&t;0x03
 macro_line|#endif
 eof

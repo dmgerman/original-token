@@ -7,6 +7,8 @@ DECL|macro|RUSAGE_SELF
 mdefine_line|#define&t;RUSAGE_SELF&t;0
 DECL|macro|RUSAGE_CHILDREN
 mdefine_line|#define&t;RUSAGE_CHILDREN&t;-1
+DECL|macro|RUSAGE_BOTH
+mdefine_line|#define RUSAGE_BOTH&t;-2&t;&t;/* sys_wait4() uses this */
 DECL|struct|rusage
 r_struct
 id|rusage

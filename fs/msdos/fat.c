@@ -151,7 +151,7 @@ id|data
 id|printk
 c_func
 (paren
-l_string|&quot;bread in fat_access failed&bslash;r&bslash;n&quot;
+l_string|&quot;bread in fat_access failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -226,7 +226,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;bread in fat_access failed&bslash;r&bslash;n&quot;
+l_string|&quot;bread in fat_access failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -248,6 +248,13 @@ op_eq
 l_int|16
 )paren
 (brace
+id|p_first
+op_assign
+id|p_last
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* GCC needs that stuff */
 id|next
 op_assign
 (paren
@@ -813,10 +820,19 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;cache lookup: %d&bslash;r&bslash;n&quot;
+l_string|&quot;cache lookup: &lt;%d,%d&gt; %d (%d,%d) -&gt; &quot;
+comma
+id|inode-&gt;i_dev
+comma
+id|inode-&gt;i_ino
+comma
+id|cluster
 comma
 op_star
 id|f_clu
+comma
+op_star
+id|d_clu
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -863,7 +879,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;cache hit: %d (%d)&bslash;r&bslash;n&quot;
+l_string|&quot;cache hit: %d (%d)&bslash;n&quot;
 comma
 id|walk-&gt;file_cluster
 comma
@@ -887,6 +903,14 @@ id|cluster
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;cache miss&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#ifdef DEBUG
 DECL|function|list_cache
@@ -925,7 +949,11 @@ id|walk-&gt;device
 id|printk
 c_func
 (paren
-l_string|&quot;(%d,%d) &quot;
+l_string|&quot;&lt;%d,%d&gt;(%d,%d) &quot;
+comma
+id|walk-&gt;device
+comma
+id|walk-&gt;ino
 comma
 id|walk-&gt;file_cluster
 comma
@@ -943,7 +971,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;r&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -977,7 +1005,11 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;cache add: %d (%d)&bslash;r&bslash;n&quot;
+l_string|&quot;cache add: &lt;%d,%d&gt; %d (%d)&bslash;n&quot;
+comma
+id|inode-&gt;i_dev
+comma
+id|inode-&gt;i_ino
 comma
 id|f_clu
 comma
@@ -1216,10 +1248,13 @@ op_logical_neg
 (paren
 id|this
 op_assign
-id|inode-&gt;i_data
-(braket
-id|D_START
-)braket
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_start
 )paren
 )paren
 r_return
@@ -1297,6 +1332,22 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_busy
+op_logical_or
+id|inode-&gt;i_nlink
+)paren
+)paren
 id|cache_add
 c_func
 (paren
@@ -1307,6 +1358,7 @@ comma
 id|this
 )paren
 suffix:semicolon
+multiline_comment|/* don&squot;t add clusters of moved files, because we can&squot;t invalidate them&n;&t;   when this inode is returned. */
 r_return
 id|this
 suffix:semicolon
@@ -1358,10 +1410,13 @@ id|inode-&gt;i_mode
 )paren
 op_logical_and
 op_logical_neg
-id|inode-&gt;i_data
-(braket
-id|D_START
-)braket
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_start
 )paren
 )paren
 (brace
@@ -1455,10 +1510,13 @@ op_logical_neg
 (paren
 id|this
 op_assign
-id|inode-&gt;i_data
-(braket
-id|D_START
-)braket
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_start
 )paren
 )paren
 r_return
@@ -1513,7 +1571,7 @@ id|this
 id|printk
 c_func
 (paren
-l_string|&quot;fat_free: skipped EOF&bslash;r&bslash;n&quot;
+l_string|&quot;fat_free: skipped EOF&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1552,10 +1610,13 @@ l_int|0xfff8
 suffix:semicolon
 r_else
 (brace
-id|inode-&gt;i_data
-(braket
-id|D_START
-)braket
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_start
 op_assign
 l_int|0
 suffix:semicolon
@@ -1564,6 +1625,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|lock_fat
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1572,6 +1639,7 @@ op_ne
 op_minus
 l_int|1
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1594,6 +1662,39 @@ id|panic
 c_func
 (paren
 l_string|&quot;fat_free: deleting beyond EOF&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|free_clusters
+op_ne
+op_minus
+l_int|1
+)paren
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|free_clusters
+op_increment
+suffix:semicolon
+id|inode-&gt;i_blocks
+op_decrement
+suffix:semicolon
+)brace
+id|unlock_fat
+c_func
+(paren
+id|inode-&gt;i_sb
 )paren
 suffix:semicolon
 id|cache_inval_inode

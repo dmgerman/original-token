@@ -3,6 +3,7 @@ multiline_comment|/*&n; * super.c contains code to handle the super-block tables
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -76,6 +77,12 @@ comma
 id|msdos_read_super
 comma
 l_string|&quot;msdos&quot;
+)brace
+comma
+(brace
+id|proc_read_super
+comma
+l_string|&quot;proc&quot;
 )brace
 comma
 (brace

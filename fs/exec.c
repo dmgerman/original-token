@@ -166,9 +166,15 @@ comma
 l_int|NULL
 )paren
 )paren
+(brace
+id|inode
+op_assign
+l_int|NULL
+suffix:semicolon
 r_goto
 id|end_coredump
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

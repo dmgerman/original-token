@@ -94,7 +94,11 @@ mdefine_line|#define BLKROSET 4701 /* set device read-only (0 = read-write) */
 DECL|macro|BLKROGET
 mdefine_line|#define BLKROGET 4702 /* get read-only status (0 = read_write) */
 DECL|macro|BMAP_IOCTL
-mdefine_line|#define BMAP_IOCTL 1
+mdefine_line|#define BMAP_IOCTL 1&t;/* obsolete - kept for compatibility */
+DECL|macro|FIBMAP
+mdefine_line|#define FIBMAP&t;   1&t;/* bmap access */
+DECL|macro|FIGETBSZ
+mdefine_line|#define FIGETBSZ   2&t;/* get the block size used for bmap */
 DECL|typedef|buffer_block
 r_typedef
 r_char

@@ -2516,7 +2516,7 @@ l_string|&quot;sys_accept: no more sockets&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-id|EINVAL
+id|EAGAIN
 suffix:semicolon
 )brace
 id|newsock-&gt;type
@@ -2610,9 +2610,9 @@ OL
 l_int|0
 )paren
 (brace
-id|sock_release
+id|sys_close
 (paren
-id|newsock
+id|fd
 )paren
 suffix:semicolon
 r_return

@@ -241,7 +241,7 @@ r_void
 op_star
 id|data
 suffix:semicolon
-multiline_comment|/* printk(&quot;msdos_file_read&bslash;r&bslash;n&quot;); */
+multiline_comment|/* printk(&quot;msdos_file_read&bslash;n&quot;); */
 r_if
 c_cond
 (paren
@@ -252,7 +252,7 @@ id|inode
 id|printk
 c_func
 (paren
-l_string|&quot;msdos_file_read: inode = NULL&bslash;r&bslash;n&quot;
+l_string|&quot;msdos_file_read: inode = NULL&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -394,10 +394,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_data
-(braket
-id|D_BINARY
-)braket
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_binary
 )paren
 (brace
 id|memcpy_tofs
@@ -701,8 +704,16 @@ c_cond
 (paren
 id|error
 )paren
+(brace
+id|msdos_truncate
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 id|offset
 op_assign
 id|filp-&gt;f_pos
@@ -762,10 +773,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_data
-(braket
-id|D_BINARY
-)braket
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_binary
 )paren
 (brace
 id|memcpy_fromfs
@@ -949,10 +963,13 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|inode-&gt;i_data
-(braket
-id|D_ATTRS
-)braket
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
 op_or_assign
 id|ATTR_ARCH
 suffix:semicolon
@@ -1020,10 +1037,13 @@ op_div
 id|cluster
 )paren
 suffix:semicolon
-id|inode-&gt;i_data
-(braket
-id|D_ATTRS
-)braket
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_attrs
 op_or_assign
 id|ATTR_ARCH
 suffix:semicolon

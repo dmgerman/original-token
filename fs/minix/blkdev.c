@@ -149,10 +149,10 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|minix_bmap
+l_int|NULL
 comma
 multiline_comment|/* bmap */
-id|minix_truncate
+l_int|NULL
 multiline_comment|/* truncate */
 )brace
 suffix:semicolon

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -15,6 +16,21 @@ c_func
 (paren
 r_int
 id|fd
+)paren
+suffix:semicolon
+r_void
+id|getrusage
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+comma
+r_int
+comma
+r_struct
+id|rusage
+op_star
 )paren
 suffix:semicolon
 DECL|function|send_sig
@@ -2219,9 +2235,9 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
-DECL|function|sys_waitpid
+DECL|function|sys_wait4
 r_int
-id|sys_waitpid
+id|sys_wait4
 c_func
 (paren
 id|pid_t
@@ -2234,6 +2250,11 @@ id|stat_addr
 comma
 r_int
 id|options
+comma
+r_struct
+id|rusage
+op_star
+id|ru
 )paren
 (brace
 r_int
@@ -2410,6 +2431,23 @@ id|p-&gt;exit_code
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ru
+op_ne
+l_int|NULL
+)paren
+id|getrusage
+c_func
+(paren
+id|p
+comma
+id|RUSAGE_BOTH
+comma
+id|ru
+)paren
+suffix:semicolon
 r_return
 id|p-&gt;pid
 suffix:semicolon
@@ -2439,6 +2477,23 @@ op_add_assign
 id|p-&gt;maj_flt
 op_plus
 id|p-&gt;cmaj_flt
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ru
+op_ne
+l_int|NULL
+)paren
+id|getrusage
+c_func
+(paren
+id|p
+comma
+id|RUSAGE_BOTH
+comma
+id|ru
+)paren
 suffix:semicolon
 id|flag
 op_assign
@@ -2597,6 +2652,38 @@ suffix:semicolon
 r_return
 op_minus
 id|ECHILD
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * sys_waitpid() remains for compatibility. waitpid() should be&n; * implemented by calling sys_wait4() from libc.a.&n; */
+DECL|function|sys_waitpid
+r_int
+id|sys_waitpid
+c_func
+(paren
+id|pid_t
+id|pid
+comma
+r_int
+r_int
+op_star
+id|stat_addr
+comma
+r_int
+id|options
+)paren
+(brace
+r_return
+id|sys_wait4
+c_func
+(paren
+id|pid
+comma
+id|stat_addr
+comma
+id|options
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 )brace
 eof

@@ -12,6 +12,21 @@ mdefine_line|#define TASK_SIZE&t;0xc0000000
 multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
+multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
+DECL|macro|FSHIFT
+mdefine_line|#define FSHIFT&t;&t;11&t;&t;/* nr of bits of precision */
+DECL|macro|FIXED_1
+mdefine_line|#define FIXED_1&t;&t;(1&lt;&lt;FSHIFT)&t;/* 1.0 as fixed-point */
+DECL|macro|LOAD_FREQ
+mdefine_line|#define LOAD_FREQ&t;(5*HZ)&t;&t;/* 5 sec intervals */
+DECL|macro|EXP_1
+mdefine_line|#define EXP_1&t;&t;1884&t;&t;/* 1/exp(5sec/1min) as fixed-point */
+DECL|macro|EXP_5
+mdefine_line|#define EXP_5&t;&t;2014&t;&t;/* 1/exp(5sec/5min) */
+DECL|macro|EXP_15
+mdefine_line|#define EXP_15&t;&t;2037&t;&t;/* 1/exp(5sec/15min) */
+DECL|macro|CALC_LOAD
+mdefine_line|#define CALC_LOAD(load,exp,n) &bslash;&n;&t;load *= exp; &bslash;&n;&t;load += n*(FIXED_1-exp); &bslash;&n;&t;load &gt;&gt;= FSHIFT;
 DECL|macro|CT_TO_SECS
 mdefine_line|#define CT_TO_SECS(x)&t;((x) / HZ)
 DECL|macro|CT_TO_USECS

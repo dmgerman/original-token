@@ -5,7 +5,6 @@ DECL|struct|msdos_sb_info
 r_struct
 id|msdos_sb_info
 (brace
-multiline_comment|/* space in struct super_block is 28 bytes */
 DECL|member|cluster_size
 r_int
 r_int
@@ -76,6 +75,21 @@ r_char
 id|conversion
 suffix:semicolon
 multiline_comment|/* b = binary, t = text, a = auto */
+DECL|member|fat_wait
+r_struct
+id|wait_queue
+op_star
+id|fat_wait
+suffix:semicolon
+DECL|member|fat_lock
+r_int
+id|fat_lock
+suffix:semicolon
+DECL|member|free_clusters
+r_int
+id|free_clusters
+suffix:semicolon
+multiline_comment|/* -1 if undefined */
 )brace
 suffix:semicolon
 macro_line|#endif
